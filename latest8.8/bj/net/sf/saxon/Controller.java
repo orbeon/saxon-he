@@ -456,6 +456,18 @@ public class Controller extends Transformer implements InstructionInfoProvider {
         }
         allOutputDestinations.add(uri);
     }
+    
+    /**
+     * Remove a URI from the set of output destinations that cannot be written to or read from.
+     * Used to support saxon:discard-document()
+     */
+
+    public void removeUnavailableOutputDestination(String uri) {
+        if (allOutputDestinations != null) {
+            allOutputDestinations.remove(uri);
+        }
+    }
+    
 
     /**
      * Determine whether an output URI is available for use. This method is intended

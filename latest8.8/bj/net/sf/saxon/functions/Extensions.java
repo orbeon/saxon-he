@@ -127,12 +127,18 @@ public class Extensions  {
      * select="saxon:discard-document(document('a.xml'))"
      */
 
-    public static DocumentInfo discardDocument(XPathContext context, DocumentInfo doc) {
+   public static DocumentInfo discardDocument(XPathContext context, DocumentInfo doc) {
         if (doc == null) {
             return null;
         }
-        return context.getController().getDocumentPool().discard(doc);
+        Controller c = context.getController();
+        String uri = c.getDocumentPool().getDocumentURI(doc);
+        if (uri != null) {
+            c.removeUnavailableOutputDestination(uri);
+        }
+        return c.getDocumentPool().discard(doc);
     }
+
 
     /**
     * Determine whether two node-sets contain the same nodes
