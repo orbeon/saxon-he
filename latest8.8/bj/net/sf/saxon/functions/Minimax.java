@@ -80,6 +80,23 @@ public class Minimax extends CollatingFunction {
     }
 
     /**
+     * Determine the item type of the value returned by the function
+     *
+     * @param th the type hierarchy cache
+     * @return the statically inferred type of the expression     
+     */
+
+    public ItemType getItemType(TypeHierarchy th) {
+        ItemType t = argument[0].getItemType(th);
+        if (t.getPrimitiveType() == Type.UNTYPED_ATOMIC) {
+            return Type.DOUBLE_TYPE;
+        } else {
+            return t;
+        }
+    }
+
+
+    /**
     * Evaluate the function
     */
 

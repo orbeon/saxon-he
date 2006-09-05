@@ -341,11 +341,11 @@ public abstract class StandardFunction {
             arg(e, 1, Type.STRING_TYPE, StaticProperty.EXACTLY_ONE);
             arg(e, 2, Type.STRING_TYPE, StaticProperty.EXACTLY_ONE);
 
-        e = register("max", Minimax.class, Minimax.MAX, 1, 2, SAME_AS_FIRST_ARGUMENT, StaticProperty.ALLOWS_ZERO_OR_ONE);
+        e = register("max", Minimax.class, Minimax.MAX, 1, 2, Type.ANY_ATOMIC_TYPE, StaticProperty.ALLOWS_ZERO_OR_ONE);
             arg(e, 0, Type.ANY_ATOMIC_TYPE, StaticProperty.ALLOWS_ZERO_OR_MORE);
             arg(e, 1, Type.STRING_TYPE, StaticProperty.EXACTLY_ONE);
 
-        e = register("min", Minimax.class, Minimax.MIN, 1, 2, SAME_AS_FIRST_ARGUMENT, StaticProperty.ALLOWS_ZERO_OR_ONE);
+        e = register("min", Minimax.class, Minimax.MIN, 1, 2, Type.ANY_ATOMIC_TYPE, StaticProperty.ALLOWS_ZERO_OR_ONE);
             arg(e, 0, Type.ANY_ATOMIC_TYPE, StaticProperty.ALLOWS_ZERO_OR_MORE);
             arg(e, 1, Type.STRING_TYPE, StaticProperty.EXACTLY_ONE);
 
