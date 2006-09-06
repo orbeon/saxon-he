@@ -104,6 +104,9 @@ public final class TimeValue extends CalendarValue {
                     if (state != 0) {
                         badTime("decimal separator occurs twice", s);
                     }
+                    if (!tok.hasMoreElements()) {
+                        badTime("decimal point must be followed by digits", s);
+                    }
                     part = (String) tok.nextElement();
                     double fractionalSeconds = Double.parseDouble('.' + part);
                     microsecond = (int) (Math.round(fractionalSeconds * 1000000));

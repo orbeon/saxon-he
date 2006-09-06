@@ -194,6 +194,9 @@ public final class DateTimeValue extends CalendarValue {
                     if (state != 0) {
                         badDate("Decimal separator occurs twice", s);
                     }
+                    if (!tok.hasMoreElements()) {
+                        badDate("Decimal point must be followed by digits", s);
+                    }
                     part = (String)tok.nextElement();
                     double fractionalSeconds = Double.parseDouble('.' + part);
                     microsecond = (int)(Math.round(fractionalSeconds * 1000000));
