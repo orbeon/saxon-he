@@ -257,7 +257,7 @@ public final class DecimalValue extends NumericValue {
             return value.toString();
         } else if (scale < 0) {
             String s = value.abs().unscaledValue().toString();
-
+						if (s.equals("0")) return s;
             FastStringBuffer sb = new FastStringBuffer(s.length() + (-scale) + 2);
             if (value.signum() < 0) {
                 sb.append('-');
