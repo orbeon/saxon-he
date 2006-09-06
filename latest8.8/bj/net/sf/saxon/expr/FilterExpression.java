@@ -100,13 +100,16 @@ public final class FilterExpression extends ComputedExpression {
         // check whether the filter is a constant true() or false()
         if (filter instanceof Value && !(filter instanceof NumericValue)) {
             try {
-                if (filter.effectiveBooleanValue(null)) {
+                if (filter.effectiveBooleanValue(env.makeEearlyEvaluationContext())) {
                     ComputedExpression.setParentExpression(start, getParentExpression());
                     return start;
                 } else {
                     return EmptySequence.getInstance();
                 }
             } catch (XPathException e) {
+                if (e.getLocator() == null) {
+                    e.setLocator(this);
+                }
                 throw StaticError.makeStaticError(e);
             }
         }
