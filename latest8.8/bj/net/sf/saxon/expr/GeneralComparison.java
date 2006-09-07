@@ -26,7 +26,7 @@ import java.util.Comparator;
 public class GeneralComparison extends BinaryExpression implements ComparisonExpression {
 
     protected int singletonOperator;
-    protected transient AtomicComparer comparer;  // transient because not Serializable
+    protected AtomicComparer comparer;  
 
     /**
      * Create a relational expression identifying the two operands and the operator
