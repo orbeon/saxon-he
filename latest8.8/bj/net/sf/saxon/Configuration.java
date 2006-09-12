@@ -552,6 +552,7 @@ public class Configuration implements Serializable, SourceResolver {
 
     public void setTraceListener(TraceListener traceListener) {
         this.traceListener = traceListener;
+        setCompileWithTracing(true);
         setMultiThreading(false);
     }
 
