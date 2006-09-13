@@ -100,7 +100,7 @@ public final class FilterExpression extends ComputedExpression {
         // check whether the filter is a constant true() or false()
         if (filter instanceof Value && !(filter instanceof NumericValue)) {
             try {
-                if (filter.effectiveBooleanValue(env.makeEearlyEvaluationContext())) {
+                if (filter.effectiveBooleanValue(env.makeEarlyEvaluationContext())) {
                     ComputedExpression.setParentExpression(start, getParentExpression());
                     return start;
                 } else {
