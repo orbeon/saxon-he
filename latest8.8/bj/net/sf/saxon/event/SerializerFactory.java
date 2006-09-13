@@ -75,7 +75,7 @@ public class SerializerFactory implements Serializable {
                     throw de;
                 }
             }
-            proxy.open();
+            //proxy.open();    // line deleted, see bug 1558133
             return proxy;
         } else if (result instanceof StreamResult) {
 
