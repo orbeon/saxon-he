@@ -115,7 +115,7 @@ public class DOMWriter implements Receiver {
     		Element element = (Element)currentNode;
             if (!(uri.equals(NamespaceConstant.XML))) {
                 if (prefix.equals("")) {
-                    element.setAttributeNS(null, "xmlns", uri);
+                    element.setAttributeNS(NamespaceConstant.XMLNS, "xmlns", uri);
                 } else {
                     element.setAttributeNS(NamespaceConstant.XMLNS, "xmlns:" + prefix, uri);
 
