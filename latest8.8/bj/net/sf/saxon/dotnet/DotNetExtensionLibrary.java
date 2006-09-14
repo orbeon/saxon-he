@@ -878,9 +878,9 @@ public class DotNetExtensionLibrary implements FunctionLibrary {
 
         try {
 
-            // support the URN format type:full.type.Name?assembly=name;version=ver;culture=cult...
+            // support the URN format clitype:full.type.Name?assembly=name;version=ver;culture=cult...
 
-            if (uri.startsWith("type:")) {
+            if (uri.startsWith("clitype:")) {
                 return ((DotNetPlatform)config.getPlatform()).dynamicLoad(uri, config.isTraceExternalFunctions());
             }
         } catch (XPathException err) {
