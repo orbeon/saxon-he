@@ -1,7 +1,7 @@
 package net.sf.saxon.pull;
 
-import net.sf.saxon.instruct.ElementCreator;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.instruct.ElementCreator;
 import net.sf.saxon.type.Type;
 
 /**
@@ -39,6 +39,21 @@ public class UnconstructedElement extends UnconstructedParent {
 
     public int getNodeKind() {
         return Type.ELEMENT;
+    }
+
+    /**
+     * Get the Base URI for the node, that is, the URI used for resolving a relative URI contained
+     * in the node. This will be the same as the System ID unless xml:base has been used.
+     *
+     * @return the base URI of the node
+     */
+
+    public String getBaseURI() {
+        if (node == null) {
+            // we need to construct the element because it might have an xml:base attribute
+            tryToConstruct();
+        }
+        return node.getBaseURI();
     }
 }
 

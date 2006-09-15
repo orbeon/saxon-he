@@ -99,6 +99,7 @@ public abstract class UnconstructedParent implements NodeInfo {
         puller.setPipelineConfiguration(pipe);
         TinyBuilder builder = new TinyBuilder();
         builder.setPipelineConfiguration(pipe);
+        builder.setSystemId(pipe.getLocationProvider().getSystemId(instruction.getLocationId()));
         builder.setBaseURI(pipe.getLocationProvider().getSystemId(instruction.getLocationId()));
         NamespaceReducer reducer = new NamespaceReducer();
         reducer.setUnderlyingReceiver(builder);
