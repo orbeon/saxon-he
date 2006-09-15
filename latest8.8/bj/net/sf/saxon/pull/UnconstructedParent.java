@@ -217,9 +217,13 @@ public abstract class UnconstructedParent implements NodeInfo {
 
     public String getBaseURI() {
         if (node == null) {
-            tryToConstruct();
+            // the base URI of a constructed parentless document or element node is the static base URI of the
+            // instruction/expression that created it
+            PipelineConfiguration pipe = savedXPathContext.getController().makePipelineConfiguration();
+            return pipe.getLocationProvider().getSystemId(instruction.getLocationId());
+        } else {
+            return node.getBaseURI();
         }
-        return node.getBaseURI();
     }
 
     /**

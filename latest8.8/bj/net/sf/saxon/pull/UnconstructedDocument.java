@@ -101,10 +101,6 @@ public class UnconstructedDocument extends UnconstructedParent implements Docume
         return "";
     }
 
-    public String getBaseURI() {
-        PipelineConfiguration pipe = savedXPathContext.getController().makePipelineConfiguration();
-        return pipe.getLocationProvider().getSystemId(instruction.getLocationId());
-    }
 
     /**
      * Get the root node, if it is a document node.
