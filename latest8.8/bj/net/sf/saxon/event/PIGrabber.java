@@ -95,7 +95,7 @@ public class PIGrabber extends ProxyReceiver {
 			// System.err.println("Found xml-stylesheet media=" + piMedia + " title=" + piTitle);
 
             if ( (piType.equals("text/xml") || piType.equals("application/xml") ||
-                    piType.equals("text/xsl") || piType.equals("applicaton/xsl") || piType.equals("application.xml+xslt")) &&
+                    piType.equals("text/xsl") || piType.equals("applicaton/xsl") || piType.equals("application/xml+xslt")) &&
 
                     (reqMedia==null || piMedia==null || reqMedia.equals(piMedia)) &&
 
