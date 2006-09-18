@@ -356,21 +356,21 @@ public final class DecimalValue extends NumericValue {
     * Implement the XPath round-half-to-even() function
     */
 
-    public NumericValue roundHalfToEven(int scale) {
-        if (scale<0) {
-            try {
-                AtomicValue val = convert(Type.INTEGER, null);
-                if (val instanceof IntegerValue) {
-                    return ((IntegerValue)val).roundHalfToEven(scale);
-                } else {
-                    return ((BigIntegerValue)val).roundHalfToEven(scale);
-                }
-            } catch (XPathException err) {
-                throw new IllegalArgumentException("internal error in integer-decimal conversion");
-            }
-        } else {
+   public NumericValue roundHalfToEven(int scale) {
+//        if (scale<0) {
+//            try {
+//                AtomicValue val = convert(Type.INTEGER, null);
+//                if (val instanceof IntegerValue) {
+//                    return ((IntegerValue)val).roundHalfToEven(scale);
+//                } else {
+//                    return ((BigIntegerValue)val).roundHalfToEven(scale);
+//                }
+//            } catch (XPathException err) {
+//                throw new IllegalArgumentException("internal error in integer-decimal conversion");
+//            }
+//        } else {
             return new DecimalValue(stripTrailingZeros(value.setScale(scale, BigDecimal.ROUND_HALF_EVEN)));
-        }
+//        }
     }
 
     /**
