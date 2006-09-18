@@ -83,8 +83,12 @@ public class XSLCharacterMap extends StyleElement {
             setObjectNameCode(makeNameCode(name.trim()));
         } catch (NamespaceException err) {
             compileError(err.getMessage(), "XTSE0280");
+            name = "unnamedCharacterMap_" + hashCode();
+            setObjectNameCode(getNamePool().allocate("", "", name));
         } catch (XPathException err) {
             compileError(err.getMessage());
+            name = "unnamedCharacterMap_" + hashCode();
+            setObjectNameCode(getNamePool().allocate("", "", name));
         }
 
     }
