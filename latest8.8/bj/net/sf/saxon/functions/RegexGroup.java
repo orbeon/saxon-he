@@ -29,11 +29,16 @@ public class RegexGroup extends SystemFunction implements XSLTFunction {
         AtomicValue gp0 = (AtomicValue)argument[0].evaluateItem(c);
         NumericValue gp = (NumericValue)gp0.getPrimitiveValue();
         RegexIterator iter = c.getCurrentRegexIterator();
-        if (iter == null) return null;
+        if (iter == null) {
+            return StringValue.EMPTY_STRING;
+        }
         String s = iter.getRegexGroup((int)gp.longValue());
-        if (s == null) return null;
+        if (s == null) {
+            return StringValue.EMPTY_STRING;
+        }
         return StringValue.makeStringValue(s);
     }
+
 
     /**
     * Determine the dependencies

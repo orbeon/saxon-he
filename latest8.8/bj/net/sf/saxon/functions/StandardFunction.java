@@ -415,7 +415,7 @@ public abstract class StandardFunction {
             arg(e, 0, Type.STRING_TYPE, StaticProperty.ALLOWS_ZERO_OR_ONE);
             arg(e, 1, Type.STRING_TYPE, StaticProperty.EXACTLY_ONE);
 
-        e = register("regex-group", RegexGroup.class, 0, 1, 1, Type.STRING_TYPE, StaticProperty.ALLOWS_ZERO_OR_ONE);
+        e = register("regex-group", RegexGroup.class, 0, 1, 1, Type.STRING_TYPE, StaticProperty.EXACTLY_ONE);
             arg(e, 0, Type.INTEGER_TYPE, StaticProperty.EXACTLY_ONE);
 
         e = register("remove", Remove.class, 0, 2, 2, SAME_AS_FIRST_ARGUMENT, StaticProperty.ALLOWS_ZERO_OR_MORE);
