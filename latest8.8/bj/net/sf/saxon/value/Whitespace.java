@@ -102,8 +102,8 @@ public class Whitespace {
      * Remove leading whitespace characters from a string
      */
 
-    public static CharSequence removeLeadingWhitespace(CharSequence value) {
-        int start = 0;
+   public static CharSequence removeLeadingWhitespace(CharSequence value) {
+        int start = -1;
         final int len = value.length();
         for (int i=0; i<len; i++) {
             char c = value.charAt(i);
@@ -114,12 +114,13 @@ public class Whitespace {
         }
         if (start == 0) {
             return value;
-        } else if (start == len - 1) {
+        } else if (start < 0 || start == len - 1) {
             return "";
         } else {
             return value.subSequence(start, len);
         }
     }
+
 
     /**
      * Determine if a string contains any whitespace
