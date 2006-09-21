@@ -26,6 +26,7 @@ public class ParentNodeExpression extends SingleNodeExpression {
         if (item instanceof NodeInfo) {
             return ((NodeInfo)item).getParent();
         } else {
+            dynamicError("The context item for the parent axis (..) is not a node", "XPTY0020", context);
             return null;
         }
     }
