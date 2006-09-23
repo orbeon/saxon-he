@@ -6,10 +6,10 @@ import net.sf.saxon.style.StandardNames;
 import net.sf.saxon.type.BuiltInSchemaFactory;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.Type;
-import org.w3c.dom.Attr;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Element;
-import org.w3c.dom.TypeInfo;
+import org.w3c.dom.*;
+
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * This class is an implementation of the DOM Attr class that wraps a Saxon NodeInfo
@@ -41,6 +41,47 @@ public class AttrOverNodeInfo extends NodeOverNodeInfo implements Attr {
 
     public String getValue() {
         return node.getStringValue();
+    }
+
+    /**
+    * Determine whether the node has any children.
+    * @return <code>true</code>: a DOM Attribute has a text node as a child.
+    */
+
+    public boolean hasChildNodes() {
+        return true;
+    }
+
+    /**
+     * Get first child
+     * @return the first child node of this node. In this model an attribute node always has a single text
+     * node as its child.
+     */
+
+    public Node getFirstChild() {
+        return new TextOverAttrInfo(this);
+    }
+
+    /**
+     * Get last child
+     *
+     * @return last child of this node, or null if it has no children
+     */
+
+    public Node getLastChild() {
+        return getFirstChild();
+    }
+
+    /**
+     * Return a <code>NodeList</code> that contains all children of this node. If
+     * there are no children, this is a <code>NodeList</code> containing no
+     * nodes.
+     */
+
+    public NodeList getChildNodes() {
+        List list = new ArrayList(1);
+        list.add(getFirstChild());
+        return new DOMNodeList(list);
     }
 
     /**
