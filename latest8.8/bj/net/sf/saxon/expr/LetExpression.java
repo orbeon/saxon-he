@@ -101,7 +101,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
             refCount = declaration.getReferenceCount(this, env);
             if (refCount == 0) {
                 // variable is not used - no need to evaluate it
-                return action;
+                return action.optimize(opt, env, contextItemType);
             }
             declaration = null;     // let the garbage collector take it
         }
