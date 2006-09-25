@@ -1572,10 +1572,10 @@ public class ExpressionParser {
                                 SchemaDeclaration attributeDecl =
                                         env.getConfiguration().getAttributeDeclaration(nameCode & 0xfffff);
                                 if (!env.isImportedSchema(suri)) {
-                                    grumble("No schema has been imported for namespace '" + suri + '\'');
+                                    grumble("No schema has been imported for namespace '" + suri + '\'', "XPST0008");
                                 }
                                 if (attributeDecl == null) {
-                                    grumble("There is no declaration for attribute @" + nodeName + " in an imported schema");
+                                    grumble("There is no declaration for attribute @" + nodeName + " in an imported schema", "XPST0008");
                                 } else {
                                     schemaType = attributeDecl.getType();
                                     nameTest = new NameTest(Type.ATTRIBUTE, nameCode, env.getNamePool());
@@ -1589,12 +1589,12 @@ public class ExpressionParser {
                             if (schemaDeclaration) {
                                 // schema-element(N)
                                 if (!env.isImportedSchema(suri)) {
-                                    grumble("No schema has been imported for namespace '" + suri + '\'');
+                                    grumble("No schema has been imported for namespace '" + suri + '\'', "XPST0008");
                                 }
                                 SchemaDeclaration elementDecl =
                                         env.getConfiguration().getElementDeclaration(nameCode & 0xfffff);
                                 if (elementDecl == null) {
-                                    grumble("There is no declaration for element <" + nodeName + "> in an imported schema");
+                                    grumble("There is no declaration for element <" + nodeName + "> in an imported schema", "XPST0008");
                                 } else {
                                     schemaType = elementDecl.getType();
                                     nameTest = elementDecl.makeSchemaNodeTest();
@@ -1648,7 +1648,7 @@ public class ExpressionParser {
                             schemaType = env.getConfiguration().getSchemaType(contentType);
                         }
                         if (schemaType == null) {
-                            grumble("Unknown type name " + lname);
+                            grumble("Unknown type name " + lname, "XPST0008");
                         }
                         if (primaryType == Type.ATTRIBUTE && schemaType.isComplexType()) {
                             grumble("An attribute cannot have a complex type");
