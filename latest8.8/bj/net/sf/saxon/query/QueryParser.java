@@ -2384,11 +2384,11 @@ class QueryParser extends ExpressionParser {
 
                 } else if ("text".equals(nodeKind)) {
                     nextToken();
-                    if (t.currentToken == Token.RCURLY) {
-                        lookAhead(); // after an RCURLY
-                        nextToken();
-                        return EmptySequence.getInstance();
-                    } else {
+//                    if (t.currentToken == Token.RCURLY) {
+//                        lookAhead(); // after an RCURLY
+//                        nextToken();
+//                        return EmptySequence.getInstance();
+//                    } else {
                         Expression value = parseExpression();
                         expect(Token.RCURLY);
                         lookAhead(); // after an RCURLY
@@ -2402,14 +2402,14 @@ class QueryParser extends ExpressionParser {
                         ValueOf vof = new ValueOf(select, false, true);
                         setLocation(vof, offset);
                         return makeTracer(offset, vof, StandardNames.XSL_TEXT, -1);
-                    }
+//                    }
                 } else if ("comment".equals(nodeKind)) {
                     nextToken();
-                    if (t.currentToken == Token.RCURLY) {
-                        lookAhead(); // after an RCURLY
-                        nextToken();
-                        return EmptySequence.getInstance();
-                    } else {
+//                    if (t.currentToken == Token.RCURLY) {
+//                        lookAhead(); // after an RCURLY
+//                        nextToken();
+//                        return EmptySequence.getInstance();
+//                    } else {
                         Expression value = parseExpression();
                         expect(Token.RCURLY);
                         lookAhead(); // after an RCURLY
@@ -2417,7 +2417,7 @@ class QueryParser extends ExpressionParser {
                         Comment com = new Comment();
                         makeSimpleContent(value, com, offset);
                         return makeTracer(offset, com, StandardNames.XSL_COMMENT, -1);
-                    }
+//                    }
                 } else if ("processing-instruction".equals(nodeKind)) {
                     nextToken();
                     Expression name = parseExpression();
