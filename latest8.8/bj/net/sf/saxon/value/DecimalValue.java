@@ -22,6 +22,7 @@ public final class DecimalValue extends NumericValue {
     private static final int DIVIDE_PRECISION = 18;
     private static boolean stripTrailingZerosMethodUnavailable = false;
     private static Method stripTrailingZerosMethod = null;
+    private static boolean canSetScaleNegative = true;  // until proved otherwise
     private static final Object[] EMPTY_OBJECT_ARRAY = {};
 
     private BigDecimal value;
@@ -356,21 +357,35 @@ public final class DecimalValue extends NumericValue {
     * Implement the XPath round-half-to-even() function
     */
 
-   public NumericValue roundHalfToEven(int scale) {
-//        if (scale<0) {
-//            try {
-//                AtomicValue val = convert(Type.INTEGER, null);
-//                if (val instanceof IntegerValue) {
-//                    return ((IntegerValue)val).roundHalfToEven(scale);
-//                } else {
-//                    return ((BigIntegerValue)val).roundHalfToEven(scale);
-//                }
-//            } catch (XPathException err) {
-//                throw new IllegalArgumentException("internal error in integer-decimal conversion");
-//            }
-//        } else {
-            return new DecimalValue(stripTrailingZeros(value.setScale(scale, BigDecimal.ROUND_HALF_EVEN)));
-//        }
+    public NumericValue roundHalfToEven(int scale) {
+        if (scale<0 && !canSetScaleNegative) {
+            // This path is taken on JDK 1.4. But it gives the wrong answer, because
+            // it ignores the fractional part of the number: so when rounding to a multiple of
+            // 10, the value 65.05 is rounded to 60 instead of 70.
+            try {
+                AtomicValue val = convert(Type.INTEGER, null);
+                if (val instanceof IntegerValue) {
+                    return ((IntegerValue)val).roundHalfToEven(scale);
+                } else {
+                    return ((BigIntegerValue)val).roundHalfToEven(scale);
+                }
+            } catch (XPathException err) {
+                throw new IllegalArgumentException("internal error in integer-decimal conversion");
+            }
+        } else {
+            BigDecimal scaledValue;
+            try {
+                scaledValue = value.setScale(scale, BigDecimal.ROUND_HALF_EVEN);
+            } catch (ArithmeticException e) {
+                if (scale < 0) {
+                    canSetScaleNegative = false;
+                    return roundHalfToEven(scale);
+                } else {
+                    throw e;
+                }
+            }
+            return new DecimalValue(stripTrailingZeros(scaledValue));
+        }
     }
 
     /**
