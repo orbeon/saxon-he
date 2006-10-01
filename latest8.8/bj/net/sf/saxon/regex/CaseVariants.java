@@ -75,6 +75,7 @@ public class CaseVariants {
 
 
     static {
+        cv(0x0041, 0x0061);
         cv(0x0042, 0x0062);
         cv(0x0043, 0x0063);
         cv(0x0044, 0x0064);
