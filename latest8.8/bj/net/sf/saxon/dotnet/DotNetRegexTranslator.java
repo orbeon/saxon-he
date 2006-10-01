@@ -1411,7 +1411,7 @@ public class DotNetRegexTranslator {
     }
 
     private static CharClass makeSingleCharClass(int ch) {
-        if (ch > 65535) {
+        if (ch <= 65535) {
             return new SingleChar((char)ch);
         } else {
             return new WideSingleChar(ch);
