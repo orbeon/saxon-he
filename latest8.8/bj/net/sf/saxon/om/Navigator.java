@@ -51,33 +51,30 @@ public final class Navigator {
      * Helper method to get the base URI of an element or processing instruction node
      */
 
-    public static String getBaseURI(NodeInfo node) {
+public static String getBaseURI(NodeInfo node) {
         String xmlBase = node.getAttributeValue(StandardNames.XML_BASE);
         if (xmlBase != null) {
-            String escaped = EscapeURI.escape(xmlBase,"!#$%&'()*+,-./:;=?_[]~").toString();
-            URI escapedURI;
+            //String escaped = EscapeURI.escape(xmlBase,"!#$%&'()*+,-./:;=?_[]~").toString();
+            URI baseURI;
             try {
-                escapedURI = new URI(escaped);
-                if (!escapedURI.isAbsolute()) {
+                baseURI = new URI(xmlBase);
+                if (!baseURI.isAbsolute()) {
                     NodeInfo parent = node.getParent();
                     if (parent == null) {
-                        // We have a parentless element with a relative xml:base attribute. We need to ensure that
-                        // in such cases, the systemID of the element is always set to reflect the base URI
-                        // TODO: ignoring the above comment, in order to pass fn-base-uri-10 in XQTS...
-                        //return element.getSystemId();
-                        return escapedURI.toString();
+                        // We have a parentless element with a relative xml:base attribute.
+                        // See for example test XQTS fn-base-uri-10 and base-uri-27
+                        URI base = new URI(node.getSystemId());
+                        URI resolved = base.resolve(baseURI);
+                        return resolved.toString();
                     }
                     String startSystemId = node.getSystemId();
                     String parentSystemId = parent.getSystemId();
                     if (startSystemId.equals(parentSystemId)) {
-                        // TODO: we are resolving a relative base URI against the base URI of the parent element.
-                        // This isn't what the RFC says we should do: we should resolve it against the base URI
-                        // of the containing entity. So xml:base on an ancestor element should have no effect (check this)
                         URI base = new URI(node.getParent().getBaseURI());
-                        escapedURI = base.resolve(escapedURI);
+                        baseURI = base.resolve(baseURI);
                     } else {
                         URI base = new URI(startSystemId);
-                        escapedURI = base.resolve(escapedURI);
+                        baseURI = base.resolve(baseURI);
                     }
                 }
             } catch (URISyntaxException e) {
@@ -85,7 +82,7 @@ public final class Navigator {
                 // will probably fail as a result.
                 return xmlBase;
             }
-            return escapedURI.toString();
+            return baseURI.toString();
         }
         String startSystemId = node.getSystemId();
         NodeInfo parent = node.getParent();
@@ -99,6 +96,7 @@ public final class Navigator {
             return startSystemId;
         }
     }
+
 
     /**
      * Output all namespace nodes associated with this element. Does nothing if
