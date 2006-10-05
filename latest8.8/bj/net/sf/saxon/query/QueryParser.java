@@ -1192,7 +1192,7 @@ class QueryParser extends ExpressionParser {
         if (t.currentToken == Token.ASSIGN) {
             t.setState(Tokenizer.DEFAULT_STATE);
             nextToken();
-            Expression exp = parseExpression();
+            Expression exp = parseExprSingle();
             var.setIsParameter(false);
             var.setValueExpression(makeTracer(offset, exp, StandardNames.XSL_VARIABLE, varNameCode));
         } else if (t.currentToken == Token.NAME) {
