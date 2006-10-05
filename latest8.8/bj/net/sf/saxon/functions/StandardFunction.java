@@ -172,9 +172,9 @@ public abstract class StandardFunction {
         e = register("data", Data.class, 0, 1, 1, Type.ANY_ATOMIC_TYPE, StaticProperty.ALLOWS_ZERO_OR_MORE);
             arg(e, 0, Type.ITEM_TYPE, StaticProperty.ALLOWS_ZERO_OR_MORE);
 
-        e = register("dateTime", DateTimeConstructor.class, 0, 2, 2, Type.DATE_TIME_TYPE, StaticProperty.EXACTLY_ONE);
-            arg(e, 0, Type.DATE_TYPE, StaticProperty.EXACTLY_ONE);
-            arg(e, 1, Type.TIME_TYPE, StaticProperty.EXACTLY_ONE);
+        e = register("dateTime", DateTimeConstructor.class, 0, 2, 2, Type.DATE_TIME_TYPE, StaticProperty.ALLOWS_ZERO_OR_ONE);
+            arg(e, 0, Type.DATE_TYPE, StaticProperty.ALLOWS_ZERO_OR_ONE);
+            arg(e, 1, Type.TIME_TYPE, StaticProperty.ALLOWS_ZERO_OR_ONE);
 
         e = register("day-from-date", Component.class, (Component.DAY<<16) + Type.DATE, 1, 1, Type.INTEGER_TYPE, StaticProperty.ALLOWS_ZERO_OR_ONE);
             arg(e, 0, Type.DATE_TYPE, StaticProperty.ALLOWS_ZERO_OR_ONE);

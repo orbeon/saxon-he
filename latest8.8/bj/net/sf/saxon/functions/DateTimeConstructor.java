@@ -17,10 +17,20 @@ public class DateTimeConstructor extends SystemFunction {
     */
 
     public Item evaluateItem(XPathContext context) throws XPathException {
-        DateValue arg0 = (DateValue)((AtomicValue)argument[0].evaluateItem(context)).getPrimitiveValue();
-        TimeValue arg1 = (TimeValue)((AtomicValue)argument[1].evaluateItem(context)).getPrimitiveValue();
+        AtomicValue arg0 = (AtomicValue)argument[0].evaluateItem(context);
+        if (arg0 == null) {
+            return null;
+        }
+        DateValue d = (DateValue)arg0.getPrimitiveValue();
+
+        AtomicValue arg1 = (AtomicValue)argument[1].evaluateItem(context);
+        if (arg1 == null) {
+            return null;
+        }
+        TimeValue t = (TimeValue)arg1.getPrimitiveValue();
+
         try {
-            return new DateTimeValue(arg0, arg1);
+            return new DateTimeValue(d, t);
         } catch (DynamicError e) {
             if (e.getLocator() == null) {
                 e.setLocator(this);
@@ -31,6 +41,7 @@ public class DateTimeConstructor extends SystemFunction {
             throw e;
         }
     }
+
 
 }
 
