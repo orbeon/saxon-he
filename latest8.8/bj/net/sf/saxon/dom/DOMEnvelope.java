@@ -125,8 +125,9 @@ public class DOMEnvelope implements ExternalObjectModel, Serializable {
     public Value convertObjectToXPathValue(Object object, Configuration config) throws XPathException {
         if (object instanceof NodeList) {
             NodeList list = ((NodeList)object);
-            NodeInfo[] nodes = new NodeInfo[list.getLength()];
-            for (int i=0; i<list.getLength(); i++) {
+            final int len = list.getLength();
+            NodeInfo[] nodes = new NodeInfo[len];
+            for (int i=0; i<len; i++) {
                 if (list.item(i) instanceof NodeOverNodeInfo) {
                     nodes[i] = ((NodeOverNodeInfo)list.item(i)).getUnderlyingNodeInfo();
                 } else {

@@ -129,7 +129,8 @@ public class DOMSender implements SaxonLocator, SourceLocationProvider {
     private void walkNode (Node node) throws XPathException {
         if (node.hasChildNodes()) {
             NodeList nit = node.getChildNodes();
-            for (int i=0; i<nit.getLength(); i++) {
+            final int len = nit.getLength();
+            for (int i=0; i<len; i++) {
                 Node child = nit.item(i);
                 switch (child.getNodeType()) {
                     case Node.DOCUMENT_NODE:
@@ -197,7 +198,8 @@ public class DOMSender implements SaxonLocator, SourceLocationProvider {
         }
 
         if (atts != null) {
-            for (int a2=0; a2<atts.getLength(); a2++) {
+            final int len = atts.getLength();
+            for (int a2=0; a2<len; a2++) {
                 Attr att = (Attr)atts.item(a2);
                 String attname = att.getName();
                 if (attname.startsWith("xmlns") && (attname.equals("xmlns") || attname.startsWith("xmlns:"))) {

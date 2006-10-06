@@ -447,7 +447,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     }
 
     private static void expandStringValue(NodeList list, StringBuffer sb) {
-        for (int i = 0; i < list.getLength(); i++) {
+    	  final int len = list.getLength();
+        for (int i = 0; i < len; i++) {
             Node child = list.item(i);
             switch (child.getNodeType()) {
                 case Node.ELEMENT_NODE:
@@ -924,7 +925,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 return EMPTY_NAMESPACE_LIST;
             }
             int count = 0;
-            for (int i=0; i<atts.getLength(); i++) {
+            final int attsLen = atts.getLength();
+            for (int i=0; i<attsLen; i++) {
                 Attr att = (Attr)atts.item(i);
                 String attName = att.getName();
                 if (attName.equals("xmlns")) {
@@ -939,7 +941,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 int[] result = (count > buffer.length ? new int[count] : buffer);
                 NamePool pool = getNamePool();
                 int n = 0;
-                for (int i=0; i<atts.getLength(); i++) {
+                for (int i=0; i<attsLen; i++) {
                     Attr att = (Attr)atts.item(i);
                     String attName = att.getName();
                     if (attName.equals("xmlns")) {
@@ -974,7 +976,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             this.start = start;
             NamedNodeMap atts = start.node.getAttributes();
             if (atts != null) {
-                for (int i=0; i<atts.getLength(); i++) {
+                final int attsLen = atts.getLength();
+                for (int i=0; i<attsLen; i++) {
                     String name = atts.item(i).getNodeName();
                     if (!(name.startsWith("xmlns") &&
                             (name.length() == 5 || name.charAt(5) == ':'))) {
