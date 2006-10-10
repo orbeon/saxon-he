@@ -940,7 +940,7 @@ public abstract class Value implements Expression, Serializable, ValueRepresenta
         } else if (object instanceof Source && config != null) {
             if (object instanceof DOMSource) {
                 NodeInfo node = Controller.unravel((Source)object, config);
-                if (((NodeInfo)object).getConfiguration() != config) {
+                if (node.getConfiguration() != config) {
                     throw new DynamicError("Externally-supplied DOM Node belongs to wrong Configuration");
                 }
                 return new SingletonNode(node);
