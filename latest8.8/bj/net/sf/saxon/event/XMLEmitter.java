@@ -33,7 +33,7 @@ public class XMLEmitter extends Emitter
 
     protected boolean preferHex = false;
     protected boolean undeclareNamespaces = false;
-    private boolean warningIssued = false;
+    //private boolean warningIssued = false;
 
     // The element stack holds the display names (lexical QNames) of elements that
     // have been started but not finished. It is used to obtain the element name
@@ -564,19 +564,36 @@ public class XMLEmitter extends Emitter
                         }
                     }
                 } else {
-                    // Recoverable error: using disable output escaping with characters
+                    // Using disable output escaping with characters
                     // that are not available in the target encoding
-                    if (!warningIssued) {
-                        try {
-                            getPipelineConfiguration().getErrorListener().warning(
-                                new TransformerException("disable-output-escaping is ignored for characters " +
-                                                         "not available in the chosen encoding"));
-                        } catch (TransformerException e) {
-                            throw DynamicError.makeDynamicError(e);
+                    // The required action is to ignore d-o-e in respect of those characters that are
+                    // not available in the encoding. This is slow...
+                    final int len = chars.length();
+                    for (int i=0; i<len; i++) {
+                        char c = chars.charAt(i);
+                        if (c != 0) {
+                            if (c > 127) {
+                                if (XMLChar.isHighSurrogate(c)) {
+                                    char[] pair = new char[2];
+                                    pair[0] = c;
+                                    pair[1] = chars.charAt(++i);
+                                    int cc = XMLChar.supplemental(c, pair[1]);
+                                    if (!characterSet.inCharset(cc)) {
+                                        writeEscape(new CharSlice(pair), false);
+                                    } else {
+                                        writeCharSequence(new CharSlice(pair));
+                                    }
+                                } else {
+                                    char[] ca = {c};
+                                    if (!characterSet.inCharset(c)) {
+                                        writeEscape(new CharSlice(ca), false);
+                                    } else {
+                                        writeCharSequence(new CharSlice(ca));
+                                    }
+                                }
+                            }
                         }
-                        warningIssued = true;
                     }
-                    writeEscape(chars, false);
                 }
             }
         } catch (java.io.IOException err) {
