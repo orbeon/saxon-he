@@ -572,26 +572,24 @@ public class XMLEmitter extends Emitter
                     for (int i=0; i<len; i++) {
                         char c = chars.charAt(i);
                         if (c != 0) {
-                            if (c > 127) {
-                                if (XMLChar.isHighSurrogate(c)) {
-                                    char[] pair = new char[2];
-                                    pair[0] = c;
-                                    pair[1] = chars.charAt(++i);
-                                    int cc = XMLChar.supplemental(c, pair[1]);
-                                    if (!characterSet.inCharset(cc)) {
-                                        writeEscape(new CharSlice(pair), false);
-                                    } else {
-                                        writeCharSequence(new CharSlice(pair));
-                                    }
-                                } else {
-                                    char[] ca = {c};
-                                    if (!characterSet.inCharset(c)) {
-                                        writeEscape(new CharSlice(ca), false);
-                                    } else {
-                                        writeCharSequence(new CharSlice(ca));
-                                    }
-                                }
-                            }
+                             if (c > 127 && XMLChar.isHighSurrogate(c)) {
+                                  char[] pair = new char[2];
+                                  pair[0] = c;
+                                  pair[1] = chars.charAt(++i);
+                                  int cc = XMLChar.supplemental(c, pair[1]);
+                                  if (!characterSet.inCharset(cc)) {
+                                      writeEscape(new CharSlice(pair), false);
+                                  } else {
+                                      writeCharSequence(new CharSlice(pair));
+                                  }
+                              } else {
+                                  char[] ca = {c};
+                                  if (!characterSet.inCharset(c)) {
+                                      writeEscape(new CharSlice(ca), false);
+                                  } else {
+                                      writeCharSequence(new CharSlice(ca));
+                                  }
+                             }
                         }
                     }
                 }
