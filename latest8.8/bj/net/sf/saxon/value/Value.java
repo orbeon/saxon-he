@@ -745,7 +745,7 @@ public abstract class Value implements Expression, Serializable, ValueRepresenta
         for (int m=0; m<externalObjectModels.size(); m++) {
             ExternalObjectModel model = (ExternalObjectModel)externalObjectModels.get(m);
             Value val = model.convertObjectToXPathValue(object, config);
-            if (val != null && TypeChecker.testConformance(val, requiredType, config) == null) {
+            if (val != null && TypeChecker.testConformance(val, requiredType, config.getConversionContext()) == null) {
                 return val;
             }
         }

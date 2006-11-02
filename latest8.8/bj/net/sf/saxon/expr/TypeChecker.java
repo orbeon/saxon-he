@@ -3,6 +3,8 @@ package net.sf.saxon.expr;
 import net.sf.saxon.functions.NumberFn;
 import net.sf.saxon.functions.StringFn;
 import net.sf.saxon.functions.SystemFunction;
+import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.style.StandardNames;
 import net.sf.saxon.trans.StaticError;
 import net.sf.saxon.trans.XPathException;
@@ -506,30 +508,55 @@ public final class TypeChecker {
      * Test whether a given value conforms to a given type
      * @param val the value
      * @param requiredType the required type
-     * @param config
+     * @param context
      * @return a DynamicError describing the error condition if the value doesn't conform;
      * or null if it does.
      */
 
-    public static DynamicError testConformance(Value val, SequenceType requiredType, Configuration config) {
+    public static DynamicError testConformance(Value val, SequenceType requiredType, XPathContext context)
+    throws XPathException {
         ItemType reqItemType = requiredType.getPrimaryType();
+        final Configuration config = context.getConfiguration();
         final TypeHierarchy th = config.getTypeHierarchy();
-        if (!th.isSubType(val.getItemType(th), reqItemType)) {
-            DynamicError err = new DynamicError (
-                    "Global parameter requires type " + reqItemType +
+        SequenceIterator iter = val.iterate(context);
+        int count = 0;
+        while (true) {
+            Item item = iter.next();
+            if (item == null) {
+                break;
+            }
+            count++;
+            if (!reqItemType.matchesItem(item, false, config)) {
+                DynamicError err = new DynamicError (
+                    "External parameter requires type " + reqItemType +
                     "; supplied value has type " + val.getItemType(th));
+                err.setIsTypeError(true);
+                return err;
+            }
+        }
+
+        int reqCardinality = requiredType.getCardinality();
+        if (count == 0 && !Cardinality.allowsZero(reqCardinality)) {
+            DynamicError err = new DynamicError (
+                    "External parameter requires non-empty sequence; supplied value is empty");
             err.setIsTypeError(true);
             return err;
         }
-        int reqCardinality = requiredType.getCardinality();
-        if (!Cardinality.subsumes(reqCardinality, val.getCardinality())) {
+        if (count > 1 && !Cardinality.allowsMany(reqCardinality)) {
             DynamicError err = new DynamicError (
-                    "Supplied value of external parameter does not match the required cardinality");
+                    "External parameter requires singleton sequence; supplied value contains " + count + " items");
+            err.setIsTypeError(true);
+            return err;
+        }
+        if (count > 0 && reqCardinality == StaticProperty.EMPTY) {
+            DynamicError err = new DynamicError (
+                    "External parameter requires empty sequence; supplied value is non-empty");
             err.setIsTypeError(true);
             return err;
         }
         return null;
     }
+
 
     /**
      * Test whether a given expression is capable of returning a value that has an effective boolean

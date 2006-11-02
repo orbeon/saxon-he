@@ -123,7 +123,7 @@ public final class Bindery  {
             // For any other parameter value, we verify that if conforms to the
             // required type. This must be precise conformance, we don't attempt to
             // do atomization or to convert untypedAtomic values
-            DynamicError err = TypeChecker.testConformance(val, binding.getRequiredType(), config);
+            DynamicError err = TypeChecker.testConformance(val, binding.getRequiredType(), context);
             if (err != null) {
                 throw err;
             }
