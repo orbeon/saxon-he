@@ -15,6 +15,8 @@ import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.*;
 
 import java.util.Comparator;
+import java.io.ObjectInputStream;
+import java.io.IOException;
 
 /**
  * ValueComparison: a boolean expression that compares two atomic values
@@ -41,6 +43,18 @@ public final class ValueComparison extends BinaryExpression implements Compariso
     public ValueComparison(Expression p1, int op, Expression p2) {
         super(p1, op, p2);
     }
+
+    /**
+     * Deserialization method ensures that there is only one BooleanValue.TRUE and only one BooleanValue.FALSE
+     */
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        if (resultWhenEmpty != null) {
+            resultWhenEmpty = (resultWhenEmpty.getBooleanValue() ? BooleanValue.TRUE : BooleanValue.FALSE);
+        }
+    }
+
 
     /**
      * Get the AtomicComparer used to compare atomic values. This encapsulates any collation that is used
