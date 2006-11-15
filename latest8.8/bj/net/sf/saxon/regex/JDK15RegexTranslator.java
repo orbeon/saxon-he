@@ -728,6 +728,14 @@ public class JDK15RegexTranslator {
             return instance;
         }
 
+        void output(FastStringBuffer buf) {
+            buf.append("\\x00");        // no character matches
+        }
+
+        void outputComplement(FastStringBuffer buf) {
+            buf.append("[^\\x00]");    // every character matches
+        }
+
         void inClassOutput(FastStringBuffer buf) {
             throw new RuntimeException("BMP output botch");
         }
