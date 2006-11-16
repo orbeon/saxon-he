@@ -1239,7 +1239,7 @@ public class JDK15RegexTranslator {
                     expect('[');
                     break;
                 }
-            } else {
+            } else if (caseBlind) {
                 int[] variants = CaseVariants.getCaseVariants(lower.getSingleChar());
                 for (int v=0; v<variants.length; v++) {
                     members.add(new SingleChar(variants[v]));
