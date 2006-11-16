@@ -1609,28 +1609,23 @@ public class DotNetRegexTranslator {
             throw makeException("expected", new String(new char[]{c}));
     }
 
-    private CharClass parseCharClassExpr() throws RegexSyntaxException {
+private CharClass parseCharClassExpr() throws RegexSyntaxException {
         boolean compl;
         if (curChar == '^') {
             advance();
             compl = true;
-        } else
+        } else {
             compl = false;
+        }
         List members = new ArrayList(10);
-        boolean first = true;
+        boolean firstOrLast = true;
         do {
-            CharClass lower = parseCharClassEscOrXmlChar(first);
-            first = false;
+            CharClass lower = parseCharClassEscOrXmlChar(firstOrLast);
+            firstOrLast = isLastInGroup();
             members.add(lower);
-            if (curChar == '-') {
+            if (curChar == '-' && !firstOrLast) {
                 advance();
-                if (curChar == ']') {   // MHK: [+-] is reallowed by Schema Oct 2004 2nd edition
-                    break;
-                }
-                if (curChar == '[') {
-                    break;
-                }
-                CharClass upper = parseCharClassEscOrXmlChar(first);
+                CharClass upper = parseCharClassEscOrXmlChar(firstOrLast);
                 if (lower.getSingleChar() < 0 || upper.getSingleChar() < 0)
                     throw makeException("multi_range");
                 if (lower.getSingleChar() > upper.getSingleChar())
@@ -1682,6 +1677,12 @@ public class DotNetRegexTranslator {
         advance();
         return result;
     }
+
+    private boolean isLastInGroup() {
+       // look ahead at the next character
+       char c = regExp.charAt(pos);
+       return (c == ']' || c == '[');
+   }
 
     private CharClass parseCharClassEscOrXmlChar(boolean first) throws RegexSyntaxException {
         switch (curChar) {
