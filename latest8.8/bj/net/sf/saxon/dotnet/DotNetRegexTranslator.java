@@ -1621,8 +1621,9 @@ private CharClass parseCharClassExpr() throws RegexSyntaxException {
         boolean firstOrLast = true;
         do {
             CharClass lower = parseCharClassEscOrXmlChar(firstOrLast);
-            firstOrLast = isLastInGroup();
             members.add(lower);
+            if (curChar == ']' || eos) break;
+            firstOrLast = isLastInGroup();
             if (curChar == '-' && !firstOrLast) {
                 advance();
                 CharClass upper = parseCharClassEscOrXmlChar(firstOrLast);
