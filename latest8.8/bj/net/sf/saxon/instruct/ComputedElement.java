@@ -234,6 +234,8 @@ public class ComputedElement extends ElementCreator {
         String prefix;
         String localName;
         String uri;
+        Expression namespace = this.namespace;
+
 
         // name needs to be evaluated at run-time
         AtomicValue nameValue = (AtomicValue)elementName.evaluateItem(context);
