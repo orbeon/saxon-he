@@ -867,7 +867,7 @@ public abstract class Value implements Expression, Serializable, ValueRepresenta
              for (int i = 0; i < ((Object[])object).length; i++){
                  Object obj = ((Object[])object)[i];
                  if (obj instanceof NodeInfo) {
-                     if (((NodeInfo)object).getConfiguration() != config) {
+                     if (((NodeInfo)obj).getConfiguration() != config) {
                          throw new DynamicError("Externally-supplied NodeInfo belongs to wrong Configuration");
                      }
                      array[a++] = (NodeInfo)obj;
