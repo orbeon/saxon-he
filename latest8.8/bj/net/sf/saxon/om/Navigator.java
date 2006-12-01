@@ -680,6 +680,12 @@ public static String getBaseURI(NodeInfo node) {
                 throw new NullPointerException("DOM/JDOM tree compare - internal error");
             }
             if (par1.isSameNodeInfo(par2)) {
+                if (p1.getNodeKind() == Type.ATTRIBUTE && p2.getNodeKind() != Type.ATTRIBUTE) {
+                    return -1;  // attributes first
+                }
+                if (p1.getNodeKind() != Type.ATTRIBUTE && p2.getNodeKind() == Type.ATTRIBUTE) {
+                    return +1;  // attributes first
+                }
                 return ((SiblingCountingNode)p1).getSiblingPosition() -
                         ((SiblingCountingNode)p2).getSiblingPosition();
             }
