@@ -183,13 +183,20 @@ public final class TinyDocumentImpl extends TinyParentNodeImpl
         }
         List list = new ArrayList(size);
         int i = nodeNr+1;
-        while (tree.depth[i] != 0) {
-            if (tree.nodeKind[i]==Type.ELEMENT &&
-                    (tree.nameCode[i] & 0xfffff) == fingerprint) {
-                list.add(tree.getNode(i));
+        try {
+            while (tree.depth[i] != 0) {
+                if (tree.nodeKind[i]==Type.ELEMENT &&
+                        (tree.nameCode[i] & 0xfffff) == fingerprint) {
+                    list.add(tree.getNode(i));
+                }
+                i++;
             }
-            i++;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // this shouldn't happen. If it does happen, it means the tree wasn't properly closed
+            // during construction (there is no stopper node at the end). In this case, we'll recover
+            return list;
         }
+
         return list;
     }
 
