@@ -330,17 +330,22 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 Method compareDocumentPosition = Node.class.getMethod("compareDocumentPosition", argClasses);
                 Object[] args = {((NodeWrapper)other).node};
                 Short i = (Short)(compareDocumentPosition.invoke(node, args));
-                switch (i.shortValue()) {
+                short relationship = i.shortValue();
+                if ((relationship &
+                        (2 | 8)) != 0) {
+                    return +1;
+                } else if ((relationship &
+                        (4 | 16)) != 0) {
+                    return -1;
+                }                
+                
                                 // the symbolic constants require JDK 1.5
-                    case 2: //Node.DOCUMENT_POSITION_PRECEDING:
-                    case 8: //Node.DOCUMENT_POSITION_CONTAINS:
-                        return +1;
-                    case 4: //Node.DOCUMENT_POSITION_FOLLOWING:
-                    case 16: //Node.DOCUMENT_POSITION_CONTAINED_BY:
-                        return -1;
-                    default:
-                        // use fallback implementation
-                }
+                    //case 2: Node.DOCUMENT_POSITION_PRECEDING:
+                    //case 8: Node.DOCUMENT_POSITION_CONTAINS:
+                    //case 4: Node.DOCUMENT_POSITION_FOLLOWING:
+                    //case 16:Node.DOCUMENT_POSITION_CONTAINED_BY:
+                        
+                // use fallback implementation
             } catch (NoSuchMethodException e) {
                 // use fallback implementation
             } catch (IllegalAccessException e) {
