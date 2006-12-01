@@ -120,10 +120,18 @@ public class DocumentBuilderImpl extends DocumentBuilder {
             builder.setPipelineConfiguration(pipe);
             SAXSource source = new SAXSource(in);
             if (entityResolver != null) {
-                source.getXMLReader().setEntityResolver(entityResolver);
+                XMLReader reader = source.getXMLReader();
+                if (reader == null) {
+                    reader = configuration.getSourceParser();
+                }
+                reader.setEntityResolver(entityResolver);
             }
             if (errorHandler != null) {
-                source.getXMLReader().setErrorHandler(errorHandler);
+                XMLReader reader = source.getXMLReader();
+                if (reader == null) {
+                    reader = configuration.getSourceParser();
+                }
+                reader.setErrorHandler(errorHandler);
             }
             source.setSystemId(in.getSystemId());
             new Sender(pipe).send(source, builder);
