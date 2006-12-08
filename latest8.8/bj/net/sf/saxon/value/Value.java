@@ -27,6 +27,7 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
 * A value is the result of an expression but it is also an expression in its own right.
@@ -123,10 +124,15 @@ public abstract class Value implements Expression, Serializable, ValueRepresenta
             return Double.NEGATIVE_INFINITY;
         } else if ("NaN".equals(n)) {
             return Double.NaN;
+        } else if (!doublePattern.matcher(n).matches()) {
+            // Need to disallow values that are OK in Java but not in XPath
+            throw new NumberFormatException("Invalid characters in float/double value");            
         } else {
             return Double.parseDouble(n);
         }
     }
+    
+    private static Pattern doublePattern = Pattern.compile("^[0-9.eE+-]+$");    
 
     /**
      * Get a SequenceIterator over a ValueRepresentation
