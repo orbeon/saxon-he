@@ -444,9 +444,10 @@ namespace Saxon.Api {
 
         public XdmNode Build(Uri uri) {
             baseUri = uri;
-            return Build(
-                (Stream)XmlResolver.GetEntity(uri, "application/xml", Type.GetType("System.IO.Stream"))
-            );
+            Stream inn = (Stream)XmlResolver.GetEntity(uri, "application/xml", Type.GetType("System.IO.Stream"));
+            XdmNode outt = Build(inn);
+            inn.Close();
+            return outt;
         }
 
         /// <summary>
