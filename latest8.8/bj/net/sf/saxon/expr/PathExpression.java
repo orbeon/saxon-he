@@ -777,10 +777,10 @@ public final class PathExpression extends ComputedExpression implements ContextM
         if (first.getItemType(th).getPrimitiveType() == Type.DOCUMENT) {
             return true;
         };
-        // Not sure if this second test is effective in allowing keys to be built. See XMark q9.
-        if (first instanceof AxisExpression && ((AxisExpression)first).getContextItemType().getPrimitiveType() == Type.DOCUMENT) {
-            return true;
-        };
+        // Not sure if this second test is effective in allowing keys to be built. See XMark q9. Deleted by patch: bug 1616070
+        //if (first instanceof AxisExpression && ((AxisExpression)first).getContextItemType().getPrimitiveType() == Type.DOCUMENT) {
+        //    return true;
+        //};
         return false;
     }
 
