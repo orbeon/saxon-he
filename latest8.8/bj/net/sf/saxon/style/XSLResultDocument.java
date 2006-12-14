@@ -133,7 +133,7 @@ public class XSLResultDocument extends StyleElement {
             formatExpression = makeAttributeValueTemplate(formatAttribute);
             if (formatExpression instanceof StringValue) {
                 try {
-                    format = makeNameCode(formatAttribute.trim()) & NamePool.FP_MASK;
+                    format = makeNameCode(((StringValue)formatExpression).getStringValue().trim()) & NamePool.FP_MASK;
                 } catch (NamespaceException err) {
                     compileError(err.getMessage(), "XTSE0280");
                 } catch (XPathException err) {
