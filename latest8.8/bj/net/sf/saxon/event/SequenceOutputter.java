@@ -51,7 +51,7 @@ public final class SequenceOutputter extends SequenceWriter {
 
     public void reset() {
         list = new ArrayList(Math.max(list.size()+10, 50));
-        if (controller != null) {
+        if (controller != null && adviseReuse()) {
             controller.reuseSequenceOutputter(this);
         }
     }

@@ -76,6 +76,14 @@ public abstract class SequenceWriter extends SequenceReceiver {
         outputter.setPipelineConfiguration(getPipelineConfiguration());
         outputter.open();
     }
+    
+    /**
+     * Decide whether reuse of the SequenceWriter is advisable
+     */
+
+    protected boolean adviseReuse() {
+        return builder != null && ((TinyBuilder)builder).getTree().getNumberOfNodes() < 20000;
+    }    
 
     /**
      * Notify the end of a document node
