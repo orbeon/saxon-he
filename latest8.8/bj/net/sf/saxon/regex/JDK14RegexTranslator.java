@@ -1220,7 +1220,11 @@ public class JDK14RegexTranslator {
         }
 
         void inClassOutputBmp(FastStringBuffer buf) {
-            buf.append("\\" + i + ".{0}");  // terminate the back-reference with a syntactic separator
+            if (i != -1) {
+            	buf.append("(?:\\" + i + ")");  // terminate the back-reference with a syntactic separator
+            } else {
+                buf.append("(?:)"); // matches a zero-length string, while allowing a quantifier
+            }		
         }
     }
 
@@ -1462,7 +1466,12 @@ public class JDK14RegexTranslator {
                             recede();
                         }
                     }
-                    return new BackReference(c0);
+                    if (captures.contains(c0)) {
+                        return new BackReference(c0);
+                    } else {
+                        //match a zero-length string
+                        return new BackReference(-1);
+                    }
                 } else {
                     throw makeException("digit not allowed after \\");
                 }
@@ -1491,7 +1500,11 @@ public class JDK14RegexTranslator {
                 expect('}');
             }
         }
-        String propertyName = regExp.subSequence(start, pos - 1).toString();
+        CharSequence propertyNameCS = regExp.subSequence(start, pos - 1); 
+        if (ignoreWhitespace && !inCharClassExpr) {
+            propertyNameCS = Whitespace.removeAllWhitespace(propertyNameCS);
+        }
+        String propertyName = propertyNameCS.toString();
         advance();
         switch (propertyName.length()) {
             case 0:
