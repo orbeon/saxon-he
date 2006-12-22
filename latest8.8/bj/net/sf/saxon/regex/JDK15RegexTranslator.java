@@ -437,7 +437,6 @@ public class JDK15RegexTranslator {
     private JDK15RegexTranslator(CharSequence regExp) {
         this.regExp = regExp;
         this.length = regExp.length();
-        advance();
     }
 
     /**
@@ -464,6 +463,7 @@ public class JDK15RegexTranslator {
         tr.isXPath = xpath;
         tr.ignoreWhitespace = ignoreWhitespace;
         tr.caseBlind = caseBlind;
+        tr.advance();
         tr.translateTop();
         //System.err.println("Output regex: " + tr.result.toString());
         return tr.result.toString();
