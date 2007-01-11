@@ -44,10 +44,11 @@ public class Doc extends SystemFunction {
             return doc(context);
         } else {
             // operation == DOC_AVAILABLE
+            ErrorListener old = null;
             try {
                 Controller controller = context.getController();
                 // suppress all error messages while attempting to fetch the document
-                ErrorListener old = controller.getErrorListener();
+                old = controller.getErrorListener();
                 controller.setErrorListener(new ErrorListener() {
                     public void warning(TransformerException exception) {}
                     public void error(TransformerException exception) {}
@@ -57,6 +58,9 @@ public class Doc extends SystemFunction {
                 controller.setErrorListener(old);
                 return BooleanValue.get(item != null);
             } catch (XPathException err) {
+                if (old != null) {
+                	controller.setErrorListener(old);
+                }
                 return BooleanValue.FALSE;
             }
         }
