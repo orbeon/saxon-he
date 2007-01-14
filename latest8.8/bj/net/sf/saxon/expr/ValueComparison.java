@@ -218,8 +218,9 @@ public final class ValueComparison extends BinaryExpression implements Compariso
         // evaluate the expression now if both arguments are constant
 
         if ((operand0 instanceof Value) && (operand1 instanceof Value)) {
-            return (AtomicValue) evaluateItem(env.makeEarlyEvaluationContext());
-        }        
+            AtomicValue r = (AtomicValue) evaluateItem(env.makeEarlyEvaluationContext());
+            return (r == null ? EmptySequence.getInstance() : (Expression)r);
+        }         
 
         // optimise count(x) eq 0 (or gt 0, ne 0, eq 0, etc)
 
