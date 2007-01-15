@@ -154,7 +154,8 @@ public class DocumentInstr extends ParentNodeConstructor {
                 args[0] = content;
                 args[1] = StringValue.EMPTY_STRING;
                 fn.setArguments(args);
-                return fn;
+                CastExpression cast = new CastExpression(fn, Type.UNTYPED_ATOMIC_TYPE, false);
+                return cast;
             }
         } else {
             throw new AssertionError("getStringValueExpression() called on non-text-only document instruction");

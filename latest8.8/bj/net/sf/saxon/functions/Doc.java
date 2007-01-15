@@ -45,8 +45,8 @@ public class Doc extends SystemFunction {
         } else {
             // operation == DOC_AVAILABLE
             ErrorListener old = null;
+            Controller controller = context.getController();
             try {
-                Controller controller = context.getController();
                 // suppress all error messages while attempting to fetch the document
                 old = controller.getErrorListener();
                 controller.setErrorListener(new ErrorListener() {
