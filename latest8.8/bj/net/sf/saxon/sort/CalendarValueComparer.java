@@ -31,6 +31,11 @@ public class CalendarValueComparer implements AtomicComparer {
      */
 
     public int compare(Object a, Object b) {
+        if (a == null) {
+            return (b == null ? 0 : -1);
+        } else if (b == null) {
+            return +1;
+        }
         return ((CalendarValue)a).compareTo((CalendarValue)b, config);
     }
 
