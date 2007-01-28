@@ -175,7 +175,9 @@ public final class LocationPathPattern extends Pattern {
             equivalentExpr = equivalentExpr.typeCheck(env, contextItemType);
             // the rewritten expression may use additional variables; must ensure there are enough slots for these
             // (see test match55)
-            ((ExpressionContext) env).getStyleElement().allocateSlots(equivalentExpr);
+						if (env instanceof ExpressionContext) {
+							  ((ExpressionContext) env).getStyleElement().allocateSlots(equivalentExpr);
+						}
             specialFilter = true;
         }
 
