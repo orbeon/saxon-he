@@ -285,7 +285,7 @@ public class QNameValue extends AtomicValue {
     public Object convertToJava(Class target, XPathContext context) throws XPathException {
         if (target.isAssignableFrom(QNameValue.class)) {
             return this;
-        } else if (target.getClass().getName().equals("javax.xml.namespace.QName")) {
+        } else if (target.getName().equals("javax.xml.namespace.QName")) {
             // TODO: rewrite this under JDK 1.5
             return makeQName(context.getConfiguration());
         } else {
