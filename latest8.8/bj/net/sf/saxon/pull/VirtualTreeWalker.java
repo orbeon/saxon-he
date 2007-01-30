@@ -654,11 +654,14 @@ public class VirtualTreeWalker implements PullProvider, NamespaceDeclarations {
         } else {
             FastStringBuffer sb = new FastStringBuffer(100);
             SequenceIterator content = (SequenceIterator)iteratorStack.peek();
+            boolean previousAtomic = false;
             if (alreadyRead) {
-                if (content.current() == null) {
+                Item current = content.current();
+                if (current == null) {
                     return "";
                 }
-                processText(content.current(), sb);
+                processText(current, sb);
+                previousAtomic = (current instanceof AtomicValue);
                 alreadyRead = false;
             }
             while (true) {
@@ -666,7 +669,12 @@ public class VirtualTreeWalker implements PullProvider, NamespaceDeclarations {
                 if (next == null) {
                     break;
                 }
+                boolean atomic = (next instanceof AtomicValue);
+                if (atomic && previousAtomic) {
+                    sb.append(' ');
+                }
                 processText(next, sb);
+                previousAtomic = atomic;
             }
             return sb;
         }
