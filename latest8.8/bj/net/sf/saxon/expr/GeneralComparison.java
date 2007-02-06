@@ -404,6 +404,7 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
 
         if (operand0 instanceof RangeExpression &&
                 th.isSubType(operand1.getItemType(th), Type.INTEGER_TYPE) &&
+                operator == Token.EQUALS &&
                 !Cardinality.allowsMany(operand1.getCardinality())) {
             Expression min = ((RangeExpression)operand0).operand0;
             Expression max = ((RangeExpression)operand0).operand1;
@@ -422,6 +423,7 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
 
         if (operand0 instanceof IntegerRange &&
                 th.isSubType(operand1.getItemType(th), Type.INTEGER_TYPE) &&
+                operator == Token.EQUALS &&
                 !Cardinality.allowsMany(operand1.getCardinality())) {
             long min = ((IntegerRange)operand0).getStart();
             long max = ((IntegerRange)operand0).getEnd();
