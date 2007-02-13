@@ -1836,7 +1836,7 @@ public class StaticQueryContext implements StaticContext {
         } else if (type instanceof CombinedNodeTest) {
             NodeTest[] tests = ((CombinedNodeTest)type).getComponentNodeTests();
             for (int i=0; i<tests.length; i++) {
-                SequenceType st = SequenceType.makeSequenceType(tests[1], StaticProperty.EXACTLY_ONE);
+                SequenceType st = SequenceType.makeSequenceType(tests[i], StaticProperty.EXACTLY_ONE);
                 checkImportedType(st, declaration);
             }
         }

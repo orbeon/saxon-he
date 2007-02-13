@@ -295,7 +295,7 @@ public class QueryReader {
     static void checkSchemaNamespaceImported(StaticQueryContext env, int fingerprint, Declaration declaration)
             throws StaticError {
         String uri = env.getNamePool().getURI(fingerprint);
-        if (uri.equals(NamespaceConstant.SCHEMA)) {
+        if (uri.equals(NamespaceConstant.SCHEMA || uri.equals(NamespaceConstant.ANONYMOUS)) {
             return;
         } else if (NamespaceConstant.isXDTNamespace(uri)) {
             return;
