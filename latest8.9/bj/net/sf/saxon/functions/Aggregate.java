@@ -159,9 +159,9 @@ public class Aggregate extends SystemFunction {
                     throw err;
                 }
                 sum = ((NumericValue)sum).arithmetic(Token.PLUS, (NumericValue)next, context);
-                if (((NumericValue)sum).isNaN()) {
+                if (((NumericValue)sum).isNaN() && sum instanceof DoubleValue) {
                     // take an early bath, once we've got a NaN it's not going to change
-                    // TODO: it could change from a float NaN to a double NaN...
+                    // TODO(DONE!): it could change from a float NaN to a double NaN...
                     return sum;
                 }
             }
@@ -239,9 +239,9 @@ public class Aggregate extends SystemFunction {
                     throw err;
                 }
                 item = ((NumericValue)item).arithmetic(Token.PLUS, (NumericValue)next, context);
-                if (((NumericValue)item).isNaN()) {
+                if (((NumericValue)item).isNaN() && item instanceof DoubleValue) {
                     // take an early bath, once we've got a NaN it's not going to change
-                    // TODO: it could change from a float NaN to a double NaN...
+                    // TODO(DONE!): it could change from a float NaN to a double NaN...
                     return item;
                 }
             }
