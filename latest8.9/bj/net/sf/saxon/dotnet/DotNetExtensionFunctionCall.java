@@ -217,7 +217,8 @@ public class DotNetExtensionFunctionCall extends FunctionCall {
             	theParameterTypes = method.GetParameters();
             }
             boolean usesContext = theParameterTypes.length > 0 &&
-                    (theParameterTypes[0].get_Name().equals("XPathContext"));
+                                theParameterTypes[0].get_ParameterType()
+                                .get_FullName().equals("net.sf.saxon.expr.XPathContext");
             if (isStatic) {
                 theInstance = null;
             } else {
@@ -784,6 +785,22 @@ public class DotNetExtensionFunctionCall extends FunctionCall {
             cli.System.Collections.IList list;
             if (targetType.IsAssignableFrom(CLI_ARRAYLIST)) {
                 list = new cli.System.Collections.ArrayList(100);
+            } else if (targetType.get_IsArray()) {
+                cli.System.Type elementType = targetType.GetElementType();
+                cli.System.Array array = cli.System.Array.CreateInstance(elementType, value.getLength());
+                for (int i=0; i<value.getLength(); i++) {
+                    Item it = value.itemAt(i);
+                    Object obj = it;
+                    if (it == null) {
+                        obj = null;
+                    } else if (it instanceof AtomicValue) {
+                        obj = convertToDotNet(((AtomicValue) it), CLI_OBJECT, context);
+                    } else if (it instanceof VirtualNode) {
+                        obj = (((VirtualNode) it).getUnderlyingNode());
+                    }
+                    array.SetValue(obj, i);
+                }
+                return array;    
             } else {
                 try {
                     list = (cli.System.Collections.IList)targetType.GetConstructor(null).Invoke(null);
@@ -794,7 +811,7 @@ public class DotNetExtensionFunctionCall extends FunctionCall {
                 }
             }
             return convertToDotNetList(value, list, context);
-        } else if (targetType.get_IsArray()) {
+        } else if (targetType.get_IsArray()) {	// probably redundant code
             cli.System.Type component = targetType.GetElementType();
             if (component.IsAssignableFrom(CLI_ITEM) ||
                     component.IsAssignableFrom(CLI_NODEINFO) ||

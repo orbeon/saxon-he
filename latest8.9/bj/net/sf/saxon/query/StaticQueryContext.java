@@ -179,6 +179,7 @@ public class StaticQueryContext implements StaticContext {
         functionLibraryList.addFunctionLibrary(config.getVendorFunctionLibrary());
         functionLibraryList.addFunctionLibrary(new ConstructorFunctionLibrary(config));
         if (config.isAllowExternalFunctions()) {
+            functionLibraryList.addFunctionLibrary(new JavaExtensionLibrary(config));
             functionLibraryList.addFunctionLibrary(config.getExtensionBinder());
         }
         localFunctionLibraryNr = functionLibraryList.addFunctionLibrary(

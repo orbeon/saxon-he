@@ -364,9 +364,13 @@ public class DotNetExtensionLibrary implements FunctionLibrary {
                                     (theParameterTypes.length == 1 ? "" : "s") +
                                     "; expecting " + significantArgs);
                         }
+                        
+                        boolean usesContext = theParameterTypes.length > 0 &&
+                                theParameterTypes[0].get_ParameterType()
+                                .get_FullName().equals("net.sf.saxon.expr.XPathContext");
 
                         if (theParameterTypes.length == significantArgs &&
-                                (significantArgs == 0 || !theParameterTypes[0].get_Name().equals("XPathContext"))) {
+                                (significantArgs == 0 || !usesContext)) {
                             if (debug) {
                                 diag.println("Found a candidate method:");
                                 diag.println("    " + theMethod);
@@ -376,8 +380,7 @@ public class DotNetExtensionLibrary implements FunctionLibrary {
 
                         // we allow the method to have an extra parameter if the first parameter is XPathContext
 
-                        if (theParameterTypes.length == significantArgs + 1 &&
-                                theParameterTypes[0].get_Name().equals("XPathContext")) {
+                        if (theParameterTypes.length == significantArgs + 1 && usesContext) {
                             if (debug) {
                                 diag.println("Method is a candidate because first argument is XPathContext");
                             }
