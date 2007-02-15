@@ -23,7 +23,7 @@ import net.sf.saxon.type.*;
 import net.sf.saxon.value.Whitespace;
 import net.sf.saxon.functions.ExtensionFunctionFactory;
 /*JAVAONLY*/import net.sf.saxon.java.JavaPlatform;
-//import net.sf.saxon.dotnet.DotNetPlatform;
+/*DOTNETONLY*/import net.sf.saxon.dotnet.DotNetPlatform;
 import org.xml.sax.*;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -214,9 +214,9 @@ public class Configuration implements Serializable, SourceResolver {
 
         /*JAVAONLY*/    platform = JavaPlatform.getInstance();
 
-        //  if (System.getProperty("java.vendor").equals("Jeroen Frijters")) {
-        //      platform = DotNetPlatform.getInstance();
-        //  }
+        /*DOTNETONLY*/  if (System.getProperty("java.vendor").equals("Jeroen Frijters")) {
+        /*DOTNETONLY*/      platform = DotNetPlatform.getInstance();
+        /*DOTNETONLY*/  }
 
     }
 
@@ -248,7 +248,6 @@ public class Configuration implements Serializable, SourceResolver {
         //namePool = NamePool.getDefaultNamePool();
         namePool = new NamePool();
         extensionBinder = platform.makeExtensionLibrary(this);
-
         // Get the implicit timezone from the current system clock
         GregorianCalendar calendar = new GregorianCalendar();
         int tzmsecs = (calendar.get(Calendar.ZONE_OFFSET) + calendar.get(Calendar.DST_OFFSET));

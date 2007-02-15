@@ -5,6 +5,7 @@ import net.sf.saxon.StandardErrorListener;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.functions.ConstructorFunctionLibrary;
 import net.sf.saxon.functions.FunctionLibrary;
+import net.sf.saxon.functions.JavaExtensionLibrary;
 import net.sf.saxon.functions.FunctionLibraryList;
 import net.sf.saxon.functions.SystemFunctionLibrary;
 import net.sf.saxon.instruct.*;

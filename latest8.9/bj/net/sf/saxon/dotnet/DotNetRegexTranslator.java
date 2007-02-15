@@ -661,50 +661,73 @@ public class DotNetRegexTranslator extends SurrogateRegexTranslator {
             compl = false;
         }
         List members = new ArrayList(10);
-        boolean firstOrLast = true;
+        //boolean firstOrLast = true;
         do {
-            CharClass lower = parseCharClassEscOrXmlChar(firstOrLast);
+            CharClass lower = parseCharClassEscOrXmlChar(true);
             members.add(lower);
-            if (curChar == ']' || eos) break;
-            firstOrLast = isLastInGroup();
-            if (curChar == '-' && !firstOrLast) {
-                advance();
-                CharClass upper = parseCharClassEscOrXmlChar(firstOrLast);
-                if (lower.getSingleChar() < 0 || upper.getSingleChar() < 0)
-                    throw makeException("multi_range");
-                if (lower.getSingleChar() > upper.getSingleChar())
-                    throw makeException("invalid range (start > end)");
-                members.set(members.size() - 1,
-                        new CharRange(lower.getSingleChar(), upper.getSingleChar()));
-                if (caseBlind) {
-                    // Special-case A-Z and a-z
-                    if (lower.getSingleChar() == 'a' && upper.getSingleChar() == 'z') {
-                        members.add(new CharRange('A', 'Z'));
-                        for (int v = 0; v < CaseVariants.ROMAN_VARIANTS.length; v++) {
-                            members.add(makeSingleCharClass(CaseVariants.ROMAN_VARIANTS[v]));
-                        }
-                    } else if (lower.getSingleChar() == 'A' && upper.getSingleChar() == 'Z') {
-                        members.add(new CharRange('a', 'z'));
-                        for (int v = 0; v < CaseVariants.ROMAN_VARIANTS.length; v++) {
-                            members.add(makeSingleCharClass(CaseVariants.ROMAN_VARIANTS[v]));
-                        }
-                    } else {
-                        for (int k = lower.getSingleChar(); k <= upper.getSingleChar(); k++) {
-                            int[] variants = CaseVariants.getCaseVariants(k);
-                            for (int v = 0; v < variants.length; v++) {
-                                members.add(makeSingleCharClass(variants[v]));
+            if (curChar == ']' || eos) {
+                //addCaseVariant(lower, members);
+                break;
+            }
+            //firstOrLast = isLastInGroup();
+            if (curChar == '-') {
+                char next = regExp.charAt(pos);
+                if (next == '[') {
+                    // hyphen denotes subtraction
+                    // TODO: subtraction can't be used in a negative character group
+                    // addCaseVariant(lower, members);
+                    advance();
+                    break;
+                } else if (next == ']') {
+                    // hyphen denotes a regular character - no need to do anything
+                    // addCaseVariant(lower, members);
+                    // TODO: the spec rules are unclear here. We are allowing hyphen to represent
+                    // itself in contexts like [A-Z-0-9]
+                } else {
+                    // hyphen denotes a character range
+                    advance();
+                    CharClass upper = parseCharClassEscOrXmlChar(true);
+                    if (lower.getSingleChar() < 0 || upper.getSingleChar() < 0)
+                        throw makeException("multi_range");
+                    if (lower.getSingleChar() > upper.getSingleChar())
+                        throw makeException("invalid range (start > end)");
+                    members.set(members.size() - 1,
+                            new CharRange(lower.getSingleChar(), upper.getSingleChar()));
+                    if (caseBlind) {
+                        // Special-case A-Z and a-z
+                        if (lower.getSingleChar() == 'a' && upper.getSingleChar() == 'z') {
+                            members.add(new CharRange('A', 'Z'));
+                            for (int v = 0; v < CaseVariants.ROMAN_VARIANTS.length; v++) {
+                                members.add(makeSingleCharClass(CaseVariants.ROMAN_VARIANTS[v]));
+                            }
+                        } else if (lower.getSingleChar() == 'A' && upper.getSingleChar() == 'Z') {
+                            members.add(new CharRange('a', 'z'));
+                            for (int v = 0; v < CaseVariants.ROMAN_VARIANTS.length; v++) {
+                                members.add(makeSingleCharClass(CaseVariants.ROMAN_VARIANTS[v]));
+                            }
+                        } else {
+                            for (int k = lower.getSingleChar(); k <= upper.getSingleChar(); k++) {
+                                int[] variants = CaseVariants.getCaseVariants(k);
+                                for (int v = 0; v < variants.length; v++) {
+                                    members.add(makeSingleCharClass(variants[v]));
+                                }
                             }
                         }
                     }
+                    // look for a subtraction
+                    if (curChar == '-' && regExp.charAt(pos) == '[') {
+                        advance();
+                        expect('[');
+                        break;
+                    }
                 }
-
-                if (curChar == '-') {
-                    advance();
-                    expect('[');
-                    break;
-                }
+            } else {
+                // addCaseVariant(lower, members);
             }
         } while (curChar != ']');
+        if (eos) {
+            expect(']');
+        }
         CharClass result;
         if (members.size() == 1)
             result = (CharClass) members.get(0);
@@ -720,12 +743,6 @@ public class DotNetRegexTranslator extends SurrogateRegexTranslator {
         inCharClassExpr = false;
         advance();
         return result;
-    }
-
-    private boolean isLastInGroup() {
-        // look ahead at the next character
-        char c = regExp.charAt(pos);
-        return (c == ']' || c == '[');
     }
 
     private CharClass parseCharClassEscOrXmlChar(boolean first) throws RegexSyntaxException {

@@ -52,7 +52,7 @@ public class DotNetPlatform implements Platform {
     public final static String getSaxonSaFullyQualifiedClassName() {
         return "com.saxonica.validate.SchemaAwareConfiguration, " +
                 "saxon8sa, " +
-                "Version=8.9.0.1, " +
+                "Version=8.9.0.2, " +
                 "Culture=neutral, " +
                 "PublicKeyToken=e1fdd002d5083fe6";
     }

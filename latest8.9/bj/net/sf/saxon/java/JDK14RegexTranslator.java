@@ -583,31 +583,50 @@ public class JDK14RegexTranslator extends SurrogateRegexTranslator {
             compl = false;
         }
         List members = new ArrayList(10);
-        boolean firstOrLast = true;
+        //boolean firstOrLast = true;
         do {
-            CharClass lower = parseCharClassEscOrXmlChar(firstOrLast);
+            CharClass lower = parseCharClassEscOrXmlChar(true);
             members.add(lower);
-            if (curChar == ']' || eos) break;
-            firstOrLast = isLastInGroup();
-            if (curChar == '-' && !firstOrLast) {
-                advance();
-                CharClass upper = parseCharClassEscOrXmlChar(firstOrLast);
-                if (lower.getSingleChar() < 0 || upper.getSingleChar() < 0) {
-                    throw makeException("multi_range");
-                }
-                if (lower.getSingleChar() > upper.getSingleChar()) {
-                    throw makeException("invalid range (start > end)");
-                }
-                members.set(members.size() - 1,
-                        new CharRange(lower.getSingleChar(), upper.getSingleChar()));
-                if (curChar == '-') {
+            if (curChar == ']' || eos) {
+                break;
+            }    
+            //firstOrLast = isLastInGroup();
+            if (curChar == '-') {
+                char next = regExp.charAt(pos);
+                if (next == '[') {
+                    // hyphen denotes subtraction
+                    // TODO: subtraction can't be used in a negative character group
                     advance();
-                    expect('[');
                     break;
-                }
+                } else if (next == ']') {
+                    // hyphen denotes a regular character - no need to do anything
+                    // TODO: the spec rules are unclear here. We are allowing hyphen to represent
+                    // itself in contexts like [A-Z-0-9]
+                } else {
+                    // hyphen denotes a character range
+                    advance();    
+		                CharClass upper = parseCharClassEscOrXmlChar(true);
+		                if (lower.getSingleChar() < 0 || upper.getSingleChar() < 0) {
+		                    throw makeException("multi_range");
+		                }
+		                if (lower.getSingleChar() > upper.getSingleChar()) {
+		                    throw makeException("invalid range (start > end)");
+		                }
+                		members.set(members.size() - 1,
+                        	new CharRange(lower.getSingleChar(), upper.getSingleChar()));
+		                
+		                // look for a subtraction
+		                if (curChar == '-' && regExp.charAt(pos) == '[') {
+		                    advance();
+		                    break;
+		                }
+		            }    
             }
         } while (curChar != ']');
-        CharClass result;
+        if (eos) {
+            expect(']');
+        }
+				CharClass result;
         if (members.size() == 1) {
             result = (CharClass) members.get(0);
         } else {
@@ -625,12 +644,7 @@ public class JDK14RegexTranslator extends SurrogateRegexTranslator {
         advance();
         return result;
     }
-
-    private boolean isLastInGroup() {
-        // look ahead at the next character
-        char c = regExp.charAt(pos);
-        return (c == ']' || c == '[');
-    }
+        
 
     private CharClass parseCharClassEscOrXmlChar(boolean first) throws RegexSyntaxException {
         switch (curChar) {
