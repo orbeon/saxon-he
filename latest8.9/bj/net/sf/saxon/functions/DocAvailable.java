@@ -50,35 +50,34 @@ public class DocAvailable extends SystemFunction {
      */
 
     public Item evaluateItem(XPathContext context) throws XPathException {
-        Controller controller = context.getController();
+        AtomicValue hrefVal = (AtomicValue)argument[0].evaluateItem(context);
+        if (hrefVal==null) {
+            return BooleanValue.FALSE;
+        }
+        String href = hrefVal.getStringValue();
+
         // suppress all error messages while attempting to fetch the document
+        Controller controller = context.getController();
         ErrorListener old = controller.getErrorListener();
         controller.setErrorListener(new ErrorListener() {
             public void warning(TransformerException exception) {}
             public void error(TransformerException exception) {}
             public void fatalError(TransformerException exception) {}
         });
-        boolean b = docAvailable(context);
+        boolean b = docAvailable(href, context);
         controller.setErrorListener(old);
         return BooleanValue.get(b);
     }
 
-    private boolean docAvailable(XPathContext context) throws XPathException {
-        AtomicValue hrefVal = (AtomicValue)argument[0].evaluateItem(context);
-        if (hrefVal==null) {
-            return false;
-        }
-        String href = hrefVal.getStringValue();
+    private boolean docAvailable(String href, XPathContext context) {
         try {
             Item item = Document.makeDoc(href, expressionBaseURI, context, this);
-            if (item==null) {
-                return false;
-            }
-            return true;
+            return item != null;
         } catch (Exception err) {
             return false;
         }
     }
+
 
 
 }
