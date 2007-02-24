@@ -123,6 +123,14 @@ public class SortExpression extends Expression implements SortKeyEvaluator {
                 sortKeyDefinitions[i].setLanguage(replacement);
                 found = true;
             }
+						if (sortKeyDefinitions[i].collationName == original) {
+                sortKeyDefinitions[i].collationName = replacement;
+                found = true;
+            }
+            if (sortKeyDefinitions[i].stable == original) {
+                sortKeyDefinitions[i].stable = replacement;
+                found = true;
+            }            
         }
         return found;
     }
@@ -244,6 +252,12 @@ public class SortExpression extends Expression implements SortKeyEvaluator {
             for (int i = 0; i < sortKeyDefinitions.length; i++) {
                 final Expression sk2 = sortKeyDefinitions[i].getSortKey().promote(offer);
                 sortKeyDefinitions[i].setSortKey(sk2);
+								if (sortKeyDefinitions[i].order != null) {
+                    sortKeyDefinitions[i].order = sortKeyDefinitions[i].order.promote(offer);
+                }
+                if (sortKeyDefinitions[i].stable != null) {
+                    sortKeyDefinitions[i].stable = sortKeyDefinitions[i].stable.promote(offer);
+                }                
                 if (sortKeyDefinitions[i].caseOrder != null) {
                     sortKeyDefinitions[i].caseOrder = sortKeyDefinitions[i].caseOrder.promote(offer);
                 }
