@@ -171,7 +171,7 @@ namespace Saxon.Api {
             JStreamSource source = new JStreamSource(uri.ToString());
             JAugmentedSource aug = JAugmentedSource.makeAugmentedSource(source);
             aug.setPleaseCloseAfterUse(true);
-            PreparedStylesheet pss = (PreparedStylesheet)factory.newTemplates(source, info);
+            PreparedStylesheet pss = (PreparedStylesheet)factory.newTemplates(aug, info);
             return new XsltExecutable(pss);
         }
 
