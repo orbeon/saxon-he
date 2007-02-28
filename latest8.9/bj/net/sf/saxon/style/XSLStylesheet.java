@@ -853,6 +853,7 @@ public class XSLStylesheet extends StyleElement {
             if (other == null) {
                 // this is the first
                 templateIndex.put(key, template);
+                exec.putNamedTemplate(fingerprint, template.getCompiledTemplate());
             } else {
                 // check the precedences
                 int thisPrecedence = template.getPrecedence();
@@ -866,9 +867,9 @@ public class XSLStylesheet extends StyleElement {
                     // can't happen, but we'll play safe
                     //other.setRedundantNamedTemplate();
                     templateIndex.put(key, template);
+                    exec.putNamedTemplate(fingerprint, template.getCompiledTemplate());
                 }
             }
-            exec.putNamedTemplate(fingerprint, template.getCompiledTemplate());
         }
     }
 
