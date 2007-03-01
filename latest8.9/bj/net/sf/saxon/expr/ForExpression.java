@@ -432,6 +432,7 @@ public class ForExpression extends Assignation {
                 return this;
             }
         }
+        repairParentPointers();
         return null;
     }
 
