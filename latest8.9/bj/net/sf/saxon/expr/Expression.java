@@ -850,6 +850,19 @@ public abstract class Expression implements SequenceIterable, EvaluableItem, Ser
     }
 
     /**
+     * Walk a subtree of the expression tree setting all the parent pointers correctly
+     */
+
+    public void repairParentPointers() {
+        for (Iterator children = iterateSubExpressions(); children.hasNext();) {
+            Expression child = (Expression)children.next();
+            child.setParentExpression(this);
+            child.repairParentPointers();
+        }
+    }
+
+
+    /**
      * Get the host language (XSLT, XQuery, XPath) used to implement the code in this container
      * @return typically {@link net.sf.saxon.Configuration#XSLT} or {@link net.sf.saxon.Configuration#XQUERY}
      */
