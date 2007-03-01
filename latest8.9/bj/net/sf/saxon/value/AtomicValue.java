@@ -164,10 +164,12 @@ public abstract class AtomicValue extends Value implements Item {
 
     public final AtomicValue convert(BuiltInAtomicType schemaType, XPathContext context) throws XPathException {
         AtomicValue val = convertPrimitive(schemaType, true, context);
-        ValidationException err = ((ValidationErrorValue)val).getException();
-        if (err.getErrorCodeLocalPart() == null) {
-            err.setErrorCode("FORG0001");
-            throw err;
+        if (val instanceof ValidationErrorValue) {
+            ValidationException err = ((ValidationErrorValue)val).getException();
+            if (err.getErrorCodeLocalPart() == null) {
+                err.setErrorCode("FORG0001");
+                throw err;
+            }
         }
         return val;
     };
