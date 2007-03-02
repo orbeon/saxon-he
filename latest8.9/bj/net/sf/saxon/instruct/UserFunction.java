@@ -209,7 +209,7 @@ public final class UserFunction extends Procedure implements InstructionInfoProv
             } else if (kid instanceof SortExpression) {
                 gatherDirectContributingCallees(((SortExpression)kid).getBaseExpression(), result);
             } else if (kid instanceof TupleSorter) {
-                gatherDirectContributingCallees(((SortExpression)kid).getBaseExpression(), result);
+                gatherDirectContributingCallees(((TupleSorter)kid).getBaseExpression(), result);
             } else if (kid instanceof TailCallLoop) {
                 gatherDirectContributingCallees(((TailCallLoop)kid).getBaseExpression(), result);
             }
