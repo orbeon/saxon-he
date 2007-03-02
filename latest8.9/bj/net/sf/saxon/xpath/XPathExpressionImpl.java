@@ -265,11 +265,15 @@ public class XPathExpressionImpl implements XPathExpression, SortKeyEvaluator {
                 return first.getStringValue();
 
             } else if (qName.equals(XPathConstants.NUMBER)) {
-                SequenceIterator iter = new Atomizer(expression, config).iterate(context);
+                SequenceIterator iter = expression.iterate(context);
 
                 Item first = iter.next();
                 if (first == null) {
                     return new Double(Double.NaN);
+                }
+                if (first instanceof NodeInfo) {
+                    DoubleValue v = NumberFn.convert(new StringValue(first.getStringValueCS()));
+                    return new Double(v.getDoubleValue());
                 }
                 if (first instanceof NumericValue) {
                     return new Double(((NumericValue)first).getDoubleValue());
