@@ -259,6 +259,7 @@ public abstract class Pattern implements PatternFinder, Serializable, Container 
      */
 
     public Expression makeSearchExpression() {
+        // NOTE: not currently used; retained for use when we get around to compiling XSLT to Java.
         // TODO:PERF could improve the logic for LocationPathPatterns
         final int kind = getNodeKind();
         Expression base;
