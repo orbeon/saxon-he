@@ -1,10 +1,11 @@
 package net.sf.saxon.expr;
 
 import net.sf.saxon.functions.Minimax;
-import net.sf.saxon.functions.Position;
 import net.sf.saxon.functions.SystemFunction;
+import net.sf.saxon.functions.Position;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.sort.AtomicComparer;
 import net.sf.saxon.sort.CodepointCollator;
 import net.sf.saxon.sort.GenericAtomicComparer;
@@ -14,7 +15,6 @@ import net.sf.saxon.trans.StaticError;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
-import net.sf.saxon.pattern.EmptySequenceTest;
 
 
 /**
@@ -361,6 +361,52 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
             e1 = TypeChecker.staticTypeCheck(e1, SequenceType.NUMERIC_SEQUENCE, false, role, env);
         }
 
+        // look for (N to M = I)
+
+
+        if (operand0 instanceof RangeExpression &&
+                th.isSubType(operand1.getItemType(th), BuiltInAtomicType.INTEGER) &&
+                operator == Token.EQUALS &&
+                !Cardinality.allowsMany(operand1.getCardinality())) {
+            Expression min = ((RangeExpression)operand0).operand0;
+            Expression max = ((RangeExpression)operand0).operand1;
+            if (operand1 instanceof Position) {
+                PositionRange pr = new PositionRange(min, max);
+                ExpressionTool.copyLocationInfo(this, pr);
+                pr.setParentExpression(getParentExpression());
+                return pr;
+            } else {
+                IntegerRangeTest ir = new IntegerRangeTest(operand1, min, max);
+                ExpressionTool.copyLocationInfo(this, ir);
+                ir.setParentExpression(getParentExpression());
+                return ir;
+            }
+        }
+
+        if (value0 instanceof IntegerRange &&
+                th.isSubType(operand1.getItemType(th), BuiltInAtomicType.INTEGER) &&
+                operator == Token.EQUALS &&
+                !Cardinality.allowsMany(operand1.getCardinality())) {
+            long min = ((IntegerRange)value0).getStart();
+            long max = ((IntegerRange)value0).getEnd();
+            if (operand1 instanceof Position) {
+                PositionRange pr = new PositionRange(
+                        Literal.makeLiteral(Int64Value.makeIntegerValue(min)),
+                        Literal.makeLiteral(Int64Value.makeIntegerValue(max)));
+                ExpressionTool.copyLocationInfo(this, pr);
+                pr.setParentExpression(getParentExpression());
+                return pr;
+            } else {
+                IntegerRangeTest ir = new IntegerRangeTest(operand1,
+                        Literal.makeLiteral(Int64Value.makeIntegerValue(min)),
+                        Literal.makeLiteral(Int64Value.makeIntegerValue(max)));
+                ExpressionTool.copyLocationInfo(this, ir);
+                ir.setParentExpression(getParentExpression());
+                return ir;
+            }
+        }
+        
+
         // If second operand is a singleton, rewrite as
         //      some $x in E0 satisfies $x op E1
 
@@ -423,50 +469,6 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
         }
 
 
-        // look for (N to M = I)
-
-
-        if (operand0 instanceof RangeExpression &&
-                th.isSubType(operand1.getItemType(th), BuiltInAtomicType.INTEGER) &&
-                operator == Token.EQUALS &&
-                !Cardinality.allowsMany(operand1.getCardinality())) {
-            Expression min = ((RangeExpression)operand0).operand0;
-            Expression max = ((RangeExpression)operand0).operand1;
-            if (operand1 instanceof Position) {
-                PositionRange pr = new PositionRange(min, max);
-                ExpressionTool.copyLocationInfo(this, pr);
-                pr.setParentExpression(getParentExpression());
-                return pr;
-            } else {
-                IntegerRangeTest ir = new IntegerRangeTest(operand1, min, max);
-                ExpressionTool.copyLocationInfo(this, ir);
-                ir.setParentExpression(getParentExpression());
-                return ir;
-            }
-        }
-
-        if (value0 instanceof IntegerRange &&
-                th.isSubType(operand1.getItemType(th), BuiltInAtomicType.INTEGER) &&
-                operator == Token.EQUALS &&
-                !Cardinality.allowsMany(operand1.getCardinality())) {
-            long min = ((IntegerRange)value0).getStart();
-            long max = ((IntegerRange)value0).getEnd();
-            if (operand1 instanceof Position) {
-                PositionRange pr = new PositionRange(
-                        Literal.makeLiteral(Int64Value.makeIntegerValue(min)),
-                        Literal.makeLiteral(Int64Value.makeIntegerValue(max)));
-                ExpressionTool.copyLocationInfo(this, pr);
-                pr.setParentExpression(getParentExpression());
-                return pr;
-            } else {
-                IntegerRangeTest ir = new IntegerRangeTest(operand1,
-                        Literal.makeLiteral(Int64Value.makeIntegerValue(min)),
-                        Literal.makeLiteral(Int64Value.makeIntegerValue(max)));
-                ExpressionTool.copyLocationInfo(this, ir);
-                ir.setParentExpression(getParentExpression());
-                return ir;
-            }
-        }
 
         // evaluate the expression now if both arguments are constant
 
