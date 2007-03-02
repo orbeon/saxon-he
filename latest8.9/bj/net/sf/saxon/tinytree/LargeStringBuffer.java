@@ -163,6 +163,13 @@ public final class LargeStringBuffer implements CharSequence, Serializable {
             offset1 = end - startOffsets[seg1];
         }
         FastStringBuffer startSegment = (FastStringBuffer)segments.get(seg0);
+        // We've had reports (28 Feb 2007) of an NPE here, which we couldn't reproduce.
+        // The following code is designed to produce diagnistics if it ever happens again
+        if (startSegment == null) {
+            System.err.println("*** INTERNAL SAXON ERROR IN LARGE STRING BUFFER");
+            System.err.println("*** request: subSequence(" + start + ", " + end + ")");
+            dumpDataStructure();
+        }
         if (seg0 == seg1) {
             // the required substring is all in one segment
             return startSegment.subSequence(offset0, offset1);
@@ -239,6 +246,19 @@ public final class LargeStringBuffer implements CharSequence, Serializable {
             sb.write(writer);
         }
     }
+
+    /**
+     * Produce diagnosic dump
+     */
+
+    public void dumpDataStructure() {
+        System.err.println("** Segments:");
+        for (int s=0; s<segments.size(); s++) {
+            System.err.println("   SEG " + s + " start offset " + startOffsets[s] + " length "
+                    + ((FastStringBuffer)segments.get(s)).length());
+        }
+    }
+    
 
 }
 
