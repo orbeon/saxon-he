@@ -360,6 +360,7 @@ public final class ComputedAttribute extends SimpleNodeConstructor {
 
         String prefix = null;
         String localName = null;
+        String uri = null;
 
         if (nameValue instanceof StringValue) {
             // this will always be the case in XSLT
@@ -397,16 +398,15 @@ public final class ComputedAttribute extends SimpleNodeConstructor {
                 }
             }
 
-        } else if (nameValue instanceof QNameValue) {
+        } else if (nameValue instanceof QNameValue && allowNameAsQName) {
             // this is allowed in XQuery
             // TODO: do we need to check for xmlns, xmlns:xxx on this path?
             localName = ((QNameValue)nameValue).getLocalName();
-            String namespaceURI = ((QNameValue)nameValue).getNamespaceURI();
-            if (namespaceURI == null) {
-                namespaceURI = "";
+            uri = ((QNameValue)nameValue).getNamespaceURI();
+            if (uri == null) {
+                uri = "";
             }
-            namespace = new StringLiteral(namespaceURI);
-            if (namespaceURI.equals("")) {
+            if (uri.equals("")) {
                 prefix = "";
             } else {
                 prefix = ((QNameValue)nameValue).getPrefix();
@@ -421,38 +421,36 @@ public final class ComputedAttribute extends SimpleNodeConstructor {
             throw dynamicError(this, err, context);
         }
 
-        String uri;
-
-        if (namespace==null) {
-        	if (prefix.length() == 0) {
-        		uri = "";
-        	} else {
+        if (namespace==null && uri==null) {
+            if (prefix.length() == 0) {
+                uri = "";
+            } else {
                 uri = nsContext.getURIForPrefix(prefix, false);
                 if (uri==null) {
                     DynamicError err = new DynamicError("Undeclared prefix in attribute name: " + prefix, this);
                     err.setErrorCode((isXSLT() ? "XTDE0860" : "XQDY0074"));
                     err.setXPathContext(context);
                     throw dynamicError(this, err, context);
-      		    }
-        	}
-
-        } else {
-
-            // generate a name using the supplied namespace URI
-            if (namespace instanceof StringLiteral) {
-                uri = ((StringLiteral)namespace).getStringValue();
-            } else {
-                uri = namespace.evaluateAsString(context);
-                if (!AnyURIValue.isValidURI(uri)) {
-                    DynamicError de = new DynamicError(
-                            "The value of the namespace attribute must be a valid URI");
-                    de.setErrorCode("XTDE0865");
-                    de.setXPathContext(context);
-                    de.setLocator(this);
-                    throw de;
                 }
             }
-            
+        } else {
+            if (uri==null) {
+                // generate a name using the supplied namespace URI
+                if (namespace instanceof StringLiteral) {
+                    uri = ((StringLiteral)namespace).getStringValue();
+                } else {
+                    uri = namespace.evaluateAsString(context);
+                    if (!AnyURIValue.isValidURI(uri)) {
+                        DynamicError de = new DynamicError(
+                                "The value of the namespace attribute must be a valid URI");
+                        de.setErrorCode("XTDE0865");
+                        de.setXPathContext(context);
+                        de.setLocator(this);
+                        throw de;
+                    }
+                }
+            }
+
             if (uri.length() == 0) {
                 // there is a special rule for this case in the specification;
                 // we force the attribute to go in the null namespace
