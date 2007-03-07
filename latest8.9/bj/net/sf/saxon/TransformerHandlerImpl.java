@@ -45,6 +45,7 @@ public class TransformerHandlerImpl extends ReceivingContentHandler implements T
         builder = controller.makeBuilder();
         builder.setPipelineConfiguration(getPipelineConfiguration());
         receiver = controller.makeStripper(builder);
+        receiver.setPipelineConfiguration(getPipelineConfiguration());
         if (controller.getExecutable().stripsInputTypeAnnotations()) {
             receiver = controller.getConfiguration().getAnnotationStripper(receiver);
         }
