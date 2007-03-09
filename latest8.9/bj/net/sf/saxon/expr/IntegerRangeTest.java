@@ -35,6 +35,18 @@ public class IntegerRangeTest extends Expression {
         this.max = max;
     }
 
+    public Expression getMinValueExpression() {
+        return min;
+    }
+
+    public Expression getMaxValueExpression() {
+        return max;
+    }
+
+    public Expression getValueExpression() {
+        return value;
+    }
+
     public Expression typeCheck(StaticContext env, ItemType contextItemType) throws XPathException {
         // Already done, we only get one of these expressions after the operands have been analyzed
         return this;
