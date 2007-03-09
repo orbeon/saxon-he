@@ -689,11 +689,16 @@ public class NamePool implements Serializable {
             // This indicates a standard name known to the system (but it might have a non-standard prefix)
             int prefixIndex = getPrefixIndex(nameCode);
             short uriCode = getURICode(nameCode);
-            String prefix = getPrefixWithIndex(uriCode, prefixIndex);
-            if (prefix.equals("")) {
-                return StandardNames.getLocalName(nameCode & FP_MASK);
+            String prefix;
+            if (uriCode == NamespaceConstant.XML_CODE) {
+                return "xml:" + StandardNames.getLocalName(nameCode & FP_MASK);
             } else {
-                return prefix + ':' + StandardNames.getLocalName(nameCode & FP_MASK);
+                prefix = getPrefixWithIndex(uriCode, prefixIndex);
+                if (prefix.length() == 0) {
+                    return StandardNames.getLocalName(nameCode & FP_MASK);
+                } else {
+                    return prefix + ':' + StandardNames.getLocalName(nameCode & FP_MASK);
+                }
             }
         }
 
