@@ -30,7 +30,7 @@ public class Choose extends Instruction {
     // are evaluated in turn, and when one is found that is true, the corresponding
     // action is evaluated. For xsl:if, there is always one condition and one action.
     // An xsl:otherwise is compiled as if it were xsl:when test="true()". If no
-    // condition is satisfied, the instruction returns without doing anything.
+    // condition is satisfied, the instruction returns an empty sequence.
 
     private Expression[] conditions;
     private Expression[] actions;
@@ -196,8 +196,15 @@ public class Choose extends Instruction {
 
     public int computeCardinality() {
         int card = 0;
+        boolean includesTrue = false;
         for (int i=0; i<actions.length; i++) {
             card = Cardinality.union(card, actions[i].getCardinality());
+            if (Literal.isConstantBoolean(conditions[i], true)) {
+                includesTrue = true;
+            }
+        }
+        if (!includesTrue) {
+            card = Cardinality.union(card, StaticProperty.ALLOWS_ZERO);
         }
         return card;
     }
