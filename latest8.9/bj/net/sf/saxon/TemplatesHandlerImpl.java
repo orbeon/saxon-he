@@ -84,7 +84,7 @@ public class TemplatesHandlerImpl extends ReceivingContentHandler implements Tem
             CompilerInfo info = new CompilerInfo();
             info.setURIResolver(config.getURIResolver());
             info.setErrorListener(config.getErrorListener());
-
+            info.setCompileWithTracing(config.isCompileWithTracing());
             PreparedStylesheet sheet = new PreparedStylesheet(config, info);
 
             try {

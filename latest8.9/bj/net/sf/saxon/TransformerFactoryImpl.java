@@ -132,7 +132,7 @@ public class TransformerFactoryImpl extends SAXTransformerFactory {
         CompilerInfo info = new CompilerInfo();
         info.setURIResolver(config.getURIResolver());
         info.setErrorListener(config.getErrorListener());
-
+        info.setCompileWithTracing(config.isCompileWithTracing());
         PreparedStylesheet pss = new PreparedStylesheet(config, info);
         pss.prepare(source);
         return pss;
