@@ -237,19 +237,20 @@ public class DurationValue extends AtomicValue {
      */
 
     public DurationValue normalizeDuration() {
-        int totalMonths = years*12 + months;
-        int years = totalMonths / 12;
-        int months = totalMonths % 12;
+        long totalMonths = years*12L + months;
+        long years = totalMonths / 12L;
+        long months = totalMonths % 12L;
         long totalMicroSeconds = ((((((days*24L + hours)*60L)+minutes)*60L)+seconds)*1000000L)+microseconds;
         int microseconds = (int)(totalMicroSeconds % 1000000L);
-        int totalSeconds = (int)(totalMicroSeconds / 1000000L);
-        int seconds = totalSeconds % 60;
-        int totalMinutes = totalSeconds / 60;
-        int minutes = totalMinutes % 60;
-        int totalHours = totalMinutes / 60;
-        int hours = totalHours % 24;
-        int days = totalHours / 24;
-        return new DurationValue(!negative, years, months, days, hours, minutes, seconds, microseconds);
+        long totalSeconds = totalMicroSeconds / 1000000L;
+        long seconds = totalSeconds % 60L;
+        long totalMinutes = totalSeconds / 60L;
+        long minutes = totalMinutes % 60L;
+        long totalHours = totalMinutes / 60L;
+        long hours = totalHours % 24L;
+        long days = totalHours / 24;
+        return new DurationValue(!negative, (int)years, (int)months, (int)days,
+                (int)hours, (int)minutes, (int)seconds, (int)microseconds);
 
     }
 
