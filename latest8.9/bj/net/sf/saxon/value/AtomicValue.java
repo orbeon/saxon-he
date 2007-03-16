@@ -168,8 +168,8 @@ public abstract class AtomicValue extends Value implements Item {
             ValidationException err = ((ValidationErrorValue)val).getException();
             if (err.getErrorCodeLocalPart() == null) {
                 err.setErrorCode("FORG0001");
-                throw err;
             }
+            throw err;
         }
         return val;
     };
