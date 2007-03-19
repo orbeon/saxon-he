@@ -242,14 +242,26 @@ public class Sender {
         }
 
         if (xInclude) {
+            boolean tryAgain = false;
             try {
+                // This feature name is supported in the version of Xerces bundled with JDK 1.5
                 parser.setFeature("http://apache.org/xml/features/xinclude-aware", true);
             } catch (SAXNotRecognizedException err) {
-                throw new DynamicError("Selected XML parser " + parser.getClass().getName() +
-                        " does not recognize request for XInclude processing");
+                tryAgain = true;
             } catch (SAXNotSupportedException err) {
-                throw new DynamicError("Selected XML parser " + parser.getClass().getName() +
-                        " does not support XInclude processing");
+                tryAgain = true;
+            }
+            if (tryAgain) {
+                try {
+                    // This feature name is supported in Xerces 2.9.0
+                    parser.setFeature("http://apache.org/xml/features/xinclude", true);
+                } catch (SAXNotRecognizedException err) {
+                    throw new DynamicError("Selected XML parser " + parser.getClass().getName() +
+                            " does not recognize request for XInclude processing");
+                } catch (SAXNotSupportedException err) {
+                    throw new DynamicError("Selected XML parser " + parser.getClass().getName() +
+                            " does not support XInclude processing");
+                }
             }
         }
 //        if (config.isTiming()) {
