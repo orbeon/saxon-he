@@ -1258,7 +1258,7 @@ public abstract class StyleElement extends ElementWithAttributes
      * one originally loaded, that forms the root of the import/include tree
      */
 
-    protected XSLStylesheet getPrincipalStylesheet() {
+    public XSLStylesheet getPrincipalStylesheet() {
         XSLStylesheet sheet = getContainingStylesheet();
         while (true) {
             XSLStylesheet next = sheet.getImporter();

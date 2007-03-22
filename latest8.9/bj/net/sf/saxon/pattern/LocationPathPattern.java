@@ -288,7 +288,7 @@ public final class LocationPathPattern extends Pattern {
             nextFree = ExpressionTool.allocateSlots(filters[i], nextFree,
                      ((ExpressionContext) env).getStyleElement().getContainingSlotManager());
         }
-        ((ExpressionContext) env).getStyleElement().getContainingStylesheet().allocatePatternSlots(nextFree);
+        ((ExpressionContext) env).getStyleElement().getPrincipalStylesheet().allocatePatternSlots(nextFree);
     }
 
     /**
