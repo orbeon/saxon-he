@@ -37,7 +37,7 @@ public final class AnyURIValue extends StringValue {
     */
 
     public AnyURIValue(CharSequence value) {
-        this.value = (value==null ? "" : Whitespace.trimWhitespace(value).toString());
+        this.value = (value==null ? "" : Whitespace.collapseWhitespace(value).toString());
         this.typeLabel = BuiltInAtomicType.ANY_URI;
     }
 
@@ -50,7 +50,7 @@ public final class AnyURIValue extends StringValue {
      */
 
      public AnyURIValue(CharSequence value, AtomicType type) {
-         this.value = (value==null ? "" : Whitespace.trimWhitespace(value).toString());
+         this.value = (value==null ? "" : Whitespace.collapseWhitespace(value).toString());
          this.typeLabel = type;
      }
 
