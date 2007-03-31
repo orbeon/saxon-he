@@ -305,7 +305,9 @@ public class ComputedElement extends ElementCreator {
             // this is allowed in XQuery
             localName = ((QNameValue)nameValue).getLocalName();
             uri = ((QNameValue)nameValue).getNamespaceURI();
-            //namespace = new StringValue(uri);
+            if (uri == null) {
+                uri = "";
+            }
             prefix = ((QNameValue)nameValue).getPrefix();
         } else {
             DynamicError err = new DynamicError("Computed element name has incorrect type");
