@@ -405,7 +405,7 @@ public class DotNetExtensionFunctionCall extends FunctionCall {
         if (resultClass==null) {
             return AnyItemType.getInstance();
         }
-        String name = resultClass.get_Name();
+        String name = resultClass.get_FullName();
         if (name.equals("net.sf.saxon.value.Value")) {
             return AnyItemType.getInstance();
         } else if (resultClass.toString().equals("void")) {

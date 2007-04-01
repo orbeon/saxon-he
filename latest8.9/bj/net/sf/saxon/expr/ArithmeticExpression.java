@@ -117,6 +117,14 @@ public class ArithmeticExpression extends BinaryExpression {
             return new Literal(EmptySequence.getInstance());
         }
 
+        if (type0.isExternalType() || type1.isExternalType()) {
+            DynamicError de = new DynamicError("Arithmetic operators are not defined for external objects");
+            de.setLocator(this);
+            de.setIsTypeError(true);
+            de.setErrorCode("XPTY0004");
+            throw de;
+        }
+
         if (operator == Token.NEGATE) {
             if (operand1 instanceof Literal && ((Literal)operand1).getValue() instanceof NumericValue) {
                 NumericValue nv = (NumericValue)((Literal)operand1).getValue();

@@ -126,6 +126,15 @@ public final class ValueComparison extends BinaryExpression implements Compariso
         AtomicType t0 = operand0.getItemType(th).getAtomizedItemType();
         AtomicType t1 = operand1.getItemType(th).getAtomizedItemType();
 
+        if (t0.isExternalType() || t1.isExternalType()) {
+            StaticError err = new StaticError("Cannot perform comparisons involving external objects");
+            err.setIsTypeError(true);
+            err.setErrorCode("XPTY0004");
+            err.setLocator(this);
+            throw err;
+        }
+
+
         BuiltInAtomicType p0 = (BuiltInAtomicType)t0.getPrimitiveItemType();
         if (p0.equals(BuiltInAtomicType.UNTYPED_ATOMIC)) {
             p0 = BuiltInAtomicType.STRING;

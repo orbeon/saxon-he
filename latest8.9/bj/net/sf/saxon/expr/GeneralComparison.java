@@ -133,6 +133,14 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
             return Literal.makeLiteral(BooleanValue.FALSE);
         }
 
+        if (((AtomicType)t0).isExternalType() || ((AtomicType)t1).isExternalType()) {
+            DynamicError err = new DynamicError("Cannot perform comparisons involving external objects");
+            err.setIsTypeError(true);
+            err.setErrorCode("XPTY0004");
+            err.setLocator(this);
+            throw err;
+        }
+
         BuiltInAtomicType pt0 = (BuiltInAtomicType)t0.getPrimitiveItemType();
         BuiltInAtomicType pt1 = (BuiltInAtomicType)t1.getPrimitiveItemType();
 
