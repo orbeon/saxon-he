@@ -1,18 +1,16 @@
 package net.sf.saxon.dotnet;
 
 import cli.System.Environment;
-import cli.System.Globalization.CultureInfo;
 import cli.System.Reflection.Assembly;
-import cli.System.Reflection.AssemblyName;
 import cli.System.Uri;
 import cli.System.Xml.*;
 import net.sf.saxon.AugmentedSource;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Platform;
-import net.sf.saxon.functions.JavaExtensionLibrary;
 import net.sf.saxon.functions.FunctionLibrary;
 import net.sf.saxon.functions.FunctionLibraryList;
 import net.sf.saxon.functions.JavaExtensionFunctionFactory;
+import net.sf.saxon.functions.JavaExtensionLibrary;
 import net.sf.saxon.om.NamespaceConstant;
 import net.sf.saxon.om.Validation;
 import net.sf.saxon.pull.PullProvider;
@@ -21,7 +19,7 @@ import net.sf.saxon.regex.RegularExpression;
 import net.sf.saxon.sort.CodepointCollator;
 import net.sf.saxon.sort.NamedCollation;
 import net.sf.saxon.sort.StringCollator;
-import net.sf.saxon.trans.DynamicError;
+import net.sf.saxon.trans.StaticError;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.SchemaType;
 
@@ -337,156 +335,138 @@ public class DotNetPlatform implements Platform {
      * </ul>
      */
 
-    public cli.System.Type dynamicLoad(String uri, boolean trace) throws XPathException {
-        if (uri.startsWith("clitype:")) {
-            uri = uri.substring(8);
-        } else {
-            if (trace) {
-                System.err.println("Unrecognized .NET external URI: " + uri);
+    public cli.System.Type dynamicLoad(String uri, boolean debug) throws XPathException {
+            if (uri.startsWith("clitype:")) {
+                uri = uri.substring(8);
+            } else {
+                if (debug) {
+                    System.err.println("Unrecognized .NET external URI: " + uri);
+                }
+                throw new StaticError("Unrecognized .NET external URI: " + uri);
             }
-            throw new DynamicError("Unrecognized .NET external URI: " + uri);
-        }
-        String typeName;
-        String queryParams;
-        int q = uri.indexOf('?');
-        if (q == 0 || q == uri.length()-1) {
-            if (trace) {
-                System.err.println("Misplaced '?' in " + uri);
+            String typeName;
+            String queryParams;
+            int q = uri.indexOf('?');
+            if (q == 0 || q == uri.length()-1) {
+                if (debug) {
+                    System.err.println("Misplaced '?' in " + uri);
+                }
+                throw new StaticError("Misplaced '?' in " + uri);
             }
-            throw new DynamicError("Misplaced '?' in " + uri);
-        }
-        if (q > 0) {
-            typeName = uri.substring(0, q);
-            queryParams = uri.substring(q+1);
-        } else {
-            typeName = uri;
-            queryParams = "";
-        }
-        if ("".equals(queryParams)) {
-            cli.System.Type type = cli.System.Type.GetType(typeName);
-            if (type == null && trace) {
+            if (q > 0) {
+                typeName = uri.substring(0, q);
+                queryParams = uri.substring(q+1);
+            } else {
+                typeName = uri;
+                queryParams = "";
+            }
+            if ("".equals(queryParams)) {
+                cli.System.Type type = cli.System.Type.GetType(typeName);
+                if (type == null && debug) {
+                    try {
+                        if (false) throw new cli.System.TypeLoadException();
+                        cli.System.Type type2 = cli.System.Type.GetType(typeName, true);
+                    } catch (Exception err) {
+                        System.err.println("Failed to load type " + typeName + ": " + err.getMessage());
+                        return null;
+                    } catch (cli.System.TypeLoadException err) {
+                        System.err.println("Failed to load type " + typeName + ": " + err.getMessage());
+                        return null;
+                    }
+                    System.err.println("Failed to load type " + typeName);
+                }
+                return type;
+            } else {
+//            AssemblyName aname = new AssemblyName();
+                String loadFrom = null;
+                String href = null;
+                String partialName = null;
+                String asmName = null;
+                String loc = null;
+                String ver = null;
+                String sn = null;
+                StringTokenizer tok = new StringTokenizer(queryParams, ";&");
+                while (tok.hasMoreTokens()) {
+                    String kv = tok.nextToken();
+                    int eq = kv.indexOf('=');
+                    if (eq <= 0) {
+                        if (debug) {
+                            System.err.println("Bad keyword=value pair in " + kv);
+                        }
+                        throw new StaticError("Bad keyword=value pair in " + kv);
+                    }
+                    String keyword = kv.substring(0, eq);
+                    String value = kv.substring(eq+1);
+                    if (keyword.equals("asm")) {
+                        asmName = value;
+                    } else if (keyword.equals("ver")) {
+                        ver = value;
+                    } else if (keyword.equals("loc")) {
+                        loc = value;
+                    } else if (keyword.equals("sn")) {
+                        sn = value;
+                    } else if (keyword.equals("from")) {
+                        loadFrom = value;
+                    } else if (keyword.equals("href")) {
+                        href = value;
+                    } else if (keyword.equals("partialname")) {
+                        partialName = value;
+                    } else if (debug) {
+                        System.err.println("Unrecognized keyword in URI: " + keyword + " (ignored)");
+                    }
+                }
+                Assembly asm;
                 try {
-                    if (false) throw new cli.System.TypeLoadException();
-                    cli.System.Type type2 = cli.System.Type.GetType(typeName, true);
-                } catch (Exception err) {
-                    System.err.println("Failed to load type " + typeName + ": " + err.getMessage());
-                    return null;
-                } catch (cli.System.TypeLoadException err) {
-                    System.err.println("Failed to load type " + typeName + ": " + err.getMessage());
-                    return null;
+                    if (false) throw new cli.System.IO.FileNotFoundException();
+                    if (partialName != null) {
+                        asm = Assembly.LoadWithPartialName(partialName);
+                    } else if (loadFrom != null) {
+                        asm = Assembly.LoadFrom(loadFrom);
+                    } else if (href != null) {
+                        asm = Assembly.LoadFrom(href);
+                    } else {
+                        String longName = asmName;
+                        if (ver != null) {
+                            longName += ", Version=" + ver;
+                        }
+                        if (loc != null) {
+                            longName += ", Culture=" + loc;
+                        }
+                        if (sn != null) {
+                            longName += ", PublicKeyToken=" + sn;
+                        }
+                        asm = Assembly.Load(longName);
+//                    asm = Assembly.Load(aname);
+                    }
+                    if (debug) {
+                        System.err.println("Assembly " + asm.get_FullName() + " successfully loaded");
+                        System.err.println("Assembly codebase (" +
+                                (asm.get_GlobalAssemblyCache() ? "GAC" : "local") +
+                                "): " + asm.get_CodeBase());
+                    }
+                } catch (cli.System.IO.FileNotFoundException err) {
+                    if (debug) {
+                        System.err.println("Failed to load assembly "  + uri + ": " + err.getMessage() +
+                                " (FileNotFoundException)");
+                    }
+                    throw new StaticError("Failed to load assembly " + uri + ": " + err.getMessage());
+                } catch (Throwable err) {
+                    if (debug) {
+                        System.err.println("Failed to load assembly "  + uri + ": " + err.getMessage() +
+                                " (" + err.getClass().getName() + ")");
+                    }
+                    throw new StaticError("Failed to load assembly " + uri + ": " + err.getMessage());
                 }
-                System.err.println("Failed to load type " + typeName);
+                cli.System.Type type = asm.GetType(typeName);
+                if (type == null) {
+                    if (debug) {
+                        System.err.println("Type " + typeName + " not found in assembly");
+                    }
+                    throw new StaticError("Type " + typeName + " not found in assembly");
+                }
+                return type;
             }
-            return type;
-        } else {
-            AssemblyName aname = new AssemblyName();
-            String loadFrom = null;
-            String partialName = null;
-            StringTokenizer tok = new StringTokenizer(queryParams, ";&");
-            while (tok.hasMoreTokens()) {
-                String kv = tok.nextToken();
-                int eq = kv.indexOf('=');
-                if (eq <= 0) {
-                    if (trace) {
-                        System.err.println("Bad keyword=value pair in " + kv);
-                    }
-                    throw new DynamicError("Bad keyword=value pair in " + kv);
-                }
-                String keyword = kv.substring(0, eq);
-                String value = kv.substring(eq+1);
-                if (keyword.equals("asm")) {
-                    aname.set_Name(value);
-                } else if (keyword.equals("ver")) {
-                    try {
-                        aname.set_Version(new cli.System.Version(value));
-                    } catch (Exception err) {
-                        if (trace) {
-                            System.err.println("Invalid version " + kv);
-                        }
-                        throw new DynamicError("Invalid version " + kv);
-                    }
-                } else if (keyword.equals("loc")) {
-                    try {
-                        if (!"".equals(value)) {
-                            aname.set_CultureInfo(new CultureInfo(value));
-                        }
-                    } catch (Exception err) {
-                        if (trace) {
-                            System.err.println("Invalid culture info " + kv);
-                        }
-                        throw new DynamicError("Invalid culture info " + kv);
-                    }
-                } else if (keyword.equals("sn")) {
-                    if (value.length() != 16) {
-                        if (trace) {
-                            System.err.println("Strong name must be 16 hex digits");
-                        }
-                        throw new DynamicError("Strong name must be 16 hex digits " + kv);
-                    }
-                    byte[] sn = new byte[16];
-                    String hex = "01234356789abcdefABCDEF";
-                    for (int i=0; i<8; i++) {
-                        int h1 = hex.indexOf(value.charAt(i*2));
-                        if (h1 < 0) {
-                            if (trace) {
-                                System.err.println("Invalid hex digit in strong name");
-                            }
-                            throw new DynamicError("Invalid hex digit in strong name " + kv);
-                        }
-                        if (h1 > 15) {
-                            h1 -= 6;
-                        }
-                        int h2 = hex.indexOf(value.charAt(i*2 + 1));
-                        if (h2 < 0) {
-                            if (trace) {
-                                System.err.println("Invalid hex digit in strong name");
-                            }
-                            throw new DynamicError("Invalid hex digit in strong name " + kv);
-                        }
-                        if (h2 > 15) {
-                            h2 -= 6;
-                        }
-                        sn[i] = (byte)((h1<<4 | h2) & 0xff);
-                    }
-                    aname.SetPublicKeyToken(sn);
-
-                } else if (keyword.equals("from")) {
-                    loadFrom = value;
-                } else if (keyword.equals("partialname")) {
-                    partialName = value;
-                } else if (trace) {
-                    System.err.println("Unrecognized keyword in URI: " + keyword + " (ignored)");
-                }
-            }
-            Assembly asm;
-            try {
-                if (false) throw new cli.System.IO.FileNotFoundException();
-                if (partialName != null) {
-                    asm = Assembly.LoadWithPartialName(partialName);
-                } else if (loadFrom != null) {
-                    // TODO: allow the URI to be relative to the base URI of the stylesheet
-                    asm = Assembly.LoadFrom(loadFrom);
-                } else {
-                    asm = Assembly.Load(aname);
-                }
-                if (trace) {
-                    System.err.println("Assembly + " + aname + " successfully loaded");
-                }
-            } catch (cli.System.IO.FileNotFoundException err) {
-                throw new DynamicError("Failed to load assembly " + aname + ": " + err.getMessage());
-            } catch (Throwable err) {
-                throw new DynamicError("Failed to load assembly " + aname + ": " + err.getMessage());
-            }
-            cli.System.Type type = asm.GetType(typeName);
-            if (type == null) {
-                if (trace) {
-                    System.err.println("Type " + typeName + " not found in assembly");
-                }
-                throw new DynamicError("Type " + typeName + " not found in assembly");
-            }
-            return type;
         }
-    }
 
     public SchemaType getExternalObjectType(Configuration config, String uri, String localName) {
         if (uri.equals(NamespaceConstant.DOT_NET_TYPE)) {
