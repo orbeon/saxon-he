@@ -185,7 +185,11 @@ public abstract class Emitter implements Result, Receiver
 
         if (writer instanceof OutputStreamWriter && outputProperties != null) {
             String enc = ((OutputStreamWriter)writer).getEncoding();
-            outputProperties.put(OutputKeys.ENCODING, enc);
+            outputProperties.setProperty(OutputKeys.ENCODING, enc);
+            try {
+                characterSet = CharacterSetFactory.getCharacterSet(outputProperties, getPipelineConfiguration().getController());
+                allCharactersEncodable = (characterSet instanceof UnicodeCharacterSet);
+            } catch (XPathException err) {}
         }
     }
 
