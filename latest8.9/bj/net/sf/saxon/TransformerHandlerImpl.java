@@ -95,9 +95,11 @@ public class TransformerHandlerImpl extends ReceivingContentHandler implements T
     * Get the systemId of the document
     */
 
-    public String getSystemId() {
-        return systemId;
+    public String getSystemId() {    // see bug 1706449
+         String s = super.getSystemId();
+         return (s == null ? systemId : s);
     }
+
 
     /**
     * Set the output destination of the transformation
