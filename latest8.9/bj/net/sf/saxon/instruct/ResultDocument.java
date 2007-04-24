@@ -422,7 +422,7 @@ public class ResultDocument extends Instruction {
                 validationAction,
                 schemaType);
         SequenceReceiver out = c2.getReceiver();
-
+        out.open();  // added for bug 1706429
         out.startDocument(0);
         content.process(c2);
         out.endDocument();
