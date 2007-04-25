@@ -578,7 +578,7 @@ public final class DoubleValue extends NumericValue {
             System.err.println("Sign: " + s);
             System.err.println("Exponent: " + exponent);
             System.err.println("Significand: " + m);
-            BigDecimal dec = new BigDecimal(m);
+            BigDecimal dec = BigDecimal.valueOf(m);
             if (exponent > 0) {
                 dec = dec.multiply(new BigDecimal(BigInteger.valueOf(2).pow(exponent)));
             } else {

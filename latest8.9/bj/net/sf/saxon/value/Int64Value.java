@@ -308,7 +308,7 @@ public final class Int64Value extends IntegerValue {
      */
 
     public BigDecimal getDecimalValue() {
-        return new BigDecimal(value);
+        return BigDecimal.valueOf(value);
     }
 
     /**
