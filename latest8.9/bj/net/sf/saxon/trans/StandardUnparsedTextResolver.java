@@ -91,7 +91,7 @@ public class StandardUnparsedTextResolver implements UnparsedTextURIResolver {
                             String mediaType = null;
                             int pos = contentType.indexOf(';');
                             if (pos >= 0) {
-                                mediaType = mediaType.substring(0, pos);
+                                mediaType = contentType.substring(0, pos);
                             } else {
                                 mediaType = contentType;
                             }
