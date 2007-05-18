@@ -344,7 +344,7 @@ public class XPathExpressionImpl implements XPathExpression, SortKeyEvaluator {
         }
         try {
             NodeInfo doc = null;
-            if (inputSource == null) {
+            if (inputSource != null) {
                 doc = new XPathEvaluator().setSource(new SAXSource(inputSource));
             }
             return evaluate(doc, qName);
