@@ -189,18 +189,18 @@ public final class CastableExpression extends UnaryExpression {
     }
 
     public static boolean isCastable(AtomicValue value, AtomicType targetType, XPathContext context) {
-        if (targetType instanceof BuiltInAtomicType) {
+        //if (targetType instanceof BuiltInAtomicType) {
             return !(value.convert(targetType, context, true) instanceof ValidationErrorValue);
-        } else {
-            AtomicValue prim =
-                value.convert((AtomicType)targetType.getBuiltInBaseType(), context, true);
-            if (prim instanceof ValidationErrorValue) {
-                return false;
-            }
-            AtomicValue val =
-                targetType.setDerivedTypeLabel(prim.copy(null), prim.getStringValueCS(), true);
-            return !(val instanceof ValidationErrorValue);
-        }
+        //} else {
+        //    AtomicValue prim =
+        //        value.convert((AtomicType)targetType.getBuiltInBaseType(), context, true);
+        //    if (prim instanceof ValidationErrorValue) {
+        //        return false;
+        //    }
+        //    AtomicValue val =
+        //        targetType.setDerivedTypeLabel(prim.copy(null), prim.getStringValueCS(), true);
+        //    return !(val instanceof ValidationErrorValue);
+        //}
     }
 
     /**
