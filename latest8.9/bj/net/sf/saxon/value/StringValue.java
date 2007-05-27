@@ -168,15 +168,15 @@ public class StringValue extends AtomicValue {
                 case Type.UNSIGNED_INT:
                 case Type.UNSIGNED_SHORT:
                 case Type.UNSIGNED_BYTE:
-                    if (checker != null) {
-                        for (int c=0; c<value.length(); c++) {
-                            if (value.charAt(c) == '+') {
-                                ValidationException err = new ValidationException(
-                                        "An unsigned number must not contain a plus sign");
-                                return new ValidationErrorValue(err);
-                            }
-                        }
-                    }
+                    //if (checker != null) {
+                    //    for (int c=0; c<value.length(); c++) {
+                    //        if (value.charAt(c) == '+') {
+                    //            ValidationException err = new ValidationException(
+                    //                    "An unsigned number must not contain a plus sign");
+                    //            return new ValidationErrorValue(err);
+                    //        }
+                    //    }
+                    //}
                     // fall through
                 case Type.NON_POSITIVE_INTEGER:
                 case Type.NEGATIVE_INTEGER:

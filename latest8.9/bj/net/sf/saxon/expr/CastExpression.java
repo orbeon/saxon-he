@@ -295,20 +295,20 @@ public final class CastExpression extends UnaryExpression  {
             }
             return result;
         }
-        AtomicValue result = value.convert(targetPrimitiveType, context, true);
+        AtomicValue result = value.convert(targetType, context, true);
         if (result instanceof ValidationErrorValue) {
             XPathException err = ((ValidationErrorValue)result).getException();
             String code = err.getErrorCodeLocalPart();
             dynamicError(err.getMessage(), code, context);
         }
-        if (derived) {
-            result = result.convert(targetType, context, true);
-            if (result instanceof ValidationErrorValue) {
-                XPathException err = ((ValidationErrorValue)result).getException();
-                String code = err.getErrorCodeLocalPart();
-                dynamicError(err.getMessage(), code, context);
-            }
-        }
+        //if (derived) {
+        //    result = result.convert(targetType, context, true);
+        //    if (result instanceof ValidationErrorValue) {
+        //        XPathException err = ((ValidationErrorValue)result).getException();
+        //        String code = err.getErrorCodeLocalPart();
+        //        dynamicError(err.getMessage(), code, context);
+        //    }
+        //}
         return result;
     }
 
