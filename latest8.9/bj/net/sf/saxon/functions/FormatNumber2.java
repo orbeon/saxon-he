@@ -682,7 +682,7 @@ public class FormatNumber2 extends SystemFunction implements XSLTFunction {
          */
         private void formatDecimal(BigDecimal dval, StringBuffer sb) {
             dval = dval.setScale(maxFractionPartSize, BigDecimal.ROUND_HALF_EVEN);
-            sb.append(dval.toString());
+            sb.append(DecimalValue.decimalToString(dval));
 
             int point = sb.indexOf(".");
             int intDigits;
