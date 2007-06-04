@@ -5,7 +5,6 @@ import net.sf.saxon.StandardErrorListener;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.functions.ConstructorFunctionLibrary;
 import net.sf.saxon.functions.FunctionLibrary;
-import net.sf.saxon.functions.JavaExtensionLibrary;
 import net.sf.saxon.functions.FunctionLibraryList;
 import net.sf.saxon.functions.SystemFunctionLibrary;
 import net.sf.saxon.instruct.*;
@@ -162,7 +161,7 @@ public class StaticQueryContext implements StaticContext {
             ((StandardErrorListener)errorListener).setRecoveryPolicy(Configuration.DO_NOT_RECOVER);
         }
         if (isTopLevelModule()) {
-            globalFunctionLibrary = new XQueryFunctionLibrary(config);
+            //globalFunctionLibrary = new XQueryFunctionLibrary(config);
             libraryVariables = new IntHashMap(10);
         }
         requiredContextItemType = AnyItemType.getInstance();
@@ -175,13 +174,25 @@ public class StaticQueryContext implements StaticContext {
         moduleURIResolver = config.getModuleURIResolver();
         constructionMode = config.isSchemaAware(Configuration.XQUERY) ? Validation.PRESERVE : Validation.STRIP;
         collations.setDefaultCollationName(NamespaceConstant.CODEPOINT_COLLATION_URI);
+        resetFunctionLibraries();
+        clearPassiveNamespaces();
+    }
+
+    /**
+     * Reset function libraries
+     */
+
+    private void resetFunctionLibraries() {
+        if (isTopLevelModule()) {
+            globalFunctionLibrary = new XQueryFunctionLibrary(config);
+        }
+
         functionLibraryList = new FunctionLibraryList();
         functionLibraryList.addFunctionLibrary(new SystemFunctionLibrary(SystemFunctionLibrary.XPATH_ONLY));
         functionLibraryList.addFunctionLibrary(config.getVendorFunctionLibrary());
         functionLibraryList.addFunctionLibrary(new ConstructorFunctionLibrary(config));
         if (config.isAllowExternalFunctions()) {
-            functionLibraryList.addFunctionLibrary(new JavaExtensionLibrary(config));
-            functionLibraryList.addFunctionLibrary(config.getExtensionBinder());
+            Configuration.getPlatform().addFunctionLibraries(functionLibraryList, config);
         }
         localFunctionLibraryNr = functionLibraryList.addFunctionLibrary(
                 new XQueryFunctionLibrary(config));
@@ -191,9 +202,7 @@ public class StaticQueryContext implements StaticContext {
 
         unboundFunctionLibraryNr = functionLibraryList.addFunctionLibrary(
                 new UnboundFunctionLibrary());
-
-        clearPassiveNamespaces();
-    }
+    }  
 
     /**
      * Test whether this is a "top-level" module. This is true for a main module and also for a
@@ -359,13 +368,7 @@ public class StaticQueryContext implements StaticContext {
         n.constructionMode = constructionMode;
         n.executable = executable;
         n.importers = importers;
-        n.functionLibraryList = (FunctionLibraryList)functionLibraryList.copy();
-        n.localFunctionLibraryNr = localFunctionLibraryNr;
-        n.importedFunctionLibraryNr = importedFunctionLibraryNr;
-        n.unboundFunctionLibraryNr = unboundFunctionLibraryNr;
-        n.globalFunctionLibrary = globalFunctionLibrary;
-        n.importedModuleNamespaces = new HashSet(importedModuleNamespaces);
-        n.getImportedFunctionLibrary().setImportingModule(n);
+        n.resetFunctionLibraries();
         return n;
     }
 
