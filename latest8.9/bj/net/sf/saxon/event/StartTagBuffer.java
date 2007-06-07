@@ -4,6 +4,7 @@ import net.sf.saxon.om.NamePool;
 import net.sf.saxon.om.NamespaceConstant;
 import net.sf.saxon.om.NamespaceResolver;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.type.Type;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,6 +35,7 @@ public class StartTagBuffer extends ProxyReceiver implements NamespaceResolver
     // Details of pending attribute events
 
     AttributeCollectionImpl bufferedAttributes;
+    boolean acceptAttributes;
 
     // We keep track of namespaces. The namespaces
     // array holds a list of all namespaces currently declared (organised as pairs of entries,
@@ -77,7 +79,7 @@ public class StartTagBuffer extends ProxyReceiver implements NamespaceResolver
         // Ensure that the element namespace is output, unless this is done
         // automatically by the caller (which is true, for example, for a literal
         // result element).
-
+        acceptAttributes = true;
         if ((properties & ReceiverOptions.NAMESPACE_OK) == 0) {
             namespace(getNamePool().allocateNamespaceCode(nameCode), 0);
         }
@@ -85,6 +87,14 @@ public class StartTagBuffer extends ProxyReceiver implements NamespaceResolver
     }
 
     public void namespace(int namespaceCode, int properties) throws XPathException {
+
+        if (!acceptAttributes) {
+            throw NoOpenStartTagException.makeNoOpenStartTagException(
+                    Type.NAMESPACE, getNamePool().getPrefixFromNamespaceCode(namespaceCode),
+                    getPipelineConfiguration().getController().getExecutable().getHostLanguage(),
+                    false, false);
+        }
+
         // avoid duplicates
         for (int n=0; n<countStack[depth - 1]; n++) {
             if (namespaces[namespacesSize - 1 - n] == namespaceCode) {
@@ -111,6 +121,13 @@ public class StartTagBuffer extends ProxyReceiver implements NamespaceResolver
     public void attribute(int nameCode, int typeCode, CharSequence value, int locationId, int properties)
             throws XPathException {
         // Perform namespace fixup for the attribute
+
+        if (!acceptAttributes) {
+            throw NoOpenStartTagException.makeNoOpenStartTagException(
+                    Type.ATTRIBUTE, getNamePool().getDisplayName(nameCode),
+                    getPipelineConfiguration().getController().getExecutable().getHostLanguage(),
+                    false, false);
+        }
 
         if (((properties & ReceiverOptions.NAMESPACE_OK) == 0) &&
                 NamePool.getPrefixIndex(nameCode) != 0) {	// non-null prefix
@@ -153,6 +170,7 @@ public class StartTagBuffer extends ProxyReceiver implements NamespaceResolver
                     bufferedAttributes.getLocationId(i),
                     bufferedAttributes.getProperties(i) | ReceiverOptions.NAMESPACE_OK);
         }
+        acceptAttributes = false;
         nextReceiver.startContent();
     }
 
