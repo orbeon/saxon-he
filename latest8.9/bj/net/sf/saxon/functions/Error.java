@@ -1,15 +1,17 @@
 package net.sf.saxon.functions;
-import net.sf.saxon.expr.*;
+import net.sf.saxon.expr.Expression;
+import net.sf.saxon.expr.ExpressionLocation;
+import net.sf.saxon.expr.StaticContext;
+import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NamespaceConstant;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.sxpath.XPathEvaluator;
 import net.sf.saxon.sxpath.XPathExpression;
 import net.sf.saxon.trans.DynamicError;
-import net.sf.saxon.trans.StaticError;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.Type;
 import net.sf.saxon.type.BuiltInAtomicType;
+import net.sf.saxon.type.Type;
 import net.sf.saxon.value.*;
 
 /**
@@ -22,8 +24,8 @@ public class Error extends SystemFunction {
     * Simplify and validate.
     */
 
-     public Expression simplify(StaticContext env) throws StaticError {
-        return this;
+     public Expression simplify(StaticContext env) throws XPathException {
+        return super.simplify(env);
     }
 
     /**
