@@ -273,6 +273,7 @@ public class SimpleContentConstructor extends Expression {
                     sb.append(sep);
                 }
                 first = false;
+                prevText = false;
                 sb.append(item.getStringValueCS());
             }
         }
