@@ -7,6 +7,7 @@ import cli.System.Xml.*;
 import net.sf.saxon.AugmentedSource;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Platform;
+import net.sf.saxon.Version;
 import net.sf.saxon.functions.FunctionLibrary;
 import net.sf.saxon.functions.FunctionLibraryList;
 import net.sf.saxon.functions.JavaExtensionFunctionFactory;
@@ -50,7 +51,7 @@ public class DotNetPlatform implements Platform {
     public final static String getSaxonSaFullyQualifiedClassName() {
         return "com.saxonica.validate.SchemaAwareConfiguration, " +
                 "saxon8sa, " +
-                "Version=8.9.0.2, " +
+                "Version=" + Version.getProductVersion() + ", " +
                 "Culture=neutral, " +
                 "PublicKeyToken=e1fdd002d5083fe6";
     }

@@ -1535,6 +1535,7 @@ public class Controller extends Transformer implements InstructionInfoProvider {
             if (close) {
                 ((AugmentedSource)source).close();
             }
+            principalResultURI = null;
         }
     }
 
