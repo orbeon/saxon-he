@@ -157,7 +157,7 @@ namespace Saxon.Api {
         /// The value is the string "yes" or "no".</summary>
 
         public static readonly QName OMIT_XML_DECLARATION =
-            new QName("", "omi-xml-declaration");
+            new QName("", "omit-xml-declaration");
 
         /// <summary>QName identifying the serialization parameter "standalone".
         /// The value is the string "yes" or "no" or "omit".</summary>
