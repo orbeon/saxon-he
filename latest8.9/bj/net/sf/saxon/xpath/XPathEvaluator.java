@@ -261,7 +261,7 @@ public class XPathEvaluator implements XPath {
      */
 
     public void setBackwardsCompatible(boolean compatible) {
-        staticContext.setBackwardsCompatibilityMode(true);
+        staticContext.setBackwardsCompatibilityMode(compatible);
     }
 
     /**
