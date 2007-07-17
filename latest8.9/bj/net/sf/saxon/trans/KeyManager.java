@@ -418,8 +418,13 @@ public class KeyManager implements Serializable {
         }
         List definitions = getKeyDefinitions(keyNameFingerprint);
         if (definitions == null) {
-            throw new DynamicError("Key " + context.getNamePool().getDisplayName(keyNameFingerprint) +
-            							" has not been defined", "XTDE1260", context);
+            String keyName;
+            try {
+                keyName = context.getNamePool().getDisplayName(keyNameFingerprint);
+            } catch (Exception err) {
+                keyName = "" + keyNameFingerprint;
+            }
+            throw new DynamicError("Key " + keyName + " has not been defined", "XTDE1260", context);
         }
         KeyDefinition definition = (KeyDefinition)definitions.get(0);
                // the itemType and collation and BC mode will be the same for all keys with the same name
