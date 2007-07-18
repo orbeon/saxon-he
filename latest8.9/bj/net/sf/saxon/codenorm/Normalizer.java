@@ -148,7 +148,7 @@ public class Normalizer {
             for (int j = 0; j < buffer.length();) {
                 //ch = UTF16.charAt(buffer, j);
                 ch = buffer.charAt(j++);
-                if (XMLChar.isHighSurrogate(ch32)) {
+                if (XMLChar.isHighSurrogate(ch)) {
                     char low = buffer.charAt(j++);
                     ch = XMLChar.supplemental((char)ch, low);
                 }
@@ -163,7 +163,7 @@ public class Normalizer {
                         ch2 = target.charAt(k-1);
                         if (XMLChar.isSurrogate(ch2)) {
                             k--;
-                            char high = buffer.charAt(k-1);
+                            char high = target.charAt(k-1);
                             ch2 = XMLChar.supplemental(high, (char)ch2);
                         }
                         if (data.getCanonicalClass(ch2) <= chClass) break;
