@@ -219,9 +219,9 @@ public final class PositionRange extends Expression {
     * Get the dependencies
     */
 
-    public int getIntrinsicDependencies() {
-        return StaticProperty.DEPENDS_ON_POSITION;
-    }
+    //public int getIntrinsicDependencies() {
+    //    return StaticProperty.DEPENDS_ON_POSITION;
+    //}
 
     /**
      * Get the immediate sub-expressions of this expression. Default implementation
