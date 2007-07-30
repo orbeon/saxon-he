@@ -1,5 +1,6 @@
 package net.sf.saxon.instruct;
 import net.sf.saxon.Controller;
+import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.event.*;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.om.Item;
@@ -118,32 +119,55 @@ public abstract class ElementCreator extends ParentNodeConstructor {
             TypeHierarchy th = env.getConfiguration().getTypeHierarchy();
             Expression[] components = ((Block)content).getChildren();
             boolean foundChild = false;
+            boolean foundPossibleChild = false;
             int childNodeKinds = (1<<Type.TEXT | 1<<Type.ELEMENT | 1<<Type.COMMENT | 1<<Type.PROCESSING_INSTRUCTION);
             for (int i=0; i<components.length; i++) {
-                // Need to ignore a zero-length text node, which is included to prevent space-separation
-                // in a construct like <a>{@x}{@y}</b>
-                if (components[i] instanceof ValueOf &&
-                        ((ValueOf)components[i]).select instanceof StringLiteral &&
-                        ((StringLiteral)((ValueOf)components[i]).select).getStringValue().equals("")) {
-                    continue;
-                }
                 ItemType it = components[i].getItemType(th);
                 if (it instanceof NodeTest) {
+                    boolean maybeEmpty = Cardinality.allowsZero(components[i].getCardinality());
                     int possibleNodeKinds = ((NodeTest)it).getNodeKindMask();
-                    if ((possibleNodeKinds & ~childNodeKinds) == 0) {
-                        foundChild = true;
-                    } else if (foundChild && possibleNodeKinds == 1<<Type.ATTRIBUTE) {
+                    if ((possibleNodeKinds & 1<<Type.TEXT) != 0) {
+                        // the text node might turn out to be zero-length. If that's a possibility,
+                        // then we only issue a warning. Also, we need to completely ignore a known
+                        // zero-length text node, which is included to prevent space-separation
+                        // in an XQuery construct like <a>{@x}{@y}</b>
+                        if (components[i] instanceof ValueOf &&
+                                ((ValueOf)components[i]).select instanceof StringLiteral) {
+                            String value = (((StringLiteral)((ValueOf)components[i]).select).getStringValue());
+                            if (value.length() == 0) {
+                                // continue;  // not an error
+                            } else {
+                                foundChild = true;
+                            }
+                        } else {
+                            foundPossibleChild = true;
+                        }
+                    } else if ((possibleNodeKinds & ~childNodeKinds) == 0) {
+                        if (maybeEmpty) {
+                            foundPossibleChild = true;
+                        } else {
+                            foundChild = true;
+                        }
+                    } else if (foundChild && possibleNodeKinds == 1<<Type.ATTRIBUTE && !maybeEmpty) {
                         DynamicError de = new DynamicError(
                                 "Cannot create an attribute node after creating a child of the containing element");
                         de.setErrorCode(isXSLT() ? "XTDE0410" : "XQTY0024");
-                        de.setLocator(this);
+                        de.setLocator(components[i]);
                         throw de;
-                    } else if (foundChild && possibleNodeKinds == 1<<Type.NAMESPACE) {
+                    } else if (foundChild && possibleNodeKinds == 1<<Type.NAMESPACE && !maybeEmpty) {
                         DynamicError de = new DynamicError(
                                 "Cannot create a namespace node after creating a child of the containing element");
                         de.setErrorCode(isXSLT() ? "XTDE0410" : "XQTY0024");
-                        de.setLocator(this);
+                        de.setLocator(components[i]);
                         throw de;
+                    } else if ((foundChild ||foundPossibleChild) && possibleNodeKinds == 1<<Type.ATTRIBUTE) {
+                        env.issueWarning(
+                                "Creating an attribute here will fail if previous instructions create any children",
+                                components[i]);
+                    } else if ((foundChild ||foundPossibleChild) && possibleNodeKinds == 1<<Type.NAMESPACE) {
+                        env.issueWarning(
+                                "Creating a namespace node here will fail if previous instructions create any children",
+                                components[i]);
                     }
                 }
             }
