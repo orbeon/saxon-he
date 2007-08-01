@@ -682,8 +682,8 @@ public class FormatNumber2 extends SystemFunction implements XSLTFunction {
          */
         private void formatDecimal(BigDecimal dval, StringBuffer sb) {
             dval = dval.setScale(maxFractionPartSize, BigDecimal.ROUND_HALF_EVEN);
-            sb.append(DecimalValue.decimalToString(dval));
-
+            sb.append(DecimalValue.decimalToString(dval).toString());
+                                      // for JDK 1.4 - see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6409414
             int point = sb.indexOf(".");
             int intDigits;
             if (point >= 0) {
