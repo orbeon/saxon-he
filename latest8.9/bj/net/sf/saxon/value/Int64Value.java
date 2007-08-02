@@ -571,15 +571,19 @@ public final class Int64Value extends IntegerValue {
     public IntegerValue mod(IntegerValue other) throws XPathException {
         // if either of the values is large, we use BigInteger arithmetic to be on the safe side
         if (other instanceof Int64Value) {
-            long topa = (value >> 32) & 0xffffffff;
+            long topa = value >> 32;
             if (topa != 0 && topa != 0xffffffff) {
                 return new BigIntegerValue(value).mod(new BigIntegerValue(((Int64Value)other).value));
             }
-            long topb = (((Int64Value)other).value >> 32) & 0xffffffff;
+            long quotient = ((Int64Value) other).value;
+            if (quotient == 0) {
+                throw new DynamicError("Integer modulo zero", "FOAR0001");
+            }
+            long topb = quotient >> 32;
             if (topb != 0 && topb != 0xffffffff) {
                 return new BigIntegerValue(value).mod(new BigIntegerValue(((Int64Value)other).value));
             }
-            return makeIntegerValue(value % ((Int64Value) other).value);
+            return makeIntegerValue(value % quotient);
         } else {
             return new BigIntegerValue(value).mod(other);
         }
