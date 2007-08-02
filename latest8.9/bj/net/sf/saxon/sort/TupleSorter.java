@@ -60,14 +60,16 @@ public class TupleSorter extends Expression {
 
     public Expression typeCheck(StaticContext env, ItemType contextItemType) throws XPathException {
         base = base.typeCheck(env, contextItemType);
-        comparators = new AtomicComparer[sortKeys.length];
-        final XPathContext context = env.makeEarlyEvaluationContext();
-        for (int i=0; i<sortKeys.length; i++) {
-            // sort key doesn't get a new context in XQuery
-            sortKeys[i].getSortKey().typeCheck(env, contextItemType);
-            comparators[i] = sortKeys[i].makeComparator(context);
-            // now lose the sort key expression, which we only held on to for its type information
-            sortKeys[i].setSortKey(new StringLiteral(StringValue.EMPTY_STRING));
+        if (comparators == null) {
+            comparators = new AtomicComparer[sortKeys.length];
+            final XPathContext context = env.makeEarlyEvaluationContext();
+            for (int i=0; i<sortKeys.length; i++) {
+                // sort key doesn't get a new context in XQuery
+                sortKeys[i].getSortKey().typeCheck(env, contextItemType);
+                comparators[i] = sortKeys[i].makeComparator(context);
+                // now lose the sort key expression, which we only held on to for its type information
+                sortKeys[i].setSortKey(new StringLiteral(StringValue.EMPTY_STRING));
+            }
         }
         return this;
     }
