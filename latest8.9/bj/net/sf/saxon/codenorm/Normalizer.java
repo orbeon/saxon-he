@@ -160,14 +160,15 @@ public class Normalizer {
 
                     int ch2;
                     while (k > 0) {
+                        int step = 1;
                         ch2 = target.charAt(k-1);
                         if (XMLChar.isSurrogate(ch2)) {
-                            k--;
-                            char high = target.charAt(k-1);
+                            step = 2;
+                            char high = target.charAt(k-2);
                             ch2 = XMLChar.supplemental(high, (char)ch2);
                         }
                         if (data.getCanonicalClass(ch2) <= chClass) break;
-                        k--;
+                        k-=step;
                     }
 //                    for (; k > 0; k -= (ch2<65536 ? 1 : 2)) {
 //                        ch2 = UTF16.charAt(target, k-1);
