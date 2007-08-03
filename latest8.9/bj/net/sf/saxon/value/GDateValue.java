@@ -276,7 +276,8 @@ public abstract class GDateValue extends CalendarValue {
 
     public int hashCode() {
         // Equality must imply same hashcode, but not vice-versa
-        return getCalendar().getTime().hashCode() + getTimezoneInMinutes();
+        return toDateTime().hashCode();
+        //return getCalendar().getTime().hashCode() + getTimezoneInMinutes();
     }
 }
 
