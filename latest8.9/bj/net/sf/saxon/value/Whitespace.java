@@ -67,6 +67,7 @@ public class Whitespace {
                         case '\r':
                         case '\t':
                             sb.append(' ');
+                            break;
                         default:
                             sb.append(c);
                     }
