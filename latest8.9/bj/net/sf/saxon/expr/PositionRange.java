@@ -183,7 +183,11 @@ public final class PositionRange extends Expression {
     public SequenceIterator makePositionIterator(SequenceIterator base, XPathContext c) throws XPathException {
         int low, high;
         NumericValue min = (NumericValue)minPosition.evaluateItem(c);
-        low = (int)min.longValue();
+        if (min.isWholeNumber()) {
+            low = (int)min.longValue();
+        } else {
+            low = (int)min.ceiling().longValue();
+        }
         if (maxPosition == null) {
             if (maxSameAsMin) {
                 high = low;
