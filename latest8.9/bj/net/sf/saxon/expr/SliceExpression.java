@@ -72,6 +72,27 @@ public class SliceExpression extends Expression {
         return base.getCardinality() | StaticProperty.ALLOWS_ZERO;
     }
 
+
+    /**
+     * Compute the dependencies of an expression, as the union of the
+     * dependencies of its subexpressions. (This is overridden for path expressions
+     * and filter expressions, where the dependencies of a subexpression are not all
+     * propogated). This method should be called only once, to compute the dependencies;
+     * after that, getDependencies should be used.
+     *
+     * @return the depencies, as a bit-mask
+     */
+
+    public int computeDependencies() {
+        return base.getDependencies() |
+                // not all dependencies in the step matter, because the context node, etc,
+                // are not those of the outer expression
+                (range.getDependencies() &
+                (StaticProperty.DEPENDS_ON_XSLT_CONTEXT |
+                    StaticProperty.DEPENDS_ON_LOCAL_VARIABLES |
+                    StaticProperty.DEPENDS_ON_USER_FUNCTIONS));
+    }
+
     public Iterator iterateSubExpressions() {
         return new PairIterator(base, range);
     }

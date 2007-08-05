@@ -182,7 +182,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
             return p;
         }
 
-        evaluationMode = ExpressionTool.lazyEvaluationMode(sequence);
+        evaluationMode = isIndexedVariable() ? ExpressionTool.MAKE_MEMO_CLOSURE : ExpressionTool.lazyEvaluationMode(sequence);
         return this;
     }
 
