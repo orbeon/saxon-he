@@ -702,6 +702,12 @@ public class FormatNumber2 extends SystemFunction implements XSLTFunction {
                 }
             } else {
                 intDigits = sb.length();
+                if (minFractionPartSize > 0) {
+                    sb.append('.');
+                    for (int i=0; i<minFractionPartSize; i++) {
+                        sb.append('0');
+                    }
+                }
             }
             for (int i=0; i<(minWholePartSize - intDigits); i++) {
                 sb.insert(0, '0');
