@@ -196,7 +196,7 @@ public final class PositionRange extends Expression {
             }
         } else {
             NumericValue max = (NumericValue)maxPosition.evaluateItem(c);
-            high = (int)max.longValue();
+            high = (int)max.longValue(); // truncating towards zero is OK for the max
         }
         return PositionIterator.make(base, low, high);
     }
