@@ -152,21 +152,21 @@ public final class PathExpression extends Expression implements ContextMappingFu
             return start;
         }
 
-        // Remove a redundant "." in the middle of a path expression
+        // Remove a redundant "." in the middle of a path expression [removed because incorrect: see test qxmp331]
 
-        if (step instanceof PathExpression && ((PathExpression)step).getFirstStep() instanceof ContextItemExpression) {
-            PathExpression p2 = new PathExpression(start, ((PathExpression)step).getRemainingSteps());
-            p2.setLocationId(getLocationId());
-            p2.setParentExpression(getParentExpression());
-            return p2;
-        }
+        //if (step instanceof PathExpression && ((PathExpression)step).getFirstStep() instanceof ContextItemExpression) {
+        //    PathExpression p2 = new PathExpression(start, ((PathExpression)step).getRemainingSteps());
+        //    p2.setLocationId(getLocationId());
+        //    p2.setParentExpression(getParentExpression());
+        //    return p2;
+        //}
 
-        if (start instanceof PathExpression && ((PathExpression)start).getLastStep() instanceof ContextItemExpression) {
-            PathExpression p2 = new PathExpression(((PathExpression)start).getLeadingSteps(), step);
-            p2.setLocationId(getLocationId());
-            p2.setParentExpression(getParentExpression());
-            return p2;
-        }
+        //if (start instanceof PathExpression && ((PathExpression)start).getLastStep() instanceof ContextItemExpression) {
+        //    PathExpression p2 = new PathExpression(((PathExpression)start).getLeadingSteps(), step);
+        //    p2.setLocationId(getLocationId());
+        //    p2.setParentExpression(getParentExpression());
+        //    return p2;
+        //}
 
         // the expression /.. is sometimes used to represent the empty node-set
 
