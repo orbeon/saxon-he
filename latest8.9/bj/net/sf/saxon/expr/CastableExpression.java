@@ -85,7 +85,7 @@ public final class CastableExpression extends UnaryExpression {
 
         final TypeHierarchy th = env.getConfiguration().getTypeHierarchy();
         if (!CastExpression.isPossibleCast(
-                operand.getItemType(th).getAtomizedItemType().getFingerprint(),
+                operand.getItemType(th).getAtomizedItemType().getPrimitiveType(),
                 targetType.getPrimitiveType())) {
             return Literal.makeLiteral(BooleanValue.FALSE);
         }
