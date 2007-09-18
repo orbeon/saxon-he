@@ -42,7 +42,7 @@ public final class WhitespaceTextImpl extends TinyNodeImpl {
      */
 
     public static CharSequence getStringValue(TinyTree tree, int nodeNr) {
-        long value = ((long)tree.alpha[nodeNr]<<32) | (tree.beta[nodeNr]);
+        long value = ((long)tree.alpha[nodeNr]<<32) | ((long)tree.beta[nodeNr] & 0xffffffffL);
         return new CompressedWhitespace(value);
     }
 
