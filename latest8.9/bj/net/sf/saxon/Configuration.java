@@ -2440,7 +2440,7 @@ public class Configuration implements Serializable, SourceResolver {
             }
             config.setXIncludeAware(((Boolean)value).booleanValue());
 
-        } else if (name.equals(FeatureKeys.XML_VERSION)) {
+        } else if (name.equals(FeatureKeys.XML_VERSION) || name.equals("http://saxon.sf.bet/feature/xml-version")) {
             if (!(value instanceof String && (value.equals("1.0") || value.equals("1.1")))) {
                 throw new IllegalArgumentException(
                         "XML_VERSION value must be \"1.0\" or \"1.1\" as a String");
@@ -2524,6 +2524,9 @@ public class Configuration implements Serializable, SourceResolver {
 
         } else if (name.equals(FeatureKeys.XINCLUDE)) {
         	return Boolean.valueOf(config.isXIncludeAware());
+
+        } else if (name.equals(FeatureKeys.XML_VERSION)) {
+        	return (config.getXMLVersion() == XML10 ? "1.0" : "1.1");            
 
         } else {
 	        throw new IllegalArgumentException("Unknown attribute " + name);

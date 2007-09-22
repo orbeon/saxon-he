@@ -215,7 +215,7 @@ public class FeatureKeys {
      */
 
     public static final String XML_VERSION =
-            "http://saxon.sf.bet/feature/xml-version";
+            "http://saxon.sf.net/feature/xml-version";
 
 
     private FeatureKeys() {
