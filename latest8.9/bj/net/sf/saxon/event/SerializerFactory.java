@@ -195,6 +195,8 @@ public class SerializerFactory implements Serializable {
     protected Receiver createHTMLSerializer(
             Emitter emitter, Properties props, PipelineConfiguration pipe,
             CharacterMapExpander characterMapExpander, ProxyReceiver normalizer) throws XPathException {
+        // Ensure that the XHTML namespace is registered in the NamePool. Without this, the meta-tag insertion can fail
+        pipe.getConfiguration().getNamePool().allocateCodeForURI(NamespaceConstant.XHTML);
         Receiver target;
         target = emitter;
         if (!"no".equals(props.getProperty(OutputKeys.INDENT))) {
