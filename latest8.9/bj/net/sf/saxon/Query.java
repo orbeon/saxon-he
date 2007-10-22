@@ -170,7 +170,11 @@ public class Query {
                             badUsage(name, "No ModuleURIResolver class");
                         }
                         String r = args[i++];
-                        config.setModuleURIResolver(r);
+                        Object mr = config.getInstance(r, null);
+                        if (!(mr instanceof ModuleURIResolver)) {
+                            badUsage(name, r + " is not a ModuleURIResolver");
+                        }
+                        staticEnv.setModuleURIResolver((ModuleURIResolver)mr);
                     } else if (args[i].equals("-noext")) {
                         i++;
                         config.setAllowExternalFunctions(false);
@@ -364,7 +368,7 @@ public class Query {
                     String q = queryFileName.substring(1, queryFileName.length() - 1);
                     exp = staticEnv.compileQuery(q);
                 } else if (useURLs || queryFileName.startsWith("http:") || queryFileName.startsWith("file:")) {
-                    ModuleURIResolver resolver = config.getModuleURIResolver();
+                    ModuleURIResolver resolver = staticEnv.getModuleURIResolver();
                     String[] locations = {queryFileName};
                     Source[] sources = resolver.resolve(null, null, locations);
                     if (sources.length != 1 || !(sources[0] instanceof StreamSource)) {
