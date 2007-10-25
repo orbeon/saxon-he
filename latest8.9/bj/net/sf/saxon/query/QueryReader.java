@@ -297,7 +297,7 @@ public class QueryReader {
         String uri = env.getNamePool().getURI(fingerprint);
         if (uri.equals(NamespaceConstant.SCHEMA)) {
             return;
-        } else if (uri.equals(NamespaceConstant.ANONYMOUS)) {
+        } else if (uri.equals(NamespaceConstant.ANONYMOUS) || uri.equals(NamespaceConstant.JAVA_TYPE)) {
             return;
         } if (env.isImportedSchema(uri)) {
             return;   // schema namespace is imported in this module
