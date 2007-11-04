@@ -190,6 +190,19 @@ public class Executable implements Serializable {
     }
 
     /**
+     * Iterate over all the named templates defined in this Executable
+     * @return an iterator, the items returned being of class {@link net.sf.saxon.instruct.Template}
+     */
+
+    public Iterator iterateNamedTemplates() {
+        if (namedTemplateTable == null) {
+            return Collections.EMPTY_LIST.iterator();
+        } else {
+            return namedTemplateTable.values().iterator();
+        }
+    }
+
+    /**
      * Get the library containing all the in-scope functions in the static context
      *
      * @return the function libary
