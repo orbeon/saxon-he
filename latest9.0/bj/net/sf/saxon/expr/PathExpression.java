@@ -661,7 +661,7 @@ public final class PathExpression extends Expression implements ContextMappingFu
 
         if (!Cardinality.allowsMany(start.getCardinality()) &&
                 (step instanceof AxisExpression)) {
-            return !Axis.isForwards[((AxisExpression) step).getAxis()];
+            return Axis.isReverse[((AxisExpression) step).getAxis()];
         }
 
         if (!(start instanceof AxisExpression)) {
