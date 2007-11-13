@@ -278,7 +278,7 @@ public class DocumentBuilder {
             as.setStripSpace(whitespacePolicy.ordinal());
         }
         as.setLineNumbering(lineNumbering);
-        if (source.getSystemId() == null) {
+        if (source.getSystemId() == null && baseURI != null) {
             source.setSystemId(baseURI.toString());
         }
         try {
