@@ -87,8 +87,10 @@ public class DotNetRegularExpression implements RegularExpression {
      */
 
     public boolean matches(CharSequence input) {
-        Match m = pattern.Match(input.toString());
-        return (m.get_Success() && m.get_Length() == input.length());
+        // We rely on the fact that this method is only used for the XML Schema pattern facet, and
+        // the regular expressions are preprocessed in that case to add implicit anchoring. The method
+        // is also used to test if the pattern matches an empty string, which is OK.
+        return pattern.IsMatch(input.toString());
     }
 
     /**

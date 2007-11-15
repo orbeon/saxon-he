@@ -142,7 +142,11 @@ public class DotNetRegexTranslator extends SurrogateRegexTranslator {
         advance();
         translateTop();
         //System.err.println("Output regex: " + FastStringBuffer.diagnosticPrint(result));
-        return result.toString();
+        if (xpath) {
+            return result.toString();
+        } else {
+            return "^(?:" + result.toString() + ")$"; // anchored for the XML Schema case
+        }
     }
 
     /**
