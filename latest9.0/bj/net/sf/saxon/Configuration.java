@@ -1,6 +1,6 @@
 package net.sf.saxon;
 
-//  //import net.sf.saxon.dotnet.DotNetPlatform;
+/*DOTNETONLY*/  //import net.sf.saxon.dotnet.DotNetPlatform;
 import net.sf.saxon.event.*;
 import net.sf.saxon.expr.Optimizer;
 import net.sf.saxon.expr.XPathContext;
@@ -230,10 +230,10 @@ public class Configuration implements Serializable, SourceResolver {
 
         /*JAVAONLY*/    platform = JavaPlatform.getInstance();
 
-        // /*JAVAONLY*/  if (System.getProperty("java.vendor").equals("Jeroen Frijters")) {
+        /*DOTNETONLY*/ /*JAVAONLY*/  if (System.getProperty("java.vendor").equals("Jeroen Frijters")) {
            //System.err.println("Call to create .NET platform currently disabled in Configuration.java (needed for JDK1.4)");
-        //      platform = DotNetPlatform.getInstance();
-        // /*JAVAONLY*/ }
+        /*DOTNETONLY*/      platform = DotNetPlatform.getInstance();
+        /*DOTNETONLY*/ /*JAVAONLY*/ }
 //        System.err.println(System.getProperty("java.vendor"));
 //        System.err.println(platform.getClass().getName());
 
