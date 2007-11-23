@@ -1405,17 +1405,21 @@ public abstract class StyleElement extends ElementWithAttributes
 
         Expression result = Literal.makeEmptySequence();
         int locationId = allocateLocationId(getSystemId(), getLineNumber());
+        NodeInfo lookahead = (NodeInfo)iter.next();
         while (true) {
             int lineNumber = getLineNumber();
-            NodeInfo node = (NodeInfo)iter.next();
+            NodeInfo node = lookahead;
             if (node == null) {
                 return result;
             }
+            lookahead = (NodeInfo)iter.next();
             if (node instanceof StyleElement) {
                 lineNumber = node.getLineNumber();  // this is to get a line number for the next text node
             }
-            if (node.getNodeKind() == Type.TEXT) {
+            if (node.getNodeKind() == Type.TEXT &&
+                    !(lookahead instanceof XSLParam || lookahead instanceof XSLSort)) {
                 // handle literal text nodes by generating an xsl:value-of instruction
+                // but skip whitespace text nodes that have an xsl:param or xsl:sort following-sibling
                 ValueOf text = new ValueOf(new StringLiteral(node.getStringValue()), false, false);
                 text.setLocationId(allocateLocationId(getSystemId(), lineNumber));
                 result = Block.makeBlock(result, text);
