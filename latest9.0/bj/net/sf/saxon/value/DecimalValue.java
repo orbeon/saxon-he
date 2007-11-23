@@ -464,7 +464,7 @@ public final class DecimalValue extends NumericValue {
 
     public boolean isWholeNumber() {
         return value.scale()==0 ||
-               value.equals(value.setScale(0, BigDecimal.ROUND_DOWN));
+               value.compareTo(value.setScale(0, BigDecimal.ROUND_DOWN)) == 0;
     }
 
     /**
