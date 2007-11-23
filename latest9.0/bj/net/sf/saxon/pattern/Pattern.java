@@ -8,6 +8,7 @@ import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.event.LocationProvider;
 import net.sf.saxon.Configuration;
+import net.sf.saxon.style.ExpressionContext;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -127,6 +128,17 @@ public abstract class Pattern implements PatternFinder, Serializable, Container 
 
     public Iterator iterateSubExpressions() {
         return Collections.EMPTY_LIST.iterator();
+    }
+
+    /**
+     * Allocate slots to any variables used within the pattern
+     * @param env the static context in the XSLT stylesheet
+     * @param nextFree the next slot that is free to be allocated
+     * @return the next slot that is free to be allocated
+     */
+
+    public int allocateSlots(ExpressionContext env, int nextFree) {
+        return nextFree;
     }
 
     /**

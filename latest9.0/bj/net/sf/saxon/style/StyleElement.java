@@ -1057,11 +1057,11 @@ public abstract class StyleElement extends ElementWithAttributes
      * @param pattern the pattern whose slots are to be allocated
      */
 
-    public void allocateSlots(Pattern pattern) {
-        if (pattern instanceof LocationPathPattern) {
-            ((LocationPathPattern)pattern).allocateSlots((ExpressionContext)getStaticContext(), 0);
-        }
-    }
+//    public void allocateSlots(Pattern pattern) {
+//        if (pattern instanceof LocationPathPattern) {
+//            ((LocationPathPattern)pattern).allocateSlots((ExpressionContext)getStaticContext(), 0);
+//        }
+//    }
 
     /**
      * Allocate space for range variables within predicates in the match pattern. The xsl:template
@@ -1075,7 +1075,8 @@ public abstract class StyleElement extends ElementWithAttributes
      */
     
     public void allocatePatternSlots(Pattern match, SlotManager frame) {
-        allocateSlots(match);
+        //allocateSlots(match);
+        match.allocateSlots((ExpressionContext)getStaticContext(), 0);
         int highWater = frame.getNumberOfVariables();
         getContainingStylesheet().allocatePatternSlots(highWater);
     }

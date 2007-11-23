@@ -6,6 +6,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.instruct.Executable;
+import net.sf.saxon.style.ExpressionContext;
 
 /**
 * A pattern formed as the union (or) of two other patterns
@@ -75,6 +76,19 @@ public class UnionPattern extends Pattern {
         p1.setOriginalText(pattern);
         p2.setOriginalText(pattern);
 	}
+
+    /**
+     * Allocate slots to any variables used within the pattern
+     * @param env the static context in the XSLT stylesheet
+     * @param nextFree the next slot that is free to be allocated
+     * @return the next slot that is free to be allocated
+     */
+
+    public int allocateSlots(ExpressionContext env, int nextFree) {
+        nextFree = p1.allocateSlots(env, nextFree);
+        nextFree = p2.allocateSlots(env, nextFree);
+        return nextFree;
+    }
 
     /**
     * Determine if the supplied node matches the pattern
