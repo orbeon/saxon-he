@@ -1,9 +1,7 @@
 package net.sf.saxon.instruct;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
-import net.sf.saxon.event.Receiver;
-import net.sf.saxon.event.ReceiverOptions;
-import net.sf.saxon.event.TreeReceiver;
+import net.sf.saxon.event.*;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -11,6 +9,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.TypeHierarchy;
+import net.sf.saxon.type.Type;
 
 import javax.xml.transform.OutputKeys;
 import java.util.ArrayList;
@@ -179,7 +178,8 @@ public class Message extends Instruction {
         Controller controller = context.getController();
         Receiver emitter = controller.getMessageEmitter();
 
-        TreeReceiver rec = new TreeReceiver(emitter);
+        SequenceReceiver rec = new TreeReceiver(emitter);
+        rec = new AttributeMasker(rec);
 
         XPathContext c2 = context.newMinorContext();
         c2.setOrigin(this);
@@ -234,6 +234,57 @@ public class Message extends Instruction {
     public void explain(ExpressionPresenter out) {
         out.startElement("xslMessage");
         out.endElement();
+    }
+
+    private static class AttributeMasker extends ProxyReceiver {
+        private boolean contentStarted = true;
+
+        public AttributeMasker(SequenceReceiver next) {
+            setPipelineConfiguration(next.getPipelineConfiguration());
+            setUnderlyingReceiver(next);
+        }
+
+        public void startElement(int nameCode, int typeCode, int locationId, int properties) throws XPathException {
+            contentStarted = false;
+            super.startElement(nameCode, typeCode, locationId, properties);
+        }
+
+        public void startContent() throws XPathException {
+            contentStarted = true;
+            super.startContent();
+        }
+
+
+        public void attribute(int nameCode, int typeCode, CharSequence value, int locationId, int properties)
+                throws XPathException {
+            if (contentStarted) {
+                String attName = getNamePool().getDisplayName(nameCode);
+                processingInstruction("attribute", "name=\"" + attName + "\" value=\"" + value + "\"", 0, 0);
+            } else {
+                super.attribute(nameCode, typeCode, value, locationId, properties);
+            }
+        }
+
+        public void namespace(int namespaceCode, int properties) throws XPathException {
+            if (contentStarted) {
+                String prefix = getNamePool().getPrefixFromNamespaceCode(namespaceCode);
+                String uri = getNamePool().getURIFromNamespaceCode(namespaceCode);
+                processingInstruction("namespace", "prefix=\"" + prefix + "\" uri=\"" + uri + "\"", 0, 0);
+            } else {
+                super.namespace(namespaceCode, properties);
+            }
+        }
+
+        public void append(Item item, int locationId, int copyNamespaces) throws XPathException {
+            if (item instanceof NodeInfo) {
+                int kind = ((NodeInfo)item).getNodeKind();
+                if (kind == Type.ATTRIBUTE || kind == Type.NAMESPACE) {
+                    ((NodeInfo)item).copy(this, NodeInfo.NO_NAMESPACES, false, 0);
+                    return;
+                }
+            }
+            ((SequenceReceiver)nextReceiver).append(item, locationId, copyNamespaces);
+        }
     }
 }
 //
