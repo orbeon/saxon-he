@@ -1,4 +1,5 @@
 package net.sf.saxon.dotnet;
+
 import cli.System.Xml.*;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.PipelineConfiguration;
@@ -9,8 +10,8 @@ import net.sf.saxon.trans.XPathException;
 
 
 /**
-  * DotNetDomBuilder is a Receiver that constructs an XmlDocument, the .NET implementation of a DOM
-  */
+ * DotNetDomBuilder is a Receiver that constructs an XmlDocument, the .NET implementation of a DOM
+ */
 
 public class DotNetDomBuilder implements Receiver {
 
@@ -21,8 +22,8 @@ public class DotNetDomBuilder implements Receiver {
     protected XmlDocument document;
 
     /**
-    * Set the namePool in which all name codes can be found
-    */
+     * Set the namePool in which all name codes can be found
+     */
 
     public void setPipelineConfiguration(PipelineConfiguration pipe) {
         this.pipe = pipe;
@@ -30,32 +31,33 @@ public class DotNetDomBuilder implements Receiver {
     }
 
     /**
-    * Get the pipeline configuration used for this document
-    */
+     * Get the pipeline configuration used for this document
+     */
 
     public PipelineConfiguration getPipelineConfiguration() {
         return pipe;
     }
 
     /**
-    * Get the configuration used for this document
-    */
+     * Get the configuration used for this document
+     * @return the Saxon Configuration object
+     */
 
     public Configuration getConfiguration() {
         return pipe.getConfiguration();
     }
 
     /**
-    * Set the System ID
-    */
+     * Set the System ID
+     */
 
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
 
     /**
-    * Get the System ID
-    */
+     * Get the System ID
+     */
 
     public String getSystemId() {
         return systemId;
@@ -63,20 +65,22 @@ public class DotNetDomBuilder implements Receiver {
 
 
     /**
-    * Start of the document.
-    */
+     * Start of the document.
+     */
 
-    public void open () {}
+    public void open() {
+    }
 
     /**
-    * End of the document.
-    */
+     * End of the document.
+     */
 
-    public void close () {}
+    public void close() {
+    }
 
     /**
      * Start of a document node.
-    */
+     */
 
     public void startDocument(int properties) throws XPathException {
         document = new XmlDocument();
@@ -87,13 +91,14 @@ public class DotNetDomBuilder implements Receiver {
      * Notify the end of a document node
      */
 
-    public void endDocument() throws XPathException {}
+    public void endDocument() throws XPathException {
+    }
 
     /**
-    * Start of an element.
-    */
+     * Start of an element.
+     */
 
-    public void startElement (int nameCode, int typeCode, int locationId, int properties) throws XPathException {
+    public void startElement(int nameCode, int typeCode, int locationId, int properties) throws XPathException {
         if (document == null) {
             document = new XmlDocument();
             currentNode = document;
@@ -110,13 +115,13 @@ public class DotNetDomBuilder implements Receiver {
         }
     }
 
-    public void namespace (int namespaceCode, int properties) throws XPathException {
+    public void namespace(int namespaceCode, int properties) throws XPathException {
         try {
-        	String prefix = namePool.getPrefixFromNamespaceCode(namespaceCode);
-    		String uri = namePool.getURIFromNamespaceCode(namespaceCode);
-    		XmlElement element = (XmlElement)currentNode;
+            String prefix = namePool.getPrefixFromNamespaceCode(namespaceCode);
+            String uri = namePool.getURIFromNamespaceCode(namespaceCode);
+            XmlElement element = (XmlElement)currentNode;
             if (!(uri.equals(NamespaceConstant.XML))) {
-                if (prefix.equals("")) {
+                if (prefix.length() == 0) {
                     element.SetAttribute("xmlns", uri);
                 } else {
                     // an odd way to do it, but using SetAttribute hits problems
@@ -130,25 +135,38 @@ public class DotNetDomBuilder implements Receiver {
         }
     }
 
-    public void attribute (int nameCode, int typeCode, CharSequence value, int locationId, int properties)
-    throws XPathException {
-        String qname = namePool.getDisplayName(nameCode);
+    public void attribute(int nameCode, int typeCode, CharSequence value, int locationId, int properties)
+            throws XPathException {
+        String prefix = namePool.getPrefix(nameCode);
+        String localName = namePool.getLocalName(nameCode);
         String uri = namePool.getURI(nameCode);
         try {
-    		XmlElement element = (XmlElement)currentNode;
-            element.SetAttribute(qname, uri, value.toString());
+            XmlElement element = (XmlElement)currentNode;
+            XmlAttribute attr = document.CreateAttribute(prefix, localName, uri);
+            attr.set_Value(value.toString());
+            element.get_Attributes().Append(attr);
         } catch (Exception err) {
             throw new XPathException(err);
         }
+
+//        String qname = namePool.getDisplayName(nameCode);
+//        String uri = namePool.getURI(nameCode);
+//        try {
+//    		XmlElement element = (XmlElement)currentNode;
+//            element.SetAttribute(qname, uri, value.toString());
+//        } catch (Exception err) {
+//            throw new XPathException(err);
+//        }
     }
 
-    public void startContent() throws XPathException {}
+    public void startContent() throws XPathException {
+    }
 
     /**
-    * End of an element.
-    */
+     * End of an element.
+     */
 
-    public void endElement () throws XPathException {
+    public void endElement() throws XPathException {
         currentNode.Normalize();
         currentNode = currentNode.get_ParentNode();
 
@@ -156,10 +174,10 @@ public class DotNetDomBuilder implements Receiver {
 
 
     /**
-    * Character data.
-    */
+     * Character data.
+     */
 
-    public void characters (CharSequence chars, int locationId, int properties) throws XPathException {
+    public void characters(CharSequence chars, int locationId, int properties) throws XPathException {
         try {
             XmlText text = document.CreateTextNode(chars.toString());
             currentNode.AppendChild(text);
@@ -170,14 +188,14 @@ public class DotNetDomBuilder implements Receiver {
 
 
     /**
-    * Handle a processing instruction.
-    */
+     * Handle a processing instruction.
+     */
 
-    public void processingInstruction (String target, CharSequence data, int locationId, int properties)
-        throws XPathException {
+    public void processingInstruction(String target, CharSequence data, int locationId, int properties)
+            throws XPathException {
         try {
             XmlProcessingInstruction pi =
-                document.CreateProcessingInstruction(target, data.toString());
+                    document.CreateProcessingInstruction(target, data.toString());
             currentNode.AppendChild(pi);
         } catch (Exception err) {
             throw new XPathException(err);
@@ -185,10 +203,10 @@ public class DotNetDomBuilder implements Receiver {
     }
 
     /**
-    * Handle a comment.
-    */
+     * Handle a comment.
+     */
 
-    public void comment (CharSequence chars, int locationId, int properties) throws XPathException {
+    public void comment(CharSequence chars, int locationId, int properties) throws XPathException {
         try {
             XmlComment comment = document.CreateComment(chars.toString());
             currentNode.AppendChild(comment);
@@ -211,6 +229,7 @@ public class DotNetDomBuilder implements Receiver {
 
     /**
      * Get the constructed document
+     * @return the document node of the constructed document
      */
 
     public XmlDocument getDocumentNode() {

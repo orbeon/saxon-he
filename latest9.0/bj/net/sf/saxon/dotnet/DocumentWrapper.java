@@ -49,7 +49,7 @@ public class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 //                break;
 //            }
 //        }
-        System.err.println("Setting configuration");
+//        System.err.println("Setting configuration");
         setConfiguration(config);
     }
 
