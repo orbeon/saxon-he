@@ -832,6 +832,7 @@ class QueryParser extends ExpressionParser {
         sImport.locationURIs = new ArrayList(5);
         nextToken();
         if (isKeyword("namespace")) {
+            t.setState(Tokenizer.DEFAULT_STATE);
             nextToken();
             expect(Token.NAME);
             prefix = t.currentTokenValue;
@@ -933,6 +934,7 @@ class QueryParser extends ExpressionParser {
         mImport.locationURIs = new ArrayList(5);
         nextToken();
         if (t.currentToken == Token.NAME && t.currentTokenValue.equals("namespace")) {
+            t.setState(Tokenizer.DEFAULT_STATE);
             nextToken();
             expect(Token.NAME);
             prefix = t.currentTokenValue;
