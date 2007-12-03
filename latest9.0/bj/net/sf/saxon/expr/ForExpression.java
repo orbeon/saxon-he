@@ -616,7 +616,8 @@ public class ForExpression extends Assignation {
         // setting the range variable at each step.
 
         SequenceIterator base = sequence.iterate(context);
-        MappingFunction map = new MappingAction(context, getLocalSlotNumber(), positionVariable, action);
+        int pslot = (positionVariable == null ? -1 : positionVariable.getLocalSlotNumber());
+        MappingFunction map = new MappingAction(context, getLocalSlotNumber(), pslot, action);
         return new MappingIterator(base, map);
     }
 
@@ -713,7 +714,7 @@ public class ForExpression extends Assignation {
      * also as the Binding of the position variable (at $n) in XQuery, if used.
      */
 
-    private static class MappingAction implements MappingFunction {
+    private static class MappingAction implements MappingIterator.StatefulMappingFunction {
 
         private XPathContext context;
         private int slotNumber;
@@ -723,13 +724,15 @@ public class ForExpression extends Assignation {
 
         public MappingAction(XPathContext context,
                                 int slotNumber,
-                                PositionVariable positionBinding,
+                                int pslot,
+                                //PositionVariable positionBinding,
                                 Expression action) {
             this.context = context;
             this.slotNumber = slotNumber;
-            if (positionBinding != null) {
-                pslot = positionBinding.getLocalSlotNumber();
-            }
+            this.pslot = pslot;
+//            if (positionBinding != null) {
+//                pslot = positionBinding.getLocalSlotNumber();
+//            }
             this.action = action;
         }
 
@@ -739,6 +742,11 @@ public class ForExpression extends Assignation {
                 context.setLocalVariable(pslot, Int64Value.makeIntegerValue(position++));
             }
             return action.iterate(context);
+        }
+
+
+        public MappingIterator.StatefulMappingFunction getAnother() {
+            return new MappingAction(context, slotNumber, pslot, action);
         }
     }
 

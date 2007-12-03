@@ -90,7 +90,11 @@ public final class MappingIterator implements SequenceIterator {
 
     public SequenceIterator getAnother() throws XPathException {
         SequenceIterator newBase = base.getAnother();
-        return new MappingIterator(newBase, action);
+        MappingFunction newAction = action;
+        if (newAction instanceof StatefulMappingFunction) {
+            newAction = ((StatefulMappingFunction)newAction).getAnother();
+        }
+        return new MappingIterator(newBase, newAction);
     }
 
     /**
@@ -108,18 +112,17 @@ public final class MappingIterator implements SequenceIterator {
     }
 
     /**
-     * Indicate that any nodes returned in the sequence will be atomized. This
-     * means that if it wishes to do so, the implementation can return the typed
-     * values of the nodes rather than the nodes themselves. The implementation
-     * is free to ignore this hint.
-     * @param atomizing true if the caller of this iterator will atomize any
-     * nodes that are returned, and is therefore willing to accept the typed
-     * value of the nodes instead of the nodes themselves.
+     * Interface representing a mapping function that retains state information and that therefore
+     * needs to be cloned if a new mapping iterator is created
      */
 
-//    public void setIsAtomizing(boolean atomizing) {
-//        this.atomizing = atomizing;
-//    }
+    public interface StatefulMappingFunction extends MappingFunction {
+        /**
+         * Clone the mapping function
+         * @return a new mapping function with the state reset to its initial values at the start of the iteration
+         */
+        public StatefulMappingFunction getAnother();
+    }
 
 }
 
