@@ -59,6 +59,8 @@ public class Evaluate extends SystemFunction {
     */
 
     public void checkArguments(ExpressionVisitor visitor) throws XPathException {
+        visitor.getExecutable().setReasonUnableToCompile(
+                "Cannot compile a stylesheet containing calls to saxon:evaluate");
         if (staticContext == null) {
             // only do this once
             StaticContext env = visitor.getStaticContext();
