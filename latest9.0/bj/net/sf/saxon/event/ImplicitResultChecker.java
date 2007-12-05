@@ -66,6 +66,9 @@ public class ImplicitResultChecker extends ProxyReceiver {
         // If we haven't written any output, do the close only if no explicit result document has been written.
         // This will cause a file to be created and perhaps an XML declaration to be written
         if (!clean || !controller.hasThereBeenAnExplicitResultDocument()) {
+            if (!open) {
+                open();
+            }
             nextReceiver.close();
         }
     }
