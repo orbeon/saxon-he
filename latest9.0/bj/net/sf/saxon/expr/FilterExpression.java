@@ -787,6 +787,9 @@ public final class FilterExpression extends Expression {
         if (!ExpressionTool.dependsOnVariable(start, bindings)) {
             return this;
         }
+        if (isPositional(th)) {
+            return this;
+        }
         if (start instanceof FilterExpression) {
             FilterExpression fe = (FilterExpression)start;
             if (fe.isPositional(th)) {
