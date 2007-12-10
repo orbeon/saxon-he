@@ -128,14 +128,15 @@ public class IntHashMap implements Serializable {
      *
      * @param key   Key
      * @param value Value
+     * @return the previous value mapped to this key if there was one, otherwise null
      */
-    public void put(int key, Object value) {
+    public Object put(int key, Object value) {
         if (value == null) {
             throw new NullPointerException("IntHashMap does not allow null values");
         }
         int i = indexOf(key);
-        //if (_filled[i]) {
-        if (_value[i] != null) {
+        Object obj = _value[i];
+        if (obj != null) {
             _value[i] = value;
         } else {
             _key[i] = key;
@@ -143,6 +144,7 @@ public class IntHashMap implements Serializable {
             //_filled[i] = true;
             grow();
         }
+        return obj;
     }
 
 
