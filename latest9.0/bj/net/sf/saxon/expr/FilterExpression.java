@@ -682,19 +682,22 @@ public final class FilterExpression extends Expression {
             }
             case Token.FNE: {
                 // rewrite SEQ[position() ne V] as
-                // let $N := V return remove(SEQ, if (is-whole-number($N)) then $N else 0)
+                // let $N := V return remove(SEQ, if (is-whole-number($N)) then xs:integer($N) else 0)
                 LetExpression let = new LetExpression();
+                ExpressionTool.copyLocationInfo(start, let);
                 let.setRequiredType(SequenceType.makeSequenceType(
                         comparand.getItemType(th), StaticProperty.ALLOWS_ONE));
                 let.setVariableQName(new StructuredQName("pp", NamespaceConstant.SAXON, "pp" + let.hashCode()));
                 let.setSequence(comparand);
                 LocalVariableReference isWholeArg = new LocalVariableReference(let);
-                LocalVariableReference comparandArg = new LocalVariableReference(let);
+                LocalVariableReference castArg = new LocalVariableReference(let);
                 Expression isWhole = lib.makeSaxonFunction(
                         "is-whole-number", env, new Expression[] {isWholeArg});
-
+                ExpressionTool.copyLocationInfo(start, isWhole);
+                Expression cast = new CastExpression(castArg, BuiltInAtomicType.INTEGER, false);
+                ExpressionTool.copyLocationInfo(start, cast);
                 Expression choice = Choose.makeConditional(
-                        isWhole, comparandArg, new Literal(Int64Value.makeIntegerValue(0)));
+                        isWhole, cast, new Literal(Int64Value.makeIntegerValue(0)));
                 Remove rem = (Remove)SystemFunction.makeSystemFunction(
                         "remove", new Expression[] {start, choice});
                 let.setAction(rem);
