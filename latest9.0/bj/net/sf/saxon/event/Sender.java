@@ -331,9 +331,9 @@ public class Sender {
             try {
                 parser.setProperty("http://xml.org/sax/properties/lexical-handler", ce);
             } catch (SAXNotSupportedException err) {    // this just means we won't see the comments
-                throw new UnsupportedOperationException(err.getMessage());
+                //throw new UnsupportedOperationException(err.getMessage());
             } catch (SAXNotRecognizedException err) {
-                throw new UnsupportedOperationException(err.getMessage());
+                //throw new UnsupportedOperationException(err.getMessage());
             }
         }
 //        TracingFilter tf = new TracingFilter();
