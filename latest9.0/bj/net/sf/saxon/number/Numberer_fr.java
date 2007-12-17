@@ -25,7 +25,7 @@ public class Numberer_fr extends AbstractNumberer {
 
 	private static String[] frenchOrdinalTens = { "", "Dixième", "Vingtième", "Trentième", "Quarantième", "Cinquantième", "Soixantième", "Soixante", "Quatre-vingtième", "Quatre-vingt" };
 
-	private static String[] frenchDays = { "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi" };
+	private static String[] frenchDays = { "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche" };
 
 	private static String[] frenchMonths = { "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre" };
 
