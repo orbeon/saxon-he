@@ -331,8 +331,8 @@ public final class LocationPathPattern extends Pattern {
         if (parentPattern instanceof LocationPathPattern) {
             nextFree = ((LocationPathPattern)parentPattern).allocateSlots(env, nextFree);
         }
-        if (parentPattern instanceof LocationPathPattern) {
-            nextFree = ((LocationPathPattern)parentPattern).allocateSlots(env, nextFree);
+        if (ancestorPattern instanceof LocationPathPattern) {
+            nextFree = ((LocationPathPattern)ancestorPattern).allocateSlots(env, nextFree);
         }
         env.getStyleElement().getPrincipalStylesheet().allocatePatternSlots(nextFree);
         return nextFree;
