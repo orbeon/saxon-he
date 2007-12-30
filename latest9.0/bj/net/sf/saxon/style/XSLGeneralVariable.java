@@ -371,6 +371,7 @@ public abstract class XSLGeneralVariable extends StyleElement {
                 try {
                     if (requiredType != null) {
                         var.setContainer(this);  //temporarily
+                        select.setContainer(this);  // added for bug 1861163
                         RoleLocator role =
                                 new RoleLocator(RoleLocator.VARIABLE, getVariableDisplayName(), 0, null);
                         role.setErrorCode("XTTE0570");
