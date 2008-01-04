@@ -443,7 +443,9 @@ public interface NodeInfo extends Source, Item, ValueRepresentation {
      * part of the Saxon API.
      *
      * @exception XPathException
-     * @param out the Receiver to which the node should be copied
+     * @param out the Receiver to which the node should be copied.  It is the caller's
+     * responsibility to ensure that this Receiver is open before the method is called
+     * (or that it is self-opening), and that it is closed after use.
      * @param whichNamespaces in the case of an element, controls
      *     which namespace nodes should be copied. Values are {@link #NO_NAMESPACES},
      *     {@link #LOCAL_NAMESPACES}, {@link #ALL_NAMESPACES}

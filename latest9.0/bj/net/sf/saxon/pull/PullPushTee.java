@@ -34,7 +34,7 @@ public class PullPushTee extends PullFilter {
     public PullPushTee(PullProvider base, Receiver branch) throws XPathException {
         super(base);
         this.branch = branch;
-        branch.open();
+        //branch.open();
     }
 
     /**
@@ -126,7 +126,7 @@ public class PullPushTee extends PullFilter {
 
             case END_OF_INPUT:
                 in.close();
-                out.close();
+                //out.close();
                 break;
 
             case ATOMIC_VALUE:

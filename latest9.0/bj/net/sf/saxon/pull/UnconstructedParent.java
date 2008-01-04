@@ -128,9 +128,9 @@ public abstract class UnconstructedParent implements NodeInfo {
         ComplexContentOutputter outputter = new ComplexContentOutputter();
         outputter.setReceiver(reducer);
         outputter.setPipelineConfiguration(pipe);
-        outputter.open();
+        //outputter.open();
         new PullPushCopier(puller, outputter).copy();
-        outputter.close();
+        //outputter.close();
 
         node = builder.getCurrentRoot();
     }
@@ -509,7 +509,9 @@ public abstract class UnconstructedParent implements NodeInfo {
     /**
      * Copy this node to a given outputter
      *
-     * @param out             the Receiver to which the node should be copied
+     * @param out             the Receiver to which the node should be copied. It is the caller's responsibility
+     *                        to ensure that this Receiver is open before the method is called, and that it is
+     *                        closed after use.
      * @param whichNamespaces in the case of an element, controls
      *                        which namespace nodes should be copied. Values are {@link #NO_NAMESPACES},
      *                        {@link #LOCAL_NAMESPACES}, {@link #ALL_NAMESPACES}
@@ -529,7 +531,7 @@ public abstract class UnconstructedParent implements NodeInfo {
                 PullProvider pull = new VirtualTreeWalker(instruction, savedXPathContext);
                 pull.setPipelineConfiguration(out.getPipelineConfiguration());
                 PullPushCopier copier = new PullPushCopier(pull, out);
-                copier.copy();
+                copier.append();
                 return;
             } else {
                 construct();

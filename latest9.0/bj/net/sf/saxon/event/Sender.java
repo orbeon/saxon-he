@@ -385,7 +385,7 @@ public class Sender {
                     validation, stripSpace, null, -1);
         }
 
-        receiver.open();
+        //receiver.open();
         PullProvider provider = source.getPullProvider();
         if (provider instanceof LocationProvider) {
             pipe.setLocationProvider((LocationProvider)provider);
@@ -394,7 +394,7 @@ public class Sender {
         receiver.setPipelineConfiguration(pipe);
         PullPushCopier copier = new PullPushCopier(provider, receiver);
         copier.copy();
-        receiver.close();
+        //receiver.close();
     }
 
     /**
