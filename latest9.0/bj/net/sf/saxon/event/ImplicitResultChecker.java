@@ -25,6 +25,13 @@ public class ImplicitResultChecker extends ProxyReceiver {
         open = true;
     }
 
+    public void startDocument(int properties) throws XPathException {
+        if (!open) {
+            open();
+        }
+        nextReceiver.startDocument(properties);
+    }
+
     public void startElement(int nameCode, int typeCode, int locationId, int properties) throws XPathException {
         if (clean) {
             firstContent();

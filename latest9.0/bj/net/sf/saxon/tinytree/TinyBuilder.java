@@ -120,6 +120,11 @@ public class TinyBuilder extends Builder {
             // the content of an element
             return;
         }
+
+        if (tree == null) {
+            open();
+        }
+        
         started = true;
         ended = false;
 
