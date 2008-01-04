@@ -7,10 +7,7 @@ import net.sf.saxon.type.Type;
 import org.jdom.Document;
 
 /**
-  * The root node of an XPath tree. (Or equivalently, the tree itself).<P>
-  * This class should have been named Root; it is used not only for the root of a document,
-  * but also for the root of a result tree fragment, which is not constrained to contain a
-  * single top-level element.
+  * The root node of an XPath tree that wraps a JDOM document node.<P>
   * @author Michael H. Kay
   */
 
