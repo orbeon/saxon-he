@@ -471,7 +471,10 @@ public final class ComputedAttribute extends SimpleNodeConstructor {
                     if (uri.equals(NamespaceConstant.XML)) {
                         prefix = "xml";
                     } else {
-                        prefix = "ns0";
+                        prefix = pool.suggestPrefixForURI(uri);
+                        if (prefix == null) {
+                            prefix = "ns0";
+                        }
                     }
                 }
                 // If the prefix is a duplicate, a different one will be substituted
