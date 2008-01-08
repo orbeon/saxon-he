@@ -400,7 +400,7 @@ public class XQueryFunction implements InstructionInfo, Container, Declaration {
                         executable.getFunctionLibrary().getClass().getName());
             }
 
-            compiledFunction.computeEvaluationMode();
+            //compiledFunction.computeEvaluationMode();
             return compiledFunction;
         } catch (XPathException e) {
             e.maybeSetLocation(this);
@@ -434,6 +434,7 @@ public class XQueryFunction implements InstructionInfo, Container, Declaration {
 
         body.setContainer(this);
         compiledFunction.setBody(body);
+        compiledFunction.computeEvaluationMode();
         ExpressionTool.allocateSlots(body, arity, compiledFunction.getStackFrameMap());
     }
 
