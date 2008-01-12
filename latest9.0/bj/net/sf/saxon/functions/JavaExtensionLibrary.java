@@ -1,7 +1,6 @@
 package net.sf.saxon.functions;
 
 import net.sf.saxon.Configuration;
-import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
@@ -490,16 +489,16 @@ public class JavaExtensionLibrary implements FunctionLibrary {
             // if one argument is less-preferred
 
             if (debug) {
-                diag.println("Finding best fit method with arguments:");
-                try {
-                    ExpressionPresenter ep = new ExpressionPresenter(config,
-                            ExpressionPresenter.defaultDestination(config, diag));
-                    for (int v = 0; v < args.length; v++) {
-                        args[v].explain(ep);
-                    }
-                } catch (XPathException err) {
-                    // ignore the exception
-                }
+                diag.println("Finding best fit method for arguments");
+//                try {
+//                    ExpressionPresenter ep = new ExpressionPresenter(config,
+//                            ExpressionPresenter.defaultDestination(config, diag));
+//                    for (int v = 0; v < args.length; v++) {
+//                        args[v].explain(ep);
+//                    }
+//                } catch (XPathException err) {
+//                    // ignore the exception
+//                }
             }
 
             boolean eliminated[] = new boolean[candidates];

@@ -491,7 +491,8 @@ public class VariableReference extends Expression implements BindingReference {
     public void explain(ExpressionPresenter destination) {
 
         destination.startElement("variableReference");
-        destination.emitAttribute("name", getDisplayName());
+        String d = getDisplayName();
+        destination.emitAttribute("name", (d == null ? "null" : d));
         destination.endElement();
     }
 }
