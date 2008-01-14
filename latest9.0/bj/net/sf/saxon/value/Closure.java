@@ -198,12 +198,25 @@ public class Closure extends Value {
      */
 
     public void process(XPathContext context) throws XPathException {
-        // To evaluate the closure in push mode, we need to use the original context of the
-        // expression for everything except the current output destination, which is newly created
-        XPathContext c2 = savedXPathContext.newContext();
-        SequenceReceiver out = context.getReceiver();
-        c2.setTemporaryReceiver(out);
-        expression.process(c2);
+        if (expression == null) {
+            // This is a Closure that simply wraps a SequenceIterator supplied from the Java level
+            SequenceReceiver out = context.getReceiver();
+            while (true) {
+                Item item = inputIterator.next();
+                if (item == null) {
+                    break;
+                }
+                out.append(item, 0, NodeInfo.ALL_NAMESPACES);
+            }
+            inputIterator = inputIterator.getAnother();
+        } else {
+            // To evaluate the closure in push mode, we need to use the original context of the
+            // expression for everything except the current output destination, which is newly created
+            XPathContext c2 = savedXPathContext.newContext();
+            SequenceReceiver out = context.getReceiver();
+            c2.setTemporaryReceiver(out);
+            expression.process(c2);
+        }
     }
 
     /**
