@@ -184,16 +184,16 @@ public class Document extends SystemFunction implements XSLTFunction {
             this.context = context;
         }
 
-        public Item map(Item item) throws XPathException {
-
-            if (baseURI==null) {
+				public Item map(Item item) throws XPathException {
+            String b = baseURI;
+            if (b==null) {
                 if (item instanceof NodeInfo) {
-                    baseURI = ((NodeInfo)item).getBaseURI();
+                    b = ((NodeInfo)item).getBaseURI();
                 } else {
-                    baseURI = stylesheetURI;
+                    b = stylesheetURI;
                 }
             }
-            return makeDoc(item.getStringValue(), baseURI, context, locator);
+            return makeDoc(item.getStringValue(), b, context, locator);
         }
     }
 
