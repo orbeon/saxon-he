@@ -184,7 +184,7 @@ public class PromotionOffer  {
                 int properties = child.getSpecialProperties();
                 if (((properties & StaticProperty.NON_CREATIVE) != 0) &&
                         !ExpressionTool.dependsOnVariable(child, bindingList) &&
-                        (child.getDependencies() & StaticProperty.HAS_SIDE_EFFECTS) == 0) {
+                        (child.getDependencies() & (StaticProperty.HAS_SIDE_EFFECTS | StaticProperty.DEPENDS_ON_ASSIGNABLE_GLOBALS)) == 0) {
                     return promote(child);
                 }
                 break;
@@ -199,7 +199,7 @@ public class PromotionOffer  {
                 if (ExpressionTool.dependsOnVariable(child, bindingList)) {
                     break;
                 }
-                if ((dependencies & StaticProperty.HAS_SIDE_EFFECTS) != 0) {
+                if ((dependencies & (StaticProperty.HAS_SIDE_EFFECTS | StaticProperty.DEPENDS_ON_ASSIGNABLE_GLOBALS)) != 0) {
                     break;
                 }
                 if ((dependencies & StaticProperty.DEPENDS_ON_FOCUS) == 0 &&

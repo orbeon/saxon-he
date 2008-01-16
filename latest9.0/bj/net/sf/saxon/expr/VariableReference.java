@@ -323,11 +323,18 @@ public class VariableReference extends Expression implements BindingReference {
 
 
     public int getIntrinsicDependencies() {
-        if (binding == null || !binding.isGlobal()) {
-            return StaticProperty.DEPENDS_ON_LOCAL_VARIABLES;
+        int d = 0;
+        if (binding == null) {
+            // assume the worst
+            d |= (StaticProperty.DEPENDS_ON_LOCAL_VARIABLES | StaticProperty.DEPENDS_ON_ASSIGNABLE_GLOBALS);
+        } else if (binding.isGlobal()) {
+            if (binding.isAssignable()) {
+                d |= StaticProperty.DEPENDS_ON_ASSIGNABLE_GLOBALS;
+            }
         } else {
-            return 0;
+            d |= StaticProperty.DEPENDS_ON_LOCAL_VARIABLES;
         }
+        return d;
     }
 
     /**

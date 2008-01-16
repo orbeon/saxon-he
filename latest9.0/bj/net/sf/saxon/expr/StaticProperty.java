@@ -63,13 +63,20 @@ public abstract class StaticProperty {
     public static final int DEPENDS_ON_USER_FUNCTIONS = 1<<8;
 
     /**
+     * Bit setting: Expression depends on assignable global variables
+     */
+
+    public static final int DEPENDS_ON_ASSIGNABLE_GLOBALS = 1<<9;    
+
+    /**
     * Combination of bits representing dependencies on the XSLT context
     */
 
     public static final int DEPENDS_ON_XSLT_CONTEXT =
             DEPENDS_ON_CURRENT_ITEM |
             DEPENDS_ON_CURRENT_GROUP |
-            DEPENDS_ON_REGEX_GROUP;
+            DEPENDS_ON_REGEX_GROUP |
+            DEPENDS_ON_ASSIGNABLE_GLOBALS;
 
     /**
     * Combination of bits representing dependencies on the focus
@@ -272,6 +279,7 @@ public abstract class StaticProperty {
             DEPENDS_ON_FOCUS |
             DEPENDS_ON_LOCAL_VARIABLES |
             DEPENDS_ON_USER_FUNCTIONS |
+            DEPENDS_ON_ASSIGNABLE_GLOBALS |
             HAS_SIDE_EFFECTS;
 
     /**
