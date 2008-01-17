@@ -128,10 +128,12 @@ namespace Saxon.Api {
 
         public void Compile(Uri uri) {
             StreamSource ss = new StreamSource(uri.ToString());
+            AugmentedSource aug = AugmentedSource.makeAugmentedSource(ss);
+            aug.setPleaseCloseAfterUse(true);
             if (errorList == null) {
-                config.addSchemaSource(ss);
+                config.addSchemaSource(aug);
             } else {
-                config.addSchemaSource(ss, new ErrorGatherer(errorList));
+                config.addSchemaSource(aug, new ErrorGatherer(errorList));
             }
         }
 
@@ -275,8 +277,10 @@ namespace Saxon.Api {
         /// <param name="baseUri">URI of the document to be validated</param>                  
 
         public void SetSource(Uri baseUri) {
-            StreamSource ss = new StreamSource(baseUri.ToString());
-            this.source = ss;
+            StreamSource ss = new StreamSource(uri.ToString());
+            AugmentedSource aug = AugmentedSource.makeAugmentedSource(ss);
+            aug.setPleaseCloseAfterUse(true);
+            this.source = aug;
         }
 
         /// <summary>
