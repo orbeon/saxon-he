@@ -277,7 +277,7 @@ namespace Saxon.Api {
         /// <param name="baseUri">URI of the document to be validated</param>                  
 
         public void SetSource(Uri baseUri) {
-            StreamSource ss = new StreamSource(uri.ToString());
+            StreamSource ss = new StreamSource(baseUri.ToString());
             AugmentedSource aug = AugmentedSource.makeAugmentedSource(ss);
             aug.setPleaseCloseAfterUse(true);
             this.source = aug;
