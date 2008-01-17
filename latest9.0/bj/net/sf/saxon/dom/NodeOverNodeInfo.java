@@ -428,7 +428,9 @@ public abstract class NodeOverNodeInfo implements Node {
 
     public boolean isSupported(String feature,
                                String version) {
-        return feature.equalsIgnoreCase("xml");
+        return (feature.equalsIgnoreCase("XML") || feature.equalsIgnoreCase("Core")) &&
+            (version == null || version.length() == 0 ||
+            version.equals("3.0") || version.equals("2.0") || version.equals("1.0"));
     }
 
     /**

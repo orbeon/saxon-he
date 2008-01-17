@@ -21,7 +21,9 @@ class DOMImplementationImpl implements DOMImplementation {
  */
 
 public boolean hasFeature(String feature, String version) {
-    return false;
+    return (feature.equalsIgnoreCase("XML") || feature.equalsIgnoreCase("Core")) &&
+            (version == null || version.length() == 0 ||
+            version.equals("3.0") || version.equals("2.0") || version.equals("1.0"));
 }
 
  /**
