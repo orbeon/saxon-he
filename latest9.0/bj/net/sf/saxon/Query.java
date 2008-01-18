@@ -730,7 +730,7 @@ public class Query {
             if (showTime) {
                 System.err.println("Processing " + sourceInput.getSystemId());
             }
-            if ((exp.getExpression().getDependencies() & StaticProperty.DEPENDS_ON_FOCUS) == 0) {
+            if ((!exp.usesContextItem())) {
                 System.err.println("Source document ignored - query does not access the context item");
                 sourceInput = null;
 

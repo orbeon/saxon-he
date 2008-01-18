@@ -7,6 +7,7 @@ import net.sf.saxon.evpull.*;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.instruct.Executable;
 import net.sf.saxon.instruct.SlotManager;
+import net.sf.saxon.instruct.GlobalVariable;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pull.PullFromIterator;
 import net.sf.saxon.pull.PullNamespaceReducer;
@@ -100,6 +101,27 @@ public class XQueryExpression implements Container {
     
     public SlotManager getStackFrameMap() {
         return stackFrameMap;
+    }
+
+    /**
+     * Ask whether this query uses the context item
+     * @return true if the context item is referenced either in the query body or in the initializer
+     * of any global variable
+     */
+
+    public boolean usesContextItem() {
+        if ((expression.getDependencies() & StaticProperty.DEPENDS_ON_FOCUS) != 0) {
+            return true;
+        }
+        Iterator iter = executable.getCompiledGlobalVariables().values().iterator();
+        while (iter.hasNext()) {
+            GlobalVariable var = (GlobalVariable)iter.next();
+            Expression select = var.getSelectExpression();
+            if (select != null && (select.getDependencies() & StaticProperty.DEPENDS_ON_FOCUS) != 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -693,6 +715,12 @@ public class XQueryExpression implements Container {
     public PathMap getPathMap() {
         if (pathMap == null) {
             pathMap = new PathMap(expression);
+        }
+        Iterator iter = executable.getCompiledGlobalVariables().values().iterator();
+        while (iter.hasNext()) {
+            GlobalVariable var = (GlobalVariable)iter.next();
+            Expression select = var.getSelectExpression();
+            select.addToPathMap(pathMap, null);
         }
         return pathMap;
     }
