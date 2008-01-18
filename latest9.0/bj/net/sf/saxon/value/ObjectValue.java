@@ -243,8 +243,12 @@ public class ObjectValue extends AtomicValue {
                 throw new XPathException("Cannot convert string to Java char unless length is 1");
             }
         } else {
-            throw new XPathException("Conversion of external object to " + target.getName() +
-                        " is not supported");
+            Object o = super.convertToJava(target, context);
+            if (o == null) {
+                throw new XPathException("Conversion of external object to " + target.getName() +
+                            " is not supported");
+            }
+            return o;
         }
     }
 
