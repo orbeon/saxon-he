@@ -134,6 +134,7 @@ public final class TypeChecker {
                     try {
                         exp = visitor.typeCheck(visitor.simplify(fn), AnyItemType.getInstance());
                     } catch (XPathException err) {
+                        err.maybeSetLocation(exp);
                         throw err.makeStatic();
                     }
                     suppliedItemType = BuiltInAtomicType.STRING;
@@ -147,6 +148,7 @@ public final class TypeChecker {
                     try {
                         exp = visitor.typeCheck(visitor.simplify(fn), AnyItemType.getInstance());
                     } catch (XPathException err) {
+                        err.maybeSetLocation(exp);
                         throw err.makeStatic();
                     }
                     suppliedItemType = BuiltInAtomicType.DOUBLE;
@@ -190,6 +192,7 @@ public final class TypeChecker {
                             exp = cexp;
                         }
                     } catch (XPathException err) {
+                        err.maybeSetLocation(exp);
                         throw err.makeStatic();
                     }
                     itemTypeOK = true;
@@ -212,6 +215,7 @@ public final class TypeChecker {
                             exp = cexp;
                         }
                     } catch (XPathException err) {
+                        err.maybeSetLocation(exp);
                         throw err.makeStatic();
                     }
                 }
@@ -227,6 +231,7 @@ public final class TypeChecker {
                         try {
                             exp = visitor.typeCheck(visitor.simplify(exp), AnyItemType.getInstance());
                         } catch (XPathException err) {
+                            err.maybeSetLocation(exp);
                             throw err.makeStatic();
                         }
                         suppliedItemType = (rt == StandardNames.XS_DOUBLE ? BuiltInAtomicType.DOUBLE : BuiltInAtomicType.FLOAT);

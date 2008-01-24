@@ -277,6 +277,7 @@ public class XSLFunction extends StyleElement implements StylesheetProcedure {
             exp2 = exp2.optimize(visitor, null);
 
         } catch (XPathException err) {
+            err.maybeSetLocation(this);
             compileError(err);
         }
 
