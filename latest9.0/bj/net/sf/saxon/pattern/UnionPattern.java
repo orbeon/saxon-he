@@ -1,12 +1,15 @@
 package net.sf.saxon.pattern;
 import net.sf.saxon.expr.ExpressionVisitor;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.MultiIterator;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.instruct.Executable;
 import net.sf.saxon.style.ExpressionContext;
+
+import java.util.Iterator;
 
 /**
 * A pattern formed as the union (or) of two other patterns
@@ -121,6 +124,27 @@ public class UnionPattern extends Pattern {
             return NodeKindTest.makeNodeKindTest(nodeType);
         }
     }
+
+    /**
+     * Get the dependencies of the pattern. The only possible dependency for a pattern is
+     * on local variables. This is analyzed in those patterns where local variables may appear.
+     *
+     * @return the dependencies, as a bit-significant mask
+     */
+
+    public int getDependencies() {
+        return p1.getDependencies() | p2.getDependencies();
+    }
+
+    /**
+     * Iterate over the subexpressions within this pattern
+     * @return an iterator over the subexpressions.
+     */
+
+    public Iterator iterateSubExpressions() {
+        return new MultiIterator(new Iterator[]{p1.iterateSubExpressions(), p2.iterateSubExpressions()});
+    }
+    
 
     /**
     * Get the LHS of the union
