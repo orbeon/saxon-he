@@ -871,7 +871,7 @@ public abstract class Expression
      * expression.
      */
 
-    public int[] getSlotsUsed() {
+    public synchronized int[] getSlotsUsed() {
         if (slotsUsed != null) {
             return slotsUsed;
         }
