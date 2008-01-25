@@ -736,7 +736,7 @@ public abstract class Expression implements SequenceIterable, EvaluableItem, Ser
      * Should only be called if the caller has established that there is a dependency on local variables.
      */
 
-    public int[] getSlotsUsed() {
+    public synchronized int[] getSlotsUsed() {
         if (slotsUsed != null) {
             return slotsUsed;
         }
