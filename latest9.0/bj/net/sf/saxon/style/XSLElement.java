@@ -212,6 +212,7 @@ public class XSLElement extends StyleElement {
         ComputedElement inst = new ComputedElement(elementName,
                 namespace,
                 nsContext,
+                (nsContext == null ? null : nsContext.getURIForPrefix("", true)),
                 schemaType,
                 validation,
                 inheritNamespaces,

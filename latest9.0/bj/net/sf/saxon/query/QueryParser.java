@@ -2399,6 +2399,7 @@ class QueryParser extends ExpressionParser {
                         // it really is a computed element constructor: save the namespace context
                         inst = new ComputedElement(name, null,
                                 env.getNamespaceResolver(),
+                                env.getDefaultElementNamespace(),
                                 null,
                                 ((QueryModule)env).getConstructionMode(),
                                 ((QueryModule)env).isInheritNamespaces(),

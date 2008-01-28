@@ -29,6 +29,7 @@ public class ComputedElement extends ElementCreator {
     private Expression elementName;
     private Expression namespace = null;
     private NamespaceResolver nsContext;
+    private String defaultNamespace;
     private boolean allowNameAsQName;
     private ItemType itemType;
 
@@ -48,6 +49,7 @@ public class ComputedElement extends ElementCreator {
     public ComputedElement(Expression elementName,
                            Expression namespace,
                            NamespaceResolver nsContext,
+                           String defaultNamespace,
                            SchemaType schemaType,
                            int validation,
                            boolean inheritNamespaces,
@@ -55,6 +57,7 @@ public class ComputedElement extends ElementCreator {
         this.elementName = elementName;
         this.namespace = namespace;
         this.nsContext = nsContext;
+        this.defaultNamespace = defaultNamespace;
         setSchemaType(schemaType);
         this.validation = validation;
         preservingTypes = schemaType == null && validation == Validation.PRESERVE;
@@ -136,9 +139,12 @@ public class ComputedElement extends ElementCreator {
                 if (val instanceof StringValue) {
                     String[] parts = visitor.getConfiguration().getNameChecker().checkQNameParts(val.getStringValueCS());
                     if (namespace == null) {
-                        String uri = getNamespaceResolver().getURIForPrefix(parts[0], true);
+                        String prefix = parts[0];
+                        String uri = (prefix.length()==0 ?
+                                defaultNamespace :
+                                getNamespaceResolver().getURIForPrefix(prefix, true));
                         if (uri == null) {
-                            XPathException se = new XPathException("Prefix " + parts[0] + " has not been declared");
+                            XPathException se = new XPathException("Prefix " + prefix + " has not been declared");
                             se.setErrorCode("XPST0081");
                             se.setIsStaticError(true);
                             throw se;
@@ -169,7 +175,7 @@ public class ComputedElement extends ElementCreator {
     public Expression copy() {
         ComputedElement ce = new ComputedElement(
                 elementName.copy(), (namespace==null ? null : namespace.copy()),
-                getNamespaceResolver(), getSchemaType(),
+                getNamespaceResolver(), defaultNamespace, getSchemaType(),
                 validation, inheritNamespaces, allowNameAsQName);
         ce.setContentExpression(content.copy());
         return ce;
@@ -328,12 +334,16 @@ public class ComputedElement extends ElementCreator {
         }
 
         if (namespace == null && uri == null) {
-            uri = nsContext.getURIForPrefix(prefix, true);
-            if (uri == null) {
-                XPathException err = new XPathException("Undeclared prefix in element name: " + prefix, this);
-                err.setErrorCode((isXSLT() ? "XTDE0830" : "XQDY0074"));
-                err.setXPathContext(context);
-                throw dynamicError(this, err, context);
+            if (prefix.length() == 0) {
+                uri = defaultNamespace;
+            } else {
+                uri = nsContext.getURIForPrefix(prefix, true);
+                if (uri == null) {
+                    XPathException err = new XPathException("Undeclared prefix in element name: " + prefix, this);
+                    err.setErrorCode((isXSLT() ? "XTDE0830" : "XQDY0074"));
+                    err.setXPathContext(context);
+                    throw dynamicError(this, err, context);
+                }
             }
 
         } else {
