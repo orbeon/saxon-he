@@ -113,12 +113,15 @@ public class XQueryExpression implements Container {
         if ((expression.getDependencies() & StaticProperty.DEPENDS_ON_FOCUS) != 0) {
             return true;
         }
-        Iterator iter = executable.getCompiledGlobalVariables().values().iterator();
-        while (iter.hasNext()) {
-            GlobalVariable var = (GlobalVariable)iter.next();
-            Expression select = var.getSelectExpression();
-            if (select != null && (select.getDependencies() & StaticProperty.DEPENDS_ON_FOCUS) != 0) {
-                return true;
+        HashMap map = executable.getCompiledGlobalVariables();
+        if (map != null) {
+            Iterator iter = map.values().iterator();
+            while (iter.hasNext()) {
+                GlobalVariable var = (GlobalVariable)iter.next();
+                Expression select = var.getSelectExpression();
+                if (select != null && (select.getDependencies() & StaticProperty.DEPENDS_ON_FOCUS) != 0) {
+                    return true;
+                }
             }
         }
         return false;
@@ -716,11 +719,14 @@ public class XQueryExpression implements Container {
         if (pathMap == null) {
             pathMap = new PathMap(expression);
         }
-        Iterator iter = executable.getCompiledGlobalVariables().values().iterator();
-        while (iter.hasNext()) {
-            GlobalVariable var = (GlobalVariable)iter.next();
-            Expression select = var.getSelectExpression();
-            select.addToPathMap(pathMap, null);
+        HashMap map = executable.getCompiledGlobalVariables();
+        if (map != null) {
+            Iterator iter = map.values().iterator();
+            while (iter.hasNext()) {
+                GlobalVariable var = (GlobalVariable)iter.next();
+                Expression select = var.getSelectExpression();
+                select.addToPathMap(pathMap, null);
+            }
         }
         return pathMap;
     }
