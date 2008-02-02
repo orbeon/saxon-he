@@ -349,11 +349,13 @@ public class ForExpression extends Assignation {
                         // Only do this if the sequence expression has not yet been changed, because
                         // the position in a predicate after the first is different.
 
+                        Binding[] thisVar = {this};
                         if (positionVariable != null && operands[op] instanceof VariableReference && !changed) {
                             List varRefs = new ArrayList();
                             ExpressionTool.gatherVariableReferences(action, positionVariable, varRefs);
                             if (varRefs.size() == 1 && varRefs.get(0) == operands[op] &&
-                                    (operands[1-op].getDependencies() & StaticProperty.DEPENDS_ON_FOCUS) == 0) {
+                                    (operands[1-op].getDependencies() & StaticProperty.DEPENDS_ON_FOCUS) == 0 &&
+                                    !ExpressionTool.dependsOnVariable(operands[1-op], thisVar)) {
                                 FunctionCall position =
                                         SystemFunction.makeSystemFunction("position", SimpleExpression.NO_ARGUMENTS);
                                 Expression predicate;
@@ -390,7 +392,6 @@ public class ForExpression extends Assignation {
                         // as
                         //    for $x in EXPR[a/b eq "z"] return A
 
-                        Binding[] thisVar = {this};
                         if ( positionVariable == null &&
                                 ExpressionTool.isVariableReplaceableByDot(term, thisVar) &&
                                 (term.getDependencies() & StaticProperty.DEPENDS_ON_FOCUS) == 0 &&
