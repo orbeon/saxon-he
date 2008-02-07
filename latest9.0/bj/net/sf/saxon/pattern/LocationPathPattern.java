@@ -10,6 +10,7 @@ import net.sf.saxon.type.Type;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.functions.Position;
 import net.sf.saxon.instruct.Executable;
+import net.sf.saxon.instruct.SlotManager;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -324,9 +325,12 @@ public final class LocationPathPattern extends Pattern {
 
     public int allocateSlots(ExpressionContext env, int nextFree) {
         // See tests cnfr23, idky239, match54, group018
+        SlotManager slotManager = env.getStyleElement().getContainingSlotManager();
+        if (variableBinding != null) {
+            nextFree = ExpressionTool.allocateSlots(variableBinding, nextFree, slotManager);
+        }
         for (int i = 0; i < numberOfFilters; i++) {
-            nextFree = ExpressionTool.allocateSlots(filters[i], nextFree,
-                     env.getStyleElement().getContainingSlotManager());
+            nextFree = ExpressionTool.allocateSlots(filters[i], nextFree, slotManager);
         }
         if (parentPattern instanceof LocationPathPattern) {
             nextFree = ((LocationPathPattern)parentPattern).allocateSlots(env, nextFree);
