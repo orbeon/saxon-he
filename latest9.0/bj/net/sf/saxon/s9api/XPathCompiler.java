@@ -8,7 +8,7 @@ import net.sf.saxon.sxpath.XPathVariable;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.SequenceType;
 
-import javax.xml.namespace.QName;
+//import javax.xml.namespace.QName;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -132,7 +132,7 @@ public class XPathCompiler {
      */
 
     public void declareVariable(QName qname) {
-        XPathVariable var = env.declareVariable(qname.getNamespaceURI(), qname.getLocalPart());
+        XPathVariable var = env.declareVariable(qname.getNamespaceURI(), qname.getLocalName());
         declaredVariables.add(var);
     }
 
@@ -158,7 +158,7 @@ public class XPathCompiler {
 //        } catch (XPathException e) {
 //            throw new SaxonApiException(e);
 //        }
-        XPathVariable var = env.declareVariable(qname.getNamespaceURI(), qname.getLocalPart());
+        XPathVariable var = env.declareVariable(qname.getNamespaceURI(), qname.getLocalName());
         var.setRequiredType(
                 SequenceType.makeSequenceType(
                         itemType.getUnderlyingItemType(), occurrences.getCardinality()));

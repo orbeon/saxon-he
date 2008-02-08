@@ -75,7 +75,7 @@ public class XPathSelector implements Iterable<XdmItem> {
     public void setVariable(QName name, XdmValue value) throws SaxonApiException {
         XPathVariable var = null;
         for (XPathVariable v : declaredVariables) {
-            if (v.getVariableQName().equals(name)) {
+            if (v.getVariableQName().equals(name.getStructuredQName())) {
                 var = v;
                 break;
             }
