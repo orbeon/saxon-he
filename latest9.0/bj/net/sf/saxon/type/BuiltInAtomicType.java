@@ -789,7 +789,11 @@ public class BuiltInAtomicType implements AtomicType, Serializable {
     public final SequenceIterator getTypedValue(NodeInfo node)
             throws XPathException {
         try {
-            return getTypedValue(node.getStringValue(),
+            CharSequence stringValue = node.getStringValueCS();
+            if (stringValue.length() == 0 && node instanceof ExtendedNodeInfo && ((ExtendedNodeInfo)node).isNilled()) {
+                return EmptyIterator.getInstance();
+            }
+            return getTypedValue(stringValue,
                     new InscopeNamespaceResolver(node),
                     node.getConfiguration().getNameChecker());
         } catch (ValidationException err) {
@@ -810,16 +814,20 @@ public class BuiltInAtomicType implements AtomicType, Serializable {
 
     public Value atomize(NodeInfo node) throws XPathException {
         // Fast path for common cases
+        CharSequence stringValue = node.getStringValueCS();
+        if (stringValue.length() == 0 && node instanceof ExtendedNodeInfo && ((ExtendedNodeInfo)node).isNilled()) {
+            return EmptySequence.getInstance();
+        }
         if (fingerprint == StandardNames.XS_STRING) {
-            return StringValue.makeStringValue(node.getStringValueCS());
+            return StringValue.makeStringValue(stringValue);
         } else if (fingerprint == StandardNames.XS_UNTYPED_ATOMIC) {
-            return new UntypedAtomicValue(node.getStringValueCS());
+            return new UntypedAtomicValue(stringValue);
         }
         final NameChecker checker = node.getConfiguration().getNameChecker();
         if (isNamespaceSensitive()) {
             try {
                 NamespaceResolver resolver = new InscopeNamespaceResolver(node);
-                String[] parts = checker.getQNameParts(Whitespace.trimWhitespace(node.getStringValueCS()));
+                String[] parts = checker.getQNameParts(Whitespace.trimWhitespace(stringValue));
                 String uri = resolver.getURIForPrefix(parts[0], true);
                 if (uri == null) {
                     throw new ValidationException("Namespace prefix " + Err.wrap(parts[0]) +
@@ -827,12 +835,12 @@ public class BuiltInAtomicType implements AtomicType, Serializable {
                 }
                 return new QNameValue(parts[0], uri, parts[1], BuiltInAtomicType.QNAME, checker);
             } catch (QNameException err) {
-                throw new ValidationException("Invalid lexical QName " + Err.wrap(node.getStringValueCS()));
+                throw new ValidationException("Invalid lexical QName " + Err.wrap(stringValue));
             } catch (XPathException err) {
                 throw new ValidationException(err.getMessage());
             }
         }
-        return StringValue.convertStringToBuiltInType(node.getStringValueCS(), this, checker).asAtomic();
+        return StringValue.convertStringToBuiltInType(stringValue, this, checker).asAtomic();
     }
 
     /**
