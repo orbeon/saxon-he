@@ -5,7 +5,6 @@ import net.sf.saxon.event.ProxyReceiver;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.event.SaxonOutputKeys;
 import net.sf.saxon.expr.PathMap;
-import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.instruct.TerminationException;
 import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.SequenceIterator;
