@@ -127,7 +127,7 @@ public class GeneralComparison10 extends BinaryExpression {
             maybeBoolean1 = false;
         }
 
-        if (!maybeBoolean0 && !maybeBoolean1) {
+        if (!maybeBoolean0 && !maybeBoolean1 && (operator == Token.EQUALS || operator == Token.NE)) {
             int n0 = th.relationship(type0, BuiltInAtomicType.NUMERIC);
             int n1 = th.relationship(type1, BuiltInAtomicType.NUMERIC);
             boolean maybeNumeric0 = (n0 != TypeHierarchy.DISJOINT);
