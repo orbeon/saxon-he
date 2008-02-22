@@ -1068,6 +1068,7 @@ class QueryParser extends ExpressionParser {
             if (baseURI == null) {
                 if (m < hints.length) {
                     ss.setSystemId(hints[m]);
+                    baseURI = hints[m];
                 } else {
                     grumble("No base URI available for imported module", "XQST0059");
                 }
