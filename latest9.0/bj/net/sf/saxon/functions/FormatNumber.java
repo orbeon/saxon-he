@@ -721,7 +721,11 @@ public class FormatNumber extends SystemFunction implements XSLTFunction {
                     }
                 }
             }
-            fsb.prependRepeated('0', minWholePartSize - intDigits);
+            if (minWholePartSize == 0 && intDigits == 1 && fsb.charAt(0) == '0') {
+                fsb.removeCharAt(0);
+            } else {
+                fsb.prependRepeated('0', minWholePartSize - intDigits);
+            }
         }
 
        /**
