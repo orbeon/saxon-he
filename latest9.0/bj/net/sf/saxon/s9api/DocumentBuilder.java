@@ -313,7 +313,8 @@ public class DocumentBuilder {
     public XdmNode wrap(Object node) throws IllegalArgumentException {
         ExternalObjectModel model = config.findExternalObjectModel(node);
         DocumentInfo doc = model.wrapDocument(node, (baseURI == null ? null : baseURI.toString()), config);
-        return (XdmNode)XdmItem.wrapItem(doc);
+        NodeInfo wrappedNode = model.wrapNode(doc, node);
+        return (XdmNode)XdmItem.wrapItem(wrappedNode);
     }
 
 }
