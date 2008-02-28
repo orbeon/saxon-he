@@ -304,8 +304,15 @@ public class DocumentBuilder {
      * Create a node by wrapping a recognized external node from a supported object model.
      * The support module for the external object model must be on the class path and registered
      * with the Saxon configuration.
-     * @param node the document node of the external tree representation
-     * @return the document node as an XdmNode
+     *
+     * <p>It is best to avoid calling this method repeatedly to wrap different nodes in the same document.
+     * Each such wrapper conceptually creates a new XDM tree instance with its own identity. Although the
+     * memory is shared, operations that rely on node identity might not have the expected result. It is
+     * best to create a single wrapper for the document node, and then to navigate to the other nodes in the
+     * tree using S9API interfaces.</p>
+     *
+     * @param node the node in the external tree representation
+     * @return the supplied node wrapped as an XdmNode
      * @throws IllegalArgumentException if the type of object supplied is not recognized. This may be because
      * the required code is not on the class path
      */
