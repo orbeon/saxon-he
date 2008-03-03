@@ -9,6 +9,7 @@ import net.sf.saxon.trans.CompilerInfo;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.DocumentImpl;
 import net.sf.saxon.tree.TreeBuilder;
+import org.xml.sax.Locator;
 
 import javax.xml.transform.Templates;
 import javax.xml.transform.sax.TemplatesHandler;
@@ -100,22 +101,48 @@ public class TemplatesHandlerImpl extends ReceivingContentHandler implements Tem
     }
 
     /**
-    * Set the SystemId of the document
+     * Set the SystemId of the document. Note that if this method is called, any locator supplied
+     * to the setDocumentLocator() method is ignored. This also means that no line number information
+     * will be available.
+     * @param url the system ID (base URI) of the stylesheet document, which will be used in any error
+     * reporting and also for resolving relative URIs in xsl:include and xsl:import. It will also form
+     * the static base URI in the static context of XPath expressions.
     */
 
     public void setSystemId(String url) {
         systemId = url;
         builder.setSystemId(url);
+        super.setDocumentLocator(new Locator() {
+            public int getColumnNumber() {
+                return -1;
+            }
+
+            public int getLineNumber() {
+                return -1;
+            }
+
+            public String getPublicId() {
+                return null;
+            }
+
+            public String getSystemId() {
+                return systemId;
+            }
+        });
     }
 
     /**
     * Callback interface for SAX: not for application use
     */
 
-//    public void setDocumentLocator (Locator locator) {
-//    	super.setDocumentLocator(locator);
-//        setSystemId(locator.getSystemId());
-//    }
+    public void setDocumentLocator (final Locator locator) {
+        // If the user has called setSystemId(), we use that system ID in preference to this one,
+        // which probably comes from the XML parser possibly via some chain of SAX filters
+        if (systemId == null) {
+            super.setDocumentLocator(locator);
+        }
+    }
+
 
     /**
     * Get the systemId of the document
