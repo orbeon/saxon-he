@@ -93,10 +93,9 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             wrapper.nodeKind = Type.ATTRIBUTE;
             break;
         case XmlNodeType.Text:
-            wrapper = new NodeWrapper(node, parent, index);
-            wrapper.nodeKind = Type.TEXT;
-            break;
         case XmlNodeType.CDATA:
+        case XmlNodeType.Whitespace:
+        case XmlNodeType.SignificantWhitespace:
             wrapper = new NodeWrapper(node, parent, index);
             wrapper.nodeKind = Type.TEXT;
             break;
@@ -362,7 +361,9 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 return ((XmlAttribute)node).get_Value();
 
             case XmlNodeType.Text:
-            //case Node.CDATA_SECTION_NODE:
+            case XmlNodeType.Whitespace:
+            case XmlNodeType.SignificantWhitespace:
+            case XmlNodeType.CDATA:
                 return node.get_Value();
 
             case XmlNodeType.Comment:
@@ -1009,6 +1010,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 //                            break;
                         case XmlNodeType.Text:
                         case XmlNodeType.CDATA:
+                        case XmlNodeType.Whitespace:
+                        case XmlNodeType.SignificantWhitespace:
                             thisText = true;
                             if (previousText) {
 //                                if (isAtomizing()) {
@@ -1052,6 +1055,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 //                            break;
                         case XmlNodeType.Text:
                         case XmlNodeType.CDATA:
+                        case XmlNodeType.Whitespace:
+                        case XmlNodeType.SignificantWhitespace:
                             thisText = true;
                             if (previousText) {
 //                                if (isAtomizing()) {
