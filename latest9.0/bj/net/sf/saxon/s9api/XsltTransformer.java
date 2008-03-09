@@ -221,6 +221,17 @@ public class XsltTransformer implements Destination {
         tr.setPipelineConfiguration(controller.makePipelineConfiguration());
         return tr;
     }
+
+    /**
+     * Get the underlying Controller used to implement this XsltTransformer. This provides access
+     * to lower-level methods not otherwise available in the s9api interface. Note that classes
+     * and methods obtained by this route cannot be guaranteed stable from release to release.
+     * @since 9.0.0.4
+     */
+
+    public Controller getUnderlyingController() {
+        return controller;
+    }
 }
 
 //

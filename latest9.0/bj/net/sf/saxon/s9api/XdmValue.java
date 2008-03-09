@@ -7,6 +7,10 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.Value;
 import net.sf.saxon.value.EmptySequence;
+import net.sf.saxon.value.SequenceExtent;
+
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * An value in the XDM data model. A value is a sequence of zero or more items,
@@ -26,6 +30,21 @@ import net.sf.saxon.value.EmptySequence;
 public class XdmValue implements Iterable<XdmItem> {
 
     private ValueRepresentation value;    // this must be a materialized value
+
+    /**
+     * Create an XdmValue as a sequence of XdmItem objects
+     * @param items a sequence of XdmItem objects. Note that if this is supplied as a list or similar
+     * collection, subsequent changes to the list/collection will have no effect on the XdmValue.
+     * @since 9.0.0.4
+     */
+
+    public XdmValue(Iterable<XdmItem> items) {
+        List values = new ArrayList();
+        for (XdmItem item : items) {
+            values.add(item.getUnderlyingValue());
+        }
+        value = new SequenceExtent(values);
+    }
 
     protected XdmValue() {
         // must be followed by setValue()
