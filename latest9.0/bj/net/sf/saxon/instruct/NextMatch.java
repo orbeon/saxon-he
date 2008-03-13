@@ -95,6 +95,7 @@ public class NextMatch extends ApplyImports {
             WithParam.displayExpressions(tunnelParams, out);
             out.endSubsidiaryElement();
         }
+        out.endElement();
     }
 
 }
