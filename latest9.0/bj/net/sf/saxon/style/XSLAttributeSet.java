@@ -86,6 +86,7 @@ public class XSLAttributeSet extends StyleElement implements StylesheetProcedure
 
         if (nameAtt==null) {
             reportAbsence("name");
+            setObjectName(new StructuredQName("", "", "attribute-set-error-name"));
             return;
         }
 
@@ -93,8 +94,10 @@ public class XSLAttributeSet extends StyleElement implements StylesheetProcedure
             setObjectName(makeQName(nameAtt));
         } catch (NamespaceException err) {
             compileError(err.getMessage(), "XTSE0280");
+            setObjectName(new StructuredQName("", "", "attribute-set-error-name"));
         } catch (XPathException err) {
             compileError(err.getMessage(), "XTSE0280");
+            setObjectName(new StructuredQName("", "", "attribute-set-error-name"));
         }
 
     }
