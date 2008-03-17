@@ -66,6 +66,7 @@ public class EventIteratorToReceiver {
                         out.attribute(att.getNameCode(), att.getTypeAnnotation(), att.getStringValueCS(), 0, 0);
                     }
                 }
+                out.startContent();
             } else if (event instanceof EndElementEvent) {
                 level--;
                 out.endElement();
