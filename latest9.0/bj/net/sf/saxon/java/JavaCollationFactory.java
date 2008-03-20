@@ -189,7 +189,7 @@ public abstract class JavaCollationFactory {
             language = lang;
             country = "";
         } else {
-            language = lang.substring(1, hyphen);
+            language = lang.substring(0, hyphen);
             country = lang.substring(hyphen+1);
         }
         return new Locale(language, country);
