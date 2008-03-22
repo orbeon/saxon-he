@@ -8,6 +8,7 @@ import net.sf.saxon.instruct.Choose;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.om.ValueRepresentation;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trace.Location;
 import net.sf.saxon.trans.XPathException;
@@ -746,8 +747,16 @@ public class ForExpression extends Assignation {
         }
 
 
-        public MappingIterator.StatefulMappingFunction getAnother() {
-            return new MappingAction(context, slotNumber, pslot, action);
+         public MappingIterator.StatefulMappingFunction getAnother() {
+            // Create a copy of the stack frame, so that changes made to local variables by the cloned
+            // iterator are not seen by the original iterator
+            XPathContextMajor c2 = context.newContext();
+            StackFrame oldstack = context.getStackFrame();
+            ValueRepresentation[] vars = oldstack.getStackFrameValues();
+            ValueRepresentation[] newvars = new ValueRepresentation[vars.length];
+            System.arraycopy(vars, 0, newvars, 0, vars.length);
+            c2.setStackFrame(oldstack.getStackFrameMap(), newvars);
+            return new MappingAction(c2, slotNumber, pslot, action);
         }
     }
 
