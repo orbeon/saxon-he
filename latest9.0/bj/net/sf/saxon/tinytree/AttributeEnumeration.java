@@ -63,6 +63,7 @@ final class AttributeEnumeration extends AxisIteratorImpl {
                     // there can only be one match, so abandon the search after this node
                     index = Integer.MAX_VALUE;
                 }
+                current = null;
                 return true;
             }
             index++;
