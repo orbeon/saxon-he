@@ -1824,6 +1824,15 @@ public class Configuration implements Serializable, SourceResolver {
         if (styleParserPool == null) {
             styleParserPool = new ArrayList(10);
         }
+        try {
+            // give things back to the garbage collecter
+            parser.setContentHandler(null);
+            parser.setEntityResolver(null);
+            parser.setDTDHandler(null);
+            parser.setErrorHandler(null);
+        } catch (Exception err) {
+            //
+        }
         styleParserPool.add(parser);
     }
 
@@ -2750,6 +2759,7 @@ public class Configuration implements Serializable, SourceResolver {
         // Get the constructed document
 
         DocumentInfo newdoc = (DocumentInfo)b.getCurrentRoot();
+        b.reset();
 
         // If requested, close the input stream
 

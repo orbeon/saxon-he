@@ -361,6 +361,7 @@ public class Document extends SystemFunction implements XSLTFunction {
                 }
                 new Sender(b.getPipelineConfiguration()).send(source, s);
                 newdoc = (DocumentInfo)b.getCurrentRoot();
+                b.reset();
                 if (source instanceof AugmentedSource && ((AugmentedSource)source).isPleaseCloseAfterUse()) {
                     ((AugmentedSource)source).close();
                 }

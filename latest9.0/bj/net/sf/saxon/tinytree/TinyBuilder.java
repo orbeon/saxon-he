@@ -167,6 +167,15 @@ public class TinyBuilder extends Builder {
 
     }
 
+    public void reset() {
+        super.reset();
+        tree = null;
+        currentDepth = 0;
+        nodeNr = 0;
+        ended = false;
+        sizeParameters = null;
+    }
+
     public void close() throws XPathException {
         //System.err.println("Tree.close " + tree + " size=" + tree.numberOfNodes);
         tree.addNode(Type.STOPPER, 0, 0, 0, -1);

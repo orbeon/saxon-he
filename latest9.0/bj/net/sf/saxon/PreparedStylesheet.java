@@ -240,6 +240,7 @@ public class PreparedStylesheet implements Templates, Serializable {
             sender.send(aug, commentStripper);
         }
         doc = (DocumentImpl)styleBuilder.getCurrentRoot();
+        styleBuilder.reset();
 
         if (aug.isPleaseCloseAfterUse()) {
             aug.close();

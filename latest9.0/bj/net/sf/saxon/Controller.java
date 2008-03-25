@@ -1552,6 +1552,7 @@ public class Controller extends Transformer implements InstructionInfoProvider {
                     ((AugmentedSource)source).close();
                 }
                 DocumentInfo doc = (DocumentInfo)sourceBuilder.getCurrentRoot();
+                sourceBuilder.reset();
                 registerDocument(doc, source.getSystemId());
                 startNode = doc;
             }

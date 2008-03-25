@@ -207,6 +207,27 @@ public abstract class Builder implements Receiver {
         return currentRoot;
     }
 
+   /**
+     * Reset the builder to its initial state. The most important effect of calling this
+     * method (implemented in subclasses) is to release any links to the constructed document
+     * tree, allowing the memory occupied by the tree to released by the garbage collector even
+     * if the Builder is still in memory. This can happen because the Builder is referenced from a
+     * parser in the Configuration's parser pool.
+     */
+
+    public void reset() {
+        pipe = null;
+        config = null;
+        namePool = null;
+        systemId = null;
+        baseURI = null;
+        currentRoot = null;
+        lineNumbering = false;
+        started = false;
+        timing = false;
+        open = false;
+    }
+
     /**
      * Static method to build a document from any kind of Source object. If the source
      * is already in the form of a tree, it is wrapped as required.
@@ -275,6 +296,7 @@ public abstract class Builder implements Receiver {
                 throw XPathException.makeXPathException(err);
             }
             start = b.getCurrentRoot();
+            b.reset();
         }
         return start;
     }

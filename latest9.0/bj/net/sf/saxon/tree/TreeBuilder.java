@@ -124,6 +124,14 @@ public class TreeBuilder extends Builder
 
     }
 
+    public void reset() {
+        super.reset();
+        currentNode = null;
+        nodeFactory = null;
+        depth = 0;
+        nextNodeNumber = 1;
+    }
+
     /**
     * Notify the start of an element
     */
