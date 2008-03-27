@@ -10,6 +10,7 @@ import net.sf.saxon.javax.xml.xquery.*;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.StandardNames;
+import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.pull.PullSource;
 import net.sf.saxon.pull.StaxBridge;
 import net.sf.saxon.tinytree.TinyBuilder;
@@ -189,7 +190,11 @@ public class StandardDOMHandler  {
                 return new QNameValue(q.getPrefix(), q.getNamespaceURI(), q.getLocalPart(),
                         BuiltInAtomicType.QNAME, null);
             } else if (value instanceof Node) {
-                return (Item)(new DOMObjectModel().convertObjectToXPathValue(value, config));
+                //return (Item)(new DOMObjectModel().convertObjectToXPathValue(value, config));
+                DOMObjectModel model = new DOMObjectModel();
+                DocumentInfo wrapper = model.wrapDocument(value, "", config);
+                NodeInfo node = model.wrapNode(wrapper, value);
+                return node;
             } else if (value instanceof Source) {
                 // Saxon extension to the XQJ specification
                 Builder b = new TinyBuilder();

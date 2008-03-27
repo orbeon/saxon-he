@@ -117,6 +117,52 @@ public class SaxonXQDataSource implements XQDataSource {
     public void setProperty(String name, String value) throws XQException {
         throw new XQException("Property " + name + " is not recognized");
     }
+
+//    public static void main(String[] args) throws Exception {
+//                XQConnection conn = new SaxonXQDataSource().getConnection();
+//                DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+//                    System.err.println("Using DocumentBuilderFactory " + dfactory.getClass());
+//
+//                dfactory.setNamespaceAware(true);
+//
+//                DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
+//                    System.err.println("Using DocumentBuilder " + docBuilder.getClass());
+//
+//
+//                Document doc = docBuilder.parse(
+//                              new InputSource(new File("data/books.xml").toURL().toString()));
+////                File inputFile = new File("data/books.xml");
+////                if (!inputFile.exists()) {
+////                    System.out.println("*** Current directory must be the samples directory");
+////                    return;
+////                }
+////                StreamSource source = new StreamSource(inputFile);
+////                URI schemaURI = inputFile.toURI().resolve("books.xsd");
+////                XQItemType booksElement = conn.createSchemaElementType(
+////                        new QName("", "BOOKLIST"),
+////                        XQItemType.XQITEMKIND_ELEMENT,
+////                        schemaURI);
+////                XQItemType booksDocument = conn.createDocumentElementType(booksElement);
+////                XQItem input = conn.createItemFromDocument(source, booksDocument);
+//                //org.w3c.dom.Document w3cdoc =.....;
+//                ArrayList items = new ArrayList();
+//                items.add(new Integer(1));
+//                items.add(doc);
+//                items.add(new Integer(2));
+//                XQSequence result = conn.createSequence(items.iterator());
+//
+//                if (result != null) {
+//                    Properties pro = new Properties();
+//                    pro.setProperty("method", "xml");
+//                    pro.setProperty("indent", "yes");
+//
+//                    BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream("c:/temp/test.out"));
+//                    result.writeSequence(fos, pro);
+//                    fos.flush();
+//                    fos.close();
+//                }
+//            
+//    }
 }
 
 //
