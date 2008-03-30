@@ -585,17 +585,19 @@ public final class LocationPathPattern extends Pattern {
      * @throws XPathException
      */
 
-    public void resolveCurrent(LetExpression let, PromotionOffer offer) throws XPathException {
+    public void resolveCurrent(LetExpression let, PromotionOffer offer, boolean topLevel) throws XPathException {
         for (int i = 0; i < numberOfFilters; i++) {
             filters[i] = filters[i].promote(offer);
         }
         if (parentPattern instanceof LocationPathPattern) {
-            ((LocationPathPattern) parentPattern).resolveCurrent(let, offer);
+            ((LocationPathPattern) parentPattern).resolveCurrent(let, offer, false);
         }
         if (ancestorPattern instanceof LocationPathPattern) {
-            ((LocationPathPattern) ancestorPattern).resolveCurrent(let, offer);
+            ((LocationPathPattern) ancestorPattern).resolveCurrent(let, offer, false);
         }
-        variableBinding = let;
+        if (topLevel) {
+            variableBinding = let;
+        }
     }
 }
 

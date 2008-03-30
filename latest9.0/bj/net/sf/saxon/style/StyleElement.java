@@ -1118,7 +1118,7 @@ public abstract class StyleElement extends ElementWithAttributes
                     PromotionOffer offer = new PromotionOffer(config.getOptimizer());
                     offer.action = PromotionOffer.REPLACE_CURRENT;
                     offer.containingExpression = let;
-                    ((LocationPathPattern)pattern).resolveCurrent(let, offer);
+                    ((LocationPathPattern)pattern).resolveCurrent(let, offer, true);
                     allocateSlots(let);
                 }
             }
