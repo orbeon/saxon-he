@@ -82,6 +82,14 @@ public final class UntypedAtomicConverter extends UnaryExpression {
         }
     }
 
+
+    public Expression promote(PromotionOffer offer) throws XPathException {
+        // Don't try to loop-lift an UntypedAtomicConverter. This is because the type-checking on the
+        // result variable is not good enough to prevent a new one being added, ad infinitum.
+        operand = doPromotion(operand, offer);
+        return this;
+    }
+
     /**
      * Type-check the expression
      */
