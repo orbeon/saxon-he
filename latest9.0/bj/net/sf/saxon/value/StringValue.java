@@ -288,8 +288,13 @@ public class StringValue extends AtomicValue {
         if (targetType instanceof BuiltInAtomicType) {
             return convertStringToBuiltInType(value, (BuiltInAtomicType)targetType, checker);
         } else {
+            BuiltInAtomicType primitiveType = (BuiltInAtomicType)targetType.getPrimitiveItemType();
+            if (primitiveType.getFingerprint() == StandardNames.XS_STRING) {
+                int whitespaceAction = targetType.getWhitespaceAction(null);
+                value = Whitespace.applyWhitespaceNormalization(whitespaceAction, value);
+            }
             ConversionResult result =
-                    convertStringToBuiltInType(value, (BuiltInAtomicType)targetType.getPrimitiveItemType(), checker);
+                    convertStringToBuiltInType(value, primitiveType, checker);
             if (result instanceof ValidationFailure) {
                 // conversion has failed
                 return result;
