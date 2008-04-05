@@ -717,7 +717,7 @@ public final class FilterExpression extends Expression {
                 Expression isWhole = lib.makeSaxonFunction(
                         "is-whole-number", env, new Expression[] {isWholeArg});
                 Expression plusOne = new ArithmeticExpression(
-                        arithArg, Token.MINUS, new Literal(Int64Value.makeIntegerValue(1)));
+                        arithArg, Token.PLUS, new Literal(Int64Value.makeIntegerValue(1)));
                 Rounding ceiling = (Rounding)SystemFunction.makeSystemFunction(
                         "ceiling", new Expression[] {ceilingArg});
                 Expression choice = Choose.makeConditional(isWhole, plusOne, ceiling);
