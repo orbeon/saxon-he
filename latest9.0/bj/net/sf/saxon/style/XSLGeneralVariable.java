@@ -389,7 +389,7 @@ public abstract class XSLGeneralVariable extends StyleElement {
         }
         if (global) {
             final GlobalVariable gvar = (GlobalVariable)var;
-            //gvar.lookForCycles(new Stack());
+            var.setContainer(gvar);
             Expression exp2 = select;
             if (exp2 != null) {
                 try {
