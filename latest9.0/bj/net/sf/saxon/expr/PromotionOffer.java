@@ -1,6 +1,8 @@
 package net.sf.saxon.expr;
+
 import net.sf.saxon.functions.Current;
 import net.sf.saxon.functions.Reverse;
+import net.sf.saxon.instruct.Block;
 import net.sf.saxon.instruct.LocalParam;
 import net.sf.saxon.om.NamespaceConstant;
 import net.sf.saxon.om.StructuredQName;
@@ -247,7 +249,8 @@ public class PromotionOffer  {
                 break;
             }
             case EXTRACT_GLOBAL_VARIABLES:
-                if (!(child instanceof Literal || child instanceof LocalParam) &&
+                if (!(child instanceof Literal || child instanceof LocalParam ||
+                        (child instanceof Block && ((Block)child).containsLocalParam())) &&
                         child.getDependencies() == 0 &&
                         (child.getSpecialProperties() & StaticProperty.NON_CREATIVE) != 0) {
                     return optimizer.extractGlobalVariables(child, visitor);

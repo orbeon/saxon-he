@@ -126,6 +126,16 @@ public class Block extends Instruction {
     }
 
     /**
+     * Test whether the Block includes a LocalParam instruction (which will be true only if it is the
+     * body of an XSLT template)
+     * @return true if the Block contains a LocalParam instruction
+     */
+
+    public boolean containsLocalParam() {
+        return children != null && children.length > 0 && children[0] instanceof LocalParam;
+    }
+
+    /**
      * Replace one subexpression by a replacement subexpression
      * @param original the original subexpression
      * @param replacement the replacement subexpression
