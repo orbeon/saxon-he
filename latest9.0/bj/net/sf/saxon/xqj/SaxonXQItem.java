@@ -227,7 +227,7 @@ public class SaxonXQItem implements XQResultItem {
             Receiver out = sf.getReceiver(result, pipe, props);
             TreeReceiver tr = new TreeReceiver(out);
             tr.open();
-            tr.append(item, 0, 0);
+            tr.append(item, 0, NodeInfo.ALL_NAMESPACES);
             tr.close();
         } catch (XPathException e) {
             XQException xqe = new XQException(e.getMessage());
