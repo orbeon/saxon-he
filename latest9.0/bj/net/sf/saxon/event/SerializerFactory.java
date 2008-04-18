@@ -223,7 +223,7 @@ public class SerializerFactory implements Serializable {
             characterMapExpander.setUnderlyingReceiver(target);
             target = characterMapExpander;
         }
-        if (!"no".equals(props.getProperty(SaxonOutputKeys.ESCAPE_URI_ATTRIBUTES))) {
+        if (!("no".equals(props.getProperty(SaxonOutputKeys.ESCAPE_URI_ATTRIBUTES)) || "no".equals(props.getProperty("escape-uri-attibutes")))) {
             ProxyReceiver escaper = newHTMLURIEscaper(pipe, props);
             escaper.setUnderlyingReceiver(target);
             target = escaper;
@@ -278,7 +278,7 @@ public class SerializerFactory implements Serializable {
             filter.setUnderlyingReceiver(target);
             target = filter;
         }
-        if (!"no".equals(props.getProperty(SaxonOutputKeys.ESCAPE_URI_ATTRIBUTES))) {
+        if (!("no".equals(props.getProperty(SaxonOutputKeys.ESCAPE_URI_ATTRIBUTES))  || "no".equals(props.getProperty("escape-uri-attibutes")))) {
             ProxyReceiver escaper = newHTMLURIEscaper(pipe, props);
             escaper.setUnderlyingReceiver(target);
             target = escaper;

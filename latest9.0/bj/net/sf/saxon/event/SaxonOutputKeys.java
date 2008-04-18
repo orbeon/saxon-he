@@ -84,7 +84,7 @@ public class SaxonOutputKeys {
      * <p>Indicates whether HTML attributes of type URI are to be URI-escaped</p>
      */
 
-    public static final String ESCAPE_URI_ATTRIBUTES = "escape-uri-attibutes";
+    public static final String ESCAPE_URI_ATTRIBUTES = "escape-uri-attributes";
 
     /**
      * representation = rep1[;rep2].
@@ -210,7 +210,8 @@ public class SaxonOutputKeys {
                 if (value != null) {
                     checkYesOrNo(key, value);
                 }
-            } else if (key.equals(ESCAPE_URI_ATTRIBUTES)) {
+            } else if (key.equals(ESCAPE_URI_ATTRIBUTES) || key.equals("escape-uri-attibutes")) {
+                // misspelling is for backwards compatibility
                 if (value != null) {
                     checkYesOrNo(key, value);
                 }
