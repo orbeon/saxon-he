@@ -215,6 +215,10 @@ public class SaxonOutputKeys {
                 if (value != null) {
                     checkYesOrNo(key, value);
                 }
+            } else if (key.equals(NORMALIZATION_FORM)) {
+                if (value != null) {
+                    checkNormalizationForm(value);
+                }
             } else if (key.equals(CHARACTER_REPRESENTATION)) {
                 // no validation performed
             } else if (key.equals(NEXT_IN_CHAIN)) {
@@ -273,6 +277,18 @@ public class SaxonOutputKeys {
         if (isValidClarkName(value, checker)) return;
         throw new XPathException("Invalid value for serialization method: " +
                 "must be xml, html, xhtml, text, or a QName in '{uri}local' form");
+
+    }
+
+    private static void checkNormalizationForm(String value) throws XPathException {
+        if ("NFC".equals(value)) return;
+        if ("NFD".equals(value)) return;
+        if ("NFKC".equals(value)) return;
+        if ("NFKD".equals(value)) return;
+        if ("fully-normalized".equals(value)) return;
+        if ("none".equals(value)) return;
+        throw new XPathException("Invalid value for normalization-form: " +
+                "must be NFC, NFD, NFKC, NFKD, fully-normalized, or none");
 
     }
 
