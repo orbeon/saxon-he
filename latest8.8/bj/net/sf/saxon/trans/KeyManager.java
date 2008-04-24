@@ -440,9 +440,9 @@ public class KeyManager implements Serializable {
         if (definitions == null) {
             String keyName; // bug 1755333
             try {
-                keyName = context.getNamePool().getDisplayName(keyNameFingerprint);
+                keyName = context.getNamePool().getDisplayName(fingerprint);
             } catch (Exception err) {
-                keyName = "" + keyNameFingerprint;
+                keyName = "" + fingerprint;
             }            
             DynamicError de = new DynamicError("Key " + keyName +
             							" has not been defined");

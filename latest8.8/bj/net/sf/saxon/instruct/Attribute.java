@@ -374,19 +374,20 @@ public final class Attribute extends SimpleNodeConstructor {
         	}
 
         } else {
-
-            // generate a name using the supplied namespace URI
-            if (namespace instanceof StringValue) {
-                uri = ((StringValue)namespace).getStringValue();
-            } else {
-                uri = namespace.evaluateAsString(context);
-                if (!AnyURIValue.isValidURI(uri)) {
-                    DynamicError de = new DynamicError(
-                            "The value of the namespace attribute must be a valid URI");
-                    de.setErrorCode("XTDE0865");
-                    de.setXPathContext(context);
-                    de.setLocator(this);
-                    throw de;
+            if (uri == null) {
+                // generate a name using the supplied namespace URI
+                if (namespace instanceof StringValue) {
+                    uri = ((StringValue)namespace).getStringValue();
+                } else {
+                    uri = namespace.evaluateAsString(context);
+                    if (!AnyURIValue.isValidURI(uri)) {
+                        DynamicError de = new DynamicError(
+                                "The value of the namespace attribute must be a valid URI");
+                        de.setErrorCode("XTDE0865");
+                        de.setXPathContext(context);
+                        de.setLocator(this);
+                        throw de;
+                    }
                 }
             }
             
