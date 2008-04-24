@@ -28,9 +28,9 @@ final class PrecedingSiblingEnumeration extends AxisIteratorImpl {
     }
 
     public Item next() {
-//        if (nextNodeNr < 0) {
-//            return null;
-//        }
+        if (nextNodeNr < 0) { // fix bug 1825549
+            return null;
+        }
         while (true) {
             nextNodeNr = document.prior[nextNodeNr];
             if (nextNodeNr < 0) {

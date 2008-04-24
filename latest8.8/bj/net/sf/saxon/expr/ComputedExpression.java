@@ -509,7 +509,7 @@ public abstract class ComputedExpression
      * Should only be called if the caller has established that there is a dependency on local variables.
      */
 
-    public synchronized int[] getSlotsUsed() {
+    public synchronized int[] getSlotsUsed() {  // fix bug 1878851
         if (slotsUsed != null) {
             return slotsUsed;
         }

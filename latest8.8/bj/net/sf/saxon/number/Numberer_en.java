@@ -610,7 +610,7 @@ public class Numberer_en implements Numberer, Serializable {
     };
 
     private static int[] minUniqueDayLength = {
-        2, 1, 2, 1, 2, 2, 1
+        1, 2, 1, 2, 1, 2, 2
     };
 
     /**

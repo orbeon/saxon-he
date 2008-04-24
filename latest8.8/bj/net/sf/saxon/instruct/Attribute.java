@@ -299,6 +299,7 @@ public final class Attribute extends SimpleNodeConstructor {
 
         String prefix = null;
         String localName = null;
+        String uri = null;
 
         if (nameValue instanceof StringValue) {
             // this will always be the case in XSLT
@@ -339,12 +340,12 @@ public final class Attribute extends SimpleNodeConstructor {
         } else if (nameValue instanceof QNameValue) {
             // this is allowed in XQuery
             localName = ((QNameValue)nameValue).getLocalName();
-            String namespaceURI = ((QNameValue)nameValue).getNamespaceURI();
-            if (namespaceURI == null) {
-                namespaceURI = "";
+            uri = ((QNameValue)nameValue).getNamespaceURI();
+            if (uri == null) {
+                uri = "";
             }
-            namespace = new StringValue(namespaceURI);
-            if (namespaceURI.equals("")) {
+            //namespace = new StringValue(namespaceURI);
+            if (uri.equals("")) {
                 prefix = "";
             } else {
                 prefix = ((QNameValue)nameValue).getPrefix();
@@ -359,9 +360,7 @@ public final class Attribute extends SimpleNodeConstructor {
             throw dynamicError(this, err, context);
         }
 
-        String uri;
-
-        if (namespace==null) {
+        if (namespace==null && uri == null) {
         	if ("".equals(prefix)) {
         		uri = "";
         	} else {

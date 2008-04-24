@@ -199,11 +199,12 @@ public class KeyFn extends SystemFunction implements XSLTFunction {
             final XPathContext keyContext = context;
             final DocumentInfo document = doc;
             final KeyManager keyManager = controller.getKeyManager();
+            final int keyFp = fprint;  // bug fix 1755333
             MappingFunction map = new MappingFunction() {
                 // Map a value to the sequence of nodes having that value as a key value
                 public Object map(Item item) throws XPathException {
                     return keyManager.selectByKey(
-                            keyFingerprint, document, (AtomicValue)item, keyContext);
+                            keyFp, document, (AtomicValue)item, keyContext);
                 }
             };
 

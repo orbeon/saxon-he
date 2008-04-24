@@ -438,8 +438,13 @@ public class KeyManager implements Serializable {
 
         List definitions = getKeyDefinitions(fingerprint);
         if (definitions == null) {
-            DynamicError de = new DynamicError("Key " +
-            		context.getNamePool().getDisplayName(fingerprint) +
+            String keyName; // bug 1755333
+            try {
+                keyName = context.getNamePool().getDisplayName(keyNameFingerprint);
+            } catch (Exception err) {
+                keyName = "" + keyNameFingerprint;
+            }            
+            DynamicError de = new DynamicError("Key " + keyName +
             							" has not been defined");
             de.setXPathContext(context);
             de.setErrorCode("XTDE1260");
