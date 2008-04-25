@@ -76,11 +76,13 @@ public class XdmSequenceIterator implements Iterator<XdmItem> {
     public XdmItem next() {
         switch (state) {
             case ON_ITEM:
+                state = BEFORE_ITEM;
                 return next;
             case FINISHED:
                 throw new java.util.NoSuchElementException();
             case BEFORE_ITEM:
                 if (hasNext()) {
+                    state = BEFORE_ITEM;
                     return next;
                 } else {
                     throw new java.util.NoSuchElementException();
