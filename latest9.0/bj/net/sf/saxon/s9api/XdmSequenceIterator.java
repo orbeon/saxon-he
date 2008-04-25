@@ -18,11 +18,16 @@ import java.util.Iterator;
 public class XdmSequenceIterator implements Iterator<XdmItem> {
 
     private XdmItem next = null;
-    private boolean finished = false;
+    private int state = BEFORE_ITEM;
     private SequenceIterator base;
+
+    private final static int BEFORE_ITEM = 0;
+    private final static int ON_ITEM = 1;
+    private final static int FINISHED = 2;
 
     protected XdmSequenceIterator(SequenceIterator base) {
         this.base = base;
+        this.state = BEFORE_ITEM;
     }
 
     /**
@@ -36,16 +41,27 @@ public class XdmSequenceIterator implements Iterator<XdmItem> {
      * is detected at this point.
      */
     public boolean hasNext() throws SaxonApiUncheckedException {
-        try {
-            next = XdmItem.wrapItem(base.next());
-            if (next == null) {
-                finished = true;
+        switch (state) {
+            case ON_ITEM:
+                return true;
+            case FINISHED:
                 return false;
-            }
-        } catch (XPathException err) {
-            throw new SaxonApiUncheckedException(err);
+            case BEFORE_ITEM:
+                try {
+                    next = XdmItem.wrapItem(base.next());
+                    if (next == null) {
+                        state = FINISHED;
+                        return false;
+                    } else {
+                        state = ON_ITEM;
+                        return true;
+                    }
+                } catch (XPathException err) {
+                    throw new SaxonApiUncheckedException(err);
+                }
+            default:
+                throw new IllegalStateException();
         }
-        return true;
     }
 
     /**
@@ -58,10 +74,21 @@ public class XdmSequenceIterator implements Iterator<XdmItem> {
      *          iteration has no more elements.
      */
     public XdmItem next() {
-        if (finished) {
-            throw new java.util.NoSuchElementException();
+        switch (state) {
+            case ON_ITEM:
+                return next;
+            case FINISHED:
+                throw new java.util.NoSuchElementException();
+            case BEFORE_ITEM:
+                if (hasNext()) {
+                    return next;
+                } else {
+                    throw new java.util.NoSuchElementException();
+                }
+            default:
+                throw new IllegalStateException();
         }
-        return next;
+
     }
 
     /**
