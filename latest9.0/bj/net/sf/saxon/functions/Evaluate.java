@@ -104,20 +104,24 @@ public class Evaluate extends SystemFunction {
         if (operation == EXPRESSION) {
             // compile-time evaluation of saxon:expression is allowed
             if (argument[0] instanceof StringLiteral) {
-                PreparedExpression pexpr = new PreparedExpression();
-                String exprText = ((StringLiteral)argument[0]).getStringValue();
-                pexpr.variables = new XPathVariable[10];
-                for (int i=1; i<10; i++) {
-                    pexpr.variables[i-1] = staticContext.declareVariable("", "p"+i);
-                }
-                Expression expr = ExpressionTool.make(exprText, staticContext, 0, Token.EOF, 1, false);
+                try {   // bug 1952318
+                    PreparedExpression pexpr = new PreparedExpression();
+                    String exprText = ((StringLiteral)argument[0]).getStringValue();
+                    pexpr.variables = new XPathVariable[10];
+                    for (int i=1; i<10; i++) {
+                        pexpr.variables[i-1] = staticContext.declareVariable("", "p"+i);
+                    }
+                    Expression expr = ExpressionTool.make(exprText, staticContext, 0, Token.EOF, 1, false);
 
-                ItemType contextItemType = Type.ITEM_TYPE;
-                expr = visitor.typeCheck(expr, contextItemType);
-                pexpr.stackFrameMap = staticContext.getStackFrameMap();
-                ExpressionTool.allocateSlots(expr, pexpr.stackFrameMap.getNumberOfVariables(), pexpr.stackFrameMap);
-                pexpr.expression = expr;
-                return new Literal(new ObjectValue(pexpr));
+                    ItemType contextItemType = Type.ITEM_TYPE;
+                    expr = visitor.typeCheck(expr, contextItemType);
+                    pexpr.stackFrameMap = staticContext.getStackFrameMap();
+                    ExpressionTool.allocateSlots(expr, pexpr.stackFrameMap.getNumberOfVariables(), pexpr.stackFrameMap);
+                    pexpr.expression = expr;
+                    return new Literal(new ObjectValue(pexpr));
+                } catch (XPathException err) {
+                    return this;
+                }
             }
         }
         // the other operations don't allow compile time evaluation because they need a run-time context
