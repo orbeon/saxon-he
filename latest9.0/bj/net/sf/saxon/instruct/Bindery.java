@@ -1,4 +1,5 @@
 package net.sf.saxon.instruct;
+
 import net.sf.saxon.expr.TypeChecker;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.DocumentInfo;
@@ -7,8 +8,12 @@ import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.om.ValueRepresentation;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.AtomicType;
+import net.sf.saxon.type.ExternalObjectType;
 import net.sf.saxon.type.ItemType;
-import net.sf.saxon.value.*;
+import net.sf.saxon.value.AtomicValue;
+import net.sf.saxon.value.EmptySequence;
+import net.sf.saxon.value.SequenceType;
+import net.sf.saxon.value.Value;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -104,7 +109,7 @@ public final class Bindery  {
         }
 
         ItemType reqItemType = requiredType.getPrimaryType();
-        if (val instanceof AtomicValue && reqItemType.isAtomicType()) {
+        if (val instanceof AtomicValue && reqItemType.isAtomicType() && !(reqItemType instanceof ExternalObjectType)) {
             // If the parameter is an atomic value, typically a string supplied on
             // the command line, we attempt to convert it to the required type. This
             // will not always succeed.
