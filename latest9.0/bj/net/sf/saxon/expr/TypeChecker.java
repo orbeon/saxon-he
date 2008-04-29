@@ -214,6 +214,7 @@ public final class TypeChecker {
                         } else {
                             exp = cexp;
                         }
+                        suppliedItemType = exp.getItemType(th);
                     } catch (XPathException err) {
                         err.maybeSetLocation(exp);
                         throw err.makeStatic();
