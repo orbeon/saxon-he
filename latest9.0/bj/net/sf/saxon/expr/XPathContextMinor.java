@@ -535,6 +535,15 @@ public class XPathContextMinor implements XPathContext {
         return controller.getImplicitTimezone();
     }
 
+    /**
+     * Mark the context as being in (or not in) temporary output state
+     * @param temp true to set temporary output state; false to unset it
+     */
+
+    public void setTemporaryOutputState(boolean temp) {
+        isTemporaryDestination = temp;
+    }
+
     // TODO: eliminate this class. A new XPathContextMinor is created under two circumstances,
     // (a) when the focus changes (i.e., a new current iterator), and (b) when the current
     // receiver changes. We could handle these by maintaining a stack of iterators and a stack of

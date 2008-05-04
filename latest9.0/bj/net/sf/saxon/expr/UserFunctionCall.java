@@ -385,6 +385,7 @@ public class UserFunctionCall extends FunctionCall implements InstructionInfoPro
 
         XPathContextMajor c2 = c.newCleanContext();
         c2.setOrigin(this);
+        c2.setTemporaryOutputState(true);
         try {
             return function.call(actualArgs, c2);
         } catch (StackOverflowError err) {
