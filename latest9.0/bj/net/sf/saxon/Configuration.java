@@ -1,17 +1,17 @@
 package net.sf.saxon;
 
-/*DOTNETONLY*/  //import net.sf.saxon.dotnet.DotNetPlatform;
+/*DOTNETONLY*/  import net.sf.saxon.dotnet.DotNetPlatform;
 import net.sf.saxon.event.*;
 import net.sf.saxon.expr.Optimizer;
-import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.PathMap;
+import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.functions.ExtensionFunctionFactory;
 import net.sf.saxon.functions.FunctionLibrary;
 import net.sf.saxon.functions.StandardCollectionURIResolver;
 import net.sf.saxon.functions.VendorFunctionLibrary;
 import net.sf.saxon.instruct.Debugger;
 import net.sf.saxon.instruct.SlotManager;
-/*JAVAONLY*/  import net.sf.saxon.java.JavaPlatform;
+/*JAVAONLY*/ import net.sf.saxon.java.JavaPlatform;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pull.PullProvider;
 import net.sf.saxon.pull.PullSource;
@@ -23,12 +23,11 @@ import net.sf.saxon.sort.StringCollator;
 import net.sf.saxon.sxpath.IndependentContext;
 import net.sf.saxon.tinytree.TinyBuilder;
 import net.sf.saxon.trace.TraceListener;
-import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.trans.SaxonErrorCode;
+import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.TreeBuilder;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.Whitespace;
-import net.sf.saxon.dotnet.DotNetPlatform;
 import org.xml.sax.*;
 
 import javax.xml.parsers.ParserConfigurationException;
