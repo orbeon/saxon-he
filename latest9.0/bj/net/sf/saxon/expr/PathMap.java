@@ -18,6 +18,7 @@ import java.io.FileReader;
 import java.io.File;
 import java.util.*;
 import java.net.URISyntaxException;
+import java.net.URI;
 
 /**
  * A PathMap is a description of all the paths followed by an expression.
@@ -436,26 +437,31 @@ public class PathMap {
             } else if (exp instanceof Document) {
                 baseUri = ((Document)exp).getStaticBaseURI();
             }
-            if (baseUri != null) {
-                Expression arg = ((SystemFunction)exp).getArguments()[0];
-                String suppliedUri = null;
-                if (arg instanceof Literal) {
-                    try {
-                        suppliedUri = Configuration.getPlatform().makeAbsolute(
-                            ((Literal)arg).getValue().getStringValue(),
-                            baseUri).toString();
-                    } catch (URISyntaxException err) {
-                        suppliedUri = null;
-                    } catch (XPathException err) {
-                        suppliedUri = null;
-                    }
-                }
-                if (requiredUri.equals(suppliedUri)) {
-                    if (requiredRoot != null) {
-                        throw new IllegalStateException("More than one document root found in path map for " + requiredUri);
+            Expression arg = ((SystemFunction)exp).getArguments()[0];
+            String suppliedUri = null;
+            if (arg instanceof Literal) {
+                try {
+                    String argValue = ((Literal)arg).getValue().getStringValue();
+                    if (baseUri == null) {
+                        if (new URI(argValue).isAbsolute()) {
+                            suppliedUri = argValue;
+                        } else {
+                            suppliedUri = null;
+                        }
                     } else {
-                        requiredRoot = newRoot;
+                        suppliedUri = Configuration.getPlatform().makeAbsolute(argValue, baseUri).toString();
                     }
+                } catch (URISyntaxException err) {
+                    suppliedUri = null;
+                } catch (XPathException err) {
+                    suppliedUri = null;
+                }
+            }
+            if (requiredUri.equals(suppliedUri)) {
+                if (requiredRoot != null) {
+                    throw new IllegalStateException("More than one document root found in path map for " + requiredUri);
+                } else {
+                    requiredRoot = newRoot;
                 }
             }
         }
