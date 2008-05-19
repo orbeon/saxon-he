@@ -2,16 +2,16 @@ package net.sf.saxon.s9api;
 
 import net.sf.saxon.AugmentedSource;
 import net.sf.saxon.Configuration;
+import net.sf.saxon.om.DocumentInfo;
+import net.sf.saxon.om.ExternalObjectModel;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Validation;
-import net.sf.saxon.om.ExternalObjectModel;
-import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.trans.XPathException;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-import java.net.URI;
 import java.io.File;
+import java.net.URI;
 
 /**
  * A document builder holds properties controlling how a Saxon document tree should be built, and
@@ -323,6 +323,42 @@ public class DocumentBuilder {
         NodeInfo wrappedNode = model.wrapNode(doc, node);
         return (XdmNode)XdmItem.wrapItem(wrappedNode);
     }
+
+//    public static void main(String[] args) {
+//        String validXML = "<!DOCTYPE a [<!ELEMENT a EMPTY>]><a/>";
+//        String invalidXML = "<!DOCTYPE a [<!ELEMENT a (b+)>]><a/>";
+//        DocumentBuilder builder = new Processor(false).newDocumentBuilder();
+//        builder.setDTDValidation(true);
+//
+//        StringReader sr = new StringReader(validXML);
+//        SAXSource source = new SAXSource(new InputSource(sr));
+//        try {
+//            XdmNode d = builder.build(source);
+//            //assertNotNull(d);
+//        } catch (SaxonApiException e) {
+//            System.err.println(e.getMessage());
+//        }
+//
+//        sr = new StringReader(invalidXML);
+//        source = new SAXSource(new InputSource(sr));
+//        try {
+//            XdmNode d = builder.build(source);
+//            System.err.println("invalid document parsed without error");
+//        } catch (SaxonApiException e) {
+//            // expected failure;
+//        }
+//
+//        builder.setDTDValidation(false);
+//        sr = new StringReader(invalidXML);
+//        source = new SAXSource(new InputSource(sr));
+//        try {
+//            XdmNode d = builder.build(source);
+//            System.err.println(d);
+//        } catch (SaxonApiException e) {
+//            System.err.println("Parsing failed but validation was not requested: " + e.getMessage());
+//        }
+//
+//    }
 
 }
 

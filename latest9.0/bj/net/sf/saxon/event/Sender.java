@@ -161,7 +161,8 @@ public class Sender {
             return;
 
         } else if (source instanceof SAXSource) {
-            sendSAXSource((SAXSource)source, next, schemaValidation, topLevelNameCode, stripSpace, xInclude, topLevelType);
+            sendSAXSource((SAXSource)source, next, schemaValidation, topLevelNameCode, stripSpace, xInclude,
+                    dtdValidation == Validation.STRICT, topLevelType);
             return;
 
         } else if (source instanceof StreamSource) {
@@ -181,7 +182,8 @@ public class Sender {
                 }
                 SAXSource sax = new SAXSource(parser, is);
                 sax.setSystemId(source.getSystemId());
-                sendSAXSource(sax, next, schemaValidation, topLevelNameCode, stripSpace, xInclude, topLevelType);
+                sendSAXSource(sax, next, schemaValidation, topLevelNameCode, stripSpace, xInclude,
+                        dtdValidation == Validation.STRICT, topLevelType);
                 if (reuseParser) {
                     config.reuseSourceParser(parser);
                 }
@@ -252,7 +254,8 @@ public class Sender {
     }
 
     private void sendSAXSource(SAXSource source, Receiver receiver, int validation,
-                               int topLevelElement, int stripSpace, boolean xInclude, SchemaType topLevelType)
+                               int topLevelElement, int stripSpace, boolean xInclude,
+                               boolean dtdValidation, SchemaType topLevelType)
     throws XPathException {
         XMLReader parser = source.getXMLReader();
         boolean reuseParser = false;
@@ -281,6 +284,19 @@ public class Sender {
             }
         }
 
+        try {
+            parser.setFeature("http://xml.org/sax/features/validation", dtdValidation);
+        } catch (SAXNotRecognizedException err) {
+            if (dtdValidation) {
+                throw new XPathException("XML Parser does not recognize request for DTD validation");
+            }
+        } catch (SAXNotSupportedException err) {
+            if (dtdValidation) {
+                throw new XPathException("XML Parser does not support DTD validation");
+            }
+        }
+
+
         if (xInclude) {
             boolean tryAgain = false;
             try {
@@ -307,7 +323,8 @@ public class Sender {
 //        if (config.isTiming()) {
 //            System.err.println("Using SAX parser " + parser);
 //        }
-        parser.setErrorHandler(new StandardErrorHandler(pipe.getErrorListener()));
+        StandardErrorHandler errorHandler = new StandardErrorHandler(pipe.getErrorListener());
+        parser.setErrorHandler(errorHandler);
 
 
         if ((validation & Validation.VALIDATION_MODE_MASK) != Validation.PRESERVE) {
@@ -365,6 +382,9 @@ public class Sender {
             }
         } catch (java.io.IOException err) {
             throw new XPathException(err);
+        }
+        if (errorHandler.getErrorCount() > 0) {
+            throw new XPathException("XML Parser reported one or more errors");
         }
         if (reuseParser) {
             config.reuseSourceParser(parser);

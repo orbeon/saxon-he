@@ -19,6 +19,7 @@ public class StandardErrorHandler implements org.xml.sax.ErrorHandler {
 
     private ErrorListener errorListener;
     private Writer errorOutput;
+    private int errorCount = 0;
 
     public StandardErrorHandler(ErrorListener listener) {
         errorListener = listener;
@@ -48,6 +49,7 @@ public class StandardErrorHandler implements org.xml.sax.ErrorHandler {
             return;     // ignore this warning from AElfred2
         }
         //System.err.println("ErrorHandler.warning " + e.getMessage());
+        errorCount++;
         if (errorListener != null) {
             try {
                 errorListener.warning(new TransformerException(e));
@@ -79,7 +81,7 @@ public class StandardErrorHandler implements org.xml.sax.ErrorHandler {
     */
 
     protected void reportError (SAXParseException e, boolean isFatal) {
-
+        errorCount++;
         if (errorListener != null) {
             try {
                 ExpressionLocation loc =
@@ -110,6 +112,10 @@ public class StandardErrorHandler implements org.xml.sax.ErrorHandler {
                 e2.printStackTrace();
             }
         }
+    }
+
+    public int getErrorCount() {
+        return errorCount;
     }
 }
 
