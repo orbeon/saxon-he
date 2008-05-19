@@ -303,6 +303,7 @@ public final class TypeChecker {
                         suppliedItemType.toString(env.getNamePool()), supplied);
                 err.setErrorCode(role.getErrorCode());
                 err.setIsTypeError(true);
+                err.setLocator(role.getSourceLocator());
                 throw err;
             }
         }
@@ -319,6 +320,7 @@ public final class TypeChecker {
                         suppliedItemType.toString(env.getNamePool()), supplied);
                 err.setErrorCode(role.getErrorCode());
                 err.setIsTypeError(true);
+                err.setLocator(role.getSourceLocator());
                 throw err;
             }
             Expression cexp = new ItemChecker(exp, reqItemType, role);
@@ -334,6 +336,7 @@ public final class TypeChecker {
                         Cardinality.toString(suppliedCard), supplied);
                 err.setIsTypeError(true);
                 err.setErrorCode(role.getErrorCode());
+                err.setLocator(role.getSourceLocator());
                 throw err;
             } else {
                 Expression cexp = CardinalityChecker.makeCardinalityChecker(exp, reqCard, role);
@@ -432,6 +435,7 @@ public final class TypeChecker {
             XPathException err = new XPathException("An empty sequence is not allowed as the " + role.getMessage(), supplied);
             err.setErrorCode(role.getErrorCode());
             err.setIsTypeError(true);
+            err.setLocator(role.getSourceLocator());
             throw err;
         }
 
@@ -458,6 +462,7 @@ public final class TypeChecker {
                         suppliedItemType.toString(env.getNamePool()), supplied);
                 err.setErrorCode(role.getErrorCode());
                 err.setIsTypeError(true);
+                err.setLocator(role.getSourceLocator());
                 throw err;
             }
         }
@@ -480,6 +485,7 @@ public final class TypeChecker {
                         Cardinality.toString(suppliedCard), supplied);
                 err.setIsTypeError(true);
                 err.setErrorCode(role.getErrorCode());
+                err.setLocator(role.getSourceLocator());
                 throw err;
             } else {
                 Expression cexp = CardinalityChecker.makeCardinalityChecker(exp, reqCard, role);
