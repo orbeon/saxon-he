@@ -2,6 +2,7 @@ package net.sf.saxon.sql;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.SimpleExpression;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.PromotionOffer;
 import net.sf.saxon.instruct.Executable;
 import net.sf.saxon.om.Axis;
 import net.sf.saxon.om.AxisIterator;
@@ -128,6 +129,14 @@ public class SQLInsert extends ExtensionInstruction {
 
         public String getExpressionType() {
             return "sql:insert";
+        }
+
+        public Expression promote(PromotionOffer offer) throws XPathException {
+            if (offer.action != PromotionOffer.FOCUS_INDEPENDENT && offer.action != PromotionOffer.EXTRACT_GLOBAL_VARIABLES) {
+                return super.promote(offer);
+            } else {
+                return this;
+            }
         }
 
         public Item evaluateItem(XPathContext context) throws XPathException {

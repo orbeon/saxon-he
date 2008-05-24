@@ -1,8 +1,5 @@
 package net.sf.saxon.sql;
-import net.sf.saxon.expr.Expression;
-import net.sf.saxon.expr.SimpleExpression;
-import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.expr.StringLiteral;
+import net.sf.saxon.expr.*;
 import net.sf.saxon.instruct.Executable;
 import net.sf.saxon.om.*;
 import net.sf.saxon.style.ExtensionInstruction;
@@ -142,6 +139,14 @@ public class SQLUpdate extends ExtensionInstruction {
         public String getExpressionType() {
             return "sql:update";
         }
+
+       public Expression promote(PromotionOffer offer) throws XPathException {
+            if (offer.action != PromotionOffer.FOCUS_INDEPENDENT && offer.action != PromotionOffer.EXTRACT_GLOBAL_VARIABLES) {
+                return super.promote(offer);
+            } else {
+                return this;
+            }
+        }        
 
         public Item evaluateItem(XPathContext context) throws XPathException {
 
