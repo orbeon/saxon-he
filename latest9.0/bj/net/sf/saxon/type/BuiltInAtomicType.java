@@ -116,6 +116,10 @@ public class BuiltInAtomicType implements AtomicType, Serializable {
 
     public static BuiltInAtomicType ENTITY;
 
+    static {
+        init();
+    }
+
     /**
      * Static initialization
      */

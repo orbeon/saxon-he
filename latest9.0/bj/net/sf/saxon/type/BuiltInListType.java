@@ -26,6 +26,10 @@ public class BuiltInListType implements ListType, Serializable {
     public static BuiltInListType NMTOKENS;
     public static BuiltInListType ANY_URIS;
 
+    static {
+        init();
+    }
+
     /**
      * Static initialization
      */
