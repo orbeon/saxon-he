@@ -169,6 +169,17 @@ public class KeyDefinition extends Procedure implements Serializable, Instructio
     }
 
     /**
+     * Set the body of the key (the use expression). This is held redundantly as an Expression and
+     * as a SequenceIterable (not sure why!)
+     * @param body the use expression of the key
+     */
+
+    public void setBody(Expression body) {
+        super.setBody(body);
+        use = body;
+    }    
+
+    /**
     * Get the use expression for the key definition
      * @return the expression specified in the "use" attribute of the xsl:key declaration
     */
