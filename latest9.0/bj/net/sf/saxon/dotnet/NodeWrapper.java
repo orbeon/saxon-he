@@ -324,12 +324,12 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
             case Type.TEXT:
                 if (span == 1) {
-                    return node.get_Value();
+                    return node.get_InnerText();
                 } else {
                     FastStringBuffer fsb = new FastStringBuffer(100);
                     XmlNode textNode = node;
                     for (int i=0; i<span; i++) {
-                        fsb.append(textNode.get_Value());
+                        fsb.append(textNode.get_InnerText());
                         textNode = textNode.get_NextSibling();
                     }
                     return fsb.condense();
@@ -1105,8 +1105,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
          * Get properties of this iterator, as a bit-significant integer.
          *
          * @return the properties of this iterator. This will be some combination of
-         *         properties such as {@link GROUNDED}, {@link LAST_POSITION_FINDER},
-         *         and {@link LOOKAHEAD}. It is always
+         *         properties such as {@link #GROUNDED}, {@link #LAST_POSITION_FINDER},
+         *         and {@link #LOOKAHEAD}. It is always
          *         acceptable to return the value zero, indicating that there are no known special properties.
          *         It is acceptable for the properties of the iterator to change depending on its state.
          */
