@@ -108,7 +108,7 @@ public class Minimax extends CollatingFunction {
      */
 
     public ItemType getItemType(TypeHierarchy th) {
-        ItemType t = argument[0].getItemType(th);
+        ItemType t = Atomizer.getAtomizedItemType(argument[0], false, th);
         if (t.getPrimitiveType() == StandardNames.XS_UNTYPED_ATOMIC) {
             return BuiltInAtomicType.DOUBLE;
         } else {
