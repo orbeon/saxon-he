@@ -2915,7 +2915,7 @@ public class Configuration implements Serializable, SourceResolver {
         		throw new IllegalArgumentException(
                         "SCHEMA_URI_RESOLVER value must be an instance of net.sf.saxon.type.SchemaURIResolver");
         	}
-        	setOutputURIResolver((OutputURIResolver)value);           
+        	setOutputURIResolver((OutputURIResolver)value);
 
         } else if (name.equals(FeatureKeys.SCHEMA_VALIDATION)) {
              if (!(value instanceof Integer)) {
@@ -3107,7 +3107,7 @@ public class Configuration implements Serializable, SourceResolver {
         	return Boolean.valueOf(isTraceExternalFunctions());
 
         } else if (name.equals(FeatureKeys.TRACE_OPTIMIZER_DECISIONS)) {
-        	return Boolean.valueOf(isOptimizerTracing());            
+        	return Boolean.valueOf(isOptimizerTracing());
 
         } else if (name.equals(FeatureKeys.TREE_MODEL)) {
         	return new Integer(getTreeModel());
@@ -3139,6 +3139,9 @@ public class Configuration implements Serializable, SourceResolver {
 //    }
 
 
+    public Iterator getExtensionsOfType(SchemaType contentType) {
+        return Collections.EMPTY_LIST.iterator();
+    }
 }
 
 

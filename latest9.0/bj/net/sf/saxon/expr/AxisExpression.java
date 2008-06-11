@@ -8,6 +8,8 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.Cardinality;
 
+import java.util.Iterator;
+
 
 /**
  * An AxisExpression is always obtained by simplifying a PathExpression.
@@ -168,6 +170,12 @@ public final class AxisExpression extends Expression {
                             ", as this type requires simple content", this);
                 } else if (((ComplexType)contentType).isEmptyContent() &&
                         (axis==Axis.CHILD || axis==Axis.DESCENDANT || axis==Axis.DESCENDANT_OR_SELF)) {
+                    for (Iterator iter=visitor.getConfiguration().getExtensionsOfType(contentType); iter.hasNext();) {
+                        ComplexType extension = (ComplexType)iter.next();
+                        if (!extension.isEmptyContent()) {
+                            return this;
+                        }
+                    }
                     env.issueWarning("The " + Axis.axisName[axis] + " axis will never select any " +
                             " nodes when starting at a node with type " +
                             contentType.getDescription() +
