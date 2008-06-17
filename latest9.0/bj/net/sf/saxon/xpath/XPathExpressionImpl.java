@@ -212,6 +212,10 @@ public class XPathExpressionImpl implements XPathExpression, SortKeyEvaluator {
     public SequenceIterator rawIterator(Item contextItem) throws XPathException {
         XPathContextMajor context = new XPathContextMajor(contextItem, executable);
         context.openStackFrame(stackFrameMap);
+        return rawIterator(context);
+    }
+
+    private SequenceIterator rawIterator(XPathContextMajor context) throws XPathException {
         SequenceIterator iterator = expression.iterate(context);
         if (sortKey != null) {
             Expression key = sortKey.expression;
@@ -346,7 +350,8 @@ public class XPathExpressionImpl implements XPathExpression, SortKeyEvaluator {
                 }
                 throw new XPathExpressionException("Expression result is not a node");
             } else if (qName.equals(XPathConstants.NODESET)) {
-                SequenceIterator iter = expression.iterate(context);
+                //SequenceIterator iter = expression.iterate(context);
+                SequenceIterator iter = rawIterator(context);
                 SequenceExtent extent = new SequenceExtent(iter);
                 if (model != null) {
                     Object result = model.convertToNodeList(extent);
