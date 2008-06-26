@@ -142,7 +142,7 @@ public abstract class XSLGeneralIncorporate extends StyleElement {
                 return null;
             }
             XSLStylesheet incSheet = (XSLStylesheet)outermost;
-
+            incSheet.validate();  // bug 2003065
             if (incSheet.validationError!=null) {
                 if (reportingCircumstances == REPORT_ALWAYS) {
                     incSheet.compileError(incSheet.validationError);
