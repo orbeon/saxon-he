@@ -160,10 +160,20 @@ public class NumberInstruction extends Expression {
         } else {
             if (value==null) {
                 // we are numbering the context node
-                if (contextItemType.isAtomicType()) {
-                    XPathException err = new XPathException("xsl:number requires the context item to be a node, but it is an atomic value");
+                XPathException err = null;
+                if (contextItemType == null) {
+                    err = new XPathException(
+                            "xsl:number requires a select attribute, a value attribute, or a context item");
+                } else if (contextItemType.isAtomicType()) {
+                    err = new XPathException(
+                            "xsl:number requires the context item to be a node, but it is an atomic value");
+
+                }
+                if (err != null) {
                     err.setIsTypeError(true);
                     err.setErrorCode("XTTE0990");
+                    err.setLocator(this);
+                    throw err;
                 }
             }
         }
@@ -335,7 +345,7 @@ public class NumberInstruction extends Expression {
             lang = replacement;
             found = true;
         }
-                return found;
+        return found;
     }
 
 
