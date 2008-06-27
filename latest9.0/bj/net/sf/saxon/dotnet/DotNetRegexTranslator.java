@@ -181,14 +181,13 @@ public class DotNetRegexTranslator extends SurrogateRegexTranslator {
 //        }
 
         // .NET 2.0 supports character class subtraction syntax: [AB-[CD]].
-        // But we want to work on .NET 1.1, so we use [AB](?![CD])
+        // But we want to work on .NET 1.1, so we use (?![CD])[AB]
 
         public void outputBmp(FastStringBuffer buf) {
-            cc1.outputBmp(buf);
             buf.append("(?!");
             cc2.outputBmp(buf);
             buf.append(")");
-        }
+            cc1.outputBmp(buf);        }
 
 //        void outputComplementBmp(FastStringBuffer buf) {
 //            buf.append('[');
