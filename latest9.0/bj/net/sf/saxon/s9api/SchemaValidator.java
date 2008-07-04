@@ -232,7 +232,7 @@ public class SchemaValidator implements Destination {
         Receiver receiver = config.getDocumentValidator(
                 output,
                 systemId,
-                (lax ? Validation.LAX : Validation.STRICT),
+                (lax ? Validation.LAX : Validation.STRICT) | Validation.VALIDATE_OUTPUT,
                 Whitespace.NONE,
                 documentElementType,
                 topLevelElement);
@@ -241,6 +241,65 @@ public class SchemaValidator implements Destination {
         }
         return receiver;
     }
+
+//    public static void main(String[] args) {
+//
+//        // This validation run should report exactly two validation errors.
+//
+//        String source_xml = "<?xml version='1.0'?><request><user_name>ed</user_name><password>sdsd</password><date1>a2009-01-01</date1><date2>b2009-01-01</date2></request>";
+//        String xsd = "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" elementFormDefault=\"qualified\" attributeFormDefault=\"unqualified\">\n" +
+//                "\t<xs:element name=\"request\">\n" +
+//                "\t\t<xs:complexType>\n" +
+//                "\t\t\t<xs:sequence>\n" +
+//                "\t\t\t\t<xs:element name=\"user_name\" type=\"xs:string\"/>\n" +
+//                "\t\t\t\t<xs:element name=\"password\" type=\"xs:string\"/>\n" +
+//                "\t\t\t\t<xs:element name=\"date1\" type=\"xs:date\"/>\n" +
+//                "\t\t\t\t<xs:element name=\"date2\" type=\"xs:date\"/>\n" +
+//                "\t\t\t</xs:sequence>\n" +
+//                "\t\t</xs:complexType>\n" +
+//                "\t</xs:element>\n" +
+//                "</xs:schema>";
+//
+//        final List<TransformerException> errorList = new ArrayList<TransformerException>();
+//        try {
+//            Processor proc = new Processor(true);
+//            proc.setConfigurationProperty(net.sf.saxon.FeatureKeys.VALIDATION_WARNINGS, true);
+//            //proc.setConfigurationProperty(net.sf.saxon.FeatureKeys.SCHEMA_VALIDATION, Validation.LAX);
+//            SchemaManager sm = proc.getSchemaManager();
+//            StreamSource source_xsd = new StreamSource(new StringReader(xsd));
+//
+//            ErrorListener listener = new ErrorListener() {
+//                public void error(TransformerException exception) throws TransformerException {
+//                    errorList.add(exception);
+//                }
+//
+//                public void fatalError(TransformerException exception) throws TransformerException {
+//                    System.err.println("FATAL_ERROR:" + exception.getMessage());
+//                }
+//
+//                public void warning(TransformerException exception) throws TransformerException {
+//                    errorList.add(exception);
+//                }
+//            };
+//
+//            SchemaValidator sv = sm.newSchemaValidator();
+//            sv.setErrorListener(listener);
+//            sm.load(source_xsd);
+//            StreamSource source = new StreamSource(new StringReader(source_xml));
+//            sv.validate(source);
+//
+//            System.err.println("Validation errors not detected");
+//
+//        }
+//
+//        catch (SaxonApiException sapie) {
+//            System.err.println(errorList.size() == 2);
+//        }
+//        catch (Exception e) {
+//            System.err.println(e.getMessage());
+//        }
+//    }
+
 
 }
 
