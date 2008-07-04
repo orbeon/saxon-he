@@ -297,14 +297,16 @@ public class IndependentContext extends AbstractStaticContext
 
     public SlotManager getStackFrameMap() {
         SlotManager map = getConfiguration().makeSlotManager();
+        XPathVariable[] va = new XPathVariable[variables.size()];
         for (Iterator v = variables.values().iterator(); v.hasNext();) {
             XPathVariable var = (XPathVariable)v.next();
-            map.allocateSlotNumber(var.getVariableQName());
+            va[var.getLocalSlotNumber()] = var;
+        }
+        for (int i=0; i<va.length; i++) {
+            map.allocateSlotNumber(va[i].getVariableQName());
         }
         return map;
     }
-
-
 
     public boolean isImportedSchema(String namespace) {
         return importedSchemaNamespaces.contains(namespace);
