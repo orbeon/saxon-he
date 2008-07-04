@@ -297,6 +297,26 @@ public class XdmNode extends XdmItem {
         return (NodeInfo) getUnderlyingValue();
     }
 
+    /**
+     * In the case of an XdmNode that wraps a node in an external object model such as DOM, JDOM,
+     * XOM, or DOM4J, get the underlying wrapped node
+     * @return the underlying external node if there is one, or null if this is not an XdmNode that
+     * wraps such an external node
+     * @since 9.1.0.2
+     */
+
+    public Object getExternalNode() {
+        NodeInfo saxonNode = getUnderlyingNode();
+        if (saxonNode instanceof VirtualNode) {
+            Object externalNode = ((VirtualNode)saxonNode).getUnderlyingNode();
+            return (externalNode instanceof NodeInfo ? null : externalNode);
+        } else {
+            return null;
+        }
+    }
+
+
+
 }
 
 //

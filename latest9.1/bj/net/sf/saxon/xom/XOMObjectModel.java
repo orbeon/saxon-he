@@ -1,17 +1,16 @@
 package net.sf.saxon.xom;
 
 import net.sf.saxon.Configuration;
-import net.sf.saxon.pattern.AnyNodeTest;
-import net.sf.saxon.type.ItemType;
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.Receiver;
-import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.expr.PJConverter;
 import net.sf.saxon.expr.JPConverter;
+import net.sf.saxon.expr.PJConverter;
+import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.*;
+import net.sf.saxon.pattern.AnyNodeTest;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.type.ItemType;
 import net.sf.saxon.value.SequenceExtent;
-import net.sf.saxon.value.SingletonNode;
 import net.sf.saxon.value.Value;
 import nu.xom.Document;
 import nu.xom.Node;
@@ -153,9 +152,9 @@ public class XOMObjectModel implements ExternalObjectModel, Serializable {
      * be converted, an exception should be thrown
      */
 
-    public Value convertObjectToXPathValue(Object object, Configuration config) throws XPathException {
+    public ValueRepresentation convertObjectToXPathValue(Object object, Configuration config) throws XPathException {
         if (object instanceof Node) {
-            return new SingletonNode(wrapNode((Node)object, config));
+            return wrapNode((Node)object, config);
         } else if (object instanceof Node[]) {
             NodeInfo[] nodes = new NodeInfo[((Node[])object).length];
             for (int i=0; i<nodes.length; i++) {

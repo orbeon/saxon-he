@@ -1,17 +1,17 @@
 package net.sf.saxon.jdom;
 
 import net.sf.saxon.Configuration;
-import net.sf.saxon.pattern.AnyNodeTest;
-import net.sf.saxon.type.ItemType;
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.Receiver;
-import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.expr.PJConverter;
 import net.sf.saxon.expr.JPConverter;
+import net.sf.saxon.expr.PJConverter;
+import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.*;
+import net.sf.saxon.pattern.AnyNodeTest;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.value.Value;
+import net.sf.saxon.type.ItemType;
 import net.sf.saxon.value.SingletonNode;
+import net.sf.saxon.value.Value;
 import org.jdom.*;
 
 import javax.xml.transform.Result;
@@ -70,7 +70,7 @@ public class JDOMObjectModel implements ExternalObjectModel, Serializable {
         if (isRecognizedNodeClass(targetClass)) {
             return new JPConverter() {
                 public ValueRepresentation convert(Object object, XPathContext context) throws XPathException {
-                    throw new XPathException("Cannot handle JDOM nodes returned by an extension function");
+                    return convertObjectToXPathValue(object, context.getConfiguration());
                 }
                 public ItemType getItemType() {
                     return AnyNodeTest.getInstance();
@@ -161,8 +161,18 @@ public class JDOMObjectModel implements ExternalObjectModel, Serializable {
      * be converted, an exception should be thrown
      */
 
-    public Value convertObjectToXPathValue(Object object, Configuration config) throws XPathException {
-        return null;
+    public ValueRepresentation convertObjectToXPathValue(Object object, Configuration config) throws XPathException {
+        if (isRecognizedNode(object)) {
+            if (object instanceof Document) {
+                return wrapDocument(object, ((Document)object).getBaseURI(), config);
+            } else {
+                Document root = getDocumentRoot(object);
+                DocumentInfo docInfo = wrapDocument(root, root.getBaseURI(), config);
+                return wrapNode(docInfo, object);
+            } 
+        } else {
+            return null;
+        }
     }
 
     /**
