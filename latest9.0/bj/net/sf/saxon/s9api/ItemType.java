@@ -1,9 +1,11 @@
 package net.sf.saxon.s9api;
 
+import net.sf.saxon.om.Item;
+import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.pattern.AnyNodeTest;
 import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.BuiltInAtomicType;
-import net.sf.saxon.om.Item;
+import net.sf.saxon.value.AtomicValue;
 
 /**
  * An item type, as defined in the XPath/XQuery specifications.
@@ -23,19 +25,34 @@ public class ItemType {
      * ItemType representing the type item(), that is, any item at all
      */
 
-    public static ItemType ANY_ITEM = new ItemType(AnyItemType.getInstance(), null);
+    public static ItemType ANY_ITEM = new ItemType(AnyItemType.getInstance(), null) {
+
+        public boolean matches(XdmItem item) {
+            return true;
+        }
+    };
 
     /**
      * ItemType representing the type node(), that is, any node
      */
 
-    public static ItemType ANY_NODE = new ItemType(AnyNodeTest.getInstance(), null);
+    public static ItemType ANY_NODE = new ItemType(AnyNodeTest.getInstance(), null) {
+
+        public boolean matches(XdmItem item) {
+            return item.getUnderlyingValue() instanceof NodeInfo;
+        }
+    };
 
     /**
      * ItemType representing the type xs:anyAtomicType, that is, any atomic value
      */
 
-    public static ItemType ANY_ATOMIC_VALUE = new ItemType(BuiltInAtomicType.ANY_ATOMIC, null);
+    public static ItemType ANY_ATOMIC_VALUE = new ItemType(BuiltInAtomicType.ANY_ATOMIC, null) {
+
+        public boolean matches(XdmItem item) {
+            return item.getUnderlyingValue() instanceof AtomicValue;
+        }
+    };
 
     private net.sf.saxon.type.ItemType underlyingType;
     private Processor processor;
