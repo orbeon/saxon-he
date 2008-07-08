@@ -758,6 +758,9 @@ public class Query {
             exp = staticEnv.compileQuery(q);
         } else if (useURLs || queryFileName.startsWith("http:") || queryFileName.startsWith("file:")) {
             ModuleURIResolver resolver = staticEnv.getModuleURIResolver();
+            if (resolver == null) {
+                resolver = staticEnv.getConfiguration().getStandardModuleURIResolver();
+            }
             String[] locations = {queryFileName};
             Source[] sources = resolver.resolve(null, null, locations);
             if (sources.length != 1 || !(sources[0] instanceof StreamSource)) {
