@@ -278,7 +278,9 @@ public final class LocationPathPattern extends Pattern {
             iter = Arrays.asList(filters).subList(0, numberOfFilters).iterator();
         }
         if (variableBinding != null) {
-            Iterator[] pair = {iter, new MonoIterator(variableBinding)};
+            // Note that the variable binding must come first to ensure slots are allocated to the "current"
+            // variable before the variable reference is encountered
+            Iterator[] pair = {new MonoIterator(variableBinding), iter};
             iter = new MultiIterator(pair);
         }
         if (parentPattern != null) {
