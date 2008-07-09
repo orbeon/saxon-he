@@ -115,7 +115,7 @@ public abstract class PJConverter implements Serializable {
         if (targetClass == SequenceIterator.class) {
             return ToSequenceIterator.INSTANCE;
         }
-        if (targetClass == ValueRepresentation.class) {
+        if (targetClass == ValueRepresentation.class || targetClass == Item.class) {
             return Identity.INSTANCE;
         }
         if (targetClass == Value.class | targetClass == SequenceExtent.class) {
