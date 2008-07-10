@@ -355,7 +355,7 @@ public final class Navigator {
         NodeInfo memoNode = null;
         int memoNumber = 0;
         Controller controller = context.getController();
-        boolean memoise = (!hasVariablesInPatterns);
+        boolean memoise = (!hasVariablesInPatterns) && from==null;
         if (memoise) {
             Object[] memo = (Object[])controller.getUserData(inst, "xsl:number");
             if (memo != null) {

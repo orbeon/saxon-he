@@ -415,7 +415,15 @@ public final class LocationPathPattern extends Pattern {
     public boolean matches(NodeInfo node, XPathContext context) throws XPathException {
         // if there is a variable to hold the value of current(), bind it now
         if (variableBinding != null) {
-            variableBinding.evaluateItem(context);
+            XPathContext c2 = context;
+            Item ci = context.getContextItem();
+            if (!(ci instanceof NodeInfo && ((NodeInfo)ci).isSameNodeInfo(node))) {
+                c2 = context.newContext();
+                UnfailingIterator si = SingletonIterator.makeIterator(node);
+                si.next();
+                c2.setCurrentIterator(si);
+            }
+            variableBinding.evaluateItem(c2);
         }
         return internalMatches(node, context);
         // matches() and internalMatches() differ in the way they handle the current() function.
