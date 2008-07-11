@@ -521,6 +521,8 @@ public abstract class PJConverter implements Serializable {
                 }
                 if (targetClass.isAssignableFrom(val.getClass())) {
                     return val;
+                } else if (val instanceof EmptySequence) {
+                    return null;
                 } else {
                     throw new XPathException("Cannot convert value " + val.getClass() + " of type " +
                             Value.asValue(value).getItemType(context.getConfiguration().getTypeHierarchy()) +
