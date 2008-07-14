@@ -6,6 +6,8 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.AtomicValue;
+import net.sf.saxon.value.SequenceType;
+import net.sf.saxon.instruct.SlotManager;
 
 import java.util.StringTokenizer;
 import java.util.Iterator;
@@ -35,6 +37,8 @@ public final class IDPattern extends Pattern {
 
     public Pattern analyze(ExpressionVisitor visitor, ItemType contextItemType) throws XPathException {
         idExpression = visitor.typeCheck(idExpression, contextItemType);
+        RoleLocator role = new RoleLocator(RoleLocator.FUNCTION, "id", 1);
+        idExpression = TypeChecker.staticTypeCheck(idExpression, SequenceType.ATOMIC_SEQUENCE, false, role, visitor);
         return this;
     }
 
@@ -52,7 +56,7 @@ public final class IDPattern extends Pattern {
      */
 
     public Iterator iterateSubExpressions() {
-        return idExpression.iterateSubExpressions();
+        return new MonoIterator(idExpression);
     }
 
     /**
@@ -76,6 +80,17 @@ public final class IDPattern extends Pattern {
 
     public void promote(PromotionOffer offer) throws XPathException {
         idExpression = idExpression.promote(offer);
+    }
+
+    /**
+     * Allocate slots to any variables used within the pattern
+     * @param env         the static context in the XSLT stylesheet
+     * @param slotManager the slot manager representing the stack frame for local variables
+     * @param nextFree    the next slot that is free to be allocated @return the next slot that is free to be allocated
+     */
+
+     public int allocateSlots(StaticContext env, SlotManager slotManager, int nextFree) {
+        return ExpressionTool.allocateSlots(idExpression, nextFree, slotManager);
     }
 
     /**

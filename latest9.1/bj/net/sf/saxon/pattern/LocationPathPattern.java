@@ -339,10 +339,10 @@ public final class LocationPathPattern extends Pattern {
         for (int i = 0; i < numberOfFilters; i++) {
             nextFree = ExpressionTool.allocateSlots(filters[i], nextFree, slotManager);
         }
-        if (parentPattern instanceof LocationPathPattern) {
+        if (parentPattern != null) {
             nextFree = parentPattern.allocateSlots(env, slotManager, nextFree);
         }
-        if (ancestorPattern instanceof LocationPathPattern) {
+        if (ancestorPattern != null) {
             nextFree = ancestorPattern.allocateSlots(env, slotManager, nextFree);
         }
         //env.getStyleElement().getPrincipalStylesheet().allocatePatternSlots(nextFree);

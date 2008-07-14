@@ -1,15 +1,14 @@
 package net.sf.saxon.pattern;
 
-import net.sf.saxon.expr.Expression;
-import net.sf.saxon.expr.ExpressionVisitor;
-import net.sf.saxon.expr.PromotionOffer;
-import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.*;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.KeyDefinitionSet;
 import net.sf.saxon.trans.KeyManager;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.value.AtomicValue;
+import net.sf.saxon.value.SequenceType;
+import net.sf.saxon.instruct.SlotManager;
 
 import java.util.Iterator;
 
@@ -44,6 +43,8 @@ public final class KeyPattern extends Pattern {
 
     public Pattern analyze(ExpressionVisitor visitor, ItemType contextItemType) throws XPathException {
         keyExpression = visitor.typeCheck(keyExpression, contextItemType);
+        RoleLocator role = new RoleLocator(RoleLocator.FUNCTION, "key", 2);
+        keyExpression = TypeChecker.staticTypeCheck(keyExpression, SequenceType.ATOMIC_SEQUENCE, false, role, visitor);
         keySet = visitor.getExecutable().getKeyManager().getKeyDefinitionSet(keyName);
         return this;
     }
@@ -62,7 +63,7 @@ public final class KeyPattern extends Pattern {
      */
 
     public Iterator iterateSubExpressions() {
-        return keyExpression.iterateSubExpressions();
+        return new MonoIterator(keyExpression);
     }
 
     /**
@@ -86,6 +87,17 @@ public final class KeyPattern extends Pattern {
 
     public void promote(PromotionOffer offer) throws XPathException {
         keyExpression = keyExpression.promote(offer);
+    }
+
+    /**
+     * Allocate slots to any variables used within the pattern
+     * @param env         the static context in the XSLT stylesheet
+     * @param slotManager the slot manager representing the stack frame for local variables
+     * @param nextFree    the next slot that is free to be allocated @return the next slot that is free to be allocated
+     */
+
+     public int allocateSlots(StaticContext env, SlotManager slotManager, int nextFree) {
+        return ExpressionTool.allocateSlots(keyExpression, nextFree, slotManager);
     }
 
     /**
