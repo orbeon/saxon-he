@@ -7,6 +7,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.instruct.Executable;
+import net.sf.saxon.instruct.SlotManager;
 import net.sf.saxon.style.ExpressionContext;
 
 import java.util.Iterator;
@@ -84,12 +85,13 @@ public class UnionPattern extends Pattern {
      * Allocate slots to any variables used within the pattern
      * @param env the static context in the XSLT stylesheet
      * @param nextFree the next slot that is free to be allocated
+     * @param stackFrame
      * @return the next slot that is free to be allocated
      */
 
-    public int allocateSlots(ExpressionContext env, int nextFree) {
-        nextFree = p1.allocateSlots(env, nextFree);
-        nextFree = p2.allocateSlots(env, nextFree);
+    public int allocateSlots(ExpressionContext env, int nextFree, SlotManager stackFrame) {
+        nextFree = p1.allocateSlots(env, nextFree, stackFrame);
+        nextFree = p2.allocateSlots(env, nextFree, stackFrame);
         return nextFree;
     }
 

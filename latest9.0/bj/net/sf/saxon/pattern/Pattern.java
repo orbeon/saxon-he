@@ -2,6 +2,7 @@ package net.sf.saxon.pattern;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.instruct.Executable;
 import net.sf.saxon.instruct.Block;
+import net.sf.saxon.instruct.SlotManager;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
@@ -134,10 +135,11 @@ public abstract class Pattern implements PatternFinder, Serializable, Container 
      * Allocate slots to any variables used within the pattern
      * @param env the static context in the XSLT stylesheet
      * @param nextFree the next slot that is free to be allocated
+     * @param stackFrame
      * @return the next slot that is free to be allocated
      */
 
-    public int allocateSlots(ExpressionContext env, int nextFree) {
+    public int allocateSlots(ExpressionContext env, int nextFree, SlotManager stackFrame) {
         return nextFree;
     }
 

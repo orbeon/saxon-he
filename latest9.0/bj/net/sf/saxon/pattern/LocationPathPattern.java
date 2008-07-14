@@ -320,10 +320,11 @@ public final class LocationPathPattern extends Pattern {
      * Allocate slots to any variables used within the pattern
      * @param env the static context in the XSLT stylesheet
      * @param nextFree the next slot that is free to be allocated
+     * @param stackFrame
      * @return the next slot that is free to be allocated
      */
 
-    public int allocateSlots(ExpressionContext env, int nextFree) {
+    public int allocateSlots(ExpressionContext env, int nextFree, SlotManager stackFrame) {
         // See tests cnfr23, idky239, match54, group018
         SlotManager slotManager = env.getStyleElement().getContainingSlotManager();
         if (variableBinding != null) {
@@ -332,11 +333,11 @@ public final class LocationPathPattern extends Pattern {
         for (int i = 0; i < numberOfFilters; i++) {
             nextFree = ExpressionTool.allocateSlots(filters[i], nextFree, slotManager);
         }
-        if (parentPattern instanceof LocationPathPattern) {
-            nextFree = ((LocationPathPattern)parentPattern).allocateSlots(env, nextFree);
+        if (parentPattern != null) {
+            nextFree = parentPattern.allocateSlots(env, nextFree, stackFrame);
         }
-        if (ancestorPattern instanceof LocationPathPattern) {
-            nextFree = ((LocationPathPattern)ancestorPattern).allocateSlots(env, nextFree);
+        if (ancestorPattern != null) {
+            nextFree = ancestorPattern.allocateSlots(env, nextFree, stackFrame);
         }
         env.getStyleElement().getPrincipalStylesheet().allocatePatternSlots(nextFree);
         return nextFree;

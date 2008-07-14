@@ -1076,7 +1076,7 @@ public abstract class StyleElement extends ElementWithAttributes
     
     public void allocatePatternSlots(Pattern match, SlotManager frame) {
         //allocateSlots(match);
-        match.allocateSlots((ExpressionContext)getStaticContext(), 0);
+        match.allocateSlots((ExpressionContext)getStaticContext(), 0, frame);
         int highWater = frame.getNumberOfVariables();
         getContainingStylesheet().allocatePatternSlots(highWater);
     }
