@@ -1,7 +1,5 @@
 package net.sf.saxon.pattern;
-import net.sf.saxon.expr.ExpressionVisitor;
-import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.expr.MultiIterator;
+import net.sf.saxon.expr.*;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
@@ -71,6 +69,15 @@ public class UnionPattern extends Pattern {
         return this;
     }
 
+    public void promote(PromotionOffer offer) throws XPathException {
+        p1.promote(offer);
+        p2.promote(offer);
+    }
+
+    public boolean replaceSubExpression(Expression original, Expression replacement) {
+        return p1.replaceSubExpression(original, replacement) ||
+                p2.replaceSubExpression(original, replacement);
+    }
 	/**
 	* Set the original text
 	*/
