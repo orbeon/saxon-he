@@ -310,10 +310,10 @@ public final class LocationPathPattern extends Pattern {
                 found = true;
             }
         }
-        if (parentPattern instanceof LocationPathPattern) {
+        if (parentPattern != null) {
             found |= parentPattern.replaceSubExpression(original, replacement);
         }
-        if (ancestorPattern instanceof LocationPathPattern) {
+        if (ancestorPattern != null) {
             found |= ancestorPattern.replaceSubExpression(original, replacement);
         }
         if (variableBinding == original) {

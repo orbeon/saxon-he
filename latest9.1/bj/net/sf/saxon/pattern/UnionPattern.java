@@ -1,9 +1,6 @@
 package net.sf.saxon.pattern;
 
-import net.sf.saxon.expr.ExpressionVisitor;
-import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.expr.MultiIterator;
-import net.sf.saxon.expr.StaticContext;
+import net.sf.saxon.expr.*;
 import net.sf.saxon.instruct.Executable;
 import net.sf.saxon.instruct.SlotManager;
 import net.sf.saxon.om.NodeInfo;
@@ -86,6 +83,16 @@ public class UnionPattern extends Pattern {
         p1.setOriginalText(pattern);
         p2.setOriginalText(pattern);
     }
+
+    public void promote(PromotionOffer offer) throws XPathException {
+        p1.promote(offer);
+        p2.promote(offer);
+    }
+
+    public boolean replaceSubExpression(Expression original, Expression replacement) {
+        return p1.replaceSubExpression(original, replacement) ||
+                p2.replaceSubExpression(original, replacement);
+    }    
 
     /**
      * Allocate slots to any variables used within the pattern

@@ -89,6 +89,15 @@ public final class KeyPattern extends Pattern {
         keyExpression = keyExpression.promote(offer);
     }
 
+    public boolean replaceSubExpression(Expression original, Expression replacement) {
+        if (keyExpression == original) {
+            keyExpression = replacement;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Allocate slots to any variables used within the pattern
      * @param env         the static context in the XSLT stylesheet
