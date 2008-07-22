@@ -124,7 +124,8 @@ public class ArithmeticExpression10 extends BinaryExpression {
         // we allow this to return an "ANY" calculator which defers the decision. However, we only allow this if
         // at least one of the operand types is AnyAtomicType.
 
-        boolean mustResolve = !(type0.equals(BuiltInAtomicType.ANY_ATOMIC) || type1.equals(BuiltInAtomicType.ANY_ATOMIC));
+        boolean mustResolve = !(type0.equals(BuiltInAtomicType.ANY_ATOMIC) || type1.equals(BuiltInAtomicType.ANY_ATOMIC)
+            || type0.equals(BuiltInAtomicType.NUMERIC) || type1.equals(BuiltInAtomicType.NUMERIC));
 
         calculator = Calculator.getCalculator(type0.getFingerprint(), type1.getFingerprint(),
                 ArithmeticExpression.mapOpCode(operator), mustResolve);
