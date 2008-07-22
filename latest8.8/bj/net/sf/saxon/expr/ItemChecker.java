@@ -169,7 +169,7 @@ public final class ItemChecker extends UnaryExpression {
             context.setReceiver(filter);
             next.process(context);
             filter.close();
-            context.setReceiver(filter);
+            context.setReceiver(out);
         } else {
             super.process(context);
         }
