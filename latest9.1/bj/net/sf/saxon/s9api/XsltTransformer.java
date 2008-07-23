@@ -221,7 +221,14 @@ public class XsltTransformer implements Destination {
             throw new IllegalStateException("No destination has been supplied");
         }
         try {
-            controller.transform(initialContextNode, destination.getReceiver(controller.getConfiguration()));
+            Receiver receiver;
+            if (destination instanceof Serializer) {
+                receiver = ((Serializer)destination).getReceiver(
+                        controller.getConfiguration(), controller.getOutputProperties());
+            } else {
+                receiver = destination.getReceiver(controller.getConfiguration());
+            }
+            controller.transform(initialContextNode, receiver);
         } catch (TransformerException e) {
             throw new SaxonApiException(e);
         }

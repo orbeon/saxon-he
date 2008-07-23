@@ -18,6 +18,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Enumeration;
 
 /**
  * A Serializer takes a tree representation of XML and turns it into lexical XML markup.
@@ -321,6 +322,21 @@ public class Serializer implements Destination {
      */
 
     public Receiver getReceiver(Configuration config) throws SaxonApiException {
+        return getReceiver(config, null);
+    }
+
+    /**
+     * Return a receiver to which Saxon will send events. This method is provided
+     * primarily for system use, though it could also be called by user applications
+     * wanting to make use of the Saxon serializer.
+     * @param config The Saxon configuration.
+     * @param predefinedProperties values of serialization properties defined within a query or stylesheet,
+     * which will be used in the event that no value for the corresponding property has been defined in
+     * the Serializer itself. May be null if no serialization properties have been predefined.
+     * @return a receiver to which XML events will be sent
+     */
+
+    protected Receiver getReceiver(Configuration config, Properties predefinedProperties) throws SaxonApiException {
         try {
             SerializerFactory sf = config.getSerializerFactory();
             PipelineConfiguration pipe = config.makePipelineConfiguration();
@@ -328,6 +344,18 @@ public class Serializer implements Destination {
             for (Property p : properties.keySet()) {
                 String value = properties.get(p);
                 props.setProperty(p.toString(), value);
+            }
+            if (predefinedProperties != null) {
+                Enumeration eps = predefinedProperties.propertyNames();
+                while (eps.hasMoreElements()) {
+                    String name = (String)eps.nextElement();
+                    String value = predefinedProperties.getProperty(name);
+                    if (props.getProperty(name) == null) {
+                        props.setProperty(name, value);
+                    } else if (name.equals(OutputKeys.CDATA_SECTION_ELEMENTS) || name.equals(SaxonOutputKeys.SUPPRESS_INDENTATION)) {
+                        props.setProperty(name, props.getProperty(name) + " " + value);
+                    }
+                }
             }
             return sf.getReceiver(result, pipe, props);
         } catch (XPathException e) {

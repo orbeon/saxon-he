@@ -11,6 +11,7 @@ import net.sf.saxon.value.SequenceExtent;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.EmptySequence;
 import net.sf.saxon.trace.TraceListener;
+import net.sf.saxon.event.Receiver;
 
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
@@ -24,15 +25,15 @@ import java.io.PrintStream;
 /**
  * An <code>XQueryEvaluator</code> represents a compiled and loaded stylesheet ready for execution.
  * The <code>XQueryEvaluator</code> holds details of the dynamic evaluation context for the stylesheet.
- *
+ * <p/>
  * <p>An <code>XQueryEvaluator</code> must not be used concurrently in multiple threads.
  * It is safe, however, to reuse the object within a single thread to run the same
  * stylesheet several times. Running the stylesheet does not change the context
  * that has been established.</p>
- *
+ * <p/>
  * <p>An <code>XQueryEvaluator</code> is always constructed by running the <code>Load</code>
  * method of an {@link net.sf.saxon.s9api.XQueryExecutable}.</p>
- *
+ * <p/>
  * <p>An <code>XQueryEvaluator</code> is itself a <code>Iterable</code>. This makes it possible to
  * evaluate the results in a for-each expression.</p>
  */
@@ -46,7 +47,7 @@ public class XQueryEvaluator implements Iterable<XdmItem> {
 
     /**
      * Protected constructor
-     * @param processor the Saxon processor
+     * @param processor  the Saxon processor
      * @param expression the XQuery expression
      */
 
@@ -79,8 +80,8 @@ public class XQueryEvaluator implements Iterable<XdmItem> {
     /**
      * Get the initial context item for the query, if one has been set
      * @return the initial context item, or null if none has been set. This will not necessarily
-     * be the same object as was supplied, but it will be an XdmItem object that represents
-     * the same underlying node or atomic value.
+     *         be the same object as was supplied, but it will be an XdmItem object that represents
+     *         the same underlying node or atomic value.
      */
 
     public XdmItem getContextItem() {
@@ -89,7 +90,7 @@ public class XQueryEvaluator implements Iterable<XdmItem> {
 
     /**
      * Set the value of external variable defined in the query
-     * @param name the name of the external variable, as a QName
+     * @param name  the name of the external variable, as a QName
      * @param value the value of the external variable, or null to clear a previously set value
      */
 
@@ -118,9 +119,8 @@ public class XQueryEvaluator implements Iterable<XdmItem> {
     /**
      * Set an object that will be used to resolve URIs used in
      * fn:doc() and related functions.
-     *
      * @param resolver An object that implements the URIResolver interface, or
-     *      null.
+     *                 null.
      */
 
     public void setURIResolver(URIResolver resolver) {
@@ -129,35 +129,32 @@ public class XQueryEvaluator implements Iterable<XdmItem> {
 
     /**
      * Get the URI resolver.
-     *
      * @return the user-supplied URI resolver if there is one, or the
-     *     system-defined one otherwise
+     *         system-defined one otherwise
      */
 
     public URIResolver getURIResolver() {
         return context.getURIResolver();
     }
 
-	/**
-	 * Set the error listener. The error listener receives reports of all run-time
+    /**
+     * Set the error listener. The error listener receives reports of all run-time
      * errors and can decide how to report them.
-	 *
-	 * @param listener the ErrorListener to be used
-	 */
+     * @param listener the ErrorListener to be used
+     */
 
-	public void setErrorListener(ErrorListener listener) {
-		context.setErrorListener(listener);
-	}
+    public void setErrorListener(ErrorListener listener) {
+        context.setErrorListener(listener);
+    }
 
-	/**
-	 * Get the error listener.
-	 *
-	 * @return the ErrorListener in use
-	 */
+    /**
+     * Get the error listener.
+     * @return the ErrorListener in use
+     */
 
-	public ErrorListener getErrorListener() {
-		return context.getErrorListener();
-	}
+    public ErrorListener getErrorListener() {
+        return context.getErrorListener();
+    }
 
     /**
      * Set a TraceListener which will receive messages relating to the evaluation of all expressions.
@@ -183,8 +180,8 @@ public class XQueryEvaluator implements Iterable<XdmItem> {
      * By default, the destination is System.err. If a TraceListener is in use,
      * this is ignored, and the trace() output is sent to the TraceListener.
      * @param stream the PrintStream to which trace output will be sent. If set to
-     * null, trace output is suppressed entirely. It is the caller's responsibility
-     * to close the stream after use.
+     *               null, trace output is suppressed entirely. It is the caller's responsibility
+     *               to close the stream after use.
      * @since 9.1
      */
 
@@ -195,8 +192,8 @@ public class XQueryEvaluator implements Iterable<XdmItem> {
     /**
      * Get the destination for output from the fn:trace() function.
      * @return the PrintStream to which trace output will be sent. If no explicitly
-     * destination has been set, returns System.err. If the destination has been set
-     * to null to suppress trace output, returns null.
+     *         destination has been set, returns System.err. If the destination has been set
+     *         to null to suppress trace output, returns null.
      * @since 9.1
      */
 
@@ -213,17 +210,18 @@ public class XQueryEvaluator implements Iterable<XdmItem> {
         this.destination = destination;
     }
 
-     /**
+    /**
      * Perform the query.
-     *
+     * <p/>
      * <ul><li>In the case of a non-updating query, the results are sent to the
      * registered Destination.</li>
      * <li>In the case of an updating query, all updated documents will be available after query
-      * execution as the result of the {@link #getUpdatedDocuments} method.</li>
+     * execution as the result of the {@link #getUpdatedDocuments} method.</li>
      * </ul>
-     * @throws net.sf.saxon.s9api.SaxonApiException if any dynamic error occurs during the query
+     * @throws net.sf.saxon.s9api.SaxonApiException
+     *                               if any dynamic error occurs during the query
      * @throws IllegalStateException if this is a non-updating query and no Destination has been
-     * supplied for the query results
+     *                               supplied for the query results
      */
 
     public void run() throws SaxonApiException {
@@ -239,7 +237,15 @@ public class XQueryEvaluator implements Iterable<XdmItem> {
                 if (destination == null) {
                     throw new IllegalStateException("No destination supplied");
                 }
-                expression.run(context, destination.getReceiver(expression.getExecutable().getConfiguration()), null);
+                Receiver receiver;
+                if (destination instanceof Serializer) {
+                    receiver = ((Serializer)destination).getReceiver(
+                            expression.getExecutable().getConfiguration(),
+                            expression.getExecutable().getDefaultOutputProperties());
+                } else {
+                    receiver = destination.getReceiver(expression.getExecutable().getConfiguration());
+                }
+                expression.run(context, receiver, null);
             }
         } catch (TransformerException e) {
             throw new SaxonApiException(e);
@@ -250,7 +256,8 @@ public class XQueryEvaluator implements Iterable<XdmItem> {
      * Perform the query, sending the results to a specified destination. This method
      * must not be used with an updating query
      * @param destination The destination where the result document will be sent
-     * @throws net.sf.saxon.s9api.SaxonApiException if any dynamic error occurs during the query
+     * @throws net.sf.saxon.s9api.SaxonApiException
+     *                               if any dynamic error occurs during the query
      * @throws IllegalStateException if this is an updating query
      */
 
@@ -259,7 +266,15 @@ public class XQueryEvaluator implements Iterable<XdmItem> {
             throw new IllegalStateException("Query is updating");
         }
         try {
-            expression.run(context, destination.getReceiver(expression.getExecutable().getConfiguration()), null);
+            Receiver receiver;
+            if (destination instanceof Serializer) {
+                receiver = ((Serializer)destination).getReceiver(
+                        expression.getExecutable().getConfiguration(),
+                        expression.getExecutable().getDefaultOutputProperties());
+            } else {
+                receiver = destination.getReceiver(expression.getExecutable().getConfiguration());
+            }
+            expression.run(context, receiver, null);
         } catch (TransformerException e) {
             throw new SaxonApiException(e);
         }
@@ -269,7 +284,7 @@ public class XQueryEvaluator implements Iterable<XdmItem> {
      * Perform the query, returning the results as an XdmValue. This method
      * must not be used with an updating query
      * @return an XdmValue representing the results of the query
-     * @throws SaxonApiException if the query fails with a dynamic error
+     * @throws SaxonApiException     if the query fails with a dynamic error
      * @throws IllegalStateException if this is an updating query
      */
 
@@ -298,9 +313,9 @@ public class XQueryEvaluator implements Iterable<XdmItem> {
      * Get an iterator over the results of the query. This method
      * must not be used with an updating query
      * @throws SaxonApiUncheckedException if a dynamic error is detected while constructing the iterator.
-     * It is also possible for an SaxonApiUncheckedException to be thrown by the hasNext() method of the
-     * returned iterator if a dynamic error occurs while evaluating the result sequence.
-     * @throws IllegalStateException if this is an updating query
+     *                                    It is also possible for an SaxonApiUncheckedException to be thrown by the hasNext() method of the
+     *                                    returned iterator if a dynamic error occurs while evaluating the result sequence.
+     * @throws IllegalStateException      if this is an updating query
      */
 
     public Iterator<XdmItem> iterator() throws SaxonApiUncheckedException {
@@ -317,7 +332,7 @@ public class XQueryEvaluator implements Iterable<XdmItem> {
     /**
      * After executing an updating query using the {@link #run()} method, iterate over the root
      * nodes of the documents updated by the query.
-     *
+     * <p/>
      * <p>The results remain available until a new query is executed. This method returns the results
      * of the most recently executed query. It does not consume the results.</p>
      * @return an iterator over the root nodes of documents (or other trees) that were updated by the query

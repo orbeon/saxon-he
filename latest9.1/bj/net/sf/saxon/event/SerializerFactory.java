@@ -63,7 +63,9 @@ public class SerializerFactory implements Serializable {
                                 Properties props)
                                     throws XPathException {
         if (result instanceof Emitter) {
-            ((Emitter)result).setOutputProperties(props);
+            if (((Emitter)result).getOutputProperties() == null) {
+                ((Emitter)result).setOutputProperties(props);
+            }
             return (Emitter)result;
         } else if (result instanceof Receiver) {
             Receiver receiver = (Receiver)result;
