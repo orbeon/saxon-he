@@ -276,6 +276,13 @@ public class XdmNode extends XdmItem {
             val = val.replace("<", "&lt;");
             val = val.replace("&", "&amp;");
             return node.getDisplayName() + "=\"" + val + '"';
+        } else if (node.getNodeKind() == Type.NAMESPACE) {
+            String val = node.getStringValue().replace("\"", "&quot;");
+            val = val.replace("<", "&lt;");
+            val = val.replace("&", "&amp;");
+            String name = node.getDisplayName();
+            name = (name.equals("") ? "xmlns" : "xmlns:" + name);
+            return name + "=\"" + val + '"';
         }
 
         try {

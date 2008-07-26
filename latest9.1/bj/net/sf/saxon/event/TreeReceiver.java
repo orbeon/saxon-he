@@ -159,11 +159,12 @@ public class TreeReceiver extends SequenceReceiver {
      */
 
     public void namespace(int namespaceCode, int properties) throws XPathException {
-        if (isDocumentLevel[level-1] || !inStartTag) {
+        boolean documentLevel = level==0 || isDocumentLevel[level-1];
+        if (documentLevel || !inStartTag) {
             throw NoOpenStartTagException.makeNoOpenStartTagException(
                     Type.NAMESPACE, getNamePool().getPrefixFromNamespaceCode(namespaceCode),
                     getPipelineConfiguration().getHostLanguage(),
-                    isDocumentLevel[level-1], getPipelineConfiguration().isSerializing());
+                    documentLevel, getPipelineConfiguration().isSerializing());
         }
         nextReceiver.namespace(namespaceCode, properties);
         previousAtomic = false;
