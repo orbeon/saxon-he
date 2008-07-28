@@ -477,9 +477,11 @@ public class ExtensionFunctionCall extends FunctionCall {
                              XPathContext context) throws XPathException {
         int j = firstParam;
         for (int i = firstArg; i < argValues.length; i++) {
-            //argValues[i] = Value.asValue(argValues[i]);
-            //params[j] = ((Value)argValues[i]).convertToJava(paramTypes[j], context);
-            params[j] = argumentConverters[i].convert(argValues[i], paramTypes[j], context);
+            ValueRepresentation val = argValues[i];
+            if (val instanceof Value) {
+                val = ((Value)val).reduce();
+            }
+            params[j] = argumentConverters[i].convert(val, paramTypes[j], context);
             j++;
         }
     }

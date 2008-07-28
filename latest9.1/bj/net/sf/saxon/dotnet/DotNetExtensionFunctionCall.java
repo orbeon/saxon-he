@@ -421,7 +421,7 @@ public class DotNetExtensionFunctionCall extends FunctionCall {
                              XPathContext context) throws XPathException {
         int j = firstParam;
         for (int i = firstArg; i < argValues.length; i++) {
-            argValues[i] = Value.asValue(argValues[i]);
+            argValues[i] = Value.asValue(argValues[i]).reduce();
             params[j] = convertToDotNet(((Value) argValues[i]), paramTypes[j].get_ParameterType(), context);
             j++;
         }
