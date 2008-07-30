@@ -165,7 +165,7 @@ public class GroupByIterator implements GroupIterator, LastPositionFinder, Looka
     }
 
     public Item next() throws XPathException {
-        if (position < groups.size()) {
+        if (position >=0 && position < groups.size()) {
             position++;
             return current();
         } else {

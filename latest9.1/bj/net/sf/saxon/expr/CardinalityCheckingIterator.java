@@ -65,12 +65,15 @@ public final class CardinalityCheckingIterator implements SequenceIterator {
         if (position < 2) {
             if (position == 0) {
                 current = first;
-                position = 1;
+                position = (first==null ? -1 : 1);
                 return current;
             } else if (position == 1) {
                 current = second;
-                position = 2;
+                position = (second==null ? -1 : 2);
                 return current;
+            } else {
+                // position == -1
+                return null;
             }
         }
         current = base.next();
