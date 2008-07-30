@@ -321,8 +321,9 @@ public class MemoClosure extends Closure {
             }
             if (++position < used) {
                 return reservoir[position];
-//            } else if (state == ALL_READ) {
-//                return null;
+            } else if (state == ALL_READ) { // means another client has filled the reservoir
+                position = -2;
+                return null;
             } else {
                 Item i = inputIterator.next();
                 if (i == null) {
