@@ -432,6 +432,9 @@ public class StaticQueryContext {
         if ((prefix.equals("xml") != uri.equals(NamespaceConstant.XML))) {
             throw new IllegalArgumentException("Misdeclaration of XML namespace");
         }
+        if (prefix.length() == 0) {
+            defaultElementNamespace = (uri.length() == 0 ? null : uri);
+        }
         if (uri.length() == 0 && prefix.length() != 0) {
             userDeclaredNamespaces.remove(prefix);
         } else {
