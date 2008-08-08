@@ -433,7 +433,7 @@ public class StaticQueryContext {
             throw new IllegalArgumentException("Misdeclaration of XML namespace");
         }
         if (prefix.length() == 0) {
-            defaultElementNamespace = (uri.length() == 0 ? null : uri);
+            defaultElementNamespace = (uri==null ? "" : uri);
         }
         if (uri.length() == 0 && prefix.length() != 0) {
             userDeclaredNamespaces.remove(prefix);
