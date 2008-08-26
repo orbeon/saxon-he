@@ -273,7 +273,7 @@ public final class AxisExpression extends Expression {
                                 return this;
                             }
                         }
-                        SchemaType schemaType = ((ComplexType)contentType).getElementParticleType(childElement);
+                        SchemaType schemaType = ((ComplexType)contentType).getElementParticleType(childElement, true);
                         if (schemaType == null) {
                             String n = env.getNamePool().getDisplayName(childElement);
                             env.issueWarning("The complex type " + contentType.getDescription() +
@@ -324,7 +324,7 @@ public final class AxisExpression extends Expression {
                                     usefulChildren.add(c);
                                     considerSelf = true;
                                 }
-                                SchemaType st = ((ComplexType)contentType).getElementParticleType(c);
+                                SchemaType st = ((ComplexType)contentType).getElementParticleType(c, true);
                                 if (st == null) {
                                     throw new AssertionError("Can't find type for element " + c);
                                 }

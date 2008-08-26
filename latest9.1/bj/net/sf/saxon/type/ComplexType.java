@@ -110,11 +110,12 @@ public interface ComplexType extends SchemaType {
      * return the type of the global element declaration with the given name if one exists, or AnyType
      * if none exists and lax validation is permitted by the wildcard.
      * @param fingerprint Identifies the name of the child element within this content model
+     * @param considerExtensions
      * @return the schema type associated with the child element particle with the given name.
      * If there is no such particle, return null.
      */
 
-    public SchemaType getElementParticleType(int fingerprint) throws SchemaException, ValidationException;
+    public SchemaType getElementParticleType(int fingerprint, boolean considerExtensions) throws SchemaException, ValidationException;
 
     /**
      * Find an element particle within this complex type definition having a given element name

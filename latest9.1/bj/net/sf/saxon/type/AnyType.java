@@ -373,9 +373,10 @@ public final class AnyType implements ComplexType, Serializable {
      * if none exists and lax validation is permitted by the wildcard.
      *
      * @param fingerprint Identifies the name of the child element within this content model
+     * @param considerExtensions
      */
 
-    public SchemaType getElementParticleType(int fingerprint) {
+    public SchemaType getElementParticleType(int fingerprint, boolean considerExtensions) {
         return this;
     }
 

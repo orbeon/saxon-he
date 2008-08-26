@@ -453,7 +453,7 @@ public class FixedElement extends ElementCreator {
         }
         SchemaType type;
         try {
-            type = ((ComplexType)parentType).getElementParticleType(nameCode & 0xfffff);
+            type = ((ComplexType)parentType).getElementParticleType(nameCode & 0xfffff, true);
         } catch (SchemaException e) {
             throw new XPathException(e);
         }
