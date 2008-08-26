@@ -275,6 +275,9 @@ public class XPathExpressionImpl implements XPathExpression, SortKeyEvaluator {
     public Object evaluate(Object node, QName qName) throws XPathExpressionException {
         NodeInfo contextNode = this.contextNode;
         if (node != null) {
+            if (node instanceof SingletonNode) {
+                node = ((SingletonNode)node).getNode();
+            }
             if (node instanceof NodeInfo) {
                 if (!((NodeInfo)node).getConfiguration().isCompatible(config)) {
                     throw new XPathExpressionException(

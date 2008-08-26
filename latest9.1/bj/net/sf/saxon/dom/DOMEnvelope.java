@@ -48,13 +48,13 @@ public class DOMEnvelope implements ExternalObjectModel, Serializable {
         if (NodeOverNodeInfo.class.isAssignableFrom(targetClass)) {
             return new PJConverter() {
                 public Object convert(ValueRepresentation value, Class targetClass, XPathContext context) throws XPathException {
-                    return convertXPathValueToObject(Value.asValue(value), targetClass, context);
+                    return convertXPathValueToObject(value, targetClass, context);
                 }
             };
         } else if (NodeList.class.isAssignableFrom(targetClass)) {
             return new PJConverter() {
                 public Object convert(ValueRepresentation value, Class targetClass, XPathContext context) throws XPathException {
-                    return convertXPathValueToObject(Value.asValue(value), targetClass, context);
+                    return convertXPathValueToObject(value, targetClass, context);
                 }
             };
         } else {
@@ -182,7 +182,7 @@ public class DOMEnvelope implements ExternalObjectModel, Serializable {
      * be converted, an exception should be thrown
      */
 
-    public Value convertObjectToXPathValue(Object object, Configuration config) throws XPathException {
+    public ValueRepresentation convertObjectToXPathValue(Object object, Configuration config) throws XPathException {
         if (object instanceof NodeList) {
             // NodeList needs great care, because Xerces element nodes implement the NodeList interface,
             // with the actual list being the children of the node in question. So we only recognize a
@@ -205,7 +205,7 @@ public class DOMEnvelope implements ExternalObjectModel, Serializable {
             // Note, we accept the nodes in the order returned by the function; there
             // is no requirement that this should be document order.
         } else if (object instanceof NodeOverNodeInfo) {
-            return Value.asValue(((NodeOverNodeInfo)object).getUnderlyingNodeInfo());
+            return ((NodeOverNodeInfo)object).getUnderlyingNodeInfo();
         } else {
             return null;
         }
@@ -221,7 +221,7 @@ public class DOMEnvelope implements ExternalObjectModel, Serializable {
      * supplied value cannot be converted to the appropriate class
      */
 
-    public Object convertXPathValueToObject(Value value, Object targetClass, XPathContext context) throws XPathException {
+    public Object convertXPathValueToObject(ValueRepresentation value, Object targetClass, XPathContext context) throws XPathException {
         // We accept the object if (a) the target class is Node, Node[], or NodeList,
         // or (b) the supplied object is a node, or sequence of nodes, that wrap DOM nodes,
         // provided that the target class is Object or a collection class
@@ -242,7 +242,7 @@ public class DOMEnvelope implements ExternalObjectModel, Serializable {
         }
         List nodes = new ArrayList(20);
 
-        SequenceIterator iter = value.iterate();
+        SequenceIterator iter = Value.asIterator(value);
         while (true) {
             Item item = iter.next();
             if (item == null) {
