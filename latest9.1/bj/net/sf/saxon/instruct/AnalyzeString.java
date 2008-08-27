@@ -163,7 +163,34 @@ public class AnalyzeString extends Instruction {
             nonMatching = nonMatching.optimize(visitor, BuiltInAtomicType.STRING);
             adoptChildExpression(nonMatching);
         }
+        if (pattern == null && regex instanceof StringLiteral && flags instanceof StringLiteral) {
+            try {
+                final Platform platform = Configuration.getPlatform();
+                final CharSequence regex = ((StringLiteral)this.regex).getStringValue();
+                final CharSequence flagstr = ((StringLiteral)flags).getStringValue();
+                final int xmlVersion = visitor.getConfiguration().getXMLVersion();
+                pattern = platform.compileRegularExpression(
+                        regex, xmlVersion, RegularExpression.XPATH_SYNTAX, flagstr);
+
+                if (pattern.matches("")) {
+                    invalidRegex("The regular expression must not be one that matches a zero-length string", "XTDE1150");
+                }
+            } catch (XPathException err) {
+                if ("FORX0001".equals(err.getErrorCodeLocalPart())) {
+                    invalidRegex("Error in regular expression flags: " + err, "XTDE1145");
+                } else {
+                    invalidRegex("Error in regular expression: " + err, "XTDE1140");
+                }
+            }
+        }
         return this;
+    }
+
+    private void invalidRegex(String message, String errorCode) throws XPathException {
+        pattern = null;
+        XPathException err = new XPathException(message, errorCode);
+        err.setLocator(this);
+        throw err;
     }
 
     /**
