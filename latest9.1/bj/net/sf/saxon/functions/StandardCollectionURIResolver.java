@@ -2,13 +2,14 @@ package net.sf.saxon.functions;
 
 import net.sf.saxon.AugmentedSource;
 import net.sf.saxon.CollectionURIResolver;
+import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
-import net.sf.saxon.trans.Err;
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.Stripper;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.NodeKindTest;
+import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.AnyURIValue;
 import net.sf.saxon.value.ObjectValue;
@@ -79,32 +80,46 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
             return null;
         }
 
-        if (base == null) {
-            base = ResolveURI.tryToExpand(base);
-            if (base == null) {
-                XPathException err = new XPathException("Cannot resolve relative URI: no base URI available");
-                err.setErrorCode("FODC0002");
-                err.setXPathContext(context);
-                throw err;
-            }
-        }
-
-        URI resolvedURI;
         URIQueryParameters params = null;
+        URI relativeURI;
         try {
-            URI relative = new URI(href);
-            String query = relative.getQuery();
+            relativeURI = new URI(ResolveURI.escapeSpaces(href));
+            String query = relativeURI.getQuery();
             if (query != null) {
                 params = new URIQueryParameters(query, context.getConfiguration());
                 int q = href.indexOf('?');
-                href = href.substring(0, q);
+                href = ResolveURI.escapeSpaces(href.substring(0, q));
+                relativeURI = new URI(href);
             }
-            resolvedURI = new URI(base).resolve(href);
+
         } catch (URISyntaxException e) {
-            XPathException err = new XPathException("Invalid URI " + Err.wrap(href) + " passed to collection() function");
-            err.setErrorCode("FODC0002");
+            XPathException err = new XPathException("Invalid relative URI " + Err.wrap(href, Err.VALUE) + " passed to collection() function");
+            err.setErrorCode("FODC0004");
             err.setXPathContext(context);
             throw err;
+        }
+
+        URI resolvedURI;
+        if (!relativeURI.isAbsolute()) {
+            if (base == null) {
+                base = ResolveURI.tryToExpand(base);
+                if (base == null) {
+                    XPathException err = new XPathException("Cannot resolve relative URI: no base URI available");
+                    err.setErrorCode("FODC0004");
+                    err.setXPathContext(context);
+                    throw err;
+                }
+            }
+            try {
+                resolvedURI = Configuration.getPlatform().makeAbsolute(href, base);
+            } catch (URISyntaxException e) {
+                XPathException err = new XPathException("Cannot resolve relative URI: " + e.getMessage());
+                err.setErrorCode("FODC0004");
+                err.setXPathContext(context);
+                throw err;
+            }
+        } else {
+            resolvedURI = relativeURI;
         }
 
         if ("file".equals(resolvedURI.getScheme())) {
