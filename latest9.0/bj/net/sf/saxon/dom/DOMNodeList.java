@@ -67,7 +67,11 @@ public final class DOMNodeList implements org.w3c.dom.NodeList {
     */
 
     public Node item(int index) {
-        return (Node)sequence.get(index);
+        if (index < 0 || index >= sequence.size()) {
+            return null;
+        } else {
+            return (Node)sequence.get(index);
+        }
     }
 
 }

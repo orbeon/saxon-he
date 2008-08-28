@@ -62,12 +62,17 @@ public final class DOMNodeList implements org.w3c.dom.NodeList {
     }
 
     /**
-    * Return the n'th item in the list (DOM method)
-    * @throws java.lang.ClassCastException if the item is not a DOM Node
-    */
+     * Return the n'th item in the list (DOM method)
+     * @return the n'th node in the node list, counting from zero; or null if the index is out of range
+     * @throws java.lang.ClassCastException if the item is not a DOM Node
+     */
 
     public Node item(int index) {
-        return (Node)sequence.get(index);
+        if (index < 0 || index >= sequence.size()) {
+            return null;
+        } else {
+            return (Node)sequence.get(index);
+        }
     }
 
 }
