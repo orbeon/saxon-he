@@ -785,7 +785,9 @@ public class QueryModule implements StaticContext {
                         Binding b = (Binding)list.get(i);
                         if (b instanceof GlobalVariable) {
                             String uri = ((GlobalVariable)b).getSystemId();
-                            if (!uri.equals(getSystemId())) {
+                            StructuredQName qName = b.getVariableQName();
+                            boolean synthetic = NamespaceConstant.SAXON.equals(qName.getNamespaceURI()) && "gg".equals(qName.getPrefix());
+                            if (!synthetic && !uri.equals(getSystemId())) {
                                 QueryModule sqc = executable.getQueryModuleWithSystemId(uri, topModule);
                                 sqc.lookForModuleCycles(referees, ((GlobalVariable)b).getLineNumber());
                             }
@@ -814,7 +816,9 @@ public class QueryModule implements StaticContext {
                         Binding b = (Binding)list.get(i);
                         if (b instanceof GlobalVariable) {
                             String uri = ((GlobalVariable)b).getSystemId();
-                            if (!uri.equals(getSystemId())) {
+                            StructuredQName qName = b.getVariableQName();
+                            boolean synthetic = NamespaceConstant.SAXON.equals(qName.getNamespaceURI()) && "gg".equals(qName.getPrefix());
+                            if (!synthetic && !uri.equals(getSystemId())) {
                                 QueryModule sqc = executable.getQueryModuleWithSystemId(uri, topModule);
                                 sqc.lookForModuleCycles(referees, ((GlobalVariable)b).getLineNumber());
                             }
