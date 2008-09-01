@@ -157,6 +157,23 @@ public class IntegerRangeTest extends Expression {
                 return found;
     }
 
+    /**
+    * Promote this expression if possible
+    */
+
+    public Expression promote(PromotionOffer offer) throws XPathException {
+        Expression exp = offer.accept(this);
+        if (exp != null) {
+            return exp;
+        } else {
+            if (offer.action != PromotionOffer.UNORDERED) {
+                value = doPromotion(value, offer);
+                min = doPromotion(min, offer);
+                max = doPromotion(max, offer);
+            }
+            return this;
+        }
+    }    
 
     /**
      * Evaluate the expression
