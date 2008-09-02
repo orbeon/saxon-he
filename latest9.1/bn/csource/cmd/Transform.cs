@@ -27,8 +27,10 @@ namespace Saxon.Cmd
          * Private constructor, ensuring the class can only be used via its "Main" method.
          */
 
-        private DotNetTransform()
+        private DotNetTransform()     
         {
+            // Ensure the extended character sets in charsets.jar are loaded
+            GC.KeepAlive(typeof(sun.nio.cs.ext.ExtendedCharsets));               
         }
 
         /**

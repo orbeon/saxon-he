@@ -48,6 +48,13 @@ public class DotNetPlatform implements Platform {
         return theInstance;
     }
 
+    /**
+     * Create a link to the extended character sets in charsets.jar. This makes these accessible for
+     * loading.
+     */
+
+    //private static CharsetProvider provider = new sun.nio.cs.ext.ExtendedCharsets();    
+
     private DotNetPlatform(){}
 
     /**

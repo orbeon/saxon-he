@@ -26,6 +26,8 @@ namespace Saxon.Cmd
 
         private DotNetQuery()
         {
+            // Ensure the extended character sets in charsets.jar are loaded
+            GC.KeepAlive(typeof(sun.nio.cs.ext.ExtendedCharsets));  
         }
 
         ///<summary>
