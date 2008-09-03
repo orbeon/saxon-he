@@ -6,10 +6,7 @@ import net.sf.saxon.event.Receiver;
 import net.sf.saxon.event.SaxonOutputKeys;
 import net.sf.saxon.expr.PathMap;
 import net.sf.saxon.instruct.TerminationException;
-import net.sf.saxon.om.DocumentInfo;
-import net.sf.saxon.om.NodeInfo;
-import net.sf.saxon.om.SequenceIterator;
-import net.sf.saxon.om.Validation;
+import net.sf.saxon.om.*;
 import net.sf.saxon.query.*;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trace.XQueryTraceListener;
@@ -859,32 +856,40 @@ public class Query {
      * @throws IOException    if input or output fails
      */
     protected void runQuery(XQueryExpression exp, DynamicQueryContext dynamicEnv,
-                            OutputStream destination, Properties outputProps)
+                            OutputStream destination, final Properties outputProps)
             throws XPathException, IOException {
         if (exp.getExpression().isUpdatingExpression() && updating) {
-            Set affectedDocuments = exp.runUpdate(dynamicEnv);
+
             if (writeback) {
-                XPathException firstError = null;
-                for (Iterator af = affectedDocuments.iterator(); af.hasNext();) {
-                    NodeInfo node = (NodeInfo)af.next();
-                    //TODO: if we construct a temporary document and then update it, the temporary document
-                    // has the URI of the query, and writing it back overwrites the query.
-                    try {
-                        QueryResult.rewriteToDisk(node, outputProps, backup, (showTime ? System.err : null));
-                    } catch (XPathException err) {
-                        System.err.println(err.getMessage());
-                        if (firstError == null) {
-                            firstError = err;
+                final List<XPathException> errors = new ArrayList<XPathException>(3);
+                UpdateAgent agent = new UpdateAgent() {
+                    public void update(NodeInfo node, Controller controller) throws XPathException {
+                        try {
+                            DocumentPool pool = controller.getDocumentPool();
+                            String documentURI = pool.getDocumentURI(node);
+                            if (documentURI != null) {
+                                QueryResult.rewriteToDisk(node, outputProps, backup, (showTime ? System.err : null));
+                            } else if (showTime) {
+                                System.err.println("Updated document discarded because it was not read using doc()");
+                            }
+                        } catch (XPathException err) {
+                            System.err.println(err.getMessage());
+                            errors.add(err);
                         }
                     }
+                };
+                exp.runUpdate(dynamicEnv, agent);
+
+                if (!errors.isEmpty()) {
+                    throw errors.get(0);
                 }
-                if (firstError != null) {
-                    throw firstError;
+            } else {
+                Set affectedDocuments = exp.runUpdate(dynamicEnv);
+                if (affectedDocuments.contains(dynamicEnv.getContextItem())) {
+                    QueryResult.serialize((NodeInfo)dynamicEnv.getContextItem(),
+                            new StreamResult(destination),
+                            outputProps);
                 }
-            } else if (affectedDocuments.contains(dynamicEnv.getContextItem())) {
-                QueryResult.serialize((NodeInfo)dynamicEnv.getContextItem(),
-                        new StreamResult(destination),
-                        outputProps);
             }
         } else if (wrap && !pullMode) {
             SequenceIterator results = exp.iterator(dynamicEnv);

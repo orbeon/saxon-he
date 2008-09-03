@@ -2,18 +2,20 @@ package net.sf.saxon.instruct;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
-import net.sf.saxon.evpull.*;
+import net.sf.saxon.event.Builder;
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.event.SequenceReceiver;
+import net.sf.saxon.evpull.BracketedDocumentIterator;
+import net.sf.saxon.evpull.EventIterator;
+import net.sf.saxon.evpull.SingletonEventIterator;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.functions.StringJoin;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.pattern.NodeTest;
-import net.sf.saxon.pull.*;
-import net.sf.saxon.tinytree.TinyBuilder;
+import net.sf.saxon.pull.UnconstructedDocument;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
@@ -250,7 +252,7 @@ public class DocumentInstr extends ParentNodeConstructor {
                     XPathContext c2 = context.newMinorContext();
                     c2.setOrigin(this);
 
-                    TinyBuilder builder = new TinyBuilder();
+                    Builder builder = controller.makeBuilder();
                     //builder.setSizeParameters(treeSizeParameters);
                     builder.setLineNumbering(controller.getConfiguration().isLineNumbering());
 

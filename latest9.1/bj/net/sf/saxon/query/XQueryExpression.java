@@ -597,16 +597,7 @@ public class XQueryExpression implements Container {
             context.openStackFrame(stackFrameMap);
             expression.evaluatePendingUpdates(context, pul);
             pul.apply(context, staticContext.getRevalidationMode());
-            // Only mark a document for rewriting to disk if it is in the document pool,
-            // that is, if it was supplied using doc() or similar functions.
-            Set rewrittenTrees = new HashSet();
-            for (Iterator iter = pul.getAffectedTrees().iterator(); iter.hasNext();) {
-                NodeInfo node = (NodeInfo)iter.next();
-                if (node.isSameNodeInfo(controller.getDocumentPool().find(node.getSystemId()))) {
-                     rewrittenTrees.add(node);
-                }
-            }
-            return rewrittenTrees;
+            return pul.getAffectedTrees();
         } catch (XPathException e) {
             if (!e.hasBeenReported()) {
                 try {
@@ -618,6 +609,57 @@ public class XQueryExpression implements Container {
             throw e;
         }
     }
+
+    /**
+     * Run an updating query, writing back eligible updated node to persistent storage.
+     *
+     * <p>A node is eligible to be written back to disk if it is present in the document pool,
+     * which generally means that it was originally read using the doc() or collection() function.</p>
+     *
+     * <p>On completion of this method it is generally unsafe to rely on the contents or relationships
+     *         of NodeInfo objects that were obtained before the updating query was run. Such objects may or may not
+     *         reflect the results of the update operations. This is especially true in the case of nodes that
+     *         are part of a subtree that has been deleted (detached from its parent). Instead, the new updated
+     *         tree should be accessed by navigation from the root nodes returned by this method.</p>
+     *
+     * <p>If one or more eligible updated nodes cannot be written back to disk, perhaps because the URI
+     * identifies a non-updatable location, then an exception is thrown. In this case it is undefined
+     *
+     * @param dynamicEnv the dynamic context for query execution
+     *
+     * @throws XPathException if evaluation of the update query fails, or it this is not an updating query
+     */
+
+    public void runUpdate(DynamicQueryContext dynamicEnv, UpdateAgent agent) throws XPathException {
+        if (!isUpdating) {
+            throw new XPathException("Calling runUpdate() on a non-updating query");
+        }
+
+        Configuration config = executable.getConfiguration();
+        Controller controller = newController();
+        initializeController(dynamicEnv, controller);
+        XPathContextMajor context = initialContext(dynamicEnv, controller);
+        try {
+            PendingUpdateList pul = config.newPendingUpdateList();
+            context.openStackFrame(stackFrameMap);
+            expression.evaluatePendingUpdates(context, pul);
+            pul.apply(context, staticContext.getRevalidationMode());
+            for (Iterator iter = pul.getAffectedTrees().iterator(); iter.hasNext();) {
+                NodeInfo node = (NodeInfo)iter.next();
+                agent.update(node, controller);
+            }
+        } catch (XPathException e) {
+            if (!e.hasBeenReported()) {
+                try {
+                    controller.getErrorListener().fatalError(e);
+                } catch (TransformerException e2) {
+                    // ignore secondary error
+                }
+            }
+            throw e;
+        }
+    }
+
 
     private XPathContextMajor initialContext(DynamicQueryContext dynamicEnv, Controller controller) throws XPathException {
         Item contextItem = dynamicEnv.getContextItem();
