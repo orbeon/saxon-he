@@ -2902,16 +2902,6 @@ public class Configuration implements Serializable, SourceResolver {
                 return (DocumentInfo)source;
             }
 
-            // Handle a DOMSource
-            if (source instanceof DOMSource) {
-                NodeInfo node = unravel(source);
-                if (node instanceof DocumentInfo) {
-                    return (DocumentInfo)node;
-                } else {
-                    source = node;
-                }
-            }
-
             // Handle an AugmentedSource wrapping a DOMSource or DocumentInfo
             if (source instanceof AugmentedSource) {
                 AugmentedSource asource = (AugmentedSource)source;
@@ -2935,8 +2925,18 @@ public class Configuration implements Serializable, SourceResolver {
                     }
                 }
             }
-        }
 
+            // Handle a DOMSource
+            if (source instanceof DOMSource) {
+                NodeInfo node = unravel(source);
+                if (node instanceof DocumentInfo) {
+                    return (DocumentInfo)node;
+                } else {
+                    source = node;
+                }
+            }
+        }
+      
         // Create a pipeline configuration
         PipelineConfiguration pipe = makePipelineConfiguration();
 
