@@ -1,13 +1,13 @@
 package net.sf.saxon.om;
 import net.sf.saxon.Configuration;
-import net.sf.saxon.value.Whitespace;
-import net.sf.saxon.value.Value;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.event.Stripper;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.Type;
+import net.sf.saxon.value.Value;
+import net.sf.saxon.value.Whitespace;
 
 
 /**
@@ -59,11 +59,15 @@ public class StrippedNode implements NodeInfo, VirtualNode {
     }
 
     /**
-    * Get the underlying DOM node, to implement the VirtualNode interface
+    * Get the underlying node, to implement the VirtualNode interface
     */
 
     public Object getUnderlyingNode() {
-        return node;
+        Object n = node;
+        while (n instanceof VirtualNode) {
+            n = ((VirtualNode)n).getUnderlyingNode();
+        }
+        return n;
     }
 
     /**
@@ -798,8 +802,6 @@ public class StrippedNode implements NodeInfo, VirtualNode {
         }
 
     }  // end of class StrippingIterator
-
-
 
 }
 
