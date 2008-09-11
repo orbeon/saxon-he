@@ -143,11 +143,8 @@ public class DOMWriter implements Receiver {
             element.setAttributeNS(("".equals(uri) ? null : uri), qname, value.toString());
             // The following code assumes JDK 1.5 or JAXP 1.3
             if ((nameCode & NamePool.FP_MASK) == StandardNames.XML_ID || (properties & ReceiverOptions.IS_ID) != 0) {
-                int colon = qname.indexOf(':');
-                if (colon >= 0) {
-                    qname = qname.substring(colon);
-                }
-                element.setIdAttributeNS(uri, qname, true);
+                String localName = namePool.getLocalName(nameCode);
+                element.setIdAttributeNS(uri, localName, true);
             }
         } catch (DOMException err) {
             throw new XPathException(err);
