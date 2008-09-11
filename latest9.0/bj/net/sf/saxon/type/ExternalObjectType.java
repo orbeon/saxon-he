@@ -569,6 +569,23 @@ public class ExternalObjectType implements AtomicType, Serializable {
         return toString();
     }
 
+    /**
+     * Returns a hash code value for the object.
+     */
+
+    public int hashCode() {
+        return fingerprint;
+    }
+
+    /**
+     * Test whether two ExternalObjectType objects represent the same type
+     * @param obj the other ExternalObjectType
+     * @return
+     */
+
+    public boolean equals(Object obj) {
+        return obj instanceof ExternalObjectType && fingerprint == ((ExternalObjectType)obj).fingerprint;
+    }    
 }
 
 //
