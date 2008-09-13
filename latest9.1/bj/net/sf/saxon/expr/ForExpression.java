@@ -304,6 +304,7 @@ public class ForExpression extends Assignation {
     public Expression convertWhereToPredicate(ExpressionVisitor visitor, ItemType contextItemType) throws XPathException {
         if (Choose.isSingleBranchChoice(action)) {
             final TypeHierarchy th = visitor.getConfiguration().getTypeHierarchy();
+            final Optimizer opt = visitor.getConfiguration().getOptimizer();
             Expression head = null;
             Expression selection = sequence;
             ItemType selectionContextItemType = contextItemType;
@@ -390,7 +391,7 @@ public class ForExpression extends Assignation {
                         //    for $x in EXPR[a/b eq "z"] return A
 
                         if ( positionVariable == null &&
-                                ExpressionTool.isVariableReplaceableByDot(term, thisVar) &&
+                                opt.isVariableReplaceableByDot(term, thisVar) &&
                                 (term.getDependencies() & StaticProperty.DEPENDS_ON_FOCUS) == 0 &&
                                 ExpressionTool.dependsOnVariable(operands[op], thisVar) &&
                                 !ExpressionTool.dependsOnVariable(operands[1-op], thisVar)) {
@@ -431,7 +432,7 @@ public class ForExpression extends Assignation {
 
                         Binding[] thisVar = {this};
                         if (positionVariable == null &&
-                                ExpressionTool.isVariableReplaceableByDot(term, thisVar) &&
+                                opt.isVariableReplaceableByDot(term, thisVar) &&
                                 (term.getDependencies() & StaticProperty.DEPENDS_ON_FOCUS) == 0 &&
                                 ExpressionTool.dependsOnVariable(operands[op], thisVar) &&
                                 !ExpressionTool.dependsOnVariable(operands[1-op], thisVar)) {
@@ -471,7 +472,7 @@ public class ForExpression extends Assignation {
                     Expression action = q0.getAction();
                     Binding[] thisVar = {this};
                     if (positionVariable == null &&
-                            ExpressionTool.isVariableReplaceableByDot(term, thisVar) &&
+                            opt.isVariableReplaceableByDot(term, thisVar) &&
                             (term.getDependencies() & StaticProperty.DEPENDS_ON_FOCUS) == 0 &&
                             ExpressionTool.dependsOnVariable(sequence, thisVar) &&
                             !ExpressionTool.dependsOnVariable(action, thisVar)) {

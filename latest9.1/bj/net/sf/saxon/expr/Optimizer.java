@@ -14,6 +14,7 @@ import net.sf.saxon.value.SequenceExtent;
 import net.sf.saxon.value.Value;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
 /**
  * This class performs optimizations that vary between different versions of the Saxon product.
@@ -166,6 +167,46 @@ public class Optimizer implements Serializable {
     public ValueRepresentation makeIndexedValue(SequenceIterator iter) throws XPathException {
         throw new UnsupportedOperationException("Indexing requires Saxon-SA");
     }
+
+    /**
+     * Determine whether it is possible to rearrange an expression so that all references to a given
+     * variable are replaced by a reference to ".". This is true of there are no references to the variable
+     * within a filter predicate or on the rhs of a "/" operator.
+     * @param exp the expression in question
+     * @param binding an array of bindings defining range variables; the method tests that there are no
+     * references to any of these variables within a predicate or on the rhs of "/"
+     * @return true if the variable reference can be replaced
+     */
+
+    public boolean isVariableReplaceableByDot(Expression exp, Binding[] binding) {
+        if (exp instanceof FilterExpression) {
+            Expression start = ((FilterExpression)exp).getBaseExpression();
+            Expression filter = ((FilterExpression)exp).getFilter();
+            return isVariableReplaceableByDot(start, binding) &&
+                    !ExpressionTool.dependsOnVariable(filter, binding);
+        } else if (exp instanceof PathExpression) {
+            Expression start = ((PathExpression)exp).getFirstStep();
+            Expression rest = ((PathExpression)exp).getRemainingSteps();
+            return isVariableReplaceableByDot(start, binding) &&
+                    !ExpressionTool.dependsOnVariable(rest, binding);
+        } else if (exp instanceof SlashExpression) {
+            // TODO: it is probably safe to use this branch for PathExpression as well
+            Expression start = ((SlashExpression)exp).getStartExpression();
+            Expression rest = ((SlashExpression)exp).getStepExpression();
+            return isVariableReplaceableByDot(start, binding) &&
+                    !ExpressionTool.dependsOnVariable(rest, binding);
+        } else {
+            Iterator iter = exp.iterateSubExpressions();
+            while (iter.hasNext()) {
+                Expression sub = (Expression)iter.next();
+                if (!isVariableReplaceableByDot(sub, binding)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
 
     /**
      * Make a conditional document sorter. This optimization is attempted
