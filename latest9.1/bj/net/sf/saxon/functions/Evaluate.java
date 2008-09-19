@@ -216,6 +216,7 @@ public class Evaluate extends SystemFunction {
         ItemType contextItemType = Type.ITEM_TYPE;
         ExpressionVisitor visitor = ExpressionVisitor.make(env);
         visitor.setExecutable(env.getExecutable());
+        expr = ExpressionTool.resolveCallsToCurrentFunction(expr, env.getConfiguration());
         expr = visitor.typeCheck(expr, contextItemType);
         pexpr.stackFrameMap = env.getStackFrameMap();
         ExpressionTool.allocateSlots(expr, pexpr.stackFrameMap.getNumberOfVariables(), pexpr.stackFrameMap);
