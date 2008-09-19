@@ -410,9 +410,15 @@ public class Sender {
             } else if (nested instanceof RuntimeException) {
                 throw (RuntimeException)nested;
             } else {
-                XPathException de = new XPathException(err);
-                de.setHasBeenReported();
-                throw de;
+                if (errorHandler.getErrorCount() == 0) {
+                    // The built-in parser for JDK 1.6 has a nasty habit of not notifying errors to the ErrorHandler
+                    throw new XPathException("Error reported by XML parser processing " +
+                            source.getSystemId() + ": " + err.getMessage());
+                } else {
+                    XPathException de = new XPathException(err);
+                    de.setHasBeenReported();
+                    throw de;
+                }
             }
         } catch (java.io.IOException err) {
             throw new XPathException(err);
