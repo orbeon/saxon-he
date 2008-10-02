@@ -214,8 +214,12 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
         boolean stable = true;
         NamePool pool = context.getController().getNamePool();
 
-        DocumentInfo catalog =
-                (DocumentInfo) Document.makeDoc(catalogFile.toString(), null, context, null);
+        StreamSource source = new StreamSource(catalogFile.toString());
+        AugmentedSource as = AugmentedSource.makeAugmentedSource(source);
+        as.setSchemaValidationMode(Validation.SKIP);
+        DocumentInfo catalog = context.getConfiguration().buildDocument(as);        
+//        DocumentInfo catalog =
+//                (DocumentInfo) Document.makeDoc(catalogFile.toString(), null, context, null);
         if (catalog==null) {
             // we failed to read the catalogue
             XPathException err = new XPathException("Failed to load collection catalogue " + catalogFile);
