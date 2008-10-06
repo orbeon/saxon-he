@@ -699,7 +699,7 @@ public abstract class TinyNodeImpl implements NodeInfo, FingerprintedNode, Sourc
             int nextSib = tree.next[n];
             if (nextSib > dn) {
                 return true;
-            } else if (tree.depth[nextSib] == 0) {
+            } else if (nextSib < 0 || tree.depth[nextSib] == 0) {
                 return true;
             } else if (nextSib < n) {
                 n = nextSib;

@@ -702,7 +702,7 @@ public abstract class TinyNodeImpl implements NodeInfo, ExtendedNodeInfo, Finger
         int n = nodeNr;
         while (true) {
             int nextSib = tree.next[n];
-            if (nextSib > dn) {
+            if (nextSib < 0 || nextSib > dn) {
                 return true;
             } else if (tree.depth[nextSib] == 0) {
                 return true;
