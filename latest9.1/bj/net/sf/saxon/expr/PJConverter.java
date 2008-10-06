@@ -512,6 +512,15 @@ public abstract class PJConverter implements Serializable {
         public static Identity INSTANCE = new Identity();
 
         public Object convert(ValueRepresentation value, Class targetClass, XPathContext context) throws XPathException {
+            if (value instanceof SingletonNode) {
+                value = ((SingletonNode)value).getNode();
+            }
+            if (value instanceof VirtualNode) {
+                Object obj = ((VirtualNode)value).getUnderlyingNode();
+                if (targetClass.isAssignableFrom(obj.getClass())) {
+                    return obj;
+                }
+            }
             if (targetClass.isAssignableFrom(value.getClass())) {
                 return value;
             } else {
@@ -840,8 +849,9 @@ public abstract class PJConverter implements Serializable {
             PJConverter converter = allocate(
                     config, val.getItemType(config.getTypeHierarchy()), val.getCardinality(), targetClass);
             if (converter instanceof General) {
-                throw new XPathException("Cannot convert value of type " +
-                                val.getItemType(config.getTypeHierarchy()) + " to class " + targetClass);
+                converter = Identity.INSTANCE;
+//                throw new XPathException("Cannot convert value of type " +
+//                                val.getItemType(config.getTypeHierarchy()) + " to class " + targetClass);
             }
             return converter.convert(val, targetClass, context);
             //return Value.asValue(value).convertToJava(targetClass, context);
