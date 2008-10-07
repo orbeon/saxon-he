@@ -208,7 +208,10 @@ public abstract class Emitter implements Result, Receiver
     }
 
     /**
-     * Set the output destination as a byte stream
+     * Set the output destination as a byte stream.
+     * <p>Note that if a specific encoding (other than the default, UTF-8) is required, then
+     * {@link #setOutputProperties(java.util.Properties)} must be called <i>before</i> calling
+     * this method.</p>
      * @param stream the OutputStream being used as an output destination
     */
 
@@ -221,6 +224,10 @@ public abstract class Emitter implements Result, Receiver
         // the character encoding is correct.
 
         if (usesWriter()) {
+
+            if (outputProperties == null) {
+                outputProperties = new Properties();
+            }
 
             String encoding = outputProperties.getProperty(OutputKeys.ENCODING);
             if (encoding==null) {
