@@ -1,25 +1,27 @@
 package net.sf.saxon.xpath;
 import net.sf.saxon.AugmentedSource;
 import net.sf.saxon.Configuration;
+import net.sf.saxon.dom.DocumentWrapper;
+import net.sf.saxon.dom.NodeWrapper;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.ExpressionTool;
 import net.sf.saxon.expr.ExpressionVisitor;
 import net.sf.saxon.expr.XPathContextMajor;
 import net.sf.saxon.instruct.Executable;
 import net.sf.saxon.instruct.SlotManager;
-import net.sf.saxon.om.Item;
-import net.sf.saxon.om.NodeInfo;
-import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.om.*;
 import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.type.SchemaException;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.Value;
 import net.sf.saxon.value.Whitespace;
 import org.xml.sax.InputSource;
+import org.w3c.dom.Node;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.*;
 import java.io.File;
@@ -131,10 +133,17 @@ public class XPathEvaluator implements XPath {
     */
 
     public NodeInfo setSource(Source source) throws net.sf.saxon.trans.XPathException {
-        if (stripSpace) {
-            AugmentedSource as = AugmentedSource.makeAugmentedSource(source);
-            as.setStripSpace(Whitespace.ALL);
-            source = as;
+        if (source instanceof DOMSource) {
+            Node node = ((DOMSource)source).getNode();
+            String baseURI = source.getSystemId();
+            DocumentWrapper documentWrapper = new DocumentWrapper(node.getOwnerDocument(), baseURI, config);
+            NodeWrapper nodeWrapper = documentWrapper.wrap(node);
+            if (stripSpace) {
+                StrippedDocument sdoc = new StrippedDocument(documentWrapper, AllElementStripper.getInstance());
+                return sdoc.wrap(nodeWrapper);
+            } else {
+                return nodeWrapper;
+            }
         } else if (source instanceof NodeInfo) {
             NodeInfo origin = (NodeInfo)source;
             if (!origin.getConfiguration().isCompatible(config)) {
@@ -142,9 +151,20 @@ public class XPathEvaluator implements XPath {
                         "Supplied node must be built using the same or a compatible Configuration",
                         SaxonErrorCode.SXXP0004);
             }
-            return (NodeInfo)source;
+            if (stripSpace) {
+                StrippedDocument sdoc = new StrippedDocument(origin.getDocumentRoot(), AllElementStripper.getInstance());
+                return sdoc.wrap(origin);
+            } else {
+                return origin;
+            }
+        } else {
+            if (stripSpace) {
+                AugmentedSource as = AugmentedSource.makeAugmentedSource(source);
+                as.setStripSpace(Whitespace.ALL);
+                source = as;
+            }
+            return config.buildDocument(source);
         }
-        return config.buildDocument(source);
     }
 
     /**
