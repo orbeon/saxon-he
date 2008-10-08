@@ -479,30 +479,33 @@ public class KeyManager implements Serializable {
 
         int keySetNumber = keySet.getKeySetNumber();
         BuiltInAtomicType itemType = value.getPrimitiveType();
-        Object indexObject = getIndex(doc, keySetNumber, itemType);
-        if (indexObject instanceof String) {
-            // index is under construction
-            XPathException de = new XPathException("Key definition is circular");
-            de.setXPathContext(context);
-            de.setErrorCode("XTDE0640");
-            throw de;
-        }
-        HashMap index = (HashMap)indexObject;
+        HashMap index;
+        synchronized(doc) {
+            Object indexObject = getIndex(doc, keySetNumber, itemType);
+            if (indexObject instanceof String) {
+                // index is under construction
+                XPathException de = new XPathException("Key definition is circular");
+                de.setXPathContext(context);
+                de.setErrorCode("XTDE0640");
+                throw de;
+            }
+            index = (HashMap)indexObject;
 
-        // If the index does not yet exist, then create it.
-        if (index==null) {
-            // Mark the index as being under construction, in case the definition is circular
-            putIndex(doc, keySetNumber, itemType, "Under Construction", context);
-            index = buildIndex(keySet, itemType, foundItemTypes, doc, context);
-            putIndex(doc, keySetNumber, itemType, index, context);
-            if (foundItemTypes != null) {
-                // build indexes for each item type actually found
-                for (Iterator f = foundItemTypes.iterator(); f.hasNext();) {
-                    BuiltInAtomicType t = (BuiltInAtomicType)f.next();
-                    if (!t.equals(BuiltInAtomicType.STRING)) {
-                        putIndex(doc, keySetNumber, t, "Under Construction", context);
-                        index = buildIndex(keySet, t, null, doc, context);
-                        putIndex(doc, keySetNumber, t, index, context);
+            // If the index does not yet exist, then create it.
+            if (index==null) {
+                // Mark the index as being under construction, in case the definition is circular
+                putIndex(doc, keySetNumber, itemType, "Under Construction", context);
+                index = buildIndex(keySet, itemType, foundItemTypes, doc, context);
+                putIndex(doc, keySetNumber, itemType, index, context);
+                if (foundItemTypes != null) {
+                    // build indexes for each item type actually found
+                    for (Iterator f = foundItemTypes.iterator(); f.hasNext();) {
+                        BuiltInAtomicType t = (BuiltInAtomicType)f.next();
+                        if (!t.equals(BuiltInAtomicType.STRING)) {
+                            putIndex(doc, keySetNumber, t, "Under Construction", context);
+                            index = buildIndex(keySet, t, null, doc, context);
+                            putIndex(doc, keySetNumber, t, index, context);
+                        }
                     }
                 }
             }
