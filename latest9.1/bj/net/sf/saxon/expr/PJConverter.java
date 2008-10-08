@@ -122,17 +122,19 @@ public abstract class PJConverter implements Serializable {
             return ToSequenceExtent.INSTANCE;
         }
 
-        List externalObjectModels = config.getExternalObjectModels();
-        for (int m=0; m<externalObjectModels.size(); m++) {
-            ExternalObjectModel model = (ExternalObjectModel)externalObjectModels.get(m);
-            PJConverter converter = model.getPJConverter(targetClass);
-            if (converter != null) {
-                return converter;
+        if (!itemType.isAtomicType()) {
+            List externalObjectModels = config.getExternalObjectModels();
+            for (int m=0; m<externalObjectModels.size(); m++) {
+                ExternalObjectModel model = (ExternalObjectModel)externalObjectModels.get(m);
+                PJConverter converter = model.getPJConverter(targetClass);
+                if (converter != null) {
+                    return converter;
+                }
             }
-        }
 
-        if (NodeInfo.class.isAssignableFrom(targetClass)) {
-            return Identity.INSTANCE;
+            if (NodeInfo.class.isAssignableFrom(targetClass)) {
+                return Identity.INSTANCE;
+            }
         }
 
         if (Collection.class.isAssignableFrom(targetClass)) {
