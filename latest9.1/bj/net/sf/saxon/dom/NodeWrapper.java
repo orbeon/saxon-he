@@ -414,7 +414,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         }
         int nodeKind = getNodeKind();
         if (nodeKind == Type.ELEMENT || nodeKind == Type.ATTRIBUTE) {
-            String prefix = node.getPrefix();
+            String prefix = getPrefix();
             if (prefix==null) {
                 prefix = "";
             }
@@ -547,13 +547,21 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     /**
      * Get the prefix of the name of the node. This is defined only for elements and attributes.
      * If the node has no prefix, or for other kinds of node, return a zero-length string.
-     * This implementation simply returns the prefix defined in the DOM model; this is nto strictly
-     * accurate in all cases, but is good enough for the purpose.
      * @return The prefix of the name of the node.
      */
 
     public String getPrefix() {
-        return node.getPrefix();
+        int kind = getNodeKind();
+        if (kind == Type.ELEMENT || kind == Type.ATTRIBUTE) {
+            String name = node.getNodeName();
+            int colon = name.indexOf(':');
+            if (colon < 0) {
+                return "";
+            } else {
+                return name.substring(0, colon);
+            }
+        }
+        return "";
     }
 
     /**
