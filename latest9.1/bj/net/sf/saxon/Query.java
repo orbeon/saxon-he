@@ -861,7 +861,7 @@ public class Query {
         if (exp.getExpression().isUpdatingExpression() && updating) {
 
             if (writeback) {
-                final List<XPathException> errors = new ArrayList<XPathException>(3);
+                final List errors = new ArrayList(3);
                 UpdateAgent agent = new UpdateAgent() {
                     public void update(NodeInfo node, Controller controller) throws XPathException {
                         try {
@@ -881,7 +881,7 @@ public class Query {
                 exp.runUpdate(dynamicEnv, agent);
 
                 if (!errors.isEmpty()) {
-                    throw errors.get(0);
+                    throw (XPathException)errors.get(0);
                 }
             } else {
                 Set affectedDocuments = exp.runUpdate(dynamicEnv);
