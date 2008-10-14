@@ -159,11 +159,15 @@ public class DOMObjectModel implements ExternalObjectModel, Serializable {
      */
 
     public PJConverter getNodeListCreator(Object node) {
-        return new PJConverter() {
-            public Object convert(ValueRepresentation value, Class targetClass, XPathContext context) throws XPathException {
-                return convertXPathValueToObject(Value.asValue(value), NodeList.class, context);
-            }
-        };
+        if (node==null || (node instanceof VirtualNode && ((VirtualNode)node).getUnderlyingNode() instanceof Node)) {
+            return new PJConverter() {
+                public Object convert(ValueRepresentation value, Class targetClass, XPathContext context) throws XPathException {
+                    return convertXPathValueToObject(Value.asValue(value), NodeList.class, context);
+                }
+            };
+        } else {
+            return null;
+        }
     }
 
     /**
