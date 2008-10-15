@@ -610,9 +610,14 @@ public class ReceivingContentHandler
         String uri = systemId;
         if (locator!=null) {
             try {
-                String baseURI = locator.getSystemId();
-                URI absoluteURI = new URI(baseURI).resolve(systemId);
-                uri = absoluteURI.toString();
+                URI suppliedURI = new URI(systemId);
+                if (!suppliedURI.isAbsolute()) {
+                    String baseURI = locator.getSystemId();
+                    if (baseURI != null) {
+                        URI absoluteURI = new URI(baseURI).resolve(systemId);
+                        uri = absoluteURI.toString();
+                    }
+                }
             } catch (URISyntaxException err) {
                 uri = systemId; // fallback
             }
