@@ -96,7 +96,7 @@ public class GYearValue extends GDateValue {
 
         FastStringBuffer sb = new FastStringBuffer(16);
         int yr = year;
-        if (year < 0) {
+        if (year <= 0) {
             sb.append('-');
             yr = -yr +1;           // no year zero in lexical space
         }
