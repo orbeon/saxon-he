@@ -192,7 +192,9 @@ public class ForExpression extends Assignation {
             int count = ExpressionTool.getReferenceCount(action, this, false);
             SlashExpression path2 = (SlashExpression)action;
             Expression s2 = path2.getStartExpression();
-            if (count == 1 && s2 instanceof VariableReference && ((VariableReference)s2).getBinding() == this) {
+            Expression step2 = path2.getStepExpression();
+            if (count == 1 && s2 instanceof VariableReference && ((VariableReference)s2).getBinding() == this &&
+                    ((step2.getDependencies() & (StaticProperty.DEPENDS_ON_POSITION | StaticProperty.DEPENDS_ON_LAST)) == 0)) {
                 Expression newPath = new SlashExpression(sequence, path2.getStepExpression());
                 ExpressionTool.copyLocationInfo(this, newPath);
                 newPath = visitor.typeCheck(visitor.simplify(newPath), contextItemType);

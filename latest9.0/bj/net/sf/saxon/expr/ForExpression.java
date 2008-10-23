@@ -208,7 +208,9 @@ public class ForExpression extends Assignation {
             int count = ExpressionTool.getReferenceCount(action, this, false);
             PathExpression path2 = (PathExpression)action;
             Expression s2 = path2.getStartExpression();
-            if (count == 1 && s2 instanceof VariableReference && ((VariableReference)s2).getBinding() == this) {
+            Expression step2 = path2.getStepExpression();
+            if (count == 1 && s2 instanceof VariableReference && ((VariableReference)s2).getBinding() == this &&
+                    ((step2.getDependencies() & (StaticProperty.DEPENDS_ON_POSITION | StaticProperty.DEPENDS_ON_LAST)) == 0)) {
                 PathExpression newPath = new PathExpression(sequence, path2.getStepExpression());
                 if ((newPath.getSpecialProperties() & StaticProperty.ORDERED_NODESET) != 0) {
                     // see test qxmp299, where this condition isn't satisfied
