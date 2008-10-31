@@ -477,12 +477,14 @@ public final class ComplexContentOutputter extends SequenceReceiver {
             characters(item.getStringValueCS(), locationId, 0);
             previousAtomic = true;
         } else if (((NodeInfo)item).getNodeKind() == Type.DOCUMENT) {
+            startDocument(0);
             SequenceIterator iter = ((NodeInfo)item).iterateAxis(Axis.CHILD);
             while (true) {
                 Item it = iter.next();
                 if (it == null) break;
                 append(it, locationId, copyNamespaces);
             }
+            endDocument();
             previousAtomic = false;
         } else {
             try {
