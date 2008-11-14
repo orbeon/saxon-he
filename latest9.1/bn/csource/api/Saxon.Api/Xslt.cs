@@ -830,7 +830,8 @@ namespace Saxon.Api
     {
 
         private IResultDocumentHandler handler;
-        private Hashtable resultMap = new Hashtable();
+        private ArrayList resultList = new ArrayList();
+        private ArrayList destinationList = new ArrayList();
 
         public ResultDocumentHandlerWrapper(IResultDocumentHandler handler)
         {
@@ -850,14 +851,23 @@ namespace Saxon.Api
             }
             XmlDestination destination = handler.HandleResultDocument(href, baseUri);
             JResult result = destination.GetResult();
-            resultMap.Add(result, destination);
-            return destination.GetResult();
+            resultList.Add(result);
+            destinationList.Add(destination);
+            return result;
         }
 
         public void close(JResult result)
         {
-            XmlDestination destination = (XmlDestination)resultMap[result];
-            destination.Close();
+            for (int i = 0; i < resultList.Count; i++)
+            {
+                if (Object.ReferenceEquals(resultList[i], result))
+                {
+                    ((XmlDestination)destinationList[i]).Close();
+                    resultList.RemoveAt(i);
+                    destinationList.RemoveAt(i);
+                    return;
+                }
+            }
         }
     }
 
