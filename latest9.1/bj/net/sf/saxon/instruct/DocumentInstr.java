@@ -258,6 +258,7 @@ public class DocumentInstr extends ParentNodeConstructor {
 
                     //receiver.setSystemId(getBaseURI());
                     builder.setBaseURI(getBaseURI());
+                    builder.setTiming(false);
 
                     PipelineConfiguration pipe = controller.makePipelineConfiguration();
                     pipe.setHostLanguage(getHostLanguage());
