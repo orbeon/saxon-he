@@ -1,6 +1,7 @@
 package net.sf.saxon.s9api;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.Controller;
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.event.SaxonOutputKeys;
@@ -15,10 +16,10 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Enumeration;
 
 /**
  * A Serializer takes a tree representation of XML and turns it into lexical XML markup.
@@ -322,7 +323,7 @@ public class Serializer implements Destination {
      */
 
     public Receiver getReceiver(Configuration config) throws SaxonApiException {
-        return getReceiver(config, null);
+        return getReceiver(config, null, null);
     }
 
     /**
@@ -330,16 +331,17 @@ public class Serializer implements Destination {
      * primarily for system use, though it could also be called by user applications
      * wanting to make use of the Saxon serializer.
      * @param config The Saxon configuration.
+     * @param controller The Saxon controller (of the transformation). May be null.
      * @param predefinedProperties values of serialization properties defined within a query or stylesheet,
      * which will be used in the event that no value for the corresponding property has been defined in
      * the Serializer itself. May be null if no serialization properties have been predefined.
      * @return a receiver to which XML events will be sent
      */
 
-    protected Receiver getReceiver(Configuration config, Properties predefinedProperties) throws SaxonApiException {
+    protected Receiver getReceiver(Configuration config, Controller controller, Properties predefinedProperties) throws SaxonApiException {
         try {
             SerializerFactory sf = config.getSerializerFactory();
-            PipelineConfiguration pipe = config.makePipelineConfiguration();
+            PipelineConfiguration pipe = (controller==null ? config.makePipelineConfiguration() : controller.makePipelineConfiguration());
             Properties props  = new Properties();
             for (Property p : properties.keySet()) {
                 String value = properties.get(p);

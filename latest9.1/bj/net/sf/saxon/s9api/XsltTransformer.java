@@ -224,7 +224,7 @@ public class XsltTransformer implements Destination {
             Receiver receiver;
             if (destination instanceof Serializer) {
                 receiver = ((Serializer)destination).getReceiver(
-                        controller.getConfiguration(), controller.getOutputProperties());
+                        controller.getConfiguration(), controller, controller.getOutputProperties());
             } else {
                 receiver = destination.getReceiver(controller.getConfiguration());
             }

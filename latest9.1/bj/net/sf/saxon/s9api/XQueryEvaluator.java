@@ -241,6 +241,7 @@ public class XQueryEvaluator implements Iterable<XdmItem> {
                 if (destination instanceof Serializer) {
                     receiver = ((Serializer)destination).getReceiver(
                             expression.getExecutable().getConfiguration(),
+                            null,
                             expression.getExecutable().getDefaultOutputProperties());
                 } else {
                     receiver = destination.getReceiver(expression.getExecutable().getConfiguration());
@@ -270,6 +271,7 @@ public class XQueryEvaluator implements Iterable<XdmItem> {
             if (destination instanceof Serializer) {
                 receiver = ((Serializer)destination).getReceiver(
                         expression.getExecutable().getConfiguration(),
+                        null,
                         expression.getExecutable().getDefaultOutputProperties());
             } else {
                 receiver = destination.getReceiver(expression.getExecutable().getConfiguration());
