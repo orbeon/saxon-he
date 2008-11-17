@@ -74,6 +74,7 @@ public abstract class SequenceWriter extends SequenceReceiver {
         builder = pipe.getController().makeBuilder();
         builder.setPipelineConfiguration(pipe);
         builder.setSystemId(getSystemId());
+        builder.setTiming(false);
 
         NamespaceReducer reducer = new NamespaceReducer();
         reducer.setUnderlyingReceiver(builder);
