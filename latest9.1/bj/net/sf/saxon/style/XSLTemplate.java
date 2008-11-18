@@ -355,10 +355,12 @@ public final class XSLTemplate extends StyleElement implements StylesheetProcedu
 //        ExpressionPresenter presenter = ExpressionPresenter.make(getConfiguration());
 //        exp.explain(presenter);
 //        presenter.close();
-        Expression exp2 = getConfiguration().getOptimizer().promoteExpressionsToGlobal(exp, visitor);
-        if (exp != exp2) {
-            compiledTemplate.setBody(exp2);
-            exp = exp2;
+        if (!getConfiguration().isCompileWithTracing()) {
+            Expression exp2 = getConfiguration().getOptimizer().promoteExpressionsToGlobal(exp, visitor);
+            if (exp != exp2) {
+                compiledTemplate.setBody(exp2);
+                exp = exp2;
+            }
         }
 
         allocateSlots(exp);
