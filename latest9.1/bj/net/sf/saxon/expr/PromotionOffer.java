@@ -231,7 +231,9 @@ public class PromotionOffer  {
                 if (child instanceof VariableReference &&
                     ((VariableReference)child).getBinding() == bindingList[0]) {
                     try {
-                        return containingExpression.copy();
+                        Expression copy = containingExpression.copy();
+                        ExpressionTool.copyLocationInfo(child, copy);
+                        return copy;
                     } catch (UnsupportedOperationException err) {
                         // If we can't make a copy, return the original. This is safer than it seems,
                         // because on the paths where this happens, we are merely moving the expression from

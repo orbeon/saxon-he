@@ -1,6 +1,5 @@
 package net.sf.saxon.expr;
 import net.sf.saxon.Configuration;
-import net.sf.saxon.instruct.Executable;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.SequenceIterator;
@@ -173,8 +172,8 @@ public final class SingletonAtomizer extends UnaryExpression {
 
 	public ItemType getItemType(TypeHierarchy th) {
         boolean isSchemaAware = true;
-        Executable exec = getExecutable();
-        if (exec != null && !exec.getConfiguration().isSchemaAware(Configuration.XML_SCHEMA)) {
+        //Executable exec = getExecutable();
+        if (!th.getConfiguration().isSchemaAware(Configuration.XML_SCHEMA)) {
             isSchemaAware = false;
         }
         ItemType in = operand.getItemType(th);
