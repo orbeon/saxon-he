@@ -52,6 +52,15 @@ public final class ValueComparison extends BinaryExpression implements Compariso
     }
 
     /**
+     * Set the AtomicComparer used to compare atomic values
+     * @param comparer the AtomicComparer
+     */
+
+    public void setAtomicComparer(AtomicComparer comparer) {
+        this.comparer = comparer;
+    }
+
+    /**
      * Get the AtomicComparer used to compare atomic values. This encapsulates any collation that is used.
      * Note that the comparer is always known at compile time.
      */
@@ -207,13 +216,15 @@ public final class ValueComparison extends BinaryExpression implements Compariso
             }
         }
 
-        final String defaultCollationName = env.getDefaultCollationName();
-        StringCollator comp = env.getCollation(defaultCollationName);
-        if (comp == null) {
-            comp = CodepointCollator.getInstance();
+        if (comparer == null) {
+            final String defaultCollationName = env.getDefaultCollationName();
+            StringCollator comp = env.getCollation(defaultCollationName);
+            if (comp == null) {
+                comp = CodepointCollator.getInstance();
+            }
+            comparer = GenericAtomicComparer.makeAtomicComparer(
+                    p0, p1, comp, env.getConfiguration().getConversionContext());
         }
-        comparer = GenericAtomicComparer.makeAtomicComparer(
-                p0, p1, comp, env.getConfiguration().getConversionContext());
         return this;
     }
 

@@ -194,18 +194,22 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
             }
 
             ValueComparison vc = new ValueComparison(e0, singletonOperator, e1);
+            vc.setAtomicComparer(comparer);
             ExpressionTool.copyLocationInfo(this, vc);
             return visitor.typeCheck(visitor.simplify(vc), contextItemType);
         }
 
         StaticContext env = visitor.getStaticContext();
-        final String defaultCollationName = env.getDefaultCollationName();
-        StringCollator collation = env.getCollation(defaultCollationName);
-        if (collation == null) {
-            collation = CodepointCollator.getInstance();
+
+        if (comparer == null) {
+            final String defaultCollationName = env.getDefaultCollationName();
+            StringCollator collation = env.getCollation(defaultCollationName);
+            if (collation == null) {
+                collation = CodepointCollator.getInstance();
+            }
+            comparer = GenericAtomicComparer.makeAtomicComparer(
+                    pt0, pt1, collation, visitor.getConfiguration().getConversionContext());
         }
-        comparer = GenericAtomicComparer.makeAtomicComparer(
-                pt0, pt1, collation, visitor.getConfiguration().getConversionContext());
 
 
         // evaluate the expression now if both arguments are constant
@@ -316,6 +320,7 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
             }
 
             ValueComparison vc = new ValueComparison(e0, singletonOperator, e1);
+            vc.setAtomicComparer(comparer);
             ExpressionTool.copyLocationInfo(this, vc);
             return visitor.optimize(visitor.typeCheck(visitor.simplify(vc), contextItemType), contextItemType);
         }
@@ -446,6 +451,7 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
                             singletonOperator,
                             makeMinOrMax(e1, "max"));
                     vc.setResultWhenEmpty(BooleanValue.FALSE);
+                    vc.setAtomicComparer(comparer);
                     break;
                 case Token.GT:
                 case Token.GE:
@@ -453,6 +459,7 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
                             singletonOperator,
                             makeMinOrMax(e1, "min"));
                     vc.setResultWhenEmpty(BooleanValue.FALSE);
+                    vc.setAtomicComparer(comparer);
                     break;
                 default:
                     throw new UnsupportedOperationException("Unknown operator " + operator);
