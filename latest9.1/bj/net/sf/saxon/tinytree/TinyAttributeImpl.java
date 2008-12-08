@@ -202,6 +202,15 @@ final class TinyAttributeImpl extends TinyNodeImpl {
     }
 
     /**
+     * Determine whether the node has the is-nilled property
+     * @return true if the node has the is-nilled property
+     */
+
+    public boolean isNilled() {
+        return false;
+    }
+
+    /**
      * Determine whether this node has the is-id property
      *
      * @return true if the node is an ID
