@@ -1,5 +1,6 @@
 package net.sf.saxon.sort;
 import net.sf.saxon.Configuration;
+import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.TypeHierarchy;
@@ -364,16 +365,17 @@ public class SortKeyDefinition implements Serializable {
             // TODO: build a URI allowing the collation to be reconstructed
         }
 
-        atomicComparer = AtomicSortComparer.makeSortComparer(stringCollator,
-                sortKey.getItemType(th).getAtomizedItemType().getPrimitiveType(), context);
-
         if (dataTypeExpression==null) {
+            atomicComparer = AtomicSortComparer.makeSortComparer(stringCollator,
+                sortKey.getItemType(th).getAtomizedItemType().getPrimitiveType(), context);
             if (!emptyLeast) {
                 atomicComparer = new EmptyGreatestComparer(atomicComparer);
             }
         } else {
             String dataType = dataTypeExpression.evaluateAsString(context).toString();
             if (dataType.equals("text")) {
+                atomicComparer = AtomicSortComparer.makeSortComparer(stringCollator,
+                    StandardNames.XS_STRING, context);
                 atomicComparer = new TextComparer(atomicComparer);
             } else if (dataType.equals("number")) {
                 atomicComparer = NumericComparer.getInstance();
