@@ -27,6 +27,7 @@ public class DotNetPullProvider implements PullProvider, SaxonLocator, SourceLoc
     private NamePool pool;
     private String baseURI;
     private boolean isEmptyElement = false;
+    private boolean expandDefaults = true;
     private int current = START_OF_INPUT;
 
     /**
@@ -107,7 +108,7 @@ public class DotNetPullProvider implements PullProvider, SaxonLocator, SourceLoc
                 final String localName = parser.get_LocalName();
                 if ("xmlns".equals(prefix) || ("".equals(prefix) && "xmlns".equals(localName))) {
                     // skip the namespace declaration
-                } else {
+                } else if (expandDefaults || !parser.get_IsDefault()) {
                     int nc = pool.allocate(prefix, namespaceURI, localName);
                     // .NET does not report the attribute type (even if it's an ID...)
                     atts.addAttribute(nc, StandardNames.XS_UNTYPED_ATOMIC, parser.get_Value(), 0, 0);
@@ -391,6 +392,7 @@ public class DotNetPullProvider implements PullProvider, SaxonLocator, SourceLoc
     public void setPipelineConfiguration(PipelineConfiguration pipe) {
         this.pipe = pipe;
         pool = pipe.getConfiguration().getNamePool();
+        expandDefaults = pipe.getConfiguration().isExpandAttributeDefaults();
     }
 
     /**
