@@ -36,7 +36,16 @@ public class XSLCharacterMap extends StyleElement {
      */
 
     public StructuredQName getCharacterMapName() {
-        return getObjectName();
+        StructuredQName name = getObjectName();
+        if (name == null) {
+            try {
+                return makeQName(getAttributeValue("name"));
+            } catch (Exception err) {
+                // the error will be reported later
+                return new StructuredQName("", "", "unnamedCharacterMap_" + hashCode());
+            }
+        }
+        return name;
     }
 
     /**
