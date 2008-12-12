@@ -3,6 +3,7 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.functions.Tokenize;
+import net.sf.saxon.functions.StringFn;
 import net.sf.saxon.instruct.SlotManager;
 import net.sf.saxon.om.*;
 import net.sf.saxon.om.ListIterator;
@@ -105,10 +106,12 @@ public class KeyManager implements Serializable {
 
     private void registerIdrefKey(Configuration config) {
         PatternFinder idref = IdrefTest.getInstance();
-        Expression eval = new Atomizer(new ContextItemExpression(), config);
+        //Expression eval = new Atomizer(new ContextItemExpression(), config);
 
-        StringLiteral regex = new StringLiteral("\\s");
-        Tokenize use = (Tokenize)SystemFunction.makeSystemFunction("tokenize", new Expression[]{eval, regex});
+        StringFn sf = (StringFn)SystemFunction.makeSystemFunction(
+                "string", new Expression[]{new ContextItemExpression()});
+        StringLiteral regex = new StringLiteral("\\s+");
+        Tokenize use = (Tokenize)SystemFunction.makeSystemFunction("tokenize", new Expression[]{sf, regex});
         KeyDefinition key = new KeyDefinition(idref, use, null, null);
         key.setIndexedItemType(BuiltInAtomicType.STRING);
         try {
