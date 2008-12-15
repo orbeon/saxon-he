@@ -1030,7 +1030,7 @@ http\://www.w3.org/2001/XMLSchema: com.saxonica.jaxp.SchemaFactoryImpl
           <exclude name="xmlschema2006-11-06/sunData"/>
           <exclude name="xmlschema2006-11-06/nistData"/>
         </fileset>
-      </zip>-->
+      </zip>
       <zip zipfile="${archive.dir}/querytests.zip">
         <fileset dir="e:/tests/xqts-extra"/>
         <fileset dir="e:/xqts/saxon">
