@@ -116,6 +116,9 @@ public abstract class Emitter implements Result, Receiver
 
     public void setStreamResult(StreamResult result) throws XPathException {
         streamResult = result;
+        if (systemId == null) {
+            systemId = result.getSystemId();
+        }
     }
 
     /**
