@@ -24,7 +24,7 @@ public class SaxonXQStaticContext implements XQStaticContext {
     private int scrollability = XQConstants.SCROLLTYPE_FORWARD_ONLY;
     private Map namespaces = new HashMap();
     private String baseURI = "";
-    boolean preserveBoundarySpace = true;
+    boolean preserveBoundarySpace = false;
     boolean constructionModeIsPreserve = false;
     boolean inheritNamespaces = true;
     boolean preserveNamespaces = true;
