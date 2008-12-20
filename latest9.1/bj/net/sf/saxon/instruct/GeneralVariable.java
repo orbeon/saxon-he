@@ -59,6 +59,7 @@ public abstract class GeneralVariable extends Instruction implements Binding {
 
     public void setSelectExpression(Expression select) {
         this.select = select;
+        evaluationMode = ExpressionTool.UNDECIDED;
         adoptChildExpression(select);
     }
 
