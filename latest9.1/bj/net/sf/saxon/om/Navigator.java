@@ -584,7 +584,10 @@ public final class Navigator {
                 }
             case Type.TEXT:
                 {
-                    out.characters(node.getStringValueCS(), 0, 0);
+                    CharSequence val = node.getStringValueCS();
+                    if (val.length() != 0) {
+                        out.characters(val, 0, 0);
+                    }
                     return;
                 }
             case Type.COMMENT:

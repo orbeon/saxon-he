@@ -357,16 +357,16 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 return sb1;
 
             case Type.ATTRIBUTE:
-                return ((Attr)node).getValue();
+                return emptyIfNull(((Attr)node).getValue());
 
             case Type.TEXT:
                 if (span == 1) {
-                    return node.getNodeValue();
+                    return emptyIfNull(node.getNodeValue());
                 } else {
                     FastStringBuffer fsb = new FastStringBuffer(100);
                     Node textNode = node;
                     for (int i=0; i<span; i++) {
-                        fsb.append(textNode.getNodeValue());
+                        fsb.append(emptyIfNull(textNode.getNodeValue()));
                         textNode = textNode.getNextSibling();
                     }
                     return fsb.condense();
@@ -374,12 +374,16 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
             case Type.COMMENT:
             case Type.PROCESSING_INSTRUCTION:
-                return node.getNodeValue();
+                return emptyIfNull(node.getNodeValue());
 
             default:
                 return "";
         }
     }
+
+    private static String emptyIfNull(String s) {
+        return (s==null ? "" : s);
+    }    
 
     private static void expandStringValue(NodeList list, StringBuffer sb) {
         final int len = list.getLength();
