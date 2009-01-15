@@ -117,6 +117,12 @@ public final class NumericPromoter extends UnaryExpression {
             err.setLocator(this);
             throw err;
         }
+        if (requiredType.equals(BuiltInAtomicType.FLOAT) && value instanceof DoubleValue) {
+            XPathException err = new XPathException(
+                    "Cannot promote from xs:double to xs:float", "XPTY0004", context);
+            err.setLocator(this);
+            throw err;
+        }
         return value.convert(requiredType, true, context).asAtomic();
     }
 

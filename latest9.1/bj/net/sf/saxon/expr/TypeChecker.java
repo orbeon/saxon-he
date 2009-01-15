@@ -226,20 +226,22 @@ public final class TypeChecker {
                 // Rule 3a: numeric promotion decimal -> float -> double
 
                 int rt = ((AtomicType)reqItemType).getFingerprint();
-                if (rt == StandardNames.XS_DOUBLE || rt == StandardNames.XS_FLOAT) {
-                    if (th.relationship(suppliedItemType, BuiltInAtomicType.NUMERIC) != TypeHierarchy.DISJOINT) {
-                        Expression cexp = new NumericPromoter(exp, (BuiltInAtomicType)reqItemType.getPrimitiveItemType());
-                        ExpressionTool.copyLocationInfo(exp, cexp);
-                        exp = cexp;
-                        try {
-                            exp = visitor.typeCheck(visitor.simplify(exp), AnyItemType.getInstance());
-                        } catch (XPathException err) {
-                            err.maybeSetLocation(exp);
-                            throw err.makeStatic();
-                        }
-                        suppliedItemType = (rt == StandardNames.XS_DOUBLE ? BuiltInAtomicType.DOUBLE : BuiltInAtomicType.FLOAT);
-                        suppliedCard = -1;
+                if ((rt == StandardNames.XS_DOUBLE &&
+                            th.relationship(suppliedItemType, BuiltInAtomicType.NUMERIC) != TypeHierarchy.DISJOINT) ||
+                        (rt == StandardNames.XS_FLOAT &&
+                            th.relationship(suppliedItemType, BuiltInAtomicType.NUMERIC) != TypeHierarchy.DISJOINT) &&
+                            !th.isSubType(suppliedItemType, BuiltInAtomicType.DOUBLE)) {
+                    Expression cexp = new NumericPromoter(exp, (BuiltInAtomicType)reqItemType.getPrimitiveItemType());
+                    ExpressionTool.copyLocationInfo(exp, cexp);
+                    exp = cexp;
+                    try {
+                        exp = visitor.typeCheck(visitor.simplify(exp), AnyItemType.getInstance());
+                    } catch (XPathException err) {
+                        err.maybeSetLocation(exp);
+                        throw err.makeStatic();
                     }
+                    suppliedItemType = (rt == StandardNames.XS_DOUBLE ? BuiltInAtomicType.DOUBLE : BuiltInAtomicType.FLOAT);
+                    suppliedCard = -1;
                 }
 
                 // Rule 3b: promotion from anyURI -> string
