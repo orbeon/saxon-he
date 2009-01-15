@@ -171,6 +171,9 @@ public final class DateTimeValue extends CalendarValue implements Comparable {
             return badDate("Date must not start with '+' sign", s);
         } else if ("-".equals(part)) {
             era = -1;
+            if (!tok.hasMoreElements()) {
+                return badDate("No year after '-'", s);
+            }
             part = (String)tok.nextElement();
         }
         int value = DurationValue.simpleInteger(part);

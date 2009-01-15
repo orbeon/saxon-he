@@ -117,6 +117,9 @@ public abstract class GDateValue extends CalendarValue {
                 return badDate("Date may not start with '+' sign", s);
             } else if ("-".equals(part)) {
                 era = -1;
+                if (!tok.hasMoreElements()) {
+                    return badDate("No year after '-'", s);
+                }
                 part = (String)tok.nextElement();
             }
 
