@@ -539,15 +539,11 @@ public final class Int64Value extends IntegerValue {
     public IntegerValue times(IntegerValue other) {
         // if either of the values is large, we use BigInteger arithmetic to be on the safe side
         if (other instanceof Int64Value) {
-            long topa = value >> 32;
-            if (topa != 0 && topa != 0xffffffff) {
+            if (isLong() || ((Int64Value)other).isLong()) {
                 return new BigIntegerValue(value).times(new BigIntegerValue(((Int64Value)other).value));
+            } else {
+                return makeIntegerValue(value * ((Int64Value)other).value);
             }
-            long topb = (((Int64Value)other).value >> 32);
-            if (topb != 0 && topb != 0xffffffff) {
-                return new BigIntegerValue(value).times(new BigIntegerValue(((Int64Value)other).value));
-            }
-            return makeIntegerValue(value * ((Int64Value)other).value);
         } else {
             return new BigIntegerValue(value).times(other);
         }
@@ -560,25 +556,22 @@ public final class Int64Value extends IntegerValue {
     public NumericValue div(IntegerValue other) throws XPathException {
         // if either of the values is large, we use BigInteger arithmetic to be on the safe side
         if (other instanceof Int64Value) {
-            long topa = value >> 32;
-            if (topa != 0 && topa != 0xffffffff) {
-                return new BigIntegerValue(value).div(new BigIntegerValue(((Int64Value)other).value));
-            }
-            long topb = ((Int64Value)other).value >> 32;
-            if (topb != 0 && topb != 0xffffffff) {
-                return new BigIntegerValue(value).div(new BigIntegerValue(((Int64Value)other).value));
-            }
-            // the result of dividing two integers is a decimal; but if
-            // one divides exactly by the other, we implement it as an integer
-            long quotient = ((Int64Value) other).value;
+            long quotient = ((Int64Value)other).value;
             if (quotient == 0) {
                 throw new XPathException("Integer division by zero", "FOAR0001");
             }
+            if (isLong() || ((Int64Value)other).isLong()) {
+                return new BigIntegerValue(value).div(new BigIntegerValue(quotient));
+            }
+
+            // the result of dividing two integers is a decimal; but if
+            // one divides exactly by the other, we implement it as an integer
             if (value % quotient == 0) {
                 return makeIntegerValue(value / quotient);
-            }
-            return (NumericValue)Calculator.DECIMAL_DECIMAL[Calculator.DIV].compute(
+            } else {
+                return (NumericValue)Calculator.DECIMAL_DECIMAL[Calculator.DIV].compute(
                             new DecimalValue(value), new DecimalValue(quotient), null);
+            }
         } else {
             return new BigIntegerValue(value).div(other);
         }
@@ -591,19 +584,15 @@ public final class Int64Value extends IntegerValue {
     public IntegerValue mod(IntegerValue other) throws XPathException {
         // if either of the values is large, we use BigInteger arithmetic to be on the safe side
         if (other instanceof Int64Value) {
-            long topa = value >> 32;
-            if (topa != 0 && topa != 0xffffffff) {
-                return new BigIntegerValue(value).mod(new BigIntegerValue(((Int64Value)other).value));
-            }
             long quotient = ((Int64Value) other).value;
             if (quotient == 0) {
                 throw new XPathException("Integer modulo zero", "FOAR0001");
             }
-            long topb = quotient >> 32;
-            if (topb != 0 && topb != 0xffffffff) {       
+            if (isLong() || ((Int64Value)other).isLong()) {
                 return new BigIntegerValue(value).mod(new BigIntegerValue(((Int64Value)other).value));
+            } else {
+                return makeIntegerValue(value % quotient);
             }
-            return makeIntegerValue(value % quotient);
         } else {
             return new BigIntegerValue(value).mod(other);
         }
@@ -616,12 +605,7 @@ public final class Int64Value extends IntegerValue {
     public IntegerValue idiv(IntegerValue other) throws XPathException {
        // if either of the values is large, we use BigInteger arithmetic to be on the safe side
         if (other instanceof Int64Value) {
-            long topa = (value >> 32);
-            if (topa != 0 && topa != 0xffffffff) {
-                return new BigIntegerValue(value).idiv(new BigIntegerValue(((Int64Value)other).value));
-            }
-            long topb = (((Int64Value)other).value >> 32);
-            if (topb != 0 && topb != 0xffffffff) {
+            if (isLong() || ((Int64Value)other).isLong()) {
                 return new BigIntegerValue(value).idiv(new BigIntegerValue(((Int64Value)other).value));
             }
             try {
@@ -637,7 +621,17 @@ public final class Int64Value extends IntegerValue {
             }
         } else {
             return new BigIntegerValue(value).idiv(other);
-        }        
+        }
+    }
+
+    /**
+     * Test whether this value needs a long to hold it. Specifically, whether
+     * the absolute value is > 2^31.
+     */
+
+    private boolean isLong() {
+        long top = value >> 31;
+        return top != 0 && top != 0x1ffffffffL;
     }
 
     /**
