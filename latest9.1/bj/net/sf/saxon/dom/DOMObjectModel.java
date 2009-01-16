@@ -159,7 +159,8 @@ public class DOMObjectModel implements ExternalObjectModel, Serializable {
      */
 
     public PJConverter getNodeListCreator(Object node) {
-        if (node==null || (node instanceof VirtualNode && ((VirtualNode)node).getUnderlyingNode() instanceof Node)) {
+        if (node==null || node instanceof Node || node instanceof DOMSource ||
+                (node instanceof VirtualNode && ((VirtualNode)node).getUnderlyingNode() instanceof Node)) {
             return new PJConverter() {
                 public Object convert(ValueRepresentation value, Class targetClass, XPathContext context) throws XPathException {
                     return convertXPathValueToObject(Value.asValue(value), NodeList.class, context);
