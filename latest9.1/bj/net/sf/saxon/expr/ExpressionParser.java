@@ -2089,6 +2089,12 @@ public class ExpressionParser {
                         Expression idValue;
                         if (t.currentToken == Token.STRING_LITERAL) {
                             idValue = new StringLiteral(t.currentTokenValue);
+                        } else if (t.currentToken == Token.NUMBER) {
+                            NumericValue number = NumericValue.parseNumber(t.currentTokenValue);
+                            if (number.isNaN()) {
+                                grumble("Invalid numeric literal " + Err.wrap(t.currentTokenValue, Err.VALUE));
+                            }
+                            idValue = new Literal(number);
                         } else if (t.currentToken == Token.DOLLAR) {
                             nextToken();
                             expect(Token.NAME);
