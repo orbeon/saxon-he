@@ -318,6 +318,10 @@ public class HTMLEmitter extends XMLEmitter {
                         writer.write("&#34;");
                     } else if (c=='\n') {
                         writer.write("&#xA;");
+                    } else if (c=='\t') {
+                        writer.write("&#x9;");
+                    } else if (c=='\r') {
+                        writer.write("&#xD;");
                     }
                 } else {
                     if (c=='<') {
@@ -326,6 +330,8 @@ public class HTMLEmitter extends XMLEmitter {
                         writer.write("&gt;");  // changed to allow for "]]>"
                     } else if (c=='&') {
                         writer.write("&amp;");
+                    } else if (c=='\r') {
+                        writer.write("&#xD;");
                     }
                 }
 
