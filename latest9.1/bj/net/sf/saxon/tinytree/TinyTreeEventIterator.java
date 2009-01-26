@@ -84,9 +84,9 @@ public class TinyTreeEventIterator implements EventIterator {
         boolean lastNode = currentNodeNr + 1 >= tree.numberOfNodes;
         int nextDepth = (lastNode ? 0 : tree.depth[currentNodeNr+1]);
 
-        boolean atEnd = (thisDepth == tree.depth[startNodeNr] && currentNodeNr != startNodeNr);
+        boolean atEnd = (thisDepth <= tree.depth[startNodeNr] && currentNodeNr != startNodeNr);
 
-        if (atEnd && pendingEndEvents == 1) {
+        if (atEnd && pendingEndEvents >= 1) {
             pendingEndEvents--;
             startNodeNr = -1;
             if (startAtDocument) {
