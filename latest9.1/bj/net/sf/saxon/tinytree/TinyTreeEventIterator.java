@@ -136,7 +136,8 @@ public class TinyTreeEventIterator implements EventIterator {
                 pendingEndEvents = thisDepth - nextDepth;
                 return tree.getNode(currentNodeNr++);
             case Type.PARENT_POINTER:
-                throw new IllegalStateException("First child node must not be a parent-pointer pseudo-node");
+                currentNodeNr++;
+                return next();
             default:
                 throw new IllegalStateException("Unknown node kind " + tree.nodeKind[currentNodeNr]);
         }
