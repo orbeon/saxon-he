@@ -767,7 +767,7 @@ public class StaxBridge implements PullProvider, SaxonLocator, SourceLocationPro
          */
 
         public boolean isId(int index) {
-            return reader.getAttributeType(index).equals("ID");
+            return "ID".equals(reader.getAttributeType(index));
         }
 
         /**
@@ -776,7 +776,7 @@ public class StaxBridge implements PullProvider, SaxonLocator, SourceLocationPro
 
         public boolean isIdref(int index) {
             String attributeType = reader.getAttributeType(index);
-            return attributeType.equals("IDREF") || attributeType.equals("IDREFS");
+            return "IDREF".equals(attributeType) || "IDREFS".equals(attributeType);
         }
     }
 
