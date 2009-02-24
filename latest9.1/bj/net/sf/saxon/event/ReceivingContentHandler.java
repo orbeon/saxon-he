@@ -294,17 +294,19 @@ public class ReceivingContentHandler
                     continue;
                 }
                 // TODO: JDK15: eliminate use of reflection for Attributes2.isSpecified()
-                if (suppressDTDAttributeDefaults && attributes2class == null) {
-                    try {
-                        attributes2class = getConfiguration().getClass("org.xml.sax.ext.Attributes2", false, null);
-                        //noinspection RedundantArrayCreation
-                        isSpecifiedMethod = attributes2class.getMethod("isSpecified", new Class[]{String.class});
-                    } catch (XPathException e) {
-                        suppressDTDAttributeDefaults = false;
-                        attributes2class = null;
-                    } catch (NoSuchMethodException e) {
-                        suppressDTDAttributeDefaults = false;
-                        attributes2class = null;
+                if (suppressDTDAttributeDefaults) {
+                    if (attributes2class == null) {
+                        try {
+                            attributes2class = getConfiguration().getClass("org.xml.sax.ext.Attributes2", false, null);
+                            //noinspection RedundantArrayCreation
+                            isSpecifiedMethod = attributes2class.getMethod("isSpecified", new Class[]{String.class});
+                        } catch (XPathException e) {
+                            suppressDTDAttributeDefaults = false;
+                            attributes2class = null;
+                        } catch (NoSuchMethodException e) {
+                            suppressDTDAttributeDefaults = false;
+                            attributes2class = null;
+                        }
                     }
 
                     if (suppressDTDAttributeDefaults) {
