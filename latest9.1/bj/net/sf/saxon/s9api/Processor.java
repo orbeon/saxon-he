@@ -210,6 +210,7 @@ public class Processor {
     public void writeXdmValue(XdmValue value, Destination destination) throws SaxonApiException {
         try {
             Receiver out = destination.getReceiver(config);
+            out.setPipelineConfiguration(config.makePipelineConfiguration());
             out = new NamespaceReducer(out);
             TreeReceiver tree = new TreeReceiver(out);
             tree.open();
