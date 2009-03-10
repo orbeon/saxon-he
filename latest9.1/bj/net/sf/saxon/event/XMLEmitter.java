@@ -464,7 +464,7 @@ public class XMLEmitter extends Emitter {
                 // null (0) characters will be used before and after any section of
                 // the value generated from a character map
                 writer.write('=');
-                char delimiter = (val.indexOf('"') >= 0 ? '\'' : '"');
+                char delimiter = (val.indexOf('"') >= 0 && val.indexOf('\'') < 0 ? '\'' : '"');
                 writer.write(delimiter);
                 writeEscape(value, true);
                 writer.write(delimiter);
