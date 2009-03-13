@@ -1,5 +1,7 @@
 package net.sf.saxon.sort;
 
+import net.sf.saxon.om.FastStringBuffer;
+
 import java.io.Serializable;
 
 /**
@@ -338,6 +340,48 @@ public class IntHashSet implements IntSet, Serializable {
         }
         return h;
     }
+
+    /**
+     * Diagnostic output
+     */
+
+    public void diagnosticDump() {
+        System.err.println("Contents of IntHashSet");
+        FastStringBuffer sb = new FastStringBuffer(100);
+        for (int i = 0; i < _values.length; i++) {
+            if (i % 10 == 0) {
+                System.err.println(sb.toString());
+                sb.setLength(0);
+            }
+            if (_values[i] == ndv) {
+                sb.append("*, ");
+            } else {
+                sb.append(_values[i] + ", ");
+            }
+        }
+        System.err.println(sb.toString());
+        sb.setLength(0);
+        System.err.println("size: " + _size);
+        System.err.println("ndv: " + ndv);
+        System.err.println("nlo: " + _nlo);
+        System.err.println("nhi: " + _nhi);
+        System.err.println("nmax: " + _nmax);
+        System.err.println("shift: " + _shift);
+        System.err.println("mask: " + _mask);
+        System.err.println("Result of iterator:");
+        IntIterator iter = iterator();
+        int i = 0;
+        while (iter.hasNext()) {
+            if (i++ % 10 == 0) {
+                System.err.println(sb.toString());
+                sb.setLength(0);
+            }
+            sb.append(iter.next() + ", ");
+        }
+        System.err.println(sb.toString());
+        System.err.println("=====================");
+    }
+    
 
     /**
      * Iterator class

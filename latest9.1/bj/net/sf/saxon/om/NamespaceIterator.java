@@ -281,13 +281,20 @@ public class NamespaceIterator implements AxisIterator {
             return XML_NAMESPACE_CODE_ARRAY;
         } else {
 
-            int[] codes = new int[declared.size()];
-            int i = 0;
-            IntIterator ii = declared.iterator();
-            while (ii.hasNext()) {
-                codes[i++] = ii.next();
+            try {
+                int[] codes = new int[declared.size()];
+                int i = 0;
+                IntIterator ii = declared.iterator();
+                while (ii.hasNext()) {
+                    codes[i++] = ii.next();
+                }
+                return codes;
+            } catch (ArrayIndexOutOfBoundsException e) {
+                // Diagnostic patch for a rarely-occurring problem, observed in both 8.6 and 9.1
+                System.err.println("*** Internal error in NamespaceIterator ***");
+                declared.diagnosticDump();
+                throw e;
             }
-            return codes;
         }
     }
 
