@@ -7,6 +7,7 @@ import net.sf.saxon.style.XSLTStaticContext;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.type.SchemaType;
+import net.sf.saxon.type.BuiltInListType;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.NumericValue;
@@ -108,8 +109,10 @@ public class Available extends SystemFunction implements XSLTFunction {
                         SchemaType type = config.getSchemaType(fingerprint);
                         if (type instanceof BuiltInAtomicType) {
                             b = env.isAllowedBuiltInType((BuiltInAtomicType)type);
+                        } else if (type instanceof BuiltInListType) {
+                            b = config.isSchemaAware(Configuration.XSLT);
                         } else {
-                            b = (type != null && (NamespaceConstant.SCHEMA.equals(uri) || env.isImportedSchema(uri)));
+                            b = (type != null && (uri.equals(NamespaceConstant.SCHEMA) || env.isImportedSchema(uri)));
                         }
                     }
                 } catch (QNameException e) {
