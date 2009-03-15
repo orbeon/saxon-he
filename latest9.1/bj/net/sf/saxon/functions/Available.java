@@ -109,7 +109,7 @@ public class Available extends SystemFunction implements XSLTFunction {
                         if (type instanceof BuiltInAtomicType) {
                             b = env.isAllowedBuiltInType((BuiltInAtomicType)type);
                         } else {
-                            b = (type != null && env.isImportedSchema(uri));
+                            b = (type != null && (NamespaceConstant.SCHEMA.equals(uri) || env.isImportedSchema(uri)));
                         }
                     }
                 } catch (QNameException e) {
