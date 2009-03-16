@@ -607,18 +607,30 @@ public abstract class NodeImpl
      */
 
     public NodeInfo getRoot() {
-        return getParent().getRoot();
+        NodeInfo parent = getParent();
+        if (parent == null) {
+            return this;
+        } else {
+            return parent.getRoot();
+        }
     }
 
     /**
      * Get the root (document) node
-     *
-     * @return the DocumentInfo representing the containing document
+     * @return the DocumentInfo representing the containing document. If this
+     *     node is part of a tree that does not have a document node as its
+     *     root, returns null.
      */
 
     public DocumentInfo getDocumentRoot() {
-        return getParent().getDocumentRoot();
+        NodeInfo parent = getParent();
+        if (parent == null) {
+            return null;
+        } else {
+            return parent.getDocumentRoot();
+        }
     }
+
 
     /**
      * Get the physical root of the tree. This may be an imaginary document node: this method
