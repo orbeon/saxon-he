@@ -221,8 +221,9 @@ public abstract class XSLGeneralVariable extends StyleElement {
         if (tunnelAtt!=null) {
             if (tunnelAtt.equals("yes")) {
                 tunnel = true;
-                if (this instanceof XSLParam && getParent() instanceof XSLFunction) {
-                    compileError("For attribute 'tunnel' within xsl:function, the only permitted value is 'no'", "XTSE0020");
+                if (this instanceof XSLParam && !(getParent() instanceof XSLTemplate)) {
+                    compileError("For attribute 'tunnel' within an " + getParent().getDisplayName() +
+                            " parameter, the only permitted value is 'no'", "XTSE0020");
                 }
             } else if (tunnelAtt.equals("no")) {
                 tunnel = false;
