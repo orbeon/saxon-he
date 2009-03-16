@@ -391,7 +391,10 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
                     return;
                 }
                 if ((namespaceList[i]&0xffff0000) == (nscode&0xffff0000)) {
-                    if (externalCall) {
+                    if ((namespaceList[i]&0x0000ffff) == 0) {
+                        // this is an undeclaration; replace it with the new declaration
+                        namespaceList[i] = nscode;
+                    } else if (externalCall) {
                         throw new IllegalArgumentException("New namespace conflicts with existing namespace binding");
                     } else {
                         return;
@@ -591,7 +594,8 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
         if (namespaceList!=null) {
             for (int i=0; i<namespaceList.length; i++) {
                 if ((namespaceList[i]>>16) == prefixCode) {
-                    return (short)(namespaceList[i] & 0xffff);
+                    short u = (short)(namespaceList[i] & 0xffff);
+                    return (u==0 && prefixCode!=0 ? (short)-1 : u);
                 }
             }
         }

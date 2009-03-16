@@ -203,11 +203,11 @@ public abstract class NodeImpl
       * not implement the correct semantics.
       */
 
-     public int hashCode() {
-         FastStringBuffer buff = new FastStringBuffer(20);
-         generateId(buff);
-         return buff.toString().hashCode();
-     }
+//     public int hashCode() {
+//         FastStringBuffer buff = new FastStringBuffer(20);
+//         generateId(buff);
+//         return buff.toString().hashCode();
+//     }
 
     /**
      * Get the nameCode of the node. This is used to locate the name in the NamePool
@@ -428,6 +428,9 @@ public abstract class NodeImpl
      */
 
     public NodeInfo getPreviousSibling() {
+        if (parent == null) {
+            return null;
+        }
         return parent.getNthChild(index - 1);
     }
 
@@ -440,6 +443,9 @@ public abstract class NodeImpl
      */
 
     public NodeInfo getNextSibling() {
+        if (parent == null) {
+            return null;
+        }
         return parent.getNthChild(index + 1);
     }
 
@@ -812,9 +818,14 @@ public abstract class NodeImpl
         // Overridden for attribute nodes
         if (parent != null) {
             parent.removeChild(this);
-            parent = null;
+            DocumentImpl newRoot = new DocumentImpl();
+            newRoot.setConfiguration(parent.getConfiguration());
+            newRoot.setImaginary(true);
+            parent = newRoot;
         }
+        index = -1;
     }
+
 
     /**
      * Remove an attribute from this element node
