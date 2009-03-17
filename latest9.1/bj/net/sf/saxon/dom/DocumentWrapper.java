@@ -55,7 +55,8 @@ public class DocumentWrapper extends NodeWrapper implements DocumentInfo {
         if (node == this.node) {
             return this;
         }
-        if (node.getOwnerDocument() == this.node) {
+        Document doc = node.getOwnerDocument();
+        if (doc == this.node || (domLevel3 && doc != null && doc.isSameNode(this.node))) {
             return makeWrapper(node, this);
         } else {
             throw new IllegalArgumentException(
