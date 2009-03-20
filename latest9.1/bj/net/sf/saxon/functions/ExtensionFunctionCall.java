@@ -220,18 +220,18 @@ public class ExtensionFunctionCall extends FunctionCall {
         for (int i=0; i<argValues.length; i++) {
             argValues[i] = ExpressionTool.lazyEvaluate(argument[i], context, 1);
         }
-        try {
+//        try {
             return call(argValues, context);
-        } catch (XPathException err) {
-            err.printStackTrace();
-            String msg = err.getMessage();
-            msg = "Error in call to extension function {" + theMethod.toString() + "}: " + msg;
-            XPathException err2 = new XPathException(msg, err.getException());
-            err2.setXPathContext(context);
-            err2.setLocator(this);
-            err2.setErrorCode(err.getErrorCodeNamespace(), err.getErrorCodeLocalPart());
-            throw err2;
-        }
+//        } catch (XPathException err) {
+//            err.printStackTrace();
+//            String msg = err.getMessage();
+//            msg = "Error in call to extension function {" + theMethod.toString() + "}: " + msg;
+//            XPathException err2 = new XPathException(msg, err.getException());
+//            err2.setXPathContext(context);
+//            err2.setLocator(this);
+//            err2.setErrorCode(err.getErrorCodeNamespace(), err.getErrorCodeLocalPart());
+//            throw err2;
+//        }
     }
 
     /**
