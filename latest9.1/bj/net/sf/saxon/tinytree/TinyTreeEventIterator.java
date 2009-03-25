@@ -1,10 +1,11 @@
 package net.sf.saxon.tinytree;
 
+import net.sf.saxon.event.LocationProvider;
+import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.evpull.*;
 import net.sf.saxon.om.NamespaceDeclarationsImpl;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.Type;
-import net.sf.saxon.event.PipelineConfiguration;
 
 /**
  * This implementation of the Saxon event-pull interface starts from a document, element,
@@ -16,7 +17,7 @@ import net.sf.saxon.event.PipelineConfiguration;
  * materializes any Node objects.
  */
 
-public class TinyTreeEventIterator implements EventIterator {
+public class TinyTreeEventIterator implements EventIterator, LocationProvider {
 
     private int startNodeNr;
     private int currentNodeNr;
@@ -36,6 +37,7 @@ public class TinyTreeEventIterator implements EventIterator {
 
     public TinyTreeEventIterator(TinyNodeImpl startNode, PipelineConfiguration pipe) {
         this.pipe = pipe;
+        this.pipe.setLocationProvider(this);
         int kind = startNode.getNodeKind();
         if (kind != Type.DOCUMENT && kind != Type.ELEMENT) {
             throw new IllegalArgumentException("TinyTreeEventIterator must start at a document or element node");
@@ -112,6 +114,7 @@ public class TinyTreeEventIterator implements EventIterator {
                 StartElementEvent see = new StartElementEvent(pipe);
                 see.setNameCode(tree.nameCode[currentNodeNr]);
                 see.setTypeCode(tree.getTypeAnnotation(currentNodeNr));
+                see.setLocationId(currentNodeNr);
                 // add the attributes
                 int index = tree.alpha[currentNodeNr];
                 if (index >= 0) {
@@ -144,72 +147,6 @@ public class TinyTreeEventIterator implements EventIterator {
 
     }
 
-
-
-    /**
-     * Get the attributes associated with the current element. This method must
-     * be called only after a START_ELEMENT event has been notified. The contents
-     * of the returned AttributeCollection are guaranteed to remain unchanged
-     * until the next START_ELEMENT event, but may be modified thereafter. The object
-     * should not be modified by the client.
-     * <p/>
-     * <p>Attributes may be read before or after reading the namespaces of an element,
-     * but must not be read after the first child node has been read, or after calling
-     * one of the methods skipToEnd(), getStringValue(), or getTypedValue().</p>
-     *
-     * @return an AttributeCollection representing the attributes of the element
-     *         that has just been notified.
-     */
-
-//    public AttributeCollection getAttributes() throws XPathException {
-//        if (tree.nodeKind[currentNodeNr] == Type.ELEMENT) {
-//            if (tree.alpha[currentNodeNr] == -1) {
-//                return AttributeCollectionImpl.EMPTY_ATTRIBUTE_COLLECTION;
-//            }
-//            return new TinyAttributeCollection(tree, currentNodeNr);
-//        } else {
-//            throw new IllegalStateException("getAttributes() called when current event is not ELEMENT_START");
-//        }
-//    }
-
-    /**
-     * Get the namespace declarations associated with the current element. This method must
-     * be called only after a START_ELEMENT event has been notified. In the case of a top-level
-     * START_ELEMENT event (that is, an element that either has no parent node, or whose parent
-     * is not included in the sequence being read), the NamespaceDeclarations object returned
-     * will contain a namespace declaration for each namespace that is in-scope for this element
-     * node. In the case of a non-top-level element, the NamespaceDeclarations will contain
-     * a set of namespace declarations and undeclarations, representing the differences between
-     * this element and its parent.
-     * <p/>
-     * <p>It is permissible for this method to return namespace declarations that are redundant.</p>
-     * <p/>
-     * <p>The NamespaceDeclarations object is guaranteed to remain unchanged until the next START_ELEMENT
-     * event, but may then be overwritten. The object should not be modified by the client.</p>
-     * <p/>
-     * <p>Namespaces may be read before or after reading the attributes of an element,
-     * but must not be read after the first child node has been read, or after calling
-     * one of the methods skipToEnd(), getStringValue(), or getTypedValue().</p>*
-     */
-
-//    public NamespaceDeclarations getNamespaceDeclarations() throws XPathException {
-//        if (tree.nodeKind[currentNodeNr] == Type.ELEMENT) {
-//            int[] decl;
-//            if (currentNodeNr == startNodeNr) {
-//                // get all inscope namespaces for a top-level element in the sequence.
-//                decl = TinyElementImpl.getInScopeNamespaces(tree, currentNodeNr, nsBuffer);
-//            } else {
-//                // only namespace declarations (and undeclarations) on this element are required
-//                decl = TinyElementImpl.getDeclaredNamespaces(tree, currentNodeNr, nsBuffer);
-//            }
-//            nsDeclarations.setNamespaceCodes(decl);
-//            return nsDeclarations;
-//        }
-//        throw new IllegalStateException("getNamespaceDeclarations() called when current event is not START_ELEMENT");
-//    }
-
-
-
     /**
      * Determine whether the EventIterator returns a flat sequence of events, or whether it can return
      * nested event iterators
@@ -219,6 +156,36 @@ public class TinyTreeEventIterator implements EventIterator {
 
     public boolean isFlatSequence() {
         return true;
+    }
+
+    /**
+     * Get location information: the system Id of the current start element event
+     * @param locationId in this case, the node number in the tiny tree
+     * @return the system Id of the node: that is its base URI, before taking xml:base into account
+     */
+
+    public String getSystemId(long locationId) {
+        return tree.getSystemId((int)locationId);
+    }
+
+    /**
+     * Get location information: the line number of the current start element event
+     * @param locationId in this case, the node number in the tiny tree
+     * @return the line number of the node if known, or -1 otherwise
+     */
+
+    public int getLineNumber(long locationId) {
+        return tree.getLineNumber((int)locationId);
+    }
+
+    /**
+     * Get location information: the column number of the current start element event
+     * @param locationId in this case, the node number in the tiny tree
+     * @return the column number of the node if known, or -1 otherwise
+     */
+
+    public int getColumnNumber(long locationId) {
+        return tree.getColumnNumber((int)locationId);
     }
 }
 
