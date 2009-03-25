@@ -6,6 +6,8 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.Whitespace;
+import net.sf.saxon.event.PipelineConfiguration;
+import net.sf.saxon.event.LocationProvider;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
@@ -438,30 +440,59 @@ public class EventToStaxBridge implements XMLStreamReader {
     }
 
     public Location getLocation() {
-        return new Location() {
+        if (startElementEvent != null) {
+            PipelineConfiguration pipe = startElementEvent.getPipelineConfiguration();
+            final LocationProvider provider = pipe.getLocationProvider();
+            final int locationId = startElementEvent.getLocationId();
+            return new Location() {
+                public int getCharacterOffset() {
+                    return -1;
+                }
 
-            public int getCharacterOffset() {
-                return -1;
-            }
+                public int getColumnNumber() {
+                    return provider.getColumnNumber(locationId);
+                }
 
-            public int getColumnNumber() {
-                return -1;
-            }
+                public int getLineNumber() {
+                    return provider.getLineNumber(locationId);
+                }
 
-            public int getLineNumber() {
-                return -1;
-            }
+                public String getPublicId() {
+                    return null;
+                }
 
-            public String getPublicId() {
-                return null;
-            }
+                public String getSystemId() {
+                    return provider.getSystemId(locationId);
+                }
+            };
+        } else if (currentItem instanceof NodeInfo) {
+            final NodeInfo node = (NodeInfo)currentItem;
+            return new Location() {
+                public int getCharacterOffset() {
+                    return -1;
+                }
 
-            public String getSystemId() {
-                return null; 
-            }
-        };
+                public int getColumnNumber() {
+                    return node.getColumnNumber();
+                }
+
+                public int getLineNumber() {
+                    return node.getLineNumber();
+                }
+
+                public String getPublicId() {
+                    return null;
+                }
+
+                public String getSystemId() {
+                    return node.getSystemId();
+                }
+            };
+
+        } else {
+            return DummyLocation.THE_INSTANCE;
+        }
     }
-
     public Object getProperty(String s) throws IllegalArgumentException {
         return null;
     }
@@ -488,40 +519,29 @@ public class EventToStaxBridge implements XMLStreamReader {
         return ((NamespaceResolver)provider).getURIForPrefix(prefix, true);
     }
 
-    /**
-     * Bridge a SAX SourceLocator to a javax.xml.stream.Location
-     */
+    public static class DummyLocation  implements Location{
+        public static final Location THE_INSTANCE = new DummyLocation();
 
-    public class SourceStreamLocation implements Location {
-
-        private SourceLocator locator;
-
-        /**
-         * Create a StAX SourceStreamLocation object based on a given SAX SourceLocator
-         * @param locator the SAX SourceLocator
-         */
-        public SourceStreamLocation(SourceLocator locator) {
-            this.locator = locator;
-        }
+        private DummyLocation() {}
 
         public int getCharacterOffset() {
             return -1;
         }
 
         public int getColumnNumber() {
-            return locator.getColumnNumber();
+            return -1;
         }
 
         public int getLineNumber() {
-            return locator.getLineNumber();
+            return -1;
         }
 
-        public String getPublicId() {
-            return locator.getPublicId();
+        public java.lang.String getPublicId() {
+            return null;
         }
 
-        public String getSystemId() {
-            return locator.getSystemId();
+        public java.lang.String getSystemId() {
+            return null;
         }
     }
 

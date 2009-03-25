@@ -1,7 +1,6 @@
 package net.sf.saxon.evpull;
 
 import net.sf.saxon.Configuration;
-import net.sf.saxon.trans.Err;
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.expr.ExpressionLocation;
 import net.sf.saxon.om.NamePool;
@@ -9,6 +8,7 @@ import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Orphan;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.sort.IntArraySet;
+import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.Type;
 
@@ -305,6 +305,15 @@ public class StartElementEvent implements PullEvent {
     }
 
     /**
+     * Get the PipelineConfiguration
+     * @return the PipelineConfiguration
+     */
+
+    public PipelineConfiguration getPipelineConfiguration() {
+        return pipe;
+    }
+
+    /**
      * Set the location associated with the event
      * @param locationId a location identifier, to be interpreted by the locationProvider
      * associated with the PipelineConfiguration
@@ -323,6 +332,28 @@ public class StartElementEvent implements PullEvent {
     public int getLocationId() {
         return locationId;
     }
+
+//    public static void main(String[] args) throws Exception {
+//        try {
+//            Configuration config = new Configuration();
+//            config.setLineNumbering(true);
+//            DocumentInfo doc = config.buildDocument(new StreamSource(new File("C:/MyJava/testdata/books.xml")));
+//            PipelineConfiguration pipe = config.makePipelineConfiguration();
+//            EventIterator ei = new Decomposer(doc, pipe);
+//            XMLStreamReader reader = new EventToStaxBridge(ei, config.getNamePool());
+//            while (true) {
+//                int event = reader.next();
+//                if (event == XMLStreamReader.END_DOCUMENT) {
+//                    break;
+//                }
+//                System.err.println("EVENT: " + event + " @ " +
+//                        reader.getLocation().getSystemId() + "#" + reader.getLocation().getLineNumber());
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
 
 //
