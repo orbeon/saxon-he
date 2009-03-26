@@ -43,6 +43,9 @@ public class QNameValue extends QualifiedNameValue {
 
     public QNameValue(String prefix, String uri, String localName, AtomicType type) {
         qName = new StructuredQName(prefix, uri, localName);
+        if (type == null) {
+            type = BuiltInAtomicType.QNAME;
+        }
         typeLabel = type;
     }
 
