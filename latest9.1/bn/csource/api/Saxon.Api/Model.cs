@@ -4,6 +4,7 @@ using System.Xml;
 using System.Collections;
 using JConfiguration = net.sf.saxon.Configuration;
 using JAtomicValue = net.sf.saxon.value.AtomicValue;
+using JEmptySequence = net.sf.saxon.value.EmptySequence;
 using JSingletonNode = net.sf.saxon.value.SingletonNode;
 using JConversionResult = net.sf.saxon.type.ConversionResult;
 using JValidationFailure = net.sf.saxon.type.ValidationFailure;
@@ -72,7 +73,7 @@ namespace Saxon.Api
         public static XdmValue Wrap(ValueRepresentation value)
         {
             XdmValue result;
-            if (value == null || value is EmptySequence)
+            if (value == null || value is JEmptySequence)
             {
                 return XdmEmptySequence.INSTANCE;
             }
@@ -340,7 +341,7 @@ namespace Saxon.Api
         public XdmAtomicValue(QName q)
         {
             this.value = new QNameValue(
-                q.Prefix, q.Uri, q.LocalName, null);
+                q.Prefix, q.Uri, q.LocalName);
         }
 
         /// <summary>
@@ -902,7 +903,7 @@ namespace Saxon.Api
 
         private XdmEmptySequence()
         {
-            this.value = null;
+            this.value = JEmptySequence.getInstance();
         }
     }
 
