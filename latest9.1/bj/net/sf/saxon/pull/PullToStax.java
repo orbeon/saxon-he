@@ -30,7 +30,7 @@ public class PullToStax implements XMLStreamReader {
     private NamePool namePool;
     private boolean previousAtomic;
     private FastStringBuffer currentTextNode = new FastStringBuffer(100);
-    private int currentStaxEvent;
+    private int currentStaxEvent = XMLStreamReader.START_DOCUMENT;
     private XPathException pendingException = null;
 
     /**
@@ -237,7 +237,7 @@ public class PullToStax implements XMLStreamReader {
                 break;
             case PullProvider.START_DOCUMENT:
                 currentStaxEvent = XMLStreamConstants.START_DOCUMENT;
-                break;
+                return next();
             case PullProvider.END_DOCUMENT:
                 currentStaxEvent = XMLStreamConstants.END_DOCUMENT;
                 break;
