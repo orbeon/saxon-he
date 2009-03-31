@@ -1,13 +1,13 @@
 package net.sf.saxon.evpull;
 
+import net.sf.saxon.event.LocationProvider;
+import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pull.NamespaceContextImpl;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.Whitespace;
-import net.sf.saxon.event.PipelineConfiguration;
-import net.sf.saxon.event.LocationProvider;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
@@ -15,9 +15,9 @@ import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.transform.SourceLocator;
 import java.util.Iterator;
 import java.util.Stack;
+import java.util.NoSuchElementException;
 
 /**
  * This class bridges EventIterator events to XMLStreamReader (Stax) events. That is, it acts
@@ -222,6 +222,10 @@ public class EventToStaxBridge implements XMLStreamReader {
             p = provider.next();
         } catch (XPathException e) {
             throw new XMLStreamException(e);
+        }
+        if (p == null) {
+            // The spec is ambivalent here; it also says IllegalStateException is appropriate
+            throw new NoSuchElementException("end of stream");
         }
         startElementEvent = null;
         if (p instanceof StartDocumentEvent) {
