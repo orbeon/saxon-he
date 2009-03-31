@@ -88,7 +88,7 @@ public class TinyTreeEventIterator implements EventIterator, LocationProvider {
 
         boolean atEnd = (thisDepth <= tree.depth[startNodeNr] && currentNodeNr != startNodeNr);
 
-        if (atEnd && pendingEndEvents >= 1) {
+        if (atEnd && pendingEndEvents == 1) {
             pendingEndEvents--;
             startNodeNr = -1;
             if (startAtDocument) {
