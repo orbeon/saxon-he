@@ -3,7 +3,6 @@ import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.functions.EscapeURI;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.sort.LRUCache;
-import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.AtomicType;
 import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.type.ConversionResult;
@@ -11,7 +10,6 @@ import net.sf.saxon.type.ValidationFailure;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
 
 
 /**
@@ -38,7 +36,8 @@ public final class AnyURIValue extends StringValue {
      * valid only after escaping, as otherwise an exception occurs during the validation process
      */
 
-    private static LRUCache cache = new LRUCache(20);
+    private static ThreadLocal caches = new ThreadLocal();
+    //private static LRUCache cache = new LRUCache(20);
 
     /**
     * Constructor
@@ -86,6 +85,12 @@ public final class AnyURIValue extends StringValue {
      */
 
     public static boolean isValidURI(CharSequence value) {
+
+        LRUCache cache = (LRUCache)caches.get();
+        if (cache == null) {
+            cache = new LRUCache(10);
+            caches.set(cache);
+        }
 
         if (cache.get(value) != null) {
             return true;
@@ -160,44 +165,22 @@ public final class AnyURIValue extends StringValue {
         }
     }
 
-    /**
-    * Convert to Java object (for passing to external functions)
-    * @param target the Java class to which conversion is required
-    * @return the result of the conversion
-    * @throws XPathException if conversion to this target type is not possible
-    */
-
-//    public Object convertAtomicToJava(Class target, XPathContext context) throws XPathException {
-//        if (target==Object.class) {
-//            return value;
-//        } else if (target.isAssignableFrom(StringValue.class)) {
-//            return this;
-//        } else if (target==URI.class) {
-//            try {
-//                return new URI(value.toString());
-//            } catch (URISyntaxException err) {
-//                throw new XPathException("The anyURI value '" + value + "' is not an acceptable Java URI");
-//            }
-//        } else if (target==URL.class) {
-//            try {
-//                return new URL(value.toString());
-//            } catch (MalformedURLException err) {
-//                throw new XPathException("The anyURI value '" + value + "' is not an acceptable Java URL");
-//            }
-//        } else if (target==String.class) {
-//            return value;
-//        } else if (target==CharSequence.class) {
-//            return value;
-//        } else {
-//             Object o = super.convertSequenceToJava(target, context);
-//            if (o == null) {
-//                throw new XPathException("Conversion of anyURI to " + target.getName() +
-//                        " is not supported");
-//            }
-//            return o;
+//    public static void main(String[] args) {
+//        ExecutorService executor = Executors.newFixedThreadPool(10);
+//        for (int i = 0; i < 100; i++) {
+//            executor.execute(new Runnable() {
+//                public void run() {
+//                    for (int i=0; i<1000000; i++) {
+//                        String uri = "http://a.com/aaa" + i;
+//                        boolean b = AnyURIValue.isValidURI(uri);
+//                        if (i % 1000 == 0) {
+//                            System.err.println("Memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+//                        }
+//                    }
+//                }
+//            });
 //        }
 //    }
-
 
 }
 
