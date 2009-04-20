@@ -192,7 +192,7 @@ public class XPathEvaluator {
     public XPathExpression createPattern(String pattern) throws XPathException {
         Pattern pat = Pattern.make(pattern, staticContext, staticContext.getExecutable());
         ExpressionVisitor visitor = ExpressionVisitor.make(staticContext);
-        pat.analyze(visitor, null);
+        pat.analyze(visitor, Type.NODE_TYPE);
         SlotManager map = staticContext.getStackFrameMap();
         int slots = map.getNumberOfVariables();
         slots = pat.allocateSlots(staticContext, map, slots);
