@@ -27,10 +27,16 @@ public class TEXTEmitter extends XMLEmitter {
             characterSet = UnicodeCharacterSet.getInstance();
         }
         // Write a BOM if requested
+        String encoding = outputProperties.getProperty(OutputKeys.ENCODING);
+        if (encoding==null || encoding.equalsIgnoreCase("utf8")) {
+            encoding = "UTF-8";
+        }
         String byteOrderMark = outputProperties.getProperty(SaxonOutputKeys.BYTE_ORDER_MARK);
 
-        if ("yes".equals(byteOrderMark) &&
-                    "UTF-8".equalsIgnoreCase(outputProperties.getProperty(OutputKeys.ENCODING))) {
+        if ("yes".equals(byteOrderMark) && (
+                "UTF-8".equalsIgnoreCase(encoding) ||
+                    "UTF-16LE".equalsIgnoreCase(encoding) ||
+                    "UTF-16BE".equalsIgnoreCase(encoding))) {
             try {
                 writer.write('\uFEFF');
                 empty = false;
