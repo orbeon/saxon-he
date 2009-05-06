@@ -514,9 +514,14 @@ public class LetExpression extends Assignation implements TailCallReturner {
             replaceVariable(opt, seq);
         }
         if (isIndexedVariable()) {
-            Binding newBinding = ((VariableReference) seq).getBinding();
-            if (newBinding instanceof LetExpression) {
-                ((LetExpression) newBinding).setIndexedVariable();
+            if (seq instanceof VariableReference) {
+                Binding newBinding = ((VariableReference) seq).getBinding();
+                if (newBinding instanceof LetExpression) {
+                    ((LetExpression) newBinding).setIndexedVariable();
+                }
+            } else {
+                // can happen as a result of other rewrites
+                refCount = 10;
             }
         }
     }
