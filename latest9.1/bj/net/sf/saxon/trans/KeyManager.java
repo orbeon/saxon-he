@@ -368,6 +368,7 @@ public class KeyManager implements Serializable {
                     // not ideal for performance, but it's very unusual to have more than
                     // one key definition for a key.
                     LocalOrderComparer comparer = LocalOrderComparer.getInstance();
+                    boolean found = false;
                     for (int i=0; i<nodes.size(); i++) {
                         int d = comparer.compare(curr, (NodeInfo)nodes.get(i));
                         if (d<=0) {
@@ -377,12 +378,15 @@ public class KeyManager implements Serializable {
                                 // add the node at this position
                                 nodes.add(i, curr);
                             }
-                            return;
+                            found = true;
+                            break;
                         }
                         // else continue round the loop
                     }
                     // if we're still here, add the new node at the end
-                    nodes.add(curr);
+                    if (!found) {
+                        nodes.add(curr);
+                    }
                 }
             }
         }
