@@ -352,49 +352,54 @@ public class ExpressionTool {
             }
 
             case SHARED_APPEND_EXPRESSION: {
-                Block block = (Block)exp;
-                Expression base = block.getChildren()[0];
-                Value baseVal;
-                if (base instanceof Literal) {
-                    baseVal = ((Literal)base).getValue();
-                } else if (base instanceof VariableReference) {
-                    baseVal = Value.asValue(evaluate(base, EVALUATE_VARIABLE, context, ref));
-                    if (baseVal instanceof MemoClosure && ((MemoClosure)baseVal).isFullyRead()) {
-                        baseVal = ((MemoClosure)baseVal).materialize();
+                if (exp instanceof Block) {
+                    Block block = (Block)exp;
+                    Expression base = block.getChildren()[0];
+                    Value baseVal;
+                    if (base instanceof Literal) {
+                        baseVal = ((Literal)base).getValue();
+                    } else if (base instanceof VariableReference) {
+                        baseVal = Value.asValue(evaluate(base, EVALUATE_VARIABLE, context, ref));
+                        if (baseVal instanceof MemoClosure && ((MemoClosure)baseVal).isFullyRead()) {
+                            baseVal = ((MemoClosure)baseVal).materialize();
+                        }
+                    } else {
+                        throw new AssertionError("base of shared append expression is of class " + base.getClass());
+                    }
+                    if (baseVal instanceof ShareableSequence && ((ShareableSequence)baseVal).isShareable()) {
+                        List list = ((ShareableSequence)baseVal).getList();
+                        SequenceIterator iter = block.getChildren()[1].iterate(context);
+                        while (true) {
+                            Item i = iter.next();
+                            if (i == null) {
+                                break;
+                            }
+                            list.add(i);
+                        }
+                        return new ShareableSequence(list);
+                    } else {
+                        List list = new ArrayList(20);
+                        SequenceIterator iter = baseVal.iterate();
+                        while (true) {
+                            Item i = iter.next();
+                            if (i == null) {
+                                break;
+                            }
+                            list.add(i);
+                        }
+                        iter = block.getChildren()[1].iterate(context);
+                        while (true) {
+                            Item i = iter.next();
+                            if (i == null) {
+                                break;
+                            }
+                            list.add(i);
+                        }
+                        return new ShareableSequence(list);
                     }
                 } else {
-                    throw new AssertionError("base of shared append expression is of class " + base.getClass());
-                }
-                if (baseVal instanceof ShareableSequence && ((ShareableSequence)baseVal).isShareable()) {
-                    List list = ((ShareableSequence)baseVal).getList();
-                    SequenceIterator iter = block.getChildren()[1].iterate(context);
-                    while (true) {
-                        Item i = iter.next();
-                        if (i == null) {
-                            break;
-                        }
-                        list.add(i);
-                    }
-                    return new ShareableSequence(list);
-                } else {
-                    List list = new ArrayList(20);
-                    SequenceIterator iter = baseVal.iterate();
-                    while (true) {
-                        Item i = iter.next();
-                        if (i == null) {
-                            break;
-                        }
-                        list.add(i);
-                    }
-                    iter = block.getChildren()[1].iterate(context);
-                    while (true) {
-                        Item i = iter.next();
-                        if (i == null) {
-                            break;
-                        }
-                        list.add(i);
-                    }
-                    return new ShareableSequence(list);
+                    // it's not a Block: it must have been rewritten after deciding to use this evaluation mode
+                    return SequenceExtent.makeSequenceExtent(exp.iterate(context));
                 }
             }
 
