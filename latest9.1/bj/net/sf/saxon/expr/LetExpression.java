@@ -460,10 +460,13 @@ public class LetExpression extends Assignation implements TailCallReturner {
             // if this results in the expression (let $x := $y return Z), replace all references to
             // to $x by references to $y in the Z part, and eliminate this LetExpression by
             // returning the action part.
-            if (sequence instanceof VariableReference && !((VariableReference)sequence).getBinding().isAssignable()) {
-                replaceVariable(offer.getOptimizer(), sequence);
-                return action;
-            }                       
+            if (sequence instanceof VariableReference) {
+                Binding b = ((VariableReference)sequence).getBinding();
+                if (b != null && !b.isAssignable()) {
+                    replaceVariable(offer.getOptimizer(), sequence);
+                    return action;
+                }
+            }
             // similarly, for (let $x := lazy($y) return Z)
             if (sequence instanceof LazyExpression &&
                     ((LazyExpression) sequence).getBaseExpression() instanceof VariableReference &&
