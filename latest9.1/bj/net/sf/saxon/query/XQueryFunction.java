@@ -432,6 +432,7 @@ public class XQueryFunction implements InstructionInfo, Container, Declaration {
      */
 
     public void optimize() throws XPathException {
+        body.checkForUpdatingSubexpressions();
         if (isUpdating) {
             if (!ExpressionTool.isAllowedInUpdatingContext(body)) {
                 XPathException err = new XPathException(
@@ -440,7 +441,7 @@ public class XQueryFunction implements InstructionInfo, Container, Declaration {
                 throw err;
             }
         } else {
-            body.checkForUpdatingSubexpressions(); 
+            //body.checkForUpdatingSubexpressions();
             if (body.isUpdatingExpression()) {
                 XPathException err = new XPathException(
                          "The body of a non-updating function must be a non-updating expression", "XUST0001");
