@@ -459,11 +459,13 @@ public class XQueryFunction implements InstructionInfo, Container, Declaration {
         // mark tail calls within the function body
 
         int arity = arguments.size();
-        int tailCalls = ExpressionTool.markTailFunctionCalls(body, functionName, arity);
-        if (tailCalls != 0) {
-            compiledFunction.setBody(body);
-            compiledFunction.setTailRecursive(tailCalls > 0, tailCalls > 1);
-            body = new TailCallLoop(compiledFunction);
+        if (!isUpdating) {
+            int tailCalls = ExpressionTool.markTailFunctionCalls(body, functionName, arity);
+            if (tailCalls != 0) {
+                compiledFunction.setBody(body);
+                compiledFunction.setTailRecursive(tailCalls > 0, tailCalls > 1);
+                body = new TailCallLoop(compiledFunction);
+            }
         }
 
         body.setContainer(this);
