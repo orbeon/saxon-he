@@ -6,10 +6,7 @@ import cli.System.Uri;
 import cli.System.Xml.*;
 import net.sf.saxon.*;
 import net.sf.saxon.event.PipelineConfiguration;
-import net.sf.saxon.functions.FunctionLibrary;
-import net.sf.saxon.functions.FunctionLibraryList;
-import net.sf.saxon.functions.JavaExtensionFunctionFactory;
-import net.sf.saxon.functions.JavaExtensionLibrary;
+import net.sf.saxon.functions.*;
 import net.sf.saxon.om.NamespaceConstant;
 import net.sf.saxon.om.Validation;
 import net.sf.saxon.pull.PullProvider;
@@ -19,6 +16,7 @@ import net.sf.saxon.sort.CodepointCollator;
 import net.sf.saxon.sort.NamedCollation;
 import net.sf.saxon.sort.StringCollator;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.trans.Err;
 import net.sf.saxon.type.SchemaType;
 
 import javax.xml.transform.Source;
@@ -28,6 +26,8 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -107,7 +107,7 @@ public class DotNetPlatform implements Platform {
      * @throws java.net.URISyntaxException
      */
 
-    public URI makeAbsolute(String relativeURI, String base) throws URISyntaxException {
+    public URI makeAbsoluteOLD(String relativeURI, String base) throws URISyntaxException {
 
         // It's not entirely clear why the .NET product needs a different version of this method.
         // Possibly because of bugs in GNU classpath.
@@ -127,11 +127,79 @@ public class DotNetPlatform implements Platform {
             else {
                 fulluri = resolver.ResolveUri(null, relativeURI.replaceAll("file:", ""));
             }
-            return new URI(fulluri.ToString());
+            return new URI(fulluri.get_AbsoluteUri());
         } catch (cli.System.UriFormatException e) {
             throw new URISyntaxException(base + " + " + relativeURI, e.getMessage());
         }
     }
+
+    public URI makeAbsolute(String relativeURI, String base) throws URISyntaxException {
+            URI absoluteURI;
+            // System.err.println("makeAbsolute " + relativeURI + " against base " + base);
+            if (relativeURI == null) {
+                absoluteURI = new URI(ResolveURI.escapeSpaces(base));
+                if (!absoluteURI.isAbsolute()) {
+                    throw new URISyntaxException(base, "Relative URI not supplied, so base URI must be absolute");
+                } else {
+                    return absoluteURI;
+                }
+            }
+            relativeURI = ResolveURI.escapeSpaces(relativeURI);
+            base = ResolveURI.escapeSpaces(base);
+            try {
+                if (base==null || base.length() == 0) {
+                    absoluteURI = new URI(relativeURI);
+                    if (!absoluteURI.isAbsolute()) {
+                        String expandedBase = ResolveURI.tryToExpand(base);
+                        if (!expandedBase.equals(base)) { // prevent infinite recursion
+                            return makeAbsolute(relativeURI, expandedBase);
+                        }
+                    }
+                } else if (base != null && (base.startsWith("jar:") || base.startsWith("file:////"))) {
+
+                    // jar: URIs can't be resolved by the java.net.URI class, because they don't actually
+                    // conform with the RFC standards for hierarchic URI schemes (quite apart from not being
+                    // a registered URI scheme). But they seem to be widely used.
+
+                    // URIs starting file://// are accepted by the java.net.URI class, they are used to
+                    // represent Windows UNC filenames. However, the java.net.URI algorithm for resolving
+                    // a relative URI against such a base URI fails to produce a usable UNC filename (it's not
+                    // clear whether Java is implementing RFC 3986 correctly here, it depends on interpretation).
+                    // So we use the java.net.URL algorithm for this case too, because it works.
+
+                    try {
+                        URL baseURL = new URL(base);
+                        URL absoluteURL = new URL(baseURL, relativeURI);
+                        absoluteURI = new URI(absoluteURL.toString());
+                            // TODO: JDK1.5: use absoluteURL.toURI()
+                    } catch (MalformedURLException err) {
+                        throw new URISyntaxException(base + " " + relativeURI, err.getMessage());
+                    }
+                } else {
+                    URI baseURI;
+                    try {
+                        baseURI = new URI(base);
+                    } catch (URISyntaxException e) {
+                        throw new URISyntaxException(base, "Invalid base URI: " + e.getMessage());
+                    }
+                    try {
+                        new URI(relativeURI);   // for validation only
+                    } catch (URISyntaxException e) {
+                        throw new URISyntaxException(base, "Invalid relative URI: " + e.getMessage());
+                    }
+                    absoluteURI = (relativeURI.length()==0 ?
+                                     baseURI :
+                                     baseURI.resolve(relativeURI)
+                                 );
+                }
+            } catch (IllegalArgumentException err0) {
+                // can be thrown by resolve() when given a bad URI
+                throw new URISyntaxException(relativeURI, "Cannot resolve URI against base " + Err.wrap(base));
+            }
+
+            return absoluteURI;
+        }
+    
 
     /**
      * Get the platform version
