@@ -1846,7 +1846,7 @@ public class QueryParser extends ExpressionParser {
                 expect(Token.NAME);
                 PositionVariable pos = new PositionVariable();
                 StructuredQName posQName = makeStructuredQName(t.currentTokenValue, false);
-                if (posQName.equals(varQName)) {
+                if (!scanOnly && posQName.equals(varQName)) {
                     grumble("The two variables declared in a single 'for' clause must have different names", "XQST0089");
                 }
                 pos.setVariableQName(posQName);
