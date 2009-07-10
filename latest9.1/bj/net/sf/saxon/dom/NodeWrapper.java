@@ -1163,6 +1163,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 if (forwards) {
                     ix += currentSpan;
                     if (ix >= childNodesLength) {
+                        position = -1;
                         return null;
                     } else {
                         currentSpan = skipFollowingTextNodes();
@@ -1181,11 +1182,13 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                         }
                         NodeWrapper wrapper = makeWrapper(currentDomNode, docWrapper, commonParent, ix);
                         wrapper.span = currentSpan;
+                        position++;
                         return current = wrapper;
                     }
                 } else {
                     ix--;
                     if (ix < 0) {
+                        position = -1;
                         return null;
                     } else {
                         currentSpan = skipPrecedingTextNodes();
@@ -1205,6 +1208,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                         }
                         NodeWrapper wrapper = makeWrapper(currentDomNode, docWrapper, commonParent, ix);
                         wrapper.span = currentSpan;
+                        position++;
                         return current = wrapper;
                     }
                 }
