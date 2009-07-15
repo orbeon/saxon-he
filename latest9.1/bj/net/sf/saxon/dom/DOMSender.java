@@ -280,8 +280,8 @@ public class DOMSender implements SaxonLocator, SourceLocationProvider {
             String attname = att.getName();
             if (attname.equals("xmlns")) {
                 //System.err.println("Default namespace: " + att.getValue());
-                if (nsDeclarations.get("")==null) {
-                    String uri = att.getValue();
+                String uri = att.getValue();
+                if (nsDeclarations.get("")==null || !nsDeclarations.get("").equals(uri)) {
                     nsSupport.declarePrefix("", uri);
                     nsDeclarations.put("", uri);
                 }
