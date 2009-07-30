@@ -65,13 +65,16 @@ public class XPathFactoryImpl extends XPathFactory {
      * this method will return true in respect of any such model.
      */
     public boolean isObjectModelSupported(String model) {
-        return config.getExternalObjectModel(model) != null;
-//        return model.equals(NamespaceConstant.OBJECT_MODEL_SAXON) ||
-//                model.equals(XPathConstants.DOM_OBJECT_MODEL) ||
-//                model.equals(NamespaceConstant.OBJECT_MODEL_JDOM) ||
-//                model.equals(NamespaceConstant.OBJECT_MODEL_XOM) ||
-//                model.equals(NamespaceConstant.OBJECT_MODEL_DOM4J);
+        boolean debug = System.getProperty("jaxp.debug") != null;
+        if (debug) {
+            System.err.println("JAXP: Calling " + getClass().getName() + ".isObjectModelSupported(\"" + model + "\")");
+            System.err.println("JAXP: -- returning " + silentIsObjectModelSupported(model));
+        }
+        return silentIsObjectModelSupported(model);
+    }
 
+    private boolean silentIsObjectModelSupported(String model) {
+        return model.equals(NamespaceConstant.OBJECT_MODEL_SAXON) || config.getExternalObjectModel(model) != null;
     }
 
     /**
