@@ -246,6 +246,10 @@ public class SaxonXQForwardSequence extends Closable implements XQResultSequence
     public void writeSequence(OutputStream os, Properties props) throws XQException {
         checkNotClosed();
         checkOnlyReadOnce();
+        if (props == null) {
+            props = new Properties();
+        }
+        props = SaxonXQSequence.setDefaultProperties(props);
         SequenceIterator iter = iterator;
         if (isOnItem()) {
             iter = new Insert.InsertIterator(
