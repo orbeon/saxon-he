@@ -42,7 +42,7 @@ public class IntegratedFunctionCall extends FunctionCall {
         checkArgumentCount(definition.getMinimumNumberOfArguments(), definition.getMaximumNumberOfArguments(), visitor);
         final int args = getNumberOfArguments();
         SequenceType[] declaredArgumentTypes = definition.getArgumentTypes();
-        if (declaredArgumentTypes == null || declaredArgumentTypes.length == 0) {
+        if (declaredArgumentTypes == null || (args != 0 && declaredArgumentTypes.length == 0)) {
             throw new XPathException("Integrated function " + getDisplayName() +
                     " failed to declare its argument types");
         }
