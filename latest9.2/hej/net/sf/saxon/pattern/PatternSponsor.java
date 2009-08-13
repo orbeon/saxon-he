@@ -165,6 +165,16 @@ public class PatternSponsor extends Expression {
     }
 
     /**
+     * Treat all subexpressions as being evaluated repeatedly
+     * @param child
+     * @return
+     */
+
+    public boolean hasLoopingSubexpression(Expression child) {
+        return true;
+    }
+
+    /**
      * <p>Determine the static cardinality of the expression. This establishes how many items
      * there will be in the result of the expression, at compile time (i.e., without
      * actually evaluating the result.</p>

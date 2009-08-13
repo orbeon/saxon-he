@@ -203,10 +203,10 @@ public class NumberInstruction extends Expression {
             lang = visitor.typeCheck(lang, contextItemType);
         }
         if (count != null) {
-            count = count.analyze(visitor, contextItemType);
+            visitor.typeCheck(new PatternSponsor(count), contextItemType);
         }
         if (from != null) {
-            from = from.analyze(visitor, contextItemType);
+            visitor.typeCheck(new PatternSponsor(from), contextItemType);
         }
         return this;
     }
