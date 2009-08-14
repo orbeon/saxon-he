@@ -81,7 +81,7 @@ public class FormatDate extends SystemFunction {
 
         Numberer numberer = context.getConfiguration().makeNumberer(language, country);
         FastStringBuffer sb = new FastStringBuffer(FastStringBuffer.SMALL);
-        if (numberer instanceof Numberer_en && !"en".equals(language)) {
+        if (numberer.getClass() == Numberer_en.class && !"en".equals(language)) {
             sb.append("[Language: en]");
         }
         int i = 0;
