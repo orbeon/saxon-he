@@ -1047,6 +1047,7 @@ public class Query {
         System.err.println("  -projection:[on|off]  Use source document projection");
         System.err.println("  -q:filename           Query file name");
         System.err.println("  -qs:string            Query string (usually in quotes)");
+        System.err.println("  -qversion:1.0|1.1     XQuery language version");
         System.err.println("  -r:classname          Use URIResolver class");
         System.err.println("  -repeat:N             Repeat N times for performance measurement");
         System.err.println("  -s:file|URI           Provide initial context document");
