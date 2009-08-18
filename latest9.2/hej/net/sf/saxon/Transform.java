@@ -603,6 +603,13 @@ public class Transform {
             }
 
             config.displayLicenseMessage();
+            if (schemaAware && !config.isLicensedFeature(Configuration.LicenseFeature.SCHEMA_AWARE_XSLT)) {
+                if ("EE".equals(config.getEditionCode())) {
+                    quit("Installed license does not allow schema-aware transformation", 2);
+                } else {
+                    quit("Schema-aware transformation requires Saxon Enterprise Edition", 2);
+                }
+            }
 
             if (additionalSchemas != null) {
                 Query.loadAdditionalSchemas(config, additionalSchemas);
@@ -759,9 +766,14 @@ public class Transform {
             //err.printStackTrace();
             quit("Transformation failed: " + err.getMessage(), 2);
         } catch (Exception err2) {
-            err2.printStackTrace();
-            quit("Fatal error during transformation: " + err2.getClass().getName() + ": " + 
-                    (err2.getMessage() == null ? " (no message)" : err2.getMessage()), 2);
+            // TODO: move LicenseException to net.sf.saxon
+            if ("com.saxonica.config.LicenseException".equals(err2.getClass().getName())) {
+                quit(err2.getMessage(), 2);
+            } else {
+                err2.printStackTrace();
+                quit("Fatal error during transformation: " + err2.getClass().getName() + ": " +
+                        (err2.getMessage() == null ? " (no message)" : err2.getMessage()), 2);
+            }
         }
 
 
