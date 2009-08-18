@@ -834,7 +834,7 @@ public class Executable implements Serializable {
     public void setSchemaAware(boolean aware) {
         if (aware && !config.isLicensedFeature(Configuration.LicenseFeature.SCHEMA_VALIDATION)) {
             throw new IllegalArgumentException(
-                    "Schema-aware processing is not possible: the Configuration is not schema-aware");
+                    "Schema-aware processing is not possible: no License");
         }
         schemaAware = aware;
     }
