@@ -60,6 +60,26 @@ public final class LocationPathPattern extends Pattern {
         filter.setContainer(this);
     }
 
+    public void setLineNumber(int lineNumber) {
+        super.setLineNumber(lineNumber);
+        if (parentPattern != null) {
+            parentPattern.setLineNumber(lineNumber);
+        }
+        if (ancestorPattern != null) {
+            ancestorPattern.setLineNumber(lineNumber);
+        }
+    }
+
+    public void setSystemId(String systemId) {
+        super.setSystemId(systemId);
+        if (parentPattern != null) {
+            parentPattern.setSystemId(systemId);
+        }
+        if (ancestorPattern != null) {
+            ancestorPattern.setSystemId(systemId);
+        }
+    }
+    
 
     /**
      * Set the executable containing this pattern
