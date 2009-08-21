@@ -1164,6 +1164,8 @@ public class Configuration implements Serializable, SourceResolver {
 
     public void setCompileWithTracing(boolean trace) {
         tracing = trace;
+        defaultXsltCompilerInfo.setCompileWithTracing(trace);
+        defaultStaticQueryContext.setCompileWithTracing(trace);        
     }
 
     /**
