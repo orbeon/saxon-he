@@ -97,6 +97,7 @@ public class StaticQueryContext {
         namePool = config.getNamePool();
         errorListener = config.getErrorListener();
         moduleURIResolver = config.getModuleURIResolver();
+        tracing = config.isCompileWithTracing();
         if (errorListener instanceof StandardErrorListener) {
             errorListener = ((StandardErrorListener)errorListener).makeAnother(Configuration.XQUERY);
             ((StandardErrorListener)errorListener).setRecoveryPolicy(Configuration.DO_NOT_RECOVER);
@@ -126,6 +127,7 @@ public class StaticQueryContext {
              namePool = config.getNamePool();
              errorListener = config.getErrorListener();
              moduleURIResolver = config.getModuleURIResolver();
+             tracing = config.isCompileWithTracing();
              if (errorListener instanceof StandardErrorListener) {
                  errorListener = ((StandardErrorListener)errorListener).makeAnother(Configuration.XQUERY);
                  ((StandardErrorListener)errorListener).setRecoveryPolicy(Configuration.DO_NOT_RECOVER);
