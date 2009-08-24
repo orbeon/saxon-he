@@ -669,11 +669,7 @@ public final class Tokenizer {
                 if (nextTokenValue.indexOf('\n') >= 0) {
                     for (int i = 0; i<nextTokenValue.length(); i++) {
                         if (nextTokenValue.charAt(i) == '\n') {
-                            lineNumber++;
-                            if (newlineOffsets==null) {
-                                newlineOffsets = new ArrayList(20);
-                            }
-                            newlineOffsets.add(new Integer(nextTokenStartOffset+i));
+                            incrementLineNumber(nextTokenStartOffset+i+1);
                         }
                     }
                 }
@@ -880,6 +876,19 @@ public final class Tokenizer {
             newlineOffsets = new ArrayList(20);
         }
         newlineOffsets.add(new Integer(inputOffset-1));
+    }
+
+    /**
+     * Increment the line number, making a record of where in the input string the newline character occurred.
+     * @param offset the place in the input string where the newline occurred
+     */
+
+    public void incrementLineNumber(int offset) {
+        nextLineNumber++;
+        if (newlineOffsets==null) {
+            newlineOffsets = new ArrayList(20);
+        }
+        newlineOffsets.add(new Integer(offset));
     }
 
     /**

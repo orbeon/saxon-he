@@ -3123,6 +3123,16 @@ public class QueryParser extends ExpressionParser {
             String val = t.input.substring(t.inputOffset - 1, end + 1);
             // and without
             String rval = t.input.substring(t.inputOffset, end);
+
+            // account for any newlines found in the value
+            // (note, subexpressions between curlies will have been parsed using a different tokenizer)
+            String tail = val;
+            int pos;
+            while ((pos = tail.indexOf('\n')) >= 0) {
+                t.incrementLineNumber(t.inputOffset - 1 + pos);
+                tail = tail.substring(pos+1);
+            }
+
             t.inputOffset = end + 1;
             // on return, the current character is the closing quote
             c = t.nextChar();
