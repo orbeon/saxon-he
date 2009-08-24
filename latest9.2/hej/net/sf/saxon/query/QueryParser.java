@@ -3111,8 +3111,10 @@ public class QueryParser extends ExpressionParser {
                 try {
                     avt = makeAttributeContent(t.input, t.inputOffset, delim, true);
                 } catch (XPathException err) {
-                    grumble(err.getMessage());
-                    return null;
+                    if (!err.hasBeenReported()) {
+                        grumble(err.getMessage());
+                    }
+                    throw err;
                 }
 
                 // by convention, this returns the end position when called with scanOnly set
