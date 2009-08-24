@@ -299,7 +299,7 @@ public class ApplyTemplates extends Instruction {
 
             context.setCurrentIterator(iterator);
             context.setCurrentMode(mode);
-            context.setOriginatingConstructType(Location.TEMPLATE);
+            //context.setOriginatingConstructType(Location.TEMPLATE);
             boolean lookahead = (iterator.getProperties() & SequenceIterator.LOOKAHEAD) != 0;
             Template previousTemplate = null;
             while(true) {
