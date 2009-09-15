@@ -370,7 +370,7 @@ public class Sender {
 
         ReceivingContentHandler ce;
         final ContentHandler ch = parser.getContentHandler();
-        if (ch instanceof ReceivingContentHandler) {
+        if (ch instanceof ReceivingContentHandler && config.isCompatible(((ReceivingContentHandler)ch).getConfiguration())) {
             ce = (ReceivingContentHandler)ch;
             ce.reset();
         } else {
