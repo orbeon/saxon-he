@@ -39,13 +39,11 @@ public class NegateExpression extends UnaryExpression {
     }
 
     public Expression typeCheck(ExpressionVisitor visitor, ItemType contextItemType) throws XPathException {
-        // always called from ArithmeticExpression.typeCheck, so the operand has already been checked.
-        // Now need to ensure that it's numeric
         Expression oldop = operand;
         RoleLocator role = new RoleLocator(RoleLocator.UNARY_EXPR, "-", 0);
-        //role.setSourceLocator(this);
         operand = TypeChecker.staticTypeCheck(operand, SequenceType.OPTIONAL_NUMERIC, backwardsCompatible,
                 role, visitor);
+        operand = visitor.typeCheck(operand, contextItemType);
         if (operand != oldop) {
             adoptChildExpression(operand);
         }
