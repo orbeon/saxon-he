@@ -22,6 +22,7 @@ public class MetaTagAdjuster extends ProxyReceiver {
     int droppingMetaTags = -1;
     boolean inMetaTag = false;
     boolean foundHead = false;
+    String headPrefix = null;
     int metaCode;
     short requiredURICode = 0;
     AttributeCollectionImpl attributes;
@@ -105,6 +106,7 @@ public class MetaTagAdjuster extends ProxyReceiver {
             String localName = namePool.getLocalName(nameCode);
             if (uriCode == requiredURICode && comparesEqual(localName, "head")) {
                 foundHead = true;
+                headPrefix = namePool.getPrefix(nameCode);
             }
         }
 
@@ -145,7 +147,7 @@ public class MetaTagAdjuster extends ProxyReceiver {
             NamePool namePool = getNamePool();
             nextReceiver.startContent();
             String uri = (requiredURICode == 0 ? "" : NamespaceConstant.XHTML);
-            int metaCode = namePool.allocate("", uri, "meta");
+            int metaCode = namePool.allocate(headPrefix, uri, "meta");
             nextReceiver.startElement(metaCode, StandardNames.XS_UNTYPED, 0, 0);
             int httpEquivCode = namePool.allocate("", "", "http-equiv");
             nextReceiver.attribute(httpEquivCode, StandardNames.XS_UNTYPED_ATOMIC, "Content-Type", 0, 0);
