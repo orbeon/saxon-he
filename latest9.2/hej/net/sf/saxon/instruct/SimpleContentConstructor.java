@@ -138,22 +138,25 @@ public class SimpleContentConstructor extends Expression implements DivisibleIns
             XPathContext c = visitor.getStaticContext().makeEarlyEvaluationContext();
             return new Literal(Value.asValue(evaluateItem(c)));
         }
-        boolean isUntyped = isAtomic || !visitor.getExecutable().isSchemaAware();
-        if (!isUntyped) {
-            boolean maybeElement = th.relationship(itemType, NodeKindTest.ELEMENT) != TypeHierarchy.DISJOINT;
-            boolean maybeAttribute = th.relationship(itemType, NodeKindTest.ATTRIBUTE) != TypeHierarchy.DISJOINT;
-            isUntyped = !maybeElement && !maybeAttribute;
-        }
         if (isSingleton) {
             if (isAtomic) {
-                return select;
-            } else if (isUntyped) {
-                return SystemFunction.makeSystemFunction("string", new Expression[]{select});
+                if (th.isSubType(itemType, BuiltInAtomicType.STRING)) {
+                    return select;
+                } else {
+                    return SystemFunction.makeSystemFunction("string", new Expression[]{select});
+                }
+            } else {
+                boolean isUntyped = !visitor.getExecutable().isSchemaAware();
+                if (!isUntyped) {
+                    boolean maybeElement = th.relationship(itemType, NodeKindTest.ELEMENT) != TypeHierarchy.DISJOINT;
+                    boolean maybeAttribute = th.relationship(itemType, NodeKindTest.ATTRIBUTE) != TypeHierarchy.DISJOINT;
+                    isUntyped = !maybeElement && !maybeAttribute;
+                }
+                if (isUntyped) {
+                    return SystemFunction.makeSystemFunction("string", new Expression[]{select});
+                }
             }
         }
-//        if (isSingleton && isUntyped) {
-//            return select;
-//        }
         return this;
     }
 
