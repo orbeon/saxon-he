@@ -64,6 +64,12 @@ public class Copy extends ElementCreator {
 
 
     public Expression typeCheck(ExpressionVisitor visitor, ItemType contextItemType) throws XPathException {
+        if (contextItemType == null) {
+            // See spec bug 7624, test case copy903err
+            XPathException err = new XPathException("Context item for xsl:copy is undefined", "XTTE0945");
+            err.setLocator(this);
+            throw err;
+        }
         if (contextItemType instanceof NodeTest) {
             switch (contextItemType.getPrimitiveType()) {
                 // For elements and attributes, assume the type annotation will change
@@ -206,6 +212,13 @@ public class Copy extends ElementCreator {
         Controller controller = context.getController();
         SequenceReceiver out = context.getReceiver();
         Item item = context.getContextItem();
+        if (item == null) {
+            // See spec bug 7624, test case copy904err
+            XPathException err = new XPathException("Context item for xsl:copy is undefined", "XTTE0945");
+            err.setLocator(this);
+            throw err;
+        }
+
         if (!(item instanceof NodeInfo)) {
             out.append(item, locationId, NodeInfo.ALL_NAMESPACES);
             return null;
