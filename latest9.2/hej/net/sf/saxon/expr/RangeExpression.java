@@ -38,15 +38,16 @@ public class RangeExpression extends BinaryExpression {
         operand0 = visitor.typeCheck(operand0, contextItemType);
         operand1 = visitor.typeCheck(operand1, contextItemType);
 
+        boolean backCompat = visitor.getStaticContext().isInBackwardsCompatibleMode();
         RoleLocator role0 = new RoleLocator(RoleLocator.BINARY_EXPR, "to", 0);
         //role0.setSourceLocator(this);
         operand0 = TypeChecker.staticTypeCheck(
-                operand0, SequenceType.OPTIONAL_INTEGER, false, role0, visitor);
+                operand0, SequenceType.OPTIONAL_INTEGER, backCompat, role0, visitor);
 
         RoleLocator role1 = new RoleLocator(RoleLocator.BINARY_EXPR, "to", 1);
         //role1.setSourceLocator(this);
         operand1 = TypeChecker.staticTypeCheck(
-                operand1, SequenceType.OPTIONAL_INTEGER, false, role1, visitor);
+                operand1, SequenceType.OPTIONAL_INTEGER, backCompat, role1, visitor);
 
         return makeConstantRange();
     }
