@@ -2,12 +2,14 @@ package net.sf.saxon;
 
 import net.sf.saxon.charcode.CharacterSetFactory;
 import net.sf.saxon.event.*;
+import net.sf.saxon.evpull.PullEventSource;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.functions.*;
 import net.sf.saxon.instruct.*;
 import net.sf.saxon.number.Numberer;
 import net.sf.saxon.number.Numberer_en;
 import net.sf.saxon.om.*;
+import net.sf.saxon.pull.PullSource;
 import net.sf.saxon.query.ModuleURIResolver;
 import net.sf.saxon.query.StandardModuleURIResolver;
 import net.sf.saxon.query.StaticQueryContext;
@@ -21,7 +23,6 @@ import net.sf.saxon.trans.*;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.Whitespace;
-import net.sf.saxon.evpull.PullEventSource;
 import org.xml.sax.*;
 import org.xml.sax.ext.DefaultHandler2;
 import org.xml.sax.ext.LexicalHandler;
@@ -3158,6 +3159,9 @@ public class Configuration implements Serializable, SourceResolver {
             return source;
         }
         if (source instanceof NodeInfo) {
+            return source;
+        }
+        if (source instanceof PullSource) {
             return source;
         }
         if (source instanceof PullEventSource) {
