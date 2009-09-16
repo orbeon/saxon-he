@@ -872,14 +872,13 @@ public class JavaExtensionLibrary implements FunctionLibrary {
     private class UnresolvedExtensionFunction extends CompileTimeFunction {
 
         private List candidateMethods;
-        private StructuredQName functionName;
         private Class theClass;
 
 
         public UnresolvedExtensionFunction(StructuredQName functionName, Class theClass,
                                            List candidateMethods, Expression[] staticArgs) {
             setArguments(staticArgs);
-            this.functionName = functionName;
+            setFunctionName(functionName);
             this.theClass = theClass;
             this.candidateMethods = candidateMethods;
         }
@@ -899,14 +898,14 @@ public class JavaExtensionLibrary implements FunctionLibrary {
             AccessibleObject method = getBestFit(candidateMethods, argument, theClass);
             if (method == null) {
                 XPathException err = new XPathException("There is more than one method matching the function call " +
-                        functionName.getDisplayName() +
+                        getFunctionName().getDisplayName() +
                         ", and there is insufficient type information to determine which one should be used");
                 err.setLocator(this);
                 throw err;
             } else {
                 JavaExtensionFunctionFactory factory =
                         (JavaExtensionFunctionFactory)config.getExtensionFunctionFactory("java");
-                Expression call = factory.makeExtensionFunctionCall(functionName, theClass, method, argument);
+                Expression call = factory.makeExtensionFunctionCall(getFunctionName(), theClass, method, argument);
                 ExpressionTool.copyLocationInfo(this, call);
                 return call.typeCheck(visitor, contextItemType);
             }

@@ -936,13 +936,12 @@ public class DotNetExtensionLibrary implements FunctionLibrary {
     private class UnresolvedExtensionFunction extends CompileTimeFunction {
 
         private List candidateMethods;
-        private StructuredQName functionName;
         private cli.System.Type theClass;
 
 
         public UnresolvedExtensionFunction(StructuredQName functionName, cli.System.Type theClass, List candidateMethods, Expression[] staticArgs) {
             setArguments(staticArgs);
-            this.functionName = functionName;
+            setFunctionName(functionName);
             this.theClass = theClass;
             this.candidateMethods = candidateMethods;
         }
@@ -962,14 +961,14 @@ public class DotNetExtensionLibrary implements FunctionLibrary {
             MemberInfo method = getBestFit(candidateMethods, argument, theClass);
             if (method == null) {
                 XPathException err = new XPathException("There is more than one method matching the function call " +
-                        functionName.getDisplayName() +
+                        getFunctionName().getDisplayName() +
                         ", and there is insufficient type information to determine which one should be used");
                 err.setLocator(this);
                 throw err;
             } else {
                 DotNetExtensionFunctionFactory factory =
                         (DotNetExtensionFunctionFactory)config.getExtensionFunctionFactory("clitype");
-                Expression call = factory.makeExtensionFunctionCall(functionName, theClass, method, argument);
+                Expression call = factory.makeExtensionFunctionCall(getFunctionName(), theClass, method, argument);
                 ExpressionTool.copyLocationInfo(this, call);
                 return call;
             }
