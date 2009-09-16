@@ -276,14 +276,6 @@ public class Document extends SystemFunction {
             return getFragment(doc, fragmentId, c);
         }
 
-        if (pool.isMarkedUnavailable(documentKey)) {
-            XPathException err = new XPathException(
-                    "Document has been marked not available: " + documentKey);
-            err.setXPathContext(c);
-            err.setErrorCode("FODC0005");
-            throw err;
-        }
-
         // check that the document was not written by this transformation
 
         if (!controller.checkUniqueOutputDestination(documentKey)) {
@@ -296,6 +288,15 @@ public class Document extends SystemFunction {
         }
 
         try {
+
+            if (pool.isMarkedUnavailable(documentKey)) {
+                XPathException err = new XPathException(
+                        "Document has been marked not available: " + documentKey);
+                err.setXPathContext(c);
+                err.setErrorCode("FODC0005");
+                throw err;
+            }
+            
             // Get a Source from the URIResolver
 
             Source source = resolveURI(href, baseURI, documentKey, controller);
