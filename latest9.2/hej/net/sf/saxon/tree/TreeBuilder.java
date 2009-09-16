@@ -8,7 +8,6 @@ import net.sf.saxon.om.AttributeCollectionImpl;
 import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.Configuration;
 
 import java.util.ArrayList;
 
