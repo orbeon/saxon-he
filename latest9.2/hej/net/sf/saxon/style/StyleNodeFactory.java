@@ -107,7 +107,11 @@ public class StyleNodeFactory implements NodeFactory {
 	        e.processDefaultXPathNamespaceAttribute("");
             return e;
 
-        } else if (parent instanceof XSLStylesheet && namePool.getURICode(nameCode) != 0) {
+        }
+
+        short uriCode = namePool.getURICode(nameCode);
+
+        if (parent instanceof XSLStylesheet && uriCode != 0 && uriCode != NamespaceConstant.XSLT_CODE) {
             DataElement d = new DataElement();
             d.setNamespaceDeclarations(namespaces, namespacesUsed);
             d.initialise(nameCode, typeCode, attlist, parent, sequence);
@@ -116,8 +120,7 @@ public class StyleNodeFactory implements NodeFactory {
 
         } else {   // not recognized as an XSLT element, not top-level
 
-	        short uriCode = namePool.getURICode(nameCode);
-	        String localname = namePool.getLocalName(nameCode);
+            String localname = namePool.getLocalName(nameCode);
             StyleElement temp = null;
 
             // Detect a misspelt XSLT declaration
