@@ -755,16 +755,42 @@ public class Query {
             exp = staticEnv.compileQuery(q);
         } else if (useURLs || queryFileName.startsWith("http:") || queryFileName.startsWith("file:")) {
             ModuleURIResolver resolver = staticEnv.getModuleURIResolver();
+            boolean isStandardResolver = false;
             if (resolver == null) {
                 resolver = staticEnv.getConfiguration().getStandardModuleURIResolver();
+                isStandardResolver = true;
             }
-            String[] locations = {queryFileName};
-            Source[] sources = resolver.resolve(null, null, locations);
-            if (sources.length != 1 || !(sources[0] instanceof StreamSource)) {
-                quit("Module URI Resolver must return a single StreamSource", 2);
+            while (true) {
+                String[] locations = {queryFileName};
+                Source[] sources;
+                try {
+                    sources = resolver.resolve(null, null, locations);
+                } catch (Exception e) {
+                    if (e instanceof XPathException) {
+                        throw (XPathException)e;
+                    } else {
+                        XPathException err = new XPathException("Exception in ModuleURIResolver: ", e);
+                        err.setErrorCode("XQST0059");
+                        throw err;
+                    }
+                }
+                if (sources == null) {
+                    if (isStandardResolver) {
+                        // this should not happen
+                        quit("System problem: standard ModuleURIResolver returned null", 4);
+                    } else {
+                        resolver = staticEnv.getConfiguration().getStandardModuleURIResolver();
+                        isStandardResolver = true;
+                    }
+                } else {
+                    if (sources.length != 1 || !(sources[0] instanceof StreamSource)) {
+                        quit("Module URI Resolver must return a single StreamSource", 2);
+                    }
+                    String queryText = QueryReader.readSourceQuery((StreamSource)sources[0], config.getNameChecker());
+                    exp = staticEnv.compileQuery(queryText);
+                    break;
+                }
             }
-            String queryText = QueryReader.readSourceQuery((StreamSource)sources[0], config.getNameChecker());
-            exp = staticEnv.compileQuery(queryText);
         } else {
             InputStream queryStream = new FileInputStream(queryFileName);
             staticEnv.setBaseURI(new File(queryFileName).toURI().toString());
