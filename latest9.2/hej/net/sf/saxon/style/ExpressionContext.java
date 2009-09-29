@@ -387,7 +387,8 @@ public class ExpressionContext implements XSLTStaticContext {
         if (type.getFingerprint() == StandardNames.XS_DATE_TIME_STAMP) {
             return config.getXsdVersion() == Configuration.XSD11;
         }
-        return getExecutable().isSchemaAware() || type.isAllowedInBasicXSLT();
+        return type.isAllowedInBasicXSLT() ||
+                config.isLicensedFeature(Configuration.LicenseFeature.SAXON_EXTENSION_FUNCTIONS);
     }
 
     /**
