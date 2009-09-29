@@ -114,7 +114,7 @@ public final class UntypedAtomicConverter extends UnaryExpression implements Map
                 requiredItemType == BuiltInAtomicType.STRING &&
                 ((Atomizer)operand).getBaseExpression().getItemType(th) instanceof NodeTest) {
             Expression nodeExp = ((Atomizer)operand).getBaseExpression();
-            if (Cardinality.allowsMany(nodeExp.getCardinality())) {
+            if (nodeExp.getCardinality() != StaticProperty.EXACTLY_ONE) {
                 SystemFunction fn = (SystemFunction)SystemFunction.makeSystemFunction(
                         "string", new Expression[]{new ContextItemExpression()});
                 fn.setContainer(getContainer());
