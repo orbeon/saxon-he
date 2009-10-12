@@ -131,6 +131,9 @@ public final class DecimalValue extends NumericValue {
                     break;
                 }
             }
+            if (digits.length() == 0) {
+                return DecimalValue.ZERO;
+            }
             BigInteger bigInt = new BigInteger(digits.toString());
             BigDecimal bigDec = new BigDecimal(bigInt, scale);
             return new DecimalValue(bigDec);
