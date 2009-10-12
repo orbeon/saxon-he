@@ -944,7 +944,6 @@ public abstract class StyleElement extends ElementImpl
             if ("".equals(parts[0])) {
                 // Name is unprefixed: use the default-xpath-namespace
                 uri = getDefaultXPathNamespace();
-                nameCode = getNamePool().allocate(parts[0], uri, lname);
             } else {
                 uri = getURIForPrefix(parts[0], false);
                 if (uri == null) {
