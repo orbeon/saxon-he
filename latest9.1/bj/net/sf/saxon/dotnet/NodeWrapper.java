@@ -2,7 +2,11 @@ package net.sf.saxon.dotnet;
 
 import cli.System.Xml.*;
 import net.sf.saxon.Configuration;
+import net.sf.saxon.sort.IntSet;
+import net.sf.saxon.sort.IntHashSet;
+import net.sf.saxon.sort.IntIterator;
 import net.sf.saxon.event.Receiver;
+import net.sf.saxon.event.NamespaceReducer;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.NameTest;
 import net.sf.saxon.pattern.NodeTest;
@@ -761,7 +765,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      */
 
     public void copy(Receiver out, int whichNamespaces, boolean copyAnnotations, int locationId) throws XPathException {
-        Navigator.copy(this, out, docWrapper.getNamePool(), whichNamespaces, copyAnnotations, locationId);
+        Receiver r = new NamespaceReducer(out);
+        Navigator.copy(this, r, docWrapper.getNamePool(), whichNamespaces, copyAnnotations, locationId);
     }
 
     /**
@@ -780,47 +785,40 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      */
 
     public int[] getDeclaredNamespaces(int[] buffer) {
+        // Note: in a DOM created by the XML parser, all namespaces are present as attribute nodes. But
+        // in a DOM created programmatically, this is not necessarily the case. So we need to add
+        // namespace bindings for the namespace of the element and any attributes
         if (node.get_NodeType().Value == XmlNodeType.Element) {
             XmlElement elem = (XmlElement)node;
             XmlNamedNodeMap atts = elem.get_Attributes();
-
-            if (atts == null) {
-                return EMPTY_NAMESPACE_LIST;
-            }
-            int count = 0;
+            IntSet codes = new IntHashSet();
+            NamePool pool = getNamePool();
             for (int i = 0; i < atts.get_Count(); i++) {
                 XmlAttribute att = (XmlAttribute)atts.Item(i);
                 String attName = att.get_Name();
                 if (attName.equals("xmlns")) {
-                    count++;
+                    String prefix = "";
+                    String uri = att.get_Value();
+                    codes.add(pool.allocateNamespaceCode(prefix, uri));
                 } else if (attName.startsWith("xmlns:")) {
-                    count++;
+                    String prefix = attName.substring(6);
+                    String uri = att.get_Value();
+                    codes.add(pool.allocateNamespaceCode(prefix, uri));
+                } else if (att.get_NamespaceURI().length() != 0) {
+                    codes.add(pool.allocateNamespaceCode(att.get_Prefix(), att.get_NamespaceURI()));
                 }
             }
-            if (count == 0) {
-                return EMPTY_NAMESPACE_LIST;
-            } else {
-                int[] result = (buffer == null || count > buffer.length ? new int[count] : buffer);
-                NamePool pool = getNamePool();
-                int n = 0;
-                for (int i = 0; i < atts.get_Count(); i++) {
-                    XmlAttribute att = (XmlAttribute)atts.Item(i);
-                    String attName = att.get_Name();
-                    if (attName.equals("xmlns")) {
-                        String prefix = "";
-                        String uri = att.get_Value();
-                        result[n++] = pool.allocateNamespaceCode(prefix, uri);
-                    } else if (attName.startsWith("xmlns:")) {
-                        String prefix = attName.substring(6);
-                        String uri = att.get_Value();
-                        result[n++] = pool.allocateNamespaceCode(prefix, uri);
-                    }
-                }
-                if (count < result.length) {
-                    result[count] = -1;
-                }
-                return result;
+
+            if (elem.get_NamespaceURI().length() != 0) {
+                codes.add(pool.allocateNamespaceCode(elem.get_Prefix(), elem.get_NamespaceURI()));
             }
+            int count = codes.size();
+            int[] result = new int[count];
+            int p = 0;
+            for (IntIterator ii = codes.iterator(); ii.hasNext();) {
+                 result[p++] = ii.next();
+            }
+            return result;
         } else {
             return null;
         }
