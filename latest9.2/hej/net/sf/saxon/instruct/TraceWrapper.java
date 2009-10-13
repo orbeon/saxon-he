@@ -21,6 +21,11 @@ import java.util.Iterator;
 public class TraceWrapper extends Instruction {
     Expression child;   // the instruction or other expression to be traced
 
+    public int getImplementationMethod() {
+        return child.getImplementationMethod();
+    }
+
+
     /**
      * Simplify an expression. This performs any static optimization (by rewriting the expression
      * as a different expression). The default implementation does nothing.
