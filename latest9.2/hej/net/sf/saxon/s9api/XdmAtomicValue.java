@@ -1,6 +1,7 @@
 package net.sf.saxon.s9api;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.om.Name11Checker;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.AtomicType;
 import net.sf.saxon.type.BuiltInAtomicType;
@@ -119,8 +120,17 @@ public class XdmAtomicValue extends XdmItem {
         if (((AtomicType)it).isAbstract()) {
             throw new SaxonApiException("Requested type is an abstract type");
         }
+        if (((AtomicType)it).isNamespaceSensitive()) {
+            throw new SaxonApiException("Requested type is namespace-sensitive");
+        }
         if (((AtomicType)it).isBuiltInType()) {
-            // TODO
+                 ConversionResult cv = StringValue.convertStringToBuiltInType(
+                    lexicalForm, (BuiltInAtomicType)it, new Name11Checker());
+            try {
+                setValue(cv.asAtomic());
+            } catch (ValidationException e) {
+                throw new SaxonApiException(e);
+            }
         } else {
             Configuration config = ((ConstructedItemType)type).getProcessor().getUnderlyingConfiguration();
             ConversionResult result = new StringValue(lexicalForm).convert(
