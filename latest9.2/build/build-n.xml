@@ -8,11 +8,9 @@
 	<import file="build-constants.xml"/>      
 		    
     <!-- directories holding C# source code -->
-    <property name="vss-n.dir" value="${root}/Documents and Settings/Mike/Documents/Visual Studio 2008/Projects/Saxon.Net"/>
+    <!-- <property name="vss-n.dir" value="${root}/Documents and Settings/Mike/Documents/Visual Studio 2008/Projects/Saxon.Net"/>-->
 
-    <!-- directory holding C# source code as in Subversion -->
-    <!--<property name="subversion-n.dir" value="${root}/saxon-svn2/latest9.0/bn/csource"/>-->	
-    	    
+   	    
     <!-- directory holding .NET API documentation -->
     <property name="dotnetdoc.dir" value="${root}/MyJava/build/dotnetdoc"/>
     		    
@@ -33,9 +31,7 @@
     <!--<property name="dot.net.debug" value="live"/>--> 
     
     <!-- The other important thing to enable debugging is that the .pdb file is available in the same directory
-         as the .dll. At present debugging Saxon-SA code is proving problematic: saxon9sa.dll is dynamically
-         loaded using a strong name, so it has to be loaded from the GAC; and it will only get a strong name if
-         debug is set to "live". 2008-03-07 -->
+         as the .dll. -->
     
     <!-- Precondition for .NET compilation: IKVM is installed.
          * Download from www.ikvm.net
@@ -64,10 +60,6 @@
    
     <!-- development source -->
         
-    <property name="source-api-n.dir" value="${vss-n.dir}"/>
-    <property name="source-cmd-n.dir" value="${vss-n.dir}"/>
-    <property name="source-samples-n.dir" value="${vss-n.dir}"/>        
-           
     <path id="classpath-n">
         <fileset dir="${lib.dir}">
             <include name="*.jar"/>
@@ -99,7 +91,7 @@
             <include name="charsets.dll"/>
           </fileset>-->
         </copy>
-        <copy file="${saxondotnet.snk}" todir="${basedir}"/>
+        <!--<copy file="${saxondotnet.snk}" todir="${basedir}"/>-->
         <mkdir dir="${basedir}/libs/xerces"/>
         <unjar src="${basedir}/libs/xercesimpl.jar" dest="${basedir}/libs/xerces"/>
         <unjar src="${basedir}/libs/resolver.jar" dest="${basedir}/libs/xerces"/>
@@ -150,22 +142,20 @@ platform=com.saxonica.config.DotNetPlatformPE
     
     <target name="copysource-development-n" description="Copy source files for Saxon on .NET from development directory">
         <copy todir="${temp-src-nj.dir}">
-          <fileset dir="${source-j.dir}">
+          <fileset dir="${source-hej.dir}">
             <include name="net/sf/saxon/**/*.java"/>
             <exclude name="**/ant/**"/>
             <exclude name="**/dom/**"/>
             <exclude name="**/dom4j/**"/>
             <exclude name="**/java/**"/>
-            <!--exclude name="**/javax/**"/-->
             <exclude name="**/jdom/**"/>
-            <!--<exclude name="**/pull/PullToStax.java"/>-->
-            <!--<exclude name="**/pull/StaxBridge.java"/>-->
-            <!-- <exclude name="**/s9api/**"/>		s9api needs Java 5 -->
             <exclude name="**/s9api/**"/>
             <exclude name="**/sql/**"/>
             <exclude name="**/xom/**"/>
             <exclude name="**/xpath/**"/>
             <exclude name="**/xqj/**"/>
+          </fileset>
+          <fileset dir="${source-eej.dir}">
 		    <include name="com/saxonica/config/*.java"/>
 		    <include name="com/saxonica/extfn/*.java"/>
             <include name="com/saxonica/extra/*.java"/>
@@ -181,24 +171,16 @@ platform=com.saxonica.config.DotNetPlatformPE
             <include name="com/saxonica/update/*.java"/>
             <include name="com/saxonica/validate/*.java"/>
             <include name="com/saxonica/xsltextn/*.java"/>
-            <include name="com/saxonica/Validate.java"/>
-            
+            <include name="com/saxonica/Validate.java"/>            
           </fileset>          
         </copy>
-        <!--<replace file="${temp-src-nj.dir}/com/saxonica/EnterpriseConfiguration.java"
-                 token="/*JAVAONLY*/"
-                 value="//"
-                 summary="yes"/>  
-        <replace file="${temp-src-nj.dir}/net/sf/saxon/Configuration.java"
-                 token="/*JAVAONLY*/"
-                 value="//"
-                 summary="yes"/>-->
         <copy todir="${temp-src-nc.dir}/api">
-          <fileset dir="${vss-n.dir}">
+          <fileset dir="${source-api-n.dir}">
             <include name="Saxon.Api/*.cs"/>
             <include name="Saxon.Api/Properties/AssemblyInfo.cs"/>
           </fileset>
         </copy>
+        <!-- Commented out code used when source in Visual Studio        
         <copy todir="${temp-src-nc.dir}/cmd">
           <fileset dir="${source-cmd-n.dir}/Transform">
             <include name="*.cs"/>
@@ -210,6 +192,15 @@ platform=com.saxonica.config.DotNetPlatformPE
             <include name="*.cs"/>
           </fileset>
         </copy>
+        -->
+        <copy todir="${temp-src-nc.dir}/cmd">
+          <fileset dir="${source-cmd-n.dir}">
+            <include name="Transform.cs"/>
+            <include name="Query.cs"/>
+            <include name="Validate.cs"/>
+          </fileset>
+        </copy>
+        <!-- Commented out code used when source in Visual Studio   
         <copy todir="${temp-src-nc.dir}/samples">
           <fileset dir="${source-samples-n.dir}/Examples">
             <include name="*.cs"/>
@@ -219,6 +210,14 @@ platform=com.saxonica.config.DotNetPlatformPE
           </fileset>
           <fileset dir="${source-samples-n.dir}/TestRunner">
             <include name="*.cs"/>
+          </fileset>
+        </copy>
+        -->
+        <copy todir="${temp-src-nc.dir}/samples">
+          <fileset dir="${source-samples-n.dir}">
+            <include name="Examples.cs"/>
+            <include name="SampleExtensions.cs"/>
+            <include name="TestRunner.cs"/>
           </fileset>
         </copy>
     </target>    
@@ -347,7 +346,10 @@ platform=com.saxonica.config.DotNetPlatformPE
           <!--<reference path="${dll-n.dir}/IKVM.OpenJDK.XMLparse.dll"/>-->
         </ikvmc>
         <ikvmc home="${ikvm.dir}"
-               assembly="saxon9pe" target="library" keyfile="${saxondotnet.snk}" version="${version}"
+               assembly="saxon9pe" 
+               target="library" 
+               keyfile="${saxondotnet.snk}" 
+               version="${version}"
                debug="false" srcpath="c:/MyJava/saxon8.x"
                out="${basedir}/${dll-n.dir}/saxon9pe.dll"
                verbose="true">
@@ -369,7 +371,10 @@ platform=com.saxonica.config.DotNetPlatformPE
           <reference path="System.Security"/>
         </ikvmc>
         <ikvmc home="${ikvm.dir}"
-               assembly="saxon9ee" target="library" keyfile="${saxondotnet.snk}" version="${version}"
+               assembly="saxon9ee" 
+               target="library" 
+               keyfile="${saxondotnet.snk}" 
+               version="${version}"
                debug="false" srcpath="c:/MyJava/saxon8.x"
                out="${basedir}/${dll-n.dir}/saxon9ee.dll"
                verbose="true">
@@ -399,7 +404,8 @@ platform=com.saxonica.config.DotNetPlatformPE
              from the relevant client in Visual Studio, for example Transform.exe -->
         
         <ikvmc home="${ikvm.dir}"
-               assembly="saxon9ee-debug" target="library" 
+               assembly="saxon9ee-debug" 
+               target="library" 
                debug="true" srcpath="c:/MyJava/saxon8.x"
                out="${basedir}/${dll-n.dir}/saxon9ee-debug.dll"
                verbose="true">
@@ -462,9 +468,9 @@ platform=com.saxonica.config.DotNetPlatformPE
 		
 		<dn:csc targetType="library" outputFile="${basedir}/${dll-n.dir}/he/saxon9he-api.dll"
 		     docFile="${dotnetdoc.dir}/apidoc.xml"
-		     extraOptions="-keyfile:c:\MyJava\build\saxondotnet.snk"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
-		     <src dir="${basedir}/${temp-src-nc.dir}/api/Saxon.Api" includes="*.cs"/>
+		     <src dir="${basedir}/${temp-src-nc.dir}/api/Saxon.Api" includes="*.cs Properties/AssemblyInfo.cs"/>
 		     <reference dir="${basedir}/${dll-n.dir}">
 		        <!--<include name="charsets.dll"/>-->
 		        <include name="IKVM.OpenJDK.Core.dll"/>
@@ -480,7 +486,8 @@ platform=com.saxonica.config.DotNetPlatformPE
 		
 		<!-- Transform, Query, Validate commands -->
 		
-		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
+		<dn:csc targetType="exe" 
+		     win32icon="c:\MyDotNet\icons\gyfu.ico"
 		     outputFile="${basedir}/${dll-n.dir}/he/Transform.exe"
 		     executable="${csharp.compiler}">
 		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Transform.cs"/>
@@ -548,7 +555,7 @@ platform=com.saxonica.config.DotNetPlatformPE
 		
 		<dn:csc targetType="library" outputFile="${basedir}/${dll-n.dir}/pe/saxon9pe-api.dll"
 		     docFile="${dotnetdoc.dir}/apidoc.xml"
-		     extraOptions="-keyfile:c:\MyJava\build\saxondotnet.snk"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
 		     <src dir="${basedir}/${temp-src-nc.dir}/api/Saxon.Api" includes="*.cs"/>
 		     <reference dir="${basedir}/${dll-n.dir}">
@@ -636,7 +643,7 @@ platform=com.saxonica.config.DotNetPlatformPE
 		
 		<dn:csc targetType="library" outputFile="${basedir}/${dll-n.dir}/ee/saxon9ee-api.dll"
 		     docFile="${dotnetdoc.dir}/apidoc.xml"
-		     extraOptions="-keyfile:c:\MyJava\build\saxondotnet.snk"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
 		     <src dir="${basedir}/${temp-src-nc.dir}/api/Saxon.Api" includes="*.cs"/>
 		     <reference dir="${basedir}/${dll-n.dir}/ee">

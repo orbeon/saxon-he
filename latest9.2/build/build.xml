@@ -125,11 +125,13 @@
    
     
     <target name="release-userdoc" description="Generate User Documentation">
+    <!--
+      NO ACTION FOR MAINTENANCE BUILDS
 	  <taskdef name="saxon-xslt" 
 			         classname="net.sf.saxon.ant.AntTransform" 
 			         classpath="e:\saxon-build\9.1.0.6\saj\saxon9sa.jar;e:\saxon-build\9.1.0.6\bj\saxon9-ant.jar;c:\saxon-licenses"/>
-                        <!-- actually, putting the license file on the classpath here doesn't seem to work. It has to be in the classpath
-                               used to invoke Ant in the first place - specifically, in the CLASSPATH environment variable -->
+                        <!~~ actually, putting the license file on the classpath here doesn't seem to work. It has to be in the classpath
+                               used to invoke Ant in the first place - specifically, in the CLASSPATH environment variable ~~>
 	  <copy todir="${build-resources.dir}/doc">
         <fileset dir="${userdoc.dir}/fixed"/>
       </copy> 
@@ -168,7 +170,7 @@
 			            schemaAware="true"
 			            xmlVersion="1.0"
 			            schemaValidation="strict"
-			            out="${product.dir}/resources/doc/dummy.html"><!--validation="strict" -->
+			            out="${product.dir}/resources/doc/dummy.html"><!~~validation="strict" ~~>
 			  <param name="destination" expression="offline"/>
 			</saxon-xslt> 
 			<zip zipfile="${build-resources.dir}/source-userdoc.zip">
@@ -180,12 +182,12 @@
 			    <include name="fixed/**"/>
 			    <include name="welcome/**"/>
 			  </fileset>
-			</zip>  			     
+			</zip> --> 			     
     </target>
     
     <target name="release-source" description="Generate Zip file containing issued Source Code">
       <zip zipfile="${build-resources.dir}/source.zip">
-        <fileset dir="${development-j.dir}">
+        <fileset dir="${source-hej.dir}">
            <include name="net/**/*.java"/>
            <include name="net/**/package.html"/>
            <!-- TODO: add .NET source code -->
@@ -195,8 +197,8 @@
            <include name="cmd/**/*.cs"/>
         </fileset>   
       </zip>
-      <zip zipfile="${development-j.dir}/sa-source.zip">
-        <fileset dir="${development-j.dir}">
+      <zip zipfile="${source-eej.dir}/sa-source.zip">
+        <fileset dir="${source-eej.dir}">
            <include name="com/saxonica/**/*.java"/>
            <include name="com/saxonica/**/package.html"/>
         </fileset>

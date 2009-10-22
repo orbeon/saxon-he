@@ -6,7 +6,12 @@
     <!-- Build file for Saxon on the Java platform. This build file is designed to be imported
          from build.xml -->
     
-	<import file="build-constants.xml"/>   		        
+	<import file="build-constants.xml"/>
+	
+	<!-- Import of private Saxonica build file for signing the issued JARs (task private-signjars). -->
+	<!-- This can be replaced by a reference to different signing tool -->
+	
+	<import file="${root}/MyJava/build/build-j-signer.xml"/>   		        
     
     
     <!-- directory holding Java test drivers -->
@@ -31,21 +36,6 @@
     <property name="javadoc.dir" value="${build-resources.dir}/doc/javadoc"/>   
     
     
-    <!-- following properties can be switched to determine whether to build from patch source
-         or from development source -->
-         
-    <!-- patch source -->     
-    <!--      
-    <property name="source-bj.dir" value="${subversion-j.dir}"/>
-    <property name="source-saj.dir" value="${saj-patch.dir}"/>
-    <property name="source-api-n.dir" value="${subversion-n.dir}/api/Saxon.Api"/>
-    <property name="source-cmd-n.dir" value="${subversion-n.dir}/cmd"/>
-    <property name="source-samples-n.dir" value="${subversion-n.dir}/samples"/>
-    -->    
-    
-
-    
-
     <path id="classpath-j">
         <fileset dir="${lib.dir}">
             <include name="*.jar"/>
@@ -140,11 +130,13 @@ platform=com.saxonica.config.JavaPlatformPE
 
     <target name="copysource-development-j" description="Copy relevant source files from development directory">
         <copy todir="${temp-src-j.dir}">
-          <fileset dir="${source-j.dir}">
+          <fileset dir="${source-hej.dir}">
             <include name="net/sf/saxon/**/*.java"/>
             <include name="javax/xml/xquery/*.java"/>
             <exclude name="**/dotnet/**"/>
             <include name="net/sf/saxon/**/package.html"/>
+          </fileset>
+          <fileset dir="${source-eej.dir}">
             <include name="com/saxonica/**/*.java"/>
             <exclude name="com/saxonica/config/DotNetVerifier.java"/>
             <exclude name="com/saxonica/config/DotNetExtensionFunctionFactory.java"/>
@@ -289,18 +281,6 @@ platform=com.saxonica.config.JavaPlatformPE
         </jar>-->
     </target>
     
-    <target name="signjars" depends="jar-hej, jar-pej, jar-eej" description="Sign all JAR files">
-        <signjar keystore="${jar-signer-certificate}" storetype="pkcs12" alias="saxonica limited's globalsign nv-sa id"
-                 storepass="34kaulbach" verbose="true"> 
-            <path>
-                <fileset dir="${product.dir}/hej" includes="*.jar" />
-                <fileset dir="${product.dir}/pej" includes="*.jar" />
-                <fileset dir="${product.dir}/eej" includes="*.jar" />
-            </path>
-        </signjar>
-    </target>
-    
-   
     <target name="samples-j" description="Copy and Compile Java Samples"
     				depends="jar-eej, samples-common">
       <mkdir dir="${product.dir}/resources/samples/java"/>
@@ -377,7 +357,12 @@ platform=com.saxonica.config.JavaPlatformPE
               tofile="${javadoc.dir}/stylesheet.css"
               overwrite="true"/>
     </target>
-    
+
+
+    <target name="signjars" depends="jar-hej, jar-pej, jar-eej, private-signjars" description="Sign all JAR files">
+        <!-- If the private-signjars task is not available, simply delete the dependency -->
+    </target>
+        
                     
     <target name="j" depends="signjars"
         description="Generate Saxon (all three editions) for the Java platform"/>

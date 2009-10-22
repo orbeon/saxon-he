@@ -2,10 +2,7 @@
 
 <project basedir="." default="all" name="Saxon: The XSLT and XQuery Processor: build constants"
          xmlns:dn="antlib:org.apache.ant.dotnet">
-    
-    <!--TODO: 1: ensure saxon9api.netmodule is included in the build
-           2: remove the archive target before shipping this file-->
-    
+       
     <!-- note : Ant 1.7 is needed for this script -->
     
     <!-- Ant 1.7 introduces a <service> element to allow META-INF/services
@@ -19,19 +16,7 @@
          the released resources file. A full build requires access to Saxonica
          proprietary source code. The open source Saxon-HE product can be built for
          Java using target "hej"; but building Saxon-HE for .NET may require some
-         disentangling of tasks that depend on Saxon-EE code being present. -->
-         
-    <!-- Useful targets:
-    
-         clean        clears temporary directories
-         bj           builds executables for Saxon-B 
-         saj          builds executables for Saxon-B and Saxon-SA 
-         n            builds executables for Saxon on .NET
-         build        builds all executables
-         resources    builds samples and documentation
-         release      builds ZIP files for published downloads
-         archive      produces a back-up archive  -->
-             
+         disentangling of tasks that depend on Saxon-EE code being present. -->           
          
     <!-- Naming conventions:
          -n   : .NET
@@ -43,9 +28,9 @@
     -->
     
     
-    <property name="version" value="9.2.0.2"/>
-    <property name="versionh" value="9-2-0-2"/>
-    <property name="release.date" value="2009-08-05"/>
+    <property name="version" value="9.2.0.3"/>
+    <property name="versionh" value="9-2-0-3"/>
+    <property name="release.date" value="2009-10-22"/>
     
     <!-- REMEMBER ALSO TO SET THE VERSION IN AssemblyInfo.cs and Version.java -->
     
@@ -57,10 +42,21 @@
     <!-- root drive for built files -->
     <property name="oroot" value="e:"/>
     
-    <!-- Java source (used for building both the Java and .NET products) -->
-
-    <property name="development-j.dir" value="${root}/MyJava/saxon8.x"/>        
-    <property name="source-j.dir" value="${development-j.dir}"/>
+    
+    <!-- Root directory for open source Java code -->        
+    <property name="source-hej.dir" value="../hej"/>
+    
+    <!-- Root directory for Saxonica-proprietary Java code -->        
+    <property name="source-eej.dir" value="${root}/saxon-sa-svn/latest9.2/eej"/>
+    
+    <!-- Root directory for all .NET code -->        
+    <property name="source-n.dir" value="../hen"/>
+    
+    <property name="source-api-n.dir" value="${source-n.dir}/csource/api"/>
+    <property name="source-cmd-n.dir" value="${source-n.dir}/csource/cmd"/>
+    <property name="source-samples-n.dir" value="${source-n.dir}/csource/samples"/>     
+    
+ 
     	    
     <!-- directory holding XML user documentation -->
     <property name="userdoc.dir" value="${root}/MyJava/doc/saxon8"/>
@@ -77,7 +73,7 @@
     <property name="issue.dir" value="${oroot}/saxon-issues/saxon-issue-${release.date} (${version})"/>
     	    
     <!-- location of the archive directory -->
-    <property name="archive.dir" value="e:/archive${versionh}"/>
+    <property name="archive.dir" value="${oroot}/archive${versionh}"/>
 		    
     
     <!-- following locations are relative to the build file -->
