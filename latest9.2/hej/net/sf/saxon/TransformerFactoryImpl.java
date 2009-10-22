@@ -33,7 +33,7 @@ public class TransformerFactoryImpl extends SAXTransformerFactory {
      * Default constructor.
      */
     public TransformerFactoryImpl() {
-        config = new Configuration();
+        config = Configuration.newConfiguration();
         config.setProcessor(this);
     }
 

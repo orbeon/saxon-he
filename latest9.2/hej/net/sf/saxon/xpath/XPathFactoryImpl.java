@@ -23,7 +23,7 @@ public class XPathFactoryImpl extends XPathFactory {
      */
 
     public XPathFactoryImpl() {
-        config = new Configuration();
+        config = Configuration.newConfiguration();
         setConfiguration(config);
     }
 
