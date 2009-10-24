@@ -39,7 +39,7 @@ import java.util.StringTokenizer;
  * an XSL error is found.
  */
 
-public abstract class gStyleElement extends ElementImpl
+public abstract class StyleElement extends ElementImpl
         implements Locator, Container, InstructionInfo {
 
     protected short[] extensionNamespaces = null;		// a list of URI codes

@@ -284,7 +284,7 @@ public final class AxisExpression extends Expression {
                                     test,
                                     Token.INTERSECT,
                                     new ContentTypeTest(Type.ELEMENT, schemaType, env.getConfiguration()));
-                            computedCardinality = ((ComplexType)contentType).getElementParticleCardinality(childElement);
+                            computedCardinality = ((ComplexType)contentType).getElementParticleCardinality(childElement, true);
                             visitor.resetStaticProperties();
                             if (computedCardinality == StaticProperty.ALLOWS_ZERO) {
                                 // this shouldn't happen, because we've already checked for this a different way.

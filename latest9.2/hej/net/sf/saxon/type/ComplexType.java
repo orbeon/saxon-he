@@ -144,11 +144,12 @@ public interface ComplexType extends SchemaType {
      * {@link net.sf.saxon.expr.StaticProperty#ALLOWS_ZERO_OR_MORE}, {@link net.sf.saxon.expr.StaticProperty#ALLOWS_ONE_OR_MORE},
      * If there is no such particle, return {@link net.sf.saxon.expr.StaticProperty#EMPTY}.
      * @param fingerprint Identifies the name of the child element within this content model
+     * @param searchExtendedTypes true if types derived by extension from this type are to be considered
      * @return the cardinality associated with the child element particle with the given name.
      * If there is no such particle, return {@link net.sf.saxon.expr.StaticProperty#EMPTY}.
      */
 
-    public int getElementParticleCardinality(int fingerprint) throws SchemaException, ValidationException;
+    public int getElementParticleCardinality(int fingerprint, boolean searchExtendedTypes) throws SchemaException, ValidationException;
 
     /**
      * Find an attribute use within this complex type definition having a given attribute name

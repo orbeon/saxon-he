@@ -401,9 +401,10 @@ public final class Untyped implements ComplexType, Serializable {
      * If there is no such particle, return zero.
      *
      * @param fingerprint Identifies the name of the child element within this content model
+     * @param searchExtensionTypes
      */
 
-    public int getElementParticleCardinality(int fingerprint) {
+    public int getElementParticleCardinality(int fingerprint, boolean searchExtensionTypes) {
         return StaticProperty.ALLOWS_ZERO_OR_MORE;
     }
 

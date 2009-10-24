@@ -436,9 +436,10 @@ public final class AnyType implements ComplexType, Serializable {
      * If there is no such particle, return zero.
      *
      * @param fingerprint Identifies the name of the child element within this content model
+     * @param searchExtendedTypes
      */
 
-    public int getElementParticleCardinality(int fingerprint) {
+    public int getElementParticleCardinality(int fingerprint, boolean searchExtendedTypes) {
         return StaticProperty.ALLOWS_ZERO_OR_MORE;
     }
 
