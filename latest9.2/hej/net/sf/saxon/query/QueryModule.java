@@ -153,9 +153,12 @@ public class QueryModule implements StaticContext {
             defaultElementNamespace = sqc.getDefaultElementNamespace();
             defaultCollationName = sqc.getDefaultCollationName();
             constructionMode = sqc.getConstructionMode();
+            if (constructionMode == Validation.PRESERVE && !executable.isSchemaAware()) {
+                // if not schema-aware, generate untyped output by default
+                constructionMode = Validation.STRIP;
+            }
             isUpdating = sqc.isUpdatingEnabled();
             languageVersion = sqc.getLanguageVersion();
-            //allowTypedNodes = sqc.isAllowTypedNodes();
         }
         resetFunctionLibraries();
     }
