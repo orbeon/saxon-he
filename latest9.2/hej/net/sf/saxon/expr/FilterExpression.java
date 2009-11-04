@@ -592,6 +592,17 @@ public final class FilterExpression extends Expression implements ContextSwitchi
             Expression min = ((IntegerRangeTest)filter).getMinValueExpression();
             Expression max = ((IntegerRangeTest)filter).getMaxValueExpression();
 
+            if (ExpressionTool.dependsOnFocus(min)) {
+                return null;
+            }
+            if (ExpressionTool.dependsOnFocus(max)) {
+                if (max instanceof Last) {
+                    return SystemFunction.makeSystemFunction("subsequence", new Expression[]{start, min});
+                } else {
+                    return null;
+                }
+            }
+
             LetExpression let = new LetExpression();
             let.setRequiredType(SequenceType.SINGLE_INTEGER);
             let.setVariableQName(new StructuredQName("nn", NamespaceConstant.SAXON, "nn" + let.hashCode()));
