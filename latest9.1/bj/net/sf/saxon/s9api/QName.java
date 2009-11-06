@@ -140,7 +140,7 @@ public class QName {
             if (closeBrace < 0) {
                 throw new IllegalArgumentException("No closing '}' in Clark name");
             }
-            namespaceURI = expandedName.substring(1, closeBrace - 1);
+            namespaceURI = expandedName.substring(1, closeBrace);
             if (closeBrace == expandedName.length()) {
                 throw new IllegalArgumentException("Missing local part in Clark name");
             }
