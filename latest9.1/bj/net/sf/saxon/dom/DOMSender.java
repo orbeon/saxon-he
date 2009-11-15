@@ -89,13 +89,30 @@ public class DOMSender implements SaxonLocator, SourceLocationProvider {
         receiver.setPipelineConfiguration(pipe);
 
         receiver.open();
-        if (root.getNodeType() == Node.ELEMENT_NODE) {
-            sendElement((Element)root);
-        } else {
-            // walk the root node
-            receiver.startDocument(0);
-            walkNode(root);
-            receiver.endDocument();
+        switch (root.getNodeType()) {
+            case Node.DOCUMENT_NODE:
+            case Node.DOCUMENT_FRAGMENT_NODE:
+                receiver.startDocument(0);
+                walkNode(root);
+                receiver.endDocument();
+                break;
+            case Node.ELEMENT_NODE:
+                sendElement((Element)root);
+                break;
+            case Node.TEXT_NODE:
+            case Node.CDATA_SECTION_NODE:
+                receiver.characters(((CharacterData)root).getData(), 0, 0);
+                break;
+            case Node.COMMENT_NODE:
+                receiver.comment(((Comment)root).getData(), 0, 0);
+                break;
+            case Node.PROCESSING_INSTRUCTION_NODE:
+                receiver.processingInstruction(
+                        ((ProcessingInstruction)root).getTarget(),
+                        ((ProcessingInstruction)root).getData(), 0, 0);
+                break;
+            default:
+                throw new XPathException("DOMSender: unsupported kind of start node (" + root.getNodeType() + ")");
         }
         receiver.close();
     }
