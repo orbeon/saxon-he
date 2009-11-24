@@ -1025,6 +1025,16 @@ public class XSLStylesheet extends StyleElement {
                 }
             }
 
+            // Call type-check method for each user-defined function in the stylesheet. This is no longer
+            // done during the optimize step, to avoid functions being inlined before they are type-checked.
+
+            for (int i = 0; i < topLevel.size(); i++) {
+                NodeInfo node = (NodeInfo) topLevel.get(i);
+                if (node instanceof XSLFunction) {
+                    ((XSLFunction) node).typeCheckBody();
+                }
+            }
+
             // Call optimize method for each top-level object in the stylesheet
 
             for (int i = 0; i < topLevel.size(); i++) {

@@ -267,12 +267,10 @@ public class XSLFunction extends StyleElement implements StylesheetProcedure {
         }
     }
 
-    public void optimize() throws XPathException {
-
+    public void typeCheckBody() throws XPathException {
         Expression exp = compiledFunction.getBody();
         Expression exp2 = exp;
         ExpressionVisitor visitor = makeExpressionVisitor();
-        Optimizer opt = getConfiguration().getOptimizer();
         try {
             // We've already done the typecheck of each XPath expression, but it's worth doing again at this
             // level because we have more information now.
@@ -284,6 +282,32 @@ public class XSLFunction extends StyleElement implements StylesheetProcedure {
                 role.setErrorCode("XTTE0780");
                 exp2 = TypeChecker.staticTypeCheck(exp2, resultType, false, role, visitor);
             }
+        } catch (XPathException err) {
+            err.maybeSetLocation(this);
+            compileError(err);
+        }
+        if (exp2 != exp) {
+            compiledFunction.setBody(exp2);
+        }
+    }
+
+    public void optimize() throws XPathException {
+
+        Expression exp = compiledFunction.getBody();
+        Expression exp2 = exp;
+        ExpressionVisitor visitor = makeExpressionVisitor();
+        Optimizer opt = getConfiguration().getOptimizer();
+        try {
+            // We've already done the typecheck of each XPath expression, but it's worth doing again at this
+            // level because we have more information now.
+
+//            exp2 = visitor.typeCheck(exp, null);
+//            if (resultType != null) {
+//                RoleLocator role =
+//                        new RoleLocator(RoleLocator.FUNCTION_RESULT, functionName, 0);
+//                role.setErrorCode("XTTE0780");
+//                exp2 = TypeChecker.staticTypeCheck(exp2, resultType, false, role, visitor);
+//            }
             if (opt.getOptimizationLevel() != Optimizer.NO_OPTIMIZATION) {
                 exp2 = exp2.optimize(visitor, null);
             }
