@@ -196,9 +196,13 @@ public class XdmNode extends XdmItem {
 
     public URI getBaseURI() {
         try {
-            return new URI(getUnderlyingNode().getBaseURI());
+            String uri = getUnderlyingNode().getBaseURI();
+            if (uri == null) {
+                return null;
+            }
+            return new URI(uri);
         } catch (URISyntaxException e) {
-            throw new IllegalStateException("baseURI");
+            throw new IllegalStateException("baseURI", e);
         }
     }
 
