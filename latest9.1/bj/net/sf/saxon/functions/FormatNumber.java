@@ -507,6 +507,10 @@ public class FormatNumber extends SystemFunction implements XSLTFunction {
                 }
             }
 
+            if (minWholePartSize == 0 && !foundDecimalSeparator) {
+                minWholePartSize = 1;
+            }           
+
             // System.err.println("minWholePartSize = " + minWholePartSize);
             // System.err.println("maxWholePartSize = " + maxWholePartSize);
             // System.err.println("minFractionPartSize = " + minFractionPartSize);
