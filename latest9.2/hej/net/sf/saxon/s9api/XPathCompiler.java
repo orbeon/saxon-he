@@ -141,6 +141,7 @@ public class XPathCompiler {
 
     public void importSchemaNamespace(String uri) {
         env.getImportedSchemaNamespaces().add(uri);
+        env.getExecutable().setSchemaAware(true);
     }
 
     /**
