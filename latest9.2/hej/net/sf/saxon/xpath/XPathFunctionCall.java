@@ -4,6 +4,7 @@ import net.sf.saxon.expr.*;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.ValueRepresentation;
 import net.sf.saxon.om.EmptyIterator;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
@@ -124,13 +125,28 @@ public class XPathFunctionCall extends FunctionCall {
      */
 
     protected SequenceIterator call(ValueRepresentation[] argValues, XPathContext context) throws XPathException {
+        // An argument is supplied to the extension function as a List, unless it is a singleton.
+        // The items within the list are converted to the "natural Java representation", for example
+        // a double is passed as a Double, a string as a String.
         List convertedArgs = new ArrayList(argValues.length);
         Configuration config = context.getConfiguration();
         for (int i=0; i<argValues.length; i++) {
-            Value actual = Value.asValue(argValues[i]).reduce();
-            PJConverter converter = PJConverter.allocate(
-                    config, actual.getItemType(config.getTypeHierarchy()), actual.getCardinality(), Object.class);
-            convertedArgs.add(converter.convert(actual, Object.class, context));
+            List target = new ArrayList();
+            SequenceIterator iter = Value.asIterator(argValues[i]);
+            while (true) {
+                Item item = iter.next();
+                if (item == null) {
+                    break;
+                }
+                PJConverter converter = PJConverter.allocate(
+                    config, Value.asValue(item).getItemType(config.getTypeHierarchy()), StaticProperty.ALLOWS_ONE, Object.class);
+                target.add(converter.convert(item, Object.class, context));
+            }
+            if (target.size() == 1) {
+                convertedArgs.add(target.get(0));
+            } else {
+                convertedArgs.add(target);
+            }
         }
         try {
             Object result = function.evaluate(convertedArgs);
@@ -139,7 +155,6 @@ public class XPathFunctionCall extends FunctionCall {
             }
             JPConverter converter = JPConverter.allocate(result.getClass(), config);
             return Value.asIterator(converter.convert(result, context));
-            //return Value.convertJavaObjectToXPath(result, SequenceType.ANY_SEQUENCE, context).iterate();
         } catch (XPathFunctionException e) {
             throw new XPathException(e);
         }

@@ -212,6 +212,7 @@ public class JAXPXPathStaticContext extends AbstractStaticContext
 
     public void importSchema(Source source) throws SchemaException {
         getConfiguration().addSchemaSource(source, getConfiguration().getErrorListener());
+        getExecutable().setSchemaAware(true);
     }
 
     /**
