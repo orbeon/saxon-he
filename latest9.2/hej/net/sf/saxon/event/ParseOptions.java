@@ -76,6 +76,7 @@ public class ParseOptions implements Serializable {
         sourceIsXQJ = p.sourceIsXQJ;
         expandAttributeDefaults = p.expandAttributeDefaults;
         useXsiSchemaLocation = p.useXsiSchemaLocation;
+        continueAfterValidationErrors = p.continueAfterValidationErrors;
     }
 
     /**
