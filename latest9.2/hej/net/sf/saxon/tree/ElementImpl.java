@@ -459,6 +459,19 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
             throw new IllegalStateException(
                     "Cannot add an attribute to an element as it already has an attribute with the specified name");
         }
+        if ((nameCode>>20) != 0) {
+            // The new attribute name is in a namespace
+            int nscode = getNamePool().getNamespaceCode(nameCode);
+            int prefixCode = nscode>>16 & 0xffff;
+            short uc = getURICodeForPrefixCode(prefixCode);
+            if (uc == -1) {
+                // The namespace is not already declared on the element
+                addNamespace(nscode, true);
+            } else if (uc != (nscode&0xffff)) {
+                throw new IllegalStateException(
+                        "Namespace binding of new name conflicts with existing namespace binding");
+            }
+        }
         if ((properties & ReceiverOptions.IS_ID) != 0) {
             DocumentImpl root = getPhysicalRoot();
             if (root != null) {
