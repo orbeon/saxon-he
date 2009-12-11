@@ -932,7 +932,10 @@ public class ExpressionTool {
             return null;
         } else if (exp instanceof LetExpression && ((LetExpression)exp).getSequence() instanceof ContextItemExpression) {
             Expression action = ((LetExpression)exp).getAction();
-            factorOutDot(action, (LetExpression)exp);
+            boolean changed = factorOutDot(action, (LetExpression)exp);
+            if (changed) {
+                exp.resetLocalStaticProperties();
+            }
             return exp;
         } else if ((exp.getDependencies() &
                 (StaticProperty.DEPENDS_ON_CONTEXT_ITEM | StaticProperty.DEPENDS_ON_CONTEXT_DOCUMENT)) != 0) {
@@ -942,18 +945,26 @@ public class ExpressionTool {
             let.setRequiredType(SequenceType.makeSequenceType(contextItemType, StaticProperty.EXACTLY_ONE));
             let.setSequence(new ContextItemExpression());
             let.setAction(exp);
-            factorOutDot(exp, let);
-            if (ExpressionTool.getReferenceCount(exp, let, false) == 0) {
-                return exp;
-            } else {
+            boolean changed = factorOutDot(exp, let);
+            if (changed) {
                 return let;
+            } else {
+                return exp;
             }
         } else {
             return null;
         }
     }
 
-    private static void factorOutDot(Expression exp, Binding variable) {
+    /**
+     * Replace references to the context item with references to a variable
+     * @param exp the expression in which the replacement is to take place
+     * @param variable the declaration of the variable
+     * @return true if replacement has taken place (at any level)
+     */
+
+    private static boolean factorOutDot(Expression exp, Binding variable) {
+        boolean changed = false;
         if ((exp.getDependencies() &
                 (StaticProperty.DEPENDS_ON_CONTEXT_ITEM | StaticProperty.DEPENDS_ON_CONTEXT_DOCUMENT)) != 0) {
             Iterator<Expression> iter = exp.iterateSameFocusSubExpressions();
@@ -963,6 +974,7 @@ public class ExpressionTool {
                     VariableReference ref = new VariableReference(variable);
                     copyLocationInfo(child, ref);
                     exp.replaceSubExpression(child, ref);
+                    changed = true;
                 } else if (child instanceof ParentNodeExpression ||
                         child instanceof AxisExpression ||
                         child instanceof RootExpression) {
@@ -970,11 +982,16 @@ public class ExpressionTool {
                     copyLocationInfo(child, ref);
                     PathExpression path = new PathExpression(ref, child);
                     exp.replaceSubExpression(child, path);
+                    changed = true;
                 } else {
-                    factorOutDot(child, variable);
+                    changed |= factorOutDot(child, variable);
                 }
             }
         }
+        if (changed) {
+            exp.resetLocalStaticProperties();
+        }
+        return changed;
     }
 
     /**
