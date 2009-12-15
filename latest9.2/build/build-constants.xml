@@ -28,9 +28,9 @@
     -->
     
     
-    <property name="version" value="9.2.0.3"/>
-    <property name="versionh" value="9-2-0-3"/>
-    <property name="release.date" value="2009-10-22"/>
+    <property name="version" value="9.2.0.4"/>
+    <property name="versionh" value="9-2-0-4"/>
+    <property name="release.date" value="2009-12-15"/>
     
     <!-- REMEMBER ALSO TO SET THE VERSION IN AssemblyInfo.cs and Version.java -->
     
