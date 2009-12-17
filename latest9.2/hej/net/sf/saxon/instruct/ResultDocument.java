@@ -344,9 +344,12 @@ public class ResultDocument extends Instruction implements DivisibleInstruction 
 
                 String hrefValue = EscapeURI.iriToUri(href.evaluateAsString(context)).toString();
                 try {
-                    result = resolver.resolve(hrefValue, base);
+                    result = (resolver==null ? null : resolver.resolve(hrefValue, base));
                     //System.err.println("Resolver returned " + result);
+                } catch (TransformerException err) {
+                    throw XPathException.makeXPathException(err);
                 } catch (Exception err) {
+                    err.printStackTrace();
                     throw new XPathException("Exception thrown by OutputURIResolver", err);
                 }
                 if (result == null) {

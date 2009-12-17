@@ -110,6 +110,7 @@ public class PreparedStylesheet implements Templates, Serializable {
 
     public void setConfiguration(Configuration config) {
         this.config = config;
+        this.compilerInfo = config.getDefaultXsltCompilerInfo();
     }
 
     /**
