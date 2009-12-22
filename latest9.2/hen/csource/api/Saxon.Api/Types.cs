@@ -8,6 +8,7 @@ using JAnyItemType = net.sf.saxon.type.AnyItemType;
 using JNodeTest = net.sf.saxon.pattern.NodeTest;
 using JAnyNodeType = net.sf.saxon.pattern.AnyNodeTest;
 using JAnyFunctionType = net.sf.saxon.type.AnyFunctionType;
+using JEmptySequenceTest = net.sf.saxon.pattern.EmptySequenceTest;
 using JFunctionItemType = net.sf.saxon.type.FunctionItemType;
 using JNodeKindTest = net.sf.saxon.pattern.NodeKindTest;
 using JAtomicType = net.sf.saxon.type.AtomicType;
