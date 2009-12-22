@@ -41,6 +41,10 @@ namespace Saxon.Api
             {
                 return new XdmAtomicType(((JAtomicType)type));
             }
+            else if (type is JEmptySequenceTest)
+            {
+                return XdmAnyNodeType.Instance;  // TODO: need to represent this properly
+            }
             else if (type is JNodeTest)
             {
                 if (type is JAnyNodeType)
@@ -345,6 +349,9 @@ namespace Saxon.Api
                     case ' ':
                         occ = JStaticProperty.EXACTLY_ONE;
                         break;
+                    case 'º':
+                        occ = JStaticProperty.ALLOWS_ZERO;
+                        break;
                     default:
                         throw new ArgumentException("Unknown occurrence indicator");
                 }
@@ -368,6 +375,10 @@ namespace Saxon.Api
                 {
                     occ = '?';
                 }
+                else if (seqType.getCardinality() == JStaticProperty.ALLOWS_ZERO)
+                {
+                    occ = 'º ';
+                }
                 else
                 {
                     occ = ' ';
@@ -377,22 +388,7 @@ namespace Saxon.Api
 
             internal JSequenceType ToSequenceType() {
                 JItemType jit = itemType.Unwrap();
-                int occ;
-                switch (occurrences) {
-                    case '*':
-                        occ = JStaticProperty.ALLOWS_ZERO_OR_MORE;
-                        break;
-                    case '+':
-                        occ = JStaticProperty.ALLOWS_ONE_OR_MORE;
-                        break;
-                    case '?':
-                        occ = JStaticProperty.ALLOWS_ZERO_OR_ONE;
-                        break;
-                    default:
-                        occ = JStaticProperty.EXACTLY_ONE;
-                        break;
-                }
-                return JSequenceType.makeSequenceType(jit, occ);
+                return JSequenceType.makeSequenceType(jit, occurrences);
             }
  
                 
