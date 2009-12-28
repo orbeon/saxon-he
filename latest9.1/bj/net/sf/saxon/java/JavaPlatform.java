@@ -263,11 +263,12 @@ public class JavaPlatform implements Platform {
 
     public void addFunctionLibraries(FunctionLibraryList list, Configuration config, int hostLanguage) {
         FunctionLibrary extensionBinder = config.getExtensionBinder("java");
-        if (extensionBinder instanceof JavaExtensionLibrary) {
-            ((JavaExtensionLibrary)extensionBinder).setStrictJavaUriFormat(
-                    hostLanguage != Configuration.XSLT
-            );
-        }
+//        See bug 2922201, test case test/users/grosso
+//        if (extensionBinder instanceof JavaExtensionLibrary) {
+//            ((JavaExtensionLibrary)extensionBinder).setStrictJavaUriFormat(
+//                    hostLanguage != Configuration.XSLT
+//            );
+//        }
         list.addFunctionLibrary(extensionBinder);
     }
 
