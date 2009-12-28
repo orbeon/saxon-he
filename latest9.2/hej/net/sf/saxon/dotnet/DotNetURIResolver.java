@@ -6,6 +6,7 @@ import cli.System.Type;
 import cli.System.Uri;
 import cli.System.Xml.XmlResolver;
 import net.sf.saxon.RelativeURIResolver;
+import net.sf.saxon.functions.ResolveURI;
 import net.sf.saxon.trans.XPathException;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -72,7 +73,20 @@ public class DotNetURIResolver implements RelativeURIResolver, EntityResolver {
     public String makeAbsolute(String href, String base) throws TransformerException {
         if (base == null || base.length()==0) {
             try {
+                //noinspection ConstantIfStatement
+                if (false) throw new cli.System.UriFormatException();
                 return new Uri(href).ToString();
+            } catch (cli.System.UriFormatException e) {
+                // if the base URI is null, or is itself a relative URI, we
+                // try to expand it relative to the current working directory
+                String expandedBase = ResolveURI.tryToExpand(base);
+                if (!expandedBase.equals(base)) { // prevent infinite recursion
+                    return makeAbsolute(href, expandedBase);
+                } else {
+                    XPathException de = new XPathException("Invalid URI: " + e.getMessage());
+                    de.setErrorCode("FODC0005");
+                    throw de;
+                }
             } catch (Exception e) {
                 XPathException de = new XPathException("Invalid URI: " + e.getMessage());
                 de.setErrorCode("FODC0005");
