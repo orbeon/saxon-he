@@ -1,4 +1,6 @@
 package net.sf.saxon.functions;
+
+import net.sf.saxon.event.ComplexContentOutputter;
 import net.sf.saxon.event.SequenceReceiver;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.ExpressionVisitor;
@@ -86,39 +88,44 @@ public class StringJoin extends SystemFunction {
         // separator argument unless there are at least two items in the sequence.
 
         SequenceReceiver out = context.getReceiver();
-        // Start and end with an empty string to force space separation from any previous or following outputs
-        out.append(StringValue.EMPTY_STRING, 0, 0);
-
-        SequenceIterator iter = argument[0].iterate(context);
-        Item it = iter.next();
-        if (it==null) {
-            return;
-        }
-
-        CharSequence first = it.getStringValueCS();
-        out.characters(first, 0, 0);
-
-        it = iter.next();
-        if (it==null) {
+        if (out instanceof ComplexContentOutputter) {
+            // Optimization is only safe if evaluated as part of a complex content constructor
+            // Start and end with an empty string to force space separation from any previous or following outputs
             out.append(StringValue.EMPTY_STRING, 0, 0);
-            return;
-        }
 
-        // Type checking ensures that the separator is not an empty sequence
-        CharSequence sep = argument[1].evaluateItem(context).getStringValueCS();
-        out.characters(sep, 0, 0);
-        out.characters(it.getStringValueCS(), 0, 0);
-
-        while (true) {
-            it = iter.next();
-            if (it == null) {
-                break;
+            SequenceIterator iter = argument[0].iterate(context);
+            Item it = iter.next();
+            if (it==null) {
+                return;
             }
+
+            CharSequence first = it.getStringValueCS();
+            out.characters(first, 0, 0);
+
+            it = iter.next();
+            if (it==null) {
+                out.append(StringValue.EMPTY_STRING, 0, 0);
+                return;
+            }
+
+            // Type checking ensures that the separator is not an empty sequence
+            CharSequence sep = argument[1].evaluateItem(context).getStringValueCS();
             out.characters(sep, 0, 0);
             out.characters(it.getStringValueCS(), 0, 0);
-        }
 
-        out.append(StringValue.EMPTY_STRING, 0, 0);
+            while (true) {
+                it = iter.next();
+                if (it == null) {
+                    break;
+                }
+                out.characters(sep, 0, 0);
+                out.characters(it.getStringValueCS(), 0, 0);
+            }
+
+            out.append(StringValue.EMPTY_STRING, 0, 0);
+        } else {
+            out.append(evaluateItem(context), 0, 0);
+        }
     }
 
 }
