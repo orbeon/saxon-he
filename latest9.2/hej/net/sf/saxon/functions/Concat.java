@@ -1,6 +1,7 @@
 package net.sf.saxon.functions;
 
 import net.sf.saxon.event.SequenceReceiver;
+import net.sf.saxon.event.ComplexContentOutputter;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.FastStringBuffer;
 import net.sf.saxon.om.Item;
@@ -54,19 +55,24 @@ public class Concat extends SystemFunction {
 
     public void process(XPathContext context) throws XPathException {
         SequenceReceiver out = context.getReceiver();
-        int numArgs = argument.length;
-        // Start and end with an empty string to force space separation from any previous or following outputs
-        out.append(StringValue.EMPTY_STRING, 0, 0);
-        boolean empty = true;
-        for (int i=0; i<numArgs; i++) {
-            AtomicValue val = (AtomicValue)argument[i].evaluateItem(context);
-            if (val!=null) {
-                out.characters(val.getStringValueCS(), 0, 0);
-                empty = false;
-            }
-        }
-        if (!empty) {
+        if (out instanceof ComplexContentOutputter) {
+            // This optimization is only safe if the output forms part of document or element content
+            int numArgs = argument.length;
+            // Start and end with an empty string to force space separation from any previous or following outputs
             out.append(StringValue.EMPTY_STRING, 0, 0);
+            boolean empty = true;
+            for (int i=0; i<numArgs; i++) {
+                AtomicValue val = (AtomicValue)argument[i].evaluateItem(context);
+                if (val!=null) {
+                    out.characters(val.getStringValueCS(), 0, 0);
+                    empty = false;
+                }
+            }
+            if (!empty) {
+                out.append(StringValue.EMPTY_STRING, 0, 0);
+            }
+        } else {
+            out.append(evaluateItem(context), 0, 0);
         }
     }
 }
