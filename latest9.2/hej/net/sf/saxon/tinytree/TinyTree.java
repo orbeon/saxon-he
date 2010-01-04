@@ -36,7 +36,7 @@ public final class TinyTree {
 
     // the contents of the document
 
-    protected LargeStringBuffer charBuffer;
+    protected CharSequence charBuffer;
     protected FastStringBuffer commentBuffer = null; // created when needed
 
     protected int numberOfNodes = 0;    // excluding attributes and namespaces
@@ -373,7 +373,18 @@ public final class TinyTree {
      */
 
     void appendChars(CharSequence chars) {
-        charBuffer.append(chars);
+        if (charBuffer instanceof FastStringBuffer) {
+            if (charBuffer.length() > 65000) {
+                LargeStringBuffer lsb = new LargeStringBuffer();
+                lsb.append(charBuffer);
+                lsb.append(chars);
+                charBuffer = lsb;
+            } else {
+                ((FastStringBuffer)charBuffer).append(chars);
+            }
+        } else {
+            ((LargeStringBuffer)charBuffer).append(chars);
+        }
     }
 
     /**

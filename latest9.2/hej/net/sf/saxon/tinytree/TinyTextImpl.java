@@ -32,10 +32,7 @@ public final class TinyTextImpl extends TinyNodeImpl {
     */
 
     public String getStringValue() {
-        int start = tree.alpha[nodeNr];
-        int len = tree.beta[nodeNr];
-        //return new String(tree.charBuffer, start, len);
-        return tree.charBuffer.substring(start, start+len);
+        return getStringValueCS().toString();
     }
 
     /**
