@@ -187,7 +187,7 @@ public final class TinyTree {
         namespaceCode = new int[namespaces];
 
         //charBuffer = new LargeStringBuffer(characters, 64000);
-        charBuffer = new LargeStringBuffer();
+        charBuffer = (characters > 65000 ? new LargeStringBuffer() : new FastStringBuffer(characters));
     }
 
     /**
