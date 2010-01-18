@@ -20,35 +20,35 @@ public class TinyBuilderCondensed extends TinyBuilder {
      * @param len   the length of the text node
      */
 
-    protected int makeTextNode(CharSequence chars, int len) {
-        TinyTree tree = getTree();
-        int hash = chars.hashCode();
-        int[] nodes = textValues.get(hash);
-        if (nodes != null) {
-            int used = nodes[0];
-            for (int i=1; i<used; i++) {
-                int nodeNr = nodes[i];
-                if (nodeNr == 0) {
-                    break;
-                } else if (chars.equals(TinyTextImpl.getStringValue(tree, nodeNr))) {
-                    return tree.addTextNodeCopy(getCurrentDepth(), nodeNr);
-                }
-            }
-        } else {
-            nodes = new int[4];
-            nodes[0] = 1;
-            textValues.put(hash, nodes);
-        }
-        if (nodes[0] + 1 > nodes.length) {
-            int[] n2 = new int[nodes.length*2];
-            System.arraycopy(nodes, 0, n2, 0, nodes[0]);
-            textValues.put(hash, n2);
-            nodes = n2;
-        }
-        int newNode = super.makeTextNode(chars, len);
-        nodes[nodes[0]++] = newNode;
-        return newNode;
-    }
+//    protected int makeTextNode(CharSequence chars, int len) {
+//        TinyTree tree = getTree();
+//        int hash = chars.hashCode();
+//        int[] nodes = textValues.get(hash);
+//        if (nodes != null) {
+//            int used = nodes[0];
+//            for (int i=1; i<used; i++) {
+//                int nodeNr = nodes[i];
+//                if (nodeNr == 0) {
+//                    break;
+//                } else if (chars.equals(TinyTextImpl.getStringValue(tree, nodeNr))) {
+//                    return tree.addTextNodeCopy(getCurrentDepth(), nodeNr);
+//                }
+//            }
+//        } else {
+//            nodes = new int[4];
+//            nodes[0] = 1;
+//            textValues.put(hash, nodes);
+//        }
+//        if (nodes[0] + 1 > nodes.length) {
+//            int[] n2 = new int[nodes.length*2];
+//            System.arraycopy(nodes, 0, n2, 0, nodes[0]);
+//            textValues.put(hash, n2);
+//            nodes = n2;
+//        }
+//        int newNode = super.makeTextNode(chars, len);
+//        nodes[nodes[0]++] = newNode;
+//        return newNode;
+//    }
 
     /**
      * For attribute nodes, the commoning-up of stored values is achieved simply by calling intern() on the
