@@ -7,6 +7,8 @@ import net.sf.saxon.expr.*;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.ContentTypeTest;
 import net.sf.saxon.pattern.NodeKindTest;
+import net.sf.saxon.pattern.AnyNodeTest;
+import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
@@ -219,9 +221,13 @@ public class CopyOf extends Instruction implements DivisibleInstruction {
     }
 
     public ItemType getItemType(TypeHierarchy th) {
+        Executable exec = getExecutable();
+        ItemType in = select.getItemType(th);
+        if (!exec.isSchemaAware()) {
+            return in;
+        }
+        Configuration config = exec.getConfiguration();
         if (schemaType != null) {
-            Configuration config = getExecutable().getConfiguration();
-            ItemType in = select.getItemType(th);
             int e = th.relationship(in, NodeKindTest.ELEMENT);
             if (e == TypeHierarchy.SAME_TYPE || e == TypeHierarchy.SUBSUMED_BY) {
                 return new ContentTypeTest(Type.ELEMENT, schemaType, config);
@@ -230,6 +236,65 @@ public class CopyOf extends Instruction implements DivisibleInstruction {
             if (a == TypeHierarchy.SAME_TYPE || a == TypeHierarchy.SUBSUMED_BY) {
                 return new ContentTypeTest(Type.ATTRIBUTE, schemaType, config);
             }
+        } else switch (validation) {
+            case Validation.PRESERVE:
+                return in;
+            case Validation.STRIP: {
+                int e = th.relationship(in, NodeKindTest.ELEMENT);
+                if (e == TypeHierarchy.SAME_TYPE || e == TypeHierarchy.SUBSUMED_BY) {
+                    return new ContentTypeTest(Type.ELEMENT, Untyped.getInstance(), config);
+                }
+                int a = th.relationship(in, NodeKindTest.ATTRIBUTE);
+                if (a == TypeHierarchy.SAME_TYPE || a == TypeHierarchy.SUBSUMED_BY) {
+                    return new ContentTypeTest(Type.ATTRIBUTE, BuiltInAtomicType.UNTYPED_ATOMIC, config);
+                }
+                if (e != TypeHierarchy.DISJOINT || a != TypeHierarchy.DISJOINT) {
+                    // it might be an element or attribute
+                    return AnyNodeTest.getInstance();
+                } else {
+                    // it can't be an element or attribute, so stripping type annotations can't affect it
+                    return in;
+                }
+            }
+            case Validation.STRICT:
+            case Validation.LAX:
+                if (in instanceof NodeTest) {
+                    int fp = ((NodeTest)in).getFingerprint();
+                    if (fp != -1) {
+                        int e = th.relationship(in, NodeKindTest.ELEMENT);
+                        if (e == TypeHierarchy.SAME_TYPE || e == TypeHierarchy.SUBSUMED_BY) {
+                            SchemaDeclaration elem = config.getElementDeclaration(fp);
+                            if (elem != null) {
+                                return new ContentTypeTest(Type.ELEMENT, elem.getType(), config);
+                            } else {
+                                return new ContentTypeTest(Type.ELEMENT, Untyped.getInstance(), config);
+                            }
+                        }
+                        int a = th.relationship(in, NodeKindTest.ATTRIBUTE);
+                        if (a == TypeHierarchy.SAME_TYPE || a == TypeHierarchy.SUBSUMED_BY) {
+                            SchemaDeclaration attr = config.getElementDeclaration(fp);
+                            if (attr != null) {
+                                return new ContentTypeTest(Type.ATTRIBUTE, attr.getType(), config);
+                            } else {
+                                return new ContentTypeTest(Type.ATTRIBUTE, BuiltInAtomicType.UNTYPED_ATOMIC, config);
+                            }
+                        }
+                    } else {
+                        int e = th.relationship(in, NodeKindTest.ELEMENT);
+                        if (e == TypeHierarchy.SAME_TYPE || e == TypeHierarchy.SUBSUMED_BY) {
+                            return NodeKindTest.ELEMENT;
+                        }
+                        int a = th.relationship(in, NodeKindTest.ATTRIBUTE);
+                        if (a == TypeHierarchy.SAME_TYPE || a == TypeHierarchy.SUBSUMED_BY) {
+                            return NodeKindTest.ATTRIBUTE;
+                        }
+                    }
+                    return AnyNodeTest.getInstance();
+                } else if (in instanceof AtomicType) {
+                    return in;
+                } else {
+                    return AnyItemType.getInstance();
+                }
         }
         return select.getItemType(th);
     }
