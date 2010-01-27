@@ -275,27 +275,29 @@ public class TreeReceiver extends SequenceReceiver {
      */
 
     public void append(Item item, int locationId, int copyNamespaces) throws XPathException {
-        if (item instanceof AtomicValue) {
-            if (previousAtomic) {
-                characters(" ", locationId, 0);
+        if (item != null) {
+            if (item instanceof AtomicValue) {
+                if (previousAtomic) {
+                    characters(" ", locationId, 0);
+                }
+                characters(item.getStringValueCS(), locationId, 0);
+                previousAtomic = true;
+            } else if (item instanceof FunctionItem) {
+                throw new XPathException("Cannot add a function item to a tree");
+            } else if (((NodeInfo)item).getNodeKind() == Type.DOCUMENT) {
+                startDocument(0); // needed to ensure that illegal namespaces or attributes in the content are caught
+                SequenceIterator iter = ((NodeInfo)item).iterateAxis(Axis.CHILD);
+                while (true) {
+                    Item it = iter.next();
+                    if (it == null) break;
+                    append(it, locationId, copyNamespaces);
+                }
+                previousAtomic = false;
+                endDocument();
+            } else {
+                ((NodeInfo)item).copy(this, copyNamespaces, true, locationId);
+                previousAtomic = false;
             }
-            characters(item.getStringValueCS(), locationId, 0);
-            previousAtomic = true;
-        } else if (item instanceof FunctionItem) {
-            throw new XPathException("Cannot add a function item to a tree");
-        } else if (((NodeInfo)item).getNodeKind() == Type.DOCUMENT) {
-            startDocument(0); // needed to ensure that illegal namespaces or attributes in the content are caught
-            SequenceIterator iter = ((NodeInfo)item).iterateAxis(Axis.CHILD);
-            while (true) {
-                Item it = iter.next();
-                if (it == null) break;
-                append(it, locationId, copyNamespaces);
-            }
-            previousAtomic = false;
-            endDocument();
-        } else {
-            ((NodeInfo)item).copy(this, copyNamespaces, true, locationId);
-            previousAtomic = false;
         }
     }
 
