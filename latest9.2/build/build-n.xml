@@ -903,6 +903,7 @@ platform=com.saxonica.config.DotNetPlatformPE
                      
     <target name="product-dotnetdoc" description="Create .NET API documentation"
         depends="copysource-development-n, csharp-hen, dotnetdoc-dependset">
+    <!-- Omit for maintenance builds    
       <taskdef name="saxon-xslt" 
 			         classname="net.sf.saxon.ant.AntTransform" 
 			         classpath="e:\saxon-build\9.1.0.7\saj\saxon9sa.jar;e:\saxon-build\9.1.0.7\bj\saxon9-ant.jar;c:\saxon-licenses"/>
@@ -929,6 +930,7 @@ platform=com.saxonica.config.DotNetPlatformPE
       <copy file="${userdoc.dir}/fixed/javadoc/stylesheet.css"
               tofile="${build-resources.dir}/doc/dotnetdoc/stylesheet.css"
               overwrite="true"/>
+    -->
     </target>  
     
     
