@@ -14,6 +14,7 @@ import net.sf.saxon.query.XQueryFunctionLibrary;
 import net.sf.saxon.sort.CodepointCollator;
 import net.sf.saxon.sort.IntHashMap;
 import net.sf.saxon.sort.StringCollator;
+import net.sf.saxon.sort.IntIterator;
 import net.sf.saxon.trans.*;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.Whitespace;
@@ -882,8 +883,20 @@ public class XSLStylesheet extends StyleElement {
      }
 
      protected XSLFunction getFunction(StructuredQName name, int arity) {
-         HashMap<StructuredQName, XSLFunction> m = functionIndex.get(arity);
-         return (m == null ? null : m.get(name));
+        if (arity == -1) {
+            // supports the single-argument function-available() function (slowly)
+            for (IntIterator arities = functionIndex.keyIterator(); arities.hasNext();) {
+                int a = arities.next();
+                HashMap<StructuredQName, XSLFunction> m = functionIndex.get(a);
+                if (m != null && m.get(name) != null) {
+                    return m.get(name);
+                }
+            }
+            return null;
+        } else {
+             HashMap<StructuredQName, XSLFunction> m = functionIndex.get(arity);
+             return (m == null ? null : m.get(name));
+        }
      }
 
      protected void putFunction(XSLFunction function) {
