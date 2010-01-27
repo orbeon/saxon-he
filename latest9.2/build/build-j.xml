@@ -335,6 +335,7 @@ platform=com.saxonica.config.JavaPlatformPE
     
                   
     <target name="product-javadoc" description="Generate Javadoc." depends="copysource-development-j">
+    <!-- Omit for maintenance builds
         <javadoc bottom="Copyright (c) Saxonica Limited. All rights reserved."
             destdir="${javadoc.dir}" doctitle="saxon9 Javadocs"
             noindex="true" notree="true" access="protected"
@@ -356,6 +357,7 @@ platform=com.saxonica.config.JavaPlatformPE
         <copy file="${userdoc.dir}/fixed/javadoc/stylesheet.css"
               tofile="${javadoc.dir}/stylesheet.css"
               overwrite="true"/>
+    -->
     </target>
 
 
