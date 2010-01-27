@@ -60,7 +60,10 @@ public class SingletonClosure extends Closure {
 
     public void process(XPathContext context) throws XPathException {
         SequenceReceiver out = context.getReceiver();
-        out.append(asItem(), 0, NodeInfo.ALL_NAMESPACES);
+        Item item = asItem();
+        if (item != null) {
+            out.append(item, 0, NodeInfo.ALL_NAMESPACES);
+        }
     }
 
 
