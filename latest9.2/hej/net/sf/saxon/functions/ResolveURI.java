@@ -181,6 +181,17 @@ public class ResolveURI extends SystemFunction {
                 } catch (URISyntaxException e) {
                     throw new URISyntaxException(base, "Invalid base URI: " + e.getMessage());
                 }
+                if (baseURI.getFragment() != null) {
+                    int hash = base.indexOf('#');
+                    if (hash >= 0) {
+                        base = base.substring(0, hash);
+                    }
+                    try {
+                        baseURI = new URI(base);
+                    } catch (URISyntaxException e) {
+                        throw new URISyntaxException(base, "Invalid base URI: " + e.getMessage());
+                    }
+                }
                 try {
                     new URI(relativeURI);   // for validation only
                 } catch (URISyntaxException e) {
