@@ -64,6 +64,11 @@ public class XSLStylesheet extends StyleElement {
     private HashMap<StructuredQName, XSLTemplate> templateIndex =
             new HashMap<StructuredQName, XSLTemplate>(20);
 
+    // Table of named stylesheet functions. A two level lookup, using first the arity and then
+    // the expanded name of the function.
+    private IntHashMap<HashMap<StructuredQName, XSLFunction>> functionIndex =
+            new IntHashMap(8);
+
     // the value of the inputTypeAnnotations attribute on this module, combined with the values
     // on all imported/included modules. This is a combination of the bit-significant values
     // ANNOTATION_STRIP and ANNOTATION_PRESERVE.
@@ -845,6 +850,53 @@ public class XSLStylesheet extends StyleElement {
             }
         }
     }
+
+    /**
+      * Add a stylesheet function to the index
+      * @param function The XSLFunction object
+      * @throws XPathException
+      */
+     protected void indexFunction(XSLFunction function) throws XPathException {
+         StructuredQName qName = function.getObjectName();
+         int arity = function.getNumberOfArguments();
+
+         // see if there is already a named function with this precedence
+         XSLFunction other = getFunction(qName, arity);
+         if (other == null) {
+             // this is the first
+             putFunction(function);
+         } else {
+             // check the precedences
+             int thisPrecedence = function.getPrecedence();
+             int otherPrecedence = other.getPrecedence();
+             if (thisPrecedence == otherPrecedence) {
+                 function.compileError("Duplicate function declaration (see line " +
+                         other.getLineNumber() + " of " + other.getSystemId() + ')', "XTSE0770");
+             } else if (thisPrecedence < otherPrecedence) {
+                 //
+             } else {
+                 // can't happen, but we'll play safe
+                 putFunction(function);
+             }
+         }
+     }
+
+     protected XSLFunction getFunction(StructuredQName name, int arity) {
+         HashMap<StructuredQName, XSLFunction> m = functionIndex.get(arity);
+         return (m == null ? null : m.get(name));
+     }
+
+     protected void putFunction(XSLFunction function) {
+         StructuredQName qName = function.getObjectName();
+         int arity = function.getNumberOfArguments();
+         HashMap<StructuredQName, XSLFunction> m = functionIndex.get(arity);
+         if (m == null) {
+             m = new HashMap<StructuredQName, XSLFunction>();
+             functionIndex.put(arity, m);
+         }
+         m.put(qName, function);
+     }
+
 
     /**
      * Collect any namespace aliases

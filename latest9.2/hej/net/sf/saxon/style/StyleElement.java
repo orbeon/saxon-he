@@ -2013,16 +2013,17 @@ public abstract class StyleElement extends ElementImpl
         // we rely on the search following the order of decreasing import precedence.
 
         XSLStylesheet root = getPrincipalStylesheet();
-        List toplevel = root.getTopLevel();
-        for (int i = toplevel.size() - 1; i >= 0; i--) {
-            Object child = toplevel.get(i);
-            if (child instanceof XSLFunction &&
-                    ((XSLFunction)child).getObjectName().equals(qName) &&
-                    (arity == -1 || ((XSLFunction)child).getNumberOfArguments() == arity)) {
-                return (XSLFunction)child;
-            }
-        }
-        return null;
+        return root.getFunction(qName, arity);
+//        List toplevel = root.getTopLevel();
+//        for (int i = toplevel.size() - 1; i >= 0; i--) {
+//            Object child = toplevel.get(i);
+//            if (child instanceof XSLFunction &&
+//                    ((XSLFunction)child).getObjectName().equals(qName) &&
+//                    (arity == -1 || ((XSLFunction)child).getNumberOfArguments() == arity)) {
+//                return (XSLFunction)child;
+//            }
+//        }
+//        return null;
     }
 
     /**

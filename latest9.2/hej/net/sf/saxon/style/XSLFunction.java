@@ -130,6 +130,10 @@ public class XSLFunction extends StyleElement implements StylesheetProcedure {
         return qn;
     }
 
+    protected void index(XSLStylesheet top) throws XPathException {
+        top.indexFunction(this);
+    }
+
     /**
     * Determine whether this type of element is allowed to contain a template-body.
     * @return true: yes, it may contain a general template-body
@@ -191,28 +195,28 @@ public class XSLFunction extends StyleElement implements StylesheetProcedure {
 
         // check that this function is not a duplicate of another
 
-        XSLStylesheet root = getPrincipalStylesheet();
-        List toplevel = root.getTopLevel();
-        boolean isDuplicate = false;
-        for (int i=toplevel.size()-1; i>=0; i--) {
-            Object child = toplevel.get(i);
-            if (child instanceof XSLFunction &&
-                    !(child == this) &&
-                    ((XSLFunction)child).getObjectName().equals(getObjectName()) &&
-                    ((XSLFunction)child).getNumberOfArguments() == numberOfArguments) {
-                if (((XSLFunction)child).getPrecedence() == getPrecedence()) {
-                    isDuplicate = true;
-                }
-                if (((XSLFunction)child).getPrecedence() > getPrecedence()) {
-                    // it's not an error to have duplicates if there is another with higher precedence
-                    isDuplicate = false;
-                    break;
-                }
-            }
-        }
-        if (isDuplicate) {
-            compileError("Duplicate function declaration", "XTSE0770");
-        }
+//        XSLStylesheet root = getPrincipalStylesheet();
+//        List toplevel = root.getTopLevel();
+//        boolean isDuplicate = false;
+//        for (int i=toplevel.size()-1; i>=0; i--) {
+//            Object child = toplevel.get(i);
+//            if (child instanceof XSLFunction &&
+//                    !(child == this) &&
+//                    ((XSLFunction)child).getObjectName().equals(getObjectName()) &&
+//                    ((XSLFunction)child).getNumberOfArguments() == numberOfArguments) {
+//                if (((XSLFunction)child).getPrecedence() == getPrecedence()) {
+//                    isDuplicate = true;
+//                }
+//                if (((XSLFunction)child).getPrecedence() > getPrecedence()) {
+//                    // it's not an error to have duplicates if there is another with higher precedence
+//                    isDuplicate = false;
+//                    break;
+//                }
+//            }
+//        }
+//        if (isDuplicate) {
+//            compileError("Duplicate function declaration", "XTSE0770");
+//        }
     }
 
 
