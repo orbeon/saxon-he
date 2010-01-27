@@ -267,7 +267,7 @@ public class CopyOf extends Instruction implements DivisibleInstruction {
                             if (elem != null) {
                                 return new ContentTypeTest(Type.ELEMENT, elem.getType(), config);
                             } else {
-                                return new ContentTypeTest(Type.ELEMENT, Untyped.getInstance(), config);
+                                return new ContentTypeTest(Type.ELEMENT, AnyType.getInstance(), config);
                             }
                         }
                         int a = th.relationship(in, NodeKindTest.ATTRIBUTE);
@@ -276,7 +276,7 @@ public class CopyOf extends Instruction implements DivisibleInstruction {
                             if (attr != null) {
                                 return new ContentTypeTest(Type.ATTRIBUTE, attr.getType(), config);
                             } else {
-                                return new ContentTypeTest(Type.ATTRIBUTE, BuiltInAtomicType.UNTYPED_ATOMIC, config);
+                                return new ContentTypeTest(Type.ATTRIBUTE, AnySimpleType.getInstance(), config);
                             }
                         }
                     } else {
