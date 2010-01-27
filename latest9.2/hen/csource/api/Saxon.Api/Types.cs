@@ -378,7 +378,7 @@ namespace Saxon.Api
                 }
                 else if (seqType.getCardinality() == JStaticProperty.ALLOWS_ZERO)
                 {
-                    occ = 'º ';
+                    occ = 'º';
                 }
                 else
                 {
