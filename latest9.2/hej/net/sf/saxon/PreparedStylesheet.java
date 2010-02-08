@@ -18,12 +18,14 @@ import net.sf.saxon.trans.RuleManager;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.DocumentImpl;
 import net.sf.saxon.tree.TreeBuilder;
+import net.sf.saxon.value.Whitespace;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXSource;
-import java.io.*;
+import java.io.Serializable;
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -259,6 +261,7 @@ public class PreparedStylesheet implements Templates, Serializable {
         aug.setSchemaValidationMode(Validation.STRIP);
         aug.setDTDValidationMode(Validation.STRIP);
         aug.setLineNumbering(true);
+        aug.setStripSpace(Whitespace.NONE);
         if (aug.getXMLReader() == null && Configuration.getPlatform().isJava()) {
             XMLReader styleParser = config.getStyleParser();
             aug.setXMLReader(styleParser);
