@@ -217,7 +217,16 @@ public class Substring extends SystemFunction {
         }
 
         if (!sv.containsSurrogatePairs()) {
-            return s.subSequence(Math.max((int)lstart-1, 0), Math.min(slength, (int)lend-1));
+            int a1 = (int)lstart - 1;
+            int a2 = Math.min(slength, (int)lend - 1);
+            if (a1 < 0) {
+                if (a2 < 0) {
+                    return "";
+                } else {
+                    a1 = 0;
+                }
+            }
+            return s.subSequence(a1, a2);
         }
 
         int jstart=-1;
