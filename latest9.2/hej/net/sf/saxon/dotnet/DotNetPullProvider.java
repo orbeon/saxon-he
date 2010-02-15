@@ -436,10 +436,8 @@ public class DotNetPullProvider implements PullProvider, SaxonLocator, SourceLoc
      * @see #getLineNumber
      */
     public int getColumnNumber() {
-        if (parser instanceof XmlTextReader) {
-            return ((XmlTextReader)parser).get_LinePosition();
-        } else if (parser instanceof XmlValidatingReader) {
-            return ((XmlValidatingReader)parser).get_LinePosition();
+        if (parser instanceof IXmlLineInfo && ((IXmlLineInfo)parser).HasLineInfo()) {
+            return ((IXmlLineInfo)parser).get_LinePosition();
         } else {
             return -1;
         }
@@ -461,11 +459,8 @@ public class DotNetPullProvider implements PullProvider, SaxonLocator, SourceLoc
      * @see #getColumnNumber
      */
     public int getLineNumber() {
-        if (parser instanceof XmlTextReader) {
-            //System.err.println("DotNetPullProvider lineNumber = " + ((XmlTextReader)parser).get_LineNumber());
-            return ((XmlTextReader)parser).get_LineNumber();
-        } else if (parser instanceof XmlValidatingReader) {
-            return ((XmlValidatingReader)parser).get_LineNumber();
+        if (parser instanceof IXmlLineInfo && ((IXmlLineInfo)parser).HasLineInfo()) {
+            return ((IXmlLineInfo)parser).get_LinePosition();
         } else {
             return -1;
         }
