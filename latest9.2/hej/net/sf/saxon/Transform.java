@@ -561,7 +561,9 @@ public class Transform {
                     } else if (option.equals("1.1")) {    // XML 1.1
                         i++;
                         config.setConfigurationProperty(FeatureKeys.XML_VERSION, "1.1");
-
+                    } else if (option.startsWith("-")) {
+                        config.setConfigurationProperty("http://saxon.sf.net/feature/" + option.substring(1), value);
+                        i++;
                     } else if (args[i].equals("-?")) {
                         badUsage(command, "");
                     } else if (args[i].equals("-")) {
