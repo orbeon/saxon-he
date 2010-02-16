@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Saxonica")]
 [assembly: AssemblyProduct("Saxon.Api")]
-[assembly: AssemblyCopyright("Copyright © Saxonica 2009")]
+[assembly: AssemblyCopyright("Copyright © Saxonica 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("9.2.0.4")]
-[assembly: AssemblyFileVersion("9.2.0.4")]
+[assembly: AssemblyVersion("9.2.0.6")]
+[assembly: AssemblyFileVersion("9.2.0.6")]
