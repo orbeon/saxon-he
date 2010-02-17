@@ -471,7 +471,7 @@ platform=com.saxonica.config.DotNetPlatformPE
 		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
 		     <src dir="${basedir}/${temp-src-nc.dir}/api/Saxon.Api" includes="*.cs Properties/AssemblyInfo.cs"/>
-		     <reference dir="${basedir}/${dll-n.dir}">
+		     <reference dir="${basedir}/${dll-n.dir}/he">
 		        <!--<include name="charsets.dll"/>-->
 		        <include name="IKVM.OpenJDK.Core.dll"/>
          	    <include name="IKVM.OpenJDK.Charsets.dll"/>
@@ -486,12 +486,24 @@ platform=com.saxonica.config.DotNetPlatformPE
 		
 		<!-- Transform, Query, Validate commands -->
 		
+		<echo file="${basedir}/${temp-src-nc.dir}/cmd/AssemblyInfo.cs">
+		  using System.Reflection;
+          using System.Runtime.CompilerServices;
+          using System.Runtime.InteropServices;
+          [assembly: AssemblyCompany("Saxonica")]
+          [assembly: AssemblyProduct("Saxon.HE")]
+          [assembly: AssemblyCopyright("Copyright © Saxonica 2010")]
+          [assembly: AssemblyVersion("${version}")]
+          [assembly: AssemblyFileVersion("${version}")]
+        </echo>
+		
 		<dn:csc targetType="exe" 
 		     win32icon="c:\MyDotNet\icons\gyfu.ico"
 		     outputFile="${basedir}/${dll-n.dir}/he/Transform.exe"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
-		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Transform.cs"/>
-		     <reference dir="${basedir}/${dll-n.dir}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Transform.cs AssemblyInfo.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/he">
 		        <include name="IKVM.OpenJDK.Core.dll"/>
          	    <include name="IKVM.OpenJDK.Charsets.dll"/>
          	    <include name="IKVM.OpenJDK.Text.dll"/>
@@ -506,9 +518,10 @@ platform=com.saxonica.config.DotNetPlatformPE
 		
 		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
 		     outputFile="${basedir}/${dll-n.dir}/he/Query.exe"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
-		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Query.cs"/>
-		     <reference dir="${basedir}/${dll-n.dir}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Query.cs AssemblyInfo.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/he">
 		        <include name="IKVM.OpenJDK.Core.dll"/>
          	    <include name="IKVM.OpenJDK.Charsets.dll"/>
          	    <include name="IKVM.OpenJDK.Text.dll"/>
@@ -557,8 +570,8 @@ platform=com.saxonica.config.DotNetPlatformPE
 		     docFile="${dotnetdoc.dir}/apidoc.xml"
 		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
-		     <src dir="${basedir}/${temp-src-nc.dir}/api/Saxon.Api" includes="*.cs"/>
-		     <reference dir="${basedir}/${dll-n.dir}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/api/Saxon.Api" includes="*.cs Properties/AssemblyInfo.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/pe">
 		        <!--<include name="charsets.dll"/>-->
 		        <include name="IKVM.OpenJDK.Core.dll"/>
          	    <include name="IKVM.OpenJDK.Charsets.dll"/>
@@ -572,12 +585,24 @@ platform=com.saxonica.config.DotNetPlatformPE
 		</dn:csc>
 		
 		<!-- Transform, Query, Validate commands -->
+
+		<echo file="${basedir}/${temp-src-nc.dir}/cmd/AssemblyInfo.cs">
+		  using System.Reflection;
+          using System.Runtime.CompilerServices;
+          using System.Runtime.InteropServices;
+          [assembly: AssemblyCompany("Saxonica")]
+          [assembly: AssemblyProduct("Saxon.PE")]
+          [assembly: AssemblyCopyright("Copyright © Saxonica 2010")]
+          [assembly: AssemblyVersion("${version}")]
+          [assembly: AssemblyFileVersion("${version}")]
+        </echo>
 		
 		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
 		     outputFile="${basedir}/${dll-n.dir}/pe/Transform.exe"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
-		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Transform.cs"/>
-		     <reference dir="${basedir}/${dll-n.dir}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Transform.cs AssemblyInfo.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/pe">
 		        <include name="IKVM.OpenJDK.Core.dll"/>
          	    <include name="IKVM.OpenJDK.Charsets.dll"/>
          	    <include name="IKVM.OpenJDK.Security.dll"/>
@@ -592,9 +617,10 @@ platform=com.saxonica.config.DotNetPlatformPE
 		
 		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
 		     outputFile="${basedir}/${dll-n.dir}/pe/Query.exe"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
-		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Query.cs"/>
-		     <reference dir="${basedir}/${dll-n.dir}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Query.cs AssemblyInfo.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/pe">
 		        <include name="IKVM.OpenJDK.Core.dll"/>
          	    <include name="IKVM.OpenJDK.Charsets.dll"/>
          	    <include name="IKVM.OpenJDK.Security.dll"/>
@@ -645,7 +671,7 @@ platform=com.saxonica.config.DotNetPlatformPE
 		     docFile="${dotnetdoc.dir}/apidoc.xml"
 		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
-		     <src dir="${basedir}/${temp-src-nc.dir}/api/Saxon.Api" includes="*.cs"/>
+		     <src dir="${basedir}/${temp-src-nc.dir}/api/Saxon.Api" includes="*.cs Properties/AssemblyInfo.cs"/>
 		     <reference dir="${basedir}/${dll-n.dir}/ee">
 		        <!--<include name="charsets.dll"/>-->
 		        <include name="IKVM.OpenJDK.Core.dll"/>
@@ -661,11 +687,23 @@ platform=com.saxonica.config.DotNetPlatformPE
 		
 		<!-- Transform, Query, Validate commands -->
 		
+		<echo file="${basedir}/${temp-src-nc.dir}/cmd/AssemblyInfo.cs">
+		  using System.Reflection;
+          using System.Runtime.CompilerServices;
+          using System.Runtime.InteropServices;
+          [assembly: AssemblyCompany("Saxonica")]
+          [assembly: AssemblyProduct("Saxon.EE")]
+          [assembly: AssemblyCopyright("Copyright © Saxonica 2010")]
+          [assembly: AssemblyVersion("${version}")]
+          [assembly: AssemblyFileVersion("${version}")]
+        </echo>		
+		
 		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
 		     outputFile="${basedir}/${dll-n.dir}/ee/Transform.exe"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
-		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Transform.cs"/>
-		     <reference dir="${basedir}/${dll-n.dir}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Transform.cs AssemblyInfo.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/ee">
 		        <include name="IKVM.OpenJDK.Core.dll"/>
          	    <include name="IKVM.OpenJDK.Charsets.dll"/>
          	    <include name="IKVM.OpenJDK.Security.dll"/>
@@ -680,9 +718,10 @@ platform=com.saxonica.config.DotNetPlatformPE
 		
 		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
 		     outputFile="${basedir}/${dll-n.dir}/ee/Query.exe"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
-		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Query.cs"/>
-		     <reference dir="${basedir}/${dll-n.dir}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Query.cs AssemblyInfo.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/ee">
 		        <include name="IKVM.OpenJDK.Core.dll"/>
          	    <include name="IKVM.OpenJDK.Charsets.dll"/>
          	    <include name="IKVM.OpenJDK.Security.dll"/>
@@ -697,9 +736,10 @@ platform=com.saxonica.config.DotNetPlatformPE
 		
 		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
 		     outputFile="${basedir}/${dll-n.dir}/ee/Validate.exe"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
-		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Validate.cs"/>
-		     <reference dir="${basedir}/${dll-n.dir}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Validate.cs AssemblyInfo.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/ee">
 		        <include name="IKVM.OpenJDK.Core.dll"/>
          	    <include name="IKVM.OpenJDK.Charsets.dll"/>
          	    <include name="IKVM.OpenJDK.Security.dll"/>
@@ -866,7 +906,26 @@ platform=com.saxonica.config.DotNetPlatformPE
     </target>
     
     <target name="product-n" description="Assemble product.directories for Saxon on .NET"
-       										    depends="product-hen, product-pen, product-een"/>
+       										    depends="product-hen, product-pen, product-een">
+       										    
+       <!-- Following steps are for diagnostics only, they can be omitted if Powershell is not available -->
+       										    
+       <exec executable="c:/windows/system32/WindowsPowerShell/v1.0/powershell.exe">
+		  <arg line="tools/list-dependencies.ps1"/>
+		  <arg line="${build-hen.dir}/bin"/>
+	   </exec>
+	   
+	   <exec executable="c:/windows/system32/WindowsPowerShell/v1.0/powershell.exe">
+		  <arg line="tools/list-dependencies.ps1"/>
+		  <arg line="${build-pen.dir}/bin"/>
+	   </exec>
+	   
+	   <exec executable="c:/windows/system32/WindowsPowerShell/v1.0/powershell.exe">
+		  <arg line="tools/list-dependencies.ps1"/>
+		  <arg line="${build-een.dir}/bin"/>
+	   </exec>
+	   
+	</target>      										    
        
     <target name="samples-n" description="Assemble release samples for .NET"
                   depends="csharp-hen, compile-samples-n">

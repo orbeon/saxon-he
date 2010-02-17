@@ -3,8 +3,12 @@
 <project basedir="." default="all" name="Saxon: The XSLT and XQuery Processor"
          xmlns:dn="antlib:org.apache.ant.dotnet">
     
-    <!--TODO: 1: ensure saxon9api.netmodule is included in the build
-           2: remove the archive target before shipping this file-->
+    <!-- How to do a maintenance build 
+    
+         1. Run with target "prepare"
+         2. Run with target "build"
+         3. Copy DLLs to the GAC using Control Panel
+         4. Run with target "release" -->
     
     <!-- note : Ant 1.7 is needed for this script -->
     
@@ -28,7 +32,7 @@
          n            builds executables for Saxon on .NET
          build        builds all executables
          resources    builds samples and documentation
-         release      builds ZIP files for published downloads
+         release      builds ZIP files for published downloads, runs regression tests
          archive      produces a back-up archive  -->
              
          
@@ -49,7 +53,9 @@
     -->
        
     <import file="build-j.xml"/>
-    <import file="build-n.xml"/>     
+    <import file="build-n.xml"/>
+    <import file="test-j.xml"/>
+    <import file="test-n.xml"/>     
     
 
     
@@ -100,6 +106,7 @@
           <include name="query/books-to-html.xq"/>
           <include name="scm/scmschema.*"/>
           <include name="styles/books.xsl"/>
+          <include name="styles/books.txt"/>
           <include name="styles/play.xsl"/>
           <include name="styles/identity.xsl"/>
           <include name="styles/books-csv.xsl"/>
@@ -224,10 +231,13 @@
     </target>  
       
     <target name="build" description="Complete Saxon product build"
-      	depends="j, n"/> 
+      	depends="j, n"/>
+      	
+    <target name="test" description="Run regression tests"
+        depends="test-j, test-n"/>  	 
       
     <target name="release" description="Create .ZIP files for release"
-        depends="build, resources"
+        depends="build, resources, test"
         >  <!-- -->
       <mkdir dir="${issue.dir}"/> 
       <zip zipfile="${issue.dir}/saxonhe${versionh}j.zip">
