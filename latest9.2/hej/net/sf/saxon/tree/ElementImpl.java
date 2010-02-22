@@ -345,7 +345,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
         int prefixCode = nscode>>16 & 0xffff;
         short uc = getURICodeForPrefixCode(prefixCode);
         if (uc == -1 || uc == 0) {
-            addNamespace(nscode, false);
+            addNamespace(nscode, true);
         } else if (uc != (nscode&0xffff)) {
             throw new IllegalArgumentException(
                     "Namespace binding of new name conflicts with existing namespace binding");
@@ -399,6 +399,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
                     if ((namespaceList[i]&0x0000ffff) == 0) {
                         // this is an undeclaration; replace it with the new declaration
                         namespaceList[i] = nscode;
+                        return;
                     } else if (externalCall) {
                         throw new IllegalArgumentException("New namespace conflicts with existing namespace binding");
                     } else {
