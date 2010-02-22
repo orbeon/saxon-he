@@ -2,6 +2,7 @@ package net.sf.saxon.instruct;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
+import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.om.*;
@@ -142,14 +143,16 @@ public class ComputedElement extends ElementCreator {
                 throw de;
             }
         } else {
-            elementName = TypeChecker.staticTypeCheck(elementName,
-                    SequenceType.SINGLE_STRING, false, role, visitor);
+            TypeHierarchy th = visitor.getConfiguration().getTypeHierarchy();
+            if (!th.isSubType(elementName.getItemType(th), BuiltInAtomicType.STRING)) {
+                elementName = SystemFunction.makeSystemFunction("string", new Expression[]{elementName});
+            }
         }
         if (namespace != null) {
             namespace = visitor.typeCheck(namespace, contextItemType);
             //adoptChildExpression(namespace);
 
-            role = new RoleLocator(RoleLocator.INSTRUCTION, "attribute/namespace", 0);
+            role = new RoleLocator(RoleLocator.INSTRUCTION, "element/namespace", 0);
             //role.setSourceLocator(this);
             namespace = TypeChecker.staticTypeCheck(
                     namespace, SequenceType.SINGLE_STRING, false, role, visitor);

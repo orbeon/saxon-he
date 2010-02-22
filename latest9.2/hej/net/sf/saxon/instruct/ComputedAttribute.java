@@ -7,6 +7,7 @@ import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
+import net.sf.saxon.functions.SystemFunction;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -170,8 +171,10 @@ public final class ComputedAttribute extends AttributeCreator {
                 throw err;
             }
         } else {
-            attributeName = TypeChecker.staticTypeCheck(attributeName,
-                    SequenceType.SINGLE_STRING, false, role, visitor);
+            TypeHierarchy th = visitor.getConfiguration().getTypeHierarchy();
+            if (!th.isSubType(attributeName.getItemType(th), BuiltInAtomicType.STRING)) {
+                attributeName = SystemFunction.makeSystemFunction("string", new Expression[]{attributeName});
+            }
         }
 
         if (namespace != null) {
