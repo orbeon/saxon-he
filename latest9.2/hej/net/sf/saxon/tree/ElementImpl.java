@@ -344,7 +344,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
         int nscode = getNamePool().getNamespaceCode(newNameCode);
         int prefixCode = nscode>>16 & 0xffff;
         short uc = getURICodeForPrefixCode(prefixCode);
-        if (uc == -1) {
+        if (uc == -1 || uc == 0) {
             addNamespace(nscode, false);
         } else if (uc != (nscode&0xffff)) {
             throw new IllegalArgumentException(
