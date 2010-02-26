@@ -671,7 +671,7 @@ public final class TinyTree {
                     Value value = stype.atomize(att);
                     if (allowTypedValueCache) {
                         if (attTypedValue == null) {
-                            attTypedValue = new Value[numberOfAttributes];
+                            attTypedValue = new Value[attParent.length];
                         }
                         attTypedValue[nodeNr] = value;
                     }
@@ -715,7 +715,7 @@ public final class TinyTree {
                     Value value = stype.atomize(att);
                     if (allowTypedValueCache) {
                         if (attTypedValue == null) {
-                            attTypedValue = new Value[numberOfAttributes];
+                            attTypedValue = new Value[attParent.length];
                         }
                         attTypedValue[nodeNr] = value;
                     }

@@ -193,18 +193,17 @@
     </target>
     
     <target name="release-source" description="Generate Zip file containing issued Source Code">
-      <zip zipfile="${build-resources.dir}/source.zip">
+      <zip zipfile="${build-resources.dir}/saxon${versionh}source.zip">
         <fileset dir="${source-hej.dir}">
            <include name="net/**/*.java"/>
            <include name="net/**/package.html"/>
-           <!-- TODO: add .NET source code -->
         </fileset>
         <fileset dir="${temp-src-nc.dir}">
            <include name="api/**/*.cs"/>
            <include name="cmd/**/*.cs"/>
         </fileset>   
       </zip>
-      <zip zipfile="${source-eej.dir}/sa-source.zip">
+      <zip zipfile="${source-eej.dir}/../releases/saxonee${versionh}source.zip">
         <fileset dir="${source-eej.dir}">
            <include name="com/saxonica/**/*.java"/>
            <include name="com/saxonica/**/package.html"/>
