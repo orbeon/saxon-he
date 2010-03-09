@@ -131,7 +131,7 @@ public final class DecimalValue extends NumericValue {
                     break;
                 }
             }
-            if (digits.length() == 0) {
+            if (digits.length() == 0 || (digits.length() == 1 && digits.charAt(0) == '-')) {
                 return DecimalValue.ZERO;
             }
             BigInteger bigInt = new BigInteger(digits.toString());
