@@ -1485,8 +1485,12 @@ public abstract class StyleElement extends ElementImpl
                 if (!(sibling instanceof XSLParam || sibling instanceof XSLSort)) {
                     // The test for XSLParam and XSLSort is to eliminate whitespace nodes that have been retained
                     // because of xml:space="preserve"
-                    ValueOf text = new ValueOf(new StringLiteral(node.getStringValue()), false, false);
+                    Instruction text = new ValueOf(new StringLiteral(node.getStringValue()), false, false);
                     text.setLocationId(allocateLocationId(getSystemId(), lineNumber));
+                    if (getPreparedStylesheet().isCompileWithTracing()) {
+                        text = new TraceInstruction(text, text);
+                        text.setLocationId(allocateLocationId(getSystemId(), lineNumber));
+                    }
                     contents.add(text);
                 }
 
