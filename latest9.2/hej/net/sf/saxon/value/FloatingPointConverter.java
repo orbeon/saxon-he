@@ -446,12 +446,11 @@ public class FloatingPointConverter {
     /**
      * Append a string representation of a double value to a string buffer
      * @param s the string buffer to which the result will be appended
-     * @param value the double to be formatted
+     * @param d the double to be formatted
      * @return the original string buffer, now containing the string representation of the supplied double
      */
 
-    public static FastStringBuffer appendDouble(FastStringBuffer s, double value) {
-        double d = value;
+    public static FastStringBuffer appendDouble(FastStringBuffer s, double d) {
         if (d == Double.NEGATIVE_INFINITY) {
             s.append(NEGATIVE_INFINITY);
         } else if (d == Double.POSITIVE_INFINITY) {
@@ -483,7 +482,7 @@ public class FloatingPointConverter {
             int exp = (int)rawExp - doubleExpBias;
             if (rawExp == 0) {
                 // don't know how to handle this currently: hand it over to Java to deal with
-                s.append(Double.toString(value));
+                s.append(Double.toString(d));
                 return s;
             }
             if (exponential) {
@@ -515,12 +514,11 @@ public class FloatingPointConverter {
      * Append a string representation of a double value to a string buffer, forcing use of
      * exponential notation
      * @param s the string buffer to which the result will be appended
-     * @param value the double to be formatted
+     * @param d the double to be formatted
      * @return the original string buffer, now containing the string representation of the supplied double
      */
 
-    public static FastStringBuffer appendDoubleExponential(FastStringBuffer s, double value) {
-        double d = value;
+    public static FastStringBuffer appendDoubleExponential(FastStringBuffer s, double d) {
         if (d == Double.NEGATIVE_INFINITY) {
             s.append(NEGATIVE_INFINITY);
         } else if (d == Double.POSITIVE_INFINITY) {
@@ -551,7 +549,7 @@ public class FloatingPointConverter {
             int exp = (int)rawExp - doubleExpBias;
             if (rawExp == 0) {
                 // don't know how to handle this currently: hand it over to Java to deal with
-                s.append(Double.toString(value));
+                s.append(Double.toString(d));
                 return s;
             }
             fppfppExponential(s, exp, fraction, 52);
@@ -563,12 +561,11 @@ public class FloatingPointConverter {
     /**
      * Append a string representation of a float value to a string buffer
      * @param s the string buffer to which the result will be appended
-     * @param value the float to be formatted
+     * @param f the float to be formatted
      * @return the original string buffer, now containing the string representation of the supplied float
      */
 
-    public static FastStringBuffer appendFloat(FastStringBuffer s, float value) {
-        float f = value;
+    public static FastStringBuffer appendFloat(FastStringBuffer s, float f) {
         if (f == Float.NEGATIVE_INFINITY) {
             s.append(NEGATIVE_INFINITY);
         } else if (f == Float.POSITIVE_INFINITY) {
@@ -601,7 +598,7 @@ public class FloatingPointConverter {
             int precision = 23;
             if (rawExp == 0) {
                 // don't know how to handle this currently: hand it over to Java to deal with
-                s.append(Float.toString(value));
+                s.append(Float.toString(f));
                 return s;
             }
             if (exponential) {
@@ -629,12 +626,11 @@ public class FloatingPointConverter {
      * Append a string representation of a float value to a string buffer, forcing use of exponential
      * notation
      * @param s the string buffer to which the result will be appended
-     * @param value the float to be formatted
+     * @param f the float to be formatted
      * @return the original string buffer, now containing the string representation of the supplied float
      */
 
-    public static FastStringBuffer appendFloatExponential(FastStringBuffer s, float value) {
-        float f = value;
+    public static FastStringBuffer appendFloatExponential(FastStringBuffer s, float f) {
         if (f == Float.NEGATIVE_INFINITY) {
             s.append(NEGATIVE_INFINITY);
         } else if (f == Float.POSITIVE_INFINITY) {
@@ -666,14 +662,14 @@ public class FloatingPointConverter {
             int precision = 23;
             if (rawExp == 0) {
                 // don't know how to handle this currently: hand it over to Java to deal with
-                s.append(Float.toString(value));
+                s.append(Float.toString(f));
                 return s;
             }
             fppfppExponential(s, exp, fraction, precision);
         }
         return s;
     }
-    
+
 
 //    public static void main(String[] args) {
 //        if (args.length > 0 && args[0].equals("F")) {
