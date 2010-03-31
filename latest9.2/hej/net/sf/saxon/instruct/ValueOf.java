@@ -240,14 +240,14 @@ public final class ValueOf extends SimpleNodeConstructor {
 
     public TailCall processLeavingTail(XPathContext context) throws XPathException {
         SequenceReceiver out = context.getReceiver();
-        if (select instanceof SimpleContentConstructor) {
-            ((SimpleContentConstructor)select).process(context, locationId, options);
-        } else {
+//        if (select instanceof SimpleContentConstructor) {
+//            ((SimpleContentConstructor)select).process(context, locationId, options);
+//        } else {
             Item item = select.evaluateItem(context);
             if (item != null) {
                 out.characters(item.getStringValueCS(), locationId, options);
             }
-        }
+//        }
         return null;
     }
 
