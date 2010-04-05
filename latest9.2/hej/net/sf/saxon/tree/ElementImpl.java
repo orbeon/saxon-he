@@ -343,10 +343,11 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
         nameCode = newNameCode;
         int nscode = getNamePool().getNamespaceCode(newNameCode);
         int prefixCode = nscode>>16 & 0xffff;
+        int uriCode = nscode&0xffff;
         short uc = getURICodeForPrefixCode(prefixCode);
-        if (uc == -1 || uc == 0) {
+        if ((uc == -1 || uc == 0) && uriCode != 0) {
             addNamespace(nscode, true);
-        } else if (uc != (nscode&0xffff)) {
+        } else if (uc != uriCode) {
             throw new IllegalArgumentException(
                     "Namespace binding of new name conflicts with existing namespace binding");
         }
