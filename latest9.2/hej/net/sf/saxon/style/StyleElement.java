@@ -1150,30 +1150,30 @@ public abstract class StyleElement extends ElementImpl
         try {
             pattern = pattern.analyze(makeExpressionVisitor(), Type.NODE_TYPE);
             boolean usesCurrent = false;
-            if (pattern instanceof LocationPathPattern) {
-                Iterator sub = pattern.iterateSubExpressions();
-                while (sub.hasNext()) {
-                    Expression filter = (Expression)sub.next();
-                    if (ExpressionTool.callsFunction(filter, Current.FN_CURRENT)) {
-                        usesCurrent = true;
-                        break;
-                    }
-                }
-                if (usesCurrent) {
-                    Configuration config = getConfiguration();
 
-                    LetExpression let = new LetExpression();
-                    let.setVariableQName(new StructuredQName("saxon", NamespaceConstant.SAXON, "current" + hashCode()));
-                    let.setRequiredType(SequenceType.SINGLE_ITEM);
-                    let.setSequence(new ContextItemExpression());
-                    let.setAction(Literal.makeEmptySequence());
-                    PromotionOffer offer = new PromotionOffer(config.getOptimizer());
-                    offer.action = PromotionOffer.REPLACE_CURRENT;
-                    offer.containingExpression = let;
-                    ((LocationPathPattern)pattern).resolveCurrent(let, offer, true);
-                    //allocateSlots(let); //redundant, done again later
+            Iterator sub = pattern.iterateSubExpressions();
+            while (sub.hasNext()) {
+                Expression filter = (Expression)sub.next();
+                if (ExpressionTool.callsFunction(filter, Current.FN_CURRENT)) {
+                    usesCurrent = true;
+                    break;
                 }
             }
+            if (usesCurrent) {
+                Configuration config = getConfiguration();
+
+                LetExpression let = new LetExpression();
+                let.setVariableQName(new StructuredQName("saxon", NamespaceConstant.SAXON, "current" + hashCode()));
+                let.setRequiredType(SequenceType.SINGLE_ITEM);
+                let.setSequence(new ContextItemExpression());
+                let.setAction(Literal.makeEmptySequence());
+                PromotionOffer offer = new PromotionOffer(config.getOptimizer());
+                offer.action = PromotionOffer.REPLACE_CURRENT;
+                offer.containingExpression = let;
+                pattern.resolveCurrent(let, offer, true);
+                //allocateSlots(let); //redundant, done again later
+            }
+
             return pattern;
         } catch (XPathException err) {
             // we can't report a dynamic error such as divide by zero unless the pattern

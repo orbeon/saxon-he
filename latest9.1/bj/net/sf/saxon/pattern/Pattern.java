@@ -142,6 +142,22 @@ public abstract class Pattern implements PatternFinder, Serializable, Container 
     }
 
     /**
+     * If the pattern contains any calls on current(), this method is called to modify such calls
+     * to become variable references to a variable declared in a specially-allocated local variable
+     *
+     * @param let   the expression that assigns the local variable. This returns a dummy result, and is executed
+     *              just before evaluating the pattern, to get the value of the context item into the variable.
+     * @param offer A PromotionOffer used to process the expressions and change the call on current() into
+     *              a variable reference
+     * @param topLevel
+     * @throws XPathException
+     */
+
+    public void resolveCurrent(LetExpression let, PromotionOffer offer, boolean topLevel) throws XPathException {
+        // implemented in subclasses
+    }
+
+    /**
      * Offer promotion for subexpressions within this pattern. The offer will be accepted if the subexpression
      * is not dependent on the factors (e.g. the context item) identified in the PromotionOffer.
      * By default the offer is not accepted - this is appropriate in the case of simple expressions

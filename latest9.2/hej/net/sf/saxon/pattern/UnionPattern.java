@@ -134,6 +134,12 @@ public class UnionPattern extends Pattern {
         return nextFree;
     }
 
+    @Override
+    public void resolveCurrent(LetExpression let, PromotionOffer offer, boolean topLevel) throws XPathException {
+        p1.resolveCurrent(let, offer, topLevel);
+        p2.resolveCurrent(let, offer, topLevel);
+    }
+
     /**
      * Gather the component (non-union) patterns of this union pattern
      * @param set the set into which the components will be added
