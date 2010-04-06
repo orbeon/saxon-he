@@ -745,7 +745,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
                 boolean found = false;
                 if (namespaceList != null) {
                     for (int i=0; i<namespaceList.length; i++) {
-                        if ((namespaceList[i] & 0xffff) == prefixCode) {
+                        if ((namespaceList[i] & 0xffff0000) == prefixCode) {
                             found = true;
                             break;
                         }
