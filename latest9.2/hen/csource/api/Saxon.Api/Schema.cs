@@ -384,6 +384,7 @@ namespace Saxon.Api
             PullProvider pp = new DotNetPullProvider(reader);
             PipelineConfiguration pipe = config.makePipelineConfiguration();
             pipe.setUseXsiSchemaLocation(useXsiSchemaLocation);
+            pipe.setRecoverFromValidationErrors(true);
             pp.setPipelineConfiguration(pipe);
             // pp = new PullTracer(pp);  /* diagnostics */
             PullSource psource = new PullSource(pp);
@@ -490,6 +491,7 @@ namespace Saxon.Api
             }
             PipelineConfiguration pipe = config.makePipelineConfiguration();
             pipe.setUseXsiSchemaLocation(useXsiSchemaLocation);
+            pipe.setRecoverFromValidationErrors(true);
             if (errorList != null)
             {
                 pipe.setErrorListener(new ErrorGatherer(errorList));
