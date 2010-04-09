@@ -119,9 +119,6 @@ public class Executable implements Serializable {
 
     public void setConfiguration(Configuration config) {
         this.config = config;
-        if (!config.isLicensedFeature(Configuration.LicenseFeature.SCHEMA_AWARE_XSLT)) {
-            setReasonUnableToCompile("Compiling stylesheets requires Saxon-EE");
-        }
     }
 
     /**
