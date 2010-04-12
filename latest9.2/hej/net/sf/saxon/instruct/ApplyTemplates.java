@@ -178,6 +178,9 @@ public class ApplyTemplates extends Instruction {
         Mode thisMode = mode;
         if (useCurrentMode) {
             thisMode = context.getCurrentMode();
+            if (thisMode == null) {
+                mode = context.getController().getRuleManager().getDefaultMode();
+            }
         }
 
         // handle parameters if any
@@ -231,8 +234,7 @@ public class ApplyTemplates extends Instruction {
      *     correct (sorted) order
      * @param mode Identifies the processing mode. It should match the
      *     mode defined when the element handler was registered using
-     *     setHandler with a mode parameter. Set this parameter to null to
-     *     invoke the default mode.
+     *     setHandler with a mode parameter. Must not be null.
      * @param parameters A ParameterSet containing the parameters to
      *     the handler/template being invoked. Specify null if there are no
      *     parameters.
@@ -374,8 +376,12 @@ public class ApplyTemplates extends Instruction {
                 SequenceIterator iter = node.iterateAxis(Axis.CHILD);
                 XPathContextMajor c2 = context.newContext();
                 c2.setOriginatingConstructType(Location.BUILT_IN_TEMPLATE);
-	            TailCall tc = applyTemplates(
-                        iter, context.getCurrentMode(), parameters, tunnelParams, c2, locationId);
+                Mode currentMode = context.getCurrentMode();
+                if (currentMode == null) {
+                    currentMode = context.getController().getRuleManager().getDefaultMode();
+                }
+                TailCall tc = applyTemplates(
+                        iter, currentMode, parameters, tunnelParams, c2, locationId);
                 while (tc != null) {
                     tc = tc.processLeavingTail();
                 }
