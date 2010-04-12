@@ -5,6 +5,7 @@ import net.sf.saxon.expr.PathMap;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.XPathContextMajor;
 import net.sf.saxon.functions.Component;
+import net.sf.saxon.functions.Document;
 import net.sf.saxon.functions.EscapeURI;
 import net.sf.saxon.instruct.*;
 import net.sf.saxon.om.*;
@@ -493,9 +494,6 @@ public class Controller extends Transformer {
         if (allOutputDestinations == null) {
             allOutputDestinations = new HashSet<String>(20);
         }
-        if (uri.startsWith("file:///")) {
-            uri = "file:/" + uri.substring(8);
-        }
         return !allOutputDestinations.contains(uri);
     }
 
@@ -545,7 +543,7 @@ public class Controller extends Transformer {
      */
 
     public void checkImplicitResultTree() throws XPathException {
-        if (!checkUniqueOutputDestination(principalResultURI)) {
+        if (!checkUniqueOutputDestination(Document.normalizeURI(principalResultURI))) {
             XPathException err = new XPathException("Cannot write an implicit result document if an explicit result document has been written to the same URI: " +
                     principalResultURI);
             err.setErrorCode("XTDE1490");
@@ -1954,14 +1952,15 @@ public class Controller extends Transformer {
         Receiver out = initialContext.getReceiver();
         if (out instanceof ComplexContentOutputter && ((ComplexContentOutputter)out).contentHasBeenWritten()) {
             if (principalResultURI != null) {
-                if (!checkUniqueOutputDestination(principalResultURI)) {
+                String documentKey = Document.normalizeURI(principalResultURI);
+                if (!checkUniqueOutputDestination(documentKey)) {
                     XPathException err = new XPathException(
                             "Cannot write more than one result document to the same URI, or write to a URI that has been read: " +
                             result.getSystemId());
                     err.setErrorCode("XTDE1490");
                     throw err;
                 } else {
-                    addUnavailableOutputDestination(principalResultURI);
+                    addUnavailableOutputDestination(documentKey);
                 }
             }
         }

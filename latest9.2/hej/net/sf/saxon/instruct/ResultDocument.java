@@ -3,9 +3,9 @@ package net.sf.saxon.instruct;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
 import net.sf.saxon.OutputURIResolver;
-import net.sf.saxon.value.Whitespace;
 import net.sf.saxon.event.*;
 import net.sf.saxon.expr.*;
+import net.sf.saxon.functions.Document;
 import net.sf.saxon.functions.EscapeURI;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.EmptySequenceTest;
@@ -19,6 +19,7 @@ import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.type.TypeHierarchy;
+import net.sf.saxon.value.Whitespace;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
@@ -544,7 +545,8 @@ public class ResultDocument extends Instruction implements DivisibleInstruction 
             throw err;
         }
 
-        if (!controller.checkUniqueOutputDestination(result.getSystemId())) {
+        String documentKey = Document.normalizeURI(result.getSystemId());
+        if (!controller.checkUniqueOutputDestination(documentKey)) {
             XPathException err = new XPathException("Cannot write more than one result document to the same URI: " +
                     result.getSystemId());
             err.setXPathContext(context);
@@ -552,7 +554,7 @@ public class ResultDocument extends Instruction implements DivisibleInstruction 
             err.setErrorCode("XTDE1490");
             throw err;
         } else {
-            controller.addUnavailableOutputDestination(result.getSystemId());
+            controller.addUnavailableOutputDestination(documentKey);
             controller.setThereHasBeenAnExplicitResultDocument();
         }
     }

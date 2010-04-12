@@ -19,6 +19,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.dom.DOMSource;
 import java.io.FileNotFoundException;
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -28,6 +29,8 @@ import java.net.URISyntaxException;
  */
 
 public class Document extends SystemFunction {
+
+    private final static boolean caseBlindFiles = new File("a").equals(new File("A"));
 
     private String expressionBaseURI = null;
     private boolean readOnce = false;   // TODO: implement this. The idea is that if streaming copy cannot be
@@ -442,8 +445,36 @@ public class Document extends SystemFunction {
                 }
             }
         }
-        return documentKey;
+        return normalizeURI(documentKey);
     }
+
+    /**
+     * Normalize the representation of file: URIs to give better equality matching than straight
+     * string comparison. The main purpose is (a) to eliminate the distinction between "file:/" and
+     * "file:///", and (b) to normalize case in the case of Windows filenames: especially the distinction
+     * between "file:/C:" and "file:/c:".
+     * @param uri the URI to be normalized
+     * @return the normalized URI.
+     */
+
+    public static String normalizeURI(String uri) {
+        if (uri == null) {
+            return null;
+        }
+        if (uri.startsWith("FILE:")) {
+            uri = "file:" + uri.substring(5);
+        }
+        if (uri.startsWith("file:")) {
+            if (uri.startsWith("file:///")) {
+                uri = "file:/" + uri.substring(8);
+            }
+            if (caseBlindFiles) {
+                uri = uri.toLowerCase();
+            }
+        }
+        return uri;
+    }
+
 
     /**
      * Supporting routine to load one external document given a URI (href) and a baseURI. This is used
