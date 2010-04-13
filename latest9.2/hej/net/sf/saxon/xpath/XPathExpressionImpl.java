@@ -295,6 +295,10 @@ public class XPathExpressionImpl implements XPathExpression, SortKeyEvaluator {
                             ": " + e.getMessage());
                 }
                 if (val instanceof NodeInfo) {
+                    if (!((NodeInfo)val).getConfiguration().isCompatible(config)) {
+                        throw new XPathExpressionException(
+                                    "Supplied node must be built using the same or a compatible Configuration");
+                    }
                     contextNode = (NodeInfo)val;
                 } else {
                     throw new XPathExpressionException(
