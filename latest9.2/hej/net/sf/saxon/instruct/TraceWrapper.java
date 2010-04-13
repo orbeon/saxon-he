@@ -21,6 +21,28 @@ import java.util.Iterator;
 public class TraceWrapper extends Instruction {
     Expression child;   // the instruction or other expression to be traced
 
+    /**
+     * Determine whether this is an updating expression as defined in the XQuery update specification
+     * @return true if this is an updating expression
+     */
+
+    @Override
+    public boolean isUpdatingExpression() {
+        return child.isUpdatingExpression();
+    }
+
+    /**
+     * Check to ensure that this expression does not contain any inappropriate updating subexpressions.
+     * This check is overridden for those expressions that permit updating subexpressions.
+     * @throws net.sf.saxon.trans.XPathException
+     *          if the expression has a non-permitted updating subexpression
+     */
+
+    @Override
+    public void checkForUpdatingSubexpressions() throws XPathException {
+        child.checkForUpdatingSubexpressions();
+    }    
+
     public int getImplementationMethod() {
         return child.getImplementationMethod();
     }
