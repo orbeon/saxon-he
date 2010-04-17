@@ -256,7 +256,7 @@ public abstract class Assignation extends Expression implements Binding {
      * @return a set of variable bindings including all those supplied plus this one
      */
 
-    protected Binding[] extendBindingList(Binding[] in) {
+    public Binding[] extendBindingList(Binding[] in) {
         Binding[] newBindingList;
         if (in == null) {
             newBindingList = new Binding[1];

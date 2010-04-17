@@ -397,9 +397,14 @@ public final class LocationPathPattern extends Pattern {
         if (ancestorPattern != null) {
             ancestorPattern.promote(offer, parent);
         }
+        Binding[] savedBindingList = offer.bindingList;
+        if (variableBinding instanceof Assignation) {
+            offer.bindingList = ((Assignation)variableBinding).extendBindingList(offer.bindingList);
+        }
         for (int i = 0; i < numberOfFilters; i++) {
             filters[i] = filters[i].promote(offer, parent);
         }
+        offer.bindingList = savedBindingList;
     }
 
     /**

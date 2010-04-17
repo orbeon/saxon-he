@@ -536,7 +536,7 @@ public class ForExpression extends Assignation {
      * Extend an array of variable bindings to include the binding(s) defined in this expression
      */
 
-    protected Binding[] extendBindingList(Binding[] in) {
+    public Binding[] extendBindingList(Binding[] in) {
         if (positionVariable == null) {
             return super.extendBindingList(in);
         }
