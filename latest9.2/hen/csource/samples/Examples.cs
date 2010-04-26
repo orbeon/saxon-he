@@ -825,7 +825,7 @@ public class XsltProcessingInstruction : Example {
         XPathSelector eval = processor.NewXPathCompiler().Compile(path).Load();
         eval.ContextItem = input;
         XdmAtomicValue hrefval = (XdmAtomicValue)eval.EvaluateSingle();
-        String href = hrefval.ToString();
+        String href = (hrefval == null ? null : hrefval.ToString());
 
         if (href == null || href == "")
         {
@@ -2223,45 +2223,7 @@ public class ExtraTestCase : Example
 
     public override void run(Uri samplesDir)
     {
-        String strQuery = @"for
-  $offer in //offer,
-  $category in //category,
-  $price in round(number($offer/price)) where
-  $offer/categoryId = $category/@id and
-  $category = 'Techno' and $price > 250 order by
-  $price descending
-return
-  <offer> 
-    <price>{string($offer/price)}</price> 
-    <title>{string($offer/title)}</title>
-  </offer>";
 
-        //String strQuery2 = "count(//*)";
-
-        Processor processor = new Processor();
-        XmlTextReader reader = new XmlTextReader(new FileStream("c:/MyJava/users/vadim/file.xml", FileMode.Open, FileAccess.Read, FileShare.Read));
-
-        reader.Normalization = true;
-
-        XdmNode m_doc = processor.NewDocumentBuilder().Build(reader);
-        Console.WriteLine("Built source document");
-        reader.Close();
-        XQueryCompiler m_compiler = processor.NewXQueryCompiler();
-
-        MemoryStream ms = new MemoryStream();
-        XQueryExecutable exp = m_compiler.Compile(strQuery); // strQuery contains the query above
-        Console.WriteLine("Compiled query");
-        XQueryEvaluator eval = exp.Load();
-
-        eval.ContextItem = m_doc;
-
-        Serializer qout = new Serializer();
-        qout.SetOutputProperty(Serializer.METHOD, "html");
-        qout.SetOutputProperty(Serializer.INDENT, "no");
-        qout.SetOutputStream(ms);
-        Console.WriteLine("Running query");
-        eval.Run(qout); // infinite work here 
-        Console.WriteLine("Query complete");
     }
 
     
