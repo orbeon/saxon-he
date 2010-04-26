@@ -860,7 +860,6 @@ platform=com.saxonica.config.DotNetPlatformPE
 				%NET%\gacutil /if IKVM.OpenJDK.Util.dll
 				%NET%\gacutil /if IKVM.OpenJDK.Text.dll
 				%NET%\gacutil /if IKVM.OpenJDK.XML.API.dll
-				%NET%\gacutil /if xercesImpl.dll
 				%NET%\gacutil /if saxon9he.dll 
 				%NET%\gacutil /if saxon9he-api.dll                
       </echo> 
@@ -889,7 +888,6 @@ platform=com.saxonica.config.DotNetPlatformPE
 				%NET%\gacutil /if IKVM.OpenJDK.Util.dll
 				%NET%\gacutil /if IKVM.OpenJDK.Text.dll
 				%NET%\gacutil /if IKVM.OpenJDK.XML.API.dll
-				%NET%\gacutil /if xercesImpl.dll
 				%NET%\gacutil /if saxon9pe.dll 
 				%NET%\gacutil /if saxon9pe-api.dll                
       </echo> 
@@ -918,9 +916,8 @@ platform=com.saxonica.config.DotNetPlatformPE
 				%NET%\gacutil /if IKVM.OpenJDK.Util.dll
 				%NET%\gacutil /if IKVM.OpenJDK.Text.dll
 				%NET%\gacutil /if IKVM.OpenJDK.XML.API.dll
-				%NET%\gacutil /if xercesImpl.dll
-				%NET%\gacutil /if saxon9pe.dll 
-				%NET%\gacutil /if saxon9pe-api.dll              
+				%NET%\gacutil /if saxon9ee.dll 
+				%NET%\gacutil /if saxon9ee-api.dll              
       </echo>             
     </target>
     

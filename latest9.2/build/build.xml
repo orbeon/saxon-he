@@ -316,8 +316,8 @@
                  summary="yes"/>
       <copy todir="${archive.dir}">
        <fileset dir="${issue.dir}"/>
-       <fileset dir="${development-j.dir}" includes="sa-source.zip"/>
-       <fileset dir="${build-resources.dir}" includes="source.zip"/>
+       <fileset dir="${source-eej.dir}" includes="saxonee${version}source.zip"/>
+       <fileset dir="${build-resources.dir}" includes="saxon${version}source.zip"/>
       </copy>
       <zip zipfile="${archive.dir}/testsuite.zip">
         <fileset dir="e:/tests">
@@ -328,18 +328,21 @@
       <zip zipfile="${archive.dir}/schematests.zip">
         <fileset dir="e:/tests">
           <include name="xmlschema2006-11-06/**"/>
-          <exclude name="xmlschema2006-11-06/msData"/>
-          <exclude name="xmlschema2006-11-06/sunData"/>
-          <exclude name="xmlschema2006-11-06/nistData"/>
+          <exclude name="xmlschema2006-11-06/msData/**"/>
+          <exclude name="xmlschema2006-11-06/sunData/**"/>
+          <exclude name="xmlschema2006-11-06/nistData/**"/>
         </fileset>
       </zip>
       <zip zipfile="${archive.dir}/querytests.zip">
         <fileset dir="e:/tests/xqts-extra"/>
         <fileset dir="e:/xqts/saxon">
           <exclude name="results/**"/>
+          <exclude name="results.net/**"/>
+          <exclude name="**/java/**"/>
         </fileset>
         <fileset dir="e:/xquts/saxon">
           <exclude name="results/**"/>
+          <exclude name="results.net/**"/>
         </fileset>
       </zip>
       <zip zipfile="${archive.dir}/xslttests.zip">
@@ -355,7 +358,7 @@
       </zip>
       <zip zipfile="${archive.dir}/javatests.zip">
         <fileset dir="c:/MyJava/testcode"/>
-      </zip>
+      </zip>
       <zip zipfile="${archive.dir}/doc.zip">
         <fileset dir="c:/MyJava/doc"/>
       </zip>
@@ -366,11 +369,14 @@
         <fileset dir="c:/MyDotNet/make"/>
       </zip>      
       <zip zipfile="${archive.dir}/licenses.zip">
-        <fileset dir="c:/saxon-licenses"/>
+        <fileset dir="c:/saxon-licenses">
+            <exclude name="archived-licenses/**"/>
+            <exclude name="licenses/**"/>
+        </fileset>    
       </zip>
       <zip zipfile="${archive.dir}/build.zip">
         <fileset dir="c:/MyJava/build">
-          <exclude name="c:/MyJava/build/temp"/>
+          <exclude name="c:/MyJava/build/temp/**"/>
         </fileset>
       </zip>
     </target>  
