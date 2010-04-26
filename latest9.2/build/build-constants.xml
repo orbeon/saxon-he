@@ -28,9 +28,9 @@
     -->
     
     
-    <property name="version" value="9.2.0.7"/>
-    <property name="versionh" value="9-2-0-7"/>
-    <property name="release.date" value="2010-02-26"/>
+    <property name="version" value="9.2.1.1"/>
+    <property name="versionh" value="9-2-1-1"/>
+    <property name="release.date" value="2010-04-26"/>
     
     <!-- REMEMBER ALSO TO SET THE VERSION IN AssemblyInfo.cs and Version.java -->
     
@@ -64,7 +64,8 @@
     
     <!-- directories holding use cases and sample applications -->
     <property name="usecases.dir" value="${root}/MyJava/use-cases"/>
-    <property name="samples.dir" value="${root}/MyJava/samples"/>
+    <!--<property name="samples.dir" value="${root}/MyJava/samples"/>-->
+    <property name="samples.dir" value="e:/saxon-build/9.2.0.2/resources/samples"/>
     
     <!-- directory in which to build the product for release -->
     <property name="product.dir" value="${oroot}/saxon-build/${version}"/>

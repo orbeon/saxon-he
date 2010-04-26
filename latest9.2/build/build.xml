@@ -143,31 +143,76 @@
 	  <copy todir="${product.dir}/hej">
         <fileset dir="${userdoc.dir}/welcome">
           <include name="doc/**"/>
-          <include name="notices/**"/>
+          <include name="notices/CERN.txt"/>
+          <include name="notices/JAMESCLARK.txt"/>
+          <include name="notices/LEGAL.txt"/>
+          <include name="notices/LICENSE.txt"/>
+          <include name="notices/THAI.txt"/>
+          <include name="notices/UNICODE.txt"/>
         </fileset>
       </copy>
       <copy todir="${product.dir}/pej">
         <fileset dir="${userdoc.dir}/welcome">
           <include name="doc/**"/>
-          <include name="notices/**"/>
+          <include name="notices/CERN.txt"/>
+          <include name="notices/JAMESCLARK.txt"/>
+          <include name="notices/LEGAL.txt"/>
+          <include name="notices/LICENSE.txt"/>
+          <include name="notices/THAI.txt"/>
+          <include name="notices/UNICODE.txt"/>
         </fileset>
       </copy>
       <copy todir="${product.dir}/eej">
         <fileset dir="${userdoc.dir}/welcome">
           <include name="doc/**"/>
-          <include name="notices/**"/>
+          <include name="notices/CERN.txt"/>
+          <include name="notices/JAMESCLARK.txt"/>
+          <include name="notices/LEGAL.txt"/>
+          <include name="notices/LICENSE.txt"/>
+          <include name="notices/THAI.txt"/>
+          <include name="notices/UNICODE.txt"/>
         </fileset>
       </copy>
       <copy todir="${product.dir}/hen">
         <fileset dir="${userdoc.dir}/welcome">
           <include name="doc/**"/>
-          <include name="notices/**"/>
+          <include name="notices/CERN.txt"/>
+          <include name="notices/JAMESCLARK.txt"/>
+          <include name="notices/LEGAL.txt"/>
+          <include name="notices/LICENSE.txt"/>
+          <include name="notices/THAI.txt"/>
+          <include name="notices/UNICODE.txt"/>
+          <include name="notices/APACHE-XERCES.txt"/>
+          <include name="notices/FRIJTERS.txt"/>
+          <include name="notices/GPL+CLASSPATH.txt"/>
+        </fileset>
+      </copy>
+      <copy todir="${product.dir}/pen">
+        <fileset dir="${userdoc.dir}/welcome">
+          <include name="doc/**"/>
+          <include name="notices/CERN.txt"/>
+          <include name="notices/JAMESCLARK.txt"/>
+          <include name="notices/LEGAL.txt"/>
+          <include name="notices/LICENSE.txt"/>
+          <include name="notices/THAI.txt"/>
+          <include name="notices/UNICODE.txt"/>
+          <include name="notices/APACHE-XERCES.txt"/>
+          <include name="notices/FRIJTERS.txt"/>
+          <include name="notices/GPL+CLASSPATH.txt"/>
         </fileset>
       </copy>
       <copy todir="${product.dir}/een">
         <fileset dir="${userdoc.dir}/welcome">
           <include name="doc/**"/>
-          <include name="notices/**"/>
+          <include name="notices/CERN.txt"/>
+          <include name="notices/JAMESCLARK.txt"/>
+          <include name="notices/LEGAL.txt"/>
+          <include name="notices/LICENSE.txt"/>
+          <include name="notices/THAI.txt"/>
+          <include name="notices/UNICODE.txt"/>
+          <include name="notices/APACHE-XERCES.txt"/>
+          <include name="notices/FRIJTERS.txt"/>
+          <include name="notices/GPL+CLASSPATH.txt"/>
         </fileset>
       </copy>
    <!--
