@@ -230,6 +230,15 @@ public class Closure extends Value {
         return new SequenceExtent(iterate()).reduce();
     }
 
+    /**
+     * Override value.toString() to prevent side-effects in the debugger
+     * @return
+     */
+
+    public String toString() {
+        return "";
+    }
+
 }
 
 //
