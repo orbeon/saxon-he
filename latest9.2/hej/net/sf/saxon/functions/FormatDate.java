@@ -52,9 +52,8 @@ public class FormatDate extends SystemFunction {
             countryVal = (StringValue)argument[4].evaluateItem(context);
         }
 
-        Configuration config = context.getConfiguration();
-        String language = (languageVal == null ? config.getDefaultLanguage() : languageVal.getStringValue());
-        String country = (countryVal == null ? config.getDefaultCountry() : countryVal.getStringValue());
+        String language = (languageVal == null ? null : languageVal.getStringValue());
+        String country = (countryVal == null ? null : countryVal.getStringValue());
         CharSequence result = formatDate(value, format, language, country, context);
         if (calendarVal != null) {
             String cal = calendarVal.getStringValue();
@@ -79,9 +78,18 @@ public class FormatDate extends SystemFunction {
     private static CharSequence formatDate(CalendarValue value, String format, String language, String country, XPathContext context)
     throws XPathException {
 
+        Configuration config = context.getConfiguration();
+        boolean languageDefaulted = (language == null);
+        if (language == null) {
+            language = config.getDefaultLanguage();
+        }
+        if (country == null) {
+            country = config.getDefaultCountry();
+        }
+
         Numberer numberer = context.getConfiguration().makeNumberer(language, country);
         FastStringBuffer sb = new FastStringBuffer(FastStringBuffer.SMALL);
-        if (numberer.getClass() == Numberer_en.class && !"en".equals(language)) {
+        if (numberer.getClass() == Numberer_en.class && !"en".equals(language) && !languageDefaulted) {
             sb.append("[Language: en]");
         }
         int i = 0;
