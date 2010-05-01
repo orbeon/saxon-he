@@ -146,6 +146,7 @@ public class DocumentBuilderImpl extends DocumentBuilder {
                     reader = config.getSourceParser();
                 }
                 reader.setEntityResolver(entityResolver);
+                source.setXMLReader(reader);
             }
             if (errorHandler != null) {
                 XMLReader reader = source.getXMLReader();
@@ -153,6 +154,7 @@ public class DocumentBuilderImpl extends DocumentBuilder {
                     reader = config.getSourceParser();
                 }
                 reader.setErrorHandler(errorHandler);
+                source.setXMLReader(reader);
             }
             source.setSystemId(in.getSystemId());
             ParseOptions options = new ParseOptions();
