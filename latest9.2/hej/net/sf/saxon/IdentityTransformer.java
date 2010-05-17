@@ -27,7 +27,7 @@ class IdentityTransformer extends Controller {
                     result, pipe, getOutputProperties());
             NamespaceReducer reducer = new NamespaceReducer();
             reducer.setUnderlyingReceiver(receiver);
-            ParseOptions options = new ParseOptions();
+            ParseOptions options = pipe.getParseOptions();
             options.setContinueAfterValidationErrors(true);
             new Sender(pipe).send(source, reducer, options);
         } catch (XPathException err) {

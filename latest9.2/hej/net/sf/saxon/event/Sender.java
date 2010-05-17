@@ -407,7 +407,7 @@ public class Sender {
                     XPathException de = new XPathException("Error reported by XML parser processing " +
                             source.getSystemId() + ": " + err.getMessage(), err);
                     try {
-                        options.getErrorListener().fatalError(de);
+                        listener.fatalError(de);
                         de.setHasBeenReported(true);
                     } catch (TransformerException e) {
                         //
@@ -433,7 +433,7 @@ public class Sender {
                         (errs == 1 ? "" : "s"));
                 if (dtdRecover) {
                     try {
-                        options.getErrorListener().warning(xe);
+                        listener.warning(xe);
                     } catch (TransformerException e) {
                         //
                     }
