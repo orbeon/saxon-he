@@ -692,7 +692,7 @@ public class Query {
                     additionalSchemas = value;
                 } else if (option.equals("xsdversion")) {    // XSD 1.1
                     i++;
-                    if (!("1.0".equals(value) | "1.1".equals(value))) {
+                    if (!("1.0".equals(value) || "1.1".equals(value))) {
                         badUsage(command, "-xsdversion must be 1.0 or 1.1");
                     }
                     config.setConfigurationProperty(FeatureKeys.XSD_VERSION, value);
