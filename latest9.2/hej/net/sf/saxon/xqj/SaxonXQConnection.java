@@ -73,7 +73,7 @@ public class SaxonXQConnection extends SaxonXQDataFactory implements XQConnectio
 
     public XQStaticContext getStaticContext() throws XQException {
         checkNotClosed();
-        return staticContext;
+        return new SaxonXQStaticContext(staticContext);
     }
 
     public XQPreparedExpression prepareExpression(InputStream xquery) throws XQException {
@@ -179,7 +179,7 @@ public class SaxonXQConnection extends SaxonXQDataFactory implements XQConnectio
     public void setStaticContext(XQStaticContext properties) throws XQException {
         checkNotClosed();
         SaxonXQDataSource.checkNotNull(properties, "properties");
-        staticContext = (SaxonXQStaticContext)properties;
+        staticContext = new SaxonXQStaticContext((SaxonXQStaticContext)properties);
     }
 
     private XQException newXQException(Exception err) {

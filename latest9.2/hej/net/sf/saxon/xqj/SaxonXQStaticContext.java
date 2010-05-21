@@ -45,6 +45,31 @@ public class SaxonXQStaticContext implements XQStaticContext {
     }
 
     /**
+     * Create a SaxonXQStaticContext object as a copy of another SaxonXQStaticContext object
+     * @param sc the static context to be copied
+     */
+
+    public SaxonXQStaticContext(SaxonXQStaticContext sc) {
+        this.config = sc.config;
+        this.bindingMode = sc.bindingMode;
+        this.holdability = sc.holdability;
+        this.scrollability = sc.scrollability;
+        this.namespaces = new HashMap<String, String>(namespaces);
+        this.baseURI = sc.baseURI;
+        this.preserveBoundarySpace = sc.preserveBoundarySpace;
+        this.constructionModeIsPreserve = sc.constructionModeIsPreserve;
+        this.inheritNamespaces = sc.inheritNamespaces;
+        this.preserveNamespaces = sc.preserveNamespaces;
+        this.emptyLeast = sc.emptyLeast;
+        this.isOrdered = sc.isOrdered;
+        this.contextItemStaticType = sc.contextItemStaticType;
+        this.defaultCollationName = sc.defaultCollationName;
+        this.defaultElementNamespace = sc.defaultElementNamespace;
+        this.defaultFunctionNamespace = sc.defaultFunctionNamespace;
+    }
+
+
+    /**
      * Get a new Saxon StaticQueryContext object holding the information held in this
      * XQStaticContext
      * @return a newly constructed StaticQueryContext object
