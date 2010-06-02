@@ -144,7 +144,7 @@ public class QueryModule implements StaticContext {
 
         explicitPrologNamespaces = new HashMap<String, String>(10);
         if (sqc != null) {
-            executable = sqc.getExecutable();
+            //executable = sqc.getExecutable();
             inheritNamespaces = sqc.isInheritNamespaces();
             preserveNamespaces = sqc.isPreserveNamespaces();
             preserveSpace = sqc.isPreserveBoundarySpace();
@@ -153,7 +153,7 @@ public class QueryModule implements StaticContext {
             defaultElementNamespace = sqc.getDefaultElementNamespace();
             defaultCollationName = sqc.getDefaultCollationName();
             constructionMode = sqc.getConstructionMode();
-            if (constructionMode == Validation.PRESERVE && !executable.isSchemaAware()) {
+            if (constructionMode == Validation.PRESERVE && !sqc.isSchemaAware()) {
                 // if not schema-aware, generate untyped output by default
                 constructionMode = Validation.STRIP;
             }

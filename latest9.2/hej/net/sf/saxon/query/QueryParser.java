@@ -1082,7 +1082,7 @@ public class QueryParser extends ExpressionParser {
 
     public void applyModuleImport(Import mImport) throws XPathException {
         boolean foundOne = false;
-
+        List existingModules = null;
         // resolve the location URIs against the base URI
         for (int i=0; i<mImport.locationURIs.size(); i++) {
             try {
@@ -1094,35 +1094,47 @@ public class QueryParser extends ExpressionParser {
             }
         }
 
-        // If any of the modules are already loaded, don't re-read them; but do check that none of them
-        // references the current module namespace directly or indirectly
-        List existingModules = executable.getQueryLibraryModules(mImport.namespaceURI);
-        if (existingModules != null) {
-            //System.err.println("Number of existing modules: " + existingModules.size());
-            for (int m = 0; m < existingModules.size(); m++) {
-                QueryModule importedModule = (QueryModule)existingModules.get(m);
-                //System.err.println("Existing module location URI =  " + importedModule.getLocationURI());
-                if (importedModule.getLocationURI()!=null &&
-                        !importedModule.getLocationURI().equals(((QueryModule)env).getLocationURI())) {
-                    //QueryReader.importModuleContents(importedModule, (QueryModule)env);
-                    foundOne = true;
-                }
-                if (importedModule instanceof QueryLibrary) {
-                    // found a separately-compiled library module
-                    foundOne = true;
-                    ((QueryLibrary)importedModule).link(((QueryModule)env));
-                }
-//                if (!disableCycleChecks &&
-//                        ((QueryModule)env).getModuleNamespace() != null &&
-//                        !((QueryModule)env).getModuleNamespace().equals(importedModule.getModuleNamespace()) &&
-//                        importedModule.importsNamespaceIndirectly(((QueryModule)env).getModuleNamespace())) {
-//                    grumble("A cycle exists among the module imports, involving namespaces " +
-//                            ((QueryModule)env).getModuleNamespace() + " and " +
-//                            importedModule.getModuleNamespace());
-//                }
-                for (int h = mImport.locationURIs.size() - 1; h >= 0; h--) {
-                    if (mImport.locationURIs.get(h).equals(importedModule.getLocationURI())) {
-                        mImport.locationURIs.remove(h);
+        // See if the URI is that of a separately-compiled query library
+        QueryLibrary lib = ((QueryModule)env).getUserQueryContext().getCompiledLibrary(mImport.namespaceURI);
+        if (lib != null) {
+            executable.addQueryLibraryModule(lib);
+            foundOne = true;
+            existingModules = new ArrayList<QueryModule>();
+            existingModules.add(lib);
+            lib.link(((QueryModule)env));
+
+        } else {
+
+            // If any of the modules are already loaded, don't re-read them; but do check that none of them
+            // references the current module namespace directly or indirectly
+            existingModules = executable.getQueryLibraryModules(mImport.namespaceURI);
+            if (existingModules != null) {
+                //System.err.println("Number of existing modules: " + existingModules.size());
+                for (int m = 0; m < existingModules.size(); m++) {
+                    QueryModule importedModule = (QueryModule)existingModules.get(m);
+                    //System.err.println("Existing module location URI =  " + importedModule.getLocationURI());
+                    if (importedModule.getLocationURI()!=null &&
+                            !importedModule.getLocationURI().equals(((QueryModule)env).getLocationURI())) {
+                        //QueryReader.importModuleContents(importedModule, (QueryModule)env);
+                        foundOne = true;
+                    }
+//                    if (importedModule instanceof QueryLibrary) {
+//                        // found a separately-compiled library module
+//                        foundOne = true;
+//                        ((QueryLibrary)importedModule).link(((QueryModule)env));
+//                    }
+    //                if (!disableCycleChecks &&
+    //                        ((QueryModule)env).getModuleNamespace() != null &&
+    //                        !((QueryModule)env).getModuleNamespace().equals(importedModule.getModuleNamespace()) &&
+    //                        importedModule.importsNamespaceIndirectly(((QueryModule)env).getModuleNamespace())) {
+    //                    grumble("A cycle exists among the module imports, involving namespaces " +
+    //                            ((QueryModule)env).getModuleNamespace() + " and " +
+    //                            importedModule.getModuleNamespace());
+    //                }
+                    for (int h = mImport.locationURIs.size() - 1; h >= 0; h--) {
+                        if (mImport.locationURIs.get(h).equals(importedModule.getLocationURI())) {
+                            mImport.locationURIs.remove(h);
+                        }
                     }
                 }
             }

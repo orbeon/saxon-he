@@ -190,7 +190,7 @@ public class XQueryCompiler {
      */
 
     public void setSchemaAware(boolean schemaAware) {
-        env.getExecutable().setSchemaAware(schemaAware);
+        env.setSchemaAware(schemaAware);
     }
 
     /**
@@ -201,7 +201,7 @@ public class XQueryCompiler {
      */
 
     public boolean isSchemaAware() {
-        return env.getExecutable().isSchemaAware();
+        return env.isSchemaAware();
     }
 
     /**

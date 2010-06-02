@@ -3687,7 +3687,7 @@ public class Configuration implements Serializable, SourceResolver {
             }
 
         } else if (name.equals(FeatureKeys.XQUERY_SCHEMA_AWARE)) {
-            getDefaultStaticQueryContext().getExecutable().setSchemaAware(requireBoolean(name, value));
+            getDefaultStaticQueryContext().setSchemaAware(requireBoolean(name, value));
 
         } else if (name.equals(FeatureKeys.XQUERY_STATIC_ERROR_LISTENER_CLASS)) {
             getDefaultStaticQueryContext().setErrorListener(
@@ -3974,7 +3974,7 @@ public class Configuration implements Serializable, SourceResolver {
             return getDefaultStaticQueryContext().getRequiredContextItemType();
 
         } else if (name.equals(FeatureKeys.XQUERY_SCHEMA_AWARE)) {
-            return getDefaultStaticQueryContext().getExecutable().isSchemaAware();
+            return getDefaultStaticQueryContext().isSchemaAware();
 
         } else if (name.equals(FeatureKeys.XQUERY_STATIC_ERROR_LISTENER_CLASS)) {
             return getDefaultStaticQueryContext().getErrorListener().getClass().getName();

@@ -77,7 +77,7 @@ public class SaxonXQStaticContext implements XQStaticContext {
 
     protected StaticQueryContext getSaxonStaticQueryContext() {
         StaticQueryContext sqc = config.newStaticQueryContext();
-        sqc.getExecutable().setSchemaAware(config.isLicensedFeature(Configuration.LicenseFeature.SCHEMA_VALIDATION));
+        sqc.setSchemaAware(config.isLicensedFeature(Configuration.LicenseFeature.SCHEMA_VALIDATION));
         sqc.setBaseURI(baseURI);
         sqc.setConstructionMode(constructionModeIsPreserve ? Validation.PRESERVE : Validation.STRIP);
         sqc.setDefaultElementNamespace(defaultElementNamespace);

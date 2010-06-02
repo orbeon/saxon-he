@@ -57,7 +57,7 @@ public class StaticQueryContext {
     private String baseURI;
     private HashMap<String, String> userDeclaredNamespaces;
     private Set userDeclaredVariables;
-    private Executable executable;
+    //private Executable executable;
     private boolean inheritNamespaces = true;
     private boolean preserveNamespaces = true;
     private int constructionMode = Validation.PRESERVE;
@@ -73,6 +73,9 @@ public class StaticQueryContext {
     private boolean generateCode = false;
     private boolean isUpdating = false;
     private String languageVersion = "1.0";
+    private CollationMap collationMap;
+    private LocationMap locationMap;
+    private boolean schemaAware;
 
     /**
      * Private constructor used when copying a context
@@ -102,12 +105,12 @@ public class StaticQueryContext {
             errorListener = ((StandardErrorListener)errorListener).makeAnother(Configuration.XQUERY);
             ((StandardErrorListener)errorListener).setRecoveryPolicy(Configuration.DO_NOT_RECOVER);
         }
-        //collations = new CollationMap(config);
-        executable = new Executable(config);
-        executable.setCollationTable(new CollationMap(config.getCollationMap()));
-        executable.setHostLanguage(Configuration.XQUERY);
-        executable.setLocationMap(new LocationMap());
-        executable.setSchemaAware((Boolean)config.getConfigurationProperty(FeatureKeys.XQUERY_SCHEMA_AWARE));
+        collationMap = new CollationMap(config.getCollationMap());
+        //executable = new Executable(config);
+        //executable.setCollationTable(new CollationMap(config.getCollationMap()));
+        //executable.setHostLanguage(Configuration.XQUERY);
+        locationMap = new LocationMap();
+        schemaAware = ((Boolean)config.getConfigurationProperty(FeatureKeys.XQUERY_SCHEMA_AWARE));
         reset();
     }
 
@@ -132,11 +135,11 @@ public class StaticQueryContext {
                  errorListener = ((StandardErrorListener)errorListener).makeAnother(Configuration.XQUERY);
                  ((StandardErrorListener)errorListener).setRecoveryPolicy(Configuration.DO_NOT_RECOVER);
              }
-             //collations = new CollationMap(config);
-             executable = new Executable(config);
-             executable.setCollationTable(new CollationMap(config.getCollationMap()));
-             executable.setHostLanguage(Configuration.XQUERY);
-             executable.setLocationMap(new LocationMap());
+             collationMap = new CollationMap(config);
+             //executable = new Executable(config);
+             //executable.setCollationTable(new CollationMap(config.getCollationMap()));
+             //executable.setHostLanguage(Configuration.XQUERY);
+             locationMap = new LocationMap();
              reset();
          } else {
              copyFrom(config.getDefaultStaticQueryContext());
@@ -179,10 +182,12 @@ public class StaticQueryContext {
         generateCode = c.generateCode;
         isUpdating = c.isUpdating;
         languageVersion = c.languageVersion;
-        executable = new Executable(config);
-        executable.setCollationTable(new CollationMap(c.executable.getCollationTable()));
-        executable.setHostLanguage(Configuration.XQUERY);
-        executable.setLocationMap(new LocationMap());
+        collationMap = new CollationMap(c.collationMap);
+        locationMap = new LocationMap();
+//        executable = new Executable(config);
+//        executable.setCollationTable(new CollationMap(c.executable.getCollationTable()));
+//        executable.setHostLanguage(Configuration.XQUERY);
+//        executable.setLocationMap(new LocationMap());
     }
 
 
@@ -262,24 +267,54 @@ public class StaticQueryContext {
     }
 
     /**
-     * Set the Executable to contain this query. Normally a query constitutes its own Executable,
-     * and the executable will then be created automatically. This method is used when the query is to
-     * share the same executable as a host program, specifically, an XSLT stylesheet that imports the
-     * query.
-     * @param executable the executable
-     */
+      * Set the Executable to contain this query. Normally a query constitutes its own Executable,
+      * and the executable will then be created automatically. This method is used when the query is to
+      * share the same executable as a host program, specifically, an XSLT stylesheet that imports the
+      * query.
+      * @param executable the executable
+      * @throws UnsupportedOperationException since Saxon 9.2.1.2 - the StaticQueryContext no longer contains
+      * an Executable, because it needs to be sharable by multiple queries.
+      */
 
-    public void setExecutable(Executable executable) {
-        this.executable = executable;
-    }
+     public void setExecutable(Executable executable) {
+         //this.executable = executable;
+         throw new UnsupportedOperationException();
+     }
+
 
     /**
-     * Get the executable containing this query
+     * Get the executable containing this query. Changed in 9.2.1.2 to create the Executable, since the StaticQueryContext
+     * no longer contains an Executable, but rather creates a new one for each query.
      * @return the executable (or null if not set)
      */
 
     public Executable getExecutable() {
+        Executable executable = new Executable(config);
+        executable.setCollationTable(collationMap);
+        executable.setLocationMap(locationMap);
+        executable.setSchemaAware(schemaAware);
+        executable.setHostLanguage(Configuration.XQUERY);
         return executable;
+    }
+
+    /**
+     * Say whether this query is schema-aware
+     * @param aware true if this query is schema-aware
+     * @since 9.2.1.2
+     */
+
+    public void setSchemaAware(boolean aware) {
+        this.schemaAware = aware;
+    }
+
+    /**
+     * Ask whether this query is schema-aware
+     * @return true if this query is schema-aware
+     * @since 9.2.1.2
+     */
+
+    public boolean isSchemaAware() {
+        return schemaAware;
     }
 
     /**
@@ -480,6 +515,11 @@ public class StaticQueryContext {
         QueryParser qp = newQueryParser(isUpdating, languageVersion);
         qp.setCompileWithTracing(isCompileWithTracing() || config.isCompileWithTracing());
         QueryModule mainModule = new QueryModule(this);
+        Executable executable = new Executable(config);
+        executable.setCollationTable(collationMap);
+        executable.setLocationMap(locationMap);
+        executable.setSchemaAware(schemaAware);
+        executable.setHostLanguage(Configuration.XQUERY);
         mainModule.setExecutable(executable);
         return qp.makeXQueryExpression(query, mainModule, config);
     }
@@ -577,6 +617,20 @@ public class StaticQueryContext {
              throws XPathException, IOException {
          throw new UnsupportedOperationException("Separate compilation of query libraries requires Saxon-EE");
      }
+    
+    /**
+     * Get a previously compiled library module
+     * @param namespace the module namespace
+     * @return the QueryLibrary if a module with this namespace has been compiled as a library module;
+     * otherwise null. Always null when not using Saxon-EE.
+     * @since 9.2.1.2
+     */
+
+    public QueryLibrary getCompiledLibrary(String namespace) {
+        return null;
+    }
+
+
 
 
     /**
@@ -890,7 +944,7 @@ public class StaticQueryContext {
      */
 
     public void declareCollation(String name, StringCollator comparator) {
-        executable.getCollationTable().setNamedCollation(name, comparator);
+        collationMap.setNamedCollation(name, comparator);
     }
 
     /**
@@ -903,7 +957,7 @@ public class StaticQueryContext {
      */
 
     public void declareDefaultCollation(String name)  {
-        executable.getCollationTable().setDefaultCollationName(name);
+        collationMap.setDefaultCollationName(name);
     }
 
     /**
@@ -917,7 +971,7 @@ public class StaticQueryContext {
      */
 
     public StringCollator getCollation(String name) {
-        return executable.getCollationTable().getNamedCollation(name);
+        return collationMap.getNamedCollation(name);
     }
 
     /**
@@ -926,7 +980,7 @@ public class StaticQueryContext {
      */
 
     public CollationMap getCollationMap() {
-        return executable.getCollationTable();
+        return collationMap;
     }
 
     /**
@@ -942,7 +996,7 @@ public class StaticQueryContext {
      */
 
     public String getDefaultCollationName() {
-        return executable.getCollationTable().getDefaultCollationName();
+        return collationMap.getDefaultCollationName();
     }
 
     /**
@@ -955,7 +1009,7 @@ public class StaticQueryContext {
      */
 
     public CollationMap getAllCollations() {
-        return new CollationMap(executable.getCollationTable());
+        return new CollationMap(collationMap);
     }
 
     /**

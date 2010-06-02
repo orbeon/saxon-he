@@ -121,7 +121,7 @@ public class Query {
         config.setHostLanguage(Configuration.XQUERY);
 
         StaticQueryContext staticEnv = config.newStaticQueryContext();
-        staticEnv.getExecutable().setSchemaAware(schemaAware);
+        staticEnv.setSchemaAware(schemaAware);
         DynamicQueryContext dynamicEnv = new DynamicQueryContext(config);
 
         // Check the command-line arguments.
