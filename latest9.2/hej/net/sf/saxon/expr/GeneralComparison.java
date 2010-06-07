@@ -38,6 +38,17 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
         singletonOperator = getSingletonOperator(op);
     }
 
+   @Override
+    public Expression simplify(ExpressionVisitor visitor) throws XPathException {
+        Expression e = super.simplify(visitor);
+        if (e == this) {
+            e = visitor.getConfiguration().getOptimizer().simplifyGeneralComparison(
+                    this, visitor.getStaticContext().isInBackwardsCompatibleMode());
+        }
+        ExpressionTool.copyLocationInfo(this, e);
+        return e;
+    }    
+
     /**
      * Get the AtomicComparer used to compare atomic values. This encapsulates any collation that is used
      */

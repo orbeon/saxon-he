@@ -881,8 +881,8 @@ public class ExpressionParser {
             case Token.GE:
                 op = t.currentToken;
                 nextToken();
-                exp = env.getConfiguration().getOptimizer().makeGeneralComparison(
-                        exp, op, parseRangeExpression(), env.isInBackwardsCompatibleMode());
+                exp = new GeneralComparison(
+                        exp, op, parseRangeExpression());
                 setLocation(exp);
                 return exp;
 

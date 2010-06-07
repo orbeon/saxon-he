@@ -139,14 +139,16 @@ public class GeneralComparison10 extends BinaryExpression {
             // or the complications of converting values to numbers
             if (operator == Token.EQUALS || operator == Token.NE) {
                 if ((!maybeNumeric0 && !maybeNumeric1) || (numeric0 && numeric1)) {
-                    BinaryExpression gc = opt.makeGeneralComparison(operand0, operator, operand1, false);
-                    ExpressionTool.copyLocationInfo(this, gc);
-                    return visitor.optimize(visitor.typeCheck(gc, contextItemType), contextItemType);
+                    GeneralComparison gc = new GeneralComparison(operand0, operator, operand1);
+                    BinaryExpression binExp = visitor.getConfiguration().getOptimizer().simplifyGeneralComparison(gc, false);
+                    ExpressionTool.copyLocationInfo(this, binExp);
+                    return visitor.optimize(visitor.typeCheck(binExp, contextItemType), contextItemType);
                 }
             } else if (numeric0 && numeric1) {
-                BinaryExpression gc = opt.makeGeneralComparison(operand0, operator, operand1, false);
-                ExpressionTool.copyLocationInfo(this, gc);
-                return visitor.optimize(visitor.typeCheck(gc, contextItemType), contextItemType);
+                GeneralComparison gc = new GeneralComparison(operand0, operator, operand1);
+                BinaryExpression binExp = visitor.getConfiguration().getOptimizer().simplifyGeneralComparison(gc, false);
+                ExpressionTool.copyLocationInfo(this, binExp);
+                return visitor.optimize(visitor.typeCheck(binExp, contextItemType), contextItemType);
             }
         }
 

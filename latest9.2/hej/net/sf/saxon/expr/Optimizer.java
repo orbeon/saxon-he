@@ -76,21 +76,21 @@ public class Optimizer implements Serializable {
     }
 
     /**
-     * Create a GeneralComparison expression
-     * @param p0 the first operand
-     * @param op the operator
-     * @param p1 the second operand
-     * @param backwardsCompatible true if XPath 1.0 backwards compatibility is in force
-     * @return the constructed expression
+     * Simplify a GeneralComparison expression
+     * @param gc the GeneralComparison to be simplified
+     * @param backwardsCompatible true if in 1.0 compatibility mode
+     * @return the simplified expression
      */
 
-    public BinaryExpression makeGeneralComparison(Expression p0, int op, Expression p1, boolean backwardsCompatible) {
+    public BinaryExpression simplifyGeneralComparison(GeneralComparison gc, boolean backwardsCompatible) {
         if (backwardsCompatible) {
-            return new GeneralComparison10(p0, op, p1);
+            Expression[] operands = gc.getOperands();
+            return new GeneralComparison10(operands[0], gc.getOperator(), operands[1]);
         } else {
-            return new GeneralComparison(p0, op, p1);
+            return gc;
         }
     }
+
 
     /**
      * Attempt to optimize a copy operation. Return null if no optimization is possible.
