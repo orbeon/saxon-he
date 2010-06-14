@@ -185,7 +185,7 @@ namespace Saxon.Api
         /// and probably disastrous.
         /// </summary>
 
-        public Boolean TrustResultType {
+        public virtual Boolean TrustResultType {
             get{return false;}
         }
 
@@ -194,7 +194,7 @@ namespace Saxon.Api
         /// item, position, or size from the dynamic context. This inhibits certain Saxon optimizations.
         /// </summary>
 
-        public Boolean DependsOnFocus {
+        public virtual Boolean DependsOnFocus {
             get{return false;}
         }
 
@@ -205,7 +205,7 @@ namespace Saxon.Api
         /// as expected.
         /// </summary>
 
-        public Boolean HasSideEffects {
+        public virtual Boolean HasSideEffects {
             get{return false;}
         }
 
@@ -241,7 +241,7 @@ namespace Saxon.Api
         /// </remarks>
         /// <param name="context">Information about the static context in which the function is called</param>
 
-        public void SupplyStaticContext(StaticContext context)
+        public virtual void SupplyStaticContext(StaticContext context)
         {
             // default: no action
         }
@@ -255,7 +255,7 @@ namespace Saxon.Api
         /// <param name="destination">The new extension function object. This will always be an instance of the same
         /// class as the existing object.</param>
 
-        public void CopyLocalData(ExtensionFunctionCall destination) { }
+        public virtual void CopyLocalData(ExtensionFunctionCall destination) { }
 
         /// <summary>
         /// Method called at run time to evaluate the function.
