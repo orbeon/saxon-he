@@ -190,6 +190,7 @@ public class ArithmeticExpression extends BinaryExpression {
     public Expression copy() {
         ArithmeticExpression ae = new ArithmeticExpression(operand0.copy(), operator, operand1.copy());
         ae.calculator = calculator;
+        ae.simplified = simplified;
         return ae;
     }
 
