@@ -332,7 +332,7 @@ public final class DoubleValue extends NumericValue {
 
         d /= factor;
         if (value < 0) {
-            d = 0.0 -d;
+            d = -d;
         }
         return new DoubleValue(d);
 
