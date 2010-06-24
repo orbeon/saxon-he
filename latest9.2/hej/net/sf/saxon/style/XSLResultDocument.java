@@ -224,11 +224,7 @@ public class XSLResultDocument extends StyleElement {
             NodeInfo first = (NodeInfo)kids.next();
             if (first instanceof LiteralResultElement) {
                 if (first.getFingerprint() == getNamePool().allocate("", NamespaceConstant.XHTML, "html")) {
-                    if (backwardsCompatibleModeIsEnabled()) {
-                        globalProps.setProperty("method", "xml");
-                    } else {
-                        globalProps.setProperty("method", "xhtml");
-                    }
+                    globalProps.setProperty("method", "xhtml");
                 } else if (first.getLocalPart().equalsIgnoreCase("html") && first.getURI().length() == 0) {
                     globalProps.setProperty("method", "html");
                 } else {
