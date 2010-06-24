@@ -300,7 +300,7 @@ public class SerializerFactory implements Serializable {
             target = filter;
         }
         if (!"no".equals(props.getProperty(SaxonOutputKeys.ESCAPE_URI_ATTRIBUTES))) {
-            ProxyReceiver escaper = newHTMLURIEscaper(pipe, props);
+            ProxyReceiver escaper = newXHTMLURIEscaper(pipe, props);
             escaper.setUnderlyingReceiver(target);
             target = escaper;
         }
@@ -531,6 +531,20 @@ public class SerializerFactory implements Serializable {
 
     protected ProxyReceiver newHTMLURIEscaper(PipelineConfiguration pipe, Properties outputProperties) {
         HTMLURIEscaper r = new HTMLURIEscaper();
+        r.setPipelineConfiguration(pipe);
+        return r;
+    }
+
+    /**
+     * Create a new XHTML URI Escaper, responsible for percent-encoding of URIs in
+     * HTML output documents. This method exists so that it can be overridden in a subclass.
+     * @param pipe the pipeline configuration
+     * @param outputProperties the serialization parameters
+     * @return the newly created HTML URI escaper.
+     */
+
+    protected ProxyReceiver newXHTMLURIEscaper(PipelineConfiguration pipe, Properties outputProperties) {
+        XHTMLURIEscaper r = new XHTMLURIEscaper();
         r.setPipelineConfiguration(pipe);
         return r;
     }
