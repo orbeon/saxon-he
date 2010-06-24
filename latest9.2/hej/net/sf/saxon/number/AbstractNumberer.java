@@ -145,21 +145,21 @@ public abstract class AbstractNumberer implements Numberer, Serializable {
             if (number == 0 || number > 20) {
                 return "" + number;
             }
-            return "" + (char)(0x2460 + number);
+            return "" + (char)(0x2460 + number - 1);
 
         case '\u2474':
             // parenthesized digits
             if (number == 0 || number > 20) {
                 return "" + number;
             }
-            return "" + (char)(0x2474 + number);
+            return "" + (char)(0x2474 + number - 1);
 
         case '\u2488':
             // digit full stop
             if (number == 0 || number > 20) {
                 return "" + number;
             }
-            return "" + (char)(0x2488 + number);             
+            return "" + (char)(0x2488 + number - 1);             
 
         case '\u0391':
             if (number==0) {
