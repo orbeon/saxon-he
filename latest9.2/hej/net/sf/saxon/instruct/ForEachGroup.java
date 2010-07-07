@@ -308,11 +308,13 @@ public class ForEachGroup extends Instruction
 
     protected void promoteInst(PromotionOffer offer) throws XPathException {
         select = doPromotion(this, select, offer);
-        action = doPromotion(this, action, offer);
-        key = doPromotion(this, key, offer);
+        if (offer.action == PromotionOffer.INLINE_VARIABLE_REFERENCES ||
+                offer.action == PromotionOffer.EXTRACT_GLOBAL_VARIABLES) {
+            // Don't pass on other requests
+            action = doPromotion(this, action, offer);
+            key = doPromotion(this, key, offer);
+        }
         // TODO: promote expressions in the sort key definitions
-        // Note: this mechanism seems to make no distinction between subexpressions that change focus and those
-        // that don't. This probably relies on some promotions never being used at the XSLT level.
     }
 
     /**

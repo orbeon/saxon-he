@@ -203,7 +203,11 @@ public class ForEach extends Instruction implements ContextMappingFunction {
 
     protected void promoteInst(PromotionOffer offer) throws XPathException {
         select = doPromotion(this, select, offer);
-        action = doPromotion(this, action, offer);
+        if (offer.action == PromotionOffer.INLINE_VARIABLE_REFERENCES ||
+                offer.action == PromotionOffer.EXTRACT_GLOBAL_VARIABLES) {
+            // Don't pass on other requests
+            action = doPromotion(this, action, offer);
+        }
     }
 
     /**
