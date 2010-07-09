@@ -41,6 +41,10 @@ public class MessageWarner extends XMLEmitter {
         }
     }
 
+    public void close() {
+        // do nothing
+    }    
+
 }
 
 //
