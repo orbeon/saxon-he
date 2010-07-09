@@ -1468,8 +1468,8 @@ public abstract class StyleElement extends ElementImpl
         //Expression result = Literal.makeEmptySequence();
         int locationId = allocateLocationId(getSystemId(), getLineNumber());
         List<Expression> contents = new ArrayList<Expression>(10);
+        int lineNumber = getLineNumber();
         while (true) {
-            int lineNumber = getLineNumber();
             NodeInfo node = ((NodeInfo)iter.next());
             if (node == null) {
                 //return result;
