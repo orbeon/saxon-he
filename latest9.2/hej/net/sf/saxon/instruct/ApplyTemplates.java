@@ -145,6 +145,12 @@ public class ApplyTemplates extends Instruction {
         return this;
     }
 
+    public int getIntrinsicDependencies() {
+        // If the instruction uses mode="#current", this represents a dependency on the context
+        // which means the instruction cannot be loop-lifted or moved to a global variable.
+        // We overload the dependency DEPENDS_ON_CURRENT_ITEM to achieve this effect.
+        return super.getIntrinsicDependencies() | (useCurrentMode ? StaticProperty.DEPENDS_ON_CURRENT_ITEM : 0);
+    }
 
     /**
      * Copy an expression. This makes a deep copy.
