@@ -309,13 +309,19 @@ public class XQueryCompiler {
      */
 
     public void compileLibrary(File query) throws SaxonApiException, IOException {
+        FileInputStream stream = null;
         try {
+            stream = new FileInputStream(query);
             String savedBaseUri = env.getBaseURI();
             env.setBaseURI(query.toURI().toString());
-            env.compileQuery(new FileInputStream(query), encoding);
+            env.compileLibrary(stream, encoding);
             env.setBaseURI(savedBaseUri);
         } catch (XPathException e) {
             throw new SaxonApiException(e);
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
         }
     }
 
@@ -393,15 +399,21 @@ public class XQueryCompiler {
      */
 
     public XQueryExecutable compile(File query) throws SaxonApiException, IOException {
+        FileInputStream stream = null;
         try {
+            stream = new FileInputStream(query);
             String savedBaseUri = env.getBaseURI();
             env.setBaseURI(query.toURI().toString());
             XQueryExecutable exec =
-                    new XQueryExecutable(processor, env.compileQuery(new FileInputStream(query), encoding));
+                    new XQueryExecutable(processor, env.compileQuery(stream, encoding));
             env.setBaseURI(savedBaseUri);
             return exec;
         } catch (XPathException e) {
             throw new SaxonApiException(e);
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
         }
     }
 
@@ -440,24 +452,6 @@ public class XQueryCompiler {
             throw new SaxonApiException(e);
         }
     }
-
-    /**
-     * Compile an XQuery library module, together with any modules that it imports, as a free-standing
-     * function library.
-     * @since 9.2
-     */
-
-//    public XQueryLibrary compileLibrary(File libraryModule) throws SaxonApiException, IOException {
-//        try {
-//            String savedBaseUri = env.getBaseURI();
-//            env.setBaseURI(libraryModule.toURI().toString());
-//            XQueryLibrary exec =
-//                    new XQueryLibrary(processor, env.compileLibrary(new FileInputStream(libraryModule), encoding));
-//            env.setBaseURI(savedBaseUri);
-//            return exec;
-//        } catch (XPathException e) {
-//            throw new SaxonApiException(e);
-//        }
 
     /**
      * Get the underlying {@link net.sf.saxon.query.StaticQueryContext} object that maintains the static context
