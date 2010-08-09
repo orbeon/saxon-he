@@ -116,6 +116,10 @@ public class StandardURIResolver implements NonDelegatingURIResolver, Serializab
 
         // System.err.println("StandardURIResolver, href=" + href + ", base=" + base);
 
+        // Following commented-out line added experimentally 2010-05-21; it seems to solve problems
+        // when file-names containing non-ASCII characters are used, but is not being committed for the moment
+        // because there may be unknown consequences for other test cases.
+        // base = EscapeURI.iriToUri(base).toString();
         String relativeURI = href;
         String id = null;
 
