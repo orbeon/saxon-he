@@ -99,21 +99,6 @@
             <exclude name="org.w3c.dom.html.HTMLDOMImplementation.class"/>
             <exclude name="META-INF/MANIFEST.MF"/>
         </jar> 
-        <!--<ikvmc home="${ikvm.dir}"
-               assembly="xerces" target="library" keyfile="${saxondotnet.snk}" version="${version}"
-               debug="false" srcpath="e:/Javalib/xerces-2_9_0/src"
-               out="${basedir}/${dll-n.dir}/xercesImpl.dll"
-               verbose="true">
-          <fileset dir="${basedir}/libs">
-            <include name="xerces.jar"/>
-          </fileset>
-          <reference path="mscorlib.dll"/>
-          <reference path="${dll-n.dir}/IKVM.OpenJDK.Core.dll"/>
-          <reference path="${dll-n.dir}/IKVM.OpenJDK.Charsets.dll"/>
-          <reference path="${dll-n.dir}/IKVM.OpenJDK.Text.dll"/>
-          <reference path="${dll-n.dir}/IKVM.OpenJDK.Util.dll"/>
-          <reference path="${dll-n.dir}/IKVM.OpenJDK.XML.API.dll"/>
-        </ikvmc>-->
     </target>    
         
     <target name="create-edition-properties-n" description="Create the edition.properties files for the three editions of Saxon on Java">
@@ -196,19 +181,7 @@ platform=com.saxonica.config.DotNetPlatformPE
           [assembly: AssemblyVersion("${version}")]
           [assembly: AssemblyFileVersion("${version}")]
         </echo>
-        <!-- Commented out code used when source in Visual Studio        
-        <copy todir="${temp-src-nc.dir}/cmd">
-          <fileset dir="${source-cmd-n.dir}/Transform">
-            <include name="*.cs"/>
-          </fileset>
-          <fileset dir="${source-cmd-n.dir}/Query">
-            <include name="*.cs"/>
-          </fileset>
-          <fileset dir="${source-cmd-n.dir}/Validate">
-            <include name="*.cs"/>
-          </fileset>
-        </copy>
-        -->
+ 
         <copy todir="${temp-src-nc.dir}/cmd">
           <fileset dir="${source-cmd-n.dir}">
             <include name="Transform.cs"/>
@@ -440,22 +413,14 @@ platform=com.saxonica.config.DotNetPlatformPE
           <reference path="${dll-n.dir}/IKVM.OpenJDK.XML.API.dll"/>
           <reference path="System.Security"/>
         </ikvmc>
-        
-        <!--           
-        <exec dir="." executable="ikvmc.cmd" >
-          <arg line="${dot.net.debug}"/>   <!- -set to 'debug' for testing, 'live' for final build - ->
-          <arg line="${basedir}/${jar-n.dir}"/>
-          <arg line="${basedir}/${dll-n.dir}"/>
-          <arg line="${version}"/>
-        </exec>-->
-        
+               
         <!-- NB Remember to add the dll's to the GAC - it doesn't work if you don't -->
         
     </target>
     
     <target name="csharp-hen" description="Compile C# source for .NET commands and API library (HE)"
             xmlns:dn="antlib:org.apache.ant.dotnet" depends="dll-n"
-        > <!---->
+        > 
         
         <taskdef 
             uri="antlib:org.apache.ant.dotnet">
@@ -830,12 +795,7 @@ platform=com.saxonica.config.DotNetPlatformPE
 		</dn:csc>				
 		
 				      
-		<!--		
-	    <exec dir="." executable="csharp-compile.cmd" >
-          <arg line="${basedir}/${temp-src-nc.dir}"/>
-          <arg line="${basedir}/${dll-n.dir}"/>
-          <arg line="${version}"/>
-        </exec> -->  	     
+
     </target>
     
     <target name="product-hen" description="Assemble product.directory for Saxon-HE on .NET"

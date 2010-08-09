@@ -238,6 +238,9 @@ platform=com.saxonica.config.JavaPlatformPE
         <jar basedir="${classes-j.dir}/pe" compress="${build.compress}" jarfile="${product.dir}/pej/saxon9pe.jar" update="true">
             <include name="edition.properties"/>
         </jar>
+        <jar basedir="${classes-j.dir}" compress="${build.compress}" jarfile="${product.dir}/pej/saxon9-sql.jar">
+            <include name="net/sf/saxon/option/sql/*.class"/>
+        </jar>
                 
 
     </target>
@@ -271,9 +274,7 @@ platform=com.saxonica.config.JavaPlatformPE
             <include name="com/saxonica/codegen/*.class"/>
             <include name="com/saxonica/CompileQuery.class"/>
         </jar>
-        <jar basedir="${classes-j.dir}" compress="${build.compress}" jarfile="${product.dir}/eej/saxon9-sql.jar">
-            <include name="net/sf/saxon/option/sql/*.class"/>
-        </jar>
+        
         <!-- The Saxon-Ant task is delivered with Saxon-B but it won't compile without Saxon-SA present,
              unless modified 
         <jar basedir="${classes-j.dir}" compress="${build.compress}" jarfile="${product.dir}/bj/saxon9-ant.jar">
@@ -321,6 +322,7 @@ platform=com.saxonica.config.JavaPlatformPE
     
     <target name="testdrivers-j" description="Copy Java Test Drivers">
 			<mkdir dir="${product.dir}/resources/drivers/java/test"/>
+    	<mkdir dir="${product.dir}/resources/drivers/java/test/classes"/>
 			<copy todir="${product.dir}/resources/drivers/java/test">
 			  <fileset dir="${drivers-j.dir}">
 			    <include name="XQueryTestSuiteDriver.java"/> 
@@ -331,6 +333,16 @@ platform=com.saxonica.config.JavaPlatformPE
 			    <include name="SchemaTestSuiteDriver.java"/> 
         </fileset>
       </copy>
+        <javac debug="true" debuglevel="source, lines" 
+			      destdir="${product.dir}/resources/drivers/java/test/classes"
+            srcdir="${product.dir}/resources/drivers/java" 
+            source="${build.compiler.source}"
+            target="${build.compiler.target}">
+          <include name="*.java"/>    
+          <classpath>
+            <path refid="classpath-samples"/>
+          </classpath>
+        </javac>
     </target>           
     
                   
