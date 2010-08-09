@@ -99,7 +99,10 @@ namespace Saxon.Api
         public static XdmValue Wrap(ValueRepresentation value)
         {
             XdmValue result;
-            if (value == null || value is JEmptySequence)
+            if (value == null) {
+                return null;
+            }
+            if (value is JEmptySequence)
             {
                 return XdmEmptySequence.INSTANCE;
             }
