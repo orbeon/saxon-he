@@ -33,8 +33,10 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.io.IOException;
 import java.util.*;
 import java.util.Collection;
+import java.net.URL;
 
 
 /**
@@ -228,23 +230,59 @@ public class Configuration implements Serializable, SourceResolver {
         try {
             String sConfigFile = "edition.properties";
 
-            InputStream in = Configuration.class.getClassLoader().getResourceAsStream(sConfigFile);
-            if (in == null) {
-                throw new RuntimeException("Cannot read edition.properties file");
-            }
-            Properties props = new Properties();
-            props.load(in);
-
-            String platformClassName = props.getProperty("platform");
-            if (platformClassName == null) {
-                platformClassName = "net.sf.saxon.java.JavaPlatform";
-            }
             ClassLoader loader = null;
             try {
                 loader = Thread.currentThread().getContextClassLoader();
             } catch (Exception err) {
                 System.err.println("Failed to getContextClassLoader() - continuing");
             }
+
+            if (loader == null) {
+                loader = Configuration.class.getClassLoader();
+            }
+
+            InputStream in = null;
+
+            if (loader != null) {
+                in = loader.getResourceAsStream(sConfigFile);
+                if (in == null) {
+                    System.err.println("Cannot read edition.properties file located using ClassLoader " +
+                            loader + ": using defaults");
+                }
+            } else {
+                // Means we're in a very strange class-loading environment, things are getting desparate
+                URL url = ClassLoader.getSystemResource(sConfigFile);
+                if (url != null) {
+                    try {
+                        in = url.openStream();
+                    } catch (IOException ioe) {
+                        System.err.println(
+                                "IO error " + ioe.getMessage() +
+                                " reading edition.properties located using getSystemResource(): using defaults");
+                        in = null;
+                    }
+                }
+            }
+
+            String platformClassName;
+            String configClassName;
+
+            if (in == null) {
+                platformClassName = "net.sf.saxon.java.JavaPlatform";
+                configClassName = "net.sf.saxon.Configuration";
+            } else {
+                Properties props = new Properties();
+                props.load(in);
+                platformClassName = props.getProperty("platform");
+                if (platformClassName == null) {
+                    platformClassName = "net.sf.saxon.java.JavaPlatform";
+                }
+                configClassName = props.getProperty("config");
+                if (configClassName == null) {
+                    configClassName = "net.sf.saxon.Configuration";
+                }
+            }
+
             Class platformClass;
             if (loader != null) {
                 try {
@@ -257,10 +295,6 @@ public class Configuration implements Serializable, SourceResolver {
             }
             platform = (Platform)platformClass.newInstance();
 
-            String configClassName = props.getProperty("config");
-            if (configClassName == null) {
-                configClassName = "net.sf.saxon.Configuration";
-            }
             Class configClass;
             if (loader != null) {
                 try {
@@ -276,8 +310,8 @@ public class Configuration implements Serializable, SourceResolver {
             e.printStackTrace();
             throw new RuntimeException("Failed to load configuration defined in edition.properties", e);
         }
-    }    
-
+    }
+    
     /**
      * Factory method to construct a Configuration object by reading a configuration file.
      * Requires Saxon-PE or Saxon-EE
