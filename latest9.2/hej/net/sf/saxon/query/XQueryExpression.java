@@ -779,7 +779,9 @@ public class XQueryExpression implements Container {
             while (iter.hasNext()) {
                 GlobalVariable var = (GlobalVariable)iter.next();
                 Expression select = var.getSelectExpression();
-                select.addToPathMap(pathMap, null);
+                if (select != null) {
+                    select.addToPathMap(pathMap, null);
+                }
             }
         }
         return pathMap;
