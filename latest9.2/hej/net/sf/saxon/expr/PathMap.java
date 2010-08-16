@@ -438,6 +438,8 @@ public class PathMap {
                 baseUri = ((Doc)exp).getStaticBaseURI();
             } else if (exp instanceof Document) {
                 baseUri = ((Document)exp).getStaticBaseURI();
+            } else {
+                continue;
             }
             Expression arg = ((SystemFunction)exp).getArguments()[0];
             String suppliedUri = null;
