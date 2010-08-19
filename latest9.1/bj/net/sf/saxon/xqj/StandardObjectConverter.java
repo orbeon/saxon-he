@@ -187,21 +187,21 @@ public class StandardObjectConverter implements ObjectConverter {
                 XMLGregorianCalendar g = (XMLGregorianCalendar)value;
                 QName gtype = g.getXMLSchemaType();
                 if (gtype.equals(DatatypeConstants.DATETIME)) {
-                    return DateTimeValue.makeDateTimeValue(gtype.toString()).asAtomic();
+                    return DateTimeValue.makeDateTimeValue(value.toString()).asAtomic();
                 } else if (gtype.equals(DatatypeConstants.DATE)) {
-                    return DateValue.makeDateValue(gtype.toString()).asAtomic();
+                    return DateValue.makeDateValue(value.toString()).asAtomic();
                 } else if (gtype.equals(DatatypeConstants.TIME)) {
-                    return TimeValue.makeTimeValue(gtype.toString()).asAtomic();
+                    return TimeValue.makeTimeValue(value.toString()).asAtomic();
                 } else if (gtype.equals(DatatypeConstants.GYEAR)) {
-                    return GYearValue.makeGYearValue(gtype.toString()).asAtomic();
+                    return GYearValue.makeGYearValue(value.toString()).asAtomic();
                 } else if (gtype.equals(DatatypeConstants.GYEARMONTH)) {
-                    return GYearMonthValue.makeGYearMonthValue(gtype.toString()).asAtomic();
+                    return GYearMonthValue.makeGYearMonthValue(value.toString()).asAtomic();
                 } else if (gtype.equals(DatatypeConstants.GMONTH)) {
-                    return GMonthValue.makeGMonthValue(gtype.toString()).asAtomic();
+                    return GMonthValue.makeGMonthValue(value.toString()).asAtomic();
                 } else if (gtype.equals(DatatypeConstants.GMONTHDAY)) {
-                    return GMonthDayValue.makeGMonthDayValue(gtype.toString()).asAtomic();
+                    return GMonthDayValue.makeGMonthDayValue(value.toString()).asAtomic();
                 } else if (gtype.equals(DatatypeConstants.GDAY)) {
-                    return GDayValue.makeGDayValue(gtype.toString()).asAtomic();
+                    return GDayValue.makeGDayValue(value.toString()).asAtomic();
                 } else {
                     throw new AssertionError("Unknown Gregorian date type");
                 }
