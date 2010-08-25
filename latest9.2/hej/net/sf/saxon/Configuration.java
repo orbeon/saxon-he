@@ -227,6 +227,7 @@ public class Configuration implements Serializable, SourceResolver {
     public static int XSD11 = 11;
 
     static {
+        String messages = "";
         try {
             String sConfigFile = "edition.properties";
 
@@ -234,11 +235,7 @@ public class Configuration implements Serializable, SourceResolver {
             try {
                 loader = Thread.currentThread().getContextClassLoader();
             } catch (Exception err) {
-                System.err.println("Failed to getContextClassLoader() - continuing");
-            }
-
-            if (loader == null) {
-                loader = Configuration.class.getClassLoader();
+                messages += "Failed to getContextClassLoader() - continuing\n";
             }
 
             InputStream in = null;
@@ -246,19 +243,31 @@ public class Configuration implements Serializable, SourceResolver {
             if (loader != null) {
                 in = loader.getResourceAsStream(sConfigFile);
                 if (in == null) {
-                    System.err.println("Cannot read edition.properties file located using ClassLoader " +
-                            loader + ": using defaults");
+                    messages += "Cannot read edition.properties file located using ClassLoader " +
+                            loader + " - continuing\n";
                 }
-            } else {
+            }
+
+            if (in == null) {
+                loader = Configuration.class.getClassLoader();
+                if (loader != null) {
+                    in = loader.getResourceAsStream(sConfigFile);
+                    if (in == null) {
+                        messages += "Cannot read edition.properties file located using ClassLoader " +
+                                loader + " - continuing\n";
+                    }
+                }
+            }
+
+            if (in == null) {
                 // Means we're in a very strange class-loading environment, things are getting desparate
                 URL url = ClassLoader.getSystemResource(sConfigFile);
                 if (url != null) {
                     try {
                         in = url.openStream();
                     } catch (IOException ioe) {
-                        System.err.println(
-                                "IO error " + ioe.getMessage() +
-                                " reading edition.properties located using getSystemResource(): using defaults");
+                        messages += "IO error " + ioe.getMessage() +
+                                " reading edition.properties located using getSystemResource(): using defaults";
                         in = null;
                     }
                 }
@@ -268,6 +277,7 @@ public class Configuration implements Serializable, SourceResolver {
             String configClassName;
 
             if (in == null) {
+                System.err.println(messages);
                 platformClassName = "net.sf.saxon.java.JavaPlatform";
                 configClassName = "net.sf.saxon.Configuration";
             } else {
@@ -307,6 +317,7 @@ public class Configuration implements Serializable, SourceResolver {
             }
             configurationClass = (Class<Configuration>)configClass;
         } catch (Exception e) {
+            System.err.println(messages);
             e.printStackTrace();
             throw new RuntimeException("Failed to load configuration defined in edition.properties", e);
         }
