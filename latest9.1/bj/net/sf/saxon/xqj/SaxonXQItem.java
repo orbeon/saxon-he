@@ -137,7 +137,7 @@ public class SaxonXQItem extends Closable implements XQResultItem, SaxonXQItemAc
         checkNotClosed();
         if (item instanceof AtomicValue) {
             AtomicValue prim = ((AtomicValue)item);
-            return (byte)longValue(prim, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            return (int)longValue(prim, Integer.MIN_VALUE, Integer.MAX_VALUE);
         }
         throw new XQException("Failed in getInt: item is not an atomic value, or is closed");
     }
@@ -229,7 +229,7 @@ public class SaxonXQItem extends Closable implements XQResultItem, SaxonXQItemAc
         checkNotClosed();
         if (item instanceof AtomicValue) {
             AtomicValue prim = ((AtomicValue)item);
-            return (byte)longValue(prim, Short.MIN_VALUE, Short.MAX_VALUE);
+            return (short)longValue(prim, Short.MIN_VALUE, Short.MAX_VALUE);
         }
         throw new XQException("Failed in getShort: item is not an atomic value, or is closed");
     }
