@@ -49,6 +49,10 @@ public class GeneralComparison10 extends BinaryExpression {
         singletonOperator = getSingletonOperator(op);
     }
 
+    public void setAtomicComparer(AtomicComparer comparer) {
+        this.comparer = comparer; 
+    }
+
     /**
     * Determine the static cardinality. Returns [1..1]
     */
