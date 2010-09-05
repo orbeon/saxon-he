@@ -23,10 +23,17 @@ public class IntegerRange extends Value implements GroundedValue {
     /**
      * Construct an integer range expression
      * @param start the first integer in the sequence (inclusive)
-     * @param end the last integer in the sequence (inclusive). Must be >= start
+     * @param end the last integer in the sequence (inclusive). Must be >= start, and he number of items in the
+     * sequence must be less than Integer.MAX_INT.
      */
 
-    public IntegerRange(long start, long end) {
+    public IntegerRange(long start, long end) throws XPathException {
+        if (end < start) {
+            throw new IllegalArgumentException("end < start in IntegerRange");
+        }
+        if (end - start > Integer.MAX_VALUE) {
+            throw new XPathException("Maximum length of sequence in Saxon is " + Integer.MAX_VALUE);
+        }
         this.start = start;
         this.end = end;
     }
@@ -123,7 +130,12 @@ public class IntegerRange extends Value implements GroundedValue {
             newEnd = end;
         }
         if (newEnd >= newStart) {
-            return new IntegerRange(newStart, newEnd);
+            try {
+                return new IntegerRange(newStart, newEnd);
+            } catch (XPathException err) {
+                // Can't happen - if the sequence is OK, then any subsequence is OK
+                throw new IllegalStateException(err);
+            }
         } else {
             return EmptySequence.getInstance();
         }
