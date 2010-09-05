@@ -75,7 +75,7 @@ public class RangeExpression extends BinaryExpression {
 
     }
 
-    private Expression makeConstantRange() {
+    private Expression makeConstantRange() throws XPathException {
         if (operand0 instanceof Literal && operand1 instanceof Literal) {
             Value v0 = ((Literal)operand0).getValue();
             Value v1 = ((Literal)operand1).getValue();
