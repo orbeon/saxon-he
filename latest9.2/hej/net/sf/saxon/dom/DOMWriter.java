@@ -6,6 +6,7 @@ import net.sf.saxon.om.NamePool;
 import net.sf.saxon.om.NamespaceConstant;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.Whitespace;
 import org.w3c.dom.*;
 
 
@@ -182,7 +183,15 @@ public class DOMWriter implements Receiver {
             if (nextSibling != null && level == 0) {
                 currentNode.insertBefore(text, nextSibling);
             } else {
-                currentNode.appendChild(text);
+                if (currentNode.getNodeType() == Node.DOCUMENT_NODE) {
+                    if (Whitespace.isWhite(chars)) {
+                        // do nothing with top-level whitespace
+                    } else {
+                        throw new XPathException("The DOM model does not allow text as a direct child of a document node");
+                    }
+                } else {
+                    currentNode.appendChild(text);
+                }
             }
         } catch (DOMException err) {
             throw new XPathException(err);
