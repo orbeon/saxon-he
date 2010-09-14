@@ -3,6 +3,10 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.Container;
 import net.sf.saxon.expr.VariableReference;
 import net.sf.saxon.expr.Expression;
+import net.sf.saxon.functions.FunctionLibrary;
+import net.sf.saxon.functions.FunctionLibraryList;
+import net.sf.saxon.instruct.Executable;
+import net.sf.saxon.instruct.LocationMap;
 import net.sf.saxon.instruct.SlotManager;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
@@ -81,6 +85,11 @@ public class IndependentContext extends AbstractStaticContext
         ic.importedSchemaNamespaces = importedSchemaNamespaces;
         ic.externalResolver = externalResolver;
         ic.autoDeclare = autoDeclare;
+        FunctionLibrary libList = ic.getFunctionLibrary();
+        if (libList != null) {
+            setFunctionLibrary(libList.copy());
+        }
+        ic.setBackwardsCompatibilityMode(isInBackwardsCompatibleMode());
         return ic;
     }
 
