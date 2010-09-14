@@ -124,7 +124,7 @@ public class FormatDate extends SystemFunction {
                     throw e;
                 }
                 String componentFormat = format.substring(i, close);
-                sb.append(formatComponent(value, Whitespace.removeAllWhitespace(componentFormat), numberer, context));
+                sb.append(formatComponent(value, Whitespace.removeAllWhitespace(componentFormat), numberer, country, context));
                 i = close+1;
             }
         }
@@ -135,7 +135,7 @@ public class FormatDate extends SystemFunction {
             Pattern.compile("([YMDdWwFHhmsfZzPCE])\\s*(.*)");
 
     private static CharSequence formatComponent(CalendarValue value, CharSequence specifier,
-                                                Numberer numberer, XPathContext context)
+                                                Numberer numberer, String country, XPathContext context)
     throws XPathException {
         boolean ignoreDate = (value instanceof TimeValue);
         boolean ignoreTime = (value instanceof DateValue);
@@ -300,7 +300,7 @@ public class FormatDate extends SystemFunction {
             }
         case'Z':       // timezone in +hh:mm format, unless format=N in which case use timezone name
             if (value.hasTimezone()) {
-                return getNamedTimeZone(value.toDateTime(), numberer.getCountry(), format);
+                return getNamedTimeZone(value.toDateTime(), country, format);
             } else {
                 return "";
             }
