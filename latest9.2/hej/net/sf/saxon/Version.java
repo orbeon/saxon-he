@@ -6,10 +6,10 @@ package net.sf.saxon;
 
 public final class Version {
 
-    private static final int[] STRUCTURED_VERSION = {9,2,1,3};
-    private static final String VERSION = "9.2.1.3";   // unpublished maintenance build
-    private static final String BUILD = "082511"; //mmddhh
-    private static final String RELEASE_DATE = "2010-08-25";
+    private static final int[] STRUCTURED_VERSION = {9,2,1,4};
+    private static final String VERSION = "9.2.1.4";   // unpublished maintenance build
+    private static final String BUILD = "091614"; //mmddhh
+    private static final String RELEASE_DATE = "2010-09-16";
 
     private Version() {
         // class is never instantiated

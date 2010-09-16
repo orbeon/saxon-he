@@ -85,7 +85,9 @@ public class Optimizer implements Serializable {
     public BinaryExpression simplifyGeneralComparison(GeneralComparison gc, boolean backwardsCompatible) {
         if (backwardsCompatible) {
             Expression[] operands = gc.getOperands();
-            return new GeneralComparison10(operands[0], gc.getOperator(), operands[1]);
+            GeneralComparison10 gc10 = new GeneralComparison10(operands[0], gc.getOperator(), operands[1]);
+            gc10.setAtomicComparer(gc.getAtomicComparer());
+            return gc10;
         } else {
             return gc;
         }
