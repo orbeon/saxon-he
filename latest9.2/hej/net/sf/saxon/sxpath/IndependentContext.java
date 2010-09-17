@@ -85,7 +85,7 @@ public class IndependentContext extends AbstractStaticContext
         ic.importedSchemaNamespaces = importedSchemaNamespaces;
         ic.externalResolver = externalResolver;
         ic.autoDeclare = autoDeclare;
-        FunctionLibrary libList = ic.getFunctionLibrary();
+        FunctionLibrary libList = getFunctionLibrary();
         if (libList != null) {
             setFunctionLibrary(libList.copy());
         }
