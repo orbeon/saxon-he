@@ -32,6 +32,16 @@ public class TraceWrapper extends Instruction {
     }
 
     /**
+     * Determine whether this is a vacuous expression as defined in the XQuery update specification
+     *
+     * @return true if this expression is vacuous
+     */
+    @Override
+    public boolean isVacuousExpression() {
+        return child.isVacuousExpression();
+    }
+
+    /**
      * Check to ensure that this expression does not contain any inappropriate updating subexpressions.
      * This check is overridden for those expressions that permit updating subexpressions.
      * @throws net.sf.saxon.trans.XPathException
