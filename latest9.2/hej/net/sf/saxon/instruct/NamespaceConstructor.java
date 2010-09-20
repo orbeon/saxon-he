@@ -65,7 +65,9 @@ public class NamespaceConstructor extends SimpleNodeConstructor {
         super.promoteInst(offer);
     }
 
-    public void localTypeCheck(ExpressionVisitor visitor, ItemType contextItemType) {}
+    public void localTypeCheck(ExpressionVisitor visitor, ItemType contextItemType) throws XPathException {
+        visitor.typeCheck(name, contextItemType);
+    }
 
     public Iterator<Expression> iterateSubExpressions() {
         ArrayList list = new ArrayList(6);
