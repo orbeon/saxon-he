@@ -54,7 +54,7 @@ public class SaxonXQStaticContext implements XQStaticContext {
         this.bindingMode = sc.bindingMode;
         this.holdability = sc.holdability;
         this.scrollability = sc.scrollability;
-        this.namespaces = new HashMap<String, String>(namespaces);
+        this.namespaces = new HashMap<String, String>(sc.namespaces);
         this.baseURI = sc.baseURI;
         this.preserveBoundarySpace = sc.preserveBoundarySpace;
         this.constructionModeIsPreserve = sc.constructionModeIsPreserve;
