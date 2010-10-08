@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="all" name="Saxon: The XSLT and XQuery Processor"
+         xmlns:dn="antlib:org.apache.ant.dotnet">
+    
+    <!-- How to do a maintenance build 
+    
+         1. Run with target "prepare"
+         2. Run with target "build"
+         3. Copy DLLs to the GAC using Control Panel
+         4. Run with target "release" -->
+    
+    <!-- note : Ant 1.7 is needed for this script -->
+    
+    <!-- Ant 1.7 introduces a <service> element to allow META-INF/services
+         directories to be created in JAR files. Unfortunately it is broken,
+         see http://issues.apache.org/bugzilla/show_bug.cgi?id=41201. The relevant
+         code here is retained in the form of comments, and can be reinstated
+         when the bug is fixed. Meanwhile the directories are created manually -->
+    
+    <!-- Build file for Saxon. This builds all six for the released products:
+         Saxon-HE, -PE, and -EE, on both the Java and .NET platforms. It also builds
+         the released resources file. A full build requires access to Saxonica
+         proprietary source code. The open source Saxon-HE product can be built for
+         Java using target "hej"; but building Saxon-HE for .NET may require some
+         disentangling of tasks that depend on Saxon-EE code being present. -->
+         
+    <!-- Useful targets:
+    
+         prepare      clears temporary directories, generates fixed files
+         j            builds executables for Saxon on Java
+         n            builds executables for Saxon on .NET
+         build        builds all executables
+         resources    builds samples and documentation
+         release      builds ZIP files for published downloads, runs regression tests
+         archive      produces a back-up archive  -->
+             
+         
+    <!-- Naming conventions:
+         -n   : .NET
+         -j   : Java
+         -he  : Home Edition
+         -pe  : Professional Edition
+         -ee  : Enterprise Edition
+         combined as appropriate, so -pej denotes Saxon-PE on the Java platform
+    -->
+    
+    <import file="build-constants.xml"/>
+    
+    <!-- If building for only one platform, 
+       (a) remove one of the imports below
+       (b) remove dependencies on targets in that build file, which are always suffixed -j or -n respectively 
+    -->
+       
+    <import file="build-j.xml"/>
+    <import file="build-n.xml"/>
+    <import file="test-j.xml"/>
+    <import file="test-n.xml"/>     
+    
+
+    
+    <target name="clean" description="Clean all files other than source code and downloaded jars.">
+        <delete dir="${temp.dir}"/>
+        <delete dir="${product.dir}"/>
+        <mkdir dir="${product.dir}"/>
+    </target>
+    
+    <target name="prepare" description="Create 'fixed' files in build libraries"
+      depends="clean, prepare-n, prepare-j"/>
+      
+    
+    <target name="download" description="Download third-party jar files.">
+        <get src="http://mirrors.ibiblio.org/pub/mirrors/maven2/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar"
+            dest="${lib.dir}/dom4j-1.6.1.jar" verbose="true"/>
+
+        <get src="http://www.ibiblio.org/maven/jdom/jars/jdom-1.0.jar"
+            dest="${lib.dir}/jdom-1.0.jar" verbose="true"/>
+
+        <get src="http://www.cafeconleche.org/XOM/xom-1.1.jar" dest="${lib.dir}/xom-1.1.jar"
+            verbose="true"/>
+            
+        <get src="http://dist.codehaus.org/stax/jars/stax-api-1.0.1.jar" dest="${lib.dir}/stax-api-1.0.1.jar"
+            verbose="true"/> 
+            
+            <!-- TODO: add servlet.jar, ant.jar -->   
+            
+    </target>                   
+    
+    <target name="samples-common" description="Assemble Cross-Platform Samples and Use-Cases">
+    	<mkdir dir="${build-resources.dir}/samples"/>
+      <copy todir="${product.dir}/resources/use-cases">
+        <fileset dir="${usecases.dir}"/>
+      </copy>
+      <copy todir="${product.dir}/resources/samples">
+        <fileset dir="${samples.dir}">
+          <!-- stuff tends to gather in samples, so only select what's needed to be issued -->
+          <include name="analysis/timing-profile.xsl"/>
+          <include name="config/config.xml"/>
+          <include name="data/books.xml"/>
+          <include name="data/othello.xml"/>
+          <include name="data/books.xsd"/>
+          <include name="data/books.dtd"/>
+          <include name="data/play.dtd"/>
+          <include name="query/tour.xq"/>
+          <include name="query/books.xq"/>
+          <include name="query/books-to-html.xq"/>
+          <include name="scm/scmschema.*"/>
+          <include name="styles/books.xsl"/>
+          <include name="styles/books.txt"/>
+          <include name="styles/play.xsl"/>
+          <include name="styles/identity.xsl"/>
+          <include name="styles/books-csv.xsl"/>
+          <include name="styles/books-sa.xsl"/>
+          <include name="styles/books-sql.xsl"/>
+          <include name="styles/tour.xsl"/>
+          <include name="styles/summarize.xsl"/>
+          <include name="trax/xml/**/*.xml"/>
+          <include name="trax/xsl/**/*.xsl"/>
+          <include name="trax/xsl/**/preamble.txt"/>
+          <include name="trax/xsl/**/postamble.txt"/>
+        </fileset>
+      </copy>
+    </target>
+    
+    <!-- The Saxonica build creates a cross-platform samples directory, but it's separated
+         by platform in case a platform-specific build is needed -->
+    
+    
+    <target name="samples" depends="samples-j, samples-n"/>
+    
+
+   
+    
+    <target name="release-userdoc" description="Generate User Documentation">
+	  <taskdef name="saxon-xslt" 
+			         classname="net.sf.saxon.ant.AntTransform" 
+			         classpath="e:\saxon-build\9.1.0.6\saj\saxon9sa.jar;e:\saxon-build\9.1.0.6\bj\saxon9-ant.jar;c:\saxon-licenses"/>
+                        <!-- actually, putting the license file on the classpath here doesn't seem to work. It has to be in the classpath
+                               used to invoke Ant in the first place - specifically, in the CLASSPATH environment variable -->
+	  <copy todir="${build-resources.dir}/doc">
+        <fileset dir="${userdoc.dir}/fixed"/>
+      </copy> 
+	  <copy todir="${product.dir}/hej">
+        <fileset dir="${userdoc.dir}/welcome">
+          <include name="doc/**"/>
+          <include name="notices/CERN.txt"/>
+          <include name="notices/JAMESCLARK.txt"/>
+          <include name="notices/LEGAL.txt"/>
+          <include name="notices/LICENSE.txt"/>
+          <include name="notices/THAI.txt"/>
+          <include name="notices/UNICODE.txt"/>
+        </fileset>
+      </copy>
+      <copy todir="${product.dir}/pej">
+        <fileset dir="${userdoc.dir}/welcome">
+          <include name="doc/**"/>
+          <include name="notices/CERN.txt"/>
+          <include name="notices/JAMESCLARK.txt"/>
+          <include name="notices/LEGAL.txt"/>
+          <include name="notices/LICENSE.txt"/>
+          <include name="notices/THAI.txt"/>
+          <include name="notices/UNICODE.txt"/>
+        </fileset>
+      </copy>
+      <copy todir="${product.dir}/eej">
+        <fileset dir="${userdoc.dir}/welcome">
+          <include name="doc/**"/>
+          <include name="notices/CERN.txt"/>
+          <include name="notices/JAMESCLARK.txt"/>
+          <include name="notices/LEGAL.txt"/>
+          <include name="notices/LICENSE.txt"/>
+          <include name="notices/THAI.txt"/>
+          <include name="notices/UNICODE.txt"/>
+        </fileset>
+      </copy>
+      <copy todir="${product.dir}/hen">
+        <fileset dir="${userdoc.dir}/welcome">
+          <include name="doc/**"/>
+          <include name="notices/CERN.txt"/>
+          <include name="notices/JAMESCLARK.txt"/>
+          <include name="notices/LEGAL.txt"/>
+          <include name="notices/LICENSE.txt"/>
+          <include name="notices/THAI.txt"/>
+          <include name="notices/UNICODE.txt"/>
+          <include name="notices/APACHE-XERCES.txt"/>
+          <include name="notices/FRIJTERS.txt"/>
+          <include name="notices/GPL+CLASSPATH.txt"/>
+        </fileset>
+      </copy>
+      <copy todir="${product.dir}/pen">
+        <fileset dir="${userdoc.dir}/welcome">
+          <include name="doc/**"/>
+          <include name="notices/CERN.txt"/>
+          <include name="notices/JAMESCLARK.txt"/>
+          <include name="notices/LEGAL.txt"/>
+          <include name="notices/LICENSE.txt"/>
+          <include name="notices/THAI.txt"/>
+          <include name="notices/UNICODE.txt"/>
+          <include name="notices/APACHE-XERCES.txt"/>
+          <include name="notices/FRIJTERS.txt"/>
+          <include name="notices/GPL+CLASSPATH.txt"/>
+        </fileset>
+      </copy>
+      <copy todir="${product.dir}/een">
+        <fileset dir="${userdoc.dir}/welcome">
+          <include name="doc/**"/>
+          <include name="notices/CERN.txt"/>
+          <include name="notices/JAMESCLARK.txt"/>
+          <include name="notices/LEGAL.txt"/>
+          <include name="notices/LICENSE.txt"/>
+          <include name="notices/THAI.txt"/>
+          <include name="notices/UNICODE.txt"/>
+          <include name="notices/APACHE-XERCES.txt"/>
+          <include name="notices/FRIJTERS.txt"/>
+          <include name="notices/GPL+CLASSPATH.txt"/>
+        </fileset>
+      </copy>
+   <!--
+      NO USER DOCUMENTATION FOR MAINTENANCE BUILDS             
+			<saxon-xslt in="${userdoc.dir}/catalog.xml" 
+			            style="${userdoc.dir}/render-page2.xsl"
+			            schemaAware="true"
+			            xmlVersion="1.0"
+			            schemaValidation="strict"
+			            out="${product.dir}/resources/doc/dummy.html"><!~~validation="strict" ~~>
+			  <param name="destination" expression="offline"/>
+			</saxon-xslt> 
+			<zip zipfile="${build-resources.dir}/source-userdoc.zip">
+			  <fileset dir="${userdoc.dir}">
+			    <include name="**/*.xml"/>
+			    <include name="**/*.xsl"/>
+			    <include name="**/*.xsd"/>
+			    <include name="**/*.css"/>
+			    <include name="fixed/**"/>
+			    <include name="welcome/**"/>
+			  </fileset>
+			</zip> --> 			     
+    </target>
+    
+    <target name="release-source" description="Generate Zip file containing issued Source Code">
+      <zip zipfile="${build-resources.dir}/saxon${versionh}source.zip">
+        <fileset dir="${source-hej.dir}">
+           <include name="net/**/*.java"/>
+           <include name="net/**/package.html"/>
+        </fileset>
+        <fileset dir="${temp-src-nc.dir}">
+           <include name="api/**/*.cs"/>
+           <include name="cmd/**/*.cs"/>
+        </fileset>   
+      </zip>
+      <zip zipfile="${source-eej.dir}/../releases/saxonee${versionh}source.zip">
+        <fileset dir="${source-eej.dir}">
+           <include name="com/saxonica/**/*.java"/>
+           <include name="com/saxonica/**/package.html"/>
+        </fileset>
+      </zip>
+    </target>
+    
+    <target name="resources" description="Generate contents of released resources file"
+      	depends="release-userdoc, product-javadoc, product-dotnetdoc,
+      	         samples, samples-j, testdrivers-j,  release-source">  <!-- samples-n, -->
+      <mkdir dir="${product.dir}/resources/build"/>
+      <copy todir="${product.dir}/resources/build">
+        <fileset dir="${basedir}">
+          <include name="build.xml"/>
+          <include name="ikvmc.cmd"/>
+          <include name="csharp-compile.cmd"/>
+        </fileset>  
+      </copy>
+      <copy todir="${product.dir}/resources">
+        <fileset dir="${userdoc.dir}/welcome">
+          <include name="notices/**"/>
+        </fileset>
+      </copy>
+    </target>  
+      
+    <target name="build" description="Complete Saxon product build"
+      	depends="j, n"/>
+      	
+    <target name="test" description="Run regression tests"
+        depends="test-j, test-n"/>  	 
+      
+    <target name="release" description="Create .ZIP files for release"
+        depends="build, resources, test"
+        >  <!-- -->
+      <mkdir dir="${issue.dir}"/> 
+      <zip zipfile="${issue.dir}/saxonhe${versionh}j.zip">
+        <fileset dir="${product.dir}/hej"/>
+      </zip>
+      <zip zipfile="${issue.dir}/saxonhe${versionh}n.zip">
+        <fileset dir="${product.dir}/hen"/>
+      </zip>
+      <zip zipfile="${issue.dir}/saxonpe${versionh}j.zip">
+        <fileset dir="${product.dir}/pej"/>
+      </zip>                     
+      <zip zipfile="${issue.dir}/saxonpe${versionh}n.zip">
+        <fileset dir="${product.dir}/pen"/>
+      </zip>
+	  <zip zipfile="${issue.dir}/saxonee${versionh}j.zip">
+        <fileset dir="${product.dir}/eej"/>
+      </zip>                     
+      <zip zipfile="${issue.dir}/saxonee${versionh}n.zip">
+        <fileset dir="${product.dir}/een"/>
+      </zip>
+      <zip zipfile="${issue.dir}/saxon-resources${versionh}.zip">
+        <fileset dir="${product.dir}/resources"/>
+      </zip>
+    </target>
+    
+    <target name="archive" description="Archive everything needed for backup"> 
+      <mkdir dir="${archive.dir}"/>
+      <copy file="archive-contents.txt" todir="${archive.dir}"/>
+      <replace file="${archive.dir}/archive-contents.txt"
+                 token="N-N-N-N"
+                 value="${version}"
+                 summary="yes"/>
+      <copy todir="${archive.dir}">
+       <fileset dir="${issue.dir}"/>
+       <fileset dir="${source-eej.dir}" includes="saxonee${version}source.zip"/>
+       <fileset dir="${build-resources.dir}" includes="saxon${version}source.zip"/>
+      </copy>
+      <zip zipfile="${archive.dir}/testsuite.zip">
+        <fileset dir="e:/tests">
+          <include name="testsuite/**"/>
+          <include name="gold/**"/>
+        </fileset>
+      </zip>        
+      <zip zipfile="${archive.dir}/schematests.zip">
+        <fileset dir="e:/tests">
+          <include name="xmlschema2006-11-06/**"/>
+          <exclude name="xmlschema2006-11-06/msData/**"/>
+          <exclude name="xmlschema2006-11-06/sunData/**"/>
+          <exclude name="xmlschema2006-11-06/nistData/**"/>
+        </fileset>
+      </zip>
+      <zip zipfile="${archive.dir}/querytests.zip">
+        <fileset dir="e:/tests/xqts-extra"/>
+        <fileset dir="e:/xqts/saxon">
+          <exclude name="results/**"/>
+          <exclude name="results.net/**"/>
+          <exclude name="**/java/**"/>
+        </fileset>
+        <fileset dir="e:/xquts/saxon">
+          <exclude name="results/**"/>
+          <exclude name="results.net/**"/>
+        </fileset>
+      </zip>
+      <zip zipfile="${archive.dir}/xslttests.zip">
+        <fileset dir="e:/xslts-extra"/>
+        <fileset dir="e:/xslt20-test/TestSuiteStagingArea/SaxonResults">
+          <include name="*.xml"/>
+          <include name="*.xsl"/>
+        </fileset>
+        <fileset dir="e:/xslt20-test/TestSuiteStagingArea/SaxonResults.Net">
+          <include name="*.xml"/>
+          <include name="*.xsl"/>
+        </fileset>
+      </zip>
+      <zip zipfile="${archive.dir}/javatests.zip">
+        <fileset dir="c:/MyJava/testcode"/>
+      </zip>
+      <zip zipfile="${archive.dir}/doc.zip">
+        <fileset dir="c:/MyJava/doc"/>
+      </zip>
+      <zip zipfile="${archive.dir}/licensetool.zip">
+        <fileset dir="c:/MyJava/licensetool"/>
+      </zip>
+      <zip zipfile="${archive.dir}/dotnetmake.zip">
+        <fileset dir="c:/MyDotNet/make"/>
+      </zip>      
+      <zip zipfile="${archive.dir}/licenses.zip">
+        <fileset dir="c:/saxon-licenses">
+            <exclude name="archived-licenses/**"/>
+            <exclude name="licenses/**"/>
+        </fileset>    
+      </zip>
+      <zip zipfile="${archive.dir}/build.zip">
+        <fileset dir="c:/MyJava/build">
+          <exclude name="c:/MyJava/build/temp/**"/>
+        </fileset>
+      </zip>
+    </target>  
+      
+       
+    
+</project>

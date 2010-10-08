@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="all" name="Regression Test Saxon for the .NET platform"
+         xmlns:dn="antlib:org.apache.ant.dotnet">
+         
+    <import file="build-constants.xml"/>
+    <import file="build-n.xml"/>
+    
+    <target name="test-cmd-hen">
+      <exec dir="${build-hen.dir}/bin" 
+            executable="${build-hen.dir}/bin/Transform"
+            failonerror="true">
+         <arg line="-t"/>
+         <arg line="-s:${build-resources.dir}/samples/data/books.xml"/>
+         <arg line="-xsl:${build-resources.dir}/samples/styles/books.xsl"/>
+      </exec>
+      <exec dir="${build-hen.dir}/bin" 
+            executable="${build-hen.dir}/bin/Query"
+            failonerror="true">
+         <arg line="-t"/>
+         <arg line="-s:${build-resources.dir}/samples/data/books.xml"/>
+         <arg line="-q:${build-resources.dir}/samples/query/books.xq"/>
+      </exec>
+    </target>   
+    
+    <target name="test-cmd-pen">
+      <exec dir="${build-pen.dir}/bin" 
+            executable="${build-pen.dir}/bin/Transform.exe"
+            failonerror="true">
+         <arg line="-t"/>
+         <arg line="-s:${build-resources.dir}/samples/data/books.xml"/>
+         <arg line="-xsl:${build-resources.dir}/samples/styles/books.xsl"/>
+      </exec>
+      <exec dir="${build-pen.dir}/bin" 
+            executable="${build-pen.dir}/bin/Query.exe"
+            failonerror="true">
+         <arg line="-t"/>
+         <arg line="-s:${build-resources.dir}/samples/data/books.xml"/>
+         <arg line="-qs:saxon:line-number((//*)[last()])"/>
+         <arg line="-l:on"/>
+      </exec>
+    </target>
+    
+    <target name="test-cmd-een">
+      <exec dir="${build-een.dir}/bin" 
+            executable="${build-een.dir}/bin/Transform.exe"
+            failonerror="true">
+         <arg line="-t"/>
+         <arg line="-s:${build-resources.dir}/samples/data/books.xml"/>
+         <arg line="-xsl:${build-resources.dir}/samples/styles/books.xsl"/>
+      </exec>
+      <exec dir="${build-een.dir}/bin" 
+            executable="${build-een.dir}/bin/Query.exe"
+            failonerror="true">
+         <arg line="-t"/>
+         <arg line="-s:${build-resources.dir}/samples/data/books.xml"/>
+         <arg line="-qs:saxon:line-number((//*)[last()])"/>
+         <arg line="-l:on"/>
+      </exec>
+      <exec dir="${build-een.dir}/bin" 
+            executable="${build-een.dir}/bin/Validate.exe"
+            failonerror="true">
+         <arg line="-t"/>
+         <arg line="-s:${build-resources.dir}/samples/data/books.xml"/>
+         <arg line="-xsd:${build-resources.dir}/samples/data/books.xsd"/>
+      </exec>
+    </target>
+    
+    <target name="test-api-een">
+      <!-- This will fail if the DLL has not been added to the GAC -->
+      <exec dir="${build-resources.dir}/samples/cs/bin"
+            executable="${build-resources.dir}/samples/cs/bin/Examples"
+            failonerror="true">
+         <arg line="-dir:${build-resources.dir}/samples"/>
+         <arg line="-SA"/>
+         <arg line="-ask:no"/>
+     </exec>
+    </target>
+    
+    <target name="test-cmd-n" depends="test-cmd-hen, test-cmd-pen, test-cmd-een"/>
+    
+    <target name="test-api-n" depends="test-api-een"/>
+    
+    <target name="test-n" depends="test-cmd-n, test-api-n"/>               
+         
+         
+         
+</project>
