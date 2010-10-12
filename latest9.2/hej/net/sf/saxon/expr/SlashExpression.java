@@ -405,6 +405,21 @@ public class SlashExpression extends Expression
     }
 
     /**
+     * Add a representation of this expression to a PathMap. The PathMap captures a map of the nodes visited
+     * by an expression in a source tree.
+     * @param pathMap        the PathMap to which the expression should be added
+     * @param pathMapNodeSet
+     * @return the pathMapNode representing the focus established by this expression, in the case where this
+     *         expression is the first operand of a path expression or filter expression
+     */
+
+    public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
+        PathMap.PathMapNodeSet target = start.addToPathMap(pathMap, pathMapNodeSet);
+        return step.addToPathMap(pathMap, target);
+    }
+
+
+    /**
      * Iterate the path-expression in a given context
      * @param context the evaluation context
      */
