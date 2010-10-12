@@ -216,10 +216,7 @@ public abstract class AbstractNumberer implements Numberer, Serializable {
             return toAlphaSequence(number, katakanaI);
 
         case '\u4e00':
-            if (number==0) {
-                return "0";
-            }
-            return toRadical(number, kanjiDigits, pictureLength, groupSize, groupSeparator);
+            return toJapanese(number);
 
         default:
 
@@ -476,6 +473,50 @@ public abstract class AbstractNumberer implements Numberer, Serializable {
         {"", "x", "xx", "xxx", "xl", "l", "lx", "lxx", "lxxx", "xc"};
     private static String[] romanUnits =
         {"", "i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix"};
+
+
+    /**
+        * Format the number in Japanese.
+        * @param number the number to be formatted: must be in the range 1 to 9999
+        * @return the Japanese Kanji representation of the number in lower case
+        */
+
+       public String toJapanese(long number) {
+           FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.TINY);
+           if (number == 0) {
+               fsb.appendWideChar(0x3007);
+           } else if (number <= 9999) {
+               toJapanese((int)number, fsb, false);
+           } else {
+               fsb.append("" + number);
+           }
+           return fsb.toString();
+       }
+
+       private static void toJapanese(int nr, FastStringBuffer fsb, boolean isInitial) {
+           if (nr == 0) {
+               // no action (not used at top level)
+           } else if (nr <= 9) {
+               if (!(nr == 1 && isInitial)) {
+                   fsb.appendWideChar(kanjiDigits[nr]);
+               }
+           } else if (nr == 10) {
+               fsb.appendWideChar(0x5341);
+           } else if (nr <= 99) {
+               toJapanese(nr / 10, fsb, true);
+               fsb.appendWideChar(0x5341);
+               toJapanese(nr % 10, fsb, false);
+           } else if (nr <= 999) {
+               toJapanese(nr / 100, fsb, true);
+               fsb.appendWideChar(0x767e);
+               toJapanese(nr % 100, fsb, false);
+           } else if (nr <= 9999) {
+               toJapanese(nr / 1000, fsb, true);
+               fsb.appendWideChar(0x5343);
+               toJapanese(nr % 1000, fsb, false);
+           }
+
+       }
 
 
     /**
