@@ -87,7 +87,7 @@ public class IndependentContext extends AbstractStaticContext
         ic.autoDeclare = autoDeclare;
         FunctionLibrary libList = getFunctionLibrary();
         if (libList != null) {
-            setFunctionLibrary(libList.copy());
+            ic.setFunctionLibrary(libList.copy());
         }
         ic.setBackwardsCompatibilityMode(isInBackwardsCompatibleMode());
         return ic;
