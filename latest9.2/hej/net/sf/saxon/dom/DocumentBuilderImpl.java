@@ -67,6 +67,9 @@ public class DocumentBuilderImpl extends DocumentBuilder {
      */
 
     public Configuration getConfiguration() {
+        if (config == null) {
+            config = new Configuration();
+        }
         return config;
     }
 
