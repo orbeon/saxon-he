@@ -284,6 +284,9 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
             throw new IllegalStateException("writeEndDocument with no matching writeStartDocument");
         }
         try {
+            if (isEmptyElement) {
+                startContent(); // which also ends the element and decrements depth
+            }
             while (depth > 0) {
                 writeEndElement();
             }
