@@ -139,7 +139,7 @@ public class Configuration implements Serializable, SourceResolver, NotationSet 
     private SerializerFactory serializerFactory = new SerializerFactory(this);
     private Properties defaultSerializationProperties = new Properties();
     private transient CharacterSetFactory characterSetFactory;
-    private String defaultLanguage = Locale.TAIWAN.getLanguage(); //Locale.getDefault().getLanguage();
+    private String defaultLanguage = Locale.getDefault().getLanguage(); 
     private String defaultCountry = Locale.getDefault().getCountry();
 
     private transient LocalizerFactory localizerFactory;
