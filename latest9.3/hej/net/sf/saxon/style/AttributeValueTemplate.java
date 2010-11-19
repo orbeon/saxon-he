@@ -65,7 +65,7 @@ public abstract class AttributeValueTemplate {
                     addStringComponent(components, avt, last, i0);
                 }
                 Expression exp;
-                ExpressionParser parser = new ExpressionParser();
+                ExpressionParser parser = env.getConfiguration().newExpressionParser("XP", false, env.getXPathLanguageLevel());
                 parser.setLanguage(ExpressionParser.XPATH, env.getXPathLanguageLevel());
                 exp = parser.parse(avt, i0 + 1, Token.RCURLY, lineNumber, env);
                 exp = visitor.simplify(exp);

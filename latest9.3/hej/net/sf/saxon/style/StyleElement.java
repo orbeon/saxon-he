@@ -576,7 +576,8 @@ public abstract class StyleElement extends ElementImpl
             throws XPathException {
         getStaticContext();
         try {
-            ExpressionParser parser = new ExpressionParser();
+            ExpressionParser parser =
+                    getConfiguration().newExpressionParser("XP", false, staticContext.getXPathLanguageLevel());
             parser.setLanguage(ExpressionParser.XPATH, staticContext.getXPathLanguageLevel());
             return parser.parseSequenceType(sequenceType, staticContext);
         } catch (XPathException err) {
