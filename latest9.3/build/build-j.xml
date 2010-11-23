@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="all" name="Saxon for the Java platform"
+         xmlns:dn="antlib:org.apache.ant.dotnet">
+    
+    <!-- Build file for Saxon on the Java platform. This build file is designed to be imported
+         from build.xml -->
+    
+	<import file="build-constants.xml"/>   		        
+    
+	<!-- Import of private Saxonica build file for signing the issued JARs (task private-signjars). -->
+	<!-- This can be replaced by a reference to different signing tool -->
+	
+	<import file="c:/MyJava/build/build-j-signer.xml"/>   		        
+    
+    
+    <!-- directory holding Java test drivers -->
+    <property name="drivers-j.dir" value="c:/MyJava/testcode/test"/>		    
+		    
+
+    
+    <!-- following locations are relative to the build file -->
+        
+    <property name="services.dir" value="services"/>
+    <property name="temp-src-j.dir" value="${temp.dir}/j/source"/>
+    <property name="classes-j.dir" value="${temp.dir}/j/classes"/>
+    
+    <property name="jar-signer-certificate" value="codesigner.p12"/> 
+
+    <!-- following locations are relative to the destination directory -->
+		
+    <property name="build-hej.dir" value="${product.dir}/hej"/> 
+    <property name="build-pej.dir" value="${product.dir}/pej"/>  
+    <property name="build-eej.dir" value="${product.dir}/eej"/> 
+
+    <property name="javadoc.dir" value="${build-resources.dir}/doc/javadoc"/>   
+    
+    
+    <path id="classpath-j">
+        <fileset dir="${lib.dir}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+        
+     
+    <path id="classpath-samples">
+        <fileset dir="${lib.dir}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${build-eej.dir}">
+            <include name="*.jar"/>
+        </fileset>
+        <!-- Substitute build-hej.dir if there is no requirement to compile the sample applications
+             that depend on Saxon-EE -->
+    </path> 
+
+
+    <target name="create-meta-inf" description="Create contents of META-INF/services files">    
+        
+        <!-- given the Ant 1.7.0 bug, create the services files here for copying into the JARS -->
+        <mkdir dir="${services.dir}/saxon9he/META-INF/services"/>
+        <echo file="${services.dir}/saxon9he/META-INF/services/javax.xml.transform.TransformerFactory"
+              message="net.sf.saxon.TransformerFactoryImpl"/>
+        <mkdir dir="${services.dir}/saxon9he/META-INF/services"/>
+        <!-- The peculiar format of these files is due to the bug described at
+             http://markmail.org/message/obgfqbnrkuhzl6wl. The correct format is
+             just to use the first line: this works for JDK 1.6. But JDK 1.5 incorrectly
+             expects a properties file, in the form of the subsequent line. The combination
+             works with both Java releases -->
+        <echo file="${services.dir}/saxon9he/META-INF/services/javax.xml.xpath.XPathFactory"
+>net.sf.saxon.xpath.XPathFactoryImpl
+http\://java.sun.com/jaxp/xpath/dom:    net.sf.saxon.xpath.XPathFactoryImpl
+http\://saxon.sf.net/jaxp/xpath/om:     net.sf.saxon.xpath.XPathFactoryImpl
+</echo>
+
+        <mkdir dir="${services.dir}/saxon9pe/META-INF/services"/>
+        <echo file="${services.dir}/saxon9pe/META-INF/services/javax.xml.transform.TransformerFactory"
+              message="com.saxonica.config.ProfessionalTransformerFactory"/> 
+        <echo file="${services.dir}/saxon9pe/META-INF/services/javax.xml.xpath.XPathFactory"
+>com.saxonica.config.ProfessionalXPathFactory
+http\://java.sun.com/jaxp/xpath/dom:    com.saxonica.config.ProfessionalXPathFactory
+http\://saxon.sf.net/jaxp/xpath/om:     com.saxonica.config.ProfessionalXPathFactory
+http\://www.xom.nu/jaxp/xpath/xom:      com.saxonica.config.ProfessionalXPathFactory
+http\://jdom.org/jaxp/xpath/jdom:       com.saxonica.config.ProfessionalXPathFactory
+http\://www.dom4j.org/jaxp/xpath/dom4j: com.saxonica.config.ProfessionalXPathFactory
+</echo>
+
+               
+        <mkdir dir="${services.dir}/saxon9ee/META-INF/services"/>
+        <echo file="${services.dir}/saxon9ee/META-INF/services/javax.xml.transform.TransformerFactory"
+              message="com.saxonica.config.EnterpriseTransformerFactory"/>
+        <echo file="${services.dir}/saxon9ee/META-INF/services/javax.xml.xpath.XPathFactory"
+>com.saxonica.config.EnterpriseXPathFactory
+http\://java.sun.com/jaxp/xpath/dom:    com.saxonica.config.ProfessionalXPathFactory
+http\://saxon.sf.net/jaxp/xpath/om:     com.saxonica.config.ProfessionalXPathFactory
+http\://www.xom.nu/jaxp/xpath/xom:      com.saxonica.config.ProfessionalXPathFactory
+http\://jdom.org/jaxp/xpath/jdom:       com.saxonica.config.ProfessionalXPathFactory
+http\://www.dom4j.org/jaxp/xpath/dom4j: com.saxonica.config.ProfessionalXPathFactory
+</echo>     
+        <echo file="${services.dir}/saxon9ee/META-INF/services/javax.xml.validation.SchemaFactory"
+>com.saxonica.jaxp.SchemaFactoryImpl
+http\://www.w3.org/2001/XMLSchema: com.saxonica.jaxp.SchemaFactoryImpl
+</echo>         
+                                      
+
+    </target>
+    
+    <target name="create-edition-properties-j" description="Create the edition.properties files for the three editions of Saxon on Java">
+        <mkdir dir="${classes-j.dir}"/>
+        <mkdir dir="${classes-j.dir}/he"/>
+        <mkdir dir="${classes-j.dir}/pe"/>
+        <mkdir dir="${classes-j.dir}/ee"/>
+        <echo file="${classes-j.dir}/he/edition.properties"
+>config=net.sf.saxon.Configuration
+platform=net.sf.saxon.java.JavaPlatform
+</echo>
+        <echo file="${classes-j.dir}/pe/edition.properties"
+>config=com.saxonica.config.ProfessionalConfiguration
+platform=com.saxonica.config.JavaPlatformPE
+</echo>
+        <echo file="${classes-j.dir}/ee/edition.properties"
+>config=com.saxonica.config.EnterpriseConfiguration
+platform=com.saxonica.config.JavaPlatformPE
+</echo>   
+    </target> 
+    
+    <target name="prepare-j" depends="create-meta-inf, create-edition-properties-j"/> 
+    
+       
+
+    <target name="copysource-development-j" description="Copy relevant source files from development directory">
+        <copy todir="${temp-src-j.dir}">
+          <fileset dir="${source-hej.dir}">
+            <include name="net/sf/saxon/**/*.java"/>
+            <include name="javax/xml/xquery/*.java"/>
+            <exclude name="**/dotnet/**"/>
+            <include name="net/sf/saxon/**/package.html"/>
+          </fileset>
+          <fileset dir="${source-eej.dir}">
+            <include name="com/saxonica/**/*.java"/>
+            <!--<exclude name="com/saxonica/config/DotNetVerifier.java"/>-->
+            <exclude name="com/saxonica/config/DotNetExtensionFunctionFactory.java"/>
+            <exclude name="com/saxonica/config/DotNetExtensionLibrary.java"/>
+            <exclude name="com/saxonica/config/DotNetPlatformPE.java"/>
+            <exclude name="com/saxonica/expr/DotNetExtensionFunctionCall.java"/>
+            <include name="com/saxonica/**/package.html"/>
+          </fileset>          
+        </copy>            
+    </target>    
+        
+    <target name="compile-j" description="Compile Saxon classes for the Java product." 
+            depends="copysource-development-j">
+        <mkdir dir="${classes-j.dir}"/>
+
+        <javac debug="${build.debug}" debuglevel="${build.debuglevel}" 
+            deprecation="${build.deprecation}" destdir="${classes-j.dir}"
+            optimize="${build.optimize}" srcdir="${temp-src-j.dir}" source="${build.compiler.source}"
+            target="${build.compiler.target}"
+            fork="true"
+            memoryinitialsize="256m"
+            memorymaximumsize="256m">
+
+            <include name="net/**"/>
+            <include name="javax/xml/xquery/**"/>
+            <include name="com/saxonica/**"/>
+            <exclude name="**/ant/**"/>
+            
+            <!--<exclude name="**/dotnet/**"/>-->
+            <!--<exclude name="com/saxonica/validate/DotNetVerifier.java"/>-->
+            <classpath>
+                <path refid="classpath-j"/>
+            </classpath>
+        </javac>
+    </target>
+          
+    <target name="jar-hej" description="Create Saxon-HE jar files for Java" depends="compile-j">
+        <mkdir dir="${product.dir}/hej"/>
+
+        <jar basedir="${classes-j.dir}" compress="${build.compress}" jarfile="${product.dir}/hej/saxon9he.jar">
+            <include name="net/**/*.class"/>
+            <exclude name="net/sf/saxon/ant/*.class"/>
+            <exclude name="net/sf/saxon/option/**/*.class"/>
+            <!--<exclude name="**/javax/**/*.class"/>
+            <exclude name="**/xpath/**/*.class"/>
+            <exclude name="**/xqj/**/*.class"/>-->
+            <include name="javax/xml/xquery/*.class"/>
+            <include name="META-INF/**"/>
+            <manifest>
+                <attribute name="Project-Name" value="Saxon-HE"/>
+                <attribute name="Main-Class" value="net.sf.saxon.Transform"/>
+            </manifest>
+            <metainf dir="${services.dir}/saxon9he/META-INF"/>
+            <!--<metainf dir="${services.dir}/saxon9-xpath/META-INF"/>-->
+            <!--
+            <service type="javax.xml.transform.TransformerFactory"
+                provider="net.sf.saxon.TransformerFactoryImpl"/>
+            -->    
+        </jar>
+        <jar basedir="${classes-j.dir}/he" compress="${build.compress}" jarfile="${product.dir}/hej/saxon9he.jar" update="true">
+            <include name="edition.properties"/>
+        </jar>
+
+    </target>
+    
+    <target name="jar-pej" description="Create Saxon-PE jar files for Java" depends="compile-j">
+        <mkdir dir="${product.dir}/pej"/>
+              
+        <jar basedir="${classes-j.dir}" compress="${build.compress}" jarfile="${product.dir}/pej/saxon9pe.jar">
+            <include name="net/**/*.class"/>
+            <exclude name="net/sf/saxon/ant/*.class"/>
+            <exclude name="**/sql/**/*.class"/>
+            <include name="com/saxonica/**/*.class"/>
+            <exclude name="com/saxonica/codegen/**/*.class"/>
+            <exclude name="com/saxonica/deploy/**/*.class"/>
+            <exclude name="com/saxonica/fsa/**/*.class"/>
+            <exclude name="com/saxonica/jaxp/**/**/*.class"/>
+            <exclude name="com/saxonica/schema/**/*.class"/>
+            <exclude name="com/saxonica/sdoc/**/*.class"/>
+            <exclude name="com/saxonica/stream/**/*.class"/>
+            <exclude name="com/saxonica/update/**/*.class"/>
+            <exclude name="com/saxonica/validate/**/*.class"/>
+            <exclude name="com/saxonica/Validate.class"/>
+            <exclude name="com/saxonica/CompileQuery.class"/>
+            <exclude name="com/saxonica/CompileStylesheet.class"/>
+            <exclude name="com/saxonica/CompileStylesheet$TracingObjectOutputStream.class"/>
+            <exclude name="com/saxonica/config/EnterpriseConfiguration.class"/>
+            <exclude name="com/saxonica/config/EnterpriseConfiguration$SurrogateSchema.class"/>
+            <exclude name="com/saxonica/config/EnterpriseTransformerFactory.class"/>
+            <exclude name="com/saxonica/config/EnterpriseXPathFactory.class"/>
+            <exclude name="com/saxonica/extra/StaticQueryContextEE.class"/>
+            <exclude name="com/saxonica/extra/OptimizerEE.class"/>
+            <exclude name="com/saxonica/extra/GeneralComparisonEE.class"/>
+            <exclude name="com/saxonica/extra/MultithreadedContextMappingIterator.class"/>
+            <exclude name="com/saxonica/extra/MultithreadedForEach.class"/>
+            <include name="javax/xml/xquery/*.class"/>
+            <manifest>
+                <attribute name="Project-Name" value="Saxon-PE"/>
+                <attribute name="Main-Class" value="net.sf.saxon.Transform"/>
+            </manifest>
+            <metainf dir="${services.dir}/saxon9pe/META-INF"/>
+
+        </jar>
+        <jar basedir="${classes-j.dir}/pe" compress="${build.compress}" jarfile="${product.dir}/pej/saxon9pe.jar" update="true">
+            <include name="edition.properties"/>
+        </jar>
+        <jar basedir="${classes-j.dir}" compress="${build.compress}" jarfile="${product.dir}/pej/saxon9-sql.jar">
+            <include name="net/sf/saxon/option/sql/*.class"/>
+        </jar>        
+
+    </target>
+    
+    <target name="jar-eej" description="Create Saxon-EE jar files for Java" depends="compile-j">
+        <mkdir dir="${product.dir}/eej"/>
+        
+        <copy todir="${product.dir}/eej">
+          <fileset dir="${product.dir}/pej">
+            <include name="saxon9-sql.jar"/>
+          </fileset>
+        </copy>          
+        <jar basedir="${classes-j.dir}" compress="${build.compress}" jarfile="${product.dir}/eej/saxon9ee.jar">
+            <include name="net/**/*.class"/>
+            <exclude name="net/sf/saxon/ant/*.class"/>
+            <exclude name="**/sql/**/*.class"/>
+            <include name="com/saxonica/**/*.class"/>
+            <exclude name="com/saxonica/codegen/*.class"/>
+            <exclude name="com/saxonica/CompileQuery.class"/>
+            <include name="javax/xml/xquery/*.class"/>
+            <manifest>
+                <attribute name="Project-Name" value="Saxon-EE"/>
+                <attribute name="Main-Class" value="net.sf.saxon.Transform"/>
+            </manifest>
+            <metainf dir="${services.dir}/saxon9ee/META-INF"/> 
+        </jar>
+        <jar basedir="${classes-j.dir}/ee" compress="${build.compress}" jarfile="${product.dir}/eej/saxon9ee.jar" update="true">
+            <include name="edition.properties"/>
+        </jar>
+        <jar basedir="${classes-j.dir}" compress="${build.compress}" jarfile="${product.dir}/eej/saxon9ee-qc.jar">
+            <include name="com/saxonica/codegen/*.class"/>
+            <include name="com/saxonica/CompileQuery.class"/>
+        </jar>
+        
+        <!-- The Saxon-Ant task is delivered with Saxon-B but it won't compile without Saxon-SA present,
+             unless modified 
+        <jar basedir="${classes-j.dir}" compress="${build.compress}" jarfile="${product.dir}/bj/saxon9-ant.jar">
+            <include name="net/sf/saxon/ant/*.class"/>
+        </jar>-->
+    </target>
+    
+    <target name="samples-j" description="Copy and Compile Java Samples"
+    				depends="jar-eej, samples-common">
+      <mkdir dir="${product.dir}/resources/samples/java"/>
+      <mkdir dir="${product.dir}/resources/samples/java/classes"/>
+      <copy todir="${product.dir}/resources/samples/java">
+        <fileset dir="${samples.dir}/java">
+          <include name="ApplyXPathJAXP.java"/>
+          <include name="ExampleContentHandler.java"/>
+          <include name="JDOMExample.java"/>
+          <include name="PullExamples.java"/>
+          <include name="QueryAPIExamples.java"/>
+          <include name="QuickValidator.java"/>
+          <include name="S9APIExamples.java"/>
+          <include name="SaxonServlet.java"/>
+          <include name="SaxonSAServlet.java"/>
+          <include name="SchemaValidatorExample.java"/>
+          <include name="SchemaValidatorHandlerExample.java"/>
+          <include name="TraxExamples.java"/>
+          <include name="XMarkBenchmark.java"/>
+          <include name="XPathExample.java"/>
+          <include name="XPathExampleDOM.java"/>
+          <include name="XPathExampleSA.java"/>
+          <include name="XPathExampleServlet.java"/>
+          <include name="XQJExamples.java"/>
+        </fileset>
+      </copy>
+	  <javac debug="true" debuglevel="source, lines" 
+			      destdir="${product.dir}/resources/samples/java/classes"
+            srcdir="${product.dir}/resources/samples/java" 
+            source="${build.compiler.source}"
+            target="${build.compiler.target}">
+        <include name="*.java"/>    
+        <classpath>
+            <path refid="classpath-samples"/>
+        </classpath>
+      </javac>            
+    </target>
+    
+    <target name="testdrivers-j" description="Copy Java Test Drivers">
+    	<mkdir dir="${product.dir}/resources/drivers/java/test"/>
+    	<mkdir dir="${product.dir}/resources/drivers/java/test/classes"/>
+    	<copy todir="${product.dir}/resources/drivers/java/test">
+    	  <fileset dir="${drivers-j.dir}">
+    	    <include name="XQueryTestSuiteDriver.java"/> 
+    	    <include name="XsltTestSuiteDriver.java"/> 
+    	    <include name="CanonicalXML.java"/> 
+    	    <include name="XQTSModuleURIResolver.java"/> 
+    	    <include name="XQTSCollectionURIResolver.java"/> 
+    	    <include name="SchemaTestSuiteDriver.java"/> 
+          </fileset>
+        </copy>
+        <javac debug="true" debuglevel="source, lines" 
+			      destdir="${product.dir}/resources/drivers/java/test/classes"
+            srcdir="${product.dir}/resources/drivers/java" 
+            source="${build.compiler.source}"
+            target="${build.compiler.target}">
+          <include name="*.java"/>    
+          <classpath>
+            <path refid="classpath-samples"/>
+          </classpath>
+        </javac>
+    </target>           
+    
+                  
+    <target name="product-javadoc" description="Generate Javadoc." depends="copysource-development-j">
+        <javadoc bottom="Copyright (c) 2004-2010 Saxonica Limited. All rights reserved."
+            destdir="${javadoc.dir}" doctitle="Saxon9 Java API Documentation"
+            noindex="false" notree="false" access="protected"
+            maxmemory="512M" source="1.5">
+            <packageset dir="${temp-src-j.dir}">
+                <include name="net/**"/>
+                <include name="com/**"/>
+                <include name="javax/xml/query/**"/>
+                <exclude name="com/saxonica/testdriver/**"/>
+                <exclude name="**/dotnet/**"/>
+                <exclude name="**/DotNetVerifier.java"/>
+            </packageset>
+            <packageset dir="e:/javalib/xqj-final/ri/src"/>
+            <classpath>
+                <path refid="classpath-j"/>
+            </classpath>
+            
+            <link href="http://download.oracle.com/javase/6/docs/api/"/>
+            <link href="http://www.xom.nu/apidocs/"/>
+            
+            <group title="s9api Interface" packages="net.sf.saxon.s9api"/>
+            <group title="Other Interfaces">
+                <package name="net.sf.saxon"/>              
+                <package name="net.sf.saxon.lib"/>
+                <package name="net.sf.saxon.om"/>
+                <package name="net.sf.saxon.query"/>
+                <package name="net.sf.saxon.sxpath"/>
+                <package name="net.sf.saxon.value"/>
+                <package name="net.sf.saxon.type"/>
+                <package name="net.sf.saxon.xpath"/>
+                <package name="net.sf.saxon.xqj"/>
+                <package name="com.saxonica.config"/>
+                <package name="com.saxonica.jaxp"/>
+                <package name="com.saxonica.schema"/>
+                
+            </group>
+            <group title="External Interfaces">
+                <package name="javax.xml.xquery"/>
+            </group>
+ 
+            
+        </javadoc>
+        <copy file="${userdoc.dir}/fixed/javadoc/stylesheet.css"
+              tofile="${javadoc.dir}/stylesheet.css"
+              overwrite="true"/>
+    </target>
+
+
+    <target name="signjars" depends="jar-hej, jar-pej, jar-eej, private-signjars" description="Sign all JAR files">
+        <!-- If the private-signjars task is not available, simply delete the dependency -->
+    </target>
+    
+                    
+    <target name="j" depends="signjars"
+        description="Generate Saxon (all three editions) for the Java platform"/>
+        
+    <target name="release-j" description="Create .ZIP files for release"
+        depends="j, test-j"
+        >  <!-- -->
+      <mkdir dir="${issue.dir}"/> 
+      <zip zipfile="${issue.dir}/SaxonHE${versionh}J.zip">
+        <fileset dir="${product.dir}/hej"/>
+      </zip>
+      <zip zipfile="${issue.dir}/SaxonPE${versionh}J.zip">
+        <fileset dir="${product.dir}/pej"/>
+      </zip>                     
+	  <zip zipfile="${issue.dir}/SaxonEE${versionh}J.zip">
+        <fileset dir="${product.dir}/eej"/>
+      </zip>                     
+     </target>    
+       
+    
+</project>

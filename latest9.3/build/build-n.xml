@@ -1,0 +1,1136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="all" name="Saxon for the .NET platform"
+         xmlns:dn="antlib:org.apache.ant.dotnet">
+    
+    <!-- Build file for Saxon on .NET. This build file is designed to be imported from build.xml -->
+    
+	<import file="build-constants.xml"/>      
+		    
+    <!-- directories holding C# source code -->
+    <property name="vss-n.dir" value="c:/saxon-svn/latest9.3/hen/csource"/>
+
+    <!-- directory holding C# source code as in Subversion -->
+    <!--<property name="subversion-n.dir" value="${root}/saxon-svn2/latest9.0/bn/csource"/>-->	
+    	    
+    <!-- directory holding .NET API documentation -->
+    <property name="dotnetdoc.dir" value="c:/MyJava/build/dotnetdoc"/>
+    		    
+    <!-- location of the C# compiler -->
+    <property name="csharp.compiler" value="C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\csc.exe"/>   
+		    
+    
+    <!-- following locations are for IKVMC code used to build the .NET product -->
+    
+    <property name="development-ikvm.dir" value="c:/MyDotNet"/>
+    <property name="ikvm.dir" value="${development-ikvm.dir}/ikvm-0.42.0.3"/>
+    <property name="generated.stubs.dir" value="${development-ikvm.dir}/stubs"/>
+    <property name="ikvm.strongname" value="Version=0.42.0.3, Culture=neutral, PublicKeyToken=13235d27fcbfff58, ProcessorArchitecture=MSIL"/>
+    <property name="saxon.strongname" value="Version=${version}, Culture=neutral, PublicKeyToken=e1fdd002d5083fe6, ProcessorArchitecture=MSIL"/>
+    
+    <!-- Key file used for signing the Saxonica-built .NET product. User builds should use a different key file -->
+    <property name="saxondotnet.snk" value="${development-ikvm.dir}/make/saxondotnet.snk"/>
+    
+    <!-- set to 'debug' for testing, 'live' for final build -->
+    <!--<property name="dot.net.debug" value="live"/>--> 
+    
+    <!-- The other important thing to enable debugging is that the .pdb file is available in the same directory
+         as the .dll. -->
+    
+    <!-- Precondition for .NET compilation: IKVM is installed.
+         * Download from www.ikvm.net
+         * Unzip into ${development-ikvm.dir}
+         * Register in the GAC (access the Microsoft .NET Framework Configuration item in the 
+                                Windows Control Panel, and add the assemblies to the Assembly Cache. 
+                                At a minimum, install the IKVM.OpenJDK.ClassLibrary.dll and IKVM.Runtime.dll)
+         * Generate stubs in ${generated.stubs.dir} 
+           for System.Xml.dll, System.Security.dll, and IKVM.OpenJDK.ClassLibrary.dll
+    -->       
+    
+    <!-- following locations are relative to the build file -->
+        
+    <property name="temp-src-nj.dir" value="${temp.dir}/n/jsource"/>
+    <property name="temp-src-nc.dir" value="${temp.dir}/n/csource"/>
+    <property name="classes-n.dir" value="${temp.dir}/n/classes"/> 
+    <property name="jar-n.dir" value="${temp.dir}/n/jar"/> 
+    <property name="dll-n.dir" value="${temp.dir}/n/dll"/>  
+
+		<!-- following locations are relative to the destination directory -->
+		
+    <property name="build-hen.dir" value="${product.dir}/hen"/> 
+    <property name="build-pen.dir" value="${product.dir}/pen"/>  
+    <property name="build-een.dir" value="${product.dir}/een"/>
+     
+   
+    <!-- development source -->
+        
+    <property name="source-api-n.dir" value="${vss-n.dir}/api"/>
+    <property name="source-cmd-n.dir" value="${vss-n.dir}/cmd"/>
+    <property name="source-samples-n.dir" value="${vss-n.dir}/samples"/>        
+           
+    <path id="classpath-n">
+        <fileset dir="${lib.dir}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${ikvm.dir}">
+        	 <include name="classpath/mscorlib.jar"/>
+        	 <include name="classpath/System.jar"/>
+        	 <include name="classpath/IKVM.Runtime.jar"/>
+        </fileset>
+        <fileset dir="${generated.stubs.dir}">
+             <include name="CIL.jar"/>	 
+        	 <include name="System.Xml.jar"/>
+        	 <include name="System.Security.jar"/>
+        </fileset>	 
+    </path>
+       
+    
+    <target name="prepare-libs-n" description="Prepare required libraries for .NET, specifically Xerces and TagSoup">
+        <taskdef name="ikvmc" classname="net.ikvm.ant.IkvmcTask" classpath="e:\javalib\ant-ikvmc.0.4.jar"/>
+        <mkdir dir="${dll-n.dir}"/>
+        <copy todir="${dll-n.dir}">
+          <fileset dir="${ikvm.dir}/bin">
+            <include name="IKVM.OpenJDK.*.dll"/>
+            <include name="IKVM.Runtime.dll"/>            
+          </fileset>
+          <!--<fileset dir="${ikvm.dir}/openjdk/extras">
+            <include name="charsets.dll"/>
+          </fileset>-->
+        </copy>
+        <copy file="${saxondotnet.snk}" todir="${basedir}"/>
+        <mkdir dir="${basedir}/libs/xerces"/>
+        <unjar src="${basedir}/libs/xercesimpl.jar" dest="${basedir}/libs/xerces"/>
+        <unjar src="${basedir}/libs/resolver.jar" dest="${basedir}/libs/xerces"/>
+        <jar basedir="${basedir}/libs/xerces" compress="${build.compress}" jarfile="${basedir}/libs/xerces.jar">
+            <include name="**/*.class"/>
+            <include name="**/*.properties"/>
+            <exclude name="org.w3c.dom.html.HTMLDOMImplementation.class"/>
+            <exclude name="META-INF/MANIFEST.MF"/>
+        </jar>
+    </target>    
+        
+    <target name="create-edition-properties-n" description="Create the edition.properties files for the three editions of Saxon on Java">
+        <mkdir dir="${classes-n.dir}"/>
+        <mkdir dir="${classes-n.dir}/he"/>
+        <mkdir dir="${classes-n.dir}/pe"/>
+        <mkdir dir="${classes-n.dir}/ee"/>
+        <echo file="${classes-n.dir}/he/edition.properties"
+>config=net.sf.saxon.Configuration
+platform=net.sf.saxon.dotnet.DotNetPlatform
+</echo>
+        <echo file="${classes-n.dir}/pe/edition.properties"
+>config=com.saxonica.config.ProfessionalConfiguration
+platform=com.saxonica.config.DotNetPlatformPE
+</echo>
+        <echo file="${classes-n.dir}/ee/edition.properties"
+>config=com.saxonica.config.EnterpriseConfiguration
+platform=com.saxonica.config.DotNetPlatformPE
+</echo>   
+    </target>
+    
+    <target name="prepare-n" depends="prepare-libs-n, create-edition-properties-n"/>
+    
+    
+    <target name="copysource-development-n" description="Copy source files for Saxon on .NET from development directory">
+        <copy todir="${temp-src-nj.dir}">
+          <fileset dir="${source-hej.dir}">
+            <include name="net/sf/saxon/**/*.java"/>
+            <exclude name="**/ant/**"/>
+            <exclude name="**/dom/**"/>
+            <exclude name="**/dom4j/**"/>
+            <exclude name="**/java/**"/>
+            <exclude name="**/jdom/**"/>
+            <exclude name="**/s9api/**"/>
+            <exclude name="**/sql/**"/>
+            <exclude name="**/xom/**"/>
+            <exclude name="**/xpath/**"/>
+            <exclude name="**/xqj/**"/>
+          </fileset>
+          <fileset dir="${source-eej.dir}">
+            <include name="com/saxonica/**/*.java"/>  
+            <exclude name="com/saxonica/CompileQuery.java"/>
+            <exclude name="com/saxonica/CompileStylesheet.java"/>
+            <exclude name="com/saxonica/codegen/*.java"/> 
+            <exclude name="com/saxonica/deploy/*.java"/>
+            <exclude name="com/saxonica/testdriver/*.java"/> 
+            <exclude name="com/saxonica/jaxp/*.java"/>            
+          </fileset>          
+        </copy>
+        <copy todir="${temp-src-nc.dir}/api">
+          <fileset dir="${source-api-n.dir}">
+            <include name="Saxon.Api/*.cs"/>
+            <!--<include name="Saxon.Api/Properties/AssemblyInfo.cs"/>-->
+          </fileset>
+        </copy>
+        <mkdir dir="${temp-src-nc.dir}/api/Saxon.Api/Properties"/>
+        <echo file="${temp-src-nc.dir}/api/Saxon.Api/Properties/AssemblyInfo.cs">
+		  using System.Reflection;
+          using System.Runtime.CompilerServices;
+          using System.Runtime.InteropServices;
+          [assembly: AssemblyTitle("Saxon.Api")]
+          [assembly: AssemblyDescription("")]
+          [assembly: AssemblyConfiguration("")]
+          [assembly: AssemblyCompany("Saxonica")]
+          [assembly: AssemblyProduct("Saxon.Api")]
+          [assembly: AssemblyCopyright("Copyright © Saxonica 2010")]
+          [assembly: AssemblyTrademark("")]
+          [assembly: AssemblyCulture("")]
+          [assembly: ComVisible(false)]
+          [assembly: Guid("8cf9aad8-da5f-47f0-9251-1fbcbdcfe477")]
+          [assembly: AssemblyVersion("${version}")]
+          [assembly: AssemblyFileVersion("${version}")]
+        </echo>
+        <mkdir dir="${temp-src-nc.dir}/cmd"/>
+        <copy todir="${temp-src-nc.dir}/cmd">
+          <fileset dir="${source-cmd-n.dir}">
+            <include name="**/Transform.cs"/>
+            <include name="**/Query.cs"/>
+            <include name="**/Validate.cs"/>
+          </fileset>
+        </copy>
+        
+       
+        <copy todir="${temp-src-nc.dir}/samples">
+          <fileset dir="${source-samples-n.dir}">
+            <include name="*.cs"/>
+          </fileset>
+        </copy>
+    </target>
+                      
+    <target name="compile-n" description="Compile Saxon Java classes for the .NET product" 
+            depends="copysource-development-n">
+        <mkdir dir="${classes-n.dir}"/>
+        <mkdir dir="${classes-n.dir}/he"/>
+        <mkdir dir="${classes-n.dir}/pe"/>
+        <mkdir dir="${classes-n.dir}/ee"/>
+        <echo message="Compile with debug = ${build.debug}, debuglevel = ${build.debuglevel}"/>
+        <javac debug="${build.debug}" debuglevel="${build.debuglevel}" 
+            deprecation="${build.deprecation}" destdir="${classes-n.dir}"
+            optimize="${build.optimize}" srcdir="${temp-src-nj.dir}" source="${build.compiler.source}"
+            target="${build.compiler.target}">
+
+            <include name="net/**"/>
+            <include name="com/saxonica/**"/>
+            <exclude name="**/s9api/**"/>
+            <exclude name="**/EnterpriseXPathFactory.java"/>
+            <exclude name="**/ProfessionalXPathFactory.java"/>
+            <exclude name="**/EnterpriseTransformerFactory.java"/>
+            <exclude name="**/ProfessionalTransformerFactory.java"/>
+            <exclude name="**/JavaPlatform.java"/>
+            <exclude name="**/JavaPlatformPE.java"/>
+            <exclude name="**/JavaLocalizerFactory.java"/>
+            <classpath>
+                <path refid="classpath-n"/>
+            </classpath>
+        </javac>
+    </target>
+    
+    <target name="jar-hen" description="Create Saxon-HE jar files for .NET" depends="compile-n">
+        <mkdir dir="${jar-n.dir}"/>
+        <jar basedir="${classes-n.dir}" compress="${build.compress}" jarfile="${jar-n.dir}/saxon9he.jar">
+            <include name="net/**/*.class"/>
+            <exclude name="net/sf/saxon/option/**/*.class"/>
+        </jar>
+        <jar basedir="${classes-n.dir}/he" compress="${build.compress}" jarfile="${jar-n.dir}/saxon9he.jar" update="true">
+            <include name="edition.properties"/>
+        </jar> 
+    </target> 
+    
+    <target name="jar-pen" description="Create Saxon-PE jar files for .NET" depends="compile-n">
+        <mkdir dir="${jar-n.dir}"/>
+        <jar basedir="${classes-n.dir}" compress="${build.compress}" jarfile="${jar-n.dir}/saxon9pe.jar">
+            <include name="net/**/*.class"/>
+            <exclude name="net/sf/saxon/ant/*.class"/>
+            <exclude name="**/sql/**/*.class"/>
+            <include name="com/saxonica/**/*.class"/>
+            <exclude name="com/saxonica/jaxp/**/**/*.class"/>
+            <exclude name="com/saxonica/schema/**/*.class"/>
+            <exclude name="com/saxonica/stream/**/*.class"/>
+            <exclude name="com/saxonica/update/**/*.class"/>
+            <exclude name="com/saxonica/validate/**/*.class"/>
+            <exclude name="com/saxonica/Validate.class"/>
+            <exclude name="com/saxonica/CompileStylesheet$TracingObjectOutputStream.class"/>
+            <exclude name="com/saxonica/config/EnterpriseConfiguration.class"/>
+            <exclude name="com/saxonica/config/EnterpriseConfiguration$SurrogateSchema.class"/>
+            <exclude name="com/saxonica/config/ProfessionalTransformerFactory.class"/>
+            <exclude name="com/saxonica/config/ProfessionalXPathFactory.class"/>
+            <exclude name="com/saxonica/config/EnterpriseTransformerFactory.class"/>
+            <exclude name="com/saxonica/config/EnterpriseXPathFactory.class"/>
+            <exclude name="com/saxonica/config/DynamicLoaderEE.class"/>
+            <exclude name="com/saxonica/config/StandardSchemaResolver.class"/>
+            <exclude name="com/saxonica/expr/ee/*.class"/>   
+        </jar>
+        <jar basedir="${classes-n.dir}/pe" compress="${build.compress}" jarfile="${jar-n.dir}/saxon9pe.jar" update="true">
+            <include name="edition.properties"/>
+        </jar>
+    </target>     
+    
+    <target name="jar-een" description="Create Saxon-EE jar files for .NET" depends="compile-n">
+        <mkdir dir="${jar-n.dir}"/>
+        <jar basedir="${classes-n.dir}" compress="${build.compress}" jarfile="${jar-n.dir}/saxon9ee.jar">
+            <include name="net/**/*.class"/>
+            <include name="com/saxonica/**/*.class"/>
+            <exclude name="com/saxonica/config/EnterpriseTransformerFactory.class"/>
+            <exclude name="com/saxonica/config/EnterpriseXPathFactory.class"/>
+        </jar>
+        <jar basedir="${classes-n.dir}/ee" compress="${build.compress}" jarfile="${jar-n.dir}/saxon9ee.jar" update="true">
+            <include name="edition.properties"/>
+        </jar>
+    </target>
+    
+    <target name="dll-n" description="Create DLLs for .NET" depends="jar-hen, jar-pen, jar-een">
+        <taskdef name="ikvmc" classname="net.ikvm.ant.IkvmcTask" classpath="e:\javalib\ant-ikvmc.0.4.jar"/>
+        <mkdir dir="${dll-n.dir}"/>
+        <copy todir="${jar-n.dir}">
+          <fileset dir="${basedir}/libs">
+            <include name="xerces.jar"/>
+            <include name="tagsoup-1.2.jar"/>
+          </fileset>
+        </copy>
+         
+        <!--
+            Invoke IKVMC to cross-compile the JAR files into DLLs
+        -->
+        
+        <ikvmc home="${ikvm.dir}"
+               assembly="saxon9he" target="library" keyfile="${saxondotnet.snk}" version="${version}"
+               debug="false" 
+               srcpath="${temp-src-nj.dir}"
+               out="${basedir}/${dll-n.dir}/saxon9he.dll"
+               verbose="true">
+          <fileset dir="${basedir}/${jar-n.dir}">
+            <include name="saxon9he.jar"/>
+            <include name="xerces.jar"/>
+          </fileset>
+          <reference path="mscorlib.dll"/>
+          <reference path="System.Xml"/>
+          <reference path="System"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Core.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Charsets.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Text.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Util.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.XML.API.dll"/>
+          <!--<reference path="${dll-n.dir}/xercesImpl.dll"/>-->
+          <!--<reference path="${dll-n.dir}/IKVM.OpenJDK.XMLparse.dll"/>-->
+        </ikvmc>
+        <ikvmc home="${ikvm.dir}"
+               assembly="saxon9pe" 
+               target="library" 
+               keyfile="${saxondotnet.snk}" 
+               version="${version}"
+               debug="false" 
+               srcpath="${temp-src-nj.dir}"
+               out="${basedir}/${dll-n.dir}/saxon9pe.dll"
+               verbose="true">
+          <fileset dir="${basedir}/${jar-n.dir}">
+            <include name="saxon9pe.jar"/>
+            <include name="xerces.jar"/>
+            <include name="tagsoup-1.2.jar"/>
+          </fileset>
+          <reference path="mscorlib.dll"/>
+          <reference path="System.Xml"/>
+          <reference path="System"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Core.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Charsets.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Security.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Text.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Util.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.XML.API.dll"/>
+          <!--<reference path="${dll-n.dir}/xercesImpl.dll"/>-->
+          <!--<reference path="${dll-n.dir}/IKVM.OpenJDK.XMLparse.dll"/>-->
+          <reference path="System.Security"/>
+        </ikvmc>
+        <ikvmc home="${ikvm.dir}"
+               assembly="saxon9ee" 
+               target="library" 
+               keyfile="${saxondotnet.snk}" 
+               version="${version}"
+               debug="false" 
+               srcpath="${temp-src-nj.dir}"
+               out="${basedir}/${dll-n.dir}/saxon9ee.dll"
+               verbose="true">
+          <fileset dir="${basedir}/${jar-n.dir}">
+            <include name="saxon9ee.jar"/>
+            <include name="xerces.jar"/>
+            <include name="tagsoup-1.2.jar"/>
+          </fileset>
+          <reference path="mscorlib.dll"/>
+          <reference path="System.Xml"/>
+          <reference path="System"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Core.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Charsets.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Security.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Text.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Util.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.XML.API.dll"/>
+          <!--<reference path="${dll-n.dir}/xercesImpl.dll"/>-->
+          <!--<reference path="${dll-n.dir}/IKVM.OpenJDK.XMLparse.dll"/>-->
+          <reference path="System.Security"/>
+        </ikvmc>
+        
+        <!-- Create a version of the DLL for debugging. Debugging in Visual Studio
+             requires a version of the assembly that has no strong name. Currently
+             we build this only for Enterprise Edition. The debugging version of the
+             DLL plays no further part in the build, and is not included in the
+             released product, but it can be used by linking it as a reference
+             from the relevant client in Visual Studio, for example Transform.exe -->
+        
+        <ikvmc home="${ikvm.dir}"
+               assembly="saxon9ee-debug" 
+               target="library" 
+               debug="true" 
+               srcpath="${temp-src-nj.dir}"
+               out="${basedir}/${dll-n.dir}/saxon9ee-debug.dll"
+               verbose="true">
+          <fileset dir="${basedir}/${jar-n.dir}">
+            <include name="saxon9ee.jar"/>
+            <include name="xerces.jar"/>
+          </fileset>
+          <reference path="mscorlib.dll"/>
+          <reference path="System.Xml"/>
+          <reference path="System"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Core.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Charsets.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Security.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Text.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.Util.dll"/>
+          <reference path="${dll-n.dir}/IKVM.OpenJDK.XML.API.dll"/>
+          <reference path="System.Security"/>
+        </ikvmc>
+        
+        <!-- NB Remember to add the dll's to the GAC - it doesn't work if you don't -->
+        
+    </target>
+    
+    <target name="csharp-hen" description="Compile C# source for .NET commands and API library (HE)"
+            xmlns:dn="antlib:org.apache.ant.dotnet" depends="dll-n"
+        > 
+        
+        <taskdef 
+            uri="antlib:org.apache.ant.dotnet">
+            <classpath>
+              <pathelement location="e:/javalib/ant-dotnet-1.0/ant-dotnet-1.0.jar"/>
+            </classpath>
+        </taskdef>
+
+		<mkdir dir="${dll-n.dir}/he"/>
+		
+		<copy todir="${dll-n.dir}/he">
+            <fileset dir="${dll-n.dir}">
+         	  <include name="IKVM.OpenJDK.Core.dll"/>
+         	  <include name="IKVM.OpenJDK.Charsets.dll"/>
+         	  <include name="IKVM.OpenJDK.Text.dll"/>
+         	  <include name="IKVM.OpenJDK.Util.dll"/>
+         	  <include name="IKVM.OpenJDK.XML.API.dll"/>
+         	  <include name="xercesImpl.dll"/>
+              <include name="IKVM.Runtime.dll"/>
+              <!--<include name="IKVM.OpenJDK.Charsets.dll"/>-->
+              <include name="saxon9he.dll"/>
+            </fileset>
+        </copy>
+		
+		<!-- API library DLL -->
+		
+		<dn:csc targetType="library" outputFile="${basedir}/${dll-n.dir}/he/saxon9he-api.dll"
+		     docFile="${dotnetdoc.dir}/apidoc.xml"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
+		     executable="${csharp.compiler}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/api/Saxon.Api" includes="*.cs Properties/AssemblyInfo.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/he">
+		        <!--<include name="charsets.dll"/>-->
+		        <include name="IKVM.OpenJDK.Core.dll"/>
+         	    <include name="IKVM.OpenJDK.Charsets.dll"/>
+         	    <include name="IKVM.OpenJDK.Text.dll"/>
+         	    <include name="IKVM.OpenJDK.Util.dll"/>
+         	    <include name="IKVM.OpenJDK.XML.API.dll"/>
+         	    <include name="xercesImpl.dll"/>
+		        <include name="IKVM.Runtime.dll"/>
+		        <include name="saxon9he.dll"/>
+		     </reference>
+		</dn:csc>
+		
+		<!-- Transform, Query, Validate commands -->
+		
+		<echo file="${basedir}/${temp-src-nc.dir}/cmd/AssemblyInfo.cs">
+		  using System.Reflection;
+          using System.Runtime.CompilerServices;
+          using System.Runtime.InteropServices;
+          [assembly: AssemblyCompany("Saxonica")]
+          [assembly: AssemblyProduct("Saxon.HE")]
+          [assembly: AssemblyCopyright("Copyright © Saxonica 2010")]
+          [assembly: AssemblyVersion("${version}")]
+          [assembly: AssemblyFileVersion("${version}")]
+        </echo>
+		
+		<dn:csc targetType="exe" 
+		     win32icon="c:\MyDotNet\icons\gyfu.ico"
+		     outputFile="${basedir}/${dll-n.dir}/he/Transform.exe"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
+		     executable="${csharp.compiler}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Transform.cs AssemblyInfo.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/he">
+		        <include name="IKVM.OpenJDK.Core.dll"/>
+         	    <include name="IKVM.OpenJDK.Charsets.dll"/>
+         	    <include name="IKVM.OpenJDK.Text.dll"/>
+         	    <include name="IKVM.OpenJDK.Util.dll"/>
+         	    <include name="IKVM.OpenJDK.XML.API.dll"/>
+         	    <include name="xercesImpl.dll"/>
+		        <include name="IKVM.Runtime.dll"/>
+		        <!--<include name="charsets.dll"/>-->
+		        <include name="saxon9he.dll"/>
+		     </reference>
+		</dn:csc>
+		
+		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
+		     outputFile="${basedir}/${dll-n.dir}/he/Query.exe"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
+		     executable="${csharp.compiler}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Query.cs AssemblyInfo.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/he">
+		        <include name="IKVM.OpenJDK.Core.dll"/>
+         	    <include name="IKVM.OpenJDK.Charsets.dll"/>
+         	    <include name="IKVM.OpenJDK.Text.dll"/>
+         	    <include name="IKVM.OpenJDK.Util.dll"/>
+         	    <include name="IKVM.OpenJDK.XML.API.dll"/>
+         	    <include name="xercesImpl.dll"/>
+		        <include name="IKVM.Runtime.dll"/>
+		        <!--<include name="charsets.dll"/>-->
+		        <include name="saxon9he.dll"/>
+		     </reference>
+		</dn:csc>
+		
+    </target>
+    
+    <target name="csharp-pen" description="Compile C# source for .NET commands and API library (PE)"
+            xmlns:dn="antlib:org.apache.ant.dotnet" depends="dll-n"
+        > <!---->
+        
+        <taskdef 
+            uri="antlib:org.apache.ant.dotnet">
+            <classpath>
+              <pathelement location="e:/javalib/ant-dotnet-1.0/ant-dotnet-1.0.jar"/>
+            </classpath>
+          </taskdef>
+
+		<mkdir dir="${dll-n.dir}/pe"/>
+		
+		<copy todir="${dll-n.dir}/pe">
+            <fileset dir="${dll-n.dir}">
+         	  <include name="IKVM.OpenJDK.Core.dll"/>
+         	  <include name="IKVM.OpenJDK.Charsets.dll"/>
+         	  <include name="IKVM.OpenJDK.Security.dll"/>
+         	  <include name="IKVM.OpenJDK.Text.dll"/>
+         	  <include name="IKVM.OpenJDK.Util.dll"/>
+         	  <include name="IKVM.OpenJDK.XML.API.dll"/>
+         	  <include name="xercesImpl.dll"/>
+              <include name="IKVM.Runtime.dll"/>
+              <!--<include name="charsets.dll"/>-->
+              <include name="saxon9pe.dll"/>
+            </fileset>
+        </copy>
+		
+		<!-- API library DLL -->
+		
+		<dn:csc targetType="library" outputFile="${basedir}/${dll-n.dir}/pe/saxon9pe-api.dll"
+		     docFile="${dotnetdoc.dir}/apidoc.xml"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
+		     executable="${csharp.compiler}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/api/Saxon.Api" includes="*.cs Properties/AssemblyInfo.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/pe">
+		        <!--<include name="charsets.dll"/>-->
+		        <include name="IKVM.OpenJDK.Core.dll"/>
+         	    <include name="IKVM.OpenJDK.Charsets.dll"/>
+         	    <include name="IKVM.OpenJDK.Security.dll"/>
+         	    <include name="IKVM.OpenJDK.Text.dll"/>
+         	    <include name="IKVM.OpenJDK.Util.dll"/>
+         	    <include name="IKVM.OpenJDK.XML.API.dll"/>
+         	    <include name="IKVM.Runtime.dll"/>
+		        <include name="saxon9pe.dll"/>
+		     </reference>
+		</dn:csc>
+		
+		<!-- Transform, Query, Validate commands -->
+		
+		<echo file="${basedir}/${temp-src-nc.dir}/cmd/AssemblyInfo.cs">
+		  using System.Reflection;
+          using System.Runtime.CompilerServices;
+          using System.Runtime.InteropServices;
+          [assembly: AssemblyCompany("Saxonica")]
+          [assembly: AssemblyProduct("Saxon.PE")]
+          [assembly: AssemblyCopyright("Copyright © Saxonica 2010")]
+          [assembly: AssemblyVersion("${version}")]
+          [assembly: AssemblyFileVersion("${version}")]
+        </echo>
+		
+		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
+		     outputFile="${basedir}/${dll-n.dir}/pe/Transform.exe"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
+		     executable="${csharp.compiler}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Transform.cs AssemblyInfo.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/pe">
+		        <include name="IKVM.OpenJDK.Core.dll"/>
+         	    <include name="IKVM.OpenJDK.Charsets.dll"/>
+         	    <include name="IKVM.OpenJDK.Security.dll"/>
+         	    <include name="IKVM.OpenJDK.Text.dll"/>
+         	    <include name="IKVM.OpenJDK.Util.dll"/>
+         	    <include name="IKVM.OpenJDK.XML.API.dll"/>
+		        <include name="IKVM.Runtime.dll"/>
+		        <!--<include name="charsets.dll"/>-->
+		        <include name="saxon9pe.dll"/>
+		     </reference>
+		</dn:csc>
+		
+		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
+		     outputFile="${basedir}/${dll-n.dir}/pe/Query.exe"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
+		     executable="${csharp.compiler}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Query.cs AssemblyInfo.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/pe">
+		        <include name="IKVM.OpenJDK.Core.dll"/>
+         	    <include name="IKVM.OpenJDK.Charsets.dll"/>
+         	    <include name="IKVM.OpenJDK.Security.dll"/>
+         	    <include name="IKVM.OpenJDK.Text.dll"/>
+         	    <include name="IKVM.OpenJDK.Util.dll"/>
+         	    <include name="IKVM.OpenJDK.XML.API.dll"/>
+		        <include name="IKVM.Runtime.dll"/>
+		        <!--<include name="charsets.dll"/>-->
+		        <include name="saxon9pe.dll"/>
+		     </reference>
+		</dn:csc>
+		
+    </target>    
+    
+    <target name="csharp-een" description="Compile C# source for .NET commands and API library (EE)"
+            xmlns:dn="antlib:org.apache.ant.dotnet" depends="dll-n"
+        > <!---->
+        
+        <taskdef 
+            uri="antlib:org.apache.ant.dotnet">
+            <classpath>
+              <pathelement location="e:/javalib/ant-dotnet-1.0/ant-dotnet-1.0.jar"/>
+            </classpath>
+          </taskdef>
+
+		<mkdir dir="${dll-n.dir}/ee"/>
+		
+		<copy todir="${dll-n.dir}/ee">
+            <fileset dir="${dll-n.dir}">
+         	  <include name="IKVM.OpenJDK.Core.dll"/>
+         	  <include name="IKVM.OpenJDK.Charsets.dll"/>
+         	  <include name="IKVM.OpenJDK.Security.dll"/>
+         	  <include name="IKVM.OpenJDK.Text.dll"/>
+         	  <include name="IKVM.OpenJDK.Util.dll"/>
+         	  <include name="IKVM.OpenJDK.XML.API.dll"/>
+              <include name="IKVM.Runtime.dll"/>
+              <include name="saxon9ee.dll"/>
+              <include name="saxon9ee-debug.dll"/>
+            </fileset>
+        </copy>
+		
+		<!-- API library DLL -->
+		
+		<!-- Note, this is not built for debugging in Visual Studio. Such a version
+		     is best built within VS itself -->
+		
+		<dn:csc targetType="library" outputFile="${basedir}/${dll-n.dir}/ee/saxon9ee-api.dll"
+		     docFile="${dotnetdoc.dir}/apidoc.xml"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
+		     executable="${csharp.compiler}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/api/Saxon.Api" includes="*.cs Properties/AssemblyInfo.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/ee">
+		        <!--<include name="charsets.dll"/>-->
+		        <include name="IKVM.OpenJDK.Core.dll"/>
+         	    <include name="IKVM.OpenJDK.Charsets.dll"/>
+         	    <include name="IKVM.OpenJDK.Security.dll"/>
+         	    <include name="IKVM.OpenJDK.Text.dll"/>
+         	    <include name="IKVM.OpenJDK.Util.dll"/>
+         	    <include name="IKVM.OpenJDK.XML.API.dll"/>
+		        <include name="IKVM.Runtime.dll"/>
+		        <include name="saxon9ee.dll"/>
+		     </reference>
+		</dn:csc>
+		
+		<!-- Transform, Query, Validate commands -->
+		
+		<echo file="${basedir}/${temp-src-nc.dir}/cmd/AssemblyInfo.cs">
+		  using System.Reflection;
+          using System.Runtime.CompilerServices;
+          using System.Runtime.InteropServices;
+          [assembly: AssemblyCompany("Saxonica")]
+          [assembly: AssemblyProduct("Saxon.EE")]
+          [assembly: AssemblyCopyright("Copyright © Saxonica 2010")]
+          [assembly: AssemblyVersion("${version}")]
+          [assembly: AssemblyFileVersion("${version}")]
+        </echo>		
+		
+		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
+		     outputFile="${basedir}/${dll-n.dir}/ee/Transform.exe"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
+		     executable="${csharp.compiler}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Transform.cs AssemblyInfo.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/ee">
+		        <include name="IKVM.OpenJDK.Core.dll"/>
+         	    <include name="IKVM.OpenJDK.Charsets.dll"/>
+         	    <include name="IKVM.OpenJDK.Security.dll"/>
+         	    <include name="IKVM.OpenJDK.Text.dll"/>
+         	    <include name="IKVM.OpenJDK.Util.dll"/>
+         	    <include name="IKVM.OpenJDK.XML.API.dll"/>
+		        <include name="IKVM.Runtime.dll"/>
+		        <!--<include name="charsets.dll"/>-->
+		        <include name="saxon9ee.dll"/>
+		     </reference>
+		</dn:csc>
+		
+		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
+		     outputFile="${basedir}/${dll-n.dir}/ee/Query.exe"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
+		     executable="${csharp.compiler}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Query.cs AssemblyInfo.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/ee">
+		        <include name="IKVM.OpenJDK.Core.dll"/>
+         	    <include name="IKVM.OpenJDK.Charsets.dll"/>
+         	    <include name="IKVM.OpenJDK.Security.dll"/>
+         	    <include name="IKVM.OpenJDK.Text.dll"/>
+         	    <include name="IKVM.OpenJDK.Util.dll"/>
+         	    <include name="IKVM.OpenJDK.XML.API.dll"/>
+		        <include name="IKVM.Runtime.dll"/>
+		        <!--<include name="charsets.dll"/>-->
+		        <include name="saxon9ee.dll"/>
+		     </reference>
+		</dn:csc>
+		
+		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
+		     outputFile="${basedir}/${dll-n.dir}/ee/Validate.exe"
+		     extraOptions="-keyfile:${saxondotnet.snk}"
+		     executable="${csharp.compiler}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/cmd" includes="Validate.cs AssemblyInfo.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/ee">
+		        <include name="IKVM.OpenJDK.Core.dll"/>
+         	    <include name="IKVM.OpenJDK.Charsets.dll"/>
+         	    <include name="IKVM.OpenJDK.Security.dll"/>
+         	    <include name="IKVM.OpenJDK.Text.dll"/>
+         	    <include name="IKVM.OpenJDK.Util.dll"/>
+         	    <include name="IKVM.OpenJDK.XML.API.dll"/>
+		        <include name="IKVM.Runtime.dll"/>
+		        <include name="saxon9ee.dll"/>
+		     </reference>
+		</dn:csc>
+    </target>    
+    
+    <target name="compile-samples-n" description="Compile C# source for .NET commands and API library (HE)"
+            xmlns:dn="antlib:org.apache.ant.dotnet" depends="csharp-hen, csharp-pen, csharp-een, samples-common"
+        >
+
+       <taskdef 
+            uri="antlib:org.apache.ant.dotnet">
+            <classpath>
+              <pathelement location="e:/javalib/ant-dotnet-1.0/ant-dotnet-1.0.jar"/>
+            </classpath>
+          </taskdef>
+
+		<mkdir dir="${dll-n.dir}/samples"/>
+		<mkdir dir="${dll-n.dir}/tests"/>
+		
+		<!-- Sample applications and test drivers -->
+		
+		<dn:csc targetType="exe"
+		     outputFile="${basedir}/${dll-n.dir}/samples/ExamplesHE.exe"
+		     win32icon="c:\MyDotNet\icons\csharp.ico"
+		     debug="true"
+		     executable="${csharp.compiler}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/samples" includes="ExamplesHE.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/he">
+		        <include name="IKVM.OpenJDK.*.dll"/>
+		        <include name="saxon9he-api.dll"/>
+		     </reference>
+		</dn:csc>
+		
+		<dn:csc targetType="exe"
+		     outputFile="${basedir}/${dll-n.dir}/samples/ExamplesPE.exe"
+		     win32icon="c:\MyDotNet\icons\csharp.ico"
+		     debug="true"
+		     executable="${csharp.compiler}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/samples" includes="ExamplesPE.cs SampleExtensions.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/pe">
+		        <include name="IKVM.OpenJDK.*.dll"/>
+		        <include name="saxon9pe-api.dll"/>
+		        <include name="saxon9pe.dll"/>
+		     </reference>
+		</dn:csc>
+		
+		<dn:csc targetType="exe"
+		     outputFile="${basedir}/${dll-n.dir}/samples/ExamplesEE.exe"
+		     win32icon="c:\MyDotNet\icons\csharp.ico"
+		     debug="true"
+		     executable="${csharp.compiler}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/samples" includes="ExamplesEE.cs SampleExtensions.cs"/>
+		     <reference dir="${basedir}/${dll-n.dir}/ee">
+		        <include name="IKVM.OpenJDK.*.dll"/>
+		        <include name="saxon9ee-api.dll"/>
+		        <include name="saxon9ee.dll"/>
+		     </reference>
+		</dn:csc>
+			
+		<dn:csc targetType="winexe"
+		     outputFile="${basedir}/${dll-n.dir}/samples/TestRunner.exe"
+		     win32icon="c:\MyDotNet\icons\csharp.ico"
+		     debug="true"
+		     executable="${csharp.compiler}">
+		     <src dir="${basedir}/${temp-src-nc.dir}/samples">
+		       <include name="TestRunnerForm.cs"/>
+		       <include name="TestRunnerForm.Designer.cs"/>
+		       <include name="TestRunnerProgram.cs"/>
+		       <include name="XsltTestSuiteDriver.cs"/>
+		       <include name="XQueryTestSuiteDriver.cs"/>
+		       <include name="SchemaTestSuiteDriver.cs"/>
+		       <include name="IFeedbackListener.cs"/>
+		       <include name="FileComparer.cs"/>
+		     </src>
+		     <reference dir="${basedir}/${dll-n.dir}/ee">
+		        <include name="IKVM.OpenJDK.*.dll"/>
+		        <include name="saxon9ee-api.dll"/>
+		     </reference>
+		</dn:csc>				
+		
+				      
+
+    </target>
+    
+    <target name="product-hen" description="Assemble product.directory for Saxon-HE on .NET"
+       										    depends="csharp-hen">
+      <mkdir dir="${build-hen.dir}/bin"/> 										    
+      <copy todir="${build-hen.dir}/bin">
+        <fileset dir="${dll-n.dir}/he">
+     	  <include name="IKVM.OpenJDK.*.dll"/>
+          <include name="IKVM.Runtime.dll"/>
+          <include name="saxon9he.dll"/>
+          <include name="saxon9he-api.dll"/>
+          <include name="Query.exe"/>
+          <include name="Transform.exe"/>
+        </fileset>
+      </copy>
+
+    </target>
+    
+    <target name="product-pen" description="Assemble product.directory for Saxon-PE on .NET"
+       										    depends="csharp-pen">
+      <mkdir dir="${build-pen.dir}/bin"/> 										    
+      <copy todir="${build-pen.dir}/bin">
+        <fileset dir="${dll-n.dir}/pe">
+     	  <include name="IKVM.OpenJDK.*.dll"/>
+          <include name="IKVM.Runtime.dll"/>
+          <include name="saxon9pe.dll"/>
+          <include name="saxon9pe-api.dll"/>
+          <include name="Query.exe"/>
+          <include name="Transform.exe"/>
+        </fileset>
+      </copy>
+
+    </target>
+    
+    <target name="product-een" description="Assemble product.directory for Saxon-SA on .NET"
+       										    depends="csharp-een">
+      <copy todir="${build-een.dir}/bin">
+        <fileset dir="${dll-n.dir}/ee">
+     	  <include name="IKVM.OpenJDK.*.dll"/>
+          <include name="IKVM.Runtime.dll"/>
+          <include name="saxon9ee.dll"/>
+          <include name="saxon9ee-api.dll"/>
+          <include name="Query.exe"/>
+          <include name="Transform.exe"/>
+          <include name="Validate.exe"/>
+        </fileset> 
+      </copy> 
+
+    </target>
+    
+    <target name="product-n" description="Assemble product.directories for Saxon on .NET"
+       										    depends="product-hen, product-pen, product-een">
+       										    
+       <!-- Following steps are for diagnostics only, they can be omitted if Powershell is not available -->
+       										    
+       <exec executable="c:/windows/system32/WindowsPowerShell/v1.0/powershell.exe">
+		  <arg line="tools/list-dependencies.ps1"/>
+		  <arg line="${build-hen.dir}/bin"/>
+	   </exec>
+	   
+	   <exec executable="c:/windows/system32/WindowsPowerShell/v1.0/powershell.exe">
+		  <arg line="tools/list-dependencies.ps1"/>
+		  <arg line="${build-pen.dir}/bin"/>
+	   </exec>
+	   
+	   <exec executable="c:/windows/system32/WindowsPowerShell/v1.0/powershell.exe">
+		  <arg line="tools/list-dependencies.ps1"/>
+		  <arg line="${build-een.dir}/bin"/>
+	   </exec>
+	   
+	</target>      										    
+       
+    <target name="samples-n" description="Assemble release samples for .NET"
+                  depends="csharp-hen, compile-samples-n">
+      <mkdir dir="${build-resources.dir}/samples/cs"/>
+      <copy todir="${build-resources.dir}/samples/cs"> 
+        <fileset dir="${temp-src-nc.dir}/samples">
+          <include name="*.cs"/>
+        </fileset>
+      </copy>
+      <mkdir dir="${build-resources.dir}/samples/cs/bin"/>
+      <copy todir="${build-resources.dir}/samples/cs/bin"> 
+        <fileset dir="${dll-n.dir}/samples">
+          <include name="*.exe"/>
+          <include name="*.dll"/>
+          <include name="*.pdb"/>
+        </fileset>
+      </copy>
+      <copy todir="${build-resources.dir}/samples/cs/bin"> 
+        <fileset dir="${dll-n.dir}/tests">
+          <include name="*.exe"/>
+          <include name="*.dll"/>
+          <include name="*.pdb"/>
+        </fileset>
+      </copy>      
+    </target>
+    
+    <target name="dotnetdoc-dependset">
+      <dependset>
+        <srcfilelist dir="${dotnetdoc.dir}" files="*.xsl"/> 
+        <srcfilelist dir="${temp-src-nc.dir}/api/Saxon.Api" files="*.cs"/>
+        <targetfileset dir="${dotnetdoc.dir}" includes="names.xml"/>
+      </dependset>
+    </target>               
+                     
+    <target name="product-dotnetdoc" description="Create .NET API documentation"
+        depends="copysource-development-n, csharp-hen, dotnetdoc-dependset">
+      <taskdef name="saxon-xslt" 
+			         classname="net.sf.saxon.ant.AntTransform" 
+			         classpath="e:\saxon-build\9.1.0.7\saj\saxon9sa.jar;e:\saxon-build\9.1.0.7\bj\saxon9-ant.jar;c:\saxon-licenses"/>
+
+      <saxon-xslt       in="${dotnetdoc.dir}/parsecs.xsl"
+			            style="${dotnetdoc.dir}/parsecs.xsl"
+			            initialTemplate="main"
+			            out="${dotnetdoc.dir}/names.xml"/>
+	  <saxon-xslt in="${dotnetdoc.dir}/names.xml" 
+			            style="${dotnetdoc.dir}/merge.xsl"
+			            initialTemplate="main"
+			            out="${dotnetdoc.dir}/merged.xml"/>
+      <saxon-xslt in="${dotnetdoc.dir}/merged.xml" 
+			            style="${dotnetdoc.dir}/tohtml.xsl"
+			            out="${dotnetdoc.dir}/out/index.html"/>	            	            
+      
+      <mkdir dir="${build-resources.dir}/doc/dotnetdoc"/>
+      <copy todir="${build-resources.dir}/doc/dotnetdoc">
+        <fileset dir="${dotnetdoc.dir}/out/html"/>
+      </copy>
+      <copy file="${dotnetdoc.dir}/out/index.html"
+              tofile="${build-resources.dir}/doc/dotnetdoc/index.html"
+              overwrite="true"/>
+      <copy file="${userdoc.dir}/fixed/javadoc/stylesheet.css"
+              tofile="${build-resources.dir}/doc/dotnetdoc/stylesheet.css"
+              overwrite="true"/>
+    </target>  
+    
+    
+    <target name="release-userdoc-n" description="Generate User Documentation">
+      <copy todir="${product.dir}/hen">
+        <fileset dir="${userdoc.dir}/welcome">
+          <include name="doc/**"/>
+          <include name="notices/**"/>
+          <exclude name="notices/APACHE-TAGSOUP.txt"/>
+        </fileset>
+      </copy>
+      <copy todir="${product.dir}/pen">
+        <fileset dir="${userdoc.dir}/welcome">
+          <include name="doc/**"/>
+          <include name="notices/**"/>
+        </fileset>
+      </copy>
+      <copy todir="${product.dir}/een">
+        <fileset dir="${userdoc.dir}/welcome">
+          <include name="doc/**"/>
+          <include name="notices/**"/>
+        </fileset>
+      </copy>       
+		     
+    </target>
+                  
+    <target name="n" depends="product-n, samples-n"
+    		description="Generate Saxon for the .NET platform"/> 
+    		
+    <target name="installer-hen" description="Create installer for Saxon-HE on .NET" depends="n">
+       <mkdir dir="${temp.dir}/n/installer"/> 
+       
+      <echo file="${temp.dir}/n/installer/he.iss">
+; SEE THE DOCUMENTATION FOR DETAILS ON CREATING .ISS SCRIPT FILES!
+; Documentation is at http://www.jrsoftware.org/ishelp/
+
+[Setup]
+AppName=Saxon-HE ${version}
+AppVerName=Saxon-HE ${version}
+DefaultDirName=c:\Program Files\Saxonica\SaxonHE${major.version}N
+DefaultGroupName=Saxon-HE ${version}
+PrivilegesRequired=none
+Compression=lzma
+SolidCompression=yes
+SourceDir=${build-hen.dir}\bin
+OutputDir=${issue.dir}
+OutputBaseFilename=SaxonHE${versionh}N-setup
+AppCopyright=Copyright (c) 2010 Saxonica
+
+[Files]
+; GAC Files
+
+Source: "IKVM.Runtime.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "IKVM.Runtime.dll, ${ikvm.strongname}"
+Source: "IKVM.OpenJDK.Core.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "IKVM.OpenJDK.Core.dll, ${ikvm.strongname}"
+Source: "IKVM.OpenJDK.Charsets.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "IKVM.OpenJDK.Charsets.dll, ${ikvm.strongname}"
+Source: "IKVM.OpenJDK.Util.dll"; DestDir: "{app}\bin" ; Flags: gacinstall; StrongAssemblyName: "IKVM.OpenJDK.Util.dll, ${ikvm.strongname}"
+Source: "IKVM.OpenJDK.Text.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "IKVM.OpenJDK.Text.dll, ${ikvm.strongname}"
+Source: "IKVM.OpenJDK.XML.API.dll"; DestDir: "{app}\bin"; Flags: gacinstall ; StrongAssemblyName: "IKVM.OpenJDK.XML.API.dll, ${ikvm.strongname}"
+Source: "saxon9he.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "saxon9he.dll, ${saxon.strongname}"
+Source: "saxon9he-api.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "saxon9he-api.dll, ${saxon.strongname}"
+
+; Program Files
+Source: "Query.exe"; DestDir: "{app}\bin"
+Source: "Transform.exe"; DestDir: "{app}\bin"
+
+[Registry]
+Root: HKCU; Subkey: "Software\Saxonica"; Flags: uninsdeletekeyifempty
+Root: HKCU; Subkey: "Software\Saxonica\SaxonHE-N"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Saxonica\SaxonHE-N\Settings"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}";
+Root: HKLM; Subkey: "Software\Saxonica"; Flags: uninsdeletekeyifempty
+Root: HKLM; Subkey: "Software\Saxonica\SaxonHE-N"; Flags: uninsdeletekey
+Root: HKLM; Subkey: "Software\Saxonica\SaxonHE-N\Settings"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}";
+Root: HKCU; Subkey: "Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}\bin"
+
+[UninstallDelete]
+Type: dirifempty; Name: "{app}";         
+               
+      </echo>
+      <exec executable="c:/Program Files/Inno Setup 5/Compil32.exe">
+        <arg line="/cc"/>
+        <arg line="${temp.dir}/n/installer/he.iss"/>
+      </exec>
+    </target>   
+    
+    <target name="installer-pen" description="Create installer for Saxon-PE on .NET" depends="n">
+       <mkdir dir="${temp.dir}/n/installer"/> 
+       
+      <echo file="${temp.dir}/n/installer/pe.iss">
+; SEE THE DOCUMENTATION FOR DETAILS ON CREATING .ISS SCRIPT FILES!
+; Documentation is at http://www.jrsoftware.org/ishelp/
+
+[Setup]
+AppName=Saxon-PE ${version}
+AppVerName=Saxon-PE ${version}
+DefaultDirName=c:\Program Files\Saxonica\SaxonPE${major.version}N
+DefaultGroupName=Saxon-PE ${version}
+PrivilegesRequired=none
+Compression=lzma
+SolidCompression=yes
+SourceDir=${build-pen.dir}\bin
+OutputDir=${issue.dir}
+OutputBaseFilename=SaxonPE${versionh}N-setup
+AppCopyright=Copyright (c) 2010 Saxonica
+
+[Files]
+; GAC Files
+
+Source: "IKVM.Runtime.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "IKVM.Runtime.dll, ${ikvm.strongname}"
+Source: "IKVM.OpenJDK.Core.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "IKVM.OpenJDK.Core.dll, ${ikvm.strongname}"
+Source: "IKVM.OpenJDK.Charsets.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "IKVM.OpenJDK.Charsets.dll, ${ikvm.strongname}"
+Source: "IKVM.OpenJDK.Security.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "IKVM.OpenJDK.Security.dll, ${ikvm.strongname}"
+Source: "IKVM.OpenJDK.Util.dll"; DestDir: "{app}\bin" ; Flags: gacinstall; StrongAssemblyName: "IKVM.OpenJDK.Util.dll, ${ikvm.strongname}"
+Source: "IKVM.OpenJDK.Text.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "IKVM.OpenJDK.Text.dll, ${ikvm.strongname}"
+Source: "IKVM.OpenJDK.XML.API.dll"; DestDir: "{app}\bin"; Flags: gacinstall ; StrongAssemblyName: "IKVM.OpenJDK.XML.API.dll, ${ikvm.strongname}"
+Source: "saxon9pe.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "saxon9pe.dll, ${saxon.strongname}"
+Source: "saxon9pe-api.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "saxon9pe-api.dll, ${saxon.strongname}"
+
+; Program Files
+Source: "Query.exe"; DestDir: "{app}\bin"
+Source: "Transform.exe"; DestDir: "{app}\bin"
+
+[Registry]
+Root: HKCU; Subkey: "Software\Saxonica"; Flags: uninsdeletekeyifempty
+Root: HKCU; Subkey: "Software\Saxonica\SaxonPE-N"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Saxonica\SaxonPE-N\Settings"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}";
+Root: HKLM; Subkey: "Software\Saxonica"; Flags: uninsdeletekeyifempty
+Root: HKLM; Subkey: "Software\Saxonica\SaxonPE-N"; Flags: uninsdeletekey
+Root: HKLM; Subkey: "Software\Saxonica\SaxonPE-N\Settings"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}";
+Root: HKCU; Subkey: "Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}\bin"
+
+[UninstallDelete]
+Type: dirifempty; Name: "{app}";         
+                
+      </echo>
+      <exec executable="c:/Program Files/Inno Setup 5/Compil32.exe">
+        <arg line="/cc"/>
+        <arg line="${temp.dir}/n/installer/pe.iss"/>
+      </exec>
+    </target>       
+    
+    <target name="installer-een" description="Create installer for Saxon-EE on .NET" depends="n">
+       <mkdir dir="${temp.dir}/n/installer"/> 
+       
+      <echo file="${temp.dir}/n/installer/ee.iss">
+; SEE THE DOCUMENTATION FOR DETAILS ON CREATING .ISS SCRIPT FILES!
+; Documentation is at http://www.jrsoftware.org/ishelp/
+
+[Setup]
+AppName=Saxon-EE ${version}
+AppVerName=Saxon-EE ${version}
+DefaultDirName=c:\Program Files\Saxonica\SaxonEE${major.version}N
+DefaultGroupName=Saxon-PE ${version}
+PrivilegesRequired=none
+Compression=lzma
+SolidCompression=yes
+SourceDir=${build-een.dir}\bin
+OutputDir=${issue.dir}
+OutputBaseFilename=SaxonEE${versionh}N-setup
+AppCopyright=Copyright (c) 2010 Saxonica
+
+[Files]
+; GAC Files
+
+Source: "IKVM.Runtime.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "IKVM.Runtime.dll, ${ikvm.strongname}"
+Source: "IKVM.OpenJDK.Core.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "IKVM.OpenJDK.Core.dll, ${ikvm.strongname}"
+Source: "IKVM.OpenJDK.Charsets.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "IKVM.OpenJDK.Charsets.dll, ${ikvm.strongname}"
+Source: "IKVM.OpenJDK.Security.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "IKVM.OpenJDK.Security.dll, ${ikvm.strongname}"
+Source: "IKVM.OpenJDK.Util.dll"; DestDir: "{app}\bin" ; Flags: gacinstall; StrongAssemblyName: "IKVM.OpenJDK.Util.dll, ${ikvm.strongname}"
+Source: "IKVM.OpenJDK.Text.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "IKVM.OpenJDK.Text.dll, ${ikvm.strongname}"
+Source: "IKVM.OpenJDK.XML.API.dll"; DestDir: "{app}\bin"; Flags: gacinstall ; StrongAssemblyName: "IKVM.OpenJDK.XML.API.dll, ${ikvm.strongname}"
+Source: "saxon9ee.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "saxon9ee.dll, ${saxon.strongname}"
+Source: "saxon9ee-api.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "saxon9ee-api.dll, ${saxon.strongname}"
+
+; Program Files
+Source: "Query.exe"; DestDir: "{app}\bin"
+Source: "Transform.exe"; DestDir: "{app}\bin"
+Source: "Validate.exe"; DestDir: "{app}\bin"
+
+[Registry]
+Root: HKCU; Subkey: "Software\Saxonica"; Flags: uninsdeletekeyifempty
+Root: HKCU; Subkey: "Software\Saxonica\SaxonEE-N"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Saxonica\SaxonEE-N\Settings"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}";
+Root: HKLM; Subkey: "Software\Saxonica"; Flags: uninsdeletekeyifempty
+Root: HKLM; Subkey: "Software\Saxonica\SaxonEE-N"; Flags: uninsdeletekey
+Root: HKLM; Subkey: "Software\Saxonica\SaxonEE-N\Settings"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}";
+Root: HKCU; Subkey: "Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}\bin"
+
+[UninstallDelete]
+Type: dirifempty; Name: "{app}";          
+                
+      </echo>
+      <exec executable="c:/Program Files/Inno Setup 5/Compil32.exe">
+        <arg line="/cc"/>
+        <arg line="${temp.dir}/n/installer/ee.iss"/>
+      </exec>
+    </target> 
+    
+    <target name="release-n"
+        depends="installer-hen, installer-pen, installer-een"/>          
+           
+
+    
+
+      
+       
+    
+</project>
