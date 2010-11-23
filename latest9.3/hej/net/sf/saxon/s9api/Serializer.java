@@ -1,18 +1,17 @@
 package net.sf.saxon.s9api;
 
 import net.sf.saxon.Configuration;
-import net.sf.saxon.lib.SaxonOutputKeys;
+import net.sf.saxon.event.NamespaceReducer;
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.event.StreamWriterToReceiver;
-import net.sf.saxon.event.NamespaceReducer;
 import net.sf.saxon.expr.instruct.Executable;
 import net.sf.saxon.expr.instruct.ResultDocument;
-import net.sf.saxon.query.QueryResult;
+import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.lib.SerializerFactory;
+import net.sf.saxon.query.QueryResult;
 import net.sf.saxon.trans.XPathException;
 
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
@@ -412,12 +411,14 @@ public class Serializer implements Destination {
     /**
      * Get an XMLStreamWriter that can be used for writing application-generated XML
      * to be output via this serializer.
-     * @return a newly constructed XMLStreamWriter that pipes events into this Serializer
+     * @return a newly constructed XMLStreamWriter that pipes events into this Serializer.
+     * The returned object implements {@link javax.xml.stream.XMLStreamWriter}, but is not declared
+     * as such to enable the product to load under JDK 1.5. 
      * @throws IllegalStateException if no Processor has been set for this Serializer
      * @since 9.3
      */
 
-    public XMLStreamWriter getXMLStreamWriter() throws SaxonApiException {
+    public StreamWriterToReceiver getXMLStreamWriter() throws SaxonApiException {
         if (config == null) {
             throw new IllegalStateException("This method is available only if a Processor has been set");
         }

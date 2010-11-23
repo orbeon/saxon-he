@@ -6,7 +6,6 @@ import net.sf.saxon.serialize.*;
 import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.sax.SAXResult;
@@ -45,11 +44,13 @@ public class SerializerFactory implements Serializable {
     /**
      * Create a serializer with given output properties, and return
      * an XMLStreamWriter that can be used to feed events to the serializer.
-     * @param result the destination of the serialized output (wraps a Writer, an OutputStream, or a File)
+     * @param result the destination of the serialized output (wraps a Writer, an OutputStream, or a File).
+     * The returned object implements {@link javax.xml.stream.XMLStreamWriter}, but is not declared
+     * as such to enable the product to load under JDK 1.5.
      * @param properties the serialization properties to be used
      */
 
-    public XMLStreamWriter getXMLStreamWriter(
+    public StreamWriterToReceiver getXMLStreamWriter(
             StreamResult result,
             Properties properties) throws XPathException {
         Receiver r = getReceiver(result, config.makePipelineConfiguration(), properties);
