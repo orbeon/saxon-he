@@ -282,7 +282,10 @@ public class XSLStylesheet extends StyleElement {
     }
 
 
-
+    @Override
+    protected void index(Declaration decl, PrincipalStylesheetModule top) throws XPathException {
+        compileError("xsl:stylesheet can appear only as the outermost element", "XTSE0010");
+    }
 
     /**
      * Dummy compile() method to satisfy the interface
