@@ -20,7 +20,7 @@ public class BaseURI extends SystemFunction {
      */
 
      public Expression simplify(ExpressionVisitor visitor) throws XPathException {
-        useContextItemAsDefault();
+        useContextItemAsDefault(visitor);
         return simplifyArguments(visitor);
     }
 

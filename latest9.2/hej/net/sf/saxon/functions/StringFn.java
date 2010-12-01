@@ -27,7 +27,7 @@ public class StringFn extends SystemFunction implements DivisibleInstruction {
      */
 
      public Expression simplify(ExpressionVisitor visitor) throws XPathException {
-        useContextItemAsDefault();
+        useContextItemAsDefault(visitor);
         argument[0].setFlattened(true);
         return simplifyArguments(visitor);
     }

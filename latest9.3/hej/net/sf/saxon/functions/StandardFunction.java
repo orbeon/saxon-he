@@ -275,13 +275,12 @@ public abstract class StandardFunction {
             arg(e, 0, Type.ITEM_TYPE, StaticProperty.ALLOWS_ZERO_OR_MORE, null);
             arg(e, 1, Type.NODE_TYPE, StaticProperty.EXACTLY_ONE, null);
 
-        e = register("document-uri#0", NamePart.class, NamePart.DOCUMENT_URI, 0, 1, BuiltInAtomicType.ANY_URI,
+        e = register("document-uri#0", NamePart.class, NamePart.DOCUMENT_URI, 0, 0, BuiltInAtomicType.ANY_URI,
                     StaticProperty.ALLOWS_ZERO_OR_ONE, XPATH30);
-            arg(e, 0, Type.NODE_TYPE, StaticProperty.EXACTLY_ONE, EMPTY);
             
-        e = register("document-uri#1", NamePart.class, NamePart.DOCUMENT_URI, 0, 1, BuiltInAtomicType.ANY_URI,
+        e = register("document-uri#1", NamePart.class, NamePart.DOCUMENT_URI, 1, 1, BuiltInAtomicType.ANY_URI,
                 StaticProperty.ALLOWS_ZERO_OR_ONE, CORE);
-            arg(e, 0, Type.NODE_TYPE, StaticProperty.ALLOWS_ZERO_OR_MORE, EMPTY);
+            arg(e, 0, Type.NODE_TYPE, StaticProperty.ALLOWS_ZERO_OR_ONE, EMPTY);
 
         e = register("empty", Empty.class, 0, 1, 1, BuiltInAtomicType.BOOLEAN,
                 StaticProperty.EXACTLY_ONE, CORE);
@@ -506,9 +505,8 @@ public abstract class StandardFunction {
                 StaticProperty.ALLOWS_ZERO_OR_ONE, CORE);
             arg(e, 0, Type.NODE_TYPE, StaticProperty.ALLOWS_ZERO_OR_ONE, EMPTY);
 
-        e = register("node-name#0", NamePart.class, NamePart.NODE_NAME, 0, 1, BuiltInAtomicType.QNAME,
+        e = register("node-name#0", NamePart.class, NamePart.NODE_NAME, 0, 0, BuiltInAtomicType.QNAME,
                          StaticProperty.ALLOWS_ZERO_OR_ONE, XPATH30);
-            arg(e, 0, Type.NODE_TYPE, StaticProperty.ALLOWS_ZERO_OR_ONE, EMPTY);
 
         e = register("node-name#1", NamePart.class, NamePart.NODE_NAME, 1, 1, BuiltInAtomicType.QNAME,
                  StaticProperty.ALLOWS_ZERO_OR_ONE, CORE);
@@ -642,7 +640,7 @@ public abstract class StandardFunction {
                 StaticProperty.EXACTLY_ONE, CORE);
             arg(e, 0, BuiltInAtomicType.STRING, StaticProperty.ALLOWS_ZERO_OR_ONE, null);
 
-        e = register("string-join#1", StringJoin.class, 0, 1, 2, BuiltInAtomicType.STRING,
+        e = register("string-join#1", StringJoin.class, 0, 1, 1, BuiltInAtomicType.STRING,
                  StaticProperty.EXACTLY_ONE, XPATH30);
             arg(e, 0, BuiltInAtomicType.STRING, StaticProperty.ALLOWS_ZERO_OR_MORE, StringValue.EMPTY_STRING);
 
