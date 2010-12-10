@@ -469,13 +469,15 @@ public class DocumentBuilder {
      * @return a newly constructed {@link BuildingStreamWriter}, which implements the <code>XMLStreamWriter</code>
      * interface. If schema validation has been requested for this <code>DocumentBuilder</code>, then the document constructed
      * using the <code>XMLStreamWriter</code> will be validated as it is written.
+     * <p>The returned object implements {@link javax.xml.stream.XMLStreamWriter}, but is not declared
+     * as such to enable the product to load under JDK 1.5. The caller should cast the result.
      * <p>If the stream of events supplied to the <code>XMLStreamWriter</code> does not constitute
      * a well formed (and namespace-well-formed) document, the effect is undefined; Saxon may fail
      * to detect the error, and construct an unusable tree. </p>
      * @since 9.3
      */
 
-    public BuildingStreamWriter newBuildingStreamWriter() throws SaxonApiException {
+    public BuildingStreamWriterImpl newBuildingStreamWriter() throws SaxonApiException {
         PipelineConfiguration pipe = config.makePipelineConfiguration();
         Builder builder = treeModel.makeBuilder(pipe);
         builder.setLineNumbering(lineNumbering);
@@ -539,27 +541,6 @@ public class DocumentBuilder {
          }
     }
 
-
-
-    private static class BuildingStreamWriterImpl extends StreamWriterToReceiver implements BuildingStreamWriter {
-
-        Builder builder;
-
-        public BuildingStreamWriterImpl(Receiver receiver, Builder builder) {
-            super(receiver);
-            this.builder = builder;
-            builder.open();
-        }
-
-        public XdmNode getDocumentNode() throws SaxonApiException {
-            try {
-                builder.close();
-            } catch (XPathException e) {
-                throw new SaxonApiException(e);
-            }
-            return new XdmNode(builder.getCurrentRoot());
-        }
-    }
 
 }
 

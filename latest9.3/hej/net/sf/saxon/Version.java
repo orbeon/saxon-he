@@ -6,10 +6,10 @@ package net.sf.saxon;
 
 public final class Version {
 
-    private static final int[] STRUCTURED_VERSION = {9,3,0,2};
-    private static final String VERSION = "9.3.0.2";
+    private static final int[] STRUCTURED_VERSION = {9,3,0,3};
+    private static final String VERSION = "9.3.0.3";
     private static final String BUILD = "080500"; //mmddhh
-    private static final String RELEASE_DATE = "2010-11-23";
+    private static final String RELEASE_DATE = "2010-12-09";
     private static final String MAJOR_RELEASE_DATE = "2010-10-30";
 
     private Version() {

@@ -408,16 +408,16 @@ platform=com.saxonica.config.JavaPlatformPE
         description="Generate Saxon (all three editions) for the Java platform"/>
         
     <target name="release-j" description="Create .ZIP files for release"
-        depends="j, test-j"
-        >  <!-- -->
+        depends="j" 
+        >  <!-- , test-j -->
       <mkdir dir="${issue.dir}"/> 
-      <zip zipfile="${issue.dir}/SaxonHE${versionh}J.zip">
+      <zip zipfile="${issue.dir}/saxonhe${versionh}j.zip">
         <fileset dir="${product.dir}/hej"/>
       </zip>
-      <zip zipfile="${issue.dir}/SaxonPE${versionh}J.zip">
+      <zip zipfile="${issue.dir}/saxonpe${versionh}j.zip">
         <fileset dir="${product.dir}/pej"/>
       </zip>                     
-	  <zip zipfile="${issue.dir}/SaxonEE${versionh}J.zip">
+	  <zip zipfile="${issue.dir}/saxonee${versionh}j.zip">
         <fileset dir="${product.dir}/eej"/>
       </zip>                     
      </target>    

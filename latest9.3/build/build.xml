@@ -326,8 +326,10 @@
         depends="test-j, test-n"/>  	 
       
     <target name="release" description="Create .ZIP files for release"
-        depends="build, resources, release-j, release-n"
-        >  <!-- add test -->
+        depends="build, release-source, release-j, release-n"
+        >  
+        <!-- add test -->
+        <!-- omits "resources" for maintenance releases -->
         
       <mkdir dir="${issue.dir}"/> 
       <!-- <zip zipfile="${issue.dir}/saxonhe${versionh}j.zip">
