@@ -304,6 +304,9 @@ public final class TinyTree {
     private void ensureNamespaceCapacity() {
         if (namespaceParent.length < numberOfNamespaces+1) {
             int k = numberOfNamespaces*2;
+            if (k==0) {
+                k = 10;
+            }
 
             int[] namespaceParent2 = new int[k];
             int[] namespaceCode2 = new int[k];
@@ -1315,25 +1318,26 @@ public final class TinyTree {
 
     private void updateStatistics() {
         int n0 = treesCreated;
-        int n1 = treesCreated + 1;
-        treesCreated = n1;
-        averageNodes = ((averageNodes * n0) + numberOfNodes) / n1;
-        if (averageNodes < 10.0) {
-            averageNodes = 10.0;
+        if (n0 < 1000000) {
+            int n1 = treesCreated + 1;
+            treesCreated = n1;
+            averageNodes = ((averageNodes * n0) + numberOfNodes) / n1;
+            if (averageNodes < 10.0) {
+                averageNodes = 10.0;
+            }
+            averageAttributes = ((averageAttributes * n0) + numberOfAttributes) / n1;
+            if (averageAttributes < 10.0) {
+                averageAttributes = 10.0;
+            }
+            averageNamespaces = ((averageNamespaces * n0) + numberOfNamespaces) / n1;
+            if (averageNamespaces < 5.0) {
+                averageNamespaces = 5.0;
+            }
+            averageCharacters = ((averageCharacters * n0) + charBuffer.length()) / n1;
+            if (averageCharacters < 100.0) {
+                averageCharacters = 100.0;
+            }
         }
-        averageAttributes = ((averageAttributes * n0) + numberOfAttributes) / n1;
-        if (averageAttributes < 10.0) {
-            averageAttributes = 10.0;
-        }
-        averageNamespaces = ((averageNamespaces * n0) + numberOfNamespaces) / n1;
-        if (averageNamespaces < 5.0) {
-            averageNamespaces = 5.0;
-        }
-        averageCharacters = ((averageCharacters * n0) + charBuffer.length()) / n1;
-        if (averageCharacters < 100.0) {
-            averageCharacters = 100.0;
-        }
-
     }
 
     /**
