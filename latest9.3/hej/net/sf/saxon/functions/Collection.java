@@ -77,7 +77,12 @@ public class Collection extends SystemFunction {
             // No arguments supplied: this gets the default collection
             href = context.getConfiguration().getDefaultCollection();
         } else {
-            href = argument[0].evaluateItem(context).getStringValue();
+            Item arg = argument[0].evaluateItem(context);
+            if (arg == null) {
+                href = context.getConfiguration().getDefaultCollection();
+            } else {
+                href = arg.getStringValue();
+            }
         }
 
         CollectionURIResolver resolver = context.getConfiguration().getCollectionURIResolver();

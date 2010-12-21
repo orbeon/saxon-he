@@ -181,7 +181,7 @@ public abstract class StandardFunction {
 
         e = register("collection", Collection.class, 0, 0, 1, Type.NODE_TYPE,
                 StaticProperty.ALLOWS_ZERO_OR_MORE, CORE);
-            arg(e, 0, BuiltInAtomicType.STRING, StaticProperty.EXACTLY_ONE, null);
+            arg(e, 0, BuiltInAtomicType.STRING, StaticProperty.ALLOWS_ZERO_OR_MORE, null);
 
         e = register("compare", Compare.class, 0, 2, 3, BuiltInAtomicType.INTEGER,
                 StaticProperty.ALLOWS_ZERO_OR_ONE, CORE);
