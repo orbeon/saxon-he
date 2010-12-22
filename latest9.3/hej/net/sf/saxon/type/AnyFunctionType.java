@@ -54,6 +54,16 @@ public class AnyFunctionType implements FunctionItemType {
     }
 
     /**
+     * Get the result type
+     * @return the result type
+     */
+
+    public SequenceType getResultType() {
+        return SequenceType.ANY_SEQUENCE;
+    }
+
+
+    /**
      * Get the type from which this item type is derived by restriction. This
      * is the supertype in the XPath type heirarchy, as distinct from the Schema
      * base type: this means that the supertype of xs:boolean is xs:anyAtomicType,
