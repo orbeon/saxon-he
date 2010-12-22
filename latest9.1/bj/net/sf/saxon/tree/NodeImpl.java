@@ -82,7 +82,7 @@ public abstract class NodeImpl
      * orphan node, just return the hashcode.
      */
 
-    public int getDocumentNumber() {
+    public long getDocumentNumber() {
         return getPhysicalRoot().getDocumentNumber();
     }
 

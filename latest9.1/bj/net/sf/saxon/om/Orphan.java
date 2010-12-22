@@ -540,7 +540,7 @@ public final class Orphan implements MutableNodeInfo, FingerprintedNode {
      * orphan node, just return the hashcode.
      */
 
-    public int getDocumentNumber() {
+    public long getDocumentNumber() {
         return hashCode() & 0xffffff;
         // lose the top bits because we need to subtract these values for comparison
     }

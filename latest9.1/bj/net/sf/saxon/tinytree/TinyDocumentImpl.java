@@ -144,7 +144,7 @@ public final class TinyDocumentImpl extends TinyParentNodeImpl
 
     public void generateId(FastStringBuffer buffer) {
         buffer.append('d');
-        buffer.append(Integer.toString(getDocumentNumber()));
+        buffer.append(Long.toString(tree.documentNumber));
     }
 
     /**

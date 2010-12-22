@@ -713,7 +713,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      * orphan node, just return the hashcode.
      */
 
-    public int getDocumentNumber() {
+    public long getDocumentNumber() {
         return getParent().getDocumentNumber();
     }
 

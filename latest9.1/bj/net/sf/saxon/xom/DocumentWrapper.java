@@ -30,7 +30,7 @@ public class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 
 	protected String baseURI;
 
-	protected int documentNumber;
+	protected long documentNumber;
 
     private HashMap idIndex;
 
@@ -112,8 +112,8 @@ public class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 	 * @return the unique number identifying this document within the name pool
 	 */
 
-	public int getDocumentNumber() {
-		return documentNumber;
+	public long getDocumentNumber() {
+		return (int)documentNumber;
 	}
 
     /**

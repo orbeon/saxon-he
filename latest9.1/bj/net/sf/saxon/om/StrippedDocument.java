@@ -59,7 +59,7 @@ public class StrippedDocument extends StrippedNode implements DocumentInfo {
 	* Get the unique document number
 	*/
 
-	public int getDocumentNumber() {
+	public long getDocumentNumber() {
 	    return node.getDocumentNumber();
 	}
 

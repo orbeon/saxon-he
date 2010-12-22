@@ -199,7 +199,7 @@ public abstract class TinyNodeImpl implements NodeInfo, FingerprintedNode, Sourc
      */
 
     public int hashCode() {
-        return ((tree.getDocumentNumber() & 0x3ff) << 20) ^ nodeNr ^ (getNodeKind() << 14);
+        return (((int)tree.getDocumentNumber() & 0x3ff) << 20) ^ nodeNr ^ (getNodeKind() << 14);
     }
 
     /**
@@ -635,7 +635,7 @@ public abstract class TinyNodeImpl implements NodeInfo, FingerprintedNode, Sourc
 
     public void generateId(FastStringBuffer buffer) {
         buffer.append("d");
-        buffer.append(Integer.toString(tree.getDocumentNumber()));
+        buffer.append(Long.toString(tree.getDocumentNumber()));
         buffer.append(NODE_LETTER[getNodeKind()]);
         buffer.append(Integer.toString(nodeNr));
     }
@@ -645,7 +645,7 @@ public abstract class TinyNodeImpl implements NodeInfo, FingerprintedNode, Sourc
      * (Needed when the document isn't a real node, for sorting free-standing elements)
      */
 
-    public final int getDocumentNumber() {
+    public final long getDocumentNumber() {
         return tree.getDocumentNumber();
     }
 

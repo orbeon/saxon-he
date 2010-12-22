@@ -22,7 +22,7 @@ import javax.xml.transform.SourceLocator;
 public class VirtualCopy implements NodeInfo, SourceLocator {
 
     protected String systemId;
-    protected int documentNumber;
+    protected long documentNumber;
     protected NodeInfo original;
     protected VirtualCopy parent;
     protected NodeInfo root;        // the node forming the root of the subtree that was copied
@@ -82,7 +82,7 @@ public class VirtualCopy implements NodeInfo, SourceLocator {
      * {@link net.sf.saxon.Configuration#getDocumentNumberAllocator()}
      */
 
-    public void setDocumentNumber(int documentNumber) {
+    public void setDocumentNumber(long documentNumber) {
         this.documentNumber = documentNumber;
     }
 
@@ -111,7 +111,7 @@ public class VirtualCopy implements NodeInfo, SourceLocator {
 
     public boolean isSameNodeInfo(NodeInfo other) {
         return other instanceof VirtualCopy &&
-                documentNumber == other.getDocumentNumber() &&
+                documentNumber == ((VirtualCopy)other).documentNumber &&
                 original.isSameNodeInfo(((VirtualCopy)other).original);
 
 
@@ -142,7 +142,7 @@ public class VirtualCopy implements NodeInfo, SourceLocator {
       */
 
      public int hashCode() {
-         return original.hashCode() ^ (documentNumber << 19);
+         return original.hashCode() ^ (int)(documentNumber << 19);
      }
 
     /**
@@ -469,7 +469,7 @@ public class VirtualCopy implements NodeInfo, SourceLocator {
 
     public void generateId(FastStringBuffer buffer) {
         buffer.append("d");
-        buffer.append(Integer.toString(documentNumber));
+        buffer.append(Long.toString(documentNumber));
         original.generateId(buffer);
     }
 
@@ -478,8 +478,8 @@ public class VirtualCopy implements NodeInfo, SourceLocator {
      * orphan node, just return the hashcode.
      */
 
-    public int getDocumentNumber() {
-        return documentNumber;
+    public long getDocumentNumber() {
+        return (int)documentNumber;
     }
 
     /**

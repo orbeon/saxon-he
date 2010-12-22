@@ -20,7 +20,7 @@ public final class TextFragmentValue implements DocumentInfo, FingerprintedNode,
     private String baseURI;
     private TextFragmentTextNode textNode = null;   // created on demand
     private Configuration config;
-    private int documentNumber;
+    private long documentNumber;
 
     /**
     * Constructor: create a result tree fragment containing a single text node
@@ -64,13 +64,13 @@ public final class TextFragmentValue implements DocumentInfo, FingerprintedNode,
 	* Get the unique document number
 	*/
 
-	public int getDocumentNumber() {
+	public long getDocumentNumber() {
         if (documentNumber == -1) {
             documentNumber = config.getDocumentNumberAllocator().allocateDocumentNumber();
             // technically this isn't thread-safe; however, TextFragmentValues are invariably used within
             // a single thread
         }
-	    return documentNumber;
+	    return (int)documentNumber;
 	}
 
     /**
@@ -116,7 +116,7 @@ public final class TextFragmentValue implements DocumentInfo, FingerprintedNode,
 
     public void generateId(FastStringBuffer buffer) {
         buffer.append("tt");
-        buffer.append(Integer.toString(getDocumentNumber()));
+        buffer.append(Long.toString(documentNumber));
     }
 
     /**
@@ -608,7 +608,7 @@ public final class TextFragmentValue implements DocumentInfo, FingerprintedNode,
 
         public void generateId(FastStringBuffer buffer) {
             buffer.append("tt");
-            buffer.append(Integer.toString(getDocumentNumber()));
+            buffer.append(Long.toString(documentNumber));
             buffer.append("t1");
         }
 
@@ -749,7 +749,7 @@ public final class TextFragmentValue implements DocumentInfo, FingerprintedNode,
          * orphan node, just return the hashcode.
          */
 
-        public int getDocumentNumber() {
+        public long getDocumentNumber() {
             return getDocumentRoot().getDocumentNumber();
         }
 

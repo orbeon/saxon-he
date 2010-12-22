@@ -735,7 +735,7 @@ public final class Navigator {
     public static void appendSequentialKey(SiblingCountingNode node, FastStringBuffer sb, boolean addDocNr) {
         if (addDocNr) {
             sb.append('w');
-            sb.append(Integer.toString(node.getDocumentNumber()));
+            sb.append(Long.toString(node.getDocumentNumber()));
         }
         if (node.getNodeKind() != Type.DOCUMENT) {
             NodeInfo parent = node.getParent();

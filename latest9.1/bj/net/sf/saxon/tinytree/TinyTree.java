@@ -33,7 +33,7 @@ public final class TinyTree {
     private ArrayList documentList = new ArrayList(5);
 
     // The document number (really a tree number: it can identify a non-document root node
-    protected int documentNumber;
+    protected long documentNumber;
 
     // the contents of the document
 
@@ -993,7 +993,7 @@ public final class TinyTree {
      * @return the unique number of this TinyTree structure
      */
 
-    public int getDocumentNumber() {
+    public long getDocumentNumber() {
         return documentNumber;
     }
 
@@ -1072,23 +1072,25 @@ public final class TinyTree {
 
     private void updateStatistics() {
         int n0 = treesCreated;
-        int n1 = treesCreated + 1;
-        treesCreated = n1;
-        averageNodes = ((averageNodes * n0) + numberOfNodes) / n1;
-        if (averageNodes < 10.0) {
-            averageNodes = 10.0;
-        }
-        averageAttributes = ((averageAttributes * n0) + numberOfAttributes) / n1;
-        if (averageAttributes < 10.0) {
-            averageAttributes = 10.0;
-        }
-        averageNamespaces = ((averageNamespaces * n0) + numberOfNamespaces) / n1;
-        if (averageNamespaces < 5.0) {
-            averageNamespaces = 5.0;
-        }
-        averageCharacters = ((averageCharacters * n0) + charBuffer.length()) / n1;
-        if (averageCharacters < 100.0) {
-            averageCharacters = 100.0;
+        if (n0 < 1000000) {
+            int n1 = treesCreated + 1;
+            treesCreated = n1;
+            averageNodes = ((averageNodes * n0) + numberOfNodes) / n1;
+            if (averageNodes < 10.0) {
+                averageNodes = 10.0;
+            }
+            averageAttributes = ((averageAttributes * n0) + numberOfAttributes) / n1;
+            if (averageAttributes < 10.0) {
+                averageAttributes = 10.0;
+            }
+            averageNamespaces = ((averageNamespaces * n0) + numberOfNamespaces) / n1;
+            if (averageNamespaces < 5.0) {
+                averageNamespaces = 5.0;
+            }
+            averageCharacters = ((averageCharacters * n0) + charBuffer.length()) / n1;
+            if (averageCharacters < 100.0) {
+                averageCharacters = 100.0;
+            }
         }
 
     }

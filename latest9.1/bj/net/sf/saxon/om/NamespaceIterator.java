@@ -748,7 +748,7 @@ public class NamespaceIterator implements AxisIterator {
          * orphan node, just return the hashcode.
          */
 
-        public int getDocumentNumber() {
+        public long getDocumentNumber() {
             return element.getDocumentNumber();
         }
 

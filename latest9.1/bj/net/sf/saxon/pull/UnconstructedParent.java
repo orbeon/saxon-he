@@ -508,7 +508,7 @@ public abstract class UnconstructedParent implements NodeInfo {
      * orphan node, just return the hashcode.
      */
 
-    public int getDocumentNumber() {
+    public long getDocumentNumber() {
         if (node == null) {
             tryToConstruct();
         }

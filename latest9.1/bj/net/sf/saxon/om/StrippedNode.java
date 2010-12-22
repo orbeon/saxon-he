@@ -441,7 +441,7 @@ public class StrippedNode implements NodeInfo, VirtualNode {
      * orphan node, just return the hashcode.
      */
 
-    public int getDocumentNumber() {
+    public long getDocumentNumber() {
         return docWrapper.getDocumentNumber();
     }
 

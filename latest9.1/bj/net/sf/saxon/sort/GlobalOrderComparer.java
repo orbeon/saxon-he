@@ -29,12 +29,12 @@ public final class GlobalOrderComparer implements NodeOrderComparer, Serializabl
         if (a==b) {
             return 0;
         }
-        int d1 = a.getDocumentNumber();
-        int d2 = b.getDocumentNumber();
+        long d1 = a.getDocumentNumber();
+        long d2 = b.getDocumentNumber();
         if (d1 == d2) {
             return a.compareOrder(b);
         }
-        return d1 - d2;
+        return (d1 > d2 ? +1 : -1);
     }
 }
 

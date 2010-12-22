@@ -460,7 +460,7 @@ public interface NodeInfo extends Source, Item, ValueRepresentation {
      * @since 8.4
      */
 
-    public int getDocumentNumber();
+    public long getDocumentNumber();
 
     /**
      * Copy this node to a given Receiver.

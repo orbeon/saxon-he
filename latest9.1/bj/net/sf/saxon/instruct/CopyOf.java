@@ -593,7 +593,7 @@ public class CopyOf extends Instruction {
                             return item;
                         }
                         VirtualCopy vc = VirtualCopy.makeVirtualCopy((NodeInfo)item, (NodeInfo) item);
-                        int documentNumber =
+                        long documentNumber =
                                 context.getController().getConfiguration().getDocumentNumberAllocator().allocateDocumentNumber();
                         vc.setDocumentNumber(documentNumber);
                         if (((NodeInfo)item).getNodeKind() == Type.ELEMENT) {
@@ -611,7 +611,7 @@ public class CopyOf extends Instruction {
                             return item;
                         }
                         VirtualCopy vc = VirtualUntypedCopy.makeVirtualUntypedCopy((NodeInfo) item, (NodeInfo) item);
-                        int documentNumber =
+                        long documentNumber =
                                 context.getController().getConfiguration().getDocumentNumberAllocator().allocateDocumentNumber();
                         vc.setDocumentNumber(documentNumber);
                         if (((NodeInfo)item).getNodeKind() == Type.ELEMENT) {

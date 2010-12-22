@@ -19,7 +19,7 @@ public class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 
     protected Configuration config;
     protected String baseURI;
-    protected int documentNumber;
+    protected long documentNumber;
     protected boolean domLevel3;
 
     /**
@@ -93,7 +93,7 @@ public class DocumentWrapper extends NodeWrapper implements DocumentInfo {
      * Get the unique document number
      */
 
-    public int getDocumentNumber() {
+    public long getDocumentNumber() {
         return documentNumber;
     }
 

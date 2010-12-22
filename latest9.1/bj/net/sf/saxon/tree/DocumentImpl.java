@@ -28,7 +28,7 @@ public final class DocumentImpl extends ParentNodeImpl implements DocumentInfo {
     private ElementImpl documentElement;
 
     private HashMap idTable = null;
-    private int documentNumber;
+    private long documentNumber;
     private String baseURI;
     private HashMap entityTable = null;
     private HashMap elementList = null;
@@ -106,8 +106,8 @@ public final class DocumentImpl extends ParentNodeImpl implements DocumentInfo {
 	* Get the unique document number
 	*/
 
-	public int getDocumentNumber() {
-	    return documentNumber;
+	public long getDocumentNumber() {
+	    return (int)documentNumber;
 	}
 
     /**
@@ -331,7 +331,7 @@ public final class DocumentImpl extends ParentNodeImpl implements DocumentInfo {
 
     public void generateId(FastStringBuffer buffer) {
         buffer.append('d');
-        buffer.append(Integer.toString(documentNumber));
+        buffer.append(Long.toString(documentNumber));
     }
 
     /**

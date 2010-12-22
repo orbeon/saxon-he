@@ -21,7 +21,7 @@ public class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 
     protected Configuration config;
     protected String baseURI;
-    protected int documentNumber;
+    protected long documentNumber;
 
     /**
      * Create a Saxon wrapper for a dom4j document
@@ -59,8 +59,8 @@ public class DocumentWrapper extends NodeWrapper implements DocumentInfo {
     * Get the unique document number
     */
 
-    public int getDocumentNumber() {
-        return documentNumber;
+    public long getDocumentNumber() {
+        return (int)documentNumber;
     }
 
     /**
