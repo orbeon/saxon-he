@@ -1910,7 +1910,19 @@ public abstract class StyleElement extends ElementImpl
      *         or null if no declaration of the variable can be found
      */
 
-    public XSLVariableDeclaration bindVariable(StructuredQName qName) {
+ 	public XSLVariableDeclaration bindVariable(StructuredQName qName) {
+
+        XSLVariableDeclaration decl = bindLocalVariable(qName);
+        if (decl != null) {
+            return decl;
+        }
+
+		// Now check for a global variable
+		// we rely on the search following the order of decreasing import precedence.
+		return getPrincipalStylesheetModule().getGlobalVariable(qName);
+	}
+
+    public XSLVariableDeclaration bindLocalVariable(StructuredQName qName) {
         NodeInfo curr = this;
         NodeInfo prev = this;
 
@@ -1943,11 +1955,7 @@ public abstract class StyleElement extends ElementImpl
                 }
             }
         }
-
-        // Now check for a global variable
-        // we rely on the search following the order of decreasing import precedence.
-
-        return getPrincipalStylesheetModule().getGlobalVariable(qName);
+        return null;
     }
 
     /**
