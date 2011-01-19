@@ -639,13 +639,16 @@ public class ExpressionParser {
             Assignation v;
             if (operator == Token.FOR) {
                 v = new ForExpression();
+                v.setRequiredType(SequenceType.SINGLE_ITEM);
             } else if (operator == Token.LET) {
                 v = new LetExpression();
+                v.setRequiredType(SequenceType.ANY_SEQUENCE);
             } else {
                 v = new QuantifiedExpression();
+                v.setRequiredType(SequenceType.SINGLE_ITEM);
                 ((QuantifiedExpression)v).setOperator(operator);
             }
-            v.setRequiredType(SequenceType.SINGLE_ITEM);
+
             v.setVariableQName(makeStructuredQName(var, false));
             clause.rangeVariable = v;
             nextToken();
