@@ -5,6 +5,7 @@ import net.sf.saxon.Controller;
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.SequenceOutputter;
 import net.sf.saxon.expr.instruct.Block;
+import net.sf.saxon.expr.instruct.LocalParam;
 import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.instruct.UserFunction;
 import net.sf.saxon.functions.Current;
@@ -702,6 +703,24 @@ public class ExpressionTool {
             }
         }
     }
+
+    /**
+      * Determine whether an expression contains a LocalParam subexpression
+      * @param exp the expression to be tested
+      */
+
+     public static boolean containsLocalParam(Expression exp) {
+         if (exp instanceof LocalParam) {
+             return true;
+         }
+         for (Iterator<Expression> iter = exp.iterateSameFocusSubExpressions(); iter.hasNext();) {
+             if (containsLocalParam(iter.next())) {
+                 return true;
+             }
+         }
+         return false;
+     }
+
 
     /**
      * Determine whether an expression contains a call on the function with a given fingerprint

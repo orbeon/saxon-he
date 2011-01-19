@@ -1,12 +1,11 @@
 package net.sf.saxon.expr;
 
+import net.sf.saxon.expr.instruct.LocalParam;
+import net.sf.saxon.expr.sort.DocumentSorter;
 import net.sf.saxon.functions.Current;
 import net.sf.saxon.functions.Reverse;
-import net.sf.saxon.expr.instruct.Block;
-import net.sf.saxon.expr.instruct.LocalParam;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.StructuredQName;
-import net.sf.saxon.expr.sort.DocumentSorter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.SequenceType;
@@ -249,7 +248,7 @@ public class PromotionOffer  {
             case EXTRACT_GLOBAL_VARIABLES:
                 if (!(child instanceof Literal || child instanceof LocalParam ||
                         (child == containingExpression) ||
-                        (child instanceof Block && ((Block)child).containsLocalParam())) &&
+                        ExpressionTool.containsLocalParam(child)) &&
                         (child.getDependencies()&~StaticProperty.DEPENDS_ON_RUNTIME_ENVIRONMENT) == 0 &&
                         (child.getSpecialProperties() & StaticProperty.NON_CREATIVE) != 0) {
                     return optimizer.extractGlobalVariables(child, visitor, this);
