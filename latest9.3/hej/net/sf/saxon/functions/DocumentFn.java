@@ -299,7 +299,7 @@ public class DocumentFn extends SystemFunction {
             } else {
                 Builder b = controller.makeBuilder();
                 Receiver s = b;
-                ParseOptions options = new ParseOptions();
+                ParseOptions options = new ParseOptions(b.getPipelineConfiguration().getParseOptions());
                 options.setStripSpace(Whitespace.XSLT);
                 if (controller.getExecutable().stripsInputTypeAnnotations()) {
                     s = controller.getConfiguration().getAnnotationStripper(s);
