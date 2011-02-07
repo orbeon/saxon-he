@@ -117,7 +117,7 @@ public class Err {
             } else {
                 return truncate30(cs);
             }
-        } else {
+        } else if (item instanceof NodeInfo) {
             NodeInfo node = (NodeInfo)item;
             switch (node.getNodeKind()) {
                 case Type.DOCUMENT:
@@ -138,6 +138,8 @@ public class Err {
                 default:
                     return "";
             }
+        } else {
+            return "function item";
         }
     }
 
