@@ -157,6 +157,8 @@ public class LiteralResultElement extends StyleElement {
             }
         } else {
 
+            processDefaultCollationAttribute(NamespaceConstant.XSLT);
+
             // Build the list of output namespace nodes. Note we no longer optimize this list.
             // See comments in the 9.1 source code for some history of this decision.
 

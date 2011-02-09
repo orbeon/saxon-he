@@ -390,7 +390,7 @@ public abstract class StyleElement extends ElementImpl
      */
 
     public void processStandardAttributes(String namespace) throws XPathException {
-        processDefaultCollationAttribute(namespace);
+        //processDefaultCollationAttribute(namespace);
         processExtensionElementAttribute(namespace);
         processExcludedNamespaces(namespace);
         processVersionAttribute(namespace);
