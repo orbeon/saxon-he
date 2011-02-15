@@ -2100,6 +2100,10 @@ public class ExpressionParser {
         Expression[] arguments = new Expression[args.size()];
         args.toArray(arguments);
 
+        if (placeMarkers != null) {
+            return makeCurriedFunction(functionName, arguments, placeMarkers);
+        }
+
         Expression fcall;
         try {
             fcall = env.getFunctionLibrary().bind(functionName, arguments, env, defaultContainer);
@@ -2196,10 +2200,6 @@ public class ExpressionParser {
             fcall.adoptChildExpression(arguments[a]);
         }
 
-        if (placeMarkers != null) {
-            return makeCurriedFunction((FunctionCall)fcall, arguments, placeMarkers);
-        }
-
         return makeTracer(offset, fcall, Location.FUNCTION_CALL, functionName);
 
     }
@@ -2285,17 +2285,16 @@ public class ExpressionParser {
     /**
      * Process a function call in which one or more of the argument positions are
      * represented as "?" placemarkers (indicating partial application or currying)
-     * @param fcall the function call (as if there were no currying)
+     * @param name the function name
      * @param args the arguments (with EmptySequence in the placemarker positions)
-     * @param placeMarkers  the positions of the placemarkers
-     * @return the curried function
+     * @param placeMarkers  the positions of the placemarkers   @return the curried function
      * @throws XPathException
      */
 
     protected Expression makeCurriedFunction(
-            FunctionCall fcall, Expression[] args, IntSet placeMarkers)
+            StructuredQName name, Expression[] args, IntSet placeMarkers)
             throws XPathException {
-        grumble("Curried functions are allowed only in XQuery 1.1");
+        grumble("Curried functions are allowed only in XPath/XQuery 3.0");
         return null;
     }
 
