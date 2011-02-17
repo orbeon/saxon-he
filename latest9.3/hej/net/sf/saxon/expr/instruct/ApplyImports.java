@@ -286,6 +286,7 @@ public class ApplyImports extends Instruction implements ITemplateCall {
             WithParam.displayExpressions(tunnelParams, out);
             out.endSubsidiaryElement();
         }
+        out.endElement();
     }
 
 }
