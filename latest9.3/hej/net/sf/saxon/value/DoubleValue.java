@@ -406,7 +406,9 @@ public final class DoubleValue extends NumericValue {
      */
 
     public Comparable getSchemaComparable() {
-        return new Double(value);
+        // convert negative zero to positive zero
+        double val = (value == 0.0 ? 0.0 : value);
+        return new Double(val);
     }
 
     /**

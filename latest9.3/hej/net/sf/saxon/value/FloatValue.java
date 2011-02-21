@@ -353,7 +353,9 @@ public final class FloatValue extends NumericValue {
      */
 
     public Comparable getSchemaComparable() {
-        return new Float(value);
+        // convert negative to positive zero because Float.compareTo() does the wrong thing
+        float val = (value == 0.0f ? 0.0f : value);
+        return new Float(val);
     }    
 
     /**
