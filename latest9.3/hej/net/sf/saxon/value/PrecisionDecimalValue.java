@@ -123,6 +123,13 @@ public final class PrecisionDecimalValue extends NumericValue {
         } else if (s.equals("NaN")) {
             return NaN;
         } else {
+            for (int i=0; i<in.length(); i++) {
+                if (in.charAt(i) > 128) {
+                    return new ValidationFailure(
+                            "Cannot convert string " + Err.wrap(Whitespace.trim(in), Err.VALUE) +
+                                " to xs:precisionDecimal: contains non-ASCII characters");
+                }
+            }
             try {
                 BigDecimal v = new BigDecimal(s);
                 int dataPoint = ORDINARY_VALUE;
