@@ -150,8 +150,8 @@ public class LocalParamBlock extends Instruction {
 
     protected void promoteInst(PromotionOffer offer) throws XPathException {
         for (int c=0; c<children.length; c++) {
-            // TODO: prevent certain promotions, such as making the LocalParam global.
-            children[c] = (LocalParam)doPromotion(children[c], offer);
+            LocalParam p = children[c];
+            p.setSelectExpression(doPromotion(p.getSelectExpression(), offer));
         }
     }
 
