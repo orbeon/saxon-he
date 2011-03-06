@@ -972,6 +972,9 @@ public abstract class Expression
                     }
                 }
             }
+        } else if (exp instanceof SuppliedParameterReference) {
+            int slot = ((SuppliedParameterReference)exp).getSlotNumber();
+            slots.add(slot);
         } else {
             Iterator iter = exp.iterateSubExpressions();
             while (iter.hasNext()) {

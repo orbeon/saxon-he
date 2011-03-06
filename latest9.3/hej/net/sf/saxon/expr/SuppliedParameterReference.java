@@ -36,6 +36,10 @@ public class SuppliedParameterReference extends Expression {
         slotNumber = slot;
     }
 
+    public int getSlotNumber() {
+        return slotNumber;
+    }
+
     /**
      * Set the type of the supplied value if known
      * @param type of the supplied value
