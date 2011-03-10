@@ -495,7 +495,15 @@ public class LetExpression extends Assignation implements TailCallReturner {
                 Binding b = ((VariableReference)sequence).getBinding();
                 if (b != null && !b.isAssignable()) {
                     replaceVariable(offer.getOptimizer(), sequence);
-                    return action;
+                    // defensive programming. If someone in the tree fails to pass this request down,
+                    // there will still be a reference to the variable on the tree, which will cause
+                    // a crash later. So we'll check that the variable really has gone from the
+                    // tree before deleting the variable binding.
+                    if (ExpressionTool.dependsOnVariable(action, new Binding[]{this})) {
+                        offer.getOptimizer().trace("Failed to eliminate redundant variable $" + getVariableName(), this);
+                    } else {
+                        return action;
+                    }
                 }
             }
                                  
