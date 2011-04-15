@@ -899,23 +899,28 @@ public class Configuration implements Serializable, SourceResolver, NotationSet 
 
     public ConversionRules getConversionRules() {
         if (conversionRules == null) {
-            conversionRules = new ConversionRules();
-            conversionRules.setNameChecker(
-                    xmlVersion == XML10 ?
-                    Name10Checker.getInstance() :
-                    Name11Checker.getInstance());
-            conversionRules.setStringToDoubleConverter(
-                    xsdVersion == XSD10 ?
-                    StringToDouble.getInstance() :
-                    StringToDouble11.getInstance());
-            conversionRules.setNotationSet(this);
-            if (xsdVersion == XSD10) {
-                conversionRules.setURIChecker(StandardURIChecker.getInstance());
-                // In XSD 1.1, there is no checking
-            }
-            conversionRules.setAllowYearZero(xsdVersion != XSD10);                 
+            makeConversionRules();                 
         }
         return conversionRules;
+    }
+
+    private synchronized void makeConversionRules() {
+        ConversionRules cv = new ConversionRules();
+        cv.setNameChecker(
+                xmlVersion == XML10 ?
+                Name10Checker.getInstance() :
+                Name11Checker.getInstance());
+        cv.setStringToDoubleConverter(
+                xsdVersion == XSD10 ?
+                StringToDouble.getInstance() :
+                StringToDouble11.getInstance());
+        cv.setNotationSet(this);
+        if (xsdVersion == XSD10) {
+            cv.setURIChecker(StandardURIChecker.getInstance());
+            // In XSD 1.1, there is no checking
+        }
+        cv.setAllowYearZero(xsdVersion != XSD10);
+        conversionRules = cv;
     }
 
     /**
