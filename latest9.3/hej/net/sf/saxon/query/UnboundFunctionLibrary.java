@@ -92,6 +92,9 @@ public class UnboundFunctionLibrary implements FunctionLibrary {
         for (int i=0; i<unboundFunctionCalls.size(); i++) {
             UserFunctionCall ufc = (UserFunctionCall)unboundFunctionCalls.get(i);
             QueryModule importingModule = (QueryModule)correspondingStaticContext.get(i);
+            if (importingModule == null) {
+                continue; // we've been here before
+            }
             correspondingStaticContext.set(i, null);    // for garbage collection purposes
             // The original UserFunctionCall is effectively a dummy: we weren't able to find a function
             // definition at the time. So we try again.
