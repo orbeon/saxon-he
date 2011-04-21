@@ -2,14 +2,12 @@ package net.sf.saxon.functions;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Version;
-import net.sf.saxon.expr.Expression;
-import net.sf.saxon.expr.ExpressionVisitor;
-import net.sf.saxon.expr.StringLiteral;
-import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.*;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NamespaceResolver;
 import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.style.UseWhenStaticContext;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.StringValue;
 
@@ -59,7 +57,16 @@ public class SystemProperty extends SystemFunction {
     public Expression preEvaluate(ExpressionVisitor visitor) throws XPathException {
         if (propertyName != null && NamespaceConstant.XSLT.equals(propertyName.getNamespaceURI())) {
             if (propertyName.getLocalName().equals("is-schema-aware")) {
-                return new StringLiteral(visitor.getStaticContext().isSchemaAware() ? "yes" : "no");
+                StaticContext env = visitor.getStaticContext();
+                boolean aware;
+                if (env instanceof UseWhenStaticContext) {
+                    Configuration config = env.getConfiguration();
+                    aware = "EE".equals(config.getEditionCode()) &&
+                            config.isLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XSLT);
+                } else {
+                    aware = env.isSchemaAware();
+                }
+                return new StringLiteral(aware ? "yes" : "no");
             }
             return new StringLiteral(
                     getProperty(NamespaceConstant.XSLT, propertyName.getLocalName(), visitor.getConfiguration()));
