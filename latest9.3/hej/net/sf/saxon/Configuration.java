@@ -3817,7 +3817,6 @@ public class Configuration implements Serializable, SourceResolver, NotationSet 
             }
 
         } else {
-            new IllegalArgumentException("Unknown configuration option " + name).printStackTrace();
             throw new IllegalArgumentException("Unknown configuration option " + name);
         }
     }
