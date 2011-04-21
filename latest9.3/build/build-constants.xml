@@ -14,7 +14,7 @@
          code here is retained in the form of comments, and can be reinstated
          when the bug is fixed. Meanwhile the directories are created manually -->
     
-    <!-- Build file for Saxon. This builds all six for the released products:
+    <!-- Build file for Saxon. This builds all six of the released products:
          Saxon-HE, -PE, and -EE, on both the Java and .NET platforms. It also builds
          the released resources file. A full build requires access to Saxonica
          proprietary source code. The open source Saxon-HE product can be built for
@@ -32,11 +32,11 @@
     -->
     
     
-    <property name="version" value="9.3.0.4"/>
-    <property name="versionh" value="9-3-0-4"/>
+    <property name="version" value="9.3.0.5"/>
+    <property name="versionh" value="9-3-0-5"/>
     <property name="major.version" value="9.3"/>
     <property name="major.versionh" value="9-3"/>
-    <property name="release.date" value="2010-12-22"/>
+    <property name="release.date" value="2011-04-21"/>
     
     <!-- REMEMBER ALSO TO SET THE VERSION IN Version.java -->
     
@@ -45,7 +45,7 @@
     <!-- Java source (used for building both the Java and .NET products) -->
 
     <property name="repository" value="e:/repo"/>
-    <property name="development-j.dir" value="e:/crayfish-svn/src"/>        
+    <!--<property name="development-j.dir" value="e:/crayfish-svn/src"/>-->        
     <!--<property name="source-j.dir" value="${development-j.dir}"/>-->
     <property name="source-hej.dir" value="c:/saxon-svn/latest9.3/hej"/>
     <property name="source-eej.dir" value="c:/saxon-sa-svn/latest9.3/eej"/>

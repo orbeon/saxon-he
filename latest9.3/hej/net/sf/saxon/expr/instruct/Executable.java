@@ -24,7 +24,7 @@ import java.util.*;
 public class Executable implements Serializable {
 
     // the Configuration options
-    private transient Configuration config;
+    private Configuration config;
 
     // definitions of strip/preserve space action
     private StripSpaceRules stripperRules;

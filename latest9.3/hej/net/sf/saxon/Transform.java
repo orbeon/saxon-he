@@ -268,6 +268,9 @@ public class Transform {
 
             useAssociatedStylesheet = "on".equals(options.getOptionValue("a"));
             precompiled = options.getOptionValue("c") != null;
+            if (precompiled) {
+                styleFileName = options.getOptionValue("c");
+            }
 
             String value = options.getOptionValue("explain");
             if (value != null) {
