@@ -360,7 +360,7 @@ namespace Saxon.Api
         {
             JResult result = destination.GetResult();
             JReceiver r = config.getSerializerFactory().getReceiver(result,
-                config.makePipelineConfiguration(), new JProperties());
+                config.makePipelineConfiguration(), destination.GetOutputProperties());
             r = new JNamespaceReducer(r);
             JTreeReceiver tree = new JTreeReceiver(r);
             tree.open();
