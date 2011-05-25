@@ -820,8 +820,13 @@ public class ExpressionTool {
             PromotionOffer offer = new PromotionOffer(config.getOptimizer());
             offer.action = PromotionOffer.REPLACE_CURRENT;
             offer.containingExpression = let;
-            exp = exp.promote(offer, null);
-            let.setAction(exp);
+            Expression exp2 = exp.promote(offer, null);
+            if (callsFunction(exp, Current.FN_CURRENT)) {
+                resolveCallsToCurrentFunction(exp, config);
+                XPathException err = new XPathException("Failed to remove call on current()", exp);
+                throw new AssertionError("Failed to remove call on current() " + err.getLocationAsString());
+            }
+            let.setAction(exp2);
             return let;
         } else {
             return exp;
