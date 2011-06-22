@@ -251,6 +251,7 @@ public class UseWhenStaticContext extends AbstractStaticContext implements XSLTS
                 uri = getURIForPrefix(parts[0]);
             }
             StyleNodeFactory factory = getConfiguration().makeStyleNodeFactory();
+            factory.setXsltProcessorVersion(getXPathLanguageLevel());
             return factory.isElementAvailable(uri, parts[1]);
         } catch (QNameException e) {
             XPathException err = new XPathException("Invalid element name. " + e.getMessage());

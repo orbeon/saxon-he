@@ -84,6 +84,7 @@ public class TemplatesHandlerImpl extends ReceivingContentHandler implements Tem
 
             final Configuration config = getConfiguration();
             CompilerInfo info = new CompilerInfo(config.getDefaultXsltCompilerInfo());
+            info.setXsltVersion(nodeFactory.getXsltProcessorVersion());
             PreparedStylesheet sheet = new PreparedStylesheet(config, info);
 
             try {
