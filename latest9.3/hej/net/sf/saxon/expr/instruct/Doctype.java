@@ -13,6 +13,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.type.ItemType;
+import net.sf.saxon.type.Type;
 
 import java.util.Iterator;
 
@@ -305,6 +306,8 @@ public class Doctype extends Instruction {
                     write(out, " SYSTEM \"" + nsystem + "\" ");
                 }
                 write(out, ">");
+            } else if (child.getNodeKind() == Type.TEXT) {
+                write(out, child.getStringValue());
             } else {
                 XPathException e = new XPathException("Unrecognized element " + localname + " in DTD output");
                 e.setXPathContext(context);
