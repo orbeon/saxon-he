@@ -43,6 +43,9 @@ public class DedicatedStaticContext extends IndependentContext implements Contai
         autoDeclare = ic.autoDeclare;
         setXPathLanguageLevel(ic.getXPathLanguageLevel());
         requiredContextItemType = ic.requiredContextItemType;
+        if (ic instanceof DedicatedStaticContext) {
+            setExecutable(((DedicatedStaticContext)ic).getExecutable());
+        }
     }
 
     public void setExecutable(Executable exec) {

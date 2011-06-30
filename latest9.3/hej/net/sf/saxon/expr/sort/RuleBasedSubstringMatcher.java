@@ -247,7 +247,7 @@ public class RuleBasedSubstringMatcher implements SubstringMatcher {
      */
 
     public Object getCollationKey(String s) {
-        return null;  //AUTO
+        return collator.getCollationKey(s);
     }
 
 
