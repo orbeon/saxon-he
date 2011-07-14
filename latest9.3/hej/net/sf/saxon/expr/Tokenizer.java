@@ -510,7 +510,8 @@ public final class Tokenizer {
             case '*':
                 // disambiguation of MULT and STAR is now done later
                 if (inputOffset < inputLength
-                        && input.charAt(inputOffset) == ':') {
+                        && input.charAt(inputOffset) == ':'
+                        && !(inputOffset+1 < inputLength && input.charAt(inputOffset+1) == '=')) {
                     inputOffset++;
                     nextToken = Token.SUFFIX;
                     // we leave the parser to get the following name as a separate
