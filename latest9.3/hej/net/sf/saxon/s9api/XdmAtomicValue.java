@@ -265,8 +265,12 @@ public class XdmAtomicValue extends XdmItem {
         } else if (av instanceof NumericValue) {
             return ((NumericValue)av).getDoubleValue();
         } else if (av instanceof StringValue) {
-            StringToDouble converter = StringToDouble11.getInstance();
-            return converter.stringToNumber(av.getStringValueCS());
+            try {
+                StringToDouble converter = StringToDouble11.getInstance();
+                return converter.stringToNumber(av.getStringValueCS());
+            } catch (NumberFormatException e) {
+                throw new SaxonApiException(e.getMessage());
+            }
         } else {
             throw new SaxonApiException("Cannot cast item to a double");
         }
