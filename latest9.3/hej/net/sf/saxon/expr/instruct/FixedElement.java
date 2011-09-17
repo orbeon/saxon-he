@@ -195,7 +195,12 @@ public class FixedElement extends ElementCreator {
      */
 
     public Expression copy() {
-        FixedElement fe = new FixedElement(nameCode, namespaceCodes, inheritNamespaces, getSchemaType(), validation);
+        int[] ns2 = namespaceCodes;
+        if (namespaceCodes != null && namespaceCodes.length != 0) {
+            ns2 = new int[namespaceCodes.length];
+            System.arraycopy(namespaceCodes, 0, ns2, 0, ns2.length);
+        }
+        FixedElement fe = new FixedElement(nameCode, ns2, inheritNamespaces, getSchemaType(), validation);
         fe.setContentExpression(content.copy());
         fe.setBaseURI(getBaseURI());
         return fe;
