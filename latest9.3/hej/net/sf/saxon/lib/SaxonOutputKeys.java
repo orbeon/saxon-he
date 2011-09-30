@@ -323,7 +323,7 @@ public class SaxonOutputKeys {
                     checkExtensions(key, config);
                     checkYesOrNo(key, value);
                 }
-            } else if (key.equals(SUPPRESS_INDENTATION)) {
+            } else if (key.equals(SUPPRESS_INDENTATION) || key.equals(SAXON_SUPPRESS_INDENTATION)) {
                 if (value != null) {
                     checkExtensions(key, config);
                     checkListOfClarkNames(key, value, checker);
