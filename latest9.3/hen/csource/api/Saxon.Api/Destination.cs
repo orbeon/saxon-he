@@ -215,13 +215,17 @@ namespace Saxon.Api
         public static readonly QName SAXON_DOUBLE_SPACE =
             new QName(SAXON, "saxon:double-space");
 
-        /// <summary>QName identifying the serialization parameter "saxon:double-space". The value of this 
+        /// <summary>QName identifying the serialization parameter "suppress-indentation". The value of this 
         /// parameter is given as a space-separated list of expanded QNames in Clark notation, that is 
         /// "{uri}local"; each QName identifies an element whose content should not be indented even when
-        /// indent=yes is specified.</summary>
+        /// indent=yes is specified. This serialization parameter was originally introduced in Saxon
+        /// and has since been adopted as a standard W3C serialization parameter. It is therefore
+        /// available both as SAXON_SUPPRESS_INDENTATION and as SUPPRESS_INDENTATION<summary>
 
         public static readonly QName SAXON_SUPPRESS_INDENTATION =
-            new QName(SAXON, "saxon:suppress-indentation");
+            new QName(SAXON, "suppress-indentation");
+            
+        public static readonly QName SUPPRESS_INDENTATION = SAXON_SUPPRESS_INDENTATION; 
 
         /// <summary>QName identifying the serialization parameter "saxon:next-in-chain". This
         /// is available only with XSLT, and identifies the URI of a stylesheet that is to be used to
