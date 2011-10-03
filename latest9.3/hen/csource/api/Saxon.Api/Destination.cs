@@ -220,7 +220,7 @@ namespace Saxon.Api
         /// "{uri}local"; each QName identifies an element whose content should not be indented even when
         /// indent=yes is specified. This serialization parameter was originally introduced in Saxon
         /// and has since been adopted as a standard W3C serialization parameter. It is therefore
-        /// available both as SAXON_SUPPRESS_INDENTATION and as SUPPRESS_INDENTATION<summary>
+        /// available both as SAXON_SUPPRESS_INDENTATION and as SUPPRESS_INDENTATION</summary>
 
         public static readonly QName SAXON_SUPPRESS_INDENTATION =
             new QName(SAXON, "suppress-indentation");
