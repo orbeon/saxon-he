@@ -10,14 +10,14 @@ import net.sf.saxon.tree.tiny.TinyTree;
 import net.sf.saxon.type.*;
 
 /**
-  * A CombinedNodeTest combines two nodetests using one of the operators
-  * union (=or), intersect (=and), difference (= "and not"). This arises
-  * when optimizing a union (etc) of two path expressions using the same axis.
-  * A CombinedNodeTest is also used to support constructs such as element(N,T),
-  * which can be expressed as (element(N,*) AND element(*,T))
-  *
-  * @author Michael H. Kay
-  */
+ * A CombinedNodeTest combines two nodetests using one of the operators
+ * union (=or), intersect (=and), difference (= "and not"). This arises
+ * when optimizing a union (etc) of two path expressions using the same axis.
+ * A CombinedNodeTest is also used to support constructs such as element(N,T),
+ * which can be expressed as (element(N,*) AND element(*,T))
+ *
+ * @author Michael H. Kay
+ */
 
 public class CombinedNodeTest extends NodeTest {
 
@@ -27,10 +27,11 @@ public class CombinedNodeTest extends NodeTest {
 
     /**
      * Create a NodeTest that combines two other node tests
-     * @param nt1 the first operand. Note that if the defaultPriority of the pattern
-     * is required, it will be taken from that of the first operand.
+     *
+     * @param nt1      the first operand. Note that if the defaultPriority of the pattern
+     *                 is required, it will be taken from that of the first operand.
      * @param operator one of Token.UNION, Token.INTERSECT, Token.EXCEPT
-     * @param nt2 the second operand
+     * @param nt2      the second operand
      */
 
     public CombinedNodeTest(NodeTest nt1, int operator, NodeTest nt2) {
@@ -40,25 +41,25 @@ public class CombinedNodeTest extends NodeTest {
     }
 
     /**
-    * Test whether this node test is satisfied by a given node.
-    * @param nodeType The type of node to be matched
-     @param fingerprint identifies the expanded name of the node to be matched.
-
+     * Test whether this node test is satisfied by a given node.
+     *
+     * @param nodeType    The type of node to be matched
+     * @param fingerprint identifies the expanded name of the node to be matched.
      */
 
     public boolean matches(int nodeType, int fingerprint, int annotation) {
         switch (operator) {
             case Token.UNION:
-                return nodetest1==null ||
-                       nodetest2==null ||
-                       nodetest1.matches(nodeType, fingerprint, annotation) ||
-                       nodetest2.matches(nodeType, fingerprint, annotation);
+                return nodetest1 == null ||
+                        nodetest2 == null ||
+                        nodetest1.matches(nodeType, fingerprint, annotation) ||
+                        nodetest2.matches(nodeType, fingerprint, annotation);
             case Token.INTERSECT:
-                return (nodetest1==null || nodetest1.matches(nodeType, fingerprint, annotation)) &&
-                       (nodetest2==null || nodetest2.matches(nodeType, fingerprint, annotation));
+                return (nodetest1 == null || nodetest1.matches(nodeType, fingerprint, annotation)) &&
+                        (nodetest2 == null || nodetest2.matches(nodeType, fingerprint, annotation));
             case Token.EXCEPT:
-                return (nodetest1==null || nodetest1.matches(nodeType, fingerprint, annotation)) &&
-                       !(nodetest2==null || nodetest2.matches(nodeType, fingerprint, annotation));
+                return (nodetest1 == null || nodetest1.matches(nodeType, fingerprint, annotation)) &&
+                        !(nodetest2 == null || nodetest2.matches(nodeType, fingerprint, annotation));
             default:
                 throw new IllegalArgumentException("Unknown operator in Combined Node Test");
         }
@@ -79,16 +80,16 @@ public class CombinedNodeTest extends NodeTest {
     public boolean matches(TinyTree tree, int nodeNr) {
         switch (operator) {
             case Token.UNION:
-                return nodetest1==null ||
-                       nodetest2==null ||
-                       nodetest1.matches(tree, nodeNr) ||
-                       nodetest2.matches(tree, nodeNr);
+                return nodetest1 == null ||
+                        nodetest2 == null ||
+                        nodetest1.matches(tree, nodeNr) ||
+                        nodetest2.matches(tree, nodeNr);
             case Token.INTERSECT:
-                return (nodetest1==null || nodetest1.matches(tree, nodeNr)) &&
-                       (nodetest2==null || nodetest2.matches(tree, nodeNr));
+                return (nodetest1 == null || nodetest1.matches(tree, nodeNr)) &&
+                        (nodetest2 == null || nodetest2.matches(tree, nodeNr));
             case Token.EXCEPT:
-                return (nodetest1==null || nodetest1.matches(tree, nodeNr)) &&
-                       !(nodetest2==null || nodetest2.matches(tree, nodeNr));
+                return (nodetest1 == null || nodetest1.matches(tree, nodeNr)) &&
+                        !(nodetest2 == null || nodetest2.matches(tree, nodeNr));
             default:
                 throw new IllegalArgumentException("Unknown operator in Combined Node Test");
         }
@@ -98,59 +99,60 @@ public class CombinedNodeTest extends NodeTest {
      * Test whether this node test is satisfied by a given node. This alternative
      * method is used in the case of nodes where calculating the fingerprint is expensive,
      * for example DOM or JDOM nodes.
+     *
      * @param node the node to be matched
      */
 
     public boolean matches(NodeInfo node) {
         switch (operator) {
             case Token.UNION:
-                return nodetest1==null ||
-                       nodetest2==null ||
-                       nodetest1.matches(node) ||
-                       nodetest2.matches(node);
+                return nodetest1 == null ||
+                        nodetest2 == null ||
+                        nodetest1.matches(node) ||
+                        nodetest2.matches(node);
             case Token.INTERSECT:
-                return (nodetest1==null || nodetest1.matches(node)) &&
-                       (nodetest2==null || nodetest2.matches(node));
+                return (nodetest1 == null || nodetest1.matches(node)) &&
+                        (nodetest2 == null || nodetest2.matches(node));
             case Token.EXCEPT:
-                return (nodetest1==null || nodetest1.matches(node)) &&
-                       !(nodetest2==null || nodetest2.matches(node));
+                return (nodetest1 == null || nodetest1.matches(node)) &&
+                        !(nodetest2 == null || nodetest2.matches(node));
             default:
                 throw new IllegalArgumentException("Unknown operator in Combined Node Test");
         }
     }
 
     public String toString(NamePool pool) {
-        if (nodetest1 instanceof NameTest && operator==Token.INTERSECT) {
+        if (nodetest1 instanceof NameTest && operator == Token.INTERSECT) {
             int kind = nodetest1.getPrimitiveType();
             String skind = (kind == Type.ELEMENT ? "element(" : "attribute(");
             String content = "";
             if (nodetest2 instanceof ContentTypeTest) {
-                final SchemaType schemaType = ((ContentTypeTest)nodetest2).getSchemaType();
+                final SchemaType schemaType = ((ContentTypeTest) nodetest2).getSchemaType();
                 content = ", " + pool.getClarkName(schemaType.getFingerprint());
             }
             String name = pool.getClarkName(nodetest1.getFingerprint());
             return skind + name + content + ')';
         } else {
-            String nt1 = (nodetest1==null ? "true()" : nodetest1.toString(pool));
-            String nt2 = (nodetest2==null ? "true()" : nodetest2.toString(pool));
+            String nt1 = (nodetest1 == null ? "true()" : nodetest1.toString(pool));
+            String nt2 = (nodetest2 == null ? "true()" : nodetest2.toString(pool));
             return '(' + nt1 + ' ' + Token.tokens[operator] + ' ' + nt2 + ')';
         }
     }
 
     public String toString() {
-        if (nodetest1 instanceof NameTest && operator==Token.INTERSECT) {
+        if (nodetest1 instanceof NameTest && operator == Token.INTERSECT) {
             int kind = nodetest1.getPrimitiveType();
             String skind = (kind == Type.ELEMENT ? "element(" : "attribute(");
             String content = "";
             if (nodetest2 instanceof ContentTypeTest) {
-                final SchemaType schemaType = ((ContentTypeTest)nodetest2).getSchemaType();
+                final SchemaType schemaType = ((ContentTypeTest) nodetest2).getSchemaType();
                 content = ", " + schemaType.getFingerprint();
             }
             String name = nodetest1.toString();
             return skind + name + content + ')';
         } else {
-            String nt1 = (nodetest1==null ? "true()" : nodetest1.toString());
-            String nt2 = (nodetest2==null ? "true()" : nodetest2.toString());
+            String nt1 = (nodetest1 == null ? "true()" : nodetest1.toString());
+            String nt2 = (nodetest2 == null ? "true()" : nodetest2.toString());
             return '(' + nt1 + ' ' + Token.tokens[operator] + ' ' + nt2 + ')';
         }
     }
@@ -159,6 +161,7 @@ public class CombinedNodeTest extends NodeTest {
     /**
      * Get the supertype of this type. This isn't actually a well-defined concept: the types
      * form a lattice rather than a strict hierarchy.
+     *
      * @param th the type hierarchy cache
      */
 
@@ -203,13 +206,13 @@ public class CombinedNodeTest extends NodeTest {
 
     public int getPrimitiveType() {
         int mask = getNodeKindMask();
-        if (mask == (1<<Type.ELEMENT)) {
+        if (mask == (1 << Type.ELEMENT)) {
             return Type.ELEMENT;
         }
-        if (mask == (1<<Type.ATTRIBUTE)) {
+        if (mask == (1 << Type.ATTRIBUTE)) {
             return Type.ATTRIBUTE;
         }
-        if (mask == (1<<Type.DOCUMENT)) {
+        if (mask == (1 << Type.DOCUMENT)) {
             return Type.DOCUMENT;
         }
         return Type.NODE;
@@ -225,10 +228,34 @@ public class CombinedNodeTest extends NodeTest {
         IntSet s1 = nodetest1.getRequiredNodeNames();
         IntSet s2 = nodetest2.getRequiredNodeNames();
         if (s2 == null) {
-            return s1;
+            switch (operator) {
+                case Token.UNION: {
+                    return null;
+                }
+                case Token.INTERSECT: {
+                    return s1;
+                }
+                case Token.EXCEPT: {
+                    return new IntHashSet();
+                }
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
         if (s1 == null) {
-            return s2;
+            switch (operator) {
+                case Token.UNION: {
+                    return null;
+                }
+                case Token.INTERSECT: {
+                    return s2;
+                }
+                case Token.EXCEPT: {
+                    return null;
+                }
+                default:
+                    throw new UnsupportedOperationException();
+            }
         }
         switch (operator) {
             case Token.UNION: {
@@ -287,12 +314,13 @@ public class CombinedNodeTest extends NodeTest {
 
     /**
      * Ask whether values of this type are atomizable
+     *
      * @return true unless it is known that these items will be elements with element-only
      *         content, in which case return false
      */
 
     public boolean isAtomizable() {
-        return nodetest1.isAtomizable() && nodetest2.isAtomizable(); 
+        return nodetest1.isAtomizable() && nodetest2.isAtomizable();
     }
 
     /**
@@ -304,13 +332,14 @@ public class CombinedNodeTest extends NodeTest {
         int fp1 = nodetest1.getFingerprint();
         int fp2 = nodetest2.getFingerprint();
         if (fp1 == fp2) return fp1;
-        if (fp2 == -1 && operator==Token.INTERSECT) return fp1;
-        if (fp1 == -1 && operator==Token.INTERSECT) return fp2;
+        if (fp2 == -1 && operator == Token.INTERSECT) return fp1;
+        if (fp1 == -1 && operator == Token.INTERSECT) return fp2;
         return -1;
     }
 
     /**
      * Determine whether the content type (if present) is nillable
+     *
      * @return true if the content test (when present) can match nodes that are nilled
      */
 
@@ -320,21 +349,21 @@ public class CombinedNodeTest extends NodeTest {
     }
 
     /**
-      * Returns a hash code value for the object.
-      */
+     * Returns a hash code value for the object.
+     */
 
-     public int hashCode() {
-         return nodetest1.hashCode() ^ nodetest2.hashCode();
-     }
+    public int hashCode() {
+        return nodetest1.hashCode() ^ nodetest2.hashCode();
+    }
 
     /**
      * Indicates whether some other object is "equal to" this one.
      */
     public boolean equals(Object other) {
         return other instanceof CombinedNodeTest &&
-                ((CombinedNodeTest)other).nodetest1.equals(nodetest1) &&
-                ((CombinedNodeTest)other).nodetest2.equals(nodetest2) &&
-                ((CombinedNodeTest)other).operator == operator;
+                ((CombinedNodeTest) other).nodetest1.equals(nodetest1) &&
+                ((CombinedNodeTest) other).nodetest2.equals(nodetest2) &&
+                ((CombinedNodeTest) other).operator == operator;
     }
 
     /**
@@ -346,7 +375,7 @@ public class CombinedNodeTest extends NodeTest {
     public double getDefaultPriority() {
         if (operator == Token.UNION) {
             return nodetest1.getDefaultPriority();
-         } else {
+        } else {
             // typically it's element(E, T)
             return 0.25;
         }
@@ -354,16 +383,18 @@ public class CombinedNodeTest extends NodeTest {
 
     /**
      * Get the two parts of the combined node test
+     *
      * @return the two operands
      */
 
     public NodeTest[] getComponentNodeTests() {
-        return new NodeTest[] {nodetest1, nodetest2};
+        return new NodeTest[]{nodetest1, nodetest2};
     }
 
     /**
      * Get the operator used to combine the two node tests: one of {@link Token#UNION},
-     * {@link Token#INTERSECT}, {@link Token#EXCEPT}, 
+     * {@link Token#INTERSECT}, {@link Token#EXCEPT},
+     *
      * @return the operator
      */
 
@@ -373,6 +404,7 @@ public class CombinedNodeTest extends NodeTest {
 
     /**
      * Visit all the schema components used in this ItemType definition
+     *
      * @param visitor the visitor class to be called when each component is visited
      */
 
