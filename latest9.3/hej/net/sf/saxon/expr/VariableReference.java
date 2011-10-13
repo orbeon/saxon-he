@@ -261,6 +261,9 @@ public class VariableReference extends Expression implements BindingReference {
                 return StaticProperty.ALLOWS_ZERO_OR_MORE;
             } else if (binding instanceof LetExpression) {
                 return binding.getRequiredType().getCardinality();
+            } else if(binding instanceof ForExpression){
+                //Bug fix: See Sourceforge Bug ID: 3422928
+                return ((ForExpression)binding).getRangeVariableCardinality();
             } else if (binding instanceof Assignation) {
                 return StaticProperty.EXACTLY_ONE;
             } else {
