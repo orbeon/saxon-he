@@ -3,7 +3,7 @@
 <project basedir="." default="all" name="Saxon: The XSLT and XQuery Processor"
          xmlns:dn="antlib:org.apache.ant.dotnet">
     
-    
+        
     <!-- note : Ant 1.7 is needed for this script -->
     
     <!-- Ant 1.7 introduces a <service> element to allow META-INF/services
@@ -122,7 +122,92 @@
     
     <target name="samples" depends="samples-j, samples-n"/>
     
-
+    <target name="notices" description="Copy legal notices">
+	  <copy todir="${build-resources.dir}/doc">
+        <fileset dir="${userdoc.dir}/fixed"/>
+      </copy>
+      <copy todir="${build-resources.dir}/doc">
+        <fileset dir="${userdoc.dir}/style">
+            <include name="make-menu.xsl"/>
+        </fileset>
+      </copy> 
+	  <copy todir="${product.dir}/hej">
+        <fileset dir="${userdoc.dir}/welcome">
+          <include name="doc/**"/>
+          <include name="notices/CERN.txt"/>
+          <include name="notices/JAMESCLARK.txt"/>
+          <include name="notices/LEGAL.txt"/>
+          <include name="notices/LICENSE.txt"/>
+          <include name="notices/THAI.txt"/>
+          <include name="notices/UNICODE.txt"/>
+        </fileset>
+      </copy>
+      <copy todir="${product.dir}/pej">
+        <fileset dir="${userdoc.dir}/welcome">
+          <include name="doc/**"/>
+          <include name="notices/CERN.txt"/>
+          <include name="notices/JAMESCLARK.txt"/>
+          <include name="notices/LEGAL.txt"/>
+          <include name="notices/LICENSE.txt"/>
+          <include name="notices/THAI.txt"/>
+          <include name="notices/UNICODE.txt"/>
+        </fileset>
+      </copy>
+      <copy todir="${product.dir}/eej">
+        <fileset dir="${userdoc.dir}/welcome">
+          <include name="doc/**"/>
+          <include name="notices/CERN.txt"/>
+          <include name="notices/JAMESCLARK.txt"/>
+          <include name="notices/LEGAL.txt"/>
+          <include name="notices/LICENSE.txt"/>
+          <include name="notices/THAI.txt"/>
+          <include name="notices/UNICODE.txt"/>
+        </fileset>
+      </copy>
+      <copy todir="${product.dir}/hen">
+        <fileset dir="${userdoc.dir}/welcome">
+          <include name="doc/**"/>
+          <include name="notices/CERN.txt"/>
+          <include name="notices/JAMESCLARK.txt"/>
+          <include name="notices/LEGAL.txt"/>
+          <include name="notices/LICENSE.txt"/>
+          <include name="notices/THAI.txt"/>
+          <include name="notices/UNICODE.txt"/>
+          <include name="notices/APACHE-XERCES.txt"/>
+          <include name="notices/FRIJTERS.txt"/>
+          <include name="notices/GPL+CLASSPATH.txt"/>
+        </fileset>
+      </copy>
+      <copy todir="${product.dir}/pen">
+        <fileset dir="${userdoc.dir}/welcome">
+          <include name="doc/**"/>
+          <include name="notices/CERN.txt"/>
+          <include name="notices/JAMESCLARK.txt"/>
+          <include name="notices/LEGAL.txt"/>
+          <include name="notices/LICENSE.txt"/>
+          <include name="notices/THAI.txt"/>
+          <include name="notices/UNICODE.txt"/>
+          <include name="notices/APACHE-XERCES.txt"/>
+          <include name="notices/FRIJTERS.txt"/>
+          <include name="notices/GPL+CLASSPATH.txt"/>
+        </fileset>
+      </copy>
+      <copy todir="${product.dir}/een">
+        <fileset dir="${userdoc.dir}/welcome">
+          <include name="doc/**"/>
+          <include name="notices/CERN.txt"/>
+          <include name="notices/JAMESCLARK.txt"/>
+          <include name="notices/LEGAL.txt"/>
+          <include name="notices/LICENSE.txt"/>
+          <include name="notices/THAI.txt"/>
+          <include name="notices/UNICODE.txt"/>
+          <include name="notices/APACHE-XERCES.txt"/>
+          <include name="notices/FRIJTERS.txt"/>
+          <include name="notices/GPL+CLASSPATH.txt"/>
+        </fileset>
+      </copy>        
+        
+    </target>    
    
     
     <target name="release-userdoc" description="Generate User Documentation">
@@ -326,7 +411,7 @@
         depends="test-j, test-n"/>  	 
       
     <target name="release" description="Create .ZIP files for release"
-        depends="build, release-source, release-j, release-n"
+        depends="build, notices, release-source, release-j, release-n"
         >  
         <!-- add test -->
         <!-- omits "resources" for maintenance releases -->
@@ -414,7 +499,7 @@
         <fileset dir="c:/MyJava/licensetool"/>
       </zip>
       <zip zipfile="${archive.dir}/dotnetmake.zip">
-        <fileset dir="c:/MyDotNet/make"/>
+        <fileset dir="e:/MyDotNet/make"/>
       </zip>      
       <zip zipfile="${archive.dir}/licenses.zip">
         <fileset dir="c:/saxon-licenses">

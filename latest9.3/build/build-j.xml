@@ -91,11 +91,11 @@ http\://www.dom4j.org/jaxp/xpath/dom4j: com.saxonica.config.ProfessionalXPathFac
               message="com.saxonica.config.EnterpriseTransformerFactory"/>
         <echo file="${services.dir}/saxon9ee/META-INF/services/javax.xml.xpath.XPathFactory"
 >com.saxonica.config.EnterpriseXPathFactory
-http\://java.sun.com/jaxp/xpath/dom:    com.saxonica.config.ProfessionalXPathFactory
-http\://saxon.sf.net/jaxp/xpath/om:     com.saxonica.config.ProfessionalXPathFactory
-http\://www.xom.nu/jaxp/xpath/xom:      com.saxonica.config.ProfessionalXPathFactory
-http\://jdom.org/jaxp/xpath/jdom:       com.saxonica.config.ProfessionalXPathFactory
-http\://www.dom4j.org/jaxp/xpath/dom4j: com.saxonica.config.ProfessionalXPathFactory
+http\://java.sun.com/jaxp/xpath/dom:    com.saxonica.config.EnterpriseXPathFactory
+http\://saxon.sf.net/jaxp/xpath/om:     com.saxonica.config.EnterpriseXPathFactory
+http\://www.xom.nu/jaxp/xpath/xom:      com.saxonica.config.EnterpriseXPathFactory
+http\://jdom.org/jaxp/xpath/jdom:       com.saxonica.config.EnterpriseXPathFactory
+http\://www.dom4j.org/jaxp/xpath/dom4j: com.saxonica.config.EnterpriseXPathFactory
 </echo>     
         <echo file="${services.dir}/saxon9ee/META-INF/services/javax.xml.validation.SchemaFactory"
 >com.saxonica.jaxp.SchemaFactoryImpl

@@ -22,7 +22,7 @@
     
     <!-- following locations are for IKVMC code used to build the .NET product -->
     
-    <property name="development-ikvm.dir" value="c:/MyDotNet"/>
+    <property name="development-ikvm.dir" value="e:/MyDotNet"/>
     <property name="ikvm.dir" value="${development-ikvm.dir}/ikvm-0.42.0.3"/>
     <property name="generated.stubs.dir" value="${development-ikvm.dir}/stubs"/>
     <property name="ikvm.strongname" value="Version=0.42.0.3, Culture=neutral, PublicKeyToken=13235d27fcbfff58, ProcessorArchitecture=MSIL"/>
@@ -463,7 +463,7 @@ platform=com.saxonica.config.DotNetPlatformPE
         </echo>
 		
 		<dn:csc targetType="exe" 
-		     win32icon="c:\MyDotNet\icons\gyfu.ico"
+		     win32icon="${development-ikvm.dir}\icons\gyfu.ico"
 		     outputFile="${basedir}/${dll-n.dir}/he/Transform.exe"
 		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
@@ -481,7 +481,7 @@ platform=com.saxonica.config.DotNetPlatformPE
 		     </reference>
 		</dn:csc>
 		
-		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
+		<dn:csc targetType="exe" win32icon="${development-ikvm.dir}\icons\gyfu.ico"
 		     outputFile="${basedir}/${dll-n.dir}/he/Query.exe"
 		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
@@ -562,7 +562,7 @@ platform=com.saxonica.config.DotNetPlatformPE
           [assembly: AssemblyFileVersion("${version}")]
         </echo>
 		
-		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
+		<dn:csc targetType="exe" win32icon="${development-ikvm.dir}\icons\gyfu.ico"
 		     outputFile="${basedir}/${dll-n.dir}/pe/Transform.exe"
 		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
@@ -580,7 +580,7 @@ platform=com.saxonica.config.DotNetPlatformPE
 		     </reference>
 		</dn:csc>
 		
-		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
+		<dn:csc targetType="exe" win32icon="${development-ikvm.dir}\icons\gyfu.ico"
 		     outputFile="${basedir}/${dll-n.dir}/pe/Query.exe"
 		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
@@ -663,7 +663,7 @@ platform=com.saxonica.config.DotNetPlatformPE
           [assembly: AssemblyFileVersion("${version}")]
         </echo>		
 		
-		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
+		<dn:csc targetType="exe" win32icon="${development-ikvm.dir}\icons\gyfu.ico"
 		     outputFile="${basedir}/${dll-n.dir}/ee/Transform.exe"
 		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
@@ -681,7 +681,7 @@ platform=com.saxonica.config.DotNetPlatformPE
 		     </reference>
 		</dn:csc>
 		
-		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
+		<dn:csc targetType="exe" win32icon="${development-ikvm.dir}\icons\gyfu.ico"
 		     outputFile="${basedir}/${dll-n.dir}/ee/Query.exe"
 		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
@@ -699,7 +699,7 @@ platform=com.saxonica.config.DotNetPlatformPE
 		     </reference>
 		</dn:csc>
 		
-		<dn:csc targetType="exe" win32icon="c:\MyDotNet\icons\gyfu.ico"
+		<dn:csc targetType="exe" win32icon="${development-ikvm.dir}\icons\gyfu.ico"
 		     outputFile="${basedir}/${dll-n.dir}/ee/Validate.exe"
 		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
@@ -735,7 +735,7 @@ platform=com.saxonica.config.DotNetPlatformPE
 		
 		<dn:csc targetType="exe"
 		     outputFile="${basedir}/${dll-n.dir}/samples/ExamplesHE.exe"
-		     win32icon="c:\MyDotNet\icons\csharp.ico"
+		     win32icon="${development-ikvm.dir}\icons\csharp.ico"
 		     debug="true"
 		     executable="${csharp.compiler}">
 		     <src dir="${basedir}/${temp-src-nc.dir}/samples" includes="ExamplesHE.cs"/>
@@ -747,7 +747,7 @@ platform=com.saxonica.config.DotNetPlatformPE
 		
 		<dn:csc targetType="exe"
 		     outputFile="${basedir}/${dll-n.dir}/samples/ExamplesPE.exe"
-		     win32icon="c:\MyDotNet\icons\csharp.ico"
+		     win32icon="${development-ikvm.dir}\icons\csharp.ico"
 		     debug="true"
 		     executable="${csharp.compiler}">
 		     <src dir="${basedir}/${temp-src-nc.dir}/samples" includes="ExamplesPE.cs SampleExtensions.cs"/>
@@ -760,7 +760,7 @@ platform=com.saxonica.config.DotNetPlatformPE
 		
 		<dn:csc targetType="exe"
 		     outputFile="${basedir}/${dll-n.dir}/samples/ExamplesEE.exe"
-		     win32icon="c:\MyDotNet\icons\csharp.ico"
+		     win32icon="${development-ikvm.dir}\icons\csharp.ico"
 		     debug="true"
 		     executable="${csharp.compiler}">
 		     <src dir="${basedir}/${temp-src-nc.dir}/samples" includes="ExamplesEE.cs SampleExtensions.cs"/>
@@ -773,7 +773,7 @@ platform=com.saxonica.config.DotNetPlatformPE
 			
 		<dn:csc targetType="winexe"
 		     outputFile="${basedir}/${dll-n.dir}/samples/TestRunner.exe"
-		     win32icon="c:\MyDotNet\icons\csharp.ico"
+		     win32icon="${development-ikvm.dir}\icons\csharp.ico"
 		     debug="true"
 		     executable="${csharp.compiler}">
 		     <src dir="${basedir}/${temp-src-nc.dir}/samples">
