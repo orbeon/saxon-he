@@ -1327,7 +1327,7 @@ public class QueryParser extends ExpressionParser {
             if (existingModules != null && m < hints.length) {
                 for (int e=0; e<existingModules.size(); e++) {
                     URI uri = existingModules.get(e).getLocationURI();
-                    if (uri != null && uri.equals(mImport.locationURIs.get(m))) {
+                    if (uri != null && uri.toString().equals(mImport.locationURIs.get(m))) {
                         loaded = true;
                         break;
                     }

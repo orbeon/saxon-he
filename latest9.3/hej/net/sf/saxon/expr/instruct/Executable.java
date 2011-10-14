@@ -62,6 +62,9 @@ public class Executable implements Serializable {
     // hash table of query library modules
     private HashMap<String, List<QueryModule>> queryLibraryModules;
 
+    // hash set of query module "location hints" that have been handled
+    private HashSet<String> queryLocationHintsProcessed;
+
     // flag to indicate that source documents are to have their type annotations stripped
     private boolean stripsInputTypeAnnotations;
 
