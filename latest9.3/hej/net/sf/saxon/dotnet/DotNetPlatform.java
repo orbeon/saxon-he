@@ -306,6 +306,7 @@ public class DotNetPlatform implements Platform {
                 if (base != null) {
                     RegistryKey regKey = base.OpenSubKey(path + edition + "-N\\Settings", false);
                     if (regKey != null) {
+                        System.err.println("Found registry key at " + regKey.toString());
                         return (String)regKey.GetValue("InstallPath");
                     }
                 }
