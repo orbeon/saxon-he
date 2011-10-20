@@ -157,7 +157,7 @@ public class Minimax extends CollatingFunction {
     public AtomicComparer getAtomicComparer(XPathContext context) throws XPathException {
         StringCollator collator = getCollator(1, context);
         BuiltInAtomicType type = argumentType;
-        if (type == BuiltInAtomicType.UNTYPED_ATOMIC) {
+        if (type.equals(BuiltInAtomicType.UNTYPED_ATOMIC)) {
             type = BuiltInAtomicType.DOUBLE;
         }
         AtomicComparer comparer =
@@ -299,6 +299,7 @@ public class Minimax extends CollatingFunction {
                         min = test2;
                     }
                 } catch (ClassCastException err) {
+                    err.printStackTrace();
                     XPathException de = new XPathException("Cannot compare " + min.getItemType(th) + " with " + test2.getItemType(th));
                     de.setErrorCode("FORG0006");
                     de.setIsTypeError(true);
