@@ -294,22 +294,21 @@ public class DotNetPlatform implements Platform {
     /**
      * Return the name of the directory in which the software is installed (if available)
      * @return the name of the directory in which Saxon is installed, if available, or null otherwise
-     * @param edition
+     * @param edition the Saxon edition required, e.g. "EE" or "PE"
      */
 
     public String getInstallationDirectory(String edition) {
-        RegistryKey regKey = Registry.LocalMachine;
-        if (regKey != null) {
-            regKey = regKey.OpenSubKey("Software\\Saxonica\\Saxon" + edition + "-N\\Settings", false);
-            if (regKey != null) {
-                return (String)regKey.GetValue("InstallPath");
-            }
-        }
-        regKey = Registry.CurrentUser;
-        if (regKey != null) {
-            regKey = regKey.OpenSubKey("Software\\Saxonica\\Saxon" + edition + "-N\\Settings", false);
-            if (regKey != null) {
-                return (String)regKey.GetValue("InstallPath");
+        RegistryKey[] bases = {Registry.LocalMachine, Registry.CurrentUser};
+        // See Saxon bug 3426425.
+        String[] paths = {"Software\\Saxonica\\Saxon", "Software\\Wow6432Node\\Saxonica\\Saxon"};
+        for (RegistryKey base : bases) {
+            for (String path : paths) {
+                if (base != null) {
+                    RegistryKey regKey = base.OpenSubKey(path + edition + "-N\\Settings", false);
+                    if (regKey != null) {
+                        return (String)regKey.GetValue("InstallPath");
+                    }
+                }
             }
         }
         return null;
