@@ -187,9 +187,10 @@ public class JavaPlatform implements Platform {
      * Return the name of the directory in which the software is installed (if available)
      * @return the name of the directory in which Saxon is installed, if available, or null otherwise
      * @param edition
+     * @param config
      */
 
-    public String getInstallationDirectory(String edition) {
+    public String getInstallationDirectory(String edition, Configuration config) {
         return System.getenv("SAXON_HOME");
     }
 

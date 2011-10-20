@@ -136,9 +136,10 @@ public interface Platform extends Serializable {
      * Return the name of the directory in which the software is installed (if available)
      * @return the name of the directory in which Saxon is installaed, if available, or null otherwise
      * @param edition The edition of the software that is loaded ("HE", "PE", or "EE")
+     * @param config The Saxon configuration
      */
 
-    public String getInstallationDirectory(String edition);
+    public String getInstallationDirectory(String edition, Configuration config);
 
     /**
      * Register all the external object models that are provided as standard

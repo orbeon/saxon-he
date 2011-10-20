@@ -295,9 +295,10 @@ public class DotNetPlatform implements Platform {
      * Return the name of the directory in which the software is installed (if available)
      * @return the name of the directory in which Saxon is installed, if available, or null otherwise
      * @param edition the Saxon edition required, e.g. "EE" or "PE"
+     * @param config the Saxon configuration
      */
 
-    public String getInstallationDirectory(String edition) {
+    public String getInstallationDirectory(String edition, Configuration config) {
         RegistryKey[] bases = {Registry.LocalMachine, Registry.CurrentUser};
         // See Saxon bug 3426425.
         String[] paths = {"Software\\Saxonica\\Saxon", "Software\\Wow6432Node\\Saxonica\\Saxon"};
@@ -306,8 +307,14 @@ public class DotNetPlatform implements Platform {
                 if (base != null) {
                     RegistryKey regKey = base.OpenSubKey(path + edition + "-N\\Settings", false);
                     if (regKey != null) {
-                        System.err.println("Found registry key at " + regKey.toString());
-                        return (String)regKey.GetValue("InstallPath");
+                        if (config.isTiming()) {
+                            config.getStandardErrorOutput().println("Found registry key at " + regKey.toString());
+                        }
+                        String installPath = (String)regKey.GetValue("InstallPath");
+                        if (config.isTiming()) {
+                            config.getStandardErrorOutput().println("Software installation path: " + installPath);
+                        }
+                        return installPath;
                     }
                 }
             }
