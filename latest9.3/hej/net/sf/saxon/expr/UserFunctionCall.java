@@ -449,6 +449,7 @@ public class UserFunctionCall extends FunctionCall {
             SequenceReceiver out = context.getReceiver();
             XPathContextMajor c2 = context.newCleanContext();
             c2.setReceiver(out);
+            c2.setTemporaryOutputState(true);
             c2.setOrigin(this);
             function.process(actualArgs, c2);
         }
