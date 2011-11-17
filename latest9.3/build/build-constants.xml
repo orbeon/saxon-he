@@ -32,11 +32,11 @@
     -->
     
     
-    <property name="version" value="9.3.0.8"/>
-    <property name="versionh" value="9-3-0-8"/>
+    <property name="version" value="9.3.0.10"/>
+    <property name="versionh" value="9-3-0-10"/>
     <property name="major.version" value="9.3"/>
     <property name="major.versionh" value="9-3"/>
-    <property name="release.date" value="2011-10-03"/>
+    <property name="release.date" value="2011-10-20"/>
     
     <!-- REMEMBER ALSO TO SET THE VERSION IN Version.java -->
     
