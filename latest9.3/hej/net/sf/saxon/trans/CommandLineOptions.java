@@ -542,8 +542,8 @@ public class CommandLineOptions {
             String value = serializationParams.getProperty(name);
             // parameters starting with "!" are taken as output properties
             // Allow the prefix "!saxon:" instead of "!{http://saxon.sf.net}"
-            if (name.startsWith("!saxon:")) {
-                name = "{" + NamespaceConstant.SAXON + "}" + name.substring(7);
+            if (name.startsWith("saxon:")) {
+                name = "{" + NamespaceConstant.SAXON + "}" + name.substring(6);
             }
             if (controller != null) {
                 controller.setOutputProperty(name, value);
