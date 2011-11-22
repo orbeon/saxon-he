@@ -101,7 +101,7 @@ public class XSLOutput extends StyleElement {
         	} else if (f.equals(StandardNames.SAXON_INDENT_SPACES)) {
         		indentSpaces = Whitespace.trim(atts.getValue(a));
             } else if (f.equals(StandardNames.SAXON_LINE_LENGTH)) {
-        		indentSpaces = Whitespace.trim(atts.getValue(a));
+        		lineLength = Whitespace.trim(atts.getValue(a));
             } else if (f.equals(StandardNames.SAXON_SUPPRESS_INDENTATION)) {
         		suppressIndentation = Whitespace.trim(atts.getValue(a));
             } else if (f.equals(StandardNames.SAXON_DOUBLE_SPACE)) {
