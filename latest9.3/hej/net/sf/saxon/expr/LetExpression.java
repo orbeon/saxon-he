@@ -530,6 +530,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
 
     public Expression copy() {
         LetExpression let = new LetExpression();
+        let.refCount = refCount;
         let.setVariableQName(variableName);
         let.setRequiredType(requiredType);
         let.setSequence(sequence.copy());
