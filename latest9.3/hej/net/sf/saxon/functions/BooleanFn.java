@@ -85,7 +85,17 @@ public class BooleanFn extends SystemFunction implements Negatable {
 //            }
             if (operation == BOOLEAN) {
                 Expression ebv = rewriteEffectiveBooleanValue(argument[0], visitor, contextItemType);
-                return (ebv == null ? this : ebv.optimize(visitor, contextItemType));
+                if (ebv != null) {
+                    ebv = ebv.optimize(visitor, contextItemType);
+                    if (ebv.getItemType(visitor.getConfiguration().getTypeHierarchy()) == BuiltInAtomicType.BOOLEAN &&
+                            ebv.getCardinality() == StaticProperty.EXACTLY_ONE) {
+                        return ebv;
+                    } else {
+                        argument[0] = ebv;
+                        adoptChildExpression(ebv);
+                        return this;
+                    }
+                }
             } else if (operation == NOT) {
                 Expression ebv = rewriteEffectiveBooleanValue(argument[0], visitor, contextItemType);
                 if (ebv != null) {
