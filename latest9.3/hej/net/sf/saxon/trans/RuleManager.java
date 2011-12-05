@@ -173,8 +173,14 @@ public final class RuleManager implements Serializable {
                 ((CombinedNodeTest)pattern.getNodeTest()).getOperator() == Token.UNION) {
             CombinedNodeTest cnt = (CombinedNodeTest)pattern.getNodeTest();
             NodeTest[] nt = cnt.getComponentNodeTests();
-            setTemplateRule(new NodeTestPattern(nt[0]), eh, mode, module, priority);
-            setTemplateRule(new NodeTestPattern(nt[1]), eh, mode, module, priority);
+            NodeTestPattern ntp0 = new NodeTestPattern(nt[0]);
+            NodeTestPattern ntp1 = new NodeTestPattern(nt[1]);
+            ntp0.setSystemId(pattern.getSystemId());
+            ntp1.setSystemId(pattern.getSystemId());
+            ntp0.setLineNumber(pattern.getLineNumber());
+            ntp1.setLineNumber(pattern.getLineNumber());
+            setTemplateRule(ntp0, eh, mode, module, priority);
+            setTemplateRule(ntp1, eh, mode, module, priority);
             return;
         }
         if (Double.isNaN(priority)) {
