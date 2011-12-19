@@ -1537,9 +1537,14 @@ implements Locator, Container, InstructionInfo {
 					// because of xml:space="preserve"
 					Expression text = new ValueOf(new StringLiteral(node.getStringValue()), false, false);
 					text.setLocationId(allocateLocationId(getSystemId(), lineNumber));
-                    text = makeTraceInstruction(mostRecent, text);
-//						text = getPreparedStylesheet().getCompilerInfo().getCodeInjector().injecttext, text);
-//						text.setLocationId(allocateLocationId(getSystemId(), lineNumber));
+
+                    CodeInjector injector = getPreparedStylesheet().getCompilerInfo().getCodeInjector();
+                    if (injector != null) {
+                        Expression tracer = injector.inject(text, getStaticContext(), StandardNames.XSL_TEXT, null);
+                        tracer.setLocationId(text.getLocationId());
+                        text = tracer;
+                    }
+
 					contents.add(text);
 				}
 
@@ -1620,7 +1625,7 @@ implements Locator, Container, InstructionInfo {
 	 */
 
 	protected static Expression makeTraceInstruction(StyleElement source, Expression child) {
-		if (child instanceof TraceExpression) {
+		if (child instanceof TraceExpression && !(source instanceof StylesheetProcedure)) {
 			return child;
 			// this can happen, for example, after optimizing a compile-time xsl:if
 		}
