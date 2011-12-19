@@ -39,7 +39,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 
-
 /**
  * This class holds details of user-selected configuration options for a set of transformations
  * and/or queries. When running XSLT, the preferred way of setting configuration options is via
