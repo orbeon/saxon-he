@@ -4,13 +4,12 @@ import net.sf.saxon.Controller;
 import net.sf.saxon.event.SequenceOutputter;
 import net.sf.saxon.event.SequenceReceiver;
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.Optimizer;
-import net.sf.saxon.expr.parser.PromotionOffer;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.query.QueryModule;
 import net.sf.saxon.trace.ExpressionPresenter;
+import net.sf.saxon.trace.Location;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.ItemType;
@@ -632,6 +631,10 @@ public class FLWORExpression extends Expression {
     private Expression rewriteForOrLet(ExpressionVisitor visitor, ExpressionVisitor.ContextItemType contextItemType) throws XPathException {
 
         Expression action = returnClause;
+        CodeInjector injector = null;
+        if (visitor.getStaticContext() instanceof QueryModule) {
+            injector = ((QueryModule)visitor.getStaticContext()).getCodeInjector();
+        }
 
         for (int i = clauses.size() - 1; i >= 0; i--) {
 
@@ -657,6 +660,11 @@ public class FLWORExpression extends Expression {
                     forExpr.setPositionVariable(posVar);
                 }
                 action = forExpr;
+
+                if (injector != null) {
+                    action = injector.inject(action, visitor.getStaticContext(), Location.FOR_EXPRESSION, forExpr.getVariableQName());
+                }
+
             } else {
                 LetExpression letExpr = new LetExpression();
                 letExpr.setAction(action);
@@ -667,6 +675,10 @@ public class FLWORExpression extends Expression {
                 letExpr.setRefCount(letClause.getRangeVariable().getNominalReferenceCount());
                 ExpressionTool.rebindVariableReferences(action, letClause.getRangeVariable(), letExpr);
                 action = letExpr;
+
+                if (injector != null) {
+                    action = injector.inject(action, visitor.getStaticContext(), Location.LET_EXPRESSION, letExpr.getVariableQName());
+                }
             }
 
         }

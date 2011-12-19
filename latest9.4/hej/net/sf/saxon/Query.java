@@ -261,6 +261,9 @@ public class Query {
             if (updating) {
                 staticEnv.setUpdatingEnabled(true);
             }
+            if (config.getTraceListener() != null) {
+                staticEnv.setCompileWithTracing(true);
+            }
 
             if (moduleURIResolverClass != null) {
                 Object mr = config.getInstance(moduleURIResolverClass, null);
