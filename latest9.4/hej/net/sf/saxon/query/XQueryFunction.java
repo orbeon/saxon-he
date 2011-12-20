@@ -497,6 +497,7 @@ public class XQueryFunction implements InstructionInfo, Container, Declaration {
                 body = cbody;
             }
             compiledFunction.setBody(body);
+            compiledFunction.computeEvaluationMode();
         }
     }
 
