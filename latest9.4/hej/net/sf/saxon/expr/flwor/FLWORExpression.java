@@ -5,6 +5,7 @@ import net.sf.saxon.event.SequenceOutputter;
 import net.sf.saxon.event.SequenceReceiver;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
+import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.query.QueryModule;
@@ -564,6 +565,14 @@ public class FLWORExpression extends Expression {
                     Clause clause = clauses.get(c);
                     Binding[] bindingList = clause.getRangeVariables();
 
+                    int termsDependsOnVar = 0;
+                    for(int z = i; z >= 0;z--){
+                        Expression termz = list.get(z);
+                        if(ExpressionTool.dependsOnVariable(termz, bindingList)){
+                            termsDependsOnVar++;
+                        }
+                    }
+
                     //If we find a clause that has dependencies of the variable used in the WhereClause then we make the
                     //WhereClause a predicate if the clause is a ForClause, otherwise move-up the WhereClause after the clause
                     if (ExpressionTool.dependsOnVariable(term, bindingList) || clause.getClauseKey() == Clause.COUNT) {
@@ -574,7 +583,7 @@ public class FLWORExpression extends Expression {
                             whereClause.setPredicate(makeAndCondition(list));
                         }
                         if ((clause instanceof ForClause) && !(((ForClause) clause).isAllowingEmpty())) {
-                            boolean added = ((ForClause) clause).addPredicate(visitor, contextItemType, term);
+                            boolean added = ((ForClause) clause).addPredicate(visitor, contextItemType, termsDependsOnVar);
                             //If we cannot add the WhereClause term as a predicate then put it back into the list of clauses
                             if (!added) {
                                 clauses.add(c + 1, new WhereClause(removedExpr));
