@@ -1,6 +1,7 @@
 package net.sf.saxon.expr.flwor;
 
 import net.sf.saxon.Controller;
+import net.sf.saxon.TypeCheckerEnvironment;
 import net.sf.saxon.event.SequenceOutputter;
 import net.sf.saxon.event.SequenceReceiver;
 import net.sf.saxon.expr.*;
@@ -15,6 +16,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.TypeHierarchy;
+import net.sf.saxon.value.SequenceType;
 
 import java.util.*;
 
@@ -204,6 +206,49 @@ public class FLWORExpression extends Expression {
         returnClause = visitor.typeCheck(returnClause, contextItemType);
         return this;
     }
+
+    /**
+     * Determine whether this expression implements its own method for static type checking
+     *
+     * @return true - this expression has a non-trivial implementation of the staticTypeCheck()
+     *         method
+     */
+
+    public boolean implementsStaticTypeCheck() {
+        for (Clause c : clauses) {
+            switch (c.getClauseKey()) {
+                case Clause.LET:
+                case Clause.WHERE:
+                    continue;
+                default:
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Static type checking for let expressions is delegated to the expression itself,
+     * and is performed on the "return" expression, to allow further delegation to the branches
+     * of a conditional
+     * @param req the required type
+     * @param backwardsCompatible true if backwards compatibility mode applies
+     * @param role the role of the expression in relation to the required type
+     * @param visitor an expression visitor
+     * @return the expression after type checking (perhaps augmented with dynamic type checking code)
+     * @throws XPathException if failures occur, for example if the static type of one branch of the conditional
+     * is incompatible with the required type
+     */
+
+    public Expression staticTypeCheck(SequenceType req,
+                                             boolean backwardsCompatible,
+                                             RoleLocator role, TypeCheckerEnvironment visitor)
+    throws XPathException {
+        // only called if implementsStaticTypeCheck() returns true
+        returnClause = TypeChecker.staticTypeCheck(returnClause, req, backwardsCompatible, role, visitor);
+        return this;
+    }
+
 
     /**
      * This method is required to refine the variabletype of the returnClause
@@ -583,7 +628,7 @@ public class FLWORExpression extends Expression {
                             whereClause.setPredicate(makeAndCondition(list));
                         }
                         if ((clause instanceof ForClause) && !(((ForClause) clause).isAllowingEmpty())) {
-                            boolean added = ((ForClause) clause).addPredicate(visitor, contextItemType, termsDependsOnVar);
+                            boolean added = ((ForClause) clause).addPredicate(this, visitor, contextItemType, term);
                             //If we cannot add the WhereClause term as a predicate then put it back into the list of clauses
                             if (!added) {
                                 clauses.add(c + 1, new WhereClause(removedExpr));

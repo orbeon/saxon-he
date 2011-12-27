@@ -200,7 +200,7 @@ public class ForClause extends Clause {
      * @throws XPathException if an error is encountered
      */
 
-    public boolean addPredicate(ExpressionVisitor visitor, ExpressionVisitor.ContextItemType contextItemType, Expression condition, int posVarCount) throws XPathException {
+    public boolean addPredicate(FLWORExpression flwor, ExpressionVisitor visitor, ExpressionVisitor.ContextItemType contextItemType, Expression condition) throws XPathException {
         Optimizer opt = visitor.getConfiguration().obtainOptimizer();
         boolean debug = opt.getConfiguration().isOptimizerTracing();
 
@@ -262,7 +262,7 @@ public class ForClause extends Clause {
                         ExpressionTool.copyLocationInfo(predicate, selection);
                         ExpressionVisitor.ContextItemType cit = new ExpressionVisitor.ContextItemType(selectionContextItemType, true);
                         selection = visitor.typeCheck(selection, cit);
-                        if(posVarCount <= 1){
+                        if (!ExpressionTool.dependsOnVariable(flwor, new Binding[]{positionVariable})) {
                             positionVariable = null;
                         }
                         changed = true;
