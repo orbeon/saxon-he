@@ -87,7 +87,10 @@ public class FLWORExpression extends Expression {
     }
 
     private static boolean isLoopingClause(Clause c) {
-        return c.getClauseKey() == Clause.FOR || c.getClauseKey() == Clause.GROUPBYCLAUSE || c.getClauseKey() == Clause.WINDOW;
+        return c.getClauseKey() == Clause.FOR ||
+                c.getClauseKey() == Clause.ORDERBYCLAUSE ||
+                c.getClauseKey() == Clause.GROUPBYCLAUSE ||
+                c.getClauseKey() == Clause.WINDOW;
     }
 
     /**
@@ -371,24 +374,11 @@ public class FLWORExpression extends Expression {
         } catch (XPathException e) {
             throw new IllegalStateException(e);
         }
+        if (returnClause == original) {
+            returnClause = replacement;
+            return true;
+        }
         return !changed.isEmpty();
-    }
-
-    /**
-     * Replace all references to the variable bound by this let expression,
-     * that occur within the action expression, with the given expression
-     *
-     * @param opt The optimizer
-     * @param seq the expression
-     * @throws net.sf.saxon.trans.XPathException
-     *          if an error occurs
-     */
-
-    public void replaceVariable(Optimizer opt, Expression seq) throws XPathException {
-        PromotionOffer offer2 = new PromotionOffer(opt);
-        offer2.action = PromotionOffer.INLINE_VARIABLE_REFERENCES;
-        // offer2.bindingList = new Binding[] {this};
-        offer2.containingExpression = seq;
     }
 
     /**
@@ -511,6 +501,47 @@ public class FLWORExpression extends Expression {
 
         // Optimize the return expression
         returnClause = returnClause.optimize(visitor, contextItemType);
+
+        // If any 'let' clause declares a variable that is used only once, then inline it. If the variable
+        // is not used at all, then eliminate it
+
+        boolean tryAgain;
+        do {
+            tryAgain = false;
+            for (Clause c : clauses) {
+                if (c.getClauseKey() == Clause.LET) {
+                    LetClause lc = (LetClause)c;
+                    if (!ExpressionTool.dependsOnVariable(this, new Binding[]{lc.getRangeVariable()})) {
+                        clauses.remove(c);
+                        if (clauses.isEmpty()) {
+                            return returnClause;
+                        }
+                        tryAgain = true;
+                        break;
+                    }
+                    boolean suppressInlining = false;
+                    for (Clause c2 : clauses) {
+                        if (c2.containsNonInlineableVariableReference(lc.getRangeVariable())) {
+                            suppressInlining = true;
+                            break;
+                        }
+                    }
+                    if (!suppressInlining) {
+                        if (lc.getRangeVariable().getNominalReferenceCount() == 1 ||
+                                lc.getSequence() instanceof VariableReference ||
+                                lc.getSequence() instanceof Literal) {
+                            ExpressionTool.replaceVariableReferences(this, lc.getRangeVariable(), lc.getSequence().copy());
+                            clauses.remove(c);
+                            if (clauses.isEmpty()) {
+                                return returnClause;
+                            }
+                            tryAgain = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        } while (tryAgain);
 
         // If any 'where' clause depends on the context item, remove this dependency, because it makes
         // it easier to rearrange where clauses as predicates
@@ -839,63 +870,73 @@ public class FLWORExpression extends Expression {
         return sb.toString();
     }
 
-    public boolean hasLoopingVariableReference(Binding binding, final Expression reference) {
-        boolean foundBinding = false;
-        boolean foundLoopingClause = false;
-        final List<Boolean> bList = new ArrayList<Boolean>();
+   /**
+     * Determine whether a variable reference found within a clause of a FLWOR expression is a looping
+     * reference, that is, whether the variable is used more than once
+     * @param binding the variable binding, which may be bound in a clause of the same FLWOR expression,
+     * or in some containing expression
+     * @return true if a reference to the variable occurs within a loop relative to the binding, that is, if the
+     * variable's value is used more than once. Note that this method only detects a loop that is due to the clauses
+     * of this FLWOR expression itself. A loop in an inner expression or outer expression of the FLWOR expression must
+     * be detected by the caller.
+     */
 
-        ExpressionProcessor checker = new ExpressionProcessor() {
-            public Expression processExpression(Expression expr) throws XPathException {
+    public boolean hasLoopingVariableReference(final Binding binding) {
 
-                if (expr == reference) {
-                    bList.add(false); //implies found a non-looping reference
-                } else {
-                    Stack<Expression> expressionStack = ExpressionTool.pathToContainedExpression(expr, reference, new Stack<Expression>());
-                    if (expressionStack != null) {
-                        for (int i = 0; i < expressionStack.size() - 1; i++) {
-                            Expression parent = expressionStack.get(i);
-                            Expression child = expressionStack.get(i + 1);
-                            if (parent.hasLoopingSubexpression(child)) {
-                                bList.add(true);
-                                return expr;
-                            }
-                        }
-                        bList.add(false);
+        // Determine the clause that binds the variable (if any)
+
+        int bindingClause = -1;
+        for (int i=0; i<clauses.size(); i++) {
+            if (clauseHasBinding(clauses.get(i), binding)) {
+                bindingClause = i;
+                break;
+            }
+        }
+
+        boolean boundOutside = bindingClause < 0;
+        if (boundOutside) {
+            bindingClause = 0;
+        }
+
+        // Determine the last clause that contains a reference to the variable.
+        // (If any reference to the variable is a looping reference, then the last one will be)
+
+        int lastReferencingClause = clauses.size(); // indicates the return clause
+        if (!ExpressionTool.dependsOnVariable(returnClause, new Binding[]{binding})) {
+            // artifice to get a response value from the generic processExpression() method
+            final List<Boolean> response = new ArrayList<Boolean>();
+            ExpressionProcessor checker = new ExpressionProcessor() {
+                public Expression processExpression(Expression expr) throws XPathException {
+                    if (response.isEmpty() && ExpressionTool.dependsOnVariable(expr, new Binding[]{binding})) {
+                        response.add(true);
                     }
+                    return expr;
                 }
-                return expr;
-            }
-        };
-
-        for (Clause c : clauses) {
-            if (!foundBinding && clauseHasBinding(c, binding)) {
-                foundBinding = true;
-                continue;
-            }
-            if (foundBinding) {
+            };
+            for (int i=clauses.size()-1; i>=0; i--) {
                 try {
-                    c.processSubExpressions(checker);
+                    clauses.get(i).processSubExpressions(checker);
+                    if (!response.isEmpty()) {
+                        lastReferencingClause = i;
+                        break;
+                    }
                 } catch (XPathException e) {
                     assert false;
                 }
-                if (!bList.isEmpty()) {
-                    return foundLoopingClause || bList.get(0);
-                }
-                if (isLoopingClause(c)) {
-                    foundLoopingClause = true;
-                }
             }
         }
 
-        if (foundBinding) {
-            if (foundLoopingClause) {
+        // If any clause between the binding clause and the last referencing clause is a looping clause,
+        // then the variable is used within a loop
+
+        for (int i=lastReferencingClause - 1; i>=bindingClause; i--) {
+            if (isLoopingClause(clauses.get(i))) {
                 return true;
             }
-            Stack<Expression> returnExpressionStack = ExpressionTool.pathToContainedExpression(returnClause, reference, new Stack<Expression>());
-            if (returnExpressionStack != null) {
-                return foundLoopingClause;
-            }
         }
+
+        // otherwise there is no loop caused by the clauses of the FLWOR expression itself.
+
         return false;
     }
 }

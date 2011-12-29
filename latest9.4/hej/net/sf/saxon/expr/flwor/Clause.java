@@ -103,6 +103,16 @@ public abstract class Clause {
     public void gatherVariableReferences(final ExpressionVisitor visitor, Binding binding, List<VariableReference> refs){}
 
     /**
+     * Determine whether the clause contains a reference to a local variable binding that cannot be inlined
+     * @param binding the binding for the local variable in question
+     * @return true if this clause uses the variable in a way that does not permit inlining
+     */
+
+    public boolean containsNonInlineableVariableReference(Binding binding) {
+        return false;
+    }
+
+    /**
      * Supply improved type information to the expressions that contain references to the variables declared in this clause
      * @param visitor the expression visitor
      * @param references the list of variable references

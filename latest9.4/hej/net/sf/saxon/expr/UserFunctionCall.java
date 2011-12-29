@@ -331,6 +331,14 @@ public class UserFunctionCall extends FunctionCall {
         }
     }
 
+    @Override
+    public boolean replaceSubExpression(Expression original, Expression replacement) {
+        boolean found = super.replaceSubExpression(original, replacement);
+        if (found) {
+            computeArgumentEvaluationModes();
+        }
+        return found;
+    }
 
     /**
      * Add a representation of this expression to a PathMap. The PathMap captures a map of the nodes visited

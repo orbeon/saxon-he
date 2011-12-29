@@ -308,9 +308,7 @@ public class ExpressionVisitor implements TypeCheckerEnvironment {
             }
             Expression parent = expressionStack.get(top - 1);
             if (parent instanceof FLWORExpression) {
-                if (parent.hasVariableBinding(binding)) {
-                    return ((FLWORExpression) parent).hasLoopingVariableReference(binding, ref);
-                }
+                return ((FLWORExpression) parent).hasLoopingVariableReference(binding);
             } else {
                 if (parent.hasLoopingSubexpression((expressionStack.get(top)))) {
                     return true;
@@ -322,6 +320,7 @@ public class ExpressionVisitor implements TypeCheckerEnvironment {
             top--;
         }
     }
+
 
     /**
      * Reset the static properties for the current expression and for all its containing expressions.

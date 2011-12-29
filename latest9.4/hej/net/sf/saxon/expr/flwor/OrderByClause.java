@@ -1,6 +1,8 @@
 package net.sf.saxon.expr.flwor;
 
+import net.sf.saxon.expr.Binding;
 import net.sf.saxon.expr.Expression;
+import net.sf.saxon.expr.LocalVariableReference;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.RoleLocator;
@@ -30,6 +32,16 @@ public class OrderByClause extends Clause {
     @Override
     public int getClauseKey() {
         return ORDERBYCLAUSE;
+    }
+
+    @Override
+    public boolean containsNonInlineableVariableReference(Binding binding) {
+        for (LocalVariableReference ref : tupleExpression.getSlots()) {
+            if (ref.getBinding() == binding) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public OrderByClause copy() {

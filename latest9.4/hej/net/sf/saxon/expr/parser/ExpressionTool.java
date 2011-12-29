@@ -880,6 +880,26 @@ public class ExpressionTool {
     }
 
     /**
+     * Replace all references to a particular variable within a subtree
+     *
+     * @param exp the expression at the root of the subtree
+     * @param binding the variable binding whose references are sought
+     * @param replacement the expression to be used in place of the variable reference
+     */
+
+    public static void replaceVariableReferences(Expression exp, Binding binding, Expression replacement) {
+        for (Iterator<Expression> iter = exp.iterateSubExpressions(); iter.hasNext(); ) {
+            Expression child = iter.next();
+            if (child instanceof VariableReference && ((VariableReference) child).getBinding() == binding) {
+                exp.replaceSubExpression(child, replacement);
+            } else {
+                replaceVariableReferences(child, binding, replacement);
+            }
+        }
+    }
+
+
+    /**
      * Determine how often a variable is referenced. This is the number of times
      * it is referenced at run-time: so a reference in a loop counts as "many". This code
      * currently handles local variables (Let expressions) and function parameters. It is
