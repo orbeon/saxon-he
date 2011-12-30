@@ -288,11 +288,14 @@ public class Block extends Instruction {
     public Expression copy() {
         Block b2 = new Block();
         Expression[] c2 = new Expression[children.length];
+        b2.children = c2;
         for (int c=0; c<children.length; c++) {
             c2[c] = children[c].copy();
-            b2.adoptChildExpression(c2[c]);
         }
         b2.children = c2;
+        for (int c=0; c<children.length; c++) {
+            b2.adoptChildExpression(c2[c]);
+        }
         b2.allNodesUntyped = allNodesUntyped;
         ExpressionTool.copyLocationInfo(this, b2);
         return b2;
