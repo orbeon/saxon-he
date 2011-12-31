@@ -308,7 +308,15 @@ public class ExpressionVisitor implements TypeCheckerEnvironment {
             }
             Expression parent = expressionStack.get(top - 1);
             if (parent instanceof FLWORExpression) {
-                return ((FLWORExpression) parent).hasLoopingVariableReference(binding);
+                if (parent.hasVariableBinding(binding)) {
+                    // The variable is declared in one of the clauses of the FLWOR expression
+                    return ((FLWORExpression) parent).hasLoopingVariableReference(binding);
+                } else {
+                    // The variable is declared outside the FLWOR expression
+                    if (parent.hasLoopingSubexpression((expressionStack.get(top)))) {
+                        return true;
+                    }
+                }
             } else {
                 if (parent.hasLoopingSubexpression((expressionStack.get(top)))) {
                     return true;
@@ -320,7 +328,6 @@ public class ExpressionVisitor implements TypeCheckerEnvironment {
             top--;
         }
     }
-
 
     /**
      * Reset the static properties for the current expression and for all its containing expressions.
