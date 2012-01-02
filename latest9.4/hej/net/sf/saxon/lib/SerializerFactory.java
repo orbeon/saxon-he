@@ -7,7 +7,6 @@ import net.sf.saxon.serialize.*;
 import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.TransformerException;
@@ -53,9 +52,10 @@ public class SerializerFactory implements Serializable {
      * @throws net.sf.saxon.trans.XPathException if any error occurs
      */
 
-    public XMLStreamWriter getXMLStreamWriter(
+    public StreamWriterToReceiver getXMLStreamWriter(
             StreamResult result,
             Properties properties) throws XPathException {
+        // declared to return the implementation class in order to reduce the dependency on JAXP 1.4
         Receiver r = getReceiver(result, config.makePipelineConfiguration(), properties);
         return new StreamWriterToReceiver(r);
     }

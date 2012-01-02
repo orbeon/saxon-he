@@ -13,7 +13,6 @@ import net.sf.saxon.query.QueryResult;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.Value;
 
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
@@ -464,7 +463,7 @@ public class Serializer implements Destination {
      * @since 9.3
      */
 
-    public XMLStreamWriter getXMLStreamWriter() throws SaxonApiException {
+    public StreamWriterToReceiver getXMLStreamWriter() throws SaxonApiException {
         if (config == null) {
             throw new IllegalStateException("This method is available only if a Processor has been set");
         }
