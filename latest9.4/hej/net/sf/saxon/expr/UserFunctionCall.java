@@ -75,17 +75,21 @@ public class UserFunctionCall extends FunctionCall {
         boolean isXSLT = executable != null && executable.getHostLanguage() == Configuration.XSLT;
         int n = compiledFunction.getNumberOfArguments();
         for (int i=0; i<n; i++) {
-            RoleLocator role = new RoleLocator(
-                    RoleLocator.FUNCTION, compiledFunction.getFunctionName(), i);
+            Object name = compiledFunction.getFunctionName();
+            if (name == null) {
+                name = "";
+            }
+            RoleLocator role = new RoleLocator(RoleLocator.FUNCTION, name, i);
+
             if (isXSLT) {
                 role.setErrorCode("XTTE0790");
             }
-            //role.setSourceLocator(this);
-            argument[i] = TypeChecker.staticTypeCheck(
+            Expression e2 = TypeChecker.staticTypeCheck(
                     argument[i],
                     compiledFunction.getArgumentType(i),
                     false,
                     role, visitor);
+            argument[i] = e2;
         }
     }
 
@@ -252,16 +256,27 @@ public class UserFunctionCall extends FunctionCall {
     /*@NotNull*/
     public Expression typeCheck(ExpressionVisitor visitor, ExpressionVisitor.ContextItemType contextItemType) throws XPathException {
         Expression e = super.typeCheck(visitor, contextItemType);
+        if (e != this) {
+            return e;
+        }
         if (function != null) {
-            if (e == this) {
-                computeArgumentEvaluationModes();
+            if (function.getFunctionName() == null) {
+                // This is an inline function item; add type-checking for the argument types and the result type
+                checkFunctionCall(function, visitor);
+                Expression body = function.getBody();
+                body = body.typeCheck(visitor, null);
+                TypeHierarchy th = visitor.getConfiguration().getTypeHierarchy();
+                RoleLocator role = new RoleLocator(RoleLocator.FUNCTION_RESULT, "", 0);
+                body = TypeChecker.staticTypeCheck(body, function.getResultType(th), visitor.getStaticContext().isInBackwardsCompatibleMode(), role, visitor);
+                function.setBody(body);
             }
+            computeArgumentEvaluationModes();
             if (staticType == SequenceType.ANY_SEQUENCE) {
                 // try to get a better type
                 staticType = function.getResultType(visitor.getConfiguration().getTypeHierarchy());
             }
         }
-        return e;
+        return this;
     }
 
     /*@NotNull*/
