@@ -506,6 +506,7 @@ public class FLWORExpression extends Expression {
         // is not used at all, then eliminate it
 
         boolean tryAgain;
+        boolean changed = false;
         do {
             tryAgain = false;
             for (Clause c : clauses) {
@@ -541,7 +542,17 @@ public class FLWORExpression extends Expression {
                     }
                 }
             }
+            changed |= tryAgain;
         } while (tryAgain);
+
+
+        // If changed, remove any redundant trace clauses
+        for (int i=clauses.size()-1; i>=1; i--) {
+            if (clauses.get(i).getClauseKey() == Clause.TRACE && clauses.get(i-1).getClauseKey() == Clause.TRACE) {
+                clauses.remove(i);
+            }
+        }
+
 
         // If any 'where' clause depends on the context item, remove this dependency, because it makes
         // it easier to rearrange where clauses as predicates
@@ -732,6 +743,7 @@ public class FLWORExpression extends Expression {
                     forExpr = new ForExpression();
                 }
 
+                forExpr.setLocationId(forClause.getLocationId());
                 forExpr.setAction(action);
 
                 forExpr.setSequence(forClause.getSequence());
@@ -754,6 +766,7 @@ public class FLWORExpression extends Expression {
                 LetExpression letExpr = new LetExpression();
                 letExpr.setAction(action);
                 LetClause letClause = (LetClause) clauses.get(i);
+                letExpr.setLocationId(letClause.getLocationId());
                 letExpr.setSequence(letClause.getSequence());
                 letExpr.setVariableQName(letClause.getRangeVariable().getVariableQName());
                 letExpr.setRequiredType(letClause.getRangeVariable().getRequiredType());

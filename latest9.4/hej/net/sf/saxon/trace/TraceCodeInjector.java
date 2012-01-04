@@ -1,8 +1,11 @@
 package net.sf.saxon.trace;
 
+import net.sf.saxon.expr.Container;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.Literal;
 import net.sf.saxon.expr.StaticContext;
+import net.sf.saxon.expr.flwor.Clause;
+import net.sf.saxon.expr.flwor.TraceClause;
 import net.sf.saxon.expr.instruct.TraceExpression;
 import net.sf.saxon.expr.parser.CodeInjector;
 import net.sf.saxon.om.StructuredQName;
@@ -35,6 +38,20 @@ public class TraceCodeInjector implements CodeInjector {
         //trace.setObjectNameCode(objectNameCode);
         return trace;
     }
+
+
+    /**
+     * If tracing, add a clause to a FLWOR expression that can be used to monitor requests for
+     * tuples to be processed
+     * @param target the clause whose evaluation is to be traced (or otherwise monitored)
+     * @param container the container of the containing FLWORExpression
+     * @return the new clause to do the tracing; or null if no tracing is required at this point
+     */
+
+    public Clause injectClause(Clause target, Container container) {
+        return new TraceClause(target, container);
+    }
+
 }
 
 //

@@ -33,6 +33,7 @@ public class LetClause extends Clause {
 
     public LetClause copy() {
         LetClause let2 = new LetClause();
+        let2.setLocationId(getLocationId());
         let2.rangeVariable = rangeVariable.copy();
         let2.sequence = sequence.copy();
         return let2;

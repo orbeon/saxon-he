@@ -1,5 +1,6 @@
 package net.sf.saxon.trace;
 
+import net.sf.saxon.expr.flwor.Clause;
 import net.sf.saxon.om.StandardNames;
 
 /**
@@ -86,9 +87,22 @@ public class XQueryTraceListener extends AbstractTraceListener {
                 return "default";
             case Location.TRACE_CALL:
                 return "user-trace";
+            case Location.CLAUSE_BASE + Clause.COUNT:
+                return "count";
+            case Location.CLAUSE_BASE + Clause.FOR:
+                return "for";
+            case Location.CLAUSE_BASE + Clause.LET:
+                return "let";
+            case Location.CLAUSE_BASE + Clause.GROUPBYCLAUSE:
+                return "group-by";
+            case Location.CLAUSE_BASE + Clause.ORDERBYCLAUSE:
+                return "order-by";
+            case Location.CLAUSE_BASE + Clause.WHERE:
+                return "where";
+            case Location.CLAUSE_BASE + Clause.WINDOW:
+                return "window";
             default:
-                //return "Other";
-                return null;
+                 return null;
             }
     }
 

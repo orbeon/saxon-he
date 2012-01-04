@@ -222,6 +222,12 @@ public class Location {
      */
     public static final int UNCLASSIFIED = 2099;
 
+    /**
+     * Values of the form CLAUSE_BASE + n represent FLWOR clauses
+     */
+    public static final int CLAUSE_BASE = 3000;
+
+
     private Location() {
     }
 }

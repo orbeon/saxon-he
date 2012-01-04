@@ -1,7 +1,9 @@
 package net.sf.saxon.expr.parser;
 
+import net.sf.saxon.expr.Container;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.StaticContext;
+import net.sf.saxon.expr.flwor.Clause;
 import net.sf.saxon.om.StructuredQName;
 
 /**
@@ -21,6 +23,13 @@ public interface CodeInjector {
      */
 
     public Expression inject(Expression exp, StaticContext env, int construct, StructuredQName qName);
+
+
+    /**
+     * Insert a tracing clause into a FLWOR expression
+     */
+
+    public Clause injectClause(Clause target, Container container);
 }
 
 //

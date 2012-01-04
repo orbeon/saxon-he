@@ -3,6 +3,7 @@ package net.sf.saxon.expr.parser;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.LocationProvider;
 import net.sf.saxon.expr.*;
+import net.sf.saxon.expr.flwor.Clause;
 import net.sf.saxon.expr.instruct.*;
 import net.sf.saxon.expr.sort.IntArraySet;
 import net.sf.saxon.expr.sort.IntSet;
@@ -55,7 +56,7 @@ public class ExpressionParser {
     // full namespace context at this stage.
 
     /*@Nullable*/
-    private CodeInjector codeInjector = null;
+    protected CodeInjector codeInjector = null;
 
     protected int language = XPATH;     // know which language we are parsing, for diagnostics
     public static final int XPATH = 0;
@@ -897,11 +898,12 @@ public class ExpressionParser {
             grumble("sliding/tumbling windows can only be used in XQuery");
         }
         int clauses = 0;
-        int offset = t.currentTokenStartOffset;
+        int offset;
         int operator = t.currentToken;
         Assignation first = null;
         Assignation previous = null;
         do {
+            offset = t.currentTokenStartOffset;
             nextToken();
             expect(Token.DOLLAR);
             nextToken();
@@ -919,6 +921,7 @@ public class ExpressionParser {
             }
 
             clauses++;
+            setLocation(v, offset);
             v.setVariableQName(makeStructuredQName(var, false));
             nextToken();
 
@@ -2936,6 +2939,25 @@ public class ExpressionParser {
             exp.setContainer(defaultContainer);
         }
     }
+
+    /**
+     * Set location information on a clause of a FLWOR expression. At present only the line number
+     * is retained. Needed mainly for XQuery. This version of the method supplies an
+     * explicit offset (character position within the expression or query), which the tokenizer
+     * can convert to a line number and column number.
+     *
+     * @param clause    the clause whose location information is to be set
+     * @param offset the character position within the expression (ignoring newlines)
+     */
+
+    public void setLocation(/*@NotNull*/ Clause clause, int offset) {
+        // Although we could get the column position from the offset, we choose not to retain this,
+        // and only use the line number
+        int line = t.getLineNumber(offset);
+        int loc = env.getLocationMap().allocateLocationId(env.getSystemId(), line);
+        clause.setLocationId(loc);
+    }
+
 
     /**
      * If tracing, wrap an expression in a trace instruction

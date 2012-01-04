@@ -36,7 +36,9 @@ public class WhereClause extends Clause {
     }
 
     public WhereClause copy() {
-        return new WhereClause(predicate.copy());
+        WhereClause w2 = new WhereClause(predicate.copy());
+        w2.setLocationId(getLocationId());
+        return w2;
     }
 
       /**

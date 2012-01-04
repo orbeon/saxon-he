@@ -65,6 +65,7 @@ public class QueryParser extends ExpressionParser {
     /*@NotNull*/ List<String> namespacesToBeSealed = new ArrayList<String>(10);
     /*@NotNull*/ List<Import> schemaImports = new ArrayList<Import>(5);
     /*@NotNull*/ List<Import> moduleImports = new ArrayList<Import>(5);
+    private Set<StructuredQName> outputPropertiesSeen = new HashSet<StructuredQName>(4);
 
     /*@Nullable*/ private Expression defaultValue = null;
 
@@ -1707,8 +1708,8 @@ public class QueryParser extends ExpressionParser {
     private void parseOptionDeclaration() throws XPathException {
         nextToken();
         expect(Token.NAME);
-        int varNameCode = makeNameCode(t.currentTokenValue, false);
-        String uri = env.getNamePool().getURI(varNameCode);
+        StructuredQName varName = makeStructuredQName(t.currentTokenValue, false);
+        String uri = varName.getURI();
 
         if (uri.length() == 0) {
             grumble("The QName identifying an option declaration must be prefixed", "XPST0081");
@@ -1717,10 +1718,10 @@ public class QueryParser extends ExpressionParser {
 
         nextToken();
         expect(Token.STRING_LITERAL);
-        String value = URILiteral(t.currentTokenValue);
+        String value = URILiteral(t.currentTokenValue).trim();
 
         if (uri.equals(NamespaceConstant.SAXON)) {
-            String localName = env.getNamePool().getLocalName(varNameCode);
+            String localName = varName.getLocalPart();
             if (localName.equals("output")) {
                 setOutputProperty(value);
             } else if (localName.equals("default")) {
@@ -1745,7 +1746,7 @@ public class QueryParser extends ExpressionParser {
                     warning("Value of saxon:allow-cycles must be 'true' or 'false'");
                 }
             } else {
-                warning("Unknown Saxon option declaration: " + env.getNamePool().getDisplayName(varNameCode));
+                warning("Unknown Saxon option declaration: " + varName.getDisplayName());
             }
         }
 
@@ -1789,7 +1790,7 @@ public class QueryParser extends ExpressionParser {
 
     private void badOutputProperty(String s) {
         try {
-            warning("Invalid serialization property (" + s + ") - ignored");
+            warning("Invalid serialization property (" + s + ")");
         } catch (XPathException staticError) {
             //
         }
@@ -1853,11 +1854,12 @@ public class QueryParser extends ExpressionParser {
      */
 
     /*@Nullable*/ protected Expression parseFLWORExpression() throws XPathException {
-        int offset = t.currentTokenStartOffset;
+        int exprOffset = t.currentTokenStartOffset;
         List<Clause> clauseList = new ArrayList<Clause>(4);
         boolean foundOrderBy = false;
         boolean foundWhere = false;
         while (true) {
+            int offset = t.currentTokenStartOffset;
             if (t.currentToken == Token.FOR) {
                 if (foundWhere && !XQUERY30.equals(queryVersion)) {
                     grumble("In XQuery 1.0 'for' cannot follow 'where'");
@@ -1943,6 +1945,7 @@ public class QueryParser extends ExpressionParser {
             } else {
                 break;
             }
+            setLocation(clauseList.get(clauseList.size() - 1), offset);
         }
 
         int returnOffset = t.currentTokenStartOffset;
@@ -1961,8 +1964,29 @@ public class QueryParser extends ExpressionParser {
             }
         }
 
+        if (codeInjector != null) {
+            List<Clause> expandedList = new ArrayList<Clause>(clauseList.size()*2);
+            expandedList.add(clauseList.get(0));
+            for (int i=1; i<clauseList.size(); i++) {
+                Clause extra = codeInjector.injectClause(
+                        clauseList.get(i-1),
+                        defaultContainer);
+                if (extra != null) {
+                    expandedList.add(extra);
+                }
+                expandedList.add(clauseList.get(i));
+            }
+            Clause extra = codeInjector.injectClause(
+                        clauseList.get(clauseList.size()-1), defaultContainer);
+            if (extra != null) {
+                expandedList.add(extra);
+            }
+            clauseList = expandedList;
+        }
+
+
         FLWORExpression expression = new FLWORExpression(clauseList, returnExpression);
-        setLocation(expression, offset);
+        setLocation(expression, exprOffset);
         return expression;
 
     }
@@ -1995,7 +2019,7 @@ public class QueryParser extends ExpressionParser {
     private void parseForClause(/*@NotNull*/ List<Clause> clauseList) throws XPathException {
         boolean first = true;
         do {
-            net.sf.saxon.expr.flwor.ForClause clause = new net.sf.saxon.expr.flwor.ForClause();
+            ForClause clause = new ForClause();
             if (first) {
                 //clause.offset = t.currentTokenStartOffset;
             }

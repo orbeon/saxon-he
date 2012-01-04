@@ -24,6 +24,33 @@ public abstract class Clause {
     public static final int COUNT = 4;
     public static final int ORDERBYCLAUSE = 5;
     public static final int WHERE = 6;
+    public static final int TRACE = 7;
+
+    private int locationId;
+
+    /**
+     * Get the location ID, which can be used in conjunction with a LocationProvider to determine
+     * the system ID and line number of the clause
+     * @return the location ID
+     */
+    public int getLocationId() {
+        return locationId;
+    }
+
+    /**
+     * Set the location ID, which can be used in conjunction with a LocationProvider to determine
+     * the system ID and line number of the clause
+     * @param locationId the location ID
+     */
+
+    public void setLocationId(int locationId) {
+        this.locationId = locationId;
+    }
+
+    /**
+     * Create a copy of this clause
+     * @return the copied clause
+     */
 
     public abstract Clause copy();
 

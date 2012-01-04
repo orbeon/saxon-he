@@ -50,6 +50,7 @@ public class OrderByClause extends Clause {
             sk2[i] = sortKeys[i].copy();
         }
         OrderByClause obc = new OrderByClause(sk2, (TupleExpression)tupleExpression.copy());
+        obc.setLocationId(getLocationId());
         obc.comparators = comparators;
         return obc;
     }

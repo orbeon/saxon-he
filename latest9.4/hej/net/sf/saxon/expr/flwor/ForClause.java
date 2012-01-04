@@ -35,6 +35,7 @@ public class ForClause extends Clause {
 
     public ForClause copy() {
         ForClause f2 = new ForClause();
+        f2.setLocationId(getLocationId());
         f2.rangeVariable = rangeVariable.copy();
         if (positionVariable != null) {
             f2.positionVariable = positionVariable.copy();
