@@ -1,6 +1,7 @@
 package net.sf.saxon.expr.flwor;
 
 import net.sf.saxon.expr.Container;
+import net.sf.saxon.om.NamespaceResolver;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trace.InstructionInfo;
 import net.sf.saxon.trace.Location;
@@ -16,6 +17,7 @@ public class ClauseInfo implements InstructionInfo {
 
     private Clause clause;
     private Container container;
+    private NamespaceResolver nsResolver;
 
     public ClauseInfo(Clause clause, Container container) {
         this.clause = clause;
@@ -46,6 +48,24 @@ public class ClauseInfo implements InstructionInfo {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Get the namespace bindings from the static context of the clause
+     * @return a namespace resolver that reflects the in scope namespaces of the clause
+     */
+
+    public NamespaceResolver getNamespaceResolver() {
+        return nsResolver;
+    }
+
+    /**
+     * Set the namespace bindings from the static context of the clause
+     * @param nsResolver a namespace resolver that reflects the in scope namespaces of the clause
+     */
+
+    public void setNamespaceResolver(NamespaceResolver nsResolver) {
+        this.nsResolver = nsResolver;
     }
 
     /**

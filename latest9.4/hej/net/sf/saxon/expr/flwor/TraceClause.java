@@ -2,6 +2,7 @@ package net.sf.saxon.expr.flwor;
 
 import net.sf.saxon.expr.Container;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.om.NamespaceResolver;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 
@@ -13,6 +14,7 @@ public class TraceClause extends Clause {
 
     private Clause target;
     private Container container;
+    private NamespaceResolver nsResolver;
 
     /**
      * Create a traceClause
@@ -24,6 +26,25 @@ public class TraceClause extends Clause {
         this.target = target;
         this.container = container;
     }
+
+    /**
+     * Get the namespace bindings from the static context of the clause
+     * @return a namespace resolver that reflects the in scope namespaces of the clause
+     */
+
+    public NamespaceResolver getNamespaceResolver() {
+        return nsResolver;
+    }
+
+    /**
+     * Set the namespace bindings from the static context of the clause
+     * @param nsResolver a namespace resolver that reflects the in scope namespaces of the clause
+     */
+
+    public void setNamespaceResolver(NamespaceResolver nsResolver) {
+        this.nsResolver = nsResolver;
+    }
+
 
     @Override
     public int getClauseKey() {
@@ -43,7 +64,7 @@ public class TraceClause extends Clause {
      */
     @Override
     public TuplePull getPullStream(TuplePull base, XPathContext context) {
-        return new TraceClausePull(base, target, container);
+        return new TraceClausePull(base, this, target, container);
     }
 
     /**
@@ -57,7 +78,7 @@ public class TraceClause extends Clause {
      */
     @Override
     public TuplePush getPushStream(TuplePush destination, XPathContext context) {
-        return new TraceClausePush(destination, target, container);
+        return new TraceClausePush(destination, this, target, container);
     }
 
     /**

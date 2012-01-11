@@ -13,11 +13,13 @@ import net.sf.saxon.trans.XPathException;
 public class TraceClausePush extends TuplePush {
 
     private TuplePush destination;
+    TraceClause traceClause;
     private Clause baseClause;
     private Container container;
 
-    public TraceClausePush(TuplePush destination, Clause baseClause, Container container) {
+    public TraceClausePush(TuplePush destination, TraceClause traceClause, Clause baseClause, Container container) {
         this.destination = destination;
+        this.traceClause = traceClause;
         this.baseClause = baseClause;
         this.container = container;
     }
@@ -30,6 +32,7 @@ public class TraceClausePush extends TuplePush {
         Controller controller = context.getController();
         if (controller.isTracing()) {
             ClauseInfo baseInfo = new ClauseInfo(baseClause, container);
+            baseInfo.setNamespaceResolver(traceClause.getNamespaceResolver());
             controller.getTraceListener().enter(baseInfo, context);
             destination.processTuple(context);
             controller.getTraceListener().leave(baseInfo);

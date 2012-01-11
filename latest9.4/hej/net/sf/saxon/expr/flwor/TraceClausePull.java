@@ -14,10 +14,12 @@ public class TraceClausePull extends TuplePull {
 
     private TuplePull base;
     private Clause baseClause;
+    private TraceClause traceClause;
     private Container container;
 
-    public TraceClausePull(TuplePull base, Clause baseClause, Container container) {
+    public TraceClausePull(TuplePull base, TraceClause traceClause, Clause baseClause, Container container) {
         this.base = base;
+        this.traceClause = traceClause;
         this.baseClause = baseClause;
         this.container = container;
     }
@@ -36,6 +38,7 @@ public class TraceClausePull extends TuplePull {
         Controller controller = context.getController();
         if (controller.isTracing()) {
             ClauseInfo baseInfo = new ClauseInfo(baseClause, container);
+            baseInfo.setNamespaceResolver(traceClause.getNamespaceResolver());
             controller.getTraceListener().enter(baseInfo, context);
             boolean b = base.nextTuple(context);
             controller.getTraceListener().leave(baseInfo);
