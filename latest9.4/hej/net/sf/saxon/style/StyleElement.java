@@ -11,10 +11,7 @@ import net.sf.saxon.expr.sort.SortKeyDefinition;
 import net.sf.saxon.functions.Current;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
-import net.sf.saxon.pattern.EmptySequenceTest;
-import net.sf.saxon.pattern.LocationPathPattern;
-import net.sf.saxon.pattern.NodeKindTest;
-import net.sf.saxon.pattern.Pattern;
+import net.sf.saxon.pattern.*;
 import net.sf.saxon.trace.InstructionInfo;
 import net.sf.saxon.trace.Location;
 import net.sf.saxon.trans.Err;
@@ -532,12 +529,10 @@ implements Locator, Container, InstructionInfo {
 		} catch (XPathException err) {
 			err.setLocator(this);
 			compileError(err);
-//          Following lines commented out 2011-09-04. Dead code - compileError() always throws an exception
-//			ErrorExpression erexp = new ErrorExpression(err);
-//			erexp.setLocationId(allocateLocationId(getSystemId(), getLineNumber()));
-//			erexp.setContainer(this);
-//			return erexp;
-            return null;
+			ErrorExpression erexp = new ErrorExpression(err);
+			erexp.setLocationId(allocateLocationId(getSystemId(), getLineNumber()));
+			erexp.setContainer(this);
+			return erexp;
 		}
 	}
 
@@ -554,8 +549,7 @@ implements Locator, Container, InstructionInfo {
             return Pattern.make(pattern, staticContext, getPreparedStylesheet());
 		} catch (XPathException err) {
 			compileError(err);
-            return null;
-			//return new ItemTypePattern(AnyNodeTest.getInstance());
+			return new ItemTypePattern(AnyNodeTest.getInstance());
 		}
 	}
 
@@ -573,8 +567,7 @@ implements Locator, Container, InstructionInfo {
 			return AttributeValueTemplate.make(expression, getLineNumber(), staticContext);
 		} catch (XPathException err) {
 			compileError(err);
-            return null;
-			// return new StringLiteral(expression);
+			return new StringLiteral(expression);
 		}
 	}
 
