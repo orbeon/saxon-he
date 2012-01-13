@@ -388,7 +388,8 @@ public class ExpressionTool {
                             baseVal = ((MemoClosure) baseVal).materialize();
                         }
                     } else {
-                        throw new AssertionError("base of shared append expression is of class " + base.getClass());
+                        // it's not a variable reference: it must have been rewritten after deciding to use this evaluation mode
+                        return SequenceExtent.makeSequenceExtent(exp.iterate(context));
                     }
                     SequenceIterator iter = block.getChildren()[1].iterate(context);
                     return ShareableSequence.makeShareableSequence(baseVal, iter);
