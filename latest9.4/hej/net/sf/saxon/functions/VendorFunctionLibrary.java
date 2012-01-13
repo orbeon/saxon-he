@@ -26,6 +26,11 @@ public class VendorFunctionLibrary extends IntegratedFunctionLibrary {
         registerFunction(new ItemAt());
     }
 
+    @Override
+    public FunctionLibrary copy() {
+        return new VendorFunctionLibrary();
+    }
+
     /**
      * Make a Saxon function with a given name
      * @param localName the local name of the function
