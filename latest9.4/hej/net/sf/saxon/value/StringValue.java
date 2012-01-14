@@ -186,7 +186,7 @@ public class StringValue extends AtomicValue {
         }
         for (int i = 0; i < value.length(); i++) {
             int c = (int) value.charAt(i);
-            if (c >= 55296 && c < 56319) {
+            if (c >= 55296 && c <= 56319) {
                 return true;
             }
         }
