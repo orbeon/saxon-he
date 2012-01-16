@@ -51,12 +51,16 @@ public final class AtomicSequenceConverter extends UnaryExpression {
      */
 
 
-    public static AtomicSequenceConverter makeUntypedSequenceConverter(Configuration config, Expression operand, PlainType requiredItemType) {
+    public static AtomicSequenceConverter makeUntypedSequenceConverter(Configuration config, Expression operand, PlainType requiredItemType)
+    throws XPathException {
         TypeHierarchy th = config.getTypeHierarchy();
         AtomicSequenceConverter atomicSeqConverter =
                 new AtomicSequenceConverter(operand, requiredItemType, operand.getItemType(th) == BuiltInAtomicType.UNTYPED_ATOMIC);
         final ConversionRules rules = config.getConversionRules();
         final Converter untypedConverter;
+        if (((SimpleType)requiredItemType).isNamespaceSensitive()) {
+            throw new XPathException("Cannot convert untyped atomic values to a namespace-sensitive type", "XPTY0117");
+        }
         if (requiredItemType.isAtomicType()) {
             untypedConverter = rules.getConverter(BuiltInAtomicType.UNTYPED_ATOMIC, (AtomicType)requiredItemType);
         } else {
