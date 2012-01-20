@@ -32,11 +32,11 @@
     -->
     
     
-    <property name="version" value="9.4.0.1"/>
-    <property name="versionh" value="9-4-0-1"/>
+    <property name="version" value="9.4.0.2"/>
+    <property name="versionh" value="9-4-0-2"/>
     <property name="major.version" value="9.4"/>
     <property name="major.versionh" value="9-4"/>
-    <property name="release.date" value="2011-12-9"/>
+    <property name="release.date" value="2012-01-16"/>
     
     <!-- REMEMBER ALSO TO SET THE VERSION IN Version.java -->
     
@@ -44,11 +44,10 @@
    
     <!-- Java source (used for building both the Java and .NET products) -->
 
-    <property name="repository" value="../repos"/>
-    <!--<property name="development-j.dir" value="e:/crayfish-svn/src"/>-->        
-    <!--<property name="source-j.dir" value="${development-j.dir}"/>-->
+    <property name="repository" value="e:/mon-repos"/>
+    <property name="ee-repo" value="e:/repo94ee/latest9.4"
     <property name="source-hej.dir" value="../hej"/>
-    <property name="source-eej.dir" value="../eej"/>
+    <property name="source-eej.dir" value="$ee-repo/eej"/>
     	    
     <!-- directory holding XML user documentation -->
     <property name="userdoc.dir" value="${repository}/userdoc/saxon9"/>
