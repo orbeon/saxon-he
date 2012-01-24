@@ -246,14 +246,15 @@ public class Query {
 
         config.setHostLanguage(Configuration.XQUERY);
 
-        StaticQueryContext staticEnv = config.newStaticQueryContext();
-        staticEnv.setSchemaAware(schemaAware);
+        StaticQueryContext staticEnv;
         DynamicQueryContext dynamicEnv = new DynamicQueryContext(config);
 
         // Check the command-line arguments.
 
         try {
             parseOptions(options, command, dynamicEnv);
+            staticEnv = config.newStaticQueryContext();
+            staticEnv.setSchemaAware(schemaAware);
 
             if (languageVersion != null) {
                 staticEnv.setLanguageVersion(languageVersion);
