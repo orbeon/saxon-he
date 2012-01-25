@@ -92,6 +92,8 @@ public class Mode implements Serializable {
         isStripper = false;
         this.modeName = modeName;
         if (omniMode != null) {
+            genericNodeRuleChain =
+                    omniMode.genericNodeRuleChain==null ? null : new Rule(omniMode.genericNodeRuleChain);
             documentRuleChain =
                     omniMode.documentRuleChain==null ? null : new Rule(omniMode.documentRuleChain);
             textRuleChain =
