@@ -102,6 +102,8 @@ public class Mode implements Serializable {
         this.modeName = modeName;
         if (omniMode != null) {
             // TODO: add atomic values and function items
+            genericRuleChain =
+                    omniMode.genericRuleChain==null ? null : new Rule(omniMode.genericRuleChain);
             documentRuleChain =
                     omniMode.documentRuleChain==null ? null : new Rule(omniMode.documentRuleChain);
             textRuleChain =
