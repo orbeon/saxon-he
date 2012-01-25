@@ -233,9 +233,17 @@ public class ForClause extends Clause {
         Expression term = condition;
 
         if (positionVariable != null &&
-                (term instanceof ValueComparison || term instanceof GeneralComparison)) {
-            BinaryExpression comp = (BinaryExpression) term;
+                (term instanceof ValueComparison || term instanceof GeneralComparison || term instanceof CompareToIntegerConstant) &&
+                ExpressionTool.dependsOnVariable(term, new Binding[]{positionVariable})) {
+            ComparisonExpression comp = (ComparisonExpression) term;
             Expression[] operands = comp.getOperands();
+
+            if (ExpressionTool.dependsOnVariable(flwor, new Binding[]{positionVariable})) {
+                // cannot convert a positional where clause into a positional predicate if there are
+                // other references to the position variable
+                return false;
+            }
+
             for (int op = 0; op < 2; op++) {
 
                 // If the where clause is a simple test on the position variable, for example
@@ -244,7 +252,10 @@ public class ForClause extends Clause {
                 //    for $x in EXPR[position() = 5] return A
                 // This takes advantage of the optimizations applied to positional filter expressions
                 // Only do this if the sequence expression has not yet been changed, because
-                // the position in a predicate after the first is different.
+                // the position in a predicate after the first is different.  And only do it if this
+                // is the only reference to the position variable, because if there are other references,
+                // the existence of the predicate will change the values of the position variable.
+
                 Binding[] thisVar = {this.getRangeVariable()};
                 if (positionVariable != null && operands[op] instanceof VariableReference && !changed) {
                     List varRefs = new ArrayList();

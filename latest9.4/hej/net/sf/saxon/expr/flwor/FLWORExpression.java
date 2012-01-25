@@ -652,33 +652,32 @@ public class FLWORExpression extends Expression {
                     Clause clause = clauses.get(c);
                     Binding[] bindingList = clause.getRangeVariables();
 
-                    int termsDependsOnVar = 0;
-                    for(int z = i; z >= 0;z--){
-                        Expression termz = list.get(z);
-                        if(ExpressionTool.dependsOnVariable(termz, bindingList)){
-                            termsDependsOnVar++;
-                        }
-                    }
+                    // Find the first clause prior to the where clause that declares variables on which the
+                    // term of the where clause depends
 
-                    //If we find a clause that has dependencies of the variable used in the WhereClause then we make the
-                    //WhereClause a predicate if the clause is a ForClause, otherwise move-up the WhereClause after the clause
                     if (ExpressionTool.dependsOnVariable(term, bindingList) || clause.getClauseKey() == Clause.COUNT) {
+                        // remove this term from the where clause
                         Expression removedExpr = list.remove(i);
                         if (list.isEmpty()) {
+                            // the where clause has no terms left, so remove the clause
                             clauses.remove(clauses.size() - whereIndex);
                         } else {
+                            // change the predicate of the where clause to use only those terms that remain
                             whereClause.setPredicate(makeAndCondition(list));
                         }
                         if ((clause instanceof ForClause) && !(((ForClause) clause).isAllowingEmpty())) {
+                            // if the clause is a "for" clause, try to add the term as a predicate
                             boolean added = ((ForClause) clause).addPredicate(this, visitor, contextItemType, term);
                             //If we cannot add the WhereClause term as a predicate then put it back into the list of clauses
                             if (!added) {
                                 clauses.add(c + 1, new WhereClause(removedExpr));
                             }
                         } else {
+                            // the clause is not a "for" clause, so just move the "where" to this place in the list of clauses
                             WhereClause newWhere = new WhereClause(term);
                             clauses.add(c + 1, newWhere);
                         }
+                        // we found a variable on which the term depends so we can't move it any further
                         break;
                     }
                 }
