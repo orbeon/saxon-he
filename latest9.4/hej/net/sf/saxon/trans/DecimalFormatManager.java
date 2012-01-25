@@ -1,6 +1,5 @@
 package net.sf.saxon.trans;
 
-import cli.System.Decimal;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.StructuredQName;
 
