@@ -5,6 +5,8 @@ import net.sf.saxon.event.ReceiverOptions;
 import net.sf.saxon.event.SequenceReceiver;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.functions.StringFn;
+import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.StandardNames;
@@ -14,6 +16,7 @@ import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.Orphan;
 import net.sf.saxon.type.*;
+import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.Value;
 import net.sf.saxon.value.Whitespace;
@@ -216,7 +219,13 @@ public final class ValueOf extends SimpleNodeConstructor {
      */
 
     public Expression convertToCastAsString() {
-        return new CastExpression(select, BuiltInAtomicType.UNTYPED_ATOMIC, true);
+        if (noNodeIfEmpty || !Cardinality.allowsZero(select.getCardinality())) {
+            return new CastExpression(select, BuiltInAtomicType.UNTYPED_ATOMIC, true);
+        } else {
+            // must return zero-length string rather than () if empty
+            StringFn sf = (StringFn) SystemFunction.makeSystemFunction("string", new Expression[]{select});
+            return new CastExpression(sf, BuiltInAtomicType.UNTYPED_ATOMIC, false);
+        }
     }
 
     /**
