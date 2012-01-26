@@ -1970,14 +1970,14 @@ public class QueryParser extends ExpressionParser {
             for (int i=1; i<clauseList.size(); i++) {
                 Clause extra = codeInjector.injectClause(
                         clauseList.get(i-1),
-                        defaultContainer);
+                        env, defaultContainer);
                 if (extra != null) {
                     expandedList.add(extra);
                 }
                 expandedList.add(clauseList.get(i));
             }
             Clause extra = codeInjector.injectClause(
-                        clauseList.get(clauseList.size()-1), defaultContainer);
+                        clauseList.get(clauseList.size()-1), env, defaultContainer);
             if (extra != null) {
                 expandedList.add(extra);
             }

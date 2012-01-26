@@ -22,8 +22,9 @@ public class TraceClause extends Clause {
      * @param container the container of the containing FLWORExpression
      */
 
-    public TraceClause(Clause target, Container container) {
+    public TraceClause(Clause target, NamespaceResolver nsResolver, Container container) {
         this.target = target;
+        this.nsResolver = nsResolver;
         this.container = container;
     }
 
@@ -52,7 +53,7 @@ public class TraceClause extends Clause {
     }
 
     public TraceClause copy() {
-        return new TraceClause(target, container);
+        return new TraceClause(target, nsResolver,  container);
     }
 
     /**

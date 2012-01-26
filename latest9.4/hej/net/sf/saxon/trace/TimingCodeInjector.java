@@ -35,12 +35,13 @@ public class TimingCodeInjector extends TraceCodeInjector {
     /**
      * If tracing, add a clause to a FLWOR expression that can be used to monitor requests for
      * tuples to be processed
+     *
      * @param target the clause whose evaluation is to be traced (or otherwise monitored)
-     * @param container the container of the containing FLWORExpression
-     * @return the new clause to do the tracing; or null if no tracing is required at this point
+     * @param env
+     *@param container the container of the containing FLWORExpression  @return the new clause to do the tracing; or null if no tracing is required at this point
      */
 
-    public Clause injectClause(Clause target, Container container) {
+    public Clause injectClause(Clause target, StaticContext env, Container container) {
         return null;
     }
 }

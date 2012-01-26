@@ -29,7 +29,7 @@ public interface CodeInjector {
      * Insert a tracing clause into a FLWOR expression
      */
 
-    public Clause injectClause(Clause target, Container container);
+    public Clause injectClause(Clause target, StaticContext env, Container container);
 }
 
 //

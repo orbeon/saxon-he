@@ -25,6 +25,15 @@ public class ClauseInfo implements InstructionInfo {
     }
 
     /**
+     * Get the clause being traced
+     * @return the clause in the FLWOR expression to which this ClauseInfo relates
+     */
+
+    public Clause getClause() {
+        return clause;
+    }
+
+    /**
      * Get the type of construct. This will either be the fingerprint of a standard XSLT instruction name
      * (values in {@link net.sf.saxon.om.StandardNames}: all less than 1024)
      * or it will be a constant in class {@link net.sf.saxon.trace.Location}.
