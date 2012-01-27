@@ -587,7 +587,10 @@ public class Transform {
                 }
 
                 if (wholeDirectory) {
-                    if(threadCount > 0){
+                    if((threadCount > 0) && (sources.size() > 1)){
+                        if (threadCount > sources.size()) {
+                            threadCount = sources.size();
+                        }
 
                         //calculate sources per thread
                         int sourcesPerThread = (int)Math.floor(sources.size()/threadCount);
@@ -598,7 +601,7 @@ public class Transform {
                        // long elapsedTime = System.nanoTime();
                         for(int i= 0, j = 0, z = 0; i < sources.size(); j++, i += sourcesPerThread + z){
                             z = (j < rem ? 1 : 0);  //split remainder of sources amongst rem threads
-                            th[j] = new TransformThread(i, sheet, sources.subList(i, i+sourcesPerThread + z -1), outputFile, options, traceDestination);
+                            th[j] = new TransformThread(i, sheet, sources.subList(i, i + sourcesPerThread + z), outputFile, options, traceDestination);
                             th[j].start();
                         }
                         for(int i=0; i < th.length; i++){
