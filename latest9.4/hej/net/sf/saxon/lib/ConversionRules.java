@@ -1,6 +1,6 @@
 package net.sf.saxon.lib;
 
-import net.sf.saxon.expr.sort.IntHashMap;
+import net.sf.saxon.expr.sort.LRUCache;
 import net.sf.saxon.om.NameChecker;
 import net.sf.saxon.om.NotationSet;
 import net.sf.saxon.type.AtomicType;
@@ -33,8 +33,10 @@ public class ConversionRules implements Serializable {
     private boolean allowYearZero;
 
     // These two tables need to be thread-local or synchronised to make the caching thread-safe
-    private ThreadLocal<IntHashMap<Converter>> converterCache = new ThreadLocal<IntHashMap<Converter>>();
-    private ThreadLocal<IntHashMap<StringConverter>> stringConverterCache = new ThreadLocal<IntHashMap<StringConverter>>();
+    private ThreadLocal<LRUCache<Integer, Converter>> converterCache =
+            new ThreadLocal<LRUCache<Integer, Converter>>();
+    private ThreadLocal<LRUCache<Integer, StringConverter>> stringConverterCache =
+            new ThreadLocal<LRUCache<Integer, StringConverter>>();
 
 
     public ConversionRules() {
@@ -177,9 +179,9 @@ public class ConversionRules implements Serializable {
         // For a lookup key, use the primitive type of the source type (always 10 bits) and the
         // fingerprint of the target type (20 bits)
         int key = (source.getPrimitiveType() << 20) | target.getFingerprint();
-        IntHashMap<Converter> converters = converterCache.get();
+        LRUCache<Integer, Converter> converters = converterCache.get();
         if (converters == null) {
-            converters = new IntHashMap<Converter>(50);
+            converters = new LRUCache<Integer, Converter>(50);
             converterCache.set(converters);
         }
         Converter converter = converters.get(key);
@@ -203,9 +205,9 @@ public class ConversionRules implements Serializable {
 
     public StringConverter getStringConverter(AtomicType target) {
         int key = target.getFingerprint();
-        IntHashMap<StringConverter> stringConverters = stringConverterCache.get();
+        LRUCache<Integer, StringConverter> stringConverters = stringConverterCache.get();
         if (stringConverters == null) {
-            stringConverters = new IntHashMap<StringConverter>(50);
+            stringConverters = new LRUCache<Integer, StringConverter>(50);
             stringConverterCache.set(stringConverters);
         }
         StringConverter converter = stringConverters.get(key);

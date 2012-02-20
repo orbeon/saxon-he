@@ -322,7 +322,7 @@ public class DocumentBuilder {
         if (source instanceof AugmentedSource) {
             throw new IllegalArgumentException("AugmentedSource not accepted");
         }
-        ParseOptions options = new ParseOptions();
+        ParseOptions options = new ParseOptions(config.getParseOptions());
         options.setDTDValidationMode(dtdValidation ? Validation.STRICT : Validation.STRIP);
         if (schemaValidator != null) {
             options.setSchemaValidationMode(schemaValidator.isLax() ? Validation.LAX : Validation.STRICT);
