@@ -93,11 +93,11 @@ public class DotNetStandardModuleURIResolver implements ModuleURIResolver {
             // expect cli.System.IO.FileNotFoundException if this fails
             if (obj instanceof Stream) {
                 StreamSource source = new StreamSource(new DotNetInputStream((Stream)obj));
-                source.setSystemId(abs.toString());
+                source.setSystemId(Uri.EscapeUriString(abs.toString()));
                 return source;
             } else if (obj instanceof TextReader) {
                 StreamSource source = new StreamSource(new DotNetReader((TextReader)obj));
-                source.setSystemId(abs.toString());
+                source.setSystemId(Uri.EscapeUriString(abs.toString()));
                 return source;
             } else if (obj instanceof StreamSource) {
                 return ((StreamSource)obj);
