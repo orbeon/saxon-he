@@ -1,5 +1,6 @@
 package net.sf.saxon.expr;
 
+import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.value.StringValue;
 
 /**
@@ -37,7 +38,9 @@ public class StringLiteral extends Literal {
 
     /*@NotNull*/
     public Expression copy() {
-        return new StringLiteral((StringValue)getValue());
+        StringLiteral stringLiteral = new StringLiteral((StringValue)getValue());
+        ExpressionTool.copyLocationInfo(this, stringLiteral);
+        return stringLiteral;
     }
 }
 
