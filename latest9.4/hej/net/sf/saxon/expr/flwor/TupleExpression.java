@@ -4,6 +4,7 @@ import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.LocalVariableReference;
 import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.om.ValueRepresentation;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
@@ -41,6 +42,16 @@ public class TupleExpression extends Expression {
     /*@NotNull*/
     public ItemType getItemType(TypeHierarchy th) {
         return new ExternalObjectType(Object.class, th.getConfiguration());
+    }
+
+        /*@NotNull*/
+    public Expression typeCheck(ExpressionVisitor visitor,
+                                /*@Nullable*/ ExpressionVisitor.ContextItemType contextItemType)
+            throws XPathException {
+        for (int i = 0; i < slots.length; i++) {
+            slots[i] = (LocalVariableReference) visitor.typeCheck(slots[i], contextItemType);
+        }
+        return this;
     }
 
     /**
