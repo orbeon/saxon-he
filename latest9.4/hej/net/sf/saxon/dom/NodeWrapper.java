@@ -985,7 +985,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 if (count < result.length) {
                     result[count] = null;
                 }
-                localNamespaces = result;
+                localNamespaces = new NamespaceBinding[result.length];
+                System.arraycopy(result, 0, localNamespaces, 0, result.length);
                 return result;
             }
         } else {

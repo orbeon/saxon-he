@@ -235,7 +235,9 @@ public class XPathEvaluator implements XPath {
         Expression exp = ExpressionTool.make(expression, staticContext, container, 0, -1, 1, null);
         ExpressionVisitor visitor = ExpressionVisitor.make(staticContext, exec);
         visitor.setExecutable(exec);
-        exp = visitor.typeCheck(exp, new ExpressionVisitor.ContextItemType(Type.ITEM_TYPE, true));
+        final ExpressionVisitor.ContextItemType contextItemType = new ExpressionVisitor.ContextItemType(Type.ITEM_TYPE, true);
+        exp = visitor.typeCheck(exp, contextItemType);
+        exp = visitor.optimize(exp, contextItemType);
         SlotManager map = staticContext.getConfiguration().makeSlotManager();
         ExpressionTool.allocateSlots(exp, 0, map);
         exp.setContainer(container);
