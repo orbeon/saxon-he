@@ -372,6 +372,7 @@ public class SerializerFactory implements Serializable {
         } else {
             target = emitter;
         }
+
         if ("1.0".equals(props.getProperty(OutputKeys.VERSION)) &&
                 pipe.getConfiguration().getXMLVersion() == Configuration.XML11) {
             // Check result meets XML 1.0 constraints if configuration allows XML 1.1 input but
