@@ -169,7 +169,11 @@ public class TraceExpression extends Instruction implements InstructionInfo {
 
     /*@NotNull*/
     public Expression copy() {
-        return new TraceExpression(child.copy());
+        TraceExpression t = new TraceExpression(child.copy());
+        t.objectName = objectName;
+        t.namespaceResolver = namespaceResolver;
+        t.constructType = constructType;
+        return t;
     }
 
     /**

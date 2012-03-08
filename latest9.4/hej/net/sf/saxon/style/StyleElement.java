@@ -1565,8 +1565,7 @@ implements Locator, Container, InstructionInfo {
 							TraceExpression t = new TraceExpression(let);
 							t.setConstructType(Location.LET_EXPRESSION);
 							t.setObjectName(lv.getVariableQName());
-//							t.setSystemId(node.getSystemId());
-//							t.setLineNumber(node.getLineNumber());
+                            t.setNamespaceResolver(getNamespaceResolver());
 							contents.add(t);
 						} else {
 							contents.add(let);

@@ -256,6 +256,7 @@ public class XSLFunction extends StyleElement implements StylesheetProcedure {
         if (exec.getConfiguration().isCompileWithTracing()) {
             TraceExpression trace = new TraceExpression(exp);
             trace.setConstructType(StandardNames.XSL_FUNCTION);
+            trace.setNamespaceResolver(getNamespaceResolver());
             trace.setObjectName(getObjectName());
             exp = trace;
         }

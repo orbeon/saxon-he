@@ -31,11 +31,9 @@ public class TraceCodeInjector implements CodeInjector {
             return exp;
         }
         TraceExpression trace = new TraceExpression(exp);
-        //ExpressionTool.copyLocationInfo(exp, trace);
         trace.setNamespaceResolver(env.getNamespaceResolver());
         trace.setConstructType(construct);
         trace.setObjectName(qName);
-        //trace.setObjectNameCode(objectNameCode);
         return trace;
     }
 

@@ -508,6 +508,7 @@ public class ExpressionParser {
                 if (t.currentTokenValue.equals("try")) {
                     return parseTryCatchExpression();
                 } else if (t.currentTokenValue.equals("map")) {
+                    // TODO: in the draft grammar map{} is a primary, so should not be handled at this level
                     return parseMapExpression();
                 }
                 // else drop through

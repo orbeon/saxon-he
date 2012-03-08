@@ -395,6 +395,7 @@ public class XQueryFunction implements InstructionInfo, Container, Declaration {
                     TraceExpression trace = new TraceExpression(body);
                     trace.setConstructType(StandardNames.XSL_FUNCTION);
                     trace.setObjectName(functionName);
+                    trace.setNamespaceResolver(staticContext.getNamespaceResolver());
                     trace.setLocationId(staticContext.getLocationMap().allocateLocationId(systemId, lineNumber));
                     body = trace;
                 }
