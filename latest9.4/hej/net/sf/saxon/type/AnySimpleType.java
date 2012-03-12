@@ -365,7 +365,7 @@ public final class AnySimpleType implements SimpleType {
      */
 
     public int getWhitespaceAction() {
-        return Whitespace.COLLAPSE;
+        return Whitespace.PRESERVE;
     }
 
     /**
