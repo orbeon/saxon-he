@@ -33,7 +33,8 @@ public class JavaPlatform implements Platform {
      * the class name appearing in the edition.properties file within the issued JAR file
      */
 
-    public JavaPlatform() {}
+    public JavaPlatform() {
+    }
 
     /**
      * Perform platform-specific initialization of the configuration
@@ -106,11 +107,11 @@ public class JavaPlatform implements Platform {
      * Convert a StreamSource to either a SAXSource or a PullSource, depending on the native
      * parser of the selected platform
      *
-     * @param pipe the pipeline configuration
-     * @param input the supplied StreamSource
-     * @param validation indicates whether schema validation is required
+     * @param pipe          the pipeline configuration
+     * @param input         the supplied StreamSource
+     * @param validation    indicates whether schema validation is required
      * @param dtdValidation indicates whether DTD validation is required
-     * @param stripspace indicates whether whitespace text nodes should be stripped
+     * @param stripspace    indicates whether whitespace text nodes should be stripped
      * @return the PullSource or SAXSource, initialized with a suitable parser, or the original
      *         input Source, if now special handling is required or possible. This implementation
      *         always returns the original input unchanged.
@@ -127,14 +128,16 @@ public class JavaPlatform implements Platform {
      * strength=primary, case-order=upper-first, ignore-modifiers=yes, alphanumeric=yes.
      * Properties that are not supported are generally ignored; however some errors, such as
      * failing to load a requested class, are fatal.
+     *
      * @param config the configuration object
-     * @param props the desired properties of the collation
-     * @param uri the collation URI
+     * @param props  the desired properties of the collation
+     * @param uri    the collation URI
      * @return a collation with these properties
      * @throws XPathException if a fatal error occurs
      */
 
-    /*@Nullable*/ public StringCollator makeCollation(Configuration config, Properties props, String uri) throws XPathException {
+    /*@Nullable*/
+    public StringCollator makeCollation(Configuration config, Properties props, String uri) throws XPathException {
         return JavaCollationFactory.makeCollation(config, uri, props);
     }
 
@@ -151,7 +154,7 @@ public class JavaPlatform implements Platform {
     public boolean canReturnCollationKeys(StringCollator collation) {
         return (collation instanceof CodepointCollator) ||
                 ((collation instanceof SimpleCollation) &&
-                        (((SimpleCollation)collation).getCollation() instanceof Collator));
+                        (((SimpleCollation) collation).getCollation() instanceof Collator));
     }
 
     /**
@@ -164,14 +167,15 @@ public class JavaPlatform implements Platform {
      */
 
     public Object getCollationKey(SimpleCollation namedCollation, String value) {
-        return ((Collator)namedCollation.getCollation()).getCollationKey(value);
+        return ((Collator) namedCollation.getCollation()).getCollationKey(value);
     }
 
     /**
      * Add the platform-specific function libraries to a function library list. This version
      * of the method does nothing
-     * @param list the function library list that is to be extended
-     * @param config the Configuration
+     *
+     * @param list         the function library list that is to be extended
+     * @param config       the Configuration
      * @param hostLanguage the host language, for example Configuration.XQUERY
      */
 
@@ -185,8 +189,9 @@ public class JavaPlatform implements Platform {
 
     /**
      * Return the name of the directory in which the software is installed (if available)
-     * @return the name of the directory in which Saxon is installed, if available, or null otherwise
+     *
      * @param edition
+     * @return the name of the directory in which Saxon is installed, if available, or null otherwise
      */
 
     public String getInstallationDirectory(String edition, Configuration config) {
@@ -212,9 +217,41 @@ public class JavaPlatform implements Platform {
      * @since 9.4
      */
 
-    public void setDefaultSAXParserFactory(){
+    public void setDefaultSAXParserFactory() {
         // No action for Saxon on Java
     }
+
+    /**
+     * Return the class loader required to load the bytecode generated classes
+     *
+     * @param definedClassName The generated class name
+     * @param classFile        The bytecode of the generated class
+     * @param config           The cThe saxon configuration
+     * @param thisClass        The class object generated
+     * @return the class loader object
+     * @since 9.4
+     */
+
+    public ClassLoader getClassLoaderForGeneratedClass(final String definedClassName, final byte[] classFile, Configuration config, Class thisClass) {
+        ClassLoader parentClassLoader = config.getDynamicLoader().getClassLoader();
+        if (parentClassLoader == null) {
+            parentClassLoader = Thread.currentThread().getContextClassLoader();
+        }
+        if (parentClassLoader == null) {
+            parentClassLoader = thisClass.getClassLoader();
+        }
+        return new ClassLoader(parentClassLoader) {
+            @Override
+            protected Class<?> findClass(String name) throws ClassNotFoundException {
+                if (name.equals(definedClassName)) {
+                    return defineClass(name, classFile, 0, classFile.length);
+                } else {
+                    return super.findClass(name);
+                }
+            }
+        };
+    }
+
 
 }
 

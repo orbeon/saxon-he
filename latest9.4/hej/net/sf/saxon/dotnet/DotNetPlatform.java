@@ -345,6 +345,37 @@ public class DotNetPlatform implements Platform {
         System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl");
     }
 
+    /**
+     * Return the class loader required to load the bytecode generated classes
+     *
+     * @param definedClassName The generated class name
+     * @param classFile        The bytecode of the generated class
+     * @param config           The cThe saxon configuration
+     * @param thisClass        The class object generated
+     * @return the class loader object
+     * @since 9.4
+     */
+
+    public ClassLoader getClassLoaderForGeneratedClass(final String definedClassName, final byte[] classFile, Configuration config, Class thisClass) {
+        ClassLoader parentClassLoader = config.getDynamicLoader().getClassLoader();
+        if (parentClassLoader == null) {
+            parentClassLoader = Thread.currentThread().getContextClassLoader();
+        }
+        if (parentClassLoader == null) {
+            parentClassLoader = thisClass.getClassLoader();
+        }
+        return new ClassLoader(parentClassLoader) {
+            @Override
+            protected Class<?> findClass(String name) throws ClassNotFoundException {
+                if (name.equals(definedClassName)) {
+                    return defineClass(name, classFile, 0, classFile.length);
+                } else {
+                    return super.findClass(name);
+                }
+            }
+        };
+    }
+
 
 }
 

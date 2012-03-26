@@ -134,7 +134,7 @@ public interface Platform extends Serializable {
 
     /**
      * Return the name of the directory in which the software is installed (if available)
-     * @return the name of the directory in which Saxon is installaed, if available, or null otherwise
+     * @return the name of the directory in which Saxon is installed, if available, or null otherwise
      * @param edition The edition of the software that is loaded ("HE", "PE", or "EE")
      * @param config the Saxon configuration
      */
@@ -159,6 +159,20 @@ public interface Platform extends Serializable {
      */
 
     public void setDefaultSAXParserFactory();
+
+    /**
+     * Return the class loader required to load the bytecode generated classes
+     * @return the class loader object
+     * @param definedClassName The generated class name
+     * @param classFile The bytecode of the generated class
+     * @param config The cThe saxon configuration
+     * @param thisClass The class object generated
+     *
+     * @since 9.4
+     *
+     * */
+
+     public ClassLoader getClassLoaderForGeneratedClass(final String definedClassName, final byte[] classFile, Configuration config, Class thisClass);
 }
 
 //
