@@ -447,6 +447,9 @@ public class StandardEntityResolver implements EntityResolver {
         register("-//W3C//DTD XMLSCHEMA 200102//EN",
                 "http://www.w3.org/2001/XMLSchema.dtd",
                 "w3c/xmlschema/XMLSchema.dtd");
+        register("datatypes",
+                "http://www.w3.org/2001/datatypes.dtd",
+                "w3c/xmlschema/datatypes.dtd");
     }
 
     /**
