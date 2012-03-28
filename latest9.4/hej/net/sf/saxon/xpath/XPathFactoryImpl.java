@@ -109,7 +109,7 @@ public class XPathFactoryImpl extends XPathFactory {
             config.setSchemaValidationMode(b ? Validation.STRICT : Validation.STRIP);
         } else {
             try {
-                config.setConfigurationProperty(feature, true);
+                config.setConfigurationProperty(feature, b);  // TODO: it said 'true', register a bug
             } catch (IllegalArgumentException err) {
                 throw new XPathFactoryConfigurationException("Unknown or non-boolean feature: " + feature);
             }
