@@ -207,10 +207,18 @@ public class PathMap {
             }
             for (PathMapArc arc : arcs) {
                 int axis = arc.getAxis();
-                if (axis == Axis.SELF || axis == Axis.ANCESTOR || axis == Axis.ANCESTOR_OR_SELF ||
-                        axis == Axis.PARENT || axis == Axis.ATTRIBUTE) {
+                if (axis == Axis.ATTRIBUTE) {
                     PathMapNode next = arc.getTarget();
-                    if (axis != Axis.ATTRIBUTE && next.isAtomized()) {
+                    if (next.isReturnable()) {
+                        return false;
+                    }
+                    if (next.getArcs().length != 0 && !next.allPathsAreWithinStreamableSnapshot()) {
+                        return false;
+                    }
+                } else if (axis == Axis.SELF || axis == Axis.ANCESTOR || axis == Axis.ANCESTOR_OR_SELF ||
+                        axis == Axis.PARENT) {
+                    PathMapNode next = arc.getTarget();
+                    if (next.isAtomized()) {
                         return false;
                     }
                     if (!next.allPathsAreWithinStreamableSnapshot()) {
