@@ -188,6 +188,7 @@ public class PatternMaker {
             result.setOriginalText(expression.toString());
             result.setSystemId(expression.getSystemId());
             result.setLineNumber(expression.getLineNumber());
+            result.setExecutable(expression.getExecutable());
             return result;
         }
     }
