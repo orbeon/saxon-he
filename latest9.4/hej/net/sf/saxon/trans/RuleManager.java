@@ -1,5 +1,6 @@
 package net.sf.saxon.trans;
 
+import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.instruct.Template;
 import net.sf.saxon.expr.parser.Optimizer;
@@ -138,6 +139,11 @@ public final class RuleManager implements Serializable {
             UnionPattern up = (UnionPattern)pattern;
             Pattern p1 = up.getLHS();
             Pattern p2 = up.getRHS();
+            Expression currentSetter = up.getVariableBindingExpression();
+            if (currentSetter != null) {
+                p1.setVariableBindingExpression(currentSetter);
+                p2.setVariableBindingExpression(currentSetter);
+            }
             setTemplateRule(p1, eh, mode, module, priority);
             setTemplateRule(p2, eh, mode, module, priority);
             return;

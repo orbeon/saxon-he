@@ -1,14 +1,16 @@
 package net.sf.saxon.pattern;
 
-import net.sf.saxon.expr.Expression;
-import net.sf.saxon.expr.LetExpression;
-import net.sf.saxon.expr.MultiIterator;
-import net.sf.saxon.expr.StaticContext;
+import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.Executable;
 import net.sf.saxon.expr.instruct.SlotManager;
+import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.PromotionOffer;
+import net.sf.saxon.om.Item;
+import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.iter.SingletonIterator;
+import net.sf.saxon.tree.iter.UnfailingIterator;
 import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
@@ -25,6 +27,7 @@ public abstract class VennPattern extends Pattern {
 
     protected Pattern p1, p2;
     private int nodeType = Type.NODE;
+    private Expression variableBinding = null;      // local variable to which the current() node is bound
 
     /**
      * Constructor
@@ -92,8 +95,11 @@ public abstract class VennPattern extends Pattern {
      */
 
     public void resolveCurrent(LetExpression let, PromotionOffer offer, boolean topLevel) throws XPathException {
-        p1.resolveCurrent(let, offer, topLevel);
-        p2.resolveCurrent(let, offer, topLevel);
+        p1.resolveCurrent(let, offer, false);
+        p2.resolveCurrent(let, offer, false);
+        if (topLevel) {
+             variableBinding = let;
+        }
     }
 
     /**
@@ -128,8 +134,13 @@ public abstract class VennPattern extends Pattern {
      */
 
     public boolean replaceSubExpression(Expression original, Expression replacement) {
-        return p1.replaceSubExpression(original, replacement) ||
-                p2.replaceSubExpression(original, replacement);
+        if (variableBinding == original) {
+            variableBinding = replacement;
+            return true;
+        } else {
+            return p1.replaceSubExpression(original, replacement) ||
+                    p2.replaceSubExpression(original, replacement);
+        }
     }
 
     /**
@@ -151,10 +162,27 @@ public abstract class VennPattern extends Pattern {
      */
 
     public int allocateSlots(StaticContext env, SlotManager slotManager, int nextFree) {
+        if (variableBinding != null) {
+            nextFree = ExpressionTool.allocateSlots(variableBinding, nextFree, slotManager);
+        }
         nextFree = p1.allocateSlots(env, slotManager, nextFree);
         nextFree = p2.allocateSlots(env, slotManager, nextFree);
         return nextFree;
     }
+
+     /**
+     * Set an expression used to bind the variable that represents the value of the current() function
+     * @param exp the expression that binds the variable
+     */
+
+    public void setVariableBindingExpression(Expression exp) {
+        variableBinding = exp;
+    }
+
+    public Expression getVariableBindingExpression() {
+        return variableBinding;
+    }
+
 
     /**
      * Gather the component (non-Venn) patterns of this Venn pattern
@@ -219,8 +247,29 @@ public abstract class VennPattern extends Pattern {
 
     /*@NotNull*/
     public Iterator iterateSubExpressions() {
-        return new MultiIterator(new Iterator[]{p1.iterateSubExpressions(), p2.iterateSubExpressions()});
+        if (variableBinding != null) {
+            return new MultiIterator(
+                    new Iterator[]{new MonoIterator(variableBinding), p1.iterateSubExpressions(), p2.iterateSubExpressions()});
+        } else {
+            return new MultiIterator(
+                    new Iterator[]{p1.iterateSubExpressions(), p2.iterateSubExpressions()});
+        }
     }
+
+    protected void bindVariable(Item item, XPathContext context) throws XPathException {
+        if (variableBinding != null && item instanceof NodeInfo) {
+            XPathContext c2 = context;
+            Item ci = context.getContextItem();
+            if (!(ci instanceof NodeInfo && ((NodeInfo)ci).isSameNodeInfo(((NodeInfo)item)))) {
+                c2 = context.newContext();
+                UnfailingIterator si = SingletonIterator.makeIterator(item);
+                si.next();
+                c2.setCurrentIterator(si);
+            }
+            variableBinding.evaluateItem(c2);
+        }
+    }
+
 
     /**
      * Get the LHS of the union

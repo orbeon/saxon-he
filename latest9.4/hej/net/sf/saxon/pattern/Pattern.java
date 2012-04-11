@@ -112,6 +112,15 @@ public abstract class Pattern implements PatternFinder, Serializable, Container 
 	}
 
     /**
+     * Set an expression used to bind the variable that represents the value of the current() function
+     * @param exp the expression that binds the variable
+     */
+
+    public void setVariableBindingExpression(Expression exp) {
+        // no action by default
+    }
+
+    /**
      * Simplify the pattern by applying any context-independent optimisations.
      * Default implementation does nothing.
      * @return the optimised Pattern

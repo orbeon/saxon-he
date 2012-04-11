@@ -34,6 +34,7 @@ public class UnionPattern extends VennPattern {
      */
 
     public boolean matches(Item item, XPathContext context) throws XPathException {
+        bindVariable(item, context);
         return p1.matches(item, context) || p2.matches(item, context);
     }
 

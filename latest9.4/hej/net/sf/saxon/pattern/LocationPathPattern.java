@@ -112,6 +112,15 @@ public final class LocationPathPattern extends Pattern {
     }
 
     /**
+     * Set an expression used to bind the variable that represents the value of the current() function
+     * @param exp the expression that binds the variable
+     */
+
+    public void setVariableBindingExpression(Expression exp) {
+        variableBinding = exp;
+    }
+
+    /**
      * Get the filters assocated with the last step in the pattern
      * @return an array of expression holding the filter predicates in order
      */
