@@ -1,5 +1,6 @@
 package net.sf.saxon.expr.sort;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -10,7 +11,7 @@ import java.util.Map;
  */
 public class LRUCache<K,V> {
 
-    private LinkedHashMap<K,V> map;
+    private Map<K,V> map;
 
     /**
      * Creates a new LRU cache.
@@ -18,11 +19,23 @@ public class LRUCache<K,V> {
      * @param cacheSize the maximum number of entries that will be kept in this cache.
      */
     public LRUCache(final int cacheSize) {
+        this(cacheSize, false);
+    }
+
+    /**
+     * Creates a new LRU cache with the option of synchronization.
+     *
+     * @param cacheSize the maximum number of entries that will be kept in this cache.
+     */
+    public LRUCache(final int cacheSize, boolean concurrent) {
         map = new LinkedHashMap<K,V>(cacheSize, 0.75f, true) {
             protected boolean removeEldestEntry(Map.Entry eldest) {
                 return cacheSize < super.size();
             }
         };
+        if (concurrent) {
+            map = Collections.synchronizedMap(map);
+        }
     }
 
     /**

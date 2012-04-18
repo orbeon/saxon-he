@@ -33,10 +33,10 @@ public class ConversionRules implements Serializable {
     private boolean allowYearZero;
 
     // These two tables need to be thread-local or synchronised to make the caching thread-safe
-    private ThreadLocal<LRUCache<Integer, Converter>> converterCache =
-            new ThreadLocal<LRUCache<Integer, Converter>>();
-    private ThreadLocal<LRUCache<Integer, StringConverter>> stringConverterCache =
-            new ThreadLocal<LRUCache<Integer, StringConverter>>();
+    private LRUCache<Integer, Converter> converterCache =
+            new LRUCache<Integer, Converter>(100, true);
+    private LRUCache<Integer, StringConverter> stringConverterCache =
+            new LRUCache<Integer, StringConverter>(100, true);
 
 
     public ConversionRules() {
@@ -179,16 +179,11 @@ public class ConversionRules implements Serializable {
         // For a lookup key, use the primitive type of the source type (always 10 bits) and the
         // fingerprint of the target type (20 bits)
         int key = (source.getPrimitiveType() << 20) | target.getFingerprint();
-        LRUCache<Integer, Converter> converters = converterCache.get();
-        if (converters == null) {
-            converters = new LRUCache<Integer, Converter>(50);
-            converterCache.set(converters);
-        }
-        Converter converter = converters.get(key);
+        Converter converter = converterCache.get(key);
         if (converter == null) {
             converter = Converter.getConverter(source, target, this);
             if (converter != null) {
-                converters.put(key, converter);
+                converterCache.put(key, converter);
             } else {
                 return null;
             }
@@ -205,15 +200,10 @@ public class ConversionRules implements Serializable {
 
     public StringConverter getStringConverter(AtomicType target) {
         int key = target.getFingerprint();
-        LRUCache<Integer, StringConverter> stringConverters = stringConverterCache.get();
-        if (stringConverters == null) {
-            stringConverters = new LRUCache<Integer, StringConverter>(50);
-            stringConverterCache.set(stringConverters);
-        }
-        StringConverter converter = stringConverters.get(key);
+        StringConverter converter = stringConverterCache.get(key);
         if (converter == null) {
             converter = StringConverter.getStringConverter(target, this);
-            stringConverters.put(key, converter);
+            stringConverterCache.put(key, converter);
         }
         return converter;
     }
