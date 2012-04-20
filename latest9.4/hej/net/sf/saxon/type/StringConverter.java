@@ -207,6 +207,11 @@ public abstract class StringConverter extends Converter {
          /*@NotNull*/
          public ConversionResult convert(/*@NotNull*/ AtomicValue input) {
              CharSequence in = input.getStringValueCS();
+             try {
+                in = phaseTwo.getTargetType().preprocess(in);
+             } catch (ValidationException err) {
+                 return new ValidationFailure(err);
+             }
              ConversionResult temp = phaseOne.convertString(in);
              if (temp instanceof ValidationFailure) {
                  return temp;
@@ -216,6 +221,11 @@ public abstract class StringConverter extends Converter {
 
          /*@NotNull*/
          public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+             try {
+                input = phaseTwo.getTargetType().preprocess(input);
+             } catch (ValidationException err) {
+                 return new ValidationFailure(err);
+             }
              ConversionResult temp = phaseOne.convertString(input);
              if (temp instanceof ValidationFailure) {
                  return temp;
@@ -436,6 +446,11 @@ public abstract class StringConverter extends Converter {
         /*@NotNull*/
         public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
             CharSequence cs = Whitespace.applyWhitespaceNormalization(whitespaceAction, input);
+            try {
+                cs = targetType.preprocess(cs);
+            } catch (ValidationException err) {
+                return new ValidationFailure(err);
+            }
             StringValue sv = new StringValue(cs);
             ValidationFailure f = targetType.validate(sv, cs, getConversionRules());
             if (f == null) {
@@ -470,6 +485,11 @@ public abstract class StringConverter extends Converter {
         /*@NotNull*/
         public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
             CharSequence cs = Whitespace.applyWhitespaceNormalization(whitespaceAction, input);
+            try {
+                cs = targetType.preprocess(cs);
+            } catch (ValidationException err) {
+                return new ValidationFailure(err);
+            }
             ValidationFailure f = builtInValidator.validate(cs);
             if (f != null) {
                 return f;

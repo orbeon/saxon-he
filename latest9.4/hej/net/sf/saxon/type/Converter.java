@@ -573,6 +573,10 @@ public abstract class Converter {
             setConversionRules(rules);
         }
 
+        public AtomicType getTargetType() {
+            return newType;
+        }
+
         /*@NotNull*/
         public ConversionResult convert(/*@NotNull*/ AtomicValue input) {
             return convert(input, input.getStringValueCS());
