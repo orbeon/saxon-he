@@ -413,19 +413,24 @@ public abstract class StringConverter extends Converter {
             }
         }
         /*@Nullable*/ public ValidationFailure validate(/*@NotNull*/ CharSequence input) {
-            String in = input.toString();
-            if (in.indexOf(':') >= 0) {
-                // replace any colons by underscores and then test if it's a valid NCName
-                FastStringBuffer buff = new FastStringBuffer(in.length());
-                buff.append(in);
-                for (int i = 0; i < buff.length(); i++) {
-                    if (buff.charAt(i) == ':') {
-                        buff.setCharAt(i, '_');
-                    }
+            // if it's valid as an NCName then it's OK
+            CharSequence trimmed = Whitespace.trimWhitespace(input);
+            if (checker.isValidNCName(trimmed)) {
+                return null;
+            }
+
+            // if not, replace any colons by underscores and then test if it's a valid NCName
+            FastStringBuffer buff = new FastStringBuffer(trimmed.length());
+            buff.append(trimmed);
+            for (int i = 0; i < buff.length(); i++) {
+                if (buff.charAt(i) == ':') {
+                    buff.setCharAt(i, '_');
                 }
-                return super.validate(buff);
+            }
+            if (checker.isValidNCName(buff)) {
+                return null;
             } else {
-                return super.validate(in);
+                return new ValidationFailure("The value '" + trimmed + "' is not a valid xs:Name");
             }
         }
     }
