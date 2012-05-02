@@ -221,6 +221,11 @@ public class XMLEmitter extends Emitter {
                 }
             }
 
+            String systemId = outputProperties.getProperty(OutputKeys.DOCTYPE_SYSTEM);
+            if (systemId != null && !"".equals(systemId)) {
+                requireWellFormed = true;
+            }
+
             if (omitXMLDeclaration.equals("no")) {
                 writer.write("<?xml version=\"" + version + "\" " + "encoding=\"" + encoding + '\"' +
                         (standalone != null ? " standalone=\"" + standalone + '\"' : "") + "?>");
@@ -294,16 +299,13 @@ public class XMLEmitter extends Emitter {
     {
         if (!started) {
             openDocument();
-        } else if (requireWellFormed && elementStack.isEmpty()) {
-            if (startedElement) {
-                XPathException err = new XPathException("When 'standalone' or 'doctype-system' is specified, " +
-                        "the document must be well-formed; but this document contains more than one top-level element");
-                err.setErrorCode("SEPM0004");
-                throw err;
-            } else {
-                startedElement = true;
-            }
+        } else if (requireWellFormed && elementStack.isEmpty() && startedElement) {
+            XPathException err = new XPathException("When 'standalone' or 'doctype-system' is specified, " +
+                    "the document must be well-formed; but this document contains more than one top-level element");
+            err.setErrorCode("SEPM0004");
+            throw err;
         }
+        startedElement = true;
 
         String displayName = elemName.getDisplayName();
         if (!allCharactersEncodable) {
