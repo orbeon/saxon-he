@@ -183,9 +183,10 @@ public final class AtomicSequenceConverter extends UnaryExpression {
                 return new Literal(EmptySequence.getInstance());
             }
             Configuration config = visitor.getConfiguration();
-            AtomicType sourceType = (AtomicType) operand.getItemType(config.getTypeHierarchy());
-            converter = config.getConversionRules().getConverter(
-                    sourceType, (AtomicType)requiredItemType);
+//            AtomicType sourceType = (AtomicType) operand.getItemType(config.getTypeHierarchy());
+//            converter = config.getConversionRules().getConverter(
+//                    sourceType, (AtomicType)requiredItemType);
+            allocateConverter(config);
             ValueRepresentation val = SequenceExtent.makeSequenceExtent(
                     iterate(visitor.getStaticContext().makeEarlyEvaluationContext()));
             return Literal.makeLiteral(Value.asValue(val));
