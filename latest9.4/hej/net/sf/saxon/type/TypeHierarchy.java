@@ -120,7 +120,6 @@ public class TypeHierarchy implements Serializable {
      */
 
     private int computeRelationship(/*@NotNull*/ ItemType t1, /*@NotNull*/ ItemType t2) {
-        //System.err.println("computeRelationship " + t1 + ", " + t2);
         if (t1 == t2) {
             return SAME_TYPE;
         }

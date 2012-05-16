@@ -509,7 +509,7 @@ public class XsltTransformer implements Destination {
             if (doc == null) {
                 throw new SaxonApiException("No source document has been built by the previous pipeline stage");
             }
-            Receiver result = destination.getReceiver(processor.getUnderlyingConfiguration());
+            Result result = getDestinationResult();
             try {
                 controller.transformDocument(doc, result);
             } catch (TransformerException e) {
