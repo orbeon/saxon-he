@@ -168,6 +168,12 @@ public class TinyBuilder extends Builder {
 
     public void endDocument () throws XPathException {
 //        System.err.println("TinyBuilder: " + this + " End document");
+
+        // Add a stopper node to ensure no-one walks off the end of the array; but
+        // decrement numberOfNodes so the next node will overwrite it
+        tree.addNode(Type.STOPPER, 0, 0, 0, -1);
+        tree.numberOfNodes--;
+
         if (currentDepth > 1) return;
             // happens when copying a document node as the child of an element
 
