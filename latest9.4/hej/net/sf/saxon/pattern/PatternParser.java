@@ -163,9 +163,12 @@ public class PatternParser extends ExpressionParser {
 
     /*@NotNull*/
     protected Expression parsePredicate() throws XPathException {
+        boolean disallow = t.disallowUnionKeyword;
+        t.disallowUnionKeyword = false;
         ++inPredicate;
         Expression exp = parseExpression();
         --inPredicate;
+        t.disallowUnionKeyword = disallow;
         return exp;
     }
 
