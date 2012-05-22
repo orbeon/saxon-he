@@ -117,9 +117,18 @@ public class Numberer_nl extends AbstractNumberer {
              long rem = number % 100;
              return (number/100==1?"":toWords(number / 100)) + "Honderd" + toWords(rem);
          } else {
-             if (number < 20) return dutchUnits[(int)number];
+             if (number < 20) {
+                 return dutchUnits[(int)number];
+             }
              int rem = (int)(number % 10);
-             return (rem==0 ? "" : dutchUnits[rem])+(rem==2?"\u00ebn":"en")+dutchTens[(int)number / 10] ;
+             String tens = dutchTens[(int)number / 10];
+             if (rem == 0) {
+                 return tens;
+             } else if (rem == 2) {
+                 return "\u00ebn" + tens;
+             } else {
+                 return dutchUnits[rem] + tens;
+             }
          }
      }
 
