@@ -14,6 +14,7 @@ import net.sf.saxon.type.ItemType;
 public class ItemTypePattern extends Pattern {
 
     private ItemType itemType;
+    private double priority = Double.NaN;
 
     /**
      * Create an ItemTypePattern that matches all items of a given type
@@ -22,6 +23,15 @@ public class ItemTypePattern extends Pattern {
 
     public ItemTypePattern(ItemType test) {
         itemType = test;
+    }
+
+    /**
+     * Set a priority to override the default priority. This is used when the pattern is written in a complex
+     * form such as a[true()] justifying a priority of 0.5, but then simplifies down to an ItemTypePattern
+     */
+
+    public void setPriority(double priority) {
+        this.priority = priority;
     }
 
     /**
@@ -51,7 +61,7 @@ public class ItemTypePattern extends Pattern {
     */
 
     public final double getDefaultPriority() {
-    	return itemType.getDefaultPriority();
+    	return (Double.isNaN(priority) ? itemType.getDefaultPriority() : priority);
     }
 
     /**

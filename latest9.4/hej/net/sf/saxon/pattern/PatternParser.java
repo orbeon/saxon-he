@@ -39,7 +39,12 @@ public class PatternParser extends ExpressionParser {
         ExpressionVisitor visitor = ExpressionVisitor.make(env, exp.getExecutable());
         ExpressionVisitor.ContextItemType cit = new ExpressionVisitor.ContextItemType(AnyItemType.getInstance(), true);
         boolean is30 = env.getXPathLanguageLevel().equals(DecimalValue.THREE);
-        return PatternMaker.fromExpression(exp.simplify(visitor).typeCheck(visitor, cit), env.getConfiguration(), is30);
+        Pattern pat = PatternMaker.fromExpression(exp.simplify(visitor).typeCheck(visitor, cit), env.getConfiguration(), is30);
+        if (exp instanceof FilterExpression && pat instanceof ItemTypePattern) {
+            // the pattern has been simplified but needs to retain a default priority based on its syntactic form
+            ((ItemTypePattern) pat).setPriority(0.5);
+        }
+        return pat;
     }
 
     /**

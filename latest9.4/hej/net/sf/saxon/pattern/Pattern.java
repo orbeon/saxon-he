@@ -125,6 +125,7 @@ public abstract class Pattern implements PatternFinder, Serializable, Container 
      * Default implementation does nothing.
      * @return the optimised Pattern
      * @param visitor the expression visitor
+     * @throws XPathException if a static error is discovered
      */
 
     public Pattern simplify(ExpressionVisitor visitor) throws XPathException {
@@ -137,6 +138,7 @@ public abstract class Pattern implements PatternFinder, Serializable, Container 
      * @param contextItemType the type of the context item at the point where the pattern
      * is defined. Set to null if it is known that the context item is undefined.
      * @return the optimised Pattern
+     * @throws XPathException if a static error is discovered
     */
 
     public Pattern analyze(ExpressionVisitor visitor, ExpressionVisitor.ContextItemType contextItemType) throws XPathException {
@@ -183,8 +185,8 @@ public abstract class Pattern implements PatternFinder, Serializable, Container 
      *              just before evaluating the pattern, to get the value of the context item into the variable.
      * @param offer A PromotionOffer used to process the expressions and change the call on current() into
      *              a variable reference
-     * @param topLevel
-     * @throws XPathException
+     * @param topLevel true if this is an external call rather than an internal recursive call
+     * @throws XPathException if an error occurs
      */
 
     public void resolveCurrent(LetExpression let, PromotionOffer offer, boolean topLevel) throws XPathException {
@@ -206,7 +208,7 @@ public abstract class Pattern implements PatternFinder, Serializable, Container 
      * @param offer details of the offer, for example the offer to move
      *              expressions that don't depend on the context to an outer level in
      *              the containing expression
-     * @param parent
+     * @param parent the expression acting as parent of this pattern
      * @throws net.sf.saxon.trans.XPathException
      *          if any error is detected
      */
@@ -240,6 +242,7 @@ public abstract class Pattern implements PatternFinder, Serializable, Container 
     * @param context The dynamic context. Only relevant if the pattern
     * uses variables, or contains calls on functions such as document() or key().
     * @return true if the node matches the Pattern, false otherwise
+    * @throws XPathException if a dynamic error occurs during pattern matching
     */
 
     public abstract boolean matches(Item item, XPathContext context) throws XPathException;
@@ -252,6 +255,7 @@ public abstract class Pattern implements PatternFinder, Serializable, Container 
      * @param context The dynamic context. Only relevant if the pattern
      * uses variables, or contains calls on functions such as document() or key().
      * @return true if the node matches the Pattern, false otherwise
+     * @throws XPathException if a dynamic error occurs during pattern matching
      */
 
     public boolean matchesBeneathAnchor(NodeInfo node, NodeInfo anchor, XPathContext context) throws XPathException {
@@ -263,10 +267,12 @@ public abstract class Pattern implements PatternFinder, Serializable, Container 
     * for matching sub-patterns; it does not alter the value of current(). The default implementation
     * is identical to matches().
     * @param node The NodeInfo representing the Element or other node to be tested against the Pattern
-    * @param anchor
+    * @param anchor The anchor node, which must match any AnchorPattern subpattern
      *@param context The dynamic context. Only relevant if the pattern
      * uses variables, or contains calls on functions such as document() or key(). @return true if the node matches the Pattern, false otherwise
-    */
+     * @return true if the pattern matches the supplied node
+     * @throws XPathException if a dynamic error occurs during pattern matching
+     */
 
     protected boolean internalMatches(NodeInfo node, NodeInfo anchor, XPathContext context) throws XPathException {
         return matches(node, context);
