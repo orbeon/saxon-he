@@ -68,7 +68,7 @@ public class XSLFunction extends StyleElement implements StylesheetProcedure {
 		AttributeCollection atts = getAttributeList();
         overrideAtt = "yes";
     	for (int a=0; a<atts.getLength(); a++) {
-			String f = atts.getLocalName(a);
+			String f = atts.getQName(a);
             if (f.equals(StandardNames.NAME)) {
 				nameAtt = Whitespace.trim(atts.getValue(a));
                 assert (nameAtt != null);

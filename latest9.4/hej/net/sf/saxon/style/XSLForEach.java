@@ -82,7 +82,7 @@ public class XSLForEach extends StyleElement {
 		String selectAtt = null;
 
 		for (int a=0; a<atts.getLength(); a++) {
-			String f = atts.getLocalName(a);
+			String f = atts.getQName(a);
 			if (f.equals(StandardNames.SELECT)) {
         		selectAtt = atts.getValue(a);
             } else if (f.equals("threads") && atts.getURI(a).equals(NamespaceConstant.SAXON)) {

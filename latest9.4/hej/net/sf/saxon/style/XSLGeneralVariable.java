@@ -174,7 +174,7 @@ public abstract class XSLGeneralVariable extends StyleElement {
         String tunnelAtt = null;
 
 		for (int a=0; a<atts.getLength(); a++) {
-			String f = atts.getLocalName(a);
+			String f = atts.getQName(a);
 			if (f.equals(StandardNames.NAME)) {
         		nameAtt = Whitespace.trim(atts.getValue(a)) ;
         	} else if (f.equals(StandardNames.SELECT)) {
