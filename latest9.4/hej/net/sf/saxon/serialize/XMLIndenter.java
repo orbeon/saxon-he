@@ -4,9 +4,9 @@ import net.sf.saxon.event.ProxyReceiver;
 import net.sf.saxon.event.ReceiverOptions;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.SaxonOutputKeys;
+import net.sf.saxon.om.FingerprintedQName;
 import net.sf.saxon.om.NamespaceBinding;
 import net.sf.saxon.om.NodeName;
-import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.tiny.CharSlice;
 import net.sf.saxon.tree.util.AttributeCollectionImpl;
@@ -39,7 +39,7 @@ public class XMLIndenter extends ProxyReceiver {
     private int line = 0;       // line and column measure the number of lines and columns
     private int column = 0;     // .. in whitespace text nodes between tags
     private int suppressedAtLevel = -1;
-    /*@Nullable*/ private Set<StructuredQName> suppressedElements = null;
+    /*@Nullable*/ private Set<FingerprintedQName> suppressedElements = null;
     private XMLEmitter emitter;
     int totalAttributeLength = 0;
     private AttributeCollectionImpl bufferedAttributes;
@@ -73,11 +73,11 @@ public class XMLIndenter extends ProxyReceiver {
             // for compatibility: since 9.3 also available in default namespace
         }
         if (s != null) {
-            suppressedElements = new HashSet<StructuredQName>(8);
+            suppressedElements = new HashSet<FingerprintedQName>(8);
             StringTokenizer st = new StringTokenizer(s, " \t\r\n");
             while (st.hasMoreTokens()) {
                 String clarkName = st.nextToken();
-                suppressedElements.add(StructuredQName.fromClarkName(clarkName));
+                suppressedElements.add(FingerprintedQName.fromClarkName(clarkName));
             }
         }
 
@@ -111,7 +111,7 @@ public class XMLIndenter extends ProxyReceiver {
         afterEndTag = false;
         allWhite = true;
         line = 0;
-        if (suppressedElements != null && suppressedElements.contains(nameCode)) {
+        if (suppressedElements != null && suppressedAtLevel == -1 && suppressedElements.contains(nameCode)) {
             suppressedAtLevel = level;
         }
         int typeCode = type.getFingerprint();
