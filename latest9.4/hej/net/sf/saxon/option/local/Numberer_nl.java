@@ -17,6 +17,7 @@ import net.sf.saxon.expr.number.AbstractNumberer;
  *  @see <a href="http://taaladvies.net/taal/advies/popup.php?id=88">http://taaladvies.net/taal/advies/popup.php?id=88</a>
  *  @see <a href="http://www.vlaanderen.be/servlet/Satellite?c=Page&cid=1120536021990&pagename=taaltelefoon%2FPage%2FHomePageMIN">http://www.vlaanderen.be/servlet/Satellite?c=Page&cid=1120536021990&pagename=taaltelefoon%2FPage%2FHomePageMIN</a>
  *
+ * See also https://dev.saxonica.com/community/issues/1541
  */
 
 public class Numberer_nl extends AbstractNumberer {
@@ -125,9 +126,9 @@ public class Numberer_nl extends AbstractNumberer {
              if (rem == 0) {
                  return tens;
              } else if (rem == 2) {
-                 return "\u00ebn" + tens;
+                 return dutchUnits[rem] + "\u00ebn" + tens.toLowerCase();
              } else {
-                 return dutchUnits[rem] + tens;
+                 return dutchUnits[rem] + "en" + tens.toLowerCase();
              }
          }
      }
