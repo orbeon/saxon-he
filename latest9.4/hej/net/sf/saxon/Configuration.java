@@ -4453,6 +4453,20 @@ public class Configuration implements Serializable, SourceResolver, NotationSet 
     }
 
     /**
+     * Called by the garbage collector on an object when garbage collection
+     * determines that there are no more references to the object. This implementation
+     * closes the error output file if one has been allocated.
+     */
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        if (standardErrorOutput != System.err) {
+            standardErrorOutput.close();
+        }
+    }
+
+    /**
      * This class contains constants representing features of the software that may or may
      * not be licensed. (Note, this list is at a finer-grained level than the actual
      * purchasing options.)
