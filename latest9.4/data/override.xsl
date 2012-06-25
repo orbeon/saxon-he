@@ -15,14 +15,16 @@
   
   <xsl:template match="/">
       <xsl:apply-templates select="$overriddenSchema"/>
-      <xsl:message>
+      <!--<xsl:message>
          <xsl:apply-templates select="$overriddenSchema"/>
-      </xsl:message>
+      </xsl:message>-->
   </xsl:template>
   
   <xsl:template match="element(xs:schema)">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
+      <!-- MHK addition (bug 17574: add import declarations from the overriding stylesheet if necessary -->
+      <xsl:apply-templates select="$overrideElement/../xs:import[not(@namespace = current()/xs:import/@namespace)]"/>
       <xsl:apply-templates/>
     </xsl:copy>
   </xsl:template>
@@ -37,6 +39,10 @@
   <xsl:template match="element(xs:import)" priority="5">
     <xsl:copy>
       <xsl:copy-of select="@* except @schemaLocation"/>
+      <!-- MHK addition: make schemaLocation absolute -->
+      <xsl:if test="exists(@schemaLocation)">
+        <xsl:attribute name="schemaLocation" select="resolve-uri(@schemaLocation, base-uri(.))"/>
+      </xsl:if>
     </xsl:copy>
   </xsl:template>
 
