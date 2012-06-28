@@ -39,17 +39,18 @@ public class DecimalFormatManager implements Serializable {
 
     public void setDefaultDecimalFormat(DecimalSymbols dfs, int precedence)
     throws XPathException {
-        if (!usingOriginalDefault) {
-            if (!dfs.equals(defaultDFS)) {
-                XPathException err = new XPathException("There are two conflicting definitions of the default decimal format");
-                err.setErrorCode("XTSE1290");
-                err.setIsStaticError(true);
-                throw err;
-            }
-        }
-        defaultDFS = dfs;
+//        if (!usingOriginalDefault) {
+//            if (!dfs.equals(defaultDFS)) {
+//                XPathException err = new XPathException("There are two conflicting definitions of the default decimal format");
+//                err.setErrorCode("XTSE1290");
+//                err.setIsStaticError(true);
+//                throw err;
+//            }
+//        }
+        //defaultDFS = dfs;
         usingOriginalDefault = false;
         setNamedDecimalFormat(DEFAULT_NAME, dfs, precedence);
+        defaultDFS = getNamedDecimalFormat(DEFAULT_NAME);
             // this is to trigger fixup of calls
     }
 
@@ -101,7 +102,9 @@ public class DecimalFormatManager implements Serializable {
                     return;
                 }
                 if (precedence==oldPrecedence && !dfs.equals(old)) {
-                    XPathException err = new XPathException("There are two conflicting definitions of the named decimal-format");
+                    XPathException err = new XPathException("There are two conflicting definitions of the " +
+                            (qName.equals(DEFAULT_NAME) ? "unnamed" : "named") +
+                            " decimal-format");
                     err.setErrorCode("XTSE1290");
                     err.setIsStaticError(true);
                     throw err;
