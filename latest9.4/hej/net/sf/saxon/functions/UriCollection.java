@@ -61,7 +61,8 @@ public class UriCollection extends SystemFunction implements CallableExpression 
             // No arguments supplied: this gets the default collection
             href = context.getConfiguration().getDefaultCollection();
         } else {
-            href = argument[0].evaluateItem(context).getStringValue();
+            Item item = argument[0].evaluateItem(context);
+            href = (item == null ? "" : item.getStringValue());
         }
 
         CollectionURIResolver resolver = context.getConfiguration().getCollectionURIResolver();
