@@ -38,6 +38,17 @@ public class Component extends SystemFunction {
     }
 
     /**
+     * Set the details of this type of function
+     *
+     * @param entry information giving details of the function signature
+     */
+    @Override
+    public void setDetails(StandardFunction.Entry entry) {
+        super.setDetails(entry);
+        component = (operation >> 16) & 0xffff;
+    }
+
+    /**
      * For an expression that returns an integer or a sequence of integers, get
      * a lower and upper bound on the values of the integers that may be returned, from
      * static analysis. The default implementation returns null, meaning "unknown" or
@@ -99,7 +110,6 @@ public class Component extends SystemFunction {
         if (arg == null) {
             return null;
         }
-
         return arg.getComponent(component);
 
     }
