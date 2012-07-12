@@ -159,7 +159,9 @@ public class ConstructorFunctionLibrary implements FunctionLibrary {
                     }
                 } else {
                     assert type.isListType();
-                    return env.getConfiguration().obtainOptimizer().makeCastToList(arguments[0], (ListType) type, true);
+                    Expression exp = env.getConfiguration().obtainOptimizer().makeCastToList(arguments[0], (ListType) type, true);
+                    exp.setContainer(container);
+                    return exp;
                 }
             } else {
                 XPathException err = new XPathException("Unknown constructor function: {" + uri + '}' + localName);
