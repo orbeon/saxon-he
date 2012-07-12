@@ -34,6 +34,7 @@ public class PipelineConfiguration {
      * Create a PipelineConfiguration. Note: the normal way to create
      * a PipelineConfiguration is via the factory methods in the Controller and
      * Configuration classes
+     *
      * @param config the Saxon configuration
      * @see Configuration#makePipelineConfiguration
      * @see Controller#makePipelineConfiguration
@@ -47,6 +48,7 @@ public class PipelineConfiguration {
     /**
      * Create a PipelineConfiguration as a copy of an existing
      * PipelineConfiguration
+     *
      * @param p the existing PipelineConfiguration
      */
 
@@ -66,6 +68,7 @@ public class PipelineConfiguration {
 
     /**
      * Get the Saxon Configuration object
+     *
      * @return the Saxon Configuration
      */
 
@@ -76,6 +79,7 @@ public class PipelineConfiguration {
 
     /**
      * Set the Saxon Configuration object
+     *
      * @param config the Saxon Configuration
      */
 
@@ -85,15 +89,20 @@ public class PipelineConfiguration {
 
     /**
      * Get the LocationProvider for interpreting location ids passed down this pipeline
+     *
      * @return the appropriate LocationProvider
      */
 
     public LocationProvider getLocationProvider() {
+        if (locationProvider == null) {
+            locationProvider = DummyLocationProvider.THE_INSTANCE;
+        }
         return locationProvider;
     }
 
     /**
      * Set the LocationProvider for interpreting location ids passed down this pipeline
+     *
      * @param locationProvider the LocationProvider
      */
 
@@ -103,6 +112,7 @@ public class PipelineConfiguration {
 
     /**
      * Get a SourceLocator for a given locationId, using this location provider
+     *
      * @param locationId an integer identifier for a source location
      * @return an object holding location information
      */
@@ -113,6 +123,7 @@ public class PipelineConfiguration {
 
     /**
      * Get the ErrorListener set as a property of this pipeline
+     *
      * @return the ErrorListener; null if none has been set.
      */
 
@@ -124,6 +135,7 @@ public class PipelineConfiguration {
      * Get an ErrorListener for reporting errors in processing this pipeline; this
      * will be the ErrorListener set locally in the PipelineConfiguration if there is one,
      * or the ErrorListener from the Configuration otherwise.
+     *
      * @return the ErrorListener to be used; never null
      */
 
@@ -137,6 +149,7 @@ public class PipelineConfiguration {
 
     /**
      * Set the ErrorListener used for reporting errors in processing this pipeline
+     *
      * @param errorListener the ErrorListener
      */
 
@@ -146,6 +159,7 @@ public class PipelineConfiguration {
 
     /**
      * Get the URIResolver used for processing URIs encountered on this pipeline
+     *
      * @return the URIResolver
      */
 
@@ -155,6 +169,7 @@ public class PipelineConfiguration {
 
     /**
      * Set the URIResolver used for processing URIs encountered on this pipeline
+     *
      * @param uriResolver the URIResolver
      */
 
@@ -165,6 +180,7 @@ public class PipelineConfiguration {
     /**
      * Get the user-defined SchemaURIResolver for resolving URIs used in "import schema"
      * declarations; returns null if none has been explicitly set.
+     *
      * @return the SchemaURIResolver
      */
 
@@ -174,6 +190,7 @@ public class PipelineConfiguration {
 
     /**
      * Set the document parsing and building options to be used on this pipeline
+     *
      * @param options the options to be used
      */
 
@@ -184,6 +201,7 @@ public class PipelineConfiguration {
     /**
      * Get the document parsing and building options to be used on this pipeline
      * return the options to be used
+     *
      * @return the parser options for this pipeline
      */
 
@@ -194,6 +212,7 @@ public class PipelineConfiguration {
     /**
      * Say whether xsi:schemaLocation and xsi:noNamespaceSchemaLocation attributes
      * should be recognized while validating an instance document
+     *
      * @param recognize true if these attributes should be recognized
      */
 
@@ -206,11 +225,12 @@ public class PipelineConfiguration {
      * or as recoverable.
      * <p>Note this is a shortcut for <code>getParseOptions().setContinueAfterValidationErrors()</code>, retained
      * for backwards compatibility.</p>
+     *
      * @param recover set to true if validation errors are to be treated as recoverable. If this option is set to true,
-     * such errors will be reported to the ErrorListener using the error() method, and validation will continue.
-     * If it is set to false, errors will be reported using the fatalError() method, and validation will
-     * be abandoned.  The default depends on the circumstances: typically during standalone instance validation
-     * the default is true, but during XSLT and XQuery processing it is false.
+     *                such errors will be reported to the ErrorListener using the error() method, and validation will continue.
+     *                If it is set to false, errors will be reported using the fatalError() method, and validation will
+     *                be abandoned.  The default depends on the circumstances: typically during standalone instance validation
+     *                the default is true, but during XSLT and XQuery processing it is false.
      */
 
     public void setRecoverFromValidationErrors(boolean recover) {
@@ -221,8 +241,9 @@ public class PipelineConfiguration {
      * Ask if this pipeline recovers from validation errors
      * <p>Note this is a shortcut for <code>getParseOptions().isContinueAfterValidationErrors()</code>, retained
      * for backwards compatibility.</p>
+     *
      * @return true if validation errors on this pipeline are treated as recoverable; false if they are treated
-     * as fatal
+     *         as fatal
      */
 
     public boolean isRecoverFromValidationErrors() {
@@ -232,6 +253,7 @@ public class PipelineConfiguration {
     /**
      * Set a user-defined SchemaURIResolver for resolving URIs used in "import schema"
      * declarations.
+     *
      * @param resolver the SchemaURIResolver
      */
 
@@ -241,6 +263,7 @@ public class PipelineConfiguration {
 
     /**
      * Get the controller associated with this pipelineConfiguration
+     *
      * @return the controller if it is known; otherwise null.
      */
 
@@ -250,6 +273,7 @@ public class PipelineConfiguration {
 
     /**
      * Set the Controller associated with this pipelineConfiguration
+     *
      * @param controller the Controller
      */
 
@@ -259,6 +283,7 @@ public class PipelineConfiguration {
 
     /**
      * Get the host language in use
+     *
      * @return for example {@link Configuration#XSLT} or {@link Configuration#XQUERY}
      */
 
@@ -268,6 +293,7 @@ public class PipelineConfiguration {
 
     /**
      * Set the host language in use
+     *
      * @param language for example {@link Configuration#XSLT} or {@link Configuration#XQUERY}
      */
 
@@ -277,6 +303,7 @@ public class PipelineConfiguration {
 
     /**
      * Ask whether this pipeline is a serializing pipeline
+     *
      * @return true if this pipeline is producing serialized output
      */
 
@@ -286,6 +313,7 @@ public class PipelineConfiguration {
 
     /**
      * Set whether this pipeline is a serializing pipeline
+     *
      * @param isSerializing true if this pipeline is producing serialized output
      */
 
@@ -297,6 +325,7 @@ public class PipelineConfiguration {
      * Set whether attribute defaults defined in a schema or DTD are to be expanded or not
      * (by default, fixed and default attribute values are expanded, that is, they are inserted
      * into the document during validation as if they were present in the instance being validated)
+     *
      * @param expand true if defaults are to be expanded, false if not
      */
 
@@ -308,6 +337,7 @@ public class PipelineConfiguration {
      * Ask whether attribute defaults defined in a schema or DTD are to be expanded or not
      * (by default, fixed and default attribute values are expanded, that is, they are inserted
      * into the document during validation as if they were present in the instance being validated)
+     *
      * @return true if defaults are to be expanded, false if not
      */
 
@@ -317,7 +347,8 @@ public class PipelineConfiguration {
 
     /**
      * Set a named component of the pipeline
-     * @param name string the component name
+     *
+     * @param name  string the component name
      * @param value the component value
      */
 
@@ -330,6 +361,7 @@ public class PipelineConfiguration {
 
     /**
      * Get a named component of the pipeline
+     *
      * @param name string the component name
      * @return the component value, or null if absent
      */
@@ -341,7 +373,24 @@ public class PipelineConfiguration {
             return components.get(name);
         }
     }
-  }
+
+    private static class DummyLocationProvider implements LocationProvider {
+
+        public final static DummyLocationProvider THE_INSTANCE = new DummyLocationProvider();
+
+        public String getSystemId(long locationId) {
+            return null;
+        }
+
+        public int getLineNumber(long locationId) {
+            return -1;
+        }
+
+        public int getColumnNumber(long locationId) {
+            return -1;
+        }
+    }
+}
 
 //
 // The contents of this file are subject to the Mozilla Public License Version 1.0 (the "License");
