@@ -14,6 +14,7 @@ import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.util.Orphan;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
 
@@ -348,6 +349,13 @@ public final class ComputedAttribute extends AttributeCreator {
             err.setLocator(this);
             throw err;
         }
+    }
+
+    @Override
+    public NodeInfo evaluateItem(XPathContext context) throws XPathException {
+        NodeInfo node = super.evaluateItem(context);
+        validateOrphanAttribute((Orphan)node, context);
+        return node;
     }
 
 

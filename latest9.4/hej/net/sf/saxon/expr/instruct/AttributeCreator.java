@@ -1,15 +1,18 @@
 package net.sf.saxon.expr.instruct;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.Controller;
 import net.sf.saxon.event.ReceiverOptions;
 import net.sf.saxon.event.SequenceReceiver;
 import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.lib.Validation;
 import net.sf.saxon.om.NodeName;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.util.Orphan;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.Whitespace;
 
@@ -186,6 +189,48 @@ public abstract class AttributeCreator extends SimpleNodeConstructor implements 
         }
 
         //return null;
+    }
+
+    /**
+     * Validate a newly-constructed parentless attribute using the type and validation attributes
+     * @param orphan the new attribute node
+     * @param context the dynamic evaluation context
+     * @throws XPathException if validation fails
+     */
+
+    protected void validateOrphanAttribute(Orphan orphan, XPathContext context) throws XPathException {
+        ConversionRules rules = context.getConfiguration().getConversionRules();
+        SimpleType schemaType = getSchemaType();
+        int validationAction = getValidationAction();
+        if (schemaType != null) {
+            ValidationFailure err = schemaType.validateContent(
+                    orphan.getStringValueCS(), DummyNamespaceResolver.getInstance(), rules);
+            if (err != null) {
+                throw new ValidationException("Attribute value " + Err.wrap(orphan.getStringValueCS(), Err.VALUE) +
+                                           " does not the match the required type " +
+                                           schemaType.getDescription() + ". " +
+                                           err.getMessage());
+            }
+            orphan.setTypeAnnotation(schemaType.getFingerprint());
+            if (schemaType.isNamespaceSensitive()) {
+                throw new XPathException("Cannot validate a parentless attribute whose content is namespace-sensitive", "XTTE1545");
+            }
+        } else if (validationAction== Validation.STRICT || validationAction==Validation.LAX) {
+            try {
+                final Controller controller = context.getController();
+                assert controller != null;
+                SimpleType ann = controller.getConfiguration().validateAttribute(
+                        orphan.getNameCode(), orphan.getStringValueCS(), validationAction);
+                orphan.setTypeAnnotation(ann);
+            } catch (ValidationException e) {
+                XPathException err = XPathException.makeXPathException(e);
+                err.setErrorCodeQName(e.getErrorCodeQName());
+                err.setXPathContext(context);
+                err.setLocator(this);
+                err.setIsTypeError(true);
+                throw err;
+            }
+        }
     }
 
 }

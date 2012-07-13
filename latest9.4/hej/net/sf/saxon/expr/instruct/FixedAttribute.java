@@ -1,7 +1,6 @@
 package net.sf.saxon.expr.instruct;
 
 import net.sf.saxon.Configuration;
-import net.sf.saxon.Controller;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.functions.SystemFunction;
@@ -231,41 +230,9 @@ public final class FixedAttribute extends AttributeCreator {
 
 
     public NodeInfo evaluateItem(XPathContext context) throws XPathException {
-        final ConversionRules rules = context.getConfiguration().getConversionRules();
         Orphan o = (Orphan)super.evaluateItem(context);
         assert o != null;
-        SimpleType schemaType = getSchemaType();
-        int validationAction = getValidationAction();
-        if (schemaType != null) {
-            ValidationFailure err = schemaType.validateContent(
-                    o.getStringValueCS(), DummyNamespaceResolver.getInstance(), rules);
-            if (err != null) {
-                throw new ValidationException("Attribute value " + Err.wrap(o.getStringValueCS(), Err.VALUE) +
-                                           " does not the match the required type " +
-                                           schemaType.getDescription() + ". " +
-                                           err.getMessage());
-            }
-            o.setTypeAnnotation(schemaType.getFingerprint());
-            if (schemaType.isNamespaceSensitive()) {
-                throw new XPathException("Cannot validate a parentless attribute whose content is namespace-sensitive", "XTTE1545");
-            }
-        } else if (validationAction==Validation.STRICT || validationAction==Validation.LAX) {
-            try {
-                final Controller controller = context.getController();
-                assert controller != null;
-                SimpleType ann = controller.getConfiguration().validateAttribute(
-                        nodeName.getNameCode(), o.getStringValueCS(), validationAction);
-                o.setTypeAnnotation(ann);
-            } catch (ValidationException e) {
-                XPathException err = XPathException.makeXPathException(e);
-                err.setErrorCodeQName(e.getErrorCodeQName());
-                err.setXPathContext(context);
-                err.setLocator(this);
-                err.setIsTypeError(true);
-                throw err;
-            }
-        }
-
+        validateOrphanAttribute(o, context);
         return o;
     }
 
