@@ -31,7 +31,7 @@ public class CurrentGroupingKey extends SystemFunction implements CallableExpres
     @Override
     public SequenceIterator iterate(XPathContext c) throws XPathException{
     	  GroupIterator gi = c.getCurrentGroupIterator();
-          if (gi==null) {
+          if (gi==null || gi.getCurrentGroupingKey()==null) {
               return EmptyIterator.emptyIterator();
           }
 
