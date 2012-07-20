@@ -476,11 +476,12 @@ public final class FilterExpression extends Expression implements ContextSwitchi
         // filter depends only on the context. (This can't be done if, for example, the predicate uses
         // local variables, even variables declared within the predicate)
         try {
-            if (start instanceof Literal && (filter.getDependencies()&~StaticProperty.DEPENDS_ON_FOCUS) == 0) {
+            if (start instanceof Literal && !ExpressionTool.refersToVariableOrFunction(filter)
+                    && (filter.getDependencies()&~StaticProperty.DEPENDS_ON_FOCUS) == 0) {
                 XPathContext context = visitor.getStaticContext().makeEarlyEvaluationContext();
                 return (Value)SequenceExtent.makeSequenceExtent(iterate(context));
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             // can happen for a variety of reasons, for example the filter references a global parameter,
             // references the doc() function, etc.
             return null;

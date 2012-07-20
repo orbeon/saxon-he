@@ -731,11 +731,13 @@ public class ExpressionTool {
      *
      * @param e the expression being tested
      * @return true if the expression includes a variable reference or function call, or an XSLT construct
-     *         equivalent to a function call (e.g call-template)
+     *         equivalent to a function call (e.g call-template). Also returns true if the expression includes
+     *         a variable binding element, as (a) this is likely to mean it also contains a reference, and (b)
+     *         it also needs to be caught on the same paths.
      */
 
     public static boolean refersToVariableOrFunction(Expression e) {
-        if (e instanceof VariableReference || e instanceof UserFunctionCall
+        if (e instanceof VariableReference || e instanceof Binding || e instanceof UserFunctionCall
                 || e instanceof CallTemplate || e instanceof ApplyTemplates || e instanceof ApplyImports || e instanceof NextMatch) {
             return true;
         } else {
