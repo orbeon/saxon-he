@@ -409,7 +409,7 @@ public class SortKeyDefinition implements Serializable {
             String caseOrderX = caseOrder.evaluateAsString(context).toString();
             String languageX = language.evaluateAsString(context).toString();
             Properties props = new Properties();
-            if (languageX.length() != 0 && !(language instanceof StringLiteral)) {
+            if (languageX.length() != 0) {
                 ConversionResult v = StringValue.convertStringToBuiltInType(
                             languageX, BuiltInAtomicType.LANGUAGE, config.getConversionRules());
                 if (v instanceof ValidationFailure) {
