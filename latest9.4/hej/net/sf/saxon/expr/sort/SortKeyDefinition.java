@@ -4,7 +4,6 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.flwor.ExpressionProcessor;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.trans.XPathException;
@@ -458,8 +457,7 @@ public class SortKeyDefinition implements Serializable {
 			String caseOrderX = caseOrder.evaluateAsString(context).toString();
 			String languageX = language.evaluateAsString(context).toString();
 			Properties props = new Properties();
-			if (languageX.length() != 0 && !(language instanceof StringLiteral)) {
-                ConversionRules rules = config.getConversionRules();
+			if (languageX.length() != 0) {
                 ValidationFailure vf = StringConverter.STRING_TO_LANGUAGE.validate(languageX);
                 if (vf != null) {
                     throw new XPathException("The lang attribute of xsl:sort must be a valid language code", "XTDE0030");
