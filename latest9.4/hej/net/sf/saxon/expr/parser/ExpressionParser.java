@@ -2251,7 +2251,7 @@ public class ExpressionParser {
     /**
      * Ask whether the syntax namespace-node() is allowed in a node kind test.
      *
-     * @return false (currently allowed only in XQuery 1.1)
+     * @return false (currently allowed only in XQuery 3.0)
      */
 
     protected boolean isNamespaceTestAllowed() {

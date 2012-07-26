@@ -1539,12 +1539,12 @@ public class QueryParser extends ExpressionParser {
     }
 
     /**
-     * Parse a context item declaration. Allowed only in XQuery 1.1
+     * Parse a context item declaration. Allowed only in XQuery 3.0
      * @throws XPathException if parsing fails
      */
 
     protected void parseContextItemDeclaration() throws XPathException {
-        grumble("A context item declaration is allowed only in XQuery 1.1");
+        grumble("A context item declaration is allowed only in XQuery 3.0");
     }
 
     /**

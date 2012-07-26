@@ -74,7 +74,7 @@ public class QueryModule implements StaticContext {
     private boolean isUpdating = false;
     private DecimalValue languageVersion = DecimalValue.ONE;
     private ItemType requiredContextItemType = AnyItemType.getInstance(); // must be the same for all modules
-    /*@Nullable*/ private DecimalFormatManager decimalFormatManager = null;   // used only in XQuery 1.1
+    /*@Nullable*/ private DecimalFormatManager decimalFormatManager = null;   // used only in XQuery 3.0
     private CodeInjector codeInjector;
     //private boolean allowTypedNodes = false;
 
