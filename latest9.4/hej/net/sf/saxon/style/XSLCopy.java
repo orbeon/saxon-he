@@ -126,7 +126,7 @@ public class XSLCopy extends StyleElement {
             // find any referenced attribute sets
             attributeSets = getAttributeSets(use, null);
         }
-        if (select != null && getPreparedStylesheet().getCompilerInfo().getXsltVersion().compareTo(DecimalValue.THREE) < 0) {
+        if (select != null && !isXslt30Processor()) {
             // we have a 2.0 processor
             if (forwardsCompatibleModeIsEnabled()) {
                 compileWarning("xsl:copy/@select is ignored in forwards-compatibility mode", "");
