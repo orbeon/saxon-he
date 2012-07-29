@@ -216,6 +216,9 @@ public final class FilterExpression extends Expression implements ContextSwitchi
             adoptChildExpression(start2);
         }
         start.setFiltered(true);
+        if (Literal.isEmptySequence(start)) {
+            return start;
+        }
 
         Expression filter2 = visitor.typeCheck(filter, new ExpressionVisitor.ContextItemType(start.getItemType(th), false));
         if (filter2 != filter) {
