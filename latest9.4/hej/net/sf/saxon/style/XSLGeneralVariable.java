@@ -434,6 +434,7 @@ public abstract class XSLGeneralVariable extends StyleElement {
             setReferenceCount(gvar);
 
             if (exp2 != select) {
+                select = exp2;
                 gvar.setSelectExpression(exp2);
             }
         }
