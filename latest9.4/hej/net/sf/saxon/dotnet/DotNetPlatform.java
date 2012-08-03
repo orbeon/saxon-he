@@ -4,6 +4,7 @@ import cli.Microsoft.Win32.Registry;
 import cli.Microsoft.Win32.RegistryKey;
 import cli.System.Environment;
 import cli.System.Xml.*;
+import com.saxonica.bytecode.GeneratedCode;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Platform;
 import net.sf.saxon.event.PipelineConfiguration;
@@ -359,10 +360,10 @@ public class DotNetPlatform implements Platform {
     public ClassLoader getClassLoaderForGeneratedClass(final String definedClassName, final byte[] classFile, Configuration config, Class thisClass) {
         ClassLoader parentClassLoader = config.getDynamicLoader().getClassLoader();
         if (parentClassLoader == null) {
-            parentClassLoader = Thread.currentThread().getContextClassLoader();
+            parentClassLoader = thisClass.getClassLoader();
         }
         if (parentClassLoader == null) {
-            parentClassLoader = thisClass.getClassLoader();
+            parentClassLoader = Thread.currentThread().getContextClassLoader();
         }
         return new ClassLoader(parentClassLoader) {
             @Override
