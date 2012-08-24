@@ -240,6 +240,15 @@ public class IntHashSet extends AbstractIntSet implements IntSet, Serializable {
      */
 
     public static boolean containsSome(IntSet one, IntSet two) {
+        if (two instanceof IntEmptySet) {
+            return false;
+        }
+        if (two instanceof IntUniversalSet) {
+            return !one.isEmpty();
+        }
+        if (two instanceof IntComplementSet) {
+            return !((IntComplementSet)two).getExclusions().containsAll(one);
+        }
         IntIterator it = two.iterator();
         while (it.hasNext()) {
             if (one.contains(it.next())) {

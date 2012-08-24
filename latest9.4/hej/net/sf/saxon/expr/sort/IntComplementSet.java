@@ -11,6 +11,10 @@ public class IntComplementSet implements IntSet {
         this.exclusions = exclusions.copy();
     }
 
+    public IntSet getExclusions() {
+        return exclusions;
+    }
+
     public IntSet copy() {
         return new IntComplementSet(exclusions);
     }
