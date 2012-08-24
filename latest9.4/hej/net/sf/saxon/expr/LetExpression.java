@@ -251,6 +251,29 @@ public class LetExpression extends Assignation implements TailCallReturner {
     }
 
     /**
+     * Replace one subexpression by a replacement subexpression
+     * @param original the original subexpression
+     * @param replacement the replacement subexpression
+     * @return true if the original subexpression is found
+     */
+
+    public boolean replaceSubExpression(Expression original, Expression replacement) {
+        boolean found = false;
+        if (sequence == original) {
+            sequence = replacement;
+            setEvaluationMode(ExpressionTool.eagerEvaluationMode(sequence));
+            found = true;
+        }
+        if (action == original) {
+            action = replacement;
+            found = true;
+        }
+        return found;
+    }
+
+
+
+    /**
      * Determine whether all references to this variable are using the value either
      * (a) by atomizing it, or (b) by taking its string value. (This excludes usages
      * such as testing the existence of a node or taking the effective boolean value).
