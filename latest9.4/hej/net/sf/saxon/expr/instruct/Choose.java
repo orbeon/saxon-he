@@ -285,7 +285,9 @@ public class Choose extends Instruction {
                     // if this is an "empty" else branch, don't be draconian about the error handling. It might be
                     // the user knows the otherwise branch isn't needed because one of the when branches will always
                     // be satisfied.
-                    if (Literal.isEmptySequence(actions[i])) {
+                    // Also, don't throw a type error if the branch will never be executed; this can happen with
+                    // a typeswitch where the purpose of the condition is to test the type.
+                    if (Literal.isEmptySequence(actions[i]) || Literal.isConstantBoolean(conditions[i], false)) {
                         actions[i] = new ErrorExpression(err);
                     } else {
                         throw err;
