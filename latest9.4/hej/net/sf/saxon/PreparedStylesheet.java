@@ -499,6 +499,8 @@ public class PreparedStylesheet extends Executable implements Templates, Seriali
                 } catch (Exception err2) {
                     // ignore secondary error
                 }
+            } else if (errorCount == 0) {
+                errorCount++;
             }
         } else {
             errorCount++;
