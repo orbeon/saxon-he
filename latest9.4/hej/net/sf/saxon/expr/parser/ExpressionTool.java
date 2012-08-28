@@ -888,17 +888,23 @@ public class ExpressionTool {
      * @param exp the expression at the root of the subtree
      * @param binding the variable binding whose references are sought
      * @param replacement the expression to be used in place of the variable reference
+     * @return true if the expression has been changed, at any level
      */
 
-    public static void replaceVariableReferences(Expression exp, Binding binding, Expression replacement) {
+    public static boolean replaceVariableReferences(Expression exp, Binding binding, Expression replacement) {
+        boolean found = false;
         for (Iterator<Expression> iter = exp.iterateSubExpressions(); iter.hasNext(); ) {
             Expression child = iter.next();
             if (child instanceof VariableReference && ((VariableReference) child).getBinding() == binding) {
-                exp.replaceSubExpression(child, replacement);
+                found |= exp.replaceSubExpression(child, replacement);
             } else {
-                replaceVariableReferences(child, binding, replacement);
+                found |= replaceVariableReferences(child, binding, replacement);
             }
         }
+        if (found) {
+            exp.resetLocalStaticProperties();
+        }
+        return found;
     }
 
 
