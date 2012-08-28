@@ -8,6 +8,7 @@ import net.sf.saxon.expr.parser.Tokenizer;
 import net.sf.saxon.functions.Doc;
 import net.sf.saxon.functions.Id;
 import net.sf.saxon.functions.KeyFn;
+import net.sf.saxon.om.Axis;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.AnyItemType;
@@ -122,6 +123,21 @@ public class PatternParser extends ExpressionParser {
                 default:
                     return super.parseBasicStep(firstInPattern);
 
+            }
+        }
+    }
+
+    @Override
+    protected void testPermittedAxis(byte axis) throws XPathException {
+        if (inPredicate == 0) {
+            if (env.getXPathLanguageLevel().equals(DecimalValue.THREE)) {
+                if (!Axis.isSubtreeAxis[axis]) {
+                    grumble("The " + Axis.axisName[axis] + " is not allowed in a pattern");
+                }
+            } else {
+                if (axis != net.sf.saxon.om.Axis.CHILD && axis != net.sf.saxon.om.Axis.ATTRIBUTE) {
+                    grumble("Unless XSLT 3.0 is enabled, the only axes allowed in a pattern are the child and attribute axes");
+                }
             }
         }
     }

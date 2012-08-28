@@ -1796,6 +1796,7 @@ public class ExpressionParser {
                     grumble(err.getMessage());
                     axis = Axis.CHILD; // error recovery
                 }
+                testPermittedAxis(axis);
                 if (axis == Axis.NAMESPACE && language == XQUERY) {
                     grumble("The namespace axis is not available in XQuery");
                 }
@@ -1840,6 +1841,10 @@ public class ExpressionParser {
                 //break;
         }
         return new ErrorExpression();
+    }
+
+    protected void testPermittedAxis(byte axis) throws XPathException {
+        // no action by default - all axes are permitted
     }
 
     protected Expression parseNumericLiteral() throws XPathException {
