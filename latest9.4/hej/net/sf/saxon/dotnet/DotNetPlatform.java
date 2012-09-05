@@ -4,7 +4,6 @@ import cli.Microsoft.Win32.Registry;
 import cli.Microsoft.Win32.RegistryKey;
 import cli.System.Environment;
 import cli.System.Xml.*;
-import com.saxonica.bytecode.GeneratedCode;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Platform;
 import net.sf.saxon.event.PipelineConfiguration;
