@@ -185,7 +185,7 @@ public abstract class XSLGeneralVariable extends StyleElement {
         		requiredAtt = Whitespace.trim(atts.getValue(a)) ;
             } else if (f.equals(StandardNames.TUNNEL) && allowsTunnelAttribute()) {
         		tunnelAtt = Whitespace.trim(atts.getValue(a)) ;
-        	} else if (f.equals("assignable") &&
+        	} else if (atts.getLocalName(a).equals("assignable") &&
                     atts.getURI(a).equals(NamespaceConstant.SAXON) &&
                     this instanceof XSLVariableDeclaration) {
         		assignAtt = Whitespace.trim(atts.getValue(a)) ;
