@@ -185,7 +185,7 @@ public class StandardErrorListener implements ErrorListener, Serializable {
      */
 
     public void error(TransformerException exception) throws TransformerException {
-        if (recoveryPolicy == Configuration.RECOVER_SILENTLY) {
+        if (recoveryPolicy == Configuration.RECOVER_SILENTLY && !(exception instanceof ValidationException)) {
             // do nothing
             return;
         }
