@@ -1,6 +1,7 @@
 package net.sf.saxon;
 
 import net.sf.saxon.event.*;
+import net.sf.saxon.expr.ErrorExpression;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.XPathContextMajor;
 import net.sf.saxon.expr.instruct.*;
@@ -19,6 +20,7 @@ import net.sf.saxon.tree.wrapper.SpaceStrippedDocument;
 import net.sf.saxon.tree.wrapper.TypeStrippedDocument;
 import net.sf.saxon.type.Untyped;
 import net.sf.saxon.value.DateTimeValue;
+import net.sf.saxon.value.SingletonClosure;
 import org.xml.sax.SAXParseException;
 
 import javax.xml.transform.*;
@@ -2233,7 +2235,13 @@ public class Controller extends Transformer {
             Iterator<GlobalVariable> iter = vars.values().iterator();
             while (iter.hasNext()) {
                 GlobalVariable var = iter.next();
-                var.evaluateVariable(context);
+                try {
+                    var.evaluateVariable(context);
+                } catch (XPathException err) {
+                    // Don't report an exception unless the variable is actually evaluated
+                    SingletonClosure closure = new SingletonClosure(new ErrorExpression(err), context);
+                    getBindery().defineGlobalVariable(var, closure);
+                }
             }
         }
     }
