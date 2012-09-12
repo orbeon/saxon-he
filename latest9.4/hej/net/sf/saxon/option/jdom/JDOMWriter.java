@@ -13,8 +13,8 @@ import org.jdom.*;
 import java.util.Stack;
 
 /**
-  * JDOMWriter is a Receiver that constructs a JDOM document from the stream of events
-  */
+ * JDOMWriter is a Receiver that constructs a JDOM document from the stream of events
+ */
 
 public class JDOMWriter extends net.sf.saxon.event.Builder {
 
@@ -25,6 +25,7 @@ public class JDOMWriter extends net.sf.saxon.event.Builder {
 
     /**
      * Create a JDOMWriter using the default node factory
+     *
      * @param pipe information about the Saxon pipeline
      */
 
@@ -41,24 +42,26 @@ public class JDOMWriter extends net.sf.saxon.event.Builder {
      */
 
     public void setUnparsedEntity(String name, String systemID, String publicID) throws XPathException {
-       // no-op
+        // no-op
     }
 
     /**
-    * Start of the document.
-    */
+     * Start of the document.
+     */
 
-    public void open () {}
+    public void open() {
+    }
 
     /**
-    * End of the document.
-    */
+     * End of the document.
+     */
 
-    public void close () {}
+    public void close() {
+    }
 
     /**
      * Start of a document node.
-    */
+     */
 
     public void startDocument(int properties) throws XPathException {
         document = new Document();
@@ -76,10 +79,10 @@ public class JDOMWriter extends net.sf.saxon.event.Builder {
     }
 
     /**
-    * Start of an element.
-    */
+     * Start of an element.
+     */
 
-    public void startElement (NodeName nameCode, SchemaType typeCode, int locationId, int properties) throws XPathException {
+    public void startElement(NodeName nameCode, SchemaType typeCode, int locationId, int properties) throws XPathException {
         flush();
         String local = nameCode.getLocalPart();
         String uri = nameCode.getURI();
@@ -93,30 +96,30 @@ public class JDOMWriter extends net.sf.saxon.event.Builder {
         if (ancestors.size() == 1) {
             document.setRootElement(element);
         } else {
-            ((Element)ancestors.peek()).addContent(element);
+            ((Element) ancestors.peek()).addContent(element);
         }
         ancestors.push(element);
     }
 
-    public void namespace (NamespaceBinding namespaceBinding, int properties) throws XPathException {
-        String prefix =  namespaceBinding.getPrefix();
-        String uri =  namespaceBinding.getURI();
-        Namespace ns = (prefix.length()==0 ?
+    public void namespace(NamespaceBinding namespaceBinding, int properties) throws XPathException {
+        String prefix = namespaceBinding.getPrefix();
+        String uri = namespaceBinding.getURI();
+        Namespace ns = (prefix.length() == 0 ?
                 Namespace.getNamespace(uri) :
                 Namespace.getNamespace(prefix, uri));
-        ((Element)ancestors.peek()).addNamespaceDeclaration(ns);
+        ((Element) ancestors.peek()).addNamespaceDeclaration(ns);
     }
 
-    public void attribute (NodeName nameCode, SimpleType typeCode, CharSequence value, int locationId, int properties)
-    throws XPathException {
+    public void attribute(NodeName nameCode, SimpleType typeCode, CharSequence value, int locationId, int properties)
+            throws XPathException {
         String local = nameCode.getLocalPart();
         String uri = nameCode.getURI();
         String prefix = nameCode.getPrefix();
-        Namespace ns = (prefix.length()==0 ?
+        Namespace ns = (prefix.length() == 0 ?
                 Namespace.getNamespace(uri) :
                 Namespace.getNamespace(prefix, uri));
         Attribute att = new Attribute(local, value.toString(), ns);
-        ((Element)ancestors.peek()).getAttributes().add(att);
+        ((Element) ancestors.peek()).getAttributes().add(att);
     }
 
     public void startContent() throws XPathException {
@@ -124,10 +127,10 @@ public class JDOMWriter extends net.sf.saxon.event.Builder {
     }
 
     /**
-    * End of an element.
-    */
+     * End of an element.
+     */
 
-    public void endElement () throws XPathException {
+    public void endElement() throws XPathException {
         flush();
         ancestors.pop();
         Object parent = ancestors.peek();
@@ -137,46 +140,59 @@ public class JDOMWriter extends net.sf.saxon.event.Builder {
     }
 
     /**
-    * Character data.
-    */
+     * Character data.
+     */
 
-    public void characters (CharSequence chars, int locationId, int properties) throws XPathException {
+    public void characters(CharSequence chars, int locationId, int properties) throws XPathException {
         textBuffer.append(chars);
     }
 
     private void flush() {
         if (textBuffer.length() != 0) {
             Text text = new Text(textBuffer.toString());
-            ((Element)ancestors.peek()).addContent(text);
+            if (ancestors.size() == 1) {
+                ((Document) ancestors.peek()).addContent(text);
+            } else {
+                ((Element) ancestors.peek()).addContent(text);
+            }
             textBuffer.setLength(0);
         }
     }
 
 
     /**
-    * Handle a processing instruction.
-    */
+     * Handle a processing instruction.
+     */
 
-    public void processingInstruction (String target, CharSequence data, int locationId, int properties)
+    public void processingInstruction(String target, CharSequence data, int locationId, int properties)
             throws XPathException {
         flush();
         ProcessingInstruction pi = new ProcessingInstruction(target, data.toString());
-        ((Element)ancestors.peek()).addContent(pi);
+        if (ancestors.size() == 1) {
+            ((Document) ancestors.peek()).addContent(pi);
+        } else {
+            ((Element) ancestors.peek()).addContent(pi);
+        }
     }
 
     /**
-    * Handle a comment.
-    */
+     * Handle a comment.
+     */
 
-    public void comment (CharSequence chars, int locationId, int properties) throws XPathException{
+    public void comment(CharSequence chars, int locationId, int properties) throws XPathException {
         flush();
         Comment comment = new Comment(chars.toString());
-        ((Element)ancestors.peek()).addContent(comment);
+        if (ancestors.size() == 1) {
+            ((Document) ancestors.peek()).addContent(comment);
+        } else {
+            ((Element) ancestors.peek()).addContent(comment);
+        }
     }
 
     /**
      * Ask whether this Receiver (or the downstream pipeline) makes any use of the type annotations
      * supplied on element and attribute events
+     *
      * @return true if the Receiver makes any use of this information. If false, the caller
      *         may supply untyped nodes instead of supplying the type annotation
      */
@@ -187,6 +203,7 @@ public class JDOMWriter extends net.sf.saxon.event.Builder {
 
     /**
      * Get the constructed document node
+     *
      * @return the document node of the constructed XOM tree
      */
 
@@ -196,10 +213,12 @@ public class JDOMWriter extends net.sf.saxon.event.Builder {
 
     /**
      * Get the current root node.
+     *
      * @return a Saxon wrapper around the constructed XOM document node
      */
 
-    /*@Nullable*/ public NodeInfo getCurrentRoot() {
+    /*@Nullable*/
+    public NodeInfo getCurrentRoot() {
         return new DocumentWrapper(document, systemId, config);
     }
 }

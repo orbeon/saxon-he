@@ -21,7 +21,7 @@ public class XOMWriter extends net.sf.saxon.event.Builder {
     //private PipelineConfiguration pipe;
     //private NamePool namePool;
     private Document document;
-    private Stack<Node> ancestors = new Stack<Node>();
+    private Stack<ParentNode> ancestors = new Stack<ParentNode>();
     private NodeFactory nodeFactory;
 //    private String systemId;
     private boolean implicitDocumentNode = false;
@@ -133,7 +133,7 @@ public class XOMWriter extends net.sf.saxon.event.Builder {
             if (node instanceof Attribute) {
                 ((Element)ancestors.peek()).addAttribute((Attribute) node);
             } else {
-                ((Element)ancestors.peek()).appendChild(node);
+                ancestors.peek().appendChild(node);
             }
         }
     }
@@ -183,7 +183,7 @@ public class XOMWriter extends net.sf.saxon.event.Builder {
                 if (node instanceof Attribute) {
                     ((Element)ancestors.peek()).addAttribute((Attribute) node);
                 } else {
-                    ((Element)ancestors.peek()).appendChild(node);
+                    ancestors.peek().appendChild(node);
                 }
             }
             textBuffer.setLength(0);
@@ -204,7 +204,7 @@ public class XOMWriter extends net.sf.saxon.event.Builder {
             if (node instanceof Attribute) {
                 ((Element)ancestors.peek()).addAttribute((Attribute) node);
             } else {
-                ((Element)ancestors.peek()).appendChild(node);
+                ancestors.peek().appendChild(node);
             }
         }
     }
@@ -221,7 +221,7 @@ public class XOMWriter extends net.sf.saxon.event.Builder {
             if (node instanceof Attribute) {
                 ((Element)ancestors.peek()).addAttribute((Attribute) node);
             } else {
-                ((Element)ancestors.peek()).appendChild(node);
+                ancestors.peek().appendChild(node);
             }
         }
     }

@@ -20,7 +20,7 @@ import java.util.Stack;
 public class DOM4JWriter extends net.sf.saxon.event.Builder {
 
     private Document document;
-    private Stack ancestors = new Stack();
+    private Stack <Branch> ancestors = new Stack <Branch>();
     private boolean implicitDocumentNode = false;
     private FastStringBuffer textBuffer = new FastStringBuffer(FastStringBuffer.MEDIUM);
 
@@ -93,7 +93,7 @@ public class DOM4JWriter extends net.sf.saxon.event.Builder {
             element = new DefaultElement(name);
             document.setRootElement(element);
         } else {
-            element = ((Element)ancestors.peek()).addElement(name);
+            element = ancestors.peek().addElement(name);
         }
         ancestors.push(element);
     }
@@ -142,7 +142,7 @@ public class DOM4JWriter extends net.sf.saxon.event.Builder {
     private void flush() {
         if (textBuffer.length() != 0) {
             Text text = new DefaultText(textBuffer.toString());
-            ((Element)ancestors.peek()).add(text);
+            ancestors.peek().add(text);
             textBuffer.setLength(0);
         }
     }
@@ -156,7 +156,7 @@ public class DOM4JWriter extends net.sf.saxon.event.Builder {
             throws XPathException {
         flush();
         ProcessingInstruction pi = new DefaultProcessingInstruction(target, data.toString());
-        ((Element)ancestors.peek()).add(pi);
+        ancestors.peek().add(pi);
     }
 
     /**
@@ -166,7 +166,7 @@ public class DOM4JWriter extends net.sf.saxon.event.Builder {
     public void comment (CharSequence chars, int locationId, int properties) throws XPathException{
         flush();
         Comment comment = new DefaultComment(chars.toString());
-        ((Element)ancestors.peek()).add(comment);
+        ancestors.peek().add(comment);
     }
 
     /**
