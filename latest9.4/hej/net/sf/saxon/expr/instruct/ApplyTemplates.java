@@ -155,6 +155,8 @@ public class ApplyTemplates extends Instruction implements ITemplateCall {
             Expression e2 = opt.makeStreamingApplyTemplates(this);
             if (e2 != null) {
                 return e2;
+            } else {
+                throw new XPathException("xsl:apply-templates instruction is not streamable: use -explain:on for explanation");
             }
         }
         return this;
