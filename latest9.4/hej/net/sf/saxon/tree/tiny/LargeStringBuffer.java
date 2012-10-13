@@ -144,7 +144,7 @@ public final class LargeStringBuffer implements AppendableCharSequence, Serializ
             length += len;
 
         } else {
-            throw new IllegalArgumentException("Unknown kind of CharSequence");
+            append(s.toString());
         }
     }
 
