@@ -156,7 +156,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall {
             if (e2 != null) {
                 return e2;
             } else {
-                throw new XPathException("xsl:apply-templates instruction is not streamable: use -explain:on for explanation");
+                //throw new XPathException("xsl:apply-templates instruction is not streamable: use -explain:on for explanation");
             }
         }
         return this;
