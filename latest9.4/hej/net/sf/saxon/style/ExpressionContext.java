@@ -3,6 +3,7 @@ package net.sf.saxon.style;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.Executable;
+import net.sf.saxon.expr.instruct.GlobalVariable;
 import net.sf.saxon.expr.instruct.LocationMap;
 import net.sf.saxon.functions.FunctionLibrary;
 import net.sf.saxon.functions.IntegratedFunctionLibrary;
@@ -272,6 +273,11 @@ public class ExpressionContext implements XSLTStaticContext {
     public Expression bindVariable(StructuredQName qName) throws XPathException {
         XSLVariableDeclaration xslVariableDeclaration = element.bindVariable(qName);
         if (xslVariableDeclaration == null) {
+            // it might be a variable imported from XQuery
+            GlobalVariable v = getExecutable().getGlobalVariable(qName);
+            if (v != null) {
+                return new VariableReference(v);
+            }
             if (NamespaceConstant.ERR.equals(qName.getURI())) {
                 AxisIterator catchers = element.iterateAxis(Axis.ANCESTOR_OR_SELF,
                         new NameTest(Type.ELEMENT, StandardNames.XSL_CATCH, getNamePool()));
