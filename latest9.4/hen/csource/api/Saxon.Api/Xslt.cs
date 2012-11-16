@@ -71,7 +71,7 @@ namespace Saxon.Api
             this.processor = processor;
             this.config = processor.config;
             this.factory = new TransformerFactoryImpl(config);
-            this.info = new JCompilerInfo();
+            this.info = new JCompilerInfo(config.getDefaultXsltCompilerInfo());
             info.setURIResolver(config.getURIResolver());
             info.setErrorListener(config.getErrorListener());
         }
