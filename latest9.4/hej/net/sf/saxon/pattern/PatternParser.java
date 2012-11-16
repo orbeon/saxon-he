@@ -113,6 +113,7 @@ public class PatternParser extends ExpressionParser {
                 case Token.PI_QNAME:
                 case Token.TAG:
                 case Token.INLINE_FUNCTION_LITERAL:
+                case Token.DOTDOT:
                     grumble("Token " + currentTokenDisplay() + " not allowed here in an XSLT pattern");
                     return null;
                 case Token.FUNCTION:
