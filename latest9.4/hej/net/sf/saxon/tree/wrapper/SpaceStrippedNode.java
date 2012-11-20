@@ -78,29 +78,15 @@ public class SpaceStrippedNode extends AbstractVirtualNode implements WrappingFu
      * {@link net.sf.saxon.om.Item#getTypedValue()}. However, this method is often more convenient and may be
      * more efficient, especially in the common case where the value is expected to be a singleton.
      *
-     * @return the typed value. If requireSingleton is set to true, the result will always be an
-     *         AtomicValue. In other cases it may be a Value representing a sequence whose items are atomic
-     *         values.
+     * @return the typed value.
      * @since 8.5
      */
 
     public Value atomize() throws XPathException {
-        // We rely on the fact that for all simple types other than string, whitespace is collapsed,
-        // so the atomized value of the stripped node is the same as the atomized value of its underlying
-        // node. Only when the simple type is string do we need to strip unwanted whitespace text nodes
-        Value baseVal = node.atomize();
-        if (baseVal instanceof StringValue) {
-            int primitiveType = ((StringValue)baseVal).getTypeLabel().getPrimitiveType();
-            switch (primitiveType) {
-                case StandardNames.XS_STRING:
-                    return new StringValue(getStringValueCS());
-                case StandardNames.XS_ANY_URI:
-                    return new AnyURIValue(getStringValueCS());
-                default:
-                    return new UntypedAtomicValue(getStringValueCS());
-            }
+        if (getNodeKind() == Type.ELEMENT) {
+            return getSchemaType().atomize(this);
         } else {
-            return baseVal;
+            return node.atomize();
         }
     }
 

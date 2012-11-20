@@ -438,7 +438,7 @@ public abstract class AbstractVirtualNode implements VirtualNode {
      */
 
     public boolean isNilled() {
-        return false;
+        return node.isNilled();
     }
 
 }
