@@ -159,6 +159,7 @@ public abstract class StandardNames {
     public static final int XML_LANG = XML + 3;
     public static final int XML_ID = XML + 4;
     public static final int XML_LANG_TYPE = XML + 5;
+    public static final int XML_SPACE_TYPE = XML + 6;
 
     public static final NodeName XML_ID_NAME = new FingerprintedQName("xml", NamespaceConstant.XML, "id", XML_ID);
 
@@ -543,6 +544,7 @@ public abstract class StandardNames {
         bindXMLName(XML_LANG, "lang");
         bindXMLName(XML_ID, "id");
         bindXMLName(XML_LANG_TYPE, "_langType");
+        bindXMLName(XML_SPACE_TYPE, "_spaceType");
 
         bindXSName(XS_STRING, "string");
         bindXSName(XS_BOOLEAN, "boolean");
