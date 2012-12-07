@@ -12,6 +12,8 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.tree.iter.EmptyAxisIterator;
 import net.sf.saxon.tree.util.FastStringBuffer;
+import net.sf.saxon.type.ComplexType;
+import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.*;
 
@@ -267,6 +269,12 @@ public class SpaceStrippedNode extends AbstractVirtualNode implements WrappingFu
             }
             NodeInfo actualParent =
                     (parent==null ? nextRealNode.getParent() : parent.node);
+
+            // if the node has a simple type annotation, it is preserved
+            SchemaType type = actualParent.getSchemaType();
+            if (type.isSimpleType() || ((ComplexType)type).isSimpleContent()) {
+                return true;
+            }
 
             if (((SpaceStrippedDocument)docWrapper).containsPreserveSpace()) {
                 NodeInfo p = actualParent;
