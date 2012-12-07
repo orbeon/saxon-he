@@ -536,6 +536,8 @@ public final class ValueComparison extends BinaryExpression implements Compariso
             long operand;
             if (literalOperand instanceof IntegerValue) {
                 operand = ((IntegerValue) literalOperand).longValue();
+            } else if (literalOperand.isNaN()) {
+                return new Literal(BooleanValue.get(op == Token.FNE));
             } else if (((NumericValue) literalOperand).isWholeNumber()) {
                 operand = ((NumericValue) literalOperand).longValue();
             } else if (op == Token.FEQ) {
