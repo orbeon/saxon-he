@@ -88,6 +88,7 @@ public class NumberFormatter implements Serializable {
                     c = UTF16CharacterSet.combinePair((char)c, format.charAt(++i));
                 }
             }
+            if (c > 65535) i--;
             if (i>t) {
                 String sep = format.substring(t, i);
                 punctuationTokens.add(sep);
