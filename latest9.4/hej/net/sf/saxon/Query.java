@@ -761,7 +761,7 @@ public class Query {
 
     protected void processSource(/*@Nullable*/ Source sourceInput, XQueryExpression exp, DynamicQueryContext dynamicEnv) throws XPathException {
         if (sourceInput != null) {
-            ParseOptions options = new ParseOptions(); 
+            ParseOptions options = new ParseOptions(config.getParseOptions());
             if (showTime) {
                 System.err.println("Processing " + sourceInput.getSystemId());
             }
