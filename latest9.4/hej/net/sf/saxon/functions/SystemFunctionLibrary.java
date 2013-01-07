@@ -32,7 +32,7 @@ public class SystemFunctionLibrary implements FunctionLibrary {
      * @return the appropriate SystemFunctionLibrary
      */
 
-    public static SystemFunctionLibrary getSystemFunctionLibrary(int functionSet) {
+    public synchronized static SystemFunctionLibrary getSystemFunctionLibrary(int functionSet) {
         if (THE_INSTANCES.get(functionSet) == null) {
             THE_INSTANCES.put(functionSet, new SystemFunctionLibrary(functionSet));
         }
