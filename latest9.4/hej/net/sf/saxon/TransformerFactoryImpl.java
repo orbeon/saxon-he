@@ -2,6 +2,8 @@ package net.sf.saxon;
 
 import net.sf.saxon.lib.FeatureKeys;
 import net.sf.saxon.trans.CompilerInfo;
+import net.sf.saxon.trans.ConfigurationReader;
+import net.sf.saxon.trans.XPathException;
 import org.xml.sax.XMLFilter;
 
 import javax.xml.transform.*;
@@ -10,6 +12,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import java.io.File;
 
 
 /**
@@ -262,7 +265,14 @@ public class TransformerFactoryImpl extends SAXTransformerFactory {
      */
 
     public void setAttribute(String name, Object value) throws IllegalArgumentException {
-        if (name.equals(FeatureKeys.CONFIGURATION)) {
+        if (name.equals(FeatureKeys.CONFIGURATION_FILE)) {
+            ConfigurationReader reader = new ConfigurationReader();
+            try {
+                setConfiguration(reader.makeConfiguration(new StreamSource(new File((String)(value)))));
+            } catch (XPathException err) {
+                throw new IllegalArgumentException(err);
+            }
+        } else if (name.equals(FeatureKeys.CONFIGURATION)) {
             config = (Configuration)value;
         } else {
             config.setConfigurationProperty(name, value);
