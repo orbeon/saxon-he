@@ -927,7 +927,9 @@ namespace Saxon.Api
                 else if (initialContextNode != null)
                 {
                     JDocumentInfo doc = initialContextNode.getDocumentRoot();
-                    controller.registerDocument(doc, (doc.getBaseURI()==null ? null : new JDocumentURI(doc.getBaseURI())));
+		    if(doc != null) {
+                    	controller.registerDocument(doc, (doc.getBaseURI()==null ? null : new JDocumentURI(doc.getBaseURI())));
+		    }
                     controller.transform(initialContextNode, destination.GetResult(controller.makePipelineConfiguration()));
                 }
                 else
