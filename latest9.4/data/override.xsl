@@ -106,9 +106,10 @@
   </xsl:template>
   
 
-  <xsl:function name="f:componentName" as="xs:QName">
+  <xsl:function name="f:componentName" as="xs:QName?">
     <xsl:param name="component" as="element()"/>
-    <xsl:sequence select=" QName($component/ancestor::xs:schema/@targetNamespace, $component/@name)"/>
+    <xsl:sequence select="if ($component/@name) then QName($component/ancestor::xs:schema/@targetNamespace, $component/@name) else ()"/>
   </xsl:function>
+  
 
 </xsl:transform>
