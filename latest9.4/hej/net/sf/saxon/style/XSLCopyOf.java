@@ -53,7 +53,7 @@ public final class XSLCopyOf extends StyleElement {
                 validationAtt = Whitespace.trim(atts.getValue(a));
             } else if (f.equals(StandardNames.TYPE)) {
                 typeAtt = Whitespace.trim(atts.getValue(a));
-            } else if (f.equals("read-once") && atts.getURI(a).equals(NamespaceConstant.SAXON)) {
+            } else if (atts.getLocalName(a).equals("read-once") && atts.getURI(a).equals(NamespaceConstant.SAXON)) {
                 readOnceAtt = Whitespace.trim(atts.getValue(a));
         	} else {
         		checkUnknownAttribute(atts.getNodeName(a));

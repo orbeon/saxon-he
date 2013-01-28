@@ -94,7 +94,7 @@ public class XSLFunction extends StyleElement implements StylesheetProcedure {
                     override = true;
                     compileError("override must be 'yes' or 'no'", "XTSE0020");
                 }
-            } else if (f.equals("memo-function") && atts.getURI(a).equals(NamespaceConstant.SAXON)) {
+            } else if (atts.getLocalName(a).equals("memo-function") && atts.getURI(a).equals(NamespaceConstant.SAXON)) {
                 String memoAtt = Whitespace.trim(atts.getValue(a));
                 if ("yes".equals(memoAtt)) {
                     memoFunction = true;
