@@ -1,5 +1,6 @@
 package net.sf.saxon.type;
 
+import net.sf.saxon.dotnet.DotNetExternalObjectType;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.om.NameChecker;
 import net.sf.saxon.om.NamespaceResolver;
@@ -168,8 +169,11 @@ public abstract class StringConverter extends Converter {
                     // converter to user-defined subtypes of built-in subtypes of xs:string
                     return new StringToDerivedStringSubtype(rules, targetType);
                 }
+            } else if(targetType instanceof DotNetExternalObjectType || targetType instanceof ExternalObjectType) {
+              return new StringToExternalObjectType();
             } else {
                 // converter to user-defined types derived from types other than xs:string
+
                 StringConverter first = getStringConverter((AtomicType)targetType.getPrimitiveItemType(), rules);
                 DownCastingConverter second = new DownCastingConverter(targetType, rules);
                 return new StringToNonStringDerivedType(first, second);
@@ -993,6 +997,15 @@ public abstract class StringConverter extends Converter {
             } catch (XPathException err) {
                 return new ValidationFailure(ValidationException.makeXPathException(err));
             }
+        }
+    }
+
+    public static class StringToExternalObjectType extends StringConverter {
+
+
+        @Override
+        public ConversionResult convertString(CharSequence input) {
+            return new ValidationFailure("Cannot convert string to external object");
         }
     }
 }
