@@ -1,6 +1,5 @@
 package net.sf.saxon.type;
 
-import net.sf.saxon.dotnet.DotNetExternalObjectType;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.om.NameChecker;
 import net.sf.saxon.om.NamespaceResolver;
@@ -169,9 +168,24 @@ public abstract class StringConverter extends Converter {
                     // converter to user-defined subtypes of built-in subtypes of xs:string
                     return new StringToDerivedStringSubtype(rules, targetType);
                 }
-            } else if(targetType instanceof DotNetExternalObjectType || targetType instanceof ExternalObjectType) {
-              return new StringToExternalObjectType();
+            } if(targetType instanceof ExternalObjectType) {
+               return new StringToExternalObjectType();
             } else {
+                String className = "net.sf.saxon.dotnet.DotNetExternalObjectType";
+                Class theClass;
+                ClassLoader classLoader = StringConverter.class.getClassLoader();
+                try {
+                    try{
+                        theClass = classLoader.loadClass(className);
+                    }catch(Exception ex) {
+                        theClass = Class.forName(className);
+                    }
+                    if(theClass.isInstance(targetType)) {
+                        return new StringToExternalObjectType();
+                    }
+                }
+                catch(ClassNotFoundException ex) {}
+
                 // converter to user-defined types derived from types other than xs:string
 
                 StringConverter first = getStringConverter((AtomicType)targetType.getPrimitiveItemType(), rules);
