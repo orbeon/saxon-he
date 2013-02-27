@@ -1,5 +1,6 @@
 package net.sf.saxon.type;
 
+import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.om.NameChecker;
 import net.sf.saxon.om.NamespaceResolver;
@@ -9,6 +10,7 @@ import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.value.*;
+import net.sf.saxon.value.StringValue;
 
 import java.util.regex.Pattern;
 
@@ -168,9 +170,10 @@ public abstract class StringConverter extends Converter {
                     // converter to user-defined subtypes of built-in subtypes of xs:string
                     return new StringToDerivedStringSubtype(rules, targetType);
                 }
-            } if(targetType instanceof ExternalObjectType) {
+            }
+            if (targetType instanceof ExternalObjectType) {
                return new StringToExternalObjectType();
-            } else {
+            } else if (Configuration.getPlatform().isDotNet()) {
                 String className = "net.sf.saxon.dotnet.DotNetExternalObjectType";
                 Class theClass;
                 ClassLoader classLoader = StringConverter.class.getClassLoader();
@@ -185,13 +188,13 @@ public abstract class StringConverter extends Converter {
                     }
                 }
                 catch(ClassNotFoundException ex) {}
-
-                // converter to user-defined types derived from types other than xs:string
-
-                StringConverter first = getStringConverter((AtomicType)targetType.getPrimitiveItemType(), rules);
-                DownCastingConverter second = new DownCastingConverter(targetType, rules);
-                return new StringToNonStringDerivedType(first, second);
             }
+            // converter to user-defined types derived from types other than xs:string
+
+            StringConverter first = getStringConverter((AtomicType)targetType.getPrimitiveItemType(), rules);
+            DownCastingConverter second = new DownCastingConverter(targetType, rules);
+            return new StringToNonStringDerivedType(first, second);
+
         }
 
 //       } else {
