@@ -165,7 +165,7 @@ public class ExternalObjectType implements AtomicType, Serializable {
      */
 
     public boolean isPlainType() {
-        return false;
+        return true;
     }    
 
     /**
