@@ -431,7 +431,7 @@ public class EventToStaxBridge implements XMLStreamReader {
         if (currentStaxEvent != XMLStreamConstants.PROCESSING_INSTRUCTION) {
             throw new IllegalStateException("Not positioned at a processing instruction");
         }
-        return getText();
+        return currentItem.getStringValue();
     }
 
     public String getPITarget() {
