@@ -51,7 +51,7 @@ public class Numberer_de extends AbstractNumberer {
             return s + "hundert" +
                 (rem==0 ? "" : (rem>20 ? "" : "und") + toWords(rem, LOWER_CASE));
         } else {
-            if (number < 20) return germanUnits[(int)number];
+            if (number < 20) return (number == 1 ? "Eins" : germanUnits[(int)number]);
             int rem = (int)(number % 10);
             int tens = (int)number / 10;
             return (germanUnits[rem]) +
@@ -61,7 +61,7 @@ public class Numberer_de extends AbstractNumberer {
     }
 
     private static String[] germanUnits = {
-        "", "Eins", "Zwei", "Drei", "Vier", "F\u00fcnf", "Sechs", "Sieben", "Acht", "Neun",
+        "", "Ein", "Zwei", "Drei", "Vier", "F\u00fcnf", "Sechs", "Sieben", "Acht", "Neun",
         "Zehn", "Elf", "Zw\u00f6lf", "Dreizehn", "Vierzehn", "F\u00fcnfzehn", "Sechszehn",
         "Siebzehn", "Achtzehn", "Neunzehn"};
 
