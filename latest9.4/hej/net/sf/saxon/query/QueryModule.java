@@ -827,9 +827,11 @@ public class QueryModule implements StaticContext {
                             String uri = ((GlobalVariable) b).getSystemId();
                             StructuredQName qName = b.getVariableQName();
                             boolean synthetic = NamespaceConstant.SAXON.equals(qName.getURI()) && "gg".equals(qName.getPrefix());
-                            if (!synthetic && !uri.equals(getSystemId())) {
+                            if (!synthetic && uri!=null && !uri.equals(getSystemId())) {
                                 QueryModule sqc = executable.getQueryModuleWithSystemId(uri, topModule);
-                                sqc.lookForModuleCycles(referees, ((GlobalVariable) b).getLineNumber());
+                                if (sqc != null) {
+                                    sqc.lookForModuleCycles(referees, ((GlobalVariable) b).getLineNumber());
+                                }
                             }
                         }
                     }
@@ -837,9 +839,11 @@ public class QueryModule implements StaticContext {
                     ExpressionTool.gatherCalledFunctions(select, fList);
                     for (UserFunction f : fList) {
                         String uri = f.getSystemId();
-                        if (!uri.equals(getSystemId())) {
+                        if (uri!=null && !uri.equals(getSystemId())) {
                             QueryModule sqc = executable.getQueryModuleWithSystemId(uri, topModule);
-                            sqc.lookForModuleCycles(referees, f.getLineNumber());
+                            if (sqc != null) {
+                                sqc.lookForModuleCycles(referees, f.getLineNumber());
+                            }
                         }
                     }
                 }
@@ -857,9 +861,11 @@ public class QueryModule implements StaticContext {
                             String uri = ((GlobalVariable) b).getSystemId();
                             StructuredQName qName = b.getVariableQName();
                             boolean synthetic = NamespaceConstant.SAXON.equals(qName.getURI()) && "gg".equals(qName.getPrefix());
-                            if (!synthetic && !uri.equals(getSystemId())) {
+                            if (!synthetic && uri!=null && !uri.equals(getSystemId())) {
                                 QueryModule sqc = executable.getQueryModuleWithSystemId(uri, topModule);
-                                sqc.lookForModuleCycles(referees, ((GlobalVariable) b).getLineNumber());
+                                if (sqc != null) {
+                                    sqc.lookForModuleCycles(referees, ((GlobalVariable) b).getLineNumber());
+                                }
                             }
                         }
                     }
@@ -867,9 +873,11 @@ public class QueryModule implements StaticContext {
                     ExpressionTool.gatherCalledFunctions(body, fList);
                     for (UserFunction f : fList) {
                         String uri = f.getSystemId();
-                        if (!uri.equals(getSystemId())) {
+                        if (uri!=null && !uri.equals(getSystemId())) {
                             QueryModule sqc = executable.getQueryModuleWithSystemId(uri, topModule);
-                            sqc.lookForModuleCycles(referees, f.getLineNumber());
+                            if (sqc != null) {
+                                sqc.lookForModuleCycles(referees, f.getLineNumber());
+                            }
                         }
                     }
                 }
