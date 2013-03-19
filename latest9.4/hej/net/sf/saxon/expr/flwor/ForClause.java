@@ -266,7 +266,7 @@ public class ForClause extends Clause {
                         FunctionCall position =
                                 SystemFunction.makeSystemFunction("position", SimpleExpression.NO_ARGUMENTS);
                         Expression predicate = term.copy();
-                        predicate.replaceSubExpression(((BinaryExpression) predicate).getOperands()[op], position);
+                        predicate.replaceSubExpression(((ComparisonExpression) predicate).getOperands()[op], position);
                         if (debug) {
                             opt.trace("Replaced positional variable in predicate by position()");
                         }
