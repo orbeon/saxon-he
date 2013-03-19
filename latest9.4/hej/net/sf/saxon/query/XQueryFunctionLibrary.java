@@ -69,6 +69,9 @@ public class XQueryFunctionLibrary implements FunctionLibrary, XQueryFunctionBin
     public void declareFunction(/*@NotNull*/ XQueryFunction function) throws XPathException {
         String keyObj = function.getIdentificationKey();
         XQueryFunction existing = functions.get(keyObj);
+        if (existing == function) {
+            return;
+        }
         if (existing != null) {
             XPathException err = new XPathException("Duplicate definition of function " +
                     function.getDisplayName() +
