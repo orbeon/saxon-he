@@ -7,10 +7,7 @@ import net.sf.saxon.expr.instruct.Executable;
 import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.instruct.Template;
 import net.sf.saxon.expr.instruct.TraceExpression;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.Optimizer;
-import net.sf.saxon.expr.parser.RoleLocator;
-import net.sf.saxon.expr.parser.TypeChecker;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.pattern.Pattern;
@@ -413,6 +410,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetProcedu
         }
 
         Expression exp = compiledTemplate.getBody();
+        ExpressionTool.resetPropertiesWithinSubtree(exp);
         ExpressionVisitor visitor = makeExpressionVisitor();
         visitor.setOptimizeForStreaming(compiledTemplate.isStreamable());
         Optimizer opt = getConfiguration().obtainOptimizer();
@@ -421,6 +419,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetProcedu
             // level because we have more information now.
             Expression exp2 = visitor.typeCheck(exp, cit);
             if (opt.getOptimizationLevel() != Optimizer.NO_OPTIMIZATION) {
+                ExpressionTool.resetPropertiesWithinSubtree(exp2);
                 exp2 = visitor.optimize(exp2, cit);
             }
             if (exp != exp2) {

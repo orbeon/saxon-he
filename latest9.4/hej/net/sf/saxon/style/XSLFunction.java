@@ -282,6 +282,7 @@ public class XSLFunction extends StyleElement implements StylesheetProcedure {
 
     public void typeCheckBody() throws XPathException {
         Expression exp = compiledFunction.getBody();
+        ExpressionTool.resetPropertiesWithinSubtree(exp);
         Expression exp2 = exp;
         ExpressionVisitor visitor = makeExpressionVisitor();
         try {
@@ -306,6 +307,7 @@ public class XSLFunction extends StyleElement implements StylesheetProcedure {
 
     public void optimize(Declaration declaration) throws XPathException {
         Expression exp = compiledFunction.getBody();
+        ExpressionTool.resetPropertiesWithinSubtree(exp);
         ExpressionVisitor visitor = makeExpressionVisitor();
         Expression exp2 = exp;
         Optimizer opt = getConfiguration().obtainOptimizer();

@@ -4,6 +4,7 @@ import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.GeneralVariable;
 import net.sf.saxon.expr.instruct.GlobalVariable;
 import net.sf.saxon.expr.instruct.SlotManager;
+import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.Optimizer;
 import net.sf.saxon.pattern.AnyNodeTest;
@@ -180,6 +181,7 @@ public abstract class XSLVariableDeclaration
             Optimizer opt = getConfiguration().obtainOptimizer();
             try {
                 if (opt.getOptimizationLevel() != Optimizer.NO_OPTIMIZATION) {
+                    ExpressionTool.resetPropertiesWithinSubtree(exp2);
                     exp2 = exp2.optimize(visitor, new ExpressionVisitor.ContextItemType(AnyNodeTest.getInstance(), true));
                 }
 
