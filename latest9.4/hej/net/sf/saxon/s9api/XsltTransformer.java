@@ -13,6 +13,8 @@ import net.sf.saxon.trans.XPathException;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Properties;
 
 /**
@@ -425,6 +427,13 @@ public class XsltTransformer implements Destination {
     public void transform() throws SaxonApiException {
         if (destination == null) {
             throw new IllegalStateException("No destination has been supplied");
+        }
+        if (baseOutputUriWasSet && destination instanceof XdmDestination && ((XdmDestination)destination).getBaseURI() == null) {
+            try {
+                ((XdmDestination)destination).setBaseURI(new URI(controller.getBaseOutputURI()));
+            } catch (URISyntaxException e) {
+                // no action
+            }
         }
         try {
             controller.transform(initialSource, getDestinationResult());
