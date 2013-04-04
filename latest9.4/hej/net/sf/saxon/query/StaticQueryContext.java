@@ -75,7 +75,7 @@ public class StaticQueryContext {
     private boolean isUpdating = false;
     private DecimalValue languageVersion = DecimalValue.ONE;
     private CollationMap collationMap;
-    private LocationMap locationMap;
+    //private LocationMap locationMap;
     private boolean schemaAware;
 
 
@@ -107,13 +107,8 @@ public class StaticQueryContext {
             ((StandardErrorListener)errorListener).setRecoveryPolicy(Configuration.DO_NOT_RECOVER);
         }
         collationMap = new CollationMap(config.getCollationMap());
-        locationMap = new LocationMap();
+        //locationMap = new LocationMap();
         schemaAware = (Boolean)config.getConfigurationProperty(FeatureKeys.XQUERY_SCHEMA_AWARE);
-//        executable = new Executable(config);
-//        executable.setCollationTable(new CollationMap(config.getCollationMap()));
-//        executable.setHostLanguage(Configuration.XQUERY);
-//        executable.setLocationMap(new LocationMap());
-//        executable.setSchemaAware((Boolean)config.getConfigurationProperty(FeatureKeys.XQUERY_SCHEMA_AWARE));
         reset();
     }
 
@@ -138,7 +133,7 @@ public class StaticQueryContext {
                  ((StandardErrorListener)errorListener).setRecoveryPolicy(Configuration.DO_NOT_RECOVER);
              }
              collationMap = new CollationMap(config.getCollationMap());
-             locationMap = new LocationMap();
+             //locationMap = new LocationMap();
              //schemaAware = (Boolean)config.getConfigurationProperty(FeatureKeys.XQUERY_SCHEMA_AWARE);
 //             executable = new Executable(config);
 //             executable.setCollationTable(new CollationMap(config.getCollationMap()));
@@ -187,7 +182,7 @@ public class StaticQueryContext {
         isUpdating = c.isUpdating;
         languageVersion = c.languageVersion;
         collationMap = new CollationMap(c.collationMap);
-        locationMap = new LocationMap();
+        //locationMap = new LocationMap();
         schemaAware = c.schemaAware;
 //        executable = new Executable(config);
 //        executable.setCollationTable(new CollationMap(c.executable.getCollationTable()));
@@ -260,7 +255,7 @@ public class StaticQueryContext {
     /*@NotNull*/ public Executable getExecutable() {
         Executable executable = new Executable(config);
         executable.setCollationMap(collationMap);
-        executable.setLocationMap(locationMap);
+        executable.setLocationMap(new LocationMap());
         executable.setSchemaAware(schemaAware);
         executable.setHostLanguage(Configuration.XQUERY, getLanguageVersion().equals(DecimalValue.THREE));
         return executable;
