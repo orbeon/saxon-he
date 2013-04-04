@@ -2450,6 +2450,9 @@ public class Configuration implements Serializable, SourceResolver, NotationSet 
             parser = makeParser(getStyleParserClass());
         } else {
             parser = loadParser();
+            StandardEntityResolver resolver = new StandardEntityResolver();
+            resolver.setConfiguration(this);
+            parser.setEntityResolver(resolver);
         }
         try {
             parser.setFeature("http://xml.org/sax/features/namespaces", true);
