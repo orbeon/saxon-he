@@ -207,7 +207,25 @@ public abstract class NodeTest implements ItemType, Serializable {
      */
 
     public SchemaType getContentType() {
-        return AnyType.getInstance();
+        int m = getNodeKindMask();
+        switch (m) {
+            case 1<<Type.DOCUMENT:
+                return AnyType.getInstance();
+            case 1<<Type.ELEMENT:
+                return AnyType.getInstance();
+            case 1<<Type.ATTRIBUTE:
+                return AnySimpleType.getInstance();
+            case 1<<Type.COMMENT:
+                return BuiltInAtomicType.STRING;
+            case 1<<Type.TEXT:
+                return BuiltInAtomicType.UNTYPED_ATOMIC;
+            case 1<<Type.PROCESSING_INSTRUCTION:
+                return BuiltInAtomicType.STRING;
+            case 1<<Type.NAMESPACE:
+                return BuiltInAtomicType.STRING;
+            default:
+                return AnyType.getInstance();
+        }
     }
 
     /**
