@@ -23,10 +23,9 @@ import net.sf.saxon.pattern.Pattern;
 import net.sf.saxon.style.XSLTemplate;
 import net.sf.saxon.trans.RuleTarget;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.ListType;
-import net.sf.saxon.type.PlainType;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.TypeHierarchy;
+import net.sf.saxon.type.UnionType;
 
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -342,7 +341,7 @@ public class Optimizer implements Serializable {
      */
 
     public Expression makeCastToList(Expression operand, SchemaType targetType, boolean allowsEmpty) {
-        return new CastToList(operand, (ListType) targetType, allowsEmpty);
+        throw new UnsupportedOperationException("Cast to List is not supported in Saxon-HE");
     }
 
     /**
@@ -381,7 +380,7 @@ public class Optimizer implements Serializable {
         return expr;
     }
 
-    public FunctionItem makeCastToUnion(final PlainType type, final NamespaceResolver resolver) {
+    public FunctionItem makeCastToUnion(final UnionType type, final NamespaceResolver resolver) {
         throw new UnsupportedOperationException();
     }
 

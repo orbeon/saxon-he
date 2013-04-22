@@ -10,15 +10,11 @@ package net.sf.saxon.expr;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.ExternalObjectModel;
 import net.sf.saxon.om.*;
-import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.wrapper.VirtualNode;
-import net.sf.saxon.type.BuiltInAtomicType;
-import net.sf.saxon.type.ExternalObjectType;
-import net.sf.saxon.type.ItemType;
-import net.sf.saxon.type.TypeHierarchy;
+import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
 
 import java.io.Serializable;
@@ -338,7 +334,7 @@ public abstract class PJConverter implements Serializable {
             } else if (itemType instanceof ExternalObjectType) {
                     return UnwrapExternalObject.INSTANCE;
 
-            } else if (itemType instanceof EmptySequenceTest) {
+            } else if (itemType instanceof ErrorType) {
                 return ToNull.INSTANCE;
 
             } else if (itemType instanceof NodeTest) {

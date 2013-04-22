@@ -18,8 +18,10 @@ import net.sf.saxon.functions.Minimax;
 import net.sf.saxon.functions.SystemFunctionCall;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.lib.StringCollator;
-import net.sf.saxon.om.*;
-import net.sf.saxon.pattern.EmptySequenceTest;
+import net.sf.saxon.om.GroundedValue;
+import net.sf.saxon.om.Sequence;
+import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
@@ -222,7 +224,7 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
         ItemType t0 = operand0.getItemType(th);  // this is always an atomic type or empty-sequence()
         ItemType t1 = operand1.getItemType(th);  // this is always an atomic type or empty-sequence()
 
-        if (t0 instanceof EmptySequenceTest || t1 instanceof EmptySequenceTest) {
+        if (t0 instanceof ErrorType || t1 instanceof ErrorType) {
             return Literal.makeLiteral(BooleanValue.FALSE);
         }
 

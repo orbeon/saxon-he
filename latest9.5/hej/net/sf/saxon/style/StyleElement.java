@@ -219,7 +219,7 @@ implements Locator, Container, InstructionInfo {
 
 	protected ItemType getCommonChildItemType() {
 		final TypeHierarchy th = getConfiguration().getTypeHierarchy();
-		ItemType t = EmptySequenceTest.getInstance();
+		ItemType t = ErrorType.getInstance();
 		AxisIterator children = iterateAxis(AxisInfo.CHILD);
 		while (true) {
 			NodeInfo next = children.next();

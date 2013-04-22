@@ -518,7 +518,8 @@ public final class AxisExpression extends Expression {
     /**
      * Make a union node test for a set of supplied element fingerprints
      *
-     * @param elements the set of integer element fingerprints to be tested for
+     * @param elements the set of integer element fingerprints to be tested for. Must not
+     * be empty.
      * @param pool     the name pool
      * @return a NodeTest that returns true if the node is an element whose name is one of the names
      *         in this set
@@ -535,11 +536,7 @@ public final class AxisExpression extends Expression {
                 test = new CombinedNodeTest(test, Token.UNION, nextTest);
             }
         }
-        if (test == null) {
-            return EmptySequenceTest.getInstance();
-        } else {
-            return test;
-        }
+        return test;
     }
 
     /**
@@ -884,13 +881,13 @@ public final class AxisExpression extends Expression {
                 return new ItemTypePattern(NodeKindTest.ATTRIBUTE);
             } else if (!AxisInfo.containsNodeKind(axis, kind)) {
                 // for example, attribute::comment()
-                return new ItemTypePattern(EmptySequenceTest.getInstance());
+                return new ItemTypePattern(ErrorType.getInstance());
             } else {
                 return new ItemTypePattern(test);
             }
         } else if (axis == AxisInfo.CHILD || axis == AxisInfo.DESCENDANT || axis == AxisInfo.DESCENDANT_OR_SELF) {
             if (kind != Type.NODE && !AxisInfo.containsNodeKind(axis, kind)) {
-                test = EmptySequenceTest.getInstance();
+                return new ItemTypePattern(ErrorType.getInstance());
             }
             return new ItemTypePattern(test);
         } else if (axis == AxisInfo.NAMESPACE) {
@@ -899,7 +896,7 @@ public final class AxisExpression extends Expression {
                 return new ItemTypePattern(NodeKindTest.NAMESPACE);
             } else if (!AxisInfo.containsNodeKind(axis, kind)) {
                 // for example, namespace::comment()
-                return new ItemTypePattern(EmptySequenceTest.getInstance());
+                return new ItemTypePattern(ErrorType.getInstance());
             } else {
                 return new ItemTypePattern(test);
             }

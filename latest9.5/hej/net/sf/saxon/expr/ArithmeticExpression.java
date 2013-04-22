@@ -15,12 +15,8 @@ import net.sf.saxon.expr.parser.Token;
 import net.sf.saxon.expr.parser.TypeChecker;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.om.StandardNames;
-import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.AtomicType;
-import net.sf.saxon.type.BuiltInAtomicType;
-import net.sf.saxon.type.ItemType;
-import net.sf.saxon.type.TypeHierarchy;
+import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
 
 /**
@@ -111,7 +107,7 @@ public class ArithmeticExpression extends BinaryExpression {
         //role0.setSourceLocator(this);
         operand0 = TypeChecker.staticTypeCheck(operand0, atomicType, false, role0, visitor);
         final ItemType itemType0 = operand0.getItemType(th);
-        if (itemType0 instanceof EmptySequenceTest) {
+        if (itemType0 instanceof ErrorType) {
             return Literal.makeEmptySequence();
         }
         AtomicType type0 = (AtomicType) itemType0.getPrimitiveItemType();
@@ -131,7 +127,7 @@ public class ArithmeticExpression extends BinaryExpression {
         //role1.setSourceLocator(this);
         operand1 = TypeChecker.staticTypeCheck(operand1, atomicType, false, role1, visitor);
         final ItemType itemType1 = operand1.getItemType(th);
-        if (itemType1 instanceof EmptySequenceTest) {
+        if (itemType1 instanceof ErrorType) {
             return Literal.makeEmptySequence();
         }
         AtomicType type1 = (AtomicType)itemType1.getPrimitiveItemType();

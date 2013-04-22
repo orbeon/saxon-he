@@ -13,11 +13,11 @@ import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.pattern.AnyNodeTest;
-import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.BuiltInAtomicType;
+import net.sf.saxon.type.ErrorType;
 import net.sf.saxon.type.ItemType;
 
 import java.io.Serializable;
@@ -331,7 +331,7 @@ public final class SequenceType implements Serializable {
      */
 
     public static final SequenceType EMPTY_SEQUENCE =
-            makeSequenceType(EmptySequenceTest.getInstance(), StaticProperty.EMPTY);
+            makeSequenceType(ErrorType.getInstance(), StaticProperty.EMPTY);
 
     /**
      * A type that only permits a non-empty sequence
@@ -349,7 +349,7 @@ public final class SequenceType implements Serializable {
      */
     private SequenceType(ItemType primaryType, int cardinality) {
         this.primaryType = primaryType;
-        if (primaryType instanceof EmptySequenceTest) {
+        if (primaryType instanceof ErrorType) {
             this.cardinality = StaticProperty.EMPTY;
         } else {
             this.cardinality = cardinality;

@@ -7,26 +7,25 @@
 
 package net.sf.saxon.expr.instruct;
 
-import com.saxonica.bytecode.ExpressionCompiler;
 import com.saxonica.bytecode.AnalyzeStringCompiler;
+import com.saxonica.bytecode.ExpressionCompiler;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.PromotionOffer;
 import net.sf.saxon.expr.parser.RoleLocator;
 import net.sf.saxon.expr.parser.TypeChecker;
-import net.sf.saxon.regex.RegexIterator;
-import net.sf.saxon.regex.RegularExpression;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StandardNames;
-import net.sf.saxon.pattern.EmptySequenceTest;
+import net.sf.saxon.regex.RegexIterator;
+import net.sf.saxon.regex.RegularExpression;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.DecimalValue;
-import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.SequenceType;
+import net.sf.saxon.value.StringValue;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -327,7 +326,7 @@ public class AnalyzeString extends Instruction {
             if (nonMatching != null) {
                 return nonMatching.getItemType(th);
             } else {
-                return EmptySequenceTest.getInstance();
+                return ErrorType.getInstance();
             }
         }
     }

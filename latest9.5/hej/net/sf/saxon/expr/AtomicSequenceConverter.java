@@ -16,7 +16,6 @@ import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
-import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
@@ -57,7 +56,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
 
         ItemType sourceType = operand.getItemType(config.getTypeHierarchy());
         final ConversionRules rules = config.getConversionRules();
-        if (sourceType instanceof EmptySequenceTest) {
+        if (sourceType instanceof ErrorType) {
             converter = Converter.IDENTITY_CONVERTER;
         } else if (!(sourceType instanceof AtomicType)) {
             converter = null;

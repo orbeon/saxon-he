@@ -16,7 +16,6 @@ import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.PathMap;
 import net.sf.saxon.expr.parser.RoleLocator;
 import net.sf.saxon.om.*;
-import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.trans.XPathException;
@@ -247,7 +246,7 @@ public final class SingletonAtomizer extends UnaryExpression {
             return in;
         } else if (in instanceof NodeTest) {
 
-            if (in instanceof EmptySequenceTest) {
+            if (in instanceof ErrorType) {
                 return in;
             }
 

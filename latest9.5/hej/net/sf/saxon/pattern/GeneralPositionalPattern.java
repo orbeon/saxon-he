@@ -19,6 +19,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.ManualIterator;
 import net.sf.saxon.tree.iter.SingletonIterator;
 import net.sf.saxon.tree.iter.UnfailingIterator;
+import net.sf.saxon.type.ErrorType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.value.NumericValue;
 
@@ -113,7 +114,7 @@ public class GeneralPositionalPattern extends Pattern {
             return new ItemTypePattern(nodeTest);
         } else if (Literal.isConstantBoolean(positionExpr, false)) {
             // if a filter is constant false, the pattern doesn't match anything
-            return new ItemTypePattern(EmptySequenceTest.getInstance());
+            return new ItemTypePattern(ErrorType.getInstance());
         }
 
         if ((positionExpr.getDependencies() & StaticProperty.DEPENDS_ON_POSITION) == 0) {

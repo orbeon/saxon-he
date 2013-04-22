@@ -26,15 +26,11 @@ import net.sf.saxon.expr.parser.PromotionOffer;
 import net.sf.saxon.functions.EscapeURI;
 import net.sf.saxon.lib.*;
 import net.sf.saxon.om.*;
-import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.ItemType;
-import net.sf.saxon.type.SchemaType;
-import net.sf.saxon.type.Type;
-import net.sf.saxon.type.TypeHierarchy;
+import net.sf.saxon.type.*;
 import net.sf.saxon.value.Whitespace;
 import net.sf.saxon.z.IntHashMap;
 import net.sf.saxon.z.IntIterator;
@@ -415,7 +411,7 @@ public class ResultDocument extends Instruction implements ValidatingInstruction
 
     /*@NotNull*/
     public ItemType getItemType(TypeHierarchy th) {
-        return EmptySequenceTest.getInstance();
+        return ErrorType.getInstance();
     }
 
     /**

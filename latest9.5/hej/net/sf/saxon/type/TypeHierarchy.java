@@ -13,7 +13,6 @@ import net.sf.saxon.expr.parser.RoleLocator;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.AnyNodeTest;
-import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.EmptyIterator;
@@ -444,9 +443,9 @@ public class TypeHierarchy implements Serializable {
                     }
                 } else if (t2 instanceof AnyNodeTest) {
                     return SUBSUMED_BY;
-                } else if (t1 instanceof EmptySequenceTest) {
+                } else if (t1 instanceof ErrorType) {
                     return DISJOINT;
-                } else if (t2 instanceof EmptySequenceTest) {
+                } else if (t2 instanceof ErrorType) {
                     return DISJOINT;
                 } else {
                     // first find the relationship between the node kinds allowed

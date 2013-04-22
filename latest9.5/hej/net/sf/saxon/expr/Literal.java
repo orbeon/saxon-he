@@ -20,12 +20,12 @@ import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.PathMap;
 import net.sf.saxon.om.*;
-import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.pattern.ItemTypePattern;
 import net.sf.saxon.pattern.Pattern;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.Navigator;
+import net.sf.saxon.type.ErrorType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.*;
@@ -206,7 +206,7 @@ public class Literal extends Expression {
     @Override
     public Pattern toPattern(Configuration config, boolean is30) throws XPathException {
         if (isEmptySequence(this)) {
-            return new ItemTypePattern(EmptySequenceTest.getInstance());
+            return new ItemTypePattern(ErrorType.getInstance());
         } else {
             return super.toPattern(config, is30);
         }
@@ -596,7 +596,7 @@ public class Literal extends Expression {
     @Override
     public Pattern toStreamingPattern(Configuration config, List<String> reasonForFailure) {
         if (isEmptySequence(this)) {
-            return new ItemTypePattern(EmptySequenceTest.getInstance());
+            return new ItemTypePattern(ErrorType.getInstance());
         } else {
             return super.toStreamingPattern(config, reasonForFailure);
         }

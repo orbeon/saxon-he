@@ -17,7 +17,6 @@ import net.sf.saxon.functions.StringFn;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.StandardNames;
-import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
@@ -78,7 +77,7 @@ public class CastExpression extends CastingExpression  {
             sourceItemType = operand.getItemType(th);
 //        }
 
-        if (sourceItemType instanceof EmptySequenceTest) {
+        if (sourceItemType instanceof ErrorType) {
             if (allowsEmpty()) {
                 return Literal.makeEmptySequence();
             } else {

@@ -102,9 +102,8 @@ public class ConstructorFunctionLibrary implements FunctionLibrary {
                     SequenceType.ATOMIC_SEQUENCE);
             }
             return new CallableFunctionItem(null, 1, callable, functionType);
-
         } else {
-            return staticContext.getConfiguration().obtainOptimizer().makeCastToUnion((PlainType) type, resolver);
+            return staticContext.getConfiguration().obtainOptimizer().makeCastToUnion((UnionType) type, resolver);
         }
     }
 
@@ -178,6 +177,8 @@ public class ConstructorFunctionLibrary implements FunctionLibrary {
                         cast.setContainer(container);
                         return cast;
                     }
+                } else if (type == ErrorType.getInstance()) {
+                    return new CastToUnion(arguments[0], ErrorType.getInstance(), true);
                 } else {
                     assert type.isListType();
                     return new CastToList(arguments[0], (ListType) type, true);

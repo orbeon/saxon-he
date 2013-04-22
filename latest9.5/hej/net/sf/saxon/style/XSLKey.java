@@ -18,7 +18,6 @@ import net.sf.saxon.expr.sort.CodepointCollator;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.om.*;
-import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.pattern.ItemTypePattern;
 import net.sf.saxon.pattern.Pattern;
 import net.sf.saxon.trans.Err;
@@ -26,6 +25,7 @@ import net.sf.saxon.trans.KeyDefinition;
 import net.sf.saxon.trans.KeyManager;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.BuiltInAtomicType;
+import net.sf.saxon.type.ErrorType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.SequenceType;
@@ -127,7 +127,7 @@ public class XSLKey extends StyleElement implements StylesheetProcedure {
         match = makePattern(matchAtt);
         if (match == null) {
             // error has been reported
-            match = new ItemTypePattern(EmptySequenceTest.getInstance());
+            match = new ItemTypePattern(ErrorType.getInstance());
         }
 
         if (useAtt!=null) {
@@ -265,7 +265,7 @@ public class XSLKey extends StyleElement implements StylesheetProcedure {
         use = use.optimize(visitor, contextItemType);
         final TypeHierarchy th = config.getTypeHierarchy();
         ItemType useItemType = use.getItemType(th);
-        if (useItemType == EmptySequenceTest.getInstance()) {
+        if (useItemType == ErrorType.getInstance()) {
             useItemType = BuiltInAtomicType.STRING; // corner case, prevents crashing
         }
         BuiltInAtomicType useType = (BuiltInAtomicType)useItemType.getPrimitiveItemType();

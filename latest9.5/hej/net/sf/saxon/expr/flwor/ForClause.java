@@ -14,14 +14,10 @@ import net.sf.saxon.functions.SystemFunctionCall;
 import net.sf.saxon.lib.FeatureKeys;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.StructuredQName;
-import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
-import net.sf.saxon.type.AnyItemType;
-import net.sf.saxon.type.BuiltInAtomicType;
-import net.sf.saxon.type.ItemType;
-import net.sf.saxon.type.TypeHierarchy;
+import net.sf.saxon.type.*;
 import net.sf.saxon.value.SequenceType;
 
 import java.util.ArrayList;
@@ -390,7 +386,7 @@ public class ForClause extends Clause {
     public void refineVariableType(ExpressionVisitor visitor, List<VariableReference> references, Expression returnExpr) {
         final TypeHierarchy th = visitor.getConfiguration().getTypeHierarchy();
         ItemType actualItemType = sequence.getItemType(th);
-        if(actualItemType instanceof EmptySequenceTest) {
+        if(actualItemType instanceof ErrorType) {
             actualItemType = AnyItemType.getInstance();
         }
         for (VariableReference ref : references) {

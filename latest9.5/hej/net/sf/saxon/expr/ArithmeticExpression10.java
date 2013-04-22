@@ -14,12 +14,8 @@ import net.sf.saxon.functions.NumberFn;
 import net.sf.saxon.functions.SystemFunctionCall;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
-import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.AtomicType;
-import net.sf.saxon.type.BuiltInAtomicType;
-import net.sf.saxon.type.ItemType;
-import net.sf.saxon.type.TypeHierarchy;
+import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
 
 /**
@@ -90,13 +86,13 @@ public class ArithmeticExpression10 extends BinaryExpression implements Callable
         operand1 = TypeChecker.staticTypeCheck(operand1, atomicType, true, role1, visitor);
 
         final ItemType itemType0 = operand0.getItemType(th);
-        if (itemType0 instanceof EmptySequenceTest) {
+        if (itemType0 instanceof ErrorType) {
             return Literal.makeLiteral(DoubleValue.NaN);
         }
         AtomicType type0 = (AtomicType) itemType0.getPrimitiveItemType();
 
         final ItemType itemType1 = operand1.getItemType(th);
-        if (itemType1 instanceof EmptySequenceTest) {
+        if (itemType1 instanceof ErrorType) {
             return Literal.makeLiteral(DoubleValue.NaN);
         }
         AtomicType type1 = (AtomicType)itemType1.getPrimitiveItemType();

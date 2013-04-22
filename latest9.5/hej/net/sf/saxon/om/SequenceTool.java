@@ -11,15 +11,11 @@ import net.sf.saxon.event.SequenceReceiver;
 import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.functions.Count;
-import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.GroundedIterator;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.tree.wrapper.VirtualNode;
-import net.sf.saxon.type.AnyItemType;
-import net.sf.saxon.type.ItemType;
-import net.sf.saxon.type.Type;
-import net.sf.saxon.type.TypeHierarchy;
+import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
 
 /**
@@ -239,7 +235,7 @@ public class SequenceTool {
         if (sequence instanceof Item) {
             return Type.getItemType(((Item)sequence), th);
         } else if (sequence instanceof EmptySequence) {
-            return EmptySequenceTest.getInstance();
+            return ErrorType.getInstance();
         } else if (sequence instanceof GroundedValue) {
             try {
                 ItemType type = null;
@@ -258,7 +254,7 @@ public class SequenceTool {
                         break;
                     }
                 }
-                return (type == null ? EmptySequenceTest.getInstance() : type);
+                return (type == null ? ErrorType.getInstance() : type);
             } catch (XPathException err) {
                 return AnyItemType.getInstance();
             }

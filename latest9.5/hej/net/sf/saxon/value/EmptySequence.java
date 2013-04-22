@@ -11,9 +11,9 @@ import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
-import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.EmptyIterator;
+import net.sf.saxon.type.ErrorType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.TypeHierarchy;
 
@@ -88,7 +88,7 @@ public final class EmptySequence<T extends Item> implements GroundedValue {
 
     /*@NotNull*/
     public ItemType getItemType(/*@NotNull*/ TypeHierarchy th) {
-        return EmptySequenceTest.getInstance();
+        return ErrorType.getInstance();
     }
 
     /**

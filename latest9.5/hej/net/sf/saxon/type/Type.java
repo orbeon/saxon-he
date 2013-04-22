@@ -308,10 +308,10 @@ public abstract class Type implements Serializable {
         if (t1 == t2) {
             return t1;
         }
-        if (t1 instanceof EmptySequenceTest) {
+        if (t1 instanceof ErrorType) {
             return t2;
         }
-        if (t2 instanceof EmptySequenceTest) {
+        if (t2 instanceof ErrorType) {
             return t1;
         }
         if (t1 instanceof ExternalObjectType && t2 instanceof ExternalObjectType) {
@@ -354,10 +354,10 @@ public abstract class Type implements Serializable {
         if (t1 == t2) {
             return t1;
         }
-        if (t1 instanceof EmptySequenceTest) {
+        if (t1 instanceof ErrorType) {
             return t2;
         }
-        if (t2 instanceof EmptySequenceTest) {
+        if (t2 instanceof ErrorType) {
             return t1;
         }
         if (t1 == AnyItemType.getInstance() || t2 == AnyItemType.getInstance()) {

@@ -17,7 +17,6 @@ import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StandardNames;
-import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.Cardinality;
@@ -114,7 +113,7 @@ public final class TypeChecker {
         // NOTE: we don't currently do any static inference regarding the content type
         if (!itemTypeOK) {
             suppliedItemType = exp.getItemType(th);
-            if (suppliedItemType instanceof EmptySequenceTest) {
+            if (suppliedItemType instanceof ErrorType) {
                 // supplied type is empty-sequence(): this can violate a cardinality constraint but not an item type constraint
                 itemTypeOK = true;
             } else {
@@ -546,7 +545,7 @@ public final class TypeChecker {
 
         // If we haven't evaluated the cardinality of the supplied expression, do it now
         if (suppliedCard == -1) {
-            if (suppliedItemType instanceof EmptySequenceTest) {
+            if (suppliedItemType instanceof ErrorType) {
                 suppliedCard = StaticProperty.EMPTY;
             } else {
                 suppliedCard = exp.getCardinality();

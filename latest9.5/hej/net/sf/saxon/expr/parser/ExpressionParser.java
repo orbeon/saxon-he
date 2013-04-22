@@ -7,6 +7,7 @@
 
 package net.sf.saxon.expr.parser;
 
+import net.sf.saxon.expr.CastableToUnion;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.LocationProvider;
 import net.sf.saxon.expr.*;
@@ -736,14 +737,14 @@ public class ExpressionParser {
             switch (operator) {
                 case Token.CASTABLE_AS:
                     if (type.isUnionType()) {
-                        return env.getConfiguration().obtainOptimizer().makeCastableToUnion(lhs, type, allowEmpty);
+                        return new CastableToUnion(lhs, (UnionType)type, allowEmpty);
                     } else if (type.isListType()) {
                         return env.getConfiguration().obtainOptimizer().makeCastableToList(lhs, type, allowEmpty);
                     }
                     break;
                 case Token.CAST_AS:
                     if (type.isUnionType()) {
-                        return env.getConfiguration().obtainOptimizer().makeCastToUnion(lhs, type, allowEmpty);
+                        return new CastToUnion(lhs, (UnionType)type, allowEmpty);
                     } else if (type.isListType()) {
                         return new CastToList(lhs, (ListType)type, allowEmpty);
                     }
@@ -1071,11 +1072,6 @@ public class ExpressionParser {
 
         boolean builtInNamespace = uri.equals(NamespaceConstant.SCHEMA);
 
-//            if (!builtInNamespace && NamespaceConstant.isXDTNamespace(uri)) {
-//                uri = NamespaceConstant.XDT;
-//                builtInNamespace = true;
-//            }
-
         if (builtInNamespace) {
             ItemType t = Type.getBuiltInItemType(uri, local);
             if (t == null) {
@@ -1085,6 +1081,8 @@ public class ExpressionParser {
                 if (!env.isAllowedBuiltInType((BuiltInAtomicType) t)) {
                     grumble("The type " + qname + " is not recognized by a Basic XSLT Processor. ", "XPST0080");
                 }
+                return t;
+            } else if (t.isPlainType()) {
                 return t;
             } else {
                 grumble("The type " + qname + " is not atomic", "XPST0051");
@@ -1242,8 +1240,9 @@ public class ExpressionParser {
      */
 
     public SequenceType parseSequenceType() throws XPathException {
+        boolean disallowIndicator = t.currentTokenValue.equals("empty-sequence");
         ItemType primaryType = parseItemType();
-        if (primaryType instanceof EmptySequenceTest) {
+        if (disallowIndicator) {
             // No occurrence indicator allowed
             return SequenceType.makeSequenceType(primaryType, StaticProperty.EMPTY);
         }
@@ -1305,7 +1304,7 @@ public class ExpressionParser {
                 nextToken();
                 expect(Token.RPAR);
                 nextToken();
-                primaryType = EmptySequenceTest.getInstance();
+                primaryType = ErrorType.getInstance();
             } else {
                 primaryType = parseKindTest();
             }
@@ -2024,7 +2023,7 @@ public class ExpressionParser {
         if (t.currentToken == Token.RPAR) {
             if (schemaDeclaration) {
                 grumble("schema-element() and schema-attribute() require a name to be supplied");
-                return EmptySequenceTest.getInstance();
+                return null;
             }
             empty = true;
             nextToken();
@@ -2032,13 +2031,13 @@ public class ExpressionParser {
         switch (primaryType) {
             case Type.ITEM:
                 grumble("item() is not allowed in a path expression");
-                return EmptySequenceTest.getInstance();
+                return null;
             case Type.NODE:
                 if (empty) {
                     return AnyNodeTest.getInstance();
                 } else {
                     grumble("No arguments are allowed in node()");
-                    return EmptySequenceTest.getInstance();
+                    return null;
                 }
             case Type.TEXT:
                 if (empty) {
@@ -2052,7 +2051,7 @@ public class ExpressionParser {
                     return NodeKindTest.COMMENT;
                 } else {
                     grumble("No arguments are allowed in comment()");
-                    return EmptySequenceTest.getInstance();
+                    return null;
                 }
             case Type.NAMESPACE:
                 if (empty) {
@@ -2062,7 +2061,7 @@ public class ExpressionParser {
                     return NodeKindTest.NAMESPACE;
                 } else {
                     grumble("No arguments are allowed in namespace-node()");
-                    return EmptySequenceTest.getInstance();
+                    return null;
                 }
             case Type.DOCUMENT:
                 if (empty) {
@@ -2211,7 +2210,7 @@ public class ExpressionParser {
                         }
                         if (schemaType == null) {
                             grumble("Unknown type name " + lname, "XPST0008");
-                            return EmptySequenceTest.getInstance();
+                            return null;
                         }
                         if (primaryType == Type.ATTRIBUTE && schemaType.isComplexType()) {
                             warning("An attribute cannot have a complex type");
@@ -2248,7 +2247,7 @@ public class ExpressionParser {
                         }
                     } else {
                         grumble("Unexpected " + Token.tokens[t.currentToken] + " after ',' in SequenceType");
-                        return EmptySequenceTest.getInstance();
+                        return null;
                     }
 
                     expect(Token.RPAR);
@@ -2257,11 +2256,11 @@ public class ExpressionParser {
                 } else {
                     grumble("Expected ')' or ',' in SequenceType");
                 }
-                return EmptySequenceTest.getInstance();
+                return null;
             default:
                 // can't happen!
                 grumble("Unknown node kind");
-                return EmptySequenceTest.getInstance();
+                return null;
         }
     }
 

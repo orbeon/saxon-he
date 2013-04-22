@@ -28,10 +28,7 @@ import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trace.Location;
 import net.sf.saxon.tree.iter.LookaheadIterator;
 import net.sf.saxon.tree.util.Navigator;
-import net.sf.saxon.type.AtomicType;
-import net.sf.saxon.type.FunctionItemType;
-import net.sf.saxon.type.ItemType;
-import net.sf.saxon.type.Type;
+import net.sf.saxon.type.*;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.Whitespace;
 import net.sf.saxon.z.IntHashMap;
@@ -274,7 +271,7 @@ public class Mode implements Serializable {
 
         // Ignore a pattern that will never match, e.g. "@comment"
 
-        if (pattern.getItemType() instanceof EmptySequenceTest) {
+        if (pattern.getItemType() instanceof ErrorType) {
             return;
         }
 

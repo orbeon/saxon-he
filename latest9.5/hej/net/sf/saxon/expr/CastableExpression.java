@@ -11,11 +11,13 @@ import com.saxonica.bytecode.CastableExpressionCompiler;
 import com.saxonica.bytecode.ExpressionCompiler;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.om.*;
-import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
-import net.sf.saxon.value.*;
+import net.sf.saxon.value.AtomicValue;
+import net.sf.saxon.value.BooleanValue;
+import net.sf.saxon.value.Cardinality;
+import net.sf.saxon.value.EmptySequence;
 
 /**
 * Castable Expression: implements "Expr castable as atomic-type?".
@@ -50,9 +52,7 @@ public final class CastableExpression extends CastingExpression {
 
         final TypeHierarchy th = visitor.getConfiguration().getTypeHierarchy();
         ItemType sourceItemType = operand.getItemType(th);
-        if (sourceItemType instanceof EmptySequenceTest) {
-            return Literal.makeLiteral(BooleanValue.get(allowsEmpty()));
-        }
+
         AtomicType atomizedType = (AtomicType)sourceItemType.getAtomizedItemType().getPrimitiveItemType();
         if (!(atomizedType == BuiltInAtomicType.ANY_ATOMIC)) {
             converter = visitor.getConfiguration().getConversionRules().getConverter(atomizedType, getTargetType());

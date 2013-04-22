@@ -20,7 +20,6 @@ import net.sf.saxon.expr.parser.PromotionOffer;
 import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
-import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
@@ -342,7 +341,7 @@ public class Block extends Instruction {
     /*@NotNull*/
     public final ItemType getItemType(TypeHierarchy th) {
         if (children.length==0) {
-            return EmptySequenceTest.getInstance();
+            return ErrorType.getInstance();
         }
         ItemType t1 = children[0].getItemType(th);
         for (int i=1; i<children.length; i++) {

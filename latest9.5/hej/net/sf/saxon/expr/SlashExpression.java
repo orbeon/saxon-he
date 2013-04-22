@@ -22,6 +22,7 @@ import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.pattern.*;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.type.ErrorType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.type.TypeHierarchy;
@@ -737,7 +738,7 @@ public class SlashExpression extends Expression
         }
         Pattern tailPattern = tail.toPattern(config, is30);
         if (tailPattern instanceof ItemTypePattern) {
-            if (tailPattern.getItemType() instanceof EmptySequenceTest) {
+            if (tailPattern.getItemType() instanceof ErrorType) {
                 return tailPattern;
             }
         }

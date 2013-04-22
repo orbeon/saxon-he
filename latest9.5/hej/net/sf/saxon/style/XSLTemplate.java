@@ -17,12 +17,12 @@ import net.sf.saxon.expr.instruct.Template;
 import net.sf.saxon.expr.instruct.TraceExpression;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.*;
-import net.sf.saxon.pattern.EmptySequenceTest;
 import net.sf.saxon.pattern.Pattern;
 import net.sf.saxon.trans.Mode;
 import net.sf.saxon.trans.RuleManager;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
+import net.sf.saxon.type.ErrorType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.DecimalValue;
@@ -272,7 +272,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetProcedu
         // the check for duplicates is now done in the buildIndexes() method of XSLStylesheet
         if (match != null) {
             match = typeCheck("match", match);
-            if (match.getItemType() instanceof EmptySequenceTest) {
+            if (match.getItemType() instanceof ErrorType) {
                 try {
                     getConfiguration().getErrorListener().warning(
                             new TransformerException("Pattern will never match anything", this));

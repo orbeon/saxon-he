@@ -8,21 +8,27 @@
 package net.sf.saxon.type;
 
 import com.saxonica.schema.UserSimpleType;
+import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.StaticContext;
+import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.UntypedAtomicValue;
 import net.sf.saxon.value.Whitespace;
+
+import java.util.Collections;
+import java.util.Set;
 
 
 /**
  * This class has a singleton instance which represents the XML Schema 1.1 built-in type xs:error
  */
 
-public final class ErrorType implements SimpleType {
+public final class ErrorType implements UnionType, PlainType {
 
     /*@NotNull*/ private static ErrorType theInstance = new ErrorType();
 
@@ -62,6 +68,14 @@ public final class ErrorType implements SimpleType {
      */
     public String getEQName() {
         return "Q{" + NamespaceConstant.SCHEMA + "}error";
+    }
+
+    public boolean containsListType() {
+        return false;
+    }
+
+    public Set<PlainType> getPlainMemberTypes() {
+        return Collections.emptySet();
     }
 
     /**
@@ -165,6 +179,8 @@ public final class ErrorType implements SimpleType {
     public int getFingerprint() {
         return StandardNames.XS_ERROR;
     }
+
+
 
     /**
      * Get the namecode of the name of this type. This includes the prefix from the original
@@ -304,10 +320,12 @@ public final class ErrorType implements SimpleType {
      * @param rules
      * @return an iterator over the atomic sequence comprising the typed value. The objects
      *         returned by this SequenceIterator will all be of type {@link net.sf.saxon.value.AtomicValue}
+     * @throws ValidationException if the supplied value is not in the lexical space of the data type (which is
+     * always true for this type)
      */
 
-    /*@NotNull*/ public AtomicSequence getTypedValue(CharSequence value, NamespaceResolver resolver, ConversionRules rules) {
-        return new UntypedAtomicValue(value);
+    /*@NotNull*/ public AtomicSequence getTypedValue(CharSequence value, NamespaceResolver resolver, ConversionRules rules) throws ValidationException {
+        throw new ValidationException("Cast to xs:error always fails");
     }
 
     /**
@@ -427,7 +445,51 @@ public final class ErrorType implements SimpleType {
         return input;
     }
 
-//#ifdefined SCHEMA
+    public boolean isPlainType() {
+        return true;
+    }
+
+    public boolean matches(Item item, XPathContext context) {
+        return false;
+    }
+
+    public boolean matchesItem(Item item, boolean allowURIPromotion, Configuration config) {
+        return false;
+    }
+
+    public ItemType getSuperType(TypeHierarchy th) {
+        return AnyItemType.getInstance();
+    }
+
+    public ItemType getPrimitiveItemType() {
+        return this;
+    }
+
+    public int getPrimitiveType() {
+        return Type.ITEM;
+    }
+
+    public double getDefaultPriority() {
+        return -1000;
+    }
+
+    public PlainType getAtomizedItemType() {
+        return BuiltInAtomicType.UNTYPED_ATOMIC;
+    }
+
+    public boolean isAtomizable() {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void visitNamedSchemaComponents(SchemaComponentVisitor visitor) throws XPathException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public SequenceType getResultTypeOfCast() {
+        return SequenceType.EMPTY_SEQUENCE;
+    }
+
+    //#ifdefined SCHEMA
     /**
      * Get the schema component in the form of a function item. This allows schema information
      * to be made visible to XSLT or XQuery code. The function makes available the contents of the
