@@ -333,7 +333,7 @@ public abstract class StandardFunction {
                 .arg(0, BuiltInAtomicType.NUMERIC, OPT, EMPTY);
 
         register("format-date", FormatDate.class, StandardNames.XS_DATE, 2, 5, BuiltInAtomicType.STRING,
-                ONE, XSLT | XPATH30, 0)
+                OPT, XSLT | XPATH30, 0)
                 .arg(0, BuiltInAtomicType.DATE, OPT, null)
                 .arg(1, BuiltInAtomicType.STRING, ONE, null)
                 .arg(2, BuiltInAtomicType.STRING, OPT, null)
@@ -341,7 +341,7 @@ public abstract class StandardFunction {
                 .arg(4, BuiltInAtomicType.STRING, OPT, null);
 
         register("format-dateTime", FormatDate.class, StandardNames.XS_DATE_TIME, 2, 5, BuiltInAtomicType.STRING,
-                ONE, XSLT | XPATH30, 0)
+                OPT, XSLT | XPATH30, 0)
                 .arg(0, BuiltInAtomicType.DATE_TIME, OPT, null)
                 .arg(1, BuiltInAtomicType.STRING, ONE, null)
                 .arg(2, BuiltInAtomicType.STRING, OPT, null)
@@ -358,7 +358,7 @@ public abstract class StandardFunction {
                 .arg(2, BuiltInAtomicType.STRING, OPT, null);
 
         register("format-time", FormatDate.class, StandardNames.XS_TIME, 2, 5, BuiltInAtomicType.STRING,
-                ONE, XSLT | XPATH30, 0)
+                OPT, XSLT | XPATH30, 0)
                 .arg(0, BuiltInAtomicType.TIME, OPT, null)
                 .arg(1, BuiltInAtomicType.STRING, ONE, null)
                 .arg(2, BuiltInAtomicType.STRING, OPT, null)
