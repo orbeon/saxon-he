@@ -338,7 +338,7 @@ public abstract class StandardFunction {
             arg(e, 0, BuiltInAtomicType.NUMERIC, StaticProperty.ALLOWS_ZERO_OR_ONE, EMPTY);
 
         e = register("format-date", FormatDate.class, StandardNames.XS_DATE, 2, 5, BuiltInAtomicType.STRING,
-                StaticProperty.EXACTLY_ONE, XSLT | XPATH30);
+                StaticProperty.ALLOWS_ZERO_OR_ONE, XSLT | XPATH30);
             arg(e, 0, BuiltInAtomicType.DATE, StaticProperty.ALLOWS_ZERO_OR_ONE, null);
             arg(e, 1, BuiltInAtomicType.STRING, StaticProperty.EXACTLY_ONE, null);
             arg(e, 2, BuiltInAtomicType.STRING, StaticProperty.ALLOWS_ZERO_OR_ONE, null);
@@ -346,7 +346,7 @@ public abstract class StandardFunction {
             arg(e, 4, BuiltInAtomicType.STRING, StaticProperty.ALLOWS_ZERO_OR_ONE, null);
 
         e = register("format-dateTime", FormatDate.class, StandardNames.XS_DATE_TIME, 2, 5, BuiltInAtomicType.STRING,
-                StaticProperty.EXACTLY_ONE, XSLT | XPATH30);
+                StaticProperty.ALLOWS_ZERO_OR_ONE, XSLT | XPATH30);
             arg(e, 0, BuiltInAtomicType.DATE_TIME, StaticProperty.ALLOWS_ZERO_OR_ONE, null);
             arg(e, 1, BuiltInAtomicType.STRING, StaticProperty.EXACTLY_ONE, null);
             arg(e, 2, BuiltInAtomicType.STRING, StaticProperty.ALLOWS_ZERO_OR_ONE, null);
@@ -360,7 +360,7 @@ public abstract class StandardFunction {
             arg(e, 2, BuiltInAtomicType.STRING, StaticProperty.EXACTLY_ONE, null);
 
         e = register("format-time", FormatDate.class, StandardNames.XS_TIME, 2, 5, BuiltInAtomicType.STRING,
-                StaticProperty.EXACTLY_ONE, XSLT | XPATH30);
+                StaticProperty.ALLOWS_ZERO_OR_ONE, XSLT | XPATH30);
             arg(e, 0, BuiltInAtomicType.TIME, StaticProperty.ALLOWS_ZERO_OR_ONE, null);
             arg(e, 1, BuiltInAtomicType.STRING, StaticProperty.EXACTLY_ONE, null);
             arg(e, 2, BuiltInAtomicType.STRING, StaticProperty.ALLOWS_ZERO_OR_ONE, null);
