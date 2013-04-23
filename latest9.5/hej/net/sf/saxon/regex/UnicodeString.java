@@ -75,6 +75,8 @@ public abstract class UnicodeString {
      * @param endIndex the index of the first character to be NOT included (counting
      * codepoints, not 16-bit characters)
      * @return a substring
+     * @throws IndexOutOfBoundsException if the selection goes off the start or end of the string
+     * (this function follows the semantics of String.substring(), not the XPath semantics
      */
     public abstract UnicodeString substring(int beginIndex, int endIndex);
 

@@ -128,6 +128,9 @@ public class Substring extends SystemFunctionCall implements Callable {
         }
 
         UnicodeString us = UnicodeString.makeUnicodeString(s);
+        if (lstart > us.length()) {
+            return "";
+        }
         return us.substring((int)lstart-1, us.length()).toString();
     }
 
@@ -213,8 +216,12 @@ public class Substring extends SystemFunctionCall implements Callable {
         }
 
         UnicodeString us = UnicodeString.makeUnicodeString(sv.getStringValueCS());
+        int clength = us.length();
         int a1 = (int)lstart - 1;
-        int a2 = Math.min(slength, (int)lend - 1);
+        if (a1 >= clength) {
+            return "";
+        }
+        int a2 = Math.min(clength, (int)lend - 1);
         if (a1 < 0) {
             if (a2 < 0) {
                 return "";
