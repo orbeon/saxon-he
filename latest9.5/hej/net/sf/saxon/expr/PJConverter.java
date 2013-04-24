@@ -16,6 +16,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.wrapper.VirtualNode;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
+import net.sf.saxon.value.StringValue;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -139,7 +140,10 @@ public abstract class PJConverter implements Serializable {
         }
         if (!Cardinality.allowsMany(cardinality)) {
             if (itemType.isPlainType()) {
-                if (th.isSubType(itemType, BuiltInAtomicType.STRING)) {
+                if (itemType == ErrorType.getInstance()) {
+                    // supplied value is (); we need to convert it to null; this converter does the job.
+                    return StringValueToString.INSTANCE;
+                } else if (th.isSubType(itemType, BuiltInAtomicType.STRING)) {
                     if (targetClass == Object.class || targetClass == String.class || targetClass == CharSequence.class) {
                         return StringValueToString.INSTANCE;
                     } else if (targetClass.isAssignableFrom(StringValue.class)) {
@@ -560,8 +564,9 @@ public abstract class PJConverter implements Serializable {
 
         public static final StringValueToString INSTANCE = new StringValueToString();
 
-        public Object convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
-            return value.head().getStringValue();
+        public String convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
+            Item first = value.head();
+            return first == null ? null : first.getStringValue();
         }
 
     }
@@ -571,7 +576,11 @@ public abstract class PJConverter implements Serializable {
         public static final StringValueToChar INSTANCE = new StringValueToChar();
 
         public Object convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
-            String str = value.head().getStringValue();
+            Item first = value.head();
+            if (first == null) {
+                return null;
+            }
+            String str = first.getStringValue();
             if (str.length() == 1) {
                 return str.charAt(0);
             } else {
@@ -602,7 +611,8 @@ public abstract class PJConverter implements Serializable {
         public static final IntegerValueToBigInteger INSTANCE = new IntegerValueToBigInteger();
 
         public Object convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
-            return ((IntegerValue)value).asBigInteger();
+            IntegerValue val = (IntegerValue)value.head();
+            return (val == null ? null : val.asBigInteger());
         }
 
     }
@@ -673,8 +683,7 @@ public abstract class PJConverter implements Serializable {
 
         public Object convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
             NumericValue nv = (NumericValue)value.head();
-            assert nv != null;
-            return nv.getDecimalValue();
+            return (nv == null ? null : nv.getDecimalValue());
         }
 
     }
@@ -708,8 +717,9 @@ public abstract class PJConverter implements Serializable {
         public static final AnyURIValueToURI INSTANCE = new AnyURIValueToURI();
 
         public Object convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
+            AnyURIValue av = (AnyURIValue)value.head();
             try {
-                return new URI(((AnyURIValue)value).getStringValue());
+                return (av == null ? null : new URI(((AnyURIValue)value).getStringValue()));
             } catch (URISyntaxException err) {
                 throw new XPathException("The anyURI value '" + value + "' is not an acceptable Java URI");
             }
@@ -722,8 +732,9 @@ public abstract class PJConverter implements Serializable {
         public static final AnyURIValueToURL INSTANCE = new AnyURIValueToURL();
 
         public Object convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
+            AnyURIValue av = (AnyURIValue)value.head();
             try {
-                return new URL(((AnyURIValue)value).getStringValue());
+                return (av == null ? null : new URL(((AnyURIValue)value).getStringValue()));
             } catch (MalformedURLException err) {
                 throw new XPathException("The anyURI value '" + value + "' is not an acceptable Java URL");
             }
@@ -737,8 +748,7 @@ public abstract class PJConverter implements Serializable {
 
         public Object convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
             QualifiedNameValue qv = (QualifiedNameValue)value.head();
-            assert qv != null;
-            return qv.toJaxpQName();
+            return (qv == null ? null : qv.toJaxpQName());
         }
 
     }
@@ -749,8 +759,7 @@ public abstract class PJConverter implements Serializable {
 
         public Object convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
             CalendarValue cv = (CalendarValue)value.head();
-            assert cv != null;
-            return cv.getCalendar().getTime();
+            return (cv == null ? null : cv.getCalendar().getTime());
         }
 
     }
@@ -761,8 +770,7 @@ public abstract class PJConverter implements Serializable {
 
         public Object convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
             CalendarValue cv = (CalendarValue)value.head();
-            assert cv != null;
-            return cv.getCalendar();
+            return (cv == null ? null : cv.getCalendar());
         }
 
     }

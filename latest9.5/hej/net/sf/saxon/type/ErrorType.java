@@ -489,6 +489,10 @@ public final class ErrorType implements UnionType, PlainType {
         return SequenceType.EMPTY_SEQUENCE;
     }
 
+    public String toString() {
+        return "xs:error";
+    }
+
     //#ifdefined SCHEMA
     /**
      * Get the schema component in the form of a function item. This allows schema information
