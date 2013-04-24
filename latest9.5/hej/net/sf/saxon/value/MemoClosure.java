@@ -216,36 +216,6 @@ public class MemoClosure<T extends Item> extends Closure<T> {
      * SequenceValues, but its real benefits come for a SequenceValue stored extensionally
      */
 
-//    /*@Nullable*/ public synchronized T itemAt(int n) throws XPathException {
-//        if (n < 0) {
-//            return null;
-//        }
-//        if (reservoir != null && n < used) {
-//            return reservoir[n];
-//        }
-//        if (state == ALL_READ || state == EMPTY) {
-//            return null;
-//        }
-//        if (state == UNREAD) {
-//            return super.itemAt(n);
-//            // this will read from the start of the sequence
-//        }
-//        // We have read some items from the input sequence but not enough. Read as many more as are needed.
-//        int diff = n - used + 1;
-//        while (diff-- > 0) {
-//            T i = inputIterator.next();
-//            if (i == null) {
-//                state = ALL_READ;
-//                condense();
-//                return itemAt(n);
-//            }
-//            append(i);
-//            state = MAYBE_MORE;
-//        }
-//        //noinspection ConstantConditions
-//        return reservoir[n];
-//    }
-
     /**
      * Append an item to the reservoir
      * @param item the item to be added
@@ -403,14 +373,15 @@ public class MemoClosure<T extends Item> extends Closure<T> {
          * @return the corresponding value
          */
 
-        /*@Nullable*/ public GroundedValue materialize() {
+        /*@Nullable*/ public GroundedValue materialize() throws XPathException {
             if (state == ALL_READ) {
                 assert reservoir != null;
                 return new SequenceExtent<Item>(reservoir);
             } else if (state == EMPTY) {
                 return EmptySequence.getInstance();
             } else {
-                throw new IllegalStateException("Progressive iterator is not grounded until all items are read");
+                return new SequenceExtent<T>(iterate());
+                //throw new IllegalStateException("Progressive iterator is not grounded until all items are read");
             }
         }
 
@@ -423,12 +394,61 @@ public class MemoClosure<T extends Item> extends Closure<T> {
          */
 
         public int getProperties() {
-            if (state == EMPTY || state == ALL_READ) {
+            // bug 1740 shows that it is better to report the iterator as grounded even though this
+            // may trigger eager evaluation of the underlying sequence.
+            //if (state == EMPTY || state == ALL_READ) {
                 return GROUNDED | LAST_POSITION_FINDER;
-            } else {
-                return 0;
-            }
+            //} else {
+            //    return 0;
+            //}
         }
+
+        /**
+         * Get the n'th item in the sequence, zero-based
+         */
+
+        public synchronized T itemAt(int n) throws XPathException {
+            if (n < 0) {
+                return null;
+            }
+            if (reservoir != null && n < used) {
+                return reservoir[n];
+            }
+            if (state == ALL_READ || state == EMPTY) {
+                return null;
+            }
+            if (state == UNREAD) {
+                T item = inputIterator.next();
+                state = MAYBE_MORE;
+                if (item == null) {
+                    state = EMPTY;
+                    return null;
+                } else {
+                    state = MAYBE_MORE;
+                    reservoir = (T[])new Item[50];
+                    used = 0;
+                    append(item);
+                    if (n == 0) {
+                        return item;
+                    }
+                }
+            }
+            // We have read some items from the input sequence but not enough. Read as many more as are needed.
+            int diff = n - used + 1;
+            while (diff-- > 0) {
+                T i = inputIterator.next();
+                if (i == null) {
+                    state = ALL_READ;
+                    condense();
+                    return null;
+                }
+                append(i);
+                state = MAYBE_MORE;
+            }
+            //noinspection ConstantConditions
+            return reservoir[n];
+        }
+
     }
 
 }

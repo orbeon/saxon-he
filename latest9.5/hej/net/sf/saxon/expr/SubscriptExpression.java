@@ -26,6 +26,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.GroundedIterator;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.type.TypeHierarchy;
+import net.sf.saxon.value.MemoClosure;
 import net.sf.saxon.value.NumericValue;
 
 import java.util.Iterator;
@@ -198,6 +199,8 @@ public class SubscriptExpression extends SingleItemFilter {
             SequenceIterator iter = operand.iterate(context);
             if (intindex == 1) {
                 item = iter.next();
+            } else if (iter instanceof MemoClosure.ProgressiveIterator) {
+                item = ((MemoClosure.ProgressiveIterator)iter).itemAt(intindex - 1);
             } else if ((iter.getProperties() & SequenceIterator.GROUNDED) != 0) {
                 GroundedValue value = ((GroundedIterator)iter).materialize();
                 item = value.itemAt(intindex-1);
