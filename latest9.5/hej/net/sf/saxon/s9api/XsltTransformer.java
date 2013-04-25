@@ -12,7 +12,6 @@ import net.sf.saxon.Controller;
 import net.sf.saxon.event.Builder;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.lib.TraceListener;
-import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
@@ -524,7 +523,7 @@ public class XsltTransformer implements Destination {
 
     public void close() throws SaxonApiException {
         if (sourceTreeBuilder != null) {
-            DocumentInfo doc = (DocumentInfo) sourceTreeBuilder.getCurrentRoot();
+            NodeInfo doc = sourceTreeBuilder.getCurrentRoot();
             //sourceTreeBuilder.reset();
             sourceTreeBuilder = null;
             if (doc == null) {
