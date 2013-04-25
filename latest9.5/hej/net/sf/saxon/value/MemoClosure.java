@@ -376,7 +376,7 @@ public class MemoClosure<T extends Item> extends Closure<T> {
         /*@Nullable*/ public GroundedValue materialize() throws XPathException {
             if (state == ALL_READ) {
                 assert reservoir != null;
-                return new SequenceExtent<Item>(reservoir);
+                return new SequenceExtent<Item>(reservoir, 0, used);
             } else if (state == EMPTY) {
                 return EmptySequence.getInstance();
             } else {
