@@ -9,7 +9,10 @@ package net.sf.saxon.style;
 
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.SuppliedParameterReference;
-import net.sf.saxon.expr.instruct.*;
+import net.sf.saxon.expr.instruct.Executable;
+import net.sf.saxon.expr.instruct.LocalParam;
+import net.sf.saxon.expr.instruct.LocalParamSetter;
+import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.parser.RoleLocator;
 import net.sf.saxon.expr.parser.TypeChecker;
 import net.sf.saxon.om.AxisInfo;
@@ -146,7 +149,9 @@ public class XSLLocalParam extends XSLGeneralVariable {
 
 
     public Expression compile(Executable exec, Declaration decl) throws XPathException {
-        if (sourceBinding.getReferences().size() == 0 && !sourceBinding.hasProperty(SourceBinding.REQUIRED)) {
+        if (!"iterate".equals(getParent().getLocalPart()) &&
+                sourceBinding.getReferences().size() == 0 &&
+                !sourceBinding.hasProperty(SourceBinding.REQUIRED)) {
             return null;
         }
         if (getParent() instanceof XSLFunction) {
