@@ -756,11 +756,11 @@ public class Choose extends Instruction {
                      } else {
                          doingConditions = false;
                          index = 0;
-                         return new SubExpressionInfo(actions[index++], true, true, Expression.INHERITED_CONTEXT);
+                         return new SubExpressionInfo(actions[index++], true, false, Expression.INHERITED_CONTEXT);
                      }
                  } else {
                      if (index < actions.length) {
-                         return new SubExpressionInfo(actions[index++], true, true, Expression.INHERITED_CONTEXT);
+                         return new SubExpressionInfo(actions[index++], true, false, Expression.INHERITED_CONTEXT);
                      } else {
                          return null;
                      }
