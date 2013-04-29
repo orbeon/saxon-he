@@ -383,14 +383,14 @@ public class ExpressionTool {
                 if (exp instanceof Block) {
                     Block block = (Block) exp;
                     Expression[] children = block.getChildren();
-                    List<Sequence> subsequences = new ArrayList<Sequence>(children.length);
+                    List<GroundedValue> subsequences = new ArrayList<GroundedValue>(children.length);
                     for (Expression child : children) {
                         if (Cardinality.allowsMany(child.getCardinality())) {
-                            subsequences.add(SequenceTool.toLazySequence(child.iterate(context)));
+                            subsequences.add(SequenceTool.toGroundedValue(child.iterate(context)));
                         } else {
                             Item j = child.evaluateItem(context);
                             if (j != null) {
-                                subsequences.add(j);
+                                subsequences.add(j instanceof GroundedValue ? ((GroundedValue)j) : new SingletonItem(j));
                             }
                         }
                     }
