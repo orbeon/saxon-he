@@ -1708,7 +1708,7 @@ namespace Saxon.Api
         /// A new XdmEnumerator over the same sequence of XDM items, positioned at the start of the sequence.
         /// </returns>
 
-        IXdmEnumerator GetAnother();
+        /**public**/ IXdmEnumerator GetAnother();
     }
 
     /// <summary>

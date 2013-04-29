@@ -751,7 +751,7 @@ namespace Saxon.Api
         /// returned URIs will be dereferenced by calling the <c>GetEntity</c> method.
         /// </returns>
 
-        Uri[] GetModules(String moduleUri, Uri baseUri, String[] locationHints);
+        /**public**/ Uri[] GetModules(String moduleUri, Uri baseUri, String[] locationHints);
 
         /// <summary>
         /// Dereference a URI returned by <c>GetModules</c> to retrieve a <c>Stream</c> containing
@@ -761,7 +761,7 @@ namespace Saxon.Api
         /// <returns>Either a <c>Stream</c> or a <c>String</c> containing the query text. 
         /// The supplied URI will be used as the base URI of the query module.</returns>
 
-        Object GetEntity(Uri absoluteUri);
+        /**public**/ Object GetEntity(Uri absoluteUri);
 
     }
 

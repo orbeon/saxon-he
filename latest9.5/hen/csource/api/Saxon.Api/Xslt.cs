@@ -162,7 +162,7 @@ namespace Saxon.Api
         /// <para>The initial setting of this property is false, regardless of whether or not the <c>Processor</c>
         /// is schema-aware. Setting this property to true if the processor is not schema-aware will cause an Exception.</para>
         /// </remarks>
-         
+
         public bool SchemaAware
         {
             get
@@ -275,10 +275,11 @@ namespace Saxon.Api
         ///  over some compilation options
         ///  </summary>
         /// <returns> the underlying CompilerInfo object, which holds compilation-time options. The methods on
-         /// this object are not guaranteed stable from release to release.
-         /// </returns>
+        /// this object are not guaranteed stable from release to release.
+        /// </returns>
 
-        public JCompilerInfo GetUnderlyingCompilerInfo() {
+        public JCompilerInfo GetUnderlyingCompilerInfo()
+        {
             return info;
         }
 
@@ -588,10 +589,11 @@ namespace Saxon.Api
         /// diagnostics and instrumentation
         /// </summary>
         /// <param name="destination">The destination for the diagnostic output</param>
-        
-        public void Explain(XmlDestination destination) {
+
+        public void Explain(XmlDestination destination)
+        {
             JConfiguration config = pss.getConfiguration();
-            JResult result = destination.GetResult(config.makePipelineConfiguration());          
+            JResult result = destination.GetResult(config.makePipelineConfiguration());
             JProperties properties = new JProperties();
             properties.setProperty("indent", "yes");
             properties.setProperty("{http://saxon.sf.net/}indent-spaces", "2");
@@ -638,7 +640,7 @@ namespace Saxon.Api
         private IMessageListener messageListener;
         private JStreamSource streamSource;
         private Stream traceFunctionDestination;
-        
+
 
         // internal constructor
 
@@ -687,7 +689,7 @@ namespace Saxon.Api
         /// The base URI of the principal input document. This is used for example by the <c>document()</c>
         /// function if the document contains links to other documents in the form of relative URIs.</param>
 
-        public void SetInputStream(Stream input, Uri baseUri) 
+        public void SetInputStream(Stream input, Uri baseUri)
         {
             streamSource = new JStreamSource(new DotNetInputStream(input), baseUri.ToString());
         }
@@ -979,9 +981,10 @@ namespace Saxon.Api
                 else if (initialContextNode != null)
                 {
                     JDocumentInfo doc = initialContextNode.getDocumentRoot();
-		    if(doc != null) {
-                    	controller.registerDocument(doc, (doc.getBaseURI()==null ? null : new JDocumentURI(doc.getBaseURI())));
-		    }
+                    if (doc != null)
+                    {
+                        controller.registerDocument(doc, (doc.getBaseURI() == null ? null : new JDocumentURI(doc.getBaseURI())));
+                    }
                     controller.transform(initialContextNode, destination.GetResult(controller.makePipelineConfiguration()));
                 }
                 else
@@ -1096,7 +1099,8 @@ namespace Saxon.Api
             this.pipe = pipe;
         }
 
-        public JOutputURIResolver newInstance() {
+        public JOutputURIResolver newInstance()
+        {
             return new ResultDocumentHandlerWrapper(handler, pipe);
         }
 
@@ -1157,6 +1161,7 @@ namespace Saxon.Api
         ///</summary>
         ///
 
+        /**public**/
         void Message(XdmNode content, bool terminate, IXmlLocation location);
 
     }
@@ -1178,14 +1183,14 @@ namespace Saxon.Api
         /// created programmatically where no base URI has been set up).
         /// </summary>
 
-        Uri BaseUri { get; set; }
+        /**public**/ Uri BaseUri { get; set; }
 
         /// <summary>
         /// The line number of a node relative to the start of the external entity.
         /// The value -1 indicates that the line number is not known or not applicable.
         /// </summary>
 
-        int LineNumber { get; set; }
+        /**public**/ int LineNumber { get; set; }
     }
 
     internal class XmlLocation : IXmlLocation
@@ -1213,7 +1218,8 @@ namespace Saxon.Api
         public bool terminate;
         public int locationId;
 
-        public MessageListenerProxy(JPipelineConfiguration pipe, IMessageListener ml) : base(pipe)
+        public MessageListenerProxy(JPipelineConfiguration pipe, IMessageListener ml)
+            : base(pipe)
         {
             listener = ml;
         }
