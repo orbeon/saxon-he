@@ -76,6 +76,7 @@ public final class Date {
      */
     public static String date(XPathContext context, String datetimeIn) {
         ConversionRules rules = context.getConfiguration().getConversionRules();
+        datetimeIn = nn(datetimeIn);
         if (datetimeIn.indexOf('T') >= 0) {
             ConversionResult cr = DateTimeValue.makeDateTimeValue(datetimeIn, rules);
             if (cr instanceof ValidationFailure) {
@@ -111,6 +112,7 @@ public final class Date {
      */
 
     public static String time(XPathContext context, String dateTime) {
+        dateTime = nn(dateTime);
         if (dateTime.indexOf('T') >= 0) {
             ConversionResult cr = DateTimeValue.makeDateTimeValue(dateTime, context.getConfiguration().getConversionRules());
             if (cr instanceof ValidationFailure) {
@@ -157,6 +159,7 @@ public final class Date {
      * @throws XPathException
      */
     public static double year(XPathContext context, String datetimeIn) {
+        datetimeIn = nn(datetimeIn);
         try {
             ConversionResult cr = CalendarValue.makeCalendarValue(datetimeIn, context.getConfiguration().getConversionRules());
             if (cr instanceof ValidationFailure) {
@@ -192,6 +195,7 @@ public final class Date {
      */
 
     public static boolean leapYear(XPathContext context, String dateTime) throws XPathException {
+        dateTime = nn(dateTime);
         double year = year(context, dateTime);
         if (Double.isNaN(year)) {
             return false;
@@ -218,6 +222,7 @@ public final class Date {
      */
 
     public static double monthInYear(XPathContext context, String dateTime) {
+        dateTime = nn(dateTime);
         try {
             ConversionResult cr = CalendarValue.makeCalendarValue(dateTime, context.getConfiguration().getConversionRules());
             if (cr instanceof ValidationFailure) {
@@ -252,6 +257,7 @@ public final class Date {
      */
 
     public static String monthName(XPathContext context, String date) {
+        date = nn(date);
         String[] months = {"January", "February", "March", "April", "May", "June",
                 "July", "August", "September", "October", "November", "December"};
         double m = monthInYear(context, date);
@@ -278,6 +284,7 @@ public final class Date {
      */
 
     public static String monthAbbreviation(XPathContext context, String date) {
+        date = nn(date);
         String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
         double m = monthInYear(context, date);
@@ -305,6 +312,7 @@ public final class Date {
      */
 
     public static double weekInYear(XPathContext context, String dateTime) throws XPathException {
+        dateTime = nn(dateTime);
         int dayInYear = (int)dayInYear(context, dateTime);
         String firstJan = dateTime.substring(0, 4) + "-01-01";
         int jan1day = ((int)dayInWeek(context, firstJan) + 5) % 7;
@@ -346,6 +354,7 @@ public final class Date {
      */
 
     public static double weekInMonth(XPathContext context, String dateTime) throws XPathException {
+        dateTime = nn(dateTime);
         return (double)(int)((dayInMonth(context, dateTime) - 1) / 7 + 1);
     }
 
@@ -366,6 +375,7 @@ public final class Date {
      */
 
     public static double dayInYear(XPathContext context, String dateTime) throws XPathException {
+        dateTime = nn(dateTime);
         int month = (int)monthInYear(context, dateTime);
         int day = (int)dayInMonth(context, dateTime);
         int[] prev = {0,
@@ -402,6 +412,7 @@ public final class Date {
      */
 
     public static double dayInMonth(XPathContext context, String dateTime) throws XPathException {
+        dateTime = nn(dateTime);
         try {
             ConversionResult cr = CalendarValue.makeCalendarValue(dateTime, context.getConfiguration().getConversionRules());
             if (cr instanceof ValidationFailure) {
@@ -437,6 +448,7 @@ public final class Date {
      */
 
     public static double dayOfWeekInMonth(XPathContext context, String dateTime) throws XPathException {
+        dateTime = nn(dateTime);
         double dd = dayInMonth(context, dateTime);
         if (Double.isNaN(dd)) {
             return dd;
@@ -465,6 +477,7 @@ public final class Date {
      */
 
     public static double dayInWeek(XPathContext context, String dateTime) throws XPathException {
+        dateTime = nn(dateTime);
         double yy = year(context, dateTime);
         double mm = monthInYear(context, dateTime);
         double dd = dayInMonth(context, dateTime);
@@ -500,6 +513,7 @@ public final class Date {
      */
 
     public static String dayName(XPathContext context, String dateTime) throws XPathException {
+        dateTime = nn(dateTime);
         String[] days = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
                 "Saturday"};
         double d = dayInWeek(context, dateTime);
@@ -528,6 +542,7 @@ public final class Date {
      */
 
     public static String dayAbbreviation(XPathContext context, String dateTime) throws XPathException {
+        dateTime = nn(dateTime);
         String[] days = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         double d = dayInWeek(context, dateTime);
         if (Double.isNaN(d)) {
@@ -554,6 +569,7 @@ public final class Date {
      */
 
     public static double hourInDay(XPathContext context, String dateTime) {
+        dateTime = nn(dateTime);
         try {
             ConversionResult cr = CalendarValue.makeCalendarValue(dateTime, context.getConfiguration().getConversionRules());
             if (cr instanceof ValidationFailure) {
@@ -586,6 +602,7 @@ public final class Date {
      */
 
     public static double minuteInHour(XPathContext context, String dateTime) {
+        dateTime = nn(dateTime);
         try {
             ConversionResult cr = CalendarValue.makeCalendarValue(dateTime, context.getConfiguration().getConversionRules());
             if (cr instanceof ValidationFailure) {
@@ -618,6 +635,7 @@ public final class Date {
      */
 
     public static double secondInMinute(XPathContext context, String dateTime) throws XPathException {
+        dateTime = nn(dateTime);
         try {
             ConversionResult cr = CalendarValue.makeCalendarValue(dateTime, context.getConfiguration().getConversionRules());
             if (cr instanceof ValidationFailure) {
@@ -660,7 +678,9 @@ public final class Date {
      * [Appendix E Adding durations to dateTimes] of [XML Schema Part 2: Datatypes].
      * @throws XPathException
      */
-    public static String add(XPathContext context, final String datetimeIn, final String durationIn) throws XPathException {
+    public static String add(XPathContext context, String datetimeIn, String durationIn) throws XPathException {
+        datetimeIn = nn(datetimeIn);
+        durationIn = nn(durationIn);
         ConversionResult cr0 = CalendarValue.makeCalendarValue(datetimeIn, context.getConfiguration().getConversionRules());
         if (cr0 instanceof ValidationFailure) {
             return "";
@@ -730,6 +750,8 @@ public final class Date {
      */
 
     public String addDuration(XPathContext context, String duration0, String duration1) {
+        duration0 = nn(duration0);
+        duration1 = nn(duration1);
         ConversionResult dv0 = DurationValue.makeDuration(duration0);
         ConversionResult dv1 = DurationValue.makeDuration(duration1);
         if (dv0 instanceof ValidationFailure || dv1 instanceof ValidationFailure) {
@@ -802,7 +824,9 @@ public final class Date {
      * the number of minutes must be less than 60; the number of hours must be less than 24.
      * @throws XPathException
      */
-    public static String difference(XPathContext context, final String dateLeftIn, final String dateRightIn) throws XPathException {
+    public static String difference(XPathContext context, String dateLeftIn, String dateRightIn) throws XPathException {
+        dateLeftIn = nn(dateLeftIn);
+        dateRightIn = nn(dateRightIn);
         final ConversionRules rules = context.getConfiguration().getConversionRules();
         ConversionResult op0 = CalendarValue.makeCalendarValue(dateLeftIn, rules);
         ConversionResult op1 = CalendarValue.makeCalendarValue(dateRightIn, rules);
@@ -920,7 +944,8 @@ public final class Date {
      * If the argument is not in any of these formats, date:seconds returns NaN.
      * @throws XPathException
      */
-    public static double seconds(XPathContext context, final String datetimeIn) throws XPathException {
+    public static double seconds(XPathContext context, String datetimeIn) throws XPathException {
+        datetimeIn = nn(datetimeIn);
         ConversionResult cr = CalendarValue.makeCalendarValue(datetimeIn, context.getConfiguration().getConversionRules());
         if (cr instanceof DateTimeValue || cr instanceof DateValue ||
                 cr instanceof GYearValue || cr instanceof GYearMonthValue) {
@@ -939,6 +964,16 @@ public final class Date {
         } else {
             return Double.NaN;
         }
+    }
+
+    /**
+     * Treat null as zero-length string
+     * @param in input string
+     * @return zero-length string if input is null, else the input string unchanged.
+     */
+
+    private static String nn(String in) {
+        return (in == null ? "" : in);
     }
 }
 
