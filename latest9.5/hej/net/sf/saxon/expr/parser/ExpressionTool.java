@@ -113,8 +113,12 @@ public class ExpressionTool {
 
     public static void copyLocationInfo(Expression from, Expression to) {
         if (from != null && to != null) {
-            to.setLocationId(from.getLocationId());
-            to.setContainer(from.getContainer());
+            if(to.getLocationId() == -1) {
+                to.setLocationId(from.getLocationId());
+            }
+            if(to.getContainer() == null) {
+                to.setContainer(from.getContainer());
+            }
         }
     }
 
