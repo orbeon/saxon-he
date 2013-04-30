@@ -112,7 +112,7 @@ public class URIQueryParameters {
 
     }
 
-    public static FilenameFilter makeGlobFilter(String value) {
+    public static RegexFilter makeGlobFilter(String value) {
         FastStringBuffer sb = new FastStringBuffer(value.length() + 6);
         sb.append('^');
         for (int i=0; i<value.length(); i++) {
@@ -226,6 +226,11 @@ public class URIQueryParameters {
          */
 
         public boolean accept(File dir, String name) {
+            return new File(dir, name).isDirectory() || pattern.matcher(name).matches();
+            //return pattern.matcher(name).matches();
+        }
+
+        public boolean matches(String name) {
             return pattern.matcher(name).matches();
         }
 
