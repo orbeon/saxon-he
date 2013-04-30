@@ -42,8 +42,9 @@ public class Collection extends SystemFunction implements CallableExpression {
     }
 
     public int computeSpecialProperties() {
-        return super.computeSpecialProperties() & ~StaticProperty.NON_CREATIVE &
-                StaticProperty.ORDERED_NODESET & StaticProperty.PEER_NODESET;
+        // See redmine bug 1652. We cannot assume that the nodes will be in document order because we can't assume
+        // they will all be "new" documents. We can't even assume that they will be distinct.
+        return (super.computeSpecialProperties() & ~StaticProperty.NON_CREATIVE) | StaticProperty.PEER_NODESET;
     }
 
     /**
