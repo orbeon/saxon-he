@@ -7,7 +7,6 @@
 
 package net.sf.saxon.functions;
 
-import net.sf.saxon.expr.CastToList;
 import com.saxonica.functions.hof.AtomicConstructorFunctionItem;
 import com.saxonica.functions.hof.CallableFunctionItem;
 import com.saxonica.functions.hof.SpecificFunctionType;
@@ -22,6 +21,7 @@ import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
+import net.sf.saxon.value.StringValue;
 
 /**
  * The ConstructorFunctionLibrary represents the collection of constructor functions for atomic types. These
@@ -121,7 +121,17 @@ public class ConstructorFunctionLibrary implements FunctionLibrary {
         if (type == null || type.isComplexType()) {
             return false;
         }
-        // TODO: disallow constructors for xs:NOTATION, xs:anySimpleType, etc
+                if (type.isAtomicType() && ((AtomicType)type).isAbstract()) {
+            return false;
+        }
+        if (type == AnySimpleType.getInstance()) {
+            return false;
+        }        if (type.isAtomicType() && ((AtomicType)type).isAbstract()) {
+            return false;
+        }
+        if (type == AnySimpleType.getInstance()) {
+            return false;
+        }
         return true;
     }
 
