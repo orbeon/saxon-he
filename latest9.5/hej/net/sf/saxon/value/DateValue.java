@@ -519,11 +519,13 @@ public class DateValue extends GDateValue implements Comparable {
     }
 
     /**
-     * Get the week number within a month. This is required for the XSLT format-date() function,
-     * and the rules are not entirely clear. The days of the week are numbered from
-     * 1 (Monday) to 7 (Sunday), and by analogy with the ISO week number, we consider that week 1
+     * Get the week number within a month. This is required for the XSLT format-date() function.
+     * The days of the week are numbered from 1 (Monday) to 7 (Sunday), and week 1
      * in any calendar month is the week (from Monday to Sunday) that includes the first Thursday
-     * of that month. Unlike the ISO week number, we put the previous days in week zero.
+     * of that month.
+     *
+     * <p>See bug 21370 which clarified the specification. This caused a change to the Saxon
+     * implementation such that the days before the start of week 1 go in week 5, not week zero.</p>
      *
      * @param year  the year
      * @param month the month (1-12)
@@ -533,21 +535,10 @@ public class DateValue extends GDateValue implements Comparable {
 
     public static int getWeekNumberWithinMonth(int year, int month, int day) {
         int firstDay = getDayOfWeek(year, month, 1);
-        int inc = (firstDay < 5 ? 1 : 0);   // implements the First Thursday rule
-        return ((day + firstDay - 2) / 7) + inc;
+        int inc = (firstDay < 5 ? 1 : 5);   // implements the First Thursday rule
+        int wk = ((day + firstDay - 2) / 7) + inc;
+        return (wk > 5 ? wk-5 : wk);
     }
-
-    /**
-     * Temporary test rig
-     */
-
-//    public static void main(String[] args) throws Exception {
-//        DateValue date = new DateValue(args[0]);
-//        System.out.println(date.getStringValue());
-//        int jd = getJulianDayNumber(date.year,  date.month, date.day);
-//        System.out.println(jd);
-//        System.out.println(dateFromJulianDayNumber(jd).getStringValue());
-//    }
 
 }
 
