@@ -30,9 +30,9 @@
 
 package net.sf.saxon.regex;
 
-import net.sf.saxon.z.*;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.value.Whitespace;
+import net.sf.saxon.z.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -862,6 +862,7 @@ public class RECompiler {
         switch (pattern.charAt(idx)) {
             case '$':
                 if (isXPath) {
+                    flags[0] |= NODE_NULLABLE;
                     idx++;
                     Operation.OpEOL eol = new Operation.OpEOL();
                     return appendNode(eol);
@@ -870,6 +871,7 @@ public class RECompiler {
 
             case '^':
                 if (isXPath) {
+                    flags[0] |= NODE_NULLABLE;
                     idx++;
                     Operation.OpBOL bol = new Operation.OpBOL();
                     return appendNode(bol);
