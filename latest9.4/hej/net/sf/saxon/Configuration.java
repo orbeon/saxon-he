@@ -2482,7 +2482,7 @@ public class Configuration implements Serializable, SourceResolver, NotationSet 
             try {
                 // give things back to the garbage collecter
                 parser.setContentHandler(null);
-                parser.setEntityResolver(null);
+                //parser.setEntityResolver(null);
                 parser.setDTDHandler(null);
                 parser.setErrorHandler(null);
                 // Unfortunately setting the lexical handler to null doesn't work on Xerces, because
