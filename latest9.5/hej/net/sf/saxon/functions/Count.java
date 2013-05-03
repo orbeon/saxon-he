@@ -7,6 +7,9 @@
 
 package net.sf.saxon.functions;
 
+import com.saxonica.bytecode.CountCompiler;
+import com.saxonica.bytecode.ExpressionCompiler;
+import com.saxonica.bytecode.util.CannotCompileException;
 import com.saxonica.stream.adjunct.CountAdjunct;
 import net.sf.saxon.expr.LastPositionFinder;
 import net.sf.saxon.expr.XPathContext;
@@ -100,5 +103,12 @@ public class Count extends Aggregate {
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         return new Int64Value(count(arguments[0].iterate()));
     }
+
+//#ifdefined BYTECODE
+    @Override
+    public ExpressionCompiler getExpressionCompiler() throws CannotCompileException {
+        return new CountCompiler();
+    }
+//#endif
 }
 
