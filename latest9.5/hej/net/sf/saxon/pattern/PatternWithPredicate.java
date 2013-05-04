@@ -55,6 +55,31 @@ public class PatternWithPredicate extends Pattern {
     }
 
     /**
+     * Determine the types of nodes to which this pattern applies. Used for optimisation.
+     * For patterns that match nodes of several types, return Type.NODE. For patterns that
+     * do not match nodes, return -1.
+     *
+     * @return the type of node matched by this pattern. e.g. Type.ELEMENT or Type.TEXT
+     */
+
+    @Override
+    public int getNodeKind() {
+        return basePattern.getNodeKind();
+    }
+
+    /**
+     * Determine the name fingerprint of nodes to which this pattern applies. Used for
+     * optimisation.
+     *
+     * @return A fingerprint that the nodes must match, or -1 if it can match multiple fingerprints,
+     *         or it if matches atomic values
+     */
+    @Override
+    public int getFingerprint() {
+        return basePattern.getFingerprint();
+    }
+
+    /**
      * Determine whether this Pattern matches the given Node.
      * @param item    The NodeInfo representing the Element or other node to be tested against the Pattern
      * @param context The dynamic context. Only relevant if the pattern
