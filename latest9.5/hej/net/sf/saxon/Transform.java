@@ -1039,7 +1039,7 @@ public class Transform {
         if (!showTime) {
             System.err.println(config.getProductTitle());
         }
-        System.err.println("Usage: see http://www.saxonica.com/documentation/using-xsl/commandline.xml");
+        System.err.println("Usage: see http://saxonica.com/documentation/html/using-xsl/commandline.html");
         System.err.println("Format: " + getClass().getName() + " options params");
         CommandLineOptions options = new CommandLineOptions();
         setPermittedOptions(options);

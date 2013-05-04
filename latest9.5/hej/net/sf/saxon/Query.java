@@ -924,7 +924,7 @@ public class Query {
         if (!showTime) {
             System.err.println(config.getProductTitle());
         }
-        System.err.println("Usage: see http://www.saxonica.com/documentation/using-xquery/commandline.xml");
+        System.err.println("Usage: see http://www.saxonica.com/documentation/html/using-xquery/commandline.html");
         System.err.println("Format: " + getClass().getName() + " options params");
         CommandLineOptions options = new CommandLineOptions();
         setPermittedOptions(options);
