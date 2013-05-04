@@ -351,7 +351,7 @@ public class Mode implements Serializable {
                 namespaceRuleChain = addRuleToList(newRule, namespaceRuleChain);
                 break;
             default:
-                if (pattern instanceof ItemTypePattern) {
+                if (pattern instanceof ItemTypePattern || pattern instanceof PatternWithPredicate) {
                     ItemType type = pattern.getItemType();
                     if (type instanceof AtomicType) {
                         atomicValueRuleChain = addRuleToList(newRule, atomicValueRuleChain);
