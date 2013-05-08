@@ -65,6 +65,7 @@ public class HTMLEmitter extends XMLEmitter {
         setEmptyTag("area");
         setEmptyTag("base");
         setEmptyTag("basefont");
+        setEmptyTag("embed");
         setEmptyTag("br");
         setEmptyTag("col");
         setEmptyTag("frame");
