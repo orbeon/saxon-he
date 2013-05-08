@@ -8,6 +8,7 @@
 package net.sf.saxon.serialize;
 
 import net.sf.saxon.event.ReceiverOptions;
+import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.om.NodeName;
 import net.sf.saxon.trans.XPathException;
@@ -410,7 +411,7 @@ public class HTMLEmitter extends XMLEmitter {
             inScript = -1000000;
         }
 
-        if (isEmptyTag(name) && uri.length()==0) {
+        if (isEmptyTag(name) && (uri.length()==0 || uri.equals(NamespaceConstant.XHTML))) {
             // no end tag required
             elementStack.pop();
         } else {
