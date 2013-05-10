@@ -1081,7 +1081,7 @@ namespace Saxon.Api
         /// by the processor does not necessarily bear any direct resemblance to the way
         /// that the XSLT source code is written.</para></remarks>
 
-        XmlDestination HandleResultDocument(string href, Uri baseUri);
+        /**public**/ XmlDestination HandleResultDocument(string href, Uri baseUri);
 
     }
 
