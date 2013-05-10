@@ -116,9 +116,7 @@ public class ExpressionTool {
             if(to.getLocationId() == -1) {
                 to.setLocationId(from.getLocationId());
             }
-            if(to.getContainer() == null) {
-                to.setContainer(from.getContainer());
-            }
+            to.setContainer(from.getContainer());
         }
     }
 
