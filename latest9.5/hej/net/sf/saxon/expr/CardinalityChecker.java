@@ -27,6 +27,7 @@ import net.sf.saxon.type.Type;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.IntegerValue;
+import net.sf.saxon.value.SequenceExtent;
 
 import java.util.List;
 
@@ -132,6 +133,9 @@ public final class CardinalityChecker extends UnaryExpression {
             checker.resetLocalStaticProperties();
             this.resetLocalStaticProperties();
             return checker;
+        }
+        if(operand instanceof Literal) {
+            return new Literal(SequenceExtent.makeSequenceExtent(iterate(visitor.makeDynamicContext())));
         }
         return this;
     }
