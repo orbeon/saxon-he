@@ -1,5 +1,7 @@
 package net.sf.saxon.serialize.charcode;
 
+import net.sf.saxon.tree.tiny.CharSlice;
+
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.HashMap;
@@ -23,7 +25,6 @@ public class JavaCharacterSet implements CharacterSet {
 
     private byte[] charinfo = new byte[65536];
         // rely on initialization to zeroes
-    private StringBuffer supplementary = new StringBuffer(2);
 
     //private final static byte UNKNOWN = 0;
     private static final byte GOOD = 1;
@@ -65,9 +66,10 @@ public class JavaCharacterSet implements CharacterSet {
                 }
             }
         } else {
-            supplementary.setCharAt(0, UTF16CharacterSet.highSurrogate(c));
-            supplementary.setCharAt(1, UTF16CharacterSet.lowSurrogate(c));
-            return encoder.canEncode(supplementary);
+            char[] cc = new char[2];
+            cc[0] = UTF16CharacterSet.highSurrogate(c);
+            cc[1] = UTF16CharacterSet.lowSurrogate(c);
+            return encoder.canEncode(new CharSlice(cc));
         }
     }
 
