@@ -50,6 +50,8 @@ public class FormatNumber extends SystemFunctionCall implements Callable {
 
     private NameChecker nameChecker = Name10Checker.getInstance();
 
+    private boolean is30;
+
     /**
      * Bind aspects of the static context on which the particular function depends
      *
@@ -69,6 +71,7 @@ public class FormatNumber extends SystemFunctionCall implements Callable {
 			decimalFormatManager = new DecimalFormatManager();
 		}
         decimalFormatSymbols = decimalFormatManager.getDefaultDecimalFormat();
+        is30 = env.getXPathLanguageLevel().equals(DecimalValue.THREE);
     }
 
     public void checkArguments(ExpressionVisitor visitor) throws XPathException {
@@ -218,7 +221,6 @@ public class FormatNumber extends SystemFunctionCall implements Callable {
                     String lexicalName = argument[2].evaluateItem(context).getStringValue();
                     StructuredQName qName;
                     try {
-                        boolean is30 = context.getController().getExecutable().isAllowXPath30();
                         qName = StructuredQName.fromLexicalQName(lexicalName, false,
                                 is30, context.getConfiguration().getNameChecker(), nsContext);
                     } catch (XPathException e) {
@@ -408,7 +410,7 @@ public class FormatNumber extends SystemFunctionCall implements Callable {
 			boolean foundDigit = false;
 			boolean foundDecimalSeparator = false;
             for (int ch : pic) {
-                if (ch == digitSign || ch == zeroDigit) {
+                if (ch == digitSign || ch == zeroDigit || (is30 && isInDigitFamily(ch, zeroDigit))) {
                     foundDigit = true;
                     break;
                 }
@@ -464,7 +466,7 @@ public class FormatNumber extends SystemFunctionCall implements Callable {
                             grumble("Passive character must not appear between active characters in a sub-picture");
                             break;
                     }
-                } else if (c == zeroDigit) {
+                } else if (c == zeroDigit || (is30 && isInDigitFamily(c, zeroDigit))) {
                     switch (phase) {
                         case 0:
                         case 1:
@@ -885,5 +887,9 @@ public class FormatNumber extends SystemFunctionCall implements Callable {
 		}
 		return new StringValue(formatNumber(number, pics, dfs));
 	}
+
+    private static boolean isInDigitFamily(int ch, int zeroDigit) {
+        return (ch >= zeroDigit && ch <= zeroDigit + 10);
+    }
 }
 
