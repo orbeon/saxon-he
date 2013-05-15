@@ -217,7 +217,7 @@ public class StandardEntityResolver implements EntityResolver {
 
         register("-//W3C//ELEMENTS XHTML Inline Presentation 1.0//EN",
                 "http://www.w3.org/MarkUp/DTD/xhtml-inlpres-1.mod",
-                "xhtml11/xhtml-inlpres-1.mod");
+                "w3c/xhtml11/xhtml-inlpres-1.mod");
 
         register("-//W3C//ELEMENTS XHTML Inline Structural 1.0//EN",
                 "http://www.w3.org/MarkUp/DTD/xhtml-inlstruct-1.mod",
@@ -523,11 +523,11 @@ public class StandardEntityResolver implements EntityResolver {
 
         register("-//XML-DEV//ENTITIES RDDL QName Module 1.0//EN",
                 "http://www.rddl.org/rddl-qname-1.mod",
-                "rddl/rddl-qname-1.mod");
+                "w3c/rddl/rddl-qname-1.mod");
 
         register("-//XML-DEV//ENTITIES RDDL Resource Module 1.0//EN",
                 "http://www.rddl.org/rddl-resource-1.mod",
-                "rddl/rddl-resource-1.mod");
+                "w3c/rddl/rddl-resource-1.mod");
 
         register("-//W3C//DTD Specification V2.10//EN",
                 "http://www.w3.org/2002/xmlspec/dtd/2.10/xmlspec.dtd",
