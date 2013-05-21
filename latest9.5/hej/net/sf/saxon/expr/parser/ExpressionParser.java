@@ -788,8 +788,12 @@ public class ExpressionParser {
 
     /*@NotNull*/
     protected Expression parseSwitchExpression() throws XPathException {
-        grumble("switch expression requires XQuery 1.1");
-        return new ErrorExpression();
+        try {
+            return parseFunctionCall();
+        } catch(XPathException ex){
+            grumble("switch expression requires XQuery 3.0");
+            return new ErrorExpression();
+        }
     }
 
     /**
@@ -1741,11 +1745,19 @@ public class ExpressionParser {
                 return parseInlineFunction(annotations);
 
             case Token.NODEKIND:
-                if (t.currentTokenValue.equals("function")) {
-                    return parseInlineFunction(null);
-                } else if (t.currentTokenValue.equals("map")) {
-                    return parseFunctionCall();
-                }
+
+                    if (t.currentTokenValue.equals("function")) {
+                        if (languageVersion.equals(DecimalValue.THREE)) {
+                            return parseInlineFunction(null);
+                        } else {
+                           return parseFunctionCall();
+                        }
+                    } else if (t.currentTokenValue.equals("map") || t.currentTokenValue.equals("namespace-node") || t.currentTokenValue.equals("switch")) {
+                        if (!languageVersion.equals(DecimalValue.THREE)) {
+                            return parseFunctionCall();
+                        }
+                    }
+
                 // fall through!
             case Token.NAME:
             case Token.PREFIX:

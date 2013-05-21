@@ -522,6 +522,9 @@ public class QueryParser extends ExpressionParser {
             expect(Token.SEMICOLON);
             nextToken();
         } else if (t.currentToken == Token.XQUERY_ENCODING) {
+            if(queryVersion == XQUERY10){
+                grumble("XQuery version declaration omitted (Mandatory when running XQuery 1.0)", "XPST0003");
+            }
             queryVersion = XQUERY30;
             nextToken();
             expect(Token.STRING_LITERAL);
@@ -1628,6 +1631,9 @@ public class QueryParser extends ExpressionParser {
         // the next token should be the < QNAME "("> pair
         int offset = t.currentTokenStartOffset;
         nextToken();
+        if(t.currentToken == Token.NODEKIND || t.currentToken == Token.IF || t.currentToken == Token.SWITCH || t.currentToken == Token.TYPESWITCH) {
+            t.currentToken = Token.FUNCTION;
+        }
         expect(Token.FUNCTION);
 
         String uri;
