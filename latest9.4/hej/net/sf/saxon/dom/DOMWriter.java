@@ -151,7 +151,7 @@ public class DOMWriter extends Builder {
                     (properties & ReceiverOptions.IS_ID) != 0 ||
                     nameCode.isInNamespace(NamespaceConstant.XML) && nameCode.getLocalPart().equals("id")) {
                 String localName = nameCode.getLocalPart();
-                element.setIdAttributeNS(uri, localName, true);
+                element.setIdAttributeNS(("".equals(uri) ? null : uri), localName, true);
             }
         } catch (DOMException err) {
             throw new XPathException(err);
