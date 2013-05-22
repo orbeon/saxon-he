@@ -77,6 +77,27 @@ public class QueryParser extends ExpressionParser {
 
     /*@Nullable*/ private Expression defaultValue = null;
 
+    static  Set<String> reservedNames = new HashSet<String>();
+    static {
+        reservedNames.add("attribute");
+        reservedNames.add("comment");
+        reservedNames.add("document-node");
+        reservedNames.add("element");
+        reservedNames.add("empty-sequence");
+        reservedNames.add("function");
+        reservedNames.add("if");
+        reservedNames.add("item");
+        reservedNames.add("namespace-node");
+        reservedNames.add("node");
+        reservedNames.add("processing-instruction");
+        reservedNames.add("schema-attribute");
+        reservedNames.add("schema-element");
+        reservedNames.add("switch");
+        reservedNames.add("text");
+        reservedNames.add("typeswitch");
+    }
+
+
     /**
      * Constructor for internal use: this class should be instantiated via the QueryModule
      */
@@ -1614,6 +1635,10 @@ public class QueryParser extends ExpressionParser {
         grumble("A context item declaration is allowed only in XQuery 3.0");
     }
 
+    protected boolean isReservedFunctionName(String reservedStr){
+        return reservedNames.contains(reservedStr);
+    }
+
     /**
      * Parse a function declaration.
      * <p>Syntax:<br/>
@@ -1639,6 +1664,9 @@ public class QueryParser extends ExpressionParser {
         String uri;
         StructuredQName qName;
         if (t.currentTokenValue.indexOf(':') < 0) {
+            if(languageVersion.equals(DecimalValue.THREE) && isReservedFunctionName(t.currentTokenValue)) {
+                grumble("Function name "+t.currentTokenValue+" is reserved in XQuery 3.0");
+            }
             uri = env.getDefaultFunctionNamespace();
             qName = new StructuredQName("", uri, t.currentTokenValue);
         } else {

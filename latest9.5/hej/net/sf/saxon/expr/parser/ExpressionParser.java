@@ -1752,10 +1752,12 @@ public class ExpressionParser {
                         } else {
                            return parseFunctionCall();
                         }
-                    } else if (t.currentTokenValue.equals("map") || t.currentTokenValue.equals("namespace-node") || t.currentTokenValue.equals("switch")) {
-                        if (!languageVersion.equals(DecimalValue.THREE)) {
+                    } else if (t.currentTokenValue.equals("namespace-node") || t.currentTokenValue.equals("switch")) {
+                        if(!languageVersion.equals(DecimalValue.THREE)) {
                             return parseFunctionCall();
                         }
+                    } else if(t.currentTokenValue.equals("map")) {
+                        return parseFunctionCall();
                     }
 
                 // fall through!
