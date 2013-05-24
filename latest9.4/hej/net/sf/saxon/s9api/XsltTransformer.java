@@ -428,7 +428,10 @@ public class XsltTransformer implements Destination {
         if (destination == null) {
             throw new IllegalStateException("No destination has been supplied");
         }
-        if (baseOutputUriWasSet && destination instanceof XdmDestination && ((XdmDestination)destination).getBaseURI() == null) {
+        if (baseOutputUriWasSet &&
+                destination instanceof XdmDestination &&
+                ((XdmDestination)destination).getBaseURI() == null &&
+                controller.getBaseOutputURI() != null) {
             try {
                 ((XdmDestination)destination).setBaseURI(new URI(controller.getBaseOutputURI()));
             } catch (URISyntaxException e) {
