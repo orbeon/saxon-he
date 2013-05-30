@@ -116,7 +116,9 @@ public class XSLCopy extends StyleElement {
         }
 
         if (selectAtt != null) {
-            //if (getPreparedStylesheet().getCompilerInfo().getXsltVersion().compareTo(CompilerInfo.THREE) < 0
+            if (!isXslt30Processor()) {
+                compileError("The @select attribute of xsl:copy requires XSLT 3.0");
+            }
             select = makeExpression(selectAtt);
             selectSpecified = true;
         }

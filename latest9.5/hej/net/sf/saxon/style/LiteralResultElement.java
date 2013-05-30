@@ -126,6 +126,9 @@ public class LiteralResultElement extends StyleElement {
                             compileError("The xsl:inherit-namespaces attribute has permitted values (yes, no)", "XTSE0020");
                         }
                     } else if (fp == StandardNames.XSL_ON_EMPTY) {
+                        if (!isXslt30Processor()) {
+                            compileError("The 'xsl:on-empty' attribute requires XSLT 3.0");
+                        }
                         onEmpty = makeExpression(atts.getValue(i));
                     } else {
                         compileError("Unknown XSL attribute " + namePool.getDisplayName(anameCode), "XTSE0805");

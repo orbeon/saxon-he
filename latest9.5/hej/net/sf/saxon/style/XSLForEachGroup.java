@@ -118,7 +118,7 @@ public final class XSLForEachGroup extends StyleElement {
                     compileError(e.getMessage());
                 }
             } else if (f.equals("composite")) {
-                if (!getPreparedStylesheet().getCompilerInfo().getXsltVersion().equals(DecimalValue.THREE)) {
+                if (!isXslt30Processor()) {
                     compileError("The 'composite' attribute requires XSLT 3.0");
                 }
                 String val = Whitespace.trim(atts.getValue(a));
@@ -195,7 +195,7 @@ public final class XSLForEachGroup extends StyleElement {
         }
 
         if ((groupSourceBinding != null || keySourceBinding != null) &&
-                !getPreparedStylesheet().getCompilerInfo().getXsltVersion().equals(DecimalValue.THREE)) {
+                !isXslt30Processor()) {
             compileError("for-each-group binding variables are allowed only with XSLT 3.0");
         }
 

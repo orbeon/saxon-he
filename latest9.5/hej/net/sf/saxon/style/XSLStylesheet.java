@@ -152,6 +152,9 @@ public class XSLStylesheet extends StyleElement {
             } else if (f.equals(StandardNames.INPUT_TYPE_ANNOTATIONS)) {
                 inputTypeAnnotationsAtt = atts.getValue(a);
             } else if (f.equals(StandardNames.DEFAULT_MODE)) {
+                if (!isXslt30Processor()) {
+                    compileError("The @default-mode attribute requires XSLT 3.0");
+                }
                 String val = Whitespace.trim(atts.getValue(a));
                 if (!"#unnamed".equals(val)) {
                     try {

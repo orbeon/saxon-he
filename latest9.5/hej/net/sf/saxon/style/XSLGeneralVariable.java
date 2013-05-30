@@ -73,6 +73,9 @@ public abstract class XSLGeneralVariable extends StyleElement {
 
     public void validate(Declaration decl) throws XPathException {
         sourceBinding.validate();
+        if (sourceBinding.hasProperty(SourceBinding.STATIC) && !isXslt30Processor()) {
+            compileError("Static variables and parameters require XSLT 3.0 to be enabled");
+        }
     }
 
     /**

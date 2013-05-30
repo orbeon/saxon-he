@@ -143,6 +143,9 @@ public class XSLElement extends StyleElement {
         }
 
         if (onEmptyAtt != null) {
+            if (!isXslt30Processor()) {
+                compileError("The 'on-empty' attribute requires XSLT 3.0");
+            }
             onEmpty = makeExpression(onEmptyAtt);
         }
     }
