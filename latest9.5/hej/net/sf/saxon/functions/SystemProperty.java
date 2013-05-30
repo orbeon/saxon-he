@@ -10,6 +10,7 @@ package net.sf.saxon.functions;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Version;
 import net.sf.saxon.expr.*;
+import net.sf.saxon.expr.instruct.Executable;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.lib.FeatureKeys;
 import net.sf.saxon.lib.NamespaceConstant;
@@ -78,7 +79,7 @@ public class SystemProperty extends SystemFunctionCall implements Callable {
                 return new StringLiteral(aware ? "yes" : "no");
             }
             return new StringLiteral(
-                    getProperty(NamespaceConstant.XSLT, propertyName.getLocalPart(), visitor.getConfiguration()));
+                    getProperty(NamespaceConstant.XSLT, propertyName.getLocalPart(), visitor.getExecutable()));
         } else {
            return this;
         }
@@ -108,7 +109,7 @@ public class SystemProperty extends SystemFunctionCall implements Callable {
             }
         }
         return new StringValue(getProperty(
-                qName.getURI(), qName.getLocalPart(), context.getConfiguration()));
+                qName.getURI(), qName.getLocalPart(), context.getController().getExecutable()));
     }
 
     /**
@@ -137,7 +138,7 @@ public class SystemProperty extends SystemFunctionCall implements Callable {
                     return new StringValue(isSchemaAware ? "yes" : "no");
                 } else {
                     return new StringValue(getProperty(
-                            qName.getURI(), qName.getLocalPart(), context.getConfiguration()));
+                            qName.getURI(), qName.getLocalPart(), context.getController().getExecutable()));
                 }
             } catch (XPathException err) {
                 dynamicError("Invalid system property name. " + err.getMessage(), "XTDE1390", context);
@@ -150,14 +151,15 @@ public class SystemProperty extends SystemFunctionCall implements Callable {
      * Here's the real code:
      * @param uri the namespace URI of the system property name
      * @param local the local part of the system property name
-     * @param config the Saxon configuration
+     * @param exec the Saxon executable
      * @return the value of the corresponding system property 
     */
 
-    public static String getProperty(String uri, String local, Configuration config) {
+    public static String getProperty(String uri, String local, Executable exec) {
         if (uri.equals(NamespaceConstant.XSLT)) {
             if (local.equals("version")) {
-                return Version.getXSLVersionString();
+                return exec.isAllowXPath30() ? "3.0" : "2.0";
+                //return Version.getXSLVersionString();
             } else if (local.equals("vendor")) {
                 return Version.getProductVendor();
             } else if (local.equals("vendor-url")) {
@@ -165,7 +167,7 @@ public class SystemProperty extends SystemFunctionCall implements Callable {
             } else if (local.equals("product-name")) {
                 return Version.getProductName();
             } else if (local.equals("product-version")) {
-                return Version.getProductVariantAndVersion(config);
+                return Version.getProductVariantAndVersion(exec.getConfiguration());
             } else if (local.equals("supports-serialization")) {
                 return "yes";
             } else if (local.equals("supports-backwards-compatibility")) {
@@ -175,7 +177,7 @@ public class SystemProperty extends SystemFunctionCall implements Callable {
             }
             return "";
 
-        } else if (uri.length() == 0 && config.getBooleanProperty(FeatureKeys.ALLOW_EXTERNAL_FUNCTIONS)) {
+        } else if (uri.length() == 0 && exec.getConfiguration().getBooleanProperty(FeatureKeys.ALLOW_EXTERNAL_FUNCTIONS)) {
 	        String val = System.getProperty(local);
 	        return val==null ? "" : val;
 	    } else {
