@@ -10,10 +10,7 @@ package net.sf.saxon.serialize;
 import net.sf.saxon.event.ProxyReceiver;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.lib.NamespaceConstant;
-import net.sf.saxon.om.FingerprintedQName;
-import net.sf.saxon.om.NamePool;
-import net.sf.saxon.om.NoNamespaceName;
-import net.sf.saxon.om.NodeName;
+import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.AttributeCollectionImpl;
 import net.sf.saxon.type.BuiltInAtomicType;
@@ -23,6 +20,8 @@ import net.sf.saxon.type.Untyped;
 import net.sf.saxon.value.Whitespace;
 
 import javax.xml.transform.OutputKeys;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -41,6 +40,7 @@ public class MetaTagAdjuster extends ProxyReceiver {
     NodeName metaCode;
     String requiredURI = "";
     AttributeCollectionImpl attributes;
+    List<NamespaceBinding> namespaces = new ArrayList<NamespaceBinding>();
     String encoding;
     String mediaType;
     int level = 0;
@@ -112,6 +112,7 @@ public class MetaTagAdjuster extends ProxyReceiver {
             if (nameCode.isInNamespace(requiredURI) && comparesEqual(localName, "meta")) {
                 inMetaTag = true;
                 attributes.clear();
+                namespaces.clear();
                 return;
             }
         }
@@ -150,6 +151,28 @@ public class MetaTagAdjuster extends ProxyReceiver {
             nextReceiver.attribute(nameCode, typeCode, value, locationId, properties);
         }
     }
+
+    /**
+     * Notify a namespace. Namespaces are notified <b>after</b> the startElement event, and before
+     * any children for the element. The namespaces that are reported are only required
+     * to include those that are different from the parent element; however, duplicates may be reported.
+     * A namespace must not conflict with any namespaces already used for element or attribute names.
+     *
+     * @param namespaceBinding the prefix/uri pair representing the namespace binding
+     * @param properties       any special properties to be passed on this call
+     * @throws IllegalStateException: attempt to output a namespace when there is no open element
+     *                                start tag
+     */
+    @Override
+    public void namespace(NamespaceBinding namespaceBinding, int properties) throws XPathException {
+        if (inMetaTag) {
+            // fix bug 1788
+            namespaces.add(namespaceBinding);
+        } else {
+            nextReceiver.namespace(namespaceBinding, properties);
+        }
+    }
+
 
     /**
      * Notify the start of the content, that is, the completion of all attributes and namespaces.
