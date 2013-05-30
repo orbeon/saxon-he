@@ -10,6 +10,7 @@ package net.sf.saxon.expr.sort;
 import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.tree.util.FastStringBuffer;
 
+import java.math.BigInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -74,10 +75,11 @@ public class AlphanumericCollator implements StringCollator, java.io.Serializabl
 
             // a number was found in each of the strings: compare the numbers
 
-            int n1 = Integer.parseInt(s1.substring(m1start, m1.end()));
-            int n2 = Integer.parseInt(s2.substring(m2start, m2.end()));
-            if (n1 != n2) {
-                return (n1 - n2);
+            BigInteger n1 = new BigInteger(s1.substring(m1start, m1.end()));
+            BigInteger n2 = new BigInteger(s2.substring(m2start, m2.end()));
+            c = n1.compareTo(n2);
+            if (c != 0) {
+                return c;
             }
 
             // the numbers are equal: move on to the next part of the string
