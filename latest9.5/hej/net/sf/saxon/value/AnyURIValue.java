@@ -66,7 +66,7 @@ public final class AnyURIValue extends StringValue {
 
     /*@NotNull*/ public AtomicValue copyAsSubType(AtomicType typeLabel) {
         AnyURIValue v = new AnyURIValue(value);
-        v.noSurrogates = noSurrogates;
+        v.unicodeString = unicodeString;
         v.typeLabel = typeLabel;
         return v;
     }

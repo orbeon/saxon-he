@@ -47,7 +47,7 @@ public class UntypedAtomicValue extends StringValue {
 
     /*@NotNull*/ public AtomicValue copyAsSubType(AtomicType typeLabel) {
         UntypedAtomicValue v = new UntypedAtomicValue(value);
-        v.noSurrogates = noSurrogates;
+        v.unicodeString = unicodeString;
         v.doubleValue = doubleValue;
         v.typeLabel = typeLabel;
         return v;

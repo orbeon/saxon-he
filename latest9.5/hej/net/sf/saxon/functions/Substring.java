@@ -98,8 +98,8 @@ public class Substring extends SystemFunctionCall implements Callable {
      * @return the substring starting at this position.
     */
 
-    public static CharSequence substring(StringValue sv, NumericValue start) {
-        CharSequence s = sv.getStringValueCS();
+    public static UnicodeString substring(StringValue sv, NumericValue start) {
+        UnicodeString s = sv.getUnicodeString();
         int slength = s.length();
 
         long lstart;
@@ -107,7 +107,7 @@ public class Substring extends SystemFunctionCall implements Callable {
             //noinspection RedundantCast
             lstart = ((Int64Value)start).longValue();
             if (lstart > slength) {
-                return "";
+                return UnicodeString.EMPTY_STRING;
             } else if (lstart <= 0) {
                 lstart = 1;
             }
@@ -115,23 +115,22 @@ public class Substring extends SystemFunctionCall implements Callable {
             //NumericValue rstart = start.round();
             // We need to be careful to handle cases such as plus/minus infinity
             if (start.isNaN()) {
-                return "";
+                return UnicodeString.EMPTY_STRING;
             } else if (start.signum() <= 0) {
                 return s;
             } else if (start.compareTo(slength) > 0) {
                 // this works even where the string contains surrogate pairs,
                 // because the Java length is always >= the XPath length
-                return "";
+                return UnicodeString.EMPTY_STRING;
             } else {
                 lstart = Math.round(start.getDoubleValue());
             }
         }
 
-        UnicodeString us = UnicodeString.makeUnicodeString(s);
-        if (lstart > us.length()) {
-            return "";
+        if (lstart > s.length()) {
+            return UnicodeString.EMPTY_STRING;
         }
-        return us.substring((int)lstart-1, us.length()).toString();
+        return s.substring((int)lstart-1, s.length());
     }
 
     /**
@@ -144,7 +143,7 @@ public class Substring extends SystemFunctionCall implements Callable {
      * @return the substring starting at this position.
     */
 
-    public static CharSequence substring(StringValue sv, NumericValue start, /*@NotNull*/ NumericValue len, XPathContext context) {
+    public static UnicodeString substring(StringValue sv, NumericValue start, /*@NotNull*/ NumericValue len, XPathContext context) {
 
         CharSequence s = sv.getStringValueCS();
         int slength = s.length();
@@ -154,20 +153,20 @@ public class Substring extends SystemFunctionCall implements Callable {
             //noinspection RedundantCast
             lstart = ((Int64Value)start).longValue();
             if (lstart > slength) {
-                return "";
+                return UnicodeString.EMPTY_STRING;
             }
         } else {
             start = start.round(0);
             // TODO: convert directly to a long using Math.round, as in the 2-argument case
             // We need to be careful to handle cases such as plus/minus infinity and NaN
             if (start.isNaN()) {
-                return "";
+                return UnicodeString.EMPTY_STRING;
             } else if (start.signum() <= 0) {
                 lstart = 0;
             } else if (start.compareTo(slength) > 0) {
                 // this works even where the string contains surrogate pairs,
                 // because the Java length is always >= the XPath length
-                return "";
+                return UnicodeString.EMPTY_STRING;
             } else {
                 try {
                     lstart = start.longValue();
@@ -193,9 +192,9 @@ public class Substring extends SystemFunctionCall implements Callable {
         } else {
             // We need to be careful to handle cases such as plus/minus infinity and NaN
             if (end.isNaN()) {
-                return "";
+                return UnicodeString.EMPTY_STRING;
             } else if (end.signum() <= 0) {
-                return "";
+                return UnicodeString.EMPTY_STRING;
             } else if (end.compareTo(slength) > 0) {
                 // this works even where the string contains surrogate pairs,
                 // because the Java length is always >= the XPath length
@@ -212,24 +211,24 @@ public class Substring extends SystemFunctionCall implements Callable {
         }
 
         if (lend < lstart) {
-            return "";
+            return UnicodeString.EMPTY_STRING;
         }
 
-        UnicodeString us = UnicodeString.makeUnicodeString(sv.getStringValueCS());
+        UnicodeString us = sv.getUnicodeString();
         int clength = us.length();
         int a1 = (int)lstart - 1;
         if (a1 >= clength) {
-            return "";
+            return UnicodeString.EMPTY_STRING;
         }
         int a2 = Math.min(clength, (int)lend - 1);
         if (a1 < 0) {
             if (a2 < 0) {
-                return "";
+                return UnicodeString.EMPTY_STRING;
             } else {
                 a1 = 0;
             }
         }
-        return us.substring(a1, a2).toString();
+        return us.substring(a1, a2);
     }
 
     /**
@@ -245,10 +244,10 @@ public class Substring extends SystemFunctionCall implements Callable {
         StringValue arg0 = (StringValue)arguments[0].head();
         NumericValue arg1 = (NumericValue)arguments[1].head();
         if (arguments.length == 2) {
-            return new StringValue(substring(arg0, arg1));
+            return StringValue.makeStringValue(substring(arg0, arg1));
         } else {
             NumericValue arg2 = (NumericValue)arguments[2].head();
-            return new StringValue(substring(arg0, arg1, arg2, context));
+            return StringValue.makeStringValue(substring(arg0, arg1, arg2, context));
         }
     }
 

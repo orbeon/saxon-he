@@ -7,7 +7,7 @@
 
 package net.sf.saxon.regex;
 
-import net.sf.saxon.value.*;
+import net.sf.saxon.value.StringValue;
 
 /**
  * A Unicode string which, in general, may contain non-BMP characters (that is, codepoints
@@ -72,5 +72,14 @@ public final class GeneralUnicodeString extends UnicodeString {
             System.arraycopy(chars, start, c, 0, end - start);
         }
         return StringValue.contract(c, end - start).toString();
+    }
+
+    public CharSequence getCharSequence() {
+        int[] c = chars;
+        if (start != 0) {
+            c = new int[end - start];
+            System.arraycopy(chars, start, c, 0, end - start);
+        }
+        return StringValue.contract(c, end - start);
     }
 }

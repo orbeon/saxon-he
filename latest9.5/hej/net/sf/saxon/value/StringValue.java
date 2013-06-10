@@ -9,6 +9,7 @@ package net.sf.saxon.value;
 
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.StringCollator;
+import net.sf.saxon.regex.BMPString;
 import net.sf.saxon.regex.UnicodeString;
 import net.sf.saxon.tree.iter.UnfailingIterator;
 import net.sf.saxon.tree.util.FastStringBuffer;
@@ -28,11 +29,18 @@ public class StringValue extends AtomicValue {
     /*@NotNull*/ public static final StringValue TRUE = new StringValue("true");
     /*@NotNull*/ public static final StringValue FALSE = new StringValue("false");
 
+    static {
+        EMPTY_STRING.unicodeString = new BMPString("");
+        SINGLE_SPACE.unicodeString = new BMPString(" ");
+        TRUE.unicodeString = new BMPString("true");
+        FALSE.unicodeString = new BMPString("false");
+    }
+
     // We hold the value as a CharSequence (it may be a StringBuffer rather than a string)
     // But the first time this is converted to a string, we keep it as a string
 
     protected CharSequence value;     // may be zero-length, will never be null
-    protected boolean noSurrogates = false;
+    protected UnicodeString unicodeString = null;
 
     /**
      * Protected constructor for use by subtypes
@@ -75,7 +83,7 @@ public class StringValue extends AtomicValue {
      */
 
     public void setContainsNoSurrogates() {
-        noSurrogates = true;
+        unicodeString = new BMPString(value);
     }
 
     /**
@@ -87,7 +95,7 @@ public class StringValue extends AtomicValue {
 
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
         StringValue v = new StringValue(value);
-        v.noSurrogates = noSurrogates;
+        v.unicodeString = unicodeString;
         v.typeLabel = typeLabel;
         return v;
     }
@@ -118,6 +126,15 @@ public class StringValue extends AtomicValue {
         }
     }
 
+    public static StringValue makeStringValue(UnicodeString unicode) {
+        if (unicode.length() == 0) {
+            return EMPTY_STRING;
+        }
+        StringValue sv = new StringValue(unicode.getCharSequence());
+        sv.unicodeString = unicode;
+        return sv;
+    }
+
     /**
      * Get the string value as a CharSequence
      */
@@ -144,15 +161,21 @@ public class StringValue extends AtomicValue {
      */
 
     public int getStringLength() {
-        if (noSurrogates) {
-            return value.length();
-        } else {
-            int len = getStringLength(value);
-            if (len == value.length()) {
-                noSurrogates = true;
-            }
-            return len;
+        if (unicodeString == null) {
+            makeUnicodeString();
         }
+        return unicodeString.length();
+    }
+
+    public void makeUnicodeString() {
+        unicodeString = UnicodeString.makeUnicodeString(value);
+    }
+
+    public UnicodeString getUnicodeString() {
+        if (unicodeString == null) {
+            makeUnicodeString();
+        }
+        return unicodeString;
     }
 
     /**
@@ -188,14 +211,10 @@ public class StringValue extends AtomicValue {
      */
 
     public boolean containsSurrogatePairs() {
-        if (noSurrogates) {
-            return false;
+        if (unicodeString != null) {
+            return unicodeString.length() != value.length();
         }
-        if (UnicodeString.containsSurrogatePairs(value)) {
-            return true;
-        }
-        noSurrogates = true;
-        return false;
+        return UnicodeString.containsSurrogatePairs(value);
     }
 
     /**
@@ -204,7 +223,7 @@ public class StringValue extends AtomicValue {
      */
 
     public boolean isKnownToContainNoSurrogates() {
-        return noSurrogates;
+        return unicodeString instanceof BMPString;
     }
 
     /**

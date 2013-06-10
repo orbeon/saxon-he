@@ -113,4 +113,11 @@ public abstract class UnicodeString {
      */
 
     public abstract boolean isEnd(int pos);
+
+    /**
+     * Get the value of this UnicodeString as a CharSequence
+     * @return a CharSequence representing the same characters as this UnicodeString
+     */
+
+    public abstract CharSequence getCharSequence();
 }
