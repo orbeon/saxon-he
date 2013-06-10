@@ -3345,7 +3345,7 @@ public class Configuration implements Serializable, SourceResolver, NotationSet 
             builder.setTiming(isTiming());
             builder.setLineNumbering(lineNumbering);
             builder.setPipelineConfiguration(pipe);
-            Sender.send(source, builder, options);
+            Sender.send(source, new NamespaceReducer(builder), options);
 
             // Get the constructed document
 
