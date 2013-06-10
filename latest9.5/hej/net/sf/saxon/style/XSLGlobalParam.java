@@ -92,9 +92,9 @@ public class XSLGlobalParam extends XSLGlobalVariable {
                 select.setContainer(binding);
             }
             binding.setSelectExpression(select);
-
-            initializeBinding(exec, decl, binding);
             binding.setVariableQName(sourceBinding.getVariableQName());
+            initializeBinding(exec, decl, binding);
+
             binding.setSlotNumber(slot);
             binding.setRequiredType(getRequiredType());
             binding.setRequiredParam(sourceBinding.hasProperty(SourceBinding.REQUIRED));
