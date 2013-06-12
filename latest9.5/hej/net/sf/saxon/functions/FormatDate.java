@@ -93,36 +93,41 @@ public class FormatDate extends SystemFunctionCall implements Callable {
         String country = (countryVal == null ? null : countryVal.getStringValue());
         CharSequence result = formatDate(value, format, language, country, context);
         if (calendarVal != null) {
-            StructuredQName cal;
-            try {
-                cal = StructuredQName.fromLexicalQName(calendarVal.getStringValue(), false,
-                        is30, context.getConfiguration().getNameChecker(), nsContext);
-            } catch (XPathException e) {
-                XPathException err = new XPathException("Invalid calendar name. " + e.getMessage());
+            result = adjustCalendar(calendarVal, result, context);
+        }
+        return new StringValue(result);
+    }
+
+    private CharSequence adjustCalendar(StringValue calendarVal, CharSequence result, XPathContext context) throws XPathException {
+        StructuredQName cal;
+        try {
+            cal = StructuredQName.fromLexicalQName(calendarVal.getStringValue(), false,
+                    is30, context.getConfiguration().getNameChecker(), nsContext);
+        } catch (XPathException e) {
+            XPathException err = new XPathException("Invalid calendar name. " + e.getMessage());
+            err.setErrorCode("FOFD1340");
+            err.setLocator(this);
+            err.setXPathContext(context);
+            throw err;
+        }
+
+        if (cal.getURI().equals("")) {
+            String calLocal = cal.getLocalPart();
+            if (calLocal.equals("AD") || calLocal.equals("ISO")) {
+                // no action
+            } else if (Arrays.binarySearch(knownCalendars, calLocal) >= 0) {
+                result = "[Calendar: AD]" + result.toString();
+            } else {
+                XPathException err = new XPathException("Unknown no-namespace calendar: " + calLocal);
                 err.setErrorCode("FOFD1340");
                 err.setLocator(this);
                 err.setXPathContext(context);
                 throw err;
             }
-
-            if (cal.getURI().equals("")) {
-                String calLocal = cal.getLocalPart();
-                if (calLocal.equals("AD") || calLocal.equals("ISO")) {
-                    // no action
-                } else if (Arrays.binarySearch(knownCalendars, calLocal) >= 0) {
-                    result = "[Calendar: AD]" + result.toString();
-                } else {
-                    XPathException err = new XPathException("Unknown no-namespace calendar: " + calLocal);
-                    err.setErrorCode("FOFD1340");
-                    err.setLocator(this);
-                    err.setXPathContext(context);
-                    throw err;
-                }
-            } else {
-                result = "[Calendar: AD]" + result.toString();
-            }
+        } else {
+            result = "[Calendar: AD]" + result.toString();
         }
-        return new StringValue(result);
+        return result;
     }
 
     /**
@@ -769,10 +774,7 @@ public class FormatDate extends SystemFunctionCall implements Callable {
         String country = (countryVal == null ? null : countryVal.getStringValue());
         CharSequence result = formatDate(value, format, language, country, context);
         if (calendarVal != null) {
-            String cal = calendarVal.getStringValue();
-            if (!cal.equals("AD") && !cal.equals("ISO")) {
-                result = "[Calendar: AD]" + result.toString();
-            }
+            result = adjustCalendar(calendarVal, result, context);
         }
         return new StringValue(result);
     }
