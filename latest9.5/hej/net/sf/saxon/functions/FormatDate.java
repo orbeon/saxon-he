@@ -9,13 +9,17 @@ package net.sf.saxon.functions;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.Callable;
+import net.sf.saxon.expr.StaticContext;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.instruct.SavedNamespaceContext;
 import net.sf.saxon.expr.number.Alphanumeric;
 import net.sf.saxon.expr.number.NamedTimeZone;
 import net.sf.saxon.expr.number.Numberer_en;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.lib.Numberer;
+import net.sf.saxon.om.NamespaceResolver;
 import net.sf.saxon.om.Sequence;
+import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.regex.UnicodeString;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
@@ -24,6 +28,7 @@ import net.sf.saxon.value.*;
 import net.sf.saxon.value.StringValue;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,6 +39,12 @@ import java.util.regex.Pattern;
 
 public class FormatDate extends SystemFunctionCall implements Callable {
 
+    static String[] knownCalendars = {"AD", "AH", "AME", "AM", "AP", "AS", "BE", "CB", "CE", "CL", "CS", "EE", "FE", "ISO", "JE",
+    "KE", "KY", "ME", "MS", "NS", "OS", "RS", "SE", "SH", "SS", "TE", "VE", "VS"};
+
+    private NamespaceResolver nsContext = null;
+	private boolean is30 = false;
+
     public void checkArguments(/*@NotNull*/ ExpressionVisitor visitor) throws XPathException {
         int numArgs = argument.length;
         if (numArgs != 2 && numArgs != 5) {
@@ -42,6 +53,19 @@ public class FormatDate extends SystemFunctionCall implements Callable {
                     this);
         }
         super.checkArguments(visitor);
+    }
+
+    /**
+     * Bind aspects of the static context on which the particular function depends
+     *
+     * @param env the static context of the function call
+     */
+    @Override
+    public void bindStaticContext(StaticContext env) throws XPathException {
+        is30 = env.getXPathLanguageLevel().equals(DecimalValue.THREE);
+        if (nsContext == null && getNumberOfArguments() > 2) {
+            nsContext = new SavedNamespaceContext(env.getNamespaceResolver());
+        }
     }
 
     /**
@@ -69,8 +93,32 @@ public class FormatDate extends SystemFunctionCall implements Callable {
         String country = (countryVal == null ? null : countryVal.getStringValue());
         CharSequence result = formatDate(value, format, language, country, context);
         if (calendarVal != null) {
-            String cal = calendarVal.getStringValue();
-            if (!cal.equals("AD") && !cal.equals("ISO")) {
+            StructuredQName cal;
+            try {
+                cal = StructuredQName.fromLexicalQName(calendarVal.getStringValue(), false,
+                        is30, context.getConfiguration().getNameChecker(), nsContext);
+            } catch (XPathException e) {
+                XPathException err = new XPathException("Invalid calendar name. " + e.getMessage());
+                err.setErrorCode("FOFD1340");
+                err.setLocator(this);
+                err.setXPathContext(context);
+                throw err;
+            }
+
+            if (cal.getURI().equals("")) {
+                String calLocal = cal.getLocalPart();
+                if (calLocal.equals("AD") || calLocal.equals("ISO")) {
+                    // no action
+                } else if (Arrays.binarySearch(knownCalendars, calLocal) >= 0) {
+                    result = "[Calendar: AD]" + result.toString();
+                } else {
+                    XPathException err = new XPathException("Unknown no-namespace calendar: " + calLocal);
+                    err.setErrorCode("FOFD1340");
+                    err.setLocator(this);
+                    err.setXPathContext(context);
+                    throw err;
+                }
+            } else {
                 result = "[Calendar: AD]" + result.toString();
             }
         }

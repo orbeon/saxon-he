@@ -116,11 +116,11 @@ public class SystemFunctionLibrary implements FunctionLibrary {
             f.setDetails(entry);
             f.setFunctionName(functionName);
             checkArgumentCount(arity, entry.minArguments, entry.maxArguments, local);
-            f.bindStaticContext(env);
             if (staticArgs != null) {
                 f.setArguments(staticArgs);
             }
             f.setContainer(container);
+            f.bindStaticContext(env);
             return f;
         } else {
             return null;
