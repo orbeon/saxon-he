@@ -478,9 +478,17 @@ public class FormatDate extends SystemFunctionCall implements Callable {
                 }
             }
         } else if (primary.equals("I") || primary.equals("i")) {
-            // for roman numerals, ignore the width specifier
-            min = 1;
+            int[] range = getWidths(widths);
+            min = range[0];
             max = Integer.MAX_VALUE;
+
+            String s = numberer.format(value, UnicodeString.makeUnicodeString(primary), null, letterValue, ordinal);
+            int len = StringValue.getStringLength(s);
+            while (len < min) {
+                s = s + ' ';
+                len++;
+            }
+            return s;
         } else {
             int[] range = getWidths(widths);
             min = range[0];
