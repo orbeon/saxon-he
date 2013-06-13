@@ -10,6 +10,7 @@ package net.sf.saxon.serialize;
 import net.sf.saxon.event.ProxyReceiver;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.event.ReceiverOptions;
+import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.FingerprintedQName;
 import net.sf.saxon.om.NodeName;
 import net.sf.saxon.om.StructuredQName;
@@ -238,10 +239,12 @@ public class CDATAFilter extends ProxyReceiver {
     /**
      * Extract the list of CDATA elements from the output properties
      * @param details the output properties
-     * @return an array of integer fingerprints of the element names in the cdata-section-elements property
     */
 
     private void getCdataElements(Properties details) {
+        boolean isHTML = "html".equals(details.getProperty(OutputKeys.METHOD));
+        boolean isHTML5 = isHTML && "5.0".equals(details.getProperty(OutputKeys.VERSION));
+        boolean isHTML4 = isHTML && !isHTML5;
         String cdata = details.getProperty(OutputKeys.CDATA_SECTION_ELEMENTS);
         if (cdata==null) {
             // this doesn't happen, but there's no harm allowing for it
@@ -253,7 +256,10 @@ public class CDATAFilter extends ProxyReceiver {
         while (st2.hasMoreTokens()) {
             String expandedName = st2.nextToken();
             StructuredQName sq = StructuredQName.fromClarkName(expandedName);
-            nameList.add(new FingerprintedQName("", sq.getURI(), sq.getLocalPart()));
+            String uri = sq.getURI();
+            if (!isHTML || (isHTML4 && !uri.equals("")) || (isHTML5 && !uri.equals("") && !uri.equals(NamespaceConstant.XHTML))) {
+                nameList.add(new FingerprintedQName("", sq.getURI(), sq.getLocalPart()));
+            }
         }
     }
 

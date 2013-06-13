@@ -7,7 +7,6 @@
 
 package net.sf.saxon.lib;
 
-import com.saxonica.serialize.XHTMLPrefixRemover;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
 import net.sf.saxon.event.*;
@@ -287,6 +286,10 @@ public class SerializerFactory implements Serializable {
         if (characterMapExpander != null) {
             characterMapExpander.setUnderlyingReceiver(target);
             target = characterMapExpander;
+        }
+        String cdataElements = props.getProperty(OutputKeys.CDATA_SECTION_ELEMENTS);
+        if (cdataElements!=null && cdataElements.length()>0) {
+            target = newCDATAFilter(target, props);
         }
         if (!"no".equals(props.getProperty(SaxonOutputKeys.ESCAPE_URI_ATTRIBUTES))) {
             target = newHTMLURIEscaper(target, props);
