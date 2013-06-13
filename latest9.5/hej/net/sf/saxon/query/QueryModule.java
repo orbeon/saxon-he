@@ -85,11 +85,13 @@ public class QueryModule implements StaticContext {
     /*@Nullable*/ private DecimalFormatManager decimalFormatManager = null;   // used only in XQuery 3.0
     private CodeInjector codeInjector;
     private Map<StructuredQName, String> featuresUsed = new HashMap<StructuredQName, String>();
-    private Set<StructuredQName> featuresProhibited = new HashSet();
-    private Set<StructuredQName> featuresRequired = new HashSet();
+    private Set<StructuredQName> featuresProhibited = new HashSet<StructuredQName>();
+    private Set<StructuredQName> featuresRequired = new HashSet<StructuredQName>();
     private final static Set<StructuredQName> featuresRecognized = new HashSet<StructuredQName>();
     static {
-        featuresRecognized.add(new StructuredQName("", NamespaceConstant.XQUERY, "schema-aware"));
+        featuresRecognized.add(new StructuredQName("", NamespaceConstant.XQUERY, "typed-data"));
+        featuresRecognized.add(new StructuredQName("", NamespaceConstant.XQUERY, "typed-data-schemas"));
+        featuresRecognized.add(new StructuredQName("", NamespaceConstant.XQUERY, "typed-data-all-optional-features"));
         featuresRecognized.add(new StructuredQName("", NamespaceConstant.XQUERY, "static-typing"));
         featuresRecognized.add(new StructuredQName("", NamespaceConstant.XQUERY, "serialization"));
         featuresRecognized.add(new StructuredQName("", NamespaceConstant.XQUERY, "module"));

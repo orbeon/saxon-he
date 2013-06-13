@@ -1064,9 +1064,9 @@ public class QueryParser extends ExpressionParser {
         Map<StructuredQName, String> featuresUsed = ((QueryModule) env).getFeaturesUsed();
         //String defaultUri = (allowXPath30Syntax ? NamespaceConstant.XQUERY : "");
         String defaultUri = NamespaceConstant.XQUERY;
-        StructuredQName schemaImportQName = makeStructuredQName("schema-aware", defaultUri);
+        StructuredQName schemaImportQName = makeStructuredQName("typed-data-schemas", defaultUri);
         if (!featuresUsed.containsKey(schemaImportQName)) {
-            featuresUsed.put(schemaImportQName, "XQST0009;import schema is not allowed when the schema-aware feature is disabled (see line number: " + getTokenizer().getLineNumber() + ")");
+            featuresUsed.put(schemaImportQName, "XQST0009;import schema is not allowed when the typed-data-schemas feature is disabled (see line number: " + getTokenizer().getLineNumber() + ")");
         }
 
         getExecutable().setSchemaAware(true);
@@ -1880,17 +1880,14 @@ public class QueryParser extends ExpressionParser {
 
                 if (featureName.equals(allOpFeatureQN)) {
                     processRequireProhibitFeatures(requiredFound, allFeatures, featureName);
-                    Iterator itr = featuresRecognized.iterator();
-                    while (itr.hasNext()) {
-                        featureName = (StructuredQName) itr.next();
-                        if (!featureName.equals(allExtensionsQN)) {
-                            processRequireProhibitFeatures(requiredFound, allFeatures, featureName);
+                    for (StructuredQName name : featuresRecognized) {
+                        if (!name.equals(allExtensionsQN)) {
+                            processRequireProhibitFeatures(requiredFound, allFeatures, name);
                         }
                     }
-                    continue;
-                }
-                processRequireProhibitFeatures(requiredFound, allFeatures, featureName);
-            }
+                } else {
+                    processRequireProhibitFeatures(requiredFound, allFeatures, featureName);
+                }            }
 
         }
 
@@ -2696,9 +2693,10 @@ public class QueryParser extends ExpressionParser {
         SchemaType requiredType = null;
         Set<StructuredQName> featuresProhibited = ((QueryModule) env).getFeaturesProhibited();
         String defaultUri = (allowXPath30Syntax ? NamespaceConstant.XQUERY : "");
-        StructuredQName schemaAwareQName = makeStructuredQName("schema-aware", defaultUri);
-        if (featuresProhibited.contains(schemaAwareQName)) {
-            grumble("validate is not allowed when the schema-aware feature is disabled (see line number: " + getTokenizer().getLineNumber() + ")", "XQST0075");
+        StructuredQName typedDataSchemas = makeStructuredQName("typed-data-schemas", defaultUri);
+        StructuredQName typedDataAllOptional = makeStructuredQName("typed-data-all-optional-features", defaultUri);
+        if (featuresProhibited.contains(typedDataSchemas) || featuresProhibited.contains(typedDataAllOptional)) {
+            grumble("validate is not allowed when the typed-data feature is disabled (see line number: " + getTokenizer().getLineNumber() + ")", "XQST0075");
         }
         env.getConfiguration().checkLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XQUERY, "validate expression");
         switch (t.currentToken) {
