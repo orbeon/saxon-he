@@ -157,7 +157,12 @@ public class ConstructorFunctionLibrary implements FunctionLibrary {
                         cast.setContainer(container);
                         return cast;
                     }
-                } else {
+                } else if (type == ErrorType.getInstance()) {
+                    XPathException err = new XPathException("Unsupported constructor function: {" + uri + '}' + localName);
+                    err.setErrorCode("XPST0017");
+                    err.setIsStaticError(true);
+                    throw err;
+                }  else {
                     assert type.isListType();
                     Expression exp = env.getConfiguration().obtainOptimizer().makeCastToList(arguments[0], (ListType) type, true);
                     exp.setContainer(container);

@@ -767,13 +767,17 @@ public class ExpressionParser {
         } else {
             switch (operator) {
                 case Token.CASTABLE_AS:
-                    if (type.isUnionType()) {
+                    if(type instanceof ErrorType) {
+                        grumble("Unsupported operation castable as xs:error");
+                    } else if (type.isUnionType()) {
                         return env.getConfiguration().obtainOptimizer().makeCastableToUnion(lhs, type, allowEmpty);
                     } else if (type.isListType()) {
                         return env.getConfiguration().obtainOptimizer().makeCastableToList(lhs, type, allowEmpty);
                     }
                 case Token.CAST_AS:
-                    if (type.isUnionType()) {
+                    if(type instanceof ErrorType) {
+                        grumble("Unsupported operation cast as xs:error");
+                    } else if (type.isUnionType()) {
                         return env.getConfiguration().obtainOptimizer().makeCastToUnion(lhs, type, allowEmpty);
                     } else if (type.isListType()) {
                         return env.getConfiguration().obtainOptimizer().makeCastToList(lhs, type, allowEmpty);
