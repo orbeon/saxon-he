@@ -101,6 +101,7 @@ public class RECompiler {
 
     boolean isXPath = true;
     boolean isXPath30 = true;
+    boolean isXSD11 = false;
     IntHashSet captures = new IntHashSet();
 
     REFlags reFlags;
@@ -123,6 +124,7 @@ public class RECompiler {
         this.reFlags = flags;
         isXPath = flags.isAllowsXPath20Extensions();
         isXPath30 = flags.isAllowsXPath30Extensions();
+        isXSD11 = flags.isAllowsXSD11Syntax();
     }
 
 
@@ -574,6 +576,8 @@ public class RECompiler {
                         syntaxError("Bad range");
                     } else if (thereFollows("--") && !thereFollows("--[")) {
                         syntaxError("Unescaped hyphen as start of range");
+                    } else if (!isXSD11 && pattern.charAt(idx-1) != '[' && pattern.charAt(idx-1) != '^' && !thereFollows("]") && !thereFollows("-[")) {
+                        syntaxError("In XSD 1.0, hyphen is allowed only at the beginning or end of a positive character group");
                     } else {
                         simpleChar = '-';
                         idx++;

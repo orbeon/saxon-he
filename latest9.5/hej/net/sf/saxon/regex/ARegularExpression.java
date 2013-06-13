@@ -29,7 +29,7 @@ public class ARegularExpression implements RegularExpression {
      * Create and compile a regular expression
      * @param pattern the regular expression
      * @param flags the flags (ixsmq)
-     * @param hostLanguage one of "XP20", "XP30", "XSD10", "XSD11"
+     * @param hostLanguage one of "XP20", "XP30", "XSD10", "XSD11". Also allow combinations, e.g. "XP20/XSD11".
      * @param warnings a list to be populated with any warnings arising during compilation of the regex
      * @throws XPathException if the regular expression is invalid
      */

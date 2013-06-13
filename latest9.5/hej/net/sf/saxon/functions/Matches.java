@@ -16,11 +16,11 @@ import net.sf.saxon.expr.StringLiteral;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.om.Sequence;
-import net.sf.saxon.regex.RegularExpression;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.regex.ARegularExpression;
+import net.sf.saxon.regex.RegularExpression;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.*;
+import net.sf.saxon.value.StringValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,7 +158,11 @@ public class Matches extends SystemFunctionCall {
         }
 
         try {
-            re = new ARegularExpression(regex.getStringValue(), flags.toString(), (allow30features ? "XP30" : "XP20"), null);
+            String lang = (allow30features ? "XP30" : "XP20");
+            if (context.getConfiguration().getXsdVersion() == Configuration.XSD11) {
+                lang += "/XSD11";
+            }
+            re = new ARegularExpression(regex.getStringValue(), flags.toString(), lang, null);
 
         } catch (XPathException err) {
             XPathException de = new XPathException(err);
@@ -271,6 +275,9 @@ public class Matches extends SystemFunctionCall {
             try {
                 String in = ((StringLiteral)args[patternArg]).getStringValue();
                 String hostLang = (DecimalValue.THREE.equals(env.getXPathLanguageLevel()) ? "XP30": "XP20");
+                if (env.getConfiguration().getXsdVersion() == Configuration.XSD11) {
+                    hostLang += "/XSD11";
+                }
                 List<String> warnings = new ArrayList<String>(1);
                 RegularExpression re = Configuration.getPlatform().compileRegularExpression(in, flagstr, hostLang, warnings);
                 for (String e : warnings) {
