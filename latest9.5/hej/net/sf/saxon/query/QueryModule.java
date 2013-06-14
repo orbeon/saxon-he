@@ -84,23 +84,9 @@ public class QueryModule implements StaticContext {
     private ItemType requiredContextItemType = AnyItemType.getInstance(); // must be the same for all modules
     /*@Nullable*/ private DecimalFormatManager decimalFormatManager = null;   // used only in XQuery 3.0
     private CodeInjector codeInjector;
-    private Map<StructuredQName, String> featuresUsed = new HashMap<StructuredQName, String>();
-    private Set<StructuredQName> featuresProhibited = new HashSet<StructuredQName>();
-    private Set<StructuredQName> featuresRequired = new HashSet<StructuredQName>();
-    private final static Set<StructuredQName> featuresRecognized = new HashSet<StructuredQName>();
-    static {
-        featuresRecognized.add(new StructuredQName("", NamespaceConstant.XQUERY, "typed-data"));
-        featuresRecognized.add(new StructuredQName("", NamespaceConstant.XQUERY, "typed-data-schemas"));
-        featuresRecognized.add(new StructuredQName("", NamespaceConstant.XQUERY, "typed-data-all-optional-features"));
-        featuresRecognized.add(new StructuredQName("", NamespaceConstant.XQUERY, "static-typing"));
-        featuresRecognized.add(new StructuredQName("", NamespaceConstant.XQUERY, "serialization"));
-        featuresRecognized.add(new StructuredQName("", NamespaceConstant.XQUERY, "module"));
-        featuresRecognized.add(new StructuredQName("", NamespaceConstant.XQUERY, "higher-order-function"));
-        featuresRecognized.add(new StructuredQName("", NamespaceConstant.XQUERY, "all-extensions"));
-        featuresRecognized.add(new StructuredQName("", NamespaceConstant.XQUERY, "all-optional-features"));
-    }
-    //private boolean allowTypedNodes = false;
-    //construct {name, locator, error-code}
+    private Map<LanguageFeature, SourceLocator> featuresUsed = new HashMap<LanguageFeature, SourceLocator>();
+    private Set<LanguageFeature> featuresProhibited = new HashSet<LanguageFeature>();
+    private Set<LanguageFeature> featuresRequired = new HashSet<LanguageFeature>();
 
     /**
      * Create a QueryModule for a main module, copying the data that has been set up in a
@@ -247,6 +233,17 @@ public class QueryModule implements StaticContext {
             err.setErrorCode("XQST0059");
             err.setIsStaticError(true);
             throw err;
+        }
+
+        for (Map.Entry<LanguageFeature, SourceLocator> entry : module.getFeaturesUsed().entrySet()) {
+            if (importer.getFeaturesProhibited().contains(entry.getKey())) {
+                XPathException err = new XPathException("Imported module uses feature " +
+                        entry.getKey().getName().getLocalPart() +
+                        ", which is prohibited in the importing module", entry.getValue());
+                err.setErrorCode("XQST0120");
+                throw err;
+            }
+            importer.getFeaturesUsed().put(entry.getKey(), entry.getValue());
         }
 
         return module;
@@ -1396,20 +1393,29 @@ public class QueryModule implements StaticContext {
         defaultCollationName = collation;
     }
 
-    public Map<StructuredQName, String> getFeaturesUsed() {
+    public Map<LanguageFeature, SourceLocator> getFeaturesUsed() {
         return featuresUsed;
     }
 
-    public Set<StructuredQName> getFeaturesProhibited() {
+    public Set<LanguageFeature> getFeaturesProhibited() {
         return featuresProhibited;
     }
 
-    public Set<StructuredQName> getRequiredFeature() {
+    public Set<LanguageFeature> getFeaturesRequired() {
         return featuresRequired;
     }
 
-    public Set<StructuredQName> getFeatureRecognized() {
-        return featuresRecognized;
+    public void useFeature(LanguageFeature feature, String construct, SourceLocator locator) throws XPathException {
+        if (featuresProhibited.contains(feature)) {
+            XPathException err = new XPathException("Use of " + construct +
+                    " is disallowed because the " + feature.getName().getLocalPart() + " has been prohibited", "XQST0128");
+            err.setLocator(locator);
+            throw err;
+        }
+        featuresUsed.put(feature, locator);
+        if (feature.getParent() != null) {
+            useFeature(feature.getParent(), construct, locator);
+        }
     }
 
     /**

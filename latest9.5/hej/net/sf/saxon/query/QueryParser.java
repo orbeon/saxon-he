@@ -33,6 +33,7 @@ import net.sf.saxon.value.StringValue;
 import net.sf.saxon.z.IntHashSet;
 
 import javax.xml.transform.OutputKeys;
+import javax.xml.transform.SourceLocator;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
@@ -1061,13 +1062,7 @@ public class QueryParser extends ExpressionParser {
             throw new XPathException("This Saxon version and license does not allow use of 'import schema'", "XQST0009");
         }
         env.getConfiguration().checkLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XQUERY, "import schema");
-        Map<StructuredQName, String> featuresUsed = ((QueryModule) env).getFeaturesUsed();
-        //String defaultUri = (allowXPath30Syntax ? NamespaceConstant.XQUERY : "");
-        String defaultUri = NamespaceConstant.XQUERY;
-        StructuredQName schemaImportQName = makeStructuredQName("typed-data-schemas", defaultUri);
-        if (!featuresUsed.containsKey(schemaImportQName)) {
-            featuresUsed.put(schemaImportQName, "XQST0009;import schema is not allowed when the typed-data-schemas feature is disabled (see line number: " + getTokenizer().getLineNumber() + ")");
-        }
+        ((QueryModule) env).useFeature(LanguageFeature.TYPED_DATA_SCHEMAS, "import schema", makeLocator());
 
         getExecutable().setSchemaAware(true);
         Import sImport = new Import();
@@ -1245,12 +1240,7 @@ public class QueryParser extends ExpressionParser {
 //        }
 
         moduleImports.add(mImport);
-        Map<StructuredQName, String> featuresUsed = ((QueryModule) env).getFeaturesUsed();
-        String defaultUri = (allowXPath30Syntax ? NamespaceConstant.XQUERY : "");
-        StructuredQName schemaImportQName = makeStructuredQName("module", defaultUri);
-        if (!featuresUsed.containsKey(schemaImportQName)) {
-            featuresUsed.put(schemaImportQName, "XQST0016;The Module feature is disabled and is not allowed to be used (see line number: " + getTokenizer().getLineNumber() + ")");
-        }
+        ((QueryModule)env).useFeature(LanguageFeature.MODULE, "import module", makeLocator());
     }
 
     public void applyModuleImport(/*@NotNull*/ Import mImport) throws XPathException {
@@ -1848,21 +1838,16 @@ public class QueryParser extends ExpressionParser {
             } else {
                 warning("Unknown Saxon option declaration: " + varName.getDisplayName());
             }
-        } else if (uri.equals(NamespaceConstant.XQUERY)) {
+        } else if (uri.equals(NamespaceConstant.XQUERY) && allowXPath30Syntax) {
             String localName = varName.getLocalPart();
-            StringTokenizer tokenizer = new StringTokenizer(value.toString(), " \t\n\r", false);
-            Set<StructuredQName> featuresRecognized = ((QueryModule) env).getFeatureRecognized();
-            StructuredQName allOpFeatureQN = makeStructuredQName("all-optional-features", defaultUri);
-            StructuredQName allExtensionsQN = makeStructuredQName("all-extensions", defaultUri);
+            StringTokenizer tokenizer = new StringTokenizer(value, " \t\n\r", false);
             StructuredQName featureName;
             boolean requiredFound = false;
-            boolean allFeatures = false;
             if (localName.equals("require-feature")) {
                 requiredFound = true;
             } else if (!localName.equals("prohibit-feature")) {
                 warning("Unknown option declaration in XQuery namespace: " + varName.getDisplayName());
             }
-            ;
             while (tokenizer.hasMoreTokens()) {
                 String val = tokenizer.nextToken();
                 if (val == null) {
@@ -1878,75 +1863,89 @@ public class QueryParser extends ExpressionParser {
                     return;
                 }
 
-                if (featureName.equals(allOpFeatureQN)) {
-                    processRequireProhibitFeatures(requiredFound, allFeatures, featureName);
-                    for (StructuredQName name : featuresRecognized) {
-                        if (!name.equals(allExtensionsQN)) {
-                            processRequireProhibitFeatures(requiredFound, allFeatures, name);
+                if (featureName.equals(LanguageFeature.ALL_OPTIONAL_FEATURES)) {
+                    Set<LanguageFeature> exceptions =
+                        (requiredFound ? ((QueryModule)env).getFeaturesProhibited() : ((QueryModule)env).getFeaturesRequired());
+                    for (LanguageFeature f : LanguageFeature.getAllOptionalFeatures()) {
+                        if (!exceptions.contains(f)) {
+                            processRequireProhibitFeatures(requiredFound, f.getName());
                         }
                     }
                 } else {
-                    processRequireProhibitFeatures(requiredFound, allFeatures, featureName);
-                }            }
-
+                    processRequireProhibitFeatures(requiredFound, featureName);
+                }
+            }
         }
 
         nextToken();
     }
 
-    private void processRequireProhibitFeatures(boolean requiredFound, boolean allFeatures, StructuredQName featureName) throws XPathException {
-        String defaultUri = (allowXPath30Syntax ? NamespaceConstant.XQUERY : "");
-        Set<StructuredQName> otherList;
-        Set<StructuredQName> optionList;
-        Map<StructuredQName, String> featuresUsed = null;
+    private void processRequireProhibitFeatures(boolean isRequired, StructuredQName featureName) throws XPathException {
         String localname = featureName.getLocalPart();
-        StructuredQName allOpFeatureQN = makeStructuredQName("all-optional-features", defaultUri);
-        if (requiredFound) {
-            optionList = ((QueryModule) env).getRequiredFeature();
-            otherList = ((QueryModule) env).getFeaturesProhibited();
-        } else {
-            optionList = ((QueryModule) env).getFeaturesProhibited();
-            featuresUsed = ((QueryModule) env).getFeaturesUsed();
-            otherList = ((QueryModule) env).getRequiredFeature();
-        }
-
-
-        if (!((QueryModule) env).getFeatureRecognized().contains(featureName)) {
-            grumble("The feature name " + featureName.getLocalPart() + " is not recognized", "XQST0123");
-        }
-        if (requiredFound) {
-            if (localname.equals("static-typing")) {
-                grumble("The static-typing feature not supported in this implementation", "XQST0120");
-            } else if (localname.equals("all-extensions")) {
-                grumble("all-extensions is not allowed to appear in a require-feature option", "XQST0126");
-            } else if (localname.equals("schema-aware")) {
-                if (!env.getConfiguration().isLicensedFeature(Configuration.LicenseFeature.SCHEMA_VALIDATION)) {
-                    otherList.add(featureName);
-                    grumble("Schema-awareness is not available with this version of Saxon and this license", "XQST0120");
+        LanguageFeature feature = LanguageFeature.getFeature(featureName);
+        if (localname.endsWith("-all-optional-features")) {
+            LanguageFeature parent = feature.getParent();
+            processRequireProhibitFeatures(isRequired, parent.getName());
+            for (LanguageFeature child : parent.getChildren()) {
+                if (child != feature) {
+                    processRequireProhibitFeatures(isRequired, child.getName());
                 }
             }
+            return;
+        }
+        if (feature == null) {
+            grumble("The feature name " + featureName.getLocalPart() + " is not recognized", "XQST0123");
+            return;
+        }
+        if (isRequired) {
+            if (feature.getAvailability() == LanguageFeature.NEVER) {
+                grumble("Saxon does not implement the " + featureName.getLocalPart() + " feature", "XQST0120");
+            }
+            if (featureName.equals(LanguageFeature.ALL_EXTENSIONS.getName())) {
+                grumble("The all-extensions feature cannot appear in a require-feature declaration", "XQST0126");
+            }
+            if (((QueryModule)env).getFeaturesProhibited().contains(feature)) {
+                grumble("The " + featureName.getLocalPart() + " feature has already been prohibited", "XQST0127");
+            }
+            if (((QueryModule)env).getFeaturesRequired().contains(feature)) {
+                warning("The " + featureName.getLocalPart() + " feature appears as required more than once");
+            }
+            ((QueryModule)env).getFeaturesRequired().add(feature);
+        } else {
+            if (feature.getAvailability() == LanguageFeature.ALWAYS) {
+                grumble("Saxon does not allow the feature " + featureName.getLocalPart() + " to be disabled", "XQST0128");
+            }
+            if (((QueryModule)env).getFeaturesRequired().contains(feature)) {
+                grumble("The " + featureName.getLocalPart() + " feature has already been required", "XQST0127");
+            }
+            SourceLocator locator = ((QueryModule)env).getFeaturesUsed().get(feature);
+            if (locator != null) {
+                XPathException err = new XPathException("The query uses a construct that requires feature " +
+                        featureName.getLocalPart() + ", but this feature is subsequently prohibited (see line " +
+                        getTokenizer().getLineNumber() + ")");
+                err.setLocator(locator);
+                err.setErrorCode("XQST0127");
+                throw err;
+            }
+            if (((QueryModule)env).getFeaturesProhibited().contains(feature)) {
+                warning("The " + featureName.getLocalPart() + " feature appears as prohibited more than once");
+            }
+            ((QueryModule)env).getFeaturesProhibited().add(feature);
+        }
+
+
+        if (isRequired && localname.equals("schema-aware")) {
+                if (!env.getConfiguration().isLicensedFeature(Configuration.LicenseFeature.SCHEMA_VALIDATION)) {
+                    grumble("Schema-awareness is not available with this version of Saxon and this license", "XQST0120");
+                }
+
         } else {
             if (localname.equals("all-extensions")) {
                 //TODO also  - all-optional-features
             }
-            String message = featuresUsed.get(featureName);
 
-            if (message != null) {
-                grumble(message.substring(9), message.substring(0, 8));
-            }
         }
-        if (!optionList.contains(featureName)) {
-            if (otherList.contains(featureName)) {
-                if (otherList.contains(allOpFeatureQN)) {
-                    otherList.remove(featureName);
-                } else {
-                    grumble("The " + featureName.getDisplayName() + " feature cannot be both required and prohibited at the same time (see line: " + getTokenizer().getLineNumber() + ")", "XQST0127");
-                }
-            }
-            optionList.add(featureName);
-        } else {
-            warning("Duplicate features specified in " + (requiredFound ? "require-feature" : "prohibit-feature"));
-        }
+
     }
 
     protected void parseOutputDeclaration(StructuredQName varName, String value) throws XPathException {
@@ -2691,13 +2690,7 @@ public class QueryParser extends ExpressionParser {
         int mode = Validation.STRICT;
         boolean foundCurly = false;
         SchemaType requiredType = null;
-        Set<StructuredQName> featuresProhibited = ((QueryModule) env).getFeaturesProhibited();
-        String defaultUri = (allowXPath30Syntax ? NamespaceConstant.XQUERY : "");
-        StructuredQName typedDataSchemas = makeStructuredQName("typed-data-schemas", defaultUri);
-        StructuredQName typedDataAllOptional = makeStructuredQName("typed-data-all-optional-features", defaultUri);
-        if (featuresProhibited.contains(typedDataSchemas) || featuresProhibited.contains(typedDataAllOptional)) {
-            grumble("validate is not allowed when the typed-data feature is disabled (see line number: " + getTokenizer().getLineNumber() + ")", "XQST0075");
-        }
+        ((QueryModule)env).useFeature(LanguageFeature.TYPED_DATA_SCHEMAS, "validate expression", makeLocator());
         env.getConfiguration().checkLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XQUERY, "validate expression");
         switch (t.currentToken) {
             case Token.VALIDATE_STRICT:
