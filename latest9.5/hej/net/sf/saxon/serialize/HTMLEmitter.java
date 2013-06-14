@@ -8,7 +8,6 @@
 package net.sf.saxon.serialize;
 
 import net.sf.saxon.event.ReceiverOptions;
-import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.om.NodeName;
 import net.sf.saxon.trans.XPathException;
@@ -16,13 +15,14 @@ import net.sf.saxon.tree.tiny.CompressedWhitespace;
 import net.sf.saxon.type.SchemaType;
 
 import javax.xml.transform.OutputKeys;
+import java.util.Stack;
 
 /**
   * This class generates HTML output
   * @author Michael H. Kay
   */
 
-public class HTMLEmitter extends XMLEmitter {
+public abstract class HTMLEmitter extends XMLEmitter {
 
 	/**
 	* Preferred character representations
@@ -37,10 +37,11 @@ public class HTMLEmitter extends XMLEmitter {
 	private int excludedRepresentation = REP_ENTITY;
 
 	private int inScript;
-    private int version = 4;
+    protected int version = 4;
 	private String parentElement;
     private String uri;
     private boolean escapeNonAscii = false;
+    private Stack<NodeName> nodeNameStack = new Stack<NodeName>();
 
 	/**
 	 * Decode preferred representation
@@ -62,24 +63,9 @@ public class HTMLEmitter extends XMLEmitter {
 
     static HTMLTagHashSet emptyTags = new HTMLTagHashSet(31);
 
-    static {
-        setEmptyTag("area");
-        setEmptyTag("base");
-        setEmptyTag("basefont");
-        setEmptyTag("embed");
-        setEmptyTag("br");
-        setEmptyTag("col");
-        setEmptyTag("frame");
-        setEmptyTag("hr");
-        setEmptyTag("img");
-        setEmptyTag("input");
-        setEmptyTag("isindex");
-        setEmptyTag("link");
-        setEmptyTag("meta");
-        setEmptyTag("param");
-    }
 
-    private static void setEmptyTag(String tag) {
+
+    protected static void setEmptyTag(String tag) {
         emptyTags.add(tag);
     }
 
@@ -152,6 +138,13 @@ public class HTMLEmitter extends XMLEmitter {
     }
 
     /**
+     * Decide whether an element is "serialized as an HTML element" in the language of the 3.0 specification
+     * @return true if the element
+     */
+
+    protected abstract boolean isHTMLElement(NodeName name);
+
+    /**
     * Output start of document
     */
 
@@ -168,23 +161,6 @@ public class HTMLEmitter extends XMLEmitter {
             // This method is sometimes called twice, especially during an identity transform
             // This check stops two DOCTYPE declarations being output.
 
-        String versionProperty = outputProperties.getProperty(SaxonOutputKeys.HTML_VERSION);
-        // Note, we recognize html-version even when running XSLT 2.0.
-        if (versionProperty == null) {
-            versionProperty = outputProperties.getProperty(OutputKeys.VERSION);
-        }
-
-        if (versionProperty != null) {
-            if (versionProperty.equals("4.0") || versionProperty.equals("4.01")) {
-                version = 4;
-            } else if (versionProperty.equals("5.0")) {
-                version = 5;
-            } else {
-                XPathException err = new XPathException("Unsupported HTML version: " + versionProperty);
-                err.setErrorCode("SESU0013");
-                throw err;
-            }
-        }
 
         String byteOrderMark = outputProperties.getProperty(SaxonOutputKeys.BYTE_ORDER_MARK);
 
@@ -196,41 +172,18 @@ public class HTMLEmitter extends XMLEmitter {
                 // Might be an encoding exception; just ignore it
             }
         }
-
-        String systemId = outputProperties.getProperty(OutputKeys.DOCTYPE_SYSTEM);
-        String publicId = outputProperties.getProperty(OutputKeys.DOCTYPE_PUBLIC);
-
-        // Treat "" as equivalent to absent. This goes beyond what the spec strictly allows.
-        if ("".equals(systemId)) {
-            systemId = null;
-        }
-        if ("".equals(publicId)) {
-            publicId = null;
-        }
-        if (systemId!=null || publicId!=null || version==5) {
-            writeDocType(null, "html", systemId, publicId);
-        }
-
         inScript = -1000000;
     }
 
     /**
      * Output the document type declaration
      * @param displayName     The element name
-     * @param systemId The DOCTYP system identifier
+     * @param systemId The DOCTYPE system identifier
      * @param publicId The DOCTYPE public identifier
      */
 
     protected void writeDocType(NodeName name, String displayName, String systemId, String publicId) throws XPathException {
-        if (version == 5) {
-            try {
-                writer.write("<!DOCTYPE HTML>\n");
-            } catch (java.io.IOException err) {
-                throw new XPathException(err);
-            }
-        } else {
-            super.writeDocType(name, displayName, systemId, publicId);
-        }
+        super.writeDocType(name, displayName, systemId, publicId);
     }
 
     /**
@@ -241,13 +194,14 @@ public class HTMLEmitter extends XMLEmitter {
 
         super.startElement(elemName, typeCode, locationId, properties);
 		uri = elemName.getURI();
-        parentElement = (String)elementStack.peek();
+        parentElement = elementStack.peek();
         if (elemName.isInNamespace("") &&
                 (   parentElement.equalsIgnoreCase("script") ||
                     parentElement.equalsIgnoreCase("style"))) {
             inScript = 0;
         }
         inScript++;
+        nodeNameStack.push(elemName);
     }
 
     public void startContent() throws XPathException {
@@ -405,13 +359,14 @@ public class HTMLEmitter extends XMLEmitter {
     */
 
     public void endElement() throws XPathException {
-        String name = (String)elementStack.peek();
+        NodeName nodeName = nodeNameStack.pop();
+        String name = elementStack.peek();
         inScript--;
         if (inScript==0) {
             inScript = -1000000;
         }
 
-        if (isEmptyTag(name) && (uri.length()==0 || uri.equals(NamespaceConstant.XHTML))) {
+        if (isEmptyTag(name) && isHTMLElement(nodeName)) {
             // no end tag required
             elementStack.pop();
         } else {

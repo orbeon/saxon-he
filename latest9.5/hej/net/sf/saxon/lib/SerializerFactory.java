@@ -516,7 +516,18 @@ public class SerializerFactory implements Serializable {
      */
 
     protected Emitter newHTMLEmitter(Properties properties) {
-        return new HTMLEmitter();
+        HTMLEmitter emitter;
+        String versionProperty = properties.getProperty(SaxonOutputKeys.HTML_VERSION);
+        // Note, we recognize html-version even when running XSLT 2.0.
+        if (versionProperty == null) {
+            versionProperty = properties.getProperty(OutputKeys.VERSION);
+        }
+        if (versionProperty != null && versionProperty.equals("5.0")) {
+            emitter = new HTML50Emitter();
+        } else {
+            emitter = new HTML40Emitter();
+        }
+        return emitter;
     }
 
     /**
