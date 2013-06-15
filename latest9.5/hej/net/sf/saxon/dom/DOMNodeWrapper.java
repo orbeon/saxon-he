@@ -845,10 +845,10 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
     public DOMNodeWrapper getNextSibling() {
         synchronized (docWrapper) {
             Node currNode = node.getNextSibling();
-            if (currNode.getNodeType() == Node.DOCUMENT_TYPE_NODE) {
-                currNode = currNode.getNextSibling();
-            }
             if (currNode != null) {
+                if (currNode.getNodeType() == Node.DOCUMENT_TYPE_NODE) {
+                    currNode = currNode.getNextSibling();
+                }
                 return makeWrapper(currNode, docWrapper);
             }
             return null;
