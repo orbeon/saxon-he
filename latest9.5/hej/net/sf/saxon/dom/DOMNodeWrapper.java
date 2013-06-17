@@ -130,6 +130,9 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
                 wrapper = new DOMNodeWrapper(node, docWrapper, parent, index);
                 wrapper.nodeKind = Type.PROCESSING_INSTRUCTION;
                 break;
+            case Node.ENTITY_REFERENCE_NODE:
+                throw new IllegalStateException("DOM contains entity reference nodes, which Saxon does not support. " +
+                        "The DOM should be built using the expandEntityReferences() option");
             default:
                 throw new IllegalArgumentException("Unsupported node type in DOM! " + node.getNodeType() + " instance " + node.toString());
         }
