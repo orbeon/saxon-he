@@ -7,13 +7,10 @@
 
 package net.sf.saxon.expr;
 
-//#ifdefined BYTECODE
+
 import com.saxonica.bytecode.ExpressionCompiler;
 import com.saxonica.bytecode.LiteralCompiler;
-//#endif
-//#ifdefined HOF
 import com.saxonica.functions.hof.FunctionLiteral;
-//#endif
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.SequenceReceiver;
 import net.sf.saxon.expr.parser.ExpressionTool;
