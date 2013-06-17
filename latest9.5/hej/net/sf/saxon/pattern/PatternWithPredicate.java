@@ -11,6 +11,7 @@ import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.PromotionOffer;
 import net.sf.saxon.functions.Current;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.trans.XPathException;
@@ -43,6 +44,34 @@ public class PatternWithPredicate extends Pattern {
             replaceCurrent(predicate, binding);
         }
     }
+
+    /**
+     * Offer promotion for subexpressions within this pattern. The offer will be accepted if the subexpression
+     * is not dependent on the factors (e.g. the context item) identified in the PromotionOffer.
+     * By default the offer is not accepted - this is appropriate in the case of simple expressions
+     * such as constant values and variable references where promotion would give no performance
+     * advantage. This method is always called at compile time.
+     * <p/>
+     * <p>Unlike the corresponding method on {@link net.sf.saxon.expr.Expression}, this method does not return anything:
+     * it can make internal changes to the pattern, but cannot return a different pattern. Only certain
+     * kinds of promotion are applicable within a pattern: specifically, promotions affecting local
+     * variable references within the pattern.
+     *
+     * @param offer details of the offer, for example the offer to move
+     *              expressions that don't depend on the context to an outer level in
+     *              the containing expression
+     * @param parent
+     * @throws net.sf.saxon.trans.XPathException
+     *          if any error is detected
+     */
+
+    public void promote(PromotionOffer offer, Expression parent) throws XPathException {
+        Binding[] savedBindingList = offer.bindingList;
+        basePattern.promote(offer, parent);
+        predicate = predicate.promote(offer, parent);
+        offer.bindingList = savedBindingList;
+    }
+
 
     /**
      * Allocate slots to any variables used within the pattern

@@ -22,7 +22,9 @@ import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.BooleanValue;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * The PatternSponsor class allows a Pattern to be treated like an expression. Although
@@ -241,6 +243,24 @@ public class PatternSponsor extends Expression {
     /*@NotNull*/
     public Iterator<Expression> iterateSubExpressions() {
         return pattern.iterateSubExpressions();
+    }
+
+    /**
+     * Get the immediate sub-expressions of this expression, with information about the relationship
+     * of each expression to its parent expression. Default implementation
+     * works off the results of iterateSubExpressions()
+     *
+     * @return an iterator containing the sub-expressions of this expression
+     */
+
+    /*@NotNull*/
+    public Iterator<SubExpressionInfo> iterateSubExpressionInfo() {
+        // default implementation
+        List<SubExpressionInfo> list = new ArrayList<SubExpressionInfo>();
+        for (Iterator<Expression> kids = iterateSubExpressions(); kids.hasNext(); ) {
+            list.add(new SubExpressionInfo(kids.next(), true, true, NAVIGATION_CONTEXT));
+        }
+        return list.iterator();
     }
 
     /**
