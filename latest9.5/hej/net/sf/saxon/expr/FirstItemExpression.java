@@ -15,11 +15,9 @@ import net.sf.saxon.expr.parser.Token;
 import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
-import net.sf.saxon.pattern.ItemTypePattern;
-import net.sf.saxon.pattern.NodeTest;
-import net.sf.saxon.pattern.Pattern;
-import net.sf.saxon.pattern.SimplePositionalPattern;
+import net.sf.saxon.pattern.*;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.Int64Value;
@@ -84,19 +82,17 @@ public final class FirstItemExpression extends SingleItemFilter {
     @Override
     public Pattern toPattern(Configuration config, boolean is30) throws XPathException {
         Pattern basePattern = operand.toPattern(config, is30);
-        if (basePattern instanceof ItemTypePattern && basePattern.getItemType() instanceof NodeTest) {
-            return new SimplePositionalPattern(
-                    (NodeTest)basePattern.getItemType(), Literal.makeLiteral(Int64Value.PLUS_ONE), Token.FEQ);
-        }
-//        if (basePattern instanceof LocationPathPattern) {
-//            ((LocationPathPattern) basePattern).addFilter(new Literal(IntegerValue.PLUS_ONE));
-//            return basePattern;
-//        } else
-        if (is30) {
-            // TODO: rules unclear - bug 12455
-            return basePattern;
+        ItemType type = basePattern.getItemType();
+        if (type instanceof NodeTest) {
+            if (basePattern instanceof ItemTypePattern) {
+                return new SimplePositionalPattern(
+                        (NodeTest)type, Literal.makeLiteral(Int64Value.PLUS_ONE), Token.FEQ);
+            } else {
+                return new GeneralNodePattern(this, (NodeTest)type);
+            }
         } else {
-            throw new XPathException("The filtered expression in an XSLT 2.0 pattern must be a simple step");
+            // For a non-node pattern, the predicate [1] is always true
+            return basePattern;
         }
     }
 
