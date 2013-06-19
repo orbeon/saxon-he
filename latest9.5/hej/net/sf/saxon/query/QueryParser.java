@@ -33,7 +33,6 @@ import net.sf.saxon.value.StringValue;
 import net.sf.saxon.z.IntHashSet;
 
 import javax.xml.transform.OutputKeys;
-import javax.xml.transform.SourceLocator;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
@@ -1838,115 +1837,120 @@ public class QueryParser extends ExpressionParser {
             } else {
                 warning("Unknown Saxon option declaration: " + varName.getDisplayName());
             }
-        } else if (uri.equals(NamespaceConstant.XQUERY) && allowXPath30Syntax) {
+        } else if (uri.equals(NamespaceConstant.XQUERY)) {
             String localName = varName.getLocalPart();
-            StringTokenizer tokenizer = new StringTokenizer(value, " \t\n\r", false);
-            StructuredQName featureName;
-            boolean requiredFound = false;
-            if (localName.equals("require-feature")) {
-                requiredFound = true;
-            } else if (!localName.equals("prohibit-feature")) {
+//            StringTokenizer tokenizer = new StringTokenizer(value, " \t\n\r", false);
+//            StructuredQName featureName;
+            if (localName.equals("require-feature") || localName.equals("prohibit-feature")) {
+                warning("The options require-feature and prohibit-feature have been dropped from the specification");
+            } else {
                 warning("Unknown option declaration in XQuery namespace: " + varName.getDisplayName());
             }
-            while (tokenizer.hasMoreTokens()) {
-                String val = tokenizer.nextToken();
-                if (val == null) {
-                    break;
-                }
-                try {
-                    featureName = makeStructuredQNameSilently(val, defaultUri);
-                } catch (XPathException err) {
-                    grumble("The feature name " + val + " is not a valid lexical QName", "XQST0081");
-                    return;
-                } catch (QNameException err) {
-                    grumble("The feature name " + val + " is not a valid lexical QName", "XQST0122");
-                    return;
-                }
-
-                if (featureName.equals(LanguageFeature.ALL_OPTIONAL_FEATURES)) {
-                    Set<LanguageFeature> exceptions =
-                        (requiredFound ? ((QueryModule)env).getFeaturesProhibited() : ((QueryModule)env).getFeaturesRequired());
-                    for (LanguageFeature f : LanguageFeature.getAllOptionalFeatures()) {
-                        if (!exceptions.contains(f)) {
-                            processRequireProhibitFeatures(requiredFound, f.getName());
-                        }
-                    }
-                } else {
-                    processRequireProhibitFeatures(requiredFound, featureName);
-                }
-            }
+//            boolean requiredFound = false;
+//            if (localName.equals("require-feature")) {
+//                requiredFound = true;
+//            } else if (!localName.equals("prohibit-feature")) {
+//                warning("Unknown option declaration in XQuery namespace: " + varName.getDisplayName());
+//            }
+//            while (tokenizer.hasMoreTokens()) {
+//                String val = tokenizer.nextToken();
+//                if (val == null) {
+//                    break;
+//                }
+//                try {
+//                    featureName = makeStructuredQNameSilently(val, defaultUri);
+//                } catch (XPathException err) {
+//                    grumble("The feature name " + val + " is not a valid lexical QName", "XQST0081");
+//                    return;
+//                } catch (QNameException err) {
+//                    grumble("The feature name " + val + " is not a valid lexical QName", "XQST0122");
+//                    return;
+//                }
+//
+//                if (featureName.equals(LanguageFeature.ALL_OPTIONAL_FEATURES)) {
+//                    Set<LanguageFeature> exceptions =
+//                        (requiredFound ? ((QueryModule)env).getFeaturesProhibited() : ((QueryModule)env).getFeaturesRequired());
+//                    for (LanguageFeature f : LanguageFeature.getAllOptionalFeatures()) {
+//                        if (!exceptions.contains(f)) {
+//                            processRequireProhibitFeatures(requiredFound, f.getName());
+//                        }
+//                    }
+//                } else {
+//                    processRequireProhibitFeatures(requiredFound, featureName);
+//                }
+//            }
         }
 
         nextToken();
     }
 
-    private void processRequireProhibitFeatures(boolean isRequired, StructuredQName featureName) throws XPathException {
-        String localname = featureName.getLocalPart();
-        LanguageFeature feature = LanguageFeature.getFeature(featureName);
-        if (localname.endsWith("-all-optional-features")) {
-            LanguageFeature parent = feature.getParent();
-            processRequireProhibitFeatures(isRequired, parent.getName());
-            for (LanguageFeature child : parent.getChildren()) {
-                if (child != feature) {
-                    processRequireProhibitFeatures(isRequired, child.getName());
-                }
-            }
-            return;
-        }
-        if (feature == null) {
-            grumble("The feature name " + featureName.getLocalPart() + " is not recognized", "XQST0123");
-            return;
-        }
-        if (isRequired) {
-            if (feature.getAvailability() == LanguageFeature.NEVER) {
-                grumble("Saxon does not implement the " + featureName.getLocalPart() + " feature", "XQST0120");
-            }
-            if (featureName.equals(LanguageFeature.ALL_EXTENSIONS.getName())) {
-                grumble("The all-extensions feature cannot appear in a require-feature declaration", "XQST0126");
-            }
-            if (((QueryModule)env).getFeaturesProhibited().contains(feature)) {
-                grumble("The " + featureName.getLocalPart() + " feature has already been prohibited", "XQST0127");
-            }
-            if (((QueryModule)env).getFeaturesRequired().contains(feature)) {
-                warning("The " + featureName.getLocalPart() + " feature appears as required more than once");
-            }
-            ((QueryModule)env).getFeaturesRequired().add(feature);
-        } else {
-            if (feature.getAvailability() == LanguageFeature.ALWAYS) {
-                grumble("Saxon does not allow the feature " + featureName.getLocalPart() + " to be disabled", "XQST0128");
-            }
-            if (((QueryModule)env).getFeaturesRequired().contains(feature)) {
-                grumble("The " + featureName.getLocalPart() + " feature has already been required", "XQST0127");
-            }
-            SourceLocator locator = ((QueryModule)env).getFeaturesUsed().get(feature);
-            if (locator != null) {
-                XPathException err = new XPathException("The query uses a construct that requires feature " +
-                        featureName.getLocalPart() + ", but this feature is subsequently prohibited (see line " +
-                        getTokenizer().getLineNumber() + ")");
-                err.setLocator(locator);
-                err.setErrorCode("XQST0127");
-                throw err;
-            }
-            if (((QueryModule)env).getFeaturesProhibited().contains(feature)) {
-                warning("The " + featureName.getLocalPart() + " feature appears as prohibited more than once");
-            }
-            ((QueryModule)env).getFeaturesProhibited().add(feature);
-        }
-
-
-        if (isRequired && localname.equals("schema-aware")) {
-                if (!env.getConfiguration().isLicensedFeature(Configuration.LicenseFeature.SCHEMA_VALIDATION)) {
-                    grumble("Schema-awareness is not available with this version of Saxon and this license", "XQST0120");
-                }
-
-        } else {
-            if (localname.equals("all-extensions")) {
-                //TODO also  - all-optional-features
-            }
-
-        }
-
-    }
+//    private void processRequireProhibitFeatures(boolean isRequired, StructuredQName featureName) throws XPathException {
+//        String localname = featureName.getLocalPart();
+//        LanguageFeature feature = LanguageFeature.getFeature(featureName);
+//        if (localname.endsWith("-all-optional-features")) {
+//            LanguageFeature parent = feature.getParent();
+//            processRequireProhibitFeatures(isRequired, parent.getName());
+//            for (LanguageFeature child : parent.getChildren()) {
+//                if (child != feature) {
+//                    processRequireProhibitFeatures(isRequired, child.getName());
+//                }
+//            }
+//            return;
+//        }
+//        if (feature == null) {
+//            grumble("The feature name " + featureName.getLocalPart() + " is not recognized", "XQST0123");
+//            return;
+//        }
+//        if (isRequired) {
+//            if (feature.getAvailability() == LanguageFeature.NEVER) {
+//                grumble("Saxon does not implement the " + featureName.getLocalPart() + " feature", "XQST0120");
+//            }
+//            if (featureName.equals(LanguageFeature.ALL_EXTENSIONS.getName())) {
+//                grumble("The all-extensions feature cannot appear in a require-feature declaration", "XQST0126");
+//            }
+//            if (((QueryModule)env).getFeaturesProhibited().contains(feature)) {
+//                grumble("The " + featureName.getLocalPart() + " feature has already been prohibited", "XQST0127");
+//            }
+//            if (((QueryModule)env).getFeaturesRequired().contains(feature)) {
+//                warning("The " + featureName.getLocalPart() + " feature appears as required more than once");
+//            }
+//            ((QueryModule)env).getFeaturesRequired().add(feature);
+//        } else {
+//            if (feature.getAvailability() == LanguageFeature.ALWAYS) {
+//                grumble("Saxon does not allow the feature " + featureName.getLocalPart() + " to be disabled", "XQST0128");
+//            }
+//            if (((QueryModule)env).getFeaturesRequired().contains(feature)) {
+//                grumble("The " + featureName.getLocalPart() + " feature has already been required", "XQST0127");
+//            }
+//            SourceLocator locator = ((QueryModule)env).getFeaturesUsed().get(feature);
+//            if (locator != null) {
+//                XPathException err = new XPathException("The query uses a construct that requires feature " +
+//                        featureName.getLocalPart() + ", but this feature is subsequently prohibited (see line " +
+//                        getTokenizer().getLineNumber() + ")");
+//                err.setLocator(locator);
+//                err.setErrorCode("XQST0127");
+//                throw err;
+//            }
+//            if (((QueryModule)env).getFeaturesProhibited().contains(feature)) {
+//                warning("The " + featureName.getLocalPart() + " feature appears as prohibited more than once");
+//            }
+//            ((QueryModule)env).getFeaturesProhibited().add(feature);
+//        }
+//
+//
+//        if (isRequired && localname.equals("schema-aware")) {
+//                if (!env.getConfiguration().isLicensedFeature(Configuration.LicenseFeature.SCHEMA_VALIDATION)) {
+//                    grumble("Schema-awareness is not available with this version of Saxon and this license", "XQST0120");
+//                }
+//
+//        } else {
+//            if (localname.equals("all-extensions")) {
+//                //TODO also  - all-optional-features
+//            }
+//
+//        }
+//
+//    }
 
     protected void parseOutputDeclaration(StructuredQName varName, String value) throws XPathException {
         grumble("Serialization parameters require XQuery 3.0 to be enabled");
