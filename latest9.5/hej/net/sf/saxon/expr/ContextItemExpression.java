@@ -255,7 +255,8 @@ public class ContextItemExpression extends Expression {
      */
     @Override
     public Pattern toPattern(Configuration config, boolean is30) throws XPathException {
-        throw new XPathException("'.' is not valid as a step in a path pattern");
+        return new AnchorPattern();
+        //throw new XPathException("'.' is not valid as a step in a path pattern");
     }
 
     //#ifdefined STREAM

@@ -325,6 +325,10 @@ public class TypeHierarchy implements Serializable {
             }
         } else if (t2 instanceof AnyItemType) {
             return SUBSUMED_BY;
+         } else if (t1 == ErrorType.getInstance()) {
+                return SUBSUMED_BY;
+            } else if (t2 == ErrorType.getInstance()) {
+                return SUBSUMES;
         } else if (t1.isPlainType()) {
             if (t2 instanceof NodeTest || t2 instanceof FunctionItemType || t2 instanceof ExternalObjectType) {
                 return DISJOINT;
@@ -443,10 +447,10 @@ public class TypeHierarchy implements Serializable {
                     }
                 } else if (t2 instanceof AnyNodeTest) {
                     return SUBSUMED_BY;
-                } else if (t1 instanceof ErrorType) {
-                    return DISJOINT;
-                } else if (t2 instanceof ErrorType) {
-                    return DISJOINT;
+//                } else if (t1 instanceof ErrorType) {
+//                    return DISJOINT;
+//                } else if (t2 instanceof ErrorType) {
+//                    return DISJOINT;
                 } else {
                     // first find the relationship between the node kinds allowed
                     int nodeKindRelationship;

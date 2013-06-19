@@ -1092,7 +1092,7 @@ public abstract class Expression
                 (type instanceof NodeTest || this instanceof VariableReference)) {
             return new NodeSetPattern(this);
         }
-        throw new XPathException("Cannot convert the expression {" + toString() + "} to a pattern");
+        throw new XPathException("Cannot convert the expression {" + toString() + "} to a pattern", "XTSE0340");
     }
 
 //#ifdefined STREAM

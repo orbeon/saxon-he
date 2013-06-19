@@ -8,12 +8,12 @@
 package net.sf.saxon.pattern;
 
 import net.sf.saxon.expr.parser.Token;
-import net.sf.saxon.z.IntSet;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.NodeName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.tiny.TinyTree;
 import net.sf.saxon.type.*;
+import net.sf.saxon.z.IntSet;
 
 /**
  * A CombinedNodeTest combines two nodetests using one of the operators
@@ -255,10 +255,10 @@ public class CombinedNodeTest extends NodeTest {
         SchemaType type2 = nodetest2.getContentType();
         if (type1.isSameType(type2)) return type1;
         if (operator == Token.INTERSECT) {
-            if (type2 instanceof AnyType) {
+            if (type2 instanceof AnyType || (type2 instanceof AnySimpleType && type1.isSimpleType())) {
                 return type1;
             }
-            if (type1 instanceof AnyType) {
+            if (type1 instanceof AnyType || (type1 instanceof AnySimpleType && type2.isSimpleType())) {
                 return type2;
             }
         }

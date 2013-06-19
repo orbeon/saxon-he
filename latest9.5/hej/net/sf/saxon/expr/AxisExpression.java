@@ -873,7 +873,7 @@ public final class AxisExpression extends Expression {
             test = AnyChildNodeTest.getInstance();
         }
         int kind = test.getPrimitiveType();
-        if (axis == AxisInfo.SELF && kind == Type.DOCUMENT) {
+        if (axis == AxisInfo.SELF) {
             return new ItemTypePattern(test);
         } else if (axis == AxisInfo.ATTRIBUTE) {
             if (kind == Type.NODE) {
@@ -920,6 +920,7 @@ public final class AxisExpression extends Expression {
     @Override
     public Pattern toStreamingPattern(Configuration config, List<String> reasonForFailure) {
         SlashExpression s = new SlashExpression(new ContextItemExpression(), this);
+        //SlashExpression s = new SlashExpression(new AxisExpression(AxisInfo.SELF, AnyNodeTest.getInstance()), this);
         try {
             return s.toPattern(config, true);
         } catch (XPathException e) {
