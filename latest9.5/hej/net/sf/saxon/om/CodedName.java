@@ -161,5 +161,13 @@ public class CodedName implements NodeName {
             return false;
         }
     }
+
+    public boolean isIdentical(IdentityComparable other) {
+        if(other instanceof NodeName) {
+            return this.equals(other) && this.getPrefix().equals(((NodeName)other).getPrefix());
+        } else {
+            return false;
+        }
+    }
 }
 

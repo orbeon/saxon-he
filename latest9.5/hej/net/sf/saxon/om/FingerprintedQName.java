@@ -125,4 +125,11 @@ public class FingerprintedQName extends StructuredQName implements NodeName {
         }
     }
 
+    public boolean isIdentical(IdentityComparable other) {
+        if(other instanceof NodeName) {
+            return this.equals(other) && this.getPrefix().equals(((NodeName)other).getPrefix());
+        } else {
+            return false;
+        }
+    }
 }

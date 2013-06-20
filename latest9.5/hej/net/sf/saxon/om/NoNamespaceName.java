@@ -164,4 +164,12 @@ public class NoNamespaceName implements NodeName {
     public String toString() {
         return localName;
     }
+
+    public boolean isIdentical(IdentityComparable other) {
+        if(other instanceof NodeName) {
+            return this.equals(other) && this.getPrefix().equals(((NodeName)other).getPrefix());
+        } else {
+            return false;
+        }
+    }
 }

@@ -35,7 +35,7 @@ import net.sf.saxon.type.*;
  */
 
 public abstract class AtomicValue extends AbstractItem
-        implements AtomicSequence, ConversionResult {
+        implements AtomicSequence, ConversionResult, IdentityComparable {
 
     protected AtomicType typeLabel;
 
@@ -140,6 +140,14 @@ public abstract class AtomicValue extends AbstractItem
     public boolean isIdentical(/*@NotNull*/ AtomicValue v) {
         // default implementation
         return getSchemaComparable().equals(v.getSchemaComparable());
+    }
+
+    public boolean isIdentical(IdentityComparable other) {
+        if(other instanceof AtomicValue) {
+            return isIdentical((AtomicValue) other);
+        } else {
+            return false;
+        }
     }
 
     /**

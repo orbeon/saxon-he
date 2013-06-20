@@ -18,7 +18,7 @@ package net.sf.saxon.om;
  * {@link FingerprintedQName}</p>
  */
 
-public interface NodeName {
+public interface NodeName extends IdentityComparable{
 
     /**
      * Get the prefix of the QName.
