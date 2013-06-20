@@ -142,6 +142,14 @@ public abstract class AtomicValue extends AbstractItem
         return getSchemaComparable().equals(v.getSchemaComparable());
     }
 
+    /**
+     * Determine whether two IdentityComparable values are identical. This is a stronger
+     * test than equality (even schema-equality); for example two dateTime values are not identical unless
+     * they are in the same timezone.
+     * @param other
+     * @return true if the two values are indentical, false otherwise
+     */
+
     public boolean isIdentical(IdentityComparable other) {
         if(other instanceof AtomicValue) {
             return isIdentical((AtomicValue) other);
