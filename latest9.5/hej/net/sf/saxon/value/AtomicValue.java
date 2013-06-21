@@ -147,7 +147,7 @@ public abstract class AtomicValue extends AbstractItem
      * test than equality (even schema-equality); for example two dateTime values are not identical unless
      * they are in the same timezone.
      * @param other
-     * @return true if the two values are indentical, false otherwise
+     * @return true if the two values are identical, false otherwise
      */
 
     public boolean isIdentical(IdentityComparable other) {
