@@ -234,14 +234,18 @@ public abstract class ParentNodeConstructor extends Instruction implements Valid
         if (visitor.isOptimizeForStreaming()) {
             visitor.getConfiguration().obtainOptimizer().makeCopyOperationsExplicit(this, content);
         }
-        TypeHierarchy th = visitor.getConfiguration().getTypeHierarchy();
-        if (getValidationAction() == Validation.STRIP) {
-            if ((content.getSpecialProperties() & StaticProperty.ALL_NODES_UNTYPED) != 0 ||
-                    (th.relationship(content.getItemType(th), NodeKindTest.ELEMENT) == TypeHierarchy.DISJOINT &&
-                            th.relationship(content.getItemType(th), NodeKindTest.ATTRIBUTE) == TypeHierarchy.DISJOINT)) {
-                // No need to strip type annotations if there are none needing to be stripped
-                setNoNeedToStrip();
+        if (getExecutable().isSchemaAware()) {
+            TypeHierarchy th = visitor.getConfiguration().getTypeHierarchy();
+            if (getValidationAction() == Validation.STRIP) {
+                if ((content.getSpecialProperties() & StaticProperty.ALL_NODES_UNTYPED) != 0 ||
+                        (th.relationship(content.getItemType(th), NodeKindTest.ELEMENT) == TypeHierarchy.DISJOINT &&
+                                th.relationship(content.getItemType(th), NodeKindTest.ATTRIBUTE) == TypeHierarchy.DISJOINT)) {
+                    // No need to strip type annotations if there are none needing to be stripped
+                    setNoNeedToStrip();
+                }
             }
+        } else {
+            setNoNeedToStrip();
         }
         return this;
     }

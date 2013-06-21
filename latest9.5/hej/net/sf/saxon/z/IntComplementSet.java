@@ -87,12 +87,18 @@ public class IntComplementSet implements IntSet {
     }
 
     public boolean containsAll(/*@NotNull*/ IntSet other) {
-        IntIterator ii = other.iterator();
-        while (ii.hasNext()) {
-            if (exclusions.contains(ii.next())) {
-                return false;
+        if (other instanceof IntComplementSet) {
+            return ((IntComplementSet)other).exclusions.containsAll(exclusions);
+        } else if (other instanceof IntUniversalSet) {
+            return (!exclusions.isEmpty());
+        } else {
+            IntIterator ii = other.iterator();
+            while (ii.hasNext()) {
+                if (exclusions.contains(ii.next())) {
+                    return false;
+                }
             }
+            return true;
         }
-        return true;
     }
 }
