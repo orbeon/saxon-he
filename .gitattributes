@@ -397,3 +397,7 @@ tags/9.1.0.8/bj/net/sf/saxon/Transform.class svn_mime_002dtype=application%2Foct
 tags/9.1.0.8/bj/net/sf/saxon/TransformerFactoryImpl.class svn_mime_002dtype=application%2Foctet-stream
 tags/9.1.0.8/bj/net/sf/saxon/TransformerHandlerImpl.class svn_mime_002dtype=application%2Foctet-stream
 tags/9.1.0.8/bj/net/sf/saxon/Version.class svn_mime_002dtype=application%2Foctet-stream
+tags/9.5.1.1/data/w3c/xlink/xlink.xsd svn_eol_002dstyle=native
+tags/9.5.1.1/hej/net/sf/saxon/expr/CastToUnion.java svn_eol_002dstyle=native
+tags/9.5.1.1/hej/net/sf/saxon/expr/CastableToUnion.java svn_eol_002dstyle=native
+tags/9.5.1.1/hej/net/sf/saxon/type/UnionType.java svn_eol_002dstyle=native
