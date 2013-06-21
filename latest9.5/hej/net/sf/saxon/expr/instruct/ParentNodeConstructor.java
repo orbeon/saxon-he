@@ -234,7 +234,8 @@ public abstract class ParentNodeConstructor extends Instruction implements Valid
         if (visitor.isOptimizeForStreaming()) {
             visitor.getConfiguration().obtainOptimizer().makeCopyOperationsExplicit(this, content);
         }
-        if (getExecutable().isSchemaAware()) {
+        Executable exec = getExecutable();
+        if (exec == null || exec.isSchemaAware()) {
             TypeHierarchy th = visitor.getConfiguration().getTypeHierarchy();
             if (getValidationAction() == Validation.STRIP) {
                 if ((content.getSpecialProperties() & StaticProperty.ALL_NODES_UNTYPED) != 0 ||
