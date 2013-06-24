@@ -1167,57 +1167,59 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
 
         /*@Nullable*/
         public NodeInfo next() {
-            while (true) {
-                if (forwards) {
-                    ix += currentSpan;
-                    if (ix >= childNodesLength) {
-                        position = -1;
-                        return null;
-                    } else {
-                        currentSpan = skipFollowingTextNodes();
-                        Node currentDomNode = childNodes.item(ix);
-                        switch (currentDomNode.getNodeType()) {
-                            case Node.DOCUMENT_TYPE_NODE:
-                                continue;
-                            case Node.ELEMENT_NODE:
-                                break;
-                            default:
-                                if (elementsOnly) {
+            synchronized (start.docWrapper) {
+                while (true) {
+                    if (forwards) {
+                        ix += currentSpan;
+                        if (ix >= childNodesLength) {
+                            position = -1;
+                            return null;
+                        } else {
+                            currentSpan = skipFollowingTextNodes();
+                            Node currentDomNode = childNodes.item(ix);
+                            switch (currentDomNode.getNodeType()) {
+                                case Node.DOCUMENT_TYPE_NODE:
                                     continue;
-                                } else {
+                                case Node.ELEMENT_NODE:
                                     break;
-                                }
+                                default:
+                                    if (elementsOnly) {
+                                        continue;
+                                    } else {
+                                        break;
+                                    }
+                            }
+                            DOMNodeWrapper wrapper = makeWrapper(currentDomNode, docWrapper, commonParent, ix);
+                            wrapper.span = currentSpan;
+                            position++;
+                            return current = wrapper;
                         }
-                        DOMNodeWrapper wrapper = makeWrapper(currentDomNode, docWrapper, commonParent, ix);
-                        wrapper.span = currentSpan;
-                        position++;
-                        return current = wrapper;
-                    }
-                } else {
-                    ix--;
-                    if (ix < 0) {
-                        position = -1;
-                        return null;
                     } else {
-                        currentSpan = skipPrecedingTextNodes();
-                        ix -= (currentSpan - 1);
-                        Node currentDomNode = childNodes.item(ix);
-                        switch (currentDomNode.getNodeType()) {
-                            case Node.DOCUMENT_TYPE_NODE:
-                                continue;
-                            case Node.ELEMENT_NODE:
-                                break;
-                            default:
-                                if (elementsOnly) {
+                        ix--;
+                        if (ix < 0) {
+                            position = -1;
+                            return null;
+                        } else {
+                            currentSpan = skipPrecedingTextNodes();
+                            ix -= (currentSpan - 1);
+                            Node currentDomNode = childNodes.item(ix);
+                            switch (currentDomNode.getNodeType()) {
+                                case Node.DOCUMENT_TYPE_NODE:
                                     continue;
-                                } else {
+                                case Node.ELEMENT_NODE:
                                     break;
-                                }
+                                default:
+                                    if (elementsOnly) {
+                                        continue;
+                                    } else {
+                                        break;
+                                    }
+                            }
+                            DOMNodeWrapper wrapper = makeWrapper(currentDomNode, docWrapper, commonParent, ix);
+                            wrapper.span = currentSpan;
+                            position++;
+                            return current = wrapper;
                         }
-                        DOMNodeWrapper wrapper = makeWrapper(currentDomNode, docWrapper, commonParent, ix);
-                        wrapper.span = currentSpan;
-                        position++;
-                        return current = wrapper;
                     }
                 }
             }
