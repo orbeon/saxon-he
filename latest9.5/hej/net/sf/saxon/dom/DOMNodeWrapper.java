@@ -465,9 +465,13 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
                 return ((Element) node).getAttribute(attName);
             }
             node = node.getParentNode();
-        } while (node.getNodeType() == Node.ELEMENT_NODE);
+        } while (node != null && node.getNodeType() == Node.ELEMENT_NODE);
 
-        return "";
+        if (colon < 0) {
+            return "";
+        } else {
+            throw new IllegalStateException("Undeclared namespace prefix in element name " + displayName + " in DOM input");
+        }
 
     }
 
@@ -498,12 +502,10 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
             if (attVal != null) {
                 return attVal;
             }
-
-
             node = node.getParentNode();
-        } while (node.getNodeType() == Node.ELEMENT_NODE);
+        } while (node != null && node.getNodeType() == Node.ELEMENT_NODE);
 
-        return "";
+        throw new IllegalStateException("Undeclared namespace prefix in attribute name " + displayName + " in DOM input");
 
     }
 
