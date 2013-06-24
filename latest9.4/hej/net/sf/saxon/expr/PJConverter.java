@@ -115,7 +115,7 @@ public abstract class PJConverter implements Serializable {
             return ToSequenceExtent.INSTANCE;
         }
 
-        if (!itemType.isPlainType()) {
+        if (!(itemType instanceof BuiltInAtomicType)) {
             List<ExternalObjectModel> externalObjectModels = config.getExternalObjectModels();
             for (ExternalObjectModel model : externalObjectModels) {
                 PJConverter converter = model.getPJConverter(targetClass);
@@ -138,7 +138,10 @@ public abstract class PJConverter implements Serializable {
             return new ToArray(itemConverter);
         }
         if (!Cardinality.allowsMany(cardinality)) {
-            if (itemType.isPlainType()) {
+            if (itemType instanceof ExternalObjectType) {
+                return UnwrapExternalObject.INSTANCE;
+
+            } else if (itemType.isPlainType()) {
                 if (th.isSubType(itemType, BuiltInAtomicType.STRING)) {
                     if (targetClass == Object.class || targetClass == String.class || targetClass == CharSequence.class) {
                         return StringValueToString.INSTANCE;
@@ -281,7 +284,7 @@ public abstract class PJConverter implements Serializable {
                     } else if (targetClass == java.util.Date.class) {
                         return CalendarValueToDate.INSTANCE;
                     } else if (targetClass == java.util.Calendar.class) {
-                        return CalendarValueToCalendar.INSTANCE;                          
+                        return CalendarValueToCalendar.INSTANCE;
                     } else {
                         throw cannotConvert(itemType, targetClass, config);
                     }
@@ -331,9 +334,6 @@ public abstract class PJConverter implements Serializable {
                     return Atomic.INSTANCE;
                 }
 
-            } else if (itemType instanceof ExternalObjectType) {
-                    return UnwrapExternalObject.INSTANCE;
-
             } else if (itemType instanceof EmptySequenceTest) {
                 return ToNull.INSTANCE;
 
@@ -353,6 +353,7 @@ public abstract class PJConverter implements Serializable {
             return General.INSTANCE;
         }
     }
+
 
     private static XPathException cannotConvert(ItemType source, Class target, Configuration config) {
         return new XPathException("Cannot convert from " + source.toString(config.getNamePool()) +
