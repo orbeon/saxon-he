@@ -224,7 +224,8 @@ public class XdmNode extends XdmItem {
      */
 
     public XdmNode getParent() {
-        return (XdmNode) XdmValue.wrap(getUnderlyingNode().getParent());
+        NodeInfo p = getUnderlyingNode().getParent();
+        return (p == null ? null : (XdmNode) XdmValue.wrap(p));
     }
 
     /**
