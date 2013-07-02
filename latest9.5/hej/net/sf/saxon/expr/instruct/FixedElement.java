@@ -51,17 +51,20 @@ public class FixedElement extends ElementCreator {
      * @param namespaceBindings List of namespaces to be added to the element node.
      *                       Supply an empty array if none are required.
      * @param inheritNamespaces true if the children of this element are to inherit its namespaces
+     * @param inheritFromParent true if this element is to inherit namespaces from its parent
      * @param schemaType Type annotation for the new element node
      * @param validation Validation mode to be applied, for example STRICT, LAX, SKIP
      */
     public FixedElement(NodeName elementName,
                         NamespaceBinding[] namespaceBindings,
                         boolean inheritNamespaces,
+                        boolean inheritFromParent,
                         SchemaType schemaType,
                         int validation) {
         this.elementName = elementName;
         this.namespaceBindings = namespaceBindings;
         this.inheritNamespaces = inheritNamespaces;
+        this.inheritFromParent = inheritFromParent;
         setValidationAction(validation, schemaType);
         preservingTypes = schemaType == null && validation == Validation.PRESERVE;
     }
@@ -216,7 +219,7 @@ public class FixedElement extends ElementCreator {
             ns2 = new NamespaceBinding[namespaceBindings.length];
             System.arraycopy(namespaceBindings, 0, ns2, 0, ns2.length);
         }
-        FixedElement fe = new FixedElement(elementName, ns2, inheritNamespaces, getSchemaType(), getValidationAction());
+        FixedElement fe = new FixedElement(elementName, ns2, inheritNamespaces, inheritFromParent, getSchemaType(), getValidationAction());
         fe.setContentExpression(content.copy());
         fe.setBaseURI(getBaseURI());
         if (getOnEmpty() != null) {

@@ -48,6 +48,8 @@ public abstract class ElementCreator extends ParentNodeConstructor {
 
     protected boolean inheritNamespaces = true;
 
+    protected boolean inheritFromParent = true;
+
     /**
      * The onEmpty expression is used in XSLT 3.0 to supply an alternative result to be returned
      * when the content of the element (including attributes) is empty. The most common case is
@@ -140,6 +142,10 @@ public abstract class ElementCreator extends ParentNodeConstructor {
 
     public boolean isInheritNamespaces() {
         return inheritNamespaces;
+    }
+
+    public boolean isInheritFromParent() {
+        return inheritFromParent;
     }
 
     /**
@@ -412,6 +418,9 @@ public abstract class ElementCreator extends ParentNodeConstructor {
                 elemOut.setSystemId(getNewBaseURI(context, copiedNode));
             }
             int properties = (inheritNamespaces ? 0 : ReceiverOptions.DISINHERIT_NAMESPACES);
+            if (!inheritFromParent) {
+                properties |= ReceiverOptions.REFUSE_NAMESPACE_INHERITANCE;
+            }
             elemOut.startElement(elemName, typeCode, locationId, properties);
 
             // output the required namespace nodes via a callback

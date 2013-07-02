@@ -3088,6 +3088,7 @@ public class QueryParser extends ExpressionParser {
             inst = new FixedElement(elemName,
                     ((QueryModule) env).getActiveNamespaceCodes(),
                     ((QueryModule) env).isInheritNamespaces(),
+                    true,
                     null,
                     ((QueryModule) env).getConstructionMode());
             ((FixedElement) inst).setBaseURI(env.getBaseURI());
@@ -3146,6 +3147,7 @@ public class QueryParser extends ExpressionParser {
         FixedElement el2 = new FixedElement(new CodedName(nameCode, env.getNamePool()),
                 ((QueryModule) env).getActiveNamespaceCodes(),
                 ((QueryModule) env).isInheritNamespaces(),
+                true,
                 null,
                 ((QueryModule) env).getConstructionMode());
         el2.setBaseURI(env.getBaseURI());
@@ -3489,7 +3491,7 @@ public class QueryParser extends ExpressionParser {
                     return new ErrorExpression();
                 default:
                     t.unreadChar();
-                    exp = parseDirectElementConstructor();
+                    exp = parseDirectElementConstructor(allowEndTag);
             }
             setLocation(exp, offset);
             return exp;
@@ -3508,7 +3510,7 @@ public class QueryParser extends ExpressionParser {
      *                        if the end of input is encountered prematurely
      */
 
-    private Expression parseDirectElementConstructor() throws XPathException, StringIndexOutOfBoundsException {
+    private Expression parseDirectElementConstructor(boolean isNested) throws XPathException, StringIndexOutOfBoundsException {
         int offset = t.inputOffset - 1;
         // we're reading raw characters, so we don't want the currentTokenStartOffset
         char c;
@@ -3707,6 +3709,7 @@ public class QueryParser extends ExpressionParser {
         FixedElement elInst = new FixedElement(fqn,
                 ((QueryModule) env).getActiveNamespaceCodes(),
                 ((QueryModule) env).isInheritNamespaces(),
+                !isNested,
                 null,
                 validationMode);
 

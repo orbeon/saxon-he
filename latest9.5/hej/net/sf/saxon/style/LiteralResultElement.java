@@ -317,6 +317,7 @@ public class LiteralResultElement extends StyleElement {
                         new CodedName(resultNameCode, getNamePool()),
                         bindings,
                         inheritNamespaces,
+                        true,
                         schemaType,
                         validation);
 

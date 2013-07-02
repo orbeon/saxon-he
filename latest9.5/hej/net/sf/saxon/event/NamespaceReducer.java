@@ -75,7 +75,7 @@ public class NamespaceReducer extends ProxyReceiver implements NamespaceResolver
         // If the parent element specified inherit=no, keep a list of namespaces that need to be
         // undeclared
 
-        if (depth>0 && disinheritStack[depth-1]) {
+        if ((depth>0 && disinheritStack[depth-1]) || ((properties & ReceiverOptions.REFUSE_NAMESPACE_INHERITANCE) != 0)) {
             pendingUndeclarations = new NamespaceBinding[namespacesSize];
             System.arraycopy(namespaces, 0, pendingUndeclarations, 0, namespacesSize);
         } else {

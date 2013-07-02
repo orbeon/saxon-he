@@ -196,6 +196,7 @@ public class XSLElement extends StyleElement {
                 FixedElement inst = new FixedElement(qn,
                         NamespaceBinding.EMPTY_ARRAY,
                         inheritNamespaces,
+                        true,
                         schemaType,
                         validation);
                 inst.setBaseURI(getBaseURI());

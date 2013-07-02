@@ -127,6 +127,12 @@ public class ReceiverOptions {
 
     public static final int MUTABLE_TREE = 32768;
 
+    /**
+     * Flag set on startElement() to indicate that this element does not inherit namespaces from its parent
+     */
+
+    public static final int REFUSE_NAMESPACE_INHERITANCE = 65536;
+
 
 
 }
