@@ -1693,36 +1693,38 @@ public class QueryParser extends ExpressionParser {
 
         nextToken();
         HashSet<StructuredQName> paramNames = new HashSet<StructuredQName>(8);
-        while (t.currentToken != Token.RPAR) {
-            //     ParamList   ::=     Param ("," Param)*
-            //     Param       ::=     "$" VarName  TypeDeclaration?
-            expect(Token.DOLLAR);
-            nextToken();
-            expect(Token.NAME);
-            StructuredQName argQName = makeStructuredQName(t.currentTokenValue, "");
-            if (paramNames.contains(argQName)) {
-                grumble("Duplicate parameter name " + Err.wrap(t.currentTokenValue, Err.VARIABLE), "XQST0039");
-            }
-            paramNames.add(argQName);
-            SequenceType paramType = SequenceType.ANY_SEQUENCE;
-            nextToken();
-            if (t.currentToken == Token.AS) {
+        if (t.currentToken != Token.RPAR) {
+            while (true) {
+                //     ParamList   ::=     Param ("," Param)*
+                //     Param       ::=     "$" VarName  TypeDeclaration?
+                expect(Token.DOLLAR);
                 nextToken();
-                paramType = parseSequenceType();
-            }
+                expect(Token.NAME);
+                StructuredQName argQName = makeStructuredQName(t.currentTokenValue, "");
+                if (paramNames.contains(argQName)) {
+                    grumble("Duplicate parameter name " + Err.wrap(t.currentTokenValue, Err.VARIABLE), "XQST0039");
+                }
+                paramNames.add(argQName);
+                SequenceType paramType = SequenceType.ANY_SEQUENCE;
+                nextToken();
+                if (t.currentToken == Token.AS) {
+                    nextToken();
+                    paramType = parseSequenceType();
+                }
 
-            UserFunctionParameter arg = new UserFunctionParameter();
-            arg.setRequiredType(paramType);
-            arg.setVariableQName(argQName);
-            func.addArgument(arg);
-            declareRangeVariable(arg);
-            if (t.currentToken == Token.RPAR) {
-                break;
-            } else if (t.currentToken == Token.COMMA) {
-                nextToken();
-            } else {
-                grumble("Expected ',' or ')' after function argument, found '" +
-                        Token.tokens[t.currentToken] + '\'');
+                UserFunctionParameter arg = new UserFunctionParameter();
+                arg.setRequiredType(paramType);
+                arg.setVariableQName(argQName);
+                func.addArgument(arg);
+                declareRangeVariable(arg);
+                if (t.currentToken == Token.RPAR) {
+                    break;
+                } else if (t.currentToken == Token.COMMA) {
+                    nextToken();
+                } else {
+                    grumble("Expected ',' or ')' after function argument, found '" +
+                            Token.tokens[t.currentToken] + '\'');
+                }
             }
         }
         t.setState(Tokenizer.BARE_NAME_STATE);
