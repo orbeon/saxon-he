@@ -525,7 +525,7 @@ public abstract class Token {
     /**
      * "prefix:*" token
      */
-    public static final int PREFIX = 208;    // e.g. prefix:*
+    public static final int PREFIX = 208;    // for example prefix:*
     /**
      * Numeric literal
      */
