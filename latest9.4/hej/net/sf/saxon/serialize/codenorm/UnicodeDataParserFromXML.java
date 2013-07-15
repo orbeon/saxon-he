@@ -134,7 +134,7 @@ class UnicodeDataParserFromXML {
         while (st.hasMoreTokens()) {
             String tok = st.nextToken();
             int clss;
-            int repeat = 0;
+            int repeat = 1;
             int star = tok.indexOf('*');
             if (star < 0) {
                 clss = Integer.parseInt(tok, 32);
