@@ -8,17 +8,17 @@
 package net.sf.saxon.serialize.codenorm;
 
 import net.sf.saxon.Configuration;
-import net.sf.saxon.om.AxisInfo;
-import net.sf.saxon.z.IntHashMap;
-import net.sf.saxon.z.IntToIntHashMap;
-import net.sf.saxon.z.IntToIntMap;
 import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.lib.Validation;
+import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
+import net.sf.saxon.z.IntHashMap;
+import net.sf.saxon.z.IntToIntHashMap;
+import net.sf.saxon.z.IntToIntMap;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.InputStream;
@@ -142,7 +142,7 @@ class UnicodeDataParserFromXML {
         while (st.hasMoreTokens()) {
             String tok = st.nextToken();
             int clss;
-            int repeat = 0;
+            int repeat = 1;
             int star = tok.indexOf('*');
             if (star < 0) {
                 clss = Integer.parseInt(tok, 32);
