@@ -173,8 +173,8 @@ public abstract class ExtensionFunctionCall implements Serializable, Callable {
      * If the argument is always a singleton, then the single item may be obtained by calling
      * <code>arguments[i].next()</code>.</p>
      *
-     * <p>The implementation is not obliged to read all the items in each <code>SequenceIterator</code>
-     * if they are not required to compute the result; but if any <code>SequenceIterator</code> is not read
+     * <p>The implementation is not obliged to read all the items in each <code>Sequence</code>
+     * if they are not required to compute the result; but if any <code>Sequence</code> is not read
      * to completion, it is good practice to call its <code>close()</code> method.</p>
      *
      * @return an iterator over the results of the function.
