@@ -86,10 +86,12 @@ public class AttributeSet extends Procedure {
 //#ifdefined STREAM
     public int getW3CStreamability() {
         int max = body.getStreamability(Expression.NAVIGATION_CONTEXT, false, null);
-        for (AttributeSet aset : useAttributeSets) {
-            int s = aset.getW3CStreamability();
-            if (s > max) {
-                max = s;
+        if (useAttributeSets != null) {
+            for (AttributeSet aset : useAttributeSets) {
+                int s = aset.getW3CStreamability();
+                if (s > max) {
+                    max = s;
+                }
             }
         }
         return max;
