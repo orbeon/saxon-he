@@ -875,7 +875,7 @@ public class Mode implements Serializable {
                     } else {
                         // invert the template to check that it's streamable; but then use the original
                         Template t = (Template)r.getAction();
-                        opt.makeInversion(r.getPattern(), t, (NodeTest)test);
+                        opt.makeInversion(r.getPattern(), t, test);
                     }
                 }
             };

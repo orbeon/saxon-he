@@ -18,11 +18,11 @@ import net.sf.saxon.om.FunctionItem;
 import net.sf.saxon.om.NamespaceResolver;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceIterator;
-import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.pattern.Pattern;
 import net.sf.saxon.style.XSLTemplate;
 import net.sf.saxon.trans.RuleTarget;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.type.UnionType;
@@ -304,7 +304,7 @@ public class Optimizer implements Serializable {
      * @param nodeTest the static item type of the context node of the template
      */
 
-    public RuleTarget makeInversion(Pattern pattern, Template template, NodeTest nodeTest) throws XPathException {
+    public RuleTarget makeInversion(Pattern pattern, Template template, ItemType nodeTest) throws XPathException {
         return null;
     }
 
