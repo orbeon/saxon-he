@@ -322,7 +322,7 @@ public final class FastStringBuffer implements AppendableCharSequence, Serializa
      */
 
     public String toString() {
-        condense();    // has side-effects which is nasty on the debugger!
+        //condense();    // has side-effects which is nasty on the debugger!
         return new String(array, 0, used);
     }
 
@@ -400,17 +400,16 @@ public final class FastStringBuffer implements AppendableCharSequence, Serializa
         if (index<0 || index>used) {
             throw new IndexOutOfBoundsException(""+index);
         }
-        
         if (ch > 0xffff) {
             ensureCapacity(2);
+            System.arraycopy(array, index, array, index + 2, used - index);
             used+=2;
-            System.arraycopy(array, index, array, index + 1 + 1, used - index);
             array[index] = UTF16CharacterSet.highSurrogate(ch);
             array[index+1] = UTF16CharacterSet.lowSurrogate(ch);
         } else {
             ensureCapacity(1);
-            used+=1;
             System.arraycopy(array, index, array, index + 1, used - index);
+            used++;
             array[index] = (char)ch;
         }
     }
