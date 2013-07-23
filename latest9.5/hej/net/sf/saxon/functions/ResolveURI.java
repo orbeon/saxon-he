@@ -148,6 +148,16 @@ public class ResolveURI extends SystemFunctionCall implements Callable {
                 dynamicError("Base URI " + Err.wrap(base) + " is not an absolute URI", "FORG0002", context);
             }
             if (absoluteURI.isOpaque()) {
+                // Special-case JAR file URLs, even though non-conformant
+                if (base.startsWith("jar:file:")) {
+                    try {
+                        URL absoluteURL = new URL(base);
+                        URL resolved = new URL(absoluteURL, relative);
+                        return new AnyURIValue(resolved.toString());
+                    } catch (Exception err) {
+                        // fall through to report error
+                    }
+                }
                 dynamicError("Base URI " + Err.wrap(base) + " is a non-hierarchic URI", "FORG0002", context);
             }
             if (absoluteURI.getRawFragment() != null) {
