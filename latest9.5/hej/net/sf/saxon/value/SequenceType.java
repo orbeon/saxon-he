@@ -240,11 +240,104 @@ public final class SequenceType implements Serializable {
             makeSequenceType(BuiltInAtomicType.ANY_URI, StaticProperty.ALLOWS_ZERO_OR_ONE);
 
     /**
+     * A type that allows a single optional date
+     */
+
+    public static final SequenceType OPTIONAL_DATE =
+            makeSequenceType(BuiltInAtomicType.DATE, StaticProperty.ALLOWS_ZERO_OR_ONE);
+
+    /**
+     * A type that allows a single optional time
+     */
+
+    public static final SequenceType OPTIONAL_TIME =
+            makeSequenceType(BuiltInAtomicType.TIME, StaticProperty.ALLOWS_ZERO_OR_ONE);
+
+    /**
+     * A type that allows a single optional gYear
+     */
+
+    public static final SequenceType OPTIONAL_G_YEAR =
+            makeSequenceType(BuiltInAtomicType.G_YEAR, StaticProperty.ALLOWS_ZERO_OR_ONE);
+
+    /**
+     * A type that allows a single optional gYearMonth
+     */
+
+    public static final SequenceType OPTIONAL_G_YEAR_MONTH =
+            makeSequenceType(BuiltInAtomicType.G_YEAR_MONTH, StaticProperty.ALLOWS_ZERO_OR_ONE);
+
+    /**
+     * A type that allows a single optional gMonth
+     */
+
+    public static final SequenceType OPTIONAL_G_MONTH =
+            makeSequenceType(BuiltInAtomicType.G_MONTH, StaticProperty.ALLOWS_ZERO_OR_ONE);
+
+    /**
+     * A type that allows a single optional gMonthDay
+     */
+
+    public static final SequenceType OPTIONAL_G_MONTH_DAY =
+            makeSequenceType(BuiltInAtomicType.G_MONTH_DAY, StaticProperty.ALLOWS_ZERO_OR_ONE);
+
+    /**
+     * A type that allows a single optional gDay
+     */
+
+    public static final SequenceType OPTIONAL_G_DAY =
+            makeSequenceType(BuiltInAtomicType.G_DAY, StaticProperty.ALLOWS_ZERO_OR_ONE);
+
+
+    /**
      * A type that allows a single optional dateTime
      */
 
     public static final SequenceType OPTIONAL_DATE_TIME =
             makeSequenceType(BuiltInAtomicType.DATE_TIME, StaticProperty.ALLOWS_ZERO_OR_ONE);
+
+    /**
+     * A type that allows a single optional duration
+     */
+
+    public static final SequenceType OPTIONAL_DURATION =
+            makeSequenceType(BuiltInAtomicType.DURATION, StaticProperty.ALLOWS_ZERO_OR_ONE);
+
+    /**
+     * A type that allows a single optional yearMonthDuration
+     */
+
+    public static final SequenceType OPTIONAL_YEAR_MONTH_DURATION =
+            makeSequenceType(BuiltInAtomicType.YEAR_MONTH_DURATION, StaticProperty.ALLOWS_ZERO_OR_ONE);
+
+    /**
+     * A type that allows a single optional dayTimeDuration
+     */
+
+    public static final SequenceType OPTIONAL_DAY_TIME_DURATION =
+            makeSequenceType(BuiltInAtomicType.DAY_TIME_DURATION, StaticProperty.ALLOWS_ZERO_OR_ONE);
+
+
+    /**
+     * A type that allows a single optional xs:NOTATION
+     */
+
+    public static final SequenceType OPTIONAL_NOTATION =
+            makeSequenceType(BuiltInAtomicType.NOTATION, StaticProperty.ALLOWS_ZERO_OR_ONE);
+
+    /**
+     * A type that allows a single optional xs:Base64Binary
+     */
+
+    public static final SequenceType OPTIONAL_BASE64_BINARY =
+            makeSequenceType(BuiltInAtomicType.BASE64_BINARY, StaticProperty.ALLOWS_ZERO_OR_ONE);
+
+    /**
+     * A type that allows a single optional xs:hexBinary
+     */
+
+    public static final SequenceType OPTIONAL_HEX_BINARY =
+            makeSequenceType(BuiltInAtomicType.HEX_BINARY, StaticProperty.ALLOWS_ZERO_OR_ONE);
 
 
     /**
@@ -421,7 +514,7 @@ public final class SequenceType implements Serializable {
 
     public boolean matches(Sequence value, Configuration config) throws XPathException {
         if (value instanceof Item) {
-            return primaryType.matchesItem((Item)value, false, config);
+            return primaryType.matchesItem((Item) value, false, config);
         }
         int count = 0;
         SequenceIterator iter = value.iterate();

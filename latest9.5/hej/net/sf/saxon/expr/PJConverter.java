@@ -62,6 +62,30 @@ public abstract class PJConverter implements Serializable {
         jpmap.put(URL.class, SequenceType.OPTIONAL_ANY_URI);
         jpmap.put(BigInteger.class, SequenceType.OPTIONAL_INTEGER);
         jpmap.put(BigDecimal.class, SequenceType.OPTIONAL_DECIMAL);
+
+        jpmap.put(StringValue.class, SequenceType.OPTIONAL_STRING);
+        jpmap.put(BooleanValue.class, SequenceType.OPTIONAL_BOOLEAN);
+        jpmap.put(DoubleValue.class, SequenceType.OPTIONAL_DOUBLE);
+        jpmap.put(FloatValue.class, SequenceType.OPTIONAL_FLOAT);
+        jpmap.put(DecimalValue.class, SequenceType.OPTIONAL_DECIMAL);
+        jpmap.put(IntegerValue.class, SequenceType.OPTIONAL_INTEGER);
+        jpmap.put(AnyURIValue.class, SequenceType.OPTIONAL_ANY_URI);
+        jpmap.put(QNameValue.class, SequenceType.OPTIONAL_QNAME);
+        jpmap.put(NotationValue.class, SequenceType.OPTIONAL_NOTATION);
+        jpmap.put(DateValue.class, SequenceType.OPTIONAL_DATE);
+        jpmap.put(DateTimeValue.class, SequenceType.OPTIONAL_DATE_TIME);
+        jpmap.put(TimeValue.class, SequenceType.OPTIONAL_TIME);
+        jpmap.put(DurationValue.class, SequenceType.OPTIONAL_DURATION);
+        jpmap.put(DayTimeDurationValue.class, SequenceType.OPTIONAL_DAY_TIME_DURATION);
+        jpmap.put(YearMonthDurationValue.class, SequenceType.OPTIONAL_YEAR_MONTH_DURATION);
+        jpmap.put(GYearValue.class, SequenceType.OPTIONAL_G_YEAR);
+        jpmap.put(GYearMonthValue.class, SequenceType.OPTIONAL_G_YEAR_MONTH);
+        jpmap.put(GMonthValue.class, SequenceType.OPTIONAL_G_MONTH);
+        jpmap.put(GMonthDayValue.class, SequenceType.OPTIONAL_G_MONTH_DAY);
+        jpmap.put(GDayValue.class, SequenceType.OPTIONAL_G_DAY);
+        jpmap.put(Base64BinaryValue.class, SequenceType.OPTIONAL_BASE64_BINARY);
+        jpmap.put(HexBinaryValue.class, SequenceType.OPTIONAL_HEX_BINARY);
+
     }
 
 
