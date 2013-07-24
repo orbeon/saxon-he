@@ -165,26 +165,18 @@ public abstract class ExtensionFunctionCall implements Serializable, Callable {
  * @param context The XPath dynamic evaluation context
      *
      * @param arguments The values of the arguments to the function call. Each argument value (which is in general
-     * a sequence) is supplied in the form of an iterator over the items in the sequence. Any required conversions
+     * a sequence) is supplied in the form of a Sequence object. Any required conversions
      * to the declared types of the arguments will already have been performed.
      *
-     * <p>If required, the supplied sequence can be materialized by calling, for example,
-     * <code>new SequenceExtent(arguments[i])</code>.
-     * If the argument is always a singleton, then the single item may be obtained by calling
-     * <code>arguments[i].next()</code>.</p>
-     *
-     * <p>The implementation is not obliged to read all the items in each <code>Sequence</code>
-     * if they are not required to compute the result; but if any <code>Sequence</code> is not read
-     * to completion, it is good practice to call its <code>close()</code> method.</p>
-     *
-     * @return an iterator over the results of the function.
+     * @return the results of the function.
      *
      * <p>The implementation is responsible for ensuring that the result is a valid instance of the declared
      * result type. Saxon will check that this is the case if the {@link net.sf.saxon.lib.ExtensionFunctionDefinition#trustResultType()}
      * method returns false, but it will never convert the supplied result value to the declared result type.</p>
      *
-     * <p>If the result is a single item, it can be returned in the form of a {@link net.sf.saxon.tree.iter.SingletonIterator}.
-     * If the result is an empty sequence, the method should return {@link net.sf.saxon.tree.iter.EmptyIterator#getInstance()}</p>
+     * <p>If the result is a single item, it can be returned in the form of a {@link net.sf.saxon.value.AtomicValue}, which
+     * implements the {@link Sequence} interface..
+     * If the result is an empty sequence, the method should return {@link net.sf.saxon.value.EmptySequence#getInstance()}</p>
      *
      * @throws XPathException if a dynamic error occurs during evaluation of the function. The Saxon run-time
      * code will add information about the error location.
@@ -202,11 +194,10 @@ public abstract class ExtensionFunctionCall implements Serializable, Callable {
      *
      * @param context The XPath dynamic evaluation context
      * @param arguments The values of the arguments to the function call. Each argument value (which is in general
-     * a sequence) is supplied in the form of an iterator over the items in the sequence. If required, the
-     * supplied sequence can be materialized by calling, for example, <code>new SequenceExtent(arguments[i])</code>.
+     * a sequence) is supplied in the form of a Sequence object.
      * If the argument is always a singleton, then the single item may be obtained by calling
-     * <code>arguments[i].next()</code>. The implementation is not obliged to read all the items in each
-     * <code>SequenceIterator</code> if they are not required to compute the result; but if any SequenceIterator is not read
+     * <code>arguments[i].head()</code>. The implementation is not obliged to read all the items in each
+     * <code>Sequence</code> if they are not required to compute the result; but if any Sequence is not read
      * to completion, it is good practice to call its close() method.
      * @return the effective boolean value of the result
      * @throws XPathException if a dynamic error occurs during evaluation of the function. The Saxon run-time
