@@ -10,7 +10,6 @@ package net.sf.saxon.tree.tiny;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.ReceiverOptions;
 import net.sf.saxon.lib.FeatureKeys;
-import net.sf.saxon.z.IntArraySet;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
@@ -18,6 +17,8 @@ import net.sf.saxon.tree.linked.SystemIdMap;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
+import net.sf.saxon.value.StringValue;
+import net.sf.saxon.z.IntArraySet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1308,33 +1309,34 @@ public final class TinyTree {
     }
 
     /**
-     * Update the statistics held in static data. We don't bother to sychronize, on the basis that it doesn't
-     * matter if the stats are wrong.
+     * Update the statistics held in static data. We synchronize this, because updates to a double
+     * are not atomic: see bug #1844
      */
 
     private void updateStatistics() {
-        int n0 = treesCreated;
-        if (n0 < 1000000) {  // it should have stabilized by then, and we don't want to overflow
-            int n1 = treesCreated + 1;
-            treesCreated = n1;
-            averageNodes = ((averageNodes * n0) + numberOfNodes) / n1;
-            if (averageNodes < 10.0) {
-                averageNodes = 10.0;
-            }
-            averageAttributes = ((averageAttributes * n0) + numberOfAttributes) / n1;
-            if (averageAttributes < 10.0) {
-                averageAttributes = 10.0;
-            }
-            averageNamespaces = ((averageNamespaces * n0) + numberOfNamespaces) / n1;
-            if (averageNamespaces < 5.0) {
-                averageNamespaces = 5.0;
-            }
-            averageCharacters = ((averageCharacters * n0) + charBuffer.length()) / n1;
-            if (averageCharacters < 100.0) {
-                averageCharacters = 100.0;
+        synchronized (TinyTree.class) {
+            int n0 = treesCreated;
+            if (n0 < 1000000) {  // it should have stabilized by then, and we don't want to overflow
+                int n1 = treesCreated + 1;
+                treesCreated = n1;
+                averageNodes = ((averageNodes * n0) + numberOfNodes) / n1;
+                if (averageNodes < 10.0) {
+                    averageNodes = 10.0;
+                }
+                averageAttributes = ((averageAttributes * n0) + numberOfAttributes) / n1;
+                if (averageAttributes < 10.0) {
+                    averageAttributes = 10.0;
+                }
+                averageNamespaces = ((averageNamespaces * n0) + numberOfNamespaces) / n1;
+                if (averageNamespaces < 5.0) {
+                    averageNamespaces = 5.0;
+                }
+                averageCharacters = ((averageCharacters * n0) + charBuffer.length()) / n1;
+                if (averageCharacters < 100.0) {
+                    averageCharacters = 100.0;
+                }
             }
         }
-
     }
 
     /**
