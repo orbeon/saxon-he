@@ -151,6 +151,10 @@ public class StandardEntityResolver implements EntityResolver {
                 "http://www.w3.org/MarkUp/DTD/xhtml-bdo-1.mod",
                 "w3c/xhtml11/xhtml-bdo-1.mod");
 
+        register("-//W3C//ELEMENTS XHTML BIDI Override Element 1.0//EN", //should be "BDO Element 1.0" not "BIDI Override Element 1.0"
+                "http://www.w3.org/MarkUp/DTD/xhtml-bdo-1.mod",
+                "w3c/xhtml11/xhtml-bdo-1.mod");
+
         register("-//W3C//ELEMENTS XHTML Block Phrasal 1.0//EN",
                 "http://www.w3.org/MarkUp/DTD/xhtml-blkphras-1.mod",
                 "w3c/xhtml11/xhtml-blkphras-1.mod");
@@ -176,6 +180,10 @@ public class StandardEntityResolver implements EntityResolver {
                 "w3c/xhtml11/xhtml-datatypes-1.mod");
 
         register("-//W3C//ELEMENTS XHTML Editing Markup 1.0//EN",
+                "http://www.w3.org/MarkUp/DTD/xhtml-edit-1.mod",
+                "w3c/xhtml11/xhtml-edit-1.mod");
+
+        register("-//W3C//ELEMENTS XHTML Editing Elements 1.0//EN",   // should be "Editing Markup" not "Editing Elements", but allow both
                 "http://www.w3.org/MarkUp/DTD/xhtml-edit-1.mod",
                 "w3c/xhtml11/xhtml-edit-1.mod");
 
@@ -223,7 +231,11 @@ public class StandardEntityResolver implements EntityResolver {
                 "http://www.w3.org/MarkUp/DTD/xhtml-inlstruct-1.mod",
                 "w3c/xhtml11/xhtml-inlstruct-1.mod");
 
-        register("-//W3C//ENTITIES XHTML Inline Style 1.0//EN",
+        register("-//W3C//ENTITIES XHTML Inline Style 1.0//EN",  // should be "ELEMENTS" not "ENTITIES", but allow either
+                "http://www.w3.org/MarkUp/DTD/xhtml-inlstyle-1.mod",
+                "w3c/xhtml11/xhtml-inlstyle-1.mod");
+
+        register("-//W3C//ELEMENTS XHTML Inline Style 1.0//EN",
                 "http://www.w3.org/MarkUp/DTD/xhtml-inlstyle-1.mod",
                 "w3c/xhtml11/xhtml-inlstyle-1.mod");
 
@@ -320,6 +332,10 @@ public class StandardEntityResolver implements EntityResolver {
                 "w3c/xhtml11/xhtml-struct-1.mod");
 
         register("-//W3C//DTD XHTML Style Sheets 1.0//EN",
+                "http://www.w3.org/MarkUp/DTD/xhtml-style-1.mod",
+                "w3c/xhtml11/xhtml-style-1.mod");
+
+        register("-//W3C//ELEMENTS XHTML Style Sheets 1.0//EN",  // should be "DTD XHTML" not "ELEMENTS XHTML"
                 "http://www.w3.org/MarkUp/DTD/xhtml-style-1.mod",
                 "w3c/xhtml11/xhtml-style-1.mod");
 
@@ -604,6 +620,11 @@ public class StandardEntityResolver implements EntityResolver {
         fileName = systemIds.get(systemId);
         if (fileName != null) {
             return fetch(fileName, config);
+        }
+
+        // If this is a W3C URI, Saxon ought really to have a copy...
+        if (systemId.startsWith("http://www.w3.org/") && config.isTiming()) {
+            config.getStandardErrorOutput().println("Saxon does not have a local copy of PUBLIC " + publicId + " SYSTEM " + systemId);
         }
 
         // Otherwise, leave the parser to resolve the URI in the normal way
