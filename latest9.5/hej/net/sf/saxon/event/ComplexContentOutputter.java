@@ -316,7 +316,7 @@ public final class ComplexContentOutputter extends SequenceReceiver {
                     getPipelineConfiguration().isSerializing(),
                     lp,
                     startElementLocationId);
-            if (lp != null) {
+            if (lp != null && locationId > 0) {
                 err.setLocator(new ExpressionLocation(lp, locationId));
             }
             throw err;

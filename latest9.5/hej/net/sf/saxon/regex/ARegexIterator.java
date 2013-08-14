@@ -9,15 +9,16 @@ package net.sf.saxon.regex;
 
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.z.IntHashMap;
-import net.sf.saxon.z.IntToIntHashMap;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.ArrayIterator;
 import net.sf.saxon.tree.iter.EmptyIterator;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.value.StringValue;
+import net.sf.saxon.z.IntHashMap;
+import net.sf.saxon.z.IntToIntHashMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,50 +62,56 @@ public class ARegexIterator implements RegexIterator {
     * @return the next item in the sequence
     */
 
-    public Item next() {
-        if (next == null && prevEnd >= 0) {
-            // we've returned a match (or we're at the start), so find the next match
-            if (matcher.match(theString, prevEnd)) {
-                int start = matcher.getParenStart(0);
-                int end = matcher.getParenEnd(0);
-                if (prevEnd == start) {
-                    // there's no intervening non-matching string to return
-                    next = null;
-                    current = theString.substring(start, end);
-                    prevEnd = end;
+    public Item next() throws XPathException {
+        try {
+            if (next == null && prevEnd >= 0) {
+                // we've returned a match (or we're at the start), so find the next match
+                if (matcher.match(theString, prevEnd)) {
+                    int start = matcher.getParenStart(0);
+                    int end = matcher.getParenEnd(0);
+                    if (prevEnd == start) {
+                        // there's no intervening non-matching string to return
+                        next = null;
+                        current = theString.substring(start, end);
+                        prevEnd = end;
+                    } else {
+                        // return the non-matching substring first
+                        current = theString.substring(prevEnd, start);
+                        next = theString.substring(start, end);
+                    }
                 } else {
-                    // return the non-matching substring first
-                    current = theString.substring(prevEnd, start);
-                    next = theString.substring(start, end);
+                    // there are no more regex matches, we must return the final non-matching text if any
+                    if (prevEnd < theString.length()) {
+                        current = theString.substring(prevEnd, theString.length());
+                        next = null;
+                    } else {
+                        // this really is the end...
+                        current = null;
+                        position = -1;
+                        prevEnd = -1;
+                        return null;
+                    }
+                    prevEnd = -1;
                 }
             } else {
-                // there are no more regex matches, we must return the final non-matching text if any
-                if (prevEnd < theString.length()) {
-                    current = theString.substring(prevEnd, theString.length());
+                // we've returned a non-match, so now return the match that follows it, if there is one
+                if (prevEnd >= 0) {
+                    current = next;
                     next = null;
+                    prevEnd = matcher.getParenEnd(0);
                 } else {
-                    // this really is the end...
                     current = null;
                     position = -1;
-                    prevEnd = -1;
                     return null;
                 }
-                prevEnd = -1;
             }
-        } else {
-            // we've returned a non-match, so now return the match that follows it, if there is one
-            if (prevEnd >= 0) {
-                current = next;
-                next = null;
-                prevEnd = matcher.getParenEnd(0);
-            } else {
-                current = null;
-                position = -1;
-                return null;
-            }
+            position++;
+            return currentStringValue();
+        } catch (StackOverflowError e) {
+            XPathException xe = new XPathException("Stack overflow (excessive recursion) during regular expression evaluation");
+            xe.setErrorCode(SaxonErrorCode.SXRE0001);
+            throw xe;
         }
-        position++;
-        return currentStringValue();
     }
 
     private StringValue currentStringValue() {

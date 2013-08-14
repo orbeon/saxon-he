@@ -37,7 +37,13 @@ public class SaxonErrorCode {
      * SXCH0004: cannot load user-supplied ContentHandler
      */
 
-    public static final String SXCH0004 = "SXCH0004";    
+    public static final String SXCH0004 = "SXCH0004";
+
+    /**
+     * SXRE0001: stack overflow within regular expression evaluation
+     */
+
+    public static final String SXRE0001 = "SXRE0001";
 
     /**
      * SXSE0001: cannot use character maps in an environment with no Controller
