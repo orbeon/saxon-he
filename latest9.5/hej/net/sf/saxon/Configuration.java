@@ -140,6 +140,7 @@ public class Configuration implements Serializable, SourceResolver, NotationSet 
     private IntegratedFunctionLibrary integratedFunctionLibrary = new IntegratedFunctionLibrary();
     private transient LocalizerFactory localizerFactory;
     private ModuleURIResolver moduleURIResolver = null;
+    private StaticQueryContextFactory staticQueryContextFactory = new StaticQueryContextFactory();
     private NamePool namePool = new NamePool();
 
     protected int optimizationLevel = Optimizer.FULL_OPTIMIZATION;
@@ -3120,13 +3121,25 @@ public class Configuration implements Serializable, SourceResolver, NotationSet 
     }
 
     /**
-     * Get a new StaticQueryContext (which is also the factory class for creating a query parser)
+     * Set the StaticQueryContextFactory used for creating instances of StaticQueryContext
+     * @param factory the factory class to be used when a new StaticQueryContext is required.
+     * Note that this is not used for the default StaticQueryContext held in the Configuration itself.
+     */
+
+    public void setStaticQueryContextFactory(StaticQueryContextFactory factory) {
+        staticQueryContextFactory = factory;
+    }
+
+    /**
+     * Get a new StaticQueryContext (which is also the factory class for creating a query parser).
+     * Note that this method is used to underpin the s9api and XQJ APIs for XQuery compilation, and
+     * that modifying the behaviour of the StaticQueryContext can affect the behaviour of those APIs
      *
      * @return a new StaticQueryContext
      */
 
     public StaticQueryContext newStaticQueryContext() {
-        return new StaticQueryContext(this, false);
+        return staticQueryContextFactory.newStaticQueryContext(this);
     }
 
     /**
