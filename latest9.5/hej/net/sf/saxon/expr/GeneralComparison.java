@@ -436,28 +436,28 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
         // look for (N to M = I)
         // First a variable range...
 
-        if (operand0 instanceof RangeExpression &&
+        if (e0 instanceof RangeExpression &&
                 th.isSubType(operand1.getItemType(th), BuiltInAtomicType.NUMERIC) &&
                 operator == Token.EQUALS &&
-                !Cardinality.allowsMany(operand1.getCardinality())) {
-            Expression min = ((RangeExpression) operand0).operand0;
-            Expression max = ((RangeExpression) operand0).operand1;
-            IntegerRangeTest ir = new IntegerRangeTest(operand1, min, max);
+                !Cardinality.allowsMany(e1.getCardinality())) {
+            Expression min = ((RangeExpression) e0).operand0;
+            Expression max = ((RangeExpression) e0).operand1;
+            IntegerRangeTest ir = new IntegerRangeTest(e1, min, max);
             ExpressionTool.copyLocationInfo(this, ir);
             return ir;
         }
 
         // Now a fixed range...
 
-        if (operand0 instanceof Literal) {
-            GroundedValue value0 = ((Literal) operand0).getValue();
+        if (e0 instanceof Literal) {
+            GroundedValue value0 = ((Literal) e0).getValue();
             if (value0 instanceof IntegerRange &&
-                    th.isSubType(operand1.getItemType(th), BuiltInAtomicType.NUMERIC) &&
+                    th.isSubType(e1.getItemType(th), BuiltInAtomicType.NUMERIC) &&
                     operator == Token.EQUALS &&
-                    !Cardinality.allowsMany(operand1.getCardinality())) {
+                    !Cardinality.allowsMany(e1.getCardinality())) {
                 long min = ((IntegerRange) value0).getStart();
                 long max = ((IntegerRange) value0).getEnd();
-                IntegerRangeTest ir = new IntegerRangeTest(operand1,
+                IntegerRangeTest ir = new IntegerRangeTest(e1,
                         Literal.makeLiteral(Int64Value.makeIntegerValue(min)),
                         Literal.makeLiteral(Int64Value.makeIntegerValue(max)));
                 ExpressionTool.copyLocationInfo(this, ir);
@@ -506,8 +506,10 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
 
         // evaluate the expression now if both arguments are constant
 
+        operand0 = e0;
+        operand1 = e1;
         if ((operand0 instanceof Literal) && (operand1 instanceof Literal)) {
-            return Literal.makeLiteral((AtomicValue) evaluateItem(env.makeEarlyEvaluationContext()));
+            return Literal.makeLiteral(evaluateItem(env.makeEarlyEvaluationContext()));
         }
 
         // Finally, convert to use the GeneralComparisonEE algorithm if in Saxon-EE
