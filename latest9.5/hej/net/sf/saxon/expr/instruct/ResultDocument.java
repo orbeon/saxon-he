@@ -541,8 +541,9 @@ public class ResultDocument extends Instruction implements ValidatingInstruction
             err.setXPathContext(context);
             err.maybeSetLocation(this);
             throw err;
+        } finally {
+            out.close();
         }
-        out.close();
         context.setReceiver(saved);
         if (resolver != null && result != controller.getPrincipalResult()) {
             try {
