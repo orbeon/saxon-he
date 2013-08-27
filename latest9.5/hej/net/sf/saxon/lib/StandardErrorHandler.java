@@ -34,6 +34,7 @@ public class StandardErrorHandler implements org.xml.sax.ErrorHandler {
     private int warningCount = 0;
     private int errorCount = 0;
     private int fatalErrorCount = 0;
+    private boolean silent = false;
 
     public StandardErrorHandler(ErrorListener listener) {
         errorListener = listener;
@@ -54,6 +55,10 @@ public class StandardErrorHandler implements org.xml.sax.ErrorHandler {
         errorOutput = writer;
     }
 
+    public void setSilent() {
+        silent = true;
+    }
+
     /**
     * Callback interface for SAX: not for application use
     */
@@ -62,7 +67,9 @@ public class StandardErrorHandler implements org.xml.sax.ErrorHandler {
         if (errorListener != null) {
             try {
                 warningCount++;
-                errorListener.warning(new TransformerException(e));
+                if (!silent) {
+                    errorListener.warning(new TransformerException(e));
+                }
             } catch (Exception ignored) {}
         }
     }
@@ -74,7 +81,9 @@ public class StandardErrorHandler implements org.xml.sax.ErrorHandler {
     public void error (SAXParseException e) throws SAXException {
         //System.err.println("ErrorHandler.error " + e.getMessage());
         errorCount++;
-        reportError(e, false);
+        if (!silent) {
+            reportError(e, false);
+        }
     }
 
     /**
@@ -84,7 +93,9 @@ public class StandardErrorHandler implements org.xml.sax.ErrorHandler {
     public void fatalError (/*@NotNull*/ SAXParseException e) throws SAXException {
         //System.err.println("ErrorHandler.fatalError " + e.getMessage());
         fatalErrorCount++;
-        reportError(e, true);
+        if (!silent) {
+            reportError(e, true);
+        }
         throw e;
     }
 

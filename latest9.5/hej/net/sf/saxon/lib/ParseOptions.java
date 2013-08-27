@@ -89,6 +89,7 @@ public class ParseOptions implements Serializable {
         lineNumbering = p.lineNumbering;
         xIncludeAware = p.xIncludeAware;
         pleaseClose = p.pleaseClose;
+        errorHandler = p.errorHandler;
         errorListener = p.errorListener;
         entityResolver = p.entityResolver;
         if (p.filters != null) {

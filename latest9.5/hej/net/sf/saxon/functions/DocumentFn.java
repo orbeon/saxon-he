@@ -23,6 +23,7 @@ import net.sf.saxon.expr.sort.GlobalOrderComparer;
 import net.sf.saxon.lib.FeatureKeys;
 import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.lib.RelativeURIResolver;
+import net.sf.saxon.lib.StandardErrorHandler;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.NonDelegatingURIResolver;
@@ -386,6 +387,11 @@ public class DocumentFn extends SystemFunctionCall implements Callable {
                     s = controller.getConfiguration().getAnnotationStripper(s);
                 }
                 options.setSchemaValidationMode(controller.getSchemaValidationMode());
+                if (locator instanceof DocAvailable) {
+                    StandardErrorHandler eh = new StandardErrorHandler(controller.getErrorListener());
+                    eh.setSilent();
+                    options.setErrorHandler(eh);
+                }
                 PathMap map = controller.getPathMapForDocumentProjection();
                 if (map != null) {
                     PathMap.PathMapRoot pathRoot = map.getRootForDocument(documentKey.toString());
