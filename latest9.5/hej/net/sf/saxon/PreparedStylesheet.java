@@ -270,6 +270,7 @@ public class PreparedStylesheet extends Executable implements Templates, Seriali
         PipelineConfiguration pipe = getConfiguration().makePipelineConfiguration();
         LinkedTreeBuilder styleBuilder = new LinkedTreeBuilder(pipe);
         pipe.setURIResolver(compilerInfo.getURIResolver());
+        pipe.setErrorListener(compilerInfo.getErrorListener());
         styleBuilder.setSystemId(styleSource.getSystemId());
         styleBuilder.setNodeFactory(nodeFactory);
         styleBuilder.setLineNumbering(true);
@@ -293,6 +294,7 @@ public class PreparedStylesheet extends Executable implements Templates, Seriali
         } else {
             options = new ParseOptions();
         }
+        options.setErrorListener(compilerInfo.getErrorListener());
         options.setSchemaValidationMode(Validation.STRIP);
         options.setDTDValidationMode(Validation.STRIP);
         options.setLineNumbering(true);
