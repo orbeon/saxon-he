@@ -165,7 +165,6 @@ public class AttributeCollectionImpl implements Attributes, AttributeCollection 
         names[index] = nodeName;
         codes[index] = ((long)locationId << 32) | (long)properties;
         setTypeAnnotation(index, type);
-        values[used++] = value;
         values[index] = value;
     }
 
