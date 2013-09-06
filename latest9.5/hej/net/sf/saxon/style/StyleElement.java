@@ -1929,7 +1929,7 @@ implements Locator, Container, InstructionInfo {
 	 * @throws XPathException always, after reporting the error to the ErrorListener
 	 */
 
-	protected void compileError(String message)
+	public void compileError(String message)
 	throws XPathException {
 		XPathException tce = new XPathException(message);
 		tce.setLocator(this);
