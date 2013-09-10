@@ -9,6 +9,7 @@ using JSink = net.sf.saxon.@event.Sink;
 using JProperties = java.util.Properties;
 using JOutputStream = java.io.OutputStream;
 using JWriter = java.io.Writer;
+using JCharSequence = java.lang.CharSequence;
 using JFileOutputStream = java.io.FileOutputStream;
 using JXPathException = net.sf.saxon.trans.XPathException;
 using JResult = javax.xml.transform.Result;
@@ -16,6 +17,7 @@ using JStreamResult = javax.xml.transform.stream.StreamResult;
 using JBuilder = net.sf.saxon.@event.Builder;
 using JTinyBuilder = net.sf.saxon.tree.tiny.TinyBuilder;
 using JLinkedTreeBuilder = net.sf.saxon.tree.linked.LinkedTreeBuilder;
+using JSchemaType = net.sf.saxon.type.SchemaType;
 using net.sf.saxon.@event;
 using net.sf.saxon.lib;
 using net.sf.saxon.om;
@@ -642,8 +644,94 @@ namespace Saxon.Api
             {
                 builder.setBaseURI(baseUri.ToString());
             }
-            return builder;
+            
+            return new TreeProtector(builder);
         }
+
+            /**
+     * TreeProtector is a filter that ensures that the events reaching the Builder constitute a single
+     * tree rooted at an element or document node (because anything else will crash the builder)
+     */
+
+    public class TreeProtector : ProxyReceiver {
+
+        private int level = 0;
+        private bool ended = false;
+
+        public TreeProtector(Receiver next): base(next) {
+            
+        }
+
+        public override void startDocument(int properties){
+            if (ended) {
+                JXPathException e = new JXPathException("Only a single document can be written to an XdmDestination");
+                throw new DynamicError(e);
+            }
+            base.startDocument(properties);
+            level++;
+        }
+
+        public override void endDocument() {
+            base.endDocument();
+            level--;
+            if (level == 0) {
+                ended = true;
+            }
+        }
+
+        public override void startElement(NodeName nameCode, JSchemaType typeCode, int locationId, int properties) {
+            if (ended) {
+                JXPathException e = new JXPathException("Only a single root node can be written to an XdmDestination");
+                throw new DynamicError(e);
+            }
+            base.startElement(nameCode, typeCode, locationId, properties);
+            level++;
+        }
+
+        public override void endElement() {
+            base.endElement();
+            level--;
+            if (level == 0) {
+                ended = true;
+            }
+        }
+
+        public override void characters(JCharSequence chars, int locationId, int properties) {
+            if (level == 0) {
+                JXPathException e = new JXPathException("When writing to an XdmDestination, text nodes are only allowed within a document or element node");
+                throw new DynamicError(e);
+            }
+            base.characters(chars, locationId, properties);
+        }
+
+
+        public override void processingInstruction(String target, JCharSequence data, int locationId, int properties)
+        {
+            if (level == 0) {
+                JXPathException e =  new JXPathException("When writing to an XdmDestination, processing instructions are only allowed within a document or element node");
+                throw new DynamicError(e);
+            }
+            base.processingInstruction(target, data, locationId, properties);
+        }
+
+
+        public override void comment(JCharSequence chars, int locationId, int properties)
+        {
+            if (level == 0) {
+                JXPathException e =  new JXPathException("When writing to an XdmDestination, comment nodes are only allowed within a document or element node");
+            }
+            base.comment(chars, locationId, properties);
+        }
+
+       
+        public override void append(Item item, int locationId, int copyNamespaces) {
+            if (level == 0) {
+                JXPathException e = new JXPathException("When writing to an XdmDestination, atomic values are only allowed within a document or element node");
+            }
+            base.append(item, locationId, copyNamespaces);
+        }
+
+    }
     }
 
 
