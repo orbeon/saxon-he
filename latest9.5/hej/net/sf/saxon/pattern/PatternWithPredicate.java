@@ -109,6 +109,17 @@ public class PatternWithPredicate extends Pattern {
     }
 
     /**
+     * Get the dependencies of the pattern. The only possible dependency for a pattern is
+     * on local variables. This is analyzed in those patterns where local variables may appear.
+     *
+     * @return the dependencies, as a bit-significant mask
+     */
+    @Override
+    public int getDependencies() {
+        return predicate.getDependencies();
+    }
+
+    /**
      * Determine whether this Pattern matches the given Node.
      * @param item    The NodeInfo representing the Element or other node to be tested against the Pattern
      * @param context The dynamic context. Only relevant if the pattern
