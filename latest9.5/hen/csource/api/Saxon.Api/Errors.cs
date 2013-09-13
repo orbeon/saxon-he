@@ -62,6 +62,20 @@ namespace Saxon.Api
             }
         }
 
+
+        /// <summary>
+        /// Return the message associated with this error concatenated with the message from the causing exception
+        /// </summary> 
+        public String InnerMessage
+        {
+            get
+            {
+
+                return exception.getMessage() + ": " + exception.getCause().Message;
+            }
+
+        }
+
         /// <summary>
         /// The URI of the query or stylesheet module in which the error was detected
         /// (as a string)
