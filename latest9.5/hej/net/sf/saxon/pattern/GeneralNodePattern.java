@@ -78,6 +78,11 @@ public final class GeneralNodePattern extends Pattern {
     public Pattern analyze(ExpressionVisitor visitor, ExpressionVisitor.ContextItemType contextItemType) throws XPathException {
 
         equivalentExpr = visitor.typeCheck(equivalentExpr, contextItemType);
+        // See if the expression is now known to be non-positional
+        if (equivalentExpr instanceof FilterExpression && !((FilterExpression)equivalentExpr).isFilterIsPositional()) {
+            return PatternMaker.fromExpression(equivalentExpr, visitor.getConfiguration(), true)
+                    .analyze(visitor, contextItemType);
+        }
         ItemType type = equivalentExpr.getItemType(visitor.getConfiguration().getTypeHierarchy());
         if (!(type instanceof NodeTest)) {
             throw new XPathException("GeneralNodePattern can only match nodes");
