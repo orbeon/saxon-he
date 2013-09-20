@@ -3263,6 +3263,10 @@ public class QueryParser extends ExpressionParser {
         } catch (QNameException e) {
             throw new XPathException(e);
         }
+        if (!attNameCode.getURI().equals("") && attNameCode.getPrefix().equals("")) {
+            // This must be because the name was given as Q{uri}local. Invent a prefix.
+            attNameCode = new FingerprintedQName("_", attNameCode.getURI(), attNameCode.getLocalPart());
+        }
         Expression attContent = null;
         nextToken();
         if (t.currentToken != Token.RCURLY) {
