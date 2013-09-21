@@ -7,6 +7,7 @@
 
 package net.sf.saxon.expr;
 
+import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.trans.XPathException;
@@ -29,6 +30,45 @@ public class SingletonIntersectExpression extends VennExpression {
 
     public SingletonIntersectExpression(final Expression p1, final int op, final Expression p2) {
         super(p1, op, p2);
+    }
+
+    /**
+     * Simplify the expression
+     *
+     * @param visitor an expression visitor
+     */
+    @Override
+    public Expression simplify(ExpressionVisitor visitor) throws XPathException {
+        return this;
+    }
+
+    /**
+     * Type-check the expression
+     */
+    @Override
+    public Expression typeCheck(ExpressionVisitor visitor, ExpressionVisitor.ContextItemType contextItemType) throws XPathException {
+        return this;
+    }
+
+    /**
+     * Perform optimisation of an expression and its subexpressions.
+     * <p/>
+     * <p>This method is called after all references to functions and variables have been resolved
+     * to the declaration of the function or variable, and after all type checking has been done.</p>
+     *
+     * @param visitor         an expression visitor
+     * @param contextItemType the static type of "." at the point where this expression is invoked.
+     *                        The parameter is set to null if it is known statically that the context item will be undefined.
+     *                        If the type of the context item is not known statically, the argument is set to
+     *                        {@link net.sf.saxon.type.Type#ITEM_TYPE}
+     * @return the original expression, rewritten if appropriate to optimize execution
+     * @throws net.sf.saxon.trans.XPathException
+     *          if an error is discovered during this phase
+     *          (typically a type error)
+     */
+    @Override
+    public Expression optimize(ExpressionVisitor visitor, ExpressionVisitor.ContextItemType contextItemType) throws XPathException {
+        return this;
     }
 
     /**
