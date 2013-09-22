@@ -87,6 +87,9 @@ public class XSLPreserveSpace extends StyleElement {
                     }
                     String prefix = s.substring(0, s.length()-2);
                     String uri = getURIForPrefix(prefix, false);
+                    if (uri == null) {
+                        undeclaredNamespaceError(prefix, "XTSE0280");
+                    }
                     nt = new NamespaceTest(getNamePool(), Type.ELEMENT, uri);
                     rules.addRule(nt, preserve, decl.getModule(), decl.getSourceElement().getLineNumber());
 
