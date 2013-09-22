@@ -136,7 +136,7 @@ public class PrependIterator implements AxisIterator {
      */
 
     /*@NotNull*/ public AxisIterator getAnother() {
-        return new PrependIterator(start, base);
+        return new PrependIterator(start, base.getAnother());
     }
 
     /**
