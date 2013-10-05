@@ -47,6 +47,8 @@ public class SingletonIntersectExpression extends VennExpression {
      */
     @Override
     public Expression typeCheck(ExpressionVisitor visitor, ExpressionVisitor.ContextItemType contextItemType) throws XPathException {
+        operand0 = visitor.typeCheck(operand0, contextItemType);
+        operand1 = visitor.typeCheck(operand1, contextItemType);
         return this;
     }
 
