@@ -3663,7 +3663,9 @@ public class QueryParser extends ExpressionParser {
                     }
 
                     if (uri.length() == 0) {
-                        grumble("Namespace URI must not be empty", "XQST0085");
+                        if (env.getConfiguration().getXMLVersion() == Configuration.XML10) {
+                            grumble("Namespace URI must not be empty", "XQST0085");
+                        }
                     }
                 }
                 namespaceCount++;

@@ -1459,7 +1459,8 @@ public class QueryModule implements StaticContext {
      * <p/>
      * This method is intended for internal use only.
      * @param prefix the namespace prefix
-     * @param uri    the namespace URI
+     * @param uri    the namespace URI. If this is equal to "", the namespace is "undeclared" within the
+     * scope of this declaration.
      */
 
     public void declareActiveNamespace(/*@Nullable*/ String prefix, /*@Nullable*/ String uri) {
@@ -1534,7 +1535,12 @@ public class QueryModule implements StaticContext {
         if (activeNamespaces != null) {
             for (int i = activeNamespaces.size() - 1; i >= 0; i--) {
                 if ((activeNamespaces.get(i)).prefix.equals(prefix)) {
-                    return (activeNamespaces.get(i)).uri;
+                    String uri = (activeNamespaces.get(i)).uri;
+                    if (uri.equals("") && !prefix.equals("")) {
+                        // the namespace is undeclared
+                        return null;
+                    }
+                    return uri;
                 }
             }
         }
