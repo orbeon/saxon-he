@@ -370,6 +370,7 @@ public abstract class ParentNodeConstructor extends Instruction implements Valid
         ItemType type = getItemType(th);
         if (th.relationship(type, NodeKindTest.ELEMENT) != TypeHierarchy.DISJOINT ||
                 th.relationship(type, NodeKindTest.DOCUMENT) != TypeHierarchy.DISJOINT) {
+            // ?? surely this condition is always true?
             result.addDescendants();
         }
         return new PathMap.PathMapNodeSet(pathMap.makeNewRoot(this));
