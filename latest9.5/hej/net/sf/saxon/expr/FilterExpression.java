@@ -11,7 +11,6 @@ package net.sf.saxon.expr;
 import com.saxonica.bytecode.ExpressionCompiler;
 import com.saxonica.bytecode.FilterExpressionCompiler;
 import com.saxonica.stream.adjunct.FilterExpressionAdjunct;
-import net.sf.saxon.pattern.GeneralPositionalPattern;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.instruct.Choose;
 import net.sf.saxon.expr.parser.*;
@@ -1239,7 +1238,7 @@ public final class FilterExpression extends Expression implements ContextSwitchi
      */
     @Override
     public int getStreamability(int syntacticContext, boolean allowExtensions, List<String> reasons) {
-        if (allowExtensions && ((start.getSpecialProperties() & StaticProperty.CONTEXT_DOCUMENT_NODESET) == 0)) {
+        if ((start.getSpecialProperties() & StaticProperty.CONTEXT_DOCUMENT_NODESET) == 0) {
             // base expression does not return nodes from the context document, so the filter is immaterial
             return start.getStreamability(syntacticContext, allowExtensions, reasons);
         }
