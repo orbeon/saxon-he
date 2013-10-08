@@ -19,6 +19,7 @@ import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.DateTimeValue;
 
@@ -167,7 +168,7 @@ public class DynamicQueryContext {
         if (item instanceof NodeInfo) {
             if (!((NodeInfo)item).getConfiguration().isCompatible(config)) {
                 throw new IllegalArgumentException(
-                            "Supplied node must be built using the same or a compatible Configuration");
+                            "Supplied node must be built using the same or a compatible Configuration: " + SaxonErrorCode.SXXP0004);
             }
         }
         contextItem = item;

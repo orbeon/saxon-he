@@ -7,9 +7,11 @@
 
 package net.sf.saxon.expr.instruct;
 
+import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.*;
+import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.SequenceExtent;
 import net.sf.saxon.value.SequenceType;
@@ -116,6 +118,21 @@ public final class Bindery  {
         Sequence val = globalParameters.convertParameterValue(qName, requiredType, applyConversionRules, context);
         if (val==null) {
             return false;
+        }
+
+        // Check that any nodes belong to the right configuration
+
+        Configuration config = context.getConfiguration();
+        SequenceIterator iter = val.iterate();
+        while (true) {
+            Item next = iter.next();
+            if (next == null) {
+                break;
+            }
+            if (next instanceof NodeInfo && !config.isCompatible(((NodeInfo)next).getConfiguration())) {
+                throw new XPathException("A node supplied in a global parameter must be built using the same Configuration " +
+                        "that was used to compile the stylesheet or query", SaxonErrorCode.SXXP0004);
+            }
         }
 
         // If the supplied value is a document node, and the document node has a systemID that is an absolute

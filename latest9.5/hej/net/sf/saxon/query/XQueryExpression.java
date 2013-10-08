@@ -28,6 +28,7 @@ import net.sf.saxon.lib.SerializerFactory;
 import net.sf.saxon.lib.TraceListener;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trace.ExpressionPresenter;
+import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.SingletonIterator;
 import net.sf.saxon.tree.iter.UnfailingIterator;
@@ -322,7 +323,7 @@ public class XQueryExpression implements Container {
             throw new XPathException("Cannot call iterator() on an updating query");
         }
         if (!env.getConfiguration().isCompatible(getExecutable().getConfiguration())) {
-            throw new XPathException("The query must be compiled and executed under the same Configuration");
+            throw new XPathException("The query must be compiled and executed under the same Configuration", SaxonErrorCode.SXXP0004);
         }
         Controller controller = newController();
         env.initializeController(controller);
@@ -376,7 +377,7 @@ public class XQueryExpression implements Container {
             throw new XPathException("Cannot call run() on an updating query");
         }
         if (!env.getConfiguration().isCompatible(getExecutable().getConfiguration())) {
-            throw new XPathException("The query must be compiled and executed under the same Configuration");
+            throw new XPathException("The query must be compiled and executed under the same Configuration", SaxonErrorCode.SXXP0004);
         }
         Item contextItem = env.getContextItem();
         if (contextItem instanceof DocumentInfo && ((DocumentInfo)contextItem).isTyped() && !getExecutable().isSchemaAware()) {
