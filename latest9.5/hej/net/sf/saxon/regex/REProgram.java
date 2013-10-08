@@ -135,19 +135,19 @@ public class REProgram implements Serializable
             boolean caseBlind = flags.isCaseIndependent();
             for (int i=0; i<instructions.length; i++) {
                 Operation op = instructions[i];
-                if (op instanceof Operation.OpStar &&
+                if ((op instanceof Operation.OpStar || op instanceof Operation.OpReluctantStar) &&
                         op.next == i+2 &&
                         (instructions[i+1] instanceof Operation.OpAtom || instructions[i+1] instanceof Operation.OpCharClass)) {
-                    if (noAmbiguity(instructions[i+1], instructions[op.next], caseBlind)) {
+                    if (noAmbiguity(instructions[i+1], instructions[op.next], caseBlind, op instanceof Operation.OpReluctantStar)) {
                         //System.err.println("Optimizing *");
                         instructions[i] = new Operation.OpConfidentStar();
                         instructions[i].next = op.next;
                     }
-                } else if (op instanceof Operation.OpPlus &&
+                } else if ((op instanceof Operation.OpPlus || op instanceof Operation.OpReluctantPlus) &&
                         op.next == i-2 &&
                         (instructions[i-1] instanceof Operation.OpAtom || instructions[i-1] instanceof Operation.OpCharClass) &&
                         (instructions[i-2].next == i+1)) {
-                    if (noAmbiguity(instructions[i-1], instructions[i+1], caseBlind)) {
+                    if (noAmbiguity(instructions[i-1], instructions[i+1], caseBlind, op instanceof Operation.OpReluctantPlus)) {
                         //System.err.println("Optimizing +");
                         instructions[i] = new Operation.OpConfidentPlus();
                         instructions[i].next = i+1;
@@ -205,12 +205,15 @@ public class REProgram implements Serializable
      * @return true if it can be established that there is no input sequence that will match both instructions
      */
 
-    boolean noAmbiguity(Operation op0, Operation op1, boolean caseBlind) {
+    boolean noAmbiguity(Operation op0, Operation op1, boolean caseBlind, boolean reluctant) {
         // op0 will always be either an Atom or a CharClass. op1 may be anything.
         if (op1 instanceof Operation.OpClose || op1 instanceof Operation.OpCloseCluster) {
             op1 = instructions[op1.next];
         }
-        if (op1 instanceof Operation.OpEndProgram || op1 instanceof Operation.OpBOL || op1 instanceof Operation.OpEOL) {
+        if (op1 instanceof Operation.OpEndProgram) {
+            return !reluctant;
+        }
+        if (op1 instanceof Operation.OpBOL || op1 instanceof Operation.OpEOL) {
             return true;
         }
         IntSet set0;
