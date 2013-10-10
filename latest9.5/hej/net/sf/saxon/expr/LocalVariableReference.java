@@ -91,14 +91,14 @@ public class LocalVariableReference extends VariableReference {
             return c.getStackFrame().slots[slotNumber];
         } catch (ArrayIndexOutOfBoundsException err) {
             if (slotNumber == -999) {
-                if (binding != null) {
-                    try {
-                        slotNumber = binding.getLocalSlotNumber();
-                        return c.getStackFrame().slots[slotNumber];
-                    } catch (ArrayIndexOutOfBoundsException err2) {
-                        // fall through
-                    }
-                }
+//                if (binding != null) {
+//                    try {
+//                        slotNumber = binding.getLocalSlotNumber();
+//                        return c.getStackFrame().slots[slotNumber];
+//                    } catch (ArrayIndexOutOfBoundsException err2) {
+//                        // fall through
+//                    }
+//                }
                 throw new ArrayIndexOutOfBoundsException("Local variable $" + getDisplayName() + " has not been allocated a stack frame slot");
             } else {
                 int actual = c.getStackFrame().slots.length;

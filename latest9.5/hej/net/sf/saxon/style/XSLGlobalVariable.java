@@ -8,7 +8,10 @@
 package net.sf.saxon.style;
 
 import net.sf.saxon.expr.Expression;
-import net.sf.saxon.expr.instruct.*;
+import net.sf.saxon.expr.instruct.Executable;
+import net.sf.saxon.expr.instruct.GeneralVariable;
+import net.sf.saxon.expr.instruct.GlobalVariable;
+import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.Optimizer;
@@ -247,8 +250,7 @@ public class XSLGlobalVariable extends XSLGeneralVariable implements StylesheetP
                 ((GlobalVariable)compiledVariable).setContainsLocals(slotManager);
             }
 
-            if (exp2 != sourceBinding.getSelectExpression()) {
-                //sourceBinding.setSelectExpresion(exp2);
+            if (exp2 != compiledVariable.getSelectExpression()) {
                 compiledVariable.setSelectExpression(exp2);
             }
         }
