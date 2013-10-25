@@ -9,6 +9,7 @@ package net.sf.saxon.om;
 
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.iter.ArrayIterator;
 import net.sf.saxon.tree.iter.GroundedIterator;
 import net.sf.saxon.value.EmptySequence;
 import net.sf.saxon.value.SequenceExtent;
@@ -40,6 +41,7 @@ import java.util.*;
 public class Chain implements GroundedValue {
 
     private List<GroundedValue> children = new ArrayList<GroundedValue>();
+    private Item[] extent = null;
 
     public Chain(List<GroundedValue> children) {
         this.children = children;
@@ -87,7 +89,11 @@ public class Chain implements GroundedValue {
     }
 
     public SequenceIterator<Item> iterate() {
-        return new ChainIterator();
+        if (extent != null) {
+            return new ArrayIterator<Item>(extent);
+        } else {
+            return new ChainIterator();
+        }
     }
 
     /**
@@ -97,6 +103,9 @@ public class Chain implements GroundedValue {
      */
 
     public void append(GroundedValue sequence) {
+        if (extent != null) {
+            throw new IllegalStateException();
+        }
         children.add(sequence);
     }
 
@@ -108,6 +117,9 @@ public class Chain implements GroundedValue {
 
 
     public void append(Item item) {
+        if (extent != null) {
+            throw new IllegalStateException();
+        }
         if (item instanceof GroundedValue) {
             children.add((GroundedValue) item);
         } else {
@@ -121,18 +133,19 @@ public class Chain implements GroundedValue {
      */
 
     private void consolidate() {
-        try {
-            List<Item> extent = new ArrayList<Item>();
-            SequenceIterator<Item> iter = iterate();
-            Item item;
-            while ((item = iter.next()) != null) {
-                extent.add(item);
+        if (extent == null) {
+            try {
+                List<Item> content = new ArrayList<Item>();
+                SequenceIterator<Item> iter = iterate();
+                Item item;
+                while ((item = iter.next()) != null) {
+                    content.add(item);
+                }
+                Item[] array = new Item[content.size()];
+                extent = content.toArray(array);
+            } catch (XPathException e) {
+                throw new AssertionError(e);
             }
-            GroundedValue replacement = new SequenceExtent<Item>(extent);
-            children = new ArrayList<GroundedValue>(1);
-            this.children.add(replacement);
-        } catch (XPathException e) {
-            throw new AssertionError(e);
         }
     }
 
@@ -143,13 +156,12 @@ public class Chain implements GroundedValue {
      * @return the n'th item if it exists, or null otherwise
      */
     public Item itemAt(int n) {
-        if (n < 0 || children.size() == 0) {
+        consolidate();
+        if (n < extent.length) {
+            return extent[n];
+        } else {
             return null;
         }
-        if (children.size() > 1) {
-            consolidate();
-        }
-        return children.get(0).itemAt(n);
     }
 
     /**
@@ -165,13 +177,26 @@ public class Chain implements GroundedValue {
      * @return the required subsequence.
      */
     public GroundedValue subsequence(int start, int length) {
-        if (children.size() == 0) {
+        consolidate();
+        int newStart;
+        if (start < 0) {
+            start = 0;
+        } else if (start >= extent.length) {
             return EmptySequence.getInstance();
         }
-        if (children.size() > 1) {
-            consolidate();
+        newStart = start;
+        int newEnd;
+        if (length == Integer.MAX_VALUE) {
+            newEnd = extent.length;
+        } else if (length < 0) {
+            return EmptySequence.getInstance();
+        } else {
+            newEnd = newStart + length;
+            if (newEnd > extent.length) {
+                newEnd = extent.length;
+            }
         }
-        return children.get(0).subsequence(start, length);
+        return new SequenceExtent<Item>(extent, newStart, newEnd - newStart);
     }
 
     /**
@@ -180,6 +205,9 @@ public class Chain implements GroundedValue {
      * @return the number of items in the sequence
      */
     public int getLength() {
+        if (extent != null) {
+            return extent.length;
+        }
         int n = 0;
         for (GroundedValue v : children) {
             n += v.getLength();
@@ -233,10 +261,8 @@ public class Chain implements GroundedValue {
      * @return the simplified sequence
      */
     public GroundedValue reduce() {
-        if (children.size() != 1) {
-            consolidate();
-        }
-        return children.get(0);
+        consolidate();
+        return new SequenceExtent(extent);
     }
 
     private class ChainIterator implements SequenceIterator<Item>, GroundedIterator<Item> {
