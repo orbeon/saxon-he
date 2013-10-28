@@ -376,7 +376,8 @@ public final class FilterExpression extends Expression implements ContextSwitchi
             // If the filter is indexable consider creating a key, or an indexed filter expression
             // (This happens in Saxon-EE only)
             if (isIndexable != 0) {
-                boolean contextIsDoc = contextItemType != null && th.isSubType(contextItemType.itemType, NodeKindTest.DOCUMENT);
+                boolean contextIsDoc = contextItemType != null && contextItemType.itemType != ErrorType.getInstance() &&
+                        th.isSubType(contextItemType.itemType, NodeKindTest.DOCUMENT);
                 Expression f = opt.tryIndexedFilter(this, visitor, isIndexable > 0, contextIsDoc);
                 if (f != this) {
                     return f.typeCheck(visitor, contextItemType).optimize(visitor, contextItemType);
