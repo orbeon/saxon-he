@@ -262,10 +262,10 @@ public class CombinedNodeTest extends NodeTest {
         SchemaType type2 = nodetest2.getContentType();
         if (type1.isSameType(type2)) return type1;
         if (operator == Token.INTERSECT) {
-            if (type2 instanceof AnyType) {
+            if (type2 instanceof AnyType || (type2 instanceof AnySimpleType && type1.isSimpleType())) {
                 return type1;
             }
-            if (type1 instanceof AnyType) {
+            if (type1 instanceof AnyType || (type1 instanceof AnySimpleType && type2.isSimpleType())) {
                 return type2;
             }
         }
