@@ -226,12 +226,14 @@ public class ArrayIterator<T extends Item> implements UnfailingIterator<T>,
      */
 
     /*@NotNull*/ public GroundedValue materialize() {
+        SequenceExtent seq;
         if (start==0 && end == items.length) {
-            return new SequenceExtent<T>(items);
+            seq = new SequenceExtent<T>(items);
         } else {
             SequenceExtent e = new SequenceExtent<T>(items);
-            return new SequenceExtent<T>(e, start, end-start);
+            seq = new SequenceExtent<T>(e, start, end-start);
         }
+        return seq.reduce();
     }
 
     /**

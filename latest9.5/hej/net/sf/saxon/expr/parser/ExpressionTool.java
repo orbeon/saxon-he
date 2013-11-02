@@ -375,7 +375,7 @@ public class ExpressionTool {
                     return new SequenceExtent(
                             (SequenceExtent) base,
                             tail.getStart() - 1,
-                            ((SequenceExtent) base).getLength() - tail.getStart() + 1);
+                            ((SequenceExtent) base).getLength() - tail.getStart() + 1).reduce();
                 }
 
                 return Closure.make(tail, context, ref);
