@@ -477,6 +477,20 @@ public class SlashExpression extends Expression
     }
 
     /**
+     * Replace this expression by an expression that returns the same result but without
+     * regard to order
+     *
+     * @param retainAllNodes true if all nodes in the result must be retained; false
+     *                       if duplicates can be eliminated
+     */
+    @Override
+    public Expression unordered(boolean retainAllNodes) throws XPathException {
+        start = start.unordered(retainAllNodes);
+        step = step.unordered(retainAllNodes);
+        return this;
+    }
+
+    /**
      * Get the immediate subexpressions of this expression
      */
 

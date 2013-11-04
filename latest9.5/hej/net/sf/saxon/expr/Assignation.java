@@ -263,6 +263,19 @@ public abstract class Assignation extends Expression implements Binding {
     }
 
     /**
+     * Replace this expression by an expression that returns the same result but without
+     * regard to order
+     *
+     * @param retainAllNodes true if all nodes in the result must be retained; false
+     *                       if duplicates can be eliminated
+     */
+    @Override
+    public Expression unordered(boolean retainAllNodes) throws XPathException {
+        action = action.unordered(retainAllNodes);
+        return this;
+    }
+
+    /**
      * Suppress validation on contained element constructors, on the grounds that the parent element
      * is already performing validation. The default implementation does nothing.
      */

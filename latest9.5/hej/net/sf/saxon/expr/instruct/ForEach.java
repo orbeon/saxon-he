@@ -247,6 +247,19 @@ public class ForEach extends Instruction implements ContextMappingFunction<Item>
         return this;
     }
 
+    /**
+     * Replace this expression by an expression that returns the same result but without
+     * regard to order
+     *
+     * @param retainAllNodes true if all nodes in the result must be retained; false
+     *                       if duplicates can be eliminated
+     */
+    @Override
+    public Expression unordered(boolean retainAllNodes) throws XPathException {
+        select = select.unordered(retainAllNodes);
+        action = action.unordered(retainAllNodes);
+        return this;
+    }
 
     /**
      * Add a representation of this expression to a PathMap. The PathMap captures a map of the nodes visited

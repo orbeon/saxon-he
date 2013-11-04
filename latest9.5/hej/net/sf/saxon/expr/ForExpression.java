@@ -324,6 +324,22 @@ public class ForExpression extends Assignation {
     }
 
     /**
+     * Replace this expression by an expression that returns the same result but without
+     * regard to order
+     *
+     * @param retainAllNodes true if all nodes in the result must be retained; false
+     *                       if duplicates can be eliminated
+     */
+    @Override
+    public Expression unordered(boolean retainAllNodes) throws XPathException {
+        action = action.unordered(retainAllNodes);
+        if (positionVariable == null) {
+            sequence = sequence.unordered(retainAllNodes);
+        }
+        return this;
+    }
+
+    /**
      * For an expression that returns an integer or a sequence of integers, get
      * a lower and upper bound on the values of the integers that may be returned, from
      * static analysis. The default implementation returns null, meaning "unknown" or

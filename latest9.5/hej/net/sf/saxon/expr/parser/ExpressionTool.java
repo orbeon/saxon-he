@@ -138,10 +138,11 @@ public class ExpressionTool {
         if (exp instanceof Literal) {
             return exp;   // fast exit
         }
-        PromotionOffer offer = new PromotionOffer(opt);
-        offer.action = PromotionOffer.UNORDERED;
-        offer.retainAllNodes = retainAllNodes;
-        return exp.promote(offer, null);
+        return exp.unordered(retainAllNodes);
+//        PromotionOffer offer = new PromotionOffer(opt);
+//        offer.action = PromotionOffer.UNORDERED;
+//        offer.retainAllNodes = retainAllNodes;
+//        return exp.promote(offer, null);
     }
 
     /**
@@ -166,10 +167,11 @@ public class ExpressionTool {
         if (exp.getItemType(opt.getConfiguration().getTypeHierarchy()) instanceof AnyItemType) {
             return exp;
         } else {
-            PromotionOffer offer = new PromotionOffer(opt);
-            offer.action = PromotionOffer.UNORDERED;
-            offer.retainAllNodes = false;
-            return exp.promote(offer, null);
+            return exp.unordered(false);
+//            PromotionOffer offer = new PromotionOffer(opt);
+//            offer.action = PromotionOffer.UNORDERED;
+//            offer.retainAllNodes = false;
+//            return exp.promote(offer, null);
         }
     }
 

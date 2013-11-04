@@ -427,6 +427,21 @@ public class Choose extends Instruction {
     }
 
     /**
+     * Replace this expression by an expression that returns the same result but without
+     * regard to order
+     *
+     * @param retainAllNodes true if all nodes in the result must be retained; false
+     *                       if duplicates can be eliminated
+     */
+    @Override
+    public Expression unordered(boolean retainAllNodes) throws XPathException {
+        for (int i=0; i<actions.length; i++) {
+            actions[i] = actions[i].unordered(retainAllNodes);
+        }
+        return this;
+    }
+
+    /**
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression

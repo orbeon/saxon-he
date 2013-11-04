@@ -270,6 +270,17 @@ public abstract class Expression
     }
 
     /**
+     * Replace this expression by an expression that returns the same result but without
+     * regard to order
+     * @param retainAllNodes true if all nodes in the result must be retained; false
+     * if duplicates can be eliminated
+     */
+
+    public Expression unordered(boolean retainAllNodes) throws XPathException {
+        return this;
+    }
+
+    /**
      * Get the static properties of this expression (other than its type). The result is
      * bit-signficant. These properties are used for optimizations. In general, if
      * property bit is set, it is true, but if it is unset, the value is unknown.

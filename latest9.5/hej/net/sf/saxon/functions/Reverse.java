@@ -8,6 +8,7 @@
 package net.sf.saxon.functions;
 
 import net.sf.saxon.expr.Callable;
+import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.Sequence;
@@ -50,6 +51,18 @@ public class Reverse extends SystemFunctionCall implements Callable {
         } else {
             return baseProps;
         }
+    }
+
+    /**
+     * Replace this expression by an expression that returns the same result but without
+     * regard to order
+     *
+     * @param retainAllNodes true if all nodes in the result must be retained; false
+     *                       if duplicates can be eliminated
+     */
+    @Override
+    public Expression unordered(boolean retainAllNodes) throws XPathException {
+        return argument[0].unordered(retainAllNodes);
     }
 
     /*@NotNull*/

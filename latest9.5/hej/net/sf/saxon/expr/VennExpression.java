@@ -461,6 +461,25 @@ public class VennExpression extends BinaryExpression {
     }
 
     /**
+     * Replace this expression by an expression that returns the same result but without
+     * regard to order
+     *
+     * @param retainAllNodes true if all nodes in the result must be retained; false
+     *                       if duplicates can be eliminated
+     */
+    @Override
+    public Expression unordered(boolean retainAllNodes) throws XPathException {
+        if (operator == Token.UNION && operandsAreDisjoint(getExecutable().getConfiguration().getTypeHierarchy())) {
+            // replace union operator by comma operator to avoid cost of sorting into document order. See XMark q7
+            Block block = new Block();
+            block.setChildren(new Expression[]{operand0, operand1});
+            ExpressionTool.copyLocationInfo(this, block);
+            return block;
+        }
+        return this;
+    }
+
+    /**
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression

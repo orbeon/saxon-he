@@ -861,6 +861,21 @@ public final class FilterExpression extends Expression implements ContextSwitchi
     }
 
     /**
+     * Replace this expression by an expression that returns the same result but without
+     * regard to order
+     *
+     * @param retainAllNodes true if all nodes in the result must be retained; false
+     *                       if duplicates can be eliminated
+     */
+    @Override
+    public Expression unordered(boolean retainAllNodes) throws XPathException {
+        if (!filterIsPositional) {
+            start = start.unordered(retainAllNodes);
+        }
+        return this;
+    }
+
+    /**
      * Rearrange a filter expression so that predicates that are independent of a given
      * set of range variables come first, allowing them to be promoted along with the base
      * expression

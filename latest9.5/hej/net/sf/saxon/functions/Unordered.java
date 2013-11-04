@@ -26,7 +26,7 @@ public class Unordered extends CompileTimeFunction {
         Expression exp = super.typeCheck(visitor, contextItemType);
         if (exp instanceof Unordered) {
             Optimizer opt = visitor.getConfiguration().obtainOptimizer();
-            return ExpressionTool.unsorted(opt, ((Unordered)exp).argument[0], false);
+            return ExpressionTool.unsorted(opt, ((Unordered)exp).argument[0], true);
         }
         return exp;
     }
@@ -36,9 +36,21 @@ public class Unordered extends CompileTimeFunction {
         Expression exp = super.optimize(visitor, contextItemType);
         if (exp instanceof Unordered) {
             return ExpressionTool.unsorted(visitor.getConfiguration().obtainOptimizer(),
-                    ((Unordered) exp).argument[0], false);
+                    ((Unordered) exp).argument[0], true);
         }
         return exp;
+    }
+
+    /**
+     * Replace this expression by an expression that returns the same result but without
+     * regard to order
+     *
+     * @param retainAllNodes true if all nodes in the result must be retained; false
+     *                       if duplicates can be eliminated
+     */
+    @Override
+    public Expression unordered(boolean retainAllNodes) throws XPathException {
+        return argument[0].unordered(retainAllNodes);
     }
 
     /**

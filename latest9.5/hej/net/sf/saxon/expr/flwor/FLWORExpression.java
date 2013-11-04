@@ -26,7 +26,10 @@ import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.SequenceType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This class represents a FLWOR expression, evaluated using tuple streams
@@ -592,6 +595,24 @@ public class FLWORExpression extends Expression {
             return rewriteForOrLet(visitor, contextItemType);
         }
 
+        return this;
+    }
+
+    /**
+     * Replace this expression by an expression that returns the same result but without
+     * regard to order
+     *
+     * @param retainAllNodes true if all nodes in the result must be retained; false
+     *                       if duplicates can be eliminated
+     */
+    @Override
+    public Expression unordered(boolean retainAllNodes) throws XPathException {
+        for (Clause c : clauses) {
+            if (c instanceof ForClause && ((ForClause)c).getPositionVariable() == null) {
+                ((ForClause)c).setSequence(((ForClause)c).getSequence().unordered(retainAllNodes));
+            }
+        }
+        returnClause = returnClause.unordered(retainAllNodes);
         return this;
     }
 

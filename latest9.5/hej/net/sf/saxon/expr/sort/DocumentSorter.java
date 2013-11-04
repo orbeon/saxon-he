@@ -79,6 +79,20 @@ public class DocumentSorter extends UnaryExpression {
         return this;
     }
 
+    /**
+     * Replace this expression by an expression that returns the same result but without
+     * regard to order
+     *
+     * @param retainAllNodes true if all nodes in the result must be retained; false
+     *                       if duplicates can be eliminated
+     */
+    @Override
+    public Expression unordered(boolean retainAllNodes) throws XPathException {
+        if (!retainAllNodes) {
+            return operand.unordered(retainAllNodes);
+        }
+        return this;
+    }
 
     public int computeSpecialProperties() {
         return operand.getSpecialProperties() | StaticProperty.ORDERED_NODESET;
