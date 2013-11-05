@@ -155,7 +155,8 @@ public class Average extends Aggregate implements Callable {
 
 	public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         try {
-		    return average(arguments[0].iterate(), context);
+		    AtomicValue val = average(arguments[0].iterate(), context);
+            return (val == null ? EmptySequence.getInstance() : val);
         } catch (XPathException err) {
             err.maybeSetContext(context);
             err.maybeSetLocation(this);
