@@ -16,14 +16,20 @@ import net.sf.saxon.evpull.EventIterator;
 import net.sf.saxon.expr.instruct.Executable;
 import net.sf.saxon.expr.instruct.UserFunction;
 import net.sf.saxon.expr.parser.*;
-import net.sf.saxon.om.*;
+import net.sf.saxon.om.Item;
+import net.sf.saxon.om.Sequence;
+import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trace.Location;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.TypeHierarchy;
-import net.sf.saxon.value.*;
+import net.sf.saxon.value.Cardinality;
+import net.sf.saxon.value.Closure;
+import net.sf.saxon.value.EmptySequence;
+import net.sf.saxon.value.SequenceType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -367,7 +373,7 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionRefere
     @Override
     public boolean replaceSubExpression(Expression original, Expression replacement) {
         boolean found = super.replaceSubExpression(original, replacement);
-        if (found) {
+        if (found && argumentEvaluationModes != null) {
             computeArgumentEvaluationModes();
         }
         return found;
