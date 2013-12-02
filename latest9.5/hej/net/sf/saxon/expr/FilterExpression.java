@@ -921,7 +921,7 @@ public final class FilterExpression extends Expression implements ContextSwitchi
      * @return true if the expression depends on position() or last() explicitly or implicitly
      */
 
-    private static boolean isPositionalFilter(Expression exp, TypeHierarchy th) {
+    public static boolean isPositionalFilter(Expression exp, TypeHierarchy th) {
         ItemType type = exp.getItemType(th);
         if (type.equals(BuiltInAtomicType.BOOLEAN)) {
             // common case, get it out of the way quickly

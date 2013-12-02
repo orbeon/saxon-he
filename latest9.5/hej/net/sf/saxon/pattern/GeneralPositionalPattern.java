@@ -13,6 +13,8 @@ import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.Optimizer;
 import net.sf.saxon.expr.parser.PromotionOffer;
+import net.sf.saxon.functions.Current;
+import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.trans.XPathException;
@@ -121,8 +123,26 @@ public class GeneralPositionalPattern extends Pattern {
             usesPosition = false;
         }
 
+        // See if the expression is now known to be non-positional
+        if (!FilterExpression.isPositionalFilter(positionExpr, visitor.getConfiguration().getTypeHierarchy())) {
+            AxisExpression ae = new AxisExpression(AxisInfo.CHILD, nodeTest);
+            FilterExpression fe = new FilterExpression(ae, positionExpr);
+            return PatternMaker.fromExpression(fe, visitor.getConfiguration(), true)
+                    .analyze(visitor, contextItemType);
+        }
+
         return this;
 
+    }
+
+    /**
+     * Replace any calls on current() by a variable reference bound to the supplied binding
+     */
+    @Override
+    public void bindCurrent(Binding binding) {
+        if (ExpressionTool.callsFunction(positionExpr, Current.FN_CURRENT)) {
+            replaceCurrent(positionExpr, binding);
+        }
     }
 
     /**
