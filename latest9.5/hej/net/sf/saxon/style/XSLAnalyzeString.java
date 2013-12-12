@@ -139,23 +139,30 @@ public class XSLAnalyzeString extends StyleElement {
         //checkWithinTemplate();
 
         AxisIterator kids = iterateAxis(AxisInfo.CHILD);
+        boolean foundFallback = false;
         while(true) {
             NodeInfo curr = kids.next();
             if (curr == null) {
                 break;
             }
             if (curr instanceof XSLFallback) {
-                // no-op
+                foundFallback = true;
             } else if (curr instanceof XSLMatchingSubstring) {
                 boolean b = curr.getLocalPart().equals("matching-substring");
                 if (b) {
                     if (matching!=null) {
                         compileError("xsl:matching-substring element must only appear once", "XTSE0010");
                     }
+                    if (nonMatching != null || foundFallback) {
+                        compileError("xsl:matching-substring element must precede xsl:non-matching-substring and xsl:fallback", "XTSE0010");
+                    }
                     matching = (StyleElement)curr;
                 } else {
                     if (nonMatching!=null) {
                         compileError("xsl:non-matching-substring element must only appear once", "XTSE0010");
+                    }
+                    if (foundFallback) {
+                        compileError("xsl:non-matching-substring element must precede xsl:fallback", "XTSE0010");
                     }
                     nonMatching = (StyleElement)curr;
                 }
