@@ -141,11 +141,9 @@ public class DOMSender implements SaxonLocator, SourceLocationProvider {
     */
 
     private void walkNode (Node node) throws XPathException {
+        // See https://saxonica.plan.io/issues/1955
         if (node.hasChildNodes()) {
-            NodeList nit = node.getChildNodes();
-            final int len = nit.getLength();
-            for (int i=0; i<len; i++) {
-                Node child = nit.item(i);
+            for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
                 switch (child.getNodeType()) {
                     case Node.DOCUMENT_NODE:
                     case Node.DOCUMENT_FRAGMENT_NODE:
