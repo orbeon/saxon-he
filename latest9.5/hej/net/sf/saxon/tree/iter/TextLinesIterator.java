@@ -62,6 +62,7 @@ public abstract class TextLinesIterator implements SequenceIterator<StringValue>
     /*@Nullable*/ public StringValue next() throws XPathException {
         if (position < 0) {
             // input already exhausted
+            close(); // jwL
             return null;
         }
         try {
@@ -69,6 +70,7 @@ public abstract class TextLinesIterator implements SequenceIterator<StringValue>
             if (s == null) {
                 current = null;
                 position = -1;
+                close(); // jwL
                 return null;
             }
             if (position == 0 && s.startsWith("\ufeff")) {
@@ -80,6 +82,7 @@ public abstract class TextLinesIterator implements SequenceIterator<StringValue>
             position++;
             return current;
         } catch (IOException err) {
+            close(); // jwL
             XPathException e = UnparsedText.handleIOError(uri, err, null);
             if (location != null) {
                 e.setLocator(location);
