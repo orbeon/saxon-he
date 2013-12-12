@@ -222,8 +222,8 @@ public class XSLGlobalVariable extends XSLGeneralVariable implements StylesheetP
      */
 
     public void optimize(Declaration declaration) throws XPathException {
-        if (!redundant && sourceBinding.getSelectExpression()!=null) {
-            Expression exp2 = sourceBinding.getSelectExpression();
+        if (!redundant && compiledVariable.getSelectExpression()!=null) {
+            Expression exp2 = compiledVariable.getSelectExpression();
             ExpressionVisitor visitor = makeExpressionVisitor();
             Optimizer opt = getConfiguration().obtainOptimizer();
             try {
