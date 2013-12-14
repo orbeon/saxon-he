@@ -195,7 +195,7 @@ public class PatternWithPredicate extends Pattern {
      */
     @Override
     public double getDefaultPriority() {
-        return basePattern.getDefaultPriority() + 0.5;
+        return 0.5;
     }
 
 //#ifdefined STREAM
