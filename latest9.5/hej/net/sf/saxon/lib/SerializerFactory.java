@@ -238,9 +238,11 @@ public class SerializerFactory implements Serializable {
             return target;
 
         } else if(staxResultClass != null && staxResultClass.isAssignableFrom(result.getClass())) {
-             StAXResultHandler handler = (StAXResultHandler) config.getDynamicLoader().getInstance("net.sf.saxon.lib.StAXHandler", getClass().getClassLoader());
-             return handler.getReceiver(result, props);
-        }else {
+            StAXResultHandler handler = (StAXResultHandler) config.getDynamicLoader().getInstance("net.sf.saxon.stax.StAXResultHandlerImpl", getClass().getClassLoader());
+            Receiver r = handler.getReceiver(result, props);
+            r.setPipelineConfiguration(pipe);
+            return r;
+        } else {
             if (pipe != null) {
                 // try to find an external object model that knows this kind of Result
                 List externalObjectModels = pipe.getConfiguration().getExternalObjectModels();
