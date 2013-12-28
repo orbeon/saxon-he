@@ -130,7 +130,7 @@ public class CommandLineOptions {
     public void setActualOptions(/*@NotNull*/ String[] args) throws XPathException {
         for (String arg : args) {
             if ("-".equals(arg)) {
-                positionalOptions.add(args[1]);
+                positionalOptions.add(arg);
             } else if (arg.charAt(0) == '-') {
                 String option;
                 String value = "";
