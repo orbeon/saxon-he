@@ -317,6 +317,14 @@ public class ApplyTemplates extends Instruction implements ITemplateCall {
             return W3C_MOTIONLESS;
         }
 
+        // Make a special case if the select expression is a call on copy-of. The July 2012 XSLT 3.0 specification
+        // gets this wrong. Ideally we should handle all grounded expressions specially, but that's too big a change
+        // for a bug fix. See Saxon bug 1971.
+
+        if (select instanceof CopyOf) {
+            return ((CopyOf)select).getSelectExpression().getStreamability(NODE_VALUE_CONTEXT, allowExtensions, reasons);
+        }
+
         boolean modeOK = false;
         if (usesCurrentMode()) {
             PreparedStylesheet pss = (PreparedStylesheet) getExecutable();

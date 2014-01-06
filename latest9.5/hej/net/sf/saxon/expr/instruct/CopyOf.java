@@ -456,6 +456,20 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
     }
 
     /**
+     * Get the immediate sub-expressions of this expression, with information about the relationship
+     * of each expression to its parent expression. Default implementation
+     * works off the results of iterateSubExpressions()
+     *
+     * @return an iterator containing the sub-expressions of this expression
+     */
+
+    /*@NotNull*/
+    public Iterator<SubExpressionInfo> iterateSubExpressionInfo() {
+        SubExpressionInfo info = new SubExpressionInfo(select, true, false, NODE_VALUE_CONTEXT);
+        return new MonoIterator<SubExpressionInfo>(info);
+    }
+
+    /**
      * Replace one subexpression by a replacement subexpression
      * @param original the original subexpression
      * @param replacement the replacement subexpression

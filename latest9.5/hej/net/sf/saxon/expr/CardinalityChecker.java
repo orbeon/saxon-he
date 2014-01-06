@@ -29,6 +29,7 @@ import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.SequenceExtent;
 
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -150,6 +151,21 @@ public final class CardinalityChecker extends UnaryExpression {
     public void setErrorCode(String code) {
         role.setErrorCode(code);
     }
+
+    /**
+     * Get the immediate sub-expressions of this expression, with information about the relationship
+     * of each expression to its parent expression. Default implementation
+     * works off the results of iterateSubExpressions()
+     *
+     * @return an iterator containing the sub-expressions of this expression
+     */
+
+    /*@NotNull*/
+    public Iterator<SubExpressionInfo> iterateSubExpressionInfo() {
+        SubExpressionInfo info = new SubExpressionInfo(getBaseExpression(), true, false, INHERITED_CONTEXT);
+        return new MonoIterator<SubExpressionInfo>(info);
+    }
+
 
     /**
      * Get the RoleLocator, which contains diagnostic information for use if the cardinality check fails
