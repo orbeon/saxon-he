@@ -83,31 +83,62 @@ public abstract class HTMLEmitter extends XMLEmitter {
     private static HTMLTagHashSet booleanCombinations = new HTMLTagHashSet(53);
 
     static {
-        setBooleanAttribute("area", "nohref");
-        setBooleanAttribute("button", "disabled");
-        setBooleanAttribute("dir", "compact");
-        setBooleanAttribute("dl", "compact");
-        setBooleanAttribute("frame", "noresize");
-        setBooleanAttribute("hr", "noshade");
-        setBooleanAttribute("img", "ismap");
-        setBooleanAttribute("input", "checked");
-        setBooleanAttribute("input", "disabled");
-        setBooleanAttribute("input", "readonly");
-        setBooleanAttribute("menu", "compact");
-        setBooleanAttribute("object", "declare");
-        setBooleanAttribute("ol", "compact");
-        setBooleanAttribute("optgroup", "disabled");
-        setBooleanAttribute("option", "selected");
-        setBooleanAttribute("option", "disabled");
-        setBooleanAttribute("script", "defer");
-        setBooleanAttribute("select", "multiple");
-        setBooleanAttribute("select", "disabled");
-        setBooleanAttribute("td", "nowrap");
-        setBooleanAttribute("textarea", "disabled");
-        setBooleanAttribute("textarea", "readonly");
-        setBooleanAttribute("th", "nowrap");
-        setBooleanAttribute("ul", "compact");
-    }
+            setBooleanAttribute("*", "hidden"); // HTML5
+            setBooleanAttribute("area", "nohref");
+            setBooleanAttribute("audio", "autoplay"); // HTML5
+            setBooleanAttribute("audio", "controls"); // HTML5
+            setBooleanAttribute("audio", "loop"); // HTML5
+            setBooleanAttribute("audio", "muted"); // HTML5
+            setBooleanAttribute("button", "disabled");
+            setBooleanAttribute("button", "autofocus"); // HTML5
+            setBooleanAttribute("button", "formnovalidate"); //HTML5
+            setBooleanAttribute("details", "open"); // HTML5
+            setBooleanAttribute("dialog", "open"); // HTML5
+            setBooleanAttribute("dir", "compact");
+            setBooleanAttribute("dl", "compact");
+            setBooleanAttribute("fieldset", "disabled"); //HTML5
+            setBooleanAttribute("form", "novalidate"); // HTML5
+            setBooleanAttribute("frame", "noresize");
+            setBooleanAttribute("hr", "noshade");
+            setBooleanAttribute("img", "ismap");
+            setBooleanAttribute("input", "checked");
+            setBooleanAttribute("input", "disabled");
+            setBooleanAttribute("input", "multiple"); //HTML5
+            setBooleanAttribute("input", "readonly");
+            setBooleanAttribute("input", "required"); //HTML5
+            setBooleanAttribute("input", "autofocus"); // HTML5
+            setBooleanAttribute("input", "formnovalidate"); //HTML5
+            setBooleanAttribute("iframe", "seamless"); // HTML5
+            setBooleanAttribute("keygen", "autofocus"); // HTML5
+            setBooleanAttribute("keygen", "disabled"); //HTML5
+            setBooleanAttribute("menu", "compact");
+            setBooleanAttribute("object", "declare");
+            setBooleanAttribute("object", "typemustmatch"); // HTML5
+            setBooleanAttribute("ol", "compact");
+            setBooleanAttribute("ol", "reversed"); // HTML5
+            setBooleanAttribute("optgroup", "disabled");
+            setBooleanAttribute("option", "selected");
+            setBooleanAttribute("option", "disabled");
+            setBooleanAttribute("script", "defer");
+            setBooleanAttribute("script", "async");   // HTML5
+            setBooleanAttribute("select", "multiple");
+            setBooleanAttribute("select", "disabled");
+            setBooleanAttribute("select", "autofocus"); // HTML5
+            setBooleanAttribute("select", "required"); // HTML5
+            setBooleanAttribute("style", "scoped"); // HTML5
+            setBooleanAttribute("td", "nowrap");
+            setBooleanAttribute("textarea", "disabled");
+            setBooleanAttribute("textarea", "readonly");
+            setBooleanAttribute("textarea", "autofocus"); // HTML5
+            setBooleanAttribute("textarea", "required"); // HTML5
+            setBooleanAttribute("th", "nowrap");
+            setBooleanAttribute("track", "default"); // HTML5
+            setBooleanAttribute("ul", "compact");
+            setBooleanAttribute("video", "autoplay"); // HTML5
+            setBooleanAttribute("video", "controls"); // HTML5
+            setBooleanAttribute("video", "loop"); // HTML5
+            setBooleanAttribute("video", "muted"); // HTML5
+        }
 
     private static void setBooleanAttribute(String element, String attribute) {
         booleanAttributes.add(attribute);
@@ -117,7 +148,8 @@ public abstract class HTMLEmitter extends XMLEmitter {
     private static boolean isBooleanAttribute(String element, String attribute, String value) {
         return attribute.equalsIgnoreCase(value) &&
                 booleanAttributes.contains(attribute) &&
-                booleanCombinations.contains(element + '+' + attribute);
+                ( booleanCombinations.contains(element + '+' + attribute) ||
+                  booleanCombinations.contains("*+" + attribute));
     }
 
     /**
