@@ -79,8 +79,9 @@ public abstract class HTMLEmitter extends XMLEmitter {
 
     // we use two HashMaps to avoid unnecessary string concatenations
 
-    private static HTMLTagHashSet booleanAttributes = new HTMLTagHashSet(31);
-    private static HTMLTagHashSet booleanCombinations = new HTMLTagHashSet(53);
+    // Sizes must be large enough: this hash set cannot grow beyond the initial size
+    private static HTMLTagHashSet booleanAttributes = new HTMLTagHashSet(43);
+    private static HTMLTagHashSet booleanCombinations = new HTMLTagHashSet(57);
 
     static {
             setBooleanAttribute("*", "hidden"); // HTML5
