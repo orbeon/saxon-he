@@ -155,6 +155,14 @@ public abstract class NumericValue extends AtomicValue implements Comparable {
     public abstract int signum();
 
     /**
+     * Determine with the value is (double or float) negative zero
+     */
+
+    public boolean isNegativeZero() {
+        return false;
+    }
+
+    /**
      * Determine whether the value is a whole number, that is, whether it compares
      * equal to some integer
      *

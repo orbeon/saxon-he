@@ -275,7 +275,7 @@ public class FormatNumber extends SystemFunctionCall implements Callable {
 		NumericValue absN = number;
 		SubPicture pic;
 		String minusSign = "";
-		if (number.signum() < 0) {
+		if (number.signum() < 0 || number.isNegativeZero()) {
 			absN = number.negate();
 			if (subPictures[1]==null) {
 				pic = subPictures[0];

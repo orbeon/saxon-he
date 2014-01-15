@@ -62,12 +62,12 @@ public class FloatingPointConverter {
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
     };
 
-    private static final long doubleSignMask = 0x8000000000000000L;
+    public static final long doubleSignMask = 0x8000000000000000L;
     private static final long doubleExpMask = 0x7ff0000000000000L;
     private static final int doubleExpShift = 52;
     private static final int doubleExpBias = 1023;
     private static final long doubleFractMask = 0xfffffffffffffL;
-    private static final int floatSignMask = 0x80000000;
+    public static final int floatSignMask = 0x80000000;
     private static final int floatExpMask = 0x7f800000;
     private static final int floatExpShift = 23;
     private static final int floatExpBias = 127;

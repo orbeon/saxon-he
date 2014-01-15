@@ -260,6 +260,14 @@ public final class FloatValue extends NumericValue {
     }
 
     /**
+     * Determine with the value is (double or float) negative zero
+     */
+    @Override
+    public boolean isNegativeZero() {
+        return value == 0 && (Float.floatToIntBits(value) & FloatingPointConverter.floatSignMask) != 0;
+    }
+
+    /**
     * Determine whether the value is a whole number, that is, whether it compares
     * equal to some integer
     */
