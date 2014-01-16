@@ -101,6 +101,14 @@ public class SaxonOutputKeys {
     public static final String HTML_VERSION = "html-version";
 
     /**
+     * item-separatpr = string
+     * <p>Item separator for XQuery output. Not actually used in Saxon 9.5, but the syntax
+    * is accepted and ignored for conformance reasons.</p>
+     */
+
+    public static final String ITEM_SEPARATOR = "item-separator";
+
+    /**
      * saxon:attribute-order = list of attribute names
      * <p/>
      * <p>Defines an ordering for attributes in the serialized output. Any attribute present in the list
@@ -289,6 +297,8 @@ public class SaxonOutputKeys {
                 if (value != null) {
                     checkYesOrNo(key, value);
                 }
+            } else if (key.equals(ITEM_SEPARATOR)) {
+                // no constraints
             } else if (key.equals(OutputKeys.MEDIA_TYPE)) {
                 // no constraints
             } else if (key.equals(OutputKeys.METHOD)) {

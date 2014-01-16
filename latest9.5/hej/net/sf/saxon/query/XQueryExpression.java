@@ -411,7 +411,14 @@ public class XQueryExpression implements Container {
         pipe.setHostLanguage(Configuration.XQUERY);
         Receiver receiver = sf.getReceiver(result, pipe, actualProperties);
         context.changeOutputDestination(receiver, null);
-        context.getReceiver().open();
+
+        Receiver out = context.getReceiver();
+        String itemSeparator = actualProperties.getProperty(SaxonOutputKeys.ITEM_SEPARATOR);
+        if (out instanceof ComplexContentOutputter && itemSeparator != null) {
+            out = new SequenceNormalizer((SequenceReceiver)out, itemSeparator);
+            context.setReceiver((SequenceReceiver)out);
+        }
+        out.open();
 
         // Run the query
         try {

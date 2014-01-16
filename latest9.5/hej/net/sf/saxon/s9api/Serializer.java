@@ -197,7 +197,12 @@ public class Serializer implements Destination {
          * Saxon extension for interfacing with debuggers; indicates that the location information is
          * available for events in this output stream
          */
-        SAXON_SUPPLY_SOURCE_LOCATOR(SaxonOutputKeys.SUPPLY_SOURCE_LOCATOR);
+        SAXON_SUPPLY_SOURCE_LOCATOR(SaxonOutputKeys.SUPPLY_SOURCE_LOCATOR),
+
+        /**
+         * Set to a string used to separate adjacent items in an XQuery result sequence
+         */
+        ITEM_SEPARATOR(SaxonOutputKeys.ITEM_SEPARATOR);
 
         private String name;
 
