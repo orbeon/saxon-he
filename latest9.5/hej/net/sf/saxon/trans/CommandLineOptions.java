@@ -136,7 +136,7 @@ public class CommandLineOptions {
                 String value = "";
                 if (arg.length() > 5 && arg.charAt(1) == '-') {
                     // --featureKey:value format
-                    int colon = arg.lastIndexOf(':');
+                    int colon = arg.indexOf(':');
                     if (colon > 0 && colon < arg.length() - 1) {
                         option = arg.substring(2, colon);
                         value = arg.substring(colon + 1);
