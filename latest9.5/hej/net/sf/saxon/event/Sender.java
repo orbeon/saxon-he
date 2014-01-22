@@ -521,11 +521,18 @@ public abstract class Sender {
             pipe.setLocationProvider((LocationProvider)provider);
         }
         receiver.setPipelineConfiguration(pipe);
-        SequenceReceiver out = receiver instanceof SequenceReceiver
+        SequenceReceiver out = nextRealReceiver(receiver) instanceof SequenceReceiver
                 ? ((SequenceReceiver)receiver)
                 : new TreeReceiver(receiver);
         EventIteratorToReceiver.copy(provider, out);
         receiver.close();
+    }
+
+    private static Receiver nextRealReceiver(Receiver receiver) {
+        if(receiver instanceof ProxyReceiver) {
+            return nextRealReceiver(((ProxyReceiver) receiver).getUnderlyingReceiver());
+        }
+        return receiver;
     }
 
 

@@ -45,8 +45,8 @@ public class EventIteratorToReceiver {
             if (event == null) {
                 break;
             }
-            if (event instanceof Orphan && ((Orphan)event).getNodeKind() == Type.TEXT) {
-                out.characters(((Orphan)event).getStringValueCS(), 0, 0);
+            if (event instanceof NodeInfo && ((NodeInfo)event).getNodeKind() == Type.TEXT) {
+                out.characters(((NodeInfo)event).getStringValueCS(), 0, 0);
             } else if (event instanceof DocumentInfo && level > 0) {
                 AxisIterator kids = ((DocumentInfo)event).iterateAxis(AxisInfo.CHILD);
                 while (true) {
