@@ -234,6 +234,7 @@ public class ForEach extends Instruction implements ContextMappingFunction<Item>
         action = doPromotion(action, offer);
 
         if (offer.containingExpression instanceof LetExpression) {
+            ((LetExpression) offer.containingExpression).setEvaluationMode(ExpressionTool.MAKE_MEMO_CLOSURE);
             offer.containingExpression =
                     visitor.optimize(offer.containingExpression, contextItemType);
         }
