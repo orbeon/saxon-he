@@ -801,7 +801,14 @@ namespace Saxon.Api
                 source.setSystemId(baseUri.ToString());
             }
             source = augmentSource(source);
-            DocumentInfo doc = config.buildDocument(source);
+            DocumentInfo doc = null;
+            try
+            {
+                doc = config.buildDocument(source);
+            }
+            catch (net.sf.saxon.trans.XPathException e) {
+                throw new StaticError(e);
+            }
             return (XdmNode)XdmValue.Wrap(doc);
         }
 
@@ -880,7 +887,15 @@ namespace Saxon.Api
                 source.setSystemId(baseUri.ToString());
             }
             source = augmentSource(source);
-            DocumentInfo doc = config.buildDocument(source);
+            DocumentInfo doc = null;
+            try
+            {
+                doc = config.buildDocument(source);
+            }
+            catch (net.sf.saxon.trans.XPathException e)
+            {
+                throw new StaticError(e);
+            }
             return (XdmNode)XdmValue.Wrap(doc);
         }
 
@@ -997,7 +1012,15 @@ namespace Saxon.Api
             Source source = new PullSource(pp);
             source.setSystemId(reader.BaseURI);
             source = augmentSource(source);
-            DocumentInfo doc = config.buildDocument(source);
+            DocumentInfo doc = null;
+            try
+            {
+                doc = config.buildDocument(source);
+            }
+            catch (net.sf.saxon.trans.XPathException e)
+            {
+                throw new StaticError(e);
+            }
             return (XdmNode)XdmValue.Wrap(doc);
         }
 
