@@ -118,22 +118,6 @@ public final class LargeStringBuffer implements AppendableCharSequence, Serializ
             }
             length += len;
 
-        } else if (s instanceof String) {
-            ((String)s).getChars(0, firstSegLen, firstSeg, firstSegOffset);
-            int start = firstSegLen;
-            for (int i=0; i<fullSegments; i++) {
-                char[] seg = new char[SEGLEN];
-                addSegment(seg);
-                ((String)s).getChars(start, start+SEGLEN, seg, 0);
-                start += SEGLEN;
-            }
-            if (lastSegLen > 0) {
-                char[] seg = new char[SEGLEN];
-                addSegment(seg);
-                ((String)s).getChars(start, len, seg, 0);
-            }
-            length += len;
-
         } else if (s instanceof FastStringBuffer) {
             ((FastStringBuffer)s).getChars(0, firstSegLen, firstSeg, firstSegOffset);
             int start = firstSegLen;
@@ -151,7 +135,25 @@ public final class LargeStringBuffer implements AppendableCharSequence, Serializ
             length += len;
 
         } else {
-            append(s.toString());
+            if (!(s instanceof String)) {
+                s = s.toString();
+            }
+
+            ((String)s).getChars(0, firstSegLen, firstSeg, firstSegOffset);
+            int start = firstSegLen;
+            for (int i=0; i<fullSegments; i++) {
+                char[] seg = new char[SEGLEN];
+                addSegment(seg);
+                ((String)s).getChars(start, start+SEGLEN, seg, 0);
+                start += SEGLEN;
+            }
+            if (lastSegLen > 0) {
+                char[] seg = new char[SEGLEN];
+                addSegment(seg);
+                ((String)s).getChars(start, len, seg, 0);
+            }
+            length += len;
+
         }
     }
 
