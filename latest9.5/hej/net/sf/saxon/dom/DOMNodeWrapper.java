@@ -280,7 +280,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
                 case Type.DOCUMENT:
                 case Type.ELEMENT:
                     NodeList children1 = node.getChildNodes();
-                    StringBuffer sb1 = new StringBuffer(16);
+                    FastStringBuffer sb1 = new FastStringBuffer(16);
                     expandStringValue(children1, sb1);
                     return sb1;
 
@@ -321,7 +321,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
         return (s == null ? "" : s);
     }
 
-    private static void expandStringValue(NodeList list, StringBuffer sb) {
+    private static void expandStringValue(NodeList list, FastStringBuffer sb) {
         final int len = list.getLength();
         for (int i = 0; i < len; i++) {
             Node child = list.item(i);
