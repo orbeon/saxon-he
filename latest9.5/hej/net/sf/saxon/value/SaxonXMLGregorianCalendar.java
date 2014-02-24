@@ -1,8 +1,7 @@
-package net.sf.saxon.xqj;
+package net.sf.saxon.value;
 
 import net.sf.saxon.functions.Component;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.value.*;
 
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.Duration;
