@@ -43,6 +43,7 @@ public class PatternWithPredicate extends Pattern {
         } else if (ExpressionTool.callsFunction(predicate, Current.FN_CURRENT)) {
             replaceCurrent(predicate, binding);
         }
+        basePattern.bindCurrent(binding);
     }
 
     /**
@@ -80,7 +81,8 @@ public class PatternWithPredicate extends Pattern {
      */
 
     public int allocateSlots(SlotManager slotManager, int nextFree) {
-        return ExpressionTool.allocateSlots(predicate, nextFree, slotManager);
+        int n = ExpressionTool.allocateSlots(predicate, nextFree, slotManager);
+        return basePattern.allocateSlots(slotManager, n);
     }
 
     /**
@@ -116,7 +118,7 @@ public class PatternWithPredicate extends Pattern {
      */
     @Override
     public int getDependencies() {
-        return predicate.getDependencies();
+        return predicate.getDependencies() | basePattern.getDependencies();
     }
 
     /**
@@ -184,6 +186,7 @@ public class PatternWithPredicate extends Pattern {
     public Pattern analyze(ExpressionVisitor visitor, ExpressionVisitor.ContextItemType contextItemType) throws XPathException {
         ExpressionVisitor.ContextItemType cit = new ExpressionVisitor.ContextItemType(getItemType(), false);
         predicate = visitor.typeCheck(predicate, cit);
+        basePattern = basePattern.analyze(visitor, contextItemType);
         return this;
     }
 
