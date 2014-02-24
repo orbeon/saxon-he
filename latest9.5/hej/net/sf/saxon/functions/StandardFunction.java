@@ -231,7 +231,7 @@ public abstract class StandardFunction {
 
         register("current-group", CurrentGroup.class, 0, 0, 0, Type.ITEM_TYPE, STAR, XSLT, 0);
 
-        register("current-grouping-key", CurrentGroupingKey.class, 0, 0, 0, BuiltInAtomicType.ANY_ATOMIC, OPT, XSLT, 0);
+        register("current-grouping-key", CurrentGroupingKey.class, 0, 0, 0, BuiltInAtomicType.ANY_ATOMIC, STAR, XSLT, 0);
 
         register("data#0", Data.class, 0, 0, 0, BuiltInAtomicType.ANY_ATOMIC, STAR, XPATH30, FOCUS);
 
