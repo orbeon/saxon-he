@@ -23,6 +23,7 @@ import net.sf.saxon.tree.iter.SingletonIterator;
 import net.sf.saxon.tree.iter.UnfailingIterator;
 import net.sf.saxon.type.ErrorType;
 import net.sf.saxon.type.ItemType;
+import net.sf.saxon.type.Type;
 import net.sf.saxon.value.NumericValue;
 
 import java.util.Iterator;
@@ -123,9 +124,15 @@ public class GeneralPositionalPattern extends Pattern {
             usesPosition = false;
         }
 
-        // See if the expression is now known to be non-positional
+        // See if the expression is now known to be non-positional (see bugs 1908, 1992)
         if (!FilterExpression.isPositionalFilter(positionExpr, visitor.getConfiguration().getTypeHierarchy())) {
-            AxisExpression ae = new AxisExpression(AxisInfo.CHILD, nodeTest);
+            byte axis = AxisInfo.CHILD;
+            if (nodeTest.getPrimitiveType() == Type.ATTRIBUTE) {
+                axis = AxisInfo.ATTRIBUTE;
+            } else if (nodeTest.getPrimitiveType() == Type.NAMESPACE) {
+                axis = AxisInfo.NAMESPACE;
+            }
+            AxisExpression ae = new AxisExpression(axis, nodeTest);
             FilterExpression fe = new FilterExpression(ae, positionExpr);
             return PatternMaker.fromExpression(fe, visitor.getConfiguration(), true)
                     .analyze(visitor, contextItemType);
