@@ -463,7 +463,7 @@ public abstract class GeneralVariable implements Binding, SourceLocator {
 
     public Sequence getSelectValue(XPathContext context) throws XPathException {
         if (select==null) {
-            throw new AssertionError("*** No select expression!!");
+            throw new XPathException("Internal error: No select expression", this);
             // The value of the variable is a sequence of nodes and/or atomic values
 
         } else {
