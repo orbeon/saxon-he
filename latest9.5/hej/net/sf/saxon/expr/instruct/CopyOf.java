@@ -16,6 +16,7 @@ import net.sf.saxon.Controller;
 import net.sf.saxon.event.*;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
+import net.sf.saxon.expr.sort.DocumentSorter;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.lib.Validation;
@@ -250,7 +251,6 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
         return c;
     }
 
-
     /*@NotNull*/
     public Expression simplify(ExpressionVisitor visitor) throws XPathException {
         select = visitor.simplify(select);
@@ -386,12 +386,21 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
     /*@NotNull*/
     public Expression optimize(ExpressionVisitor visitor, ExpressionVisitor.ContextItemType contextItemType) throws XPathException {
         if (readOnce) {
-            Expression optcopy = visitor.getConfiguration().obtainOptimizer().optimizeCopy(select);
+            Expression optcopy;
+            if (!(select instanceof DocumentSorter)) {
+                optcopy = visitor.getConfiguration().obtainOptimizer().optimizeCopy(select);
+                if (optcopy != null) {
+                    return optcopy;
+                }
+            }
+            select = visitor.optimize(select, contextItemType);
+            optcopy = visitor.getConfiguration().obtainOptimizer().optimizeCopy(select);
             if (optcopy != null) {
                 return optcopy;
             }
+        } else {
+            select = visitor.optimize(select, contextItemType);
         }
-        select = visitor.optimize(select, contextItemType);
         if (Literal.isEmptySequence(select)) {
             return select;
         }
