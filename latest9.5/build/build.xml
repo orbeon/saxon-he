@@ -52,7 +52,7 @@
     <import file="test-n.xml"/>   
 
     <path id="saxonee.class.path">
-      <pathelement location="${lib.dir}/saxon9ee.jar"/>
+      <pathelement location="${product.dir}/eej/saxon9ee.jar"/>
     </path>
     
 
@@ -109,7 +109,7 @@
          by platform in case a platform-specific build is needed -->
     
     
-    <target name="samples" depends="samples-j, samples-n"/>
+    <target name="samples" depends="samples-j"/> <!-- samples-n -->
     
  
   
@@ -298,20 +298,13 @@
       </xslt>-->
  
 	  <zip zipfile="${build-resources.dir}/source-userdoc.zip">
-		  <fileset dir="${userdoc.dir}">
-		    <include name="**/*.xml"/>
-		    <include name="**/*.xsl"/>
-		    <include name="**/*.xsd"/>
-		    <include name="**/*.css"/>
-		    <include name="fixed/**"/>
-		    <include name="welcome/**"/>
-		  </fileset>
+		  <fileset dir="${userdoc.dir}/viewer_app" />
 	 </zip>  			     
     </target>
     
     <target name="release-source" description="Generate Zip file containing issued Source Code">
       <zip zipfile="${product.dir}/saxon${versionh}source.zip">
-        <fileset dir="${source-hej.dir}">
+        <fileset dir="${temp.dir}/preprocessed/hej/source">
            <include name="net/**/*.java"/>
            <include name="net/**/package.html"/>
         </fileset>
@@ -332,7 +325,7 @@
     
     <target name="resources" description="Generate contents of released resources file"
       	depends="release-userdoc, product-javadoc, product-dotnetdoc,
-      	         samples, samples-j, testdrivers-j,  release-source">  <!-- samples-n, -->
+      	         samples, samples-j, testdrivers-j,  release-source, release-userdoc-n">  <!-- samples-n, -->
       <mkdir dir="${product.dir}/resources/build"/>
       <copy todir="${product.dir}/resources/build">
         <fileset dir="${basedir}">
@@ -356,11 +349,41 @@
       	depends="j, n"/> 
       
     <target name="test" description="Run regression tests"
-        depends="test-j, test-n"/>  	 
+        depends="test-j, test-n"/>
+
+    <target name="maintenance-release" description="Create .ZIP files for release"
+        depends="build, release-j, release-n"
+        >
+        <!-- removed "resources" - not used in maintenance releases -->
+        <!-- TODO add test -->
+
+      <mkdir dir="${issue.dir}"/>
+      <!-- <zip zipfile="${issue.dir}/saxonhe${versionh}j.zip">
+        <fileset dir="${product.dir}/hej"/>
+      </zip>
+      <zip zipfile="${issue.dir}/saxonhe${versionh}n.zip">
+        <fileset dir="${product.dir}/hen"/>
+      </zip>
+      <zip zipfile="${issue.dir}/saxonpe${versionh}j.zip">
+        <fileset dir="${product.dir}/pej"/>
+      </zip>
+      <zip zipfile="${issue.dir}/saxonpe${versionh}n.zip">
+        <fileset dir="${product.dir}/pen"/>
+      </zip>
+	  <zip zipfile="${issue.dir}/saxonee${versionh}j.zip">
+        <fileset dir="${product.dir}/eej"/>
+      </zip>
+      <zip zipfile="${issue.dir}/saxonee${versionh}n.zip">
+        <fileset dir="${product.dir}/een"/>
+      </zip>-->
+
+      <!-- <copy file="${product.dir}/saxon${versionh}source.zip" todir="${issue.dir}"/>-->
+    </target>
       
     <target name="release" description="Create .ZIP files for release"
         depends="build, release-j, release-n, resources"
-        >  
+        >
+
         <!-- removed "resources" - not used in maintenance releases -->
         <!-- TODO add test -->
         

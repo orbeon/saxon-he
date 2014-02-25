@@ -33,11 +33,12 @@
     
     <import file="build-locations.xml"/> <!-- defines $repo-os and $repo-priv -->
     
-    <property name="version" value="9.5.0.1"/>
-    <property name="versionh" value="9-5-0-1"/>
+    <property name="version" value="9.5.1.4"/>
+    <property name="versionh" value="9-5-1-4"/>
+    <property name="version.maven" value="9.5.1-4"/>
     <property name="major.version" value="9.5"/>
     <property name="major.versionh" value="9-5"/>
-    <property name="release.date" value="2013-04-18"/>
+    <property name="release.date" value="2014-01-22"/>
     
     <!-- REMEMBER ALSO TO SET THE VERSION IN Version.java -->
     
@@ -50,13 +51,13 @@
     <property name="repository" value=".."/>
     <property name="development-j.dir" value="${repository}/src"/>   
     <property name="development-data.dir" value="${development-j.dir}/he/data"/>        
-<!--    <property name="source-hej.dir" value="${repo-os}/latest9.5/hej"/>
-    <property name="source-eej.dir" value="${repo-priv}/latest9.5/eej"/> -->
-    <property name="source-hej.dir" value="${repo-os}/he/java"/>
-    <property name="source-eej.dir" value="${repo-priv}/ee/java"/>
+    <property name="source-hej.dir" value="${repo-os}/latest9.5/hej"/>
+    <property name="source-eej.dir" value="${repo-priv}/latest9.5/eej"/> 
+    <!--<property name="source-hej.dir" value="${repo-os}/he/java"/>
+    <property name="source-eej.dir" value="${repo-priv}/ee/java"/>-->
     	    
     <!-- directory holding XML user documentation -->
-    <property name="userdoc.dir" value="${repository}/userdoc/saxon9"/>
+  <property name="userdoc.dir" value="${repo-priv}/latest9.5/userdoc"/>
     
     
     <!-- directories holding use cases and sample applications -->

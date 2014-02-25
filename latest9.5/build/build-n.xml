@@ -8,7 +8,7 @@
 	<import file="build-constants.xml"/>      
 		    
     <!-- directories holding C# source code -->
-    <property name="vss-n.dir" value="${repo-os}/hen"/>
+    <property name="vss-n.dir" value="${repo-os}/latest9.5/hen"/>
 
     <!-- directory holding C# source code as in Subversion -->
     <!--<property name="subversion-n.dir" value="${root}/saxon-svn2/latest9.0/bn/csource"/>-->	
@@ -28,8 +28,8 @@
 <!--      <condition property="csharp.compiler" value="C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\csc.exe">
         <os family="windows"/>
       </condition>-->
-    
-  <condition property="csharp.compiler" value="C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe">
+    <condition property="csharp.compiler" value="C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\csc.exe">
+<!--  <condition property="csharp.compiler" value="C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe"> -->
     <os family="windows"/>
   </condition>
     <!-- following locations are for IKVMC code used to build the .NET product -->
@@ -83,7 +83,7 @@
     <property name="source-api-n.dir" value="${vss-n.dir}/csource/api"/>
     <property name="source-cmd-n.dir" value="${vss-n.dir}/csource/cmd"/>
     <property name="source-samples-n.dir" value="${vss-n.dir}/csource/samples"/>
-    <taskdef resource="com/igormaznitsa/jcp/ant/tasks.properties" classpath="../lib/jcp-5.3.jar"/>
+    <taskdef resource="com/igormaznitsa/jcp/ant/tasks.properties" classpath="../lib/jcp-5.3.2.jar"/>
            
     <path id="classpath-n">
         <fileset dir="${lib.dir}">
@@ -1185,10 +1185,9 @@
       </dependset>
     </target>               
                      
-    <!--<target name="product-dotnetdoc" description="Create .NET API documentation"
-        depends="copysource-development-n, csharp-hen, dotnetdoc-dependset" >-->
-  <target name="product-dotnetdoc" description="Create .NET API documentation" depends="csharp-een"
-    >
+    <target name="product-dotnetdoc" description="Create .NET API documentation"
+        depends="copysource-development-n, csharp-hen, dotnetdoc-dependset" >
+
         <mkdir dir="${docout-n.dir}"/>
         
         <xslt  in="${doctools-n.dir}/parsecs.xsl"
@@ -1216,7 +1215,12 @@
 	      <classpath refid="saxonee.class.path"/>
 			<factory name="com.saxonica.config.EnterpriseTransformerFactory"/>
 	    </xslt>
-	             	            
+	     <xslt in="${doctemp-n.dir}/merged.xml"
+			style="${doctools-n.dir}/convert-to-jel-package.xsl"
+			out="${docout-n.dir}/dotnetdoc-xml/packages/Saxon.Api.xml">
+	      <classpath refid="saxonee.class.path"/>
+			<factory name="com.saxonica.config.EnterpriseTransformerFactory"/>
+	    </xslt>
       
       <copy file="${doctools-n.dir}/stylesheet.css"
               tofile="${build-resources.dir}/doc/dotnetdoc/stylesheet.css"
@@ -1251,7 +1255,7 @@
     		description="Generate Saxon for the .NET platform"/>
     		<!--, samples-n --> 
     		
-    <target name="installer-hen" description="Create installer for Saxon-HE on .NET" depends="n">
+    <target name="installer-hen" description="Create installer for Saxon-HE on .NET" depends="n, release-userdoc-n">
        <mkdir dir="${temp.dir}/n/installer"/> 
        
       <echo file="${temp.dir}/n/installer/he.iss">
@@ -1282,6 +1286,15 @@ Source: "IKVM.OpenJDK.Text.dll"; DestDir: "{app}\bin"; Flags: gacinstall; Strong
 Source: "IKVM.OpenJDK.XML.API.dll"; DestDir: "{app}\bin"; Flags: gacinstall ; StrongAssemblyName: "IKVM.OpenJDK.XML.API.dll, ${ikvm.strongname}"
 Source: "saxon9he.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "saxon9he.dll, ${saxon.strongname}"
 Source: "saxon9he-api.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "saxon9he-api.dll, ${saxon.strongname}"
+Source: "..\notices\APACHE-RESOLVER.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\APACHE-XERCES.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\CERN.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\FRIJTERS.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\GPL+CLASSPATH.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\JAMESCLARK.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\LICENSE.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\THAI.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\UNICODE.txt" ; DestDir: "{app}\notices"
 
 ; Program Files
 Source: "Query.exe"; DestDir: "{app}\bin"
@@ -1338,6 +1351,15 @@ Source: "IKVM.OpenJDK.Text.dll"; DestDir: "{app}\bin"; Flags: gacinstall; Strong
 Source: "IKVM.OpenJDK.XML.API.dll"; DestDir: "{app}\bin"; Flags: gacinstall ; StrongAssemblyName: "IKVM.OpenJDK.XML.API.dll, ${ikvm.strongname}"
 Source: "saxon9pe.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "saxon9pe.dll, ${saxon.strongname}"
 Source: "saxon9pe-api.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "saxon9pe-api.dll, ${saxon.strongname}"
+Source: "..\notices\APACHE-RESOLVER.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\APACHE-XERCES.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\CERN.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\FRIJTERS.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\GPL+CLASSPATH.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\JAMESCLARK.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\LICENSE.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\THAI.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\UNICODE.txt" ; DestDir: "{app}\notices"
 
 ; Program Files
 Source: "Query.exe"; DestDir: "{app}\bin"
@@ -1394,6 +1416,16 @@ Source: "IKVM.OpenJDK.Text.dll"; DestDir: "{app}\bin"; Flags: gacinstall; Strong
 Source: "IKVM.OpenJDK.XML.API.dll"; DestDir: "{app}\bin"; Flags: gacinstall ; StrongAssemblyName: "IKVM.OpenJDK.XML.API.dll, ${ikvm.strongname}"
 Source: "saxon9ee.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "saxon9ee.dll, ${saxon.strongname}"
 Source: "saxon9ee-api.dll"; DestDir: "{app}\bin"; Flags: gacinstall; StrongAssemblyName: "saxon9ee-api.dll, ${saxon.strongname}"
+Source: "..\notices\APACHE-RESOLVER.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\APACHE-XERCES.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\ASM.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\CERN.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\FRIJTERS.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\GPL+CLASSPATH.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\JAMESCLARK.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\LICENSE.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\THAI.txt" ; DestDir: "{app}\notices"
+Source: "..\notices\UNICODE.txt" ; DestDir: "{app}\notices"
 
 ; Program Files
 Source: "Query.exe"; DestDir: "{app}\bin"
