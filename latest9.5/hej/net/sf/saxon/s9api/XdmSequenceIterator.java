@@ -109,5 +109,17 @@ public class XdmSequenceIterator implements Iterator<XdmItem> {
     public void remove() {
         throw new UnsupportedOperationException();
     }
+
+    /**
+     * The close() method should be called to release resources if the caller wants to stop reading
+     * data before reaching the end. This is particularly relevant if the query uses saxon:stream()
+     * to read its input, since there will then be another thread supplying data, which will be left
+     * in suspended animation if no-one is consuming the data.
+     * @since 9.5.1.5 (see bug 2016)
+     */
+
+    public void close() {
+        base.close();
+    }
 }
 
