@@ -338,24 +338,25 @@ public class DocumentFn extends SystemFunctionCall implements Callable {
         }
 
         DocumentPool pool = controller.getDocumentPool();
-        doc = pool.find(documentKey);
-        if (doc != null) {
-            return getFragment(doc, fragmentId, c, locator);
-        }
 
-        // check that the document was not written by this transformation
+        //noinspection SynchronizationOnLocalVariableOrMethodParameter
+        synchronized (controller) {
+            doc = pool.find(documentKey);
+            if (doc != null) {
+                return getFragment(doc, fragmentId, c, locator);
+            }
 
-        if (!controller.checkUniqueOutputDestination(documentKey)) {
-            pool.markUnavailable(documentKey);
-            XPathException err = new XPathException(
-                    "Cannot read a document that was written during the same transformation: " + documentKey);
-            err.setXPathContext(c);
-            err.setErrorCode("XTRE1500");
-            err.setLocator(locator);
-            throw err;
-        }
+            // check that the document was not written by this transformation
 
-        try {
+            if (!controller.checkUniqueOutputDestination(documentKey)) {
+                pool.markUnavailable(documentKey);
+                XPathException err = new XPathException(
+                        "Cannot read a document that was written during the same transformation: " + documentKey);
+                err.setXPathContext(c);
+                err.setErrorCode("XTRE1500");
+                err.setLocator(locator);
+                throw err;
+            }
 
             if (pool.isMarkedUnavailable(documentKey)) {
                 XPathException err = new XPathException(
@@ -364,6 +365,9 @@ public class DocumentFn extends SystemFunctionCall implements Callable {
                 err.setErrorCode("FODC0002");
                 throw err;
             }
+        }
+
+        try {
 
             // Get a Source from the URIResolver
 
@@ -410,8 +414,19 @@ public class DocumentFn extends SystemFunctionCall implements Callable {
                     }
                 }
             }
-            controller.registerDocument(newdoc, documentKey);
-            controller.addUnavailableOutputDestination(documentKey);
+            // At this point, we have built the document. But it's possible that another thread
+            // has built the same document and put it in the document pool. So we do another
+            // check on the document pool, and if this has happened, we discard the document
+            // we have just built and use the one from the pool instead.
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
+            synchronized (controller) {
+                doc = pool.find(documentKey);
+                if (doc != null) {
+                    return getFragment(doc, fragmentId, c, locator);
+                }
+                controller.registerDocument(newdoc, documentKey);
+                controller.addUnavailableOutputDestination(documentKey);
+            }
             return getFragment(newdoc, fragmentId, c, locator);
 
         } catch (TransformerException err) {
