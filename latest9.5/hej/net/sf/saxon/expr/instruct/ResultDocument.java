@@ -679,7 +679,8 @@ public class ResultDocument extends Instruction implements ValidatingInstruction
             }
 
             DocumentURI documentKey = new DocumentURI(uri);
-            synchronized (controller.getDocumentPool()) {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
+            synchronized (controller) {
                 if (!controller.checkUniqueOutputDestination(documentKey)) {
                     XPathException err = new XPathException("Cannot write more than one result document to the same URI: " +
                             (uri.equals(Controller.ANONYMOUS_PRINCIPAL_OUTPUT_URI) ? "(implicit output URI)" : uri));

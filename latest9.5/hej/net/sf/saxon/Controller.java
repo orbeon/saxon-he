@@ -598,7 +598,7 @@ public class Controller extends Transformer {
         //if (principalResultURI != null) {
 
             DocumentURI documentURI = new DocumentURI(implicitURI);
-            synchronized (getDocumentPool()){
+            synchronized (this){
                 if (!checkUniqueOutputDestination(documentURI)) {
                     XPathException err = new XPathException(
                             "Cannot write an implicit result document if an explicit result document has been written to the same URI: " +
@@ -2252,22 +2252,6 @@ public class Controller extends Transformer {
 
     private void closeResult(Result result, boolean mustClose, XPathContextMajor initialContext) throws XPathException {
         Receiver out = initialContext.getReceiver();
-//        if (out instanceof ComplexContentOutputter && ((ComplexContentOutputter) out).contentHasBeenWritten()) {
-//            if (principalResultURI != null) {
-//                DocumentURI documentKey = new DocumentURI(principalResultURI);
-//                synchronized (getDocumentPool()) {
-//                if (!checkUniqueOutputDestination(documentKey)) {
-//                    XPathException err = new XPathException(
-//                            "Cannot write more than one result document to the same URI, or write to a URI that has been read: " +
-//                                    result.getSystemId());
-//                    err.setErrorCode("XTDE1490");
-//                    throw err;
-//                } else {
-//                    addUnavailableOutputDestination(documentKey);
-//                }
-//                }
-//            }
-//        }
 
         out.endDocument();
         out.close();
