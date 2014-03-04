@@ -21,6 +21,7 @@ import net.sf.saxon.tree.linked.NodeFactory;
 import net.sf.saxon.tree.linked.TextImpl;
 import net.sf.saxon.tree.util.AttributeCollectionImpl;
 import net.sf.saxon.type.SchemaType;
+import net.sf.saxon.type.Type;
 import net.sf.saxon.value.DecimalValue;
 
 import javax.xml.transform.TransformerException;
@@ -116,6 +117,10 @@ public class StyleNodeFactory implements NodeFactory {
     	// Try first to make an XSLT element
 
     	StyleElement e = makeXSLElement(f, parent);
+        if (e instanceof XSLStylesheet && parent.getNodeKind() != Type.DOCUMENT) {
+            e = new AbsentExtensionElement();
+            e.setValidationError(new XPathException(elemName.getDisplayName() + " can only appear at the outermost level"), StyleElement.REPORT_ALWAYS);
+        }
 
 		if (e != null) {  // recognized as an XSLT element
 
