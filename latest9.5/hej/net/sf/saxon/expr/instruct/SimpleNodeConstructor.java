@@ -225,8 +225,14 @@ public abstract class SimpleNodeConstructor extends Instruction {
     */
 
     public TailCall processLeavingTail(XPathContext context) throws XPathException {
-        CharSequence value = select.evaluateAsString(context);
-        processValue(value, context);
+
+        try {
+            CharSequence value = select.evaluateAsString(context);
+            processValue(value, context);
+        } catch (XPathException e) {
+            e.maybeSetLocation(this);
+            throw e;
+        }
         return null;
     }
 
