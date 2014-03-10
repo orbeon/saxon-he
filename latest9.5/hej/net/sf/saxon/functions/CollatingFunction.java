@@ -184,7 +184,7 @@ public abstract class CollatingFunction extends SystemFunctionCall {
      * specified collation is not recognized
      */
 
-    protected StringCollator getCollator(XPathContext context) throws XPathException {
+    public StringCollator getCollator(XPathContext context) throws XPathException {
         if (staticCollation != null) {
             return staticCollation;
         }
