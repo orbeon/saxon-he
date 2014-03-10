@@ -160,7 +160,9 @@ public class RootExpression extends SingleNodeExpression {
      */
     @Override
     public int getStreamability(int syntacticContext, boolean allowExtensions, List<String> reasons) {
-        reasons.add("Root expression '/' is free-ranging");
+        if (reasons != null) {
+            reasons.add("Root expression '/' is free-ranging");
+        }
         return W3C_FREE_RANGING;
     }
 
