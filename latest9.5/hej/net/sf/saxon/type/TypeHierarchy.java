@@ -15,7 +15,6 @@ import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.AnyNodeTest;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.iter.EmptyIterator;
 import net.sf.saxon.value.*;
 import net.sf.saxon.value.StringValue;
 import net.sf.saxon.z.IntHashSet;
@@ -92,10 +91,6 @@ public class TypeHierarchy implements Serializable {
 
         SequenceIterator iterator = value.iterate();
         final ItemType requiredItemType = requiredType.getPrimaryType();
-
-        if (iterator instanceof EmptyIterator) {
-            return EmptySequence.getInstance();
-        }
 
         if (requiredItemType.isPlainType()) {
 
