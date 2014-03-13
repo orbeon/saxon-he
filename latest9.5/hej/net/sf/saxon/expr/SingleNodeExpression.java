@@ -7,6 +7,7 @@
 
 package net.sf.saxon.expr;
 
+import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.SequenceIterator;
@@ -37,11 +38,15 @@ public abstract class SingleNodeExpression extends Expression {
             err.setIsTypeError(true);
             err.setLocator(this);
             throw err;
-        }else {
+        } else {
             contextMaybeUndefined = contextItemType.contextMaybeUndefined;
         }
-        if (contextItemType.itemType.isPlainType()) {
-            XPathException err = new XPathException(noContextMessage() + ": the context item is an atomic value");
+
+        Configuration config = visitor.getConfiguration();
+        TypeHierarchy th = config.getTypeHierarchy();
+        int relation = th.relationship(contextItemType.itemType, AnyNodeTest.getInstance());
+        if (relation == TypeHierarchy.DISJOINT) {
+            XPathException err = new XPathException(noContextMessage() + ": the context item is not a node");
             err.setErrorCode("XPTY0020");
             err.setIsTypeError(true);
             err.setLocator(this);
