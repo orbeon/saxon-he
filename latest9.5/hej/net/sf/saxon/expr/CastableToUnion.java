@@ -5,6 +5,7 @@ import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.type.UnionType;
@@ -136,7 +137,7 @@ public class CastableToUnion extends UnaryExpression {
 
     /*@NotNull*/
     public ItemType getItemType(TypeHierarchy th) {
-        return (ItemType)targetType;
+        return BuiltInAtomicType.BOOLEAN;
     }
 
     /**
