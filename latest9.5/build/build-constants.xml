@@ -33,12 +33,12 @@
     
     <import file="build-locations.xml"/> <!-- defines $repo-os and $repo-priv -->
     
-    <property name="version" value="9.5.1.4"/>
-    <property name="versionh" value="9-5-1-4"/>
-    <property name="version.maven" value="9.5.1-4"/>
+    <property name="version" value="9.5.1.5"/>
+    <property name="versionh" value="9-5-1-5"/>
+    <property name="version.maven" value="9.5.1-5"/>
     <property name="major.version" value="9.5"/>
     <property name="major.versionh" value="9-5"/>
-    <property name="release.date" value="2014-01-22"/>
+    <property name="release.date" value="2014-03-21"/>
     
     <!-- REMEMBER ALSO TO SET THE VERSION IN Version.java -->
     
