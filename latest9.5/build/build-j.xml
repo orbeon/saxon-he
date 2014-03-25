@@ -245,7 +245,7 @@ platform=com.saxonica.config.JavaPlatformPE
             <include name="com/saxonica/**/*.java"/>
             <exclude name="com/saxonica/testdriver/**/*.java"/>
             <!--<exclude name="com/saxonica/jaxp/*.java"/>-->
-            <!--<exclude name="com/saxonica/config/pe/**" />-->
+            <exclude name="com/saxonica/config/pe/**" />
             <!--<exclude name="com/saxonica/config/DotNetVerifier.java"/>-->
             <exclude name="com/saxonica/config/DotNetExtensionFunctionFactory.java"/>
             <exclude name="com/saxonica/config/DotNetExtensionLibrary.java"/>
@@ -341,7 +341,7 @@ platform=com.saxonica.config.JavaPlatformPE
             destination="${temp-src-prep-eej.dir}"
             verbose="true">
         <global name="EE" value="true"/>
-        <global name="PE" value="true"/>
+        <global name="PE" value="false"/>
        <global name="STREAM" value="true"/>
        <global name="HOF" value="true"/>
        <global name="BYTECODE" value="true"/>
@@ -350,9 +350,6 @@ platform=com.saxonica.config.JavaPlatformPE
        </preprocess>
        <replaceregexp file="${temp-src-prep-eej.dir}/net/sf/saxon/Configuration.java" match="import net\.sf\.saxon\.dotnet\.DotNetPlatform(.*)" replace="" byline="yes" />
        <replaceregexp file="${temp-src-prep-eej.dir}/net/sf/saxon/Configuration.java" match="import com\.saxonica\.config\.DotNetPlatform(.*)" replace="" byline="yes" />
-             <!--<replaceregexp match="import com\.saxonica\.bytecode(.*)" replace="" flags="g"  byline="true">
-	     <fileset dir="${temp-src-prep-eej.dir}"  includes="**/*.java" />
-       </replaceregexp>   -->
        <echo>Preprocessing eej complete!</echo>
     </target>
         
@@ -448,8 +445,8 @@ platform=com.saxonica.config.JavaPlatformPE
             <include name="net/**/*.class"/>
             <exclude name="net/sf/saxon/option/**/*.class"/>
             <!--<exclude name="**/javax/**/*.class"/>
-            <exclude name="**/xpath/**/*.class"/>
-            <exclude name="**/xqj/**/*.class"/>-->
+            <exclude name="**/xpath/**/*.class"/>-->
+            <exclude name="**/xqj/**/*.class"/>
             <include name="javax/xml/xquery/*.class"/>
             <include name="META-INF/**"/>
             <manifest>
@@ -462,6 +459,10 @@ platform=com.saxonica.config.JavaPlatformPE
             <service type="javax.xml.transform.TransformerFactory"
                 provider="net.sf.saxon.TransformerFactoryImpl"/>
             -->    
+        </jar>
+        
+        <jar basedir="${classes-j.dir}" compress="${build.compress}" jarfile="${product.dir}/hej/saxon9-xqj.jar">
+            <include name="**/xqj/**/*.class"/>   
         </jar>
         
         <!-- add edition.properties -->
@@ -729,7 +730,7 @@ platform=com.saxonica.config.JavaPlatformPE
     	<mkdir dir="${product.dir}/resources/drivers/java/classes"/>
     	<copy todir="${product.dir}/resources/drivers/java">
     	  <fileset dir="${source-eej.dir}">
-    	    <include name="com/saxonica/testdriver/XQueryTestSuiteDriver.java"/> 
+  <!--  	    <include name="com/saxonica/testdriver/XQueryTestSuiteDriver.java"/> 
     	    <include name="com/saxonica/testdriver/XsltTestSuiteDriver.java"/>
     	    <include name="com/saxonica/testdriver/Xslt30TestSuiteDriver.java"/>
     	    <include name="com/saxonica/testdriver/TestDriver.java"/>
@@ -745,7 +746,9 @@ platform=com.saxonica.config.JavaPlatformPE
     	    <include name="com/saxonica/testdriver/CanonicalXML.java"/> 
     	    <include name="com/saxonica/testdriver/XQTSModuleURIResolver.java"/> 
     	    <include name="com/saxonica/testdriver/XQTSCollectionURIResolver.java"/> 
-    	    <include name="com/saxonica/testdriver/SchemaTestSuiteDriver.java"/> 
+    	    <include name="com/saxonica/testdriver/SchemaTestSuiteDriver.java"/> -->
+    	      <exclude name="com/saxonica/testdriver/lic/*.java"/>
+    	      <include name="com/saxonica/testdriver/**/*.java"/>
           </fileset>
         </copy>
         <javac debug="true" debuglevel="${build.debuglevel}" 
@@ -810,7 +813,7 @@ platform=com.saxonica.config.JavaPlatformPE
     </target>
 
 
-    <target name="signjars" depends="jar-hej, jar-pej, jar-eej, maven, private-signjars" description="Sign all JAR files">
+    <target name="signjars" depends="jar-hej, jar-pej, jar-eej, private-signjars" description="Sign all JAR files">
         <!-- If the private-signjars task is not available, simply delete the dependency -->
     </target>
     
@@ -845,8 +848,8 @@ platform=com.saxonica.config.JavaPlatformPE
             <include name="net/**/*.class"/>
             <exclude name="net/sf/saxon/option/**/*.class"/>
             <!--<exclude name="**/javax/**/*.class"/>
-            <exclude name="**/xpath/**/*.class"/>
-            <exclude name="**/xqj/**/*.class"/>-->
+            <exclude name="**/xpath/**/*.class"/>-->
+            <exclude name="**/xqj/**/*.class"/>
             <include name="javax/xml/xquery/*.class"/>
             <include name="META-INF/**"/>
             <manifest>
@@ -860,18 +863,29 @@ platform=com.saxonica.config.JavaPlatformPE
                 provider="net.sf.saxon.TransformerFactoryImpl"/>
             -->
         </jar>
+        
+        <jar basedir="${classes-j.dir}" compress="${build.compress}" jarfile="${product.dir}/maven/Saxon-HE-${version.maven}-xqj.jar">
+            <include name="**/xqj/**/*.class"/>   
+        </jar>
 
         <jar basedir="${development-data.dir}" compress="${build.compress}" jarfile="${product.dir}/maven/Saxon-HE-${version.maven}.jar" update="true">
             <include name="**"/>
         </jar>
-
+        <!-- saxon9-unpack.jar -->
+        <jar basedir="${classes-j.dir}" compress="${build.compress}" jarfile="${product.dir}/maven/Saxon-HE-${version.maven}-unpack.jar" update="true">
+            <include name="com/saxonica/ptree/PTreeReader.class"/>
+            <include name="com/saxonica/ptree/PTreeReader$PTreeException.class"/>
+            <include name="com/saxonica/ptree/TextMangler.class"/>
+            <include name="com/saxonica/ptree/TextObfuscator.class"/>
+            <include name="com/saxonica/ptree/PackageURIResolver.class"/>
+        </jar>
 
         <jar basedir="${classes-j.dir}" compress="true" jarfile="${product.dir}/maven/Saxon-HE-${version.maven}-compressed.jar">
             <include name="net/**/*.class"/>
             <exclude name="net/sf/saxon/option/**/*.class"/>
             <!--<exclude name="**/javax/**/*.class"/>
-            <exclude name="**/xpath/**/*.class"/>
-            <exclude name="**/xqj/**/*.class"/>-->
+            <exclude name="**/xpath/**/*.class"/>-->
+            <exclude name="**/xqj/**/*.class"/>
             <include name="javax/xml/xquery/*.class"/>
             <include name="META-INF/**"/>
             <manifest>

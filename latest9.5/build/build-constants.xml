@@ -38,7 +38,7 @@
     <property name="version.maven" value="9.5.1-5"/>
     <property name="major.version" value="9.5"/>
     <property name="major.versionh" value="9-5"/>
-    <property name="release.date" value="2014-03-21"/>
+    <property name="release.date" value="2014-03-25"/>
     
     <!-- REMEMBER ALSO TO SET THE VERSION IN Version.java -->
     
