@@ -716,12 +716,16 @@ public class CommandLineOptions {
         }
     }
 
-    /*@NotNull*/ public static String showExecutionTimeNano(long nanosecs) {
+    private static DayTimeDurationValue milliSecond = new DayTimeDurationValue(1, 0, 0, 0, 0, 1000);
+
+    public static String showExecutionTimeNano(long nanosecs) {
         if (nanosecs < 1e9) {
+            // time less than one second
             return (nanosecs/1e6) + "ms";
         } else {
             try {
-                DayTimeDurationValue d = new DayTimeDurationValue(1, 0, 0, 0, nanosecs/1000000000L, (int)(nanosecs%1000));
+                double millisecs = nanosecs/1e6;
+                DayTimeDurationValue d = (DayTimeDurationValue)milliSecond.multiply(millisecs);
                 long days = ((NumericValue)d.getComponent(Component.DAY)).longValue();
                 long hours = ((NumericValue)d.getComponent(Component.HOURS)).longValue();
                 long minutes = ((NumericValue)d.getComponent(Component.MINUTES)).longValue();
@@ -737,7 +741,7 @@ public class CommandLineOptions {
                     fsb.append(minutes + "m ");
                 }
                 fsb.append(seconds + "s");
-                return fsb.toString() + " (" + nanosecs/1e6 + "ms)";
+                return fsb.toString() + " (" + millisecs + "ms)";
             } catch (XPathException e) {
                 return nanosecs/1e6 + "ms";
             }
