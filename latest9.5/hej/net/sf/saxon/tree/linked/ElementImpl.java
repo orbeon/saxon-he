@@ -679,7 +679,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
         for (Iterator<String> iter = iteratePrefixes(); iter.hasNext(); ) {
             String prefix = iter.next();
             if (uri.equals(getURIForPrefix(prefix, true))) {
-                return uri;
+                return prefix;
             }
         }
         return null;
