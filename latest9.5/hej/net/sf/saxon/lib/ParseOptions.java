@@ -27,7 +27,9 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -62,6 +64,8 @@ public class ParseOptions implements Serializable {
     private int validationErrorLimit = Integer.MAX_VALUE;
     /*@Nullable*/ private ValidationParams validationParams = null;
     /*@Nullable*/ private ValidationStatisticsRecipient validationStatisticsRecipient = null;
+    private Map<String, Boolean> parserFeatures = null;
+    private Map<String, String> parserProperties = null;
 
     /**
      * Create a ParseOptions object with default options set
@@ -101,6 +105,12 @@ public class ParseOptions implements Serializable {
         validationErrorLimit = p.validationErrorLimit;
         continueAfterValidationErrors = p.continueAfterValidationErrors;
         addCommentsAfterValidationErrors = p.addCommentsAfterValidationErrors;
+        if(p.parserFeatures != null){
+            parserFeatures = new HashMap<String, Boolean>(p.parserFeatures);
+        }
+        if(p.parserProperties != null){
+            parserProperties = new HashMap<String, String>(p.parserProperties);
+        }
     }
 
     /**
@@ -155,6 +165,18 @@ public class ParseOptions implements Serializable {
             }
             filters.addAll(options.filters);
         }
+        if(options.parserFeatures != null) {
+            if(parserFeatures == null) {
+                parserFeatures = new HashMap<String, Boolean>();
+            }
+            parserFeatures.putAll(options.parserFeatures);
+        }
+        if(options.parserProperties != null) {
+            if(parserProperties == null) {
+                parserProperties = new HashMap<String, String>();
+            }
+            parserProperties.putAll(options.parserProperties);
+        }
         if (options.sourceIsXQJ) {
             sourceIsXQJ = true;
         }
@@ -172,6 +194,38 @@ public class ParseOptions implements Serializable {
         }
         validationErrorLimit = java.lang.Math.min(validationErrorLimit, options.validationErrorLimit);
     }
+
+    public void addParserFeature(String uri, boolean value){
+        if(parserFeatures == null) {
+            parserFeatures = new HashMap<String, Boolean>();
+        }
+         parserFeatures.put(uri, new Boolean(value));
+    }
+
+    public void addParserProperties(String uri, String value){
+        if(parserProperties == null) {
+            parserProperties = new HashMap<String, String>();
+        }
+         parserProperties.put(uri, value);
+    }
+
+    public boolean getParserFeature(String uri){
+        return parserFeatures.get(uri).booleanValue();
+    }
+
+    public String getParserProperty(String name){
+        return parserProperties.get(name);
+    }
+
+    public Map<String, Boolean> getParserFeatures(){
+        return parserFeatures;
+    }
+
+    public Map<String, String> getParserProperties(){
+        return parserProperties;
+    }
+
+
 
     /**
      * Merge settings from the Configuration object into these parseOptions

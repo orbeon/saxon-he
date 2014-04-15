@@ -23,6 +23,12 @@ package net.sf.saxon.lib;
  
  public abstract class FeatureKeys {
 
+ public final static String XML_PARSER_FEATURE =
+"http://saxon.sf.net/feature/parserFeature?uri";
+
+public final static String XML_PARSER_PROPERTY =
+"http://saxon.sf.net/feature/parserProperty?uri";
+
         
 /**
 *            <p>ALLOW_EXTERNAL_FUNCTIONS determines whether calls to reflexive external functions are

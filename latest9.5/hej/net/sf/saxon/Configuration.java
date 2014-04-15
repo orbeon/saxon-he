@@ -3807,6 +3807,12 @@ public class Configuration implements Serializable, SourceResolver, NotationSet 
         } else if (name.equals(FeatureKeys.XINCLUDE)) {
             setXIncludeAware(requireBoolean(name, value));
 
+        } else if(name.startsWith(FeatureKeys.XML_PARSER_FEATURE)){
+             defaultParseOptions.addParserFeature(name, requireBoolean(name, value));
+
+        } else if (name.startsWith(FeatureKeys.XML_PARSER_PROPERTY)) {
+            defaultParseOptions.addParserProperties(name, requireString(name, value));
+
         } else if (name.equals(FeatureKeys.XQUERY_ALLOW_UPDATE)) {
             getDefaultStaticQueryContext().setUpdatingEnabled(requireBoolean(name, value));
 
@@ -4290,6 +4296,12 @@ public class Configuration implements Serializable, SourceResolver, NotationSet 
         } else if (name.equals(FeatureKeys.XSLT_STATIC_URI_RESOLVER_CLASS)) {
             return getDefaultXsltCompilerInfo().getURIResolver().getClass().getName();
 
+        } else if (name.startsWith(FeatureKeys.XML_PARSER_FEATURE)) {
+             String uri = name.substring(FeatureKeys.XML_PARSER_FEATURE.length());
+             return defaultParseOptions.getParserFeature(uri);
+        } else if (name.startsWith(FeatureKeys.XML_PARSER_PROPERTY)) {
+             String uri = name.substring(FeatureKeys.XML_PARSER_PROPERTY.length());
+             return defaultParseOptions.getParserProperty(uri);
         } else if (name.equals(FeatureKeys.XSLT_VERSION)) {
             return getDefaultXsltCompilerInfo().getXsltVersion().toString();
 

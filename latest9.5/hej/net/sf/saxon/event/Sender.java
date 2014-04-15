@@ -33,6 +33,7 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
 /**
 * Sender is a helper class that sends events to a Receiver from any kind of Source object
@@ -331,6 +332,37 @@ public abstract class Sender {
             if (dtdValidation) {
                 throw new XPathException("XML Parser does not support DTD validation", err);
             }
+        }
+
+        Map<String, Boolean> parserFeatures = options.getParserFeatures();
+        Map<String, String> parserProperties = options.getParserProperties();
+
+        if(parserFeatures != null) {
+            for(Map.Entry<String, Boolean> entry : parserFeatures.entrySet()){
+                try {
+                    parser.setFeature(entry.getKey(), entry.getValue());
+                } catch (SAXNotRecognizedException err) {
+                    config.getStandardErrorOutput().println("XML Parser does not recognize the feature "+entry.getKey());
+                } catch (SAXNotSupportedException err) {
+                    config.getStandardErrorOutput().println("XML Parser does not support the feature "+entry.getKey());
+                }
+            }
+        }
+
+        if(parserProperties != null) {
+           for(Map.Entry<String, String> entry : parserProperties.entrySet()) {
+               try {
+                   parser.setProperty(entry.getKey(), entry.getValue());
+               } catch (SAXNotRecognizedException err) {
+                   config.getStandardErrorOutput().println("XML Parser does not recognize the property "+entry.getKey());
+               } catch (SAXNotSupportedException err) {
+                   config.getStandardErrorOutput().println("XML Parser does not support the property "+entry.getKey());
+               }
+
+           }
+
+
+
         }
 
         boolean xInclude = options.isXIncludeAware();
