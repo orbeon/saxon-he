@@ -407,46 +407,48 @@ public class MemoClosure<T extends Item> extends Closure<T> {
          * Get the n'th item in the sequence, zero-based
          */
 
-        public synchronized T itemAt(int n) throws XPathException {
-            if (n < 0) {
-                return null;
-            }
-            if (reservoir != null && n < used) {
-                return reservoir[n];
-            }
-            if (state == ALL_READ || state == EMPTY) {
-                return null;
-            }
-            if (state == UNREAD) {
-                T item = inputIterator.next();
-                state = MAYBE_MORE;
-                if (item == null) {
-                    state = EMPTY;
+        public T itemAt(int n) throws XPathException {
+            synchronized (MemoClosure.this) {
+                if (n < 0) {
                     return null;
-                } else {
+                }
+                if (reservoir != null && n < used) {
+                    return reservoir[n];
+                }
+                if (state == ALL_READ || state == EMPTY) {
+                    return null;
+                }
+                if (state == UNREAD) {
+                    T item = inputIterator.next();
                     state = MAYBE_MORE;
-                    reservoir = (T[])new Item[50];
-                    used = 0;
-                    append(item);
-                    if (n == 0) {
-                        return item;
+                    if (item == null) {
+                        state = EMPTY;
+                        return null;
+                    } else {
+                        state = MAYBE_MORE;
+                        reservoir = (T[])new Item[50];
+                        used = 0;
+                        append(item);
+                        if (n == 0) {
+                            return item;
+                        }
                     }
                 }
-            }
-            // We have read some items from the input sequence but not enough. Read as many more as are needed.
-            int diff = n - used + 1;
-            while (diff-- > 0) {
-                T i = inputIterator.next();
-                if (i == null) {
-                    state = ALL_READ;
-                    condense();
-                    return null;
+                // We have read some items from the input sequence but not enough. Read as many more as are needed.
+                int diff = n - used + 1;
+                while (diff-- > 0) {
+                    T i = inputIterator.next();
+                    if (i == null) {
+                        state = ALL_READ;
+                        condense();
+                        return null;
+                    }
+                    append(i);
+                    state = MAYBE_MORE;
                 }
-                append(i);
-                state = MAYBE_MORE;
+                //noinspection ConstantConditions
+                return reservoir[n];
             }
-            //noinspection ConstantConditions
-            return reservoir[n];
         }
 
     }
