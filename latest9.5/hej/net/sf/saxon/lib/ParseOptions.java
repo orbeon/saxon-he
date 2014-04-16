@@ -195,36 +195,69 @@ public class ParseOptions implements Serializable {
         validationErrorLimit = java.lang.Math.min(validationErrorLimit, options.validationErrorLimit);
     }
 
-    public void addParserFeature(String uri, boolean value){
-        if(parserFeatures == null) {
-            parserFeatures = new HashMap<String, Boolean>();
-        }
-         parserFeatures.put(uri, new Boolean(value));
-    }
+    /**
+      * Add a parser feature to a map, which will be applied to the XML parser later
+      *
+      * @param uri The features as a URIs
+      * @param value The value given to the feature as boolean
+      */
+     public void addParserFeature(String uri, boolean value){
+         if(parserFeatures == null) {
+             parserFeatures = new HashMap<String, Boolean>();
+         }
+          parserFeatures.put(uri, new Boolean(value));
+     }
 
-    public void addParserProperties(String uri, String value){
-        if(parserProperties == null) {
-            parserProperties = new HashMap<String, String>();
-        }
-         parserProperties.put(uri, value);
-    }
+     /**
+      * Add a parser property to a map, which is applied to the XML parser later
+      *
+      * @param uri The properties as a URIs
+      * @param value The value given to the properties as a string
+      */
+     public void addParserProperties(String uri, String value){
+         if(parserProperties == null) {
+             parserProperties = new HashMap<String, String>();
+         }
+          parserProperties.put(uri, value);
+     }
 
-    public boolean getParserFeature(String uri){
-        return parserFeatures.get(uri).booleanValue();
-    }
+     /**
+      * Get a particular parser feature added
+      *
+      * @param uri The feature name as a URIs
+      * @return The feature value as boolean
+      */
+     public boolean getParserFeature(String uri){
+         return parserFeatures.get(uri).booleanValue();
+     }
 
-    public String getParserProperty(String name){
-        return parserProperties.get(name);
-    }
+     /**
+      * Get a particular parser property added
+      *
+      * @param name The properties as a URIs
+      * @return The property value as string
+      */
+     public String getParserProperty(String name){
+         return parserProperties.get(name);
+     }
 
-    public Map<String, Boolean> getParserFeatures(){
-        return parserFeatures;
-    }
+     /**
+      * Get all the parser features added
+      *
+      * @return A map of (feature, value) pairs
+      */
+     public Map<String, Boolean> getParserFeatures(){
+         return parserFeatures;
+     }
 
-    public Map<String, String> getParserProperties(){
-        return parserProperties;
-    }
-
+     /**
+      * Get all the parser properties added
+      *
+      * @return A map of (feature, string) pairs
+      */
+     public Map<String, String> getParserProperties(){
+         return parserProperties;
+     }
 
 
     /**
@@ -236,7 +269,7 @@ public class ParseOptions implements Serializable {
     public void applyDefaults(/*@NotNull*/ Configuration config) {
         if (dtdValidation == Validation.DEFAULT) {
             dtdValidation = config.isValidation() ? Validation.STRICT : Validation.SKIP;
-        }        
+        }
         if (schemaValidation == Validation.DEFAULT) {
             schemaValidation = config.getSchemaValidationMode();
         }
