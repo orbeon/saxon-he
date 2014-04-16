@@ -299,6 +299,7 @@ latest9.4/data/w3c/xhtml11/xhtml11.dtd svn_eol_002dstyle=native
 latest9.4/data/w3c/xmlschema/XMLSchema.dtd svn_eol_002dstyle=native
 latest9.4/data/w3c/xmlschema/datatypes.dtd svn_eol_002dstyle=native
 latest9.4/data/w3c/xmlspec/xmlspec.dtd svn_eol_002dstyle=native
+latest9.5/build/readme95.txt svn_eol_002dstyle=native
 latest9.5/data/w3c/xlink/xlink.xsd svn_eol_002dstyle=native
 latest9.5/hej/net/sf/saxon/expr/CastToUnion.java svn_eol_002dstyle=native
 latest9.5/hej/net/sf/saxon/expr/CastableToUnion.java svn_eol_002dstyle=native
