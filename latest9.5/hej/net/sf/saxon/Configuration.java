@@ -3808,10 +3808,12 @@ public class Configuration implements Serializable, SourceResolver, NotationSet 
             setXIncludeAware(requireBoolean(name, value));
 
         } else if(name.startsWith(FeatureKeys.XML_PARSER_FEATURE)){
-             defaultParseOptions.addParserFeature(name, requireBoolean(name, value));
+             String uri = name.substring(FeatureKeys.XML_PARSER_FEATURE.length());
+             defaultParseOptions.addParserFeature(uri, requireBoolean(name, value));
 
         } else if (name.startsWith(FeatureKeys.XML_PARSER_PROPERTY)) {
-            defaultParseOptions.addParserProperties(name, requireString(name, value));
+            String uri = name.substring(FeatureKeys.XML_PARSER_PROPERTY.length());
+            defaultParseOptions.addParserProperties(uri, requireString(name, value));
 
         } else if (name.equals(FeatureKeys.XQUERY_ALLOW_UPDATE)) {
             getDefaultStaticQueryContext().setUpdatingEnabled(requireBoolean(name, value));

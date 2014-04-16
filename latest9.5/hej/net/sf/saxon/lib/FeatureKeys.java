@@ -24,10 +24,10 @@ package net.sf.saxon.lib;
  public abstract class FeatureKeys {
 
  public final static String XML_PARSER_FEATURE =
-"http://saxon.sf.net/feature/parserFeature?uri";
+"http://saxon.sf.net/feature/parserFeature?uri=";
 
 public final static String XML_PARSER_PROPERTY =
-"http://saxon.sf.net/feature/parserProperty?uri";
+"http://saxon.sf.net/feature/parserProperty?uri=";
 
         
 /**
