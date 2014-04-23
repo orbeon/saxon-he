@@ -294,12 +294,12 @@ public class Message extends Instruction {
                             "Processing terminated by " + StandardErrorListener.getInstructionName(this) +
                                     " at line " + getLineNumber() +
                                     " in " + StandardErrorListener.abbreviatePath(getSystemId()));
+                    te.setLocator(this);
                     try {
                         String code = errorCode.evaluateAsString(context).toString();
                         StructuredQName errorCode = StructuredQName.fromLexicalQName(
                                     code, false, true, context.getConfiguration().getNameChecker(), nsResolver);
                         te.setErrorCodeQName(errorCode);
-                        te.setLocator(this);
                     } catch (XPathException err) {
                         // no action, ignore the error
                     }
