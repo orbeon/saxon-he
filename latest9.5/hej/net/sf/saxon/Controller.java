@@ -1886,7 +1886,9 @@ public class Controller extends Transformer {
                     if (executable.stripsInputTypeAnnotations()) {
                         r = config.getAnnotationStripper(r);
                     }
-                    r.setPipelineConfiguration(sourceBuilder.getPipelineConfiguration());
+                    PipelineConfiguration pipe = sourceBuilder.getPipelineConfiguration();
+                    pipe.getParseOptions().setSchemaValidationMode(validationMode);
+                    r.setPipelineConfiguration(pipe);
                     Sender.send(source, r, null);
                     if (close) {
                         ((AugmentedSource) source).close();
