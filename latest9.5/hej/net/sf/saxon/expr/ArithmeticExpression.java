@@ -112,15 +112,15 @@ public class ArithmeticExpression extends BinaryExpression {
         if (itemType0 instanceof ErrorType) {
             return Literal.makeEmptySequence();
         }
-        PlainType type0 = (PlainType) itemType0.getPrimitiveItemType();
-        if (type0 == BuiltInAtomicType.UNTYPED_ATOMIC) {
+        AtomicType type0 = (AtomicType) itemType0.getPrimitiveItemType();
+        if (type0.equals(BuiltInAtomicType.UNTYPED_ATOMIC)) {
         	operand0 = UntypedSequenceConverter.makeUntypedSequenceConverter(visitor.getConfiguration(), operand0, BuiltInAtomicType.DOUBLE);
             type0 = BuiltInAtomicType.DOUBLE;
         } else if (/*!(operand0 instanceof UntypedAtomicConverter)*/
                 (operand0.getSpecialProperties()&StaticProperty.NOT_UNTYPED_ATOMIC) == 0 &&
                 th.relationship(type0, BuiltInAtomicType.UNTYPED_ATOMIC) != TypeHierarchy.DISJOINT) {
         	operand0 = UntypedSequenceConverter.makeUntypedSequenceConverter(visitor.getConfiguration(), operand0, BuiltInAtomicType.DOUBLE);
-            type0 = (PlainType)operand0.getItemType(th);
+            type0 = (AtomicType)operand0.getItemType(th).getPrimitiveItemType();
         }
 
         // System.err.println("First operand"); operand0.display(10);
@@ -132,15 +132,15 @@ public class ArithmeticExpression extends BinaryExpression {
         if (itemType1 instanceof ErrorType) {
             return Literal.makeEmptySequence();
         }
-        PlainType type1 = (PlainType)itemType1.getPrimitiveItemType();
-        if (type1 == BuiltInAtomicType.UNTYPED_ATOMIC) {
+        AtomicType type1 = (AtomicType)itemType1.getPrimitiveItemType();
+        if (type1.equals(BuiltInAtomicType.UNTYPED_ATOMIC)) {
         	operand1 = UntypedSequenceConverter.makeUntypedSequenceConverter(visitor.getConfiguration(), operand1, BuiltInAtomicType.DOUBLE);
             type1 = BuiltInAtomicType.DOUBLE;
         } else if (/*!(operand1 instanceof UntypedAtomicConverter) &&*/
                 (operand1.getSpecialProperties()&StaticProperty.NOT_UNTYPED_ATOMIC) == 0 &&
                 th.relationship(type1, BuiltInAtomicType.UNTYPED_ATOMIC) != TypeHierarchy.DISJOINT) {
         	operand1 = UntypedSequenceConverter.makeUntypedSequenceConverter(visitor.getConfiguration(), operand1, BuiltInAtomicType.DOUBLE);
-            type1 = (PlainType)operand1.getItemType(th);
+            type1 = (AtomicType)operand1.getItemType(th).getPrimitiveItemType();
         }
 
         if (operand0 != oldOp0) {
@@ -181,17 +181,15 @@ public class ArithmeticExpression extends BinaryExpression {
         boolean mustResolve = !(type0.equals(BuiltInAtomicType.ANY_ATOMIC) || type1.equals(BuiltInAtomicType.ANY_ATOMIC)
                 || type0.equals(BuiltInAtomicType.NUMERIC) || type1.equals(BuiltInAtomicType.NUMERIC));
 
-        if (type0 instanceof AtomicType && type1 instanceof AtomicType) {
-            calculator = Calculator.getCalculator(
-                    ((AtomicType)type0).getFingerprint(), ((AtomicType)type1).getFingerprint(), mapOpCode(operator), mustResolve);
+        calculator = Calculator.getCalculator(
+                type0.getFingerprint(), type1.getFingerprint(), mapOpCode(operator), mustResolve);
 
-            if (calculator == null) {
-                XPathException de = new XPathException("Arithmetic operator is not defined for arguments of types (" +
-                        ((AtomicType)type0).getDescription() + ", " + ((AtomicType)type1).getDescription() + ")");
-                de.setLocator(this);
-                de.setErrorCode("XPTY0004");
-                throw de;
-            }
+        if (calculator == null) {
+            XPathException de = new XPathException("Arithmetic operator is not defined for arguments of types (" +
+                    type0.getDescription() + ", " + type1.getDescription() + ")");
+            de.setLocator(this);
+            de.setErrorCode("XPTY0004");
+            throw de;
         }
 
         try {

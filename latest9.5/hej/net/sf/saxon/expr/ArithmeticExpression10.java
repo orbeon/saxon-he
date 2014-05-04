@@ -149,16 +149,6 @@ public class ArithmeticExpression10 extends BinaryExpression implements Callable
          // we allow this to return an "ANY" calculator which defers the decision. However, we only allow this if
          // at least one of the operand types is AnyAtomicType or (otherwise unspecified) numeric.
 
-        if (!(type0 instanceof AtomicType)) {
-            // it's a union type
-            type0 = BuiltInAtomicType.ANY_ATOMIC;
-        }
-
-        if (!(type1 instanceof AtomicType)) {
-            // it's a union type
-            type1 = BuiltInAtomicType.ANY_ATOMIC;
-        }
-
         boolean mustResolve = !(type0.equals(BuiltInAtomicType.ANY_ATOMIC) || type1.equals(BuiltInAtomicType.ANY_ATOMIC)
                 || type0.equals(BuiltInAtomicType.NUMERIC) || type1.equals(BuiltInAtomicType.NUMERIC));
 
