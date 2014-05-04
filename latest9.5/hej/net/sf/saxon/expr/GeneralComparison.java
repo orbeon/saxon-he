@@ -228,7 +228,7 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
             return Literal.makeLiteral(BooleanValue.FALSE);
         }
 
-        if (((AtomicType) t0).isExternalType() || ((AtomicType) t1).isExternalType()) {
+        if (((PlainType) t0).isExternalType() || ((PlainType) t1).isExternalType()) {
             XPathException err = new XPathException("Cannot perform comparisons involving external objects");
             err.setIsTypeError(true);
             err.setErrorCode("XPTY0004");

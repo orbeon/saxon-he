@@ -88,7 +88,7 @@ public class CastExpression extends CastingExpression  {
                 throw err;
             }
         }
-        AtomicType sourceType = (AtomicType) sourceItemType;
+        PlainType sourceType = (PlainType) sourceItemType;
         int r = th.relationship(sourceType, getTargetType());
         if (r == TypeHierarchy.SAME_TYPE) {
             return operand;
@@ -100,8 +100,8 @@ public class CastExpression extends CastingExpression  {
 
             ConversionRules rules = visitor.getConfiguration().getConversionRules();
 
-            if (!(sourceType == BuiltInAtomicType.ANY_ATOMIC || sourceType.getFingerprint() == Type.EMPTY)) {
-                converter = rules.getConverter(sourceType, getTargetType());
+            if (sourceType.isAtomicType() && sourceType != BuiltInAtomicType.ANY_ATOMIC) {
+                converter = rules.getConverter((AtomicType)sourceType, getTargetType());
                 if (converter == null) {
                     XPathException err = new XPathException("Casting from " + sourceType + " to " + getTargetType() +
                             " can never succeed");
