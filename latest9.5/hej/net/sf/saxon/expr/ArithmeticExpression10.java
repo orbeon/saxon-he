@@ -13,7 +13,10 @@ import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.functions.NumberFn;
 import net.sf.saxon.functions.SystemFunctionCall;
 import net.sf.saxon.lib.NamespaceConstant;
-import net.sf.saxon.om.*;
+import net.sf.saxon.om.GroundedValue;
+import net.sf.saxon.om.Sequence;
+import net.sf.saxon.om.SequenceTool;
+import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
@@ -89,13 +92,13 @@ public class ArithmeticExpression10 extends BinaryExpression implements Callable
         if (itemType0 instanceof ErrorType) {
             return Literal.makeLiteral(DoubleValue.NaN);
         }
-        AtomicType type0 = (AtomicType) itemType0.getPrimitiveItemType();
+        PlainType type0 = (PlainType) itemType0.getPrimitiveItemType();
 
         final ItemType itemType1 = operand1.getItemType(th);
         if (itemType1 instanceof ErrorType) {
             return Literal.makeLiteral(DoubleValue.NaN);
         }
-        AtomicType type1 = (AtomicType)itemType1.getPrimitiveItemType();
+        PlainType type1 = (PlainType)itemType1.getPrimitiveItemType();
 
         // If both operands are integers, use integer arithmetic and convert the result to a double
         if (th.isSubType(type0, BuiltInAtomicType.INTEGER) &&
@@ -146,10 +149,20 @@ public class ArithmeticExpression10 extends BinaryExpression implements Callable
          // we allow this to return an "ANY" calculator which defers the decision. However, we only allow this if
          // at least one of the operand types is AnyAtomicType or (otherwise unspecified) numeric.
 
+        if (!(type0 instanceof AtomicType)) {
+            // it's a union type
+            type0 = BuiltInAtomicType.ANY_ATOMIC;
+        }
+
+        if (!(type1 instanceof AtomicType)) {
+            // it's a union type
+            type1 = BuiltInAtomicType.ANY_ATOMIC;
+        }
+
         boolean mustResolve = !(type0.equals(BuiltInAtomicType.ANY_ATOMIC) || type1.equals(BuiltInAtomicType.ANY_ATOMIC)
                 || type0.equals(BuiltInAtomicType.NUMERIC) || type1.equals(BuiltInAtomicType.NUMERIC));
 
-        calculator = assignCalculator(type0, type1, mustResolve);
+        calculator = assignCalculator((AtomicType)type0, (AtomicType)type1, mustResolve);
 
         try {
             if ((operand0 instanceof Literal) && (operand1 instanceof Literal)) {
@@ -178,7 +191,7 @@ public class ArithmeticExpression10 extends BinaryExpression implements Callable
     }
 
     private Expression createConversionCode(
-            Expression operand, final Configuration config, AtomicType type) {
+            Expression operand, final Configuration config, PlainType type) {
         TypeHierarchy th = config.getTypeHierarchy();
         if (Cardinality.allowsMany(operand.getCardinality())) {               
             Expression fie = FirstItemExpression.makeFirstItemExpression(operand);
