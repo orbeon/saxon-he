@@ -273,6 +273,8 @@ public class Transform {
                 initializeConfiguration(config);
                 schemaAware = config.isLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XSLT);
                 compilerInfo = config.getDefaultXsltCompilerInfo();
+            } catch (LicenseException e) {
+                quit(e.getMessage(), 2);
             } catch (XPathException e) {
                 quit(e.getMessage(), 2);
             }
