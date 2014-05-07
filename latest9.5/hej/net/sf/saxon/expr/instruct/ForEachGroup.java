@@ -276,7 +276,7 @@ public class ForEachGroup extends Instruction
                     sortKey = CardinalityChecker.makeCardinalityChecker(sortKey, StaticProperty.ALLOWS_ZERO_OR_ONE, role);
                 }
                 sk.setSortKey(sortKey, true);
-
+                sk.typeCheck(visitor, contextItemType);
                 if (sk.isFixed()) {
                     AtomicComparer comp = sk.makeComparator(
                             visitor.getStaticContext().makeEarlyEvaluationContext());
