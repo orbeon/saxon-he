@@ -8,7 +8,6 @@
 package net.sf.saxon.serialize;
 
 import net.sf.saxon.lib.NamespaceConstant;
-import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.om.NodeName;
 import net.sf.saxon.trans.XPathException;
 
@@ -63,21 +62,7 @@ public class HTML50Emitter extends HTMLEmitter {
     }
 
     protected void openDocument() throws XPathException {
-        String versionProperty = outputProperties.getProperty(SaxonOutputKeys.HTML_VERSION);
-        // Note, we recognize html-version even when running XSLT 2.0.
-        if (versionProperty == null) {
-            versionProperty = outputProperties.getProperty(OutputKeys.VERSION);
-        }
-
-        if (versionProperty != null) {
-            if (versionProperty.equals("5.0")) {
-                version = 5;
-            } else {
-                XPathException err = new XPathException("Unsupported HTML version: " + versionProperty);
-                err.setErrorCode("SESU0013");
-                throw err;
-            }
-        }
+        version = 5;
         String systemId = outputProperties.getProperty(OutputKeys.DOCTYPE_SYSTEM);
         String publicId = outputProperties.getProperty(OutputKeys.DOCTYPE_PUBLIC);
 

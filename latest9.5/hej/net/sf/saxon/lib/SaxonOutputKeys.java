@@ -549,5 +549,26 @@ public class SaxonOutputKeys {
             return false;
         }
     }
+
+    /**
+     * Examine the already-validated properties to see whether the html-version property is present
+     * with the decimal value 5.0 or if absent if the version property is present with the value 5.
+     * @param properties the properties to be examined
+     * @return true if the properties include html-version="5.0" or version="5.0". The property is a decimal value, so
+     * it can also be written, for example, "5" or "+5.00".
+     */
+    public static boolean isHtmlVersion5orVersion5(Properties properties) {
+        String htmlVersion = properties.getProperty(SaxonOutputKeys.HTML_VERSION);
+        if (htmlVersion == null) {
+            htmlVersion = properties.getProperty(OutputKeys.VERSION);
+        }
+        try {
+            return htmlVersion != null &&
+                    ((DecimalValue)DecimalValue.makeDecimalValue(htmlVersion, false).asAtomic())
+                        .getDecimalValue().equals(BigDecimal.valueOf(5));
+        } catch (ValidationException e) {
+            return false;
+        }
+    }
 }
 
