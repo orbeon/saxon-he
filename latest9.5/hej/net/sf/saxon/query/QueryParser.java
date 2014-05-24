@@ -399,7 +399,13 @@ public class QueryParser extends ExpressionParser {
     public final void parseLibraryModule(String queryString, /*@NotNull*/ QueryModule env)
             throws XPathException {
         this.env = env;
-        nameChecker = env.getConfiguration().getNameChecker();
+        final Configuration config = env.getConfiguration();
+        if (config.getXMLVersion() == Configuration.XML10) {
+            queryString = normalizeLineEndings10(queryString);
+        } else {
+            queryString = normalizeLineEndings11(queryString);
+        }
+        nameChecker = config.getNameChecker();
         Executable exec = env.getExecutable();
         if (exec == null) {
             throw new IllegalStateException("Query library module has no associated Executable");
