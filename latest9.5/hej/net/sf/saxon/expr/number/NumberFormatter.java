@@ -15,6 +15,7 @@ import net.sf.saxon.z.IntPredicate;
 import net.sf.saxon.z.IntUnionPredicate;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -154,7 +155,14 @@ public class NumberFormatter implements Serializable {
                 long nr = (Long) o;
                 RegularGroupFormatter rgf = new RegularGroupFormatter(groupSize, groupSeparator, UnicodeString.EMPTY_STRING);
                 s = numberer.format(nr, formatTokens.get(tok), rgf, letterValue, ordinal);
+            } else if (o instanceof BigInteger) {
+                // Saxon bug 2071
+                FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.SMALL);
+                fsb.append(o.toString());
+                RegularGroupFormatter rgf = new RegularGroupFormatter(groupSize, groupSeparator, UnicodeString.EMPTY_STRING);
+                s = rgf.format(fsb);
             } else {
+                // not sure this can happen
                 s = o.toString();
             }
             sb.append(s);
