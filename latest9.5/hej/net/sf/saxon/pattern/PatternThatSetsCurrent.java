@@ -60,6 +60,7 @@ public class PatternThatSetsCurrent extends Pattern {
      */
     @Override
     public int allocateSlots(SlotManager slotManager, int nextFree) {
+        slotManager.allocateSlotNumber(Current.FN_CURRENT);
         binding.setSlotNumber(nextFree++);
         return wrappedPattern.allocateSlots(slotManager, nextFree);
     }
