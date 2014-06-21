@@ -378,26 +378,28 @@ public class KeyManager implements Serializable {
                     // otherwise, we need to insert the node at the correct
                     // position in document order. This code does an insertion sort:
                     // not ideal for performance, but it's very unusual to have more than
-                    // one key definition for a key.
+                    // one key definition for a key. We start looking at the end because
+                    // it's most likely that the new node will come after all the others.
+                    // See bug 2092 in saxonica.plan.io
                     LocalOrderComparer comparer = LocalOrderComparer.getInstance();
                     boolean found = false;
-                    for (int i=0; i<nodes.size(); i++) {
+                    for (int i=nodes.size()-1; i>=0; i--) {
                         int d = comparer.compare(curr, nodes.get(i));
-                        if (d<=0) {
+                        if (d>=0) {
                             if (d==0) {
                                 // node already in list; do nothing
                             } else {
                                 // add the node at this position
-                                nodes.add(i, curr);
+                                nodes.add(i+1, curr);
                             }
                             found = true;
                             break;
                         }
                         // else continue round the loop
                     }
-                    // if we're still here, add the new node at the end
+                    // if we're still here, add the new node at the start
                     if (!found) {
-                        nodes.add(curr);
+                        nodes.add(0, curr);
                     }
                 }
             }
