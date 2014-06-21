@@ -31,6 +31,7 @@ public class ArithmeticExpression extends BinaryExpression {
 
     private Calculator calculator;
     protected boolean simplified = false;
+    private AtomicType itemType = null;
 
     /**
      * Create an arithmetic expression
@@ -331,6 +332,9 @@ public class ArithmeticExpression extends BinaryExpression {
 
     /*@NotNull*/
     public ItemType getItemType(TypeHierarchy th) {
+        if (itemType != null) {
+            return itemType;
+        }
         if (calculator == null) {
             return BuiltInAtomicType.ANY_ATOMIC;  // type is not known statically
         } else {
@@ -342,7 +346,7 @@ public class ArithmeticExpression extends BinaryExpression {
             if (!(t2 instanceof AtomicType)) {
                 t2 = t2.getAtomizedItemType();
             }
-            ItemType resultType = calculator.getResultType((AtomicType) t1.getPrimitiveItemType(),
+            AtomicType resultType = calculator.getResultType((AtomicType) t1.getPrimitiveItemType(),
                     (AtomicType) t2.getPrimitiveItemType());
 
             if (resultType.equals(BuiltInAtomicType.ANY_ATOMIC)) {
@@ -354,8 +358,18 @@ public class ArithmeticExpression extends BinaryExpression {
                     resultType = BuiltInAtomicType.NUMERIC;
                 }
             }
-            return resultType;
+            return itemType = resultType;
         }
+    }
+
+    /**
+     * Reset the static properties of the expression to -1, so that they have to be recomputed
+     * next time they are used.
+     */
+    @Override
+    public void resetLocalStaticProperties() {
+        super.resetLocalStaticProperties();
+        itemType = null;
     }
 
     /**
