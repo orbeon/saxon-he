@@ -232,7 +232,7 @@ public class StandardErrorListener implements ErrorListener, Serializable {
                     getLocationMessage(exception) +
                     "\n  " +
                     wordWrap(explanation) +
-                    wordWrap(constraintReference != null ? "" : ("\n  " + constraintReference)) +
+                    wordWrap(constraintReference == null ? "" : ("\n  " + constraintReference)) +
                     wordWrap(validationLocation.length()==0 ? "" : ("\n  " + validationLocation)) +
                     wordWrap(contextLocation.length()==0 ? "" : ("\n  " + contextLocation));
         } else {
