@@ -24,6 +24,7 @@ import net.sf.saxon.trace.Location;
 import net.sf.saxon.trace.TraceEventMulticaster;
 import net.sf.saxon.trans.*;
 import net.sf.saxon.tree.iter.SingletonIterator;
+import net.sf.saxon.tree.linked.DocumentImpl;
 import net.sf.saxon.tree.wrapper.SpaceStrippedDocument;
 import net.sf.saxon.tree.wrapper.TypeStrippedDocument;
 import net.sf.saxon.type.Untyped;
@@ -1842,7 +1843,12 @@ public class Controller extends Transformer {
             if (s2 != null) {
                 underSource = s2;
             }
-            if (wrap && (underSource instanceof NodeInfo || underSource instanceof DOMSource)) {
+            if (underSource instanceof DOMSource && ((DOMSource)underSource).getNode() == null) {
+                // bug 2102
+                DocumentImpl doc = new DocumentImpl();
+                doc.setConfiguration(config);
+                startNode = doc;
+            } else if (wrap && (underSource instanceof NodeInfo || underSource instanceof DOMSource)) {
                 startNode = prepareInputTree(underSource);
                 String uri = underSource.getSystemId();
                 DocumentInfo root = startNode.getDocumentRoot();

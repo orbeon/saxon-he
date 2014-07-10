@@ -10,7 +10,6 @@ package net.sf.saxon.tree.linked;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.Builder;
 import net.sf.saxon.event.Receiver;
-import net.sf.saxon.z.IntHashMap;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
@@ -22,6 +21,7 @@ import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.type.Untyped;
 import net.sf.saxon.value.Whitespace;
+import net.sf.saxon.z.IntHashMap;
 
 import java.util.*;
 
@@ -131,7 +131,7 @@ public final class DocumentImpl extends ParentNodeImpl implements DocumentInfo, 
      * @return true if the document contains elements whose type is other than UNTYPED
      */
     public boolean isTyped() {
-        return documentElement.getTypeAnnotation() != StandardNames.XS_UNTYPED;
+        return documentElement != null && documentElement.getTypeAnnotation() != StandardNames.XS_UNTYPED;
     }
 
     /**
