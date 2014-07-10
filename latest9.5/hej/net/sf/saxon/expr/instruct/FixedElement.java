@@ -267,7 +267,13 @@ public class FixedElement extends ElementCreator {
                     err.setLocator(instr);
                     throw err;
                 }
-                schemaType = decl.getType();
+                SchemaType xsiType = instr.getXSIType(env);
+                SchemaType declaredType = decl.getType();
+                if (xsiType != null) {
+                    schemaType = xsiType;
+                } else {
+                    schemaType = declaredType;
+                }
                 instr.getValidationOptions().setTopLevelType(schemaType);
                 itemType = new CombinedNodeTest(
                         new NameTest(Type.ELEMENT, fp, env.getNamePool()),
@@ -280,11 +286,9 @@ public class FixedElement extends ElementCreator {
                     e.setLocator(instr);
                     throw e;
                 }
-                SchemaType xsiType = instr.getXSIType(env);
                 if (xsiType != null) {
-                    xsiType.analyzeContentExpression(content, Type.ELEMENT, env);
                     try {
-                        config.checkTypeDerivationIsOK(xsiType, schemaType, 0);
+                        config.checkTypeDerivationIsOK(xsiType, declaredType, 0);
                     } catch (SchemaException e) {
                         ValidationException ve = new ValidationException("The specified xsi:type " + xsiType.getDescription() +
                                 " is not validly derived from the required type " + schemaType.getDescription());
