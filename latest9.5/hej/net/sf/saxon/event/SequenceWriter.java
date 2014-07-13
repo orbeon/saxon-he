@@ -37,6 +37,7 @@ import net.sf.saxon.value.ObjectValue;
 public abstract class SequenceWriter extends SequenceReceiver {
     private Receiver outputter = null;
     private Builder builder = null;
+    private TreeModel treeModel;
     private int level = 0;
     private boolean inStartTag = false;
 
@@ -52,6 +53,14 @@ public abstract class SequenceWriter extends SequenceReceiver {
      */
 
     public abstract void write(Item item) throws XPathException;
+
+    public TreeModel getTreeModel() {
+        return treeModel;
+    }
+
+    public void setTreeModel(TreeModel treeModel) {
+        this.treeModel = treeModel;
+    }
 
     /**
      * Start of a document node.
@@ -75,15 +84,19 @@ public abstract class SequenceWriter extends SequenceReceiver {
 
     private void createTree(boolean mutable) throws XPathException {
         PipelineConfiguration pipe = getPipelineConfiguration();
-        if (mutable) {
-            TreeModel model = pipe.getController().getModel();
-            if (model.isMutable()) {
-                builder = pipe.getController().makeBuilder();
-            } else {
-                builder = new LinkedTreeBuilder(pipe);
-            }
+        if (treeModel != null) {
+            builder = treeModel.makeBuilder(pipe);
         } else {
-            builder = pipe.getController().makeBuilder();
+            if (mutable) {
+                TreeModel model = pipe.getController().getModel();
+                if (model.isMutable()) {
+                    builder = pipe.getController().makeBuilder();
+                } else {
+                    builder = new LinkedTreeBuilder(pipe);
+                }
+            } else {
+                builder = pipe.getController().makeBuilder();
+            }
         }
         builder.setPipelineConfiguration(pipe);
         builder.setSystemId(getSystemId());

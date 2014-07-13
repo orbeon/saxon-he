@@ -15,6 +15,7 @@ import net.sf.saxon.expr.parser.ExpressionLocation;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.NodeName;
+import net.sf.saxon.om.TreeModel;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.SchemaType;
 
@@ -31,6 +32,10 @@ class MessageListenerProxy extends SequenceWriter {
 
     protected MessageListenerProxy(MessageListener listener, PipelineConfiguration pipe) {
         super(pipe);
+        // See bug 2104. We use the Linked Tree model because the TinyTree can use excessive memory. This
+        // is because the initial size allocation is based on the size of source documents, which might be large;
+        // also because we store several messages in a single TinyTree; and because we fail to condense the tree.
+        setTreeModel(TreeModel.LINKED_TREE);
         this.listener = listener;
     }
 
