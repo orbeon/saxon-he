@@ -1222,6 +1222,7 @@ namespace Saxon.Api
             : base(pipe)
         {
             listener = ml;
+            setTreeModel(TreeModel.LinkedTree);
         }
 
         public override void startDocument(int properties)
