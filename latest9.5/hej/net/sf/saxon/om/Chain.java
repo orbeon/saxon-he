@@ -157,7 +157,7 @@ public class Chain implements GroundedValue {
      */
     public Item itemAt(int n) {
         consolidate();
-        if (n < extent.length) {
+        if (n >= 0 && n < extent.length) {
             return extent[n];
         } else {
             return null;
