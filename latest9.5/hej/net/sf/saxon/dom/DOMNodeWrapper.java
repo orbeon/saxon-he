@@ -332,6 +332,8 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
                 case Node.COMMENT_NODE:
                 case Node.PROCESSING_INSTRUCTION_NODE:
                     break;
+                case Node.DOCUMENT_TYPE_NODE:
+                    break;
                 default:
                     sb.append(child.getNodeValue());
             }
