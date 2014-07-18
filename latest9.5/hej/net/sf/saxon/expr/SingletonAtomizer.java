@@ -52,6 +52,15 @@ public final class SingletonAtomizer extends UnaryExpression {
     }
 
     /**
+     * Ask if the expression is allowed to return an empty sequence
+     * @return true if the expected cardinality is zero-or-one, false if it is exactly-one
+     */
+
+    public boolean isAllowEmpty() {
+        return allowEmpty;
+    }
+
+    /**
     * Simplify an expression
      * @param visitor an expression visitor
      */
