@@ -156,6 +156,18 @@ namespace Saxon.Api
         }
 
         /// <summary>
+        /// Return the underlying exception. This is unstable as this is an internal object
+        /// </summary>
+        /// <returns>XPathException</returns>
+        public XPathException UnderlyingException
+        { 
+            get
+            {
+                return exception;
+            }
+        }
+
+        /// <summary>
         /// Return the error message.
         /// </summary>
 
@@ -163,6 +175,7 @@ namespace Saxon.Api
         {
             return exception.getMessage();
         }
+
     }
 
     /// <summary>
