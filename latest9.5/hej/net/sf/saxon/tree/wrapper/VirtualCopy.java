@@ -16,11 +16,15 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.tree.iter.SingletonIterator;
 import net.sf.saxon.tree.util.FastStringBuffer;
+import net.sf.saxon.tree.util.NamespaceIterator;
 import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.Type;
 
 import javax.xml.transform.SourceLocator;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This class represents a node that is a virtual copy of another node: that is, it behaves as a node that's the
@@ -583,11 +587,9 @@ public class VirtualCopy implements NodeInfo, SourceLocator {
      *
      * @param buffer If this is non-null, and the result array fits in this buffer, then the result
      *               may overwrite the contents of this array, to avoid the cost of allocating a new array on the heap.
-     * @return An array of integers representing the namespace declarations and undeclarations present on
+     * @return An array representing the namespace declarations and undeclarations present on
      *         this element. For a node other than an element, return null. Otherwise, the returned array is a
-     *         sequence of namespace codes, whose meaning may be interpreted by reference to the name pool. The
-     *         top half word of each namespace code represents the prefix, the bottom half represents the URI.
-     *         If the bottom half is zero, then this is a namespace undeclaration rather than a declaration.
+     *         sequence of namespace bindings
      *         The XML namespace is never included in the list. If the supplied array is larger than required,
      *         then the first unused entry will be set to -1.
      *         <p/>
@@ -595,7 +597,12 @@ public class VirtualCopy implements NodeInfo, SourceLocator {
      */
 
     public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
-        return original.getDeclaredNamespaces(buffer);
+        List<NamespaceBinding> allNamespaces = new ArrayList<NamespaceBinding>(20);
+        Iterator<NamespaceBinding> iter = NamespaceIterator.iterateNamespaces(original);
+        while (iter.hasNext()) {
+            allNamespaces.add(iter.next());
+        }
+        return allNamespaces.toArray(new NamespaceBinding[allNamespaces.size()]);
     }
 
     /**
