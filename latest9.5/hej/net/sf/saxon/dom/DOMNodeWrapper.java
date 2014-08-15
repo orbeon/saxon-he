@@ -500,9 +500,8 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
 
         Node node = attr.getOwnerElement();
         do {
-            String attVal = ((Element) node).getAttribute(attName);
-            if (attVal != null) {
-                return attVal;
+            if (((Element) node).hasAttribute(attName)) {
+                return ((Element) node).getAttribute(attName);
             }
             node = node.getParentNode();
         } while (node != null && node.getNodeType() == Node.ELEMENT_NODE);
