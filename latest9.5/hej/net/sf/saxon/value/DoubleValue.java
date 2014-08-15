@@ -238,15 +238,10 @@ public final class DoubleValue extends NumericValue {
             return this;    // handles the negative zero case
         }
         
-        if (value == -0.0) {
-            return this;    // handles the negative zero case
-        }
-        
-        if (value >= -0.5 && value < 0.0) {
-            return new DoubleValue(-0.0);
-        }
-        
         if (scale==0 && value > Long.MIN_VALUE && value < Long.MAX_VALUE) {
+            if (value >= -0.5 && value < 0.0) {
+                return new DoubleValue(-0.0);
+            }
             return new DoubleValue(Math.round(value));
         }
 
@@ -262,7 +257,7 @@ public final class DoubleValue extends NumericValue {
             return new DoubleValue(dec.doubleValue());
         }
 
-        // Now apply any rounding needed, using the "round half to even" rule***CHANGE
+        // Now apply any rounding needed, using the "round half to even" rule
 
         double rem = d % 10;
         if (rem >= 5) {

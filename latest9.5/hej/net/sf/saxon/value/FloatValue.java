@@ -223,15 +223,24 @@ public final class FloatValue extends NumericValue {
     */
 
     public NumericValue round(int scale) {
-        if (Float.isNaN(value)) return this;
-        if (Float.isInfinite(value)) return this;
-        if (value==0.0) return this;    // handles the negative zero case
-        if (value >= -0.5 && value < 0.0) return new FloatValue(-0.0f);
-        if (scale==0 && value > Integer.MIN_VALUE && value < Integer.MAX_VALUE) {
-            return new FloatValue((float)Math.round(value));
+        if (Float.isNaN(value)) {
+            return this;
+        }
+        if (Float.isInfinite(value)) {
+            return this;
+        }
+        if (value == 0.0) {
+            return this;    // handles the negative zero case
+        }
+
+        if (scale == 0 && value > Integer.MIN_VALUE && value < Integer.MAX_VALUE) {
+            if (value >= -0.5 && value < 0.0) {
+                return new FloatValue(-0.0f);
+            }
+            return new FloatValue((float) Math.round(value));
         }
         DoubleValue d = new DoubleValue(getDoubleValue());
-        d = (DoubleValue)d.round(scale);
+        d = (DoubleValue) d.round(scale);
         return new FloatValue(d.getFloatValue());
     }
 
