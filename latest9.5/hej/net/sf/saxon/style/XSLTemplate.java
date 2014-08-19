@@ -470,7 +470,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetProcedu
                     exp = cbody;
                 }
             } catch (Exception e) {
-                System.err.println("Failed while compiling function " + (nameAtt==null ? matchAtt : nameAtt));
+                System.err.println("Failed while compiling template " + (nameAtt==null ? matchAtt : nameAtt));
                 e.printStackTrace();
                 throw new XPathException(e);
             }
