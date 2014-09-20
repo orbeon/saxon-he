@@ -11,6 +11,7 @@ import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.om.NamespaceResolver;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.*;
+import net.sf.saxon.value.StringValue;
 
 import java.math.BigDecimal;
 
@@ -302,7 +303,11 @@ public abstract class Converter {
             if (temp instanceof ValidationFailure) {
                 return temp;
             }
-            return phaseTwo.convert((AtomicValue) temp);
+            if (phaseTwo instanceof DownCastingConverter) {
+                return ((DownCastingConverter) phaseTwo).convert((AtomicValue) temp, input.getCanonicalLexicalRepresentation());
+            } else {
+                return phaseTwo.convert((AtomicValue) temp);
+            }
         }
 
         /*@NotNull*/
