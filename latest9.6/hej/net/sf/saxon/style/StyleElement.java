@@ -860,7 +860,7 @@ public abstract class StyleElement extends ElementImpl
             } else {
                 // Note this will normalize the decimal so that trailing spaces are not significant
                 version = (DecimalValue) val;
-                if (version.compareTo(DecimalValue.TWO) < 0) {
+                if (version.compareTo(DecimalValue.TWO) < 0 && !version.equals(DecimalValue.ONE)) {
                     // XSLT 2.0 says use backwards compatible mode. XSLT 3.0 says we can raise an error.
                     // Both allow a warning
                     issueWarning("Unrecognized version " + version + ": treated as 1.0", this);
