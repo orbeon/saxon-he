@@ -506,7 +506,8 @@ public class XQueryExpression implements Container {
             } else {
                 receiver = new TreeReceiver(receiver);
             }
-            pull(dynamicEnv, (SequenceReceiver) receiver);
+            EventIterator iter = internalIterateEvents(controller, dynamicEnv);
+            EventIteratorToReceiver.copy(iter, (SequenceReceiver)receiver);
         } catch (XPathException err) {
             config.reportFatalError(err);
             throw err;
@@ -536,7 +537,7 @@ public class XQueryExpression implements Container {
         Configuration config = dynamicEnv.getConfiguration();
         try {
             Controller controller = newController(dynamicEnv);
-            EventIterator iter = iterateEvents(controller, dynamicEnv);
+            EventIterator iter = internalIterateEvents(controller, dynamicEnv);
             EventIteratorToReceiver.copy(iter, destination);
         } catch (XPathException err) {
             config.reportFatalError(err);
@@ -561,7 +562,10 @@ public class XQueryExpression implements Container {
             throw new XPathException("Cannot call iterateEvents() on an updating query");
         }
         dynamicEnv.initializeController(controller);
+        return internalIterateEvents(controller, dynamicEnv);
+    }
 
+    private EventIterator internalIterateEvents(Controller controller, DynamicQueryContext dynamicEnv) throws XPathException {
         XPathContextMajor context = initialContext(dynamicEnv, controller);
 
         // In tracing/debugging mode, evaluate all the global variables first
