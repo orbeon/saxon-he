@@ -1,0 +1,1656 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:saxon="http://saxon.sf.net/"
+           xmlns:c="http://saxon.sf.net/ns/configuration"
+           elementFormDefault="qualified"
+           targetNamespace="http://saxon.sf.net/ns/configuration">
+  <xs:import namespace="http://saxon.sf.net/" schemaLocation="saxon-attributes.xsd"/>
+  
+
+   <xs:element name="configuration">
+      <xs:complexType>
+         <xs:all>
+        
+
+            <xs:element ref="c:global" minOccurs="0"/>
+        
+
+            <xs:element ref="c:serialization" minOccurs="0"/>
+        
+
+            <xs:element ref="c:collations" minOccurs="0"/>
+        
+
+            <xs:element ref="c:localizations" minOccurs="0"/>
+        
+
+            <xs:element ref="c:xslt" minOccurs="0"/>
+        
+
+            <xs:element ref="c:xquery" minOccurs="0"/>
+        
+
+            <xs:element ref="c:xsd" minOccurs="0"/>
+        
+
+            <xs:element ref="c:resources" minOccurs="0"/>
+         </xs:all>
+         <xs:attribute name="edition" use="optional" type="c:editionType">
+            <xs:annotation>
+               <xs:documentation> Defines which Saxon edition is to be used. </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+      </xs:complexType>
+  </xs:element>
+  
+
+   <xs:element name="global">
+      <xs:annotation>
+         <xs:documentation> Defines properties of the global configuration. </xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:attribute name="allowExternalFunctions" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>ALLOW_EXTERNAL_FUNCTIONS determines whether calls to reflexive external functions are
+                allowed. More specifically, if set to <b>false</b> it disallows all of the
+                following:</p>
+                  <ul>
+                     <li>Calls to reflexive Java extension functions</li>
+                     <li>Use of the XSLT system-property() function to access Java system properties</li>
+                     <li>Use of a relative URI in the <code>xsl:result-document</code> instruction</li>
+                     <li>Calls to XSLT extension instructions</li>
+                  </ul>
+                  <p>The default value is <b>true</b>. The setting <b>false</b> is recommended in an
+                environment where untrusted stylesheets may be executed.</p>
+                  <p>This option does not disable use of the <code>doc()</code> function or similar
+                functions to access the filestore of the machine where the transformation or query
+                is running. That should be done using a user-supplied <code>URIResolver</code>
+                  </p>
+                  <p>Note that integrated extension functions are trusted; calls to such functions are
+                allowed even if this configuration option is false. In cases where an integrated
+                extension function is used to load and execute untrusted code, it should check this
+                configuration option before doing so.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="allowStreamabilityExtensions" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>ALLOW_STREAMABILITY_EXTENSIONS determines whether Saxon allows streaming of constructs
+                     that are not guaranteed streamable according to the W3C streamability rules in the XSLT 3.0
+                     specification.</p>
+                  <p>When this is set to false, Saxon tries to match the W3C streamability rules as closely as
+                     possible (ensuring that a stylesheet that is streamable under Saxon is also streamable under any
+                     other streamable XSLT 3.0 processor). However, it is likely that there will still be some differences.</p>
+                  
+               </xs:documentation>
+            </xs:annotation>   
+         </xs:attribute>
+         <xs:attribute name="collationUriResolver" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>The supplied <code>CollationURIResolver</code> is used to process any collation URIs
+                found in the query or stylesheet, returning an object of class
+                    <link>StringCollator</link> that implements the requested collation.</p>
+                  <p>The supplied class is instantiated and the resulting instance is used as the value of
+                the <link>FeatureKeys#COLLATION_URI_RESOLVER</link> property.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="collectionUriResolver" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>The supplied class is instantiated and the resulting instance is used as the value of
+                the <link>FeatureKeys#COLLECTION_URI_RESOLVER</link> property.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="compileWithTracing" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>If run-time tracing of stylesheet or query execution is required, then the code must
+            be compiled with tracing enabled. Default is false. This option causes code to be
+            compiled that makes calls to a <link>net.sf.saxon.lib.TraceListener</link>, but this has
+            no effect unless a <code>TraceListener</code> is registered at execution time.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="defaultCollection" use="optional" type="xs:anyURI">
+            <xs:annotation>
+               <xs:documentation>
+                  <p> This determines the collection that is used when the <code>fn:collection()</code>
+                function is called with no arguments; the effect is the same as if it were called
+                passing the URI that is the value of this configuration property.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="dtdValidation" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>If true, the XML parser is requested to perform validation of source documents
+                against their DTD. Default is false.</p>
+                  <p>This option establishes a default for use whenever source documents (not stylesheets
+                or schema documents) are parsed. The option can be overridden for individual
+                documents by setting the <link>net.sf.saxon.lib.ParseOptions</link> for that
+                individual document, for example from a <code>URIResolver</code>.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="dtdValidationRecoverable" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This option determines whether DTD validation failures should be treated as
+                recoverable. If the option is set, a validation failure is reported as a warning
+                rather than an error. The default is false.</p>
+                  <p>This option establishes a default for use whenever source documents (not stylesheets
+                or schema documents) are parsed. The option can be overridden for individual
+                documents by setting the <link>net.sf.saxon.lib.ParseOptions</link> for that
+                individual document, for example from a <code>URIResolver</code>.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="errorListener" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>ERROR_LISTENER_CLASS is the name of the class used to implement the JAXP
+                    <code>ErrorListener</code>. This is used both at compile time and at run-time.
+                Currently if this option is specified, the class is instantiated, and the same
+                instance is used for all processes running under this configuration. This may change
+                in future so that a new instance is created for each compilation or evaluation.</p>
+                  <p>Finer control can be obtained by setting the <code>ErrorListener</code> for a
+                specific XSLT or XQuery compilation or evaluation.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="expandAttributeDefaults" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>EXPAND_ATTRIBUTE_DEFAULTS determines whether fixed and default values defined in a
+                schema or DTD will be expanded (both on input and on output documents, if validation
+                is requested). By default (and for conformance with the specification) validation
+                against a DTD or schema will cause default values defined in the schema or DTD to be
+                inserted into the document. Setting this feature to false suppresses this behavior.
+                In the case of DTD-defined defaults this only works if the XML parser reports
+                whether each attribute was specified in the source or generated by expanding a
+                default value. Not all XML parsers report this information.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="generateByteCode" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>By default, Saxon-EE attempts to generate Java bytecode for evaluation of
+                parts of a query or stylesheet that are amenable to such treatment. Setting this option
+                to false disables this.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="lazyConstructionMode" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>LAZY_CONSTRUCTION_MODE determines whether temporary trees are constructed * lazily.
+                The default setting is false; there are a few situations (but not many) where
+                setting this * to true can give a performance benefit (especially a memory
+                saving).</p>
+                  <p>The option is most likely to be effective when executing XQuery in "pull" mode, that
+                is, when the client calls the query processor to deliver the result as a stream of
+                nodes, rather than running the query and piping the results into a serializer.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="lineNumbering" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>Default is false. If true, line and column number information is retained for all
+                source documents. This information is accessible using the
+                    <code>saxon:line-number()</code> and <code>saxon:column-number()</code>
+                extension functions.</p>
+                  <p>Note that the information is only as good as the XML parser supplies. SAX parsers
+                generally report the position of an element node using the line and column number of
+                the "&gt;" character that forms the last character of the start tag.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="optimizationLevel" use="optional" type="xs:integer">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>A string whose value is an integer in the range 0 (no optimization) to 10 (full
+                optimization); currently all values other than 0 result in full optimization but
+                this is likely to change in future. The default is full optimization; this feature
+                allows optimization to be suppressed in cases where reducing compile time is
+                important, or where optimization gets in the way of debugging, or causes extension
+                functions with side-effects to behave unpredictably. (Note however, that even with
+                no optimization, lazy evaluation may still cause the evaluation order to be not as
+                expected.) </p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="parser" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>The class will be instantiated and the resulting <code>XMLReader</code> will be used
+                to parse source documents (that is, the principal source document plus any secondary
+                source documents read using the <code>doc()</code>, <code>document()</code>, or
+                    <code>collection()</code> function)</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="preEvaluateDoc" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>If true, calls on the <code>doc()</code> and <code>document()</code> functions, if
+                their arguments are known at compile time, will be evaluated at compile time, and
+                the resulting document will be stored as part of the Saxon
+                    <link>net.sf.saxon.Configuration</link> and shared by all queries and
+                transformations running within that <code>Configuration</code>. This is useful for
+                reference documents that have stable content and are used by many different queries
+                and transformations. The default is false, which means each query or transformation
+                will reload the document from disk.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="preferJaxpParser" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This option has no effect on the Java platform. The default is <b>true</b>. When
+                running on the .NET platform, if the option is true it causes the Apache Xerces
+                parser (cross-compiled using IKVMC) to be used in preference to the .NET XML parser.
+                If false the .NET XML parser (<code>System.Xml.XmlTextReader</code>) is used. One
+                reason for using this option is that the .NET XML parser does not report ID
+                attributes, which means that the id() function does not work.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="recognizeUriQueryParameters" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>True if the the standard URI resolver is to recognize query parameters included in
+                the URI (for example, <code>?val=strict</code>). Such parameters can then be used in
+                URIs passed to the <code>doc()</code> or <code>document()</code> functions. For
+                details of the query parameters available, see <xref section="sourcedocs">Source
+                    Documents</xref>. The default is false.</p>
+                  <p>This option has no effect if a user-supplied <code>URIResolver</code> is in use,
+                unless the user-supplied <code>URIResolver</code> chooses to inherit this
+                functionality from the standard <code>URIResolver</code>.</p>
+                  <p>Allowed parameters include <code>validation=strict|lax|strip</code> to perform schema
+                validation, <code>strip-space=yes|ignorable|no</code> to control whitespace
+                stripping, and <code>xinclude=yes|no</code> to control whether XInclude processing
+                takes place (assuming the XML parser supports it).</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="schemaValidation" use="optional" type="c:schemaValidationType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>Indicates whether and how schema validation should be applied to source
+                documents.</p>
+                  <p>Indicates whether and how schema validation should be applied to source
+                documents.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="serializerFactory" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>The class will be instantiated and the resulting <code>SerializerFactory</code> will
+                be used to create the serialization pipeline for XSLT and XQuery results. By
+                subclassing the standard <code>SerializerFactory</code> it is possible to customize
+                many aspects of the output produced by the Serializer, or to introduce new
+                serialization methods and parameters.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="sourceResolver" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>On interfaces that allow a <code>org.xml.sax.Source</code> to be supplied, if a kind
+                of <code>Source</code> is provided that Saxon does not recognize, it will be passed
+                to the user-supplied <code>SourceResolver</code>, which has the opportunity to
+                convert it to a kind of <code>Source</code> that Saxon does recognize. This allows
+                new kinds of input to be supplied as input to Saxon's query, transformation, and
+                validation engines.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="standardErrorOutputFile" use="optional" type="c:fileNameType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>STANDARD_ERROR_OUTPUT_FILE is the name of a file to which Saxon will redirect output
+                that would otherwise go to the operating system standard error stream (System.err).
+                This is the fallback destination for various tracing and diagnostic output. In some
+                cases a more specific mechanism exists to select the destination for particular
+                kinds of output.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="stripSpace" use="optional" type="c:stripSpaceType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>Indicates whether all whitespace, no whitespace, or whitespace in elements defined in
+                a DTD or schema as having element-only content should be stripped from source
+                documents. The default is "ignorable". This whitespace stripping is additional to
+                any stripping done as a result of the <code>xsl:strip-space</code> declaration in an
+                XSLT stylesheet.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="suppressEvaluationExpiryWarning" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This is set to true to suppress the warning otherwise issued by command-line interfaces
+                indicating that an evaluation license is in use and is due to expire in a set number of days.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="timing" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This is set to true to cause basic timing and tracing information is to be output to
+                the standard error output stream. The name of the feature is poorly chosen, since
+                much of the information that is output has nothing to do with timing, for example
+                the names of output files for <code>xsl:result-document</code> are traced.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="traceExternalFunctions" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>If this option is set, Saxon will output (to the standard error output) progress
+                information about its attempts to locate and disambiguate references to reflexive
+                Java extension functions. This is useful for diagnostics if the XQuery or XSLT
+                compiler is failing to locate user-written extension functions.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="traceListener" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>The <code>TraceListener</code> will be notified of significant events occurring
+                during a query or transformation, for tracing or debugging purposes.</p>
+                  <p>Setting a <code>TraceListener</code> automatically sets the
+                    <link>FeatureKeys#COMPILE_WITH_TRACING</link> option.</p>
+                  <p>Avoid this option if more than one transformation or query is running concurrently:
+                use the feature <link>FeatureKeys#TRACE_LISTENER_CLASS</link> instead.
+                Alternatively, it is possible to set a <code>TraceListener</code> for an individual
+                query or transformation.</p>
+                  <p>The class will be instantiated once for each query or transformation, and the
+                resulting <code>TraceListener</code> will be notified of significant events
+                occurring during that query or transformation, for tracing or debugging
+                purposes.</p>
+                  <p>Setting a <code>TraceListener</code> automatically sets the
+                    <link>FeatureKeys#COMPILE_WITH_TRACING</link> option.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="traceOptimizerDecisions" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>If this option is set, Saxon will output (to the standard error output) detailed
+                information about the rewrites to the expression tree made by the optimizer. This
+                information is mainly useful for internal system debugging, but it is also possible
+                to digest it to analyze the ways in which the expression has been optimized for the
+                purpose of performance analysis and tuning.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="treeModel" use="optional" type="c:treeModelType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>Selects an implementation of the Saxon tree model. The default is
+                    <code>TINY_TREE</code>.</p>
+                  <p>For running XQuery Update, use the linked tree, because it is the only implementation
+                that is updateable.</p>
+                  <p>Selects an implementation of the Saxon tree model. The default is
+                    <code>tinyTree</code>.</p>
+                  <p>For running XQuery Update, use the linked tree, because it is the only implementation
+                that is updateable.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="uriResolver" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>An instance of the specified <code>URIResolver</code> class will be created, and used
+                to resolve (dereference) all URIs specifed in calls to the <code>doc()</code> and
+                    <code>document()</code> functions, as well as URIs used in
+                    <code>xsl:include</code> and <code>xsl:import</code> and location hints for
+                XQuery modules and XSD schema documents.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="usePiDisableOutputEscaping" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This option determines whether a <code>TransformerHandler</code> created with this
+                    <code>TransformerFactory</code> or <code>Configuration</code> recognizes the
+                JAXP-defined processing instructions <code>Result.PI_DISABLE_OUTPUT_ESCAPING</code>
+                and <code>Result.PI_ENABLE_OUTPUT_ESCAPING</code> in the input stream as
+                instructions to disable or to re-enable output escaping. The default value is
+                    <b>false</b>.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="useTypedValueCache" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This option is relevant only when the TinyTree is used; it determines whether (for a
+                validated document) a cache will be maintained containing the typed values of nodes.
+                Typed values are held in the cache only for elements and attributes whose type is
+                other than string, untypedAtomic, or anyURI. The default value is true. Setting this
+                value to false can reduce memory requirements at the cost of requiring recomputation
+                of typed values on each access.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="validationWarnings" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This option indicates (if true) that errors occuring while validating a final result
+                tree are not to be treated as fatal.</p>
+                  <p>Regardless of the setting of this option, all validation errors are reported to
+               the error() method of the ErrorListener, and validation is terminated if the
+               error() method throws an exception, or if the error limit set in the ParseOptions
+               object is reached.</p>
+                  <p>This option primarily controls what happens at the end of a validation episode.
+            If the validation episode detected one or more validation errors, then when this option
+            is off, an exception is thrown, which will normally result in any query or stylesheet
+            failing with a dynamic error, and no output file being written. If the option is on,
+            no exception is thrown, and the output is written as if validation had been successful.
+            Note in this case that any type annotations present in a result document are unreliable.</p>
+                  <p>If this option is set when running XSLT or XQuery, it is ignored as far as
+            input files are concerned: validation errors in input files are still fatal.
+            However, if the option is set and a validation error occurs in a final output file,
+            the output file is still written and the process terminates as if successful.</p>
+                  <p>The detailed interpretation of this option changed in Saxon 9.5.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="versionOfXml" use="optional" type="xs:decimal">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This determines the XML version used by the Configuration.</p>
+                  <p>Note that source documents specifying xml version="1.0" or "1.1" are accepted
+                regardless of this setting. The effect of this switch is to change the validation
+                rules for types such as <code>xs:Name</code> and <code>xs:NCName</code>, to change
+                the characters allowed in names within XPath expressions (etc.), to change the
+                meaning of <code>\i</code> and <code>\c</code> in regular expressions, and to
+                determine whether the serializer allows XML 1.1 documents to be constructed. </p>
+                  <p>The default is currently 1.0, but may change.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="xInclude" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>Indicates whether source documents should have any XInclude directives expanded. The
+                default is false. The option applies to all input XML documents, including
+                stylesheets and schema documents. It can be overridden for individual documents
+                using the <link>net.sf.saxon.lib.ParseOptions</link> class.</p>
+                  <p>This option relies on support in the underlying XML parser. If the XML parser does
+                not support XInclude processing, the option is ignored.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+      </xs:complexType>
+  </xs:element>
+
+  
+
+   <xs:element name="serialization">
+      <xs:annotation>
+         <xs:documentation> Defines defaults for serialization properties. </xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:attribute name="byte-order-mark" use="optional" type="c:yesOrNoType">
+            <xs:annotation>
+               <xs:documentation>Indicates whether serialized output should include a byte order mark</xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="cdata-section-elements" use="optional" type="c:listOfQNameType">
+            <xs:annotation>
+               <xs:documentation>A list of element names whose content is to be serialized using CDATA sections</xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="doctype-public" use="optional" type="xs:string">
+            <xs:annotation>
+               <xs:documentation>The public identifier to be used in the DOCTYPE declaration</xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="doctype-system" use="optional" type="xs:anyURI">
+            <xs:annotation>
+               <xs:documentation>The system identifier (URI) to be used in the DOCTYPE declaration</xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="encoding" use="optional" type="xs:string">
+            <xs:annotation>
+               <xs:documentation>The output encoding, for example utf-8 or us-ascii</xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="escape-uri-attributes" use="optional" type="c:yesOrNoType">
+            <xs:annotation>
+               <xs:documentation>Defines whether URI-valued attributes in HTML/XHTML (for example href)
+          are to be %HH-encoded</xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="include-content-type" use="optional" type="c:yesOrNoType">
+            <xs:annotation>
+               <xs:documentation>Defines whether a &lt;meta&gt; element should be added to the
+          HTML &lt;head&gt; element to identify the media type of the output</xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="indent" use="optional" type="c:yesOrNoType">
+            <xs:annotation>
+               <xs:documentation> Defines whether indentation is to be added to the output. </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="media-type" use="optional" type="xs:string">
+            <xs:annotation>
+               <xs:documentation> Defines the media type (MIME type) of the output. </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="method" use="optional" type="xs:QName">
+            <xs:annotation>
+               <xs:documentation> Defines the serialization method, for example 'xml' or 'html' or 'text'. </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="normalization-form" use="optional" type="xs:string">
+            <xs:annotation>
+               <xs:documentation> Defines whether Unicode normalization should be applied during serialization,
+            and if so, which Unicode normalization form should be used. </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="omit-xml-declaration" use="optional" type="c:yesOrNoType">
+            <xs:annotation>
+               <xs:documentation> Defines whether the XML declaration should be omitted from XML output. </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="standalone" use="optional" type="c:yesOrNoOrOmitType">
+            <xs:annotation>
+               <xs:documentation> Defines whether the XML declaration in XML output should have a 'standalone' attribute. </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="suppress-indentation" use="optional" type="c:listOfQNameType">
+            <xs:annotation>
+               <xs:documentation> Defines a list of element names whose content should not be indented
+            even when indent='yes' is specified. </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="undeclare-prefixes" use="optional" type="c:yesOrNoType">
+            <xs:annotation>
+               <xs:documentation> Defines whether namespaces present on a parent element but not on
+            its children should be undeclared using XML Namespaces 1.1 syntax. </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="version" use="optional" type="xs:string">
+            <xs:annotation>
+               <xs:documentation> Defines the version of XML or HTML to be used for the output. </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:anyAttribute namespace="##other" processContents="lax"/>
+      </xs:complexType>
+  </xs:element>
+
+  
+
+   <xs:element name="collations">
+      <xs:annotation>
+         <xs:documentation> 
+        Defines collation URIs for use in queries and stylesheets.
+      </xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:sequence>
+        
+
+            <xs:element maxOccurs="unbounded" ref="c:collation"/>
+         </xs:sequence>
+      </xs:complexType>
+  </xs:element>
+
+  
+
+   <xs:element name="collation">
+      <xs:annotation>
+         <xs:documentation> 
+        Defines a collation URI for use in queries and stylesheets.
+      </xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:attribute name="uri" use="required" type="xs:anyURI">
+            <xs:annotation>
+               <xs:documentation> 
+            The collation URI as used in queries and stylesheets.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="alphanumeric" use="optional" type="c:yesOrNoOrCodepointType">
+            <xs:annotation>
+               <xs:documentation> 
+            Indicates whether a sequence of digits within a string is to be treated as a number,
+            so that AB100 sorts after AB99.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="case-order" use="optional" type="c:caseOrderType">
+            <xs:annotation>
+               <xs:documentation> 
+            Indicates whether lower-case letters sort before or after upper-case.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="class" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation> 
+            The name of a Java class that performs the string comparison.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="decomposition" use="optional" type="c:decompositionType">
+            <xs:annotation>
+               <xs:documentation> 
+            Indicates whether composite (accented) Unicode characters should be decomposed
+            before sorting.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="ignore-case" use="optional" type="c:yesOrNoType">
+            <xs:annotation>
+               <xs:documentation> 
+            Indicates whether differences of case are to be ignored during comparisons.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="ignore-modifiers" use="optional" type="c:yesOrNoType">
+            <xs:annotation>
+               <xs:documentation> 
+            Indicates whether modifiers (such as accents and diacritical marks) 
+            are to be ignored during comparisons.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="ignore-width" use="optional" type="c:yesOrNoType">
+            <xs:annotation>
+               <xs:documentation> 
+            Indicates whether width differences between characters 
+            are to be ignored during comparisons.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="lang" use="optional" type="xs:language">
+            <xs:annotation>
+               <xs:documentation> 
+            Indicates the natural language of the text, for example 'en' for English or 'de' for German.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="rules" use="optional" type="xs:string">
+            <xs:annotation>
+               <xs:documentation> 
+            Provides detailed sorting rules in the format of the Java RuleBasedCollator class.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="strength" use="optional" type="c:strengthType">
+            <xs:annotation>
+               <xs:documentation> 
+            The strength of the collation: primary, secondary, or tertiary. These terms are described
+            in the Unicode Collation Algorithm.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+      </xs:complexType>
+  </xs:element>
+  
+  
+
+   <xs:element name="localizations">
+      <xs:annotation>
+         <xs:documentation> 
+        Defines localization of the output of format-date(), format-number(), and
+        xsl:number. 
+      </xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:sequence>
+        
+
+            <xs:element maxOccurs="unbounded" ref="c:localization"/>
+         </xs:sequence>
+         <xs:attribute name="defaultCountry" use="optional" type="xs:NCName">
+            <xs:annotation>
+               <xs:documentation>
+                  <p> This determines the country that is used by <code>format-date()</code> and similar
+                functions if no country code is supplied explicitly. If no value is given for this
+                property, the default is taken from the Java Locale, which in turn typically depends
+                on settings for the current user in the operating system.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="defaultLanguage" use="optional" type="xs:NCName">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This option determines the language that is used by <code>format-date()</code>,
+                    <code>xsl:number</code> and similar constructs if no language code is supplied
+                explicitly. If no value is given for this property, the default is taken from the
+                Java Locale, which in turn typically depends on settings for the current user in the
+                operating system.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+      </xs:complexType>
+  </xs:element>
+  
+  
+
+   <xs:element name="localization">
+      <xs:annotation>
+         <xs:documentation> 
+        Defines localization of the output of format-date(), format-number(), and
+        xsl:number for a specific language. 
+      </xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:attribute name="class" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation> 
+            The Java class used to perform the localization.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="lang" use="optional" type="xs:language">
+            <xs:annotation>
+               <xs:documentation> 
+            The language to which this localization applies, for example 'fr-CA' for Canadian French.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+      </xs:complexType>
+  </xs:element>
+  
+  
+
+   <xs:element name="xslt">
+      <xs:annotation>
+         <xs:documentation> 
+        Defines configuration properties specific to XSLT processing.
+      </xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:sequence>
+        
+
+            <xs:element ref="c:extensionElement"/>
+         </xs:sequence>
+         <xs:attribute name="errorListener" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>ERROR_LISTENER_CLASS is the name of the class used to implement the JAXP
+                    <code>ErrorListener</code>. This is used both at compile time and at run-time.
+                Currently if this option is specified, the class is instantiated, and the same
+                instance is used for all processes running under this configuration. This may change
+                in future so that a new instance is created for each compilation or evaluation.</p>
+                  <p>Finer control can be obtained by setting the <code>ErrorListener</code> for a
+                specific XSLT or XQuery compilation or evaluation.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="messageReceiver" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>Use the specified Receiver to process the output from <code>xsl:message</code>. The
+                class must implement the <code>net.sf.saxon.event.Receiver</code> interface. This
+                interface is similar to a SAX <code>ContentHandler</code>, in that it takes a stream
+                of events to generate output.</p>
+                  <p> By default the standard XML emitter is used, configured to write to the standard
+                error stream, and to include no XML declaration. </p>
+                  <p>In general the content of a message is an XML fragment. Each message is output as a
+                new document. The sequence of calls to this Receiver is as follows: there is a
+                single <code>open()</code> call at the start of the transformation, and a single
+                    <code>close()</code> call at the end; and each evaluation of an
+                    <code>xsl:message</code> instruction starts with a <code>startDocument()</code>
+                call and ends with <code>endDocument()</code>. </p>
+                  <p>The <code>startDocument()</code> event has a <code>properties</code> argument
+                indicating whether <code>terminate="yes"</code> was specified, and the
+                    <code>locationId</code> on calls such as <code>startElement()</code> and
+                    <code>characters()</code> can be used to identify the location in the stylesheet
+                where the message data originated (this is achieved by passing the supplied
+                    <code>locationId</code> in a call to
+                    <code>getPipelineConfiguration().getLocator().getSystemId(locationId)</code>, or
+                to <code>getLineNumber()</code> on the same object). </p>
+                  <p>Select the class <code>net.sf.saxon.event.MessageWarner</code> to have
+                    <code>xsl:message</code> output notified to the JAXP <code>ErrorListener</code>,
+                as described in the JAXP documentation.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="outputUriResolver" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>The supplied class will be instantiated, and the resulting
+                    <code>OutputURIResolver</code> will be used to resolve URIs of secondary result
+                documents selected in the <code>href</code> attribute of the
+                    <code>xsl:result-document</code> instruction</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="recoveryPolicy" use="optional" type="c:recoveryPolicyType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>An Integer, one of <link>net.sf.saxon.Configuration#RECOVER_SILENTLY</link>,
+                    <link>net.sf.saxon.Configuration#RECOVER_WITH_WARNINGS</link>, or
+                    <link>net.sf.saxon.Configuration#DO_NOT_RECOVER</link>. Indicates the policy for
+                handling dynamic errors that the XSLT specification defines as recoverable. 0 means
+                recover silently; 1 means recover after signalling a warning to the
+                    <code>ErrorListener</code>; 2 means treat the error as fatal. An example of a
+                recoverable error is when two template rules match the same node.</p>
+                  <p>Indicates the policy for handling dynamic errors that the XSLT specification defines
+                as recoverable. "recoverSilently" means recover silently; "recoverWithWarnings"
+                means recover after signalling a warning to the <code>ErrorListener</code>;
+                "doNotRecover" means treat the error as fatal. An example of a recoverable error is
+                when two template rules match the same node. </p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="schemaAware" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This property indicates whether stylesheets should be compiled with the ability to
+                handle schema-typed input documents. By default a stylesheet is compiled to handle
+                such input if it contains an <code>xsl:import-schema</code> instruction, and not
+                otherwise. It is
+                necessary for a stylesheet to be compiled as schema-aware if it is to handle typed
+                (validated) input documents in which nodes have type annotations based on their
+                schema-defined type.</p>
+                  <p>This option can be set for a particular XSLT compilation. When the option is set at
+                the <code>Configuration</code> level (or on a <code>TransformerFactory</code>), it acts as a default.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="stylesheetParser" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>The class will be instantiated, and the resulting <code>XMLReader</code> will be used
+            to parse stylesheet documents (that is, the principal stylesheet module plus any
+            secondary source documents read using xsl:include or xsl:import) and also schema
+            documents.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="staticUriResolver" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This property defines a <code>URIResolver</code> used when dereferencing the URIs
+                that appear in the <code>href</code> attributes of the <code>xsl:include</code> and
+                    <code>xsl:import</code> declarations. Note that this defaults to the setting of
+                the global <code>URI_RESOLVER</code> property.</p>
+                  <p>This option can be set for a particular XSLT compilation. When the option is set at
+                the <code>Configuration</code> level (or on a <code>TransformerFactory</code>), it acts as a default.</p>
+                  <p>In the absence of this property, the global <code>URIResolver</code>
+                specified as the value of the <link>#URI_RESOLVER_CLASS</link> property is used.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="version" use="optional" type="xs:decimal">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This property determines the version of XSLT to be supported by default</p>
+                  <p>XSLT 3.0 is supported only in Saxon EE. If no value is specified for the property,
+            an XSLT 2.0 or XSLT 3.0 processor is used depending on the value of the <code>version</code>
+            attribute of the <code>xsl:stylesheet</code> element.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="versionWarning" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>Indicates whether a warning message should be notified (to the
+                    <code>ErrorListener</code>) if running Saxon against an XSLT stylesheet that
+                specifies <code>version="1.0"</code>. The warning that an XSLT 1.0 stylesheet is
+                being processed using an XSLT 2.0 processor is output by default (because the W3C
+                specification requires it), but it may be suppressed using this option.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+      </xs:complexType>
+  </xs:element>
+  
+  
+
+   <xs:element name="extensionElement">
+      <xs:annotation>
+         <xs:documentation> 
+        Describes a user-supplied library of XSLT extension instructions.
+      </xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:attribute name="factory" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation> 
+            The Java class that implements the extension instructions.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="namespace" use="optional" type="xs:anyURI">
+            <xs:annotation>
+               <xs:documentation> 
+            The namespace URI of the extension instructions implemented by this extension library.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+      </xs:complexType>
+  </xs:element>
+  
+  
+
+   <xs:element name="xquery">
+      <xs:annotation>
+         <xs:documentation> 
+        Defines configuration properties specific to XQuery processing.
+      </xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:attribute name="allowUpdate" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>Determines whether XQuery Update syntax is accepted. If true, update syntax is
+                accepted, if false, it is not accepted. Setting the value to true does not mean that
+                the query has to use update syntax, only that it may do so.</p>
+                  <p>Note that XQuery Update syntax and XQuery 3.0 syntax cannot currently be mixed.</p>
+                  <p>This option can be set for a particular XQuery compilation. When the option is set at
+                the <code>Configuration</code> level, it acts as a default.</p>
+                  <p>On the command line, this option is combined with the option "discard" which
+                indicates that updates are allowed, but the updates are not written back to
+                filestore. This does not correspond to any option in the Java API, where writing an
+                updated document back to filestore only happens if explicitly requested.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="constructionMode" use="optional" type="c:constructionModeType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This option defines the default value of the construction mode in the XQuery static
+                context (overridable in the query prolog)</p>
+                  <p>This option can be set for a particular XQuery compilation. When the option is set at
+                the <code>Configuration</code> level, it acts as a default.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="defaultElementNamespace" use="optional">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This property defines the default namespace for elements and types that are not
+                qualified by a namespace prefix.</p>
+                  <p>This option can be set for a particular XQuery compilation. When the option is set at
+                the <code>Configuration</code> level, it acts as a default.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="defaultFunctionNamespace" use="optional" type="xs:anyURI">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This property defines the default namespace for function names that are not
+                qualified by a namespace prefix.</p>
+                  <p>This option can be set for a particular XQuery compilation. When the option is set at
+                the <code>Configuration</code> level, it acts as a default.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="emptyLeast" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This property defines how the empty sequence is handled in XQuery sorting (the "order
+                by" clause). If true, () comes at the start of the sorted sequence; if false, it
+                comes last.</p>
+                  <p>This option can be set for a particular XQuery compilation. When the option is set at
+                the <code>Configuration</code> level, it acts as a default.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="errorListener" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>ERROR_LISTENER_CLASS is the name of the class used to implement the JAXP
+                    <code>ErrorListener</code>. This is used both at compile time and at run-time.
+                Currently if this option is specified, the class is instantiated, and the same
+                instance is used for all processes running under this configuration. This may change
+                in future so that a new instance is created for each compilation or evaluation.</p>
+                  <p>Finer control can be obtained by setting the <code>ErrorListener</code> for a
+                specific XSLT or XQuery compilation or evaluation.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="inheritNamespaces" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This property defines the default value of the inherit-namespaces property in the
+                XQuery static context.</p>
+                  <p>This option can be set for a particular XQuery compilation. When the option is set at
+                the <code>Configuration</code> level, it acts as a default.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="moduleUriResolver" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>Affects XQuery only. An instance of a user-written class implementing Saxon's
+                    <link>net.sf.saxon.lib.ModuleURIResolver</link> interface. This is used to
+                process any URIs used in <code>import module</code> directives in XQuery.</p>
+                  <p>Affects XQuery only. The name of a user-written class implementing Saxon's
+                    <link>net.sf.saxon.lib.ModuleURIResolver</link> interface. This is used to
+                process any URIs used in <code>import module</code> directives in XQuery.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="preserveBoundarySpace" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This property defines whether "boundary space" (insignificant space in direct element
+                constructors) should be retained or not</p>
+                  <p>This option can be set for a particular XQuery compilation. When the option is set at
+                the <code>Configuration</code> level, it acts as a default.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="preserveNamespaces" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This property defines whether unused namespace declarations are retained by XQuery
+                element copy operations</p>
+                  <p>This option can be set for a particular XQuery compilation. When the option is set at
+                the <code>Configuration</code> level, it acts as a default.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="requiredContextItemType" use="optional" type="c:itemTypeType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This property defines the default expected context item type for a query.</p>
+                  <p>This option can be set for a particular XQuery compilation. When the option is set at
+                the <code>Configuration</code> level, it acts as a default.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="version" use="optional" type="xs:decimal">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This property determines the version of XQuery used by the Configuration. In order
+                to use XQuery 3.0, it is necessary both to set the XQuery compiler to process XQuery
+                3.0, and to specify XQuery 3.0 in the query prolog of each module that uses XQuery
+                3.0 features.</p>
+                  <p>This option can be set for a particular XQuery compilation. When the option is set at
+                the <code>Configuration</code> level, it acts as a default.</p>
+                  <p>Note that XQuery 3.0 features cannot be used with XQuery Update.</p>
+                  <p>XQuery 3.0 is supported only in Saxon EE.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+      </xs:complexType>
+  </xs:element>
+  
+  
+
+   <xs:element name="xsd">
+      <xs:annotation>
+         <xs:documentation> 
+        Defines configuration properties specific to XML Schema processing.
+      </xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:attribute name="assertionsCanSeeComments" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>ASSERTIONS_CAN_SEE_COMMENTS determines whether comment and processing instructions
+            in a document being validated are visible to assertions in an XSD 1.1 schema.</p>
+                  <p>If the value is false (the default), comments and processing instructions are
+            stripped from the view of the document that is made visible to the XPath expression
+            that implements the assertion. If this creates adjacent text nodes, they are collapsed
+            into a single text node.</p>
+                  <p>If the value is true, then comments and processing instructions are
+            visible to the XPath assertion.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="multipleSchemaImports" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>Affects schema construction (whether for standalone validation, or in the context of XSLT or XQuery).
+               If set to true, the schema processor always attempts to fetch a schema document appearing
+               in an <code>xs:import</code> directive, whether or not a schema for that namespace has already
+               been loaded. Note that this setting might cause spurious errors due to like-named schema
+               components being loaded more than once. With the default setting (false), <code>xs:import</code> directives do not cause
+               a schema document to be loaded if the schema already contains components for the specified
+               target namespace.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="occurrenceLimits" use="optional" type="c:occurrenceLimitsType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>OCCURRENCE_LIMITS determines the largest values of <code>minOccurs</code> and
+                    <code>maxOccurs</code> that can be accommodated when compiling an "expanded"
+                finite state machine to represent an XSD content model grammar. These limits do not
+                apply in the common cases where the grammar can be implemented using a counting
+                finite-state-machine, but in those cases where this is not possible, any
+                    <code>minOccurs</code> value greater than the first integer is reduced to the
+                value of the first integer, and any <code>maxOccurs</code> value greater than the
+                second integer is treated as "unbounded".</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="schemaUriResolver" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>The supplied <code>SchemaURIResolver</code> will be used to resolve URIs of schema
+                documents referenced in <code>xsl:import-schema</code> declarations in XSLT,
+                    <code>import schema</code> in XQuery, references from one schema document to
+                another using <code>xs:include</code> or <code>xs:import</code>, and references from
+                an instance document to a schema using <code>xsi:schemaLocation</code>.</p>
+                  <p>The name of a class that implements the interface <code>SchemaURIResolver</code>;
+                this class will be instantiated and the resulting instance will be used as the value
+                of the <link>FeatureKeys#SCHEMA_URI_RESOLVER</link> property.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="useXsiSchemaLocation" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This option determines whether or not to use the <code>xsi:schemaLocation</code>
+                    and<code> xsi:noNamespaceSchemaLocation</code> attributes in an instance
+                document to locate a schema for validation.</p>
+                  <p>Note, these attribute are only consulted if validation is requested; the presence of
+                one of these attributes never by itself triggers validation.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="version" use="optional" type="xs:decimal">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This property determines the version of XML Schema used by the Configuration. The
+                default is XSD 1.0. If XSD 1.0 is selected, XSD 1.1 features will be rejected, with
+                the exception of the version control attributes that allow sections of the schema to
+                be marked as requiring XSD 1.0 or XSD 1.1.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+      </xs:complexType>
+  </xs:element>
+  
+  
+
+   <xs:element name="resources">
+      <xs:annotation>
+         <xs:documentation> 
+        Defines additional classes available for integration purposes.
+      </xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:choice minOccurs="0" maxOccurs="unbounded">
+        
+
+            <xs:element ref="c:externalObjectModel"/>
+        
+
+            <xs:element ref="c:extensionFunction"/>
+        
+
+            <xs:element ref="c:schemaDocument"/>
+        
+
+            <xs:element ref="c:schemaComponentModel"/>
+         </xs:choice>
+      </xs:complexType>
+  </xs:element>
+  
+  
+
+   <xs:element name="externalObjectModel" type="c:javaClassNameType">
+      <xs:annotation>
+         <xs:documentation> 
+        Defines an external object model (tree representation). The content is the name
+        of a Java class that implements <code>net.sf.saxon.lib.ExternalObjectModel</code>.
+      </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+  
+  
+
+   <xs:element name="extensionFunction" type="c:javaClassNameType">
+      <xs:annotation>
+         <xs:documentation> 
+        Defines an external function, implemented in Java, that can be called from
+        within an XPath expression. The content is the name of a Java class that
+        implements <code>net.sf.saxon.lib.ExtensionFunctionDefinition</code>
+         </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+  
+  
+
+   <xs:element name="schemaDocument" type="xs:anyURI">
+      <xs:annotation>
+         <xs:documentation> 
+        Provides the location of a schema document that will 
+        be preloaded into the configuration and made
+        available to all queries and stylesheets.
+      </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+  
+  
+
+   <xs:element name="schemaComponentModel" type="xs:anyURI">
+      <xs:annotation>
+         <xs:documentation> 
+        Provides the location of a schema in Saxon's SCM format that 
+        will be preloaded into the configuration and made
+        available to all queries and stylesheets.
+      </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <xs:simpleType name="constructionModeType">
+      <xs:annotation>
+         <xs:documentation> 
+            <p>Defines how an XQuery processor will handle whitespace in element
+        constructors. One of:</p> 
+            <ul>
+               <li>strip - whitespace in the query is ignored </li>
+               <li>preserve - whitespace in the query is copied to the result tree </li>
+            </ul>
+         </xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="strip">
+            <xs:annotation>
+               <xs:documentation> 
+            Whitespace in element constructors is ignored
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="preserve">
+            <xs:annotation>
+               <xs:documentation> 
+            Whitespace in element constructors is copied to the result tree
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+      </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="caseOrderType">
+      <xs:annotation>
+         <xs:documentation> Used for the case-order property of a collation: defines whether lower-case
+        collates before or after upper-case, other things being equal. One of: upper-first,
+        lower-first 
+      </xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="upper-first">
+            <xs:annotation>
+               <xs:documentation> 
+            Upper-case precedes lower-case in sort order
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="lower-first">
+            <xs:annotation>
+               <xs:documentation> 
+            Lower-case precedes upper-case in sort order
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+      </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="decompositionType">
+      <xs:annotation>
+         <xs:documentation> Used for the decomposition property of a collation: defines whether a
+        string is converted to decomposed normal form before comparisons are made, and if so, which
+        form is to be used. One of: none, standard, or full. </xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="none">
+            <xs:annotation>
+               <xs:documentation> 
+            No decomposition of Unicode combining characters is performed before sorting
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="standard">
+            <xs:annotation>
+               <xs:documentation> 
+            Standard decomposition of Unicode combining characters is performed before sorting
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="full">
+            <xs:annotation>
+               <xs:documentation> 
+            Full decomposition of Unicode combining characters is performed before sorting
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+      </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="editionType">
+      <xs:annotation>
+         <xs:documentation> Code describing a Saxon product edition. One of: HE - home edition PE -
+        professional edition EE - enterprise edition </xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="HE">
+            <xs:annotation>
+               <xs:documentation> 
+            Saxon Home Edition
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="PE">
+            <xs:annotation>
+               <xs:documentation> 
+            Saxon Professional Edition
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="EE">
+            <xs:annotation>
+               <xs:documentation> 
+            Saxon Enterprise Edition
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+      </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="fileNameType">
+      <xs:annotation>
+         <xs:documentation> 
+        A file name, usually for output. Currently implemented simply as a string.
+      </xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="itemTypeType">
+      <xs:annotation>
+         <xs:documentation> An XPath item type, such as "item()", "node()", "element(*, xs:anyType)",
+        or "xs:string". Currently implemented simply as a string. 
+      </xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:minLength value="1"/>
+      </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="javaClassNameType">
+      <xs:annotation>
+         <xs:documentation> A fully-qualified Java class name: a sequence of identifiers separated by
+        periods, where each identifier starts with a letter (or dollar or underscore), and continues
+        with letters or digits (or dollar or underscore). The definition of "letter" used in this
+        regular expression does not exactly match the Java definition, but the differences are
+        unlikely to matter. May also be a zero-length string to indicate the default value.
+      </xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:pattern value="(([\p{L}$_][\p{L}$_0-9]*)(\.[\p{L}$_][\p{L}$_0-9]*)*)?"/>
+      </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="listOfQNameType">
+      <xs:annotation>
+         <xs:documentation> A space-separated list of QNames. Used in serialization parameters such as
+        cdata-section-elements. </xs:documentation>
+      </xs:annotation>
+      <xs:list itemType="xs:QName"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="occurrenceLimitsType">
+      <xs:annotation>
+         <xs:documentation> Highest values of minOccurs/maxOccurs for which accurate finite state
+        automata should be generated during schema compilation. High limits can cause a large amount
+        of memory to be used. Occurrence limits greater than these values may be non-strictly
+        enforced. Format is a pair of integers, comma-separated. </xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:pattern value="[0-9]+,\s*[0-9]+"/>
+      </xs:restriction>
+  </xs:simpleType>
+
+
+  <xs:simpleType name="recoveryPolicyType">
+      <xs:annotation>
+         <xs:documentation> Defines how an XSLT processor will handle recoverable errors. One of: -
+        recoverSilently - take the recovery action and continue silently - recoverWithWarnings -
+        take the recovery action and continue with a warning - doNotRecover - terminate with a fatal
+        error </xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="recoverSilently">
+            <xs:annotation>
+               <xs:documentation> 
+            For XSLT recoverable dynamic errors, Saxon recovers silently
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="recoverWithWarnings">
+            <xs:annotation>
+               <xs:documentation> 
+            For XSLT recoverable dynamic errors, Saxon recovers but outputs a warning
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="doNotRecover">
+            <xs:annotation>
+               <xs:documentation> 
+            For XSLT recoverable dynamic errors, Saxon reports an error and does not recover
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+      </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="schemaValidationType">
+      <xs:annotation>
+         <xs:documentation> A request for schema validation (or non-validation). One of: strict -
+        validation must be performed lax - validation performed if an element declaration is
+        available preserve - existing type annotations are retained strip - no validation performed,
+        existing type annotations are dropped </xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="strict">
+            <xs:annotation>
+               <xs:documentation> 
+            Strict validation: an element declaration must be present and the instance must be valid
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="lax">
+            <xs:annotation>
+               <xs:documentation> 
+            Lax validation: if an element declaration is present then the instance must be valid
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="preserve">
+            <xs:annotation>
+               <xs:documentation> 
+            Existing type annotations are preserved when copying, no validation takes place
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="strip">
+            <xs:annotation>
+               <xs:documentation> 
+            Existing type annotations are discarded when copying, no validation takes place
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+      </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="strengthType">
+      <xs:annotation>
+         <xs:documentation> Defines the values of the strength property of a collation. Defines which
+        properties of a string are considered significant. One of: primary, secondary, tertiary, or
+        identical. </xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="primary"/>
+         <xs:enumeration value="secondary"/>
+         <xs:enumeration value="tertiary"/>
+         <xs:enumeration value="identical"/>
+      </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="stripSpaceType">
+      <xs:annotation>
+         <xs:documentation> Option for stripping whitespace in source documents. One of: all - all
+        whitespace text nodes are removed, unless xml:space="preserve" is present none - no
+        whitespace text nodes are removed ignorable - whitespace text nodes in element-only content
+        (identified by schema or DTD) are stripped </xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="all">
+            <xs:annotation>
+               <xs:documentation> 
+            All whitespace-only text nodes are removed from the source document
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="none">
+            <xs:annotation>
+               <xs:documentation> 
+            No whitespace-only text nodes are removed from the source document
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="ignorable">
+            <xs:annotation>
+               <xs:documentation> 
+            Whitespace-only text nodes are removed from the source document if the containing element
+            is described in a DTD or schema as having element-only content
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+      </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="treeModelType">
+      <xs:annotation>
+         <xs:documentation> Choice of XDM tree model implementation for representing source documents.
+        One of: linkedTree - mutable tree using one Java object per node tinyTree - compact
+        immutable tree (default) tinyTreeCondensed - tinyTree with extra compression of text and
+        attribute values </xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="linkedTree">
+            <xs:annotation>
+               <xs:documentation> 
+            Saxon linked tree implementation (one object per node). Useful for XQuery update.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="tinyTree">
+            <xs:annotation>
+               <xs:documentation> 
+            Saxon tiny tree implementation: the default choice. A compact tree offering fast navigation.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="tinyTreeCondensed">
+            <xs:annotation>
+               <xs:documentation> 
+            Saxon condensed tiny tree implementation: reduces memory usage but takes longer to build;
+            no performance penalty during tree navigation.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+      </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="yesOrNoType">
+      <xs:annotation>
+         <xs:documentation> Used for serialization parameters, and for collation parameters. One of
+        "yes" or "no". </xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="yes">
+            <xs:annotation>
+               <xs:documentation> 
+            Sets the option on.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="no">
+            <xs:annotation>
+               <xs:documentation> 
+            Sets the option off.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+      </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="yesOrNoOrOmitType">
+      <xs:annotation>
+         <xs:documentation> Used for "standalone" serialization parameter. One of "yes" or "no" or
+        "omit". </xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="yes">
+            <xs:annotation>
+               <xs:documentation> 
+            Sets standalone="yes" in the XML declaration.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="no">
+            <xs:annotation>
+               <xs:documentation> 
+            Sets standalone="no" in the XML declaration.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="omit">
+            <xs:annotation>
+               <xs:documentation> 
+            There will be no 'standalone' attribute in the XML declaration.
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+      </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="yesOrNoOrCodepointType">
+      <xs:annotation>
+         <xs:documentation> Used for "alphanumeric" property of a collation. One of "yes" or "no" or
+        "codepoint". </xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="yes">
+            <xs:annotation>
+               <xs:documentation> 
+            Selects a collation in which a sequence of digits is treated as a number: AA100 sorts after AA99
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="no">
+            <xs:annotation>
+               <xs:documentation> 
+            Selects a collation in which digits are sorted as individual characters: AA100 sorts before AA99
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="codepoint">
+            <xs:annotation>
+               <xs:documentation> 
+            Selects a collation in which a sequence of digits is treated as a number (AA100 sorts after AA99),
+            and other characters are sorted by Unicode codepoint value
+          </xs:documentation>
+            </xs:annotation>
+         </xs:enumeration>
+      </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>
