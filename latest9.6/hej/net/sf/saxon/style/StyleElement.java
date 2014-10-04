@@ -1187,7 +1187,11 @@ public abstract class StyleElement extends ElementImpl
     protected void processExpandTextAttribute(String ns) throws XPathException {
         String v = getAttributeValue(ns, "expand-text");
         if (v != null) {
-            expandText = processBooleanAttribute("expand-text", v);
+            if (isXslt30Processor()) {
+                expandText = processBooleanAttribute("expand-text", v);
+            } else {
+                issueWarning("The @expand-text attribute is ignored because XSLT 3.0 is not enabled", this);
+            }
         } else {
             NodeInfo parent = getParent();
             expandText = parent instanceof StyleElement && ((StyleElement) parent).expandText;
