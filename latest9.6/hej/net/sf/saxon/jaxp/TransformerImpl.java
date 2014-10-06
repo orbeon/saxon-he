@@ -24,6 +24,8 @@ import net.sf.saxon.value.UntypedAtomicValue;
 import org.w3c.dom.Node;
 import org.xml.sax.XMLFilter;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -134,6 +136,16 @@ public class TransformerImpl extends IdentityTransformer {
                 destination = new SAXDestination(((SAXResult) outputTarget).getHandler());
             } else if (outputTarget instanceof DOMResult) {
                 Node root = ((DOMResult) outputTarget).getNode();
+                if (root == null) {
+                    try {
+                        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                        dbf.setNamespaceAware(true);
+                        root = dbf.newDocumentBuilder().newDocument();
+                        ((DOMResult) outputTarget).setNode(root);
+                    } catch (ParserConfigurationException e) {
+                        throw new XPathException(e);
+                    }
+                }
                 destination = new DOMDestination(root);
             } else if (outputTarget instanceof Receiver) {
                 destination = new Destination() {
