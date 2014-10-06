@@ -11,6 +11,7 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.PreparedStylesheet;
 import net.sf.saxon.expr.instruct.GlobalParam;
 import net.sf.saxon.expr.instruct.GlobalVariable;
+import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.value.SequenceType;
 
@@ -81,6 +82,10 @@ public class XsltExecutable {
      */
 
     public Xslt30Transformer load30() {
+        String nextInChain = preparedStylesheet.getOutputProperties().getProperty(SaxonOutputKeys.NEXT_IN_CHAIN);
+        if (nextInChain != null) {
+            processor.getUnderlyingConfiguration().getLogger().warning("saxon:next-in-chain is ignored when using an Xslt30Transformer");
+        }
         return new Xslt30Transformer(processor, preparedStylesheet.newController(), preparedStylesheet.getCompileTimeParams());
     }
 
