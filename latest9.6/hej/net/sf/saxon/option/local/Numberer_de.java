@@ -47,6 +47,7 @@ public class Numberer_de extends AbstractNumberer {
             long n = number / 1000000;
             String s = (n == 1 ? "Eine" : toWords(n));
             return s + " Million" +
+                    (n == 1 ? "" : "en") +
                     (rem == 0 ? "" : ' ' + toWords(rem));
         } else if (number >= 1000) {
             long rem = number % 1000;
