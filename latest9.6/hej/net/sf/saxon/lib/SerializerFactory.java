@@ -8,7 +8,6 @@
 package net.sf.saxon.lib;
 
 import net.sf.saxon.Configuration;
-import net.sf.saxon.Controller;
 import net.sf.saxon.event.*;
 import net.sf.saxon.query.SequenceWrapper;
 import net.sf.saxon.serialize.*;
@@ -17,7 +16,6 @@ import net.sf.saxon.trans.XPathException;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
 import java.util.List;
@@ -134,6 +132,17 @@ public class SerializerFactory {
                                 Properties props,
                                 /*@Nullable*/ CharacterMapIndex charMapIndex)
             throws XPathException {
+        String nextInChain = props.getProperty(SaxonOutputKeys.NEXT_IN_CHAIN);
+        if (nextInChain != null && !nextInChain.isEmpty()) {
+            String href = props.getProperty(SaxonOutputKeys.NEXT_IN_CHAIN);
+            String base = props.getProperty(SaxonOutputKeys.NEXT_IN_CHAIN_BASE_URI);
+            if (base == null) {
+                base = "";
+            }
+            Properties sansNext = new Properties(props);
+            sansNext.setProperty(SaxonOutputKeys.NEXT_IN_CHAIN, "");
+            return prepareNextStylesheet(pipe, href, base, result);
+        }
         if (result instanceof Emitter) {
             if (((Emitter) result).getOutputProperties() == null) {
                 ((Emitter) result).setOutputProperties(props);
@@ -756,7 +765,7 @@ public class SerializerFactory {
      * This method is intended for internal use, to support the
      * <code>saxon:next-in-chain</code> extension.
      *
-     * @param controller the current transformation
+     * @param pipe the current transformation
      * @param href       URI of the next stylesheet to be applied
      * @param baseURI    base URI for resolving href if it's a relative
      *                   URI
@@ -765,11 +774,12 @@ public class SerializerFactory {
      * @throws XPathException if any dynamic error occurs
      */
 
-    public Receiver prepareNextStylesheet(Controller controller, String href, String baseURI, Receiver result)
-            throws TransformerException {
-        controller.getConfiguration().checkLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION, "saxon:next-in-chain");
+    public Receiver prepareNextStylesheet(PipelineConfiguration pipe, String href, String baseURI, Result result)
+            throws XPathException {
+        pipe.getConfiguration().checkLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION, "saxon:next-in-chain");
         return null;
     }
+
 
     /**
      * Get a SequenceWrapper, a class that serializes an XDM sequence with full annotation of item types, node kinds,

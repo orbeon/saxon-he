@@ -14,8 +14,11 @@ import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.expr.instruct.GlobalParameterSet;
 import net.sf.saxon.lib.Logger;
+import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.lib.TraceListener;
-import net.sf.saxon.om.*;
+import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.om.Sequence;
+import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.serialize.ReconfigurableSerializer;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.linked.DocumentImpl;
@@ -30,6 +33,7 @@ import javax.xml.transform.dom.DOMSource;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Properties;
 
 /**
  * An <code>XsltTransformer</code> represents a compiled and loaded stylesheet ready for execution.
@@ -295,11 +299,34 @@ public class XsltTransformer implements Destination {
     public void setDestination(Destination destination) {
         this.destination = destination;
         if (destination instanceof Serializer) {
-            Serializer serializer = (Serializer) destination;
-            serializer.setDefaultOutputProperties(controller.getExecutable().getDefaultOutputProperties());
-            serializer.setCharacterMap(controller.getExecutable().getCharacterMapIndex());
+            Properties declaredProperties = controller.getExecutable().getDefaultOutputProperties();
+            String nextInChain = declaredProperties.getProperty(SaxonOutputKeys.NEXT_IN_CHAIN);
+            if (nextInChain != null && !nextInChain.isEmpty()) {
+                try {
+                    String base = declaredProperties.getProperty(SaxonOutputKeys.NEXT_IN_CHAIN_BASE_URI);
+                    Source nextStylesheet = getURIResolver().resolve(nextInChain, base);
+                    XsltTransformer next = processor.newXsltCompiler().compile(nextStylesheet).load();
+                    next.setDestination(destination);
+                    this.setDestination(next);
+                } catch (Exception e) {
+                    final Exception err = e;
+                    this.setDestination(new Destination() {
+                        public Receiver getReceiver(Configuration config) throws SaxonApiException {
+                            throw new SaxonApiException("Failed to configure next-in-chain stylesheet", err);
+                        }
+
+                        public void close() throws SaxonApiException {
+                        }
+                    });
+                }
+            } else {
+                Serializer serializer = (Serializer) destination;
+                serializer.setDefaultOutputProperties(declaredProperties);
+                serializer.setCharacterMap(controller.getExecutable().getCharacterMapIndex());
+            }
         }
     }
+
 
     /**
      * Get the destination that was specified in a previous call of {@link #setDestination}
