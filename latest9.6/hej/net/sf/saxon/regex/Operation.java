@@ -12,7 +12,10 @@ import net.sf.saxon.expr.sort.EmptyIntIterator;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.z.*;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * Represents an operation or instruction in the regular expression program. The class Operation
@@ -1224,43 +1227,36 @@ public abstract class Operation {
         }
     }
 
+    /**
+     * The ForceProgressIterator is used to protect against non-termination; specifically,
+     * iterators that return an infinite number of zero-length matches. After getting a
+     * certain number of zero-length matches at the same position, hasNext() returns false.
+     * (Potentially this gives problems with an expression such as (a?|b?|c?|d) that can
+     * legitimately return more than one zero-length match).
+     */
+
     private static class ForceProgressIterator implements IntIterator {
         private IntIterator base;
-        private boolean baseHasNext;
-        private int baseNext;
-        private boolean previousWasZeroLength = false;
+        int countZeroLength = 0;
+        int currentPos = -1;
 
         public ForceProgressIterator(IntIterator base) {
             this.base = base;
-            baseHasNext = base.hasNext();
-            if (baseHasNext) {
-                baseNext = base.next();
-            }
         }
 
         public boolean hasNext() {
-            return baseHasNext;
+            return countZeroLength <= 3 && base.hasNext();
         }
 
         public int next() {
-            int m = baseNext;
-            baseHasNext = base.hasNext();
-            if (baseHasNext) {
-                int n = base.next();
-                if (m == n) {
-                    if (previousWasZeroLength) {
-                        do {
-                            baseHasNext = base.hasNext();
-                            if (baseHasNext) {
-                                n = base.next();
-                            }
-                        } while (baseHasNext && n == m);
-                    }
-                    previousWasZeroLength = true;
-                }
-                baseNext = n;
+            int p = base.next();
+            if (p == currentPos) {
+                countZeroLength++;
+            } else {
+                countZeroLength = 0;
+                currentPos = p;
             }
-            return m;
+            return p;
         }
     }
 
