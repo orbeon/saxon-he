@@ -1073,7 +1073,7 @@ public class Transform {
         }
         if (repeat > 1) {
             System.err.println("*** Average execution time over last " + runs + " runs: " +
-                    CommandLineOptions.showExecutionTimeNano(totalTime / runs) + "ms");
+                    CommandLineOptions.showExecutionTimeNano(totalTime / runs));
         }
     }
 
