@@ -495,13 +495,11 @@ public class XPathParser {
                 return parseValidateExpression();
             case Token.PRAGMA:
                 return parseExtensionExpression();  // XQuery only
-            case Token.LCURLY:
-                return parseMapExpression();
+//            case Token.LCURLY:
+//                return parseMapExpression();
             case Token.KEYWORD_CURLY:
                 if (t.currentTokenValue.equals("try")) {
                     return parseTryCatchExpression();
-                } else if (t.currentTokenValue.equals("map")) {
-                    return parseMapExpression();
                 }
                 // else drop through
 
