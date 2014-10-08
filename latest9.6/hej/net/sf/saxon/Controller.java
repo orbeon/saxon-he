@@ -303,6 +303,17 @@ public class Controller {
         return initialMode;
     }
 
+    /**
+     * Get the value of a supplied parameter (XSLT) or external variable (XQuery)
+     * @param name the QName of the parameter
+     * @return the supplied value of the parameter, if such a parameter exists, and if a value
+     * was supplied. Returns null if the parameter is not declared or if no value was supplied,
+     * even if there is a default defined in the stylesheet or query.
+     */
+
+    public Sequence getParameter(StructuredQName name) {
+        return getBindery().getSuppliedParameters().get(name);
+    }
 
     /**
      * Set the base output URI.

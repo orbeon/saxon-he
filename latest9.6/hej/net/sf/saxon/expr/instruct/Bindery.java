@@ -101,6 +101,15 @@ public final class Bindery {
     }
 
     /**
+     * Get the supplied parameters
+     * @return the supplied global parameter values
+     */
+
+    public GlobalParameterSet getSuppliedParameters() {
+        return globalParameters;
+    }
+
+    /**
      * Use global parameter. This is called when a global xsl:param element is processed.
      * If a parameter of the relevant name was supplied, it is bound to the xsl:param element.
      * Otherwise the method returns false, so the xsl:param default will be evaluated.
