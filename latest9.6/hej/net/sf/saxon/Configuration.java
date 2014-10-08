@@ -52,6 +52,7 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.*;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -3862,10 +3863,20 @@ public class Configuration implements SourceResolver, NotationSet {
             setXIncludeAware(requireBoolean(name, value));
         } else if (name.startsWith(FeatureKeys.XML_PARSER_FEATURE)) {
             String uri = name.substring(FeatureKeys.XML_PARSER_FEATURE.length());
+            try {
+                uri = URLDecoder.decode(uri, "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new IllegalArgumentException(e);
+            }
             defaultParseOptions.addParserFeature(uri, requireBoolean(name, value));
 
         } else if (name.startsWith(FeatureKeys.XML_PARSER_PROPERTY)) {
             String uri = name.substring(FeatureKeys.XML_PARSER_PROPERTY.length());
+            try {
+                uri = URLDecoder.decode(uri, "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new IllegalArgumentException(e);
+            }
             defaultParseOptions.addParserProperties(uri, value);
 
         } else if (name.startsWith("http://saxon.sf.net/feature/xquery")) {
