@@ -9,6 +9,7 @@ package net.sf.saxon.s9api;
 
 import net.sf.saxon.PreparedStylesheet;
 import net.sf.saxon.style.Compilation;
+import net.sf.saxon.style.PackageVersion;
 import net.sf.saxon.style.StylesheetPackage;
 import net.sf.saxon.trans.CompilerInfo;
 import net.sf.saxon.trans.XPathException;
@@ -51,15 +52,25 @@ public class XsltPackage {
     }
 
     /**
-     * Get the version number of the package (the value of the attribute <code>xsl:package/@package-version</code>
+     * Get the version number of the package (the value of the attribute <code>xsl:package/@package-version</code>.
+     * Note that this may have had trailing zeroes truncated.
      *
-     * @return the package version number
+     * @return the package version number(s)+suffix?
      */
 
     public String getVersion() {
         return stylesheetPackage.getPackageVersion().toString();
     }
 
+    /**
+     * Get the version of the package as a structured object that meets the requirements of
+     * <a href="http://www.w3.org/TR/xslt-30/#package-versions">http://www.w3.org/TR/xslt-30/#package-versions</a>
+     *
+     * @return  the package version of the stylesheet
+     */
+    public PackageVersion getPackageVersion() {
+        return stylesheetPackage.getPackageVersion();
+    }
     /**
      * Link this package with the packages it uses to form an executable stylesheet. This process fixes
      * up any cross-package references to files, templates, and other components, and checks to ensure

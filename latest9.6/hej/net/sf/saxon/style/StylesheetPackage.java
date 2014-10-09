@@ -51,7 +51,8 @@ public class StylesheetPackage extends StylesheetModule implements GlobalVariabl
         public abstract void doAction() throws XPathException;
     }
 
-    private NestedIntegerValue packageVersion = null;
+    private NestedIntegerValue packageVersionOLD = null;
+    private PackageVersion packageVersion = null;
     private String packageName;
     private List<StylesheetPackage> usedPackages = new ArrayList<StylesheetPackage>();
 
@@ -1635,20 +1636,20 @@ public class StylesheetPackage extends StylesheetModule implements GlobalVariabl
     }
 
     /**
-     * Get the package-version identifier appearing on the xsl:package element
+     *  Get the package-version identifier appearing on the xsl:package element
      *
-     * @return the version identifier as a DeweyDecimalValue
+     * @return  the version identifier as a structured entity
      */
-    public NestedIntegerValue getPackageVersion() {
+    public PackageVersion getPackageVersion() {
         return packageVersion;
     }
 
     /**
-     * Set the package-version identifier appearing on the xsl:package element
+     *  Set the package-version identifier appearing on the xsl:package element
      *
-     * @param version - the version identifier as a DeweyDecimalValue
+     * @param version  the version identifier as a structured entity
      */
-    public void setPackageVersion(NestedIntegerValue version) {
+    public void setPackageVersion(PackageVersion version) {
         packageVersion = version;
     }
 

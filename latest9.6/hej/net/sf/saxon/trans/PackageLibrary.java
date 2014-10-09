@@ -8,9 +8,9 @@
 package net.sf.saxon.trans;
 
 
-import net.sf.saxon.regex.RegularExpression;
+import net.sf.saxon.style.PackageVersion;
+import net.sf.saxon.style.PackageVersionRanges;
 import net.sf.saxon.style.StylesheetPackage;
-import net.sf.saxon.value.NestedIntegerValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,38 +21,60 @@ public class PackageLibrary {
 
     Map<String, List<StylesheetPackage>> packageMap = new HashMap<String, List<StylesheetPackage>>();
 
-    public void addPackage(String name, StylesheetPackage packagei) {
+    /**
+     * Add a package to the current library with the given name
+     *
+     * <p>Packages which have the same name <b>and version</b> to one already within the library are considered
+     * to be duplicates and are not added.</p>
+     *
+     * @param name   The name to use for this package
+     * @param packageIn  The stylesheet package to be added
+     */
+    public void addPackage(String name, StylesheetPackage packageIn) {
         List<StylesheetPackage> list = packageMap.get(name);
         if (list == null) {
             list = new ArrayList<StylesheetPackage>();
-            list.add(packagei);
+            list.add(packageIn);
             packageMap.put(name, list);
         } else {
             for (StylesheetPackage p : list) {
-                if (p.getPackageVersion().equals(packagei.getPackageVersion())) {
+                if (p.getPackageVersion().equals(packageIn.getPackageVersion())) {
                     list.remove(p);
-                    list.add(packagei);
+                    list.add(packageIn);
                     return;
                 }
             }
-            list.add(packagei);
-
+            list.add(packageIn);
         }
-
     }
 
-    public StylesheetPackage getPackage(String name, NestedIntegerValue ver) {
+    /**
+     * Return the first package from the library that has the given name and whose version lies in the given ranges
+     *
+     * @param name  The name of the package
+     * @param ranges  The ranges of versions of that package that are acceptable
+     * @return The first package that meets the criteria, or null if none can be found
+     */
+    public StylesheetPackage getPackage(String name, PackageVersionRanges ranges) {
         List<StylesheetPackage> list = packageMap.get(name);
         for (StylesheetPackage p : list) {
-            if (p.getPackageVersion().equals(ver)) {
+            if (ranges.contains(p.getPackageVersion())) {
                 return p;
             }
         }
         return null;
     }
 
+    /**
+     * Return the latest version of a package of the given name from the library.
+     *
+     * <p>The definition of 'latest' is determined by partial ordering of the {@link PackageVersion} class</p>
+     *
+     * @param name The name of the package to be returned
+     * @return  The version of the named package whose version orders highest, or null if no such package exists
+     */
     public StylesheetPackage getPackage(String name) {
-        NestedIntegerValue latestVersion = null;
+        PackageVersion latestVersion = null;
         StylesheetPackage latestPackage = null;
         List<StylesheetPackage> list = packageMap.get(name);
         if (list == null) {
@@ -66,18 +88,6 @@ public class PackageLibrary {
 
         }
         return latestPackage;
-    }
-
-    public StylesheetPackage getPackage(String name, RegularExpression versionRegEx) {
-        List<StylesheetPackage> list = packageMap.get(name);
-        if (list != null) {
-            for (StylesheetPackage p : list) {
-                if (versionRegEx.matches(p.getPackageVersion().getStringValueCS())) {
-                    return p;
-                }
-            }
-        }
-        return null;
     }
 
     public int size(String name) {

@@ -28,8 +28,7 @@ import java.math.BigDecimal;
 public class XSLPackage extends XSLModuleRoot {
 
     private String nameAtt = null;
-    private NestedIntegerValue packageVersion = null;
-
+    private PackageVersion packageVersion = null;
 
     public String getName() {
         if (nameAtt == null) {
@@ -53,17 +52,16 @@ public class XSLPackage extends XSLModuleRoot {
         return version;
     }
 
-    public NestedIntegerValue getPackageVersion() {
+    public PackageVersion getPackageVersion() {
         if (packageVersion == null) {
             try {
                 prepareAttributes();
             } catch (XPathException e) {
-                packageVersion = new NestedIntegerValue(new int[]{1, 0});
+                packageVersion = PackageVersion.ONE_ZERO;
             }
         }
         return packageVersion;
     }
-
 
 
     @Override
@@ -84,7 +82,7 @@ public class XSLPackage extends XSLModuleRoot {
             } else if (f.equals(StandardNames.PACKAGE_VERSION) && getLocalPart().equals("package")) {
                 String pversion = Whitespace.trim(atts.getValue(a));
                 try {
-                    packageVersion = NestedIntegerValue.parse(pversion);
+                    packageVersion = new PackageVersion(pversion);
                 } catch (XPathException ex) {
                     throw new XPathException("Error in xsl:package - The package-version attribute has incorrect character(s): " + pversion);
                 }
@@ -124,7 +122,7 @@ public class XSLPackage extends XSLModuleRoot {
             }
         }
         if (packageVersion == null) {
-            packageVersion = NestedIntegerValue.parse("1.0");
+            packageVersion = PackageVersion.ONE_ZERO;
         }
 
         if (version == null) {
