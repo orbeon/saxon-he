@@ -12,10 +12,7 @@ import com.saxonica.ee.bytecode.ItemCheckerCompiler;
 import com.saxonica.ee.stream.adjunct.ItemCheckerAdjunct;
 import net.sf.saxon.event.SequenceReceiver;
 import net.sf.saxon.event.TypeCheckingFilter;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.RoleLocator;
-import net.sf.saxon.expr.parser.Token;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NamePool;
 import net.sf.saxon.om.SequenceIterator;
@@ -250,7 +247,9 @@ public final class ItemChecker extends UnaryExpression {
 
     /*@NotNull*/
     public Expression copy() {
-        return new ItemChecker(getBaseExpression().copy(), requiredItemType, role);
+        ItemChecker ic2 = new ItemChecker(getBaseExpression().copy(), requiredItemType, role);
+        ExpressionTool.copyLocationInfo(this, ic2);
+        return ic2;
     }
 
 
