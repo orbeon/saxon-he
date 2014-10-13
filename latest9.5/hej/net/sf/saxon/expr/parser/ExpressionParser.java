@@ -7,7 +7,6 @@
 
 package net.sf.saxon.expr.parser;
 
-import net.sf.saxon.expr.CastableToUnion;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.LocationProvider;
 import net.sf.saxon.expr.*;
@@ -160,6 +159,10 @@ public class ExpressionParser {
 
     public NameChecker getNameChecker() {
         return nameChecker;
+    }
+
+    public void setCatchDepth(int depth) {
+        catchDepth = depth;
     }
 
     /**
