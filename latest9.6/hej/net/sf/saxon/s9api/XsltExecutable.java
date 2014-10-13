@@ -128,6 +128,9 @@ public class XsltExecutable {
     /*@NotNull*/
     public HashMap<QName, ParameterDetails> getGlobalParameters() {
         List<GlobalVariable> globals = preparedStylesheet.getCompiledGlobalVariables();
+        if (globals == null) {
+            return new HashMap<QName, ParameterDetails>(1);
+        }
         HashMap<QName, ParameterDetails> params = new HashMap<QName, ParameterDetails>(globals.size());
         for (GlobalVariable v : globals) {
             if (v instanceof GlobalParam) {
