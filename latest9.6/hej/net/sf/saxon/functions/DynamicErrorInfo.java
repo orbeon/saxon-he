@@ -105,6 +105,21 @@ public class DynamicErrorInfo extends ExtensionFunctionDefinition {
     }
 
     /**
+     * Ask whether the function has side-effects. If the function does have side-effects, the optimizer
+     * will be less aggressive in moving or removing calls to the function. However, calls on functions
+     * with side-effects can never be guaranteed.
+     *
+     * @return true if the function has side-effects (including creation of new nodes, if the
+     *         identity of those nodes is significant). The default implementation returns false.
+     */
+    @Override
+    public boolean hasSideEffects() {
+        // return true to prevent loop-lifting out of the try/catch expression: see bug 2181
+        return true;
+    }
+
+
+    /**
      * Create a call on this function. This method is called by the compiler when it identifies
      * a function call that calls this function.
      */
