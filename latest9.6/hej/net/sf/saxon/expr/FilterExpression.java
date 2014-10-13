@@ -1112,13 +1112,15 @@ public final class FilterExpression extends Expression implements ContextSwitchi
                                 if (base instanceof VariableReference) {
                                     Sequence baseVal = ((VariableReference)base).evaluateVariable(context);
                                     if (baseVal instanceof MemoClosure) {
-                                        return ((MemoClosure)baseVal).itemAt(pos - 1).iterate();
+                                        final Item m = ((MemoClosure) baseVal).itemAt(pos - 1);
+                                        return m == null ? EmptyIterator.emptyIterator() : m.iterate();
                                     } else {
                                         Item m = SequenceTool.toGroundedValue(baseVal).itemAt(pos - 1);
                                         return m == null ? EmptyIterator.emptyIterator() : m.iterate();
                                     }
                                 } else if (base instanceof Literal) {
-                                    return ((Literal)base).getValue().itemAt(pos - 1).iterate();
+                                    final Item m = ((Literal) base).getValue().itemAt(pos - 1);
+                                    return m == null ? EmptyIterator.emptyIterator() : m.iterate();
                                 } else {
                                     SequenceIterator baseIter = base.iterate(context);
                                     return SubsequenceIterator.make(baseIter, pos, pos);
