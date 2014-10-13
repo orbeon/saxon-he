@@ -4600,6 +4600,7 @@ public class XQueryParser extends XPathParser {
                 parser.setDefaultContainer(getDefaultContainer());
                 parser.setScanOnly(scanOnly);
                 parser.setRangeVariableStack(rangeVariables);
+                parser.setCatchDepth(catchDepth);
                 exp = parser.parse(avt, i0 + 1, Token.RCURLY, lineNumber, env);
                 if (!scanOnly) {
                     exp = ExpressionVisitor.make(env).simplify(exp);

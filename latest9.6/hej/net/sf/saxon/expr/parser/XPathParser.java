@@ -154,6 +154,10 @@ public class XPathParser {
         return defaultContainer;
     }
 
+    public void setCatchDepth(int depth) {
+        catchDepth = depth;
+    }
+
     /**
      * Read the next token, catching any exception thrown by the tokenizer
      *
