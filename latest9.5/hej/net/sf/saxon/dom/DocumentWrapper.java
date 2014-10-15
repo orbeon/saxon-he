@@ -243,8 +243,13 @@ public class DocumentWrapper extends DOMNodeWrapper implements DocumentInfo {
         try {
             URI systemIdURI = new URI(systemId);
             if (!systemIdURI.isAbsolute()) {
-                systemIdURI = new URI(getBaseURI()).resolve(systemIdURI);
-                systemId = systemIdURI.toString();
+                String base = getBaseURI();
+                if (base != null) {
+                    systemIdURI = new URI(base).resolve(systemIdURI);
+                    systemId = systemIdURI.toString();
+                } else {
+                    // base URI unknown: return the relative URI as written
+                }
             }
         } catch (URISyntaxException err) {
             // invalid URI: no action - return the "URI" as written
