@@ -282,7 +282,15 @@ public class DocumentWrapper extends DOMNodeWrapper implements DocumentInfo {
         String systemId = entity.getSystemId();
         try {
             URI systemIdURI = new URI(systemId);
+
             if (!systemIdURI.isAbsolute()) {
+                String base = getBaseURI();
+                if (base != null) {
+                    systemIdURI = new URI(base).resolve(systemIdURI);
+                    systemId = systemIdURI.toString();
+                } else {
+                    // base URI unknown: return the relative URI as written
+                }
                 systemIdURI = new URI(getBaseURI()).resolve(systemIdURI);
                 systemId = systemIdURI.toString();
             }
