@@ -1335,8 +1335,10 @@ public class StylesheetPackage extends StylesheetModule implements GlobalVariabl
             if (comp.getProcedure() instanceof GlobalVariable) {
                 GlobalVariable gv = (GlobalVariable)comp.getProcedure();
                 pss.registerGlobalVariable(gv);
-                int slot = pss.getGlobalVariableMap().allocateSlotNumber(gv.getVariableQName());
-                gv.setBinderySlotNumber(slot);
+                if (!gv.isUnused()) {
+                    int slot = pss.getGlobalVariableMap().allocateSlotNumber(gv.getVariableQName());
+                    gv.setBinderySlotNumber(slot);
+                }
             }
         }
 
@@ -1344,8 +1346,10 @@ public class StylesheetPackage extends StylesheetModule implements GlobalVariabl
             if (comp.getProcedure() instanceof GlobalVariable) {
                 GlobalVariable gv = (GlobalVariable)comp.getProcedure();
                 pss.registerGlobalVariable(gv);
-                int slot = pss.getGlobalVariableMap().allocateSlotNumber(gv.getVariableQName());
-                gv.setBinderySlotNumber(slot);
+                if (!gv.isUnused()) {
+                    int slot = pss.getGlobalVariableMap().allocateSlotNumber(gv.getVariableQName());
+                    gv.setBinderySlotNumber(slot);
+                }
             }
         }
 

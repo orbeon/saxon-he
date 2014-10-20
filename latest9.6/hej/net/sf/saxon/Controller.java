@@ -2448,12 +2448,14 @@ public class Controller {
         List<GlobalVariable> vars = getExecutable().getCompiledGlobalVariables();
         if (vars != null) {
             for (GlobalVariable var : vars) {
-                try {
-                    var.evaluateVariable(context, var.getDeclaringComponent());
-                } catch (XPathException err) {
-                    // Don't report an exception unless the variable is actually evaluated
-                    SingletonClosure closure = new SingletonClosure(new ErrorExpression(err), context);
-                    getBindery().setGlobalVariable(var, closure);
+                if (!var.isUnused()) {
+                    try {
+                        var.evaluateVariable(context, var.getDeclaringComponent());
+                    } catch (XPathException err) {
+                        // Don't report an exception unless the variable is actually evaluated
+                        SingletonClosure closure = new SingletonClosure(new ErrorExpression(err), context);
+                        getBindery().setGlobalVariable(var, closure);
+                    }
                 }
             }
         }

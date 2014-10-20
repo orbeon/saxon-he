@@ -329,6 +329,22 @@ public class GlobalVariable extends ComponentBody implements Binding, Container,
     }
 
     /**
+     * Mark this variable as unused
+     */
+
+    public void setUnused() {
+        binderySlotNumber = -9234;
+    }
+
+    /**
+     * Ask if this variable is unused
+     */
+
+    public boolean isUnused() {
+        return binderySlotNumber == -9234;
+    }
+
+    /**
      * Get the slot number allocated to this variable in the Bindery
      *
      * @return the slot number, that is the position allocated to the variable within the Bindery

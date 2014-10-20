@@ -10,7 +10,9 @@ package net.sf.saxon.testdriver;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
-import net.sf.saxon.lib.*;
+import net.sf.saxon.lib.EnvironmentVariableResolver;
+import net.sf.saxon.lib.FeatureKeys;
+import net.sf.saxon.lib.OutputURIResolver;
 import net.sf.saxon.s9api.*;
 import net.sf.saxon.trans.XPathException;
 
@@ -82,7 +84,8 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
 
     protected boolean isSlow(String testName) {
         return testName.startsWith("regex-classes") ||
-                testName.equals("normalize-unicode-008");
+                testName.equals("normalize-unicode-008") ||
+                testName.startsWith("xp-"); // test driver cannot handle the new xp- tests
     }
 
 

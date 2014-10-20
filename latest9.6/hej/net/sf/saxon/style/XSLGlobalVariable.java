@@ -9,9 +9,9 @@ package net.sf.saxon.style;
 
 import net.sf.saxon.expr.Component;
 import net.sf.saxon.expr.Expression;
+import net.sf.saxon.expr.instruct.ComponentBody;
 import net.sf.saxon.expr.instruct.GlobalParam;
 import net.sf.saxon.expr.instruct.GlobalVariable;
-import net.sf.saxon.expr.instruct.ComponentBody;
 import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
@@ -243,7 +243,9 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
 
     public void compileDeclaration(Compilation compilation, ComponentDeclaration decl) throws XPathException {
 
-        if (sourceBinding.getReferences().isEmpty() && !isAssignable() && getVisibility() == Visibility.PRIVATE) {
+        boolean unused = sourceBinding.getReferences().isEmpty() && !isAssignable() &&
+                getVisibility() == Visibility.PRIVATE;
+        if (unused && !compilation.getCompilerInfo().isCompileWithTracing()) {
             redundant = true;
             // Remove the global variable from the package (otherwise a failure can occur
             // when pre-evaluating global variables)
@@ -270,6 +272,9 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
             //int slot = compilation.getGlobalVariableMap().allocateSlotNumber(sourceBinding.getVariableQName());
             //inst.setSlotNumber(slot);
             inst.setRequiredType(getRequiredType());
+            if (unused) {
+                inst.setUnused();
+            }
             sourceBinding.fixupBinding(inst);
             compiledVariable = inst;
         }
