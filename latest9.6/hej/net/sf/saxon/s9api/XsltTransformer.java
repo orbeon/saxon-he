@@ -573,7 +573,11 @@ public class XsltTransformer implements Destination {
             pipe.setLocationProvider(controller.getExecutable().getLocationMap());
             return new ReconfigurableSerializer(r, serializer.getOutputProperties(), serializer.getResult());
         } else {
-            return destination.getReceiver(controller.getConfiguration());
+            Receiver r = destination.getReceiver(controller.getConfiguration());
+            PipelineConfiguration pipe = r.getPipelineConfiguration();
+            pipe.setController(controller);
+            pipe.setLocationProvider(controller.getExecutable().getLocationMap());
+            return r;
         }
     }
 
