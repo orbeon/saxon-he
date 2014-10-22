@@ -262,7 +262,7 @@
             <factory name="com.saxonica.config.EnterpriseTransformerFactory"/>
             <param name="changes-article" expression="../viewer_app/doc/changes-article.xml"/>
             <param name="functions-article" expression="../viewer_app/doc/functions-article.xml"/>
-           <param name="base-uri" expression="${userdoc.dir}/viewer_app/html"/>
+           <param name="base-uri" expression="${userdoc.dir}/viewer_app/html/documentation"/>
         </xslt>
         <copy file="${userdoc.dir}/viewer_app/cetree.css" tofile="${userdoc.dir}/viewer_app/html/cetree.css"/>
 
