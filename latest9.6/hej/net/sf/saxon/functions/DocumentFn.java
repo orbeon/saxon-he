@@ -37,6 +37,7 @@ import javax.xml.transform.SourceLocator;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -512,6 +513,16 @@ public class DocumentFn extends SystemFunctionCall implements Callable {
                 ex.printStackTrace();
             }
             throw de;
+        }
+
+        if(source instanceof StreamSource && ((StreamSource)source).getInputStream() == null && ((StreamSource)source).getReader() == null) {
+            String uri = source.getSystemId();
+            resolver = context.getController().getStandardURIResolver();
+            try {
+                source = resolver.resolve(uri, "");
+            } catch (TransformerException ex) {
+                throw XPathException.makeXPathException(ex);
+            }
         }
 
         // if a user URI resolver returns null, try the standard one
