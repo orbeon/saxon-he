@@ -23,7 +23,7 @@ import net.sf.saxon.regex.ARegularExpression;
 import net.sf.saxon.regex.JavaRegularExpression;
 import net.sf.saxon.regex.RegularExpression;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.SchemaType;
+import net.sf.saxon.type.ExternalObjectType;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
@@ -248,7 +248,7 @@ public class JavaPlatform implements Platform {
         // do nothing
     }
 
-    public SchemaType getExternalObjectType(Configuration config, String uri, String localName) {
+    public ExternalObjectType getExternalObjectType(Configuration config, String uri, String localName) {
         throw new UnsupportedOperationException("getExternalObjectType for Java");
     }
 

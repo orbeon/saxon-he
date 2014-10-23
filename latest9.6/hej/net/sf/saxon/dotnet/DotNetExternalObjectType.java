@@ -7,7 +7,6 @@
 
 package net.sf.saxon.dotnet;
 
-import com.saxonica.ee.schema.UserSimpleType;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.Literal;
@@ -19,22 +18,20 @@ import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
-import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.Whitespace;
 
-import java.util.Collections;
-import java.util.Set;
-
 /**
- * This class represents the type of an external Java object returned by
+ * This class represents the type of an external dotnet object returned by
  * an extension function, or supplied as an external variable/parameter.
  */
 
-public class DotNetExternalObjectType implements AtomicType {
+public class DotNetExternalObjectType extends ExtensionObjectType implements ItemType {
 
     private transient cli.System.Type dotNetType;
     private Configuration config;
     private int fingerprint;
+
+    public DotNetExternalObjectType(){}
 
     //public static final ExternalObjectType GENERAL_EXTERNAL_OBJECT_TYPE = new ExternalObjectType(Object.class, config);
 
@@ -86,24 +83,15 @@ public class DotNetExternalObjectType implements AtomicType {
         return true;
     }
 
-    /**
-     * Determine whether this is a built-in type or a user-defined type
-     *
-     * @return false, this type is not built-in
-     */
-
-    public boolean isBuiltInType() {
-        return false;
-    }
 
     /**
      * Ask whether this is a plain type (a type whose instances are always atomic values)
      *
-     * @return true
+     * @return false
      */
 
     public boolean isPlainType() {
-        return true;
+        return false;
     }
 
     /**
@@ -131,40 +119,8 @@ public class DotNetExternalObjectType implements AtomicType {
         return 0;
     }
 
-    /**
-     * Determine whether the type is abstract, that is, whether it cannot have instances that are not also
-     * instances of some concrete subtype
-     *
-     * @return false, this type is not abstract
-     */
 
-    public boolean isAbstract() {
-        return false;
-    }
 
-    /**
-     * Determine whether the atomic type is a primitive type.  The primitive types are
-     * the 19 primitive types of XML Schema, plus xs:integer, xs:dayTimeDuration and xs:yearMonthDuration;
-     * xs:untypedAtomic; and all supertypes of these (xs:anyAtomicType, xs:numeric, ...)
-     *
-     * @return true if the type is considered primitive under the above rules
-     */
-
-    public boolean isPrimitiveType() {
-        return false;
-    }
-
-    /**
-     * Determine whether the atomic type is ordered, that is, whether less-than and greater-than comparisons
-     * are permitted
-     *
-     * @param optimistic
-     * @return true if ordering operations are permitted
-     */
-
-    public boolean isOrdered(boolean optimistic) {
-        return false;
-    }
 
 
     /**
@@ -179,12 +135,7 @@ public class DotNetExternalObjectType implements AtomicType {
         return null;  //AUTO
     }
 
-    /**
-     * Get the validation status - always valid
-     */
-    public final int getValidationStatus() {
-        return VALIDATED;
-    }
+
 
     /**
      * Returns the value of the 'block' attribute for this type, as a bit-signnificant
@@ -253,17 +204,15 @@ public class DotNetExternalObjectType implements AtomicType {
     }
 
     /**
-     * Get the primitive item type corresponding to this item type. For item(),
-     * this is Type.ITEM. For node(), it is Type.NODE. For specific node kinds,
-     * it is the value representing the node kind, for example Type.ELEMENT.
-     * For anyAtomicValue it is Type.ATOMIC_VALUE. For numeric it is Type.NUMBER.
-     * For other atomic types it is the primitive type as defined in XML Schema,
-     * except that INTEGER is considered to be a primitive type.
+     * Get the primitive item type corresponding to this item type.
+     *
+     * @return EXTERNAL_OBJECT_TYPE, the ExternalObjectType that encapsulates
+     *         the Java type Object.class.
      */
 
     /*@NotNull*/
     public ItemType getPrimitiveItemType() {
-        return this;
+        return BuiltInAtomicType.STRING;
     }
 
     /**
@@ -279,21 +228,16 @@ public class DotNetExternalObjectType implements AtomicType {
         return StandardNames.XS_ANY_ATOMIC_TYPE;
     }
 
+    public PlainType getAtomizedItemType() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public String toString() {
         String name = dotNetType.ToString();
         name = name.replace('$', '-');
         return "type:" + name;
     }
 
-    /**
-     * Get the item type of the atomic values that will be produced when an item
-     * of this type is atomized
-     */
-
-    /*@NotNull*/
-    public AtomicType getAtomizedItemType() {
-        return this;
-    }
 
     /**
      * Ask whether values of this type are atomizable
@@ -316,22 +260,7 @@ public class DotNetExternalObjectType implements AtomicType {
         return 0;
     }
 
-//#ifdefined  SCHEMA
 
-    /**
-     * Get the schema component in the form of a function item. This allows schema information
-     * to be made visible to XSLT or XQuery code. The function makes available the contents of the
-     * schema component as defined in the XSD specification. The function takes a string as argument
-     * representing a property name, and returns the corresponding property of the schema component.
-     * There is also a property "class" which returns the kind of schema component, for example
-     * "Attribute Declaration".
-     *
-     * @return the schema component represented as a function from property names to property values.
-     */
-    public FunctionItem getComponentAsFunction() {
-        return UserSimpleType.getComponentAsFunction(this);
-    }
-//#endif
 
     /**
      * Returns the base type that this type inherits from. This method can be used to get the
@@ -479,14 +408,7 @@ public class DotNetExternalObjectType implements AtomicType {
         return value;
     }
 
-    /**
-     * Returns the built-in base type this type is derived from.
-     *
-     * @return the first built-in type found when searching up the type hierarchy
-     */
-    public SchemaType getBuiltInBaseType() {
-        return this;
-    }
+
 
     /**
      * Test whether this simple type is namespace-sensitive, that is, whether
@@ -540,38 +462,8 @@ public class DotNetExternalObjectType implements AtomicType {
     }
 
 
-    /**
-     * Validate that a primitive atomic value is a valid instance of a type derived from the
-     * same primitive type.
-     *
-     * @param primValue    the value in the value space of the primitive type.
-     * @param lexicalValue the value in the lexical space. If null, the string value of primValue
-     *                     is used. This value is checked against the pattern facet (if any)
-     * @param rules        the conversion rules for the configuration
-     * @return null if the value is valid; otherwise, a ValidationFailure object indicating
-     *         the nature of the error.
-     * @throws UnsupportedOperationException in the case of an external object type
-     */
 
-    public ValidationFailure validate(AtomicValue primValue, CharSequence lexicalValue, ConversionRules rules) {
-        throw new UnsupportedOperationException("validate");
-    }
 
-    /**
-     * Analyze an expression to see whether the expression is capable of delivering a value of this
-     * type.
-     *
-     * @param expression the expression that delivers the content
-     * @param kind       the node kind whose content is being delivered: {@link net.sf.saxon.type.Type#ELEMENT},
-     *                   {@link net.sf.saxon.type.Type#ATTRIBUTE}, or {@link net.sf.saxon.type.Type#DOCUMENT}
-     * @param env        the static evaluation context
-     * @throws net.sf.saxon.trans.XPathException
-     *          if the expression will never deliver a value of the correct type
-     */
-
-    public void analyzeContentExpression(Expression expression, int kind, StaticContext env) throws XPathException {
-        analyzeContentExpression(this, expression, env, kind);
-    }
 
     /**
      * Analyze an expression to see whether the expression is capable of delivering a value of this
@@ -627,19 +519,7 @@ public class DotNetExternalObjectType implements AtomicType {
         return false;
     }
 
-    /**
-     * Get a StringConverter, an object which converts strings in the lexical space of this
-     * data type to instances (in the value space) of the data type.
-     * <p/>
-     * <p>This method must return null if the conversion depends on external factors
-     * defined in the conversion rules. In such cases, a converter can be obtained using
-     * {@link net.sf.saxon.lib.ConversionRules#getStringConverter}</p>
-     *
-     * @return a StringConverter to do the conversion, or null if no built-in converter is available.
-     */
-    public StringConverter getStringConverter(ConversionRules rules) {
-        return null;
-    }
+
 
     /**
      * Check whether a given input string is valid according to this SimpleType
@@ -716,16 +596,6 @@ public class DotNetExternalObjectType implements AtomicType {
         // no action
     }
 
-    /**
-     * Get the list of plain types that are subsumed by this type
-     *
-     * @return for an atomic type, the type itself; for a plain union type, the list of plain types
-     *         in its transitive membership, in declaration order
-     */
-    /*@NotNull*/
-    public Set<? extends PlainType> getPlainMemberTypes() {
-        return Collections.singleton(this);
-    }
 
     public double getDefaultPriority() {
         return 0.5;

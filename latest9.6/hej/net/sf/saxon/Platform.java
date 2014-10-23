@@ -13,7 +13,7 @@ import net.sf.saxon.expr.sort.SimpleCollation;
 import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.regex.RegularExpression;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.SchemaType;
+import net.sf.saxon.type.ExtensionObjectType;
 import org.xml.sax.XMLReader;
 
 import javax.xml.transform.Source;
@@ -181,7 +181,7 @@ public interface Platform {
      * @return the SchemaType object representing this type
      */
 
-    public SchemaType getExternalObjectType(Configuration config, String uri, String localName);
+    public ExtensionObjectType getExternalObjectType(Configuration config, String uri, String localName);
 
     /**
      * Return the name of the directory in which the software is installed (if available)

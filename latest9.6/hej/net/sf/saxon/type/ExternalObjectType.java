@@ -22,7 +22,7 @@ import net.sf.saxon.value.ObjectValue;
  * an extension function, or supplied as an external variable/parameter.
  */
 
-public class ExternalObjectType implements ItemType {
+public class ExternalObjectType extends ExtensionObjectType implements ItemType {
 
     public static ExternalObjectType EXTERNAL_OBJECT_TYPE = new ExternalObjectType(Object.class);
 

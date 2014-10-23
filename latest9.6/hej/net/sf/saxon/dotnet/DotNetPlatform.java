@@ -24,7 +24,7 @@ import net.sf.saxon.regex.ARegularExpression;
 import net.sf.saxon.regex.JavaRegularExpression;
 import net.sf.saxon.regex.RegularExpression;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.SchemaType;
+import net.sf.saxon.type.ExtensionObjectType;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
@@ -343,7 +343,7 @@ public class DotNetPlatform implements Platform {
      */
 
 
-    public SchemaType getExternalObjectType(Configuration config, String uri, String localName) {
+    public ExtensionObjectType getExternalObjectType(Configuration config, String uri, String localName) {
         if (uri.equals(NamespaceConstant.DOT_NET_TYPE)) {
             return new DotNetExternalObjectType(cli.System.Type.GetType(localName), config);
         } else {
