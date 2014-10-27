@@ -18,10 +18,7 @@ import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.PathMap;
 import net.sf.saxon.expr.sort.DocumentOrderIterator;
 import net.sf.saxon.expr.sort.GlobalOrderComparer;
-import net.sf.saxon.lib.FeatureKeys;
-import net.sf.saxon.lib.ParseOptions;
-import net.sf.saxon.lib.RelativeURIResolver;
-import net.sf.saxon.lib.StandardErrorHandler;
+import net.sf.saxon.lib.*;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.NonDelegatingURIResolver;
@@ -514,8 +511,11 @@ public class DocumentFn extends SystemFunctionCall implements Callable {
             }
             throw de;
         }
-
-        if(source instanceof StreamSource && ((StreamSource)source).getInputStream() == null && ((StreamSource)source).getReader() == null) {
+        Source sourcei = source;
+        if(sourcei instanceof AugmentedSource) {
+            sourcei = ((AugmentedSource)sourcei).getContainedSource();
+        }
+        if(sourcei instanceof StreamSource && ((StreamSource)sourcei).getInputStream() == null && ((StreamSource)sourcei).getReader() == null) {
             String uri = source.getSystemId();
             resolver = context.getController().getStandardURIResolver();
             try {
