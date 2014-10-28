@@ -1181,8 +1181,8 @@ public class StaticQueryContext {
      */
 
     public void setErrorListener(ErrorListener listener) {
-        if (errorListener instanceof StandardErrorListener) {
-            errorListener = ((StandardErrorListener) errorListener).makeAnother(Configuration.XQUERY);
+        if (listener instanceof StandardErrorListener) {
+            errorListener = ((StandardErrorListener) listener).makeAnother(Configuration.XQUERY);
             ((StandardErrorListener) errorListener).setRecoveryPolicy(Configuration.DO_NOT_RECOVER);
         } else if (listener instanceof UnfailingErrorListener) {
             errorListener = (UnfailingErrorListener) listener;
