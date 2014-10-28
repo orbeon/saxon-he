@@ -472,6 +472,7 @@ namespace Saxon.Api
 
         public override JResult GetResult(JPipelineConfiguration pipe)
         {
+			builder.setPipelineConfiguration (pipe);
             return builder;
         }
     }
