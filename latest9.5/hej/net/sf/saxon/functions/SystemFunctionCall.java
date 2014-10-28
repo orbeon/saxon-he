@@ -13,10 +13,7 @@ import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.AnyItemType;
-import net.sf.saxon.type.FunctionItemType;
-import net.sf.saxon.type.ItemType;
-import net.sf.saxon.type.TypeHierarchy;
+import net.sf.saxon.type.*;
 import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.SequenceType;
 
@@ -330,7 +327,8 @@ public abstract class SystemFunctionCall extends FunctionCall implements Callabl
             }
         } else if ((details.properties & StandardFunction.AS_PRIM_ARG0) != 0) {
             if (argument.length > 0) {
-                return argument[0].getItemType(th).getPrimitiveItemType();
+                ItemType t0 = argument[0].getItemType(th).getPrimitiveItemType();
+                return t0 instanceof AtomicType ? t0 : type;  // bug 2200
             } else {
                 return AnyItemType.getInstance();
                 // if there is no first argument, an error will be reported
