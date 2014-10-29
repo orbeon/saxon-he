@@ -146,7 +146,7 @@ public class DotNetPlatform implements Platform {
 
     public Source getParserSource(PipelineConfiguration pipe, StreamSource input, int validation, boolean dtdValidation,
                                   int stripspace) {
-        Configuration config = pipe.getConfiguration();
+      Configuration config = pipe.getConfiguration();
         boolean preferJaxp = (Boolean) config.getConfigurationProperty(FeatureKeys.PREFER_JAXP_PARSER);
         InputStream is = input.getInputStream();
         if (is != null) {
@@ -216,10 +216,10 @@ public class DotNetPlatform implements Platform {
                 return input;
             }
         }
-        String uri = input.getSystemId();
+       /* String uri = input.getSystemId();
         if (uri != null) {
             try {
-                Source r = pipe.getURIResolver().resolve(uri, null);
+                Source r = pipe.getURIResolver().resolve(uri,null);
                 if (r == null) {
                     return input;
                 } else if (r instanceof AugmentedSource) {
@@ -241,7 +241,7 @@ public class DotNetPlatform implements Platform {
             } catch (TransformerException err) {
                 return input;
             }
-        }
+        } */
         return input;
     }
 

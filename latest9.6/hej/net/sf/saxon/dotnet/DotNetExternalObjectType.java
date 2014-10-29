@@ -31,7 +31,6 @@ public class DotNetExternalObjectType extends ExtensionObjectType implements Ite
     private Configuration config;
     private int fingerprint;
 
-    public DotNetExternalObjectType(){}
 
     //public static final ExternalObjectType GENERAL_EXTERNAL_OBJECT_TYPE = new ExternalObjectType(Object.class, config);
 
@@ -229,7 +228,7 @@ public class DotNetExternalObjectType extends ExtensionObjectType implements Ite
     }
 
     public PlainType getAtomizedItemType() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     public String toString() {

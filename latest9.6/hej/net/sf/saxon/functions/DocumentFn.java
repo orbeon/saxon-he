@@ -511,19 +511,6 @@ public class DocumentFn extends SystemFunctionCall implements Callable {
             }
             throw de;
         }
-        Source sourcei = source;
-        if(sourcei instanceof AugmentedSource) {
-            sourcei = ((AugmentedSource)sourcei).getContainedSource();
-        }
-        if(sourcei instanceof StreamSource && ((StreamSource)sourcei).getInputStream() == null && ((StreamSource)sourcei).getReader() == null) {
-            String uri = source.getSystemId();
-            resolver = context.getController().getStandardURIResolver();
-            try {
-                source = resolver.resolve(uri, "");
-            } catch (TransformerException ex) {
-                throw XPathException.makeXPathException(ex);
-            }
-        }
 
         // if a user URI resolver returns null, try the standard one
         // (Note, the standard URI resolver never returns null)
