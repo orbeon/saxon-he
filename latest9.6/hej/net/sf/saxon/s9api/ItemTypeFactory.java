@@ -479,7 +479,7 @@ public class ItemTypeFactory {
      */
 
     public ItemType getExternalObjectType(Class externalClass) {
-        ExternalObjectType type = new ExternalObjectType(externalClass, processor.getUnderlyingConfiguration());
+        JavaExternalObjectType type = new JavaExternalObjectType(externalClass, processor.getUnderlyingConfiguration());
         return new ConstructedItemType(type, processor);
     }
 

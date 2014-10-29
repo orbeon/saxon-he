@@ -16,7 +16,7 @@ import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.type.BuiltInListType;
-import net.sf.saxon.type.ExternalObjectType;
+import net.sf.saxon.type.JavaExternalObjectType;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.BooleanValue;
@@ -92,7 +92,7 @@ public class TypeAvailable extends Available implements Callable {
         String uri = qName.getURI();
         if (uri.equals(NamespaceConstant.JAVA_TYPE)) {
             try {
-                String className = ExternalObjectType.localNameToClassName(qName.getLocalPart());
+                String className = JavaExternalObjectType.localNameToClassName(qName.getLocalPart());
                 config.getClass(className, false, null);
                 return true;
             } catch (XPathException err) {

@@ -431,7 +431,7 @@ public abstract class PJConverter {
                     return Atomic.INSTANCE;
                 }
 
-            } else if (itemType instanceof ExternalObjectType) {
+            } else if (itemType instanceof JavaExternalObjectType) {
                 return UnwrapExternalObject.INSTANCE;
 
             } else if (itemType instanceof ErrorType) {

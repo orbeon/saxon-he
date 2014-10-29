@@ -1062,13 +1062,13 @@ public class XPathParser {
         } else if (uri.equals(NamespaceConstant.JAVA_TYPE)) {
             Class theClass;
             try {
-                String className = ExternalObjectType.localNameToClassName(local);
+                String className = JavaExternalObjectType.localNameToClassName(local);
                 theClass = env.getConfiguration().getClass(className, false, null);
             } catch (XPathException err) {
                 grumble("Unknown Java class " + local, "XPST0051");
-                return ExternalObjectType.EXTERNAL_OBJECT_TYPE;
+                return JavaExternalObjectType.EXTERNAL_OBJECT_TYPE;
             }
-            return new ExternalObjectType(theClass, env.getConfiguration());
+            return new JavaExternalObjectType(theClass, env.getConfiguration());
         } else if (uri.equals(NamespaceConstant.DOT_NET_TYPE)) {
             return (AtomicType) Configuration.getPlatform().getExternalObjectType(env.getConfiguration(), uri, local);
         } else {

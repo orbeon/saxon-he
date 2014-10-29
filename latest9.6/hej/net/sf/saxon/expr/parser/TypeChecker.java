@@ -317,8 +317,8 @@ public final class TypeChecker {
                 exp = makeFunctionSequenceCoercer(exp, (FunctionItemType) reqItemType, visitor, role);
                 itemTypeOK = true;
 
-            } else if (reqItemType instanceof ExternalObjectType &&
-                    Sequence.class.isAssignableFrom(((ExternalObjectType) reqItemType).getJavaClass()) &&
+            } else if (reqItemType instanceof JavaExternalObjectType &&
+                    Sequence.class.isAssignableFrom(((JavaExternalObjectType) reqItemType).getJavaClass()) &&
                     reqCard == StaticProperty.EXACTLY_ONE) {
                 // special case: allow an extension function to call an instance method on the implementation type of an XDM value
                 // we leave the conversion to be sorted out at run-time
@@ -712,7 +712,7 @@ public final class TypeChecker {
                 th.relationship(t, BuiltInAtomicType.ANY_URI) == TypeHierarchy.DISJOINT &&
                 th.relationship(t, BuiltInAtomicType.UNTYPED_ATOMIC) == TypeHierarchy.DISJOINT &&
                 th.relationship(t, BuiltInAtomicType.NUMERIC) == TypeHierarchy.DISJOINT &&
-                !(t instanceof ExternalObjectType)) {
+                !(t instanceof JavaExternalObjectType)) {
             XPathException err = new XPathException(
                     "Effective boolean value is defined only for sequences containing " +
                             "booleans, strings, numbers, URIs, or nodes");

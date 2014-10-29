@@ -206,7 +206,7 @@ public abstract class JPConverter {
             return VoidConverter.INSTANCE;
         }
 
-        return new WrapExternalObject(new ExternalObjectType(javaClass, config));
+        return new WrapExternalObject(new JavaExternalObjectType(javaClass, config));
     }
 
     /**

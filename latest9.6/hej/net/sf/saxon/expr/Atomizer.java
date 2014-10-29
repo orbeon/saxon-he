@@ -22,7 +22,6 @@ import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.iter.AtomizingIterator;
 import net.sf.saxon.tree.iter.*;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.AtomicValue;
@@ -405,7 +404,7 @@ public final class Atomizer extends UnaryExpression {
             }
 
             return in.getAtomizedItemType();
-        } else if (in instanceof ExternalObjectType) {
+        } else if (in instanceof JavaExternalObjectType) {
             return in.getAtomizedItemType();
         } else if (in instanceof FunctionItemType) {
             return null;

@@ -271,7 +271,7 @@ public final class SingletonAtomizer extends UnaryExpression {
             }
 
             return in.getAtomizedItemType();
-        } else if (in instanceof ExternalObjectType) {
+        } else if (in instanceof JavaExternalObjectType) {
             return in.getAtomizedItemType();
         }
         return BuiltInAtomicType.ANY_ATOMIC;

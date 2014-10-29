@@ -331,9 +331,9 @@ public class TypeHierarchy {
         } else if (t2 instanceof AnyItemType) {
             return SUBSUMED_BY;
         } else if (t1.isPlainType()) {
-            if (t2 instanceof NodeTest || t2 instanceof FunctionItemType || t2 instanceof ExternalObjectType) {
+            if (t2 instanceof NodeTest || t2 instanceof FunctionItemType || t2 instanceof JavaExternalObjectType) {
                 return DISJOINT;
-            } else if (t2 instanceof ExternalObjectType) {
+            } else if (t2 instanceof JavaExternalObjectType) {
                 if (((AtomicType) t1).getFingerprint() == StandardNames.XS_ANY_ATOMIC_TYPE) {
                     return SUBSUMES;
                 } else {
@@ -436,7 +436,7 @@ public class TypeHierarchy {
                 throw new IllegalStateException();
             }
         } else if (t1 instanceof NodeTest) {
-            if (t2.isPlainType() || (t2 instanceof FunctionItemType) || (t2 instanceof ExternalObjectType)) {
+            if (t2.isPlainType() || (t2 instanceof FunctionItemType) || (t2 instanceof JavaExternalObjectType)) {
                 return DISJOINT;
             } else {
                 // both types are NodeTests
@@ -524,9 +524,9 @@ public class TypeHierarchy {
                     }
                 }
             }
-        } else if (t1 instanceof ExternalObjectType) {
-            if (t2 instanceof ExternalObjectType) {
-                return ((ExternalObjectType) t1).getRelationship((ExternalObjectType) t2);
+        } else if (t1 instanceof JavaExternalObjectType) {
+            if (t2 instanceof JavaExternalObjectType) {
+                return ((JavaExternalObjectType) t1).getRelationship((JavaExternalObjectType) t2);
             } else {
                 return DISJOINT;
             }

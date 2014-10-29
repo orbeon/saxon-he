@@ -17,7 +17,7 @@ import net.sf.saxon.lib.SerializerFactory;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.s9api.*;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.ExternalObjectType;
+import net.sf.saxon.type.JavaExternalObjectType;
 import net.sf.saxon.value.EmptySequence;
 import net.sf.saxon.value.ObjectValue;
 import net.sf.saxon.value.UntypedAtomicValue;
@@ -218,7 +218,7 @@ public class TransformerImpl extends IdentityTransformer {
                 converted = (Sequence) value;
             } else if (value instanceof String) {
                 converted = new UntypedAtomicValue((String) value);
-            } else if (required.getPrimaryType() instanceof ExternalObjectType) {
+            } else if (required.getPrimaryType() instanceof JavaExternalObjectType) {
                 converted = new ObjectValue<Object>(value);
             } else {
                 JPConverter converter = JPConverter.allocate(value.getClass(), null, config);

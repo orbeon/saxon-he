@@ -14,8 +14,8 @@ import cli.System.Xml.*;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Platform;
 import net.sf.saxon.event.PipelineConfiguration;
-import net.sf.saxon.expr.sort.CodepointCollator;
 import net.sf.saxon.expr.sort.AtomicMatchKey;
+import net.sf.saxon.expr.sort.CodepointCollator;
 import net.sf.saxon.expr.sort.SimpleCollation;
 import net.sf.saxon.lib.*;
 import net.sf.saxon.pull.PullProvider;
@@ -24,13 +24,12 @@ import net.sf.saxon.regex.ARegularExpression;
 import net.sf.saxon.regex.JavaRegularExpression;
 import net.sf.saxon.regex.RegularExpression;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.ExtensionObjectType;
+import net.sf.saxon.type.ExternalObjectType;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamSource;
 import java.io.InputStream;
@@ -343,7 +342,7 @@ public class DotNetPlatform implements Platform {
      */
 
 
-    public ExtensionObjectType getExternalObjectType(Configuration config, String uri, String localName) {
+    public ExternalObjectType getExternalObjectType(Configuration config, String uri, String localName) {
         if (uri.equals(NamespaceConstant.DOT_NET_TYPE)) {
             return new DotNetExternalObjectType(cli.System.Type.GetType(localName), config);
         } else {

@@ -8,8 +8,8 @@
 package net.sf.saxon.value;
 
 import net.sf.saxon.om.AbstractItem;
-import net.sf.saxon.type.ExternalObjectType;
 import net.sf.saxon.type.ItemType;
+import net.sf.saxon.type.JavaExternalObjectType;
 import net.sf.saxon.type.TypeHierarchy;
 
 
@@ -108,7 +108,7 @@ public class ObjectValue<T> extends AbstractItem {
 
     /*@NotNull*/
     public ItemType getItemType(/*@Nullable*/ TypeHierarchy th) {
-        return new ExternalObjectType(value.getClass());
+        return new JavaExternalObjectType(value.getClass());
     }
 
     /**

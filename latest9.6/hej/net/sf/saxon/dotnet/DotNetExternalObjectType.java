@@ -25,7 +25,7 @@ import net.sf.saxon.value.Whitespace;
  * an extension function, or supplied as an external variable/parameter.
  */
 
-public class DotNetExternalObjectType extends ExtensionObjectType implements ItemType {
+public class DotNetExternalObjectType extends ExternalObjectType implements ItemType {
 
     private transient cli.System.Type dotNetType;
     private Configuration config;
@@ -82,16 +82,6 @@ public class DotNetExternalObjectType extends ExtensionObjectType implements Ite
         return true;
     }
 
-
-    /**
-     * Ask whether this is a plain type (a type whose instances are always atomic values)
-     *
-     * @return false
-     */
-
-    public boolean isPlainType() {
-        return false;
-    }
 
     /**
      * Get the name of this type as a StructuredQName, unless the type is anonymous, in which case
