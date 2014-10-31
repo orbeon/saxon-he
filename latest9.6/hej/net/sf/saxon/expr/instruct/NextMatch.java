@@ -194,6 +194,7 @@ public class NextMatch extends ApplyImports {
             c2.setTunnelParameters(tunnelParams);
             c2.openStackFrame(nh.getStackFrameMap());
             c2.setCurrentTemplateRule(rule);
+            c2.setCurrentComponent(nh.getDeclaringComponent()); // bug 2160
 
             // System.err.println("Tail call on template");
 
