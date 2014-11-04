@@ -151,7 +151,9 @@ public class DotNetURIResolver implements RelativeURIResolver, EntityResolver {
                 return source;
             } else if (obj instanceof Source) {
                 return ((Source) obj);
-            } else {
+            } else if(obj == null) {
+                return null;
+            } else{
                 throw new XPathException(
                         "Unrecognized object returned by XmlResolver (type " + obj.getClass().getName());
             }
