@@ -507,11 +507,13 @@ public class Xslt30Transformer {
 
     public void applyTemplates(Source source, Destination destination) throws SaxonApiException {
         prime();
-        if (destination instanceof Serializer) {
+
+        //Moved the commented out code below to the getDestinationReceiver method. See bug issue: #2208
+        /*if (destination instanceof Serializer) {
             Serializer serializer = (Serializer) destination;
             serializer.setDefaultOutputProperties(controller.getExecutable().getDefaultOutputProperties());
             serializer.setCharacterMap(controller.getExecutable().getCharacterMapIndex());
-        }
+        }*/
         try {
             Receiver out = getDestinationReceiver(destination);
             controller.initializeController(globalParameterSet);
@@ -658,11 +660,12 @@ public class Xslt30Transformer {
         if (templateName == null) {
             templateName = new QName("xsl", NamespaceConstant.XSLT, "initial-template");
         }
-        if (destination instanceof Serializer) {
+        //Moved the commented out code below to the getDestinationReceiver method. See bug issue: #2208
+        /*if (destination instanceof Serializer) {
             Serializer serializer = (Serializer) destination;
             serializer.setDefaultOutputProperties(controller.getExecutable().getDefaultOutputProperties());
             serializer.setCharacterMap(controller.getExecutable().getCharacterMapIndex());
-        }
+        } */
         try {
             Receiver out = getDestinationReceiver(destination);
             if (baseOutputUriWasSet) {
@@ -805,6 +808,8 @@ public class Xslt30Transformer {
     private Receiver getDestinationReceiver(Destination destination) throws SaxonApiException {
         if (destination instanceof Serializer) {
             Serializer serializer = (Serializer) destination;
+            serializer.setDefaultOutputProperties(controller.getExecutable().getDefaultOutputProperties());
+            serializer.setCharacterMap(controller.getExecutable().getCharacterMapIndex());
             Object dest = serializer.getOutputDestination();
             if (!baseOutputUriWasSet) {
                 if (dest instanceof File) {
