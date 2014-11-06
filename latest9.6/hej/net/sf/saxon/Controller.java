@@ -1843,16 +1843,16 @@ public class Controller {
                                 "Source document and stylesheet must use the same or compatible Configurations",
                                 SaxonErrorCode.SXXP0004);
                     }
-                    if (startNode instanceof DocumentInfo &&
-                            !(startNode instanceof SpaceStrippedDocument || startNode instanceof TypeStrippedDocument)) {
-                        startNode = prepareInputTree(startNode);
-                    }
+
                     if (startNode instanceof DocumentInfo && ((DocumentInfo) startNode).isTyped() && !executable.isSchemaAware()) {
                         throw new XPathException("Cannot use a schema-validated source document unless the stylesheet is schema-aware");
                     }
                 }
 
             }
+
+            // Apply xsl:strip-space and @strip-type-annotations attributes from the stylesheet
+            // TODO: these should also be applied in the case of non-document nodes
 
             if (stripSourceTrees && executable.stripsWhitespace()) {
                 ItemMappingFunction<Item, Item> spaceStripper =
