@@ -8,9 +8,7 @@
 package net.sf.saxon;
 
 import net.sf.saxon.event.*;
-import net.sf.saxon.expr.ErrorExpression;
-import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.expr.XPathContextMajor;
+import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.*;
 import net.sf.saxon.expr.parser.PathMap;
 import net.sf.saxon.functions.AccessorFn;
@@ -904,27 +902,22 @@ public class Controller {
     }
 
     /**
-     * Set the initial context item, when running XQuery.
-     * <p/>
-     * When a transformation is invoked using the {@link #transform} method, the
-     * initial context node is set automatically. This method is useful in XQuery,
-     * to define an initial context node for evaluating global variables, and also
-     * in XSLT 2.0, when the transformation is started by invoking a named template.
-     * <p/>
-     * <p>When an initial context item is set, it also becomes the context item used for
-     * evaluating global variables. The two context items can only be different when the
-     * {@link #transform} method is used to transform a document starting at a node other
-     * than the root.</p>
-     * <p/>
-     * <p>In XQuery, the two context items are always
-     * the same; in XSLT, the context node for evaluating global variables is the root of the
-     * tree containing the initial context item.</p>
+     * Set the initial context item.
+     *
+     * <p></p>When a transformation is invoked using the {@link #transform} method, the
+     * initial context node is set automatically. But when the
+     * {@link #applyTemplates(net.sf.saxon.om.Sequence, net.sf.saxon.event.Receiver)} method is used, the
+     * global context item can differ from the node to which templates are applied. </p>
      *
      * @param item The initial context item.
      * @since 8.7
      */
 
     public void setInitialContextItem(Item item) {
+        if (item instanceof NodeInfo) {
+            // In XSLT, apply strip-space and strip-type-annotations options
+            item = prepareInputTree(((NodeInfo)item));
+        }
         initialContextItem = item;
         contextForGlobalVariables = item;
     }
@@ -1850,6 +1843,10 @@ public class Controller {
                                 "Source document and stylesheet must use the same or compatible Configurations",
                                 SaxonErrorCode.SXXP0004);
                     }
+                    if (startNode instanceof DocumentInfo &&
+                            !(startNode instanceof SpaceStrippedDocument || startNode instanceof TypeStrippedDocument)) {
+                        startNode = prepareInputTree(startNode);
+                    }
                     if (startNode instanceof DocumentInfo && ((DocumentInfo) startNode).isTyped() && !executable.isSchemaAware()) {
                         throw new XPathException("Cannot use a schema-validated source document unless the stylesheet is schema-aware");
                     }
@@ -1857,6 +1854,33 @@ public class Controller {
 
             }
 
+            if (stripSourceTrees && executable.stripsWhitespace()) {
+                ItemMappingFunction<Item, Item> spaceStripper =
+                        new ItemMappingFunction<Item, Item>() {
+                            public Item mapItem(Item item) throws XPathException {
+                                if (item instanceof DocumentInfo) {
+                                    return new SpaceStrippedDocument((DocumentInfo)item, executable.getStripperRules());
+                                } else {
+                                    return item;
+                                }
+                            }
+                        };
+                iter = new ItemMappingIterator(iter, spaceStripper);
+            }
+
+            if (executable.stripsInputTypeAnnotations()) {
+                ItemMappingFunction<Item, Item> typeStripper =
+                        new ItemMappingFunction<Item, Item>() {
+                            public Item mapItem(Item item) throws XPathException {
+                                if (item instanceof DocumentInfo) {
+                                    return new TypeStrippedDocument((DocumentInfo)item);
+                                } else {
+                                    return item;
+                                }
+                            }
+                        };
+                iter = new ItemMappingIterator(iter, typeStripper);
+            }
 
             outputDestination = openResult(outputDestination, initialContext);
             initialContext.setCurrentIterator(new FocusTrackingIterator(iter.getAnother()));
