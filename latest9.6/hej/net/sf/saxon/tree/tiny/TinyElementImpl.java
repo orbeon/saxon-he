@@ -292,9 +292,10 @@ public final class TinyElementImpl extends TinyParentNodeImpl {
                     String prefix = pool.getPrefix(nameCode);
                     String uri = pool.getURI(nameCode);
                     String local = pool.getLocalName(nameCode);
+                    int options = (!first && (copyOptions & CopyOptions.SOME_NAMESPACES) != 0) ? ReceiverOptions.NAMESPACE_OK : 0;
                     receiver.startElement(new FingerprintedQName(prefix, uri, local, nameCode),
                             typeCode,
-                            locationId, first ? 0 : ReceiverOptions.NAMESPACE_OK);
+                            locationId, options);
 
                     // there is an element to close
                     closePending = true;
