@@ -237,8 +237,15 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             XdmNode initialFunction = (XdmNode) xpath.evaluateSingle("initial-function", testInput);
             XdmNode initialTemplate = (XdmNode) xpath.evaluateSingle("initial-template", testInput);
 
-
-            QName initialModeName = getQNameAttribute(xpath, testInput, "initial-mode/@name");
+            QName initialModeName = null;
+            if (initialMode != null) {
+                if ("#unnamed".equals(initialMode.getAttributeValue(new QName("name"))) ||
+                        "#default".equals(initialMode.getAttributeValue(new QName("name")))) {
+                    // no action. TODO: handle unnamed and default modes differently
+                } else {
+                    initialModeName = getQNameAttribute(xpath, testInput, "initial-mode/@name");
+                }
+            }
             QName initialTemplateName = getQNameAttribute(xpath, testInput, "initial-template/@name");
 
             String outputUri = xpath.evaluate("string(output/@file)", testInput).toString();
