@@ -855,7 +855,8 @@ public abstract class StringConverter extends Converter {
         /*@NotNull*/
         public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
             if (nsResolver == null) {
-                throw new UnsupportedOperationException("Cannot validate a QName without a namespace resolver");
+                // See bug 2213
+                return new ValidationFailure("Cannot validate a QName without a namespace resolver");
             }
             try {
                 String[] parts = NameChecker.getQNameParts(Whitespace.trimWhitespace(input));
