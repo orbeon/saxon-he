@@ -7,7 +7,6 @@
 
 package net.sf.saxon.query;
 
-import net.sf.saxon.expr.GlobalVariableReference;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.*;
@@ -118,7 +117,7 @@ public class QueryModule implements StaticContext {
         pd.setAllowXPath30(getXPathLanguageLevel().equals(DecimalValue.THREE));
         pd.setHostLanguage(Configuration.XQUERY);
         pd.setSchemaAware(isSchemaAware());
-        pd.setLocationMap(sqc.makeExecutable().getLocationMap());
+        pd.setLocationMap(executable.getLocationMap());    // bug 2215
         packageData = pd;
     }
 

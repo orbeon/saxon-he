@@ -22,6 +22,7 @@ import net.sf.saxon.evpull.EmptyEventIterator;
 import net.sf.saxon.evpull.EventIterator;
 import net.sf.saxon.evpull.EventIteratorOverSequence;
 import net.sf.saxon.evpull.SingletonEventIterator;
+import net.sf.saxon.expr.instruct.LocationMap;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.functions.IntegratedFunctionCall;
 import net.sf.saxon.functions.IsWholeNumber;
@@ -800,17 +801,16 @@ public abstract class Expression implements SourceLocator, InstructionInfo, Iden
      */
 
     /*@Nullable*/
-    public String getSystemId() {
-        Container container = getContainer();
-        return container == null ? null : getContainer().getSystemId();
-//        if (locationId == -1) {
-//            return null;
-//        }
-//        LocationMap map = getContainer().getPackageData().getLocationMap();
-//        if (map == null) {
-//            return null;
-//        }
-//        return map.getSystemId(locationId);
+    public String getSystemId() {  // bug 2215
+        if (locationId == -1) {
+            return (getContainer() == null ? null : getContainer().getSystemId());
+        } else {
+            LocationMap map = getContainer().getPackageData().getLocationMap();
+            if (map == null) {
+                return null;
+            }
+            return map.getSystemId(locationId);
+        }
     }
 
     /**
