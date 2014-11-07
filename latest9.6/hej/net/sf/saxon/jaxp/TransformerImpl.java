@@ -82,6 +82,9 @@ public class TransformerImpl extends IdentityTransformer {
     public void transform(Source xmlSource, final Result outputTarget) throws XPathException {
         try {
             xsltTransformer.setSource(xmlSource);
+            if (outputTarget.getSystemId() != null) { //bug 2214
+                xsltTransformer.setBaseOutputURI(outputTarget.getSystemId());
+            }
             Destination destination;
 
             if (outputTarget instanceof StreamResult) {
