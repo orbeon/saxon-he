@@ -810,7 +810,7 @@ public class XQueryExpression implements Container {
      */
     /*@Nullable*/
     public String getSystemId() {
-        return mainModule.getSystemId();
+        return mainModule.getSystemId();  // bug 2216
     }
 
     /**

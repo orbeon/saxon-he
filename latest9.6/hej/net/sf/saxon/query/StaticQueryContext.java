@@ -562,7 +562,7 @@ public class StaticQueryContext {
         }
         qp.setStreaming(isStreaming());
         QueryModule mainModule = new QueryModule(this);
-        //Executable executable = makeExecutable();    // bug 2215
+        //Executable executable = makeExecutable();    // bug 2216
         //mainModule.setExecutable(executable);
         if (languageVersion.equals(DecimalValue.THREE)) {
             qp.setDisableCycleChecks(true);

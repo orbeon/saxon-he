@@ -801,7 +801,7 @@ public abstract class Expression implements SourceLocator, InstructionInfo, Iden
      */
 
     /*@Nullable*/
-    public String getSystemId() {  // bug 2215
+    public String getSystemId() {  // bug 2216
         if (locationId == -1) {
             return (getContainer() == null ? null : getContainer().getSystemId());
         } else {

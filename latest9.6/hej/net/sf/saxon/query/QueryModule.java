@@ -117,7 +117,7 @@ public class QueryModule implements StaticContext {
         pd.setAllowXPath30(getXPathLanguageLevel().equals(DecimalValue.THREE));
         pd.setHostLanguage(Configuration.XQUERY);
         pd.setSchemaAware(isSchemaAware());
-        pd.setLocationMap(executable.getLocationMap());    // bug 2215
+        pd.setLocationMap(executable.getLocationMap());    // bug 2216
         packageData = pd;
     }
 
