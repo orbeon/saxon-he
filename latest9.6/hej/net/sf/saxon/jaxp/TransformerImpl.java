@@ -87,7 +87,8 @@ public class TransformerImpl extends IdentityTransformer {
             }
             Destination destination;
 
-            if (outputTarget instanceof StreamResult) {
+            if (outputTarget instanceof StreamResult)
+            {
                 StreamResult sr = (StreamResult) outputTarget;
                 if (sr.getOutputStream() != null) {
                     destination = xsltExecutable.getProcessor().newSerializer(sr.getOutputStream());
