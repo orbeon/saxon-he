@@ -751,6 +751,8 @@ public class Configuration implements SourceResolver, NotationSet {
 
     public void setErrorListener(ErrorListener listener) {
         defaultParseOptions.setErrorListener(listener);
+        defaultXsltCompilerInfo.setErrorListener(listener);   // bug 2215
+        defaultStaticQueryContext.setErrorListener(listener);
     }
 
     public Logger getLogger() {
