@@ -7,7 +7,6 @@
 
 package net.sf.saxon.functions;
 
-import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.lib.NamespaceConstant;
@@ -36,7 +35,6 @@ public class FunctionAvailable extends Available implements Callable {
         String lexicalQName = ((Literal) argument[0]).getValue().getStringValue();
         StaticContext env = visitor.getStaticContext();
         boolean b = false;
-        Configuration config = visitor.getConfiguration();
 
         int minArity = 0;
         int maxArity = 20;
@@ -53,7 +51,12 @@ public class FunctionAvailable extends Available implements Callable {
             } else {
                 uri = env.getURIForPrefix(prefix);
             }
+
             StructuredQName functionName = new StructuredQName(prefix, uri, parts[1]);
+            // Special-case exslt:node-set : bug 2212
+            if ("node-set".equals(parts[1]) && NamespaceConstant.EXSLT_COMMON.equals(uri) && minArity<=1 && maxArity>=1) {
+                return Literal.makeLiteral(BooleanValue.TRUE, getContainer());
+            }
             for (int i = minArity; i <= maxArity; i++) {
                 SymbolicName sn = new SymbolicName(StandardNames.XSL_FUNCTION, functionName, i);
                 if (env.getFunctionLibrary().isAvailable(sn)) {
@@ -121,6 +124,11 @@ public class FunctionAvailable extends Available implements Callable {
             e.setLocator(this);
             e.setXPathContext(context);
             throw e;
+        }
+
+        // Special-case exslt:node-set : bug 2212
+        if ("node-set".equals(qName.getLocalPart()) && qName.hasURI(NamespaceConstant.EXSLT_COMMON) && arity==1) {
+            return true;
         }
 
         final FunctionLibrary lib = context.getController().getExecutable().getFunctionLibrary();
