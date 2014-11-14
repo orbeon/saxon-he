@@ -757,6 +757,9 @@ public class Mode {
 
     private Rule searchRuleChain(Item item, XPathContext context,
                                  Rule/*@Nullable*/ bestRule, Rule head, RuleFilter filter) throws XPathException {
+        while (!(context instanceof XPathContextMajor)) {
+            context = context.getCaller();
+        }
         while (head != null) {
             if (filter.testRule(head)) {
                 if (bestRule != null) {
@@ -767,7 +770,7 @@ public class Mode {
                         break;
                     } else if (rank == 0) {
                         // this rule has the same precedence and priority as the matching rule already found
-                        if (head.isAlwaysMatches() || head.getPattern().matches(item, context)) {
+                        if (head.isAlwaysMatches() || head.matches(item, (XPathContextMajor)context)) {
                             reportAmbiguity(item, bestRule, head, context);
                             // choose whichever one comes last (assuming the error wasn't fatal)
                             bestRule = bestRule.getSequence() > head.getSequence() ? bestRule : head;
@@ -777,11 +780,11 @@ public class Mode {
                         }
                     } else {
                         // this rule has higher rank than the matching rule already found
-                        if (head.isAlwaysMatches() || head.getPattern().matches(item, context)) {
+                        if (head.isAlwaysMatches() || head.matches(item, (XPathContextMajor)context)) {
                             bestRule = head;
                         }
                     }
-                } else if (head.isAlwaysMatches() || head.getPattern().matches(item, context)) {
+                } else if (head.isAlwaysMatches() || head.matches(item, (XPathContextMajor)context)) {
                     bestRule = head;
                     if (recoveryPolicy == Configuration.RECOVER_SILENTLY) {
                         break;   // choose the first match; rules within a chain are in order of rank
