@@ -106,7 +106,7 @@ public class Controller extends Transformer {
     /*@Nullable*/ private Template initialTemplate = null;
     /*@Nullable*/ private HashSet<DocumentURI> allOutputDestinations;
     private DocumentPool sourceDocumentPool;
-    /*@Nullable*/ private SequenceOutputter reusableSequenceOutputter = null;
+    ///*@Nullable*/ private SequenceOutputter reusableSequenceOutputter = null;
     private HashMap<String, Object> userDataTable;
     /*@Nullable*/ private DateTimeValue currentDateTime;
     private boolean dateTimePreset = false;
@@ -642,17 +642,17 @@ public class Controller extends Transformer {
      */
 
     /*@NotNull*/
-    public synchronized SequenceOutputter allocateSequenceOutputter(int size) {
+    public synchronized SequenceOutputter allocateSequenceOutputter(int size) {  // bug 2220
         PipelineConfiguration pipe = makePipelineConfiguration();
-        SequenceOutputter so = reusableSequenceOutputter;
-        if (so != null) {
-            so.setPipelineConfiguration(pipe);
-            so.setSystemId(null);    // Added 10.8.2009 - seems right, but doesn't solve EvaluateNodeTest problem
-            reusableSequenceOutputter = null;
-            return so;
-        } else {
+//        SequenceOutputter so = reusableSequenceOutputter;
+//        if (so != null) {
+//            so.setPipelineConfiguration(pipe);
+//            so.setSystemId(null);    // Added 10.8.2009 - seems right, but doesn't solve EvaluateNodeTest problem
+//            reusableSequenceOutputter = null;
+//            return so;
+//        } else {
             return new SequenceOutputter(pipe, this, size);
-        }
+//        }
     }
 
     /**
@@ -661,8 +661,8 @@ public class Controller extends Transformer {
      * @param out the SequenceOutputter that is available for reuse
      */
 
-    public void reuseSequenceOutputter(SequenceOutputter out) {
-        reusableSequenceOutputter = out;
+    public void reuseSequenceOutputter(SequenceOutputter out) { // bug 2220
+//        reusableSequenceOutputter = out;
     }
 
 
