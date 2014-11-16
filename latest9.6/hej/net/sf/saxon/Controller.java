@@ -104,7 +104,6 @@ public class Controller {
     /*@Nullable*/ private Template initialTemplate = null;
     /*@Nullable*/ private HashSet<DocumentURI> allOutputDestinations;
     private DocumentPool sourceDocumentPool;
-    /*@Nullable*/ private SequenceOutputter reusableSequenceOutputter = null;
     private HashMap<String, Object> userDataTable;
     /*@Nullable*/ private DateTimeValue currentDateTime;
     private boolean dateTimePreset = false;
@@ -512,16 +511,9 @@ public class Controller {
 
     /*@NotNull*/
     public synchronized SequenceOutputter allocateSequenceOutputter(int size) {
+        // bug 2220: dropped the ability to reuse an existing SequenceOutputter
         PipelineConfiguration pipe = makePipelineConfiguration();
-        SequenceOutputter so = reusableSequenceOutputter;
-        if (so != null) {
-            so.setPipelineConfiguration(pipe);
-            so.setSystemId(null);    // Added 10.8.2009 - seems right, but doesn't solve EvaluateNodeTest problem
-            reusableSequenceOutputter = null;
-            return so;
-        } else {
-            return new SequenceOutputter(pipe, this, size);
-        }
+        return new SequenceOutputter(pipe, this, size);
     }
 
     /**
@@ -531,7 +523,7 @@ public class Controller {
      */
 
     public void reuseSequenceOutputter(SequenceOutputter out) {
-        reusableSequenceOutputter = out;
+        // no action: bug 2220
     }
 
 
