@@ -279,8 +279,8 @@ namespace SaxonHE
             xpath.Caching = true;
 
             // Compile and evaluate an XPath expressions
-            XPathSelector selector = xpath.Compile("//ITEM", input).Load()
-            Console.WriteLine(selector.EffectiveBooleanValue())
+			XPathSelector selector = xpath.Compile ("//ITEM", input).Load ();
+			Console.WriteLine(selector.EffectiveBooleanValue());
 
         }
     }
