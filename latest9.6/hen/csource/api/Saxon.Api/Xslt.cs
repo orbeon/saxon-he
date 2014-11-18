@@ -288,18 +288,17 @@ namespace Saxon.Api
         }
 
 
-		/**
-     	* <summary><para>Compile a library package.</ara>
-     * <para>The source argument identifies an XML file containing an &lt;xsl:package&gt; element. Any packages
-     * on which this package depends must have been made available to the <code>XsltCompiler</code>
-     * by importing them using {@link #importPackage}.</para></summary>
-     *
-     * <param name='input'>source identifies an XML document holding the the XSLT package to be compiled</param>
-     * <returns the XsltPackage that results from the compilation. Note that this package
-     *         is not automatically imported to this <code>XsltCompiler</code>; if the package is required
-     *         for use in subsequent compilations then it must be explicitly imported.</returns>
-     * <remarks><para>@since 9.6</para></remarks>
-     */
+
+	/// <summary>Compile a library package.</summary>
+	/// <para>The source argument identifies an XML file containing an &lt;xsl:package&gt; element. Any packages
+    /// on which this package depends must have been made available to the <code>XsltCompiler</code>
+    /// by importing them using {@link #importPackage}.</para></summary>
+    /// <param name='input'>source identifies an XML document holding the the XSLT package to be compiled</param>
+    /// <returns the XsltPackage that results from the compilation. Note that this package
+    ///is not automatically imported to this <code>XsltCompiler</code>; if the package is required
+    ///for use in subsequent compilations then it must be explicitly imported.</returns>
+    /// <remarks><para>@since 9.6</para></remarks>
+     
 		public XsltPackage CompilePackage(Stream input)
 		{
 			try
@@ -838,17 +837,7 @@ namespace Saxon.Api
         }
 
 
-        /**
-         * Get the underlying implementation object representing the compiled stylesheet. This provides
-         * an escape hatch into lower-level APIs. The object returned by this method may change from release
-         * to release.
-         *
-         * @return the underlying implementation of the compiled stylesheet
-         */
 
-        /*public JPreparedStylesheet getUnderlyingCompiledStylesheet() {
-            return preparedStylesheet;
-        }*/
 
     }
 
@@ -1558,6 +1547,60 @@ namespace Saxon.Api
 
 
 
+ 	/// <summary>An <code>Xslt30Transformer</code> represents a compiled and loaded stylesheet ready for execution.
+	/// The <code>Xslt30Transformer</code> holds details of the dynamic evaluation context for the stylesheet.</summary>
+ 
+	///<remarks><para>The <code>Xslt30Transformer</code> differs from {@link XsltTransformer} is supporting new options
+ 	/// for invoking a stylesheet, corresponding to facilities defined in the XSLT 3.0 specification. However,
+ 	/// it is not confined to use with XSLT 3.0, and most of the new invocation facilities (for example,
+    /// calling a stylesheet-defined function directly) work equally well with XSLT 2.0 and in some cases
+    /// XSLT 1.0 stylesheets.</para>
+ 	/// <para>An <code>Xslt30Transformer</code> must not be used concurrently in multiple threads.
+ 	/// It is safe, however, to reuse the object within a single thread to run the same
+ 	/// stylesheet several times. Running the stylesheet does not change the context
+ 	/// that has been established.</para>
+ 
+ 	/// <para>An <code>Xslt30Transformer</code> is always constructed by running the <code>Load30</code>
+ 	/// method of an {@link XsltExecutable}.</para>
+ 
+ 	/// <para>Unlike <code>XsltTransformer</code>, an <code>Xslt30Transformer</code> is not a <code>Destination</code>. T
+ 	/// To pipe the results of one transformation into another, the target should be an <code>XsltTransfomer</code>
+ 	/// rather than an <code>Xslt30Transformer</code>.</para>
+
+ 	/// <para>Evaluation of an Xslt30Transformer proceeds in a number of phases:</para>
+ 	///<list type="number">
+ 	/// <item><term>First<term><description> values may be supplied for stylesheet parameters and for the global context item. The
+ 	/// global context item is used when initializing global variables. Unlike earlier transformation APIs,
+ 	/// the global context item is quite independent of the "principal Source document".
+ 	/// </item>
+ 	/// <item><term>stylesheet<term>/ may now be repeatedly invoked. Each invocation takes one of three forms:
+ 	/// <list type="bullet">
+ 	/// <item>Invocation by applying templates. In this case, the information required is (i) an initial
+ 	/// mode (which defaults to the unnamed mode), (ii) an initial match sequence, which is any
+ 	/// XDM value, which is used as the effective "select" expression of the implicit apply-templates
+ 	/// call, and (iii) optionally, values for the tunnel and non-tunnel parameters defined on the
+ 	/// templates that get invoked (equivalent to using <code>xsl:with-param</code> on the implicit
+ 	/// <code>apply-templates</code> call).</item>
+ 	/// <item>Invocation by calling a named template. In this case, the information required is
+ 	/// (i) the name of the initial template (which defaults to "xsl:initial-template"), and
+ 	/// (ii) optionally, values for the tunnel and non-tunnel parameters defined on the
+ 	/// templates that get invoked (equivalent to using <code>xsl:with-param</code> on the implicit
+ 	/// <code>call-template</code> instruction).</item>
+ 	/// <item>Invocation by calling a named function. In this case, the information required is
+ 	/// the sequence of arguments to the function call.</item>
+ 	/// </list>
+ 	/// </item>
+ 	/// <item><description>Whichever invocation method is chosen, the result may either be returned directly, as an arbitrary
+ 	/// XDM value, or it may effectively be wrapped in an XML document. If it is wrapped in an XML document,
+ 	/// that document can be processed in a number of ways, for example it can be materialized as a tree in
+ 	/// memory, it can be serialized as XML or HTML, or it can be subjected to further transformation.</description></item>
+ 	/// </list>
+ 	/// <p>Once the stylesheet has been invoked (using any of these methods), the values of the global context
+ 	/// item and stylesheet parameters cannot be changed. If it is necessary to run another transformation with
+ 	/// a different context item or different stylesheet parameters, a new <code>Xslt30Transformer</code>
+ 	/// should be created from the original <code>XsltExecutable</code>.</p></remarks>
+ 	/// <para> @since 9.6</para> 
+
     [Serializable]
     public class Xslt30Transformer
     {
@@ -1571,11 +1614,6 @@ namespace Saxon.Api
 	private JStreamSource streamSource;
 	private Processor processor;
 
-	/**
-     * internal constructor
-     * @param controller the Saxon controller object
-     * @param staticParameters the static parameters supplied at stylesheet compile time
-     */
 
 	internal Xslt30Transformer(Processor proc, Controller controller, GlobalParameterSet staticParameter)
         {
@@ -1585,7 +1623,12 @@ namespace Saxon.Api
 			this.globalParameterSet = new GlobalParameterSet(staticParameter);
         }
 
-        public XdmItem GlobalContextItem
+	
+     ///<summary> Supply the context item to be used when evaluating global variables and parameters.
+     /// The item to be used as the context item within the initializers
+     /// of global variables and parameters. This argument can be null if no context item is to be
+	///  supplied.</summary>
+    public XdmItem GlobalContextItem
         {
 		set { 
 				if (primed) {
@@ -1595,17 +1638,13 @@ namespace Saxon.Api
 		}
 		get { return (XdmItem)XdmItem.Wrap(controller.getInitialContextItem()); }
 
-        }
-
-	/**
-     * Get the underlying Controller used to implement this XsltTransformer. This provides access
-     * to lower-level methods not otherwise available in the s9api interface. Note that classes
-     * and methods obtained by this route cannot be guaranteed stable from release to release.
-     *
-     * @return the underlying {@link Controller}
-     */
+    }
 
 
+	///<summary> Get the underlying Controller used to implement this XsltTransformer. This provides access
+    /// to lower-level methods not otherwise available in the s9api interface. Note that classes
+	/// and methods obtained by this route cannot be guaranteed stable from release to release.</summary>
+	///<returns> The underlying {@link Controller}</returns>
 	public Controller GetUnderlyingController {
 		get { return controller; }
 	}
@@ -1638,7 +1677,7 @@ namespace Saxon.Api
 
 	/// <summary>
 	/// The <c>SchemaValidationMode</c> to be used in this transformation, especially for documents
-	/// loaded using the <c>doc()</c>, <c>document()</c>, or <c>collection()</c> functions.
+	/// loaded using the <code>doc()</code>, <code>document()</code>, or <code>collection()</code> functions.
 	/// </summary>
 	/// 
 
@@ -1732,6 +1771,16 @@ namespace Saxon.Api
 	}
 
 
+	
+	 /// <summary> Get the base output URI.</summary>
+	 /// <remarks><para> This returns the value set using the {@link #setBaseOutputURI} method. If no value has been set
+     /// explicitly, then the method returns null if called before the transformation, or the computed
+     /// default base output URI if called after the transformation.</p>
+     /// </para>
+     /// <para> The base output URI is used for resolving relative URIs in the <code>href</code> attribute
+     /// of the <code>xsl:result-document</code> instruction.</para>
+	 /// <returns> The base output URI</returns>
+     
 	public String BaseOutputURI {
 		set {
 		controller.setBaseOutputURI(value);
@@ -1796,7 +1845,7 @@ namespace Saxon.Api
 	/// the standard error stream.</para>
 	/// </summary>
 	/// <remarks>
-	/// <para>The supplied destination is ignored if a <c>TraceListener</c> is in use.</para>
+	/// <para>The supplied destination is ignored if a <code>TraceListener</code> is in use.</para>
 	/// <para>Since 9.6. Changed in 9.6 to use a StandardLogger</para>
 	/// </remarks>
 
@@ -1814,6 +1863,33 @@ namespace Saxon.Api
 	}
 
 
+     ///<summary><para> Set parameters to be passed to the initial template. These are used
+     /// whether the transformation is invoked by applying templates to an initial source item,
+     /// or by invoking a named template. The parameters in question are the xsl:param elements
+     /// appearing as children of the xsl:template element. </para>
+ 	/// <remarks>
+     /// <para>The parameters are supplied in the form of a map; the key is a QName which must
+     /// match the name of the parameter; the associated value is an XdmValue containing the
+     /// value to be used for the parameter. If the initial template defines any required
+     /// parameters, the map must include a corresponding value. If the initial template defines
+     /// any parameters that are not present in the map, the default value is used. If the map
+     /// contains any parameters that are not defined in the initial template, these values
+     /// are silently ignored.</para>
+    
+     /// <para>The supplied values are converted to the required type using the function conversion
+     /// rules. If conversion is not possible, a run-time error occurs (not now, but later, when
+     /// the transformation is actually run).</para>
+     /// <para>The <code>XsltTransformer</code> retains a reference to the supplied map, so parameters can be added or
+     /// changed until the point where the transformation is run.</para>
+     /// <para>The XSLT 3.0 specification makes provision for supplying parameters to the initial
+     /// template, as well as global stylesheet parameters. Although there is no similar provision
+     /// in the XSLT 1.0 or 2.0 specifications, this method works for all stylesheets, regardless whether
+     /// XSLT 3.0 is enabled or not.</para></remarks>
+     
+	 ///<param name="parameters"> The parameters to be used for the initial template</param>
+	 ///<param name="tunnel"> true if these values are to be used for setting tunnel parameters;
+	 ///false if they are to be used for non-tunnel parameters</param>
+     
 	public void SetInitialTemplateParameters(Dictionary<QName, XdmValue> parameters, bool tunnel){
 	
 		JMap templateParameters = new java.util.HashMap ();
@@ -1833,7 +1909,7 @@ namespace Saxon.Api
 	///<remarks><para>The value may be the name of the initial mode, or null to indicate the default
 	/// (unnamed) mode</para></remarks>
 
-	public QName InitialMode{
+	public QName InitialMode {
 
 		set {
 			try {
@@ -1965,6 +2041,19 @@ namespace Saxon.Api
 
 	}
 
+
+     ///<summary> Invoke a transformation by calling a named template. The results of calling
+     /// the template are wrapped in a document node, which is then sent to the specified
+     /// destination. If {@link #setInitialTemplateParameters(java.util.Map, boolean)} has been
+    /// called, then the parameters supplied are made available to the called template (no error
+	/// occurs if parameters are supplied that are not used).</summary> 
+	///<param name="templateName"> The name of the initial template. This must match the name of a
+    /// public named template in the stylesheet. If the value is null,
+	/// the QName <code>xsl:initial-template</code> is used.</param>
+	/// <param name="destination"> The destination of the result document produced by wrapping the result of the apply-templates
+    /// call in a document node.  If the destination is a {@link Serializer}, then the serialization
+    /// parameters set in the serializer are combined with those defined in the stylesheet
+	/// (the parameters set in the serializer take precedence).</param> 
 	public void CallTemplate(QName templateName, XmlDestination destination){
 		prime ();
 		if (templateName == null) {
@@ -2006,6 +2095,15 @@ namespace Saxon.Api
 		}
 	}
 
+
+     ///<summary> Call a public user-defined function in the stylesheet. </summary>
+	 /// <param name="function"> The name of the function to be called</param>
+	 ///<param name="argument">  The values of the arguments to be supplied to the function. These
+     /// will be converted if necessary to the type as defined in the function signature, using
+	 /// the function conversion rules.</param>
+	/// <returns> the result of calling the function. This is the raw result, without wrapping in a document
+	/// node and without serialization.</returns>
+
 	public XdmValue CallFunction(QName function, XdmValue[] arguments){
 		prime ();
 		try{
@@ -2042,6 +2140,18 @@ namespace Saxon.Api
 	}
 
 
+	
+    /// <summary>Call a public user-defined function in the stylesheet, wrapping the result in an XML document, and sending
+    /// this document to a specified destination</summary>    
+	///<param name="function"> The name of the function to be called</param>
+	///<param name="arguments"> The values of the arguments to be supplied to the function. These
+    ///                    will be converted if necessary to the type as defined in the function signature, using
+	///                    the function conversion rules.</param>
+	///<param name="destination"> The destination of the result document produced by wrapping the result of the apply-templates
+    ///                    call in a document node.  If the destination is a {@link Serializer}, then the serialization
+    ///                    parameters set in the serializer are combined with those defined in the stylesheet
+	//                    (the parameters set in the serializer take precedence).</param>
+     
 	public void CallFunction(QName function, XdmValue[] arguments, XmlDestination destination){
 		XdmValue result = CallFunction (function, arguments);
 		if (destination is Serializer) {
