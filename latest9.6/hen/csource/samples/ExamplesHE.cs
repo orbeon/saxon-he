@@ -251,7 +251,7 @@ namespace SaxonHE
     /// XPath expression returning effective boolean value
     /// </summary>
 
-    public class XPathSimple : Example
+    public class XPathSimple2 : Example
     {
 
         public override String testName
