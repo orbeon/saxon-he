@@ -156,6 +156,10 @@ public class UserFunction extends ComponentBody {
 
     /*@Nullable*/
     public Boolean isInlineable() {
+        if (body == null) {
+            // happens (for example?) while optimizing xsl:key/@use
+            return null;
+        }
         if ((body.getSpecialProperties() & StaticProperty.HAS_SIDE_EFFECTS) != 0) {
             // This is mainly to handle current-output-uri()
             return false;
