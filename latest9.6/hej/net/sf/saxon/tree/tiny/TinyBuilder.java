@@ -462,8 +462,10 @@ public class TinyBuilder extends Builder {
      */
 
     public void setUnparsedEntity(String name, String uri, String publicId) {
-        assert currentRoot != null;
-        ((TinyDocumentImpl) currentRoot).setUnparsedEntity(name, uri, publicId);
+        if (((TinyDocumentImpl) currentRoot).getUnparsedEntity(name) == null) {
+            // bug 2187
+            ((TinyDocumentImpl) currentRoot).setUnparsedEntity(name, uri, publicId);
+        }
     }
 
     /*@NotNull*/

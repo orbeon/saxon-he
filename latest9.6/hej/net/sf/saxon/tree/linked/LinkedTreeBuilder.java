@@ -390,7 +390,10 @@ public class LinkedTreeBuilder extends Builder
      */
 
     public void setUnparsedEntity(String name, String uri, String publicId) {
-        ((DocumentImpl) currentRoot).setUnparsedEntity(name, uri, publicId);
+        if (((DocumentImpl) currentRoot).getUnparsedEntity(name) == null) {
+            // bug 2187
+            ((DocumentImpl) currentRoot).setUnparsedEntity(name, uri, publicId);
+        }
     }
 
     /**
