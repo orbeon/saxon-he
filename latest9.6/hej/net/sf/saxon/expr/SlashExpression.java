@@ -435,7 +435,7 @@ public class SlashExpression extends Expression
         AxisExpression ay = (AxisExpression) ExpressionTool.unfilteredExpression(y, false);
         ay.setAxis(AxisInfo.DESCENDANT);
 
-        Expression k = new FilterExpression(ay, ax);
+        Expression k = new FilterExpression(y, x);
         // If we're not starting at the root, ensure we go down at least one level
         if (!th.isSubType(contextItemType.getItemType(), NodeKindTest.DOCUMENT)) {
             k = new SlashExpression(new AxisExpression(AxisInfo.CHILD, NodeKindTest.ELEMENT), k);
