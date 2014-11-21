@@ -1048,13 +1048,22 @@ public class QueryModule implements StaticContext {
                     // the variable declaration hasn't yet been read, because of the limited provision
                     // for cyclic imports. In XQuery 3.0 forwards references are more generally allowed.
                     if (getLanguageVersion().equals(DecimalValue.THREE)) {
-                        UndeclaredVariable uvar = new UndeclaredVariable();
-                        uvar.setPackageData(main.getPackageData());
-                        uvar.setVariableQName(qName);
-                        GlobalVariableReference ref = new GlobalVariableReference();
-                        uvar.registerReference(ref);
-                        undeclaredVariables.put(qName, uvar);
-                        return ref;
+                        UndeclaredVariable uvar = undeclaredVariables.get(qName);
+                        if (uvar != null) {
+                            // second or subsequent reference to the as-yet-undeclared variable
+                            GlobalVariableReference ref = new GlobalVariableReference();
+                            uvar.registerReference(ref);
+                            return ref;
+                        } else {
+                            // first reference to the as-yet-undeclared variable
+                            uvar = new UndeclaredVariable();
+                            uvar.setPackageData(main.getPackageData());
+                            uvar.setVariableQName(qName);
+                            GlobalVariableReference ref = new GlobalVariableReference();
+                            uvar.registerReference(ref);
+                            undeclaredVariables.put(qName, uvar);
+                            return ref;
+                        }
                     } else {
                         XPathException err = new XPathException("Variable $" + qName.getDisplayName() + " has not been declared");
                         err.setErrorCode("XPST0008");
