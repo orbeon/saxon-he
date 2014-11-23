@@ -946,11 +946,14 @@ public abstract class StyleElement extends ElementImpl
     /**
      * Determine what version of the XSLT the configured processor supports
      *
-     * @return the version of XSLT supported by the processor
+     * @return the version of XSLT supported by the processor. This is the processor version requested on the
+     * command line or via the API, which defaults to the value of the version attribute on the outermost xsl:stylesheet
+     * or xsl:package element on the top-level module of the package. It is not affected by other [xsl:] version
+     * attributes.
      */
 
     public DecimalValue getProcessorVersion() {
-        return getCompilation().getStyleNodeFactory(true).getXsltProcessorVersion();
+        return getCompilation().getVersion();
     }
 
     /**

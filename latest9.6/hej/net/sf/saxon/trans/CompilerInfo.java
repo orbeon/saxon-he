@@ -498,7 +498,7 @@ public class CompilerInfo {
      * Get the version of XSLT supported by this processor
      *
      * @return {@link net.sf.saxon.value.DecimalValue#TWO} or {@link net.sf.saxon.value.DecimalValue#THREE},
-     *         or zero indicating that the processor versino is taken from the version attribute of the xsl:stylesheet element.)
+     *         or zero indicating that the processor version is taken from the version attribute of the xsl:stylesheet element.)
      * @since 9.3
      */
 

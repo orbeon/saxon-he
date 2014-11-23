@@ -11,7 +11,6 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.event.LocationProvider;
 import net.sf.saxon.event.ReceiverOptions;
 import net.sf.saxon.lib.FeatureKeys;
-import net.sf.saxon.z.IntArraySet;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
@@ -19,6 +18,8 @@ import net.sf.saxon.tree.linked.SystemIdMap;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
+import net.sf.saxon.value.StringValue;
+import net.sf.saxon.z.IntArraySet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -155,6 +156,9 @@ public final class TinyTree implements LocationProvider {
 
     // a boolean that is set to true if the document declares a namespace other than the XML namespace
     protected boolean usesNamespaces = false;
+
+    // Diagnostic patch for bug 2220
+    private boolean writingPriorIndex = false;
 
     /**
      * Create a tree with a specified initial size
@@ -355,6 +359,10 @@ public final class TinyTree implements LocationProvider {
      * @return the node number of the node that was added
      */
     int addNode(short kind, int depth, int alpha, int beta, int nameCode) {
+        if (writingPriorIndex) {
+            // Diagnostic patch for bug 2220
+            throw new AssertionError("Adding new node while writing prior index: see bug 2220");
+        }
         ensureNodeCapacity(kind);
         nodeKind[numberOfNodes] = (byte) kind;
         this.depth[numberOfNodes] = (short) depth;
@@ -758,6 +766,7 @@ public final class TinyTree implements LocationProvider {
     }
 
     private synchronized void makePriorIndex() {
+        writingPriorIndex = true; // bug 2220 diagnostic patch
         int[] p = new int[numberOfNodes];
         Arrays.fill(p, 0, numberOfNodes, -1);
         for (int i = 0; i < numberOfNodes; i++) {
@@ -767,6 +776,7 @@ public final class TinyTree implements LocationProvider {
             }
         }
         prior = p;
+        writingPriorIndex = false; // bug 2220 diagnostic patch
     }
 
     /**

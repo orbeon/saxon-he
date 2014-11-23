@@ -42,7 +42,7 @@ public class StyleNodeFactory implements NodeFactory {
 
     protected Configuration config;
     protected NamePool namePool;
-    protected DecimalValue processorVersion = DecimalValue.TWO;
+    //protected DecimalValue processorVersion = DecimalValue.TWO;
     private Compilation compilation;
     private boolean topLevelModule;
 
@@ -50,10 +50,12 @@ public class StyleNodeFactory implements NodeFactory {
      * Create the node factory for representing an XSLT stylesheet as a tree structure
      *
      * @param config the Saxon configuration
+     * @param compilation the compilation episode
      */
 
-    public StyleNodeFactory(Configuration config) {
+    public StyleNodeFactory(Configuration config, Compilation compilation) {
         this.config = config;
+        this.compilation = compilation;
         namePool = config.getNamePool();
     }
 
@@ -81,11 +83,6 @@ public class StyleNodeFactory implements NodeFactory {
         return compilation;
     }
 
-    public void setCompilation(Compilation compilation) {
-        this.compilation = compilation;
-    }
-
-
     public Configuration getConfiguration() {
         return config;
     }
@@ -99,7 +96,7 @@ public class StyleNodeFactory implements NodeFactory {
      */
 
     public void setXsltProcessorVersion(DecimalValue version) {
-        processorVersion = version;
+        //processorVersion = version;
     }
 
     /**
@@ -110,7 +107,7 @@ public class StyleNodeFactory implements NodeFactory {
      */
 
     public DecimalValue getXsltProcessorVersion() {
-        return processorVersion;
+        return compilation.getVersion();
     }
 
     /**
@@ -194,10 +191,10 @@ public class StyleNodeFactory implements NodeFactory {
                 e.setValidationError(err, StyleElement.REPORT_ALWAYS);
             }
 
-            if (e instanceof XSLModuleRoot && processorVersion.compareTo(DecimalValue.ZERO) == 0) {
+            if (e instanceof XSLModuleRoot && compilation.getVersion().compareTo(DecimalValue.ZERO) == 0) {
                 DecimalValue effectiveVersion = e.getEffectiveVersion();
-                processorVersion = effectiveVersion.equals(DecimalValue.THREE) ?
-                        DecimalValue.THREE : DecimalValue.TWO;
+                compilation.setVersion(effectiveVersion.equals(DecimalValue.THREE) ?
+                        DecimalValue.THREE : DecimalValue.TWO);
             }
             return e;
 

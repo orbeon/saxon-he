@@ -28,6 +28,7 @@ import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.query.XQueryParser;
 import net.sf.saxon.serialize.charcode.CharacterSetFactory;
 import net.sf.saxon.serialize.charcode.XMLCharacterData;
+import net.sf.saxon.style.Compilation;
 import net.sf.saxon.style.StyleNodeFactory;
 import net.sf.saxon.style.XSLCopy;
 import net.sf.saxon.sxpath.IndependentContext;
@@ -3074,10 +3075,11 @@ public class Configuration implements SourceResolver, NotationSet {
      * in a stylesheet document
      *
      * @return the StyleNodeFactory used in this Configuration
+     * @param compilation
      */
 
-    public StyleNodeFactory makeStyleNodeFactory() {
-        return new StyleNodeFactory(this);
+    public StyleNodeFactory makeStyleNodeFactory(Compilation compilation) {
+        return new StyleNodeFactory(this, compilation);
     }
 
     /**

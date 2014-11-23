@@ -99,10 +99,6 @@ public class TemplatesHandlerImpl extends ReceivingContentHandler implements Tem
             }
             builder.reset();
 
-
-            final Configuration config = getConfiguration();
-            CompilerInfo info = new CompilerInfo(config.getDefaultXsltCompilerInfo());
-            info.setXsltVersion(nodeFactory.getXsltProcessorVersion());
             try {
                 XsltCompiler compiler = processor.newXsltCompiler();
                 templates = new TemplatesImpl(compiler.compile(doc));

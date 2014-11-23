@@ -450,7 +450,8 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
                 }
             } else {
                 try {
-                    Source source = new StreamSource(file.toURI().toString());
+                    String escaped = file.toURI().toASCIIString();
+                    Source source = new StreamSource(escaped);
                     ParseOptions options = new ParseOptions();
                     if (validation != Validation.STRIP && validation != Validation.PRESERVE) {
                         options.setSchemaValidationMode(validation);

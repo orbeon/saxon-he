@@ -90,7 +90,7 @@ public class PreparedStylesheet extends Executable {
         RuleManager rm = new RuleManager();
         rm.setRecoveryPolicy(compilerInfo.getRecoveryPolicy());
         setRuleManager(rm);
-        setHostLanguage(Configuration.XSLT, compilerInfo.getXsltVersion().equals(DecimalValue.THREE));
+        setHostLanguage(Configuration.XSLT, compilation.getVersion().equals(DecimalValue.THREE));
         //setCollationMap(compilerInfo.getCollationMap());
         setSchemaAware(compilerInfo.isSchemaAware());
         if (compilerInfo.getErrorListener() == null) {

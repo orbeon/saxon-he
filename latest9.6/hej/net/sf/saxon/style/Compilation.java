@@ -35,7 +35,7 @@ public class Compilation {
     // diagnostic switch to control output of timing information
     public final static boolean TIMING = false;
     private CompilerInfo compilerInfo;
-    private DecimalValue stylesheetVersion; // the first version attribute in the package or stylesheet
+    private DecimalValue processorVersion;
     //private StyleNodeFactory nodeFactory;
     private StylesheetPackage stylesheetPackage;
     private PackageData packageData;
@@ -66,7 +66,7 @@ public class Compilation {
     public Compilation(Configuration config, CompilerInfo info) {
         this.compilerInfo = info;
         schemaAware = info.isSchemaAware();
-
+        processorVersion = info.getXsltVersion();
         PackageData pd = new PackageData(config);
         pd.setConfiguration(config);
         pd.setAllowXPath30(info.getXsltVersion().equals(DecimalValue.THREE));
@@ -165,8 +165,8 @@ public class Compilation {
             throw e;
         }
         CompilerInfo info = getCompilerInfo();
-        if (info.getXsltVersion().equals(DecimalValue.ZERO)) {
-            info.setXsltVersion(xslpackage.getVersion());
+        if (processorVersion.equals(DecimalValue.ZERO)) {
+            processorVersion = xslpackage.getVersion();
         }
         StyleNodeFactory factory = getStyleNodeFactory(true);
         StylesheetPackage pp = factory.newStylesheetPackage(xslpackage);
@@ -266,8 +266,13 @@ public class Compilation {
      */
 
     public void setVersion(DecimalValue v) {
-        stylesheetVersion = v;
-        packageData.setAllowXPath30(v.equals(DecimalValue.THREE));
+        if (v.equals(DecimalValue.THREE)) {
+            processorVersion = v;
+            packageData.setAllowXPath30(true);
+        } else {
+            processorVersion = DecimalValue.TWO;
+            packageData.setAllowXPath30(false);
+        }
     }
 
     /**
@@ -278,7 +283,7 @@ public class Compilation {
      */
 
     public DecimalValue getVersion() {
-        return stylesheetVersion;
+        return processorVersion;
     }
 
     /**
@@ -314,10 +319,9 @@ public class Compilation {
      */
 
     public StyleNodeFactory getStyleNodeFactory(boolean topLevel) {
-        StyleNodeFactory factory = getConfiguration().makeStyleNodeFactory();
-        factory.setCompilation(this);
+        StyleNodeFactory factory = getConfiguration().makeStyleNodeFactory(this);
         factory.setTopLevelModule(topLevel);
-        factory.setXsltProcessorVersion(getCompilerInfo().getXsltVersion());
+        //factory.setXsltProcessorVersion(getCompilerInfo().getXsltVersion());
         return factory;
     }
 

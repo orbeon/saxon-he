@@ -72,6 +72,7 @@ public class LiteralResultElement extends StyleElement {
      * Process the attribute list
      */
 
+    @SuppressWarnings("StatementWithEmptyBody")
     public void prepareAttributes() throws XPathException {
 
         // Process the values of all attributes. At this stage we deal with attribute
