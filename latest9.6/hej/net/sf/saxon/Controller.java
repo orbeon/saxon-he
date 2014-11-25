@@ -1529,7 +1529,7 @@ public class Controller {
     /**
      * Get user data associated with a key. To retrieve user data, two objects are required:
      * an arbitrary object that may be regarded as the container of the data (originally, and
-     * typically still, a node in a tree), and a name. The name serves to distingush data objects
+     * typically still, a node in a tree), and a name. The name serves to distinguish data objects
      * associated with the same node by different client applications.
      * <p/>
      * This method is intended primarily for internal use, though it may also be

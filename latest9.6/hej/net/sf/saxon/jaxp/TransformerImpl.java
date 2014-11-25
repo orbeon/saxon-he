@@ -40,6 +40,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -51,6 +53,7 @@ public class TransformerImpl extends IdentityTransformer {
 
     private XsltExecutable xsltExecutable;
     private XsltTransformer xsltTransformer;
+    private Map<String, Object> parameters = new HashMap<String, Object>(8);
 
     protected TransformerImpl(XsltExecutable e, XsltTransformer t) {
         super(e.getProcessor().getUnderlyingConfiguration());
@@ -197,9 +200,9 @@ public class TransformerImpl extends IdentityTransformer {
      * @param name  The name of the parameter, which may begin with a
      *              namespace URI in curly braces ({}).
      * @param value The value object.  This can be any valid Java object. It is
-     *              up to the processor to provide the proper object coersion or to simply
+     *              up to the processor to provide the proper object coercion or to simply
      *              pass the object on for use in an extension.
-     * @throws NullPointerException     If value is null.
+     * @throws NullPointerException     If name is null.
      * @throws IllegalArgumentException If the supplied value cannot be converted to the declared
      *                                  type of the corresponding stylesheet parameter
      */
@@ -208,6 +211,10 @@ public class TransformerImpl extends IdentityTransformer {
         if (name == null) {
             throw new NullPointerException("Transformer.setParameter() - name is null");
         }
+        if (value == null) {
+            throw new NullPointerException("Transformer.setParameter() - value is null");
+        }
+        parameters.put(name, value);
         QName qName = QName.fromClarkName(name);
         XsltExecutable.ParameterDetails details = xsltExecutable.getGlobalParameters().get(qName);
         if (details == null) {
@@ -252,11 +259,11 @@ public class TransformerImpl extends IdentityTransformer {
      * the transformation process.
      *
      * @param name of <code>Object</code> to get
-     * @return A parameter that has been set with setParameter.
+     * @return A parameter that has been set with setParameter, or null if none has been set.
      */
     @Override
     public Object getParameter(String name) {
-        return xsltTransformer.getParameter(QName.fromClarkName(name));
+        return parameters.get(name);
     }
 
     /**
@@ -264,6 +271,7 @@ public class TransformerImpl extends IdentityTransformer {
      */
     @Override
     public void clearParameters() {
+        parameters.clear();
         xsltTransformer.clearParameters();
     }
 
