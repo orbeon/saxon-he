@@ -3076,14 +3076,14 @@ public class Configuration implements Serializable, SourceResolver, NotationSet 
         for (ExternalObjectModel model : externalObjectModels) {
             NodeInfo node = model.unravel(source, this);
             if (node != null) {
-                if (node.getConfiguration() != this) {
+                if (!node.getConfiguration().isCompatible(this)) {
                     throw new IllegalArgumentException("Externally supplied Node belongs to the wrong Configuration");
                 }
                 return node;
             }
         }
         if (source instanceof NodeInfo) {
-            if (((NodeInfo) source).getConfiguration() != this) {
+            if (!((NodeInfo) source).getConfiguration().isCompatible(this)) {
                 throw new IllegalArgumentException("Externally supplied NodeInfo belongs to the wrong Configuration");
             }
             return (NodeInfo) source;
