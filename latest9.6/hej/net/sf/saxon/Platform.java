@@ -223,6 +223,6 @@ public interface Platform {
      * @since 9.4
      */
 
-    public ClassLoader getClassLoaderForGeneratedClass(final String definedClassName, final byte[] classFile, Configuration config, Class thisClass);
+    //public ClassLoader getClassLoaderForGeneratedClass(final String definedClassName, final byte[] classFile, Configuration config, Class thisClass);
 }
 

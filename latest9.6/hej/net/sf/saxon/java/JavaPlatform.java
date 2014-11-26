@@ -34,7 +34,9 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamSource;
 import java.text.CollationKey;
 import java.text.Collator;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -93,13 +95,11 @@ public class JavaPlatform implements Platform {
     }
 
 
-
-
-        /**
-         * Get a parser by instantiating the SAXParserFactory
-         *
-         * @return the parser (XMLReader)
-         */
+    /**
+     * Get a parser by instantiating the SAXParserFactory
+     *
+     * @return the parser (XMLReader)
+     */
 
     public XMLReader loadParser() {
         XMLReader parser;
@@ -192,15 +192,17 @@ public class JavaPlatform implements Platform {
     public boolean hasICUNumberer() {
         return false;
     }
+
     /**
      * If available, make a collation using the ICU-J Library
-     * @param uri the collation URI (which will always be a UCA collation URI as defined in XSLT 3.0)
+     *
+     * @param uri    the collation URI (which will always be a UCA collation URI as defined in XSLT 3.0)
      * @param config the Saxon configuration
      * @return the collation, or null if not available
      * @throws XPathException if the URI is malformed in some way
      */
 
-    public StringCollator makeICUCollator(String uri, Configuration config)  throws XPathException {
+    public StringCollator makeICUCollator(String uri, Configuration config) throws XPathException {
         return null;
     }
 
@@ -286,7 +288,9 @@ public class JavaPlatform implements Platform {
         // No action for Saxon on Java
     }
 
-    public ClassLoader getClassLoaderForGeneratedClass(final String definedClassName, final byte[] classFile, Configuration config, Class thisClass) {
+
+
+    /*public ClassLoader getClassLoaderForGeneratedClass(final String definedClassName, final byte[] classFile, Configuration config, Class thisClass) {
         ClassLoader parentClassLoader = config.getDynamicLoader().getClassLoader();
         if (parentClassLoader == null) {
             parentClassLoader = Thread.currentThread().getContextClassLoader();
@@ -304,7 +308,7 @@ public class JavaPlatform implements Platform {
                 }
             }
         };
-    }
+    } */
 
 }
 

@@ -35,7 +35,9 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.charset.spi.CharsetProvider;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -406,7 +408,9 @@ public class DotNetPlatform implements Platform {
         System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl");
     }
 
-    public ClassLoader getClassLoaderForGeneratedClass(final String definedClassName, final byte[] classFile, Configuration config, Class thisClass) {
+
+
+    /*public ClassLoader getClassLoaderForGeneratedClass(final String definedClassName, final byte[] classFile, Configuration config, Class thisClass) {
         ClassLoader parentClassLoader = config.getDynamicLoader().getClassLoader();
 
         if (parentClassLoader == null) {
@@ -425,7 +429,7 @@ public class DotNetPlatform implements Platform {
                 }
             }
         };
-    }
+    }*/
 
 
 }
