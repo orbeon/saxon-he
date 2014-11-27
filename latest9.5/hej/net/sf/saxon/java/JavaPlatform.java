@@ -241,25 +241,6 @@ public class JavaPlatform implements Platform {
         // No action for Saxon on Java
     }
 
-    public ClassLoader getClassLoaderForGeneratedClass(final String definedClassName, final byte[] classFile, Configuration config, Class thisClass) {
-        ClassLoader parentClassLoader = config.getDynamicLoader().getClassLoader();
-        if (parentClassLoader == null) {
-            parentClassLoader = Thread.currentThread().getContextClassLoader();
-        }
-        if (parentClassLoader == null) {
-            parentClassLoader = thisClass.getClassLoader();
-        }
-        return new ClassLoader(parentClassLoader) {
-            @Override
-            protected Class<?> findClass(String name) throws ClassNotFoundException {
-                if (name.equals(definedClassName)) {
-                    return defineClass(name, classFile, 0, classFile.length);
-                } else {
-                    return super.findClass(name);
-                }
-            }
-        };
-    }
 
 }
 

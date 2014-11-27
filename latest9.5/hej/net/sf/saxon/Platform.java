@@ -190,6 +190,5 @@ public interface Platform extends Serializable {
      *
      * */
 
-    public ClassLoader getClassLoaderForGeneratedClass(final String definedClassName, final byte[] classFile, Configuration config, Class thisClass);
 }
 
