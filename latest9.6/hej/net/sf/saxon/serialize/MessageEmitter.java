@@ -18,11 +18,13 @@ import net.sf.saxon.trans.XPathException;
 public class MessageEmitter extends XMLEmitter {
     public void endDocument() throws XPathException {
         try {
-            writer.write('\n');
+            if (writer != null) {
+                writer.write('\n');
+            }
         } catch (java.io.IOException err) {
             throw new XPathException(err);
         }
-        super.close();
+        super.endDocument();
     }
 
     public void close() throws XPathException {
