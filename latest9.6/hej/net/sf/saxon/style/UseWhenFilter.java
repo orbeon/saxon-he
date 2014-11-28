@@ -12,7 +12,9 @@ import net.sf.saxon.event.LocationProvider;
 import net.sf.saxon.event.ProxyReceiver;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.event.StartTagBuffer;
-import net.sf.saxon.expr.*;
+import net.sf.saxon.expr.Expression;
+import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.XPathContextMajor;
 import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.functions.DocumentFn;
@@ -347,6 +349,9 @@ public class UseWhenFilter extends ProxyReceiver {
                                 if (isImport) {
                                     e.setErrorCode("XTSE0210");
                                 }
+                            }
+                            if (!e.hasBeenReported()) {
+                                compilation.reportError(e);
                             }
                             throw e;
                         }

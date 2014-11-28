@@ -135,7 +135,7 @@ public class StylesheetModule {
             compilation.getImportStack().pop();
             return doc;
         } catch (XPathException err) {
-            if (!err.hasBeenReported()) {
+            if (topLevelModule && !err.hasBeenReported()) {  // bug 2244
                 compilation.reportError(err);
             }
             throw err;
