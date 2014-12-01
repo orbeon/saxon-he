@@ -277,9 +277,10 @@ namespace SaxonHE
 
             // Enable caching, so each expression is only compiled once
             xpath.Caching = true;
-
+            
             // Compile and evaluate an XPath expressions
-			XPathSelector selector = xpath.Compile ("//ITEM", input).Load ();
+			XPathSelector selector = xpath .Compile ("//ITEM").Load ();
+            selector.ContextItem = input;
 			Console.WriteLine(selector.EffectiveBooleanValue());
 
         }
