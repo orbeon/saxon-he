@@ -271,7 +271,7 @@ public class TinyBuilder extends Builder {
         siblingsAtDepth[currentDepth] = 0;
 
         LocationProvider locator = pipe.getLocationProvider();
-        if (locator instanceof SourceLocationProvider) {
+        if (locator instanceof SourceLocationProvider && locator.getSystemId(locationId)!=null) {
             tt.setSystemId(nodeNr, locator.getSystemId(locationId));
         } else if (currentDepth == 1) {
             tt.setSystemId(nodeNr, systemId);
