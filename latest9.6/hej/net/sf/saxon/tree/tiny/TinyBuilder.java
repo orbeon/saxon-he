@@ -423,7 +423,7 @@ public class TinyBuilder extends Builder {
         siblingsAtDepth[currentDepth]++;
 
         LocationProvider locator = pipe.getLocationProvider();
-        if (locator instanceof SourceLocationProvider) {
+        if (locator instanceof SourceLocationProvider && locator.getSystemId(locationId)!=null) {
             tt.setSystemId(nodeNr, locator.getSystemId(locationId));
             if (lineNumbering) {
                 tt.setLineNumber(nodeNr, locator.getLineNumber(locationId), locator.getColumnNumber(locationId));
