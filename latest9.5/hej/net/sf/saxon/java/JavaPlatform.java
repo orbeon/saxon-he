@@ -7,6 +7,7 @@
 
 package net.sf.saxon.java;
 
+import com.saxonica.bytecode.util.GeneratedClassLoader;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Platform;
 import net.sf.saxon.dom.DOMEnvelope;
@@ -31,7 +32,9 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamSource;
 import java.text.Collator;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -240,6 +243,70 @@ public class JavaPlatform implements Platform {
     public void setDefaultSAXParserFactory(){
         // No action for Saxon on Java
     }
+
+//#if EE==true
+
+   /**
+     * Return the class loader required to load the bytecode generated classes
+     * @param config           The saxon configuration
+     * @param thisClass        The class object generated
+     * @return the class loader object
+     * @since 9.5.1.9
+     */
+    public ClassLoader makeClassLoader(Configuration config, Class thisClass){
+        ClassLoader parentClassLoader = config.getDynamicLoader().getClassLoader();
+
+        if (parentClassLoader == null) {
+            parentClassLoader = Thread.currentThread().getContextClassLoader();
+        }
+        if (parentClassLoader == null) {
+            parentClassLoader = thisClass.getClassLoader();
+        }
+         return new MyClassLoader(parentClassLoader);
+
+    }
+
+
+    /**
+     * MyClassLoader. Sub class of the Class loader which keeps a map
+     * of bytecode generated classes.
+     *
+     *  @since 9.6.0.3
+    */
+    public static class MyClassLoader extends ClassLoader implements GeneratedClassLoader {
+
+
+        Map<String, Class> classMap = new Hashtable<String, Class>();
+
+        public MyClassLoader(ClassLoader parentClassLoader) {
+
+            super(parentClassLoader);
+
+        }
+
+
+        public void registerClass(String name, byte[] classFile) {
+
+            if (!classMap.containsKey(name)) {
+                Class classi = defineClass(name, classFile, 0, classFile.length);
+                classMap.put(name, classi);
+            }
+        }
+
+
+        @Override
+        protected Class<?> findClass(String name) throws ClassNotFoundException {
+
+            if (classMap.containsKey(name)) {
+                return classMap.get(name);
+
+            } else {
+                return super.findClass(name);
+            }
+        }
+
+    }
+//#endif
 
 
 }

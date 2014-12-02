@@ -178,17 +178,19 @@ public interface Platform extends Serializable {
 
     public void setDefaultSAXParserFactory();
 
+
+
+
     /**
      * Return the class loader required to load the bytecode generated classes
+     *
+     * @param config           The saxon configuration
+     * @param thisClass        The class object generated
      * @return the class loader object
-     * @param definedClassName The generated class name
-     * @param classFile The bytecode of the generated class
-     * @param config The cThe saxon configuration
-     * @param thisClass The class object generated
-     *
-     * @since 9.4
-     *
-     * */
+     * @since 9.5.1.9
+     */
+
+    public ClassLoader makeClassLoader(Configuration config, Class thisClass);
 
 }
 
