@@ -212,17 +212,19 @@ public interface Platform {
 
     public void setDefaultSAXParserFactory();
 
+//#if EE==true
     /**
      * Return the class loader required to load the bytecode generated classes
      *
-     * @param definedClassName The generated class name
-     * @param classFile        The bytecode of the generated class
-     * @param config           The cThe saxon configuration
+     * @param config           The saxon configuration
      * @param thisClass        The class object generated
      * @return the class loader object
-     * @since 9.4
+     * @since 9.6.0.3
      */
 
     //public ClassLoader getClassLoaderForGeneratedClass(final String definedClassName, final byte[] classFile, Configuration config, Class thisClass);
+    public ClassLoader makeClassLoader(Configuration config, Class thisClass);
+//#endif
+
 }
 
