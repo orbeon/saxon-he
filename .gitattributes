@@ -475,6 +475,7 @@ latest9.6/hen/csource/api/Saxon.Api/XPath.cs svn_eol_002dstyle=native
 latest9.6/hen/csource/api/Saxon.Api/XQuery.cs svn_eol_002dstyle=native
 latest9.6/hen/csource/api/Saxon.Api/Xslt.cs svn_eol_002dstyle=native
 latest9.6/hen/csource/cmd/Query.cs svn_eol_002dstyle=native
+latest9.6/hen/csource/cmd/StylesheetPackager.cs svn_eol_002dstyle=native
 latest9.6/hen/csource/cmd/Transform.cs svn_eol_002dstyle=native
 latest9.6/hen/csource/cmd/Validate.cs svn_eol_002dstyle=native
 latest9.6/hen/csource/samples/Environment.cs svn_eol_002dstyle=native
