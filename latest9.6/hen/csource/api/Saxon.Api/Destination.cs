@@ -591,6 +591,7 @@ namespace Saxon.Api
 		public override JReceiver GetReceiver(JPipelineConfiguration pipe)
         {
             DotNetReceiver dnr = new DotNetReceiver(writer);
+			dnr.setPipelineConfiguration (pipe);
             dnr.setCloseAfterUse(closeAfterUse);
             return dnr;
             //net.sf.saxon.@event.TracingFilter filter = new net.sf.saxon.@event.TracingFilter();
