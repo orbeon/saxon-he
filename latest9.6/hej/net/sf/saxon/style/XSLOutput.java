@@ -11,6 +11,9 @@ import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.type.ConversionResult;
+import net.sf.saxon.type.ValidationFailure;
+import net.sf.saxon.value.DecimalValue;
 import net.sf.saxon.value.Whitespace;
 
 import javax.xml.transform.OutputKeys;
@@ -168,6 +171,18 @@ public class XSLOutput extends StyleElement {
         // no action
     }
 
+
+    /**
+     * Process the [xsl:]version attribute if there is one
+     *
+     * @param ns the namespace URI of the attribute required, either the XSLT namespace or ""
+     * @throws net.sf.saxon.trans.XPathException
+     *          if the value of the attribute is invalid
+     */
+    @Override
+    protected void processVersionAttribute(String ns) throws XPathException {
+         version = ((StyleElement)getParent()).getEffectiveVersion().getStringValue();
+    }
 
     /**
      * Validate the properties,
