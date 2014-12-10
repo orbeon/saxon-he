@@ -84,6 +84,8 @@ public class TransformerImpl extends IdentityTransformer {
     @Override
     public void transform(Source xmlSource, final Result outputTarget) throws XPathException {
         boolean closeResultAfterUse = false;
+
+        FileOutputStream stream = null;
         try {
             xsltTransformer.setSource(xmlSource);
             if (outputTarget.getSystemId() != null) { //bug 2214
@@ -94,6 +96,7 @@ public class TransformerImpl extends IdentityTransformer {
             if (outputTarget instanceof StreamResult)
             {
                 StreamResult sr = (StreamResult) outputTarget;
+
                 if (sr.getOutputStream() != null) {
                     destination = xsltExecutable.getProcessor().newSerializer(sr.getOutputStream());
                 } else if (sr.getWriter() != null) {
@@ -124,7 +127,6 @@ public class TransformerImpl extends IdentityTransformer {
                     } catch (IOException err) {
                         throw new XPathException("Failed to create output file " + uri, err);
                     }
-                    FileOutputStream stream;
                     try {
                         stream = new FileOutputStream(file);
                         closeResultAfterUse = true;
@@ -180,11 +182,17 @@ public class TransformerImpl extends IdentityTransformer {
             xsltTransformer.setDestination(destination);
 
             xsltTransformer.transform();
-            if(closeResultAfterUse) {
-                destination.close();
-            }
+
         } catch (SaxonApiException e) {
-            throw XPathException.makeXPathException(e);
+
+        } finally {
+            if(closeResultAfterUse && stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+
+                }
+            }
         }
     }
 
