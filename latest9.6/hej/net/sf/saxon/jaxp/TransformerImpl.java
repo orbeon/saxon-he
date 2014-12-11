@@ -85,13 +85,13 @@ public class TransformerImpl extends IdentityTransformer {
     public void transform(Source xmlSource, final Result outputTarget) throws XPathException {
         boolean closeResultAfterUse = false;
 
-        FileOutputStream stream = null;
+       Destination destination = null;
         try {
             xsltTransformer.setSource(xmlSource);
             if (outputTarget.getSystemId() != null) { //bug 2214
                 xsltTransformer.setBaseOutputURI(outputTarget.getSystemId());
             }
-            Destination destination;
+
 
             if (outputTarget instanceof StreamResult)
             {
@@ -127,13 +127,8 @@ public class TransformerImpl extends IdentityTransformer {
                     } catch (IOException err) {
                         throw new XPathException("Failed to create output file " + uri, err);
                     }
-                    try {
-                        stream = new FileOutputStream(file);
-                        closeResultAfterUse = true;
-                    } catch (FileNotFoundException e) {
-                        throw new XPathException("Failed to create output file", e);
-                    }
-                    destination = xsltExecutable.getProcessor().newSerializer(stream);
+                    closeResultAfterUse = true;
+                    destination = xsltExecutable.getProcessor().newSerializer(file); //bug fix for issue #2250
                 } else {
                     throw new IllegalArgumentException("StreamResult supplies neither an OutputStream nor a Writer");
                 }
@@ -185,12 +180,12 @@ public class TransformerImpl extends IdentityTransformer {
 
         } catch (SaxonApiException e) {
 
-        } finally {
-            if(closeResultAfterUse && stream != null) {
+        } finally {  //bug fix for issue #2250
+            if(closeResultAfterUse && destination != null) {
                 try {
-                    stream.close();
-                } catch (IOException e) {
-
+                    destination.close();
+                } catch (SaxonApiException e) {
+                    throw new XPathException(e);
                 }
             }
         }
