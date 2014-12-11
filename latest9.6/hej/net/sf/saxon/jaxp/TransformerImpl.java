@@ -179,13 +179,13 @@ public class TransformerImpl extends IdentityTransformer {
             xsltTransformer.transform();
 
         } catch (SaxonApiException e) {
-
+            throw XPathException.makeXPathException(e);
         } finally {  //bug fix for issue #2250
             if(closeResultAfterUse && destination != null) {
                 try {
                     destination.close();
-                } catch (SaxonApiException e) {
-                    throw new XPathException(e);
+                } catch (SaxonApiException err) {
+                    throw XPathException.makeXPathException(err);
                 }
             }
         }
