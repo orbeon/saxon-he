@@ -1730,6 +1730,9 @@ public class Controller {
             if (close && source instanceof AugmentedSource) {
                 ((AugmentedSource) source).close();
             }
+            if(messageReceiver != null) {
+                messageReceiver.close();
+            }
             //principalResultURI = null;
         }
     }

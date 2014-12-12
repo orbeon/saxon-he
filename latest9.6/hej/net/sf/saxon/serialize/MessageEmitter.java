@@ -20,6 +20,7 @@ public class MessageEmitter extends XMLEmitter {
         try {
             if (writer != null) {
                 writer.write('\n');
+                writer.flush();
             }
         } catch (java.io.IOException err) {
             throw new XPathException(err);
