@@ -54,6 +54,9 @@ public final class LargeStringBuffer implements AppendableCharSequence {
     private void addSegment(char[] seg) {
         int segs = data.length;
         if (segmentsUsed + 1 > segs) {
+            if (segmentsUsed == 32768) {
+                throw new IllegalStateException("Source document too large: more than 1G characters in text nodes");
+            }
             char[][] d2 = new char[segs * 2][];
             System.arraycopy(data, 0, d2, 0, segmentsUsed);
             data = d2;
