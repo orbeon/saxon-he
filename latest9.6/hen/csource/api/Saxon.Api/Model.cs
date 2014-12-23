@@ -1060,7 +1060,7 @@ namespace Saxon.Api
         {
 			get { 
 				string baseUriStr = ((NodeInfo)value).getBaseURI();
-				if (baseUriStr == null) {
+				if (baseUriStr == null || baseUriStr.Equals("")) {
 					return null;
 				}
 				return new Uri(baseUriStr); 
