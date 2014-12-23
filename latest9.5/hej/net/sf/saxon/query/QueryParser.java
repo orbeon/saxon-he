@@ -1149,24 +1149,26 @@ public class QueryParser extends ExpressionParser {
         // Do the importing
 
         Configuration config = env.getConfiguration();
-        if (!config.isSchemaAvailable(sImport.namespaceURI)) {
-            if (!sImport.locationURIs.isEmpty()) {
-                try {
-                    PipelineConfiguration pipe = config.makePipelineConfiguration();
-                    config.readMultipleSchemas(pipe, env.getBaseURI(), sImport.locationURIs, sImport.namespaceURI);
-                    namespacesToBeSealed.add(sImport.namespaceURI);
-                } catch (TransformerConfigurationException err) {
-                    grumble("Error in schema " + sImport.namespaceURI + ": " + err.getMessage(), "XQST0059");
+        synchronized (config) {
+            if (!config.isSchemaAvailable(sImport.namespaceURI)) {
+                if (!sImport.locationURIs.isEmpty()) {
+                    try {
+                        PipelineConfiguration pipe = config.makePipelineConfiguration();
+                        config.readMultipleSchemas(pipe, env.getBaseURI(), sImport.locationURIs, sImport.namespaceURI);
+                        namespacesToBeSealed.add(sImport.namespaceURI);
+                    } catch (TransformerConfigurationException err) {
+                        grumble("Error in schema " + sImport.namespaceURI + ": " + err.getMessage(), "XQST0059");
+                    }
+                } else if (sImport.namespaceURI.equals(NamespaceConstant.XML) ||
+                        sImport.namespaceURI.equals(NamespaceConstant.FN) ||
+                        sImport.namespaceURI.equals(NamespaceConstant.SCHEMA_INSTANCE)) {
+                    config.addSchemaForBuiltInNamespace(sImport.namespaceURI);
+                } else {
+                    grumble("Unable to locate requested schema " + sImport.namespaceURI, "XQST0059");
                 }
-            } else if (sImport.namespaceURI.equals(NamespaceConstant.XML) ||
-                    sImport.namespaceURI.equals(NamespaceConstant.FN) ||
-                    sImport.namespaceURI.equals(NamespaceConstant.SCHEMA_INSTANCE)) {
-                config.addSchemaForBuiltInNamespace(sImport.namespaceURI);
-            } else {
-                grumble("Unable to locate requested schema " + sImport.namespaceURI, "XQST0059");
             }
+            ((QueryModule) env).addImportedSchema(sImport.namespaceURI, env.getBaseURI(), sImport.locationURIs);
         }
-        ((QueryModule) env).addImportedSchema(sImport.namespaceURI, env.getBaseURI(), sImport.locationURIs);
     }
 
     /**

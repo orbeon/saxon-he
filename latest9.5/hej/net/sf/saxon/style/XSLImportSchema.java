@@ -84,7 +84,7 @@ public class XSLImportSchema extends StyleElement {
                 namespace = namespace.trim();
             }
             PreparedStylesheet preparedStylesheet = getPreparedStylesheet();
-            Configuration config = preparedStylesheet.getConfiguration();
+            Configuration config = getConfiguration();
             try {
                 config.checkLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XSLT, "xsl:import-schema");
             } catch (LicenseException err) {
@@ -93,42 +93,44 @@ public class XSLImportSchema extends StyleElement {
                 xe.setLocator(this);
                 throw xe;
             }
-            AxisIterator kids = iterateAxis(AxisInfo.CHILD);
-            NodeInfo inlineSchema = null;
-            while (true) {
-                Item child = kids.next();
-                if (child==null) {
-                    break;
+            synchronized (config) {   // bug 2210
+                AxisIterator kids = iterateAxis(AxisInfo.CHILD);
+                NodeInfo inlineSchema = null;
+                while (true) {
+                    Item child = kids.next();
+                    if (child==null) {
+                        break;
+                    }
+                    if (inlineSchema != null) {
+                        compileError(getDisplayName() + " must not have more than one child element");
+                    }
+                    inlineSchema = (NodeInfo)child;
+                    if (inlineSchema.getFingerprint() != StandardNames.XS_SCHEMA) {
+                        compileError("The only child element permitted for " + getDisplayName() + " is xs:schema");
+                    }
+                    if (schemaLoc != null) {
+                        compileError("The schema-location attribute must be absent if an inline schema is present");
+                    }
+
+                    namespace = config.readInlineSchema(inlineSchema, namespace,
+                            preparedStylesheet.getCompilerInfo().getErrorListener());
+                    getPrincipalStylesheetModule().addImportedSchema(namespace);
                 }
                 if (inlineSchema != null) {
-                    compileError(getDisplayName() + " must not have more than one child element");
-                }
-                inlineSchema = (NodeInfo)child;
-                if (inlineSchema.getFingerprint() != StandardNames.XS_SCHEMA) {
-                    compileError("The only child element permitted for " + getDisplayName() + " is xs:schema");
-                }
-                if (schemaLoc != null) {
-                    compileError("The schema-location attribute must be absent if an inline schema is present");
-                }
-
-                namespace = config.readInlineSchema(inlineSchema, namespace,
-                        preparedStylesheet.getCompilerInfo().getErrorListener());
-                getPrincipalStylesheetModule().addImportedSchema(namespace);
-            }
-            if (inlineSchema != null) {
-                return;
-            }
-            if (!config.isSchemaAvailable(namespace)) {
-                if (schemaLoc == null) {
-                    compileWarning("No schema for this namespace is known, " +
-                            "and no schema-location was supplied, so no schema has been imported",
-                            SaxonErrorCode.SXWN9006);
                     return;
                 }
-                PipelineConfiguration pipe = config.makePipelineConfiguration();
-                namespace = config.readSchema(pipe, getBaseURI(), schemaLoc, namespace);
+                if (!config.isSchemaAvailable(namespace)) {
+                    if (schemaLoc == null) {
+                        compileWarning("No schema for this namespace is known, " +
+                                "and no schema-location was supplied, so no schema has been imported",
+                                SaxonErrorCode.SXWN9006);
+                        return;
+                    }
+                    PipelineConfiguration pipe = config.makePipelineConfiguration();
+                    namespace = config.readSchema(pipe, getBaseURI(), schemaLoc, namespace);
+                }
+                getPrincipalStylesheetModule().addImportedSchema(namespace);
             }
-            getPrincipalStylesheetModule().addImportedSchema(namespace);
         } catch (SchemaException err) {
             compileError(err.getMessage(), "XTSE0220");
         } catch (TransformerConfigurationException err) {
