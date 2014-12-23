@@ -522,11 +522,11 @@ public class StylesheetPackage extends StylesheetModule implements GlobalVariabl
             ComponentDeclaration decl = topLevel.get(i);
             decl.getSourceElement().index(decl, this);
         }
-        // Now seal all the schemas that have been imported to guarantee consistency with instance documents
-        Configuration config = getConfiguration();
-        for (String ns : schemaIndex) {
-            config.sealNamespace(ns);
-        }
+//        // Now seal all the schemas that have been imported to guarantee consistency with instance documents
+//        Configuration config = getConfiguration();
+//        for (String ns : schemaIndex) {
+//            config.sealNamespace(ns);
+//        }
     }
 
     /**
