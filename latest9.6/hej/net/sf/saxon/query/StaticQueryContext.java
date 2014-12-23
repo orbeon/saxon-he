@@ -891,7 +891,7 @@ public class StaticQueryContext {
         if (value == null && !external) {
             throw new NullPointerException("No initial value for declared variable");
         }
-        if (!type.matches(value, getConfiguration())) {
+        if (value != null && !type.matches(value, getConfiguration())) {  // bug 2248
             throw new XPathException("Value of declared variable does not match its type");
         }
         GlobalVariable var = external ? new GlobalParam() : new GlobalVariable();
@@ -904,7 +904,9 @@ public class StaticQueryContext {
 
         var.setVariableQName(qName);
         var.setRequiredType(type);
-        var.setSelectExpression(Literal.makeLiteral(SequenceTool.toGroundedValue(value), var));
+        if (value != null) {           // bug 2248
+            var.setSelectExpression(Literal.makeLiteral(SequenceTool.toGroundedValue(value), var));
+        }
         if (userDeclaredVariables == null) {
             userDeclaredVariables = new HashSet<GlobalVariable>();
         }
