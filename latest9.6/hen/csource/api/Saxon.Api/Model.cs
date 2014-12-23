@@ -1058,7 +1058,13 @@ namespace Saxon.Api
 
         public Uri BaseUri
         {
-            get { return new Uri(((NodeInfo)value).getBaseURI()); }
+			get { 
+				string baseUriStr = ((NodeInfo)value).getBaseURI();
+				if (baseUriStr == null) {
+					return null;
+				}
+				return new Uri(baseUriStr); 
+			}
         }
 
         /// <summary>
