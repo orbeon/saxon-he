@@ -452,7 +452,7 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
                 try {
                     String escaped = file.toURI().toASCIIString();
                     Source source = new StreamSource(escaped);
-                    ParseOptions options = new ParseOptions();
+                    ParseOptions options = new ParseOptions(pipe.getParseOptions());  // bug 2273
                     if (validation != Validation.STRIP && validation != Validation.PRESERVE) {
                         options.setSchemaValidationMode(validation);
                     }
