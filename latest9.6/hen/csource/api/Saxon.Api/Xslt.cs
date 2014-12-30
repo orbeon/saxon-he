@@ -323,12 +323,12 @@ namespace Saxon.Api
 
 
 
-		/**
-     	* <summary>Compile a list of packages.</summary>
-     	* <param name='input'> sources the collection of packages to be compiled, in the form of an Iterable</param
-     	* <returns> the collection of compiled packages, in the form of an Iterable.</returns>
-     	* <remarks><para>Since 9.6</para></remarks>
-     	*/
+
+     	/// <summary>Compile a list of packages.</summary>
+     	/// <param name='input'> sources the collection of packages to be compiled, in the form of an Iterable</param
+     	/// <returns> the collection of compiled packages, in the form of an Iterable.</returns>
+     	/// <remarks><para>Since 9.6</para></remarks>
+     	
 		public IList<XsltPackage> CompilePackages(IList<Stream> sources)
 		{
 			java.util.List sourcesJList = new java.util.ArrayList();
@@ -358,14 +358,12 @@ namespace Saxon.Api
 		}
 
 
-		/**
-     	* <summary>Import a library package. Calling this method makes the supplied package available for reference
-     	* in the <code>xsl:use-package</code> declaration of subsequent compilations performed using this
-     	* <code>XsltCompiler</code>.</summary>
-    	 *
-     	* <param name='thePackage'> thePackage the package to be imported</param>
-     	* <remarks>since 9.6</remarks>
-     	*/
+
+     	/// <summary>Import a library package. Calling this method makes the supplied package available for reference
+     	/// in the <code>xsl:use-package</code> declaration of subsequent compilations performed using this
+     	/// <code>XsltCompiler</code>.</summary>
+     	/// <param name='thePackage'> thePackage the package to be imported</param>
+     	/// <remarks>since 9.6</remarks>
 
 		public void ImportPackage(XsltPackage thePackage) {
 			if (thePackage.Processor != this.processor) {
@@ -1351,7 +1349,6 @@ namespace Saxon.Api
         /// by the processor does not necessarily bear any direct resemblance to the way
         /// that the XSLT source code is written.</para></remarks>
 
-        /**public**/
         XmlDestination HandleResultDocument(string href, Uri baseUri);
 
     }
@@ -1430,9 +1427,10 @@ namespace Saxon.Api
         ///<summary>Handle the output of an <c>xsl:message</c> instruction
         ///in the stylesheet
         ///</summary>
-        ///
+		///<param name="content"></param>
+		/// <param name="terminate"></param>
+		/// <param name="location"></param>
 
-        /**public**/
         void Message(XdmNode content, bool terminate, IXmlLocation location);
 
     }
@@ -1454,7 +1452,6 @@ namespace Saxon.Api
         /// created programmatically where no base URI has been set up).
         /// </summary>
 
-        /**public**/
         Uri BaseUri { get; set; }
 
         /// <summary>
@@ -1462,7 +1459,6 @@ namespace Saxon.Api
         /// The value -1 indicates that the line number is not known or not applicable.
         /// </summary>
 
-        /**public**/
         int LineNumber { get; set; }
     }
 
@@ -2169,6 +2165,12 @@ namespace Saxon.Api
 
 
     }
+
+	///<summary> An <c>XsltPackage</c> object represents the result of compiling an XSLT 3.0 package, as
+ 	/// represented by an XML document containing an <c>xsl:package</c> element.</summary>
+	/// <remarks><para>
+	/// @since 9.6
+	/// </para></remarks>
 
 [Serializable]
 public class XsltPackage
