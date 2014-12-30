@@ -1591,6 +1591,7 @@ public class Controller {
             throw new IllegalStateException(
                     "The Transformer is being used recursively or concurrently. This is not permitted.");
         }
+        inUse = true; // bug 2275
         clearPerTransformationData();
         if (executable == null) {
             throw new XPathException("Stylesheet has not been prepared");
@@ -1754,6 +1755,7 @@ public class Controller {
             throw new IllegalStateException(
                     "The Transformer is being used recursively or concurrently. This is not permitted.");
         }
+        inUse = true; // bug 2275
         clearPerTransformationData();
         if (executable == null) {
             throw new XPathException("Stylesheet has not been prepared");
