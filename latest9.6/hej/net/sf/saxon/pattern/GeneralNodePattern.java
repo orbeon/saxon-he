@@ -72,8 +72,8 @@ public final class GeneralNodePattern extends Pattern {
      */
 
     public Pattern analyze(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
-        equivalentExpr = visitor.typeCheck(equivalentExpr, contextItemType);
-        equivalentExpr = visitor.optimize(equivalentExpr, contextItemType);
+        equivalentExpr = visitor.typeCheck(equivalentExpr, ContextItemStaticInfo.DEFAULT);
+        equivalentExpr = visitor.optimize(equivalentExpr, ContextItemStaticInfo.DEFAULT);
         // See if the expression is now known to be non-positional
         if (equivalentExpr instanceof FilterExpression && !((FilterExpression)equivalentExpr).isFilterIsPositional()) {
             return PatternMaker.fromExpression(equivalentExpr, visitor.getConfiguration(), true)

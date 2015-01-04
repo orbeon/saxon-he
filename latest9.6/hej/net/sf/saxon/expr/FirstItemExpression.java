@@ -13,6 +13,7 @@ import com.saxonica.ee.stream.adjunct.FirstItemExpressionAdjunct;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.Token;
+import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.pattern.*;
@@ -82,9 +83,11 @@ public final class FirstItemExpression extends SingleItemFilter {
         Pattern basePattern = operand.toPattern(config, is30);
         ItemType type = basePattern.getItemType();
         if (type instanceof NodeTest) {
-            if (basePattern instanceof NodeTestPattern) {
+            Expression baseExpr = getBaseExpression();
+            if (baseExpr instanceof AxisExpression &&
+                ((AxisExpression) baseExpr).getAxis() == AxisInfo.CHILD && basePattern instanceof NodeTestPattern) {
                 return new SimplePositionalPattern(
-                        (NodeTest) type, Literal.makeLiteral(Int64Value.PLUS_ONE, getContainer()), Token.FEQ);
+                    (NodeTest) type, Literal.makeLiteral(Int64Value.PLUS_ONE, getContainer()), Token.FEQ);
             } else {
                 return new GeneralNodePattern(this, (NodeTest) type);
             }

@@ -792,6 +792,8 @@ public class SlashExpression extends Expression
             if (tailPattern.getItemType() instanceof ErrorType) {
                 return tailPattern;
             }
+        } else if (tailPattern instanceof GeneralNodePattern) {
+            return new GeneralNodePattern(this, (NodeTest) tailPattern.getItemType());
         }
 
         byte axis = AxisInfo.PARENT;
