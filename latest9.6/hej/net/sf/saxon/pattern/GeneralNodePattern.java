@@ -75,9 +75,13 @@ public final class GeneralNodePattern extends Pattern {
         equivalentExpr = visitor.typeCheck(equivalentExpr, ContextItemStaticInfo.DEFAULT);
         equivalentExpr = visitor.optimize(equivalentExpr, ContextItemStaticInfo.DEFAULT);
         // See if the expression is now known to be non-positional
-        if (equivalentExpr instanceof FilterExpression && !((FilterExpression)equivalentExpr).isFilterIsPositional()) {
-            return PatternMaker.fromExpression(equivalentExpr, visitor.getConfiguration(), true)
-                    .analyze(visitor, contextItemType);
+        if (equivalentExpr instanceof FilterExpression && !((FilterExpression) equivalentExpr).isFilterIsPositional()) {
+            try {
+                return PatternMaker.fromExpression(equivalentExpr, visitor.getConfiguration(), true)
+                    .analyze(visitor, ContextItemStaticInfo.DEFAULT);
+            } catch (XPathException err) {
+                // cannot make pattern from expression - not a problem, just use the original
+            }
         }
         return this;
     }
