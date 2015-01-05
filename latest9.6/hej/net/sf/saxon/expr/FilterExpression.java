@@ -1071,6 +1071,8 @@ public final class FilterExpression extends Expression implements ContextSwitchi
         } else if (basePattern instanceof NodeTestPattern &&
                 basePattern.getItemType() instanceof NodeTest &&
                 filterIsPositional &&
+                base instanceof AxisExpression &&
+                ((AxisExpression) base).getAxis() == AxisInfo.CHILD &&
                 (filter.getDependencies() & StaticProperty.DEPENDS_ON_LAST) == 0) {
             return new GeneralPositionalPattern((NodeTest) basePattern.getItemType(), filter);
         }
