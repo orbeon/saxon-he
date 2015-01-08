@@ -1353,6 +1353,7 @@ namespace Saxon.Api
 
     }
 
+	///<summary>Internal wrapper class for <c>IResultDocumentHandler</c></summary>
     internal class ResultDocumentHandlerWrapper : JOutputURIResolver
     {
 
@@ -1361,17 +1362,31 @@ namespace Saxon.Api
         private ArrayList destinationList = new ArrayList();
         private JPipelineConfiguration pipe;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Saxon.Api.ResultDocumentHandlerWrapper"/> class.
+		/// </summary>
+		/// <param name="handler">Handler.</param>
+		/// <param name="pipe">Pipe.</param>
         public ResultDocumentHandlerWrapper(IResultDocumentHandler handler, JPipelineConfiguration pipe)
         {
             this.handler = handler;
             this.pipe = pipe;
         }
 
+		/// <summary>
+		/// Create new instance
+		/// </summary>
+		/// <returns>The <c>JOutURIResolver</c> instance.</returns>
         public JOutputURIResolver newInstance()
         {
             return new ResultDocumentHandlerWrapper(handler, pipe);
         }
 
+		/// <summary>
+		/// Resolve the specified href and baseString.
+		/// </summary>
+		/// <param name="href">Href.</param>
+		/// <param name="baseString">Base string.</param>
         public JResult resolve(String href, String baseString)
         {
             Uri baseUri;
@@ -1390,6 +1405,11 @@ namespace Saxon.Api
             return result;
         }
 
+
+		/// <summary>
+		/// Close the specified result.
+		/// </summary>
+		/// <param name="result">Result.</param>
         public void close(JResult result)
         {
             for (int i = 0; i < resultList.Count; i++)
@@ -1462,6 +1482,10 @@ namespace Saxon.Api
         int LineNumber { get; set; }
     }
 
+
+	/// <summary>
+	/// Xml location. An implementation of IXmlLocation
+	/// </summary>
     internal class XmlLocation : IXmlLocation
     {
         private Uri baseUri;
@@ -1479,6 +1503,10 @@ namespace Saxon.Api
     }
 
 
+	/// <summary>
+	/// Message listener proxy. This class implements a Receiver that can receive xsl:message output and send it to a
+	/// user-supplied MessageListener
+	/// </summary>
     [Serializable]
     internal class MessageListenerProxy : JSequenceWriter
     {
@@ -1487,6 +1515,11 @@ namespace Saxon.Api
         public bool terminate;
         public int locationId;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Saxon.Api.MessageListenerProxy"/> class.
+		/// </summary>
+		/// <param name="pipe">pipe.</param>
+		/// <param name="ml">ml.</param>
         public MessageListenerProxy(JPipelineConfiguration pipe, IMessageListener ml)
             : base(pipe)
         {
@@ -1494,6 +1527,11 @@ namespace Saxon.Api
             base.setTreeModel(net.sf.saxon.om.TreeModel.LINKED_TREE);
         }
 
+
+		/// <summary>
+		/// Starts the document.
+		/// </summary>
+		/// <param name="properties">Properties.</param>
         public override void startDocument(int properties)
         {
             terminate = (properties & JReceiverOptions.TERMINATE) != 0;
@@ -1501,6 +1539,14 @@ namespace Saxon.Api
             base.startDocument(properties);
         }
 
+
+		/// <summary>
+		/// Starts the element.
+		/// </summary>
+		/// <param name="nameCode">Name code.</param>
+		/// <param name="typeCode">Type code.</param>
+		/// <param name="locationId">Location identifier.</param>
+		/// <param name="properties">Properties.</param>
         public override void startElement(JNodeName nameCode, JSchemaType typeCode, int locationId, int properties)
         {
             if (this.locationId == -1)
@@ -1510,6 +1556,12 @@ namespace Saxon.Api
             base.startElement(nameCode, typeCode, locationId, properties);
         }
 
+		/// <summary>
+		/// Characters the specified s, locationId and properties.
+		/// </summary>
+		/// <param name="s">S.</param>
+		/// <param name="locationId">Location identifier.</param>
+		/// <param name="properties">Properties.</param>
         public override void characters(CharSequence s, int locationId, int properties)
         {
             if (this.locationId == -1)
@@ -1519,6 +1571,13 @@ namespace Saxon.Api
             base.characters(s, locationId, properties);
         }
 
+
+		/// <summary>
+		/// Append the specified item, locationId and copyNamespaces.
+		/// </summary>
+		/// <param name="item">Item.</param>
+		/// <param name="locationId">Location identifier.</param>
+		/// <param name="copyNamespaces">Copy namespaces.</param>
         public override void append(JItem item, int locationId, int copyNamespaces)
         {
             if (this.locationId == -1)
@@ -1528,6 +1587,11 @@ namespace Saxon.Api
             base.append(item, locationId, copyNamespaces);
         }
 
+
+		/// <summary>
+		/// Write the specified item.
+		/// </summary>
+		/// <param name="item">Item.</param>
         public override void write(JItem item)
         {
             XmlLocation loc = new XmlLocation();
@@ -1593,8 +1657,8 @@ namespace Saxon.Api
  	/// </list>
  	/// <p>Once the stylesheet has been invoked (using any of these methods), the values of the global context
  	/// item and stylesheet parameters cannot be changed. If it is necessary to run another transformation with
- 	/// a different context item or different stylesheet parameters, a new <code>Xslt30Transformer</code>
- 	/// should be created from the original <code>XsltExecutable</code>.</p></remarks>
+ 	/// a different context item or different stylesheet parameters, a new <c>Xslt30Transformer</c>
+ 	/// should be created from the original <c>XsltExecutable</c>.</p></remarks>
  	/// <para> @since 9.6</para> 
 
     [Serializable]
