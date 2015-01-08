@@ -1058,7 +1058,7 @@ namespace Saxon.Api
 
         public Uri BaseUri
         {
-			get { 
+            get { 
 				string baseUriStr = ((NodeInfo)value).getBaseURI();
 				if (baseUriStr == null || baseUriStr.Equals("")) {
 					return null;
@@ -1604,7 +1604,7 @@ namespace Saxon.Api
             }
             else
             {
-                return prefix + ":" + uri;
+				return prefix + ":" + LocalName;
             }
         }
 

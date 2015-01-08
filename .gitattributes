@@ -459,7 +459,6 @@ latest9.5/samples/trax/xsl/postamble.txt svn_eol_002dstyle=native
 latest9.5/samples/trax/xsl/preamble.txt svn_eol_002dstyle=native
 latest9.5/samples/trax/xsl/text.xsl svn_eol_002dstyle=native
 latest9.6/hej/net/sf/saxon/type/ExternalObjectType.java svn_eol_002dstyle=native
-latest9.6/hen/csource/.DS_Store svn_mime_002dtype=application%2Foctet-stream
 latest9.6/hen/csource/api/Saxon.Api/Configuration.cs svn_eol_002dstyle=native
 latest9.6/hen/csource/api/Saxon.Api/Destination.cs svn_eol_002dstyle=native
 latest9.6/hen/csource/api/Saxon.Api/Errors.cs svn_eol_002dstyle=native
