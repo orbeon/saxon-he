@@ -11,9 +11,6 @@ import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.ConversionResult;
-import net.sf.saxon.type.ValidationFailure;
-import net.sf.saxon.value.DecimalValue;
 import net.sf.saxon.value.Whitespace;
 
 import javax.xml.transform.OutputKeys;
@@ -27,7 +24,7 @@ public class XSLOutput extends StyleElement {
 
     private StructuredQName outputFormatName;
     /*@Nullable*/ private String method = null;
-    private String version = null;
+    private String outputVersion = null;
     private String htmlVersion = null;
     private String indent = null;
     private String encoding = null;
@@ -77,7 +74,7 @@ public class XSLOutput extends StyleElement {
             } else if (f.equals(StandardNames.METHOD)) {
                 method = Whitespace.trim(atts.getValue(a));
             } else if (f.equals(StandardNames.VERSION)) {
-                version = Whitespace.trim(atts.getValue(a));
+                outputVersion = Whitespace.trim(atts.getValue(a));
             } else if (f.equals(StandardNames.HTML_VERSION)) {
                 htmlVersion = Whitespace.trim(atts.getValue(a));
             } else if (f.equals(StandardNames.BYTE_ORDER_MARK)) {
@@ -181,7 +178,7 @@ public class XSLOutput extends StyleElement {
      */
     @Override
     protected void processVersionAttribute(String ns) throws XPathException {
-         version = ((StyleElement)getParent()).getEffectiveVersion().getStringValue();
+         version = ((StyleElement)getParent()).getEffectiveVersion();
     }
 
     /**
@@ -230,8 +227,8 @@ public class XSLOutput extends StyleElement {
             checkAndPut(SaxonOutputKeys.BYTE_ORDER_MARK, byteOrderMark, details, precedences, thisPrecedence);
         }
 
-        if (version != null) {
-            checkAndPut(OutputKeys.VERSION, version, details, precedences, thisPrecedence);
+        if (outputVersion != null) {
+            checkAndPut(OutputKeys.VERSION, outputVersion, details, precedences, thisPrecedence);
         }
 
         if (htmlVersion != null) {
