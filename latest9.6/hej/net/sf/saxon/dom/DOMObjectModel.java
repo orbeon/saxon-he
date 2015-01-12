@@ -240,9 +240,15 @@ public class DOMObjectModel extends TreeModel implements ExternalObjectModel {
     public boolean sendSource(Source source, Receiver receiver) throws XPathException {
         if (source instanceof DOMSource) {
             Node startNode = ((DOMSource) source).getNode();
-            DOMSender driver = new DOMSender(startNode, receiver);
-            driver.setSystemId(source.getSystemId());
-            driver.send();
+            if (startNode == null) {
+                // Send an empty document
+                receiver.startDocument(0);
+                receiver.endDocument();
+            } else {
+                DOMSender driver = new DOMSender(startNode, receiver);
+                driver.setSystemId(source.getSystemId());
+                driver.send();
+            }
             return true;
         }
         return false;
