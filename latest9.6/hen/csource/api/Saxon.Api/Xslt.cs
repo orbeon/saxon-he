@@ -1227,12 +1227,12 @@ namespace Saxon.Api
 		{
 			XdmNode doc = XdmNode;
 			if (doc == null) {
-				throw new StaticError("No source document has been built by the previous pipeline stage");
+				throw new StaticError(new net.sf.saxon.trans.XPathException("No source document has been built by the previous pipeline stage"));
 			}
 			Reset ();
 			JReceiver result = GetReceiver (controller.makePipelineConfiguration());
 			try{
-				controller.transform(doc, result);
+				controller.transform(doc.Implementation, result);
 			}catch (javax.xml.transform.TransformerException err)
 			{
 				throw new DynamicError(err);
