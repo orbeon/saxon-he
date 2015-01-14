@@ -369,17 +369,36 @@ namespace Saxon.Api
 
     }
 
+	/// <summary>
+	/// Error gatherer. This class To provide customized error handling
+	/// <p>If an application does <em>not</em> register its own custom
+	/// <para><code>ErrorListener</code>, the default <code>ErrorGatherer</code>
+	/// is used which keeps track of all warnings and errors in a list.
+	/// and does not throw any <code>Exception</code>s.
+	/// Applications are <em>strongly</em> encouraged to register and use
+	/// <code>ErrorListener</code>s that insure proper behavior for warnings and
+	/// errors.</para>
+	/// </summary>
     [Serializable]
     internal class ErrorGatherer : javax.xml.transform.ErrorListener
     {
 
         private IList errorList;
 
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Saxon.Api.ErrorGatherer"/> class.
+		/// </summary>
+		/// <param name="errorList">Error list.</param>
         public ErrorGatherer(IList errorList)
         {
             this.errorList = errorList;
         }
 
+		/// <summary>
+		/// Warning the specified exception.
+		/// </summary>
+		/// <param name="exception">TransformerException.</param>
         public void warning(TransformerException exception)
         {
             StaticError se = new StaticError(exception);
@@ -388,6 +407,10 @@ namespace Saxon.Api
             errorList.Add(se);
         }
 
+		/// <summary>
+		/// Report a Transformer exception thrown.
+		/// </summary>
+		/// <param name="error">Error.</param>
         public void error(TransformerException error)
         {
             StaticError se = new StaticError(error);
@@ -396,6 +419,10 @@ namespace Saxon.Api
             errorList.Add(se);
         }
 
+		/// <summary>
+		/// Report a fatal exception thrown.
+		/// </summary>
+		/// <param name="error">TransformerException.</param>
         public void fatalError(TransformerException error)
         {
             StaticError se = new StaticError(error);
@@ -404,6 +431,11 @@ namespace Saxon.Api
             //Console.WriteLine("(Adding fatal error " + error.getMessage() + ")");
         }
 
+
+		/// <summary>
+		/// Gets the error list.
+		/// </summary>
+		/// <returns>Returns the error list</returns>
 		public IList ErrorList{
 			get { return errorList;}
 		}
