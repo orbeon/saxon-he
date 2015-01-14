@@ -773,13 +773,20 @@ namespace Saxon.Api
 
 
 
-
+		/// <summary>
+		/// Inner class containing information about a global parameter to a compiled stylesheet.
+		/// </summary>
         public class ParameterDetails
         {
 
             private XdmSequenceType type;
             private bool isRequired;
 
+			/// <summary>
+			/// Initializes a new instance of the <see cref="Saxon.Api.XsltExecutable+ParameterDetails"/> class.
+			/// </summary>
+			/// <param name="type1">Type1.</param>
+			/// <param name="isRequired1">If set to <c>true</c> is required1.</param>
             public ParameterDetails(XdmSequenceType type1, bool isRequired1)
             {
                 this.type = type1;
@@ -792,19 +799,22 @@ namespace Saxon.Api
              * @return the type defined in the <code>as</code> attribute of the <code>xsl:param</code> element,
              *         without its occurrence indicator
              */
-
+			/// <summary>
+			/// Gets the type of the declared item.
+			/// </summary>
+			/// <returns>The type defined in the <code>as</code> attribute of the <code>xsl:param</code> element,
+			///  without its occurrence indicator</returns>
             public XdmItemType getDeclaredItemType()
             {
                 return type.itemType;
             }
 
-            /**
-             * Get the declared cardinality of the parameter
-             *
-             * @return the occurrence indicator from the type appearing in the <code>as</code> attribute
-             *         of the <code>xsl:param</code> element
-             */
 
+			/// <summary>
+			/// Gets the declared cardinality of the parameter.
+			/// </summary>
+			/// <returns>The occurrence indicator from the type appearing in the <code>as</code> attribute
+			/// of the <code>xsl:param</code> element</returns>
             public int getDeclaredCardinality()
             {
                 return type.occurrences;
@@ -819,13 +829,12 @@ namespace Saxon.Api
                 return type;
             }
 
-            /**
-             * Ask whether the parameter is required (mandatory) or optional
-             *
-             * @return true if the parameter is mandatory (<code>required="yes"</code>), false
-             *         if it is optional
-             */
 
+			/// <summary>
+			/// Ask whether the parameter is required (mandatory) or optional
+			/// </summary>
+			/// <return><c>true</c> if the parameter is mandatory (<code>required="yes"</code>), false
+			///         if it is optional.</return>
             public bool IsRequired
             {
                 set { this.isRequired = value; }
@@ -1664,7 +1673,7 @@ namespace Saxon.Api
  	/// global context item is used when initializing global variables. Unlike earlier transformation APIs,
  	/// the global context item is quite independent of the "principal Source document".
  	/// </item>
- 	/// <item><term>stylesheet<term>/ may now be repeatedly invoked. Each invocation takes one of three forms:
+ 	/// <item><term>stylesheet<term> may now be repeatedly invoked. Each invocation takes one of three forms:
  	/// <list type="bullet">
  	/// <item>Invocation by applying templates. In this case, the information required is (i) an initial
  	/// mode (which defaults to the unnamed mode), (ii) an initial match sequence, which is any
@@ -1686,11 +1695,12 @@ namespace Saxon.Api
  	/// that document can be processed in a number of ways, for example it can be materialized as a tree in
  	/// memory, it can be serialized as XML or HTML, or it can be subjected to further transformation.</description></item>
  	/// </list>
- 	/// <p>Once the stylesheet has been invoked (using any of these methods), the values of the global context
+ 	/// <<para>Once the stylesheet has been invoked (using any of these methods), the values of the global context
  	/// item and stylesheet parameters cannot be changed. If it is necessary to run another transformation with
  	/// a different context item or different stylesheet parameters, a new <c>Xslt30Transformer</c>
- 	/// should be created from the original <c>XsltExecutable</c>.</p></remarks>
- 	/// <para> @since 9.6</para> 
+ 	/// should be created from the original <c>XsltExecutable</c>.</para>
+	/// <para> @since 9.6</para> 
+	/// </remark>
 
     [Serializable]
     public class Xslt30Transformer

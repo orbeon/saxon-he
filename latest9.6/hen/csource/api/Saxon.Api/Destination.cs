@@ -511,10 +511,10 @@ namespace Saxon.Api
 		/// eturn a Receiver. Saxon calls this method to obtain a Receiver, to which it then sends
 		/// a sequence of events representing the content of an XML document.
         /// </summary>
-        /// <returns>The receiver.</returns>
-		/// <param name="pipe">Pipe. The Saxon configuration. This is supplied so that the destination can
-		/// use information from the configuration (for example, a reference to the name pool)
+		/// <param name="pipe">Pipe. The Saxon pipeline configuration. This is supplied so that the destination can
+		/// use information from the <code>PipelineConfiguration</code> (for example, a reference to the name pool)
 		/// to construct or configure the returned Receiver.</param>
+		/// <returns>The receiver.</returns>
 
         public override JReceiver GetReceiver(JPipelineConfiguration pipe)
         {
@@ -522,6 +522,13 @@ namespace Saxon.Api
             return builder;
         }
 
+		/// <summary>
+		/// Gets the receiver.
+		/// </summary>
+		/// <param name="config">Config.The Saxon configuration. This is supplied so that the destination can
+		/// use information from the <code>Configuration</code> (for example, a reference to the name pool)
+		/// to construct or configure the returned Receiver.</param>
+		/// <returns>The receiver.</returns>
 		public JReceiver GetReceiver(JConfiguration config)
 		{
 			builder.setPipelineConfiguration (config.makePipelineConfiguration());
@@ -540,8 +547,12 @@ namespace Saxon.Api
         public NullDestination()
         { }
 
-        /// <summary inherit="yes"/>
-
+       
+		/// <summary inherit="yes"/>
+		/// Gets the receiver.
+		/// </summary>
+		/// <returns>The receiver.</returns>
+		/// <param name="pipe">Pipe. The PipelineConfiguration</param>
 		public override JReceiver GetReceiver(JPipelineConfiguration pipe)
         {
             return new JSink(pipe);
