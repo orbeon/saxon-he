@@ -507,7 +507,14 @@ namespace Saxon.Api
             get { return builder.getDocumentNode(); }
         }
 
-        /// <summary inherit="yes"/>
+		/// <summary inherit="yes"/>
+		/// eturn a Receiver. Saxon calls this method to obtain a Receiver, to which it then sends
+		/// a sequence of events representing the content of an XML document.
+        /// </summary>
+        /// <returns>The receiver.</returns>
+		/// <param name="pipe">Pipe. The Saxon configuration. This is supplied so that the destination can
+		/// use information from the configuration (for example, a reference to the name pool)
+		/// to construct or configure the returned Receiver.</param>
 
         public override JReceiver GetReceiver(JPipelineConfiguration pipe)
         {
@@ -586,8 +593,16 @@ namespace Saxon.Api
             set { closeAfterUse = value; }
         }
 
-        /// <summary inherit="yes"/>
-
+        
+		/// <summary inherit="yes"/>
+		/// Return a Receiver. Saxon calls this method to obtain a Java Receiver, to which it then sends
+		/// a sequence of events representing the content of an XML document. The method is intended
+		/// primarily for internal use, and may give poor diagnostics if used incorrectly.
+		/// </summary>
+		/// <returns>The receiver.</returns>
+		/// <param name="pipe">JPipelineConfiguration. The Saxon configuration. This is supplied so that the destination can
+		/// use information from the configuration (for example, a reference to the name pool)
+		/// to construct or configure the returned Receiver.</param>
 		public override JReceiver GetReceiver(JPipelineConfiguration pipe)
         {
             DotNetReceiver dnr = new DotNetReceiver(writer);
@@ -683,7 +698,14 @@ namespace Saxon.Api
             }
         }
 
-        /// <summary inherit="yes"/>
+		/// <summary inherit="yes"/>
+		/// Return a Receiver. Saxon calls this method to obtain a Receiver, to which it then sends
+		/// a sequence of events representing the content of an XML document.
+        /// </summary>
+        /// <returns>The receiver to which events are to be sent</returns>
+		/// <param name="pipe">Pipe. The Saxon configuration. This is supplied so that the destination can
+		/// use information from the configuration (for example, a reference to the name pool)
+		/// to construct or configure the returned Receiver.</param>
 
 		public override JReceiver GetReceiver(JPipelineConfiguration pipe)
         {

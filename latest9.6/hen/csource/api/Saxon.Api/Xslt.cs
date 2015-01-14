@@ -1819,16 +1819,18 @@ namespace Saxon.Api
 
 
 
-
 	///<summary> Supply the values of global stylesheet variables and parameters.</summary>
-     
-     /// <param> parameters a map whose keys are QNames identifying global stylesheet parameters,
-     /// and whose corresponding values are the values to be assigned to those parameters. If necessary
-     /// the supplied values are converted to the declared type of the parameter.
-     /// The contents of the supplied map are copied by this method,
-     /// so subsequent changes to the map have no effect.
+	/// <param> parameters a map whose keys are QNames identifying global stylesheet parameters,
+	/// and whose corresponding values are the values to be assigned to those parameters. If necessary
+	/// the supplied values are converted to the declared type of the parameter.
+	/// The contents of the supplied map are copied by this method,
+	/// so subsequent changes to the map have no effect.
 	/// </param>
-
+	/// <param name="parameters">Parameters. A Dictionary whose keys are QNames identifying global stylesheet parameters,
+	///and whose corresponding values are the values to be assigned to those parameters. If necessary
+	///the supplied values are converted to the declared type of the parameter.
+	///The contents of the supplied map are copied by this method,
+	///so subsequent changes to the map have no effect.</param>
 	public void SetStylesheetParameters(Dictionary<QName, XdmValue> parameters){
 
 		if (primed) {

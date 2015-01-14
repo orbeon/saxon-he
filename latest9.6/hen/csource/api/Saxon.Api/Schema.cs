@@ -555,7 +555,9 @@ namespace Saxon.Api
 
     }
 
-    // internal class that wraps a (.NET) QueryResolver to create a (Java) SchemaURIResolver
+    /// <summary>
+	/// internal class that wraps a (.NET) QueryResolver to create a (Java) SchemaURIResolver
+    /// </summary>
 
     internal class DotNetSchemaURIResolver : net.sf.saxon.lib.SchemaURIResolver
     {
@@ -563,6 +565,10 @@ namespace Saxon.Api
         internal SchemaResolver resolver;
         internal JConfiguration config;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Saxon.Api.DotNetSchemaURIResolver"/> class.
+		/// </summary>
+		/// <param name="resolver">Resolver.</param>
         public DotNetSchemaURIResolver(SchemaResolver resolver)
         {
             this.resolver = resolver;
@@ -573,6 +579,12 @@ namespace Saxon.Api
             this.config = config;
         }
 
+		/// <summary>
+		/// Resolve the specified targetNamespace, baseURI and locations.
+		/// </summary>
+		/// <param name="targetNamespace">Target namespace.</param>
+		/// <param name="baseURI">BaseURI.</param>
+		/// <param name="locations">Locations.</param>
         public Source[] resolve(String targetNamespace, String baseURI, String[] locations)
         {
             if (config.isSchemaAvailable(targetNamespace))
