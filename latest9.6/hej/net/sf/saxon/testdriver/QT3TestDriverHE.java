@@ -82,12 +82,13 @@ public class QT3TestDriverHE extends TestDriver {
     public static void main(String[] args) throws Exception {
         if (args.length == 0 || args[0].equals("-?")) {
             usage();
+            return;
         }
         new QT3TestDriverHE().go(args);
     }
 
     public static void usage() {
-        System.err.println("java com.saxonica.testdriver.FOTestSuiteDriver[HE] testsuiteDir catalog [-o:resultsdir] [-s:testSetName]" +
+        System.err.println("java net.sf.saxon.testdriver.QT3TestSuiteDriverHE testsuiteDir catalog [-o:resultsdir] [-s:testSetName]" +
                 " [-t:testNamePattern] [-unfolded] [-bytecode:on|off|debug] [-tree] [-lang:XP20|XP30|XQ10|XQ30]");
 
     }
