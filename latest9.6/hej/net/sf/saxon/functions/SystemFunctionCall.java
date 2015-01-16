@@ -58,6 +58,20 @@ public abstract class SystemFunctionCall extends FunctionCall implements Callabl
         if (entry == null) {
             return null;
         }
+        if ((entry.properties & StandardFunction.IMP_CX_I) != 0 && arguments.length == 0) {
+            // Add the context item as an implicit argument
+            Expression[] newArgs = new Expression[1];
+            newArgs[0] = new ContextItemExpression();
+            return makeSystemFunction(name, newArgs);
+        }
+        if ((entry.properties & StandardFunction.IMP_CX_D) != 0) {
+            // Add the context document as an implicit argument
+            int arity = arguments.length;
+            Expression[] newArgs = new Expression[arity + 1];
+            System.arraycopy(arguments, 0, newArgs, 0, arity);
+            newArgs[arity] = new RootExpression();
+            return makeSystemFunction(name, newArgs);
+        }
         Class functionClass = entry.implementationClass;
         try {
             SystemFunctionCall f = (SystemFunctionCall) functionClass.newInstance();
@@ -396,13 +410,13 @@ public abstract class SystemFunctionCall extends FunctionCall implements Callabl
      */
 
     protected final void useContextItemAsDefault(/*@NotNull*/ ExpressionVisitor visitor) {
-        if (argument.length == 0) {
-            argument = new Expression[1];
-            argument[0] = new ContextItemExpression();
-            details = StandardFunction.getFunction(getFunctionName().getLocalPart(), 1);
-            ExpressionTool.copyLocationInfo(this, argument[0]);
-            visitor.resetStaticProperties();
-        }
+//        if (argument.length == 0) {
+//            argument = new Expression[1];
+//            argument[0] = new ContextItemExpression();
+//            details = StandardFunction.getFunction(getFunctionName().getLocalPart(), 1);
+//            ExpressionTool.copyLocationInfo(this, argument[0]);
+//            visitor.resetStaticProperties();
+//        }
         // Note that the extra argument is added before type-checking takes place. The
         // type-checking will add any necessary checks to ensure that the context item
         // is a node, in cases where this is required.
@@ -423,20 +437,20 @@ public abstract class SystemFunctionCall extends FunctionCall implements Callabl
 
     protected final void addContextDocumentArgument(int pos, String augmentedName)
             throws XPathException {
-        if (argument.length > pos) {
-            return;
-            // this can happen during optimization, if the extra argument is already present
-        }
-        if (argument.length != pos) {
-            throw new XPathException("Too few arguments in call to " + augmentedName + "() function");
-        }
-        Expression[] newArgs = new Expression[pos + 1];
-        System.arraycopy(argument, 0, newArgs, 0, argument.length);
-        RootExpression rootExpression = new RootExpression();
-        ExpressionTool.copyLocationInfo(this, rootExpression);
-        newArgs[pos] = rootExpression;
-        argument = newArgs;
-        setDetails(StandardFunction.getFunction(augmentedName, newArgs.length));
+//        if (argument.length > pos) {
+//            return;
+//            // this can happen during optimization, if the extra argument is already present
+//        }
+//        if (argument.length != pos) {
+//            throw new XPathException("Too few arguments in call to " + augmentedName + "() function");
+//        }
+//        Expression[] newArgs = new Expression[pos + 1];
+//        System.arraycopy(argument, 0, newArgs, 0, argument.length);
+//        RootExpression rootExpression = new RootExpression();
+//        ExpressionTool.copyLocationInfo(this, rootExpression);
+//        newArgs[pos] = rootExpression;
+//        argument = newArgs;
+//        setDetails(StandardFunction.getFunction(augmentedName, newArgs.length));
     }
 
     /**

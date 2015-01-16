@@ -8,10 +8,7 @@
 package net.sf.saxon.functions;
 
 import com.saxonica.functions.hof.CallableFunctionItem;
-import net.sf.saxon.expr.Container;
-import net.sf.saxon.expr.Expression;
-import net.sf.saxon.expr.StaticContext;
-import net.sf.saxon.expr.SuppliedParameterReference;
+import net.sf.saxon.expr.*;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.FunctionItem;
 import net.sf.saxon.om.StructuredQName;
@@ -102,6 +99,22 @@ public class SystemFunctionLibrary implements FunctionLibrary {
                     err.setIsStaticError(true);
                     throw err;
                 }
+            }
+            if ((entry.properties & StandardFunction.IMP_CX_I) != 0 && arity == 0) {
+                // Add the context item as an implicit argument
+                staticArgs = new Expression[1];
+                staticArgs[0] = new ContextItemExpression();
+                arity = 1;
+                entry = StandardFunction.getFunction(local, arity);
+            }
+            if ((entry.properties & StandardFunction.IMP_CX_D) != 0) {
+                // Add the context document as an implicit argument
+                Expression[] newArgs = new Expression[arity + 1];
+                System.arraycopy(staticArgs, 0, newArgs, 0, arity);
+                newArgs[arity] = new RootExpression();
+                staticArgs = newArgs;
+                arity++;
+                entry = StandardFunction.getFunction(local, arity);
             }
             if ((functionSet & entry.applicability) == 0) {
                 XPathException err = new XPathException(

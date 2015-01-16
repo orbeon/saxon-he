@@ -153,6 +153,9 @@ public abstract class StandardFunction {
     public static final int BASE = 8;             // Depends on base URI
     public static final int NS = 16;              // Depends on namespace context
     public static final int DCOLL = 32;           // Depends on default collation
+    public static final int IMP_CX_I = 64;        // Argument defaults to context item
+    public static final int IMP_CX_D = 128;       // Argument defaults to context document
+
 
     public static final int DEPENDS_ON_STATIC_CONTEXT = BASE | NS | DCOLL;
 
@@ -186,7 +189,7 @@ public abstract class StandardFunction {
                 // can't say "same as first argument" because the avg of a set of integers is decimal
                 .arg(0, BuiltInAtomicType.ANY_ATOMIC, STAR, EMPTY);
 
-        register("base-uri", BaseURI.class, 0, 0, 1, BuiltInAtomicType.ANY_URI, OPT, CORE, BASE)
+        register("base-uri", BaseURI.class, 0, 0, 1, BuiltInAtomicType.ANY_URI, OPT, CORE, BASE | IMP_CX_I)
                 .arg(0, Type.NODE_TYPE, OPT | INS, EMPTY);
 
         register("boolean", BooleanFn.class, 0, 1, 1, BuiltInAtomicType.BOOLEAN, ONE, CORE, 0)
@@ -288,7 +291,7 @@ public abstract class StandardFunction {
                 .arg(0, Type.ITEM_TYPE, STAR, null)
                 .arg(1, Type.NODE_TYPE, ONE, null);
 
-        register("document-uri#0", DocumentUriFn.class, 0, 0, 0, BuiltInAtomicType.ANY_URI, OPT, XPATH30, FOCUS);
+        register("document-uri#0", DocumentUriFn.class, 0, 0, 0, BuiltInAtomicType.ANY_URI, OPT, XPATH30, FOCUS | IMP_CX_I);
 
         register("document-uri#1", DocumentUriFn.class, 0, 1, 1, BuiltInAtomicType.ANY_URI, OPT, CORE, 0)
                 .arg(0, Type.NODE_TYPE, OPT | INS, EMPTY);
@@ -312,7 +315,7 @@ public abstract class StandardFunction {
         register("element-available", ElementAvailable.class, 0, 1, 1, BuiltInAtomicType.BOOLEAN, ONE, XSLT | USE_WHEN, NS)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null);
 
-        register("element-with-id#1", Id.class, Id.ELEMENT_WITH_ID, 1, 1, NodeKindTest.ELEMENT, STAR, CORE, FOCUS)
+        register("element-with-id#1", Id.class, Id.ELEMENT_WITH_ID, 1, 1, NodeKindTest.ELEMENT, STAR, CORE, FOCUS | IMP_CX_D)
                 .arg(0, BuiltInAtomicType.STRING, STAR, EMPTY);
 
         register("element-with-id#2", Id.class, Id.ELEMENT_WITH_ID, 2, 2, NodeKindTest.ELEMENT, STAR, CORE, 0)
@@ -387,13 +390,13 @@ public abstract class StandardFunction {
                 .arg(0, BuiltInAtomicType.STRING, ONE, null)
                 .arg(1, BuiltInAtomicType.INTEGER, ONE, null);
 
-        register("generate-id#0", GenerateId.class, 0, 0, 0, BuiltInAtomicType.STRING, ONE, XSLT | XPATH30, FOCUS);
+        register("generate-id#0", GenerateId.class, 0, 0, 0, BuiltInAtomicType.STRING, ONE, XSLT | XPATH30, FOCUS | IMP_CX_I);
 
         register("generate-id#1", GenerateId.class, 0, 1, 1, BuiltInAtomicType.STRING, ONE, XSLT | XPATH30, 0)
                 .arg(0, Type.NODE_TYPE, OPT | INS, StringValue.EMPTY_STRING);
 
         register("has-children#0", HasChildren.class, 0, 0, 0, BuiltInAtomicType.BOOLEAN,
-                ONE, StandardFunction.XPATH30, 0);
+                ONE, StandardFunction.XPATH30, IMP_CX_I);
 
         register("has-children#1", HasChildren.class, 0, 1, 1, BuiltInAtomicType.BOOLEAN,
                 OPT, XPATH30, 0)
@@ -415,14 +418,14 @@ public abstract class StandardFunction {
                 BuiltInAtomicType.INTEGER, OPT, CORE, 0)
                 .arg(0, BuiltInAtomicType.TIME, OPT, EMPTY);
 
-        register("id#1", Id.class, Id.ID, 1, 1, NodeKindTest.ELEMENT, STAR, CORE, FOCUS)
+        register("id#1", Id.class, Id.ID, 1, 1, NodeKindTest.ELEMENT, STAR, CORE, FOCUS | IMP_CX_D)
                 .arg(0, BuiltInAtomicType.STRING, STAR, EMPTY);
 
         register("id#2", Id.class, Id.ID, 2, 2, NodeKindTest.ELEMENT, STAR, CORE, 0)
                 .arg(0, BuiltInAtomicType.STRING, STAR, EMPTY)
                 .arg(1, Type.NODE_TYPE, ONE, null);
 
-        register("idref#1", Idref.class, 0, 1, 1, Type.NODE_TYPE, STAR, CORE, FOCUS)
+        register("idref#1", Idref.class, 0, 1, 1, Type.NODE_TYPE, STAR, CORE, FOCUS | IMP_CX_D)
                 .arg(0, BuiltInAtomicType.STRING, STAR, EMPTY);
 
         register("idref#2", Idref.class, 0, 2, 2, Type.NODE_TYPE, STAR, CORE, 0)
@@ -455,7 +458,7 @@ public abstract class StandardFunction {
         register("iri-to-uri", EscapeURI.class, EscapeURI.IRI_TO_URI, 1, 1, BuiltInAtomicType.STRING, ONE, CORE, 0)
                 .arg(0, BuiltInAtomicType.STRING, OPT, StringValue.EMPTY_STRING);
 
-        register("key#2", KeyFn.class, 0, 2, 2, Type.NODE_TYPE, STAR, XSLT, FOCUS | NS)
+        register("key#2", KeyFn.class, 0, 2, 2, Type.NODE_TYPE, STAR, XSLT, FOCUS | NS | IMP_CX_D)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null)
                 .arg(1, BuiltInAtomicType.ANY_ATOMIC, STAR, EMPTY);
 
@@ -473,7 +476,7 @@ public abstract class StandardFunction {
 
         register("last", Last.class, 0, 0, 0, BuiltInAtomicType.INTEGER, ONE, CORE, FOCUS);
 
-        register("local-name#0", LocalNameFn.class, 0, 0, 0, BuiltInAtomicType.STRING, ONE, CORE, FOCUS);
+        register("local-name#0", LocalNameFn.class, 0, 0, 0, BuiltInAtomicType.STRING, ONE, CORE, FOCUS | IMP_CX_I);
 
         register("local-name#1", LocalNameFn.class, 0, 1, 1, BuiltInAtomicType.STRING, ONE, CORE, 0)
                 .arg(0, Type.NODE_TYPE, OPT | INS, StringValue.EMPTY_STRING);
@@ -528,12 +531,12 @@ public abstract class StandardFunction {
                 BuiltInAtomicType.INTEGER, OPT, CORE, 0)
                 .arg(0, BuiltInAtomicType.DURATION, OPT, EMPTY);
 
-        register("name#0", NameFn.class, 0, 0, 0, BuiltInAtomicType.STRING, ONE, CORE, FOCUS);
+        register("name#0", NameFn.class, 0, 0, 0, BuiltInAtomicType.STRING, ONE, CORE, FOCUS | IMP_CX_I);
 
         register("name#1", NameFn.class, 0, 1, 1, BuiltInAtomicType.STRING, ONE, CORE, 0)
                 .arg(0, Type.NODE_TYPE, OPT | INS, StringValue.EMPTY_STRING);
 
-        register("namespace-uri#0", NamespaceUriFn.class, 0, 0, 0, BuiltInAtomicType.ANY_URI, ONE, CORE, FOCUS);
+        register("namespace-uri#0", NamespaceUriFn.class, 0, 0, 0, BuiltInAtomicType.ANY_URI, ONE, CORE, FOCUS | IMP_CX_I);
 
         register("namespace-uri#1", NamespaceUriFn.class, 0, 1, 1, BuiltInAtomicType.ANY_URI, ONE, CORE, 0)
                 .arg(0, Type.NODE_TYPE, OPT | INS, StringValue.EMPTY_STRING);
@@ -545,12 +548,12 @@ public abstract class StandardFunction {
         register("namespace-uri-from-QName", AccessorFn.class, (AccessorFn.NAMESPACE << 16) + StandardNames.XS_QNAME, 1, 1, BuiltInAtomicType.ANY_URI, OPT, CORE, 0)
                 .arg(0, BuiltInAtomicType.QNAME, OPT, EMPTY);
 
-        register("nilled#0", Nilled.class, 0, 0, 0, BuiltInAtomicType.BOOLEAN, OPT, XPATH30, FOCUS);
+        register("nilled#0", Nilled.class, 0, 0, 0, BuiltInAtomicType.BOOLEAN, OPT, XPATH30, FOCUS | IMP_CX_I);
 
         register("nilled#1", Nilled.class, 0, 1, 1, BuiltInAtomicType.BOOLEAN, OPT, CORE, 0)
                 .arg(0, Type.NODE_TYPE, OPT | INS, EMPTY);
 
-        register("node-name#0", NodeNameFn.class, 0, 0, 0, BuiltInAtomicType.QNAME, OPT, XPATH30, FOCUS);
+        register("node-name#0", NodeNameFn.class, 0, 0, 0, BuiltInAtomicType.QNAME, OPT, XPATH30, FOCUS | IMP_CX_I);
 
         register("node-name#1", NodeNameFn.class, 0, 1, 1, BuiltInAtomicType.QNAME, OPT, CORE, 0)
                 .arg(0, Type.NODE_TYPE, OPT | INS, EMPTY);
@@ -567,7 +570,7 @@ public abstract class StandardFunction {
                 .arg(0, BuiltInAtomicType.STRING, OPT, StringValue.EMPTY_STRING)
                 .arg(1, BuiltInAtomicType.STRING, ONE, null);
 
-        register("number#0", NumberFn.class, 0, 0, 0, BuiltInAtomicType.DOUBLE, ONE, CORE, FOCUS);
+        register("number#0", NumberFn.class, 0, 0, 0, BuiltInAtomicType.DOUBLE, ONE, CORE, FOCUS | IMP_CX_I);
 
         register("number#1", NumberFn.class, 0, 1, 1, BuiltInAtomicType.DOUBLE, ONE, CORE, 0)
                 .arg(0, BuiltInAtomicType.ANY_ATOMIC, OPT, DoubleValue.NaN);
@@ -585,7 +588,7 @@ public abstract class StandardFunction {
         register("parse-xml-fragment", ParseXmlFragment.class, 0, 1, 1, NodeKindTest.DOCUMENT, ONE, XPATH30, 0)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null);
 
-        register("path", Path.class, 0, 0, 1, BuiltInAtomicType.STRING, OPT, XPATH30, 0)
+        register("path", Path.class, 0, 0, 1, BuiltInAtomicType.STRING, OPT, XPATH30, IMP_CX_I)
                 .arg(0, AnyNodeTest.getInstance(), OPT | StandardFunction.INS, null);
 
         register("position", Position.class, 0, 0, 0, BuiltInAtomicType.INTEGER, ONE, CORE, FOCUS);
@@ -629,7 +632,7 @@ public abstract class StandardFunction {
         register("reverse", Reverse.class, 0, 1, 1, Type.ITEM_TYPE, STAR, CORE, 0)
                 .arg(0, Type.ITEM_TYPE, STAR | NAV, EMPTY);
 
-        register("root#0", Root.class, 0, 0, 0, Type.NODE_TYPE, OPT, CORE, FOCUS);
+        register("root#0", Root.class, 0, 0, 0, Type.NODE_TYPE, OPT, CORE, FOCUS | IMP_CX_I);
 
         register("root#1", Root.class, 0, 1, 1, Type.NODE_TYPE, OPT, CORE, 0)
                 .arg(0, Type.NODE_TYPE, OPT | NAV, EMPTY);
@@ -669,7 +672,7 @@ public abstract class StandardFunction {
 
         register("static-base-uri", StaticBaseURI.class, 0, 0, 0, BuiltInAtomicType.ANY_URI, OPT, CORE, BASE);
 
-        register("string#0", StringFn.class, 0, 0, 0, BuiltInAtomicType.STRING, ONE, CORE, FOCUS);
+        register("string#0", StringFn.class, 0, 0, 0, BuiltInAtomicType.STRING, ONE, CORE, FOCUS | IMP_CX_I);
 
         register("string#1", StringFn.class, 0, 1, 1, BuiltInAtomicType.STRING, ONE, CORE, 0)
                 .arg(0, Type.ITEM_TYPE, OPT | ABS, StringValue.EMPTY_STRING);
@@ -766,21 +769,21 @@ public abstract class StandardFunction {
         register("upper-case", UpperCase.class, 0, 1, 1, BuiltInAtomicType.STRING, ONE, CORE, 0)
                 .arg(0, BuiltInAtomicType.STRING, OPT, StringValue.EMPTY_STRING);
 
-        register("unparsed-entity-uri", UnparsedEntity.class, UnparsedEntity.URI, 1, 1, BuiltInAtomicType.ANY_URI, ONE, XSLT, FOCUS)
+        register("unparsed-entity-uri#1", UnparsedEntity.class, UnparsedEntity.URI, 1, 1, BuiltInAtomicType.ANY_URI, ONE, XSLT, FOCUS | IMP_CX_D)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null);
 
         // internal version of unparsed-entity-uri with second argument representing the current document
-        register("unparsed-entity-uri_9999_", UnparsedEntity.class, UnparsedEntity.URI, 2, 2,
+        register("unparsed-entity-uri#2", UnparsedEntity.class, UnparsedEntity.URI, 2, 2,
                 BuiltInAtomicType.STRING, ONE, INTERNAL, 0)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null)
                 .arg(1, Type.NODE_TYPE, ONE, null);
         // it must actually be a document node, but there's a non-standard error code
 
-        register("unparsed-entity-public-id", UnparsedEntity.class, UnparsedEntity.PUBLIC_ID, 1, 1, BuiltInAtomicType.STRING, ONE, XSLT, FOCUS)
+        register("unparsed-entity-public-id#1", UnparsedEntity.class, UnparsedEntity.PUBLIC_ID, 1, 1, BuiltInAtomicType.STRING, ONE, XSLT, FOCUS | IMP_CX_D)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null);
 
         // internal version of unparsed-entity-public-id with second argument representing the current document
-        register("unparsed-entity-public-id_9999_", UnparsedEntity.class, UnparsedEntity.PUBLIC_ID, 2, 2,
+        register("unparsed-entity-public-id#2", UnparsedEntity.class, UnparsedEntity.PUBLIC_ID, 2, 2,
                 BuiltInAtomicType.STRING, ONE, INTERNAL, 0)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null)
                 .arg(1, Type.NODE_TYPE, ONE, null);
