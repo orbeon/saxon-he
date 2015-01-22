@@ -571,11 +571,38 @@ public class XPathParser {
                     while (getCurrentOperatorPrecedence() > prec) {
                         rhs = parseBinaryExpression(rhs, getCurrentOperatorPrecedence());
                     }
+                    if (getCurrentOperatorPrecedence() == prec && !allowMultipleOperators()){
+                        grumble("Left operand of '" + Token.tokens[t.currentToken] + "' needs parentheses");
+                    }
                     lhs = makeBinaryExpression(lhs, operator, rhs);
                     setLocation(lhs);
             }
         }
         return lhs;
+    }
+
+    private boolean allowMultipleOperators() {
+        switch (t.currentToken) {
+            case Token.FEQ:
+            case Token.FNE:
+            case Token.FLE:
+            case Token.FLT:
+            case Token.FGE:
+            case Token.FGT:
+            case Token.EQUALS:
+            case Token.NE:
+            case Token.LE:
+            case Token.LT:
+            case Token.GE:
+            case Token.GT:
+            case Token.IS:
+            case Token.PRECEDES:
+            case Token.FOLLOWS:
+            case Token.TO:
+                return false;
+            default:
+                return true;
+        }
     }
 
     private int getCurrentOperatorPrecedence() {
