@@ -1250,6 +1250,32 @@ namespace Saxon.Api
 
 		}
 
+		internal JReceiver GetDestinationReceiver(XmlDestination destination){
+			if (destination is Serializer) {
+				Serializer serializer = (Serializer) destination;
+				serializer.SetDefaultOutputProperties(controller.getExecutable ().getDefaultOutputProperties());
+				serializer.SetCharacterMap (controller.getExecutable().getCharacterMapIndex());
+				String filename = serializer.GetFilename ();
+				java.io.OutputStream dest = serializer.GetOutputDestination();
+				if (!baseOutputUriWasSet) {
+					if (dest is java.io.FileOutputStream) {
+						controller.setBaseOutputURI(filename==null ? "" : filename);
+					}
+				}
+				JReceiver r = serializer.GetReceiver(controller.getConfiguration());
+				JPipelineConfiguration pipe = r.getPipelineConfiguration();
+				pipe.setController(controller);
+				pipe.setLocationProvider(controller.getExecutable().getLocationMap());
+				return new net.sf.saxon.serialize.ReconfigurableSerializer(r, serializer.GetOutputProperties(), serializer.GetResult(pipe));
+			} else {
+				JPipelineConfiguration pipe = controller.getConfiguration().makePipelineConfiguration();
+				JReceiver r = destination.GetReceiver(pipe);
+				pipe.setController(controller);
+				pipe.setLocationProvider(controller.getExecutable().getLocationMap());
+				return r;
+			}
+		}
+
         /// <summary>
         /// Run the transformation, sending the result to a specified destination.
         /// </summary>
@@ -1267,6 +1293,11 @@ namespace Saxon.Api
 				throw new DynamicError ("Destination is null");
 			} else {
 				this.destination = destination;
+				if (destination is Serializer) {
+					Serializer serializer = (Serializer)destination;
+					serializer.SetDefaultOutputProperties (controller.getExecutable ().getDefaultOutputProperties ());
+					serializer.SetCharacterMap (controller.getExecutable ().getCharacterMapIndex ());
+				} 
 			}
             try
             {
@@ -1280,11 +1311,14 @@ namespace Saxon.Api
 					((XdmDestination)destination).BaseUri = BaseOutputUri;
 				}
 
+				JPipelineConfiguration pipe = controller.makePipelineConfiguration();
+				pipe.setLocationProvider(controller.getExecutable().getLocationMap());
+
                 if (streamSource != null)
                 {
-				controller.transform(streamSource, destination.GetReceiver(controller.makePipelineConfiguration()));
+				controller.transform(streamSource, destination.GetReceiver(pipe));
                 }
-				
+
 				else if (initialContextNode != null)
                 {
                     JDocumentInfo doc = initialContextNode.getDocumentRoot();
@@ -1292,11 +1326,11 @@ namespace Saxon.Api
                     {
                         controller.registerDocument(doc, (doc.getBaseURI() == null ? null : new JDocumentURI(doc.getBaseURI())));
                     }
-				controller.transform(initialContextNode, destination.GetReceiver(controller.makePipelineConfiguration()));
+				controller.transform(initialContextNode, destination.GetReceiver(pipe));
                 }
                 else
                 {
-                    controller.transform(null, destination.GetReceiver(controller.makePipelineConfiguration()));
+                    controller.transform(null, destination.GetReceiver(pipe));
                 }
 
                 destination.Close();
