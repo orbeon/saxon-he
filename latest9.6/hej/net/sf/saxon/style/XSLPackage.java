@@ -14,7 +14,6 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.DecimalValue;
-import net.sf.saxon.value.NestedIntegerValue;
 import net.sf.saxon.value.Whitespace;
 
 import java.math.BigDecimal;
@@ -101,9 +100,10 @@ public class XSLPackage extends XSLModuleRoot {
             } else if (f.equals(StandardNames.DEFAULT_VALIDATION)) {
                 String val = Whitespace.trim(atts.getValue(a));
                 defaultValidation = Validation.getCode(val);
-                if (defaultValidation == Validation.INVALID) {
+                if (defaultValidation == Validation.INVALID ||
+                    defaultValidation == Validation.STRICT || defaultValidation == Validation.LAX) {   // bug 2303) {
                     compileError("Invalid value for default-validation attribute. " +
-                            "Permitted values are (strict, lax, preserve, strip)", "XTSE0020");
+                            "Permitted values are (preserve, strip)", "XTSE0020");
                 } else if (!isSchemaAware() && defaultValidation != Validation.STRIP) {
                     defaultValidation = Validation.STRIP;
                     compileError("default-validation='" + val + "' requires a schema-aware processor",
