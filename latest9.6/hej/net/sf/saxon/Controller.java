@@ -7,6 +7,7 @@
 
 package net.sf.saxon;
 
+import com.saxonica.ee.stream.QuitParsingException;
 import net.sf.saxon.event.*;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.*;
@@ -2313,8 +2314,11 @@ public class Controller {
         }
         PipelineConfiguration pipe = despatcher.getPipelineConfiguration();
         pipe.getParseOptions().setSchemaValidationMode(validationMode);
-        Sender.send(source, despatcher, null);
-
+        try {
+            Sender.send(source, despatcher, null);
+        } catch (QuitParsingException e) {
+            // do nothing: early exit. Bug 2304
+        }
         if (traceListener != null) {
             traceListener.close();
         }
