@@ -2249,6 +2249,7 @@ public class Controller {
     }
 
 
+//#ifdefined STREAM
     /**
      * Transform a source XML document supplied as a stream, in streaming mode. <br>
      * <p/>
@@ -2327,6 +2328,7 @@ public class Controller {
         closeMessageEmitter();
 
     }
+//#endif
 
     /**
      * Get a receiver to which the input to this transformation can be supplied
