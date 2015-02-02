@@ -7,7 +7,7 @@
 
 package net.sf.saxon;
 
-import com.saxonica.ee.stream.QuitParsingException;
+import net.sf.saxon.trans.QuitParsingException;
 import net.sf.saxon.event.*;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.*;
@@ -2249,7 +2249,7 @@ public class Controller {
     }
 
 
-//#ifdefined STREAM
+
     /**
      * Transform a source XML document supplied as a stream, in streaming mode. <br>
      * <p/>
@@ -2328,7 +2328,7 @@ public class Controller {
         closeMessageEmitter();
 
     }
-//#endif
+
 
     /**
      * Get a receiver to which the input to this transformation can be supplied
