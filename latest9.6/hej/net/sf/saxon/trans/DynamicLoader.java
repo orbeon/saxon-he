@@ -38,8 +38,8 @@ public class DynamicLoader {
         knownClasses.put("net.sf.saxon.serialize.MessageEmitter", MessageEmitter.class);
         //knownClasses.put("net.sf.saxon.java.JavaPlatform", JavaPlatform.class);  // not available on .NET
         knownClasses.put("net.sf.saxon.Configuration", Configuration.class);
-        knownClasses.put("org.apache.resolver.tools.CatalogResolver", CatalogResolver.class);
-        knownClasses.put("org.apache.xerces.jaxp.SAXParserFactoryImpl", SAXParserFactoryImpl.class);
+        knownClasses.put("org.apache.xml.resolver.tools.CatalogResolver", CatalogResolver.class);
+        //knownClasses.put("org.apache.xerces.jaxp.SAXParserFactoryImpl", SAXParserFactoryImpl.class);
     }
 
     /**
