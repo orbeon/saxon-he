@@ -7,10 +7,10 @@
 
 package net.sf.saxon.trans;
 
+import com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.Logger;
 import net.sf.saxon.serialize.MessageEmitter;
-import org.apache.xerces.jaxp.SAXParserFactoryImpl;
 import org.apache.xml.resolver.tools.CatalogResolver;
 
 import java.util.HashMap;
@@ -39,7 +39,7 @@ public class DynamicLoader {
         //knownClasses.put("net.sf.saxon.java.JavaPlatform", JavaPlatform.class);  // not available on .NET
         knownClasses.put("net.sf.saxon.Configuration", Configuration.class);
         knownClasses.put("org.apache.xml.resolver.tools.CatalogResolver", CatalogResolver.class);
-        knownClasses.put("org.apache.xerces.jaxp.SAXParserFactoryImpl", SAXParserFactoryImpl.class);
+        knownClasses.put("com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl", SAXParserFactoryImpl.class);
     }
 
     /**
