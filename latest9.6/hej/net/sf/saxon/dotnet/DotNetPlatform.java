@@ -26,10 +26,12 @@ import net.sf.saxon.regex.JavaRegularExpression;
 import net.sf.saxon.regex.RegularExpression;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ExternalObjectType;
+import org.apache.xerces.jaxp.SAXParserFactoryImpl;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamSource;
@@ -407,6 +409,7 @@ public class DotNetPlatform implements Platform {
 
     public void setDefaultSAXParserFactory() {
         System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl");
+        SAXParserFactory parserFactory = new SAXParserFactoryImpl();
     }
 
 
