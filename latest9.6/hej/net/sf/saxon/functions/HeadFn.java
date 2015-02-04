@@ -12,8 +12,10 @@ import net.sf.saxon.expr.FirstItemExpression;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.EmptySequence;
 
 /**
  * This class implements the function fn:head(), which is a standard function in XPath 3.0
@@ -44,7 +46,8 @@ public class HeadFn extends CompileTimeFunction {
      *          if a dynamic error occurs during the evaluation of the expression
      */
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
-        return arguments[0].head();
+        Item item = arguments[0].head();
+        return item == null ? EmptySequence.getInstance() : item;
     }
 }
 
