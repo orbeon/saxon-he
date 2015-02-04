@@ -203,7 +203,11 @@ namespace Saxon.Api
         {
             get
             {
-                return ((DotNetURIResolver)processor.getUnderlyingConfiguration().getURIResolver()).getXmlResolver();
+				if (processor.getUnderlyingConfiguration ().getURIResolver () is DotNetURIResolver) {
+					return ((DotNetURIResolver)processor.getUnderlyingConfiguration ().getURIResolver ()).getXmlResolver ();
+				} else {
+					return new XmlUrlResolver();
+				}
             }
             set
             {
