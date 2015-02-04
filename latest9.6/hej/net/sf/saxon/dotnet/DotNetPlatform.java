@@ -14,6 +14,7 @@ import cli.System.Xml.*;
 import com.saxonica.ee.bytecode.util.GeneratedClassLoader;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Platform;
+import net.sf.saxon.Version;
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.expr.sort.AtomicMatchKey;
 import net.sf.saxon.expr.sort.CodepointCollator;
@@ -405,12 +406,9 @@ public class DotNetPlatform implements Platform {
      *
      * @since 9.4
      */
-
     public void setDefaultSAXParserFactory() {
-        System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl");
-        SAXParserFactoryImpl parserFactory = new SAXParserFactoryImpl();
+        System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl, saxon9ee, Version="+ Version.getProductVersion()+", Culture=neutral, PublicKeyToken=e1fdd002d5083fe6");
     }
-
 
 //#if EE==true
     /**
