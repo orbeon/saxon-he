@@ -55,6 +55,7 @@ public class UseWhenFilter extends ProxyReceiver {
     private Stack<URI> baseUriStack = new Stack<URI>();
     private NestedIntegerValue precedence;
     private int importCount = 0;
+    private boolean removeUnderscoredAttributes = false;
 
 
 
@@ -331,7 +332,7 @@ public class UseWhenFilter extends ProxyReceiver {
                             if (next.getURI().equals(NamespaceConstant.XSLT) &&
                                     (next.getLocalPart().equals("param") || next.getLocalPart().equals("variable")) &&
                                     ("yes".equals(staticStr) || "true".equals(staticStr) || "1".equals(staticStr))) {
-
+                                 // TODO: what is this code trying to do?
                             }
                         }
                     } else {
@@ -358,7 +359,7 @@ public class UseWhenFilter extends ProxyReceiver {
                     }
                 }
             }
-
+            removeUnderscoredAttributes = inXsltNamespace;
             nextReceiver.startElement(elemName, typeCode, locationId, properties);
         } else {
             depthOfHole++;
@@ -431,7 +432,7 @@ public class UseWhenFilter extends ProxyReceiver {
      */
 
     public void attribute(NodeName attName, SimpleType typeCode, CharSequence value, int locationId, int properties) throws XPathException {
-        if (depthOfHole == 0 && !(attName.getLocalPart().startsWith("_") && attName.hasURI(""))) {
+        if (depthOfHole == 0 && (!removeUnderscoredAttributes || !(attName.getLocalPart().startsWith("_") && attName.hasURI("")))) {
             nextReceiver.attribute(attName, typeCode, value, locationId, properties);
         }
     }
@@ -447,6 +448,7 @@ public class UseWhenFilter extends ProxyReceiver {
         if (depthOfHole == 0) {
             nextReceiver.startContent();
         }
+        removeUnderscoredAttributes = false;
     }
 
     /**
