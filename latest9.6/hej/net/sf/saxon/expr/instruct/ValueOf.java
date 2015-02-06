@@ -153,6 +153,25 @@ public final class ValueOf extends SimpleNodeConstructor {
         }
     }
 
+    /**
+     * Determine the intrinsic dependencies of an expression, that is, those which are not derived
+     * from the dependencies of its subexpressions. For example, position() has an intrinsic dependency
+     * on the context position, while (position()+1) does not. The default implementation
+     * of the method returns 0, indicating "no dependencies".
+     *
+     * @return a set of bit-significant flags identifying the "intrinsic"
+     * dependencies. The flags are documented in class net.sf.saxon.value.StaticProperty
+     */
+    @Override
+    public int getIntrinsicDependencies() {
+        int d = super.getIntrinsicDependencies();
+        if (isDisableOutputEscaping()) {
+            // Bug 2312 : prevent extraction of global variables
+            d |= StaticProperty.DEPENDS_ON_ASSIGNABLE_GLOBALS;
+        }
+        return d;
+    }
+
     public void localTypeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) {
         //
     }
