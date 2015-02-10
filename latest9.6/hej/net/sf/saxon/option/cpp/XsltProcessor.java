@@ -7,17 +7,18 @@
 
 package net.sf.saxon.option.cpp;
 
+import net.sf.saxon.om.AtomicArray;
+import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.s9api.*;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.*;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.net.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * * This class is to use with Saxon/C on C++
@@ -29,23 +30,23 @@ public class XsltProcessor extends SaxonCAPI {
 
     public XsltProcessor(Processor proc, boolean license) {
         super(proc, license);
-        if(debug) {
-            System.err.println("XsltProcessor constructor(proc, l), Processor: "+System.identityHashCode(proc));
+        if (debug) {
+            System.err.println("XsltProcessor constructor(proc, l), Processor: " + System.identityHashCode(proc));
         }
     }
 
     public XsltProcessor() {
         processor = new Processor(false);
-                if(debug) {
-            System.err.println("XsltProcessor constructor(), Processor: "+System.identityHashCode(processor));
+        if (debug) {
+            System.err.println("XsltProcessor constructor(), Processor: " + System.identityHashCode(processor));
         }
     }
 
 
     public XsltProcessor(boolean license) {
         processor = new Processor(license);
-        if(debug) {
-            System.err.println("XsltProcessor(l), Processor: "+System.identityHashCode(processor));
+        if (debug) {
+            System.err.println("XsltProcessor(l), Processor: " + System.identityHashCode(processor));
         }
     }
 
@@ -130,7 +131,7 @@ public class XsltProcessor extends SaxonCAPI {
                 }
             }
             if (outFilename != null) {
-               serializer = resolveOutputFile(processor, cwd, outFilename);
+                serializer = resolveOutputFile(processor, cwd, outFilename);
             }
 
             applyXsltTransformerProperties(this, cwd, processor, transformer, params, values, props);
@@ -152,7 +153,7 @@ public class XsltProcessor extends SaxonCAPI {
             SaxonCException saxonException = new SaxonCException(e);
             saxonExceptions.add(saxonException);
             throw e;
-        } catch(NullPointerException ex) {
+        } catch (NullPointerException ex) {
             throw new SaxonApiException(ex);
         }
     }
@@ -161,7 +162,7 @@ public class XsltProcessor extends SaxonCAPI {
     public static void applyXsltTransformerProperties(SaxonCAPI api, String cwd, Processor processor, XsltTransformer transformer, String[] params, Object[] values, Properties props) throws SaxonApiException {
         if (params != null) {
             String initialTemplate;
-            String initialMode ;
+            String initialMode;
             XdmNode node;
             String outfile = null;
             Source source;
@@ -172,16 +173,16 @@ public class XsltProcessor extends SaxonCAPI {
             }
             if (params.length != 0) {
                 if (cwd != null && cwd.length() > 0) {
-            if (!cwd.endsWith("/")) {
-                cwd = cwd.concat("/");
-            }
+                    if (!cwd.endsWith("/")) {
+                        cwd = cwd.concat("/");
+                    }
                 }
                 for (int i = 0; i < params.length; i++) {
                     if (params[i].startsWith("!")) {
                         String name = params[i].substring(1);
                         Serializer.Property prop = Serializer.Property.get(name);
-                        if(prop == null) {
-                            throw new SaxonApiException("Property name "+name+ " not found");
+                        if (prop == null) {
+                            throw new SaxonApiException("Property name " + name + " not found");
                         }
                         propsList.put(prop, (String) values[i]);
                     } else if (params[i].equals("o") && outfile == null) {
@@ -195,7 +196,7 @@ public class XsltProcessor extends SaxonCAPI {
                         initialMode = (String) values[i];
                         transformer.setInitialMode(new QName(initialMode));
                     } else if (params[i].equals("s")) {
-                       source = api.resolveFileToSource(cwd, (String) values[i]);
+                        source = api.resolveFileToSource(cwd, (String) values[i]);
                         transformer.setSource(builder.build(source).asSource());
                     } else if (params[i].equals("item") || params[i].equals("node")) {
                         Object value = values[i];
@@ -203,17 +204,17 @@ public class XsltProcessor extends SaxonCAPI {
                             node = (XdmNode) value;
                             transformer.setSource((node).asSource());
                         }
-                    } else if(params[i].equals("resources")){
+                    } else if (params[i].equals("resources")) {
                         char separatorChar = '/';
                         if (SaxonCAPI.RESOURCES_DIR == null) {
-                            String dir1 = (String)values[i];
+                            String dir1 = (String) values[i];
                             if (!dir1.endsWith("/")) {
-                               dir1 = dir1.concat("/");
+                                dir1 = dir1.concat("/");
                             }
-                             if (File.separatorChar != '/') {
-                               dir1.replace(separatorChar, File.separatorChar);
+                            if (File.separatorChar != '/') {
+                                dir1.replace(separatorChar, File.separatorChar);
                                 separatorChar = '\\';
-                                 dir1.replace('/', '\\');
+                                dir1.replace('/', '\\');
                             }
                             SaxonCAPI.RESOURCES_DIR = dir1;
                         }
@@ -221,7 +222,8 @@ public class XsltProcessor extends SaxonCAPI {
                     } else if (params[i].startsWith("param:")) {
                         String paramName = params[i].substring(6);
                         Object value = values[i];
-                        XdmValue valueForCpp;
+                        XdmValue valueForCpp = null;
+                        QName qname = QName.fromClarkName(paramName);
                         if (value instanceof XdmValue) {
                             valueForCpp = (XdmValue) value;
                             if (debug) {
@@ -232,26 +234,58 @@ public class XsltProcessor extends SaxonCAPI {
                                 System.err.println("XSLTTransformerForCpp Type: " + suppliedItemType.toString());
                             }
 
+                        } else if (value instanceof Object[]){
+                                Object [] arr = (Object[])value;
 
-                            QName qname = QName.fromClarkName(paramName);
-                            transformer.setParameter(qname, valueForCpp);
+                                List<AtomicValue> valueList = new ArrayList<AtomicValue>();
+                                for(int j=0; j<arr.length;j++){
+                                    Object itemi = arr[j];
+                                    if(itemi instanceof XdmValue) {
+                                      valueList.add((AtomicValue)(((XdmValue)itemi).getUnderlyingValue()));
+                                    } else {
+                                        valueList.add((AtomicValue)(getXdmValue(itemi)).getUnderlyingValue());
+                                    }
+                                }
+                                AtomicArray sequence = new AtomicArray(valueList);
+                                valueForCpp = XdmValue.wrap(sequence);
                         } else {
-                            if(value instanceof Integer) {
+                                //fast track for primitive values
+                                valueForCpp = getXdmValue(value);
+                        }
 
-                            }
+
+                        if (qname != null && valueForCpp != null) {
+                            transformer.setParameter(qname, valueForCpp);
                         }
                     }
 
-                    //TODO fast track for primitive values
                 }
             }
-            if(api.serializer != null) {
-                for(Map.Entry pairi : propsList.entrySet()){
-                        api.serializer.setOutputProperty((Serializer.Property)pairi.getKey(), (String) pairi.getValue());
+            if (api.serializer != null) {
+                for (Map.Entry pairi : propsList.entrySet()) {
+                    api.serializer.setOutputProperty((Serializer.Property) pairi.getKey(), (String) pairi.getValue());
                 }
             }
         }
 
+    }
+
+    private static XdmValue getXdmValue(Object value) {
+        XdmValue valueForCpp = null;
+        if (value instanceof Integer) {
+            valueForCpp = XdmValue.wrap(new Int64Value(((Integer) value).intValue()));
+        } else if (value instanceof Boolean) {
+            valueForCpp = XdmValue.wrap(BooleanValue.get(((Boolean) value).booleanValue()));
+        } else if (value instanceof Double) {
+            valueForCpp = XdmValue.wrap(DoubleValue.makeDoubleValue(((Double) value).doubleValue()));
+        } else if (value instanceof Float) {
+            valueForCpp = XdmValue.wrap(FloatValue.makeFloatValue(((Float) value).floatValue()));
+        } else if (value instanceof Long) {
+            valueForCpp = XdmValue.wrap(Int64Value.makeIntegerValue((((Long) value).longValue())));
+        } else if (value instanceof String) {
+            valueForCpp = XdmValue.wrap(StringValue.makeStringValue(((String) value)));
+        }
+        return valueForCpp;
     }
 
 
@@ -277,7 +311,7 @@ public class XsltProcessor extends SaxonCAPI {
         XdmDestination destination = new XdmDestination();
 
         try {
-             transformer.setDestination(destination);
+            transformer.setDestination(destination);
             this.applyXsltTransformerProperties(this, cwd, processor, transformer, params, values, props);
 
             if (sourceFile == null && doc != null) {
@@ -292,7 +326,7 @@ public class XsltProcessor extends SaxonCAPI {
             SaxonCException saxonException = new SaxonCException(e);
             saxonExceptions.add(saxonException);
             throw e;
-        }  catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             throw new SaxonApiException(ex);
         }
 
@@ -301,8 +335,8 @@ public class XsltProcessor extends SaxonCAPI {
 
     //TODO comments needed on method signatures
     public String transformToString(String cwd, String sourceFile, String stylesheet, String[] params, Object[] values) throws SaxonApiException {
-        if(debug) {
-            System.err.println("xsltApplyStylesheet, Processor: "+System.identityHashCode(processor));
+        if (debug) {
+            System.err.println("xsltApplyStylesheet, Processor: " + System.identityHashCode(processor));
         }
 
         Source source = null;
@@ -332,7 +366,7 @@ public class XsltProcessor extends SaxonCAPI {
             if (sourceFile == null && doc != null) {
                 transformer.setInitialContextNode(doc);
             } else if (sourceFile != null) {
-               source = resolveFileToSource(cwd, sourceFile);
+                source = resolveFileToSource(cwd, sourceFile);
                 transformer.setSource(source);
             }
             transformer.transform();
@@ -395,8 +429,8 @@ public class XsltProcessor extends SaxonCAPI {
 
     public static void main(String[] args) throws Exception {
         // String cwd = "/Users/ond1/work/development/svn/saxon-dev/tests/saxon-c/samples/trax";
-         String cwd = "/Users/ond1/work/development/tests/jeroen";
-       // String cwd = "C:///www///html///trax";
+        String cwd = "/Users/ond1/work/development/tests/jeroen";
+        // String cwd = "C:///www///html///trax";
         //String cwd = "http://localhost/trax";
         /*if (args.length > 0) {
             cwd = args[0];
@@ -407,16 +441,17 @@ public class XsltProcessor extends SaxonCAPI {
         String outfile = "outfile.html";
         Processor processor = new Processor(false);
         XsltProcessor cpp = new XsltProcessor(processor, false);
-        String[] params1 = {"resources"};
-        Object[] values1 = {"/Users/ond1/work/development/tests/jeroen/data"};
+        Object[] arrValues = {2, "test"};
+        String[] params1 = {"resources", "param:test1"};
+        Object[] values1 = {"/Users/ond1/work/development/tests/jeroen/data", arrValues};
         String outputdoc = cpp.transformToString(cwd, sourcefile1, stylesheet12, params1, values1);
         System.out.println(outputdoc);
         System.exit(0);
-       // Processor processor = cpp.getProcessor();
+        // Processor processor = cpp.getProcessor();
         // XsltTransformer transformer = cpp.xsltParseStylesheetFile(args[0]).load();
         //XdmNode sourceNode = cpp.xmlParseFile(cwd, "xml/foo.xml");
-       XdmNode sourceNode2 = SaxonCAPI.xmlParseString(processor, null, "<result><assert-xml file=\"type-0501.out\"/></result>");
-        XdmValue node1 = (XdmValue)cpp.createXdmAtomicItem("string","textXXXXX");//new XdmValueForCpp(sourceNode2);
+        XdmNode sourceNode2 = SaxonCAPI.xmlParseString(processor, null, "<result><assert-xml file=\"type-0501.out\"/></result>");
+        XdmValue node1 = (XdmValue) cpp.createXdmAtomicItem("string", "textXXXXX");//new XdmValueForCpp(sourceNode2);
 
         XdmValue resultNode2 = cpp.xmlParseString("<?xml version=\"1.0\" encoding=\"UTF-8\"?><html><head><title>Untitled</title></head><body leftmargin=\"100\"></body></html>");
 
@@ -434,7 +469,8 @@ public class XsltProcessor extends SaxonCAPI {
 
         cpp.createStylesheetFromString("samples", "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\n" +
                 "    version=\"2.0\" xmlns:pf=\"http://example.com\">\n" +
-               "<xsl:param name=\"pf:param-name\"  />" +
+                "<xsl:param name=\"pf:param-name\"  />" +
+                 "<xsl:param name=\"test1\"  />" +
 
                 "    \n" +
                 "    \n" +
@@ -450,8 +486,8 @@ public class XsltProcessor extends SaxonCAPI {
             long startTime = System.currentTimeMillis();
             for (int i = 0; i < repeat; i++) {
                 //result = cpp.xsltApplyStylesheet(cwd, null, "xsl/foo.xsl", params3, values3);
-                 result = cpp.transformToString(cwd, null, null, params1, values1);
-               // cpp.xsltSaveResultToFile(cwd, null, "xsl/foo.xsl", null, params3, values3);
+                result = cpp.transformToString(cwd, null, null, params1, values1);
+                // cpp.xsltSaveResultToFile(cwd, null, "xsl/foo.xsl", null, params3, values3);
             }
             long endTime = System.currentTimeMillis();
             System.out.println("output:" + result + " Time:" + ((endTime - startTime) / 5));
@@ -460,7 +496,7 @@ public class XsltProcessor extends SaxonCAPI {
         }
         SaxonCException[] exceptionForCpps = cpp.getExceptions();
         // String result2 = cpp.xsltApplyStylesheet(cpp.getProcessor(), null, stylesheet, params1, values1);
-       // System.out.println("output:" + result);
+        // System.out.println("output:" + result);
 
 
     }
