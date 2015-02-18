@@ -26,6 +26,14 @@ import java.util.List;
 
 public abstract class SystemFunctionCall extends FunctionCall implements Callable {
 
+    private int originalArity = -1;
+    public void setOriginalArity(int arity) {
+        originalArity = arity;
+    }
+    public int getOriginalArity() {
+        return (originalArity == -1 ? getNumberOfArguments() : originalArity);
+    }
+
     public Callable getConvertingCallable() {
         final Callable raw = this;
         return new Callable() {

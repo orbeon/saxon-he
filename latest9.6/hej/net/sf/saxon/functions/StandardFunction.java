@@ -774,7 +774,7 @@ public abstract class StandardFunction {
 
         // internal version of unparsed-entity-uri with second argument representing the current document
         register("unparsed-entity-uri#2", UnparsedEntity.class, UnparsedEntity.URI, 2, 2,
-                BuiltInAtomicType.STRING, ONE, INTERNAL, 0)
+                BuiltInAtomicType.STRING, ONE, XSLT, 0)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null)
                 .arg(1, Type.NODE_TYPE, ONE, null);
         // it must actually be a document node, but there's a non-standard error code
@@ -784,7 +784,7 @@ public abstract class StandardFunction {
 
         // internal version of unparsed-entity-public-id with second argument representing the current document
         register("unparsed-entity-public-id#2", UnparsedEntity.class, UnparsedEntity.PUBLIC_ID, 2, 2,
-                BuiltInAtomicType.STRING, ONE, INTERNAL, 0)
+                BuiltInAtomicType.STRING, ONE, XSLT, 0)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null)
                 .arg(1, Type.NODE_TYPE, ONE, null);
         // it must actually be a document node, but there's a non-standard error code

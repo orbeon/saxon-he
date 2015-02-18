@@ -100,6 +100,7 @@ public class SystemFunctionLibrary implements FunctionLibrary {
                     throw err;
                 }
             }
+            int originalArity = arity;
             if ((entry.properties & StandardFunction.IMP_CX_I) != 0 && arity == 0) {
                 // Add the context item as an implicit argument
                 staticArgs = new Expression[1];
@@ -118,7 +119,7 @@ public class SystemFunctionLibrary implements FunctionLibrary {
             }
             if ((functionSet & entry.applicability) == 0) {
                 XPathException err = new XPathException(
-                        "System function " + local + "#" + staticArgs.length + " is not available with this host language/version");
+                        "System function " + local + "#" + originalArity + " is not available with this host language/version");
                 err.setErrorCode("XPST0017");
                 err.setIsStaticError(true);
                 throw err;
@@ -129,8 +130,9 @@ public class SystemFunctionLibrary implements FunctionLibrary {
                 f = (SystemFunctionCall) functionClass.newInstance();
             } catch (Exception err) {
                 err.printStackTrace();
-                throw new AssertionError("Failed to load system function fn:" + local + ":" + err.getMessage());
+                throw new AssertionError("Failed to load system function fn:" + local + " - " + err.getMessage());
             }
+            f.setOriginalArity(originalArity);
             f.setDetails(entry);
             f.setFunctionName(functionName);
             checkArgumentCount(arity, entry.minArguments, entry.maxArguments, local);

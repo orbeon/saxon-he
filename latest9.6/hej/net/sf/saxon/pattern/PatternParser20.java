@@ -168,7 +168,7 @@ public class PatternParser20 extends XPathParser implements PatternParser {
             if (fn instanceof Id) {
 
                 // Only one argument allowed, which must be a string literal or variable reference
-                if (((Id) fn).getNumberOfArguments() != 1) {
+                if (((Id) fn).getOriginalArity() != 1) {
                     grumble("id() in an XSLT 2.0 pattern must have only one argument");
                 } else {
                     Expression arg = ((Id) fn).getArguments()[0];
@@ -180,7 +180,7 @@ public class PatternParser20 extends XPathParser implements PatternParser {
             } else if (fn instanceof KeyFn) {
 
                 // Only two arguments allowed
-                if (((KeyFn) fn).getNumberOfArguments() != 2) {
+                if (((KeyFn) fn).getOriginalArity() != 2) {
                     grumble("key() in an XSLT 2.0 pattern must have exactly two arguments");
                 } else {
                     Expression arg0 = ((KeyFn) fn).getArguments()[0];
