@@ -31,7 +31,7 @@ public class TimingCodeInjector extends TraceCodeInjector {
      */
 
     public Expression inject(Expression exp, StaticContext env, int construct, StructuredQName qName) {
-        if (construct == StandardNames.XSL_FUNCTION || construct == StandardNames.XSL_TEMPLATE) {
+        if (construct == StandardNames.XSL_FUNCTION || construct == StandardNames.XSL_TEMPLATE || construct == StandardNames.XSL_VARIABLE) {
             return super.inject(exp, env, construct, qName);
         } else {
             return exp;

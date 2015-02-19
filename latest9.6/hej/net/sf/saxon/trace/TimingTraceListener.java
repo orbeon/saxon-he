@@ -117,7 +117,7 @@ public class TimingTraceListener implements TraceListener {
                     name = ins.instruct.getProperty("match").toString();
                     writer.writeAttribute("match", name);
                 }
-                writer.writeAttribute("construct", (ins.instruct.getConstructType() == StandardNames.XSL_FUNCTION ? "function" : "template"));
+                writer.writeAttribute("construct", (ins.instruct.getConstructType() == StandardNames.XSL_FUNCTION ? "function" : (ins.instruct.getConstructType() == StandardNames.XSL_VARIABLE ? "variable" : "template")));
                 String file = ins.instruct.getSystemId();
                 if (file != null) {
                     if (file.length() > 15) {
@@ -151,7 +151,7 @@ public class TimingTraceListener implements TraceListener {
 
     public void enter(/*@NotNull*/ InstructionInfo instruction, XPathContext context) {
         int loc = instruction.getConstructType();
-        if (loc == StandardNames.XSL_FUNCTION || loc == StandardNames.XSL_TEMPLATE) {
+        if (loc == StandardNames.XSL_FUNCTION || loc == StandardNames.XSL_TEMPLATE || loc == StandardNames.XSL_VARIABLE) {
             long start = System.nanoTime();
             InstructionDetails instructDetails = new InstructionDetails();
             instructDetails.instruct = instruction;
@@ -166,7 +166,7 @@ public class TimingTraceListener implements TraceListener {
 
     public void leave(/*@NotNull*/ InstructionInfo instruction) {
         int loc = instruction.getConstructType();
-        if (loc == StandardNames.XSL_FUNCTION || loc == StandardNames.XSL_TEMPLATE) {
+        if (loc == StandardNames.XSL_FUNCTION || loc == StandardNames.XSL_TEMPLATE || loc == StandardNames.XSL_VARIABLE) {
             InstructionDetails instruct = instructs.peek();
             long duration = System.nanoTime() - instruct.gross;
             long net = duration - instruct.net;
