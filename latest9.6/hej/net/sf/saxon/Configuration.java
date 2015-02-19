@@ -4448,16 +4448,31 @@ public class Configuration implements SourceResolver, NotationSet {
             throw new AssertionError(e);
         }
 //#endif
-//#if PE==true && DOTNET != true
+//#if PE==true && DOTNET != true && SAXONC != true
         try {
             platformChoice = (Platform) new DynamicLoader().getInstance("com.saxonica.config.JavaPlatformPE", null);
         } catch (XPathException e) {
             throw new AssertionError(e);
         }
 //#endif
-//#if EE==true && DOTNET != true
+//#if EE==true && DOTNET != true && SAXONC != true
         try {
             platformChoice = (Platform) new DynamicLoader().getInstance("com.saxonica.config.JavaPlatformPE", null);
+        } catch (XPathException e) {
+            throw new AssertionError(e);
+        }
+//#endif
+
+//#if PE==true && DOTNET != true && SAXONC == true
+        try {
+            platformChoice = (Platform) new DynamicLoader().getInstance("com.saxonica.config.JavaPlatformC", null);
+        } catch (XPathException e) {
+            throw new AssertionError(e);
+        }
+//#endif
+//#if EE==true && DOTNET != true && SAXONC==true
+        try {
+            platformChoice = (Platform) new DynamicLoader().getInstance("com.saxonica.config.JavaPlatformC", null);
         } catch (XPathException e) {
             throw new AssertionError(e);
         }
