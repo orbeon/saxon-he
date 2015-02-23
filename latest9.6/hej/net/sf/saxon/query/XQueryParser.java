@@ -1956,6 +1956,7 @@ public class XQueryParser extends XPathParser {
 
         // the next token should be the < QNAME "("> pair
         int offset = t.currentTokenStartOffset;
+        t.setState(Tokenizer.DEFAULT_STATE);
         nextToken();
         if (t.currentToken != Token.FUNCTION && !allowXPath30Syntax) {
             // XQuery 1.0 allows reserved names as function names. These will appear as some other kind of token
