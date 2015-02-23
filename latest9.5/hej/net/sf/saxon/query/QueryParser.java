@@ -1652,6 +1652,7 @@ public class QueryParser extends ExpressionParser {
 
         // the next token should be the < QNAME "("> pair
         int offset = t.currentTokenStartOffset;
+        t.setState(Tokenizer.DEFAULT_STATE);
         nextToken();
         if(t.currentToken == Token.NODEKIND || t.currentToken == Token.IF || t.currentToken == Token.SWITCH || t.currentToken == Token.TYPESWITCH) {
             t.currentToken = Token.FUNCTION;
