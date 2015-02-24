@@ -847,7 +847,7 @@ public class ExpressionTool {
      * @return true if the expression contains a subexpression that is an instance of the specified class
      */
 
-    public static boolean containsSubexpression(Expression exp, final Class<? extends Expression> subClass) {
+    public static boolean containsSubexpression(Expression exp, final Class subClass) {
         return contains(exp, false, new ExpressionPredicate() {
             public boolean matches(Expression e) {
                 return subClass.isAssignableFrom(e.getClass());

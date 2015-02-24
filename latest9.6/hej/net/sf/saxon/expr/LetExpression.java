@@ -11,7 +11,10 @@ import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.LetExpressionCompiler;
 import com.saxonica.ee.stream.adjunct.LetExpressionAdjunct;
 import net.sf.saxon.evpull.EventIterator;
-import net.sf.saxon.expr.instruct.*;
+import net.sf.saxon.expr.instruct.DocumentInstr;
+import net.sf.saxon.expr.instruct.GlobalVariable;
+import net.sf.saxon.expr.instruct.TailCall;
+import net.sf.saxon.expr.instruct.TailCallReturner;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -690,6 +693,16 @@ public class LetExpression extends Assignation implements TailCallReturner {
     public String toString() {
         return "let $" + getVariableEQName() + " := " + sequence.toString() +
                 " return " + ExpressionTool.parenthesize(action);
+    }
+
+    /**
+     * Produce a short string identifying the expression for use in error messages
+     *
+     * @return a short string, sufficient to identify the expression
+     */
+    @Override
+    public String toShortString() {
+        return "let $" + getVariableName() + " := ...";
     }
 
     /**
