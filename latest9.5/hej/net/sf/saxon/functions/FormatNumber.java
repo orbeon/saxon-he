@@ -889,7 +889,7 @@ public class FormatNumber extends SystemFunctionCall implements Callable {
 	}
 
     private static boolean isInDigitFamily(int ch, int zeroDigit) {
-        return (ch >= zeroDigit && ch <= zeroDigit + 10);
+        return (ch >= zeroDigit && ch < zeroDigit + 10);
     }
 }
 
