@@ -10,7 +10,10 @@ package net.sf.saxon.functions;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.SavedNamespaceContext;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.om.*;
+import net.sf.saxon.om.Item;
+import net.sf.saxon.om.NamespaceResolver;
+import net.sf.saxon.om.Sequence;
+import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.DecimalFormatManager;
 import net.sf.saxon.trans.DecimalSymbols;
 import net.sf.saxon.trans.XPathException;
@@ -899,7 +902,7 @@ public class FormatNumber extends SystemFunctionCall implements Callable {
     }
 
     private static boolean isInDigitFamily(int ch, int zeroDigit) {
-        return ch >= zeroDigit && ch <= zeroDigit + 10;
+        return ch >= zeroDigit && ch < zeroDigit + 10;
     }
 }
 
