@@ -28,6 +28,12 @@ public class XsltProcessor extends SaxonCAPI {
     private XsltExecutable executable = null;
 
 
+    /**
+     * Constructor to initialise XsltProcessor with processor and flag for license
+     *
+     * @param proc  - s9api processor
+     * @param license   - flag indicating presence of license file
+     */
     public XsltProcessor(Processor proc, boolean license) {
         super(proc, license);
         if (debug) {

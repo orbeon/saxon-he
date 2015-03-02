@@ -212,7 +212,7 @@ public interface Platform {
 
     public void setDefaultSAXParserFactory();
 
-//#if EE==true
+//#ifdefined BYTECODE
     /**
      * Return the class loader required to load the bytecode generated classes
      *
