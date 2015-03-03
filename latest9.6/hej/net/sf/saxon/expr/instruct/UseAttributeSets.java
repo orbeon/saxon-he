@@ -12,6 +12,7 @@ import com.saxonica.ee.bytecode.UseAttributeSetsCompiler;
 import com.saxonica.ee.stream.adjunct.StreamingAdjunct;
 import com.saxonica.ee.stream.adjunct.UseAttributeSetsAdjunct;
 import net.sf.saxon.expr.Expression;
+import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
@@ -121,7 +122,7 @@ public class UseAttributeSets extends Instruction {
      */
 
     public int getIntrinsicDependencies() {
-        int d = 0;
+        int d = StaticProperty.DEPENDS_ON_FOCUS; // bug 2324
         for (AttributeSet as : attributeSets) {
             d |= as.getFocusDependencies();
         }
