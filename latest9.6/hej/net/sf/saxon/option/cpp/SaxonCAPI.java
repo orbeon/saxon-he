@@ -18,7 +18,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.type.BuiltInType;
 import net.sf.saxon.type.Converter;
-import net.sf.saxon.value.StringValue;
+import net.sf.saxon.value.*;
 import org.xml.sax.InputSource;
 
 import javax.xml.transform.ErrorListener;
@@ -32,7 +32,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-public class SaxonCAPI {
+
+
+/**
+ *  This class holds common attributes and methods required in the XsltProcessor, XQueryEngine and XPathProcessor
+ *
+ * */
+
+ public class SaxonCAPI {
     protected Properties props = null;
     protected Processor processor = null;
     protected XdmNode doc = null;
@@ -42,6 +49,10 @@ public class SaxonCAPI {
     protected InputStream in = null;
     public static String RESOURCES_DIR = null;
 
+
+    /**
+     * Default Constructor. Creates a processor that does not require a license edition
+    */
     public SaxonCAPI() {
         processor = new Processor(false);
         if (debug) {
@@ -49,6 +60,10 @@ public class SaxonCAPI {
         }
     }
 
+    /**
+     * Constructor with license edition flag
+     * @param license    - specify license edition flag
+    */
     public SaxonCAPI(boolean license) {
         processor = new Processor(license);
         if (debug) {
@@ -56,7 +71,11 @@ public class SaxonCAPI {
         }
     }
 
-
+    /**
+     * Constructor
+     * @param proc    - specify processor object
+     * @param license - license edition
+    */
     public SaxonCAPI(Processor proc, boolean license) {
         if (proc == null) {
             processor = new Processor(license);
@@ -71,6 +90,11 @@ public class SaxonCAPI {
         }
     }
 
+    /**
+     * Register the Schema by file name.
+     * @param cwd    - Current Working directory
+     * @param xsd    - File name of the schema relative to the cwd
+    */
     public SchemaValidator registerSchema(String cwd, String xsd) throws SaxonApiException {
         //TODO sort out the handling of options on the SchemaValidator
         SchemaManager schemaManager = processor.getSchemaManager();
@@ -82,7 +106,9 @@ public class SaxonCAPI {
         return validator;
     }
 
-
+    /**
+     * Error Listener to capture errors
+    */
      protected ErrorListener errorListener = new StandardErrorListener() {
 
         @Override
@@ -104,38 +130,68 @@ public class SaxonCAPI {
         }
     };
 
-
+    /**
+     * Get the Schema manager
+     * @return SchemaManager
+    */
     public SchemaManager getSchemaManager(){
         return processor.getSchemaManager();
     }
 
-
+    /**
+     * Get the Processor object created
+     * @return Processor
+    */
     public Processor getProcessor() {
         return processor;
     }
 
+    /**
+     * set debug mode on or off
+     * @param d    - flag for debug mode
+    */
     public static void setDebugMode(boolean d) {
         debug = d;
     }
 
+    /**
+     * get the input stream
+     * @return InputStream - created input stream
+    */
     public InputStream getInputStream() {
         return in;
     }
 
 
+    /**
+     * Get the exceptions thrown during the compile and execution of the XSLT/XQuery
+     * @return SaxCEExeption[] -- array of the exceptions
+    */
     public SaxonCException[] getExceptions() {
         return saxonExceptions.toArray(new SaxonCException[saxonExceptions.size()]);
     }
 
+
+    /**
+     * Check for exceptions thrown
+     * @return boolean - Return true if exception thrown during the process and false otherwise.
+    */
     public boolean checkException() {
         return saxonExceptions.size() > 0;
     }
 
-
+    /**
+     * Clear exceptions recorded during the process
+    */
     public void clearExceptions() {
         saxonExceptions.clear();
     }
 
+    /**
+     * Get a particular exceptions
+     * @param i - index into the list of thrown exceptions
+     * @return SaxonCException - Saxon/C wrapped exception
+    */
     public SaxonCException getException(int i) {
         if (i < saxonExceptions.size()) {
             return saxonExceptions.get(i);
@@ -144,9 +200,16 @@ public class SaxonCAPI {
         }
     }
 
-    public XdmNode xmlParseFile(String cwd, String filename) throws SaxonApiException {
+
+    /**
+     * parse XML document supplied by file
+     * @param cwd    - Current Working directory
+     * @param filename    - File name of the XML document to parse
+     * @return XdmNode
+    */
+    public XdmNode parseXmlFile(String cwd, String filename) throws SaxonApiException {
         try {
-            doc = xmlParseFile(processor, cwd, null, filename);
+            doc = parseXmlFile(processor, cwd, null, filename);
             return doc;
         } catch (SaxonApiException ex) {
             SaxonCException saxonException = new SaxonCException(ex);
@@ -156,10 +219,18 @@ public class SaxonCAPI {
     }
 
 
-
-    public XdmNode xmlParseFile(String cwd, SchemaValidator validator, String filename, String[] params, String[] values) throws SaxonApiException {
+    /**
+     * parse XML document with addition parameters. Document supplied by file name.
+     * @param cwd    - Current Working directory
+     * @param validator - Supplie Scema validator
+     * @param filename    - File name of the XML document to parse
+     * @param params  - parameters and property names given as an array of stings
+     * @param values - the values of the parameters and properties. given as a array of Java objects
+     * @return  XdmNode
+    */
+    public XdmNode parseXmlFile(String cwd, SchemaValidator validator, String filename, String[] params, String[] values) throws SaxonApiException {
         try {
-            doc = xmlParseFile(processor, cwd, validator, filename);
+            doc = parseXmlFile(processor, cwd, validator, filename);
             return doc;
         } catch (SaxonApiException ex) {
             SaxonCException saxonException = new SaxonCException(ex);
@@ -168,10 +239,24 @@ public class SaxonCAPI {
         }
     }
 
+
+    /**
+     * parse XML document supplied string
+     * @param xml    - string representation of XML document
+     * @return XdmNode
+    */
     public XdmNode xmlParseString(String xml) throws SaxonApiException {
         return xmlParseString(null, xml, null, null);
     }
 
+    /**
+     * parse XML document supplied string
+     * @param xml    - string representation of XML document
+     * @param validator - Supplied Schema validator
+     * @param params  - parameters and property names given as an array of stings
+     * @param values - the values of the parameters and properties. given as a array of Java objects
+     * @return XdmNode
+    */
     public XdmNode xmlParseString(SchemaValidator validator, String xml , String[] params, String[] values) throws SaxonApiException {
         try {
             doc = xmlParseString(processor, validator, xml);
@@ -187,6 +272,12 @@ public class SaxonCAPI {
     }
 
 
+    /**
+     * Create an Xdm atomic value from string representation
+     * @param typeStr    - Specified type of the XdmValue
+     * @param valueStr - The value given in a strign form
+     * @return XdmValue - value
+    */
     public static XdmValue createXdmAtomicItem(String typeStr, String valueStr) throws Exception{
 
 
@@ -199,6 +290,29 @@ public class SaxonCAPI {
         return XdmValue.wrap(converter.convert(new StringValue(valueStr)).asAtomic());
 
 
+    }
+
+    /**
+     * Wrap a boxed primitive type as an XdmValue.
+     * @param value    - boxed primitive type
+     * @return XdmValue
+    */
+    public static XdmValue getXdmValue(Object value) {
+        XdmValue valueForCpp = null;
+        if (value instanceof Integer) {
+            valueForCpp = XdmValue.wrap(new Int64Value(((Integer) value).intValue()));
+        } else if (value instanceof Boolean) {
+            valueForCpp = XdmValue.wrap(BooleanValue.get(((Boolean) value).booleanValue()));
+        } else if (value instanceof Double) {
+            valueForCpp = XdmValue.wrap(DoubleValue.makeDoubleValue(((Double) value).doubleValue()));
+        } else if (value instanceof Float) {
+            valueForCpp = XdmValue.wrap(FloatValue.makeFloatValue(((Float) value).floatValue()));
+        } else if (value instanceof Long) {
+            valueForCpp = XdmValue.wrap(Int64Value.makeIntegerValue((((Long) value).longValue())));
+        } else if (value instanceof String) {
+            valueForCpp = XdmValue.wrap(StringValue.makeStringValue(((String) value)));
+        }
+        return valueForCpp;
     }
 
     //TODO pass the schema file and options as an array instead of the SchemaValidator object
@@ -223,7 +337,7 @@ public class SaxonCAPI {
     }
 
 
-    public static XdmNode xmlParseFile(Processor processor, String cwd, SchemaValidator validator, String filename) throws SaxonApiException {
+    public static XdmNode parseXmlFile(Processor processor, String cwd, SchemaValidator validator, String filename) throws SaxonApiException {
         try {
             DocumentBuilder builder = processor.newDocumentBuilder();
             Source source = null;
@@ -246,6 +360,13 @@ public class SaxonCAPI {
         }
     }
 
+    /**
+     *   Create a File object given the filename and the cwd used fix-up the location of the file.
+     *
+      * @param cwd - Supply the current working directory which the filename will be resolved against
+     * @param filename
+     * @return  file object
+     */
     public File absoluteFile(String cwd, String filename) {
         char separatorChar = '/';
         if (File.separatorChar != '/') {
@@ -266,9 +387,16 @@ public class SaxonCAPI {
         return new File(fullpath);
     }
 
+    /**
+     * Resolve the file with the cwd
+     * deprecated method
+     * @param cwd - Current working directory
+     * @param filename -
+     * @return  File object
+     * @throws SaxonApiException
+     */
     public File resolveFile(String cwd, String filename) throws SaxonApiException {
         URI cwdURI = null;
-        Source source = null;
         File file = null;
         if (cwd != null && cwd.length() > 0) {
 
@@ -277,7 +405,6 @@ public class SaxonCAPI {
                 file = absoluteFile(cwd, filename);
 
             } catch (Exception e) {
-                URL url = null;
                 try {
                     cwdURI = new URI(cwd + filename);
                     file = new File(cwdURI);
@@ -294,6 +421,13 @@ public class SaxonCAPI {
     }
 
 
+    /**
+     *  Resolve file name. Returns the file as a Source object
+     * @param cwd - Current working directory
+     * @param filename
+     * @return Source
+     * @throws SaxonApiException
+     */
     public Source resolveFileToSource(String cwd, String filename) throws SaxonApiException {
 
         Source source = null;
@@ -349,6 +483,14 @@ public class SaxonCAPI {
         }
     }
 
+    /**
+     * Resolve the output file and wrap it into a Serializer for use in XQuery and XSLT processors
+     * @param processor - The same processor used in XQuery or XSLT engine must be used. Otherwise errors might occur
+     * @param cwd - Current working directory
+     * @param outfile  - the output filename where result will be stored
+     * @return  Serializer
+     * @throws SaxonApiException
+     */
     public Serializer resolveOutputFile(Processor processor, String cwd, String outfile) throws SaxonApiException {
         Serializer serializer = null;
         File file =  absoluteFile(cwd, outfile);

@@ -163,9 +163,6 @@ public class XQueryEngine extends SaxonCAPI {
             }
         }
 
-        String outputFilename = null;
-        String initialTemplate = null;
-        String initialMode = null;
         XdmItem item = null;
         String outfile = null;
         File sourceFile = null;
