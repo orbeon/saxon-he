@@ -55,7 +55,7 @@ public class XsltProcessor extends SaxonCAPI {
      * Constructor to initialise XsltProcessor with license flag
      *
      * @param license - flag indicating presence of license file
-    */
+     */
     public XsltProcessor(boolean license) {
         processor = new Processor(license);
         if (debug) {
@@ -65,20 +65,22 @@ public class XsltProcessor extends SaxonCAPI {
 
     /**
      * Create new object of this class
+     *
      * @param proc    - s9api processor
      * @param license - flag indicating presence of license file
      * @return XsltProcessor
-    */
+     */
     public static XsltProcessor newInstance(boolean license, Processor proc) {
         return new XsltProcessor(proc, license);
     }
 
     /**
      * Compile the stylesheet from file  for use later
-     * @param cwd    - current working directory
+     *
+     * @param cwd      - current working directory
      * @param filename - File name of the stylsheet
      * @return XsltExecutable
-    */
+     */
     public XsltExecutable createStylesheetFromFile(String cwd, String filename) throws SaxonApiException {
 
         try {
@@ -102,10 +104,11 @@ public class XsltProcessor extends SaxonCAPI {
 
     /**
      * Compile the stylesheet from string  for use later
+     *
      * @param cwd - current working directory
      * @param str - stylesheet as a string
      * @return XsltExecutable
-    */
+     */
     public XsltExecutable createStylesheetFromString(String cwd, String str) throws SaxonApiException {
         clearExceptions();
         XsltCompiler compiler = processor.newXsltCompiler();
@@ -141,13 +144,14 @@ public class XsltProcessor extends SaxonCAPI {
      * through the stages of compilation, loading any source documents and execution.
      * Here we supply parameters and properties required to do the transformation.
      * The parameter names and values are supplied as a two arrays in the form of a key and value.
-     * @param cwd    - current working directory
+     *
+     * @param cwd            - current working directory
      * @param sourceFilename - source supplied as a file name
-     * @param stylesheet - File name of the stylesheet
-     * @param outFilename - Save result of transformation to the given file name
-     * @param params  - parameters and property names given as an array of stings
-     * @param values - the values of the paramaters and properties. given as a array of Java objects
-    */
+     * @param stylesheet     - File name of the stylesheet
+     * @param outFilename    - Save result of transformation to the given file name
+     * @param params         - parameters and property names given as an array of stings
+     * @param values         - the values of the paramaters and properties. given as a array of Java objects
+     */
     public void transformToFile(String cwd, String sourceFilename, String stylesheet, String outFilename, String[] params, Object[] values) throws SaxonApiException {
 
         try {
@@ -201,17 +205,18 @@ public class XsltProcessor extends SaxonCAPI {
     }
 
 
-     /**
+    /**
      * Applies the properties and parameters required in the transformation.
      * In addition we can supply the source, stylesheet and output file names.
      * We can also supply values to xsl:param and xsl:variables required in the stylesheet.
      * The parameter names and values are supplied as a two arrays in the form of a key and value.
-     * @param cwd    - current working directory
-     * @param processor - required to use the same processor as for the compiled stylesheet
+     *
+     * @param cwd         - current working directory
+     * @param processor   - required to use the same processor as for the compiled stylesheet
      * @param transformer - pass the current object to set local variables supplied in the parameters
-     * @param params  - parameters and property names given as an array of stings
-     * @param values - the values of the parameters and properties. given as a array of Java objects
-    */
+     * @param params      - parameters and property names given as an array of stings
+     * @param values      - the values of the parameters and properties. given as a array of Java objects
+     */
     public static void applyXsltTransformerProperties(SaxonCAPI api, String cwd, Processor processor, XsltTransformer transformer, String[] params, Object[] values, Properties props) throws SaxonApiException {
         if (params != null) {
             String initialTemplate;
@@ -270,6 +275,7 @@ public class XsltProcessor extends SaxonCAPI {
                                 dir1.replace('/', '\\');
                             }
                             SaxonCAPI.RESOURCES_DIR = dir1;
+
                         }
 
                     } else if (params[i].startsWith("param:")) {
@@ -324,9 +330,6 @@ public class XsltProcessor extends SaxonCAPI {
     }
 
 
-
-
-
     /**
      * Do transformation and return result as an Xdm node in memory
      * This method is designed to be used with the createStylesheet[File/String] methods above,
@@ -335,35 +338,37 @@ public class XsltProcessor extends SaxonCAPI {
      * through the stages of compilation, loading any source documents and execution.
      * Here we supply parameters and properties required to do the transformation.
      * The parameter names and values are supplied as a two arrays in the form of a key and value.
-     * @param cwd    - current working directory
+     *
+     * @param cwd        - current working directory
      * @param sourceFile - source supplied as a file name
      * @param stylesheet - File name of the stylesheet
-     * @param params  - parameters and property names given as an array of stings
-     * @param values - the values of the paramaters and properties. given as a array of Java objects
+     * @param params     - parameters and property names given as an array of stings
+     * @param values     - the values of the paramaters and properties. given as a array of Java objects
      * @return result as an XdmNode
-    */
+     */
     public XdmNode transformToNode(String cwd, String sourceFile, String stylesheet, String[] params, Object[] values) throws SaxonApiException {
         Source source;
         clearExceptions();
         XsltTransformer transformer = null;
-        if (stylesheet == null && executable != null) {
-            transformer = executable.load();
-        } else {
-            XsltCompiler compiler = processor.newXsltCompiler();
-            source = resolveFileToSource(cwd, stylesheet);
-            compiler.setErrorListener(errorListener);
+        try {
+            if (stylesheet == null && executable != null) {
+                transformer = executable.load();
+            } else {
+                XsltCompiler compiler = processor.newXsltCompiler();
+                source = resolveFileToSource(cwd, stylesheet);
+                compiler.setErrorListener(errorListener);
 
-            try {
-                transformer = compiler.compile(source).load();
-            } catch (SaxonApiException ex) {
-                if (ex.getErrorCode() == null) {
-                    throw new SaxonApiException(new XPathException(ex.getMessage(), saxonExceptions.get(0).getErrorCode()));
+                try {
+                    transformer = compiler.compile(source).load();
+                } catch (SaxonApiException ex) {
+                    if (ex.getErrorCode() == null) {
+                        throw new SaxonApiException(new XPathException(ex.getMessage(), saxonExceptions.get(0).getErrorCode()));
+                    }
                 }
             }
-        }
-        XdmDestination destination = new XdmDestination();
+            XdmDestination destination = new XdmDestination();
 
-        try {
+
             transformer.setDestination(destination);
             this.applyXsltTransformerProperties(this, cwd, processor, transformer, params, values, props);
 
@@ -379,7 +384,7 @@ public class XsltProcessor extends SaxonCAPI {
             SaxonCException saxonException = new SaxonCException(e);
             saxonExceptions.add(saxonException);
             throw e;
-        } catch (NullPointerException ex) {
+        } catch (Exception ex) {
             throw new SaxonApiException(ex);
         }
 
@@ -394,40 +399,41 @@ public class XsltProcessor extends SaxonCAPI {
      * through the stages of compilation, loading any source documents and execution.
      * Here we supply parameters and properties required to do the transformation.
      * The parameter names and values are supplied as a two arrays in the form of a key and value.
-     * @param cwd    - current working directory
+     *
+     * @param cwd        - current working directory
      * @param sourceFile - source supplied as a file name
      * @param stylesheet - File name of the stylesheet
-     * @param params  - parameters and property names given as an array of stings
-     * @param values - the values of the paramaters and properties. given as a array of Java objects
+     * @param params     - parameters and property names given as an array of stings
+     * @param values     - the values of the paramaters and properties. given as a array of Java objects
      * @return result as a string representation
-    */
+     */
     public String transformToString(String cwd, String sourceFile, String stylesheet, String[] params, Object[] values) throws SaxonApiException {
         if (debug) {
             System.err.println("xsltApplyStylesheet, Processor: " + System.identityHashCode(processor));
         }
+        try {
+            Source source;
+            clearExceptions();
+            XsltTransformer transformer = null;
+            if (stylesheet == null && executable != null) {
+                transformer = executable.load();
+            } else {
+                XsltCompiler compiler = processor.newXsltCompiler();
+                source = resolveFileToSource(cwd, stylesheet);
+                compiler.setErrorListener(errorListener);
 
-        Source source;
-        clearExceptions();
-        XsltTransformer transformer = null;
-        if (stylesheet == null && executable != null) {
-            transformer = executable.load();
-        } else {
-            XsltCompiler compiler = processor.newXsltCompiler();
-            source = resolveFileToSource(cwd, stylesheet);
-            compiler.setErrorListener(errorListener);
-
-            try {
-                transformer = compiler.compile(source).load();
-            } catch (SaxonApiException ex) {
-                if (ex.getErrorCode() == null) {
-                    throw new SaxonApiException(new XPathException(ex.getMessage(), saxonExceptions.get(0).getErrorCode()));
+                try {
+                    transformer = compiler.compile(source).load();
+                } catch (SaxonApiException ex) {
+                    if (ex.getErrorCode() == null) {
+                        throw new SaxonApiException(new XPathException(ex.getMessage(), saxonExceptions.get(0).getErrorCode()));
+                    }
                 }
             }
-        }
-        StringWriter sw = new StringWriter();
-        serializer = processor.newSerializer(sw);
-        transformer.setDestination(serializer);
-        try {
+            StringWriter sw = new StringWriter();
+            serializer = processor.newSerializer(sw);
+            transformer.setDestination(serializer);
+
             applyXsltTransformerProperties(this, cwd, processor, transformer, params, values, props);
 
             if (sourceFile == null && doc != null) {
@@ -443,6 +449,8 @@ public class XsltProcessor extends SaxonCAPI {
             SaxonCException saxonException = new SaxonCException(e);
             saxonExceptions.add(saxonException);
             throw e;
+        } catch (Exception ex) {
+            throw new SaxonApiException(ex);
         }
     }
 
@@ -451,32 +459,33 @@ public class XsltProcessor extends SaxonCAPI {
      * The method goes through the stages of compilation, loading any source documents and execution.
      * Here we supply parameters and properties required to do the transformation.
      * The parameter names and values are supplied as a two arrays in the form of a key and value.
-     * @param cwd    - current working directory
+     *
+     * @param cwd        - current working directory
      * @param sourceFile - source supplied as a file name
      * @param stylesheet - File name of the stylesheet
-     * @param params  - parameters and property names given as an array of stings
-     * @param values - the values of the paramaters and properties. given as a array of Java objects
+     * @param params     - parameters and property names given as an array of stings
+     * @param values     - the values of the paramaters and properties. given as a array of Java objects
      * @return result as an XdmNode
-    */
+     */
     public String xsltApplyStylesheet(String cwd, Processor processor, String sourceFile, String stylesheet, String[] params, Object[] values) throws SaxonApiException {
 
         clearExceptions();
         XsltCompiler compiler = processor.newXsltCompiler();
-
-        Source source = resolveFileToSource(cwd, stylesheet);
-
-
-        compiler.setErrorListener(errorListener);
-        XsltTransformer transformer = null;
         try {
-            transformer = compiler.compile(source).load();
-        } catch (SaxonApiException ex) {
-            if (ex.getErrorCode() == null) {
-                throw new SaxonApiException(new XPathException(ex.getMessage(), saxonExceptions.get(0).getErrorCode()));
+            Source source = resolveFileToSource(cwd, stylesheet);
+
+
+            compiler.setErrorListener(errorListener);
+            XsltTransformer transformer = null;
+            try {
+                transformer = compiler.compile(source).load();
+            } catch (SaxonApiException ex) {
+                if (ex.getErrorCode() == null) {
+                    throw new SaxonApiException(new XPathException(ex.getMessage(), saxonExceptions.get(0).getErrorCode()));
+                }
             }
-        }
 
-        try {
+
             StringWriter sw = new StringWriter();
 
             if (serializer == null) {
@@ -499,6 +508,8 @@ public class XsltProcessor extends SaxonCAPI {
             SaxonCException saxonException = new SaxonCException(e);
             saxonExceptions.add(saxonException);
             throw e;
+        } catch (Exception ex) {
+            throw new SaxonApiException(ex);
         }
 
 
