@@ -461,16 +461,23 @@ public abstract class JPConverter {
 
     public static class WrapExternalObject extends JPConverter {
 
-        public static final WrapExternalObject INSTANCE = new WrapExternalObject(BuiltInAtomicType.ANY_ATOMIC);
+        public static final WrapExternalObject INSTANCE = new WrapExternalObject(new JavaExternalObjectType(Object.class));
 
-        private ItemType resultType;
+        private JavaExternalObjectType resultType;
 
-        public WrapExternalObject(ItemType resultType) {
+        public WrapExternalObject(JavaExternalObjectType resultType) {
             this.resultType = resultType;
         }
 
         public ObjectValue<Object> convert(Object object, XPathContext context) throws XPathException {
-            return object == null ? null : new ObjectValue<Object>(object);
+            if (object == null) {
+                return null;
+            } else if (resultType.getJavaClass().isInstance(object)) {
+                return new ObjectValue<Object>(object);
+            } else {
+                throw new XPathException("Java external object of type " + object.getClass().getName() +
+                    " is not an instance of the required type " + resultType.getJavaClass().getName(), "XPTY0004");
+            }
         }
 
         public ItemType getItemType() {

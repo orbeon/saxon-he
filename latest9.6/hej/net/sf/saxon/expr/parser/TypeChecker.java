@@ -7,6 +7,7 @@
 
 package net.sf.saxon.expr.parser;
 
+import com.saxonica.expr.JavaExtensionFunctionCall;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.functions.NumberFn;
@@ -318,11 +319,20 @@ public final class TypeChecker {
                 itemTypeOK = true;
 
             } else if (reqItemType instanceof JavaExternalObjectType &&
-                    Sequence.class.isAssignableFrom(((JavaExternalObjectType) reqItemType).getJavaClass()) &&
+                    /*Sequence.class.isAssignableFrom(((JavaExternalObjectType) reqItemType).getJavaClass()) &&  */
                     reqCard == StaticProperty.EXACTLY_ONE) {
-                // special case: allow an extension function to call an instance method on the implementation type of an XDM value
-                // we leave the conversion to be sorted out at run-time
-                itemTypeOK = true;
+
+                if (Sequence.class.isAssignableFrom(((JavaExternalObjectType) reqItemType).getJavaClass())) {
+                    // special case: allow an extension function to call an instance method on the implementation type of an XDM value
+                    // we leave the conversion to be sorted out at run-time
+                    itemTypeOK = true;
+                } else if (supplied instanceof JavaExtensionFunctionCall) {
+                    // adjust the required type of the Java extension function call
+                    ((JavaExtensionFunctionCall)supplied).adjustRequiredType((JavaExternalObjectType)reqItemType);
+                    itemTypeOK = true;
+                    cardOK = true;
+                }
+
             }
 
         }
