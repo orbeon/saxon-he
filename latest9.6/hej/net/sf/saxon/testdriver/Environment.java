@@ -651,6 +651,8 @@ public class
                     } else {
                         environment.streamedFile = new File(((XdmNode) env).getBaseURI().resolve(href));
                     }
+                } else if (href == null) {
+                    System.err.println("*** Cannot stream from an inline source document");
                 } else {
                     environment.streamedSecondaryDocs.put(
                             new File(((XdmNode) env).getBaseURI().resolve(href)).toURI().toString(),

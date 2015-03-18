@@ -52,5 +52,12 @@ public interface SchemaDeclaration {
 
     public boolean isAbstract();
 
+    /**
+     * Determine, in the case of an Element Declaration, whether there are type alternatives defined
+     * @return true if the element uses conditional type assignment
+     */
+
+    public boolean hasTypeAlternatives();
+
 }
 

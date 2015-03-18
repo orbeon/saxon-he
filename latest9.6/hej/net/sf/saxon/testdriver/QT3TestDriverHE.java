@@ -187,6 +187,8 @@ public class QT3TestDriverHE extends TestDriver {
             return !inverse;
         } else if ("unicode-normalization-form".equals(type)) {
             return value.equalsIgnoreCase("FULLY-NORMALIZED") ? inverse : !inverse;
+        } else if ("unicode-version".equals(type)) {
+            return true || value.equals("6.0");
         } else if ("feature".equals(type)) {
             if ("namespace-axis".equals(value)) {
                 return !inverse;

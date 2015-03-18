@@ -268,6 +268,7 @@ public class FixedElement extends ElementCreator {
                     err.setLocator(instr);
                     throw err;
                 }
+
                 SchemaType declaredType = decl.getType();
                 SchemaType xsiType = instr.getXSIType(env);
                 if (xsiType != null) {
@@ -275,28 +276,30 @@ public class FixedElement extends ElementCreator {
                 } else {
                     schemaType = declaredType;
                 }
-                instr.getValidationOptions().setTopLevelType(schemaType);
                 itemType = new CombinedNodeTest(
-                        new NameTest(Type.ELEMENT, fp, env.getNamePool()),
-                        Token.INTERSECT,
-                        new ContentTypeTest(Type.ELEMENT, schemaType, config, false));
-                try {
-                    schemaType.analyzeContentExpression(content, Type.ELEMENT, env);
-                } catch (XPathException e) {
-                    e.setErrorCode(instr.isXSLT() ? "XTTE1510" : "XQDY0027");
-                    e.setLocator(instr);
-                    throw e;
-                }
-                if (xsiType != null) {
+                    new NameTest(Type.ELEMENT, fp, env.getNamePool()),
+                    Token.INTERSECT,
+                    new ContentTypeTest(Type.ELEMENT, schemaType, config, false));
+                if (xsiType != null || !decl.hasTypeAlternatives()) {
+                    instr.getValidationOptions().setTopLevelType(schemaType);
                     try {
-                        config.checkTypeDerivationIsOK(xsiType, declaredType, 0);
-                    } catch (SchemaException e) {
-                        ValidationException ve = new ValidationException("The specified xsi:type " + xsiType.getDescription() +
+                        schemaType.analyzeContentExpression(content, Type.ELEMENT, env);
+                    } catch (XPathException e) {
+                        e.setErrorCode(instr.isXSLT() ? "XTTE1510" : "XQDY0027");
+                        e.setLocator(instr);
+                        throw e;
+                    }
+                    if (xsiType != null) {
+                        try {
+                            config.checkTypeDerivationIsOK(xsiType, declaredType, 0);
+                        } catch (SchemaException e) {
+                            ValidationException ve = new ValidationException("The specified xsi:type " + xsiType.getDescription() +
                                 " is not validly derived from the required type " + schemaType.getDescription());
-                        ve.setConstraintReference(1, "cvc-elt", "4.3");
-                        ve.setErrorCode(instr.isXSLT() ? "XTTE1515" : "XQDY0027");
-                        ve.setSourceLocator(instr);
-                        throw ve;
+                            ve.setConstraintReference(1, "cvc-elt", "4.3");
+                            ve.setErrorCode(instr.isXSLT() ? "XTTE1515" : "XQDY0027");
+                            ve.setSourceLocator(instr);
+                            throw ve;
+                        }
                     }
                 }
             } else if (validation == Validation.LAX) {
@@ -307,17 +310,19 @@ public class FixedElement extends ElementCreator {
                     itemType = new NameTest(Type.ELEMENT, fp, env.getNamePool());
                 } else {
                     schemaType = decl.getType();
-                    instr.getValidationOptions().setTopLevelType(schemaType);
                     itemType = new CombinedNodeTest(
                             new NameTest(Type.ELEMENT, fp, env.getNamePool()),
                             Token.INTERSECT,
-                            new ContentTypeTest(Type.ELEMENT, instr.getSchemaType(), config, false));
-                    try {
-                        schemaType.analyzeContentExpression(content, Type.ELEMENT, env);
-                    } catch (XPathException e) {
-                        e.setErrorCode(instr.isXSLT() ? "XTTE1515" : "XQDY0027");
-                        e.setLocator(instr);
-                        throw e;
+                            new ContentTypeTest(Type.ELEMENT, schemaType, config, false));
+                    if (!decl.hasTypeAlternatives()) {
+                        instr.getValidationOptions().setTopLevelType(schemaType);
+                        try {
+                            schemaType.analyzeContentExpression(content, Type.ELEMENT, env);
+                        } catch (XPathException e) {
+                            e.setErrorCode(instr.isXSLT() ? "XTTE1515" : "XQDY0027");
+                            e.setLocator(instr);
+                            throw e;
+                        }
                     }
                 }
             } else if (validation == Validation.PRESERVE) {
