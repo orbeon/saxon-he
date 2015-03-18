@@ -4429,53 +4429,25 @@ public class Configuration implements SourceResolver, NotationSet {
         Platform platformChoice;
 //#if DOTNET==true
         //#if EE==true || PE==true
-        try {
-            platformChoice = (Platform) new DynamicLoader().getInstance("com.saxonica.config.DotNetPlatformPE", null);
-        } catch (XPathException e) {
-            throw new AssertionError(e);
-        }
+            platformChoice = new com.saxonica.config.DotNetPlatformPE();
         //#else
-        try {
-            platformChoice = (Platform) new DynamicLoader().getInstance("net.sf.saxon.dotnet.DotNetPlatform", null);
-        } catch (XPathException e) {
-            throw new AssertionError(e);
-        }
+            platformChoice = new net.sf.saxon.dotnet.DotNetPlatform();
         //#endif
 //#else
-        try {
-            platformChoice = (Platform) new DynamicLoader().getInstance("net.sf.saxon.java.JavaPlatform", null);
-        } catch (XPathException e) {
-            throw new AssertionError(e);
-        }
+        platformChoice = new net.sf.saxon.java.JavaPlatform();
 //#endif
 //#if PE==true && DOTNET != true && SAXONC != true
-        try {
-            platformChoice = (Platform) new DynamicLoader().getInstance("com.saxonica.config.JavaPlatformPE", null);
-        } catch (XPathException e) {
-            throw new AssertionError(e);
-        }
+       platformChoice = new com.saxonica.config.JavaPlatformPE();
 //#endif
 //#if EE==true && DOTNET != true && SAXONC != true
-        try {
-            platformChoice = (Platform) new DynamicLoader().getInstance("com.saxonica.config.JavaPlatformPE", null);
-        } catch (XPathException e) {
-            throw new AssertionError(e);
-        }
+            platformChoice = new com.saxonica.config.JavaPlatformPE();
 //#endif
 
 //#if PE==true && DOTNET != true && SAXONC == true
-        try {
-            platformChoice = (Platform) new DynamicLoader().getInstance("com.saxonica.config.JavaPlatformC", null);
-        } catch (XPathException e) {
-            throw new AssertionError(e);
-        }
+            platformChoice = new com.saxonica.config.JavaPlatformC();
 //#endif
 //#if EE==true && DOTNET != true && SAXONC==true
-        try {
-            platformChoice = (Platform) new DynamicLoader().getInstance("com.saxonica.config.JavaPlatformC", null);
-        } catch (XPathException e) {
-            throw new AssertionError(e);
-        }
+            platformChoice = new com.saxonica.config.JavaPlatformC();
 //#endif
 
         return platformChoice;
@@ -4485,18 +4457,10 @@ public class Configuration implements SourceResolver, NotationSet {
         Class<? extends Configuration> configClass;
         configClass = Configuration.class;
 //#if PE==true
-        try {
-            configClass = (Class<? extends Configuration>) Class.forName("com.saxonica.config.ProfessionalConfiguration");
-        } catch (ClassNotFoundException e) {
-            throw new AssertionError(e);
-        }
+        configClass = com.saxonica.config.ProfessionalConfiguration.class;
 //#endif
 //#if EE==true
-        try {
-            configClass = (Class<? extends Configuration>) Class.forName("com.saxonica.config.EnterpriseConfiguration");
-        } catch (ClassNotFoundException e) {
-            throw new AssertionError(e);
-        }
+        configClass = com.saxonica.config.EnterpriseConfiguration.class;
 //#endif
         return configClass;
     }
