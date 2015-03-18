@@ -644,14 +644,13 @@ public class XsltTransformer implements Destination {
         if (sourceTreeBuilder != null) {
             NodeInfo doc = sourceTreeBuilder.getCurrentRoot();
             sourceTreeBuilder = null;
-            if (doc == null) {
-                throw new SaxonApiException("No source document has been built by the previous pipeline stage");
-            }
-            Receiver result = getDestinationReceiver();
-            try {
-                controller.transformDocument(doc, result);
-            } catch (TransformerException e) {
-                throw new SaxonApiException(e);
+            if (doc != null) {
+                Receiver result = getDestinationReceiver();
+                try {
+                    controller.transformDocument(doc, result);
+                } catch (TransformerException e) {
+                    throw new SaxonApiException(e);
+                }
             }
             destination.close();
         }
