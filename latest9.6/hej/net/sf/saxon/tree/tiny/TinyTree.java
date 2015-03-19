@@ -1098,7 +1098,22 @@ public final class TinyTree implements LocationProvider {
         } else {
             SchemaType type = getConfiguration().getSchemaType(tc);
             assert type != null;
-            return type.isIdRefType();
+            if (type.isIdRefType()) {
+                // See Saxon bug 2331. We still need to check that the typed value of the node contains at least one IDREF value
+                try {
+                    AtomicSequence seq = getAttributeNode(nr).atomize();
+                    for (AtomicValue val : seq) {
+                        if (val.getItemType().isIdRefType()) {
+                            return true;
+                        }
+                    }
+                    return false;
+                } catch (XPathException err) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         }
     }
 
@@ -1133,8 +1148,23 @@ public final class TinyTree implements LocationProvider {
             return false;
         }
         int tc = typeCodeArray[nr];
-        return (tc & TYPECODE_IDREF) != 0 ||
-                getConfiguration().getTypeHierarchy().isIdrefsCode(tc & NamePool.FP_MASK);
+        TypeHierarchy th = getConfiguration().getTypeHierarchy();
+        if ((tc & TYPECODE_IDREF) != 0 ||
+                th.isIdrefsCode(tc & NamePool.FP_MASK)) {
+            // See Saxon bug 2331. We still need to check that the typed value of the node contains at least one IDREF value
+            try {
+                AtomicSequence seq = getTypedValueOfElement(nr);
+                for (AtomicValue val : seq) {
+                    if (val.getItemType().isIdRefType()) {
+                        return true;
+                    }
+                }
+                return false;
+            } catch (XPathException err) {
+                return false;
+            }
+        }
+        return false;
     }
 
 
