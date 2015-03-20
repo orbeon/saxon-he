@@ -131,9 +131,10 @@ public class XMLEmitter extends Emitter {
      */
 
     public void endDocument() throws XPathException {
-        if (!elementStack.isEmpty()) {
-            throw new IllegalStateException("Attempt to end document in serializer when elements are unclosed");
-        }
+        // Removed for bug 2323
+//        if (!elementStack.isEmpty()) {
+//            throw new IllegalStateException("Attempt to end document in serializer when elements are unclosed");
+//        }
     }
 
     /**
