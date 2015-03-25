@@ -153,7 +153,6 @@ public class XsltProcessor extends SaxonCAPI {
      * @param values         - the values of the paramaters and properties. given as a array of Java objects
      */
     public void transformToFile(String cwd, String sourceFilename, String stylesheet, String outFilename, String[] params, Object[] values) throws SaxonApiException {
-
         try {
             clearExceptions();
             serializer = null;
@@ -163,11 +162,8 @@ public class XsltProcessor extends SaxonCAPI {
                 transformer = executable.load();
             } else {
                 XsltCompiler compiler = processor.newXsltCompiler();
-
                 source = resolveFileToSource(cwd, stylesheet);
-
                 compiler.setErrorListener(errorListener);
-
                 try {
                     transformer = compiler.compile(source).load();
                 } catch (SaxonApiException ex) {
@@ -179,7 +175,6 @@ public class XsltProcessor extends SaxonCAPI {
             if (outFilename != null) {
                 serializer = resolveOutputFile(processor, cwd, outFilename);
             }
-
             applyXsltTransformerProperties(this, cwd, processor, transformer, params, values, props);
             if (sourceFilename == null && doc != null) {
                 transformer.setInitialContextNode(doc);
@@ -201,6 +196,9 @@ public class XsltProcessor extends SaxonCAPI {
             throw e;
         } catch (NullPointerException ex) {
             throw new SaxonApiException(ex);
+        }
+        catch(Exception e){
+            throw new SaxonApiException(e);
         }
     }
 
@@ -534,7 +532,7 @@ public class XsltProcessor extends SaxonCAPI {
         Object[] values1 = {"/Users/ond1/work/development/tests/jeroen/data", arrValues};
         String outputdoc = cpp.transformToString(cwd, sourcefile1, stylesheet12, params1, values1);
         System.out.println(outputdoc);
-        System.exit(0);
+       // System.exit(0);
         // Processor processor = cpp.getProcessor();
         // XsltTransformer transformer = cpp.xsltParseStylesheetFile(args[0]).load();
         //XdmNode sourceNode = cpp.xmlParseFile(cwd, "xml/foo.xml");
@@ -549,7 +547,7 @@ public class XsltProcessor extends SaxonCAPI {
         String[] params3 = {"node", "!indent", "output_test.xml"};
         //Object[] values3 = {"xml/foo.xml"};
         Object[] values3 = {sourceNode2, "yes", "o"};
-        cpp.createStylesheetFromFile(cwd, "xsl/foo.xsl");
+        cpp.createStylesheetFromFile(cwd, stylesheet12);
 
 
         String result = "";
@@ -571,11 +569,12 @@ public class XsltProcessor extends SaxonCAPI {
                 "   \n" +
                 "</xsl:stylesheet>");
         try {
+               cpp.transformToFile(cwd, "categories.xml", stylesheet12, "outputTest.txt", null, null);
             long startTime = System.currentTimeMillis();
             for (int i = 0; i < repeat; i++) {
                 //result = cpp.xsltApplyStylesheet(cwd, null, "xsl/foo.xsl", params3, values3);
                 result = cpp.transformToString(cwd, null, null, params1, values1);
-                // cpp.xsltSaveResultToFile(cwd, null, "xsl/foo.xsl", null, params3, values3);
+
             }
             long endTime = System.currentTimeMillis();
             System.out.println("output:" + result + " Time:" + ((endTime - startTime) / 5));

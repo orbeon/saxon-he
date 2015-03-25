@@ -33,10 +33,19 @@ public class XQueryEngine extends SaxonCAPI {
 
     private boolean serializerSet = false;
 
+    /**
+     * Default Constructor to initialise XQueryEngine. s9api Processor is created with license flag as false
+     *
+     */
     public XQueryEngine() {
         super(false);
     }
 
+    /**
+     * Constructor to initialise XQueryEngine with license flag
+     *
+     * @param license - flag indicating presence of license file
+     */
     public XQueryEngine(boolean license) {
         super(license);
     }
@@ -49,7 +58,12 @@ public class XQueryEngine extends SaxonCAPI {
         queryFile = new File(queryFileName);
     }
 
-
+    /**
+     * Constructor to initialise XQueryEngine with processor and license flag
+     *
+     * @param proc    - s9api processor
+     * @param license - flag indicating presence of license file
+     */
     public XQueryEngine(Processor proc, boolean license) {
         super(proc, license);
     }

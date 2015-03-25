@@ -64,65 +64,60 @@ public class XPathProcessor extends SaxonCAPI {
     }
 
 
-
     public void setContextItem(XdmItem item) throws SaxonApiException {
-            this.contextItem = item;
+        this.contextItem = item;
     }
 
     public void setProperties(String[] params, Object[] values) throws SaxonApiException {
-        if(selector != null) {
-            applyXPathProperties(this , "", processor, selector, params, values);
+        if (selector != null) {
+            applyXPathProperties(this, "", processor, selector, params, values);
         } else {
             throw new SaxonApiException("XPathExecutable not created");
         }
 
     }
 
-    public void reset(){
+    public void reset() {
         compiler = null;
         selector = null;
     }
 
 
-
     public XdmValue evaluate(String cwd, String xpathStr, String[] params, Object[] values) throws SaxonApiException {
 
+        selector = compiler.compile(xpathStr).load();
+        applyXPathProperties(this, cwd, processor, selector, params, values);
 
-       applyXPathProperties(this, cwd, processor, selector, params, values);
 
-
-       return compiler.evaluate(xpathStr, contextItem);
+        return compiler.evaluate(xpathStr, contextItem);
 
     }
 
 
     public XdmItem evaluateSingle(String cwd, String xpathStr, String[] params, Object[] values) throws SaxonApiException {
 
+        selector = compiler.compile(xpathStr).load();
+        applyXPathProperties(this, cwd, processor, selector, params, values);
 
 
-       applyXPathProperties(this, cwd, processor, selector, params, values);
-
-
-       return compiler.evaluateSingle(xpathStr, contextItem);
+        return compiler.evaluateSingle(xpathStr, contextItem);
 
     }
 
     public boolean effectiveBooleanValue(String cwd, String xpathStr, String[] params, Object[] values) throws SaxonApiException {
 
 
-       selector = compiler.compile(xpathStr).load();
+        selector = compiler.compile(xpathStr).load();
 
 
-       applyXPathProperties(this, cwd, processor, selector, params, values);
-       if(contextItem != null){
-        selector.setContextItem(contextItem);
-       }
-       return selector.effectiveBooleanValue();
-
+        applyXPathProperties(this, cwd, processor, selector, params, values);
+        if (contextItem != null) {
+            selector.setContextItem(contextItem);
+        }
+        return selector.effectiveBooleanValue();
 
 
     }
-
 
 
 
@@ -141,36 +136,38 @@ public class XPathProcessor extends SaxonCAPI {
             }
             if (params.length != 0) {
                 if (cwd != null && cwd.length() > 0) {
-            if (!cwd.endsWith("/")) {
-                cwd = cwd.concat("/");
-            }
+                    if (!cwd.endsWith("/")) {
+                        cwd = cwd.concat("/");
+                    }
                 }
                 for (int i = 0; i < params.length; i++) {
                     if (params[i].startsWith("!")) {
                         String name = params[i].substring(1);
                         Serializer.Property prop = Serializer.Property.get(name);
-                        if(prop == null) {
-                            throw new SaxonApiException("Property name "+name+ " not found");
+                        if (prop == null) {
+                            throw new SaxonApiException("Property name " + name + " not found");
                         }
                         propsList.put(prop, (String) values[i]);
-                    }   else if (params[i].equals("s")) {
-                       source = api.resolveFileToSource(cwd, (String) values[i]);
-                       selector.setContextItem(builder.build(source));
+                    } else if (params[i].equals("s")) {
+                        source = api.resolveFileToSource(cwd, (String) values[i]);
+                        ((XPathProcessor)api).setContextItem(builder.build(source));
+                        selector.setContextItem(builder.build(source));
                     } else if (params[i].equals("item") || params[i].equals("node")) {
                         Object value = values[i];
                         if (value instanceof XdmItem) {
                             item = (XdmItem) value;
+                            ((XPathProcessor)api).setContextItem(item);
                             selector.setContextItem(item);
                         }
-                    } else if(params[i].equals("resources")){
+                    } else if (params[i].equals("resources")) {
                         char separatorChar = '/';
                         if (SaxonCAPI.RESOURCES_DIR == null) {
-                            String dir1 = (String)values[i];
+                            String dir1 = (String) values[i];
                             if (!dir1.endsWith("/")) {
-                               dir1 = dir1.concat("/");
+                                dir1 = dir1.concat("/");
                             }
-                             if (File.separatorChar != '/') {
-                               dir1.replace(separatorChar, File.separatorChar);
+                            if (File.separatorChar != '/') {
+                                dir1.replace(separatorChar, File.separatorChar);
                                 separatorChar = '\\';
                             }
                             SaxonCAPI.RESOURCES_DIR = dir1;
@@ -197,9 +194,9 @@ public class XPathProcessor extends SaxonCAPI {
                     }
                 }
             }
-            if(api.serializer != null) {
-                for(Map.Entry pairi : propsList.entrySet()){
-                        api.serializer.setOutputProperty((Serializer.Property)pairi.getKey(), (String) pairi.getValue());
+            if (api.serializer != null) {
+                for (Map.Entry pairi : propsList.entrySet()) {
+                    api.serializer.setOutputProperty((Serializer.Property) pairi.getKey(), (String) pairi.getValue());
                 }
             }
         }
@@ -207,21 +204,21 @@ public class XPathProcessor extends SaxonCAPI {
     }
 
 
-    public static void main(String [] arg) throws SaxonApiException{
+    public static void main(String[] arg) throws SaxonApiException {
         XPathProcessor xpath = new XPathProcessor(false);
+         String sourcefile1 = "kamervragen.xml";
+         String[] params1 = {"s"};
+        Object[] values1 = {sourcefile1};
+        Processor p = xpath.getProcessor();
+        /*DocumentBuilder b = p.newDocumentBuilder();
+        XdmNode foo = b.build(new StreamSource(new StringReader("<foo><bar/></foo>")));
+        xpath.setContextItem(foo);  */
 
-         Processor p = xpath.getProcessor();
-            DocumentBuilder b = p.newDocumentBuilder();
-            XdmNode foo = b.build(new StreamSource(new StringReader("<foo><bar/></foo>")));
-        xpath.setContextItem(foo);
-        XdmValue value = xpath.evaluateSingle("", "//*", null, null);
+        XdmValue value = xpath.evaluateSingle("/Users/ond1/work/development/tests/jeroen/xml/", "//*", params1, values1);
 
         System.out.println(value.toString());
 
     }
-
-
-
 
 
 }
