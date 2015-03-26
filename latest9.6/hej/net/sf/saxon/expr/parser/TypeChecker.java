@@ -321,7 +321,7 @@ public final class TypeChecker {
             } else if (reqItemType instanceof JavaExternalObjectType &&
                     /*Sequence.class.isAssignableFrom(((JavaExternalObjectType) reqItemType).getJavaClass()) &&  */
                     reqCard == StaticProperty.EXACTLY_ONE) {
-
+//#if PE==true || EE==true
                 if (Sequence.class.isAssignableFrom(((JavaExternalObjectType) reqItemType).getJavaClass())) {
                     // special case: allow an extension function to call an instance method on the implementation type of an XDM value
                     // we leave the conversion to be sorted out at run-time
@@ -332,6 +332,7 @@ public final class TypeChecker {
                     itemTypeOK = true;
                     cardOK = true;
                 }
+//#endif
 
             }
 
