@@ -93,7 +93,11 @@ public class ManualIterator implements FocusIterator, UnfailingIterator,
      */
 
     public boolean hasNext() {
-        return false;
+        try {
+            return position() != getLength();
+        } catch (XPathException e) {
+            return false; // should not happen
+        }
     }
 
     public Item next() {
