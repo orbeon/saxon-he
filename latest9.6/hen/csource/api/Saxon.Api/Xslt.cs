@@ -159,7 +159,13 @@ namespace Saxon.Api
         {
             get
             {
-                return ((DotNetURIResolver)xsltCompiler.getUnderlyingCompilerInfo().getURIResolver()).getXmlResolver();
+				javax.xml.transform.URIResolver resolver = processor.Implementation.getURIResolver ();
+				if (resolver is DotNetURIResolver) {
+					return ((DotNetURIResolver)resolver).getXmlResolver ();
+				} else {
+					return new XmlUrlResolver();
+				}
+                //return ((DotNetURIResolver)xsltCompiler.getUnderlyingCompilerInfo().getURIResolver()).getXmlResolver();
             }
             set
             {
