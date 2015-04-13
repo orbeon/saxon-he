@@ -180,7 +180,7 @@ public interface Platform extends Serializable {
 
 
 
-
+//#if EE==true
     /**
      * Return the class loader required to load the bytecode generated classes
      *
@@ -191,6 +191,8 @@ public interface Platform extends Serializable {
      */
 
     public ClassLoader makeClassLoader(Configuration config, Class thisClass);
+
+//#endif
 
 }
 
