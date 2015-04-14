@@ -121,7 +121,7 @@ public class AnalyzeStringFn extends CompileTimeFunction {
         resultQN.allocateNameCode(namePool);
 
         FixedElement onMatch = createInstr(namePool, Validation.PRESERVE, "fn", NamespaceConstant.FN, "match", new ProcessRegexMatchInstruction(namePool));
-        FixedElement onNonMatch = createInstr(namePool, Validation.PRESERVE, "fn", NamespaceConstant.FN, "non-match", new ProcessRegexMatchInstruction(namePool));
+        FixedElement onNonMatch = createInstr(namePool, Validation.PRESERVE, "fn", NamespaceConstant.FN, "non-match", new ContextItemExpression());  //bug 2359
 
         AnalyzeMappingFunction fn = new AnalyzeMappingFunction(iter, c2, onNonMatch, onMatch);
         ContextMappingIterator<StringValue> itr = new ContextMappingIterator<StringValue>(fn, c2);
