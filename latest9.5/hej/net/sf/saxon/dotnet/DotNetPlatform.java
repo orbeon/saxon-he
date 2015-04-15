@@ -397,13 +397,15 @@ public class DotNetPlatform implements Platform {
      */
     public ClassLoader makeClassLoader(Configuration config, Class thisClass){
         ClassLoader parentClassLoader = config.getDynamicLoader().getClassLoader();
+        
+		if (parentClassLoader == null) {
+            parentClassLoader = thisClass.getClassLoader();
+        }
 
         if (parentClassLoader == null) {
             parentClassLoader = Thread.currentThread().getContextClassLoader();
         }
-        if (parentClassLoader == null) {
-            parentClassLoader = thisClass.getClassLoader();
-        }
+
          return new MyClassLoader(parentClassLoader);
 
     }
