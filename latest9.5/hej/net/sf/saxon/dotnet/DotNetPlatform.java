@@ -419,6 +419,8 @@ public class DotNetPlatform implements Platform {
 
 
         Map<String, Class> classMap = new Hashtable<String, Class>();
+        private String cname = null;
+        private byte [] cclassFile;
 
         public MyClassLoader(ClassLoader parentClassLoader) {
 
@@ -430,8 +432,14 @@ public class DotNetPlatform implements Platform {
         public void registerClass(String name, byte[] classFile) {
 
             if (!classMap.containsKey(name)) {
+                cname = name;
+                cclassFile = classFile;
                 Class classi = defineClass(name, classFile, 0, classFile.length);
                 classMap.put(name, classi);
+
+            } else {
+                cname = null;
+                cclassFile = null;
             }
         }
 
@@ -443,7 +451,15 @@ public class DotNetPlatform implements Platform {
                 return classMap.get(name);
 
             } else {
-                return super.findClass(name);
+                if(name !=null && name.equals(cname)) {
+                   Class class1 =  defineClass(name, cclassFile, 0, cclassFile.length);
+                    classMap.put(name, class1);
+                    cname = null;
+                    cclassFile = null;
+                   return class1;
+                } else {
+                    return super.findClass(name);
+                }
             }
         }
     }
