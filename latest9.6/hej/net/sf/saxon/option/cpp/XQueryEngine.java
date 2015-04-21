@@ -264,8 +264,8 @@ public class XQueryEngine extends SaxonCAPI {
                 "  <price>30.00</price>\n" +
                 "</book></bookstore>", null, null);
         //XdmValueForCpp resultNode2 = new XdmValueForCpp(doc);
-        String[] params1 = {"node", "s", "q"};
-        Object[] values1 = {doc, "xmark10.xml", "q8.xq"};
+        String[] params1 = {"s", "qs"};
+        Object[] values1 = {"xmark10.xml", "count(//*)"};
 
         String[] params2 = {"node", "qs"};
         Object[] values2 = {doc, "/bookstore/book/title"};

@@ -4,9 +4,7 @@ import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.s9api.*;
 
 import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import java.io.File;
-import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -83,6 +81,16 @@ public class XPathProcessor extends SaxonCAPI {
     }
 
 
+    /**
+     * Compile and evaluate an XPath expression, supplied as a character string, with properties and parameters required
+     * by the XPath expression
+     * @param cwd  - Current working directory
+     * @param xpathStr  - A string containing the source text of the XPath expression
+     * @param params - Parameters and properties names required by the XPath expression. This could contain the context node , source as string or file name, etc
+     * @param values -  The values for the parameters and properties required by the XPath expression
+     *
+     *
+     **/
     public XdmValue evaluate(String cwd, String xpathStr, String[] params, Object[] values) throws SaxonApiException {
 
         selector = compiler.compile(xpathStr).load();
@@ -94,6 +102,17 @@ public class XPathProcessor extends SaxonCAPI {
     }
 
 
+    /**
+     * Compile and evaluate an XPath expression whose result is expected to be
+     * a single item, with a given context item. The expression is supplied as
+     * a character string.
+     * @param cwd  - Current working directory
+     * @param xpathStr  - A string containing the source text of the XPath expression
+     * @param params - Parameters and properties names required by the XPath expression. This could contain the context node , source as string or file name, etc
+     * @param values -  The values for the parameters and properties required by the XPath expression
+     *
+     *
+     **/
     public XdmItem evaluateSingle(String cwd, String xpathStr, String[] params, Object[] values) throws SaxonApiException {
 
         selector = compiler.compile(xpathStr).load();
@@ -104,23 +123,43 @@ public class XPathProcessor extends SaxonCAPI {
 
     }
 
+    /**
+     * Evaluate the XPath expression, returning the effective boolean value of the result.
+     *
+     * @param cwd  - Current working directory
+     * @param xpathStr  - A string containing the source text of the XPath expression
+     * @param params - Parameters and properties names required by the XPath expression. This could contain the context node , source as string or file name, etc
+     * @param values -  The values for the parameters and properties required by the XPath expression
+     *
+     *
+     **/
     public boolean effectiveBooleanValue(String cwd, String xpathStr, String[] params, Object[] values) throws SaxonApiException {
-
-
         selector = compiler.compile(xpathStr).load();
-
 
         applyXPathProperties(this, cwd, processor, selector, params, values);
         if (contextItem != null) {
             selector.setContextItem(contextItem);
         }
-        return selector.effectiveBooleanValue();
+        boolean result = selector.effectiveBooleanValue();
+        return result;
 
 
     }
 
 
 
+    /**
+     * Applies the properties and parameters required in the transformation.
+     * In addition we can supply the source, stylesheet and output file names.
+     * We can also supply values to xsl:param and xsl:variables required in the stylesheet.
+     * The parameter names and values are supplied as a two arrays in the form of a key and value.
+     *
+     * @param cwd         - current working directory
+     * @param processor   - required to use the same processor as for the compiled stylesheet
+     * @param selector - compiled and loaded XPath expression ready for execution.
+     * @param params      - parameters and property names given as an array of stings
+     * @param values      - the values of the parameters and properties. given as a array of Java objects
+     */
     public static void applyXPathProperties(SaxonCAPI api, String cwd, Processor processor, XPathSelector selector, String[] params, Object[] values) throws SaxonApiException {
         if (params != null) {
             String outputFilename = null;
@@ -149,15 +188,16 @@ public class XPathProcessor extends SaxonCAPI {
                         }
                         propsList.put(prop, (String) values[i]);
                     } else if (params[i].equals("s")) {
+                        if(!(values[i] instanceof String)) {
+                            throw new SaxonApiException("Source file has incorrect type");
+                        }
                         source = api.resolveFileToSource(cwd, (String) values[i]);
                         ((XPathProcessor)api).setContextItem(builder.build(source));
-                        selector.setContextItem(builder.build(source));
                     } else if (params[i].equals("item") || params[i].equals("node")) {
                         Object value = values[i];
                         if (value instanceof XdmItem) {
                             item = (XdmItem) value;
                             ((XPathProcessor)api).setContextItem(item);
-                            selector.setContextItem(item);
                         }
                     } else if (params[i].equals("resources")) {
                         char separatorChar = '/';
@@ -213,10 +253,14 @@ public class XPathProcessor extends SaxonCAPI {
         /*DocumentBuilder b = p.newDocumentBuilder();
         XdmNode foo = b.build(new StreamSource(new StringReader("<foo><bar/></foo>")));
         xpath.setContextItem(foo);  */
-
+         XdmNode node = xpath.xmlParseString("<out><person>text1</person><person>text2</person></out>");
+       // xpath.setContextItem(node);
+         String[] params2 = {"node"};
+        Object[] values2 = {node};
         XdmValue value = xpath.evaluateSingle("/Users/ond1/work/development/tests/jeroen/xml/", "//*", params1, values1);
-
-        System.out.println(value.toString());
+        boolean ebv = xpath.effectiveBooleanValue("/Users/ond1/work/development/tests/jeroen/xml/", "count(/out/person)>0", params2, values2);
+       // System.out.println(value.toString());
+        System.out.println(ebv);
 
     }
 
