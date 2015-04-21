@@ -284,8 +284,8 @@ public final class CardinalityChecker extends UnaryExpression {
             if (!Cardinality.allowsZero(requiredCardinality)) {
                 typeError("An empty sequence is not allowed as the " +
                         role.getMessage(), role.getErrorCode(), context);
-                return null;
             }
+            return null;
         } else {
             if (requiredCardinality == StaticProperty.EMPTY) {
                 typeError("An empty sequence is required as the " +

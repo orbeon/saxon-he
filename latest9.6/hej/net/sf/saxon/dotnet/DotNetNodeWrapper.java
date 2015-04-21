@@ -903,7 +903,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
 
         /*@Nullable*/
         public NodeInfo next() {
-            if (position < items.size()) {
+            if (position > -1 && position < items.size()) {
                 return items.get(position++);
             } else {
                 position = -1;
