@@ -311,7 +311,8 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
             ValueComparison vc = new ValueComparison(e0, singletonOperator, e1);
             vc.setAtomicComparer(comparer);
             ExpressionTool.copyLocationInfo(this, vc);
-            return visitor.typeCheck(visitor.simplify(vc), contextInfo);
+            //return visitor.typeCheck(visitor.simplify(vc), contextInfo);
+            return visitor.typeCheck(vc, contextInfo);        // bug 2225
         }
 
         StaticContext env = visitor.getStaticContext();
