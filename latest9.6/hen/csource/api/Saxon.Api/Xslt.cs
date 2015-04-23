@@ -294,6 +294,60 @@ namespace Saxon.Api
         }
 
 
+		/// <summary>
+		/// Compile a stylesheet supplied as a Stream.
+		/// </summary>
+		/// <example>
+		/// <code>
+		/// Stream source = new FileStream("input.xsl", FileMode.Open, FileAccess.Read);
+		/// XsltExecutable q = compiler.Compile(source);
+		/// source.Close();
+		/// </code>
+		/// </example>
+		/// <param name="input">A stream containing the source text of the stylesheet</param>
+		/// <param name="theBaseUri">Specify the base Uri of the stream</param>
+		/// <param name="closeStream">Flag to indicate if the stream should be closed in the method</param>
+		/// <returns>An <c>XsltExecutable</c> which represents the compiled stylesheet object.
+		/// The XsltExecutable may be loaded as many times as required, in the same or a different
+		/// thread. The <c>XsltExecutable</c> is not affected by any changes made to the <c>XsltCompiler</c>
+		/// once it has been compiled.</returns>
+		/// <remarks>
+		/// <para>If the stylesheet contains any <c>xsl:include</c> or <c>xsl:import</c> declarations,
+		/// then the <c>BaseURI</c> property must be set to allow these to be resolved.</para>
+		/// <para>The stylesheet is contained in the part of the input stream between its current
+		/// position and the end of the stream. It is the caller's responsibility to close the input 
+		/// stream after use. If the compilation succeeded, then on exit the stream will be 
+		/// exhausted; if compilation failed, the current position of the stream on exit is
+		/// undefined.</para>
+		/// </remarks>
+		internal XsltExecutable Compile(Stream input, String theBaseUri, bool closeStream)
+		{
+			//See bug 2306
+			try
+			{
+				JStreamSource ss = new JStreamSource(new DotNetInputStream(input));
+				if (theBaseUri != null)
+				{
+					ss.setSystemId(theBaseUri.ToString());
+				} else {
+					if(baseUri != null) {
+						ss.setSystemId(baseUri.ToString());
+					}
+				}
+
+				PreparedStylesheet pss = JCompilation.compileSingletonPackage(processor.Implementation, xsltCompiler.getUnderlyingCompilerInfo(),ss);
+				if(closeStream) {
+					input.Close();
+				}
+				return new XsltExecutable(processor, pss);
+			}
+			catch (JTransformerException err)
+			{
+				throw new StaticError(err);
+			}
+		}
+
+
 
 	/// <summary>Compile a library package.</summary>
 	/// <para>The source argument identifies an XML file containing an &lt;xsl:package&gt; element. Any packages
@@ -448,55 +502,34 @@ namespace Saxon.Api
             return new XsltExecutable(processor, pss);
         }
 
-        /// <summary>
-        /// Compile a stylesheet, retrieving the source using a URI.
-        /// </summary>
-        /// <remarks>
-        /// The document located via the URI is parsed using the <c>System.Xml</c> parser. This
-        /// URI is used as the base URI of the stylesheet: the <c>BaseUri</c> property of the
-        /// <c>Compiler</c> is ignored.
-        /// </remarks>
-        /// <param name="uri">The URI identifying the location where the stylesheet document can be
-        /// found</param>
-        /// <returns>An <c>XsltExecutable</c> which represents the compiled stylesheet object.
-        /// The XsltExecutable may be run as many times as required, in the same or a different
-        /// thread. The <c>XsltExecutable</c> is not affected by any changes made to the <c>XsltCompiler</c>
-        /// once it has been compiled.</returns>
+		/// <summary>
+		/// Compile a stylesheet, retrieving the source using a URI.
+		/// </summary>
+		/// <remarks>
+		/// The document located via the URI is parsed using the <c>System.Xml</c> parser. This
+		/// URI is used as the base URI of the stylesheet: the <c>BaseUri</c> property of the
+		/// <c>Compiler</c> is ignored.
+		/// </remarks>
+		/// <param name="uri">The URI identifying the location where the stylesheet document can be
+		/// found</param>
+		/// <returns>An <c>XsltExecutable</c> which represents the compiled stylesheet object.
+		/// The XsltExecutable may be run as many times as required, in the same or a different
+		/// thread. The <c>XsltExecutable</c> is not affected by any changes made to the <c>XsltCompiler</c>
+		/// once it has been compiled.</returns>
 
-        public XsltExecutable Compile(Uri uri)
-        {
-            Object obj = XmlResolver.GetEntity(uri, "application/xml", Type.GetType("System.IO.Stream"));
-            if (obj is Stream)
-            {
-                try
-                {
-                    XmlReaderSettings settings = new XmlReaderSettings();
-					settings.DtdProcessing = DtdProcessing.Parse;   // must expand entity references
-                    settings.XmlResolver = XmlResolver;
-                    settings.IgnoreWhitespace = false;
-                    settings.ValidationType = ValidationType.None;
-                    XmlReader parser = XmlReader.Create((Stream)obj, settings, uri.ToString());
-                    //XmlReader parser = new XmlTextReader(uri.ToString(), (Stream)obj);
-                    //((XmlTextReader)parser).Normalization = true;
-                    //((XmlTextReader)parser).WhitespaceHandling = WhitespaceHandling.All;
-                    //((XmlTextReader)parser).XmlResolver = XmlResolver;
-                    // Always need a validating parser, because that's the only way to get entity references expanded
-                    //parser = new XmlValidatingReader(parser);
-                    //((XmlValidatingReader)parser).ValidationType = ValidationType.None;
-                    JPullSource source = new JPullSource(new DotNetPullProvider(parser));
-					PreparedStylesheet pss = JCompilation.compileSingletonPackage(processor.Implementation, xsltCompiler.getUnderlyingCompilerInfo(), source);
-					return new XsltExecutable(processor, pss);
-                }
-                finally
-                {
-                    ((Stream)obj).Close();
-                }
-            }
-            else
-            {
-                throw new ArgumentException("Invalid type of result from XmlResolver.GetEntity: " + obj);
-            }
-        }
+		public XsltExecutable Compile(Uri uri)
+		{
+			Object obj = XmlResolver.GetEntity(uri, "application/xml", Type.GetType("System.IO.Stream"));
+			if (obj is Stream)
+			{
+				// See bug issue #2306
+				return Compile ((Stream)obj, uri.ToString, true);
+			}
+			else
+			{
+				throw new ArgumentException("Invalid type of result from XmlResolver.GetEntity: " + obj);
+			}
+		}
 
         /// <summary>
         /// Compile a stylesheet, delivered using an XmlReader.
