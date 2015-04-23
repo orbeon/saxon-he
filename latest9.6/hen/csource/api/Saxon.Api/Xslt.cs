@@ -523,7 +523,7 @@ namespace Saxon.Api
 			if (obj is Stream)
 			{
 				// See bug issue #2306
-				return Compile ((Stream)obj, uri.ToString, true);
+				return Compile ((Stream)obj, uri.ToString(), true);
 			}
 			else
 			{
