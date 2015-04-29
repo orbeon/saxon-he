@@ -7,14 +7,13 @@
 
 package net.sf.saxon.trans;
 
-import net.sf.saxon.pattern.PathFinder;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.sort.AtomicMatchKey;
-import net.sf.saxon.expr.sort.LocalOrderComparer;
 import net.sf.saxon.expr.sort.CodepointMatchKey;
+import net.sf.saxon.expr.sort.LocalOrderComparer;
 import net.sf.saxon.functions.StringFn;
 import net.sf.saxon.functions.SystemFunctionCall;
 import net.sf.saxon.functions.Tokenize;
@@ -22,10 +21,12 @@ import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.IdrefTest;
+import net.sf.saxon.pattern.PathFinder;
 import net.sf.saxon.pattern.PatternFinder;
 import net.sf.saxon.trace.ExpressionPresenter;
-import net.sf.saxon.tree.iter.*;
+import net.sf.saxon.tree.iter.EmptyIterator;
 import net.sf.saxon.tree.iter.ListIterator;
+import net.sf.saxon.tree.iter.ManualIterator;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.DoubleValue;
@@ -774,6 +775,7 @@ public class KeyManager {
                 (Map<Long, Map<AtomicMatchKey, List<NodeInfo>>>)controller.getUserData(doc, "saxon:unshared-key-index-list");
         if (docIndexes == null) {
             docIndexes = new HashMap<Long, Map<AtomicMatchKey, List<NodeInfo>>>();
+            controller.setUserData(doc, "saxon:unshared-key-index-list", docIndexes);
         }
         long indexId = (long) keyFingerprint << 32 | itemType.getFingerprint();
         docIndexes.put(indexId, index);
