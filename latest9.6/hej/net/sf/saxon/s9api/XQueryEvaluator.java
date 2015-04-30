@@ -154,7 +154,11 @@ public class XQueryEvaluator implements Iterable<XdmItem>, Destination {
      */
 
     public XdmItem getContextItem() {
-        return (XdmItem) XdmValue.wrap(context.getContextItem());
+        Item item = context.getContextItem();
+        if (item == null) {
+            return null;
+        }
+        return (XdmItem) XdmValue.wrap(item);
     }
 
     /**

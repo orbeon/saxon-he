@@ -367,7 +367,7 @@ abstract class ParentNodeImpl extends NodeImpl {
                 children = n2;
             }
         } else if (children instanceof NodeImpl) {
-            int adjacent = (index == 0 ? 0 : source.length - 1);
+            int adjacent = (index == 0 ? source.length - 1 : 0);
             if (children instanceof TextImpl && source[adjacent] instanceof TextImpl) {
                 if (index == 0) {
                     ((TextImpl) source[adjacent]).replaceStringValue(

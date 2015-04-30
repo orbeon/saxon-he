@@ -941,9 +941,11 @@ public class Query {
         } else {
             try {
                 Set<MutableNodeInfo> affectedDocuments = exp.getUnderlyingCompiledQuery().runUpdate(evaluator.getUnderlyingQueryContext());
-                Item initial = evaluator.getContextItem().getUnderlyingValue().head();
-                if (initial instanceof NodeInfo && affectedDocuments.contains(initial)) {
-                    processor.writeXdmValue(evaluator.getContextItem(), serializer);
+                if (evaluator.getContextItem() != null) {
+                    Item initial = evaluator.getContextItem().getUnderlyingValue().head();
+                    if (initial instanceof NodeInfo && affectedDocuments.contains(initial)) {
+                        processor.writeXdmValue(evaluator.getContextItem(), serializer);
+                    }
                 }
             } catch (XPathException e) {
                 throw new SaxonApiException(e);
