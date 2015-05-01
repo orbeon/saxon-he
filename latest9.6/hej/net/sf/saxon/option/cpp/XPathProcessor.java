@@ -253,7 +253,7 @@ public class XPathProcessor extends SaxonCAPI {
         /*DocumentBuilder b = p.newDocumentBuilder();
         XdmNode foo = b.build(new StreamSource(new StringReader("<foo><bar/></foo>")));
         xpath.setContextItem(foo);  */
-         XdmNode node = xpath.xmlParseString("<out><person>text1</person><person>text2</person></out>");
+         XdmNode node = xpath.parseXmlString("<out><person>text1</person><person>text2</person></out>");
        // xpath.setContextItem(node);
          String[] params2 = {"node"};
         Object[] values2 = {node};

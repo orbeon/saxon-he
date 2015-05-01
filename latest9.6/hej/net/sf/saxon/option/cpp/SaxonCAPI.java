@@ -13,6 +13,7 @@ import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.StandardErrorListener;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.om.StandardNames;
+import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.s9api.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.BuiltInAtomicType;
@@ -245,8 +246,8 @@ import java.util.Properties;
      * @param xml    - string representation of XML document
      * @return XdmNode
     */
-    public XdmNode xmlParseString(String xml) throws SaxonApiException {
-        return xmlParseString(null, xml, null, null);
+    public XdmNode parseXmlString(String xml) throws SaxonApiException {
+        return parseXmlString(null, xml, null, null);
     }
 
     /**
@@ -257,7 +258,7 @@ import java.util.Properties;
      * @param values - the values of the parameters and properties. given as a array of Java objects
      * @return XdmNode
     */
-    public XdmNode xmlParseString(SchemaValidator validator, String xml , String[] params, String[] values) throws SaxonApiException {
+    public XdmNode parseXmlString(SchemaValidator validator, String xml, String[] params, String[] values) throws SaxonApiException {
         try {
             doc = xmlParseString(processor, validator, xml);
             if (debug) {
@@ -334,6 +335,20 @@ import java.util.Properties;
         } catch (SaxonApiException ex) {
             throw ex;
         }
+    }
+
+    public static String getTypeName(String typeStr) {
+
+        int fp = StandardNames.getFingerprint(NamespaceConstant.SCHEMA, typeStr);
+
+        BuiltInAtomicType typei = (BuiltInAtomicType) BuiltInType.getSchemaType(fp);
+        StructuredQName sname = typei.getTypeName();
+        return new QName(sname.getPrefix(), sname.getURI(), sname.getLocalPart()).getClarkName();
+
+    }
+
+    public static String getStringValue(XdmValue value) {
+        return value.toString();
     }
 
 

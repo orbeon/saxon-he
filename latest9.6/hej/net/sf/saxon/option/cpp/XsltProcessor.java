@@ -537,9 +537,9 @@ public class XsltProcessor extends SaxonCAPI {
         // XsltTransformer transformer = cpp.xsltParseStylesheetFile(args[0]).load();
         //XdmNode sourceNode = cpp.xmlParseFile(cwd, "xml/foo.xml");
         XdmNode sourceNode2 = SaxonCAPI.xmlParseString(processor, null, "<result><assert-xml file=\"type-0501.out\"/></result>");
-        XdmValue node1 = (XdmValue) cpp.createXdmAtomicItem("string", "textXXXXX");//new XdmValueForCpp(sourceNode2);
+        XdmValue node1 = (XdmValue) cpp.createXdmAtomicItem("string", "textXXXXX");
 
-        XdmValue resultNode2 = cpp.xmlParseString("<?xml version=\"1.0\" encoding=\"UTF-8\"?><html><head><title>Untitled</title></head><body leftmargin=\"100\"></body></html>");
+        XdmValue resultNode2 = cpp.parseXmlString("<?xml version=\"1.0\" encoding=\"UTF-8\"?><html><head><title>Untitled</title></head><body leftmargin=\"100\"></body></html>");
 
 
         String[] params2 = {"o"};

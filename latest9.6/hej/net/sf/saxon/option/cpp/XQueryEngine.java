@@ -255,7 +255,7 @@ public class XQueryEngine extends SaxonCAPI {
         String q1 = "q1";
         String outfile = "outfile.xml";
         XQueryEngine xquery = new XQueryEngine(false);
-        XdmNode doc = xquery.xmlParseString(null, "<bookstore>\n" +
+        XdmNode doc = xquery.parseXmlString(null, "<bookstore>\n" +
                 "\n" +
                 "<book category=\"COOKING\">\n" +
                 "  <title lang=\"en\">Everyday Italian</title>\n" +
@@ -263,7 +263,7 @@ public class XQueryEngine extends SaxonCAPI {
                 "  <year>2005</year>\n" +
                 "  <price>30.00</price>\n" +
                 "</book></bookstore>", null, null);
-        //XdmValueForCpp resultNode2 = new XdmValueForCpp(doc);
+
         String[] params1 = {"s", "qs"};
         Object[] values1 = {"xmark10.xml", "count(//*)"};
 
@@ -276,7 +276,7 @@ public class XQueryEngine extends SaxonCAPI {
         String result = xquery.executeQueryToString(cwd, params2, values2);
         String result2 = xquery.executeQueryToString(cwd, params1, values1);
 
-        //XdmValueForCpp result3 = xquery.executeQueryToValue("", "", params2, values2);
+
         // xquery.executeQueryToFile("/home/ond1/test/saxon9-5-1-1source", outfile, params1, values1);
         System.out.println("Result1" + result);
         System.out.println("Result2" + result2);
