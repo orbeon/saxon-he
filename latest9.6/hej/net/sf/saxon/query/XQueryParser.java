@@ -539,7 +539,7 @@ public class XQueryParser extends XPathParser {
         if (t.currentToken == Token.XQUERY_VERSION) {
             nextToken();
             expect(Token.STRING_LITERAL);
-            queryVersion = t.currentTokenValue;
+            queryVersion = unescape(t.currentTokenValue).toString();
             if (XQUERY10.equals(queryVersion)) {
                 // no action
             } else if (XQUERY30.equals(queryVersion) || "1.1".equals(queryVersion)) {
@@ -553,10 +553,11 @@ public class XQueryParser extends XPathParser {
                 queryVersion = XQUERY10;
             }
             nextToken();
-            if ("encoding".equals(t.currentTokenValue)) {
+            String enc = unescape(t.currentTokenValue).toString();
+            if ("encoding".equals(enc)) {
                 nextToken();
                 expect(Token.STRING_LITERAL);
-                if (!encNamePattern.matcher(t.currentTokenValue).matches()) {
+                if (!encNamePattern.matcher(enc).matches()) {
                     grumble("Encoding name contains invalid characters", "XQST0087");
                 }
                 // we ignore the encoding now: it was handled earlier, while decoding the byte stream
@@ -1563,7 +1564,7 @@ public class XQueryParser extends XPathParser {
             expect(Token.EQUALS);
             nextToken();
             expect(Token.STRING_LITERAL);
-            String propertyValue = t.currentTokenValue;
+            String propertyValue = unescape(t.currentTokenValue).toString();
             nextToken();
             propertyNames.add(propertyName);
             if (propertyName.equals("decimal-separator")) {
@@ -4989,7 +4990,7 @@ public class XQueryParser extends XPathParser {
         if (token.indexOf('&') == -1) {
             lit = new StringLiteral(token, defaultContainer);
         } else {
-            FastStringBuffer sb = unescape(token);
+            CharSequence sb = unescape(token);
             lit = new StringLiteral(StringValue.makeStringValue(sb), defaultContainer);
         }
         setLocation(lit);
@@ -5006,7 +5007,7 @@ public class XQueryParser extends XPathParser {
      */
 
     /*@NotNull*/
-    private FastStringBuffer unescape(/*@NotNull*/ String token) throws XPathException {
+    protected CharSequence unescape(/*@NotNull*/ String token) throws XPathException {
         FastStringBuffer sb = new FastStringBuffer(token.length());
         for (int i = 0; i < token.length(); i++) {
             char c = token.charAt(i);
