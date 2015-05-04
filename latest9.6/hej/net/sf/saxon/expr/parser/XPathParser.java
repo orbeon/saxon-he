@@ -1934,6 +1934,22 @@ public class XPathParser {
     }
 
     /**
+     * Unescape character references and built-in entity references in a string. The XPath version
+     * of the method does nothing, since strings cannot be &-escaped in XPath.
+     *
+     * @param token the input string, which may include XML-style character references or built-in
+     *              entity references
+     * @return the string with character references and built-in entity references replaced by their expansion
+     * @throws XPathException if a malformed character or entity reference is found
+     */
+
+    /*@NotNull*/
+    protected CharSequence unescape(/*@NotNull*/ String token) throws XPathException {
+        return token;
+    }
+
+
+    /**
      * Parse a node constructor. This is allowed only in XQuery, so the method throws
      * an error for XPath.
      *
@@ -2089,7 +2105,7 @@ public class XPathParser {
                 if (empty) {
                     return NodeKindTest.PROCESSING_INSTRUCTION;
                 } else if (t.currentToken == Token.STRING_LITERAL) {
-                    String piName = Whitespace.trim(t.currentTokenValue);
+                    String piName = Whitespace.trim(unescape(t.currentTokenValue));
                     if (!NameChecker.isValidNCName(piName)) {
                         // Became an error as a result of XPath erratum XP.E7
                         grumble("Processing instruction name must be a valid NCName", "XPTY0004");
