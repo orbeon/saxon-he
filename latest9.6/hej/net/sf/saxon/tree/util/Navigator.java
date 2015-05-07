@@ -634,13 +634,19 @@ public final class Navigator {
 
                 // output the children
 
+                int options = copyOptions;
+                if ((options & CopyOptions.ALL_NAMESPACES) != 0) {
+                    // Avoid copying namespaces of ancestors unnecessarily
+                    options = options & ~CopyOptions.ALL_NAMESPACES | CopyOptions.LOCAL_NAMESPACES;
+                }
+
                 AxisIterator children = node.iterateAxis(AxisInfo.CHILD, AnyNodeTest.getInstance());
                 while (true) {
                     NodeInfo child = children.next();
                     if (child == null) {
                         break;
                     }
-                    child.copy(out, copyOptions, locationId);
+                    child.copy(out, options, locationId);
                 }
 
                 // finally the end tag
