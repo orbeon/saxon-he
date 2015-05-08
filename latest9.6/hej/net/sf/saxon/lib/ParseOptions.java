@@ -215,7 +215,7 @@ public class ParseOptions {
             lineNumbering = config.isLineNumbering();
         }
         if (errorListener == null) {
-            setErrorListener(getErrorListener());
+            setErrorListener(config.getErrorListener());
         }
 
     }
