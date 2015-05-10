@@ -148,7 +148,6 @@ public class Configuration implements SourceResolver, NotationSet {
     private DocumentPool globalDocumentPool = new DocumentPool();
     private IntegratedFunctionLibrary integratedFunctionLibrary = new IntegratedFunctionLibrary();
     private transient LocalizerFactory localizerFactory;
-    private ModuleURIResolver moduleURIResolver = null;
     private NamePool namePool = new NamePool();
 
     protected int optimizationLevel = Optimizer.FULL_OPTIMIZATION;
@@ -1564,7 +1563,7 @@ public class Configuration implements SourceResolver, NotationSet {
      */
 
     public void setModuleURIResolver(/*@Nullable*/ ModuleURIResolver resolver) {
-        moduleURIResolver = resolver;
+        getDefaultStaticQueryContext().setModuleURIResolver(resolver);
     }
 
     /**
@@ -1594,7 +1593,7 @@ public class Configuration implements SourceResolver, NotationSet {
 
     /*@Nullable*/
     public ModuleURIResolver getModuleURIResolver() {
-        return moduleURIResolver;
+        return getDefaultStaticQueryContext().getModuleURIResolver();
     }
 
     /**

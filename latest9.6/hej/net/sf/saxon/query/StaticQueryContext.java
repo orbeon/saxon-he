@@ -132,7 +132,7 @@ public class StaticQueryContext {
             this.config = config;
             namePool = config.getNamePool();
             errorListener = config.getErrorListener();
-            moduleURIResolver = config.getModuleURIResolver();
+            //moduleURIResolver = config.getModuleURIResolver();
             if (errorListener instanceof StandardErrorListener) {
                 errorListener = ((StandardErrorListener) errorListener).makeAnother(Configuration.XQUERY);
                 ((StandardErrorListener) errorListener).setRecoveryPolicy(Configuration.DO_NOT_RECOVER);
@@ -219,7 +219,8 @@ public class StaticQueryContext {
         requiredContextItemType = AnyItemType.getInstance();
         defaultFunctionNamespace = NamespaceConstant.FN;
         defaultElementNamespace = NamespaceConstant.NULL;
-        moduleURIResolver = config.getModuleURIResolver();
+        //moduleURIResolver = config.getModuleURIResolver();
+        moduleURIResolver = null;
         clearNamespaces();
         isUpdating = false;
         languageVersion = DecimalValue.THREE;
