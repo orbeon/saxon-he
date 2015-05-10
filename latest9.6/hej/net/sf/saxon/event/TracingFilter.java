@@ -147,6 +147,9 @@ public class TracingFilter extends ProxyReceiver {
      */
 
     public void endElement() throws XPathException {
+        if (indent.isEmpty()) {
+            throw new XPathException("Unmatched endElement() call");
+        }
         indent = indent.substring(2);
         out.println("RCVR " + id + indent + " END ELEMENT");
         nextReceiver.endElement();

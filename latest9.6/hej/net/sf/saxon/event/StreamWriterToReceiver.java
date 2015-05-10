@@ -10,6 +10,7 @@ package net.sf.saxon.event;
 import net.sf.saxon.lib.StandardURIChecker;
 import net.sf.saxon.om.*;
 import net.sf.saxon.serialize.charcode.UTF16CharacterSet;
+import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.type.Untyped;
@@ -17,8 +18,7 @@ import net.sf.saxon.z.IntPredicate;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class implements the XmlStreamWriter interface, translating the events into Saxon
@@ -35,9 +35,31 @@ import java.util.Map;
  * <p>The class will check all names, URIs, and character content for conformance against XML well-formedness
  * rules unless the <code>checkValues</code> option is set to false.</p>
  *
- * @since 9.3
+ * @since 9.3. Rewritten May 2015 to fix bug 2357. The handling of namespaces is probably not 100% conformant,
+ * but it's difficult to establish what all the edge cases are, and it handles the common cases well.
  */
 public class StreamWriterToReceiver implements XMLStreamWriter {
+
+    private static class Triple {
+        public String prefix;
+        public String uri;
+        public String local;
+        public String value;
+    }
+
+    private static class StartTag {
+        public Triple elementName;
+        public List<Triple> attributes;
+        public List<Triple> namespaces;
+
+        public StartTag() {
+            elementName = new Triple();
+            attributes = new ArrayList<Triple>();
+            namespaces = new ArrayList<Triple>();
+        }
+    }
+
+    private StartTag pendingTag = null;
 
     /**
      * The receiver to which events will be passed
@@ -69,17 +91,6 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
      */
 
     private int depth = -1;
-
-    /**
-     * The namespace context used to determine the namespace-prefix mappings
-     * in scope.
-     */
-    //protected NamespaceContext namespaceContext;
-
-    /**
-     * Flag set to true during processing of a start tag.
-     */
-    private boolean inStartTag;
 
     /**
      * Flag indicating that an empty element has been requested.
@@ -125,6 +136,7 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
         PipelineConfiguration pipe = receiver.getPipelineConfiguration();
         this.inScopeNamespaces = new NamespaceReducer(receiver);
         this.receiver = inScopeNamespaces;
+        //this.receiver = new TracingFilter(this.receiver);
         this.charChecker = pipe.getConfiguration().getValidCharacterChecker();
         this.namePool = pipe.getConfiguration().getNamePool();
     }
@@ -169,56 +181,157 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
         return this.isChecking;
     }
 
-
-    public void writeStartElement(/*@NotNull*/ String localName) throws XMLStreamException {
-        String uri = inScopeNamespaces.getURIForPrefix("", true);
-        assert uri != null;
-        writeStartElement("", localName, uri);
-    }
-
-    public void writeStartElement(String namespaceURI, String localName) throws XMLStreamException {
-        String prefix = getPrefix(namespaceURI);
-        boolean isDeclared = (prefix != null);
-        if (!isDeclared) {
-            if (inventPrefixes) {
-                prefix = inventPrefix(namespaceURI);
-            } else {
-                throw new XMLStreamException("namespace " + namespaceURI + " has not been declared");
-            }
-        }
-        writeStartElement(prefix, localName, namespaceURI);
-
-    }
-
-    public void writeStartElement(/*@NotNull*/ String prefix, /*@NotNull*/ String localName, /*@NotNull*/ String namespaceURI) throws XMLStreamException {
+    public void flushStartTag() throws XMLStreamException {
         if (depth == -1) {
             writeStartDocument();
         }
-        try {
-            if (!isValidURI(namespaceURI)) {
-                throw new IllegalArgumentException("Invalid namespace URI: " + namespaceURI);
+        if (pendingTag != null) {
+            try {
+                completeTriple(pendingTag.elementName, false);
+                for (Triple t : pendingTag.attributes) {
+                    completeTriple(t, true);
+                }
+                NodeName nc;
+                if (pendingTag.elementName.uri.isEmpty()) {
+                    nc = new NoNamespaceName(pendingTag.elementName.local);
+                } else {
+                    nc = new FingerprintedQName(pendingTag.elementName.prefix, pendingTag.elementName.uri, pendingTag.elementName.local);
+                }
+                receiver.startElement(nc, Untyped.getInstance(), 0, 0);
+                for (Triple t : pendingTag.namespaces) {
+                    if (t.prefix == null) {
+                        t.prefix = "";
+                    }
+                    if (t.uri == null) {
+                        t.uri = "";
+                    }
+                    receiver.namespace(new NamespaceBinding(t.prefix, t.uri), 0);
+                }
+                for (Triple t : pendingTag.attributes) {
+                    if (t.uri.isEmpty()) {
+                        nc = new NoNamespaceName(t.local);
+                    } else {
+                        nc = new FingerprintedQName(t.prefix, t.uri, t.local);
+                    }
+                    receiver.attribute(nc, BuiltInAtomicType.UNTYPED_ATOMIC, t.value, 0, 0);
+                }
+                pendingTag = null;
+                receiver.startContent();
+                if (isEmptyElement) {
+                    isEmptyElement = false;
+                    depth--;
+                    receiver.endElement();
+                }
+            } catch (XPathException e) {
+                throw new XMLStreamException(e);
             }
-            if (!isValidNCName(prefix)) {
-                throw new IllegalArgumentException("Invalid prefix: " + prefix);
-            }
-            if (!isValidNCName(localName)) {
-                throw new IllegalArgumentException("Invalid local name: " + localName);
-            }
-
-            startContent();
-            inStartTag = true;
-            depth++;
-            NodeName nc;
-            if (namespaceURI.length() == 0) {
-                nc = new NoNamespaceName(localName);
-            } else {
-                nc = new FingerprintedQName(prefix, namespaceURI, localName);
-            }
-            receiver.startElement(nc, Untyped.getInstance(), 0, 0);
-            inStartTag = true;
-        } catch (XPathException err) {
-            throw new XMLStreamException(err);
         }
+    }
+
+    public void completeTriple(Triple t, boolean isAttribute) throws XMLStreamException {
+        if (t.local == null) {
+            throw new XMLStreamException("Local name of " + (isAttribute ? "Attribute" : "Element") + " is missing");
+        }
+        if (isChecking && !isValidNCName(t.local)) {
+            throw new XMLStreamException("Local name of " + (isAttribute ? "Attribute" : "Element") +
+                Err.wrap(t.local) + " is invalid");
+        }
+        if (t.prefix == null) {
+            t.prefix = "";
+        }
+        if (t.uri == null) {
+            t.uri = "";
+        }
+        if (isChecking && !t.uri.isEmpty() && !isValidURI(t.uri)) {
+            throw new XMLStreamException("Namespace URI " + Err.wrap(t.local) + " is invalid");
+        }
+        if (t.prefix.isEmpty()) {
+            if (t.uri.isEmpty()) {
+                if (isAttribute) {
+                    // no action
+                } else {
+                    String ns = getDefaultNamespace();
+                    t.uri = ns == null ? "" : ns;
+                }
+            } else {
+                t.prefix = getPrefixForUri(t.uri);
+                if (t.prefix.isEmpty() && isAttribute) {
+                    t.prefix = inventPrefix(t.uri);
+                }
+            }
+        } else {
+            if (isChecking && !isValidNCName(t.prefix)) {
+                throw new XMLStreamException("Prefix of " + (isAttribute ? "Attribute" : "Element") +
+                    Err.wrap(t.local) + " is invalid");
+            }
+            if (t.uri.isEmpty()) {
+                t.uri = getUriForPrefix(t.prefix);
+            } else {
+                String u = getUriForPrefix(t.prefix);
+                if (!t.uri.equals(u)) {
+                    throw new XMLStreamException("Prefix " + Err.wrap(t.local) + " is bound to a different URI");
+                }
+            }
+        }
+    }
+
+    private String getDefaultNamespace() {
+        for (Triple t : pendingTag.namespaces) {
+            if (t.prefix == null || t.prefix.isEmpty()) {
+                return t.uri;
+            }
+        }
+        return inScopeNamespaces.getURIForPrefix("", true);
+    }
+
+    private String getUriForPrefix(String prefix) {
+        for (Triple t : pendingTag.namespaces) {
+            if (prefix.equals(t.prefix)) {
+                return t.uri;
+            }
+        }
+        return inScopeNamespaces.getURIForPrefix(prefix, false);
+    }
+
+    private String getPrefixForUri(String uri) {
+        for (Triple t : pendingTag.namespaces) {
+            if (uri.equals(t.uri)) {
+                return t.prefix;
+            }
+        }
+        Iterator<String> prefixes = inScopeNamespaces.iteratePrefixes();
+        while (prefixes.hasNext()) {
+            String p = prefixes.next();
+            if (inScopeNamespaces.getURIForPrefix(p, false).equals(uri)) {
+                return p;
+            }
+        }
+        return "";
+    }
+
+    public void writeStartElement(String localName) throws XMLStreamException {
+        flushStartTag();
+        depth++;
+        pendingTag = new StartTag();
+        pendingTag.elementName.local = localName;
+    }
+
+    public void writeStartElement(String namespaceURI, String localName) throws XMLStreamException {
+        flushStartTag();
+        depth++;
+        pendingTag = new StartTag();
+        pendingTag.elementName.local = localName;
+        pendingTag.elementName.uri = namespaceURI;
+
+    }
+
+    public void writeStartElement(String prefix, String localName, String namespaceURI) throws XMLStreamException {
+        flushStartTag();
+        depth++;
+        pendingTag = new StartTag();
+        pendingTag.elementName.local = localName;
+        pendingTag.elementName.uri = namespaceURI;
+        pendingTag.elementName.prefix = prefix;
     }
 
     /**
@@ -249,40 +362,21 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
 
     public void writeEmptyElement(String namespaceURI, String localName)
             throws XMLStreamException {
+        flushStartTag();
         writeStartElement(namespaceURI, localName);
         isEmptyElement = true;
     }
 
     public void writeEmptyElement(String prefix, String localName, String namespaceURI) throws XMLStreamException {
+        flushStartTag();
         writeStartElement(prefix, localName, namespaceURI);
         isEmptyElement = true;
     }
 
     public void writeEmptyElement(String localName) throws XMLStreamException {
+        flushStartTag();
         writeStartElement(localName);
         isEmptyElement = true;
-    }
-
-    /**
-     * Indicate the end of a start tag if one is open (no action otherwise).
-     * This will also write an end tag if the element was opened as an empty element.
-     *
-     * @throws javax.xml.stream.XMLStreamException
-     *          if an error occurs writing to the output stream
-     */
-    private void startContent() throws XMLStreamException {
-        if (inStartTag) {
-            try {
-                receiver.startContent();
-            } catch (XPathException err) {
-                throw new XMLStreamException(err);
-            }
-            inStartTag = false;
-            if (isEmptyElement) {
-                isEmptyElement = false;
-                writeEndElement();
-            }
-        }
     }
 
     public void writeEndElement() throws XMLStreamException {
@@ -293,7 +387,7 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
 //            throw new IllegalStateException("writeEndElement called for an empty element");
 //        }
         try {
-            startContent();
+            flushStartTag();
             receiver.endElement();
             depth--;
         } catch (XPathException err) {
@@ -306,9 +400,7 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
             throw new IllegalStateException("writeEndDocument with no matching writeStartDocument");
         }
         try {
-            if (isEmptyElement) {
-                startContent(); // which also ends the element and decrements depth
-            }
+            flushStartTag();
             while (depth > 0) {
                 writeEndElement();
             }
@@ -335,32 +427,26 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
     }
 
     public void writeAttribute(String localName, String value) throws XMLStreamException {
-        writeAttribute("", "", localName, value);
-    }
-
-    public void writeAttribute(/*@Nullable*/ String prefix, /*@Nullable*/ String namespaceURI, String localName, String value)
-            throws XMLStreamException {
-        if (!inStartTag) {
+        if (pendingTag == null) {
             throw new IllegalStateException("Cannot write attribute when not in a start tag");
         }
-        if (prefix == null) {
-            prefix = "";
+        Triple t = new Triple();
+        t.local = localName;
+        t.value = value;
+        pendingTag.attributes.add(t);
+    }
+
+    public void writeAttribute(String prefix, String namespaceURI, String localName, String value)
+            throws XMLStreamException {
+        if (pendingTag == null) {
+            throw new IllegalStateException("Cannot write attribute when not in a start tag");
         }
-        if (namespaceURI == null) {
-            namespaceURI = "";
-        }
-        if (namespaceURI.length() != 0 && !isValidURI(namespaceURI)) {
-            throw new IllegalArgumentException("Invalid attribute namespace URI: " + namespaceURI);
-        }
-        if (prefix.length() != 0 && !isValidNCName(prefix)) {
-            throw new IllegalArgumentException("Invalid attribute prefix: " + prefix);
-        }
-        if (!isValidNCName(localName)) {
-            throw new IllegalArgumentException("Invalid attribute local name: " + localName);
-        }
-        if (!isValidChars(value)) {
-            throw new IllegalArgumentException("Invalid characters in attribute content: " + value);
-        }
+        Triple t = new Triple();
+        t.prefix = prefix;
+        t.uri = namespaceURI;
+        t.local = localName;
+        t.value = value;
+        pendingTag.attributes.add(t);
         try {
             NodeName nn = new FingerprintedQName(prefix, namespaceURI, localName);
             receiver.attribute(nn, BuiltInAtomicType.UNTYPED_ATOMIC, value, -1, 0);
@@ -370,57 +456,38 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
     }
 
     public void writeAttribute(String namespaceURI, String localName, String value) throws XMLStreamException {
-        String prefix = getPrefix(namespaceURI);
-        if (prefix == null) {
-            if (inventPrefixes) {
-                prefix = inventPrefix(namespaceURI);
-            } else {
-                throw new XMLStreamException("Namespace " + namespaceURI + " has not been declared");
-            }
-        }
-        writeAttribute(prefix, namespaceURI, localName, value);
+        Triple t = new Triple();
+        t.uri = namespaceURI;
+        t.local = localName;
+        t.value = value;
+        pendingTag.attributes.add(t);
+
     }
 
     public void writeNamespace(String prefix, String namespaceURI) throws XMLStreamException {
-        if (!inStartTag) {
+        if (pendingTag == null) {
             throw new IllegalStateException("Cannot write namespace when not in a start tag");
         }
-        if (prefix == null || "".equals(prefix) || "xmlns".equals(prefix)) {
-            writeDefaultNamespace(namespaceURI);
-            return;
-        }
-        if (!isValidURI(namespaceURI)) {
-            throw new IllegalArgumentException("Invalid namespace URI: " + namespaceURI);
-        }
-        if (!isValidNCName(prefix)) {
-            throw new IllegalArgumentException("Invalid namespace prefix: " + prefix);
-        }
-        outputNamespaceDeclaration(prefix, namespaceURI);
+        Triple t = new Triple();
+        t.uri = namespaceURI;
+        t.prefix = prefix;
+        pendingTag.namespaces.add(t);
+
     }
 
     public void writeDefaultNamespace(String namespaceURI)
             throws XMLStreamException {
-        if (!inStartTag) {
-            throw new IllegalStateException();
+        if (pendingTag == null) {
+            throw new IllegalStateException("Cannot write namespace when not in a start tag");
         }
-        if (!isValidURI(namespaceURI)) {
-            throw new IllegalArgumentException("Invalid namespace URI: " + namespaceURI);
-        }
-        outputNamespaceDeclaration("", namespaceURI);
+        Triple t = new Triple();
+        t.uri = namespaceURI;
+        pendingTag.namespaces.add(t);
+
     }
 
-    private void outputNamespaceDeclaration(String prefix, String namespaceURI) throws XMLStreamException {
-        try {
-            if (prefix == null) {
-                prefix = "";
-            }
-            receiver.namespace(new NamespaceBinding(prefix, namespaceURI), 0);
-        } catch (XPathException err) {
-            throw new XMLStreamException(err);
-        }
-    }
-
-    public void writeComment(/*@Nullable*/ String data) throws XMLStreamException {
+    public void writeComment(String data) throws XMLStreamException {
+        flushStartTag();
         if (data == null) {
             data = "";
         }
@@ -431,7 +498,6 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
             if (isChecking && data.contains("--")) {
                 throw new IllegalArgumentException("Comment contains '--'");
             }
-            startContent();
             receiver.comment(data, 0, 0);
         } catch (XPathException err) {
             throw new XMLStreamException(err);
@@ -443,6 +509,7 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
     }
 
     public void writeProcessingInstruction(/*@NotNull*/ String target, /*@NotNull*/ String data) throws XMLStreamException {
+        flushStartTag();
         try {
             if (isChecking) {
                 if (!isValidNCName(target) || "xml".equalsIgnoreCase(target)) {
@@ -452,7 +519,6 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
                     throw new IllegalArgumentException("Invalid character in PI data: " + data);
                 }
             }
-            startContent();
             receiver.processingInstruction(target, data, 0, 0);
         } catch (XPathException err) {
             throw new XMLStreamException(err);
@@ -460,6 +526,7 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
     }
 
     public void writeCData(/*@NotNull*/ String data) throws XMLStreamException {
+        flushStartTag();
         writeCharacters(data);
     }
 
@@ -493,11 +560,11 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
 
     public void writeCharacters(/*@Nullable*/ String text)
             throws XMLStreamException {
+        flushStartTag();
         if (text != null) {
             if (!isValidChars(text)) {
                 throw new IllegalArgumentException("illegal XML character: " + text);
             }
-            startContent();
             try {
                 receiver.characters(text, 0, 0);
             } catch (XPathException err) {
@@ -552,7 +619,11 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
     }
 
     public Object getProperty(String name) throws IllegalArgumentException {
-        throw new IllegalArgumentException(name);
+        if (name.equals("javax.xml.stream.isRepairingNamespaces")) {
+            return inventPrefixes;
+        } else {
+            throw new IllegalArgumentException(name);
+        }
     }
 
     /**
