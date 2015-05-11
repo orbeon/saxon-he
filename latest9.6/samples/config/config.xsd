@@ -28,17 +28,24 @@
     </xs:annotation>
     <xs:complexType>
       <xs:attribute name="allowExternalFunctions" use="optional" type="xs:boolean"/>
-      <xs:attribute name="allowStreamabilityExtensions" use="optional" type="xs:boolean"/>
+      <xs:attribute name="allowMultiThreading" use="optional" type="xs:boolean"/>
+      <xs:attribute name="allowOldJavaUriFormat" use="optional" type="xs:boolean"/>
       <xs:attribute name="collationUriResolver" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="collectionUriResolver" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="compileWithTracing" use="optional" type="xs:boolean"/>
+      <xs:attribute name="debugByteCode" use="optional" type="xs:boolean"/>
+      <xs:attribute name="debugByteCodeDirectory" use="optional" type="c:fileNameType"/>
+      <xs:attribute name="defaultCollation" use="optional" type="xs:anyURI"/>
       <xs:attribute name="defaultCollection" use="optional" type="xs:anyURI"/>
+      <xs:attribute name="displayByteCode" use="optional" type="xs:boolean"/>
       <xs:attribute name="dtdValidation" use="optional" type="xs:boolean"/>
       <xs:attribute name="dtdValidationRecoverable" use="optional" type="xs:boolean"/>
+      <xs:attribute name="entityResolver" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="errorListener" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="environmentVariableResolver" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="expandAttributeDefaults" use="optional" type="xs:boolean"/>
       <xs:attribute name="generateByteCode" use="optional" type="xs:boolean"/>
+      <xs:attribute name="ignoreSAXSourceParser" use="optional" type="xs:boolean"/>
       <xs:attribute name="lazyConstructionMode" use="optional" type="xs:boolean"/>
       <xs:attribute name="lineNumbering" use="optional" type="xs:boolean"/>
       <xs:attribute name="optimizationLevel" use="optional" type="xs:integer"/>
@@ -50,8 +57,12 @@
       <xs:attribute name="serializerFactory" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="sourceResolver" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="standardErrorOutputFile" use="optional" type="c:fileNameType"/>
+      <xs:attribute name="streamability" use="optional" type="c:streamabilityType"/>
+      <xs:attribute name="streamingFallback" use="optional" type="xs:boolean"/>
       <xs:attribute name="stripSpace" use="optional" type="c:stripSpaceType"/>
+      <xs:attribute name="styleParser" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="suppressEvaluationExpiryWarning" use="optional" type="xs:boolean"/>
+      <xs:attribute name="suppressXsltNamespaceCheck" use="optional" type="xs:boolean"/>
       <xs:attribute name="timing" use="optional" type="xs:boolean"/>
       <xs:attribute name="traceExternalFunctions" use="optional" type="xs:boolean"/>
       <xs:attribute name="traceListener" use="optional" type="c:javaClassNameType"/>
@@ -60,6 +71,7 @@
       <xs:attribute name="uriResolver" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="usePiDisableOutputEscaping" use="optional" type="xs:boolean"/>
       <xs:attribute name="useTypedValueCache" use="optional" type="xs:boolean"/>
+      <xs:attribute name="validationComments" use="optional" type="xs:boolean"/>
       <xs:attribute name="validationWarnings" use="optional" type="xs:boolean"/>
       <xs:attribute name="versionOfXml" use="optional" type="xs:decimal"/>
       <xs:attribute name="xInclude" use="optional" type="xs:boolean"/>
@@ -102,6 +114,12 @@
           are to be %HH-encoded</xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="html-version" use="optional" type="xs:decimal">
+        <xs:annotation>
+          <xs:documentation>When the output method is HTML or XHTML, then if this attribute takes 
+            decimal value 5.0, then the output produced is HTML 5.0 or XHTML 5.0 respectively. </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
       <xs:attribute name="include-content-type" use="optional" type="c:yesOrNoType">
         <xs:annotation>
           <xs:documentation>Defines whether a &lt;meta&gt; element should be added to the
@@ -111,6 +129,11 @@
       <xs:attribute name="indent" use="optional" type="c:yesOrNoType">
         <xs:annotation>
           <xs:documentation> Defines whether indentation is to be added to the output. </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="item-separator" use="optional" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Defines separator to be used between items in serialized output.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="media-type" use="optional" type="xs:string">
@@ -149,6 +172,12 @@
         <xs:annotation>
           <xs:documentation> Defines whether namespaces present on a parent element but not on
             its children should be undeclared using XML Namespaces 1.1 syntax. </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="use-character-maps" use="optional" type="c:listOfQNameType"> 
+        <xs:annotation>
+          <xs:documentation> Defines a list of the names of character maps which will be 
+            applied to transform individual characters during serialization. </xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="version" use="optional" type="xs:string">
@@ -232,6 +261,14 @@
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="ignore-symbols" use="optional" type="c:yesOrNoType">
+        <xs:annotation>
+          <xs:documentation> 
+            Indicates whether punctuation symbols 
+            are to be ignored during comparisons (.NET only).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
       <xs:attribute name="ignore-width" use="optional" type="c:yesOrNoType">
         <xs:annotation>
           <xs:documentation> 
@@ -269,7 +306,8 @@
     <xs:annotation>
       <xs:documentation> 
         Defines localization of the output of format-date(), format-number(), and
-        xsl:number. 
+        xsl:number. Note this relates to Saxon's native localization and has no effect when
+        ICU localization is used.
       </xs:documentation>
     </xs:annotation>
     <xs:complexType>
@@ -303,6 +341,13 @@
       </xs:documentation>
     </xs:annotation>
     <xs:complexType>
+      <xs:attribute name="lang" use="required" type="xs:language"> 
+        <xs:annotation>
+          <xs:documentation> 
+            The language to which this localization applies, for example 'fr-CA' for Canadian French.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
       <xs:attribute name="class" use="optional" type="c:javaClassNameType">
         <xs:annotation>
           <xs:documentation> 
@@ -310,13 +355,14 @@
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="lang" use="optional" type="xs:language">
+      <xs:anyAttribute namespace="##other" processContents="lax">
         <xs:annotation>
           <xs:documentation> 
-            The language to which this localization applies, for example 'fr-CA' for Canadian French.
+            Additional attributes are passed to the user-defined LocalizaterFactory in a Properties object,
+            the propety names are the local names of the attributes, and the namespace is ignored.
           </xs:documentation>
         </xs:annotation>
-      </xs:attribute>
+      </xs:anyAttribute>
     </xs:complexType>
   </xs:element>
   
@@ -328,15 +374,17 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="c:extensionElement"/>
+        <xs:element ref="c:extensionElement" minOccurs="0" maxOccurs="unbounded"/>
       </xs:sequence>
-      <xs:attribute name="errorListener" use="optional" type="c:javaClassNameType"/>
-      <xs:attribute name="messageReceiver" use="optional" type="c:javaClassNameType"/>
+      <xs:attribute name="initialMode" use="optional" type="xs:QName"/> 
+      <xs:attribute name="initialTemplate" use="optional" type="xs:QName"/>      
+      <xs:attribute name="messageEmitter" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="outputUriResolver" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="recoveryPolicy" use="optional" type="c:recoveryPolicyType"/>
-      <xs:attribute name="schemaAware" use="optional" type="xs:boolean"/>
-      <xs:attribute name="stylesheetParser" use="optional" type="c:javaClassNameType"/>
+      <xs:attribute name="schemaAware" use="optional" type="xs:boolean"/>      
+      <xs:attribute name="staticErrorListener" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="staticUriResolver" use="optional" type="c:javaClassNameType"/>
+      <xs:attribute name="styleParser" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="version" use="optional" type="xs:decimal"/>
       <xs:attribute name="versionWarning" use="optional" type="xs:boolean"/>
     </xs:complexType>
@@ -375,15 +423,16 @@
     <xs:complexType>
       <xs:attribute name="allowUpdate" use="optional" type="xs:boolean"/>
       <xs:attribute name="constructionMode" use="optional" type="c:constructionModeType"/>
-      <xs:attribute name="defaultElementNamespace" use="optional"/>
+      <xs:attribute name="defaultElementNamespace" use="optional" type="xs:anyURI"/> 
       <xs:attribute name="defaultFunctionNamespace" use="optional" type="xs:anyURI"/>
-      <xs:attribute name="emptyLeast" use="optional" type="xs:boolean"/>
-      <xs:attribute name="errorListener" use="optional" type="c:javaClassNameType"/>
+      <xs:attribute name="emptyLeast" use="optional" type="xs:boolean"/>      
       <xs:attribute name="inheritNamespaces" use="optional" type="xs:boolean"/>
       <xs:attribute name="moduleUriResolver" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="preserveBoundarySpace" use="optional" type="xs:boolean"/>
       <xs:attribute name="preserveNamespaces" use="optional" type="xs:boolean"/>
       <xs:attribute name="requiredContextItemType" use="optional" type="c:itemTypeType"/>
+      <xs:attribute name="schemaAware" use="optional" type="xs:boolean"/>
+      <xs:attribute name="staticErrorListener" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="version" use="optional" type="xs:decimal"/>
     </xs:complexType>
   </xs:element>
@@ -459,7 +508,7 @@
     </xs:annotation>
   </xs:element>
 
-  <xs:simpleType name="constructionModeType">
+  <xs:simpleType name="constructionModeType"> 
     <xs:annotation>
       <xs:documentation> 
         <p>Defines how an XQuery processor will handle whitespace in element
@@ -492,7 +541,7 @@
     <xs:annotation>
       <xs:documentation> Used for the case-order property of a collation: defines whether lower-case
         collates before or after upper-case, other things being equal. One of: upper-first,
-        lower-first 
+        lower-first, #default. 
       </xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:string">
@@ -507,6 +556,13 @@
         <xs:annotation>
           <xs:documentation> 
             Lower-case precedes upper-case in sort order
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="#default">
+        <xs:annotation>
+          <xs:documentation> 
+            This value imposes no constraints
           </xs:documentation>
         </xs:annotation>
       </xs:enumeration>
@@ -546,8 +602,8 @@
 
   <xs:simpleType name="editionType">
     <xs:annotation>
-      <xs:documentation> Code describing a Saxon product edition. One of: HE - home edition PE -
-        professional edition EE - enterprise edition </xs:documentation>
+      <xs:documentation> Code describing a Saxon product edition. One of: HE (Home Edition), PE
+        (Professional Edition), EE (Enterprise Edition) </xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:string">
       <xs:enumeration value="HE">
@@ -711,6 +767,39 @@
       <xs:enumeration value="secondary"/>
       <xs:enumeration value="tertiary"/>
       <xs:enumeration value="identical"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType name="streamabilityType">
+    <xs:annotation>
+      <xs:documentation> Determines the test that Saxon applies to determine whether 
+        a construct is streamable, in cases where streaming is requested. </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="off">
+        <xs:annotation>
+          <xs:documentation> 
+            All constructs are treated as non-streamable. This is the only 
+            option available when using a Saxon version or license that does not enable streaming.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="standard">
+        <xs:annotation>
+          <xs:documentation> 
+            Saxon applies the rules in the W3C XSLT 3.0 specification as 
+            closely as possible. (Exact compliance is not always possible.)
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="extended">
+        <xs:annotation>
+          <xs:documentation> 
+            Use of Saxon streaming extensions is permitted. This is the 
+            default when using Saxon-EE with a suitable license.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
     </xs:restriction>
   </xs:simpleType>
 

@@ -3,7 +3,7 @@
      convenience of editing, so it is easy to set up a configuration file with non-default options.
      
      For documentation on the contents of a Saxon configuration file, see
-     http://www.saxonica.com/documentation/index/configuration-file.html
+     http://www.saxonica.com/html/documentation/configuration/configuration-file/index.html
 -->
 <configuration edition="HE" xmlns="http://saxon.sf.net/ns/configuration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://saxon.sf.net/ns/configuration config.xsd">
   <global dtdValidation="false"
@@ -23,7 +23,6 @@
           useTypedValueCache="false"
           parser=""
           timing="false"
-          traceInstructions="false"
           allowExternalFunctions="true"
           traceExternalFunctions="false"
           optimizationLevel="10"
@@ -33,9 +32,7 @@
           preEvaluateDoc="false"
           serializerFactory=""
           errorListener="net.sf.saxon.lib.StandardErrorListener"
-          errorListenerFile=""
           traceListener="net.sf.saxon.trace.XSLTTraceListener"
-          traceListenerFile=""
           usePiDisableOutputEscaping="false"
           validationWarnings="true"/>
   <serialization method="xml"
@@ -59,17 +56,14 @@
         version="2.0"
         versionWarning="false"
         schemaAware="false"
-        messageReceiver=""
-        stylesheetUriResolver=""
-        errorListener="net.sf.saxon.StandardErrorListener"
-        errorListenerFile=""
+        messageEmitter=""
+        staticUriResolver=""
+        staticErrorListener="net.sf.saxon.StandardErrorListener"
         outputUriResolver=""
-        stylesheetParser="">
-  </xslt>
+        styleParser=""/>   
+  
   <xquery version="1.1"
           allowUpdate="false"
-          errorListener="net.sf.saxon.StandardErrorListener"
-          errorListenerFile=""
           moduleUriResolver="net.sf.saxon.lib.StandardModuleURIResolver"
           inheritNamespaces="true"
           preserveNamespaces="true"
