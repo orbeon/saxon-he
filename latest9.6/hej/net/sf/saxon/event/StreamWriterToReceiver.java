@@ -296,7 +296,7 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
     private String getPrefixForUri(String uri) {
         for (Triple t : pendingTag.namespaces) {
             if (uri.equals(t.uri)) {
-                return t.prefix;
+                return t.prefix == null ? "" : t.prefix;
             }
         }
         Iterator<String> prefixes = inScopeNamespaces.iteratePrefixes();
