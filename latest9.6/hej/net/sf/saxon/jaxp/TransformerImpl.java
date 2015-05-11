@@ -35,8 +35,6 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -135,7 +133,7 @@ public class TransformerImpl extends IdentityTransformer {
                 // Copy the local output properties to the Serializer
                 Properties localOutputProperties = getLocalOutputProperties();
                 for (String key : localOutputProperties.stringPropertyNames()) {
-                    ((Serializer) destination).setOutputProperty(Serializer.getProperty(QName.fromClarkName(key)),
+                    ((Serializer) destination).setOutputProperty(QName.fromClarkName(key),
                             localOutputProperties.getProperty(key));
                 }
             } else if (outputTarget instanceof SAXResult) {

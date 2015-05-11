@@ -14,8 +14,10 @@ import net.sf.saxon.event.Receiver;
 import net.sf.saxon.event.StreamWriterToReceiver;
 import net.sf.saxon.expr.instruct.Executable;
 import net.sf.saxon.expr.instruct.ResultDocument;
+import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.lib.SerializerFactory;
+import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.query.QueryResult;
 import net.sf.saxon.serialize.CharacterMapIndex;
 import net.sf.saxon.trans.XPathException;
@@ -54,7 +56,7 @@ import java.util.Properties;
 public class Serializer implements Destination {
 
     private Processor processor; // Beware: this will often be null
-    private Map<Property, String> properties = new HashMap<Property, String>(10);
+    private Map<StructuredQName, String> properties = new HashMap<StructuredQName, String>(10);
     private StreamResult result = new StreamResult();
     private Properties defaultOutputProperties = null;
     private CharacterMapIndex characterMap = null;
@@ -408,9 +410,9 @@ public class Serializer implements Destination {
             throw new IllegalArgumentException(e.getMessage());
         }
         if (value == null) {
-            properties.remove(property);
+            properties.remove(property.getQName().getStructuredQName());
         } else {
-            properties.put(property, value);
+            properties.put(property.getQName().getStructuredQName(), value);
         }
     }
 
@@ -419,11 +421,71 @@ public class Serializer implements Destination {
      *
      * @param property the name of the required property
      * @return the value of the required property as a string, or null if the property has
-     *         not been given any value.
+     * not been given any value.
      */
 
     public String getOutputProperty(Property property) {
-        return properties.get(property);
+        return properties.get(property.getQName().getStructuredQName());
+    }
+
+    /**
+     * Set the value of a serialization property. Any existing value of the property is overridden.
+     * If the supplied value is null, any existing value of the property is removed.
+     * <p/>
+     * <p>Example:</p>
+     * <p><code>serializer.setOutputProperty(new QName("method"), "xml");</code></p>
+     * <p/>
+     * <p>Any serialization properties supplied via this interface take precedence over serialization
+     * properties defined in the source stylesheet or query.</p>
+     * <p>Unlike the method {@link #setOutputProperty(Property, String)}, this method allows properties
+     * to be set whose names are not in the standard set of property names defined in the W3C specifications,
+     * nor in a recognized Saxon extension. This enables properties to be set for use by a custom serialization
+     * method.</p>
+     *
+     * @param property The name of the property to be set
+     * @param value    The value of the property, as a string. The format is generally as defined
+     *                 in the <code>xsl:output</code> declaration in XSLT: this means that boolean properties, for
+     *                 example, are represented using the strings "yes" and "no". Properties whose values are QNames,
+     *                 such as <code>cdata-section-elements</code> are expressed using the Clark representation of
+     *                 a QName, that is "{uri}local". Multi-valued properties (again, <code>cdata-section-elements</code>
+     *                 is an example) are expressed as a space-separated list.
+     * @throws IllegalArgumentException if the value of the property is invalid. The property is
+     *                                  validated individually; invalid combinations of properties will be detected only when the properties
+     *                                  are actually used to serialize an XML event stream. No validation occurs unless the property
+     *                                  name is either in no namespace, or in the Saxon namespace
+     */
+
+    public void setOutputProperty(QName property, String value) {
+        String uri = property.getNamespaceURI();
+        if (uri.isEmpty() || uri.equals(NamespaceConstant.SAXON)) {
+            try {
+                value = SaxonOutputKeys.checkOutputProperty(property.getClarkName(), value, null, true);
+            } catch (XPathException e) {
+                throw new IllegalArgumentException(e.getMessage());
+            }
+        }
+        if (value == null) {
+            properties.remove(property.getStructuredQName());
+        } else {
+            properties.put(property.getStructuredQName(), value);
+        }
+    }
+
+    /**
+     * Get the value of a serialization property.
+     * <p/>
+     * <p>Unlike the method {@link #getOutputProperty(Property)}, this method allows properties
+     * to be read whose names are not in the standard set of property names defined in the W3C specifications,
+     * nor in a recognized Saxon extension. This enables properties to be set for use by a custom serialization
+     * method.</p>
+     *
+     * @param property the name of the required property
+     * @return the value of the required property as a string, or null if the property has
+     * not been given any value.
+     */
+
+    public String getOutputProperty(QName property) {
+        return properties.get(property.getStructuredQName());
     }
 
     /**
@@ -646,10 +708,10 @@ public class Serializer implements Destination {
             pipe.setHostLanguage(executable.getHostLanguage());
             Properties baseProps = executable.getDefaultOutputProperties();
 
-            for (Map.Entry<Property, String> entry : properties.entrySet()) {
-                QName name = entry.getKey().getQName();
+            for (Map.Entry<StructuredQName, String> entry : properties.entrySet()) {
+                StructuredQName name = entry.getKey();
                 ResultDocument.setSerializationProperty(
-                        baseProps, name.getNamespaceURI(), name.getLocalName(), entry.getValue(), null, true, config);
+                        baseProps, name.getURI(), name.getLocalPart(), entry.getValue(), null, true, config);
             }
             Receiver target = sf.getReceiver(result, pipe, baseProps, executable.getCharacterMapIndex());
             if (target.getSystemId() == null) {
@@ -671,9 +733,9 @@ public class Serializer implements Destination {
 
     protected Properties getOutputProperties() {
         Properties props = (defaultOutputProperties == null ? new Properties() : new Properties(defaultOutputProperties));
-        for (Property p : properties.keySet()) {
+        for (StructuredQName p : properties.keySet()) {
             String value = properties.get(p);
-            props.setProperty(p.toString(), value);
+            props.setProperty(p.getClarkName(), value);
         }
         return props;
     }
