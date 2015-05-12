@@ -197,15 +197,17 @@ public class DocumentWrapper extends DOMNodeWrapper implements DocumentInfo {
      *         that comes last should be returned.
      */
 
-    public synchronized NodeInfo selectID(String id, boolean getParent) {
-        if (node instanceof Document) {
-            Node el = ((Document) node).getElementById(id);
-            if (el == null) {
+    public NodeInfo selectID(String id, boolean getParent) {
+        synchronized (node) {
+            if (node instanceof Document) {
+                Node el = ((Document) node).getElementById(id);
+                if (el == null) {
+                    return null;
+                }
+                return wrap(el);
+            } else {
                 return null;
             }
-            return wrap(el);
-        } else {
-            return null;
         }
     }
 
@@ -217,8 +219,10 @@ public class DocumentWrapper extends DOMNodeWrapper implements DocumentInfo {
      *         same node in the tree.
      */
 
-    public synchronized boolean isSameNodeInfo(NodeInfo other) {
-        return other instanceof DocumentWrapper && node == ((DocumentWrapper) other).node;
+    public boolean isSameNodeInfo(NodeInfo other) {
+        synchronized (node) {
+            return other instanceof DocumentWrapper && node == ((DocumentWrapper) other).node;
+        }
     }
 
     /**
@@ -230,26 +234,28 @@ public class DocumentWrapper extends DOMNodeWrapper implements DocumentInfo {
      * @since 9.1 (implemented for this subclass since 9.2)
      */
 
-    public synchronized Iterator<String> getUnparsedEntityNames() {
-        DocumentType docType = ((Document) node).getDoctype();
-        if (docType == null) {
-            List<String> ls = Collections.emptyList();
-            return ls.iterator();
-        }
-        NamedNodeMap map = docType.getEntities();
-        if (map == null) {
-            List<String> ls = Collections.emptyList();
-            return ls.iterator();
-        }
-        List<String> names = new ArrayList<String>(map.getLength());
-        for (int i = 0; i < map.getLength(); i++) {
-            Entity e = (Entity) map.item(i);
-            if (e.getNotationName() != null) {
-                // it is an unparsed entity
-                names.add(e.getLocalName());
+    public Iterator<String> getUnparsedEntityNames() {
+        synchronized (node) {
+            DocumentType docType = ((Document) node).getDoctype();
+            if (docType == null) {
+                List<String> ls = Collections.emptyList();
+                return ls.iterator();
             }
+            NamedNodeMap map = docType.getEntities();
+            if (map == null) {
+                List<String> ls = Collections.emptyList();
+                return ls.iterator();
+            }
+            List<String> names = new ArrayList<String>(map.getLength());
+            for (int i = 0; i < map.getLength(); i++) {
+                Entity e = (Entity) map.item(i);
+                if (e.getNotationName() != null) {
+                    // it is an unparsed entity
+                    names.add(e.getLocalName());
+                }
+            }
+            return names.iterator();
         }
-        return names.iterator();
     }
 
     /**
@@ -265,39 +271,41 @@ public class DocumentWrapper extends DOMNodeWrapper implements DocumentInfo {
      * @since 8.4 (implemented for this subclass since 9.2)
      */
 
-    public synchronized String[] getUnparsedEntity(String name) {
-        DocumentType docType = ((Document) node).getDoctype();
-        if (docType == null) {
-            return null;
-        }
-        NamedNodeMap map = docType.getEntities();
-        if (map == null) {
-            return null;
-        }
-        Entity entity = (Entity) map.getNamedItem(name);
-        if (entity == null || entity.getNotationName() == null) {
-            // In the first case, no entity found. In the second case, it's a parsed entity.
-            return null;
-        }
-        String systemId = entity.getSystemId();
-        try {
-            URI systemIdURI = new URI(systemId);
-
-            if (!systemIdURI.isAbsolute()) {
-                String base = getBaseURI();
-                if (base != null) {
-                    systemIdURI = new URI(base).resolve(systemIdURI);
-                    systemId = systemIdURI.toString();
-                } else {
-                    // base URI unknown: return the relative URI as written
-                }
-                systemIdURI = new URI(getBaseURI()).resolve(systemIdURI);
-                systemId = systemIdURI.toString();
+    public String[] getUnparsedEntity(String name) {
+        synchronized (node) {
+            DocumentType docType = ((Document) node).getDoctype();
+            if (docType == null) {
+                return null;
             }
-        } catch (URISyntaxException err) {
-            // invalid URI: no action - return the "URI" as written
+            NamedNodeMap map = docType.getEntities();
+            if (map == null) {
+                return null;
+            }
+            Entity entity = (Entity) map.getNamedItem(name);
+            if (entity == null || entity.getNotationName() == null) {
+                // In the first case, no entity found. In the second case, it's a parsed entity.
+                return null;
+            }
+            String systemId = entity.getSystemId();
+            try {
+                URI systemIdURI = new URI(systemId);
+
+                if (!systemIdURI.isAbsolute()) {
+                    String base = getBaseURI();
+                    if (base != null) {
+                        systemIdURI = new URI(base).resolve(systemIdURI);
+                        systemId = systemIdURI.toString();
+                    } else {
+                        // base URI unknown: return the relative URI as written
+                    }
+                    systemIdURI = new URI(getBaseURI()).resolve(systemIdURI);
+                    systemId = systemIdURI.toString();
+                }
+            } catch (URISyntaxException err) {
+                // invalid URI: no action - return the "URI" as written
+            }
+            return new String[]{systemId, entity.getPublicId()};
         }
-        return new String[]{systemId, entity.getPublicId()};
     }
 
     /**

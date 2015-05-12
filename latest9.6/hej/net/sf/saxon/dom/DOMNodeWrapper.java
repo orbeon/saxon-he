@@ -35,8 +35,7 @@ import java.util.ArrayList;
  * <p/>
  * <p>Because the DOM is not thread-safe even when reading, and because Saxon-EE can spawn multiple
  * threads that access the same input tree, all methods that invoke DOM methods are synchronized
- * on the DocumentWrapper object. (This still relies on the user not allocating two DocumentWrappers
- * around the same DOM).</p>
+ * on the Document object.</p>
  */
 
 @SuppressWarnings({"SynchronizeOnNonFinalField"})
@@ -170,7 +169,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
             return false;
         }
         if (docWrapper.domLevel3) {
-            synchronized (docWrapper) {
+            synchronized (docWrapper.node) {
                 return node.isSameNode(((DOMNodeWrapper) other).node);
             }
         } else {
@@ -199,7 +198,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
                 return 0;
             }
             try {
-                synchronized (docWrapper) {
+                synchronized (docWrapper.node) {
                     short relationship = node.compareDocumentPosition(((DOMNodeWrapper) other).node);
                     if ((relationship &
                             (Node.DOCUMENT_POSITION_PRECEDING | Node.DOCUMENT_POSITION_CONTAINS)) != 0) {
@@ -249,7 +248,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
                 return AxisInfo.SELF;
             }
             try {
-                synchronized (docWrapper) {
+                synchronized (docWrapper.node) {
                     short relationship = node.compareDocumentPosition(((DOMNodeWrapper) other).node);
                     if ((relationship & Node.DOCUMENT_POSITION_PRECEDING) != 0) {
                         return AxisInfo.FOLLOWING;
@@ -275,7 +274,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      */
 
     public CharSequence getStringValueCS() {
-        synchronized (docWrapper) {
+        synchronized (docWrapper.node) {
             switch (nodeKind) {
                 case Type.DOCUMENT:
                 case Type.ELEMENT:
@@ -380,7 +379,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      */
 
     public String getLocalPart() {
-        synchronized (docWrapper) {
+        synchronized (docWrapper.node) {
             switch (getNodeKind()) {
                 case Type.ELEMENT:
                 case Type.ATTRIBUTE:
@@ -425,7 +424,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      */
 
     public String getURI() {
-        synchronized (docWrapper) {
+        synchronized (docWrapper.node) {
             if (nodeKind == Type.ELEMENT) {
                 return getElementURI((Element) node);
             } else if (nodeKind == Type.ATTRIBUTE) {
@@ -521,7 +520,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      */
 
     public String getPrefix() {
-        synchronized (docWrapper) {
+        synchronized (docWrapper.node) {
             int kind = getNodeKind();
             if (kind == Type.ELEMENT || kind == Type.ATTRIBUTE) {
                 String name = node.getNodeName();
@@ -549,7 +548,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
             case Type.ELEMENT:
             case Type.ATTRIBUTE:
             case Type.PROCESSING_INSTRUCTION:
-                synchronized (docWrapper) {
+                synchronized (docWrapper.node) {
                     return node.getNodeName();
                 }
             default:
@@ -564,7 +563,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
 
     public DOMNodeWrapper getParent() {
         if (parent == null) {
-            synchronized (docWrapper) {
+            synchronized (docWrapper.node) {
                 switch (getNodeKind()) {
                     case Type.ATTRIBUTE:
                         parent = makeWrapper(((Attr) node).getOwnerElement(), docWrapper);
@@ -597,7 +596,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
 
     public int getSiblingPosition() {
         if (index == -1) {
-            synchronized (docWrapper) {
+            synchronized (docWrapper.node) {
                 switch (nodeKind) {
                     case Type.ELEMENT:
                     case Type.TEXT:
@@ -732,7 +731,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
 
     public boolean hasChildNodes() {
         // An attribute node has child text nodes
-        synchronized (docWrapper) {
+        synchronized (docWrapper.node) {
             return node.getNodeType() != Node.ATTRIBUTE_NODE && node.hasChildNodes();
         }
     }
@@ -783,7 +782,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      */
 
     public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
-        synchronized (docWrapper) {
+        synchronized (docWrapper.node) {
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 if (localNamespaces != null) {
                     return localNamespaces;
@@ -846,13 +845,13 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      */
 
     public boolean isId() {
-        synchronized (docWrapper) {
+        synchronized (docWrapper.node) {
             return (node instanceof Attr) && ((Attr) node).isId();
         }
     }
 
     public DOMNodeWrapper getNextSibling() {
-        synchronized (docWrapper) {
+        synchronized (docWrapper.node) {
             Node currNode = node.getNextSibling();
             if (currNode != null) {
                 if (currNode.getNodeType() == Node.DOCUMENT_TYPE_NODE) {
@@ -866,7 +865,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
 
 
     public DOMNodeWrapper getFirstChild() {
-        synchronized (docWrapper) {
+        synchronized (docWrapper.node) {
             Node currNode = node.getFirstChild();
             if (currNode != null) {
                 if (currNode.getNodeType() == Node.DOCUMENT_TYPE_NODE) {
@@ -879,7 +878,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
     }
 
     public DOMNodeWrapper getPreviousSibling() {
-        synchronized (docWrapper) {
+        synchronized (docWrapper.node) {
             Node currNode = node.getPreviousSibling();
             if (currNode != null) {
                 if (currNode.getNodeType() == Node.DOCUMENT_TYPE_NODE) {
@@ -892,7 +891,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
     }
 
     public DOMNodeWrapper getSuccessorElement(DOMNodeWrapper anchor, String uri, String local) {
-        synchronized (docWrapper) {
+        synchronized (docWrapper.node) {
             Node stop = anchor == null ? null : anchor.node;
             Node next = node;
             do {
@@ -945,7 +944,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
         private DOMNodeWrapper current;
 
         public AttributeEnumeration(DOMNodeWrapper start) {
-            synchronized (start.docWrapper) {
+            synchronized (start.docWrapper.node) {
                 this.start = start;
                 NamedNodeMap atts = start.node.getAttributes();
                 if (atts != null) {
@@ -1033,7 +1032,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
          */
         public ChildEnumeration(DOMNodeWrapper start,
                                 boolean downwards, boolean forwards, boolean elementsOnly) {
-            synchronized (start.docWrapper) {
+            synchronized (start.docWrapper.node) {
                 this.start = start;
                 this.downwards = downwards;
                 this.forwards = forwards;
@@ -1117,7 +1116,7 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
 
         /*@Nullable*/
         public NodeInfo next() {
-            synchronized (start.docWrapper) {
+            synchronized (start.docWrapper.node) {
                 while (true) {
                     if (forwards) {
                         ix += currentSpan;
