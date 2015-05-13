@@ -10,10 +10,8 @@ package net.sf.saxon.trans;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.Logger;
 import net.sf.saxon.serialize.MessageEmitter;
-import org.apache.xerces.jaxp.SAXParserFactoryImpl;
 import org.apache.xml.resolver.tools.CatalogResolver;
 
-import javax.xml.parsers.SAXParserFactory;
 import java.util.HashMap;
 
 /**
