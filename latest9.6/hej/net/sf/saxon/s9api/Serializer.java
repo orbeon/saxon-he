@@ -691,6 +691,32 @@ public class Serializer implements Destination {
      * primarily for internal use, though it could also be called by user applications
      * wanting to make use of the Saxon serializer.
      *
+     * @param pipe The Saxon pipeline configuration. This is an internal implementation object
+     *               held within the {@link Processor}
+     * @return a receiver to which XML events will be sent
+     */
+
+    public Receiver getReceiver(PipelineConfiguration pipe) throws SaxonApiException {
+        try {
+            Configuration config = pipe.getConfiguration();
+            SerializerFactory sf = config.getSerializerFactory();
+            Properties props = getOutputProperties();
+            Receiver target = sf.getReceiver(result, pipe, props, characterMap);
+            if (target.getSystemId() == null) {
+                target.setSystemId(result.getSystemId());
+            }
+            return target;
+        } catch (XPathException e) {
+            throw new SaxonApiException(e);
+        }
+    }
+
+
+    /**
+     * Return a receiver to which Saxon will send events. This method is provided
+     * primarily for internal use, though it could also be called by user applications
+     * wanting to make use of the Saxon serializer.
+     *
      * @param executable The Saxon Executable for the transformation or query. The serialization
      *                   properties defined in this Serializer are supplemented by properties that have been
      *                   defined in the query or stylesheet associated with the Executable. The properties defined

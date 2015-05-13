@@ -567,9 +567,8 @@ public class XsltTransformer implements Destination {
                     controller.setBaseOutputURI(((File) dest).toURI().toString());
                 }
             }
-            Receiver r = destination.getReceiver(controller.getConfiguration());
-            PipelineConfiguration pipe = r.getPipelineConfiguration();
-            pipe.setController(controller);
+            PipelineConfiguration pipe = controller.makePipelineConfiguration();
+            Receiver r = ((Serializer)destination).getReceiver(pipe);
             pipe.setLocationProvider(controller.getExecutable().getLocationMap());
             return new ReconfigurableSerializer(r, serializer.getOutputProperties(), serializer.getResult());
         } else {
