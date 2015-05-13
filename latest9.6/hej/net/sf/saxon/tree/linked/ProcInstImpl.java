@@ -22,7 +22,7 @@ import net.sf.saxon.value.StringValue;
  */
 
 
-class ProcInstImpl extends NodeImpl {
+public class ProcInstImpl extends NodeImpl {
 
     String content;
     int nameCode;

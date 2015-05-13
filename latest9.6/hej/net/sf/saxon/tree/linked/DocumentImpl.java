@@ -10,7 +10,6 @@ package net.sf.saxon.tree.linked;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.Builder;
 import net.sf.saxon.event.Receiver;
-import net.sf.saxon.z.IntHashMap;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
@@ -22,6 +21,7 @@ import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.type.Untyped;
 import net.sf.saxon.value.Whitespace;
+import net.sf.saxon.z.IntHashMap;
 
 import java.util.*;
 
@@ -150,7 +150,7 @@ public final class DocumentImpl extends ParentNodeImpl implements DocumentInfo, 
      * @param e the top-level element
      */
 
-    void setDocumentElement(ElementImpl e) {
+    public void setDocumentElement(ElementImpl e) {
         documentElement = e;
     }
 
@@ -541,7 +541,7 @@ public final class DocumentImpl extends ParentNodeImpl implements DocumentInfo, 
      * @param publicId the public identifier of the unparsed entity
      */
 
-    void setUnparsedEntity(String name, String uri, String publicId) {
+    public void setUnparsedEntity(String name, String uri, String publicId) {
         // System.err.println("setUnparsedEntity( " + name + "," + uri + ")");
         if (entityTable == null) {
             entityTable = new HashMap<String, String[]>(10);

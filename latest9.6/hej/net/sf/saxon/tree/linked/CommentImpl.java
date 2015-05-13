@@ -20,7 +20,7 @@ import net.sf.saxon.value.StringValue;
  */
 
 
-final class CommentImpl extends NodeImpl {
+public class CommentImpl extends NodeImpl {
 
     String comment;
 

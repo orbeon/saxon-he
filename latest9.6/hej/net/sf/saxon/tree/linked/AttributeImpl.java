@@ -30,7 +30,7 @@ import net.sf.saxon.type.*;
  * @author Michael H. Kay
  */
 
-final class AttributeImpl extends NodeImpl {
+public class AttributeImpl extends NodeImpl {
 
     /**
      * Construct an Attribute node for the n'th attribute of a given element
