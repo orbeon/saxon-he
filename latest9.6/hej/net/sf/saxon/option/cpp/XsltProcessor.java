@@ -44,7 +44,7 @@ public class XsltProcessor extends SaxonCAPI {
      * default Constructor to initialise XsltProcessor. Assume no license file available
      */
     public XsltProcessor() {
-        processor = new Processor(false);
+        super();
         if (debug) {
             System.err.println("XsltProcessor constructor(), Processor: " + System.identityHashCode(processor));
         }
@@ -234,6 +234,10 @@ public class XsltProcessor extends SaxonCAPI {
                     }
                 }
                 for (int i = 0; i < params.length; i++) {
+                    if(debug){
+                        System.err.println("parameter name:"+params[i]);
+                        System.err.println("parameter length:"+params[i].length());
+                    }
                     if (params[i].startsWith("!")) {
                         String name = params[i].substring(1);
                         Serializer.Property prop = Serializer.Property.get(name);
@@ -242,27 +246,54 @@ public class XsltProcessor extends SaxonCAPI {
                         }
                         propsList.put(prop, (String) values[i]);
                     } else if (params[i].equals("o") && outfile == null) {
-                        outfile = (String) values[i];
-                        api.serializer = api.resolveOutputFile(processor, cwd, outfile);
-                        transformer.setDestination(api.serializer);
+                        if(values[i] instanceof String){
+                            outfile = (String) values[i];
+                            api.serializer = api.resolveOutputFile(processor, cwd, outfile);
+                            transformer.setDestination(api.serializer);
+                        }
                     } else if (params[i].equals("it")) {
-                        initialTemplate = (String) values[i];
-                        transformer.setInitialTemplate(new QName(initialTemplate));
+                        if(values[i] instanceof String) {
+                            initialTemplate = (String) values[i];
+                            transformer.setInitialTemplate(new QName(initialTemplate));
+                        } else if(debug) {
+                             System.err.println("DEBUG: value error for property 'it'");
+                        }
                     } else if (params[i].equals("im")) {
-                        initialMode = (String) values[i];
-                        transformer.setInitialMode(new QName(initialMode));
-                    } else if (params[i].equals("s")) {
-                        source = api.resolveFileToSource(cwd, (String) values[i]);
-                        transformer.setSource(builder.build(source).asSource());
-                    } else if (params[i].equals("item") || params[i].equals("node")) {
+                        if(values[i] instanceof String) {
+                            initialMode = (String) values[i];
+                            transformer.setInitialMode(new QName(initialMode));
+                         }else if(debug) {
+                             System.err.println("DEBUG: value error for property 'im'");
+                        }
+                    }else if (params[i].equals("s")) {
+                        if(values[i] instanceof String) {
+                            source = api.resolveFileToSource(cwd, (String) values[i]);
+                            transformer.setSource(builder.build(source).asSource());
+                        } else if(debug) {
+                             System.err.println("DEBUG: value error for property 's'");
+                        }
+                    } else if (params[i].equals("item") || params[i].equals("node") || params[i].equals("param:node")) {
+                        if(debug) {
+                            System.err.println("DEBUG: is null value=" + (values[i] == null));
+                            if(values[i] != null) {
+                                System.err.println("DEBUG: Type of value=" + (values[i]).getClass().getName());
+
+                            }
+                             System.err.println("DEBUG: setting the source for node");
+                            System.err.println("DEBUG: is value a XdmNode=" + (values[i] instanceof XdmNode));
+                            System.err.println("DEBUG: is value a XdmValue=" + (values[i] instanceof XdmValue));
+
+                        }
                         Object value = values[i];
                         if (value instanceof XdmNode) {
                             node = (XdmNode) value;
                             transformer.setSource((node).asSource());
+                        } else if(debug) {
+                            System.err.println("Type of node Property error.");
                         }
                     } else if (params[i].equals("resources")) {
                         char separatorChar = '/';
-                        if (SaxonCAPI.RESOURCES_DIR == null) {
+                        if (SaxonCAPI.RESOURCES_DIR == null && values[i] instanceof String) {
                             String dir1 = (String) values[i];
                             if (!dir1.endsWith("/")) {
                                 dir1 = dir1.concat("/");
@@ -440,6 +471,7 @@ public class XsltProcessor extends SaxonCAPI {
                 source = resolveFileToSource(cwd, sourceFile);
                 transformer.setSource(source);
             }
+            transformer.setErrorListener(errorListener);
             transformer.transform();
             serializer = null;
             return sw.toString();
@@ -527,11 +559,16 @@ public class XsltProcessor extends SaxonCAPI {
         String outfile = "outfile.html";
         Processor processor = new Processor(false);
         XsltProcessor cpp = new XsltProcessor(processor, false);
+          XdmNode node2 = cpp.parseXmlFile("/Users/ond1/work/development/campos", "ORP0301177AA__EE__30954_sinsello.xml");
+         String[] paramsx = {"node"};
+        Object[] valuesx = {node2};
+                    String result2 = cpp.transformToString("/Users/ond1/work/development/campos", "ORP0301177AA__EE__30954_sinsello.xml", "campos.xsl", paramsx, valuesx);
         Object[] arrValues = {2, "test"};
-        String[] params1 = {"resources", "param:test1"};
-        Object[] values1 = {"/Users/ond1/work/development/tests/jeroen/data", arrValues};
-        String outputdoc = cpp.transformToString(cwd, sourcefile1, stylesheet12, params1, values1);
-        System.out.println(outputdoc);
+
+        String[] params1 = {"resources", "param:test1", "node"};
+        Object[] values1 = {"/Users/ond1/work/development/tests/jeroen/data", arrValues, node2};
+        String outputdoc = cpp.transformToString(cwd, null, stylesheet12, params1, values1);
+       // System.out.println(outputdoc);
        // System.exit(0);
         // Processor processor = cpp.getProcessor();
         // XsltTransformer transformer = cpp.xsltParseStylesheetFile(args[0]).load();
@@ -577,13 +614,14 @@ public class XsltProcessor extends SaxonCAPI {
 
             }
             long endTime = System.currentTimeMillis();
-            System.out.println("output:" + result + " Time:" + ((endTime - startTime) / 5));
+          //  System.out.println("output:" + result + " Time:" + ((endTime - startTime) / 5));
+
+       System.out.println("output:" + result2);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         SaxonCException[] exceptionForCpps = cpp.getExceptions();
-        //String result2 = cpp.xsltApplyStylesheet(cpp.getProcessor(), null, stylesheet, params1, values1);
-        // System.out.println("output:" + result);
+
 
 
     }

@@ -45,6 +45,7 @@ import java.util.Properties;
     protected Processor processor = null;
     protected XdmNode doc = null;
     protected List<SaxonCException> saxonExceptions = new ArrayList<SaxonCException>();
+    protected List<SaxonCException> saxonWarnings = new ArrayList<SaxonCException>();
     protected static boolean debug = false;
     protected Serializer serializer = null;
     protected InputStream in = null;
@@ -113,6 +114,16 @@ import java.util.Properties;
      protected ErrorListener errorListener = new StandardErrorListener() {
 
         @Override
+        public void warning(TransformerException exception) {
+            SaxonCException saxonException = new SaxonCException((XPathException) exception);
+            saxonWarnings.add(saxonException);
+            try{
+                super.error(exception);
+            }catch(Exception ex){}
+
+        }
+
+        @Override
         public void error(TransformerException exception){
             SaxonCException saxonException = new SaxonCException((XPathException) exception);
             saxonExceptions.add(saxonException);
@@ -169,7 +180,10 @@ import java.util.Properties;
      * @return SaxCEExeption[] -- array of the exceptions
     */
     public SaxonCException[] getExceptions() {
-        return saxonExceptions.toArray(new SaxonCException[saxonExceptions.size()]);
+        if(saxonExceptions.size() >0) {
+            return saxonExceptions.toArray(new SaxonCException[saxonExceptions.size()]);
+        } else
+            return null;
     }
 
 
