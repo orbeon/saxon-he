@@ -369,6 +369,15 @@ namespace Saxon.Api
 
     }
 
+	interface IErrorGatherer
+	{
+		void warning (StaticError err);
+
+		void error (StaticError err);
+
+		void fatalError(StaticError err);
+	}
+
 	/// <summary>
 	/// Error gatherer. This class To provide customized error handling
 	/// <p>If an application does <em>not</em> register its own custom
@@ -379,57 +388,77 @@ namespace Saxon.Api
 	/// <code>ErrorListener</code>s that insure proper behavior for warnings and
 	/// errors.</para>
 	/// </summary>
-    [Serializable]
-    internal class ErrorGatherer : javax.xml.transform.ErrorListener
-    {
+	[Serializable]
+	internal class ErrorGatherer : javax.xml.transform.ErrorListener
+	{
 
-        private IList errorList;
-
+		private IList errorList;
+		private IErrorGatherer errorListener;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Saxon.Api.ErrorGatherer"/> class.
 		/// </summary>
 		/// <param name="errorList">Error list.</param>
-        public ErrorGatherer(IList errorList)
-        {
-            this.errorList = errorList;
-        }
+		public ErrorGatherer(IList errorList)
+		{
+			this.errorList = errorList;
+			this.errorListener = null;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Saxon.Api.ErrorGatherer"/> class.
+		/// </summary>
+		/// <param name="errorList">Error list.</param>
+		public ErrorGatherer(IErrorGatherer error)
+		{
+			this.errorListener = error;
+			this.errorList = null;
+		}
 
 		/// <summary>
 		/// Warning the specified exception.
 		/// </summary>
 		/// <param name="exception">TransformerException.</param>
-        public void warning(TransformerException exception)
-        {
-            StaticError se = new StaticError(exception);
-            se.isWarning = true;
-            //Console.WriteLine("(Adding warning " + exception.getMessage() + ")");
-            errorList.Add(se);
-        }
+		public void warning(TransformerException exception)
+		{
+			StaticError se = new StaticError(exception);
+			se.isWarning = true;
+			if (errorListener == null) {
+				errorList.Add (se);
+			} else {
+				errorListener.warning (se);
+			}
+		}
 
 		/// <summary>
 		/// Report a Transformer exception thrown.
 		/// </summary>
 		/// <param name="error">Error.</param>
-        public void error(TransformerException error)
-        {
-            StaticError se = new StaticError(error);
-            se.isWarning = false;
-            //Console.WriteLine("(Adding error " + error.getMessage() + ")");
-            errorList.Add(se);
-        }
+		public void error(TransformerException error)
+		{
+			StaticError se = new StaticError(error);
+			se.isWarning = false;
+			if (errorListener == null) {
+				errorList.Add (se);
+			} else {
+				errorListener.error (se);
+			}
+		}
 
 		/// <summary>
 		/// Report a fatal exception thrown.
 		/// </summary>
 		/// <param name="error">TransformerException.</param>
-        public void fatalError(TransformerException error)
-        {
-            StaticError se = new StaticError(error);
-            se.isWarning = false;
-            errorList.Add(se);
-            //Console.WriteLine("(Adding fatal error " + error.getMessage() + ")");
-        }
+		public void fatalError(TransformerException error)
+		{
+			StaticError se = new StaticError(error);
+			se.isWarning = false;
+			if (errorListener == null) {
+				errorList.Add (se);
+			} else {
+				errorListener.fatalError (se);
+			}
+		}
 
 
 		/// <summary>
@@ -438,9 +467,21 @@ namespace Saxon.Api
 		/// <returns>Returns the error list</returns>
 		public IList ErrorList{
 			get { return errorList;}
+			set{ 
+				errorList = value;
+				errorListener = null;
+			}
 		}
-    }
 
+
+		public IErrorGatherer ErrorListener{
+			get { return errorListener;}
+			set { 
+				errorListener = value;
+				errorList = null;
+			}
+		}
+	}
 
 
 

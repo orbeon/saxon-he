@@ -51,7 +51,9 @@ namespace Saxon.Api
     {
 
         private JConfiguration config;
-        private IList errorList = null;
+		private IList errorList = null;
+		private IErrorGatherer errorListener = null;
+		private ErrorGatherer errorGatherer;
         private net.sf.saxon.s9api.SchemaManager schemaManager;
         private Processor processor;
 
@@ -213,15 +215,16 @@ namespace Saxon.Api
         /// <param name="node">The document node or the outermost element node of a schema document.</param>
 
         public void Compile(XdmNode node)
-        {
-            ErrorGatherer eg = null;
-            if (errorList != null)
-            {
-                eg = new ErrorGatherer(errorList);
-            }
+        {			
+            
+			if (errorList != null && errorGatherer == null) {
+				errorGatherer = new ErrorGatherer (errorList);
+			} else if(errorListener != null && errorGatherer == null){
+				errorGatherer = new ErrorGatherer (errorListener);
+			}
             try
             {
-                config.readInlineSchema((NodeInfo)node.value, null, eg);
+                config.readInlineSchema((NodeInfo)node.value, null, errorGatherer);
             }
             catch (SchemaException e)
             {
@@ -306,9 +309,10 @@ namespace Saxon.Api
         private JConfiguration config;
         private bool lax = false;
         private Source source;
-        private XmlDestination destination;
-        private IList errorList = null;
         private bool useXsiSchemaLocation;
+		private IList errorList = null;
+		private ErrorGatherer errorGatherer = null;
+		private IErrorGatherer errorListener = null;
 
         // internal constructor
 
@@ -458,17 +462,35 @@ namespace Saxon.Api
         /// in the schema itself.</para>
         /// </remarks>
 
-        public IList ErrorList
-        {
-            set
-            {
-                errorList = value;
-            }
-            get
-            {
-                return errorList;
-            }
-        }
+		public IList ErrorList
+		{
+			set
+			{
+				errorList = value;
+				if (errorGatherer == null) {
+					errorGatherer = new ErrorGatherer (errorListener);
+				} else {
+					errorGatherer.ErrorList = value;
+				}
+				errorListener = null;
+			}
+			get
+			{
+				return errorList;
+			}
+		}
+
+		public IErrorGatherer SetErrorListener{
+			set{ 
+				errorListener = value;
+				if (errorGatherer == null) {
+					errorGatherer = new ErrorGatherer (errorListener);
+				} else {
+					errorGatherer.ErrorListener = value;
+				}
+				errorList = null;
+			}
+		}
 
 
         /// <summary>
@@ -504,10 +526,9 @@ namespace Saxon.Api
             }
             pipe.setUseXsiSchemaLocation(useXsiSchemaLocation);
             receiver.setPipelineConfiguration(pipe);
-            if (errorList != null)
-            {
-                pipe.setErrorListener(new ErrorGatherer(errorList));
-            }
+			if (errorGatherer != null) {
+				pipe.setErrorListener (errorGatherer);
+			}
             Sender.send(aug, receiver, null);
         }
 
