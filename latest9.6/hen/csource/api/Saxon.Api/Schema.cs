@@ -308,6 +308,7 @@ namespace Saxon.Api
 
         private JConfiguration config;
         private bool lax = false;
+		private XmlDestination destination;
         private Source source;
         private bool useXsiSchemaLocation;
 		private IList errorList = null;
