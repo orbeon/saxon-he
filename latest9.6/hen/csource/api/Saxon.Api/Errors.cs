@@ -369,7 +369,7 @@ namespace Saxon.Api
 
     }
 
-	interface IErrorGatherer
+	public interface IErrorGatherer
 	{
 		void warning (StaticError err);
 
