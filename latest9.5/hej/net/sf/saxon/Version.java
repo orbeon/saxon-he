@@ -14,9 +14,9 @@ package net.sf.saxon;
 public final class Version {
 
     private static final int[] STRUCTURED_VERSION = {9,5,1,9};
-    private static final String VERSION = "9.5.1.10";
-    private static final String BUILD = "041515"; //mmddhh
-    private static final String RELEASE_DATE = "2015-04-15";
+    private static final String VERSION = "9.5.1.11";
+    private static final String BUILD = "052115"; //mmddhh
+    private static final String RELEASE_DATE = "2015-05-21";
     private static final String MAJOR_RELEASE_DATE = "2013-04-17";
 
     private Version() {
