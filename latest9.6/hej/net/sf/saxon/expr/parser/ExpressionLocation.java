@@ -166,6 +166,7 @@ public class ExpressionLocation implements SourceLocator, Locator {
         } else {
             ExpressionLocation loc = new ExpressionLocation();
             loc.setLineNumber(locationProvider.getLineNumber(locationId));
+            loc.setColumnNumber(locationProvider.getColumnNumber(locationId));
             loc.setSystemId(locationProvider.getSystemId(locationId));
             return loc;
         }
