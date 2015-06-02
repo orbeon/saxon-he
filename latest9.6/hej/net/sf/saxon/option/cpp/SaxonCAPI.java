@@ -274,7 +274,7 @@ import java.util.Properties;
     */
     public XdmNode parseXmlString(SchemaValidator validator, String xml, String[] params, String[] values) throws SaxonApiException {
         try {
-            doc = xmlParseString(processor, validator, xml);
+            doc = parseXmlString(processor, validator, xml);
             if (debug) {
                 System.err.println("xmlParseString, Processor: " + System.identityHashCode(processor));
             }
@@ -331,7 +331,7 @@ import java.util.Properties;
     }
 
     //TODO pass the schema file and options as an array instead of the SchemaValidator object
-    public static XdmNode xmlParseString(Processor processor, SchemaValidator validator, String xml) throws SaxonApiException {
+    public static XdmNode parseXmlString(Processor processor, SchemaValidator validator, String xml) throws SaxonApiException {
         try {
             StringReader reader = new StringReader(xml);
             DocumentBuilder builder = processor.newDocumentBuilder();

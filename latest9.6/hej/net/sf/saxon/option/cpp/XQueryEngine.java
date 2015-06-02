@@ -51,7 +51,7 @@ public class XQueryEngine extends SaxonCAPI {
     }
 
     public XdmNode parseXMLString(String xml) throws SaxonApiException {
-        return SaxonCAPI.xmlParseString(processor, null, xml);
+        return SaxonCAPI.parseXmlString(processor, null, xml);
     }
 
     public void setXQueryFile(String queryFileName) throws SaxonApiException {
