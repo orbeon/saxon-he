@@ -32,7 +32,8 @@ package net.sf.saxon.regex;
 
 
 import net.sf.saxon.tree.util.FastStringBuffer;
-import net.sf.saxon.z.*;
+import net.sf.saxon.z.IntIterator;
+import net.sf.saxon.z.IntPredicate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -319,6 +320,19 @@ public class REMatcher {
             endn = e2;
         }
         endn[which] = i;
+    }
+
+    /**
+     * Clear any captured groups whose start position is at or beyond some specified position
+     * @param pos the specified position
+     */
+
+    protected void clearCapturedGroupsBeyond(int pos) {
+        for (int i=0; i<startn.length; i++) {
+            if (startn[i] >= pos) {
+                endn[i] = startn[i];
+            }
+        }
     }
 
     /**

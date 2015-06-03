@@ -830,6 +830,7 @@ public abstract class Operation {
                         return true;
                     }
                     if (count < max) {
+                        matcher.clearCapturedGroupsBeyond(pos);
                         IntIterator child = op.iterateMatches(matcher, pos);
                         if (child.hasNext()) {
                             pos = child.next();
