@@ -9,7 +9,10 @@ package net.sf.saxon.expr;
 
 import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.LetExpressionCompiler;
+import com.saxonica.ee.stream.Sweep;
 import com.saxonica.ee.stream.adjunct.LetExpressionAdjunct;
+import com.saxonica.ee.stream.adjunct.LetExpressionAdjunctB;
+import com.saxonica.ee.stream.adjunct.StreamingAdjunct;
 import net.sf.saxon.evpull.EventIterator;
 import net.sf.saxon.expr.instruct.DocumentInstr;
 import net.sf.saxon.expr.instruct.GlobalVariable;
@@ -364,8 +367,12 @@ public class LetExpression extends Assignation implements TailCallReturner {
      * @return the relevant StreamingAdjunct, or null if none is available
      */
     @Override
-    public LetExpressionAdjunct getStreamingAdjunct() {
-        return new LetExpressionAdjunct();
+    public StreamingAdjunct getStreamingAdjunct() {
+        if (postureAndSweep != null && getAction().getSweep() == Sweep.CONSUMING) {
+            return new LetExpressionAdjunctB();
+        } else {
+            return new LetExpressionAdjunct();
+        }
     }
 
     //#endif

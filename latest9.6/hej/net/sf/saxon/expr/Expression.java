@@ -1386,7 +1386,7 @@ public abstract class Expression implements SourceLocator, InstructionInfo, Iden
         return postureAndSweep;
     }
 
-    private PostureAndSweep postureAndSweep = null;
+    protected PostureAndSweep postureAndSweep = null;
 
     public Posture getPosture() {
         if (postureAndSweep != null) {
