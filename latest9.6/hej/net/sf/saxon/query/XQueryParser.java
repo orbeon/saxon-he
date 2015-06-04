@@ -553,10 +553,10 @@ public class XQueryParser extends XPathParser {
                 queryVersion = XQUERY10;
             }
             nextToken();
-            String enc = unescape(t.currentTokenValue).toString();
-            if ("encoding".equals(enc)) {
+            if ("encoding".equals(t.currentTokenValue)) {
                 nextToken();
                 expect(Token.STRING_LITERAL);
+                String enc = unescape(t.currentTokenValue).toString();
                 if (!encNamePattern.matcher(enc).matches()) {
                     grumble("Encoding name contains invalid characters", "XQST0087");
                 }
