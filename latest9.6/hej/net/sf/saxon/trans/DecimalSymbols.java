@@ -418,11 +418,6 @@ public class DecimalSymbols {
         }
         map.put(getPerMille(), StandardNames.PER_MILLE);
 
-        if (map.get(getZeroDigit()) != null) {
-            duplicate(StandardNames.ZERO_DIGIT, map.get(getZeroDigit()), name);
-        }
-        map.put(getZeroDigit(), StandardNames.ZERO_DIGIT);
-
         if (map.get(getDigit()) != null) {
             duplicate(StandardNames.DIGIT, map.get(getDigit()), name);
         }
@@ -431,7 +426,21 @@ public class DecimalSymbols {
         if (map.get(getPatternSeparator()) != null) {
             duplicate(StandardNames.PATTERN_SEPARATOR, map.get(getPatternSeparator()), name);
         }
-        //map.put(patternSeparator, StandardNames.PATTERN_SEPARATOR);
+        map.put(getPatternSeparator(), StandardNames.PATTERN_SEPARATOR);
+
+        int zero = getZeroDigit();
+        for (int i=zero; i<zero+10; i++) {
+            if (map.get(i) != null) {
+                XPathException err = new XPathException(
+                    "Inconsistent properties in " +
+                        (name == null ? "unnamed decimal format. " : "decimal format " + name.getDisplayName() + ". ") +
+                        "The same character is used as digit " + (i - zero) +
+                        " in the chosen digit family, and as the " + map.get(i));
+                err.setErrorCode(errorCodes[ERR_SAME_CHAR_IN_TWO_ROLES]);
+                throw err;
+            }
+        }
+        //map.put(getZeroDigit(), StandardNames.ZERO_DIGIT);
     }
 
     /**
