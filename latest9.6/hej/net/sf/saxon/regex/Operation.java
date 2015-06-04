@@ -149,6 +149,7 @@ public abstract class Operation {
                     while (true) {
                         if (currentIter == null) {
                             if (branchIter.hasNext()) {
+                                matcher.clearCapturedGroupsBeyond(position);
                                 currentOp = branchIter.next();
                                 currentIter = currentOp.iterateMatches(matcher, position);
                             } else {
