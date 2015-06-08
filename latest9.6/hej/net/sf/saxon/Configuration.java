@@ -109,7 +109,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Configuration implements SourceResolver, NotationSet {
 
-    private static final Platform platform = makePlatform();
+    protected static final Platform platform = makePlatform();
     public static final Class<? extends Configuration> configurationClass = makeConfigurationClass();
     public static final String softwareEdition = getSoftwareEdition();
     private static Set<String> booleanPropertyNames = new HashSet<String>(40);

@@ -65,7 +65,7 @@ public class DotNetPlatform implements Platform {
 
     public void initialize(Configuration config) {
         config.setURIResolver(new DotNetURIResolver(new XmlUrlResolver()));
-        config.setModuleURIResolver(new DotNetStandardModuleURIResolver(new XmlUrlResolver()));
+        //config.setModuleURIResolver(new DotNetStandardModuleURIResolver(new XmlUrlResolver())); //See bug 2392
         config.setCollectionURIResolver(new DotNetCollectionURIResolver());
     }
 
