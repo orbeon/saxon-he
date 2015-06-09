@@ -40,7 +40,6 @@ public class ApplyTemplates extends Instruction implements ITemplateCall {
     protected boolean useTailRecursion = false;
     protected Mode mode;
     protected boolean implicitSelect;
-    protected Expression threads = null;
     protected RuleManager ruleManager;
 
     protected ApplyTemplates() {
@@ -68,7 +67,6 @@ public class ApplyTemplates extends Instruction implements ITemplateCall {
         init(select, useCurrentMode, useTailRecursion, mode);
         this.implicitSelect = implicitSelect;
         this.ruleManager = ruleManager;
-        this.threads = threads;
     }
 
     protected void init(Expression select,
@@ -111,16 +109,6 @@ public class ApplyTemplates extends Instruction implements ITemplateCall {
 
     public int getImplementationMethod() {
         return super.getImplementationMethod() | Expression.WATCH_METHOD;
-    }
-
-    /**
-     * Get the number of threads requested
-     *
-     * @return the value of the saxon:threads attribute
-     */
-
-    public Expression getNumberOfThreadsExpression() {
-        return threads;
     }
 
     /**
@@ -195,9 +183,6 @@ public class ApplyTemplates extends Instruction implements ITemplateCall {
 //                throw new XPathException(msg);
             }
         }
-        if (threads != null) {
-            return visitor.getConfiguration().obtainOptimizer().generateMultithreadedInstruction(this);
-        }
         return this;
     }
 
@@ -221,10 +206,9 @@ public class ApplyTemplates extends Instruction implements ITemplateCall {
     /*@NotNull*/
     public Expression copy() {
         ApplyTemplates a2 = new ApplyTemplates(
-                select.copy(), useCurrentMode, useTailRecursion, implicitSelect, mode, ruleManager, threads);
+                select.copy(), useCurrentMode, useTailRecursion, implicitSelect, mode, ruleManager, null);
         a2.actualParams = WithParam.copy(actualParams);
         a2.tunnelParams = WithParam.copy(tunnelParams);
-        a2.threads = threads;
         a2.ruleManager = ruleManager;
         return a2;
     }

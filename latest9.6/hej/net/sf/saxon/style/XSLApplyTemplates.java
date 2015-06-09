@@ -9,16 +9,17 @@ package net.sf.saxon.style;
 
 import net.sf.saxon.expr.AxisExpression;
 import net.sf.saxon.expr.Expression;
-import net.sf.saxon.expr.StringLiteral;
 import net.sf.saxon.expr.instruct.ApplyTemplates;
 import net.sf.saxon.expr.parser.RoleLocator;
 import net.sf.saxon.expr.parser.TypeChecker;
 import net.sf.saxon.expr.sort.SortExpression;
 import net.sf.saxon.expr.sort.SortKeyDefinition;
-import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.NameTest;
-import net.sf.saxon.trans.*;
+import net.sf.saxon.trans.Err;
+import net.sf.saxon.trans.Mode;
+import net.sf.saxon.trans.RuleManager;
+import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.DecimalValue;
@@ -65,18 +66,6 @@ public class XSLApplyTemplates extends StyleElement {
             } else if (f.equals(StandardNames.SELECT)) {
                 selectAtt = atts.getValue(a);
                 defaultedSelectExpression = false;
-            } else if (f.equals("saxon:threads") && atts.getURI(a).equals(NamespaceConstant.SAXON)) {
-                String threadsAtt = Whitespace.trim(atts.getValue(a));
-                threads = makeAttributeValueTemplate(threadsAtt);
-                if (getCompilation().getCompilerInfo().isCompileWithTracing()) {
-                    compileWarning("saxon:threads - no multithreading takes place when compiling with trace enabled",
-                            SaxonErrorCode.SXWN9012);
-                    threads = new StringLiteral("0", this);
-                } else if (!"EE".equals(getConfiguration().getEditionCode())) {
-                    compileWarning("saxon:threads - ignored when not running Saxon-EE",
-                            SaxonErrorCode.SXWN9013);
-                    threads = new StringLiteral("0", this);
-                }
             } else {
                 checkUnknownAttribute(atts.getNodeName(a));
             }
