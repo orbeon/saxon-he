@@ -382,8 +382,17 @@ public class
                 String select = ((XdmNode) param).getAttributeValue(new QName("select"));
                 value = xpc.evaluate(select, null);
             }
-            environment.params.put(new QName(varName), value);
-            environment.xpathCompiler.declareVariable(new QName(varName));
+            QName varQName;
+            int colon = varName.indexOf(':');
+            if (colon >= 0){
+                NamespaceResolver resolver = new InscopeNamespaceResolver(((XdmNode) param).getUnderlyingNode());
+                String namespace = resolver.getURIForPrefix(varName.substring(0,colon), false);
+                varQName = new QName(namespace, varName);
+            } else {
+                varQName = new QName(varName);
+            }
+            environment.params.put(varQName, value);
+            environment.xpathCompiler.declareVariable(varQName);
             String declared = ((XdmNode) param).getAttributeValue(new QName("declared"));
             if (declared != null && "true".equals(declared) || "1".equals(declared)) {
                 // no action
