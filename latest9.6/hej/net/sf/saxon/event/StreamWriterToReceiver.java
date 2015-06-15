@@ -268,8 +268,11 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
                 t.uri = getUriForPrefix(t.prefix);
             } else {
                 String u = getUriForPrefix(t.prefix);
+                if (u == null) {
+                    throw new XMLStreamException("Prefix " + Err.wrap(t.prefix) + " is not bound to any URI");
+                }
                 if (!t.uri.equals(u)) {
-                    throw new XMLStreamException("Prefix " + Err.wrap(t.local) + " is bound to a different URI");
+                    throw new XMLStreamException("Prefix " + Err.wrap(t.prefix) + " is bound to a different URI");
                 }
             }
         }
