@@ -69,7 +69,8 @@ public abstract class Logger {
     public void close() {}
 
     /**
-     * Get a JAXP StreamResult object allowing serialized XML to be written to this Logger
+     * Get a JAXP StreamResult object allowing serialized XML to be written to this Logger. A subsequent call to
+     * Logger.close() is needed to ensure that any streams/writers within the StreamResult are properly closed.
      * @return a StreamResult that serializes XML to this Logger
      */
 

@@ -7,7 +7,6 @@
 
 package net.sf.saxon;
 
-import net.sf.saxon.trans.QuitParsingException;
 import net.sf.saxon.event.*;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.*;
@@ -1894,7 +1893,6 @@ public class Controller {
 
             initialContext.notifyChildThreads();
 
-            closeMessageEmitter();
             closeResult(outputDestination, mustClose, initialContext);
 
         } catch (TerminationException err) {
@@ -1921,6 +1919,7 @@ public class Controller {
             throw err;
         } finally {
             inUse = false;
+            closeMessageEmitter();
             if (close && source instanceof AugmentedSource) {
                 ((AugmentedSource) source).close();
             }
@@ -1992,144 +1991,147 @@ public class Controller {
 //        boolean mustClose = (outputDestination instanceof StreamResult &&
 //                ((StreamResult) outputDestination).getOutputStream() == null);
 
-        principalResult = outputDestination;
-        if (principalResultURI == null) {
-            principalResultURI = outputDestination.getSystemId();
-        }
-
-        XPathContextMajor initialContext = newXPathContext();
-        initialContext.createThreadManager();
-        initialContext.setOriginatingConstructType(Location.CONTROLLER);
-
-        if (startNode != null) {
-
-            initialContextItem = startNode;
-            contextForGlobalVariables = startNode.getRoot();
-
-            if (startNode.getConfiguration() == null) {
-                // must be a non-standard document implementation
-                throw new XPathException("The supplied source document must be associated with a Configuration");
+        try {
+            principalResult = outputDestination;
+            if (principalResultURI == null) {
+                principalResultURI = outputDestination.getSystemId();
             }
 
-            if (!startNode.getConfiguration().isCompatible(executable.getConfiguration())) {
-                throw new XPathException(
-                        "Source document and stylesheet must use the same or compatible Configurations",
-                        SaxonErrorCode.SXXP0004);
-            }
-            if (startNode instanceof DocumentInfo && ((DocumentInfo) startNode).isTyped() && !executable.isSchemaAware()) {
-                throw new XPathException("Cannot use a schema-validated source document unless the stylesheet is schema-aware");
-            }
-            UnfailingIterator currentIter = SingletonIterator.makeIterator(startNode);
-            FocusIterator focus = new FocusTrackingIterator(currentIter);
-            if (initialTemplate != null) {
-                focus.next();
-            }
-            initialContext.setCurrentIterator(focus);
-        }
+            XPathContextMajor initialContext = newXPathContext();
+            initialContext.createThreadManager();
+            initialContext.setOriginatingConstructType(Location.CONTROLLER);
 
-        // In tracing/debugging mode, evaluate all the global variables first
-        if (traceListener != null) {
-            preEvaluateGlobals(initialContext);
-        }
+            if (startNode != null) {
 
-        outputDestination = openResult(outputDestination, initialContext);
+                initialContextItem = startNode;
+                contextForGlobalVariables = startNode.getRoot();
 
-        // Process the source document by applying template rules to the initial context node
+                if (startNode.getConfiguration() == null) {
+                    // must be a non-standard document implementation
+                    throw new XPathException("The supplied source document must be associated with a Configuration");
+                }
 
-        ParameterSet ordinaryParams = null;
-        if (initialTemplateParams != null) {
-            ordinaryParams = new ParameterSet(initialTemplateParams);
-        }
-        ParameterSet tunnelParams = null;
-        if (initialTemplateTunnelParams != null) {
-            tunnelParams = new ParameterSet(initialTemplateTunnelParams);
-        }
-
-        if (initialTemplate == null) {
-            initialContextItem = startNode;
-            Mode mode = initialMode;
-            if (mode == null) {
-                mode = ((PreparedStylesheet) executable).getRuleManager().getUnnamedMode();
+                if (!startNode.getConfiguration().isCompatible(executable.getConfiguration())) {
+                    throw new XPathException(
+                            "Source document and stylesheet must use the same or compatible Configurations",
+                            SaxonErrorCode.SXXP0004);
+                }
+                if (startNode instanceof DocumentInfo && ((DocumentInfo) startNode).isTyped() && !executable.isSchemaAware()) {
+                    throw new XPathException("Cannot use a schema-validated source document unless the stylesheet is schema-aware");
+                }
+                UnfailingIterator currentIter = SingletonIterator.makeIterator(startNode);
+                FocusIterator focus = new FocusTrackingIterator(currentIter);
+                if (initialTemplate != null) {
+                    focus.next();
+                }
+                initialContext.setCurrentIterator(focus);
             }
-            if (initialMode != null && mode.isEmpty()) {
-                throw new XPathException("Requested initial mode " +
-                        (initialMode == null ? "" : initialMode.getModeName().getDisplayName()) +
-                        " does not exist", "XTDE0045");
+
+            // In tracing/debugging mode, evaluate all the global variables first
+            if (traceListener != null) {
+                preEvaluateGlobals(initialContext);
             }
-            if (mode.isDeclaredStreamable()) {
-                throw new XPathException("Requested initial mode " +
-                        (initialMode == null ? "" : initialMode.getModeName().getDisplayName()) +
-                        " is streamable: must supply a StreamSource or SAXSource");
+
+            outputDestination = openResult(outputDestination, initialContext);
+
+            // Process the source document by applying template rules to the initial context node
+
+            ParameterSet ordinaryParams = null;
+            if (initialTemplateParams != null) {
+                ordinaryParams = new ParameterSet(initialTemplateParams);
             }
-            if (startNode instanceof DocumentInfo && !getConfiguration().getBooleanProperty(FeatureKeys.SUPPRESS_XSLT_NAMESPACE_CHECK)) {
-                // Check for the common error where the source document is in a namespace, but the stylesheet is not
-                // designed to match that namespace.
-                NodeInfo topElement = startNode.iterateAxis(AxisInfo.CHILD, NodeKindTest.ELEMENT).next();
-                if (topElement != null) {
-                    String uri = topElement.getURI();
-                    Set<String> explicitNamespaces = mode.getExplicitNamespaces(getConfiguration().getNamePool());
-                    if (!explicitNamespaces.isEmpty() && !explicitNamespaces.contains(uri)) {
-                        // We've established that there are no template rules matching the top-level element.
-                        // But that's not a strong enough test, especially with document types that have an envelope/payload
-                        // structure. We only report a warning if the set of namespaces in stylesheet patterns is completely
-                        // disjoint from the set of namespaces on element names in the source document.
-                        AxisIterator allElements = startNode.iterateAxis(AxisInfo.DESCENDANT, NodeKindTest.ELEMENT);
-                        boolean found = false;
-                        while (true) {
-                            NodeInfo element = allElements.next();
-                            if (element == null) {
-                                break;
+            ParameterSet tunnelParams = null;
+            if (initialTemplateTunnelParams != null) {
+                tunnelParams = new ParameterSet(initialTemplateTunnelParams);
+            }
+
+            if (initialTemplate == null) {
+                initialContextItem = startNode;
+                Mode mode = initialMode;
+                if (mode == null) {
+                    mode = ((PreparedStylesheet) executable).getRuleManager().getUnnamedMode();
+                }
+                if (initialMode != null && mode.isEmpty()) {
+                    throw new XPathException("Requested initial mode " +
+                            (initialMode == null ? "" : initialMode.getModeName().getDisplayName()) +
+                            " does not exist", "XTDE0045");
+                }
+                if (mode.isDeclaredStreamable()) {
+                    throw new XPathException("Requested initial mode " +
+                            (initialMode == null ? "" : initialMode.getModeName().getDisplayName()) +
+                            " is streamable: must supply a StreamSource or SAXSource");
+                }
+                if (startNode instanceof DocumentInfo && !getConfiguration().getBooleanProperty(FeatureKeys.SUPPRESS_XSLT_NAMESPACE_CHECK)) {
+                    // Check for the common error where the source document is in a namespace, but the stylesheet is not
+                    // designed to match that namespace.
+                    NodeInfo topElement = startNode.iterateAxis(AxisInfo.CHILD, NodeKindTest.ELEMENT).next();
+                    if (topElement != null) {
+                        String uri = topElement.getURI();
+                        Set<String> explicitNamespaces = mode.getExplicitNamespaces(getConfiguration().getNamePool());
+                        if (!explicitNamespaces.isEmpty() && !explicitNamespaces.contains(uri)) {
+                            // We've established that there are no template rules matching the top-level element.
+                            // But that's not a strong enough test, especially with document types that have an envelope/payload
+                            // structure. We only report a warning if the set of namespaces in stylesheet patterns is completely
+                            // disjoint from the set of namespaces on element names in the source document.
+                            AxisIterator allElements = startNode.iterateAxis(AxisInfo.DESCENDANT, NodeKindTest.ELEMENT);
+                            boolean found = false;
+                            while (true) {
+                                NodeInfo element = allElements.next();
+                                if (element == null) {
+                                    break;
+                                }
+                                String ns = element.getURI();
+                                if (explicitNamespaces.contains(ns)) {
+                                    found = true;
+                                    break;
+                                }
                             }
-                            String ns = element.getURI();
-                            if (explicitNamespaces.contains(ns)) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            String suffix = "(Use --suppressXsltNamespaceCheck:on to avoid this warning)";
-                            if (explicitNamespaces.size() == 1 && explicitNamespaces.contains("")) {
-                                warning("The source document is in namespace " + uri +
-                                        ", but all the template rules match elements in no namespace " + suffix, SaxonErrorCode.SXXP0005);
-                            } else if (uri.equals("")) {
-                                warning("The source document is in no namespace" +
-                                        ", but the template rules all expect elements in a namespace " + suffix, SaxonErrorCode.SXXP0005);
-                            } else {
-                                warning("The source document is in namespace " + uri +
-                                        ", but none of the template rules match elements in this namespace " + suffix, SaxonErrorCode.SXXP0005);
+                            if (!found) {
+                                String suffix = "(Use --suppressXsltNamespaceCheck:on to avoid this warning)";
+                                if (explicitNamespaces.size() == 1 && explicitNamespaces.contains("")) {
+                                    warning("The source document is in namespace " + uri +
+                                            ", but all the template rules match elements in no namespace " + suffix, SaxonErrorCode.SXXP0005);
+                                } else if (uri.equals("")) {
+                                    warning("The source document is in no namespace" +
+                                            ", but the template rules all expect elements in a namespace " + suffix, SaxonErrorCode.SXXP0005);
+                                } else {
+                                    warning("The source document is in namespace " + uri +
+                                            ", but none of the template rules match elements in this namespace " + suffix, SaxonErrorCode.SXXP0005);
+                                }
                             }
                         }
                     }
                 }
-            }
-            initialContext.setCurrentMode(mode);
-            TailCall tc = mode.applyTemplates(ordinaryParams, tunnelParams, initialContext, 0);
-            while (tc != null) {
-                tc = tc.processLeavingTail();
-            }
-        } else {
-            Template t = initialTemplate;
-            XPathContextMajor c2 = initialContext.newContext();
-            initialContext.setOriginatingConstructType(Location.CONTROLLER);
-            c2.setCurrentComponent(t.getDeclaringComponent());
-            c2.openStackFrame(t.getStackFrameMap());
-            c2.setLocalParameters(ordinaryParams);
-            c2.setTunnelParameters(tunnelParams);
+                initialContext.setCurrentMode(mode);
+                TailCall tc = mode.applyTemplates(ordinaryParams, tunnelParams, initialContext, 0);
+                while (tc != null) {
+                    tc = tc.processLeavingTail();
+                }
+            } else {
+                Template t = initialTemplate;
+                XPathContextMajor c2 = initialContext.newContext();
+                initialContext.setOriginatingConstructType(Location.CONTROLLER);
+                c2.setCurrentComponent(t.getDeclaringComponent());
+                c2.openStackFrame(t.getStackFrameMap());
+                c2.setLocalParameters(ordinaryParams);
+                c2.setTunnelParameters(tunnelParams);
 
-            TailCall tc = t.expand(c2);
-            while (tc != null) {
-                tc = tc.processLeavingTail();
+                TailCall tc = t.expand(c2);
+                while (tc != null) {
+                    tc = tc.processLeavingTail();
+                }
             }
+
+            if (traceListener != null) {
+                traceListener.close();
+            }
+
+            initialContext.notifyChildThreads();
+
+            closeResult(outputDestination, mustClose, initialContext);
+        } finally {
+            closeMessageEmitter();
         }
-
-        if (traceListener != null) {
-            traceListener.close();
-        }
-
-        initialContext.notifyChildThreads();
-
-        closeMessageEmitter();
-        closeResult(outputDestination, mustClose, initialContext);
     }
 
     /**
@@ -2162,90 +2164,93 @@ public class Controller {
 
         boolean mustClose = false;
 
-        principalResult = outputDestination;
-        if (principalResultURI == null) {
-            principalResultURI = outputDestination.getSystemId();
-        }
-
-        XPathContextMajor initialContext = newXPathContext();
-        initialContext.createThreadManager();
-        initialContext.setOriginatingConstructType(Location.CONTROLLER);
-
-        NodeInfo startNode = null;
-        if (initialContextItem != null) {
-            startNode = (NodeInfo) initialContextItem.head();
-        }
-        if (startNode != null) {
-
-            initialContextItem = startNode;
-            contextForGlobalVariables = startNode.getRoot();
-
-            if (startNode.getConfiguration() == null) {
-                // must be a non-standard document implementation
-                throw new XPathException("The supplied source document must be associated with a Configuration");
+        try {
+            principalResult = outputDestination;
+            if (principalResultURI == null) {
+                principalResultURI = outputDestination.getSystemId();
             }
 
-            if (!startNode.getConfiguration().isCompatible(executable.getConfiguration())) {
-                throw new XPathException(
-                        "Source document and stylesheet must use the same or compatible Configurations",
-                        SaxonErrorCode.SXXP0004);
+            XPathContextMajor initialContext = newXPathContext();
+            initialContext.createThreadManager();
+            initialContext.setOriginatingConstructType(Location.CONTROLLER);
+
+            NodeInfo startNode = null;
+            if (initialContextItem != null) {
+                startNode = (NodeInfo) initialContextItem.head();
             }
-            if (startNode instanceof DocumentInfo && ((DocumentInfo) startNode).isTyped() && !executable.isSchemaAware()) {
-                throw new XPathException("Cannot use a schema-validated source document unless the stylesheet is schema-aware");
+            if (startNode != null) {
+
+                initialContextItem = startNode;
+                contextForGlobalVariables = startNode.getRoot();
+
+                if (startNode.getConfiguration() == null) {
+                    // must be a non-standard document implementation
+                    throw new XPathException("The supplied source document must be associated with a Configuration");
+                }
+
+                if (!startNode.getConfiguration().isCompatible(executable.getConfiguration())) {
+                    throw new XPathException(
+                            "Source document and stylesheet must use the same or compatible Configurations",
+                            SaxonErrorCode.SXXP0004);
+                }
+                if (startNode instanceof DocumentInfo && ((DocumentInfo) startNode).isTyped() && !executable.isSchemaAware()) {
+                    throw new XPathException("Cannot use a schema-validated source document unless the stylesheet is schema-aware");
+                }
+                UnfailingIterator currentIter = SingletonIterator.makeIterator(startNode);
+                FocusIterator focus = new FocusTrackingIterator(currentIter);
+                if (initialTemplateName != null) {
+                    focus.next();
+                }
+                initialContext.setCurrentIterator(focus);
             }
-            UnfailingIterator currentIter = SingletonIterator.makeIterator(startNode);
-            FocusIterator focus = new FocusTrackingIterator(currentIter);
-            if (initialTemplateName != null) {
-                focus.next();
+
+
+            // In tracing/debugging mode, evaluate all the global variables first
+            if (traceListener != null) {
+                preEvaluateGlobals(initialContext);
             }
-            initialContext.setCurrentIterator(focus);
+
+            outputDestination = openResult(outputDestination, initialContext);
+
+            // Process the source document by applying template rules to the initial context node
+
+            ParameterSet ordinaryParams = null;
+            if (initialTemplateParams != null) {
+                ordinaryParams = new ParameterSet(initialTemplateParams);
+            }
+            ParameterSet tunnelParams = null;
+            if (initialTemplateTunnelParams != null) {
+                tunnelParams = new ParameterSet(initialTemplateTunnelParams);
+            }
+
+            Template t = ((PreparedStylesheet) executable).getNamedTemplate(initialTemplateName);
+            if (t == null) {
+                throw new XPathException("Template " + initialTemplateName.getDisplayName() + " does not exist (or is not public)", "XTDE0040");
+            }
+
+            XPathContextMajor c2 = initialContext.newContext();
+            initialContext.setOriginatingConstructType(Location.CONTROLLER);
+            c2.setCurrentComponent(t.getDeclaringComponent());
+            c2.openStackFrame(t.getStackFrameMap());
+            c2.setLocalParameters(ordinaryParams);
+            c2.setTunnelParameters(tunnelParams);
+
+            TailCall tc = t.expand(c2);
+            while (tc != null) {
+                tc = tc.processLeavingTail();
+            }
+
+
+            if (traceListener != null) {
+                traceListener.close();
+            }
+
+            initialContext.notifyChildThreads();
+
+            closeResult(outputDestination, mustClose, initialContext);
+        } finally {
+            closeMessageEmitter();
         }
-
-
-        // In tracing/debugging mode, evaluate all the global variables first
-        if (traceListener != null) {
-            preEvaluateGlobals(initialContext);
-        }
-
-        outputDestination = openResult(outputDestination, initialContext);
-
-        // Process the source document by applying template rules to the initial context node
-
-        ParameterSet ordinaryParams = null;
-        if (initialTemplateParams != null) {
-            ordinaryParams = new ParameterSet(initialTemplateParams);
-        }
-        ParameterSet tunnelParams = null;
-        if (initialTemplateTunnelParams != null) {
-            tunnelParams = new ParameterSet(initialTemplateTunnelParams);
-        }
-
-        Template t = ((PreparedStylesheet) executable).getNamedTemplate(initialTemplateName);
-        if (t == null) {
-            throw new XPathException("Template " + initialTemplateName.getDisplayName() + " does not exist (or is not public)", "XTDE0040");
-        }
-
-        XPathContextMajor c2 = initialContext.newContext();
-        initialContext.setOriginatingConstructType(Location.CONTROLLER);
-        c2.setCurrentComponent(t.getDeclaringComponent());
-        c2.openStackFrame(t.getStackFrameMap());
-        c2.setLocalParameters(ordinaryParams);
-        c2.setTunnelParameters(tunnelParams);
-
-        TailCall tc = t.expand(c2);
-        while (tc != null) {
-            tc = tc.processLeavingTail();
-        }
-
-
-        if (traceListener != null) {
-            traceListener.close();
-        }
-
-        initialContext.notifyChildThreads();
-
-        closeMessageEmitter();
-        closeResult(outputDestination, mustClose, initialContext);
     }
 
 
@@ -2273,59 +2278,62 @@ public class Controller {
 
         openMessageEmitter();
 
-        // Determine whether we need to close the output stream at the end. We
-        // do this if the Result object is a StreamResult and is supplied as a
-        // system ID, not as a Writer or OutputStream
-
-        boolean mustClose = result instanceof StreamResult &&
-                ((StreamResult) result).getOutputStream() == null;
-
-        principalResult = result;
-        if (principalResultURI == null) {
-            principalResultURI = result.getSystemId();
-        }
-
-        XPathContextMajor initialContext = newXPathContext();
-        initialContext.setOriginatingConstructType(Location.CONTROLLER);
-
-        initialContextItem = null;
-        contextForGlobalVariables = null;
-
-        result = openResult(result, initialContext);
-
-        // Process the source document by applying template rules to the initial context node
-
-        if (!mode.isDeclaredStreamable()) {
-            if (config.getBooleanProperty(FeatureKeys.STREAMING_FALLBACK)) {
-                warning("Mode is not streamable; attempting fallback to non-streamed evaluation", "");
-                DocumentInfo doc = config.buildDocument(source);
-                initialMode = mode;
-                transformDocument(doc, result);
-                return;
-            } else {
-                throw new XPathException("mode supplied to transformStream() must be streamable");
-            }
-        }
-        Receiver despatcher = config.makeStreamingTransformer(initialContext, mode);
-        if (despatcher == null) {
-            throw new XPathException("Streaming requires Saxon-EE");
-        }
-        if (config.isStripsAllWhiteSpace() || executable.stripsWhitespace()) {
-            despatcher = makeStripper(despatcher);
-        }
-        PipelineConfiguration pipe = despatcher.getPipelineConfiguration();
-        pipe.getParseOptions().setSchemaValidationMode(validationMode);
         try {
-            Sender.send(source, despatcher, null);
-        } catch (QuitParsingException e) {
-            // do nothing: early exit. Bug 2304
-        }
-        if (traceListener != null) {
-            traceListener.close();
-        }
+            // Determine whether we need to close the output stream at the end. We
+            // do this if the Result object is a StreamResult and is supplied as a
+            // system ID, not as a Writer or OutputStream
 
-        closeResult(result, mustClose, initialContext);
-        closeMessageEmitter();
+            boolean mustClose = result instanceof StreamResult &&
+                    ((StreamResult) result).getOutputStream() == null;
+
+            principalResult = result;
+            if (principalResultURI == null) {
+                principalResultURI = result.getSystemId();
+            }
+
+            XPathContextMajor initialContext = newXPathContext();
+            initialContext.setOriginatingConstructType(Location.CONTROLLER);
+
+            initialContextItem = null;
+            contextForGlobalVariables = null;
+
+            result = openResult(result, initialContext);
+
+            // Process the source document by applying template rules to the initial context node
+
+            if (!mode.isDeclaredStreamable()) {
+                if (config.getBooleanProperty(FeatureKeys.STREAMING_FALLBACK)) {
+                    warning("Mode is not streamable; attempting fallback to non-streamed evaluation", "");
+                    DocumentInfo doc = config.buildDocument(source);
+                    initialMode = mode;
+                    transformDocument(doc, result);
+                    return;
+                } else {
+                    throw new XPathException("mode supplied to transformStream() must be streamable");
+                }
+            }
+            Receiver despatcher = config.makeStreamingTransformer(initialContext, mode);
+            if (despatcher == null) {
+                throw new XPathException("Streaming requires Saxon-EE");
+            }
+            if (config.isStripsAllWhiteSpace() || executable.stripsWhitespace()) {
+                despatcher = makeStripper(despatcher);
+            }
+            PipelineConfiguration pipe = despatcher.getPipelineConfiguration();
+            pipe.getParseOptions().setSchemaValidationMode(validationMode);
+            try {
+                Sender.send(source, despatcher, null);
+            } catch (QuitParsingException e) {
+                // do nothing: early exit. Bug 2304
+            }
+            if (traceListener != null) {
+                traceListener.close();
+            }
+
+            closeResult(result, mustClose, initialContext);
+        } finally {
+            closeMessageEmitter();
+        }
 
     }
 
@@ -2404,7 +2412,10 @@ public class Controller {
 
 
     private void closeMessageEmitter() throws XPathException {
-        getMessageEmitter().close();
+        Receiver me = getMessageEmitter();
+        if (me != null) {
+            me.close();
+        }
     }
 
     private void closeResult(Result result, boolean mustClose, XPathContextMajor initialContext) throws XPathException {

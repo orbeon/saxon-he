@@ -21,20 +21,41 @@ public class StandardLogger extends Logger {
 
     private PrintStream out = System.err;
     private int threshold = Logger.INFO;
+    private boolean mustClose = false;
+
+    /**
+     * Create a Logger that wraps the System.err output stream
+     */
 
     public StandardLogger() {}
+
+    /**
+     * Create a Logger that wraps the specified stream. Closing the Logger will
+     * not close the underlying stream; this remains the caller's responsibility
+     * @param stream the stream to which the Logger's output should be written
+     */
 
     public StandardLogger(PrintStream stream) {
         setPrintStream(stream);
     }
 
+    /**
+     * Create a Logger that writes to a specified file
+     * @param fileName the file to which output should be written. When the logger is closed,
+     *                 output will be flushed to the file.
+     * @throws FileNotFoundException if the file is not accessible
+     */
+
     public StandardLogger(File fileName) throws FileNotFoundException {
         setPrintStream(new PrintStream(fileName));
+        mustClose = true;
     }
 
     /**
      * Set the output destination for messages
-     * @param stream the stream to which messages will be written. Defaults to System.err
+     * @param stream the stream to which messages will be written. Defaults to System.err. The caller
+     *               is responsible for closing the stream after use (it will not be closed by the
+     *               close() method on the Logger)
      */
 
     public void setPrintStream(PrintStream stream) {
@@ -90,6 +111,16 @@ public class StandardLogger extends Logger {
     public void println(String message, int severity) {
         if (severity >= threshold) {
             out.println(message);
+        }
+    }
+
+    /**
+     * Close the logger, indicating that no further messages will be written
+     */
+    @Override
+    public void close() {
+        if (mustClose) {
+            out.close();
         }
     }
 }
