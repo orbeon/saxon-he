@@ -397,11 +397,15 @@ public final class TypeChecker {
                 throw err;
             }
         } else {
+            if (reqCard == StaticProperty.ALLOWS_ZERO) {
+                // No point doing any item checking if no items are allowed in the result
+                relation = TypeHierarchy.SAME_TYPE;
+            }
             if (relation == TypeHierarchy.DISJOINT) {
-                // The item types may be disjoint, but if both the supplied and required types permit
-                // an empty sequence, we can't raise a static error. Raise a warning instead.
                 if (Cardinality.allowsZero(suppliedCard) &&
                         Cardinality.allowsZero(reqCard)) {
+                    // The item types may be disjoint, but if both the supplied and required types permit
+                    // an empty sequence, we can't raise a static error. Raise a warning instead.
                     if (suppliedCard != StaticProperty.EMPTY) {
                         String msg = "Required item type of " + role.getMessage() +
                                 " is " + reqItemType.toString() +
