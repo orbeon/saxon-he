@@ -463,6 +463,10 @@ public class Serializer implements Destination {
             } catch (XPathException e) {
                 throw new IllegalArgumentException(e.getMessage());
             }
+            if (uri.equals(NamespaceConstant.SAXON) && property.getLocalName().equals("next-in-chain")) {
+                // ignore the next-in-chain property: it's not relevant to a Serializer
+                return;
+            }
         }
         if (value == null) {
             properties.remove(property.getStructuredQName());
