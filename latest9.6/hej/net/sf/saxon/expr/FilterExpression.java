@@ -323,6 +323,15 @@ public final class FilterExpression extends Expression implements ContextSwitchi
             adoptChildExpression(filter2);
         }
 
+        // Rewrite child::X[last()] as child::X[empty(following-sibling::X)] - especially useful for patterns
+
+        if (filter instanceof IsLastExpression && base instanceof AxisExpression &&
+            ((AxisExpression) base).getAxis() == AxisInfo.CHILD) {
+            NodeTest test = ((AxisExpression) base).getNodeTest();
+            AxisExpression fs = new AxisExpression(AxisInfo.FOLLOWING_SIBLING, test);
+            filter = SystemFunctionCall.makeSystemFunction("empty", new Expression[]{fs});
+        }
+
         // if the result of evaluating the filter cannot include numeric values, then we can use
         // its effective boolean value
 
