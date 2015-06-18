@@ -98,6 +98,13 @@
                </xs:documentation>
             </xs:annotation>
          </xs:attribute>
+         <xs:attribute name="allowStreamabilityExtensions"
+                       use="optional"
+                       type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation> Saxon 9.5 only. </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
          <xs:attribute name="collationUriResolver"
                        use="optional"
                        type="c:javaClassNameType">
@@ -230,20 +237,6 @@
                </xs:documentation>
             </xs:annotation>
          </xs:attribute>
-         <xs:attribute name="errorListener" use="optional" type="c:javaClassNameType">
-            <xs:annotation>
-               <xs:documentation>
-                  <p>
-                     <code>ERROR_LISTENER_CLASS</code> is the name of the class used to implement the JAXP
-                    <code>ErrorListener</code>. This is used both at compile time and at run-time.
-                Currently if this option is specified, the class is instantiated, and the same
-                instance is used for all processes running under this configuration. This may change
-                in future so that a new instance is created for each compilation or evaluation.</p>
-                  <p>Finer control can be obtained by setting the <code>ErrorListener</code> for a
-                specific XSLT or XQuery compilation or evaluation.</p>
-               </xs:documentation>
-            </xs:annotation>
-         </xs:attribute>
          <xs:attribute name="environmentVariableResolver"
                        use="optional"
                        type="c:javaClassNameType">
@@ -257,6 +250,20 @@
                     <code>available-environment-variables()</code> or
                     <code>environment-variable()</code> are called. Saxon essentially delegates the
                 evaluation of the function to the external resolver.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="errorListener" use="optional" type="c:javaClassNameType">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>
+                     <code>ERROR_LISTENER_CLASS</code> is the name of the class used to implement the JAXP
+                    <code>ErrorListener</code>. This is used both at compile time and at run-time.
+                Currently if this option is specified, the class is instantiated, and the same
+                instance is used for all processes running under this configuration. This may change
+                in future so that a new instance is created for each compilation or evaluation.</p>
+                  <p>Finer control can be obtained by setting the <code>ErrorListener</code> for a
+                specific XSLT or XQuery compilation or evaluation.</p>
                </xs:documentation>
             </xs:annotation>
          </xs:attribute>

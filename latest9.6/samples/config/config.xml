@@ -62,7 +62,7 @@
         schemaAware="true"
         messageEmitter=""
         staticUriResolver=""
-        staticErrorListener="net.sf.saxon.StandardErrorListener"
+        staticErrorListener="net.sf.saxon.lib.StandardErrorListener"
         outputUriResolver=""
         styleParser="">
     <extensionElement namespace="http://saxon.sf.net/sql" factory="net.sf.saxon.option.sql.SQLElementFactory"/>

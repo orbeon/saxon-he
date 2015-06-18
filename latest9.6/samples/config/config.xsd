@@ -30,6 +30,11 @@
       <xs:attribute name="allowExternalFunctions" use="optional" type="xs:boolean"/>
       <xs:attribute name="allowMultiThreading" use="optional" type="xs:boolean"/>
       <xs:attribute name="allowOldJavaUriFormat" use="optional" type="xs:boolean"/>
+      <xs:attribute name="allowStreamabilityExtensions" use="optional" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation> Saxon 9.5 only. </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
       <xs:attribute name="collationUriResolver" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="collectionUriResolver" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="compileWithTracing" use="optional" type="xs:boolean"/>
@@ -41,8 +46,8 @@
       <xs:attribute name="dtdValidation" use="optional" type="xs:boolean"/>
       <xs:attribute name="dtdValidationRecoverable" use="optional" type="xs:boolean"/>
       <xs:attribute name="entityResolver" use="optional" type="c:javaClassNameType"/>
-      <xs:attribute name="errorListener" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="environmentVariableResolver" use="optional" type="c:javaClassNameType"/>
+      <xs:attribute name="errorListener" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="expandAttributeDefaults" use="optional" type="xs:boolean"/>
       <xs:attribute name="generateByteCode" use="optional" type="xs:boolean"/>
       <xs:attribute name="ignoreSAXSourceParser" use="optional" type="xs:boolean"/>
@@ -57,7 +62,7 @@
       <xs:attribute name="serializerFactory" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="sourceResolver" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="standardErrorOutputFile" use="optional" type="c:fileNameType"/>
-      <xs:attribute name="streamability" use="optional" type="c:streamabilityType"/>
+      <xs:attribute name="streamability" use="optional" type="c:streamabilityType"/>   
       <xs:attribute name="streamingFallback" use="optional" type="xs:boolean"/>
       <xs:attribute name="stripSpace" use="optional" type="c:stripSpaceType"/>
       <xs:attribute name="styleParser" use="optional" type="c:javaClassNameType"/>
@@ -378,7 +383,7 @@
       </xs:sequence>
       <xs:attribute name="initialMode" use="optional" type="xs:QName"/> 
       <xs:attribute name="initialTemplate" use="optional" type="xs:QName"/>      
-      <xs:attribute name="messageEmitter" use="optional" type="c:javaClassNameType"/>
+      <xs:attribute name="messageEmitter" use="optional" type="c:javaClassNameType"/>      
       <xs:attribute name="outputUriResolver" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="recoveryPolicy" use="optional" type="c:recoveryPolicyType"/>
       <xs:attribute name="schemaAware" use="optional" type="xs:boolean"/>      
