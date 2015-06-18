@@ -391,7 +391,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
                 props.put(name, value);
             }
         }
-        props.put("#element", "global");
+        props.put("#element", "xquery");
         applyProperty(props, "allowUpdate", FeatureKeys.XQUERY_ALLOW_UPDATE);
         applyProperty(props, "constructionMode", FeatureKeys.XQUERY_CONSTRUCTION_MODE);
         applyProperty(props, "defaultElementNamespace", FeatureKeys.XQUERY_DEFAULT_ELEMENT_NAMESPACE);
@@ -416,7 +416,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
                 props.put(name, value);
             }
         }
-        props.put("#element", "global");
+        props.put("#element", "xslt");
         applyProperty(props, "initialMode", FeatureKeys.XSLT_INITIAL_MODE);
         applyProperty(props, "initialTemplate", FeatureKeys.XSLT_INITIAL_TEMPLATE);
         applyProperty(props, "messageEmitter", FeatureKeys.MESSAGE_EMITTER_CLASS);
@@ -439,7 +439,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
                 props.put(name, value);
             }
         }
-        props.put("#element", "global");
+        props.put("#element", "xsd");
         applyProperty(props, "assertionsCanSeeComments", FeatureKeys.ASSERTIONS_CAN_SEE_COMMENTS);
         applyProperty(props, "multipleSchemaImports", FeatureKeys.MULTIPLE_SCHEMA_IMPORTS);
         applyProperty(props, "occurrenceLimits", FeatureKeys.OCCURRENCE_LIMITS);
