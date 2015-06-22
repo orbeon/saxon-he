@@ -587,7 +587,7 @@ namespace Saxon.Api
 		/// <param name="locations">Locations.</param>
 		public Source[] resolve(String targetNamespace, String baseURI, String[] locations)
 		{
-			if (config.isSchemaAvailable(targetNamespace))
+			if (config.isSchemaAvailable(targetNamespace) && !(java.lang.Boolean.valueOf(((java.lang.Object)config.getConfigurationProperty(JFeatureKeys.MULTIPLE_SCHEMA_IMPORTS)).toString()).booleanValue()))
 			{
 				return new Source[0];
 			}
