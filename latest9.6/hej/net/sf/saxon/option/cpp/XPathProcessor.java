@@ -91,13 +91,22 @@ public class XPathProcessor extends SaxonCAPI {
      *
      *
      **/
-    public XdmValue evaluate(String cwd, String xpathStr, String[] params, Object[] values) throws SaxonApiException {
+    public XdmValue[] evaluate(String cwd, String xpathStr, String[] params, Object[] values) throws SaxonApiException {
 
         selector = compiler.compile(xpathStr).load();
         applyXPathProperties(this, cwd, processor, selector, params, values);
 
-
-        return compiler.evaluate(xpathStr, contextItem);
+        XdmValue value = compiler.evaluate(xpathStr, contextItem);
+        if(value.size() ==0) {
+            return null;
+        }
+        XdmValue[] xdmValues = new XdmValue[value.size()];
+        int i =0;
+        for(XdmItem item : value) {
+            xdmValues[i] = item;
+            i++;
+        }
+        return xdmValues;
 
     }
 
