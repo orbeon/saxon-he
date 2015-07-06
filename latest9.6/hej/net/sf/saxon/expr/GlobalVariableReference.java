@@ -8,7 +8,6 @@
 package net.sf.saxon.expr;
 
 import net.sf.saxon.expr.instruct.GlobalVariable;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.trans.SymbolicName;
@@ -89,7 +88,7 @@ public class GlobalVariableReference extends VariableReference implements Compon
     @Override
     public Sequence evaluateVariable(XPathContext c) throws XPathException {
 
-        if (bindingSlot >= 0) {
+        if (bindingSlot >= 0 && c.getCurrentComponent() != null) {
             Component target = c.getTargetComponent(bindingSlot);
             if (target.getVisibility() == Visibility.ABSTRACT) {
                 // TODO: review whether this should be a static error
