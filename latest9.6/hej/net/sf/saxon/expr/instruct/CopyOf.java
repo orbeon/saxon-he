@@ -652,7 +652,8 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
                             val.setPipelineConfiguration(savedPipe);
                         }
                         if (val != out) {
-                            val.close(); // needed to flush out unresolved IDREF values when validating: test copy-5021
+                            // See bug 2403
+                            //val.close(); // needed to flush out unresolved IDREF values when validating: test copy-5021
                         }
                         break;
                     }
