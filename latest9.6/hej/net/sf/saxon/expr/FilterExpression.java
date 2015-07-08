@@ -325,7 +325,9 @@ public final class FilterExpression extends Expression implements ContextSwitchi
 
         // Rewrite child::X[last()] as child::X[empty(following-sibling::X)] - especially useful for patterns
 
-        if (filter instanceof IsLastExpression && base instanceof AxisExpression &&
+        if (filter instanceof IsLastExpression &&        // See bug 2401
+            ((IsLastExpression) getFilter()).getCondition() &&
+            base instanceof AxisExpression &&
             ((AxisExpression) base).getAxis() == AxisInfo.CHILD) {
             NodeTest test = ((AxisExpression) base).getNodeTest();
             AxisExpression fs = new AxisExpression(AxisInfo.FOLLOWING_SIBLING, test);
