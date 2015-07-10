@@ -92,21 +92,7 @@ import java.util.Properties;
         }
     }
 
-    /**
-     * Register the Schema by file name.
-     * @param cwd    - Current Working directory
-     * @param xsd    - File name of the schema relative to the cwd
-    */
-    public SchemaValidator registerSchema(String cwd, String xsd) throws SaxonApiException {
-        //TODO sort out the handling of options on the SchemaValidator
-        SchemaManager schemaManager = processor.getSchemaManager();
-        Source source_xsd = resolveFileToSource(cwd, xsd);
 
-        SchemaValidator validator = schemaManager.newSchemaValidator();
-        validator.setErrorListener(errorListener);
-        schemaManager.load(source_xsd);
-        return validator;
-    }
 
     /**
      * Error Listener to capture errors
@@ -237,13 +223,11 @@ import java.util.Properties;
     /**
      * parse XML document with addition parameters. Document supplied by file name.
      * @param cwd    - Current Working directory
-     * @param validator - Supplie Scema validator
+     * @param validator - Supplied Schema validator
      * @param filename    - File name of the XML document to parse
-     * @param params  - parameters and property names given as an array of stings
-     * @param values - the values of the parameters and properties. given as a array of Java objects
      * @return  XdmNode
     */
-    public XdmNode parseXmlFile(String cwd, SchemaValidator validator, String filename, String[] params, String[] values) throws SaxonApiException {
+    public XdmNode parseXmlFile(String cwd, SchemaValidator validator, String filename) throws SaxonApiException {
         try {
             doc = parseXmlFile(processor, cwd, validator, filename);
             return doc;
@@ -261,18 +245,16 @@ import java.util.Properties;
      * @return XdmNode
     */
     public XdmNode parseXmlString(String xml) throws SaxonApiException {
-        return parseXmlString(null, xml, null, null);
+        return parseXmlString(null, xml);
     }
 
     /**
      * parse XML document supplied string
      * @param xml    - string representation of XML document
      * @param validator - Supplied Schema validator
-     * @param params  - parameters and property names given as an array of stings
-     * @param values - the values of the parameters and properties. given as a array of Java objects
      * @return XdmNode
     */
-    public XdmNode parseXmlString(SchemaValidator validator, String xml, String[] params, String[] values) throws SaxonApiException {
+    public XdmNode parseXmlString(SchemaValidator validator, String xml) throws SaxonApiException {
         try {
             doc = parseXmlString(processor, validator, xml);
             if (debug) {
@@ -330,7 +312,7 @@ import java.util.Properties;
         return valueForCpp;
     }
 
-    //TODO pass the schema file and options as an array instead of the SchemaValidator object
+    // This method used to be used internally
     public static XdmNode parseXmlString(Processor processor, SchemaValidator validator, String xml) throws SaxonApiException {
         try {
             StringReader reader = new StringReader(xml);

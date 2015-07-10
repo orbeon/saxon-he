@@ -7,6 +7,7 @@
 
 package net.sf.saxon.option.cpp;
 
+import com.sun.xml.internal.rngom.binary.ErrorPattern;
 import net.sf.saxon.om.AtomicArray;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.s9api.*;
@@ -324,13 +325,28 @@ public class XsltProcessor extends SaxonCAPI {
 
                         } else if (value instanceof Object[]) {
                             Object[] arr = (Object[]) value;
+                             if(debug){
+                                 System.err.println("DEBUG: Array of parameters found. arr len="+arr.length);
 
+                             }
                             List<AtomicValue> valueList = new ArrayList<AtomicValue>();
                             for (int j = 0; j < arr.length; j++) {
                                 Object itemi = arr[j];
+                                if(itemi == null){
+                                    System.err.println("Error: Null item at "+i+"th position in array of XdmValues");
+                                    break;
+                                }
+                                if(debug) {
+                                    System.err.println("Java object:"+itemi);
+                                }
                                 if (itemi instanceof XdmValue) {
                                     valueList.add((AtomicValue) (((XdmValue) itemi).getUnderlyingValue()));
                                 } else {
+                                    XdmValue valuex = getXdmValue(itemi);
+                                    if(valuex == null) {
+                                        System.err.println("Error: Null item at "+i+"th position in array of XdmValues when converting");
+                                        break;
+                                    }
                                     valueList.add((AtomicValue) (getXdmValue(itemi)).getUnderlyingValue());
                                 }
                             }
@@ -339,6 +355,11 @@ public class XsltProcessor extends SaxonCAPI {
                         } else {
                             //fast track for primitive values
                             valueForCpp = getXdmValue(value);
+                             if(debug){
+                                System.err.println("DEBUG: primitive value found");
+                                net.sf.saxon.type.ItemType suppliedItemType = SequenceTool.getItemType(valueForCpp.getUnderlyingValue(), processor.getUnderlyingConfiguration().getTypeHierarchy());
+                                System.err.println("XSLTTransformerForCpp Type: " + suppliedItemType.toString());
+                             }
                         }
 
 

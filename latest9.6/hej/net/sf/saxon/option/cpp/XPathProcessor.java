@@ -93,6 +93,11 @@ public class XPathProcessor extends SaxonCAPI {
      **/
     public XdmValue[] evaluate(String cwd, String xpathStr, String[] params, Object[] values) throws SaxonApiException {
 
+        if(debug) {
+            if(xpathStr != null) {
+                System.err.println("xpathString: "+xpathStr);
+            }
+        }
         selector = compiler.compile(xpathStr).load();
         applyXPathProperties(this, cwd, processor, selector, params, values);
 
@@ -123,7 +128,11 @@ public class XPathProcessor extends SaxonCAPI {
      *
      **/
     public XdmItem evaluateSingle(String cwd, String xpathStr, String[] params, Object[] values) throws SaxonApiException {
-
+        if(debug) {
+            if(xpathStr != null) {
+                System.err.println("xpathString: "+xpathStr);
+            }
+        }
         selector = compiler.compile(xpathStr).load();
         applyXPathProperties(this, cwd, processor, selector, params, values);
 

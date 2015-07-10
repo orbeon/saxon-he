@@ -262,7 +262,7 @@ public class XQueryEngine extends SaxonCAPI {
                 "  <author>Giada De Laurentiis</author>\n" +
                 "  <year>2005</year>\n" +
                 "  <price>30.00</price>\n" +
-                "</book></bookstore>", null, null);
+                "</book></bookstore>");
 
         String[] params1 = {"s", "qs"};
         Object[] values1 = {"xmark10.xml", "count(//*)"};
