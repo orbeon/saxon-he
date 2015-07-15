@@ -9,6 +9,7 @@ package net.sf.saxon.style;
 
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.Literal;
+import net.sf.saxon.expr.StringLiteral;
 import net.sf.saxon.expr.instruct.Block;
 import net.sf.saxon.expr.instruct.ValueOf;
 import net.sf.saxon.om.AttributeCollection;
@@ -97,12 +98,16 @@ public class XSLText extends XSLLeafNodeConstructor {
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         if (isExpandingText()) {
             TextImpl child = (TextImpl)iterateAxis(AxisInfo.CHILD).next();
-            List<Expression> contents = new ArrayList<Expression>(10);
-            getCompilation().getStyleNodeFactory(true).compileContentValueTemplate(child, contents, this);
-            Expression block = Block.makeBlock(contents, this);
-            int locationId = allocateLocationId(getSystemId(), getLineNumber());
-            block.setLocationId(locationId);
-            return block;
+            if (child != null) {
+                List<Expression> contents = new ArrayList<Expression>(10);
+                getCompilation().getStyleNodeFactory(true).compileContentValueTemplate(child, contents, this);
+                Expression block = Block.makeBlock(contents, this);
+                int locationId = allocateLocationId(getSystemId(), getLineNumber());
+                block.setLocationId(locationId);
+                return block;
+            } else {
+                return new ValueOf(new StringLiteral(StringValue.EMPTY_STRING, this), disable, false);
+            }
         } else {
             return new ValueOf(Literal.makeLiteral(value, this), disable, false);
         }
