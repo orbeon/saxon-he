@@ -1,16 +1,8 @@
 package net.sf.saxon.option.cpp;
 
-import com.sun.tools.internal.jxc.gen.config.Schema;
-import net.sf.saxon.lib.StandardErrorListener;
-import net.sf.saxon.om.AtomicArray;
-import net.sf.saxon.om.SequenceTool;
-import net.sf.saxon.s9api.*;
-import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.value.AtomicValue;
 
-import javax.xml.transform.ErrorListener;
+import net.sf.saxon.s9api.*;
 import javax.xml.transform.Source;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.StringReader;
@@ -152,6 +144,15 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
         validator = null;
     }
 
+    /**
+     * Validate an instance document supplied as a Source object
+     * @param cwd  - Current working directory
+     * @param sourceFilename  - The name of the file to be validated
+     * @param outfilename  - The name of the file where output from the validator will be sent. Can be null. TODO: does not work as yet
+     * @param params - Parameters and properties names required by the Validator. This could contain the source as a node , source as string or file name, validator options, etc
+     * @param values -  The values for the parameters and properties required by the Validator
+     *
+     **/
     public void validate(String cwd, String xsd, String sourceFilename, String outfilename, String[] params, Object[] values) throws SaxonApiException {
         if (xsd == null && validator == null) {
             throw new SaxonApiException("Schema document not found");
@@ -179,6 +180,16 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
         }
     }
 
+    /**
+     * Validate an instance document supplied as a Source object with the validated docuemnt returned to the calling program
+     * @param cwd  - Current working directory
+     * @param sourceFilename  - The name of the file to be validated
+     * @param outputFilename  - The name of the file where output from the validator will be sent. Can be null. TODO: does not work as yet
+     * @param params - Parameters and properties names required by the Validator. This could contain the source as a node , source as string or file name, validator options, etc
+     * @param values -  The values for the parameters and properties required by the Validator
+     * @return XdmNode
+     *
+     **/
     public XdmNode validateToNode(String cwd, String xsd, String sourceFilename, String outputFilename, String[] params, Object[] values) throws SaxonApiException {
 
 

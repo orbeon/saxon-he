@@ -7,7 +7,6 @@
 
 package net.sf.saxon.option.cpp;
 
-import com.sun.xml.internal.rngom.binary.ErrorPattern;
 import net.sf.saxon.om.AtomicArray;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.s9api.*;
