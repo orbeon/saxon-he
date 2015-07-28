@@ -1,8 +1,13 @@
 package net.sf.saxon.option.cpp;
 
 
+import net.sf.saxon.lib.StandardErrorListener;
 import net.sf.saxon.s9api.*;
+import net.sf.saxon.type.SchemaException;
+
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.StringReader;
@@ -18,7 +23,7 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
     private SchemaValidator validator = null;
     private Source source = null;
     private String xmlString = null;
-   protected List<SaxonCException> schemaExceptions = new ArrayList<SaxonCException>();
+   protected List<SchemaException> schemaExceptions = new ArrayList<SchemaException>();
 
     public SchemaValidatorForCpp() {
         processor = new Processor(true);
@@ -26,7 +31,15 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
     }
 
 
-    public void setSource(Source s) {
+    public SchemaValidatorForCpp(Processor proc) {
+        processor = proc;
+        schemaManager = processor.getSchemaManager();
+    }
+
+    /**
+     *  Internal use only
+     * */
+    private void setSource(Source s) {
         source = s;
     }
 
@@ -45,8 +58,9 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
 //
 //        @Override
 //        public void warning(TransformerException exception) {
-//            SaxonCException saxonException = new SaxonCException((XPathException) exception);
-//            schemaExceptions.add(saxonException);
+//
+//
+//            schemaExceptions.add(sxception);
 //
 //
 //        }
@@ -87,7 +101,7 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
         Source source_xsd = resolveFileToSource(cwd, xsd);
 
         validator = schemaManager.newSchemaValidator();
-        validator.setErrorListener(errorListener);
+        //validator.setErrorListener(errorListener);
         schemaManager.load(source_xsd);
 
     }
@@ -110,7 +124,7 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
         }
 
         validator = schemaManager.newSchemaValidator();
-        validator.setErrorListener(errorListener);
+        //validator.setErrorListener(errorListener);
 
         schemaManager.load(new StreamSource(new StringReader(xsd), systemId));
 
@@ -142,24 +156,28 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
     public void resetValidator(){
         schemaManager = processor.getSchemaManager();
         validator = null;
+        source = null;
     }
 
     /**
      * Validate an instance document supplied as a Source object
      * @param cwd  - Current working directory
      * @param sourceFilename  - The name of the file to be validated
-     * @param outfilename  - The name of the file where output from the validator will be sent. Can be null. TODO: does not work as yet
+     * @param outfilename  - The name of the file where output from the validator will be sent. Can be null.
      * @param params - Parameters and properties names required by the Validator. This could contain the source as a node , source as string or file name, validator options, etc
      * @param values -  The values for the parameters and properties required by the Validator
      *
      **/
     public void validate(String cwd, String xsd, String sourceFilename, String outfilename, String[] params, Object[] values) throws SaxonApiException {
-        if (xsd == null && validator == null) {
+        source = null; //This is required to make sure the source object created from a previous call is not used
+        if (xsd == null && validator == null && sourceFilename == null) {
             throw new SaxonApiException("Schema document not found");
         }
 
         if (xsd != null && validator == null) {
             registerSchema(cwd, xsd, params, values);
+        } else {
+            validator = schemaManager.newSchemaValidator();
         }
 
         if (outfilename != null) {
@@ -170,7 +188,7 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
             validator.setDestination(serializer);
         }
         applySchemaProperties(cwd, processor, this, params, values);
-        if(source == null) {
+        if(source == null && sourceFilename != null && !sourceFilename.isEmpty()) {
             source = resolveFileToSource(cwd, sourceFilename);
         }
         if (source != null) {
@@ -192,10 +210,13 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
      **/
     public XdmNode validateToNode(String cwd, String xsd, String sourceFilename, String outputFilename, String[] params, Object[] values) throws SaxonApiException {
 
-
+        source = null; //This is required to make sure the source object created from a previous call is not used
         if (xsd != null && validator == null) {
             registerSchema(cwd, xsd, params, values);
+        } else {
+            validator = schemaManager.newSchemaValidator();
         }
+
         if(sourceFilename != null) {
             return parseXmlFile(cwd, validator, sourceFilename);
         }
@@ -262,7 +283,7 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
                         QName qname = QName.fromClarkName(paramName);
                         thisClass.getValidator().setDocumentElementTypeName(qname);
                     }else if (params[i].equals("report")) {
-                        //TODO: outpout validation to file.
+                        //TODO: output validation to file.
                         //thisClass.getValidator().setErrorListener(thisClass.schemaListener);
 
                     } else if (params[i].equals("o") && outfile == null) {
@@ -341,6 +362,9 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
 
         validatorForCpp.registerSchema(cwd, "books.xsd", null, null);
         validatorForCpp.validate(cwd, null, "book-wrapper.xml", null, null, null);
+        validatorForCpp.resetValidator();
+        System.out.println("\n\n Testing family.xml\n");
+        validatorForCpp.validate("/Users/ond1/", null, "family.xml", null, null, null);
 
 
          String invalid_xml = "<?xml version='1.0'?><request><a/><!--comment--></request>";

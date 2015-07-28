@@ -7,6 +7,7 @@
 
 package net.sf.saxon.option.cpp;
 
+import net.sf.saxon.Transform;
 import net.sf.saxon.om.AtomicArray;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.s9api.*;
@@ -14,6 +15,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.*;
 
 import javax.xml.transform.Source;
+import javax.xml.transform.SourceLocator;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.util.*;
@@ -24,7 +26,7 @@ import java.util.*;
 public class XsltProcessor extends SaxonCAPI {
 
     private XsltExecutable executable = null;
-
+    private List<XdmNode> xslMessages = new ArrayList<XdmNode>();
 
     /**
      * Constructor to initialise XsltProcessor with processor and license flag
@@ -72,6 +74,23 @@ public class XsltProcessor extends SaxonCAPI {
      */
     public static XsltProcessor newInstance(boolean license, Processor proc) {
         return new XsltProcessor(proc, license);
+    }
+
+    public XdmNode[] getXslMessages(){
+        return xslMessages.toArray(new XdmNode[xslMessages.size()]);
+    }
+
+    public MessageListener newMessageListener(){
+        return new MyMessageListener();
+    }
+
+    public class MyMessageListener implements MessageListener{
+
+
+
+        public void message(XdmNode content, boolean terminate, SourceLocator locator) {
+            xslMessages.add(content);
+        }
     }
 
     /**
@@ -135,6 +154,8 @@ public class XsltProcessor extends SaxonCAPI {
         }
 
     }
+
+
 
     /**
      * Do transformation. Save result to file
@@ -291,6 +312,9 @@ public class XsltProcessor extends SaxonCAPI {
                         } else if(debug) {
                             System.err.println("Type of node Property error.");
                         }
+                    } else if(params[i].equals("m")) {
+                        transformer.setMessageListener(((XsltProcessor) api).newMessageListener());
+
                     } else if (params[i].equals("resources")) {
                         char separatorChar = '/';
                         if (SaxonCAPI.RESOURCES_DIR == null && values[i] instanceof String) {
@@ -585,8 +609,8 @@ public class XsltProcessor extends SaxonCAPI {
                     String result2 = cpp.transformToString("/Users/ond1/work/development/campos", "ORP0301177AA__EE__30954_sinsello.xml", "campos.xsl", paramsx, valuesx);
         Object[] arrValues = {2, "test"};
 
-        String[] params1 = {"resources", "param:test1", "node"};
-        Object[] values1 = {"/Users/ond1/work/development/tests/jeroen/data", arrValues, node2};
+        String[] params1 = {"resources", "param:test1", "node", "m"};
+        Object[] values1 = {"/Users/ond1/work/development/tests/jeroen/data", arrValues, node2, "m"};
         String outputdoc = cpp.transformToString(cwd, null, stylesheet12, params1, values1);
        // System.out.println(outputdoc);
        // System.exit(0);
@@ -618,7 +642,7 @@ public class XsltProcessor extends SaxonCAPI {
                 "    \n" +
                 "    \n" +
                 "    <xsl:template match=\"/\" >\n" +
-                "        \n" +
+                "   <xsl:message>test messages</xsl:message>" +
                 "        <xsl:copy-of select=\".\"/>\n" +
                 "       XXXXXX <xsl:value-of select=\"$pf:param-name\"/>\n" +
                 "    </xsl:template>\n" +
@@ -642,7 +666,7 @@ public class XsltProcessor extends SaxonCAPI {
         }
         SaxonCException[] exceptionForCpps = cpp.getExceptions();
 
-
+        System.out.println("xslMessage output:" + cpp.getXslMessages().length);
 
     }
 
