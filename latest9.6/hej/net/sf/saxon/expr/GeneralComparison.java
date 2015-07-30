@@ -934,6 +934,9 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
                     break;
                 }
             }
+            if (firstDigit < 0) {
+                simple = false;
+            }
             if (simple && wholePartLength > 0 && wholePartLength <= 10) {
                 double lowerBound = bounds[firstDigit][wholePartLength];
                 double upperBound = bounds[firstDigit+1][wholePartLength];
