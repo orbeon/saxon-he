@@ -103,7 +103,7 @@ public abstract class Sender {
         }
 
         if (options.getStripSpace() == Whitespace.ALL) {
-            next = new Stripper(AllElementsSpaceStrippingRule.getInstance(), receiver);
+            next = new Stripper(AllElementsSpaceStrippingRule.getInstance(), next);
         } else if (options.getStripSpace() == Whitespace.XSLT) {
             Controller controller = pipe.getController();
             if (controller != null) {
