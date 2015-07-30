@@ -357,6 +357,7 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
 
     public static void main(String[] args) throws SaxonApiException {
         SchemaValidatorForCpp validatorForCpp = new SchemaValidatorForCpp();
+        XdmValue item = SaxonCAPI.createXdmAtomicItem("QName", "{http://myDomain.co.uk/namespaces/ns1}myElement");
         validatorForCpp.getProcessor().setConfigurationProperty("http://saxon.sf.net/feature/validation-warnings", "true");
         String cwd = "/Users/ond1/work/development/svn/saxon-dev/tests/junit/testdata/";
 

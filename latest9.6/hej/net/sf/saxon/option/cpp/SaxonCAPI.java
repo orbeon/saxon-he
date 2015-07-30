@@ -19,6 +19,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.type.BuiltInType;
 import net.sf.saxon.type.Converter;
+import net.sf.saxon.type.ValidationException;
 import net.sf.saxon.value.*;
 import org.xml.sax.InputSource;
 
@@ -271,20 +272,34 @@ import java.util.Properties;
 
     /**
      * Create an Xdm atomic value from string representation
-     * @param typeStr    - Specified type of the XdmValue
-     * @param valueStr - The value given in a strign form
+     * @param typeStr    - Local name of a type in the XML Schema namespace.
+     * @param valueStr - The value given in a string form.
+     * In the case of a QName the value supplied must be in clark notation. {uri}local
      * @return XdmValue - value
     */
-    public static XdmValue createXdmAtomicItem(String typeStr, String valueStr) throws Exception{
-
+    public static XdmValue createXdmAtomicItem(String typeStr, String valueStr) throws SaxonApiException {
 
         int fp = StandardNames.getFingerprint(NamespaceConstant.SCHEMA, typeStr);
 
         BuiltInAtomicType type = (BuiltInAtomicType) BuiltInType.getSchemaType(fp);
+        if(type == null) {
+            throw new SaxonApiException("Unknown built in type: "+typeStr + " not found");
+        }
+
+        if(type.isNamespaceSensitive()) {
+            StructuredQName value = StructuredQName.fromClarkName(valueStr);
+            return XdmValue.wrap(new QNameValue(value, type));
+        }
+
         ConversionRules rules = new ConversionRules();
         Converter converter = rules.getConverter(BuiltInAtomicType.STRING, type);
 
-        return XdmValue.wrap(converter.convert(new StringValue(valueStr)).asAtomic());
+
+        try {
+            return XdmValue.wrap(converter.convert(new StringValue(valueStr)).asAtomic());
+        } catch (ValidationException e) {
+            throw new SaxonApiException(e);
+        }
 
 
     }
