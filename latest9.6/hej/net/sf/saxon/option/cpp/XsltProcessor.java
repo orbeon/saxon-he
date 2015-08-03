@@ -155,6 +155,37 @@ public class XsltProcessor extends SaxonCAPI {
 
     }
 
+     /**
+     * Compile the stylesheet from string  for use later
+     *
+     * @param cwd - current working directory
+     * @param obj - stylesheet as a XdmNode object
+     * @return XsltExecutable
+     */
+    public XsltExecutable createStylesheetFromXdmNode(String cwd, Object obj) throws SaxonApiException {
+        clearExceptions();
+        XsltCompiler compiler = processor.newXsltCompiler();
+        Source source;
+
+
+        XdmNode node = null;
+        if(obj instanceof XdmNode) {
+            node = (XdmNode)obj;
+        } else {
+            throw new SaxonApiException("Failed to create Stylesheet from XdoNode");
+        }
+
+        compiler.setErrorListener(errorListener);
+        try {
+            executable = compiler.compile(node.asSource());
+            return executable;
+        } catch (SaxonApiException ex) {
+            throw new SaxonApiException(new XPathException(ex.getMessage(), (ex.getErrorCode() == null ? saxonExceptions.get(0).getErrorCode() : "")));
+        }
+
+    }
+
+
 
 
     /**
