@@ -14,10 +14,7 @@ import com.saxonica.ee.stream.adjunct.LetExpressionAdjunct;
 import com.saxonica.ee.stream.adjunct.LetExpressionAdjunctB;
 import com.saxonica.ee.stream.adjunct.StreamingAdjunct;
 import net.sf.saxon.evpull.EventIterator;
-import net.sf.saxon.expr.instruct.DocumentInstr;
-import net.sf.saxon.expr.instruct.GlobalVariable;
-import net.sf.saxon.expr.instruct.TailCall;
-import net.sf.saxon.expr.instruct.TailCallReturner;
+import net.sf.saxon.expr.instruct.*;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -259,10 +256,56 @@ public class LetExpression extends Assignation implements TailCallReturner {
             visitor.resetStaticProperties();
         }
 
-        evaluationMode = isIndexedVariable() ?
+        // Don't use lazy evaluation for a variable that is referenced inside the "try" part of a contained try catch (XSLT3 test try-031)
+
+        if (requiresEagerEvaluation(getAction())) {
+            setEvaluationMode(ExpressionTool.eagerEvaluationMode(getSequence()));
+        } else {
+            setEvaluationMode(isIndexedVariable() ?
                 ExpressionTool.MAKE_CLOSURE :
-                ExpressionTool.lazyEvaluationMode(sequence);
+                ExpressionTool.lazyEvaluationMode(getSequence()));
+        }
+
         return this;
+    }
+
+    /**
+     * Determine whether there is a reference to this variable inside the "try" part of a contained try/catch, or
+     * if there is a reference inside a multi-threaded for-each instruction or xsl:result-document instruction. In such
+     * cases eager evaluation is necessary to preserve error semantics or to prevent contention arising during simultaneous
+     * evaluation in multiple threads
+     *
+     * @return true if eager evaluation is needed because there is a reference to the variable within a "sensitive"
+     * instruction.
+     */
+
+    private boolean requiresEagerEvaluation(Expression child) {
+        if (child instanceof TryCatch) {
+            Expression t = ((TryCatch) child).getTryExpr();
+            if (ExpressionTool.dependsOnVariable(t, new Binding[]{this})) {
+                return true;
+            }
+            for (TryCatch.CatchClause clause : ((TryCatch) child).getCatchClauses()) {
+                Expression c = clause.catchExpr;
+                if (requiresEagerEvaluation(c)) {
+                    return true;
+                }
+            }
+            return false;
+        } else if (child instanceof ForEach && ((ForEach) child).getNumberOfThreadsExpression() != null) {
+            Expression body = ((ForEach) child).getActionExpression();
+            return ExpressionTool.dependsOnVariable(body, new Binding[]{this});
+        } else if (child instanceof ResultDocument && ((ResultDocument) child).isAsynchronous()) {
+            Expression body = ((ResultDocument) child).getContentExpression();
+            return ExpressionTool.dependsOnVariable(body, new Binding[]{this});
+        } else {
+            for (Operand o : child.operands()) {
+                if (requiresEagerEvaluation(o.getExpression())) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     /**
