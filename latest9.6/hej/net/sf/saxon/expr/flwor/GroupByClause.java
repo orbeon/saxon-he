@@ -188,7 +188,7 @@ public class GroupByClause extends Clause {
      */
     @Override
     public TuplePull getPullStream(TuplePull base, XPathContext context) {
-        return new GroupByClausePull(base, this);
+        return new GroupByClausePull(base, this, context);
     }
 
     /**
@@ -295,8 +295,8 @@ public class GroupByClause extends Clause {
      * @return a comparison key suitable for comparing with other tuples
      */
 
-    public TupleComparisonKey getComparisonKey(Tuple t) {
-        return new TupleComparisonKey(t.getMembers());
+    public TupleComparisonKey getComparisonKey(Tuple t, GenericAtomicComparer[] comparers) {
+        return new TupleComparisonKey(t.getMembers(), comparers);
     }
 
     /**
@@ -310,9 +310,11 @@ public class GroupByClause extends Clause {
         // value or an empty sequence.
 
         private Sequence[] groupingValues;
+        private GenericAtomicComparer[] comparers;
 
-        public TupleComparisonKey(Sequence[] groupingValues) {
+        public TupleComparisonKey(Sequence[] groupingValues, GenericAtomicComparer[] comparers) {
             this.groupingValues = groupingValues;
+            this.comparers = comparers;
         }
 
         public int hashCode() {

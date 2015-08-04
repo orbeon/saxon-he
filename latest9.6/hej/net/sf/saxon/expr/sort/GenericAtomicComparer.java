@@ -122,7 +122,7 @@ public class GenericAtomicComparer implements AtomicComparer {
      *         is known. The original AtomicComparer is not modified
      */
 
-    public AtomicComparer provideContext(XPathContext context) {
+    public GenericAtomicComparer provideContext(XPathContext context) {
         return new GenericAtomicComparer(collator, context);
     }
 

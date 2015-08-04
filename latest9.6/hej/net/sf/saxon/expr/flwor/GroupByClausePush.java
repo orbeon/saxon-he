@@ -9,6 +9,7 @@ package net.sf.saxon.expr.flwor;
 
 import net.sf.saxon.expr.Atomizer;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.sort.GenericAtomicComparer;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.trans.XPathException;
@@ -31,13 +32,17 @@ public class GroupByClausePush extends TuplePush {
     private GroupByClause groupByClause;
     private HashMap<Object, List<GroupByClause.ObjectToBeGrouped>> map = new HashMap<Object, List<GroupByClause.ObjectToBeGrouped>>();
     private XPathContext context;
+    private GenericAtomicComparer[] comparers;
 
     public GroupByClausePush(TuplePush destination, GroupByClause groupBy, XPathContext context) {
         this.destination = destination;
         this.groupByClause = groupBy;
         this.context = context;
+        comparers = new GenericAtomicComparer[groupBy.comparers.length];
+        for (int i = 0; i < comparers.length; i++) {
+            comparers[i] = groupBy.comparers[i].provideContext(context);
+        }
     }
-
     /**
      * Move on to the next tuple. Before returning, this method must set all the variables corresponding
      * to the "returned" tuple in the local stack frame associated with the context object
@@ -67,7 +72,7 @@ public class GroupByClausePush extends TuplePush {
         }
         otbg.groupingValues = new Tuple(groupingValues);
         otbg.retainedValues = retainedTupleExpr.evaluateItem(context);
-        Object key = groupByClause.getComparisonKey(otbg.groupingValues);
+        Object key = groupByClause.getComparisonKey(otbg.groupingValues, comparers);
         List<GroupByClause.ObjectToBeGrouped> group = map.get(key);
         if (group != null) {
             group.add(otbg);
