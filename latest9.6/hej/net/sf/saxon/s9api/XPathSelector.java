@@ -8,6 +8,7 @@
 package net.sf.saxon.s9api;
 
 import net.sf.saxon.om.Item;
+import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.sxpath.XPathDynamicContext;
@@ -53,6 +54,17 @@ public class XPathSelector implements Iterable<XdmItem> {
     public void setContextItem(XdmItem item) throws SaxonApiException {
         if (item == null) {
             throw new NullPointerException("contextItem");
+        }
+        if (!exp.getInternalExpression().getContainer().getPackageData().isSchemaAware()) {
+            try {
+                Item it = item.getUnderlyingValue().head();
+                if (it instanceof NodeInfo && (((NodeInfo)it).getDocumentRoot().isTyped())) {
+                    throw new SaxonApiException(
+                        "The supplied node has been schema-validated, but the XPath expression was compiled without schema-awareness");
+                }
+            } catch (XPathException e) {
+                // ignore the failure; something else will break later
+            }
         }
         try {
             dynamicContext.setContextItem((Item) item.getUnderlyingValue());
