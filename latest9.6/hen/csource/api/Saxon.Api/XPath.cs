@@ -8,6 +8,7 @@ using JXPathEvaluator = net.sf.saxon.sxpath.XPathEvaluator;
 using JItem = net.sf.saxon.om.Item;
 using JSequenceExtent = net.sf.saxon.value.SequenceExtent;
 using JSequence = net.sf.saxon.om.Sequence;
+using JNodeInfo = net.sf.saxon.om.NodeInfo;
 using JStructuredQName = net.sf.saxon.om.StructuredQName;
 using JIndependentContext = net.sf.saxon.sxpath.IndependentContext;
 using JXPathExpression = net.sf.saxon.sxpath.XPathExpression;
@@ -17,6 +18,7 @@ using JXPathDynamicContext = net.sf.saxon.sxpath.XPathDynamicContext;
 using JXPathVariable = net.sf.saxon.sxpath.XPathVariable;
 using JDecimalValue = net.sf.saxon.value.DecimalValue;
 using JStaticProperty = net.sf.saxon.expr.StaticProperty;
+using JSaxonApiException = net.sf.saxon.s9api.SaxonApiException;
 using net.sf.saxon.dotnet;
 
 
@@ -704,7 +706,22 @@ namespace Saxon.Api
         public XdmItem ContextItem
         {
             get { return (XdmItem)XdmValue.Wrap(dynamicContext.getContextItem()); }
-            set { dynamicContext.setContextItem((JItem)value.Unwrap()); }
+			set {
+				if (value == null) {
+					throw new ArgumentException("contextItem is null");
+				}
+				if (exp.getInternalExpression ().getContainer ().getPackageData ().isSchemaAware ()) {
+					JItem it = ((XdmItem)value).Unwrap().head();
+					if (it is JNodeInfo && (((JNodeInfo)it).getDocumentRoot().isTyped())) {
+						JSaxonApiException ex = new JSaxonApiException(
+							"The supplied node has been schema-validated, but the XPath expression was compiled without schema-awareness");
+						throw new StaticError (ex);	
+
+					}
+
+				}
+
+				dynamicContext.setContextItem((JItem)value.Unwrap()); }
         }
 
         /// <summary>
