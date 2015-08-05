@@ -713,9 +713,8 @@ namespace Saxon.Api
 				if (exp.getInternalExpression ().getContainer ().getPackageData ().isSchemaAware ()) {
 					JItem it = ((XdmItem)value).Unwrap().head();
 					if (it is JNodeInfo && (((JNodeInfo)it).getDocumentRoot().isTyped())) {
-						JSaxonApiException ex = new JSaxonApiException(
-							"The supplied node has been schema-validated, but the XPath expression was compiled without schema-awareness");
-						throw new StaticError (ex);	
+						throw new ArgumentException(
+							"The supplied node has been schema-validated, but the XPath expression was compiled without schema-awareness");	
 
 					}
 
