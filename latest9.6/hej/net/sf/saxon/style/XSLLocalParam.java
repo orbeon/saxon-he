@@ -9,10 +9,13 @@ package net.sf.saxon.style;
 
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.SuppliedParameterReference;
-import net.sf.saxon.expr.instruct.*;
+import net.sf.saxon.expr.instruct.LocalParam;
+import net.sf.saxon.expr.instruct.LocalParamSetter;
+import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.parser.RoleLocator;
 import net.sf.saxon.expr.parser.TypeChecker;
 import net.sf.saxon.om.AxisInfo;
+import net.sf.saxon.om.FingerprintedQName;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
@@ -76,7 +79,16 @@ public class XSLLocalParam extends XSLGeneralVariable {
             compileError("For attribute 'tunnel' within an " + getParent().getDisplayName() +
                     " parameter, the only permitted value is 'no'", "XTSE0020");
         }
-
+        if (getParent() instanceof XSLFunction && getAttributeValue("", "required") != null) {
+            if (isXslt30Processor()) {
+                if (!sourceBinding.hasProperty(SourceBinding.REQUIRED)) {
+                    compileError("For attribute 'required' within an " + getParent().getDisplayName() +
+                        " parameter, the only permitted value is 'yes'", "XTSE0020");
+                }
+            } else {
+                checkUnknownAttribute(new FingerprintedQName("", "", "required"));
+            }
+        }
     }
 
     public void validate(ComponentDeclaration decl) throws XPathException {
