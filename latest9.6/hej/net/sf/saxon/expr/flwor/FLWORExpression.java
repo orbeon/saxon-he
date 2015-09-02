@@ -9,14 +9,11 @@ package net.sf.saxon.expr.flwor;
 
 import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.FLWORExpressionCompiler;
-import net.sf.saxon.expr.OperandUsage;
 import net.sf.saxon.Controller;
-import net.sf.saxon.expr.parser.TypeCheckerEnvironment;
 import net.sf.saxon.event.SequenceOutputter;
 import net.sf.saxon.event.SequenceReceiver;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.query.QueryModule;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -26,7 +23,9 @@ import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.value.SequenceType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class represents a FLWOR expression, evaluated using tuple streams
@@ -554,7 +553,7 @@ public class FLWORExpression extends Expression {
                 break;
             }
         }
-        if (depends) {
+        if (depends && contextItemType != null) {
             Expression expr1 = ExpressionTool.tryToFactorOutDot(this, contextItemType.getItemType());
             if (expr1 == null || expr1 == this) {
                 //no optimisation possible

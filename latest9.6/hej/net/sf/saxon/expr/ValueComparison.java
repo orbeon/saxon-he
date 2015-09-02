@@ -746,6 +746,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
                     throw new UnsupportedOperationException("Unknown operator " + op);
             }
         } catch (ClassCastException err) {
+            err.printStackTrace();
             XPathException e2 = new XPathException("Cannot compare " + Type.displayTypeName(v0) +
                     " to " + Type.displayTypeName(v1));
             e2.setErrorCode("XPTY0004");

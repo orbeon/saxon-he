@@ -1299,8 +1299,7 @@ public class ExpressionTool {
                     // one place to another, not replicating it
                     copy = replacement;
                 }
-                expr.replaceOperand(child, copy);
-                found = true;
+                found = expr.replaceOperand(child, copy);
             } else {
                 found |= inlineVariableReferences(child, binding, replacement);
             }
