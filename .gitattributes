@@ -913,3 +913,5 @@ tags/9.6.0.7/hen/csource/samples/XQueryTestSuiteDriver.cs svn_eol_002dstyle=nati
 tags/9.6.0.7/hen/csource/samples/Xslt30ResultsDocument.cs svn_eol_002dstyle=native
 tags/9.6.0.7/hen/csource/samples/Xslt30TestSuiteDriver.cs svn_eol_002dstyle=native
 tags/9.6.0.7/hen/csource/samples/XsltTestSuiteDriver.cs svn_eol_002dstyle=native
+tags/9.6.0.7/samples/styles/books.sxx svn_mime_002dtype=application%2Foctet-stream
+tags/9.6.0.7/samples/styles/tour.sxx svn_mime_002dtype=application%2Foctet-stream
