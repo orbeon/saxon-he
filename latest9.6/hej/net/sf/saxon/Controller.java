@@ -1879,7 +1879,8 @@ public class Controller {
                 iter = new ItemMappingIterator(iter, typeStripper);
             }
 
-            outputDestination = openResult(outputDestination, initialContext);
+            boolean raw = outputDestination instanceof SequenceOutputter;
+            outputDestination = openResult(outputDestination, initialContext, raw);
             initialContext.setCurrentIterator(new FocusTrackingIterator(iter.getAnother()));
             initialContext.setCurrentMode(mode);
             TailCall tc = mode.applyTemplates(ordinaryParams, tunnelParams, initialContext, 0);
@@ -1893,7 +1894,7 @@ public class Controller {
 
             initialContext.notifyChildThreads();
 
-            closeResult(outputDestination, mustClose, initialContext);
+            closeResult(outputDestination, mustClose, initialContext, raw);
 
         } catch (TerminationException err) {
             //System.err.println("Processing terminated using xsl:message");
@@ -2032,7 +2033,8 @@ public class Controller {
                 preEvaluateGlobals(initialContext);
             }
 
-            outputDestination = openResult(outputDestination, initialContext);
+            boolean raw = outputDestination instanceof SequenceOutputter;
+            outputDestination = openResult(outputDestination, initialContext, raw);
 
             // Process the source document by applying template rules to the initial context node
 
@@ -2128,7 +2130,7 @@ public class Controller {
 
             initialContext.notifyChildThreads();
 
-            closeResult(outputDestination, mustClose, initialContext);
+            closeResult(outputDestination, mustClose, initialContext, raw);
         } finally {
             closeMessageEmitter();
         }
@@ -2210,7 +2212,8 @@ public class Controller {
                 preEvaluateGlobals(initialContext);
             }
 
-            outputDestination = openResult(outputDestination, initialContext);
+            boolean raw = outputDestination instanceof SequenceOutputter;
+            outputDestination = openResult(outputDestination, initialContext, raw);
 
             // Process the source document by applying template rules to the initial context node
 
@@ -2247,7 +2250,7 @@ public class Controller {
 
             initialContext.notifyChildThreads();
 
-            closeResult(outputDestination, mustClose, initialContext);
+            closeResult(outputDestination, mustClose, initialContext, raw);
         } finally {
             closeMessageEmitter();
         }
@@ -2297,7 +2300,8 @@ public class Controller {
             initialContextItem = null;
             contextForGlobalVariables = null;
 
-            result = openResult(result, initialContext);
+            boolean raw = result instanceof SequenceOutputter;
+            result = openResult(result, initialContext, raw);
 
             // Process the source document by applying template rules to the initial context node
 
@@ -2330,7 +2334,7 @@ public class Controller {
                 traceListener.close();
             }
 
-            closeResult(result, mustClose, initialContext);
+            closeResult(result, mustClose, initialContext, raw);
         } finally {
             closeMessageEmitter();
         }
@@ -2382,7 +2386,8 @@ public class Controller {
 
         initialContextItem = null;
         contextForGlobalVariables = null;
-        final Result result2 = openResult(result, initialContext);
+        final boolean raw = result instanceof SequenceOutputter;
+        final Result result2 = openResult(result, initialContext, raw);
 
         // Process the source document by applying template rules to the initial context node
 
@@ -2403,7 +2408,7 @@ public class Controller {
                 if (traceListener != null) {
                     traceListener.close();
                 }
-                closeResult(result2, mustClose, initialContext);
+                closeResult(result2, mustClose, initialContext, raw);
                 closeMessageEmitter();
             }
         };
@@ -2418,9 +2423,11 @@ public class Controller {
         }
     }
 
-    private void closeResult(Result result, boolean mustClose, XPathContextMajor initialContext) throws XPathException {
+    private void closeResult(Result result, boolean mustClose, XPathContextMajor initialContext, boolean raw) throws XPathException {
         Receiver out = initialContext.getReceiver();
-        out.endDocument();
+        if (!raw) {
+            out.endDocument();
+        }
         out.close();
 
         if (mustClose && result instanceof StreamResult) {
@@ -2435,7 +2442,7 @@ public class Controller {
         }
     }
 
-    private Receiver openResult(Receiver result, XPathContextMajor initialContext) throws XPathException {
+    private Receiver openResult(Receiver result, XPathContextMajor initialContext, boolean raw) throws XPathException {
 
         Receiver receiver = result;
 
@@ -2452,12 +2459,18 @@ public class Controller {
 
         receiver.getPipelineConfiguration().setController(this);
 
-        initialContext.changeOutputDestination(receiver, null);
+        if (raw) {
+            initialContext.setReceiver((SequenceOutputter)receiver);
+        } else {
+            initialContext.changeOutputDestination(receiver, null);
+        }
 
         if (openNow) {
             Receiver out = initialContext.getReceiver();
             out.open();
-            out.startDocument(0);
+            if (!raw) {
+                out.startDocument(0);
+            }
         }
         return result;
     }
