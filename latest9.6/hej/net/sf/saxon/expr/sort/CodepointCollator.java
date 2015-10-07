@@ -10,8 +10,6 @@ package net.sf.saxon.expr.sort;
 import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.lib.SubstringMatcher;
 
-import java.io.Serializable;
-
 
 /**
  * A collating sequence that uses Unicode codepoint ordering
@@ -47,7 +45,7 @@ public class CodepointCollator implements StringCollator, SubstringMatcher {
      * @throws ClassCastException if the objects are of the wrong type for this Comparer
      */
 
-    public int compareCS(CharSequence a, CharSequence b) {
+    public static int compareCS(CharSequence a, CharSequence b) {
         int alen = a.length();
         int blen = b.length();
         int i = 0;
