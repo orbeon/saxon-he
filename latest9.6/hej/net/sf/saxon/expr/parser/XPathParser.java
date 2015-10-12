@@ -2572,6 +2572,9 @@ public class XPathParser {
 
     /*@NotNull*/
     protected StructuredQName resolveFunctionName(/*@NotNull*/ String fname) throws XPathException {
+        if (scanOnly) {
+            return new StructuredQName("", NamespaceConstant.SAXON, "dummy");
+        }
         StructuredQName functionName;
         String uri;
         String local;
