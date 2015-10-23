@@ -450,12 +450,6 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
         t.local = localName;
         t.value = value;
         pendingTag.attributes.add(t);
-        try {
-            NodeName nn = new FingerprintedQName(prefix, namespaceURI, localName);
-            receiver.attribute(nn, BuiltInAtomicType.UNTYPED_ATOMIC, value, -1, 0);
-        } catch (XPathException err) {
-            throw new XMLStreamException(err);
-        }
     }
 
     public void writeAttribute(String namespaceURI, String localName, String value) throws XMLStreamException {
