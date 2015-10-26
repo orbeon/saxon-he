@@ -326,6 +326,7 @@ public abstract class Operation {
                         }
                         iterators.pop();
                     }
+                    matcher.clearCapturedGroupsBeyond(position);
                     return -1;
                 }
 
