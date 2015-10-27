@@ -210,7 +210,7 @@ public interface Platform {
      * @since 9.4
      */
 
-    public void setDefaultSAXParserFactory();
+    public void setDefaultSAXParserFactory(Configuration config);
 
 //#ifdefined BYTECODE
     /**

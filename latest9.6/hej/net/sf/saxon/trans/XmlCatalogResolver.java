@@ -23,7 +23,7 @@ public class XmlCatalogResolver {
 
     public static void setCatalog(String catalog, final Configuration config, boolean isTracing) throws XPathException {
         System.setProperty("xml.catalog.files", catalog);
-        Configuration.getPlatform().setDefaultSAXParserFactory();
+        Configuration.getPlatform().setDefaultSAXParserFactory(config);
         if (isTracing) {
             // Customize the resolver to write messages to the Saxon logging destination
             CatalogManager.getStaticManager().debug = new Debug() {
