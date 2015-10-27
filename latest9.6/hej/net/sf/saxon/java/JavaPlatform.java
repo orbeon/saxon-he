@@ -285,7 +285,7 @@ public class JavaPlatform implements Platform {
      * @since 9.4
      */
 
-    public void setDefaultSAXParserFactory() {
+    public void setDefaultSAXParserFactory(Configuration config) {
         // No action for Saxon on Java
     }
 
