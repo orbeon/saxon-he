@@ -406,8 +406,8 @@ public class DotNetPlatform implements Platform {
      *
      * @since 9.4
      */
-    public void setDefaultSAXParserFactory() {
-        System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl, saxon9ee, Version="+ Version.getProductVersion()+", Culture=neutral, PublicKeyToken=e1fdd002d5083fe6");
+    public void setDefaultSAXParserFactory(Configuration config) {
+        System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl, saxon9"+config.getEditionCode().toLowerCase()+", Version="+ Version.getProductVersion()+", Culture=neutral, PublicKeyToken=e1fdd002d5083fe6");
     }
 
 //#if EE==true
