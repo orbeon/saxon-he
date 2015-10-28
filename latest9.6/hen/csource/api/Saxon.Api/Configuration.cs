@@ -1057,7 +1057,7 @@ namespace Saxon.Api
 
 				options.setTopLevelElement(
 					new FingerprintedQName(
-						topLevelElement.Prefix, topLevelElement.Uri.ToString(), topLevelElement.LocalName).getStructuredQName());
+						topLevelElement.Prefix, topLevelElement.Uri.ToString(), topLevelElement.LocalName));
 			}
 
 			if (whitespacePolicy != WhitespacePolicy.PreserveAll)
