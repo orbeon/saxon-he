@@ -38,6 +38,7 @@ using JNamespaceReducer = net.sf.saxon.@event.NamespaceReducer;
 using JValidation = net.sf.saxon.lib.Validation;
 using JXPathException = net.sf.saxon.trans.XPathException;
 using JProcessor = net.sf.saxon.s9api.Processor;
+using JParseOptions = net.sf.saxon.lib.ParseOptions;
 using net.sf.saxon.om;
 using net.sf.saxon.pull;
 using net.sf.saxon.dotnet;
