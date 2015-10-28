@@ -825,12 +825,13 @@ namespace Saxon.Api
         internal XdmNode Build(Stream input, Uri baseUri)
         {
             Source source;
-            if (processor.GetProperty("http://saxon.sf.net/feature/preferJaxpParser") == "true")
-            {
-                source = new StreamSource(new DotNetInputStream(input), baseUri.ToString());
-                source = AugmentedSource.makeAugmentedSource(source);
-                ((AugmentedSource)source).setEntityResolver(new DotNetURIResolver(XmlResolver));
-            }
+			JParseOptions options = new JParseOptions(config.getParseOptions());
+
+			if (processor.GetProperty("http://saxon.sf.net/feature/preferJaxpParser") == "true")
+			{
+				source = new StreamSource(new DotNetInputStream(input), baseUri.ToString());
+				options.setEntityResolver(new DotNetURIResolver(XmlResolver));
+			}
             else
             {
 
@@ -865,8 +866,8 @@ namespace Saxon.Api
                 source = new PullSource(new DotNetPullProvider(parser));
                 source.setSystemId(baseUri.ToString());
             }
-            source = augmentSource(source);
-            DocumentInfo doc = config.buildDocument(source);
+			augmentParseOptions(options);
+            DocumentInfo doc = config.buildDocument(source, options);
             return (XdmNode)XdmValue.Wrap(doc);
         }
 
@@ -904,12 +905,12 @@ namespace Saxon.Api
         internal XdmNode Build(TextReader input, Uri baseUri)
         {
             Source source;
-            if (processor.GetProperty("http://saxon.sf.net/feature/preferJaxpParser") == "true")
-            {
-                source = new StreamSource(new DotNetReader(input), baseUri.ToString());
-                source = AugmentedSource.makeAugmentedSource(source);
-                ((AugmentedSource)source).setEntityResolver(new DotNetURIResolver(XmlResolver));
-            }
+			JParseOptions options = new JParseOptions(config.getParseOptions());
+			if (processor.GetProperty("http://saxon.sf.net/feature/preferJaxpParser") == "true")
+			{
+				source = new StreamSource(new DotNetReader(input), baseUri.ToString());
+				options.setEntityResolver(new DotNetURIResolver(XmlResolver));
+			}
             else
             {
 
@@ -944,8 +945,8 @@ namespace Saxon.Api
                 source = new PullSource(new DotNetPullProvider(parser));
                 source.setSystemId(baseUri.ToString());
             }
-            source = augmentSource(source);
-            DocumentInfo doc = config.buildDocument(source);
+			augmentParseOptions(options);
+            DocumentInfo doc = config.buildDocument(source, options);
             return (XdmNode)XdmValue.Wrap(doc);
         }
 
@@ -1028,6 +1029,85 @@ namespace Saxon.Api
             return source;
         }
 
+		private void augmentParseOptions(JParseOptions options)
+		{
+			if (validation != SchemaValidationMode.None)
+			{
+
+				if (validation == SchemaValidationMode.Strict)
+				{
+					options.setSchemaValidationMode(JValidation.STRICT);
+				}
+				else if (validation == SchemaValidationMode.Lax)
+				{
+					options.setSchemaValidationMode(JValidation.LAX);
+				}
+				else if (validation == SchemaValidationMode.None)
+				{
+					options.setSchemaValidationMode(JValidation.STRIP);
+				}
+				else if (validation == SchemaValidationMode.Preserve)
+				{
+					options.setSchemaValidationMode(JValidation.PRESERVE);
+				}
+			}
+			if (topLevelElement != null)
+			{
+
+				options.setTopLevelElement(
+					new FingerprintedQName(
+						topLevelElement.Prefix, topLevelElement.Uri.ToString(), topLevelElement.LocalName).getStructuredQName());
+			}
+
+			if (whitespacePolicy != WhitespacePolicy.PreserveAll)
+			{
+
+				if (whitespacePolicy == WhitespacePolicy.StripIgnorable)
+				{
+					options.setStripSpace(Whitespace.IGNORABLE);
+				}
+				else
+				{
+					options.setStripSpace(Whitespace.ALL);
+				}
+			}
+			if (treeModel != TreeModel.Unspecified)
+			{
+
+				if (treeModel == TreeModel.TinyTree)
+				{
+					options.setModel(net.sf.saxon.om.TreeModel.TINY_TREE);
+				}
+				else if (treeModel == TreeModel.TinyTreeCondensed)
+				{
+					options.setModel(net.sf.saxon.om.TreeModel.TINY_TREE_CONDENSED);
+				}
+				else
+				{
+					options.setModel(net.sf.saxon.om.TreeModel.LINKED_TREE);
+				}
+			}
+			if (lineNumbering)
+			{
+
+				options.setLineNumbering(true);
+			}
+			if (dtdValidation)
+			{
+
+				options.setDTDValidationMode(JValidation.STRICT);
+			}
+			if (projectionQuery != null) {
+				net.sf.saxon.query.XQueryExpression exp = projectionQuery.getUnderlyingCompiledQuery();
+				net.sf.saxon.@event.FilterFactory ff = config.makeDocumentProjector(exp);
+				if (ff != null) {
+
+					options.addFilter (ff);
+				}
+			}
+
+		}
+
         /// <summary>
         /// Load an XML document, delivered using an XmlReader.
         /// </summary>
@@ -1069,8 +1149,9 @@ namespace Saxon.Api
             // pp = new PullTracer(pp);  /* diagnostics */
             Source source = new PullSource(pp);
             source.setSystemId(reader.BaseURI);
-            source = augmentSource(source);
-            DocumentInfo doc = config.buildDocument(source);
+			JParseOptions options = new JParseOptions(config.getParseOptions());
+            augmentParseOptions(options);
+            DocumentInfo doc = config.buildDocument(source, options);
             return (XdmNode)XdmValue.Wrap(doc);
         }
 
