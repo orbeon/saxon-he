@@ -319,17 +319,16 @@
             exampleSimple3($proc);
             echo '<br/>';
 	    exampleOfXdmValuesInLoop($proc, $foo_xml, $foo_xsl);
-          //  exampleParam($proc, $foo_xml, $foo_xsl);
-          //  exampleError1($proc, $foo_xml, $err_xsl);
+            exampleParam($proc, $foo_xml, $foo_xsl);
+            exampleError1($proc, $foo_xml, $err_xsl);
             echo '<br/>'; 
-	//    exampleError2($proc, $foo_xml, $err1_xsl);
+	    exampleError2($proc, $foo_xml, $err1_xsl);
             echo '<br/>';
-  //          exampleXMLFilterChain($proc, $foo_xml, $foo_xsl, $foo2_xsl, $foo3_xsl);
+            exampleXMLFilterChain($proc, $foo_xml, $foo_xsl, $foo2_xsl, $foo3_xsl);
             echo '<br/>';                    
-//            exampleXMLFilterChain2($proc, $foo_xml, $foo_xsl, $foo2_xsl, $foo3_xsl);          
+            exampleXMLFilterChain2($proc, $foo_xml, $foo_xsl, $foo2_xsl, $foo3_xsl);          
             echo '<br/>';  
-
-//	    $proc->close();            
+           
             unset($proc);
 	
         

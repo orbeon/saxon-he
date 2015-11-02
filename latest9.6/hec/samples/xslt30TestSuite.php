@@ -61,7 +61,7 @@ if($errCount>0){
 echo $result;
 }
 //$proc->clear();
-//$proc->close();
+
 
 
 function test_set_files ($catalog){ 
@@ -373,6 +373,5 @@ echo "<br/>";
 echo $proc->transformToString();
 echo "This link is using Html: ";
 
-$proc->close();
 
 ?>
