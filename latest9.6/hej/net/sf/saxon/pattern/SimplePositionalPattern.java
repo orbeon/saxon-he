@@ -296,7 +296,9 @@ public final class SimplePositionalPattern extends Pattern {
             return (operator == Token.FNE);
         }
 
-        int actualPos = context.getConfiguration().getSiblingPosition(node, nodeTest, Integer.MAX_VALUE);
+        int limit = (int) reqPos.ceiling().longValue();
+
+        int actualPos = context.getConfiguration().getSiblingPosition(node, nodeTest, limit);
 
         int c = Double.compare((double) actualPos, reqPos.getDoubleValue());
         switch (operator) {
