@@ -140,7 +140,7 @@ namespace Saxon.Api
 		/// May be set to -1 if the location of the error is unknown
 		/// </remarks>        
 
-		public int ColoumnNumber
+		public int ColumnNumber
 		{
 			get
 			{
