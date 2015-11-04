@@ -504,7 +504,15 @@ public class ReceivingContentHandler
                             return;
                         }
                     }
-                    receiver.processingInstruction(name, Whitespace.removeLeadingWhitespace(remainder), 0, 0);
+                    CharSequence data;
+                    if (remainder == null) {
+                        // allowed by the spec but rarely seen: see Saxon bug 2491
+                        data = "";
+                    } else {
+                        // not strictly necessary (the parser should have done this) but needed in practice
+                        data = Whitespace.removeLeadingWhitespace(remainder);
+                    }
+                    receiver.processingInstruction(name, data, 0, 0);
                 }
             }
         } catch (XPathException err) {
