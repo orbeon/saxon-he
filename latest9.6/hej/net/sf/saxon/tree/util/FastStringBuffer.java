@@ -381,8 +381,8 @@ public final class FastStringBuffer implements AppendableCharSequence {
         if (used == array.length) {
             return array;
         } else {
-            char[] chars = new char[array.length];
-            System.arraycopy(array, 0, chars, 0, array.length);
+            char[] chars = new char[used];
+            System.arraycopy(array, 0, chars, 0, used);
             return chars;
         }
     }
