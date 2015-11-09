@@ -1087,8 +1087,12 @@ public class QueryModule implements StaticContext {
                 throw err;
             }
         } else {
-            if (var.isPrivate() && !var.getSystemId().equals(getSystemId())) {
-                XPathException err = new XPathException("Variable $" + qName.getDisplayName() + " is private");
+            if (var.isPrivate() && (var.getSystemId() == null || !var.getSystemId().equals(getSystemId()))) {
+                String message = "Variable $" + qName.getDisplayName() + " is private";
+                if (var.getSystemId() == null) {
+                    message += " (no base URI known)";
+                }
+                XPathException err = new XPathException(message);
                 err.setErrorCode("XPST0008");
                 err.setIsStaticError(true);
                 throw err;
