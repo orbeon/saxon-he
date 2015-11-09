@@ -77,7 +77,7 @@ public class StringValue extends AtomicValue {
      * Assert that the string is known to contain no surrogate pairs
      */
 
-    public void setContainsNoSurrogates() {
+    public synchronized void setContainsNoSurrogates() {
         if (!(value instanceof BMPString || value instanceof LatinString)) {
             value = new BMPString(value);
         }
@@ -161,7 +161,7 @@ public class StringValue extends AtomicValue {
      * @return the length of the string in Unicode code points
      */
 
-    public int getStringLength() {
+    public synchronized int getStringLength() {
         if (!(value instanceof UnicodeString)) {
             makeUnicodeString();
         }
@@ -175,7 +175,7 @@ public class StringValue extends AtomicValue {
      * codepoints, it will be the length in Unicode codepoints
      */
 
-    public int getStringLengthUpperBound() {
+    public synchronized int getStringLengthUpperBound() {
         if (value instanceof UnicodeString) {
             return ((UnicodeString) value).uLength();
         } else {
@@ -190,7 +190,7 @@ public class StringValue extends AtomicValue {
      * @return the corresponding UnicodeString
      */
 
-    public UnicodeString getUnicodeString() {
+    public synchronized UnicodeString getUnicodeString() {
         if (!(value instanceof UnicodeString)) {
             makeUnicodeString();
         }
@@ -268,10 +268,11 @@ public class StringValue extends AtomicValue {
 
     /*@NotNull*/
     public UnfailingIterator iterateCharacters() {
-        if (value instanceof UnicodeString) {
-            return new UnicodeCharacterIterator();
+        CharSequence val = value;
+        if (val instanceof UnicodeString) {
+            return new UnicodeCharacterIterator((UnicodeString)val);
         } else {
-            return new CharacterIterator();
+            return new CharacterIterator(val);
         }
     }
 
@@ -368,7 +369,7 @@ public class StringValue extends AtomicValue {
      * @return the value as a String
      */
 
-    public String asString() {
+    public synchronized String asString() {
         if (value instanceof String) {
             return (String) value;
         }
@@ -471,24 +472,26 @@ public class StringValue extends AtomicValue {
 
     public final class CharacterIterator implements UnfailingIterator {
 
+        CharSequence val;
         int inpos = 0;        // 0-based index of the current Java char
 
         /**
          * Create an iterator over a string
          */
 
-        public CharacterIterator() {
+        public CharacterIterator(CharSequence val) {
+            this.val = val;
         }
 
         /*@Nullable*/
         public Int64Value next() {
-            if (inpos < value.length()) {
-                int c = value.charAt(inpos++);
+            if (inpos < val.length()) {
+                int c = val.charAt(inpos++);
                 int current;
                 if (c >= 55296 && c <= 56319) {
                     // we'll trust the data to be sound
                     try {
-                        current = ((c - 55296) * 1024) + ((int) value.charAt(inpos++) - 56320) + 65536;
+                        current = ((c - 55296) * 1024) + ((int) val.charAt(inpos++) - 56320) + 65536;
                     } catch (StringIndexOutOfBoundsException e) {
                         System.err.println("Invalid surrogate at end of string");
                         System.err.println(diagnosticDisplay(value.toString()));
@@ -509,7 +512,7 @@ public class StringValue extends AtomicValue {
 
         /*@NotNull*/
         public UnfailingIterator getAnother() {
-            return new CharacterIterator();
+            return new CharacterIterator(val);
         }
 
         /**
@@ -527,19 +530,21 @@ public class StringValue extends AtomicValue {
 
     public final class UnicodeCharacterIterator implements UnfailingIterator {
 
+        UnicodeString val;
         int inpos = 0;        // 0-based index of the current Java char
 
         /**
          * Create an iterator over a string
          */
 
-        public UnicodeCharacterIterator() {
+        public UnicodeCharacterIterator(UnicodeString val) {
+            this.val = val;
         }
 
         /*@Nullable*/
         public Int64Value next() {
-            if (inpos < ((UnicodeString)value).uLength()) {
-                return new Int64Value(((UnicodeString)value).uCharAt(inpos++));
+            if (inpos < val.uLength()) {
+                return new Int64Value(val.uCharAt(inpos++));
             } else {
                 return null;
             }
@@ -550,7 +555,7 @@ public class StringValue extends AtomicValue {
 
         /*@NotNull*/
         public UnfailingIterator getAnother() {
-            return new UnicodeCharacterIterator();
+            return new UnicodeCharacterIterator(val);
         }
 
         /**
