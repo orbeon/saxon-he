@@ -58,7 +58,7 @@ public class XPathSelector implements Iterable<XdmItem> {
         if (!exp.getInternalExpression().getContainer().getPackageData().isSchemaAware()) {
             try {
                 Item it = item.getUnderlyingValue().head();
-                if (it instanceof NodeInfo && (((NodeInfo)it).getDocumentRoot().isTyped())) {
+                if (it instanceof NodeInfo && (((NodeInfo) it).getDocumentRoot() != null && (((NodeInfo)it).getDocumentRoot().isTyped()))) {
                     throw new SaxonApiException(
                         "The supplied node has been schema-validated, but the XPath expression was compiled without schema-awareness");
                 }
