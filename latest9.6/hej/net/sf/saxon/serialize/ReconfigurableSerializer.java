@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2014 Saxonica Limited.
+// Copyright (c) 2015 Saxonica Limited.
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 // If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 // This Source Code Form is "Incompatible With Secondary Licenses", as defined by the Mozilla Public License, v. 2.0.
@@ -25,21 +25,42 @@ import java.util.Properties;
 public class ReconfigurableSerializer extends ProxyReceiver {
 
     private Result destination;
-    private Properties defaultOutputProperties;
+    private Properties apiDefinedProperties;
 
-    public ReconfigurableSerializer(Receiver next, Properties defaultOutputProperties, Result destination) {
+    /**
+     * Create a reconfigurable serializer (that is, a gateway to a dynamically-constructed serialization
+     * pipeline)
+     *
+     * @param next                 the next receiver to receiver events
+     * @param apiDefinedProperties the output properties explicitly declared on the Serializer object.
+     *                             These are defined to take precedence over any properties defined
+     *                             within the stylesheet.
+     * @param destination          the output destination.
+     */
+
+    public ReconfigurableSerializer(Receiver next, Properties apiDefinedProperties, Result destination) {
         super(next);
         this.destination = destination;
-        this.defaultOutputProperties = defaultOutputProperties;
+        this.apiDefinedProperties = apiDefinedProperties;
     }
+
+    /**
+     * Create a new serialization pipeline and redirect future output to that pipeline.
+     *
+     * @param outputProperties serialization properties, typically the properties specified dynamically
+     *                         in an xsl:result-document instruction, together with properties specified
+     *                         statically in the named or unnamed output format that it references.
+     * @param charMapIndex     character map index
+     * @throws XPathException
+     */
 
     public void reconfigure(Properties outputProperties, CharacterMapIndex charMapIndex) throws XPathException {
         SerializerFactory sf = getConfiguration().getSerializerFactory();
-        Properties p = new Properties(defaultOutputProperties);
-        for (String s : outputProperties.stringPropertyNames()) {
-            p.setProperty(s, outputProperties.getProperty(s));
+        Properties combinedProps = new Properties(outputProperties);
+        for (String s : apiDefinedProperties.stringPropertyNames()) {
+            combinedProps.setProperty(s, apiDefinedProperties.getProperty(s));
         }
-        Receiver r = sf.getReceiver(destination, getPipelineConfiguration(), p, charMapIndex);
+        Receiver r = sf.getReceiver(destination, getPipelineConfiguration(), combinedProps, charMapIndex);
         setUnderlyingReceiver(r);
     }
 }

@@ -820,7 +820,7 @@ public class Xslt30Transformer {
             PipelineConfiguration pipe = r.getPipelineConfiguration();
             pipe.setController(controller);
             pipe.setLocationProvider(controller.getExecutable().getLocationMap());
-            return new ReconfigurableSerializer(r, serializer.getOutputProperties(), serializer.getResult());
+            return new ReconfigurableSerializer(r, serializer.getLocalOutputProperties(), serializer.getResult());
         } else {
             Receiver r = destination.getReceiver(controller.getConfiguration());
             PipelineConfiguration pipe = r.getPipelineConfiguration();

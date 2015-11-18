@@ -758,11 +758,30 @@ public class Serializer implements Destination {
      * will be in the same format as JAXP interfaces such as
      * {@link javax.xml.transform.Transformer#getOutputProperties()}
      *
-     * @return a newly-constructed Properties object holding the declared serialization properties
+     * @return a newly-constructed Properties object holding the declared serialization properties, backed by the
+     * default output properties defined in the query or stylesheet
      */
 
     protected Properties getOutputProperties() {
         Properties props = (defaultOutputProperties == null ? new Properties() : new Properties(defaultOutputProperties));
+        for (StructuredQName p : properties.keySet()) {
+            String value = properties.get(p);
+            props.setProperty(p.getClarkName(), value);
+        }
+        return props;
+    }
+
+    /**
+     * Create a Properties object holding the serialization properties explicitly declared
+     * within this Serializer object, and not including any defaults taken from the stylesheet or query.
+     *
+     * @return a newly-constructed Properties object holding the declared serialization properties. Specifically,
+     * it holds the properties defined explicitly on this Serializer object, and excludes any properties defined
+     * in named or unnamed xsl:output declarations in the stylesheet, or the equivalent in XQuery.
+     */
+
+    protected Properties getLocalOutputProperties() {
+        Properties props = new Properties();
         for (StructuredQName p : properties.keySet()) {
             String value = properties.get(p);
             props.setProperty(p.getClarkName(), value);
