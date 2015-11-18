@@ -363,6 +363,14 @@ public final class AncestorQualifiedPattern extends Pattern {
      */
     @Override
     public Pattern convertToTypedPattern(String val) throws XPathException {
+        if (upwardsAxis == AxisInfo.ANCESTOR && upperPattern instanceof NodeTestPattern &&
+                ((NodeTestPattern)upperPattern).getItemType() instanceof NodeKindTest &&
+                upperPattern.getNodeKind() == Type.DOCUMENT) {
+            Pattern b2 = basePattern.convertToTypedPattern(val);
+            if (b2 != null) {
+                return new AncestorQualifiedPattern(b2, upperPattern, upwardsAxis);
+            }
+        }
         Pattern u2 = upperPattern.convertToTypedPattern(val);
         if (u2 == upperPattern) {
             return this;

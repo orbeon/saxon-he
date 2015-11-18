@@ -12,9 +12,9 @@ import net.sf.saxon.event.LocationProvider;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.XPathParser;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.PromotionOffer;
+import net.sf.saxon.expr.parser.XPathParser;
 import net.sf.saxon.functions.Current;
 import net.sf.saxon.om.*;
 import net.sf.saxon.sxpath.SimpleContainer;
@@ -528,7 +528,7 @@ public abstract class Pattern implements PatternFinder, Container {
      */
 
     public Pattern convertToTypedPattern(String val) throws XPathException {
-        return null;
+        return this;
     }
 }
 
