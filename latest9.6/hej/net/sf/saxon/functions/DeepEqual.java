@@ -311,7 +311,7 @@ public class DeepEqual extends CollatingFunction implements Callable {
       * Determine whether two nodes are deep-equal
       */
 
-    private static boolean deepEquals(NodeInfo n1, NodeInfo n2,
+    public static boolean deepEquals(NodeInfo n1, NodeInfo n2,
                                       AtomicComparer comparer, Configuration config, int flags)
             throws XPathException {
         // shortcut: a node is always deep-equal to itself
