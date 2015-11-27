@@ -17,8 +17,10 @@ import net.sf.saxon.value.*;
 import javax.xml.transform.Source;
 import javax.xml.transform.SourceLocator;
 import javax.xml.transform.stream.StreamSource;
+import java.awt.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * * This class is to use with Saxon/C on C++
@@ -86,7 +88,8 @@ public class XsltProcessor extends SaxonCAPI {
 
     public class MyMessageListener implements MessageListener{
 
-
+              //TODO: This is not ideal. We should output the xsl-message to the System.err as they happen.
+                //Second option is to write them out to a file.
 
         public void message(XdmNode content, boolean terminate, SourceLocator locator) {
             xslMessages.add(content);
@@ -105,7 +108,7 @@ public class XsltProcessor extends SaxonCAPI {
         try {
             clearExceptions();
             XsltCompiler compiler = processor.newXsltCompiler();
-
+            executable = null;
             Source source = resolveFileToSource(cwd, filename);
 
             compiler.setErrorListener(errorListener);
@@ -132,7 +135,7 @@ public class XsltProcessor extends SaxonCAPI {
         clearExceptions();
         XsltCompiler compiler = processor.newXsltCompiler();
         Source source;
-
+        executable = null;
 
         StringReader reader = new StringReader(str);
 
@@ -164,11 +167,11 @@ public class XsltProcessor extends SaxonCAPI {
      */
     public XsltExecutable createStylesheetFromXdmNode(String cwd, Object obj) throws SaxonApiException {
         clearExceptions();
+        executable = null;
         XsltCompiler compiler = processor.newXsltCompiler();
-        Source source;
 
 
-        XdmNode node = null;
+        XdmNode node;
         if(obj instanceof XdmNode) {
             node = (XdmNode)obj;
         } else {
@@ -286,6 +289,9 @@ public class XsltProcessor extends SaxonCAPI {
                     }
                 }
                 for (int i = 0; i < params.length; i++) {
+                    if(values[i] == null) {
+                        throw new SaxonApiException("Null parameter/property value found "+(params[i] != null ? "Check name: "+params[i] : ""));
+                    }
                     if(debug){
                         System.err.println("parameter name:"+params[i]);
                         System.err.println("parameter length:"+params[i].length());
@@ -462,13 +468,8 @@ public class XsltProcessor extends SaxonCAPI {
                 source = resolveFileToSource(cwd, stylesheet);
                 compiler.setErrorListener(errorListener);
 
-                try {
-                    transformer = compiler.compile(source).load();
-                } catch (SaxonApiException ex) {
-                    if (ex.getErrorCode() == null) {
-                        throw new SaxonApiException(new XPathException(ex.getMessage(), saxonExceptions.get(0).getErrorCode()));
-                    }
-                }
+                transformer = compiler.compile(source).load();
+
             }
             XdmDestination destination = new XdmDestination();
 
@@ -521,18 +522,16 @@ public class XsltProcessor extends SaxonCAPI {
             XsltTransformer transformer = null;
             if (stylesheet == null && executable != null) {
                 transformer = executable.load();
+            } else if(stylesheet == null){
+               SaxonApiException ex = new SaxonApiException("Stylesheet not found!");
+               throw ex;
             } else {
                 XsltCompiler compiler = processor.newXsltCompiler();
                 source = resolveFileToSource(cwd, stylesheet);
                 compiler.setErrorListener(errorListener);
 
-                try {
-                    transformer = compiler.compile(source).load();
-                } catch (SaxonApiException ex) {
-                    if (ex.getErrorCode() == null) {
-                        throw new SaxonApiException(new XPathException(ex.getMessage(), saxonExceptions.get(0).getErrorCode()));
-                    }
-                }
+                transformer = compiler.compile(source).load();
+
             }
             StringWriter sw = new StringWriter();
             serializer = processor.newSerializer(sw);
@@ -582,13 +581,13 @@ public class XsltProcessor extends SaxonCAPI {
 
             compiler.setErrorListener(errorListener);
             XsltTransformer transformer = null;
-            try {
+            //try {
                 transformer = compiler.compile(source).load();
-            } catch (SaxonApiException ex) {
+            /*} catch (SaxonApiException ex) {
                 if (ex.getErrorCode() == null) {
                     throw new SaxonApiException(new XPathException(ex.getMessage(), saxonExceptions.get(0).getErrorCode()));
                 }
-            }
+            }   */
 
 
             StringWriter sw = new StringWriter();
