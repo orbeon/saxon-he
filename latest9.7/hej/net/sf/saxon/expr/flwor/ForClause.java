@@ -276,7 +276,7 @@ public class ForClause extends Clause {
                         Expression predicate = condition.copy();
                         Operand child = op == 0
                                 ? ((ComparisonExpression)predicate).getLhs()
-                                : ((ComparisonExpression)predicate).getLhs();
+                                : ((ComparisonExpression)predicate).getRhs();
                         child.setChildExpression(position);
                         if (debug) {
                             opt.trace("Replaced positional variable in predicate by position()");
