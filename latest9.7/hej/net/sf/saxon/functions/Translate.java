@@ -9,7 +9,6 @@ package net.sf.saxon.functions;
 
 import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.TranslateCompiler;
-import net.sf.saxon.type.SpecificFunctionType;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
@@ -19,7 +18,7 @@ import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.FunctionItemType;
-import net.sf.saxon.value.EmptySequence;
+import net.sf.saxon.type.SpecificFunctionType;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
 import net.sf.saxon.z.IntToIntHashMap;
@@ -237,7 +236,7 @@ public class Translate extends SystemFunction implements Callable {
         public Sequence call(XPathContext context, Sequence[] args) throws XPathException {
             StringValue input = (StringValue) args[0].head();
             if (input == null) {
-                return EmptySequence.getInstance();
+                return StringValue.EMPTY_STRING;
             }
             CharSequence result = translateUsingMap(input, staticMap);
             return new StringValue(result);
