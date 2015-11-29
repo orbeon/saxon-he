@@ -20,7 +20,12 @@ import java.util.*;
  */
 public class NamedTimeZone {
 
+    static Set<String> knownTimeZones = new HashSet<String>(50);
     static HashMap<String, List<String>> idForCountry = new HashMap<String, List<String>>(50);
+
+    static {
+        Collections.addAll(knownTimeZones, TimeZone.getAvailableIDs());
+    }
 
     /**
      * Register a timezone in use in a particular country. Note that some countries use multiple
@@ -264,28 +269,36 @@ public class NamedTimeZone {
      * changes in different countries. The returned value is the convenional short timezone name, for example
      * PDT for Pacific Daylight Time
      *
-     * @param date    the dateTimeValue, including timezone
-     * @param country the two-letter ISO country code
+     * @param date  the dateTimeValue, including timezone
+     * @param place either a two-letter ISO country code or an Olson timezone name
      * @return the short timezone name if a timezone with the given time displacement is in use in the country
-     *         in question (on the appropriate date, if known). Otherwise, the formatted (numeric) timezone offset. If
-     *         the dateTimeValue supplied has no timezone, return a zero-length string.
+     * in question (on the appropriate date, if known). Otherwise, the formatted (numeric) timezone offset. If
+     * the dateTimeValue supplied has no timezone, return a zero-length string.
      */
 
-    public static String getTimeZoneNameForDate(DateTimeValue date, /*@Nullable*/ String country) {
+    public static String getTimeZoneNameForDate(DateTimeValue date, /*@Nullable*/ String place) {
         if (!date.hasTimezone()) {
             return "";
         }
-        if (country == null) {
+        if (place == null) {
             return formatTimeZoneOffset(date);
         }
-        List<String> possibleIds = idForCountry.get(country.toLowerCase());
-        String exampleId;
-        if (possibleIds == null) {
-            return formatTimeZoneOffset(date);
+        TimeZone zone;
+        List<String> possibleZones;
+        if (place.contains("/")) {
+            zone = getNamedTimeZone(place);
+            possibleZones = new ArrayList<String>(1);
+            possibleZones.add(place);
         } else {
-            exampleId = possibleIds.get(0);
+            possibleZones = idForCountry.get(place.toLowerCase());
+            String exampleId;
+            if (possibleZones == null) {
+                return formatTimeZoneOffset(date);
+            } else {
+                exampleId = possibleZones.get(0);
+            }
+            zone = TimeZone.getTimeZone(exampleId);
         }
-        TimeZone exampleZone = TimeZone.getTimeZone(exampleId);
         Date javaDate;
         try {
             javaDate = date.getCalendar().getTime();
@@ -293,10 +306,10 @@ public class NamedTimeZone {
             // this happens with timezones that are allowed in XPath but not in Java, especially on JDK 1.4
             return formatTimeZoneOffset(date);
         }
-        boolean inSummerTime = exampleZone.inDaylightTime(javaDate);
+        boolean inSummerTime = zone.inDaylightTime(javaDate);
         int tzMinutes = date.getTimezoneInMinutes();
-        for (int i = 0; i < possibleIds.size(); i++) {
-            TimeZone possibleTimeZone = TimeZone.getTimeZone(possibleIds.get(i));
+        for (String possibleZone : possibleZones) {
+            TimeZone possibleTimeZone = TimeZone.getTimeZone(possibleZone);
             int offset = possibleTimeZone.getOffset(javaDate.getTime());
             if (offset == tzMinutes * 60000) {
                 return possibleTimeZone.getDisplayName(inSummerTime, TimeZone.SHORT);
@@ -328,9 +341,9 @@ public class NamedTimeZone {
      * @param date    the dateTimeValue, including timezone
      * @param country the country, as a two-letter code
      * @return the Olsen timezone name if a timezone with the given time displacement is in use in the country
-     *         in question (on the appropriate date, if known). In this case an asterisk is appended to the result if the
-     *         date/time is in daylight savings time. Otherwise, the formatted (numeric) timezone offset. If
-     *         the dateTimeValue supplied has no timezone, return a zero-length string.
+     * in question (on the appropriate date, if known). In this case an asterisk is appended to the result if the
+     * date/time is in daylight savings time. Otherwise, the formatted (numeric) timezone offset. If
+     * the dateTimeValue supplied has no timezone, return a zero-length string.
      */
 
     public static String getOlsenTimeZoneName(DateTimeValue date, String country) {
@@ -370,8 +383,8 @@ public class NamedTimeZone {
      *               "America/New_York" or "Europe/Lisbon". If the country code denotes a country spanning several
      *               timezones, such as the US, then one of them is chosen arbitrarily.
      * @return true if the date/time is known to be in summer time in the relevant country;
-     *         false if it is known not to be in summer time; null if there is no timezone or if no
-     *         information is available for the specified region.
+     * false if it is known not to be in summer time; null if there is no timezone or if no
+     * information is available for the specified region.
      */
 
     public static Boolean inSummerTime(DateTimeValue date, String region) {
@@ -400,12 +413,27 @@ public class NamedTimeZone {
      *                  to be in GMT.
      * @param olsenName the Olsen name of the timezone, for example Europe/Lisbon
      * @return the civil time offset, in milliseconds, to be applied to the given
-     *         date/time
+     * date/time
      */
 
     public static int civilTimeOffset(DateTimeValue date, String olsenName) {
         TimeZone zone = TimeZone.getTimeZone(olsenName);
         return zone.getOffset(date.getCalendar().getTime().getTime());
+    }
+
+    /**
+     * Get the TimeZone object for a given Olson timezone name
+     *
+     * @param olsonName an Olson timezone name, for example "Europe/London"
+     * @return the corresponding TimeZone object, or null if not available
+     */
+
+    public static TimeZone getNamedTimeZone(String olsonName) {
+        if (knownTimeZones.contains(olsonName)) {
+            return TimeZone.getTimeZone(olsonName);
+        } else {
+            return null;
+        }
     }
 
 

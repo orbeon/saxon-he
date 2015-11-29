@@ -25,6 +25,7 @@ import net.sf.saxon.value.StringValue;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,41 +46,12 @@ public class FormatDate extends SystemFunction implements Callable {
         int numArgs = getArity();
         if (numArgs != 2 && numArgs != 5) {
             throw new XPathException("Function " + getFunctionName().getDisplayName() +
-                    " must have either two or five arguments");
+                                             " must have either two or five arguments");
         }
         is30 = visitor.getStaticContext().getXPathVersion() >= 30;
         //super.checkArguments(visitor);
     }
 
-//    /**
-//     * Evaluate in a general context
-//     */
-//
-//    /*@Nullable*/
-//    public StringValue evaluateItem(XPathContext context) throws XPathException {
-//        CalendarValue value = (CalendarValue) getArg(0).evaluateItem(context);
-//        if (value == null) {
-//            return null;
-//        }
-//        String format = getArg(1).evaluateItem(context).getStringValue();
-//
-//        StringValue calendarVal = null;
-//        StringValue countryVal = null;
-//        StringValue languageVal = null;
-//        if (getArity() > 2) {
-//            languageVal = (StringValue) getArg(2).evaluateItem(context);
-//            calendarVal = (StringValue) getArg(3).evaluateItem(context);
-//            countryVal = (StringValue) getArg(4).evaluateItem(context);
-//        }
-//
-//        String language = languageVal == null ? null : languageVal.getStringValue();
-//        String country = countryVal == null ? null : countryVal.getStringValue();
-//        CharSequence result = formatDate(value, format, language, country, context);
-//        if (calendarVal != null) {
-//            result = adjustCalendar(calendarVal, result, context);
-//        }
-//        return new StringValue(result);
-//    }
 
     private CharSequence adjustCalendar(StringValue calendarVal, CharSequence result, XPathContext context) throws XPathException {
         StructuredQName cal;
@@ -146,8 +118,8 @@ public class FormatDate extends SystemFunction implements Callable {
         if (numberer.getClass() == Numberer_en.class && !"en".equals(language) && !languageDefaulted) {
             sb.append("[Language: en]");
         }
-        if(numberer.defaultedLocale() != null) {
-            sb.append("[Language: "+ numberer.defaultedLocale().getLanguage()+"]");
+        if (numberer.defaultedLocale() != null) {
+            sb.append("[Language: " + numberer.defaultedLocale().getLanguage() + "]");
         }
 
 
@@ -184,7 +156,7 @@ public class FormatDate extends SystemFunction implements Callable {
                 }
                 String componentFormat = format.substring(i, close);
                 sb.append(formatComponent(value, Whitespace.removeAllWhitespace(componentFormat),
-                        numberer, country, context));
+                                          numberer, country, context));
                 i = close + 1;
             }
         }
@@ -573,7 +545,7 @@ public class FormatDate extends SystemFunction implements Callable {
             FastStringBuffer fsb = new FastStringBuffer(s);
             while (len < min) {
                 fsb.prependWideChar(zeroDigit);
-                len = len+1;
+                len = len + 1;
             }
             s = fsb.toString();
         }
@@ -785,8 +757,15 @@ public class FormatDate extends SystemFunction implements Callable {
         }
 
         String language = languageVal == null ? null : languageVal.getStringValue();
-        String country = countryVal == null ? null : countryVal.getStringValue();
-        CharSequence result = formatDate(value, format, language, country, context);
+        String place = countryVal == null ? null : countryVal.getStringValue();
+        if (place != null && place.contains("/") && value.hasTimezone() && !(value instanceof TimeValue)) {
+            TimeZone zone = NamedTimeZone.getNamedTimeZone(place);
+            if (zone != null) {
+                int offset = zone.getOffset(value.toDateTime().getCalendar().getTimeInMillis());
+                value = value.adjustTimezone(offset / 60000);
+            }
+        }
+        CharSequence result = formatDate(value, format, language, place, context);
         if (calendarVal != null) {
             result = adjustCalendar(calendarVal, result, context);
         }
