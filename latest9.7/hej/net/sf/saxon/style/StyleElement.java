@@ -65,7 +65,7 @@ public abstract class StyleElement extends ElementImpl {
     protected boolean expandText = false;
     private boolean explaining = false;  // true if saxon:explain="yes"
     private StructuredQName objectName;  // for instructions that define an XSLT named object, the name of that object
-
+    private String baseURI;
     private Compilation compilation;
 
 
@@ -120,6 +120,21 @@ public abstract class StyleElement extends ElementImpl {
 
     public ExpressionContext getStaticContext(StructuredQName attributeName) {
         return new ExpressionContext(this, attributeName);
+    }
+
+
+    /**
+     * Get the base URI of the element, which acts as the static base URI for XPath expressions defined
+     * on this element. This is an expensive operation so the result is cached
+     *
+     * @return the base URI
+     */
+
+    public String getBaseURI() {
+        if (baseURI == null) {
+            baseURI = super.getBaseURI();
+        }
+        return baseURI;
     }
 
     /**
