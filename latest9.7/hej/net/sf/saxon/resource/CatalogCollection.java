@@ -1,5 +1,6 @@
 package net.sf.saxon.resource;
 
+import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.functions.DocumentFn;
 import net.sf.saxon.functions.URIQueryParameters;
@@ -34,7 +35,8 @@ public class CatalogCollection extends AbstractResourceCollection {
 
 
     //TODO we might know the catalog File already
-    public CatalogCollection(String collectionURI) {
+    public CatalogCollection(Configuration config, String collectionURI) {
+        super(config);
         this.collectionURI = collectionURI;
     }
 

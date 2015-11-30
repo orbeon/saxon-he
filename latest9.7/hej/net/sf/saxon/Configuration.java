@@ -180,6 +180,7 @@ public class Configuration implements SourceResolver, NotationSet {
             return 0;
         }
     };
+    private Map<String, String> fileExtensions = new HashMap<String, String>();
 
     /**
      * Constant indicating that the processor should take the recovery action
@@ -461,6 +462,18 @@ public class Configuration implements SourceResolver, NotationSet {
         registerExtensionFunction(new ArrayForEachPair());
         registerExtensionFunction(new ArraySort());
         registerExtensionFunction(new ArrayFlatten());
+
+        registerFileExtension("xml", "application/xml");
+        registerFileExtension("html", "application/html");
+        registerFileExtension("atom", "application/atom");
+        registerFileExtension("xsl", "application/xml+xslt");
+        registerFileExtension("xslt", "application/xml+xslt");
+        registerFileExtension("xsd", "application/xml+xsd");
+        registerFileExtension("txt", "text/plain");
+        registerFileExtension("MF", "text/plain");
+        registerFileExtension("class", "application/java");
+        registerFileExtension("json", "application/json");
+        registerFileExtension("", "application/binary");
     }
 
     /**
@@ -1607,6 +1620,43 @@ public class Configuration implements SourceResolver, NotationSet {
         return collectionFinder;
     }
 
+    /**
+     * Set the media type to be associated with a file extension by the standard
+     * collection handler
+     *
+     * @param extension the file extension, for example "xml". The value "" sets
+     *                  the default media type to be used for unregistered file extensions.
+     * @param mediaType the corresponding media type, for example "application/xml". The
+     *                  choice of media type determines how a resource with this extension
+     *                  gets parsed, when the file appears as part of a collection.
+     * @since 9.7.0.1
+     */
+
+    public void registerFileExtension(String extension, String mediaType) {
+        fileExtensions.put(extension, mediaType);
+    }
+
+    /**
+     * Get the media type to be associated with a file extension by the standard
+     * collection handler
+     *
+     * @param extension the file extension, for example "xml". The value "" gets
+     *                  the default media type to be used for unregistered file extensions.
+     *                  the default media type is also returned if the supplied file
+     *                  extension is not registered.
+     * @return the corresponding media type, for example "application/xml". The
+     * choice of media type determines how a resource with this extension
+     * gets parsed, when the file appears as part of a collection.
+     * @since 9.7.0.1
+     */
+
+    public String getMediaTypeForFileExtension(String extension) {
+        String mediaType = fileExtensions.get(extension);
+        if (mediaType == null) {
+            mediaType = fileExtensions.get("");
+        }
+        return mediaType;
+    }
 
     /**
      * Set the localizer factory to be used

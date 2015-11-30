@@ -94,7 +94,7 @@ public class StandardCollectionFinder implements CollectionFinder {
                 throw err;
             }
             if (file.isDirectory()) {
-                return new DirectoryCollection(collectionURI, file, params);
+                return new DirectoryCollection(context.getConfiguration(), collectionURI, file, params);
             }
         }
 
@@ -106,7 +106,7 @@ public class StandardCollectionFinder implements CollectionFinder {
 
         // otherwise assume the URI identifies a collection catalog
 
-        return new CatalogCollection(collectionURI);
+        return new CatalogCollection(context.getConfiguration(), collectionURI);
     }
 
     /**

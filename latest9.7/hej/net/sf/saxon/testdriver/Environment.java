@@ -606,7 +606,7 @@ public class
 
             final String cURI = collectionURI;
 
-            collectioni = new AbstractResourceCollection() {
+            collectioni = new AbstractResourceCollection(config) {
 
 
                 public void addResource(Resource r) {

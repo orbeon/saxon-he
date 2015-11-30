@@ -192,6 +192,9 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
             } else if (level == 2) {
                 subsection = localName;
                 if ("resources".equals(section)) {
+                    if ("fileExtension".equals(localName)) {
+                        readFileExtension(atts);
+                    }
                     // no action until endElement()
                 } else if ("collations".equals(section)) {
                     if (!"collation".equals(localName)) {
@@ -210,19 +213,17 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
                         readExtensionElement(atts);
                     } else if ("patternOptimization".equals(localName)) {
                         readPatternOptimization(atts);
-                    } else{
+                    } else {
                         error(localName, null, null, null);
                     }
                 }
-            }
-            else if (level == 3) {
+            } else if (level == 3) {
                 if ("patternOptimization".equals(subsection)) {
                     if ("precondition".equals(localName)) {
                         readPatternPrecondition(atts);
                     } else if ("rewrite".equals(localName)) {
                         readPatternRewrite(atts);
-                    }
-                    else if ("index".equals(localName)) {
+                    } else if ("index".equals(localName)) {
                         readPatternIndex(atts);
                     }
                 }
@@ -319,7 +320,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
             }
             try {
                 ResultDocument.setSerializationProperty(props,
-                        uri, name, value, this, false, config);
+                                                        uri, name, value, this, false, config);
             } catch (XPathException e) {
                 errors.add(e);
             }
@@ -394,6 +395,19 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         }
     }
 
+    private void readFileExtension(Attributes atts) {
+        String extension = atts.getValue("", "extension");
+        String mediaType = atts.getValue("", "mediaType");
+        if (extension == null) {
+            error("fileExtension", "extension", null, null);
+        }
+        if (mediaType == null) {
+            error("fileExtension", "mediaType", null, null);
+        }
+        config.registerFileExtension(extension, mediaType);
+    }
+
+
     /**
      * Process details of patternOptimization elements. Overridden in Saxon-PE configuration reader
      *
@@ -405,6 +419,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         err.setLocator(ExplicitLocation.makeFromSax(locator));
         errors.add(err);
     }
+
     /**
      * Process details of patternPrecondition elements. Overridden in Saxon-PE configuration reader
      *
@@ -428,6 +443,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         err.setLocator(ExplicitLocation.makeFromSax(locator));
         errors.add(err);
     }
+
     /**
      * Process details of patternIndex elements. Overridden in Saxon-PE configuration reader
      *
@@ -524,9 +540,12 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         XPathException err;
         if (attribute == null) {
             err = new XPathException("Invalid configuration element " + element);
+        } else if (actual == null) {
+            err = new XPathException("Missing configuration property " +
+                                             element + "/@" + attribute);
         } else {
             err = new XPathException("Invalid configuration property " +
-                    element + "/@" + attribute + ". Supplied value '" + actual + "'. " + required);
+                                             element + "/@" + attribute + ". Supplied value '" + actual + "'. " + required);
         }
         err.setLocator(ExplicitLocation.makeFromSax(locator));
         errors.add(err);
@@ -539,9 +558,9 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
 
     protected void errorClass(String element, String attribute, String actual, Class required, Exception cause) {
         XPathException err = new XPathException("Invalid configuration property " +
-                element + (attribute == null ? "" : "/@" + attribute) +
-                ". Supplied value '" + actual +
-                "', required value is the name of a class that implements '" + required.getName() + "'", cause);
+                                                        element + (attribute == null ? "" : "/@" + attribute) +
+                                                        ". Supplied value '" + actual +
+                                                        "', required value is the name of a class that implements '" + required.getName() + "'", cause);
         err.setLocator(ExplicitLocation.makeFromSax(locator));
         errors.add(err);
     }
@@ -586,6 +605,8 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
                     } catch (XPathException e) {
                         errors.add(e);
                     }
+                } else if ("fileExtension".equals(localName)) {
+                    // already done at startElement time
                 } else {
                     error(localName, null, null, null);
                 }
@@ -636,7 +657,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
      * @param useDefault true if the default namespace is to be used when the
      *                   prefix is "". If false, the method returns "" when the prefix is "".
      * @return the uri for the namespace, or null if the prefix is not in scope.
-     *         The "null namespace" is represented by the pseudo-URI "".
+     * The "null namespace" is represented by the pseudo-URI "".
      */
 
     public String getURIForPrefix(String prefix, boolean useDefault) {

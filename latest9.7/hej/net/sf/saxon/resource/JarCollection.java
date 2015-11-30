@@ -42,6 +42,7 @@ public class JarCollection extends AbstractResourceCollection {
      */
 
     public JarCollection(XPathContext context, String collectionURI, URIQueryParameters params) {
+        super(context.getConfiguration());
         this.context = context;
         this.collectionURI = collectionURI;
         this.params = params;

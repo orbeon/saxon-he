@@ -1,5 +1,6 @@
 package net.sf.saxon.resource;
 
+import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.functions.URIQueryParameters;
 import net.sf.saxon.lib.ParseOptions;
@@ -35,13 +36,18 @@ public class DirectoryCollection extends AbstractResourceCollection {
      * @param file the directory containing the files
      * @param params query parameters supplied as part of the URI
      */
-    public DirectoryCollection(String collectionURI, File file, URIQueryParameters params) {
+    public DirectoryCollection(Configuration config, String collectionURI, File file, URIQueryParameters params) {
+        super(config);
         if (collectionURI == null) {
             throw new NullPointerException();
         }
         this.collectionURI = collectionURI;
         dirFile = file;
-        this.params = params;
+        if (params == null) {
+            this.params = new URIQueryParameters("", config);
+        } else {
+            this.params = params;
+        }
     }
 
     public Iterator<String> getResourceURIs(XPathContext context) throws XPathException {

@@ -23,25 +23,14 @@ import java.util.Map;
  */
 public abstract class AbstractResourceCollection implements ResourceCollection {
 
+    protected Configuration config;
     protected String collectionURI;
     protected URIQueryParameters params = null;
 
-    private Map<String, String> contentTypeMapping = new HashMap<String, String>();
     private Map<String, ResourceFactory> resourceFactoryMapping = new HashMap<String, ResourceFactory>();
 
-    public AbstractResourceCollection() {
-        registerFileExtension("xml", "application/xml");
-        registerFileExtension("html", "application/html");
-        registerFileExtension("atom", "application/atom");
-        registerFileExtension("xsl", "application/xml+xslt");
-        registerFileExtension("xslt", "application/xml+xslt");
-        registerFileExtension("xsd", "application/xml+xsd");
-        registerFileExtension("txt", "text/plain");
-        registerFileExtension("MF", "text/plain");
-        registerFileExtension("class", "application/java");
-        registerFileExtension("json", "application/json");
-        registerFileExtension("", "application/binary");
-
+    public AbstractResourceCollection(Configuration config) {
+        this.config = config;
         registerContentType("application/xml", XmlResource.FACTORY);
         registerContentType("text/xml", XmlResource.FACTORY);
         registerContentType("application/html", XmlResource.FACTORY);
@@ -62,11 +51,12 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
     /**
      * Ask whether the collection is stable. This method should only be called after
      * calling {@link #getResources(XPathContext)} or {@link #getResourceURIs(XPathContext)}
+     *
+     * @param context the XPath evaluation context.
      * @return true if the collection is defined to be stable, that is, if a subsequent call
      * on collection() with the same URI is guaranteed to return the same result. The method returns
      * true if the query parameter stable=yes is present in the URI, or if the configuration property
      * {@link }FeatureKeys.STABLE_COLLECTION_URI} is set.
-     * @param context the XPath evaluation context.
      */
 
     public boolean isStable(XPathContext context) {
@@ -79,15 +69,6 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
         } else {
             return stable;
         }
-    }
-
-    /**
-     * Associate a file extension with a media type. This method may
-     * be called to customize the behaviour of a JarCollection to recognize different file extensions
-     */
-
-    public void registerFileExtension(String extension, String contentType) {
-        contentTypeMapping.put(extension, contentType);
     }
 
     /**
@@ -136,7 +117,7 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
             //        oldPipe.setController(context.getController());
             //        final PipelineConfiguration newPipe = new PipelineConfiguration(oldPipe);
             final UnfailingErrorListener oldErrorListener =
-                controller == null ? new StandardErrorListener() : controller.getErrorListener();
+                    controller == null ? new StandardErrorListener() : controller.getErrorListener();
             if (onError == URIQueryParameters.ON_ERROR_IGNORE) {
                 options.setErrorListener(new UnfailingErrorListener() {
                     public void warning(TransformerException exception) {
@@ -217,10 +198,11 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
 
     /**
      * Guess the content type of a resource from its name and/or its content
+     *
      * @param resourceURI the resource URI
-     * @param stream the content of the resource. The stream must be positioned at the start.
-     *               The method looks ahead in this stream
-     *               but resets the current position on exit.
+     * @param stream      the content of the resource. The stream must be positioned at the start.
+     *                    The method looks ahead in this stream
+     *                    but resets the current position on exit.
      * @return the media type, or null.
      */
 
@@ -236,7 +218,7 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
         if (contentTypeFromName == null) {
             extension = getFileExtension(resourceURI);
             if (extension != null) {
-                contentTypeFromName = contentTypeMapping.get(extension);
+                contentTypeFromName = config.getMediaTypeForFileExtension(extension);
             }
         }
         if (contentTypeFromName == null) {
@@ -260,6 +242,7 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
 
     /**
      * Get the file extension from a file name or URI
+     *
      * @param name the file name or URI
      * @return the part after the last dot, or null if there is no dot after the last slash or backslash.
      */
@@ -267,7 +250,7 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
     private String getFileExtension(String name) {
         int i = name.lastIndexOf('.');
         int p = Math.max(name.lastIndexOf('/'), name.lastIndexOf('\\'));
-        if (i > p && i+1 < name.length()) {
+        if (i > p && i + 1 < name.length()) {
             return name.substring(i + 1);
         }
         return null;
@@ -278,7 +261,7 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
      * making decisions about the type of resource. This method can be overridden in a user-defined
      * subclass.
      *
-     * @param config     The Saxon configuration
+     * @param config      The Saxon configuration
      * @param details     Details of the input, including the input stream delivering the content of the resource.
      *                    The method is expected to
      *                    consume this input stream; the caller will close it on return.
