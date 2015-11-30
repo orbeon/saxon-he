@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="all" name="Cross-Platform Samples and Use-Cases"
+    xmlns:dn="antlib:org.apache.ant.dotnet" xmlns:if="ant:if" xmlns:unless="ant:unless">
+    
+    <import file="build-constants.xml"/>
+
+    <!-- Location of Feature Keys Tools directory -->
+    <property name="featureKeys.dir" value="${repository}/tools/featureKeys"
+              description="Feature Keys directory in development repository"/>
+
+    <!-- Saxon used for some operations -->
+    <property name="use.EE" value="true" description="Use -EE for documentation, otherwise PE"/>
+    <property if:true="${use.EE}" name="saxon.edition" value="Enterprise"
+              description="Enterprise Saxon"/>
+    <property unless:true="${use.EE}" name="saxon.edition" value="Professional"
+              description="Professional Saxon"/>
+
+    <path id="saxon.class.path">
+        <fileset if:true="${use.EE}" dir="${product.dir}/eej">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset unless:true="${use.EE}" dir="${product.dir}/pej">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+    
+    <target name="samples-common" description="Assemble Cross-Platform Samples and Use-Cases">
+        <mkdir dir="${build-resources.dir}/samples"/>
+        <copy todir="${product.dir}/resources/use-cases">
+            <fileset dir="${usecases.dir}"/>
+        </copy>
+        <!-- 2015-03-24 DL added to generate annotated configuration file schema for samples -->
+        <xslt in="${featureKeys.dir}/FeatureKeys.xml" out="${featureKeys.dir}/annotatedConfig.xsd"
+              style="${featureKeys.dir}/FeatureKeysToSchema.xsl" classpathref="saxon.class.path">
+            <param name="FeatureKeys" expression="FeatureKeys.xml"/>
+            <param name="ConfigSchema" expression="config.xsd"/>
+            <factory name="com.saxonica.config.EnterpriseTransformerFactory">
+                <attribute name="http://saxon.sf.net/feature/licenseFileLocation"
+                           value="${saxon.license}"/>
+                <attribute name="http://saxon.sf.net/feature/initialTemplate" value="main"/>
+                <!-- Bug 2126 may require byte code suppression - remove this when fixed -->
+                <attribute name="http://saxon.sf.net/feature/optimizationLevel" value="0"/>
+
+            </factory>
+        </xslt>
+        <!-- Copy config.xsd from featureKeys.dir too, to make sure that it is up to date -->
+        <copy file="${featureKeys.dir}/annotatedConfig.xsd" tofile="${samples.dir}/config/annotatedConfig.xsd"/>
+        <copy todir="${product.dir}/resources/samples">
+            <fileset dir="${samples.dir}">
+                <!-- stuff tends to gather in samples, so only select what's needed to be issued -->
+                <include name="config/config.xml"/>
+                <include name="config/config-HE.xml"/>
+                <include name="config/config.xsd"/>
+                <include name="config/annotatedConfig.xsd"/> <!-- 2015-03-24 DL added -->
+                <include name="config/saxon-attributes.xsd"/>
+                <include name="data/books.xml"/>
+                <include name="data/more-books.xml"/>
+                <include name="data/othello.xml"/>
+                <include name="data/books.xsd"/>
+                <include name="data/books.dtd"/>
+                <include name="data/play.dtd"/>
+                <include name="query/tour.xq"/>
+                <include name="query/books.xq"/>
+                <include name="query/books-to-html.xq"/>
+                <include name="scm/scmschema.*"/>
+                <include name="styles/add-id.xsl"/>
+                <include name="styles/bible.xsl"/>
+                <include name="styles/books.xsl"/>
+                <include name="styles/books.txt"/>
+                <include name="styles/play.xsl"/>
+                <include name="styles/identity.xsl"/>
+                <include name="styles/books-csv.xsl"/>
+                <include name="styles/books-sa.xsl"/>
+                <include name="styles/books-sql.xsl"/>
+                <include name="styles/rename-to-lowercase.xsl"/>
+                <include name="styles/total.xsl"/>
+                <include name="styles/tour.xsl"/>
+                <include name="styles/summarize.xsl"/>
+            </fileset>
+        </copy>
+    </target>
+</project>
