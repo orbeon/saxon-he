@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="all" name="Documentation"
+    xmlns:dn="antlib:org.apache.ant.dotnet" xmlns:if="ant:if" xmlns:unless="ant:unless">
+
+    <!-- note : Ant 1.9.1 is needed for this script -->
+
+    <!-- Ant 1.9.1 supports the use of @ant:if and @ant:unless conditional attributes
+         which are used for alternatives, currently in ICU building and documentation generation -->
+
+    <!-- The use of ant:if and ant:unless requires Ant 1.9.1 -
+        for IntelliJ the built-in is 1.8.2, but an external Ant can be configured on the Ant menu  -->
+
+    <!-- note : Ant 1.7 is needed for this script -->
+
+    <!-- Ant 1.7 introduces a <service> element to allow META-INF/services
+         directories to be created in JAR files. Unfortunately it is broken,
+         see http://issues.apache.org/bugzilla/show_bug.cgi?id=41201. The relevant
+         code here is retained in the form of comments, and can be reinstated
+         when the bug is fixed. Meanwhile the directories are created manually -->
+
+    <!-- Build file for Saxon documentation. -->
+
+    <import file="build-constants.xml"/>
+
+    <!-- Location of userdoc source -->
+    <property name="userdoc.uri" value="${repository.uri}/userdoc"
+              description="Userdoc directory in development repository"/>
+
+    <!-- Location of viewer_app output directory -  development userdoc directory -->
+    <property name="viewer_app.dir" value="${repository.uri}/userdoc/saxon9/viewer_app"
+              description="Viewer app built in userdoc directory in development repository"/>
+
+
+    <!-- Full URI for viewer_app output directory (supplied to stylesheets as parameter) -->
+    <property name="viewer_app.full-uri" value="${viewer_app.dir}"
+              description="Full URI for viewer app in userdoc directory in development repository"/>
+
+    <!-- Location of Feature Keys Tools directory -->
+    <property name="featureKeys.dir" value="${repository}/tools/featureKeys"
+              description="Feature Keys directory in development repository"/>
+
+
+    <!-- Saxon used for some late-stage operations, notably documentation generation -->
+    <property name="use.EE" value="true" description="Use -EE for documentation, otherwise PE"/>
+    <property if:true="${use.EE}" name="saxon.edition" value="Enterprise"
+        description="Enterprise Saxon"/>
+    <property unless:true="${use.EE}" name="saxon.edition" value="Professional"
+        description="Professional Saxon"/>
+
+
+    <path id="saxon.class.path">
+        <fileset if:true="${use.EE}" dir="${product.dir}/eej">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset unless:true="${use.EE}" dir="${product.dir}/pej">
+            <include name="*.jar"/>
+        </fileset>
+        <!-- <pathelement path="${lib.dir}"/>-->
+        <!--<pathelement path="${product.dir}/eej"/>-->
+    </path>
+
+    <path id="saxonee.class.path">
+        <!-- <pathelement path="${lib.dir}"/>-->
+        <pathelement path="${product.dir}/eej"/>
+    </path>
+
+
+
+    <!-- Documentation generation -->
+
+    <macrodef name="EXPath-doc"
+        description="Expand EXPath functional documentation. This links to GitHub">
+        <attribute name="target"/>
+        <sequential>
+            <xslt in="${userdoc.uri}/saxon9/src/functions/EXPath/functions-@{target}.xml"
+                out="${userdoc.uri}/saxon9/src/functions/EXPath/functions-@{target}-expanded.xml"
+                style="${userdoc.uri}/saxon9/style/genFunctionDoc.xsl" classpathref="saxon.class.path">
+                <param name="GitHub" expression="${GitHub.dir}"/>
+                <factory name="com.saxonica.config.${saxon.edition}TransformerFactory">
+                    <attribute name="http://saxon.sf.net/feature/licenseFileLocation"
+                        value="${saxon.license}"/>
+                    <attribute name="http://saxon.sf.net/feature/xinclude-aware" value="true"/>
+                    <!-- Bug 2126 may require byte code suppression - remove this when fixed -->
+                    <attribute name="http://saxon.sf.net/feature/optimizationLevel" value="0"/>
+                </factory>
+            </xslt>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="Element-doc"
+              description="Expand XSLT Element Reference and Extensions documentation">
+        <attribute name="target"/>
+        <sequential>
+            <xslt in="${userdoc.uri}/saxon9/src/extensions/@{target}-src.xml"
+                  out="${userdoc.uri}/saxon9/src/extensions/@{target}-expanded.xml"
+                  style="${userdoc.uri}/saxon9/style/elements-body.xsl" classpathref="saxon.class.path">
+                <factory name="com.saxonica.config.${saxon.edition}TransformerFactory">
+                    <attribute name="http://saxon.sf.net/feature/licenseFileLocation"
+                               value="${saxon.license}"/>
+                    <!-- Bug 2126 may require byte code suppression - remove this when fixed -->
+                    <attribute name="http://saxon.sf.net/feature/optimizationLevel" value="0"/>
+                </factory>
+            </xslt>
+        </sequential>
+    </macrodef>
+
+    <target name="gen-doc"
+        description="Collects up, generates and copies the documentation source into the canonical location">
+        <!--<diagnostics/>-->
+        <echo message="Using Saxon ${saxon.edition} Edition"/>
+        <echo message="License file: ${saxon.license}"/>
+        <echo message="userdoc.uri is: ${userdoc.uri}"/>
+        <echo message="Using output parameter ${viewer_app.full-uri}"/>
+
+        <!-- Generate the ICU/UCA documentation which involves self-inspection extension functions -->
+        <xslt in="${userdoc.uri}/saxon9/src/catalog.xml" out="${userdoc.uri}/saxon9/src/extensibility/temp.xml"
+            style="${userdoc.uri}/saxon9/style/document-ICU.xsl" classpathref="saxon.class.path">
+            <param name="output" expression="extensibility/catalog.xml"/>
+            <factory name="com.saxonica.config.${saxon.edition}TransformerFactory">
+                <attribute name="http://saxon.sf.net/feature/licenseFileLocation"
+                    value="${saxon.license}"/>
+                <attribute name="http://saxon.sf.net/feature/initialTemplate" value="go"/>
+                <!--<attribute if:true="${use.EE}" name="http://saxon.sf.net/feature/trace-external-functions" value="true"/>-->
+                <!-- Bug 2126 may require byte code suppression - remove this when fixed -->
+                <attribute name="http://saxon.sf.net/feature/optimizationLevel" value="0"/>
+                <attribute name="http://saxon.sf.net/feature/xsltVersion" value="3.0"/>
+            </factory>
+        </xslt>
+
+        <!-- Generate the XSLT Element reference documentation -->
+        <xslt in="${userdoc.uri}/saxon9/src/elements/xsl-elements-src.xml" out="${userdoc.uri}/saxon9/src/elements/xsl-elements-expanded.xml"
+              style="${userdoc.uri}/saxon9/style/genElementDoc.xsl" classpathref="saxon.class.path">
+            <factory name="com.saxonica.config.${saxon.edition}TransformerFactory">
+                <attribute name="http://saxon.sf.net/feature/licenseFileLocation"
+                           value="${saxon.license}"/>
+                <!-- Bug 2126 may require byte code suppression - remove this when fixed -->
+                <attribute name="http://saxon.sf.net/feature/optimizationLevel" value="0"/>
+            </factory>
+        </xslt>
+
+        <xslt in="${userdoc.uri}/saxon9/src/elements/xsl-elements-expanded.xml" out="${userdoc.uri}/saxon9/src/xsl-elements.xml"
+              style="${userdoc.uri}/saxon9/style/elements-body.xsl" classpathref="saxon.class.path">
+            <factory name="com.saxonica.config.${saxon.edition}TransformerFactory">
+                <attribute name="http://saxon.sf.net/feature/licenseFileLocation"
+                           value="${saxon.license}"/>
+                <!-- Bug 2126 may require byte code suppression - remove this when fixed -->
+                <attribute name="http://saxon.sf.net/feature/optimizationLevel" value="0"/>
+            </factory>
+        </xslt>
+
+        <!-- Generate the Extensions documentation: instructions, serialization parameters, Saxon SQL Extension -->
+        <Element-doc target="instructions"/>
+        <Element-doc target="serialization-params"/>
+        <Element-doc target="sql-extension"/>
+        <copy file="${userdoc.uri}/saxon9/src/extensions/sql-extension-expanded.xml"
+                tofile="${userdoc.uri}/saxon9/src/sql-extension.xml">
+        </copy>
+
+        <!-- Expand the EXPath documentation -->
+        <EXPath-doc target="binary"/>
+        <EXPath-doc target="archive"/>
+        <EXPath-doc target="file"/>
+        <!-- Generate feature keys documentation, to be included in the Configuration section (configuration.xml) -->
+        <xslt in="${featureKeys.dir}/FeatureKeys.xml" out="${userdoc.uri}/saxon9/src/featureKeys/FeatureKeysDoc.xml"
+              style="${featureKeys.dir}/FeatureKeysToDoc.xsl" classpathref="saxon.class.path">
+            <factory name="com.saxonica.config.${saxon.edition}TransformerFactory">
+                <attribute name="http://saxon.sf.net/feature/licenseFileLocation"
+                           value="${saxon.license}"/>
+                <!-- Bug 2126 may require byte code suppression - remove this when fixed -->
+                <attribute name="http://saxon.sf.net/feature/optimizationLevel" value="0"/>
+            </factory>
+        </xslt>
+
+        <!-- Generate configuration file documentation (one result document per configuration file element,
+        containing a table of its attributes/child elements), to be included in the Configuration section (configuration.xml) -->
+        <xslt in="${featureKeys.dir}/AdditionalFeatures.xml" out="${userdoc.uri}/saxon9/src/featureKeys/ConfigFileDoc.xml"
+              style="${featureKeys.dir}/ToConfigFileDoc.xsl" classpathref="saxon.class.path">
+            <factory name="com.saxonica.config.${saxon.edition}TransformerFactory">
+                <attribute name="http://saxon.sf.net/feature/licenseFileLocation"
+                           value="${saxon.license}"/>
+                <!-- Bug 2126 may require byte code suppression - remove this when fixed -->
+                <attribute name="http://saxon.sf.net/feature/optimizationLevel" value="0"/>
+            </factory>
+        </xslt>
+
+
+        <!-- Expand the documentation sections from inclusions.
+        2014-11-12 param 'output-uri' now replaces param 'output', to supply full uri of output location
+        (the stylesheet has been updated: there is no longer any resolving of the output uri).
+    Note that the 'output' parameter is important - this stylesheet produces result documents
+    which Ant DOES NOT automatically place relative to the 'out' location - that appears to be a pipe
+    outside XSLT.
+     Also note of course that the main catalog.xml file is 'touched' to make sure that a re-run will be forced -->
+
+        <xslt in="${userdoc.uri}/saxon9/src/catalog.xml" out="${viewer_app.dir}/doc/catalog.xml"
+            style="${userdoc.uri}/saxon9/style/doc-include.xsl" classpathref="saxon.class.path">
+            <!--<param name="output" expression="${viewer_app.full-uri}/doc/catalog.xml"/>-->
+            <param name="output-uri" expression="${viewer_app.full-uri}/doc"/>
+            <factory name="com.saxonica.config.${saxon.edition}TransformerFactory">
+                <attribute name="http://saxon.sf.net/feature/licenseFileLocation"
+                    value="${saxon.license}"/>
+                <attribute name="http://saxon.sf.net/feature/xinclude-aware" value="true"/>
+                <!-- Bug 2126 may require byte code suppression - remove this when fixed -->
+                <attribute name="http://saxon.sf.net/feature/optimizationLevel" value="0"/>
+            </factory>
+        </xslt>
+
+        <!-- This touch ensures that gen-doc will run again on a subsequent invocation
+            even if the catalog itself hasn't been modified, which is the normal case.
+            It's the resources that it points to that are much more likely to change -->
+        <touch file="${userdoc.uri}/saxon9/src/catalog.xml"/>
+
+    </target>
+
+
+    <!-- Generate static HTML version of user documentation -->
+
+    <target name="userdoc-html"
+        description="Creates the static HTML version of the user documentation" depends="gen-doc">
+        <echo message="Using Saxon ${saxon.edition} Edition"/>
+        <echo message="License file: ${saxon.license}"/>
+
+        <!-- Preprocess the changes.xml file to turn it into a standard article -->
+
+        <xslt in="${viewer_app.dir}/doc/changes.xml"
+            out="${viewer_app.dir}/doc/changes-article.xml"
+            style="${userdoc.uri}/saxon9/to-static/c-changes.xsl">
+            <classpath refid="saxon.class.path"/>
+
+            <factory name="com.saxonica.config.EnterpriseTransformerFactory"/>
+
+        </xslt>
+
+        <!-- Preprocess the functions.xml file to turn it into a standard article -->
+
+        <xslt in="${viewer_app.dir}/doc/functions.xml"
+            out="${viewer_app.dir}/doc/functions-article.xml"
+            style="${userdoc.uri}/saxon9/to-static/c-functions.xsl"  >
+            <classpath refid="saxon.class.path"/>
+
+            <factory name="com.saxonica.config.EnterpriseTransformerFactory"/>
+
+        </xslt>
+
+        <!-- Now process all the articles -->
+
+       <xslt in="${viewer_app.dir}/doc/catalog.xml" out="${viewer_app.dir}/dummy.xml"
+            style="${userdoc.uri}/saxon9/to-static/s-cetree.xsl" >
+            <classpath refid="saxon.class.path"/>
+
+            <factory name="com.saxonica.config.EnterpriseTransformerFactory"/>
+            <param name="changes-article" expression="${viewer_app.full-uri}/doc/changes-article.xml"/>
+            <param name="functions-article" expression="${viewer_app.full-uri}/doc/functions-article.xml"/>
+            <param name="base-uri" expression="${viewer_app.full-uri}/html/documentation"/>
+        </xslt>
+
+        <!-- Copy other important resources -->
+
+        <copy file="${viewer_app.dir}/cetree.css" tofile="${viewer_app.dir}/html/documentation/cetree.css"/>
+        <copy file="${viewer_app.dir}/cetree.css" tofile="${viewer_app.dir}/html/documentation/cetree.css"/>
+        <copy todir="${viewer_app.dir}/html/documentation/image">
+            <fileset dir="${viewer_app.dir}/image"/>
+        </copy>
+
+        <!-- remove empty output file and intermediate processing files -->
+        <delete file="${viewer_app.dir}/dummy.xml"/>
+        <delete file="${viewer_app.dir}/doc/changes-article.xml"/>
+        <delete file="${viewer_app.dir}/doc/functions-article.xml"/>
+    </target>
+
+
+
+
+
+    <!-- Generate User Documentation for release -->
+
+    <target name="release-userdoc" description="Generate User Documentation" depends="copy-notices, userdoc-html">
+        <!-- Update the archive viewer app content -->
+        <copy todir="${userdoc.uri}/saxon9/viewer_app">
+            <fileset dir="${viewer_app.dir}"/>
+        </copy>
+
+        <copy todir="${build-resources.dir}/doc">
+            <fileset dir="${userdoc.uri}/saxon9/fixed"/>
+        </copy>
+        <copy todir="${build-resources.dir}/doc">
+            <fileset dir="${userdoc.uri}/saxon9/style">
+                <include name="make-menu.xsl"/>
+            </fileset>
+        </copy>
+
+        <zip zipfile="${build-resources.dir}/source-userdoc.zip">
+            <fileset dir="${userdoc.uri}/saxon9">
+                <include name="**/*.xml"/>
+                <include name="**/*.xsl"/>
+                <include name="**/*.xsd"/>
+                <include name="**/*.css"/>
+                <include name="fixed/**"/>
+                <include name="welcome/**"/>
+                <include name="viewer_app/Saxonce/**"/>
+                <include name="viewer_app/index.html"/>
+                <include name="viewer_app/readme.txt"/>
+                <include name="viewer_app/cetree.js"/>
+                <include name="viewer_app/image/**"/>
+                <include name="viewer_app/docimg/**"/>
+                <exclude name="xslt30-status.xml"/>
+            </fileset>
+        </zip>
+    </target>
+
+
+    <target name="copy-notices" description="Copy notice files">
+        <copy todir="${product.dir}/hej">
+            <fileset dir="${userdoc.uri}/saxon9/welcome">
+                <include name="doc/**"/>
+                <include name="notices/CERN.txt"/>
+                <include name="notices/JAMESCLARK.txt"/>
+                <include name="notices/LICENSE.txt"/>
+                <include name="notices/THAI.txt"/>
+                <include name="notices/UNICODE.txt"/>
+            </fileset>
+        </copy>
+        <copy todir="${product.dir}/pej">
+            <fileset dir="${userdoc.uri}/saxon9/welcome">
+                <include name="doc/**"/>
+                <include name="notices/CERN.txt"/>
+                <include name="notices/ICU-J.txt"/>
+                <include name="notices/JAMESCLARK.txt"/>
+                <include name="notices/LICENSE.txt"/>
+                <include name="notices/THAI.txt"/>
+                <include name="notices/UNICODE.txt"/>
+            </fileset>
+        </copy>
+        <copy todir="${product.dir}/eej">
+            <fileset dir="${userdoc.uri}/saxon9/welcome">
+                <include name="doc/**"/>
+                <include name="notices/ASM.txt"/>
+                <include name="notices/CERN.txt"/>
+                <include name="notices/ICU-J.txt"/>
+                <include name="notices/JAMESCLARK.txt"/>
+                <include name="notices/LICENSE.txt"/>
+                <include name="notices/THAI.txt"/>
+                <include name="notices/UNICODE.txt"/>
+            </fileset>
+        </copy>
+        <copy todir="${product.dir}/hen">
+            <fileset dir="${userdoc.uri}/saxon9/welcome">
+                <include name="doc/**"/>
+                <include name="notices/CERN.txt"/>
+                <include name="notices/JAMESCLARK.txt"/>
+                <include name="notices/LICENSE.txt"/>
+                <include name="notices/THAI.txt"/>
+                <include name="notices/UNICODE.txt"/>
+                <include name="notices/APACHE-XERCES.txt"/>
+                <include name="notices/APACHE-RESOLVER.txt"/>
+                <include name="notices/FRIJTERS.txt"/>
+                <include name="notices/GPL+CLASSPATH.txt"/>
+            </fileset>
+        </copy>
+        <copy todir="${product.dir}/pen">
+            <fileset dir="${userdoc.uri}/saxon9/welcome">
+                <include name="doc/**"/>
+                <include name="notices/CERN.txt"/>
+                <include name="notices/ICU-J.txt"/>
+                <include name="notices/JAMESCLARK.txt"/>
+                <include name="notices/LICENSE.txt"/>
+                <include name="notices/THAI.txt"/>
+                <include name="notices/UNICODE.txt"/>
+                <include name="notices/APACHE-XERCES.txt"/>
+                <include name="notices/APACHE-RESOLVER.txt"/>
+                <include name="notices/FRIJTERS.txt"/>
+                <include name="notices/GPL+CLASSPATH.txt"/>
+            </fileset>
+        </copy>
+        <copy todir="${product.dir}/een">
+            <fileset dir="${userdoc.uri}/saxon9/welcome">
+                <include name="doc/**"/>
+                <include name="notices/ASM.txt"/>
+                <include name="notices/CERN.txt"/>
+                <include name="notices/ICU-J.txt"/>
+                <include name="notices/JAMESCLARK.txt"/>
+                <include name="notices/LICENSE.txt"/>
+                <include name="notices/THAI.txt"/>
+                <include name="notices/UNICODE.txt"/>
+                <include name="notices/APACHE-XERCES.txt"/>
+                <include name="notices/APACHE-RESOLVER.txt"/>
+                <include name="notices/FRIJTERS.txt"/>
+                <include name="notices/GPL+CLASSPATH.txt"/>
+            </fileset>
+        </copy>
+    </target>
+
+
+</project>
