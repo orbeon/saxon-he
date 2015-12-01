@@ -2319,6 +2319,7 @@ latest9.7/samples/java/he/XPathExampleServlet.java svn_eol_002dstyle=native
 latest9.7/samples/query/books-to-html.xq svn_eol_002dstyle=native
 latest9.7/samples/query/books.xq svn_eol_002dstyle=native
 latest9.7/samples/query/tour.xq svn_eol_002dstyle=native
+latest9.7/samples/schemas/validation-reports.xsd svn_eol_002dstyle=native
 latest9.7/samples/scm/scmschema.scm svn_eol_002dstyle=native
 latest9.7/samples/scm/scmschema.xsd svn_eol_002dstyle=native
 latest9.7/samples/styles/bible-streaming.xsl svn_eol_002dstyle=native
