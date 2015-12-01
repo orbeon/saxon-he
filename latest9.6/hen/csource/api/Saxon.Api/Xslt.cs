@@ -281,7 +281,7 @@ namespace Saxon.Api
                 JStreamSource ss = new JStreamSource(new DotNetInputStream(input));
                 if (baseUri != null)
                 {
-                    ss.setSystemId(baseUri.ToString());
+                    ss.setSystemId(Uri.EscapeUriString(baseUri.ToString()));
                 }
 					
 				PreparedStylesheet pss = JCompilation.compileSingletonPackage(processor.Implementation, xsltCompiler.getUnderlyingCompilerInfo(),ss);
@@ -328,10 +328,10 @@ namespace Saxon.Api
 				JStreamSource ss = new JStreamSource(new DotNetInputStream(input));
 				if (theBaseUri != null)
 				{
-					ss.setSystemId(theBaseUri.ToString());
+					ss.setSystemId(Uri.EscapeUriString(theBaseUri.ToString()));
 				} else {
 					if(baseUri != null) {
-						ss.setSystemId(baseUri.ToString());
+						ss.setSystemId(Uri.EscapeUriString(baseUri.ToString()));
 					}
 				}
 
@@ -366,7 +366,7 @@ namespace Saxon.Api
 				JStreamSource ss = new JStreamSource(new DotNetInputStream(input));
 				if (baseUri != null)
 				{
-					ss.setSystemId(baseUri.ToString());
+					ss.setSystemId(Uri.EscapeUriString(baseUri.ToString()));
 				}
 
 				//JCompilation compilation = new JCompilation(processor.Implementation, GetUnderlyingCompilerInfo());
@@ -496,7 +496,7 @@ namespace Saxon.Api
             JStreamSource ss = new JStreamSource(new DotNetReader(input));
             if (baseUri != null)
             {
-                ss.setSystemId(baseUri.ToString());
+                ss.setSystemId(Uri.EscapeUriString(baseUri.ToString()));
             }
 			PreparedStylesheet pss = JCompilation.compileSingletonPackage(processor.Implementation ,xsltCompiler.getUnderlyingCompilerInfo(), ss);
             return new XsltExecutable(processor, pss);
@@ -573,7 +573,7 @@ namespace Saxon.Api
                 {
                     throw new ArgumentNullException("BaseUri");
                 }
-                baseu = baseUri.ToString();
+                baseu = Uri.EscapeUriString(baseUri.ToString());
                 pp.setBaseURI(baseu);
             }
             source.setSystemId(baseu);
@@ -965,7 +965,7 @@ namespace Saxon.Api
 
         public void SetInputStream(Stream input, Uri baseUri)
         {
-            streamSource = new JStreamSource(new DotNetInputStream(input), baseUri.ToString());
+            streamSource = new JStreamSource(new DotNetInputStream(input), Uri.EscapeUriString(baseUri.ToString()));
         }
 
         /// <summary>
@@ -2141,7 +2141,7 @@ namespace Saxon.Api
 	/// wrapping the returned sequence in a document node</returns>
 	public XdmValue ApplyTemplates(Stream input, Uri baseUri){
 		prime ();
-		streamSource = new JStreamSource(new DotNetInputStream(input), baseUri.ToString());
+		streamSource = new JStreamSource(new DotNetInputStream(input), baseUri.ToString(Uri.EscapeUriString(baseUri.ToString())));
 
 		try{
 			JPipelineConfiguration pipe = controller.makePipelineConfiguration();
