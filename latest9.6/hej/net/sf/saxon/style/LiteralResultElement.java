@@ -384,11 +384,7 @@ public class LiteralResultElement extends StyleElement {
         if (!isInScopeNamespace(NamespaceConstant.XSLT)) {
             String message;
             if (getLocalPart().equals("stylesheet") || getLocalPart().equals("transform")) {
-                if (!isInScopeNamespace(NamespaceConstant.MICROSOFT_XSL)) {
-                    message = "Saxon is not able to process Microsoft's WD-xsl dialect";
-                } else {
-                    message = "Namespace for stylesheet element should be " + NamespaceConstant.XSLT;
-                }
+                message = "Namespace for stylesheet element should be " + NamespaceConstant.XSLT;
             } else {
                 message = "The supplied file does not appear to be a stylesheet";
             }
