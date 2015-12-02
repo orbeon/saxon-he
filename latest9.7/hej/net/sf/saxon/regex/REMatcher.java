@@ -332,6 +332,13 @@ public class REMatcher {
                 endn[i] = startn[i];
             }
         }
+        if (startBackref != null) {
+            for (int i = 0; i < startBackref.length; i++) {
+                if (startBackref[i] >= pos) {
+                    endBackref[i] = startBackref[i];
+                }
+            }
+        }
     }
 
     /**

@@ -314,6 +314,7 @@ public abstract class Operation {
                         IntIterator top = iterators.peek();
                         while (top.hasNext()) {
                             int p = top.next();
+                            matcher.clearCapturedGroupsBeyond(p);
                             int i = iterators.size();
                             if (i >= operations.size()) {
                                 return p;
