@@ -126,6 +126,9 @@ public class ArraySubarray extends ExtensionFunctionDefinition {
                 if (start < 1) {
                     throw new XPathException("Start position is less than one","FOAY0001");
                 }
+                if (start > array.size() + 1) {
+                    throw new XPathException("Start position is out of bounds","FOAY0001");
+                }
                 if (length < 0) {
                     throw new XPathException("Specified length of subarray is less than zero","FOAY0002");
                 }
