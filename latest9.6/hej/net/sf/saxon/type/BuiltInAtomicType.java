@@ -19,7 +19,6 @@ import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.*;
-import net.sf.saxon.value.StringValue;
 
 import java.util.Collections;
 import java.util.Set;
@@ -35,7 +34,7 @@ public class BuiltInAtomicType implements AtomicType {
     private int baseFingerprint;
     private int primitiveFingerprint;
     private boolean ordered = false;
-    private StringConverter stringConverter; // may be null for types where conversion rules can vary
+    StringConverter stringConverter; // may be null for types where conversion rules can vary
 
     public static BuiltInAtomicType ANY_ATOMIC =
             makeAtomicType(StandardNames.XS_ANY_ATOMIC_TYPE, AnySimpleType.getInstance(), true);
@@ -178,46 +177,6 @@ public class BuiltInAtomicType implements AtomicType {
     public static BuiltInAtomicType DATE_TIME_STAMP =
             makeAtomicType(StandardNames.XS_DATE_TIME_STAMP, DATE_TIME, true);
 
-    static {
-        ANY_ATOMIC.stringConverter = Converter.IDENTITY_CONVERTER;
-        STRING.stringConverter = StringConverter.STRING_TO_STRING;
-        LANGUAGE.stringConverter = StringConverter.STRING_TO_LANGUAGE;
-        NORMALIZED_STRING.stringConverter = StringConverter.STRING_TO_NORMALIZED_STRING;
-        TOKEN.stringConverter = StringConverter.STRING_TO_TOKEN;
-        NCNAME.stringConverter = StringConverter.STRING_TO_NCNAME;
-        NAME.stringConverter = StringConverter.STRING_TO_NAME;
-        NMTOKEN.stringConverter = StringConverter.STRING_TO_NMTOKEN;
-        ID.stringConverter = StringConverter.STRING_TO_ID;
-        IDREF.stringConverter = StringConverter.STRING_TO_IDREF;
-        ENTITY.stringConverter = StringConverter.STRING_TO_ENTITY;
-        DECIMAL.stringConverter = StringConverter.STRING_TO_DECIMAL;
-        INTEGER.stringConverter = StringConverter.STRING_TO_INTEGER;
-        DURATION.stringConverter = StringConverter.STRING_TO_DURATION;
-        G_MONTH.stringConverter = StringConverter.STRING_TO_G_MONTH;
-        G_MONTH_DAY.stringConverter = StringConverter.STRING_TO_G_MONTH_DAY;
-        G_DAY.stringConverter = StringConverter.STRING_TO_G_DAY;
-        DAY_TIME_DURATION.stringConverter = StringConverter.STRING_TO_DAY_TIME_DURATION;
-        YEAR_MONTH_DURATION.stringConverter = StringConverter.STRING_TO_YEAR_MONTH_DURATION;
-        TIME.stringConverter = StringConverter.STRING_TO_TIME;
-        BOOLEAN.stringConverter = StringConverter.STRING_TO_BOOLEAN;
-        HEX_BINARY.stringConverter = StringConverter.STRING_TO_HEX_BINARY;
-        BASE64_BINARY.stringConverter = StringConverter.STRING_TO_BASE64_BINARY;
-        UNTYPED_ATOMIC.stringConverter = StringConverter.STRING_TO_UNTYPED_ATOMIC;
-        
-        NON_POSITIVE_INTEGER.stringConverter = new StringConverter.StringToIntegerSubtype(NON_POSITIVE_INTEGER);
-        NEGATIVE_INTEGER.stringConverter = new StringConverter.StringToIntegerSubtype(NEGATIVE_INTEGER);
-        LONG.stringConverter = new StringConverter.StringToIntegerSubtype(LONG);
-        INT.stringConverter = new StringConverter.StringToIntegerSubtype(INT);
-        SHORT.stringConverter = new StringConverter.StringToIntegerSubtype(SHORT);
-        BYTE.stringConverter = new StringConverter.StringToIntegerSubtype(BYTE);
-        NON_NEGATIVE_INTEGER.stringConverter = new StringConverter.StringToIntegerSubtype(NON_NEGATIVE_INTEGER);
-        POSITIVE_INTEGER.stringConverter = new StringConverter.StringToIntegerSubtype(POSITIVE_INTEGER);
-        UNSIGNED_LONG.stringConverter = new StringConverter.StringToIntegerSubtype(UNSIGNED_LONG);
-        UNSIGNED_INT.stringConverter = new StringConverter.StringToIntegerSubtype(UNSIGNED_INT);
-        UNSIGNED_SHORT.stringConverter = new StringConverter.StringToIntegerSubtype(UNSIGNED_SHORT);
-        UNSIGNED_BYTE.stringConverter = new StringConverter.StringToIntegerSubtype(UNSIGNED_BYTE);
-        
-    }
 
     private BuiltInAtomicType(int fingerprint) {
         this.fingerprint = fingerprint;

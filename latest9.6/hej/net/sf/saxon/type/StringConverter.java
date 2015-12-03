@@ -15,7 +15,6 @@ import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.value.*;
-import net.sf.saxon.value.StringValue;
 
 import java.util.regex.Pattern;
 
@@ -80,6 +79,49 @@ public abstract class StringConverter extends Converter {
             STRING_TO_BASE64_BINARY = new StringToBase64BinaryConverter();
     /*@NotNull*/ public final static StringToUntypedAtomic
             STRING_TO_UNTYPED_ATOMIC = new StringToUntypedAtomic();
+
+    static {
+        // See bug 2524
+        BuiltInAtomicType.ANY_ATOMIC.stringConverter = Converter.IDENTITY_CONVERTER;
+        BuiltInAtomicType.STRING.stringConverter = StringConverter.STRING_TO_STRING;
+        BuiltInAtomicType.LANGUAGE.stringConverter = StringConverter.STRING_TO_LANGUAGE;
+        BuiltInAtomicType.NORMALIZED_STRING.stringConverter = StringConverter.STRING_TO_NORMALIZED_STRING;
+        BuiltInAtomicType.TOKEN.stringConverter = StringConverter.STRING_TO_TOKEN;
+        BuiltInAtomicType.NCNAME.stringConverter = StringConverter.STRING_TO_NCNAME;
+        BuiltInAtomicType.NAME.stringConverter = StringConverter.STRING_TO_NAME;
+        BuiltInAtomicType.NMTOKEN.stringConverter = StringConverter.STRING_TO_NMTOKEN;
+        BuiltInAtomicType.ID.stringConverter = StringConverter.STRING_TO_ID;
+        BuiltInAtomicType.IDREF.stringConverter = StringConverter.STRING_TO_IDREF;
+        BuiltInAtomicType.ENTITY.stringConverter = StringConverter.STRING_TO_ENTITY;
+        BuiltInAtomicType.DECIMAL.stringConverter = StringConverter.STRING_TO_DECIMAL;
+        BuiltInAtomicType.INTEGER.stringConverter = StringConverter.STRING_TO_INTEGER;
+        BuiltInAtomicType.DURATION.stringConverter = StringConverter.STRING_TO_DURATION;
+        BuiltInAtomicType.G_MONTH.stringConverter = StringConverter.STRING_TO_G_MONTH;
+        BuiltInAtomicType.G_MONTH_DAY.stringConverter = StringConverter.STRING_TO_G_MONTH_DAY;
+        BuiltInAtomicType.G_DAY.stringConverter = StringConverter.STRING_TO_G_DAY;
+        BuiltInAtomicType.DAY_TIME_DURATION.stringConverter = StringConverter.STRING_TO_DAY_TIME_DURATION;
+        BuiltInAtomicType.YEAR_MONTH_DURATION.stringConverter = StringConverter.STRING_TO_YEAR_MONTH_DURATION;
+        BuiltInAtomicType.TIME.stringConverter = StringConverter.STRING_TO_TIME;
+        BuiltInAtomicType.BOOLEAN.stringConverter = StringConverter.STRING_TO_BOOLEAN;
+        BuiltInAtomicType.HEX_BINARY.stringConverter = StringConverter.STRING_TO_HEX_BINARY;
+        BuiltInAtomicType.BASE64_BINARY.stringConverter = StringConverter.STRING_TO_BASE64_BINARY;
+        BuiltInAtomicType.UNTYPED_ATOMIC.stringConverter = StringConverter.STRING_TO_UNTYPED_ATOMIC;
+
+        BuiltInAtomicType.NON_POSITIVE_INTEGER.stringConverter = new StringConverter.StringToIntegerSubtype(BuiltInAtomicType.NON_POSITIVE_INTEGER);
+        BuiltInAtomicType.NEGATIVE_INTEGER.stringConverter = new StringConverter.StringToIntegerSubtype(BuiltInAtomicType.NEGATIVE_INTEGER);
+        BuiltInAtomicType.LONG.stringConverter = new StringConverter.StringToIntegerSubtype(BuiltInAtomicType.LONG);
+        BuiltInAtomicType.INT.stringConverter = new StringConverter.StringToIntegerSubtype(BuiltInAtomicType.INT);
+        BuiltInAtomicType.SHORT.stringConverter = new StringConverter.StringToIntegerSubtype(BuiltInAtomicType.SHORT);
+        BuiltInAtomicType.BYTE.stringConverter = new StringConverter.StringToIntegerSubtype(BuiltInAtomicType.BYTE);
+        BuiltInAtomicType.NON_NEGATIVE_INTEGER.stringConverter = new StringConverter.StringToIntegerSubtype(BuiltInAtomicType.NON_NEGATIVE_INTEGER);
+        BuiltInAtomicType.POSITIVE_INTEGER.stringConverter = new StringConverter.StringToIntegerSubtype(BuiltInAtomicType.POSITIVE_INTEGER);
+        BuiltInAtomicType.UNSIGNED_LONG.stringConverter = new StringConverter.StringToIntegerSubtype(BuiltInAtomicType.UNSIGNED_LONG);
+        BuiltInAtomicType.UNSIGNED_INT.stringConverter = new StringConverter.StringToIntegerSubtype(BuiltInAtomicType.UNSIGNED_INT);
+        BuiltInAtomicType.UNSIGNED_SHORT.stringConverter = new StringConverter.StringToIntegerSubtype(BuiltInAtomicType.UNSIGNED_SHORT);
+        BuiltInAtomicType.UNSIGNED_BYTE.stringConverter = new StringConverter.StringToIntegerSubtype(BuiltInAtomicType.UNSIGNED_BYTE);
+
+    }
+
 
     /**
      * Create a StringConverter
