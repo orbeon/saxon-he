@@ -682,6 +682,7 @@ public class Serializer implements Destination {
         r = new NamespaceReducer(r);
         ReceivingContentHandler rch = new ReceivingContentHandler();
         rch.setReceiver(r);
+        rch.setPipelineConfiguration(r.getPipelineConfiguration());
         return rch;
     }
 
