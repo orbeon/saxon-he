@@ -256,6 +256,8 @@ public class QT3TestDriverHE extends TestDriver {
             } else if ("fn-format-integer-CLDR".equals(value)) {
                 String edition = env.processor.getSaxonEdition();
                 return (edition.equals("PE") || edition.equals("EE")) ^ inverse;
+            } else if ("simple-uca-fallback".equals(value)) {
+                return !inverse;
             } else {
                 println("**** feature = " + value + "  ????");
                 return false;

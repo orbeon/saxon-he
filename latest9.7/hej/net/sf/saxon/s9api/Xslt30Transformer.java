@@ -34,6 +34,8 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import java.io.File;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -105,8 +107,6 @@ public class Xslt30Transformer {
     boolean baseOutputUriWasSet = false;
     Item globalContextItem = null;
 
-    /*@Nullable*/ private Source initialSource;
-
     /**
      * Protected constructor
      *
@@ -175,20 +175,29 @@ public class Xslt30Transformer {
 
     /**
      * Set the initial context node for the transformation.
-     * <p>This is ignored in the case where the {@link XsltTransformer} is used as the
-     * {@link Destination} of another process. In that case the initial context node will always
-     * be the document node of the document that is being streamed to this destination.</p>
-     * <p>Calling this method has the side-effect of setting the initial source to null.</p>
      *
      * @param node the initial context node, or null if there is to be no initial context node
+     * @deprecated since 9.7.0.1 - use {@link #setInitialContextItem}
      */
 
     public void setInitialContextNode(XdmNode node) {
         if (primed) {
             throw new IllegalStateException("Stylesheet has already been evaluated");
         }
-        initialSource = node == null ? null : node.getUnderlyingNode();
         this.globalContextItem = node.getUnderlyingNode();
+    }
+
+    /**
+     * Set the initial context item for the transformation.
+     *
+     * @param item the initial context item, or null if there is to be no initial context item
+     */
+
+    public void setInitialContextItem(XdmItem item) {
+        if (primed) {
+            throw new IllegalStateException("Stylesheet has already been evaluated");
+        }
+        this.globalContextItem = (Item)item.getUnderlyingValue();
     }
 
     /**
@@ -598,10 +607,11 @@ public class Xslt30Transformer {
      * @param selection   the initial value to which templates are to be applied (equivalent to the <code>select</code>
      *                    attribute of <code>xsl:apply-templates</code>)
      * @param destination the destination of the result document produced by wrapping the result of the apply-templates
-     *                    call in a document node.  If the destination is a {@link Serializer}, then the serialization
-     *                    parameters set in the serializer are combined with those defined in the stylesheet
-     *                    (the parameters set in the serializer take precedence).
+     *                    call in a document node.
      * @throws SaxonApiException if the transformation fails
+     * @since 9.6. Changed in 9.7.0.1 so that if a Serializer is supplied as the Destination, it will not
+     * be modified by this method to set output properties from the stylesheet; instead, the Serializer
+     * should be initialized by calling the <code>newSerializer</code> method on this <code>Xslt30Transformer</code>
      */
 
     public void applyTemplates(XdmValue selection, Destination destination) throws SaxonApiException {
@@ -671,11 +681,12 @@ public class Xslt30Transformer {
      *                     public named template in the stylesheet. If the value is null,
      *                     the QName <code>xsl:initial-template</code> is used.
      * @param destination  the destination of the result document produced by wrapping the result of the apply-templates
-     *                     call in a document node.  If the destination is a {@link Serializer}, then the serialization
-     *                     parameters set in the serializer are combined with those defined in the stylesheet
-     *                     (the parameters set in the serializer take precedence).
+     *                     call in a document node.
      * @throws SaxonApiException if there is no named template with this name, or if any dynamic
      *                           error occurs during the transformation
+     * @since 9.6. Changed in 9.7.0.1 so that if a Serializer is supplied as the Destination, it will not
+     * be modified by this method to set output properties from the stylesheet; instead, the Serializer
+     * should be initialized by calling the <code>newSerializer</code> method on this <code>Xslt30Transformer</code>
      */
 
     public void callTemplate(QName templateName, Destination destination) throws SaxonApiException {
@@ -806,10 +817,11 @@ public class Xslt30Transformer {
      *                    will be converted if necessary to the type as defined in the function signature, using
      *                    the function conversion rules.
      * @param destination the destination of the result document produced by wrapping the result of the apply-templates
-     *                    call in a document node.  If the destination is a {@link Serializer}, then the serialization
-     *                    parameters set in the serializer are combined with those defined in the stylesheet
-     *                    (the parameters set in the serializer take precedence).
+     *                    call in a document node.
      * @throws SaxonApiException in the event of a dynamic error
+     * @since 9.6. Changed in 9.7.0.1 so that if a Serializer is supplied as the Destination, it will not
+     * be modified by this method to set output properties from the stylesheet; instead, the Serializer
+     * should be initialized by calling the <code>newSerializer</code> method on this <code>Xslt30Transformer</code>
      */
 
     public void callFunction(QName function, XdmValue[] arguments, Destination destination) throws SaxonApiException {
@@ -824,17 +836,73 @@ public class Xslt30Transformer {
         destination.close();
     }
 
+    /**
+     * Create a serializer initialised to use the default output parameters defined in the stylesheet.
+     * These serialization parameters can be overridden by use of
+     * {@link Serializer#setOutputProperty(Serializer.Property, String)}.
+     * @since 9.7.0.1
+     */
+
+    public Serializer newSerializer() {
+        Serializer serializer = processor.newSerializer();
+        serializer.setDefaultOutputProperties(controller.getExecutable().getDefaultOutputProperties());
+        serializer.setCharacterMap(controller.getExecutable().getCharacterMapIndex());
+        return serializer;
+    }
+
+    /**
+     * Create a serializer initialised to use the default output parameters defined in the stylesheet.
+     * These serialization parameters can be overridden by use of
+     * {@link Serializer#setOutputProperty(Serializer.Property, String)}.
+     *
+     * @param file the output file to which the serializer will write its output. As well as initializing
+     *             the serializer to write to this output file, this method sets the base output URI of this
+     *             Xslt30Transformer to be the URI of this file.
+     * @since 9.7.0.1
+     */
+
+    public Serializer newSerializer(File file) {
+        Serializer serializer = processor.newSerializer(file);
+        serializer.setDefaultOutputProperties(controller.getExecutable().getDefaultOutputProperties());
+        serializer.setCharacterMap(controller.getExecutable().getCharacterMapIndex());
+        setBaseOutputURI(file.toURI().toString());
+        return serializer;
+    }
+
+    /**
+     * Create a serializer initialised to use the default output parameters defined in the stylesheet.
+     * These serialization parameters can be overridden by use of
+     * {@link Serializer#setOutputProperty(Serializer.Property, String)}.
+     * @param writer the Writer to which the serializer will write
+     * @since 9.7.0.1
+     */
+
+    public Serializer newSerializer(Writer writer) {
+        Serializer serializer = newSerializer();
+        serializer.setOutputWriter(writer);
+        return serializer;
+    }
+
+    /**
+     * Create a serializer initialised to use the default output parameters defined in the stylesheet.
+     * These serialization parameters can be overridden by use of
+     * {@link Serializer#setOutputProperty(Serializer.Property, String)}.
+     *
+     * @param stream the output stream to which the serializer will write
+     * @since 9.7.0.1
+     */
+
+    public Serializer newSerializer(OutputStream stream) {
+        Serializer serializer = newSerializer();
+        serializer.setOutputStream(stream);
+        return serializer;
+    }
+
     private Receiver getDestinationReceiver(Destination destination) throws SaxonApiException {
         if (destination instanceof Serializer) {
             Serializer serializer = (Serializer) destination;
             serializer.setDefaultOutputProperties(controller.getExecutable().getDefaultOutputProperties());
             serializer.setCharacterMap(controller.getExecutable().getCharacterMapIndex());
-            Object dest = serializer.getOutputDestination();
-            if (!baseOutputUriWasSet) {
-                if (dest instanceof File) {
-                    controller.setBaseOutputURI(((File) dest).toURI().toString());
-                }
-            }
             Receiver r = destination.getReceiver(controller.getConfiguration());
             PipelineConfiguration pipe = r.getPipelineConfiguration();
             pipe.setController(controller);

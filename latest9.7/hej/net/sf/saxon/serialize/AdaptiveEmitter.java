@@ -237,5 +237,17 @@ public class AdaptiveEmitter extends SequenceWriter {
         // TODO: use CharacterReferenceGenerator
         return "&#x" + Integer.toHexString(c) + ";";
     }
+
+    @Override
+    public void close() throws XPathException {
+        super.close();
+        if (writer != null) {
+            try {
+                writer.close();
+            } catch (IOException e) {
+                throw new XPathException(e);
+            }
+        }
+    }
 }
 

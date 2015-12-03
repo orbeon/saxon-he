@@ -183,6 +183,10 @@ public class Serializer implements Destination {
          */
         HTML_VERSION(SaxonOutputKeys.HTML_VERSION),
         /**
+         * Build-tree option (XSLT only)
+         */
+        BUILD_TREE(SaxonOutputKeys.BUILD_TREE),
+        /**
          * Saxon extension: set to an integer (represented as a string) giving the number of spaces
          * by which each level of nesting should be indented. Default is 3.
          */
@@ -609,7 +613,7 @@ public class Serializer implements Destination {
             }
             try {
                 QueryResult.serializeSequence(value.getUnderlyingValue().iterate(),
-                    processor.getUnderlyingConfiguration(), result, getOutputProperties());
+                    processor.getUnderlyingConfiguration(), result, getCombinedOutputProperties());
             } catch (XPathException e) {
                 throw new SaxonApiException(e);
             }
@@ -635,7 +639,7 @@ public class Serializer implements Destination {
 
     private void serializeNodeToResult(XdmNode node, Result res) throws SaxonApiException {
         try {
-            QueryResult.serialize(node.getUnderlyingNode(), res, getOutputProperties());
+            QueryResult.serialize(node.getUnderlyingNode(), res, getCombinedOutputProperties());
         } catch (XPathException e) {
             throw new SaxonApiException(e);
         }
@@ -722,7 +726,7 @@ public class Serializer implements Destination {
         try {
             SerializerFactory sf = config.getSerializerFactory();
             PipelineConfiguration pipe = config.makePipelineConfiguration();
-            Properties props = getOutputProperties();
+            Properties props = getCombinedOutputProperties();
             Receiver target = sf.getReceiver(result, pipe, props, characterMap);
             if (target.getSystemId() == null) {
                 target.setSystemId(result.getSystemId());
@@ -747,7 +751,7 @@ public class Serializer implements Destination {
         try {
             Configuration config = pipe.getConfiguration();
             SerializerFactory sf = config.getSerializerFactory();
-            Properties props = getOutputProperties();
+            Properties props = getCombinedOutputProperties();
             Receiver target = sf.getReceiver(result, pipe, props, characterMap);
             if (target.getSystemId() == null) {
                 target.setSystemId(result.getSystemId());
@@ -802,10 +806,10 @@ public class Serializer implements Destination {
      *
      * @return a newly-constructed Properties object holding the declared serialization properties. Specifically,
      * it holds the properties defined explicitly on this Serializer object, backed by the properties defined
-     * in unnamed xsl:output declarations in the stylesheet, or the equivalent in XQuery.
+     * in unnamed xsl:output declarations in the stylesheet, or output declarations in XQuery.
      */
 
-    protected Properties getOutputProperties() {
+    public Properties getCombinedOutputProperties() {
         Properties props = defaultOutputProperties == null ? new Properties() : new Properties(defaultOutputProperties);
         for (StructuredQName p : properties.keySet()) {
             String value = properties.get(p);

@@ -7,6 +7,7 @@
 
 package net.sf.saxon;
 
+import net.sf.saxon.expr.instruct.GlobalContextRequirement;
 import net.sf.saxon.expr.instruct.TerminationException;
 import net.sf.saxon.lib.*;
 import net.sf.saxon.s9api.*;
@@ -30,8 +31,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * This <b>Transform</b> class is the command-line entry point to the Saxon XSLT Processor.
@@ -966,14 +966,16 @@ public class Transform {
         }
         long startTime = now();
 
-        Source style = compiler.getAssociatedStylesheet(sourceInput, null, null, null);
+        XdmNode sourceDoc = processor.newDocumentBuilder().build(sourceInput);
+
+        Source style = compiler.getAssociatedStylesheet(sourceDoc.asSource(), null, null, null);
         XsltExecutable sheet = compiler.compile(style);
 
         if (showTime) {
             System.err.println("Prepared associated stylesheet " + style.getSystemId());
         }
 
-        XsltTransformer transformer = newTransformer(sheet, options, traceDestination);
+        Xslt30Transformer transformer = newTransformer(sheet, options, traceDestination);
 
         File outFile = outputFile;
         if (outFile != null && outFile.isDirectory()) {
@@ -982,15 +984,12 @@ public class Transform {
 
         Serializer serializer =
             outputFile == null ?
-                processor.newSerializer(System.out) :
-                processor.newSerializer(outFile);
+                transformer.newSerializer(System.out) :
+                transformer.newSerializer(outFile);
         options.setSerializationParams(serializer);
-        transformer.setDestination(serializer);
 
-        transformer.setSource(sourceInput);
-
-
-        transformer.transform();
+        transformer.setInitialContextItem(sourceDoc);
+        transformer.applyTemplates(sourceDoc, serializer);
 
 
         if (showTime) {
@@ -1010,31 +1009,22 @@ public class Transform {
      * @throws SaxonApiException if any error occurs
      */
 
-    protected XsltTransformer newTransformer(
+    protected Xslt30Transformer newTransformer(
         XsltExecutable sheet, CommandLineOptions options, Logger traceDestination) throws SaxonApiException {
-        final XsltTransformer transformer = sheet.load();
+        final Xslt30Transformer transformer = sheet.load30();
+        final Map<QName, XdmValue> params = new HashMap<QName, XdmValue>();
         options.setParams(processor, new CommandLineOptions.ParamSetter() {
             public void setParam(QName qName, XdmValue value) {
-                transformer.setParameter(qName, value);
+                params.put(qName, value);
             }
         });
+        transformer.setStylesheetParameters(params);
         transformer.setTraceFunctionDestination(traceDestination);
         String initialMode = options.getOptionValue("im");
         if (initialMode != null) {
             transformer.setInitialMode(QName.fromClarkName(initialMode));
         }
-        String initialTemplate = options.getOptionValue("it");
-        if (initialTemplate != null) {
-            if (initialTemplate.isEmpty()) {
-                transformer.setInitialTemplate(new QName("xsl", NamespaceConstant.XSLT, "initial-template"));
-            } else {
-                transformer.setInitialTemplate(QName.fromClarkName(initialTemplate));
-            }
-        }
-        /*String initialFunction = options.getOptionValue("if");
-        if (initialFunction != null) {
-            transformer.setInitialFunction(QName.fromClarkName(initialFunction));
-        }*/
+
         String now = options.getOptionValue("now");
         if (now != null) {
             try {
@@ -1162,21 +1152,62 @@ public class Transform {
             }
             runs++;
 
-            XsltTransformer transformer = newTransformer(sheet, options, traceDestination);
+            Xslt30Transformer transformer = newTransformer(sheet, options, traceDestination);
             Serializer serializer =
                 outputFile == null ?
-                    processor.newSerializer(System.out) :
-                    processor.newSerializer(outputFile);
+                    transformer.newSerializer(System.out) :
+                    transformer.newSerializer(outputFile);
             options.setSerializationParams(serializer);
-            transformer.setDestination(serializer);
-            transformer.setSource(source);
+
+            boolean buildTree;
+            Properties props = serializer.getCombinedOutputProperties();
+            String buildTreeProperty = props.getProperty(SaxonOutputKeys.BUILD_TREE);
+            if ("yes".equals(buildTreeProperty)) {
+                buildTree = true;
+            } else if ("no".equals(buildTreeProperty)) {
+                buildTree = false;
+            } else {
+                String method = props.getProperty(OutputKeys.METHOD);
+                buildTree = !("json".equals(method) || "adaptive".equals(method));
+            }
+
+            if (source != null) {
+                PreparedStylesheet pss = sheet.getUnderlyingCompiledStylesheet();
+                GlobalContextRequirement requirement = pss.getGlobalContextRequirement();
+                if (requirement==null || (requirement.mayBeSupplied && !requirement.isDeclaredStreamable)) {
+                    XdmNode node = processor.newDocumentBuilder().build(source);
+                    transformer.setInitialContextItem(node);
+                    source = node.asSource();
+                }
+            }
+
             if (r != repeat - 1) {
                 transformer.setTraceListener(null);
                 transformer.setTraceFunctionDestination(null);
             }
 
-            transformer.transform();
-
+            String initialTemplate = options.getOptionValue("it");
+            if (initialTemplate != null) {
+                QName initialTemplateName;
+                if (initialTemplate.isEmpty()) {
+                    initialTemplateName = new QName("xsl", NamespaceConstant.XSLT, "initial-template");
+                } else {
+                    initialTemplateName = QName.fromClarkName(initialTemplate);
+                }
+                if (buildTree) {
+                    transformer.callTemplate(initialTemplateName, serializer);
+                } else {
+                    XdmValue result = transformer.callTemplate(initialTemplateName);
+                    serializer.serializeXdmValue(result);
+                }
+            } else {
+                if (buildTree) {
+                    transformer.applyTemplates(source, serializer);
+                } else {
+                    XdmValue result = transformer.applyTemplates(source);
+                    serializer.serializeXdmValue(result);
+                }
+            }
 
             long endTime = now();
             totalTime += endTime - startTime;

@@ -37,6 +37,7 @@ public class XSLOutput extends StyleElement {
     private String includeContentType = null;
     private String nextInChain = null;
     private String suppressIndentation = null;
+    private String buildTree = null;
     private String doubleSpace = null;
     private String representation = null;
     private String indentSpaces = null;
@@ -107,6 +108,8 @@ public class XSLOutput extends StyleElement {
                 undeclareNamespaces = Whitespace.trim(atts.getValue(a));
             } else if (f.equals("suppress-indentation")) {
                 suppressIndentation = Whitespace.trim(atts.getValue(a));
+            } else if (f.equals("build-tree")) {
+                buildTree = Whitespace.trim(atts.getValue(a));
             } else if (f.equals(StandardNames.SAXON_CHARACTER_REPRESENTATION)) {
                 representation = Whitespace.trim(atts.getValue(a));
             } else if (f.equals(StandardNames.SAXON_INDENT_SPACES)) {
@@ -330,6 +333,10 @@ public class XSLOutput extends StyleElement {
 
         if (escapeURIAttributes != null) {
             checkAndPut(SaxonOutputKeys.ESCAPE_URI_ATTRIBUTES, escapeURIAttributes, details, precedences, thisPrecedence);
+        }
+
+        if (buildTree != null) {
+            checkAndPut(SaxonOutputKeys.BUILD_TREE, buildTree, details, precedences, thisPrecedence);
         }
 
         if (nextInChain != null) {

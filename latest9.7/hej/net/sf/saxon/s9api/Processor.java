@@ -407,11 +407,16 @@ public class Processor {
     }
 
     /**
-     * Write an XdmValue to a given destination. The sequence represented by the XdmValue is "normalized"
+     * Write an XdmValue to a given destination.
+     *
+     * <p>If the destination is a {@link Serializer} then the method <code>processor.writeXdmValue(V, S)</code>
+     * is equivalent to calling <code>S.serializeXdmValue(V)</code>.</p>
+     *
+     * <p>In other cases, the sequence represented by the XdmValue is "normalized"
      * as defined in the serialization specification (this is equivalent to constructing a document node
      * in XSLT or XQuery with this sequence as the content expression), and the resulting document is
-     * then copied to the destination. If the destination is a serializer this has the effect of serializing
-     * the sequence as described in the W3C specifications.
+     * then copied to the destination. Note that the construction of a document tree will fail if
+     * the sequence contains items such as maps and arrays.</p>
      *
      * @param value       the value to be written
      * @param destination the destination to which the value is to be written
@@ -420,17 +425,21 @@ public class Processor {
 
     public void writeXdmValue(/*@NotNull*/ XdmValue value, /*@NotNull*/ Destination destination) throws SaxonApiException {
         try {
-            Receiver out = destination.getReceiver(config);
-            out = new NamespaceReducer(out);
-            TreeReceiver tree = new TreeReceiver(out);
-            tree.open();
-            tree.startDocument(0);
-            for (XdmItem item : value) {
-                tree.append((Item) item.getUnderlyingValue(), ExplicitLocation.UNKNOWN_LOCATION, NodeInfo.ALL_NAMESPACES);
+            if (destination instanceof Serializer) {
+                ((Serializer)destination).serializeXdmValue(value);
+            } else {
+                Receiver out = destination.getReceiver(config);
+                out = new NamespaceReducer(out);
+                TreeReceiver tree = new TreeReceiver(out);
+                tree.open();
+                tree.startDocument(0);
+                for (XdmItem item : value) {
+                    tree.append((Item) item.getUnderlyingValue(), ExplicitLocation.UNKNOWN_LOCATION, NodeInfo.ALL_NAMESPACES);
+                }
+                tree.endDocument();
+                tree.close();
+                destination.close();
             }
-            tree.endDocument();
-            tree.close();
-            destination.close();
         } catch (XPathException err) {
             throw new SaxonApiException(err);
         }
