@@ -32,186 +32,147 @@ public class BuiltInAtomicType implements AtomicType {
     private int primitiveFingerprint;
     private UType uType;
     private boolean ordered = false;
-    private StringConverter stringConverter; // may be null for types where conversion rules can vary
+    public StringConverter stringConverter; // may be null for types where conversion rules can vary
 
-    public static BuiltInAtomicType ANY_ATOMIC =
+    public final static BuiltInAtomicType ANY_ATOMIC =
             makeAtomicType(StandardNames.XS_ANY_ATOMIC_TYPE, AnySimpleType.getInstance(), true);
 
-    public static BuiltInAtomicType STRING =
+    public final static BuiltInAtomicType STRING =
             makeAtomicType(StandardNames.XS_STRING, ANY_ATOMIC, true);
 
-    public static BuiltInAtomicType BOOLEAN =
+    public final static BuiltInAtomicType BOOLEAN =
             makeAtomicType(StandardNames.XS_BOOLEAN, ANY_ATOMIC, true);
 
-    public static BuiltInAtomicType DURATION =
+    public final static BuiltInAtomicType DURATION =
             makeAtomicType(StandardNames.XS_DURATION, ANY_ATOMIC, false);
 
-    public static BuiltInAtomicType DATE_TIME =
+    public final static BuiltInAtomicType DATE_TIME =
             makeAtomicType(StandardNames.XS_DATE_TIME, ANY_ATOMIC, true);
 
-    public static BuiltInAtomicType DATE =
+    public final static BuiltInAtomicType DATE =
             makeAtomicType(StandardNames.XS_DATE, ANY_ATOMIC, true);
 
-    public static BuiltInAtomicType TIME =
+    public final static BuiltInAtomicType TIME =
             makeAtomicType(StandardNames.XS_TIME, ANY_ATOMIC, true);
 
-    public static BuiltInAtomicType G_YEAR_MONTH =
+    public final static BuiltInAtomicType G_YEAR_MONTH =
             makeAtomicType(StandardNames.XS_G_YEAR_MONTH, ANY_ATOMIC, false);
 
-    public static BuiltInAtomicType G_MONTH =
+    public final static BuiltInAtomicType G_MONTH =
             makeAtomicType(StandardNames.XS_G_MONTH, ANY_ATOMIC, false);
 
-    public static BuiltInAtomicType G_MONTH_DAY =
+    public final static BuiltInAtomicType G_MONTH_DAY =
             makeAtomicType(StandardNames.XS_G_MONTH_DAY, ANY_ATOMIC, false);
 
-    public static BuiltInAtomicType G_YEAR =
+    public final static BuiltInAtomicType G_YEAR =
             makeAtomicType(StandardNames.XS_G_YEAR, ANY_ATOMIC, false);
 
-    public static BuiltInAtomicType G_DAY =
+    public final static BuiltInAtomicType G_DAY =
             makeAtomicType(StandardNames.XS_G_DAY, ANY_ATOMIC, false);
 
-    public static BuiltInAtomicType HEX_BINARY =
+    public final static BuiltInAtomicType HEX_BINARY =
             makeAtomicType(StandardNames.XS_HEX_BINARY, ANY_ATOMIC, true);
 
-    public static BuiltInAtomicType BASE64_BINARY =
+    public final static BuiltInAtomicType BASE64_BINARY =
             makeAtomicType(StandardNames.XS_BASE64_BINARY, ANY_ATOMIC, true);
 
-    public static BuiltInAtomicType ANY_URI =
+    public final static BuiltInAtomicType ANY_URI =
             makeAtomicType(StandardNames.XS_ANY_URI, ANY_ATOMIC, true);
 
-    public static BuiltInAtomicType QNAME =
+    public final static BuiltInAtomicType QNAME =
             makeAtomicType(StandardNames.XS_QNAME, ANY_ATOMIC, false);
 
-    public static BuiltInAtomicType NOTATION =
+    public final static BuiltInAtomicType NOTATION =
             makeAtomicType(StandardNames.XS_NOTATION, ANY_ATOMIC, false);
 
-    public static BuiltInAtomicType UNTYPED_ATOMIC =
+    public final static BuiltInAtomicType UNTYPED_ATOMIC =
             makeAtomicType(StandardNames.XS_UNTYPED_ATOMIC, ANY_ATOMIC, true);
 
-    public static BuiltInAtomicType DECIMAL =
+    public final static BuiltInAtomicType DECIMAL =
             makeAtomicType(StandardNames.XS_DECIMAL, ANY_ATOMIC, true);
 
-    public static BuiltInAtomicType FLOAT =
+    public final static BuiltInAtomicType FLOAT =
             makeAtomicType(StandardNames.XS_FLOAT, ANY_ATOMIC, true);
 
-    public static BuiltInAtomicType DOUBLE =
+    public final static BuiltInAtomicType DOUBLE =
             makeAtomicType(StandardNames.XS_DOUBLE, ANY_ATOMIC, true);
 
-    public static BuiltInAtomicType INTEGER =
+    public final static BuiltInAtomicType INTEGER =
             makeAtomicType(StandardNames.XS_INTEGER, DECIMAL, true);
 
-    public static BuiltInAtomicType NON_POSITIVE_INTEGER =
+    public final static BuiltInAtomicType NON_POSITIVE_INTEGER =
             makeAtomicType(StandardNames.XS_NON_POSITIVE_INTEGER, INTEGER, true);
 
-    public static BuiltInAtomicType NEGATIVE_INTEGER =
+    public final static BuiltInAtomicType NEGATIVE_INTEGER =
             makeAtomicType(StandardNames.XS_NEGATIVE_INTEGER, NON_POSITIVE_INTEGER, true);
 
-    public static BuiltInAtomicType LONG =
+    public final static BuiltInAtomicType LONG =
             makeAtomicType(StandardNames.XS_LONG, INTEGER, true);
 
-    public static BuiltInAtomicType INT =
+    public final static BuiltInAtomicType INT =
             makeAtomicType(StandardNames.XS_INT, LONG, true);
 
-    public static BuiltInAtomicType SHORT =
+    public final static BuiltInAtomicType SHORT =
             makeAtomicType(StandardNames.XS_SHORT, INT, true);
 
-    public static BuiltInAtomicType BYTE =
+    public final static BuiltInAtomicType BYTE =
             makeAtomicType(StandardNames.XS_BYTE, SHORT, true);
 
-    public static BuiltInAtomicType NON_NEGATIVE_INTEGER =
+    public final static BuiltInAtomicType NON_NEGATIVE_INTEGER =
             makeAtomicType(StandardNames.XS_NON_NEGATIVE_INTEGER, INTEGER, true);
 
-    public static BuiltInAtomicType POSITIVE_INTEGER =
+    public final static BuiltInAtomicType POSITIVE_INTEGER =
             makeAtomicType(StandardNames.XS_POSITIVE_INTEGER, NON_NEGATIVE_INTEGER, true);
 
-    public static BuiltInAtomicType UNSIGNED_LONG =
+    public final static BuiltInAtomicType UNSIGNED_LONG =
             makeAtomicType(StandardNames.XS_UNSIGNED_LONG, NON_NEGATIVE_INTEGER, true);
 
-    public static BuiltInAtomicType UNSIGNED_INT =
+    public final static BuiltInAtomicType UNSIGNED_INT =
             makeAtomicType(StandardNames.XS_UNSIGNED_INT, UNSIGNED_LONG, true);
 
-    public static BuiltInAtomicType UNSIGNED_SHORT =
+    public final static BuiltInAtomicType UNSIGNED_SHORT =
             makeAtomicType(StandardNames.XS_UNSIGNED_SHORT, UNSIGNED_INT, true);
 
-    public static BuiltInAtomicType UNSIGNED_BYTE =
+    public final static BuiltInAtomicType UNSIGNED_BYTE =
             makeAtomicType(StandardNames.XS_UNSIGNED_BYTE, UNSIGNED_SHORT, true);
 
-    public static BuiltInAtomicType YEAR_MONTH_DURATION =
+    public final static BuiltInAtomicType YEAR_MONTH_DURATION =
             makeAtomicType(StandardNames.XS_YEAR_MONTH_DURATION, DURATION, true);
 
-    public static BuiltInAtomicType DAY_TIME_DURATION =
+    public final static BuiltInAtomicType DAY_TIME_DURATION =
             makeAtomicType(StandardNames.XS_DAY_TIME_DURATION, DURATION, true);
 
-    public static BuiltInAtomicType NORMALIZED_STRING =
+    public final static BuiltInAtomicType NORMALIZED_STRING =
             makeAtomicType(StandardNames.XS_NORMALIZED_STRING, STRING, true);
 
-    public static BuiltInAtomicType TOKEN =
+    public final static BuiltInAtomicType TOKEN =
             makeAtomicType(StandardNames.XS_TOKEN, NORMALIZED_STRING, true);
 
-    public static BuiltInAtomicType LANGUAGE =
+    public final static BuiltInAtomicType LANGUAGE =
             makeAtomicType(StandardNames.XS_LANGUAGE, TOKEN, true);
 
-    public static BuiltInAtomicType NAME =
+    public final static BuiltInAtomicType NAME =
             makeAtomicType(StandardNames.XS_NAME, TOKEN, true);
 
-    public static BuiltInAtomicType NMTOKEN =
+    public final static BuiltInAtomicType NMTOKEN =
             makeAtomicType(StandardNames.XS_NMTOKEN, TOKEN, true);
 
-    public static BuiltInAtomicType NCNAME =
+    public final static BuiltInAtomicType NCNAME =
             makeAtomicType(StandardNames.XS_NCNAME, NAME, true);
 
-    public static BuiltInAtomicType ID =
+    public final static BuiltInAtomicType ID =
             makeAtomicType(StandardNames.XS_ID, NCNAME, true);
 
-    public static BuiltInAtomicType IDREF =
+    public final static BuiltInAtomicType IDREF =
             makeAtomicType(StandardNames.XS_IDREF, NCNAME, true);
 
-    public static BuiltInAtomicType ENTITY =
+    public final static BuiltInAtomicType ENTITY =
             makeAtomicType(StandardNames.XS_ENTITY, NCNAME, true);
 
-    public static BuiltInAtomicType DATE_TIME_STAMP =
+    public final static BuiltInAtomicType DATE_TIME_STAMP =
             makeAtomicType(StandardNames.XS_DATE_TIME_STAMP, DATE_TIME, true);
 
-    static {
-        ANY_ATOMIC.stringConverter = Converter.IDENTITY_CONVERTER;
-        STRING.stringConverter = StringConverter.STRING_TO_STRING;
-        LANGUAGE.stringConverter = StringConverter.STRING_TO_LANGUAGE;
-        NORMALIZED_STRING.stringConverter = StringConverter.STRING_TO_NORMALIZED_STRING;
-        TOKEN.stringConverter = StringConverter.STRING_TO_TOKEN;
-        NCNAME.stringConverter = StringConverter.STRING_TO_NCNAME;
-        NAME.stringConverter = StringConverter.STRING_TO_NAME;
-        NMTOKEN.stringConverter = StringConverter.STRING_TO_NMTOKEN;
-        ID.stringConverter = StringConverter.STRING_TO_ID;
-        IDREF.stringConverter = StringConverter.STRING_TO_IDREF;
-        ENTITY.stringConverter = StringConverter.STRING_TO_ENTITY;
-        DECIMAL.stringConverter = StringConverter.STRING_TO_DECIMAL;
-        INTEGER.stringConverter = StringConverter.STRING_TO_INTEGER;
-        DURATION.stringConverter = StringConverter.STRING_TO_DURATION;
-        G_MONTH.stringConverter = StringConverter.STRING_TO_G_MONTH;
-        G_MONTH_DAY.stringConverter = StringConverter.STRING_TO_G_MONTH_DAY;
-        G_DAY.stringConverter = StringConverter.STRING_TO_G_DAY;
-        DAY_TIME_DURATION.stringConverter = StringConverter.STRING_TO_DAY_TIME_DURATION;
-        YEAR_MONTH_DURATION.stringConverter = StringConverter.STRING_TO_YEAR_MONTH_DURATION;
-        TIME.stringConverter = StringConverter.STRING_TO_TIME;
-        BOOLEAN.stringConverter = StringConverter.STRING_TO_BOOLEAN;
-        HEX_BINARY.stringConverter = StringConverter.STRING_TO_HEX_BINARY;
-        BASE64_BINARY.stringConverter = StringConverter.STRING_TO_BASE64_BINARY;
-        UNTYPED_ATOMIC.stringConverter = StringConverter.STRING_TO_UNTYPED_ATOMIC;
-        
-        NON_POSITIVE_INTEGER.stringConverter = new StringConverter.StringToIntegerSubtype(NON_POSITIVE_INTEGER);
-        NEGATIVE_INTEGER.stringConverter = new StringConverter.StringToIntegerSubtype(NEGATIVE_INTEGER);
-        LONG.stringConverter = new StringConverter.StringToIntegerSubtype(LONG);
-        INT.stringConverter = new StringConverter.StringToIntegerSubtype(INT);
-        SHORT.stringConverter = new StringConverter.StringToIntegerSubtype(SHORT);
-        BYTE.stringConverter = new StringConverter.StringToIntegerSubtype(BYTE);
-        NON_NEGATIVE_INTEGER.stringConverter = new StringConverter.StringToIntegerSubtype(NON_NEGATIVE_INTEGER);
-        POSITIVE_INTEGER.stringConverter = new StringConverter.StringToIntegerSubtype(POSITIVE_INTEGER);
-        UNSIGNED_LONG.stringConverter = new StringConverter.StringToIntegerSubtype(UNSIGNED_LONG);
-        UNSIGNED_INT.stringConverter = new StringConverter.StringToIntegerSubtype(UNSIGNED_INT);
-        UNSIGNED_SHORT.stringConverter = new StringConverter.StringToIntegerSubtype(UNSIGNED_SHORT);
-        UNSIGNED_BYTE.stringConverter = new StringConverter.StringToIntegerSubtype(UNSIGNED_BYTE);
-        
-    }
+
 
     private BuiltInAtomicType(int fingerprint) {
         this.fingerprint = fingerprint;

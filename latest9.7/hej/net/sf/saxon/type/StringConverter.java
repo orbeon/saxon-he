@@ -81,6 +81,48 @@ public abstract class StringConverter extends Converter {
     /*@NotNull*/ public final static StringToUntypedAtomic
             STRING_TO_UNTYPED_ATOMIC = new StringToUntypedAtomic();
 
+    static {
+        // See bug 2524
+        BuiltInAtomicType.ANY_ATOMIC.stringConverter = Converter.IDENTITY_CONVERTER;
+        BuiltInAtomicType.STRING.stringConverter = STRING_TO_STRING;
+        BuiltInAtomicType.LANGUAGE.stringConverter = STRING_TO_LANGUAGE;
+        BuiltInAtomicType.NORMALIZED_STRING.stringConverter = STRING_TO_NORMALIZED_STRING;
+        BuiltInAtomicType.TOKEN.stringConverter = STRING_TO_TOKEN;
+        BuiltInAtomicType.NCNAME.stringConverter = STRING_TO_NCNAME;
+        BuiltInAtomicType.NAME.stringConverter = STRING_TO_NAME;
+        BuiltInAtomicType.NMTOKEN.stringConverter = STRING_TO_NMTOKEN;
+        BuiltInAtomicType.ID.stringConverter = STRING_TO_ID;
+        BuiltInAtomicType.IDREF.stringConverter = STRING_TO_IDREF;
+        BuiltInAtomicType.ENTITY.stringConverter = STRING_TO_ENTITY;
+        BuiltInAtomicType.DECIMAL.stringConverter = STRING_TO_DECIMAL;
+        BuiltInAtomicType.INTEGER.stringConverter = STRING_TO_INTEGER;
+        BuiltInAtomicType.DURATION.stringConverter = STRING_TO_DURATION;
+        BuiltInAtomicType.G_MONTH.stringConverter = STRING_TO_G_MONTH;
+        BuiltInAtomicType.G_MONTH_DAY.stringConverter = STRING_TO_G_MONTH_DAY;
+        BuiltInAtomicType.G_DAY.stringConverter = STRING_TO_G_DAY;
+        BuiltInAtomicType.DAY_TIME_DURATION.stringConverter = STRING_TO_DAY_TIME_DURATION;
+        BuiltInAtomicType.YEAR_MONTH_DURATION.stringConverter = STRING_TO_YEAR_MONTH_DURATION;
+        BuiltInAtomicType.TIME.stringConverter = STRING_TO_TIME;
+        BuiltInAtomicType.BOOLEAN.stringConverter = STRING_TO_BOOLEAN;
+        BuiltInAtomicType.HEX_BINARY.stringConverter = STRING_TO_HEX_BINARY;
+        BuiltInAtomicType.BASE64_BINARY.stringConverter = STRING_TO_BASE64_BINARY;
+        BuiltInAtomicType.UNTYPED_ATOMIC.stringConverter = STRING_TO_UNTYPED_ATOMIC;
+
+        BuiltInAtomicType.NON_POSITIVE_INTEGER.stringConverter = new StringToIntegerSubtype(BuiltInAtomicType.NON_POSITIVE_INTEGER);
+        BuiltInAtomicType.NEGATIVE_INTEGER.stringConverter = new StringToIntegerSubtype(BuiltInAtomicType.NEGATIVE_INTEGER);
+        BuiltInAtomicType.LONG.stringConverter = new StringToIntegerSubtype(BuiltInAtomicType.LONG);
+        BuiltInAtomicType.INT.stringConverter = new StringToIntegerSubtype(BuiltInAtomicType.INT);
+        BuiltInAtomicType.SHORT.stringConverter = new StringToIntegerSubtype(BuiltInAtomicType.SHORT);
+        BuiltInAtomicType.BYTE.stringConverter = new StringToIntegerSubtype(BuiltInAtomicType.BYTE);
+        BuiltInAtomicType.NON_NEGATIVE_INTEGER.stringConverter = new StringToIntegerSubtype(BuiltInAtomicType.NON_NEGATIVE_INTEGER);
+        BuiltInAtomicType.POSITIVE_INTEGER.stringConverter = new StringToIntegerSubtype(BuiltInAtomicType.POSITIVE_INTEGER);
+        BuiltInAtomicType.UNSIGNED_LONG.stringConverter = new StringToIntegerSubtype(BuiltInAtomicType.UNSIGNED_LONG);
+        BuiltInAtomicType.UNSIGNED_INT.stringConverter = new StringToIntegerSubtype(BuiltInAtomicType.UNSIGNED_INT);
+        BuiltInAtomicType.UNSIGNED_SHORT.stringConverter = new StringToIntegerSubtype(BuiltInAtomicType.UNSIGNED_SHORT);
+        BuiltInAtomicType.UNSIGNED_BYTE.stringConverter = new StringToIntegerSubtype(BuiltInAtomicType.UNSIGNED_BYTE);
+
+    }
+
     /**
      * Create a StringConverter
      */
