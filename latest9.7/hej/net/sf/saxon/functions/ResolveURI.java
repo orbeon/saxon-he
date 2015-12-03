@@ -97,7 +97,7 @@ public class ResolveURI extends SystemFunction  {
             if (absoluteURI.getRawFragment() != null) {
                 throw new XPathException("Base URI " + Err.wrap(base) + " contains a fragment identifier", "FORG0002", context);
             }
-            if (absoluteURI.getPath().isEmpty()) {
+            if (absoluteURI.getPath() != null && absoluteURI.getPath().isEmpty()) {
                 // This deals with cases like base=http://www.example.com - changing it to http://www.example.com/
                 absoluteURI = new URI(absoluteURI.getScheme(), absoluteURI.getUserInfo(), absoluteURI.getHost(),
                     absoluteURI.getPort(), "/", absoluteURI.getQuery(), absoluteURI.getFragment());
