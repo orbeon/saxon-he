@@ -96,7 +96,14 @@ public class TypeHierarchy {
             // step 1: apply atomization if necessary
 
             if (!suppliedItemType.isPlainType()) {
-                iterator = Atomizer.getAtomizingIterator(iterator, false);
+                try {
+                    iterator = Atomizer.getAtomizingIterator(iterator, false);
+                } catch (XPathException e) {
+                    ValidationFailure vf = new ValidationFailure(
+                            "Failed to atomize the " + role.getMessage() + ": " + e.getMessage());
+                    vf.setErrorCode("XPTY0117");
+                    throw vf.makeException();
+                }
                 suppliedItemType = suppliedItemType.getAtomizedItemType();
             }
 
