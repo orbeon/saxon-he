@@ -2280,6 +2280,7 @@ latest9.7/samples/config/config-HE.xml svn_eol_002dstyle=native
 latest9.7/samples/config/config.xml svn_eol_002dstyle=native
 latest9.7/samples/config/config.xsd svn_eol_002dstyle=native
 latest9.7/samples/config/saxon-attributes.xsd svn_eol_002dstyle=native
+latest9.7/samples/config/xslt30.xsd svn_eol_002dstyle=native
 latest9.7/samples/cs/Examples.cs svn_eol_002dstyle=native
 latest9.7/samples/cs/SchemaExamples.cs svn_eol_002dstyle=native
 latest9.7/samples/cs/SchemaExamples2.cs svn_eol_002dstyle=native
