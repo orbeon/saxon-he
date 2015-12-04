@@ -42,10 +42,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,6 +65,8 @@ public class TransformFn extends SystemFunction implements Callable {
             "package-name", "package-version", "package-node", "package-location", "static-params", "global-context-item",
             "template-params", "tunnel-params", "initial-function", "function-params"
     };
+
+    private final static String dummyBaseOutputUriScheme = "dummy";
 
     private boolean isTransformOptionName(String string) {
         for (String s : transformOptionNames) {
@@ -453,7 +452,7 @@ public class TransformFn extends SystemFunction implements Callable {
         }
         // Check the rules and restrictions for combinations of transform options
         AtomicValue invocationOption;
-        String invocationName = new String("invocation");
+        String invocationName = "invocation";
         AtomicValue styleOption;
         if (isXslt30Processor) {
             invocationOption = checkInvocationMutualExclusion30(map.keys());
@@ -499,12 +498,12 @@ public class TransformFn extends SystemFunction implements Callable {
         XsltExecutable sheet = getStylesheet(map, xsltCompiler, styleOption, context);
         Xslt30Transformer transformer = sheet.load30();
 
-        Destination destination = new XdmDestination();
+        //Destination destination = new XdmDestination();
         String deliveryFormat = "document";
         NodeInfo sourceNode = null;
         QName initialTemplate = null;
         QName initialMode = null;
-        StringValue baseOutputUri = null;
+        String baseOutputUri = null;
         Map<QName, XdmValue> stylesheetParams = new HashMap<QName, XdmValue>();
         MapItem serializationParamsMap = null;
         StringWriter serializedResult = null;
@@ -514,7 +513,6 @@ public class TransformFn extends SystemFunction implements Callable {
         Map<QName, XdmValue> tunnelParams = new HashMap<QName, XdmValue>();
         QName initialFunction = null;
         XdmValue[] functionParams = null;
-        XdmValue rawResult = null;
 
         AtomicIterator keysIterator = map.keys();
         AtomicValue key;
@@ -538,9 +536,11 @@ public class TransformFn extends SystemFunction implements Callable {
                         throw new XPathException("The transform option delivery-format should be one of: document|serialized|saved|raw ", "FOXT0002");
                     }
                 } else if (name.equals("base-output-uri")) {
-                    baseOutputUri = (StringValue) map.get(key).head();
+                    baseOutputUri = map.get(key).head().getStringValue();
+
                 } else if (name.equals("serialization-params")) {
                     serializationParamsMap = (MapItem) map.get(key).head();
+
                 } else if (name.equals("stylesheet-params")) {
                     MapItem params = (MapItem) map.get(key).head(); //Check this map?? (i.e. validate type of keys)
                     AtomicIterator paramIterator = params.keys();
@@ -595,88 +595,34 @@ public class TransformFn extends SystemFunction implements Callable {
             }
         }
 
-        Controller controller = transformer.getUnderlyingController();
-        final Map<String, TreeInfo> secondaryResultsForDocument = new ConcurrentHashMap<String, TreeInfo>();
-        final Map<String, String> secondaryResultsForSerialized = new ConcurrentHashMap<String, String>();
-        final Map<String, String> secondaryResultsForSaved = new ConcurrentHashMap<String, String>();
-        final Map<String, XdmValue> secondaryResultsForRaw = new ConcurrentHashMap<String, XdmValue>();
-        if (deliveryFormat.equals("document")) {
-            controller.setOutputURIResolver(new SecondaryOutputResolverForDocument(controller, secondaryResultsForDocument));
-        } else if (deliveryFormat.equals("serialized")) {
-            controller.setOutputURIResolver(new SecondaryOutputResolverForSerialized(secondaryResultsForSerialized));
-        } else if (deliveryFormat.equals("saved")) {
-            controller.setOutputURIResolver(new SecondaryOutputResolverForSaved(secondaryResultsForSaved));
-        } else if (deliveryFormat.equals("raw")) {
-            controller.setOutputURIResolver(new SecondaryOutputResolverForRaw(secondaryResultsForRaw));
-        }
+        Deliverer deliverer = Deliverer.makeDeliverer(deliveryFormat);
+        deliverer.setTransformer(transformer);
+        deliverer.setBaseOutputUri(baseOutputUri);
 
+        Controller controller = transformer.getUnderlyingController();
+        controller.setOutputURIResolver(deliverer);
+
+        Destination destination = deliverer.getPrimaryDestination(serializationParamsMap);
+        Sequence result;
         try {
             transformer.setStylesheetParameters(stylesheetParams);
             transformer.setInitialTemplateParameters(templateParams, false);
             transformer.setInitialTemplateParameters(tunnelParams, true);
             if (baseOutputUri != null) {
-                transformer.setBaseOutputURI(baseOutputUri.getStringValue());
+                transformer.setBaseOutputURI(baseOutputUri);
+            } else {
+                transformer.setBaseOutputURI(dummyBaseOutputUriScheme + ":///dummy-base-uri/");
             }
-            if (baseOutputUri == null && deliveryFormat.equals("document")) {
-                transformer.setBaseOutputURI("http://saxonica.com/output-document/output");
-            }
-            if (deliveryFormat.equals("serialized") || deliveryFormat.equals("saved")) {
-                Serializer serializer = processor.newSerializer();
-                if (serializationParamsMap != null) {  // TODO should serialization params do something if delivery format is document or raw?
-                    AtomicIterator paramIterator = serializationParamsMap.keys();
-                    while (true) {
-                        AtomicValue param = paramIterator.next();
-                        if (param != null) {
-                            QName paramName = new QName(((QNameValue) param.head()).getStructuredQName());
-                            StringValue paramVal = (StringValue) serializationParamsMap.get(param);
-                            Serializer.Property prop = serializer.getProperty(paramName);
-                            serializer.setOutputProperty(prop, paramVal.getStringValue());
-                        } else {
-                            break;
-                        }
-                    }
-                }
-                if (deliveryFormat.equals("serialized")) {
-                    if (baseOutputUri == null) {
-                        URI outputUri = URI.create("http://saxonica.com/output-serialized/output");
-                        transformer.setBaseOutputURI(outputUri.toString());
-                    }
-                    serializedResult = new StringWriter();
-                    serializer.setOutputWriter(serializedResult);
-                } else if (deliveryFormat.equals("saved")) {
-                    if (baseOutputUri == null) {
-                        // If baseOutputUri is not supplied, then stylesheet must have xsl:result-document elements with href with *absolute* URIs.
-                        // Catch error when this is not the case: by using a recognisable dummy base URI.
-                        URI outputUri = URI.create("file:///saxon-dummy-output-file-984hvds3sfmixxak22/output");
-                        serializedResultFile = new File(outputUri);
-                        // This file is a kind of dummy, no such file will actually be created;
-                        // but it prepares the serializer to produce files (as secondary result documents).
-                        // TODO this was not working! A file *is* being produced. Check conditions changed line 720. Is this right?
-                    } else if (baseOutputUri != null) {
-                        URI outputUri = URI.create(baseOutputUri.getStringValue());
-                        if (!outputUri.isAbsolute()) {
-                            throw new XPathException("The transform option base-output-uri is not an absolute URI", "FOXT0002");
-                        }
-                        serializedResultFile = new File(outputUri);
-                    }
-                    serializer.setOutputFile(serializedResultFile);
-                }
-                destination = serializer;
-            } else if (deliveryFormat.equals("raw")) {
-                transformer.setBaseOutputURI("http://saxonica.com/output-raw/output");
-            }
+
             if (initialTemplate != null) {
-                /*if (globalContextItem != null) {
-                    transformer.setGlobalContextItem(globalContextItem);
-                } else*/ //TODO is this right? then what about sourceNode?
-                //transformer.setInitialContextNode(new XdmNode(sourceNode)); is this what we want instead?
                 if (sourceNode != null) {
                     transformer.setGlobalContextItem(new XdmNode(sourceNode));
                 }
                 if (deliveryFormat.equals("raw")) {
-                    rawResult = transformer.callTemplate(initialTemplate);
+                    result = transformer.callTemplate(initialTemplate).getUnderlyingValue();
                 } else {
                     transformer.callTemplate(initialTemplate, destination);
+                    result = deliverer.getPrimaryResult();
                 }
             } else if (initialFunction != null) {
                 /*if (globalContextItem != null) {
@@ -686,18 +632,20 @@ public class TransformFn extends SystemFunction implements Callable {
                     transformer.setGlobalContextItem(new XdmNode(sourceNode));
                 }
                 if (deliveryFormat.equals("raw")) {
-                    rawResult = transformer.callFunction(initialFunction, functionParams);
+                    result = transformer.callFunction(initialFunction, functionParams).getUnderlyingValue();
                 } else {
                     transformer.callFunction(initialFunction, functionParams, destination);
+                    result = deliverer.getPrimaryResult();
                 }
             } else {
                 if (initialMode != null) {
                     transformer.setInitialMode(initialMode);
                 }
                 if (deliveryFormat.equals("raw")) {
-                    rawResult = transformer.applyTemplates(sourceNode);
+                    result = transformer.applyTemplates(sourceNode).getUnderlyingValue();
                 } else {
                     transformer.applyTemplates(sourceNode, destination);
+                    result = deliverer.getPrimaryResult();
                 }
             }
         } catch (SaxonApiException e) {
@@ -708,114 +656,180 @@ public class TransformFn extends SystemFunction implements Callable {
             }
         }
 
-        /* Result value in result map should be a DocumentInfo if delivery-format is document;
-         * a String (of serialized result) if delivery-format is serialized;
-         * a String (absolute URI of location of saved result) if delivery-format is saved.
-         * an XdmValue if delivery-format is raw (XSLT 3.0 transforms only)
-         * */
+        // Build map of secondary results
 
         HashTrieMap resultMap = new HashTrieMap(context);
-        if (deliveryFormat.equals("document")) {
-            for (Map.Entry<String, TreeInfo> entry : secondaryResultsForDocument.entrySet()) {
-                resultMap = resultMap.addEntry(new StringValue(entry.getKey()), entry.getValue().getRootNode());
-            }
-        } else if (deliveryFormat.equals("serialized")) {
-            for (Map.Entry<String, String> entry : secondaryResultsForSerialized.entrySet()) {
-                resultMap = resultMap.addEntry(new StringValue(entry.getKey()), new StringValue(entry.getValue()));
-            }
-        } else if (deliveryFormat.equals("saved")) {
-            for (Map.Entry<String, String> entry : secondaryResultsForSaved.entrySet()) {
-                resultMap = resultMap.addEntry(new StringValue(entry.getKey()), new StringValue(entry.getValue()));
-            }
-        } else if (deliveryFormat.equals("raw")) {
-            for (Map.Entry<String, XdmValue> entry : secondaryResultsForRaw.entrySet()) {
-                resultMap = resultMap.addEntry(new StringValue(entry.getKey()), entry.getValue().getUnderlyingValue());
-            }
-        }
+        resultMap = deliverer.populateResultMap(resultMap);
 
+        // Add primary result
 
-        AtomicValue resultKey;
-        if (baseOutputUri == null) {
-            resultKey = new StringValue("output");
-        } else {
-            resultKey = baseOutputUri;
-        }
-        Sequence value = null;
-        if (deliveryFormat.equals("document")) {
-            XdmNode xdmNode = ((XdmDestination) destination).getXdmNode();
-            if (xdmNode != null) {
-                value = xdmNode.getUnderlyingNode();
-            }
-        } else if (deliveryFormat.equals("serialized")) {
-            String result = serializedResult.toString();
-            if (!result.equals("")) {
-                value = new StringValue(result);
-            }
-        } else if (deliveryFormat.equals("saved")) {
-            if (serializedResultFile.isFile() && !serializedResultFile.getAbsolutePath().contains("saxon-dummy-output-file-984hvds3sfmixxak22")) {
-                value = resultKey;
-                // 2nd condition changed from serializedResultFile != null
-                // Previously: serializedResultFile is null in the case that only secondary result documents are produced,
-                // and serializedResultFile was just a dummy. Then value remains null, and no new entry to result map.
-            }
-        } else if (deliveryFormat.equals("raw")) {
-            value = rawResult.getUnderlyingValue();
-        }
-        if (value != null) {
-            resultMap = resultMap.addEntry(resultKey, value);
+        if (result != null) {
+            AtomicValue resultKey = new StringValue(baseOutputUri == null ? "output" : baseOutputUri);
+            resultMap = resultMap.addEntry(resultKey, result);
         }
         return resultMap;
 
     }
 
-    private static class SecondaryOutputResolverForDocument extends StandardOutputResolver {
-        private Controller controller;
-        private Map<String, TreeInfo> results;
+    /**
+     * Deliverer is an abstraction of the common functionality of the various delivery formats
+     */
 
-        public SecondaryOutputResolverForDocument(Controller controller, Map<String, TreeInfo> results) {
-            this.controller = controller;
-            this.results = results;
+    private abstract static class Deliverer extends StandardOutputResolver {
+
+        protected Xslt30Transformer transformer;
+        protected String baseOutputUri;
+
+        public static Deliverer makeDeliverer(String deliveryFormat) {
+            if (deliveryFormat.equals("document")) {
+                return new DocumentDeliverer();
+            } else if (deliveryFormat.equals("serialized")) {
+                return new SerializedDeliverer();
+            } else if (deliveryFormat.equals("saved")) {
+                return new SavedDeliverer();
+            } else if (deliveryFormat.equals("raw")) {
+                return new RawDeliverer();
+            } else {
+                throw new IllegalArgumentException("delivery-format");
+            }
+        }
+
+        public final void setTransformer(Xslt30Transformer transformer) {
+            this.transformer = transformer;
+        }
+
+        public final void setBaseOutputUri(String uri) {
+            this.baseOutputUri = uri;
+        }
+
+        /**
+         * Return a map containing information about all the secondary result documents
+         * @param resultMap a map to be populated, initially empty
+         * @return a map containing one entry for each secondary result document that has been written
+         * @throws XPathException if a failure occurs
+         */
+
+        public abstract HashTrieMap populateResultMap(HashTrieMap resultMap) throws XPathException;
+
+        /**
+         * Get the s9api Destination object to be used for the transformation
+         * @param serializationParamsMap the serialization parameters requested
+         * @return a suitable destination object, or null in the case of raw mode
+         * @throws XPathException if a failure occurs
+         */
+
+        public abstract Destination getPrimaryDestination(MapItem serializationParamsMap) throws XPathException;
+
+        /**
+         * Common code shared by subclasses to create a serializer
+         * @param serializationParamsMap the serialization options
+         * @return a suitable Serializer
+         */
+
+        protected Serializer makeSerializer(MapItem serializationParamsMap) {
+            Serializer serializer = transformer.newSerializer();
+            if (serializationParamsMap != null) {
+                AtomicIterator paramIterator = serializationParamsMap.keys();
+                AtomicValue param;
+                while ((param = paramIterator.next()) != null) {
+                    QName paramName = new QName(((QNameValue) param.head()).getStructuredQName());
+                    StringValue paramVal = (StringValue) serializationParamsMap.get(param);
+                    Serializer.Property prop = Serializer.getProperty(paramName);
+                    serializer.setOutputProperty(prop, paramVal.getStringValue());
+                }
+            }
+            return serializer;
+        }
+
+        /**
+         * Get the primary result of the transformation, that is, the value to be included in the
+         * entry of the result map that describes the principal result tree
+         * @return the primary result, or null if there is no primary result
+         */
+
+        public abstract Sequence getPrimaryResult();
+    }
+
+    /**
+     * Deliverer for delivery-format="document"
+     */
+
+    private static class DocumentDeliverer extends Deliverer {
+        private Map<String, TreeInfo> results = new ConcurrentHashMap<String, TreeInfo>();
+        private XdmDestination destination = new XdmDestination();
+
+        public DocumentDeliverer() {
+        }
+
+        @Override
+        public Destination getPrimaryDestination(MapItem serializationParamsMap) throws XPathException {
+            return destination;
+        }
+
+        @Override
+        public Sequence getPrimaryResult() {
+            XdmNode node = destination.getXdmNode();
+            return node==null ? null : node.getUnderlyingNode();
         }
 
         @Override
         protected Result createResult(URI absoluteURI) throws XPathException, IOException {
+            Controller controller = transformer.getUnderlyingController();
             Builder builder = controller.makeBuilder();
-            if (absoluteURI.toString().contains("http://saxonica.com/output-document")) {
+            if (absoluteURI.getScheme().equals(dummyBaseOutputUriScheme)) {
                 throw new XPathException("The location of output documents is undefined: use the transform option base-output-uri", "FOXT0002");
             }
             builder.setSystemId(absoluteURI.toString());
             return builder;
         }
 
-        /**
-         * Signal completion of the result document. This method is called by the system
-         * when the result document has been successfully written. It allows the resolver
-         * to perform tidy-up actions such as closing output streams, or firing off
-         * processes that take this result tree as input. Note that the OutputURIResolver
-         * is stateless, so the original href is supplied to identify the document
-         * that has been completed.
-         *
-         * @param result
-         */
         @Override
         public void close(Result result) throws XPathException {
             NodeInfo doc = ((Builder) result).getCurrentRoot();
             results.put(doc.getSystemId(), doc.getTreeInfo());
         }
+
+        public HashTrieMap populateResultMap(HashTrieMap resultMap) throws XPathException {
+            for (Map.Entry<String, TreeInfo> entry : results.entrySet()) {
+                resultMap = resultMap.addEntry(new StringValue(entry.getKey()), entry.getValue().getRootNode());
+            }
+            return resultMap;
+        }
     }
 
-    private static class SecondaryOutputResolverForSerialized extends StandardOutputResolver {
-        private Map<String, String> results;
-        private Map<String, StringWriter> workInProgress = new ConcurrentHashMap<String, StringWriter>();
+    /**
+     * Deliverer for delivery-format="serialized"
+     */
 
-        public SecondaryOutputResolverForSerialized(Map<String, String> results) {
-            this.results = results;
+    private static class SerializedDeliverer extends Deliverer {
+        private Map<String, String> results = new ConcurrentHashMap<String, String>();
+        private Map<String, StringWriter> workInProgress = new ConcurrentHashMap<String, StringWriter>();
+        private StringWriter primaryWriter;
+
+        public SerializedDeliverer() {
+        }
+
+        @Override
+        public Destination getPrimaryDestination(MapItem serializationParamsMap) throws XPathException {
+            Serializer serializer = makeSerializer(serializationParamsMap);
+            primaryWriter = new StringWriter();
+            serializer.setOutputWriter(primaryWriter);
+            return serializer;
+        }
+
+        @Override
+        public Sequence getPrimaryResult() {
+            String str = primaryWriter.toString();
+            if (str.isEmpty()) {
+                return null;
+            }
+            return new StringValue(str);
         }
 
         @Override
         protected Result createResult(URI absoluteURI) throws XPathException, IOException {
             StringWriter writer = new StringWriter();
-            if (absoluteURI.toString().contains("http://saxonica.com/output-serialized")) {
+            if (absoluteURI.getScheme().equals(dummyBaseOutputUriScheme)) {
                 throw new XPathException("The location of output documents is undefined: use the transform option base-output-uri", "FOXT0002");
             }
             workInProgress.put(absoluteURI.toString(), writer);
@@ -824,62 +838,103 @@ public class TransformFn extends SystemFunction implements Callable {
             return streamResult;
         }
 
-        /**
-         * Signal completion of the result document. This method is called by the system
-         * when the result document has been successfully written. It allows the resolver
-         * to perform tidy-up actions such as closing output streams, or firing off
-         * processes that take this result tree as input. Note that the OutputURIResolver
-         * is stateless, so the original href is supplied to identify the document
-         * that has been completed.
-         *
-         * @param result
-         */
         @Override
         public void close(Result result) throws XPathException {
             String output = workInProgress.get(result.getSystemId()).toString();
             results.put(result.getSystemId(), output);
             workInProgress.remove(result.getSystemId());
         }
+
+        @Override
+        public HashTrieMap populateResultMap(HashTrieMap resultMap) throws XPathException {
+            for (Map.Entry<String, String> entry : results.entrySet()) {
+                resultMap = resultMap.addEntry(new StringValue(entry.getKey()), new StringValue(entry.getValue()));
+            }
+            return resultMap;
+        }
     }
 
-    private static class SecondaryOutputResolverForSaved extends StandardOutputResolver {
-        private Map<String, String> results;
-        //private Map<String, StringWriter> workInProgress = new ConcurrentHashMap<String, StringWriter>();
+    /**
+     * Deliverer for delivery-format="saved"
+     */
 
-        public SecondaryOutputResolverForSaved(Map<String, String> results) {
-            this.results = results;
+    private static class SavedDeliverer extends Deliverer {
+        private Map<String, String> results = new ConcurrentHashMap<String, String>();
+        private File primaryOutputFile;
+        private long lastModified;
+
+        public SavedDeliverer() {
+        }
+
+        @Override
+        public Destination getPrimaryDestination(MapItem serializationParamsMap) throws XPathException {
+            Serializer serializer = makeSerializer(serializationParamsMap);
+
+                if (baseOutputUri == null) {
+                    serializer.setOutputStream(new OutputStream() {
+                        @Override
+                        public void write(int b) throws IOException {
+                            throw new IOException("fn:transform - no base-output-uri specified");
+                        }
+                    });
+                } else {
+                    URI outputUri = URI.create(baseOutputUri);
+                    if (!outputUri.isAbsolute()) {
+                        throw new XPathException("The transform option base-output-uri is not an absolute URI", "FOXT0002");
+                    }
+                    primaryOutputFile = new File(outputUri);
+                    lastModified = primaryOutputFile.exists() ? primaryOutputFile.lastModified() : -1;
+                    serializer.setOutputFile(primaryOutputFile);
+                }
+
+            return serializer;
+        }
+
+        @Override
+        public Sequence getPrimaryResult() {
+            if (primaryOutputFile == null || !primaryOutputFile.exists() || primaryOutputFile.lastModified() == lastModified) {
+                return null;
+            }
+            return new StringValue(primaryOutputFile.toURI().toString());
         }
 
         @Override
         protected Result createResult(URI absoluteURI) throws XPathException, IOException {
-            if (absoluteURI.toString().contains("/saxon-dummy-output-file-984hvds3sfmixxak22/")) {
+            if (absoluteURI.getScheme().equals(dummyBaseOutputUriScheme)) {
                 throw new XPathException("The location of output documents is undefined: use the transform option base-output-uri", "FOXT0002");
             }
             return new StreamResult(new File(absoluteURI));
         }
 
-        /**
-         * Signal completion of the result document. This method is called by the system
-         * when the result document has been successfully written. It allows the resolver
-         * to perform tidy-up actions such as closing output streams, or firing off
-         * processes that take this result tree as input. Note that the OutputURIResolver
-         * is stateless, so the original href is supplied to identify the document
-         * that has been completed.
-         *
-         * @param result
-         */
         @Override
         public void close(Result result) throws XPathException {
             results.put(result.getSystemId(), result.getSystemId());
             //workInProgress.remove(result.getSystemId());
         }
+
+        @Override
+        public HashTrieMap populateResultMap(HashTrieMap resultMap) throws XPathException {
+            for (Map.Entry<String, String> entry : results.entrySet()) {
+                resultMap = resultMap.addEntry(new StringValue(entry.getKey()), new StringValue(entry.getValue()));
+            }
+            return resultMap;
+        }
     }
 
-    private static class SecondaryOutputResolverForRaw extends StandardOutputResolver {
-        private Map<String, XdmValue> results;
+    private static class RawDeliverer extends Deliverer {
+        private Map<String, XdmValue> results = new ConcurrentHashMap<String, XdmValue>();
 
-        public SecondaryOutputResolverForRaw(Map<String, XdmValue> results) {
-            this.results = results;
+        public RawDeliverer() {
+        }
+
+        @Override
+        public Destination getPrimaryDestination(MapItem serializationParamsMap) throws XPathException {
+            return null;
+        }
+
+        @Override
+        public Sequence getPrimaryResult() {
+            return null;
         }
 
         @Override
@@ -890,20 +945,18 @@ public class TransformFn extends SystemFunction implements Callable {
             return new StreamResult(new File(absoluteURI)); //TODO - what is the result?
         }
 
-        /**
-         * Signal completion of the result document. This method is called by the system
-         * when the result document has been successfully written. It allows the resolver
-         * to perform tidy-up actions such as closing output streams, or firing off
-         * processes that take this result tree as input. Note that the OutputURIResolver
-         * is stateless, so the original href is supplied to identify the document
-         * that has been completed.
-         *
-         * @param result
-         */
         @Override
         public void close(Result result) throws XPathException {
             /*XdmValue output = new XdmValue();
             results.put(result.getSystemId(), output);*/
+        }
+
+        @Override
+        public HashTrieMap populateResultMap(HashTrieMap resultMap) throws XPathException {
+            for (Map.Entry<String, XdmValue> entry : results.entrySet()) {
+                resultMap = resultMap.addEntry(new StringValue(entry.getKey()), entry.getValue().getUnderlyingValue());
+            }
+            return resultMap;
         }
     }
 
