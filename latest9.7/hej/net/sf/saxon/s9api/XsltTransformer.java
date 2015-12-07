@@ -231,7 +231,7 @@ public class XsltTransformer implements Destination {
 
     public void setInitialContextNode(XdmNode node) {
         initialSource = node == null ? null : node.getUnderlyingNode();
-        controller.setInitialMatchSelection(node.getUnderlyingNode());
+        controller.setGlobalContextItem(node.getUnderlyingNode());
     }
 
     /**

@@ -88,8 +88,8 @@ public class Controller implements ContextOriginator {
     private Configuration config;
     private Executable executable;
 
-    private Item initialMatchSelection;
     private Item globalContextItem;
+    private boolean globalContextItemPreset;
     private Map<PackageData, Bindery> binderies;
     private GlobalParameterSet globalParameters;
     private boolean convertParameters = true;
@@ -193,7 +193,6 @@ public class Controller implements ContextOriginator {
      */
 
     public void reset() {
-        //topLevelBindery = new Bindery();
         globalParameters = new GlobalParameterSet();
         standardURIResolver = config.getSystemURIResolver();
         userURIResolver = config.getURIResolver();
@@ -231,7 +230,6 @@ public class Controller implements ContextOriginator {
         messageReceiver = null;
         currentDateTime = null;
         dateTimePreset = false;
-        initialMatchSelection = null;
         initialMode = null;
         initialTemplate = null;
         clearPerTransformationData();
@@ -245,12 +243,14 @@ public class Controller implements ContextOriginator {
     private void clearPerTransformationData() {
         userDataTable = new HashMap<String, Object>(20);
         principalResult = null;
-        //principalResultURI = null;
         allOutputDestinations = null;
         thereHasBeenAnExplicitResultDocument = false;
         lastRememberedNode = null;
         lastRememberedNumber = -1;
         tracingPaused = false;
+        if (!globalContextItemPreset) {
+            globalContextItem = null;
+        }
     }
 
     /**
@@ -275,10 +275,10 @@ public class Controller implements ContextOriginator {
      *
      * @param expandedModeName the name of the initial mode.  The mode is
      *                         supplied as an expanded QName. Two special values are recognized, in the
-     *                 reserved XSLT namespace:
-     *                 xsl:unnamed to indicate the mode with no name, and xsl:default to indicate the
-     *                 mode defined in the stylesheet header as the default mode.
-     *                 The value null also indicates the unnamed mode.
+     *                         reserved XSLT namespace:
+     *                         xsl:unnamed to indicate the mode with no name, and xsl:default to indicate the
+     *                         mode defined in the stylesheet header as the default mode.
+     *                         The value null also indicates the unnamed mode.
      * @throws XPathException if the requested mode is not defined in the stylesheet
      * @since 8.4 Changed in 9.6 to accept a StructuredQName, and to throw an error if the mode
      * has not been defined. Changed in 9.7 so that null indicates the default mode, which defaults
@@ -289,7 +289,7 @@ public class Controller implements ContextOriginator {
         if (expandedModeName == null || expandedModeName.equals(Mode.UNNAMED_MODE_NAME)) {
             initialMode = ((PreparedStylesheet) executable).getRuleManager().obtainMode(Mode.UNNAMED_MODE_NAME, true);
         } else if (expandedModeName.equals(Mode.DEFAULT_MODE_NAME)) {
-            StructuredQName defaultModeName = ((StylesheetPackage)executable.getTopLevelPackage()).getDefaultMode();
+            StructuredQName defaultModeName = ((StylesheetPackage) executable.getTopLevelPackage()).getDefaultMode();
             if (!expandedModeName.equals(defaultModeName)) {
                 setInitialMode(defaultModeName);
             }
@@ -332,6 +332,7 @@ public class Controller implements ContextOriginator {
 
     /**
      * Get the accumulator manager for this transformation. May be null if no accumulators are in use
+     *
      * @return the accumulator manager, which holds dynamic information about the values of each
      * accumulator for each document
      */
@@ -342,6 +343,7 @@ public class Controller implements ContextOriginator {
 
     /**
      * Get the value of a supplied parameter (XSLT) or external variable (XQuery)
+     *
      * @param name the QName of the parameter
      * @return the supplied value of the parameter, if such a parameter exists, and if a value
      * was supplied. Returns null if the parameter is not declared or if no value was supplied,
@@ -354,9 +356,10 @@ public class Controller implements ContextOriginator {
 
     /**
      * Get the value of a parameter, converted and/or type-checked
-     * @param name the name of the stylesheet parameter (XSLT) or external variable (XQuery)
+     *
+     * @param name         the name of the stylesheet parameter (XSLT) or external variable (XQuery)
      * @param requiredType the declared type of the parameter
-     * @param context the dynamic evaluation context
+     * @param context      the dynamic evaluation context
      * @return the parameter value if defined, or null otherwise. If the option
      * {@link #setApplyFunctionConversionRulesToExternalVariables(boolean)}} is set, the supplied
      * value is converted to the required type. Otherwise, the supplied value is checked
@@ -376,7 +379,7 @@ public class Controller implements ContextOriginator {
             while ((next = iter.next()) != null) {
                 if (next instanceof FingerprintedNode && !config.isCompatible(((FingerprintedNode) next).getConfiguration())) {
                     throw new XPathException("A node supplied in a global parameter must be built using the same Configuration " +
-                        "that was used to compile the stylesheet or query", SaxonErrorCode.SXXP0004);
+                                                     "that was used to compile the stylesheet or query", SaxonErrorCode.SXXP0004);
                 }
             }
 
@@ -561,7 +564,7 @@ public class Controller implements ContextOriginator {
         //if (principalResultURI != null) {
 
         DocumentURI documentURI = new DocumentURI(implicitURI);
-        synchronized (this) {
+        synchronized(this) {
             if (!checkUniqueOutputDestination(documentURI)) {
                 XPathException err = new XPathException(
                         "Cannot write an implicit result document if an explicit result document has been written to the same URI: " +
@@ -619,6 +622,7 @@ public class Controller implements ContextOriginator {
 
     /**
      * Say whether the principal transformation results should generate a result tree, or should be returned in raw sequence form
+     *
      * @param build set to true if a tree should be built, false if the results should be delivered in raw form
      */
 
@@ -640,16 +644,16 @@ public class Controller implements ContextOriginator {
     ///////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Set the initial named template to be used as the entry point.
-     * <p/>
-     * XSLT 2.0 allows a transformation to start by executing a named template, rather than
+     * Set the initial named template to be used as the entry point, when the transformation is invoked
+     * via the {@link #transform(Source, Receiver)} method.
+     *
+     * <p>XSLT 2.0 allows a transformation to start by executing a named template, rather than
      * by matching an initial context node in a source document. This method may eventually
-     * be superseded by a standard JAXP method once JAXP supports XSLT 2.0.
-     * <p/>
-     * Note that any parameters supplied using {@link #initializeController(net.sf.saxon.expr.instruct.GlobalParameterSet)}
-     * are used as the values
-     * of global stylesheet parameters. There is no way to supply values for local parameters
-     * of the initial template.
+     * be superseded by a standard JAXP method once JAXP supports XSLT 2.0.</p>
+     *
+     * <p>Note that any parameters supplied using {@link #initializeController(net.sf.saxon.expr.instruct.GlobalParameterSet)}
+     * are used as the values of global stylesheet parameters. There is no way to supply values for local parameters
+     * of the initial template.</p>
      *
      * @param qName The expanded name of the template, or null to indicate that there should be no initial template.
      * @throws XPathException if there is no named template with this name
@@ -664,7 +668,7 @@ public class Controller implements ContextOriginator {
         NamedTemplate t = ((PreparedStylesheet) getExecutable()).getNamedTemplate(qName);
         if (t == null) {
             XPathException err = new XPathException("The requested initial template "
-                    + qName.getDisplayName() + " does not exist");
+                                                            + qName.getDisplayName() + " does not exist");
             err.setErrorCode("XTDE0040");
             reportFatalError(err);
             throw err;
@@ -701,10 +705,6 @@ public class Controller implements ContextOriginator {
      */
 
     public void setInitialTemplateParameters(Map<StructuredQName, Sequence> params, boolean tunnel) {
-//        if (!params.isEmpty() && !executable.isAllowXPath30()) {
-//            throw new XPathException(
-//                    "Cannot supply initial template parameters when running as XSLT 2.0", SaxonErrorCode.SXST0070);
-//        }
         if (tunnel) {
             this.initialTemplateTunnelParams = params;
         } else {
@@ -1011,24 +1011,12 @@ public class Controller implements ContextOriginator {
     }
 
     /**
-     * Set the initial match selection, that is, the sequence of items to be processed
-     * by an initial applyTemplates() call.
-     * @param item The initial match selection.
-     * @since 9.7
-     */
-
-    public void setInitialMatchSelection(Item item) {
-        // TODO: make this a sequence rather than a singleton item
-        initialMatchSelection = item;
-    }
-
-    /**
      * Get the bindery for the global variables in a particular package.
      * <p/>
      * This method is intended for internal use only.
      *
-     * @return the Bindery (in which values of all variables for the requested package are held)
      * @param packageData the package for which the variables are required
+     * @return the Bindery (in which values of all variables for the requested package are held)
      */
 
     public Bindery getBindery(PackageData packageData) {
@@ -1041,39 +1029,25 @@ public class Controller implements ContextOriginator {
     }
 
     /**
-     * Get the initial match selection. In XSLT 3.0 this is the sequence of items
-     * to which the initial call of applyTemplates() is applied. In earlier XSLT
-     * releases this is always a single node, usually a document node.
-     * This returns the item (often a document node). In XSLT 3.0 it no longer has
-     * any necessary relationship to the global context item, and it can be any
-     * sequence, not necessarily a single item or node. The method returns the value
-     * previously supplied to the {@link #setInitialMatchSelection} method, or the
-     * initial context node set implicitly using methods such as {@link #transform}.
-     * The value is not used in XQuery.
+     * Set the item used as the context for evaluating global variables. This value is used
+     * as the global context item by XQuery and XPath, and also by XSLT 3.0 interfaces such
+     * as {@link #applyTemplates(Sequence, Receiver)} and {@link #callTemplate(StructuredQName, Receiver)}.
+     * It is not used by the {@link #transform(Source, Receiver)} and {@link #transformDocument(NodeInfo, Receiver)}
+     * methods; by contrast, these overwrite the global context item with a value based on the node supplied
+     * as the source of the transformation.
      *
-     * @return the initial match selection.
+     * @param contextItem the context item for evaluating global variables, or null if there is none
      * @since 9.7
      */
 
-    /*@Nullable*/
-    public Item getInitialMatchSelection() {
-        return initialMatchSelection;
-    }
-
-    /**
-      * Set the item used as the context for evaluating global variables.
-      *
-      * @param contextItem the context item for evaluating global variables, or null if there is none
-      * @since 9.7
-      */
-
-     public void setGlobalContextItem(Item contextItem) {
-         if (contextItem instanceof NodeInfo) {
+    public void setGlobalContextItem(Item contextItem) {
+        if (contextItem instanceof NodeInfo) {
             // In XSLT, apply strip-space and strip-type-annotations options
-            contextItem = prepareInputTree((NodeInfo)contextItem);
+            contextItem = prepareInputTree((NodeInfo) contextItem);
         }
-         this.globalContextItem = contextItem;
-     }
+        this.globalContextItem = contextItem;
+        this.globalContextItemPreset = true;
+    }
 
 
     /**
@@ -1206,8 +1180,8 @@ public class Controller implements ContextOriginator {
      * Defaults to the CollectionURIResolver registered with the Configuration
      *
      * @param resolver the resolver for references to collections
-     * @deprecated since 9.7. Use {@link #setCollectionFinder(CollectionFinder)}
      * @since 9.4
+     * @deprecated since 9.7. Use {@link #setCollectionFinder(CollectionFinder)}
      */
 
     public void setCollectionURIResolver(CollectionURIResolver resolver) {
@@ -1220,15 +1194,15 @@ public class Controller implements ContextOriginator {
      * CollectionURIResolver registered with the Configuration
      *
      * @return the resolver for references to collections
-     * @deprecated since 9.7. Use {@link #getCollectionFinder()}
      * @since 9.4
+     * @deprecated since 9.7. Use {@link #getCollectionFinder()}
      */
 
     /*@NotNull*/
     public CollectionURIResolver getCollectionURIResolver() {
         CollectionFinder finder = getCollectionFinder();
         if (finder instanceof CollectionURIResolverWrapper) {
-            return ((CollectionURIResolverWrapper)finder).getCollectionURIResolver();
+            return ((CollectionURIResolverWrapper) finder).getCollectionURIResolver();
         } else {
             return null;
         }
@@ -1776,7 +1750,7 @@ public class Controller implements ContextOriginator {
         }
 
         if (source instanceof TreeInfo) {
-            source = ((TreeInfo)source).getRootNode();
+            source = ((TreeInfo) source).getRootNode();
         }
 
         if (source instanceof SAXSource && config.getBooleanProperty(FeatureKeys.IGNORE_SAX_SOURCE_PARSER)) {
@@ -1822,7 +1796,7 @@ public class Controller implements ContextOriginator {
 
             } else if (source == null) {
                 if (initialMode != null) {
-                    throw new XPathException("Either a source document or initial match selection must be specified for an initial mode","XTDE0044");
+                    throw new XPathException("Either a source document or initial match selection must be specified for an initial mode", "XTDE0044");
                 }
                 if (initialTemplate == null && initialFunction == null) {
                     NamedTemplate t = ((PreparedStylesheet) getExecutable()).getNamedTemplate(
@@ -1837,8 +1811,8 @@ public class Controller implements ContextOriginator {
                 Mode mode = getInitialMode();
                 if (mode == null) {// || (initialMode != null && mode.isEmpty())) {
                     throw new XPathException("Requested initial mode " +
-                            (initialMode == null ? "" : initialMode.getModeName().getDisplayName()) +
-                            " does not exist", "XTDE0045");
+                                                     (initialMode == null ? "" : initialMode.getModeName().getDisplayName()) +
+                                                     " does not exist", "XTDE0045");
                 }
                 if (mode.isDeclaredStreamable()) {
                     if (source instanceof StreamSource || source instanceof SAXSource) {
@@ -1846,8 +1820,8 @@ public class Controller implements ContextOriginator {
                         transformStream(source, mode, receiver);
                     } else {
                         throw new XPathException("Requested initial mode " +
-                                (initialMode == null ? "" : initialMode.getModeName().getDisplayName()) +
-                                " is streamable: must supply a SAXSource or StreamSource", "SXST0061");
+                                                         (initialMode == null ? "" : initialMode.getModeName().getDisplayName()) +
+                                                         " is streamable: must supply a SAXSource or StreamSource", "SXST0061");
                     }
                 } else {
                     // The input is a SAXSource or StreamSource or AugmentedSource, or
@@ -1874,10 +1848,7 @@ public class Controller implements ContextOriginator {
                         ((AugmentedSource) source).close();
                     }
                     NodeInfo doc = sourceBuilder.getCurrentRoot();
-                    // TODO: review this:
-                    if (globalContextItem == null) {
-                        globalContextItem = doc;
-                    }
+                    globalContextItem = doc;
                     sourceBuilder.reset();
                     if (source.getSystemId() != null) {
                         registerDocument(doc.getTreeInfo(), new DocumentURI(source.getSystemId()));
@@ -1916,7 +1887,7 @@ public class Controller implements ContextOriginator {
             if (close && source instanceof AugmentedSource) {
                 ((AugmentedSource) source).close();
             }
-            if(messageReceiver != null) {
+            if (messageReceiver != null) {
                 messageReceiver.close();
             }
             //principalResultURI = null;
@@ -1960,14 +1931,14 @@ public class Controller implements ContextOriginator {
             }
             if (mode == null) {
                 throw new XPathException("Requested initial mode " +
-                        (initialMode == null ? "" : initialMode.getModeName().getDisplayName()) +
-                        " does not exist", "XTDE0045");
+                                                 (initialMode == null ? "" : initialMode.getModeName().getDisplayName()) +
+                                                 " does not exist", "XTDE0045");
             }
 
             if (mode.isDeclaredStreamable()) {
                 throw new XPathException("Requested initial mode " +
-                        (initialMode == null ? "" : initialMode.getModeName().getDisplayName()) +
-                        " is streamable: must supply a StreamSource or SAXSource");
+                                                 (initialMode == null ? "" : initialMode.getModeName().getDisplayName()) +
+                                                 " is streamable: must supply a StreamSource or SAXSource");
             }
 
             openMessageEmitter();
@@ -2035,9 +2006,9 @@ public class Controller implements ContextOriginator {
                 ItemMappingFunction<Item, Item> spaceStripper =
                         new ItemMappingFunction<Item, Item>() {
                             public Item mapItem(Item item) throws XPathException {
-                                if (item instanceof NodeInfo && ((NodeInfo)item).getNodeKind() == Type.DOCUMENT ) {
+                                if (item instanceof NodeInfo && ((NodeInfo) item).getNodeKind() == Type.DOCUMENT) {
                                     return new SpaceStrippedDocument(
-                                        ((NodeInfo)item).getTreeInfo(), executable.getStripperRules()).getRootNode();
+                                            ((NodeInfo) item).getTreeInfo(), executable.getStripperRules()).getRootNode();
                                 } else {
                                     return item;
                                 }
@@ -2051,7 +2022,7 @@ public class Controller implements ContextOriginator {
                         new ItemMappingFunction<Item, Item>() {
                             public Item mapItem(Item item) throws XPathException {
                                 if (item instanceof NodeInfo && ((NodeInfo) item).getNodeKind() == Type.DOCUMENT) {
-                                    return new TypeStrippedDocument(((NodeInfo)item).getTreeInfo()).getRootNode();
+                                    return new TypeStrippedDocument(((NodeInfo) item).getTreeInfo()).getRootNode();
                                 } else {
                                     return item;
                                 }
@@ -2059,7 +2030,6 @@ public class Controller implements ContextOriginator {
                         };
                 iter = new ItemMappingIterator(iter, typeStripper);
             }
-
 
 
             outputDestination = openResult(outputDestination, initialContext);
@@ -2186,10 +2156,7 @@ public class Controller implements ContextOriginator {
 
             if (startNode != null) {
 
-                initialMatchSelection = startNode;
-                if (globalContextItem == null) {
-                    globalContextItem = startNode.getRoot();
-                }
+                globalContextItem = startNode.getRoot();
 
                 if (startNode.getConfiguration() == null) {
                     // must be a non-standard document implementation
@@ -2232,7 +2199,6 @@ public class Controller implements ContextOriginator {
             }
 
             if (initialTemplate == null) {
-                initialMatchSelection = startNode;
                 Mode mode = initialMode;
                 if (mode == null) {
                     mode = ((PreparedStylesheet) executable).getRuleManager().getUnnamedMode();
@@ -2244,8 +2210,8 @@ public class Controller implements ContextOriginator {
 //                }
                 if (mode.isDeclaredStreamable()) {
                     throw new XPathException("Requested initial mode " +
-                            (initialMode == null ? "" : initialMode.getModeName().getDisplayName()) +
-                            " is streamable: must supply a StreamSource or SAXSource");
+                                                     (initialMode == null ? "" : initialMode.getModeName().getDisplayName()) +
+                                                     " is streamable: must supply a StreamSource or SAXSource");
                 }
                 if (startNode.getNodeKind() == Type.DOCUMENT && !getConfiguration().getBooleanProperty(FeatureKeys.SUPPRESS_XSLT_NAMESPACE_CHECK)) {
                     // Check for the common error where the source document is in a namespace, but the stylesheet is not
@@ -2273,13 +2239,13 @@ public class Controller implements ContextOriginator {
                                 String suffix = "(Use --suppressXsltNamespaceCheck:on to avoid this warning)";
                                 if (explicitNamespaces.size() == 1 && explicitNamespaces.contains("")) {
                                     warning("The source document is in namespace " + uri +
-                                            ", but all the template rules match elements in no namespace " + suffix, SaxonErrorCode.SXXP0005);
+                                                    ", but all the template rules match elements in no namespace " + suffix, SaxonErrorCode.SXXP0005);
                                 } else if (uri.equals("")) {
                                     warning("The source document is in no namespace" +
-                                            ", but the template rules all expect elements in a namespace " + suffix, SaxonErrorCode.SXXP0005);
+                                                    ", but the template rules all expect elements in a namespace " + suffix, SaxonErrorCode.SXXP0005);
                                 } else {
                                     warning("The source document is in namespace " + uri +
-                                            ", but none of the template rules match elements in this namespace " + suffix, SaxonErrorCode.SXXP0005);
+                                                    ", but none of the template rules match elements in this namespace " + suffix, SaxonErrorCode.SXXP0005);
                                 }
                             }
                         }
@@ -2363,7 +2329,7 @@ public class Controller implements ContextOriginator {
             if (globalContextItem != null) {
 
                 if (globalContextItem instanceof NodeInfo) {
-                    NodeInfo startNode = (NodeInfo)globalContextItem;
+                    NodeInfo startNode = (NodeInfo) globalContextItem;
                     if (startNode.getConfiguration() == null) {
                         // must be a non-standard document implementation
                         throw new XPathException("The supplied source document must be associated with a Configuration");
@@ -2371,8 +2337,8 @@ public class Controller implements ContextOriginator {
 
                     if (!startNode.getConfiguration().isCompatible(executable.getConfiguration())) {
                         throw new XPathException(
-                            "Source document and stylesheet must use the same or compatible Configurations",
-                            SaxonErrorCode.SXXP0004);
+                                "Source document and stylesheet must use the same or compatible Configurations",
+                                SaxonErrorCode.SXXP0004);
                     }
 
                     if (startNode.getTreeInfo().isTyped() && !executable.isSchemaAware()) {
@@ -2403,13 +2369,13 @@ public class Controller implements ContextOriginator {
                 tunnelParams = new ParameterSet(initialTemplateTunnelParams);
             }
 
-            StylesheetPackage pack = (StylesheetPackage)executable.getTopLevelPackage();
+            StylesheetPackage pack = (StylesheetPackage) executable.getTopLevelPackage();
             Component initialComponent = pack.getComponent(new SymbolicName(StandardNames.XSL_TEMPLATE, initialTemplateName));
             if (initialComponent == null) {
                 throw new XPathException("Template " + initialTemplateName.getDisplayName() + " does not exist (or is not public)", "XTDE0040");
             }
             //NamedTemplate t = ((PreparedStylesheet) executable).getNamedTemplate(initialTemplateName);
-            NamedTemplate t = (NamedTemplate)initialComponent.getCode();
+            NamedTemplate t = (NamedTemplate) initialComponent.getCode();
 
             XPathContextMajor c2 = initialContext.newContext();
             initialContext.setOrigin(this);
@@ -2474,7 +2440,6 @@ public class Controller implements ContextOriginator {
             XPathContextMajor initialContext = newXPathContext();
             initialContext.setOrigin(this);
 
-            initialMatchSelection = null;
             globalContextItem = null;
 
             result = openResult(result, initialContext);
@@ -2568,7 +2533,6 @@ public class Controller implements ContextOriginator {
         final XPathContextMajor initialContext = newXPathContext();
         initialContext.setOrigin(this);
 
-        initialMatchSelection = null;
         globalContextItem = null;
         final Result result2 = openResult(result, initialContext);
 
@@ -2636,7 +2600,7 @@ public class Controller implements ContextOriginator {
         receiver.getPipelineConfiguration().setController(this);
         SequenceReceiver out;
         if (result instanceof ComplexContentOutputter) {
-            out = (SequenceReceiver)receiver;
+            out = (SequenceReceiver) receiver;
         } else if (buildTree) {
             out = ComplexContentOutputter.makeComplexContentReceiver(receiver, null);
         } else if (receiver instanceof SequenceReceiver) {
@@ -2712,15 +2676,15 @@ public class Controller implements ContextOriginator {
     public synchronized void registerGlobalVariableDependency(GlobalVariable one, GlobalVariable two) throws XPathException {
         if (one == two) {
             throw new XPathException.Circularity("Circular dependency among global variables: "
-                + one.getVariableQName().getDisplayName() + " depends on its own value");
+                                                         + one.getVariableQName().getDisplayName() + " depends on its own value");
         }
         Set<GlobalVariable> transitiveDependencies = globalVariableDependencies.get(two);
         if (transitiveDependencies != null) {
             if (transitiveDependencies.contains(one)) {
                 throw new XPathException.Circularity("Circular dependency among variables: "
-                    + one.getVariableQName().getDisplayName() + " depends on the value of "
-                    + two.getVariableQName().getDisplayName() + ", which depends directly or indirectly on the value of "
-                    + one.getVariableQName().getDisplayName());
+                                                             + one.getVariableQName().getDisplayName() + " depends on the value of "
+                                                             + two.getVariableQName().getDisplayName() + ", which depends directly or indirectly on the value of "
+                                                             + one.getVariableQName().getDisplayName());
             }
             for (GlobalVariable var : transitiveDependencies) {
                 // register the transitive dependencies
@@ -2863,6 +2827,7 @@ public class Controller implements ContextOriginator {
 
     /**
      * Get the stack of attribute sets being evaluated (for detection of cycles)
+     *
      * @return the attribute set evaluation stack
      */
 
@@ -2872,6 +2837,7 @@ public class Controller implements ContextOriginator {
 
     /**
      * Get the cache of stylesheets (cached during calls on fn:transform()) for this query or transformation.
+     *
      * @return the stylesheet cache
      */
 

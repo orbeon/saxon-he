@@ -659,7 +659,7 @@ public class XQueryExpression implements Location {
 //            }
             ManualIterator single = new ManualIterator(contextItem);
             context.setCurrentIterator(single);
-            controller.setInitialMatchSelection(contextItem);
+            controller.setGlobalContextItem(contextItem);
         }
         return context;
     }
