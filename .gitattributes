@@ -535,6 +535,7 @@ latest9.7/build/build-j.xml svn_eol_002dstyle=native
 latest9.7/build/build-n.xml svn_eol_002dstyle=native
 latest9.7/build/build.xml svn_eol_002dstyle=native
 latest9.7/build/documentation.xml svn_eol_002dstyle=native
+latest9.7/build/maven/Saxon-HE-9.7.0-1.pom svn_eol_002dstyle=native
 latest9.7/build/samples-common.xml svn_eol_002dstyle=native
 latest9.7/build/testing-j.xml svn_eol_002dstyle=native
 latest9.7/hej/data/analyze-string.xsd svn_eol_002dstyle=native
