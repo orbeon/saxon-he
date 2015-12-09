@@ -35,7 +35,7 @@ public class AxiomWriter extends net.sf.saxon.event.Builder {
     private FastStringBuffer textBuffer = new FastStringBuffer(FastStringBuffer.C256);
 
     /**
-     * Create a JDOMWriter using the default node factory
+     * Create an AxiomWriter using the default node factory
      *
      * @param pipe information about the Saxon pipeline
      */

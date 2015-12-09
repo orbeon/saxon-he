@@ -16,8 +16,8 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.Platform;
 import net.sf.saxon.Version;
 import net.sf.saxon.event.PipelineConfiguration;
-import net.sf.saxon.expr.sort.CodepointCollator;
 import net.sf.saxon.expr.sort.AtomicMatchKey;
+import net.sf.saxon.expr.sort.CodepointCollator;
 import net.sf.saxon.expr.sort.SimpleCollation;
 import net.sf.saxon.lib.*;
 import net.sf.saxon.pull.PullProvider;
@@ -31,6 +31,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -123,9 +124,9 @@ public class DotNetPlatform implements Platform {
     public XMLReader loadParser() {
         XMLReader parser;
         try {
-//            parser = SAXParserFactory.newInstance("org.apache.xerces.jaxp.SAXParserFactoryImpl", getClass().getClassLoader())
-//                    .newSAXParser().getXMLReader();
-            parser = new org.apache.xerces.jaxp.SAXParserFactoryImpl().newSAXParser().getXMLReader();
+            parser = SAXParserFactory.newInstance("org.apache.xerces.jaxp.SAXParserFactoryImpl", getClass().getClassLoader())
+                    .newSAXParser().getXMLReader();
+            //parser = new org.apache.xerces.jaxp.SAXParserFactoryImpl().newSAXParser().getXMLReader();
         } catch (ParserConfigurationException err) {
             throw new TransformerFactoryConfigurationError(err);
         } catch (SAXException err) {

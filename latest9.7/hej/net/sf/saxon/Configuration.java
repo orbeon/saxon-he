@@ -617,6 +617,8 @@ public class Configuration implements SourceResolver, NotationSet {
         throw new LicenseException(message, LicenseException.WRONG_CONFIGURATION);
     }
 
+    public void disableLicensing() {}
+
     public boolean isFeatureAllowedBySecondaryLicense(int localLicenseId, int feature) {
         return false;
     }

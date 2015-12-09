@@ -118,6 +118,8 @@ public class Transform {
             "Name of initial template");
         options.addRecognizedOption("l", CommandLineOptions.TYPE_BOOLEAN,
             "Maintain line numbers for source documents");
+        options.addRecognizedOption("license", CommandLineOptions.TYPE_BOOLEAN,
+                                    "Check for local license file");
         options.addRecognizedOption("m", CommandLineOptions.TYPE_CLASSNAME,
             "Use named class to handle xsl:message output");
         options.addRecognizedOption("nogo", CommandLineOptions.TYPE_BOOLEAN,
@@ -497,6 +499,19 @@ public class Transform {
             if (value != null) {
                 badUsage("");
             }
+
+
+            // Check for a license if appropriate
+
+            if (!config.getEditionCode().equals("HE")) {
+                String lic = options.getOptionValue("license");
+                if (lic == null || "on".equals(lic)) {
+                    config.displayLicenseMessage();
+                } else {
+                    config.disableLicensing();
+                }
+            }
+
 
             //compilerInfo.setRecoveryPolicy(config.getRecoveryPolicy());
 

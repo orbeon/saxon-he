@@ -257,6 +257,7 @@ public class CommandLineOptions {
     public void applyToConfiguration(/*@NotNull*/ final Processor processor) throws TransformerException {
 
         Configuration config = processor.getUnderlyingConfiguration();
+
         for (Enumeration e = configOptions.propertyNames(); e.hasMoreElements(); ) {
             String name = (String) e.nextElement();
             String value = configOptions.getProperty(name);
