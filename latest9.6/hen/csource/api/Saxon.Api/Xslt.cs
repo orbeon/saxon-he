@@ -2141,7 +2141,7 @@ namespace Saxon.Api
 	/// wrapping the returned sequence in a document node</returns>
 	public XdmValue ApplyTemplates(Stream input, Uri baseUri){
 		prime ();
-		streamSource = new JStreamSource(new DotNetInputStream(input), baseUri.ToString(Uri.EscapeUriString(baseUri.ToString())));
+		streamSource = new JStreamSource(new DotNetInputStream(input), Uri.EscapeUriString(baseUri.ToString()));
 
 		try{
 			JPipelineConfiguration pipe = controller.makePipelineConfiguration();
