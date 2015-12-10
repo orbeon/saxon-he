@@ -1013,10 +1013,10 @@ public abstract class StyleElement extends ElementImpl {
                 if (version < 20 && version != 10) {
                     // XSLT 2.0 says use backwards compatible mode. XSLT 3.0 says we can raise an error.
                     // Both allow a warning
-                    issueWarning("Unrecognized version " + version + ": treated as 1.0", this);
+                    issueWarning("Unrecognized version " + val + ": treated as 1.0", this);
                     version = 10;
                 } else if (version > 20 && version < 30) {
-                    issueWarning("Unrecognized version " + version + ": treated as 2.0", this);
+                    issueWarning("Unrecognized version " + val + ": treated as 2.0", this);
                     version = 20;
                 }
             }
