@@ -275,7 +275,11 @@ public class XPathProcessor extends SaxonCAPI {
        // xpath.setContextItem(node);
          String[] params2 = {"node"};
         Object[] values2 = {node};
-        XdmValue value = xpath.evaluateSingle("/Users/ond1/work/development/tests/jeroen/xml/", "//*", params1, values1);
+        XdmValue value = xpath.evaluateSingle("/Users/ond1/work/development/tests/jeroen/xml/", "//person[1]", params2, values2);
+        if(value instanceof XdmNode){
+            String nodename = XdmUtils.getEQName(((XdmNode)value).getNodeName());
+            System.out.println(nodename);
+        }
         boolean ebv = xpath.effectiveBooleanValue("/Users/ond1/work/development/tests/jeroen/xml/", "count(/out/person)>0", params2, values2);
        // System.out.println(value.toString());
         System.out.println(ebv);

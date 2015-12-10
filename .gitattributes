@@ -482,6 +482,7 @@ latest9.6/hej/net/sf/saxon/option/cpp/SaxonCException.java svn_eol_002dstyle=nat
 latest9.6/hej/net/sf/saxon/option/cpp/SchemaValidatorForCpp.java svn_eol_002dstyle=native
 latest9.6/hej/net/sf/saxon/option/cpp/XPathProcessor.java svn_eol_002dstyle=native
 latest9.6/hej/net/sf/saxon/option/cpp/XQueryEngine.java svn_eol_002dstyle=native
+latest9.6/hej/net/sf/saxon/option/cpp/XdmUtils.java svn_eol_002dstyle=native
 latest9.6/hej/net/sf/saxon/option/cpp/XdmValueForCpp.java svn_eol_002dstyle=native
 latest9.6/hej/net/sf/saxon/option/cpp/XsltProcessor.java svn_eol_002dstyle=native
 latest9.6/hej/net/sf/saxon/trans/QuitParsingException.java svn_eol_002dstyle=native
