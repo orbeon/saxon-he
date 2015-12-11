@@ -481,7 +481,14 @@ public abstract class JPConverter {
         }
 
         public ItemType getItemType() {
-            return resultType;
+            if (resultType.getJavaClass() == Object.class) {
+                // Bug 2536. If the declared type of a Java external method is Object, and the method
+                // returns a SequenceIterator, then we don't invoke the converter, so the result value
+                // can be anything.
+                return AnyItemType.getInstance();
+            } else {
+                return resultType;
+            }
         }
     }
 
