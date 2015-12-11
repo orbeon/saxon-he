@@ -45,6 +45,7 @@ public abstract class JPConverter {
     private static HashMap<Class, JPConverter> converterMap = new HashMap<Class, JPConverter>();
 
     static {
+        converterMap.put(Object.class, FromObject.INSTANCE);
         converterMap.put(SequenceIterator.class, new FromSequenceIterator());
         converterMap.put(Sequence.class, FromSequence.INSTANCE);
         converterMap.put(OneOrMore.class, FromSequence.INSTANCE);
@@ -239,6 +240,24 @@ public abstract class JPConverter {
     public int getCardinality() {
         // default implementation
         return StaticProperty.EXACTLY_ONE;
+    }
+
+    public static class FromObject extends JPConverter {
+        public static final FromObject INSTANCE = new FromObject();
+
+        public Sequence convert(Object object, XPathContext context) throws XPathException {
+            Class theClass = object.getClass();
+            JPConverter instanceConverter = allocate(theClass, null, context.getConfiguration());
+            return instanceConverter.convert(object, context);
+        }
+
+        public ItemType getItemType() {
+            return AnyItemType.getInstance();
+        }
+
+        public int getCardinality() {
+            return StaticProperty.ALLOWS_ZERO_OR_MORE;
+        }
     }
 
     public static class FromSequenceIterator extends JPConverter {
