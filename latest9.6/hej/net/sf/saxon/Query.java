@@ -266,13 +266,13 @@ public class Query {
         //config.setHostLanguage(Configuration.XQUERY);
         processor = new Processor(config);
 
-        XQueryCompiler compiler = processor.newXQueryCompiler();
-        compiler.setSchemaAware(schemaAware);
-
         // Check the command-line arguments.
 
         try {
             parseOptions(options);
+
+            XQueryCompiler compiler = processor.newXQueryCompiler();
+            compiler.setSchemaAware(schemaAware);
 
             if (languageVersion != null) {
                 compiler.setLanguageVersion(languageVersion);
