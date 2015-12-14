@@ -133,7 +133,7 @@ public class URIQueryParameters {
                 // replace "*" with ".*"
                 sb.append(".*");
             } else if (c == '?') {
-                // replace "*" with ".?"
+                // replace "?" with ".?"
                 sb.append(".?");
             } else {
                 sb.append(c);
