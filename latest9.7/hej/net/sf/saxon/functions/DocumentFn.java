@@ -750,6 +750,9 @@ public class DocumentFn extends SystemFunction implements Callable {
         if (controller.getExecutable().stripsInputTypeAnnotations()) {
             out = controller.getConfiguration().getAnnotationStripper(out);
         }
+        if (controller.getConfiguration().isTiming()) {
+            controller.getConfiguration().getLogger().info("Streaming input document " + source.getSystemId());
+        }
         out.setPipelineConfiguration(pipe);
         try {
             Sender.send(source, out, options);
