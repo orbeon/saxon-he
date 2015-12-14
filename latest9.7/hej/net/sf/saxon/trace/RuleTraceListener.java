@@ -30,6 +30,7 @@ import java.util.List;
 public class RuleTraceListener implements TraceListener2 {
     String sourceId;
     String xslId;
+    int repeat = 0;
 
     public void setXslId(String xslId) {
         this.xslId = xslId;
@@ -37,6 +38,9 @@ public class RuleTraceListener implements TraceListener2 {
 
     public void setSourceId(String sourceId) {
         this.sourceId = sourceId;
+    }
+    public void setRepeat(int repeat) {
+        this.repeat = repeat;
     }
 
 
@@ -151,10 +155,13 @@ public class RuleTraceListener implements TraceListener2 {
             writer.writeAttribute("total.time", "" + overallTime);
             writer.writeAttribute("dateTime", DateTimeValue.getCurrentDateTime(null).getPrimitiveStringValue().toString());
             if(sourceId != null) {
-                writer.writeAttribute("source",sourceId);
+                writer.writeAttribute("s",sourceId);
             }
             if(xslId != null) {
                 writer.writeAttribute("xsl",xslId);
+            }
+            if(repeat != 0) {
+                writer.writeAttribute("repeat","" + repeat);
             }
             writer.writeStartElement("config");
             {
