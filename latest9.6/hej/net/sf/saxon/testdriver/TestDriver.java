@@ -199,6 +199,7 @@ public abstract class TestDriver {
         xpc.setLanguageVersion("3.0");
         xpc.setCaching(true);
         xpc.declareNamespace("", catalogNamespace());
+        xpc.setBaseURI(catalogFile.toURI());
 
         createGlobalEnvironments(catalog, xpc);
 

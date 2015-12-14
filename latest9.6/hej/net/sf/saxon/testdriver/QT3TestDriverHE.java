@@ -562,6 +562,7 @@ public class QT3TestDriverHE extends TestDriver {
             assertXpc.declareNamespace("math", NamespaceConstant.MATH);
             assertXpc.declareNamespace("map", NamespaceConstant.MAP_FUNCTIONS);
             assertXpc.declareVariable(new QName("result"));
+            assertXpc.setBaseURI(assertion.getBaseURI());
 
             copySchemaNamespaces(env, assertXpc);  //jwL
 
