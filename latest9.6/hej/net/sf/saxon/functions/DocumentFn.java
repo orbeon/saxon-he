@@ -18,7 +18,10 @@ import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.PathMap;
 import net.sf.saxon.expr.sort.DocumentOrderIterator;
 import net.sf.saxon.expr.sort.GlobalOrderComparer;
-import net.sf.saxon.lib.*;
+import net.sf.saxon.lib.FeatureKeys;
+import net.sf.saxon.lib.ParseOptions;
+import net.sf.saxon.lib.RelativeURIResolver;
+import net.sf.saxon.lib.StandardErrorHandler;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.NonDelegatingURIResolver;
@@ -34,7 +37,6 @@ import javax.xml.transform.SourceLocator;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamSource;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -816,6 +818,9 @@ public class DocumentFn extends SystemFunctionCall implements Callable {
 
         if (controller.getExecutable().stripsInputTypeAnnotations()) {
             out = controller.getConfiguration().getAnnotationStripper(out);
+        }
+        if (controller.getConfiguration().isTiming()) {
+            controller.getConfiguration().getLogger().info("Streaming input document " + source.getSystemId());
         }
         out.setPipelineConfiguration(pipe);
         try {
