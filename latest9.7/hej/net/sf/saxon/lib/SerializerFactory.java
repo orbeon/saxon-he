@@ -77,6 +77,7 @@ public class SerializerFactory {
             StreamResult result,
             Properties properties) throws XPathException {
         Receiver r = getReceiver(result, config.makePipelineConfiguration(), properties);
+        r = new NamespaceReducer(r);
         return new StreamWriterToReceiver(r);
     }
 

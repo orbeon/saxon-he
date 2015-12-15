@@ -17,6 +17,7 @@ import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.type.Untyped;
 import net.sf.saxon.z.IntPredicate;
 
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.util.*;
@@ -24,20 +25,24 @@ import java.util.*;
 /**
  * This class implements the XmlStreamWriter interface, translating the events into Saxon
  * Receiver events. The Receiver can be anything: a serializer, a schema validator, a tree builder.
- * <p/>
- * <p>The class will attempt to generate namespace prefixes where none have been supplied, unless the
- * <code>inventPrefixes</code> option is set to false. The preferred mode of use is to call the versions
- * of <code>writeStartElement</code> and <code>writeAttribute</code> that supply the prefix, URI, and
- * local name in full. If the prefix is omitted, the class attempts to invent a prefix. If the URI is
- * omitted, the name is assumed to be in no namespace. The <code>writeNamespace</p> method should be
- * called only if there is a need to declare a namespace prefix that is not used on any element or
- * attribute name.</p>
- * <p/>
+ *
+ * <p>This class does not itself perform "namespace repairing" as defined in the interface Javadoc
+ * (also referred to as "prefix defaulting" in the StaX JSR specification). In normal use, however,
+ * the events emitted by this class are piped into a {@link NamespaceReducer} which performs a function
+ * very similar to namespace repairing; specifically, it ensures that when elements and attribute are
+ * generated with a given namespace URI and local name, then namespace declarations are generated
+ * automatically without any explicit need to call the {@link #writeNamespace(String, String)} method.</p>
+ *
  * <p>The class will check all names, URIs, and character content for conformance against XML well-formedness
  * rules unless the <code>checkValues</code> option is set to false.</p>
  *
- * @since 9.3. Rewritten May 2015 to fix bug 2357. The handling of namespaces is probably not 100% conformant,
- * but it's difficult to establish what all the edge cases are, and it handles the common cases well.
+ * <p>The implementation of this class is influenced not only by the Javadoc documentation of the
+ * <code>XMLStreamWriter</code> interface (which is woefully inadequate), but also by the helpful
+ * but unofficial interpretation of the spec to be found at
+ * http://veithen.github.io/2009/11/01/understanding-stax.html</p>
+ *
+ * @since 9.3. Rewritten May 2015 to fix bug 2357. Further modified in 9.7.0.2 in light of the discussion
+ * of bug 2398, and the interpretation of the spec cited above.
  */
 public class StreamWriterToReceiver implements XMLStreamWriter {
 
@@ -99,23 +104,17 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
     private boolean isEmptyElement;
 
     /**
-     * Flag indicating that default prefixes should be allocated if the user does not declare them explicitly
-     */
-
-    private boolean inventPrefixes = true;
-
-    /**
      * inScopeNamespaces represents namespaces that have been declared in the XML stream
      */
     private NamespaceReducer inScopeNamespaces;
 
     /**
-     * declaredNamespaces represents prefix-to-uri bindings that have been set using setPrefix. These
-     * do not necessarily correspond to namespace declarations appearing in the XML stream. Note that
-     * this is a map from URIs to prefixes, not the other way around!
+     * setPrefixes represents the namespace bindings that have been set, at each level of the stack,
+     * using {@link #setPrefix}. There is one entry for each level of element nesting, and the entry is a list
+     * of NamespaceBinding objects, that is, prefix/uri pairs
      */
 
-    private Map<String, String> declaredNamespaces = new HashMap<String, String>(10);
+    private Stack<List<NamespaceBinding>> setPrefixes = new Stack<List<NamespaceBinding>>();
 
     /**
      * rootNamespaceContext is the namespace context supplied at the start, is the final fallback
@@ -140,32 +139,42 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
         //this.receiver = new TracingFilter(this.receiver);
         this.charChecker = pipe.getConfiguration().getValidCharacterChecker();
         this.namePool = pipe.getConfiguration().getNamePool();
+        this.setPrefixes.push(new ArrayList<NamespaceBinding>());
     }
 
     /**
-     * Say whether prefixes are to be invented when none is specified by the user
+     * Say whether prefixes are to be invented when none is specified by the user.
+     * This method has no effect, and is deprecated
      *
-     * @param invent true if prefixes are to be invented. Default is true;
+     * @param invent true if prefixes are to be invented.
+     * @deprecated since 9.7.0.2. In normal use this class feeds its output into a {@link NamespaceReducer}
+     * which performs the equivalent of "namespace repairing" or "prefix invention": that is, it ensures
+     * that when elements or attributes are written in a specific namespace, there is no need for an
+     * explicit {@link #writeNamespace(String, String)} call to create the namespace declaration.
      */
 
     public void setInventPrefixes(boolean invent) {
-        this.inventPrefixes = invent;
+        // no action
     }
 
     /**
-     * Ask whether prefixes are to be invented when none is specified by the user
+     * Ask whether prefixes are to be invented when none is specified by the user.
+     * This method is deprecated.
      *
-     * @return true if prefixes are to be invented. Default is true;
+     * @return true if the next receiver in the pipeline is a {@link NamespaceReducer}; this is an approximation
+     * of the result in earlier releases.
+     * @deprecated since 9.7.0.2
      */
 
     public boolean isInventPrefixes() {
-        return this.inventPrefixes;
+        return receiver instanceof NamespaceReducer;
     }
+
 
     /**
      * Say whether names and values are to be checked for conformance with XML rules
      *
-     * @param check true if names and values are to be checked. Default is true;
+     * @param check true if names and values are to be checked. Default is false;
      */
 
     public void setCheckValues(boolean check) {
@@ -175,7 +184,7 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
     /**
      * Ask whether names and values are to be checked for conformance with XML rules
      *
-     * @return true if names and values are to be checked. Default is true;
+     * @return true if names and values are to be checked. Default is false;
      */
 
     public boolean isCheckValues() {
@@ -221,6 +230,7 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
                 if (isEmptyElement) {
                     isEmptyElement = false;
                     depth--;
+                    setPrefixes.pop();
                     receiver.endElement();
                 }
             } catch (XPathException e) {
@@ -231,9 +241,13 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
 
     /**
      * Fill in the unknown parts of a (prefix, uri, localname) triple by reference to the namespace
-     * context
-     * @param t the (prefix, uri, localname) triple
+     * context.
+     * <p>For details see the table in the <code>XMLStreamWriter</code> javadoc.</p>
+     * @param t the (prefix, uri, localname) triple. Note that the prefix will be null if not supplied
+     *          in the call, and will be "" if an empty string or null was supplied in the call; these
+     *          cases are handled differently.
      * @param isAttribute true if this is an attribute name rather than an element name
+     * @return a list of namespace bindings that need to be output (null if empty)
      * @throws XMLStreamException
      */
 
@@ -254,36 +268,8 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
         if (isChecking && !t.uri.isEmpty() && !isValidURI(t.uri)) {
             throw new XMLStreamException("Namespace URI " + Err.wrap(t.local) + " is invalid");
         }
-        if (t.prefix.isEmpty()) {
-            if (t.uri.isEmpty()) {
-                if (isAttribute) {
-                    // no action
-                } else {
-                    String ns = getDefaultNamespace();
-                    t.uri = ns == null ? "" : ns;
-                }
-            } else {
-                t.prefix = getPrefixForUri(t.uri);
-                if (t.prefix.isEmpty() && isAttribute) {
-                    t.prefix = inventPrefix(t.uri);
-                }
-            }
-        } else {
-            if (isChecking && !isValidNCName(t.prefix)) {
-                throw new XMLStreamException("Prefix of " + (isAttribute ? "Attribute" : "Element") +
-                    Err.wrap(t.local) + " is invalid");
-            }
-            if (t.uri.isEmpty()) {
-                t.uri = getUriForPrefix(t.prefix);
-            } else {
-                String u = getUriForPrefix(t.prefix);
-                if (u == null) {
-                    throw new XMLStreamException("Prefix " + Err.wrap(t.prefix) + " is not bound to any URI");
-                }
-                if (!t.uri.equals(u)) {
-                    throw new XMLStreamException("Prefix " + Err.wrap(t.prefix) + " is bound to a different URI");
-                }
-            }
+        if (t.prefix.isEmpty() && !t.uri.isEmpty()) {
+            t.prefix = getPrefixForUri(t.uri);
         }
     }
 
@@ -311,6 +297,10 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
                 return t.prefix == null ? "" : t.prefix;
             }
         }
+        String setPrefix = getPrefix(uri);
+        if (setPrefix != null) {
+            return setPrefix;
+        }
         Iterator<String> prefixes = inScopeNamespaces.iteratePrefixes();
         while (prefixes.hasNext()) {
             String p = prefixes.next();
@@ -321,17 +311,44 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
         return "";
     }
 
+    /**
+     * Generate a start element event for an element in no namespace. Note: the element
+     * will be in no namespace, even if {@link #setDefaultNamespace(String)} has been called;
+     * this is Saxon's interpretation of the intended effect of the StAX specification.
+     *
+     * @param localName local name of the tag, may not be null
+     * @throws XMLStreamException if names are being checked and the name is invalid, or if an error occurs downstream
+     * @throws NullPointerException if the supplied local name is null
+     */
+
     public void writeStartElement(String localName) throws XMLStreamException {
         checkNonNull(localName);
+        setPrefixes.push(new ArrayList<NamespaceBinding>());
         flushStartTag();
         depth++;
         pendingTag = new StartTag();
         pendingTag.elementName.local = localName;
     }
 
+    /**
+     * Generate a start element event. The name of the element is determined by the supplied
+     * namespace URI and local name. The prefix used for the element is determined by the in-scope
+     * prefixes established using {@link #setPrefix(String, String)} and/or {@link #setDefaultNamespace(String)}
+     * if these include the specified namespace URI; otherwise the namespace will become the default namespace
+     * and there will therefore be no prefix.
+     *
+     * @param namespaceURI the namespace URI of the element name. Must not be null. A zero-length
+     *                     string means the element is in no namespace.
+     * @param localName    local part of the element name. Must not be null
+     * @throws XMLStreamException if names are being checked and are found to be invalid, or if an
+     * error occurs downstream in the pipeline.
+     * @throws NullPointerException if either argument is null
+     */
+
     public void writeStartElement(String namespaceURI, String localName) throws XMLStreamException {
         checkNonNull(namespaceURI);
         checkNonNull(localName);
+        setPrefixes.push(new ArrayList<NamespaceBinding>());
         flushStartTag();
         depth++;
         pendingTag = new StartTag();
@@ -340,42 +357,32 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
 
     }
 
+    /**
+     * Generate a start element event. The name of the element is determined by the supplied
+     * namespace URI and local name, and the prefix will be as supplied in the call.
+     *
+     * @param prefix       the prefix of the element, must not be null. If the prefix is supplied as a zero-length
+     *                     string, the element will nave no prefix (that is, the namespace URI will become the default
+     *                     namespace).
+     * @param localName    local name of the element, must not be null
+     * @param namespaceURI the uri to bind the prefix to, must not be null. If the value is a zero-length string,
+     *                     the element will be in no namespace; in this case any prefix is ignored.
+     * @throws NullPointerException if any of the arguments is null.
+     * @throws XMLStreamException if names are being checked and are found to be invalid, or if an
+     * error occurs downstream in the pipeline.
+     */
+
     public void writeStartElement(String prefix, String localName, String namespaceURI) throws XMLStreamException {
         checkNonNull(prefix);
         checkNonNull(localName);
         checkNonNull(namespaceURI);
+        setPrefixes.push(new ArrayList<NamespaceBinding>());
         flushStartTag();
         depth++;
         pendingTag = new StartTag();
         pendingTag.elementName.local = localName;
         pendingTag.elementName.uri = namespaceURI;
         pendingTag.elementName.prefix = prefix;
-    }
-
-    /**
-     * Creates a prefix that is not currently in use.
-     *
-     * @param uri the URI for which a prefix is required
-     * @return the chosen prefix
-     */
-    private String inventPrefix(String uri) {
-        String prefix = getPrefix(uri);
-        if (prefix != null) {
-            return prefix;
-        }
-        prefix = namePool.suggestPrefixForURI(uri);
-        if (prefix != null) {
-            return prefix;
-        }
-        int count = 0;
-        while (true) {
-            prefix = "ns" + count;
-            if (inScopeNamespaces.getURIForPrefix(prefix, false) == null) {
-                setPrefix(prefix, uri);
-                return prefix;
-            }
-            count++;
-        }
     }
 
     public void writeEmptyElement(String namespaceURI, String localName) throws XMLStreamException {
@@ -411,6 +418,7 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
 //        }
         try {
             flushStartTag();
+            setPrefixes.pop();
             receiver.endElement();
             depth--;
         } catch (XPathException err) {
@@ -490,6 +498,25 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
 
     }
 
+    /**
+     * Emits a namespace declaration event.
+     *
+     * <p>If the prefix argument to this method is the empty string,
+     * "xmlns", or null this method will delegate to writeDefaultNamespace.</p>
+     *
+     * <p>This method does not change the name of any element or attribute; its only use is to write
+     * additional or redundant namespace declarations. With this implementation of XMLStreamWriter,
+     * this method is needed only to generate namespace declarations for prefixes that do not appear
+     * in element or attribute names. If an attempt is made to generate a namespace declaration that
+     * conflicts with the prefix-uri bindings in scope for element and attribute names, an exception
+     * occurs.</p>
+     *
+     * @param prefix       the prefix to bind this namespace to
+     * @param namespaceURI the uri to bind the prefix to
+     * @throws IllegalStateException if the current state does not allow Namespace writing
+     * @throws XMLStreamException
+     */
+
     public void writeNamespace(String prefix, String namespaceURI) throws XMLStreamException {
         if (prefix == null || prefix.equals("") || prefix.equals("xmlns")) {
             writeDefaultNamespace(namespaceURI);
@@ -505,6 +532,21 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
         }
 
     }
+
+    /**
+     * Emits a default namespace declaration
+     *
+     * <p>This method does not change the name of any element or attribute; its only use is to write
+     * additional or redundant namespace declarations. With this implementation of XMLStreamWriter,
+     * this method is needed only to generate namespace declarations for prefixes that do not appear
+     * in element or attribute names. If an attempt is made to generate a namespace declaration that
+     * conflicts with the prefix-uri bindings in scope for element and attribute names, an exception
+     * occurs.</p>
+     *
+     * @param namespaceURI the uri to bind the default namespace to
+     * @throws IllegalStateException if the current state does not allow Namespace writing
+     * @throws XMLStreamException
+     */
 
     public void writeDefaultNamespace(String namespaceURI)
         throws XMLStreamException {
@@ -600,19 +642,17 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
         depth = 0;
     }
 
-    public void writeCharacters(/*@Nullable*/ String text)
+    public void writeCharacters(String text)
         throws XMLStreamException {
         checkNonNull(text);
         flushStartTag();
-        if (text != null) {
-            if (!isValidChars(text)) {
-                throw new IllegalArgumentException("illegal XML character: " + text);
-            }
-            try {
-                receiver.characters(text, ExplicitLocation.UNKNOWN_LOCATION, 0);
-            } catch (XPathException err) {
-                throw new XMLStreamException(err);
-            }
+        if (!isValidChars(text)) {
+            throw new IllegalArgumentException("illegal XML character: " + text);
+        }
+        try {
+            receiver.characters(text, ExplicitLocation.UNKNOWN_LOCATION, 0);
+        } catch (XPathException err) {
+            throw new XMLStreamException(err);
         }
     }
 
@@ -623,16 +663,23 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
     }
 
     public String getPrefix(String uri) {
-        String prefix = declaredNamespaces.get(uri);
-        if (prefix == null && rootNamespaceContext != null) {
-            prefix = rootNamespaceContext.getPrefix(uri);
+        for (int i=setPrefixes.size()-1; i>=0; i--) {
+            List<NamespaceBinding> bindings = setPrefixes.get(i);
+            for (int j=bindings.size()-1; j>=0; j--) {
+                NamespaceBinding binding = bindings.get(j);
+                if (binding.getURI().equals(uri)) {
+                    return binding.getPrefix();
+                }
+            }
         }
-        return prefix;
+        if (rootNamespaceContext != null) {
+            return rootNamespaceContext.getPrefix(uri);
+        }
+        return null;
     }
 
     public void setPrefix(String prefix, String uri) {
-        // TODO: see Saxon bug 2398: this should have stack-like effect; the previous settings should be reinstated when we reach
-        // the relevant endElement event.
+        // See Saxon bug 2398: this should have stack-like effect
         checkNonNull(prefix);
         if (uri == null) {
             uri = "";
@@ -643,7 +690,7 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
         if (!"".equals(prefix) && !isValidNCName(prefix)) {
             throw new IllegalArgumentException("Invalid namespace prefix: " + prefix);
         }
-        declaredNamespaces.put(uri, prefix); //sic
+        setPrefixes.peek().add(new NamespaceBinding(prefix, uri));
     }
 
     public void setDefaultNamespace(String uri)
@@ -663,16 +710,66 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
         rootNamespaceContext = context;
     }
 
-    /*@Nullable*/
+    /**
+     * Return the current namespace context.
+     *
+     * <p>The specification of this method is hopelessly vague. This method returns a namespace context
+     * that contains the namespaces declared using {@link #setPrefix(String, String)} calls that are
+     * in-scope at the time, overlaid on the root namespace context that was defined using
+     * {@link #setNamespaceContext(NamespaceContext)}. The namespaces bound using {@link #setPrefix(String, String)}
+     * are copied, and are therefore unaffected by subsequent changes, but the root namespace context
+     * is not copied, because the NamespaceContext interface provides no way of doing so.</p>
+     * @return a copy of the current namespace context.
+     */
     public javax.xml.namespace.NamespaceContext getNamespaceContext() {
-        // Note: the spec is unclear. We return the namespace context that was supplied to setNamespaceContext,
-        // regardless of any other subsequent additions
-        return rootNamespaceContext;
+        return new NamespaceContext() {
+            final NamespaceContext rootNamespaceContext = StreamWriterToReceiver.this.rootNamespaceContext;
+            final Map<String, String> bindings = new HashMap<String, String>();
+
+            {
+                for (List<NamespaceBinding> list : setPrefixes) {
+                    for (NamespaceBinding binding : list) {
+                        bindings.put(binding.getPrefix(), binding.getURI());
+                    }
+                }
+            }
+
+            public String getNamespaceURI(String prefix) {
+                String uri = bindings.get(prefix);
+                if (uri != null) {
+                    return uri;
+                }
+                return rootNamespaceContext.getNamespaceURI(prefix);
+            }
+
+            public String getPrefix(String namespaceURI) {
+                for (Map.Entry<String, String> entry : bindings.entrySet()) {
+                    if (entry.getValue().equals(namespaceURI)) {
+                        return entry.getKey();
+                    }
+                }
+                return rootNamespaceContext.getPrefix(namespaceURI);
+            }
+
+            public Iterator getPrefixes(String namespaceURI) {
+                List<String> prefixes = new ArrayList<String>();
+                for (Map.Entry<String, String> entry : bindings.entrySet()) {
+                    if (entry.getValue().equals(namespaceURI)) {
+                        prefixes.add(entry.getKey());
+                    }
+                }
+                Iterator<String> root = rootNamespaceContext.getPrefixes(namespaceURI);
+                while (root.hasNext()) {
+                    prefixes.add(root.next());
+                }
+                return prefixes.iterator();
+            }
+        };
     }
 
     public Object getProperty(String name) throws IllegalArgumentException {
         if (name.equals("javax.xml.stream.isRepairingNamespaces")) {
-            return inventPrefixes;
+            return receiver instanceof NamespaceReducer;
         } else {
             throw new IllegalArgumentException(name);
         }
