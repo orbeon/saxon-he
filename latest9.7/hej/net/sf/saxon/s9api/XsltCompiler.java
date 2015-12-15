@@ -224,6 +224,17 @@ public class XsltCompiler {
     }
 
     /**
+     * Get the default collation
+     *
+     * @return the URI of the default collation if one has been set, or the URI of the codepoint collation otherwise
+     * @since 9.7.0.2
+     */
+
+    public String getDefaultCollation() {
+        return compilerInfo.getDefaultCollation();
+    }
+
+    /**
      * Set the XSLT (and XPath) language level to be supported by the processor.
      *
      * @param version the language level to be supported. The value 2.0 requests a processor conforming to the
