@@ -4435,7 +4435,7 @@ public class Configuration implements SourceResolver, NotationSet {
 //#else
         platformChoice = new net.sf.saxon.java.JavaPlatform();
 //#endif
-// #if PE==true && DOTNET != true && SAXONC == true
+//#if PE==true && DOTNET != true && SAXONC == true
         platformChoice = new com.saxonica.config.JavaPlatformC();
 //#endif
 //#if EE==true && DOTNET != true && SAXONC==true
