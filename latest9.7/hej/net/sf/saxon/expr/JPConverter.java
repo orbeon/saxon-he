@@ -45,7 +45,7 @@ public abstract class JPConverter {
     private static HashMap<Class, JPConverter> converterMap = new HashMap<Class, JPConverter>();
 
     static {
-        converterMap.put(Object.class, FromObject.INSTANCE);
+        //converterMap.put(Object.class, FromObject.INSTANCE);
         converterMap.put(SequenceIterator.class, new FromSequenceIterator());
         converterMap.put(Sequence.class, FromSequence.INSTANCE);
         converterMap.put(OneOrMore.class, FromSequence.INSTANCE);
@@ -147,8 +147,7 @@ public abstract class JPConverter {
      */
 
     public static JPConverter allocate(Class javaClass, java.lang.reflect.Type genericType, Configuration config) {
-
-        if (javax.xml.namespace.QName.class.isAssignableFrom(javaClass)) {
+         if (javax.xml.namespace.QName.class.isAssignableFrom(javaClass)) {
             return FromQName.INSTANCE;
         }
 
@@ -169,21 +168,20 @@ public abstract class JPConverter {
                 }
             }
         }
-
         JPConverter c = converterMap.get(javaClass);
         if (c != null) {
-            return c;
+             return c;
         }
-
+        if(javaClass.equals(Object.class)) {
+            return FromObject.INSTANCE;
+        }
         if (NodeInfo.class.isAssignableFrom(javaClass)) {
             // probably now redundant
             return new FromSequence(AnyNodeTest.getInstance(), StaticProperty.ALLOWS_ZERO_OR_ONE);
         }
-
         if (Source.class.isAssignableFrom(javaClass) && !DOMSource.class.isAssignableFrom(javaClass)) {
             return FromSource.INSTANCE;
         }
-
         for (Map.Entry<Class, JPConverter> e : converterMap.entrySet()) {
             if (e.getKey().isAssignableFrom(javaClass)) {
                 return e.getValue();
