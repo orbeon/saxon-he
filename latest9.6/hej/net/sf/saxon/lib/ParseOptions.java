@@ -536,7 +536,9 @@ public class ParseOptions {
 
     public void setDTDValidationMode(int option) {
         dtdValidation = option;
-        addParserFeature("http://xml.org/sax/features/validation", (option == Validation.STRICT || option == Validation.LAX));
+        if(option == Validation.STRICT || option == Validation.LAX) {
+            addParserFeature("http://xml.org/sax/features/validation", true);
+        }
     }
 
     /**
