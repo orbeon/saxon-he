@@ -271,7 +271,8 @@ public class XPathProcessor extends SaxonCAPI {
         /*DocumentBuilder b = p.newDocumentBuilder();
         XdmNode foo = b.build(new StreamSource(new StringReader("<foo><bar/></foo>")));
         xpath.setContextItem(foo);  */
-         XdmNode node = xpath.parseXmlString("<out><person>text1</person><person>text2</person></out>");
+         XdmNode node = xpath.parseXmlString("<out><person a1='v1' a2='v2'>text1</person><person>text2</person></out>");
+          XdmNode [] children1 = XdmUtils.getChildren(XdmUtils.getChildren(node)[0]);
        // xpath.setContextItem(node);
          String[] params2 = {"node"};
         Object[] values2 = {node};
@@ -279,6 +280,11 @@ public class XPathProcessor extends SaxonCAPI {
         if(value instanceof XdmNode){
             String nodename = XdmUtils.getEQName(((XdmNode)value).getNodeName());
             System.out.println(nodename);
+            //String [] values = XdmUtils.getAttributeValues((XdmNode)value);
+            String valuex1 = XdmUtils.getAttributeValue((XdmNode)value, "a1");
+            XdmNode [] children = XdmUtils.getChildren((XdmNode)value);
+           // System.out.println(values[0]);
+            System.out.println(valuex1);
         }
         boolean ebv = xpath.effectiveBooleanValue("/Users/ond1/work/development/tests/jeroen/xml/", "count(/out/person)>0", params2, values2);
        // System.out.println(value.toString());

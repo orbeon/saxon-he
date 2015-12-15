@@ -12,6 +12,9 @@ import net.sf.saxon.om.*;
 import net.sf.saxon.s9api.*;
 import net.sf.saxon.type.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * * This utility class consists generic functions for use with XDM data model.
  * For the use of Saxon on C++
@@ -115,7 +118,7 @@ public class XdmUtils {
     }
 
     /**
-     * Get the name of the node, as a QName
+     * Get the name of the node, as a EQName
      *
      * @param node
      * @return the name of the node. In the case of unnamed nodes (for example, text and comment nodes)
@@ -132,6 +135,45 @@ public class XdmUtils {
 
     public XdmNode [] getChildNodes(){
         return null;
+    }
+
+
+    /**
+     * Get the string value of a named attribute of the element passed
+     *
+     * @param  node the element in question
+     * @param eqname the name of the required attribute
+     * @return null if this node is not an element, or if this element has no
+     *         attribute with the specified name. Otherwise return the string value of the
+     *         selected attribute node.
+     */
+    public static String getAttributeValue(XdmNode node, String eqname){
+        QName name = QName.fromEQName(eqname);
+        return node.getAttributeValue(name);
+    }
+
+    public static XdmNode [] getAttributeNodes(XdmNode node){
+       List<XdmNode> children = new ArrayList<XdmNode>();
+        XdmSequenceIterator iter = node.axisIterator(Axis.ATTRIBUTE);
+        while(iter.hasNext()){
+            children.add((XdmNode) iter.next());
+        }
+        if(children.size() == 0 ){
+            return null;
+        }
+        return children.toArray(new XdmNode[0]);
+    }
+
+    public static XdmNode[] getChildren(XdmNode node){
+        List<XdmNode> children = new ArrayList<XdmNode>();
+        XdmSequenceIterator iter = node.axisIterator(Axis.CHILD);
+        while(iter.hasNext()){
+            children.add((XdmNode)iter.next());
+        }
+        if(children.size() == 0 ){
+            return null;
+        }
+        return children.toArray(new XdmNode[0]);
     }
 
 }
