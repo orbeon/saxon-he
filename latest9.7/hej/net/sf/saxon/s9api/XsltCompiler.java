@@ -438,7 +438,12 @@ public class XsltCompiler {
 
     public XsltPackage compilePackage(Source source) throws SaxonApiException {
         try {
-            Compilation compilation = new Compilation(config, compilerInfo);
+            Compilation compilation;
+            if (source instanceof DocumentImpl && ((DocumentImpl)source).getDocumentElement() instanceof StyleElement) {
+                compilation = ((StyleElement)((DocumentImpl) source).getDocumentElement()).getCompilation();
+            } else {
+                compilation = new Compilation(config, compilerInfo);
+            }
             XsltPackage pack = new XsltPackage(processor, compilation.compilePackage(source).getStylesheetPackage());
             if (compilation.getErrorCount() > 0) {
                 throw new SaxonApiException("Package compilation failed: " + compilation.getErrorCount() + " errors reported");
@@ -531,15 +536,17 @@ public class XsltCompiler {
             depends.add(new PackDepends(document));
         }
 
-        // Find the packages that have already been processed and thus have had dependencies resolved.
-        ArrayList<PackDepends> alreadyResolved = new ArrayList<PackDepends>();
-        for (StylesheetPackage p : compilerInfo.getPackageLibrary().getPackages()) {
-            alreadyResolved.add(new PackDepends(p));
-        }
+//        // Find the packages that have already been processed and thus have had dependencies resolved.
+//        ArrayList<PackDepends> alreadyResolved = new ArrayList<PackDepends>();
+//        for (StylesheetPackage p : compilerInfo.getPackageLibrary().getPackages()) {
+//            alreadyResolved.add(new PackDepends(p));
+//        }
 
         PackageLibrary pl = compilerInfo.getPackageLibrary();
         // Compile the newly provided packages in dependency order and add them to the package library
-        for (PackDepends p : resolveDependencies(depends, alreadyResolved)) {
+
+        ArrayList<PackDepends> resolved = resolveDependencies(depends);
+        for (PackDepends p : resolved) {
             if (p.doc != null) {
                 XsltPackage packagei = compilePackage(p.doc);
                 pl.addPackage(packagei.getName(), packagei.getUnderlyingPreparedPackage());
@@ -621,7 +628,9 @@ public class XsltCompiler {
      */
 
     ArrayList<PackDepends> resolveDependencies(ArrayList<PackDepends> in) throws SaxonApiException {
-        return resolveDependencies(in, new ArrayList<PackDepends>());
+        ArrayList<PackDepends> resolved = new ArrayList<PackDepends>();
+        resolveDependencies(in, resolved);
+        return resolved;
     }
 
     /**
@@ -635,32 +644,48 @@ public class XsltCompiler {
      *                           which is effectively that at some pass every stylesheet has a dependency on one
      *                           whose dependency order is still to be determined.
      */
-    ArrayList<PackDepends> resolveDependencies(ArrayList<PackDepends> in,
+    private void resolveDependencies(ArrayList<PackDepends> in,
                                                ArrayList<PackDepends> resolved) throws SaxonApiException {
-        ArrayList<PackDepends> remaining = new ArrayList<PackDepends>();
-        boolean change = false;
+        if (in.isEmpty()) {
+            return;
+        }
+        ArrayList<PackDepends> unresolved = new ArrayList<PackDepends>();
+        boolean changed = false;
         for (PackDepends p : in) {
-            boolean satisfied = true;
-            for (UsePack u : p.uses) {
-                if (!resolved.contains(p)) {
-                    satisfied = false;
+            if (allDependenciesSatisfied(p, resolved)) {
+                resolved.add(p);
+                changed = true;
+            } else {
+                unresolved.add(p);
+            }
+        }
+        if (changed) {
+            resolveDependencies(unresolved, resolved);
+        } else {
+            String message = "Unable to resolve package dependencies for " + unresolved.get(0).packageName;
+            throw new SaxonApiException(message);
+            // TODO: be more specific if there's a circularity
+        }
+    }
+
+    private boolean allDependenciesSatisfied(PackDepends packDepends, List<PackDepends> resolved) {
+        PackageLibrary lib = getPackageLibrary();
+        for (UsePack u : packDepends.uses) {
+            boolean found = false;
+            if (lib.getPackage(u.packageName, u.ranges) != null) {
+                continue;
+            }
+            for (PackDepends pd : resolved) {
+                if (pd.packageName.equals(u.packageName) && u.ranges.contains(pd.packageVersion)) {
+                    found = true;
                     break;
                 }
             }
-            if (satisfied) {
-                change = true;
-                resolved.add(p);
-            } else {
-                remaining.add(p);
+            if (!found) {
+                return false;
             }
         }
-        if (remaining.isEmpty()) {
-            return resolved;
-        } else if (!change) {
-            throw new SaxonApiException("Possible circular package dependency");
-        } else {
-            return resolveDependencies(remaining, resolved);
-        }
+        return true;
     }
 
     /**
