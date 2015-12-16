@@ -18,6 +18,8 @@ import net.sf.saxon.expr.sort.CodepointCollator;
 import net.sf.saxon.expr.sort.CollationMatchKey;
 import net.sf.saxon.expr.sort.SimpleCollation;
 import net.sf.saxon.functions.FunctionLibraryList;
+import net.sf.saxon.lib.ModuleURIResolver;
+import net.sf.saxon.lib.StandardModuleURIResolver;
 import net.sf.saxon.resource.StandardCollectionFinder;
 import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.regex.ARegularExpression;
@@ -288,6 +290,10 @@ public class JavaPlatform implements Platform {
 
     public void setDefaultSAXParserFactory(Configuration config) {
         // No action for Saxon on Java
+    }
+
+    public ModuleURIResolver makeStandardModuleURIResolver(Configuration config) {
+        return new StandardModuleURIResolver(config);
     }
 
 

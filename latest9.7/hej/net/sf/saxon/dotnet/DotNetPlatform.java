@@ -66,7 +66,7 @@ public class DotNetPlatform implements Platform {
 
     public void initialize(Configuration config) {
         config.setURIResolver(new DotNetURIResolver(new XmlUrlResolver()));
-        config.setModuleURIResolver(new DotNetStandardModuleURIResolver(new XmlUrlResolver()));
+        //config.setModuleURIResolver(new DotNetStandardModuleURIResolver(new XmlUrlResolver()));
         //config.setCollectionURIResolver(new DotNetCollectionURIResolver());
     }
 
@@ -412,8 +412,11 @@ public class DotNetPlatform implements Platform {
         System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl, saxon9"+config.getEditionCode().toLowerCase()+", Version="+ Version.getProductVersion()+", Culture=neutral, PublicKeyToken=e1fdd002d5083fe6");
     }
 
+    public ModuleURIResolver makeStandardModuleURIResolver(Configuration config) {
+        return new DotNetStandardModuleURIResolver(new XmlUrlResolver());
+    }
 
-//#if EE==true
+    //#if EE==true
     /**
      * Return the class loader required to load the bytecode generated classes
      * @param config           The saxon configuration

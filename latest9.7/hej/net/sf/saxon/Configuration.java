@@ -160,7 +160,7 @@ public class Configuration implements SourceResolver, NotationSet {
     private String sourceParserClass;
     private transient SourceResolver sourceResolver = this;
     private transient Logger standardErrorOutput = new StandardLogger();
-    private ModuleURIResolver standardModuleURIResolver = new StandardModuleURIResolver(this);
+    private ModuleURIResolver standardModuleURIResolver = Version.platform.makeStandardModuleURIResolver(this);
     private String styleParserClass;
     private StandardURIResolver systemURIResolver = new StandardURIResolver(this);
 

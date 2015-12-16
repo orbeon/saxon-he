@@ -10,6 +10,7 @@ package net.sf.saxon;
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.expr.sort.AtomicMatchKey;
 import net.sf.saxon.expr.sort.SimpleCollation;
+import net.sf.saxon.lib.ModuleURIResolver;
 import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.regex.RegularExpression;
 import net.sf.saxon.trans.XPathException;
@@ -212,6 +213,14 @@ public interface Platform {
      */
 
     void setDefaultSAXParserFactory(Configuration config);
+
+    /**
+     * Make an instance of the default module URI resolver for this platform
+     * @return an instance of ModuleURIResolver
+     * @since 9.7.0.2
+     */
+
+    ModuleURIResolver makeStandardModuleURIResolver(Configuration config);
 
 
 //#if EE==true
