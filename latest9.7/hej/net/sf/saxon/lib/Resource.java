@@ -6,8 +6,13 @@ import net.sf.saxon.om.Item;
 import net.sf.saxon.trans.XPathException;
 
 /**
- * This interface defines a Resource. The Resource objects belong to a collection
+ * This interface defines a Resource. The Resource objects belong to a collection.
  * It is used to support the fn:collection() and fn:uri-collection() functions.
+ *
+ * <p>It is recommended (but is not universally the case) that fetching (and where necessary parsing)
+ * the content of a Resource should be delayed until the {@link #getItem} method is called. This means
+ * that errors in fetching the resource or parsing its contents may go undetected until the resource
+ * is materialized in this way.</p>
  * @since 9.7
  */
 public interface Resource {
