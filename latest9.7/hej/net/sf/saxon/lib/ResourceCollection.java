@@ -24,7 +24,7 @@ public interface ResourceCollection {
      *                will be the URI of the default collection registered with the Configuration.
     */
 
-    String getCollectionURI() ;
+    String getCollectionURI();
 
     /**
      * Get the URIs of the resources in the collection. This supports the fn:uri-collection()
@@ -32,9 +32,10 @@ public interface ResourceCollection {
      * that the URIs bear any particular relationship to the resources returned by the
      * getResources() method for the same collection URI. The URIs that are returned should be
      * suitable for passing to the registered URIResolver (in the case of XML resources),
-     * or the UnparsedTextResolver (in the case of unparsed text and JSON resources), etc.
+     * or the {@link UnparsedTextURIResolver} (in the case of unparsed text and JSON resources), etc.
      * @param context the XPath evaluation context
-     * @return an iterator over the URIs of the resources in the collection
+     * @return an iterator over the URIs of the resources in the collection. The URIs are represented
+     * as Strings. They should preferably be absolute URIs.
      * @throws XPathException in the event of any error (for example, if the collection URI
      * is not recognized)
      */
@@ -47,7 +48,8 @@ public interface ResourceCollection {
      * returned bear any particular relationship to the URIs returned by the getResourceURIs() method
      * for the same collection URI.
      * @param context the XPath evaluation context
-     * @return an iterator over the resources in the collection
+     * @return an iterator over the resources in the collection. This returns objects of class
+     * {@link Resource}.
      * @throws XPathException in the event of any error (for example, if the collection URI
      * is not recognized)
      */
