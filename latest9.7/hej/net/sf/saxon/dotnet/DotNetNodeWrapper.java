@@ -42,7 +42,6 @@ import java.util.Set;
 public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNode<DotNetNodeWrapper>, SiblingCountingNode {
 
     protected XmlNode node;
-    private int namecode = -1;
     protected short nodeKind;
     protected DotNetNodeWrapper parent;     // null means unknown
     protected DotNetDocumentWrapper docWrapper;
@@ -138,6 +137,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
                 throw new IllegalArgumentException("Unsupported node type in DOM! " + node.get_NodeType() + " instance " + node.toString());
         }
         wrapper.docWrapper = docWrapper;
+        wrapper.treeInfo = docWrapper;
         return wrapper;
     }
 
