@@ -7,13 +7,13 @@
 
 package net.sf.saxon.expr;
 
-import net.sf.saxon.ma.map.HashTrieMap;
-import net.sf.saxon.ma.map.MapItem;
-import net.sf.saxon.ma.map.MapType;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
 import net.sf.saxon.lib.ExternalObjectModel;
 import net.sf.saxon.lib.ParseOptions;
+import net.sf.saxon.ma.map.HashTrieMap;
+import net.sf.saxon.ma.map.MapItem;
+import net.sf.saxon.ma.map.MapType;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.AnyNodeTest;
 import net.sf.saxon.pattern.NodeKindTest;
@@ -21,7 +21,6 @@ import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
-import net.sf.saxon.value.StringValue;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
@@ -246,6 +245,9 @@ public abstract class JPConverter {
         public Sequence convert(Object object, XPathContext context) throws XPathException {
             Class theClass = object.getClass();
             JPConverter instanceConverter = allocate(theClass, null, context.getConfiguration());
+            if (instanceConverter instanceof FromObject) {
+                instanceConverter = new ExternalObjectWrapper(new JavaExternalObjectType(theClass));
+            }
             return instanceConverter.convert(object, context);
         }
 
