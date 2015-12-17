@@ -738,7 +738,7 @@ public abstract class StyleElement extends ElementImpl {
             return ExpressionTool.make(expression, env, 0, Token.EOF,
                                        getCompilation().getCompilerInfo().getCodeInjector());
         } catch (XPathException err) {
-            err.setLocation(allocateLocation());
+            err.maybeSetLocation(allocateLocation());
             if (err.isReportableStatically()) {
                 compileError(err);
             }
