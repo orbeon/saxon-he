@@ -1225,7 +1225,7 @@ namespace Saxon.Api
 
        }
 
-		public DotNetWriter UnderylingTextWriter {
+		public DotNetWriter UnderlyingTextWriter {
 			set {
 				writer = value;
 			}
