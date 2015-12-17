@@ -34,7 +34,6 @@ public class DotNetPullProvider implements PullProvider, Location {
 
     private PipelineConfiguration pipe;
     private XmlReader parser;
-    private NamePool pool;
     private String baseURI;
     private boolean isEmptyElement = false;
     private int current = START_OF_INPUT;
@@ -378,7 +377,6 @@ public class DotNetPullProvider implements PullProvider, Location {
     public void setPipelineConfiguration(PipelineConfiguration pipe) {
         this.pipe = pipe;
         final Configuration config = pipe.getConfiguration();
-        pool = config.getNamePool();
         expandDefaults = config.isExpandAttributeDefaults();
     }
 
