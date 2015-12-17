@@ -10,6 +10,7 @@ package net.sf.saxon.lib;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.instruct.*;
+import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.expr.parser.XPathParser;
 import net.sf.saxon.om.NodeInfo;
@@ -458,6 +459,9 @@ public class StandardErrorListener implements UnfailingErrorListener {
         String path;
         String nodeMessage = null;
         int lineNumber = -1;
+        if (loc == null) {
+            loc = ExplicitLocation.UNKNOWN_LOCATION;
+        }
         if (loc instanceof XPathParser.NestedLocation) {
             loc = ((XPathParser.NestedLocation)loc).getContainingLocation();
         }
