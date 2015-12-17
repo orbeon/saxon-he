@@ -451,7 +451,7 @@ public class StandardErrorListener implements UnfailingErrorListener {
         return getLocationMessageText(loc);
     }
 
-    private static String getLocationMessageText(SourceLocator loc) {
+    public static String getLocationMessageText(SourceLocator loc) {
         String locMessage = "";
         String systemId = null;
         NodeInfo node = null;
