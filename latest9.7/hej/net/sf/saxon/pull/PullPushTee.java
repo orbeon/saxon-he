@@ -9,7 +9,6 @@ package net.sf.saxon.pull;
 
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.event.SequenceReceiver;
-import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.om.AttributeCollection;
 import net.sf.saxon.om.NamespaceBinding;
@@ -82,7 +81,7 @@ public class PullPushTee extends PullFilter {
 
     private void copyEvent(int event) throws XPathException {
         PullProvider in = getUnderlyingProvider();
-        final Location loc = ExplicitLocation.UNKNOWN_LOCATION;
+        final Location loc = in.getSourceLocator();
         Receiver out = branch;
         switch (event) {
             case START_DOCUMENT:
