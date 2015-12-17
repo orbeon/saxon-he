@@ -558,13 +558,26 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                 nextFree = 1;
             }
             int slots = match.allocateSlots(getSlotManager(), nextFree);
-            RuleManager mgr = getCompilation().getStylesheetPackage().getRuleManager();
-            for (StructuredQName nc : modeNames) {
-                Mode mode = mgr.getMode(nc, true);
-                mode.allocatePatternSlots(slots);
-            }
+            if (slots > 0) {
+                RuleManager mgr = getCompilation().getStylesheetPackage().getRuleManager();
+                boolean appliesToAll = false;
+                for (StructuredQName nc : modeNames) {
+                    if (nc.equals(Mode.OMNI_MODE)) {
+                        appliesToAll = true;
+                        break;
+                    }
+                    Mode mode = mgr.getMode(nc, true);
+                    mode.allocatePatternSlots(slots);
+                }
+                if (appliesToAll) {
+                    for (Mode m : mgr.getAllNamedModes()) {
+                        m.allocatePatternSlots(slots);
+                    }
+                    mgr.getUnnamedMode().allocatePatternSlots(slots);
+                }
 
-            allocatePatternSlots(slots);
+                allocatePatternSlots(slots);
+            }
         }
     }
 
