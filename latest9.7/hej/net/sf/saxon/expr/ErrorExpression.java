@@ -64,7 +64,6 @@ public class ErrorExpression extends Expression {
 
     public ErrorExpression(XPathException exception) {
         this.exception = exception;
-        exception.setLocation(getLocation());
     }
 
     /**
