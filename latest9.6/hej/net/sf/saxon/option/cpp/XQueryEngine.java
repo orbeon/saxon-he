@@ -30,6 +30,7 @@ public class XQueryEngine extends SaxonCAPI {
 
     private XQueryExecutable executable = null;
     private File queryFile = null;
+    private XQueryCompiler compiler = null;
 
     private boolean serializerSet = false;
 
@@ -39,6 +40,7 @@ public class XQueryEngine extends SaxonCAPI {
      */
     public XQueryEngine() {
         super(false);
+        compiler = processor.newXQueryCompiler();
     }
 
     /**
@@ -48,14 +50,7 @@ public class XQueryEngine extends SaxonCAPI {
      */
     public XQueryEngine(boolean license) {
         super(license);
-    }
-
-    public XdmNode parseXMLString(String xml) throws SaxonApiException {
-        return SaxonCAPI.parseXmlString(processor, null, xml);
-    }
-
-    public void setXQueryFile(String queryFileName) throws SaxonApiException {
-        queryFile = new File(queryFileName);
+        compiler = processor.newXQueryCompiler();
     }
 
     /**
@@ -66,13 +61,42 @@ public class XQueryEngine extends SaxonCAPI {
      */
     public XQueryEngine(Processor proc, boolean license) {
         super(proc, license);
+        compiler = processor.newXQueryCompiler();
+    }
+
+    public XdmNode parseXMLString(String xml) throws SaxonApiException {
+        return SaxonCAPI.parseXmlString(processor, null, xml);
+    }
+
+    public void setXQueryFile(String queryFileName) throws SaxonApiException {
+        queryFile = new File(queryFileName);
+    }
+
+
+
+    /**
+     * Declare a namespace binding as part of the static context for queries compiled using this
+     * XQueryCompiler. This binding may be overridden by a binding that appears in the query prolog.
+     * The namespace binding will form part of the static context of the query, but it will not be copied
+     * into result trees unless the prefix is actually used in an element or attribute name.
+     *
+     * @param prefix The namespace prefix. If the value is a zero-length string, this method sets the default
+     *               namespace for elements and types.
+     * @param uri    The namespace URI. It is possible to specify a zero-length string to "undeclare" a namespace;
+     *               in this case the prefix will not be available for use, except in the case where the prefix
+     *               is also a zero length string, in which case the absence of a prefix implies that the name
+     *               is in no namespace.
+     * @throws NullPointerException if either the prefix or uri is null.
+     */
+    public void declareNamespace(String prefix, String uri) {
+        compiler.declareNamespace(prefix, uri);
     }
 
 
     public XQueryEvaluator xqueryEvaluator(String cwd, String[] params, Object[] values) throws SaxonApiException {
         clearExceptions();
 
-        XQueryCompiler compiler = processor.newXQueryCompiler();
+
         String query = null;
         if (params != null && params.length != values.length) {
             throw new SaxonApiException("Length of params array not equal to the length of values array");
@@ -154,7 +178,7 @@ public class XQueryEngine extends SaxonCAPI {
         return sw.toString();
     }
 
-    public XdmValue executeQueryToValue(String cwd, String outFilename, String[] params, Object[] values) throws SaxonApiException {
+    public XdmValue executeQueryToValue(String cwd, String[] params, Object[] values) throws SaxonApiException {
         XQueryEvaluator eval = xqueryEvaluator(cwd, params, values);
         return eval.evaluate();
     }

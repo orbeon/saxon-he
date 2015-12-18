@@ -51,6 +51,11 @@ public class XdmUtils {
         return null;
     }
 
+    public static String getPrimitiveTypeName(XdmAtomicValue value){
+        return getEQName(value.getPrimitiveTypeName());
+    }
+
+
 
     /**
      * Attempt to Downcast XdmItem to XdmAtomicValue. If this is not possible then return null
@@ -148,7 +153,12 @@ public class XdmUtils {
      *         selected attribute node.
      */
     public static String getAttributeValue(XdmNode node, String eqname){
+        System.err.println("Entered getAttributeValue method in Java");
+        if(eqname != null) {
+            System.err.println("EQName= "+eqname);
+        }
         QName name = QName.fromEQName(eqname);
+        System.err.println("Java-Call Att-name="+name.getClarkName() + " Value="+node.getAttributeValue(name));
         return node.getAttributeValue(name);
     }
 
@@ -174,6 +184,28 @@ public class XdmUtils {
             return null;
         }
         return children.toArray(new XdmNode[0]);
+    }
+
+    public static int getChildCount(XdmNode node) {
+        int num = 0;
+        XdmSequenceIterator iter = node.axisIterator(Axis.CHILD);
+        while(iter.hasNext()){
+            iter.next();
+            num++;
+        }
+
+        return num;
+    }
+
+    public static int getAttributeCount(XdmNode node) {
+        int num = 0;
+        XdmSequenceIterator iter = node.axisIterator(Axis.ATTRIBUTE);
+        while(iter.hasNext()){
+            iter.next();
+            num++;
+        }
+
+        return num;
     }
 
 }

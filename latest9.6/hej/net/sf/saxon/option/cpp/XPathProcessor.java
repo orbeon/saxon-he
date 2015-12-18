@@ -34,6 +34,21 @@ public class XPathProcessor extends SaxonCAPI {
         compiler = processor.newXPathCompiler();
     }
 
+    /**
+     * Declare a namespace binding as part of the static context for XPath expressions compiled using this
+     * XPathCompiler
+     *
+     * @param prefix The namespace prefix. If the value is a zero-length string, this method sets the default
+     *               namespace for elements and types.
+     * @param uri    The namespace URI. It is possible to specify a zero-length string to "undeclare" a namespace;
+     *               in this case the prefix will not be available for use, except in the case where the prefix
+     *               is also a zero length string, in which case the absence of a prefix implies that the name
+     *               is in no namespace.
+     * @throws NullPointerException if either the prefix or uri is null.
+     */
+    public void declareNamespace(String prefix, String uri) {
+        compiler.declareNamespace(prefix, uri);
+    }
 
     /**
      * Set whether XPath 1.0 backwards compatibility mode is to be used. In backwards compatibility
@@ -60,6 +75,8 @@ public class XPathProcessor extends SaxonCAPI {
         }
 
     }
+
+
 
 
     public void setContextItem(XdmItem item) throws SaxonApiException {
@@ -271,7 +288,11 @@ public class XPathProcessor extends SaxonCAPI {
         /*DocumentBuilder b = p.newDocumentBuilder();
         XdmNode foo = b.build(new StreamSource(new StringReader("<foo><bar/></foo>")));
         xpath.setContextItem(foo);  */
-         XdmNode node = xpath.parseXmlString("<out><person a1='v1' a2='v2'>text1</person><person>text2</person></out>");
+         XdmNode node = xpath.parseXmlString("<out>\n" +
+                 "<person attr1='value1' attr2='value2' xmlns='http://example.com'>text1</person>\n" +
+                 "    <person>text2</person>\n" +
+                 "    <person1>text3</person1>\n" +
+                 "</out>");
           XdmNode [] children1 = XdmUtils.getChildren(XdmUtils.getChildren(node)[0]);
        // xpath.setContextItem(node);
          String[] params2 = {"node"};
@@ -281,10 +302,12 @@ public class XPathProcessor extends SaxonCAPI {
             String nodename = XdmUtils.getEQName(((XdmNode)value).getNodeName());
             System.out.println(nodename);
             //String [] values = XdmUtils.getAttributeValues((XdmNode)value);
-            String valuex1 = XdmUtils.getAttributeValue((XdmNode)value, "a1");
+            String valuex1 = XdmUtils.getAttributeValue((XdmNode)value, "attr1");
             XdmNode [] children = XdmUtils.getChildren((XdmNode)value);
+            XdmNode parent = children[0].getParent();
            // System.out.println(values[0]);
             System.out.println(valuex1);
+            System.out.println("Parent =" + parent.getParent().getNodeName());
         }
         boolean ebv = xpath.effectiveBooleanValue("/Users/ond1/work/development/tests/jeroen/xml/", "count(/out/person)>0", params2, values2);
        // System.out.println(value.toString());
