@@ -1623,6 +1623,24 @@ public class Configuration implements SourceResolver, NotationSet {
     }
 
     /**
+     * Register a specific URI and bind it to a specific ResourceCollection. This method only works
+     * if the {@link CollectionFinder} in use is a {@link StandardCollectionFinder}.
+     *
+     * @param collectionURI the collection URI to be registered. Must not be null.
+     * @param collection    the ResourceCollection to be associated with this URI. Must not be null.
+     * @throws IllegalStateException if the {@link CollectionFinder} in use is not a
+     * {@link StandardCollectionFinder}
+     * @since 9.7.0.2
+     */
+
+    public void registerCollection(String collectionURI, ResourceCollection collection) {
+        if (!(collectionFinder instanceof StandardCollectionFinder)) {
+            throw new IllegalStateException("Current CollectionFinder is not a StandardCollectionFinder");
+        }
+        ((StandardCollectionFinder)collectionFinder).registerCollection(collectionURI, collection);
+    }
+
+    /**
      * Set the media type to be associated with a file extension by the standard
      * collection handler
      *

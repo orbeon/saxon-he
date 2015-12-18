@@ -19,12 +19,15 @@ import net.sf.saxon.trans.XPathException;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Default implementation of the CollectionFinder interface. The standard CollectionFinder recognizes three
+ * Default implementation of the CollectionFinder interface. The standard CollectionFinder recognizes four
  * types of collection:
  *
  * <ol>
+ *     <li>Any URI may be explicitly registered and associated with an instance of {@link ResourceCollection}</li>
  *     <li>If the file: URI scheme is used, and the relevant file identifies a directory, the directory
  *     is treated as a collection: it is returned as an instance of {@link DirectoryCollection}</li>
  *     <li>If the URI ends with ".jar" or ".zip", or more generally, if the method {@link #isJarFileURI(String)} returns
@@ -36,6 +39,18 @@ import java.net.URISyntaxException;
  */
 
 public class StandardCollectionFinder implements CollectionFinder {
+
+    private Map<String, ResourceCollection> registeredCollections = new HashMap<String, ResourceCollection>(2);
+
+    /**
+     * Register a specific URI and bind it to a specific ResourceCollection
+     * @param collectionURI the collection URI to be registered. Must not be null.
+     * @param collection the ResourceCollection to be associated with this URI. Must not be null.
+     */
+
+    public void registerCollection(String collectionURI, ResourceCollection collection) {
+        registeredCollections.put(collectionURI, collection);
+    }
 
     /**
      * Locate the collection of resources corresponding to a collection URI.
@@ -57,6 +72,11 @@ public class StandardCollectionFinder implements CollectionFinder {
             throw err;
         }
 
+        ResourceCollection registeredCollection = registeredCollections.get(collectionURI);
+        if (registeredCollection != null) {
+            return registeredCollection;
+        }
+
         URIQueryParameters params = null;
         String query = null;
 
@@ -68,7 +88,6 @@ public class StandardCollectionFinder implements CollectionFinder {
                 int q = collectionURI.indexOf('?');
                 params = new URIQueryParameters(query, context.getConfiguration());
                 collectionURI = ResolveURI.escapeSpaces(collectionURI.substring(0, q));
-                relativeURI = new URI(collectionURI);
             }
 
         } catch (URISyntaxException e) {
