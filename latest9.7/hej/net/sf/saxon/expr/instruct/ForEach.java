@@ -363,7 +363,11 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
     @Override
     public int computeSpecialProperties() {
         int p = super.computeSpecialProperties();
-        p |= getAction().getSpecialProperties() & StaticProperty.ALL_NODES_UNTYPED;
+        if (getSelect().getCardinality() == StaticProperty.EXACTLY_ONE) {
+            p |= getAction().getSpecialProperties();
+        } else {
+            p |= getAction().getSpecialProperties() & StaticProperty.ALL_NODES_UNTYPED;
+        }
         return p;
     }
 
