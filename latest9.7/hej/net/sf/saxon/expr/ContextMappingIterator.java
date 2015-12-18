@@ -77,6 +77,9 @@ public final class ContextMappingIterator<T extends Item> implements SequenceIte
 
     public void close() {
         base.close();
+        if (stepIterator != null) {
+            stepIterator.close();
+        }
     }
 
     /*@NotNull*/
