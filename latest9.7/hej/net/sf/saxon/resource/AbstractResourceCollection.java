@@ -284,5 +284,16 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
         return factory.makeResource(config, resourceURI, contentType, details);
     }
 
+    /**
+     * Default method to make a resource, given a resource URI
+     * @param resourceURI the resource URI
+     * @return the corresponding resource
+     */
+
+    public Resource makeResource(Configuration config, String resourceURI) throws XPathException {
+        InputDetails details = getInputDetails(resourceURI);
+        return makeResource(config, details, resourceURI);
+    }
+
 }
 
