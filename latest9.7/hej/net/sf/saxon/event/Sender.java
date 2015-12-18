@@ -363,9 +363,14 @@ public abstract class Sender {
                         parser.setFeature(entry.getKey(), entry.getValue());
                     }
                 } catch (SAXNotRecognizedException err) {
-                    config.getLogger().warning(namedParser(parser) +" does not recognize the feature " + entry.getKey());
+                    // No warning if switching a feature off doesn't work: bugs 2540 and 2551
+                    if (entry.getValue()) {
+                        config.getLogger().warning(namedParser(parser) + " does not recognize the feature " + entry.getKey());
+                    }
                 } catch (SAXNotSupportedException err) {
-                    config.getLogger().warning(namedParser(parser) + " does not support the feature " + entry.getKey());
+                    if (entry.getValue()) {
+                        config.getLogger().warning(namedParser(parser) + " does not support the feature " + entry.getKey());
+                    }
                 }
             }
         }
