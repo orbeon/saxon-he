@@ -42,5 +42,10 @@ public class DotNetIterator<T extends Object> implements Iterator<T> {
             return (T) o;
         }
     }
+
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException();
+    }
 }
 
