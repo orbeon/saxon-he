@@ -12,6 +12,8 @@ import net.sf.saxon.event.Builder;
 import net.sf.saxon.event.FilterFactory;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.om.TreeModel;
+import net.sf.saxon.trans.Maker;
+import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.ValidationParams;
 import net.sf.saxon.value.Whitespace;
@@ -44,6 +46,7 @@ public class ParseOptions {
     private StructuredQName topLevelElement;
     private SchemaType topLevelType;
     /*@Nullable*/ private transient XMLReader parser = null;
+    private Maker<XMLReader> parserMaker;
     /*@Nullable*/ private Boolean wrapDocument = null;
     /*@Nullable*/ private TreeModel treeModel = null;
     private int stripSpace = Whitespace.UNSPECIFIED;
@@ -87,6 +90,7 @@ public class ParseOptions {
         setDTDValidationMode(p.dtdValidation);
         topLevelElement = p.topLevelElement;
         topLevelType = p.topLevelType;
+        parserMaker = p.getXMLReaderMaker();
         parser = p.parser;
         wrapDocument = p.wrapDocument;
         treeModel = p.treeModel;
@@ -620,7 +624,10 @@ public class ParseOptions {
     }
 
     /**
-     * Set the SAX parser (XMLReader) to be used
+     * Set the SAX parser (XMLReader) to be used. This method must be used with care, because
+     * an XMLReader is not thread-safe. If there is any chance that this ParseOptions object will
+     * be used in multiple threads, then this property should not be set. Instead, set the XMLReaderMaker
+     * property, which allows a new parser to be created each time it is needed.
      *
      * @param parser the SAX parser
      */
@@ -630,8 +637,7 @@ public class ParseOptions {
     }
 
     /**
-     * Get the SAX parser (XMLReader) to be used
-     *
+     * Get the SAX parser (XMLReader) to be used.
      * @return the parser
      */
 
@@ -639,6 +645,43 @@ public class ParseOptions {
     public XMLReader getXMLReader() {
         return parser;
     }
+
+    /**
+     * Set the parser factory class to be used.
+     *
+     * @param parserMaker a factory object that delivers an XMLReader on demand
+     */
+
+    public void setXMLReaderMaker(Maker<XMLReader> parserMaker) {
+        this.parserMaker = parserMaker;
+    }
+
+    /**
+     * Get the parser factory class to be used
+     *
+     * @return a factory object that delivers an XMLReader on demand, or null if none has been set
+     */
+
+    /*@Nullable*/
+    public Maker<XMLReader> getXMLReaderMaker() {
+        return parserMaker;
+    }
+
+    /**
+     * Obtain an XMLReader (parser), by making one using the XMLReaderMaker if available, or by
+     * returning the registered XMLReader if available, or failing that, return null
+     */
+
+    public XMLReader obtainXMLReader() throws XPathException {
+        if (parserMaker != null) {
+            return parserMaker.make();
+        } else if (parser != null) {
+            return parser;
+        } else {
+            return null;
+        }
+    }
+
 
     /**
      * Set an EntityResolver to be used when parsing. Note that this will not be used if an XMLReader

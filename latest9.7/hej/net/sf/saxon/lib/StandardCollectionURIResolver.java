@@ -20,6 +20,7 @@ import net.sf.saxon.functions.UnparsedTextFunction;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.trans.Err;
+import net.sf.saxon.trans.Maker;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.ArrayIterator;
 import net.sf.saxon.tree.iter.AxisIterator;
@@ -355,7 +356,7 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
         int validation = Validation.STRIP;
         Boolean xinclude = null;
         boolean unparsed;
-        XMLReader parser = null;
+        Maker<XMLReader> parserMaker = null;
         int onError = URIQueryParameters.ON_ERROR_FAIL;
         FilenameFilter filter = null;
         PipelineConfiguration pipe;
@@ -386,9 +387,9 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
                 if (e != null) {
                     onError = e;
                 }
-                XMLReader p = params.getXMLReader();
+                Maker<XMLReader> p = params.getXMLReaderMaker();
                 if (p != null) {
-                    parser = p;
+                    parserMaker = p;
                 }
             }
 
@@ -459,8 +460,8 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
                     if (xinclude != null) {
                         options.setXIncludeAware(xinclude);
                     }
-                    if (parser != null) {
-                        options.setXMLReader(parser);
+                    if (parserMaker != null) {
+                        options.setXMLReaderMaker(parserMaker);
                     }
 
                     if (params != null) {

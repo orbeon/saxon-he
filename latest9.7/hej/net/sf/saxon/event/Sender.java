@@ -164,7 +164,7 @@ public abstract class Sender {
                 is.setCharacterStream(ss.getReader());
                 is.setByteStream(ss.getInputStream());
                 boolean reuseParser = false;
-                XMLReader parser = options.getXMLReader();
+                XMLReader parser = options.obtainXMLReader();
                 if (parser == null) {
                     parser = config.getSourceParser();
                     if (options.getEntityResolver() != null && parser.getEntityResolver() == null) {
@@ -294,7 +294,7 @@ public abstract class Sender {
             errorHandler = new StandardErrorHandler(listener);
         }
         if (parser == null) {
-            parser = options.getXMLReader();
+            parser = options.obtainXMLReader();
         }
         if (parser == null) {
             SAXSource ss = new SAXSource();

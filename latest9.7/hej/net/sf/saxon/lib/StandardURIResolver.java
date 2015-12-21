@@ -18,6 +18,7 @@ import net.sf.saxon.functions.EncodeForUri;
 import net.sf.saxon.functions.ResolveURI;
 import net.sf.saxon.functions.URIQueryParameters;
 import net.sf.saxon.trans.Err;
+import net.sf.saxon.trans.Maker;
 import net.sf.saxon.trans.NonDelegatingURIResolver;
 import net.sf.saxon.trans.XPathException;
 import org.xml.sax.InputSource;
@@ -203,9 +204,9 @@ public class StandardURIResolver implements NonDelegatingURIResolver {
 
 
             if (params != null) {
-                XMLReader parser = params.getXMLReader();
+                Maker<XMLReader> parser = params.getXMLReaderMaker();
                 if (parser != null) {
-                    ((SAXSource) source).setXMLReader(parser);
+                    ((SAXSource) source).setXMLReader(parser.make());
                 }
             }
 

@@ -5,6 +5,7 @@ import net.sf.saxon.Controller;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.functions.URIQueryParameters;
 import net.sf.saxon.lib.*;
+import net.sf.saxon.trans.Maker;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.Whitespace;
 import org.xml.sax.XMLReader;
@@ -99,9 +100,9 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
                 options.setStripSpace(strip);
             }
 
-            XMLReader p = params.getXMLReader();
+            Maker<XMLReader> p = params.getXMLReaderMaker();
             if (p != null) {
-                options.setXMLReader(p);
+                options.setXMLReaderMaker(p);
             }
 
 

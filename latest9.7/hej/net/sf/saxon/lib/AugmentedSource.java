@@ -32,6 +32,9 @@ import java.util.List;
  * the ParseOptions to be supplied directly, making this class unnecessary; but it is useful
  * when passing a Source to a JAXP interface that does not allow further options to be
  * supplied.</p>
+ * <p>Note that in general a <code>Source</code> object can only be used once; it is
+ * consumed by use. An augmentedSource object is consumed by use if the underlying
+ * source object is consumed by use.</p>
  *
  * @since 8.8
  */

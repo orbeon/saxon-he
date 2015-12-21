@@ -9,7 +9,8 @@ package net.sf.saxon.functions;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.Validation;
-import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.trans.Instantiator;
+import net.sf.saxon.trans.Maker;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.value.Whitespace;
 import org.xml.sax.XMLReader;
@@ -30,7 +31,7 @@ public class URIQueryParameters {
     Integer validation = null;
     int strip = Whitespace.UNSPECIFIED;
     Integer onError = null;
-    XMLReader parser = null;
+    Maker<XMLReader> parserMaker = null;
     Boolean xinclude = null;
     boolean unparsed;
     Boolean stable = null;
@@ -113,11 +114,7 @@ public class URIQueryParameters {
                 onError = ON_ERROR_FAIL;
             }
         } else if (keyword.equals("parser") && config != null) {
-            try {
-                parser = (XMLReader) config.getInstance(value, null);
-            } catch (XPathException err) {
-                config.getErrorListener().warning(err);
-            }
+            parserMaker = new Instantiator<XMLReader>(value, config);
         }
     }
 
@@ -222,11 +219,11 @@ public class URIQueryParameters {
     }
 
     /**
-     * Get the selected XML parser, or null if unspecified
+     * Get a factory for the selected XML parser class, or null if unspecified
      */
 
-    public XMLReader getXMLReader() {
-        return parser;
+    public Maker<XMLReader> getXMLReaderMaker() {
+        return parserMaker;
     }
 
     /**

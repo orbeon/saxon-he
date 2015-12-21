@@ -128,7 +128,7 @@ public class StylesheetModule {
         options.setStripSpace(Whitespace.NONE);
         options.setErrorListener(pipe.getErrorListener());
         try {
-            if (options.getXMLReader() == null && Version.platform.isJava()) {
+            if (options.getXMLReader() == null && options.getXMLReaderMaker() == null && Version.platform.isJava()) {
                 XMLReader styleParser = config.getStyleParser();
                 options.setXMLReader(styleParser);
                 Sender.send(styleSource, commentStripper, options);
@@ -223,7 +223,7 @@ public class StylesheetModule {
         options.setStripSpace(Whitespace.NONE);
         options.setErrorListener(pipe.getErrorListener());
         try {
-            if (options.getXMLReader() == null && Version.platform.isJava()) {
+            if (options.getXMLReader() == null && options.getXMLReaderMaker() == null && Version.platform.isJava()) {
                 XMLReader styleParser = config.getStyleParser();
                 options.setXMLReader(styleParser);
                 Sender.send(styleSource, sourcePipeline, options);
