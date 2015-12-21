@@ -1173,17 +1173,28 @@ public class ExpressionTool {
      * @param exp         the expression at the root of the subtree
      * @param selector    callback to determine whether a subexpression is selected
      * @param replacement the expression to be used in place of the variable reference
+     * @param mustCopy    if true, the replacement expression must be copied before use
+     * @return true if a replacement has been performed (in which case the replacement expression
+     * must be copied before being used again).
      */
 
-    public static void replaceSelectedSubexpressions(Expression exp, ExpressionSelector selector, Expression replacement) {
+    public static boolean replaceSelectedSubexpressions(
+            Expression exp, ExpressionSelector selector, Expression replacement, boolean mustCopy) {
+        boolean replaced = false;
         for (Operand o : exp.operands()) {
+            if (replaced) {
+                mustCopy = true;
+            }
             Expression child = o.getChildExpression();
             if (selector.matches(child)) {
-                o.setChildExpression(replacement);
+                Expression e2 = mustCopy ? replacement.copy() : replacement;
+                o.setChildExpression(e2);
+                replaced = true;
             } else {
-                replaceSelectedSubexpressions(child, selector, replacement);
+                replaced = replaceSelectedSubexpressions(child, selector, replacement, mustCopy);
             }
         }
+        return replaced;
     }
 
     /**
@@ -1192,15 +1203,16 @@ public class ExpressionTool {
      * @param exp         the expression at the root of the subtree
      * @param binding     the variable binding whose references are sought
      * @param replacement the expression to be used in place of the variable reference
+     * @param mustCopy    true if the replacement expression must be copied before use
      */
 
-    public static void replaceVariableReferences(Expression exp, final Binding binding, Expression replacement) {
+    public static void replaceVariableReferences(Expression exp, final Binding binding, Expression replacement, boolean mustCopy) {
         ExpressionSelector selector = new ExpressionSelector() {
             public boolean matches(Expression child) {
                 return child instanceof VariableReference && ((VariableReference) child).getBinding() == binding;
             }
         };
-        replaceSelectedSubexpressions(exp, selector, replacement);
+        replaceSelectedSubexpressions(exp, selector, replacement, mustCopy);
     }
 
     /**

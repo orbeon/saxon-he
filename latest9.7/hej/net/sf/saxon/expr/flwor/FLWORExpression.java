@@ -477,6 +477,15 @@ public class FLWORExpression extends Expression {
         returnClauseOp.setChildExpression(
                 getReturnClause().optimize(visitor, contextItemType));
 
+        // For a very simple "for" or "let" expression, convert it to a ForExpression or LetExpression now
+        if (clauses.size() == 1) {
+            Clause c = clauses.get(0);
+            if (c instanceof LetClause ||
+                    (c instanceof ForClause && ((ForClause)c).getPositionVariable() == null)) {
+                return rewriteForOrLet(visitor, contextItemType);
+            }
+        }
+
         // If any 'let' clause declares a variable that is used only once, then inline it. If the variable
         // is not used at all, then eliminate it
 
@@ -500,10 +509,11 @@ public class FLWORExpression extends Expression {
                         }
                     }
                     if (!suppressInlining) {
-                        if (lc.getRangeVariable().getNominalReferenceCount() == 1 ||
-                                lc.getSequence() instanceof VariableReference ||
-                                lc.getSequence() instanceof Literal) {
-                            ExpressionTool.replaceVariableReferences(this, lc.getRangeVariable(), lc.getSequence().copy());
+                        boolean oneRef = lc.getRangeVariable().getNominalReferenceCount() == 1;
+                        boolean simpleSeq = lc.getSequence() instanceof VariableReference ||
+                                lc.getSequence() instanceof Literal;
+                        if (oneRef || simpleSeq) {
+                            ExpressionTool.replaceVariableReferences(this, lc.getRangeVariable(), lc.getSequence(), !oneRef);
                             clauses.remove(c);
                             if (clauses.isEmpty()) {
                                 return getReturnClause();
