@@ -29,25 +29,25 @@ public class Xslt30TestReport extends TestReport {
         createWriter(processor);
         results.writeStartElement(NS, "test-suite-result");
         results.writeDefaultNamespace(NS);
-        results.writeStartElement("implementation");
+        results.writeStartElement(NS, "implementation");
         results.writeAttribute("name", testDriver.getProductEdition());
         results.writeAttribute("version", Version.getProductVersion());
         results.writeAttribute("anonymous-result-column", "false");
-        results.writeEmptyElement("organization");
+        results.writeEmptyElement(NS, "organization");
         results.writeAttribute("name", "http://www.saxonica.com/");
         results.writeAttribute("anonymous", "false");
-        results.writeEmptyElement("submitter");
+        results.writeEmptyElement(NS, "submitter");
         results.writeAttribute("name", "Michael Kay");
         results.writeAttribute("email", "mike@saxonica.com");
         //outputDiscretionaryItems();
-        results.writeEmptyElement("configuration");
+        results.writeEmptyElement(NS, "configuration");
         results.writeAttribute("timeRun", getTime());
         results.writeAttribute("lang", testDriver.lang);
         results.writeAttribute("bytecode", testDriver.isByteCode()?"on":"off");
 
 
         results.writeEndElement(); //implementation
-        results.writeEmptyElement("test-run");
+        results.writeEmptyElement(NS, "test-run");
         results.writeAttribute("dateRun", getDate());
         results.writeAttribute("testsuiteVersion", "3.0.1");
 
@@ -55,5 +55,9 @@ public class Xslt30TestReport extends TestReport {
 
     }
 
+    @Override
+    public String getReportNamespace() {
+        return NS;
+    }
 }
 

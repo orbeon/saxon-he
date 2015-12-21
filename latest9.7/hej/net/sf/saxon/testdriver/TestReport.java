@@ -39,6 +39,7 @@ public abstract class TestReport {
 
     public abstract void writeResultFilePreamble(Processor processor, XdmNode catalog) throws IOException, SaxonApiException, XMLStreamException;
 
+    public abstract String getReportNamespace();
 
     public void writeResultFilePostamble() {
         try {
@@ -58,7 +59,7 @@ public abstract class TestReport {
 
     public void startTestSetElement(XdmNode funcSetNode) {
         try {
-            results.writeStartElement("test-set");
+            results.writeStartElement(getReportNamespace(), "test-set");
             results.writeAttribute("name", funcSetNode.getAttributeValue(new QName("name")));
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
@@ -75,7 +76,7 @@ public abstract class TestReport {
 
     public void writeTestcaseElement(String name, String result, String comment) {
         try {
-            this.results.writeEmptyElement("test-case");
+            this.results.writeEmptyElement(getReportNamespace(), "test-case");
             this.results.writeAttribute("name", name);
             this.results.writeAttribute("result", result);
             if (comment != null) {

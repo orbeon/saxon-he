@@ -24,6 +24,7 @@ public class QT3TestReport extends TestReport {
 
     public void writeResultFilePreamble(Processor processor, XdmNode catalog)
             throws IOException, SaxonApiException, XMLStreamException {
+        String ns = getReportNamespace();
         createWriter(processor);
         String today = DateTimeValue.getCurrentDateTime(null).toDateValue().getStringValue().substring(0, 10);
         XdmNode outermost;
@@ -33,29 +34,29 @@ public class QT3TestReport extends TestReport {
         } else {
             throw new SaxonApiException("Outermost element of catalog file must be Q{" + QT3TestDriverHE.CNS + "}catalog");
         }
-        results.writeStartElement(QT3TestDriverHE.RNS, "test-suite-result");
-        results.writeDefaultNamespace(QT3TestDriverHE.RNS);
-        results.writeStartElement("submission");
+        results.writeStartElement(ns, "test-suite-result");
+        results.writeDefaultNamespace(ns);
+        results.writeStartElement(ns, "submission");
         results.writeAttribute("anonymous", "false");
 
-        results.writeStartElement("created");
+        results.writeStartElement(ns, "created");
         results.writeAttribute("by", "Michael Kay");
         results.writeAttribute("email", "mike@saxonica.com");
         results.writeAttribute("organization", "Saxonica");
         results.writeAttribute("on", today);
         results.writeEndElement();
 
-        results.writeStartElement("test-run");
+        results.writeStartElement(ns, "test-run");
         results.writeAttribute("test-suite-version", outermost.getAttributeValue(new QName("", "version")));
         results.writeAttribute("date-run", today);
         results.writeEndElement();
 
-        results.writeStartElement("notes");
+        results.writeStartElement(ns, "notes");
         results.writeEndElement(); // notes
 
         results.writeEndElement(); // submission
 
-        results.writeStartElement("product");
+        results.writeStartElement(ns, "product");
 
         results.writeAttribute("vendor", "Saxonica");
         results.writeAttribute("name", testDriver.getProductEdition());
@@ -71,7 +72,7 @@ public class QT3TestReport extends TestReport {
             for (Map.Entry<String, QT3TestDriverHE.Dependency> entry : dependencyMap.entrySet()) {
                 QT3TestDriverHE.Dependency dep = entry.getValue();
                 if (!"spec".equals(dep.dType)) {
-                    results.writeStartElement("dependency");
+                    results.writeStartElement(ns, "dependency");
                     results.writeAttribute("type", dep.dType);
                     results.writeAttribute("value", entry.getKey());
                     results.writeAttribute("satisfied", Boolean.toString(dep.satisfied));
@@ -84,5 +85,9 @@ public class QT3TestReport extends TestReport {
 
     }
 
+    @Override
+    public String getReportNamespace() {
+        return QT3TestDriverHE.RNS;
+    }
 }
 
