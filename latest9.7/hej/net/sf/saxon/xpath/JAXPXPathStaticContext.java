@@ -181,7 +181,8 @@ public class JAXPXPathStaticContext extends AbstractStaticContext
         // is designed to be called at run time. So we need to create a variable now,
         // which will call the variableResolver when called upon to return the run-time value
         if (variableResolver != null) {
-            return new JAXPVariableReference(new JAXPVariable(qName, variableResolver));
+            // Note that despite its name, JAXPVariableReference is not actually a VariableReference
+            return new JAXPVariableReference(qName, variableResolver);
         } else {
             throw new XPathException(
                     "Variable is used in XPath expression, but no JAXP VariableResolver is available");
