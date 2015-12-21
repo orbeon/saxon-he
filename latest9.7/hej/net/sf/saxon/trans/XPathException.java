@@ -454,12 +454,13 @@ public class XPathException extends TransformerException {
      */
 
     public void maybeSetLocation(Location here) {
-        if (getLocator() == null) {
-            setLocator(here.saveLocation());
-        } else if (getLocator().getLineNumber() == -1
-                && here != null
-                && !(getLocator().getSystemId() != null && here.getSystemId() != null && !getLocator().getSystemId().equals(here.getSystemId()))) {
-            setLocator(here.saveLocation());
+        if (here != null) {
+            if (getLocator() == null) {
+                setLocator(here.saveLocation());
+            } else if (getLocator().getLineNumber() == -1
+                    && !(getLocator().getSystemId() != null && here.getSystemId() != null && !getLocator().getSystemId().equals(here.getSystemId()))) {
+                setLocator(here.saveLocation());
+            }
         }
     }
 
