@@ -101,7 +101,7 @@ public class XSLGlobalParam extends XSLGlobalVariable {
             binding.setRequiredParam(sourceBinding.hasProperty(SourceBinding.REQUIRED));
             binding.setImplicitlyRequiredParam(sourceBinding.hasProperty(SourceBinding.IMPLICITLY_REQUIRED));
             sourceBinding.fixupBinding(binding);
-            compiledVariable = binding;
+            //compiledVariable = binding;
 
             Component overridden = getOverriddenComponent();
             if (overridden != null) {

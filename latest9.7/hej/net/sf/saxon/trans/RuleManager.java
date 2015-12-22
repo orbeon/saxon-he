@@ -256,19 +256,6 @@ public final class RuleManager {
             mode.getActivePart().addRule(pattern, eh, module, mode.getMaxPrecedence(), priority, true);
         }
 
-        // if adding a rule to the omniMode (mode='all') add it to all
-        // the other modes as well. For all but the first, it needs to
-        // be copied because the external component bindings might
-        // differ from one mode to another.
-
-        if (mode == omniMode) {
-            unnamedMode.addRule(pattern, eh, module, module.getPrecedence(), priority, false);
-            for (Mode m : modes.values()) {
-                if (m instanceof SimpleMode) {
-                    ((SimpleMode) m).addRule(pattern.copy(), eh.copy(), module, module.getPrecedence(), priority, false);
-                }
-            }
-        }
     }
 
     /**

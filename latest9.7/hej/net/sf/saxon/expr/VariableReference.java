@@ -288,7 +288,10 @@ public abstract class VariableReference extends Expression implements BindingRef
     public ItemType getItemType() {
         if (staticType == null || staticType.getPrimaryType() == AnyItemType.getInstance()) {
             if (binding != null) {
-                return binding.getRequiredType().getPrimaryType();
+                SequenceType st = binding.getRequiredType();
+                if (st != null) {
+                    return st.getPrimaryType();
+                }
             }
             return AnyItemType.getInstance();
         } else {

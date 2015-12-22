@@ -149,7 +149,7 @@ public class XSLLocalParam extends XSLGeneralVariable {
 
     @Override
     public void fixupReferences() throws XPathException {
-        sourceBinding.fixupReferences();
+        sourceBinding.fixupReferences(null);
         super.fixupReferences();
     }
 

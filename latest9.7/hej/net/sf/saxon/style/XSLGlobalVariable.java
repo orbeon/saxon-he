@@ -245,7 +245,7 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
 
     @Override
     public void fixupReferences() throws XPathException {
-        sourceBinding.fixupReferences();
+        sourceBinding.fixupReferences(compiledVariable);
         super.fixupReferences();
     }
 

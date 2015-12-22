@@ -669,10 +669,31 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                     rule = new TemplateRule();
                     compiledTemplateRules.put(modeName, rule);
                 }
-                mgr.setTemplateRule(match2, rule, mode, module, prioritySpecified ? priority : Double.NaN);
+
+                double prio = prioritySpecified ? priority : Double.NaN;
+                mgr.setTemplateRule(match2, rule, mode, module, prio);
 
                 if (mode.isDeclaredStreamable()) {
                     rule.setDeclaredStreamable(true);
+                }
+
+                // if adding a rule to the omniMode (mode='all') add it to all
+                // the other modes as well. For all but the first, it needs to
+                // be copied because the external component bindings might
+                // differ from one mode to another.
+
+                if (mode.getModeName().equals(Mode.OMNI_MODE)) {
+                    mgr.getUnnamedMode().addRule(match2, rule, module, module.getPrecedence(), prio, false);
+                    for (Mode m : mgr.getAllNamedModes()) {
+                        if (m instanceof SimpleMode) {
+                            TemplateRule ruleCopy = rule.copy();
+                            if (m.isDeclaredStreamable()) {
+                                ruleCopy.setDeclaredStreamable(true);
+                            }
+                            compiledTemplateRules.put(m.getModeName(), ruleCopy);
+                            ((SimpleMode) m).addRule(match2.copy(), ruleCopy, module, module.getPrecedence(), prio, false);
+                        }
+                    }
                 }
             }
         }

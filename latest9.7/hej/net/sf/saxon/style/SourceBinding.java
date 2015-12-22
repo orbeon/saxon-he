@@ -9,6 +9,7 @@ package net.sf.saxon.style;
 
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.DocumentInstr;
+import net.sf.saxon.expr.instruct.GlobalVariable;
 import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
 import net.sf.saxon.expr.parser.TypeChecker;
@@ -552,10 +553,11 @@ public class SourceBinding {
 
     /**
      * Notify all references to this variable of the data type
+     * @param compiledGlobalVariable null if this is a local variable; otherwise, the compiled global variable
      * @throws XPathException if the declaration is invalid
      */
 
-    public void fixupReferences() throws XPathException {
+    public void fixupReferences(GlobalVariable compiledGlobalVariable) throws XPathException {
         final SequenceType type = getInferredType(true);
         final TypeHierarchy th = sourceElement.getConfiguration().getTypeHierarchy();
         GroundedValue constantValue = null;
@@ -575,6 +577,9 @@ public class SourceBinding {
             }
         }
         for (BindingReference reference : references) {
+            if (compiledGlobalVariable != null) {
+                reference.fixup(compiledGlobalVariable);
+            }
             reference.setStaticType(type, constantValue, properties);
         }
     }
