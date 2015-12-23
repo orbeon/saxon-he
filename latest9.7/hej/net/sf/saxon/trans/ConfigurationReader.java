@@ -162,6 +162,16 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
                     error("configuration", "edition", edition, "HE|PE|EE");
                     config = new Configuration();
                 }
+                String licenseLoc = atts.getValue("licenseFileLocation");
+                if (licenseLoc != null && !edition.equals("HE")) {
+                    String base = locator.getSystemId();
+                    try {
+                        URI absoluteLoc = ResolveURI.makeAbsolute(licenseLoc, base);
+                        config.setConfigurationProperty(FeatureKeys.LICENSE_FILE_LOCATION, absoluteLoc.toString());
+                    } catch (Exception err) {
+                        errors.add(new XPathException("Failed to process license at " + licenseLoc, err));
+                    }
+                }
                 String label = atts.getValue("label");
                 if (label != null) {
                     config.setLabel(label);
