@@ -7,7 +7,9 @@
 
 package net.sf.saxon.option.cpp;
 
+import net.sf.saxon.Configuration;
 import net.sf.saxon.Transform;
+import net.sf.saxon.lib.FeatureKeys;
 import net.sf.saxon.om.AtomicArray;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.s9api.*;
@@ -34,10 +36,10 @@ public class XsltProcessor extends SaxonCAPI {
      * Constructor to initialise XsltProcessor with processor and license flag
      *
      * @param proc    - s9api processor
-     * @param license - flag indicating presence of license file
      */
-    public XsltProcessor(Processor proc, boolean license) {
-        super(proc, license);
+    public XsltProcessor(Processor proc) {
+        super(proc);
+        schemaAware = processor.getUnderlyingConfiguration().isLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XSLT);
         if (debug) {
             System.err.println("XsltProcessor constructor(proc, l), Processor: " + System.identityHashCode(proc));
         }
@@ -62,36 +64,35 @@ public class XsltProcessor extends SaxonCAPI {
      */
     public XsltProcessor(boolean license) {
         processor = new Processor(license);
+        schemaAware = processor.getUnderlyingConfiguration().isLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XSLT);
         if (debug) {
             System.err.println("XsltProcessor(l), Processor: " + System.identityHashCode(processor));
         }
     }
 
 
-
     /**
      * Create new object of this class
      *
      * @param proc    - s9api processor
-     * @param license - flag indicating presence of license file
      * @return XsltProcessor
      */
-    public static XsltProcessor newInstance(boolean license, Processor proc) {
-        return new XsltProcessor(proc, license);
+    public static XsltProcessor newInstance(Processor proc) {
+        return new XsltProcessor(proc);
     }
 
-    public XdmNode[] getXslMessages(){
+    public XdmNode[] getXslMessages() {
         return xslMessages.toArray(new XdmNode[xslMessages.size()]);
     }
 
-    public MessageListener newMessageListener(){
+    public MessageListener newMessageListener() {
         return new MyMessageListener();
     }
 
-    public class MyMessageListener implements MessageListener{
+    public class MyMessageListener implements MessageListener {
 
-              //TODO: This is not ideal. We should output the xsl-message to the System.err as they happen.
-                //Second option is to write them out to a file.
+        //TODO: This is not ideal. We should output the xsl-message to the System.err as they happen.
+        //Second option is to write them out to a file.
 
         public void message(XdmNode content, boolean terminate, SourceLocator locator) {
             xslMessages.add(content);
@@ -114,7 +115,7 @@ public class XsltProcessor extends SaxonCAPI {
             Source source = resolveFileToSource(cwd, filename);
 
             compiler.setErrorListener(errorListener);
-
+            compiler.setSchemaAware(schemaAware);
             executable = compiler.compile(source);
             return executable;
         } catch (SaxonApiException ex) {
@@ -140,7 +141,7 @@ public class XsltProcessor extends SaxonCAPI {
         executable = null;
 
         StringReader reader = new StringReader(str);
-
+        compiler.setSchemaAware(schemaAware);
         source = new StreamSource(reader);
         if (cwd != null && cwd.length() > 0) {
             if (!cwd.endsWith("/")) {
@@ -160,7 +161,7 @@ public class XsltProcessor extends SaxonCAPI {
 
     }
 
-     /**
+    /**
      * Compile the stylesheet from string  for use later
      *
      * @param cwd - current working directory
@@ -174,8 +175,8 @@ public class XsltProcessor extends SaxonCAPI {
 
 
         XdmNode node;
-        if(obj instanceof XdmNode) {
-            node = (XdmNode)obj;
+        if (obj instanceof XdmNode) {
+            node = (XdmNode) obj;
         } else {
             throw new SaxonApiException("Failed to create Stylesheet from XdoNode");
         }
@@ -189,8 +190,6 @@ public class XsltProcessor extends SaxonCAPI {
         }
 
     }
-
-
 
 
     /**
@@ -221,6 +220,9 @@ public class XsltProcessor extends SaxonCAPI {
                 XsltCompiler compiler = processor.newXsltCompiler();
                 source = resolveFileToSource(cwd, stylesheet);
                 compiler.setErrorListener(errorListener);
+
+                compiler.setSchemaAware(schemaAware);
+
                 try {
                     transformer = compiler.compile(source).load();
                 } catch (SaxonApiException ex) {
@@ -253,8 +255,7 @@ public class XsltProcessor extends SaxonCAPI {
             throw e;
         } catch (NullPointerException ex) {
             throw new SaxonApiException(ex);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             throw new SaxonApiException(e);
         }
     }
@@ -291,12 +292,12 @@ public class XsltProcessor extends SaxonCAPI {
                     }
                 }
                 for (int i = 0; i < params.length; i++) {
-                    if(values[i] == null) {
-                        throw new SaxonApiException("Null parameter/property value found "+(params[i] != null ? "Check name: "+params[i] : ""));
+                    if (values[i] == null) {
+                        throw new SaxonApiException("Null parameter/property value found " + (params[i] != null ? "Check name: " + params[i] : ""));
                     }
-                    if(debug){
-                        System.err.println("parameter name:"+params[i]);
-                        System.err.println("parameter length:"+params[i].length());
+                    if (debug) {
+                        System.err.println("parameter name:" + params[i]);
+                        System.err.println("parameter length:" + params[i].length());
                     }
                     if (params[i].startsWith("!")) {
                         String name = params[i].substring(1);
@@ -305,41 +306,59 @@ public class XsltProcessor extends SaxonCAPI {
                             throw new SaxonApiException("Property name " + name + " not found");
                         }
                         propsList.put(prop, (String) values[i]);
+                    } else if (params[i].startsWith("--") && values[i] != null) {
+                        try {
+                            processor.setConfigurationProperty("http://saxon.sf.net/feature/" + params[i].substring(2), (String) values[i]);
+                        } catch (IllegalArgumentException err) {
+                            throw new SaxonApiException(err.getMessage());
+                        }
+
                     } else if (params[i].equals("o") && outfile == null) {
-                        if(values[i] instanceof String){
+                        if (values[i] instanceof String) {
                             outfile = (String) values[i];
                             api.serializer = api.resolveOutputFile(processor, cwd, outfile);
                             transformer.setDestination(api.serializer);
                         }
                     } else if (params[i].equals("it")) {
-                        if(values[i] instanceof String) {
+                        if (values[i] instanceof String) {
                             initialTemplate = (String) values[i];
                             transformer.setInitialTemplate(new QName(initialTemplate));
-                        } else if(debug) {
-                             System.err.println("DEBUG: value error for property 'it'");
+                        } else if (debug) {
+                            System.err.println("DEBUG: value error for property 'it'");
                         }
+                    } else if (params[i].equals("xsltversion") && values[i] != null) {
+                         processor.setConfigurationProperty(FeatureKeys.XSLT_VERSION, values[i]);
+
+                    } else if (params[i].equals("dtd")) {
+                        String option = (String) values[i];
+                        if (option.equals("on")) {
+                            builder.setDTDValidation(true);
+                        } else {
+                            builder.setDTDValidation(false);
+                        }
+
                     } else if (params[i].equals("im")) {
-                        if(values[i] instanceof String) {
+                        if (values[i] instanceof String) {
                             initialMode = (String) values[i];
                             transformer.setInitialMode(new QName(initialMode));
-                         }else if(debug) {
-                             System.err.println("DEBUG: value error for property 'im'");
+                        } else if (debug) {
+                            System.err.println("DEBUG: value error for property 'im'");
                         }
-                    }else if (params[i].equals("s")) {
-                        if(values[i] instanceof String) {
+                    } else if (params[i].equals("s")) {
+                        if (values[i] instanceof String) {
                             source = api.resolveFileToSource(cwd, (String) values[i]);
                             transformer.setSource(builder.build(source).asSource());
-                        } else if(debug) {
-                             System.err.println("DEBUG: value error for property 's'");
+                        } else if (debug) {
+                            System.err.println("DEBUG: value error for property 's'");
                         }
                     } else if (params[i].equals("item") || params[i].equals("node") || params[i].equals("param:node")) {
-                        if(debug) {
+                        if (debug) {
                             System.err.println("DEBUG: is null value=" + (values[i] == null));
-                            if(values[i] != null) {
+                            if (values[i] != null) {
                                 System.err.println("DEBUG: Type of value=" + (values[i]).getClass().getName());
 
                             }
-                             System.err.println("DEBUG: setting the source for node");
+                            System.err.println("DEBUG: setting the source for node");
                             System.err.println("DEBUG: is value a XdmNode=" + (values[i] instanceof XdmNode));
                             System.err.println("DEBUG: is value a XdmValue=" + (values[i] instanceof XdmValue));
 
@@ -348,10 +367,10 @@ public class XsltProcessor extends SaxonCAPI {
                         if (value instanceof XdmNode) {
                             node = (XdmNode) value;
                             transformer.setSource((node).asSource());
-                        } else if(debug) {
+                        } else if (debug) {
                             System.err.println("Type of node Property error.");
                         }
-                    } else if(params[i].equals("m")) {
+                    } else if (params[i].equals("m")) {
                         transformer.setMessageListener(((XsltProcessor) api).newMessageListener());
 
                     } else if (params[i].equals("resources")) {
@@ -387,26 +406,26 @@ public class XsltProcessor extends SaxonCAPI {
 
                         } else if (value instanceof Object[]) {
                             Object[] arr = (Object[]) value;
-                             if(debug){
-                                 System.err.println("DEBUG: Array of parameters found. arr len="+arr.length);
+                            if (debug) {
+                                System.err.println("DEBUG: Array of parameters found. arr len=" + arr.length);
 
-                             }
+                            }
                             List<AtomicValue> valueList = new ArrayList<AtomicValue>();
                             for (int j = 0; j < arr.length; j++) {
                                 Object itemi = arr[j];
-                                if(itemi == null){
-                                    System.err.println("Error: Null item at "+i+"th position in array of XdmValues");
+                                if (itemi == null) {
+                                    System.err.println("Error: Null item at " + i + "th position in array of XdmValues");
                                     break;
                                 }
-                                if(debug) {
-                                    System.err.println("Java object:"+itemi);
+                                if (debug) {
+                                    System.err.println("Java object:" + itemi);
                                 }
                                 if (itemi instanceof XdmValue) {
                                     valueList.add((AtomicValue) (((XdmValue) itemi).getUnderlyingValue()));
                                 } else {
                                     XdmValue valuex = getXdmValue(itemi);
-                                    if(valuex == null) {
-                                        System.err.println("Error: Null item at "+i+"th position in array of XdmValues when converting");
+                                    if (valuex == null) {
+                                        System.err.println("Error: Null item at " + i + "th position in array of XdmValues when converting");
                                         break;
                                     }
                                     valueList.add((AtomicValue) (getXdmValue(itemi)).getUnderlyingValue());
@@ -417,11 +436,11 @@ public class XsltProcessor extends SaxonCAPI {
                         } else {
                             //fast track for primitive values
                             valueForCpp = getXdmValue(value);
-                             if(debug){
+                            if (debug) {
                                 System.err.println("DEBUG: primitive value found");
                                 net.sf.saxon.type.ItemType suppliedItemType = SequenceTool.getItemType(valueForCpp.getUnderlyingValue(), processor.getUnderlyingConfiguration().getTypeHierarchy());
                                 System.err.println("XSLTTransformerForCpp Type: " + suppliedItemType.toString());
-                             }
+                            }
                         }
 
 
@@ -431,6 +450,7 @@ public class XsltProcessor extends SaxonCAPI {
                     }
 
                 }
+
             }
             if (api.serializer != null) {
                 for (Map.Entry pairi : propsList.entrySet()) {
@@ -524,9 +544,9 @@ public class XsltProcessor extends SaxonCAPI {
             XsltTransformer transformer = null;
             if (stylesheet == null && executable != null) {
                 transformer = executable.load();
-            } else if(stylesheet == null){
-               SaxonApiException ex = new SaxonApiException("Stylesheet not found!");
-               throw ex;
+            } else if (stylesheet == null) {
+                SaxonApiException ex = new SaxonApiException("Stylesheet not found!");
+                throw ex;
             } else {
                 XsltCompiler compiler = processor.newXsltCompiler();
                 source = resolveFileToSource(cwd, stylesheet);
@@ -584,7 +604,7 @@ public class XsltProcessor extends SaxonCAPI {
             compiler.setErrorListener(errorListener);
             XsltTransformer transformer = null;
             //try {
-                transformer = compiler.compile(source).load();
+            transformer = compiler.compile(source).load();
             /*} catch (SaxonApiException ex) {
                 if (ex.getErrorCode() == null) {
                     throw new SaxonApiException(new XPathException(ex.getMessage(), saxonExceptions.get(0).getErrorCode()));
@@ -634,18 +654,18 @@ public class XsltProcessor extends SaxonCAPI {
         String stylesheet12 = "xslt/overzicht-resultaten.xslt";//"cadenaoriginal_3_2.xslt";//""saxon_php3/q8.xsl";//"test.xsl";
         String outfile = "outfile.html";
         Processor processor = new Processor(false);
-        XsltProcessor cpp = new XsltProcessor(processor, false);
-          XdmNode node2 = cpp.parseXmlFile("/Users/ond1/work/development/campos", "ORP0301177AA__EE__30954_sinsello.xml");
-         String[] paramsx = {"node"};
+        XsltProcessor cpp = new XsltProcessor(processor);
+        XdmNode node2 = cpp.parseXmlFile("/Users/ond1/work/development/campos", "ORP0301177AA__EE__30954_sinsello.xml");
+        String[] paramsx = {"node"};
         Object[] valuesx = {node2};
-                    String result2 = cpp.transformToString("/Users/ond1/work/development/campos", "ORP0301177AA__EE__30954_sinsello.xml", "campos.xsl", paramsx, valuesx);
+        String result2 = cpp.transformToString("/Users/ond1/work/development/campos", "ORP0301177AA__EE__30954_sinsello.xml", "campos.xsl", paramsx, valuesx);
         Object[] arrValues = {2, "test"};
 
-        String[] params1 = {"resources", "param:test1", "node", "m"};
-        Object[] values1 = {"/Users/ond1/work/development/tests/jeroen/data", arrValues, node2, "m"};
+        String[] params1 = {"resources", "param:test1", "node", "m", "xmlversion"};
+        Object[] values1 = {"/Users/ond1/work/development/tests/jeroen/data", arrValues, node2, "m", "1.1"};
         String outputdoc = cpp.transformToString(cwd, null, stylesheet12, params1, values1);
-       // System.out.println(outputdoc);
-       // System.exit(0);
+        // System.out.println(outputdoc);
+        // System.exit(0);
         // Processor processor = cpp.getProcessor();
         // XsltTransformer transformer = cpp.xsltParseStylesheetFile(args[0]).load();
         //XdmNode sourceNode = cpp.xmlParseFile(cwd, "xml/foo.xml");
@@ -657,9 +677,9 @@ public class XsltProcessor extends SaxonCAPI {
 
         String[] params2 = {"o"};
         Object[] values2 = {"output_test.xml"};
-        String[] params3 = {"node", "!indent", "output_test.xml"};
+        String[] params3 = {"node", "!indent", "output_test.xml", "xmlversion"};
         //Object[] values3 = {"xml/foo.xml"};
-        Object[] values3 = {sourceNode2, "yes", "o"};
+        Object[] values3 = {sourceNode2, "yes", "o", "1.0"};
         cpp.createStylesheetFromFile(cwd, stylesheet12);
 
 
@@ -682,7 +702,7 @@ public class XsltProcessor extends SaxonCAPI {
                 "   \n" +
                 "</xsl:stylesheet>");
         try {
-               cpp.transformToFile(cwd, "categories.xml", stylesheet12, "outputTest.txt", null, null);
+            cpp.transformToFile(cwd, "categories.xml", stylesheet12, "outputTest.txt", null, null);
             long startTime = System.currentTimeMillis();
             for (int i = 0; i < repeat; i++) {
                 //result = cpp.xsltApplyStylesheet(cwd, null, "xsl/foo.xsl", params3, values3);
@@ -690,9 +710,9 @@ public class XsltProcessor extends SaxonCAPI {
 
             }
             long endTime = System.currentTimeMillis();
-          //  System.out.println("output:" + result + " Time:" + ((endTime - startTime) / 5));
+            //  System.out.println("output:" + result + " Time:" + ((endTime - startTime) / 5));
 
-       System.out.println("output:" + result2);
+            System.out.println("output:" + result2);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

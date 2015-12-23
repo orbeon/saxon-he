@@ -7,6 +7,7 @@
 
 package net.sf.saxon.option.cpp;
 
+import net.sf.saxon.Configuration;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.query.QueryResult;
 import net.sf.saxon.s9api.*;
@@ -41,6 +42,7 @@ public class XQueryEngine extends SaxonCAPI {
     public XQueryEngine() {
         super(false);
         compiler = processor.newXQueryCompiler();
+        compiler.setErrorListener(errorListener);
     }
 
     /**
@@ -51,17 +53,20 @@ public class XQueryEngine extends SaxonCAPI {
     public XQueryEngine(boolean license) {
         super(license);
         compiler = processor.newXQueryCompiler();
+        compiler.setErrorListener(errorListener);
+        schemaAware = processor.getUnderlyingConfiguration().isLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XQUERY);
     }
 
     /**
      * Constructor to initialise XQueryEngine with processor and license flag
      *
      * @param proc    - s9api processor
-     * @param license - flag indicating presence of license file
      */
-    public XQueryEngine(Processor proc, boolean license) {
-        super(proc, license);
+    public XQueryEngine(Processor proc) {
+        super(proc);
         compiler = processor.newXQueryCompiler();
+        compiler.setErrorListener(errorListener);
+        schemaAware = processor.getUnderlyingConfiguration().isLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XQUERY);
     }
 
     public XdmNode parseXMLString(String xml) throws SaxonApiException {
@@ -101,6 +106,8 @@ public class XQueryEngine extends SaxonCAPI {
         if (params != null && params.length != values.length) {
             throw new SaxonApiException("Length of params array not equal to the length of values array");
         }
+
+        compiler.setSchemaAware(schemaAware);
 
         if (params != null && params.length != 0) {
             for (int i = 0; i < params.length; i++) {
@@ -143,6 +150,8 @@ public class XQueryEngine extends SaxonCAPI {
                     } catch (URISyntaxException e) {
                         throw new SaxonApiException(e);
                     }
+                } else if (params[i].equals("sa") && !schemaAware) {
+                    compiler.setSchemaAware(true);
                 }
             }
         }
@@ -184,13 +193,20 @@ public class XQueryEngine extends SaxonCAPI {
     }
 
     public void executeQueryToFile(String cwd, String outFilename, String[] params, Object[] values) throws SaxonApiException {
-        XQueryEvaluator eval = xqueryEvaluator(cwd, params, values);
-        if (outFilename != null) {
-            serializer = resolveOutputFile(processor, cwd, outFilename);
-            eval.run(serializer);
-            return;
+        try{
+            XQueryEvaluator eval = xqueryEvaluator(cwd, params, values);
+            if (outFilename != null) {
+                serializer = resolveOutputFile(processor, cwd, outFilename);
+                eval.run(serializer);
+                return;
+            }
+            eval.run();
+        } catch(SaxonApiException ex){
+            SaxonCException saxonException = new SaxonCException(ex);
+            saxonExceptions.add(saxonException);
+            throw ex;
+
         }
-        eval.run();
     }
 
     public static void applyXQueryProperties(SaxonCAPI api, String cwd, Serializer serializer, Processor processor, XQueryEvaluator eval, String[] params, Object[] values, Properties props) throws SaxonApiException {
@@ -209,7 +225,11 @@ public class XQueryEngine extends SaxonCAPI {
         //Serializer serializer = processor.newSerializer();
         if (params != null && params.length != 0) {
             for (int i = 0; i < params.length; i++) {
-                if (params[i].startsWith("!")) {
+                if(params[i].equals("sa")) {
+
+
+                }
+                else if (params[i].startsWith("!")) {
                     String name = params[i].substring(1);
                     Serializer.Property prop = null;//Serializer.Property.get(name);
                     serializer.setOutputProperty(prop, (String) values[i]);
@@ -263,6 +283,7 @@ public class XQueryEngine extends SaxonCAPI {
                     }
                 }
             }
+
             if (sourceFile != null) {
                 eval.setSource(builder.build(sourceFile).asSource());
 
@@ -278,7 +299,12 @@ public class XQueryEngine extends SaxonCAPI {
         String sourcefile = "xmark10.xml";
         String q1 = "q1";
         String outfile = "outfile.xml";
-        XQueryEngine xquery = new XQueryEngine(false);
+        Processor processor = new Processor(true);
+        String [] paramcon = {"l"};
+
+        String [] valuesCon = {"on"};
+        SaxonCAPI.applyToConfiguration(processor, paramcon, valuesCon);
+        XQueryEngine xquery = new XQueryEngine(processor);
         XdmNode doc = xquery.parseXmlString(null, "<bookstore>\n" +
                 "\n" +
                 "<book category=\"COOKING\">\n" +
@@ -291,8 +317,9 @@ public class XQueryEngine extends SaxonCAPI {
         String[] params1 = {"s", "qs"};
         Object[] values1 = {"xmark10.xml", "count(//*)"};
 
+
         String[] params2 = {"node", "qs"};
-        Object[] values2 = {doc, "/bookstore/book/title"};
+        Object[] values2 = {doc, "saxon:line-number(/bookstore/book/title)"};
         String cwd = "/Users/ond1/work/development/files/xmark";
         //String cwd = "C:///www///html///query";
         //String cwd = "http://localhost/query";
@@ -302,7 +329,7 @@ public class XQueryEngine extends SaxonCAPI {
 
 
         // xquery.executeQueryToFile("/home/ond1/test/saxon9-5-1-1source", outfile, params1, values1);
-        System.out.println("Result1" + result);
+        System.out.println("Result1=" + result);
         System.out.println("Result2" + result2);
 
 

@@ -29,8 +29,8 @@ public class XPathProcessor extends SaxonCAPI {
         compiler = processor.newXPathCompiler();
     }
 
-    public XPathProcessor(Processor proc, boolean l) {
-        super(proc, l);
+    public XPathProcessor(Processor proc) {
+        super(proc);
         compiler = processor.newXPathCompiler();
     }
 
@@ -115,6 +115,7 @@ public class XPathProcessor extends SaxonCAPI {
                 System.err.println("xpathString: "+xpathStr);
             }
         }
+        compiler.setSchemaAware(schemaAware);
         selector = compiler.compile(xpathStr).load();
         applyXPathProperties(this, cwd, processor, selector, params, values);
 
