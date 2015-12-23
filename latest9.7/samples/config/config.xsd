@@ -21,6 +21,13 @@
           <xs:documentation> Defines which Saxon edition is to be used. </xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="licenseFileLocation" use="optional" type="xs:anyURI">
+        <xs:annotation>
+          <xs:documentation> Defines the location of the Saxon license file, as a URI relative to the base URI of the configuration file. 
+            When made absolute, it must use the "file" URI scheme. 
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
       <xs:attribute name="label" type="xs:string">
         <xs:annotation>
           <xs:documentation>A label to identify this configuration or otherwise transmit textual
