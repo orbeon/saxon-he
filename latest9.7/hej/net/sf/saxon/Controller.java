@@ -1931,13 +1931,13 @@ public class Controller implements ContextOriginator {
             }
             if (mode == null) {
                 throw new XPathException("Requested initial mode " +
-                                                 (initialMode == null ? "" : initialMode.getModeName().getDisplayName()) +
+                                                 (initialMode == null ? "#unnamed" : initialMode.getModeName().getDisplayName()) +
                                                  " does not exist", "XTDE0045");
             }
 
             if (mode.isDeclaredStreamable()) {
                 throw new XPathException("Requested initial mode " +
-                                                 (initialMode == null ? "" : initialMode.getModeName().getDisplayName()) +
+                                                 (initialMode == null ? "#unnamed" : initialMode.getModeName().getDisplayName()) +
                                                  " is streamable: must supply a StreamSource or SAXSource");
             }
 
