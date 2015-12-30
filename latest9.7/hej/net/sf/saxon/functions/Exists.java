@@ -26,7 +26,64 @@ import net.sf.saxon.value.BooleanValue;
  */
 public class Exists extends Aggregate {
 
-    // TODO: not clear why the code here is so different from Empty().
+    @Override
+    public Expression makeFunctionCall(Expression[] arguments) {
+        return new SystemFunctionCall(this, arguments) {
+
+            public Expression optimize(/*@NotNull*/ ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
+                Expression e2 = super.optimize(visitor, contextInfo);
+                if (e2 != this) {
+                    return e2;
+                }
+                // See if we can deduce the answer from the cardinality
+                int c = getArg(0).getCardinality();
+                if (c == StaticProperty.ALLOWS_ONE_OR_MORE) {
+                    return Literal.makeLiteral(BooleanValue.TRUE);
+                } else if (c == StaticProperty.ALLOWS_ZERO) {
+                    return Literal.makeLiteral(BooleanValue.FALSE);
+                }
+
+                // Don't sort the argument
+                setArg(0, getArg(0).unordered(false, visitor.isOptimizeForStreaming()));
+
+                // Rewrite
+                //    exists(A|B) => exists(A) or exists(B)
+                if (getArg(0) instanceof VennExpression && !visitor.isOptimizeForStreaming()) {
+                    VennExpression v = (VennExpression) getArg(0);
+                    if (v.getOperator() == Token.UNION) {
+                        Expression e0 = SystemFunction.makeCall("exists", getRetainedStaticContext(), v.getLhsExpression());
+                        Expression e1 = SystemFunction.makeCall("exists", getRetainedStaticContext(), v.getRhsExpression());
+                        return new OrExpression(e0, e1).optimize(visitor, contextInfo);
+                    }
+                }
+                return this;
+            }
+
+            @Override
+            public boolean effectiveBooleanValue(XPathContext c) throws XPathException {
+                try {
+                    boolean result;
+                    SequenceIterator iter = getArg(0).iterate(c);
+                    if ((iter.getProperties() & SequenceIterator.LOOKAHEAD) != 0) {
+                        result = ((LookaheadIterator) iter).hasNext();
+                    } else {
+                        result = iter.next() != null;
+                    }
+                    iter.close();
+                    return result;
+                } catch (XPathException e) {
+                    e.maybeSetLocation(getLocation());
+                    e.maybeSetContext(c);
+                    throw e;
+                }
+            }
+
+            @Override
+            public BooleanValue evaluateItem(XPathContext context) throws XPathException {
+                return BooleanValue.get(effectiveBooleanValue(context));
+            }
+        };
+    }
 
 
     public Expression makeOptimizedFunctionCall(
