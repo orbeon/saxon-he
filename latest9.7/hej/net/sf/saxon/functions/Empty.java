@@ -20,9 +20,6 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.LookaheadIterator;
 import net.sf.saxon.value.BooleanValue;
 
-import java.util.HashSet;
-import java.util.Set;
-
 
 /**
  * Implementation of the fn:exists function
@@ -127,20 +124,6 @@ public class Empty extends Aggregate {
                     }
                 }
                 return this;
-            }
-
-            /**
-             * Find any necessary getPreconditions for the satisfaction of this expression
-             * as a list of boolean expression to be evaluated on the context node
-             * The empty() function can often be used implictly within a predicate such as [not(*)]
-             * so it can stand as its own precondition.
-             *
-             * @return A list of conditions, or null if none have been computed
-             */
-            public Set<Expression> getPreconditions() {
-                HashSet<Expression> pre = new HashSet<Expression>();
-                pre.add(this.copy());
-                return pre;
             }
 
             /**
