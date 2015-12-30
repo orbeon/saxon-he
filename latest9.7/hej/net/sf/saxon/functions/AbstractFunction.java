@@ -108,18 +108,6 @@ public abstract class AbstractFunction extends AbstractItem implements Function 
     }
 
     /**
-     * Optimize the function (may modify it)
-     *
-     * @param visitor         the expression visitor, supplies context information
-     * @param contextItemType the context item type at the point where the function definition appears
-     * @throws XPathException if any failure occurs
-     */
-
-    public void optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
-        // default: no action
-    }
-
-    /**
      * Test whether this FunctionItem is deep-equal to another function item,
      * under the rules of the deep-equal function
      *
