@@ -82,6 +82,11 @@ public class Exists extends Aggregate {
             public BooleanValue evaluateItem(XPathContext context) throws XPathException {
                 return BooleanValue.get(effectiveBooleanValue(context));
             }
+
+            @Override
+            public int getNetCost() {
+                return 0;
+            }
         };
     }
 

@@ -149,6 +149,11 @@ public class Empty extends Aggregate {
                 iter.close();
                 return result;
             }
+
+            @Override
+            public int getNetCost() {
+                return 0;
+            }
         };
     }
 

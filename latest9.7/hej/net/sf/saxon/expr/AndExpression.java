@@ -92,6 +92,12 @@ public class AndExpression extends BooleanExpression {
         return this;
     }
 
+    @Override
+    public int getCost() {
+        // Assume the RHS will be evaluated 50% of the time
+        return getLhsExpression().getCost() + getRhsExpression().getCost() / 2;
+    }
+
     /**
      * Copy an expression. This makes a deep copy.
      *

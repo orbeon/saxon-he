@@ -15,7 +15,6 @@ import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.Token;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.BooleanValue;
 
 public class OrExpression extends BooleanExpression {
@@ -52,8 +51,6 @@ public class OrExpression extends BooleanExpression {
     /*@NotNull*/
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
 
-        final TypeHierarchy th = getConfiguration().getTypeHierarchy();
-
         if ((getLhsExpression() instanceof OrExpression) || (getRhsExpression() instanceof OrExpression)) {
             final Expression e2 = getConfiguration().obtainOptimizer().tryGeneralComparison(visitor, contextItemType, (OrExpression) this);
             if (e2 != null && e2 != this) {
@@ -83,6 +80,12 @@ public class OrExpression extends BooleanExpression {
 
 
         return this;
+    }
+
+    @Override
+    public int getCost() {
+        // Assume the RHS will be evaluated 50% of the time
+        return getLhsExpression().getCost() + getRhsExpression().getCost() / 2;
     }
 
     /**
