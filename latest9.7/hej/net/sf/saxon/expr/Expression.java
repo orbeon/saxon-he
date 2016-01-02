@@ -1637,7 +1637,7 @@ public abstract class Expression implements /*InstructionInfo,*/ IdentityCompara
         if (postureAndSweep != null) {
             return postureAndSweep.getSweep();
         } else {
-            throw new IllegalStateException("getSweep() called when streamability has not yet been computed");
+            throw new IllegalStateException(getClass().getName() + ".getSweep() called when streamability has not yet been computed");
         }
     }
 
