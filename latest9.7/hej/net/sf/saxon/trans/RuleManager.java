@@ -222,11 +222,6 @@ public final class RuleManager {
             UnionPattern up = (UnionPattern) pattern;
             Pattern p1 = up.getLHS();
             Pattern p2 = up.getRHS();
-
-            if (Double.isNaN(priority)) {
-                priority = pattern.getDefaultPriority();
-            }
-
             setTemplateRule(p1, eh, mode, module, priority);
             setTemplateRule(p2, eh, mode, module, priority);
             return;
