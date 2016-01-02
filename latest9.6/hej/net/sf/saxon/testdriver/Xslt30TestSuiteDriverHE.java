@@ -796,6 +796,8 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             return true;
         } else if ("combinations_for_numbering".equals(type)) {
             return !inverse;
+        } else if ("detect_accumulator_cycles".equals(type)) {
+            return inverse;
         } else {
             println("**** dependency not recognized: " + type);
             return false;

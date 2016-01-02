@@ -11,6 +11,8 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.flwor.FLWORExpression;
 import net.sf.saxon.expr.instruct.ForEachGroup;
+import net.sf.saxon.expr.instruct.Instruction;
+import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.trans.XPathException;
 
 import javax.xml.transform.SourceLocator;
@@ -322,10 +324,15 @@ public class ExpressionVisitor implements TypeCheckerEnvironment {
             } else if (parent.getExpressionName().equals("tryCatch")) {
                 return true; // not actually a loop, but it's a simple way to prevent inlining of variables (test QT3 try-007)
             } else {
+                Expression child = expressionStack.get(top);
                 if (parent instanceof ForEachGroup && parent.hasVariableBinding(binding)) {
                     return false;
                 }
                 if (hasLoopingSubexpression(parent, (expressionStack.get(top)))) {
+                    return true;
+                }
+                if (parent instanceof Instruction && ((Instruction)parent).getInstructionNameCode() == StandardNames.XSL_ITERATE &&
+                        childHasDifferentFocus(parent, child)) {
                     return true;
                 }
                 if (parent.hasVariableBinding(binding)) {
@@ -340,6 +347,15 @@ public class ExpressionVisitor implements TypeCheckerEnvironment {
         for (Operand info : parent.operands()) {
             if (info.getExpression() == child) {
                 return info.isEvaluatedRepeatedly();
+            }
+        }
+        return false;
+    }
+
+    private static boolean childHasDifferentFocus(Expression parent, Expression child) {
+        for (Operand o : parent.operands()) {
+            if (o.getExpression() == child && !o.hasSameFocus()) {
+                return true;
             }
         }
         return false;
