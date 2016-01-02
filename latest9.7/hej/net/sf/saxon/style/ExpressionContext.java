@@ -233,7 +233,9 @@ public class ExpressionContext implements XSLTStaticContext {
         VariableReference var;
         if (xslVariableDeclaration.hasProperty(SourceBinding.IMPLICITLY_DECLARED)) {
             // Used for the $value variable in xsl:accumulator-rule
-            return new SuppliedParameterReference(0);
+            SuppliedParameterReference supRef = new SuppliedParameterReference(0);
+            supRef.setSuppliedType(xslVariableDeclaration.getDeclaredType());
+            return supRef;
         }
         if (xslVariableDeclaration.hasProperty(SourceBinding.GLOBAL)) {
             var = new GlobalVariableReference(qName);

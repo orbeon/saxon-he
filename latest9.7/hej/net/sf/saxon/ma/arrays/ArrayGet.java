@@ -23,7 +23,7 @@ import net.sf.saxon.value.SequenceType;
  */
 public class ArrayGet extends ExtensionFunctionDefinition {
 
-    private final static StructuredQName name = new StructuredQName("array", NamespaceConstant.ARRAY_FUNCTIONS, "get");
+    public final static StructuredQName name = new StructuredQName("array", NamespaceConstant.ARRAY_FUNCTIONS, "get");
     private final static SequenceType[] ARG_TYPES = new SequenceType[]{ArrayItem.SINGLE_ARRAY_TYPE, SequenceType.SINGLE_INTEGER};
 
     /**

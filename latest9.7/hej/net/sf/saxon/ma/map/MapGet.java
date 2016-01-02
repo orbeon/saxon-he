@@ -23,7 +23,7 @@ import net.sf.saxon.value.SequenceType;
  */
 public class MapGet extends ExtensionFunctionDefinition {
 
-    private final static StructuredQName name = new StructuredQName("map", NamespaceConstant.MAP_FUNCTIONS, "get");
+    public final static StructuredQName name = new StructuredQName("map", NamespaceConstant.MAP_FUNCTIONS, "get");
     private final static SequenceType[] ARG_TYPES = new SequenceType[]{
             HashTrieMap.SINGLE_MAP_TYPE, SequenceType.SINGLE_ATOMIC
     };

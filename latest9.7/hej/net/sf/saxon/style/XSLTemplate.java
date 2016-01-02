@@ -683,7 +683,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                 // differ from one mode to another.
 
                 if (mode.getModeName().equals(Mode.OMNI_MODE)) {
-                    mgr.getUnnamedMode().addRule(match2, rule, module, module.getPrecedence(), prio, false);
+                    mgr.setTemplateRule(match2, rule, mgr.getUnnamedMode(), module, prio);
                     for (Mode m : mgr.getAllNamedModes()) {
                         if (m instanceof SimpleMode) {
                             TemplateRule ruleCopy = rule.copy();
@@ -691,7 +691,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                                 ruleCopy.setDeclaredStreamable(true);
                             }
                             compiledTemplateRules.put(m.getModeName(), ruleCopy);
-                            ((SimpleMode) m).addRule(match2.copy(), ruleCopy, module, module.getPrecedence(), prio, false);
+                            mgr.setTemplateRule(match2.copy(), ruleCopy, m, module, prio);
                         }
                     }
                 }

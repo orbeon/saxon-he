@@ -189,6 +189,15 @@ public class SourceBinding {
     }
 
     /**
+     * Set the declared type of the variable
+     * @param declaredType the declared type
+     */
+
+    public void setDeclaredType(SequenceType declaredType) {
+        this.declaredType = declaredType;
+    }
+
+    /**
      * Process the QName of the variable. Validate the name and place it in the "name" field;
      * if invalid, construct an error message and place a dummy name in the "name" field for
      * recovery purposes.
