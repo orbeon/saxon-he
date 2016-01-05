@@ -528,7 +528,7 @@ public class Transform {
             List<String> positional = options.getPositionalOptions();
             int currentPositionalOption = 0;
 
-            if (options.getOptionValue("it") == null && sourceFileName == null) {
+            if (run && options.getOptionValue("it") == null && sourceFileName == null) {
                 if (positional.size() == currentPositionalOption) {
                     badUsage("No source file name");
                 }
