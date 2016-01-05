@@ -48,7 +48,10 @@ public class LocalVariableBinding implements LocalBinding {
      */
 
     public LocalVariableBinding copy() {
-        return new LocalVariableBinding(variableName, requiredType);
+        LocalVariableBinding lb2 = new LocalVariableBinding(variableName, requiredType);
+        lb2.slotNumber = slotNumber;
+        lb2.refCount = refCount;
+        return lb2;
     }
 
     /**
