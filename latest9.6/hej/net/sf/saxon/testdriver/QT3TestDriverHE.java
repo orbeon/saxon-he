@@ -359,6 +359,9 @@ public class QT3TestDriverHE extends TestDriver {
         }
 
         XdmNode exceptionElement = exceptionsMap.get(testCaseName);
+        if (exceptionElement == null) {
+            exceptionElement = exceptionsMap.get(testSetName + "*");
+        }
         if (exceptionElement != null) {
             XdmItem config = xpath.evaluateSingle("configuration", exceptionElement);
 
