@@ -1,13 +1,10 @@
 package net.sf.saxon.option.cpp;
 
 
-import net.sf.saxon.lib.StandardErrorListener;
 import net.sf.saxon.s9api.*;
 import net.sf.saxon.type.SchemaException;
 
-import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Source;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.StringReader;
@@ -20,7 +17,6 @@ import java.util.*;
 public class SchemaValidatorForCpp extends SaxonCAPI {
 
     private SchemaManager schemaManager = null;
-    private SchemaValidator validator = null;
     private Source source = null;
     private String xmlString = null;
    protected List<SchemaException> schemaExceptions = new ArrayList<SchemaException>();
@@ -43,9 +39,7 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
         source = s;
     }
 
-    public SchemaValidator getValidator() {
-        return validator;
-    }
+
 
 
        /**
@@ -100,13 +94,13 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
         }
         Source source_xsd = resolveFileToSource(cwd, xsd);
 
-        validator = schemaManager.newSchemaValidator();
         //validator.setErrorListener(errorListener);
         schemaManager.load(source_xsd);
 
+
     }
 
-    /**
+   /**
      * Register the Schema which is given as a string representation.
      *
      * @param cwd      - Current Working directory
@@ -123,10 +117,11 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
             throw new SaxonApiException("Schema document not found");
         }
 
-        validator = schemaManager.newSchemaValidator();
+
         //validator.setErrorListener(errorListener);
 
         schemaManager.load(new StreamSource(new StringReader(xsd), systemId));
+
 
     }
 
@@ -153,11 +148,7 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
         }
     }
 
-    public void resetValidator(){
-        schemaManager = processor.getSchemaManager();
-        validator = null;
-        source = null;
-    }
+
 
     /**
      * Validate an instance document supplied as a Source object
@@ -168,15 +159,23 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
      * @param values -  The values for the parameters and properties required by the Validator
      *
      **/
-    public void validate(String cwd, String xsd, String sourceFilename, String outfilename, String[] params, Object[] values) throws SaxonApiException {
+    public void validate(String cwd, String sourceFilename, String outfilename, String[] params, Object[] values) throws SaxonApiException {
         source = null; //This is required to make sure the source object created from a previous call is not used
-        if (xsd == null && validator == null && sourceFilename == null) {
-            throw new SaxonApiException("Schema document not found");
-        }
+        SchemaValidator validator = null;
 
-        if (xsd != null && validator == null) {
-            registerSchema(cwd, xsd, params, values);
-        } else {
+        /*if (xsd == null && validator == null && sourceFilename == null) {
+            throw new SaxonApiException("Schema document not found");
+        } */
+
+//        if (xsd != null && validator == null) {
+//            Source source_xsd = resolveFileToSource(cwd, xsd);
+//
+//            schemaManager.load(source_xsd);
+//            validator = schemaManager.newSchemaValidator();
+//            validator.setErrorListener(errorListener);
+//        }
+
+        if(validator == null){
             validator = schemaManager.newSchemaValidator();
         }
 
@@ -187,9 +186,12 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
             serializer.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, "yes");
             validator.setDestination(serializer);
         }
-        applySchemaProperties(cwd, processor, this, params, values);
+        applySchemaProperties(cwd, processor, this, validator, params, values);
         if(source == null && sourceFilename != null && !sourceFilename.isEmpty()) {
             source = resolveFileToSource(cwd, sourceFilename);
+        }
+        if(source == null && xmlString != null) {
+            source = parseXmlString(null, xmlString).asSource();
         }
         if (source != null) {
             validator.validate(source);
@@ -199,7 +201,8 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
     }
 
     /**
-     * Validate an instance document supplied as a Source object with the validated docuemnt returned to the calling program
+     * Validate an instance document supplied as a Source object with the validated document returned to the calling program
+     *
      * @param cwd  - Current working directory
      * @param sourceFilename  - The name of the file to be validated
      * @param outputFilename  - The name of the file where output from the validator will be sent. Can be null. TODO: does not work as yet
@@ -208,19 +211,24 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
      * @return XdmNode
      *
      **/
-    public XdmNode validateToNode(String cwd, String xsd, String sourceFilename, String outputFilename, String[] params, Object[] values) throws SaxonApiException {
+    public XdmNode validateToNode(String cwd, String sourceFilename, String outputFilename, String[] params, Object[] values) throws SaxonApiException {
 
         source = null; //This is required to make sure the source object created from a previous call is not used
-        if (xsd != null && validator == null) {
-            registerSchema(cwd, xsd, params, values);
-        } else {
-            validator = schemaManager.newSchemaValidator();
-        }
+        SchemaValidator validator = schemaManager.newSchemaValidator();
+
+//        if (xsd != null && validator == null) {
+//            Source source_xsd = resolveFileToSource(cwd, xsd);
+//            validator.setErrorListener(errorListener);
+//            schemaManager.load(source_xsd);
+//            validator = schemaManager.newSchemaValidator();
+//        } else {
+//            validator = schemaManager.newSchemaValidator();
+//        }
 
         if(sourceFilename != null) {
             return parseXmlFile(cwd, validator, sourceFilename);
         }
-        applySchemaProperties(cwd, processor, this, params, values);
+        applySchemaProperties(cwd, processor, this, validator, params, values);
 
 
         if(source != null) {
@@ -246,10 +254,11 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
      * @param cwd       - current working directory
      * @param processor - required to use the same processor as for the compiled stylesheet
      * @param thisClass - pass the current object to set local variables supplied in the parameters
+     * @param validator
      * @param params    - parameters and property names given as an array of stings
      * @param values    - the values of the parameters and properties. given as a array of Java objects
      */
-    public static void applySchemaProperties(String cwd, Processor processor, SchemaValidatorForCpp thisClass, String[] params, Object[] values) throws SaxonApiException {
+    public static void applySchemaProperties(String cwd, Processor processor, SchemaValidatorForCpp thisClass, SchemaValidator validator, String[] params, Object[] values) throws SaxonApiException {
         if (params != null) {
             String initialTemplate;
             String initialMode;
@@ -273,15 +282,15 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
                         System.err.println("parameter length:" + params[i].length());
                     }
                     if (params[i].equals("lax")) {
-                        thisClass.getValidator().setLax(((Boolean) values[i]).booleanValue());
+                        validator.setLax(((Boolean) values[i]).booleanValue());
                     }  else if (params[i].equals("element-name")) {
                         String paramName = (String) values[i];
                         QName qname = QName.fromClarkName(paramName);
-                        thisClass.getValidator().setDocumentElementName(qname);
+                        validator.setDocumentElementName(qname);
                     } else if (params[i].equals("element-type")) {
                         String paramName = (String) values[i];
                         QName qname = QName.fromClarkName(paramName);
-                        thisClass.getValidator().setDocumentElementTypeName(qname);
+                        validator.setDocumentElementTypeName(qname);
                     }else if (params[i].equals("report")) {
                         //TODO: output validation to file.
                         //thisClass.getValidator().setErrorListener(thisClass.schemaListener);
@@ -293,7 +302,7 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
 
                             thisClass.serializer.setOutputProperty(Serializer.Property.INDENT, "yes");
                             thisClass.serializer.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, "yes");
-                            thisClass.getValidator().setDestination(thisClass.serializer);
+                            validator.setDestination(thisClass.serializer);
                         }
                     } else if (params[i].equals("s")) {
                         if (values[i] instanceof String) {
@@ -352,24 +361,42 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
 
     }
 
+  public static void testValidator3(SchemaValidatorForCpp val) throws SaxonApiException {
+        String cwd = "/Users/ond1/work/development/svn/saxon-dev/src/c/Saxon.C.Api/cppTests/";
+ System.out.println("Test 3: Validate Schema from string");
+  String sch1 = "<?xml version='1.0' encoding='UTF-8'?><schema targetNamespace='http://myexample/family' " +
+          "xmlns:fam='http://myexample/family' xmlns='http://www.w3.org/2001/XMLSchema'><element name='FamilyMember'" +
+          " type='string' /><element name='Parent' type='string' substitutionGroup='fam:FamilyMember'/>" +
+          "<element name='Child' type='string' substitutionGroup='fam:FamilyMember'/><element name='Family'><" +
+          "complexType><sequence><element ref='fam:FamilyMember' maxOccurs='unbounded'/></sequence></complexType>" +
+          "</element>  </schema>";
+
+val.registerSchemaString(cwd, sch1, "file///o", null, null);
+
+	val.validate(cwd, "family.xml",  null, null, null);
+
+}
+
 
 
 
     public static void main(String[] args) throws SaxonApiException {
         SchemaValidatorForCpp validatorForCpp = new SchemaValidatorForCpp();
+
         XdmValue item = SaxonCAPI.createXdmAtomicItem("QName", "{http://myDomain.co.uk/namespaces/ns1}myElement");
         validatorForCpp.getProcessor().setConfigurationProperty("http://saxon.sf.net/feature/validation-warnings", "true");
         String cwd = "/Users/ond1/work/development/svn/saxon-dev/tests/junit/testdata/";
 
-        validatorForCpp.registerSchema(cwd, "books.xsd", null, null);
-        validatorForCpp.validate(cwd, null, "book-wrapper.xml", null, null, null);
-        validatorForCpp.resetValidator();
+
+        validatorForCpp.validate(cwd, "book-wrapper.xml", null, null, null);
+
         System.out.println("\n\n Testing family.xml\n");
-        validatorForCpp.validate("/Users/ond1/", null, "family.xml", null, null, null);
+        validatorForCpp.validate("/Users/ond1/", "family.xml", null, null, null);
 
 
          String invalid_xml = "<?xml version='1.0'?><request><a/><!--comment--></request>";
-        String sch1 = "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" elementFormDefault=\"qualified\" attributeFormDefault=\"unqualified\">\n" +
+        String sch1 = "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" elementFormDefault=\"qualified\"" +
+                " attributeFormDefault=\"unqualified\">\n" +
                 "\t<xs:element name=\"request\">\n" +
                 "\t\t<xs:complexType>\n" +
                 "\t\t\t<xs:sequence>\n" +
@@ -382,23 +409,29 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
                 "</xs:schema>";
 
 
-        String doc1 = "<Family xmlns=\"http://myexample/family\">\n" +
+        String doc1 = "<request xmlns=\"http://myexample/family\">\n" +
                 "  <Parent>John</Parent>\n" +
                 "  <Child>Alice</Child>\n" +
-                "</Family>";
-
+                "</request>";
+        String[] paramsSch = {"xsdversion"};
+        Object[] valuesSch = {"1.1"};
         XdmNode sourceNode = validatorForCpp.parseXmlString(invalid_xml);
         String[] params = {"node", "xsdversion"};
         Object[] values = {sourceNode, "1.1"};
-        validatorForCpp.registerSchemaString(cwd, sch1, "file///o", params, values);
-        validatorForCpp.validate(cwd, null, null, null, params, values);
-        validatorForCpp.resetValidator();
-        String[] params1 = {"string", "xsdversion"};
-        Object[] values1 = {doc1, "1.1"};
+        validatorForCpp.registerSchemaString(cwd, sch1, "file///o", paramsSch, valuesSch);
+        validatorForCpp.validate(cwd, null, null, params, values);
+
+        XdmNode sourceNode2 = validatorForCpp.parseXmlString(doc1);
+        String[] params1 = {"string", "xsd-string", "xsdversion"};
+        Object[] values1 = {doc1, sch1, "1.1"};
 
         System.err.println("Test 3: ");
-        validatorForCpp.registerSchemaString(cwd, sch1, "file///o", params, values);
-        XdmNode resultDoc = validatorForCpp.validateToNode(cwd, null, null, null, params1, values1);
+        testValidator3(validatorForCpp);
+
+        System.err.println("Test 5: ");
+        validatorForCpp.registerSchemaString(cwd, sch1, "file///o1", paramsSch, valuesSch);
+        //XdmNode resultDoc = validatorForCpp.validateToNode(cwd, null, null, null, params1, values1);
+        validatorForCpp.validate(cwd, null, null, params1, values1);
 
 
     }
