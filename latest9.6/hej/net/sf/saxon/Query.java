@@ -441,7 +441,7 @@ public class Query {
                 } catch (SaxonApiException err) {
                     if (err.getCause() instanceof XPathException && ((XPathException) err.getCause()).hasBeenReported()) {
                         String category = ((XPathException) err.getCause()).isTypeError() ? "type" : "dynamic";
-                        System.err.println("Query failed with " + category + " error: " + err.getCause().getMessage());
+                        quit("Query failed with " + category + " error: " + err.getCause().getMessage(), 2);
                     } else {
                         throw err;
                     }
