@@ -573,10 +573,13 @@ public class FormatDate extends SystemFunctionCall implements Callable {
 
         String s = numberer.format(value, UnicodeString.makeUnicodeString(primary), null, letterValue, ordinal);
         int len = StringValue.getStringLength(s);
-        while (len < min) {
-            // assert: this can only happen as a result of width specifiers, in which case we're using ASCII digits
-            s = ("00000000" + s).substring(s.length() + 8 - min);
-            len = StringValue.getStringLength(s);
+        if (len < min) {
+            FastStringBuffer fsb = new FastStringBuffer(s);
+            while (len < min) {
+                fsb.prepend("0");
+                len = len + 1;
+            }
+            s = fsb.toString();
         }
         if (len > max) {
             // the year is the only field we allow to be truncated
