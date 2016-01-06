@@ -245,7 +245,7 @@ public class FixedElement extends ElementCreator {
                                                  NodeName elementName, Expression content) throws XPathException {
         final Configuration config = env.getConfiguration();
         ItemType itemType;
-        int fp = elementName.getFingerprint();
+        int fp = elementName.allocateNameCode(config.getNamePool()) & NamePool.FP_MASK;   // Bug #2563 - namespaced alias in unoptimized export
         if (schemaType == null) {
             if (validation == Validation.STRICT) {
                 SchemaDeclaration decl = config.getElementDeclaration(fp);
