@@ -711,11 +711,12 @@ public class TestOutcome {
             List<String> warnings = new ArrayList<String>(1);
             try {
                 RegularExpression re = Version.platform.compileRegularExpression(regex, flagsAtt, "XP30", warnings);
-                if (re.containsMatch(getPrincipalSerializedResult())) {
+                //if (re.containsMatch(getPrincipalSerializedResult())) {
+                if (re.containsMatch(result.serialization)) {
                     return true;
                 } else {
                     driver.println("Serialized result:");
-                    driver.println(getPrincipalSerializedResult());
+                    driver.println(result.serialization);
                     //driver.println("Regex:");
                     //driver.println(regex);
                     return false;

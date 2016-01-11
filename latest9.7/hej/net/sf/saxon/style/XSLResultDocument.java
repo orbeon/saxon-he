@@ -151,6 +151,8 @@ public class XSLResultDocument extends StyleElement {
                 } catch (XPathException err) {
                     compileError(err.getMessage(), "XTDE1460");
                 }
+            } else {
+                getPrincipalStylesheetModule().setNeedsDynamicOutputProperties(true);
             }
         }
 
@@ -208,16 +210,12 @@ public class XSLResultDocument extends StyleElement {
         // In fact this is a bit of a fudge. If a function or variable is inlined, we sometimes don't detect
         // XTDE1480 at run-time. Doing this static check improves our chances, though it won't catch all cases.
         AxisIterator ai = iterateAxis(AxisInfo.ANCESTOR);
-        while (true) {
-            NodeInfo node = ai.next();
-            if (node == null) {
-                break;
-            }
+        NodeInfo node;
+        while ((node = ai.next()) != null) {
             if (node instanceof XSLGeneralVariable || node instanceof XSLFunction) {
                 issueWarning("An xsl:result-document instruction inside " + node.getDisplayName() +
                         " will always fail at run-time", this);
-                ErrorExpression ee = new ErrorExpression("Call to xsl:result-document while in temporary output state", "XTDE1480", false);
-                return ee;
+                return new ErrorExpression("Call to xsl:result-document while in temporary output state", "XTDE1480", false);
             }
         }
 

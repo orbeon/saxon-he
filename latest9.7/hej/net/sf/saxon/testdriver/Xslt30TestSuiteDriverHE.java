@@ -406,7 +406,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
 
                     controller.setOutputURIResolver(serializingOutput);
                     Destination dest = null;
-                    if (resultAsTree) {
+                    if (resultAsTree && !resultSerialized) {
                         // If we want non-serialized, we need to accumulate any result documents as trees too
                         controller.setOutputURIResolver(
                                 new OutputResolver(env.processor, outcome, false));

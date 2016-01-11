@@ -26,6 +26,7 @@ import net.sf.saxon.lib.*;
 import net.sf.saxon.om.*;
 import net.sf.saxon.serialize.CharacterMapIndex;
 import net.sf.saxon.serialize.ReconfigurableSerializer;
+import net.sf.saxon.style.StylesheetPackage;
 import net.sf.saxon.style.XSLResultDocument;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.Err;
@@ -626,14 +627,13 @@ public class ResultDocument extends Instruction
                 throw err;
             }
             StructuredQName qName = new StructuredQName(parts[0], uri, parts[1]);
-            //TODO: reinstate
-//            computedGlobalProps = getExecutable().getOutputProperties(qName);
-//            if (computedGlobalProps == null) {
-//                XPathException err = new XPathException("There is no xsl:output format named " + format);
-//                err.setErrorCode("XTDE1460");
-//                err.setXPathContext(context);
-//                throw err;
-//            }
+            computedGlobalProps = ((StylesheetPackage)getRetainedStaticContext().getPackageData()).getNamedOutputProperties(qName);
+            if (computedGlobalProps == null) {
+                XPathException err = new XPathException("There is no xsl:output format named " + format);
+                err.setErrorCode("XTDE1460");
+                err.setXPathContext(context);
+                throw err;
+            }
 
         }
 

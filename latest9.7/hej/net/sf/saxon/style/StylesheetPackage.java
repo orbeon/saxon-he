@@ -326,6 +326,16 @@ public class StylesheetPackage extends PackageData {
     }
 
     /**
+     * Get a set of named output properties
+     * @param name the output declaration name
+     * @return the corresponding properties; or null if the name is unknown
+     */
+
+    public Properties getNamedOutputProperties(StructuredQName name) {
+        return namedOutputProperties.get(name);
+    }
+
+    /**
      * Get the set of namespaces of schema declarations imported into this package
      * @return the set of imported namespaces
      */
