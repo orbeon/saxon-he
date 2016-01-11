@@ -696,13 +696,14 @@ public class TestOutcome {
             }*/
             String regex = assertion.getStringValue();
             List<String> warnings = new ArrayList<String>(1);
+            String serializedResult = result.serialization;
             try {
                 RegularExpression re = Configuration.getPlatform().compileRegularExpression(regex, flagsAtt, "XP30", warnings);
-                if (re.containsMatch(getPrincipalSerializedResult())) {
+                if (re.containsMatch(serializedResult)) {
                     return true;
                 } else {
                     driver.println("Serialized result:");
-                    driver.println(getPrincipalSerializedResult());
+                    driver.println(serializedResult);
                     //driver.println("Regex:");
                     //driver.println(regex);
                     return false;
