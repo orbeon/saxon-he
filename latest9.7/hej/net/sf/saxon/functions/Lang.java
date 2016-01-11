@@ -18,27 +18,6 @@ import net.sf.saxon.value.BooleanValue;
 
 public class Lang extends SystemFunction  {
 
-
-    /*@NotNull*/
-//    public Expression typeCheck(ExpressionVisitor visitor, /*@Nullable*/ ContextItemStaticInfo contextInfo) throws XPathException {
-//        if (getArity() == 1) {
-//            if (contextInfo == null) {
-//                XPathException err = new XPathException("The context item for lang() is absent");
-//                err.setErrorCode("XPDY0002");
-//                err.setIsTypeError(true);
-//                err.setLocation(getLocation());
-//                throw err;
-//            } else if (contextInfo instanceof AtomicType) {
-//                XPathException err = new XPathException("The context item for lang() is not a node");
-//                err.setErrorCode("XPTY0004");
-//                err.setIsTypeError(true);
-//                err.setLocation(getLocation());
-//                throw err;
-//            }
-//        }
-//        return super.typeCheck(visitor, contextInfo);
-//    }
-
     /**
      * Test whether the context node has the given language attribute
      *
@@ -70,7 +49,7 @@ public class Lang extends SystemFunction  {
             if (arglang.equalsIgnoreCase(doclang)) {
                 return true;
             }
-            int hyphen = doclang.indexOf("-");
+            int hyphen = doclang.lastIndexOf("-");
             if (hyphen < 0) {
                 return false;
             }
