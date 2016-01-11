@@ -101,7 +101,7 @@ public class Lang extends SystemFunctionCall implements Callable {
             if (arglang.equalsIgnoreCase(doclang)) {
                 return true;
             }
-            int hyphen = doclang.indexOf("-");
+            int hyphen = doclang.lastIndexOf("-");
             if (hyphen < 0) {
                 return false;
             }
