@@ -321,14 +321,11 @@ public class StandardErrorListener implements UnfailingErrorListener {
             XPathParser.NestedLocation nestedLoc = (XPathParser.NestedLocation)xe.getLocator();
             Location outerLoc = nestedLoc.getContainingLocation();
 
-
-            int line = nestedLoc.getLocalLineNumber();
-            int column = nestedLoc.getColumnNumber();
-            String innerLoc = "";
-
-            if ((line != outerLoc.getLineNumber() && line > 0) ||
-                (column != outerLoc.getColumnNumber() && column != 0) ||
-                nestedLoc.getNearbyText() != null) {
+            if (outerLoc instanceof AttributeLocation) {
+                // Typical XSLT case
+                int line = nestedLoc.getLocalLineNumber();
+                int column = nestedLoc.getColumnNumber();
+                String innerLoc = "";
                 String lineInfo = line <= 0 ? "" : "on line " + line + ' ';
                 String columnInfo = "at " + (line <= 0 ? "char " : "column ") + column + ' ';
                 String nearBy = nestedLoc.getNearbyText();
@@ -336,54 +333,42 @@ public class StandardErrorListener implements UnfailingErrorListener {
                 innerLoc = lineInfo + columnInfo;
                 if (nearBy != null && !nearBy.isEmpty()) {
                     innerLoc += (nearBy.startsWith("...") ? "near" : "in") +
-                        ' ' + Err.wrap(nearBy) + ' ';
+                            ' ' + Err.wrap(nearBy) + ' ';
                 }
-//                if (!innerLoc.isEmpty()) {
-//                    innerLoc += "of ";
-//                }
+
+                String where = innerLoc;
+                String line1 = kind + where + langText + getLocationMessageText(outerLoc) + "\n";
+                String line2 = "  " + wordWrap(getExpandedMessage(exception));
+                message = line1 + line2;
+
+            } else {
+
+
+                int line = nestedLoc.getLocalLineNumber();
+                int column = nestedLoc.getColumnNumber();
+                String innerLoc = "";
+
+                // Typical XQuery case; no extra information available from the outer location
+                innerLoc += line < 0 ? "" : "on line " + (line + 1) + ' ';
+                if (column >= 0) {
+                    innerLoc += "at " + (line < 0 ? "char " : "column ") + (column + 1) + ' ';
+                }
+                if (outerLoc.getLineNumber() > 1) {
+                    innerLoc += "(" + langText + " on line " + outerLoc.getLineNumber() + ") ";
+                }
+                if (outerLoc.getSystemId() != null) {
+                    innerLoc += "of " + outerLoc.getSystemId();
+                }
+                String nearBy = nestedLoc.getNearbyText();
+                if (nearBy != null && !nearBy.isEmpty()) {
+                    innerLoc += (nearBy.startsWith("...") ? "near" : "in") +
+                            ' ' + Err.wrap(nearBy) + ' ';
+                }
+                String line1 = kind + innerLoc + "\n";
+
+                String line2 = "  " + wordWrap(getExpandedMessage(exception));
+                message = line1 + line2;
             }
-
-
-
-            String where = innerLoc;
-
-//            if (outerLoc instanceof ExpressionContext.AttributeLocation) {
-//                where = innerLoc;
-////                ExpressionContext.AttributeLocation aloc = (ExpressionContext.AttributeLocation)outerLoc;
-////                if (aloc.getElementName() != null) {
-////                    where = innerLoc + aloc.getElementName().getDisplayName();
-////                    if (aloc.getAttributeName() != null) {
-////                        where += "/@" + aloc.getAttributeName().getDisplayName();
-////                    }
-////                    where += " ";
-////                } else {
-////                    where = innerLoc + "attribute ";
-////                }
-//            }
-            String line1 = kind + where + langText + getLocationMessageText(outerLoc) + "\n";
-
-//            int line = nestedLoc.getLocalLineNumber();
-//            int column = nestedLoc.getColumnNumber();
-//            String line2 = "";
-//
-//            if ((line != outerLoc.getLineNumber() && line > 0) ||
-//                    (column != outerLoc.getColumnNumber() && column != 0) ||
-//                    nestedLoc.getNearbyText() != null) {
-//                String lineInfo = line <= 0 ? "" : "on line " + line + ' ';
-//                String columnInfo = "at " + (line <= 0 ? "char " : "column ") + column + ' ';
-//                String nearBy = nestedLoc.getNearbyText();
-//
-//                line2 = "  " + lineInfo + columnInfo;
-//                if (nearBy != null) {
-//                    line2 += (nearBy.startsWith("...") ? "near" : "in") +
-//                        ' ' + Err.wrap(nearBy) + ":\n";
-//                } else {
-//                    line2 += ":\n  ";
-//                }
-//            }
-
-            String line2 = "  " + wordWrap(getExpandedMessage(exception));
-            message = line1 + line2;
 
         } else if (xe instanceof ValidationException) {
             String explanation = getExpandedMessage(exception);
