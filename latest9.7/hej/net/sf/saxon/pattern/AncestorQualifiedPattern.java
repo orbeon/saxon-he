@@ -41,6 +41,8 @@ public final class AncestorQualifiedPattern extends Pattern {
         this.basePattern = base;
         this.upperPattern = upper;
         this.upwardsAxis = axis;
+        adoptChildExpression(base);
+        adoptChildExpression(upper);
     }
 
     /**

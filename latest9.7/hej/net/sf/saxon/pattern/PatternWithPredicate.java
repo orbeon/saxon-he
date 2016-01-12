@@ -37,6 +37,8 @@ public class PatternWithPredicate extends Pattern {
     public PatternWithPredicate(Pattern basePattern, Expression predicate) {
         this.basePattern = basePattern;
         this.predicate = predicate;
+        adoptChildExpression(basePattern);
+        adoptChildExpression(predicate);
     }
 
     public Expression getPredicate() {
