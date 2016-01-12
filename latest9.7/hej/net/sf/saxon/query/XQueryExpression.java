@@ -19,6 +19,7 @@ import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.PackageData;
 import net.sf.saxon.expr.XPathContextMajor;
 import net.sf.saxon.expr.instruct.Executable;
+import net.sf.saxon.expr.instruct.GlobalVariable;
 import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.*;
@@ -134,29 +135,18 @@ public class XQueryExpression implements Location {
      */
 
     public boolean usesContextItem() {
-//        GlobalVariable contextVar = getExecutable().getInitialContextItemVariable();
-//        Binding[] binding = null;
-//        if (contextVar != null) {
-//            binding = new Binding[]{contextVar};
-//        }
         if (ExpressionTool.dependsOnFocus(expression)) {
             return true;
         }
-//        if (binding != null && ExpressionTool.dependsOnVariable(expression, binding)) {
-//            return true;
-//        }
-//        List<GlobalVariable> map = getPackageData().getGlobalVariableList();
-//        if (map != null) {
-//            for (GlobalVariable var : map) {
-//                Expression select = var.getSelectExpression();
-//                if (select != null && ExpressionTool.dependsOnFocus(select)) {
-//                    return true;
-//                }
-//                if (select != null && binding != null && ExpressionTool.dependsOnVariable(select, binding)) {
-//                    return true;
-//                }
-//            }
-//        }
+        List<GlobalVariable> map = getPackageData().getGlobalVariableList();
+        if (map != null) {
+            for (GlobalVariable var : map) {
+                Expression select = var.getSelectExpression();
+                if (select != null && ExpressionTool.dependsOnFocus(select)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
