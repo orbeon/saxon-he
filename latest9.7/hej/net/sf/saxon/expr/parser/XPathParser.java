@@ -3847,7 +3847,7 @@ public class XPathParser {
 
         /**
          * Get the line number within the containing entity. This is the sum of the containing
-         * location's line number, plus the local line number, minus one. Returns -1 if unknown.
+         * location's line number, plus the local line number. Returns -1 if unknown.
          *
          * @return the line number within the containing entity, or -1 if unknown.
          */

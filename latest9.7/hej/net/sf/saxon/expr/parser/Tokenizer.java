@@ -1263,7 +1263,7 @@ public final class Tokenizer {
      * Return the line number corresponding to a given offset in the expression
      *
      * @param offset the byte offset in the expression
-     * @return the line number
+     * @return the line number. Line and column numbers reported by the tokenizer start at zero.
      */
 
     public int getLineNumber(int offset) {
@@ -1274,7 +1274,7 @@ public final class Tokenizer {
      * Return the column number corresponding to a given offset in the expression
      *
      * @param offset the byte offset in the expression
-     * @return the column number
+     * @return the column number. Line and column numbers reported by the tokenizer start at zero.
      */
 
     public int getColumnNumber(int offset) {
