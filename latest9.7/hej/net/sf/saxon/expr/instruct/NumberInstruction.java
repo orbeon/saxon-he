@@ -45,6 +45,7 @@ public class NumberInstruction extends Expression {
     public static final int MULTI = 1;
     public static final int ANY = 2;
     public static final int SIMPLE = 3;
+    public static final String[] LEVEL_NAMES = new String[]{"single", "multi", "any", "simple"};
 
     private Operand selectOp;
     private Operand valueOp;
@@ -587,7 +588,7 @@ public class NumberInstruction extends Expression {
             out.emitAttribute("flags", flags);
         }
         if (valueOp == null) {
-            out.emitAttribute("level", level == ANY ? "any" : level == SINGLE ? "single" : "multi");
+            out.emitAttribute("level", LEVEL_NAMES[level]);
         }
         if (count != null) {
             out.setChildRole("count");
