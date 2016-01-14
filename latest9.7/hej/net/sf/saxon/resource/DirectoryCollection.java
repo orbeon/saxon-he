@@ -154,14 +154,16 @@ public class DirectoryCollection extends AbstractResourceCollection {
     protected Iterator<String> directoryContents(File directory, URIQueryParameters params) {
 
         FilenameFilter filter = null;
-        FilenameFilter f = params.getFilenameFilter();
-        if (f != null) {
-            filter = f;
-        }
         boolean recurse = false;
-        Boolean r = params.getRecurse();
-        if (r != null) {
-            recurse = r;
+        if (params != null) {
+            FilenameFilter f = params.getFilenameFilter();
+            if (f != null) {
+                filter = f;
+            }
+            Boolean r = params.getRecurse();
+            if (r != null) {
+                recurse = r;
+            }
         }
 
         Stack<Iterator<File>> directories = new Stack<Iterator<File>>();
