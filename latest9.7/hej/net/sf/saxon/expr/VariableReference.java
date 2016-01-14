@@ -110,7 +110,7 @@ public abstract class VariableReference extends Expression implements BindingRef
         flattened = ref.flattened;
         inLoop = ref.inLoop;
         filtered = ref.filtered;
-        //#ifdef STREAM
+        //#ifdefined STREAM
         setPostureAndSweep(ref.getPostureAndSweepIfKnown());
         //#endif
         ExpressionTool.copyLocationInfo(ref, this);
