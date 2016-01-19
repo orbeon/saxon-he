@@ -15,7 +15,6 @@ import net.sf.saxon.Controller;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.Item;
-import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.Mode;
@@ -255,21 +254,21 @@ public class ApplyImports extends Instruction implements ITemplateCall {
         if (modeComponent == null) {
             throw new AssertionError("Current mode is null");
         }
-        if (context.getCurrentIterator() == null) {
-            XPathException e = new XPathException("Cannot call xsl:apply-imports when there is no context item");
-            e.setXPathContext(context);
-            e.setErrorCode("XTDE0565");
-            e.setLocation(getLocation());
-            throw e;
-        }
+//        if (context.getCurrentIterator() == null) {
+//            XPathException e = new XPathException("Cannot call xsl:apply-imports when there is no context item");
+//            e.setXPathContext(context);
+//            e.setErrorCode("XTDE0565");
+//            e.setLocation(getLocation());
+//            throw e;
+//        }
         Item currentItem = context.getCurrentIterator().current();
-        if (!allowAnyItem && !(currentItem instanceof NodeInfo)) {
-            XPathException e = new XPathException("Cannot call xsl:apply-imports when context item is not a node");
-            e.setXPathContext(context);
-            e.setErrorCode("XTDE0565");
-            e.setLocation(getLocation());
-            throw e;
-        }
+//        if (!allowAnyItem && !(currentItem instanceof NodeInfo)) {
+//            XPathException e = new XPathException("Cannot call xsl:apply-imports when context item is not a node");
+//            e.setXPathContext(context);
+//            e.setErrorCode("XTDE0565");
+//            e.setLocation(getLocation());
+//            throw e;
+//        }
         Mode mode = modeComponent.getCode();
         Rule rule = mode.getRule(currentItem, min, max, context);
         if (rule == null) {             // use the default action for the node

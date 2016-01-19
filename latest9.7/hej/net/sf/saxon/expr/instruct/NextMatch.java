@@ -17,7 +17,6 @@ import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.XPathContextMajor;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.om.Item;
-import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.Mode;
@@ -87,19 +86,19 @@ public class NextMatch extends ApplyImports {
         if (mode == null) {
             throw new AssertionError("Current mode is null");
         }
-        if (context.getCurrentIterator() == null) {
-            XPathException e = new XPathException("Cannot call xsl:next-match when there is no context item");
-            e.setXPathContext(context);
-            e.setErrorCode("XTDE0565");
-            throw e;
-        }
+//        if (context.getCurrentIterator() == null) {
+//            XPathException e = new XPathException("Cannot call xsl:next-match when there is no context item");
+//            e.setXPathContext(context);
+//            e.setErrorCode("XTDE0565");
+//            throw e;
+//        }
         Item currentItem = context.getCurrentIterator().current();
-        if (!allowAnyItem && !(currentItem instanceof NodeInfo)) {
-            XPathException e = new XPathException("Cannot call xsl:next-match when context item is not a node");
-            e.setXPathContext(context);
-            e.setErrorCode("XTDE0565");
-            throw e;
-        }
+//        if (!allowAnyItem && !(currentItem instanceof NodeInfo)) {
+//            XPathException e = new XPathException("Cannot call xsl:next-match when context item is not a node");
+//            e.setXPathContext(context);
+//            e.setErrorCode("XTDE0565");
+//            throw e;
+//        }
         Rule rule = mode.getCode().getNextMatchRule(currentItem, currentRule, context);
         //Rule rule = controller.getRuleManager().getNextMatchHandler(currentItem, mode.getCode(), currentRule, context);
 
