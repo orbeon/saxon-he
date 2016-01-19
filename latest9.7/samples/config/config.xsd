@@ -925,46 +925,66 @@
       <xs:choice maxOccurs="unbounded" minOccurs="0">
         <xs:element ref="c:precondition"/>
         <xs:element ref="c:index"/>
-        <xs:element ref="c:rewrite"/>
+        <!--<xs:element ref="c:rewrite"/>-->
       </xs:choice>
-      <xs:attribute name="optimize" type="c:yesOrNoType">
+      <xs:attribute name="dita" type="xs:boolean" default="false">
         <xs:annotation>
-          <xs:documentation>Whether rules should be optimized</xs:documentation>
+          <xs:documentation>Whether to apply indexation for generic predicated template rules in the DITA-OT
+            framework.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="rewrites" type="c:yesOrNoType">
+      <xs:attribute name="optimize" type="xs:boolean" default="true">
+        <xs:annotation>
+          <xs:documentation>Whether to carry out any rule optimization. 
+            Default true if a pattern optimization element exists, else false.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <!--<xs:attribute name="rewrites" type="xs:boolean">
         <xs:annotation>
           <xs:documentation>Whether rules should be rewritten</xs:documentation>
         </xs:annotation>
-      </xs:attribute>
-      <xs:attribute name="index.rules" type="c:yesOrNoType">
+      </xs:attribute>-->
+      <xs:attribute name="index.comparison.predicates" type="xs:boolean" default="false">
         <xs:annotation>
-          <xs:documentation>Whether rules should be indexed against indexation
-            patterns</xs:documentation>
+          <xs:documentation>Whether to apply indexation for generic value-comparison predicated template rules
+            (<code>*[<em>exp</em>=<em>value</em>]</code>).</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="preconditions" type="c:yesOrNoType">
+      <xs:attribute name="index.minUses" type="xs:integer" default="6">
         <xs:annotation>
-          <xs:documentation>Whether preconditions for rules should be gathered</xs:documentation>
+          <xs:documentation>The minimum number of rules that share some common indexation to build an index.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="rules" type="c:yesOrNoType">
+      <xs:attribute name="index.rules" type="xs:boolean" default="false">
+        <xs:annotation>
+          <xs:documentation>Whether indexes for rules should be generated from configuration-supplied indexation
+            patterns.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="preconditions" type="xs:boolean" default="false">
+        <xs:annotation>
+          <xs:documentation>Whether to generate pattern-directed preconditions for rules. Default
+            <code>false</code>, in the absence of <code>&lt;precondition&gt;</code>
+            children.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+     <!-- <xs:attribute name="rules" type="xs:boolean">
         <xs:annotation>
           <xs:documentation>Not sure what this means!!!</xs:documentation>
         </xs:annotation>
-      </xs:attribute>
+      </xs:attribute>-->
       <xs:attribute name="precondition.minUses" type="xs:integer">
         <xs:annotation>
           <xs:documentation>The minimum number of uses a precondition needs to be considered for
             application</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="token" type="c:yesOrNoType">
+     <!-- <xs:attribute name="token" type="c:yesOrNoType">
         <xs:annotation>
           <xs:documentation>Controls whether tokenisation preconditions are
             generated</xs:documentation>
         </xs:annotation>
-      </xs:attribute>
+      </xs:attribute>-->
     </xs:complexType>
   </xs:element>
   <xs:simpleType name="patternType">
@@ -982,19 +1002,27 @@
     <xs:complexType>
       <xs:attribute name="pattern" type="c:patternType">
         <xs:annotation>
-          <xs:documentation>a pattern production expressed as expr -> expr</xs:documentation>
+          <xs:documentation>A pattern to match against a template match pattern!</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute form="unqualified" name="to" type="c:exprType" use="required">
         <xs:annotation>
-          <xs:documentation>The expression to rewrite to or use as a precondition</xs:documentation>
+          <xs:documentation>The expression to use as a precondition</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="mode" type="xsl:modes"/>
-      <xs:attribute default="false()" name="when" type="xsl:expression"/>
+      <xs:attribute name="mode" type="xsl:modes" default="#all">
+        <xs:annotation>
+          <xs:documentation>Modes for which this directive is relevant.</xs:documentation>
+        </xs:annotation>    
+      </xs:attribute>
+      <xs:attribute default="false()" name="when" type="xsl:expression">
+        <xs:annotation>
+          <xs:documentation>Qualification expression on expression variables from the pattern.</xs:documentation>
+        </xs:annotation>       
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
-  <xs:element name="rewrite">
+  <!--<xs:element name="rewrite">
     <xs:annotation>
       <xs:documentation>
         <p>A pattern rewriting production for a rule</p>
@@ -1014,7 +1042,7 @@
       <xs:attribute name="mode" type="xsl:modes"/>
       <xs:attribute default="false()" name="when" type="xsl:expression"/>
     </xs:complexType>
-  </xs:element>
+  </xs:element>-->
   <xs:element name="index">
     <xs:annotation>
       <xs:documentation>
@@ -1024,12 +1052,12 @@
     <xs:complexType>
       <xs:attribute name="pattern" type="c:patternType" use="required">
         <xs:annotation>
-          <xs:documentation>a pattern production expressed as expr -> expr</xs:documentation>
+          <xs:documentation>A pattern to match against a template match pattern!</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="index.expr" type="c:exprType" use="required">
         <xs:annotation>
-          <xs:documentation>The Xpath expresion that will be applied to the node to generate the key
+          <xs:documentation>The XPath expresion that will be applied to the node to generate the key
             values for index lookup</xs:documentation>
         </xs:annotation>
       </xs:attribute>
@@ -1041,8 +1069,16 @@
             evaluated.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="mode" type="xsl:modes"/>
-      <xs:attribute default="false()" name="when" type="xsl:expression"/>
+      <xs:attribute name="mode" type="xsl:modes" default="#all">
+        <xs:annotation>
+          <xs:documentation>Modes for which this directive is relevant.</xs:documentation>
+        </xs:annotation>    
+      </xs:attribute>
+      <xs:attribute default="false()" name="when" type="xsl:expression">
+        <xs:annotation>
+          <xs:documentation>Qualification expression on expression variables from the pattern.</xs:documentation>
+        </xs:annotation>       
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
   <xs:complexType name="patternOptmizationType">
@@ -1053,12 +1089,12 @@
     <xs:all>
       <xs:element ref="c:precondition" maxOccurs="1" minOccurs="0"/>
       <xs:element ref="c:index" maxOccurs="1" minOccurs="0"/>
-      <xs:element ref="c:rewrite" maxOccurs="1" minOccurs="0"/>
+      <!--<xs:element ref="c:rewrite" maxOccurs="1" minOccurs="0"/>-->
     </xs:all>
   </xs:complexType>
   <xs:attribute name="pattern" type="c:patternType">
     <xs:annotation>
-      <xs:documentation>a pattern expressed a modified XSLT pattern</xs:documentation>
+      <xs:documentation>a pattern expressing a modified XSLT pattern</xs:documentation>
     </xs:annotation>
   </xs:attribute>
   <xs:simpleType name="exprType">
