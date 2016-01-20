@@ -357,7 +357,7 @@ public class StandardErrorListener implements UnfailingErrorListener {
                     innerLoc += "(" + langText + " on line " + outerLoc.getLineNumber() + ") ";
                 }
                 if (outerLoc.getSystemId() != null) {
-                    innerLoc += "of " + outerLoc.getSystemId();
+                    innerLoc += "of " + outerLoc.getSystemId() + " ";
                 }
                 String nearBy = nestedLoc.getNearbyText();
                 if (nearBy != null && !nearBy.isEmpty()) {
