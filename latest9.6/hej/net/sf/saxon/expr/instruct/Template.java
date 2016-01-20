@@ -59,7 +59,7 @@ public class Template extends ComponentBody implements RuleTarget {
     private boolean declaredStreamable;
     private StructuredQName[] modeNames;
 
-    private List<Rule> references = new ArrayList<Rule>();
+    public List<Rule> references = new ArrayList<Rule>();
 
     /**
      * Create a template
@@ -87,11 +87,11 @@ public class Template extends ComponentBody implements RuleTarget {
      */
 
     public void setMatchPattern(Pattern pattern) {
-        if (matchPattern != pattern) {
-            for (Rule r: references) {
-                r.setPattern(pattern);
-            }
-        }
+//        if (matchPattern != pattern) {
+//            for (Rule r: references) {
+//                r.setPattern(pattern);
+//            }
+//        }
         matchPattern = pattern;
 
     }

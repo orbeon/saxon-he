@@ -648,11 +648,15 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
 
         if (match != null) {
             ContextItemStaticInfo info = new ContextItemStaticInfo(match.getItemType(), false, true);
-            Pattern m2 = match.analyze(visitor,  info);
-            if (m2 != match) {
-                match = m2;
-                compiledTemplate.setMatchPattern(m2);
+            for (Rule r: compiledTemplate.references) {
+                Pattern p2 = r.getPattern().analyze(visitor, info);
+                r.setPattern(p2);
             }
+//            Pattern m2 = match.analyze(visitor,  info);
+//            if (m2 != match) {
+//                match = m2;
+//                compiledTemplate.setMatchPattern(m2);
+//            }
         }
 
         opt.checkStreamability(this, compiledTemplate);
