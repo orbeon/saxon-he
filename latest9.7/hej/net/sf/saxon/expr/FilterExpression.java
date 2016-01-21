@@ -454,6 +454,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
             if (predicate1.getCost() > 2*predicate2.getCost()) {
                 FilterExpression fe1 = new FilterExpression(base, predicate2);
                 FilterExpression fe2 = new FilterExpression(fe1, predicate1);
+                ExpressionTool.copyLocationInfo(this, fe2);
                 return fe2.optimize(visitor, contextItemType);
             }
 
