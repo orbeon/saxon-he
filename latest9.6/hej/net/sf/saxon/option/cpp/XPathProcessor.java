@@ -281,7 +281,7 @@ public class XPathProcessor extends SaxonCAPI {
 
 
     public static void main(String[] arg) throws SaxonApiException {
-        XPathProcessor xpath = new XPathProcessor(false);
+        XPathProcessor xpath = new XPathProcessor(true);
          String sourcefile1 = "kamervragen.xml";
          String[] params1 = {"s"};
         Object[] values1 = {sourcefile1};
@@ -294,10 +294,12 @@ public class XPathProcessor extends SaxonCAPI {
                  "    <person>text2</person>\n" +
                  "    <person1>text3</person1>\n" +
                  "</out>");
+        XdmNode node2 = xpath.parseXmlFile("/Users/ond1/work/development/svn/test", "books.xml");
           XdmNode [] children1 = XdmUtils.getChildren(XdmUtils.getChildren(node)[0]);
        // xpath.setContextItem(node);
          String[] params2 = {"node"};
         Object[] values2 = {node};
+        Object[] values3 = {node2};
         XdmValue value = xpath.evaluateSingle("/Users/ond1/work/development/tests/jeroen/xml/", "//person[1]", params2, values2);
         if(value instanceof XdmNode){
             String nodename = XdmUtils.getEQName(((XdmNode)value).getNodeName());
@@ -313,6 +315,19 @@ public class XPathProcessor extends SaxonCAPI {
         boolean ebv = xpath.effectiveBooleanValue("/Users/ond1/work/development/tests/jeroen/xml/", "count(/out/person)>0", params2, values2);
        // System.out.println(value.toString());
         System.out.println(ebv);
+          XdmValue valuex = xpath.evaluateSingle("/Users/ond1/work/development/tests/jeroen/xml/", "//person[1]", params2, values2);
+        if(valuex != null) {
+             System.out.println("evalSingle = " + XdmUtils.getStringValue(valuex));
+        }
+        XdmValue[] value2 = xpath.evaluate("/Users/ond1/work/development/svn/test", "/BOOKLIST/BOOKS/ITEM/TITLE", params2, values3);
+        if(value2 != null) {
+        for(int i =0; i< value2.length;i++) {
+            System.out.println("Book Title: "+XdmUtils.getStringValue(value2[i]));
+        }
+        } else {
+               System.out.println("Book xpath expr returned null!!!");
+
+        }
 
     }
 

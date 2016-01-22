@@ -153,12 +153,12 @@ public class XdmUtils {
      *         selected attribute node.
      */
     public static String getAttributeValue(XdmNode node, String eqname){
-        System.err.println("Entered getAttributeValue method in Java");
-        if(eqname != null) {
-            System.err.println("EQName= "+eqname);
-        }
+
         QName name = QName.fromEQName(eqname);
-        System.err.println("Java-Call Att-name="+name.getClarkName() + " Value="+node.getAttributeValue(name));
+        if (SaxonCAPI.debug) {
+          System.err.println("EQName= "+eqname);
+          System.err.println("Java-Call Att-name="+name.getClarkName() + " Value="+node.getAttributeValue(name));
+        }
         return node.getAttributeValue(name);
     }
 

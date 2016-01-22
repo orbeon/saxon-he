@@ -1,10 +1,25 @@
 package net.sf.saxon.option.cpp;
 
 
+import net.sf.saxon.Configuration;
+import net.sf.saxon.Version;
+import net.sf.saxon.event.Builder;
+import net.sf.saxon.event.NamespaceReducer;
+import net.sf.saxon.event.Receiver;
+import net.sf.saxon.event.StreamWriterToReceiver;
+import net.sf.saxon.lib.Initializer;
+import net.sf.saxon.om.Sequence;
 import net.sf.saxon.s9api.*;
+import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.SchemaException;
+import net.sf.saxon.value.DateTimeValue;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Source;
+import javax.xml.transform.SourceLocator;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.StringReader;
@@ -19,18 +34,62 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
     private SchemaManager schemaManager = null;
     private Source source = null;
     private String xmlString = null;
-   protected List<SchemaException> schemaExceptions = new ArrayList<SchemaException>();
+    private Serializer serializer = null;
+    private MyErrorListener listener = null;
+    XMLStreamWriter streamWriter = null;
+    private boolean isDestinationFile = false;
+    private boolean reporting = false;
+    private boolean verbose = false;
 
-    public SchemaValidatorForCpp() {
+
+    public SchemaValidatorForCpp() throws SaxonApiException {
         processor = new Processor(true);
         schemaManager = processor.getSchemaManager();
+
+        if(debug && !processor.isSchemaAware()) {
+            throw  new SaxonApiException("Processor is not licensed for schema processing!");
+        }
     }
 
 
-    public SchemaValidatorForCpp(Processor proc) {
+    public SchemaValidatorForCpp(Processor proc) throws SaxonApiException {
         processor = proc;
         schemaManager = processor.getSchemaManager();
+        if(debug && !processor.isSchemaAware()) {
+            throw  new SaxonApiException("Processor is not licensed for schema processing!");
+        }
     }
+
+    public void reporting(boolean r){
+        reporting = r;
+    }
+
+    private void setValidationReportAsNode() throws SaxonApiException {
+        DocumentBuilder builder = processor.newDocumentBuilder();
+        streamWriter = builder.newBuildingStreamWriter();
+        listener = new MyErrorListener(streamWriter);
+        listener.setConfiguration(processor.getUnderlyingConfiguration());
+    }
+
+    public void setVerbose(boolean verbose){
+        this.verbose = verbose;
+    }
+
+    private void setValidationReportFileName(String reportFileName) throws SaxonApiException {
+
+        Serializer destination = processor.newSerializer();
+        destination.setOutputProperty(Serializer.Property.INDENT, "yes");
+        destination.setOutputProperty(Serializer.Property.METHOD, "xml");
+        destination.setOutputFile(new File(reportFileName));
+        listener = new MyErrorListener(streamWriter);
+        listener.setConfiguration(processor.getUnderlyingConfiguration());
+        listener.setDestination(destination);
+        isDestinationFile = true;
+
+
+
+    }
+
 
     /**
      *  Internal use only
@@ -40,41 +99,237 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
     }
 
 
+    public XdmNode getValidationReport() throws SaxonApiException {
+        if(reporting) {
+            return ((BuildingStreamWriterImpl) streamWriter).getDocumentNode();
+        }
+        return null;
+    }
 
 
        /**
      * Error Listener to capture errors
     */
-//     protected ErrorListener schemaListener = new StandardErrorListener() {
-//
-//
-//
-//
-//        @Override
-//        public void warning(TransformerException exception) {
-//
-//
-//            schemaExceptions.add(sxception);
-//
-//
-//        }
-//
-//        @Override
-//        public void error(TransformerException exception){
-//            SaxonCException saxonException = new SaxonCException((XPathException) exception);
-//            schemaExceptions.add(saxonException);
-//
-//        }
-//
-//        @Override
-//        public void fatalError(TransformerException exception){
-//            SaxonCException saxonException = new SaxonCException((XPathException) exception);
-//            schemaExceptions.add(saxonException);
-//            try{
-//                super.fatalError(exception);
-//            }catch(Exception ex){}
-//        }
-//    };
+       public class MyErrorListener implements ErrorListener, Initializer {
+
+           private XMLStreamWriter writer;
+           private int warningCount = 0;
+           private int errorCount = 0;
+           private Configuration config = null;
+           private Builder builder;
+           private String xsdversion = "1.0";
+           private Destination destination;
+           private String systemId = null;
+           private boolean verbose = false;    //TODO
+
+
+           public MyErrorListener(XMLStreamWriter writer)  {
+                this.writer = writer;
+           }
+
+
+           public MyErrorListener(Configuration config, Receiver receiver)  {
+               if (receiver instanceof Builder) {
+                   builder = (Builder) receiver;
+               }
+               Receiver r = new NamespaceReducer(receiver);
+               writer = new StreamWriterToReceiver(r);
+           }
+
+            public MyErrorListener(Configuration config) {
+                this.config = config;
+            }
+
+           public void setConfiguration(Configuration c){
+               config = c;
+           }
+
+
+           public void setDestination(Destination destination) throws SaxonApiException {
+               this.destination = destination;
+               Receiver r = destination.getReceiver(getConfiguration());
+               r = new NamespaceReducer(r);
+               writer = new StreamWriterToReceiver(r);
+           }
+
+           public Configuration getConfiguration(){
+               return config;
+           }
+
+           public int getErrorCount(){
+               return errorCount;
+           }
+
+           public int getWarningCount(){
+               return warningCount;
+           }
+
+           public void error(TransformerException exception) throws TransformerException {
+               errorCount++;
+               try {
+
+                   writer.writeStartElement("error");
+                   int lineNumber = -1;
+                   int columnNumber = -1;
+                   String fileName = "";
+                   if(exception.getLocator() != null) {
+                       SourceLocator locator = exception.getLocator();
+                       lineNumber = locator.getLineNumber();
+                       columnNumber = locator.getColumnNumber();
+                       fileName =   locator.getSystemId();
+                   }
+                   writer.writeAttribute("line", String.valueOf(lineNumber));
+                   writer.writeAttribute("position", String.valueOf(columnNumber));
+                   writer.writeCharacters(exception.getMessage());
+                   if(verbose){
+                       System.err.println("Validation error on line "+lineNumber+" column "+columnNumber+" of "+fileName+":\n" +exception.getMessage());
+                   }
+                   writer.writeEndElement();
+               } catch (XMLStreamException e) {
+                   throw new TransformerException(e);
+               }
+
+           }
+
+           public void fatalError(TransformerException exception) throws TransformerException {
+               try {
+                   writer.writeStartElement("fatal");
+                   int lineNumber = -1;
+                   int columnNumber = -1;
+                   String fileName = "";
+                   if(exception.getLocator() != null) {
+                       SourceLocator locator = exception.getLocator();
+                       lineNumber = locator.getLineNumber();
+                       columnNumber = locator.getColumnNumber();
+                       fileName =   locator.getSystemId();
+                   }
+                   writer.writeAttribute("line", String.valueOf(lineNumber));
+                   writer.writeAttribute("position", String.valueOf(columnNumber));
+                   writer.writeCharacters(exception.getMessage());
+                   if(verbose){
+                       System.err.println("Validation error on line "+lineNumber+" column "+columnNumber+" of "+fileName+":\n" +exception.getMessage());
+                   }
+                   writer.writeEndElement();
+               } catch (XMLStreamException e) {
+                   throw new TransformerException(e);
+               }
+           }
+
+           public void warning(TransformerException exception) throws TransformerException {
+               warningCount++;
+               try {
+                   writer.writeStartElement("warning");
+                   int lineNumber = -1;
+                   int columnNumber = -1;
+                   String fileName = "";
+                   if(exception.getLocator() != null) {
+                       SourceLocator locator = exception.getLocator();
+                       lineNumber = locator.getLineNumber();
+                       columnNumber = locator.getColumnNumber();
+                       fileName =   locator.getSystemId();
+
+                   }
+                   writer.writeAttribute("line", String.valueOf(lineNumber));
+                   writer.writeAttribute("position", String.valueOf(columnNumber));
+                   writer.writeCharacters(exception.getMessage());
+                   if(verbose){
+                       System.err.println("Validation error on line "+lineNumber+" column "+columnNumber+" of "+fileName+":\n" +exception.getMessage());
+                   }
+                   writer.writeEndElement();
+               } catch (XMLStreamException e) {
+                   throw new TransformerException(e);
+               }
+           }
+
+           public void initialize(Configuration config) throws TransformerException {
+               config.setErrorListener(this);
+           }
+
+           public void setXsdVersion(String version) {
+                   xsdversion = version;
+               }
+
+
+
+           /**
+            * Set the XML document that is to be validated
+            *
+            * @param id of the source document
+            */
+           public void setSystemId(String id) {
+               systemId = id;
+           }
+
+           public void startReporting(String systemId) throws SaxonApiException {
+                  this.systemId = systemId;
+
+                      try {
+                          setXsdVersion(config.getXsdVersion() == Configuration.XSD11 ? "1.1" : "1.0");
+                          writer.writeStartDocument();
+                          writer.setDefaultNamespace("http://saxon.sf.net/ns/validation");
+                          writer.writeStartElement("http://saxon.sf.net/ns/validation", "validation-report");
+
+                          if (systemId != null) {
+                              writer.writeAttribute("system-id", systemId);
+                          }
+                      } catch (XMLStreamException e) {
+                          throw new SaxonApiException(e);
+                      }
+
+              }
+
+
+
+           public void endReporting() throws SaxonApiException {
+                   createMetaData();
+                   try {
+
+                       writer.writeEndElement();//</validation-report>
+                       writer.writeEndDocument();
+                       writer.flush();
+                       writer.close();
+                       if (destination != null) {
+                           destination.close();
+                       }
+                   } catch (XMLStreamException e) {
+                       throw new SaxonApiException(e);
+                   }
+
+
+               }
+
+           public void createMetaData() throws SaxonApiException {
+                   try {
+                       writer.writeStartElement("meta-data");
+                       writer.writeStartElement("validator");
+                       writer.writeAttribute("name", Version.getProductName() + "-" + getConfiguration().getEditionCode());
+                       writer.writeAttribute("version", Version.getProductVersion());
+                       writer.writeEndElement(); //</validator>
+                       writer.writeStartElement("results");
+                       writer.writeAttribute("errors", "" + errorCount);
+                       writer.writeAttribute("warnings", "" + warningCount);
+                       writer.writeEndElement(); //</results>
+                       writer.writeStartElement("schema");
+                       /* TODO if (schemaName != null) {
+                           writer.writeAttribute("file", schemaName);
+                       } */
+                       writer.writeAttribute("xsd-version", xsdversion);
+                       writer.writeEndElement(); //</schema>
+                       writer.writeStartElement("run");
+                       writer.writeAttribute("at", DateTimeValue.getCurrentDateTime(null).getStringValue());
+                       writer.writeEndElement(); //</run>
+                       writer.writeEndElement(); //</meta-data>
+                   } catch (XMLStreamException ex) {
+                       throw new SaxonApiException(ex);
+                   }
+               }
+
+
+           public void setVerbose(boolean verbose) {
+               this.verbose = verbose;
+           }
+       }
+
 
 
     /**
@@ -130,8 +385,8 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
             for (int i = 0; i < params.length; i++) {
                 if (params[i].startsWith("http://saxon.sf.net/feature")) {
                     if (debug) {
-                        System.err.println("parameter name:" + params[i]);
-                        System.err.println("parameter length:" + params[i].length());
+                        System.err.println("java: parameter name:" + params[i]);
+                        System.err.println("java: parameter length:" + params[i].length());
                     }
                     String name = params[i];
                     String value = (String) values[i];
@@ -162,6 +417,12 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
     public void validate(String cwd, String sourceFilename, String outfilename, String[] params, Object[] values) throws SaxonApiException {
         source = null; //This is required to make sure the source object created from a previous call is not used
         SchemaValidator validator = null;
+        if(!processor.isSchemaAware()) {
+            throw  new SaxonApiException("Processor is not licensed for schema processing!");
+        }
+        isDestinationFile = false;
+        reporting = false;
+        verbose = false;
 
         /*if (xsd == null && validator == null && sourceFilename == null) {
             throw new SaxonApiException("Schema document not found");
@@ -175,9 +436,8 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
 //            validator.setErrorListener(errorListener);
 //        }
 
-        if(validator == null){
-            validator = schemaManager.newSchemaValidator();
-        }
+        validator = schemaManager.newSchemaValidator();
+
 
         if (outfilename != null) {
             serializer = resolveOutputFile(processor, cwd, outfilename);
@@ -187,6 +447,9 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
             validator.setDestination(serializer);
         }
         applySchemaProperties(cwd, processor, this, validator, params, values);
+
+
+
         if(source == null && sourceFilename != null && !sourceFilename.isEmpty()) {
             source = resolveFileToSource(cwd, sourceFilename);
         }
@@ -194,10 +457,19 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
             source = parseXmlString(null, xmlString).asSource();
         }
         if (source != null) {
+            if(reporting) {
+                listener.setVerbose(verbose);
+                 validator.setErrorListener(listener);
+                 listener.startReporting(source.getSystemId());
+             }
             validator.validate(source);
+            if(reporting) {
+                listener.endReporting();
+            }
         } else {
             throw new SaxonApiException("Source document not found");
         }
+
     }
 
     /**
@@ -215,6 +487,9 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
 
         source = null; //This is required to make sure the source object created from a previous call is not used
         SchemaValidator validator = schemaManager.newSchemaValidator();
+        isDestinationFile = false;
+        reporting = false;
+        verbose = false;
 
 //        if (xsd != null && validator == null) {
 //            Source source_xsd = resolveFileToSource(cwd, xsd);
@@ -232,9 +507,17 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
 
 
         if(source != null) {
+            if(reporting) {
+                listener.setVerbose(verbose);
+                validator.setErrorListener(listener);
+                listener.startReporting(source.getSystemId());
+            }
             XdmDestination destination = new XdmDestination();
             validator.setDestination(destination);
             validator.validate(source);
+            if(reporting) {
+                listener.endReporting();
+            }
             return destination.getXdmNode();
         }
 
@@ -283,7 +566,7 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
                     }
                     if (params[i].equals("lax")) {
                         validator.setLax(((Boolean) values[i]).booleanValue());
-                    }  else if (params[i].equals("element-name")) {
+                    } else if (params[i].equals("element-name")) {
                         String paramName = (String) values[i];
                         QName qname = QName.fromClarkName(paramName);
                         validator.setDocumentElementName(qname);
@@ -291,10 +574,20 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
                         String paramName = (String) values[i];
                         QName qname = QName.fromClarkName(paramName);
                         validator.setDocumentElementTypeName(qname);
-                    }else if (params[i].equals("report")) {
-                        //TODO: output validation to file.
-                        //thisClass.getValidator().setErrorListener(thisClass.schemaListener);
+                    } else if (params[i].equals("report-file")) {
+                        thisClass.reporting(true);
+                        if (values[i] != null && values[i] instanceof String) {
+                            thisClass.setValidationReportFileName((String) values[i]);
+                        }
 
+                    } else if (params[i].equals("verbose")) {
+                        if (values[i] != null && values[i] instanceof Boolean) {
+                            thisClass.setVerbose(((Boolean)values[i]).booleanValue());
+                        }
+
+                    } else if (params[i].equals("report-node")) {
+                        thisClass.reporting(true);
+                            thisClass.setValidationReportAsNode();
                     } else if (params[i].equals("o") && outfile == null) {
                         if (values[i] instanceof String) {
                             outfile = (String) values[i];
@@ -381,19 +674,41 @@ val.registerSchemaString(cwd, sch1, "file///o", null, null);
 
 
     public static void main(String[] args) throws SaxonApiException {
-        SchemaValidatorForCpp validatorForCpp = new SchemaValidatorForCpp();
+        Processor processor = new Processor(true);
+        SchemaValidatorForCpp validatorForCpp = new SchemaValidatorForCpp(processor);
 
         XdmValue item = SaxonCAPI.createXdmAtomicItem("QName", "{http://myDomain.co.uk/namespaces/ns1}myElement");
         validatorForCpp.getProcessor().setConfigurationProperty("http://saxon.sf.net/feature/validation-warnings", "true");
+        validatorForCpp.getProcessor().setConfigurationProperty("http://saxon.sf.net/feature/xsd-version", "1.1");
         String cwd = "/Users/ond1/work/development/svn/saxon-dev/tests/junit/testdata/";
+        Serializer serializer = processor.newSerializer();
+        XdmNode resultNode = null;
+        String resultStr = null;
+        String[] paramsx = {"report-node", "verbose"};
+        Object[] valuesx = {"true", false};
+        validatorForCpp.registerSchema("/Users/ond1/work/development/files/millicom/LineNumber", "schema.xsd", null, null);
+        validatorForCpp.validate("/Users/ond1/work/development/files/millicom/LineNumber", "example1.xml", null, paramsx, valuesx);
+        resultNode = validatorForCpp.getValidationReport();
+
+        if(resultNode != null) {
+            resultStr = serializer.serializeNodeToString(resultNode);
+            System.err.println("Validation Report-Millicom:" + resultStr);
+        }
 
 
-        validatorForCpp.validate(cwd, "book-wrapper.xml", null, null, null);
 
         System.out.println("\n\n Testing family.xml\n");
-        validatorForCpp.validate("/Users/ond1/", "family.xml", null, null, null);
+        validatorForCpp.registerSchema("/Users/ond1", "family-ext.xsd", null, null);
+        validatorForCpp.registerSchema("/Users/ond1", "family.xsd", null, null);
+        System.err.println("=============");
+        validatorForCpp.validate("/Users/ond1/", "family.xml", null, paramsx, valuesx);
+        XdmNode resultNode2 = validatorForCpp.getValidationReport();
 
-
+        if(resultNode2 != null) {
+            String resultStr2 = serializer.serializeNodeToString(resultNode2);
+            System.err.println("Validation Report2:" + resultStr2);
+        }
+        System.err.println("=============");
          String invalid_xml = "<?xml version='1.0'?><request><a/><!--comment--></request>";
         String sch1 = "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" elementFormDefault=\"qualified\"" +
                 " attributeFormDefault=\"unqualified\">\n" +
@@ -416,9 +731,10 @@ val.registerSchemaString(cwd, sch1, "file///o", null, null);
         String[] paramsSch = {"xsdversion"};
         Object[] valuesSch = {"1.1"};
         XdmNode sourceNode = validatorForCpp.parseXmlString(invalid_xml);
-        String[] params = {"node", "xsdversion"};
-        Object[] values = {sourceNode, "1.1"};
+        String[] params = {"node", "xsdversion", "report-file"};
+        Object[] values = {sourceNode, "1.1", "validationReport.xml"};
         validatorForCpp.registerSchemaString(cwd, sch1, "file///o", paramsSch, valuesSch);
+
         validatorForCpp.validate(cwd, null, null, params, values);
 
         XdmNode sourceNode2 = validatorForCpp.parseXmlString(doc1);
@@ -431,7 +747,17 @@ val.registerSchemaString(cwd, sch1, "file///o", null, null);
         System.err.println("Test 5: ");
         validatorForCpp.registerSchemaString(cwd, sch1, "file///o1", paramsSch, valuesSch);
         //XdmNode resultDoc = validatorForCpp.validateToNode(cwd, null, null, null, params1, values1);
+
         validatorForCpp.validate(cwd, null, null, params1, values1);
+        XdmNode outputNode2 = validatorForCpp.getValidationReport();
+
+        XdmNode resultNode3 = validatorForCpp.getValidationReport();
+
+        if(resultNode3 != null){
+            resultStr = serializer.serializeNodeToString(resultNode);
+            System.err.println("Validation Report3:"+resultStr);
+
+        }
 
 
     }
