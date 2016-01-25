@@ -16,8 +16,11 @@ import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.SequenceTool;
+import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.Navigator;
+
+import java.util.Properties;
 
 /**
  * This class implements the function fn:has-children(), which is a standard function in XPath 3.0
@@ -52,6 +55,25 @@ public class Innermost extends SystemFunction {
         }
         return new InnermostIterator(in);
     }
+
+
+    @Override
+    public void exportAttributes(ExpressionPresenter out) {
+        super.exportAttributes(out);
+        if (presorted) {
+            out.emitAttribute("flags", "p");
+        }
+    }
+
+    @Override
+    public void importAttributes(Properties attributes) throws XPathException {
+        super.importAttributes(attributes);
+        String flags = attributes.getProperty("flags");
+        if (flags != null && flags.contains("p")) {
+            presorted = true;
+        }
+    }
+
 
     /**
      * Inner class implementing the logic in the form of an iterator.
