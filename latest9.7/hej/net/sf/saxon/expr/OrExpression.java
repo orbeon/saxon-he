@@ -52,6 +52,7 @@ public class OrExpression extends BooleanExpression {
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
 
         if ((getLhsExpression() instanceof OrExpression) || (getRhsExpression() instanceof OrExpression)) {
+            optimizeChildren(visitor,contextItemType);       // Bug #2598
             final Expression e2 = getConfiguration().obtainOptimizer().tryGeneralComparison(visitor, contextItemType, (OrExpression) this);
             if (e2 != null && e2 != this) {
 
