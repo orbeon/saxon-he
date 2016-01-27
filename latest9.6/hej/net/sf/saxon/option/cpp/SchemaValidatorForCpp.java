@@ -12,6 +12,7 @@ import net.sf.saxon.om.Sequence;
 import net.sf.saxon.s9api.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.SchemaException;
+import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.DateTimeValue;
 
 import javax.xml.stream.XMLStreamException;
@@ -86,8 +87,6 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
         listener.setDestination(destination);
         isDestinationFile = true;
 
-
-
     }
 
 
@@ -100,7 +99,7 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
 
 
     public XdmNode getValidationReport() throws SaxonApiException {
-        if(reporting) {
+        if(reporting && streamWriter != null) {
             return ((BuildingStreamWriterImpl) streamWriter).getDocumentNode();
         }
         return null;
@@ -581,12 +580,12 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
                         }
 
                     } else if (params[i].equals("verbose")) {
-                        if (values[i] != null && values[i] instanceof Boolean) {
-                            thisClass.setVerbose(((Boolean)values[i]).booleanValue());
+                        if (values[i] != null && values[i] instanceof String) {
+                            thisClass.setVerbose(Boolean.parseBoolean((String)values[i]));
                         }
 
                     } else if (params[i].equals("report-node")) {
-                        thisClass.reporting(true);
+                            thisClass.reporting(true);
                             thisClass.setValidationReportAsNode();
                     } else if (params[i].equals("o") && outfile == null) {
                         if (values[i] instanceof String) {
@@ -685,7 +684,7 @@ val.registerSchemaString(cwd, sch1, "file///o", null, null);
         XdmNode resultNode = null;
         String resultStr = null;
         String[] paramsx = {"report-node", "verbose"};
-        Object[] valuesx = {"true", false};
+        Object[] valuesx = {"true", "false"};
         validatorForCpp.registerSchema("/Users/ond1/work/development/files/millicom/LineNumber", "schema.xsd", null, null);
         validatorForCpp.validate("/Users/ond1/work/development/files/millicom/LineNumber", "example1.xml", null, paramsx, valuesx);
         resultNode = validatorForCpp.getValidationReport();
@@ -732,7 +731,7 @@ val.registerSchemaString(cwd, sch1, "file///o", null, null);
         Object[] valuesSch = {"1.1"};
         XdmNode sourceNode = validatorForCpp.parseXmlString(invalid_xml);
         String[] params = {"node", "xsdversion", "report-file"};
-        Object[] values = {sourceNode, "1.1", "validationReport.xml"};
+        Object[] values = {sourceNode, "1.1", "validationReport3.xml"};
         validatorForCpp.registerSchemaString(cwd, sch1, "file///o", paramsSch, valuesSch);
 
         validatorForCpp.validate(cwd, null, null, params, values);
