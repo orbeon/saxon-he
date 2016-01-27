@@ -566,7 +566,11 @@ public class FixedElement extends ElementCreator {
 
     public void export(ExpressionPresenter out) {
         out.startElement("elem", this);
-        out.emitAttribute("name", elementName.getStructuredQName());
+        if (elementName.getPrefix().isEmpty()) {
+            out.emitAttribute("name", elementName.getLocalPart());
+        } else {
+            out.emitAttribute("name", elementName.getStructuredQName());
+        }
         String flags = getInheritanceFlags();
         if (!elementName.getURI().isEmpty() && elementName.getPrefix().isEmpty()) {
             flags += "d";  // "d" to indicate default namespace
