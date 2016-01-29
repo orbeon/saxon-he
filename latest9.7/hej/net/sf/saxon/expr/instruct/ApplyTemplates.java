@@ -454,7 +454,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
 
         out.startElement("applyT", this);
         if (mode != null && !mode.isUnnamedMode()) {
-            out.emitAttribute("mode", mode.getModeName());
+            out.emitAttribute("mode", mode.getModeName().getEQName());
         }
         String flags = "";
         if (useCurrentMode) {

@@ -497,7 +497,7 @@ public abstract class Mode extends ComponentCode<SimpleMode> {
     public final void export(ExpressionPresenter presenter) {
         int s = presenter.startElement("mode");
         if (!isUnnamedMode()) {
-            presenter.emitAttribute("name", getModeName());
+            presenter.emitAttribute("name", getModeName().getEQName());
         }
         presenter.emitAttribute("onNo", getCodeForBuiltInRuleSet(getBuiltInRuleSet()));
         String flags = "";
