@@ -858,7 +858,7 @@ public class GlobalVariable extends ComponentCode<GlobalVariable>
     @Override
     public void export(ExpressionPresenter presenter) {
         presenter.startElement(this instanceof GlobalParam ? "globalParam" : "globalVariable");
-        presenter.emitAttribute("name", getVariableQName());
+        presenter.emitAttribute("name", getVariableQName().getEQName());
         presenter.emitAttribute("type", getRequiredType().toString());
         presenter.emitAttribute("line", getLineNumber() + "");
         presenter.emitAttribute("module", getSystemId());
