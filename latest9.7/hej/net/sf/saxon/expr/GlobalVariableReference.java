@@ -134,7 +134,7 @@ public class GlobalVariableReference extends VariableReference implements Compon
 
     public void export(ExpressionPresenter out) {
         out.startElement("gVarRef", this);
-        out.emitAttribute("name", getVariableName());
+        out.emitAttribute("name", getVariableName().getEQName());
         out.emitAttribute("bSlot", "" + getBindingSlot());
         out.endElement();
     }
