@@ -687,7 +687,7 @@ public class UserFunction extends ComponentCode<UserFunction> implements Functio
     public void export(ExpressionPresenter presenter) {
         presenter.startElement("function");
         if (getFunctionName() != null) {
-            presenter.emitAttribute("name", getFunctionName());
+            presenter.emitAttribute("name", getFunctionName().getEQName());
             presenter.emitAttribute("line", getLineNumber() + "");
             presenter.emitAttribute("module", getSystemId());
             presenter.emitAttribute("eval", getEvaluationMode() + "");

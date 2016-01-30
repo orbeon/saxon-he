@@ -626,7 +626,7 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
     public void export(ExpressionPresenter out) {
         out.startElement("ufCall", this);
         if (getFunctionName() != null) {
-            out.emitAttribute("name", getFunctionName());
+            out.emitAttribute("name", getFunctionName().getEQName());
             out.emitAttribute("tailCall",
                     tailCall == NOT_TAIL_CALL ? "false" : tailCall == SELF_TAIL_CALL ? "self" : "foreign");
         }
