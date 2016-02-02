@@ -100,9 +100,9 @@ public abstract class XdmItem extends XdmValue {
     }
 
     /**
-     * Determine whether the item is an atomic value or a node
+     * Determine whether the item is an atomic value or some other type of item
      *
-     * @return true if the item is an atomic value, false if it is a node
+     * @return true if the item is an atomic value, false if it is a node or a function (including maps and arrays)
      */
 
     public boolean isAtomicValue() {
