@@ -1640,9 +1640,7 @@ public class Controller implements ContextOriginator {
 
     public void initializeController(GlobalParameterSet params) throws XPathException {
 
-        if (traceListener != null) {
-            traceListener.open(this);
-        }
+
 
         // get a new bindery, to clear out any variables from previous runs
 
@@ -1662,6 +1660,11 @@ public class Controller implements ContextOriginator {
         // Check the global context item
 
         globalContextItem = executable.checkInitialContextItem(globalContextItem, newXPathContext());
+
+        if (traceListener != null) {
+            traceListener.open(this);
+            preEvaluateGlobals(newXPathContext());
+        }
     }
 
     public void setApplyFunctionConversionRulesToExternalVariables(boolean applyConversionRules) {
