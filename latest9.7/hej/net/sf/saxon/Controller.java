@@ -2184,9 +2184,10 @@ public class Controller implements ContextOriginator {
             }
 
             // In tracing/debugging mode, evaluate all the global variables first
+            /* See bug 2606
             if (traceListener != null) {
                 preEvaluateGlobals(initialContext);
-            }
+            } */
 
             outputDestination = openResult(outputDestination, initialContext);
 
@@ -2355,9 +2356,10 @@ public class Controller implements ContextOriginator {
 
 
             // In tracing/debugging mode, evaluate all the global variables first
+            /* See bug 2606
             if (traceListener != null) {
                 preEvaluateGlobals(initialContext);
-            }
+            } */
 
             outputDestination = openResult(outputDestination, initialContext);
 
