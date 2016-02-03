@@ -8,14 +8,16 @@
 package net.sf.saxon.functions;
 
 import com.saxonica.ee.stream.adjunct.TraceAdjunct;
-import net.sf.saxon.ma.arrays.ArrayItem;
-import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.Controller;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.instruct.InstructionDetails;
+import net.sf.saxon.expr.parser.ExplicitLocation;
+import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.lib.Logger;
 import net.sf.saxon.lib.TraceListener;
+import net.sf.saxon.ma.arrays.ArrayItem;
+import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trace.LocationKind;
 import net.sf.saxon.trans.XPathException;
@@ -36,7 +38,7 @@ import javax.xml.transform.SourceLocator;
 
 public class Trace extends SystemFunction {
 
-    // TODO: find some (new) way of capturing the location of the call!
+    Location location = ExplicitLocation.UNKNOWN_LOCATION;
 
     /**
      * Get the static properties of this expression (other than its type). The result is
@@ -63,6 +65,14 @@ public class Trace extends SystemFunction {
         TraceListener listener = context.getController().getTraceListener();
         listener.enter(info, context);
         listener.leave(info);
+    }
+
+    @Override
+    public Expression makeFunctionCall(Expression... arguments) {
+        // Fix bug 2597
+        Expression e = super.makeFunctionCall(arguments);
+        location = e.getLocation();
+        return e;
     }
 
     public static void traceItem(/*@Nullable*/ Item val, String label, Logger out) {
@@ -98,7 +108,7 @@ public class Trace extends SystemFunction {
         String label = arguments.length == 1 ? "*" : arguments[1].head().getStringValue();
         if (controller.isTracing()) {
             Sequence value = SequenceExtent.makeSequenceExtent(arguments[0].iterate());
-            notifyListener(label, value, null, context);
+            notifyListener(label, value, location, context);
             return value;
         } else {
             Logger out = controller.getTraceFunctionDestination();
