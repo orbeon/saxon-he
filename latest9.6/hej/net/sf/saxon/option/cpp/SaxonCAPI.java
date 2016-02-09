@@ -9,6 +9,7 @@ package net.sf.saxon.option.cpp;
 
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.Version;
 import net.sf.saxon.lib.*;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.om.StandardNames;
@@ -56,9 +57,11 @@ public class SaxonCAPI {
      */
     public SaxonCAPI() {
         processor = new Processor(false);
+
         if (debug) {
             System.err.println("New processor created in SAxonCAPI(), Processor: " + System.identityHashCode(processor));
         }
+
     }
 
     /**
@@ -68,6 +71,7 @@ public class SaxonCAPI {
      */
     public SaxonCAPI(boolean license) {
         processor = new Processor(license);
+
         if (debug) {
             System.err.println("New processor created in SAxonCAPI(l), Processor: " + System.identityHashCode(processor));
         }
@@ -79,15 +83,11 @@ public class SaxonCAPI {
      * @param proc    - specify processor object
      */
     public SaxonCAPI(Processor proc) {
-        if (proc == null) {
+        if (proc != null) {
             processor = proc;
+
             if (debug) {
                 System.err.println("New processor created, Processor: " + System.identityHashCode(processor));
-            }
-        } else {
-            processor = proc;
-            if (debug) {
-                System.err.println("processor used in SAxonCAPI(proc, l), Processor: " + System.identityHashCode(processor));
             }
         }
     }
@@ -153,6 +153,10 @@ public class SaxonCAPI {
             }
         }
     };
+
+    public static String getProductVersion(Processor processor){
+        return processor.getUnderlyingConfiguration().getProductTitle();
+    }
 
     /**
      * Get the Schema manager

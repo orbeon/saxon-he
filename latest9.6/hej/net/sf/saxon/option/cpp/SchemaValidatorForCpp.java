@@ -38,10 +38,14 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
     private Serializer serializer = null;
     private MyErrorListener listener = null;
     XMLStreamWriter streamWriter = null;
-    private boolean isDestinationFile = false;
     private boolean reporting = false;
     private boolean verbose = false;
 
+
+    /*
+    *   Default constructor to create a Schema valditor based on the s9api. Assume license file is available.
+     *   throw SaxonApiException if processor not licensed
+    **/
 
     public SchemaValidatorForCpp() throws SaxonApiException {
         processor = new Processor(true);
@@ -52,7 +56,11 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
         }
     }
 
-
+    /*
+    *   Default constructor to create a Schema valditor based on the s9api. Assume license file is available.
+    *   @param proc - Supplied processor. Assume that license feature is enabled
+     *   throw SaxonApiException if processor not licensed
+    **/
     public SchemaValidatorForCpp(Processor proc) throws SaxonApiException {
         processor = proc;
         schemaManager = processor.getSchemaManager();
@@ -61,6 +69,11 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
         }
     }
 
+    /**
+     * Set reporting feature on validator
+     *
+     * @param r true or false value
+     */
     public void reporting(boolean r){
         reporting = r;
     }
@@ -72,6 +85,11 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
         listener.setConfiguration(processor.getUnderlyingConfiguration());
     }
 
+    /**
+     * Set verbose mode to output to the terminal validation exceptions.
+     * The default is on providing the reporting feature has not been enabled. In which case the user would have to switche this on
+     * @param verbose
+     */
     public void setVerbose(boolean verbose){
         this.verbose = verbose;
     }
@@ -85,7 +103,7 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
         listener = new MyErrorListener(streamWriter);
         listener.setConfiguration(processor.getUnderlyingConfiguration());
         listener.setDestination(destination);
-        isDestinationFile = true;
+
 
     }
 
@@ -419,7 +437,6 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
         if(!processor.isSchemaAware()) {
             throw  new SaxonApiException("Processor is not licensed for schema processing!");
         }
-        isDestinationFile = false;
         reporting = false;
         verbose = false;
 
@@ -486,7 +503,7 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
 
         source = null; //This is required to make sure the source object created from a previous call is not used
         SchemaValidator validator = schemaManager.newSchemaValidator();
-        isDestinationFile = false;
+
         reporting = false;
         verbose = false;
 

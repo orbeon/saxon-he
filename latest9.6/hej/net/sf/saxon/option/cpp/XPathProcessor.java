@@ -64,7 +64,14 @@ public class XPathProcessor extends SaxonCAPI {
         compiler.setBackwardsCompatible(option);
     }
 
-
+    /**
+     * Set the static base URI for XPath expressions compiled using this XPathCompiler. The base URI
+     * is part of the static context, and is used to resolve any relative URIs appearing within an XPath
+     * expression, for example a relative URI passed as an argument to the doc() function. If no
+     * static base URI is supplied, then the current working directory is used.
+     * @param uriStr
+     * @throws SaxonApiException
+     */
     public void setBaseURI(String uriStr) throws SaxonApiException {
         URI uri = null;
         try {
@@ -118,8 +125,10 @@ public class XPathProcessor extends SaxonCAPI {
         compiler.setSchemaAware(schemaAware);
         selector = compiler.compile(xpathStr).load();
         applyXPathProperties(this, cwd, processor, selector, params, values);
-
-        XdmValue value = compiler.evaluate(xpathStr, contextItem);
+        if (contextItem != null) {
+            selector.setContextItem(contextItem);
+        }
+        XdmValue value = selector.evaluate();//compiler.evaluate(xpathStr, contextItem);
         if(value.size() ==0) {
             return null;
         }
@@ -153,9 +162,11 @@ public class XPathProcessor extends SaxonCAPI {
         }
         selector = compiler.compile(xpathStr).load();
         applyXPathProperties(this, cwd, processor, selector, params, values);
+        if (contextItem != null) {
+            selector.setContextItem(contextItem);
+        }
 
-
-        return compiler.evaluateSingle(xpathStr, contextItem);
+        return selector.evaluateSingle();// compiler.evaluateSingle(xpathStr, contextItem);
 
     }
 
