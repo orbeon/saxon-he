@@ -38,6 +38,7 @@ public class VirtualUntypedCopy extends VirtualCopy {
         // Don't allow copies of copies of copies: define the new copy in terms of the original
         while (original instanceof VirtualUntypedCopy && original.getParent() == null) {
             original = ((VirtualUntypedCopy) original).original;
+            root = ((VirtualUntypedCopy) root).original;
         }
 
         vc = new VirtualUntypedCopy(original, root);
