@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cfdi:Comprobante xmlns:cfdi="http://www.sat.gob.mx/cfd/3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv32.xsd" version="3.2" serie="EE" folio="30954" fecha="2015-05-05T20:18:20" formaDePago="En una sola exhibición" noCertificado="00001000000300311033" certificado="MIIE3DCCA8SgAwIBAgIUMDAwMDEwMDAwMDAzMDAzMTEwMzMwDQYJKoZIhvcNAQEFBQAwggGKMTgwNgYDVQQDDC9BLkMuIGRlbCBTZXJ2aWNpbyBkZSBBZG1pbmlzdHJhY2nDs24gVHJpYnV0YXJpYTEvMC0GA1UECgwmU2VydmljaW8gZGUgQWRtaW5pc3RyYWNpw7NuIFRyaWJ1dGFyaWExODA2BgNVBAsML0FkbWluaXN0cmFjacOzbiBkZSBTZWd1cmlkYWQgZGUgbGEgSW5mb3JtYWNpw7NuMR8wHQYJKoZIhvcNAQkBFhBhY29kc0BzYXQuZ29iLm14MSYwJAYDVQQJDB1Bdi4gSGlkYWxnbyA3NywgQ29sLiBHdWVycmVybzEOMAwGA1UEEQwFMDYzMDAxCzAJBgNVBAYTAk1YMRkwFwYDVQQIDBBEaXN0cml0byBGZWRlcmFsMRQwEgYDVQQHDAtDdWF1aHTDqW1vYzEVMBMGA1UELRMMU0FUOTcwNzAxTk4zMTUwMwYJKoZIhvcNAQkCDCZSZXNwb25zYWJsZTogQ2xhdWRpYSBDb3ZhcnJ1YmlhcyBPY2hvYTAeFw0xMzA2MTMyMzA2MzVaFw0xNzA2MTMyMzA2MzVaMIIBJzFCMEAGA1UEAxM5T1BFUkFET1JBIFJFU1RBVVJBTlRFIFBBTE9NQVIgREUgTE9TIFBPQlJFUyBTIERFIFJMIERFIENWMUIwQAYDVQQpEzlPUEVSQURPUkEgUkVTVEFVUkFOVEUgUEFMT01BUiBERSBMT1MgUE9CUkVTIFMgREUgUkwgREUgQ1YxQjBABgNVBAoTOU9QRVJBRE9SQSBSRVNUQVVSQU5URSBQQUxPTUFSIERFIExPUyBQT0JSRVMgUyBERSBSTCBERSBDVjElMCMGA1UELRMcT1JQMDMwMTE3N0FBIC8gR09HRDg2MDQyMlRXMTEeMBwGA1UEBRMVIC8gR09HRDg2MDQyMkhTTE1OVjAxMRIwEAYDVQQLEwlPcGVyYWRvcmEwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBALI3lXbie/r2xrGwA3OkQXR+bQ8Pjxp0frSmxolQkdqJdihU/Z9B2xOtnCg2P5AszvyIW2cPV8iqE/2JBuE+nzFVY3yIVlTybEQJoUSJgSXI2ovuY3pvHq9NBEokuSx5F9A3HR9Z6EA7yVRnntsX9Kf7WdlfjzA9OSZVGw1mHd4lAgMBAAGjHTAbMAwGA1UdEwEB/wQCMAAwCwYDVR0PBAQDAgbAMA0GCSqGSIb3DQEBBQUAA4IBAQCRPsDvknRNCBfPM9lOkS/NYoi95dTHYnt+OGm3ZbVH/d88G1bfx9N2xkS8xnvyhUUgz+ZuIlZvbVYp4sgljRCSQOCMXbcCMFv1C64XzsmpmcUupxDILWLAn2nfIV0gWrRNQxKKy65URtFyQquiG5UFu4jMEC5VeQPLgPYwndcmYDSqrU3UPHTEdXhS5Ssvv5verbRItEHut61w1V/8NIFDF4th+QzvMCkglNw/VwWb+gAaiDzqYgIwlNeVFme7aw4zQZVb2dIpX96qljP/xzgeVovoZEirH3dkHYGh2ztL+qnyg1aXvIjZh0zztiGsLblXapKqoFA4glgrnvRE2gPw" condicionesDePago="Contado" subTotal="194.83" total="226.00" tipoDeComprobante="ingreso" metodoDePago="Efectivo" LugarExpedicion="CULIACAN" sello="gD1lcxnZLNxGnrx1VHZdfi9O5tcJcMgKUuY35vOUwWNhf90pTGttadZmz+AWquFsbBTNIDw/d0Gk7U10dliBenlYji3/1ELAYniTHqGYyDTv8h3f0U87cCk8S72sYM/X0wAgKQ2wdBotRFGx+JXty9TvR37rSN/ZQsHP5FW+kLk=">
+  <cfdi:Emisor rfc="ORP0301177AA" nombre="OPERADORA RESTAURANTE PALOMAR DE LOS POBRES S. DE R.L. DE C.V">
+    <cfdi:DomicilioFiscal calle="Presa las truchas" noExterior="980" noInterior="2" colonia="Las Quintas" municipio="Culiacán" estado="Sinaloa" pais="México" codigoPostal="80060"/>
+    <cfdi:ExpedidoEn calle="LAZARO CARDENAS" noExterior="660" colonia="JORGE ALMADA" municipio="CULIACAN" codigoPostal="80200" pais="Mexico"/>
+    <cfdi:RegimenFiscal Regimen="Regimen General de Ley de Personas Morales"/>
+  </cfdi:Emisor>
+  <cfdi:Receptor rfc="CATL8411188S4" nombre="Jose Lauro Campos Tapia">
+    <cfdi:Domicilio calle="Galileo" noExterior="833" colonia="Villa Universidad" localidad="Culiacan" municipio="Culiacan" estado="Sinaloa" pais="Mexico" codigoPostal="80010"/>
+  </cfdi:Receptor>
+  <cfdi:Conceptos>
+    <cfdi:Concepto cantidad="1" unidad="No aplica" noIdentificacion="No aplica" descripcion="Consumo" valorUnitario="194.83" importe="194.83"/>
+  </cfdi:Conceptos>
+  <cfdi:Impuestos totalImpuestosTrasladados="31.17">
+    <cfdi:Traslados>
+      <cfdi:Traslado impuesto="IVA" tasa="16.00" importe="31.17"/>
+    </cfdi:Traslados>
+  </cfdi:Impuestos>
+  <cfdi:Complemento/>
+</cfdi:Comprobante>
