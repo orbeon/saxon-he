@@ -107,7 +107,17 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
     public int getIntrinsicDependencies() {
         int properties = getTargetFunction().getDetails().properties;
         if ((properties & StandardFunction.FOCUS) != 0) {
-            return StaticProperty.DEPENDS_ON_FOCUS;
+            int dep = 0;
+            if ((properties & StandardFunction.CITEM) != 0) {
+                dep |= StaticProperty.DEPENDS_ON_CONTEXT_ITEM;
+            }
+            if ((properties & StandardFunction.POSN) != 0) {
+                dep |= StaticProperty.DEPENDS_ON_POSITION;
+            }
+            if ((properties & StandardFunction.LAST) != 0) {
+                dep |= StaticProperty.DEPENDS_ON_LAST;
+            }
+            return dep;
         } else if (isCallOn(RegexGroup.class)) {
             return StaticProperty.DEPENDS_ON_CURRENT_GROUP;
         } else if (isCallOnSystemFunction("current-merge-group")) {

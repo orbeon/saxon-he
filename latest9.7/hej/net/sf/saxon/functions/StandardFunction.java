@@ -62,7 +62,7 @@ public abstract class StandardFunction {
 
     public static final int AS_ARG0 = 1;          // Result has same type as first argument
     public static final int AS_PRIM_ARG0 = 2;     // Result has same primitive type as first argument
-    public static final int FOCUS = 4;            // Depends on focus
+    public static final int CITEM = 4;            // Depends on context item
     public static final int BASE = 8;             // Depends on base URI
     public static final int NS = 16;              // Depends on namespace context
     public static final int DCOLL = 32;           // Depends on default collation
@@ -70,8 +70,11 @@ public abstract class StandardFunction {
     public static final int FILTER = 256;         // Result is a subset of the value of the first arg
     public static final int LATE = 512;           // Disallow compile-time evaluation
     public static final int UO = 1024;            // Ordering in first argument is irrelevant
+    public static final int POSN = 2048;          // Depends on position
+    public static final int LAST = 4096;          // Depends on last
 
     public static final int DEPENDS_ON_STATIC_CONTEXT = BASE | NS | DCOLL;
+    public static final int FOCUS = CITEM | POSN | LAST;
 
 
     /**
@@ -215,7 +218,7 @@ public abstract class StandardFunction {
                 // can't say "same as first argument" because the avg of a set of integers is decimal
                 .arg(0, BuiltInAtomicType.ANY_ATOMIC, STAR, EMPTY);
 
-        register("base-uri#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.ANY_URI, OPT, CORE, FOCUS | BASE | LATE);
+        register("base-uri#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.ANY_URI, OPT, CORE, CITEM | BASE | LATE);
 
         register("base-uri#1", BaseUri_1.class, 1, 1, BuiltInAtomicType.ANY_URI, OPT, CORE, BASE)
                 .arg(0, Type.NODE_TYPE, OPT | INS, EMPTY);
@@ -291,7 +294,7 @@ public abstract class StandardFunction {
 
         register("current-grouping-key", CurrentGroupingKey.class, 0, 0, BuiltInAtomicType.ANY_ATOMIC, STAR, XSLT, LATE);
 
-        register("data#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.ANY_ATOMIC, STAR, XPATH30, FOCUS | LATE);
+        register("data#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.ANY_ATOMIC, STAR, XPATH30, CITEM | LATE);
 
         register("data#1", Data_1.class, 1, 1, BuiltInAtomicType.ANY_ATOMIC, STAR, CORE, 0)
                 .arg(0, Type.ITEM_TYPE, STAR | ABS, EMPTY);
@@ -340,7 +343,7 @@ public abstract class StandardFunction {
                 .arg(1, Type.NODE_TYPE, ONE, null);
 
         register("document-uri#0", ContextItemAccessorFunction.class, 0, 0,
-                 BuiltInAtomicType.ANY_URI, OPT, XPATH30, FOCUS | LATE);
+                 BuiltInAtomicType.ANY_URI, OPT, XPATH30, CITEM | LATE);
 
         register("document-uri#1", DocumentUri_1.class, 1, 1,
             BuiltInAtomicType.ANY_URI, OPT, CORE, LATE)
@@ -349,7 +352,7 @@ public abstract class StandardFunction {
         register("element-available", ElementAvailable.class, 1, 1, BuiltInAtomicType.BOOLEAN, ONE, XSLT | USE_WHEN, NS)
             .arg(0, BuiltInAtomicType.STRING, ONE, null);
 
-        register("element-with-id#1", SuperId.ElementWithId.class, 1, 1, NodeKindTest.ELEMENT, STAR, CORE, FOCUS | LATE | UO)
+        register("element-with-id#1", SuperId.ElementWithId.class, 1, 1, NodeKindTest.ELEMENT, STAR, CORE, CITEM | LATE | UO)
             .arg(0, BuiltInAtomicType.STRING, STAR, EMPTY);
 
         register("element-with-id#2", SuperId.ElementWithId.class, 2, 2, NodeKindTest.ELEMENT, STAR, CORE, UO)
@@ -442,13 +445,13 @@ public abstract class StandardFunction {
                 .arg(0, BuiltInAtomicType.STRING, ONE, null)
                 .arg(1, BuiltInAtomicType.INTEGER, ONE, null);
 
-        register("generate-id#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.STRING, ONE, XSLT | XPATH30, FOCUS | LATE);
+        register("generate-id#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.STRING, ONE, XSLT | XPATH30, CITEM | LATE);
 
         register("generate-id#1", GenerateId_1.class, 1, 1, BuiltInAtomicType.STRING, ONE, XSLT | XPATH30, 0)
                 .arg(0, Type.NODE_TYPE, OPT | INS, StringValue.EMPTY_STRING);
 
         register("has-children#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.BOOLEAN,
-                 ONE, StandardFunction.XPATH30, FOCUS | LATE);
+                 ONE, StandardFunction.XPATH30, CITEM | LATE);
 
         register("has-children#1", HasChildren_1.class, 1, 1, BuiltInAtomicType.BOOLEAN,
                 OPT, XPATH30, 0)
@@ -470,14 +473,14 @@ public abstract class StandardFunction {
                 BuiltInAtomicType.INTEGER, OPT, CORE, 0)
                 .arg(0, BuiltInAtomicType.TIME, OPT, EMPTY);
 
-        register("id#1", SuperId.Id.class, 1, 1, NodeKindTest.ELEMENT, STAR, CORE, FOCUS | LATE | UO)
+        register("id#1", SuperId.Id.class, 1, 1, NodeKindTest.ELEMENT, STAR, CORE, CITEM | LATE | UO)
                 .arg(0, BuiltInAtomicType.STRING, STAR, EMPTY);
 
         register("id#2", SuperId.Id.class, 2, 2, NodeKindTest.ELEMENT, STAR, CORE, LATE|UO)
                 .arg(0, BuiltInAtomicType.STRING, STAR, EMPTY)
                 .arg(1, Type.NODE_TYPE, ONE | NAV, null);
 
-        register("idref#1", Idref.class, 1, 1, Type.NODE_TYPE, STAR, CORE, FOCUS | LATE)
+        register("idref#1", Idref.class, 1, 1, Type.NODE_TYPE, STAR, CORE, CITEM | LATE)
                 .arg(0, BuiltInAtomicType.STRING, STAR, EMPTY);
 
         register("idref#2", Idref.class, 2, 2, Type.NODE_TYPE, STAR, CORE, LATE)
@@ -520,7 +523,7 @@ public abstract class StandardFunction {
                 .arg(0, BuiltInAtomicType.STRING, OPT, null)
                 .arg(1, MapType.ANY_MAP_TYPE, ONE, null);
 
-        register("key#2", KeyFn.class, 2, 2, Type.NODE_TYPE, STAR, XSLT, FOCUS | NS | LATE)
+        register("key#2", KeyFn.class, 2, 2, Type.NODE_TYPE, STAR, XSLT, CITEM | NS | LATE)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null)
                 .arg(1, BuiltInAtomicType.ANY_ATOMIC, STAR, EMPTY);
 
@@ -529,16 +532,16 @@ public abstract class StandardFunction {
                 .arg(1, BuiltInAtomicType.ANY_ATOMIC, STAR, EMPTY)
                 .arg(2, Type.NODE_TYPE, ONE, null);
 
-        register("lang#1", Lang.class, 1, 1, BuiltInAtomicType.BOOLEAN, ONE, CORE, FOCUS | LATE)
+        register("lang#1", Lang.class, 1, 1, BuiltInAtomicType.BOOLEAN, ONE, CORE, CITEM | LATE)
                 .arg(0, BuiltInAtomicType.STRING, OPT, null);
 
         register("lang#2", Lang.class, 2, 2, BuiltInAtomicType.BOOLEAN, ONE, CORE, 0)
                 .arg(0, BuiltInAtomicType.STRING, OPT, null)
                 .arg(1, Type.NODE_TYPE, ONE | INS, null);
 
-        register("last", PositionAndLast.Last.class, 0, 0, BuiltInAtomicType.INTEGER, ONE, CORE, FOCUS | LATE);
+        register("last", PositionAndLast.Last.class, 0, 0, BuiltInAtomicType.INTEGER, ONE, CORE, LAST | LATE);
 
-        register("local-name#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.STRING, ONE, CORE, FOCUS | LATE);
+        register("local-name#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.STRING, ONE, CORE, CITEM | LATE);
 
         register("local-name#1", LocalName_1.class, 1, 1, BuiltInAtomicType.STRING, ONE, CORE, 0)
                 .arg(0, Type.NODE_TYPE, OPT | INS, StringValue.EMPTY_STRING);
@@ -597,12 +600,12 @@ public abstract class StandardFunction {
                 BuiltInAtomicType.INTEGER, OPT, CORE, 0)
                 .arg(0, BuiltInAtomicType.DURATION, OPT, EMPTY);
 
-        register("name#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.STRING, ONE, CORE, FOCUS | LATE);
+        register("name#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.STRING, ONE, CORE, CITEM | LATE);
 
         register("name#1", Name_1.class, 1, 1, BuiltInAtomicType.STRING, ONE, CORE, 0)
                 .arg(0, Type.NODE_TYPE, OPT | INS, StringValue.EMPTY_STRING);
 
-        register("namespace-uri#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.ANY_URI, ONE, CORE, FOCUS | LATE);
+        register("namespace-uri#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.ANY_URI, ONE, CORE, CITEM | LATE);
 
         register("namespace-uri#1", NamespaceUri_1.class, 1, 1, BuiltInAtomicType.ANY_URI, ONE, CORE, 0)
                 .arg(0, Type.NODE_TYPE, OPT | INS, StringValue.EMPTY_STRING);
@@ -614,12 +617,12 @@ public abstract class StandardFunction {
         register("namespace-uri-from-QName", AccessorFn.NamespaceUriFromQName.class, 1, 1, BuiltInAtomicType.ANY_URI, OPT, CORE, 0)
                 .arg(0, BuiltInAtomicType.QNAME, OPT, EMPTY);
 
-        register("nilled#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.BOOLEAN, OPT, XPATH30, FOCUS | LATE);
+        register("nilled#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.BOOLEAN, OPT, XPATH30, CITEM | LATE);
 
         register("nilled#1", Nilled_1.class, 1, 1, BuiltInAtomicType.BOOLEAN, OPT, CORE, 0)
                 .arg(0, Type.NODE_TYPE, OPT | INS, EMPTY);
 
-        register("node-name#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.QNAME, OPT, XPATH30, FOCUS | LATE);
+        register("node-name#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.QNAME, OPT, XPATH30, CITEM | LATE);
 
         register("node-name#1", NodeName_1.class, 1, 1, BuiltInAtomicType.QNAME, OPT, CORE, 0)
                 .arg(0, Type.NODE_TYPE, OPT | INS, EMPTY);
@@ -627,7 +630,7 @@ public abstract class StandardFunction {
         register("not", NotFn.class, 1, 1, BuiltInAtomicType.BOOLEAN, ONE, CORE, 0)
                 .arg(0, Type.ITEM_TYPE, STAR | INS, BooleanValue.TRUE);
 
-        register("normalize-space#0", ContextItemAccessorFunction.StringAccessor.class, 0, 0, BuiltInAtomicType.STRING, ONE, CORE, FOCUS | LATE);
+        register("normalize-space#0", ContextItemAccessorFunction.StringAccessor.class, 0, 0, BuiltInAtomicType.STRING, ONE, CORE, CITEM | LATE);
 
         register("normalize-space#1", NormalizeSpace_1.class, 1, 1, BuiltInAtomicType.STRING, ONE, CORE, 0)
                 .arg(0, BuiltInAtomicType.STRING, OPT, null);
@@ -636,7 +639,7 @@ public abstract class StandardFunction {
                 .arg(0, BuiltInAtomicType.STRING, OPT, StringValue.EMPTY_STRING)
                 .arg(1, BuiltInAtomicType.STRING, ONE, null);
 
-        register("number#0", ContextItemAccessorFunction.Number_0.class, 0, 0, BuiltInAtomicType.DOUBLE, ONE, CORE, FOCUS | LATE);
+        register("number#0", ContextItemAccessorFunction.Number_0.class, 0, 0, BuiltInAtomicType.DOUBLE, ONE, CORE, CITEM | LATE);
 
         register("number#1", Number_1.class, 1, 1, BuiltInAtomicType.DOUBLE, ONE, CORE, 0)
                 .arg(0, BuiltInAtomicType.ANY_ATOMIC, OPT, DoubleValue.NaN);
@@ -661,12 +664,12 @@ public abstract class StandardFunction {
         register("parse-xml-fragment", ParseXmlFragment.class, 1, 1, NodeKindTest.DOCUMENT, ONE, XPATH30, LATE)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null);
 
-        register("path#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.STRING, OPT, XPATH30, FOCUS|LATE);
+        register("path#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.STRING, OPT, XPATH30, CITEM|LATE);
 
         register("path#1", Path_1.class, 1, 1, BuiltInAtomicType.STRING, OPT, XPATH30, 0)
                 .arg(0, AnyNodeTest.getInstance(), OPT | StandardFunction.INS, null);
 
-        register("position", PositionAndLast.Position.class, 0, 0, BuiltInAtomicType.INTEGER, ONE, CORE, FOCUS|LATE);
+        register("position", PositionAndLast.Position.class, 0, 0, BuiltInAtomicType.INTEGER, ONE, CORE, POSN|LATE);
 
         register("prefix-from-QName", AccessorFn.PrefixFromQName.class, 1, 1, BuiltInAtomicType.NCNAME, OPT, CORE, 0)
                 .arg(0, BuiltInAtomicType.QNAME, OPT, EMPTY);
@@ -713,7 +716,7 @@ public abstract class StandardFunction {
         register("reverse", Reverse.class, 1, 1, Type.ITEM_TYPE, STAR, CORE, AS_ARG0|FILTER)
                 .arg(0, Type.ITEM_TYPE, STAR | NAV, EMPTY);
 
-        register("root#0", ContextItemAccessorFunction.class, 0, 0, Type.NODE_TYPE, OPT, CORE, FOCUS | LATE);
+        register("root#0", ContextItemAccessorFunction.class, 0, 0, Type.NODE_TYPE, OPT, CORE, CITEM | LATE);
 
         register("root#1", Root_1.class, 1, 1, Type.NODE_TYPE, OPT, CORE, 0)
                 .arg(0, Type.NODE_TYPE, OPT | NAV, EMPTY);
@@ -757,12 +760,12 @@ public abstract class StandardFunction {
 
         register("static-base-uri", StaticContextAccessor.StaticBaseUri.class, 0, 0, BuiltInAtomicType.ANY_URI, OPT, CORE, BASE);
 
-        register("string#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.STRING, ONE, CORE, FOCUS | LATE);
+        register("string#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.STRING, ONE, CORE, CITEM | LATE);
 
         register("string#1", String_1.class, 1, 1, BuiltInAtomicType.STRING, ONE, CORE, 0)
                 .arg(0, Type.ITEM_TYPE, OPT | ABS, StringValue.EMPTY_STRING);
 
-        register("string-length#0", ContextItemAccessorFunction.StringAccessor.class, 0, 0, BuiltInAtomicType.INTEGER, ONE, CORE, FOCUS | LATE);
+        register("string-length#0", ContextItemAccessorFunction.StringAccessor.class, 0, 0, BuiltInAtomicType.INTEGER, ONE, CORE, CITEM | LATE);
 
         register("string-length#1", StringLength_1.class, 1, 1, BuiltInAtomicType.INTEGER, ONE, CORE, 0)
                 .arg(0, BuiltInAtomicType.STRING, OPT, null);
@@ -871,14 +874,14 @@ public abstract class StandardFunction {
         register("upper-case", UpperCase.class, 1, 1, BuiltInAtomicType.STRING, ONE, CORE, 0)
             .arg(0, BuiltInAtomicType.STRING, OPT, StringValue.EMPTY_STRING);
 
-        register("unparsed-entity-uri#1", UnparsedEntity.UnparsedEntityUri.class, 1, 2, BuiltInAtomicType.ANY_URI, ONE, XSLT, FOCUS | LATE)
+        register("unparsed-entity-uri#1", UnparsedEntity.UnparsedEntityUri.class, 1, 2, BuiltInAtomicType.ANY_URI, ONE, XSLT, CITEM | LATE)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null);
 
         register("unparsed-entity-uri#2", UnparsedEntity.UnparsedEntityUri.class, 1, 2, BuiltInAtomicType.ANY_URI, ONE, XSLT, 0)
             .arg(0, BuiltInAtomicType.STRING, ONE, null)
             .arg(1, Type.NODE_TYPE, ONE, null);
 
-        register("unparsed-entity-public-id#1", UnparsedEntity.UnparsedEntityPublicId.class, 1, 2, BuiltInAtomicType.STRING, ONE, XSLT, FOCUS | LATE)
+        register("unparsed-entity-public-id#1", UnparsedEntity.UnparsedEntityPublicId.class, 1, 2, BuiltInAtomicType.STRING, ONE, XSLT, CITEM | LATE)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null);
 
         register("unparsed-entity-public-id#2", UnparsedEntity.UnparsedEntityPublicId.class, 1, 2, BuiltInAtomicType.STRING, ONE, XSLT, 0)
