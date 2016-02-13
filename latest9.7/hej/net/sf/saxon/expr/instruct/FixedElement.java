@@ -568,6 +568,9 @@ public class FixedElement extends ElementCreator {
         out.startElement("elem", this);
         if (elementName.getPrefix().isEmpty()) {
             out.emitAttribute("name", elementName.getLocalPart());
+            if (!elementName.hasURI("")) {
+                out.emitAttribute("nsuri", elementName.getURI());
+            }
         } else {
             out.emitAttribute("name", elementName.getStructuredQName());
         }
