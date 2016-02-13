@@ -523,7 +523,9 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
         RetainedStaticContext rsc = makeRetainedStaticContext();
         body = compileSequenceConstructor(compilation, decl, true);
         //body.verifyParentPointers();
-        body.setRetainedStaticContext(rsc);
+        if (body.getRetainedStaticContext() == null) {
+            body.setRetainedStaticContext(rsc); // bug 2608
+        }
         if (body == null) {
             body = Literal.makeEmptySequence();
         }
