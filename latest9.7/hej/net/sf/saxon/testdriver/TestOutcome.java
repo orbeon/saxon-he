@@ -511,6 +511,7 @@ public class TestOutcome {
                     int len = Math.min(resultString.length(), assertionString.length());
                     for (int i = 0; i < len; i++) {
                         if (resultString.charAt(i) != assertionString.charAt(i)) {
+                            driver.println("Actual:'" + StringValue.diagnosticDisplay(resultString) + "'");
                             driver.println("Results differ at index " + i +
                                 "(\"" + StringValue.diagnosticDisplay(resultString.substring(i, (i + 10 > len ? len : i + 10))) + "\") vs (\"" +
                                 StringValue.diagnosticDisplay(assertionString.substring(i, (i + 10 > len ? len : i + 10))) + "\")");

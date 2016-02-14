@@ -43,6 +43,16 @@ public class ListConstructorFunction extends AbstractFunction {
     }
 
     /**
+     * Get the list type
+     *
+     * @return the last type to which we are casting
+     */
+
+    public ListType getTargetType() {
+        return targetType;
+    }
+
+    /**
      * Get the list item type (member type)
      * @return the item type of the list
      */
@@ -50,6 +60,17 @@ public class ListConstructorFunction extends AbstractFunction {
     public SimpleType getMemberType() {
         return memberType;
     }
+
+    /**
+     * Ask whether an empty sequence is allowed
+     *
+     * @return true if passing an empty sequence is allowed (and returns empty)
+     */
+
+    public boolean isAllowEmpty() {
+        return allowEmpty;
+    }
+
 
     /**
      * Get the item type of the function item

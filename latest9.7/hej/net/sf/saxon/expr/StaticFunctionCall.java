@@ -195,6 +195,42 @@ public class StaticFunctionCall extends FunctionCall implements Callable {
                 o.getChildExpression().export(out);
             }
             out.endElement();
+        } else if (target instanceof UnionConstructorFunction) {
+            // Bug 2611.
+            out.startElement("cast", this);
+            out.emitAttribute("emptiable", ((UnionConstructorFunction) target).isAllowEmpty() ? "1" : "0");
+            out.emitAttribute("as", ((UnionConstructorFunction) target).getTargetType().toString());
+            for (Operand o : operands()) {
+                o.getChildExpression().export(out);
+            }
+            out.endElement();
+        } else if (target instanceof ListConstructorFunction) {
+            // Bug 2611.
+            out.startElement("cast", this);
+            out.emitAttribute("emptiable", ((ListConstructorFunction) target).isAllowEmpty() ? "1" : "0");
+            out.emitAttribute("as", ((ListConstructorFunction) target).getTargetType().toString());
+            for (Operand o : operands()) {
+                o.getChildExpression().export(out);
+            }
+            out.endElement();
+        } else if (target instanceof UnionCastableFunction) {
+            // Bug 2611.
+            out.startElement("castable", this);
+            out.emitAttribute("emptiable", ((UnionCastableFunction) target).isAllowEmpty() ? "1" : "0");
+            out.emitAttribute("as", ((UnionCastableFunction) target).getTargetType().toString());
+            for (Operand o : operands()) {
+                o.getChildExpression().export(out);
+            }
+            out.endElement();
+        } else if (target instanceof ListCastableFunction) {
+            // Bug 2611.
+            out.startElement("castable", this);
+            out.emitAttribute("emptiable", ((ListCastableFunction) target).isAllowEmpty() ? "1" : "0");
+            out.emitAttribute("as", ((ListCastableFunction) target).getTargetType().toString());
+            for (Operand o : operands()) {
+                o.getChildExpression().export(out);
+            }
+            out.endElement();
         } else {
             super.export(out);
         }
