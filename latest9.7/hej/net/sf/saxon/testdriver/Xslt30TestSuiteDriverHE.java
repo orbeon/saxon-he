@@ -881,6 +881,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         needsEE.add("feature/XPath_3.1");
         needsEE.add("feature/dynamic_evaluation");
         needsEE.add("feature/xquery_invocation");
+        needsEE.add("feature/higher_order_functions");
 
         alwaysOff.add("detect_accumulator_cycles");
     }
@@ -942,7 +943,8 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                 } else {
                     return false;
                 }
-
+            } else if ("built_in_derived_types".equals(value)) {
+                return (spec.getNumericVersion() == 30) != inverse;
             } else {
                 System.err.println("*** Unknown feature in HE: " + value);
                 return env.processor.getSaxonEdition().equals("HE") ? false : null;
