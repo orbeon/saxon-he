@@ -38,7 +38,7 @@ public class SignificantItemDetector extends ProxyReceiver {
     }
 
     private void start() throws XPathException {
-        if (level==0 && empty) {
+        if (/*level==0 && */empty) {
             trigger.doAction();
             empty = false;
         }
@@ -75,9 +75,9 @@ public class SignificantItemDetector extends ProxyReceiver {
 
     @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
-        //if (!Whitespace.isWhite(chars)) {
+        if (chars.length() > 0) {
             start();
-        //}
+        }
         super.characters(chars, locationId, properties);
     }
 
