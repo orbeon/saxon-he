@@ -7,7 +7,6 @@
 
 package net.sf.saxon.event;
 
-import com.saxonica.xslt3.instruct.ConditionalBlock;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NamespaceBinding;
@@ -17,7 +16,6 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.SimpleType;
 import net.sf.saxon.type.Type;
-import net.sf.saxon.value.Whitespace;
 
 /**
  * This receiver is inserted into the output pipeline whenever on-empty or on-non-empty is used (XSLT 3.0).
@@ -77,9 +75,9 @@ public class SignificantItemDetector extends ProxyReceiver {
 
     @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
-        if (!Whitespace.isWhite(chars)) {
+        //if (!Whitespace.isWhite(chars)) {
             start();
-        }
+        //}
         super.characters(chars, locationId, properties);
     }
 
