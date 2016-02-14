@@ -1041,11 +1041,12 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
      */
     protected static QName getQNameAttribute(XPathCompiler xpath, XdmItem contextItem, String attributePath) throws SaxonApiException {
         String exp = "for $att in " + attributePath +
-                " return if (contains($att, ':')) then resolve-QName($att, $att/..) else " +
-                " if (contains($att,'{')) then QName(substring-before(substring-after($att,'{'),'}'),substring-after($att,'}')) else" +
+                " return if (contains($att,'{')) then QName(substring-before(substring-after($att,'{'),'}'),substring-after($att,'}')) else" +
+                " if (contains($att, ':')) then resolve-QName($att, $att /..)else" +
                 " if ($att = '#unnamed') then QName('http://saxon.sf.net/', 'unnamed') else " +
                 " if ($att = '#default') then QName('http://saxon.sf.net/', 'default') else " +
                 " QName('', $att)";
+        //System.err.println("Evaluating: " + exp);
         XdmAtomicValue qname = (XdmAtomicValue) xpath.evaluateSingle(exp, contextItem);
         return qname == null ? null : (QName) qname.getValue();
     }
