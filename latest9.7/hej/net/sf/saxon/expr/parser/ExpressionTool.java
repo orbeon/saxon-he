@@ -611,7 +611,7 @@ public class ExpressionTool {
     public static boolean hasLoopingSubexpression(Expression parent, Expression child) {
         for (Operand info : parent.operands()) {
             if (info.getChildExpression() == child) {
-                return info.isEvaluatedRepeatedly() || !info.hasSameFocus();
+                return info.isEvaluatedRepeatedly();
             }
         }
         return false;

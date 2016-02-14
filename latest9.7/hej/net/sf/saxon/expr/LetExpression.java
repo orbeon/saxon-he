@@ -68,10 +68,14 @@ public class LetExpression extends Assignation implements TailCallReturner {
         int total = 0;
         for (Operand o : child.operands()) {
             Expression g = o.getChildExpression();
+            boolean repeated = inLoop || o.isEvaluatedRepeatedly();
+            if (!repeated && !o.hasSameFocus() && ExpressionTool.dependsOnFocus(let.getSequence())) {
+                repeated = true;
+            }
             if (g instanceof LocalVariableReference && ((LocalVariableReference)g).getBinding() == let) {
-                total += inLoop || o.isEvaluatedRepeatedly() || !o.hasSameFocus() ? 10 : 1;
+                total += repeated ? 10 : 1;
             } else {
-                total += countReferences(let, g, inLoop || o.isEvaluatedRepeatedly());
+                total += countReferences(let, g, repeated);
             }
             if (total >= 10) {
                 break;

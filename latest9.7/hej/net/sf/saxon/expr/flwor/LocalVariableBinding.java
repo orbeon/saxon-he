@@ -18,8 +18,8 @@ import net.sf.saxon.value.SequenceType;
 
 /**
  * Represents the defining occurrence of a variable declared within a FLWOR expression,
- * for example the $p in "for $x at $p in ...". Also used for the variables bound by the
- * bind-group and bind-grouping-key attributes in xsl:for-each-group
+ * for example the $p in "for $x at $p in ...". Also used for the variables bound to the context
+ * item in a pattern that uses current()
  */
 
 public class LocalVariableBinding implements LocalBinding {
