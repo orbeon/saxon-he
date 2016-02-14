@@ -7,7 +7,6 @@
 
 package net.sf.saxon.style;
 
-import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.SimpleNodeConstructor;
 import net.sf.saxon.expr.parser.RetainedStaticContext;
@@ -130,7 +129,7 @@ public abstract class XSLLeafNodeConstructor extends StyleElement {
             if (select == null) {
                 select = compileSequenceConstructor(exec, decl, true);
             }
-            select = makeSimpleContentConstructor(select, separator, exec.getConfiguration());
+            select = makeSimpleContentConstructor(select, separator, getStaticContext());
             inst.setSelect(select);
 
         } catch (XPathException err) {
@@ -145,11 +144,11 @@ public abstract class XSLLeafNodeConstructor extends StyleElement {
      *
      * @param select    the expression that selects the base sequence
      * @param separator the expression that computes the separator
-     * @param config    the Saxon configuration
+     * @param env    the static context
      * @return an expression that returns a string containing the string value of the constructed node
      */
 
-    public static Expression makeSimpleContentConstructor(Expression select, Expression separator, Configuration config)
+    public static Expression makeSimpleContentConstructor(Expression select, Expression separator, StaticContext env)
     throws XPathException {
         RetainedStaticContext rsc = select.getRetainedStaticContext();
         // Merge adjacent text nodes
@@ -158,8 +157,8 @@ public abstract class XSLLeafNodeConstructor extends StyleElement {
         select = Atomizer.makeAtomizer(select);
         // Convert each atomic value to a string
         select = new AtomicSequenceConverter(select, BuiltInAtomicType.STRING);
-        select.setRetainedStaticContext(rsc);
-        ((AtomicSequenceConverter) select).allocateConverter(config, false);
+        select.setRetainedStaticContext(env.makeRetainedStaticContext());
+        ((AtomicSequenceConverter) select).allocateConverter(env.getConfiguration(), false);
         // Join the resulting strings with a separator
         if (select.getCardinality() != StaticProperty.EXACTLY_ONE) {
             select = SystemFunction.makeCall("string-join", rsc, select, separator);

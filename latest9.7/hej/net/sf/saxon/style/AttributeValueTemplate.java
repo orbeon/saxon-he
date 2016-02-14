@@ -101,7 +101,7 @@ public abstract class AttributeValueTemplate {
                 } else {
                     components.add(XSLLeafNodeConstructor.makeSimpleContentConstructor(
                             exp,
-                            new StringLiteral(StringValue.SINGLE_SPACE), env.getConfiguration()).simplify());
+                            new StringLiteral(StringValue.SINGLE_SPACE), env).simplify());
                 }
 
             } else {

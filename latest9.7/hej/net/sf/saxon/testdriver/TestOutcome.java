@@ -464,6 +464,7 @@ public class TestOutcome {
         if (isException()) {
             return false;
         } else {
+            assertXpc.declareVariable(new QName("result"));
             XPathSelector s = assertXpc.compile("$result instance of " + assertion.getStringValue()).load();
             s.setVariable(new QName("result"), result.value);
             return ((XdmAtomicValue) s.evaluateSingle()).getBooleanValue();
