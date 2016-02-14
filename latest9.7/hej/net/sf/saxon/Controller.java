@@ -2309,7 +2309,8 @@ public class Controller implements ContextOriginator {
         if (executable == null) {
             throw new XPathException("Stylesheet has not been compiled");
         }
-        if (initialMode != null && !initialMode.isUnnamedMode()) {
+        if (initialMode != null && !initialMode.getModeName().equals(
+                ((StylesheetPackage)getExecutable().getTopLevelPackage()).getDefaultMode())) {
             throw new XPathException("Initial mode and template cannot both be defined", "XTDE0047");
         }
         openMessageEmitter();
