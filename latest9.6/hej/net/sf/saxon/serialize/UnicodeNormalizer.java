@@ -9,9 +9,11 @@ package net.sf.saxon.serialize;
 
 import net.sf.saxon.event.ProxyReceiver;
 import net.sf.saxon.event.Receiver;
+import net.sf.saxon.event.ReceiverOptions;
 import net.sf.saxon.om.NodeName;
 import net.sf.saxon.serialize.codenorm.Normalizer;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.SimpleType;
 import net.sf.saxon.value.Whitespace;
 
@@ -64,7 +66,29 @@ public class UnicodeNormalizer extends ProxyReceiver {
         if (Whitespace.isWhite(chars)) {
             nextReceiver.characters(chars, locationId, properties);
         } else {
-            nextReceiver.characters(normalizer.normalize(chars), locationId, properties);
+            nextReceiver.characters(normalize(chars, (properties & ReceiverOptions.USE_NULL_MARKERS) != 0), locationId, properties);
+        }
+    }
+
+    private CharSequence normalize(CharSequence in, boolean containsNullMarkers) {
+        if (containsNullMarkers) {
+            FastStringBuffer out = new FastStringBuffer(in.length());
+            String s = in.toString();
+            int start = 0;
+            int nextNull = s.indexOf((char) 0);
+            while (nextNull >= 0) {
+                out.append(normalizer.normalize(s.substring(start, nextNull)));
+                out.append((char) 0);
+                nextNull = s.indexOf((char) 0, start + 1);
+                out.append(s.substring(start + 1, nextNull));
+                out.append((char) 0);
+                start = nextNull + 1;
+                nextNull = s.indexOf((char) 0, start);
+            }
+            out.append(normalizer.normalize(s.substring(start)));
+            return out.condense();
+        } else {
+            return normalizer.normalize(in);
         }
     }
 
