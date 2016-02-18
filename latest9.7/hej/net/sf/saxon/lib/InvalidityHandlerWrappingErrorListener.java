@@ -38,7 +38,7 @@ public class InvalidityHandlerWrappingErrorListener implements InvalidityHandler
 
     public void reportInvalidity(Invalidity failure) {
         try {
-            errorListener.fatalError(((ValidationFailure) failure).makeException());
+            errorListener.error(((ValidationFailure) failure).makeException());
         } catch (TransformerException e) {
             // no action
         }
