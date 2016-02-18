@@ -583,11 +583,11 @@ public final class Navigator {
                 int num = getNumberSingle(curr, count, null, context);
                 v.add(0, (long) num);
             }
-            curr = curr.getParent();
-            if (curr == null) {
+            if (from != null && from.matches(curr, context)) {
                 break;
             }
-            if (from != null && from.matches(curr, context)) {
+            curr = curr.getParent();
+            if (curr == null) {
                 break;
             }
         }
