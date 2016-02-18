@@ -89,7 +89,7 @@ public class OperandArray {
         try {
             return operandArray[n].getChildExpression();
         } catch (ArrayIndexOutOfBoundsException a) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(a);
         }
     }
 
