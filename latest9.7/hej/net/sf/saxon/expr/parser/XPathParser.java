@@ -276,7 +276,13 @@ public class XPathParser {
             line = t.getLineNumber(offset);
             column = t.getColumnNumber(offset);
         }
-        NestedLocation loc = new NestedLocation(env.getContainingLocation(), line == 0 ? -1 : line + 1, column + 1, nearbyText);
+        Location loc;
+        if(env.getContainingLocation() == ExplicitLocation.UNKNOWN_LOCATION) {
+            loc = new ExplicitLocation(env.getSystemId(), line+1, column);
+        } else {
+            loc = new NestedLocation(env.getContainingLocation(), line == 0 ? -1 : line + 1, column + 1, nearbyText);
+        }
+
         XPathException err = new XPathException(message);
         err.setLocation(loc);
         err.setIsSyntaxError("XPST0003".equals(errorCode.getLocalPart()));
