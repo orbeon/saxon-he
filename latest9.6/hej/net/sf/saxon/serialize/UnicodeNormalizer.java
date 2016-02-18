@@ -79,8 +79,9 @@ public class UnicodeNormalizer extends ProxyReceiver {
             while (nextNull >= 0) {
                 out.append(normalizer.normalize(s.substring(start, nextNull)));
                 out.append((char) 0);
-                nextNull = s.indexOf((char) 0, start + 1);
-                out.append(s.substring(start + 1, nextNull));
+                start = nextNull + 1;
+                nextNull = s.indexOf((char) 0, start);
+                out.append(s.substring(start, nextNull));
                 out.append((char) 0);
                 start = nextNull + 1;
                 nextNull = s.indexOf((char) 0, start);
@@ -91,6 +92,7 @@ public class UnicodeNormalizer extends ProxyReceiver {
             return normalizer.normalize(in);
         }
     }
+
 
 };
 
