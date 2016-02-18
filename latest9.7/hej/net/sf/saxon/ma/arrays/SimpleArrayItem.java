@@ -7,6 +7,7 @@
 
 package net.sf.saxon.ma.arrays;
 
+import net.sf.saxon.expr.Literal;
 import net.sf.saxon.expr.OperandRole;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.sort.AtomicComparer;
@@ -323,6 +324,9 @@ public class SimpleArrayItem extends AbstractItem implements ArrayItem {
     public void export(ExpressionPresenter out) {
         out.startElement("array");
         out.emitAttribute("size", size() + "");
+        for (Sequence mem : members) {
+            Literal.exportValue(mem, out);
+        }
         out.endElement();
     }
 
