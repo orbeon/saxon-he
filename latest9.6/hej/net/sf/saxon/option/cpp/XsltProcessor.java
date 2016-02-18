@@ -24,6 +24,11 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 
+
+//TODO: setParameter('name', 'value')
+        //TODO: setParameter('name', 'value', 'type')
+
+
 /**
  * * This class is to use with Saxon/C on C++
  */
