@@ -11,10 +11,7 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.PreparedStylesheet;
 import net.sf.saxon.Version;
 import net.sf.saxon.event.*;
-import net.sf.saxon.lib.AugmentedSource;
-import net.sf.saxon.lib.NamespaceConstant;
-import net.sf.saxon.lib.ParseOptions;
-import net.sf.saxon.lib.Validation;
+import net.sf.saxon.lib.*;
 import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.DocumentURI;
 import net.sf.saxon.om.NodeInfo;
@@ -167,6 +164,13 @@ public class StylesheetModule {
      */
     public static PreparedStylesheet loadStylesheet (
             Source styleSource, Compilation compilation) throws XPathException {
+
+        if (styleSource instanceof SAXSource &&
+                compilation.getConfiguration().getBooleanProperty(FeatureKeys.IGNORE_SAX_SOURCE_PARSER)) {
+            // This option is provided to allow the parser set by applications such as Ant to be overridden by
+            // the parser requested using FeatureKeys.SOURCE_PARSER
+            ((SAXSource) styleSource).setXMLReader(null);
+        }
 
         String systemId = styleSource.getSystemId();
         DocumentURI docURI = systemId == null ? null : new DocumentURI(systemId);

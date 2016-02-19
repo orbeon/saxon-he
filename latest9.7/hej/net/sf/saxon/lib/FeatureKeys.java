@@ -536,7 +536,7 @@
     *                supplied in the <code>SAXSource</code> (in fact, it will modify the supplied
     *                    <code>SAXSource</code> setting the <code>XMLReader</code> to null) and use an
     *                    <code>XMLReader</code> created using the value of the
-    *                    <code>SOURCE_PARSER_CLASS</code> option in preference.</p>
+    *                    <code>SOURCE_PARSER_CLASS</code> (or <code>STYLE_PARSER_CLASS</code>) option in preference.</p>
     *            <p>The defining use case for this feature is when calling a Saxon transformation from
     *                Ant. Ant always supplies the source document as a <code>SAXSource</code> using a
     *                parser instantiated using the default JAXP mechanism. A different parser set using
