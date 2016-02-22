@@ -628,6 +628,7 @@ public class TestOutcome {
                 driver.println("XPath assertion " + assertion.getStringValue() + " failed");
                 try {
                     String ass = assertion.getStringValue();
+                    // Try to evaluate the expression on the lhs of an "=" operator in the assertion
                     int eq = ass.indexOf("=");
                     if (eq > 0) {
                         ass = ass.substring(0, eq);
@@ -644,6 +645,7 @@ public class TestOutcome {
                         driver.println("Actual result of " + ass + ": " + val.toString());
                     }
                 } catch (Exception err) {
+                    // Occurs for example with an assertion like /x[a = 2] where what precedes the '=' is not an expression
                 }
                 driver.println("Actual results: " + result.value);
             }
