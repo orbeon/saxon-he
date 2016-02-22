@@ -51,20 +51,19 @@ public class OrExpression extends BooleanExpression {
     /*@NotNull*/
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
 
-        if ((getLhsExpression() instanceof OrExpression) || (getRhsExpression() instanceof OrExpression)) {
-            optimizeChildren(visitor,contextItemType);       // Bug #2598 - ensure local sub-variables are defined
-            final Expression e2 = getConfiguration().obtainOptimizer().tryGeneralComparison(visitor, contextItemType, (OrExpression) this);
-            if (e2 != null && e2 != this) {
-
-                return e2;
-            }
-        }
-
         final Expression e = super.optimize(visitor, contextItemType);
-
-
         if (e != this) {
             return e;
+        }
+
+        // If this is a top-level or-expression then try to replace multiple branches with a general comparison
+        if (!(getParentExpression() instanceof OrExpression)) {
+            System.err.println(getParentExpression().getClass());
+            final Expression e2 = getConfiguration().obtainOptimizer().tryGeneralComparison(visitor, contextItemType, (OrExpression) this);
+            if (e2 != null && e2 != this) {
+                System.err.println("Optimization done OK!");
+                return e2;
+            }
         }
 
         if (Literal.isConstantBoolean(getLhsExpression(), true) || Literal.isConstantBoolean(getRhsExpression(), true)) {
