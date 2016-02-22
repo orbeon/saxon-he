@@ -1612,7 +1612,8 @@ public abstract class StyleElement extends ElementImpl {
             return null;
         }
         try {
-            pattern = pattern.typeCheck(makeExpressionVisitor(), new ContextItemStaticInfo(Type.NODE_TYPE, true));
+            ItemType cit = getProcessorVersion() >= 30 ? Type.ITEM_TYPE : Type.NODE_TYPE;
+            pattern = pattern.typeCheck(makeExpressionVisitor(), new ContextItemStaticInfo(cit, true));
             boolean usesCurrent = false;
 
 

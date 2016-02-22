@@ -109,7 +109,8 @@ public class PatternParser20 extends XPathParser implements PatternParser {
                 case Token.TAG:
                 case Token.NAMED_FUNCTION_REF:
                 case Token.DOTDOT:
-                    grumble("Token " + currentTokenDisplay() + " not allowed here in an XSLT pattern");
+                case Token.DOT:
+                    grumble("Token " + currentTokenDisplay() + " not allowed here in an XSLT 2.0 pattern");
                     return null;
 
                 case Token.FUNCTION:
