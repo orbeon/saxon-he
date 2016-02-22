@@ -2,12 +2,12 @@
 #include "XdmNode.h"
 
 
-XdmNode::XdmNode(jobject obj): XdmItem(obj), nodeKind(UNKNOWN), baseURI(NULL), nodeName(NULL), children(NULL), parent(NULL){
+XdmNode::XdmNode(jobject obj): XdmItem(obj), nodeKind(UNKNOWN), baseURI(NULL), nodeName(NULL), children(NULL), parent(NULL), attrValues(NULL){
 	childCount = -1;
 	attrCount = -1;
 }
 
-XdmNode::XdmNode(XdmNode * p, jobject obj, XDM_NODE_KIND kind): XdmItem(obj), nodeKind(kind), baseURI(NULL), nodeName(NULL), children(NULL), parent(p){
+XdmNode::XdmNode(XdmNode * p, jobject obj, XDM_NODE_KIND kind): XdmItem(obj), nodeKind(kind), baseURI(NULL), nodeName(NULL), children(NULL), parent(p), attrValues(NULL){
 	childCount = -1;
 	attrCount = -1;
 }

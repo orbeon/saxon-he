@@ -51,9 +51,9 @@ EXTERN_C
 
 static char dllname[] =
     #ifdef __linux__
-        "/usr/lib64/libsaxon-hec.so";  //rename according to product edition (-hec or -pec) Also make change in the c file
+        "/usr/lib64/libsaxonhec.so";  //rename according to product edition (-hec or -pec) Also make change in the c file
     #elif  defined (__APPLE__) && defined(__MACH__)
-        "/usr/lib/libsaxon-eec.dylib";
+        "/usr/lib/libsaxon-hec.dylib";
     #else
          "C:\\Program Files\\Saxonica\\SaxonHEC1.0.0\\libsaxon-hec.dll";
     #endif

@@ -89,11 +89,11 @@ public:
     
 private:
 	const char * baseURI;
-	const char * nodeName = NULL;
-	XdmNode ** children = NULL; //caches child nodes when getChildren method is first called;
+	const char * nodeName;
+	XdmNode ** children; //caches child nodes when getChildren method is first called;
 	int childCount;
-	XdmNode * parent = NULL;
-	XdmNode ** attrValues = NULL;//caches attribute nodes when getAttributeNodes method is first called;
+	XdmNode * parent;
+	XdmNode ** attrValues;//caches attribute nodes when getAttributeNodes method is first called;
 	int attrCount;
 	XDM_NODE_KIND nodeKind;
     

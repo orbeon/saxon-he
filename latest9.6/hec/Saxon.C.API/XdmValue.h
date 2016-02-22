@@ -180,7 +180,7 @@ public:
 
 protected:
 	SaxonProcessor *proc;
-	char* valueType = NULL;  /*!< Cached. The type of the XdmValue */
+	char* valueType;  /*!< Cached. The type of the XdmValue */
 	//string valueStr;  /*!< Cached. String representation of the XdmValue, if available */
 
 	std::vector<XdmItem*> values;
