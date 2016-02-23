@@ -527,6 +527,7 @@ latest9.6/hec/jar/9.6.0.9/saxon-c/hej/saxon9he.jar svn_mime_002dtype=application
 latest9.6/hec/jar/9.6.0.9/saxon-c/pej/saxon9pe.jar svn_mime_002dtype=application%2Foctet-stream
 latest9.6/hec/jar/libsaxon.dylib svn_mime_002dtype=application%2Foctet-stream
 latest9.6/hec/jar/mysaxonhe.jar svn_mime_002dtype=application%2Foctet-stream
+latest9.6/hec/php-library-module/php5.4/saxon.so svn_mime_002dtype=application%2Foctet-stream
 latest9.6/hec/samples/cTests/ORP0301177AA__EE__30954_sellado.xml svn_mime_002dtype=application%2Fxml
 latest9.6/hec/samples/cTests/ORP0301177AA__EE__30954_sinsello.xml svn_mime_002dtype=application%2Fxml
 latest9.6/hec/samples/cTests/testXPath svn_mime_002dtype=application%2Fx-executable
