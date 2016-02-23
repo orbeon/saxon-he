@@ -4501,6 +4501,7 @@ public class Configuration implements SourceResolver, NotationSet {
         booleanPropertyNames.add(FeatureKeys.TRACE_OPTIMIZER_DECISIONS);
         booleanPropertyNames.add(FeatureKeys.USE_PI_DISABLE_OUTPUT_ESCAPING);
         booleanPropertyNames.add(FeatureKeys.USE_TYPED_VALUE_CACHE);
+        booleanPropertyNames.add(FeatureKeys.XQUERY_MULTIPLE_MODULE_IMPORTS);
     }
 
 
