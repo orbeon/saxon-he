@@ -414,7 +414,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
         if (readOnce) {
             Expression optcopy;
             if (!(getSelect() instanceof DocumentSorter)) {
-                optcopy = getConfiguration().obtainOptimizer().optimizeCopy(getSelect());
+                optcopy = getConfiguration().obtainOptimizer().optimizeCopy(visitor, contextItemType, getSelect());
                 if (optcopy != null) {
                     optcopy = optcopy.typeCheck(visitor, contextItemType);
                     ExpressionTool.copyLocationInfo(this, optcopy);
@@ -422,7 +422,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
                 }
             }
             selectOp.optimize(visitor, contextItemType);
-            optcopy = getConfiguration().obtainOptimizer().optimizeCopy(getSelect());
+            optcopy = getConfiguration().obtainOptimizer().optimizeCopy(visitor, contextItemType, getSelect());
             if (optcopy != null) {
                 ExpressionTool.copyLocationInfo(this, optcopy);
                 return optcopy;

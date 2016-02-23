@@ -111,7 +111,7 @@ public class Optimizer {
      */
 
     /*@Nullable*/
-    public Expression optimizeCopy(Expression select) throws XPathException {
+    public Expression optimizeCopy(ExpressionVisitor visitor, ContextItemStaticInfo cisi, Expression select) throws XPathException {
         if (select.getItemType().isPlainType()) {
             return select;
         }
