@@ -2851,22 +2851,24 @@ public class XPathParser {
         List<Expression> entries = new ArrayList<Expression>();
         StaticContext env = getStaticContext();
         nextToken();
-        while (t.currentToken != Token.RCURLY) {
-            Expression key = parseExprSingle();
-            if (t.currentToken == Token.ASSIGN) {
-                grumble("The ':=' notation is no longer accepted in map expressions: use ':' instead");
-            }
-            expect(Token.COLON);
-            nextToken();
-            Expression value = parseExprSingle();
-            Expression[] arguments = new Expression[]{key, value};
-            Expression fcall = env.getFunctionLibrary().bind(sn, arguments, env);
-            entries.add(fcall);
-            if (t.currentToken == Token.RCURLY) {
-                break;
-            } else {
-                expect(Token.COMMA);
+        if (t.currentToken != Token.RCURLY) {
+            while (true) {
+                Expression key = parseExprSingle();
+                if (t.currentToken == Token.ASSIGN) {
+                    grumble("The ':=' notation is no longer accepted in map expressions: use ':' instead");
+                }
+                expect(Token.COLON);
                 nextToken();
+                Expression value = parseExprSingle();
+                Expression[] arguments = new Expression[]{key, value};
+                Expression fcall = env.getFunctionLibrary().bind(sn, arguments, env);
+                entries.add(fcall);
+                if (t.currentToken == Token.RCURLY) {
+                    break;
+                } else {
+                    expect(Token.COMMA);
+                    nextToken();
+                }
             }
         }
         t.lookAhead(); //manual lookahead after an RCURLY

@@ -855,33 +855,39 @@ public final class Tokenizer {
                     }
                     /* fall through */
                 case '_':
+                    boolean foundColon = false;
                     loop:
                     for (; inputOffset < inputLength; inputOffset++) {
                         c = input.charAt(inputOffset);
                         switch (c) {
                             case ':':
+                                if (precedingToken == Token.QMARK || precedingToken == Token.SUFFIX) {
+                                    // only NCName allowed after "? in a lookup expression, or after *:
+                                    nextTokenValue = input.substring(nextTokenStartOffset, inputOffset);
+                                    nextToken = Token.NAME;
+                                    return;
+                                }
                                 if (inputOffset + 1 < inputLength) {
                                     char nc = input.charAt(inputOffset + 1);
                                     if (nc == ':') {
                                         nextTokenValue = input.substring(nextTokenStartOffset, inputOffset);
-                                        //nextTokenValue = nextTokenValue.intern();
                                         nextToken = Token.AXIS;
                                         inputOffset += 2;
                                         return;
                                     } else if (nc == '*') {
                                         nextTokenValue = input.substring(nextTokenStartOffset, inputOffset);
-                                        //nextTokenValue = nextTokenValue.intern();
                                         nextToken = Token.PREFIX;
                                         inputOffset += 2;
                                         return;
-                                    } else if (nc == '=') {
-                                        // as in "let $x:=2"
+                                    } else if (foundColon || !(nc == '_' || nc > 127 || Character.isLetter(nc))) {
+                                        // for example: "let $x:=2", "x:y:z", "x:2"
+                                        // end the token before the colon
                                         nextTokenValue = input.substring(nextTokenStartOffset, inputOffset);
-                                        //nextTokenValue = nextTokenValue.intern();
                                         nextToken = Token.NAME;
                                         return;
                                     }
                                 }
+                                foundColon = true;
                                 break;
                             case '.':
                             case '-':
