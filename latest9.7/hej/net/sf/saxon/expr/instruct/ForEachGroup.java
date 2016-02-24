@@ -50,6 +50,7 @@ public class ForEachGroup extends Instruction
     private StringCollator collator = null;             // collation used for the grouping comparisons
     private transient AtomicComparer[] sortComparators = null;    // comparators used for sorting the groups
     private boolean composite = false;
+    private boolean isInFork = false;
 
     private Operand selectOp;
     private Operand actionOp;
@@ -212,6 +213,14 @@ public class ForEachGroup extends Instruction
 
     public void setComposite(boolean composite) {
         this.composite = composite;
+    }
+
+    public boolean isInFork() {
+        return isInFork;
+    }
+
+    public void setIsInFork(boolean inFork) {
+        isInFork = inFork;
     }
 
     /*@NotNull*/
@@ -641,6 +650,10 @@ public class ForEachGroup extends Instruction
 
     private GroupIterator getGroupIterator(XPathContext context) throws XPathException {
         FocusIterator population = new FocusTrackingIterator(getSelectExpression().iterate(context));
+        return getGroupIterator(population, context);
+    }
+
+    public GroupIterator getGroupIterator(FocusIterator population, XPathContext context) throws XPathException {
 
         // get an iterator over the groups in "order of first appearance"
 

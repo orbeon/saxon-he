@@ -17,6 +17,7 @@ import net.sf.saxon.expr.parser.TypeChecker;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.om.AttributeCollection;
+import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.pattern.Pattern;
 import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
@@ -263,7 +264,7 @@ public final class XSLForEachGroup extends StyleElement {
                     collator,
                     collationName,
                 makeSortKeys(compilation, decl));
-
+            instr.setIsInFork(getParent().getFingerprint() == StandardNames.XSL_FORK);
             instr.setComposite(composite);
             return instr;
         } catch (XPathException e) {
