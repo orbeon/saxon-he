@@ -19,7 +19,7 @@
 		values.push_back(value);
 		xdmSize++; 
 		jValues = NULL;
-        valueType = NULL
+        valueType = NULL;
 	}
 
 

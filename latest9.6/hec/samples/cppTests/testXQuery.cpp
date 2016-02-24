@@ -37,7 +37,7 @@ void testxQuery1(SaxonProcessor * processor, XQueryProcessor * queryProc){
 	queryProc->checkException();
 	
     }
-	queryProc->setcwd("/home/ond1/work/svn/Saxon.C.Api/cppTests");
+	queryProc->setcwd(".");
      queryProc->executeQueryToFile(NULL, "catOutput.xml", NULL);
 
 		if (exists("catOutput.xml")) {
@@ -55,7 +55,7 @@ void testxQueryError(SaxonProcessor * processor, XQueryProcessor * queryProc){
    queryProc->setProperty("s", "cat.xml");
 
     queryProc->setProperty("qs", "<out>{count(/out/person)}</out>");
-queryProc->setcwd("");
+queryProc->setcwd(".");
      queryProc->executeQueryToFile(NULL, "catOutput.xml", NULL);
 
 		if (queryProc->exceptionOccurred()) {
@@ -86,7 +86,7 @@ void testxQueryError2(SaxonProcessor * processor, XQueryProcessor * queryProc){
 	if(message != NULL) {
 		cout<<"Error Message="<<message<<" Line number= "<<processor->getException()->getLineNumber(0)<<endl;
 	} else {
-		cout<<"Error Message - NULL -checkXXX"<<endl;
+		cout<<"Error Message - NULL check"<<endl;
 	}
 	
     }

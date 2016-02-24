@@ -360,8 +360,8 @@ void testXdmNodeOutput(XsltProcessor * trans){
 
 void exampleSimple1(XsltProcessor  *proc){
 		cout<<"ExampleSimple1 taken from PHP:"<<endl;
-                proc->setSourceFromFile("../../archive/samples/trax/xml/foo.xml");
-                proc->compileFromFile("../../archive/samples/trax/xsl/foo.xsl");
+                proc->setSourceFromFile("../php/trax/xml/foo.xml");
+                proc->compileFromFile("../php/trax/xsl/foo.xsl");
   	              
                 const char *result = proc->transformToString();               
 		if(result != NULL) {               
@@ -387,9 +387,9 @@ int exists(const char *fname)
 
   void exampleSimple2(XsltProcessor  *proc){
 		cout<<"<b>exampleSimple2:</b><br/>"<<endl;
-                proc->setSourceFromFile("../../archive/samples/trax/xml/foo.xml");
-                proc->compileFromFile("../../archive/samples/trax/xsl/foo.xsl");
-                const char * filename = "/home/ond1/temp/output1.xml";
+                proc->setSourceFromFile("../php/trax/xml/foo.xml");
+                proc->compileFromFile("../php/trax/xsl/foo.xsl");
+                const char * filename = "output1.xml";
 		proc->setOutputFile(filename);
                 proc->transformToFile();
 				

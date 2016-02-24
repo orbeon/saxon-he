@@ -9,10 +9,12 @@
 
 Saxon/C 1.0.0 is the latest major release of Saxon-HE/PE/EE on the C/C++ programming platform. The APIs support the specifications XSLT 2.0/3.0, XQuery 1.0/3.0, Schema Validation 1.0/1.1 and XPath 2.0/3.0 from C/C++ or PHP applications.
 
-Platforms supported: Linux Only. 
+Saxon/C is built from the Saxon 9.6.0.9 Java product using the Excelsior JET tool (version 11 MP1).
+
+Platforms supported: Linux Only.
 Windows will be supported shortly
 
-Saxon/C is release in three separate editions which replicating the products on the Java platform: Enterprise (Saxon/EEC), Professional Editon (Saxon-PE/C), and Home Edition (Saxon-HE/C)
+Saxon/C is release in three separate editions which replicating the products on the Java platform: Enterprise (Saxon-EE/C), Professional Editon (Saxon-PE/C), and Home Edition (Saxon-HE/C)
 
 <div id='installation'/>
 ## Installation: ##
@@ -20,7 +22,11 @@ Saxon/C is release in three separate editions which replicating the products on 
 #### Saxon-HE/C, Saxon-PE/C and Saxon-EE/C: ####
 To install any of the Saxon/C releases, unzip the the file libsaxon-EDITION-setup-v1.0.0.zip and execute the command './libsaxon-EDITION-setup-v1.0.0'
 First step is to select the destination of where the product files will be installed.
-The product files are unpacked in the directory 'Saxon-HEC'
+The product files are unpacked in the directory 'Saxon-EDITIONC'
+
+Link the dynamic saxon library so it can be found. For example:
+
+	ln -s /usr/lib/Saxonica/Saxon-EDITIONC1.0.0/libsaxonEDITION.so /usr/lib/libsaxonEDITION.so
 
 You need to setup the environment for the jet jvm. The jvm is in the directory JET-home=Saxonica/Saxon-EDITION1.1.0/rt
 The directory JET-home/lib/i386  or JET_home/lib/amd64 (for 64-bit machines) must be listed in the LD_LIBRARY_PATH environment variable. For instance, if you
@@ -29,8 +35,13 @@ are using bash or Bourne shell, use the following commands:
     export LD_LIBRARY_PATH=/usr/lib/rt/lib/i386:$LD_LIBRARY_PATH
 
 We assume that the 'rt' directory is in the location /usr/lib.
-The Saxon-EDITION API assumes the library is installed as follows: '/usr/lib/libsaxonhec.so', '/usr/lib/libsaxonpec.so'or '/usr/lib/libsaxoneec.so'
-The directory 'saxon-data' must be copied to '/usr/lib'
+
+Link the jetvm library so it can be found. For example:
+
+	ln -s /usr/lib/Saxonica/Saxon-EDITIONC1.0.0/rt /usr/lib/rt
+
+The Saxon-EDITION API assumes the library is installed as follows: '/usr/lib/libsaxonhec.so', '/usr/lib/libsaxonpec.so' or '/usr/lib/libsaxoneec.so'
+The directory 'saxon-data' must be linked ot copied to '/usr/lib', alternatively you can use the ennvironment variable SAXONC_HOME to locate directory.
 
 
 #### PHP extension: ####
@@ -43,7 +54,20 @@ Run the commands:
 * make
 * sudo make install
 
-Update the php.ini file (if using ubuntu it is usually in the location '/etc/php5/apache2/') to contain the php extension: insert the following in the Dynamic Extensions section: extension=saxon.so
+Create a module conf file:
+
+nano /etc/php5/mods-available/saxon.ini
+and add contents:
+
+	; configuration for php Saxon HE/PE/EE module
+	    extension=saxon.so
+	save the file.
+
+Enable the module for PHP:
+
+	php5enmod saxon
+
+Alternatively, you can update the php.ini file (if using ubuntu it is usually in the location '/etc/php5/apache2/') to contain the php extension: insert the following in the Dynamic Extensions section: extension=saxon.so
 
 * sudo service apache2 restart
 
@@ -77,7 +101,7 @@ For C++ programming see sample code for XSLT, XQuery, Schema Validation and XPat
 
 The following files are required to build Saxon/C on C++:  SaxonCGlue.c, SaxonCXPath.c, XdmValue.cpp, XdmItem.cpp, XdmNode.cpp, XdmAtomicValue.cpp, SaxonProcessor.cpp, XsltProcessor.cpp and XQueryProcessor.cpp, XPathProcessor.cpp, SchemaValidator.cpp
 
-To compile the sample test code in C++ execute the 'build.sh' file the directory 'cppTests'. This file builds executables for the test cases testing XSLT, XPath, XQuery and schema Validator. The command is similar to the following: 
+To compile the sample test code in C++ execute the 'build.sh' file the directory 'cppTests'. This file builds executables for the test cases testing XSLT, XPath, XQuery and schema Validator. The command is similar to the following:
 
 > g++ -m32  ../bin/SaxonCGlue.o ../bin/SaxonCXPath.o ../bin/SaxonProcessor.o ../bin/XQueryProcessor.o ../bin/XsltProcessor.o ../bin/XPathProcessor.o ../bin/XdmValue.o ../bin/XdmItem.o ../bin/XdmNode.o ../bin/XdmAtomicValue.o ../bin/SchemaValidator.o testXSLT.cpp -o testXSLT -ldl -lc -lsaxon $1 $2
 
@@ -90,7 +114,7 @@ There are many parameters and options that can be set to control the way in whic
 
 The example below shows how we can set the configuration features on the processor before we create any of the processors (.e.g. XsltProcessor, XQueryProcess, etc):
 
-> processor->setConfigurationProperty("xsdversion", "1.1"); 
+> processor->setConfigurationProperty("xsdversion", "1.1");
 or
 > processor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSchemaImports", "on");
 
@@ -125,7 +149,7 @@ The properties are a subset to those specified for running XSLT from the [comman
 
 
 Example 1:
- 
+
 <pre><code>
 	SaxonProcessor *processor = new SaxonProcessor(true);
 	XsltProcessor * xslt = processor->newTransformer();
@@ -142,7 +166,7 @@ Example 2:
         xslt->setSourceFile("xml/foo.xml");
 	XdmAtomicValue * xdmvaluex =processor->makeStringValue("Hello to you");
 	if(xdmvaluex !=NULL){
-		cerr<< "xdmvaluex ok"<<endl; 			
+		cerr<< "xdmvaluex ok"<<endl;
 	}
 	xslt->setParameter("a-param", xdmvaluex);
         const char * result = test->transformFileToString(NULL, "xsl/foo.xsl");
@@ -214,11 +238,11 @@ Example:
 <pre><code>
 	SaxonProcessor *processor = new SaxonProcessor();
 	XPathProcessor * xpath = processor->newXPathProcessor();
- 
+
 	xpath->setContextFile("cat.xml");
 
 	XdmValue * resultValues = xpath->evaluate("//person");
-	
+
 	if(resultValues == NULL) {
 		 printf("result is null \n");
 	} else {
@@ -229,7 +253,7 @@ Example:
 				cout<<"Item at position "<<i<<" should not be null"<<endl;
 				break;
 			}
-			cout<<"Item at "<<i<<" ="<<itemi->getStringValue(processor)<<endl;		
+			cout<<"Item at "<<i<<" ="<<itemi->getStringValue(processor)<<endl;
 		}
 	}
 	xpath->clearParameters(true);
@@ -262,12 +286,12 @@ Example:
 	processor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSchemaImports", "on");
 	SchemaValidator * val = processor->newSchemaValidator();
 	val->registerSchemaFromFile("family-ext.xsd");
-      
+
 	val->registerSchemaFromFile("family.xsd");
-	val->setProperty("report-node", "true");	
+	val->setProperty("report-node", "true");
 	val->setProperty("verbose", "true");
 	val->validate("family.xml");
-	XdmNode * node = val->getValidationReport(); 
+	XdmNode * node = val->getValidationReport();
 	if(node != NULL) {
 		cout<<endl<<"Validation Report"<<node->getStringValue()<<endl;
 	} else {
@@ -294,6 +318,7 @@ The methods on these class are given below. For a more comprehensive description
 |     | *SaxonProcessor()* <br> *Default Constructor. Create an unlicensed Saxon Processor*   |
 |   | SaxonProcessor(boolean $license)<br> *Constructor. Indicates whether the Processor requires features of Saxon that need a license file. If false, the method will creates a Configuration appropriate for Saxon HE (Home edition). If true, the method will create a Configuration appropriate to the version of the software that is running  Saxon-PE or Saxon-EE*  |
 |  |SaxonProcessor(boolean $license, string $cwd) <br> *Constructor. Indicates whether the Processor requires features of Saxon that need a license file. The cwd arugment is used to manually set the current working directory used for executions of source files*  |
+| XdmValue | createAtomicValue($primitive_type val)<br> *Create an Xdm Atomic value from any of the main primitive types (i.e. bool, int, float, double, string)* |
 | Saxon\\XdmNode | parseXmlFromString(string $value) <br> *Create an XdmNode object. The $value is a lexical representation of the XML document* |
 | Saxon\\XdmNode | parseXmlFromFile(string $fileName) <br> *Create an XdmNode object. Value is a string type and the file name to the XML document. File name can be relative or absolute. IF relative the cwd is used to resolve the file.* |
 | void | setcwd(string $cwd) <br> *Set the current working directory used to resolve against files* |
@@ -375,10 +400,10 @@ The methods on these class are given below. For a more comprehensive description
 | void | setProperty(string $name, string $value) <br> *Set properties for Query.* |
 | void | clearParameters() <br> *Clear parameter values set* |
 | void | clearProperties() <br> *Clear property values set* |
-| void | exceptionClear() <br> *Clear any exception thrown* 
+| void | exceptionClear() <br> *Clear any exception thrown*
 | string | getErrorCode(int $i) <br> *Get the ith error code if there are any errors*  |
 | string | getErrorMessage(int $i) <br> *Get the ith error message if there are any error* |
-| int | getExceptionCount() <br> *Get number of error during execution or evaluate of stylesheet and query, respectively* | 
+| int | getExceptionCount() <br> *Get number of error during execution or evaluate of stylesheet and query, respectively* |
 
 #### Saxon\\SchemaValidator class ####
 <sup>PHP API</sup>
@@ -389,7 +414,7 @@ The methods on these class are given below. For a more comprehensive description
 | void | setOutputFile(string $fileName) <br> *The instance document to be validated. Supplied file name is resolved and accessed* |
 | void | registerSchemaFromFile(string $fileName) <br> *Register the Schema which is given as file name.* |
 | void | registerSchemaFromString(string $schemaStr) <br> *Register the Schema which is given as a string representation.* |
-| void | validate() <br> *Validate an instance document supplied as a Source object. Assume source document has already been supplied through accessor methods* | 
+| void | validate() <br> *Validate an instance document supplied as a Source object. Assume source document has already been supplied through accessor methods* |
 | void | validate(string $fileName) <br> *Validate an instance document supplied as a Source object. $filename - The name of the file to be validated. $filename can be null* |
 | XdmNode | validateToNode() <br> *Validate an instance document supplied as a Source object with the validated document returned to the calling program. Assume source document has already been supplied through accessor methods* |
 | XdmNode | validateToNode(string $fileName) <br> *Validate an instance document supplied as a Source object with the validated document returned to the calling program. $filename - The name of the file to be validated. $filename can be null* |
@@ -398,7 +423,7 @@ The methods on these class are given below. For a more comprehensive description
 | void | setProperty(string $name, string $value) <br> *Set properties for Schema Validator.* |
 | void | clearParameters() <br> *Clear parameter values set* |
 | void | clearProperties() <br> *Clear property values set* |
-| void | exceptionClear() <br> *Clear any exception thrown* 
+| void | exceptionClear() <br> *Clear any exception thrown*
 | string | getErrorCode(int $i) <br> *Get the ith error code if there are any errors*  |
 | string | getErrorMessage(int $i) <br> *Get the ith error message if there are any error* |
 | int | getExceptionCount() <br> *Get number of error during execution of the validator* |
@@ -456,23 +481,24 @@ In the Saxon/C download please see the PHP unit tests for XSLT, XQuery, XPath an
 
 Example code XSLT processing:
 <pre><code>
-	<?php 
+	<?php
 	        $xmlfile = "xml/foo.xml";
 	        $xslFile = "xsl/foo.xsl";
-		$proc = new SaxonProcessor();
+		$proc = new Saxon\\SaxonProcessor();
             	$version = $proc->version();
             	echo 'Saxon Processor version: '.$version;
-                $proc->setSourceFile($xmlfile);
-                $proc->setStylesheetFile($xslFile);      
-                $result = $proc->transformToString();               
-		if($result != null) {               
+		$xsltProc = $saxonProc->newXsltProcessor();
+                $xsltProc->setSourceFromFile($xmlfile);
+                $xsltProc->compileFromFile($xslFile);
+                $result = $xsltProc->transformToString();
+		if($result != null) {
 		  echo '<b>exampleSimple1:</b><br/>';
 		  echo 'Output:'.$result;
 		} else {
 			echo "Result is null";
 		}
-		$proc->clearParameters();
-		$proc->clearProperties(); 
+		$xsltProc->clearParameters();
+		$xsltProc->clearProperties();
 	?>
 </code></pre>
 
@@ -480,31 +506,32 @@ Example code XSLT processing:
 In the example below we show how to debug if something unexpected is happening. It is also very useful to examine the apache error.log file:
 
 <pre><code>
-	<?php 
+	<?php
 	        $xmlfile = "xml/foo.xml";
 	        $xslFile = "xsl/foo.xsl";
-		$proc = new SaxonProcessor();
-                $proc->setSourceFile($xmlFile);
-                $proc->setStylesheetFile($xslFile);
-                
-                $result = $proc->transformToString();
-                
+		$proc = new Saxon\\SaxonProcessor();
+		$xsltProc = $saxonProc->newXsltProcessor();
+                $xsltProc->setSourceFromFile($xmlFile);
+                $xsltProc->compileFromFile($xslFile);
+
+                $result = $xsltProc->transformToString();
+
                 if($result == NULL) {
-                    $errCount = $proc->getExceptionCount();
-				    if($errCount > 0 ){ 
+                    $errCount = $xsltProc->getExceptionCount();
+				    if($errCount > 0 ){
 				        for($i = 0; $i < $errCount; $i++) {
-					       $errCode = $proc->getErrorCode(intval($i));
-					       $errMessage = $proc->getErrorMessage(intval($i));
+					       $errCode = $xsltProc->getErrorCode(intval($i));
+					       $errMessage = $xsltProc->getErrorMessage(intval($i));
 					       echo 'Expected error: Code='.$errCode.' Message='.$errMessage;
 					   }
-						$proc->exceptionClear();	
+						$xsltProc->exceptionClear();
 					}
-                
-                
-                }                
+
+
+                }
                 echo $result;
-            	$proc->clearParameters();
-		$proc->clearProperties();
+            	$xsltProc->clearParameters();
+		$xsltProc->clearProperties();
 	?>
 </code></pre>
 
@@ -523,15 +550,13 @@ The XML parser used is the one supplied by the Excelsior JET runtime. There are 
 <div id='limitations'/>
 ## Limitations: ##
 
-The following limitations apply to the the 1.1.0 release:
+The following limitations apply to the the 1.0.0 release:
 
 * No support for the XdmFunction type in the Xdm data model
-* No supports for XSLT and XQuery extension functions
+* No supports for external functions in XSLT and XQuery
 
 ### Feedback/Comments: ###
 
 Please use the help forums and bug trackers at [saxonica.plan.io](https://saxonica.plan.io/projects/saxon-c) if you need help or advice.
 
 
-
-|  | Comment |

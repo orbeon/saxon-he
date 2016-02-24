@@ -40,13 +40,15 @@ public:
 	XdmValue(){
 		xdmSize = 0;
 		refCount = 1;
-		jValues = NULL;		
+		jValues = NULL;
+		valueType = NULL;
 	}
 
 	XdmValue(SaxonProcessor * p){
 		proc = p;
 		jValues = NULL;
 		refCount = 1;
+		valueType = NULL;
 	}
 
 
