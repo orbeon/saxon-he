@@ -49,7 +49,8 @@ public final class AxisExpression extends Expression {
     private ItemType itemType = null;
     private ContextItemStaticInfo staticInfo = ContextItemStaticInfo.DEFAULT;
     private int computedCardinality = -1;
-    private boolean doneWarnings = false;
+    private boolean doneTypeCheck = false;
+    private boolean doneOptimize = false;
 
     /**
      * Constructor for an AxisExpression whose origin is the context item
@@ -113,7 +114,8 @@ public final class AxisExpression extends Expression {
 
     /*@NotNull*/
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
-        boolean skipChecks = doneWarnings && this.staticInfo.getItemType().equals(contextInfo.getItemType());
+        boolean noWarnings = doneOptimize || (doneTypeCheck && this.staticInfo.getItemType().equals(contextInfo.getItemType()));
+        doneTypeCheck = true;
         if (contextInfo.getItemType() == ErrorType.getInstance()) {
             XPathException err = new XPathException("Axis step " + toString() +
                     " cannot be used here: the context item is absent");
@@ -137,12 +139,9 @@ public final class AxisExpression extends Expression {
             throw err;
         } else if (relation == TypeHierarchy.OVERLAPS || relation == TypeHierarchy.SUBSUMES) {
             // need to insert a dynamic check of the context item type
-            Expression thisExp = this;
-            if (!skipChecks) {
-                thisExp = checkPlausibility(visitor, contextInfo);
-                if (Literal.isEmptySequence(thisExp)) {
-                    return thisExp;
-                }
+            Expression thisExp = checkPlausibility(visitor, contextInfo, !noWarnings);
+            if (Literal.isEmptySequence(thisExp)) {
+                return thisExp;
             }
             ContextItemExpression exp = new ContextItemExpression();
             ExpressionTool.copyLocationInfo(this, exp);
@@ -155,16 +154,10 @@ public final class AxisExpression extends Expression {
             return step;
         }
 
-        if (skipChecks) {
-            return this;
-        }
-
-        doneWarnings = true;
-
-        return checkPlausibility(visitor, contextInfo);
+        return checkPlausibility(visitor, contextInfo, !noWarnings);
     }
 
-    private Expression checkPlausibility(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
+    private Expression checkPlausibility(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo, boolean warnings) throws XPathException {
         StaticContext env = visitor.getStaticContext();
         Configuration config = env.getConfiguration();
         ItemType contextType = contextInfo.getItemType();
@@ -177,15 +170,19 @@ public final class AxisExpression extends Expression {
 
         // Test whether the requested nodetest is consistent with the requested axis
         if (test != null && !AxisInfo.getTargetUType(UType.ANY_NODE, axis).overlaps(test.getUType())) {
-            visitor.issueWarning("The " + AxisInfo.axisName[axis] + " axis will never select " +
-                            test.getUType().toStringWithIndefiniteArticle(),
-                    getLocation());
+            if (warnings) {
+                visitor.issueWarning("The " + AxisInfo.axisName[axis] + " axis will never select " +
+                                test.getUType().toStringWithIndefiniteArticle(),
+                        getLocation());
+            }
             return Literal.makeEmptySequence();
         }
 
         if (test instanceof NameTest && axis == AxisInfo.NAMESPACE && !((NameTest)test).getNamespaceURI().isEmpty()) {
-            visitor.issueWarning("The names of namespace nodes are never prefixed, so this axis step will never select anything",
-                getLocation());
+            if (warnings) {
+                visitor.issueWarning("The names of namespace nodes are never prefixed, so this axis step will never select anything",
+                    getLocation());
+            }
             return Literal.makeEmptySequence();
         }
 
@@ -194,18 +191,22 @@ public final class AxisExpression extends Expression {
         UType targetUType = AxisInfo.getTargetUType(originUType, axis);
         UType testUType = test == null ? UType.ANY_NODE : test.getUType();
         if (targetUType.equals(UType.VOID)) {
-            visitor.issueWarning("The " + AxisInfo.axisName[axis] + " axis starting at " +
-                            originUType.toStringWithIndefiniteArticle() + " node will never select anything",
-                    getLocation());
+            if (warnings) {
+                visitor.issueWarning("The " + AxisInfo.axisName[axis] + " axis starting at " +
+                                originUType.toStringWithIndefiniteArticle() + " node will never select anything",
+                        getLocation());
+            }
             return Literal.makeEmptySequence();
         }
 
         // Test whether the axis ever selects a node of the right kind, when starting at this context node
         if (!targetUType.overlaps(testUType)) {
-            visitor.issueWarning("The " + AxisInfo.axisName[axis] + " axis starting at " +
-                            originUType.toStringWithIndefiniteArticle() + " will never select " +
-                            test.getUType().toStringWithIndefiniteArticle(),
-                    getLocation());
+            if (warnings) {
+                visitor.issueWarning("The " + AxisInfo.axisName[axis] + " axis starting at " +
+                                originUType.toStringWithIndefiniteArticle() + " will never select " +
+                                test.getUType().toStringWithIndefiniteArticle(),
+                        getLocation());
+            }
             return Literal.makeEmptySequence();
         }
 
@@ -246,8 +247,10 @@ public final class AxisExpression extends Expression {
                             // check that the name appearing in the step is one of the names allowed by the nodetest
 
                             if (selectedElementNames.intersect(outermostElementNames).isEmpty()) {
-                                visitor.issueWarning("Starting at a document node, the step is selecting an element whose name " +
-                                        "is not among the names of child elements permitted for this document node type", getLocation());
+                                if (warnings) {
+                                    visitor.issueWarning("Starting at a document node, the step is selecting an element whose name " +
+                                            "is not among the names of child elements permitted for this document node type", getLocation());
+                                }
 
                                 return Literal.makeEmptySequence();
                             }
@@ -259,8 +262,10 @@ public final class AxisExpression extends Expression {
                                 int outermostElementName = oeni.hasNext() ? oeni.next() : -1;
                                 SchemaDeclaration decl = config.getElementDeclaration(outermostElementName);
                                 if (decl == null) {
-                                    visitor.issueWarning("Element " + config.getNamePool().getDisplayName(outermostElementName) +
-                                            " is not declared in the schema", getLocation());
+                                    if (warnings) {
+                                        visitor.issueWarning("Element " + config.getNamePool().getDisplayName(outermostElementName) +
+                                                " is not declared in the schema", getLocation());
+                                    }
                                     itemType = elementTest;
                                 } else {
                                     SchemaType contentType = decl.getType();
@@ -300,8 +305,10 @@ public final class AxisExpression extends Expression {
                         ct == BuiltInAtomicType.ANY_ATOMIC || ct == BuiltInAtomicType.UNTYPED_ATOMIC ||
                         ct == BuiltInAtomicType.STRING)) {
                     // TODO: this test could be more precise, e.g. string is not possible for elements and attribute nodes
-                    visitor.issueWarning("The " + AxisInfo.axisName[axis] + " axis will never select any typed nodes, " +
-                            "because the expression is being compiled in an environment that is not schema-aware", getLocation());
+                    if (warnings) {
+                        visitor.issueWarning("The " + AxisInfo.axisName[axis] + " axis will never select any typed nodes, " +
+                                "because the expression is being compiled in an environment that is not schema-aware", getLocation());
+                    }
                     return Literal.makeEmptySequence();
                 }
             }
@@ -310,52 +317,54 @@ public final class AxisExpression extends Expression {
             StructuredQName targetName = test.getMatchingNodeName();
 
             if (contentType.isSimpleType()) {
-                if ((axis == AxisInfo.CHILD || axis == AxisInfo.DESCENDANT || axis == AxisInfo.DESCENDANT_OR_SELF) &&
-                        UType.PARENT_NODE_KINDS.union(UType.ATTRIBUTE).subsumes(kind)) {
-                    visitor.issueWarning("The " + AxisInfo.axisName[axis] + " axis will never select any " +
-                                    kind +
-                                    " nodes when starting at " +
-                                    (origin == Type.ATTRIBUTE ? "an attribute node" : getStartingNodeDescription(contentType)),
-                            getLocation());
-                } else if (axis == AxisInfo.CHILD && kind.equals(UType.TEXT) &&
-                        (getParentExpression() instanceof Atomizer)) {
-                    visitor.issueWarning("Selecting the text nodes of an element with simple content may give the " +
-                            "wrong answer in the presence of comments or processing instructions. It is usually " +
-                            "better to omit the '/text()' step", getLocation());
-                } else if (axis == AxisInfo.ATTRIBUTE) {
-                    Iterator extensions = config.getExtensionsOfType(contentType);
-                    boolean found = false;
-                    if (targetfp == -1) {
-                        while (extensions.hasNext()) {
-                            ComplexType extension = (ComplexType) extensions.next();
-                            if (extension.allowsAttributes()) {
-                                found = true;
-                                break;
-                            }
-                        }
-                    } else {
-                        while (extensions.hasNext()) {
-                            ComplexType extension = (ComplexType) extensions.next();
-                            try {
-                                if (extension.getAttributeUseType(targetName) != null) {
+                if (warnings) {
+                    if ((axis == AxisInfo.CHILD || axis == AxisInfo.DESCENDANT || axis == AxisInfo.DESCENDANT_OR_SELF) &&
+                            UType.PARENT_NODE_KINDS.union(UType.ATTRIBUTE).subsumes(kind)) {
+                        visitor.issueWarning("The " + AxisInfo.axisName[axis] + " axis will never select any " +
+                                        kind +
+                                        " nodes when starting at " +
+                                        (origin == Type.ATTRIBUTE ? "an attribute node" : getStartingNodeDescription(contentType)),
+                                getLocation());
+                    } else if (axis == AxisInfo.CHILD && kind.equals(UType.TEXT) &&
+                            (getParentExpression() instanceof Atomizer)) {
+                        visitor.issueWarning("Selecting the text nodes of an element with simple content may give the " +
+                                "wrong answer in the presence of comments or processing instructions. It is usually " +
+                                "better to omit the '/text()' step", getLocation());
+                    } else if (axis == AxisInfo.ATTRIBUTE) {
+                        Iterator extensions = config.getExtensionsOfType(contentType);
+                        boolean found = false;
+                        if (targetfp == -1) {
+                            while (extensions.hasNext()) {
+                                ComplexType extension = (ComplexType) extensions.next();
+                                if (extension.allowsAttributes()) {
                                     found = true;
                                     break;
                                 }
-                            } catch (SchemaException e) {
-                                // ignore the error
+                            }
+                        } else {
+                            while (extensions.hasNext()) {
+                                ComplexType extension = (ComplexType) extensions.next();
+                                try {
+                                    if (extension.getAttributeUseType(targetName) != null) {
+                                        found = true;
+                                        break;
+                                    }
+                                } catch (SchemaException e) {
+                                    // ignore the error
+                                }
                             }
                         }
-                    }
-                    if (!found) {
-                        visitor.issueWarning("The " + AxisInfo.axisName[axis] + " axis will never select " +
-                                (targetName == null ?
-                                        "any attribute nodes" :
-                                        "an attribute node named " + getDiagnosticName(targetName, env)) +
-                                " when starting at " + getStartingNodeDescription(contentType), getLocation());
-                        // Despite the warning, leave the expression unchanged. This is because
-                        // we don't necessarily know about all extended types at compile time:
-                        // in particular, we don't seal the XML Schema namespace to block extensions
-                        // of built-in types
+                        if (!found) {
+                            visitor.issueWarning("The " + AxisInfo.axisName[axis] + " axis will never select " +
+                                    (targetName == null ?
+                                            "any attribute nodes" :
+                                            "an attribute node named " + getDiagnosticName(targetName, env)) +
+                                    " when starting at " + getStartingNodeDescription(contentType), getLocation());
+                            // Despite the warning, leave the expression unchanged. This is because
+                            // we don't necessarily know about all extended types at compile time:
+                            // in particular, we don't seal the XML Schema namespace to block extensions
+                            // of built-in types
+                        }
                     }
                 }
             } else if (((ComplexType) contentType).isSimpleContent() &&
@@ -363,11 +372,13 @@ public final class AxisExpression extends Expression {
                     UType.PARENT_NODE_KINDS.subsumes(kind)) {
                 // We don't need to consider extended types here, because a type with complex content
                 // can never be defined as an extension of a type with simple content
-                visitor.issueWarning("The " + AxisInfo.axisName[axis] + " axis will never select any " +
-                        kind.toString() +
-                        " nodes when starting at " +
-                        getStartingNodeDescription(contentType) +
-                        ", as this type requires simple content", getLocation());
+                if (warnings) {
+                    visitor.issueWarning("The " + AxisInfo.axisName[axis] + " axis will never select any " +
+                            kind.toString() +
+                            " nodes when starting at " +
+                            getStartingNodeDescription(contentType) +
+                            ", as this type requires simple content", getLocation());
+                }
                 return Literal.makeEmptySequence();
             } else if (((ComplexType) contentType).isEmptyContent() &&
                     (axis == AxisInfo.CHILD || axis == AxisInfo.DESCENDANT || axis == AxisInfo.DESCENDANT_OR_SELF)) {
@@ -377,16 +388,20 @@ public final class AxisExpression extends Expression {
                         return this;
                     }
                 }
-                visitor.issueWarning("The " + AxisInfo.axisName[axis] + " axis will never select any" +
-                        " nodes when starting at " +
-                        getStartingNodeDescription(contentType) +
-                        ", as this type requires empty content", getLocation());
+                if (warnings) {
+                    visitor.issueWarning("The " + AxisInfo.axisName[axis] + " axis will never select any" +
+                            " nodes when starting at " +
+                            getStartingNodeDescription(contentType) +
+                            ", as this type requires empty content", getLocation());
+                }
                 return Literal.makeEmptySequence();
             } else if (axis == AxisInfo.ATTRIBUTE) {
                 if (targetfp == -1) {
-                    if (!((ComplexType) contentType).allowsAttributes()) {
-                        visitor.issueWarning("The complex type " + contentType.getDescription() +
-                                " allows no attributes other than the standard attributes in the xsi namespace", getLocation());
+                    if (warnings) {
+                        if (!((ComplexType) contentType).allowsAttributes()) {
+                            visitor.issueWarning("The complex type " + contentType.getDescription() +
+                                    " allows no attributes other than the standard attributes in the xsi namespace", getLocation());
+                        }
                     }
                 } else {
                     try {
@@ -403,9 +418,11 @@ public final class AxisExpression extends Expression {
                             schemaType = ((ComplexType) contentType).getAttributeUseType(targetName);
                         }
                         if (schemaType == null) {
-                            visitor.issueWarning("The complex type " + contentType.getDescription() +
-                                    " does not allow an attribute named " + getDiagnosticName(targetName, env), getLocation());
-                            return Literal.makeEmptySequence();
+                            if (warnings) {
+                                visitor.issueWarning("The complex type " + contentType.getDescription() +
+                                        " does not allow an attribute named " + getDiagnosticName(targetName, env), getLocation());
+                                return Literal.makeEmptySequence();
+                            }
                         } else {
                             itemType = new CombinedNodeTest(
                                     test,
@@ -427,8 +444,10 @@ public final class AxisExpression extends Expression {
                         HashSet<StructuredQName> children = new HashSet<StructuredQName>();
                         ((ComplexType) contentType).gatherAllPermittedChildren(children, false);
                         if (children.isEmpty()) {
-                            visitor.issueWarning("The complex type " + contentType.getDescription() +
-                                    " does not allow children", getLocation());
+                            if (warnings) {
+                                visitor.issueWarning("The complex type " + contentType.getDescription() +
+                                        " does not allow children", getLocation());
+                            }
                             return Literal.makeEmptySequence();
                         }
 //                            if (children.contains(-1)) {
@@ -445,8 +464,10 @@ public final class AxisExpression extends Expression {
                     }
                     SchemaType schemaType = ((ComplexType) contentType).getElementParticleType(childElement, true);
                     if (schemaType == null) {
-                        visitor.issueWarning("The complex type " + contentType.getDescription() +
-                                " does not allow a child element named " + getDiagnosticName(childElement, env), getLocation());
+                        if (warnings) {
+                            visitor.issueWarning("The complex type " + contentType.getDescription() +
+                                    " does not allow a child element named " + getDiagnosticName(childElement, env), getLocation());
+                        }
                         return Literal.makeEmptySequence();
                     } else {
                         itemType = new CombinedNodeTest(
@@ -531,8 +552,10 @@ public final class AxisExpression extends Expression {
                             return path.typeCheck(visitor, contextInfo);
                         }
                     } else {
-                        visitor.issueWarning("The complex type " + contentType.getDescription() +
-                                " does not allow a descendant element named " + getDiagnosticName(targetName, env), getLocation());
+                        if (warnings) {
+                            visitor.issueWarning("The complex type " + contentType.getDescription() +
+                                    " does not allow a descendant element named " + getDiagnosticName(targetName, env), getLocation());
+                        }
                     }
                 } catch (SchemaException e) {
                     throw new AssertionError(e);
@@ -629,6 +652,9 @@ public final class AxisExpression extends Expression {
      */
 
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) {
+        doneOptimize = true; // This ensures no more warnings about empty axes, because (a) we've probably output the
+                             // warning already, and (b) we're now looking at a different expression from what the user
+                             // wrote. In particular, prevent spurious warnings after function inlining.
         staticInfo = contextInfo;
         return this;
     }
@@ -713,7 +739,8 @@ public final class AxisExpression extends Expression {
         a2.itemType = itemType;
         a2.staticInfo = staticInfo;
         a2.computedCardinality = computedCardinality;
-        a2.doneWarnings = doneWarnings;
+        a2.doneTypeCheck = doneTypeCheck;
+        a2.doneOptimize = doneOptimize;
         ExpressionTool.copyLocationInfo(this, a2);
         return a2;
     }
