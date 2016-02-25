@@ -22,7 +22,7 @@ public interface InvalidityHandler {
      * @throws XPathException if initialization of the invalidity handler fails for any reason
      */
 
-    void startReporting(String systemId) throws XPathException;
+    public void startReporting(String systemId) throws XPathException;
 
     /**
      * Report a validation error found during validation of an instance document
@@ -32,7 +32,7 @@ public interface InvalidityHandler {
      * This is fatal and will cause the validation run to be abandoned
      */
 
-    void reportInvalidity(Invalidity failure) throws XPathException;
+    public void reportInvalidity(Invalidity failure) throws XPathException;
 
     /**
      * At the end of a validation episode, do any closedown actions, and optionally return
@@ -44,7 +44,7 @@ public interface InvalidityHandler {
      * @throws XPathException if an error occurs creating any validation report
      */
 
-    Sequence endReporting() throws XPathException;
+    public Sequence endReporting() throws XPathException;
 }
 
 
