@@ -27,6 +27,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.AttributeLocation;
 import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.type.ValidationException;
+import org.jetbrains.annotations.NotNull;
 import org.xml.sax.SAXException;
 
 import javax.xml.transform.SourceLocator;
@@ -175,17 +176,14 @@ public class StandardErrorListener implements UnfailingErrorListener {
             // can happen after deserialization
             logger = new StandardLogger();
         }
-        String message = "";
-        if (exception.getLocator() != null) {
-            message = getLocationMessage(exception) + "\n  ";
-        }
-        message += wordWrap(getExpandedMessage(exception));
+        XPathException xe = XPathException.makeXPathException(exception);
+        String message = constructMessage(exception, xe, "", "Warning ");
 
         if (exception instanceof ValidationException) {
-            logger.error("Validation error " + message);
+            logger.error(message);
 
         } else {
-            logger.warning("Warning: " + message);
+            logger.warning(message);
             warningCount++;
             if (warningCount > getMaximumNumberOfWarnings()) {
                 logger.info("No more warnings will be displayed");
@@ -236,9 +234,7 @@ public class StandardErrorListener implements UnfailingErrorListener {
         } else {
             String prefix = recoveryPolicy == Configuration.RECOVER_WITH_WARNINGS ?
                     "Recoverable error " : "Error ";
-            message = prefix + getLocationMessage(exception) +
-                    "\n  " +
-                    wordWrap(getExpandedMessage(exception));
+            message = constructMessage(exception, XPathException.makeXPathException(exception), "", prefix);
         }
 
         if (exception instanceof ValidationException) {
@@ -302,17 +298,27 @@ public class StandardErrorListener implements UnfailingErrorListener {
             kind = "Type error ";
         }
 
-        if (xe.getLocator() instanceof AttributeLocation) {
-//            String where = "";
-//            ExpressionContext.AttributeLocation aloc = (ExpressionContext.AttributeLocation) xe.getLocator();
-//            if (aloc.getElementName() != null) {
-//                where = "at " + aloc.getElementName().getDisplayName();
-//                if (aloc.getAttributeName() != null) {
-//                    where += "/@" + aloc.getAttributeName().getDisplayName();
-//                }
-//                where += " ";
-//            }
+        message = constructMessage(exception, xe, langText, kind);
 
+        logger.error(message);
+        if (exception instanceof XPathException) {
+            ((XPathException) exception).setHasBeenReported(true);
+            // probably redundant. It's the caller's job to set this flag, because there might be
+            // a non-standard error listener in use.
+        }
+
+        if (exception instanceof XPathException) {
+            XPathContext context = ((XPathException) exception).getXPathContext();
+            if (context != null && getRecoveryPolicy() != Configuration.RECOVER_SILENTLY) {
+                outputStackTrace(logger, context);
+            }
+        }
+    }
+
+    @NotNull
+    private String constructMessage(TransformerException exception, XPathException xe, String langText, String kind) {
+        String message;
+        if (xe.getLocator() instanceof AttributeLocation) {
             String line1 = kind + /*where +*/ langText + getLocationMessageText(xe.getLocator()) + "\n";
             String line2 = "  " + wordWrap(getExpandedMessage(exception));
             message = line1 + line2;
@@ -387,20 +393,7 @@ public class StandardErrorListener implements UnfailingErrorListener {
                     wordWrap(getExpandedMessage(exception));
 
         }
-
-        logger.error(message);
-        if (exception instanceof XPathException) {
-            ((XPathException) exception).setHasBeenReported(true);
-            // probably redundant. It's the caller's job to set this flag, because there might be
-            // a non-standard error listener in use.
-        }
-
-        if (exception instanceof XPathException) {
-            XPathContext context = ((XPathException) exception).getXPathContext();
-            if (context != null && getRecoveryPolicy() != Configuration.RECOVER_SILENTLY) {
-                outputStackTrace(logger, context);
-            }
-        }
+        return message;
     }
 
     /**
