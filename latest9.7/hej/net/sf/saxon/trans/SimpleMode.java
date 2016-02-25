@@ -882,10 +882,9 @@ public class SimpleMode extends Mode {
         final StylesheetPackage pack, final SimpleMode mode, final List<ComponentBinding> bindings) {
         try {
             mode.processRules(new RuleAction() {
-                public void processRule(Rule r) {
-                    TemplateRule rule = (TemplateRule) r.getAction();
-                    allocateBindingSlotsRecursive(pack, mode, rule.getMatchPattern(), bindings);
-                    allocateBindingSlotsRecursive(pack, mode, rule.getBody(), bindings);
+                public void processRule (Rule r){
+                    allocateBindingSlotsRecursive(pack, mode, r.getPattern(), bindings);
+                    allocateBindingSlotsRecursive(pack, mode, ((TemplateRule) r.getAction()).getBody(), bindings);
                 }
             });
         } catch (XPathException e) {

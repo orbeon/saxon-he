@@ -202,7 +202,7 @@ public class ExpressionPresenter {
         int n = _startElement(name);
         if (parent == null || expr.getRetainedStaticContext() != parent.getRetainedStaticContext()) {
             if (expr.getRetainedStaticContext() == null) {
-                //throw new AssertionError("Export failure: no retained static context on " + expr.toShortString());
+                throw new AssertionError("Export failure: no retained static context on " + expr.toShortString());
             } else {
                 emitRetainedStaticContext(expr.getRetainedStaticContext(), parent==null ? null : parent.getRetainedStaticContext());
             }

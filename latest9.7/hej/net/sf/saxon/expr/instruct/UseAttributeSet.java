@@ -109,24 +109,23 @@ public class UseAttributeSet extends Instruction implements ComponentInvocation,
      */
 
     private static UseAttributeSet makeUseAttributeSet(StructuredQName name, StyleElement instruction) throws XPathException {
+        AttributeSet target;
         if (name.hasURI(NamespaceConstant.XSLT) && name.getLocalPart().equals("original")) {
-            AttributeSet target = (AttributeSet)instruction.getXslOriginal(StandardNames.XSL_ATTRIBUTE_SET);
-            UseAttributeSet invocation = new UseAttributeSet(name, target.isDeclaredStreamable());
-            invocation.setTarget(target);
-            invocation.setBindingSlot(-1);
-            return invocation;
+            target = (AttributeSet)instruction.getXslOriginal(StandardNames.XSL_ATTRIBUTE_SET);
         } else {
             Component invokee = instruction.getContainingPackage().getComponent(new SymbolicName(StandardNames.XSL_ATTRIBUTE_SET, name));
             instruction.getPrincipalStylesheetModule().getAttributeSetDeclarations(name);
             if (invokee == null) {
                 instruction.compileError("Unknown attribute set " + name.getEQName(), "XTSE0710");
+                return null; // to prevent compile warnings
             }
-            AttributeSet target = (AttributeSet) invokee.getCode();
-            UseAttributeSet invocation = new UseAttributeSet(name, target.isDeclaredStreamable());
-            invocation.setTarget(target);
-            invocation.setBindingSlot(-1);
-            return invocation;
+            target = (AttributeSet) invokee.getCode();
         }
+        UseAttributeSet invocation = new UseAttributeSet(name, target.isDeclaredStreamable());
+        invocation.setTarget(target);
+        invocation.setBindingSlot(-1);
+        invocation.setRetainedStaticContext(instruction.makeRetainedStaticContext());
+        return invocation;
     }
 
     public boolean isDeclaredStreamable() {

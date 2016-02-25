@@ -805,7 +805,6 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                 Expression templateRuleBody = needCopy ? body.copy() : body;
                 // following code needed only for diagnostics
                 //templateRuleBody.verifyParentPointers();
-                needCopy = true;
                 if (opt.getOptimizationLevel() != Optimizer.NO_OPTIMIZATION || compiledTemplateRule.isDeclaredStreamable()) {
                 //#ifdefined STREAM
                     cit.setContextPostureStriding();
@@ -827,10 +826,14 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                     Pattern match = r.getPattern();
                     ContextItemStaticInfo info = new ContextItemStaticInfo(match.getItemType(), false, true);
                     Pattern m2 = match.optimize(visitor, info);
+                    if (needCopy) {
+                        m2 = m2.copy();
+                    }
                     if (m2 != match) {
                         r.setPattern(m2);
                     }
                 }
+                needCopy = true;
                 if (isExplaining()) {
                     Logger err = getConfiguration().getLogger();
                     err.info("Optimized expression tree for template rule at line " +
