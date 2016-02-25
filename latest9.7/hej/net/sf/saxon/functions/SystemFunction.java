@@ -423,7 +423,7 @@ public abstract class SystemFunction extends AbstractFunction {
         out.emitAttribute("name", getFunctionName().getLocalPart());
         out.emitAttribute("arity", getArity() + "");
         if ((getDetails().properties & StandardFunction.DEPENDS_ON_STATIC_CONTEXT) != 0) {
-            out.emitRetainedStaticContext(getRetainedStaticContext());
+            out.emitRetainedStaticContext(getRetainedStaticContext(), null);
         }
         out.endElement();
     }

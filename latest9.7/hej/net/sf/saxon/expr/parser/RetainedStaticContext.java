@@ -406,6 +406,15 @@ public class RetainedStaticContext implements NamespaceResolver {
         return namespaces.keySet().iterator();
     }
 
+    /**
+     * Test whether this static context declares the same namespaces as another static context
+     * @return true if the namespace bindings (prefix:uri pairs) are the same
+     */
+
+    public boolean declaresSameNamespaces(RetainedStaticContext other) {
+        return namespaces.equals(other.namespaces);
+    }
+
     public int hashCode() {
         int h = 0x8457cbce;
         if (staticBaseUriString != null) {

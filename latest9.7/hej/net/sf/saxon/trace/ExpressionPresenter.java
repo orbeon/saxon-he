@@ -174,7 +174,8 @@ public class ExpressionPresenter {
         Properties props = new Properties();
         props.setProperty(OutputKeys.METHOD, "xml");
         props.setProperty(OutputKeys.INDENT, "yes");
-        props.setProperty(SaxonOutputKeys.INDENT_SPACES, "2");
+        props.setProperty(SaxonOutputKeys.INDENT_SPACES, "1");
+        props.setProperty(SaxonOutputKeys.LINE_LENGTH, "4096");
         if (config.getXMLVersion() == Configuration.XML11) {
             props.setProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
             props.setProperty(OutputKeys.VERSION, "1.1");
@@ -201,9 +202,9 @@ public class ExpressionPresenter {
         int n = _startElement(name);
         if (parent == null || expr.getRetainedStaticContext() != parent.getRetainedStaticContext()) {
             if (expr.getRetainedStaticContext() == null) {
-                //throw new AssertionError();
+                //throw new AssertionError("Export failure: no retained static context on " + expr.toShortString());
             } else {
-                emitRetainedStaticContext(expr.getRetainedStaticContext());
+                emitRetainedStaticContext(expr.getRetainedStaticContext(), parent==null ? null : parent.getRetainedStaticContext());
             }
         }
         String mod = expr.getSystemId();
@@ -217,32 +218,36 @@ public class ExpressionPresenter {
         return n;
     }
 
-    public void emitRetainedStaticContext(RetainedStaticContext sc) {
+    public void emitRetainedStaticContext(RetainedStaticContext sc, RetainedStaticContext parentSC) {
         try {
-            if (sc.getXPathVersion() != 30) {
+            if (sc.getXPathVersion() != 30 && (parentSC == null || parentSC.getXPathVersion() != sc.getXPathVersion())) {
                 emitAttribute("vn", sc.getXPathVersion() + "");
             }
-            if (sc.getStaticBaseUri() != null) {
+            if (sc.getStaticBaseUri() != null && (parentSC == null || !sc.getStaticBaseUri().equals(parentSC.getStaticBaseUri()))) {
                 emitAttribute("baseUri", sc.getStaticBaseUriString());
             }
-            if (!sc.getDefaultCollationName().equals(NamespaceConstant.CODEPOINT_COLLATION_URI)) {
+            if (!sc.getDefaultCollationName().equals(NamespaceConstant.CODEPOINT_COLLATION_URI) &&
+                    (parentSC == null || !sc.getDefaultCollationName().equals(parentSC.getDefaultCollationName()))) {
                 emitAttribute("defaultCollation", sc.getDefaultCollationName());
             }
-            if (!sc.getDefaultElementNamespace().isEmpty()) {
+            if (!sc.getDefaultElementNamespace().isEmpty() &&
+                    (parentSC == null || !sc.getDefaultElementNamespace().equals(parentSC.getDefaultElementNamespace()))) {
                 emitAttribute("defaultElementNS", sc.getDefaultElementNamespace());
             }
             if (!NamespaceConstant.FN.equals(sc.getDefaultFunctionNamespace())) {
                 emitAttribute("defaultFunctionNS", sc.getDefaultFunctionNamespace());
             }
-            FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.C256);
-            for (Iterator<String> iter = sc.iteratePrefixes(); iter.hasNext(); ) {
-                String p = iter.next();
-                fsb.append(p);
-                fsb.append("=");
-                fsb.append(sc.getURIForPrefix(p, true));
-                fsb.append(" ");
+            if (parentSC == null || !sc.declaresSameNamespaces(parentSC)) {
+                FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.C256);
+                for (Iterator<String> iter = sc.iteratePrefixes(); iter.hasNext(); ) {
+                    String p = iter.next();
+                    fsb.append(p);
+                    fsb.append("=");
+                    fsb.append(sc.getURIForPrefix(p, true));
+                    fsb.append(" ");
+                }
+                emitAttribute("ns", Whitespace.trim(fsb));
             }
-            emitAttribute("ns", Whitespace.trim(fsb));
         } catch (XPathException e) {
             throw new AssertionError(e);
         }
