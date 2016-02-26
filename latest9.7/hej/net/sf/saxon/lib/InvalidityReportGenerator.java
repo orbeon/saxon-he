@@ -28,18 +28,12 @@ public class InvalidityReportGenerator extends StandardInvalidityHandler {
 
     public static final String REPORT_NS = "http://saxon.sf.net/ns/validation";
 
+
     public InvalidityReportGenerator(Configuration config) {
-        super(config);
-    }
+            super(config);
+        }
 
-    /**
-     * Set the writer
-     *
-     * @param destination required to output the validation errors
-     */
-    public void setDestination(Destination destination) throws SaxonApiException {
 
-    }
 
     /**
      * Set the XML document that is to be validated
