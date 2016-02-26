@@ -361,7 +361,11 @@ public final class DateTimeValue extends CalendarValue implements Comparable {
                     return badDate("Non-numeric fractional seconds component", s);
                 }
                 double fractionalSeconds = Double.parseDouble('.' + part);
-                dt.microsecond = (int) Math.round(fractionalSeconds * 1000000);
+                int microSeconds = (int) Math.round(fractionalSeconds * 1000000);
+                if (microSeconds == 1000000) {
+                    microSeconds--; // truncate fractional seconds to .999999 if microseconds rounds to 1000000
+                }
+                dt.microsecond = microSeconds;
                 if (dt.hour == 24 && dt.microsecond != 0) {
                     return badDate("If hour is 24, fractional seconds must be 0", s);
                 }
