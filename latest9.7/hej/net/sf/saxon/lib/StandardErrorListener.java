@@ -27,7 +27,6 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.AttributeLocation;
 import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.type.ValidationException;
-import org.jetbrains.annotations.NotNull;
 import org.xml.sax.SAXException;
 
 import javax.xml.transform.SourceLocator;
@@ -315,7 +314,6 @@ public class StandardErrorListener implements UnfailingErrorListener {
         }
     }
 
-    @NotNull
     private String constructMessage(TransformerException exception, XPathException xe, String langText, String kind) {
         String message;
         if (xe.getLocator() instanceof AttributeLocation) {

@@ -4788,6 +4788,10 @@ public class Configuration implements SourceResolver, NotationSet {
         throw new UnsupportedOperationException("Loading compiled packages requires Saxon-PE or higher (even when no license is needed)");
     }
 
+    public InvalidityReportGenerator createValidityReporter() {
+        throw new UnsupportedOperationException("Loading compiled packages requires Saxon-EE (even when no license is needed)");
+    }
+
 
     /**
      * This class contains constants representing features of the software that may or may

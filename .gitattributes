@@ -1554,6 +1554,7 @@ latest9.7/hej/net/sf/saxon/lib/Initializer.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/lib/Invalidity.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/lib/InvalidityHandler.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/lib/InvalidityHandlerWrappingErrorListener.java svn_eol_002dstyle=native
+latest9.7/hej/net/sf/saxon/lib/InvalidityReportGenerator.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/lib/LocalizerFactory.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/lib/Logger.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/lib/ModuleURIResolver.java svn_eol_002dstyle=native
