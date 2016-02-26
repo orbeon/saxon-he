@@ -201,7 +201,7 @@ bool XdmNode::isAtomic() {
 				<< " not found\n" << std::endl;
 			return 0;
 		}
-		jint result = (jint)(proc->environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID, 
+		jint result = (jlong)(proc->environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID,
 		value->xdmvalue));
 
 		attrCount =(int)result;
@@ -220,7 +220,7 @@ bool XdmNode::isAtomic() {
 				<< " not found\n" << std::endl;
 			return 0;
 		}
-		jint result = (jint)(proc->environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID, 
+		jint result = (jlong)(proc->environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID,
 		value->xdmvalue));
 
 		childCount =(int)result;
