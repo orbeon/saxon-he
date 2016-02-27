@@ -625,6 +625,8 @@ public class XPathParser {
     /*@NotNull*/
     public Expression parseExprSingle() throws XPathException {
         switch (t.currentToken) {
+            case Token.EOF:
+                grumble("Expected an expression, but reached the end of the input");
             case Token.FOR:
             case Token.LET:
             case Token.FOR_SLIDING:
@@ -2121,7 +2123,7 @@ public class XPathParser {
                 return parseNamedFunctionReference();
 
             default:
-                grumble("Unexpected token " + currentTokenDisplay() + " in path expression");
+                grumble("Unexpected token " + currentTokenDisplay() + " at start of expression");
                 //break;
         }
         return new ErrorExpression();
