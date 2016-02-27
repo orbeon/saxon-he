@@ -267,7 +267,13 @@ public class Configuration implements SourceResolver, NotationSet {
      */
 
     public static Configuration newConfiguration() {
-        //System.err.println("New configuration: " + configurationClass.getName());
+            Class<? extends Configuration> configurationClass = Configuration.class;
+//#if PE==true
+            configurationClass = com.saxonica.config.ProfessionalConfiguration.class;
+//#endif
+//#if EE==true
+            configurationClass = com.saxonica.config.EnterpriseConfiguration.class;
+//#endif
         try {
             return Version.configurationClass.newInstance();
         } catch (Exception e) {

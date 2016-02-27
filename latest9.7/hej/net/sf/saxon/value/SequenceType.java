@@ -30,6 +30,7 @@ import java.util.Map;
 
 public final class SequenceType {
 
+
     private ItemType primaryType;    // the primary type of the item, e.g. "element", "comment", or "integer"
     private int cardinality;    // the required cardinality
 
@@ -443,17 +444,14 @@ public final class SequenceType {
     public static final SequenceType BASE64_BINARY_SEQUENCE =
             makeSequenceType(BuiltInAtomicType.BASE64_BINARY, StaticProperty.ALLOWS_ZERO_OR_MORE);
 
+    public static SequenceType SINGLE_FUNCTION =
+            makeSequenceType(AnyFunctionType.ANY_FUNCTION, StaticProperty.EXACTLY_ONE);
+
     /**
      * A type that allows a sequence of zero or one function items
      */
     public static final SequenceType OPTIONAL_FUNCTION_ITEM =
             makeSequenceType(AnyFunctionType.getInstance(), StaticProperty.ALLOWS_ZERO_OR_ONE);
-
-    /**
-     * A type that allows a sequence of zero or one map items
-     */
-    public static final SequenceType OPTIONAL_MAP_ITEM =
-            makeSequenceType(MapType.ANY_MAP_TYPE, StaticProperty.ALLOWS_ZERO_OR_ONE);
 
 
     /**

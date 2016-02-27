@@ -140,15 +140,6 @@ public final class Version {
 
     public static Class<? extends Configuration> configurationClass;
 
-    static {
-        configurationClass = Configuration.class;
-//#if PE==true
-        configurationClass = com.saxonica.config.ProfessionalConfiguration.class;
-//#endif
-//#if EE==true
-        configurationClass = com.saxonica.config.EnterpriseConfiguration.class;
-//#endif
-    }
 
     public static String softwareEdition;
 

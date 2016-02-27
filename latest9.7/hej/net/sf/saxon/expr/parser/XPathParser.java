@@ -2335,7 +2335,7 @@ public class XPathParser {
         ForExpression lhsVar = new ForExpression();
         lhsVar.setVariableQName(new StructuredQName("qq", NamespaceConstant.SAXON, "qq" + lhsVar.hashCode()));
         lhsVar.setSequence(lhs);
-        lhsVar.setRequiredType(AnyFunctionType.SINGLE_FUNCTION);
+        lhsVar.setRequiredType(SequenceType.SINGLE_FUNCTION);
         ForExpression rhsVar = new ForExpression();
         rhsVar.setVariableQName(new StructuredQName("qq", NamespaceConstant.SAXON, "qq" + rhsVar.hashCode()));
         rhsVar.setSequence(new Atomizer(rhs));
@@ -2391,7 +2391,7 @@ public class XPathParser {
         ForExpression lhsVar = new ForExpression();
         lhsVar.setVariableQName(new StructuredQName("qq", NamespaceConstant.SAXON, "qq" + lhsVar.hashCode()));
         lhsVar.setSequence(lhs);
-        lhsVar.setRequiredType(AnyFunctionType.SINGLE_FUNCTION);
+        lhsVar.setRequiredType(SequenceType.SINGLE_FUNCTION);
         ForExpression rhsVar = new ForExpression();
         rhsVar.setVariableQName(new StructuredQName("qq", NamespaceConstant.SAXON, "qq" + rhsVar.hashCode()));
         rhsVar.setSequence(rhs);
@@ -2419,7 +2419,7 @@ public class XPathParser {
         ForExpression lhsVar = new ForExpression();
         lhsVar.setVariableQName(new StructuredQName("qq", NamespaceConstant.SAXON, "qq" + lhsVar.hashCode()));
         lhsVar.setSequence(lhs);
-        lhsVar.setRequiredType(AnyFunctionType.SINGLE_FUNCTION);
+        lhsVar.setRequiredType(SequenceType.SINGLE_FUNCTION);
 
         Expression condition1 = new InstanceOfExpression(new LocalVariableReference(lhsVar), HashTrieMap.SINGLE_MAP_TYPE);
         Expression condition2 = new InstanceOfExpression(new LocalVariableReference(lhsVar), ArrayItem.SINGLE_ARRAY_TYPE);

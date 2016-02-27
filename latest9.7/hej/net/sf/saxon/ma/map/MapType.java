@@ -25,6 +25,11 @@ import net.sf.saxon.value.SequenceType;
 public class MapType extends AnyFunctionType {
 
     public final static MapType ANY_MAP_TYPE = new MapType(BuiltInAtomicType.ANY_ATOMIC, SequenceType.ANY_SEQUENCE);
+    /**
+     * A type that allows a sequence of zero or one map items
+     */
+    public static final SequenceType OPTIONAL_MAP_ITEM =
+            SequenceType.makeSequenceType(ANY_MAP_TYPE, StaticProperty.ALLOWS_ZERO_OR_ONE);
 
     private AtomicType keyType;
     private SequenceType valueType;

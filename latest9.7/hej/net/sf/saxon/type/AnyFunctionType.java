@@ -27,9 +27,6 @@ public class AnyFunctionType implements FunctionItemType {
 
     /*@NotNull*/ public final static AnyFunctionType ANY_FUNCTION = new AnyFunctionType();
 
-    public static SequenceType SINGLE_FUNCTION =
-            SequenceType.makeSequenceType(ANY_FUNCTION, StaticProperty.EXACTLY_ONE);
-
     /**
      * Get the singular instance of this type (Note however that subtypes of this type
      * may have any number of instances)
