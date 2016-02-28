@@ -19,6 +19,12 @@ public class DocumentNumberAllocator {
 
     private long nextDocumentNumber = 0;
 
+    // Negative document numbers are used for streamed documents. This means that streamed
+    // nodes always precede unstreamed nodes in document order. We take advantage of this
+    // when sorting a sequence that contains both streamed and unstreamed nodes.
+
+    private long nextStreamedDocumentNumber = -2; // -1 is special
+
     /**
      * Allocate a unique document number
      *
@@ -27,6 +33,16 @@ public class DocumentNumberAllocator {
 
     public synchronized long allocateDocumentNumber() {
         return nextDocumentNumber++;
+    }
+
+    /**
+     * Allocate a unique document number for a streamed document
+     *
+     * @return a unique document number for a streamed document
+     */
+
+    public synchronized long allocateStreamedDocumentNumber() {
+        return nextStreamedDocumentNumber--;
     }
 }
 

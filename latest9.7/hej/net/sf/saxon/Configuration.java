@@ -275,7 +275,7 @@ public class Configuration implements SourceResolver, NotationSet {
             configurationClass = com.saxonica.config.EnterpriseConfiguration.class;
 //#endif
         try {
-            return Version.configurationClass.newInstance();
+            return configurationClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Cannot instantiate a Configuration", e);
