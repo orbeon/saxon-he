@@ -20,7 +20,13 @@ typedef int bool;
 
 char dllname[] =
     #ifdef __linux__
-        "/usr/lib/libsaxon.so";
+#ifdef EEC
+        "/usr/lib/libsaxoneec.so";
+#elif defined PEC
+	"/usr/lib/libsaxonpec.so";
+#else
+	"/usr/lib/libsaxonhec.so";
+#endif
     #else
         "Saxon-hec.dll";
     #endif
