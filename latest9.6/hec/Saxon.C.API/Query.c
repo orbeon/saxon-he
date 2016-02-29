@@ -28,7 +28,13 @@ char dllname[] =
 	"/usr/lib/libsaxonhec.so";
 #endif
     #else
-        "Saxon-hec.dll";
+#ifdef EEC
+        "Saxon-eec.dll";
+#elif defined PEC
+	"Saxon-pec.dll";
+#else
+	"Saxon-hec.dll";
+#endif
     #endif
 
 //===============================================================================================//
@@ -158,54 +164,6 @@ jclass lookForClass (JNIEnv* penv, char* name)
     return clazz;
 }
 
-
-/*
- * Create an object and invoke the "ifoo" instance method
- */
-void invokeInstanceMethod (JNIEnv* penv, jclass myClassInDll)
-{
-    jmethodID MID_init, MID_ifoo;
-    jobject obj;
-
-    MID_init = (*penv)->GetMethodID (penv, myClassInDll, "<init>", "()V");
-    if (!MID_init) {
-        printf("Error: MyClassInDll.<init>() not found\n");
-        return;
-    }
-
-    obj = (*penv)->NewObject(penv, myClassInDll, MID_init);
-    if (!obj) {
-        printf("Error: failed to allocate an object\n");
-        return;
-    }
-
-    MID_ifoo = (*penv)->GetMethodID (penv, myClassInDll, "ifoo", "()V");
-
-    if (!MID_ifoo) {
-        printf("Error: MyClassInDll.ifoo() not found\n");
-        return;
-    }
-    
-    (*(penv))->CallVoidMethod (penv, obj, MID_ifoo);
-}
-
-
-
-/*
- * Invoke the "foo" static method
- */
-void invokeStaticMethod(JNIEnv* penv, jclass myClassInDll)
-{
-    jmethodID MID_foo;
-
-    MID_foo = (*penv)->GetStaticMethodID(penv, myClassInDll, "foo", "()V");
-    if (!MID_foo) {
-        printf("\nError: MyClassInDll.foo() not found\n");
-        return;
-    }
-    
-    (*penv)->CallStaticVoidMethod(penv, myClassInDll, MID_foo);
-}
 
 jmethodID findConstructor (JNIEnv* penv, jclass myClassInDll, char* arguments)
 {

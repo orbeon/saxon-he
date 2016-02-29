@@ -7,7 +7,6 @@
     #include <stdio.h>  
     #define HANDLE void*
     #define LoadLibrary(x) dlopen(x, RTLD_LAZY)
-//    #define FreeLibrary(x) dlclose(x, RTLD_LAZY)
     #define GetProcAddress(x,y) dlsym(x,y)
 #else
     #include <windows.h>
@@ -37,7 +36,6 @@ char dllname[] =
 #endif
 
 #endif
-
 //===============================================================================================//
 /*! <code>Environment</code>. This struct captures the jni, JVM and handler to the cross compiled Saxon/C library.
  * <p/>
@@ -167,7 +165,6 @@ jclass lookForClass (JNIEnv* penv, char* name)
 
 
 
-
 jmethodID findConstructor (JNIEnv* penv, jclass myClassInDll, char* arguments)
 {
     jmethodID MID_init, mID;
@@ -242,11 +239,11 @@ void finalizeJavaRT (JavaVM* jvm)
 
 
 
-int transform(Environment environ, int argc, const char* argv[]) {
+int validate(Environment environ, int argc, const char* argv[]) {
 
 
     jmethodID MID_foo;
-    jclass transClass = lookForClass(environ.env, "net/sf/saxon/Transform");
+    jclass transClass = lookForClass(environ.env, "com/saxonica/Validate");
     char methodName[] = "main";
     char args[] = "([Ljava/lang/String;)V";
     jobjectArray stringArray = NULL;
@@ -257,7 +254,7 @@ int transform(Environment environ, int argc, const char* argv[]) {
         return -1;
     }
      if(argc < 2) {
-	printf("\nError: Not enough arguments in Transform");
+	printf("\nError: Not enough arguments in Validate");
 	return 0;
     }
 	   jclass stringClass = lookForClass(environ.env, "java/lang/String");
@@ -297,7 +294,7 @@ int main( int argc, const char* argv[] )
      * The handle of loaded component is used to retrieve Invocation API.
      */
     initJavaRT (environ.myDllHandle, &environ.jvm, &environ.env);
-    transform(environ, argc, argv);	
+    validate(environ, argc, argv);	
 
   
 fflush(stdout);
