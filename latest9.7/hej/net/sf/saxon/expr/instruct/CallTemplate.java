@@ -40,6 +40,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
     private WithParam[] tunnelParams = WithParam.EMPTY_ARRAY;
     private boolean useTailRecursion = false;
     private int bindingSlot;
+    private boolean isWithinDeclaredStreamableConstruct;
 
     /**
      * Construct a CallTemplate instruction.
@@ -53,10 +54,11 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
      *                         where the name of the called template is to be calculated dynamically
      */
 
-    public CallTemplate(NamedTemplate template, StructuredQName calledTemplateName, boolean useTailRecursion) {
+    public CallTemplate(NamedTemplate template, StructuredQName calledTemplateName, boolean useTailRecursion, boolean inStreamable) {
         this.template = template;
         this.calledTemplateName = calledTemplateName;
         this.useTailRecursion = useTailRecursion;
+        this.isWithinDeclaredStreamableConstruct = inStreamable;
     }
 
     /**
@@ -277,7 +279,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
 
     /*@NotNull*/
     public Expression copy() {
-        CallTemplate ct = new CallTemplate(template, calledTemplateName, useTailRecursion);
+        CallTemplate ct = new CallTemplate(template, calledTemplateName, useTailRecursion, isWithinDeclaredStreamableConstruct);
         ExpressionTool.copyLocationInfo(this, ct);
         ct.actualParams = WithParam.copy(ct, actualParams);
         ct.tunnelParams = WithParam.copy(ct, tunnelParams);
@@ -348,6 +350,9 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
         c2.openStackFrame(t.getStackFrameMap());
         c2.setLocalParameters(assembleParams(context, actualParams));
         c2.setTunnelParameters(assembleTunnelParams(context, tunnelParams));
+        if (isWithinDeclaredStreamableConstruct) {
+            c2.setCurrentGroupIterator(null);
+        }
 
         try {
             TailCall tc = t.expand(c2);
@@ -426,6 +431,9 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
             out.emitAttribute("name", template.getTemplateName());
         }
         out.emitAttribute("bSlot", ""+getBindingSlot());
+        if (isWithinDeclaredStreamableConstruct) {
+            out.emitAttribute("flags", "d");
+        }
         if (actualParams.length > 0) {
             WithParam.exportParameters(actualParams, out, false);
         }

@@ -187,6 +187,7 @@ public class XSLApplyTemplates extends StyleElement {
                 useCurrentMode,
                 useTailRecursion,
                 defaultedSelectExpression,
+                isWithinDeclaredStreamableConstruct(),
                 mode,
                 rm);
         app.setActualParams(getWithParamInstructions(app, compilation, decl, false));

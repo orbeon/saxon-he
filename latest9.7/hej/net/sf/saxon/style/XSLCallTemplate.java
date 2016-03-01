@@ -205,7 +205,7 @@ public class XSLCallTemplate extends StyleElement {
             return null;   // error already reported
         }
 
-        CallTemplate call = new CallTemplate(template, calledTemplateName, useTailRecursion);
+        CallTemplate call = new CallTemplate(template, calledTemplateName, useTailRecursion, isWithinDeclaredStreamableConstruct());
         call.setLocation(getLocation());
         call.setActualParameters(
                 getWithParamInstructions(call, exec, decl, false),

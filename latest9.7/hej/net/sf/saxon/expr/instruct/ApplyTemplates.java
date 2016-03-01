@@ -38,6 +38,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
     protected boolean useTailRecursion = false;
     protected Mode mode;
     protected boolean implicitSelect;
+    protected boolean inStreamableConstruct = false;
     protected RuleManager ruleManager;
     private int bindingSlot; // for binding the mode
 
@@ -59,12 +60,14 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
                             boolean useCurrentMode,
                             boolean useTailRecursion,
                             boolean implicitSelect,
+                            boolean inStreamableConstruct,
                             Mode mode,
                             RuleManager ruleManager) {
 
         selectOp = new Operand(this, select, OperandRole.SINGLE_ATOMIC);
         init(select, useCurrentMode, useTailRecursion, mode);
         this.implicitSelect = implicitSelect;
+        this.inStreamableConstruct = inStreamableConstruct;
         this.ruleManager = ruleManager;
     }
 
@@ -227,7 +230,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
     /*@NotNull*/
     public Expression copy() {
         ApplyTemplates a2 = new ApplyTemplates(
-                getSelect().copy(), useCurrentMode, useTailRecursion, implicitSelect, mode, ruleManager);
+                getSelect().copy(), useCurrentMode, useTailRecursion, implicitSelect, inStreamableConstruct, mode, ruleManager);
         a2.setActualParams(WithParam.copy(a2, getActualParams()));
         a2.setTunnelParams(WithParam.copy(a2, getTunnelParams()));
         ExpressionTool.copyLocationInfo(this, a2);
@@ -288,6 +291,9 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
         c2.setCurrentMode(targetMode);
         c2.setOrigin(this);
         c2.setCurrentComponent(targetMode);
+        if (inStreamableConstruct) {
+            c2.setCurrentGroupIterator(null);
+        }
 
         try {
             TailCall tc = thisMode.applyTemplates(params, tunnels, c2, getLocation());

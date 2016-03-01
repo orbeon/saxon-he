@@ -1907,6 +1907,19 @@ public abstract class StyleElement extends ElementImpl {
         return null;
     }
 
+    protected boolean isWithinDeclaredStreamableConstruct() {
+        String streamable = getAttributeValue("streamable");
+        if (streamable != null) {
+            streamable = Whitespace.trim(streamable);
+            if ("yes".equals(streamable) || "1".equals(streamable) || "true".equals(streamable)) {
+                return true;
+            }
+        }
+        ;
+        NodeInfo parent = getParent();
+        return parent instanceof StyleElement && ((StyleElement) parent).isWithinDeclaredStreamableConstruct();
+    }
+
     protected String generateId() {
         FastStringBuffer buff = new FastStringBuffer(FastStringBuffer.C16);
         generateId(buff);

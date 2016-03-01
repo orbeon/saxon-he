@@ -99,6 +99,19 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
         return true;
     }
 
+    protected boolean isWithinDeclaredStreamableConstruct() {
+        try {
+            for (Mode m : getApplicableModes()) {
+                if (m.isDeclaredStreamable()) {
+                    return true;
+                }
+            }
+        } catch (XPathException e) {
+            return false;
+        }
+        return false;
+    }
+
     /**
      * Set the required context item type. Used when there is an xsl:context-item child element
      * @param type the required context item type
