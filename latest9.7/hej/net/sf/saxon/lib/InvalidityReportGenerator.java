@@ -32,6 +32,14 @@ public class InvalidityReportGenerator extends StandardInvalidityHandler {
 
     }
 
+    /**
+     * Set the receiver
+     * @param receiver required to output the validation errors
+     */
+    public void setReceiver(Receiver receiver){
+        //no action
+    }
+
 
 
     /**
