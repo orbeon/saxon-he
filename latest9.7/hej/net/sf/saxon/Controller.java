@@ -1830,33 +1830,7 @@ public class Controller implements ContextOriginator {
                     // The input is a SAXSource or StreamSource or AugmentedSource, or
                     // a DOMSource with wrap=no: build the document tree
 
-                    Builder sourceBuilder = makeBuilder();
-                    if (sourceBuilder instanceof TinyBuilder) {
-                        ((TinyBuilder) sourceBuilder).setStatistics(Statistics.SOURCE_DOCUMENT_STATISTICS);
-                    }
-                    //Sender sender = new Sender(sourceBuilder.getPipelineConfiguration());
-                    Receiver r = sourceBuilder;
-                    if (config.isStripsAllWhiteSpace() || executable.stripsWhitespace() ||
-                            validationMode == Validation.STRICT || validationMode == Validation.LAX) {
-                        r = makeStripper(sourceBuilder);
-                    }
-                    if (executable.stripsInputTypeAnnotations()) {
-                        r = config.getAnnotationStripper(r);
-                    }
-                    PipelineConfiguration pipe = sourceBuilder.getPipelineConfiguration();
-                    pipe.getParseOptions().setSchemaValidationMode(validationMode);
-                    r.setPipelineConfiguration(pipe);
-                    Sender.send(source, r, null);
-                    if (close) {
-                        ((AugmentedSource) source).close();
-                    }
-                    NodeInfo doc = sourceBuilder.getCurrentRoot();
-                    globalContextItem = doc;
-                    sourceBuilder.reset();
-                    if (source.getSystemId() != null) {
-                        registerDocument(doc.getTreeInfo(), new DocumentURI(source.getSystemId()));
-                    }
-                    startNode = doc;
+                    startNode = makeSourceTree(source, close, validationMode);
                 }
             }
             if (!streaming) {
@@ -1895,6 +1869,45 @@ public class Controller implements ContextOriginator {
             }
             //principalResultURI = null;
         }
+    }
+
+    /**
+     * Make a source tree from a source supplied as a StreamSource or SAXSource
+     * @param source the source
+     * @param close true if the source is to be closed after use
+     * @param validationMode indicates whether the source should be schema-validated
+     * @return the root of the constructed tree
+     * @throws XPathException if tree construction fails
+     */
+
+    public NodeInfo makeSourceTree(Source source, boolean close, int validationMode) throws XPathException {
+        Builder sourceBuilder = makeBuilder();
+        if (sourceBuilder instanceof TinyBuilder) {
+            ((TinyBuilder) sourceBuilder).setStatistics(Statistics.SOURCE_DOCUMENT_STATISTICS);
+        }
+        //Sender sender = new Sender(sourceBuilder.getPipelineConfiguration());
+        Receiver r = sourceBuilder;
+        if (config.isStripsAllWhiteSpace() || executable.stripsWhitespace() ||
+                validationMode == Validation.STRICT || validationMode == Validation.LAX) {
+            r = makeStripper(sourceBuilder);
+        }
+        if (executable.stripsInputTypeAnnotations()) {
+            r = config.getAnnotationStripper(r);
+        }
+        PipelineConfiguration pipe = sourceBuilder.getPipelineConfiguration();
+        pipe.getParseOptions().setSchemaValidationMode(validationMode);
+        r.setPipelineConfiguration(pipe);
+        Sender.send(source, r, null);
+        if (close) {
+            ((AugmentedSource) source).close();
+        }
+        NodeInfo doc = sourceBuilder.getCurrentRoot();
+        globalContextItem = doc;
+        sourceBuilder.reset();
+        if (source.getSystemId() != null) {
+            registerDocument(doc.getTreeInfo(), new DocumentURI(source.getSystemId()));
+        }
+        return doc;
     }
 
     /**

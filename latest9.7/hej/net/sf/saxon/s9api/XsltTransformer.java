@@ -13,7 +13,9 @@ import net.sf.saxon.event.Builder;
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.event.TreeReceiver;
+import net.sf.saxon.expr.instruct.GlobalContextRequirement;
 import net.sf.saxon.expr.instruct.GlobalParameterSet;
+import net.sf.saxon.lib.AugmentedSource;
 import net.sf.saxon.lib.Logger;
 import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.lib.TraceListener;
@@ -230,8 +232,13 @@ public class XsltTransformer implements Destination {
      */
 
     public void setInitialContextNode(XdmNode node) {
-        initialSource = node == null ? null : node.getUnderlyingNode();
-        controller.setGlobalContextItem(node.getUnderlyingNode());
+        if (node == null) {
+            initialSource = null;
+            controller.setGlobalContextItem(null);
+        } else {
+            initialSource = node.getUnderlyingNode();
+            controller.setGlobalContextItem(node.getUnderlyingNode());
+        }
     }
 
     /**
@@ -549,6 +556,21 @@ public class XsltTransformer implements Destination {
         }
         try {
             Receiver out = getDestinationReceiver();
+            GlobalContextRequirement gcr = controller.getExecutable().getGlobalContextRequirement();
+            if ((gcr == null || gcr.mayBeSupplied) && initialSource != null) {
+                if (initialSource instanceof NodeInfo) {
+                    controller.setGlobalContextItem((NodeInfo)initialSource);
+                } else if (initialSource instanceof DOMSource) {
+                    NodeInfo node = controller.prepareInputTree(initialSource);
+                    controller.setGlobalContextItem(node);
+                    initialSource = node;
+                } else {
+                    boolean close = (initialSource instanceof AugmentedSource && ((AugmentedSource)initialSource).isPleaseCloseAfterUse());
+                    NodeInfo node = controller.makeSourceTree(initialSource, close, getSchemaValidationMode().getNumber());
+                    controller.setGlobalContextItem(node);
+                    initialSource = node;
+                }
+            }
             controller.initializeController(parameters);
             controller.transform(initialSource, out);
             destination.close();

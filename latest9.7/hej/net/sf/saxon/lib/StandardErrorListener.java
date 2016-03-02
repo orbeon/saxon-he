@@ -331,7 +331,7 @@ public class StandardErrorListener implements UnfailingErrorListener {
                 int column = nestedLoc.getColumnNumber();
                 String innerLoc = "";
                 String lineInfo = line <= 0 ? "" : "on line " + line + ' ';
-                String columnInfo = "at " + (line <= 0 ? "char " : "column ") + column + ' ';
+                String columnInfo = column <= 0 ? "" : "at " + (line <= 0 ? "char " : "column ") + column + ' ';
                 String nearBy = nestedLoc.getNearbyText();
 
                 innerLoc = lineInfo + columnInfo;

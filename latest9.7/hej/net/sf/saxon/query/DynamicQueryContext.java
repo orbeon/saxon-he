@@ -406,7 +406,7 @@ public class DynamicQueryContext {
     public void initializeController(/*@NotNull*/ Controller controller) throws XPathException {
         controller.setURIResolver(getURIResolver());
         controller.setErrorListener(getErrorListener());
-        //controller.addTraceListener(getTraceListener());
+        controller.addTraceListener(getTraceListener());
         if (unparsedTextURIResolver != null) {
             controller.setUnparsedTextURIResolver(unparsedTextURIResolver);
         }

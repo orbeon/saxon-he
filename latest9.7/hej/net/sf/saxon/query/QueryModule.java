@@ -120,6 +120,7 @@ public class QueryModule implements StaticContext {
 
 
         executable.setTopLevelPackage(pd);
+        executable.addPackage(pd);
 
         if (sqc.getModuleLocation() == null) {
             moduleLocation = new ExplicitLocation(sqc.getSystemId(), 1, -1);
