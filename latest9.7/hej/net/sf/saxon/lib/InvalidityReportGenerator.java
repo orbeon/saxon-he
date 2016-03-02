@@ -1,22 +1,9 @@
 package net.sf.saxon.lib;
 
 import net.sf.saxon.Configuration;
-import net.sf.saxon.Version;
-import net.sf.saxon.event.NamespaceReducer;
-import net.sf.saxon.event.Receiver;
-import net.sf.saxon.event.StreamWriterToReceiver;
-import net.sf.saxon.lib.Invalidity;
-import net.sf.saxon.lib.StandardInvalidityHandler;
 import net.sf.saxon.om.Sequence;
-import net.sf.saxon.s9api.Destination;
-import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.value.DateTimeValue;
-
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * This class <code>InvalidityReportGenerator</code> extends the standard error handler for errors found during validation
@@ -79,9 +66,6 @@ public class InvalidityReportGenerator extends StandardInvalidityHandler {
 
     }
 
-    public Destination getDestination() {
-        return null;
-    }
 
     public void startReporting(String systemId) throws XPathException {
 
