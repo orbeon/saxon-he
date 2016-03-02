@@ -1,6 +1,7 @@
 package net.sf.saxon.lib;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.event.Receiver;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
 import javax.xml.stream.XMLStreamWriter;
@@ -19,6 +20,17 @@ public class InvalidityReportGenerator extends StandardInvalidityHandler {
     public InvalidityReportGenerator(Configuration config) {
             super(config);
         }
+
+    /**
+        * Create a Report Invalidity Handler writing to a Receiver
+        *
+        * @param config   the Saxon configuration
+        * @param receiver required to output the validation errors
+     */
+    public InvalidityReportGenerator(Configuration config, Receiver receiver) throws XPathException {
+        super(config);
+
+    }
 
 
 
@@ -67,8 +79,14 @@ public class InvalidityReportGenerator extends StandardInvalidityHandler {
     }
 
 
+    /**
+     * At the start of a validation episode, initialize the handler
+     *
+     * @param systemId optional; may be used to represent the destination of any report produced
+     * @throws XPathException if initialization of the invalidity handler fails for any reason
+     */
     public void startReporting(String systemId) throws XPathException {
-
+        // no action
     }
 
     public Sequence endReporting() throws XPathException {
@@ -83,7 +101,7 @@ public class InvalidityReportGenerator extends StandardInvalidityHandler {
      */
 
     public void createMetaData() throws XPathException {
-
+        // no action
     }
 
 }
