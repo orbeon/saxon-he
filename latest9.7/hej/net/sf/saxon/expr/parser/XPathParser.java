@@ -723,7 +723,13 @@ public class XPathParser {
                         rhs = parseBinaryExpression(rhs, getCurrentOperatorPrecedence());
                     }
                     if (getCurrentOperatorPrecedence() == prec && !allowMultipleOperators()) {
-                        grumble("Left operand of '" + Token.tokens[t.currentToken] + "' needs parentheses");
+                        String tok = Token.tokens[t.currentToken];
+                        String message = "Left operand of '" + Token.tokens[t.currentToken] + "' needs parentheses";
+                        if (tok.equals("<") || tok.equals(">")) {
+                            // Example input: return <a>3</a><b>4</b> - bug 2659
+                            message += ". Or perhaps an XQuery element constructor appears where it is not allowed";
+                        }
+                        grumble(message);
                     }
                     lhs = makeBinaryExpression(lhs, operator, rhs);
                     setLocation(lhs, offset);
