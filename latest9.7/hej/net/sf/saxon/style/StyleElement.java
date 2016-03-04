@@ -2368,6 +2368,16 @@ public abstract class StyleElement extends ElementImpl {
                         error.getLocator() instanceof Expression) && !(this instanceof StylesheetComponent))) {
             error.setLocator(this);
         }
+        // Add a reference to the stylesheet node to any AttributeLocation: see bug 2662
+        if (error.getLocator() instanceof AttributeLocation) {
+            ((AttributeLocation)error.getLocator()).setElementNode(this);
+        }
+        if (error.getLocator() instanceof XPathParser.NestedLocation) {
+            Location container = ((XPathParser.NestedLocation)error.getLocator()).getContainingLocation();
+            if (container instanceof AttributeLocation) {
+                ((AttributeLocation)container).setElementNode(this);
+            }
+        }
         getCompilation().reportError(error);
     }
 

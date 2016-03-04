@@ -18,11 +18,12 @@ import net.sf.saxon.tree.util.Navigator;
 
 public class AttributeLocation implements Location {
 
-    String systemId;
-    int lineNumber;
-    int columnNumber;
-    StructuredQName elementName;
-    StructuredQName attributeName;
+    private String systemId;
+    private int lineNumber;
+    private int columnNumber;
+    private StructuredQName elementName;
+    private StructuredQName attributeName;
+    private NodeInfo elementNode;
 
     public AttributeLocation(NodeInfo element, StructuredQName attributeName) {
         this.systemId = element.getSystemId();
@@ -38,6 +39,24 @@ public class AttributeLocation implements Location {
         this.columnNumber = location.getColumnNumber();
         this.elementName = elementName;
         this.attributeName = attributeName;
+    }
+
+    /**
+     * Add a reference to the containing element node. This needs care because we don't want to retain
+     * links to the source stylesheet at run-time; it is therefore done only for static errors
+     */
+
+    public void setElementNode(NodeInfo node) {
+        elementNode = node;
+    }
+
+    /**
+     * Get the reference to the containing element node, if available.
+     * @return the containing element node, or null if not available or not applicable.
+     */
+
+    public NodeInfo getElementNode() {
+        return elementNode;
     }
 
     /**
