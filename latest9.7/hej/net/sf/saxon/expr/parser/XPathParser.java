@@ -276,8 +276,9 @@ public class XPathParser {
             line = t.getLineNumber(offset);
             column = t.getColumnNumber(offset);
         }
-        Location loc;
-        if(env.getContainingLocation() == ExplicitLocation.UNKNOWN_LOCATION) {
+        Location loc = env.getContainingLocation();
+        if (loc instanceof ExplicitLocation && loc.getLineNumber() <= 1 && loc.getColumnNumber() == -1) {
+            // No extra information available about the container
             loc = new ExplicitLocation(env.getSystemId(), line+1, column);
         } else {
             loc = new NestedLocation(env.getContainingLocation(), line == 0 ? -1 : line + 1, column + 1, nearbyText);
