@@ -50,8 +50,8 @@ public class ExplicitLocation implements Location {
      * Create an ExpressionLocation corresponding to a given module, line number, and column number
      *
      * @param systemId     the module URI
-     * @param lineNumber   the line number
-     * @param columnNumber the column number
+     * @param lineNumber   the line number (starting at 1; -1 means unknown)
+     * @param columnNumber the column number (starting at 1; -1 means unknown)
      */
 
     public ExplicitLocation(String systemId, int lineNumber, int columnNumber) {

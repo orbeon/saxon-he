@@ -276,13 +276,7 @@ public class XPathParser {
             line = t.getLineNumber(offset);
             column = t.getColumnNumber(offset);
         }
-        Location loc = env.getContainingLocation();
-        if (loc instanceof ExplicitLocation && loc.getLineNumber() <= 1 && loc.getColumnNumber() == -1) {
-            // No extra information available about the container
-            loc = new ExplicitLocation(env.getSystemId(), line+1, column);
-        } else {
-            loc = new NestedLocation(env.getContainingLocation(), line == 0 ? -1 : line + 1, column + 1, nearbyText);
-        }
+        Location loc = makeNestedLocation(env.getContainingLocation(), line, column, nearbyText);
 
         XPathException err = new XPathException(message);
         err.setLocation(loc);
@@ -3623,7 +3617,7 @@ public class XPathParser {
             int line = t.getLineNumber(offset);
             int column = t.getColumnNumber(offset);
             if (exp.getLocation() == null || exp.getLocation() == ExplicitLocation.UNKNOWN_LOCATION) {
-                NestedLocation loc = new NestedLocation(env.getContainingLocation(), line, column);
+                Location loc = makeNestedLocation(env.getContainingLocation(), line, column, null);
                 exp.setLocation(loc);
             }
         }
@@ -3641,7 +3635,7 @@ public class XPathParser {
     public void setLocation(Clause clause, int offset) {
         int line = t.getLineNumber(offset);
         int column = t.getColumnNumber(offset);
-        NestedLocation loc = new NestedLocation(env.getContainingLocation(), line, column);
+        Location loc = makeNestedLocation(env.getContainingLocation(), line, column, null);
         clause.setLocation(loc);
         clause.setPackageData(env.getPackageData());
     }
@@ -3657,8 +3651,28 @@ public class XPathParser {
         } else {
             int line = t.getLineNumber();
             int column = t.getColumnNumber();
-            mostRecentLocation = new NestedLocation(env.getContainingLocation(), line, column);
+            mostRecentLocation = makeNestedLocation(env.getContainingLocation(), line, column, null);
             return mostRecentLocation;
+        }
+    }
+
+    /**
+     * Make a Location object relative to an existing location
+     * @param containingLoc the containing location
+     * @param line the line number relative to the containing location (zero-based)
+     * @param column the column number relative to the containing location (zero-based)
+     * @param nearbyText (maybe null) expression text around the point of the error
+     * @return a suitable Location object
+     */
+
+    public Location makeNestedLocation(Location containingLoc, int line, int column, String nearbyText) {
+        if (containingLoc instanceof ExplicitLocation &&
+                containingLoc.getLineNumber() <= 1 && containingLoc.getColumnNumber() == -1 &&
+                nearbyText == null) {
+            // No extra information available about the container
+            return new ExplicitLocation(env.getSystemId(), line + 1, column + 1);
+        } else {
+            return new NestedLocation(containingLoc, line, column, nearbyText);
         }
     }
 
@@ -3864,13 +3878,13 @@ public class XPathParser {
 
         /**
          * Get the line number within the containing entity. This is the sum of the containing
-         * location's line number, plus the local line number, minus one (because both start at 1). Returns -1 if unknown.
+         * location's line number, plus the local line number. Returns -1 if unknown.
          *
          * @return the line number within the containing entity, or -1 if unknown.
          */
 
         public int getLineNumber() {
-            return containingLocation.getLineNumber() + localLineNumber - 1;
+            return containingLocation.getLineNumber() + localLineNumber;
         }
 
         /**

@@ -353,9 +353,9 @@ public class StandardErrorListener implements UnfailingErrorListener {
                 String innerLoc = "";
 
                 // Typical XQuery case; no extra information available from the outer location
-                innerLoc += line < 0 ? "" : "on line " + line + ' ';
+                innerLoc += line < 0 ? "" : "on line " + (line+1) + ' ';
                 if (column >= 0) {
-                    innerLoc += "at " + (line < 0 ? "char " : "column ") + column + ' ';
+                    innerLoc += "at " + (line < 0 ? "char " : "column ") + (column+1) + ' ';
                 }
                 if (outerLoc.getLineNumber() > 1) {
                     innerLoc += "(" + langText + " on line " + outerLoc.getLineNumber() + ") ";
