@@ -3863,13 +3863,13 @@ public class XPathParser {
 
         /**
          * Get the line number within the containing entity. This is the sum of the containing
-         * location's line number, plus the local line number. Returns -1 if unknown.
+         * location's line number, plus the local line number, minus one (because both start at 1). Returns -1 if unknown.
          *
          * @return the line number within the containing entity, or -1 if unknown.
          */
 
         public int getLineNumber() {
-            return containingLocation.getLineNumber() + localLineNumber;
+            return containingLocation.getLineNumber() + localLineNumber - 1;
         }
 
         /**
