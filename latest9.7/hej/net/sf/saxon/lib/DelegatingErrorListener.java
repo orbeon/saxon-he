@@ -48,6 +48,15 @@ public class DelegatingErrorListener implements UnfailingErrorListener {
             // no action
         }
     }
+
+    /**
+     * Get the ErrorListener that this DelegatingErrorListener delegates to.
+     * @return the ErrorListener originally supplied when this DelegatingErrorListener was created.
+     */
+
+    public ErrorListener getBaseErrorListener() {
+        return base;
+    }
 }
 
 
