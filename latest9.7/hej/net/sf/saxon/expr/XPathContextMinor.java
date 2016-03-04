@@ -12,6 +12,7 @@ import net.sf.saxon.Controller;
 import net.sf.saxon.event.SequenceReceiver;
 import net.sf.saxon.expr.instruct.ParameterSet;
 import net.sf.saxon.expr.sort.GroupIterator;
+import net.sf.saxon.lib.DelegatingErrorListener;
 import net.sf.saxon.lib.UnfailingErrorListener;
 import net.sf.saxon.om.*;
 import net.sf.saxon.regex.RegexIterator;
@@ -242,8 +243,10 @@ public class XPathContextMinor implements XPathContext {
      * has been set locally, the ErrorListener in the Controller is returned; this in turn defaults
      * to the ErrorListener set in the Configuration.
      *
-     * @return the ErrorListener in use. This will always be an UnfailingErrorListener,
-     *         which is a Saxon subclass of ErrorListener that throws no exceptions.
+     * @return the ErrorListener in use. Note that this is not necessarily the ErrorListener that was supplied
+     * by the caller; if that was not an {@link UnfailingErrorListener},
+     * it will have been wrapped in a {@link DelegatingErrorListener}, and it is the DelegatingErrorListener
+     * that this method returns.
      * @since 9.6
      */
     public UnfailingErrorListener getErrorListener() {

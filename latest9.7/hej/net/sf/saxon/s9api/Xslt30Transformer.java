@@ -20,9 +20,7 @@ import net.sf.saxon.expr.instruct.UserFunction;
 import net.sf.saxon.expr.instruct.UserFunctionParameter;
 import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
-import net.sf.saxon.lib.Logger;
-import net.sf.saxon.lib.NamespaceConstant;
-import net.sf.saxon.lib.TraceListener;
+import net.sf.saxon.lib.*;
 import net.sf.saxon.om.*;
 import net.sf.saxon.serialize.ReconfigurableSerializer;
 import net.sf.saxon.trans.Mode;
@@ -322,11 +320,18 @@ public class Xslt30Transformer {
      *
      * @return listener The error listener in use. This is notified of all dynamic errors detected during the
      * transformation. If no user-supplied ErrorListener has been set the method will return a system-supplied
-     * ErrorListener.
+     * ErrorListener. If an explicit ErrorListener has been set using {@link #setErrorListener(ErrorListener)},
+     * then that ErrorListener will generally be returned, unless the internal ErrorListener has been changed
+     * by some other mechanism.
      */
 
     public ErrorListener getErrorListener() {
-        return controller.getErrorListener();
+        UnfailingErrorListener uel = controller.getErrorListener();
+        if (uel instanceof DelegatingErrorListener) {
+            return ((DelegatingErrorListener)uel).getBaseErrorListener();
+        } else {
+            return uel;
+        }
     }
 
     /**

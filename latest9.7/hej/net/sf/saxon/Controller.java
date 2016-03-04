@@ -906,7 +906,10 @@ public class Controller implements ContextOriginator {
     /**
      * Get the error listener.
      *
-     * @return the ErrorListener in use
+     * @return the ErrorListener in use. Note that this is not necessarily the ErrorListener that was supplied
+     * to the {@link #setErrorListener(ErrorListener)} method; if that was not an {@link UnfailingErrorListener},
+     * it will have been wrapped in a {@link DelegatingErrorListener}, and it is the DelegatingErrorListener
+     * that this method returns.
      */
 
     public UnfailingErrorListener getErrorListener() {

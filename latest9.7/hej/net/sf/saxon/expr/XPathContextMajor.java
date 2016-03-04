@@ -618,8 +618,10 @@ public class XPathContextMajor extends XPathContextMinor {
      * has been set locally, the ErrorListener in the Controller is returned; this in turn defaults
      * to the ErrorListener set in the Configuration.
      *
-     * @return the ErrorListener in use. This will always be an UnfailingErrorListener,
-     * which is a Saxon subclass of ErrorListener that throws no exceptions.
+     * @return the ErrorListener in use. Note that this is not necessarily the ErrorListener that was supplied
+     * to the {@link #setErrorListener(ErrorListener)} method; if that was not an {@link UnfailingErrorListener},
+     * it will have been wrapped in a {@link DelegatingErrorListener}, and it is the DelegatingErrorListener
+     * that this method returns.
      * @since 9.6
      */
 

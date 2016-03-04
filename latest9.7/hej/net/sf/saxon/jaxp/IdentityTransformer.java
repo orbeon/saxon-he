@@ -11,6 +11,7 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.Sender;
 import net.sf.saxon.event.SequenceReceiver;
+import net.sf.saxon.lib.DelegatingErrorListener;
 import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.lib.SerializerFactory;
@@ -110,6 +111,9 @@ public class IdentityTransformer extends Transformer {
      */
     @Override
     public ErrorListener getErrorListener() {
+        if (errorListener instanceof DelegatingErrorListener) {
+            return ((DelegatingErrorListener)errorListener).getBaseErrorListener();
+        }
         return errorListener;
     }
 

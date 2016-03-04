@@ -15,10 +15,7 @@ import net.sf.saxon.event.Receiver;
 import net.sf.saxon.event.TreeReceiver;
 import net.sf.saxon.expr.instruct.GlobalContextRequirement;
 import net.sf.saxon.expr.instruct.GlobalParameterSet;
-import net.sf.saxon.lib.AugmentedSource;
-import net.sf.saxon.lib.Logger;
-import net.sf.saxon.lib.SaxonOutputKeys;
-import net.sf.saxon.lib.TraceListener;
+import net.sf.saxon.lib.*;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
@@ -433,13 +430,20 @@ public class XsltTransformer implements Destination {
      * Get the ErrorListener being used during this compilation episode
      *
      * @return listener The error listener in use. This is notified of all dynamic errors detected during the
-     *         transformation. If no user-supplied ErrorListener has been set the method will return a system-supplied
-     *         ErrorListener.
+     * transformation. If no user-supplied ErrorListener has been set the method will return a system-supplied
+     * ErrorListener. If an explicit ErrorListener has been set using {@link #setErrorListener(ErrorListener)},
+     * then that ErrorListener will generally be returned, unless the internal ErrorListener has been changed
+     * by some other mechanism.
      * @since 9.2
      */
 
     public ErrorListener getErrorListener() {
-        return controller.getErrorListener();
+        UnfailingErrorListener uel = controller.getErrorListener();
+        if (uel instanceof DelegatingErrorListener) {
+            return ((DelegatingErrorListener) uel).getBaseErrorListener();
+        } else {
+            return uel;
+        }
     }
 
     /**

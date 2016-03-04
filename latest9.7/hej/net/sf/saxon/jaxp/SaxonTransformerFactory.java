@@ -8,7 +8,9 @@
 package net.sf.saxon.jaxp;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.lib.DelegatingErrorListener;
 import net.sf.saxon.lib.FeatureKeys;
+import net.sf.saxon.lib.UnfailingErrorListener;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XsltCompiler;
@@ -344,7 +346,12 @@ public class SaxonTransformerFactory extends SAXTransformerFactory {
      * @return The current error listener, which should never be null.
      */
     public ErrorListener getErrorListener() {
-        return getConfiguration().getErrorListener();
+        UnfailingErrorListener uel = getConfiguration().getErrorListener();
+        if (uel instanceof DelegatingErrorListener) {
+            return ((DelegatingErrorListener) uel).getBaseErrorListener();
+        } else {
+            return uel;
+        }
     }
 
 
