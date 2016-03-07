@@ -7,7 +7,6 @@
 
 package net.sf.saxon.expr;
 
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
 
@@ -25,7 +24,7 @@ public interface Callable {
      * @param arguments the values of the arguments, supplied as Sequences.
      *                  <p>Generally it is advisable, if calling iterate() to process a supplied sequence, to
      *                  call it only once; if the value is required more than once, it should first be converted
-     *                  to a {@link net.sf.saxon.om.GroundedValue} by calling the utility methd
+     *                  to a {@link net.sf.saxon.om.GroundedValue} by calling the utility method
      *                  SequenceTool.toGroundedValue().</p>
      *                  <p>If the expected value is a single item, the item should be obtained by calling
      *                  Sequence.head(): it cannot be assumed that the item will be passed as an instance of
