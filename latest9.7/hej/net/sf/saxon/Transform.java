@@ -108,8 +108,6 @@ public class Transform {
                 "Display compiled expression tree and optimization decisions for exportation");
         options.addRecognizedOption("ext", CommandLineOptions.TYPE_BOOLEAN,
             "Allow calls to Java extension functions and xsl:result-document");
-       /* options.addRecognizedOption("if", CommandLineOptions.TYPE_QNAME | CommandLineOptions.VALUE_REQUIRED,
-                "Name of initial function");*/
         options.addRecognizedOption("im", CommandLineOptions.TYPE_QNAME | CommandLineOptions.VALUE_REQUIRED,
             "Name of initial mode");
         options.addRecognizedOption("init", CommandLineOptions.TYPE_CLASSNAME,
@@ -1154,10 +1152,6 @@ public class Transform {
                 if (initialTemplate != null) {
                     msg += " initial template = " + (initialTemplate.isEmpty() ? "xsl:initial-template" : initialTemplate);
                 }
-                String initialFunction = options.getOptionValue("if");
-                if (initialFunction != null) {
-                    msg += " initial function = " + initialFunction;
-                }
                 System.err.println(msg);
             }
             long startTime = now();
@@ -1174,22 +1168,31 @@ public class Transform {
                     transformer.newSerializer(outputFile);
             options.setSerializationParams(serializer);
 
-            boolean buildTree;
+            boolean buildResultTree;
             Properties props = serializer.getCombinedOutputProperties();
             String buildTreeProperty = props.getProperty(SaxonOutputKeys.BUILD_TREE);
             if ("yes".equals(buildTreeProperty)) {
-                buildTree = true;
+                buildResultTree = true;
             } else if ("no".equals(buildTreeProperty)) {
-                buildTree = false;
+                buildResultTree = false;
             } else {
                 String method = props.getProperty(OutputKeys.METHOD);
-                buildTree = !("json".equals(method) || "adaptive".equals(method));
+                buildResultTree = !("json".equals(method) || "adaptive".equals(method));
             }
+
+            String initialTemplate = options.getOptionValue("it");
 
             if (source != null) {
                 PreparedStylesheet pss = sheet.getUnderlyingCompiledStylesheet();
                 GlobalContextRequirement requirement = pss.getGlobalContextRequirement();
-                if (requirement==null || (requirement.mayBeSupplied && !requirement.isDeclaredStreamable)) {
+                boolean buildSourceTree;
+                if (requirement == null) {
+                    buildSourceTree = initialTemplate != null ||
+                            !transformer.getUnderlyingController().getInitialMode().isDeclaredStreamable();
+                } else {
+                    buildSourceTree = requirement.mayBeSupplied && !requirement.isDeclaredStreamable;
+                }
+                if (buildSourceTree) {
                     XdmNode node = processor.newDocumentBuilder().build(source);
                     transformer.setInitialContextItem(node);
                     source = node.asSource();
@@ -1201,7 +1204,6 @@ public class Transform {
                 transformer.setTraceFunctionDestination(null);
             }
 
-            String initialTemplate = options.getOptionValue("it");
             if (initialTemplate != null) {
                 QName initialTemplateName;
                 if (initialTemplate.isEmpty()) {
@@ -1209,14 +1211,14 @@ public class Transform {
                 } else {
                     initialTemplateName = QName.fromClarkName(initialTemplate);
                 }
-                if (buildTree) {
+                if (buildResultTree) {
                     transformer.callTemplate(initialTemplateName, serializer);
                 } else {
                     XdmValue result = transformer.callTemplate(initialTemplateName);
                     serializer.serializeXdmValue(result);
                 }
             } else {
-                if (buildTree) {
+                if (buildResultTree) {
                     transformer.applyTemplates(source, serializer);
                 } else {
                     XdmValue result = transformer.applyTemplates(source);
