@@ -86,7 +86,7 @@ public class GroupByClause extends Clause {
      */
 
     public void initRetainedTupleExpression(FLWORExpression flwor, TupleExpression expr) {
-        retainedTupleOp = new Operand(flwor, expr, OperandRole.NAVIGATE);
+        retainedTupleOp = new Operand(flwor, expr, OperandRole.REPEAT_NAVIGATE);
     }
 
     /**
@@ -138,7 +138,7 @@ public class GroupByClause extends Clause {
      */
 
     public void initGroupingTupleExpression(FLWORExpression flwor, TupleExpression expr) {
-        groupingTupleOp = new Operand(flwor, expr, OperandRole.NAVIGATE);
+        groupingTupleOp = new Operand(flwor, expr, OperandRole.REPEAT_NAVIGATE);
     }
 
     /**

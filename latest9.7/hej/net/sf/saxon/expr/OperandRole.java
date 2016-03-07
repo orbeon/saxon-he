@@ -35,8 +35,12 @@ public class OperandRole {
             new OperandRole(OperandRole.USES_NEW_FOCUS | OperandRole.HIGHER_ORDER, OperandUsage.TRANSMISSION, SequenceType.ANY_SEQUENCE);
     public final static OperandRole INSPECT =
             new OperandRole(0, OperandUsage.INSPECTION,  SequenceType.ANY_SEQUENCE);
+    public final static OperandRole REPEAT_INSPECT =
+            new OperandRole(OperandRole.HIGHER_ORDER, OperandUsage.INSPECTION, SequenceType.ANY_SEQUENCE);
     public final static OperandRole NAVIGATE =
             new OperandRole(0, OperandUsage.NAVIGATION,  SequenceType.ANY_SEQUENCE);
+    public final static OperandRole REPEAT_NAVIGATE =
+            new OperandRole(OperandRole.HIGHER_ORDER, OperandUsage.NAVIGATION, SequenceType.ANY_SEQUENCE);
     public final static OperandRole SINGLE_ATOMIC =
             new OperandRole(0, OperandUsage.ABSORPTION,  SequenceType.SINGLE_ATOMIC);
     public final static OperandRole ATOMIC_SEQUENCE =

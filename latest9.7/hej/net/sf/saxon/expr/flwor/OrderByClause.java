@@ -34,8 +34,8 @@ public class OrderByClause extends Clause {
     //TupleExpression tupleExpression;
 
     public OrderByClause(FLWORExpression flwor, SortKeyDefinition[] sortKeys, TupleExpression tupleExpression) {
-        this.sortKeysOp = new Operand(flwor, new SortKeyDefinitionList(sortKeys), OperandRole.NAVIGATE);
-        this.tupleOp = new Operand(flwor, tupleExpression, OperandRole.NAVIGATE);
+        this.sortKeysOp = new Operand(flwor, new SortKeyDefinitionList(sortKeys), OperandRole.REPEAT_NAVIGATE);
+        this.tupleOp = new Operand(flwor, tupleExpression, OperandRole.REPEAT_NAVIGATE);
     }
 
     @Override

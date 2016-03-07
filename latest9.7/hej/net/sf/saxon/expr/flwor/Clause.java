@@ -35,6 +35,7 @@ public abstract class Clause {
 
     private Location location;
     private PackageData packageData;
+    private boolean repeated;
 
     /**
      * Get the location, which can be used to determine
@@ -67,6 +68,14 @@ public abstract class Clause {
 
     public Configuration getConfiguration() {
         return packageData.getConfiguration();
+    }
+
+    public void setRepeated(boolean repeated) {
+        this.repeated = repeated;
+    }
+
+    public boolean isRepeated() {
+        return repeated;
     }
 
     /**

@@ -57,7 +57,7 @@ public class FLWORExpression extends Expression {
         return clauses;
     }
 
-    private static boolean isLoopingClause(Clause c) {
+    public static boolean isLoopingClause(Clause c) {
         return c.getClauseKey() == Clause.FOR || c.getClauseKey() == Clause.GROUPBYCLAUSE || c.getClauseKey() == Clause.WINDOW;
     }
 
@@ -263,14 +263,23 @@ public class FLWORExpression extends Expression {
     @Override
     public Iterable<Operand> operands() {
         final List<Operand> list = new ArrayList<Operand>(5);
+        OperandProcessor processor0 = new OperandProcessor() {
+            public void processOperand(Operand op) {
+                list.add(op);
+            }
+        };
         OperandProcessor processor = new OperandProcessor() {
             public void processOperand(Operand op) {
                 list.add(op);
             }
         };
+        boolean repeatable = false;
         try {
             for (Clause c : clauses) {
                 c.processOperands(processor);
+                if (c instanceof ForClause) {
+                    repeatable = true;
+                }
             }
         } catch (XPathException e) {
             throw new IllegalStateException(e);
@@ -365,6 +374,8 @@ public class FLWORExpression extends Expression {
         List<LocalVariableBinding> newBindings = new ArrayList<LocalVariableBinding>();
         for (Clause c : clauses) {
             Clause c2 = c.copy(this);
+            c2.setLocation(c.getLocation());
+            c2.setRepeated(c.isRepeated());
             oldBindings.addAll(Arrays.asList(c.getRangeVariables()));
             newBindings.addAll(Arrays.asList(c2.getRangeVariables()));
             newClauses.add(c2);

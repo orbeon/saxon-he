@@ -16,7 +16,6 @@ import com.saxonica.ee.stream.adjunct.StreamingAdjunct;
 import net.sf.saxon.evpull.EventIterator;
 import net.sf.saxon.expr.instruct.*;
 import net.sf.saxon.expr.parser.*;
-import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
@@ -245,13 +244,6 @@ public class LetExpression extends Assignation implements TailCallReturner {
 
         // Don't inline variables whose initializer might contain a call to xsl:result-document
         if (refCount == 1 && ExpressionTool.changesXsltContext(getSequence())) {
-            refCount = 5;
-        }
-
-        // Don't inline a variable created by extracting references to "." (e.g. from a where clause),
-        // because this could cause the optimizer to loop. Bug 2664.
-        if (refCount == 1 && NamespaceConstant.SAXON.equals(getVariableQName().getURI()) &&
-                getVariableQName().getLocalPart().startsWith("dot")) {
             refCount = 5;
         }
 

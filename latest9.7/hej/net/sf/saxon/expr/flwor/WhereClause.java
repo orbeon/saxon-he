@@ -30,6 +30,14 @@ public class WhereClause extends Clause {
     }
 
     @Override
+    public void setRepeated(boolean repeated) {
+        super.setRepeated(repeated);
+        if (repeated) {
+            this.predicateOp.setOperandRole(OperandRole.REPEAT_INSPECT);
+        }
+    }
+
+    @Override
     public int getClauseKey() {
         return WHERE;
     }

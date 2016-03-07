@@ -2511,6 +2511,7 @@ public class XQueryParser extends XPathParser {
                 nextToken();
                 Expression condition = parseExprSingle();
                 WhereClause clause = new WhereClause(flwor, condition);
+                clause.setRepeated(containsLoopingClause(clauseList));
                 clauseList.add(clause);
                 foundWhere = true;
             } else if (isKeyword("stable") || isKeyword("order")) {
@@ -2560,6 +2561,7 @@ public class XQueryParser extends XPathParser {
                     keys[i] = key;
                 }
                 OrderByClause clause = new OrderByClause(flwor, keys, tupleExpression);
+                clause.setRepeated(containsLoopingClause(clauseList));
                 clauseList.add(clause);
             } else {
                 break;
@@ -2626,6 +2628,15 @@ public class XQueryParser extends XPathParser {
         }
     }
 
+    protected static boolean containsLoopingClause(List<Clause> clauseList) {
+        for (Clause c : clauseList) {
+            if (FLWORExpression.isLoopingClause(c)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Parse a ForClause.
      * <p/>
@@ -2641,6 +2652,7 @@ public class XQueryParser extends XPathParser {
         boolean first = true;
         do {
             ForClause clause = new ForClause();
+            clause.setRepeated(!first || containsLoopingClause(clauseList));
             setLocation(clause, t.currentTokenStartOffset);
             if (first) {
                 //clause.offset = t.currentTokenStartOffset;
@@ -2750,6 +2762,7 @@ public class XQueryParser extends XPathParser {
         do {
             LetClause clause = new LetClause();
             setLocation(clause, t.currentTokenStartOffset);
+            clause.setRepeated(containsLoopingClause(clauseList));
             if (first) {
                 //clause.offset = t.currentTokenStartOffset;
             }
@@ -2799,6 +2812,7 @@ public class XQueryParser extends XPathParser {
         do {
             CountClause clause = new CountClause();
             setLocation(clause, t.currentTokenStartOffset);
+            clause.setRepeated(containsLoopingClause(clauseList));
             clauseList.add(clause);
             nextToken();
             expect(Token.DOLLAR);
@@ -2829,6 +2843,7 @@ public class XQueryParser extends XPathParser {
         }
         GroupByClause clause = new GroupByClause(env.getConfiguration());
         setLocation(clause, t.currentTokenStartOffset);
+        clause.setRepeated(containsLoopingClause(clauseList));
         List<StructuredQName> variableNames = new ArrayList<StructuredQName>();
         List<String> collations = new ArrayList<String>();
         nextToken();
@@ -2965,6 +2980,7 @@ public class XQueryParser extends XPathParser {
         }
         WindowClause clause = new WindowClause();
         setLocation(clause, t.currentTokenStartOffset);
+        clause.setRepeated(containsLoopingClause(clauseList));
         clause.setIsSlidingWindow(t.currentToken == Token.FOR_SLIDING);
         nextToken();
         if (!isKeyword("window")) {

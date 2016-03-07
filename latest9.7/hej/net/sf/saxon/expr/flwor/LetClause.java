@@ -39,7 +39,7 @@ public class LetClause extends Clause {
     }
 
     public void initSequence(FLWORExpression flwor, Expression sequence) {
-        sequenceOp = new Operand(flwor, sequence, OperandRole.NAVIGATE);
+        sequenceOp = new Operand(flwor, sequence, isRepeated() ? OperandRole.REPEAT_NAVIGATE : OperandRole.NAVIGATE);
     }
 
     public void setSequence(Expression sequence) {
