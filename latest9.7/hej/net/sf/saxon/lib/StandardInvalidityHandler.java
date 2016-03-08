@@ -24,9 +24,12 @@ import javax.xml.transform.SourceLocator;
 import javax.xml.transform.dom.DOMLocator;
 
 /**
- * This class <code>StandardInvalidityHandler</code> is the standard error handler for errors found during validation
- * of an instance document against a schema, used if no other InvalidityHandler is nominated. Its effect is to construct
- * a message containing information about the error, and output this message to a nominated Logger.
+ * This class <code>StandardInvalidityHandler</code>, despite its name, is not directly used by Saxon, and in particular
+ * it is NOT the default InvalidityHandler. It is however available for use by applications, either directly or by
+ * subclassing. (The default InvalidityHandler wraps a supplied ErrorListener).
+ *
+ * This InvalidityHandler logs validation error messages to a supplied {@link Logger}, using the Logger belonging
+ * to the supplied {@link Configuration} as the default destination.
  */
 
 public class StandardInvalidityHandler implements InvalidityHandler {
@@ -101,8 +104,6 @@ public class StandardInvalidityHandler implements InvalidityHandler {
                 wordWrap(constraintReference == null ? "" : "\n  " + constraintReference);
 
         localLogger.error(finalMessage);
-
-
     }
 
 

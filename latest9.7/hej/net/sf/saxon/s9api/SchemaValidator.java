@@ -129,8 +129,6 @@ public abstract class SchemaValidator implements Destination {
 
     public abstract void reportValidationStatistics(Destination destination) throws SaxonApiException;
 
-    public abstract InvalidityHandler getReportingHandler();
-
     /**
      * This method can be called before running a validation to define a destination to which validation
      * reports should be written. The validation report is in XML format, and the Destination may therefore

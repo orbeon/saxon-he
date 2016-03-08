@@ -228,9 +228,9 @@ public class ParseOptions {
         if (errorListener == null) {
             setErrorListener(config.getErrorListener());
         }
-        if (invalidityHandler == null) {
-            invalidityHandler = new StandardInvalidityHandler(config);
-        }
+//        if (invalidityHandler == null) {
+//            invalidityHandler = new InvalidityHandlerWrappingErrorListener(errorListener);
+//        }
 
     }
 
