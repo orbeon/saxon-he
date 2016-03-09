@@ -1096,12 +1096,14 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         }
 
         public void close(Result result) throws XPathException {
-            if (serialized) {
-                outcome.setSecondaryResult(uri, null, stringWriter == null ? "" : stringWriter.toString());
-            } else {
-                XdmDestination xdm = (XdmDestination) destination;
-                if (xdm != null) {
-                    outcome.setSecondaryResult(xdm.getBaseURI(), xdm.getXdmNode(), null);
+            if (uri != null) {
+                if (serialized) {
+                    outcome.setSecondaryResult(uri, null, stringWriter == null ? "" : stringWriter.toString());
+                } else {
+                    XdmDestination xdm = (XdmDestination) destination;
+                    if (xdm != null) {
+                        outcome.setSecondaryResult(xdm.getBaseURI(), xdm.getXdmNode(), null);
+                    }
                 }
             }
         }
