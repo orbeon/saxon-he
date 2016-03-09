@@ -1729,6 +1729,25 @@ public class Controller implements ContextOriginator {
         }
     }
 
+    private void checkReadiness() throws XPathException {
+        if (inUse) {
+            throw new IllegalStateException(
+                    "The Controller is being used recursively or concurrently. This is not permitted.");
+        }
+        if (binderies == null) {
+            throw new IllegalStateException("The Controller has not been initialized");
+        }
+        inUse = true;
+        clearPerTransformationData();
+        if (executable == null) {
+            throw new XPathException("Stylesheet has not been prepared");
+        }
+        if (!dateTimePreset) {
+            currentDateTime = null;     // reset at start of each transformation
+        }
+
+    }
+
     /**
      * Perform a transformation from a Source document to a Result document.
      *
@@ -1742,20 +1761,7 @@ public class Controller implements ContextOriginator {
      */
 
     public void transform(Source source, Receiver receiver) throws XPathException {
-        if (inUse) {
-            throw new IllegalStateException(
-                    "The Transformer is being used recursively or concurrently. This is not permitted.");
-        }
-        inUse = true;
-        clearPerTransformationData();
-        if (executable == null) {
-            throw new XPathException("Stylesheet has not been prepared");
-        }
-
-        if (!dateTimePreset) {
-            currentDateTime = null;     // reset at start of each transformation
-        }
-
+        checkReadiness();
         if (source instanceof TreeInfo) {
             source = ((TreeInfo) source).getRootNode();
         }
@@ -1927,24 +1933,10 @@ public class Controller implements ContextOriginator {
      */
 
     public void applyTemplates(Sequence source, Receiver outputDestination) throws XPathException {
-        if (inUse) {
-            throw new IllegalStateException(
-                    "The Transformer is being used recursively or concurrently. This is not permitted.");
-        }
-        inUse = true;
-        clearPerTransformationData();
-        if (executable == null) {
-            throw new XPathException("Stylesheet has not been prepared");
-        }
-
-        if (!dateTimePreset) {
-            currentDateTime = null;     // reset at start of each transformation
-        }
-
+        checkReadiness();
         boolean close = false;
+
         try {
-
-
             Mode mode = initialMode;
             if (mode == null) {
                 mode = ((PreparedStylesheet) executable).getRuleManager().getUnnamedMode();
@@ -2322,10 +2314,7 @@ public class Controller implements ContextOriginator {
 
     public void callTemplate(StructuredQName initialTemplateName, Receiver outputDestination)
             throws XPathException {
-
-        if (executable == null) {
-            throw new XPathException("Stylesheet has not been compiled");
-        }
+        checkReadiness();
         if (initialMode != null && !initialMode.getModeName().equals(
                 ((StylesheetPackage)getExecutable().getTopLevelPackage()).getDefaultMode())) {
             throw new XPathException("Initial mode and template cannot both be defined", "XTDE0047");
@@ -2420,6 +2409,7 @@ public class Controller implements ContextOriginator {
                 traceListener.close();
             }
             closeMessageEmitter();
+            inUse = false;
         }
     }
 
@@ -2439,12 +2429,9 @@ public class Controller implements ContextOriginator {
      * @throws XPathException if any dynamic error occurs
      */
 
-    public void transformStream(Source source, Mode mode, Receiver result)
+    private void transformStream(Source source, Mode mode, Receiver result)
             throws XPathException {
-        if (executable == null) {
-            throw new XPathException("Stylesheet has not been compiled");
-        }
-
+        checkReadiness();
         openMessageEmitter();
 
         // Determine whether we need to close the output stream at the end. We
@@ -2534,6 +2521,7 @@ public class Controller implements ContextOriginator {
     /*@Nullable*/
     public Receiver getStreamingReceiver(Mode mode, Receiver result)
             throws XPathException {
+        // TODO: this method does not check that the Controller is not already in use, nor does it mark it as being in use.
         // System.err.println("*** TransformDocument");
         if (executable == null) {
             throw new XPathException("Stylesheet has not been compiled");
