@@ -2431,7 +2431,6 @@ public class Controller implements ContextOriginator {
 
     private void transformStream(Source source, Mode mode, Receiver result)
             throws XPathException {
-        checkReadiness();
         openMessageEmitter();
 
         // Determine whether we need to close the output stream at the end. We
