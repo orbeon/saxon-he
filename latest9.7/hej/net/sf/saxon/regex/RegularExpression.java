@@ -68,6 +68,14 @@ public interface RegularExpression {
 
     public CharSequence replace(CharSequence input, CharSequence replacement) throws XPathException;
 
+    /**
+     * Get the flags used at the time the regular expression was compiled.
+     *
+     * @return a string containing the flags
+     */
+
+    public String getFlags();
+
 
 }
 

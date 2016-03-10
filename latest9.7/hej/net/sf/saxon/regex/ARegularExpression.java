@@ -125,5 +125,15 @@ public class ARegularExpression implements RegularExpression {
             throw new XPathException(err.getMessage(), "FORX0004");
         }
     }
+
+    /**
+     * Get the flags used at the time the regular expression was compiled.
+     *
+     * @return a string containing the flags
+     */
+    @Override
+    public String getFlags() {
+        return rawFlags;
+    }
 }
 

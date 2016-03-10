@@ -184,5 +184,40 @@ public class JavaRegularExpression implements RegularExpression {
         }
         return flags;
     }
+
+    /**
+     * Get the flags used at the time the regular expression was compiled.
+     *
+     * @return a string containing the flags
+     */
+    @Override
+    public String getFlags() {
+        String flags = "";
+        if ((flagBits & Pattern.UNIX_LINES) != 0) {
+            flags += 'd';
+        }
+        if ((flagBits & Pattern.MULTILINE) != 0) {
+            flags += 'm';
+        }
+        if ((flagBits & Pattern.CASE_INSENSITIVE) != 0) {
+            flags += 'i';
+        }
+        if ((flagBits & Pattern.DOTALL) != 0) {
+            flags += 's';
+        }
+        if ((flagBits & Pattern.COMMENTS) != 0) {
+            flags += 'x';
+        }
+        if ((flagBits & Pattern.UNICODE_CASE) != 0) {
+            flags += 'u';
+        }
+        if ((flagBits & Pattern.LITERAL) != 0) {
+            flags += 'q';
+        }
+        if ((flagBits & Pattern.CANON_EQ) != 0) {
+            flags += 'c';
+        }
+        return flags;
+    }
 }
 

@@ -40,7 +40,8 @@ public class Replace extends RegexFunction  {
      */
     @Override
     public Expression makeFunctionCall(Expression... arguments) {
-        if (arguments[2] instanceof StringLiteral) {
+        boolean maybeQ = arguments.length == 4 && (!(arguments[3] instanceof StringLiteral) || ((StringLiteral) arguments[3]).getStringValue().contains("q"));
+        if (arguments[2] instanceof StringLiteral && !maybeQ) {
             // Do early checking of the replacement expression if known statically
             String rep = ((StringLiteral) arguments[2]).getStringValue();
             if (checkReplacement(rep) == null) {
@@ -67,15 +68,16 @@ public class Replace extends RegexFunction  {
         StringValue arg2 = (StringValue) arguments[2].head();
         CharSequence replacement = arg2.getStringValueCS();
 
-        if (!replacementChecked) {
-            // if it is a string literal, the check was done at compile time
-            String msg = checkReplacement(replacement);
-            if (msg != null) {
-                throw new XPathException(msg, "FORX0004", context);
+        RegularExpression re = getRegularExpression(arguments);
+        if (!re.getFlags().contains("q")) {
+            if (!replacementChecked) {
+                // if it is a string literal, the check was done at compile time
+                String msg = checkReplacement(replacement);
+                if (msg != null) {
+                    throw new XPathException(msg, "FORX0004", context);
+                }
             }
         }
-
-        RegularExpression re = getRegularExpression(arguments);
         CharSequence res = re.replace(input, replacement);
         return StringValue.makeStringValue(res);
     }

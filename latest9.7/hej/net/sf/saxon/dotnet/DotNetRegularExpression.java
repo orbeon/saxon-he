@@ -205,6 +205,30 @@ public class DotNetRegularExpression implements RegularExpression {
     }
 
     /**
+     * Get the flags used at the time the regular expression was compiled.
+     *
+     * @return a string containing the flags
+     */
+    @Override
+    public String getFlags() {
+        String flags = "";
+        RegexOptions options = pattern.get_Options();
+        if ((options.Value & RegexOptions.IgnoreCase) != 0 ) {
+            flags += "i";
+        }
+        if ((options.Value & RegexOptions.Multiline) != 0 ) {
+            flags += "m";
+        }
+        if ((options.Value & RegexOptions.Singleline) != 0 ) {
+            flags += "s";
+        }
+        if ((options.Value & RegexOptions.IgnorePatternWhitespace) != 0 ) {
+            flags += "x";
+        }
+        return flags;
+    }
+
+    /**
      * Test whether the 'x' flag is set.
      *
      * @param inFlags the flags as a string, e.g. "im"
