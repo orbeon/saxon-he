@@ -55,7 +55,7 @@ import java.util.Map;
  * <p>An <code>Xslt30Transformer</code> is always constructed by running the <code>Load30</code>
  * method of an {@link XsltExecutable}.</p>
  * <p/>
- * <p>Unlike <code>XsltTransformer</code>, an <code>Xslt30Transformer</code> is not a <code>Destination</code>. T
+ * <p>Unlike <code>XsltTransformer</code>, an <code>Xslt30Transformer</code> is not a <code>Destination</code>.
  * To pipe the results of one transformation into another, the target should be an <code>XsltTransfomer</code>
  * rather than an <code>Xslt30Transformer</code>.</p>
  * <p/>
@@ -65,7 +65,6 @@ import java.util.Map;
  * <li>First, values may be supplied for stylesheet parameters and for the global context item. The
  * global context item is used when initializing global variables. Unlike earlier transformation APIs,
  * the global context item is quite independent of the "principal Source document".</li>
- * <p/>
  * <li>The stylesheet may now be repeatedly invoked. Each invocation takes one of three forms:
  * <ol>
  * <li>Invocation by applying templates. In this case, the information required is (i) an initial
