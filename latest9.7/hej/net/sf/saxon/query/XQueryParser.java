@@ -3726,7 +3726,12 @@ public class XQueryParser extends XPathParser {
                 } else if (nodeKind.equals("ordered") || nodeKind.equals("unordered")) {
                     // these are currently no-ops in Saxon
                     nextToken();
-                    Expression content = parseExpression();
+                    Expression content;
+                    if (t.currentToken == Token.RCURLY && allowXPath31Syntax) {
+                        content = Literal.makeEmptySequence();
+                    } else {
+                        content = parseExpression();
+                    }
                     expect(Token.RCURLY);
                     lookAhead();  // must be done manually after an RCURLY
                     nextToken();
@@ -4067,7 +4072,12 @@ public class XQueryParser extends XPathParser {
 
     private Expression parseTextNodeConstructor(int offset) throws XPathException {
         nextToken();
-        Expression value = parseExpression();
+        Expression value;
+        if (t.currentToken == Token.RCURLY && allowXPath31Syntax) {
+            value = Literal.makeEmptySequence();
+        } else {
+            value = parseExpression();
+        }
         expect(Token.RCURLY);
         lookAhead(); // after an RCURLY
         nextToken();
@@ -4079,7 +4089,12 @@ public class XQueryParser extends XPathParser {
 
     private Expression parseCommentConstructor(int offset) throws XPathException {
         nextToken();
-        Expression value = parseExpression();
+        Expression value;
+        if (t.currentToken == Token.RCURLY && allowXPath31Syntax) {
+            value = Literal.makeEmptySequence();
+        } else {
+            value = parseExpression();
+        }
         expect(Token.RCURLY);
         lookAhead(); // after an RCURLY
         nextToken();
