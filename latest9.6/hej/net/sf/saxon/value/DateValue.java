@@ -526,7 +526,8 @@ public class DateValue extends GDateValue implements Comparable {
      * of that month.
      * <p/>
      * <p>See bug 21370 which clarified the specification. This caused a change to the Saxon
-     * implementation such that the days before the start of week 1 go in week 5, not week zero.</p>
+     * implementation such that the days before the start of week 1 go in the last week of the previous
+     * month, not week zero.</p>
      *
      * @param year  the year
      * @param month the month (1-12)
@@ -536,9 +537,13 @@ public class DateValue extends GDateValue implements Comparable {
 
     public static int getWeekNumberWithinMonth(int year, int month, int day) {
         int firstDay = getDayOfWeek(year, month, 1);
-        int inc = (firstDay < 5 ? 1 : 5);   // implements the First Thursday rule
-        int wk = ((day + firstDay - 2) / 7) + inc;
-        return (wk > 5 ? wk - 5 : wk);
+        if (firstDay > 4 && (firstDay + day) <= 8) {
+            // days before week one are part of the last week of the previous month (4 or 5)
+            DateValue lastDayPrevMonth = yesterday(year, (byte) month, (byte) 1);
+            return getWeekNumberWithinMonth(lastDayPrevMonth.year, lastDayPrevMonth.month, lastDayPrevMonth.day);
+        }
+        int inc = (firstDay < 5 ? 1 : 0);   // implements the First Thursday rule
+        return ((day + firstDay - 2) / 7) + inc;
     }
 
 }
