@@ -55,6 +55,7 @@ using JXsltPackage = net.sf.saxon.s9api.XsltPackage;
 using JMap = java.util.Map;
 using JLocation = net.sf.saxon.expr.parser.Location;
 using JExplicitLocation = net.sf.saxon.expr.parser.ExplicitLocation;
+using JDotNetOutputStream = net.sf.saxon.dotnet.DotNetOutputStream;
 
 
 
@@ -81,7 +82,7 @@ namespace Saxon.Api
     {
         private Processor processor;
         private Uri baseUri;
-		private ErrorGatherer errorGatherer;
+        private ErrorGatherer errorGatherer;
         private Hashtable variableList = new Hashtable();
         private JXsltCompiler xsltCompiler;
 
@@ -92,9 +93,9 @@ namespace Saxon.Api
         {
             this.processor = processor;
             xsltCompiler = processor.JProcessor.newXsltCompiler();
-			errorGatherer = new ErrorGatherer (new List<StaticError> ());
-			xsltCompiler.setErrorListener (errorGatherer);
-			xsltCompiler.setURIResolver (processor.Implementation.getURIResolver());
+            errorGatherer = new ErrorGatherer(new List<StaticError>());
+            xsltCompiler.setErrorListener(errorGatherer);
+            xsltCompiler.setURIResolver(processor.Implementation.getURIResolver());
         }
 
         /// <summary>
@@ -129,10 +130,10 @@ namespace Saxon.Api
         /// whether they are to be case-blind and/or accent-blind</param>
         /// <param name="isDefault">If true, this collation will be used as the default collation</param>
 
-            [Obsolete("Declare collations globally at the Processor level")]
+        [Obsolete("Declare collations globally at the Processor level")]
         public void DeclareCollation(Uri uri, CompareInfo compareInfo, CompareOptions options, Boolean isDefault)
         {
-			JDotNetComparator comparator = new JDotNetComparator(uri.ToString(), compareInfo, options);
+            JDotNetComparator comparator = new JDotNetComparator(uri.ToString(), compareInfo, options);
             processor.JProcessor.getUnderlyingConfiguration().registerCollation(uri.ToString(), comparator);
         }
 
@@ -169,12 +170,15 @@ namespace Saxon.Api
         {
             get
             {
-				javax.xml.transform.URIResolver resolver = processor.Implementation.getURIResolver ();
-				if (resolver is JDotNetURIResolver) {
-					return ((JDotNetURIResolver)resolver).getXmlResolver ();
-				} else {
-					return new XmlUrlResolver();
-				}
+                javax.xml.transform.URIResolver resolver = processor.Implementation.getURIResolver();
+                if (resolver is JDotNetURIResolver)
+                {
+                    return ((JDotNetURIResolver)resolver).getXmlResolver();
+                }
+                else
+                {
+                    return new XmlUrlResolver();
+                }
             }
             set
             {
@@ -208,27 +212,28 @@ namespace Saxon.Api
         }
 
 
-		/// <summary>
-		/// Indicates whether or not assertions (<c>xsl:assert instructions</c>) have been enabled at run time. 
-		/// </summary>
-		/// <remarks>By default assertions are disabled at compile time. If assertions are enabled at compile time, then by
-		/// default they will also be enabled at run time; but they can be disabled at run time by
-		/// specific request. At compile time, assertions can be enabled for some packages and
-		/// disabled for others; at run-time, they can only be enabled or disabled globally.</remarks>
-		/// <returns>true if assertions are enabled at compile time</returns>
-		/// <remarks>Since 9.7</remarks>
-     
+        /// <summary>
+        /// Indicates whether or not assertions (<c>xsl:assert instructions</c>) have been enabled at run time. 
+        /// </summary>
+        /// <remarks>By default assertions are disabled at compile time. If assertions are enabled at compile time, then by
+        /// default they will also be enabled at run time; but they can be disabled at run time by
+        /// specific request. At compile time, assertions can be enabled for some packages and
+        /// disabled for others; at run-time, they can only be enabled or disabled globally.</remarks>
+        /// <returns>true if assertions are enabled at compile time</returns>
+        /// <remarks>Since 9.7</remarks>
 
-		public bool AssertionsEnabled
-		{
-			get {
-				return xsltCompiler.isAssertionsEnabled();
-			}
+
+        public bool AssertionsEnabled
+        {
+            get
+            {
+                return xsltCompiler.isAssertionsEnabled();
+            }
             set
             {
                 xsltCompiler.setAssertionsEnabled(value);
             }
-		}
+        }
 
         /// <summary>
         /// The <c>XsltLanguageVersion</c> property determines whether the version of the XSLT language specification
@@ -248,11 +253,11 @@ namespace Saxon.Api
         {
             get
             {
-				return xsltCompiler.getXsltLanguageVersion ();
+                return xsltCompiler.getXsltLanguageVersion();
             }
             set
             {
-				xsltCompiler.setXsltLanguageVersion(value);
+                xsltCompiler.setXsltLanguageVersion(value);
             }
         }
 
@@ -272,12 +277,12 @@ namespace Saxon.Api
         {
             set
             {
-				errorGatherer = new ErrorGatherer (value);
-				xsltCompiler.setErrorListener(errorGatherer);
+                errorGatherer = new ErrorGatherer(value);
+                xsltCompiler.setErrorListener(errorGatherer);
             }
             get
             {
-				return errorGatherer.ErrorList;
+                return errorGatherer.ErrorList;
             }
         }
 
@@ -315,8 +320,8 @@ namespace Saxon.Api
                 {
                     ss.setSystemId(Uri.EscapeUriString(baseUri.ToString()));
                 }
-					
-				JPreparedStylesheet pss = JCompilation.compileSingletonPackage(processor.Implementation, xsltCompiler.getUnderlyingCompilerInfo(),ss);
+
+                JPreparedStylesheet pss = JCompilation.compileSingletonPackage(processor.Implementation, xsltCompiler.getUnderlyingCompilerInfo(), ss);
                 return new XsltExecutable(processor, pss);
             }
             catch (JSaxonApiException err)
@@ -326,141 +331,196 @@ namespace Saxon.Api
         }
 
 
-		/// <summary>
-		/// Compile a stylesheet supplied as a Stream.
-		/// </summary>
-		/// <example>
-		/// <code>
-		/// Stream source = new FileStream("input.xsl", FileMode.Open, FileAccess.Read);
-		/// XsltExecutable q = compiler.Compile(source);
-		/// source.Close();
-		/// </code>
-		/// </example>
-		/// <param name="input">A stream containing the source text of the stylesheet</param>
-		/// <param name="theBaseUri">Specify the base Uri of the stream</param>
-		/// <param name="closeStream">Flag to indicate if the stream should be closed in the method</param>
-		/// <returns>An <c>XsltExecutable</c> which represents the compiled stylesheet object.
-		/// The XsltExecutable may be loaded as many times as required, in the same or a different
-		/// thread. The <c>XsltExecutable</c> is not affected by any changes made to the <c>XsltCompiler</c>
-		/// once it has been compiled.</returns>
-		/// <remarks>
-		/// <para>If the stylesheet contains any <c>xsl:include</c> or <c>xsl:import</c> declarations,
-		/// then the <c>BaseURI</c> property must be set to allow these to be resolved.</para>
-		/// <para>The stylesheet is contained in the part of the input stream between its current
-		/// position and the end of the stream. It is the caller's responsibility to close the input 
-		/// stream after use. If the compilation succeeded, then on exit the stream will be 
-		/// exhausted; if compilation failed, the current position of the stream on exit is
-		/// undefined.</para>
-		/// </remarks>
-        
-		internal XsltExecutable Compile(Stream input, String theBaseUri, bool closeStream)
-		{
-			//See bug 2306
-			try
-			{
-				JStreamSource ss = new JStreamSource(new JDotNetInputStream(input));
-				if (theBaseUri != null)
-				{
-					ss.setSystemId(Uri.EscapeUriString(theBaseUri.ToString()));
-				} else {
-					if(baseUri != null) {
-						ss.setSystemId(Uri.EscapeUriString(baseUri.ToString()));
-					}
-				}
+        /// <summary>
+        /// Compile a stylesheet supplied as a Stream.
+        /// </summary>
+        /// <example>
+        /// <code>
+        /// Stream source = new FileStream("input.xsl", FileMode.Open, FileAccess.Read);
+        /// XsltExecutable q = compiler.Compile(source);
+        /// source.Close();
+        /// </code>
+        /// </example>
+        /// <param name="input">A stream containing the source text of the stylesheet</param>
+        /// <param name="theBaseUri">Specify the base Uri of the stream</param>
+        /// <param name="closeStream">Flag to indicate if the stream should be closed in the method</param>
+        /// <returns>An <c>XsltExecutable</c> which represents the compiled stylesheet object.
+        /// The XsltExecutable may be loaded as many times as required, in the same or a different
+        /// thread. The <c>XsltExecutable</c> is not affected by any changes made to the <c>XsltCompiler</c>
+        /// once it has been compiled.</returns>
+        /// <remarks>
+        /// <para>If the stylesheet contains any <c>xsl:include</c> or <c>xsl:import</c> declarations,
+        /// then the <c>BaseURI</c> property must be set to allow these to be resolved.</para>
+        /// <para>The stylesheet is contained in the part of the input stream between its current
+        /// position and the end of the stream. It is the caller's responsibility to close the input 
+        /// stream after use. If the compilation succeeded, then on exit the stream will be 
+        /// exhausted; if compilation failed, the current position of the stream on exit is
+        /// undefined.</para>
+        /// </remarks>
 
-				JPreparedStylesheet pss = JCompilation.compileSingletonPackage(processor.Implementation, xsltCompiler.getUnderlyingCompilerInfo(),ss);
-				if(closeStream) {
-					input.Close();
-				}
-				return new XsltExecutable(processor, pss);
-			}
-			catch (JSaxonApiException err)
-			{
-				throw new StaticError(err);
-			}
-		}
+        internal XsltExecutable Compile(Stream input, String theBaseUri, bool closeStream)
+        {
+            //See bug 2306
+            try
+            {
+                JStreamSource ss = new JStreamSource(new JDotNetInputStream(input));
+                if (theBaseUri != null)
+                {
+                    ss.setSystemId(Uri.EscapeUriString(theBaseUri.ToString()));
+                }
+                else
+                {
+                    if (baseUri != null)
+                    {
+                        ss.setSystemId(Uri.EscapeUriString(baseUri.ToString()));
+                    }
+                }
 
-
-
-	/// <summary><para>Compile a library package.</para>
-	/// <para>The source argument identifies an XML file containing an &lt;xsl:package&gt; element. Any packages
-    /// on which this package depends must have been made available to the <code>XsltCompiler</code>
-    /// by importing them using <see cref="#ImportPackage"/>.</para></summary>
-    /// <param name='input'>source identifies an XML document holding the the XSLT package to be compiled</param>
-    /// <returns> the XsltPackage that results from the compilation. Note that this package
-    ///is not automatically imported to this <code>XsltCompiler</code>; if the package is required
-    ///for use in subsequent compilations then it must be explicitly imported.</returns>
-    /// <remarks><para>@since 9.6</para></remarks>
-     
-		public XsltPackage CompilePackage(Stream input)
-		{
-			try
-			{
-				JStreamSource ss = new JStreamSource(new JDotNetInputStream(input));
-				if (baseUri != null)
-				{
-					ss.setSystemId(Uri.EscapeUriString(baseUri.ToString()));
-				}
-
-				return new XsltPackage(processor, xsltCompiler.compilePackage(ss));
-			}
-			catch (JSaxonApiException err)
-			{
-				throw new StaticError(err);
-			}
-		}
+                JPreparedStylesheet pss = JCompilation.compileSingletonPackage(processor.Implementation, xsltCompiler.getUnderlyingCompilerInfo(), ss);
+                if (closeStream)
+                {
+                    input.Close();
+                }
+                return new XsltExecutable(processor, pss);
+            }
+            catch (JSaxonApiException err)
+            {
+                throw new StaticError(err);
+            }
+        }
 
 
 
+        /// <summary><para>Compile a library package.</para>
+        /// <para>The source argument identifies an XML file containing an &lt;xsl:package&gt; element. Any packages
+        /// on which this package depends must have been made available to the <code>XsltCompiler</code>
+        /// by importing them using <see cref="#ImportPackage"/>.</para></summary>
+        /// <param name='input'>source identifies an XML document holding the the XSLT package to be compiled</param>
+        /// <returns> the XsltPackage that results from the compilation. Note that this package
+        ///is not automatically imported to this <code>XsltCompiler</code>; if the package is required
+        ///for use in subsequent compilations then it must be explicitly imported.</returns>
+        /// <remarks><para>@since 9.6</para></remarks>
 
-     	/// <summary>Compile a list of packages.</summary>
-     	/// <param name='sources'> the collection of packages to be compiled, in the form of an
-     	/// Iterable</param>
-     	/// <returns> the collection of compiled packages, in the form of an Iterable.</returns>
-     	/// <remarks><para>Since 9.6</para></remarks>
-     	
-		public IList<XsltPackage> CompilePackages(IList<Stream> sources)
-		{
-			java.util.List sourcesJList = new java.util.ArrayList();
-			foreach (Stream ss in sources) {
-				sourcesJList.add(new JStreamSource(new JDotNetInputStream(ss)));
-			
-			}
-			java.lang.Iterable resultJList = null;
+        public XsltPackage CompilePackage(Stream input)
+        {
+            try
+            {
+                JStreamSource ss = new JStreamSource(new JDotNetInputStream(input));
+                if (baseUri != null)
+                {
+                    ss.setSystemId(Uri.EscapeUriString(baseUri.ToString()));
+                }
 
-			try {
-			
-				resultJList = xsltCompiler.compilePackages (sourcesJList);
-
-
-			} catch(JTransformerException ex){
-				throw new StaticError (ex);
-			}
-			IList<XsltPackage> result = new List<XsltPackage>();
-			java.util.Iterator iter = resultJList.iterator ();
-
-			for(;iter.hasNext();){
-				JXsltPackage pp = (JXsltPackage)iter.next ();
-				result.Add (new XsltPackage(processor, pp));
-			}
-
-			return result;
-		}
+                return new XsltPackage(processor, xsltCompiler.compilePackage(ss));
+            }
+            catch (JSaxonApiException err)
+            {
+                throw new StaticError(err);
+            }
+        }
 
 
 
-     	/// <summary>Import a library package. Calling this method makes the supplied package available for reference
-     	/// in the <code>xsl:use-package</code> declaration of subsequent compilations performed using this
-     	/// <code>XsltCompiler</code>.</summary>
-     	/// <param name='thePackage'> thePackage the package to be imported</param>
-     	/// <remarks>since 9.6</remarks>
 
-		public void ImportPackage(XsltPackage thePackage) {
-			if (thePackage.Processor != this.processor) {
-				throw new StaticError(new JTransformerException("The imported package and the XsltCompiler must belong to the same Processor"));
-			}
-			GetUnderlyingCompilerInfo().getPackageLibrary().addPackage(thePackage.PackageName, thePackage.getUnderlyingPreparedPackage());
-		}
+        /// <summary>Compile a list of packages.</summary>
+        /// <param name='sources'> the collection of packages to be compiled, in the form of an
+        /// Iterable</param>
+        /// <returns> the collection of compiled packages, in the form of an Iterable.</returns>
+        /// <remarks><para>Since 9.6</para></remarks>
+
+        public IList<XsltPackage> CompilePackages(IList<Stream> sources)
+        {
+            java.util.List sourcesJList = new java.util.ArrayList();
+            foreach (Stream ss in sources)
+            {
+                sourcesJList.add(new JStreamSource(new JDotNetInputStream(ss)));
+
+            }
+            java.lang.Iterable resultJList = null;
+
+            try
+            {
+
+                resultJList = xsltCompiler.compilePackages(sourcesJList);
+
+
+            }
+            catch (JTransformerException ex)
+            {
+                throw new StaticError(ex);
+            }
+            IList<XsltPackage> result = new List<XsltPackage>();
+            java.util.Iterator iter = resultJList.iterator();
+
+            for (; iter.hasNext();)
+            {
+                JXsltPackage pp = (JXsltPackage)iter.next();
+                result.Add(new XsltPackage(processor, pp));
+            }
+
+            return result;
+        }
+
+
+
+        /// <summary>Import a library package. Calling this method makes the supplied package available for reference
+        /// in the <code>xsl:use-package</code> declaration of subsequent compilations performed using this
+        /// <code>XsltCompiler</code>.</summary>
+        /// <param name='thePackage'> thePackage the package to be imported</param>
+        /// <remarks>since 9.6</remarks>
+
+        public void ImportPackage(XsltPackage thePackage)
+        {
+            if (thePackage.Processor != this.processor)
+            {
+                throw new StaticError(new JTransformerException("The imported package and the XsltCompiler must belong to the same Processor"));
+            }
+            GetUnderlyingCompilerInfo().getPackageLibrary().addPackage(thePackage.PackageName, thePackage.getUnderlyingPreparedPackage());
+        }
+
+
+        /// <summary>
+        ///  Load a compiled package from a file or from a remote location.
+        ///  The supplied URI represents the location of a resource which must have been originally.
+        /// The supplied URI represents the location of a resource which must have been originally
+        /// created using XsltPackage#save(System.Stream).
+        /// The result of loading the package is returned as an<code> XsltPackage</code> object.
+        /// Note that this package is not automatically imported to this <code>XsltCompiler</code>;
+        /// if the package is required for use in subsequent compilations then it must be explicitly
+        /// imported.
+        /// </summary>
+        /// <param name="location">the location from which the package is to be loaded, as a URI</param>
+        /// <returns>the compiled package loaded from the supplied file or remote location<returns>
+
+        public XsltPackage LoadLibraryPackage(Uri location)
+        {
+            try
+            {
+                JXsltPackage package = xsltCompiler.loadLibraryPackage(new java.net.URI(location.ToString()));
+                return new XsltPackage(processor, package);
+
+            }
+            catch (net.sf.saxon.trans.XPathException e)
+            {
+                throw new StaticError(e);
+            }
+
+
+        }
+
+        /// <summary>
+        /// Load a compiled package from a file or from a remote location, with the intent to use this as a complete
+        /// executable stylesheet, not as a library package.
+        /// The supplied URI represents the location of a resource which must have been originally
+        /// created using XsltPackage#save(System.Stream).</p>
+        /// </summary>
+        /// <param name="location"> the location from which the package is to be loaded, as a URI</param>
+        /// <returns>the compiled package loaded from the supplied file or remote location</returns>
+        public XsltExecutable LoadExecutablePackage(Uri location)
+        {
+            return LoadLibraryPackage(location).Link();
+
+        }
 
 
         ///<summary>  
@@ -473,7 +533,7 @@ namespace Saxon.Api
 
         public JCompilerInfo GetUnderlyingCompilerInfo()
         {
-			return xsltCompiler.getUnderlyingCompilerInfo();
+            return xsltCompiler.getUnderlyingCompilerInfo();
         }
 
 
@@ -492,7 +552,7 @@ namespace Saxon.Api
         public void SetParameter(QName name, XdmValue value)
         {
             variableList.Add(name, value);
-			xsltCompiler.getUnderlyingCompilerInfo().setParameter(name.ToStructuredQName(), value.Unwrap());
+            xsltCompiler.getUnderlyingCompilerInfo().setParameter(name.ToStructuredQName(), value.Unwrap());
         }
 
         /// <summary>
@@ -528,7 +588,7 @@ namespace Saxon.Api
             {
                 ss.setSystemId(Uri.EscapeUriString(baseUri.ToString()));
             }
-			JPreparedStylesheet pss = JCompilation.compileSingletonPackage(processor.Implementation ,xsltCompiler.getUnderlyingCompilerInfo(), ss);
+            JPreparedStylesheet pss = JCompilation.compileSingletonPackage(processor.Implementation, xsltCompiler.getUnderlyingCompilerInfo(), ss);
             return new XsltExecutable(processor, pss);
         }
 
@@ -552,9 +612,9 @@ namespace Saxon.Api
             Object obj = XmlResolver.GetEntity(uri, "application/xml", Type.GetType("System.IO.Stream"));
             if (obj is Stream)
             {
-				
-				// See bug issue #2306
-				return Compile ((Stream)obj, uri.ToString(), true);
+
+                // See bug issue #2306
+                return Compile((Stream)obj, uri.ToString(), true);
 
             }
             else
@@ -592,7 +652,7 @@ namespace Saxon.Api
         public XsltExecutable Compile(XmlReader reader)
         {
             JDotNetPullProvider pp = new JDotNetPullProvider(reader);
-			JPipelineConfiguration pipe = processor.Implementation.makePipelineConfiguration();
+            JPipelineConfiguration pipe = processor.Implementation.makePipelineConfiguration();
             pp.setPipelineConfiguration(pipe);
             // pp = new PullTracer(pp);  /* diagnostics */
             JPullSource source = new JPullSource(pp);
@@ -608,7 +668,7 @@ namespace Saxon.Api
                 pp.setBaseURI(baseu);
             }
             source.setSystemId(baseu);
-			JPreparedStylesheet pss = JCompilation.compileSingletonPackage(processor.Implementation, xsltCompiler.getUnderlyingCompilerInfo(), source);
+            JPreparedStylesheet pss = JCompilation.compileSingletonPackage(processor.Implementation, xsltCompiler.getUnderlyingCompilerInfo(), source);
             return new XsltExecutable(processor, pss);
         }
 
@@ -626,7 +686,7 @@ namespace Saxon.Api
 
         public XsltExecutable Compile(XdmNode node)
         {
-			JPreparedStylesheet pss = JCompilation.compileSingletonPackage(processor.Implementation, xsltCompiler.getUnderlyingCompilerInfo(), node.Implementation);
+            JPreparedStylesheet pss = JCompilation.compileSingletonPackage(processor.Implementation, xsltCompiler.getUnderlyingCompilerInfo(), node.Implementation);
             return new XsltExecutable(processor, pss);
         }
 
@@ -735,14 +795,14 @@ namespace Saxon.Api
     {
 
         private JPreparedStylesheet pss;
-		private Processor processor;
+        private Processor processor;
 
         // internal constructor
 
         internal XsltExecutable(Processor proc, JPreparedStylesheet pss)
         {
-			this.processor = proc;
-			this.pss = pss;
+            this.processor = proc;
+            this.pss = pss;
         }
 
         /// <summary>
@@ -756,31 +816,31 @@ namespace Saxon.Api
         public XsltTransformer Load()
         {
 
-			JController c = pss.newController ();
-			return new XsltTransformer(c, pss.getCompileTimeParams());
+            JController c = pss.newController();
+            return new XsltTransformer(c, pss.getCompileTimeParams());
         }
 
 
 
-		/// <summary>
-		/// Load the stylesheet to prepare it for execution. This version of the load() method
-		/// creates an <code>Xslt30Transformer</code> which offers interfaces for stylesheet
-		/// invocation corresponding to those described in the XSLT 3.0 specification. It can be used
-		/// with XSLT 2.0 or XSLT 3.0 stylesheets, and in both cases it offers new XSLT 3.0 functionality such
-		/// as the ability to supply parameters to the initial template, or the ability to invoke
-		/// stylesheet-defined functions, or the ability to return an arbitrary sequence as a result
-		/// without wrapping it in a document node.
-		/// </summary>
-		/// <returns>
-		/// An <c>Xslt30Transformer</c>. The returned <c>Xslt30Transformer</c> can be used to
-		/// set up the dynamic context for stylesheet evaluation, and to run the stylesheet.
-		/// </returns>
+        /// <summary>
+        /// Load the stylesheet to prepare it for execution. This version of the load() method
+        /// creates an <code>Xslt30Transformer</code> which offers interfaces for stylesheet
+        /// invocation corresponding to those described in the XSLT 3.0 specification. It can be used
+        /// with XSLT 2.0 or XSLT 3.0 stylesheets, and in both cases it offers new XSLT 3.0 functionality such
+        /// as the ability to supply parameters to the initial template, or the ability to invoke
+        /// stylesheet-defined functions, or the ability to return an arbitrary sequence as a result
+        /// without wrapping it in a document node.
+        /// </summary>
+        /// <returns>
+        /// An <c>Xslt30Transformer</c>. The returned <c>Xslt30Transformer</c> can be used to
+        /// set up the dynamic context for stylesheet evaluation, and to run the stylesheet.
+        /// </returns>
 
-		public Xslt30Transformer Load30()
-		{
-			JController c = pss.newController ();
-			return new Xslt30Transformer(processor, c, pss.getCompileTimeParams());
-		}
+        public Xslt30Transformer Load30()
+        {
+            JController c = pss.newController();
+            return new Xslt30Transformer(processor, c, pss.getCompileTimeParams());
+        }
 
         /// <summary>
         /// Output an XML representation of the compiled code of the stylesheet, for purposes of 
@@ -825,17 +885,17 @@ namespace Saxon.Api
         /// </returns>
         public Dictionary<QName, ParameterDetails> GetGlobalParameters()
         {
-			java.lang.Iterable globals = pss.getGlobalParameters();
+            java.lang.Iterable globals = pss.getGlobalParameters();
             Dictionary<QName, ParameterDetails> params1 = new Dictionary<QName, ParameterDetails>();
-			java.util.Iterator iter = globals.iterator();
+            java.util.Iterator iter = globals.iterator();
             while (iter.hasNext())
             {
-				net.sf.saxon.expr.instruct.GlobalParam var = (net.sf.saxon.expr.instruct.GlobalParam) iter.next ();
+                net.sf.saxon.expr.instruct.GlobalParam var = (net.sf.saxon.expr.instruct.GlobalParam)iter.next();
 
-				ParameterDetails details = new ParameterDetails(XdmSequenceType.FromSequenceType(var.getRequiredType()), var.isRequiredParam());
-				params1.Add(QName.FromClarkName(var.getVariableQName().getClarkName()), details);
+                ParameterDetails details = new ParameterDetails(XdmSequenceType.FromSequenceType(var.getRequiredType()), var.isRequiredParam());
+                params1.Add(QName.FromClarkName(var.getVariableQName().getClarkName()), details);
 
-                
+
             }
 
             return params1;
@@ -843,51 +903,51 @@ namespace Saxon.Api
 
 
 
-		/// <summary>
-		/// Inner class containing information about a global parameter to a compiled stylesheet.
-		/// </summary>
+        /// <summary>
+        /// Inner class containing information about a global parameter to a compiled stylesheet.
+        /// </summary>
         public class ParameterDetails
         {
 
             private XdmSequenceType type;
             private bool isRequired;
 
-			/// <summary>
-			/// Initializes a new instance of the <see cref="Saxon.Api.XsltExecutable+ParameterDetails"/> class.
-			/// </summary>
-			/// <param name="type1">Type1.</param>
-			/// <param name="isRequired1">If set to <c>true</c> is required1.</param>
+            /// <summary>
+            /// Initializes a new instance of the <see cref="Saxon.Api.XsltExecutable+ParameterDetails"/> class.
+            /// </summary>
+            /// <param name="type1">Type1.</param>
+            /// <param name="isRequired1">If set to <c>true</c> is required1.</param>
             public ParameterDetails(XdmSequenceType type1, bool isRequired1)
             {
                 this.type = type1;
                 this.isRequired = isRequired1;
             }
 
-			/// <summary>
-			/// Gets the declared item type of the parameter.
-			/// </summary>
-			/// <returns>The type defined in the <code>as</code> attribute of the <code>xsl:param</code> element,
-			///  without its occurrence indicator</returns>
+            /// <summary>
+            /// Gets the declared item type of the parameter.
+            /// </summary>
+            /// <returns>The type defined in the <code>as</code> attribute of the <code>xsl:param</code> element,
+            ///  without its occurrence indicator</returns>
             public XdmItemType getDeclaredItemType()
             {
                 return type.itemType;
             }
 
 
-			/// <summary>
-			/// Gets the declared cardinality of the parameter.
-			/// </summary>
-			/// <returns>The occurrence indicator from the type appearing in the <code>as</code> attribute
-			/// of the <code>xsl:param</code> element</returns>
+            /// <summary>
+            /// Gets the declared cardinality of the parameter.
+            /// </summary>
+            /// <returns>The occurrence indicator from the type appearing in the <code>as</code> attribute
+            /// of the <code>xsl:param</code> element</returns>
             public int getDeclaredCardinality()
             {
                 return type.occurrences;
             }
 
-			/// <summary>
-			/// Gets the underlying declared type of the parameter.
-			/// </summary>
-			/// <returns>The underlying declared type.</returns>
+            /// <summary>
+            /// Gets the underlying declared type of the parameter.
+            /// </summary>
+            /// <returns>The underlying declared type.</returns>
 
             public XdmSequenceType getUnderlyingDeclaredType()
             {
@@ -895,11 +955,11 @@ namespace Saxon.Api
             }
 
 
-			/// <summary>
-			/// Ask whether the parameter is required (mandatory) or optional
-			/// </summary>
-			/// <returns><c>true</c> if the parameter is mandatory (<code>required="yes"</code>), false
-			///         if it is optional.</returns>
+            /// <summary>
+            /// Ask whether the parameter is required (mandatory) or optional
+            /// </summary>
+            /// <returns><c>true</c> if the parameter is mandatory (<code>required="yes"</code>), false
+            ///         if it is optional.</returns>
             public bool IsRequired
             {
                 set { this.isRequired = value; }
@@ -931,22 +991,22 @@ namespace Saxon.Api
     {
 
         private JController controller;
-		private JNodeInfo initialContextNode;
+        private JNodeInfo initialContextNode;
         private IResultDocumentHandler resultDocumentHandler;
         private IMessageListener messageListener;
         private JStreamSource streamSource;
-		private StandardLogger traceFunctionDestination;
-        private XmlDestination destination;		
-		private GlobalParameterSet staticParameter;
-		private bool baseOutputUriWasSet = false;
+        private StandardLogger traceFunctionDestination;
+        private XmlDestination destination;
+        private GlobalParameterSet staticParameter;
+        private bool baseOutputUriWasSet = false;
 
 
         // internal constructor
 
-		internal XsltTransformer(JController controller, GlobalParameterSet staticParameter)
+        internal XsltTransformer(JController controller, GlobalParameterSet staticParameter)
         {
             this.controller = controller;
-			this.staticParameter = new GlobalParameterSet(staticParameter);
+            this.staticParameter = new GlobalParameterSet(staticParameter);
         }
 
         /// <summary>
@@ -963,8 +1023,8 @@ namespace Saxon.Api
 
         public XdmNode InitialContextNode
         {
-		get { return (initialContextNode == null ? null : (XdmNode)XdmValue.Wrap(initialContextNode)); }
-		set { initialContextNode = (value == null ? null : (JNodeInfo)value.Unwrap()); }
+            get { return (initialContextNode == null ? null : (XdmNode)XdmValue.Wrap(initialContextNode)); }
+            set { initialContextNode = (value == null ? null : (JNodeInfo)value.Unwrap()); }
         }
 
         /// <summary>
@@ -1040,7 +1100,7 @@ namespace Saxon.Api
             {
                 try
                 {
-				controller.setInitialTemplate(value.ToStructuredQName());
+                    controller.setInitialTemplate(value.ToStructuredQName());
                 }
                 catch (javax.xml.transform.TransformerException err)
                 {
@@ -1049,7 +1109,7 @@ namespace Saxon.Api
             }
         }
 
-	
+
 
         /// <summary>
         /// The base output URI, which acts as the base URI for resolving the <c>href</c>
@@ -1064,7 +1124,7 @@ namespace Saxon.Api
             }
             set
             {
-				baseOutputUriWasSet = true;
+                baseOutputUriWasSet = true;
                 controller.setBaseOutputURI(value.ToString());
             }
         }
@@ -1227,15 +1287,15 @@ namespace Saxon.Api
         /// </summary>
         /// <remarks>
         /// <para>The supplied destination is ignored if a <c>TraceListener</c> is in use.</para>
-		/// <para>Since 9.6. Changed in 9.6 to use a StandardLogger</para>
+        /// <para>Since 9.6. Changed in 9.6 to use a StandardLogger</para>
         /// </remarks>
 
-		public StandardLogger TraceFunctionDestination
+        public StandardLogger TraceFunctionDestination
         {
             set
             {
                 traceFunctionDestination = value;
-				controller.setTraceFunctionDestination(value);
+                controller.setTraceFunctionDestination(value);
             }
             get
             {
@@ -1260,7 +1320,7 @@ namespace Saxon.Api
 
         public void SetParameter(QName name, XdmValue value)
         {
-			staticParameter.put (name.ToStructuredQName(), value.Unwrap());
+            staticParameter.put(name.ToStructuredQName(), value.Unwrap());
         }
 
 
@@ -1288,56 +1348,65 @@ namespace Saxon.Api
         }
 
 
-		/// <summary>
-		/// Close the Destination, releasing any resources that need to be released.
-		/// </summary>
-		/// <remarks>
-		/// This method is called by the system on completion of a query or transformation.
-		/// Some kinds of Destination may need to close an output stream, others might
-		/// not need to do anything. The default implementation does nothing.
-		/// </remarks>
+        /// <summary>
+        /// Close the Destination, releasing any resources that need to be released.
+        /// </summary>
+        /// <remarks>
+        /// This method is called by the system on completion of a query or transformation.
+        /// Some kinds of Destination may need to close an output stream, others might
+        /// not need to do anything. The default implementation does nothing.
+        /// </remarks>
 
-		public override void Close()
-		{
-			XdmNode doc = XdmNode;
-			if (doc == null) {
-				throw new StaticError(new net.sf.saxon.trans.XPathException("No source document has been built by the previous pipeline stage"));
-			}
+        public override void Close()
+        {
+            XdmNode doc = XdmNode;
+            if (doc == null)
+            {
+                throw new StaticError(new net.sf.saxon.trans.XPathException("No source document has been built by the previous pipeline stage"));
+            }
 
-			JReceiver result = destination.GetReceiver (controller.makePipelineConfiguration());
-			try{
-				controller.transform(doc.Implementation, result);
-			}catch (javax.xml.transform.TransformerException err)
-			{
-				throw new DynamicError(err);
-			}
-			destination.Close();
+            JReceiver result = destination.GetReceiver(controller.makePipelineConfiguration());
+            try
+            {
+                controller.transform(doc.Implementation, result);
+            }
+            catch (javax.xml.transform.TransformerException err)
+            {
+                throw new DynamicError(err);
+            }
+            destination.Close();
 
-		}
+        }
 
-		internal JReceiver GetDestinationReceiver(XmlDestination destination){
-			if (destination is Serializer) {
-				Serializer serializer = (Serializer) destination;
-				serializer.SetDefaultOutputProperties(controller.getExecutable ().getDefaultOutputProperties());
-				serializer.SetCharacterMap (controller.getExecutable().getCharacterMapIndex());
-				String filename = serializer.GetFilename ();
-				java.io.OutputStream dest = serializer.GetOutputDestination();
-				if (!baseOutputUriWasSet) {
-					if (dest is java.io.FileOutputStream) {
-						controller.setBaseOutputURI(filename==null ? "" : filename);
-					}
-				}
-				JReceiver r = serializer.GetReceiver(controller.getConfiguration());
-				JPipelineConfiguration pipe = r.getPipelineConfiguration();
-				pipe.setController(controller);
-				return new net.sf.saxon.serialize.ReconfigurableSerializer(r, serializer.GetOutputProperties(), serializer.GetResult(pipe));
-			} else {
-				JPipelineConfiguration pipe = controller.getConfiguration().makePipelineConfiguration();
-				JReceiver r = destination.GetReceiver(pipe);
-				pipe.setController(controller);
-				return r;
-			}
-		}
+        internal JReceiver GetDestinationReceiver(XmlDestination destination)
+        {
+            if (destination is Serializer)
+            {
+                Serializer serializer = (Serializer)destination;
+                serializer.SetDefaultOutputProperties(controller.getExecutable().getDefaultOutputProperties());
+                serializer.SetCharacterMap(controller.getExecutable().getCharacterMapIndex());
+                String filename = serializer.GetFilename();
+                java.io.OutputStream dest = serializer.GetOutputDestination();
+                if (!baseOutputUriWasSet)
+                {
+                    if (dest is java.io.FileOutputStream)
+                    {
+                        controller.setBaseOutputURI(filename == null ? "" : filename);
+                    }
+                }
+                JReceiver r = serializer.GetReceiver(controller.getConfiguration());
+                JPipelineConfiguration pipe = r.getPipelineConfiguration();
+                pipe.setController(controller);
+                return new net.sf.saxon.serialize.ReconfigurableSerializer(r, serializer.GetOutputProperties(), serializer.GetResult(pipe));
+            }
+            else
+            {
+                JPipelineConfiguration pipe = controller.getConfiguration().makePipelineConfiguration();
+                JReceiver r = destination.GetReceiver(pipe);
+                pipe.setController(controller);
+                return r;
+            }
+        }
 
         /// <summary>
         /// Run the transformation, sending the result to a specified destination.
@@ -1352,43 +1421,49 @@ namespace Saxon.Api
 
         public void Run(XmlDestination destination)
         {
-			if (destination == null) {
-				throw new DynamicError ("Destination is null");
-			} else {
-				this.destination = destination;
-				if (destination is Serializer) {
-					Serializer serializer = (Serializer)destination;
-					serializer.SetDefaultOutputProperties (controller.getExecutable ().getDefaultOutputProperties ());
-					serializer.SetCharacterMap (controller.getExecutable ().getCharacterMapIndex ());
-				} 
-			}
+            if (destination == null)
+            {
+                throw new DynamicError("Destination is null");
+            }
+            else
+            {
+                this.destination = destination;
+                if (destination is Serializer)
+                {
+                    Serializer serializer = (Serializer)destination;
+                    serializer.SetDefaultOutputProperties(controller.getExecutable().getDefaultOutputProperties());
+                    serializer.SetCharacterMap(controller.getExecutable().getCharacterMapIndex());
+                }
+            }
             try
             {
-                
-				if(staticParameter != null) {
-					controller.initializeController(staticParameter);
-				}
-				if(baseOutputUriWasSet && destination is XdmDestination && 
-					((XdmDestination)destination).BaseUri == null && 
-				controller.getBaseOutputURI() != null) {
-					((XdmDestination)destination).BaseUri = BaseOutputUri;
-				}
 
-				JPipelineConfiguration pipe = controller.makePipelineConfiguration();
+                if (staticParameter != null)
+                {
+                    controller.initializeController(staticParameter);
+                }
+                if (baseOutputUriWasSet && destination is XdmDestination &&
+                    ((XdmDestination)destination).BaseUri == null &&
+                controller.getBaseOutputURI() != null)
+                {
+                    ((XdmDestination)destination).BaseUri = BaseOutputUri;
+                }
+
+                JPipelineConfiguration pipe = controller.makePipelineConfiguration();
 
                 if (streamSource != null)
                 {
-				controller.transform(streamSource, destination.GetReceiver(pipe));
+                    controller.transform(streamSource, destination.GetReceiver(pipe));
                 }
 
-				else if (initialContextNode != null)
+                else if (initialContextNode != null)
                 {
                     JNodeInfo doc = initialContextNode.getRoot();
                     if (doc != null)
                     {
-						controller.registerDocument(doc.getTreeInfo(), (doc.getBaseURI() == null ? null : new JDocumentURI(doc.getBaseURI())));
+                        controller.registerDocument(doc.getTreeInfo(), (doc.getBaseURI() == null ? null : new JDocumentURI(doc.getBaseURI())));
                     }
-				controller.transform(initialContextNode, destination.GetReceiver(pipe));
+                    controller.transform(initialContextNode, destination.GetReceiver(pipe));
                 }
                 else
                 {
@@ -1485,11 +1560,12 @@ namespace Saxon.Api
         /// by the processor does not necessarily bear any direct resemblance to the way
         /// that the XSLT source code is written.</para></remarks>
 
-		/**public**/ XmlDestination HandleResultDocument(string href, Uri baseUri);
+        /**public**/
+        XmlDestination HandleResultDocument(string href, Uri baseUri);
 
     }
 
-	///<summary>Internal wrapper class for <c>IResultDocumentHandler</c></summary>
+    ///<summary>Internal wrapper class for <c>IResultDocumentHandler</c></summary>
     internal class ResultDocumentHandlerWrapper : JOutputURIResolver
     {
 
@@ -1498,31 +1574,31 @@ namespace Saxon.Api
         private ArrayList destinationList = new ArrayList();
         private JPipelineConfiguration pipe;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Saxon.Api.ResultDocumentHandlerWrapper"/> class.
-		/// </summary>
-		/// <param name="handler">Handler.</param>
-		/// <param name="pipe">Pipe.</param>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Saxon.Api.ResultDocumentHandlerWrapper"/> class.
+        /// </summary>
+        /// <param name="handler">Handler.</param>
+        /// <param name="pipe">Pipe.</param>
         public ResultDocumentHandlerWrapper(IResultDocumentHandler handler, JPipelineConfiguration pipe)
         {
             this.handler = handler;
             this.pipe = pipe;
         }
 
-		/// <summary>
-		/// Create new instance
-		/// </summary>
-		/// <returns>The <c>JOutURIResolver</c> instance.</returns>
+        /// <summary>
+        /// Create new instance
+        /// </summary>
+        /// <returns>The <c>JOutURIResolver</c> instance.</returns>
         public JOutputURIResolver newInstance()
         {
             return new ResultDocumentHandlerWrapper(handler, pipe);
         }
 
-		/// <summary>
-		/// Resolve the specified href and baseString.
-		/// </summary>
-		/// <param name="href">Href.</param>
-		/// <param name="baseString">Base string.</param>
+        /// <summary>
+        /// Resolve the specified href and baseString.
+        /// </summary>
+        /// <param name="href">Href.</param>
+        /// <param name="baseString">Base string.</param>
         public JResult resolve(String href, String baseString)
         {
             Uri baseUri;
@@ -1542,10 +1618,10 @@ namespace Saxon.Api
         }
 
 
-		/// <summary>
-		/// Close the specified result.
-		/// </summary>
-		/// <param name="result">Result.</param>
+        /// <summary>
+        /// Close the specified result.
+        /// </summary>
+        /// <param name="result">Result.</param>
         public void close(JResult result)
         {
             for (int i = 0; i < resultList.Count; i++)
@@ -1583,11 +1659,12 @@ namespace Saxon.Api
         ///<summary>Handle the output of an <c>xsl:message</c> instruction
         ///in the stylesheet
         ///</summary>
-		///<param name="content"></param>
-		/// <param name="terminate"></param>
-		/// <param name="location"></param>
+        ///<param name="content"></param>
+        /// <param name="terminate"></param>
+        /// <param name="location"></param>
 
-		/**public**/ void Message(XdmNode content, bool terminate, IXmlLocation location);
+        /**public**/
+        void Message(XdmNode content, bool terminate, IXmlLocation location);
 
     }
 
@@ -1608,20 +1685,22 @@ namespace Saxon.Api
         /// created programmatically where no base URI has been set up).
         /// </summary>
 
-		/**public**/ Uri BaseUri { get; set; }
+        /**public**/
+        Uri BaseUri { get; set; }
 
         /// <summary>
         /// The line number of a node relative to the start of the external entity.
         /// The value -1 indicates that the line number is not known or not applicable.
         /// </summary>
 
-		/**public**/ int LineNumber { get; set; }
+        /**public**/
+        int LineNumber { get; set; }
     }
 
 
-	/// <summary>
-	/// Xml location. An implementation of IXmlLocation
-	/// </summary>
+    /// <summary>
+    /// Xml location. An implementation of IXmlLocation
+    /// </summary>
     internal class XmlLocation : IXmlLocation
     {
         private Uri baseUri;
@@ -1639,10 +1718,10 @@ namespace Saxon.Api
     }
 
 
-	/// <summary>
-	/// Message listener proxy. This class implements a Receiver that can receive xsl:message output and send it to a
-	/// user-supplied MessageListener
-	/// </summary>
+    /// <summary>
+    /// Message listener proxy. This class implements a Receiver that can receive xsl:message output and send it to a
+    /// user-supplied MessageListener
+    /// </summary>
     [Serializable]
     internal class MessageListenerProxy : JSequenceWriter
     {
@@ -1651,11 +1730,11 @@ namespace Saxon.Api
         public bool terminate;
         public JLocation location;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Saxon.Api.MessageListenerProxy"/> class.
-		/// </summary>
-		/// <param name="pipe">pipe.</param>
-		/// <param name="ml">ml.</param>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Saxon.Api.MessageListenerProxy"/> class.
+        /// </summary>
+        /// <param name="pipe">pipe.</param>
+        /// <param name="ml">ml.</param>
         public MessageListenerProxy(JPipelineConfiguration pipe, IMessageListener ml)
             : base(pipe)
         {
@@ -1664,43 +1743,43 @@ namespace Saxon.Api
         }
 
 
-		/// <summary>
-		/// Starts the document.
-		/// </summary>
-		/// <param name="properties">Properties.</param>
+        /// <summary>
+        /// Starts the document.
+        /// </summary>
+        /// <param name="properties">Properties.</param>
         public override void startDocument(int properties)
         {
             terminate = (properties & JReceiverOptions.TERMINATE) != 0;
-			location = JExplicitLocation.UNKNOWN_LOCATION;
+            location = JExplicitLocation.UNKNOWN_LOCATION;
             base.startDocument(properties);
         }
 
 
-		/// <summary>
-		/// Starts the element.
-		/// </summary>
-		/// <param name="nameCode">Name code.</param>
-		/// <param name="typeCode">Type code.</param>
-		/// <param name="location">Location identifier.</param>
-		/// <param name="properties">Properties.</param>
+        /// <summary>
+        /// Starts the element.
+        /// </summary>
+        /// <param name="nameCode">Name code.</param>
+        /// <param name="typeCode">Type code.</param>
+        /// <param name="location">Location identifier.</param>
+        /// <param name="properties">Properties.</param>
         public override void startElement(JNodeName nameCode, JSchemaType typeCode, JLocation location, int properties)
         {
-			if (this.location == JExplicitLocation.UNKNOWN_LOCATION)
+            if (this.location == JExplicitLocation.UNKNOWN_LOCATION)
             {
                 this.location = location;
             }
             base.startElement(nameCode, typeCode, location, properties);
         }
 
-		/// <summary>
-		/// Characters the specified s, locationId and properties.
-		/// </summary>
-		/// <param name="s">S.</param>
-		/// <param name="location">Location identifier.</param>
-		/// <param name="properties">Properties.</param>
+        /// <summary>
+        /// Characters the specified s, locationId and properties.
+        /// </summary>
+        /// <param name="s">S.</param>
+        /// <param name="location">Location identifier.</param>
+        /// <param name="properties">Properties.</param>
         public override void characters(CharSequence s, JLocation location, int properties)
         {
-			if (this.location == JExplicitLocation.UNKNOWN_LOCATION)
+            if (this.location == JExplicitLocation.UNKNOWN_LOCATION)
             {
                 this.location = location;
             }
@@ -1708,15 +1787,15 @@ namespace Saxon.Api
         }
 
 
-		/// <summary>
-		/// Append the specified item, locationId and copyNamespaces.
-		/// </summary>
-		/// <param name="item">Item.</param>
-		/// <param name="location">Location identifier.</param>
-		/// <param name="copyNamespaces">Copy namespaces.</param>
+        /// <summary>
+        /// Append the specified item, locationId and copyNamespaces.
+        /// </summary>
+        /// <param name="item">Item.</param>
+        /// <param name="location">Location identifier.</param>
+        /// <param name="copyNamespaces">Copy namespaces.</param>
         public override void append(JItem item, JLocation location, int copyNamespaces)
         {
-			if (this.location == JExplicitLocation.UNKNOWN_LOCATION)
+            if (this.location == JExplicitLocation.UNKNOWN_LOCATION)
             {
                 this.location = location;
             }
@@ -1724,17 +1803,17 @@ namespace Saxon.Api
         }
 
 
-		/// <summary>
-		/// Write the specified item.
-		/// </summary>
-		/// <param name="item">Item.</param>
+        /// <summary>
+        /// Write the specified item.
+        /// </summary>
+        /// <param name="item">Item.</param>
         public override void write(JItem item)
         {
             XmlLocation loc = new XmlLocation();
-			if (location != JExplicitLocation.UNKNOWN_LOCATION)
+            if (location != JExplicitLocation.UNKNOWN_LOCATION)
             {
-				loc.BaseUri = new Uri(location.getSystemId());
-				loc.LineNumber = location.getLineNumber();
+                loc.BaseUri = new Uri(location.getSystemId());
+                loc.LineNumber = location.getLineNumber();
             }
             listener.Message((XdmNode)XdmItem.Wrap(item), terminate, loc);
         }
@@ -1742,726 +1821,818 @@ namespace Saxon.Api
 
 
 
- 	/// <summary>An <code>Xslt30Transformer</code> represents a compiled and loaded stylesheet ready for execution.
-	/// The <code>Xslt30Transformer</code> holds details of the dynamic evaluation context for the stylesheet.</summary>
- 
-	///<remarks><para>The <code>Xslt30Transformer</code> differs from <see cref="XsltTransformer"/> 
-	/// in supporting new options
- 	/// for invoking a stylesheet, corresponding to facilities defined in the XSLT 3.0 specification. However,
- 	/// it is not confined to use with XSLT 3.0, and most of the new invocation facilities (for example,
+    /// <summary>An <code>Xslt30Transformer</code> represents a compiled and loaded stylesheet ready for execution.
+    /// The <code>Xslt30Transformer</code> holds details of the dynamic evaluation context for the stylesheet.</summary>
+
+    ///<remarks><para>The <code>Xslt30Transformer</code> differs from <see cref="XsltTransformer"/> 
+    /// in supporting new options
+    /// for invoking a stylesheet, corresponding to facilities defined in the XSLT 3.0 specification. However,
+    /// it is not confined to use with XSLT 3.0, and most of the new invocation facilities (for example,
     /// calling a stylesheet-defined function directly) work equally well with XSLT 2.0 and in some cases
     /// XSLT 1.0 stylesheets.</para>
- 	/// <para>An <code>Xslt30Transformer</code> must not be used concurrently in multiple threads.
- 	/// It is safe, however, to reuse the object within a single thread to run the same
- 	/// stylesheet several times. Running the stylesheet does not change the context
- 	/// that has been established.</para>
- 
- 	/// <para>An <code>Xslt30Transformer</code> is always constructed by running the <code>Load30</code>
- 	/// method of an <see cref="XsltExecutable"/>.</para>
- 
- 	/// <para>Unlike <code>XsltTransformer</code>, an <code>Xslt30Transformer</code> is not a <code>Destination</code>.
- 	/// To pipe the results of one transformation into another, the target should be an <code>XsltTransfomer</code>
- 	/// rather than an <code>Xslt30Transformer</code>.</para>
+    /// <para>An <code>Xslt30Transformer</code> must not be used concurrently in multiple threads.
+    /// It is safe, however, to reuse the object within a single thread to run the same
+    /// stylesheet several times. Running the stylesheet does not change the context
+    /// that has been established.</para>
 
- 	/// <para>Evaluation of an Xslt30Transformer proceeds in a number of phases:</para>
- 	/// <list type="number">
- 	/// <item>First, values may be supplied for stylesheet parameters and for the global context item. The
- 	/// global context item is used when initializing global variables. Unlike earlier transformation APIs,
- 	/// the global context item is quite independent of the "principal Source document".
- 	/// </item>
- 	/// <item>The stylesheet may now be repeatedly invoked. Each invocation takes
- 	/// one of three forms:
- 	/// <list type="number">
- 	/// <item>Invocation by applying templates. In this case, the information required is (i) an initial
- 	/// mode (which defaults to the unnamed mode), (ii) an initial match sequence, which is any
- 	/// XDM value, which is used as the effective "select" expression of the implicit apply-templates
- 	/// call, and (iii) optionally, values for the tunnel and non-tunnel parameters defined on the
- 	/// templates that get invoked (equivalent to using <code>xsl:with-param</code> on the implicit
- 	/// <code>apply-templates</code> call).</item>
- 	/// <item>Invocation by calling a named template. In this case, the information required is
- 	/// (i) the name of the initial template (which defaults to "xsl:initial-template"), and
- 	/// (ii) optionally, values for the tunnel and non-tunnel parameters defined on the
- 	/// templates that get invoked (equivalent to using <code>xsl:with-param</code> on the implicit
- 	/// <code>call-template</code> instruction).</item>
- 	/// <item>Invocation by calling a named function. In this case, the information required is
- 	/// the sequence of arguments to the function call.</item>
- 	/// </list>
- 	/// </item>
- 	/// <item>Whichever invocation method is chosen, the result may either be returned directly, as an arbitrary
- 	/// XDM value, or it may effectively be wrapped in an XML document. If it is wrapped in an XML document,
- 	/// that document can be processed in a number of ways, for example it can be materialized as a tree in
- 	/// memory, it can be serialized as XML or HTML, or it can be subjected to further transformation.</item>
- 	/// </list>
- 	/// <para>Once the stylesheet has been invoked (using any of these methods), the values of the global context
- 	/// item and stylesheet parameters cannot be changed. If it is necessary to run another transformation with
- 	/// a different context item or different stylesheet parameters, a new <c>Xslt30Transformer</c>
- 	/// should be created from the original <c>XsltExecutable</c>.</para>
-	/// <para> @since 9.6</para> 
-	/// </remarks>
+    /// <para>An <code>Xslt30Transformer</code> is always constructed by running the <code>Load30</code>
+    /// method of an <see cref="XsltExecutable"/>.</para>
+
+    /// <para>Unlike <code>XsltTransformer</code>, an <code>Xslt30Transformer</code> is not a <code>Destination</code>.
+    /// To pipe the results of one transformation into another, the target should be an <code>XsltTransfomer</code>
+    /// rather than an <code>Xslt30Transformer</code>.</para>
+
+    /// <para>Evaluation of an Xslt30Transformer proceeds in a number of phases:</para>
+    /// <list type="number">
+    /// <item>First, values may be supplied for stylesheet parameters and for the global context item. The
+    /// global context item is used when initializing global variables. Unlike earlier transformation APIs,
+    /// the global context item is quite independent of the "principal Source document".
+    /// </item>
+    /// <item>The stylesheet may now be repeatedly invoked. Each invocation takes
+    /// one of three forms:
+    /// <list type="number">
+    /// <item>Invocation by applying templates. In this case, the information required is (i) an initial
+    /// mode (which defaults to the unnamed mode), (ii) an initial match sequence, which is any
+    /// XDM value, which is used as the effective "select" expression of the implicit apply-templates
+    /// call, and (iii) optionally, values for the tunnel and non-tunnel parameters defined on the
+    /// templates that get invoked (equivalent to using <code>xsl:with-param</code> on the implicit
+    /// <code>apply-templates</code> call).</item>
+    /// <item>Invocation by calling a named template. In this case, the information required is
+    /// (i) the name of the initial template (which defaults to "xsl:initial-template"), and
+    /// (ii) optionally, values for the tunnel and non-tunnel parameters defined on the
+    /// templates that get invoked (equivalent to using <code>xsl:with-param</code> on the implicit
+    /// <code>call-template</code> instruction).</item>
+    /// <item>Invocation by calling a named function. In this case, the information required is
+    /// the sequence of arguments to the function call.</item>
+    /// </list>
+    /// </item>
+    /// <item>Whichever invocation method is chosen, the result may either be returned directly, as an arbitrary
+    /// XDM value, or it may effectively be wrapped in an XML document. If it is wrapped in an XML document,
+    /// that document can be processed in a number of ways, for example it can be materialized as a tree in
+    /// memory, it can be serialized as XML or HTML, or it can be subjected to further transformation.</item>
+    /// </list>
+    /// <para>Once the stylesheet has been invoked (using any of these methods), the values of the global context
+    /// item and stylesheet parameters cannot be changed. If it is necessary to run another transformation with
+    /// a different context item or different stylesheet parameters, a new <c>Xslt30Transformer</c>
+    /// should be created from the original <c>XsltExecutable</c>.</para>
+    /// <para> @since 9.6</para> 
+    /// </remarks>
 
     [Serializable]
     public class Xslt30Transformer
     {
 
-	private JController controller;
-	private GlobalParameterSet globalParameterSet;
-	private bool primed;
-	private bool baseOutputUriWasSet;
-	private IMessageListener messageListener;
-	private StandardLogger traceFunctionDestination;
-	private JStreamSource streamSource;
-	private Processor processor;
+        private JController controller;
+        private GlobalParameterSet globalParameterSet;
+        private bool primed;
+        private bool baseOutputUriWasSet;
+        private IMessageListener messageListener;
+        private StandardLogger traceFunctionDestination;
+        private JStreamSource streamSource;
+        private Processor processor;
 
 
-	internal Xslt30Transformer(Processor proc, JController controller, GlobalParameterSet staticParameter)
+        internal Xslt30Transformer(Processor proc, JController controller, GlobalParameterSet staticParameter)
         {
 
-			this.controller = controller;
-			this.processor = proc;
-			this.globalParameterSet = new GlobalParameterSet(staticParameter);
+            this.controller = controller;
+            this.processor = proc;
+            this.globalParameterSet = new GlobalParameterSet(staticParameter);
         }
 
-	
-     ///<summary> Supply the context item to be used when evaluating global variables and parameters.
-     /// The item to be used as the context item within the initializers
-     /// of global variables and parameters. This argument can be null if no context item is to be
-	///  supplied.</summary>
-    public XdmItem GlobalContextItem
+
+        ///<summary> Supply the context item to be used when evaluating global variables and parameters.
+        /// The item to be used as the context item within the initializers
+        /// of global variables and parameters. This argument can be null if no context item is to be
+        ///  supplied.</summary>
+        public XdmItem GlobalContextItem
         {
-		set { 
-				if (primed) {
-					throw new DynamicError("Stylesheet has already been evaluated");
-				}
-			controller.setGlobalContextItem(value==null ? null : value.value.head());
-		}
-		get { return (XdmItem)XdmItem.Wrap(controller.getGlobalContextItem()); }
+            set
+            {
+                if (primed)
+                {
+                    throw new DynamicError("Stylesheet has already been evaluated");
+                }
+                controller.setGlobalContextItem(value == null ? null : value.value.head());
+            }
+            get { return (XdmItem)XdmItem.Wrap(controller.getGlobalContextItem()); }
+
+        }
+
+
+        ///<summary> Get the underlying Controller used to implement this XsltTransformer. This provides access
+        /// to lower-level methods not otherwise available in the s9api interface. Note that classes
+        /// and methods obtained by this route cannot be guaranteed stable from release to release.</summary>
+        public JController GetUnderlyingController
+        {
+            get { return controller; }
+        }
+
+        internal JReceiver GetDestinationReceiver(XmlDestination destination)
+        {
+            if (destination is Serializer)
+            {
+                Serializer serializer = (Serializer)destination;
+                serializer.SetDefaultOutputProperties(controller.getExecutable().getDefaultOutputProperties());
+                serializer.SetCharacterMap(controller.getExecutable().getCharacterMapIndex());
+                String filename = serializer.GetFilename();
+                java.io.OutputStream dest = serializer.GetOutputDestination();
+                if (!baseOutputUriWasSet)
+                {
+                    if (dest is java.io.FileOutputStream)
+                    {
+                        controller.setBaseOutputURI(filename == null ? "" : filename);
+                    }
+                }
+                JReceiver r = serializer.GetReceiver(controller.getConfiguration());
+                JPipelineConfiguration pipe = r.getPipelineConfiguration();
+                pipe.setController(controller);
+                return new net.sf.saxon.serialize.ReconfigurableSerializer(r, serializer.GetOutputProperties(), serializer.GetResult(pipe));
+            }
+            else
+            {
+                JPipelineConfiguration pipe = controller.getConfiguration().makePipelineConfiguration();
+                JReceiver r = destination.GetReceiver(pipe);
+                pipe.setController(controller);
+                return r;
+            }
+        }
+
+        /// <summary>
+        /// The <c>SchemaValidationMode</c> to be used in this transformation, especially for documents
+        /// loaded using the <code>doc()</code>, <code>document()</code>, or <code>collection()</code> functions.
+        /// </summary>
+        /// 
+
+        public SchemaValidationMode SchemaValidationMode
+        {
+            get
+            {
+                switch (controller.getSchemaValidationMode())
+                {
+                    case JValidation.STRICT:
+                        return SchemaValidationMode.Strict;
+                    case JValidation.LAX:
+                        return SchemaValidationMode.Lax;
+                    case JValidation.STRIP:
+                        return SchemaValidationMode.None;
+                    case JValidation.PRESERVE:
+                        return SchemaValidationMode.Preserve;
+                    case JValidation.DEFAULT:
+                    default:
+                        return SchemaValidationMode.Unspecified;
+                }
+            }
+
+
+            set
+            {
+                switch (value)
+                {
+                    case SchemaValidationMode.Strict:
+                        controller.setSchemaValidationMode(JValidation.STRICT);
+                        break;
+                    case SchemaValidationMode.Lax:
+                        controller.setSchemaValidationMode(JValidation.LAX);
+                        break;
+                    case SchemaValidationMode.None:
+                        controller.setSchemaValidationMode(JValidation.STRIP);
+                        break;
+                    case SchemaValidationMode.Preserve:
+                        controller.setSchemaValidationMode(JValidation.PRESERVE);
+                        break;
+                    case SchemaValidationMode.Unspecified:
+                    default:
+                        controller.setSchemaValidationMode(JValidation.DEFAULT);
+                        break;
+                }
+            }
+        }
+
+
+
+        /// <summary> Supply the values of global stylesheet variables and parameters.</summary>
+        /// <param name="parameters"> A Dictionary whose keys are QNames identifying global stylesheet parameters,
+        /// and whose corresponding values are the values to be assigned to those parameters. If necessary
+        /// the supplied values are converted to the declared type of the parameter.
+        /// The contents of the supplied map are copied by this method,
+        /// so subsequent changes to the map have no effect.</param>
+        public void SetStylesheetParameters(Dictionary<QName, XdmValue> parameters)
+        {
+
+            if (primed)
+            {
+                throw new DynamicError("Stylesheet has already been evaluated");
+            }
+            //try {
+            GlobalParameterSet params1 = new GlobalParameterSet();
+            foreach (KeyValuePair<QName, XdmValue> entry in parameters)
+            {
+                QName qname = entry.Key;
+                params1.put(qname.ToStructuredQName(), entry.Value.value);
+            }
+
+            globalParameterSet = params1;
+
+
+        }
+
+
+        internal void prime()
+        {
+            if (!primed)
+            {
+                if (globalParameterSet == null)
+                {
+                    globalParameterSet = new GlobalParameterSet();
+                }
+                try
+                {
+                    controller.initializeController(globalParameterSet);
+                }
+                catch (net.sf.saxon.trans.XPathException e)
+                {
+                    throw new DynamicError(e);
+                }
+            }
+            primed = true;
+        }
+
+
+
+        /// <summary>Get the base output URI.</summary>
+        /// <remarks><para> This returns the value set using the setter method. If no value has been set
+        /// explicitly, then the method returns null if called before the transformation, or the computed
+        /// default base output URI if called after the transformation.
+        /// </para>
+        /// <para> The base output URI is used for resolving relative URIs in the <code>href</code> attribute
+        /// of the <code>xsl:result-document</code> instruction.</para></remarks>
+        /// <returns> The base output URI</returns>
+
+        public String BaseOutputURI
+        {
+            set
+            {
+                controller.setBaseOutputURI(value);
+                baseOutputUriWasSet = value != null;
+            }
+            get { return controller.getBaseOutputURI(); }
+        }
+
+        /// <summary>
+        /// The <c>XmlResolver</c> to be used at run-time to resolve and dereference URIs
+        /// supplied to the <c>doc()</c> and <c>document()</c> functions.
+        /// </summary>
+
+        public XmlResolver InputXmlResolver
+        {
+            get
+            {
+                return ((JDotNetURIResolver)controller.getURIResolver()).getXmlResolver();
+            }
+            set
+            {
+                controller.setURIResolver(new JDotNetURIResolver(value));
+            }
+        }
+
+        /// <summary>
+        /// Ask whether assertions (<c>xsl:assert instructions</c>) have been enabled at run time. 
+        /// </summary>
+        /// <remarks>By default they are disabled at compile time. If assertions are enabled at compile time, then by
+        /// default they will also be enabled at run time; but they can be disabled at run time by
+        /// specific request. At compile time, assertions can be enabled for some packages and
+        /// disabled for others; at run-time, they can only be enabled or disabled globally.</remarks>
+        /// <returns>true if assertions are enabled at run time</returns>
+        /// <remarks>Since 9.7</remarks>
+
+
+        public bool ssAssertionsEnabled
+        {
+            get
+            {
+                return controller.isAssertionsEnabled();
+            }
+        }
+
+
+        /// <summary>
+        /// Listener for messages output using &lt;xsl:message&gt;. 
+        /// <para>The caller may supply a message listener before calling <c>Run</c>;
+        /// the processor will then invoke the listener once for each message generated during
+        /// the transformation. Each message will be output as an object of type <c>XdmNode</c>
+        /// representing a document node.</para>
+        /// <para>If no message listener is supplied by the caller, message information will be written to
+        /// the standard error stream.</para>
+        /// </summary>
+        /// <remarks>
+        /// <para>Each message is presented as an XML document node. Calling <c>ToString()</c>
+        /// on the message object will usually generate an acceptable representation of the
+        /// message.</para>
+        /// <para>When the &lt;xsl:message&gt; instruction specifies <c>terminate="yes"</c>,
+        /// the message is first notified using this interface, and then an exception is thrown
+        /// which terminates the transformation.</para>
+        /// </remarks>
+
+        public IMessageListener MessageListener
+        {
+            set
+            {
+                messageListener = value;
+                JPipelineConfiguration pipe = controller.makePipelineConfiguration();
+                controller.setMessageEmitter(new MessageListenerProxy(pipe, value));
+            }
+            get
+            {
+                return messageListener;
+            }
+        }
+
+        /// <summary>
+        /// Destination for output of messages using &lt;trace()&gt;. 
+        /// <para>If no message listener is supplied by the caller, message information will be written to
+        /// the standard error stream.</para>
+        /// </summary>
+        /// <remarks>
+        /// <para>The supplied destination is ignored if a <code>TraceListener</code> is in use.</para>
+        /// <para>Since 9.6. Changed in 9.6 to use a StandardLogger</para>
+        /// </remarks>
+
+        public StandardLogger TraceFunctionDestination
+        {
+            set
+            {
+                traceFunctionDestination = value;
+                controller.setTraceFunctionDestination(value);
+            }
+            get
+            {
+                return traceFunctionDestination;
+            }
+        }
+
+
+        ///<summary><para> Set parameters to be passed to the initial template. These are used
+        /// whether the transformation is invoked by applying templates to an initial source item,
+        /// or by invoking a named template. The parameters in question are the xsl:param elements
+        /// appearing as children of the xsl:template element. </para></summary>
+        /// <remarks>
+        /// <para>The parameters are supplied in the form of a map; the key is a QName which must
+        /// match the name of the parameter; the associated value is an XdmValue containing the
+        /// value to be used for the parameter. If the initial template defines any required
+        /// parameters, the map must include a corresponding value. If the initial template defines
+        /// any parameters that are not present in the map, the default value is used. If the map
+        /// contains any parameters that are not defined in the initial template, these values
+        /// are silently ignored.</para>
+
+        /// <para>The supplied values are converted to the required type using the function conversion
+        /// rules. If conversion is not possible, a run-time error occurs (not now, but later, when
+        /// the transformation is actually run).</para>
+        /// <para>The <code>XsltTransformer</code> retains a reference to the supplied map, so parameters can be added or
+        /// changed until the point where the transformation is run.</para>
+        /// <para>The XSLT 3.0 specification makes provision for supplying parameters to the initial
+        /// template, as well as global stylesheet parameters. Although there is no similar provision
+        /// in the XSLT 1.0 or 2.0 specifications, this method works for all stylesheets, regardless whether
+        /// XSLT 3.0 is enabled or not.</para></remarks>
+
+        ///<param name="parameters"> The parameters to be used for the initial template</param>
+        ///<param name="tunnel"> true if these values are to be used for setting tunnel parameters;
+        ///false if they are to be used for non-tunnel parameters</param>
+
+        public void SetInitialTemplateParameters(Dictionary<QName, XdmValue> parameters, bool tunnel)
+        {
+
+            JMap templateParameters = new java.util.HashMap();
+            foreach (KeyValuePair<QName, XdmValue> entry in parameters)
+            {
+                QName qname = entry.Key;
+                templateParameters.put(qname.ToStructuredQName(), entry.Value.value);
+            }
+
+            controller.setInitialTemplateParameters(templateParameters, tunnel);
+
+
+        }
+
+
+        /// <summary>initial mode for the transformation. This is used if the stylesheet is
+        /// subsequently invoked by any of the <code>applyTemplates</code> methods.</summary>
+        ///<remarks><para>The value may be the name of the initial mode, or null to indicate the default
+        /// (unnamed) mode</para></remarks>
+
+        public QName InitialMode
+        {
+
+            set
+            {
+                try
+                {
+                    controller.setInitialMode(value == null ? null : value.ToStructuredQName());
+                }
+                catch (net.sf.saxon.trans.XPathException e)
+                {
+                    throw new DynamicError(e);
+                }
+            }
+            get
+            {
+                net.sf.saxon.trans.Mode mode = controller.getInitialMode();
+                if (mode == null)
+                    return null;
+                else
+                    return new QName(mode.getModeName().ToString());
+            }
+
+
+        }
+
+
+        /// <summary>Invoke the stylesheet by applying templates to a supplied Source document, sending the results (wrapped
+        /// in a document node) to a given Destination. The invocation uses any initial mode set using <see cref="#InitialMode"/>,
+        /// and any template parameters set using <see cref="#SetInitialTemplateParameters"/>.
+        /// </summary>
+        /// <param name="input">Input. The source document.To apply more than one transformation to the same source document, the source document
+        /// tree can be pre-built using a <see cref="DocumentBuilder"/>.</param>
+        /// <param name="destination">Destination. the destination of the result document produced by wrapping the result of the apply-templates
+        /// call in a document node.  If the destination is a <see cref="Serializer"/>, then the serialization
+        /// parameters set in the serializer are combined with those defined in the stylesheet
+        /// (the parameters set in the serializer take precedence).</param>
+        public void ApplyTemplates(Stream input, XmlDestination destination)
+        {
+            prime();
+            streamSource = new JStreamSource(new JDotNetInputStream(input));
+
+            try
+            {
+                JReceiver outi = GetDestinationReceiver(destination);// destination.GetReceiver(controller.makePipelineConfiguration());
+                controller.initializeController(globalParameterSet);
+                controller.transform(streamSource, outi);
+            }
+            catch (net.sf.saxon.trans.XPathException exp)
+            {
+                throw new DynamicError(exp);
+            }
+
+        }
+
+        /// <summary>
+        /// Invoke the stylesheet by applying templates to a supplied Source document, returning the raw results
+        /// as an <see cref="XdmValue"/>. The invocation uses any initial mode set using <see cref="#InitialMode"/>,
+        /// and any template parameters set using <see cref="#SetInitialTemplateParameters"/>.
+        /// </summary>
+        /// <param name="input">Input. The source document</param>
+        /// <param name="baseUri">Base URI.</param>
+        /// <returns>XdmValue. The raw result of processing the supplied Source using the selected template rule, without
+        /// wrapping the returned sequence in a document node</returns>
+        public XdmValue ApplyTemplates(Stream input, Uri baseUri)
+        {
+            prime();
+            streamSource = new JStreamSource(new JDotNetInputStream(input), Uri.EscapeUriString(baseUri.ToString()));
+
+            try
+            {
+                JPipelineConfiguration pipe = controller.makePipelineConfiguration();
+                JSequenceOutputter outi = new JSequenceOutputter(pipe);
+                controller.initializeController(globalParameterSet);
+                controller.transform(streamSource, outi);
+
+
+                controller.initializeController(globalParameterSet);
+                controller.transform(streamSource, outi);
+                return XdmValue.Wrap(outi.getSequence());
+            }
+            catch (net.sf.saxon.trans.XPathException exp)
+            {
+                throw new DynamicError(exp);
+            }
+
+        }
+
+
+        /// <summary>
+        /// Invoke the stylesheet by applying templates to a supplied input sequence, sending the results (wrapped
+        /// in a document node) to a given Destination. The invocation uses any initial mode set using <see cref="#InitialMode"/>,
+        /// and any template parameters set using <see cref="#SetInitialTemplateParameters"/>.
+        /// </summary>
+        /// <param name="selection">Selection. the initial value to which templates are to be applied (equivalent to the <code>select</code>
+        /// attribute of <code>xsl:apply-templates</code>)</param>
+        /// <param name="destination">Destination. The destination of the result document produced by wrapping the result of the apply-templates
+        /// call in a document node.  If the destination is a <see cref="Serializer"/>, then the serialization
+        /// parameters set in the serializer are combined with those defined in the stylesheet
+        /// (the parameters set in the serializer take precedence).</param>
+        public void ApplyTemplates(XdmValue selection, XmlDestination destination)
+        {
+            prime();
+            try
+            {
+                JReceiver outi = GetDestinationReceiver(destination);
+                if (baseOutputUriWasSet)
+                {
+                    outi.setSystemId(controller.getBaseOutputURI());
+                }
+                controller.applyTemplates(selection.Unwrap(), outi);
+                destination.Close();
+            }
+            catch (net.sf.saxon.trans.XPathException ex)
+            {
+
+                throw new DynamicError(ex);
+            }
+
+        }
+
+
+        /// <summary>
+        /// Invoke the stylesheet by applying templates to a supplied input sequence, returning the raw results.
+        /// as an <see cref="XdmValue"/>. The invocation uses any initial mode set using <see cref="#InitialMode"/>,
+        /// and any template parameters set using <see cref="#SetInitialTemplateParameters"/>.
+        /// </summary>
+        /// <param name="selection">Selection. selection the initial value to which templates are to be applied (equivalent to the <code>select</code>
+        /// attribute of <code>xsl:apply-templates</code>)</param>
+        /// <returns>Xdmvalue. he raw result of applying templates to the supplied selection value, without wrapping in
+        /// a document node or serializing the result. If there is more that one item in the selection, the result
+        /// is the concatenation of the results of applying templates to each item in turn.</returns>
+        public XdmValue ApplyTemplates(XdmValue selection)
+        {
+            prime();
+            try
+            {
+
+                JPipelineConfiguration pipe = controller.makePipelineConfiguration();
+                JSequenceOutputter outi = new JSequenceOutputter(pipe);
+
+                if (baseOutputUriWasSet)
+                {
+                    outi.setSystemId(controller.getBaseOutputURI());
+                }
+                controller.applyTemplates(selection.Unwrap(), outi);
+                return XdmValue.Wrap(outi.getSequence());
+            }
+            catch (net.sf.saxon.trans.XPathException ex)
+            {
+
+                throw new DynamicError(ex);
+            }
+
+        }
+
+
+        ///<summary> Invoke a transformation by calling a named template. The results of calling
+        /// the template are wrapped in a document node, which is then sent to the specified
+        /// destination. If <see cref="#SetInitialTemplateParameters"/> has been
+        /// called, then the parameters supplied are made available to the called template (no error
+        /// occurs if parameters are supplied that are not used).</summary> 
+        ///<param name="templateName"> The name of the initial template. This must match the name of a
+        /// public named template in the stylesheet. If the value is null,
+        /// the QName <code>xsl:initial-template</code> is used.</param>
+        /// <param name="destination"> The destination of the result document produced by wrapping the result of the apply-templates
+        /// call in a document node.  If the destination is a <see cref="Serializer"/>, then the serialization
+        /// parameters set in the serializer are combined with those defined in the stylesheet
+        /// (the parameters set in the serializer take precedence).</param> 
+        public void CallTemplate(QName templateName, XmlDestination destination)
+        {
+            prime();
+            if (templateName == null)
+            {
+                templateName = new QName("xsl", NamespaceConstant.XSLT, "initial-template");
+            }
+            /*if (destination is Serializer) {
+                Serializer serializer = (Serializer)destination;
+                serializer.SetDefaultOutputProperties(controller.getExecutable ().getDefaultOutputProperties());
+
+            }*/
+            try
+            {
+                JReceiver outi = GetDestinationReceiver(destination);
+                if (baseOutputUriWasSet)
+                {
+                    outi.setSystemId(controller.getBaseOutputURI());
+                }
+                controller.callTemplate(templateName.ToStructuredQName(), outi);
+            }
+            catch (net.sf.saxon.trans.XPathException exp)
+            {
+                throw new DynamicError(exp);
+            }
+        }
+
+
+
+
+        public XdmValue CallTemplate(QName templateName)
+        {
+            prime();
+            if (templateName == null)
+            {
+                templateName = new QName("xsl", NamespaceConstant.XSLT, "initial-template");
+            }
+
+            try
+            {
+                JPipelineConfiguration pipe = controller.makePipelineConfiguration();
+                JSequenceOutputter outi = new JSequenceOutputter(pipe);
+
+                controller.callTemplate(templateName.ToStructuredQName(), outi);
+                return XdmValue.Wrap(outi.getSequence());
+            }
+            catch (net.sf.saxon.trans.XPathException exp)
+            {
+                throw new DynamicError(exp);
+            }
+        }
+
+
+        ///<summary> Call a public user-defined function in the stylesheet. </summary>
+        ///<param name="function"> The name of the function to be called</param>
+        ///<param name="arguments">  The values of the arguments to be supplied to the function. These
+        /// will be converted if necessary to the type as defined in the function signature, using
+        /// the function conversion rules.</param>
+        /// <returns> the result of calling the function. This is the raw result, without wrapping in a document
+        /// node and without serialization.</returns>
+
+        public XdmValue CallFunction(QName function, XdmValue[] arguments)
+        {
+            prime();
+            try
+            {
+                net.sf.saxon.trans.SymbolicName fName = new net.sf.saxon.trans.SymbolicName(net.sf.saxon.om.StandardNames.XSL_FUNCTION, function.ToStructuredQName(), arguments.Length);
+                JConfiguration config = processor.Implementation;
+                net.sf.saxon.sxpath.IndependentContext env = new net.sf.saxon.sxpath.IndependentContext(config);
+                JPreparedStylesheet pss = (JPreparedStylesheet)controller.getExecutable();
+                net.sf.saxon.expr.Component f = pss.getComponent(fName);
+                if (f == null)
+                {
+                    net.sf.saxon.trans.XPathException exception = new net.sf.saxon.trans.XPathException("No function with name " + function.ClarkName + " and arity " + arguments.Length + " has been declared in the stylesheet", "XTDE0041");
+                    throw new DynamicError(exception);
+                }
+                JUserFunction uf = (JUserFunction)f.getCode();
+                net.sf.saxon.expr.instruct.UserFunctionParameter[] params1 = uf.getParameterDefinitions();
+                net.sf.saxon.om.Sequence[] vr = new net.sf.saxon.om.Sequence[arguments.Length];
+                for (int i = 0; i < arguments.Length; i++)
+                {
+                    net.sf.saxon.value.SequenceType type = params1[i].getRequiredType();
+                    vr[i] = arguments[i].Unwrap();
+                    if (!type.matches(vr[i], config.getTypeHierarchy()))
+                    {
+                        JRoleDiagnostic role = new JRoleDiagnostic(JRoleDiagnostic.FUNCTION, function.ToString(), i);
+                        vr[i] = config.getTypeHierarchy().applyFunctionConversionRules(vr[i], type, role, net.sf.saxon.expr.parser.ExplicitLocation.UNKNOWN_LOCATION);
+                    }
+                }
+
+                net.sf.saxon.expr.XPathContextMajor context = controller.newXPathContext();
+                context.setCurrentComponent(pss.getComponent(fName));
+                net.sf.saxon.om.Sequence result = uf.call(context, vr);
+                return XdmValue.Wrap(result);
+            }
+            catch (net.sf.saxon.trans.XPathException ex)
+            {
+                throw new DynamicError(ex);
+
+            }
+
+        }
+
+
+
+        /// <summary>Call a public user-defined function in the stylesheet, wrapping the result in an XML document, and sending
+        /// this document to a specified destination</summary>    
+        ///<param name="function"> The name of the function to be called</param>
+        ///<param name="arguments"> The values of the arguments to be supplied to the function. These
+        ///                    will be converted if necessary to the type as defined in the function signature, using
+        ///                    the function conversion rules.</param>
+        ///<param name="destination"> The destination of the result document produced by wrapping the result of the apply-templates
+        ///                    call in a document node.  If the destination is a <see cref="Serializer"/>, then the serialization
+        ///                    parameters set in the serializer are combined with those defined in the stylesheet
+        ///                    (the parameters set in the serializer take precedence).</param>
+
+        public void CallFunction(QName function, XdmValue[] arguments, XmlDestination destination)
+        {
+            XdmValue result = CallFunction(function, arguments);
+            if (destination is Serializer)
+            {
+                // TODO: call the function in push mode, avoiding creation of the result in memory
+                Serializer serializer = (Serializer)destination;
+                serializer.SetDefaultOutputProperties(controller.getExecutable().getDefaultOutputProperties());
+                processor.WriteXdmValue(result, destination);
+                destination.Close();
+            }
+
+
+        }
+
+
+
 
     }
 
-
-	///<summary> Get the underlying Controller used to implement this XsltTransformer. This provides access
-    /// to lower-level methods not otherwise available in the s9api interface. Note that classes
-	/// and methods obtained by this route cannot be guaranteed stable from release to release.</summary>
-	public JController GetUnderlyingController {
-		get { return controller; }
-	}
-
-	internal JReceiver GetDestinationReceiver(XmlDestination destination){
-		if (destination is Serializer) {
-			Serializer serializer = (Serializer) destination;
-			serializer.SetDefaultOutputProperties(controller.getExecutable ().getDefaultOutputProperties());
-			serializer.SetCharacterMap (controller.getExecutable().getCharacterMapIndex());
-			String filename = serializer.GetFilename ();
-			java.io.OutputStream dest = serializer.GetOutputDestination();
-			if (!baseOutputUriWasSet) {
-				if (dest is java.io.FileOutputStream) {
-					controller.setBaseOutputURI(filename==null ? "" : filename);
-				}
-			}
-			JReceiver r = serializer.GetReceiver(controller.getConfiguration());
-			JPipelineConfiguration pipe = r.getPipelineConfiguration();
-			pipe.setController(controller);
-			return new net.sf.saxon.serialize.ReconfigurableSerializer(r, serializer.GetOutputProperties(), serializer.GetResult(pipe));
-		} else {
-			JPipelineConfiguration pipe = controller.getConfiguration().makePipelineConfiguration();
-			JReceiver r = destination.GetReceiver(pipe);
-			pipe.setController(controller);
-			return r;
-		}
-	}
-
-	/// <summary>
-	/// The <c>SchemaValidationMode</c> to be used in this transformation, especially for documents
-	/// loaded using the <code>doc()</code>, <code>document()</code>, or <code>collection()</code> functions.
-	/// </summary>
-	/// 
-
-	public SchemaValidationMode SchemaValidationMode
-	{
-		get
-		{
-			switch (controller.getSchemaValidationMode())
-			{
-			case JValidation.STRICT:
-				return SchemaValidationMode.Strict;
-			case JValidation.LAX:
-				return SchemaValidationMode.Lax;
-			case JValidation.STRIP:
-				return SchemaValidationMode.None;
-			case JValidation.PRESERVE:
-				return SchemaValidationMode.Preserve;
-			case JValidation.DEFAULT:
-			default:
-				return SchemaValidationMode.Unspecified;
-			}
-		}
-
-
-		set
-		{
-			switch (value)
-			{
-			case SchemaValidationMode.Strict:
-				controller.setSchemaValidationMode(JValidation.STRICT);
-				break;
-			case SchemaValidationMode.Lax:
-				controller.setSchemaValidationMode(JValidation.LAX);
-				break;
-			case SchemaValidationMode.None:
-				controller.setSchemaValidationMode(JValidation.STRIP);
-				break;
-			case SchemaValidationMode.Preserve:
-				controller.setSchemaValidationMode(JValidation.PRESERVE);
-				break;
-			case SchemaValidationMode.Unspecified:
-			default:
-				controller.setSchemaValidationMode(JValidation.DEFAULT);
-				break;
-			}
-		}
-	}
-
-
-
-	/// <summary> Supply the values of global stylesheet variables and parameters.</summary>
-	/// <param name="parameters"> A Dictionary whose keys are QNames identifying global stylesheet parameters,
-	/// and whose corresponding values are the values to be assigned to those parameters. If necessary
-	/// the supplied values are converted to the declared type of the parameter.
-	/// The contents of the supplied map are copied by this method,
-	/// so subsequent changes to the map have no effect.</param>
-	public void SetStylesheetParameters(Dictionary<QName, XdmValue> parameters){
-
-		if (primed) {
-			throw new DynamicError("Stylesheet has already been evaluated");
-		}
-		//try {
-		GlobalParameterSet params1 = new GlobalParameterSet();
-		foreach (KeyValuePair<QName, XdmValue> entry in parameters) {
-			QName qname = entry.Key;
-			params1.put (qname.ToStructuredQName(), entry.Value.value);
-		}
-	
-		globalParameterSet = params1;
-	
-	
-	}
-
-
-	internal void prime() {
-		if (!primed) {
-			if (globalParameterSet == null) {
-				globalParameterSet = new GlobalParameterSet();
-			}
-			try {
-				controller.initializeController(globalParameterSet);
-			} catch (net.sf.saxon.trans.XPathException e) {
-				throw new DynamicError(e);
-			}
-		}
-		primed = true;
-	}
-
-
-	
-	 /// <summary>Get the base output URI.</summary>
-	 /// <remarks><para> This returns the value set using the setter method. If no value has been set
-     /// explicitly, then the method returns null if called before the transformation, or the computed
-     /// default base output URI if called after the transformation.
-     /// </para>
-     /// <para> The base output URI is used for resolving relative URIs in the <code>href</code> attribute
-     /// of the <code>xsl:result-document</code> instruction.</para></remarks>
-	 /// <returns> The base output URI</returns>
-     
-	public String BaseOutputURI {
-		set {
-		controller.setBaseOutputURI(value);
-			baseOutputUriWasSet = value != null;
-		}
-		get { return controller.getBaseOutputURI ();}
-	}
-
-	/// <summary>
-	/// The <c>XmlResolver</c> to be used at run-time to resolve and dereference URIs
-	/// supplied to the <c>doc()</c> and <c>document()</c> functions.
-	/// </summary>
-
-	public XmlResolver InputXmlResolver
-	{
-		get
-		{
-			return ((JDotNetURIResolver)controller.getURIResolver()).getXmlResolver();
-		}
-		set
-		{
-			controller.setURIResolver(new JDotNetURIResolver(value));
-		}
-	}
-
-		/// <summary>
-		/// Ask whether assertions (<c>xsl:assert instructions</c>) have been enabled at run time. 
-		/// </summary>
-		/// <remarks>By default they are disabled at compile time. If assertions are enabled at compile time, then by
-		/// default they will also be enabled at run time; but they can be disabled at run time by
-		/// specific request. At compile time, assertions can be enabled for some packages and
-		/// disabled for others; at run-time, they can only be enabled or disabled globally.</remarks>
-		/// <returns>true if assertions are enabled at run time</returns>
-		/// <remarks>Since 9.7</remarks>
-
-
-		public bool ssAssertionsEnabled
-		{
-			get {
-				return controller.isAssertionsEnabled();
-			}
-		}
-		
-
-	/// <summary>
-	/// Listener for messages output using &lt;xsl:message&gt;. 
-	/// <para>The caller may supply a message listener before calling <c>Run</c>;
-	/// the processor will then invoke the listener once for each message generated during
-	/// the transformation. Each message will be output as an object of type <c>XdmNode</c>
-	/// representing a document node.</para>
-	/// <para>If no message listener is supplied by the caller, message information will be written to
-	/// the standard error stream.</para>
-	/// </summary>
-	/// <remarks>
-	/// <para>Each message is presented as an XML document node. Calling <c>ToString()</c>
-	/// on the message object will usually generate an acceptable representation of the
-	/// message.</para>
-	/// <para>When the &lt;xsl:message&gt; instruction specifies <c>terminate="yes"</c>,
-	/// the message is first notified using this interface, and then an exception is thrown
-	/// which terminates the transformation.</para>
-	/// </remarks>
-
-	public IMessageListener MessageListener
-	{
-		set
-		{
-			messageListener = value;
-			JPipelineConfiguration pipe = controller.makePipelineConfiguration();
-			controller.setMessageEmitter(new MessageListenerProxy(pipe, value));
-		}
-		get
-		{
-			return messageListener;
-		}
-	}
-
-	/// <summary>
-	/// Destination for output of messages using &lt;trace()&gt;. 
-	/// <para>If no message listener is supplied by the caller, message information will be written to
-	/// the standard error stream.</para>
-	/// </summary>
-	/// <remarks>
-	/// <para>The supplied destination is ignored if a <code>TraceListener</code> is in use.</para>
-	/// <para>Since 9.6. Changed in 9.6 to use a StandardLogger</para>
-	/// </remarks>
-
-	public StandardLogger TraceFunctionDestination
-	{
-		set
-		{
-			traceFunctionDestination = value;
-			controller.setTraceFunctionDestination(value);
-		}
-		get
-		{
-			return traceFunctionDestination;
-		}
-	}
-
-
-     ///<summary><para> Set parameters to be passed to the initial template. These are used
-     /// whether the transformation is invoked by applying templates to an initial source item,
-     /// or by invoking a named template. The parameters in question are the xsl:param elements
-     /// appearing as children of the xsl:template element. </para></summary>
- 	/// <remarks>
-     /// <para>The parameters are supplied in the form of a map; the key is a QName which must
-     /// match the name of the parameter; the associated value is an XdmValue containing the
-     /// value to be used for the parameter. If the initial template defines any required
-     /// parameters, the map must include a corresponding value. If the initial template defines
-     /// any parameters that are not present in the map, the default value is used. If the map
-     /// contains any parameters that are not defined in the initial template, these values
-     /// are silently ignored.</para>
-    
-     /// <para>The supplied values are converted to the required type using the function conversion
-     /// rules. If conversion is not possible, a run-time error occurs (not now, but later, when
-     /// the transformation is actually run).</para>
-     /// <para>The <code>XsltTransformer</code> retains a reference to the supplied map, so parameters can be added or
-     /// changed until the point where the transformation is run.</para>
-     /// <para>The XSLT 3.0 specification makes provision for supplying parameters to the initial
-     /// template, as well as global stylesheet parameters. Although there is no similar provision
-     /// in the XSLT 1.0 or 2.0 specifications, this method works for all stylesheets, regardless whether
-     /// XSLT 3.0 is enabled or not.</para></remarks>
-     
-	 ///<param name="parameters"> The parameters to be used for the initial template</param>
-	 ///<param name="tunnel"> true if these values are to be used for setting tunnel parameters;
-	 ///false if they are to be used for non-tunnel parameters</param>
-     
-	public void SetInitialTemplateParameters(Dictionary<QName, XdmValue> parameters, bool tunnel){
-	
-		JMap templateParameters = new java.util.HashMap ();
-		foreach (KeyValuePair<QName, XdmValue> entry in parameters) {
-			QName qname = entry.Key;
-			templateParameters.put (qname.ToStructuredQName(), entry.Value.value);
-		}
-
-		controller.setInitialTemplateParameters (templateParameters, tunnel);
-
-	
-	}
-
-
-	/// <summary>initial mode for the transformation. This is used if the stylesheet is
-	/// subsequently invoked by any of the <code>applyTemplates</code> methods.</summary>
-	///<remarks><para>The value may be the name of the initial mode, or null to indicate the default
-	/// (unnamed) mode</para></remarks>
-
-	public QName InitialMode {
-
-		set {
-			try {
-				controller.setInitialMode(value == null ? null : value.ToStructuredQName());
-			} catch (net.sf.saxon.trans.XPathException e) {
-				throw new DynamicError(e);
-			}
-		}
-		get{
-				net.sf.saxon.trans.Mode mode = controller.getInitialMode ();
-				if (mode == null)
-					return null;
-				else
-				return new QName (mode.getModeName().ToString());
-		}
-
-	
-	}
-
-
-	/// <summary>Invoke the stylesheet by applying templates to a supplied Source document, sending the results (wrapped
-	/// in a document node) to a given Destination. The invocation uses any initial mode set using <see cref="#InitialMode"/>,
-	/// and any template parameters set using <see cref="#SetInitialTemplateParameters"/>.
-	/// </summary>
-	/// <param name="input">Input. The source document.To apply more than one transformation to the same source document, the source document
-	/// tree can be pre-built using a <see cref="DocumentBuilder"/>.</param>
-	/// <param name="destination">Destination. the destination of the result document produced by wrapping the result of the apply-templates
-	/// call in a document node.  If the destination is a <see cref="Serializer"/>, then the serialization
-	/// parameters set in the serializer are combined with those defined in the stylesheet
-	/// (the parameters set in the serializer take precedence).</param>
-	public void ApplyTemplates(Stream input, XmlDestination destination){
-		prime ();
-		streamSource = new JStreamSource(new JDotNetInputStream(input));
-
-		try{
-			JReceiver outi = GetDestinationReceiver(destination);// destination.GetReceiver(controller.makePipelineConfiguration());
-			controller.initializeController (globalParameterSet);
-			controller.transform (streamSource, outi);
-		} catch(net.sf.saxon.trans.XPathException exp){
-			throw new DynamicError(exp);
-		}
-	
-	}
-
-	/// <summary>
-	/// Invoke the stylesheet by applying templates to a supplied Source document, returning the raw results
-	/// as an <see cref="XdmValue"/>. The invocation uses any initial mode set using <see cref="#InitialMode"/>,
-	/// and any template parameters set using <see cref="#SetInitialTemplateParameters"/>.
-	/// </summary>
-	/// <param name="input">Input. The source document</param>
-	/// <param name="baseUri">Base URI.</param>
-	/// <returns>XdmValue. The raw result of processing the supplied Source using the selected template rule, without
-	/// wrapping the returned sequence in a document node</returns>
-	public XdmValue ApplyTemplates(Stream input, Uri baseUri){
-		prime ();
-		streamSource = new JStreamSource(new JDotNetInputStream(input), Uri.EscapeUriString(baseUri.ToString()));
-
-		try{
-			JPipelineConfiguration pipe = controller.makePipelineConfiguration();
-			JSequenceOutputter outi = new JSequenceOutputter(pipe);
-			controller.initializeController(globalParameterSet);
-			controller.transform(streamSource, outi);
-
-
-			controller.initializeController (globalParameterSet);
-			controller.transform (streamSource, outi);
-			return XdmValue.Wrap(outi.getSequence());
-		} catch(net.sf.saxon.trans.XPathException exp){
-			throw new DynamicError(exp);
-		}
-
-	}
-
-
-	/// <summary>
-	/// Invoke the stylesheet by applying templates to a supplied input sequence, sending the results (wrapped
-	/// in a document node) to a given Destination. The invocation uses any initial mode set using <see cref="#InitialMode"/>,
-	/// and any template parameters set using <see cref="#SetInitialTemplateParameters"/>.
-	/// </summary>
-	/// <param name="selection">Selection. the initial value to which templates are to be applied (equivalent to the <code>select</code>
-	/// attribute of <code>xsl:apply-templates</code>)</param>
-	/// <param name="destination">Destination. The destination of the result document produced by wrapping the result of the apply-templates
-	/// call in a document node.  If the destination is a <see cref="Serializer"/>, then the serialization
-	/// parameters set in the serializer are combined with those defined in the stylesheet
-	/// (the parameters set in the serializer take precedence).</param>
-	public void ApplyTemplates(XdmValue selection, XmlDestination destination){
-		prime ();
-		try{
-			JReceiver outi = GetDestinationReceiver(destination);
-			if(baseOutputUriWasSet) {
-				outi.setSystemId(controller.getBaseOutputURI());
-			}
-			controller.applyTemplates(selection.Unwrap(), outi);
-			destination.Close();
-		}catch(net.sf.saxon.trans.XPathException ex){
-
-				throw new DynamicError (ex);
-		}
-	
-	}
-
-
-	/// <summary>
-	/// Invoke the stylesheet by applying templates to a supplied input sequence, returning the raw results.
-	/// as an <see cref="XdmValue"/>. The invocation uses any initial mode set using <see cref="#InitialMode"/>,
-	/// and any template parameters set using <see cref="#SetInitialTemplateParameters"/>.
-	/// </summary>
-	/// <param name="selection">Selection. selection the initial value to which templates are to be applied (equivalent to the <code>select</code>
-	/// attribute of <code>xsl:apply-templates</code>)</param>
-	/// <returns>Xdmvalue. he raw result of applying templates to the supplied selection value, without wrapping in
-	/// a document node or serializing the result. If there is more that one item in the selection, the result
-	/// is the concatenation of the results of applying templates to each item in turn.</returns>
-	public XdmValue ApplyTemplates(XdmValue selection){
-		prime ();
-		try{
-
-			JPipelineConfiguration pipe = controller.makePipelineConfiguration();
-			JSequenceOutputter outi = new JSequenceOutputter(pipe);
-
-			if(baseOutputUriWasSet) {
-				outi.setSystemId(controller.getBaseOutputURI());
-			}
-			controller.applyTemplates(selection.Unwrap(), outi);
-			return XdmValue.Wrap(outi.getSequence());
-		}catch(net.sf.saxon.trans.XPathException ex){
-
-			throw new DynamicError (ex);
-		}
-
-	}
-
-
-     ///<summary> Invoke a transformation by calling a named template. The results of calling
-     /// the template are wrapped in a document node, which is then sent to the specified
-     /// destination. If <see cref="#SetInitialTemplateParameters"/> has been
-    /// called, then the parameters supplied are made available to the called template (no error
-	/// occurs if parameters are supplied that are not used).</summary> 
-	///<param name="templateName"> The name of the initial template. This must match the name of a
-    /// public named template in the stylesheet. If the value is null,
-	/// the QName <code>xsl:initial-template</code> is used.</param>
-	/// <param name="destination"> The destination of the result document produced by wrapping the result of the apply-templates
-    /// call in a document node.  If the destination is a <see cref="Serializer"/>, then the serialization
-    /// parameters set in the serializer are combined with those defined in the stylesheet
-	/// (the parameters set in the serializer take precedence).</param> 
-	public void CallTemplate(QName templateName, XmlDestination destination){
-		prime ();
-		if (templateName == null) {
-			templateName = new QName ("xsl", NamespaceConstant.XSLT, "initial-template");
-		}
-		/*if (destination is Serializer) {
-			Serializer serializer = (Serializer)destination;
-			serializer.SetDefaultOutputProperties(controller.getExecutable ().getDefaultOutputProperties());
-
-		}*/
-		try{
-			JReceiver outi = GetDestinationReceiver(destination);
-			if(baseOutputUriWasSet) {
-				outi.setSystemId(controller.getBaseOutputURI());
-			}
-			controller.callTemplate(templateName.ToStructuredQName(), outi);
-		} catch(net.sf.saxon.trans.XPathException exp){
-			throw new DynamicError(exp);
-		}
-	}
-
-
-
-
-	public XdmValue CallTemplate(QName templateName){
-		prime ();
-		if (templateName == null) {
-			templateName = new QName ("xsl", NamespaceConstant.XSLT, "initial-template");
-		}
-
-		try{
-			JPipelineConfiguration pipe = controller.makePipelineConfiguration();
-			JSequenceOutputter outi = new JSequenceOutputter(pipe);
-
-			controller.callTemplate(templateName.ToStructuredQName(), outi);
-			return XdmValue.Wrap(outi.getSequence());
-		} catch(net.sf.saxon.trans.XPathException exp){
-			throw new DynamicError(exp);
-		}
-	}
-
-
-     ///<summary> Call a public user-defined function in the stylesheet. </summary>
-	 ///<param name="function"> The name of the function to be called</param>
-	 ///<param name="arguments">  The values of the arguments to be supplied to the function. These
-     /// will be converted if necessary to the type as defined in the function signature, using
-	 /// the function conversion rules.</param>
-	/// <returns> the result of calling the function. This is the raw result, without wrapping in a document
-	/// node and without serialization.</returns>
-
-	public XdmValue CallFunction(QName function, XdmValue[] arguments){
-		prime ();
-		try{
-		net.sf.saxon.trans.SymbolicName fName = new net.sf.saxon.trans.SymbolicName(net.sf.saxon.om.StandardNames.XSL_FUNCTION, function.ToStructuredQName(), arguments.Length);
-			JConfiguration config = processor.Implementation;
-		net.sf.saxon.sxpath.IndependentContext env = new net.sf.saxon.sxpath.IndependentContext(config);
-		JPreparedStylesheet pss = (JPreparedStylesheet) controller.getExecutable();
-		net.sf.saxon.expr.Component f = pss.getComponent(fName);
-		if (f == null) {
-				net.sf.saxon.trans.XPathException exception = new net.sf.saxon.trans.XPathException ("No function with name " + function.ClarkName + " and arity " + arguments.Length + " has been declared in the stylesheet", "XTDE0041");
-				throw new DynamicError(exception);
-		}
-		JUserFunction uf = (JUserFunction)f.getCode();
-		net.sf.saxon.expr.instruct.UserFunctionParameter [] params1 = uf.getParameterDefinitions();
-		net.sf.saxon.om.Sequence [] vr = new net.sf.saxon.om.Sequence[arguments.Length];
-		for (int i = 0; i < arguments.Length; i++) {
-			net.sf.saxon.value.SequenceType type = params1[i].getRequiredType();
-				vr [i] = arguments [i].Unwrap ();
-					if (!type.matches(vr[i], config.getTypeHierarchy())) {
-						JRoleDiagnostic role = new JRoleDiagnostic(JRoleDiagnostic.FUNCTION, function.ToString(), i);
-						vr[i] = config.getTypeHierarchy().applyFunctionConversionRules(vr[i], type, role, net.sf.saxon.expr.parser.ExplicitLocation.UNKNOWN_LOCATION);
-			}
-		}
-
-		net.sf.saxon.expr.XPathContextMajor context = controller.newXPathContext ();
-		context.setCurrentComponent (pss.getComponent(fName));
-		net.sf.saxon.om.Sequence result = uf.call (context, vr);
-		return XdmValue.Wrap (result);
-		} catch(net.sf.saxon.trans.XPathException ex){
-			throw new DynamicError(ex);
-
-		}
-	
-	}
-
-
-	
-    /// <summary>Call a public user-defined function in the stylesheet, wrapping the result in an XML document, and sending
-    /// this document to a specified destination</summary>    
-	///<param name="function"> The name of the function to be called</param>
-	///<param name="arguments"> The values of the arguments to be supplied to the function. These
-    ///                    will be converted if necessary to the type as defined in the function signature, using
-	///                    the function conversion rules.</param>
-	///<param name="destination"> The destination of the result document produced by wrapping the result of the apply-templates
-    ///                    call in a document node.  If the destination is a <see cref="Serializer"/>, then the serialization
-    ///                    parameters set in the serializer are combined with those defined in the stylesheet
-	///                    (the parameters set in the serializer take precedence).</param>
-     
-	public void CallFunction(QName function, XdmValue[] arguments, XmlDestination destination){
-		XdmValue result = CallFunction (function, arguments);
-		if (destination is Serializer) {
-			// TODO: call the function in push mode, avoiding creation of the result in memory
-			Serializer serializer = (Serializer) destination;
-			serializer.SetDefaultOutputProperties(controller.getExecutable().getDefaultOutputProperties());
-			processor.WriteXdmValue (result, destination);
-			destination.Close ();
-		}
-
-	
-	}
-
-
-
+    ///<summary> An <c>XsltPackage</c> object represents the result of compiling an XSLT 3.0 package, as
+    /// represented by an XML document containing an <c>xsl:package</c> element.</summary>
+    /// <remarks><para>
+    /// @since 9.6
+    /// </para></remarks>
+
+    [Serializable]
+    public class XsltPackage
+    {
+        private Processor processor;
+        private JXsltPackage package;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Saxon.Api.XsltPackage"/> class.
+        /// </summary>
+        /// <param name="p">Processor</param>
+        /// <param name="pp">XsltPackage</param>
+        internal XsltPackage(Processor p, JXsltPackage pp)
+        {
+            this.processor = p;
+            this.package = pp;
+
+        }
+
+        /// <summary>
+        /// Get the Processor from which this XsltCompiler was constructed
+        /// </summary>
+        public Processor Processor
+        {
+            get { return processor; }
+        }
+
+
+        /// <summary>
+        /// Get the name of the package (the URI appearing as the value of <code>xsl:package/@name</code>)
+        /// </summary>
+        /// <returns>return the package name</returns>
+
+        public String PackageName
+        {
+            get { return package.getName(); }
+        }
+
+
+        /// <summary>Get the version number of the package (the value of the attribute <code>xsl:package/@package-version</code></summary>
+        /// <returns> the package version number</returns>
+
+        public String Version
+        {
+            get { return package.getVersion(); }
+        }
+
+
+        /// <summary>Link this package with the packages it uses to form an executable stylesheet. This process fixes
+        /// up any cross-package references to files, templates, and other components, and checks to ensure
+        /// that all such references are consistent.</summary>
+        /// <returns> the resulting XsltExecutable</returns>
+
+        public XsltExecutable Link()
+        {
+            try
+            {
+
+                JCompilation compilation = new JCompilation(processor.Implementation, new JCompilerInfo());
+                JPreparedStylesheet pss = new JPreparedStylesheet(compilation);
+                package.getUnderlyingPreparedPackage().updatePreparedStylesheet(pss);
+                return new XsltExecutable(processor, pss);
+            }
+            catch (net.sf.saxon.trans.XPathException e)
+            {
+                throw new StaticError(e);
+            }
+        }
+
+        /// <summary>Save this compiled package to filestore.</summary>
+        /// <param name="stream"> the stream to which the compiled package should be saved</param>
+        /// 
+        public void Save(Stream stream)
+        {
+            JDotNetOutputStream outputStream = new JDotNetOutputStream(stream);
+            JExpressionPresenter outp = new JExpressionPresenter(processor.Implementation, new javax.xml.transform.stream.StreamResult(outputStream), true);
+            try
+            {
+                package.getUnderlyingPreparedPackage().export(outp);
+            }
+            catch (net.sf.saxon.trans.XPathException e)
+            {
+                throw new StaticError(e);
+            }
+        }
+
+
+        /// <summary>Escape-hatch interface to the underlying implementation class.</summary>
+        /// <returns>the underlying StylesheetPackage. The interface to StylesheetPackage
+        /// is not a stable part of the s9api API definition.</returns>
+
+        public JStylesheetPackage getUnderlyingPreparedPackage()
+        {
+            return package.getUnderlyingPreparedPackage();
+        }
 
     }
-
-	///<summary> An <c>XsltPackage</c> object represents the result of compiling an XSLT 3.0 package, as
- 	/// represented by an XML document containing an <c>xsl:package</c> element.</summary>
-	/// <remarks><para>
-	/// @since 9.6
-	/// </para></remarks>
-
-[Serializable]
-public class XsltPackage
-{
-	private Processor processor;
-	private JXsltPackage package;
-
-	/// <summary>
-	/// Initializes a new instance of the <see cref="Saxon.Api.XsltPackage"/> class.
-	/// </summary>
-	/// <param name="p">Processor</param>
-	/// <param name="pp">XsltPackage</param>
-	internal XsltPackage(Processor p, JXsltPackage pp){
-		this.processor = p;
-		this.package = pp;
-
-	}
-
-	/// <summary>
-	/// Get the Processor from which this XsltCompiler was constructed
-	/// </summary>
-	public Processor Processor
-	{
-		get { return processor; }
-	}
-
-	
-	/// <summary>
-	/// Get the name of the package (the URI appearing as the value of <code>xsl:package/@name</code>)
-	/// </summary>
-	/// <returns>return the package name</returns>
-
-	public String PackageName {
-		get { return package.getName();}
-	}
-
-	
-     /// <summary>Get the version number of the package (the value of the attribute <code>xsl:package/@package-version</code></summary>
-     /// @return the package version number
-
-	public String Version {
-		get { return package.getVersion(); }
-	}
-
-	
-     /// <summary>Link this package with the packages it uses to form an executable stylesheet. This process fixes
-     /// up any cross-package references to files, templates, and other components, and checks to ensure
-     /// that all such references are consistent.</summary>
-     /// <returns> the resulting XsltExecutable</returns>
-     
-	public XsltExecutable Link()  {
-		try {
-
-			JCompilation compilation = new JCompilation(processor.Implementation, new JCompilerInfo());
-			JPreparedStylesheet pss = new JPreparedStylesheet(compilation);
-			package.getUnderlyingPreparedPackage().updatePreparedStylesheet(pss);
-			return new XsltExecutable(processor, pss);
-		} catch (net.sf.saxon.trans.XPathException e) {
-			throw new StaticError(e);
-		}
-	}
-		
-
-    /// <summary>Escape-hatch interface to the underlying implementation class.</summary>
-	/// <returns>the underlying StylesheetPackage. The interface to StylesheetPackage
-	/// is not a stable part of the s9api API definition.</returns>
-
-	public JStylesheetPackage getUnderlyingPreparedPackage() {
-		return package.getUnderlyingPreparedPackage();
-	}
-
-}
 
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2013 Saxonica Limited.
+// Copyright (c) 2016 Saxonica Limited.
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 // If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 // This Source Code Form is "Incompatible With Secondary Licenses", as defined by the Mozilla Public License, v. 2.0.
