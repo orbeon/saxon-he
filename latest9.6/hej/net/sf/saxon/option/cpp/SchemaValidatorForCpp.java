@@ -493,13 +493,12 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
      *
      * @param cwd  - Current working directory
      * @param sourceFilename  - The name of the file to be validated
-     * @param outputFilename  - The name of the file where output from the validator will be sent. Can be null. TODO: does not work as yet
      * @param params - Parameters and properties names required by the Validator. This could contain the source as a node , source as string or file name, validator options, etc
      * @param values -  The values for the parameters and properties required by the Validator
      * @return XdmNode
      *
      **/
-    public XdmNode validateToNode(String cwd, String sourceFilename, String outputFilename, String[] params, Object[] values) throws SaxonApiException {
+    public XdmNode validateToNode(String cwd, String sourceFilename, String[] params, Object[] values) throws SaxonApiException {
 
         source = null; //This is required to make sure the source object created from a previous call is not used
         SchemaValidator validator = schemaManager.newSchemaValidator();
