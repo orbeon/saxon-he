@@ -19,7 +19,7 @@ void setDllname(){
 		strncat(resources_dir, env,  env_len);
 		strncat(resources_dir, "/saxon-data", rDir_len);
 		strncat(dllname, env, env_len);
-		strncat(dllname, "/libsaxoneec.so", name_len); //rename according to product edition (-hec or -pec)
+		strncat(dllname, "/libsaxonhec.so", name_len); //rename according to product edition (-hec or -pec)
 #ifdef DEBUG	
 		printf("resources_dir: %s\n", resources_dir);	
 		printf("envDir: %s\n", env);

@@ -1,3 +1,10 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2016 Saxonica Limited.
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+// If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// This Source Code Form is "Incompatible With Secondary Licenses", as defined by the Mozilla Public License, v. 2.0.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #ifndef SAXONCGLUE_H 
 #define SAXONCGLUE_H
 #include <jni.h>
@@ -51,11 +58,11 @@ EXTERN_C
 
 static char dllname[] =
     #ifdef __linux__
-        "/usr/lib/libsaxon.so";  //rename according to product edition (-hec or -pec) Also make change in the c file
+        "/usr/lib/libsaxonhec.so";  //rename according to product edition (hec or pec) Also make change in the c file
     #elif  defined (__APPLE__) && defined(__MACH__)
         "/usr/lib/libsaxoneec.dylib";
     #else
-         "C:\\Program Files\\Saxonica\\SaxonEEC1.0.0\\libsaxoneec.dll";
+         "C:\\Program Files\\Saxonica\\SaxonHEC1.0.0\\libsaxonhec.dll";
     #endif
 
 static char resources_dir[] = 
@@ -64,7 +71,7 @@ static char resources_dir[] =
     #elif  defined (__APPLE__) && defined(__MACH__)
         "/usr/lib/saxon-data";
     #else
-         "C:\\Program Files\\Saxonica\\SaxonEEC1.0.0\\saxon-data";
+         "C:\\Program Files\\Saxonica\\SaxonHEC1.0.0\\saxon-data";
     #endif
 
 

@@ -81,6 +81,28 @@ void testValidator4(SaxonProcessor * processor, SchemaValidator * val){
 
 }
 
+void testValidator4a(SaxonProcessor * processor, SchemaValidator * val){
+  processor->exceptionClear();
+  val->clearParameters(true);
+  val->clearProperties();
+  cout<<endl<<"Test 4: Validate source file with schema file. i.e. family.xml and family.xsd"<<endl;	
+
+	val->registerSchemaFromFile("family-ext.xsd");
+       //val->registerSchema("family.xsd");
+	val->registerSchemaFromFile("family.xsd");
+	XdmNode * node = val->validateToNode("family.xml");
+	if(node != NULL) {
+		if(!val->exceptionOccurred()) {
+			cout<<endl<<"Doc1 is OK"<<endl;
+	 	} else {
+			cout<<endl<<"Error: Doc reported as valid!"<<endl;
+		}
+	} else {
+	cout<<endl<<"Error: node is NULL"<<endl;
+	}
+
+}
+
 void testValidator5(SaxonProcessor * processor, SchemaValidator * val){
   processor->exceptionClear();
   val->clearParameters(true);
@@ -105,11 +127,11 @@ val->setParameter("node", (XdmValue *)input);
 	val->setProperty("verbose", "true");
 	val->validate();
 	XdmNode * node = val->getValidationReport(); 
-	if(node != NULL) {
-		cout<<endl<<"Validation Report"<<node->getStringValue()<<endl;
-	} else {
-		cout<<endl<<"Error: Validation Report is NULL"<<endl;
-	}
+	//if(node != NULL) {
+		cout<<endl<<node->size()<<"Validation Report"<<node->getStringValue()<<endl;
+	//} else {
+	//	cout<<endl<<"Error: Validation Report is NULL"<<endl;
+	//}
 
 	
 
@@ -131,6 +153,7 @@ int main()
 	processor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSchemaImports", "on");
 	SchemaValidator * validator2 = processor->newSchemaValidator();
 	testValidator4(processor, validator2);
+	testValidator4a(processor, validator2);
 	processor->setConfigurationProperty("xsdversion", "1.1");
 	SchemaValidator * validator3 = processor->newSchemaValidator();
 	testValidator5(processor, validator3);
