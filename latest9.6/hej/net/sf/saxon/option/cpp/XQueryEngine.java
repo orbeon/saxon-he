@@ -70,10 +70,15 @@ public class XQueryEngine extends SaxonCAPI {
     }
 
     public XdmNode parseXMLString(String xml) throws SaxonApiException {
-        return SaxonCAPI.parseXmlString(processor, null, xml);
+        try {
+            return SaxonCAPI.parseXmlString(processor, null, xml);
+        } catch(SaxonApiException ex){
+            saxonExceptions.add(new SaxonCException(ex));
+            throw ex;
+        }
     }
 
-    public void setXQueryFile(String queryFileName) throws SaxonApiException {
+    public void setXQueryFile(String queryFileName) {
         queryFile = new File(queryFileName);
     }
 
@@ -101,10 +106,11 @@ public class XQueryEngine extends SaxonCAPI {
     public XQueryEvaluator xqueryEvaluator(String cwd, String[] params, Object[] values) throws SaxonApiException {
         clearExceptions();
 
-
         String query = null;
         if (params != null && params.length != values.length) {
-            throw new SaxonApiException("Length of params array not equal to the length of values array");
+            SaxonCException ex = new SaxonCException("Length of params array not equal to the length of values array");
+            saxonExceptions.add(ex);
+            throw ex;
         }
 
         compiler.setSchemaAware(schemaAware);
@@ -140,7 +146,9 @@ public class XQueryEngine extends SaxonCAPI {
                         try {
                             executable = compiler.compile(queryFile);
                         } catch (IOException e) {
-                            throw new SaxonApiException(e);
+                            SaxonCException ex = new SaxonCException(e);
+                            saxonExceptions.add(ex);
+                            throw ex;
                         }
                     }
                 } else if (params[i].equals("base")) {
@@ -148,7 +156,9 @@ public class XQueryEngine extends SaxonCAPI {
                     try {
                         compiler.setBaseURI(new URI(baseURI));
                     } catch (URISyntaxException e) {
-                        throw new SaxonApiException(e);
+                        SaxonCException ex = new SaxonCException(e);
+                        saxonExceptions.add(ex);
+                        throw ex;
                     }
                 } else if (params[i].equals("sa") && !schemaAware) {
                     compiler.setSchemaAware(true);
@@ -158,11 +168,18 @@ public class XQueryEngine extends SaxonCAPI {
 
 
         if (query == null && queryFile == null) {
-            throw new SaxonApiException("No Query supplied");
+            SaxonCException ex = new SaxonCException("No Query supplied");
+            saxonExceptions.add(ex);
+            throw ex;
         }
 
         XQueryEvaluator eval = executable.load();
-        applyXQueryProperties(this, cwd, serializer, processor, eval, params, values, props);
+        try{
+            applyXQueryProperties(this, cwd, serializer, processor, eval, params, values, props);
+        } catch(SaxonApiException ex){
+            saxonExceptions.add(new SaxonCException(ex));
+            throw ex;
+        }
         return eval;
     }
 
@@ -179,10 +196,9 @@ public class XQueryEngine extends SaxonCAPI {
         try {
             QueryResult.serializeSequence(eval.evaluate().getUnderlyingValue().iterate(), processor.getUnderlyingConfiguration(), sw, props);
         } catch (XPathException e) {
-            SaxonApiException apiEx = new SaxonApiException(e);
-            SaxonCException saxonException = new SaxonCException(apiEx);
+            SaxonCException saxonException = new SaxonCException(e);
             saxonExceptions.add(saxonException);
-            throw apiEx;
+            throw saxonException;
         }
         return sw.toString();
     }

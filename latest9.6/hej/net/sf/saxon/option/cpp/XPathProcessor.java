@@ -78,7 +78,9 @@ public class XPathProcessor extends SaxonCAPI {
             uri = new URI(uriStr);
             compiler.setBaseURI(uri);
         } catch (URISyntaxException e) {
-            throw new SaxonApiException(e);
+            SaxonCException ex = new SaxonCException(e);
+            saxonExceptions.add(ex);
+            throw ex;
         }
 
     }
@@ -92,9 +94,18 @@ public class XPathProcessor extends SaxonCAPI {
 
     public void setProperties(String[] params, Object[] values) throws SaxonApiException {
         if (selector != null) {
-            applyXPathProperties(this, "", processor, selector, params, values);
+            try {
+                applyXPathProperties(this, "", processor, selector, params, values);
+            }catch(SaxonApiException e){
+                SaxonCException ex = new SaxonCException(e);
+                saxonExceptions.add(ex);
+                throw ex;
+            }
         } else {
-            throw new SaxonApiException("XPathExecutable not created");
+            SaxonCException ex = new SaxonCException("XPathExecutable not created");
+            saxonExceptions.add(ex);
+            throw ex;
+
         }
 
     }
@@ -102,6 +113,7 @@ public class XPathProcessor extends SaxonCAPI {
     public void reset() {
         compiler = null;
         selector = null;
+        clearExceptions();
     }
 
 
@@ -183,11 +195,26 @@ public class XPathProcessor extends SaxonCAPI {
     public boolean effectiveBooleanValue(String cwd, String xpathStr, String[] params, Object[] values) throws SaxonApiException {
         selector = compiler.compile(xpathStr).load();
 
-        applyXPathProperties(this, cwd, processor, selector, params, values);
+        try {
+
+            applyXPathProperties(this, cwd, processor, selector, params, values);
+        } catch(SaxonApiException e){
+            SaxonCException ex = new SaxonCException(e);
+            saxonExceptions.add(ex);
+            throw e;
+        }
+
         if (contextItem != null) {
             selector.setContextItem(contextItem);
         }
-        boolean result = selector.effectiveBooleanValue();
+        boolean result;
+        try {
+            result = selector.effectiveBooleanValue();
+        } catch(SaxonApiException e){
+            SaxonCException ex = new SaxonCException(e);
+            saxonExceptions.add(ex);
+            throw e;
+        }
         return result;
 
 

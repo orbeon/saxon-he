@@ -124,8 +124,8 @@ public class SaxonCAPI {
 
         @Override
         public void warning(TransformerException exception) {
-            SaxonCException saxonException = new SaxonCException((XPathException) exception);
-            saxonWarnings.add(saxonException);
+            saxonWarnings.add(new SaxonCException(exception));
+
             try {
                 super.error(exception);
             } catch (Exception ex) {
@@ -135,8 +135,7 @@ public class SaxonCAPI {
 
         @Override
         public void error(TransformerException exception) {
-            SaxonCException saxonException = new SaxonCException((XPathException) exception);
-            saxonExceptions.add(saxonException);
+            saxonExceptions.add(new SaxonCException(exception));
             try {
                 super.error(exception);
             } catch (Exception ex) {
@@ -145,8 +144,7 @@ public class SaxonCAPI {
 
         @Override
         public void fatalError(TransformerException exception) {
-            SaxonCException saxonException = new SaxonCException((XPathException) exception);
-            saxonExceptions.add(saxonException);
+            saxonExceptions.add(new SaxonCException(exception));
             try {
                 super.fatalError(exception);
             } catch (Exception ex) {
@@ -283,6 +281,19 @@ public class SaxonCAPI {
 
 
     /**
+     * Get the exceptions thrown during the compile and execution of the XSLT/XQuery
+     *
+     * @return SaxCEExeption[] -- array of the exceptions
+     */
+    public SaxonCException[] getWarnings() {
+        if (saxonWarnings.size() > 0) {
+            return saxonWarnings.toArray(new SaxonCException[saxonWarnings.size()]);
+        } else
+            return null;
+    }
+
+
+    /**
      * Check for exceptions thrown
      *
      * @return boolean - Return true if exception thrown during the process and false otherwise.
@@ -295,6 +306,7 @@ public class SaxonCAPI {
      * Clear exceptions recorded during the process
      */
     public void clearExceptions() {
+        saxonWarnings.clear();
         saxonExceptions.clear();
     }
 
@@ -304,7 +316,7 @@ public class SaxonCAPI {
      * @param i - index into the list of thrown exceptions
      * @return SaxonCException - Saxon/C wrapped exception
      */
-    public SaxonCException getException(int i) {
+    public SaxonApiException getException(int i) {
         if (i < saxonExceptions.size()) {
             return saxonExceptions.get(i);
         } else {
@@ -325,8 +337,7 @@ public class SaxonCAPI {
             doc = parseXmlFile(processor, cwd, null, filename);
             return doc;
         } catch (SaxonApiException ex) {
-            SaxonCException saxonException = new SaxonCException(ex);
-            saxonExceptions.add(saxonException);
+            saxonExceptions.add(new SaxonCException(ex.getCause()));
             throw ex;
         }
     }
@@ -345,8 +356,7 @@ public class SaxonCAPI {
             doc = parseXmlFile(processor, cwd, validator, filename);
             return doc;
         } catch (SaxonApiException ex) {
-            SaxonCException saxonException = new SaxonCException(ex);
-            saxonExceptions.add(saxonException);
+            saxonExceptions.add(new SaxonCException(ex.getCause()));
             throw ex;
         }
     }
@@ -377,8 +387,7 @@ public class SaxonCAPI {
             }
             return doc;
         } catch (SaxonApiException ex) {
-            SaxonCException saxonException = new SaxonCException(ex);
-            saxonExceptions.add(saxonException);
+            saxonExceptions.add(new SaxonCException(ex.getCause()));
             throw ex;
         }
     }

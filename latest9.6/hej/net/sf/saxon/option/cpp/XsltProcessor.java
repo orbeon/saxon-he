@@ -124,10 +124,8 @@ public class XsltProcessor extends SaxonCAPI {
             executable = compiler.compile(source);
             return executable;
         } catch (SaxonApiException ex) {
-            if (ex.getErrorCode() == null) {
-                throw new SaxonApiException(new XPathException(ex.getMessage(), saxonExceptions.get(0).getErrorCode()));
-            }
-
+            SaxonCException ex2 = new SaxonCException(ex);
+            saxonExceptions.add(ex2);
             throw ex;
         }
     }
@@ -161,7 +159,9 @@ public class XsltProcessor extends SaxonCAPI {
             executable = compiler.compile(source);
             return executable;
         } catch (SaxonApiException ex) {
-            throw new SaxonApiException(new XPathException(ex.getMessage(), (ex.getErrorCode() == null ? saxonExceptions.get(0).getErrorCode() : "")));
+            SaxonCException ex2 = new SaxonCException(ex);
+            saxonExceptions.add(ex2);
+            throw ex2;
         }
 
     }
@@ -183,7 +183,9 @@ public class XsltProcessor extends SaxonCAPI {
         if (obj instanceof XdmNode) {
             node = (XdmNode) obj;
         } else {
-            throw new SaxonApiException("Failed to create Stylesheet from XdoNode");
+            SaxonCException ex  = new SaxonCException("Failed to create Stylesheet from XdoNode");
+            saxonExceptions.add(ex);
+            throw ex;
         }
 
         compiler.setErrorListener(errorListener);
@@ -191,7 +193,15 @@ public class XsltProcessor extends SaxonCAPI {
             executable = compiler.compile(node.asSource());
             return executable;
         } catch (SaxonApiException ex) {
-            throw new SaxonApiException(new XPathException(ex.getMessage(), (ex.getErrorCode() == null ? saxonExceptions.get(0).getErrorCode() : "")));
+            SaxonCException ex2;
+            if (ex.getErrorCode() == null) {
+                ex2 = new SaxonCException(new XPathException(ex.getMessage(), ""));
+            } else {
+                ex2 = new SaxonCException(ex);
+            }
+
+            saxonExceptions.add(ex2);
+            throw ex;
         }
 
     }
@@ -231,9 +241,9 @@ public class XsltProcessor extends SaxonCAPI {
                 try {
                     transformer = compiler.compile(source).load();
                 } catch (SaxonApiException ex) {
-                    if (ex.getErrorCode() == null) {
-                        throw new SaxonApiException(new XPathException(ex.getMessage(), saxonExceptions.get(0).getErrorCode()));
-                    }
+                    SaxonCException ex2 = new SaxonCException(ex);
+                    saxonExceptions.add(ex2);
+                    throw ex;
                 }
             }
             if (outFilename != null) {
@@ -248,20 +258,24 @@ public class XsltProcessor extends SaxonCAPI {
                 transformer.setSource(source);
             }
             if (serializer == null) {
-                throw new SaxonApiException("Output file not set for this transformation");
+                SaxonCException ex = new SaxonCException("Output file not set for this transformation");
             }
             transformer.setDestination(serializer);
             transformer.transform();
             serializer = null;
 
         } catch (SaxonApiException e) {
-            SaxonCException saxonException = new SaxonCException(e);
-            saxonExceptions.add(saxonException);
+            SaxonCException ex = new SaxonCException(e);
+            saxonExceptions.add(ex);
             throw e;
         } catch (NullPointerException ex) {
-            throw new SaxonApiException(ex);
-        } catch (Exception e) {
-            throw new SaxonApiException(e);
+            SaxonApiException ex2 = new SaxonApiException(ex);
+            saxonExceptions.add(new SaxonCException(ex2));
+            throw ex2;
+        } catch (Exception ex) {
+            SaxonCException ex2 = new SaxonCException(ex);
+            saxonExceptions.add(ex2);
+            throw ex2;
         }
     }
 
@@ -288,7 +302,8 @@ public class XsltProcessor extends SaxonCAPI {
             DocumentBuilder builder = processor.newDocumentBuilder();
             Map<Serializer.Property, String> propsList = new HashMap<Serializer.Property, String>();
             if (params.length != values.length) {
-                throw new SaxonApiException("Length of params array not equal to the length of values array");
+                throw new SaxonCException("Length of params array not equal to the length of values array");
+
             }
             if (params.length != 0) {
                 if (cwd != null && cwd.length() > 0) {
@@ -298,7 +313,8 @@ public class XsltProcessor extends SaxonCAPI {
                 }
                 for (int i = 0; i < params.length; i++) {
                     if (values[i] == null) {
-                        throw new SaxonApiException("Null parameter/property value found " + (params[i] != null ? "Check name: " + params[i] : ""));
+                        throw new SaxonCException("Null parameter/property value found " + (params[i] != null ? "Check name: " + params[i] : ""));
+
                     }
                     if (debug) {
                         System.err.println("parameter name:" + params[i]);
@@ -315,7 +331,7 @@ public class XsltProcessor extends SaxonCAPI {
                         try {
                             processor.setConfigurationProperty("http://saxon.sf.net/feature/" + params[i].substring(2), (String) values[i]);
                         } catch (IllegalArgumentException err) {
-                            throw new SaxonApiException(err.getMessage());
+                            throw new SaxonCException(err.getMessage());
                         }
 
                     } else if (params[i].equals("o") && outfile == null) {
@@ -373,7 +389,7 @@ public class XsltProcessor extends SaxonCAPI {
                             node = (XdmNode) value;
                             transformer.setSource((node).asSource());
                         } else if (debug) {
-                            System.err.println("Type of node Property error.");
+                            System.err.println("DEBUG: Type of node Property error.");
                         }
                     } else if (params[i].equals("m")) {
                         transformer.setMessageListener(((XsltProcessor) api).newMessageListener());
@@ -402,11 +418,11 @@ public class XsltProcessor extends SaxonCAPI {
                         if (value instanceof XdmValue) {
                             valueForCpp = (XdmValue) value;
                             if (debug) {
-                                System.err.println("XSLTTransformerForCpp: " + paramName);
-                                System.err.println("XSLTTransformerForCpp: " + valueForCpp.getUnderlyingValue().toString());
+                                System.err.println("DEBUG: XSLTTransformerForCpp: " + paramName);
+                                System.err.println("DEBUG: XSLTTransformerForCpp: " + valueForCpp.getUnderlyingValue().toString());
                                 net.sf.saxon.type.ItemType suppliedItemType = SequenceTool.getItemType(valueForCpp.getUnderlyingValue(), processor.getUnderlyingConfiguration().getTypeHierarchy());
-                                System.err.println("XSLTTransformerForCpp: " + valueForCpp.getUnderlyingValue());
-                                System.err.println("XSLTTransformerForCpp Type: " + suppliedItemType.toString());
+                                System.err.println("DEBUG: XSLTTransformerForCpp: " + valueForCpp.getUnderlyingValue());
+                                System.err.println("DEBUG: XSLTTransformerForCpp Type: " + suppliedItemType.toString());
                             }
 
                         } else if (value instanceof Object[]) {
@@ -517,7 +533,7 @@ public class XsltProcessor extends SaxonCAPI {
             saxonExceptions.add(saxonException);
             throw e;
         } catch (Exception ex) {
-            throw new SaxonApiException(ex);
+            throw new SaxonCException(ex);
         }
 
     }
@@ -550,7 +566,8 @@ public class XsltProcessor extends SaxonCAPI {
             if (stylesheet == null && executable != null) {
                 transformer = executable.load();
             } else if (stylesheet == null) {
-                SaxonApiException ex = new SaxonApiException("Stylesheet not found!");
+                SaxonCException ex = new SaxonCException("Stylesheet not found!");
+                saxonExceptions.add(ex);
                 throw ex;
             } else {
                 XsltCompiler compiler = processor.newXsltCompiler();
@@ -580,8 +597,10 @@ public class XsltProcessor extends SaxonCAPI {
             SaxonCException saxonException = new SaxonCException(e);
             saxonExceptions.add(saxonException);
             throw e;
-        } catch (Exception ex) {
-            throw new SaxonApiException(ex);
+        } catch (Exception e) {
+            SaxonCException ex = new SaxonCException(e);
+            saxonExceptions.add(ex);
+            throw ex;
         }
     }
 
@@ -640,7 +659,9 @@ public class XsltProcessor extends SaxonCAPI {
             saxonExceptions.add(saxonException);
             throw e;
         } catch (Exception ex) {
-            throw new SaxonApiException(ex);
+            SaxonCException ex2 = new SaxonCException(ex);
+            saxonExceptions.add(ex2);
+            throw ex2;
         }
 
 
@@ -706,6 +727,34 @@ public class XsltProcessor extends SaxonCAPI {
                 "    \n" +
                 "   \n" +
                 "</xsl:stylesheet>");
+
+        cpp.createStylesheetFromString("samples", "<xsl:stylesheet \n" +
+                "    xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" \n" +
+                "    xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" \n" +
+                "    version=\"2.0\">\n" +
+                "\n" +
+                "    <xslt:output method=\"xml\" encoding=\"UTF-8\"/>\n" +
+                "\n" +
+                "    <xsl:template match=\"/\">        \n" +
+                "        <xsl:call-template name=\"test\">\n" +
+                "          <xsl:with-param name=\"xxx\" select=\"'test'\"/>\n" +
+                "        </xsl:call-template>\n" +
+                "    </xsl:template>\n" +
+                "\n" +
+                "    <xsl:template name='test'>\n" +
+                "        <xsl:param name=\"xxx\" tunnel=\"yes\" />\n" +
+                "        <p>xxx: <xsl:value-of select=\"$xxx\"/></p>\n" +
+                "    </xsl:template>\n" +
+                "\n" +
+                "</xsl:stylesheet>");
+
+        String valueStr = cpp.transformToString(cwd,"categories.xml", null, null, null);
+         if(valueStr != null) {
+             System.out.println("Output = " + valueStr);
+         } else {
+             System.out.println("valueSt is null");
+         }
+
         try {
             cpp.transformToFile(cwd, "categories.xml", stylesheet12, "outputTest.txt", null, null);
             long startTime = System.currentTimeMillis();

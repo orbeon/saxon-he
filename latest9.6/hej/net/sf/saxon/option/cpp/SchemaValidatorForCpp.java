@@ -52,7 +52,9 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
         schemaManager = processor.getSchemaManager();
 
         if(debug && !processor.isSchemaAware()) {
-            throw  new SaxonApiException("Processor is not licensed for schema processing!");
+            SaxonCException ex =   new SaxonCException("Processor is not licensed for schema processing!");
+            saxonExceptions.add(ex);
+            throw ex;
         }
     }
 
@@ -64,8 +66,10 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
     public SchemaValidatorForCpp(Processor proc) throws SaxonApiException {
         processor = proc;
         schemaManager = processor.getSchemaManager();
-        if(debug && !processor.isSchemaAware()) {
-            throw  new SaxonApiException("Processor is not licensed for schema processing!");
+        if(!processor.isSchemaAware()) {
+            SaxonCException ex = new SaxonCException("Processor is not licensed for schema processing!");
+            saxonExceptions.add(ex);
+            throw  ex;
         }
     }
 
@@ -87,7 +91,7 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
 
     /**
      * Set verbose mode to output to the terminal validation exceptions.
-     * The default is on providing the reporting feature has not been enabled. In which case the user would have to switche this on
+     * The default is on providing the reporting feature has not been enabled. In which case the user would have to switch this on
      * @param verbose
      */
     public void setVerbose(boolean verbose){
@@ -362,7 +366,9 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
         setProperties(params, values);
 
         if (xsd == null) {
-            throw new SaxonApiException("Schema document not found");
+            SaxonCException ex = new SaxonCException("Schema document not found");
+            saxonExceptions.add(ex);
+            throw ex;
         }
         Source source_xsd = resolveFileToSource(cwd, xsd);
 
@@ -386,7 +392,9 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
         setProperties(params, values);
 
         if (xsd == null) {
-            throw new SaxonApiException("Schema document not found");
+            SaxonCException ex = new SaxonCException("Schema document not found");
+            saxonExceptions.add(ex);
+            throw ex;
         }
 
 
@@ -413,7 +421,9 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
                             String xsdversion = (String)values[i];
                             getSchemaManager().setXsdVersion(xsdversion);
                         } else {
-                            throw new SaxonApiException("XSD version has not been correctly set");
+                            SaxonCException ex = new SaxonCException("XSD version has not been correctly set");
+                            saxonExceptions.add(ex);
+                            throw ex;
                         }
                 }
             }
@@ -435,7 +445,9 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
         source = null; //This is required to make sure the source object created from a previous call is not used
         SchemaValidator validator = null;
         if(!processor.isSchemaAware()) {
-            throw  new SaxonApiException("Processor is not licensed for schema processing!");
+            SaxonCException ex = new SaxonCException("Processor is not licensed for schema processing!");
+            saxonExceptions.add(ex);
+            throw ex;
         }
         reporting = false;
         verbose = false;
@@ -483,7 +495,9 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
                 listener.endReporting();
             }
         } else {
-            throw new SaxonApiException("Source document not found");
+            SaxonCException ex = new SaxonCException("Source document not found");
+            saxonExceptions.add(ex);
+            throw ex;
         }
 
     }

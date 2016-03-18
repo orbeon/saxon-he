@@ -7,6 +7,7 @@
 
 package net.sf.saxon.option.cpp;
 
+import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.trans.XPathException;
@@ -14,54 +15,79 @@ import net.sf.saxon.trans.XPathException;
 /**
  * * This class is to use with Saxon on C++
  */
-public class SaxonCException {
+public class SaxonCException extends SaxonApiException {
     private String errorCode;
-    private String errorMessage;
     private int linenumber = -1;
     private boolean isTypeError = false;
     private boolean isStaticError = false;
     private boolean isGlobalError = false;
 
-    public SaxonCException() {
-    }
-
-    public SaxonCException(SaxonApiException ex) {
-        QName code = ex.getErrorCode();
-        errorCode = (code != null ? ex.getErrorCode().toString() : null);
-        errorMessage = ex.getMessage();
-
-        if (ex.getCause() instanceof XPathException) {
-            XPathException cause = (XPathException) ex.getCause();
-            isGlobalError = cause.isGlobalError();
-            isStaticError = cause.isStaticError();
-            isTypeError = cause.isTypeError();
-            javax.xml.transform.SourceLocator locator =  cause.getLocator();
-            if(locator != null) {
-                linenumber = cause.getLocator().getLineNumber();
+    public SaxonCException(Throwable cause) {
+        super(cause);
+        errorCode = "";
+        if(cause instanceof XPathException) {
+            XPathException exception = (XPathException)cause;
+            isStaticError = exception.isStaticError();
+            isTypeError = exception.isTypeError();
+            errorCode = exception.getErrorCodeQName().toString();
+            if(errorCode == null) {
+                errorCode = "";
             }
         }
+
     }
 
-    public SaxonCException(XPathException ex) {
-        errorCode = ex.getErrorCodeLocalPart();
-        errorMessage = ex.getMessage();
+   /*public static SaxonCException makeSaxonCException(Throwable cause){
+        SaxonCException cException = new SaxonCException(cause);
+        if(cause instanceof XPathException) {
+            StructuredQName qname = ((XPathException) cause).getErrorCodeQName();
+              if(qname != null) {
+                  cException.set
 
-        isGlobalError = ex.isGlobalError();
-        isStaticError = ex.isStaticError();
-        isTypeError = ex.isTypeError();
-        javax.xml.transform.SourceLocator locator = ex.getLocator();
-        if(locator != null) {
-            linenumber = locator.getLineNumber();
+              }
+        }
+    }    */
+
+
+
+    /**
+     * Create a SaxonApiException
+     *
+     * @param message the message
+     */
+
+    public SaxonCException(String message) {
+        super(message);
+        errorCode = "";
+
+    }
+
+    public SaxonCException(String message, Throwable cause) {
+        super(message, cause);
+        if(cause instanceof XPathException) {
+            XPathException exception = (XPathException)cause;
+            isStaticError = exception.isStaticError();
+            isTypeError = exception.isTypeError();
+            errorCode = exception.getErrorCodeQName().toString();
         }
 
     }
 
-    public String getErrorCode(){
-        return errorCode;
+
+
+    public String getErrorCodeString(){
+        if(errorCode != null) {
+            return errorCode;
+        } else if (super.getErrorCode() != null){
+            return super.getErrorCode().toString();
+        } else {
+            return "";
+        }
+
     }
 
     public String getErrorMessage(){
-        return errorMessage;
+        return super.getMessage();
     }
 
     public int getLinenumber(){
