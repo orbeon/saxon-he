@@ -10,8 +10,7 @@ package net.sf.saxon.om;
 import net.sf.saxon.trans.XPathException;
 
 /**
- * A sequence that wraps an iterator, without being materialized. If used more than once, the input
- * iterator is re-evaluated (which can cause problems if the client is dependent on node identity).
+ * A sequence that wraps an iterator, without being materialized. It can only be used once.
  */
 public class LazySequence implements Sequence {
 
@@ -28,8 +27,10 @@ public class LazySequence implements Sequence {
     }
 
     /**
-     * Get the first item in the sequence
-     * @return the first item
+     * Get the first item in the sequence. This calls iterate() internally, which means it can only
+     * be called once; the method should only be used if the client requires only the first item in
+     * the sequence (or knows that the sequence has length one).
+     * @return the first item, or null if the sequence is empty
      * @throws XPathException
      */
 
@@ -42,6 +43,7 @@ public class LazySequence implements Sequence {
      * iterator backing the sequence. On subsequent calls it clones the original iterator.
      * @return  an iterator over the items in the sequence
      * @throws XPathException if evaluation of the iterator fails.
+     * @throws IllegalStateException if iterate() has already been called
      */
 
     public synchronized SequenceIterator iterate() throws XPathException {

@@ -11,9 +11,12 @@ import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.util.CannotCompileException;
 import com.saxonica.ee.stream.adjunct.StreamingAdjunct;
 import net.sf.saxon.Configuration;
+import net.sf.saxon.expr.oper.OperandArray;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.functions.*;
 import net.sf.saxon.functions.Error;
+import net.sf.saxon.om.LazySequence;
+import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.pattern.NodeSetPattern;
 import net.sf.saxon.pattern.Pattern;
@@ -350,6 +353,16 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
             }
         }
         return super.toPattern(config, is30);
+    }
+
+    public Sequence[] evaluateArguments(XPathContext context) throws XPathException {
+        OperandArray operanda = getOperanda();
+        int numArgs = operanda.getNumberOfOperands();
+        Sequence[] actualArgs = new Sequence[numArgs];
+        for (int i = 0; i < numArgs; i++) {
+            actualArgs[i] = new LazySequence(operanda.getOperandExpression(i).iterate(context));
+        }
+        return actualArgs;
     }
 
     /**
