@@ -30,6 +30,7 @@
 const char * failure;
 sxnc_environment * SaxonProcessor::environ = 0;
 int SaxonProcessor::refCount = 0;
+int SaxonProcessor::jvmCreatedCPP=0;
 
 bool SaxonProcessor::exceptionOccurred(){
 	return environ->env->ExceptionCheck();
@@ -48,7 +49,7 @@ SaxonProcessor::SaxonProcessor() {
     SaxonProcessor(licensei);
 }
 
-int SaxonProcessor::jvmCreatedCPP=0;
+
 
 //TODO - Exception handling in Saxon/C on both Java side and C++ side does not correctly handle multiple exceptions
 //This needs working on in the next release
@@ -134,9 +135,9 @@ SaxonProcessor::SaxonProcessor(bool l){
     refCount++;
 
 
-
      if(jvmCreatedCPP == 0){
 	jvmCreatedCPP=1;
+std::cerr<<"SaxonProc constructor: jvm created!"<<jvmCreatedCPP<<" refCount="<<refCount<<std::endl;
     environ = new sxnc_environment;//(sxnc_environment *)malloc(sizeof(sxnc_environment));
 
     /*
@@ -176,7 +177,8 @@ SaxonProcessor::SaxonProcessor(const char * configFile){
     versionStr = NULL;
     refCount++;
 
-     if(!environ){
+    if(jvmCreatedCPP == 0){
+	jvmCreatedCPP=1;
     //environ = new sxnc_environment;
 	environ = (sxnc_environment *)malloc(sizeof(sxnc_environment));
 
@@ -223,6 +225,9 @@ SaxonProcessor::SaxonProcessor(const char * configFile){
 
     SaxonProcessor::~SaxonProcessor(){
 	clearConfigurationProperties();
+	if(versionStr != NULL) {
+		delete versionStr;
+	}
 	refCount--;	//The might be redundant due to the bug fix 2670
    }
 
@@ -447,20 +452,18 @@ XdmNode * SaxonProcessor::parseXmlFromUri(const char* source){
 
 
 void SaxonProcessor::release(){
-//std::cerr<<"SaxonProc: release called!"<<std::endl;
-	if(jvmCreatedCPP!=0) {
-//std::cerr<<"SaxonProc: jvmCreatedCPP!"<<std::endl;
-		jvmCreatedCPP =0;
+	if(SaxonProcessor::jvmCreatedCPP!=0) {
+		SaxonProcessor::jvmCreatedCPP =0;
 
- 		finalizeJavaRT (environ->jvm);
+ 		finalizeJavaRT (SaxonProcessor::environ->jvm);
 
 		//delete environ ;
 	/*clearParameters();
 	clearProperties();*/
 } else {
-//#ifdef DEBUG
+#ifdef DEBUG
      std::cerr<<"SaxonProc: JVM finalize not called!"<<std::endl;
-//#endif
+#endif
 }
 }
 
