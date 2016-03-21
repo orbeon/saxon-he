@@ -173,23 +173,23 @@ int XsltProcessor::exceptionCount(){
  }
 
 void XsltProcessor::compileFromString(const char* stylesheetStr) {
-	jmethodID mID =
+	static jmethodID cStringmID =
 			(jmethodID) proc->environ->env->GetMethodID(cppClass,
 					"createStylesheetFromString",
 					"(Ljava/lang/String;Ljava/lang/String;)Lnet/sf/saxon/s9api/XsltExecutable;");
-	if (!mID) {
+	if (!cStringmID) {
 		cerr << "Error: MyClassInDll." << "createStylesheetFromString"
 				<< " not found\n" << endl;
 
 	} else {
 
 		stylesheetObject = (jobject)(
-				proc->environ->env->CallObjectMethod(cppXT, mID,
+				proc->environ->env->CallObjectMethod(cppXT, cStringmID,
 						proc->environ->env->NewStringUTF(cwdXT.c_str()),
 						proc->environ->env->NewStringUTF(stylesheetStr)));
 		if (!stylesheetObject) {
 			if(exceptionOccurred()) {
-				cerr<< "Error in compileFromString"<<endl;
+				
 				if(proc->exception != NULL) {
 					delete proc->exception;
 				}
@@ -202,18 +202,18 @@ void XsltProcessor::compileFromString(const char* stylesheetStr) {
 }
 
 void XsltProcessor::compileFromXdmNode(XdmNode * node) {
-	jmethodID mID =
+	static jmethodID cNodemID =
 			(jmethodID) proc->environ->env->GetMethodID(cppClass,
 					"createStylesheetFromFile",
 					"(Ljava/lang/String;Lnet/sf/saxon/s9api/XdmNode;)Lnet/sf/saxon/s9api/XsltExecutable;");
-	if (!mID) {
+	if (!cNodemID) {
 		cerr << "Error: MyClassInDll." << "createStylesheetFromXdmNode"
 				<< " not found\n" << endl;
 
 	} else {
 		releaseStylesheet();
 		stylesheetObject = (jobject)(
-				proc->environ->env->CallObjectMethod(cppXT, mID,
+				proc->environ->env->CallObjectMethod(cppXT, cNodemID,
 						proc->environ->env->NewStringUTF(cwdXT.c_str()),
 						node->getUnderlyingValue(proc)));
 		if (!stylesheetObject) {
@@ -231,18 +231,19 @@ void XsltProcessor::compileFromXdmNode(XdmNode * node) {
 }
 
 void XsltProcessor::compileFromFile(const char* stylesheet) {
-	jmethodID mID =
+	static jmethodID cFilemID =
 			(jmethodID) proc->environ->env->GetMethodID(cppClass,
 					"createStylesheetFromFile",
 					"(Ljava/lang/String;Ljava/lang/String;)Lnet/sf/saxon/s9api/XsltExecutable;");
-	if (!mID) {
+	if (!cFilemID) {
 		cerr << "Error: MyClassInDll." << "createStylesheetFromFile"
 				<< " not found\n" << endl;
 
 	} else {
 		releaseStylesheet();
+
 		stylesheetObject = (jobject)(
-				proc->environ->env->CallObjectMethod(cppXT, mID,
+				proc->environ->env->CallObjectMethod(cppXT, cFilemID,
 						proc->environ->env->NewStringUTF(cwdXT.c_str()),
 						proc->environ->env->NewStringUTF(stylesheet)));
 		if (!stylesheetObject) {
@@ -256,15 +257,15 @@ void XsltProcessor::compileFromFile(const char* stylesheet) {
 	   		}
      		
 		}
+		//proc->environ->env->NewGlobalRef(stylesheetObject);
 	}
 
 }
 
 void XsltProcessor::releaseStylesheet() {
-	if (stylesheetObject) {
-		proc->environ->env->DeleteLocalRef(stylesheetObject);
-		stylesheetObject = NULL;
-	}
+
+	stylesheetObject = NULL;
+	
 }
 
 
@@ -278,7 +279,7 @@ XdmValue * XsltProcessor::transformFileToValue(const char* sourcefile,
 	}
 
 	setProperty("resources", proc->getResourcesDirectory());
-	jmethodID mID =
+	static jmethodID mID =
 			(jmethodID) proc->environ->env->GetMethodID(cppClass,
 					"transformToNode",
 					"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmNode;");

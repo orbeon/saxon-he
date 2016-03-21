@@ -32,6 +32,7 @@ zend_class_entry *xdmAtomicValue_ce;
 
 void SaxonProcessor_free_storage(void *object TSRMLS_DC)
 {
+ 
     saxonProcessor_object *obj = (saxonProcessor_object *)object;
 
     zend_hash_destroy(obj->std.properties);
@@ -77,7 +78,7 @@ PHP_METHOD(SaxonProcessor, __construct)
         php_error(E_WARNING,"Wrong SaxonProcessor arguments");
         RETURN_NULL();
     }
-
+ 
 
     zval *object = getThis();
     SaxonProcessor * saxonProc;
@@ -129,7 +130,7 @@ PHP_METHOD(SaxonProcessor, __construct)
 
 PHP_METHOD(SaxonProcessor, __destruct)
 {
-    //php_error(E_WARNING,"SaxonProcessor PHP destuctor");
+    
     saxonProcessor_object *obj = (saxonProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
 
     SaxonProcessor * saxonProc= obj->saxonProcessor;
@@ -483,11 +484,13 @@ PHP_METHOD(SaxonProcessor, setConfigurationProperty)
 
 void XsltProcessor_free_storage(void *object TSRMLS_DC)
 {
+
     xsltProcessor_object *obj = (xsltProcessor_object *)object;
 
     zend_hash_destroy(obj->std.properties);
     FREE_HASHTABLE(obj->std.properties);
     efree(obj);
+
 }
 
 zend_object_value xsltProcessor_create_handler(zend_class_entry *type TSRMLS_DC)
@@ -512,7 +515,6 @@ zend_object_value xsltProcessor_create_handler(zend_class_entry *type TSRMLS_DC)
 
 PHP_METHOD(XsltProcessor, __destruct)
 {
-    //std::cerr<<"destruct xsltPRoc called"<<std::endl;
     xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
 
 
@@ -2928,7 +2930,7 @@ PHP_METHOD(XdmNode,  getAttributeValue){
     xdmNode_object *obj = (xdmNode_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
     xdmNode = obj->xdmNode;
     if (xdmNode != NULL && name != NULL) {
-	std::cerr<<std::endl<<"getAttr-value="<<name<<std::endl;
+	
         const char * valueStr = xdmNode->getAttributeValue(name);
         if(valueStr != NULL) {
             char *str = estrdup(valueStr);
@@ -3313,15 +3315,17 @@ PHP_MINFO_FUNCTION(saxon)
 PHP_MSHUTDOWN_FUNCTION(saxon) {
     UNREGISTER_INI_ENTRIES();
     SaxonProcessor::release();
-    
+
     return SUCCESS;
 }
 
 PHP_RSHUTDOWN_FUNCTION(saxon) {
+    //std::cerr<<"RSHUTDOWN called -start"<<std::endl;
     return SUCCESS;
 }
 
 PHP_RINIT_FUNCTION(saxon) {
+    //std::cerr<<"RINIT called -start"<<std::endl;
     return SUCCESS;
 }
 

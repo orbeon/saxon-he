@@ -518,9 +518,9 @@ public:
     static sxnc_environment * environ;
     std::string cwd; /*!< current working directory */
     jobject proc; /*!< Java Processor object */
-    /*static int jvmCreated;
+    static int jvmCreatedCPP;
     
-    static JavaVM *jvm;*/
+    /*static JavaVM *jvm;*/
     static int refCount;
 protected:
 	jclass xdmAtomicClass;

@@ -48,7 +48,8 @@ SaxonProcessor::SaxonProcessor() {
     SaxonProcessor(licensei);
 }
 
-//int SaxonProcessor::jvmCreated=0;
+int SaxonProcessor::jvmCreatedCPP=0;
+
 //TODO - Exception handling in Saxon/C on both Java side and C++ side does not correctly handle multiple exceptions
 //This needs working on in the next release
 SaxonApiException * SaxonProcessor::checkForExceptionCPP(JNIEnv* env, jclass callingClass,  jobject callingObject){
@@ -126,11 +127,16 @@ SaxonApiException * SaxonProcessor::checkForExceptionCPP(JNIEnv* env, jclass cal
 
 
 SaxonProcessor::SaxonProcessor(bool l){
+
     cwd="";
     licensei = l;
     versionStr = NULL;
     refCount++;
-     if(!environ){
+
+
+
+     if(jvmCreatedCPP == 0){
+	jvmCreatedCPP=1;
     environ = new sxnc_environment;//(sxnc_environment *)malloc(sizeof(sxnc_environment));
 
     /*
@@ -145,7 +151,13 @@ SaxonProcessor::SaxonProcessor(bool l){
      * The handle of loaded component is used to retrieve Invocation API.
      */
     initDefaultJavaRT (&environ); 
-    }
+    } else {
+#ifdef DEBUG
+     std::cerr<<"SaxonProc constructor: jvm exists!"<<std::endl;
+#endif
+
+}
+
  
     versionClass = lookForClass(environ->env, "net/sf/saxon/Version");
     procClass = lookForClass(environ->env, "net/sf/saxon/s9api/Processor");
@@ -155,9 +167,7 @@ SaxonProcessor::SaxonProcessor(bool l){
 	if(!proc) {
 		std::cout<<"proc is NULL in SaxonProcessor constructor"<<std::endl;
 	}
-#ifdef DEBUG
-     std::cerr<<"SaxonProc constructor: End"<<std::endl;
-#endif
+
     xdmAtomicClass = lookForClass(environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
 }
 
@@ -165,8 +175,10 @@ SaxonProcessor::SaxonProcessor(const char * configFile){
     cwd="";
     versionStr = NULL;
     refCount++;
+
      if(!environ){
-    environ = new sxnc_environment;//(sxnc_environment *)malloc(sizeof(sxnc_environment));
+    //environ = new sxnc_environment;
+	environ = (sxnc_environment *)malloc(sizeof(sxnc_environment));
 
     /*
      * First of all, load required component.
@@ -211,13 +223,7 @@ SaxonProcessor::SaxonProcessor(const char * configFile){
 
     SaxonProcessor::~SaxonProcessor(){
 	clearConfigurationProperties();
-	if(refCount<= 1) {
-	 release();
-	delete environ;
-  	} else  {
-		refCount--;	
-	}
-
+	refCount--;	//The might be redundant due to the bug fix 2670
    }
 
 
@@ -300,9 +306,7 @@ SchemaValidator * SaxonProcessor::newSchemaValidator(){
 const char * SaxonProcessor::version() {
 
      if(versionStr == NULL) {
-     	jmethodID MID_version;
-
-    	MID_version = (jmethodID)environ->env->GetStaticMethodID(saxonCAPIClass, "getProductVersion", "(Lnet/sf/saxon/s9api/Processor;)Ljava/lang/String;");
+     	static jmethodID MID_version = (jmethodID)environ->env->GetStaticMethodID(saxonCAPIClass, "getProductVersion", "(Lnet/sf/saxon/s9api/Processor;)Ljava/lang/String;");
     	if (!MID_version) {
         	std::cerr<<"\nError: MyClassInDll "<<"SaxonCAPI.getProductVersion()"<<" not found"<<std::endl;
         	return NULL;
@@ -356,16 +360,16 @@ XdmNode * SaxonProcessor::parseXmlFromString(const char* source){
 
 int SaxonProcessor::getNodeKind(jobject obj){
 	jclass xdmNodeClass = lookForClass(environ->env, "Lnet/sf/saxon/s9api/XdmNode;");
-	jmethodID mID = (jmethodID) environ->env->GetMethodID(xdmNodeClass,"getNodeKind", "()Lnet/sf/saxon/s9api/XdmNodeKind;");
-	if (!mID) {
+	static jmethodID nodeKindMID = (jmethodID) environ->env->GetMethodID(xdmNodeClass,"getNodeKind", "()Lnet/sf/saxon/s9api/XdmNodeKind;");
+	if (!nodeKindMID) {
 		cerr << "Error: MyClassInDll." << "getNodeKind" << " not found\n"
 				<< endl;
 		return 0;
 	} 
 
-	jobject nodeKindObj = (environ->env->CallObjectMethod(obj, mID));
+	jobject nodeKindObj = (environ->env->CallObjectMethod(obj, nodeKindMID));
 	if(!nodeKindObj) {
-		std::cout<<"saxonPRoc nodeKind error"<<std::endl;
+		std::cout<<"saxonProc nodeKind error"<<std::endl;
 		return 0;
 	}
 	jclass xdmUtilsClass = lookForClass(environ->env, "Lnet/sf/saxon/option/cpp/XdmUtils;");
@@ -443,14 +447,21 @@ XdmNode * SaxonProcessor::parseXmlFromUri(const char* source){
 
 
 void SaxonProcessor::release(){
- 	finalizeJavaRT (environ->jvm);
-#ifdef DEBUG
-     std::cerr<<"SaxonProc: release called"<<std::endl;
-#endif
-	/*delete environ;
-	//free(proc);
-	clearParameters();
+//std::cerr<<"SaxonProc: release called!"<<std::endl;
+	if(jvmCreatedCPP!=0) {
+//std::cerr<<"SaxonProc: jvmCreatedCPP!"<<std::endl;
+		jvmCreatedCPP =0;
+
+ 		finalizeJavaRT (environ->jvm);
+
+		//delete environ ;
+	/*clearParameters();
 	clearProperties();*/
+} else {
+//#ifdef DEBUG
+     std::cerr<<"SaxonProc: JVM finalize not called!"<<std::endl;
+//#endif
+}
 }
 
 

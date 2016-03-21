@@ -70,12 +70,12 @@ HANDLE loadDll(char* name)
 #endif
 
     if (!hDll) {
-        printf ("Unable to load %s\n", name);
+        fprintf (stderr, "Unable to load %s\n", name);
 	perror("Error: ");
         exit(1);
     }
 #ifdef DEBUG
-    printf ("%s loaded\n", name);
+    fprintf (stderr, "%s loaded\n", name);
 #endif
 
     return hDll;
@@ -98,7 +98,11 @@ void initDefaultJavaRT(sxnc_environment ** env){
  */
 void initJavaRT(HANDLE myDllHandle, JavaVM** pjvm, JNIEnv** penv)
 {
-    //perror ("initJavaRT - load Saxon/C library\n");
+if(jvmCreated==0) {
+     jvmCreated=1;
+#ifdef DEBUG
+    perror ("initJavaRT - load Saxon/C library\n");
+#endif
     int result;
     JavaVMInitArgs args;
     JNI_GetDefaultJavaVMInitArgs_func =
@@ -108,6 +112,10 @@ void initJavaRT(HANDLE myDllHandle, JavaVM** pjvm, JNIEnv** penv)
 #else
     GetProcAddress (myDllHandle, "JNI_GetDefaultJavaVMInitArgs");
 #endif
+
+#ifdef DEBUG
+    fprintf (stderr,"initJavaRT - check point 0\n");
+#endif 
     
     JNI_CreateJavaVM_func =
     (jint (JNICALL *) (JavaVM **pvm, void **penv, void *args))
@@ -118,14 +126,18 @@ void initJavaRT(HANDLE myDllHandle, JavaVM** pjvm, JNIEnv** penv)
     GetProcAddress (myDllHandle, "JNI_CreateJavaVM");
     
 #endif
+
+#ifdef DEBUG
+    fprintf (stderr,"initJavaRT - check point 1\n");
+#endif
     
     if(!JNI_GetDefaultJavaVMInitArgs_func) {
-        printf ("%s doesn't contain public JNI_GetDefaultJavaVMInitArgs\n", getDllname());
+        fprintf (stderr,"%s doesn't contain public JNI_GetDefaultJavaVMInitArgs\n", getDllname());
         exit (1);
     }
     
     if(!JNI_CreateJavaVM_func) {
-        printf ("%s doesn't contain public JNI_CreateJavaVM\n", getDllname());
+        fprintf (stderr,"%s doesn't contain public JNI_CreateJavaVM\n", getDllname());
         exit (1);
     }
     
@@ -134,24 +146,33 @@ void initJavaRT(HANDLE myDllHandle, JavaVM** pjvm, JNIEnv** penv)
     args.version = JNI_VERSION_1_2;
     result = JNI_GetDefaultJavaVMInitArgs_func(&args);
     if (result != JNI_OK) {
-        printf("JNI_GetDefaultJavaVMInitArgs() failed with result\n");
+        fprintf(stderr,"JNI_GetDefaultJavaVMInitArgs() failed with result\n");
         exit(1);
-    }  
+    }
+
+#ifdef DEBUG
+    fprintf (stderr,"initJavaRT - before JNI_CreateJavaVM_func\n");
+#endif  
     /*
      * NOTE: no JVM is actually created
      * this call to JNI_CreateJavaVM is intended for JET RT initialization
      */
     result = JNI_CreateJavaVM_func (pjvm, (void **)penv, &args);
     if (result != JNI_OK) {
-        printf("JNI_CreateJavaVM() failed with result\n");
+        fprintf(stderr,"JNI_CreateJavaVM() failed with result: %i\n",result);
         exit(1);
     }
 
 #ifdef DEBUG
-    printf ("JET RT initialized\n");
-
+    fprintf (stderr, "JET RT initialized\n");
+   fflush (stderr);
 #endif
     fflush (stdout);
+  } else {
+#ifdef DEBUG
+    perror ("initJavaRT - Saxon/C library loaded already\n");
+#endif
+	}
 }
 
 
@@ -363,10 +384,11 @@ const char * checkForException(sxnc_environment environ, jclass callingClass,  j
 void finalizeJavaRT (JavaVM* jvm)
 {
 
-  if(!jvm){
-	  printf("\njvm is null\n");	
+  if(jvmCreated!= 0){
+    printf("\njvm is null\n");	
+    (*jvm)->DestroyJavaVM (jvm);
+    jvmCreated=0;	
   }
-  (*jvm)->DestroyJavaVM (jvm);
 }
 
 

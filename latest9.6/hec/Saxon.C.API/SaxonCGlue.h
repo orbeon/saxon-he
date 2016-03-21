@@ -74,6 +74,9 @@ static char resources_dir[] =
          "C:\\Program Files\\Saxonica\\SaxonHEC1.0.0\\saxon-data";
     #endif
 
+// Static variable used to track when jvm has been created. Used to prevent creation more than once.
+static int jvmCreated =0;
+
 
 //===============================================================================================//
 /*! <code>Environment</code>. This struct captures the jni, JVM and handler to the cross compiled Saxon/C library.
