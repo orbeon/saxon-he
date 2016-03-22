@@ -137,7 +137,6 @@ SaxonProcessor::SaxonProcessor(bool l){
 
      if(jvmCreatedCPP == 0){
 	jvmCreatedCPP=1;
-std::cerr<<"SaxonProc constructor: jvm created!"<<jvmCreatedCPP<<" refCount="<<refCount<<std::endl;
     environ = new sxnc_environment;//(sxnc_environment *)malloc(sizeof(sxnc_environment));
 
     /*
