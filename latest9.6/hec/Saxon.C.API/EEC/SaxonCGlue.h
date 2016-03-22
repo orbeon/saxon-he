@@ -58,11 +58,11 @@ EXTERN_C
 
 static char dllname[] =
     #ifdef __linux__
-        "/usr/lib/libsaxoneec.so";  //rename according to product edition (-hec or -pec) Also make change in the c file
+        "/usr/lib/libsaxoneec.so";  //rename according to product edition (hec or pec) Also make change in the c file
     #elif  defined (__APPLE__) && defined(__MACH__)
         "/usr/lib/libsaxoneec.dylib";
     #else
-         "C:\\Program Files\\Saxonica\\SaxonEEC1.0.0\\libsaxoneec.dll";
+         "C:\\Program Files\\Saxonica\\SaxonHEC1.0.1\\libsaxoneec.dll";
     #endif
 
 static char resources_dir[] = 
@@ -71,8 +71,11 @@ static char resources_dir[] =
     #elif  defined (__APPLE__) && defined(__MACH__)
         "/usr/lib/saxon-data";
     #else
-         "C:\\Program Files\\Saxonica\\SaxonEEC1.0.0\\saxon-data";
+         "C:\\Program Files\\Saxonica\\SaxonHEC1.0.1\\saxon-data";
     #endif
+
+// Static variable used to track when jvm has been created. Used to prevent creation more than once.
+static int jvmCreated =0;
 
 
 //===============================================================================================//

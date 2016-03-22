@@ -7,11 +7,11 @@
 4. [Technical](#tech)
 5. [Limitations](#limitations)
 
-Saxon/C 1.0.0 is the latest major release of Saxon-HE/PE/EE on the C/C++ programming platform. The APIs support the specifications XSLT 2.0/3.0, XQuery 1.0/3.0, Schema Validation 1.0/1.1 and XPath 2.0/3.0 from C/C++ or PHP applications.
+Saxon/C 1.0.1 is the latest major release of Saxon-HE/PE/EE on the C/C++ programming platform. The APIs support the specifications XSLT 2.0/3.0, XQuery 1.0/3.0, Schema Validation 1.0/1.1 and XPath 2.0/3.0 from C/C++ or PHP applications.
 
-Saxon/C is built from the Saxon 9.6.0.9 Java product using the Excelsior JET tool (version 11 MP1).
+Saxon/C is built from the Saxon 9.6.0.9 Java product using the Excelsior JET tool (version 11 MP2).
 
-Platforms supported: Linux Only.
+Platforms supported: Linux Only. 
 Windows will be supported shortly
 
 Saxon/C is release in three separate editions which replicating the products on the Java platform: Enterprise (Saxon-EE/C), Professional Editon (Saxon-PE/C), and Home Edition (Saxon-HE/C)
@@ -20,13 +20,13 @@ Saxon/C is release in three separate editions which replicating the products on 
 ## Installation: ##
 
 #### Saxon-HE/C, Saxon-PE/C and Saxon-EE/C: ####
-To install any of the Saxon/C releases, unzip the the file libsaxon-EDITION-setup-v1.0.0.zip and execute the command './libsaxon-EDITION-setup-v1.0.0'
+To install any of the Saxon/C releases, unzip the the file libsaxon-EDITION-setup-v#.#.#.zip and execute the command './libsaxon-EDITION-setup-v#.#.#'
 First step is to select the destination of where the product files will be installed.
 The product files are unpacked in the directory 'Saxon-EDITIONC'
 
 Link the dynamic saxon library so it can be found. For example:
 
-	ln -s /usr/lib/Saxonica/Saxon-EDITIONC1.0.0/libsaxonEDITION.so /usr/lib/libsaxonEDITION.so
+	ln -s /usr/lib/Saxonica/Saxon-EDITIONC#.#.#/libsaxonEDITION.so /usr/lib/libsaxonEDITION.so
 
 You need to setup the environment for the jet jvm. The jvm is in the directory JET-home=Saxonica/Saxon-EDITION1.1.0/rt
 The directory JET-home/lib/i386  or JET_home/lib/amd64 (for 64-bit machines) must be listed in the LD_LIBRARY_PATH environment variable. For instance, if you
@@ -38,7 +38,7 @@ We assume that the 'rt' directory is in the location /usr/lib.
 
 Link the jetvm library so it can be found. For example:
 
-	ln -s /usr/lib/Saxonica/Saxon-EDITIONC1.0.0/rt /usr/lib/rt
+	ln -s /usr/lib/Saxonica/Saxon-EDITIONC#.#.#/rt /usr/lib/rt
 
 The Saxon-EDITION API assumes the library is installed as follows: '/usr/lib/libsaxonhec.so', '/usr/lib/libsaxonpec.so' or '/usr/lib/libsaxoneec.so'
 The directory 'saxon-data' must be linked ot copied to '/usr/lib', alternatively you can use the ennvironment variable SAXONC_HOME to locate directory.
@@ -101,7 +101,7 @@ For C++ programming see sample code for XSLT, XQuery, Schema Validation and XPat
 
 The following files are required to build Saxon/C on C++:  SaxonCGlue.c, SaxonCXPath.c, XdmValue.cpp, XdmItem.cpp, XdmNode.cpp, XdmAtomicValue.cpp, SaxonProcessor.cpp, XsltProcessor.cpp and XQueryProcessor.cpp, XPathProcessor.cpp, SchemaValidator.cpp
 
-To compile the sample test code in C++ execute the 'build.sh' file the directory 'cppTests'. This file builds executables for the test cases testing XSLT, XPath, XQuery and schema Validator. The command is similar to the following:
+To compile the sample test code in C++ execute the 'build.sh' file the directory 'cppTests'. This file builds executables for the test cases testing XSLT, XPath, XQuery and schema Validator. The command is similar to the following: 
 
 > g++ -m32  ../bin/SaxonCGlue.o ../bin/SaxonCXPath.o ../bin/SaxonProcessor.o ../bin/XQueryProcessor.o ../bin/XsltProcessor.o ../bin/XPathProcessor.o ../bin/XdmValue.o ../bin/XdmItem.o ../bin/XdmNode.o ../bin/XdmAtomicValue.o ../bin/SchemaValidator.o testXSLT.cpp -o testXSLT -ldl -lc -lsaxon $1 $2
 
@@ -114,7 +114,7 @@ There are many parameters and options that can be set to control the way in whic
 
 The example below shows how we can set the configuration features on the processor before we create any of the processors (.e.g. XsltProcessor, XQueryProcess, etc):
 
-> processor->setConfigurationProperty("xsdversion", "1.1");
+> processor->setConfigurationProperty("xsdversion", "1.1"); 
 or
 > processor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSchemaImports", "on");
 
@@ -149,7 +149,7 @@ The properties are a subset to those specified for running XSLT from the [comman
 
 
 Example 1:
-
+ 
 <pre><code>
 	SaxonProcessor *processor = new SaxonProcessor(true);
 	XsltProcessor * xslt = processor->newTransformer();
@@ -166,7 +166,7 @@ Example 2:
         xslt->setSourceFile("xml/foo.xml");
 	XdmAtomicValue * xdmvaluex =processor->makeStringValue("Hello to you");
 	if(xdmvaluex !=NULL){
-		cerr<< "xdmvaluex ok"<<endl;
+		cerr<< "xdmvaluex ok"<<endl; 			
 	}
 	xslt->setParameter("a-param", xdmvaluex);
         const char * result = test->transformFileToString(NULL, "xsl/foo.xsl");
@@ -238,11 +238,11 @@ Example:
 <pre><code>
 	SaxonProcessor *processor = new SaxonProcessor();
 	XPathProcessor * xpath = processor->newXPathProcessor();
-
+ 
 	xpath->setContextFile("cat.xml");
 
 	XdmValue * resultValues = xpath->evaluate("//person");
-
+	
 	if(resultValues == NULL) {
 		 printf("result is null \n");
 	} else {
@@ -253,7 +253,7 @@ Example:
 				cout<<"Item at position "<<i<<" should not be null"<<endl;
 				break;
 			}
-			cout<<"Item at "<<i<<" ="<<itemi->getStringValue(processor)<<endl;
+			cout<<"Item at "<<i<<" ="<<itemi->getStringValue(processor)<<endl;		
 		}
 	}
 	xpath->clearParameters(true);
@@ -264,7 +264,7 @@ Example:
 
 | Name | Example | Comment |
 | :---- | :---- | :---- |
-| 'node'=xdmValue | setParameter("node",xdmNodeObj) | Sets the source document for query. We also accept the parameter names 'item'.|
+| 'node'=xdmValue | setParameter("node",xdmNodeObj) | Sets the source document for the validation. We also accept the parameter names 'item'.|
 | param=xdmValue | setParameter("numParam",value1) | Set the value of external variable defined in the query |
 
 #### setProperty(string $name, string $propValue) Method ####
@@ -274,9 +274,16 @@ The properties are a subset to those specified for running the Schema Validator 
 | :---- | :---- | :---- |
 |![serialization name]=value  | setProperty("!INDENT","yes") | Influence the serialization of the XML by the parameters specified with a exclamation mark with a name and the value. See [Documentation](http://saxonica.com/documentation/index.html#!javadoc/net.sf.saxon.s9api/Serializer/Property) |
 | 'o'=filename | setProperty("o", "output.xml") | Sets the destination for the result of the XQuery to the specificed filename  |
+| 'string'=xml-string | setProperty("string",xml-string) | Sets the source document aas a string for validation. Parsing will happen when the validate method has been called.|
 | 'dtd'=boolean | setProperty("dtd", "true") | Set whether DTD validation should be applied to documents loaded |
 | 's'=filename | setProperty("s", "filename") | Identifies the source file or directory. Mandatory unless the -it option is used. |
 | 'resources'=directory | setProperty("resources", "dir") | Specifies the directory where the resources file are found|
+| 'report-node'=boolean | setProperty("report-node", "true") | Flag for validation reporting feature. Error validation failures are represented in an XML document |
+| 'report-file'=filename | setProperty("report-file", "filename") | Switches on the validation reporting feature. Validation failures collected and saved in an XML format in a file.|
+| 'verbose'=boolean | setProperty("verbose", "true") | Set verbose mode to output to the terminal validation exceptions. The default is on providing the reporting feature has not been enabled.|
+| 'element-type'=string | setProperty("element-type", "{uri}local") | Set the name of the required type of the top-level element of the document to be validated. The string should be in the Clark notation: {uri}local|
+| 'element-name'=string | setProperty("element-name", "{uri}local") | Set the name of the required top-level element of the document to be validated (that is, the name of the outermost element of the document). The string should be in the Clark notation: {uri}local|
+| 'lax'=boolean | setProperty("lax", "true") | The validation mode may be either strict or lax. Default is strict. This property indicates that lax validation is required.|
 
 Example:
 
@@ -286,12 +293,12 @@ Example:
 	processor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSchemaImports", "on");
 	SchemaValidator * val = processor->newSchemaValidator();
 	val->registerSchemaFromFile("family-ext.xsd");
-
+      
 	val->registerSchemaFromFile("family.xsd");
-	val->setProperty("report-node", "true");
+	val->setProperty("report-node", "true");	
 	val->setProperty("verbose", "true");
 	val->validate("family.xml");
-	XdmNode * node = val->getValidationReport();
+	XdmNode * node = val->getValidationReport(); 
 	if(node != NULL) {
 		cout<<endl<<"Validation Report"<<node->getStringValue()<<endl;
 	} else {
@@ -400,10 +407,10 @@ The methods on these class are given below. For a more comprehensive description
 | void | setProperty(string $name, string $value) <br> *Set properties for Query.* |
 | void | clearParameters() <br> *Clear parameter values set* |
 | void | clearProperties() <br> *Clear property values set* |
-| void | exceptionClear() <br> *Clear any exception thrown*
+| void | exceptionClear() <br> *Clear any exception thrown* 
 | string | getErrorCode(int $i) <br> *Get the ith error code if there are any errors*  |
 | string | getErrorMessage(int $i) <br> *Get the ith error message if there are any error* |
-| int | getExceptionCount() <br> *Get number of error during execution or evaluate of stylesheet and query, respectively* |
+| int | getExceptionCount() <br> *Get number of error during execution or evaluate of stylesheet and query, respectively* | 
 
 #### Saxon\\SchemaValidator class ####
 <sup>PHP API</sup>
@@ -414,7 +421,7 @@ The methods on these class are given below. For a more comprehensive description
 | void | setOutputFile(string $fileName) <br> *The instance document to be validated. Supplied file name is resolved and accessed* |
 | void | registerSchemaFromFile(string $fileName) <br> *Register the Schema which is given as file name.* |
 | void | registerSchemaFromString(string $schemaStr) <br> *Register the Schema which is given as a string representation.* |
-| void | validate() <br> *Validate an instance document supplied as a Source object. Assume source document has already been supplied through accessor methods* |
+| void | validate() <br> *Validate an instance document supplied as a Source object. Assume source document has already been supplied through accessor methods* | 
 | void | validate(string $fileName) <br> *Validate an instance document supplied as a Source object. $filename - The name of the file to be validated. $filename can be null* |
 | XdmNode | validateToNode() <br> *Validate an instance document supplied as a Source object with the validated document returned to the calling program. Assume source document has already been supplied through accessor methods* |
 | XdmNode | validateToNode(string $fileName) <br> *Validate an instance document supplied as a Source object with the validated document returned to the calling program. $filename - The name of the file to be validated. $filename can be null* |
@@ -423,7 +430,7 @@ The methods on these class are given below. For a more comprehensive description
 | void | setProperty(string $name, string $value) <br> *Set properties for Schema Validator.* |
 | void | clearParameters() <br> *Clear parameter values set* |
 | void | clearProperties() <br> *Clear property values set* |
-| void | exceptionClear() <br> *Clear any exception thrown*
+| void | exceptionClear() <br> *Clear any exception thrown* 
 | string | getErrorCode(int $i) <br> *Get the ith error code if there are any errors*  |
 | string | getErrorMessage(int $i) <br> *Get the ith error message if there are any error* |
 | int | getExceptionCount() <br> *Get number of error during execution of the validator* |
@@ -481,7 +488,7 @@ In the Saxon/C download please see the PHP unit tests for XSLT, XQuery, XPath an
 
 Example code XSLT processing:
 <pre><code>
-	<?php
+	<?php 
 	        $xmlfile = "xml/foo.xml";
 	        $xslFile = "xsl/foo.xsl";
 		$proc = new Saxon\\SaxonProcessor();
@@ -489,16 +496,16 @@ Example code XSLT processing:
             	echo 'Saxon Processor version: '.$version;
 		$xsltProc = $saxonProc->newXsltProcessor();
                 $xsltProc->setSourceFromFile($xmlfile);
-                $xsltProc->compileFromFile($xslFile);
-                $result = $xsltProc->transformToString();
-		if($result != null) {
+                $xsltProc->compileFromFile($xslFile);      
+                $result = $xsltProc->transformToString();               
+		if($result != null) {               
 		  echo '<b>exampleSimple1:</b><br/>';
 		  echo 'Output:'.$result;
 		} else {
 			echo "Result is null";
 		}
 		$xsltProc->clearParameters();
-		$xsltProc->clearProperties();
+		$xsltProc->clearProperties(); 
 	?>
 </code></pre>
 
@@ -506,29 +513,29 @@ Example code XSLT processing:
 In the example below we show how to debug if something unexpected is happening. It is also very useful to examine the apache error.log file:
 
 <pre><code>
-	<?php
+	<?php 
 	        $xmlfile = "xml/foo.xml";
 	        $xslFile = "xsl/foo.xsl";
 		$proc = new Saxon\\SaxonProcessor();
 		$xsltProc = $saxonProc->newXsltProcessor();
                 $xsltProc->setSourceFromFile($xmlFile);
                 $xsltProc->compileFromFile($xslFile);
-
+                
                 $result = $xsltProc->transformToString();
-
+                
                 if($result == NULL) {
                     $errCount = $xsltProc->getExceptionCount();
-				    if($errCount > 0 ){
+				    if($errCount > 0 ){ 
 				        for($i = 0; $i < $errCount; $i++) {
 					       $errCode = $xsltProc->getErrorCode(intval($i));
 					       $errMessage = $xsltProc->getErrorMessage(intval($i));
 					       echo 'Expected error: Code='.$errCode.' Message='.$errMessage;
 					   }
-						$xsltProc->exceptionClear();
+						$xsltProc->exceptionClear();	
 					}
-
-
-                }
+                
+                
+                }                
                 echo $result;
             	$xsltProc->clearParameters();
 		$xsltProc->clearProperties();
@@ -550,10 +557,11 @@ The XML parser used is the one supplied by the Excelsior JET runtime. There are 
 <div id='limitations'/>
 ## Limitations: ##
 
-The following limitations apply to the the 1.0.0 release:
+The following limitations apply to the the 1.0 release:
 
 * No support for the XdmFunction type in the Xdm data model
 * No supports for external functions in XSLT and XQuery
+
 
 ### Feedback/Comments: ###
 

@@ -423,7 +423,7 @@ int main()
 
     SaxonProcessor * processor = new SaxonProcessor(true);
     cout<<"Test: XsltProcessor with Saxon version="<<processor->version()<<endl<<endl; 
-    processor->setcwd("/home/ond1/work/svn/Saxon.C.Api/cppTests");
+    //processor->setcwd("/home/");
     processor->setConfigurationProperty("http://saxon.sf.net/feature/generateByteCode", "off");
 
     XsltProcessor * trans = processor->newXsltProcessor();

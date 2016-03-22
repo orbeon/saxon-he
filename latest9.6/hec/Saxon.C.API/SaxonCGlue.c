@@ -112,10 +112,7 @@ if(jvmCreated==0) {
 #else
     GetProcAddress (myDllHandle, "JNI_GetDefaultJavaVMInitArgs");
 #endif
-
-#ifdef DEBUG
-    fprintf (stderr,"initJavaRT - check point 0\n");
-#endif 
+ 
     
     JNI_CreateJavaVM_func =
     (jint (JNICALL *) (JavaVM **pvm, void **penv, void *args))
@@ -127,9 +124,6 @@ if(jvmCreated==0) {
     
 #endif
 
-#ifdef DEBUG
-    fprintf (stderr,"initJavaRT - check point 1\n");
-#endif
     
     if(!JNI_GetDefaultJavaVMInitArgs_func) {
         fprintf (stderr,"%s doesn't contain public JNI_GetDefaultJavaVMInitArgs\n", getDllname());
@@ -149,10 +143,7 @@ if(jvmCreated==0) {
         fprintf(stderr,"JNI_GetDefaultJavaVMInitArgs() failed with result\n");
         exit(1);
     }
-
-#ifdef DEBUG
-    fprintf (stderr,"initJavaRT - before JNI_CreateJavaVM_func\n");
-#endif  
+  
     /*
      * NOTE: no JVM is actually created
      * this call to JNI_CreateJavaVM is intended for JET RT initialization
@@ -163,10 +154,7 @@ if(jvmCreated==0) {
         exit(1);
     }
 
-#ifdef DEBUG
-    fprintf (stderr, "JET RT initialized\n");
-   fflush (stderr);
-#endif
+
     fflush (stdout);
   } else {
 #ifdef DEBUG
@@ -385,7 +373,6 @@ void finalizeJavaRT (JavaVM* jvm)
 {
 
   if(jvmCreated!= 0){
-    printf("\njvm is null\n");	
     (*jvm)->DestroyJavaVM (jvm);
     jvmCreated=0;	
   }

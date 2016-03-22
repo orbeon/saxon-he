@@ -62,7 +62,7 @@ static char dllname[] =
     #elif  defined (__APPLE__) && defined(__MACH__)
         "/usr/lib/libsaxoneec.dylib";
     #else
-         "C:\\Program Files\\Saxonica\\SaxonHEC1.0.0\\libsaxonhec.dll";
+         "C:\\Program Files\\Saxonica\\SaxonHEC1.0.1\\libsaxonhec.dll";
     #endif
 
 static char resources_dir[] = 
@@ -71,7 +71,7 @@ static char resources_dir[] =
     #elif  defined (__APPLE__) && defined(__MACH__)
         "/usr/lib/saxon-data";
     #else
-         "C:\\Program Files\\Saxonica\\SaxonHEC1.0.0\\saxon-data";
+         "C:\\Program Files\\Saxonica\\SaxonHEC1.0.1\\saxon-data";
     #endif
 
 // Static variable used to track when jvm has been created. Used to prevent creation more than once.

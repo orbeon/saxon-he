@@ -40,9 +40,8 @@ int main()
     setParameter(&parameters, &parLen, &parCap,"", "numParam", num);
   
 
-    const char *result = xsltApplyStylesheet(*environ, &processor, "/home/ond1/work/svn/Saxon.C.Api/cTests/", "ORP0301177AA__EE__30954_sinsello.xml","campos.xsl", 0 ,0, 0, 0);
+    const char *result = xsltApplyStylesheet(*environ, &processor, NULL, "cat.xml","test.xsl", 0 ,0, 0, 0);
   
-    /*xsltSaveResultToFile(*environ, &processor, "/home/ond1/work/svn/Saxon.C.Api/cTests/", "cat.xml","test.xsl", "output.txt", parameters ,0, parLen, 0);*/
 	
 
     if(!result) {

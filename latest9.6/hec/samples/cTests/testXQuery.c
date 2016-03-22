@@ -42,9 +42,8 @@ int main()
 
     setProperty(&properties, &propLen, &propCap, "qs", "<out>{count(/out/person)}</out>");
 
-    const char * result = executeQueryToString(*environ, &processor, "/home/ond1/work/svn/Saxon.C.Api/cTests/", 0,properties,0,propLen);
+    const char * result = executeQueryToString(*environ, &processor, NULL, 0,properties,0,propLen);
 
-    //executeQueryToFile(*environ, &processor, "/home/ond1/work/svn/Saxon.C.Api/ctests/", "xquerOut.txt", 0,properties,0,propLen);
     if(!result) {
       printf("result is null\n");
     }else {

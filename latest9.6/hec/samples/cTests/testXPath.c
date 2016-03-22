@@ -38,9 +38,9 @@ int main()
     setProperty(&properties, &propLen, &propCap, "s", "cat.xml");
     
 
-    sxnc_value * result = evaluate(*environ,&processor, "/home/ond1/work/svn/Saxon.C.Api/cTests/", "/out/person", 0, properties, 0, propLen);
+    sxnc_value * result = evaluate(*environ,&processor, NULL, "/out/person", 0, properties, 0, propLen);
 
- bool resultBool = effectiveBooleanValue(*environ,&processor, "/home/ond1/work/svn/Saxon.C.Api/cTests/", "count(/out/person)>0", 0, properties, 0, propLen);
+ bool resultBool = effectiveBooleanValue(*environ,&processor, NULL, "count(/out/person)>0", 0, properties, 0, propLen);
  
     if(!result) {
       printf("result is null");
