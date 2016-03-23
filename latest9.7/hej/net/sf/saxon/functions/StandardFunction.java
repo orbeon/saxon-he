@@ -325,10 +325,10 @@ public abstract class StandardFunction {
 
         register("default-language", DynamicContextAccessor.DefaultLanguage.class, 0, 0, BuiltInAtomicType.LANGUAGE, ONE, CORE, DLANG);
 
-        register("distinct-values#1", DistinctValues.class, 1, 2, BuiltInAtomicType.ANY_ATOMIC, STAR, CORE, DCOLL | AS_ARG0 | FILTER | UO)
+        register("distinct-values#1", DistinctValues.class, 1, 2, BuiltInAtomicType.ANY_ATOMIC, STAR, CORE, DCOLL|UO)
                 .arg(0, BuiltInAtomicType.ANY_ATOMIC, STAR, EMPTY);
 
-        register("distinct-values#2", CollatingFunctionFree.class, 1, 2, BuiltInAtomicType.ANY_ATOMIC, STAR, CORE, BASE|AS_ARG0|FILTER|UO)
+        register("distinct-values#2", CollatingFunctionFree.class, 1, 2, BuiltInAtomicType.ANY_ATOMIC, STAR, CORE, BASE|UO)
                 .arg(0, BuiltInAtomicType.ANY_ATOMIC, STAR, EMPTY)
                 .arg(1, BuiltInAtomicType.STRING, ONE, null);
 
