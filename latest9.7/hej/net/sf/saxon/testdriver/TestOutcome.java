@@ -383,6 +383,10 @@ public class TestOutcome {
         } else if (tag.equals("assert-message")) {
             XdmNode subAssertion = (XdmNode) catalogXpc.evaluateSingle("*", assertion);
             for (XdmNode message : xslMessages) {
+                if (message.getNodeName().getLocalName().equals("trust") && message.getStringValue().equals("me")) {
+                    // In the JS tests, assume message assertions are OK
+                    return true;
+                }
                 if (testAssertion2(subAssertion, new SingleResultDoc(message, ""), assertXpc, catalogXpc, debug)) {
                     return true;
                 }
@@ -714,15 +718,17 @@ public class TestOutcome {
             String regex = assertion.getStringValue();
             List<String> warnings = new ArrayList<String>(1);
             try {
+                String principalSerializedResult = getPrincipalSerializedResult();
+                if (principalSerializedResult == null) {
+                    driver.println("No serialized result available!");
+                    return false;
+                }
                 RegularExpression re = Version.platform.compileRegularExpression(regex, flagsAtt, "XP30", warnings);
-                //if (re.containsMatch(getPrincipalSerializedResult())) {
-                if (re.containsMatch(result.serialization)) {
+                if (re.containsMatch(principalSerializedResult)) {
                     return true;
                 } else {
                     driver.println("Serialized result:");
-                    driver.println(result.serialization);
-                    //driver.println("Regex:");
-                    //driver.println(regex);
+                    driver.println(principalSerializedResult);
                     return false;
                 }
             } catch (XPathException e) {

@@ -819,7 +819,7 @@ public abstract class StandardFunction {
                 .arg(0, BuiltInAtomicType.ANY_ATOMIC, STAR, null)
                 .arg(1, BuiltInAtomicType.ANY_ATOMIC, OPT, null);
 
-        register("system-property", SystemProperty.class, 1, 1, BuiltInAtomicType.STRING, ONE, XSLT | USE_WHEN, NS)
+        register("system-property", SystemProperty.class, 1, 1, BuiltInAtomicType.STRING, ONE, XSLT | USE_WHEN, NS | LATE)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null);
 
         register("tail", TailFn.class, 1, 1, AnyItemType.getInstance(), STAR, XPATH30, AS_ARG0|FILTER)

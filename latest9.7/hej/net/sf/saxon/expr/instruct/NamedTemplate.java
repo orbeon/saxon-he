@@ -305,7 +305,7 @@ public class NamedTemplate extends ComponentCode<NamedTemplate> {
 
     public void export(ExpressionPresenter presenter) {
         presenter.startElement("template");
-        presenter.emitAttribute("name", getTemplateName());
+        presenter.emitAttribute("name", getTemplateName().getEQName());
         explainProperties(presenter);
 
         presenter.emitAttribute("slots", "" + getStackFrameMap().getNumberOfVariables());

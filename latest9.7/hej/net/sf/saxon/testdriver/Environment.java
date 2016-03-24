@@ -47,6 +47,7 @@ public class
     public XQueryCompiler xqueryCompiler;
     public XsltCompiler xsltCompiler;
     public XsltExecutable xsltExecutable;
+    public File exportedStylesheet;
     public XdmItem contextItem;
     public HashMap<QName, XdmValue> params = new HashMap<QName, XdmValue>();
     public boolean usable = true;
@@ -226,6 +227,10 @@ public class
                 driver.println("**** failure while compiling environment-defined stylesheet " + fileName);
                 environment.failedToBuild = true;
                 environment.usable = false;
+            }
+            if (driver.runWithJS) {
+                String sourceFile = ((XdmNode) env).getBaseURI().resolve(fileName).toString();
+                environment.exportedStylesheet = driver.exportStylesheet(environment.xsltCompiler, sourceFile);
             }
         }
 
@@ -579,7 +584,7 @@ public class
         }
         final HashMap<String, ResourceCollection> collections = new HashMap<String, ResourceCollection>();
         AbstractResourceCollection collectioni = null;
-        Configuration config = environment.processor.getUnderlyingConfiguration();
+        final Configuration config = environment.processor.getUnderlyingConfiguration();
         for (XdmItem coll : xpc.evaluate("collection", env)) {
             final List<Resource> resourcesi = new ArrayList<Resource>();
 
@@ -792,7 +797,7 @@ public class
 
             String role = ((XdmNode) source).getAttributeValue(new QName("role"));
             String href = ((XdmNode) source).getAttributeValue(new QName("file"));
-            if ("true".equals(streaming)) {
+            if ("true".equals(streaming) || driver.runWithJS) {
                 if (".".equals(role)) {
                     if (href == null) {
                         environment.streamedContent = xpc.evaluate("string(content)", source).toString();

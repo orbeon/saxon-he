@@ -41,6 +41,8 @@ public abstract class TestDriver {
     protected TreeModel treeModel = TreeModel.TINY_TREE;
     protected boolean debug = false;
     protected boolean export = false;
+    protected boolean runWithJS = false;
+    protected String jsBase = null;
     protected Pattern testPattern = null;
     protected String requestedTestSet = null;
     protected String testSuiteDir;
@@ -63,6 +65,10 @@ public abstract class TestDriver {
     }
 
     public abstract String catalogNamespace();
+
+    public boolean hasEECapability() {
+        return false;
+    }
 
     public void go(String[] args) throws Exception {
 
@@ -93,6 +99,14 @@ public abstract class TestDriver {
             }
             if (args[i].startsWith("-export")) {
                 export = true;
+            }
+            if (args[i].startsWith("-js")) {
+                export = true;
+                runWithJS = true;
+                treeModel = DOMObjectModel.getInstance();
+                if (args[i].startsWith("-js:")) {
+                    jsBase = args[i].substring(4);
+                }
             }
             if (args[i].equals("-unfolded")) {
                 unfolded = true;
@@ -269,6 +283,10 @@ public abstract class TestDriver {
 
     }
 
+    protected String getNameOfExceptionsFile() {
+        return "exceptions.xml";
+    }
+
     /**
      * Look for an exceptions.xml document with the general format:
      * <p/>
@@ -295,7 +313,7 @@ public abstract class TestDriver {
         QName edition = new QName("", "edition");
         String saxonEdition = driverProc.getSaxonEdition();
         try {
-            File exceptionsFile = new File(resultsDir + "/exceptions.xml");
+            File exceptionsFile = new File(resultsDir + "/" + getNameOfExceptionsFile());
             System.err.println("Loading exceptions file " + exceptionsFile.getAbsolutePath());
             exceptionsDoc = exceptBuilder.build(exceptionsFile);
             XdmSequenceIterator iter = exceptionsDoc.axisIterator(Axis.DESCENDANT, new QName("", "exception"));
@@ -415,6 +433,14 @@ public abstract class TestDriver {
     public void registerXQueryModule(String uri, File resource) {
         queryModules.put(uri, resource);
     }
+
+    /**
+     * Export a stylesheet (used in the XSLT JS driver
+     */
+
+    public File exportStylesheet(XsltCompiler compiler, String fileName) {
+        return null;
+    };
 
     /**
      * Inject code into a compiled query

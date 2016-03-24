@@ -243,5 +243,17 @@ public class SameNameTest extends NodeTest implements QNameTest {
                 matchesNode(((SameNameTest) other).origin);
     }
 
+    /**
+     * Generate Javascript code to test if a name matches the test.
+     *
+     * @return JS code as a string. The generated code will be used
+     * as the body of a JS function in which the argument name "q" is an
+     * XdmQName object holding the name. The XdmQName object has properties
+     * uri and local.
+     */
+    public String generateJavaScriptNameTest() {
+        // Not applicable
+        return "false";
+    }
 }
 

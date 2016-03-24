@@ -61,9 +61,6 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
     @Override
     public Expression preEvaluate(ExpressionVisitor visitor) throws XPathException {
         SystemFunction target = getTargetFunction();
-        if (target instanceof StaticContextAccessor) {
-
-        }
         if ((target.getDetails().properties & StandardFunction.LATE) == 0) {
             return super.preEvaluate(visitor);
         } else {

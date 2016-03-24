@@ -49,7 +49,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
     protected static void usage() {
         System.err.println("java com.saxonica.testdriver.Xslt30TestSuiteDriver[HE] testsuiteDir catalog [-o:resultsdir] [-s:testSetName]" +
                                    " [-t:testNamePattern] [-bytecode:on|off|debug] [-export] [-tree] [-lang] [-save] [-streaming:off|std|ext]" +
-                                   " [-xt30:on] [-T]");
+                                   " [-xt30:on] [-T] [-js]");
     }
 
     @Override
@@ -308,27 +308,41 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
 
         }
 
-        if (sheet != null) {
+        // TODO - trap multiples?
+        XdmNode initialMode = (XdmNode) xpath.evaluateSingle("initial-mode", testInput);
+        XdmNode initialFunction = (XdmNode) xpath.evaluateSingle("initial-function", testInput);
+        XdmNode initialTemplate = (XdmNode) xpath.evaluateSingle("initial-template", testInput);
+
+        QName initialModeName = null;
+        if (initialMode != null) {
+            String attValue = initialMode.getAttributeValue(new QName("name"));
+            if ("#unnamed".equals(attValue)) {
+                initialModeName = new QName("xsl", NamespaceConstant.XSLT, "unnamed");
+            } else if ("#default".equals(attValue)) {
+                initialModeName = new QName("xsl", NamespaceConstant.XSLT, "default");
+            } else {
+                initialModeName = getQNameAttribute(xpath, testInput, "initial-mode/@name");
+            }
+        }
+
+        QName initialTemplateName = getQNameAttribute(xpath, testInput, "initial-template/@name");
+
+        if (runWithJS && !outcome.isException()) {
+            clearGlobalParameters();
+            Map<QName, XdmValue> caseGlobalParams = getNamedParameters(xpath, testInput, false, false);
+            for (Map.Entry<QName, XdmValue> entry : caseGlobalParams.entrySet()) {
+                setGlobalParameter(entry.getKey(), entry.getValue());
+            }
+            URI baseOut = new File(resultsDir + "/results/output.xml").toURI();
+            runJSTransform(env, outcome, initialTemplateName, initialModeName, baseOut);
+            if ("*notJS*".equals(outcome.getComment())) {
+                return;
+            }
+        }
+
+        if (sheet != null && !runWithJS) {
             XdmItem contextItem = env.contextItem;
 
-            // TODO - trap multiples?
-            XdmNode initialMode = (XdmNode) xpath.evaluateSingle("initial-mode", testInput);
-            XdmNode initialFunction = (XdmNode) xpath.evaluateSingle("initial-function", testInput);
-            XdmNode initialTemplate = (XdmNode) xpath.evaluateSingle("initial-template", testInput);
-
-            QName initialModeName = null;
-            if (initialMode != null) {
-                String attValue = initialMode.getAttributeValue(new QName("name"));
-                if ("#unnamed".equals(attValue)) {
-                    initialModeName = new QName("xsl", NamespaceConstant.XSLT, "unnamed");
-                } else if ("#default".equals(attValue)) {
-                    initialModeName = new QName("xsl", NamespaceConstant.XSLT, "default");
-                } else {
-                    initialModeName = getQNameAttribute(xpath, testInput, "initial-mode/@name");
-                }
-            }
-
-            QName initialTemplateName = getQNameAttribute(xpath, testInput, "initial-template/@name");
 
             String outputUri = xpath.evaluate("string(output/@file)", testInput).toString();
             if ("".equals(outputUri)) {
@@ -340,312 +354,20 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                 //baseOutputURI = testInput.getBaseURI().resolve(outputUri).toString();
                 baseOutputURI = baseOut.resolve(outputUri).toString();
             }
+            boolean failure;
             if (useXslt30Transformer) {
-                try {
-
-                    boolean assertsSerial = xpath.evaluate("result//(assert-serialization|assert-serialization-error|serialization-matches)", testCase).size() > 0;
-                    boolean resultAsTree = env.outputTree;
-                    boolean serializationDeclared = env.outputSerialize;
-                    XdmNode needsTree = (XdmNode) xpath.evaluateSingle("output/@tree", testInput);
-                    if (needsTree != null) {
-                        resultAsTree = needsTree.getStringValue().equals("yes");
-                    }
-                    XdmNode needsSerialization = (XdmNode) xpath.evaluateSingle("output/@serialize", testInput);
-                    if (needsSerialization != null) {
-                        serializationDeclared = needsSerialization.getStringValue().equals("yes");
-                    }
-                    boolean resultSerialized = serializationDeclared || assertsSerial;
-
-//                    if (assertsSerial) {
-//                        String comment = outcome.getComment();
-//                        comment = (comment == null ? "" : comment) + "*Serialization " + (serializationDeclared ? "declared* " : "required* ");
-//                        outcome.setComment(comment);
-//                    }
-
-
-                    Xslt30Transformer transformer = sheet.load30();
-                    transformer.setURIResolver(env);
-                    if (env.unparsedTextResolver != null) {
-                        transformer.getUnderlyingController().setUnparsedTextURIResolver(env.unparsedTextResolver);
-                    }
-                    if (tracing) {
-                        transformer.setTraceListener(new XSLTTraceListener());
-                    }
-
-                    Map<QName, XdmValue> caseGlobalParams = getNamedParameters(xpath, testInput, false, false);
-                    Map<QName, XdmValue> caseStaticParams = getNamedParameters(xpath, testInput, true, false);
-                    Map<QName, XdmValue> globalParams = new HashMap<QName, XdmValue>(env.params);
-                    globalParams.putAll(caseStaticParams);
-                    globalParams.putAll(caseGlobalParams);  // has to be this way to ensure test-local overrides global
-                    transformer.setStylesheetParameters(globalParams);
-
-                    if (contextItem != null) {
-                        transformer.setGlobalContextItem(contextItem);
-                    }
-
-                    transformer.setErrorListener(collector);
-
-                    transformer.setBaseOutputURI(baseOutputURI);
-
-                    transformer.setMessageListener(new MessageListener() {
-                        public void message(XdmNode content, boolean terminate, SourceLocator locator) {
-                            outcome.addXslMessage(content);
-                            System.err.println(content.getStringValue());
-                        }
-                    });
-
-                    XdmValue result = null;
-
-                    StringWriter sw = new StringWriter();
-
-                    Serializer serializer = env.processor.newSerializer(sw);
-                    //serializer.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, "yes");
-
-                    OutputResolver serializingOutput = new OutputResolver(env.processor, outcome, true);
-                    Controller controller = transformer.getUnderlyingController();
-
-                    controller.setOutputURIResolver(serializingOutput);
-                    Destination dest = null;
-                    if (resultAsTree && !resultSerialized) {
-                        // If we want non-serialized, we need to accumulate any result documents as trees too
-                        controller.setOutputURIResolver(
-                                new OutputResolver(env.processor, outcome, false));
-                        dest = new XdmDestination();
-                    }
-                    if (resultSerialized) {
-                        dest = serializer;
-                    }
-
-                    Source src = null;
-                    if (env.streamedFile != null) {
-                        src = new StreamSource(env.streamedFile);
-                    } else if (env.streamedContent != null) {
-                        src = new StreamSource(new StringReader(env.streamedContent), "inlineDoc");
-                    } else if (initialTemplate == null && contextItem != null) {
-                        src = ((XdmNode) contextItem).getUnderlyingNode();
-                    }
-
-                    if (src == null && initialFunction == null && initialTemplateName == null && initialModeName == null) {
-                        initialTemplateName = new QName("xsl", NamespaceConstant.XSLT, "initial-template");
-                    }
-
-                    try {
-                        if (initialModeName != null) {
-                            transformer.setInitialMode(initialModeName);
-                        } else {
-                            controller.getInitialMode();   /// has the side effect of setting to the unnamed
-                        }
-                    } catch (IllegalArgumentException e) {
-                        if (e.getCause() instanceof XPathException) {
-                            collector.fatalError((XPathException) e.getCause());
-                            throw new SaxonApiException(e.getCause());
-                        } else {
-                            throw e;
-                        }
-                    }
-
-                    if (initialMode != null || initialTemplate != null) {
-                        XdmNode init = initialMode == null ? initialTemplate : initialMode;
-                        Map<QName, XdmValue> params = getNamedParameters(xpath, init, false, false);
-                        Map<QName, XdmValue> tunnelledParams = getNamedParameters(xpath, init, false, true);
-                        if (xsltLanguageVersion.equals("2.0")) {
-                            if (!(params.isEmpty() && tunnelledParams.isEmpty())) {
-                                System.err.println("*** Initial template parameters ignored for XSLT 2.0");
-                            }
-                        } else {
-                            transformer.setInitialTemplateParameters(params, false);
-                            transformer.setInitialTemplateParameters(tunnelledParams, true);
-                        }
-                    }
-
-
-                    if (initialTemplateName != null) {
-                        transformer.setGlobalContextItem(contextItem);
-                        if (dest == null) {
-                            result = transformer.callTemplate(initialTemplateName);
-                        } else {
-                            transformer.callTemplate(initialTemplateName, dest);
-                        }
-                    } else if (initialFunction != null) {
-                        QName name = getQNameAttribute(xpath, initialFunction, "@name");
-                        XdmValue[] params = getParameters(xpath, initialFunction);
-                        if (dest == null) {
-                            result = transformer.callFunction(name, params);
-                        } else {
-                            transformer.callFunction(name, params, dest);
-                        }
-                    } else {
-                        if (dest == null) {
-                            result = transformer.applyTemplates(src);
-                        } else {
-                            transformer.applyTemplates(src, dest);
-                        }
-                    }
-
-                    outcome.setWarningsReported(collector.getFoundWarnings());
-                    if (resultAsTree && !resultSerialized) {
-                        result = ((XdmDestination) dest).getXdmNode();
-                    }
-                    if (resultSerialized) {
-                        outcome.setPrincipalSerializedResult(sw.toString());
-                    }
-                    outcome.setPrincipalResult(result);
-
-                    if (saveResults) {
-                        String s = sw.toString();
-                        // If a transform result is entirely xsl:result-document, then result will be null
-                        if (!resultSerialized && result != null) {
-                            StringWriter sw2 = new StringWriter();
-                            Serializer se = env.processor.newSerializer(sw2);
-                            se.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, "yes");
-                            env.processor.writeXdmValue(result, se);
-                            se.close();
-                            s = sw2.toString();
-                        }
-                        // currently, only save the principal result file in the result directory
-                        saveResultsToFile(s,
-                                new File(resultsDir + "/results/" + testSetName + "/" + testName + ".out"));
-                        Map<URI, TestOutcome.SingleResultDoc> xslResultDocuments = outcome.getSecondaryResultDocuments();
-                        for (Map.Entry<URI, TestOutcome.SingleResultDoc> entry : xslResultDocuments.entrySet()) {
-                            URI key = entry.getKey();
-                            String path = key.getPath();
-                            String serialization = outcome.serialize(env.processor, entry.getValue());
-                            saveResultsToFile(serialization, new File(path));
-                        }
-                    }
-                } catch (SaxonApiException err) {
-                    if (err.getCause() instanceof XPathException &&
-                            !((XPathException) err.getCause()).hasBeenReported()) {
-                        System.err.println("Thrown exception " + ((XPathException) err.getCause()).getErrorCodeLocalPart() +
-                                ": " + err.getCause().getMessage());
-                    }
-                    outcome.setException(err);
-                    if (collector.getErrorCodes().isEmpty()) {
-                        if (err.getErrorCode() == null) {
-                            outcome.addReportedError("Error_with_no_error_code");
-                        } else {
-                            outcome.addReportedError(err.getErrorCode().getLocalName());
-                        }
-                    } else {
-                        outcome.setErrorsReported(collector.getErrorCodes());
-                    }
-                } catch (Exception err) {
-                    err.printStackTrace();
-                    failures++;
-                    resultsDoc.writeTestcaseElement(testName, "fail", "*** crashed " + err.getClass() + ": " + err.getMessage());
-                    return;
-                }
+                failure = runWithXslt30Transformer(testCase, xpath, outcome, testName,
+                                                   testSetName, env, testInput, sheet, collector,
+                                                   xsltLanguageVersion, contextItem, initialMode,
+                                                   initialFunction, initialTemplate, initialModeName,
+                                                   initialTemplateName, baseOutputURI);
             } else {
-                try {
-                    XsltTransformer transformer = sheet.load();
-                    transformer.setURIResolver(env);
-                    transformer.setBaseOutputURI(baseOutputURI);
-                    if (env.unparsedTextResolver != null) {
-                        transformer.getUnderlyingController().setUnparsedTextURIResolver(env.unparsedTextResolver);
-                    }
-                    if (initialTemplateName != null) {
-                        transformer.setInitialTemplate(initialTemplateName);
-                    }
-                    if (initialMode != null) {
-                        try {
-                            transformer.setInitialMode(initialModeName);
-                        } catch (IllegalArgumentException e) {
-                            if (e.getCause() instanceof XPathException) {
-                                collector.fatalError((XPathException) e.getCause());
-                                throw new SaxonApiException(e.getCause());
-                            } else {
-                                throw e;
-                            }
-                        }
-                    }
-                    for (XdmItem param : xpath.evaluate("param[not(@static='yes')]", testInput)) {
-                        String name = ((XdmNode) param).getAttributeValue(new QName("name"));
-                        String select = ((XdmNode) param).getAttributeValue(new QName("select"));
-                        XdmValue value;
-                        try {
-                            value = xpath.evaluate(select, null);
-                        } catch (SaxonApiException e) {
-                            System.err.println("*** Error evaluating parameter " + name + ": " + e.getMessage());
-                            throw e;
-                        }
-                        transformer.setParameter(new QName(name), value);
-                    }
-                    if (contextItem != null) {
-                        transformer.setInitialContextNode((XdmNode) contextItem);
-                    }
-                    if (env.streamedFile != null) {
-                        transformer.setSource(new StreamSource(env.streamedFile));
-                    } else if (env.streamedContent != null) {
-                        transformer.setSource(new StreamSource(new StringReader(env.streamedContent), "inlineDoc"));
-                    }
-                    for (QName varName : env.params.keySet()) {
-                        transformer.setParameter(varName, env.params.get(varName));
-                    }
-                    transformer.setErrorListener(collector);
-                   /* if (outputUri != null) {
-                        transformer.setBaseOutputURI(testInput.getBaseURI().resolve(outputUri).toString());
-                    } else {
-                        transformer.setBaseOutputURI(new File(resultsDir + "/results/output.xml").toURI().toString());
-                    }*/
-                    transformer.setMessageListener(new MessageListener() {
-                        public void message(XdmNode content, boolean terminate, SourceLocator locator) {
-                            outcome.addXslMessage(content);
-                            System.err.println(content.getStringValue());
-                        }
-                    });
-
-
-                    // Run the transformation twice, once for serialized results, once for a tree.
-                    // TODO: we could be smarter about this and capture both
-
-                    // run with serialization
-                    StringWriter sw = new StringWriter();
-                    Serializer serializer = env.processor.newSerializer(sw);
-                    transformer.setDestination(serializer);
-                    transformer.getUnderlyingController().setOutputURIResolver(
-                            new OutputResolver(env.processor, outcome, true));
-                    transformer.transform();
-                    outcome.setPrincipalSerializedResult(sw.toString());
-                    if (saveResults) {
-                        // currently, only save the principal result file
-                        saveResultsToFile(sw.toString(),
-                                new File(resultsDir + "/results/" + testSetName + "/" + testName + ".out"));
-                        Map<URI, TestOutcome.SingleResultDoc> xslResultDocuments = outcome.getSecondaryResultDocuments();
-                        for (Map.Entry<URI, TestOutcome.SingleResultDoc> entry : xslResultDocuments.entrySet()) {
-                            URI key = entry.getKey();
-                            if (key != null) {
-                                String path = key.getPath();
-                                String serialization = outcome.serialize(env.processor, entry.getValue());
-                                saveResultsToFile(serialization, new File(path));
-                            }
-                        }
-                    }
-
-                    // run without serialization
-                    if (env.streamedContent != null) {
-                        transformer.setSource(new StreamSource(new StringReader(env.streamedContent), "inlineDoc"));
-                    }
-                    XdmDestination destination = new XdmDestination();
-                    transformer.setDestination(destination);
-                    transformer.getUnderlyingController().setOutputURIResolver(
-                            new OutputResolver(env.processor, outcome, false));
-                    transformer.transform();
-                    outcome.setPrincipalResult(destination.getXdmNode());
-                    outcome.setWarningsReported(collector.getFoundWarnings());
-                    //}
-                } catch (SaxonApiException err) {
-                    outcome.setException(err);
-                    if (collector.getErrorCodes().isEmpty()) {
-                        outcome.addReportedError(err.getErrorCode().getLocalName());
-                    } else {
-                        outcome.setErrorsReported(collector.getErrorCodes());
-                    }
-                } catch (Exception err) {
-                    err.printStackTrace();
-                    failures++;
-                    resultsDoc.writeTestcaseElement(testName, "fail", "*** crashed " + err.getClass() + ": " + err.getMessage());
-                    return;
-                }
+                failure = runWithXsltTransformer(xpath, outcome, testName, testSetName, env, testInput,
+                                                 sheet, collector, contextItem, initialMode, initialModeName,
+                                                 initialTemplateName, baseOutputURI);
+            }
+            if (failure) {
+                return;
             }
         }
 
@@ -686,6 +408,335 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         }
     }
 
+    public void runJSTransform(Environment env, TestOutcome outcome, QName initialTemplateName, QName initialModeName,
+                               URI baseOutputURI) {
+        // exists to be overridden
+    }
+
+    private boolean runWithXsltTransformer(XPathCompiler xpath, final TestOutcome outcome, String testName,
+                                           String testSetName, Environment env, XdmNode testInput,
+                                           XsltExecutable sheet, ErrorCollector collector,
+                                           XdmItem contextItem, XdmNode initialMode, QName initialModeName,
+                                           QName initialTemplateName, String baseOutputURI) {
+        try {
+            XsltTransformer transformer = sheet.load();
+            transformer.setURIResolver(env);
+            transformer.setBaseOutputURI(baseOutputURI);
+            if (env.unparsedTextResolver != null) {
+                transformer.getUnderlyingController().setUnparsedTextURIResolver(env.unparsedTextResolver);
+            }
+            if (initialTemplateName != null) {
+                transformer.setInitialTemplate(initialTemplateName);
+            }
+            if (initialMode != null) {
+                try {
+                    transformer.setInitialMode(initialModeName);
+                } catch (IllegalArgumentException e) {
+                    if (e.getCause() instanceof XPathException) {
+                        collector.fatalError((XPathException) e.getCause());
+                        throw new SaxonApiException(e.getCause());
+                    } else {
+                        throw e;
+                    }
+                }
+            }
+            for (XdmItem param : xpath.evaluate("param[not(@static='yes')]", testInput)) {
+                String name = ((XdmNode) param).getAttributeValue(new QName("name"));
+                String select = ((XdmNode) param).getAttributeValue(new QName("select"));
+                XdmValue value;
+                try {
+                    value = xpath.evaluate(select, null);
+                } catch (SaxonApiException e) {
+                    System.err.println("*** Error evaluating parameter " + name + ": " + e.getMessage());
+                    throw e;
+                }
+                transformer.setParameter(new QName(name), value);
+                setGlobalParameter(new QName(name), value);
+            }
+            if (contextItem != null) {
+                transformer.setInitialContextNode((XdmNode) contextItem);
+            }
+            if (env.streamedFile != null) {
+                transformer.setSource(new StreamSource(env.streamedFile));
+            } else if (env.streamedContent != null) {
+                transformer.setSource(new StreamSource(new StringReader(env.streamedContent), "inlineDoc"));
+            }
+            for (QName varName : env.params.keySet()) {
+                transformer.setParameter(varName, env.params.get(varName));
+                setGlobalParameter(varName, env.params.get(varName));
+            }
+            transformer.setErrorListener(collector);
+           /* if (outputUri != null) {
+                transformer.setBaseOutputURI(testInput.getBaseURI().resolve(outputUri).toString());
+            } else {
+                transformer.setBaseOutputURI(new File(resultsDir + "/results/output.xml").toURI().toString());
+            }*/
+            transformer.setMessageListener(new MessageListener() {
+                public void message(XdmNode content, boolean terminate, SourceLocator locator) {
+                    outcome.addXslMessage(content);
+                    System.err.println(content.getStringValue());
+                }
+            });
+
+
+            // Run the transformation twice, once for serialized results, once for a tree.
+            // TODO: we could be smarter about this and capture both
+
+            // run with serialization
+            StringWriter sw = new StringWriter();
+            Serializer serializer = env.processor.newSerializer(sw);
+            transformer.setDestination(serializer);
+            transformer.getUnderlyingController().setOutputURIResolver(
+                    new OutputResolver(env.processor, outcome, true));
+            transformer.transform();
+            outcome.setPrincipalSerializedResult(sw.toString());
+            if (saveResults) {
+                // currently, only save the principal result file
+                saveResultsToFile(sw.toString(),
+                        new File(resultsDir + "/results/" + testSetName + "/" + testName + ".out"));
+                Map<URI, TestOutcome.SingleResultDoc> xslResultDocuments = outcome.getSecondaryResultDocuments();
+                for (Map.Entry<URI, TestOutcome.SingleResultDoc> entry : xslResultDocuments.entrySet()) {
+                    URI key = entry.getKey();
+                    if (key != null) {
+                        String path = key.getPath();
+                        String serialization = outcome.serialize(env.processor, entry.getValue());
+                        saveResultsToFile(serialization, new File(path));
+                    }
+                }
+            }
+
+            // run without serialization
+            if (env.streamedContent != null) {
+                transformer.setSource(new StreamSource(new StringReader(env.streamedContent), "inlineDoc"));
+            }
+            XdmDestination destination = new XdmDestination();
+            transformer.setDestination(destination);
+            transformer.getUnderlyingController().setOutputURIResolver(
+                    new OutputResolver(env.processor, outcome, false));
+            transformer.transform();
+            outcome.setPrincipalResult(destination.getXdmNode());
+            outcome.setWarningsReported(collector.getFoundWarnings());
+            //}
+        } catch (SaxonApiException err) {
+            outcome.setException(err);
+            if (collector.getErrorCodes().isEmpty()) {
+                outcome.addReportedError(err.getErrorCode().getLocalName());
+            } else {
+                outcome.setErrorsReported(collector.getErrorCodes());
+            }
+        } catch (Exception err) {
+            err.printStackTrace();
+            failures++;
+            resultsDoc.writeTestcaseElement(testName, "fail", "*** crashed " + err.getClass() + ": " + err.getMessage());
+            return true;
+        }
+        return false;
+    }
+
+    protected void clearGlobalParameters(){}
+
+    protected void setGlobalParameter(QName qName, XdmValue value) {
+        // For overriding in Javascript driver
+    }
+
+    protected boolean runWithXslt30Transformer(XdmNode testCase, XPathCompiler xpath, final TestOutcome outcome, String testName, String testSetName, Environment env, XdmNode testInput, XsltExecutable sheet, ErrorCollector collector, String xsltLanguageVersion, XdmItem contextItem, XdmNode initialMode, XdmNode initialFunction, XdmNode initialTemplate, QName initialModeName, QName initialTemplateName, String baseOutputURI) {
+        try {
+
+            boolean assertsSerial = xpath.evaluate("result//(assert-serialization|assert-serialization-error|serialization-matches)", testCase).size() > 0;
+            boolean resultAsTree = env.outputTree;
+            boolean serializationDeclared = env.outputSerialize;
+            XdmNode needsTree = (XdmNode) xpath.evaluateSingle("output/@tree", testInput);
+            if (needsTree != null) {
+                resultAsTree = needsTree.getStringValue().equals("yes");
+            }
+            XdmNode needsSerialization = (XdmNode) xpath.evaluateSingle("output/@serialize", testInput);
+            if (needsSerialization != null) {
+                serializationDeclared = needsSerialization.getStringValue().equals("yes");
+            }
+            boolean resultSerialized = serializationDeclared || assertsSerial;
+
+//                    if (assertsSerial) {
+//                        String comment = outcome.getComment();
+//                        comment = (comment == null ? "" : comment) + "*Serialization " + (serializationDeclared ? "declared* " : "required* ");
+//                        outcome.setComment(comment);
+//                    }
+
+
+            Xslt30Transformer transformer = sheet.load30();
+            transformer.setURIResolver(env);
+            if (env.unparsedTextResolver != null) {
+                transformer.getUnderlyingController().setUnparsedTextURIResolver(env.unparsedTextResolver);
+            }
+            if (tracing) {
+                transformer.setTraceListener(new XSLTTraceListener());
+            }
+
+            Map<QName, XdmValue> caseGlobalParams = getNamedParameters(xpath, testInput, false, false);
+            Map<QName, XdmValue> caseStaticParams = getNamedParameters(xpath, testInput, true, false);
+            Map<QName, XdmValue> globalParams = new HashMap<QName, XdmValue>(env.params);
+            globalParams.putAll(caseStaticParams);
+            globalParams.putAll(caseGlobalParams);  // has to be this way to ensure test-local overrides global
+            transformer.setStylesheetParameters(globalParams);
+
+            if (contextItem != null) {
+                transformer.setGlobalContextItem(contextItem);
+            }
+
+            transformer.setErrorListener(collector);
+
+            transformer.setBaseOutputURI(baseOutputURI);
+
+            transformer.setMessageListener(new MessageListener() {
+                public void message(XdmNode content, boolean terminate, SourceLocator locator) {
+                    outcome.addXslMessage(content);
+                    System.err.println(content.getStringValue());
+                }
+            });
+
+            XdmValue result = null;
+
+            StringWriter sw = new StringWriter();
+
+            Serializer serializer = env.processor.newSerializer(sw);
+            //serializer.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, "yes");
+
+            OutputResolver serializingOutput = new OutputResolver(env.processor, outcome, true);
+            Controller controller = transformer.getUnderlyingController();
+
+            controller.setOutputURIResolver(serializingOutput);
+            Destination dest = null;
+            if (resultAsTree) {
+                // If we want non-serialized, we need to accumulate any result documents as trees too
+                controller.setOutputURIResolver(
+                        new OutputResolver(env.processor, outcome, false));
+                dest = new XdmDestination();
+            }
+            if (resultSerialized) {
+                dest = serializer;
+            }
+
+            Source src = null;
+            if (env.streamedFile != null) {
+                src = new StreamSource(env.streamedFile);
+            } else if (env.streamedContent != null) {
+                src = new StreamSource(new StringReader(env.streamedContent), "inlineDoc");
+            } else if (initialTemplate == null && contextItem != null) {
+                src = ((XdmNode) contextItem).getUnderlyingNode();
+            }
+
+            if (src == null && initialFunction == null && initialTemplateName == null && initialModeName == null) {
+                initialTemplateName = new QName("xsl", NamespaceConstant.XSLT, "initial-template");
+            }
+
+            try {
+                if (initialModeName != null) {
+                    transformer.setInitialMode(initialModeName);
+                } else {
+                    controller.getInitialMode();   /// has the side effect of setting to the unnamed
+                }
+            } catch (IllegalArgumentException e) {
+                if (e.getCause() instanceof XPathException) {
+                    collector.fatalError((XPathException) e.getCause());
+                    throw new SaxonApiException(e.getCause());
+                } else {
+                    throw e;
+                }
+            }
+
+            if (initialMode != null || initialTemplate != null) {
+                XdmNode init = initialMode == null ? initialTemplate : initialMode;
+                Map<QName, XdmValue> params = getNamedParameters(xpath, init, false, false);
+                Map<QName, XdmValue> tunnelledParams = getNamedParameters(xpath, init, false, true);
+                if (xsltLanguageVersion.equals("2.0")) {
+                    if (!(params.isEmpty() && tunnelledParams.isEmpty())) {
+                        System.err.println("*** Initial template parameters ignored for XSLT 2.0");
+                    }
+                } else {
+                    transformer.setInitialTemplateParameters(params, false);
+                    transformer.setInitialTemplateParameters(tunnelledParams, true);
+                }
+            }
+
+
+            if (initialTemplateName != null) {
+                transformer.setGlobalContextItem(contextItem);
+                if (dest == null) {
+                    result = transformer.callTemplate(initialTemplateName);
+                } else {
+                    transformer.callTemplate(initialTemplateName, dest);
+                }
+            } else if (initialFunction != null) {
+                QName name = getQNameAttribute(xpath, initialFunction, "@name");
+                XdmValue[] params = getParameters(xpath, initialFunction);
+                if (dest == null) {
+                    result = transformer.callFunction(name, params);
+                } else {
+                    transformer.callFunction(name, params, dest);
+                }
+            } else {
+                if (dest == null) {
+                    result = transformer.applyTemplates(src);
+                } else {
+                    transformer.applyTemplates(src, dest);
+                }
+            }
+
+            outcome.setWarningsReported(collector.getFoundWarnings());
+            if (resultAsTree && !resultSerialized) {
+                result = ((XdmDestination) dest).getXdmNode();
+            }
+            if (resultSerialized) {
+                outcome.setPrincipalSerializedResult(sw.toString());
+            }
+            outcome.setPrincipalResult(result);
+
+            if (saveResults) {
+                String s = sw.toString();
+                // If a transform result is entirely xsl:result-document, then result will be null
+                if (!resultSerialized && result != null) {
+                    StringWriter sw2 = new StringWriter();
+                    Serializer se = env.processor.newSerializer(sw2);
+                    se.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, "yes");
+                    env.processor.writeXdmValue(result, se);
+                    se.close();
+                    s = sw2.toString();
+                }
+                // currently, only save the principal result file in the result directory
+                saveResultsToFile(s,
+                        new File(resultsDir + "/results/" + testSetName + "/" + testName + ".out"));
+                Map<URI, TestOutcome.SingleResultDoc> xslResultDocuments = outcome.getSecondaryResultDocuments();
+                for (Map.Entry<URI, TestOutcome.SingleResultDoc> entry : xslResultDocuments.entrySet()) {
+                    URI key = entry.getKey();
+                    String path = key.getPath();
+                    String serialization = outcome.serialize(env.processor, entry.getValue());
+                    saveResultsToFile(serialization, new File(path));
+                }
+            }
+        } catch (SaxonApiException err) {
+            if (err.getCause() instanceof XPathException &&
+                    !((XPathException) err.getCause()).hasBeenReported()) {
+                System.err.println("Thrown exception " + ((XPathException) err.getCause()).getErrorCodeLocalPart() +
+                        ": " + err.getCause().getMessage());
+            }
+            outcome.setException(err);
+            if (collector.getErrorCodes().isEmpty()) {
+                if (err.getErrorCode() == null) {
+                    outcome.addReportedError("Error_with_no_error_code");
+                } else {
+                    outcome.addReportedError(err.getErrorCode().getLocalName());
+                }
+            } else {
+                outcome.setErrorsReported(collector.getErrorCodes());
+            }
+        } catch (Exception err) {
+            err.printStackTrace();
+            failures++;
+            resultsDoc.writeTestcaseElement(testName, "fail", "*** crashed " + err.getClass() + ": " + err.getMessage());
+            return true;
+        }
+        return false;
+    }
+
     protected void setLanguageVersion(XsltCompiler compiler, String spec) {
         compiler.setXsltLanguageVersion("2.0"); // Always 2.0 for Saxon-HE
     }
@@ -693,14 +744,14 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
     protected void initPatternOptimization(XsltCompiler compiler) {
     }
 
-    private XsltExecutable exportImport(String testName, String testSetName, TestOutcome outcome, XsltCompiler compiler, XsltExecutable sheet, ErrorCollector collector, Source styleSource) {
+    protected XsltExecutable exportImport(String testName, String testSetName, TestOutcome outcome, XsltCompiler compiler, XsltExecutable sheet, ErrorCollector collector, Source styleSource) {
         try {
             if (export) {
                 try {
                     File exportFile = new File(resultsDir + "/export/" + testSetName + "/" + testName + ".xsltp");
                     XsltPackage compiledPack = compiler.compilePackage(styleSource);
                     compiledPack.save(exportFile);
-                    sheet = compiler.loadExecutablePackage(exportFile.toURI());
+                    sheet = reloadExportedStylesheet(compiler, exportFile);
                 } catch (SaxonApiException e) {
                     System.err.println(e.getMessage());
                     //e.printStackTrace();  //temporary, for debugging
@@ -722,6 +773,10 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             outcome.setErrorsReported(collector.getErrorCodes());
         }
         return sheet;
+    }
+
+    protected XsltExecutable reloadExportedStylesheet(XsltCompiler compiler, File exportFile) throws SaxonApiException {
+        return compiler.loadExecutablePackage(exportFile.toURI());
     }
 
     /**
@@ -857,11 +912,13 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
 
     protected Set<String> alwaysOff = new HashSet<String>();
 
-    private void setDependencyData() {
+    protected void setDependencyData() {
         alwaysOn.add("feature/disabling_output_escaping");
         alwaysOn.add("feature/serialization");
         alwaysOn.add("feature/namespace_axis");
+        alwaysOn.add("feature/dtd");
         alwaysOn.add("feature/backwards_compatibility");
+        alwaysOn.add("feature/built_in_derived_types");
         alwaysOn.add("feature/xsl-stylesheet-processing-instruction");
         alwaysOn.add("available_documents");
         alwaysOn.add("ordinal_scheme_name");
@@ -881,9 +938,9 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         needsEE.add("feature/XPath_3.1");
         needsEE.add("feature/dynamic_evaluation");
         needsEE.add("feature/xquery_invocation");
-        needsEE.add("feature/higher_order_functions");
 
         alwaysOff.add("detect_accumulator_cycles");
+        alwaysOff.add("feature/higher_order_functions");
     }
 
     /**
@@ -916,7 +973,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             return !needed;
         }
         if (needsEE.contains(type) || needsEE.contains(tv)) {
-            return env.processor.getSaxonEdition().equals("HE") ? !needed : needed;
+            return env.processor.getSaxonEdition().equals("HE") != needed;
         }
 
         if ("spec".equals(type)) {
@@ -943,8 +1000,10 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                 } else {
                     return false;
                 }
-            } else if ("built_in_derived_types".equals(value)) {
-                return (spec.getNumericVersion() == 30) != inverse;
+            } else if ("higher_order_functions".equals(value)) {
+                return !inverse;
+            } else if ("simple-uca-fallback".equals(value)) {
+                return !inverse;
             } else {
                 System.err.println("*** Unknown feature in HE: " + value);
                 return env.processor.getSaxonEdition().equals("HE") ? false : null;
@@ -1041,12 +1100,11 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
      */
     protected static QName getQNameAttribute(XPathCompiler xpath, XdmItem contextItem, String attributePath) throws SaxonApiException {
         String exp = "for $att in " + attributePath +
-                " return if (contains($att,'{')) then QName(substring-before(substring-after($att,'{'),'}'),substring-after($att,'}')) else" +
-                " if (contains($att, ':')) then resolve-QName($att, $att /..)else" +
+                " return if (contains($att, ':')) then resolve-QName($att, $att/..) else " +
+                " if (contains($att,'{')) then QName(substring-before(substring-after($att,'{'),'}'),substring-after($att,'}')) else" +
                 " if ($att = '#unnamed') then QName('http://saxon.sf.net/', 'unnamed') else " +
                 " if ($att = '#default') then QName('http://saxon.sf.net/', 'default') else " +
                 " QName('', $att)";
-        //System.err.println("Evaluating: " + exp);
         XdmAtomicValue qname = (XdmAtomicValue) xpath.evaluateSingle(exp, contextItem);
         return qname == null ? null : (QName) qname.getValue();
     }
@@ -1096,14 +1154,12 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         }
 
         public void close(Result result) throws XPathException {
-            if (uri != null) {
-                if (serialized) {
-                    outcome.setSecondaryResult(uri, null, stringWriter == null ? "" : stringWriter.toString());
-                } else {
-                    XdmDestination xdm = (XdmDestination) destination;
-                    if (xdm != null) {
-                        outcome.setSecondaryResult(xdm.getBaseURI(), xdm.getXdmNode(), null);
-                    }
+            if (serialized) {
+                outcome.setSecondaryResult(uri, null, stringWriter == null ? "" : stringWriter.toString());
+            } else {
+                XdmDestination xdm = (XdmDestination) destination;
+                if (xdm != null) {
+                    outcome.setSecondaryResult(xdm.getBaseURI(), xdm.getXdmNode(), null);
                 }
             }
         }

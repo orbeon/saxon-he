@@ -26,4 +26,14 @@ public interface QNameTest {
 
     boolean matches(StructuredQName qname);
 
+    /**
+     * Generate Javascript code to test if a name matches the test.
+     * @return JS code as a string. The generated code will be used
+     * as the body of a JS function in which the argument name "q" is an
+     * XdmQName object holding the name. The XdmQName object has properties
+     * uri and local.
+     */
+
+    String generateJavaScriptNameTest();
+
 }

@@ -141,12 +141,6 @@ public class NamespaceConstant {
     public static final String JSON = FN;
 
     /**
-     * Recognize the Microsoft namespace so we can give a suitably sarcastic error message
-     */
-
-    public static final String MICROSOFT_XSL = "http://www.w3.org/TR/WD-xsl";
-
-    /**
      * The XHTML namespace http://www.w3.org/1999/xhtml
      */
 

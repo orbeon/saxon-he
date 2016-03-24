@@ -82,7 +82,7 @@ public final class TinyTree extends GenericTreeInfo {
 
     // the typeCode array holds type codes for element nodes; it is constructed only
     // if at least one element has a type other than untyped, or has an IDREF property.
-    // The array holds the type fingerprint, with bit TYPECODE_IDREF set if the value is an IDREF
+    // The array holds a reference to the schema type.
     /*@Nullable*/
     protected SchemaType[] typeArray = null;
 

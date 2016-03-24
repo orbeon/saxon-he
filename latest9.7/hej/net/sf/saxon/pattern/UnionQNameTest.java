@@ -57,5 +57,29 @@ public class UnionQNameTest implements QNameTest {
         }
         return fsb.toString();
     }
+
+    /**
+     * Generate Javascript code to test if a name matches the test.
+     *
+     * @return JS code as a string. The generated code will be used
+     * as the body of a JS function in which the argument name "q" is an
+     * XdmQName object holding the name. The XdmQName object has properties
+     * uri and local.
+     */
+    @Override
+    public String generateJavaScriptNameTest() {
+        FastStringBuffer fsb = new FastStringBuffer(256);
+        boolean started = false;
+        for (QNameTest qt : tests) {
+            if (started) {
+                fsb.append("||");
+            } else {
+                started = true;
+            }
+            String test = qt.generateJavaScriptNameTest();
+            fsb.append("(" + test + ")");
+        }
+        return fsb.toString();
+    }
 }
 

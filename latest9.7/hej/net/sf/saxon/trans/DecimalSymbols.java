@@ -409,7 +409,7 @@ public class DecimalSymbols {
     public void export(StructuredQName name, ExpressionPresenter out) {
         out.startElement("decimalFormat");
         if (name != null) {
-            out.emitAttribute("name", name);
+            out.emitAttribute("name", name.getEQName());
         }
         for (int i=0; i<intValues.length; i++) {
             out.emitAttribute(propertyNames[i], intValues[i]+"");

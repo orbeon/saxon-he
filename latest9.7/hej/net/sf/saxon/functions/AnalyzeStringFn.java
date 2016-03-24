@@ -93,6 +93,9 @@ public class AnalyzeStringFn extends RegexFunction {
                     StandardEntityResolver resolver = new StandardEntityResolver();
                     resolver.setConfiguration(config);
                     InputSource is = resolver.resolveEntity(null, "classpath:xpath-functions.xsd");
+                    if(is == null) {
+                        throw new XPathException("Failed to load xpath-functions.xsd from the classpath");
+                    }
                     if (config.isTiming()) {
                         config.getLogger().info("Loading schema from resources for: " + NamespaceConstant.FN);
                     }

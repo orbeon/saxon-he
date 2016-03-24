@@ -14,9 +14,12 @@ import net.sf.saxon.style.StylesheetModule;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.Rule;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.Type;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.TreeMap;
 
 /**
  * A whitespace stripping rule that strips elected elements unless xml:space indicates that whitespace
@@ -96,7 +99,8 @@ public class SelectedElementsSpaceStrippingRule implements SpaceStrippingRule {
         NodeTest test = pattern.getNodeTest();
         double priority = test.getDefaultPriority();
         Rule newRule = new Rule(pattern, action, precedence, minImportPrecedence, priority, sequence++);
-        newRule.setRank((precedence << 16) + sequence);
+        int prio = priority == 0 ? 2 : priority == -0.25 ? 1 : 0;
+        newRule.setRank((precedence << 18) + (prio << 16) + sequence);
         if (test instanceof NodeKindTest) {
             newRule.setAlwaysMatches(true);
             anyElementRule = addRuleToList(newRule, anyElementRule, true);
@@ -234,6 +238,28 @@ public class SelectedElementsSpaceStrippingRule implements SpaceStrippingRule {
     }
 
     /**
+     * Get all the rules in rank order, highest-ranking rules first
+     * @return the rules in rank order
+     */
+    public Iterator<Rule> getRankedRules() {
+        TreeMap<Integer, Rule> treeMap = new TreeMap<Integer, Rule>();
+        Rule rule = anyElementRule;
+        while (rule != null) {
+            treeMap.put(-rule.getRank(), rule);
+            rule = rule.getNext();
+        }
+        rule = unnamedElementRuleChain;
+        while (rule != null) {
+            treeMap.put(-rule.getRank(), rule);
+            rule = rule.getNext();
+        }
+        for (Rule r : namedElementRules.values()) {
+            treeMap.put(-r.getRank(), r);
+        }
+        return treeMap.values().iterator();
+    }
+
+    /**
      * Export this rule as part of an exported stylesheet
      *
      * @param presenter the output handler
@@ -254,6 +280,25 @@ public class SelectedElementsSpaceStrippingRule implements SpaceStrippingRule {
             exportRule(r, presenter);
         }
         presenter.endElement();
+
+        presenter.startElement("stripJS");
+        FastStringBuffer fsb = new FastStringBuffer(256);
+        Iterator<Rule> iter = getRankedRules();
+        boolean foundCatchAll = false;
+        while (iter.hasNext()) {
+            rule = iter.next();
+            exportRuleJS(rule, fsb);
+            if (rule.getPattern().getItemType() instanceof NodeKindTest) {
+                foundCatchAll = true;
+                break;
+            }
+        }
+        if (!foundCatchAll) {
+            fsb.append("  return false;");
+        }
+        //System.err.println(fsb.toString());
+        presenter.emitAttribute("test", fsb.toString());
+        presenter.endElement();
     }
 
     private static void exportRule(Rule rule, ExpressionPresenter presenter) {
@@ -262,6 +307,25 @@ public class SelectedElementsSpaceStrippingRule implements SpaceStrippingRule {
         presenter.emitAttribute("test", rule.getPattern().getItemType().toString());
         presenter.emitAttribute("prec", rule.getPrecedence()+"");
         presenter.endElement();
+    }
+
+    private static void exportRuleJS(Rule rule, FastStringBuffer fsb) {
+        String which = rule.getAction() == Stripper.STRIP ? "true" : "false";
+        NodeTest test = (NodeTest)rule.getPattern().getItemType();
+        if (test instanceof NodeKindTest) {
+            // elements="*"
+            fsb.append("return " + which + ";");
+        } else if (test instanceof NameTest) {
+            fsb.append("if (uri=='" + test.getMatchingNodeName().getURI() +
+                               "' && local=='" + test.getMatchingNodeName().getLocalPart() +
+                               "') return " + which + ";" );
+        } else if (test instanceof NamespaceTest) {
+            fsb.append("if (uri=='" + ((NamespaceTest)test).getNamespaceURI() + "') return " + which + ";");
+        } else if (test instanceof LocalNameTest) {
+            fsb.append("if (local=='" + ((LocalNameTest) test).getLocalName() + "') return " + which + ";");
+        } else {
+            throw new IllegalStateException("Cannot export " + test.getClass());
+        }
     }
 }
 
