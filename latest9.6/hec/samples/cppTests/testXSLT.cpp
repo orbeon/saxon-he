@@ -232,7 +232,7 @@ cout<<endl<<"Test: testTransfromFromstring2-Error:"<<endl;
   trans->clearProperties();
     XdmNode * input = processor->parseXmlFromString("<out><person>text1</person><person>text2</person><person>text3</person></out>");
 
-   trans->compileFromString("<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>       <xsl:param name='values' select='(2,3,4)' /><xsl:output method='xml' indent='yes' /><xsl:template match='*'><output><xsl:for-each select='$values' ><out><xsl:value-of select='. * 3'/></out></xsl:for-each></output></xsl:template><xsl:stylesheet>");
+   trans->compileFromString("<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>       <xsl:param name='values' select='(2,3,4)' /><xsl:output method='xml' indent='yes' /><xsl:template match='*'><output><xsl:for-each select='$values' ><out><xsl:value-of select='. * 3'/></out><xsl:for-each></output></xsl:template><xsl:stylesheet>");
 trans->setSourceFromXdmValue((XdmItem*)input);
  const char * output = trans->transformToString();
    if(output == NULL) {
@@ -373,6 +373,21 @@ void exampleSimple1(XsltProcessor  *proc){
 		proc->clearProperties();            
             }
 
+void exampleSimple1Err(XsltProcessor  *proc){
+		cout<<"ExampleSimple1 taken from PHP:"<<endl;
+                proc->setSourceFromFile("cat.xml");
+                proc->compileFromFile("err.xsl");
+  	              
+                const char *result = proc->transformToString();               
+		if(result != NULL) {               
+			cout<<result<<endl;
+		} else {
+			cout<<"Result is null"<<endl;
+		}
+		proc->clearParameters(true);
+		proc->clearProperties();            
+            }
+
 int exists(const char *fname)
 {
     FILE *file;
@@ -417,18 +432,66 @@ void exampleSimple3(SaxonProcessor * saxonProc, XsltProcessor  *proc){
 		proc->clearProperties();
 }
 
+void exampleParam(SaxonProcessor * saxonProc, XsltProcessor  *proc){
+                cout<< "\nExampleParam:</b><br/>"<<endl;
+		proc->setSourceFromFile("../php/trax/xml/foo.xml");
+                proc->compileFromFile("../php/trax/xsl/foo.xsl");
+            
+		XdmAtomicValue * xdmvalue = saxonProc->makeStringValue("Hello to you");
+		if(xdmvalue !=NULL){
+			
+			proc->setParameter("a-param", (XdmValue*)xdmvalue);
+		} else {
+			cout<< "Xdmvalue is null"<<endl;
+		}
+                const char * result = proc->transformToString();
+		if(result != NULL) {                
+			cout<<"Output:"<<result<<endl;
+		} else {
+			cout<<"Result is NULL<br/>"<<endl;
+		}
+               
+                //proc->clearParameters();                
+                //unset($result);
+                //echo 'again with a no parameter value<br/>';
+		
+		proc->setProperty("!indent", "yes"); 
+                const char *result2 = proc->transformToString();
+               
+                proc->clearProperties();
+		if(result2 != NULL) {                
+			cout<<result2<<endl;
+		}
+               
+              //  unset($result);
+               // echo 'again with no parameter and no properties value set. This should fail as no contextItem set<br/>';
+                XdmAtomicValue * xdmValue2 = saxonProc->makeStringValue("goodbye to you");
+		proc->setParameter("a-param", (XdmValue*)xdmValue2);
+		
+                const char *result3 = proc->transformToString();   
+		if(result3 != NULL) {             
+                	cout<<"Output ="<<result3<<endl;
+		} else {
+			cout<<"Error in result"<<endl;
+		}
+		proc->clearParameters();
+		proc->clearProperties(); 
+                        
+            }
+
+
 
 int main()
 {
 
     SaxonProcessor * processor = new SaxonProcessor(true);
     cout<<"Test: XsltProcessor with Saxon version="<<processor->version()<<endl<<endl; 
-    //processor->setcwd("/home/");
+    //processor->setcwd("/home");
     processor->setConfigurationProperty("http://saxon.sf.net/feature/generateByteCode", "off");
 
     XsltProcessor * trans = processor->newXsltProcessor();
-    
-    exampleSimple1(trans);
+    exampleSimple1Err(trans);
+   exampleSimple1(trans);
     exampleSimple2(trans);
     exampleSimple3(processor, trans);
 
@@ -453,6 +516,8 @@ int main()
     testTrackingOfValueReferenceError(processor, trans);
 
     testXdmNodeOutput(trans);
+
+    exampleParam(processor, trans);
 
     delete trans;
      processor->release();
