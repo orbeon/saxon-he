@@ -1055,7 +1055,7 @@ public class FormatNumber extends SystemFunction implements Callable {
             if (arg2 == null) {
                 dfs = dfm.getDefaultDecimalFormat();
             } else {
-                String lexicalName = arguments[2].head().getStringValue();
+                String lexicalName = arg2.getStringValue();
                 dfs = getNamedDecimalFormat(dfm, lexicalName);
             }
         }
