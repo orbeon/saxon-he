@@ -319,6 +319,10 @@ public class XPathProcessor extends SaxonCAPI {
 
 
     public static void main(String[] arg) throws SaxonApiException {
+
+       int num= Integer.parseInt("123",5);
+        System.out.println("Xxxxxxx= "+num);
+
         XPathProcessor xpath = new XPathProcessor(true);
          String sourcefile1 = "kamervragen.xml";
          String[] params1 = {"s"};

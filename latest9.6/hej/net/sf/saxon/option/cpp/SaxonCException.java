@@ -29,8 +29,11 @@ public class SaxonCException extends SaxonApiException {
             XPathException exception = (XPathException)cause;
             isStaticError = exception.isStaticError();
             isTypeError = exception.isTypeError();
-            errorCode = exception.getErrorCodeQName().toString();
-            if(errorCode == null) {
+            StructuredQName errorCodeQN = exception.getErrorCodeQName();
+            if(errorCodeQN != null) {
+                errorCode = errorCodeQN.toString();
+
+            } else {
                 errorCode = "";
             }
         }
@@ -87,7 +90,11 @@ public class SaxonCException extends SaxonApiException {
     }
 
     public String getErrorMessage(){
-        return super.getMessage();
+        String message = super.getMessage();
+        if(message == null) {
+            return "";
+        }
+        return message;
     }
 
     public int getLinenumber(){

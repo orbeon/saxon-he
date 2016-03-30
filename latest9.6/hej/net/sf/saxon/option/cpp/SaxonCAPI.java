@@ -135,6 +135,10 @@ public class SaxonCAPI {
 
         @Override
         public void error(TransformerException exception) {
+            if (Configuration.RECOVER_WITH_WARNINGS == Configuration.RECOVER_SILENTLY && !(exception instanceof ValidationException)) {
+                // do nothing
+                return;
+            }
             saxonExceptions.add(new SaxonCException(exception));
             try {
                 super.error(exception);
@@ -144,6 +148,10 @@ public class SaxonCAPI {
 
         @Override
         public void fatalError(TransformerException exception) {
+            if (exception instanceof XPathException && ((XPathException) exception).hasBeenReported()) {
+                       // don't report the same error twice
+                       return;
+            }
             saxonExceptions.add(new SaxonCException(exception));
             try {
                 super.fatalError(exception);

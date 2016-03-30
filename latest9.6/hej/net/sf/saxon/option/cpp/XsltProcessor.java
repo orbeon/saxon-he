@@ -668,7 +668,7 @@ public class XsltProcessor extends SaxonCAPI {
     }
 
     public static void main(String[] args) throws Exception {
-        // String cwd = "/Users/ond1/work/development/svn/saxon-dev/tests/saxon-c/samples/trax";
+         String cwd2 = "/Users/ond1/work/development/svn/saxon-dev/tests/saxon-c/samples/trax";
         String cwd = "/Users/ond1/work/development/tests/jeroen";
         // String cwd = "C:///www///html///trax";
         //String cwd = "http://localhost/trax";
@@ -681,6 +681,9 @@ public class XsltProcessor extends SaxonCAPI {
         String outfile = "outfile.html";
         Processor processor = new Processor(false);
         XsltProcessor cpp = new XsltProcessor(processor);
+        cpp.createStylesheetFromFile(cwd2, "xsl/foo.xsl");
+        String resultStr = cpp.transformToString(cwd2, null, null, null, null);
+
         XdmNode node2 = cpp.parseXmlFile("/Users/ond1/work/development/campos", "ORP0301177AA__EE__30954_sinsello.xml");
         String[] paramsx = {"node"};
         Object[] valuesx = {node2};
@@ -700,63 +703,69 @@ public class XsltProcessor extends SaxonCAPI {
 
         XdmValue resultNode2 = cpp.parseXmlString("<?xml version=\"1.0\" encoding=\"UTF-8\"?><html><head><title>Untitled</title></head><body leftmargin=\"100\"></body></html>");
 
-
+          XdmValue value1 = SaxonCAPI.createXdmAtomicItem("string", "good bye");
         String[] params2 = {"o"};
         Object[] values2 = {"output_test.xml"};
         String[] params3 = {"node", "!indent", "output_test.xml", "xmlversion"};
-        //Object[] values3 = {"xml/foo.xml"};
+        String[]param4 = {"s", "param:a-param"};
+        Object[] values4 = {"xml/foo.xml", value1};
         Object[] values3 = {sourceNode2, "yes", "o", "1.0"};
         cpp.createStylesheetFromFile(cwd, stylesheet12);
 
 
         String result = "";
         int repeat = 1;
+        try {
+            cpp.createStylesheetFromString("samples", "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\n" +
+                    "    version=\"2.0\" xmlns:pf=\"http://example.com\">\n" +
+                    "<xsl:param name=\"pf:param-name\"  />" +
+                    "<xsl:param name=\"test1\"  />" +
 
-        cpp.createStylesheetFromString("samples", "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\n" +
-                "    version=\"2.0\" xmlns:pf=\"http://example.com\">\n" +
-                "<xsl:param name=\"pf:param-name\"  />" +
-                "<xsl:param name=\"test1\"  />" +
+                    "    \n" +
+                    "    \n" +
+                    "    <xsl:template match=\"/\" >\n" +
+                    "   <xsl:message>test messages</xsl:message>" +
+                    "        <xsl:copy-of select=\".\"/>\n" +
+                    "       XXXXXX <xsl:value-of select=\"$pf:param-name\"/>\n" +
+                    "    </xsl:template>\n" +
+                    "    \n" +
+                    "   \n" +
+                    "</xsl:stylesheet>");
 
-                "    \n" +
-                "    \n" +
-                "    <xsl:template match=\"/\" >\n" +
-                "   <xsl:message>test messages</xsl:message>" +
-                "        <xsl:copy-of select=\".\"/>\n" +
-                "       XXXXXX <xsl:value-of select=\"$pf:param-name\"/>\n" +
-                "    </xsl:template>\n" +
-                "    \n" +
-                "   \n" +
-                "</xsl:stylesheet>");
+            cpp.createStylesheetFromString("samples", "<xsl:stylesheet \n" +
+                    "    xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" \n" +
+                    "    xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" \n" +
+                    "    version=\"2.0\">\n" +
+                    "\n" +
+                    "    <xslt:output method=\"xml\" encoding=\"UTF-8\"/>\n" +
+                    "\n" +
+                    "    <xsl:template match=\"/\">        \n" +
+                    "        <xsl:call-template name=\"test\">\n" +
+                    "          <xsl:with-param name=\"xxx\" select=\"'test'\"/>\n" +
+                    "        </xsl:call-template>\n" +
+                    "    </xsl:template>\n" +
+                    "\n" +
+                    "    <xsl:template name='test'>\n" +
+                    "        <xsl:param name=\"xxx\" tunnel=\"yes\" />\n" +
+                    "        <p>xxx: <xsl:value-of select=\"$xxx\"/></p>\n" +
+                    "    </xsl:template>\n" +
+                    "\n" +
+                    "</xsl:stylesheet>");
 
-        cpp.createStylesheetFromString("samples", "<xsl:stylesheet \n" +
-                "    xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" \n" +
-                "    xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" \n" +
-                "    version=\"2.0\">\n" +
-                "\n" +
-                "    <xslt:output method=\"xml\" encoding=\"UTF-8\"/>\n" +
-                "\n" +
-                "    <xsl:template match=\"/\">        \n" +
-                "        <xsl:call-template name=\"test\">\n" +
-                "          <xsl:with-param name=\"xxx\" select=\"'test'\"/>\n" +
-                "        </xsl:call-template>\n" +
-                "    </xsl:template>\n" +
-                "\n" +
-                "    <xsl:template name='test'>\n" +
-                "        <xsl:param name=\"xxx\" tunnel=\"yes\" />\n" +
-                "        <p>xxx: <xsl:value-of select=\"$xxx\"/></p>\n" +
-                "    </xsl:template>\n" +
-                "\n" +
-                "</xsl:stylesheet>");
+            String valueStr = cpp.transformToString(cwd, "categories.xml", null, null, null);
+            if (valueStr != null) {
+                System.out.println("Output = " + valueStr);
+            } else {
+                System.out.println("valueSt is null");
+            }
 
-        String valueStr = cpp.transformToString(cwd,"categories.xml", null, null, null);
-         if(valueStr != null) {
-             System.out.println("Output = " + valueStr);
-         } else {
-             System.out.println("valueSt is null");
-         }
+        }catch(SaxonCException ex) {}
 
         try {
-            cpp.transformToFile(cwd, "categories.xml", stylesheet12, "outputTest.txt", null, null);
+
+            String resultStr2 = cpp.transformToString(cwd2, null, null, param4, values4);
+
+           /* cpp.transformToFile(cwd, "categories.xml", stylesheet12, "outputTest.txt", null, null);
             long startTime = System.currentTimeMillis();
             for (int i = 0; i < repeat; i++) {
                 //result = cpp.xsltApplyStylesheet(cwd, null, "xsl/foo.xsl", params3, values3);
@@ -766,7 +775,7 @@ public class XsltProcessor extends SaxonCAPI {
             long endTime = System.currentTimeMillis();
             //  System.out.println("output:" + result + " Time:" + ((endTime - startTime) / 5));
 
-            System.out.println("output:" + result2);
+            System.out.println("output:" + result2); */
         } catch (Exception ex) {
             ex.printStackTrace();
         }
