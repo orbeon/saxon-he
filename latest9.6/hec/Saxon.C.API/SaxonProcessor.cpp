@@ -51,8 +51,6 @@ SaxonProcessor::SaxonProcessor() {
 
 
 
-//TODO - Exception handling in Saxon/C on both Java side and C++ side does not correctly handle multiple exceptions
-//This needs working on in the next release
 SaxonApiException * SaxonProcessor::checkForExceptionCPP(JNIEnv* env, jclass callingClass,  jobject callingObject){
 
     if (env->ExceptionCheck()) {
@@ -76,15 +74,21 @@ SaxonApiException * SaxonProcessor::checkForExceptionCPP(JNIEnv* env, jclass cal
 	if(getMessage) {
 
 		jstring message(static_cast<jstring>(env->CallObjectMethod(exc, getMessage)));
-        	char const* utfMessage(env->GetStringUTFChars(message, 0));
+		char const* utfMessage = NULL;		
+		if(!message) {
+			utfMessage = "";
+			return NULL;
+		} else {
+        		utfMessage = (env->GetStringUTFChars(message, 0));
+		}
 		if(utfMessage != NULL) {
 			result1 = (result1 + " : ") + utfMessage;
-		}
-		//cout<<"ExceptionMessage ZZZ: "<<result1<<endl;
+		} 
+		
 		//env->ReleaseStringUTFChars(message,utfMessage);
-		if(callingObject != NULL && result1.compare(0,36, "net.sf.saxon.s9api.SaxonApiException", 36) == 0){
-			jmethodID  getErrorCodeID(env->GetMethodID(callingClass, "getExceptions", "()[Lnet/sf/saxon/option/cpp/SaxonExceptionForCpp;"));
-			jclass saxonExceptionClass(env->FindClass("net/sf/saxon/option/cpp/SaxonExceptionForCpp"));
+		if(callingObject != NULL && result1.compare(0,36, "net.sf.saxon.option.cpp.SaxonCException", 36) == 0){
+			jmethodID  getErrorCodeID(env->GetMethodID(callingClass, "getExceptions", "()[Lnet/sf/saxon/option/cpp/SaxonCException;"));
+			jclass saxonExceptionClass(env->FindClass("net/sf/saxon/option/cpp/SaxonCException"));
 				if(getErrorCodeID){	
 					jobjectArray saxonExceptionObject((jobjectArray)(env->CallObjectMethod(callingObject, getErrorCodeID)));
 					if(saxonExceptionObject) {

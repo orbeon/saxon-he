@@ -248,7 +248,7 @@ void XsltProcessor::compileFromFile(const char* stylesheet) {
 						proc->environ->env->NewStringUTF(stylesheet)));
 		if (!stylesheetObject) {
 			if(exceptionOccurred()) {
-				cerr<<"Error in compile of Stylesheet"<<endl;
+				
 				if(proc->exception != NULL) {
 					delete proc->exception;
 				}
