@@ -338,9 +338,11 @@ public abstract class TestDriver {
                         break;
                     }
                 }
-                if (testName != null && appliesThisEdition) {
+                if (appliesThisEdition) {
                     if (runVal.equals("false")) {
-                        exceptionsMap.put(testName, entry);
+                        for (String tc : testName.trim().split("\\s+")) {
+                            exceptionsMap.put(tc, entry);
+                        }
                     } else {
                         XdmSequenceIterator iter2 = entry.axisIterator(Axis.CHILD, new QName("optimization"));
                         if (iter2.hasNext()) {
