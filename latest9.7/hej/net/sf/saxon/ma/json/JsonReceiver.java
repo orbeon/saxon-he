@@ -250,6 +250,7 @@ public class JsonReceiver implements Receiver {
             keyChecker.pop();
             output.append(indenting ? " }" : "}");
         }
+        atStart = false;
     }
 
     public static CharSequence escape(CharSequence in, boolean forXml, IntPredicate hexEscapes) throws XPathException {
