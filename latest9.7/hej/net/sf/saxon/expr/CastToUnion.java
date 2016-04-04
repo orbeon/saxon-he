@@ -380,7 +380,7 @@ public class CastToUnion extends UnaryExpression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("castToUnion", this);
         out.emitAttribute("as", targetType.toString());
         getBaseExpression().export(out);

@@ -681,7 +681,7 @@ public class XQueryExpression implements Location {
      *            will be sent
      */
 
-    public void explain(/*@NotNull*/ ExpressionPresenter out) {
+    public void explain(/*@NotNull*/ ExpressionPresenter out) throws XPathException {
         out.startElement("query");
         getExecutable().getKeyManager().exportKeys(out, null);
         getExecutable().explainGlobalVariables(out);

@@ -114,7 +114,7 @@ public interface Function extends Item, Callable, GroundedValue {
      * Output information about this function item to the diagnostic explain() output
      */
 
-    void export(ExpressionPresenter out);
+    void export(ExpressionPresenter out) throws XPathException;
 
 }
 

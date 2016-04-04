@@ -175,7 +175,7 @@ public final class Comment extends SimpleNodeConstructor {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("comment", this);
         getSelect().export(out);
         out.endElement();

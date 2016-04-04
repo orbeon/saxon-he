@@ -284,13 +284,15 @@ public class TryCatch extends Expression {
      * @param out the expression presenter used to display the structure
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("try", this);
         tryOp.getChildExpression().export(out);
         for (CatchClause clause : catchClauses) {
             out.startElement("catch");
             out.emitAttribute("err", clause.nameTest.toString());
-            out.emitAttribute("test", clause.nameTest.generateJavaScriptNameTest());
+            if ("JS".equals(out.getOption("target"))) {
+                out.emitAttribute("test", clause.nameTest.generateJavaScriptNameTest());
+            }
             clause.catchOp.getChildExpression().export(out);
             out.endElement();
         }

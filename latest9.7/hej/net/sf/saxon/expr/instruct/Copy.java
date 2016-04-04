@@ -550,7 +550,7 @@ public class Copy extends ElementCreator {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("copy", this);
         exportValidationAndType(out);
         String flags = "";

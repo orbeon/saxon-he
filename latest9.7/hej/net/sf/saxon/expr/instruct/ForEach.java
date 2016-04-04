@@ -493,7 +493,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("forEach", this);
         getSelect().export(out);
         getAction().export(out);
@@ -501,7 +501,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
         out.endElement();
     }
 
-    protected void explainThreads(ExpressionPresenter out) {
+    protected void explainThreads(ExpressionPresenter out) throws XPathException{
         // no action in this class: implemented in subclass
     }
 

@@ -411,7 +411,7 @@ public class RangeKey implements MapItem {
     /**
      * Output information about this function item to the diagnostic explain() output
      */
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("range-key-map");
         out.emitAttribute("size", size() + "");
         out.endElement();

@@ -335,7 +335,7 @@ public final class ItemChecker extends UnaryExpression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("treat", this);
         out.emitAttribute("as", requiredItemType.toString());
         out.emitAttribute("diag", role.save());

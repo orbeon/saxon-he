@@ -179,7 +179,7 @@ public class ConditionalSorter extends Expression {
      * @param out the expression presenter used to display the structure
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("conditionalSort", this);
         getCondition().export(out);
         getDocumentSorter().export(out);

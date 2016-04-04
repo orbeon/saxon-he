@@ -345,7 +345,7 @@ public class UseAttributeSet extends Instruction implements ComponentInvocation,
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("useAS", this);
         out.emitAttribute("name", targetName);
         out.emitAttribute("bSlot", "" + getBindingSlot());

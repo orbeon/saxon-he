@@ -604,5 +604,18 @@ public class NumericType implements UnionType, PlainType {
     public String toString() {
         return "xs:numeric";
     }
+
+    /**
+     * Generate Javascript code to test whether an item conforms to this item type
+     *
+     * @return a Javascript instruction or sequence of instructions, which can be used as the body
+     * of a Javascript function, and which returns a boolean indication whether the value of the
+     * variable "item" is an instance of this item type.
+     * @param knownToBe
+     */
+    @Override
+    public String generateJavaScriptItemTypeTest(ItemType knownToBe) {
+        return "return Atomic.numeric.matches(item);";
+    }
 }
 

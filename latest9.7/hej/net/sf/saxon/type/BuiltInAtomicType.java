@@ -1133,6 +1133,21 @@ public class BuiltInAtomicType implements AtomicType {
                 p == BuiltInAtomicType.INTEGER;
     }
 
+    /**
+     * Generate Javascript code to test whether an item conforms to this item type
+     *
+     * @return a Javascript instruction or sequence of instructions, which can be used as the body
+     * of a Javascript function, and which returns a boolean indication whether the value of the
+     * variable "item" is an instance of this item type.
+     * @throws XPathException if JS code cannot be generated for this item type, for example because
+     *                        the test is schema-aware.
+     * @param knownToBe
+     */
+    @Override
+    public String generateJavaScriptItemTypeTest(ItemType knownToBe) throws XPathException {
+        return "return Atomic." + getName() + ".matches(item);";
+    }
+
     //#ifdefined  SCHEMA
     public Function getComponentAsFunction() {
         return UserSimpleType.getComponentAsFunction(this);

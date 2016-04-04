@@ -302,7 +302,7 @@ public final class LocalParamSetter extends Instruction {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("param", this);
         out.emitAttribute("name", binding.getVariableQName());
         out.emitAttribute("slot", "" + binding.getSlotNumber());

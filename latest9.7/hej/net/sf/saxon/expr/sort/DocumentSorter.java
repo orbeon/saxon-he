@@ -230,7 +230,7 @@ public class DocumentSorter extends UnaryExpression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("docOrder", this);
         out.emitAttribute("intra", comparer instanceof LocalOrderComparer ? "1" : "0");
         getBaseExpression().export(out);

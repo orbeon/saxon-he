@@ -680,7 +680,7 @@ public class SortKeyDefinition extends PseudoExpression {
     }
 
     @Override
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("sortKey", this);
         if (finalComparator != null) {
             out.emitAttribute("comp", finalComparator.save());

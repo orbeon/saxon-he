@@ -10,6 +10,7 @@ package net.sf.saxon.pattern;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.NodeName;
 import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.tiny.TinyTree;
 import net.sf.saxon.type.*;
 
@@ -150,6 +151,21 @@ public final class AnyNodeTest extends NodeTest implements QNameTest {
      */
     public String generateJavaScriptNameTest() {
         return "true";
+    }
+
+    /**
+     * Generate Javascript code to test whether an item conforms to this item type
+     *
+     * @return a Javascript instruction or sequence of instructions, which can be used as the body
+     * of a Javascript function, and which returns a boolean indication whether the value of the
+     * variable "item" is an instance of this item type.
+     * @throws XPathException if JS code cannot be generated for this item type, for example because
+     *                        the test is schema-aware.
+     * @param knownToBe
+     */
+    @Override
+    public String generateJavaScriptItemTypeTest(ItemType knownToBe) throws XPathException {
+        return "return DomUtils.isNode(item);";
     }
 }
 

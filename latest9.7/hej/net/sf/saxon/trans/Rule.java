@@ -142,7 +142,7 @@ public class Rule {
      * @param out   the destination for the export
      * @param modeStreamable    if the mode for this rule is streamable (should be EE only?)
      */
-    public void export(ExpressionPresenter out, boolean modeStreamable) {
+    public void export(ExpressionPresenter out, boolean modeStreamable) throws XPathException {
         RuleTarget target = getAction();
         TemplateRule template = null;
         if (target instanceof TemplateRule) {
@@ -189,7 +189,7 @@ public class Rule {
             int e = out.endElement();
             if (s != e) {
                 throw new IllegalStateException(
-                        "exported expression tree unbalanced in template at line " +
+                        "Export tree unbalanced in template at line " +
                                 (template != null ?
                                         template.getLineNumber() + " of " + template.getSystemId() : ""));
             }
@@ -202,7 +202,7 @@ public class Rule {
      * Add other exported properties as required
      * @param out  the export destination
      */
-    public void exportOtherProperties(ExpressionPresenter out){}
+    public void exportOtherProperties(ExpressionPresenter out) throws XPathException {}
 
 
     /**

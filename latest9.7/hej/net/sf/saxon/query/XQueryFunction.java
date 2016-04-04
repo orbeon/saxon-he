@@ -528,7 +528,7 @@ public class XQueryFunction implements InstructionInfo, Declaration {
      *
      * @param out the destination to be used
      */
-    public void explain(/*@NotNull*/ ExpressionPresenter out) {
+    public void explain(/*@NotNull*/ ExpressionPresenter out) throws XPathException {
         out.startElement("declareFunction");
         out.emitAttribute("name", functionName.getDisplayName());
         out.emitAttribute("arity", "" + getNumberOfArguments());

@@ -112,7 +112,7 @@ public class CallableFunction extends AbstractFunction {
      * @param out
      */
     @Override
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         if (callable instanceof UserFunction) {
             out.startElement("userFI");
             out.emitAttribute("name", getFunctionName());

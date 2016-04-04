@@ -303,7 +303,7 @@ public class NamedTemplate extends ComponentCode<NamedTemplate> {
      * Output diagnostic explanation to an ExpressionPresenter
      */
 
-    public void export(ExpressionPresenter presenter) {
+    public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("template");
         presenter.emitAttribute("name", getTemplateName().getEQName());
         explainProperties(presenter);

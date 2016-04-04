@@ -781,7 +781,7 @@ public class ForEachGroup extends Instruction
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("forEachGroup", this);
         out.emitAttribute("algorithm", getAlgorithmName(algorithm));
         if (composite) {

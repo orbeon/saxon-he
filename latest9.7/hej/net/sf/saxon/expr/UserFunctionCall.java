@@ -623,7 +623,7 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("ufCall", this);
         if (getFunctionName() != null) {
             out.emitAttribute("name", getFunctionName().getEQName());

@@ -11,6 +11,7 @@ import net.sf.saxon.expr.Operand;
 import net.sf.saxon.expr.OperandRole;
 import net.sf.saxon.expr.PseudoExpression;
 import net.sf.saxon.trace.ExpressionPresenter;
+import net.sf.saxon.trans.XPathException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,7 +107,7 @@ public class SortKeyDefinitionList extends PseudoExpression implements Iterable<
     }
 
     @Override
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         for (SortKeyDefinition skd : sortKeyDefinitions) {
             skd.export(out);
         }

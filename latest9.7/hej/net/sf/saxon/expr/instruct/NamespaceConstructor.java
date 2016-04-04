@@ -218,7 +218,7 @@ public class NamespaceConstructor extends SimpleNodeConstructor {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("namespace", this);
         out.setChildRole("name");
         getNameExp().export(out);

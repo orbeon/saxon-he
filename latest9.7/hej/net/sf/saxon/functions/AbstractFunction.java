@@ -120,7 +120,7 @@ public abstract class AbstractFunction extends AbstractItem implements Function 
     /**
      * Output information about this function item to the diagnostic explain() output
      */
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("abstractFunction");
         out.emitAttribute("class", getClass().getSimpleName());
         if (getFunctionName() != null) {

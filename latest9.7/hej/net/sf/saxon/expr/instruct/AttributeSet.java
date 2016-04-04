@@ -157,7 +157,7 @@ public class AttributeSet extends ComponentCode<AttributeSet> {
      * @param presenter the expression presenter used to display the structure
      */
     @Override
-    public void export(ExpressionPresenter presenter) {
+    public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("attributeSet");
         presenter.emitAttribute("name", getObjectName().getEQName());
         presenter.emitAttribute("line", getLineNumber() + "");

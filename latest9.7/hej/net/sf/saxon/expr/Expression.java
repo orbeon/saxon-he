@@ -978,9 +978,11 @@ public abstract class Expression implements /*InstructionInfo,*/ IdentityCompara
      * is written to the supplied output destination.
      *
      * @param out the expression presenter used to display the structure
+     * @throws XPathException if the export fails, for example if an expression is found that won't work
+     * in the target environment.
      */
 
-    public abstract void export(ExpressionPresenter out);
+    public abstract void export(ExpressionPresenter out) throws XPathException;
 
     /**
      * Diagnostic print of expression structure. The abstract expression tree
@@ -991,7 +993,13 @@ public abstract class Expression implements /*InstructionInfo,*/ IdentityCompara
 
     public final void explain(Logger out) {
         ExpressionPresenter ep = new ExpressionPresenter(getConfiguration(), out);
-        export(ep);
+        try {
+            export(ep);
+        } catch (XPathException e) {
+            ep.startElement("failure");
+            ep.emitAttribute("message", e.getMessage());
+            ep.endElement();
+        }
         ep.close();
     }
 

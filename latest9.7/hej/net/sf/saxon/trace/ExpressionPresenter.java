@@ -27,9 +27,7 @@ import net.sf.saxon.value.Whitespace;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.stream.StreamResult;
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * This class handles the display of an abstract expression tree in an XML format
@@ -45,6 +43,7 @@ public class ExpressionPresenter {
     private Stack<Expression> expressionStack = new Stack<Expression>();
     private Stack<String> nameStack = new Stack<String>();
     private String defaultNamespace;
+    private Map<String, String> options = new HashMap<String,String>();
 
     /**
      * Make an ExpressionPresenter that writes indented output to the standard error output
@@ -141,6 +140,26 @@ public class ExpressionPresenter {
 
     public void setDefaultNamespace(String namespace) {
         defaultNamespace = namespace;
+    }
+
+    /**
+     * Set an option (a keyword=value pair, where both are strings)
+     * @param key the option name
+     * @param value the option value
+     */
+
+    public void setOption(String key, String value) {
+        options.put(key, value);
+    }
+
+    /**
+     * Get the value of an option
+     * @param key the option name
+     * @return the option value, or null if the option has not been set
+     */
+
+    public String getOption(String key) {
+        return options.get(key);
     }
 
     /**

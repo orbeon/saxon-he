@@ -439,7 +439,7 @@ public class CastExpression extends CastingExpression implements Callable {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("cast", this);
         out.emitAttribute("as", getTargetType().getTypeName());
         out.emitAttribute("emptiable", allowsEmpty() ? "1" : "0");

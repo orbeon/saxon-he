@@ -1210,7 +1210,7 @@ public class QueryModule implements StaticContext {
      * @param out the expression presenter used to display the output
      */
 
-    public void explainGlobalFunctions(ExpressionPresenter out) {
+    public void explainGlobalFunctions(ExpressionPresenter out) throws XPathException{
         globalFunctionLibrary.explainGlobalFunctions(out);
     }
 

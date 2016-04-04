@@ -123,6 +123,28 @@ public class XsltPackage {
     }
 
     /**
+     * Save this compiled package to filestore for a particular target environment
+     *
+     * @param file the file to which the compiled package should be saved
+     * @param target the target environment. The only value currently recognized is "JS", which exports
+     *               the package for running under Saxon-JS.
+     * @throws SaxonApiException if the compiled package cannot be saved to the specified
+     *                           location.
+     * @since 9.7.0.5 (experimental and subject to change)
+     */
+
+    public void save(File file, String target) throws SaxonApiException {
+        StreamResult destination = new StreamResult(file);
+        ExpressionPresenter out = new ExpressionPresenter(processor.getUnderlyingConfiguration(), destination, true);
+        out.setOption("target", target);
+        try {
+            stylesheetPackage.export(out);
+        } catch (XPathException e) {
+            throw new SaxonApiException(e);
+        }
+    }
+
+    /**
      * Escape-hatch interface to the underlying implementation class.
      * @return the underlying StylesheetPackage. The interface to StylesheetPackage
      * is not a stable part of the s9api API definition.

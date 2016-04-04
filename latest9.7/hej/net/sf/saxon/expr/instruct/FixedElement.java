@@ -564,7 +564,7 @@ public class FixedElement extends ElementCreator {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("elem", this);
         if (elementName.getPrefix().isEmpty()) {
             out.emitAttribute("name", elementName.getLocalPart());

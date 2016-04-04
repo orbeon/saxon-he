@@ -113,7 +113,7 @@ public class LocalParamBlock extends Instruction {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("params", this);
         for (Operand o : operands()) {
             o.getChildExpression().export(out);

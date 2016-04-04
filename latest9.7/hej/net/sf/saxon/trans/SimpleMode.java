@@ -922,9 +922,9 @@ public class SimpleMode extends Mode {
      * @param out used to display the expression tree
      */
 
-    public void explainTemplateRules(final ExpressionPresenter out) {
+    public void explainTemplateRules(final ExpressionPresenter out) throws XPathException {
         RuleAction action = new RuleAction() {
-            public void processRule(Rule r) {
+            public void processRule(Rule r) throws XPathException {
                 r.export(out, isDeclaredStreamable());
             }
         };
@@ -966,23 +966,19 @@ public class SimpleMode extends Mode {
      */
 
     @Override
-    public void exportTemplateRules(final ExpressionPresenter out) {
+    public void exportTemplateRules(final ExpressionPresenter out) throws XPathException {
         //final Set<RuleTarget> processedRules = new HashSet<RuleTarget>();
         // TODO: if two rules share the same template, avoid duplicate output. This can happen with union patterns, and also
         // when a template is present in more than one mode.
         RuleAction action = new RuleAction() {
-            public void processRule(Rule r) {
+            public void processRule(Rule r) throws XPathException {
                // if (processedRules.add(r.getAction())) {
                     r.export(out, isDeclaredStreamable());
                // }
             }
         };
 
-        try {
-            processRules(action);
-        } catch (XPathException err) {
-            // can't happen, and doesn't matter if it does
-        }
+        processRules(action);
 
     }
 

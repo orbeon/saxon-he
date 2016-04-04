@@ -127,5 +127,21 @@ public interface ItemType {
 
     void visitNamedSchemaComponents(SchemaComponentVisitor visitor) throws XPathException;
 
+
+    /**
+     * Generate Javascript code to test whether an item conforms to this item type
+     * @param knownToBe An item type that the supplied item is known to conform to; the generated code
+     *                  can assume that the item is an instance of this type.
+     * @return a Javascript instruction or sequence of instructions, which can be used as the body
+     * of a Javascript function, and which returns a boolean indication whether the value of the
+     * variable "item" is an instance of this item type.
+     * @throws XPathException if JS code cannot be generated for this item type, for example because
+     *                        the test is schema-aware.
+     *
+     */
+
+    String generateJavaScriptItemTypeTest(ItemType knownToBe) throws XPathException;
+
+
 }
 

@@ -399,7 +399,7 @@ public class TraceExpression extends Instruction implements InstructionInfo {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         getChild().export(out);
     }
 

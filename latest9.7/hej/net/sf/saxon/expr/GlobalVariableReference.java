@@ -132,7 +132,7 @@ public class GlobalVariableReference extends VariableReference implements Compon
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("gVarRef", this);
         out.emitAttribute("name", getVariableName().getEQName());
         out.emitAttribute("bSlot", "" + getBindingSlot());

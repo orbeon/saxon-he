@@ -77,7 +77,7 @@ public class CurrentGroupingKeyCall extends Expression implements Callable {
      * @param out the expression presenter used to display the structure
      */
     @Override
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("currentGroupingKey");
         out.endElement();
     }

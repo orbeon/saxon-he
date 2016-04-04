@@ -628,7 +628,7 @@ public class HashTrieMap extends AbstractItem implements MapItem, GroundedValue 
     /**
      * Output information about this function item to the diagnostic explain() output
      */
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("map");
         out.emitAttribute("size", size() + "");
         out.endElement();

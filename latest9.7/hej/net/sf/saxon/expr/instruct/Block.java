@@ -634,7 +634,7 @@ public class Block extends Instruction {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("sequence", this);
         for (Operand o : operands()) {
             Expression child = o.getChildExpression();

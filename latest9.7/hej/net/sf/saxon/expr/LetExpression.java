@@ -800,7 +800,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("let", this);
         out.emitAttribute("var", variableName);
         out.emitAttribute("as", getSequence().getItemType().toString() +

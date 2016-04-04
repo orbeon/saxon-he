@@ -830,7 +830,7 @@ public class ResultDocument extends Instruction
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("resultDoc", this);
         out.emitAttribute("global", exportProperties(globalProperties));
         out.emitAttribute("local", exportProperties(localProperties));

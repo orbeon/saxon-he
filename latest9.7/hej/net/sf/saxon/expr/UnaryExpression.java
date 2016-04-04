@@ -194,7 +194,7 @@ public abstract class UnaryExpression extends Expression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         String name = getExpressionName();
         if (name == null) {
             out.startElement("unaryOperator", this);

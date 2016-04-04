@@ -350,7 +350,7 @@ public final class ValueOf extends SimpleNodeConstructor {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("valueOf", this);
         String flags = "";
         if ((options & ReceiverOptions.DISABLE_ESCAPING) != 0) {

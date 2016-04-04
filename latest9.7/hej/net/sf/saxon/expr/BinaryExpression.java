@@ -437,7 +437,7 @@ public abstract class BinaryExpression extends Expression {
      * @param out the output destination for the displayed expression tree
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement(tag(), this);
         out.emitAttribute("op", displayOperator());
         explainExtraAttributes(out);

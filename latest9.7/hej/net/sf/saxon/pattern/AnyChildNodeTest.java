@@ -10,6 +10,7 @@ package net.sf.saxon.pattern;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.NodeName;
 import net.sf.saxon.tree.tiny.TinyTree;
+import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.type.UType;
@@ -138,6 +139,20 @@ public final class AnyChildNodeTest extends NodeTest {
     public int hashCode() {
         return "AnyChildNodeTest".hashCode();
     }
+
+    /**
+     * Generate Javascript code to test whether an item conforms to this item type
+     *
+     * @return a Javascript instruction or sequence of instructions, which can be used as the body
+     * of a Javascript function, and which returns a boolean indication whether the value of the
+     * variable "item" is an instance of this item type.
+     * @param knownToBe
+     */
+    @Override
+    public String generateJavaScriptItemTypeTest(ItemType knownToBe) {
+        return "return item instanceof Node && (item.nodeType==1 || item.nodeType==3 || item.nodeType==7 || item.nodeType==8);";
+    }
+
 
 }
 

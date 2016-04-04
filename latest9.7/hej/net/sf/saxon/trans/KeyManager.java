@@ -575,7 +575,7 @@ public class KeyManager {
      * @param out the expression presenter that will display the information
      */
 
-    public void exportKeys(ExpressionPresenter out, Map<Component, Integer> componentIdMap) {
+    public void exportKeys(ExpressionPresenter out, Map<Component, Integer> componentIdMap) throws XPathException {
         for (Map.Entry<StructuredQName, KeyDefinitionSet> e : keyDefinitions.entrySet()) {
             List<KeyDefinition> list = e.getValue().getKeyDefinitions();
             for (KeyDefinition kd : list) {

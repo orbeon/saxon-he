@@ -418,7 +418,7 @@ public abstract class SystemFunction extends AbstractFunction {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("fnRef");
         out.emitAttribute("name", getFunctionName().getLocalPart());
         out.emitAttribute("arity", getArity() + "");

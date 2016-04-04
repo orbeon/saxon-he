@@ -471,7 +471,7 @@ public abstract class FunctionCall extends Expression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("functionCall", this);
         if (getFunctionName() == null) {
             throw new AssertionError("Exporting call to anonymous function");

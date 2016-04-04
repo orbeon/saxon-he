@@ -809,7 +809,7 @@ public class Choose extends Instruction {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("choose", this);
         for (int i = 0; i < size(); i++) {
             getCondition(i).export(out);

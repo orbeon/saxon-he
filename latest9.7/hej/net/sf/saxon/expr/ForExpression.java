@@ -559,7 +559,7 @@ public class ForExpression extends Assignation {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("for", this);
         explainSpecializedAttributes(out);
         out.emitAttribute("var", getVariableName());

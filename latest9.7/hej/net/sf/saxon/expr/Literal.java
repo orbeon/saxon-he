@@ -503,7 +503,7 @@ public class Literal extends Expression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         exportValue(value, out);
     }
 

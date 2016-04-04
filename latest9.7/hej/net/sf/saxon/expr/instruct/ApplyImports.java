@@ -308,7 +308,7 @@ public class ApplyImports extends Instruction implements ITemplateCall {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("applyImports", this);
         if (allowAnyItem) {
             out.emitAttribute("flags", "i");

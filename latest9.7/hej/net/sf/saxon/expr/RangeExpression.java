@@ -190,7 +190,7 @@ public class RangeExpression extends BinaryExpression {
      * @param out the output destination for the displayed expression tree
      */
     @Override
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("to", this);
         getLhsExpression().export(out);
         getRhsExpression().export(out);

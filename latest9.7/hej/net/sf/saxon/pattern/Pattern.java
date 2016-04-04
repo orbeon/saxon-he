@@ -436,7 +436,7 @@ public abstract class Pattern extends PseudoExpression {
         return null;
     }
 
-    public abstract void export(ExpressionPresenter presenter);
+    public abstract void export(ExpressionPresenter presenter) throws XPathException;
 
 //    /**
 //     * Copy location information (the line number, priority and references to package) from one pattern

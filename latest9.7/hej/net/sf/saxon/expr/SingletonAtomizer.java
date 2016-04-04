@@ -311,7 +311,7 @@ public final class SingletonAtomizer extends UnaryExpression {
      * @param out
      */
     @Override
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
 
         out.startElement("atomSing", this);
         if (allowEmpty) {

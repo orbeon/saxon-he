@@ -8,7 +8,9 @@
 package net.sf.saxon.pattern;
 
 import net.sf.saxon.om.*;
+import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.tiny.TinyTree;
+import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.type.UType;
@@ -330,6 +332,40 @@ public class NameTest extends NodeTest implements QNameTest {
     public String generateJavaScriptNameTest() {
         computeUriAndLocal();
         return "q.uri=='" + uri + "'&&q.local=='" + localName + "'";
+    }
+
+    /**
+     * Generate Javascript code to test whether an item conforms to this item type
+     * @param knownToBe NodeTest that the item is known to conform to (no run-time test needed)
+     * @return a Javascript instruction or sequence of instructions, which can be used as the body
+     * of a Javascript function, and which returns a boolean indication whether the value of the
+     * variable "item" is an instance of this item type.
+     * @throws XPathException if JS code cannot be generated for this item type, for example because
+     *                        the test is schema-aware.
+     *
+     */
+    @Override
+    public String generateJavaScriptItemTypeTest(ItemType knownToBe) throws XPathException {
+
+        boolean knownKind = knownToBe.getUType() == this.getUType();
+        if (nodeKind == Type.ATTRIBUTE && getNamespaceURI().equals("")) {
+            // Optimization
+            String nt = "item.name=='" + getLocalPart() + "'";
+            return "return " + (knownKind ? nt : "item instanceof Attr && " + nt);
+        }
+        String instNode = "";
+        if (!knownKind) {
+            if (knownToBe instanceof NodeTest) {
+                instNode = "item.nodeType==" + nodeKind + " && ";
+            } else if (nodeKind == Type.ATTRIBUTE) {
+                instNode = "item instanceof Attr && ";
+            } else if (nodeKind == Type.NAMESPACE) {
+                instNode = "item instanceof NamespaceNode && ";
+            } else {
+                instNode = "item instanceof Node && item.nodeType==" + nodeKind + " && ";
+            }
+        }
+        return "var q=DomUtils.nameOfNode(item); return " + instNode + generateJavaScriptNameTest() + ";";
     }
 }
 

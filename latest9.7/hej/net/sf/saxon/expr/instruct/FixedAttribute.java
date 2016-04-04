@@ -267,7 +267,7 @@ public final class FixedAttribute extends AttributeCreator {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("att", this);
         out.emitAttribute("name", nodeName.getStructuredQName());
         if (getValidationAction() != Validation.SKIP && getValidationAction() != Validation.BY_TYPE) {

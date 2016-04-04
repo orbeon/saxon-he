@@ -580,7 +580,7 @@ public class Executable {
      * @param presenter the destination for the explanation of the global variables
      */
 
-    public void explainGlobalVariables(ExpressionPresenter presenter) {
+    public void explainGlobalVariables(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("globalVariables");
         for (PackageData pack : getPackages()) {
             for (GlobalVariable var : pack.getGlobalVariableList()) {

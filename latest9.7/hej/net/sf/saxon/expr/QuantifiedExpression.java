@@ -334,7 +334,7 @@ public class QuantifiedExpression extends Assignation {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement(Token.tokens[operator], this);
         out.emitAttribute("var", getVariableQName());
         out.emitAttribute("slot", ""+slotNumber);

@@ -108,7 +108,7 @@ public class KeyFn extends SystemFunction {
      * @param out
      */
     @Override
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         super.export(out);
     }
 

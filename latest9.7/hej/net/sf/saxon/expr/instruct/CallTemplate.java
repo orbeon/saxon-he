@@ -425,7 +425,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("callT", this);
         if (template != null && template.getTemplateName() != null) {
             out.emitAttribute("name", template.getTemplateName());

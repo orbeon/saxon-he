@@ -83,7 +83,7 @@ public class OriginalFunction extends AbstractFunction implements Function, Cont
     }
 
     @Override
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("origF");
         out.emitAttribute("name", getFunctionName());
         out.emitAttribute("arity", ""+getArity());

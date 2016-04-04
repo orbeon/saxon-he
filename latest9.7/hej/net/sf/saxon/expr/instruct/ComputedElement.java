@@ -455,7 +455,7 @@ public class ComputedElement extends ElementCreator {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("compElem", this);
         String flags = getInheritanceFlags();
         if (!flags.isEmpty()) {

@@ -273,7 +273,7 @@ public final class InstanceOfExpression extends UnaryExpression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("instance", this);
         if (targetCardinality == StaticProperty.ALLOWS_ZERO) {
             out.emitAttribute("of", "empty-sequence()");

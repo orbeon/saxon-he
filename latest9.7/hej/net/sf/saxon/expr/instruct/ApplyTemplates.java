@@ -456,7 +456,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
      * @param out output destination
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
 
         out.startElement("applyT", this);
         if (mode != null && !mode.isUnnamedMode()) {

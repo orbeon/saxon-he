@@ -499,7 +499,7 @@ public final class ComputedAttribute extends AttributeCreator {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("compAtt", this);
         if (getValidationAction() != Validation.SKIP) {
             out.emitAttribute("validation", Validation.toString(getValidationAction()));

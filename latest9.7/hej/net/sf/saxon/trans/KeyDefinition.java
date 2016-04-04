@@ -305,7 +305,7 @@ public class KeyDefinition extends ComponentCode<KeyDefinition> implements Conte
      * @param out the expression presenter used to display the structure
      */
 
-    public void export(ExpressionPresenter out, Map<Component, Integer> componentIdMap) {
+    public void export(ExpressionPresenter out, Map<Component, Integer> componentIdMap) throws XPathException {
         out.startElement("key");
         out.emitAttribute("name", getObjectName().getEQName());
         if (!NamespaceConstant.CODEPOINT_COLLATION_URI.equals(collationName)) {
@@ -336,7 +336,7 @@ public class KeyDefinition extends ComponentCode<KeyDefinition> implements Conte
     }
 
     @Override
-    public void export(ExpressionPresenter presenter) {
+    public void export(ExpressionPresenter presenter) throws XPathException {
         throw new UnsupportedOperationException();
     }
 }

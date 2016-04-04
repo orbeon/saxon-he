@@ -306,4 +306,6 @@ public class JavaExternalObjectType extends ExternalObjectType implements ItemTy
         return new StructuredQName("jt", NamespaceConstant.JAVA_TYPE, classNameToLocalName(className));
     }
 
+
+
 }

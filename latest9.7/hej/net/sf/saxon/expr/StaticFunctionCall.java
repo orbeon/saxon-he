@@ -176,7 +176,7 @@ public class StaticFunctionCall extends FunctionCall implements Callable {
      * @param out
      */
     @Override
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         if (target instanceof CurriedSystemFunction) {
             CurriedSystemFunction csf = (CurriedSystemFunction) target;
             out.startElement("cfn");

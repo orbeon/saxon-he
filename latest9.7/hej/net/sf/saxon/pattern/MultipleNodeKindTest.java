@@ -11,10 +11,7 @@ import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.NodeName;
 import net.sf.saxon.tree.tiny.TinyTree;
 import net.sf.saxon.tree.util.FastStringBuffer;
-import net.sf.saxon.type.PrimitiveUType;
-import net.sf.saxon.type.SchemaType;
-import net.sf.saxon.type.Type;
-import net.sf.saxon.type.UType;
+import net.sf.saxon.type.*;
 
 import java.util.LinkedList;
 
@@ -168,6 +165,45 @@ public final class MultipleNodeKindTest extends NodeTest {
     public int hashCode() {
         return uType.hashCode();
     }
+
+    /**
+     * Generate Javascript code to test whether an item conforms to this item type
+     *
+     * @return a Javascript instruction or sequence of instructions, which can be used as the body
+     * of a Javascript function, and which returns a boolean indication whether the value of the
+     * variable "item" is an instance of this item type.
+     * @param knownToBe
+     */
+    @Override
+    public String generateJavaScriptItemTypeTest(ItemType knownToBe) {
+        FastStringBuffer fsb = new FastStringBuffer(256);
+        fsb.append("return item instanceof Node && (false");
+        UType u = uType;
+        if (UType.DOCUMENT.overlaps(u)) {
+            fsb.append("||item.nodeType==9||item.nodeType==11");
+        }
+        if (UType.ELEMENT.overlaps(u)) {
+            fsb.append("||item.nodeType==1");
+        }
+        if (UType.ATTRIBUTE.overlaps(u)) {
+            fsb.append("||item.nodeType==2");  // TODO: Attr may not be a node
+        }
+        if (UType.TEXT.overlaps(u)) {
+            fsb.append("||item.nodeType==3");
+        }
+        if (UType.COMMENT.overlaps(u)) {
+            fsb.append("||item.nodeType==8");
+        }
+        if (UType.PI.overlaps(u)) {
+            fsb.append("||item.nodeType==7");
+        }
+        if (UType.NAMESPACE.overlaps(u)) {
+            fsb.append("||item.nodeType==13");  // TODO: this won't work
+        }
+        fsb.append(");");
+        return fsb.toString().replace("false||", "");
+    }
+
 
 }
 

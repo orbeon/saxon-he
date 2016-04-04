@@ -338,7 +338,7 @@ public class XQueryFunctionLibrary implements FunctionLibrary, XQueryFunctionBin
      * @param out the ExpressionPresenter that renders the output
      */
 
-    public void explainGlobalFunctions(/*@NotNull*/ ExpressionPresenter out) {
+    public void explainGlobalFunctions(/*@NotNull*/ ExpressionPresenter out) throws XPathException {
         for (XQueryFunction fn : functions.values()) {
             fn.explain(out);
         }

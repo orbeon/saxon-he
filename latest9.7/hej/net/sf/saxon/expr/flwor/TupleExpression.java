@@ -178,7 +178,7 @@ public class TupleExpression extends Expression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("tuple", this);
         for (Operand o : operands()) {
             o.getChildExpression().export(out);

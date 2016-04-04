@@ -1271,7 +1271,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      * @param out the ExpressionPresenter to be used
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("filter", this);
         String flags = "";
         if (filterIsIndependent) {

@@ -446,7 +446,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("copyOf", this);
         if (validation != Validation.SKIP) {
             out.emitAttribute("validation", Validation.toString(validation));

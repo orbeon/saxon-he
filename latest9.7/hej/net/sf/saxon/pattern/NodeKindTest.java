@@ -290,5 +290,36 @@ public class NodeKindTest extends NodeTest {
                 ((NodeKindTest) other).kind == kind;
     }
 
+    /**
+     * Generate Javascript code to test whether an item conforms to this item type
+     *
+     * @return a Javascript instruction or sequence of instructions, which can be used as the body
+     * of a Javascript function, and which returns a boolean indication whether the value of the
+     * variable "item" is an instance of this item type.
+     * @param knownToBe
+     */
+    @Override
+    public String generateJavaScriptItemTypeTest(ItemType knownToBe) {
+        String instNode = knownToBe instanceof NodeTest ? " " : " item instanceof Node && ";
+        switch (getNodeKind()) {
+            case Type.DOCUMENT:
+                return "return" + instNode + "(item.nodeType==9||item.nodeType==11);";
+            case Type.ELEMENT:
+                return "return" + instNode + "item.nodeType==1;";
+            case Type.TEXT:
+                return "return" + instNode + "item.nodeType==3;";
+            case Type.COMMENT:
+                return "return" + instNode + "item.nodeType==8;";
+            case Type.PROCESSING_INSTRUCTION:
+                return "return" + instNode + "item.nodeType==7&&item.target!='xml';";
+            case Type.ATTRIBUTE:
+                return "return item instanceof Attr";
+            case Type.NAMESPACE:
+                return "return item instanceof NamespaceNode";
+            default:
+                return "return false;";
+        }
+    }
+
 }
 

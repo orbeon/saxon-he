@@ -350,7 +350,7 @@ public class FLWORExpression extends Expression {
      * @param out the expression presenter used to display the structure
      */
     @Override
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("FLWOR", this);
         for (Clause c : clauses) {
             c.explain(out);

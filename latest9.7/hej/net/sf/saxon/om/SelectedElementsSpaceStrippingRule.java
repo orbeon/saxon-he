@@ -264,7 +264,7 @@ public class SelectedElementsSpaceStrippingRule implements SpaceStrippingRule {
      *
      * @param presenter the output handler
      */
-    public void export(ExpressionPresenter presenter) {
+    public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("strip");
         Rule rule = anyElementRule;
         while (rule != null) {
@@ -281,24 +281,29 @@ public class SelectedElementsSpaceStrippingRule implements SpaceStrippingRule {
         }
         presenter.endElement();
 
-        presenter.startElement("stripJS");
-        FastStringBuffer fsb = new FastStringBuffer(256);
-        Iterator<Rule> iter = getRankedRules();
+        FastStringBuffer fsb = null;
         boolean foundCatchAll = false;
-        while (iter.hasNext()) {
-            rule = iter.next();
-            exportRuleJS(rule, fsb);
-            if (rule.getPattern().getItemType() instanceof NodeKindTest) {
-                foundCatchAll = true;
-                break;
+        if ("JS".equals(presenter.getOption("target"))) {
+            presenter.startElement("stripJS");
+            fsb = new FastStringBuffer(256);
+            Iterator<Rule> iter = getRankedRules();
+            foundCatchAll = false;
+            while (iter.hasNext()) {
+                rule = iter.next();
+                exportRuleJS(rule, fsb);
+                if (rule.getPattern().getItemType() instanceof NodeKindTest) {
+                    foundCatchAll = true;
+                    break;
+                }
             }
+
+            if (!foundCatchAll) {
+                fsb.append("  return false;");
+            }
+            //System.err.println(fsb.toString());
+            presenter.emitAttribute("test", fsb.toString());
+            presenter.endElement();
         }
-        if (!foundCatchAll) {
-            fsb.append("  return false;");
-        }
-        //System.err.println(fsb.toString());
-        presenter.emitAttribute("test", fsb.toString());
-        presenter.endElement();
     }
 
     private static void exportRule(Rule rule, ExpressionPresenter presenter) {

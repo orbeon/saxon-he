@@ -321,7 +321,7 @@ public final class RuleManager {
      * @param presenter the object used to present the output
      */
 
-    public void exportTemplateRules(ExpressionPresenter presenter) {
+    public void exportTemplateRules(ExpressionPresenter presenter) throws XPathException {
         unnamedMode.export(presenter);
         for (Mode mode : modes.values()) {
             mode.export(presenter);
@@ -334,7 +334,7 @@ public final class RuleManager {
      * @param presenter the object used to present the output
      */
 
-    public void explainTemplateRules(ExpressionPresenter presenter) {
+    public void explainTemplateRules(ExpressionPresenter presenter) throws XPathException {
         unnamedMode.explain(presenter);
         for (Mode mode : modes.values()) {
             mode.explain(presenter);

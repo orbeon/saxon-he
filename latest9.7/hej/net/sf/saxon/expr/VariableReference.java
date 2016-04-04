@@ -622,7 +622,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter destination) {
+    public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("varRef", this);
         destination.emitAttribute("name", variableName);
 //        if (this instanceof LocalVariableReference) {

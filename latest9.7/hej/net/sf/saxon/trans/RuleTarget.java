@@ -19,7 +19,7 @@ public interface RuleTarget {
      * @param presenter the destination for the explanation
      */
 
-    void export(ExpressionPresenter presenter);
+    void export(ExpressionPresenter presenter) throws XPathException;
 
     /**
      * Register a rule for which this is the target

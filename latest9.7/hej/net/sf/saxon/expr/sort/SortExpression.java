@@ -485,7 +485,7 @@ public class SortExpression extends Expression
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("sort", this);
         out.setChildRole("select");
         getSelect().export(out);

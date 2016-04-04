@@ -16,6 +16,7 @@ import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trace.InstructionInfo;
 import net.sf.saxon.trans.SymbolicName;
 import net.sf.saxon.trans.Visibility;
+import net.sf.saxon.trans.XPathException;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -238,7 +239,7 @@ public abstract class ComponentCode<T extends ComponentCode> implements Instruct
      * @param presenter the expression presenter used to generate the XML representation of the structure
      */
 
-    public abstract void export(ExpressionPresenter presenter);
+    public abstract void export(ExpressionPresenter presenter) throws XPathException;
 }
 
 

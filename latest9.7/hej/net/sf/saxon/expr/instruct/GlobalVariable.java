@@ -856,7 +856,7 @@ public class GlobalVariable extends ComponentCode<GlobalVariable>
      * @param presenter the expression presenter used to display the structure
      */
     @Override
-    public void export(ExpressionPresenter presenter) {
+    public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement(this instanceof GlobalParam ? "globalParam" : "globalVariable");
         presenter.emitAttribute("name", getVariableQName().getEQName());
         presenter.emitAttribute("type", getRequiredType().toString());

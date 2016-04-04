@@ -298,7 +298,7 @@ public class CastToList extends UnaryExpression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("castToList", this);
         out.emitAttribute("as", targetType.toString());
         getBaseExpression().export(out);

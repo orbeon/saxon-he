@@ -369,7 +369,7 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
      * @param out
      */
     @Override
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("fn", this);
         out.emitAttribute("name", getFunctionName().getDisplayName());
         getTargetFunction().exportAttributes(out);

@@ -157,6 +157,12 @@ public class SaxonErrorCode {
     public static final String SXJE0053 = "SXJE0053";
 
     /**
+     * SXJS0001: Cannot export for Javascript if the stylesheet is schema-aware
+     */
+
+    public static final String SXJS0001 = "SXJS0001";
+
+    /**
      * SXPK0001: No binding available for call-template instruction
      */
 

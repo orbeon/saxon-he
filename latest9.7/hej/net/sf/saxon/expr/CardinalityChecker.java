@@ -400,7 +400,7 @@ public final class CardinalityChecker extends UnaryExpression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("check", this);
         String occ = Cardinality.getOccurrenceIndicator(requiredCardinality);
         if (occ.equals("")) {

@@ -158,7 +158,7 @@ public class NegateExpression extends UnaryExpression {
         return "minus";
     }
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("minus", this);
         if (backwardsCompatible) {
             out.emitAttribute("vn", "1");

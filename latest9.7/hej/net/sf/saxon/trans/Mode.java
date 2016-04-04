@@ -321,7 +321,7 @@ public abstract class Mode extends ComponentCode<SimpleMode> {
      * @param out used to display the expression tree
      */
 
-    public abstract void exportTemplateRules(ExpressionPresenter out);
+    public abstract void exportTemplateRules(ExpressionPresenter out) throws XPathException;
 
     /**
      * Explain all template rules in this mode in a form that can be re-imported.
@@ -331,7 +331,7 @@ public abstract class Mode extends ComponentCode<SimpleMode> {
      * @param out used to display the expression tree
      */
 
-    public abstract void explainTemplateRules(ExpressionPresenter out);
+    public abstract void explainTemplateRules(ExpressionPresenter out) throws XPathException;
 
 
     /**
@@ -494,7 +494,7 @@ public abstract class Mode extends ComponentCode<SimpleMode> {
         }
     }
 
-    public final void export(ExpressionPresenter presenter) {
+    public final void export(ExpressionPresenter presenter) throws XPathException {
         int s = presenter.startElement("mode");
         if (!isUnnamedMode()) {
             presenter.emitAttribute("name", getModeName().getEQName());
@@ -526,11 +526,11 @@ public abstract class Mode extends ComponentCode<SimpleMode> {
         exportTemplateRules(presenter);
         int e = presenter.endElement();
         if (s != e) {
-            throw new IllegalStateException("tree unbalanced");
+            throw new IllegalStateException("Export tree unbalanced for mode " + getModeName());
         }
     }
 
-    public void explain(ExpressionPresenter presenter) {
+    public void explain(ExpressionPresenter presenter) throws XPathException {
         int s = presenter.startElement("mode");
         if (!isUnnamedMode()) {
             presenter.emitAttribute("name", getModeName());

@@ -684,7 +684,7 @@ public class UserFunction extends ComponentCode<UserFunction> implements Functio
      * @param presenter the expression presenter used to display the structure
      */
     @Override
-    public void export(ExpressionPresenter presenter) {
+    public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("function");
         if (getFunctionName() != null) {
             presenter.emitAttribute("name", getFunctionName().getEQName());

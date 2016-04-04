@@ -13,6 +13,7 @@ import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.SchemaDeclaration;
 import net.sf.saxon.type.UType;
 
@@ -136,10 +137,17 @@ public class NodeTestPattern extends Pattern {
         }
     }
 
-    public void export(ExpressionPresenter presenter) {
+    public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.nodeTest");
         presenter.emitAttribute("test", nodeTest.toString());
-        //nodeTest.export(presenter);
+        if ("JS".equals(presenter.getOption("target"))) {
+            try {
+                presenter.emitAttribute("jsTest", nodeTest.generateJavaScriptItemTypeTest(AnyItemType.getInstance()));
+            } catch (XPathException e) {
+                e.maybeSetLocation(getLocation());
+                throw e;
+            }
+        }
         presenter.endElement();
     }
 

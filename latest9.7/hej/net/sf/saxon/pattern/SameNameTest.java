@@ -8,8 +8,11 @@
 package net.sf.saxon.pattern;
 
 import net.sf.saxon.om.*;
+import net.sf.saxon.trans.SaxonErrorCode;
+import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.tiny.TinyTree;
 import net.sf.saxon.tree.util.Navigator;
+import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.type.UType;
@@ -254,6 +257,21 @@ public class SameNameTest extends NodeTest implements QNameTest {
     public String generateJavaScriptNameTest() {
         // Not applicable
         return "false";
+    }
+
+    /**
+     * Generate Javascript code to test whether an item conforms to this item type
+     *
+     * @return a Javascript instruction or sequence of instructions, which can be used as the body
+     * of a Javascript function, and which returns a boolean indication whether the value of the
+     * variable "item" is an instance of this item type.
+     * @throws XPathException if JS code cannot be generated for this item type, for example because
+     *                        the test is schema-aware.
+     * @param knownToBe
+     */
+    @Override
+    public String generateJavaScriptItemTypeTest(ItemType knownToBe) throws XPathException {
+        throw new XPathException("Cannot generate JS code for a SameNameTest", SaxonErrorCode.SXJS0001);
     }
 }
 

@@ -276,7 +276,7 @@ public final class CastableExpression extends CastingExpression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter out) {
+    public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("castable", this);
         out.emitAttribute("as", getTargetType().getTypeName());
         out.emitAttribute("emptiable", allowsEmpty() ? "1" : "0");

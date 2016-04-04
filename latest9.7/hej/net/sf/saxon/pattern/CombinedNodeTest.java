@@ -8,17 +8,17 @@
 package net.sf.saxon.pattern;
 
 import net.sf.saxon.expr.parser.Token;
-import net.sf.saxon.om.StructuredQName;
-import net.sf.saxon.trace.ExpressionPresenter;
-import net.sf.saxon.z.IntSet;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.NodeName;
+import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.tiny.TinyTree;
+import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.*;
+import net.sf.saxon.z.IntSet;
 
 /**
- * A CombinedNodeTest combines two nodetests using one of the operators
+ * A CombinedNodeTest combines two node tests using one of the operators
  * union (=or), intersect (=and), difference (= "and not"). This arises
  * when optimizing a union (etc) of two path expressions using the same axis.
  * A CombinedNodeTest is also used to support constructs such as element(N,T),
@@ -411,12 +411,35 @@ public class CombinedNodeTest extends NodeTest {
     }
 
 
-    public void export(ExpressionPresenter presenter) {
-        presenter.startElement("combinedNT");
-        presenter.emitAttribute("op", Token.tokens[operator]);
-        nodetest1.export(presenter);
-        nodetest2.export(presenter);
-        presenter.endElement();
+    /**
+     * Generate Javascript code to test whether an item conforms to this item type
+     *
+     * @return a Javascript instruction or sequence of instructions, which can be used as the body
+     * of a Javascript function, and which returns a boolean indication whether the value of the
+     * variable "item" is an instance of this item type.
+     * @throws XPathException if JS code cannot be generated for this item type, for example because
+     *                        the test is schema-aware.
+     * @param knownToBe
+     */
+    @Override
+    public String generateJavaScriptItemTypeTest(ItemType knownToBe) throws XPathException {
+        FastStringBuffer fsb = new FastStringBuffer(256);
+        String conjunctor = null;
+        switch (operator) {
+            case Token.UNION:
+                conjunctor = "||";
+                break;
+            case Token.INTERSECT:
+                conjunctor = "&&";
+                break;
+            case Token.EXCEPT:
+                conjunctor = "&&!";
+                break;
+        }
+        fsb.append("function a() {" + nodetest1.generateJavaScriptItemTypeTest(knownToBe) + "};");
+        fsb.append("function b() {" + nodetest2.generateJavaScriptItemTypeTest(knownToBe) + "};");
+        fsb.append("return a()" + conjunctor + "b();");
+        return fsb.toString();
     }
 
 }

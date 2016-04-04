@@ -8,7 +8,6 @@
 package net.sf.saxon.pattern;
 
 import net.sf.saxon.om.*;
-import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.tiny.TinyTree;
 import net.sf.saxon.type.*;
@@ -279,11 +278,6 @@ public abstract class NodeTest implements ItemType {
     /*@NotNull*/
     public NodeTest copy() {
         return this;
-    }
-    public void export(ExpressionPresenter presenter) {
-        presenter.startElement("nt");
-        presenter.emitAttribute("test",toString());
-        presenter.endElement();
     }
 
 }
