@@ -10,6 +10,7 @@ package net.sf.saxon.s9api;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.trace.ExpressionPresenter;
+import net.sf.saxon.trans.XPathException;
 
 /**
  * An XQueryExecutable represents the compiled form of a query.
@@ -99,7 +100,11 @@ public class XQueryExecutable {
 
     public void explain(Destination destination) throws SaxonApiException {
         Configuration config = processor.getUnderlyingConfiguration();
-        exp.explain(new ExpressionPresenter(config, destination.getReceiver(config)));
+        try {
+            exp.explain(new ExpressionPresenter(config, destination.getReceiver(config)));
+        } catch (XPathException e) {
+            throw new SaxonApiException(e);
+        }
     }
 
     /**

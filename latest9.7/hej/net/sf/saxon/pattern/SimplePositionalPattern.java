@@ -179,7 +179,7 @@ public final class SimplePositionalPattern extends Pattern {
         return nodeTest.toString() + "[" + position + "]";
     }
 
-    public void export(ExpressionPresenter presenter) {
+    public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.simPos");
         presenter.emitAttribute("test", nodeTest.toString());
         presenter.emitAttribute("pos", position + "");

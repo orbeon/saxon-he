@@ -236,7 +236,7 @@ public final class UntypedSequenceConverter extends AtomicSequenceConverter {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter destination) {
+    public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("cvUntyped", this);
         destination.emitAttribute("to", getRequiredItemType().toString());
         getBaseExpression().export(destination);

@@ -126,7 +126,7 @@ public class WhereClause extends Clause {
      * @param out the expression presenter used to display the structure
      */
     @Override
-    public void explain(ExpressionPresenter out) {
+    public void explain(ExpressionPresenter out) throws XPathException {
         out.startElement("where");
         getPredicate().export(out);
         out.endElement();

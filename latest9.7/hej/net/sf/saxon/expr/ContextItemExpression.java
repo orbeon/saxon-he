@@ -318,7 +318,7 @@ public class ContextItemExpression extends Expression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter destination) {
+    public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("dot", this);
         ItemType type = getItemType();
         if (!(type == AnyItemType.getInstance())) {

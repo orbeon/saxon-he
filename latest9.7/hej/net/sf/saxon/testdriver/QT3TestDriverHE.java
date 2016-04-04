@@ -522,7 +522,11 @@ public class QT3TestDriverHE extends TestDriver {
                             XdmDestination expDest = new XdmDestination();
                             Configuration config = driverProc.getUnderlyingConfiguration();
                             ExpressionPresenter presenter = new ExpressionPresenter(config, expDest.getReceiver(config));
-                            q.getUnderlyingCompiledQuery().explain(presenter);
+                            try {
+                                q.getUnderlyingCompiledQuery().explain(presenter);
+                            } catch (XPathException e) {
+                                e.printStackTrace();
+                            }
                             presenter.close();
                             XdmNode explanation = expDest.getXdmNode();
                             XdmItem optResult = xpc.evaluateSingle(optimization.getAttributeValue(new QName("assert")), explanation);

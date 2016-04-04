@@ -160,7 +160,7 @@ public class TailExpression extends UnaryExpression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter destination) {
+    public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("tail", this);
         destination.emitAttribute("start", start + "");
         getBaseExpression().export(destination);

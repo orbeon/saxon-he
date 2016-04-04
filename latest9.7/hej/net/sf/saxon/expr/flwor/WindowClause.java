@@ -201,7 +201,7 @@ public class WindowClause extends Clause {
      * @param out the expression presenter used to display the structure
      */
     @Override
-    public void explain(ExpressionPresenter out) {
+    public void explain(ExpressionPresenter out) throws XPathException {
         out.startElement(isSlidingWindow() ? "slidingWindow" : "tumblingWindow");
         out.startSubsidiaryElement("select");
         getSequence().export(out);

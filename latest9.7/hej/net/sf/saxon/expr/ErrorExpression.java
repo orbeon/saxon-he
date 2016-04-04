@@ -208,7 +208,7 @@ public class ErrorExpression extends Expression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter destination) {
+    public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("error", this);
         destination.emitAttribute("message", exception == null ? message : exception.getMessage());
         destination.emitAttribute("code", exception == null ? errorCode : exception.getErrorCodeLocalPart());

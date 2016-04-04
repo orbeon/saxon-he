@@ -155,7 +155,7 @@ public class ConditionalPattern extends Pattern {
     }
 
     @Override
-    public void export(ExpressionPresenter presenter) {
+    public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.choose");
         for (int i = 0; i < conditions.length; i++) {
             conditions[i].export(presenter);

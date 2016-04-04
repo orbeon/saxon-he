@@ -37,7 +37,7 @@ public interface SpaceStrippingRule {
      * @param presenter the output handler
      */
 
-    public void export(ExpressionPresenter presenter);
+    public void export(ExpressionPresenter presenter) throws XPathException;
 
 }
 

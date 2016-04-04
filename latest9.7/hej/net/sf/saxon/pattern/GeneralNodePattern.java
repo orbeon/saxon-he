@@ -346,7 +346,7 @@ public final class GeneralNodePattern extends Pattern {
         return n;
     }
 
-    public void export(ExpressionPresenter presenter) {
+    public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.genNode");
         presenter.emitAttribute("type", itemType.toString());
         equivalentExpr.export(presenter);

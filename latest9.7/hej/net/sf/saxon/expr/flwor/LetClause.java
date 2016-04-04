@@ -177,7 +177,7 @@ public class LetClause extends Clause {
      * @param out the expression presenter used to display the structure
      */
     @Override
-    public void explain(ExpressionPresenter out) {
+    public void explain(ExpressionPresenter out) throws XPathException{
         out.startElement("let");
         out.emitAttribute("var", getRangeVariable().getVariableQName().getDisplayName());
         out.emitAttribute("slot", getRangeVariable().getLocalSlotNumber() + "");

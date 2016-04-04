@@ -106,7 +106,7 @@ public class AnchorPattern extends Pattern {
     }
 
     @Override
-    public void export(ExpressionPresenter presenter) {
+    public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.anchor");
         presenter.endElement();
     }

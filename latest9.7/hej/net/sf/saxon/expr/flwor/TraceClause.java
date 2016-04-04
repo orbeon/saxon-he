@@ -105,7 +105,7 @@ public class TraceClause extends Clause {
      * @param out the expression presenter used to display the structure
      */
     @Override
-    public void explain(ExpressionPresenter out) {
+    public void explain(ExpressionPresenter out) throws XPathException {
         out.startElement("trace");
         out.endElement();
     }

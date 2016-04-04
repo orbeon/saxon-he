@@ -259,7 +259,7 @@ public class PatternThatSetsCurrent extends Pattern {
         return n;
     }
 
-    public void export(ExpressionPresenter presenter) {
+    public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.withCurrent");
         wrappedPattern.export(presenter);
         presenter.endElement();

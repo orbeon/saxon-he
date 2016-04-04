@@ -277,7 +277,7 @@ public class WithParam  {
      * @param tunnel true if these are tunnel parameters
      */
 
-    public static void exportParameters(WithParam[] params, ExpressionPresenter out, boolean tunnel) {
+    public static void exportParameters(WithParam[] params, ExpressionPresenter out, boolean tunnel) throws XPathException{
         if (params != null) {
             for (WithParam param : params) {
                 out.startElement("withParam");

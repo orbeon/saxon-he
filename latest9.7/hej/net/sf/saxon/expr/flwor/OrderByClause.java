@@ -160,7 +160,7 @@ public class OrderByClause extends Clause {
      * @param out the expression presenter used to display the structure
      */
     @Override
-    public void explain(ExpressionPresenter out) {
+    public void explain(ExpressionPresenter out) throws XPathException {
         out.startElement("order-by");
         for (SortKeyDefinition k : getSortKeyDefinitions()) {
             out.startSubsidiaryElement("key");

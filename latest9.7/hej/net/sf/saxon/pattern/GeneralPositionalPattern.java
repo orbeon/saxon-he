@@ -399,7 +399,7 @@ public class GeneralPositionalPattern extends Pattern {
         return nodeTest.toString() + "[" + positionExpr.toString() + "]";
     }
 
-    public void export(ExpressionPresenter presenter) {
+    public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.genPos");
         presenter.emitAttribute("type", nodeTest.toString());
         positionExpr.export(presenter);

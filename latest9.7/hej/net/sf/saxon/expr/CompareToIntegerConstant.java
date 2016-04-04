@@ -267,7 +267,7 @@ public class CompareToIntegerConstant extends UnaryExpression implements Compari
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter destination) {
+    public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("compareToInt", this);
         destination.emitAttribute("op", Token.tokens[operator]);
         destination.emitAttribute("val", comparand + "");

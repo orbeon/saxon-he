@@ -186,6 +186,7 @@ public abstract class TestDriver {
         driverSerializer.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, "yes");
         driverSerializer.setOutputProperty(Serializer.Property.INDENT, "yes");
         processCatalog(new File(catalog));
+        System.err.println("Writing results to " + resultsDir + "/results" + Version.getProductVersion() + ".xml");
         printResults(resultsDir + "/results" + Version.getProductVersion() + ".xml");
     }
 

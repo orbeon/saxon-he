@@ -278,7 +278,7 @@ public class RootExpression extends Expression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter destination) {
+    public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("root", this);
         destination.endElement();
     }

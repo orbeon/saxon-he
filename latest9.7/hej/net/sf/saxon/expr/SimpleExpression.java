@@ -222,7 +222,7 @@ public abstract class SimpleExpression extends Expression implements Callable {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter destination) {
+    public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("userExpression", this);
         destination.emitAttribute("class", getExpressionType());
         for (Operand o : operands()) {

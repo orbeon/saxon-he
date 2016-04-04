@@ -148,7 +148,7 @@ public abstract class Clause {
      * @param out the expression presenter used to display the structure
      */
 
-    public abstract void explain(ExpressionPresenter out);
+    public abstract void explain(ExpressionPresenter out) throws XPathException;
 
     /**
      * Get the variables bound by this clause

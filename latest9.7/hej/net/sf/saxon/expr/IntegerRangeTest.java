@@ -236,7 +236,7 @@ public class IntegerRangeTest extends Expression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter destination) {
+    public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("intRangeTest", this);
         getValue().export(destination);
         getMin().export(destination);

@@ -219,7 +219,7 @@ public class SuppliedParameterReference extends Expression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter destination) {
+    public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("supplied", this);
         destination.emitAttribute("slot", slotNumber + "");
         destination.endElement();

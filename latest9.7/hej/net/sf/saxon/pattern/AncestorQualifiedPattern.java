@@ -384,7 +384,7 @@ public final class AncestorQualifiedPattern extends Pattern {
         return 88267 ^ basePattern.hashCode() ^ upperPattern.hashCode() ^ (upwardsAxis << 22);
     }
 
-    public void export(ExpressionPresenter presenter) {
+    public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.withUpper");
         presenter.emitAttribute("axis", AxisInfo.axisName[getUpwardsAxis()]);
         presenter.emitAttribute("upFirst", ""+ testUpperPatternFirst);

@@ -421,7 +421,7 @@ public class TemplateRule implements RuleTarget, Location {
      * Output diagnostic explanation to an ExpressionPresenter
      */
 
-    public void export(ExpressionPresenter presenter) {
+    public void export(ExpressionPresenter presenter) throws XPathException{
         presenter.startElement("template");
 
         explainProperties(presenter);

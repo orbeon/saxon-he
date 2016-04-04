@@ -207,7 +207,7 @@ public class SubscriptExpression extends SingleItemFilter {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter destination) {
+    public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("subscript", this);
         getBaseExpression().export(destination);
         getSubscript().export(destination);

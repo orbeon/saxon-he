@@ -747,16 +747,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
     protected XsltExecutable exportImport(String testName, String testSetName, TestOutcome outcome, XsltCompiler compiler, XsltExecutable sheet, ErrorCollector collector, Source styleSource) {
         try {
             if (export) {
-                try {
-                    File exportFile = new File(resultsDir + "/export/" + testSetName + "/" + testName + ".xsltp");
-                    XsltPackage compiledPack = compiler.compilePackage(styleSource);
-                    compiledPack.save(exportFile);
-                    sheet = reloadExportedStylesheet(compiler, exportFile);
-                } catch (SaxonApiException e) {
-                    System.err.println(e.getMessage());
-                    //e.printStackTrace();  //temporary, for debugging
-                    throw e;
-                }
+                sheet = exportStylesheet(testName, testSetName, compiler, sheet, styleSource);
             } else {
                 sheet = compiler.compile(styleSource);
             }
@@ -771,6 +762,20 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             System.err.println(err.getMessage());
             outcome.setException(new SaxonApiException(err));
             outcome.setErrorsReported(collector.getErrorCodes());
+        }
+        return sheet;
+    }
+
+    protected XsltExecutable exportStylesheet(String testName, String testSetName, XsltCompiler compiler, XsltExecutable sheet, Source styleSource) throws SaxonApiException {
+        try {
+            File exportFile = new File(resultsDir + "/export/" + testSetName + "/" + testName + ".xsltp");
+            XsltPackage compiledPack = compiler.compilePackage(styleSource);
+            compiledPack.save(exportFile);
+            sheet = reloadExportedStylesheet(compiler, exportFile);
+        } catch (SaxonApiException e) {
+            System.err.println(e.getMessage());
+            //e.printStackTrace();  //temporary, for debugging
+            throw e;
         }
         return sheet;
     }

@@ -310,7 +310,7 @@ public class PatternWithPredicate extends Pattern {
     }
 
 
-    public void export(ExpressionPresenter presenter) {
+    public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.withPredicate");
         basePattern.export(presenter);
         predicate.export(presenter);

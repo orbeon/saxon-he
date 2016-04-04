@@ -391,7 +391,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter destination) {
+    public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("convert", this);
         destination.emitAttribute("from", getBaseExpression().getItemType().toString());
         destination.emitAttribute("to", requiredItemType.toString());

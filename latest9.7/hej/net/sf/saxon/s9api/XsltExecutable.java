@@ -103,7 +103,11 @@ public class XsltExecutable {
 
     public void explain(Destination destination) throws SaxonApiException {
         Configuration config = processor.getUnderlyingConfiguration();
-        preparedStylesheet.explain(new ExpressionPresenter(config, destination.getReceiver(config)));
+        try {
+            preparedStylesheet.explain(new ExpressionPresenter(config, destination.getReceiver(config)));
+        } catch (XPathException e) {
+            throw new SaxonApiException(e);
+        }
     }
 
     /**

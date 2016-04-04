@@ -253,7 +253,7 @@ public class PreparedStylesheet extends Executable {
      * @param presenter destination for the explanatory output
      */
 
-    public void explainNamedTemplates(ExpressionPresenter presenter) {
+    public void explainNamedTemplates(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("namedTemplates");
         if (namedTemplateTable != null) {
             for (NamedTemplate t : namedTemplateTable.values()) {
@@ -350,7 +350,7 @@ public class PreparedStylesheet extends Executable {
      * @param presenter defines the destination and format of the output
      */
 
-    public void explain(ExpressionPresenter presenter) {
+    public void explain(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("stylesheet");
         presenter.namespace("fn", NamespaceConstant.FN);
         presenter.namespace("xs", NamespaceConstant.SCHEMA);

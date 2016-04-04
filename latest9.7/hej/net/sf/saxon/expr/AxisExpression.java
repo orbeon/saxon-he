@@ -1084,10 +1084,24 @@ public final class AxisExpression extends Expression {
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter destination) {
+    public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("axis", this);
         destination.emitAttribute("name", AxisInfo.axisName[axis]);
         destination.emitAttribute("nodeTest", test == null ? "node()" : test.toString());
+        if ("JS".equals(destination.getOption("target"))) {
+            NodeTest known = AnyNodeTest.getInstance();
+            if (axis == AxisInfo.ATTRIBUTE) {
+                known = NodeKindTest.makeNodeKindTest(Type.ATTRIBUTE);
+            } else if (axis == AxisInfo.NAMESPACE) {
+                known = NodeKindTest.makeNodeKindTest(Type.NAMESPACE);
+            }
+            try {
+                destination.emitAttribute("jsTest", test == null ? "return true;" : test.generateJavaScriptItemTypeTest(known));
+            } catch (XPathException e) {
+                e.maybeSetLocation(getLocation());
+                throw e;
+            }
+        }
         destination.endElement();
     }
 

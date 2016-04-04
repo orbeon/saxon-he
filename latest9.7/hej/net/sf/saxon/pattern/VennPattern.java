@@ -275,7 +275,7 @@ public abstract class VennPattern extends Pattern {
         return p1.toString() + " " + getOperatorName() + " " + p2.toString();
     }
 
-    public void export(ExpressionPresenter presenter) {
+    public void export(ExpressionPresenter presenter) throws XPathException{
         presenter.startElement("p.venn");
         presenter.emitAttribute("op", getOperatorName());
         p1.export(presenter);

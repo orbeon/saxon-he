@@ -196,7 +196,7 @@ public class BooleanExpressionPattern extends Pattern {
         return n;
     }
 
-    public void export(ExpressionPresenter presenter) {
+    public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.booleanExp");
         /*if (comp != null) {
             comp.export(presenter);
