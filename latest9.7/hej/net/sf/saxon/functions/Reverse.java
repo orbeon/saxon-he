@@ -12,6 +12,8 @@ import com.saxonica.ee.stream.adjunct.StreamingAdjunct;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.parser.ContextItemStaticInfo;
+import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.SequenceTool;
@@ -82,6 +84,30 @@ public class Reverse extends SystemFunction {
 
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         return SequenceTool.toLazySequence(getReverseIterator(arguments[0].iterate()));
+    }
+
+    /**
+     * Allow the function to create an optimized call based on the values of the actual arguments
+     *
+     * @param visitor     the expression visitor
+     * @param contextInfo information about the context item
+     * @param arguments   the supplied arguments to the function call. Note: modifying the contents
+     *                    of this array should not be attempted, it is likely to have no effect.
+     * @return either a function call on this function, or an expression that delivers
+     * the same result, or null indicating that no optimization has taken place
+     * @throws XPathException if an error is detected
+     */
+    @Override
+    public Expression makeOptimizedFunctionCall(
+            ExpressionVisitor visitor, ContextItemStaticInfo contextInfo, Expression... arguments)
+            throws XPathException {
+        // When reverse() has only a zero-or-one argument, there is no need to reverse
+        // This often occurs in reverse-axis steps
+        if (arguments[0].getCardinality() == StaticProperty.ALLOWS_ZERO_OR_ONE) {
+            return arguments[0];
+        }
+        return super.makeOptimizedFunctionCall(visitor, contextInfo, arguments);
+
     }
 
     //#ifdefined STREAM
