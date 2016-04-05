@@ -600,7 +600,17 @@ public class Transform {
 
                 long startTime = now();
 
-                List<String> styleFileNames = CommandLineOptions.buildStylesheetFileList(config, styleFileName);
+                List<String> styleFileNames;
+                boolean isURI = false;
+                if (useURLs || CommandLineOptions.isImplicitURI(styleFileName)) {
+                    // See bug 2687
+                    // TODO: this isn't very satisfactory; need a better way of registering packages.
+                    styleFileNames = new ArrayList<String>(1);
+                    styleFileNames.add(styleFileName);
+                    isURI = true;
+                } else{
+                    styleFileNames = CommandLineOptions.buildStylesheetFileList(config, styleFileName);
+                }
                 List<Source> stylesheetSources = new ArrayList<Source>();
                 XsltExecutable sheet = null;
 
@@ -613,7 +623,7 @@ public class Transform {
                 XMLReader styleParser = null;
                 for (String sn : styleFileNames) {
                     styleFileName = sn;
-                    if (useURLs || CommandLineOptions.isImplicitURI(styleFileName)) {
+                    if (isURI) {
                         styleSource = config.getURIResolver().resolve(styleFileName, null);
                         if (styleSource == null) {
                             styleSource = config.getSystemURIResolver().resolve(styleFileName, null);
