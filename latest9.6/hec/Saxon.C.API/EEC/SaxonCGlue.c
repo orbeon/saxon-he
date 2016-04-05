@@ -6,31 +6,63 @@ jobject cpp;
 * If the SAXONC_HOME sxnc_environmental variable is set then use that as base.
 */
 void setDllname(){
-	if(getenv("SAXONC_HOME")!= NULL) {
+	size_t name_len  = strlen(tempDllname);
+	size_t rDir_len  = strlen(tempResources_dir);
+	char * env = getenv("SAXONC_HOME");
+	size_t env_len;
+	if(env!= NULL) {
 
-		char * env = getenv("SAXONC_HOME");
-		size_t env_len = strlen(env);
-		size_t name_len =  15;
-		size_t rDir_len = 11;
-		//dllname =malloc(sizeof(char)*name_len);
-		//resources_dir =malloc(sizeof(char)*rDir_len);
+		
+		env_len = strlen(env);
+		dllname =malloc(sizeof(char)*name_len+env_len+1);
+		resources_dir =malloc(sizeof(char)*rDir_len+env_len+1);
+		snprintf(dllname, env_len+name_len+1, "%s%s", env, tempDllname);
+		snprintf(resources_dir, env_len+rDir_len+1, "%s%s", env, tempResources_dir);
+		
+#ifdef DEBUG	
+		
+		printf("envDir: %s\n", env);
+		
+		
+#endif
+
+       } else {
+		env_len = 8;
+		dllname =malloc(sizeof(char)*name_len+env_len+1);
+		resources_dir =malloc(sizeof(char)*rDir_len+env_len+1);
+#ifdef DEBUG
+		if(dllname == NULL || resources_dir == NULL)
+		{
+    		  // error
+		  printf("Error in allocation of Dllname\n");
+		}
+#endif
 		memset(&dllname[0], 0, sizeof(dllname));
 		memset(&resources_dir[0], 0, sizeof(resources_dir));
-		strncat(resources_dir, env,  env_len);
-		strncat(resources_dir, "/saxon-data", rDir_len);
-		strncat(dllname, env, env_len);
-		strncat(dllname, "/libsaxoneec.so", name_len); //rename according to product edition (-hec or -pec)
-#ifdef DEBUG	
-		printf("resources_dir: %s\n", resources_dir);	
-		printf("envDir: %s\n", env);
-		printf("size of env %i\n", strlen(env));
-		printf("size of dllname %i\n", strlen(dllname));
-		printf("dllName: %s\n", dllname);
-		printf("resources_dir: %s\n", resources_dir);
+#ifdef __linux__
+		
+       		snprintf(dllname, 8+name_len+1, "%s%s", "/usr/lib", tempDllname);
+		snprintf(resources_dir, 8+rDir_len+1, "%s%s", "/usr/lib", tempResources_dir);
+#elif  defined (__APPLE__) && defined(__MACH__)
+       		snprintf(dllname, 8+name_len+1, "%s%s", "/usr/lib", tempDllname);
+		snprintf(resources_dir, 8+rDir_len+1, "%s%s", "/usr/lib", tempResources_dir);
+#else
+		//TODO When windows version of Saxon/C is done we will have to fixup this
+		strncpy(dllname, "C:\\Program Files\\Saxonica\\SaxonEEC1.0.1", 42);
+		strncpy(resources_dir, "C:\\Program Files\\Saxonica\\SaxonEEC1.0.1", 42);
 #endif
+
+	
+
 	}
+		
+
 #ifdef DEBUG	
-		printf("resources_dir: %s\n", resources_dir);	
+
+		printf("Library length: %i\n", name_len);
+		printf("Env length: %i\n", env_len);
+		printf("dllname length alloc: %i\n", (env_len+name_len+1));
+		printf("resources length alloc: %i\n", (env_len+rDir_len+1));		
 		printf("size of dllname %i\n", strlen(dllname));
 		printf("dllName: %s\n", dllname);
 		printf("resources_dir: %s\n", resources_dir);
@@ -41,6 +73,10 @@ void setDllname(){
 
 char * getDllname(){
 	return dllname;
+}
+
+char * getResourceDirectory(){
+	return resources_dir;
 }
 
 /*

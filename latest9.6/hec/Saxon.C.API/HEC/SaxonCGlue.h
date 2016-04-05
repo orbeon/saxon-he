@@ -53,26 +53,30 @@ static const bool true = 1;
 
 EXTERN_C
 
+ 
 
-
-
-static char dllname[] =
-    #ifdef __linux__
-        "/usr/lib/libsaxonhec.so";  //rename according to product edition (hec or pec) Also make change in the c file
+static char tempDllname[] =
+#if defined (__linux__)
+        "/libsaxonhec.so";  
     #elif  defined (__APPLE__) && defined(__MACH__)
-        "/usr/lib/libsaxonhec.dylib";
+        "/libsaxonhec.dylib";
     #else
-         "C:\\Program Files\\Saxonica\\SaxonHEC1.0.1\\libsaxonhec.dll";
+         "\\libsaxonhec.dll";
     #endif
 
-static char resources_dir[] = 
+static char tempResources_dir[] = 
      #ifdef __linux__
-        "/usr/lib/saxon-data";
+        "/saxon-data";
     #elif  defined (__APPLE__) && defined(__MACH__)
-        "/usr/lib/saxon-data";
+        "/saxon-data";
     #else
-         "C:\\Program Files\\Saxonica\\SaxonHEC1.0.1\\saxon-data";
+         "\\saxon-data";
     #endif
+
+
+static char * dllname;
+
+static char *resources_dir;
 
 // Static variable used to track when jvm has been created. Used to prevent creation more than once.
 static int jvmCreated =0;
@@ -124,6 +128,12 @@ extern const char * failure;
 
 char * getDllname();
 
+
+/*
+* Get Dll name.
+*/
+
+char * getResourceDirectory();
 
 /*
 * Set Dll name. Also set the saxon resources directory. 
