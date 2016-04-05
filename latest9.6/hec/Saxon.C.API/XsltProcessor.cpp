@@ -96,7 +96,12 @@ bool XsltProcessor::removeParameter(const char* name) {
 }
 
 void XsltProcessor::setProperty(const char* name, const char* value) {
-	properties.insert(std::pair<std::string, std::string>(std::string(name), std::string(value)));
+#ifdef DEBUG	
+	if(value == NULL) {
+		std::cerr<<"XSLTProc setProperty is NULL"<<std::endl;
+	}
+#endif
+	properties.insert(std::pair<std::string, std::string>(std::string(name), std::string((value == NULL ? "" : value))));
 
 }
 

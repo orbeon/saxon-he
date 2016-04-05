@@ -12,9 +12,7 @@
     XQueryProcessor::XQueryProcessor(SaxonProcessor *p, std::string curr) {
     proc = p;
 
-    /*
-     * Look for class.
-     */
+  
      cppClass = lookForClass(proc->environ->env, "net/sf/saxon/option/cpp/XQueryEngine");
 
 
@@ -125,7 +123,12 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
      * @param value of the property
      */
     void XQueryProcessor::setProperty(const char * name, const char * value){
-	properties.insert(std::pair<std::string, std::string>(std::string(name), std::string(value)));
+#ifdef DEBUG	
+	if(value == NULL) {
+		std::cerr<<"XQueryProc setProperty is NULL"<<std::endl;
+	}
+#endif
+	properties.insert(std::pair<std::string, std::string>(std::string(name), std::string((value== NULL ? "" : value))));
     }
 
     void XQueryProcessor::clearParameters(bool delVal){

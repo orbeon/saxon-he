@@ -471,7 +471,12 @@ bool SchemaValidator::removeParameter(const char * name) {
 }
 
 void SchemaValidator::setProperty(const char * name, const char * value) {
-	properties.insert(std::pair<std::string, std::string>(std::string(name), std::string(value)));
+#ifdef DEBUG	
+	if(value == NULL) {
+		std::cerr<<"Validator setProperty is NULL"<<std::endl;
+	}
+#endif
+	properties.insert(std::pair<std::string, std::string>(std::string(name), std::string((value== NULL ? "" : value))));
 }
 
 void SchemaValidator::clearParameters(bool delVal) {

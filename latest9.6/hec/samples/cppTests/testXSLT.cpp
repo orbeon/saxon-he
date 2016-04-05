@@ -419,8 +419,8 @@ int exists(const char *fname)
 
 void exampleSimple3(SaxonProcessor * saxonProc, XsltProcessor  *proc){
 		cout<<"<b>exampleSimple3:</b><br/>"<<endl;
-		//proc->clearParameters(true);
-		//proc->clearProperties();
+		proc->clearParameters(true);
+		proc->clearProperties();
                 XdmNode * xdmNode = saxonProc->parseXmlFromString("<doc><b>text value of out</b></doc>");
 		if(xdmNode == NULL) {
 			cout<<"xdmNode is null'"<<endl;

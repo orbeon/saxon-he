@@ -143,6 +143,7 @@ SaxonProcessor::SaxonProcessor(bool l){
 	jvmCreatedCPP=1;
     environ = new sxnc_environment;//(sxnc_environment *)malloc(sizeof(sxnc_environment));
 
+
     /*
      * First of all, load required component.
      * By the time of JET initialization, all components should be loaded.
@@ -264,7 +265,8 @@ void SaxonProcessor::applyConfigurationProperties(){
 			exceptionClear();
       		 }
    
-
+ 	  environ->env->DeleteLocalRef(stringArray1);
+	  environ->env->DeleteLocalRef(stringArray2);
 		
 	}
 }
@@ -336,7 +338,7 @@ void SaxonProcessor::setResourcesDirectory(const char* dir){
 }
 
 const char * SaxonProcessor::getResourcesDirectory(){
-	return resources_dir;
+	return getResourceDirectory();
 }
 
 

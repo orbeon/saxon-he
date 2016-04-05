@@ -365,7 +365,12 @@ bool XPathProcessor::removeParameter(const char * name) {
 }
 
 void XPathProcessor::setProperty(const char * name, const char * value) {
-	properties.insert(std::pair<std::string, std::string>(std::string(name), std::string(value)));
+#ifdef DEBUG	
+	if(value == NULL) {
+		std::cerr<<"XPathProc setProperty is NULL"<<std::endl;
+	}
+#endif
+	properties.insert(std::pair<std::string, std::string>(std::string(name), std::string((value == NULL ? "" : value))));
 }
 
 void XPathProcessor::clearParameters(bool delVal) {

@@ -34,9 +34,12 @@ void testxQuery1(SaxonProcessor * processor, XQueryProcessor * queryProc){
     if(result != NULL){
     	cout<<"Result :"<<result<<endl;
     } else {
+
 	queryProc->checkException();
 	
     }
+
+return;
 	queryProc->setcwd(".");
      queryProc->executeQueryToFile(NULL, "catOutput.xml", NULL);
 
@@ -229,7 +232,7 @@ int main()
 {
 
     SaxonProcessor * processor = new SaxonProcessor(false);
-    cout<<"Test: XQueryProcessor with Saxon version="<<processor->version()<<endl<<endl;
+    //cout<<"Test: XQueryProcessor with Saxon version="<<processor->version()<<endl<<endl;
     XQueryProcessor * query = processor->newXQueryProcessor();
     
 
