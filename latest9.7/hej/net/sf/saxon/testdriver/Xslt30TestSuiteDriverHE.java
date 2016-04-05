@@ -1005,7 +1005,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                 } else {
                     return false;
                 }
-            } else if ("higher_order_functions".equals(value)) {
+            } else if ("higher-order-functions".equals(value)) {
                 return !inverse;
             } else if ("simple-uca-fallback".equals(value)) {
                 return !inverse;
