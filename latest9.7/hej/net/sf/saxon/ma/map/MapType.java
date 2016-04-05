@@ -269,6 +269,28 @@ public class MapType extends AnyFunctionType {
         keyType.visitNamedSchemaComponents(visitor);
         valueType.getPrimaryType().visitNamedSchemaComponents(visitor);
     }
+
+    /**
+     * Generate Javascript code to test whether an item conforms to this item type
+     *
+     * @param knownToBe a type that this item is known to conform to
+     * @return a Javascript instruction or sequence of instructions, which can be used as the body
+     * of a Javascript function, and which returns a boolean indication whether the value of the
+     * variable "item" is an instance of this item type.
+     * @throws XPathException if JS code cannot be generated for this item type, for example because
+     *                        the test is schema-aware.
+     */
+    @Override
+    public String generateJavaScriptItemTypeTest(ItemType knownToBe) throws XPathException {
+        if (this == ANY_MAP_TYPE) {
+            return "return item instanceof HashTrie";
+        }
+        FastStringBuffer fsb = new FastStringBuffer(256);
+        fsb.append("function k(item) {" + keyType.generateJavaScriptItemTypeTest(BuiltInAtomicType.ANY_ATOMIC) + "};");
+        fsb.append("function v(item) {" + valueType.getPrimaryType().generateJavaScriptItemTypeTest(AnyItemType.getInstance()) + "};");
+        fsb.append("return item instanceof HashTrie && item.conforms(k, v);");
+        return fsb.toString();
+    }
 }
 
 // Copyright (c) 2011 Saxonica Limited. All rights reserved.

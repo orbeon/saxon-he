@@ -10,6 +10,7 @@ package net.sf.saxon.pattern;
 import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.NodeName;
+import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.tree.tiny.TinyTree;
 import net.sf.saxon.type.ItemType;
@@ -176,16 +177,17 @@ public class DocumentNodeTest extends NodeTest {
 
     /**
      * Generate Javascript code to test whether an item conforms to this item type
-     *
+     * @param knownToBe a type that the item is known to conform to, without further testing
      * @return a Javascript instruction or sequence of instructions, which can be used as the body
      * of a Javascript function, and which returns a boolean indication whether the value of the
      * variable "item" is an instance of this item type.
-     * @param knownToBe
+     *
      */
     @Override
-    public String generateJavaScriptItemTypeTest(ItemType knownToBe) {
-        return "return item instanceof Node && (item.nodeType==9 || item.nodeType==11);";
-    }
+    public String generateJavaScriptItemTypeTest(ItemType knownToBe) throws XPathException {
+        String elTest = "function e(item) {" + elementTest.generateJavaScriptItemTypeTest(NodeKindTest.ELEMENT) + "};";
+        return elTest + "return item instanceof Node && (item.nodeType==9 || item.nodeType==11) && " +
+                "Axis.child(item).filter(e).next();"; }
 
 }
 

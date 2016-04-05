@@ -1135,16 +1135,19 @@ public class BuiltInAtomicType implements AtomicType {
 
     /**
      * Generate Javascript code to test whether an item conforms to this item type
-     *
+     * @param knownToBe a type that the item is known to conform to
      * @return a Javascript instruction or sequence of instructions, which can be used as the body
      * of a Javascript function, and which returns a boolean indication whether the value of the
      * variable "item" is an instance of this item type.
      * @throws XPathException if JS code cannot be generated for this item type, for example because
      *                        the test is schema-aware.
-     * @param knownToBe
+     *
      */
     @Override
     public String generateJavaScriptItemTypeTest(ItemType knownToBe) throws XPathException {
+        if (this == BuiltInAtomicType.NOTATION) {
+            return "return false;";
+        }
         return "return Atomic." + getName() + ".matches(item);";
     }
 

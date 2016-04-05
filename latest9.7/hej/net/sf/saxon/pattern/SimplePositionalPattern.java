@@ -7,13 +7,14 @@
 
 package net.sf.saxon.pattern;
 
-import net.sf.saxon.expr.*;
+import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.Navigator;
+import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.UType;
 
@@ -182,6 +183,9 @@ public final class SimplePositionalPattern extends Pattern {
     public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.simPos");
         presenter.emitAttribute("test", nodeTest.toString());
+        if ("JS".equals(presenter.getOption("target"))) {
+            presenter.emitAttribute("jsTest", nodeTest.generateJavaScriptItemTypeTest(AnyItemType.getInstance()));
+        }
         presenter.emitAttribute("pos", position + "");
         presenter.endElement();
     }

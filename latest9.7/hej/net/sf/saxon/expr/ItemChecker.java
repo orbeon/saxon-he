@@ -338,6 +338,9 @@ public final class ItemChecker extends UnaryExpression {
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("treat", this);
         out.emitAttribute("as", requiredItemType.toString());
+        if ("JS".equals(out.getOption("target"))) {
+            out.emitAttribute("jsTest", requiredItemType.generateJavaScriptItemTypeTest(getBaseExpression().getItemType()));
+        }
         out.emitAttribute("diag", role.save());
         getBaseExpression().export(out);
         out.endElement();
