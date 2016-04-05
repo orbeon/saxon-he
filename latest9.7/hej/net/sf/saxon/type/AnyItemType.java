@@ -150,5 +150,23 @@ public class AnyItemType implements ItemType {
     public String generateJavaScriptItemTypeTest(ItemType knownToBe) throws XPathException {
         return "return true;";
     }
+
+    /**
+     * Generate Javascript code to convert a supplied Javascript value to this item type,
+     * if conversion is possible, or throw an error otherwise.
+     *
+     * @param errorCode the error to be thrown if conversion is not possible
+     * @return a Javascript instruction or sequence of instructions, which can be used as the body
+     * of a Javascript function, and which returns the result of conversion to this type, or throws
+     * an error if conversion is not possible. The variable "val" will hold the supplied Javascript
+     * value.
+     */
+    public String generateJavaScriptItemTypeAcceptor(String errorCode) throws XPathException {
+        return "if (typeof val == 'number') return Atomic.double.fromNumber(val);" +
+                "if (typeof val == 'string') return Atomic.string.fromString(val);" +
+                "if (typeof val == 'boolean') return Atomic.boolean.fromBoolean(val);" +
+                "if (DomUtils.isNode(val)) return val;" +
+                "throw XError('Conversion failed','" + errorCode + "');";
+    }
 }
 

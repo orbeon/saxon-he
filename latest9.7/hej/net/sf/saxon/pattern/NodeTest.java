@@ -280,5 +280,19 @@ public abstract class NodeTest implements ItemType {
         return this;
     }
 
+    /**
+     * Generate Javascript code to convert a supplied Javascript value to this item type,
+     * if conversion is possible, or throw an error otherwise.
+     *
+     * @param errorCode the error to be thrown if conversion is not possible
+     * @return a Javascript instruction or sequence of instructions, which can be used as the body
+     * of a Javascript function, and which returns the result of conversion to this type, or throws
+     * an error if conversion is not possible. The variable "val" will hold the supplied Javascript
+     * value.
+     */
+    public String generateJavaScriptItemTypeAcceptor(String errorCode) throws XPathException {
+        return "function test(item) {" + generateJavaScriptItemTypeTest(AnyItemType.getInstance()) + "};" +
+                "if (test(val)) {return val;} else {throw XError('Conversion failed', '" + errorCode + "');}";
+    }
 }
 

@@ -81,5 +81,19 @@ public abstract class ExternalObjectType {
         throw new XPathException("Cannot generate JS code for external object tests", SaxonErrorCode.SXJS0001);
     }
 
+    /**
+     * Generate Javascript code to convert a supplied Javascript value to this item type,
+     * if conversion is possible, or throw an error otherwise.
+     *
+     * @param errorCode the error to be thrown if conversion is not possible
+     * @return a Javascript instruction or sequence of instructions, which can be used as the body
+     * of a Javascript function, and which returns the result of conversion to this type, or throws
+     * an error if conversion is not possible. The variable "val" will hold the supplied Javascript
+     * value.
+     */
+    public String generateJavaScriptItemTypeAcceptor(String errorCode) throws XPathException {
+        throw new XPathException("Cannot generate JS code for external object tests", SaxonErrorCode.SXJS0001);
+    }
+
 
 }

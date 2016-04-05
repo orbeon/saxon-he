@@ -307,5 +307,4 @@ public class JavaExternalObjectType extends ExternalObjectType implements ItemTy
     }
 
 
-
 }

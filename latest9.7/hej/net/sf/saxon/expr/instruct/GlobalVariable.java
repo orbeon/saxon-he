@@ -876,6 +876,10 @@ public class GlobalVariable extends ComponentCode<GlobalVariable>
             presenter.emitAttribute("flags", flags);
         }
 
+        if ("JS".equals(presenter.getOption("target"))) {
+            presenter.emitAttribute("jsAcceptor", getRequiredType().getPrimaryType().generateJavaScriptItemTypeAcceptor("XTTE0590"));
+        }
+
         if (getSelectExpression() != null) {
             getSelectExpression().export(presenter);
         }
