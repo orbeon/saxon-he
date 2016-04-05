@@ -611,7 +611,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
             if (val instanceof NumericValue) {
                 if (((NumericValue) val).isWholeNumber()) {
                     long lvalue = ((NumericValue) val).longValue();
-                    if (lvalue <= 0) {
+                    if (lvalue <= 0 || lvalue >= Integer.MAX_VALUE) {
                         return Literal.makeEmptySequence();
                     } else if (lvalue == 1) {
                         return FirstItemExpression.makeFirstItemExpression(getBase());
