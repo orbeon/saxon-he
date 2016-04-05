@@ -194,10 +194,18 @@ public class IdentityTransformer extends Transformer {
         // local output properties)
 
         Properties newProps = new Properties();
-        Enumeration keys = localOutputProperties.propertyNames();
+        Properties sheetProperties = getStylesheetOutputProperties();
+        Enumeration keys = sheetProperties.propertyNames();
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
-            newProps.setProperty(key, localOutputProperties.getProperty(key));
+            newProps.setProperty(key, sheetProperties.getProperty(key));
+        }
+        if (localOutputProperties != null) {
+            keys = localOutputProperties.propertyNames();
+            while (keys.hasMoreElements()) {
+                String key = (String) keys.nextElement();
+                newProps.setProperty(key, localOutputProperties.getProperty(key));
+            }
         }
         return newProps;
     }
