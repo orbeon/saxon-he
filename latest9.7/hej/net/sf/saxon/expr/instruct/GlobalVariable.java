@@ -32,6 +32,7 @@ import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.SequenceExtent;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.SingletonClosure;
+import net.sf.saxon.value.Cardinality;
 
 import java.util.*;
 
@@ -878,6 +879,7 @@ public class GlobalVariable extends ComponentCode<GlobalVariable>
 
         if ("JS".equals(presenter.getOption("target"))) {
             presenter.emitAttribute("jsAcceptor", getRequiredType().getPrimaryType().generateJavaScriptItemTypeAcceptor("XTTE0590"));
+            presenter.emitAttribute("jsCardCheck", Cardinality.generateJavaScriptChecker(getRequiredType().getCardinality()));
         }
 
         if (getSelectExpression() != null) {

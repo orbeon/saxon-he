@@ -208,5 +208,26 @@ public final class Cardinality {
                 throw new AssertionError("unknown cardinality value");
         }
     }
+
+    /**
+     * Generate Javascript code to check whether a number satisfies the cardinality property.
+     *
+     * @param card the cardinality value
+     * @return a Javascript function which checks whether a number satisfies the cardinality property.
+     */
+
+    public static String generateJavaScriptChecker(int card) {
+        if (Cardinality.allowsZero(card) && Cardinality.allowsMany(card)) {
+            return "function c() {return true;};";
+        } else if (card == StaticProperty.EXACTLY_ONE) {
+            return "function c(n) {return n==1;};";
+        } else if (card == StaticProperty.EMPTY) {
+            return "function c(n) {return n==0;};";
+        } else if (!Cardinality.allowsZero(card)) {
+            return "function c(n) {return n>=1;};";
+        } else {
+            return "function c(n) {return n<=1;};";
+        }
+    }
 }
 
