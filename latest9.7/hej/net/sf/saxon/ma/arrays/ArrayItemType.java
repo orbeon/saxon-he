@@ -16,6 +16,7 @@ import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.*;
+import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.SequenceType;
 
 /**
@@ -228,6 +229,41 @@ public class ArrayItemType extends AnyFunctionType {
 
     public void visitNamedSchemaComponents(SchemaComponentVisitor visitor) throws XPathException {
         memberType.getPrimaryType().visitNamedSchemaComponents(visitor);
+    }
+
+    /**
+     * Generate Javascript code to test whether an item conforms to this item type
+     *
+     * @param knownToBe a type that this item is known to conform to
+     * @return a Javascript instruction or sequence of instructions, which can be used as the body
+     * of a Javascript function, and which returns a boolean indication whether the value of the
+     * variable "item" is an instance of this item type.
+     * @throws XPathException if JS code cannot be generated for this item type, for example because
+     *                        the test is schema-aware.
+     */
+    @Override
+    public String generateJavaScriptItemTypeTest(ItemType knownToBe) throws XPathException {
+        if (this == ANY_ARRAY_TYPE) {
+            return "return item instanceof Expr.XdmArray";
+        }
+        FastStringBuffer fsb = new FastStringBuffer(256);
+        fsb.append("function v(item) {" + memberType.getPrimaryType().generateJavaScriptItemTypeTest(AnyItemType.getInstance()) + "};");
+        // TODO: change the code below to use the common method in Cardinality.java
+        int card = memberType.getCardinality();
+        if (Cardinality.allowsZero(card) && Cardinality.allowsMany(card)) {
+            fsb.append("function c() {return true;};");
+        } else if (card == StaticProperty.EXACTLY_ONE) {
+            fsb.append("function c(n) {return n==1;};");
+        } else if (card == StaticProperty.EMPTY) {
+            fsb.append("function c(n) {return n==0;};");
+        } else if (!Cardinality.allowsZero(card)) {
+            fsb.append("function c(n) {return n>=1;};");
+        } else {
+            fsb.append("function c(n) {return n<=1;};");
+        }
+        fsb.append("return item instanceof Expr.XdmArray && " +
+                           "Iter.ForArray(item.value).every(function(seq){return c(seq.length) && Iter.ForArray(seq).every(v)});");
+        return fsb.toString();
     }
 }
 
