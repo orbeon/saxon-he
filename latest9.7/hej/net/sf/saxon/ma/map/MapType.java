@@ -288,7 +288,19 @@ public class MapType extends AnyFunctionType {
         FastStringBuffer fsb = new FastStringBuffer(256);
         fsb.append("function k(item) {" + keyType.generateJavaScriptItemTypeTest(BuiltInAtomicType.ANY_ATOMIC) + "};");
         fsb.append("function v(item) {" + valueType.getPrimaryType().generateJavaScriptItemTypeTest(AnyItemType.getInstance()) + "};");
-        fsb.append("return item instanceof HashTrie && item.conforms(k, v);");
+        int card = valueType.getCardinality();
+        if (Cardinality.allowsZero(card) && Cardinality.allowsMany(card)) {
+            fsb.append("function c() {return true;};");
+        } else if (card == StaticProperty.EXACTLY_ONE) {
+            fsb.append("function c(n) {return n==1;};");
+        } else if (card == StaticProperty.EMPTY) {
+            fsb.append("function c(n) {return n==0;};");
+        } else if (!Cardinality.allowsZero(card)) {
+            fsb.append("function c(n) {return n>=1;};");
+        } else {
+            fsb.append("function c(n) {return n<=1;};");
+        }
+        fsb.append("return item instanceof HashTrie && item.conforms(k, v, c);");
         return fsb.toString();
     }
 }
