@@ -252,7 +252,7 @@ static jmethodID emID = NULL; //cache the methodID
 	   }
 
 	   (*(environ.env))->SetObjectArrayElement(environ.env, stringArray, i, (*(environ.env))->NewStringUTF(environ.env,"resources"));
-	     (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)((*(environ.env))->NewStringUTF(environ.env, resources_dir)) );
+	     (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)((*(environ.env))->NewStringUTF(environ.env, getResourceDirectory())) );
 	    i++;
 	   int j=0;	
   	   for(; j < propLen; j++, i++) {
@@ -318,7 +318,7 @@ bool effectiveBooleanValue(sxnc_environment environ, sxnc_processor ** proc, cha
 	   }
 
 	   (*(environ.env))->SetObjectArrayElement(environ.env, stringArray, i, (*(environ.env))->NewStringUTF(environ.env,"resources"));
-	     (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)((*(environ.env))->NewStringUTF(environ.env, resources_dir)) );
+	     (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)((*(environ.env))->NewStringUTF(environ.env, getResourceDirectory())) );
 	    i++;
 	   int j=0;	
   	   for(; j<propLen; j++, i++) {

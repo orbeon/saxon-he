@@ -112,7 +112,7 @@ void xsltSaveResultToFile(sxnc_environment environ, sxnc_processor ** proc, char
 	     (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)(parameters[i].value) );
 	   }
  	   (*(environ.env))->SetObjectArrayElement(environ.env, stringArray, i, (*(environ.env))->NewStringUTF(environ.env,"resources"));
-	   (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)((*(environ.env))->NewStringUTF(environ.env, resources_dir)) );
+	   (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)((*(environ.env))->NewStringUTF(environ.env, getResourceDirectory())) );
 	   i++;
             int j=0;
   	   for(; j< propLen; j++, i++) {
@@ -174,7 +174,7 @@ const char * xsltApplyStylesheet(sxnc_environment environ, sxnc_processor ** pro
 	   }
 
 	   (*(environ.env))->SetObjectArrayElement(environ.env, stringArray, i, (*(environ.env))->NewStringUTF(environ.env,"resources"));
-	     (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)((*(environ.env))->NewStringUTF(environ.env, resources_dir)) );
+	     (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)((*(environ.env))->NewStringUTF(environ.env, getResourceDirectory())) );
 	    i++;
 	    int j=0;		
   	   for(; j<propLen; j++, i++) {
@@ -236,7 +236,7 @@ void executeQueryToFile(sxnc_environment environ, sxnc_processor ** proc, char *
 	     (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)(parameters[i].value) );
 	   }
  	   (*(environ.env))->SetObjectArrayElement(environ.env, stringArray, i, (*(environ.env))->NewStringUTF(environ.env,"resources"));
-	   (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)((*(environ.env))->NewStringUTF(environ.env, resources_dir)) );
+	   (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)((*(environ.env))->NewStringUTF(environ.env, getResourceDirectory())) );
 	   i++;
 	  int j=0;
   	   for(; j<propLen; i++, j++) {
@@ -289,7 +289,7 @@ const char * executeQueryToString(sxnc_environment environ, sxnc_processor ** pr
 
 
 	   (*(environ.env))->SetObjectArrayElement(environ.env, stringArray, i, (*(environ.env))->NewStringUTF(environ.env,"resources"));
-	     (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)((*(environ.env))->NewStringUTF(environ.env, resources_dir)) );
+	     (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)((*(environ.env))->NewStringUTF(environ.env, getResourceDirectory())) );
 	    i++;
 	    int j=0;	
   	   for(; j<propLen; i++, j++) {
