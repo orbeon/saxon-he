@@ -360,8 +360,8 @@ void testXdmNodeOutput(XsltProcessor * trans){
 
 void exampleSimple1(XsltProcessor  *proc){
 		cout<<"ExampleSimple1 taken from PHP:"<<endl;
-                proc->setSourceFromFile("../php/trax/xml/foo.xml");
-                proc->compileFromFile("../php/trax/xsl/foo.xsl");
+                proc->setSourceFromFile("../php/xml/foo.xml");
+                proc->compileFromFile("../php/xsl/foo.xsl");
   	              
                 const char *result = proc->transformToString();               
 		if(result != NULL) {               
@@ -402,8 +402,8 @@ int exists(const char *fname)
 
   void exampleSimple2(XsltProcessor  *proc){
 		cout<<"<b>exampleSimple2:</b><br/>"<<endl;
-                proc->setSourceFromFile("../php/trax/xml/foo.xml");
-                proc->compileFromFile("../php/trax/xsl/foo.xsl");
+                proc->setSourceFromFile("../php/xml/foo.xml");
+                proc->compileFromFile("../php/xsl/foo.xsl");
                 const char * filename = "output1.xml";
 		proc->setOutputFile(filename);
                 proc->transformToFile();
@@ -434,8 +434,8 @@ void exampleSimple3(SaxonProcessor * saxonProc, XsltProcessor  *proc){
 
 void exampleParam(SaxonProcessor * saxonProc, XsltProcessor  *proc){
                 cout<< "\nExampleParam:</b><br/>"<<endl;
-		proc->setSourceFromFile("../php/trax/xml/foo.xml");
-                proc->compileFromFile("../php/trax/xsl/foo.xsl");
+		proc->setSourceFromFile("../php/xml/foo.xml");
+                proc->compileFromFile("../php/xsl/foo.xsl");
             
 		XdmAtomicValue * xdmvalue = saxonProc->makeStringValue("Hello to you");
 		if(xdmvalue !=NULL){
