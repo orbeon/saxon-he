@@ -482,7 +482,7 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
                         }
                         s.setPipelineConfiguration(pipe);
                         Sender.send(source, s, options);
-                        DocumentInfo node = (DocumentInfo) b.getCurrentRoot();
+                        NodeInfo node = b.getCurrentRoot();
                         b.reset();
                         return SingletonIterator.makeIterator(node);
                     } else {
