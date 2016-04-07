@@ -18,5 +18,3 @@ gcc  Transform.c -o transform -ldl -lc -lsaxonpec -DPEC $1 $2
 
 gcc  Query.c -o query -ldl -lc -lsaxonpec -DPEC $1 $2
 
-gcc  Validate.c -o validate -ldl -lc -lsaxonpec -DPEC $1 $2
-
