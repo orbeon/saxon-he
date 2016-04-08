@@ -351,7 +351,6 @@ public class Transform {
             value = options.getOptionValue("export");
             if (value != null) {
                 export = true;
-                processor.setConfigurationProperty(FeatureKeys.TRACE_OPTIMIZER_DECISIONS, true);
                 if (!"".equals(value)) {
                     exportOutputFileName = value;
                 }
