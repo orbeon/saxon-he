@@ -343,7 +343,7 @@ public class Base64BinaryValue extends AtomicValue implements AtomicMatchKey, Co
     }
 
     private static int decodeChar(char c) throws XPathException {
-        int d = c <= 128 ? decoding[c] : -1;
+        int d = c < 128 ? decoding[c] : -1;
         if (d == -1) {
             throw new XPathException("Invalid character '" + c + "' in base64 value", "FORG0001");
         }
