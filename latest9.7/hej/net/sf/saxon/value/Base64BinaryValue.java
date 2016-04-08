@@ -7,7 +7,6 @@
 
 package net.sf.saxon.value;
 
-import com.saxonica.functions.extfn.EXPathFile;
 import net.sf.saxon.expr.sort.AtomicMatchKey;
 import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.om.SequenceTool;
@@ -16,9 +15,6 @@ import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.AtomicType;
 import net.sf.saxon.type.BuiltInAtomicType;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -347,7 +343,7 @@ public class Base64BinaryValue extends AtomicValue implements AtomicMatchKey, Co
     }
 
     private static int decodeChar(char c) throws XPathException {
-        int d = decoding[c];
+        int d = c < 128 ? decoding[c] : -1;
         if (d == -1) {
             throw new XPathException("Invalid character '" + c + "' in base64 value", "FORG0001");
         }
