@@ -1162,73 +1162,7 @@ public class BuiltInAtomicType implements AtomicType {
      * value.
      */
     public String generateJavaScriptItemTypeAcceptor(String errorCode) throws XPathException {
-        String test = "function test(item) {" + generateJavaScriptItemTypeTest(AnyItemType.getInstance()) + "};";
-        switch (fingerprint) {
-            case StandardNames.XS_NUMERIC:
-            case StandardNames.XS_DOUBLE:
-                return test + "if (test(val)) {return val;}" +
-                        "else if (typeof val == 'number') {return Atomic.double.fromNumber(val);}" +
-                        "else if (typeof val == 'string') {return Atomic.double.fromString(val);}" +
-                        "else throw XError('Conversion failed','" + errorCode + "');";
-            case StandardNames.XS_BOOLEAN:
-                return test + "if (test(val)) {return val;}" +
-                        "else if (typeof val == 'boolean') {return Atomic.boolean.fromBoolean(val);}" +
-                        "else if (typeof val == 'string') {return Atomic.boolean.fromString(val);}" +
-                        "else throw XError('Conversion failed','" + errorCode + "');";
-//            case StandardNames.XS_DURATION:
-//            case StandardNames.XS_DATE_TIME:
-//            case StandardNames.XS_DATE:
-//            case StandardNames.XS_TIME:
-//            case StandardNames.XS_G_YEAR_MONTH:
-//            case StandardNames.XS_G_MONTH:
-//            case StandardNames.XS_G_MONTH_DAY:
-//            case StandardNames.XS_G_YEAR:
-//            case StandardNames.XS_G_DAY:
-//            case StandardNames.XS_HEX_BINARY:
-//            case StandardNames.XS_BASE64_BINARY:
-//            case StandardNames.XS_ANY_URI:
-//            case StandardNames.XS_QNAME:
-//            case StandardNames.XS_NOTATION:
-//            case StandardNames.XS_UNTYPED_ATOMIC:
-//            case StandardNames.XS_DECIMAL:
-//            case StandardNames.XS_FLOAT:
-//
-//            case StandardNames.XS_INTEGER:
-//                return null;
-//            case StandardNames.XS_NON_POSITIVE_INTEGER:
-//            case StandardNames.XS_NEGATIVE_INTEGER:
-//            case StandardNames.XS_LONG:
-//            case StandardNames.XS_INT:
-//            case StandardNames.XS_SHORT:
-//            case StandardNames.XS_BYTE:
-//            case StandardNames.XS_NON_NEGATIVE_INTEGER:
-//            case StandardNames.XS_POSITIVE_INTEGER:
-//            case StandardNames.XS_UNSIGNED_LONG:
-//            case StandardNames.XS_UNSIGNED_INT:
-//            case StandardNames.XS_UNSIGNED_SHORT:
-//            case StandardNames.XS_UNSIGNED_BYTE:
-//                return ((IntegerValue) primValue).validateAgainstSubType(this);
-//            case StandardNames.XS_YEAR_MONTH_DURATION:
-//            case StandardNames.XS_DAY_TIME_DURATION:
-//                return null;  // treated as primitive
-//            case StandardNames.XS_DATE_TIME_STAMP:
-//                return ((CalendarValue) primValue).getTimezoneInMinutes() == CalendarValue.NO_TIMEZONE
-//                        ? new ValidationFailure("xs:dateTimeStamp value must have a timezone") : null;
-//            case StandardNames.XS_NORMALIZED_STRING:
-//            case StandardNames.XS_TOKEN:
-//            case StandardNames.XS_LANGUAGE:
-//            case StandardNames.XS_NAME:
-//            case StandardNames.XS_NMTOKEN:
-//            case StandardNames.XS_NCNAME:
-//            case StandardNames.XS_ID:
-//            case StandardNames.XS_IDREF:
-//            case StandardNames.XS_ENTITY:
-//                return stringConverter.validate(primValue.getStringValueCS());
-            default:
-                return test + "if (test(val)) {return val;}" +
-                        "else if (typeof val == 'string') {return Atomic." + getName() + ".fromString(val);}" +
-                        "else throw XError('Conversion failed','" + errorCode + "');";
-        }
+        return "return Atomic." + getName() + ".cast(val);";
     }
 
     //#ifdefined  SCHEMA

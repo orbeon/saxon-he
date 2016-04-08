@@ -162,11 +162,7 @@ public class AnyItemType implements ItemType {
      * value.
      */
     public String generateJavaScriptItemTypeAcceptor(String errorCode) throws XPathException {
-        return "if (typeof val == 'number') return Atomic.double.fromNumber(val);" +
-                "if (typeof val == 'string') return Atomic.string.fromString(val);" +
-                "if (typeof val == 'boolean') return Atomic.boolean.fromBoolean(val);" +
-                "if (DomUtils.isNode(val)) return val;" +
-                "throw XError('Conversion failed','" + errorCode + "');";
+        return "return val;";
     }
 }
 
