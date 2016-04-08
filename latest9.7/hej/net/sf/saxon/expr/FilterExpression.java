@@ -741,8 +741,11 @@ public final class FilterExpression extends BinaryExpression implements ContextS
                         long n = ((NumericValue) ((Literal) comparand).getValue()).longValue();
                         args[2] = Literal.makeLiteral(Int64Value.makeIntegerValue(n - 1));
                     } else {
-                        args[2] = new ArithmeticExpression(
+                        ArithmeticExpression decrement = new ArithmeticExpression(
                                 comparand, Token.MINUS, Literal.makeLiteral(Int64Value.makeIntegerValue(1)));
+                        decrement.setCalculator(Calculator.getCalculator(      // bug 2704
+                                StandardNames.XS_INTEGER, StandardNames.XS_INTEGER, Calculator.MINUS, true));
+                        args[2] = decrement;
                     }
                     return SystemFunction.makeCall("subsequence", start.getRetainedStaticContext(), args);
                 }

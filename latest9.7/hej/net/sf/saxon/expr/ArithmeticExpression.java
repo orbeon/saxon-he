@@ -425,7 +425,9 @@ public class ArithmeticExpression extends BinaryExpression {
 
     @Override
     protected void explainExtraAttributes(ExpressionPresenter out) {
-        out.emitAttribute("calc", calculator.code());
+        if (calculator != null) { // May be null during optimizer tracing
+            out.emitAttribute("calc", calculator.code());
+        }
     }
 
     //#ifdefined BYTECODE
