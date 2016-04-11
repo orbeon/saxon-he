@@ -35,6 +35,20 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 	} else {
 		cwdV = curr;
 	}
+	if(exceptionOccurred()) {
+				if(proc->exception != NULL) {
+					delete proc->exception;
+				}
+				proc->exception = proc->checkForExceptionCPP(proc->environ->env, cppClass, NULL);
+				
+     			
+			
+#ifdef DEBUG
+		proc->environ->env->ExceptionDescribe();
+#endif
+		proc->exceptionClear();
+	}
+
 }
 
    void SchemaValidator::setcwd(const char* dir){

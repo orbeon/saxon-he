@@ -7,7 +7,7 @@
 4. [Technical](#tech)
 5. [Limitations](#limitations)
 
-Saxon/C 1.0.1 is the latest major release of Saxon-HE/PE/EE on the C/C++ programming platform. The APIs support the specifications XSLT 2.0/3.0, XQuery 1.0/3.0, Schema Validation 1.0/1.1 and XPath 2.0/3.0 from C/C++ or PHP applications.
+Saxon/C 1.0.1 is the latest release of Saxon-HE/PE/EE on the C/C++ programming platform. The APIs support the specifications XSLT 2.0/3.0, XQuery 1.0/3.0, Schema Validation 1.0/1.1 and XPath 2.0/3.0 from C/C++ or PHP applications.
 
 Saxon/C is built from the Saxon 9.6.0.9 Java product using the Excelsior JET tool (version 11 MP2).
 
@@ -94,6 +94,8 @@ The following files are required to build Saxon/C on C++:  SaxonCGlue.c, SaxonXP
 To compile the sample test code in C execute the 'build.sh' file the directory 'cTests'. This file builds executables for the test cases testing XSLT, XPath, XQuery and schema Validator. The command is similar to the following:
 
 > gcc -m32 -I$jdkdir/include -I$jdkdir/include/linux -I /System/Library/Frameworks/JavaVM.framework/Headers ../SaxonCGlue.c ../SaxonCProcessor.c ../SaxonCXPath.c  testXSLT.c -o testXSLT -ldl -lc -lsaxon $1
+
+Saxon/C can be run from the commandline in a similar way to its Java counterpart (same options are available). See the file Transform.c, Query.c and Validate.c (which is available in Saxon-EE/C) in the directory 'command'. The build.sh script can be executed to build the commandline programs.
 
 
 ### C++: ###
