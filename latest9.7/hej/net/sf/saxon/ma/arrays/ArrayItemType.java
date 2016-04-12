@@ -248,23 +248,11 @@ public class ArrayItemType extends AnyFunctionType {
         }
         FastStringBuffer fsb = new FastStringBuffer(256);
         fsb.append("function v(item) {" + memberType.getPrimaryType().generateJavaScriptItemTypeTest(AnyItemType.getInstance()) + "};");
-        // TODO: change the code below to use the common method in Cardinality.java
-        int card = memberType.getCardinality();
-        if (Cardinality.allowsZero(card) && Cardinality.allowsMany(card)) {
-            fsb.append("function c() {return true;};");
-        } else if (card == StaticProperty.EXACTLY_ONE) {
-            fsb.append("function c(n) {return n==1;};");
-        } else if (card == StaticProperty.EMPTY) {
-            fsb.append("function c(n) {return n==0;};");
-        } else if (!Cardinality.allowsZero(card)) {
-            fsb.append("function c(n) {return n>=1;};");
-        } else {
-            fsb.append("function c(n) {return n<=1;};");
-        }
+        fsb.append(Cardinality.generateJavaScriptChecker(memberType.getCardinality()));
         fsb.append("return item instanceof Expr.XdmArray && " +
                            "Iter.ForArray(item.value).every(function(seq){return c(seq.length) && Iter.ForArray(seq).every(v)});");
         return fsb.toString();
     }
 }
 
-// Copyright (c) 2015 Saxonica Limited. All rights reserved.
+// Copyright (c) 2015-2016 Saxonica Limited. All rights reserved.

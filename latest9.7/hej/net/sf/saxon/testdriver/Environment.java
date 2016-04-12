@@ -35,8 +35,16 @@ import java.util.*;
  * of test cases.
  */
 
-public class
-        Environment implements URIResolver {
+public class Environment implements URIResolver {
+
+    public static class CatalogResource {
+        public File file;
+        public URL url;
+        public String mediaType;
+        public String encoding;
+        public String uri;
+        public XdmNode doc;
+    }
 
     public Processor processor;
     public Map<String, XdmNode> sourceDocs = new HashMap<String, XdmNode>();
@@ -59,6 +67,7 @@ public class
     public boolean schemaAvailable = false;
     public boolean outputTree = true;
     public boolean outputSerialize = false;
+    public Map<String, CatalogResource> catalogResources = new HashMap<String, CatalogResource>();
 
 
     /**
@@ -504,32 +513,38 @@ public class
         final HashMap<URI, Object> resources = new HashMap<URI, Object>();
         final HashMap<URI, String> encodings = new HashMap<URI, String>();
         for (XdmItem resource : xpc.evaluate("resource", env)) {
-            String uri = ((XdmNode) resource).getAttributeValue(new QName("uri"));
+            CatalogResource res = new CatalogResource();
+            res.uri = ((XdmNode) resource).getAttributeValue(new QName("uri"));
             String href = ((XdmNode) resource).getAttributeValue(new QName("file"));
-            String encoding = ((XdmNode) resource).getAttributeValue(new QName("encoding"));
-            String media = ((XdmNode) resource).getAttributeValue(new QName("media-type"));
+            res.encoding = ((XdmNode) resource).getAttributeValue(new QName("encoding"));
+            res.mediaType = ((XdmNode) resource).getAttributeValue(new QName("media-type"));
             if (href != null) {
                 Object obj = null;
+
                 if (href.startsWith("http")) {
                     try {
-                        obj = new URL(href);
+                        res.url = new URL(href);
+                        obj = res.url;
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
                     }
                 } else {
-                    obj = new File(((XdmNode) env).getBaseURI().resolve(href));
+                    res.file = new File(((XdmNode) env).getBaseURI().resolve(href));
+                    obj = res.file;
                 }
                 try {
-                    resources.put(new URI(uri), obj);
-                    encodings.put(new URI(uri), encoding);
-                    URI abs = ((XdmNode) resource).getBaseURI().resolve(uri);
+                    resources.put(new URI(res.uri), obj);
+                    encodings.put(new URI(res.uri), res.encoding);
+                    URI abs = ((XdmNode) resource).getBaseURI().resolve(res.uri);
                     resources.put(abs, obj);
-                    encodings.put(abs, encoding);
+                    encodings.put(abs, res.encoding);
+                    environment.catalogResources.put(abs.toString(), res);
+
                 } catch (URISyntaxException e) {
                     driver.println("** Invalid URI in environment: " + e.getMessage());
                 }
-                if (media != null && media.endsWith("xquery")) {
-                    driver.registerXQueryModule(uri, (File) obj);
+                if (res.mediaType != null && res.mediaType.endsWith("xquery")) {
+                    driver.registerXQueryModule(res.uri, res.file);
                 }
             }
 
@@ -766,9 +781,15 @@ public class
         for (XdmItem source : xpc.evaluate("source", env)) {
             XdmNode doc = null;
 
-            String uri = ((XdmNode) source).getAttributeValue(new QName("uri"));
-            String mime = ((XdmNode) source).getAttributeValue(new QName("media-type"));
-            if (mime != null && "application/xml".equals(mime)) {
+            CatalogResource res = new CatalogResource();
+            String rawUri = ((XdmNode) source).getAttributeValue(new QName("uri"));
+            if (rawUri != null) {
+                res.uri = ((XdmNode) env).getBaseURI().resolve(rawUri).toString();
+                environment.catalogResources.put(res.uri, res);
+            }
+            res.mediaType = ((XdmNode) source).getAttributeValue(new QName("media-type"));
+            if (res.mediaType != null && "application/xml".equals(res.mediaType)) {
+                // MHK 2016-04-07: why??
                 continue;
             }
             String validation = ((XdmNode) source).getAttributeValue(new QName("", "validation"));
@@ -803,11 +824,12 @@ public class
                         environment.streamedContent = xpc.evaluate("string(content)", source).toString();
                     } else {
                         environment.streamedFile = new File(((XdmNode) env).getBaseURI().resolve(href));
+                        res.file = environment.streamedFile;
                     }
                 } else {
-                    environment.streamedSecondaryDocs.put(
-                            new File(((XdmNode) env).getBaseURI().resolve(href)).toURI().toString(),
-                            validation);
+                    File file = new File(((XdmNode) env).getBaseURI().resolve(href));
+                    environment.streamedSecondaryDocs.put(file.toURI().toString(), validation);
+                    res.file = file;
                 }
             } else {
                 Source ss;
@@ -816,31 +838,34 @@ public class
                     File file = null;
                     if (fileLoc.getScheme().equals("file")) {
                         file = new File(((XdmNode) env).getBaseURI().resolve(href));
-                        if (uri == null) {
-                            uri = file.toURI().toString();
+                        if (res.uri == null) {
+                            res.uri = file.toURI().toString();
                         }
+                        res.file = file;
                     }
                     try {
                         ss = (file == null ? new StreamSource(fileLoc.toString())
-                                : new StreamSource(new FileInputStream(file), uri));
+                                : new StreamSource(new FileInputStream(file), res.uri));
                     } catch (FileNotFoundException e) {
                         driver.println("*** failed to find source document " + href);
                         continue;
                     }
                 } else {
                     // content is inline in the catalog
-                    if (uri == null) {
-                        uri = ((XdmNode) env).getBaseURI().toString();
+                    String baseUri = res.uri;
+                    if (res.uri == null) {
+                        baseUri = ((XdmNode) env).getBaseURI().toString();
                     }
                     String content = xpc.evaluate("string(content)", source).toString();
-                    ss = new StreamSource(new StringReader(content), uri);
+                    ss = new StreamSource(new StringReader(content), baseUri);
                 }
 
 
                 try {
                     builder.setLineNumbering(true);
-                    doc = builder.build(ss);
-                    environment.sourceDocs.put(uri, doc);
+                    res.doc = builder.build(ss);
+                    environment.sourceDocs.put(res.uri, res.doc);
+
                 } catch (SaxonApiException e) {
                     //e.printStackTrace();
                     driver.println("*** failed to build source document " + href + " - " + e.getMessage());
