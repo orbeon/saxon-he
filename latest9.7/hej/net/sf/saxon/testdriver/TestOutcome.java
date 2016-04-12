@@ -383,7 +383,7 @@ public class TestOutcome {
         } else if (tag.equals("assert-message")) {
             XdmNode subAssertion = (XdmNode) catalogXpc.evaluateSingle("*", assertion);
             for (XdmNode message : xslMessages) {
-                if (message.getNodeName().getLocalName().equals("trust") && message.getStringValue().equals("me")) {
+                if (message.getNodeKind() == XdmNodeKind.ELEMENT && message.getNodeName().getLocalName().equals("trust") && message.getStringValue().equals("me")) {
                     // In the JS tests, assume message assertions are OK
                     return true;
                 }
