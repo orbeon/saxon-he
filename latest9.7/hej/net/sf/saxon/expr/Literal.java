@@ -12,12 +12,13 @@ import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.LiteralCompiler;
 import com.saxonica.ee.stream.adjunct.LiteralAdjunct;
 import com.saxonica.ee.stream.adjunct.StreamingAdjunct;
-import net.sf.saxon.expr.parser.*;
-import net.sf.saxon.ma.arrays.ArrayItem;
 import com.saxonica.functions.hof.FunctionLiteral;
-import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.SequenceReceiver;
+import net.sf.saxon.expr.parser.*;
+import net.sf.saxon.ma.arrays.ArrayItem;
+import net.sf.saxon.ma.map.KeyValuePair;
+import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.NodeTestPattern;
 import net.sf.saxon.pattern.Pattern;
@@ -529,6 +530,10 @@ public class Literal extends Expression {
             } else if (value instanceof MapItem) {
                 out.startElement("map");
                 out.emitAttribute("size", "" + ((MapItem) value).size());
+                for (KeyValuePair kvp : (MapItem)value) {
+                    exportAtomicValue(kvp.key, out);
+                    exportValue(kvp.value, out);
+                }
                 out.endElement();
             } else if (value instanceof Function) {
                 ((Function) value).export(out);
