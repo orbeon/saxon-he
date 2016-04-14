@@ -8,6 +8,7 @@
 package net.sf.saxon.testdriver;
 
 
+import com.saxonica.testdriver.Licensor;
 import net.sf.saxon.Version;
 import net.sf.saxon.dom.DOMObjectModel;
 import net.sf.saxon.lib.FeatureKeys;
@@ -15,6 +16,7 @@ import net.sf.saxon.om.TreeModel;
 import net.sf.saxon.s9api.*;
 
 import javax.xml.stream.XMLStreamException;
+import java.awt.im.spi.InputMethod;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -57,6 +59,7 @@ public abstract class TestDriver {
     protected String lang;
     protected boolean useXslt30Transformer = true;  // Temporary for controlling test processor
     protected boolean tracing = false;
+    protected Licensor licensor = new Licensor();
 
     static Set<String> unsharedEnvironments = new HashSet<String>();
     static {
@@ -80,9 +83,18 @@ public abstract class TestDriver {
         System.err.println("Testing " + getProductEdition() + " " + Version.getProductVersion());
         System.err.println("Java version " + System.getProperty("java.version"));
 
+
         testSuiteDir = args[0];
         String catalog = args[1];
-        catalogFileName = catalog;
+
+        char separatorChar = '/';
+        if (File.separatorChar != '/') {
+            separatorChar = '\\';
+        }
+        if(!testSuiteDir.endsWith(""+separatorChar)) {
+            testSuiteDir = testSuiteDir + separatorChar;
+        }
+        catalogFileName = testSuiteDir+catalog;
 
         for (int i = 2; i < args.length; i++) {
             if (args[i].startsWith("-t:")) {
@@ -569,5 +581,8 @@ public abstract class TestDriver {
 
     public abstract boolean ensureDependencySatisfied(XdmNode dependency, Environment env);
 
+    public Licensor getLicensor() {
+        return licensor;
+    }
 }
 
