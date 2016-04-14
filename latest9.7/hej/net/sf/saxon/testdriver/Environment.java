@@ -779,7 +779,6 @@ public class Environment implements URIResolver {
 
     private static void loadSourceDocuments(TestDriver driver, XPathCompiler xpc, XdmItem env, Environment environment, DocumentBuilder builder, SchemaManager manager, boolean validateSources) throws SaxonApiException {
         for (XdmItem source : xpc.evaluate("source", env)) {
-            XdmNode doc = null;
 
             CatalogResource res = new CatalogResource();
             String rawUri = ((XdmNode) source).getAttributeValue(new QName("uri"));
@@ -873,7 +872,7 @@ public class Environment implements URIResolver {
 
                 builder.setTreeModel(selectedTreeModel);
 
-                XdmItem selectedItem = doc;
+                XdmItem selectedItem = res.doc;
                 String select = ((XdmNode) source).getAttributeValue(new QName("select"));
                 if (select != null) {
                     XPathSelector selector = environment.xpathCompiler.compile(select).load();
