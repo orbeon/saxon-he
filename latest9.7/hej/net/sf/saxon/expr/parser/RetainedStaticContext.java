@@ -97,16 +97,13 @@ public class RetainedStaticContext implements NamespaceResolver {
 
 
     public boolean JAXPStaticContextCheck(StaticContext sc){
- //#ifdefined DOTNET && DOTNET==true
          if(sc instanceof JAXPXPathStaticContext && !(((JAXPXPathStaticContext) sc).getNamespaceContext() instanceof NamespaceResolver)){
              setNamespacesFromJAXP((JAXPXPathStaticContext) sc);
              return true;
          }
-//#endif
         return false;
     }
 
- //#ifdefined DOTNET && DOTNET==true
     /**
      * Create namespace information from the JAXP XPath static context. This
      * case needs special treatment because the JAXP static context holds namespace information
@@ -167,7 +164,7 @@ public class RetainedStaticContext implements NamespaceResolver {
         };
 
     }
-//#endif
+
 
     /**
      * Get the Configuration
