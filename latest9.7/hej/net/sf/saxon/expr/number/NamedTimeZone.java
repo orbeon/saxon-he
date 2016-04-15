@@ -306,7 +306,7 @@ public class NamedTimeZone {
             // this happens with timezones that are allowed in XPath but not in Java, especially on JDK 1.4
             return formatTimeZoneOffset(date);
         }
-        boolean inSummerTime = zone.inDaylightTime(javaDate);
+        boolean inSummerTime = zone != null && zone.inDaylightTime(javaDate);
         int tzMinutes = date.getTimezoneInMinutes();
         for (String possibleZone : possibleZones) {
             TimeZone possibleTimeZone = TimeZone.getTimeZone(possibleZone);
