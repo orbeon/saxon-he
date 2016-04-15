@@ -13,6 +13,7 @@ import com.saxonica.ee.stream.adjunct.StreamingAdjunct;
 import com.saxonica.ee.stream.adjunct.TryCatchAdjunct;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.PromotionOffer;
+import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceIterator;
@@ -219,6 +220,9 @@ public class TryCatch extends Expression {
                 err.setIsGlobalError(false);
             } else {
                 StructuredQName code = err.getErrorCodeQName();
+                if(code == null) {
+                    code = new StructuredQName("err", NamespaceConstant.SAXON,"SXWN9000");
+                }
                 for (CatchClause clause : catchClauses) {
                     if (clause.nameTest.matches(code)) {
                         Expression caught = clause.catchOp.getChildExpression();

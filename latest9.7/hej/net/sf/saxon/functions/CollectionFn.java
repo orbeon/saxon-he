@@ -92,7 +92,7 @@ public class CollectionFn extends SystemFunction implements Callable {
                     if (base != null) {
                         absoluteURI = new URI(base).resolve(href).toString();
                     } else {
-                        throw new XPathException("Relative collection URI cannot be resolved: no base URI available");
+                        throw new XPathException("Relative collection URI cannot be resolved: no base URI available", "FODC0002");
                     }
                 }
             } catch (URISyntaxException e) {
