@@ -77,6 +77,7 @@ public class Environment implements URIResolver {
     public static Environment createLocalEnvironment(URI baseURI, int generateByteCode, boolean unfolded, Spec spec, TestDriver testDriver) {
         final Environment environment = new Environment();
         environment.processor = new Processor(!testDriver.driverProc.getSaxonEdition().equals("HE"));
+        //testDriver.getLicensor().activate(environment.processor);
         //AutoActivate.activate(environment.processor);
 
         configureByteCode(testDriver, environment, generateByteCode);
@@ -127,7 +128,6 @@ public class Environment implements URIResolver {
                     defaultEnvironment.processor.getConfigurationProperty(FeatureKeys.XSD_VERSION));
         }
         driver.prepareForSQL(environment.processor);
-
         //AutoActivate.activate(environment.processor);
 
 
