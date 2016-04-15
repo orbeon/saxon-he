@@ -44,7 +44,7 @@ public class ComponentTest {
     }
 
     public boolean matches(ComponentCode component) {
-        return component.getComponentKind() == componentKind &&
+        return (componentKind == -1 || component.getComponentKind() == componentKind) &&
                 nameTest.matches(component.getObjectName()) &&
                 !((componentKind == StandardNames.XSL_FUNCTION) && arity != -1 && arity != ((UserFunction) component).getArity());
     }
