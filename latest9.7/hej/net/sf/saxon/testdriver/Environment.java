@@ -864,6 +864,7 @@ public class Environment implements URIResolver {
                     builder.setLineNumbering(true);
                     res.doc = builder.build(ss);
                     environment.sourceDocs.put(res.uri, res.doc);
+                    environment.sourceDocs.put(rawUri, res.doc);
 
                 } catch (SaxonApiException e) {
                     //e.printStackTrace();
