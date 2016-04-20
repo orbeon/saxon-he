@@ -110,6 +110,12 @@ public final class Tokenizer {
     private int precedingToken = Token.UNKNOWN;
 
     /**
+     * The content of the preceding token
+     */
+
+    private String precedingTokenValue = "";
+
+    /**
      * Flag to disallow "union" as a synonym for "|" when parsing XSLT 2.0 patterns
      */
 
@@ -151,9 +157,11 @@ public final class Tokenizer {
         if (state == DEFAULT_STATE) {
             // force the followsOperator() test to return true
             precedingToken = Token.UNKNOWN;
+            precedingTokenValue = "";
             currentToken = Token.UNKNOWN;
         } else if (state == OPERATOR_STATE) {
             precedingToken = Token.RPAR;
+            precedingTokenValue = ")";
             currentToken = Token.RPAR;
         }
     }
@@ -213,6 +221,7 @@ public final class Tokenizer {
 
     public void next() throws XPathException {
         precedingToken = currentToken;
+        precedingTokenValue = currentTokenValue;
         currentToken = nextToken;
         currentTokenValue = nextTokenValue;
         if (currentTokenValue == null) {
@@ -418,6 +427,7 @@ public final class Tokenizer {
      */
     public void lookAhead() throws XPathException {
         precedingToken = nextToken;
+        precedingTokenValue = nextTokenValue;
         nextTokenValue = null;
         nextTokenStartOffset = inputOffset;
         for (; ; ) {
@@ -891,6 +901,16 @@ public final class Tokenizer {
                                 break;
                             case '.':
                             case '-':
+                                // If the name up to the "-" or "." is a valid operator, and if the preceding token
+                                // is such that an operator is valid here and an NCName isn't, then quit here (bug 2715)
+                                if (precedingToken > Token.LAST_OPERATOR &&
+                                        !(precedingToken == Token.QMARK || precedingToken == Token.SUFFIX) &&
+                                        getBinaryOp(input.substring(nextTokenStartOffset, inputOffset)) != Token.UNKNOWN &&
+                                        !(precedingToken == Token.NAME && getBinaryOp(precedingTokenValue) != Token.UNKNOWN)) {
+                                    nextToken = getBinaryOp(input.substring(nextTokenStartOffset, inputOffset));
+                                    return;
+                                }
+                                // else fall through
                             case '_':
                                 break;
 
