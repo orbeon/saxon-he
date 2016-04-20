@@ -7,9 +7,6 @@
 
 package net.sf.saxon.expr;
 
-import net.sf.saxon.expr.ListConstructorFunction;
-import net.sf.saxon.expr.StaticProperty;
-import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.om.NamespaceResolver;
 import net.sf.saxon.om.Sequence;
@@ -46,10 +43,8 @@ public class ListCastableFunction extends ListConstructorFunction {
             resultType = (AtomicType) getMemberType();
         }
 
-        SequenceType argType = allowEmpty ? SequenceType.OPTIONAL_ATOMIC : SequenceType.SINGLE_ATOMIC;
-
         return new SpecificFunctionType(
-                new SequenceType[]{argType},
+                new SequenceType[]{SequenceType.ANY_SEQUENCE},
                 SequenceType.makeSequenceType(resultType, StaticProperty.ALLOWS_ZERO_OR_MORE));
     }
 
