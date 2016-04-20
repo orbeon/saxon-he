@@ -10,6 +10,7 @@ package net.sf.saxon.expr;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.om.NamespaceResolver;
 import net.sf.saxon.om.Sequence;
+import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
@@ -67,9 +68,13 @@ public class ListCastableFunction extends ListConstructorFunction {
      *          if a dynamic error occurs within the function
      */
     public BooleanValue call(XPathContext context, Sequence[] args) throws XPathException {
-        AtomicValue val = (AtomicValue) args[0].head();
+        SequenceIterator iter = args[0].iterate();
+        AtomicValue val = (AtomicValue) iter.next();
         if (val == null) {
             return BooleanValue.get(allowEmpty);
+        }
+        if (iter.next() != null) {
+            return BooleanValue.FALSE;
         }
         if (!(val instanceof StringValue) || val instanceof AnyURIValue) {
             return BooleanValue.FALSE;
