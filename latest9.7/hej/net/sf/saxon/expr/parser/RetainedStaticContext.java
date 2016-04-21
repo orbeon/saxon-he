@@ -11,7 +11,6 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.Version;
 import net.sf.saxon.expr.PackageData;
 import net.sf.saxon.expr.StaticContext;
-import net.sf.saxon.java.JavaPlatform;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.NamespaceResolver;
 import net.sf.saxon.trans.DecimalFormatManager;
