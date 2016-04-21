@@ -124,6 +124,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
         stylesheetPackage = getConfiguration().makeStylesheetPackage();
         int xPathVersion = sourceElement.getProcessorVersion() >= 30 ? 31 : 20;
         stylesheetPackage.setXPathVersion(xPathVersion);
+        stylesheetPackage.setTargetEdition(sourceElement.getCompilation().getCompilerInfo().getTargetEdition());
 
         keyManager = stylesheetPackage.getKeyManager();
         decimalFormatManager = stylesheetPackage.getDecimalFormatManager();

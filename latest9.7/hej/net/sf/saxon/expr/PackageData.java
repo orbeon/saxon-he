@@ -33,6 +33,7 @@ public class PackageData {
     private List<GlobalVariable> globalVariables = new ArrayList<GlobalVariable>();
     private SlotManager globalSlotManager = new SlotManager();
     private int localLicenseId = -1;
+    private String targetEdition;
 
 
     /**
@@ -122,6 +123,27 @@ public class PackageData {
     public int getLocalLicenseId() {
         return localLicenseId;
     }
+
+    /**
+     * Set the target Saxon edition under which this package will execute
+     *
+     * @param edition the Saxon edition e.g. "HE" or "JS"
+     */
+
+    public void setTargetEdition(String edition) {
+        this.targetEdition = edition;
+    }
+
+    /**
+     * Get the target Saxon edition under which this package will execute
+     *
+     * @return the Saxon edition e.g. "HE" or "JS"
+     */
+
+    public String getTargetEdition() {
+        return this.targetEdition;
+    }
+
 
     /**
      * Ask whether the package is schema-aware

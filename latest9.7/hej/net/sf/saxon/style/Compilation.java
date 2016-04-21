@@ -140,6 +140,7 @@ public class Compilation {
             PackageData pd = new PackageData(getConfiguration());
             pd.setXPathVersion(getProcessorVersion() == 30 ? 31 : getProcessorVersion());
             pd.setHostLanguage(Configuration.XSLT);
+            pd.setTargetEdition(compilerInfo.getTargetEdition());
             packageData = pd;
         }
     }

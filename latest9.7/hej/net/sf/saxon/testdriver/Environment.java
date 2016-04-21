@@ -87,6 +87,9 @@ public class Environment implements URIResolver {
         environment.xqueryCompiler = environment.processor.newXQueryCompiler();
         environment.xqueryCompiler.setBaseURI(baseURI);
         environment.xsltCompiler = environment.processor.newXsltCompiler();
+        if (testDriver.runWithJS) {
+            environment.xsltCompiler.setTargetEdition("JS");
+        }
         if (spec == Spec.XT30) {
             environment.xsltCompiler.setXsltLanguageVersion("3.0");
             environment.xpathCompiler.setLanguageVersion("3.1");
@@ -145,6 +148,9 @@ public class Environment implements URIResolver {
         if (driver.spec.shortSpecName.equals("XT")) {
             environment.xsltCompiler = environment.processor.newXsltCompiler();
             environment.xsltCompiler.setXsltLanguageVersion(driver.spec.version);
+            if (driver.runWithJS) {
+                environment.xsltCompiler.setTargetEdition("JS");
+            }
         }
 
         if (driver.unfolded) {

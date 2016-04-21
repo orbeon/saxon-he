@@ -155,6 +155,9 @@ public class Transform {
         options.setPermittedValues("strip", new String[]{"none", "all", "ignorable"}, null);
         options.addRecognizedOption("t", CommandLineOptions.TYPE_BOOLEAN,
             "Display version and timing information, and names of output files");
+        options.addRecognizedOption("target", CommandLineOptions.TYPE_ENUMERATION | CommandLineOptions.VALUE_REQUIRED,
+                                    "Target Saxon edition for execution via -export");
+        options.setPermittedValues("target", new String[]{"EE", "PE", "HE", "JS"}, null);
         options.addRecognizedOption("T", CommandLineOptions.TYPE_CLASSNAME,
             "Use named TraceListener class, or standard TraceListener");
         options.addRecognizedOption("TJ", CommandLineOptions.TYPE_BOOLEAN,
@@ -354,6 +357,11 @@ public class Transform {
                 if (!"".equals(value)) {
                     exportOutputFileName = value;
                 }
+            }
+
+            value = options.getOptionValue("target");
+            if (value != null) {
+                compiler.setTargetEdition(value);
             }
 
             value = options.getOptionValue("o");

@@ -48,6 +48,7 @@ public class CompilerInfo {
     private PackageLibrary packageLibrary = new PackageLibrary();
     private boolean generateByteCode = false;
     private boolean assertionsEnabled = false;
+    private String targetEdition = "HE";
 
     private PatternOptimization patternOptimization;
 
@@ -92,6 +93,7 @@ public class CompilerInfo {
         extensionFunctionLibrary = info.extensionFunctionLibrary;
         defaultCollation = info.defaultCollation;
         assertionsEnabled = info.assertionsEnabled;
+        targetEdition = info.targetEdition;
         patternOptimization = info.patternOptimization;      // project: pattern optimization
     }
 
@@ -145,7 +147,27 @@ public class CompilerInfo {
         variableList.clear();
     }
 
-     /**
+    /**
+     * Set the target edition under which the stylesheet will be executed.
+     * @param edition the Saxon edition for the run-time environment. One of "EE", "PE", "HE", or "JS".
+     * @since 9.7.0.5. Experimental and subject to change.
+     */
+
+    public void setTargetEdition(String edition) {
+        this.targetEdition = edition;
+    }
+
+    /**
+     * Get the target edition under which the stylesheet will be executed.
+     * @return the Saxon edition for the run-time environment. One of "EE", "PE", "HE", or "JS".
+     * @since 9.7.0.5. Experimental and subject to change.
+     */
+
+    public String getTargetEdition() {
+        return targetEdition;
+    }
+
+    /**
      * Set the package library to be used during the compilation episode. Any packages referenced
      * using xsl:use-package declarations during the stylesheet compilation must be found in this
      * package library

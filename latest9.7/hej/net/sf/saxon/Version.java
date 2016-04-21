@@ -47,17 +47,11 @@ public final class Version {
     /**
      * Get the version number of the schema-aware version of the product
      *
-     * @param config the Saxon configuration
+     * @param edition the Saxon edition code, e.g. "EE" or "JS"
      * @return the version number of this version of Saxon, as a string
      */
 
-    public static String getProductVariantAndVersion(Configuration config) {
-        String edition = config.getEditionCode();
-        if (edition.equals("PE") || edition.equals("EE")) {
-            if (!config.isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION)) {
-                edition += " (unlicensed)";
-            }
-        }
+    public static String getProductVariantAndVersion(String edition) {
         return edition + " " + getProductVersion();
     }
 

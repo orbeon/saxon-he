@@ -115,6 +115,10 @@ public class SystemProperty extends SystemFunction implements Callable {
 
     }
 
+    public static String yesOrNo(boolean whatever) {
+        return whatever ? "yes" : "no";
+    }
+
     /**
      * Here's the real code:
      *
@@ -126,6 +130,7 @@ public class SystemProperty extends SystemFunction implements Callable {
 
     public static String getProperty(String uri, String local, RetainedStaticContext rsc) {
         Configuration config = rsc.getConfiguration();
+        String edition = rsc.getPackageData().getTargetEdition();
         if (uri.equals(NamespaceConstant.XSLT)) {
             if (local.equals("version")) {
                 return rsc.getXPathVersion() >= 30 ? "3.0" : "2.0";
@@ -136,26 +141,33 @@ public class SystemProperty extends SystemFunction implements Callable {
             } else if (local.equals("product-name")) {
                 return Version.getProductName();
             } else if (local.equals("product-version")) {
-                return Version.getProductVariantAndVersion(rsc.getConfiguration());
+                return Version.getProductVariantAndVersion(edition);
             } else if (local.equals("is-schema-aware")) {
                 boolean schemaAware = rsc.getPackageData().isSchemaAware();
-                return schemaAware ? "yes" : "no";
+                return yesOrNo(schemaAware);
             } else if (local.equals("supports-serialization")) {
-                return "yes";
+                return yesOrNo(!"JS".equals(edition));
             } else if (local.equals("supports-backwards-compatibility")) {
                 return "yes";
             } else if (local.equals("supports-namespace-axis")) {
                 return "yes";
             } else if (local.equals("supports-streaming")) {
-                return rsc.getXPathVersion() >= 30 &&
+                return yesOrNo(
+                        "EE".equals(edition) &&
+                        rsc.getXPathVersion() >= 30 &&
                         config.isLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XSLT) &&
-                        !config.getConfigurationProperty(FeatureKeys.STREAMABILITY).equals("off") ? "yes" : "no";
+                        !config.getConfigurationProperty(FeatureKeys.STREAMABILITY).equals("off"));
             } else if (local.equals("supports-dynamic-evaluation")) {
-                return rsc.getXPathVersion() >= 30 &&
-                        config.isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION) ? "yes" : "no";
+                return yesOrNo(
+                        !"JS".equals(edition) &&
+                        rsc.getXPathVersion() >= 30 &&
+                        config.isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION));
             } else if (local.equals("supports-higher-order-functions")) {
-                return rsc.getXPathVersion() >= 30 &&
-                    config.isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION) ? "yes" : "no";
+                return yesOrNo(
+                        !"JS".equals(edition) &&
+                        !"HE".equals(edition) &&
+                        rsc.getXPathVersion() >= 30 &&
+                        config.isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION));
             } else if (local.equals("xpath-version")) {
                 String v = rsc.getXPathVersion() + "";
                 return v.charAt(0) + "." + v.charAt(1);

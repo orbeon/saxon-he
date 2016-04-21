@@ -66,6 +66,7 @@ public class XsltCompiler {
         this.config = processor.getUnderlyingConfiguration();
         compilerInfo = new CompilerInfo(config.getDefaultXsltCompilerInfo());
         compilerInfo.setGenerateByteCode(config.isGenerateByteCode(Configuration.XSLT));
+        compilerInfo.setTargetEdition(config.getEditionCode());
     }
 
     /**
@@ -181,6 +182,31 @@ public class XsltCompiler {
 
     public boolean isSchemaAware() {
         return compilerInfo.isSchemaAware();
+    }
+
+    /**
+     * Set the target edition under which the stylesheet will be executed.
+     *
+     * @param edition the Saxon edition for the run-time environment. One of "EE", "PE", "HE", or "JS".
+     * @since 9.7.0.5. Experimental and subject to change.
+     */
+
+    public void setTargetEdition(String edition) {
+        if (!("EE".equals(edition) || "PE".equals(edition) || "HE".equals(edition) || "JS".equals(edition))) {
+            throw new IllegalArgumentException("Unknown Saxon edition " + edition);
+        }
+        compilerInfo.setTargetEdition(edition);
+    }
+
+    /**
+     * Get the target edition under which the stylesheet will be executed.
+     *
+     * @return the Saxon edition for the run-time environment. One of "EE", "PE", "HE", or "JS".
+     * @since 9.7.0.5. Experimental and subject to change.
+     */
+
+    public String getTargetEdition() {
+        return compilerInfo.getTargetEdition();
     }
 
     /**

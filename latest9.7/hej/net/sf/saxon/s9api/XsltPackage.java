@@ -115,6 +115,9 @@ public class XsltPackage {
     public void save(File file) throws SaxonApiException {
         StreamResult destination = new StreamResult(file);
         ExpressionPresenter out = new ExpressionPresenter(processor.getUnderlyingConfiguration(), destination, true);
+        if (stylesheetPackage.getTargetEdition().equals("JS")) {
+            out.setOption("target", "JS");
+        }
         try {
             stylesheetPackage.export(out);
         } catch (XPathException e) {

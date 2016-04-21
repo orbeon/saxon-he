@@ -79,10 +79,10 @@ public class FunctionAvailable extends SystemFunction {
         }
     }
 
-    private boolean isFunctionAvailable(String lexicalName, int arity, XPathContext context) throws XPathException {
+    private boolean isFunctionAvailable(String lexicalName, String edition, int arity, XPathContext context) throws XPathException {
         if (arity == -1) {
             for (int i = 0; i < 20; i++) {
-                if (isFunctionAvailable(lexicalName, i, context)) {
+                if (isFunctionAvailable(lexicalName, edition, i, context)) {
                     return true;
                 }
             }
@@ -108,7 +108,18 @@ public class FunctionAvailable extends SystemFunction {
 
         final FunctionLibrary lib = context.getController().getExecutable().getFunctionLibrary();
         SymbolicName sn = new SymbolicName(StandardNames.XSL_FUNCTION, qName, arity);
-        return lib.isAvailable(sn);
+        boolean known = lib.isAvailable(sn);
+        if (known && sn.getComponentName().hasURI(NamespaceConstant.FN) && !context.getConfiguration().getEditionCode().equals(edition)) {
+            // Target environment differs from compile-time environment: some functions might not be available
+            StandardFunction.Entry details = StandardFunction.getFunction(sn.getComponentName().getLocalPart(), sn.getArity());
+            if (details != null) {
+                if (((details.applicability & StandardFunction.HOF) != 0) && ("HE".equals(edition) || "JS".equals(edition))) {
+                    return false;
+                }
+                // TODO: some further functions are not available in Saxon-JS
+            }
+        }
+        return known;
     }
 
     /**
@@ -126,7 +137,8 @@ public class FunctionAvailable extends SystemFunction {
         if (arguments.length == 2) {
             arity = (int) ((NumericValue) arguments[1].head()).longValue();
         }
-        return BooleanValue.get(isFunctionAvailable(lexicalQName, arity, context));
+        return BooleanValue.get(
+                isFunctionAvailable(lexicalQName, getRetainedStaticContext().getPackageData().getTargetEdition(), arity, context));
     }
 }
 
