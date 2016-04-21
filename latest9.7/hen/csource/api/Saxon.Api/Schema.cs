@@ -128,6 +128,18 @@ namespace Saxon.Api
         }
 
         /// <summary>
+        /// This property provides a way to set the catalog file which will be used by the Apache catalog resolver.
+        /// </summary>
+        /// <para>The value of the xml.catalog.files</para>
+        public String Catalog
+        {
+            set
+            {
+                net.sf.saxon.trans.XmlCatalogResolver.setCatalog(value, this.config, false);
+            }
+        }
+
+        /// <summary>
         /// List of errors. The caller may supply an empty list before calling Compile;
         /// the processor will then populate the list with error information obtained during
         /// the schema compilation. Each error will be included as an object of type StaticError.
