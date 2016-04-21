@@ -318,23 +318,8 @@ public class SortExpression extends Expression
             for (SortKeyDefinition sortKeyDefinition : getSortKeyDefinitionList()) {
                 final Expression sk2 = sortKeyDefinition.getSortKey().promote(offer);
                 sortKeyDefinition.setSortKey(sk2, true);
-                if (sortKeyDefinition.order != null) {
-                    sortKeyDefinition.order = sortKeyDefinition.order.promote(offer);
-                }
-                if (sortKeyDefinition.stable != null) {
-                    sortKeyDefinition.stable = sortKeyDefinition.stable.promote(offer);
-                }
-                if (sortKeyDefinition.caseOrder != null) {
-                    sortKeyDefinition.caseOrder = sortKeyDefinition.caseOrder.promote(offer);
-                }
-                if (sortKeyDefinition.dataTypeExpression != null) {
-                    sortKeyDefinition.dataTypeExpression = sortKeyDefinition.dataTypeExpression.promote(offer);
-                }
-                if (sortKeyDefinition.language != null) {
-                    sortKeyDefinition.language = sortKeyDefinition.language.promote(offer);
-                }
-                if (sortKeyDefinition.collationName != null) {
-                    sortKeyDefinition.collationName = sortKeyDefinition.collationName.promote(offer);
+                for (Operand o : sortKeyDefinition.operands()) {
+                    o.setChildExpression(o.getChildExpression().promote(offer));
                 }
             }
             return this;

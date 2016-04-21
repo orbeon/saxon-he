@@ -46,14 +46,14 @@ import java.util.Properties;
 
 public class SortKeyDefinition extends PseudoExpression {
 
-    protected Expression sortKey;
-    protected Expression order;
-    protected Expression dataTypeExpression = null;
+    protected Operand sortKey;
+    protected Operand order;
+    protected Operand dataTypeExpression = null;
     // used when the type is not known till run-time
-    protected Expression caseOrder;
-    protected Expression language;
-    protected Expression collationName = null;
-    protected Expression stable = null; // not actually used, but present so it can be validated
+    protected Operand caseOrder;
+    protected Operand language;
+    protected Operand collationName = null;
+    protected Operand stable = null; // not actually used, but present so it can be validated
     protected StringCollator collation;
     protected String baseURI;           // needed in case collation URI is relative
     protected boolean emptyLeast = true;
@@ -66,9 +66,9 @@ public class SortKeyDefinition extends PseudoExpression {
     // ascending/descending, caseOrder, etc.
 
     public SortKeyDefinition() {
-        order = new StringLiteral("ascending");
-        caseOrder = new StringLiteral("#default");
-        language = new StringLiteral(StringValue.EMPTY_STRING);
+        order = new Operand(this, new StringLiteral("ascending"), OperandRole.SINGLE_ATOMIC);
+        caseOrder = new Operand(this, new StringLiteral("#default"), OperandRole.SINGLE_ATOMIC);
+        language = new Operand(this, new StringLiteral(StringValue.EMPTY_STRING), OperandRole.SINGLE_ATOMIC);
     }
 
     /**
@@ -81,9 +81,8 @@ public class SortKeyDefinition extends PseudoExpression {
      */
 
     public void setSortKey(Expression exp, boolean setContext) {
-        sortKey = exp;
+        sortKey = new Operand(this, exp, setContext ? OperandRole.FOCUS_CONTROLLED_ACTION : OperandRole.ATOMIC_SEQUENCE);
         setContextForSortKey = setContext;
-        adoptChildExpression(sortKey);
     }
 
     /**
@@ -93,7 +92,7 @@ public class SortKeyDefinition extends PseudoExpression {
      */
 
     public Expression getSortKey() {
-        return sortKey;
+        return sortKey.getChildExpression();
     }
 
     /**
@@ -118,8 +117,7 @@ public class SortKeyDefinition extends PseudoExpression {
      */
 
     public void setOrder(Expression exp) {
-        order = exp;
-        adoptChildExpression(exp);
+        order.setChildExpression(exp);
     }
 
     /**
@@ -130,7 +128,7 @@ public class SortKeyDefinition extends PseudoExpression {
      */
 
     public Expression getOrder() {
-        return order;
+        return order.getChildExpression();
     }
 
     /**
@@ -142,8 +140,14 @@ public class SortKeyDefinition extends PseudoExpression {
      */
 
     public void setDataTypeExpression(Expression exp) {
-        dataTypeExpression = exp;
-        adoptChildExpression(exp);
+        if (exp == null) {
+            dataTypeExpression = null;
+        } else {
+            if (dataTypeExpression == null) {
+                dataTypeExpression = new Operand(this, exp, OperandRole.SINGLE_ATOMIC);
+            }
+            dataTypeExpression.setChildExpression(exp);
+        }
     }
 
     /**
@@ -153,7 +157,7 @@ public class SortKeyDefinition extends PseudoExpression {
      */
 
     public Expression getDataTypeExpression() {
-        return dataTypeExpression;
+        return dataTypeExpression.getChildExpression();
     }
 
     /**
@@ -165,8 +169,7 @@ public class SortKeyDefinition extends PseudoExpression {
      */
 
     public void setCaseOrder(Expression exp) {
-        caseOrder = exp;
-        adoptChildExpression(exp);
+        caseOrder.setChildExpression(exp);
     }
 
     /**
@@ -177,7 +180,7 @@ public class SortKeyDefinition extends PseudoExpression {
      */
 
     public Expression getCaseOrder() {
-        return caseOrder;
+        return caseOrder.getChildExpression();
     }
 
     /**
@@ -188,8 +191,7 @@ public class SortKeyDefinition extends PseudoExpression {
      */
 
     public void setLanguage(Expression exp) {
-        language = exp;
-        adoptChildExpression(exp);
+        language.setChildExpression(exp);
     }
 
     /**
@@ -199,18 +201,24 @@ public class SortKeyDefinition extends PseudoExpression {
      */
 
     public Expression getLanguage() {
-        return language;
+        return language.getChildExpression();
     }
 
     /**
      * Set the collation name (specifically, an expression which when evaluated returns the collation URI).
      *
-     * @param collationName the expression that determines the collation name
+     * @param collationNameExpr the expression that determines the collation name
      */
 
-    public void setCollationNameExpression(Expression collationName) {
-        this.collationName = collationName;
-        adoptChildExpression(collationName);
+    public void setCollationNameExpression(Expression collationNameExpr) {
+        if (collationNameExpr == null) {
+            collationName = null;
+        } else {
+            if (collationName == null) {
+                collationName = new Operand(this, collationNameExpr, OperandRole.SINGLE_ATOMIC);
+            }
+            collationName.setChildExpression(collationNameExpr);
+        }
     }
 
     /**
@@ -221,7 +229,7 @@ public class SortKeyDefinition extends PseudoExpression {
      */
 
     public Expression getCollationNameExpression() {
-        return collationName;
+        return collationName.getChildExpression();
     }
 
     /**
@@ -269,12 +277,18 @@ public class SortKeyDefinition extends PseudoExpression {
     /**
      * Set whether this sort key definition is stable
      *
-     * @param stable the expression that determines whether the sort key definition is stable
+     * @param stableExpr the expression that determines whether the sort key definition is stable
      *               (it evaluates to the string "yes" or "no".
      */
 
-    public void setStable(Expression stable) {
-        this.stable = stable;
+    public void setStable(Expression stableExpr) {
+        if (stableExpr == null) {
+            stableExpr = new StringLiteral("yes");
+        }
+        if (stable == null) {
+            stable = new Operand(this, stableExpr, OperandRole.SINGLE_ATOMIC);
+        }
+        stable.setChildExpression(stableExpr);
     }
 
     /**
@@ -285,7 +299,7 @@ public class SortKeyDefinition extends PseudoExpression {
      */
 
     public Expression getStable() {
-        return stable;
+        return stable.getChildExpression();
     }
 
     /**
@@ -336,38 +350,13 @@ public class SortKeyDefinition extends PseudoExpression {
      */
 
     public boolean isFixed() {
-        return order instanceof Literal &&
+        return order.getChildExpression() instanceof Literal &&
                 (dataTypeExpression == null ||
-                        dataTypeExpression instanceof Literal) &&
-                caseOrder instanceof Literal &&
-                language instanceof Literal &&
-                (stable == null || stable instanceof Literal) &&
-                (collationName == null || collationName instanceof Literal);
-    }
-
-
-    /**
-     * Simplify this sort key definition
-     *
-     * @return the simplified sort key definition
-     * @throws XPathException if any failure occurs
-     */
-
-    public SortKeyDefinition simplify() throws XPathException {
-        sortKey = sortKey.simplify();
-        order = order.simplify();
-        if (dataTypeExpression != null) {
-            dataTypeExpression = dataTypeExpression.simplify();
-        }
-        caseOrder = caseOrder.simplify();
-        language = language.simplify();
-        if (stable != null) {
-            stable = stable.simplify();
-        }
-        if (collationName != null) {
-            collationName = collationName.simplify();
-        }
-        return this;
+                        dataTypeExpression.getChildExpression() instanceof Literal) &&
+                caseOrder.getChildExpression() instanceof Literal &&
+                language.getChildExpression() instanceof Literal &&
+                (stable == null || stable.getChildExpression() instanceof Literal) &&
+                (collationName == null || collationName.getChildExpression() instanceof Literal);
     }
 
     /**
@@ -378,13 +367,13 @@ public class SortKeyDefinition extends PseudoExpression {
 
     public SortKeyDefinition copy() {
         SortKeyDefinition sk2 = new SortKeyDefinition();
-        sk2.setSortKey(copy(sortKey), true);
-        sk2.setOrder(copy(order));
-        sk2.setDataTypeExpression(copy(dataTypeExpression));
-        sk2.setCaseOrder(copy(caseOrder));
-        sk2.setLanguage(copy(language));
-        sk2.setStable(copy(stable));
-        sk2.setCollationNameExpression(copy(collationName));
+        sk2.setSortKey(copy(sortKey.getChildExpression()), true);
+        sk2.setOrder(copy(order.getChildExpression()));
+        sk2.setDataTypeExpression(dataTypeExpression == null ? null : copy(dataTypeExpression.getChildExpression()));
+        sk2.setCaseOrder(copy(caseOrder.getChildExpression()));
+        sk2.setLanguage(copy(language.getChildExpression()));
+        sk2.setStable(copy(stable == null ? null : stable.getChildExpression()));
+        sk2.setCollationNameExpression(collationName == null ? null : copy(collationName.getChildExpression()));
         sk2.collation = collation;
         sk2.emptyLeast = emptyLeast;
         sk2.baseURI = baseURI;
@@ -408,28 +397,15 @@ public class SortKeyDefinition extends PseudoExpression {
      */
 
     public SortKeyDefinition typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
-        order = order.typeCheck(visitor, contextItemType);
-        if (dataTypeExpression != null) {
-            setDataTypeExpression(dataTypeExpression.typeCheck(visitor, contextItemType));
+        for (Operand o : checkedOperands()) {
+            if (o.hasSameFocus()) {
+                o.typeCheck(visitor, contextItemType);
+            }
+            // Otherwise rely on the containing SortExpression to type-check the sort key
         }
-        if (caseOrder != null) {
-            setCaseOrder(caseOrder.typeCheck(visitor, contextItemType));
-        }
-        if (language != null) {
-            setLanguage(language.typeCheck(visitor, contextItemType));
-        }
-        if (stable != null) {
-            setStable(stable.typeCheck(visitor, contextItemType));
-        }
-        if (collationName != null) {
-            setCollationNameExpression(collationName.typeCheck(visitor, contextItemType));
-        }
-        if (!setContextForSortKey) {
-            setSortKey(sortKey.typeCheck(visitor, contextItemType), false);
-        }
-
-        if (language instanceof StringLiteral && ((StringLiteral) language).getStringValue().length() != 0) {
-            ValidationFailure vf = StringConverter.STRING_TO_LANGUAGE.validate(((StringLiteral) language).getStringValue());
+        Expression lang = getLanguage();
+        if (lang instanceof StringLiteral && ((StringLiteral) lang).getStringValue().length() != 0) {
+            ValidationFailure vf = StringConverter.STRING_TO_LANGUAGE.validate(((StringLiteral) lang).getStringValue());
             if (vf != null) {
                 throw new XPathException("The lang attribute of xsl:sort must be a valid language code", "XTDE0030");
             }
@@ -440,22 +416,18 @@ public class SortKeyDefinition extends PseudoExpression {
     @Override
     public Iterable<Operand> operands() {
         List<Operand> list = new ArrayList<Operand>(8);
-        list.add(new Operand(this, sortKey, OperandRole.FOCUS_CONTROLLED_ACTION));
-        list.add(new Operand(this, order, OperandRole.SINGLE_ATOMIC));
+        list.add(sortKey);
+        list.add(order);
         if (dataTypeExpression != null) {
-            list.add(new Operand(this, dataTypeExpression, OperandRole.SINGLE_ATOMIC));
+            list.add(dataTypeExpression);
         }
-        if (caseOrder != null) {
-            list.add(new Operand(this, caseOrder, OperandRole.SINGLE_ATOMIC));
-        }
-        if (language != null) {
-            list.add(new Operand(this, language, OperandRole.SINGLE_ATOMIC));
-        }
+        list.add(caseOrder);
+        list.add(language);
         if (stable != null) {
-            list.add(new Operand(this, stable, OperandRole.SINGLE_ATOMIC));
+            list.add(stable);
         }
         if (collationName != null) {
-            list.add(new Operand(this, collationName, OperandRole.SINGLE_ATOMIC));
+            list.add(collationName);
         }
         return list;
     }
@@ -488,7 +460,7 @@ public class SortKeyDefinition extends PseudoExpression {
 
     public AtomicComparer makeComparator(XPathContext context) throws XPathException {
 
-        String orderX = order.evaluateAsString(context).toString();
+        String orderX = order.getChildExpression().evaluateAsString(context).toString();
 
         final Configuration config = context.getConfiguration();
 
@@ -497,7 +469,7 @@ public class SortKeyDefinition extends PseudoExpression {
         if (collation != null) {
             stringCollator = collation;
         } else if (collationName != null) {
-            String cname = collationName.evaluateAsString(context).toString();
+            String cname = collationName.getChildExpression().evaluateAsString(context).toString();
             URI collationURI;
             try {
                 collationURI = new URI(cname);
@@ -517,8 +489,8 @@ public class SortKeyDefinition extends PseudoExpression {
                 throw new XPathException("Unknown collation " + collationURI, "XTDE1035");
             }
         } else {
-            String caseOrderX = caseOrder.evaluateAsString(context).toString();
-            String languageX = language.evaluateAsString(context).toString();
+            String caseOrderX = caseOrder.getChildExpression().evaluateAsString(context).toString();
+            String languageX = language.getChildExpression().evaluateAsString(context).toString();
             String uri = "http://saxon.sf.net/collation";
             boolean firstParam = true;
             Properties props = new Properties();
@@ -542,12 +514,12 @@ public class SortKeyDefinition extends PseudoExpression {
 
         if (dataTypeExpression == null) {
             atomicComparer = AtomicSortComparer.makeSortComparer(stringCollator,
-                    sortKey.getItemType().getAtomizedItemType().getPrimitiveType(), context);
+                    sortKey.getChildExpression().getItemType().getAtomizedItemType().getPrimitiveType(), context);
             if (!emptyLeast) {
                 atomicComparer = new EmptyGreatestComparer(atomicComparer);
             }
         } else {
-            String dataType = dataTypeExpression.evaluateAsString(context).toString();
+            String dataType = dataTypeExpression.getChildExpression().evaluateAsString(context).toString();
             if (dataType.equals("text")) {
                 atomicComparer = AtomicSortComparer.makeSortComparer(stringCollator,
                         StandardNames.XS_STRING, context);
@@ -566,7 +538,7 @@ public class SortKeyDefinition extends PseudoExpression {
         }
 
         if (stable != null) {
-            StringValue stableVal = (StringValue) stable.evaluateItem(context);
+            StringValue stableVal = (StringValue) stable.getChildExpression().evaluateItem(context);
             String s = Whitespace.trim(stableVal.getStringValue());
             if (s.equals("yes") || s.equals("no") || s.equals("true") || s.equals("false") || s.equals("1") || s.equals("0")) {
                 // no action
@@ -686,24 +658,24 @@ public class SortKeyDefinition extends PseudoExpression {
             out.emitAttribute("comp", finalComparator.save());
         }
         out.setChildRole("select");
-        sortKey.export(out);
+        sortKey.getChildExpression().export(out);
         out.setChildRole("order");
-        order.export(out);
+        order.getChildExpression().export(out);
         if (dataTypeExpression != null) {
             out.setChildRole("dataType");
-            dataTypeExpression.export(out);
+            dataTypeExpression.getChildExpression().export(out);
         }
         out.setChildRole("lang");
-        language.export(out);
+        language.getChildExpression().export(out);
         out.setChildRole("caseOrder");
-        caseOrder.export(out);
+        caseOrder.getChildExpression().export(out);
         if (stable != null) {
             out.setChildRole("stable");
-            stable.export(out);
+            stable.getChildExpression().export(out);
         }
         if (collationName != null) {
             out.setChildRole("collation");
-            collationName.export(out);
+            collationName.getChildExpression().export(out);
         }
 
         out.endElement();
