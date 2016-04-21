@@ -7,7 +7,6 @@
 
 package net.sf.saxon.event;
 
-import com.saxonica.ee.validate.DocumentValidator;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
 import net.sf.saxon.Version;

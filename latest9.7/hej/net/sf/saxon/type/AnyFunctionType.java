@@ -12,7 +12,6 @@ import net.sf.saxon.expr.ItemChecker;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
 import net.sf.saxon.om.Function;
 import net.sf.saxon.om.Item;
-import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.SequenceType;
 
@@ -252,7 +251,7 @@ public class AnyFunctionType implements FunctionItemType {
      * value.
      */
     public String generateJavaScriptItemTypeAcceptor(String errorCode) throws XPathException {
-        throw new XPathException("Cannot generate JS code for function type tests", SaxonErrorCode.SXJS0001);
+        return "throw XError('Cannot convert JS value to a map or array')";
     }
 }
 

@@ -240,7 +240,7 @@ public class JsonReceiver implements Receiver {
             output.append(escape(unescaped, false, new ControlChar()));
             output.append('"');
         } else if (!Whitespace.isWhite(textBuffer)) {
-            throw new XPathException("xml-to-json: Element " + name + " must have no text content", ERR_INPUT);
+            throw new XPathException("xml-to-json: Element " + name.getDisplayName() + " must have no text content", ERR_INPUT);
         }
         textBuffer.setLength(0);
         escaped = false;

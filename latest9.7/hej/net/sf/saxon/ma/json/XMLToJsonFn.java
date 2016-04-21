@@ -7,20 +7,23 @@
 
 package net.sf.saxon.ma.json;
 
-import net.sf.saxon.expr.parser.ExplicitLocation;
-import net.sf.saxon.expr.parser.RoleDiagnostic;
-import net.sf.saxon.ma.map.HashTrieMap;
-import net.sf.saxon.ma.map.MapItem;
+import net.sf.saxon.event.DocumentValidator;
 import net.sf.saxon.event.PipelineConfiguration;
+import net.sf.saxon.event.Receiver;
 import net.sf.saxon.event.StartTagBuffer;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.expr.parser.ExpressionTool;
+import net.sf.saxon.expr.parser.RoleDiagnostic;
 import net.sf.saxon.functions.SystemFunction;
+import net.sf.saxon.ma.map.HashTrieMap;
+import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AtomicIterator;
+import net.sf.saxon.type.Type;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.*;
 
@@ -116,7 +119,11 @@ public class XMLToJsonFn extends SystemFunction {
         PipelineConfiguration pipe = context.getController().makePipelineConfiguration();
         JsonReceiver receiver = new JsonReceiver(pipe);
         receiver.setIndenting(indent);
-        StartTagBuffer stb = new StartTagBuffer(receiver);
+        Receiver r = receiver;
+        if (xml.getNodeKind() == Type.DOCUMENT) {
+            r = new DocumentValidator(r, "FOJS0006");
+        }
+        StartTagBuffer stb = new StartTagBuffer(r);
         pipe.setComponent(StartTagBuffer.class.getName(), stb);
         stb.setPipelineConfiguration(pipe);
         stb.open();
