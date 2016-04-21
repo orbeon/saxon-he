@@ -9,6 +9,7 @@ package net.sf.saxon.testdriver;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.parser.ExplicitLocation;
+import net.sf.saxon.functions.ResolveURI;
 import net.sf.saxon.lib.EnvironmentVariableResolver;
 import net.sf.saxon.lib.FeatureKeys;
 import net.sf.saxon.lib.NamespaceConstant;
@@ -28,6 +29,7 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.StringWriter;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -769,11 +771,18 @@ public class QT3TestDriverHE extends TestDriver {
         }
 
         public Source resolve(String href, String base) throws TransformerException {
-            XdmNode node = env.sourceDocs.get(href);
-            if (node == null) {
-                return null;
-            } else {
+            try {
+                String abs = ResolveURI.makeAbsolute(href, base).toString();
+                XdmNode node = env.sourceDocs.get(abs);
+                if (node == null) {
+                    node = env.sourceDocs.get(href);
+                    if (node == null) {
+                        return null;
+                    }
+                }
                 return node.asSource();
+            } catch (URISyntaxException e) {
+                throw new XPathException(e);
             }
         }
     }
