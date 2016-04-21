@@ -2239,7 +2239,7 @@ public abstract class StyleElement extends ElementImpl {
             int k = 0;
             while ((child = kids.next()) != null) {
                 if (child instanceof XSLSortOrMergeKey) {
-                    keys[k++] = ((XSLSortOrMergeKey) child).getSortKeyDefinition().simplify();
+                    keys[k++] = (SortKeyDefinition)((XSLSortOrMergeKey) child).getSortKeyDefinition().simplify();
                 }
             }
             return new SortKeyDefinitionList(keys);

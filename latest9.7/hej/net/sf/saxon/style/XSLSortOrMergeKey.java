@@ -234,7 +234,7 @@ public abstract class XSLSortOrMergeKey extends StyleElement {
         }
         // Simplify the sort key definition - this is especially important in the case where
         // all aspects of the sort key are known statically.
-        sortKeyDefinition = sortKeyDefinition.simplify();
+        sortKeyDefinition = (SortKeyDefinition)sortKeyDefinition.simplify();
         // not an executable instruction
         return null;
     }
