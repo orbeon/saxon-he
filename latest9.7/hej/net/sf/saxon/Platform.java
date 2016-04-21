@@ -8,6 +8,8 @@
 package net.sf.saxon;
 
 import net.sf.saxon.event.PipelineConfiguration;
+import net.sf.saxon.expr.StaticContext;
+import net.sf.saxon.expr.parser.RetainedStaticContext;
 import net.sf.saxon.expr.sort.AtomicMatchKey;
 import net.sf.saxon.expr.sort.SimpleCollation;
 import net.sf.saxon.lib.ModuleURIResolver;
@@ -213,6 +215,20 @@ public interface Platform {
      */
 
     void setDefaultSAXParserFactory(Configuration config);
+
+
+    /**
+     *  Checks if the supplied static context is an instance of the JAXP static context.
+     *  On Java we create namespace information from the JAXP XPath static context.
+     *  On the .NET platform we do nothing.
+     *  @param retainedStaticContext
+     *  @param sc
+     *  @return boolean
+     *  @since 9.7.0.5
+     *
+     */
+
+    boolean JAXPStaticContextCheck(RetainedStaticContext retainedStaticContext, StaticContext sc);
 
     /**
      * Make an instance of the default module URI resolver for this platform

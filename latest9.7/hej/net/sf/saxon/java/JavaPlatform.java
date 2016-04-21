@@ -13,6 +13,8 @@ import net.sf.saxon.Platform;
 import net.sf.saxon.dom.DOMEnvelope;
 import net.sf.saxon.dom.DOMObjectModel;
 import net.sf.saxon.event.PipelineConfiguration;
+import net.sf.saxon.expr.StaticContext;
+import net.sf.saxon.expr.parser.RetainedStaticContext;
 import net.sf.saxon.expr.sort.AtomicMatchKey;
 import net.sf.saxon.expr.sort.CodepointCollator;
 import net.sf.saxon.expr.sort.CollationMatchKey;
@@ -20,6 +22,7 @@ import net.sf.saxon.expr.sort.SimpleCollation;
 import net.sf.saxon.functions.FunctionLibraryList;
 import net.sf.saxon.lib.ModuleURIResolver;
 import net.sf.saxon.lib.StandardModuleURIResolver;
+import net.sf.saxon.om.NamespaceResolver;
 import net.sf.saxon.resource.StandardCollectionFinder;
 import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.regex.ARegularExpression;
@@ -27,9 +30,11 @@ import net.sf.saxon.regex.JavaRegularExpression;
 import net.sf.saxon.regex.RegularExpression;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ExternalObjectType;
+import net.sf.saxon.xpath.JAXPXPathStaticContext;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
@@ -37,10 +42,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamSource;
 import java.text.CollationKey;
 import java.text.Collator;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Implementation of the Platform class containing methods specific to the Java platform
@@ -53,6 +55,88 @@ public class JavaPlatform implements Platform {
      */
 
     public JavaPlatform() {
+    }
+
+
+    /**
+     *  Checks if the supplied static context is an instance of the JAXP static context.
+     *  On Java we create namespace information from the JAXP XPath static context.
+     *  On the .NET platform we do nothing.
+     *  @param retainedStaticContext
+     *  @param sc
+     *  @return boolean
+     *  @since 9.7.0.5
+     *
+     */
+
+    public boolean JAXPStaticContextCheck(RetainedStaticContext retainedStaticContext, StaticContext sc){
+         if(sc instanceof JAXPXPathStaticContext && !(((JAXPXPathStaticContext) sc).getNamespaceContext() instanceof NamespaceResolver)){
+             setNamespacesFromJAXP(retainedStaticContext, (JAXPXPathStaticContext) sc);
+             return true;
+         }
+        return false;
+    }
+
+    /**
+     * Create namespace information from the JAXP XPath static context. This
+     * case needs special treatment because the JAXP static context holds namespace information
+     * using a NamespaceContext object, which (absurdly) offers no way to iterate over all the
+     * contained namespaces.
+     *
+     * @param retainedStaticContext
+     * @param sc JAXP static context
+     */
+
+    private void setNamespacesFromJAXP(RetainedStaticContext retainedStaticContext, JAXPXPathStaticContext sc) {
+        final NamespaceContext nc = sc.getNamespaceContext();
+        retainedStaticContext.setNamespaces(new Map<String, String>() {
+            public void clear() { }
+
+            public int size() {
+                throw new UnsupportedOperationException();
+            }
+
+            public boolean isEmpty() {
+                throw new UnsupportedOperationException();
+            }
+
+            public boolean containsKey(Object key) {
+                return nc.getNamespaceURI(key.toString()) != null;
+            }
+
+            public boolean containsValue(Object value) {
+                throw new UnsupportedOperationException();
+            }
+
+            public String get(Object key) {
+                return nc.getNamespaceURI(key.toString());
+            }
+
+            public String put(String key, String value) {
+                throw new UnsupportedOperationException();
+            }
+
+            public String remove(Object key) {
+                throw new UnsupportedOperationException();
+            }
+
+            public void putAll(Map<? extends String, ? extends String> m) {
+                throw new UnsupportedOperationException();
+            }
+
+            public Set<String> keySet() {
+                throw new UnsupportedOperationException();
+            }
+
+            public Collection<String> values() {
+                throw new UnsupportedOperationException();
+            }
+
+            public Set<Entry<String, String>> entrySet() {
+                throw new UnsupportedOperationException();
+            }
+        });
+
     }
 
     /**

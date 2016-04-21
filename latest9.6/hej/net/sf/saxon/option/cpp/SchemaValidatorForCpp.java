@@ -8,11 +8,7 @@ import net.sf.saxon.event.NamespaceReducer;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.event.StreamWriterToReceiver;
 import net.sf.saxon.lib.Initializer;
-import net.sf.saxon.om.Sequence;
 import net.sf.saxon.s9api.*;
-import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.SchemaException;
-import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.DateTimeValue;
 
 import javax.xml.stream.XMLStreamException;
@@ -24,7 +20,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.StringReader;
-import java.util.*;
 
 /**
  * A <tt>SchemaValidator</tt> is an object that is used for validating instance documents against a schema.

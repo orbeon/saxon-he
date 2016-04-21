@@ -16,6 +16,8 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.Platform;
 import net.sf.saxon.Version;
 import net.sf.saxon.event.PipelineConfiguration;
+import net.sf.saxon.expr.StaticContext;
+import net.sf.saxon.expr.parser.RetainedStaticContext;
 import net.sf.saxon.expr.sort.AtomicMatchKey;
 import net.sf.saxon.expr.sort.CodepointCollator;
 import net.sf.saxon.expr.sort.SimpleCollation;
@@ -410,6 +412,10 @@ public class DotNetPlatform implements Platform {
 
     public void setDefaultSAXParserFactory(Configuration config) {
         System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl, saxon9"+config.getEditionCode().toLowerCase()+", Version="+ Version.getProductVersion()+", Culture=neutral, PublicKeyToken=e1fdd002d5083fe6");
+    }
+
+    public boolean JAXPStaticContextCheck(RetainedStaticContext retainedStaticContext, StaticContext sc) {
+        return false;
     }
 
     public ModuleURIResolver makeStandardModuleURIResolver(Configuration config) {

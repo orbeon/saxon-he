@@ -8,15 +8,15 @@
 package net.sf.saxon.expr.parser;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.Version;
 import net.sf.saxon.expr.PackageData;
 import net.sf.saxon.expr.StaticContext;
+import net.sf.saxon.java.JavaPlatform;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.NamespaceResolver;
 import net.sf.saxon.trans.DecimalFormatManager;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.xpath.JAXPXPathStaticContext;
 
-import javax.xml.namespace.NamespaceContext;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -77,7 +77,7 @@ public class RetainedStaticContext implements NamespaceResolver {
         this.xpathVersion = sc.getXPathVersion();
         defaultFunctionNamespace = sc.getDefaultFunctionNamespace();
         backwardsCompatibility = sc.isInBackwardsCompatibleMode();
-        if (JAXPStaticContextCheck(sc)) {
+        if (Version.platform.JAXPStaticContextCheck(this, sc)) {
             //updated in method
         } else {
             this.namespaces = new HashMap<String, String>(4);
@@ -89,79 +89,6 @@ public class RetainedStaticContext implements NamespaceResolver {
                 }
             }
         }
-
-    }
-
-
-
-
-
-    public boolean JAXPStaticContextCheck(StaticContext sc){
-         if(sc instanceof JAXPXPathStaticContext && !(((JAXPXPathStaticContext) sc).getNamespaceContext() instanceof NamespaceResolver)){
-             setNamespacesFromJAXP((JAXPXPathStaticContext) sc);
-             return true;
-         }
-        return false;
-    }
-
-    /**
-     * Create namespace information from the JAXP XPath static context. This
-     * case needs special treatment because the JAXP static context holds namespace information
-     * using a NamespaceContext object, which (absurdly) offers no way to iterate over all the
-     * contained namespaces.
-     *
-     * @param sc JAXP static context
-     */
-
-    public void setNamespacesFromJAXP(JAXPXPathStaticContext sc) {
-        final NamespaceContext nc = sc.getNamespaceContext();
-        namespaces = new Map<String, String>() {
-            public void clear() { }
-
-            public int size() {
-                throw new UnsupportedOperationException();
-            }
-
-            public boolean isEmpty() {
-                throw new UnsupportedOperationException();
-            }
-
-            public boolean containsKey(Object key) {
-                return nc.getNamespaceURI(key.toString()) != null;
-            }
-
-            public boolean containsValue(Object value) {
-                throw new UnsupportedOperationException();
-            }
-
-            public String get(Object key) {
-                return nc.getNamespaceURI(key.toString());
-            }
-
-            public String put(String key, String value) {
-                throw new UnsupportedOperationException();
-            }
-
-            public String remove(Object key) {
-                throw new UnsupportedOperationException();
-            }
-
-            public void putAll(Map<? extends String, ? extends String> m) {
-                throw new UnsupportedOperationException();
-            }
-
-            public Set<String> keySet() {
-                throw new UnsupportedOperationException();
-            }
-
-            public Collection<String> values() {
-                throw new UnsupportedOperationException();
-            }
-
-            public Set<Entry<String, String>> entrySet() {
-                throw new UnsupportedOperationException();
-            }
-        };
 
     }
 
@@ -445,5 +372,8 @@ public class RetainedStaticContext implements NamespaceResolver {
     }
 
 
+    public void setNamespaces(Map<String,String> namespaces) {
+        this.namespaces = namespaces;
+    }
 }
 
