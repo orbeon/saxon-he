@@ -707,6 +707,9 @@ public class FormatNumber extends SystemFunction implements Callable {
                             break;
                         }
                     }
+                    if (regular && (maxWholePartSize - wholePartGroupingPositions[n-1] > first)) {
+                        regular = false;
+                    }
                     if (regular) {
                         wholePartGroupingPositions = new int[1];
                         wholePartGroupingPositions[0] = first;
