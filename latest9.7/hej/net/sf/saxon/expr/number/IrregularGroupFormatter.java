@@ -41,12 +41,18 @@ public class IrregularGroupFormatter extends NumericGroupFormatter {
     @Override
     public String format(FastStringBuffer value) {
         UnicodeString in = UnicodeString.makeUnicodeString(value);
-        int[] out = new int[in.uLength() + separators.size()];
+        int l, m = 0;
+        for (l = 0; l < in.uLength(); l++) {
+            if (groupingPositions.contains(l)) {
+                m++;
+            }
+        }
+        int[] out = new int[in.uLength() + m];
         int j = 0;
         int k = out.length - 1;
         for (int i = in.uLength() - 1; i >= 0; i--) {
             out[k--] = in.uCharAt(i);
-            if (groupingPositions.contains(in.uLength() - i)) {
+            if ((i > 0) && groupingPositions.contains(in.uLength() - i)) {
                 out[k--] = separators.get(j++);
             }
         }

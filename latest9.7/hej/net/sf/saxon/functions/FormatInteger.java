@@ -175,6 +175,7 @@ public class FormatInteger extends SystemFunction {
         List<Integer> separatorList = new ArrayList<Integer>();
         int groupingPosition = 0; // number of digits to the right of a grouping separator
         int firstGroupingPos = 0; // number of digits to the right of the first grouping separator
+        int lastGroupingPos = 0;
         boolean regularCheck = true;
         int zeroDigit = -1;
 
@@ -252,7 +253,13 @@ public class FormatInteger extends SystemFunction {
                         if (i == 0) {
                             throw new XPathException(preface + "the picture cannot begin with a separator", "FODF1310");
                         }
+                        lastGroupingPos = groupingPosition;
                     }
+            }
+        }
+        if (regularCheck && groupingPositions.size() >= 1) {
+            if (picExpanded.uLength() - lastGroupingPos - groupingPositions.size() > firstGroupingPos) {
+                regularCheck = false;
             }
         }
 
