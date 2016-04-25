@@ -261,11 +261,15 @@ public class ParseIetfDate extends SystemFunction implements Callable {
         }
         currentToken = tokens.get(++i);
         if (!currentToken.equals(EOF)){
-            badDate("Extra content found in string after date",input);
+            badDate("Extra content found in string after date", input);
         }
         DateValue date = new DateValue(year, month, day);
-        return DateTimeValue.makeDateTimeValue(date, timeValue.get(0));
-        /*return DateTimeValue.getCurrentDateTime(context);*/
+        TimeValue time = timeValue.get(0);
+        if (time.getHour() == 24) {
+            date = DateValue.tomorrow(date.getYear(), date.getMonth(), date.getDay());
+            time = new TimeValue((byte) 0, (byte) 0, (byte) 0, 0, time.getTimezoneInMinutes());
+        }
+        return DateTimeValue.makeDateTimeValue(date, time);
     }
 
     /**
@@ -284,12 +288,13 @@ public class ParseIetfDate extends SystemFunction implements Callable {
         int microsecond = 0; /*the number of microseconds, 0-999999*/
         int tz = 0; /*the timezone displacement in minutes from UTC.*/
         int i = currentPosition;
+        int n = currentPosition; /* the final token index, returned by the method */
         String currentToken = tokens.get(i);
         if (!currentToken.matches("[0-9]+")){
             badDate("Hour number expected", input);
         }
-        if (currentToken.length() != 2){
-            badDate("Hour must be exactly two digits", input);
+        if (currentToken.length() > 2){
+            badDate("Hour number exceeds two digits", input);
         }
         hour = (byte) Integer.parseInt(currentToken);
         currentToken = tokens.get(++i);
@@ -305,11 +310,12 @@ public class ParseIetfDate extends SystemFunction implements Callable {
         }
         minute = (byte) Integer.parseInt(currentToken);
         currentToken = tokens.get(++i);
+        boolean finished = false;
+
         if (currentToken.equals(EOF)){
-            /* seconds, microseconds, timezones not given*/
-            TimeValue timeValue = new TimeValue(hour, minute, second, microsecond, tz);
-            result.add(timeValue);
-            return i-1;
+        /* seconds, microseconds, timezones not given*/
+            n = i - 1;
+            finished = true;
         }
         else if (":".equals(currentToken)){
             currentToken = tokens.get(++i);
@@ -322,124 +328,152 @@ public class ParseIetfDate extends SystemFunction implements Callable {
             second = (byte) Integer.parseInt(currentToken);
             currentToken = tokens.get(++i);
             if (currentToken.equals(EOF)){
-                /* microseconds, timezones not given*/
-                TimeValue timeValue = new TimeValue(hour, minute, second, microsecond, tz);
-                result.add(timeValue);
-                return i-1;
+            /* microseconds, timezones not given*/
+                n = i - 1;
+                finished = true;
             }
-            if (".".equals(currentToken)){
+            else if (".".equals(currentToken)){
                 currentToken = tokens.get(++i);
                 if (!currentToken.matches("[0-9]+")){
                     badDate("Fractional part of seconds expected after decimal point", input);
                 }
                 int len = Math.min(6, currentToken.length());
-                currentToken = currentToken.substring(0,len);
+                currentToken = currentToken.substring(0, len);
                 while (currentToken.length() < 6){
-                    currentToken = currentToken+"0";
+                    currentToken = currentToken + "0";
                 }
                 microsecond = Integer.parseInt(currentToken);
-                if (i < tokens.size()-1) {
+                if (i < tokens.size() - 1) {
                     currentToken = tokens.get(++i);
                 }
             }
         }
-        if (" ".equals(currentToken)) {
-            currentToken = tokens.get(++i);
-            if (currentToken.matches("[0-9]+")) {
-                /* no timezone is given in the time, we must have reached a year */
-                TimeValue timeValue = new TimeValue(hour, minute, second, microsecond, tz);
-                result.add(timeValue);
-                return i-2;
-            }
-        }
-        if (currentToken.matches("[A-Za-z]+")){
-            if (!isTimezoneName(currentToken)){
-                badDate("Timezone name not recognised",input);
-            }
-            tz = getTimezoneOffsetFromName(currentToken);
-            TimeValue timeValue = new TimeValue(hour, minute, second, microsecond, tz);
-            result.add(timeValue);
-            return i;
-
-        } else if ("+".equals(currentToken)|"-".equals(currentToken)) {
-            String sign = currentToken;
-            int tzOffsetHours = 0;
-            int tzOffsetMinutes = 0;
-            currentToken = tokens.get(++i);
-            if (!currentToken.matches("[0-9]+")){
-                badDate("Parsing timezone offset, number expected after '" + sign + "'",input);
-            }
-            else if (currentToken.length() != 2 && currentToken.length() != 4){
-                badDate("Timezone offset does not have the correct number of digits",input);
-            }
-            else if (currentToken.length() == 4){
-                tzOffsetHours = Integer.parseInt(currentToken.substring(0,2));
-                tzOffsetMinutes = Integer.parseInt(currentToken.substring(2,4));
-                currentToken = tokens.get(++i);
-            }
-            else if (currentToken.length() == 2){
-                tzOffsetHours = Integer.parseInt(currentToken);
-                currentToken = tokens.get(++i);
-                if (":".equals(currentToken)) {
-                    currentToken = tokens.get(++i);
-                    if (currentToken.matches("[0-9]+")){
-                        if (currentToken.length() != 2) {
-                            badDate("Parsing timezone offset, minutes must be two digits",input);
-                        }
-                        else tzOffsetMinutes = Integer.parseInt(currentToken);
-                        currentToken = tokens.get(++i);
-                    }
-                }
-            }
-            tz = tzOffsetHours*60 + tzOffsetMinutes;
-            if (sign.equals("-")){
-                tz = -tz;
-            }
-            if (currentToken.equals(EOF)){
-                TimeValue timeValue = new TimeValue(hour, minute, second, microsecond, tz);
-                result.add(timeValue);
-                return i-1;
-            }
+        if (!finished) {
             if (" ".equals(currentToken)) {
                 currentToken = tokens.get(++i);
                 if (currentToken.matches("[0-9]+")) {
-                    /* we must have reached the year */
-                    TimeValue timeValue = new TimeValue(hour, minute, second, microsecond, tz);
-                    result.add(timeValue);
-                    return i-2;
+                /* no timezone is given in the time, we must have reached a year */
+                    n = i - 2;
+                    finished = true;
                 }
             }
-            if ("(".equals(currentToken)) {
-                currentToken = tokens.get(++i);
-                if (" ".equals(currentToken)) {
-                    currentToken = tokens.get(++i);
-                }
-                if (!currentToken.matches("[A-Za-z]+")) {
-                    badDate("Timezone name expected after '('",input);
-                }
-                else if (currentToken.matches("[A-Za-z]+")) {
+            if (!finished) {
+                if (currentToken.matches("[A-Za-z]+")){
                     if (!isTimezoneName(currentToken)){
-                        badDate("Timezone name not recognised",input);
+                        badDate("Timezone name not recognised", input);
                     }
+                    tz = getTimezoneOffsetFromName(currentToken);
+                    n = i;
+                    finished = true;
+
+                } else if ("+".equals(currentToken)|"-".equals(currentToken)) {
+                    String sign = currentToken;
+                    int tzOffsetHours = 0;
+                    int tzOffsetMinutes = 0;
                     currentToken = tokens.get(++i);
+                    if (!currentToken.matches("[0-9]+")){
+                        badDate("Parsing timezone offset, number expected after '" + sign + "'", input);
+                    }
+                    int tLength = currentToken.length();
+                    if (tLength > 4){
+                        badDate("Timezone offset does not have the correct number of digits", input);
+                    }
+                    else if (tLength >= 3){
+                        tzOffsetHours = Integer.parseInt(currentToken.substring(0, tLength - 2));
+                        tzOffsetMinutes = Integer.parseInt(currentToken.substring(tLength - 2, tLength));
+                        currentToken = tokens.get(++i);
+                    }
+                    else {
+                        tzOffsetHours = Integer.parseInt(currentToken);
+                        currentToken = tokens.get(++i);
+                        if (":".equals(currentToken)) {
+                            currentToken = tokens.get(++i);
+                            if (currentToken.matches("[0-9]+")){
+                                if (currentToken.length() != 2) {
+                                    badDate("Parsing timezone offset, minutes must be two digits", input);
+                                }
+                                else tzOffsetMinutes = Integer.parseInt(currentToken);
+                                currentToken = tokens.get(++i);
+                            }
+                        }
+                    }
+                    if (tzOffsetMinutes > 59) {
+                        badDate("Timezone offset minutes out of range", input);
+                    }
+                    tz = tzOffsetHours * 60 + tzOffsetMinutes;
+                    if (sign.equals("-")){
+                        tz = -tz;
+                    }
+                    if (currentToken.equals(EOF)){
+                        n = i - 1;
+                        finished = true;
+                    }
+                    else if (" ".equals(currentToken)) {
+                        currentToken = tokens.get(++i);
+                        if (currentToken.matches("[0-9]+")) {
+                        /* we must have reached the year */
+                            n = i - 2;
+                            finished = true;
+                        }
+                    }
+                    if (!finished && "(".equals(currentToken)) {
+                        currentToken = tokens.get(++i);
+                        if (" ".equals(currentToken)) {
+                            currentToken = tokens.get(++i);
+                        }
+                        if (!currentToken.matches("[A-Za-z]+")) {
+                            badDate("Timezone name expected after '('", input);
+                        }
+                        else if (currentToken.matches("[A-Za-z]+")) {
+                            if (!isTimezoneName(currentToken)){
+                                badDate("Timezone name not recognised", input);
+                            }
+                            currentToken = tokens.get(++i);
+                        }
+                        if (" ".equals(currentToken)) {
+                            currentToken = tokens.get(++i);
+                        }
+                        if (!")".equals(currentToken)){
+                            badDate("Expected ')' after timezone name", input);
+                        }
+                        n = i;
+                        finished = true;
+                    }
+                    else if (!finished) {
+                        badDate("Unexpected content after timezone offset", input);
+                    }
+                } else if (!finished) {
+                    badDate("Unexpected content in time (after minutes)", input);
                 }
-                if (" ".equals(currentToken)) {
-                    currentToken = tokens.get(++i);
-                }
-                if (!")".equals(currentToken)){
-                    badDate("Expected ')' after timezone name",input);
-                }
-                TimeValue timeValue = new TimeValue(hour, minute, second, microsecond, tz);
-                result.add(timeValue);
-                return i;
             }
-            else {
-                badDate("Unexpected content after timezone offset", input);
-            }
-        } else {
-            badDate("Unexpected content in time (after minutes)", input);
         }
-        return i; /* Should never reach here */
+        if (!finished) {
+            throw new AssertionError("Should have finished");
+        }
+        if (!isValidTime(hour, minute, second, microsecond, tz)) {
+            badDate("Time/timezone is not valid", input);
+        }
+        TimeValue timeValue = new TimeValue(hour, minute, second, microsecond, tz);
+        result.add(timeValue);
+        return n;
+    }
+
+    /**
+     * Determine whether a given time is valid
+     *
+     * @param hour  the hour (0-24)
+     * @param minute the minute (0-59)
+     * @param second   the second (0-59)
+     * @param microsecond   the microsecond (0-999999)
+     * @param tz   the timezone displacement in minutes from UTC
+     * @return true if this is a valid time
+     */
+
+    public static boolean isValidTime(int hour, int minute, int second, int microsecond, int tz) {
+        return (hour >= 0 && hour <= 23 && minute >= 0 && minute < 60 && second >= 0 && second < 60
+                && microsecond >= 0 && microsecond < 1000000
+                || hour == 24 && minute == 0 && second == 0 && microsecond == 0)
+                && tz >= -14 * 60 && tz <= 14 * 60;
     }
 
 
