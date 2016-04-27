@@ -403,7 +403,12 @@ public abstract class StandardFunction {
         register("floor", Floor.class, 1, 1, NumericType.getInstance(), OPT, CORE, AS_PRIM_ARG0)
                 .arg(0, NumericType.getInstance(), OPT, EMPTY);
 
-        register("format-date", FormatDate.class, 2, 5, BuiltInAtomicType.STRING,
+        register("format-date#2", FormatDate.class, 2, 2, BuiltInAtomicType.STRING,
+                OPT, XSLT | XPATH30, 0)
+                .arg(0, BuiltInAtomicType.DATE, OPT, null)
+                .arg(1, BuiltInAtomicType.STRING, ONE, null);
+
+        register("format-date#5", FormatDate.class, 5, 5, BuiltInAtomicType.STRING,
                 OPT, XSLT | XPATH30, 0)
                 .arg(0, BuiltInAtomicType.DATE, OPT, null)
                 .arg(1, BuiltInAtomicType.STRING, ONE, null)
@@ -411,7 +416,12 @@ public abstract class StandardFunction {
                 .arg(3, BuiltInAtomicType.STRING, OPT, null)
                 .arg(4, BuiltInAtomicType.STRING, OPT, null);
 
-        register("format-dateTime", FormatDate.class, 2, 5, BuiltInAtomicType.STRING,
+        register("format-dateTime#2", FormatDate.class, 2, 2, BuiltInAtomicType.STRING,
+                OPT, XSLT | XPATH30, 0)
+                .arg(0, BuiltInAtomicType.DATE_TIME, OPT, null)
+                .arg(1, BuiltInAtomicType.STRING, ONE, null);
+
+        register("format-dateTime#5", FormatDate.class, 5, 5, BuiltInAtomicType.STRING,
                 OPT, XSLT | XPATH30, 0)
                 .arg(0, BuiltInAtomicType.DATE_TIME, OPT, null)
                 .arg(1, BuiltInAtomicType.STRING, ONE, null)
@@ -433,7 +443,12 @@ public abstract class StandardFunction {
                 .arg(1, BuiltInAtomicType.STRING, ONE, null)
                 .arg(2, BuiltInAtomicType.STRING, OPT, null);
 
-        register("format-time", FormatDate.class, 2, 5, BuiltInAtomicType.STRING,
+        register("format-time#2", FormatDate.class, 2, 2, BuiltInAtomicType.STRING,
+                OPT, XSLT | XPATH30, 0)
+                .arg(0, BuiltInAtomicType.TIME, OPT, null)
+                .arg(1, BuiltInAtomicType.STRING, ONE, null);
+
+        register("format-time#5", FormatDate.class, 5, 5, BuiltInAtomicType.STRING,
                 OPT, XSLT | XPATH30, 0)
                 .arg(0, BuiltInAtomicType.TIME, OPT, null)
                 .arg(1, BuiltInAtomicType.STRING, ONE, null)

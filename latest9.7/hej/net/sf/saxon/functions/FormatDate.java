@@ -42,17 +42,6 @@ public class FormatDate extends SystemFunction implements Callable {
     private boolean is30 = false;
 
 
-    public void checkArguments(/*@NotNull*/ ExpressionVisitor visitor) throws XPathException {
-        int numArgs = getArity();
-        if (numArgs != 2 && numArgs != 5) {
-            throw new XPathException("Function " + getFunctionName().getDisplayName() +
-                                             " must have either two or five arguments");
-        }
-        is30 = visitor.getStaticContext().getXPathVersion() >= 30;
-        //super.checkArguments(visitor);
-    }
-
-
     private CharSequence adjustCalendar(StringValue calendarVal, CharSequence result, XPathContext context) throws XPathException {
         StructuredQName cal;
         try {
