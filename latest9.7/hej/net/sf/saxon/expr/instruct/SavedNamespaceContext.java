@@ -116,6 +116,19 @@ public final class SavedNamespaceContext implements NamespaceResolver {
         return prefixes.iterator();
     }
 
+    /**
+     * Compare this saved namespace context to another (so that they can be shared)
+     * @param obj the other namespace context
+     */
 
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof SavedNamespaceContext && bindings.equals(((SavedNamespaceContext) obj).bindings);
+    }
+
+    @Override
+    public int hashCode() {
+        return bindings.hashCode();
+    }
 }
 

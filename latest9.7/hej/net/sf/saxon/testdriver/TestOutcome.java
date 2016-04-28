@@ -919,6 +919,9 @@ public class TestOutcome {
             XdmAtomicValue item;
             try {
                 item = (XdmAtomicValue) s.evaluateSingle();
+//                if (item != null && !item.getBooleanValue()) {
+//                    System.err.println("Actual: " + result.value.toString());
+//                }
             } catch (SaxonApiException e) {
                 System.err.println("assert-eq failed - " + e.getMessage());
                 return false;
