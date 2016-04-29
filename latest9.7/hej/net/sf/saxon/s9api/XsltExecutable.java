@@ -125,6 +125,39 @@ public class XsltExecutable {
     public void export(OutputStream destination) throws SaxonApiException {
         Configuration config = processor.getUnderlyingConfiguration();
         ExpressionPresenter presenter = new ExpressionPresenter(config, new StreamResult(destination), true);
+        if (preparedStylesheet.getTopLevelPackage().getTargetEdition().equals("JS")) {
+            presenter.setOption("target", "JS");
+        }
+        try {
+            ((StylesheetPackage)preparedStylesheet.getTopLevelPackage()).export(presenter);
+        } catch (XPathException e) {
+            throw new SaxonApiException(e);
+        }
+        try {
+            destination.close();
+        } catch (IOException e) {
+            throw new SaxonApiException(e);
+        }
+    }
+
+    /**
+     * Produce a representation of the compiled stylesheet for a particular target environment, in XML form, suitable for
+     * distribution and reloading. If the configuration under which the export takes place
+     * is suitably licensed, then license information will be included in the export file
+     * allowing execution of the stylesheet without any additional license.
+     * <p><i>The detailed form of the output representation is not documented.<i></p>
+     *
+     * @param destination the destination for the XML document containing the diagnostic representation
+     *                    of the compiled stylesheet. The stream will be closed when writing has finished.
+     * @param target the target environment. The only value currently recognized is "JS", which exports
+     *               the package for running under Saxon-JS.
+     * @since 9.7
+     */
+
+    public void export(OutputStream destination, String target) throws SaxonApiException {
+        Configuration config = processor.getUnderlyingConfiguration();
+        ExpressionPresenter presenter = new ExpressionPresenter(config, new StreamResult(destination), true);
+        presenter.setOption("target", target);
         try {
             ((StylesheetPackage)preparedStylesheet.getTopLevelPackage()).export(presenter);
         } catch (XPathException e) {
