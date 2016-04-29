@@ -365,7 +365,7 @@ public class NameTest extends NodeTest implements QNameTest {
                 instNode = "item instanceof Node && item.nodeType==" + nodeKind + " && ";
             }
         }
-        return "var q=DomUtils.nameOfNode(item); return " + instNode + generateJavaScriptNameTest() + ";";
+        return "var q=SaxonJS.DomUtils.nameOfNode(item); return " + instNode + generateJavaScriptNameTest() + ";";
     }
 }
 

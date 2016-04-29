@@ -244,13 +244,13 @@ public class ArrayItemType extends AnyFunctionType {
     @Override
     public String generateJavaScriptItemTypeTest(ItemType knownToBe) throws XPathException {
         if (this == ANY_ARRAY_TYPE) {
-            return "return item instanceof Expr.XdmArray";
+            return "return item instanceof SaxonJS.Expr.XdmArray";
         }
         FastStringBuffer fsb = new FastStringBuffer(256);
         fsb.append("function v(item) {" + memberType.getPrimaryType().generateJavaScriptItemTypeTest(AnyItemType.getInstance()) + "};");
         fsb.append(Cardinality.generateJavaScriptChecker(memberType.getCardinality()));
-        fsb.append("return item instanceof Expr.XdmArray && " +
-                           "Iter.ForArray(item.value).every(function(seq){return c(seq.length) && Iter.ForArray(seq).every(v)});");
+        fsb.append("return item instanceof SaxonJS.Expr.XdmArray && " +
+                           "SaxonJS.Iter.ForArray(item.value).every(function(seq){return c(seq.length) && SaxonJS.Iter.ForArray(seq).every(v)});");
         return fsb.toString();
     }
 }

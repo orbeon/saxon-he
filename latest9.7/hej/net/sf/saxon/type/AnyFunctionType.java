@@ -237,7 +237,7 @@ public class AnyFunctionType implements FunctionItemType {
      */
     @Override
     public String generateJavaScriptItemTypeTest(ItemType knownToBe) throws XPathException {
-        return "return item instanceof HashTrie || item instanceof Expr.XdmArray;";
+        return "return item instanceof HashTrie || item instanceof SaxonJS.Expr.XdmArray;";
     }
 
     /**
