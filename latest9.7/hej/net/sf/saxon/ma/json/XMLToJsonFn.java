@@ -32,8 +32,6 @@ import java.util.Map;
 
 /**
  * Implement the XML to JSON conversion as a built-in function - fn:xml-to-json()
- * <p>This exploits the stylesheets xml-to-json.xsl and xml-to-json-indent.xsl, to perform the actual conversion.
- * These are held as resources within the Saxon jar and compiled when needed.  </p>
  */
 public class XMLToJsonFn extends SystemFunction {
 

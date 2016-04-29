@@ -130,10 +130,8 @@ public class JsonReceiver implements Receiver {
                 }
             }
             output.append('"');
-            if (alreadyEscaped) {
-                key = unescape(key);
-            }
-            output.append(escape(key, false, new ControlChar()));
+            key = (alreadyEscaped ? handleEscapedString(key) : escape(key, false, new ControlChar())).toString();
+            output.append(key);
             output.append('"');
             output.append(indenting ? " : " : ":");
         }
@@ -229,15 +227,23 @@ public class JsonReceiver implements Receiver {
                 throw new XPathException("xml-to-json: Value of <boolean> element is not a valid xs:boolean", ERR_INPUT);
             }
         } else if (local.equals("number")) {
-            double d = StringToDouble11.getInstance().stringToNumber(textBuffer);
-            if (Double.isNaN(d) || Double.isInfinite(d)) {
-                throw new XPathException("xml-to-json: Infinity and NaN are not allowed", ERR_INPUT);
+            try {
+                double d = StringToDouble11.getInstance().stringToNumber(textBuffer);
+                if (Double.isNaN(d) || Double.isInfinite(d)) {
+                    throw new XPathException("xml-to-json: Infinity and NaN are not allowed", ERR_INPUT);
+                }
+                output.append(new DoubleValue(d).getStringValueCS());
+            } catch (NumberFormatException e) {
+                throw new XPathException("xml-to-json: Invalid number: " + textBuffer);
             }
-            output.append(new DoubleValue(d).getStringValueCS());
         } else if (local.equals("string")) {
             output.append('"');
-            String unescaped = escaped ? unescape(textBuffer.toString()) : textBuffer.toString();
-            output.append(escape(unescaped, false, new ControlChar()));
+            String str = textBuffer.toString();
+            if (escaped) {
+                output.append(handleEscapedString(str));
+            } else {
+                output.append(escape(str, false, new ControlChar()));
+            }
             output.append('"');
         } else if (!Whitespace.isWhite(textBuffer)) {
             throw new XPathException("xml-to-json: Element " + name.getDisplayName() + " must have no text content", ERR_INPUT);
@@ -251,6 +257,40 @@ public class JsonReceiver implements Receiver {
             output.append(indenting ? " }" : "}");
         }
         atStart = false;
+    }
+
+    private static CharSequence handleEscapedString(String str) throws XPathException {
+        // check that escape sequences are valid
+        unescape(str);
+        FastStringBuffer out = new FastStringBuffer(str.length() * 2);
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (c == '"' && (i == 0 || str.charAt(i - 1) != '\\')) {
+                out.append("\\\"");
+            } else if (c < 32 || (c >= 127 && c < 160)) {
+                if (c == '\b') {
+                    out.append("\\b");
+                } else if (c == '\f') {
+                    out.append("\\f");
+                } else if (c == '\n') {
+                    out.append("\\n");
+                } else if (c == '\r') {
+                    out.append("\\r");
+                } else if (c == '\t') {
+                    out.append("\\t");
+                } else {
+                    out.append("\\u");
+                    String hex = Integer.toHexString(c).toUpperCase();
+                    while (hex.length() < 4) {
+                        hex = "0" + hex;
+                    }
+                    out.append(hex);
+                }
+            } else {
+                out.append(c);
+            }
+        }
+        return out;
     }
 
     public static CharSequence escape(CharSequence in, boolean forXml, IntPredicate hexEscapes) throws XPathException {
