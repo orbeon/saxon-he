@@ -314,7 +314,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
             try {
                 config.setConfigurationProperty(featureKey, value);
             } catch (IllegalArgumentException e) {
-                error(props.getProperty("#element"), propertyName, value, e.getMessage());
+                error(props.getProperty("#element"), propertyName, value, "Property not available in Saxon-" + config.getEditionCode());
             }
         }
     }
