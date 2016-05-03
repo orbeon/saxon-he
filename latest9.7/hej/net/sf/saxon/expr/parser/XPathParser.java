@@ -7,6 +7,7 @@
 
 package net.sf.saxon.expr.parser;
 
+import com.saxonica.functions.hof.ApplyFn;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Version;
 import net.sf.saxon.expr.*;
@@ -1904,7 +1905,7 @@ public class XPathParser {
                 setLocation(step);
             } else if (t.currentToken == Token.LPAR) {
                 // dynamic function call (XQuery 3.0/XPath 3.0 syntax)
-                step = parseDynamicFunctionCall(step);
+                step = parseDynamicFunctionCall(step, null);
                 setLocation(step);
             } else if (t.currentToken == Token.QMARK) {
                 step = parseLookup(step);
@@ -1937,15 +1938,18 @@ public class XPathParser {
         if (token == Token.NAME || token == Token.FUNCTION) {
             return parseFunctionCall(lhs);
         } else if (token == Token.DOLLAR) {
-            grumble("Variable reference after '=>': dynamic function calls require Saxon-PE or higher");
+            Expression var = parseVariableReference();
+            expect(Token.LPAR);
+            return parseDynamicFunctionCall(var, lhs);
         } else if (token == Token.LPAR) {
-            grumble("Parenthesized expression after '=>': dynamic function calls require Saxon-PE or higher");
+            Expression var = parseParenthesizedExpression();
+            expect(Token.LPAR);
+            return parseDynamicFunctionCall(var, lhs);
         } else {
             grumble("Unexpected " + Token.tokens[token] + " after '=>'");
+            return null;
         }
-        return null;
     }
-
     /**
      * Parse the expression within a predicate. A separate method so it can be overridden
      *
@@ -2272,10 +2276,63 @@ public class XPathParser {
      */
 
     /*@NotNull*/
-    protected Expression parseDynamicFunctionCall(Expression functionItem) throws XPathException {
-        grumble("Unexpected '(' after primary expression. (Dynamic function calls require XPath 3.0)");
-        return new ErrorExpression();
+    public Expression parseDynamicFunctionCall(Expression functionItem, Expression prefixArgument) throws XPathException {
+        checkLanguageVersion30();
+
+        ArrayList<Expression> args = new ArrayList<Expression>(10);
+        if (prefixArgument != null) {
+            args.add(prefixArgument);
+        }
+        IntSet placeMarkers = null;
+
+        // the "(" has already been read by the Tokenizer: now parse the arguments
+        nextToken();
+        if (t.currentToken != Token.RPAR) {
+            while (true) {
+                Expression arg = parseFunctionArgument();
+                if (arg == null) {
+                    // this is a "?" placemarker
+                    if (placeMarkers == null) {
+                        placeMarkers = new IntArraySet();
+                    }
+                    placeMarkers.add(args.size());
+                    arg = Literal.makeEmptySequence(); // a convenient fiction
+                    checkHofFeature();
+                }
+                args.add(arg);
+                if (t.currentToken == Token.COMMA) {
+                    nextToken();
+                } else {
+                    break;
+                }
+            }
+            expect(Token.RPAR);
+        }
+        nextToken();
+
+        if (placeMarkers == null) {
+            return generateApplyCall(functionItem, args);
+        } else {
+            return createDynamicCurriedFunction(functionItem, args, placeMarkers);
+        }
+        /*grumble("Unexpected '(' after primary expression. (Dynamic function calls require XPath 3.0)");
+        return new ErrorExpression();*/
     }
+
+    protected Expression createDynamicCurriedFunction(Expression functionItem, ArrayList<Expression> args, IntSet placeMarkers) throws XPathException {
+        grumble("Partial function application not allowed");
+        return null;
+    }
+
+    protected Expression generateApplyCall(Expression functionItem, ArrayList<Expression> args) throws XPathException {
+        ArrayBlock block = new ArrayBlock(args);
+        RetainedStaticContext rsc = new RetainedStaticContext(getStaticContext());
+        SystemFunctionCall call = (SystemFunctionCall) SystemFunction.makeCall("apply", rsc, functionItem, block);
+        ((ApplyFn) call.getTargetFunction()).setDynamicFunctionCall(functionItem.toShortString());
+        setLocation(call, t.currentTokenStartOffset);
+        return call;
+    }
+
 
     /**
      * Parse a lookup operator ("?")
@@ -3767,6 +3824,15 @@ public class XPathParser {
         return this.allowAbsentExpression;
     }
 
+    /**
+     * Check that the higher-order-function feature is licensed
+     *
+     * @throws XPathException if the feature is licensed
+     */
+
+    protected void checkHofFeature() throws XPathException {
+        env.getConfiguration().checkLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION, "higher-order functions", -1);
+    }
 
     /**
      * A nested location: for use with XPath expressions and queries nested within some
