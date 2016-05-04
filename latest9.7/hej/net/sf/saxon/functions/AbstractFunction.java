@@ -129,6 +129,10 @@ public abstract class AbstractFunction extends AbstractItem implements Function 
         out.emitAttribute("arity", getArity() + "");
         out.endElement();
     }
+
+    public boolean isTrustedResultType() {
+        return false;
+    }
 }
 
 // Copyright (c) 2009-2012 Saxonica Limited. All rights reserved.

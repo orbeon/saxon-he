@@ -55,4 +55,8 @@ public abstract class CurriedSystemFunction extends AbstractFunction {
     }
 
     public abstract void exportLocalData(ExpressionPresenter out);
+
+    public boolean isTrustedResultType() {
+        return false;
+    }
 }

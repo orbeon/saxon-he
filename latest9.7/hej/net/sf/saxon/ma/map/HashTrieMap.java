@@ -633,6 +633,10 @@ public class HashTrieMap extends AbstractItem implements MapItem, GroundedValue 
         out.emitAttribute("size", size() + "");
         out.endElement();
     }
+
+    public boolean isTrustedResultType() {
+        return false;
+    }
 }
 
 // Copyright (c) 2015 Saxonica Limited. All rights reserved.

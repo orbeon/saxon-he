@@ -740,6 +740,10 @@ public class UserFunction extends ComponentCode<UserFunction> implements Functio
         presenter.endElement();
     }
 
+    public boolean isTrustedResultType() {
+        return false;
+    }
+
     /**
      * Get the type of construct. This will either be the fingerprint of a standard XSLT instruction name
      * (values in {@link net.sf.saxon.om.StandardNames}: all less than 1024)

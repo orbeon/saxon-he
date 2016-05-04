@@ -116,5 +116,9 @@ public interface Function extends Item, Callable, GroundedValue {
 
     void export(ExpressionPresenter out) throws XPathException;
 
+
+
+    boolean isTrustedResultType();
+
 }
 

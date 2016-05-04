@@ -417,6 +417,10 @@ public class RangeKey implements MapItem {
         out.endElement();
     }
 
+    public boolean isTrustedResultType() {
+        return false;
+    }
+
     private class RangeKeyIterator implements AtomicIterator {
 
         int pos = 0;

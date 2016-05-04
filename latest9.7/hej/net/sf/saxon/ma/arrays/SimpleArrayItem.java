@@ -330,6 +330,10 @@ public class SimpleArrayItem extends AbstractItem implements ArrayItem {
         out.endElement();
     }
 
+    public boolean isTrustedResultType() {
+        return false;
+    }
+
     /**
      * Get a list of the members of the array
      *

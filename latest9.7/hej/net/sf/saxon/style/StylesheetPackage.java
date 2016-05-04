@@ -7,7 +7,6 @@
 
 package net.sf.saxon.style;
 
-import com.saxonica.ee.extfn.IxslFunctionLibrary;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.PreparedStylesheet;
 import net.sf.saxon.expr.Component;
@@ -642,7 +641,8 @@ public class StylesheetPackage extends PackageData {
         functionLibrary.addFunctionLibrary(
             new ConstructorFunctionLibrary(config));
         if ("JS".equals(getTargetEdition())) {
-            functionLibrary.addFunctionLibrary(new IxslFunctionLibrary(config));
+            addIxslFunctionLibrary(functionLibrary);
+
         }
 
         queryFunctions = new XQueryFunctionLibrary(config);
@@ -652,6 +652,8 @@ public class StylesheetPackage extends PackageData {
 
         return this.functionLibrary = functionLibrary;
     }
+
+    protected void addIxslFunctionLibrary(FunctionLibraryList functionLibrary) {}
 
     /**
      * Get the function library.

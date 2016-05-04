@@ -154,7 +154,7 @@ public class ApplyFn extends SystemFunction  {
             c2 = ((UserFunction)function).makeNewContext(context);
         }
         Sequence rawResult = function.call(c2, argArray);
-        if (function instanceof SystemFunction || function instanceof AtomicConstructorFunction) {
+        if (function.isTrustedResultType()) {
             // trust system functions to return a result of the correct type
             return rawResult;
         } else {

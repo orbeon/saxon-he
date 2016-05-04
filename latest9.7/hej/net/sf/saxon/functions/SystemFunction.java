@@ -449,6 +449,10 @@ public abstract class SystemFunction extends AbstractFunction {
 
     public void exportAttributes(ExpressionPresenter out) {};
 
+    public boolean isTrustedResultType() {
+        return true;
+    }
+
     /**
      * Import any attributes found in the export file, that is, any attributes output using
      * the exportAttributes method
