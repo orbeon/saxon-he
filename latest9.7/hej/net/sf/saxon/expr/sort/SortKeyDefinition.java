@@ -157,7 +157,7 @@ public class SortKeyDefinition extends PseudoExpression {
      */
 
     public Expression getDataTypeExpression() {
-        return dataTypeExpression.getChildExpression();
+       return dataTypeExpression == null ? null : dataTypeExpression.getChildExpression();
     }
 
     /**
