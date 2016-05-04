@@ -7,7 +7,7 @@
 
 package net.sf.saxon.expr.parser;
 
-import com.saxonica.functions.hof.ApplyFn;
+import net.sf.saxon.functions.ApplyFn;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Version;
 import net.sf.saxon.expr.*;

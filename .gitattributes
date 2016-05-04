@@ -1377,6 +1377,7 @@ latest9.7/hej/net/sf/saxon/functions/Adjust_1.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/functions/Adjust_2.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/functions/Aggregate.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/functions/AnalyzeStringFn.java svn_eol_002dstyle=native
+latest9.7/hej/net/sf/saxon/functions/ApplyFn.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/functions/Atan2Fn.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/functions/AvailableEnvironmentVariables.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/functions/AvailableSystemProperties.java svn_eol_002dstyle=native
