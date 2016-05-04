@@ -9,6 +9,7 @@ package net.sf.saxon.functions;
 
 import net.sf.saxon.expr.OperandUsage;
 import net.sf.saxon.expr.StaticProperty;
+import net.sf.saxon.ma.arrays.ArrayItemType;
 import net.sf.saxon.ma.json.JsonDoc;
 import net.sf.saxon.ma.json.JsonToXMLFn;
 import net.sf.saxon.ma.json.ParseJsonFn;
@@ -207,6 +208,11 @@ public abstract class StandardFunction {
                 .arg(0, BuiltInAtomicType.STRING, OPT, null)
                 .arg(1, BuiltInAtomicType.STRING, ONE, null)
                 .arg(2, BuiltInAtomicType.STRING, ONE, null);
+
+        register("_APPLY", ApplyFn.class, 2, 2, AnyItemType.getInstance(),
+                STAR, StandardFunction.XPATH30, LATE)
+                .arg(0, AnyFunctionType.getInstance(), ONE, null)
+                .arg(1, ArrayItemType.ANY_ARRAY_TYPE, ONE, null);
 
         register("available-environment-variables", AvailableEnvironmentVariables.class, 0, 0, BuiltInAtomicType.STRING,
                  STAR, XPATH30 | USE_WHEN, LATE);

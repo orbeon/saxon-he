@@ -2327,7 +2327,7 @@ public class XPathParser {
     protected Expression generateApplyCall(Expression functionItem, ArrayList<Expression> args) throws XPathException {
         ArrayBlock block = new ArrayBlock(args);
         RetainedStaticContext rsc = new RetainedStaticContext(getStaticContext());
-        SystemFunctionCall call = (SystemFunctionCall) SystemFunction.makeCall("apply", rsc, functionItem, block);
+        SystemFunctionCall call = (SystemFunctionCall) SystemFunction.makeCall("_APPLY", rsc, functionItem, block);
         ((ApplyFn) call.getTargetFunction()).setDynamicFunctionCall(functionItem.toShortString());
         setLocation(call, t.currentTokenStartOffset);
         return call;
