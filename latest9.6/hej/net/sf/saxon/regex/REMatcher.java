@@ -619,10 +619,10 @@ public class REMatcher {
                             }
                         } else {
                             while (true) {
-                                if (i >= replacement.uLength()) {
+                                if (++i >= replacement.uLength()) {
                                     break;
                                 }
-                                ch = replacement.uCharAt(++i);
+                                ch = replacement.uCharAt(i);
                                 if (ch >= '0' && ch <= '9') {
                                     int m = n * 10 + (ch - '0');
                                     if (m > maxCapture) {
