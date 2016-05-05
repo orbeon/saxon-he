@@ -51,11 +51,6 @@ public class DynamicQueryContext {
         this.config = config;
         uriResolver = config.getURIResolver();
         errorListener = config.getErrorListener();
-        try {
-            traceListener = config.makeTraceListener();
-        } catch (XPathException err) {
-            throw new IllegalStateException(err.getMessage());
-        }
         if (errorListener instanceof StandardErrorListener) {
             errorListener = ((StandardErrorListener) errorListener).makeAnother(Configuration.XQUERY);
             ((StandardErrorListener) errorListener).setRecoveryPolicy(Configuration.DO_NOT_RECOVER);

@@ -54,6 +54,7 @@ public class TimingTraceListener implements TraceListener {
     /*@NotNull*/ private Stack<InstructionDetails> instructs = new Stack();
     /*@NotNull*/ HashMap<InstructionInfo, InstructionDetails> instructMap = new HashMap<InstructionInfo, InstructionDetails>();
     /*@Nullable*/ private Configuration config = null;
+    private int lang = Configuration.XSLT;
 
     /**
      * Set the PrintStream to which the output will be written.
@@ -74,6 +75,7 @@ public class TimingTraceListener implements TraceListener {
 
     public void open(/*@NotNull*/ Controller controller) {
         config = controller.getConfiguration();
+        lang = controller.getExecutable().getHostLanguage();
         t_total = System.nanoTime();
     }
 
@@ -209,22 +211,24 @@ public class TimingTraceListener implements TraceListener {
      */
     /*@NotNull*/
     public PreparedStylesheet getStyleSheet() throws XPathException {
-
+        String process = this.lang == Configuration.XSLT ? "Stylesheet" : "Query";
+        String templateOr = this.lang == Configuration.XSLT ? "template, " : "";
+        String templatesAnd = this.lang == Configuration.XSLT ? "templates and " : "";
         String xsl = "<?xml version='1.0' encoding='UTF-8'?>" +
                 "<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' " +
                 "xmlns:xs='http://www.w3.org/2001/XMLSchema' exclude-result-prefixes='xs' version='2.0'>" +
                 "<xsl:template match='*'>" +
                 "<html>" +
                 "<head>" +
-                "<title>Analysis of Stylesheet Execution Time</title>" +
+                "<title>Analysis of " + process + " Execution Time</title>" +
                 "</head>" +
                 "<body>" +
-                "<h1>Analysis of Stylesheet Execution Time</h1>" +
+                "<h1>Analysis of " + process + " Execution Time</h1>" +
                 "<p>Total time: <xsl:value-of select='format-number(@t-total, \"#0.000\")'/> milliseconds</p>" +
-                "<h2>Time spent in each template or function:</h2>" +
-                "<p>The table below is ordered by the total net time spent in the template or" +
-                "   function. Gross time means the time including called templates and functions;" +
-                "  net time means time excluding time spent in called templates and functions.</p>" +
+                "<h2>Time spent in each " + templateOr + "function or global variable:</h2>" +
+                "<p>The table below is ordered by the total net time spent in the " + templateOr +
+                "   function or global variable. Gross time means the time including called " + templatesAnd + "functions;" +
+                "  net time means time excluding time spent in called " + templatesAnd + "functions.</p>" +
                 "<table border='border' cellpadding='10'>" +
                 "   <thead>" +
                 "      <tr>" +
