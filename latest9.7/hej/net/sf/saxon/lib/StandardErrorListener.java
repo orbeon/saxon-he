@@ -385,7 +385,7 @@ public class StandardErrorListener implements UnfailingErrorListener {
                     "\n  " +
                     wordWrap(explanation);
         } else {
-            message = "Error " +
+            message = kind +
                     getLocationMessage(exception) +
                     "\n  " +
                     wordWrap(getExpandedMessage(exception));
