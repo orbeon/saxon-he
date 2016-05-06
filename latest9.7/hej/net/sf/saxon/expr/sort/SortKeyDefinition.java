@@ -229,7 +229,7 @@ public class SortKeyDefinition extends PseudoExpression {
      */
 
     public Expression getCollationNameExpression() {
-        return collationName.getChildExpression();
+        return collationName == null ? null : collationName.getChildExpression();
     }
 
     /**
@@ -619,7 +619,7 @@ public class SortKeyDefinition extends PseudoExpression {
     public boolean equals(Object other) {
         if (other instanceof SortKeyDefinition) {
             SortKeyDefinition skd2 = (SortKeyDefinition) other;
-            return sortKey.hashCode() == skd2.getSortKey().hashCode() && hashCode() == skd2.hashCode();
+            return getSortKey().hashCode() == skd2.getSortKey().hashCode() && hashCode() == skd2.hashCode();
 
         } else {
             return false;
@@ -634,18 +634,18 @@ public class SortKeyDefinition extends PseudoExpression {
 
     public int hashCode() {
         int h = 0;
-        h ^= order.hashCode();
-        h ^= caseOrder.hashCode();
-        h ^= language.hashCode();
+        h ^= getOrder().hashCode();
+        h ^= getCaseOrder().hashCode();
+        h ^= getLanguage().hashCode();
 
-        if (dataTypeExpression != null) {
-            h ^= dataTypeExpression.hashCode();
+        if (getDataTypeExpression() != null) {
+            h ^= getDataTypeExpression().hashCode();
         }
-        if (stable != null) {
-            h ^= stable.hashCode();
+        if (getStable() != null) {
+            h ^= getStable().hashCode();
         }
-        if (collationName != null) {
-            h ^= collationName.hashCode();
+        if (getCollationNameExpression() != null) {
+            h ^= getCollationNameExpression().hashCode();
 
         }
         return h;
