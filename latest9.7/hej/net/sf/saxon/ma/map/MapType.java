@@ -283,14 +283,14 @@ public class MapType extends AnyFunctionType {
     @Override
     public String generateJavaScriptItemTypeTest(ItemType knownToBe) throws XPathException {
         if (this == ANY_MAP_TYPE) {
-            return "return item instanceof HashTrie";
+            return "return item instanceof SaxonJS.HashTrie";
         }
         FastStringBuffer fsb = new FastStringBuffer(256);
         fsb.append("function k(item) {" + keyType.generateJavaScriptItemTypeTest(BuiltInAtomicType.ANY_ATOMIC) + "};");
         fsb.append("function v(item) {" + valueType.getPrimaryType().generateJavaScriptItemTypeTest(AnyItemType.getInstance()) + "};");
         int card = valueType.getCardinality();
         fsb.append(Cardinality.generateJavaScriptChecker(card));
-        fsb.append("return item instanceof HashTrie && item.conforms(k, v, c);");
+        fsb.append("return item instanceof SaxonJS.HashTrie && item.conforms(k, v, c);");
         return fsb.toString();
     }
 }
