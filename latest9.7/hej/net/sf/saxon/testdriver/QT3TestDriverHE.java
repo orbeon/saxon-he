@@ -254,7 +254,8 @@ public class QT3TestDriverHE extends TestDriver {
                 String edition = env.processor.getSaxonEdition();
                 return (edition.equals("PE") || edition.equals("EE")) ^ inverse;
             } else if ("fn-load-xquery-module".equals(value)) {
-                return !inverse;
+                String edition = env.processor.getSaxonEdition();
+                return edition.equals("EE") ^ inverse;
             } else if ("fn-format-integer-CLDR".equals(value)) {
                 String edition = env.processor.getSaxonEdition();
                 return (edition.equals("PE") || edition.equals("EE")) ^ inverse;
