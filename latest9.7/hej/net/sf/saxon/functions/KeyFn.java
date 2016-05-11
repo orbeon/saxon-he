@@ -7,8 +7,6 @@
 
 package net.sf.saxon.functions;
 
-import com.saxonica.ee.bytecode.ExpressionCompiler;
-import com.saxonica.ee.bytecode.KeyFnCompiler;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.RetainedStaticContext;
 import net.sf.saxon.expr.sort.DocumentOrderIterator;
@@ -134,19 +132,6 @@ public class KeyFn extends SystemFunction {
         }
 
     }
-
-//#ifdefined BYTECODE
-
-    /**
-     * Return the compiler of the KeyFn expression
-     *
-     * @return the relevant ExpressionCompiler
-     */
-    @Override
-    public ExpressionCompiler getExpressionCompiler() {
-        return new KeyFnCompiler();
-    }
-//#endif
 
     /**
      * Evaluate the expression
