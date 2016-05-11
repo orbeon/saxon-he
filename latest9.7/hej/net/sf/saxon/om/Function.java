@@ -117,7 +117,10 @@ public interface Function extends Item, Callable, GroundedValue {
     void export(ExpressionPresenter out) throws XPathException;
 
 
-
+    /**
+     * Check that result type is SystemFunction or AtomicConstructorFunction
+     *
+     */
     boolean isTrustedResultType();
 
 }

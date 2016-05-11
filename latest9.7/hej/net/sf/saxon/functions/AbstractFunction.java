@@ -130,6 +130,10 @@ public abstract class AbstractFunction extends AbstractItem implements Function 
         out.endElement();
     }
 
+    /**
+     * Check that result type is SystemFunction or AtomicConstructorFunction
+     *
+     */
     public boolean isTrustedResultType() {
         return false;
     }
