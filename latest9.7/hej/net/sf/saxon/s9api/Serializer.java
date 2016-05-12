@@ -394,6 +394,18 @@ public class Serializer implements Destination {
     }
 
     /**
+     * Say if the output stream should be closed on completion
+     * By default the close method closes the output stream only when the serializer created the output stream itself
+     * that is when the destination has been suppplied as a file rather than a stream.
+     * @param value - if true the output file will be closed when the close method is called
+     *              if false the close method has no effect.
+     */
+
+    public void setCloseOnCompletion(boolean value) {
+        mustClose = value;
+    }
+
+    /**
      * Set a character map to be used
      *
      * @param characterMap the character map

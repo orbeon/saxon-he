@@ -133,6 +133,8 @@ public class TransformerImpl extends IdentityTransformer {
                         throw new XPathException("Failed to create output file", e);
                     }
                     destination = xsltExecutable.getProcessor().newSerializer(stream);
+                    ((Serializer)destination).setCloseOnCompletion(true);
+
                 } else {
                     throw new IllegalArgumentException("StreamResult supplies neither an OutputStream nor a Writer");
                 }
