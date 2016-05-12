@@ -411,7 +411,14 @@ public class DotNetPlatform implements Platform {
      */
 
     public void setDefaultSAXParserFactory(Configuration config) {
-        System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl, saxon9"+config.getEditionCode().toLowerCase()+", Version="+ Version.getProductVersion()+", Culture=neutral, PublicKeyToken=e1fdd002d5083fe6");
+        String editionCode = "he";
+//#if PE==true
+        editionCode = "pe";
+//#endif
+//#if EE==true
+        editionCode = "ee";
+//#endif
+        System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl, saxon9"+editionCode+", Version="+ Version.getProductVersion()+", Culture=neutral, PublicKeyToken=e1fdd002d5083fe6");
     }
 
     public boolean JAXPStaticContextCheck(RetainedStaticContext retainedStaticContext, StaticContext sc) {
