@@ -1897,7 +1897,7 @@ public class XQueryParser extends XPathParser {
         int offset = t.currentTokenStartOffset;
         GlobalVariable var = new GlobalVariable();
         var.setPackageData(((QueryModule) env).getPackageData());
-        var.setLineNumber(t.getLineNumber());
+        var.setLineNumber(t.getLineNumber() + 1);
         var.setSystemId(env.getSystemId());
         if (annotations != null) {
             var.setPrivate(annotations.get(Annotation.PRIVATE) != null);
