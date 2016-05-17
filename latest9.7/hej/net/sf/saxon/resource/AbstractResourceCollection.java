@@ -39,6 +39,7 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
         registerContentType("application/atom", XmlResource.FACTORY);
         registerContentType("application/xml+xslt", XmlResource.FACTORY);
         registerContentType("application/xml+xsd", XmlResource.FACTORY);
+        registerContentType("application/rdf+xml", XmlResource.FACTORY);
         registerContentType("text/plain", UnparsedTextResource.FACTORY);
         registerContentType("application/java", BinaryResource.FACTORY);
         registerContentType("application/binary", BinaryResource.FACTORY);
