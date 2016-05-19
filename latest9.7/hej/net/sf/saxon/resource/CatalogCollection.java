@@ -51,6 +51,7 @@ public class CatalogCollection extends AbstractResourceCollection {
         put("text/html", "html");
         put("text/plain", "txt");
         put("text/xml", "xml");
+        put("text/xml", "rdf");
         put("application/octet-stream", "binary");
         put("application/mac-binary", "binary");
         put("application/binary", "binary");
