@@ -13,8 +13,6 @@ import org.xml.sax.XMLReader;
 import javax.xml.transform.TransformerException;
 import java.io.*;
 import java.net.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * AbstractCollection is an abstract superclass for the various implementations
@@ -28,22 +26,8 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
     protected String collectionURI;
     protected URIQueryParameters params = null;
 
-    private Map<String, ResourceFactory> resourceFactoryMapping = new HashMap<String, ResourceFactory>();
-
     public AbstractResourceCollection(Configuration config) {
         this.config = config;
-        registerContentType("application/xml", XmlResource.FACTORY);
-        registerContentType("text/xml", XmlResource.FACTORY);
-        registerContentType("application/html", XmlResource.FACTORY);
-        registerContentType("text/html", XmlResource.FACTORY);
-        registerContentType("application/atom", XmlResource.FACTORY);
-        registerContentType("application/xml+xslt", XmlResource.FACTORY);
-        registerContentType("application/xml+xsd", XmlResource.FACTORY);
-        registerContentType("application/rdf+xml", XmlResource.FACTORY);
-        registerContentType("text/plain", UnparsedTextResource.FACTORY);
-        registerContentType("application/java", BinaryResource.FACTORY);
-        registerContentType("application/binary", BinaryResource.FACTORY);
-        registerContentType("application/json", JSONResource.FACTORY);
     }
 
     public String getCollectionURI() {
@@ -76,10 +60,15 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
     /**
      * Associate a media type with a resource factory. This method may
      * be called to customize the behaviour of a JarCollection to recognize different file extensions
+     * Since 9.7.0.6 this registers the content type with the configuration, making the register
+     * of content types more accessible to applications.
+     *
+     * @param contentType a media type or MIME type, for example application/xsd+xml
+     * @param factory     a ResourceFactory used to parse (or otherwise process) resources of that type
      */
 
     public void registerContentType(String contentType, ResourceFactory factory) {
-        resourceFactoryMapping.put(contentType, factory);
+        config.registerMediaType(contentType, factory);
     }
 
     protected ParseOptions optionsFromQueryParameters(URIQueryParameters params, XPathContext context) {
@@ -188,7 +177,7 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
         } catch (IOException e) {
             throw new XPathException(e);
         }
-        if (inputDetails.contentType == null) {
+        if (inputDetails.contentType == null || config.getResourceFactoryForMediaType(inputDetails.contentType) == null) {
             inputDetails.contentType = guessContentType(resourceURI, inputDetails.inputStream);
         }
         if (params != null && params.getOnError() != null) {
@@ -277,7 +266,7 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
         ResourceFactory factory = null;
         String contentType = details.contentType;
         if (contentType != null) {
-            factory = resourceFactoryMapping.get(contentType);
+            factory = config.getResourceFactoryForMediaType(contentType);
         }
         if (factory == null) {
             factory = BinaryResource.FACTORY;
@@ -288,6 +277,7 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
 
     /**
      * Default method to make a resource, given a resource URI
+     *
      * @param resourceURI the resource URI
      * @return the corresponding resource
      */

@@ -26,8 +26,7 @@ import net.sf.saxon.query.QueryModule;
 import net.sf.saxon.query.StaticQueryContext;
 import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.query.XQueryParser;
-import net.sf.saxon.resource.CollectionURIResolverWrapper;
-import net.sf.saxon.resource.StandardCollectionFinder;
+import net.sf.saxon.resource.*;
 import net.sf.saxon.serialize.charcode.CharacterSetFactory;
 import net.sf.saxon.serialize.charcode.XMLCharacterData;
 import net.sf.saxon.style.Compilation;
@@ -181,6 +180,7 @@ public class Configuration implements SourceResolver, NotationSet {
         }
     };
     private Map<String, String> fileExtensions = new HashMap<String, String>();
+    private Map<String, ResourceFactory> resourceFactoryMapping = new HashMap<String, ResourceFactory>();
 
     /**
      * Constant indicating that the processor should take the recovery action
@@ -480,6 +480,19 @@ public class Configuration implements SourceResolver, NotationSet {
         registerFileExtension("class", "application/java");
         registerFileExtension("json", "application/json");
         registerFileExtension("", "application/binary");
+
+        registerMediaType("application/xml", XmlResource.FACTORY);
+        registerMediaType("text/xml", XmlResource.FACTORY);
+        registerMediaType("application/html", XmlResource.FACTORY);
+        registerMediaType("text/html", XmlResource.FACTORY);
+        registerMediaType("application/atom", XmlResource.FACTORY);
+        registerMediaType("application/xml+xslt", XmlResource.FACTORY);
+        registerMediaType("application/xml+xsd", XmlResource.FACTORY);
+        registerMediaType("application/rdf+xml", XmlResource.FACTORY);
+        registerMediaType("text/plain", UnparsedTextResource.FACTORY);
+        registerMediaType("application/java", BinaryResource.FACTORY);
+        registerMediaType("application/binary", BinaryResource.FACTORY);
+        registerMediaType("application/json", JSONResource.FACTORY);
     }
 
     /**
@@ -1666,6 +1679,19 @@ public class Configuration implements SourceResolver, NotationSet {
     }
 
     /**
+     * Associate a media type with a resource factory. This method may
+     * be called to customize the behaviour of a collection to recognize different file extensions
+     *
+     * @param contentType a media type or MIME type, for example application/xsd+xml
+     * @param factory     a ResourceFactory used to parse (or otherwise process) resources of that type
+     * @since 9.7.0.6
+     */
+
+    public void registerMediaType(String contentType, ResourceFactory factory) {
+        resourceFactoryMapping.put(contentType, factory);
+    }
+
+    /**
      * Get the media type to be associated with a file extension by the standard
      * collection handler
      *
@@ -1685,6 +1711,18 @@ public class Configuration implements SourceResolver, NotationSet {
             mediaType = fileExtensions.get("");
         }
         return mediaType;
+    }
+
+    /**
+     * Get the resource factory associated with a media type
+     *
+     * @param mediaType the media type or MIME type, for example "application/xml"
+     * @return the associated resource factory if one has been registered for this media type,
+     * or null otherwise
+     */
+
+    public ResourceFactory getResourceFactoryForMediaType(String mediaType) {
+        return resourceFactoryMapping.get(mediaType);
     }
 
     /**
