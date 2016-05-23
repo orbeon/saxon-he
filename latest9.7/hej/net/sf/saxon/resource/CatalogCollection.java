@@ -41,6 +41,7 @@ public class CatalogCollection extends AbstractResourceCollection {
     }
 
 
+    //TODO - Map never used - therefore should be removed
     public static HashMap<String, String> mimeTypeMap = new HashMap<String, String>() {{
         put("application/atom+xml", "atom");
         put("text/html", "html");
@@ -51,7 +52,6 @@ public class CatalogCollection extends AbstractResourceCollection {
         put("text/html", "html");
         put("text/plain", "txt");
         put("text/xml", "xml");
-        put("text/xml", "rdf");
         put("application/octet-stream", "binary");
         put("application/mac-binary", "binary");
         put("application/binary", "binary");
