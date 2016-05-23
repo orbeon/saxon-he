@@ -79,6 +79,7 @@ public class SaxonApiException extends Exception {
      * Get the line number associated with the exception, if known.
      * @return the line number (typically of a line in a stylesheet, query, or schema, but
      * in the case of validation errors it may be a line in a source document); or -1 if not known
+     * @since 9.6
      */
 
     public int getLineNumber() {
@@ -95,6 +96,7 @@ public class SaxonApiException extends Exception {
      * Get the URI of the module associated with the exception, if known.
      * @return the URI of the module (typically a stylesheet, query, or schema, but
      * in the case of validation errors it may be a source document); or null if not known
+     * @since 9.6
      */
 
     public String getSystemId() {
