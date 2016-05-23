@@ -174,19 +174,21 @@ public class PromotionOffer {
                 if (!promoteXSLTFunctions && ((dependencies & StaticProperty.DEPENDS_ON_XSLT_CONTEXT) != 0)) {
                     break;
                 }
-                if (ExpressionTool.dependsOnVariable(child, bindingList)) {
-                    break;
-                }
+//                if (ExpressionTool.dependsOnVariable(child, bindingList, "PF")) {
+//                    break;
+//                }
                 if ((dependencies &
                         (StaticProperty.HAS_SIDE_EFFECTS | StaticProperty.DEPENDS_ON_ASSIGNABLE_GLOBALS)) != 0) {
                     break;
                 }
                 if ((dependencies & StaticProperty.DEPENDS_ON_FOCUS) == 0 &&
-                        (properties & StaticProperty.NON_CREATIVE) != 0) {
+                        (properties & StaticProperty.NON_CREATIVE) != 0 &&
+                        !ExpressionTool.dependsOnVariable(child, bindingList)) {
                     return promote(child);
                 } else if (promoteDocumentDependent &&
                         (dependencies & StaticProperty.DEPENDS_ON_NON_DOCUMENT_FOCUS) == 0 &&
-                        (properties & StaticProperty.NON_CREATIVE) != 0) {
+                        (properties & StaticProperty.NON_CREATIVE) != 0 &&
+                        !ExpressionTool.dependsOnVariable(child, bindingList)) {
                     return promote(child);
                 }
                 break;
@@ -194,10 +196,11 @@ public class PromotionOffer {
 
             case EXTRACT_GLOBAL_VARIABLES:
                 if (!(child instanceof Literal || child instanceof LocalParamSetter ||
-                        (child == containingExpression) ||
-                        ExpressionTool.containsLocalParam(child)) &&
+                        (child == containingExpression) /*||
+                        ExpressionTool.containsLocalParam(child)*/) &&
                         (child.getDependencies() & ~StaticProperty.DEPENDS_ON_RUNTIME_ENVIRONMENT) == 0 &&
-                        (child.getSpecialProperties() & StaticProperty.NON_CREATIVE) != 0) {
+                        (child.getSpecialProperties() & StaticProperty.NON_CREATIVE) != 0 &&
+                        (child.getSpecialProperties() & StaticProperty.HAS_SIDE_EFFECTS) == 0) {
                     return optimizer.extractGlobalVariables(child, visitor, this);
                 }
                 break;
@@ -250,6 +253,7 @@ public class PromotionOffer {
         LocalVariableReference var = new LocalVariableReference(let);
         int properties = child.getSpecialProperties() & StaticProperty.NOT_UNTYPED_ATOMIC;
         var.setStaticType(type, null, properties);
+        let.addReference(var, true);
         ExpressionTool.copyLocationInfo(containingExpression, var);
         return var;
     }

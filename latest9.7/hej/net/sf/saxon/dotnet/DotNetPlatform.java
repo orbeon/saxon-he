@@ -446,7 +446,6 @@ public class DotNetPlatform implements Platform {
         if (parentClassLoader == null) {
             parentClassLoader = Thread.currentThread().getContextClassLoader();
         }
-
          return new MyClassLoader(parentClassLoader);
 
     }

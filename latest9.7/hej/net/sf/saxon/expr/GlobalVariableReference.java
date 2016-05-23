@@ -55,6 +55,9 @@ public class GlobalVariableReference extends VariableReference implements Compon
      *             can be found.
      */
     public void setBindingSlot(int slot) {
+        if (bindingSlot != -1) {
+            throw new AssertionError("Duplicate binding slot assignment");
+        }
         bindingSlot = slot;
     }
 

@@ -501,7 +501,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
         out.endElement();
     }
 
-    protected void explainThreads(ExpressionPresenter out) throws XPathException{
+    protected void explainThreads(ExpressionPresenter out) throws XPathException {
         // no action in this class: implemented in subclass
     }
 

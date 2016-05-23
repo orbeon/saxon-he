@@ -11,7 +11,9 @@ import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.TryCatchExpressionCompiler;
 import com.saxonica.ee.stream.adjunct.StreamingAdjunct;
 import com.saxonica.ee.stream.adjunct.TryCatchAdjunct;
+import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
+import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.PromotionOffer;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.Item;
@@ -150,6 +152,19 @@ public class TryCatch extends Expression {
         } else {
             return this;
         }
+    }
+
+    @Override
+    public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
+        optimizeChildren(visitor, contextInfo);
+        Expression e = getParentExpression();
+        while (e != null) {
+            if (e instanceof LetExpression && ExpressionTool.dependsOnVariable(getTryExpr(), new Binding[]{(LetExpression)e})) {
+                ((LetExpression)e).setNeedsEagerEvaluation(true);
+            }
+            e = e.getParentExpression();
+        }
+        return this;
     }
 
     /**

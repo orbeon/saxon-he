@@ -41,7 +41,7 @@ public class PositionVariable implements LocalBinding {
         return variableName;
     }
 
-    public void addReference(boolean isLoopingReference) {
+    public void addReference(VariableReference ref, boolean isLoopingReference) {
 
     }
 

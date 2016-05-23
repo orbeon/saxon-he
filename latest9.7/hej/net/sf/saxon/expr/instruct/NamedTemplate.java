@@ -11,7 +11,6 @@ import com.saxonica.ee.bytecode.CompiledExpression;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.Operand;
 import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.om.StructuredQName;
@@ -59,6 +58,7 @@ public class NamedTemplate extends ComponentCode<NamedTemplate> {
     private ItemType requiredContextItemType = AnyItemType.getInstance();
     private boolean mayOmitContextItem = true;
     private boolean maySupplyContextItem = true;
+    private List<LocalParam> localParams = new ArrayList<LocalParam>(4);
 
     /**
      * Create a named template
@@ -134,6 +134,10 @@ public class NamedTemplate extends ComponentCode<NamedTemplate> {
         return templateName;
     }
 
+    public void addLocalParam(LocalParam param) {
+        localParams.add(param);
+    }
+
     /**
      * Set whether this template has one or more required parameters
      *
@@ -192,9 +196,11 @@ public class NamedTemplate extends ComponentCode<NamedTemplate> {
 
 
     public List<LocalParam> getLocalParams() {
-        List<LocalParam> result = new ArrayList<LocalParam>();
-        gatherLocalParams(getInterpretedBody(), result);
-        return result;
+//        if (localParams == null) {
+//            localParams = new ArrayList<LocalParam>();
+//            gatherLocalParams(getInterpretedBody(), localParams);
+//        }
+        return localParams;
     }
 
     private static void gatherLocalParams(Expression exp, List<LocalParam> result) {
@@ -216,32 +222,14 @@ public class NamedTemplate extends ComponentCode<NamedTemplate> {
 
     /*@Nullable*/
     public LocalParam getLocalParam(StructuredQName id) {
-        for (Operand o : body.operands()) {
-            Expression child = o.getChildExpression();
-            if (child instanceof LocalParamSetter && ((LocalParamSetter) child).getBinding().getVariableQName().equals(id)) {
-                return ((LocalParamSetter) child).getBinding();
-            } else if (ExpressionTool.containsLocalParam(child)) {
-                LocalParam lp = getLocalParam(child, id);
-                if (lp != null) {
-                    return lp;
-                }
+        List<LocalParam> params = getLocalParams();
+        for (LocalParam lp : params) {
+            if (lp.getVariableQName().equals(id)) {
+                return lp;
             }
         }
         return null;
     }
-
-    private static LocalParam getLocalParam(Expression exp, StructuredQName id) {
-        for (Operand o : exp.operands()) {
-            Expression child = o.getChildExpression();
-            if (child instanceof LocalParamSetter && ((LocalParamSetter) child).getBinding().getVariableQName().equals(id)) {
-                return ((LocalParamSetter) child).getBinding();
-            } else if (ExpressionTool.containsLocalParam(child)) {
-                return getLocalParam(child, id);
-            }
-        }
-        return null;
-    }
-
 
     /**
      * Expand the template. Called when the template is invoked using xsl:call-template.

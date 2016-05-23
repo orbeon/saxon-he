@@ -101,9 +101,9 @@ public class QuantifiedExpression extends Assignation {
                 getSequence(), sequenceType, role, visitor.getStaticContext()));
         ItemType actualItemType = getSequence().getItemType();
         refineTypeInformation(actualItemType,
-                StaticProperty.EXACTLY_ONE,
-                null,
-                getSequence().getSpecialProperties(), visitor, this);
+                              StaticProperty.EXACTLY_ONE,
+                              null,
+                              getSequence().getSpecialProperties(), this);
 
         //declaration = null;     // let the garbage collector take it
 

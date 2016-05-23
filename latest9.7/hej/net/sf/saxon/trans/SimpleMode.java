@@ -880,11 +880,17 @@ public class SimpleMode extends Mode {
 
     public static void forceAllocateAllBindingSlots(
         final StylesheetPackage pack, final SimpleMode mode, final List<ComponentBinding> bindings) {
+        final Set<TemplateRule> rulesProcessed = new HashSet<TemplateRule>();
         try {
             mode.processRules(new RuleAction() {
                 public void processRule (Rule r){
                     allocateBindingSlotsRecursive(pack, mode, r.getPattern(), bindings);
-                    allocateBindingSlotsRecursive(pack, mode, ((TemplateRule) r.getAction()).getBody(), bindings);
+                    TemplateRule tr = (TemplateRule)r.getAction();
+                    if (!rulesProcessed.contains(tr)) {
+                        // A rule can appear twice if it uses a union pattern; only process it once
+                        allocateBindingSlotsRecursive(pack, mode, tr.getBody(), bindings);
+                        rulesProcessed.add(tr);
+                    }
                 }
             });
         } catch (XPathException e) {

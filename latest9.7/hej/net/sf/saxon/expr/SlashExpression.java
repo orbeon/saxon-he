@@ -896,7 +896,7 @@ public class SlashExpression extends BinaryExpression
      * is written to the supplied output destination.
      */
 
-    public void export(ExpressionPresenter destination) throws XPathException{
+    public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("slash", this);
         if (this instanceof SimpleStepExpression) {
             destination.emitAttribute("simple", "1");

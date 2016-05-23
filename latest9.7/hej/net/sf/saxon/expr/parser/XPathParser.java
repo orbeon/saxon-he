@@ -1950,6 +1950,7 @@ public class XPathParser {
             return null;
         }
     }
+
     /**
      * Parse the expression within a predicate. A separate method so it can be overridden
      *
@@ -2271,6 +2272,7 @@ public class XPathParser {
      * Parse a dynamic function call
      *
      * @param functionItem the expression that determines the function to be called
+     * @param prefixArgument the LHS of an arrow operator, or null if this is not part of an arrow expression
      * @return the expression that results from the parsing
      * @throws net.sf.saxon.trans.XPathException if a static error is found
      */
@@ -2320,7 +2322,7 @@ public class XPathParser {
     }
 
     protected Expression createDynamicCurriedFunction(Expression functionItem, ArrayList<Expression> args, IntSet placeMarkers) throws XPathException {
-        grumble("Partial function application not allowed");
+        grumble("Partial function application not allowed in this Configuration");
         return null;
     }
 
@@ -2332,7 +2334,6 @@ public class XPathParser {
         setLocation(call, t.currentTokenStartOffset);
         return call;
     }
-
 
     /**
      * Parse a lookup operator ("?")

@@ -11,6 +11,7 @@ import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.SuppliedParameterReference;
 import net.sf.saxon.expr.instruct.LocalParam;
 import net.sf.saxon.expr.instruct.LocalParamSetter;
+import net.sf.saxon.expr.instruct.NamedTemplate;
 import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
 import net.sf.saxon.expr.parser.TypeChecker;
@@ -194,6 +195,12 @@ public class XSLLocalParam extends XSLGeneralVariable {
             binding.setTunnel(sourceBinding.hasProperty(SourceBinding.TUNNEL));
             sourceBinding.fixupBinding(binding);
             compiledParam = binding;
+            if (getParent() instanceof XSLTemplate) {
+                NamedTemplate named = ((XSLTemplate)getParent()).getCompiledNamedTemplate();
+                if (named != null) {
+                    named.addLocalParam(binding);
+                }
+            }
             return new LocalParamSetter(binding);
 
         }

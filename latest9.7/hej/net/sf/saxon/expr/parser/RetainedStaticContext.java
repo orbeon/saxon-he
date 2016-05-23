@@ -18,7 +18,9 @@ import net.sf.saxon.trans.XPathException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * This class contains the part of the static context of expressions that (a) can change from one expression

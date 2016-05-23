@@ -138,8 +138,7 @@ public class XMLToJsonFn extends SystemFunction {
      * @param context      XPath evaluation context
      * @param defaultValue the default to be used if the option has not been specified
      * @return the setting of the option
-     * @throws net.sf.saxon.trans.XPathException
-     *          if the options cannot be read
+     * @throws net.sf.saxon.trans.XPathException if the options cannot be read
      */
 
     private String getOption(MapItem options, String option, XPathContext context, String defaultValue)
@@ -164,8 +163,7 @@ public class XMLToJsonFn extends SystemFunction {
      * @param context      XPath evaluation context
      * @param defaultValue the default to be used if the option has not been specified
      * @return the setting of the option
-     * @throws net.sf.saxon.trans.XPathException
-     *          if the options cannot be read
+     * @throws net.sf.saxon.trans.XPathException if the options cannot be read
      */
     private boolean getOption(MapItem options, String option, XPathContext context, boolean defaultValue)
             throws XPathException {

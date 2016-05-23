@@ -387,7 +387,7 @@ public class ForClause extends Clause {
      * @param out the expression presenter used to display the structure
      */
     @Override
-    public void explain(ExpressionPresenter out) throws XPathException{
+    public void explain(ExpressionPresenter out) throws XPathException {
         out.startElement("for");
         out.emitAttribute("var", getRangeVariable().getVariableQName().getDisplayName());
         out.emitAttribute("slot", getRangeVariable().getLocalSlotNumber() + "");

@@ -8,6 +8,7 @@
 package net.sf.saxon.sxpath;
 
 import net.sf.saxon.expr.LocalBinding;
+import net.sf.saxon.expr.VariableReference;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
@@ -144,7 +145,7 @@ public final class XPathVariable implements LocalBinding {
      * This method should not be called by users of the API.
      */
 
-    public void addReference(boolean isLoopingReference) {
+    public void addReference(VariableReference ref, boolean isLoopingReference) {
         // no action
     }
 

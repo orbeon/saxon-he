@@ -18,10 +18,10 @@ import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.om.StructuredQName;
-import net.sf.saxon.pattern.AnyNodeTest;
 import net.sf.saxon.trace.LocationKind;
 import net.sf.saxon.trans.SymbolicName;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.SequenceType;
@@ -368,25 +368,9 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
         if (!redundant && compiledVariable.getSelectExpression() != null) {
             Expression exp2 = compiledVariable.getSelectExpression();
             ExpressionVisitor visitor = makeExpressionVisitor();
-            Optimizer opt = getConfiguration().obtainOptimizer();
-            try {
-                if (opt.getOptimizationLevel() != Optimizer.NO_OPTIMIZATION) {
-                    ExpressionTool.resetPropertiesWithinSubtree(exp2);
-                    exp2 = exp2.optimize(visitor, new ContextItemStaticInfo(AnyNodeTest.getInstance(), true));
-                }
-
-            } catch (XPathException err) {
-                err.maybeSetLocation(getLocation());
-                compileError(err);
-            }
-
-            // Try to extract new global variables from the body of the variable declaration
-            // (but don't extract the whole body!)
-//            if (opt.getOptimizationLevel() != Optimizer.NO_OPTIMIZATION) {
-//                exp2 = opt.promoteExpressionsToGlobal(exp2, visitor, true);
-//            }
-            // dropped because it doesn't seem to do much good - just splits up an expression
-            // into lots of small global variables.
+            exp2 = ExpressionTool.optimizeComponentBody(
+                    exp2, getCompilation(), visitor,
+                    new ContextItemStaticInfo(AnyItemType.getInstance(), true), false);
 
             allocateLocalSlots(exp2);
             if (slotManager != null && slotManager.getNumberOfVariables() > 0) {

@@ -595,7 +595,7 @@ public abstract class Expression implements /*InstructionInfo,*/ IdentityCompara
          }
          Expression e = subexpression.promote(offer);
          if (e != subexpression) {
-             e.restoreParentPointers();
+             //e.restoreParentPointers();
              adoptChildExpression(e);
          } else if (offer.accepted) {
              ExpressionTool.resetStaticProperties(e);

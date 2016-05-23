@@ -7,8 +7,8 @@
 
 package net.sf.saxon.expr;
 
+import net.sf.saxon.expr.parser.ExpressionAction;
 import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.PathMap;
 import net.sf.saxon.expr.parser.PromotionOffer;
 import net.sf.saxon.om.*;
@@ -33,7 +33,9 @@ public abstract class Assignation extends Expression implements LocalBinding {
     // (initialized to ensure a crash if no real slot is allocated)
     protected StructuredQName variableName;
     protected SequenceType requiredType;
-    protected int refCount = 2;
+    protected boolean isIndexedVariable = false;
+    protected boolean hasLoopingReference = false;
+    protected List<VariableReference> references = null;
 
 
     private final static OperandRole REPEATED_ACTION_ROLE = new OperandRole(OperandRole.HIGHER_ORDER, OperandUsage.TRANSMISSION);
@@ -385,40 +387,48 @@ public abstract class Assignation extends Expression implements LocalBinding {
      * type of the variable has not been explicitly declared (which is common); the variable then takes
      * a static type based on the type of the expression to which it is bound. The effect of this call
      * is to update the static expression type for all references to this variable.
-     *
      * @param type              the inferred item type of the expression to which the variable is bound
      * @param cardinality       the inferred cardinality of the expression to which the variable is bound
      * @param constantValue     the constant value to which the variable is bound (null if there is no constant value)
      * @param properties        other static properties of the expression to which the variable is bound
-     * @param visitor           an expression visitor to provide context information
      * @param currentExpression the expression that binds the variable
      */
 
-    public void refineTypeInformation(ItemType type, int cardinality,
-                                      GroundedValue constantValue, int properties,
-                                      ExpressionVisitor visitor,
-                                      Assignation currentExpression) {
-        List<VariableReference> references = new ArrayList<VariableReference>();
-        ExpressionTool.gatherVariableReferences(currentExpression.getAction(), this, references);
-        for (BindingReference ref : references) {
-            if (ref instanceof VariableReference) {
-                ((VariableReference) ref).refineVariableType(type, cardinality, constantValue, properties);
-                ExpressionTool.resetStaticProperties(this);
+    public void refineTypeInformation(final ItemType type,
+                                      final int cardinality,
+                                      final GroundedValue constantValue,
+                                      final int properties,
+                                      final Assignation currentExpression) throws XPathException {
+        ExpressionTool.processExpressionTree(currentExpression.getAction(), null, new ExpressionAction() {
+            @Override
+            public boolean process(Expression exp, Object result) throws XPathException {
+                if (exp instanceof VariableReference && ((VariableReference) exp).getBinding() == currentExpression) {
+                    ((VariableReference) exp).refineVariableType(type, cardinality, constantValue, properties);
+                }
+                return false;
             }
-        }
+        });
     }
 
     /**
      * Register a variable reference that refers to the variable bound in this expression
      *
+     * @param ref the variable reference
      * @param isLoopingReference - true if the reference occurs within a loop, such as the predicate
      *                           of a filter expression
      */
 
-    public void addReference(boolean isLoopingReference) {
-        if (refCount != FilterExpression.FILTERED && refCount != -1) {
-            refCount += isLoopingReference ? 10 : 1;
+    public void addReference(VariableReference ref, boolean isLoopingReference) {
+        hasLoopingReference |= isLoopingReference;
+        if (references == null) {
+            references = new ArrayList<VariableReference>();
         }
+        for (VariableReference vr : references) {
+            if (vr == ref) {
+                return;
+            }
+        }
+        references.add(ref);
     }
 
     /**
@@ -431,7 +441,93 @@ public abstract class Assignation extends Expression implements LocalBinding {
      */
 
     public int getNominalReferenceCount() {
-        return refCount;
+        if (isIndexedVariable) {
+            return FilterExpression.FILTERED;
+        } else if (references == null || hasLoopingReference) {
+            return 10;
+        } else {
+            return references.size();
+        }
+    }
+
+    /**
+     * Remove dead references from the reference list of the variable; at the same time, check whether
+     * any of the variable references is in a loop, and return true if so. References are considered dead
+     * if they do not have this Binding as an ancestor in the expression tree; this typically occurs because
+     * they are in a part of the tree that has been rewritten or removed.
+     *
+     * @return true if any of the references in the reference list occurs within a looping construct.
+     */
+
+    protected boolean removeDeadReferences() {
+        boolean inLoop = false;
+        if (references != null) {
+            for (int i = references.size() - 1; i >= 0; i--) {
+                // Check whether the reference still has this Assignation as an ancestor in the expression tree
+                boolean found = false;
+                inLoop |= references.get(i).isInLoop();
+                Expression parent = references.get(i).getParentExpression();
+                while (parent != null) {
+                    if (parent == this) {
+                        found = true;
+                        break;
+                    } else {
+                        parent = parent.getParentExpression();
+                    }
+                }
+                if (!found) {
+                    references.remove(i);
+                }
+            }
+        }
+        return inLoop;
+    }
+
+    /**
+     * This method recomputes the reference list by scanning the subtree rooted at this variable binding.
+     * If the scan proves expensive, or if more than two references are found, or if a looping reference is found,
+     * then the scan is abandoned. On completion the reference list for the variable is either accurate, or
+     * is null.
+     */
+
+    protected void verifyReferences() {
+        rebuildReferenceList(false);
+    }
+
+    /**
+     * Rebuild the reference list to guide subsequent optimization.
+     *
+     * @param force if true, the search is exhaustive. If false, the search (and therefore the attempt to
+     *              inline variables) is abandoned after a while to avoid excessive cost. This happens when
+     *              a stylesheet contains very large templates or functions.
+     */
+
+    public void rebuildReferenceList(boolean force) {
+        int[] results = new int[]{0, force ? Integer.MAX_VALUE : 100};
+        List<VariableReference> references = new ArrayList<VariableReference>();
+        countReferences(this, getAction(), references, results);
+        this.references = results[1] <= 0 ? null : references;
+    }
+
+    private static void countReferences(Binding binding, Expression exp, List<VariableReference> references, int[] results) {
+        // results[0] = nominal reference count
+        // results[1] = quota nodes visited
+        if (exp instanceof LocalVariableReference) {
+            LocalVariableReference ref = (LocalVariableReference) exp;
+            if (ref.getBinding() == binding) {
+                results[0] += ref.isInLoop() ? 10 : 1;
+                references.add((LocalVariableReference) exp);
+            }
+        } else if (--results[1] <= 0 || results[0] > 5) {
+            // abandon the search
+            results[0] = 100;
+            results[1] = 0;
+        } else {
+            for (Operand o : exp.operands()) {
+                countReferences(binding, o.getChildExpression(), references, results);
+            }
+        }
+
     }
 
     /**
@@ -441,7 +537,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
      */
 
     public boolean isIndexedVariable() {
-        return refCount == FilterExpression.FILTERED;
+        return isIndexedVariable;
     }
 
     /**
@@ -473,7 +569,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
      */
 
     public void setIndexedVariable() {
-        refCount = FilterExpression.FILTERED;
+        isIndexedVariable = true;
     }
 }
 

@@ -95,9 +95,9 @@ public class ForExpression extends Assignation {
                     getSequence(), sequenceType, role, visitor.getStaticContext()));
             ItemType actualItemType = getSequence().getItemType();
             refineTypeInformation(actualItemType,
-                    getRangeVariableCardinality(),
-                    null,
-                    getSequence().getSpecialProperties(), visitor, this);
+                                  getRangeVariableCardinality(),
+                                  null,
+                                  getSequence().getSpecialProperties(), this);
         }
 
         if (Literal.isEmptySequence(getAction())) {

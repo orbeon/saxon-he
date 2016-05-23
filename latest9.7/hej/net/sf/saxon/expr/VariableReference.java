@@ -40,7 +40,7 @@ public abstract class VariableReference extends Expression implements BindingRef
     protected GroundedValue constantValue = null;
     private StructuredQName variableName = null;
     private boolean flattened = false;
-    private boolean inLoop = true;
+    private boolean inLoop = false;
     private boolean filtered = false;
 
     /**
@@ -212,14 +212,14 @@ public abstract class VariableReference extends Expression implements BindingRef
 //        }
 
 
-        inLoop = ExpressionTool.isLoopingReference(this, binding);
 //  following code removed because it causes error181 to blow the stack - need to check for circularities well
 //            if (binding instanceof GlobalVariable) {
 //                ((GlobalVariable)binding).typeCheck(visitor, AnyItemType.getInstance());
 //            }
 
         if (binding != null) {
-            binding.addReference(inLoop);
+            inLoop = ExpressionTool.isLoopingReference(this, binding);
+            binding.addReference(this, inLoop);
         }
 
         return this;
@@ -232,6 +232,13 @@ public abstract class VariableReference extends Expression implements BindingRef
 
     /*@NotNull*/
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
+        if (binding instanceof LetExpression &&
+                ((LetExpression)binding).getSequence() instanceof Literal &&
+                !((LetExpression) binding).isIndexedVariable) {
+            Expression val = ((LetExpression) binding).getSequence();
+            binding = null;
+            return val.copy();
+        }
         if (constantValue != null) {
             binding = null;
             return Literal.makeLiteral(constantValue);

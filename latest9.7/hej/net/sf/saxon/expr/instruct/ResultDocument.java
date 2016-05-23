@@ -259,6 +259,23 @@ public class ResultDocument extends Instruction
         return StaticProperty.HAS_SIDE_EFFECTS;
     }
 
+    @Override
+    public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
+        optimizeChildren(visitor, contextInfo);
+        if (isAsynchronous()) {
+            Expression e = getParentExpression();
+            while (e != null) {
+                if (e instanceof LetExpression && ExpressionTool.dependsOnVariable(
+                        getContentExpression(), new Binding[]{(LetExpression) e})) {
+                    ((LetExpression) e).setNeedsEagerEvaluation(true);
+                }
+                e = e.getParentExpression();
+            }
+
+        }
+        return this;
+    }
+
     /**
      * Copy an expression. This makes a deep copy.
      *

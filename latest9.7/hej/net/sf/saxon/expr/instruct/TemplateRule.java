@@ -13,10 +13,8 @@ import com.saxonica.ee.stream.PostureAndSweep;
 import com.saxonica.ee.stream.TemplateInversion;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.om.StandardNames;
-import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.pattern.Pattern;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trace.LocationKind;
@@ -308,41 +306,6 @@ public class TemplateRule implements RuleTarget, Location {
                 gatherLocalParams(o.getChildExpression(), result);
             }
         }
-    }
-
-    /**
-     * Get the local parameter with a given parameter id
-     *
-     * @param id the parameter id
-     * @return the local parameter with this id if found, otherwise null
-     */
-
-    /*@Nullable*/
-    public LocalParam getLocalParam(StructuredQName id) {
-        for (Operand o : body.operands()) {
-            Expression child = o.getChildExpression();
-            if (child instanceof LocalParamSetter && ((LocalParamSetter) child).getBinding().getVariableQName().equals(id)) {
-                return ((LocalParamSetter) child).getBinding();
-            } else if (ExpressionTool.containsLocalParam(child)) {
-                LocalParam lp = getLocalParam(child, id);
-                if (lp != null) {
-                    return lp;
-                }
-            }
-        }
-        return null;
-    }
-
-    private static LocalParam getLocalParam(Expression exp, StructuredQName id) {
-        for (Operand o : exp.operands()) {
-            Expression child = o.getChildExpression();
-            if (child instanceof LocalParamSetter && ((LocalParamSetter) child).getBinding().getVariableQName().equals(id)) {
-                return ((LocalParamSetter) child).getBinding();
-            } else if (ExpressionTool.containsLocalParam(child)) {
-                return getLocalParam(child, id);
-            }
-        }
-        return null;
     }
 
     /**

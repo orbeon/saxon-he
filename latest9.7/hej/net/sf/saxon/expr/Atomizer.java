@@ -148,7 +148,7 @@ public final class Atomizer extends UnaryExpression {
         // If the configuration allows typed data, check whether the content type of these particular nodes is untyped
         final TypeHierarchy th = getConfiguration().getTypeHierarchy();
         computeSingleValued(th);
-        ExpressionTool.resetStaticProperties(this);
+        resetLocalStaticProperties();
         ItemType operandType = getOperandItemType();
         if (th.isSubType(operandType, BuiltInAtomicType.ANY_ATOMIC)) {
             return getBaseExpression();

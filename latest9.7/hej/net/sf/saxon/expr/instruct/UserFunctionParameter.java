@@ -8,6 +8,7 @@
 package net.sf.saxon.expr.instruct;
 
 import net.sf.saxon.expr.LocalBinding;
+import net.sf.saxon.expr.VariableReference;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
@@ -128,7 +129,7 @@ public class UserFunctionParameter implements LocalBinding {
         return variableQName;
     }
 
-    public void addReference(boolean isLoopingReference) {
+    public void addReference(VariableReference ref, boolean isLoopingReference) {
 
     }
 

@@ -350,6 +350,7 @@ public class LiteralResultElement extends StyleElement {
             content = Literal.makeEmptySequence();
         }
         inst.setContentExpression(content);
+        inst.setRetainedStaticContext(makeRetainedStaticContext());
         return inst;
     }
 

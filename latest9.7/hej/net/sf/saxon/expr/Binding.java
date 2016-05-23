@@ -82,11 +82,12 @@ public interface Binding {
     /**
      * Register a variable reference that refers to the variable bound in this expression
      *
+     * @param ref the variable reference
      * @param isLoopingReference - true if the reference occurs within a loop, such as the predicate
      *                           of a filter expression
      */
 
-    void addReference(boolean isLoopingReference);
+    void addReference(VariableReference ref, boolean isLoopingReference);
 
 }
 

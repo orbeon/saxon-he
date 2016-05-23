@@ -7,7 +7,9 @@
 
 package net.sf.saxon.expr.parser;
 
+import com.saxonica.ee.stream.StreamInstr;
 import com.saxonica.xslt3.instruct.IterateInstr;
+import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
 import net.sf.saxon.event.SequenceOutputter;
 import net.sf.saxon.event.SequenceReceiver;
@@ -25,6 +27,7 @@ import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.StandardLogger;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.Pattern;
+import net.sf.saxon.style.Compilation;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.SymbolicName;
 import net.sf.saxon.trans.XPathException;
@@ -923,24 +926,6 @@ public class ExpressionTool {
                         return false;
                     }
                 });
-        //        if (e instanceof VariableReference) {
-//            for (Binding binding : bindingList) {
-//                if (((VariableReference) e).getBinding() == binding) {
-//                    return true;
-//                }
-//            }
-//            return false;
-////        } else if ((e.getDependencies() & StaticProperty.DEPENDS_ON_LOCAL_VARIABLES) == 0) {
-////            return false;
-//        } else {
-//            for (Iterator children = e.iterateSubExpressions(); children.hasNext(); ) {
-//                Expression child = (Expression) children.next();
-//                if (dependsOnVariable(child, bindingList)) {
-//                    return true;
-//                }
-//            }
-//            return false;
-//        }
     }
 
     /**
@@ -1072,6 +1057,51 @@ public class ExpressionTool {
 
 
     /**
+     * Optimize the implementation of a component such as a function, template, or global variable
+     *
+     * @param body           the expression forming the body of the component
+     * @param compilation    the current compilation
+     * @param visitor        the expression visitor
+     * @param cit            information about the context item for evaluation of the component body
+     * @param extractGlobals true if constant expressions are to be extracted as global variables
+     * @return the optimized expression body
+     * @throws XPathException if anything goes wrong
+     */
+
+    public static Expression optimizeComponentBody(
+            Expression body, final Compilation compilation, ExpressionVisitor visitor, ContextItemStaticInfo cit, boolean extractGlobals)
+            throws XPathException {
+        Configuration config = visitor.getConfiguration();
+        Optimizer opt = config.obtainOptimizer();
+        if (opt.getOptimizationLevel() != Optimizer.NO_OPTIMIZATION && !config.isCompileWithTracing()) {
+            ExpressionTool.resetPropertiesWithinSubtree(body);
+            body = body.optimize(visitor, cit);
+            if (extractGlobals && compilation != null) {
+                Expression exp2 = opt.promoteExpressionsToGlobal(body, compilation.getPrincipalStylesheetModule(), visitor);
+                if (exp2 != null) {
+                    // Try another optimization pass: extracting global variables can identify things that are indexable
+                    ExpressionTool.resetPropertiesWithinSubtree(exp2);
+                    body = exp2.optimize(visitor, cit);
+                }
+            }
+        }
+        //#if EE==true
+        if (compilation != null) {
+            ExpressionTool.processExpressionTree(body, null, new ExpressionAction() {
+                public boolean process(Expression expression, Object result) throws XPathException {
+                    if (expression instanceof StreamInstr) {
+                        ((StreamInstr) expression).prepareForStreaming(compilation.getPackageData());
+                    }
+                    return false;
+                }
+            });
+        }
+        //#endif
+        body.restoreParentPointers();
+        return body;
+    }
+
+    /**
      * Reset cached static properties within a subtree, meaning that they have to be
      * recalulated next time they are required
      *
@@ -1080,9 +1110,18 @@ public class ExpressionTool {
 
     public static void resetPropertiesWithinSubtree(Expression exp) {
         exp.resetLocalStaticProperties();
+        if (exp instanceof LocalVariableReference) {
+            LocalVariableReference ref = (LocalVariableReference)exp;
+            Binding binding = ref.getBinding();
+            if (binding instanceof Assignation) {
+                binding.addReference(ref, ref.isInLoop());
+            }
+        }
         for (Operand o : exp.operands()) {
             resetPropertiesWithinSubtree(o.getChildExpression());
+            o.getChildExpression().setParentExpression(exp);
         }
+
     }
 
     /**
@@ -1100,25 +1139,6 @@ public class ExpressionTool {
             ContextItemExpression cie = new ContextItemExpression();
             copyLocationInfo(exp, cie);
             return cie;
-//        } else {
-//            while (callsFunction(exp, Current.FN_CURRENT, false)) {
-//                if (callsFunction(exp, Current.FN_CURRENT, true)) {
-//                    // replace trivial (same-focus) calls to current by a simple "."
-//                    replaceTrivialCallsToCurrent(exp);
-//                } else {
-//                    PromotionOffer offer = new PromotionOffer(exp.getConfiguration().obtainOptimizer());
-//                    offer.action = PromotionOffer.SUBEXPRESSION_USING_CURRENT;
-//                    offer.containingExpression = exp;
-//                    Expression e2 = exp.doPromotion(exp, offer);
-//                    if (offer.accepted) {
-//                        exp = offer.containingExpression;
-//                    } else {
-//                        return exp;
-//                    }
-//                }
-//            }
-//        }
-//        return exp;
         } else {
             if (callsFunction(exp, Current.FN_CURRENT, true)) {
                 // replace trivial (same-focus) calls to current by a simple "."
@@ -1141,6 +1161,31 @@ public class ExpressionTool {
     }
 
     /**
+     * Process every node on a subtree of the expression tree using a supplied action.
+     *
+     * @param root   the root of the subtree to be processed
+     * @param result an arbitrary object that is passed to each action call and that can be
+     *               updated to gather results of the processing
+     * @param action an action to be performed on each node of the expression tree. Processing
+     *               stops if any action returns the value true
+     * @return true if any call on the action operand returned true
+     * @throws XPathException
+     */
+
+    public static boolean processExpressionTree(Expression root, Object result, ExpressionAction action) throws XPathException {
+        boolean done = action.process(root, result);
+        if (!done) {
+            for (Operand o : root.operands()) {
+                done = processExpressionTree(o.getChildExpression(), result, action);
+                if (done) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Get a list of all references to a particular variable within a subtree
      *
      * @param exp     the expression at the root of the subtree
@@ -1158,6 +1203,29 @@ public class ExpressionTool {
             }
         }
     }
+
+//    /**
+//     * Process all references to a particular variable within a subtree
+//     *
+//     * @param exp     the expression at the root of the subtree
+//     * @param binding the variable binding whose references are sought
+//     * @param action  the action to be applied to all references to this variable
+//     * @return true if processing finished early at the request of an action invocation; false if processing ran to completion
+//     */
+//
+//    public static boolean processVariableReferences(Expression exp, Binding binding, ExpressionAction<VariableReference> action) throws XPathException {
+//        if (exp instanceof VariableReference && ((VariableReference) exp).getBinding() == binding) {
+//            return action.process((VariableReference) exp);
+//        } else {
+//            for (Operand o : exp.operands()) {
+//                boolean done = processVariableReferences(o.getChildExpression(), binding, action);
+//                if (done) {
+//                    return true;
+//                }
+//            }
+//            return false;
+//        }
+//    }
 
     /**
      * Callback for selecting expressions in the tree
@@ -1476,7 +1544,11 @@ public class ExpressionTool {
      */
 
     public static boolean inlineVariableReferences(Expression expr, Binding binding, Expression replacement) {
-        if (expr instanceof TryCatch) {
+        return inlineVariableReferencesInternal(expr, binding, replacement);
+    }
+
+    public static boolean inlineVariableReferencesInternal(Expression expr, Binding binding, Expression replacement) {
+        if (expr instanceof TryCatch && !(replacement instanceof Literal)) {
             // Don't inline variable references within a try/catch, as this will lead to errors in the
             // variable's initializer being incorrectly caught by the catch clause. See XSLT3 test try-029.
             return false;
@@ -1499,7 +1571,7 @@ public class ExpressionTool {
                     o.setChildExpression(copy);
                     found = true;
                 } else {
-                    found |= inlineVariableReferences(child, binding, replacement);
+                    found |= inlineVariableReferencesInternal(child, binding, replacement);
                 }
             }
             if (found) {
@@ -1552,6 +1624,7 @@ public class ExpressionTool {
                 LocalVariableReference var = new LocalVariableReference(binding);
                 ExpressionTool.copyLocationInfo(child, var);
                 o.setChildExpression(var);
+                binding.addReference(var, true);
                 found = true;
             } else {
                 found = replaceCallsToCurrent(child, binding);

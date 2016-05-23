@@ -14,7 +14,10 @@ import com.saxonica.ee.stream.adjunct.LetExpressionAdjunct;
 import com.saxonica.ee.stream.adjunct.LetExpressionAdjunctB;
 import com.saxonica.ee.stream.adjunct.StreamingAdjunct;
 import net.sf.saxon.evpull.EventIterator;
-import net.sf.saxon.expr.instruct.*;
+import net.sf.saxon.expr.instruct.DocumentInstr;
+import net.sf.saxon.expr.instruct.GlobalVariable;
+import net.sf.saxon.expr.instruct.TailCall;
+import net.sf.saxon.expr.instruct.TailCallReturner;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -25,9 +28,6 @@ import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.SequenceType;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 /**
  * A LetExpression represents the XQuery construct let $x := expr return expr. It is used
@@ -37,6 +37,7 @@ import java.util.List;
 public class LetExpression extends Assignation implements TailCallReturner {
 
     private int evaluationMode = ExpressionTool.UNDECIDED;
+    private boolean needsEagerEvaluation = false;
 
     /**
      * Create a LetExpression
@@ -58,42 +59,58 @@ public class LetExpression extends Assignation implements TailCallReturner {
         return "let";
     }
 
-    private void recomputeRefCount() {
-        if (refCount != FilterExpression.FILTERED) {
-            setRefCount(countReferences(this, this, false));
-        }
+    public void setNeedsEagerEvaluation(boolean req) {
+        this.needsEagerEvaluation = req;
     }
 
-    private static int countReferences(LetExpression let, Expression child, boolean inLoop) {
-        int total = 0;
-        for (Operand o : child.operands()) {
-            Expression g = o.getChildExpression();
-            boolean repeated = inLoop || o.isEvaluatedRepeatedly();
-            if (!repeated && !o.hasSameFocus() && ExpressionTool.dependsOnFocus(let.getSequence())) {
-                repeated = true;
-            }
-            if (g instanceof LocalVariableReference && ((LocalVariableReference)g).getBinding() == let) {
-                total += repeated ? 10 : 1;
-            } else {
-                total += countReferences(let, g, repeated);
-            }
-            if (total >= 10) {
-                break;
-            }
-        }
-        return total;
-    }
-
-    public void setRefCount(int refCount) {
-        this.refCount = refCount;
-    }
+//    private void recomputeRefCount() {
+//        if (refCount != FilterExpression.FILTERED) {
+//            setRefCount(countReferences(this, this, false));
+//        }
+//    }
+//
+//    private static int countReferences(LetExpression let, Expression child, boolean inLoop) {
+//        List<Integer> visits = new ArrayList<Integer>();
+//        visits.add(0);
+//        return countReferencesInternal(let, child, inLoop, visits);
+//    }
+//
+//    private static int countReferencesInternal(LetExpression let, Expression child, boolean inLoop, List<Integer> visits) {
+//        int total = 0;
+//        for (Operand o : child.operands()) {
+//            Expression g = o.getChildExpression();
+//            boolean repeated = inLoop || o.isEvaluatedRepeatedly();
+//            if (!repeated && !o.hasSameFocus() && ExpressionTool.dependsOnFocus(let.getSequence())) {
+//                repeated = true;
+//            }
+//            if (g instanceof LocalVariableReference && ((LocalVariableReference) g).getBinding() == let) {
+//                total += repeated ? 10 : 1;
+//            } else {
+//                int v = visits.get(0) + 1;
+//                if (v > 100) {
+//                    return 17; // enough; no point wasting more time on this
+//                }
+//                visits.set(0, v);
+//                total += countReferencesInternal(let, g, repeated, visits);
+//            }
+//            if (total >= 3) {
+//                break;
+//            }
+//        }
+//        return total;
+//    }
+//
+//    public void setRefCount(int refCount) {
+//        this.refCount = refCount;
+//    }
 
     @Override
     public void resetLocalStaticProperties() {
         super.resetLocalStaticProperties();
-        if (refCount != FilterExpression.FILTERED) {
-            setRefCount(-1);
-        }
+        references = null;
+//        if (refCount != FilterExpression.FILTERED) {
+//            setRefCount(-1);
+//        }
     }
 
     /**
@@ -117,18 +134,15 @@ public class LetExpression extends Assignation implements TailCallReturner {
         final ItemType actualItemType = getSequence().getItemType();
 
         refineTypeInformation(actualItemType,
-                getSequence().getCardinality(),
-                getSequence() instanceof Literal ? ((Literal) getSequence()).getValue() : null,
-                getSequence().getSpecialProperties(), visitor, this);
+                              getSequence().getCardinality(),
+                              getSequence() instanceof Literal ? ((Literal) getSequence()).getValue() : null,
+                              getSequence().getSpecialProperties(), this);
 
-        boolean indexed = refCount == FilterExpression.FILTERED;
-        refCount = 0;
+//        boolean indexed = refCount == FilterExpression.FILTERED;
+//        refCount = 0;
         getActionOp().typeCheck(visitor, contextInfo);
-        if (indexed) {
-            refCount = FilterExpression.FILTERED;
-        }
-//        if (refCount == 0) {
-//            System.err.println("refCount == 0");
+//        if (indexed) {
+//            refCount = FilterExpression.FILTERED;
 //        }
         return this;
     }
@@ -186,7 +200,6 @@ public class LetExpression extends Assignation implements TailCallReturner {
 
     /*@NotNull*/
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
-
         Optimizer opt = getConfiguration().obtainOptimizer();
 
         // if this is a construct of the form "let $j := EXP return $j" replace it with EXP
@@ -201,30 +214,57 @@ public class LetExpression extends Assignation implements TailCallReturner {
             return getSequence();
         }
 
-        /**
-         * Unless this has already been done, find and count the references to this variable
-         */
+        if (getSequence() instanceof Literal) {
+            // inline the variable: replace all references by the constant value
+            // This relies on the fact that optimizing the action part will cause any references to be inlined
+            opt.trace("Inlined constant variable " + getVariableName(), getSequence());
+            return getAction().optimize(visitor, contextItemType);
+        }
 
         // if this is an XSLT construct of the form <xsl:variable>text</xsl:variable>, try to replace
         // it by <xsl:variable select=""/>. This can be done if all the references to the variable use
         // its value as a string (rather than, say, as a node or as a boolean)
         if (getSequence() instanceof DocumentInstr && ((DocumentInstr) getSequence()).isTextOnly()) {
+            // Ensure the list of references is accurate
+            verifyReferences();
+            // Check whether all uses of the variable are atomized or stringified
             if (allReferencesAreFlattened()) {
                 Expression stringValueExpression = ((DocumentInstr) getSequence()).getStringValueExpression();
                 stringValueExpression = stringValueExpression.typeCheck(visitor, contextItemType);
                 setSequence(stringValueExpression);
                 requiredType = SequenceType.SINGLE_UNTYPED_ATOMIC;
                 adoptChildExpression(getSequence());
-                refineTypeInformation(requiredType.getPrimaryType(), requiredType.getCardinality(), null, 0, visitor, this);
+                refineTypeInformation(requiredType.getPrimaryType(), requiredType.getCardinality(), null, 0, this);
             }
         }
 
-        if (refCount < 2) {
-            recomputeRefCount();
+        // Removal of redundant variables, and inlining of variables that are only used once, depends on accurate
+        // knowledge of all references to the variable. The problem is that obtaining this knowledge can be expensive:
+        // see bug 2707. On the other hand, failing to do these optimizations is not fatal. So the general approach
+        // is that we limit the time spent discovering the information, and we don't do the optimization unless
+        // it is safe.
+
+        // Typically on entry to optimize(), the typeCheck() method has already been called, and this has set up
+        // a list of references. First we examine this list of references and remove any that are "dead", that is
+        // they no longer have this LetExpression as an ancestor in the expression tree. This function also checks
+        // whether any of these references are known to be in a loop, and returns true if so.
+
+        hasLoopingReference |= removeDeadReferences();
+
+        // If there are less than two references, and none is in a loop, then there is potential
+        // for optimization. But we now need to be absolutely sure that we have an accurate list
+        // of references.
+
+        boolean considerRemoval = ((references != null && references.size() < 2) || getSequence() instanceof VariableReference) &&
+                !isIndexedVariable && !hasLoopingReference && !needsEagerEvaluation;
+
+        if (considerRemoval) {
+            verifyReferences();
+            // At this point the list of references is either accurate, or null
+            considerRemoval = references != null;
         }
 
-        // refCount is normally initialized during the typeCheck() phase
-        if (refCount == 0) {
+        if (considerRemoval && references.isEmpty()) {
             // variable is not used - no need to evaluate it
             getActionOp().optimize(visitor, contextItemType);
             opt.trace("Eliminated unused variable " + getVariableName(), getAction());
@@ -236,40 +276,30 @@ public class LetExpression extends Assignation implements TailCallReturner {
         // can be evaluated in streaming mode, but an arbitrary expression using copy() inline can't (e.g.
         // if it appears in a path expression or as an operand of an arithmetic expression)
 
-        if (refCount == 1 && ExpressionTool.dependsOnFocus(getSequence())) {
+        if (considerRemoval && references.size() == 1 && ExpressionTool.dependsOnFocus(getSequence())) {
             if (visitor.isOptimizeForStreaming()) {
-                refCount = 5;
+                considerRemoval = false;
             }
         }
 
         // Don't inline variables whose initializer might contain a call to xsl:result-document
-        if (refCount == 1 && ExpressionTool.changesXsltContext(getSequence())) {
-            refCount = 5;
+        if (considerRemoval && references.size() == 1 && ExpressionTool.changesXsltContext(getSequence())) {
+            considerRemoval = false;
         }
 
-        if (refCount == 1 || getSequence() instanceof Literal) {
-            // Either there's only one reference, and it's not in a loop.
-            // Or the variable is bound to a constant value.
-            // In these two cases we can inline the reference.
-            // That is, we replace "let $x := SEQ return f($x)" by "f(SEQ)".
-            // Note, we rely on the fact that any context-changing expression is treated as a loop,
-            // and generates a refCount greater than one.
-            boolean done = replaceVariable(getSequence());
-            if (done) {
-                recomputeRefCount();
-                if (refCount == 0) {
-                    getActionOp().typeCheck(visitor, contextItemType);
-                    getActionOp().optimize(visitor, contextItemType);
-                    opt.trace("Inlined local variable " + getVariableName(), getAction());
-                    return getAction();
-                }
-            }
+        if (considerRemoval && (references.size() == 1 || getSequence() instanceof Literal || getSequence() instanceof VariableReference)) {
+            inlineReferences();
+            references = null;
+            return getAction().optimize(visitor, contextItemType);
         }
 
         int tries = 0;
         while (tries++ < 5) {
             Expression seq0 = getSequence();
             getSequenceOp().optimize(visitor, contextItemType);
+            if (getSequence() instanceof Literal && !isIndexedVariable) {
+                return getAction().optimize(visitor, contextItemType);
+            }
             if (seq0 == getSequence()) {
                 break;
             }
@@ -282,17 +312,18 @@ public class LetExpression extends Assignation implements TailCallReturner {
             if (act0 == getAction()) {
                 break;
             }
-            if (refCount < 2) {
-                recomputeRefCount();
-            }
-            if (refCount < 2) {
-                return optimize(visitor, contextItemType);
+            if (!isIndexedVariable) {
+                verifyReferences();
+                if (references != null && references.size() < 2) {
+                    // We may have removed references to the variable; try again at inlining.
+                    return optimize(visitor, contextItemType);
+                }
             }
         }
 
         // Don't use lazy evaluation for a variable that is referenced inside the "try" part of a contained try catch (XSLT3 test try-031)
 
-        if (requiresEagerEvaluation(getAction())) {
+        if (needsEagerEvaluation) {
             setEvaluationMode(ExpressionTool.eagerEvaluationMode(getSequence()));
         } else if (isIndexedVariable()) {
             setEvaluationMode(ExpressionTool.MAKE_CLOSURE);
@@ -302,41 +333,21 @@ public class LetExpression extends Assignation implements TailCallReturner {
         return this;
     }
 
-    /**
-     * Determine whether there is a reference to this variable inside the "try" part of a contained try/catch, or
-     * if there is a reference inside a multi-threaded for-each instruction or xsl:result-document instruction. In such
-     * cases eager evaluation is necessary to preserve error semantics or to prevent contention arising during simultaneous
-     * evaluation in multiple threads
-     * @return true if eager evaluation is needed because there is a reference to the variable within a "sensitive"
-     * instruction.
-     */
-
-    private boolean requiresEagerEvaluation(Expression child) {
-        if (child instanceof TryCatch) {
-            Expression t = ((TryCatch) child).getTryExpr();
-            if (ExpressionTool.dependsOnVariable(t, new Binding[]{this})) {
-                return true;
-            }
-            for (TryCatch.CatchClause clause : ((TryCatch) child).getCatchClauses()) {
-                Expression c = clause.catchOp.getChildExpression();
-                if (requiresEagerEvaluation(c)) {
-                    return true;
+    private void inlineReferences() {
+        // Note that the list of references might include references that are no longer reachable on the tree.
+        // We therefore take no action if (a) the parent of the reference is null, or (b) the reference is
+        // not found among the children of its parent.
+        for (VariableReference ref : references) {
+            Expression parent = ref.getParentExpression();
+            if (parent != null) {
+                for (Operand o : parent.operands()) {
+                    if (o.getChildExpression() == ref) {
+                        o.setChildExpression(getSequence().copy());
+                        break;
+                    }
                 }
+                ExpressionTool.resetStaticProperties(parent);
             }
-            return false;
-        } else if (child instanceof ForEach && ((ForEach)child).getThreads() != null) {
-            Expression body = ((ForEach)child).getAction();
-            return ExpressionTool.dependsOnVariable(body, new Binding[]{this});
-        } else if (child instanceof ResultDocument && ((ResultDocument) child).isAsynchronous()) {
-            Expression body = ((ResultDocument) child).getContentExpression();
-            return ExpressionTool.dependsOnVariable(body, new Binding[]{this});
-        } else {
-            for (Operand o : child.operands()) {
-                if (requiresEagerEvaluation(o.getChildExpression())) {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 
@@ -363,25 +374,16 @@ public class LetExpression extends Assignation implements TailCallReturner {
      *         false otherwise. The value false may indicate "not known".
      */
 
-    private boolean allReferencesAreFlattened() {
-        List references = new ArrayList();
-        ExpressionTool.gatherVariableReferences(getAction(), this, references);
-        for (int i = references.size() - 1; i >= 0; i--) {
-            BindingReference bref = (BindingReference) references.get(i);
-            if (bref instanceof VariableReference) {
-                VariableReference ref = (VariableReference) bref;
-                if (ref.isFlattened()) {
-                    // OK, it's a string context
-                } else {
+    private boolean allReferencesAreFlattened() throws XPathException {
+        if (references != null) {
+            for (VariableReference ref : references) {
+                if (!ref.isFlattened()) {
                     return false;
                 }
-
-            } else {
-                // it must be saxon:assign
-                return false;
             }
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -434,7 +436,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      */
     @Override
     public StreamingAdjunct getStreamingAdjunct() {
-        if (getPostureAndSweepIfKnown() != null && getAction().getSweep() == Sweep.CONSUMING) {
+        if (getAction().getPostureAndSweepIfKnown() != null && getAction().getSweep() == Sweep.CONSUMING) {
             return new LetExpressionAdjunctB();
         } else {
             return new LetExpressionAdjunct();
@@ -511,7 +513,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
         }
         int savedOutputState = context.getTemporaryOutputState();
         context.setTemporaryOutputState(StandardNames.XSL_VARIABLE);
-        Sequence result = ExpressionTool.evaluate(getSequence(), evaluationMode, context, refCount);
+        Sequence result = ExpressionTool.evaluate(getSequence(), evaluationMode, context, getNominalReferenceCount());
         context.setTemporaryOutputState(savedOutputState);
         return result;
     }
@@ -641,7 +643,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
                 // if we've extracted a global variable, it may need to be marked indexable
                 if (seq2 instanceof VariableReference) {
                     Binding b = ((VariableReference) seq2).getBinding();
-                    if (b instanceof GlobalVariable && refCount == FilterExpression.FILTERED) {
+                    if (b instanceof GlobalVariable && isIndexedVariable) {
                         ((GlobalVariable) b).setIndexedVariable();
                     }
                 }
@@ -661,23 +663,14 @@ public class LetExpression extends Assignation implements TailCallReturner {
             // if this results in the expression (let $x := $y return Z), replace all references to
             // to $x by references to $y in the Z part, and eliminate this LetExpression by
             // returning the action part.
-            if (getSequence() instanceof VariableReference) {
-                Binding b = ((VariableReference) getSequence()).getBinding();
-                if (b != null && !b.isAssignable()) {
-                    replaceVariable(getSequence());
-                    // defensive programming. If someone in the tree fails to pass this request down,
-                    // there will still be a reference to the variable on the tree, which will cause
-                    // a crash later. So we'll check that the variable really has gone from the
-                    // tree before deleting the variable binding. Note that this happens by design
-                    // when the variable reference is inside a try/catch.
-                    if (ExpressionTool.dependsOnVariable(getAction(), new Binding[]{this})) {
-                        offer.getOptimizer().trace("Failed to eliminate redundant variable $" + getVariableName(), this);
-                    } else {
-                        return getAction();
-                    }
+            if (getSequence() instanceof VariableReference && references != null && !needsEagerEvaluation) {
+                verifyReferences();
+                if (references != null) {
+                    inlineReferences();
+                    return getAction();
                 }
             }
-
+            references = null;
             return this;
         }
     }
@@ -693,7 +686,9 @@ public class LetExpression extends Assignation implements TailCallReturner {
     public Expression copy() {
         LetExpression let = new LetExpression();
         ExpressionTool.copyLocationInfo(this, let);
-        let.refCount = refCount;
+        let.isIndexedVariable = isIndexedVariable;
+        let.hasLoopingReference = hasLoopingReference;
+        let.setNeedsEagerEvaluation(needsEagerEvaluation);
         let.setVariableQName(variableName);
         let.setRequiredType(requiredType);
         let.setSequence(getSequence().copy());

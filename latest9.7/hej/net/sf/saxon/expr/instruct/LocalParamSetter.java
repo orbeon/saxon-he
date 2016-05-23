@@ -100,7 +100,7 @@ public final class LocalParamSetter extends Instruction {
      */
     @Override
     public int computeSpecialProperties() {
-        return 0;
+        return StaticProperty.HAS_SIDE_EFFECTS;
     }
 
     /**

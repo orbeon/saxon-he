@@ -791,19 +791,12 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
             // We've already done the typecheck of each XPath expression, but it's worth doing again at this
             // level because we have more information now.
             body = body.typeCheck(visitor, cit);
+            ExpressionTool.resetPropertiesWithinSubtree(body);
             boolean needCopy = false;
 
             if (getTemplateName() != null) {
-                Expression namedTemplateBody = body;
+                Expression namedTemplateBody = ExpressionTool.optimizeComponentBody(body, getCompilation(), visitor, cit, true);
                 needCopy = true;
-                if (opt.getOptimizationLevel() != Optimizer.NO_OPTIMIZATION && !getConfiguration().isCompileWithTracing()) {
-                    namedTemplateBody = namedTemplateBody.optimize(visitor, cit);
-                    Expression exp2 = opt.promoteExpressionsToGlobal(namedTemplateBody, getCompilation().getPrincipalStylesheetModule(), visitor);
-                    if (exp2 != null) {
-                        // Try another optimization pass: extracting global variables can identify things that are indexable
-                        namedTemplateBody = exp2.optimize(visitor, cit);
-                    }
-                }
                 compiledNamedTemplate.setBody(namedTemplateBody);
                 allocateLocalSlots(namedTemplateBody);
                 if (isExplaining()) {
@@ -816,22 +809,11 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
             }
             for (TemplateRule compiledTemplateRule : compiledTemplateRules.values()) {
                 Expression templateRuleBody = needCopy ? body.copy() : body;
-                // following code needed only for diagnostics
-                //templateRuleBody.verifyParentPointers();
-                if (opt.getOptimizationLevel() != Optimizer.NO_OPTIMIZATION || compiledTemplateRule.isDeclaredStreamable()) {
                 //#ifdefined STREAM
-                    cit.setContextPostureStriding();
+                visitor.setOptimizeForStreaming(compiledTemplateRule.isDeclaredStreamable());
+                cit.setContextPostureStriding();
                 //#endif
-                    visitor.setOptimizeForStreaming(compiledTemplateRule.isDeclaredStreamable());
-                    templateRuleBody = templateRuleBody.optimize(visitor, cit);
-                    Expression exp2 = opt.promoteExpressionsToGlobal(templateRuleBody, getCompilation().getPrincipalStylesheetModule(), visitor);
-                    if (exp2 != null) {
-                        // Try another optimization pass: extracting global variables can identify things that are indexable
-                        templateRuleBody = exp2.optimize(visitor, cit);
-                    }
-                }
-                // next line is needed for diagnostics only
-                //templateRuleBody.verifyParentPointers();
+                templateRuleBody = ExpressionTool.optimizeComponentBody(templateRuleBody, getCompilation(), visitor, cit, true);
                 compiledTemplateRule.setBody(templateRuleBody);
                 opt.checkStreamability(this, compiledTemplateRule);
                 allocateLocalSlots(templateRuleBody);
@@ -853,7 +835,6 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                         getLineNumber() + " in " + getSystemId() + ':');
                     templateRuleBody.explain(err);
                 }
-                templateRuleBody.restoreParentPointers();
             }
         } catch (XPathException e) {
             e.maybeSetLocation(this);

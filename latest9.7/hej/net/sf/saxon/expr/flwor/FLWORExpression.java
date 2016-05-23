@@ -767,7 +767,7 @@ public class FLWORExpression extends Expression {
                 letExpr.setSequence(letClause.getSequence());
                 letExpr.setVariableQName(letClause.getRangeVariable().getVariableQName());
                 letExpr.setRequiredType(letClause.getRangeVariable().getRequiredType());
-                letExpr.setRefCount(letClause.getRangeVariable().getNominalReferenceCount());
+                //letExpr.setRefCount(letClause.getRangeVariable().getNominalReferenceCount());
                 ExpressionTool.rebindVariableReferences(action, letClause.getRangeVariable(), letExpr);
                 action = letExpr;
 
@@ -777,6 +777,7 @@ public class FLWORExpression extends Expression {
             }
 
         }
+        action = action.typeCheck(visitor, contextItemType);
         action = action.optimize(visitor, contextItemType);
         return action;
     }

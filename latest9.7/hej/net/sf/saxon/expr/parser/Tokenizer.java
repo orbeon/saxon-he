@@ -395,7 +395,7 @@ public final class Tokenizer {
      * Peek ahead at the next token
      */
 
-    public int peekAhead(){
+    public int peekAhead() {
         return nextToken;
     }
 
@@ -482,7 +482,7 @@ public final class Tokenizer {
                     return;
                 case '}':
                     if (inputOffset < inputLength && input.charAt(inputOffset) == '`') {
-                        inputOffset ++;
+                        inputOffset++;
                         int j = inputOffset;
                         int newlines = 0;
                         while (true) {
@@ -498,7 +498,7 @@ public final class Tokenizer {
                                 incrementLineNumber(newlines);
                                 return;
                             } else if (input.charAt(j) == ']' && j + 2 < inputLength
-                                && input.charAt(j + 1) == '`' && input.charAt(j + 2) == '`') {
+                                    && input.charAt(j + 1) == '`' && input.charAt(j + 2) == '`') {
                                 nextToken = Token.STRING_TEMPLATE_FINAL;
                                 nextTokenValue = input.substring(inputOffset, j);
                                 inputOffset = j + 3;
@@ -811,8 +811,8 @@ public final class Tokenizer {
                                 inputOffset = j+2;
                                 incrementLineNumber(newlines);
                                 return;
-                            } else if (input.charAt(j) == ']' && j+2 < inputLength
-                                    && input.charAt(j+1) == '`' && input.charAt(j + 2) == '`') {
+                            } else if (input.charAt(j) == ']' && j + 2 < inputLength
+                                    && input.charAt(j + 1) == '`' && input.charAt(j + 2) == '`') {
                                 nextToken = Token.STRING_TEMPLATE_COMPLETE;
                                 nextTokenValue = input.substring(inputOffset, j);
                                 inputOffset = j+3;

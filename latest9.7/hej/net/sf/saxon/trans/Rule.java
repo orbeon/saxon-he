@@ -189,7 +189,7 @@ public class Rule {
             int e = out.endElement();
             if (s != e) {
                 throw new IllegalStateException(
-                        "Export tree unbalanced in template at line " +
+                        "exported expression tree unbalanced in template at line " +
                                 (template != null ?
                                         template.getLineNumber() + " of " + template.getSystemId() : ""));
             }

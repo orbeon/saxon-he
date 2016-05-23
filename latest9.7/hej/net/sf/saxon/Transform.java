@@ -615,7 +615,7 @@ public class Transform {
                     styleFileNames = new ArrayList<String>(1);
                     styleFileNames.add(styleFileName);
                     isURI = true;
-                } else{
+                } else {
                     styleFileNames = CommandLineOptions.buildStylesheetFileList(config, styleFileName);
                 }
                 List<Source> stylesheetSources = new ArrayList<Source>();

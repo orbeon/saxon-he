@@ -834,10 +834,11 @@ public class GlobalVariable extends ComponentCode<GlobalVariable>
     /**
      * Register a variable reference that refers to the variable bound in this expression
      *
+     * @param ref
      * @param isLoopingReference - true if the reference occurs within a loop, such as the predicate
      *                           of a filter expression
      */
-    public void addReference(boolean isLoopingReference) {
+    public void addReference(VariableReference ref, boolean isLoopingReference) {
         // No action
     }
 

@@ -332,7 +332,7 @@ public final class LocalParam implements LocalBinding, SourceLocator {
         throw new UnsupportedOperationException("GeneralVariable.copy()");
     }
 
-    public void addReference(boolean isLoopingReference) {
+    public void addReference(VariableReference ref, boolean isLoopingReference) {
 
     }
 

@@ -22,11 +22,24 @@ public class BinaryResource implements Resource {
     private File file = null;
     private InputStream inputStream = null;
 
+    /**
+     * ResourceFactory suitable for creating a BinaryResource
+     */
+
     public static final ResourceFactory FACTORY = new ResourceFactory() {
         public Resource makeResource(Configuration config, String resourceURI, String contentType, AbstractResourceCollection.InputDetails details) throws XPathException {
             return new BinaryResource(resourceURI, contentType, details.inputStream);
         }
     };
+
+    /**
+     * Create a binary resource
+     *
+     * @param href        the URI of the resource
+     * @param contentType the media type of the resource
+     * @param in          inputStream containing the binary content of the resource. Note that the InputStream
+     *                    is not consumed by this method, but is retained for use by the getItem() method.
+     */
 
     public BinaryResource(String href, String contentType, InputStream in) {
         this.contentType = contentType;
@@ -34,18 +47,29 @@ public class BinaryResource implements Resource {
         this.inputStream = in;
     }
 
+    /**
+     * Set the content of the resource as an array of bytes
+     *
+     * @param data the content of the resource
+     */
 
-    public void setData(byte [] data){
+    public void setData(byte[] data) {
         this.data = data;
     }
+
+    /**
+     * Get the URI of the resource
+     *
+     * @return the URI of the resource
+     */
 
     public String getResourceURI() {
         return href;
     }
 
-   private byte [] readBinaryFromConn(String href, URLConnection con) throws XPathException {
+    private byte[] readBinaryFromConn(String href, URLConnection con) throws XPathException {
         InputStream raw = null;
-       this.connection = con;
+        this.connection = con;
         try {
             raw = connection.getInputStream();
 
@@ -56,8 +80,9 @@ public class BinaryResource implements Resource {
             int offset = 0;
             while (offset < contentLength) {
                 bytesRead = in.read(data, offset, data.length - offset);
-                if (bytesRead == -1)
+                if (bytesRead == -1) {
                     break;
+                }
                 offset += bytesRead;
             }
             in.close();
@@ -71,8 +96,15 @@ public class BinaryResource implements Resource {
         }
     }
 
+    /**
+     * Utility method to construct an array of bytes from the content of an InputStream
+     * @param in the input stream. The method consumes the input stream but does not close it.
+     * @param path file name or URI used only for diagnostics
+     * @return byte array representing the content of the InputStream
+     * @throws XPathException
+     */
+
     public static byte[] readBinaryFromStream(InputStream in, String path) throws XPathException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
         int nRead;
@@ -80,14 +112,13 @@ public class BinaryResource implements Resource {
 
         try {
             while ((nRead = in.read(data, 0, data.length)) != -1) {
-              buffer.write(data, 0, nRead);
+                buffer.write(data, 0, nRead);
             }
-             buffer.flush();
+            buffer.flush();
             return buffer.toByteArray();
         } catch (IOException e) {
-            throw new XPathException("Failed to read: " + path +" " + e);
+            throw new XPathException("Failed to read: " + path + " " + e);
         }
-
 
 
     }
@@ -121,13 +152,13 @@ public class BinaryResource implements Resource {
         if (data != null) {
             return new Base64BinaryValue(data);
         }
-        if(file != null) {
+        if (file != null) {
             data = readBinary(file, href);
             return new Base64BinaryValue(data);
-        } else if(connection != null) {
-           data = readBinaryFromConn(href, connection);
+        } else if (connection != null) {
+            data = readBinaryFromConn(href, connection);
             return new Base64BinaryValue(data);
-        } else if(inputStream != null) {
+        } else if (inputStream != null) {
             data = readBinaryFromStream(inputStream, href);
             return new Base64BinaryValue(data);
         }

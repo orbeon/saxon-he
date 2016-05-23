@@ -411,25 +411,27 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
         Expression exp = compiledFunction.getBody();
         ExpressionTool.resetPropertiesWithinSubtree(exp);
         ExpressionVisitor visitor = makeExpressionVisitor();
-        Expression exp2 = exp;
-        Optimizer opt = getConfiguration().obtainOptimizer();
-        try {
-            if (opt.getOptimizationLevel() != Optimizer.NO_OPTIMIZATION) {
-                exp2 = exp.optimize(visitor, ContextItemStaticInfo.ABSENT);
-            }
+        Expression exp2 = exp.typeCheck(visitor, ContextItemStaticInfo.ABSENT);
 
-        } catch (XPathException err) {
-            err.maybeSetLocation(getLocation());
-            compileError(err);
-        }
-
-        // Try to extract new global variables from the body of the function
-        if (opt.getOptimizationLevel() != Optimizer.NO_OPTIMIZATION) {
-            Expression exp3 = opt.promoteExpressionsToGlobal(exp2, getCompilation().getPrincipalStylesheetModule(), visitor);
-            if (exp3 != null) {
-                exp2 = exp3.optimize(visitor, ContextItemStaticInfo.DEFAULT);
-            }
-        }
+        exp2 = ExpressionTool.optimizeComponentBody(exp2, getCompilation(), visitor, ContextItemStaticInfo.ABSENT, true);
+//        Optimizer opt = getConfiguration().obtainOptimizer();
+//        try {
+//            if (opt.getOptimizationLevel() != Optimizer.NO_OPTIMIZATION) {
+//                exp2 = exp.optimize(visitor, ContextItemStaticInfo.ABSENT);
+//            }
+//
+//        } catch (XPathException err) {
+//            err.maybeSetLocation(getLocation());
+//            compileError(err);
+//        }
+//
+//        // Try to extract new global variables from the body of the function
+//        if (opt.getOptimizationLevel() != Optimizer.NO_OPTIMIZATION) {
+//            Expression exp3 = opt.promoteExpressionsToGlobal(exp2, getCompilation().getPrincipalStylesheetModule(), visitor);
+//            if (exp3 != null) {
+//                exp2 = exp3.optimize(visitor, ContextItemStaticInfo.DEFAULT);
+//            }
+//        }
 
         // Add trace wrapper code if required
         exp2 = makeTraceInstruction(this, exp2);

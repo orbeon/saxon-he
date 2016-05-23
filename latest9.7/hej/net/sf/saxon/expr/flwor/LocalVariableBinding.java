@@ -9,6 +9,7 @@ package net.sf.saxon.expr.flwor;
 
 import net.sf.saxon.expr.FilterExpression;
 import net.sf.saxon.expr.LocalBinding;
+import net.sf.saxon.expr.VariableReference;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
@@ -108,11 +109,12 @@ public class LocalVariableBinding implements LocalBinding {
     /**
      * Register a variable reference that refers to the variable bound in this expression
      *
+     * @param ref
      * @param isLoopingReference - true if the reference occurs within a loop, such as the predicate
      *                           of a filter expression
      */
 
-    public void addReference(boolean isLoopingReference) {
+    public void addReference(VariableReference ref, boolean isLoopingReference) {
         if (refCount != FilterExpression.FILTERED) {
             refCount += (isLoopingReference ? 10 : 1);
         }
