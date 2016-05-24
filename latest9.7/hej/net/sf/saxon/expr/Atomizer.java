@@ -345,7 +345,7 @@ public final class Atomizer extends UnaryExpression {
      * @param alwaysUntyped true if it is known that nodes will always be untyped
      * @param th            the type hierarchy cache
      * @return the item type of the result of evaluating the operand expression, after atomization, or
-     *         null if it is known that atomization will return an error
+     *         xs:error if it is known that atomization will return an error
      */
 
     public static ItemType getAtomizedItemType(Expression operand, boolean alwaysUntyped, TypeHierarchy th) {
@@ -378,7 +378,7 @@ public final class Atomizer extends UnaryExpression {
         } else if (in instanceof ArrayItemType) {
             return ((ArrayItemType)in).getMemberType().getPrimaryType().getAtomizedItemType();
         } else if (in instanceof FunctionItemType) {
-            return null;
+            return ErrorType.getInstance();
         }
         return BuiltInAtomicType.ANY_ATOMIC;
     }
