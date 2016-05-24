@@ -199,7 +199,7 @@ public class CollectionFn extends SystemFunction implements Callable {
 
         // For releases earlier than 3.0, wrap result in an item checker to check the results are nodes
         if (getRetainedStaticContext().getXPathVersion() <= 30) {
-            RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.FUNCTION, "collection", 0);
+            RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.FUNCTION_RESULT, "collection", 0);
             ItemTypeCheckingFunction function = new ItemTypeCheckingFunction<Item>(
                     AnyNodeTest.getInstance(), role, null, context.getConfiguration());
             result = new ItemMappingIterator(result, function, true);
