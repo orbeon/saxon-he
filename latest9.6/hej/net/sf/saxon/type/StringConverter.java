@@ -15,6 +15,7 @@ import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.value.*;
+import net.sf.saxon.value.StringValue;
 
 import java.util.regex.Pattern;
 
@@ -188,9 +189,11 @@ public abstract class StringConverter extends Converter {
         }
 
         @Override
-        public void setNamespaceResolver(NamespaceResolver resolver) {
-            phaseOne.setNamespaceResolver(resolver);
-            phaseTwo.setNamespaceResolver(resolver);
+        public Converter setNamespaceResolver(NamespaceResolver resolver) {
+            return new StringToNonStringDerivedType(
+                    (StringConverter)phaseOne.setNamespaceResolver(resolver),
+                    (DownCastingConverter)phaseTwo.setNamespaceResolver(resolver));
+
         }
 
         /*@NotNull*/
@@ -885,8 +888,10 @@ public abstract class StringConverter extends Converter {
             return true;
         }
 
-        public void setNamespaceResolver(NamespaceResolver resolver) {
-            this.nsResolver = resolver;
+        public Converter setNamespaceResolver(NamespaceResolver resolver) {
+            StringToQName c = new StringToQName(getConversionRules());
+            c.nsResolver = resolver;
+            return c;
         }
 
         @Override
@@ -935,8 +940,10 @@ public abstract class StringConverter extends Converter {
         }
 
         @Override
-        public void setNamespaceResolver(NamespaceResolver resolver) {
-            nsResolver = resolver;
+        public Converter setNamespaceResolver(NamespaceResolver resolver) {
+            StringToNotation c = new StringToNotation(getConversionRules());
+            c.nsResolver = resolver;
+            return c;
         }
 
         @Override

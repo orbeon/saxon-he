@@ -115,7 +115,7 @@ public class CastExpression extends CastingExpression implements Callable {
                     throw err;
                 } else {
                     if (getTargetType().isNamespaceSensitive()) {
-                        converter.setNamespaceResolver(nsResolver);
+                        converter = converter.setNamespaceResolver(nsResolver);
                     }
                 }
                 if (converter.isXPath30Conversion() && !isXPath30
@@ -373,7 +373,7 @@ public class CastExpression extends CastingExpression implements Callable {
                 throw e;
             }
             if (nsResolver != null) {
-                converter.setNamespaceResolver(nsResolver);
+                converter = converter.setNamespaceResolver(nsResolver);
             }
         }
         ConversionResult result = converter.convert(value);

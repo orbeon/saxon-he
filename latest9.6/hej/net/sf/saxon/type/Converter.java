@@ -11,6 +11,7 @@ import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.om.NamespaceResolver;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.*;
+import net.sf.saxon.value.StringValue;
 
 import java.math.BigDecimal;
 
@@ -198,9 +199,12 @@ public abstract class Converter {
      * The resolver is ignored if the target type is not namespace-sensitive
      *
      * @param resolver the namespace resolver to be used
+     * @return a new Converter customised with the supplied namespace context. The original Converter is
+     * unchanged (see bug 2754)
      */
 
-    public void setNamespaceResolver(NamespaceResolver resolver) {
+    public Converter setNamespaceResolver(NamespaceResolver resolver) {
+        return this;
         // no action
     }
 
@@ -297,9 +301,8 @@ public abstract class Converter {
         }
 
         @Override
-        public void setNamespaceResolver(NamespaceResolver resolver) {
-            phaseOne.setNamespaceResolver(resolver);
-            phaseTwo.setNamespaceResolver(resolver);
+        public Converter setNamespaceResolver(NamespaceResolver resolver) {
+            return new TwoPhaseConverter(phaseOne.setNamespaceResolver(resolver), phaseTwo.setNamespaceResolver(resolver));
         }
 
         /*@NotNull*/
