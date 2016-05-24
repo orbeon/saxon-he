@@ -799,7 +799,7 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
                 } else {
                     StringConverter sc = a1.getItemType().getPrimitiveItemType().getStringConverter(rules);
                     if (a1 instanceof QualifiedNameValue) {
-                        sc.setNamespaceResolver(nsResolver);
+                        sc = (StringConverter)sc.setNamespaceResolver(nsResolver);
                     }
                     a0 = sc.convertString(a0.getStringValueCS()).asAtomic();
                 }
@@ -810,7 +810,7 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
                 } else {
                     StringConverter sc = a0.getItemType().getPrimitiveItemType().getStringConverter(rules);
                     if (a0 instanceof QualifiedNameValue) {
-                        sc.setNamespaceResolver(nsResolver);
+                        sc = (StringConverter)sc.setNamespaceResolver(nsResolver);
                     }
                     a1 = sc.convertString(a1.getStringValueCS()).asAtomic();
                 }

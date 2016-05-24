@@ -99,7 +99,7 @@ public class CastExpression extends CastingExpression implements Callable {
                     throw err;
                 } else {
                     if (getTargetType().isNamespaceSensitive()) {
-                        converter.setNamespaceResolver(getRetainedStaticContext());
+                        converter = converter.setNamespaceResolver(getRetainedStaticContext());
                     }
                 }
                 if (converter.isXPath30Conversion() && !isXPath30
@@ -368,7 +368,7 @@ public class CastExpression extends CastingExpression implements Callable {
                 throw e;
             }
             if (getTargetType().isNamespaceSensitive()) {
-                converter.setNamespaceResolver(getRetainedStaticContext());
+                converter = converter.setNamespaceResolver(getRetainedStaticContext());
             }
         }
         ConversionResult result = converter.convert(value);

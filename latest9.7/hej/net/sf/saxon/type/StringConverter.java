@@ -188,9 +188,10 @@ public abstract class StringConverter extends Converter {
         }
 
         @Override
-        public void setNamespaceResolver(NamespaceResolver resolver) {
-            phaseOne.setNamespaceResolver(resolver);
-            phaseTwo.setNamespaceResolver(resolver);
+        public Converter setNamespaceResolver(NamespaceResolver resolver) {
+            return new StringToNonStringDerivedType(
+                    (StringConverter)phaseOne.setNamespaceResolver(resolver),
+                    (DownCastingConverter)phaseTwo.setNamespaceResolver(resolver));
         }
 
         /*@NotNull*/
@@ -885,8 +886,10 @@ public abstract class StringConverter extends Converter {
             return true;
         }
 
-        public void setNamespaceResolver(NamespaceResolver resolver) {
-            this.nsResolver = resolver;
+        public Converter setNamespaceResolver(NamespaceResolver resolver) {
+            StringToQName copy = new StringToQName(getConversionRules());
+            copy.nsResolver = resolver;
+            return copy;
         }
 
         @Override
@@ -936,8 +939,10 @@ public abstract class StringConverter extends Converter {
         }
 
         @Override
-        public void setNamespaceResolver(NamespaceResolver resolver) {
-            nsResolver = resolver;
+        public Converter setNamespaceResolver(NamespaceResolver resolver) {
+            StringToNotation copy = new StringToNotation(getConversionRules());
+            copy.nsResolver = resolver;
+            return copy;
         }
 
         @Override

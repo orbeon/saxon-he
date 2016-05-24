@@ -787,7 +787,7 @@ public class BuiltInAtomicType implements AtomicType {
                 if (nsResolver == null) {
                     throw new UnsupportedOperationException("Cannot validate a QName without a namespace resolver");
                 }
-                converter.setNamespaceResolver(nsResolver);
+                converter = (StringConverter) converter.setNamespaceResolver(nsResolver);
                 ConversionResult result = converter.convertString(value);
                 if (result instanceof ValidationFailure) {
                     return (ValidationFailure) result;
@@ -870,7 +870,7 @@ public class BuiltInAtomicType implements AtomicType {
         if (converter == null) {
             converter = getStringConverter(node.getTreeInfo().getConfiguration().getConversionRules());
             if (isNamespaceSensitive()) {
-                converter.setNamespaceResolver(new InscopeNamespaceResolver(node));
+                converter = (StringConverter)converter.setNamespaceResolver(new InscopeNamespaceResolver(node));
             }
         }
         return converter.convertString(stringValue).asAtomic();
@@ -903,7 +903,7 @@ public class BuiltInAtomicType implements AtomicType {
         }
         StringConverter converter = getStringConverter(rules);
         if (isNamespaceSensitive()) {
-            converter.setNamespaceResolver(resolver);
+            converter = (StringConverter)converter.setNamespaceResolver(resolver);
         }
         return converter.convertString(value).asAtomic();
     }

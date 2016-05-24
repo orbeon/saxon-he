@@ -65,7 +65,7 @@ public final class CastableExpression extends CastingExpression {
                 }
             } else {
                 if (getTargetPrimitiveType().isNamespaceSensitive()) {
-                    converter.setNamespaceResolver(getRetainedStaticContext());
+                    converter = converter.setNamespaceResolver(getRetainedStaticContext());
                 }
                 if (converter.isAlwaysSuccessful() && !allowsEmpty() && operand.getCardinality() == StaticProperty.ALLOWS_ONE) {
                     return Literal.makeLiteral(BooleanValue.TRUE);
@@ -240,7 +240,7 @@ public final class CastableExpression extends CastingExpression {
                 return false;
             }
             if (getTargetType().isNamespaceSensitive()) {
-                converter.setNamespaceResolver(getRetainedStaticContext());
+                converter = converter.setNamespaceResolver(getRetainedStaticContext());
             }
         }
         return !(converter.convert(value) instanceof ValidationFailure);

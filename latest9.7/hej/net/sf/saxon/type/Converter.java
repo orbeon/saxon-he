@@ -198,10 +198,13 @@ public abstract class Converter {
      * The resolver is ignored if the target type is not namespace-sensitive
      *
      * @param resolver the namespace resolver to be used
+     * @return a new Converter customised with the supplied namespace context. The original Converter is
+     * unchanged (see bug 2754)
      */
 
-    public void setNamespaceResolver(NamespaceResolver resolver) {
+    public Converter setNamespaceResolver(NamespaceResolver resolver) {
         // no action
+        return this;
     }
 
     /**
@@ -297,9 +300,8 @@ public abstract class Converter {
         }
 
         @Override
-        public void setNamespaceResolver(NamespaceResolver resolver) {
-            phaseOne.setNamespaceResolver(resolver);
-            phaseTwo.setNamespaceResolver(resolver);
+        public Converter setNamespaceResolver(NamespaceResolver resolver) {
+            return new TwoPhaseConverter(phaseOne.setNamespaceResolver(resolver), phaseTwo.setNamespaceResolver(resolver));
         }
 
         /*@NotNull*/
