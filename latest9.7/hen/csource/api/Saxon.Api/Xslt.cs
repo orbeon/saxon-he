@@ -1077,6 +1077,25 @@ namespace Saxon.Api
         }
 
         /// <summary>
+        /// Return a Receiver. Saxon calls this method to obtain a Receiver, to which it then sends
+        /// a sequence of events representing the content of an XML document.
+        /// </summary>
+        /// <returns>The receiver to which events are to be sent</returns>
+        /// <param name="pipe">Pipe. The Saxon configuration. This is supplied so that the destination can
+        /// use information from the configuration (for example, a reference to the name pool)
+        /// to construct or configure the returned Receiver.</param>
+        public override JReceiver GetReceiver(JPipelineConfiguration pipe)
+        {
+
+            if (staticParameter != null)
+            {
+                controller.initializeController(staticParameter);
+            }
+            return base.GetReceiver(pipe);
+
+        }
+
+        /// <summary>
         /// The initial template for the stylesheet. This is either a QName, for a 
         /// named template, or null, if no initial template has been set.
         /// </summary>

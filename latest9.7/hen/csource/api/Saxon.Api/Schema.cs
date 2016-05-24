@@ -159,6 +159,7 @@ namespace Saxon.Api
             set
             {
                 errorList = value;
+                schemaManager.setErrorListener(new ErrorGatherer(errorList));
             }
             get
             {
