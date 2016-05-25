@@ -15,8 +15,8 @@ public final class Version {
 
     private static final int[] STRUCTURED_VERSION = {9, 6, 0, 9};
     private static final String VERSION = "9.6.0.9";
-    private static final String BUILD = "080512"; //mmddhh
-    private static final String RELEASE_DATE = "2016-02-04";
+    private static final String BUILD = "052513"; //mmddhh
+    private static final String RELEASE_DATE = "2016-05-25";
     private static final String MAJOR_RELEASE_DATE = "2014-10-02";
 
     private Version() {
