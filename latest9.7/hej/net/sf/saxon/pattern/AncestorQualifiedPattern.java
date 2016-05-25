@@ -140,9 +140,11 @@ public final class AncestorQualifiedPattern extends Pattern {
      */
 
     public Pattern typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
+        basePattern = basePattern.typeCheck(visitor, contextItemType);
+        upperPattern = upperPattern.typeCheck(visitor, contextItemType);
         if (upwardsAxis == AxisInfo.PARENT) {
             ItemType type = basePattern.getItemType();
-            basePattern.typeCheck(visitor, contextItemType); // project:preconditions
+            //basePattern.typeCheck(visitor, contextItemType); // project:preconditions
             if (type instanceof NodeTest) {
                 // Check that this step in the pattern makes sense in the context of the parent step
                 AxisExpression step;

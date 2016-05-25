@@ -465,8 +465,19 @@ public final class AxisExpression extends Expression {
                     SchemaType schemaType = ((ComplexType) contentType).getElementParticleType(childElement, true);
                     if (schemaType == null) {
                         if (warnings) {
-                            visitor.issueWarning("The complex type " + contentType.getDescription() +
-                                    " does not allow a child element named " + getDiagnosticName(childElement, env), getLocation());
+                            String message = "The complex type " + contentType.getDescription() +
+                                " does not allow a child element named " + getDiagnosticName(childElement, env);
+                            HashSet<StructuredQName> permitted = new HashSet<StructuredQName>();
+                            ((ComplexType)contentType).gatherAllPermittedChildren(permitted, false);
+                            for (StructuredQName sq : permitted) {
+                                if (sq.getLocalPart().equals(childElement.getLocalPart()) && !sq.equals(childElement)) {
+                                    message += ". Perhaps the namespace is " +
+                                            (childElement.hasURI("") ? "missing" : "wrong") +
+                                            ", and " + sq.getEQName() + " was intended?";
+                                    break;
+                                }
+                            }
+                            visitor.issueWarning(message, getLocation());
                         }
                         return Literal.makeEmptySequence();
                     } else {
