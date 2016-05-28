@@ -73,10 +73,9 @@ public interface ArrayItem extends Function, Iterable<Sequence> {
      *
      * @param index  the position of the member to be removed (zero-based)
      * @return a new array in which the requested member has been removed
-     * @throws net.sf.saxon.trans.XPathException if the index is out of range
      */
 
-    ArrayItem remove(int index) throws XPathException;
+    ArrayItem remove(int index);
 
     /**
      * Remove zero or more members from the array

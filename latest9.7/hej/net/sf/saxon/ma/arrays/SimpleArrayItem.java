@@ -168,7 +168,7 @@ public class SimpleArrayItem extends AbstractItem implements ArrayItem {
      * @return a new array in which the requested member has been removed
      */
 
-    public ArrayItem remove(int pos) throws XPathException {
+    public ArrayItem remove(int pos) {
         List<Sequence> newList = new ArrayList<Sequence>(members.size() - 1);
         newList.addAll(members.subList(0, pos));
         newList.addAll(members.subList(pos + 1, members.size()));
