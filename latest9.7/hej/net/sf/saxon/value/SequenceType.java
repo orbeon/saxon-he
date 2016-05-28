@@ -7,7 +7,6 @@
 
 package net.sf.saxon.value;
 
-import net.sf.saxon.ma.map.MapType;
 import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
@@ -430,6 +429,14 @@ public final class SequenceType {
 
     public static final SequenceType NUMERIC_SEQUENCE =
             makeSequenceType(NumericType.getInstance(), StaticProperty.ALLOWS_ZERO_OR_MORE);
+
+
+    /**
+     * A type that allows a sequence of zero or more integer values
+     */
+
+    public static final SequenceType INTEGER_SEQUENCE =
+            makeSequenceType(BuiltInAtomicType.INTEGER, StaticProperty.ALLOWS_ZERO_OR_MORE);
 
 
     /**

@@ -12,10 +12,13 @@ import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.Sequence;
+import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.SequenceType;
+import net.sf.saxon.z.IntHashSet;
+import net.sf.saxon.z.IntSet;
 
 /**
  * Implementation of the extension function array:remove(array, xs:integer) => array
@@ -24,7 +27,7 @@ public class ArrayRemove extends ExtensionFunctionDefinition{
 
     private final static StructuredQName name = new StructuredQName("array", NamespaceConstant.ARRAY_FUNCTIONS, "remove");
     private final static SequenceType[] ARG_TYPES = new SequenceType[]{
-            ArrayItem.SINGLE_ARRAY_TYPE, SequenceType.SINGLE_INTEGER};
+            ArrayItem.SINGLE_ARRAY_TYPE, SequenceType.INTEGER_SEQUENCE};
 
     /**
      * Get the name of the function, as a QName.
@@ -101,12 +104,24 @@ public class ArrayRemove extends ExtensionFunctionDefinition{
         return new ExtensionFunctionCall() {
             public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
                 ArrayItem array = (ArrayItem) arguments[0].head();
-                assert array != null;
-                int index = (int) ((IntegerValue) arguments[1].head()).longValue() - 1;
-                if (index < 0 || index >= array.size()){
-                    throw new XPathException("Position is not in range","FOAY0001");
+                if (arguments[1] instanceof IntegerValue) {
+                    int index = (int)((IntegerValue)arguments[1]).longValue();
+                    if (index < 0 || index >= array.size()) {
+                        throw new XPathException("Position " + index + " is not in range", "FOAY0001");
+                    }
+                    return array.remove(index);
                 }
-                return array.remove(index);
+                SequenceIterator iter = arguments[1].iterate();
+                IntegerValue pos;
+                IntSet positions = new IntHashSet();
+                while ((pos = (IntegerValue)iter.next()) != null) {
+                    int index = (int) pos.longValue() - 1;
+                    if (index < 0 || index >= array.size()) {
+                        throw new XPathException("Position " + index + " is not in range", "FOAY0001");
+                    }
+                    positions.add(index);
+                }
+                return array.removeSeveral(positions);
             }
         };
     }

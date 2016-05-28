@@ -12,6 +12,7 @@ import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.Sequence;
+import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.AtomicValue;
@@ -24,7 +25,7 @@ public class MapRemove extends ExtensionFunctionDefinition {
 
     private final static StructuredQName name = new StructuredQName("", NamespaceConstant.MAP_FUNCTIONS, "remove");
     private final static SequenceType[] ARG_TYPES = new SequenceType[]{
-            HashTrieMap.SINGLE_MAP_TYPE, SequenceType.SINGLE_ATOMIC
+            HashTrieMap.SINGLE_MAP_TYPE, SequenceType.ATOMIC_SEQUENCE
     };
 
     /**
@@ -101,10 +102,12 @@ public class MapRemove extends ExtensionFunctionDefinition {
         return new ExtensionFunctionCall() {
             public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
                 MapItem map = (MapItem) arguments[0].head();
-                assert map != null;
-                AtomicValue key = (AtomicValue) arguments[1].head();
-                assert key != null;
-                return map.remove(key);
+                SequenceIterator iter = arguments[1].iterate();
+                AtomicValue key;
+                while ((key = (AtomicValue)iter.next()) != null) {
+                    map = map.remove(key);
+                }
+                return map;
             }
         };
     }

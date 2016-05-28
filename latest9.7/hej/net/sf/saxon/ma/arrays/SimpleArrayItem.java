@@ -20,6 +20,7 @@ import net.sf.saxon.type.FunctionItemType;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.SequenceType;
+import net.sf.saxon.z.IntSet;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -142,24 +143,39 @@ public class SimpleArrayItem extends AbstractItem implements ArrayItem {
     }
 
     /**
-     * Remove a member from the array
+     * Remove zero or more members from the array
      *
-     * @param index the position of the member to be removed (zero-based)
+     * @param positions the positions of the members to be removed (zero-based).
+     *                  A value that is out of range is ignored.
      * @return a new array in which the requested member has been removed
-     * @throws net.sf.saxon.trans.XPathException
-     *          if the index is out of range
      */
 
-    public ArrayItem remove(int index) throws XPathException {
-        if (index < 0 || index >= members.size()){
-            throw new XPathException("Position is not in range","FOAY0001");
-        }
+    public ArrayItem removeSeveral(IntSet positions)  {
         List<Sequence> newList = new ArrayList<Sequence>(members.size() - 1);
-        newList.addAll(members.subList(0, index));
-        newList.addAll(members.subList(index + 1, members.size()));
+        for (int i=0; i<members.size(); i++) {
+            if (!positions.contains(i)) {
+                newList.add(members.get(i));
+            }
+        }
         return new SimpleArrayItem(newList);
-        // TODO: check for index out of range
+    };
+
+    /**
+     * Remove a member from the array
+     *
+     * @param pos the position of the member to be removed (zero-based). A value
+     *            that is out of range results in an IndexOutOfBoundsException
+     * @return a new array in which the requested member has been removed
+     */
+
+    public ArrayItem remove(int pos) throws XPathException {
+        List<Sequence> newList = new ArrayList<Sequence>(members.size() - 1);
+        newList.addAll(members.subList(0, pos));
+        newList.addAll(members.subList(pos + 1, members.size()));
+        return new SimpleArrayItem(newList);
     }
+
+
 
     /**
      * Concatenate this array with another

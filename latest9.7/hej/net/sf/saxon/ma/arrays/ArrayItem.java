@@ -12,6 +12,7 @@ import net.sf.saxon.om.Function;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.SequenceType;
+import net.sf.saxon.z.IntSet;
 
 import java.util.Iterator;
 import java.util.List;
@@ -76,6 +77,16 @@ public interface ArrayItem extends Function, Iterable<Sequence> {
      */
 
     ArrayItem remove(int index) throws XPathException;
+
+    /**
+     * Remove zero or more members from the array
+     *
+     * @param positions the positions of the members to be removed (zero-based).
+     *                  A value that is out of range is ignored.
+     * @return a new array in which the requested member has been removed
+     */
+
+    ArrayItem removeSeveral(IntSet positions);
 
     /**
      * Get the lowest common item type of the members of the array
