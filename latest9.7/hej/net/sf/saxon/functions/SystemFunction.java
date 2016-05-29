@@ -121,6 +121,14 @@ public abstract class SystemFunction extends AbstractFunction {
     public Expression makeOptimizedFunctionCall (
             ExpressionVisitor visitor, ContextItemStaticInfo contextInfo, Expression... arguments)
             throws XPathException {
+        return fixArguments(arguments);
+    }
+
+    /**
+     * Optimize for constant argument values
+     */
+
+    public Expression fixArguments(Expression... arguments) throws XPathException {
         // Check if any arguments are known to be empty, with a declared result for that case
         for (int i = 0; i < getArity(); i++) {
             if (Literal.isEmptySequence(arguments[i]) && resultIfEmpty(i) != null) {

@@ -9,17 +9,14 @@ package net.sf.saxon.functions;
 
 import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.TranslateCompiler;
-import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.Callable;
+import net.sf.saxon.expr.Expression;
+import net.sf.saxon.expr.StringLiteral;
+import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.regex.UnicodeString;
-import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
-import net.sf.saxon.type.FunctionItemType;
-import net.sf.saxon.type.SpecificFunctionType;
-import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
 import net.sf.saxon.z.IntToIntHashMap;
 import net.sf.saxon.z.IntToIntMap;
@@ -30,53 +27,22 @@ import net.sf.saxon.z.IntToIntMap;
 
 public class Translate extends SystemFunction implements Callable {
 
+    private IntToIntMap staticMap = null;
+
     /**
      * Allow the function to create an optimized call based on the values of the actual arguments
      *
-     * @param visitor     the expression visitor
-     * @param contextInfo information about the context item
      * @param arguments   the supplied arguments to the function call
      * @return either a function call on this function, or an expression that delivers
      * the same result, or null indicating that no optimization has taken place
-     * @throws net.sf.saxon.trans.XPathException if an error is detected
      */
     @Override
-    public Expression makeOptimizedFunctionCall(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo, Expression... arguments) throws XPathException {
+    public Expression fixArguments(Expression... arguments) {
         if (arguments[1] instanceof StringLiteral && arguments[2] instanceof StringLiteral) {
-            StringValue s1 = ((StringLiteral) arguments[1]).getValue();
-            StringValue s2 = ((StringLiteral) arguments[2]).getValue();
-
-            TranslateFixed fixed = new TranslateFixed(s1, s2);
-            Expression[] args = new Expression[]{arguments[0]};
-            return new StaticFunctionCall(fixed, args);
+            staticMap = buildMap(((StringLiteral) arguments[1]).getValue(), ((StringLiteral) arguments[2]).getValue());
         }
         return null;
     }
-
-
-
-//    /**
-//     * Evaluate the function
-//     */
-//
-//    public StringValue evaluateItem(XPathContext context) throws XPathException {
-//
-//        StringValue sv1 = (StringValue) getArg(0).evaluateItem(context);
-//        if (sv1 == null) {
-//            return StringValue.EMPTY_STRING;
-//        }
-//
-//        if (staticMap != null) {
-//            CharSequence sb = translateUsingMap(sv1, staticMap);
-//            return new StringValue(sb);
-//        }
-//
-//        StringValue sv2 = (StringValue) getArg(1).evaluateItem(context);
-//
-//        StringValue sv3 = (StringValue) getArg(2).evaluateItem(context);
-//
-//        return StringValue.makeStringValue(translate(sv1, sv2, sv3));
-//    }
 
     /**
      * Get the translation map built at compile time if there is one
@@ -84,7 +50,7 @@ public class Translate extends SystemFunction implements Callable {
      */
 
     public IntToIntMap getStaticMap() {
-        return null;
+        return staticMap;
     }
 
     /**
@@ -188,71 +154,17 @@ public class Translate extends SystemFunction implements Callable {
      */
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         StringValue sv0 = (StringValue) arguments[0].head();
-        StringValue sv1 = (StringValue) arguments[1].head();
-        StringValue sv2 = (StringValue) arguments[2].head();
         if (sv0 == null) {
             return StringValue.EMPTY_STRING;
         }
-        return new StringValue(translate(sv0, sv1, sv2));
-    }
-
-    public static class TranslateFixed extends CurriedSystemFunction {
-
-        public static final String NAME = "_translate_1";
-        private CharSequence arg1;
-        private CharSequence arg2;
-        private IntToIntMap staticMap;
-
-        public TranslateFixed(StringValue arg1, StringValue arg2) {
-            this.arg1 = arg1.getStringValueCS();
-            this.arg2 = arg2.getStringValueCS();
-            this.staticMap = buildMap(arg1, arg2);
-        }
-
-        @Override
-        public String getName() {
-            return NAME;
-        }
-
-        /**
-         * Get the item type of the function item
-         *
-         * @return the function item's type
-         */
-        public FunctionItemType getFunctionItemType() {
-            return new SpecificFunctionType(
-                new SequenceType[]{SequenceType.OPTIONAL_STRING},
-                SequenceType.SINGLE_STRING);
-        }
-
-        /**
-         * Invoke the function
-         *
-         * @param context the XPath dynamic evaluation context
-         * @param args    the actual arguments to be supplied
-         * @return the result of invoking the function
-         * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs within the function
-         */
-        public Sequence call(XPathContext context, Sequence[] args) throws XPathException {
-            StringValue input = (StringValue) args[0].head();
-            if (input == null) {
-                return StringValue.EMPTY_STRING;
-            }
-            CharSequence result = translateUsingMap(input, staticMap);
-            return new StringValue(result);
-        }
-
-        /**
-         * Output information about this function item to the diagnostic explain() output
-         *
-         * @param out
-         */
-        public void exportLocalData(ExpressionPresenter out) {
-            out.emitAttribute("a1", arg1.toString());
-            out.emitAttribute("a2", arg2.toString());
+        if (staticMap != null) {
+            return new StringValue(translateUsingMap(sv0, staticMap));
+        } else {
+            StringValue sv1 = (StringValue) arguments[1].head();
+            StringValue sv2 = (StringValue) arguments[2].head();
+            return new StringValue(translate(sv0, sv1, sv2));
         }
     }
-
 
 //#ifdefined BYTECODE
 

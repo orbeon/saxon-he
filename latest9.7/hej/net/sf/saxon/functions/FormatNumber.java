@@ -7,20 +7,15 @@
 
 package net.sf.saxon.functions;
 
-import net.sf.saxon.type.SpecificFunctionType;
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
-import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.DecimalFormatManager;
 import net.sf.saxon.trans.DecimalSymbols;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.tiny.CharSlice;
 import net.sf.saxon.tree.util.FastStringBuffer;
-import net.sf.saxon.type.FunctionItemType;
 import net.sf.saxon.value.*;
 
 import java.math.BigDecimal;
@@ -33,29 +28,32 @@ import java.util.List;
 
 public class FormatNumber extends SystemFunction implements Callable {
 
+    private StructuredQName decimalFormatName; // null for the default format
+    private String picture;
+    private DecimalSymbols decimalSymbols;
+    private SubPicture[] subPictures;
+
     /**
      * Allow the function to create an optimized call based on the values of the actual arguments. This handles
      * the case where the decimal format name is supplied as a literal (or defaulted), and the picture string is
      * also supplied as a literal.
      *
-     * @param visitor     the expression visitor
-     * @param contextInfo information about the context item
      * @param arguments   the supplied arguments to the function call
      * @return either a function call on this function, or an expression that delivers
      * the same result, or null indicating that no optimization has taken place
      * @throws net.sf.saxon.trans.XPathException if an error is detected
      */
     @Override
-    public Expression makeOptimizedFunctionCall(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo, Expression... arguments) throws XPathException {
+    public Expression fixArguments(Expression... arguments) throws XPathException {
 
         if (arguments[1] instanceof Literal && (arguments.length == 2 || arguments[2] instanceof Literal)) {
-            String pictureString = ((Literal) arguments[1]).getValue().getStringValue();
-            StructuredQName qName = null;
+            DecimalFormatManager dfm = getRetainedStaticContext().getDecimalFormatManager();
+            picture = ((Literal) arguments[1]).getValue().getStringValue();
             if (arguments.length == 3 && !Literal.isEmptySequence(arguments[2])) {
                 try {
                     String lexicalName = ((Literal) arguments[2]).getValue().getStringValue();
                     boolean is30 = getRetainedStaticContext().getXPathVersion() >= 30;
-                    qName = StructuredQName.fromLexicalQName(lexicalName, false,
+                    decimalFormatName = StructuredQName.fromLexicalQName(lexicalName, false,
                             is30, getRetainedStaticContext());
                 } catch (XPathException e) {
                     XPathException err = new XPathException("Invalid decimal format name. " + e.getMessage());
@@ -63,61 +61,18 @@ public class FormatNumber extends SystemFunction implements Callable {
                     throw err;
                 }
             }
-            FormatNumberFixed fnf = new FormatNumberFixed(qName, pictureString);
-            fnf.fixup(getRetainedStaticContext().getDecimalFormatManager());
-            return new StaticFunctionCall(fnf, new Expression[]{arguments[0]});
-        } else {
-            return null;
+            if (decimalFormatName == null) {
+                decimalSymbols = dfm.getDefaultDecimalFormat();
+            } else {
+                decimalSymbols = dfm.getNamedDecimalFormat(decimalFormatName);
+                if (decimalSymbols == null) {
+                    throw new XPathException(
+                            "Decimal format " + decimalFormatName.getDisplayName() + " has not been defined", "FODF1280");
+                }
+            }
+            subPictures = getSubPictures(picture, decimalSymbols);
         }
-
-//        DecimalSymbols dfs;
-//        String pictureString;
-//        if (arguments[1] instanceof Literal) {
-//            pictureString = ((Literal) arguments[1]).getValue().getStringValue();
-//        } else {
-//            return null;
-//        }
-//
-//        if (arguments.length == 3) {
-//            if (arguments[2] instanceof Literal) {
-//                DecimalFormatManager dfm = getRetainedStaticContext().getDecimalFormatManager();
-//                dfs = getNamedDecimalFormat(dfm, ((Literal)arguments[2]).getValue().getStringValue());
-//            } else {
-//                return null;
-//            }
-//        } else {
-//            dfs = getRetainedStaticContext().getDecimalFormatManager().getDefaultDecimalFormat();
-//        }
-//
-//        final SubPicture[] subPictures = getSubPictures(pictureString, dfs);
-//        final DecimalSymbols decimalSymbols = dfs;
-//        Callable callable = new Callable() {
-//            public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
-//                AtomicValue av0 = (AtomicValue) arguments[0].head();
-//                if (av0 == null) {
-//                    av0 = DoubleValue.NaN;
-//                }
-//                NumericValue number = (NumericValue) av0;
-//                CharSequence result = formatNumber(number, subPictures, decimalSymbols);
-//                return new StringValue(result);
-//            }
-//        };
-//        FunctionItemType functionType = new SpecificFunctionType(
-//            new SequenceType[]{SequenceType.OPTIONAL_NUMERIC}, SequenceType.SINGLE_STRING);
-//        Function function = new CallableFunction(1, callable, functionType) {
-//            /**
-//             * Get the roles of the arguments, for the purposes of streaming
-//             *
-//             * @return an array of OperandRole objects, one for each argument
-//             */
-//            public OperandRole[] getOperandRoles() {
-//                return new OperandRole[]{
-//                    new OperandRole(0, OperandUsage.ABSORPTION, SequenceType.OPTIONAL_NUMERIC)
-//                };
-//            }
-//        };
-//        return new StaticFunctionCall(function, new Expression[]{arguments[0]});
-
+        return null;
     }
 
     /**
@@ -1050,21 +1005,29 @@ public class FormatNumber extends SystemFunction implements Callable {
         }
         NumericValue number = (NumericValue) av0;
 
-        if (numArgs == 2) {
-            dfs = dfm.getDefaultDecimalFormat();
+        if (picture != null) {
+            // Decimal format and picture known statically
+            CharSequence result = formatNumber(number, subPictures, decimalSymbols);
+            return new StringValue(result);
+
         } else {
-            // the decimal-format name was given as a run-time expression
-            Item arg2 = arguments[2].head();
-            if (arg2 == null) {
+
+            if (numArgs == 2) {
                 dfs = dfm.getDefaultDecimalFormat();
             } else {
-                String lexicalName = arg2.getStringValue();
-                dfs = getNamedDecimalFormat(dfm, lexicalName);
+                // the decimal-format name was given as a run-time expression
+                Item arg2 = arguments[2].head();
+                if (arg2 == null) {
+                    dfs = dfm.getDefaultDecimalFormat();
+                } else {
+                    String lexicalName = arg2.getStringValue();
+                    dfs = getNamedDecimalFormat(dfm, lexicalName);
+                }
             }
+            String format = arguments[1].head().getStringValue();
+            SubPicture[] pics = getSubPictures(format, dfs);
+            return new StringValue(formatNumber(number, pics, dfs));
         }
-        String format = arguments[1].head().getStringValue();
-        SubPicture[] pics = getSubPictures(format, dfs);
-        return new StringValue(formatNumber(number, pics, dfs));
     }
 
     /**
@@ -1110,78 +1073,5 @@ public class FormatNumber extends SystemFunction implements Callable {
         return ch >= zeroDigit && ch < zeroDigit + 10;
     }
 
-    /**
-     * Implementation of format-number() when the decimal format name and picture are known statically
-     */
-
-    public static class FormatNumberFixed extends CurriedSystemFunction {
-
-        public final static String NAME = "_format-number_1";
-
-        private StructuredQName decimalFormatName; // null for the default format
-        private String picture;
-        private DecimalSymbols decimalSymbols;
-        private SubPicture[] subPictures;
-
-        /**
-         * Create the function
-         *
-         * @param decimalFormatName the name of the decimal format, or null to request the default
-         * @param picture           the supplied picture string
-         */
-
-        public FormatNumberFixed(StructuredQName decimalFormatName, String picture) {
-            this.decimalFormatName = decimalFormatName;
-            this.picture = picture;
-        }
-
-        public void fixup(DecimalFormatManager dfm) throws XPathException {
-            if (decimalFormatName == null) {
-                decimalSymbols = dfm.getDefaultDecimalFormat();
-            } else {
-                decimalSymbols = dfm.getNamedDecimalFormat(decimalFormatName);
-                if (decimalSymbols == null) {
-                    throw new XPathException(
-                            "Decimal format " + decimalFormatName.getDisplayName() + " has not been defined", "FODF1280");
-                }
-            }
-            subPictures = getSubPictures(picture, decimalSymbols);
-        }
-
-
-        @Override
-        public void exportLocalData(ExpressionPresenter out) {
-            if (decimalFormatName != null) {
-                out.emitAttribute("format", decimalFormatName);
-            }
-            out.emitAttribute("pic", picture);
-        }
-
-        @Override
-        public String getName() {
-            return NAME;
-        }
-
-        /**
-         * Get the item type of the function item
-         *
-         * @return the function item's type
-         */
-        public FunctionItemType getFunctionItemType() {
-            return new SpecificFunctionType(
-                    new SequenceType[]{SequenceType.OPTIONAL_NUMERIC}, SequenceType.SINGLE_STRING);
-        }
-
-        public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
-            AtomicValue av0 = (AtomicValue) arguments[0].head();
-            if (av0 == null) {
-                av0 = DoubleValue.NaN;
-            }
-            NumericValue number = (NumericValue) av0;
-            CharSequence result = formatNumber(number, subPictures, decimalSymbols);
-            return new StringValue(result);
-        }
-
-    }
 }
 

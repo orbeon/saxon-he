@@ -12,7 +12,6 @@ import net.sf.saxon.expr.parser.RetainedStaticContext;
 import net.sf.saxon.expr.sort.DocumentOrderIterator;
 import net.sf.saxon.expr.sort.LocalOrderComparer;
 import net.sf.saxon.om.*;
-import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.KeyDefinitionSet;
 import net.sf.saxon.trans.KeyManager;
 import net.sf.saxon.trans.XPathException;
@@ -20,38 +19,16 @@ import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.EmptySequence;
+import org.jetbrains.annotations.NotNull;
 
 
 public class KeyFn extends SystemFunction {
 
-    private KeyDefinitionSet staticKeySet = null; // null if name resolution is done at run-time
-    private transient boolean checked = false;
-    private transient boolean internal = false;
-    private boolean is30 = false;
-    // the second time checkArguments is called, it's a global check so the static context is inaccurate
-
-    /**
-     * Get the key name, if known statically. If not known statically, return null.
-     *
-     * @return the key name if known, otherwise null
-     */
-
-    public StructuredQName getStaticKeyName() {
-        return staticKeySet == null ? null : staticKeySet.getKeyName();
-    }
-
-    public KeyDefinitionSet getStaticKeySet() {
-        return staticKeySet;
-    }
+    private KeyDefinitionSet staticKeySet = null;
 
     public KeyManager getKeyManager() {
         return getRetainedStaticContext().getPackageData().getKeyManager();
     }
-
-    public boolean getInternal() {
-        return internal;
-    }
-
 
     public NamespaceResolver getNamespaceResolver() {
         return getRetainedStaticContext();
@@ -70,15 +47,10 @@ public class KeyFn extends SystemFunction {
     public static Expression internalKeyCall(KeyManager keyManager, KeyDefinitionSet keySet,
                                              String name, Expression value, Expression doc,
                                              RetainedStaticContext rsc) {
-        KeyFn k = new KeyFn();
-        k.setDetails(StandardFunction.getFunction("key", 3));
-        k.setArity(3);
-        k.staticKeySet = keySet;
-        k.checked = true;
-        k.internal = true;
-        k.is30 = true;
-        k.setRetainedStaticContext(rsc);
-        return k.makeFunctionCall(new StringLiteral(name), value, doc);
+        KeyFn fn = (KeyFn)SystemFunction.makeFunction("key", rsc, 3);
+        assert fn != null;
+        fn.staticKeySet = keySet;
+        return fn.makeFunctionCall(new StringLiteral(name), value, doc);
     }
 
     /**
@@ -98,18 +70,6 @@ public class KeyFn extends SystemFunction {
         }
         return prop;
     }
-
-    /**
-     * Diagnostic print of expression structure. The abstract expression tree
-     * is written to the supplied output destination.
-     *
-     * @param out
-     */
-    @Override
-    public void export(ExpressionPresenter out) throws XPathException {
-        super.export(out);
-    }
-
 
     /**
      * Mapping class to filter nodes that have the origin node as an ancestor-or-self
@@ -134,6 +94,26 @@ public class KeyFn extends SystemFunction {
     }
 
     /**
+     * Allow the function to create an optimized call based on the values of the actual arguments.
+     * This binds the key definition in the common case where the key name is defined statically
+     *
+     * @param arguments   the supplied arguments to the function call. Note: modifying the contents
+     *                    of this array should not be attempted, it is likely to have no effect.
+     * @return either a function call on this function, or an expression that delivers
+     * the same result, or null indicating that no optimization has taken place
+     * @throws XPathException if an error is detected
+     */
+    @Override
+    public Expression fixArguments(final Expression... arguments) throws XPathException {
+        if (arguments[0] instanceof StringLiteral) {
+            KeyManager keyManager = getKeyManager();
+            String keyName = ((StringLiteral) arguments[0]).getStringValue();
+            staticKeySet = getKeyDefinitionSet(keyManager, keyName);
+        }
+        return null;
+    }
+
+    /**
      * Evaluate the expression
      *
      * @param context   the dynamic evaluation context
@@ -144,69 +124,86 @@ public class KeyFn extends SystemFunction {
      */
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         NodeInfo origin;
-        NodeInfo root;
         if (arguments.length == 3) {
-            Item arg2;
-            try {
-                arg2 = arguments[2].head();
-            } catch (XPathException e) {
-                String code = e.getErrorCodeLocalPart();
-                if ("XPDY0002".equals(code) && arguments[2] instanceof RootExpression) {
-                    throw new XPathException("Cannot call the key() function when there is no context node", "XTDE1270", context);
-                } else if ("XPDY0050".equals(code)) {
-                    throw new XPathException("In the key() function," +
-                        " the node supplied in the third argument (or the context node if absent)" +
-                        " must be in a tree whose root is a document node", "XTDE1270", context);
-                } else if ("XPTY0020".equals(code) || "XPTY0019".equals(code)) {
-                    throw new XPathException("Cannot call the key() function when the context item is an atomic value",
-                        "XTDE1270", context);
-                }
-                throw e;
-            }
-
-            origin = (NodeInfo) arg2;
-            root = origin.getRoot();
+            origin = (NodeInfo)getOrigin(context, arguments[2]);
         } else {
-            Item contextItem = context.getContextItem();
-            if (contextItem == null) {
-                throw new XPathException("Cannot call the key() function when there is no context item", "XTDE1270", context);
-            } else if (!(contextItem instanceof NodeInfo)) {
-                throw new XPathException("Cannot call the key() function when the context item is not a node", "XTDE1270", context);
-            }
-            root = ((NodeInfo)contextItem).getRoot();
-            origin = root;
+            origin = getContextRoot(context);
         }
-        if (root.getNodeKind() != Type.DOCUMENT) {
+        if (origin.getRoot().getNodeKind() != Type.DOCUMENT) {
             throw new XPathException("In the key() function," +
                 " the node supplied in the third argument (or the context node if absent)" +
                 " must be in a tree whose root is a document node", "XTDE1270", context);
         }
-        NodeInfo doc = root;
 
         KeyDefinitionSet selectedKeySet = staticKeySet;
+        KeyManager keyManager = getKeyManager();
         if (selectedKeySet == null) {
-            String givenkeyname = arguments[0].head().getStringValue();
-            StructuredQName qName = null;
-            try {
-                qName = StructuredQName.fromLexicalQName(
-                    givenkeyname, false, true,
-                    getNamespaceResolver());
-            } catch (XPathException err) {
-                throw new XPathException("Invalid key name: " + err.getMessage(), "XTDE1260", context);
-            }
-            selectedKeySet = getKeyManager().getKeyDefinitionSet(qName);
-            if (selectedKeySet == null) {
-                throw new XPathException("Key '" + givenkeyname + "' has not been defined", "XTDE1260", context);
-            }
+            selectedKeySet = getKeyDefinitionSet(keyManager, arguments[0].head().getStringValue());
         }
+        return search(keyManager, context, arguments[1], origin, selectedKeySet);
+
+    }
+
+    private static NodeInfo getContextRoot(XPathContext context) throws XPathException {
+        Item contextItem = context.getContextItem();
+        if (contextItem == null) {
+            throw new XPathException("Cannot call the key() function when there is no context item", "XTDE1270", context);
+        } else if (!(contextItem instanceof NodeInfo)) {
+            throw new XPathException("Cannot call the key() function when the context item is not a node", "XTDE1270", context);
+        }
+        return ((NodeInfo)contextItem).getRoot();
+    }
+
+    private static Item getOrigin(XPathContext context, Sequence argument2) throws XPathException {
+        Item arg2;
+        try {
+            arg2 = argument2.head();
+        } catch (XPathException e) {
+            String code = e.getErrorCodeLocalPart();
+            if ("XPDY0002".equals(code) && argument2 instanceof RootExpression) {
+                throw new XPathException("Cannot call the key() function when there is no context node", "XTDE1270", context);
+            } else if ("XPDY0050".equals(code)) {
+                throw new XPathException("In the key() function," +
+                    " the node supplied in the third argument (or the context node if absent)" +
+                    " must be in a tree whose root is a document node", "XTDE1270", context);
+            } else if ("XPTY0020".equals(code) || "XPTY0019".equals(code)) {
+                throw new XPathException("Cannot call the key() function when the context item is an atomic value",
+                    "XTDE1270", context);
+            }
+            throw e;
+        }
+        return arg2;
+    }
+
+    @NotNull
+    private KeyDefinitionSet getKeyDefinitionSet(KeyManager keyManager, String keyName) throws XPathException {
+        KeyDefinitionSet selectedKeySet;
+        StructuredQName qName = null;
+        try {
+            qName = StructuredQName.fromLexicalQName(
+                    keyName, false, true,
+                    getNamespaceResolver());
+        } catch (XPathException err) {
+            throw new XPathException("Invalid key name: " + err.getMessage(), "XTDE1260");
+        }
+        selectedKeySet = keyManager.getKeyDefinitionSet(qName);
+        if (selectedKeySet == null) {
+            throw new XPathException("Key '" + keyName + "' has not been defined", "XTDE1260");
+        }
+        return selectedKeySet;
+    }
+
+    protected static Sequence search(
+            final KeyManager keyManager, XPathContext context, Sequence sought, NodeInfo origin, KeyDefinitionSet selectedKeySet) throws XPathException {
+
 
 //        if (internal) {
 //            System.err.println("Using key " + fprint + " on doc " + doc);
 //        }
-
+        NodeInfo doc = origin.getRoot();
         if (selectedKeySet.isComposite()) {
-            SequenceIterator soughtKey = arguments[1].iterate();
-            return new LazySequence(getKeyManager().selectByCompositeKey(selectedKeySet, doc.getTreeInfo(), soughtKey, context));
+            SequenceIterator soughtKey = sought.iterate();
+            return new LazySequence(keyManager.selectByCompositeKey(selectedKeySet, doc.getTreeInfo(), soughtKey, context));
 
         } else {
             // If the second argument is a singleton, we evaluate the function
@@ -214,10 +211,9 @@ public class KeyFn extends SystemFunction {
             // in the sequence.
 
             SequenceIterator allResults;
-            if (!(arguments[1] instanceof GroundedValue) || ((GroundedValue)arguments[1]).getLength() > 1) {
+            if (!(sought instanceof GroundedValue) || ((GroundedValue)sought).getLength() > 1) {
                 final XPathContext keyContext = context;
                 final TreeInfo document = doc.getTreeInfo();
-                final KeyManager keyManager = getKeyManager();
                 final KeyDefinitionSet keySet = selectedKeySet;
                 MappingFunction map = new MappingFunction<AtomicValue, NodeInfo>() {
                     // Map a value to the sequence of nodes having that value as a key value
@@ -227,27 +223,26 @@ public class KeyFn extends SystemFunction {
                     }
                 };
 
-                SequenceIterator keys = arguments[1].iterate();
+                SequenceIterator keys = sought.iterate();
                 SequenceIterator allValues = new MappingIterator(keys, map);
                 allResults = new DocumentOrderIterator(allValues, LocalOrderComparer.getInstance());
             } else {
                 try {
-                    AtomicValue keyValue = (AtomicValue) arguments[1].head();
+                    AtomicValue keyValue = (AtomicValue) sought.head();
                     if (keyValue == null) {
                         return EmptySequence.getInstance();
                     }
-                    allResults = getKeyManager().selectByKey(selectedKeySet, doc.getTreeInfo(), keyValue, context);
+                    allResults = keyManager.selectByKey(selectedKeySet, doc.getTreeInfo(), keyValue, context);
                 } catch (XPathException e) {
                     //e.maybesetLocation(getLocation());
                     throw e;
                 }
             }
-            if (origin.isSameNodeInfo(root)) {
+            if (origin.isSameNodeInfo(doc)) {
                 return new LazySequence(allResults);
             }
             return new LazySequence(new ItemMappingIterator(allResults, new SubtreeFilter(origin)));
         }
-
     }
 
 }

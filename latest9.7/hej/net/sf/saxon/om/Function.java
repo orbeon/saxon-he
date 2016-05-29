@@ -111,15 +111,17 @@ public interface Function extends Item, Callable, GroundedValue {
     String getDescription();
 
     /**
-     * Output information about this function item to the diagnostic explain() output
+     * Export information about this function item. This method not used when exporting a function call,
+     * only when exporting a function item literal whose value is this function.
      */
 
     void export(ExpressionPresenter out) throws XPathException;
 
 
     /**
-     * Check that result type is SystemFunction or AtomicConstructorFunction
-     *
+     * Ask whether the result returned by the function can be trusted, or whether it
+     * needs to be checked against the type signature.
+     * @return true if the result does not need to be checked.
      */
     boolean isTrustedResultType();
 

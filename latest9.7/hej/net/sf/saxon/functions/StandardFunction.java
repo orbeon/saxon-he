@@ -243,11 +243,11 @@ public abstract class StandardFunction {
                 .arg(0, BuiltInAtomicType.INTEGER, STAR, null);
 
         register("collation-key#1", CollationKeyFn.class, 1, 1, BuiltInAtomicType.ANY_ATOMIC,
-                 OPT, StandardFunction.XPATH30 | StandardFunction.USE_WHEN, StandardFunction.DCOLL)
+                 OPT, StandardFunction.XPATH31 | StandardFunction.USE_WHEN, StandardFunction.DCOLL)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null);
 
         register("collation-key#2", CollatingFunctionFree.class, 2, 2, BuiltInAtomicType.ANY_ATOMIC,
-                 OPT, StandardFunction.XPATH30 | StandardFunction.USE_WHEN, StandardFunction.DCOLL)
+                 OPT, StandardFunction.XPATH31 | StandardFunction.USE_WHEN, StandardFunction.DCOLL)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null)
                 .arg(1, BuiltInAtomicType.STRING, ONE, null);
 
@@ -329,7 +329,7 @@ public abstract class StandardFunction {
 
         register("default-collation", StaticContextAccessor.DefaultCollation.class, 0, 0, BuiltInAtomicType.STRING, ONE, CORE, DCOLL);
 
-        register("default-language", DynamicContextAccessor.DefaultLanguage.class, 0, 0, BuiltInAtomicType.LANGUAGE, ONE, CORE, DLANG);
+        register("default-language", DynamicContextAccessor.DefaultLanguage.class, 0, 0, BuiltInAtomicType.LANGUAGE, ONE, XPATH31, DLANG);
 
         register("distinct-values#1", DistinctValues.class, 1, 2, BuiltInAtomicType.ANY_ATOMIC, STAR, CORE, DCOLL|UO)
                 .arg(0, BuiltInAtomicType.ANY_ATOMIC, STAR, EMPTY);
@@ -535,12 +535,12 @@ public abstract class StandardFunction {
                 .arg(0, BuiltInAtomicType.STRING, OPT, StringValue.EMPTY_STRING);
 
         register("json-doc", JsonDoc.class, 1, 2, AnyItemType.getInstance(),
-                OPT, StandardFunction.XPATH30, LATE)
+                OPT, StandardFunction.XPATH31, LATE)
                 .arg(0, BuiltInAtomicType.STRING, OPT, null)
                 .arg(1, MapType.ANY_MAP_TYPE, ONE, null);
 
         register("json-to-xml", JsonToXMLFn.class, 1, 2, AnyItemType.getInstance(),
-                OPT, StandardFunction.XPATH30, LATE)
+                OPT, StandardFunction.XPATH31, LATE)
                 .arg(0, BuiltInAtomicType.STRING, OPT, null)
                 .arg(1, MapType.ANY_MAP_TYPE, ONE, null);
 
@@ -865,7 +865,7 @@ public abstract class StandardFunction {
                 .arg(1, BuiltInAtomicType.STRING, ONE, null);
 
         register("transform", TransformFn.class, 0, 1, MapType.ANY_MAP_TYPE, ONE, XPATH31, 0)
-                .arg(0, MapType.ANY_MAP_TYPE, OPT, EMPTY);
+                .arg(0, MapType.ANY_MAP_TYPE, ONE, EMPTY);
 
         register("translate", Translate.class, 3, 3, BuiltInAtomicType.STRING, ONE, CORE, 0)
                 .arg(0, BuiltInAtomicType.STRING, OPT, StringValue.EMPTY_STRING)
@@ -898,14 +898,14 @@ public abstract class StandardFunction {
         register("unparsed-entity-uri#1", UnparsedEntity.UnparsedEntityUri.class, 1, 2, BuiltInAtomicType.ANY_URI, ONE, XSLT, CITEM | LATE)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null);
 
-        register("unparsed-entity-uri#2", UnparsedEntity.UnparsedEntityUri.class, 1, 2, BuiltInAtomicType.ANY_URI, ONE, XSLT, 0)
+        register("unparsed-entity-uri#2", UnparsedEntity.UnparsedEntityUri.class, 1, 2, BuiltInAtomicType.ANY_URI, ONE, XSLT30, 0)
             .arg(0, BuiltInAtomicType.STRING, ONE, null)
             .arg(1, Type.NODE_TYPE, ONE, null);
 
         register("unparsed-entity-public-id#1", UnparsedEntity.UnparsedEntityPublicId.class, 1, 2, BuiltInAtomicType.STRING, ONE, XSLT, CITEM | LATE)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null);
 
-        register("unparsed-entity-public-id#2", UnparsedEntity.UnparsedEntityPublicId.class, 1, 2, BuiltInAtomicType.STRING, ONE, XSLT, 0)
+        register("unparsed-entity-public-id#2", UnparsedEntity.UnparsedEntityPublicId.class, 1, 2, BuiltInAtomicType.STRING, ONE, XSLT30, 0)
             .arg(0, BuiltInAtomicType.STRING, ONE, null)
             .arg(1, Type.NODE_TYPE, ONE, null);
 

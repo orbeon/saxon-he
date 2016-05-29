@@ -13,7 +13,6 @@ import com.saxonica.ee.bytecode.util.CannotCompileException;
 import net.sf.saxon.expr.instruct.OriginalFunction;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.functions.CurriedSystemFunction;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.Function;
@@ -177,16 +176,7 @@ public class StaticFunctionCall extends FunctionCall implements Callable {
      */
     @Override
     public void export(ExpressionPresenter out) throws XPathException {
-        if (target instanceof CurriedSystemFunction) {
-            CurriedSystemFunction csf = (CurriedSystemFunction) target;
-            out.startElement("cfn");
-            out.emitAttribute("name", csf.getName());
-            csf.exportLocalData(out);
-            for (Operand o : operands()) {
-                o.getChildExpression().export(out);
-            }
-            out.endElement();
-        } else if (target instanceof OriginalFunction) {
+         if (target instanceof OriginalFunction) {
             OriginalFunction pf = (OriginalFunction) target;
             out.startElement("origFC", this);
             out.emitAttribute("name", pf.getFunctionName());

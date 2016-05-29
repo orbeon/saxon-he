@@ -1407,7 +1407,6 @@ latest9.7/hej/net/sf/saxon/functions/CurrentGroup.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/functions/CurrentGroupCall.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/functions/CurrentGroupingKey.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/functions/CurrentGroupingKeyCall.java svn_eol_002dstyle=native
-latest9.7/hej/net/sf/saxon/functions/CurriedSystemFunction.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/functions/Data_1.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/functions/DateTimeConstructor.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/functions/DeepEqual.java svn_eol_002dstyle=native
