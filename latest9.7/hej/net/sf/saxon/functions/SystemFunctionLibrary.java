@@ -86,6 +86,9 @@ public class SystemFunctionLibrary implements FunctionLibrary {
         if (uri.equals(NamespaceConstant.FN)) {
             RetainedStaticContext rsc = new RetainedStaticContext(env);
             String local = functionName.getLocalPart();
+            if (arity == 2 && local.equals("string-join") && env.getXPathVersion() < 31) {
+                local = "_STRING-JOIN_2.0"; // Bug 2738
+            }
             SystemFunction fn = makeSystemFunction(local, arity, functionSet);
             fn.setRetainedStaticContext(rsc);
             Expression f = fn.makeFunctionCall(staticArgs);

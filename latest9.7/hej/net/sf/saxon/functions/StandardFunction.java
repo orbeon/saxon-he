@@ -798,6 +798,11 @@ public abstract class StandardFunction {
                 .arg(0, BuiltInAtomicType.ANY_ATOMIC, STAR, StringValue.EMPTY_STRING)
                 .arg(1, BuiltInAtomicType.STRING, ONE, null);
 
+        // XPath 2.0 variant of string-join with a different signature: see bug 2738
+        register("_STRING-JOIN_2.0#2", StringJoin.class, 2, 2, BuiltInAtomicType.STRING, ONE, CORE, 0)
+                .arg(0, BuiltInAtomicType.STRING, STAR, StringValue.EMPTY_STRING)
+                .arg(1, BuiltInAtomicType.STRING, ONE, null);
+
             // The argument type for string-join() is relaxed from xs:string to xs:anyAtomicType in 3.1, and we don't have
             // machinery to have different signatures for different XPath versions.
 
