@@ -386,11 +386,7 @@ public abstract class SystemFunction extends AbstractFunction {
      */
 
     public int getSpecialProperties(Expression[] arguments) {
-        int p = 0;
-        if (details == null) {
-            return p;
-        }
-        return p | StaticProperty.NON_CREATIVE;
+        return details==null ? 0 : StaticProperty.NON_CREATIVE;
     }
 
     /**
