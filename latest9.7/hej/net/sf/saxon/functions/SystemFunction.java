@@ -390,10 +390,6 @@ public abstract class SystemFunction extends AbstractFunction {
         if (details == null) {
             return p;
         }
-        if (details.itemType.isPlainType() ||
-                (details.properties & StandardFunction.AS_ARG0) != 0 || (details.properties & StandardFunction.AS_PRIM_ARG0) != 0) {
-            return p | StaticProperty.NON_CREATIVE;
-        }
         return p | StaticProperty.NON_CREATIVE;
     }
 
