@@ -515,10 +515,10 @@ public:
 //	SchemaManager
 
    // static JNIEnv *env;
-    static sxnc_environment * environ;
+    extern static sxnc_environment * environ;
     std::string cwd; /*!< current working directory */
     jobject proc; /*!< Java Processor object */
-    static int jvmCreatedCPP;
+    extern static int jvmCreatedCPP;
     
     /*static JavaVM *jvm;*/
     static int refCount;
