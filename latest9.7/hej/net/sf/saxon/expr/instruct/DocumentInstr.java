@@ -18,6 +18,7 @@ import net.sf.saxon.evpull.EventIterator;
 import net.sf.saxon.evpull.SingletonEventIterator;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ExpressionTool;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.lib.FeatureKeys;
 import net.sf.saxon.lib.ParseOptions;
@@ -34,6 +35,8 @@ import net.sf.saxon.type.*;
 import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.TextFragmentValue;
 import net.sf.saxon.value.UntypedAtomicValue;
+
+import java.util.Map;
 
 
 /**
@@ -231,13 +234,14 @@ public class DocumentInstr extends ParentNodeConstructor {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         DocumentInstr doc = new DocumentInstr(textOnly, constantText);
         ExpressionTool.copyLocationInfo(this, doc);
-        doc.setContentExpression(getContentExpression().copy());
+        doc.setContentExpression(getContentExpression().copy(rebindings));
         doc.setValidationAction(getValidationAction(), getSchemaType());
         doc.setLazyConstruction(isLazyConstruction());
         return doc;

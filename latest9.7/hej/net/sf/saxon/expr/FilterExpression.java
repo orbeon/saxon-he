@@ -28,6 +28,8 @@ import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
 
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -303,7 +305,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
 
         Expression originalFilter;
         try {
-            originalFilter = getFilter().copy();
+            originalFilter = getFilter().copy(new HashMap<IdentityWrapper<Binding>, Binding>());
         } catch (UnsupportedOperationException err) {
             originalFilter = null;
         }
@@ -1212,11 +1214,12 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        FilterExpression fe = new FilterExpression(getBase().copy(), getFilter().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        FilterExpression fe = new FilterExpression(getBase().copy(rebindings), getFilter().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, fe);
         fe.filterIsIndependent = filterIsIndependent;
         fe.filterIsPositional = filterIsPositional;

@@ -24,9 +24,7 @@ import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.z.IntIterator;
 import net.sf.saxon.z.IntSet;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -742,10 +740,11 @@ public final class AxisExpression extends Expression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         AxisExpression a2 = new AxisExpression(axis, test);
         a2.itemType = itemType;
         a2.staticInfo = staticInfo;
@@ -1179,7 +1178,7 @@ public final class AxisExpression extends Expression {
         args[0] = this.copy();
         pre.add(SystemFunctionCall.makeSystemFunction(
                 "exists", args));*/
-        Expression a = this.copy();
+        Expression a = this.copy(new HashMap<IdentityWrapper<Binding>, Binding>());
         a.setRetainedStaticContext(getRetainedStaticContext());
         pre.add(a);
         return pre;

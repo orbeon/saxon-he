@@ -22,6 +22,7 @@ import net.sf.saxon.value.SequenceType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An xsl:analyze-string element in the stylesheet. New at XSLT 2.0
@@ -259,17 +260,24 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        AnalyzeString a2 = new AnalyzeString(copy(getSelect()), copy(getRegex()), copy(getFlags()), copy(getMatching()), copy(getNonMatching()), pattern);
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        AnalyzeString a2 = new AnalyzeString(
+                copy(getSelect(), rebindings),
+                copy(getRegex(), rebindings),
+                copy(getFlags(), rebindings),
+                copy(getMatching(), rebindings),
+                copy(getNonMatching(), rebindings),
+                pattern);
         ExpressionTool.copyLocationInfo(this, a2);
         return a2;
     }
 
-    private Expression copy(Expression exp) {
-        return exp == null ? null : exp.copy();
+    private Expression copy(Expression exp, Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        return exp == null ? null : exp.copy(rebindings);
     }
 
 

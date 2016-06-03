@@ -14,10 +14,7 @@ import net.sf.saxon.evpull.BlockEventIterator;
 import net.sf.saxon.evpull.EmptyEventIterator;
 import net.sf.saxon.evpull.EventIterator;
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.PromotionOffer;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
@@ -34,6 +31,7 @@ import net.sf.saxon.value.SequenceExtent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -301,13 +299,14 @@ public class Block extends Instruction {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         Expression[] c2 = new Expression[size()];
         for (int c = 0; c < size(); c++) {
-            c2[c] = child(c).copy();
+            c2[c] = child(c).copy(rebindings);
         }
         Block b2 = new Block(c2);
         for (int c = 0; c < size(); c++) {

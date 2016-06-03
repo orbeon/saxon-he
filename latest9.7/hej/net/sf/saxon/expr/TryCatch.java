@@ -11,10 +11,7 @@ import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.TryCatchExpressionCompiler;
 import com.saxonica.ee.stream.adjunct.StreamingAdjunct;
 import com.saxonica.ee.stream.adjunct.TryCatchAdjunct;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.PromotionOffer;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
@@ -29,6 +26,7 @@ import net.sf.saxon.value.Cardinality;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -208,13 +206,14 @@ public class TryCatch extends Expression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        TryCatch t2 = new TryCatch(tryOp.getChildExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        TryCatch t2 = new TryCatch(tryOp.getChildExpression().copy(rebindings));
         for (CatchClause clause : catchClauses) {
-            t2.addCatchExpression(clause.nameTest, clause.catchOp.getChildExpression().copy());
+            t2.addCatchExpression(clause.nameTest, clause.catchOp.getChildExpression().copy(rebindings));
         }
         ExpressionTool.copyLocationInfo(this, t2);
         return t2;

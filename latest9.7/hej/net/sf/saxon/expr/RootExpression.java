@@ -12,10 +12,7 @@ import com.saxonica.ee.bytecode.RootExpressionCompiler;
 import com.saxonica.ee.stream.adjunct.RootExpressionAdjunct;
 import com.saxonica.ee.stream.adjunct.StreamingAdjunct;
 import net.sf.saxon.Configuration;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.PathMap;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
@@ -30,6 +27,8 @@ import net.sf.saxon.tree.iter.SingletonIterator;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.type.TypeHierarchy;
+
+import java.util.Map;
 
 
 /**
@@ -216,10 +215,11 @@ public class RootExpression extends Expression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         RootExpression exp = new RootExpression();
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;

@@ -26,6 +26,8 @@ import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.Whitespace;
 
+import java.util.Map;
+
 /**
  * A namespace constructor instruction. (xsl:namespace in XSLT 2.0, or namespace{}{} in XQuery 1.1)
  */
@@ -103,12 +105,13 @@ public class NamespaceConstructor extends SimpleNodeConstructor {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        NamespaceConstructor exp = new NamespaceConstructor(getNameExp().copy());
-        exp.setSelect(getSelect().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        NamespaceConstructor exp = new NamespaceConstructor(getNameExp().copy(rebindings));
+        exp.setSelect(getSelect().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;
     }

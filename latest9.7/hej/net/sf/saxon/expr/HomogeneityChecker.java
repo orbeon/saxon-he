@@ -12,6 +12,7 @@ import com.saxonica.ee.bytecode.HomogeneityCheckerCompiler;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.expr.sort.DocumentSorter;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.pattern.AnyNodeTest;
@@ -19,6 +20,8 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.HomogeneityCheckerIterator;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.TypeHierarchy;
+
+import java.util.Map;
 
 /**
  * This class is an expression that does a run-time check of the result of a "/" expression
@@ -87,11 +90,12 @@ public class HomogeneityChecker extends UnaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
     /*@NotNull*/
     @Override
-    public Expression copy() {
-        HomogeneityChecker hc = new HomogeneityChecker(getBaseExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        HomogeneityChecker hc = new HomogeneityChecker(getBaseExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, hc);
         return hc;
     }

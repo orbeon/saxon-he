@@ -23,6 +23,7 @@ import net.sf.saxon.trans.XPathException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -158,13 +159,14 @@ public class ApplyImports extends Instruction implements ITemplateCall {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         ApplyImports ai2 = new ApplyImports();
-        ai2.setActualParams(WithParam.copy(ai2, actualParams));
-        ai2.setTunnelParams(WithParam.copy(ai2, tunnelParams));
+        ai2.setActualParams(WithParam.copy(ai2, actualParams, rebindings));
+        ai2.setTunnelParams(WithParam.copy(ai2, tunnelParams, rebindings));
         ExpressionTool.copyLocationInfo(this, ai2);
         ai2.allowAnyItem = allowAnyItem;
         return ai2;

@@ -3308,7 +3308,7 @@ public class XQueryParser extends XPathParser {
             setLocation(var);
             Expression ioe = new InstanceOfExpression(var, types.get(i).get(0));
             for (int j = 1; j < types.get(i).size(); j++) {
-                ioe = new OrExpression(ioe, new InstanceOfExpression(var.copy(), types.get(i).get(j)));
+                ioe = new OrExpression(ioe, new InstanceOfExpression(var.copy(new HashMap<IdentityWrapper<Binding>, Binding>()), types.get(i).get(j)));
             }
             setLocation(ioe);
             final Expression ife = Choose.makeConditional(ioe, actions.get(i), lastAction);

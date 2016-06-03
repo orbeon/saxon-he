@@ -14,10 +14,7 @@ import net.sf.saxon.event.SequenceReceiver;
 import net.sf.saxon.expr.instruct.Block;
 import net.sf.saxon.expr.instruct.Choose;
 import net.sf.saxon.expr.instruct.ValueOf;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.Location;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.AtomicSequence;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
@@ -31,6 +28,8 @@ import net.sf.saxon.type.Type;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.Cardinality;
+
+import java.util.Map;
 
 
 /**
@@ -171,11 +170,12 @@ public class AdjacentTextNodeMerger extends UnaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        AdjacentTextNodeMerger a2 = new AdjacentTextNodeMerger(getBaseExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        AdjacentTextNodeMerger a2 = new AdjacentTextNodeMerger(getBaseExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, a2);
         return a2;
     }

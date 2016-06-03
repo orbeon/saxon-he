@@ -31,6 +31,7 @@ import net.sf.saxon.value.StringValue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -239,10 +240,11 @@ public class Literal extends Expression {
      * @return a copy of the original literal. Note that the
      *         underlying value is not copied; the code relies on the caller
      *         treating the underlying value as immutable.
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         Literal l2 = new Literal(value);
         ExpressionTool.copyLocationInfo(this, l2);
         return l2;

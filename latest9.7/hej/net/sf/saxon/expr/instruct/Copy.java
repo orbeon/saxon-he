@@ -14,10 +14,7 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
 import net.sf.saxon.event.*;
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.PromotionOffer;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.lib.Validation;
 import net.sf.saxon.om.*;
@@ -33,6 +30,7 @@ import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.Whitespace;
 
 import java.util.Iterator;
+import java.util.Map;
 
 
 /**
@@ -152,14 +150,15 @@ public class Copy extends ElementCreator {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         Copy copy = new Copy(
                 copyNamespaces, inheritNamespacesToChildren, getSchemaType(), getValidationAction());
         ExpressionTool.copyLocationInfo(this, copy);
-        copy.setContentExpression(getContentExpression().copy());
+        copy.setContentExpression(getContentExpression().copy(rebindings));
         copy.resultItemType = resultItemType;
         return copy;
     }

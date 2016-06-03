@@ -7,8 +7,10 @@
 
 package net.sf.saxon.pattern;
 
+import net.sf.saxon.expr.Binding;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ExpressionTool;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.trans.XPathException;
@@ -16,6 +18,7 @@ import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.UType;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -142,11 +145,12 @@ public class ExceptPattern extends VennPattern {
      * Copy a pattern. This makes a deep copy.
      *
      * @return the copy of the original pattern
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Pattern copy() {
-        ExceptPattern n = new ExceptPattern(p1.copy(), p2.copy());
+    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        ExceptPattern n = new ExceptPattern(p1.copy(rebindings), p2.copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
         return n;
     }

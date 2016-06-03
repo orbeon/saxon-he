@@ -20,7 +20,9 @@ import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.SequenceType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A "for" clause in a FLWOR expression
@@ -41,7 +43,7 @@ public class ForClause extends Clause {
         return FOR;
     }
 
-    public ForClause copy(FLWORExpression flwor) {
+    public ForClause copy(FLWORExpression flwor, Map<IdentityWrapper<Binding>, Binding> rebindings) {
         ForClause f2 = new ForClause();
         f2.setLocation(getLocation());
         f2.setPackageData(getPackageData());
@@ -49,7 +51,7 @@ public class ForClause extends Clause {
         if (positionVariable != null) {
             f2.positionVariable = positionVariable.copy();
         }
-        f2.initSequence(flwor, getSequence().copy());
+        f2.initSequence(flwor, getSequence().copy(rebindings));
         f2.allowsEmpty = allowsEmpty;
         return f2;
     }
@@ -273,7 +275,7 @@ public class ForClause extends Clause {
                         RetainedStaticContext rsc = new RetainedStaticContext(visitor.getStaticContext());
                         Expression position =
                                 SystemFunction.makeCall("position", rsc);
-                        Expression predicate = condition.copy();
+                        Expression predicate = condition.copy(new HashMap<IdentityWrapper<Binding>, Binding>());
                         Operand child = op == 0
                                 ? ((ComparisonExpression)predicate).getLhs()
                                 : ((ComparisonExpression)predicate).getRhs();

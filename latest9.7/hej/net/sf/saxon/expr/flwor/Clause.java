@@ -11,11 +11,13 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * A "Clause" refers specifically to one of the clauses of a FLWOR expression, for example the "for"
@@ -82,10 +84,11 @@ public abstract class Clause {
      * Create a copy of this clause
      *
      * @param flwor the new FLWORExpression to contain the copied clause
+     * @param rebindings
      * @return the copied clause
      */
 
-    public abstract Clause copy(FLWORExpression flwor);
+    public abstract Clause copy(FLWORExpression flwor, Map<IdentityWrapper<Binding>, Binding> rebindings);
 
     /**
      * Optimize any expressions contained within this clause

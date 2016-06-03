@@ -10,10 +10,8 @@ package net.sf.saxon.option.sql;
 import net.sf.saxon.Controller;
 import net.sf.saxon.event.ReceiverOptions;
 import net.sf.saxon.event.SequenceOutputter;
-import net.sf.saxon.expr.Expression;
-import net.sf.saxon.expr.SimpleExpression;
-import net.sf.saxon.expr.StringLiteral;
-import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.*;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.*;
 import net.sf.saxon.style.Compilation;
 import net.sf.saxon.style.ComponentDeclaration;
@@ -26,6 +24,7 @@ import net.sf.saxon.value.StringValue;
 
 import java.sql.*;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -188,7 +187,7 @@ public class SQLQuery extends ExtensionInstruction {
             return "sql:query";
         }
 
-        public Expression copy() {
+        public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
             QueryInstruction qi2 = new QueryInstruction();
             qi2.copyOperandsFrom(this);
             qi2.rowTag = rowTag;

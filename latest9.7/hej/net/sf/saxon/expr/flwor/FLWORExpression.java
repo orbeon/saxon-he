@@ -23,6 +23,7 @@ import net.sf.saxon.value.SequenceType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents a FLWOR expression, evaluated using tuple streams
@@ -365,15 +366,16 @@ public class FLWORExpression extends Expression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
     /*@NotNull*/
     @Override
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         List<Clause> newClauses = new ArrayList<Clause>();
         List<LocalVariableBinding> oldBindings = new ArrayList<LocalVariableBinding>();
         List<LocalVariableBinding> newBindings = new ArrayList<LocalVariableBinding>();
         for (Clause c : clauses) {
-            Clause c2 = c.copy(this);
+            Clause c2 = c.copy(this, rebindings);
             c2.setLocation(c.getLocation());
             c2.setRepeated(c.isRepeated());
             oldBindings.addAll(Arrays.asList(c.getRangeVariables()));
@@ -381,7 +383,7 @@ public class FLWORExpression extends Expression {
             newClauses.add(c2);
         }
         FLWORExpression f2 = new FLWORExpression();
-        f2.init(newClauses, getReturnClause().copy());
+        f2.init(newClauses, getReturnClause().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, f2);
         for (int i = 0; i < oldBindings.size(); i++) {
             ExpressionTool.rebindVariableReferences(f2, oldBindings.get(i), newBindings.get(i));

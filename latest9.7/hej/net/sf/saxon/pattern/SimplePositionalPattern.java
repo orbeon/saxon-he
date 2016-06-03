@@ -7,8 +7,10 @@
 
 package net.sf.saxon.pattern;
 
+import net.sf.saxon.expr.Binding;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ExpressionTool;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -17,6 +19,8 @@ import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.UType;
+
+import java.util.Map;
 
 /**
  * A SimplePositionalPattern is a pattern of the form A[N] where A is an axis expression using the child axis
@@ -163,10 +167,11 @@ public final class SimplePositionalPattern extends Pattern {
      * Copy a pattern. This makes a deep copy.
      *
      * @return the copy of the original pattern
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Pattern copy() {
+    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         SimplePositionalPattern n = new SimplePositionalPattern(nodeTest.copy(), position);
         ExpressionTool.copyLocationInfo(this, n);
         return n;

@@ -15,6 +15,7 @@ import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.ItemType;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * A "let" clause in a FLWOR expression
@@ -29,12 +30,12 @@ public class LetClause extends Clause {
         return LET;
     }
 
-    public LetClause copy(FLWORExpression flwor) {
+    public LetClause copy(FLWORExpression flwor, Map<IdentityWrapper<Binding>, Binding> rebindings) {
         LetClause let2 = new LetClause();
         let2.setLocation(getLocation());
         let2.setPackageData(getPackageData());
         let2.rangeVariable = rangeVariable.copy();
-        let2.initSequence(flwor, getSequence().copy());
+        let2.initSequence(flwor, getSequence().copy(rebindings));
         return let2;
     }
 

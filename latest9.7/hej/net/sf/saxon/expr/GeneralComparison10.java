@@ -8,10 +8,7 @@
 package net.sf.saxon.expr;
 
 import net.sf.saxon.Configuration;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.Token;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.expr.sort.AtomicComparer;
 import net.sf.saxon.expr.sort.CodepointCollator;
 import net.sf.saxon.expr.sort.GenericAtomicComparer;
@@ -35,6 +32,7 @@ import net.sf.saxon.value.StringValue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * GeneralComparison10: a boolean expression that compares two expressions
@@ -359,11 +357,12 @@ public class GeneralComparison10 extends BinaryExpression implements Callable {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        GeneralComparison10 gc = new GeneralComparison10(getLhsExpression().copy(), operator, getRhsExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        GeneralComparison10 gc = new GeneralComparison10(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, gc);
         gc.setRetainedStaticContext(getRetainedStaticContext());
         gc.comparer = comparer;

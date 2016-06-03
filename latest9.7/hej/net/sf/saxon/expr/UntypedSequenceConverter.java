@@ -11,12 +11,15 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.UntypedAtomicValue;
+
+import java.util.Map;
 
 /**
  * An UntypedSequenceConverter is an expression that performs a cast on each member of
@@ -156,11 +159,12 @@ public final class UntypedSequenceConverter extends AtomicSequenceConverter {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        UntypedSequenceConverter atomicConverter = new UntypedSequenceConverter(getBaseExpression().copy(), getRequiredItemType());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        UntypedSequenceConverter atomicConverter = new UntypedSequenceConverter(getBaseExpression().copy(rebindings), getRequiredItemType());
         ExpressionTool.copyLocationInfo(this, atomicConverter);
         atomicConverter.setConverter(converter);
         return atomicConverter;

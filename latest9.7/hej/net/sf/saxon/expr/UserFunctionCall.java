@@ -32,6 +32,7 @@ import net.sf.saxon.value.Whitespace;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -273,10 +274,11 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         if (function == null) {
             // not bound yet, we have no way to register the new copy with the XSLFunction
             throw new UnsupportedOperationException("UserFunctionCall.copy()");
@@ -287,7 +289,7 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
         int numArgs = getArity();
         Expression[] a2 = new Expression[numArgs];
         for (int i = 0; i < numArgs; i++) {
-            a2[i] = getArg(i).copy();
+            a2[i] = getArg(i).copy(rebindings);
         }
         ufc.setArguments(a2);
         if (argumentEvaluationModes != null) {

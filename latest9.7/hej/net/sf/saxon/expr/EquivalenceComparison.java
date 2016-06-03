@@ -24,6 +24,8 @@ import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.SequenceType;
 
+import java.util.Map;
+
 
 /**
  * Class to handle equivalence comparisons of singletons. This only handles equality comparison.
@@ -199,11 +201,12 @@ public class EquivalenceComparison extends BinaryExpression implements Compariso
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        EquivalenceComparison sc = new EquivalenceComparison(getLhsExpression().copy(), operator, getRhsExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        EquivalenceComparison sc = new EquivalenceComparison(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, sc);
         sc.comparer = comparer;
         sc.knownToBeComparable = knownToBeComparable;

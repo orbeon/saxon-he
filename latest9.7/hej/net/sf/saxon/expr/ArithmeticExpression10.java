@@ -22,6 +22,8 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
 
+import java.util.Map;
+
 /**
  * Arithmetic Expression: an expression using one of the operators
  * plus, minus, multiply, div, idiv, mod, in backwards
@@ -286,11 +288,12 @@ public class ArithmeticExpression10 extends BinaryExpression implements Callable
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        ArithmeticExpression10 a2 = new ArithmeticExpression10(getLhsExpression().copy(), operator, getRhsExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        ArithmeticExpression10 a2 = new ArithmeticExpression10(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, a2);
         a2.calculator = calculator;
         return a2;

@@ -7,10 +7,8 @@
 
 package net.sf.saxon.expr.flwor;
 
-import net.sf.saxon.expr.Expression;
-import net.sf.saxon.expr.Operand;
-import net.sf.saxon.expr.OperandRole;
-import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.*;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -21,6 +19,7 @@ import net.sf.saxon.z.IntHashMap;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Implements an XQuery 3.0 sliding or tumbling window clause within a FLWOR expression
@@ -124,15 +123,15 @@ public class WindowClause extends Clause {
     }
 
     @Override
-    public Clause copy(FLWORExpression flwor) {
+    public Clause copy(FLWORExpression flwor, Map<IdentityWrapper<Binding>, Binding> rebindings) {
         WindowClause wc = new WindowClause();
         wc.setLocation(getLocation());
         wc.setPackageData(getPackageData());
         wc.sliding = sliding;
         wc.includeUnclosedWindows = includeUnclosedWindows;
-        wc.initSequence(flwor, getSequence().copy());
-        wc.initStartCondition(flwor, getStartCondition().copy());
-        wc.initEndCondition(flwor, getEndCondition().copy());
+        wc.initSequence(flwor, getSequence().copy(rebindings));
+        wc.initStartCondition(flwor, getStartCondition().copy(rebindings));
+        wc.initEndCondition(flwor, getEndCondition().copy(rebindings));
         wc.windowVars = windowVars;
         return wc;
     }

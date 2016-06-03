@@ -13,6 +13,7 @@ import com.saxonica.ee.stream.adjunct.InstanceOfAdjunct;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -23,6 +24,8 @@ import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.SequenceType;
+
+import java.util.Map;
 
 /**
  * InstanceOf Expression: implements "Expr instance of data-type"
@@ -193,11 +196,12 @@ public final class InstanceOfExpression extends UnaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        InstanceOfExpression exp = new InstanceOfExpression(getBaseExpression().copy(),
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        InstanceOfExpression exp = new InstanceOfExpression(getBaseExpression().copy(rebindings),
                 SequenceType.makeSequenceType(targetType, targetCardinality));
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;

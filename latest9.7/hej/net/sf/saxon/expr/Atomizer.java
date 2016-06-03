@@ -10,15 +10,12 @@ package net.sf.saxon.expr;
 import com.saxonica.ee.bytecode.AtomizerCompiler;
 import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.stream.adjunct.AtomizerAdjunct;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.ma.arrays.ArrayItemType;
 import net.sf.saxon.event.ReceiverOptions;
 import net.sf.saxon.expr.instruct.Block;
 import net.sf.saxon.expr.instruct.Choose;
 import net.sf.saxon.expr.instruct.ValueOf;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.PathMap;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.pattern.NodeTest;
@@ -27,6 +24,8 @@ import net.sf.saxon.tree.iter.*;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.Cardinality;
+
+import java.util.Map;
 
 
 /**
@@ -275,11 +274,12 @@ public final class Atomizer extends UnaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        Atomizer copy = new Atomizer(getBaseExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        Atomizer copy = new Atomizer(getBaseExpression().copy(rebindings));
         copy.untyped = untyped;
         copy.singleValued = singleValued;
         ExpressionTool.copyLocationInfo(this, copy);

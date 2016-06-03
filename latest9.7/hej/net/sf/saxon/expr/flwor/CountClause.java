@@ -7,10 +7,14 @@
 
 package net.sf.saxon.expr.flwor;
 
+import net.sf.saxon.expr.Binding;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
+
+import java.util.Map;
 
 /**
  * A "count" clause in a FLWOR expression
@@ -24,7 +28,7 @@ public class CountClause extends Clause {
         return COUNT;
     }
 
-    public CountClause copy(FLWORExpression flwor) {
+    public CountClause copy(FLWORExpression flwor, Map<IdentityWrapper<Binding>, Binding> rebindings) {
         CountClause c2 = new CountClause();
         c2.rangeVariable = rangeVariable.copy();
         c2.setPackageData(getPackageData());

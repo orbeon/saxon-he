@@ -11,10 +11,8 @@ import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.InterpretedExpressionCompiler;
 import net.sf.saxon.Controller;
 import net.sf.saxon.event.*;
-import net.sf.saxon.expr.Expression;
-import net.sf.saxon.expr.Operand;
-import net.sf.saxon.expr.OperandRole;
-import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.*;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.expr.parser.PromotionOffer;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -23,6 +21,8 @@ import net.sf.saxon.tree.tiny.Statistics;
 import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.type.Type;
+
+import java.util.Map;
 
 /**
  * A saxon:doctype element in the stylesheet.
@@ -53,10 +53,11 @@ public class Doctype extends Instruction {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         throw new UnsupportedOperationException("Doctype.copy()");
     }
 

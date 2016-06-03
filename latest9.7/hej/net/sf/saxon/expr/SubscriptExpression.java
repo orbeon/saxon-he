@@ -14,6 +14,7 @@ import com.saxonica.ee.stream.adjunct.SubscriptExpressionAdjunct;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
@@ -22,6 +23,8 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.GroundedIterator;
 import net.sf.saxon.value.MemoClosure;
 import net.sf.saxon.value.NumericValue;
+
+import java.util.Map;
 
 /**
  * A SubscriptExpression represents a FilterExpression of the form EXPR[n]
@@ -76,11 +79,12 @@ public class SubscriptExpression extends SingleItemFilter {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        SubscriptExpression exp = new SubscriptExpression(getBaseExpression().copy(), getSubscript().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        SubscriptExpression exp = new SubscriptExpression(getBaseExpression().copy(rebindings), getSubscript().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;
     }

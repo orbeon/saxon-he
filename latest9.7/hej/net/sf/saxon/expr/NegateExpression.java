@@ -19,6 +19,8 @@ import net.sf.saxon.value.DoubleValue;
 import net.sf.saxon.value.NumericValue;
 import net.sf.saxon.value.SequenceType;
 
+import java.util.Map;
+
 /**
  * Negate Expression: implements the unary minus operator.
  * This expression is initially created as an ArithmeticExpression (or in backwards
@@ -133,11 +135,12 @@ public class NegateExpression extends UnaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        NegateExpression exp = new NegateExpression(getBaseExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        NegateExpression exp = new NegateExpression(getBaseExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;
     }

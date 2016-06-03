@@ -41,6 +41,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -1255,7 +1256,7 @@ public class ExpressionTool {
             }
             Expression child = o.getChildExpression();
             if (selector.matches(child)) {
-                Expression e2 = mustCopy ? replacement.copy() : replacement;
+                Expression e2 = mustCopy ? replacement.copy(new HashMap<IdentityWrapper<Binding>, Binding>()) : replacement;
                 o.setChildExpression(e2);
                 replaced = true;
             } else {
@@ -1560,7 +1561,7 @@ public class ExpressionTool {
                     ((VariableReference) child).getBinding() == binding) {
                     Expression copy;
                     try {
-                        copy = replacement.copy();
+                        copy = replacement.copy(new HashMap<IdentityWrapper<Binding>, Binding>());
                         ExpressionTool.copyLocationInfo(child, copy);
                     } catch (UnsupportedOperationException err) {
                         // If we can't make a copy, return the original. This is safer than it seems,

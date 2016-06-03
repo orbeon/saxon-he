@@ -17,6 +17,8 @@ import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
 import net.sf.saxon.value.StringValue;
 
+import java.util.Map;
+
 /**
  * Expression class for a cast to a union type
  */
@@ -188,11 +190,12 @@ public class CastToUnion extends UnaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        CastToUnion c = new CastToUnion(getBaseExpression().copy(), targetType, allowEmpty);
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        CastToUnion c = new CastToUnion(getBaseExpression().copy(rebindings), targetType, allowEmpty);
         ExpressionTool.copyLocationInfo(this, c);
         c.setRetainedStaticContext(getRetainedStaticContext());
         return c;

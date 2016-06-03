@@ -14,6 +14,7 @@ import com.saxonica.ee.stream.adjunct.UseAttributeSetAdjunct;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.om.StructuredQName;
@@ -28,6 +29,7 @@ import net.sf.saxon.type.ItemType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This instruction corresponds to a single QName appearing within a use-attribute-sets attribute on a
@@ -224,10 +226,11 @@ public class UseAttributeSet extends Instruction implements ComponentInvocation,
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         UseAttributeSet ua = new UseAttributeSet(targetName, isDeclaredStreamable);
         ua.setTarget(target);
         ua.setBindingSlot(bindingSlot);

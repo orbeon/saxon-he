@@ -25,6 +25,8 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.*;
 
+import java.util.Map;
+
 
 /**
  * An instruction that creates an element node whose name is known statically.
@@ -211,10 +213,11 @@ public class FixedElement extends ElementCreator {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         NamespaceBinding[] ns2 = namespaceBindings;
         if (namespaceBindings.length != 0) {
             ns2 = new NamespaceBinding[namespaceBindings.length];
@@ -222,7 +225,7 @@ public class FixedElement extends ElementCreator {
         }
         FixedElement fe = new FixedElement(elementName, ns2, inheritNamespacesToChildren,
                 inheritNamespacesFromParent, getSchemaType(), getValidationAction());
-        fe.setContentExpression(getContentExpression().copy());
+        fe.setContentExpression(getContentExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, fe);
         return fe;
     }

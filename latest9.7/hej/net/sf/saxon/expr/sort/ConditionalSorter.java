@@ -10,14 +10,13 @@ package net.sf.saxon.expr.sort;
 import com.saxonica.ee.bytecode.ConditionalSorterCompiler;
 import com.saxonica.ee.bytecode.ExpressionCompiler;
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.PromotionOffer;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
+
+import java.util.Map;
 
 /**
  * An expression that sorts an underlying sequence into document order if some condition is true, or that
@@ -163,11 +162,12 @@ public class ConditionalSorter extends Expression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        ConditionalSorter cs = new ConditionalSorter(getCondition().copy(), (DocumentSorter) getDocumentSorter().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        ConditionalSorter cs = new ConditionalSorter(getCondition().copy(rebindings), (DocumentSorter) getDocumentSorter().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, cs);
         return cs;
     }

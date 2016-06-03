@@ -16,6 +16,7 @@ import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -23,6 +24,8 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.LookaheadIterator;
 import net.sf.saxon.tree.iter.LookaheadIteratorImpl;
 import net.sf.saxon.value.EmptySequence;
+
+import java.util.Map;
 
 /**
  * Expression class that implements the "outer for" clause of XQuery 3.0
@@ -65,16 +68,17 @@ public class OuterForExpression extends ForExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         OuterForExpression forExp = new OuterForExpression();
         ExpressionTool.copyLocationInfo(this, forExp);
         forExp.setRequiredType(requiredType);
         forExp.setVariableQName(variableName);
-        forExp.setSequence(getSequence().copy());
-        Expression newAction = getAction().copy();
+        forExp.setSequence(getSequence().copy(rebindings));
+        Expression newAction = getAction().copy(rebindings);
         forExp.setAction(newAction);
         forExp.variableName = variableName;
         ExpressionTool.rebindVariableReferences(newAction, this, forExp);

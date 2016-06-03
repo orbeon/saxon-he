@@ -35,6 +35,7 @@ import net.sf.saxon.value.Whitespace;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 
 /**
@@ -260,11 +261,12 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        CopyOf c = new CopyOf(getSelect().copy(), copyNamespaces, validation, schemaType, rejectDuplicateAttributes);
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        CopyOf c = new CopyOf(getSelect().copy(rebindings), copyNamespaces, validation, schemaType, rejectDuplicateAttributes);
         c.setCopyForUpdate(copyForUpdate);
         c.setCopyLineNumbers(copyLineNumbers);
         c.setReadOnce(readOnce);

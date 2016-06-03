@@ -19,6 +19,7 @@ import net.sf.saxon.value.SequenceType;
 import javax.xml.transform.SourceLocator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The compiled form of an xsl:param element within a template in an XSLT stylesheet.
@@ -52,7 +53,7 @@ public final class LocalParam implements LocalBinding, SourceLocator {
     protected int evaluationMode = ExpressionTool.UNDECIDED;
     private Location locationId = ExplicitLocation.UNKNOWN_LOCATION;
 
-    public LocalParam(PackageData pd) {
+    public LocalParam() {
 
     }
 
@@ -328,8 +329,19 @@ public final class LocalParam implements LocalBinding, SourceLocator {
      * @return the copy of the original expression
      */
 
-    public Expression copy() {
-        throw new UnsupportedOperationException("GeneralVariable.copy()");
+    public LocalParam copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        LocalParam p2 = new LocalParam();
+        p2.conversion = conversion.copy(rebindings);
+        p2.conversionEvaluationMode = conversionEvaluationMode;
+        p2.properties = properties;
+        p2.select = select.copy(rebindings);
+        p2.variableQName = variableQName;
+        p2.requiredType = requiredType;
+        p2.slotNumber = slotNumber;
+        p2.referenceCount = referenceCount;
+        p2.evaluationMode = evaluationMode;
+        p2.locationId = locationId;
+        return p2;
     }
 
     public void addReference(VariableReference ref, boolean isLoopingReference) {

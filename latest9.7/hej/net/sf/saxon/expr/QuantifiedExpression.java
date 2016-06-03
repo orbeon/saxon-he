@@ -22,6 +22,8 @@ import net.sf.saxon.type.ItemType;
 import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.SequenceType;
 
+import java.util.Map;
+
 /**
  * A QuantifiedExpression tests whether some/all items in a sequence satisfy
  * some condition.
@@ -239,17 +241,18 @@ public class QuantifiedExpression extends Assignation {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         QuantifiedExpression qe = new QuantifiedExpression();
         ExpressionTool.copyLocationInfo(this, qe);
         qe.setOperator(operator);
         qe.setVariableQName(variableName);
         qe.setRequiredType(requiredType);
-        qe.setSequence(getSequence().copy());
-        Expression newAction = getAction().copy();
+        qe.setSequence(getSequence().copy(rebindings));
+        Expression newAction = getAction().copy(rebindings);
         qe.setAction(newAction);
         qe.variableName = variableName;
         qe.slotNumber = slotNumber;

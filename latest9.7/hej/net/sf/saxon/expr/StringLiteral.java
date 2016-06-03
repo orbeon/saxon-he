@@ -8,7 +8,10 @@
 package net.sf.saxon.expr;
 
 import net.sf.saxon.expr.parser.ExpressionTool;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.value.StringValue;
+
+import java.util.Map;
 
 /**
  * Subclass of Literal used specifically for string literals, as this is a common case
@@ -57,7 +60,7 @@ public class StringLiteral extends Literal {
     }
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         StringLiteral stringLiteral = new StringLiteral(getValue());
         ExpressionTool.copyLocationInfo(this, stringLiteral);
         return stringLiteral;

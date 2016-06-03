@@ -23,6 +23,7 @@ import net.sf.saxon.type.UType;
 import net.sf.saxon.value.SequenceType;
 
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * A NodeSetPattern is a pattern based on an expression that is evaluated to return a set of nodes;
@@ -256,11 +257,12 @@ public class NodeSetPattern extends Pattern {
      * Copy a pattern. This makes a deep copy.
      *
      * @return the copy of the original pattern
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Pattern copy() {
-        NodeSetPattern n = new NodeSetPattern(expression.copy());
+    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        NodeSetPattern n = new NodeSetPattern(expression.copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
         return n;
     }

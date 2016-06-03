@@ -1257,10 +1257,12 @@ public abstract class Expression implements /*InstructionInfo,*/ IdentityCompara
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings if a local variable is encountered whose binding is present in this
+     *                   map, then the binding will be replaced with a new binding.
      */
 
     /*@NotNull*/
-    public abstract Expression copy();
+    public abstract Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings);
 
     /**
      * Suppress validation on contained element constructors, on the grounds that the parent element

@@ -32,6 +32,7 @@ import net.sf.saxon.value.SequenceType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -492,16 +493,17 @@ public class Choose extends Instruction {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         int size = size();
         Expression[] c2 = new Expression[size];
         Expression[] a2 = new Expression[size];
         for (int c = 0; c < size; c++) {
-            c2[c] = getCondition(c).copy();
-            a2[c] = getAction(c).copy();
+            c2[c] = getCondition(c).copy(rebindings);
+            a2[c] = getAction(c).copy(rebindings);
         }
         Choose ch2 = new Choose(c2, a2);
         ExpressionTool.copyLocationInfo(this, ch2);

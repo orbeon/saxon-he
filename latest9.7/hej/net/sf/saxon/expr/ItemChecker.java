@@ -24,6 +24,8 @@ import net.sf.saxon.type.*;
 import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.IntegerValue;
 
+import java.util.Map;
+
 
 /**
  * A ItemChecker implements the item type checking of "treat as": that is,
@@ -259,11 +261,12 @@ public final class ItemChecker extends UnaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        ItemChecker exp = new ItemChecker(getBaseExpression().copy(), requiredItemType, role);
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        ItemChecker exp = new ItemChecker(getBaseExpression().copy(rebindings), requiredItemType, role);
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;
     }

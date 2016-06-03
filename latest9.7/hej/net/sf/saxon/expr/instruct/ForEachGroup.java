@@ -30,6 +30,7 @@ import net.sf.saxon.value.StringValue;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 
 /**
@@ -370,24 +371,25 @@ public class ForEachGroup extends Instruction
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         SortKeyDefinition[] newKeyDef = null;
         if (getSortKeyDefinitions() != null) {
             newKeyDef = new SortKeyDefinition[getSortKeyDefinitions().size()];
             for (int i = 0; i < getSortKeyDefinitions().size(); i++) {
-                newKeyDef[i] = getSortKeyDefinitions().getSortKeyDefinition(i).copy();
+                newKeyDef[i] = getSortKeyDefinitions().getSortKeyDefinition(i).copy(rebindings);
             }
         }
         ForEachGroup feg = new ForEachGroup(
-                getSelectExpression().copy(),
-                getActionExpression().copy(),
+                getSelectExpression().copy(rebindings),
+                getActionExpression().copy(rebindings),
                 algorithm,
-                getGroupingKey().copy(),
+                getGroupingKey().copy(rebindings),
                 collator,
-                getCollationNameExpression().copy(),
+                getCollationNameExpression().copy(rebindings),
                 newKeyDef == null ? null : new SortKeyDefinitionList(newKeyDef));
         ExpressionTool.copyLocationInfo(this, feg);
         feg.setComposite(isComposite());

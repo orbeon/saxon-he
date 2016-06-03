@@ -27,6 +27,8 @@ import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.IntegerValue;
 
+import java.util.Map;
+
 /**
  * A call to a system-defined function (specifically, a function implemented as an instance
  * of {@link net.sf.saxon.functions.SystemFunction})
@@ -211,12 +213,13 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
     @Override
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         Expression[] args = new Expression[getArity()];
         for (int i = 0; i < args.length; i++) {
-            args[i] = getArg(i).copy();
+            args[i] = getArg(i).copy(rebindings);
         }
         return new SystemFunctionCall(getTargetFunction(), args);
     }

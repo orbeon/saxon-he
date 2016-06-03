@@ -27,6 +27,9 @@ import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.SequenceType;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Variable reference: a reference to a variable. This may be an XSLT-defined variable, a range
  * variable defined within the XPath expression, or a variable defined in some other static context.
@@ -87,10 +90,11 @@ public abstract class VariableReference extends Expression implements BindingRef
      * Create a clone copy of this VariableReference
      *
      * @return the cloned copy
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public abstract Expression copy();
+    public abstract Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings);
 //    {
 //        if (binding == null) {
 //            //System.err.println("copy unbound variable " + this);
@@ -237,7 +241,7 @@ public abstract class VariableReference extends Expression implements BindingRef
                 !((LetExpression) binding).isIndexedVariable) {
             Expression val = ((LetExpression) binding).getSequence();
             binding = null;
-            return val.copy();
+            return val.copy(new HashMap<IdentityWrapper<Binding>, Binding>());
         }
         if (constantValue != null) {
             binding = null;

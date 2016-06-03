@@ -25,6 +25,8 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
 
+import java.util.Map;
+
 /**
  * ValueComparison: a boolean expression that compares two atomic values
  * for equals, not-equals, greater-than or less-than. Implements the operators
@@ -662,11 +664,12 @@ public final class ValueComparison extends BinaryExpression implements Compariso
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        ValueComparison vc = new ValueComparison(getLhsExpression().copy(), operator, getRhsExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        ValueComparison vc = new ValueComparison(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, vc);
         vc.comparer = comparer;
         vc.resultWhenEmpty = resultWhenEmpty;

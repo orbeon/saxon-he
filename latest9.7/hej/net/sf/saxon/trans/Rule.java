@@ -7,11 +7,15 @@
 
 package net.sf.saxon.trans;
 
+import net.sf.saxon.expr.Binding;
 import net.sf.saxon.expr.XPathContextMajor;
 import net.sf.saxon.expr.instruct.TemplateRule;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.pattern.Pattern;
 import net.sf.saxon.trace.ExpressionPresenter;
+
+import java.util.HashMap;
 
 /**
  * Rule: a template rule, or a strip-space rule used to support the implementation
@@ -63,7 +67,7 @@ public class Rule {
      */
 
     public Rule(Rule r, boolean copyChain) {
-        pattern = r.pattern.copy();
+        pattern = r.pattern.copy(new HashMap<IdentityWrapper<Binding>, Binding>());
         action = r.action instanceof TemplateRule ? ((TemplateRule) r.action).copy() : r.action;
         precedence = r.precedence;
         minImportPrecedence = r.minImportPrecedence;

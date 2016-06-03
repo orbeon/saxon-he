@@ -26,6 +26,8 @@ import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.Whitespace;
 
+import java.util.Map;
+
 
 /**
  * An xsl:processing-instruction element in the stylesheet, or a processing-instruction
@@ -84,13 +86,14 @@ public class ProcessingInstruction extends SimpleNodeConstructor {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        ProcessingInstruction exp = new ProcessingInstruction(getNameExp().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        ProcessingInstruction exp = new ProcessingInstruction(getNameExp().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
-        exp.setSelect(getSelect().copy());
+        exp.setSelect(getSelect().copy(rebindings));
         return exp;
     }
 

@@ -14,12 +14,15 @@ import com.saxonica.ee.stream.adjunct.TailExpressionAdjunct;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.value.SequenceExtent;
+
+import java.util.Map;
 
 /**
  * A TailExpression represents a FilterExpression of the form EXPR[position() > n]
@@ -58,11 +61,12 @@ public class TailExpression extends UnaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        TailExpression exp = new TailExpression(getBaseExpression().copy(), start);
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        TailExpression exp = new TailExpression(getBaseExpression().copy(rebindings), start);
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;
     }

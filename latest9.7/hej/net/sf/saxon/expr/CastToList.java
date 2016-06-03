@@ -20,6 +20,8 @@ import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.SequenceType;
 
+import java.util.Map;
+
 /**
  * Expression class for a cast to a List type
  */
@@ -179,11 +181,12 @@ public class CastToList extends UnaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        CastToList c = new CastToList(getBaseExpression().copy(), targetType, allowEmpty);
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        CastToList c = new CastToList(getBaseExpression().copy(rebindings), targetType, allowEmpty);
         ExpressionTool.copyLocationInfo(this, c);
         c.setRetainedStaticContext(getRetainedStaticContext());
         return c;

@@ -25,6 +25,7 @@ import net.sf.saxon.type.UType;
 import net.sf.saxon.value.NumericValue;
 
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * A GeneralPositionalPattern is a pattern of the form A[P] where A is an axis expression using the child axis
@@ -380,11 +381,12 @@ public class GeneralPositionalPattern extends Pattern {
      * Copy a pattern. This makes a deep copy.
      *
      * @return the copy of the original pattern
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Pattern copy() {
-        GeneralPositionalPattern n = new GeneralPositionalPattern(nodeTest.copy(), positionExpr.copy());
+    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        GeneralPositionalPattern n = new GeneralPositionalPattern(nodeTest.copy(), positionExpr.copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
         return n;
     }

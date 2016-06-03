@@ -10,7 +10,10 @@ package net.sf.saxon.expr;
 import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.GeneralComparisonCompiler;
 import net.sf.saxon.expr.parser.ExpressionTool;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.expr.parser.Token;
+
+import java.util.Map;
 
 /**
  * The class GeneralComparison20 specializes GeneralComparison for the case where
@@ -35,11 +38,12 @@ public class GeneralComparison20 extends GeneralComparison {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        GeneralComparison20 gc = new GeneralComparison20(getLhsExpression().copy(), operator, getRhsExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        GeneralComparison20 gc = new GeneralComparison20(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, gc);
         gc.setRetainedStaticContext(getRetainedStaticContext());
         gc.comparer = comparer;

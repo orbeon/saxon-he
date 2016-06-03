@@ -10,6 +10,7 @@ package net.sf.saxon.xpath;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.expr.parser.PathMap;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
@@ -21,6 +22,7 @@ import javax.xml.xpath.XPathFunction;
 import javax.xml.xpath.XPathFunctionException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -90,10 +92,11 @@ public class XPathFunctionCall extends FunctionCall implements Callable {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         throw new UnsupportedOperationException("XPathFunctionCall.copy()");
     }
 
@@ -167,7 +170,7 @@ public class XPathFunctionCall extends FunctionCall implements Callable {
                     break;
                 }
                 PJConverter converter = PJConverter.allocate(
-                        config, Type.getItemType(item, config.getTypeHierarchy()), StaticProperty.ALLOWS_ONE, Object.class);
+                        config, Type.getItemType(item, config.getTypeHierarchy()), StaticProperty.ALLOWS_ONE, Object.class, null);
                 target.add(converter.convert(item, Object.class, context));
             }
             if (target.size() == 1) {

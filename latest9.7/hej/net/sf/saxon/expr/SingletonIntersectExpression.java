@@ -10,11 +10,14 @@ package net.sf.saxon.expr;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.EmptyIterator;
 import net.sf.saxon.tree.iter.SingletonIterator;
+
+import java.util.Map;
 
 /**
  * This expression is equivalent to (A intersect B) in the case where A has cardinality
@@ -71,12 +74,13 @@ public class SingletonIntersectExpression extends VennExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
     @Override
-    public Expression copy() {
-        SingletonIntersectExpression exp = new SingletonIntersectExpression(getLhsExpression().copy(), operator, getRhsExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        SingletonIntersectExpression exp = new SingletonIntersectExpression(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;
     }

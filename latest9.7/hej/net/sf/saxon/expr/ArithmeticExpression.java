@@ -20,6 +20,8 @@ import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.NumericValue;
 import net.sf.saxon.value.SequenceType;
 
+import java.util.Map;
+
 /**
  * Arithmetic Expression: an expression using one of the operators
  * plus, minus, multiply, div, idiv, mod. Note that this code does not handle backwards
@@ -285,11 +287,12 @@ public class ArithmeticExpression extends BinaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        ArithmeticExpression ae = new ArithmeticExpression(getLhsExpression().copy(), operator, getRhsExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        ArithmeticExpression ae = new ArithmeticExpression(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, ae);
         ae.calculator = calculator;
         ae.simplified = simplified;

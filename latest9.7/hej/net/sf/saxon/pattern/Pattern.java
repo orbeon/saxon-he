@@ -10,10 +10,7 @@ package net.sf.saxon.pattern;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.SlotManager;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.PromotionOffer;
-import net.sf.saxon.expr.parser.XPathParser;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.functions.Current;
 import net.sf.saxon.om.*;
 import net.sf.saxon.style.ExpressionContext;
@@ -29,6 +26,7 @@ import net.sf.saxon.type.UType;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A Pattern represents the result of parsing an XSLT pattern string. <br>
@@ -456,7 +454,7 @@ public abstract class Pattern extends PseudoExpression {
 //        }
 //    }
 
-    public abstract Pattern copy();
+    public abstract Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings);
 
     /**
      * Perform optimisation of an expression and its subexpressions. This is the third and final

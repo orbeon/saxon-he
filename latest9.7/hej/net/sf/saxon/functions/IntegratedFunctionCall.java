@@ -22,6 +22,8 @@ import net.sf.saxon.type.Type;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.SequenceType;
 
+import java.util.Map;
+
 /**
  * Expression representing a call to a user-written extension
  * function implemented as a subtype of {@link ExtensionFunctionCall}
@@ -218,17 +220,18 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         ExtensionFunctionCall newCall = function.getDefinition().makeCallExpression();
         newCall.setDefinition(function.getDefinition());
         function.copyLocalData(newCall);
         IntegratedFunctionCall copy = new IntegratedFunctionCall(getFunctionName(), newCall);
         Expression[] args = new Expression[getArity()];
         for (int i = 0; i < args.length; i++) {
-            args[i] = getArg(i).copy();
+            args[i] = getArg(i).copy(rebindings);
         }
         copy.setArguments(args);
         copy.resultType = resultType;

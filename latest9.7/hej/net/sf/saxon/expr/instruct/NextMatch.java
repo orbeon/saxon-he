@@ -11,11 +11,9 @@ import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.NextMatchCompiler;
 import com.saxonica.ee.stream.adjunct.NextMatchAdjunct;
 import net.sf.saxon.Controller;
-import net.sf.saxon.expr.Component;
-import net.sf.saxon.expr.Expression;
-import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.expr.XPathContextMajor;
+import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ExpressionTool;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -24,6 +22,7 @@ import net.sf.saxon.trans.Rule;
 import net.sf.saxon.trans.XPathException;
 
 import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -51,13 +50,14 @@ public class NextMatch extends ApplyImports {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         NextMatch nm2 = new NextMatch(useTailRecursion);
-        nm2.setActualParams(WithParam.copy(nm2, getActualParams()));
-        nm2.setTunnelParams(WithParam.copy(nm2, getTunnelParams()));
+        nm2.setActualParams(WithParam.copy(nm2, getActualParams(), rebindings));
+        nm2.setTunnelParams(WithParam.copy(nm2, getTunnelParams(), rebindings));
         ExpressionTool.copyLocationInfo(this, nm2);
         nm2.allowAnyItem = allowAnyItem;
         return nm2;

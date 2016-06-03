@@ -13,10 +13,7 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
 import net.sf.saxon.event.*;
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.ExplicitLocation;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.Location;
-import net.sf.saxon.expr.parser.PromotionOffer;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.SerializerFactory;
 import net.sf.saxon.lib.StandardErrorListener;
@@ -27,6 +24,7 @@ import net.sf.saxon.type.*;
 import net.sf.saxon.value.Whitespace;
 
 import javax.xml.transform.OutputKeys;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -104,11 +102,12 @@ public class Message extends Instruction {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        Message exp = new Message(getSelect().copy(), getTerminate().copy(), getErrorCode().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        Message exp = new Message(getSelect().copy(rebindings), getTerminate().copy(rebindings), getErrorCode().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;
     }

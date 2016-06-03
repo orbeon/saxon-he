@@ -7,8 +7,10 @@
 
 package net.sf.saxon.pattern;
 
+import net.sf.saxon.expr.Binding;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ExpressionTool;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -16,6 +18,8 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.SchemaDeclaration;
 import net.sf.saxon.type.UType;
+
+import java.util.Map;
 
 /**
  * A NodeTestPattern is a pattern that consists simply of a NodeTest
@@ -155,10 +159,11 @@ public class NodeTestPattern extends Pattern {
      * Copy a pattern. This makes a deep copy.
      *
      * @return the copy of the original pattern
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Pattern copy() {
+    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         NodeTestPattern n = new NodeTestPattern(nodeTest.copy());
         ExpressionTool.copyLocationInfo(this, n);
         return n;

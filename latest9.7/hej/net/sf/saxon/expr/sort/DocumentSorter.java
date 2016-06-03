@@ -22,6 +22,8 @@ import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.SequenceType;
 
+import java.util.Map;
+
 
 /**
  * A DocumentSorter is an expression that sorts a sequence of nodes into
@@ -166,11 +168,12 @@ public class DocumentSorter extends UnaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        DocumentSorter ds = new DocumentSorter(getBaseExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        DocumentSorter ds = new DocumentSorter(getBaseExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, ds);
         return ds;
     }

@@ -22,6 +22,7 @@ import net.sf.saxon.tree.iter.EmptyIterator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -225,14 +226,15 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         ApplyTemplates a2 = new ApplyTemplates(
-                getSelect().copy(), useCurrentMode, useTailRecursion, implicitSelect, inStreamableConstruct, mode, ruleManager);
-        a2.setActualParams(WithParam.copy(a2, getActualParams()));
-        a2.setTunnelParams(WithParam.copy(a2, getTunnelParams()));
+                getSelect().copy(rebindings), useCurrentMode, useTailRecursion, implicitSelect, inStreamableConstruct, mode, ruleManager);
+        a2.setActualParams(WithParam.copy(a2, getActualParams(), rebindings));
+        a2.setTunnelParams(WithParam.copy(a2, getTunnelParams(), rebindings));
         ExpressionTool.copyLocationInfo(this, a2);
         a2.ruleManager = ruleManager;
         return a2;

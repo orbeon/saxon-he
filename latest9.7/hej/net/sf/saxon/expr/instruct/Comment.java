@@ -14,11 +14,14 @@ import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
+
+import java.util.Map;
 
 
 /**
@@ -57,13 +60,14 @@ public final class Comment extends SimpleNodeConstructor {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         Comment exp = new Comment();
         ExpressionTool.copyLocationInfo(this, exp);
-        exp.setSelect(getSelect().copy());
+        exp.setSelect(getSelect().copy(rebindings));
         return exp;
     }
 

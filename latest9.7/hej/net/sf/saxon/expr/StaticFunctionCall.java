@@ -13,6 +13,7 @@ import com.saxonica.ee.bytecode.util.CannotCompileException;
 import net.sf.saxon.expr.instruct.OriginalFunction;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.Function;
@@ -21,6 +22,8 @@ import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
+
+import java.util.Map;
 
 /**
  * A call to a function that is known statically. This is a stricter definition than "static function
@@ -105,12 +108,13 @@ public class StaticFunctionCall extends FunctionCall implements Callable {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
     @Override
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         Expression[] args = new Expression[getArity()];
         for (int i=0; i<args.length; i++) {
-            args[i] = getArg(i).copy();
+            args[i] = getArg(i).copy(rebindings);
         }
         return new StaticFunctionCall(target, args);
     }

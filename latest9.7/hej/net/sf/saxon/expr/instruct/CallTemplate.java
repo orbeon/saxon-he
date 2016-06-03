@@ -27,6 +27,7 @@ import net.sf.saxon.value.SequenceType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * Instruction representing an xsl:call-template element in the stylesheet.
@@ -275,14 +276,15 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         CallTemplate ct = new CallTemplate(template, calledTemplateName, useTailRecursion, isWithinDeclaredStreamableConstruct);
         ExpressionTool.copyLocationInfo(this, ct);
-        ct.actualParams = WithParam.copy(ct, actualParams);
-        ct.tunnelParams = WithParam.copy(ct, tunnelParams);
+        ct.actualParams = WithParam.copy(ct, actualParams, rebindings);
+        ct.tunnelParams = WithParam.copy(ct, tunnelParams, rebindings);
         return ct;
     }
 

@@ -28,6 +28,8 @@ import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
 import net.sf.saxon.value.StringValue;
 
+import java.util.Map;
+
 
 /**
  * An instruction representing an xsl:element element in an XSLT stylesheet,
@@ -209,16 +211,17 @@ public class ComputedElement extends ElementCreator {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         ComputedElement ce = new ComputedElement(
-                getNameExp().copy(), getNamespaceExp() == null ? null : getNamespaceExp().copy(),
+                getNameExp().copy(rebindings), getNamespaceExp() == null ? null : getNamespaceExp().copy(rebindings),
                 /*defaultNamespace,*/ getSchemaType(),
                 getValidationAction(), inheritNamespacesToChildren, allowNameAsQName);
         ExpressionTool.copyLocationInfo(this, ce);
-        ce.setContentExpression(getContentExpression().copy());
+        ce.setContentExpression(getContentExpression().copy(rebindings));
         return ce;
     }
 

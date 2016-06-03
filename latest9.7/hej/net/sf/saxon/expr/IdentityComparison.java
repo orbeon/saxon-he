@@ -19,6 +19,8 @@ import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.SequenceType;
 
+import java.util.Map;
+
 
 /**
  * IdentityComparison: a boolean expression that compares two nodes
@@ -141,11 +143,12 @@ public final class IdentityComparison extends BinaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        IdentityComparison ic = new IdentityComparison(getLhsExpression().copy(), operator, getRhsExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        IdentityComparison ic = new IdentityComparison(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, ic);
         ic.generateIdEmulation = generateIdEmulation;
         return ic;

@@ -13,6 +13,7 @@ import com.saxonica.ee.stream.PostureAndSweep;
 import com.saxonica.ee.stream.TemplateInversion;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.pattern.Pattern;
@@ -28,6 +29,7 @@ import net.sf.saxon.type.Type;
 import net.sf.saxon.value.SequenceType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -469,10 +471,10 @@ public class TemplateRule implements RuleTarget, Location {
 
     private void copyTo(TemplateRule tr) {
         if (body != null) {
-            tr.body = body.copy();
+            tr.body = body.copy(new HashMap<IdentityWrapper<Binding>, Binding>());
         }
         if (matchPattern != null) {
-            tr.matchPattern = matchPattern.copy();
+            tr.matchPattern = matchPattern.copy(new HashMap<IdentityWrapper<Binding>, Binding>());
         }
         tr.hasRequiredParams = hasRequiredParams;
         tr.bodyIsTailCallReturner = bodyIsTailCallReturner;

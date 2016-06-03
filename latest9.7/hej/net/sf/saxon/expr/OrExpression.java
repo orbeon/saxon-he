@@ -9,13 +9,12 @@ package net.sf.saxon.expr;
 
 import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.OrExpressionCompiler;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.Token;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.BooleanValue;
+
+import java.util.Map;
 
 public class OrExpression extends BooleanExpression {
 
@@ -90,11 +89,12 @@ public class OrExpression extends BooleanExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        OrExpression exp = new OrExpression(getLhsExpression().copy(), getRhsExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        OrExpression exp = new OrExpression(getLhsExpression().copy(rebindings), getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;
     }

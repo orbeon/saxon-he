@@ -25,6 +25,8 @@ import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
 import net.sf.saxon.value.StringValue;
 
+import java.util.Map;
+
 /**
  * An instruction derived from an xsl:attribute element in stylesheet, or from
  * an attribute constructor in XQuery, in cases where the attribute name is not known
@@ -271,16 +273,17 @@ public final class ComputedAttribute extends AttributeCreator {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         ComputedAttribute exp = new ComputedAttribute(
-                getNameExp() == null ? null : getNameExp().copy(),
-                getNamespaceExp() == null ? null : getNamespaceExp().copy(),
+                getNameExp() == null ? null : getNameExp().copy(rebindings),
+                getNamespaceExp() == null ? null : getNamespaceExp().copy(rebindings),
                 getRetainedStaticContext(), getValidationAction(), getSchemaType(), allowNameAsQName);
         ExpressionTool.copyLocationInfo(this, exp);
-        exp.setSelect(getSelect().copy());
+        exp.setSelect(getSelect().copy(rebindings));
         return exp;
     }
 

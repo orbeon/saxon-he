@@ -25,6 +25,8 @@ import net.sf.saxon.type.Type;
 import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.IntegerValue;
 
+import java.util.Map;
+
 
 /**
  * A CardinalityChecker implements the cardinality checking of "treat as": that is,
@@ -367,11 +369,12 @@ public final class CardinalityChecker extends UnaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        CardinalityChecker c2 = new CardinalityChecker(getBaseExpression().copy(), requiredCardinality, role);
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        CardinalityChecker c2 = new CardinalityChecker(getBaseExpression().copy(rebindings), requiredCardinality, role);
         ExpressionTool.copyLocationInfo(this, c2);
         return c2;
     }

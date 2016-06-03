@@ -21,6 +21,8 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
 
+import java.util.Map;
+
 
 /**
  * Cast Expression: implements "cast as data-type ( expression )". It also allows an internal
@@ -305,11 +307,12 @@ public class CastExpression extends CastingExpression implements Callable {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        CastExpression c2 = new CastExpression(getBaseExpression().copy(), getTargetType(), allowsEmpty());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        CastExpression c2 = new CastExpression(getBaseExpression().copy(rebindings), getTargetType(), allowsEmpty());
         ExpressionTool.copyLocationInfo(this, c2);
         c2.converter = converter;
         c2.setRetainedStaticContext(getRetainedStaticContext());

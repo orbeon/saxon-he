@@ -195,7 +195,7 @@ public class SQLInsert extends ExtensionInstruction {
                     } else {
                         try {
                             Class targetClass = Class.forName(parameterClassName);
-                            PJConverter converter = PJConverter.allocate(context.getConfiguration(), v.getPrimitiveType(), StaticProperty.ALLOWS_ONE, targetClass);
+                            PJConverter converter = PJConverter.allocate(context.getConfiguration(), v.getPrimitiveType(), StaticProperty.ALLOWS_ONE, targetClass, null);
                             value = converter.convert(v, targetClass, context);
                         } catch (ClassNotFoundException err) {
                             throw new XPathException("xsl:insert - cannot convert value to required class " + parameterClassName);

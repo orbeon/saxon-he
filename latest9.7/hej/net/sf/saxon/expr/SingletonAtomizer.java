@@ -24,6 +24,8 @@ import net.sf.saxon.type.*;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.Cardinality;
 
+import java.util.Map;
+
 /**
  * A SingletonAtomizer combines the functions of an Atomizer and a CardinalityChecker: it is used to
  * atomize a sequence of nodes, checking that the result of the atomization contains zero or one atomic
@@ -144,11 +146,12 @@ public final class SingletonAtomizer extends UnaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        Expression e2 = new SingletonAtomizer(getBaseExpression().copy(), role, allowEmpty);
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        Expression e2 = new SingletonAtomizer(getBaseExpression().copy(rebindings), role, allowEmpty);
         ExpressionTool.copyLocationInfo(this, e2);
         return e2;
     }

@@ -21,6 +21,8 @@ import net.sf.saxon.value.IntegerRange;
 import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.SequenceType;
 
+import java.util.Map;
+
 
 /**
  * A RangeExpression is an expression that represents an integer sequence as
@@ -161,11 +163,12 @@ public class RangeExpression extends BinaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        RangeExpression exp = new RangeExpression(getLhsExpression().copy(), getRhsExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        RangeExpression exp = new RangeExpression(getLhsExpression().copy(rebindings), getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;
     }

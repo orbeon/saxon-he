@@ -28,6 +28,9 @@ import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.SequenceType;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * A LetExpression represents the XQuery construct let $x := expr return expr. It is used
@@ -342,7 +345,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
             if (parent != null) {
                 for (Operand o : parent.operands()) {
                     if (o.getChildExpression() == ref) {
-                        o.setChildExpression(getSequence().copy());
+                        o.setChildExpression(getSequence().copy(new HashMap<IdentityWrapper<Binding>, Binding>()));
                         break;
                     }
                 }
@@ -680,10 +683,11 @@ public class LetExpression extends Assignation implements TailCallReturner {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         LetExpression let = new LetExpression();
         ExpressionTool.copyLocationInfo(this, let);
         let.isIndexedVariable = isIndexedVariable;
@@ -691,8 +695,8 @@ public class LetExpression extends Assignation implements TailCallReturner {
         let.setNeedsEagerEvaluation(needsEagerEvaluation);
         let.setVariableQName(variableName);
         let.setRequiredType(requiredType);
-        let.setSequence(getSequence().copy());
-        Expression newAction = getAction().copy();
+        let.setSequence(getSequence().copy(rebindings));
+        Expression newAction = getAction().copy(rebindings);
         let.setAction(newAction);
         ExpressionTool.rebindVariableReferences(newAction, this, let);
         return let;

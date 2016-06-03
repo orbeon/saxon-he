@@ -28,6 +28,7 @@ import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.SequenceType;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -493,11 +494,12 @@ public class VennExpression extends BinaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        VennExpression exp = new VennExpression(getLhsExpression().copy(), operator, getRhsExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        VennExpression exp = new VennExpression(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;
     }

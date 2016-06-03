@@ -14,6 +14,7 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.Item;
@@ -24,6 +25,8 @@ import net.sf.saxon.type.*;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.SequenceExtent;
 import net.sf.saxon.value.StringValue;
+
+import java.util.Map;
 
 
 /**
@@ -244,11 +247,12 @@ public class AtomicSequenceConverter extends UnaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        AtomicSequenceConverter atomicConverter = new AtomicSequenceConverter(getBaseExpression().copy(), requiredItemType);
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        AtomicSequenceConverter atomicConverter = new AtomicSequenceConverter(getBaseExpression().copy(rebindings), requiredItemType);
         ExpressionTool.copyLocationInfo(this, atomicConverter);
         atomicConverter.setConverter(converter);
         return atomicConverter;

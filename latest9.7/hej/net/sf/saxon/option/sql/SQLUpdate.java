@@ -8,6 +8,7 @@
 package net.sf.saxon.option.sql;
 
 import net.sf.saxon.expr.*;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
@@ -29,6 +30,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An sql:update element in the stylesheet.
@@ -176,7 +178,7 @@ public class SQLUpdate extends ExtensionInstruction {
         }
 
         @Override
-        public Expression copy() {
+        public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
             UpdateInstruction u2 = new UpdateInstruction();
             return u2.copyOperandsFrom(this);
         }
@@ -217,7 +219,7 @@ public class SQLUpdate extends ExtensionInstruction {
                     } else {
                         try {
                             Class targetClass = Class.forName(parameterClassName);
-                            PJConverter converter = PJConverter.allocate(context.getConfiguration(), v.getPrimitiveType(), StaticProperty.ALLOWS_ONE, targetClass);
+                            PJConverter converter = PJConverter.allocate(context.getConfiguration(), v.getPrimitiveType(), StaticProperty.ALLOWS_ONE, targetClass, null);
                             value = converter.convert(v, targetClass, context);
                         } catch (ClassNotFoundException err) {
                             throw new XPathException("xsl:insert - cannot convert value to required class " + parameterClassName);

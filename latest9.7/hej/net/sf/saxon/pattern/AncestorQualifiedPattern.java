@@ -9,10 +9,7 @@ package net.sf.saxon.pattern;
 
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.SlotManager;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.PromotionOffer;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
@@ -23,6 +20,7 @@ import net.sf.saxon.type.Type;
 import net.sf.saxon.type.UType;
 
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * An AncestorQualifiedPattern represents a path of the form A/B or A//B, where nodes must match the
@@ -399,12 +397,13 @@ public final class AncestorQualifiedPattern extends Pattern {
      * Copy a pattern. This makes a deep copy.
      *
      * @return the copy of the original pattern
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Pattern copy() {
-        AncestorQualifiedPattern n = new AncestorQualifiedPattern(basePattern.copy(),
-            upperPattern.copy(), upwardsAxis);
+    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        AncestorQualifiedPattern n = new AncestorQualifiedPattern(basePattern.copy(rebindings),
+                                                                  upperPattern.copy(rebindings), upwardsAxis);
         ExpressionTool.copyLocationInfo(this, n);
         return n;
     }

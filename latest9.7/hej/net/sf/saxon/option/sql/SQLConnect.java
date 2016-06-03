@@ -9,6 +9,7 @@ package net.sf.saxon.option.sql;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.style.Compilation;
@@ -23,6 +24,7 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -143,7 +145,7 @@ public class SQLConnect extends ExtensionInstruction {
             return "sql:connect";
         }
 
-        public ConnectInstruction copy() {
+        public ConnectInstruction copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
             return (ConnectInstruction)new ConnectInstruction().copyOperandsFrom(this);
         }
 

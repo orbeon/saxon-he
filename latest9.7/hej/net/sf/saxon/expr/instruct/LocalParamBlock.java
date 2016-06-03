@@ -10,6 +10,7 @@ package net.sf.saxon.expr.instruct;
 import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.LocalParamBlockCompiler;
 import net.sf.saxon.expr.*;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.expr.parser.PromotionOffer;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
@@ -17,6 +18,7 @@ import net.sf.saxon.type.ErrorType;
 import net.sf.saxon.type.ItemType;
 
 import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -62,14 +64,15 @@ public class LocalParamBlock extends Instruction {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         LocalParamSetter[] c2 = new LocalParamSetter[getNumberOfParams()];
         int i=0;
         for (Operand o : operands()) {
-            c2[i++] = (LocalParamSetter)o.getChildExpression().copy();
+            c2[i++] = (LocalParamSetter)o.getChildExpression().copy(rebindings);
         }
         return new LocalParamBlock(c2);
     }

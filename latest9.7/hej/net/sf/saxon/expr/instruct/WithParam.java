@@ -17,6 +17,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.SequenceType;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * An object derived from a xsl:with-param element in the stylesheet. <br>
@@ -235,7 +236,7 @@ public class WithParam  {
      * @return the resulting copy
      */
 
-    public static WithParam[] copy(Expression parent, WithParam[] params) {
+    public static WithParam[] copy(Expression parent, WithParam[] params, Map<IdentityWrapper<Binding>, Binding> rebindings) {
         if (params == null) {
             return null;
         }
@@ -245,7 +246,7 @@ public class WithParam  {
             //result[i].parameterId = params[i].parameterId;
             result[i].slotNumber = params[i].slotNumber;
             result[i].typeChecked = params[i].typeChecked;
-            result[i].selectOp = new Operand(parent, params[i].selectOp.getChildExpression().copy(), OperandRole.NAVIGATE);
+            result[i].selectOp = new Operand(parent, params[i].selectOp.getChildExpression().copy(rebindings), OperandRole.NAVIGATE);
             result[i].requiredType = params[i].requiredType;
             result[i].variableQName = params[i].variableQName;
         }

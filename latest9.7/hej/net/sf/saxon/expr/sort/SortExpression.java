@@ -22,6 +22,8 @@ import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.SequenceType;
 
+import java.util.Map;
+
 /**
  * Expression equivalent to the imaginary syntax
  * expr sortby (sort-key)+
@@ -276,16 +278,17 @@ public class SortExpression extends Expression
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         int len = getSortKeyDefinitionList().size();
         SortKeyDefinition[] sk2 = new SortKeyDefinition[len];
         for (int i = 0; i < len; i++) {
-            sk2[i] = getSortKeyDefinition(i).copy();
+            sk2[i] = getSortKeyDefinition(i).copy(rebindings);
         }
-        SortExpression se2 = new SortExpression(getSelect().copy(), new SortKeyDefinitionList(sk2));
+        SortExpression se2 = new SortExpression(getSelect().copy(rebindings), new SortKeyDefinitionList(sk2));
         ExpressionTool.copyLocationInfo(this, se2);
         se2.comparators = comparators;
         return se2;

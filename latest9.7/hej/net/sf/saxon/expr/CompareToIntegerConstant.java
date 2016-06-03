@@ -20,6 +20,8 @@ import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.Int64Value;
 import net.sf.saxon.value.NumericValue;
 
+import java.util.Map;
+
 /**
  * This class implements a comparison of a numeric value to an integer constant using one of the operators
  * eq, ne, lt, gt, le, ge. The semantics are identical to ValueComparison, but this is a fast path for an
@@ -110,11 +112,12 @@ public class CompareToIntegerConstant extends UnaryExpression implements Compari
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        CompareToIntegerConstant c2 = new CompareToIntegerConstant(getLhsExpression().copy(), operator, comparand);
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        CompareToIntegerConstant c2 = new CompareToIntegerConstant(getLhsExpression().copy(rebindings), operator, comparand);
         ExpressionTool.copyLocationInfo(this, c2);
         return c2;
     }

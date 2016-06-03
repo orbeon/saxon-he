@@ -7,12 +7,16 @@
 
 package net.sf.saxon.pattern;
 
+import net.sf.saxon.expr.Binding;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.UType;
+
+import java.util.Map;
 
 /**
  * The UniversalPattern matches everything
@@ -109,10 +113,11 @@ public class UniversalPattern extends Pattern {
      * Since there is only one, return the same.
      *
      * @return the original nodeTest
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Pattern copy() {
+    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         return this;
     }
 }

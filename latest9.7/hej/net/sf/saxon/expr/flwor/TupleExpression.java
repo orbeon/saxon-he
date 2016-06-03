@@ -14,6 +14,7 @@ import net.sf.saxon.expr.oper.OperandArray;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
@@ -22,6 +23,7 @@ import net.sf.saxon.type.ItemType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A tuple expression is an expression that returns a tuple. Specifically,
@@ -158,14 +160,15 @@ public class TupleExpression extends Expression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         int n  = getOperanda().getNumberOfOperands();
         List<LocalVariableReference> refs2 = new ArrayList<LocalVariableReference>(n);
         for (int i = 0; i < n; i++) {
-            refs2.add ((LocalVariableReference) getSlot(i).copy());
+            refs2.add ((LocalVariableReference) getSlot(i).copy(rebindings));
         }
         TupleExpression t2 = new TupleExpression();
         ExpressionTool.copyLocationInfo(this, t2);

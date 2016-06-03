@@ -182,13 +182,14 @@ public abstract class PJConverter {
      * @param itemType    the item type of the XPath value to be converted
      * @param cardinality the cardinality of the XPath value to be converted
      * @param targetClass the Java class required for the conversion result
+     * @param paramType   the type parameter, e.g if the required type is ZeroOrOne(DecimalValue), then DecimalValue
      * @return a suitable converter
      * @throws net.sf.saxon.trans.XPathException
      *          if no conversion is possible
      */
 
     public static PJConverter allocate(Configuration config, ItemType itemType,
-                                       int cardinality, Class targetClass)
+                                       int cardinality, Class targetClass, ParameterizedType paramType)
             throws XPathException {
         TypeHierarchy th = config.getTypeHierarchy();
         if (targetClass == SequenceIterator.class) {
@@ -197,17 +198,25 @@ public abstract class PJConverter {
         if (targetClass == Sequence.class || targetClass == Item.class) {
             return Identity.INSTANCE;
         }
+        boolean needsItemCasting = false;
+        ItemType requiredItemType = null;
+        if (paramType != null) {
+            // Bug 2765. One<DecimalValue> needs special treatment because not all xs:decimal instances are
+            // instances of class DecimalValue
+            requiredItemType = getParameterizedSequenceType(paramType).getPrimaryType();
+            needsItemCasting = requiredItemType == BuiltInAtomicType.DECIMAL;
+        }
         if (targetClass == One.class) {
-            return ToOne.INSTANCE;
+            return needsItemCasting ? ToOneDecimal.INSTANCE : ToOne.INSTANCE;
         }
         if (targetClass == ZeroOrOne.class) {
-            return ToZeroOrOne.INSTANCE;
+            return needsItemCasting ? ToZeroOrOneDecimal.INSTANCE : ToZeroOrOne.INSTANCE;
         }
         if (targetClass == OneOrMore.class) {
-            return ToOneOrMore.INSTANCE;
+            return needsItemCasting ? ToOneOrMoreDecimal.INSTANCE : ToOneOrMore.INSTANCE;
         }
         if (targetClass == ZeroOrMore.class) {
-            return ToZeroOrMore.INSTANCE;
+            return needsItemCasting ? ToZeroOrMoreDecimal.INSTANCE : ToZeroOrMore.INSTANCE;
         }
         if (targetClass == GroundedValue.class | targetClass == SequenceExtent.class) {
             return ToSequenceExtent.INSTANCE;
@@ -232,7 +241,7 @@ public abstract class PJConverter {
         }
         if (targetClass.isArray()) {
             PJConverter itemConverter =
-                    allocate(config, itemType, StaticProperty.EXACTLY_ONE, targetClass.getComponentType());
+                    allocate(config, itemType, StaticProperty.EXACTLY_ONE, targetClass.getComponentType(), null);
             return new ToArray(itemConverter);
         }
         if (!Cardinality.allowsMany(cardinality)) {
@@ -563,7 +572,7 @@ public abstract class PJConverter {
                 }
                 if (it instanceof AtomicValue) {
                     PJConverter pj = allocate(
-                            config, ((AtomicValue) it).getItemType(), StaticProperty.EXACTLY_ONE, Object.class);
+                            config, ((AtomicValue) it).getItemType(), StaticProperty.EXACTLY_ONE, Object.class, null);
                     list.add(pj.convert(it, Object.class, context));
                     //list.add(((AtomicValue)it).convertToJava(Object.class, context));
                 } else if (it instanceof VirtualNode) {
@@ -631,6 +640,29 @@ public abstract class PJConverter {
     }
 
     /**
+     * Converter for use when the target class is {@link One}, which constrains the value to be
+     * a One&lt;DecimalValue&gt;
+     */
+
+    public static class ToOneDecimal extends PJConverter {
+
+        public static final ToOneDecimal INSTANCE = new ToOneDecimal();
+
+        public One<Item> convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
+            // Assume all the type checking has already been done
+            return new One<Item>(toDecimal(value).head());
+        }
+    }
+
+    private static Sequence toDecimal(Sequence in) throws XPathException {
+        return new LazySequence(new ItemMappingIterator(in.iterate(), new ItemMappingFunction<Item, Item>(){
+            public Item mapItem(Item item) throws XPathException {
+                return item instanceof IntegerValue ? new DecimalValue(((IntegerValue)item).getDecimalValue()) : item;
+            }
+        }, true));
+    }
+
+    /**
      * Converter for use when the target class is {@link ZeroOrOne}, which constrains the value to be
      * a singleton or an empty sequence
      */
@@ -642,6 +674,17 @@ public abstract class PJConverter {
         public ZeroOrOne<Item> convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
             // Assume all the type checking has already been done
             return new ZeroOrOne<Item>(value.head());
+        }
+
+    }
+
+    public static class ToZeroOrOneDecimal extends PJConverter {
+
+        public static final ToZeroOrOneDecimal INSTANCE = new ToZeroOrOneDecimal();
+
+        public ZeroOrOne<Item> convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
+            // Assume all the type checking has already been done
+            return new ZeroOrOne<Item>(toDecimal(value).head());
         }
 
     }
@@ -661,6 +704,16 @@ public abstract class PJConverter {
 
     }
 
+    public static class ToOneOrMoreDecimal extends PJConverter {
+
+        public static final ToOneOrMoreDecimal INSTANCE = new ToOneOrMoreDecimal();
+
+        public OneOrMore<Item> convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
+            return OneOrMore.makeOneOrMore(toDecimal(value));
+        }
+
+    }
+
     /**
      * Converter for use when the target class is {@link ZeroOrMore}, which allows any sequence
      * but is a generic (parameterized) class so there is compile-time information about the type
@@ -673,6 +726,16 @@ public abstract class PJConverter {
 
         public ZeroOrMore<Item> convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
             return new ZeroOrMore<Item>(value.iterate());
+        }
+
+    }
+
+    public static class ToZeroOrMoreDecimal extends PJConverter {
+
+        public static final ToZeroOrMoreDecimal INSTANCE = new ToZeroOrMoreDecimal();
+
+        public ZeroOrMore<Item> convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
+            return new ZeroOrMore<Item>(toDecimal(value).iterate());
         }
 
     }
@@ -1012,7 +1075,7 @@ public abstract class PJConverter {
             }
             Configuration config = context.getConfiguration();
             PJConverter converter = allocate(
-                    config, item.getItemType(), StaticProperty.EXACTLY_ONE, targetClass);
+                    config, item.getItemType(), StaticProperty.EXACTLY_ONE, targetClass, null);
             return converter.convert(item, targetClass, context);
         }
     }
@@ -1031,7 +1094,7 @@ public abstract class PJConverter {
             Configuration config = context.getConfiguration();
             GroundedValue gv = SequenceTool.toGroundedValue(value);
             PJConverter converter = allocate(
-                    config, SequenceTool.getItemType(gv, config.getTypeHierarchy()), SequenceTool.getCardinality(gv), targetClass);
+                    config, SequenceTool.getItemType(gv, config.getTypeHierarchy()), SequenceTool.getCardinality(gv), targetClass, null);
             if (converter instanceof General) {
                 converter = Identity.INSTANCE;
             }

@@ -27,6 +27,7 @@ import net.sf.saxon.value.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -532,11 +533,12 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        GeneralComparison gc = new GeneralComparison(getLhsExpression().copy(), operator, getRhsExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        GeneralComparison gc = new GeneralComparison(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, gc);
         gc.setRetainedStaticContext(getRetainedStaticContext());
         gc.comparer = comparer;

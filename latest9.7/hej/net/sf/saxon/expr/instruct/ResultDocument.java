@@ -17,10 +17,7 @@ import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.event.SequenceReceiver;
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.PathMap;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.functions.IriToUri;
 import net.sf.saxon.lib.*;
 import net.sf.saxon.om.*;
@@ -280,10 +277,11 @@ public class ResultDocument extends Instruction
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         Map<StructuredQName, Expression> map = new HashMap<StructuredQName, Expression>();
         for (Map.Entry<StructuredQName, Operand> entry : serializationAttributes.entrySet()) {
             map.put(entry.getKey(), entry.getValue().getChildExpression());
@@ -291,14 +289,14 @@ public class ResultDocument extends Instruction
         ResultDocument r = new ResultDocument(
                 globalProperties,
                 localProperties,
-                getHref() == null ? null : getHref().copy(),
-                getFormatExpression() == null ? null : getFormatExpression().copy(),
+                getHref() == null ? null : getHref().copy(rebindings),
+                getFormatExpression() == null ? null : getFormatExpression().copy(rebindings),
                 getValidationAction(),
                 getSchemaType(),
                 map,
                 characterMapIndex);
         ExpressionTool.copyLocationInfo(this, r);
-        r.setContentExpression(getContentExpression().copy());
+        r.setContentExpression(getContentExpression().copy(rebindings));
         r.resolveAgainstStaticBase = resolveAgainstStaticBase;
         r.async = async;
         return r;

@@ -12,10 +12,7 @@ import com.saxonica.ee.bytecode.InterpretedExpressionCompiler;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.number.NumberFormatter;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.PromotionOffer;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.functions.Number_1;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.lib.Numberer;
@@ -30,9 +27,7 @@ import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * An xsl:number element in the stylesheet. Although this is an XSLT instruction, it is compiled
@@ -270,22 +265,23 @@ public class NumberInstruction extends Expression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         NumberInstruction exp = new NumberInstruction(
-                copy(selectOp), level, count, from, copy(valueOp), copy(formatOp),
-                copy(groupSizeOp), copy(groupSeparatorOp), copy(letterValueOp),
-                copy(ordinalOp), copy(startAtOp),
-                copy(langOp), formatter, hasVariablesInPatterns, backwardsCompatible);
+                copy(selectOp, rebindings), level, count, from, copy(valueOp, rebindings), copy(formatOp, rebindings),
+                copy(groupSizeOp, rebindings), copy(groupSeparatorOp, rebindings), copy(letterValueOp, rebindings),
+                copy(ordinalOp, rebindings), copy(startAtOp, rebindings),
+                copy(langOp, rebindings), formatter, hasVariablesInPatterns, backwardsCompatible);
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;
         // TODO: copy the patterns (level and count)
     }
 
-    private Expression copy(Operand op) {
-        return op == null ? null : op.getChildExpression().copy();
+    private Expression copy(Operand op, Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        return op == null ? null : op.getChildExpression().copy(rebindings);
     }
 
 

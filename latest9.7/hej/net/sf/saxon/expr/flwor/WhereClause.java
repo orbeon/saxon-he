@@ -11,12 +11,14 @@ import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.ItemType;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * A "where" clause in a FLWOR expression
@@ -50,8 +52,8 @@ public class WhereClause extends Clause {
         predicateOp.setChildExpression(predicate);
     }
 
-    public WhereClause copy(FLWORExpression flwor) {
-        WhereClause w2 = new WhereClause(flwor, getPredicate().copy());
+    public WhereClause copy(FLWORExpression flwor, Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        WhereClause w2 = new WhereClause(flwor, getPredicate().copy(rebindings));
         w2.setLocation(getLocation());
         w2.setPackageData(getPackageData());
         return w2;

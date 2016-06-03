@@ -8,10 +8,7 @@
 package net.sf.saxon.expr.flwor;
 
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.RoleDiagnostic;
-import net.sf.saxon.expr.parser.TypeChecker;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.expr.sort.AtomicComparer;
 import net.sf.saxon.expr.sort.SortKeyDefinition;
 import net.sf.saxon.expr.sort.SortKeyDefinitionList;
@@ -20,6 +17,8 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.SequenceType;
+
+import java.util.Map;
 
 /**
  * This class represents an "order by" clause in a FLWOR expression
@@ -48,13 +47,13 @@ public class OrderByClause extends Clause {
         return getTupleExpression().includesBinding(binding);
     }
 
-    public OrderByClause copy(FLWORExpression flwor) {
+    public OrderByClause copy(FLWORExpression flwor, Map<IdentityWrapper<Binding>, Binding> rebindings) {
         SortKeyDefinitionList sortKeys = getSortKeyDefinitions();
         SortKeyDefinition[] sk2 = new SortKeyDefinition[sortKeys.size()];
         for (int i = 0; i < sortKeys.size(); i++) {
-            sk2[i] = sortKeys.getSortKeyDefinition(i).copy();
+            sk2[i] = sortKeys.getSortKeyDefinition(i).copy(rebindings);
         }
-        OrderByClause obc = new OrderByClause(flwor, sk2, (TupleExpression) getTupleExpression().copy());
+        OrderByClause obc = new OrderByClause(flwor, sk2, (TupleExpression) getTupleExpression().copy(rebindings));
         obc.setLocation(getLocation());
         obc.setPackageData(getPackageData());
         obc.comparators = comparators;

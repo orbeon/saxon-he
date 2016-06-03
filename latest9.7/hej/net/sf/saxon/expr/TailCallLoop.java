@@ -13,10 +13,13 @@ import net.sf.saxon.expr.instruct.UserFunction;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.value.SequenceExtent;
+
+import java.util.Map;
 
 /**
  * A TailCallLoop wraps the body of a function that contains tail-recursive function calls. On completion
@@ -79,10 +82,11 @@ public final class TailCallLoop extends UnaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
        throw new UnsupportedOperationException("TailCallLoop.copy()");
         /*TailCallLoop e2 = new TailCallLoop(containingFunction);
         e2.setBaseExpression(getBaseExpression().copy());

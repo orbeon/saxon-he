@@ -33,6 +33,7 @@ import net.sf.saxon.value.SequenceType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A ForExpression maps an expression over a sequence.
@@ -368,16 +369,17 @@ public class ForExpression extends Assignation {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         ForExpression forExp = new ForExpression();
         ExpressionTool.copyLocationInfo(this, forExp);
         forExp.setRequiredType(requiredType);
         forExp.setVariableQName(variableName);
-        forExp.setSequence(getSequence().copy());
-        Expression newAction = getAction().copy();
+        forExp.setSequence(getSequence().copy(rebindings));
+        Expression newAction = getAction().copy(rebindings);
         forExp.setAction(newAction);
         forExp.variableName = variableName;
         forExp.slotNumber = slotNumber;

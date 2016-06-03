@@ -10,6 +10,7 @@ package net.sf.saxon.expr;
 import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.SuppliedParameterReferenceCompiler;
 import net.sf.saxon.expr.parser.ExpressionTool;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.LazySequence;
 import net.sf.saxon.om.Sequence;
@@ -17,6 +18,8 @@ import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
+
+import java.util.Map;
 
 /**
  * This expression is used as a proxy for the consuming operand of an expression such as an
@@ -94,11 +97,12 @@ public class ConsumingOperand extends UnaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        ConsumingOperand exp = new ConsumingOperand(getBaseExpression().copy());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        ConsumingOperand exp = new ConsumingOperand(getBaseExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;
     }

@@ -12,6 +12,7 @@ import net.sf.saxon.Version;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -23,9 +24,7 @@ import net.sf.saxon.value.Whitespace;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * A SortKeyDefinition defines one component of a sort key. <BR>
@@ -363,17 +362,18 @@ public class SortKeyDefinition extends PseudoExpression {
      * Copy this SortKeyDefinition
      *
      * @return a copy of this SortKeyDefinition
+     * @param rebindings
      */
 
-    public SortKeyDefinition copy() {
+    public SortKeyDefinition copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         SortKeyDefinition sk2 = new SortKeyDefinition();
-        sk2.setSortKey(copy(sortKey.getChildExpression()), true);
-        sk2.setOrder(copy(order.getChildExpression()));
-        sk2.setDataTypeExpression(dataTypeExpression == null ? null : copy(dataTypeExpression.getChildExpression()));
-        sk2.setCaseOrder(copy(caseOrder.getChildExpression()));
-        sk2.setLanguage(copy(language.getChildExpression()));
-        sk2.setStable(copy(stable == null ? null : stable.getChildExpression()));
-        sk2.setCollationNameExpression(collationName == null ? null : copy(collationName.getChildExpression()));
+        sk2.setSortKey(copy(sortKey.getChildExpression(), rebindings), true);
+        sk2.setOrder(copy(order.getChildExpression(), rebindings));
+        sk2.setDataTypeExpression(dataTypeExpression == null ? null : copy(dataTypeExpression.getChildExpression(), rebindings));
+        sk2.setCaseOrder(copy(caseOrder.getChildExpression(), rebindings));
+        sk2.setLanguage(copy(language.getChildExpression(), rebindings));
+        sk2.setStable(copy(stable == null ? null : stable.getChildExpression(), rebindings));
+        sk2.setCollationNameExpression(collationName == null ? null : copy(collationName.getChildExpression(), rebindings));
         sk2.collation = collation;
         sk2.emptyLeast = emptyLeast;
         sk2.baseURI = baseURI;
@@ -383,8 +383,8 @@ public class SortKeyDefinition extends PseudoExpression {
         return sk2;
     }
 
-    private Expression copy(Expression in) {
-        return in == null ? null : in.copy();
+    private Expression copy(Expression in, Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        return in == null ? null : in.copy(rebindings);
     }
 
     /**
@@ -590,7 +590,7 @@ public class SortKeyDefinition extends PseudoExpression {
     }
 
     public SortKeyDefinition fix(XPathContext context) throws XPathException {
-        SortKeyDefinition newSKD = this.copy();
+        SortKeyDefinition newSKD = this.copy(new HashMap<IdentityWrapper<Binding>, Binding>());
 
         newSKD.setLanguage(new StringLiteral(this.getLanguage().evaluateAsString(context)));
         newSKD.setOrder(new StringLiteral(this.getOrder().evaluateAsString(context)));

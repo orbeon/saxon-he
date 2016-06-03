@@ -8,6 +8,7 @@
 package net.sf.saxon.expr;
 
 import net.sf.saxon.expr.oper.OperandArray;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
@@ -15,6 +16,8 @@ import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -82,17 +85,18 @@ public abstract class SimpleExpression extends Expression implements Callable {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
 
         try {
             SimpleExpression se2 = getClass().newInstance();
             Expression[] a2 = new Expression[operanda.getNumberOfOperands()];
             int i = 0;
             for (Operand o : operands()) {
-                a2[i++] = o.getChildExpression().copy();
+                a2[i++] = o.getChildExpression().copy(rebindings);
             }
             OperandArray o2 = new OperandArray(se2, a2, operanda.getRoles());
             se2.setOperanda(o2);
@@ -115,7 +119,7 @@ public abstract class SimpleExpression extends Expression implements Callable {
         Expression[] a2 = new Expression[se1.operanda.getNumberOfOperands()];
         int i = 0;
         for (Operand o : se1.operands()) {
-            a2[i++] = o.getChildExpression().copy();
+            a2[i++] = o.getChildExpression().copy(new HashMap<IdentityWrapper<Binding>, Binding>());
         }
         OperandArray o2 = new OperandArray(this, a2, se1.operanda.getRoles());
         setOperanda(o2);

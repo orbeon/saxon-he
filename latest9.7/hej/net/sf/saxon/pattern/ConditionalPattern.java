@@ -8,14 +8,12 @@
 package net.sf.saxon.pattern;
 
 import com.saxonica.ee.stream.Sweep;
+import net.sf.saxon.expr.Binding;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.Operand;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.instruct.SlotManager;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.PromotionOffer;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -25,10 +23,7 @@ import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.UType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * A ConditionalPattern tests a node against one of a number of patterns depending on the value of a condition.
@@ -324,10 +319,11 @@ public class ConditionalPattern extends Pattern {
      * Copy a pattern. This makes a deep copy.
      *
      * @return the copy of the original pattern
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Pattern copy() {
+    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         //TODO - copy the conditions and patterns
         ConditionalPattern n = new ConditionalPattern(conditions,patterns);
         ExpressionTool.copyLocationInfo(this, n);

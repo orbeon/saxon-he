@@ -21,6 +21,8 @@ import net.sf.saxon.type.ErrorType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.SchemaType;
 
+import java.util.Map;
+
 
 /**
  * Handler for xsl:for-each elements in a stylesheet. The same class handles the "!" operator in XPath 3.0,
@@ -325,11 +327,12 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
-        ForEach f2 = new ForEach(getSelect().copy(), getAction().copy(), containsTailCall, getThreads());
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        ForEach f2 = new ForEach(getSelect().copy(rebindings), getAction().copy(rebindings), containsTailCall, getThreads());
         ExpressionTool.copyLocationInfo(this, f2);
         return f2;
     }

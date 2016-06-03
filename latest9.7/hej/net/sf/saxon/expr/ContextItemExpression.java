@@ -12,10 +12,7 @@ import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.stream.adjunct.ContextItemExprAdjunct;
 import com.saxonica.ee.stream.adjunct.StreamingAdjunct;
 import net.sf.saxon.Configuration;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.PathMap;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.pattern.AnchorPattern;
@@ -26,6 +23,8 @@ import net.sf.saxon.tree.iter.SingletonIterator;
 import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.ErrorType;
 import net.sf.saxon.type.ItemType;
+
+import java.util.Map;
 
 
 /**
@@ -60,10 +59,11 @@ public class ContextItemExpression extends Expression {
      * Create a clone copy of this expression
      *
      * @return a copy of this expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         ContextItemExpression cie2 = new ContextItemExpression();
         cie2.staticInfo = staticInfo;
         ExpressionTool.copyLocationInfo(this, cie2);

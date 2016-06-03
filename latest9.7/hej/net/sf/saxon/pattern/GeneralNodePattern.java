@@ -25,6 +25,7 @@ import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.type.UType;
 
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * A GeneralNodePattern represents a pattern which, because of the presence of positional
@@ -337,11 +338,12 @@ public final class GeneralNodePattern extends Pattern {
      * Copy a pattern. This makes a deep copy.
      *
      * @return the copy of the original pattern
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Pattern copy() {
-        GeneralNodePattern n = new GeneralNodePattern(equivalentExpr.copy(), itemType);
+    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        GeneralNodePattern n = new GeneralNodePattern(equivalentExpr.copy(rebindings), itemType);
         ExpressionTool.copyLocationInfo(this, n);
         return n;
     }

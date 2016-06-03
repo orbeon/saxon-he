@@ -14,6 +14,7 @@ import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.lib.Validation;
@@ -25,6 +26,8 @@ import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.Orphan;
 import net.sf.saxon.type.*;
+
+import java.util.Map;
 
 /**
  * An instruction derived from an xsl:attribute element in stylesheet, or from
@@ -169,13 +172,14 @@ public final class FixedAttribute extends AttributeCreator {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Expression copy() {
+    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
         FixedAttribute exp = new FixedAttribute(nodeName, getValidationAction(), getSchemaType());
         ExpressionTool.copyLocationInfo(this, exp);
-        exp.setSelect(getSelect().copy());
+        exp.setSelect(getSelect().copy(rebindings));
         return exp;
     }
 

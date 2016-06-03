@@ -10,10 +10,7 @@ package net.sf.saxon.pattern;
 import com.saxonica.ee.stream.Sweep;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.SlotManager;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.PromotionOffer;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.functions.Current;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
@@ -25,6 +22,7 @@ import net.sf.saxon.type.Type;
 import net.sf.saxon.type.UType;
 
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Class for handling patterns with simple non-positional boolean predicates
@@ -300,11 +298,12 @@ public class PatternWithPredicate extends Pattern {
      * Copy a pattern. This makes a deep copy.
      *
      * @return the copy of the original pattern
+     * @param rebindings
      */
 
     /*@NotNull*/
-    public Pattern copy() {
-        PatternWithPredicate n = new PatternWithPredicate(basePattern.copy(), predicate.copy());
+    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        PatternWithPredicate n = new PatternWithPredicate(basePattern.copy(rebindings), predicate.copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
         return n;
     }
