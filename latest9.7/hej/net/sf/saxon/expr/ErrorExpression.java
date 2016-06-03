@@ -12,15 +12,13 @@ import com.saxonica.ee.bytecode.ExpressionCompiler;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.ItemType;
-
-import java.util.Map;
 
 
 /**
@@ -182,7 +180,7 @@ public class ErrorExpression extends Expression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         if (exception != null) {
             ErrorExpression e2 = new ErrorExpression(exception);
             ExpressionTool.copyLocationInfo(this, e2);

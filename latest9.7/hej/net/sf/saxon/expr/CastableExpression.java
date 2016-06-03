@@ -12,7 +12,7 @@ import com.saxonica.ee.bytecode.ExpressionCompiler;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
@@ -20,8 +20,6 @@ import net.sf.saxon.type.*;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.Cardinality;
-
-import java.util.Map;
 
 /**
  * Castable Expression: implements "Expr castable as atomic-type?".
@@ -167,7 +165,7 @@ public final class CastableExpression extends CastingExpression {
     }
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         CastableExpression ce = new CastableExpression(getBaseExpression().copy(rebindings), getTargetType(), allowsEmpty());
         ExpressionTool.copyLocationInfo(this, ce);
         ce.setRetainedStaticContext(getRetainedStaticContext());

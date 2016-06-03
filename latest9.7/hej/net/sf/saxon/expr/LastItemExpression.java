@@ -10,13 +10,11 @@ package net.sf.saxon.expr;
 import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.LastItemExpressionCompiler;
 import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.ReversibleIterator;
-
-import java.util.Map;
 
 /**
  * A LastItemExpression returns the last item in the sequence returned by a given
@@ -43,7 +41,7 @@ public final class LastItemExpression extends SingleItemFilter {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         LastItemExpression exp = new LastItemExpression(getBaseExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;

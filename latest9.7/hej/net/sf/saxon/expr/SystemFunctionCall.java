@@ -216,7 +216,7 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
      * @param rebindings
      */
     @Override
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         Expression[] args = new Expression[getArity()];
         for (int i = 0; i < args.length; i++) {
             args[i] = getArg(i).copy(rebindings);

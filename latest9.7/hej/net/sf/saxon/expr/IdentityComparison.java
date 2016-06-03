@@ -147,7 +147,7 @@ public final class IdentityComparison extends BinaryExpression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         IdentityComparison ic = new IdentityComparison(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, ic);
         ic.generateIdEmulation = generateIdEmulation;

@@ -265,7 +265,7 @@ public final class ItemChecker extends UnaryExpression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         ItemChecker exp = new ItemChecker(getBaseExpression().copy(rebindings), requiredItemType, role);
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;

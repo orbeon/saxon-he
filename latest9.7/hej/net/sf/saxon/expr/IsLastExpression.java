@@ -14,14 +14,12 @@ import com.saxonica.ee.stream.adjunct.StreamingAdjunct;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.value.BooleanValue;
-
-import java.util.Map;
 
 
 /**
@@ -113,7 +111,7 @@ public final class IsLastExpression extends Expression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         IsLastExpression exp = new IsLastExpression(condition);
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;

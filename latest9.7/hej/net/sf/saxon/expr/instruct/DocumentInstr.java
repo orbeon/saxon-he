@@ -12,18 +12,24 @@ import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.stream.adjunct.DocumentInstrAdjunct;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
-import net.sf.saxon.event.*;
+import net.sf.saxon.event.Builder;
+import net.sf.saxon.event.ComplexContentOutputter;
+import net.sf.saxon.event.PipelineConfiguration;
+import net.sf.saxon.event.SequenceReceiver;
 import net.sf.saxon.evpull.BracketedDocumentIterator;
 import net.sf.saxon.evpull.EventIterator;
 import net.sf.saxon.evpull.SingletonEventIterator;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.lib.FeatureKeys;
 import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.lib.Validation;
-import net.sf.saxon.om.*;
+import net.sf.saxon.om.Item;
+import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -35,8 +41,6 @@ import net.sf.saxon.type.*;
 import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.TextFragmentValue;
 import net.sf.saxon.value.UntypedAtomicValue;
-
-import java.util.Map;
 
 
 /**
@@ -238,7 +242,7 @@ public class DocumentInstr extends ParentNodeConstructor {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         DocumentInstr doc = new DocumentInstr(textOnly, constantText);
         ExpressionTool.copyLocationInfo(this, doc);
         doc.setContentExpression(getContentExpression().copy(rebindings));

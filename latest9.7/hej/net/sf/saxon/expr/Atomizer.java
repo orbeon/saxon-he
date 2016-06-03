@@ -278,7 +278,7 @@ public final class Atomizer extends UnaryExpression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         Atomizer copy = new Atomizer(getBaseExpression().copy(rebindings));
         copy.untyped = untyped;
         copy.singleValued = singleValued;

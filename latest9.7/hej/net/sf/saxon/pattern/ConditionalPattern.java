@@ -323,7 +323,7 @@ public class ConditionalPattern extends Pattern {
      */
 
     /*@NotNull*/
-    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Pattern copy(RebindingMap rebindings) {
         //TODO - copy the conditions and patterns
         ConditionalPattern n = new ConditionalPattern(conditions,patterns);
         ExpressionTool.copyLocationInfo(this, n);

@@ -12,9 +12,9 @@ import com.saxonica.ee.bytecode.TraceExpressionCompiler;
 import net.sf.saxon.Controller;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.IdentityWrapper;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.expr.parser.PromotionOffer;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.lib.TraceListener;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NamespaceResolver;
@@ -28,7 +28,6 @@ import net.sf.saxon.type.ItemType;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * A wrapper expression used to trace expressions in XPath and XQuery.
@@ -175,7 +174,7 @@ public class TraceExpression extends Instruction implements InstructionInfo {
     }
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         TraceExpression t = new TraceExpression(getChild().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, t);
         t.objectName = objectName;

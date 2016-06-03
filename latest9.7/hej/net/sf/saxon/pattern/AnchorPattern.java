@@ -7,19 +7,16 @@
 
 package net.sf.saxon.pattern;
 
-import net.sf.saxon.expr.Binding;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.UType;
-
-import java.util.Map;
 
 /**
  * This is a special pattern that matches the "anchor node"; it corresponds to the
@@ -124,7 +121,7 @@ public class AnchorPattern extends Pattern {
      */
 
     /*@NotNull*/
-    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Pattern copy(RebindingMap rebindings) {
         return this;
     }
 }

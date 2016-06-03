@@ -264,7 +264,7 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         AnalyzeString a2 = new AnalyzeString(
                 copy(getSelect(), rebindings),
                 copy(getRegex(), rebindings),
@@ -276,7 +276,7 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
         return a2;
     }
 
-    private Expression copy(Expression exp, Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    private Expression copy(Expression exp, RebindingMap rebindings) {
         return exp == null ? null : exp.copy(rebindings);
     }
 

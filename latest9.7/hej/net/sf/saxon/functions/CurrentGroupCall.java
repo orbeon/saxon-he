@@ -8,9 +8,12 @@
 package net.sf.saxon.functions;
 
 import com.saxonica.ee.stream.adjunct.CurrentGroupAdjunct;
-import net.sf.saxon.expr.*;
+import net.sf.saxon.expr.Callable;
+import net.sf.saxon.expr.Expression;
+import net.sf.saxon.expr.StaticProperty;
+import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.instruct.ForEachGroup;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.expr.sort.GroupIterator;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -19,8 +22,6 @@ import net.sf.saxon.tree.iter.EmptyIterator;
 import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.value.AtomicValue;
-
-import java.util.Map;
 
 /**
  * Implements the XSLT function current-group()
@@ -148,7 +149,7 @@ public class CurrentGroupCall extends Expression implements Callable {
     }
 
     @Override
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         CurrentGroupCall cg = new CurrentGroupCall();
         cg.isInLoop = isInLoop;
         cg.itemType = itemType;

@@ -10,18 +10,13 @@ package net.sf.saxon.expr.instruct;
 import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.LocalParamCompiler;
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ErrorType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.value.SequenceType;
-
-import java.util.Map;
 
 /**
  * The compiled form of an xsl:param element within a template in an XSLT stylesheet. An xsl:param
@@ -215,10 +210,10 @@ public final class LocalParamSetter extends Instruction {
      */
     /*@NotNull*/
     @Override
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         LocalParam newBinding = binding.copy(rebindings);
         LocalParamSetter exp = new LocalParamSetter(newBinding);
-        rebindings.put(new IdentityWrapper<Binding>(binding), newBinding);
+        rebindings.put(binding, newBinding);
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;
     }

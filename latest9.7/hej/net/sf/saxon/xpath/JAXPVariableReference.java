@@ -9,7 +9,7 @@ package net.sf.saxon.xpath;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
@@ -20,7 +20,6 @@ import net.sf.saxon.type.ItemType;
 import net.sf.saxon.value.EmptySequence;
 
 import javax.xml.xpath.XPathVariableResolver;
-import java.util.Map;
 
 
 /**
@@ -67,7 +66,7 @@ public class JAXPVariableReference extends Expression implements Callable {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         return new JAXPVariableReference(name, resolver);
     }
 

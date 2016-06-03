@@ -12,14 +12,12 @@ import com.saxonica.ee.bytecode.IntegerRangeTestCompiler;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
-
-import java.util.Map;
 
 /**
  * An IntegerRangeTest is an expression of the form
@@ -135,7 +133,7 @@ public class IntegerRangeTest extends Expression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         IntegerRangeTest exp = new IntegerRangeTest(getValue().copy(rebindings), getMin().copy(rebindings), getMax().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;

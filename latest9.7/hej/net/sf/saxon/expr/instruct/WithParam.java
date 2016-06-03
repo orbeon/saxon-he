@@ -236,7 +236,7 @@ public class WithParam  {
      * @return the resulting copy
      */
 
-    public static WithParam[] copy(Expression parent, WithParam[] params, Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public static WithParam[] copy(Expression parent, WithParam[] params, RebindingMap rebindings) {
         if (params == null) {
             return null;
         }

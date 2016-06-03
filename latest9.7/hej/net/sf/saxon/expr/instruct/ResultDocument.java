@@ -281,7 +281,7 @@ public class ResultDocument extends Instruction
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         Map<StructuredQName, Expression> map = new HashMap<StructuredQName, Expression>();
         for (Map.Entry<StructuredQName, Operand> entry : serializationAttributes.entrySet()) {
             map.put(entry.getKey(), entry.getValue().getChildExpression());

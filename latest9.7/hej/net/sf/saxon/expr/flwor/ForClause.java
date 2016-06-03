@@ -43,7 +43,7 @@ public class ForClause extends Clause {
         return FOR;
     }
 
-    public ForClause copy(FLWORExpression flwor, Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public ForClause copy(FLWORExpression flwor, RebindingMap rebindings) {
         ForClause f2 = new ForClause();
         f2.setLocation(getLocation());
         f2.setPackageData(getPackageData());
@@ -275,7 +275,7 @@ public class ForClause extends Clause {
                         RetainedStaticContext rsc = new RetainedStaticContext(visitor.getStaticContext());
                         Expression position =
                                 SystemFunction.makeCall("position", rsc);
-                        Expression predicate = condition.copy(new HashMap<IdentityWrapper<Binding>, Binding>());
+                        Expression predicate = condition.copy(new RebindingMap());
                         Operand child = op == 0
                                 ? ((ComparisonExpression)predicate).getLhs()
                                 : ((ComparisonExpression)predicate).getRhs();

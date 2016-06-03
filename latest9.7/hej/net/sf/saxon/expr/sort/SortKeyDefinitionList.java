@@ -7,15 +7,17 @@
 
 package net.sf.saxon.expr.sort;
 
-import net.sf.saxon.expr.Binding;
 import net.sf.saxon.expr.Operand;
 import net.sf.saxon.expr.OperandRole;
 import net.sf.saxon.expr.PseudoExpression;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * The class represents a list of sort key definitions in major-to-minor sort key order. It is not a true
@@ -85,7 +87,7 @@ public class SortKeyDefinitionList extends PseudoExpression implements Iterable<
      */
 
     @Override
-    public SortKeyDefinitionList copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public SortKeyDefinitionList copy(RebindingMap rebindings) {
         SortKeyDefinition[] s2 = new SortKeyDefinition[sortKeyDefinitions.length];
         for (int i=0; i< sortKeyDefinitions.length; i++) {
             s2[i] = sortKeyDefinitions[i].copy(rebindings);

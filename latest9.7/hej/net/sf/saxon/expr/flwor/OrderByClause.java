@@ -47,7 +47,7 @@ public class OrderByClause extends Clause {
         return getTupleExpression().includesBinding(binding);
     }
 
-    public OrderByClause copy(FLWORExpression flwor, Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public OrderByClause copy(FLWORExpression flwor, RebindingMap rebindings) {
         SortKeyDefinitionList sortKeys = getSortKeyDefinitions();
         SortKeyDefinition[] sk2 = new SortKeyDefinition[sortKeys.size()];
         for (int i = 0; i < sortKeys.size(); i++) {

@@ -219,7 +219,7 @@ public class RootExpression extends Expression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         RootExpression exp = new RootExpression();
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;

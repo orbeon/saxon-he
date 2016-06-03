@@ -185,7 +185,7 @@ public class CastToList extends UnaryExpression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         CastToList c = new CastToList(getBaseExpression().copy(rebindings), targetType, allowEmpty);
         ExpressionTool.copyLocationInfo(this, c);
         c.setRetainedStaticContext(getRetainedStaticContext());

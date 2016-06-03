@@ -8,7 +8,7 @@
 package net.sf.saxon.option.sql;
 
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
@@ -22,7 +22,6 @@ import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.*;
-import net.sf.saxon.value.StringValue;
 
 import java.sql.Connection;
 import java.sql.ParameterMetaData;
@@ -30,7 +29,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * An sql:update element in the stylesheet.
@@ -178,7 +176,7 @@ public class SQLUpdate extends ExtensionInstruction {
         }
 
         @Override
-        public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+        public Expression copy(RebindingMap rebindings) {
             UpdateInstruction u2 = new UpdateInstruction();
             return u2.copyOperandsFrom(this);
         }

@@ -373,7 +373,7 @@ public class ForExpression extends Assignation {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         ForExpression forExp = new ForExpression();
         ExpressionTool.copyLocationInfo(this, forExp);
         forExp.setRequiredType(requiredType);

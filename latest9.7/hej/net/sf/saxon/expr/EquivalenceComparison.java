@@ -205,7 +205,7 @@ public class EquivalenceComparison extends BinaryExpression implements Compariso
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         EquivalenceComparison sc = new EquivalenceComparison(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, sc);
         sc.comparer = comparer;

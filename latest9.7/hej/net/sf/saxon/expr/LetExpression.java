@@ -345,7 +345,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
             if (parent != null) {
                 for (Operand o : parent.operands()) {
                     if (o.getChildExpression() == ref) {
-                        o.setChildExpression(getSequence().copy(new HashMap<IdentityWrapper<Binding>, Binding>()));
+                        o.setChildExpression(getSequence().copy(new RebindingMap()));
                         break;
                     }
                 }
@@ -687,7 +687,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         LetExpression let = new LetExpression();
         ExpressionTool.copyLocationInfo(this, let);
         let.isIndexedVariable = isIndexedVariable;

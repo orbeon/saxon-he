@@ -90,7 +90,7 @@ public class ProcessingInstruction extends SimpleNodeConstructor {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         ProcessingInstruction exp = new ProcessingInstruction(getNameExp().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
         exp.setSelect(getSelect().copy(rebindings));

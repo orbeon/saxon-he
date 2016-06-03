@@ -278,7 +278,7 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         if (function == null) {
             // not bound yet, we have no way to register the new copy with the XSLFunction
             throw new UnsupportedOperationException("UserFunctionCall.copy()");

@@ -277,7 +277,7 @@ public final class ComputedAttribute extends AttributeCreator {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         ComputedAttribute exp = new ComputedAttribute(
                 getNameExp() == null ? null : getNameExp().copy(rebindings),
                 getNamespaceExp() == null ? null : getNamespaceExp().copy(rebindings),

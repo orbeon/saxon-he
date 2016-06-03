@@ -537,7 +537,7 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         GeneralComparison gc = new GeneralComparison(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, gc);
         gc.setRetainedStaticContext(getRetainedStaticContext());

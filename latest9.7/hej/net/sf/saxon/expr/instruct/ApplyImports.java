@@ -163,7 +163,7 @@ public class ApplyImports extends Instruction implements ITemplateCall {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         ApplyImports ai2 = new ApplyImports();
         ai2.setActualParams(WithParam.copy(ai2, actualParams, rebindings));
         ai2.setTunnelParams(WithParam.copy(ai2, tunnelParams, rebindings));

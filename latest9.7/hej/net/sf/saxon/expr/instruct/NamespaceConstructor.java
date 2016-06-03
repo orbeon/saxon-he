@@ -109,7 +109,7 @@ public class NamespaceConstructor extends SimpleNodeConstructor {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         NamespaceConstructor exp = new NamespaceConstructor(getNameExp().copy(rebindings));
         exp.setSelect(getSelect().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);

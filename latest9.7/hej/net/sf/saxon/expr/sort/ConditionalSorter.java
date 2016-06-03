@@ -166,7 +166,7 @@ public class ConditionalSorter extends Expression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         ConditionalSorter cs = new ConditionalSorter(getCondition().copy(rebindings), (DocumentSorter) getDocumentSorter().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, cs);
         return cs;

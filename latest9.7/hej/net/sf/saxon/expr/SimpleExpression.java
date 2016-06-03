@@ -8,7 +8,7 @@
 package net.sf.saxon.expr;
 
 import net.sf.saxon.expr.oper.OperandArray;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
@@ -16,8 +16,6 @@ import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -89,7 +87,7 @@ public abstract class SimpleExpression extends Expression implements Callable {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
 
         try {
             SimpleExpression se2 = getClass().newInstance();
@@ -119,7 +117,7 @@ public abstract class SimpleExpression extends Expression implements Callable {
         Expression[] a2 = new Expression[se1.operanda.getNumberOfOperands()];
         int i = 0;
         for (Operand o : se1.operands()) {
-            a2[i++] = o.getChildExpression().copy(new HashMap<IdentityWrapper<Binding>, Binding>());
+            a2[i++] = o.getChildExpression().copy(new RebindingMap());
         }
         OperandArray o2 = new OperandArray(this, a2, se1.operanda.getRoles());
         setOperanda(o2);

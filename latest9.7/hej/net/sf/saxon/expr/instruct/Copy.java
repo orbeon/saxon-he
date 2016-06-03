@@ -154,7 +154,7 @@ public class Copy extends ElementCreator {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         Copy copy = new Copy(
                 copyNamespaces, inheritNamespacesToChildren, getSchemaType(), getValidationAction());
         ExpressionTool.copyLocationInfo(this, copy);

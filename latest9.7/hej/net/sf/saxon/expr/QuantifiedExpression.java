@@ -245,7 +245,7 @@ public class QuantifiedExpression extends Assignation {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         QuantifiedExpression qe = new QuantifiedExpression();
         ExpressionTool.copyLocationInfo(this, qe);
         qe.setOperator(operator);

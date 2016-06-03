@@ -454,7 +454,7 @@ public abstract class Pattern extends PseudoExpression {
 //        }
 //    }
 
-    public abstract Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings);
+    public abstract Pattern copy(RebindingMap rebindings);
 
     /**
      * Perform optimisation of an expression and its subexpressions. This is the third and final

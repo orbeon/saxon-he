@@ -210,7 +210,7 @@ public class TryCatch extends Expression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         TryCatch t2 = new TryCatch(tryOp.getChildExpression().copy(rebindings));
         for (CatchClause clause : catchClauses) {
             t2.addCatchExpression(clause.nameTest, clause.catchOp.getChildExpression().copy(rebindings));

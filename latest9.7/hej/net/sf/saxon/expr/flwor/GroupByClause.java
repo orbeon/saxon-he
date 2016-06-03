@@ -11,7 +11,7 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.expr.sort.GenericAtomicComparer;
 import net.sf.saxon.functions.DeepEqual;
 import net.sf.saxon.om.Item;
@@ -23,7 +23,10 @@ import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.SequenceExtent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This class represents an "group by" clause in a FLWOR expression
@@ -62,7 +65,7 @@ public class GroupByClause extends Clause {
     }
 
 
-    public GroupByClause copy(FLWORExpression flwor, Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public GroupByClause copy(FLWORExpression flwor, RebindingMap rebindings) {
         GroupByClause g2 = new GroupByClause(config);
         g2.setLocation(getLocation());
         g2.setPackageData(getPackageData());

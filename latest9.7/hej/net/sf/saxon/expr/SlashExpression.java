@@ -234,7 +234,7 @@ public class SlashExpression extends BinaryExpression
             }
             ContextItemExpression cie = new ContextItemExpression();
             ExpressionTool.copyLocationInfo(this, cie);
-            st = ExpressionTool.makePathExpression(cie, stax.copy(new HashMap<IdentityWrapper<Binding>, Binding>()), false);
+            st = ExpressionTool.makePathExpression(cie, stax.copy(new RebindingMap()), false);
             ExpressionTool.copyLocationInfo(this, st);
         }
 
@@ -424,7 +424,7 @@ public class SlashExpression extends BinaryExpression
             if (contextItemType != null && contextItemType.getPrimitiveType() == Type.DOCUMENT) {
                 RootExpression root = new RootExpression();
                 ExpressionTool.copyLocationInfo(this, root);
-                Expression path = ExpressionTool.makePathExpression(root, this.copy(new HashMap<IdentityWrapper<Binding>, Binding>()), false);
+                Expression path = ExpressionTool.makePathExpression(root, this.copy(new RebindingMap()), false);
                 ExpressionTool.copyLocationInfo(this, path);
                 return (SlashExpression) path;
             }
@@ -475,11 +475,11 @@ public class SlashExpression extends BinaryExpression
         }
 
         // We're in business; construct the new expression
-        Expression x = getStart().copy(new HashMap<IdentityWrapper<Binding>, Binding>());
+        Expression x = getStart().copy(new RebindingMap());
         AxisExpression ax = (AxisExpression) ExpressionTool.unfilteredExpression(x, false);
         ax.setAxis(AxisInfo.PARENT);
 
-        Expression y = getStep().copy(new HashMap<IdentityWrapper<Binding>, Binding>());
+        Expression y = getStep().copy(new RebindingMap());
         AxisExpression ay = (AxisExpression) ExpressionTool.unfilteredExpression(y, false);
         ay.setAxis(AxisInfo.DESCENDANT);
 
@@ -625,7 +625,7 @@ public class SlashExpression extends BinaryExpression
      */
 
     /*@NotNull*/
-    public SlashExpression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public SlashExpression copy(RebindingMap rebindings) {
         SlashExpression exp = (SlashExpression)ExpressionTool.makePathExpression(getStart().copy(rebindings), getStep().copy(rebindings), false);
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;
@@ -985,9 +985,9 @@ public class SlashExpression extends BinaryExpression
 
     private Expression rebuildSteps(List<Expression> list) {
         if (list.size() == 1) {
-            return list.get(0).copy(new HashMap<IdentityWrapper<Binding>, Binding>());
+            return list.get(0).copy(new RebindingMap());
         } else {
-            return new SlashExpression(list.get(0).copy(new HashMap<IdentityWrapper<Binding>, Binding>()), rebuildSteps(list.subList(1, list.size())));
+            return new SlashExpression(list.get(0).copy(new RebindingMap()), rebuildSteps(list.subList(1, list.size())));
         }
     }
 

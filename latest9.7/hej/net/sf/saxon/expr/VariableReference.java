@@ -94,7 +94,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      */
 
     /*@NotNull*/
-    public abstract Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings);
+    public abstract Expression copy(RebindingMap rebindings);
 //    {
 //        if (binding == null) {
 //            //System.err.println("copy unbound variable " + this);
@@ -241,7 +241,7 @@ public abstract class VariableReference extends Expression implements BindingRef
                 !((LetExpression) binding).isIndexedVariable) {
             Expression val = ((LetExpression) binding).getSequence();
             binding = null;
-            return val.copy(new HashMap<IdentityWrapper<Binding>, Binding>());
+            return val.copy(new RebindingMap());
         }
         if (constantValue != null) {
             binding = null;

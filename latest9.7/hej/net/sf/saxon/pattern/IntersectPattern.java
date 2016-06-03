@@ -7,10 +7,9 @@
 
 package net.sf.saxon.pattern;
 
-import net.sf.saxon.expr.Binding;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.trans.XPathException;
@@ -18,7 +17,6 @@ import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.UType;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -149,7 +147,7 @@ public class IntersectPattern extends VennPattern {
      */
 
     /*@NotNull*/
-    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Pattern copy(RebindingMap rebindings) {
         IntersectPattern n = new IntersectPattern(p1.copy(rebindings), p2.copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
         return n;

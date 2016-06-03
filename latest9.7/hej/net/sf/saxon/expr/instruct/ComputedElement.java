@@ -215,7 +215,7 @@ public class ComputedElement extends ElementCreator {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         ComputedElement ce = new ComputedElement(
                 getNameExp().copy(rebindings), getNamespaceExp() == null ? null : getNamespaceExp().copy(rebindings),
                 /*defaultNamespace,*/ getSchemaType(),

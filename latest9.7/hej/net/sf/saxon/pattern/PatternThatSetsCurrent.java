@@ -13,7 +13,7 @@ import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.functions.Current;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
@@ -24,7 +24,6 @@ import net.sf.saxon.type.UType;
 import net.sf.saxon.value.SequenceType;
 
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * This class represents a pattern that sets the value of current() to the
@@ -256,7 +255,7 @@ public class PatternThatSetsCurrent extends Pattern {
      */
 
     /*@NotNull*/
-    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Pattern copy(RebindingMap rebindings) {
         PatternThatSetsCurrent n = new PatternThatSetsCurrent(wrappedPattern.copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
         return n;

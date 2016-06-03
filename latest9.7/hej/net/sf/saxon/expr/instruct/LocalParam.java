@@ -329,7 +329,7 @@ public final class LocalParam implements LocalBinding, SourceLocator {
      * @return the copy of the original expression
      */
 
-    public LocalParam copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public LocalParam copy(RebindingMap rebindings) {
         LocalParam p2 = new LocalParam();
         p2.conversion = conversion.copy(rebindings);
         p2.conversionEvaluationMode = conversionEvaluationMode;

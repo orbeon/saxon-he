@@ -244,7 +244,7 @@ public class Literal extends Expression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         Literal l2 = new Literal(value);
         ExpressionTool.copyLocationInfo(this, l2);
         return l2;

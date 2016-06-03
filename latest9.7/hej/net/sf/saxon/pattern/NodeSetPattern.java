@@ -261,7 +261,7 @@ public class NodeSetPattern extends Pattern {
      */
 
     /*@NotNull*/
-    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Pattern copy(RebindingMap rebindings) {
         NodeSetPattern n = new NodeSetPattern(expression.copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
         return n;

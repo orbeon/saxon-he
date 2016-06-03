@@ -292,7 +292,7 @@ public class ArithmeticExpression10 extends BinaryExpression implements Callable
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         ArithmeticExpression10 a2 = new ArithmeticExpression10(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, a2);
         a2.calculator = calculator;

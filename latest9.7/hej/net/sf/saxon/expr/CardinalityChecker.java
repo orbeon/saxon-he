@@ -373,7 +373,7 @@ public final class CardinalityChecker extends UnaryExpression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         CardinalityChecker c2 = new CardinalityChecker(getBaseExpression().copy(rebindings), requiredCardinality, role);
         ExpressionTool.copyLocationInfo(this, c2);
         return c2;

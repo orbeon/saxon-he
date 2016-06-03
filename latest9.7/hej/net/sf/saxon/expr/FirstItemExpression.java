@@ -12,15 +12,13 @@ import com.saxonica.ee.bytecode.FirstItemExpressionCompiler;
 import com.saxonica.ee.stream.adjunct.FirstItemExpressionAdjunct;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.pattern.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
-
-import java.util.Map;
 
 
 /**
@@ -63,7 +61,7 @@ public final class FirstItemExpression extends SingleItemFilter {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         Expression e2 = new FirstItemExpression(getBaseExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, e2);
         return e2;

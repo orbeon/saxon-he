@@ -194,7 +194,7 @@ public class CastToUnion extends UnaryExpression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         CastToUnion c = new CastToUnion(getBaseExpression().copy(rebindings), targetType, allowEmpty);
         ExpressionTool.copyLocationInfo(this, c);
         c.setRetainedStaticContext(getRetainedStaticContext());

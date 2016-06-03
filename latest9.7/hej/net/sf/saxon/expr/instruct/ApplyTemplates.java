@@ -230,7 +230,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         ApplyTemplates a2 = new ApplyTemplates(
                 getSelect().copy(rebindings), useCurrentMode, useTailRecursion, implicitSelect, inStreamableConstruct, mode, ruleManager);
         a2.setActualParams(WithParam.copy(a2, getActualParams(), rebindings));

@@ -9,12 +9,10 @@ package net.sf.saxon.expr;
 
 import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.LocalVariableReferenceCompiler;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
-
-import java.util.Map;
 
 /**
  * Variable reference: a reference to a local variable. This subclass of VariableReference
@@ -52,7 +50,7 @@ public class LocalVariableReference extends VariableReference {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         if (binding == null) {
             throw new UnsupportedOperationException("Cannot copy a variable reference whose binding is unknown");
         }
@@ -65,7 +63,7 @@ public class LocalVariableReference extends VariableReference {
         LocalVariableReference ref = new LocalVariableReference(getVariableName());
         ref.copyFrom(this);
         ref.slotNumber = slotNumber;
-        Binding newBinding = rebindings.get(new IdentityWrapper<Binding>(binding));
+        Binding newBinding = rebindings.get(binding);
         if (newBinding != null) {
             binding = newBinding;
         }

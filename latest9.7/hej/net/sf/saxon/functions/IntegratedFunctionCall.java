@@ -224,7 +224,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         ExtensionFunctionCall newCall = function.getDefinition().makeCallExpression();
         newCall.setDefinition(function.getDefinition());
         function.copyLocalData(newCall);

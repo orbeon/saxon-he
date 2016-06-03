@@ -12,7 +12,7 @@ import com.saxonica.ee.bytecode.SimpleStepExpressionCompiler;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.SequenceIterator;
@@ -20,8 +20,6 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.EmptyIterator;
 import net.sf.saxon.type.ErrorType;
 import net.sf.saxon.type.ItemType;
-
-import java.util.Map;
 
 
 /**
@@ -80,7 +78,7 @@ public final class SimpleStepExpression extends SlashExpression {
      */
     /*@NotNull*/
     @Override
-    public SimpleStepExpression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public SimpleStepExpression copy(RebindingMap rebindings) {
         SimpleStepExpression exp = new SimpleStepExpression(getStart().copy(rebindings), getStep().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;

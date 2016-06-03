@@ -269,7 +269,7 @@ public class NumberInstruction extends Expression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         NumberInstruction exp = new NumberInstruction(
                 copy(selectOp, rebindings), level, count, from, copy(valueOp, rebindings), copy(formatOp, rebindings),
                 copy(groupSizeOp, rebindings), copy(groupSeparatorOp, rebindings), copy(letterValueOp, rebindings),
@@ -280,7 +280,7 @@ public class NumberInstruction extends Expression {
         // TODO: copy the patterns (level and count)
     }
 
-    private Expression copy(Operand op, Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    private Expression copy(Operand op, RebindingMap rebindings) {
         return op == null ? null : op.getChildExpression().copy(rebindings);
     }
 

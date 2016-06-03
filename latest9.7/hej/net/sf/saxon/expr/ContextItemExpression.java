@@ -63,7 +63,7 @@ public class ContextItemExpression extends Expression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         ContextItemExpression cie2 = new ContextItemExpression();
         cie2.staticInfo = staticInfo;
         ExpressionTool.copyLocationInfo(this, cie2);

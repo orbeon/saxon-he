@@ -7,14 +7,11 @@
 
 package net.sf.saxon.expr.flwor;
 
-import net.sf.saxon.expr.Binding;
 import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.NamespaceResolver;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
-
-import java.util.Map;
 
 /**
  * A "trace" clause in a FLWOR expression, added by a TraceCodeInjector for diagnostic
@@ -62,7 +59,7 @@ public class TraceClause extends Clause {
         return TRACE;
     }
 
-    public TraceClause copy(FLWORExpression flwor, Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public TraceClause copy(FLWORExpression flwor, RebindingMap rebindings) {
         return new TraceClause(target, nsResolver);
     }
 

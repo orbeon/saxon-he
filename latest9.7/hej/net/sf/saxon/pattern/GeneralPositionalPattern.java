@@ -385,7 +385,7 @@ public class GeneralPositionalPattern extends Pattern {
      */
 
     /*@NotNull*/
-    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Pattern copy(RebindingMap rebindings) {
         GeneralPositionalPattern n = new GeneralPositionalPattern(nodeTest.copy(), positionExpr.copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
         return n;

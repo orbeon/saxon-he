@@ -172,7 +172,7 @@ public class DocumentSorter extends UnaryExpression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         DocumentSorter ds = new DocumentSorter(getBaseExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, ds);
         return ds;

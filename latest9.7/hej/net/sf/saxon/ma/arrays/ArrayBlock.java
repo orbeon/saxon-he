@@ -13,7 +13,7 @@ import com.saxonica.ee.stream.adjunct.BlockAdjunct;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.oper.OperandArray;
 import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.pattern.NodeKindTest;
@@ -24,7 +24,6 @@ import net.sf.saxon.type.TypeHierarchy;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -150,7 +149,7 @@ public class ArrayBlock extends Expression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         List<Expression> m2 = new ArrayList<Expression>(getOperanda().getNumberOfOperands());
         for (Operand o : operands()) {
             m2.add(o.getChildExpression().copy(rebindings));

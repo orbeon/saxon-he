@@ -342,7 +342,7 @@ public final class GeneralNodePattern extends Pattern {
      */
 
     /*@NotNull*/
-    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Pattern copy(RebindingMap rebindings) {
         GeneralNodePattern n = new GeneralNodePattern(equivalentExpr.copy(rebindings), itemType);
         ExpressionTool.copyLocationInfo(this, n);
         return n;

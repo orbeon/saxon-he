@@ -174,7 +174,7 @@ public class AdjacentTextNodeMerger extends UnaryExpression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         AdjacentTextNodeMerger a2 = new AdjacentTextNodeMerger(getBaseExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, a2);
         return a2;

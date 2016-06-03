@@ -280,7 +280,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         CallTemplate ct = new CallTemplate(template, calledTemplateName, useTailRecursion, isWithinDeclaredStreamableConstruct);
         ExpressionTool.copyLocationInfo(this, ct);
         ct.actualParams = WithParam.copy(ct, actualParams, rebindings);

@@ -305,7 +305,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
 
         Expression originalFilter;
         try {
-            originalFilter = getFilter().copy(new HashMap<IdentityWrapper<Binding>, Binding>());
+            originalFilter = getFilter().copy(new RebindingMap());
         } catch (UnsupportedOperationException err) {
             originalFilter = null;
         }
@@ -1218,7 +1218,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         FilterExpression fe = new FilterExpression(getBase().copy(rebindings), getFilter().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, fe);
         fe.filterIsIndependent = filterIsIndependent;

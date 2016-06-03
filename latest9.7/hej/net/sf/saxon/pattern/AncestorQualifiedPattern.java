@@ -401,7 +401,7 @@ public final class AncestorQualifiedPattern extends Pattern {
      */
 
     /*@NotNull*/
-    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Pattern copy(RebindingMap rebindings) {
         AncestorQualifiedPattern n = new AncestorQualifiedPattern(basePattern.copy(rebindings),
                                                                   upperPattern.copy(rebindings), upwardsAxis);
         ExpressionTool.copyLocationInfo(this, n);

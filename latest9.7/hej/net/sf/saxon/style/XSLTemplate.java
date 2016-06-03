@@ -703,7 +703,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                                 ruleCopy.setDeclaredStreamable(true);
                             }
                             compiledTemplateRules.put(m.getModeName(), ruleCopy);
-                            mgr.setTemplateRule(match2.copy(new HashMap<IdentityWrapper<Binding>, Binding>()), ruleCopy, m, module, prio);
+                            mgr.setTemplateRule(match2.copy(new RebindingMap()), ruleCopy, m, module, prio);
                         }
                     }
                 }
@@ -805,7 +805,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                 namedTemplateBody.restoreParentPointers();
             }
             for (TemplateRule compiledTemplateRule : compiledTemplateRules.values()) {
-                Expression templateRuleBody = needCopy ? body.copy(new HashMap<IdentityWrapper<Binding>, Binding>()) : body;
+                Expression templateRuleBody = needCopy ? body.copy(new RebindingMap()) : body;
                 //#ifdefined STREAM
                 visitor.setOptimizeForStreaming(compiledTemplateRule.isDeclaredStreamable());
                 cit.setContextPostureStriding();
@@ -819,7 +819,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                     ContextItemStaticInfo info = new ContextItemStaticInfo(match.getItemType(), false, true);
                     Pattern m2 = match.optimize(visitor, info);
                     if (needCopy) {
-                        m2 = m2.copy(new HashMap<IdentityWrapper<Binding>, Binding>());
+                        m2 = m2.copy(new RebindingMap());
                     }
                     if (m2 != match) {
                         r.setPattern(m2);

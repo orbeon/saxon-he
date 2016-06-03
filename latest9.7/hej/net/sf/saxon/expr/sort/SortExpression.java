@@ -282,7 +282,7 @@ public class SortExpression extends Expression
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         int len = getSortKeyDefinitionList().size();
         SortKeyDefinition[] sk2 = new SortKeyDefinition[len];
         for (int i = 0; i < len; i++) {

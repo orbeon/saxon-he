@@ -7,8 +7,11 @@
 
 package net.sf.saxon.functions;
 
-import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.Callable;
+import net.sf.saxon.expr.Expression;
+import net.sf.saxon.expr.StaticProperty;
+import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.expr.sort.GroupIterator;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -17,8 +20,6 @@ import net.sf.saxon.tree.iter.EmptyIterator;
 import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.value.AtomicValue;
-
-import java.util.Map;
 
 
 /**
@@ -89,7 +90,7 @@ public class CurrentGroupingKeyCall extends Expression implements Callable {
      * @param rebindings
      */
     @Override
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         return new CurrentGroupingKeyCall();
     }
 

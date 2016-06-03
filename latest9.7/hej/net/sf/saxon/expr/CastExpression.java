@@ -311,7 +311,7 @@ public class CastExpression extends CastingExpression implements Callable {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         CastExpression c2 = new CastExpression(getBaseExpression().copy(rebindings), getTargetType(), allowsEmpty());
         ExpressionTool.copyLocationInfo(this, c2);
         c2.converter = converter;

@@ -370,7 +370,7 @@ public class FLWORExpression extends Expression {
      */
     /*@NotNull*/
     @Override
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         List<Clause> newClauses = new ArrayList<Clause>();
         List<LocalVariableBinding> oldBindings = new ArrayList<LocalVariableBinding>();
         List<LocalVariableBinding> newBindings = new ArrayList<LocalVariableBinding>();

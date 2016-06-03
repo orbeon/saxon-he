@@ -302,7 +302,7 @@ public class PatternWithPredicate extends Pattern {
      */
 
     /*@NotNull*/
-    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Pattern copy(RebindingMap rebindings) {
         PatternWithPredicate n = new PatternWithPredicate(basePattern.copy(rebindings), predicate.copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
         return n;

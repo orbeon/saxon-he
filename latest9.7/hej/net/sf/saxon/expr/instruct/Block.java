@@ -303,7 +303,7 @@ public class Block extends Instruction {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         Expression[] c2 = new Expression[size()];
         for (int c = 0; c < size(); c++) {
             c2[c] = child(c).copy(rebindings);

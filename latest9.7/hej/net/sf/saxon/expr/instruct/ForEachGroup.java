@@ -375,7 +375,7 @@ public class ForEachGroup extends Instruction
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         SortKeyDefinition[] newKeyDef = null;
         if (getSortKeyDefinitions() != null) {
             newKeyDef = new SortKeyDefinition[getSortKeyDefinitions().size()];

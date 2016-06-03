@@ -744,7 +744,7 @@ public final class AxisExpression extends Expression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         AxisExpression a2 = new AxisExpression(axis, test);
         a2.itemType = itemType;
         a2.staticInfo = staticInfo;
@@ -1178,7 +1178,7 @@ public final class AxisExpression extends Expression {
         args[0] = this.copy();
         pre.add(SystemFunctionCall.makeSystemFunction(
                 "exists", args));*/
-        Expression a = this.copy(new HashMap<IdentityWrapper<Binding>, Binding>());
+        Expression a = this.copy(new RebindingMap());
         a.setRetainedStaticContext(getRetainedStaticContext());
         pre.add(a);
         return pre;

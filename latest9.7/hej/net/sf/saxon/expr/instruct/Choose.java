@@ -497,7 +497,7 @@ public class Choose extends Instruction {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         int size = size();
         Expression[] c2 = new Expression[size];
         Expression[] a2 = new Expression[size];

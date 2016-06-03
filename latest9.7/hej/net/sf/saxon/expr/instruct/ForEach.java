@@ -331,7 +331,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         ForEach f2 = new ForEach(getSelect().copy(rebindings), getAction().copy(rebindings), containsTailCall, getThreads());
         ExpressionTool.copyLocationInfo(this, f2);
         return f2;

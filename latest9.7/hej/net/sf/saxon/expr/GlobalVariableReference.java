@@ -8,7 +8,7 @@
 package net.sf.saxon.expr;
 
 import net.sf.saxon.expr.instruct.GlobalVariable;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.om.StructuredQName;
@@ -18,7 +18,6 @@ import net.sf.saxon.trans.Visibility;
 import net.sf.saxon.trans.XPathException;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -38,7 +37,7 @@ public class GlobalVariableReference extends VariableReference implements Compon
 
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         if (binding == null) {
             //System.err.println("copy unbound variable " + this);
             throw new UnsupportedOperationException("Cannot copy a variable reference whose binding is unknown");

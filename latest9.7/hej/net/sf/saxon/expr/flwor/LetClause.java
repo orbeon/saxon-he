@@ -30,7 +30,7 @@ public class LetClause extends Clause {
         return LET;
     }
 
-    public LetClause copy(FLWORExpression flwor, Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public LetClause copy(FLWORExpression flwor, RebindingMap rebindings) {
         LetClause let2 = new LetClause();
         let2.setLocation(getLocation());
         let2.setPackageData(getPackageData());

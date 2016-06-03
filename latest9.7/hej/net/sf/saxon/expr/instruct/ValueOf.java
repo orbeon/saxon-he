@@ -16,7 +16,7 @@ import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.Item;
@@ -31,8 +31,6 @@ import net.sf.saxon.type.*;
 import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.Whitespace;
-
-import java.util.Map;
 
 /**
  * An xsl:value-of element in the stylesheet. <br>
@@ -187,7 +185,7 @@ public final class ValueOf extends SimpleNodeConstructor {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         ValueOf exp = new ValueOf(getSelect().copy(rebindings), (options & ReceiverOptions.DISABLE_ESCAPING) != 0, noNodeIfEmpty);
         ExpressionTool.copyLocationInfo(this, exp);
         if (isNumberingInstruction) {

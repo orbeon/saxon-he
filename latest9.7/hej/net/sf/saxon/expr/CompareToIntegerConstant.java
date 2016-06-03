@@ -116,7 +116,7 @@ public class CompareToIntegerConstant extends UnaryExpression implements Compari
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         CompareToIntegerConstant c2 = new CompareToIntegerConstant(getLhsExpression().copy(rebindings), operator, comparand);
         ExpressionTool.copyLocationInfo(this, c2);
         return c2;

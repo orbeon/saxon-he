@@ -12,7 +12,7 @@ import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.IdentityWrapper;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
@@ -22,7 +22,6 @@ import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.UType;
 
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * A BooleanExpressionPattern is a pattern of the form .[ Expr ] introduced in XSLT 3.0. It matches
@@ -193,7 +192,7 @@ public class BooleanExpressionPattern extends Pattern {
      */
 
     /*@NotNull*/
-    public Pattern copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Pattern copy(RebindingMap rebindings) {
         BooleanExpressionPattern n = new BooleanExpressionPattern(expression.copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
         return n;

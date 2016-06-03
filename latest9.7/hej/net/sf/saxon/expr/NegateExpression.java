@@ -139,7 +139,7 @@ public class NegateExpression extends UnaryExpression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         NegateExpression exp = new NegateExpression(getBaseExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;

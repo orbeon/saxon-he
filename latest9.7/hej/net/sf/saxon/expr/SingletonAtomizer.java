@@ -150,7 +150,7 @@ public final class SingletonAtomizer extends UnaryExpression {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         Expression e2 = new SingletonAtomizer(getBaseExpression().copy(rebindings), role, allowEmpty);
         ExpressionTool.copyLocationInfo(this, e2);
         return e2;

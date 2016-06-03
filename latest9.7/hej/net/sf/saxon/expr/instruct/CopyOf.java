@@ -265,7 +265,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         CopyOf c = new CopyOf(getSelect().copy(rebindings), copyNamespaces, validation, schemaType, rejectDuplicateAttributes);
         c.setCopyForUpdate(copyForUpdate);
         c.setCopyLineNumbers(copyLineNumbers);

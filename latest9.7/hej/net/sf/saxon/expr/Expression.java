@@ -1262,7 +1262,7 @@ public abstract class Expression implements /*InstructionInfo,*/ IdentityCompara
      */
 
     /*@NotNull*/
-    public abstract Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings);
+    public abstract Expression copy(RebindingMap rebindings);
 
     /**
      * Suppress validation on contained element constructors, on the grounds that the parent element

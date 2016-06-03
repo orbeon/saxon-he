@@ -106,7 +106,7 @@ public class Message extends Instruction {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         Message exp = new Message(getSelect().copy(rebindings), getTerminate().copy(rebindings), getErrorCode().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;

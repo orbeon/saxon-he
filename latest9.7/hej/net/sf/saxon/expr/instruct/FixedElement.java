@@ -217,7 +217,7 @@ public class FixedElement extends ElementCreator {
      */
 
     /*@NotNull*/
-    public Expression copy(Map<IdentityWrapper<Binding>, Binding> rebindings) {
+    public Expression copy(RebindingMap rebindings) {
         NamespaceBinding[] ns2 = namespaceBindings;
         if (namespaceBindings.length != 0) {
             ns2 = new NamespaceBinding[namespaceBindings.length];

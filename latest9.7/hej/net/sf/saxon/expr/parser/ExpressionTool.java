@@ -1256,7 +1256,7 @@ public class ExpressionTool {
             }
             Expression child = o.getChildExpression();
             if (selector.matches(child)) {
-                Expression e2 = mustCopy ? replacement.copy(new HashMap<IdentityWrapper<Binding>, Binding>()) : replacement;
+                Expression e2 = mustCopy ? replacement.copy(new RebindingMap()) : replacement;
                 o.setChildExpression(e2);
                 replaced = true;
             } else {
@@ -1561,7 +1561,7 @@ public class ExpressionTool {
                     ((VariableReference) child).getBinding() == binding) {
                     Expression copy;
                     try {
-                        copy = replacement.copy(new HashMap<IdentityWrapper<Binding>, Binding>());
+                        copy = replacement.copy(new RebindingMap());
                         ExpressionTool.copyLocationInfo(child, copy);
                     } catch (UnsupportedOperationException err) {
                         // If we can't make a copy, return the original. This is safer than it seems,
