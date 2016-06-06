@@ -278,6 +278,11 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
         return new SymbolicName(StandardNames.XSL_FUNCTION, getObjectName(), getNumberOfArguments());
     }
 
+    private void reportIncompatibility(String reason) throws XPathException {
+        compileError("The overriding xsl:function " + nameAtt + " does not match the overridden function: " +
+                             reason, "XTSE3070");
+    }
+
     public void checkCompatibility(Component component) throws XPathException {
         if (compiledFunction == null) {
             getCompiledFunction();
@@ -286,26 +291,22 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
         UserFunction other = (UserFunction) component.getCode();
         if (!compiledFunction.getSymbolicName().equals(other.getSymbolicName())) {
             // Can't happen
-            compileError("The overriding xsl:function " + nameAtt + " does not match the overridden function: " +
-                "the function name/arity does not match", "XTSE3070");
+            reportIncompatibility("the function name/arity does not match");
         }
-        if (!compiledFunction.getResultType().equals(other.getResultType())) {
-            compileError("The overriding xsl:function " + nameAtt + " does not match the overridden function: " +
-                "the return type does not match", "XTSE3070");
+        if (!compiledFunction.getDeclaredResultType().equals(other.getDeclaredResultType())) {
+            reportIncompatibility("the return type does not match");
         }
         if (!compiledFunction.getDeclaredStreamability().equals(other.getDeclaredStreamability())) {
-            compileError("The overriding xsl:function " + nameAtt + " does not match the overridden function: " +
-                "the streamability category does not match", "XTSE3070");
+            reportIncompatibility("the streamability category does not match");
         }
         if (!compiledFunction.getDeterminism().equals(other.getDeterminism())) {
-            compileError("The overriding xsl:function " + nameAtt + " does not match the overridden function: " +
-                "the new-each-time attribute does not match", "XTSE3070");
+            reportIncompatibility("the new-each-time attribute does not match");
         }
 
         for (int i = 0; i < getNumberOfArguments(); i++) {
             if (!compiledFunction.getArgumentType(i).equals(other.getArgumentType(i))) {
-                compileError("The overriding xsl:function " + nameAtt + " does not match the overridden function: " +
-                "the type of the " + RoleDiagnostic.ordinal(i + 1) + " argument does not match", "XTSE3070");
+                reportIncompatibility("the type of the " + RoleDiagnostic.ordinal(i + 1) +
+                                              " argument does not match");
             }
         }
     }

@@ -57,6 +57,7 @@ public class UserFunction extends ComponentCode<UserFunction> implements Functio
     private boolean tailRecursive = false;
     // indicates that the function contains tail calls on itself
     private UserFunctionParameter[] parameterDefinitions;
+    private SequenceType declaredResultType;
     private SequenceType resultType;
     protected int evaluationMode = ExpressionTool.UNDECIDED;
     private boolean isUpdating = false;
@@ -322,10 +323,11 @@ public class UserFunction extends ComponentCode<UserFunction> implements Functio
     /**
      * Set the declared result type of the function
      *
-     * @param resultType the declared return type
+     * @param resultType the declared return type (or item()* if no explicit type was declared)
      */
 
     public void setResultType(SequenceType resultType) {
+        this.declaredResultType = resultType;
         this.resultType = resultType;
     }
 
@@ -409,7 +411,9 @@ public class UserFunction extends ComponentCode<UserFunction> implements Functio
      */
 
     public SequenceType getResultType() {
-        if (resultType == SequenceType.ANY_SEQUENCE && getBody() != null) {
+        Visibility vis = getDeclaredVisibility();
+        if (resultType == SequenceType.ANY_SEQUENCE && getBody() != null &&
+                (vis == Visibility.FINAL || vis == Visibility.PRIVATE)) {
             // see if we can infer a more precise result type. We don't do this if the function contains
             // calls on further functions, to prevent infinite regress.
             if (!containsUserFunctionCalls(getBody())) {
@@ -423,11 +427,11 @@ public class UserFunction extends ComponentCode<UserFunction> implements Functio
     /**
      * Get the declared result type
      *
-     * @return the declared result type
+     * @return the declared result type, or item()* if the type was not explicitly declared
      */
 
     public SequenceType getDeclaredResultType() {
-        return resultType;
+        return declaredResultType;
     }
 
     /**
@@ -727,7 +731,7 @@ public class UserFunction extends ComponentCode<UserFunction> implements Functio
                 break;
         }
         presenter.emitAttribute("flags", flags);
-        presenter.emitAttribute("as", getResultType().toString());
+        presenter.emitAttribute("as", getDeclaredResultType().toString());
         presenter.emitAttribute("slots", getStackFrameMap().getNumberOfVariables() + "");
         for (UserFunctionParameter p : parameterDefinitions) {
             presenter.startElement("arg");
