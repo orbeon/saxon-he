@@ -566,11 +566,11 @@ public class XsltCompiler {
 
         for (Source s : sources) {
             DocumentImpl document = StylesheetModule.loadStylesheetModule(s, true, compilation, NestedIntegerValue.TWO);
-            ElementImpl packageElement = document.getDocumentElement();
-            String packageName = packageElement.getAttributeValue("", "name");
-            if (packageName == null) {
-                throw new SaxonApiException("Outermost element must be an xsl:package element with a name attribute");
-            }
+//            ElementImpl packageElement = document.getDocumentElement();
+//            String packageName = packageElement.getAttributeValue("", "name");
+//            if (packageName == null) {
+//                throw new SaxonApiException("Outermost element must be an xsl:package element with a name attribute");
+//            }
             depends.add(new PackDepends(document));
         }
 
@@ -634,6 +634,9 @@ public class XsltCompiler {
             uses = new ArrayList<UsePack>();
             if (packageElement.getURI().equals(NamespaceConstant.XSLT)) {
                 packageName = packageElement.getAttributeValue("", "name");
+                if (packageName == null) {
+                    packageName = "#unnamedPackage";
+                }
                 String pv = packageElement.getAttributeValue("", "package-version");
                 packageVersion = pv == null ? PackageVersion.ONE : new PackageVersion(pv);
                 // TODO: this is flawed - see bug 2779

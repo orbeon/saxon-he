@@ -66,6 +66,10 @@ public class NestedIntegerValue extends AtomicValue implements Comparable, Atomi
         return new NestedIntegerValue(v);
     }
 
+    public int getDepth() {
+        return value.length;
+    }
+
     public NestedIntegerValue getStem() {
         if (value.length == 0) {
             return null;
