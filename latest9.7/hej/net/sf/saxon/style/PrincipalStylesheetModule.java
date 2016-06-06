@@ -1447,7 +1447,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
         for (Action a : completionActions) {
             a.doAction();
         }
-        adjustExposedVisibility();
+        //adjustExposedVisibility();
         stylesheetPackage.complete();
     }
 

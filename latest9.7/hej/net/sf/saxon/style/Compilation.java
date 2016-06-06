@@ -239,6 +239,14 @@ public class Compilation {
             }
         }
 
+        if (getErrorCount() == 0) {
+            try {
+                psm.adjustExposedVisibility();
+            } catch (XPathException e) {
+                reportError(e);
+            }
+        }
+
         // Compile the stylesheet package
         if (getErrorCount() == 0) {
             try {
