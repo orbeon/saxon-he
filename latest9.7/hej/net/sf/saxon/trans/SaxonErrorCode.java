@@ -317,6 +317,12 @@ public class SaxonErrorCode {
 
     public static final String SXWN9015 = "SXWN9015";
 
+    /**
+     * SXWN9016: saxon:assign should not be used if multi-threading is enabled
+     */
+
+    public static final String SXWN9016 = "SXWN9016";
+
 
 }
 
