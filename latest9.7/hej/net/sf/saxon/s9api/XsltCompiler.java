@@ -10,6 +10,7 @@ package net.sf.saxon.s9api;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.PreparedStylesheet;
 import net.sf.saxon.lib.ErrorGatherer;
+import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.NodeInfo;
@@ -585,7 +586,15 @@ public class XsltCompiler {
         ArrayList<PackDepends> resolved = resolveDependencies(depends);
         for (PackDepends p : resolved) {
             if (p.doc != null) {
-                XsltPackage packagei = compilePackage(p.doc);
+                XsltPackage packagei;
+                ElementImpl top = p.doc.getDocumentElement();
+                if (top.getURI().equals(NamespaceConstant.SAXON_XSLT_EXPORT)) {
+                    IPackageLoader loader = config.makePackageLoader();
+                    StylesheetPackage pack = loader.loadPackageDoc(p.doc);
+                    packagei = new XsltPackage(processor, pack);
+                } else {
+                    packagei = compilePackage(p.doc);
+                }
                 pl.addPackage(packagei.getName(), packagei.getUnderlyingPreparedPackage());
                 if (link) {
                     packagei.link();
@@ -621,15 +630,23 @@ public class XsltCompiler {
         PackDepends(DocumentImpl d) throws XPathException {
             doc = d;
             ElementImpl packageElement = doc.getDocumentElement();
-            packageName = packageElement.getAttributeValue("", "name");
-            String pv = packageElement.getAttributeValue("", "package-version");
-            packageVersion = pv == null ? PackageVersion.ONE_ZERO : new PackageVersion(pv);
+
             uses = new ArrayList<UsePack>();
-            AxisIterator iter = doc.iterateAxis(AxisInfo.DESCENDANT,
-                    new NameTest(Type.ELEMENT, StandardNames.XSL_USE_PACKAGE, config.getNamePool()));
-            NodeInfo current;
-            while ((current = iter.next()) != null) {
-                uses.add(new UsePack(current));
+            if (packageElement.getURI().equals(NamespaceConstant.XSLT)) {
+                packageName = packageElement.getAttributeValue("", "name");
+                String pv = packageElement.getAttributeValue("", "package-version");
+                packageVersion = pv == null ? PackageVersion.ONE : new PackageVersion(pv);
+                // TODO: this is flawed - see bug 2779
+                AxisIterator iter = doc.iterateAxis(AxisInfo.DESCENDANT,
+                                                    new NameTest(Type.ELEMENT, StandardNames.XSL_USE_PACKAGE, config.getNamePool()));
+                NodeInfo current;
+                while ((current = iter.next()) != null) {
+                    uses.add(new UsePack(current));
+                }
+            } else {
+                packageName = packageElement.getAttributeValue("", "name");
+                String pv = packageElement.getAttributeValue("", "packageVersion");
+                packageVersion = pv == null ? PackageVersion.ONE : new PackageVersion(pv);
             }
         }
 

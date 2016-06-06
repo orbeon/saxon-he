@@ -28,7 +28,7 @@ public class PackageVersion implements Comparable {
      *
      */
     public static PackageVersion ZERO = new PackageVersion(new int[]{0});
-    public static PackageVersion ONE_ZERO = new PackageVersion(new int[]{1, 0});
+    public static PackageVersion ONE = new PackageVersion(new int[]{1});
     public static PackageVersion MAX_VALUE = new PackageVersion(new int[]{Integer.MAX_VALUE});
 
 

@@ -86,7 +86,7 @@ public class XSLPackage extends XSLModuleRoot {
             try {
                 prepareAttributes();
             } catch (XPathException e) {
-                packageVersion = PackageVersion.ONE_ZERO;
+                packageVersion = PackageVersion.ONE;
             }
         }
         return packageVersion;
@@ -144,7 +144,7 @@ public class XSLPackage extends XSLModuleRoot {
         }
 
         if (packageVersion == null) {
-            packageVersion = PackageVersion.ONE_ZERO;
+            packageVersion = PackageVersion.ONE;
         }
 
         if (version == -1) {

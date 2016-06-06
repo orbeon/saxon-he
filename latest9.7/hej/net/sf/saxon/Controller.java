@@ -2600,7 +2600,7 @@ public class Controller implements ContextOriginator {
         // of creating a secondary result document, then add a filter to check the first write
 
         boolean openNow = false;
-        if (getExecutable().createsSecondaryResult()) {
+        if (buildTree && getExecutable().createsSecondaryResult()) {
             receiver = new ImplicitResultChecker(receiver, this);
             receiver.setPipelineConfiguration(makePipelineConfiguration());
         } else {
