@@ -28,9 +28,9 @@
 
 //jobject cpp;
 const char * failure;
-sxnc_environment * SaxonProcessor::environ = 0;
-int SaxonProcessor::refCount = 0;
-int SaxonProcessor::jvmCreatedCPP=0;
+sxnc_environment * environ = 0;
+int refCount = 0;
+int jvmCreatedCPP=0;
 
 bool SaxonProcessor::exceptionOccurred(){
 	return environ->env->ExceptionCheck();
@@ -232,7 +232,7 @@ SaxonProcessor::SaxonProcessor(const char * configFile){
 	if(versionStr != NULL) {
 		delete versionStr;
 	}
-	refCount--;	//The might be redundant due to the bug fix 2670
+	refCount--;	//This might be redundant due to the bug fix 2670
    }
 
 
@@ -278,7 +278,7 @@ SaxonProcessor& SaxonProcessor::operator=( const SaxonProcessor& other ){
 	saxonCAPIClass = other.saxonCAPIClass;
 	cwd = other.cwd;
 	proc = other.proc;
-	environ = other.environ;
+	//environ = other.environ;
 	parameters = other.parameters;
 	configProperties = other.configProperties;
 	licensei = other.licensei;
@@ -457,10 +457,10 @@ XdmNode * SaxonProcessor::parseXmlFromUri(const char* source){
 
 
 void SaxonProcessor::release(){
-	if(SaxonProcessor::jvmCreatedCPP!=0) {
-		SaxonProcessor::jvmCreatedCPP =0;
+	if(jvmCreatedCPP!=0) {
+		jvmCreatedCPP =0;
 
- 		finalizeJavaRT (SaxonProcessor::environ->jvm);
+ 		finalizeJavaRT (environ->jvm);
 
 		//delete environ ;
 	/*clearParameters();

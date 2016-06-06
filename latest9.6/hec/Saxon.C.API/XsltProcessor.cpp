@@ -26,18 +26,18 @@ XsltProcessor::XsltProcessor(SaxonProcessor * p, std::string curr) {
 	/*
 	 * Look for class.
 	 */
-	cppClass = lookForClass(proc->environ->env,
+	cppClass = lookForClass(environ->env,
 			"net/sf/saxon/option/cpp/XsltProcessor");
 	if ((proc->proc) == NULL) {
 		cerr << "Processor is NULL" << endl;
 	}
 
-	cppXT = createSaxonProcessor2(proc->environ->env, cppClass,
+	cppXT = createSaxonProcessor2(environ->env, cppClass,
 			"(Lnet/sf/saxon/s9api/Processor;)V", proc->proc);
 
 #ifdef DEBUG
-	jmethodID debugMID = proc->environ->env->GetStaticMethodID(cppClass, "setDebugMode", "(Z)V");
-	proc->environ->env->CallStaticVoidMethod(cppClass, debugMID, (jboolean)true);
+	jmethodID debugMID = environ->env->GetStaticMethodID(cppClass, "setDebugMode", "(Z)V");
+	environ->env->CallStaticVoidMethod(cppClass, debugMID, (jboolean)true);
 #endif    
 
 	nodeCreated = false;
@@ -153,7 +153,7 @@ void XsltProcessor::exceptionClear(){
  if(proc->exception != NULL) {
  	delete proc->exception;
  	proc->exception = NULL;
-	proc->environ->env->ExceptionClear();
+	environ->env->ExceptionClear();
  }
   
  }
@@ -164,10 +164,10 @@ void XsltProcessor::exceptionClear(){
 
 const char* XsltProcessor::checkException() {
 	/*if(proc->exception == NULL) {
-	 proc->exception = proc->checkForException(proc->environ, cppClass, cpp);
+	 proc->exception = proc->checkForException(environ, cppClass, cpp);
 	 }
 	 return proc->exception;*/
-	return checkForException(*(proc->environ), cppClass, cppXT);
+	return checkForException(*(environ), cppClass, cppXT);
 }
 
 int XsltProcessor::exceptionCount(){
@@ -179,7 +179,7 @@ int XsltProcessor::exceptionCount(){
 
 void XsltProcessor::compileFromString(const char* stylesheetStr) {
 	static jmethodID cStringmID =
-			(jmethodID) proc->environ->env->GetMethodID(cppClass,
+			(jmethodID) environ->env->GetMethodID(cppClass,
 					"createStylesheetFromString",
 					"(Ljava/lang/String;Ljava/lang/String;)Lnet/sf/saxon/s9api/XsltExecutable;");
 	if (!cStringmID) {
@@ -189,16 +189,16 @@ void XsltProcessor::compileFromString(const char* stylesheetStr) {
 	} else {
 
 		stylesheetObject = (jobject)(
-				proc->environ->env->CallObjectMethod(cppXT, cStringmID,
-						proc->environ->env->NewStringUTF(cwdXT.c_str()),
-						proc->environ->env->NewStringUTF(stylesheetStr)));
+				environ->env->CallObjectMethod(cppXT, cStringmID,
+						environ->env->NewStringUTF(cwdXT.c_str()),
+						environ->env->NewStringUTF(stylesheetStr)));
 		if (!stylesheetObject) {
 			if(exceptionOccurred()) {
 				
 				if(proc->exception != NULL) {
 					delete proc->exception;
 				}
-				proc->exception = proc->checkForExceptionCPP(proc->environ->env, cppClass, NULL);
+				proc->exception = proc->checkForExceptionCPP(environ->env, cppClass, NULL);
 				proc->exceptionClear();
      			}
 		}
@@ -208,7 +208,7 @@ void XsltProcessor::compileFromString(const char* stylesheetStr) {
 
 void XsltProcessor::compileFromXdmNode(XdmNode * node) {
 	static jmethodID cNodemID =
-			(jmethodID) proc->environ->env->GetMethodID(cppClass,
+			(jmethodID) environ->env->GetMethodID(cppClass,
 					"createStylesheetFromFile",
 					"(Ljava/lang/String;Lnet/sf/saxon/s9api/XdmNode;)Lnet/sf/saxon/s9api/XsltExecutable;");
 	if (!cNodemID) {
@@ -218,15 +218,15 @@ void XsltProcessor::compileFromXdmNode(XdmNode * node) {
 	} else {
 		releaseStylesheet();
 		stylesheetObject = (jobject)(
-				proc->environ->env->CallObjectMethod(cppXT, cNodemID,
-						proc->environ->env->NewStringUTF(cwdXT.c_str()),
+				environ->env->CallObjectMethod(cppXT, cNodemID,
+						environ->env->NewStringUTF(cwdXT.c_str()),
 						node->getUnderlyingValue(proc)));
 		if (!stylesheetObject) {
 			if(exceptionOccurred()) {
 				if(proc->exception != NULL) {
 					delete proc->exception;
 				}
-				proc->exception = proc->checkForExceptionCPP(proc->environ->env, cppClass, NULL);
+				proc->exception = proc->checkForExceptionCPP(environ->env, cppClass, NULL);
 				proc->exceptionClear();
      			}
 			//cout << "Error in compileFromXdmNode" << endl;
@@ -237,7 +237,7 @@ void XsltProcessor::compileFromXdmNode(XdmNode * node) {
 
 void XsltProcessor::compileFromFile(const char* stylesheet) {
 	static jmethodID cFilemID =
-			(jmethodID) proc->environ->env->GetMethodID(cppClass,
+			(jmethodID) environ->env->GetMethodID(cppClass,
 					"createStylesheetFromFile",
 					"(Ljava/lang/String;Ljava/lang/String;)Lnet/sf/saxon/s9api/XsltExecutable;");
 	if (!cFilemID) {
@@ -248,21 +248,21 @@ void XsltProcessor::compileFromFile(const char* stylesheet) {
 		releaseStylesheet();
 
 		stylesheetObject = (jobject)(
-				proc->environ->env->CallObjectMethod(cppXT, cFilemID,
-						proc->environ->env->NewStringUTF(cwdXT.c_str()),
-						proc->environ->env->NewStringUTF(stylesheet)));
+				environ->env->CallObjectMethod(cppXT, cFilemID,
+						environ->env->NewStringUTF(cwdXT.c_str()),
+						environ->env->NewStringUTF(stylesheet)));
 		if (!stylesheetObject) {
 			if(exceptionOccurred()) {
 				
 				if(proc->exception != NULL) {
 					delete proc->exception;
 				}
-				proc->exception = proc->checkForExceptionCPP(proc->environ->env, cppClass, NULL);
+				proc->exception = proc->checkForExceptionCPP(environ->env, cppClass, NULL);
 				proc->exceptionClear();
 	   		}
      		
 		}
-		//proc->environ->env->NewGlobalRef(stylesheetObject);
+		//environ->env->NewGlobalRef(stylesheetObject);
 	}
 
 }
@@ -285,7 +285,7 @@ XdmValue * XsltProcessor::transformFileToValue(const char* sourcefile,
 
 	setProperty("resources", proc->getResourcesDirectory());
 	static jmethodID mID =
-			(jmethodID) proc->environ->env->GetMethodID(cppClass,
+			(jmethodID) environ->env->GetMethodID(cppClass,
 					"transformToNode",
 					"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmNode;");
 	if (!mID) {
@@ -295,49 +295,49 @@ XdmValue * XsltProcessor::transformFileToValue(const char* sourcefile,
 	} else {
 		jobjectArray stringArray = NULL;
 		jobjectArray objectArray = NULL;
-		jclass objectClass = lookForClass(proc->environ->env,
+		jclass objectClass = lookForClass(environ->env,
 				"java/lang/Object");
-		jclass stringClass = lookForClass(proc->environ->env,
+		jclass stringClass = lookForClass(environ->env,
 				"java/lang/String");
 
 		int size = parameters.size() + properties.size();
 		if (size > 0) {
-			objectArray = proc->environ->env->NewObjectArray((jint) size,
+			objectArray = environ->env->NewObjectArray((jint) size,
 					objectClass, 0);
-			stringArray = proc->environ->env->NewObjectArray((jint) size,
+			stringArray = environ->env->NewObjectArray((jint) size,
 					stringClass, 0);
 			int i = 0;
 			for (map<std::string, XdmValue*>::iterator iter =
 					parameters.begin(); iter != parameters.end(); ++iter, i++) {
-				proc->environ->env->SetObjectArrayElement(stringArray, i,
-						proc->environ->env->NewStringUTF(
+				environ->env->SetObjectArrayElement(stringArray, i,
+						environ->env->NewStringUTF(
 								(iter->first).c_str()));
-				proc->environ->env->SetObjectArrayElement(objectArray, i,
+				environ->env->SetObjectArrayElement(objectArray, i,
 						(iter->second)->getUnderlyingValue(proc));
 			}
 			for (map<std::string, std::string>::iterator iter =
 					properties.begin(); iter != properties.end(); ++iter, i++) {
-				proc->environ->env->SetObjectArrayElement(stringArray, i,
-						proc->environ->env->NewStringUTF(
+				environ->env->SetObjectArrayElement(stringArray, i,
+						environ->env->NewStringUTF(
 								(iter->first).c_str()));
-				proc->environ->env->SetObjectArrayElement(objectArray, i,
-						proc->environ->env->NewStringUTF(
+				environ->env->SetObjectArrayElement(objectArray, i,
+						environ->env->NewStringUTF(
 								(iter->second).c_str()));
 			}
 		}
 		jobject result = (jobject)(
-				proc->environ->env->CallObjectMethod(cppXT, mID,
-						proc->environ->env->NewStringUTF(cwdXT.c_str()),
+				environ->env->CallObjectMethod(cppXT, mID,
+						environ->env->NewStringUTF(cwdXT.c_str()),
 						(sourcefile != NULL ?
-								proc->environ->env->NewStringUTF(sourcefile) :
+								environ->env->NewStringUTF(sourcefile) :
 								NULL),
 						(stylesheetfile != NULL ?
-								proc->environ->env->NewStringUTF(
+								environ->env->NewStringUTF(
 										stylesheetfile) :
 								NULL), stringArray, objectArray));
 		if (size > 0) {
-			proc->environ->env->DeleteLocalRef(stringArray);
-			proc->environ->env->DeleteLocalRef(objectArray);
+			environ->env->DeleteLocalRef(stringArray);
+			environ->env->DeleteLocalRef(objectArray);
 		}
 		if (result) {
 			XdmNode * node = new XdmNode(result);
@@ -348,7 +348,7 @@ XdmValue * XsltProcessor::transformFileToValue(const char* sourcefile,
 			if(proc->exception != NULL) {
 				delete proc->exception;
 			}
-			proc->exception = proc->checkForExceptionCPP(proc->environ->env, cppClass, NULL);
+			proc->exception = proc->checkForExceptionCPP(environ->env, cppClass, NULL);
 			proc->exceptionClear();
 	   		
      		}
@@ -367,7 +367,7 @@ void XsltProcessor::transformFileToFile(const char* source,
 	}
 	setProperty("resources", proc->getResourcesDirectory());
 	jmethodID mID =
-			(jmethodID) proc->environ->env->GetMethodID(cppClass,
+			(jmethodID) environ->env->GetMethodID(cppClass,
 					"transformToFile",
 					"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)V");
 	if (!mID) {
@@ -377,9 +377,9 @@ void XsltProcessor::transformFileToFile(const char* source,
 	} else {
 		jobjectArray stringArray = NULL;
 		jobjectArray objectArray = NULL;
-		jclass objectClass = lookForClass(proc->environ->env,
+		jclass objectClass = lookForClass(environ->env,
 				"java/lang/Object");
-		jclass stringClass = lookForClass(proc->environ->env,
+		jclass stringClass = lookForClass(environ->env,
 				"java/lang/String");
 
 		int size = parameters.size() + properties.size();
@@ -389,9 +389,9 @@ void XsltProcessor::transformFileToFile(const char* source,
 		cerr<<"size:"<<size<<endl;
 #endif
 		if (size > 0) {
-			objectArray = proc->environ->env->NewObjectArray((jint) size,
+			objectArray = environ->env->NewObjectArray((jint) size,
 					objectClass, 0);
-			stringArray = proc->environ->env->NewObjectArray((jint) size,
+			stringArray = environ->env->NewObjectArray((jint) size,
 					stringClass, 0);
 			if (objectArray == NULL) {
 				cerr << "objectArray is NULL" << endl;
@@ -407,8 +407,8 @@ void XsltProcessor::transformFileToFile(const char* source,
 				cerr<<"map 1"<<endl;
 				cerr<<"iter->first"<<(iter->first).c_str()<<endl;
 #endif
-				proc->environ->env->SetObjectArrayElement(stringArray, i,
-						proc->environ->env->NewStringUTF(
+				environ->env->SetObjectArrayElement(stringArray, i,
+						environ->env->NewStringUTF(
 								(iter->first).c_str()));
 #ifdef DEBUG
 				string s1 = typeid(iter->second).name();
@@ -424,32 +424,32 @@ void XsltProcessor::transformFileToFile(const char* source,
 					cerr<<"(iter->second)->getUnderlyingValue() is NULL"<<endl;
 				}
 #endif
-				proc->environ->env->SetObjectArrayElement(objectArray, i,
+				environ->env->SetObjectArrayElement(objectArray, i,
 						(iter->second)->getUnderlyingValue(proc));
 
 			}
 
 			for (map<std::string, std::string>::iterator iter =
 					properties.begin(); iter != properties.end(); ++iter, i++) {
-				proc->environ->env->SetObjectArrayElement(stringArray, i,
-						proc->environ->env->NewStringUTF(
+				environ->env->SetObjectArrayElement(stringArray, i,
+						environ->env->NewStringUTF(
 								(iter->first).c_str()));
-				proc->environ->env->SetObjectArrayElement(objectArray, i,
-						proc->environ->env->NewStringUTF(
+				environ->env->SetObjectArrayElement(objectArray, i,
+						environ->env->NewStringUTF(
 								(iter->second).c_str()));
 			}
 		}
-		proc->environ->env->CallObjectMethod(cppXT, mID,
-								proc->environ->env->NewStringUTF(cwdXT.c_str()),
+		environ->env->CallObjectMethod(cppXT, mID,
+								environ->env->NewStringUTF(cwdXT.c_str()),
 								(source != NULL ?
-										proc->environ->env->NewStringUTF(
+										environ->env->NewStringUTF(
 												source) :
 										NULL),
-								proc->environ->env->NewStringUTF(stylesheet),NULL,
+								environ->env->NewStringUTF(stylesheet),NULL,
 								stringArray, objectArray);
 		if (size > 0) {
-			proc->environ->env->DeleteLocalRef(stringArray);
-			proc->environ->env->DeleteLocalRef(objectArray);
+			environ->env->DeleteLocalRef(stringArray);
+			environ->env->DeleteLocalRef(objectArray);
 		}
 		
 	}
@@ -458,7 +458,7 @@ void XsltProcessor::transformFileToFile(const char* source,
 			if(proc->exception != NULL) {
 				delete proc->exception;
 			}
-			proc->exception = proc->checkForExceptionCPP(proc->environ->env, cppClass, NULL);
+			proc->exception = proc->checkForExceptionCPP(environ->env, cppClass, NULL);
 			proc->exceptionClear();
 	   		
      		}
@@ -469,7 +469,7 @@ void XsltProcessor::transformFileToFile(const char* source,
 
 XdmValue * XsltProcessor::getXslMessages(){
 
-jmethodID mID =   (jmethodID) proc->environ->env->GetMethodID(cppClass,
+jmethodID mID =   (jmethodID) environ->env->GetMethodID(cppClass,
 					"getXslMessages",
 					"()[Lnet/sf/saxon/s9api/XdmValue;");
 	if (!mID) {
@@ -478,18 +478,18 @@ jmethodID mID =   (jmethodID) proc->environ->env->GetMethodID(cppClass,
 
 	} else {
 jobjectArray results = (jobjectArray)(
-			proc->environ->env->CallObjectMethod(cppXT, mID));
-	int sizex = proc->environ->env->GetArrayLength(results);
+			environ->env->CallObjectMethod(cppXT, mID));
+	int sizex = environ->env->GetArrayLength(results);
 
 	if (sizex>0) {
 		XdmValue * value = new XdmValue();
 		
 		for (int p=0; p < sizex; ++p) 
 		{
-			jobject resulti = proc->environ->env->GetObjectArrayElement(results, p);
+			jobject resulti = environ->env->GetObjectArrayElement(results, p);
 			value->addUnderlyingValue(resulti);
 		}
-		proc->environ->env->DeleteLocalRef(results);
+		environ->env->DeleteLocalRef(results);
 		return value;
 	}
     }
@@ -506,7 +506,7 @@ const char * XsltProcessor::transformFileToString(const char* source,
 	}
 	setProperty("resources", proc->getResourcesDirectory());
 	jmethodID mID =
-			(jmethodID) proc->environ->env->GetMethodID(cppClass,
+			(jmethodID) environ->env->GetMethodID(cppClass,
 					"transformToString",
 					"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;");
 	if (!mID) {
@@ -516,9 +516,9 @@ const char * XsltProcessor::transformFileToString(const char* source,
 	} else {
 		jobjectArray stringArray = NULL;
 		jobjectArray objectArray = NULL;
-		jclass objectClass = lookForClass(proc->environ->env,
+		jclass objectClass = lookForClass(environ->env,
 				"java/lang/Object");
-		jclass stringClass = lookForClass(proc->environ->env,
+		jclass stringClass = lookForClass(environ->env,
 				"java/lang/String");
 
 		int size = parameters.size() + properties.size();
@@ -527,9 +527,9 @@ const char * XsltProcessor::transformFileToString(const char* source,
 		cerr<<"Parameter size: "<<parameters.size()<<endl;
 #endif
 		if (size > 0) {
-			objectArray = proc->environ->env->NewObjectArray((jint) size,
+			objectArray = environ->env->NewObjectArray((jint) size,
 					objectClass, 0);
-			stringArray = proc->environ->env->NewObjectArray((jint) size,
+			stringArray = environ->env->NewObjectArray((jint) size,
 					stringClass, 0);
 			if (objectArray == NULL) {
 				cerr << "objectArray is NULL" << endl;
@@ -545,8 +545,8 @@ const char * XsltProcessor::transformFileToString(const char* source,
 				cerr<<"map 1"<<endl;
 				cerr<<"iter->first"<<(iter->first).c_str()<<endl;
 #endif
-				proc->environ->env->SetObjectArrayElement(stringArray, i,
-						proc->environ->env->NewStringUTF(
+				environ->env->SetObjectArrayElement(stringArray, i,
+						environ->env->NewStringUTF(
 								(iter->first).c_str()));
 #ifdef DEBUG
 				string s1 = typeid(iter->second).name();
@@ -562,18 +562,18 @@ const char * XsltProcessor::transformFileToString(const char* source,
 					cerr<<"(iter->second)->getUnderlyingValue() is NULL"<<endl;
 				}
 #endif
-				proc->environ->env->SetObjectArrayElement(objectArray, i,
+				environ->env->SetObjectArrayElement(objectArray, i,
 						(iter->second)->getUnderlyingValue(proc));
 
 			}
 
 			for (map<std::string, std::string>::iterator iter =
 					properties.begin(); iter != properties.end(); ++iter, i++) {
-				proc->environ->env->SetObjectArrayElement(stringArray, i,
-						proc->environ->env->NewStringUTF(
+				environ->env->SetObjectArrayElement(stringArray, i,
+						environ->env->NewStringUTF(
 								(iter->first).c_str()));
-				proc->environ->env->SetObjectArrayElement(objectArray, i,
-						proc->environ->env->NewStringUTF(
+				environ->env->SetObjectArrayElement(objectArray, i,
+						environ->env->NewStringUTF(
 								(iter->second).c_str()));
 			}
 		}
@@ -581,23 +581,23 @@ const char * XsltProcessor::transformFileToString(const char* source,
 	jstring result = NULL;
 	jobject obj =
 				(
-						proc->environ->env->CallObjectMethod(cppXT, mID,
-								proc->environ->env->NewStringUTF(cwdXT.c_str()),
+						environ->env->CallObjectMethod(cppXT, mID,
+								environ->env->NewStringUTF(cwdXT.c_str()),
 								(source != NULL ?
-										proc->environ->env->NewStringUTF(
+										environ->env->NewStringUTF(
 												source) :
 										NULL),
-								proc->environ->env->NewStringUTF(stylesheet),
+								environ->env->NewStringUTF(stylesheet),
 								stringArray, objectArray));
 		if(obj) {
 			result = (jstring)obj;
 		}		
 		if (size > 0) {
-			proc->environ->env->DeleteLocalRef(stringArray);
-			proc->environ->env->DeleteLocalRef(objectArray);
+			environ->env->DeleteLocalRef(stringArray);
+			environ->env->DeleteLocalRef(objectArray);
 		}
 		if (result) {
-			const char * str = proc->environ->env->GetStringUTFChars(result,
+			const char * str = environ->env->GetStringUTFChars(result,
 					NULL);
 			//return "result should be ok";
 			return str;
@@ -605,7 +605,7 @@ const char * XsltProcessor::transformFileToString(const char* source,
 			if(proc->exception != NULL) {
 				delete proc->exception;
 			}
-			proc->exception = proc->checkForExceptionCPP(proc->environ->env, cppClass, NULL);
+			proc->exception = proc->checkForExceptionCPP(environ->env, cppClass, NULL);
 			proc->exceptionClear();
 	   		
      		}

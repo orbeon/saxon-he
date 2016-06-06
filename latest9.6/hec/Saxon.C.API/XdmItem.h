@@ -27,7 +27,7 @@ public:
     virtual ~XdmItem(){
 //std::cerr<<std::endl<<"XdmItem destructor called, refCount"<<getRefCount()<<std::endl;
 	if(value !=NULL && proc != NULL) {
-			proc->environ->env->DeleteLocalRef(value->xdmvalue);
+			environ->env->DeleteLocalRef(value->xdmvalue);
 	}
 	free(value);
     }

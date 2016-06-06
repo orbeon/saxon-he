@@ -31,8 +31,8 @@ bool XdmNode::isAtomic() {
 		return nodeName;
 	}
 	XDM_NODE_KIND kind = getNodeKind();
- 	jclass xdmUtilsClass = lookForClass(proc->environ->env, "net/sf/saxon/option/cpp/XdmUtils");
-	jmethodID xmID = (jmethodID) proc->environ->env->GetStaticMethodID(xdmUtilsClass,"getNodeName",
+ 	jclass xdmUtilsClass = lookForClass(environ->env, "net/sf/saxon/option/cpp/XdmUtils");
+	jmethodID xmID = (jmethodID) environ->env->GetStaticMethodID(xdmUtilsClass,"getNodeName",
 					"(Lnet/sf/saxon/s9api/XdmNode;)Ljava/lang/String;");
 	switch (kind) {
             case DOCUMENT:
@@ -48,11 +48,11 @@ bool XdmNode::isAtomic() {
 			std::cerr << "Error: MyClassInDll." << "getNodeName"<< " not found\n" << std::endl;
 			return NULL;
 		} else {
-			jstring result = (jstring)(proc->environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID, value->xdmvalue));
+			jstring result = (jstring)(environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID, value->xdmvalue));
 			if(!result) {
 				return NULL;
 			} else {
-				nodeName = proc->environ->env->GetStringUTFChars(result, NULL);
+				nodeName = environ->env->GetStringUTFChars(result, NULL);
 				return nodeName;
 			} 
 		}
@@ -69,8 +69,8 @@ bool XdmNode::isAtomic() {
 		return baseURI;
 	}
 
-	jclass xdmNodeClass = lookForClass(proc->environ->env, "net/sf/saxon/s9api/XdmNode");
-	jmethodID bmID = (jmethodID) proc->environ->env->GetMethodID(xdmNodeClass,
+	jclass xdmNodeClass = lookForClass(environ->env, "net/sf/saxon/s9api/XdmNode");
+	jmethodID bmID = (jmethodID) environ->env->GetMethodID(xdmNodeClass,
 					"getBaseURI",
 					"()Ljava/net/URI;");
 	if (!bmID) {
@@ -78,18 +78,18 @@ bool XdmNode::isAtomic() {
 				<< " not found\n" << std::endl;
 		return NULL;
 	} else {
-		jobject nodeURIObj = (proc->environ->env->CallObjectMethod(value->xdmvalue, bmID));
+		jobject nodeURIObj = (environ->env->CallObjectMethod(value->xdmvalue, bmID));
 		if(!nodeURIObj){
 			return NULL;
 		} else {
-			jclass URIClass = lookForClass(proc->environ->env, "java/net/URI");
-			jmethodID strMID = (jmethodID) proc->environ->env->GetMethodID(URIClass,
+			jclass URIClass = lookForClass(environ->env, "java/net/URI");
+			jmethodID strMID = (jmethodID) environ->env->GetMethodID(URIClass,
 					"toString",
 					"()Ljava/lang/String;");
 			if(strMID){
 				jstring result = (jstring)(
-				proc->environ->env->CallObjectMethod(nodeURIObj, strMID));
-				baseURI = proc->environ->env->GetStringUTFChars(result,
+				environ->env->CallObjectMethod(nodeURIObj, strMID));
+				baseURI = environ->env->GetStringUTFChars(result,
 					NULL);
 			
 				return baseURI;
@@ -106,8 +106,8 @@ bool XdmNode::isAtomic() {
 
     XdmNode* XdmNode::getParent(){
 	if(parent == NULL && proc!= NULL) {
-		jclass xdmNodeClass = lookForClass(proc->environ->env, "net/sf/saxon/s9api/XdmNode");
-		jmethodID bmID = (jmethodID) proc->environ->env->GetMethodID(xdmNodeClass,
+		jclass xdmNodeClass = lookForClass(environ->env, "net/sf/saxon/s9api/XdmNode");
+		jmethodID bmID = (jmethodID) environ->env->GetMethodID(xdmNodeClass,
 					"getParent",
 					"()Lnet/sf/saxon/s9api/XdmNode;");
 		if (!bmID) {
@@ -115,7 +115,7 @@ bool XdmNode::isAtomic() {
 				<< " not found\n" << std::endl;
 			return NULL;
 		} else {
-			jobject nodeObj = (proc->environ->env->CallObjectMethod(value->xdmvalue, bmID));
+			jobject nodeObj = (environ->env->CallObjectMethod(value->xdmvalue, bmID));
 			if(nodeObj) {
 				parent = new XdmNode(NULL, nodeObj, UNKNOWN);
 				parent->setProcessor(proc);
@@ -133,8 +133,8 @@ bool XdmNode::isAtomic() {
     const char* XdmNode::getAttributeValue(const char *str){
 
 	if(str == NULL) { return NULL;}
-	jclass xdmUtilsClass = lookForClass(proc->environ->env, "net/sf/saxon/option/cpp/XdmUtils");
-	jmethodID xmID = (jmethodID) proc->environ->env->GetStaticMethodID(xdmUtilsClass,"getAttributeValue",
+	jclass xdmUtilsClass = lookForClass(environ->env, "net/sf/saxon/option/cpp/XdmUtils");
+	jmethodID xmID = (jmethodID) environ->env->GetStaticMethodID(xdmUtilsClass,"getAttributeValue",
 					"(Lnet/sf/saxon/s9api/XdmNode;Ljava/lang/String;)Ljava/lang/String;");
 	if (!xmID) {
 			std::cerr << "Error: SaxonDll." << "getAttributeValue"
@@ -144,16 +144,16 @@ bool XdmNode::isAtomic() {
 	if(str == NULL) {
 		return NULL;
 	}
-	jstring eqname = proc->environ->env->NewStringUTF(str);
+	jstring eqname = environ->env->NewStringUTF(str);
 
-	jstring result = (jstring)(proc->environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID,value->xdmvalue, eqname));
-	proc->environ->env->DeleteLocalRef(eqname);
-	checkForException(*(proc->environ), xdmUtilsClass, (jobject)result);//Remove code
+	jstring result = (jstring)(environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID,value->xdmvalue, eqname));
+	environ->env->DeleteLocalRef(eqname);
+	checkForException(*(environ), xdmUtilsClass, (jobject)result);//Remove code
 	if(result) {
-		const char * stri = proc->environ->env->GetStringUTFChars(result,
+		const char * stri = environ->env->GetStringUTFChars(result,
 					NULL);
 		
-		//proc->environ->env->DeleteLocalRef(result);
+		//environ->env->DeleteLocalRef(result);
 
 		return stri;
 	} else {
@@ -165,21 +165,21 @@ bool XdmNode::isAtomic() {
 
     XdmNode** XdmNode::getAttributeNodes(){
 	if(attrValues == NULL) {
-		jclass xdmUtilsClass = lookForClass(proc->environ->env, "net/sf/saxon/option/cpp/XdmUtils");
-		jmethodID xmID = (jmethodID) proc->environ->env->GetStaticMethodID(xdmUtilsClass,"getAttributeNodes",
+		jclass xdmUtilsClass = lookForClass(environ->env, "net/sf/saxon/option/cpp/XdmUtils");
+		jmethodID xmID = (jmethodID) environ->env->GetStaticMethodID(xdmUtilsClass,"getAttributeNodes",
 					"(Lnet/sf/saxon/s9api/XdmNode;)[Lnet/sf/saxon/s9api/XdmNode;");
-		jobjectArray results = (jobjectArray)(proc->environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID, 
+		jobjectArray results = (jobjectArray)(environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID, 
 		value->xdmvalue));
 		if(results == NULL) {
 			return NULL;	
 		}
-		int sizex = proc->environ->env->GetArrayLength(results);
+		int sizex = environ->env->GetArrayLength(results);
 		attrCount = sizex;
 		if(sizex>0) {	
 			attrValues =  new XdmNode*[sizex];
 			XdmNode * tempNode =NULL;
 			for (int p=0; p < sizex; ++p){
-				jobject resulti = proc->environ->env->GetObjectArrayElement(results, p);
+				jobject resulti = environ->env->GetObjectArrayElement(results, p);
 				tempNode = new XdmNode(this, resulti, ATTRIBUTE);
 				tempNode->setProcessor(proc);
 				this->incrementRefCount();
@@ -192,8 +192,8 @@ bool XdmNode::isAtomic() {
 
     int XdmNode::getAttributeCount(){
 	if(attrCount == -1 && proc!= NULL) {
-		jclass xdmUtilsClass = lookForClass(proc->environ->env, "net/sf/saxon/option/cpp/XdmUtils");
-		jmethodID xmID = (jmethodID) proc->environ->env->GetStaticMethodID(xdmUtilsClass,"getAttributeCount",
+		jclass xdmUtilsClass = lookForClass(environ->env, "net/sf/saxon/option/cpp/XdmUtils");
+		jmethodID xmID = (jmethodID) environ->env->GetStaticMethodID(xdmUtilsClass,"getAttributeCount",
 					"(Lnet/sf/saxon/s9api/XdmNode;)I");
 		
 		if (!xmID) {
@@ -201,7 +201,7 @@ bool XdmNode::isAtomic() {
 				<< " not found\n" << std::endl;
 			return 0;
 		}
-		jint result = (jlong)(proc->environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID,
+		jint result = (jlong)(environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID,
 		value->xdmvalue));
 
 		attrCount =(int)result;
@@ -211,8 +211,8 @@ bool XdmNode::isAtomic() {
 
     int XdmNode::getChildCount(){
 	if(childCount == -1 && proc!= NULL) {
-		jclass xdmUtilsClass = lookForClass(proc->environ->env, "net/sf/saxon/option/cpp/XdmUtils");
-		jmethodID xmID = (jmethodID) proc->environ->env->GetStaticMethodID(xdmUtilsClass,"getChildCount",
+		jclass xdmUtilsClass = lookForClass(environ->env, "net/sf/saxon/option/cpp/XdmUtils");
+		jmethodID xmID = (jmethodID) environ->env->GetStaticMethodID(xdmUtilsClass,"getChildCount",
 					"(Lnet/sf/saxon/s9api/XdmNode;)I");
 		
 		if (!xmID) {
@@ -220,7 +220,7 @@ bool XdmNode::isAtomic() {
 				<< " not found\n" << std::endl;
 			return 0;
 		}
-		jint result = (jlong)(proc->environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID,
+		jint result = (jlong)(environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID,
 		value->xdmvalue));
 
 		childCount =(int)result;
@@ -231,8 +231,8 @@ bool XdmNode::isAtomic() {
     XdmNode** XdmNode::getChildren(){
 
 	if(children == NULL && proc!= NULL) {
-		jclass xdmUtilsClass = lookForClass(proc->environ->env, "net/sf/saxon/option/cpp/XdmUtils");
-		jmethodID xmID = (jmethodID) proc->environ->env->GetStaticMethodID(xdmUtilsClass,"getChildren",
+		jclass xdmUtilsClass = lookForClass(environ->env, "net/sf/saxon/option/cpp/XdmUtils");
+		jmethodID xmID = (jmethodID) environ->env->GetStaticMethodID(xdmUtilsClass,"getChildren",
 					"(Lnet/sf/saxon/s9api/XdmNode;)[Lnet/sf/saxon/s9api/XdmNode;");
 		
 		if (!xmID) {
@@ -240,14 +240,14 @@ bool XdmNode::isAtomic() {
 				<< " not found\n" << std::endl;
 			return NULL;
 		}
-		jobjectArray results = (jobjectArray)(proc->environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID, 
+		jobjectArray results = (jobjectArray)(environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID, 
 		value->xdmvalue));
-		int sizex = proc->environ->env->GetArrayLength(results);
+		int sizex = environ->env->GetArrayLength(results);
 		childCount = sizex;	
 		children =  new XdmNode*[sizex];
 		XdmNode * tempNode = NULL;
 		for (int p=0; p < sizex; ++p){
-			jobject resulti = proc->environ->env->GetObjectArrayElement(results, p);
+			jobject resulti = environ->env->GetObjectArrayElement(results, p);
 			tempNode = new XdmNode(this, resulti, UNKNOWN);
 			tempNode->setProcessor(proc);
 			//tempNode->incrementRefCount();

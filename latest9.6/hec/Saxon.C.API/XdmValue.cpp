@@ -33,7 +33,7 @@
 		values.clear();
 		if(valueType != NULL) {delete valueType;}
 		if(jValues && proc != NULL) {
-			proc->environ->env->DeleteLocalRef(jValues);
+			environ->env->DeleteLocalRef(jValues);
 		}
 		xdmSize=0;
 	}
@@ -73,7 +73,7 @@
 			proc = proci;	
 			jValues;
 			int i;
-			JNIEnv *env = proc->environ->env;
+			JNIEnv *env = environ->env;
 			int count = values.size();
 			if(count == 0) {
 				return NULL;
@@ -98,13 +98,13 @@
 	XdmItem * XdmValue::itemAt(int n){
 		/*if(jValues != NULL) {
 			values.clear();
-			int sizex = proc->environ->env->GetArrayLength(jvalues);
+			int sizex = environ->env->GetArrayLength(jvalues);
 			for (int p=0; p < sizex; ++p) 
 			{
-				jobject resulti = proc->environ->env->GetObjectArrayElement(jValues, p);
+				jobject resulti = environ->env->GetObjectArrayElement(jValues, p);
 				values->addUnderlyingValue(resulti);
 			}
-			proc->environ->env->DeleteLocalRef(jValues);
+			environ->env->DeleteLocalRef(jValues);
 			jValues = NULL;
 		}*/
 		if(n >= 0 && n< values.size()) {

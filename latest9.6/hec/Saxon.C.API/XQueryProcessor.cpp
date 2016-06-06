@@ -13,14 +13,14 @@
     proc = p;
 
   
-     cppClass = lookForClass(proc->environ->env, "net/sf/saxon/option/cpp/XQueryEngine");
+     cppClass = lookForClass(environ->env, "net/sf/saxon/option/cpp/XQueryEngine");
 
 
-    cppXQ = createSaxonProcessor2 (proc->environ->env, cppClass, "(Lnet/sf/saxon/s9api/Processor;)V", proc->proc);
+    cppXQ = createSaxonProcessor2 (environ->env, cppClass, "(Lnet/sf/saxon/s9api/Processor;)V", proc->proc);
     
 #ifdef DEBUG
-	jmethodID debugMID = proc->environ->env->GetStaticMethodID(cppClass, "setDebugMode", "(Z)V");
-	proc->environ->env->CallStaticVoidMethod(cppClass, debugMID, (jboolean)true);
+	jmethodID debugMID = environ->env->GetStaticMethodID(cppClass, "setDebugMode", "(Z)V");
+	environ->env->CallStaticVoidMethod(cppClass, debugMID, (jboolean)true);
 #endif
 
     proc->exception = NULL;
@@ -61,7 +61,7 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 		return;
         }
 	jmethodID mID =
-		(jmethodID) proc->environ->env->GetMethodID(cppClass, "declareNamespace",
+		(jmethodID) environ->env->GetMethodID(cppClass, "declareNamespace",
 				"(Ljava/lang/String;Ljava/lang/String;)V");
 	if (!mID) {
 	cerr << "Error: MyClassInDll." << "declareNameSpace" << " not found\n"
@@ -69,9 +69,9 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 
 	} else {
 	
-			proc->environ->env->CallObjectMethod(cppXQ, mID,
-					proc->environ->env->NewStringUTF(prefix),
-					proc->environ->env->NewStringUTF(uri));
+			environ->env->CallObjectMethod(cppXQ, mID,
+					environ->env->NewStringUTF(prefix),
+					environ->env->NewStringUTF(uri));
 	}
 
 }
@@ -164,7 +164,7 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
     void XQueryProcessor::executeQueryToFile(const char * infilename, const char * ofilename, const char * query){
 	setProperty("resources", proc->getResourcesDirectory());  
 
-	jmethodID mID = (jmethodID)proc->environ->env->GetMethodID (cppClass,"executeQueryToFile", "(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)V");
+	jmethodID mID = (jmethodID)environ->env->GetMethodID (cppClass,"executeQueryToFile", "(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)V");
  	if (!mID) {
         cout<<"Error: MyClassInDll."<<"executeQueryToFile"<<" not found\n"<<endl;
     } else {
@@ -177,43 +177,43 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 	if(size >0) {
 
 	   int i=0;
-           jclass objectClass = lookForClass(proc->environ->env, "java/lang/Object");
-	   jclass stringClass = lookForClass(proc->environ->env, "java/lang/String");
-	   objectArray = proc->environ->env->NewObjectArray( (jint)size, objectClass, 0 );
-	   stringArray = proc->environ->env->NewObjectArray( (jint)size, stringClass, 0 );
+           jclass objectClass = lookForClass(environ->env, "java/lang/Object");
+	   jclass stringClass = lookForClass(environ->env, "java/lang/String");
+	   objectArray = environ->env->NewObjectArray( (jint)size, objectClass, 0 );
+	   stringArray = environ->env->NewObjectArray( (jint)size, stringClass, 0 );
 	   if(query!= NULL) {
-	     proc->environ->env->SetObjectArrayElement( stringArray, i, proc->environ->env->NewStringUTF("qs") );
-     	     proc->environ->env->SetObjectArrayElement( objectArray, i, proc->environ->env->NewStringUTF(query));
+	     environ->env->SetObjectArrayElement( stringArray, i, environ->env->NewStringUTF("qs") );
+     	     environ->env->SetObjectArrayElement( objectArray, i, environ->env->NewStringUTF(query));
 	     i++;	
 	   }
 	   if(infilename!= NULL) {
-	     proc->environ->env->SetObjectArrayElement( stringArray, i, proc->environ->env->NewStringUTF("s") );
-     	     proc->environ->env->SetObjectArrayElement( objectArray, i, proc->environ->env->NewStringUTF(infilename));
+	     environ->env->SetObjectArrayElement( stringArray, i, environ->env->NewStringUTF("s") );
+     	     environ->env->SetObjectArrayElement( objectArray, i, environ->env->NewStringUTF(infilename));
 	     i++;	
 	   }
 	   for(map<std::string, XdmValue* >::iterator iter=parameters.begin(); iter!=parameters.end(); ++iter, i++) {
-	     proc->environ->env->SetObjectArrayElement( stringArray, i, proc->environ->env->NewStringUTF( (iter->first).c_str() ) );
-		bool checkCast = proc->environ->env->IsInstanceOf((iter->second)->getUnderlyingValue(proc), lookForClass(proc->environ->env, "net/sf/saxon/option/cpp/XdmValueForCpp") );
+	     environ->env->SetObjectArrayElement( stringArray, i, environ->env->NewStringUTF( (iter->first).c_str() ) );
+		bool checkCast = environ->env->IsInstanceOf((iter->second)->getUnderlyingValue(proc), lookForClass(environ->env, "net/sf/saxon/option/cpp/XdmValueForCpp") );
 		if(( (bool)checkCast)==false ){
 			failure = "FAILURE in  array of XdmValueForCpp";
 		} 
-	     proc->environ->env->SetObjectArrayElement( objectArray, i, (jobject)((iter->second)->getUnderlyingValue(proc)) );
+	     environ->env->SetObjectArrayElement( objectArray, i, (jobject)((iter->second)->getUnderlyingValue(proc)) );
 	   }
   	   for(map<std::string, std::string >::iterator iter=properties.begin(); iter!=properties.end(); ++iter, i++) {
-	     proc->environ->env->SetObjectArrayElement( stringArray, i, proc->environ->env->NewStringUTF( (iter->first).c_str()  ));
-	     proc->environ->env->SetObjectArrayElement( objectArray, i, (jobject)(proc->environ->env->NewStringUTF((iter->second).c_str())) );
+	     environ->env->SetObjectArrayElement( stringArray, i, environ->env->NewStringUTF( (iter->first).c_str()  ));
+	     environ->env->SetObjectArrayElement( objectArray, i, (jobject)(environ->env->NewStringUTF((iter->second).c_str())) );
 	   }
 	}
 
-	 proc->environ->env->CallObjectMethod(cppXQ, mID, proc->environ->env->NewStringUTF(cwdXQ.c_str()), proc->environ->env->NewStringUTF(ofilename), stringArray, objectArray );
-	  proc->environ->env->DeleteLocalRef(objectArray);
-	  proc->environ->env->DeleteLocalRef(stringArray);
+	 environ->env->CallObjectMethod(cppXQ, mID, environ->env->NewStringUTF(cwdXQ.c_str()), environ->env->NewStringUTF(ofilename), stringArray, objectArray );
+	  environ->env->DeleteLocalRef(objectArray);
+	  environ->env->DeleteLocalRef(stringArray);
 
 	if(exceptionOccurred()) {
 			if(proc->exception != NULL) {
 				delete proc->exception;
 			}		
-		proc->exception = proc->checkForExceptionCPP(proc->environ->env, cppClass, NULL);	
+		proc->exception = proc->checkForExceptionCPP(environ->env, cppClass, NULL);	
 		proc->exceptionClear();
 	   		
      	}
@@ -226,7 +226,7 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 
     XdmValue * XQueryProcessor::executeQueryToValue(const char * infilename, const char * query){
 	setProperty("resources", proc->getResourcesDirectory()); 
- jmethodID mID = (jmethodID)proc->environ->env->GetMethodID (cppClass,"executeQueryToValue", "(Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmValue;");
+ jmethodID mID = (jmethodID)environ->env->GetMethodID (cppClass,"executeQueryToValue", "(Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmValue;");
  if (!mID) {
         cout<<"Error: MyClassInDll."<<"executeQueryToValue"<<" not found\n"<<endl;
     } else {
@@ -238,51 +238,51 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 	if(infilename!= NULL) size++;
 	if(size >0) {
 	   int i=0;
-           jclass objectClass = lookForClass(proc->environ->env, "java/lang/Object");
-	   jclass stringClass = lookForClass(proc->environ->env, "java/lang/String");
-	   objectArray = proc->environ->env->NewObjectArray( (jint)size, objectClass, 0 );
-	   stringArray = proc->environ->env->NewObjectArray( (jint)size, stringClass, 0 );
+           jclass objectClass = lookForClass(environ->env, "java/lang/Object");
+	   jclass stringClass = lookForClass(environ->env, "java/lang/String");
+	   objectArray = environ->env->NewObjectArray( (jint)size, objectClass, 0 );
+	   stringArray = environ->env->NewObjectArray( (jint)size, stringClass, 0 );
 
 	   if(query!= NULL) {
-	     proc->environ->env->SetObjectArrayElement( stringArray, i, proc->environ->env->NewStringUTF("qs") );
-     	     proc->environ->env->SetObjectArrayElement( objectArray, i, proc->environ->env->NewStringUTF(query));
+	     environ->env->SetObjectArrayElement( stringArray, i, environ->env->NewStringUTF("qs") );
+     	     environ->env->SetObjectArrayElement( objectArray, i, environ->env->NewStringUTF(query));
 	     i++;	
 	   }
 	   if(infilename!= NULL) {
-	     proc->environ->env->SetObjectArrayElement( stringArray, i, proc->environ->env->NewStringUTF("s") );
-     	     proc->environ->env->SetObjectArrayElement( objectArray, i, proc->environ->env->NewStringUTF(infilename));
+	     environ->env->SetObjectArrayElement( stringArray, i, environ->env->NewStringUTF("s") );
+     	     environ->env->SetObjectArrayElement( objectArray, i, environ->env->NewStringUTF(infilename));
 	     i++;	
 	   }
 	   for(map<std::string, XdmValue* >::iterator iter=parameters.begin(); iter!=parameters.end(); ++iter, i++) {
-	     proc->environ->env->SetObjectArrayElement( stringArray, i, proc->environ->env->NewStringUTF( (iter->first).c_str() ) );
-		bool checkCast = proc->environ->env->IsInstanceOf((iter->second)->getUnderlyingValue(proc), lookForClass(proc->environ->env, "net/sf/saxon/option/cpp/XdmValueForCpp") );
+	     environ->env->SetObjectArrayElement( stringArray, i, environ->env->NewStringUTF( (iter->first).c_str() ) );
+		bool checkCast = environ->env->IsInstanceOf((iter->second)->getUnderlyingValue(proc), lookForClass(environ->env, "net/sf/saxon/option/cpp/XdmValueForCpp") );
 		if(( (bool)checkCast)==false ){
 			failure = "FAILURE in  array of XdmValueForCpp";
 		} 
-	     proc->environ->env->SetObjectArrayElement( objectArray, i, (jobject)((iter->second)->getUnderlyingValue(proc)) );
+	     environ->env->SetObjectArrayElement( objectArray, i, (jobject)((iter->second)->getUnderlyingValue(proc)) );
 	   }
   	   for(map<std::string, std::string >::iterator iter=properties.begin(); iter!=properties.end(); ++iter, i++) {
-	     proc->environ->env->SetObjectArrayElement( stringArray, i, proc->environ->env->NewStringUTF( (iter->first).c_str()  ));
-	     proc->environ->env->SetObjectArrayElement( objectArray, i, (jobject)(proc->environ->env->NewStringUTF((iter->second).c_str())) );
+	     environ->env->SetObjectArrayElement( stringArray, i, environ->env->NewStringUTF( (iter->first).c_str()  ));
+	     environ->env->SetObjectArrayElement( objectArray, i, (jobject)(environ->env->NewStringUTF((iter->second).c_str())) );
 	   }
 	}
 
-	  jobject result = (jobject)(proc->environ->env->CallObjectMethod(cppXQ, mID, proc->environ->env->NewStringUTF(cwdXQ.c_str()), stringArray, objectArray ));
-	  proc->environ->env->DeleteLocalRef(objectArray);
-	  proc->environ->env->DeleteLocalRef(stringArray);
+	  jobject result = (jobject)(environ->env->CallObjectMethod(cppXQ, mID, environ->env->NewStringUTF(cwdXQ.c_str()), stringArray, objectArray ));
+	  environ->env->DeleteLocalRef(objectArray);
+	  environ->env->DeleteLocalRef(stringArray);
     if(result) {
-		jclass atomicValueClass = lookForClass(proc->environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
-		jclass nodeClass = lookForClass(proc->environ->env, "net/sf/saxon/s9api/XdmNode");
-		jclass functionItemClass = lookForClass(proc->environ->env, "net/sf/saxon/s9api/XdmFunctionItem");
+		jclass atomicValueClass = lookForClass(environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
+		jclass nodeClass = lookForClass(environ->env, "net/sf/saxon/s9api/XdmNode");
+		jclass functionItemClass = lookForClass(environ->env, "net/sf/saxon/s9api/XdmFunctionItem");
 		XdmValue * xdmValue = NULL;
-		if(proc->environ->env->IsInstanceOf(result, atomicValueClass)           == JNI_TRUE) {
+		if(environ->env->IsInstanceOf(result, atomicValueClass)           == JNI_TRUE) {
 				xdmValue = new XdmAtomicValue(result);
 				
 
-			} else if(proc->environ->env->IsInstanceOf(result, nodeClass)           == JNI_TRUE) {
+			} else if(environ->env->IsInstanceOf(result, nodeClass)           == JNI_TRUE) {
 				xdmValue = new XdmNode(result);
 
-			} else if (proc->environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
+			} else if (environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
 				return NULL;
 			} else {
 				xdmValue = new XdmValue(result);
@@ -294,7 +294,7 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 			if(proc->exception != NULL) {
 				delete proc->exception;
 			}
-			proc->exception = proc->checkForExceptionCPP(proc->environ->env, cppClass, NULL);
+			proc->exception = proc->checkForExceptionCPP(environ->env, cppClass, NULL);
 			proc->exceptionClear();
 	   		
      		} 
@@ -305,7 +305,7 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 
     const char * XQueryProcessor::executeQueryToString(const char * infilename, const char * query){
 	setProperty("resources", proc->getResourcesDirectory()); 
- jmethodID mID = (jmethodID)proc->environ->env->GetMethodID (cppClass,"executeQueryToString", "(Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;");
+ jmethodID mID = (jmethodID)environ->env->GetMethodID (cppClass,"executeQueryToString", "(Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;");
  if (!mID) {
         cout<<"Error: MyClassInDll."<<"executeQueryToString"<<" not found\n"<<endl;
     } else {
@@ -317,48 +317,48 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 	if(infilename!= NULL) size++;
 	if(size >0) {
 	   int i=0;
-           jclass objectClass = lookForClass(proc->environ->env, "java/lang/Object");
-	   jclass stringClass = lookForClass(proc->environ->env, "java/lang/String");
-	   objectArray = proc->environ->env->NewObjectArray( (jint)size, objectClass, 0 );
-	   stringArray = proc->environ->env->NewObjectArray( (jint)size, stringClass, 0 );
+           jclass objectClass = lookForClass(environ->env, "java/lang/Object");
+	   jclass stringClass = lookForClass(environ->env, "java/lang/String");
+	   objectArray = environ->env->NewObjectArray( (jint)size, objectClass, 0 );
+	   stringArray = environ->env->NewObjectArray( (jint)size, stringClass, 0 );
 
 	   if(query!= NULL) {
-	     proc->environ->env->SetObjectArrayElement( stringArray, i, proc->environ->env->NewStringUTF("qs") );
-     	     proc->environ->env->SetObjectArrayElement( objectArray, i, proc->environ->env->NewStringUTF(query));
+	     environ->env->SetObjectArrayElement( stringArray, i, environ->env->NewStringUTF("qs") );
+     	     environ->env->SetObjectArrayElement( objectArray, i, environ->env->NewStringUTF(query));
 	     i++;	
 	   }
 	   if(infilename!= NULL) {
-	     proc->environ->env->SetObjectArrayElement( stringArray, i, proc->environ->env->NewStringUTF("s") );
-     	     proc->environ->env->SetObjectArrayElement( objectArray, i, proc->environ->env->NewStringUTF(infilename));
+	     environ->env->SetObjectArrayElement( stringArray, i, environ->env->NewStringUTF("s") );
+     	     environ->env->SetObjectArrayElement( objectArray, i, environ->env->NewStringUTF(infilename));
 	     i++;	
 	   }
 	   for(map<std::string, XdmValue* >::iterator iter=parameters.begin(); iter!=parameters.end(); ++iter, i++) {
-	     proc->environ->env->SetObjectArrayElement( stringArray, i, proc->environ->env->NewStringUTF( (iter->first).c_str() ) );
-		bool checkCast = proc->environ->env->IsInstanceOf((iter->second)->getUnderlyingValue(proc), lookForClass(proc->environ->env, "net/sf/saxon/option/cpp/XdmValueForCpp") );
+	     environ->env->SetObjectArrayElement( stringArray, i, environ->env->NewStringUTF( (iter->first).c_str() ) );
+		bool checkCast = environ->env->IsInstanceOf((iter->second)->getUnderlyingValue(proc), lookForClass(environ->env, "net/sf/saxon/option/cpp/XdmValueForCpp") );
 		if(( (bool)checkCast)==false ){
 			failure = "FAILURE in  array of XdmValueForCpp";
 		} 
-	     proc->environ->env->SetObjectArrayElement( objectArray, i, (jobject)((iter->second)->getUnderlyingValue(proc)) );
+	     environ->env->SetObjectArrayElement( objectArray, i, (jobject)((iter->second)->getUnderlyingValue(proc)) );
 	   }
   	   for(map<std::string, std::string >::iterator iter=properties.begin(); iter!=properties.end(); ++iter, i++) {
-	     proc->environ->env->SetObjectArrayElement( stringArray, i, proc->environ->env->NewStringUTF( (iter->first).c_str()  ));
-	     proc->environ->env->SetObjectArrayElement( objectArray, i, (jobject)(proc->environ->env->NewStringUTF((iter->second).c_str())) );
+	     environ->env->SetObjectArrayElement( stringArray, i, environ->env->NewStringUTF( (iter->first).c_str()  ));
+	     environ->env->SetObjectArrayElement( objectArray, i, (jobject)(environ->env->NewStringUTF((iter->second).c_str())) );
 	   }
 	}
 
-	  jstring result = (jstring)(proc->environ->env->CallObjectMethod(cppXQ, mID, proc->environ->env->NewStringUTF(cwdXQ.c_str()), stringArray, objectArray ));
-	  proc->environ->env->DeleteLocalRef(objectArray);
-	  proc->environ->env->DeleteLocalRef(stringArray);
+	  jstring result = (jstring)(environ->env->CallObjectMethod(cppXQ, mID, environ->env->NewStringUTF(cwdXQ.c_str()), stringArray, objectArray ));
+	  environ->env->DeleteLocalRef(objectArray);
+	  environ->env->DeleteLocalRef(stringArray);
 
 	  if(result) {
-             const char * str = proc->environ->env->GetStringUTFChars(result, NULL);
+             const char * str = environ->env->GetStringUTFChars(result, NULL);
             //return "result should be ok";            
 	    return str;
 	   } else if(exceptionOccurred()) {
 			if(proc->exception != NULL) {
 				delete proc->exception;
 			}
-			proc->exception = proc->checkForExceptionCPP(proc->environ->env, cppClass, NULL);
+			proc->exception = proc->checkForExceptionCPP(environ->env, cppClass, NULL);
 			proc->exceptionClear();
 	   		
      		}
@@ -401,7 +401,7 @@ void XQueryProcessor::exceptionClear(){
 	if(proc->exception != NULL) {
 		delete proc->exception;
 		proc->exception = NULL;	
-		proc->environ->env->ExceptionClear();
+		environ->env->ExceptionClear();
 	}
 
    
@@ -426,10 +426,10 @@ const char * XQueryProcessor::getErrorMessage(int i ){
 
 const char* XQueryProcessor::checkException(){
 	/*if(proc->exception == NULL) {
-		proc->exception = proc->checkForException(proc->environ->env, cppClass, cppXQ);
+		proc->exception = proc->checkForException(environ->env, cppClass, cppXQ);
 	}
         return proc->exception;*/
-	return checkForException(*(proc->environ), cppClass, cppXQ);
+	return checkForException(*(environ), cppClass, cppXQ);
 }
 
 
