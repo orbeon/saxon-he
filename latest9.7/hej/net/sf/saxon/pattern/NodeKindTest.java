@@ -300,7 +300,7 @@ public class NodeKindTest extends NodeTest {
      */
     @Override
     public String generateJavaScriptItemTypeTest(ItemType knownToBe) {
-        String instNode = knownToBe instanceof NodeTest ? " " : " item instanceof Node && ";
+        String instNode = knownToBe instanceof NodeTest ? " " : " SaxonJS.U.isNode(item) && ";
         switch (getNodeKind()) {
             case Type.DOCUMENT:
                 return "return" + instNode + "(item.nodeType==9||item.nodeType==11);";
@@ -313,9 +313,9 @@ public class NodeKindTest extends NodeTest {
             case Type.PROCESSING_INSTRUCTION:
                 return "return" + instNode + "item.nodeType==7&&item.target!='xml';";
             case Type.ATTRIBUTE:
-                return "return item instanceof Attr";
+                return "return SaxonJS.U.isAttr(item)";
             case Type.NAMESPACE:
-                return "return item instanceof NamespaceNode";
+                return "return SaxonJS.U.isNamespaceNode(item)";
             default:
                 return "return false;";
         }

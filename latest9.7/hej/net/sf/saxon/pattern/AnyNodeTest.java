@@ -165,7 +165,7 @@ public final class AnyNodeTest extends NodeTest implements QNameTest {
      */
     @Override
     public String generateJavaScriptItemTypeTest(ItemType knownToBe) throws XPathException {
-        return "return SaxonJS.DomUtils.isNode(item);";
+        return "return SaxonJS.U.isNode(item);";
     }
 }
 

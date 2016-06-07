@@ -150,7 +150,7 @@ public final class AnyChildNodeTest extends NodeTest {
      */
     @Override
     public String generateJavaScriptItemTypeTest(ItemType knownToBe) {
-        return "return item instanceof Node && (item.nodeType==1 || item.nodeType==3 || item.nodeType==7 || item.nodeType==8);";
+        return "return SaxonJS.U.isNode(item) && (item.nodeType==1 || item.nodeType==3 || item.nodeType==7 || item.nodeType==8);";
     }
 
 

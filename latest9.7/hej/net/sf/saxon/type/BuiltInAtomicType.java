@@ -1148,7 +1148,7 @@ public class BuiltInAtomicType implements AtomicType {
         if (this == BuiltInAtomicType.NOTATION) {
             return "return false;";
         }
-        return "return SaxonJS.Atomic." + getName() + ".matches(item);";
+        return "return SaxonJS.U.Atomic." + getName() + ".matches(item);";
     }
 
     /**
@@ -1162,7 +1162,7 @@ public class BuiltInAtomicType implements AtomicType {
      * value.
      */
     public String generateJavaScriptItemTypeAcceptor(String errorCode) throws XPathException {
-        return "return SaxonJS.Atomic." + getName() + ".cast(val);";
+        return "return SaxonJS.U.Atomic." + getName() + ".cast(val);";
     }
 
     //#ifdefined  SCHEMA

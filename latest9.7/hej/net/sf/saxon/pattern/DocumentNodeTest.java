@@ -186,8 +186,8 @@ public class DocumentNodeTest extends NodeTest {
     @Override
     public String generateJavaScriptItemTypeTest(ItemType knownToBe) throws XPathException {
         String elTest = "function e(item) {" + elementTest.generateJavaScriptItemTypeTest(NodeKindTest.ELEMENT) + "};";
-        return elTest + "return item instanceof Node && (item.nodeType==9 || item.nodeType==11) && " +
-                "SaxonJS.Axis.child(item).filter(e).next();"; }
+        return elTest + "return SaxonJS.U.isNode(item) && (item.nodeType==9 || item.nodeType==11) && " +
+                "SaxonJS.U.Axis.child(item).filter(e).next();"; }
 
 }
 

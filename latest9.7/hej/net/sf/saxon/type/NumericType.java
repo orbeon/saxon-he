@@ -615,7 +615,7 @@ public class NumericType implements UnionType, PlainType {
      */
     @Override
     public String generateJavaScriptItemTypeTest(ItemType knownToBe) {
-        return "return SaxonJS.Atomic.numeric.matches(item);";
+        return "return SaxonJS.U.Atomic.numeric.matches(item);";
     }
 
     /**

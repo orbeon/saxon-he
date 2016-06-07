@@ -351,21 +351,21 @@ public class NameTest extends NodeTest implements QNameTest {
         if (nodeKind == Type.ATTRIBUTE && getNamespaceURI().equals("")) {
             // Optimization
             String nt = "item.name=='" + getLocalPart() + "'";
-            return "return " + (knownKind ? nt : "item instanceof Attr && " + nt);
+            return "return " + (knownKind ? nt : "SaxonJS.U.isAttr(item) && " + nt);
         }
         String instNode = "";
         if (!knownKind) {
             if (knownToBe instanceof NodeTest) {
                 instNode = "item.nodeType==" + nodeKind + " && ";
             } else if (nodeKind == Type.ATTRIBUTE) {
-                instNode = "item instanceof Attr && ";
+                instNode = "SaxonJS.U.isAttr(item) && ";
             } else if (nodeKind == Type.NAMESPACE) {
-                instNode = "item instanceof NamespaceNode && ";
+                instNode = "SaxonJS.U.isNamespaceNode(item) && ";
             } else {
-                instNode = "item instanceof Node && item.nodeType==" + nodeKind + " && ";
+                instNode = "SaxonJS.U.isNode(item) && item.nodeType==" + nodeKind + " && ";
             }
         }
-        return "var q=SaxonJS.DomUtils.nameOfNode(item); return " + instNode + generateJavaScriptNameTest() + ";";
+        return "var q=SaxonJS.U.nameOfNode(item); return " + instNode + generateJavaScriptNameTest() + ";";
     }
 }
 
