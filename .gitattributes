@@ -1610,6 +1610,7 @@ latest9.7/hej/net/sf/saxon/ma/arrays/ArrayInsertBefore.java svn_eol_002dstyle=na
 latest9.7/hej/net/sf/saxon/ma/arrays/ArrayItem.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/ma/arrays/ArrayItemType.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/ma/arrays/ArrayJoin.java svn_eol_002dstyle=native
+latest9.7/hej/net/sf/saxon/ma/arrays/ArrayPut.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/ma/arrays/ArrayRemove.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/ma/arrays/ArrayReverse.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/ma/arrays/ArraySize.java svn_eol_002dstyle=native

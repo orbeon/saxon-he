@@ -452,6 +452,7 @@ public class Configuration implements SourceResolver, NotationSet {
         registerExtensionFunction(new MapCreate());
 
         registerExtensionFunction(new ArrayGet());
+        registerExtensionFunction(new ArrayPut());
         registerExtensionFunction(new ArrayJoin());
         registerExtensionFunction(new ArraySize());
         registerExtensionFunction(new ArrayAppend());
