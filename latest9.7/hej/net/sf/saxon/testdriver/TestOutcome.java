@@ -718,7 +718,7 @@ public class TestOutcome {
             String regex = assertion.getStringValue();
             List<String> warnings = new ArrayList<String>(1);
             try {
-                String principalSerializedResult = getPrincipalSerializedResult();
+                String principalSerializedResult = result.serialization;
                 if (principalSerializedResult == null) {
                     driver.println("No serialized result available!");
                     return false;
