@@ -112,10 +112,6 @@ public class JsonReceiver implements Receiver {
                 startTagBuffer = (StartTagBuffer)pipe.getComponent(StartTagBuffer.class.getName());
             }
             String key = startTagBuffer.getAttribute("", "key");
-            boolean added = keyChecker.peek().add(key);
-            if (!added) {
-                throw new XPathException("xml-to-json: duplicate key value \"" + Err.wrap(key) + "\"", ERR_INPUT);
-            }
             if (key == null) {
                 throw new XPathException("xml-to-json: Child elements of <map> must have a key attribute", ERR_INPUT);
             }
@@ -126,11 +122,18 @@ public class JsonReceiver implements Receiver {
                     alreadyEscaped = StringConverter.STRING_TO_BOOLEAN.convertString(keyEscaped).asAtomic().effectiveBooleanValue();
                 } catch (XPathException e) {
                     throw new XPathException("xml-to-json: Value of escaped-key attribute '" + Err.wrap(keyEscaped) +
-                            "' is not a valid xs:boolean", ERR_INPUT);
+                                                     "' is not a valid xs:boolean", ERR_INPUT);
                 }
             }
-            output.append('"');
             key = (alreadyEscaped ? handleEscapedString(key) : escape(key, false, new ControlChar())).toString();
+
+            String normalizedKey = alreadyEscaped ? unescape(key) : key;
+            boolean added = keyChecker.peek().add(normalizedKey);
+            if (!added) {
+                throw new XPathException("xml-to-json: duplicate key value " + Err.wrap(key), ERR_INPUT);
+            }
+
+            output.append('"');
             output.append(key);
             output.append('"');
             output.append(indenting ? " : " : ":");
