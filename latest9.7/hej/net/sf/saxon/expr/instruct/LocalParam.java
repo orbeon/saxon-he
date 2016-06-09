@@ -19,7 +19,6 @@ import net.sf.saxon.value.SequenceType;
 import javax.xml.transform.SourceLocator;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * The compiled form of an xsl:param element within a template in an XSLT stylesheet.
@@ -334,7 +333,9 @@ public final class LocalParam implements LocalBinding, SourceLocator {
         p2.conversion = conversion.copy(rebindings);
         p2.conversionEvaluationMode = conversionEvaluationMode;
         p2.properties = properties;
-        p2.select = select.copy(rebindings);
+        if (select != null) {
+            p2.select = select.copy(rebindings);
+        }
         p2.variableQName = variableQName;
         p2.requiredType = requiredType;
         p2.slotNumber = slotNumber;
