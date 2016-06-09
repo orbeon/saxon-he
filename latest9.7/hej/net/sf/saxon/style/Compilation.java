@@ -239,6 +239,15 @@ public class Compilation {
             }
         }
 
+        // Compile groups of like-named attribute sets into a single attributeSet object
+        if (getErrorCount() == 0) {
+            try {
+                psm.combineAttributeSets(this);
+            } catch(XPathException e) {
+                reportError(e);
+            }
+        }
+
         if (getErrorCount() == 0) {
             try {
                 psm.adjustExposedVisibility();

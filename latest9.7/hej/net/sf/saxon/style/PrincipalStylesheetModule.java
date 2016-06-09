@@ -840,7 +840,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
      */
 
 
-    private void combineAttributeSets(Compilation compilation) throws XPathException {
+    public void combineAttributeSets(Compilation compilation) throws XPathException {
         Map<StructuredQName, AttributeSet> index = new HashMap<StructuredQName, AttributeSet>();
         for (Map.Entry<StructuredQName, List<ComponentDeclaration>> entry : attributeSetDeclarations.entrySet()) {
             AttributeSet as = new AttributeSet();
@@ -1154,7 +1154,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
             }
 
             // Compile groups of like-named attribute sets into a single attributeSet object
-            combineAttributeSets(compilation);
+            //combineAttributeSets(compilation);
 
             // Call compile method for each top-level object in the stylesheet
             // Note, some declarations (templates) need to be compiled repeatedly if the module
