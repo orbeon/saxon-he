@@ -189,7 +189,7 @@ public abstract class PJConverter {
      */
 
     public static PJConverter allocate(Configuration config, ItemType itemType,
-                                       int cardinality, Class targetClass, ParameterizedType paramType)
+                                       int cardinality, Class targetClass, java.lang.reflect.Type paramType)
             throws XPathException {
         TypeHierarchy th = config.getTypeHierarchy();
         if (targetClass == SequenceIterator.class) {
@@ -203,8 +203,11 @@ public abstract class PJConverter {
         if (paramType != null) {
             // Bug 2765. One<DecimalValue> needs special treatment because not all xs:decimal instances are
             // instances of class DecimalValue
-            requiredItemType = getParameterizedSequenceType(paramType).getPrimaryType();
-            needsItemCasting = requiredItemType == BuiltInAtomicType.DECIMAL;
+            SequenceType pst = getParameterizedSequenceType(paramType);
+            if (pst != null) {
+                requiredItemType = getParameterizedSequenceType(paramType).getPrimaryType();
+                needsItemCasting = requiredItemType == BuiltInAtomicType.DECIMAL;
+            }
         }
         if (targetClass == One.class) {
             return needsItemCasting ? ToOneDecimal.INSTANCE : ToOne.INSTANCE;
