@@ -295,7 +295,9 @@ public class JsonParser {
                 parseConstruct(handler, tokenizer, flags, false, context);
             } else {
                 // retain first: parse the duplicate value but discard it
-                parseConstruct(new JsonHandler(), tokenizer, flags, false, context);
+                JsonHandler h2 = new JsonHandler();
+                h2.setContext(context);
+                parseConstruct(h2, tokenizer, flags, false, context);
             }
             tok = tokenizer.next();
             if (tok == JsonTokenizer.COMMA) {
