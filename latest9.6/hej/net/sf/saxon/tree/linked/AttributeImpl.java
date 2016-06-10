@@ -234,7 +234,7 @@ public class AttributeImpl extends NodeImpl {
     public void copy(/*@NotNull*/ Receiver out, int copyOptions, int locationId) throws XPathException {
         SimpleType typeCode = (CopyOptions.includes(copyOptions, CopyOptions.TYPE_ANNOTATIONS) ?
                 ((SimpleType) getSchemaType()) : BuiltInAtomicType.UNTYPED_ATOMIC);
-        out.attribute(new NameOfNode(this), typeCode, getStringValue(), locationId, 0);
+        out.attribute(NameOfNode.makeName(this), typeCode, getStringValue(), locationId, 0);
     }
 
     /**

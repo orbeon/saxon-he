@@ -37,7 +37,7 @@ public class ProcessRegexMatchInstruction extends Instruction {
     }
 
     public int getIntrinsicDependencies() {
-        return StaticProperty.DEPENDS_ON_FOCUS;
+        return StaticProperty.DEPENDS_ON_FOCUS | StaticProperty.HAS_SIDE_EFFECTS;
     }
 
     /*@Nullable*/

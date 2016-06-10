@@ -19,6 +19,21 @@ public class NameOfNode implements NodeName {
     }
 
     /**
+     * Make a NodeName object based on the name of a supplied node.
+     *
+     * @param node the supplied node
+     * @return a NameOfNode object unless the node is mutable, in which case an immutable name is returned.
+     */
+
+    public static NodeName makeName(NodeInfo node) {
+        if (node instanceof MutableNodeInfo) {
+            return new FingerprintedQName(node.getPrefix(), node.getURI(), node.getLocalPart());
+        } else {
+            return new NameOfNode(node);
+        }
+    }
+
+    /**
      * Get the prefix of the QName.
      *
      * @return the prefix. Returns the empty string if the name is unprefixed.
