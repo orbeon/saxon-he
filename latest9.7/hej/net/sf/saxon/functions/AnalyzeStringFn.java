@@ -113,7 +113,7 @@ public class AnalyzeStringFn extends RegexFunction {
         builder.open();
         builder.setBaseURI(getStaticBaseUriString());
         builder.startElement(resultName, resultType, ExplicitLocation.UNKNOWN_LOCATION, 0);
-
+        builder.startContent();
         Item item;
         while ((item = iter.next()) != null) {
             if (iter.isMatching()) {
