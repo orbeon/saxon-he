@@ -48,7 +48,7 @@ class XdmItem;
 class XdmAtomicValue;
 
 extern int jvmCreatedCPP;
-extern sxnc_environment * environ;
+extern sxnc_environment * sxn_environ;
 extern int refCount;
 
 // The Saxon XSLT interface class
@@ -510,6 +510,7 @@ public:
      * @return char array
      */
     const char * version();
+
 
 
 //	XPathEngine

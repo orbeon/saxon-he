@@ -28,16 +28,16 @@
 
 //jobject cpp;
 const char * failure;
-sxnc_environment * environ = 0;
+sxnc_environment * sxn_environ = 0;
 int refCount = 0;
 int jvmCreatedCPP=0;
 
 bool SaxonProcessor::exceptionOccurred(){
-	return environ->env->ExceptionCheck();
+	return sxn_environ->env->ExceptionCheck();
 }
 
 void SaxonProcessor::exceptionClear(){
-	environ->env->ExceptionClear();
+	sxn_environ->env->ExceptionClear();
 }
 
 SaxonApiException * SaxonProcessor::getException(){
@@ -141,7 +141,7 @@ SaxonProcessor::SaxonProcessor(bool l){
 
      if(jvmCreatedCPP == 0){
 	jvmCreatedCPP=1;
-    environ = new sxnc_environment;//(sxnc_environment *)malloc(sizeof(sxnc_environment));
+    sxn_environ= new sxnc_environment;//(sxnc_environment *)malloc(sizeof(sxnc_environment));
 
 
     /*
@@ -149,13 +149,13 @@ SaxonProcessor::SaxonProcessor(bool l){
      * By the time of JET initialization, all components should be loaded.
      */
 
-    environ->myDllHandle = loadDefaultDll ();
+    sxn_environ->myDllHandle = loadDefaultDll ();
 
     /*
      * Initialize JET run-time.
      * The handle of loaded component is used to retrieve Invocation API.
      */
-    initDefaultJavaRT (&environ); 
+    initDefaultJavaRT (&sxn_environ); 
     } else {
 #ifdef DEBUG
      std::cerr<<"SaxonProc constructor: jvm exists!"<<std::endl;
@@ -164,16 +164,16 @@ SaxonProcessor::SaxonProcessor(bool l){
 }
 
  
-    versionClass = lookForClass(environ->env, "net/sf/saxon/Version");
-    procClass = lookForClass(environ->env, "net/sf/saxon/s9api/Processor");
-    saxonCAPIClass = lookForClass(environ->env, "net/sf/saxon/option/cpp/SaxonCAPI");
+    versionClass = lookForClass(sxn_environ->env, "net/sf/saxon/Version");
+    procClass = lookForClass(sxn_environ->env, "net/sf/saxon/s9api/Processor");
+    saxonCAPIClass = lookForClass(sxn_environ->env, "net/sf/saxon/option/cpp/SaxonCAPI");
     
-    proc = createSaxonProcessor (environ->env, procClass, "(Z)V", NULL, licensei);
+    proc = createSaxonProcessor (sxn_environ->env, procClass, "(Z)V", NULL, licensei);
 	if(!proc) {
 		std::cout<<"proc is NULL in SaxonProcessor constructor"<<std::endl;
 	}
 
-    xdmAtomicClass = lookForClass(environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
+    xdmAtomicClass = lookForClass(sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
 }
 
 SaxonProcessor::SaxonProcessor(const char * configFile){
@@ -183,36 +183,36 @@ SaxonProcessor::SaxonProcessor(const char * configFile){
 
     if(jvmCreatedCPP == 0){
 	jvmCreatedCPP=1;
-    //environ = new sxnc_environment;
-	environ = (sxnc_environment *)malloc(sizeof(sxnc_environment));
+    //sxn_environ= new sxnc_environment;
+	sxn_environ= (sxnc_environment *)malloc(sizeof(sxnc_environment));
 
     /*
      * First of all, load required component.
      * By the time of JET initialization, all components should be loaded.
      */
 
-    environ->myDllHandle = loadDefaultDll ();
+    sxn_environ->myDllHandle = loadDefaultDll ();
 
     /*
      * Initialize JET run-time.
      * The handle of loaded component is used to retrieve Invocation API.
      */
-    initDefaultJavaRT (&environ); 
+    initDefaultJavaRT (&sxn_environ); 
     }
  
-    versionClass = lookForClass(environ->env, "net/sf/saxon/Version");
+    versionClass = lookForClass(sxn_environ->env, "net/sf/saxon/Version");
 
-    procClass = lookForClass(environ->env, "net/sf/saxon/s9api/Processor");
-    saxonCAPIClass = lookForClass(environ->env, "net/sf/saxon/option/cpp/SaxonCAPI");
+    procClass = lookForClass(sxn_environ->env, "net/sf/saxon/s9api/Processor");
+    saxonCAPIClass = lookForClass(sxn_environ->env, "net/sf/saxon/option/cpp/SaxonCAPI");
 
-     static jmethodID mIDcreateProc = (jmethodID)environ->env->GetStaticMethodID(saxonCAPIClass,"createSaxonProcessor",
+     static jmethodID mIDcreateProc = (jmethodID)sxn_environ->env->GetStaticMethodID(saxonCAPIClass,"createSaxonProcessor",
 					"(Ljava/lang/String;)Lnet/sf/saxon/s9api/Processor;");
 		if (!mIDcreateProc) {
 			std::cerr << "Error: SaxonDll." << "getPrimitiveTypeName"
 				<< " not found\n" << std::endl;
 			return ;
 		}
-	proc = environ->env->CallStaticObjectMethod(saxonCAPIClass, mIDcreateProc,environ->env->NewStringUTF(configFile));
+	proc = sxn_environ->env->CallStaticObjectMethod(saxonCAPIClass, mIDcreateProc,sxn_environ->env->NewStringUTF(configFile));
 		
 	if(!proc) {
 		std::cerr << "Error: SaxonDll." << "processor is NULL in constructor(configFile)"<< std::endl;
@@ -224,7 +224,7 @@ SaxonProcessor::SaxonProcessor(const char * configFile){
 
      std::cerr<<"SaxonProc constructor(configFile)"<<std::endl;
 #endif
-    xdmAtomicClass = lookForClass(environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
+    xdmAtomicClass = lookForClass(sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
 }
 
     SaxonProcessor::~SaxonProcessor(){
@@ -240,12 +240,12 @@ SaxonProcessor::SaxonProcessor(const char * configFile){
 void SaxonProcessor::applyConfigurationProperties(){
 	if(configProperties.size()>0) {
 		int size = configProperties.size();
-		jclass stringClass = lookForClass(environ->env, "java/lang/String");
-		jobjectArray stringArray1 = environ->env->NewObjectArray( (jint)size, stringClass, 0 );
-		jobjectArray stringArray2 = environ->env->NewObjectArray( (jint)size, stringClass, 0 );
+		jclass stringClass = lookForClass(sxn_environ->env, "java/lang/String");
+		jobjectArray stringArray1 = sxn_environ->env->NewObjectArray( (jint)size, stringClass, 0 );
+		jobjectArray stringArray2 = sxn_environ->env->NewObjectArray( (jint)size, stringClass, 0 );
 		static jmethodID mIDappConfig = NULL;
 		if(mIDappConfig == NULL) {
-			mIDappConfig = (jmethodID) environ->env->GetStaticMethodID(saxonCAPIClass,"applyToConfiguration",
+			mIDappConfig = (jmethodID) sxn_environ->env->GetStaticMethodID(saxonCAPIClass,"applyToConfiguration",
 					"(Lnet/sf/saxon/s9api/Processor;[Ljava/lang/String;[Ljava/lang/String;)V");
 			if (!mIDappConfig) {
 				std::cerr << "Error: SaxonDll." << "applyToConfiguration"
@@ -255,18 +255,18 @@ void SaxonProcessor::applyConfigurationProperties(){
 		}
 		int i=0;
 		for(map<std::string, std::string >::iterator iter=configProperties.begin(); iter!=configProperties.end(); ++iter, i++) {
-	     		environ->env->SetObjectArrayElement( stringArray1, i, environ->env->NewStringUTF( (iter->first).c_str()  ));
-	     		environ->env->SetObjectArrayElement( stringArray2, i, environ->env->NewStringUTF((iter->second).c_str()) );
+	     		sxn_environ->env->SetObjectArrayElement( stringArray1, i, sxn_environ->env->NewStringUTF( (iter->first).c_str()  ));
+	     		sxn_environ->env->SetObjectArrayElement( stringArray2, i, sxn_environ->env->NewStringUTF((iter->second).c_str()) );
 	   }
 		
-		environ->env->CallStaticObjectMethod(saxonCAPIClass, mIDappConfig,proc, stringArray1,stringArray2);
+		sxn_environ->env->CallStaticObjectMethod(saxonCAPIClass, mIDappConfig,proc, stringArray1,stringArray2);
 		if (exceptionOccurred()) {
-	   		exception= checkForExceptionCPP(environ->env, saxonCAPIClass, NULL);
+	   		exception= checkForExceptionCPP(sxn_environ->env, saxonCAPIClass, NULL);
 			exceptionClear();
       		 }
    
- 	  environ->env->DeleteLocalRef(stringArray1);
-	  environ->env->DeleteLocalRef(stringArray2);
+ 	  sxn_environ->env->DeleteLocalRef(stringArray1);
+	  sxn_environ->env->DeleteLocalRef(stringArray2);
 		
 	}
 }
@@ -278,7 +278,7 @@ SaxonProcessor& SaxonProcessor::operator=( const SaxonProcessor& other ){
 	saxonCAPIClass = other.saxonCAPIClass;
 	cwd = other.cwd;
 	proc = other.proc;
-	//environ = other.environ;
+	//sxn_environ= other.environ;
 	parameters = other.parameters;
 	configProperties = other.configProperties;
 	licensei = other.licensei;
@@ -316,14 +316,14 @@ SchemaValidator * SaxonProcessor::newSchemaValidator(){
 const char * SaxonProcessor::version() {
 
      if(versionStr == NULL) {
-     	static jmethodID MID_version = (jmethodID)environ->env->GetStaticMethodID(saxonCAPIClass, "getProductVersion", "(Lnet/sf/saxon/s9api/Processor;)Ljava/lang/String;");
+     	static jmethodID MID_version = (jmethodID)sxn_environ->env->GetStaticMethodID(saxonCAPIClass, "getProductVersion", "(Lnet/sf/saxon/s9api/Processor;)Ljava/lang/String;");
     	if (!MID_version) {
         	std::cerr<<"\nError: MyClassInDll "<<"SaxonCAPI.getProductVersion()"<<" not found"<<std::endl;
         	return NULL;
     	}
 
-    	jstring jstr = (jstring)(environ->env->CallStaticObjectMethod(saxonCAPIClass, MID_version, proc));
-    	versionStr = environ->env->GetStringUTFChars(jstr, NULL);
+    	jstring jstr = (jstring)(sxn_environ->env->CallStaticObjectMethod(saxonCAPIClass, MID_version, proc));
+    	versionStr = sxn_environ->env->GetStringUTFChars(jstr, NULL);
     }
     return versionStr;
 }
@@ -344,48 +344,48 @@ const char * SaxonProcessor::getResourcesDirectory(){
 
 XdmNode * SaxonProcessor::parseXmlFromString(const char* source){
 	
-    jmethodID mID = (jmethodID)environ->env->GetStaticMethodID(saxonCAPIClass, "parseXmlString", "(Lnet/sf/saxon/s9api/Processor;Lnet/sf/saxon/s9api/SchemaValidator;Ljava/lang/String;)Lnet/sf/saxon/s9api/XdmNode;");
+    jmethodID mID = (jmethodID)sxn_environ->env->GetStaticMethodID(saxonCAPIClass, "parseXmlString", "(Lnet/sf/saxon/s9api/Processor;Lnet/sf/saxon/s9api/SchemaValidator;Ljava/lang/String;)Lnet/sf/saxon/s9api/XdmNode;");
     if (!mID) {
 	cerr<<"\nError: MyClassInDll "<<"parseXmlString()"<<" not found"<<endl;
         return NULL;
     }
 //TODO SchemaValidator
 
-   jobject xdmNodei = environ->env->CallStaticObjectMethod(saxonCAPIClass, mID, proc, NULL, environ->env->NewStringUTF(source));
+   jobject xdmNodei = sxn_environ->env->CallStaticObjectMethod(saxonCAPIClass, mID, proc, NULL, sxn_environ->env->NewStringUTF(source));
 	if(xdmNodei) {
 		XdmNode * value = new XdmNode(xdmNodei);
 		value->setProcessor(this);
 		return value;
 	}   else if (exceptionOccurred()) {
-	   exception= checkForExceptionCPP(environ->env, saxonCAPIClass, NULL);
+	   exception= checkForExceptionCPP(sxn_environ->env, saxonCAPIClass, NULL);
 		exceptionClear();
        }
    
 #ifdef DEBUG
-	environ->env->ExceptionDescribe();
+	sxn_environ->env->ExceptionDescribe();
 #endif
  
    return NULL;
 }
 
 int SaxonProcessor::getNodeKind(jobject obj){
-	jclass xdmNodeClass = lookForClass(environ->env, "Lnet/sf/saxon/s9api/XdmNode;");
-	static jmethodID nodeKindMID = (jmethodID) environ->env->GetMethodID(xdmNodeClass,"getNodeKind", "()Lnet/sf/saxon/s9api/XdmNodeKind;");
+	jclass xdmNodeClass = lookForClass(sxn_environ->env, "Lnet/sf/saxon/s9api/XdmNode;");
+	static jmethodID nodeKindMID = (jmethodID) sxn_environ->env->GetMethodID(xdmNodeClass,"getNodeKind", "()Lnet/sf/saxon/s9api/XdmNodeKind;");
 	if (!nodeKindMID) {
 		cerr << "Error: MyClassInDll." << "getNodeKind" << " not found\n"
 				<< endl;
 		return 0;
 	} 
 
-	jobject nodeKindObj = (environ->env->CallObjectMethod(obj, nodeKindMID));
+	jobject nodeKindObj = (sxn_environ->env->CallObjectMethod(obj, nodeKindMID));
 	if(!nodeKindObj) {
 		std::cout<<"saxonProc nodeKind error"<<std::endl;
 		return 0;
 	}
-	jclass xdmUtilsClass = lookForClass(environ->env, "Lnet/sf/saxon/option/cpp/XdmUtils;");
+	jclass xdmUtilsClass = lookForClass(sxn_environ->env, "Lnet/sf/saxon/option/cpp/XdmUtils;");
 
 
-	jmethodID mID2 = (jmethodID) environ->env->GetStaticMethodID(xdmUtilsClass,"convertNodeKindType", "(Lnet/sf/saxon/s9api/XdmNodeKind;)I");
+	jmethodID mID2 = (jmethodID) sxn_environ->env->GetStaticMethodID(xdmUtilsClass,"convertNodeKindType", "(Lnet/sf/saxon/s9api/XdmNodeKind;)I");
 
 	if (!mID2) {
 		cerr << "Error: MyClassInDll." << "convertNodeKindType" << " not found\n"
@@ -395,22 +395,22 @@ int SaxonProcessor::getNodeKind(jobject obj){
 	if(!nodeKindObj){
 		return 0;	
 	}
-	int nodeKind = (long)(environ->env->CallStaticObjectMethod(xdmUtilsClass, mID2, nodeKindObj));
+	int nodeKind = (long)(sxn_environ->env->CallStaticObjectMethod(xdmUtilsClass, mID2, nodeKindObj));
 
 	return nodeKind;
 }
 
 XdmNode * SaxonProcessor::parseXmlFromFile(const char* source){
 
-    jmethodID mID = (jmethodID)environ->env->GetStaticMethodID(saxonCAPIClass, "parseXmlFile", "(Lnet/sf/saxon/s9api/Processor;Ljava/lang/String;Lnet/sf/saxon/s9api/SchemaValidator;Ljava/lang/String;)Lnet/sf/saxon/s9api/XdmNode;");
+    jmethodID mID = (jmethodID)sxn_environ->env->GetStaticMethodID(saxonCAPIClass, "parseXmlFile", "(Lnet/sf/saxon/s9api/Processor;Ljava/lang/String;Lnet/sf/saxon/s9api/SchemaValidator;Ljava/lang/String;)Lnet/sf/saxon/s9api/XdmNode;");
     if (!mID) {
 	cerr<<"\nError: MyClassInDll "<<"parseXmlFile()"<<" not found"<<endl;
         return NULL;
     }
 //TODO SchemaValidator
-   jobject xdmNodei = environ->env->CallStaticObjectMethod(saxonCAPIClass, mID, proc, environ->env->NewStringUTF(cwd.c_str()),  NULL, environ->env->NewStringUTF(source));
+   jobject xdmNodei = sxn_environ->env->CallStaticObjectMethod(saxonCAPIClass, mID, proc, sxn_environ->env->NewStringUTF(cwd.c_str()),  NULL, sxn_environ->env->NewStringUTF(source));
      if(exceptionOccurred()) {
-	   exception= checkForExceptionCPP(environ->env, saxonCAPIClass, NULL);
+	   exception= checkForExceptionCPP(sxn_environ->env, saxonCAPIClass, NULL);
 	   exceptionClear();
 	   		
      } else {
@@ -424,14 +424,14 @@ XdmNode * SaxonProcessor::parseXmlFromFile(const char* source){
 
 XdmNode * SaxonProcessor::parseXmlFromUri(const char* source){
 
-    jmethodID mID = (jmethodID)environ->env->GetStaticMethodID(saxonCAPIClass, "parseXmlFile", "(Lnet/sf/saxon/s9api/Processor;Ljava/lang/String;Ljava/lang/String;)Lnet/sf/saxon/s9api/XdmNode;");
+    jmethodID mID = (jmethodID)sxn_environ->env->GetStaticMethodID(saxonCAPIClass, "parseXmlFile", "(Lnet/sf/saxon/s9api/Processor;Ljava/lang/String;Ljava/lang/String;)Lnet/sf/saxon/s9api/XdmNode;");
     if (!mID) {
 	cerr<<"\nError: MyClassInDll "<<"parseXmlFromUri()"<<" not found"<<endl;
         return NULL;
     }
-   jobject xdmNodei = environ->env->CallStaticObjectMethod(saxonCAPIClass, mID, proc, environ->env->NewStringUTF(""), environ->env->NewStringUTF(source));
+   jobject xdmNodei = sxn_environ->env->CallStaticObjectMethod(saxonCAPIClass, mID, proc, sxn_environ->env->NewStringUTF(""), sxn_environ->env->NewStringUTF(source));
      if(exceptionOccurred()) {
-	   exception= checkForExceptionCPP(environ->env, saxonCAPIClass, NULL);
+	   exception= checkForExceptionCPP(sxn_environ->env, saxonCAPIClass, NULL);
      } else {
 	XdmNode * value = new XdmNode(xdmNodei);
 	value->setProcessor(this);
@@ -456,13 +456,14 @@ XdmNode * SaxonProcessor::parseXmlFromUri(const char* source){
    }
 
 
+
 void SaxonProcessor::release(){
 	if(jvmCreatedCPP!=0) {
 		jvmCreatedCPP =0;
 
- 		finalizeJavaRT (environ->jvm);
+ 		finalizeJavaRT (sxn_environ->jvm);
 
-		//delete environ ;
+		//delete sxn_environ;
 	/*clearParameters();
 	clearProperties();*/
 } else {
@@ -478,86 +479,86 @@ void SaxonProcessor::release(){
 /* ========= Factory method for Xdm ======== */
 
     XdmAtomicValue * SaxonProcessor::makeStringValue(std::string str){
-	jobject obj = getJavaStringValue(*environ, str.c_str());
-	jmethodID mID_atomic = (jmethodID)(environ->env->GetMethodID (xdmAtomicClass, "<init>", "(Ljava/lang/String;)V"));
-	jobject obj2 = (jobject)(environ->env->NewObject(xdmAtomicClass, mID_atomic, obj));
+	jobject obj = getJavaStringValue(*sxn_environ, str.c_str());
+	jmethodID mID_atomic = (jmethodID)(sxn_environ->env->GetMethodID (xdmAtomicClass, "<init>", "(Ljava/lang/String;)V"));
+	jobject obj2 = (jobject)(sxn_environ->env->NewObject(xdmAtomicClass, mID_atomic, obj));
 	XdmAtomicValue * value = new XdmAtomicValue(obj2, "xs:string");
 	value->setProcessor(this);
 	return value;
     }
 
     XdmAtomicValue * SaxonProcessor::makeStringValue(const char * str){
-	jobject obj = getJavaStringValue(*environ, str);
-	jmethodID mID_atomic = (jmethodID)(environ->env->GetMethodID (xdmAtomicClass, "<init>", "(Ljava/lang/String;)V"));
-	jobject obj2 = (jobject)(environ->env->NewObject(xdmAtomicClass, mID_atomic, obj));
+	jobject obj = getJavaStringValue(*sxn_environ, str);
+	jmethodID mID_atomic = (jmethodID)(sxn_environ->env->GetMethodID (xdmAtomicClass, "<init>", "(Ljava/lang/String;)V"));
+	jobject obj2 = (jobject)(sxn_environ->env->NewObject(xdmAtomicClass, mID_atomic, obj));
 	XdmAtomicValue * value = new XdmAtomicValue(obj2, "xs:string");
 	value->setProcessor(this);
 	return value;
     }
 
     XdmAtomicValue * SaxonProcessor::makeIntegerValue(int i){
-	//jobject obj = integerValue(*environ, i);
-	jmethodID mID_atomic = (jmethodID)(environ->env->GetMethodID (xdmAtomicClass, "<init>", "(J)V"));
+	//jobject obj = integerValue(*sxn_environ, i);
+	jmethodID mID_atomic = (jmethodID)(sxn_environ->env->GetMethodID (xdmAtomicClass, "<init>", "(J)V"));
 	
 
-	jobject obj = (jobject)(environ->env->NewObject(xdmAtomicClass, mID_atomic, (jlong)i));
+	jobject obj = (jobject)(sxn_environ->env->NewObject(xdmAtomicClass, mID_atomic, (jlong)i));
 	XdmAtomicValue * value = new XdmAtomicValue(obj, "Q{http://www.w3.org/2001/XMLSchema}integer");
 	value->setProcessor(this);
 	return value;
     }
 
     XdmAtomicValue * SaxonProcessor::makeDoubleValue(double d){
-	//jobject obj = doubleValue(*environ, d);
-	jmethodID mID_atomic = (jmethodID)(environ->env->GetMethodID (xdmAtomicClass, "<init>", "(D)V"));
-	jobject obj = (jobject)(environ->env->NewObject(xdmAtomicClass, mID_atomic, (jdouble)d));
+	//jobject obj = doubleValue(*sxn_environ, d);
+	jmethodID mID_atomic = (jmethodID)(sxn_environ->env->GetMethodID (xdmAtomicClass, "<init>", "(D)V"));
+	jobject obj = (jobject)(sxn_environ->env->NewObject(xdmAtomicClass, mID_atomic, (jdouble)d));
 	XdmAtomicValue * value = new XdmAtomicValue(obj, "Q{http://www.w3.org/2001/XMLSchema}double");
 	value->setProcessor(this);
 	return value;
     }
 
     XdmAtomicValue * SaxonProcessor::makeFloatValue(float d){
-	//jobject obj = doubleValue(*environ, d);
-	jmethodID mID_atomic = (jmethodID)(environ->env->GetMethodID (xdmAtomicClass, "<init>", "(F)V"));
-	jobject obj = (jobject)(environ->env->NewObject(xdmAtomicClass, mID_atomic, (jfloat)d));
+	//jobject obj = doubleValue(*sxn_environ, d);
+	jmethodID mID_atomic = (jmethodID)(sxn_environ->env->GetMethodID (xdmAtomicClass, "<init>", "(F)V"));
+	jobject obj = (jobject)(sxn_environ->env->NewObject(xdmAtomicClass, mID_atomic, (jfloat)d));
 	XdmAtomicValue * value = new XdmAtomicValue(obj, "Q{http://www.w3.org/2001/XMLSchema}float");
 	value->setProcessor(this);
 	return value;
     }
 
     XdmAtomicValue * SaxonProcessor::makeLongValue(long l){
-	//jobject obj = longValue(*environ, l);
-	jmethodID mID_atomic = (jmethodID)(environ->env->GetMethodID (xdmAtomicClass, "<init>", "(J)V"));
-	jobject obj = (jobject)(environ->env->NewObject(xdmAtomicClass, mID_atomic, (jlong)l));
+	//jobject obj = longValue(*sxn_environ, l);
+	jmethodID mID_atomic = (jmethodID)(sxn_environ->env->GetMethodID (xdmAtomicClass, "<init>", "(J)V"));
+	jobject obj = (jobject)(sxn_environ->env->NewObject(xdmAtomicClass, mID_atomic, (jlong)l));
 	XdmAtomicValue * value = new XdmAtomicValue(obj, "Q{http://www.w3.org/2001/XMLSchema}long");
 	value->setProcessor(this);
 	return value;
     }
 
     XdmAtomicValue * SaxonProcessor::makeBooleanValue(bool b){
-	//jobject obj = booleanValue(*environ, b);
-	jmethodID mID_atomic = (jmethodID)(environ->env->GetMethodID (xdmAtomicClass, "<init>", "(Z)V"));
-	jobject obj = (jobject)(environ->env->NewObject(xdmAtomicClass, mID_atomic, (jboolean)b));
+	//jobject obj = booleanValue(*sxn_environ, b);
+	jmethodID mID_atomic = (jmethodID)(sxn_environ->env->GetMethodID (xdmAtomicClass, "<init>", "(Z)V"));
+	jobject obj = (jobject)(sxn_environ->env->NewObject(xdmAtomicClass, mID_atomic, (jboolean)b));
 	XdmAtomicValue * value = new XdmAtomicValue(obj, "Q{http://www.w3.org/2001/XMLSchema}boolean");
 	value->setProcessor(this);
 	return value;
     }
 
     XdmAtomicValue * SaxonProcessor::makeQNameValue(std::string str){
-	jobject val = xdmValueAsObj(*environ, "QName", str.c_str());
+	jobject val = xdmValueAsObj(*sxn_environ, "QName", str.c_str());
 	XdmAtomicValue * value = new XdmAtomicValue(val, "QName");
 	value->setProcessor(this);
 	return value;
     }
 
     XdmAtomicValue * SaxonProcessor::makeAtomicValue(std::string typei, std::string strValue){
-	jobject obj = xdmValueAsObj(*environ, typei.c_str(), strValue.c_str());
+	jobject obj = xdmValueAsObj(*sxn_environ, typei.c_str(), strValue.c_str());
 	XdmAtomicValue * value = new XdmAtomicValue(obj, typei);
 	value->setProcessor(this);
 	return value;
     }
 
     const char * SaxonProcessor::getStringValue(XdmItem * item){
-	const char *result = stringValue(*environ, item->getUnderlyingValue(this));
+	const char *result = stringValue(*sxn_environ, item->getUnderlyingValue(this));
 #ifdef DEBUG
 	if(result == NULL) {
 		std::cout<<"getStringValue of XdmItem is NULL"<<std::endl;
