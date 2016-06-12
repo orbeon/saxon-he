@@ -228,6 +228,15 @@ public class StylesheetPackage extends PackageData {
     }
 
     /**
+     * Get the whitespace stripping rules for this package
+     * @return the whitespace stripping rules (based on xsl:strip-space and xsl:preserve-space)
+     */
+
+    public SpaceStrippingRule getSpaceStrippingRule() {
+        return stripperRules;
+    }
+
+    /**
      * Get the index of named character maps defined in this package
      * @return the index of character maps
      */

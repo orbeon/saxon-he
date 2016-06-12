@@ -64,5 +64,4 @@ public interface ResourceCollection {
      */
 
     boolean isStable(XPathContext context);
-
 }

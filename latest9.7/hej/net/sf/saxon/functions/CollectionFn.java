@@ -7,6 +7,7 @@
 
 package net.sf.saxon.functions;
 
+import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
@@ -16,7 +17,10 @@ import net.sf.saxon.lib.Resource;
 import net.sf.saxon.lib.ResourceCollection;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.AnyNodeTest;
+import net.sf.saxon.resource.AbstractResourceCollection;
+import net.sf.saxon.style.StylesheetPackage;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.wrapper.SpaceStrippedDocument;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.ObjectValue;
 
@@ -185,6 +189,19 @@ public class CollectionFn extends SystemFunction implements Callable {
             collection = new EmptyCollection(EMPTY_COLLECTION_URI);
         }
 
+        // In XSLT, worry about whitespace stripping
+        SpaceStrippingRule whitespaceRule = null;
+        if (context.getController().getExecutable().getHostLanguage() == Configuration.XSLT) {
+            whitespaceRule = ((StylesheetPackage) getRetainedStaticContext().getPackageData()).getSpaceStrippingRule();
+            boolean alreadyStripped = false;
+            if (collection instanceof AbstractResourceCollection) {
+                alreadyStripped = ((AbstractResourceCollection) collection).stripWhitespace(whitespaceRule);
+                if (alreadyStripped) {
+                    whitespaceRule = null;
+                }
+            }
+        }
+
         // Get an iterator over the resources in the collection
         SequenceIterator sourceSeq = getSequenceIterator(collection, context);
 
@@ -203,6 +220,22 @@ public class CollectionFn extends SystemFunction implements Callable {
             ItemTypeCheckingFunction function = new ItemTypeCheckingFunction<Item>(
                     AnyNodeTest.getInstance(), role, null, context.getConfiguration());
             result = new ItemMappingIterator(result, function, true);
+        }
+
+        // In XSLT, apply space-stripping to document nodes in the collection
+        if (whitespaceRule != null) {
+            final SpaceStrippingRule rule = whitespaceRule;
+            ItemMappingFunction<Item, Item> stripper = new ItemMappingFunction<Item, Item>() {
+                public Item mapItem(Item item) throws XPathException {
+                    if (item instanceof NodeInfo && ((NodeInfo)item).getNodeKind() == Type.DOCUMENT) {
+                        SpaceStrippedDocument ssd = new SpaceStrippedDocument(((NodeInfo)item).getTreeInfo(), rule);
+                        return ssd.getRootNode();
+                    } else {
+                        return item;
+                    }
+                }
+            };
+            result = new ItemMappingIterator(result, stripper);
         }
 
         // If the collection is stable, cache the result

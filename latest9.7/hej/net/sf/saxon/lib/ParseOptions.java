@@ -10,6 +10,7 @@ package net.sf.saxon.lib;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.Builder;
 import net.sf.saxon.event.FilterFactory;
+import net.sf.saxon.om.SpaceStrippingRule;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.om.TreeModel;
 import net.sf.saxon.trans.Maker;
@@ -50,6 +51,7 @@ public class ParseOptions {
     /*@Nullable*/ private Boolean wrapDocument = null;
     /*@Nullable*/ private TreeModel treeModel = null;
     private int stripSpace = Whitespace.UNSPECIFIED;
+    private SpaceStrippingRule spaceStrippingRule = null;
     /*@Nullable*/ private Boolean lineNumbering = null;
     private boolean pleaseClose = false;
     /*@Nullable*/ private transient UnfailingErrorListener errorListener = null;
@@ -95,6 +97,7 @@ public class ParseOptions {
         wrapDocument = p.wrapDocument;
         treeModel = p.treeModel;
         stripSpace = p.stripSpace;
+        spaceStrippingRule = p.spaceStrippingRule;
         lineNumbering = p.lineNumbering;
         pleaseClose = p.pleaseClose;
         errorHandler = p.errorHandler;
@@ -153,6 +156,9 @@ public class ParseOptions {
         }
         if (options.stripSpace != Whitespace.UNSPECIFIED) {
             stripSpace = options.stripSpace;
+        }
+        if (options.spaceStrippingRule != null) {
+            spaceStrippingRule = options.spaceStrippingRule;
         }
         if (options.lineNumbering != null) {
             lineNumbering = options.lineNumbering;
@@ -278,6 +284,14 @@ public class ParseOptions {
 
     public int getStripSpace() {
         return (stripSpace == Whitespace.UNSPECIFIED ? Whitespace.IGNORABLE : stripSpace);
+    }
+
+    public SpaceStrippingRule getSpaceStrippingRule() {
+        return spaceStrippingRule;
+    }
+
+    public void setSpaceStrippingRule(SpaceStrippingRule rule) {
+        spaceStrippingRule = rule;
     }
 
     /**

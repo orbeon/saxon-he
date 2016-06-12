@@ -231,24 +231,6 @@ public class Environment implements URIResolver {
             environment.contextItem = value.itemAt(0);
         }
 
-        // compile any stylesheet defined as part of the environment (only one allowed)
-        // use the XSLT processor version associated with the stylesheet/@version attribute
-        for (XdmItem stylesheet : xpc.evaluate("stylesheet[not(@role='secondary')]", env)) {
-            String fileName = ((XdmNode) stylesheet).getAttributeValue(new QName("file"));
-            Source styleSource = new StreamSource(((XdmNode) env).getBaseURI().resolve(fileName).toString());
-            try {
-                environment.xsltExecutable = environment.xsltCompiler.compile(styleSource);
-            } catch (SaxonApiException e) {
-                driver.println("**** failure while compiling environment-defined stylesheet " + fileName);
-                environment.failedToBuild = true;
-                environment.usable = false;
-            }
-            if (driver.runWithJS) {
-                String sourceFile = ((XdmNode) env).getBaseURI().resolve(fileName).toString();
-                environment.exportedStylesheet = driver.exportStylesheet(environment.xsltCompiler, sourceFile);
-            }
-        }
-
         // compile any stylesheet packages defined as part of the environment
         // Support this only in EE - an unusable environment in PE/HE
         for (XdmItem stylesheet : xpc.evaluate("package[@role='secondary']", env)) {
@@ -273,6 +255,25 @@ public class Environment implements URIResolver {
                 environment.usable = false;
             }
         }
+
+        // compile any stylesheet defined as part of the environment (only one allowed)
+        // use the XSLT processor version associated with the stylesheet/@version attribute
+        for (XdmItem stylesheet : xpc.evaluate("stylesheet[not(@role='secondary')]", env)) {
+            String fileName = ((XdmNode) stylesheet).getAttributeValue(new QName("file"));
+            Source styleSource = new StreamSource(((XdmNode) env).getBaseURI().resolve(fileName).toString());
+            try {
+                environment.xsltExecutable = environment.xsltCompiler.compile(styleSource);
+            } catch (SaxonApiException e) {
+                driver.println("**** failure while compiling environment-defined stylesheet " + fileName);
+                environment.failedToBuild = true;
+                environment.usable = false;
+            }
+            if (driver.runWithJS) {
+                String sourceFile = ((XdmNode) env).getBaseURI().resolve(fileName).toString();
+                environment.exportedStylesheet = driver.exportStylesheet(environment.xsltCompiler, sourceFile);
+            }
+        }
+
 
         return environment;
     }

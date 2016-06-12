@@ -9,6 +9,7 @@ import net.sf.saxon.lib.Resource;
 import net.sf.saxon.lib.Validation;
 import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.om.SpaceStrippingRule;
 import net.sf.saxon.om.TreeInfo;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.trans.XPathException;
@@ -32,6 +33,7 @@ import java.util.List;
 public class CatalogCollection extends AbstractResourceCollection {
 
     private boolean stable;
+    private SpaceStrippingRule whitespaceRules;
 
 
     //TODO we might know the catalog File already
@@ -62,6 +64,26 @@ public class CatalogCollection extends AbstractResourceCollection {
         put("application/java-byte-code","binary");
         put("application/x-java-class","binary");
     }};
+
+    /**
+     * Supply information about the whitespace stripping rules that apply to this collection.
+     * This method will only be called when the collection() function is invoked from XSLT.
+     *
+     * @param rules the space-stripping rules that apply to this collection, derived from
+     *              the xsl:strip-space and xsl:preserve-space declarations in the stylesheet
+     *              package containing the call to the collection() function.
+     * @return true if the collection finder intends to take responsibility for whitespace
+     * stripping according to these rules; false if it wishes Saxon itself to post-process
+     * any returned XML documents to strip whitespace. Returning true may either indicate
+     * that the collection finder will strip whitespace before returning a document, or it
+     * may indicate that it does not wish the space stripping rules to be applied.  The
+     * default (returned by this method if not overridden) is false.
+     */
+    @Override
+    public boolean stripWhitespace(SpaceStrippingRule rules) {
+        this.whitespaceRules = rules;
+        return true;
+    }
 
 
     public static void putMimeTypeMap(String contentType, String extension){
@@ -96,6 +118,8 @@ public class CatalogCollection extends AbstractResourceCollection {
                  public Resource map(String in) {
                      try {
                          InputDetails id = getInputDetails(in);
+                         id.parseOptions = new ParseOptions(context.getConfiguration().getParseOptions());
+                         id.parseOptions.setSpaceStrippingRule(whitespaceRules);
                          return makeResource(context.getConfiguration(), id, in);
                      } catch (XPathException e) {
                          int onError = params.getOnError();

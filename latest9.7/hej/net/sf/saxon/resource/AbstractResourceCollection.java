@@ -5,6 +5,7 @@ import net.sf.saxon.Controller;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.functions.URIQueryParameters;
 import net.sf.saxon.lib.*;
+import net.sf.saxon.om.SpaceStrippingRule;
 import net.sf.saxon.trans.Maker;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.Whitespace;
@@ -286,6 +287,26 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
         InputDetails details = getInputDetails(resourceURI);
         return makeResource(config, details, resourceURI);
     }
+
+    /**
+     * Supply information about the whitespace stripping rules that apply to this collection.
+     * This method will only be called when the collection() function is invoked from XSLT.
+     *
+     * @param rules the space-stripping rules that apply to this collection, derived from
+     *              the xsl:strip-space and xsl:preserve-space declarations in the stylesheet
+     *              package containing the call to the collection() function.
+     * @return true if the collection finder intends to take responsibility for whitespace
+     * stripping according to these rules; false if it wishes Saxon itself to post-process
+     * any returned XML documents to strip whitespace. Returning true may either indicate
+     * that the collection finder will strip whitespace before returning a document, or it
+     * may indicate that it does not wish the space stripping rules to be applied.  The
+     * default (returned by this method if not overridden) is false.
+     */
+
+    public boolean stripWhitespace(SpaceStrippingRule rules) {
+        return false;
+    }
+
 
 }
 
