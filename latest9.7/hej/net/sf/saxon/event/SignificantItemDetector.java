@@ -8,14 +8,13 @@
 package net.sf.saxon.event;
 
 import net.sf.saxon.expr.parser.Location;
-import net.sf.saxon.om.Item;
-import net.sf.saxon.om.NamespaceBinding;
-import net.sf.saxon.om.NodeInfo;
-import net.sf.saxon.om.NodeName;
+import net.sf.saxon.ma.arrays.ArrayItem;
+import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.SimpleType;
 import net.sf.saxon.type.Type;
+import net.sf.saxon.value.AtomicValue;
 
 /**
  * This receiver is inserted into the output pipeline whenever on-empty or on-non-empty is used (XSLT 3.0).
@@ -100,6 +99,27 @@ public class SignificantItemDetector extends ProxyReceiver {
                 return false;
             }
             if (node.getNodeKind() == Type.DOCUMENT && !node.hasChildNodes()) {
+                return false;
+            }
+        } else if (item instanceof AtomicValue) {
+            return !item.getStringValue().isEmpty();
+        } else if (item instanceof ArrayItem) {
+            if (((ArrayItem)item).isEmpty()) {
+                return true;
+            } else {
+                for (Sequence mem : ((ArrayItem) item)) {
+                    try {
+                        SequenceIterator memIter = mem.iterate();
+                        Item it;
+                        while ((it = memIter.next()) != null) {
+                            if (isSignificant(it)) {
+                                return true;
+                            }
+                        }
+                    } catch (XPathException e) {
+                        return true;
+                    }
+                }
                 return false;
             }
         }
