@@ -36,7 +36,7 @@ public class XPathContextMajor extends XPathContextMinor {
 
     private ParameterSet localParameters;
     private ParameterSet tunnelParameters;
-    /*@Nullable*/ private UserFunction tailCallFunction;
+    /*@Nullable*/ private Component<UserFunction> tailCallFunction;
     private Component<? extends Mode> currentMode;
     /*@Nullable*/ private Rule currentTemplate;
     private GroupIterator currentGroupIterator;
@@ -363,19 +363,20 @@ public class XPathContextMajor extends XPathContextMinor {
      * Instead of the function being called recursively, the parameters are set to new values and the
      * function body is evaluated repeatedly
      *
-     * @param fn        the user function being called using tail recursion
+     * @param targetFn        the user function being called using tail recursion
      * @param variables the parameter to be supplied to the user function
      */
 
-    public void requestTailCall(UserFunction fn, Sequence[] variables) {
+    public void requestTailCall(Component<UserFunction> targetFn, Sequence[] variables) {
         if (variables.length > stackFrame.slots.length) {
+            UserFunction fn = targetFn.getCode();
             Sequence[] v2 = new Sequence[fn.getStackFrameMap().getNumberOfVariables()];
             System.arraycopy(variables, 0, v2, 0, variables.length);
             stackFrame.slots = v2;
         } else {
             System.arraycopy(variables, 0, stackFrame.slots, 0, variables.length);
         }
-        tailCallFunction = fn;
+        tailCallFunction = targetFn;
     }
 
 
@@ -385,8 +386,8 @@ public class XPathContextMajor extends XPathContextMinor {
      * @return null if no tail call has been requested, or the name of the function to be called otherwise
      */
 
-    public UserFunction getTailCallFunction() {
-        UserFunction fn = tailCallFunction;
+    public Component<UserFunction> getTailCallFunction() {
+        Component<UserFunction> fn = tailCallFunction;
         tailCallFunction = null;
         return fn;
     }

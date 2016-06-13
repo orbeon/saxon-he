@@ -32,7 +32,6 @@ import net.sf.saxon.value.Whitespace;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -495,14 +494,15 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
         Sequence[] actualArgs;
         XPathContextMajor c2;
         if (bindingSlot >= 0) {
-            Component targetComponent = getTargetComponent(context);
+            Component target = getTargetComponent(context);
+            targetFunction = (UserFunction)target.getCode();
+            Component<UserFunction> targetComponent = (Component<UserFunction>)target;
             if (targetComponent.getVisibility() == Visibility.ABSENT) {
                 throw new XPathException("Cannot call a function defined with visibility=absent", "XTDE3052");
             }
-            targetFunction = (UserFunction) targetComponent.getCode();
             actualArgs = evaluateArguments(context);
             if (isTailCall()) {
-                ((XPathContextMajor) context).requestTailCall(targetFunction, actualArgs);
+                ((XPathContextMajor) context).requestTailCall(targetComponent, actualArgs);
                 return EmptySequence.getInstance();
             }
             c2 = targetFunction.makeNewContext(context);
@@ -511,7 +511,8 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
             targetFunction = function;
             actualArgs = evaluateArguments(context);
             if (isTailCall()) {
-                ((XPathContextMajor) context).requestTailCall(targetFunction, actualArgs);
+                Component<UserFunction> targetComponent = targetFunction.getDeclaringComponent();
+                ((XPathContextMajor) context).requestTailCall(targetComponent, actualArgs);
                 return EmptySequence.getInstance();
             }
             c2 = targetFunction.makeNewContext(context);
@@ -534,14 +535,15 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
 
     public void process(XPathContext context) throws XPathException {
         if (bindingSlot >= 0) {
-            Component targetComponent = getTargetComponent(context);
+            Component target = getTargetComponent(context);
+            UserFunction targetFunction = (UserFunction) target.getCode();
+            Component<UserFunction> targetComponent = (Component<UserFunction>) target;
             if (targetComponent.getVisibility() == Visibility.ABSENT) {
                 throw new XPathException("Cannot call a function defined with visibility=absent", "XTDE3052");
             }
-            UserFunction targetFunction = (UserFunction) targetComponent.getCode();
             Sequence[] actualArgs = evaluateArguments(context);
             if (isTailCall()) {
-                ((XPathContextMajor) context).requestTailCall(targetFunction, actualArgs);
+                ((XPathContextMajor) context).requestTailCall(targetComponent, actualArgs);
             } else {
                 XPathContextMajor c2 = targetFunction.makeNewContext(context);
                 c2.setCurrentComponent(targetComponent);
@@ -550,7 +552,7 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
         } else {
             Sequence[] actualArgs = evaluateArguments(context);
             if (isTailCall()) {
-                ((XPathContextMajor) context).requestTailCall(function, actualArgs);
+                ((XPathContextMajor) context).requestTailCall(function.getDeclaringComponent(), actualArgs);
             } else {
                 XPathContextMajor c2 = function.makeNewContext(context);
                 function.process(actualArgs, c2);
@@ -579,14 +581,15 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
      */
 
     public EventIterator iterateEvents(XPathContext context) throws XPathException {
-        Component targetComponent = getTargetComponent(context);
+        Component target = getTargetComponent(context);
+        UserFunction targetFunction = (UserFunction) target.getCode();
+        Component<UserFunction> targetComponent = (Component<UserFunction>) target;
         if (targetComponent.getVisibility() == Visibility.ABSENT) {
             throw new XPathException("Cannot call a function defined with visibility=absent", "XTDE3052");
         }
-        UserFunction targetFunction = (UserFunction) targetComponent.getCode();
         Sequence[] actualArgs = evaluateArguments(context);
         if (isTailCall()) {
-            ((XPathContextMajor) context).requestTailCall(targetFunction, actualArgs);
+            ((XPathContextMajor) context).requestTailCall(targetComponent, actualArgs);
             return EmptyEventIterator.getInstance();
         } else {
             XPathContextMajor c2 = targetFunction.makeNewContext(context);

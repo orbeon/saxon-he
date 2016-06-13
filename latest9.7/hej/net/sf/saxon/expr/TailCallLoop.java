@@ -104,11 +104,11 @@ public final class TailCallLoop extends UnaryExpression {
         while (true) {
             SequenceIterator iter = getBaseExpression().iterate(cm);
             Sequence extent = SequenceExtent.makeSequenceExtent(iter);
-            UserFunction fn = cm.getTailCallFunction();
+            Component<UserFunction> fn = cm.getTailCallFunction();
             if (fn == null) {
                 return extent.iterate();
             }
-            if (fn != containingFunction) {
+            if (fn.getCode() != containingFunction) {
                 return tailCallDifferentFunction(fn, cm).iterate();
             }
             // otherwise, loop round to execute the tail call
@@ -123,11 +123,11 @@ public final class TailCallLoop extends UnaryExpression {
         final XPathContextMajor cm = (XPathContextMajor) context;
         while (true) {
             Item item = getBaseExpression().evaluateItem(context);
-            UserFunction fn = cm.getTailCallFunction();
+            Component<UserFunction> fn = cm.getTailCallFunction();
             if (fn == null) {
                 return item;
             }
-            if (fn != containingFunction) {
+            if (fn.getCode() != containingFunction) {
                 return tailCallDifferentFunction(fn, cm).head();
             }
             // otherwise, loop round to execute the tail call
@@ -146,11 +146,11 @@ public final class TailCallLoop extends UnaryExpression {
         Expression operand = getBaseExpression();
         while (true) {
             operand.process(context);
-            UserFunction fn = cm.getTailCallFunction();
+            Component<UserFunction> fn = cm.getTailCallFunction();
             if (fn == null) {
                 return;
             }
-            if (fn != containingFunction) {
+            if (fn.getCode() != containingFunction) {
                 SequenceTool.process(tailCallDifferentFunction(fn, cm), cm, operand.getLocation());
                 return;
             }
@@ -170,11 +170,12 @@ public final class TailCallLoop extends UnaryExpression {
      */
 
     /*@Nullable*/
-    private Sequence tailCallDifferentFunction(UserFunction fn, XPathContextMajor cm) throws XPathException {
-        cm.resetStackFrameMap(fn.getStackFrameMap(), fn.getArity());
-        cm.setCurrentComponent(fn.getDeclaringComponent());
+    private Sequence tailCallDifferentFunction(Component<UserFunction> fn, XPathContextMajor cm) throws XPathException {
+        UserFunction userFunction = fn.getCode();
+        cm.resetStackFrameMap(userFunction.getStackFrameMap(), userFunction.getArity());
+        cm.setCurrentComponent(fn);
         try {
-            return ExpressionTool.evaluate(fn.getBody(), fn.getEvaluationMode(), cm, 1);
+            return ExpressionTool.evaluate(userFunction.getBody(), userFunction.getEvaluationMode(), cm, 1);
         } catch (XPathException err) {
             err.maybeSetLocation(getLocation());
             err.maybeSetContext(cm);
