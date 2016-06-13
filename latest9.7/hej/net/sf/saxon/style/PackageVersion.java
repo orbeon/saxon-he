@@ -129,7 +129,7 @@ public class PackageVersion implements Comparable {
         }
     }
 
-    public String getStringValue() {
+    public String toString() {
         String result = "";
         for (Integer i : parts) {
             result += "." + i;

@@ -7,6 +7,7 @@
 
 package net.sf.saxon.functions;
 
+import net.sf.saxon.expr.PackageData;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
@@ -54,7 +55,8 @@ public class DocAvailable extends SystemFunction  {
 
     public boolean docAvailable(String href, XPathContext context) throws XPathException {
         try {
-            DocumentURI documentKey = DocumentFn.computeDocumentKey(href, getStaticBaseUriString(), context);
+            PackageData pd = getRetainedStaticContext().getPackageData();
+            DocumentURI documentKey = DocumentFn.computeDocumentKey(href, getStaticBaseUriString(), pd, context);
             DocumentPool pool = context.getController().getDocumentPool();
             if (pool.isMarkedUnavailable(documentKey)) {
                 return false;
@@ -63,7 +65,7 @@ public class DocAvailable extends SystemFunction  {
             if (doc != null) {
                 return true;
             }
-            Item item = DocumentFn.makeDoc(href, getStaticBaseUriString(), null, context, null, true);
+            Item item = DocumentFn.makeDoc(href, getStaticBaseUriString(), pd, null, context, null, true);
             if (item != null) {
                 return true;
             } else {

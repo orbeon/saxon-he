@@ -8,10 +8,7 @@
 package net.sf.saxon.functions;
 
 import net.sf.saxon.event.Receiver;
-import net.sf.saxon.expr.Callable;
-import net.sf.saxon.expr.Expression;
-import net.sf.saxon.expr.StaticProperty;
-import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.*;
 import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
@@ -91,7 +88,8 @@ public class Doc extends SystemFunction implements Callable {
             return ZeroOrOne.empty();
         }
         String href = hrefVal.getStringValue();
-        NodeInfo item = DocumentFn.makeDoc(href, getRetainedStaticContext().getStaticBaseUriString(), null, context, null, false);
+        PackageData packageData = getRetainedStaticContext().getPackageData();
+        NodeInfo item = DocumentFn.makeDoc(href, getRetainedStaticContext().getStaticBaseUriString(), packageData, null, context, null, false);
         if (item == null) {
             // we failed to read the document
             throw new XPathException("Failed to load document " + href, "FODC0002", context);

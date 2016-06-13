@@ -114,7 +114,7 @@ public abstract class XSLGeneralIncorporate extends StyleElement {
             XSLStylesheet includedSheet;
             StylesheetModule incModule;
 
-            DocumentURI key = DocumentFn.computeDocumentKey(href, getBaseURI(), resolver);
+            DocumentURI key = DocumentFn.computeDocumentKey(href, getBaseURI(), getCompilation().getPackageData(), resolver);
             includedSheet = (XSLStylesheet)psm.getStylesheetDocument(key);
             if (includedSheet != null) {
                 // we already have the stylesheet document in cache; but we need to create a new module,

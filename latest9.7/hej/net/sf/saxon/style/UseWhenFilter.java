@@ -310,7 +310,7 @@ public class UseWhenFilter extends ProxyReceiver {
                     // TODO: handle fragments
                     URIResolver resolver = compilation.getCompilerInfo().getURIResolver();
                     String baseUriStr = baseUri.toString();
-                    DocumentURI key = DocumentFn.computeDocumentKey(href, baseUriStr, resolver);
+                    DocumentURI key = DocumentFn.computeDocumentKey(href, baseUriStr, compilation.getPackageData(), resolver);
                     Source source;
                     try {
                         source = resolver.resolve(href, baseUriStr);
