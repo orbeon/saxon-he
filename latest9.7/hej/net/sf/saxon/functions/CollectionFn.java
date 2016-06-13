@@ -175,10 +175,17 @@ public class CollectionFn extends SystemFunction implements Callable {
         // See if the collection has been cached
 
         PackageData packageData = getRetainedStaticContext().getPackageData();
-        String packName = (packageData instanceof StylesheetPackage)
-                ? ((StylesheetPackage)packageData).getPackageName() + ((StylesheetPackage) packageData).getPackageVersion()
-                : "";
-        String collectionKey = packName + " " + absoluteURI;
+        SpaceStrippingRule whitespaceRule = NoElementsSpaceStrippingRule.getInstance();
+        String collectionKey = absoluteURI;
+        if (packageData instanceof StylesheetPackage) {
+            whitespaceRule = ((StylesheetPackage) packageData).getSpaceStrippingRule();
+            if (whitespaceRule != NoElementsSpaceStrippingRule.getInstance()) {
+                collectionKey = ((StylesheetPackage) packageData).getPackageName() +
+                        ((StylesheetPackage) packageData).getPackageVersion() +
+                        " " +
+                        absoluteURI;
+            }
+        }
 
         GroundedValue cachedCollection = (GroundedValue)context.getController().getUserData("saxon:collections", collectionKey);
         if (cachedCollection != null) {
@@ -194,9 +201,8 @@ public class CollectionFn extends SystemFunction implements Callable {
         }
 
         // In XSLT, worry about whitespace stripping
-        SpaceStrippingRule whitespaceRule = null;
-        if (packageData instanceof StylesheetPackage) {
-            whitespaceRule = ((StylesheetPackage) packageData).getSpaceStrippingRule();
+
+        if (packageData instanceof StylesheetPackage && whitespaceRule != NoElementsSpaceStrippingRule.getInstance()) {
             if (collection instanceof AbstractResourceCollection) {
                 boolean alreadyStripped = ((AbstractResourceCollection) collection).stripWhitespace(whitespaceRule);
                 if (alreadyStripped) {
