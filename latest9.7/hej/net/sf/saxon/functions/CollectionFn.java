@@ -7,7 +7,6 @@
 
 package net.sf.saxon.functions;
 
-import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
@@ -175,27 +174,31 @@ public class CollectionFn extends SystemFunction implements Callable {
 
         // See if the collection has been cached
 
-        GroundedValue cachedCollection = (GroundedValue)context.getController().getUserData("saxon:collections", absoluteURI);
+        PackageData packageData = getRetainedStaticContext().getPackageData();
+        String packName = (packageData instanceof StylesheetPackage)
+                ? ((StylesheetPackage)packageData).getPackageName() + ((StylesheetPackage) packageData).getPackageVersion()
+                : "";
+        String collectionKey = packName + " " + absoluteURI;
+
+        GroundedValue cachedCollection = (GroundedValue)context.getController().getUserData("saxon:collections", collectionKey);
         if (cachedCollection != null) {
             return cachedCollection;
         }
 
         // Call the user-supplied CollectionFinder to get the ResourceCollection
 
-        String absoluteURI1 = getAbsoluteCollectionURI(absoluteURI, context);
         CollectionFinder collectionFinder = context.getController().getCollectionFinder();
-        ResourceCollection collection = collectionFinder.findCollection(context, absoluteURI1);
+        ResourceCollection collection = collectionFinder.findCollection(context, absoluteURI);
         if (collection == null) {
             collection = new EmptyCollection(EMPTY_COLLECTION_URI);
         }
 
         // In XSLT, worry about whitespace stripping
         SpaceStrippingRule whitespaceRule = null;
-        if (context.getController().getExecutable().getHostLanguage() == Configuration.XSLT) {
-            whitespaceRule = ((StylesheetPackage) getRetainedStaticContext().getPackageData()).getSpaceStrippingRule();
-            boolean alreadyStripped = false;
+        if (packageData instanceof StylesheetPackage) {
+            whitespaceRule = ((StylesheetPackage) packageData).getSpaceStrippingRule();
             if (collection instanceof AbstractResourceCollection) {
-                alreadyStripped = ((AbstractResourceCollection) collection).stripWhitespace(whitespaceRule);
+                boolean alreadyStripped = ((AbstractResourceCollection) collection).stripWhitespace(whitespaceRule);
                 if (alreadyStripped) {
                     whitespaceRule = null;
                 }
@@ -227,8 +230,8 @@ public class CollectionFn extends SystemFunction implements Callable {
             final SpaceStrippingRule rule = whitespaceRule;
             ItemMappingFunction<Item, Item> stripper = new ItemMappingFunction<Item, Item>() {
                 public Item mapItem(Item item) throws XPathException {
-                    if (item instanceof NodeInfo && ((NodeInfo)item).getNodeKind() == Type.DOCUMENT) {
-                        SpaceStrippedDocument ssd = new SpaceStrippedDocument(((NodeInfo)item).getTreeInfo(), rule);
+                    if (item instanceof NodeInfo && ((NodeInfo) item).getNodeKind() == Type.DOCUMENT) {
+                        SpaceStrippedDocument ssd = new SpaceStrippedDocument(((NodeInfo) item).getTreeInfo(), rule);
                         return ssd.getRootNode();
                     } else {
                         return item;
@@ -253,7 +256,7 @@ public class CollectionFn extends SystemFunction implements Callable {
                     docPool.add(info, docKey);
                 }
             }
-            context.getController().setUserData("saxon:collections", absoluteURI, cachedCollection);
+            context.getController().setUserData("saxon:collections", collectionKey, cachedCollection);
             return cachedCollection;
         }
 
