@@ -448,7 +448,7 @@ public class SaxonOutputKeys {
             return false;
         }
         int closer = value.indexOf('}');
-        return closer >= 2 &&
+        return closer >= 1 &&
                 closer != value.length() - 1 &&
                 NameChecker.isValidNCName(value.substring(closer + 1));
     }
