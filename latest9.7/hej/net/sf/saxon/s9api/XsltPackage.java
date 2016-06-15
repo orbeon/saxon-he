@@ -9,6 +9,7 @@ package net.sf.saxon.s9api;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.PreparedStylesheet;
+import net.sf.saxon.expr.PackageData;
 import net.sf.saxon.style.Compilation;
 import net.sf.saxon.style.PackageVersion;
 import net.sf.saxon.style.StylesheetPackage;
@@ -96,7 +97,12 @@ public class XsltPackage {
             stylesheetPackage.checkForAbstractComponents();
             PreparedStylesheet pss = new PreparedStylesheet(compilation);
             stylesheetPackage.updatePreparedStylesheet(pss);
-            pss.addPackage(compilation.getPackageData());
+            PackageData pd = compilation.getPackageData();
+            if (pd == null) {
+                // bug 2800 (patch attempts to minimize the amount of change, probably unnecessarily conservative)
+                pd = stylesheetPackage;
+            }
+            pss.addPackage(pd);
             return new XsltExecutable(processor, pss);
         } catch (XPathException e) {
             throw new SaxonApiException(e);
