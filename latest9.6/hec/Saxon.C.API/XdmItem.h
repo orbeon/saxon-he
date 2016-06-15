@@ -47,7 +47,7 @@ public:
 	return value;
      }
 
-     const char * getStringValue(SaxonProcessor * proc=NULL); 
+     virtual const char * getStringValue(SaxonProcessor * proc=NULL); 
 
  /**
      * Get the first item in the sequence
