@@ -136,11 +136,11 @@ SaxonProcessor::SaxonProcessor(bool l){
     cwd="";
     licensei = l;
     versionStr = NULL;
-    refCount++;
+    SaxonProcessor::refCount++;
 
 
-     if(jvmCreatedCPP == 0){
-	jvmCreatedCPP=1;
+     if(SaxonProcessor::jvmCreatedCPP == 0){
+	SaxonProcessor::jvmCreatedCPP=1;
     SaxonProcessor::sxn_environ= new sxnc_environment;//(sxnc_environment *)malloc(sizeof(sxnc_environment));
 
 
@@ -179,10 +179,10 @@ SaxonProcessor::SaxonProcessor(bool l){
 SaxonProcessor::SaxonProcessor(const char * configFile){
     cwd="";
     versionStr = NULL;
-    refCount++;
+    SaxonProcessor::refCount++;
 
-    if(jvmCreatedCPP == 0){
-	jvmCreatedCPP=1;
+    if(SaxonProcessor::jvmCreatedCPP == 0){
+	SaxonProcessor::jvmCreatedCPP=1;
     //SaxonProcessor::sxn_environ= new sxnc_environment;
 	SaxonProcessor::sxn_environ= (sxnc_environment *)malloc(sizeof(sxnc_environment));
 
@@ -232,7 +232,7 @@ SaxonProcessor::SaxonProcessor(const char * configFile){
 	if(versionStr != NULL) {
 		delete versionStr;
 	}
-	refCount--;	//This might be redundant due to the bug fix 2670
+	SaxonProcessor::refCount--;	//This might be redundant due to the bug fix 2670
    }
 
 
@@ -458,8 +458,8 @@ XdmNode * SaxonProcessor::parseXmlFromUri(const char* source){
 
 
 void SaxonProcessor::release(){
-	if(jvmCreatedCPP!=0) {
-		jvmCreatedCPP =0;
+	if(SaxonProcessor::jvmCreatedCPP!=0) {
+		SaxonProcessor::jvmCreatedCPP =0;
 
  		finalizeJavaRT (SaxonProcessor::sxn_environ->jvm);
 
