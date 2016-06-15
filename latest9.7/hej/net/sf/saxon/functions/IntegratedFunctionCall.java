@@ -22,8 +22,6 @@ import net.sf.saxon.type.Type;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.SequenceType;
 
-import java.util.Map;
-
 /**
  * Expression representing a call to a user-written extension
  * function implemented as a subtype of {@link ExtensionFunctionCall}
