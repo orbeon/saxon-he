@@ -217,7 +217,7 @@ public class JavaExternalObjectType extends ExternalObjectType implements ItemTy
 
     /*@NotNull*/
     public String toString() {
-        return getDisplayName();
+        return classNameToQName(javaClass.getName()).getEQName();
     }
 
     /*@NotNull*/
