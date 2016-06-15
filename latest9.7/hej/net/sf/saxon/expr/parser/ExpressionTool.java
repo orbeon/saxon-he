@@ -1335,9 +1335,11 @@ public class ExpressionTool {
      */
 
     public static int expressionSize(Expression exp) {
+//#ifdefined BYTECODE
         if(exp instanceof CompiledExpression) {
             exp = ((CompiledExpression)exp).getOriginalExpression();
         }
+//#endif
         int total = 1;
         for (Operand o : exp.operands()) {
             total += expressionSize(o.getChildExpression());
