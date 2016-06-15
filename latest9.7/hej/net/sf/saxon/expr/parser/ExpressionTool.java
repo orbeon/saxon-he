@@ -7,6 +7,7 @@
 
 package net.sf.saxon.expr.parser;
 
+import com.saxonica.ee.bytecode.CompiledExpression;
 import com.saxonica.ee.stream.StreamInstr;
 import com.saxonica.xslt3.instruct.IterateInstr;
 import net.sf.saxon.Configuration;
@@ -1334,6 +1335,9 @@ public class ExpressionTool {
      */
 
     public static int expressionSize(Expression exp) {
+        if(exp instanceof CompiledExpression) {
+            exp = ((CompiledExpression)exp).getOriginalExpression();
+        }
         int total = 1;
         for (Operand o : exp.operands()) {
             total += expressionSize(o.getChildExpression());
