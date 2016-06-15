@@ -105,7 +105,7 @@ public class ArrayRemove extends ExtensionFunctionDefinition{
             public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
                 ArrayItem array = (ArrayItem) arguments[0].head();
                 if (arguments[1] instanceof IntegerValue) {
-                    int index = (int)((IntegerValue)arguments[1]).longValue();
+                    int index = (int)((IntegerValue)arguments[1]).longValue() - 1;
                     if (index < 0 || index >= array.size()) {
                         throw new XPathException("Position " + index + " is not in range", "FOAY0001");
                     }
