@@ -47,9 +47,7 @@ class XdmNode;
 class XdmItem;
 class XdmAtomicValue;
 
-extern int jvmCreatedCPP;
-extern sxnc_environment * sxn_environ;
-extern int refCount;
+
 
 // The Saxon XSLT interface class
 
@@ -518,7 +516,9 @@ public:
 //	SchemaManager
 
    // static JNIEnv *env;
-    
+    static int jvmCreatedCPP;
+    static sxnc_environment * sxn_environ;
+    static int refCount;
     std::string cwd; /*!< current working directory */
     jobject proc; /*!< Java Processor object */
     

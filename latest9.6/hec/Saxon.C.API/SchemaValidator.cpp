@@ -15,18 +15,18 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 	/*
 	 * Look for class.
 	 */
-	cppClass = lookForClass(sxn_environ->env,
+	cppClass = lookForClass(SaxonProcessor::sxn_environ->env,
 			"net/sf/saxon/option/cpp/SchemaValidatorForCpp");
 	if ((proc->proc) == NULL) {
 		std::cerr << "Processor is NULL" << std::endl;
 	}
 
-	cppV = createSaxonProcessor2(sxn_environ->env, cppClass,
+	cppV = createSaxonProcessor2(SaxonProcessor::sxn_environ->env, cppClass,
 			"(Lnet/sf/saxon/s9api/Processor;)V", proc->proc);
 
 #ifdef DEBUG
-	jmethodID debugMID = sxn_environ->env->GetStaticMethodID(cppClass, "setDebugMode", "(Z)V");
-	sxn_environ->env->CallStaticVoidMethod(cppClass, debugMID, (jboolean)true);
+	jmethodID debugMID = SaxonProcessor::sxn_environ->env->GetStaticMethodID(cppClass, "setDebugMode", "(Z)V");
+	SaxonProcessor::sxn_environ->env->CallStaticVoidMethod(cppClass, debugMID, (jboolean)true);
 #endif    
 
 	proc->exception = NULL;
@@ -39,12 +39,12 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 				if(proc->exception != NULL) {
 					delete proc->exception;
 				}
-				proc->exception = proc->checkForExceptionCPP(sxn_environ->env, cppClass, NULL);
+				proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
 				
      			
 			
 #ifdef DEBUG
-		sxn_environ->env->ExceptionDescribe();
+		SaxonProcessor::sxn_environ->env->ExceptionDescribe();
 #endif
 		proc->exceptionClear();
 	}
@@ -63,13 +63,13 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 
   XdmNode * SchemaValidator::getValidationReport(){
 	jmethodID mID =
-		(jmethodID) sxn_environ->env->GetMethodID(cppClass, "getValidationReport", "()Lnet/sf/saxon/s9api/XdmNode;");
+		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "getValidationReport", "()Lnet/sf/saxon/s9api/XdmNode;");
 	if (!mID) {
 		std::cerr << "Error: libsaxon." << "validate.getValidationReport()" << " not found\n"
 			<< std::endl;
 	} else {
 		jobject result = (jobject)(
-			sxn_environ->env->CallObjectMethod(cppV, mID));
+			SaxonProcessor::sxn_environ->env->CallObjectMethod(cppV, mID));
 		
 		if (result) {
 			XdmNode * node = new XdmNode(result);
@@ -87,7 +87,7 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
         }
 	
 	jmethodID mID =
-		(jmethodID) sxn_environ->env->GetMethodID(cppClass, "registerSchema",
+		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "registerSchema",
 				"(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)V");
 	if (!mID) {
 		std::cerr << "Error: libsaxon." << "validate" << " not found\n"
@@ -95,8 +95,8 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 	} else {
 	jobjectArray stringArray = NULL;
 	jobjectArray objectArray = NULL;
-	jclass objectClass = lookForClass(sxn_environ->env, "java/lang/Object");
-	jclass stringClass = lookForClass(sxn_environ->env, "java/lang/String");
+	jclass objectClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/Object");
+	jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/String");
 
 	int size = parameters.size() + properties.size();
 #ifdef DEBUG
@@ -105,16 +105,16 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 		std::cerr<<"size:"<<size<<std::endl;
 #endif
 	if (size > 0) {
-		objectArray = sxn_environ->env->NewObjectArray((jint) size,
+		objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				objectClass, 0);
-		stringArray = sxn_environ->env->NewObjectArray((jint) size,
+		stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				stringClass, 0);
 		int i = 0;
 		for (std::map<std::string, XdmValue*>::iterator iter = parameters.begin();
 				iter != parameters.end(); ++iter, i++) {
-			sxn_environ->env->SetObjectArrayElement(stringArray, i,
-					sxn_environ->env->NewStringUTF((iter->first).c_str()));
-			sxn_environ->env->SetObjectArrayElement(objectArray, i,
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
 					(iter->second)->getUnderlyingValue(proc));
 #ifdef DEBUG
 				std::string s1 = typeid(iter->second).name();
@@ -133,20 +133,20 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 		}
 		for (std::map<std::string, std::string>::iterator iter = properties.begin();
 				iter != properties.end(); ++iter, i++) {
-			sxn_environ->env->SetObjectArrayElement(stringArray, i,
-					sxn_environ->env->NewStringUTF((iter->first).c_str()));
-			sxn_environ->env->SetObjectArrayElement(objectArray, i,
-					sxn_environ->env->NewStringUTF((iter->second).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->second).c_str()));
 		}
 	}
 	
-			sxn_environ->env->CallVoidMethod(cppV, mID,
-					sxn_environ->env->NewStringUTF(cwdV.c_str()),
-					sxn_environ->env->NewStringUTF(sourceFile), stringArray, objectArray);
+			SaxonProcessor::sxn_environ->env->CallVoidMethod(cppV, mID,
+					SaxonProcessor::sxn_environ->env->NewStringUTF(cwdV.c_str()),
+					SaxonProcessor::sxn_environ->env->NewStringUTF(sourceFile), stringArray, objectArray);
 
 	if (size > 0) {
-		sxn_environ->env->DeleteLocalRef(stringArray);
-		sxn_environ->env->DeleteLocalRef(objectArray);
+		SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
+		SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
 	}
 
 }
@@ -154,12 +154,12 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 				if(proc->exception != NULL) {
 					delete proc->exception;
 				}
-				proc->exception = proc->checkForExceptionCPP(sxn_environ->env, cppClass, NULL);
+				proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
 				
      			
 			
 #ifdef DEBUG
-		sxn_environ->env->ExceptionDescribe();
+		SaxonProcessor::sxn_environ->env->ExceptionDescribe();
 #endif
 		proc->exceptionClear();
 	}
@@ -173,7 +173,7 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 	     return;
         }
 	jmethodID mID =
-		(jmethodID) sxn_environ->env->GetMethodID(cppClass, "registerSchemaString",
+		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "registerSchemaString",
 				"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)V");
 
 	if (!mID) {
@@ -182,8 +182,8 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 	} else {
 	jobjectArray stringArray = NULL;
 	jobjectArray objectArray = NULL;
-	jclass objectClass = lookForClass(sxn_environ->env, "java/lang/Object");
-	jclass stringClass = lookForClass(sxn_environ->env, "java/lang/String");
+	jclass objectClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/Object");
+	jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/String");
 
 	int size = parameters.size() + properties.size();
 #ifdef DEBUG
@@ -193,16 +193,16 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 #endif
 
 	if (size > 0) {
-		objectArray = sxn_environ->env->NewObjectArray((jint) size,
+		objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				objectClass, 0);
-		stringArray = sxn_environ->env->NewObjectArray((jint) size,
+		stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				stringClass, 0);
 		int i = 0;
 		for (std::map<std::string, XdmValue*>::iterator iter = parameters.begin();
 				iter != parameters.end(); ++iter, i++) {
-			sxn_environ->env->SetObjectArrayElement(stringArray, i,
-					sxn_environ->env->NewStringUTF((iter->first).c_str()));
-			sxn_environ->env->SetObjectArrayElement(objectArray, i,
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
 					(iter->second)->getUnderlyingValue(proc));
 #ifdef DEBUG
 				std::string s1 = typeid(iter->second).name();
@@ -221,21 +221,21 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 		}
 		for (std::map<std::string, std::string>::iterator iter = properties.begin();
 				iter != properties.end(); ++iter, i++) {
-			sxn_environ->env->SetObjectArrayElement(stringArray, i,
-					sxn_environ->env->NewStringUTF((iter->first).c_str()));
-			sxn_environ->env->SetObjectArrayElement(objectArray, i,
-					sxn_environ->env->NewStringUTF((iter->second).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->second).c_str()));
 		}
 	}
 
 	
-			sxn_environ->env->CallVoidMethod(cppV, mID,
-					sxn_environ->env->NewStringUTF(cwdV.c_str()),
-					(sourceStr != NULL ? sxn_environ->env->NewStringUTF(sourceStr) : NULL), NULL, stringArray, objectArray);
+			SaxonProcessor::sxn_environ->env->CallVoidMethod(cppV, mID,
+					SaxonProcessor::sxn_environ->env->NewStringUTF(cwdV.c_str()),
+					(sourceStr != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(sourceStr) : NULL), NULL, stringArray, objectArray);
 
 	if (size > 0) {
-		sxn_environ->env->DeleteLocalRef(stringArray);
-		sxn_environ->env->DeleteLocalRef(objectArray);
+		SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
+		SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
 	}
 
 }
@@ -245,11 +245,11 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 				if(proc->exception != NULL) {
 					delete proc->exception;
 				}
-				proc->exception = proc->checkForExceptionCPP(sxn_environ->env, cppClass, NULL);
+				proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
 				
      			
 #ifdef DEBUG
-			sxn_environ->env->ExceptionDescribe();
+			SaxonProcessor::sxn_environ->env->ExceptionDescribe();
 #endif
 			proc->exceptionClear();
 		}
@@ -264,7 +264,7 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
         }*/
 setProperty("resources", proc->getResourcesDirectory());
 jmethodID mID =
-		(jmethodID) sxn_environ->env->GetMethodID(cppClass, "validate",
+		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "validate",
 				"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)V");
 if (!mID) {
 	std::cerr << "Error: libsaxon." << "validate" << " not found\n"
@@ -273,8 +273,8 @@ if (!mID) {
 } else {
 	jobjectArray stringArray = NULL;
 	jobjectArray objectArray = NULL;
-	jclass objectClass = lookForClass(sxn_environ->env, "java/lang/Object");
-	jclass stringClass = lookForClass(sxn_environ->env, "java/lang/String");
+	jclass objectClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/Object");
+	jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/String");
 
 	int size = parameters.size() + properties.size();
 #ifdef DEBUG
@@ -283,16 +283,16 @@ if (!mID) {
 		std::cerr<<"size:"<<size<<std::endl;
 #endif
 	if (size > 0) {
-		objectArray = sxn_environ->env->NewObjectArray((jint) size,
+		objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				objectClass, 0);
-		stringArray = sxn_environ->env->NewObjectArray((jint) size,
+		stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				stringClass, 0);
 		int i = 0;
 		for (std::map<std::string, XdmValue*>::iterator iter = parameters.begin();
 				iter != parameters.end(); ++iter, i++) {
-			sxn_environ->env->SetObjectArrayElement(stringArray, i,
-					sxn_environ->env->NewStringUTF((iter->first).c_str()));
-			sxn_environ->env->SetObjectArrayElement(objectArray, i,
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
 					(iter->second)->getUnderlyingValue(proc));
 
 #ifdef DEBUG
@@ -312,33 +312,33 @@ if (!mID) {
 		}
 		for (std::map<std::string, std::string>::iterator iter = properties.begin();
 				iter != properties.end(); ++iter, i++) {
-			sxn_environ->env->SetObjectArrayElement(stringArray, i,
-					sxn_environ->env->NewStringUTF((iter->first).c_str()));
-			sxn_environ->env->SetObjectArrayElement(objectArray, i,
-					sxn_environ->env->NewStringUTF((iter->second).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->second).c_str()));
 
 		}
 	}
 	
-			sxn_environ->env->CallVoidMethod(cppV, mID,
-					sxn_environ->env->NewStringUTF(cwdV.c_str()), 
-					(sourceFile != NULL ? sxn_environ->env->NewStringUTF(sourceFile) : NULL), (outputFile.empty() ? NULL : outputFile.c_str() ), stringArray, objectArray);
+			SaxonProcessor::sxn_environ->env->CallVoidMethod(cppV, mID,
+					SaxonProcessor::sxn_environ->env->NewStringUTF(cwdV.c_str()), 
+					(sourceFile != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(sourceFile) : NULL), (outputFile.empty() ? NULL : outputFile.c_str() ), stringArray, objectArray);
 
 	if (size > 0) {
-		sxn_environ->env->DeleteLocalRef(stringArray);
-		sxn_environ->env->DeleteLocalRef(objectArray);
+		SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
+		SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
 	}
 		if(exceptionOccurred()) {
 			if(proc->exception != NULL) {
 				delete proc->exception;
 			}
-				proc->exception = proc->checkForExceptionCPP(sxn_environ->env, cppClass, NULL);
+				proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
 				
      			
 
 
 #ifdef DEBUG
-	sxn_environ->env->ExceptionDescribe();
+	SaxonProcessor::sxn_environ->env->ExceptionDescribe();
 #endif
 			proc->exceptionClear();
 		}
@@ -352,7 +352,7 @@ XdmNode * SchemaValidator::validateToNode(const char * sourceFile){
         }
 setProperty("resources", proc->getResourcesDirectory());
 jmethodID mID =
-		(jmethodID) sxn_environ->env->GetMethodID(cppClass, "validateToNode",
+		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "validateToNode",
 				"(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmNode;");
 if (!mID) {
 	std::cerr << "Error: libsaxon." << "validate" << " not found\n"
@@ -361,8 +361,8 @@ if (!mID) {
 } else {
 	jobjectArray stringArray = NULL;
 	jobjectArray objectArray = NULL;
-	jclass objectClass = lookForClass(sxn_environ->env, "java/lang/Object");
-	jclass stringClass = lookForClass(sxn_environ->env, "java/lang/String");
+	jclass objectClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/Object");
+	jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/String");
 
 	int size = parameters.size() + properties.size();
 #ifdef DEBUG
@@ -371,16 +371,16 @@ if (!mID) {
 		std::cerr<<"size:"<<size<<std::endl;
 #endif
 	if (size > 0) {
-		objectArray = sxn_environ->env->NewObjectArray((jint) size,
+		objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				objectClass, 0);
-		stringArray = sxn_environ->env->NewObjectArray((jint) size,
+		stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				stringClass, 0);
 		int i = 0;
 		for (std::map<std::string, XdmValue*>::iterator iter = parameters.begin();
 				iter != parameters.end(); ++iter, i++) {
-			sxn_environ->env->SetObjectArrayElement(stringArray, i,
-					sxn_environ->env->NewStringUTF((iter->first).c_str()));
-			sxn_environ->env->SetObjectArrayElement(objectArray, i,
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
 					(iter->second)->getUnderlyingValue(proc));
 #ifdef DEBUG
 				std::string s1 = typeid(iter->second).name();
@@ -399,19 +399,19 @@ if (!mID) {
 		}
 		for (std::map<std::string, std::string>::iterator iter = properties.begin();
 				iter != properties.end(); ++iter, i++) {
-			sxn_environ->env->SetObjectArrayElement(stringArray, i,
-					sxn_environ->env->NewStringUTF((iter->first).c_str()));
-			sxn_environ->env->SetObjectArrayElement(objectArray, i,
-					sxn_environ->env->NewStringUTF((iter->second).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->second).c_str()));
 		}
 	}
 	jobject result = (jobject)(
-			sxn_environ->env->CallObjectMethod(cppV, mID,
-					sxn_environ->env->NewStringUTF(cwdV.c_str()),
-					sxn_environ->env->NewStringUTF(sourceFile), stringArray, objectArray));
+			SaxonProcessor::sxn_environ->env->CallObjectMethod(cppV, mID,
+					SaxonProcessor::sxn_environ->env->NewStringUTF(cwdV.c_str()),
+					SaxonProcessor::sxn_environ->env->NewStringUTF(sourceFile), stringArray, objectArray));
 	if (size > 0) {
-		sxn_environ->env->DeleteLocalRef(stringArray);
-		sxn_environ->env->DeleteLocalRef(objectArray);
+		SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
+		SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
 	}
 	if (result) {
 		XdmNode * node = new XdmNode(result);
@@ -421,9 +421,9 @@ if (!mID) {
 
 }
 #ifdef DEBUG
-	sxn_environ->env->ExceptionDescribe();
+	SaxonProcessor::sxn_environ->env->ExceptionDescribe();
 #endif
-sxn_environ->env->ExceptionClear();
+SaxonProcessor::sxn_environ->env->ExceptionClear();
 
 }
 
@@ -432,7 +432,7 @@ void SchemaValidator::exceptionClear(){
  	delete proc->exception;
  	proc->exception = NULL;
  }
-   sxn_environ->env->ExceptionClear();
+   SaxonProcessor::sxn_environ->env->ExceptionClear();
  }
 
 const char * SchemaValidator::getErrorCode(int i) {
@@ -454,7 +454,7 @@ const char* SchemaValidator::checkException() {
 	 proc->exception = proc->checkForException(environ, cppClass, cpp);
 	 }
 	 return proc->exception;*/
-	return checkForException(*(sxn_environ), cppClass, cppV);
+	return checkForException(*(SaxonProcessor::sxn_environ), cppClass, cppV);
 }
 
 int SchemaValidator::exceptionCount(){

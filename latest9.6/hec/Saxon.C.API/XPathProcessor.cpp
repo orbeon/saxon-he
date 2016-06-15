@@ -15,20 +15,20 @@ XPathProcessor::XPathProcessor(SaxonProcessor* p, std::string curr) {
 	/*
 	 * Look for class.
 	 */
-	cppClass = lookForClass(sxn_environ->env,
+	cppClass = lookForClass(SaxonProcessor::sxn_environ->env,
 			"net/sf/saxon/option/cpp/XPathProcessor");
 	if ((proc->proc) == NULL) {
 		cerr << "Processor is NULL" << endl;
 	}
 
-	cppXP = createSaxonProcessor2(sxn_environ->env, cppClass,
+	cppXP = createSaxonProcessor2(SaxonProcessor::sxn_environ->env, cppClass,
 			"(Lnet/sf/saxon/s9api/Processor;)V", proc->proc);
 
 
 
 #ifdef DEBUG
-	jmethodID debugMID = sxn_environ->env->GetStaticMethodID(cppClass, "setDebugMode", "(Z)V");
-	sxn_environ->env->CallStaticVoidMethod(cppClass, debugMID, (jboolean)true);
+	jmethodID debugMID = SaxonProcessor::sxn_environ->env->GetStaticMethodID(cppClass, "setDebugMode", "(Z)V");
+	SaxonProcessor::sxn_environ->env->CallStaticVoidMethod(cppClass, debugMID, (jboolean)true);
 #endif    
 
 	proc->exception = NULL;
@@ -47,7 +47,7 @@ XdmValue * XPathProcessor::evaluate(const char * xpathStr) {
 }
 setProperty("resources", proc->getResourcesDirectory());
 jmethodID mID =
-		(jmethodID) sxn_environ->env->GetMethodID(cppClass, "evaluate",
+		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "evaluate",
 				"(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)[Lnet/sf/saxon/s9api/XdmValue;");
 if (!mID) {
 	cerr << "Error: MyClassInDll." << "evaluate" << " not found\n"
@@ -56,80 +56,80 @@ if (!mID) {
 } else {
 	jobjectArray stringArray = NULL;
 	jobjectArray objectArray = NULL;
-	jclass objectClass = lookForClass(sxn_environ->env, "java/lang/Object");
-	jclass stringClass = lookForClass(sxn_environ->env, "java/lang/String");
+	jclass objectClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/Object");
+	jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/String");
 
 	int size = parameters.size() + properties.size();
 	if (size > 0) {
-		objectArray = sxn_environ->env->NewObjectArray((jint) size,
+		objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				objectClass, 0);
-		stringArray = sxn_environ->env->NewObjectArray((jint) size,
+		stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				stringClass, 0);
 		int i = 0;
 		for (map<std::string, XdmValue*>::iterator iter = parameters.begin();
 				iter != parameters.end(); ++iter, i++) {
-			sxn_environ->env->SetObjectArrayElement(stringArray, i,
-					sxn_environ->env->NewStringUTF((iter->first).c_str()));
-			sxn_environ->env->SetObjectArrayElement(objectArray, i,
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
 					(iter->second)->getUnderlyingValue(proc));
 		}
 		for (map<std::string, std::string>::iterator iter = properties.begin();
 				iter != properties.end(); ++iter, i++) {
-			sxn_environ->env->SetObjectArrayElement(stringArray, i,
-					sxn_environ->env->NewStringUTF((iter->first).c_str()));
-			sxn_environ->env->SetObjectArrayElement(objectArray, i,
-					sxn_environ->env->NewStringUTF((iter->second).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->second).c_str()));
 		}
 	}
 	jobjectArray results = (jobjectArray)(
-			sxn_environ->env->CallObjectMethod(cppXP, mID,
-					sxn_environ->env->NewStringUTF(cwdXP.c_str()),
-					sxn_environ->env->NewStringUTF(xpathStr), stringArray, objectArray));
+			SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXP, mID,
+					SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXP.c_str()),
+					SaxonProcessor::sxn_environ->env->NewStringUTF(xpathStr), stringArray, objectArray));
 	if(!results) {
 		if(exceptionOccurred()) {
 			if(proc->exception != NULL) {
 				delete proc->exception;
 			}
-			proc->exception = proc->checkForExceptionCPP(sxn_environ->env, cppClass, NULL);
+			proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
 			proc->exceptionClear();
 			return NULL;
 	   		
      		}
 	}
 	
-	int sizex = sxn_environ->env->GetArrayLength(results);
+	int sizex = SaxonProcessor::sxn_environ->env->GetArrayLength(results);
 	if (size > 0) {
-		sxn_environ->env->DeleteLocalRef(stringArray);
-		sxn_environ->env->DeleteLocalRef(objectArray);
+		SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
+		SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
 	}
 	if (sizex>0) {
-		jclass atomicValueClass = lookForClass(sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
-		jclass nodeClass = lookForClass(sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
-		jclass functionItemClass = lookForClass(sxn_environ->env, "net/sf/saxon/s9api/XdmFunctionItem");
+		jclass atomicValueClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
+		jclass nodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
+		jclass functionItemClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmFunctionItem");
 
 		XdmValue * value = new XdmValue();
 		value->setProcessor(proc);
 		XdmItem * xdmItem = NULL;
 		for (int p=0; p < sizex; ++p) 
 		{
-			jobject resulti = sxn_environ->env->GetObjectArrayElement(results, p);
+			jobject resulti = SaxonProcessor::sxn_environ->env->GetObjectArrayElement(results, p);
 			//value->addUnderlyingValue(resulti);
 
-			if(sxn_environ->env->IsInstanceOf(resulti, atomicValueClass)           == JNI_TRUE) {
+			if(SaxonProcessor::sxn_environ->env->IsInstanceOf(resulti, atomicValueClass)           == JNI_TRUE) {
 				xdmItem = new XdmAtomicValue(resulti);
 				
 
-			} else if(sxn_environ->env->IsInstanceOf(resulti, nodeClass)           == JNI_TRUE) {
+			} else if(SaxonProcessor::sxn_environ->env->IsInstanceOf(resulti, nodeClass)           == JNI_TRUE) {
 				xdmItem = new XdmNode(resulti);
 
 
-			} else if (sxn_environ->env->IsInstanceOf(resulti, functionItemClass)           == JNI_TRUE) {
+			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(resulti, functionItemClass)           == JNI_TRUE) {
 				continue;
 			}
 			xdmItem->setProcessor(proc);
 			value->addXdmItem(xdmItem);
 		}
-		sxn_environ->env->DeleteLocalRef(results);
+		SaxonProcessor::sxn_environ->env->DeleteLocalRef(results);
 		return value;
 	}
 }
@@ -144,7 +144,7 @@ XdmItem * XPathProcessor::evaluateSingle(const char * xpathStr) {
         }
 setProperty("resources", proc->getResourcesDirectory());
 jmethodID mID =
-		(jmethodID) sxn_environ->env->GetMethodID(cppClass, "evaluateSingle",
+		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "evaluateSingle",
 				"(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmItem;");
 if (!mID) {
 	cerr << "Error: MyClassInDll." << "evaluateSingle" << " not found\n"
@@ -153,8 +153,8 @@ if (!mID) {
 } else {
 	jobjectArray stringArray = NULL;
 	jobjectArray objectArray = NULL;
-	jclass objectClass = lookForClass(sxn_environ->env, "java/lang/Object");
-	jclass stringClass = lookForClass(sxn_environ->env, "java/lang/String");
+	jclass objectClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/Object");
+	jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/String");
 
 	int size = parameters.size() + properties.size();
 #ifdef DEBUG
@@ -163,16 +163,16 @@ if (!mID) {
 		cerr<<"size:"<<size<<endl;
 #endif
 	if (size > 0) {
-		objectArray = sxn_environ->env->NewObjectArray((jint) size,
+		objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				objectClass, 0);
-		stringArray = sxn_environ->env->NewObjectArray((jint) size,
+		stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				stringClass, 0);
 		int i = 0;
 		for (map<std::string, XdmValue*>::iterator iter = parameters.begin();
 				iter != parameters.end(); ++iter, i++) {
-			sxn_environ->env->SetObjectArrayElement(stringArray, i,
-					sxn_environ->env->NewStringUTF((iter->first).c_str()));
-			sxn_environ->env->SetObjectArrayElement(objectArray, i,
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
 					(iter->second)->getUnderlyingValue(proc));
 #ifdef DEBUG
 				string s1 = typeid(iter->second).name();
@@ -191,33 +191,33 @@ if (!mID) {
 		}
 		for (map<std::string, std::string>::iterator iter = properties.begin();
 				iter != properties.end(); ++iter, i++) {
-			sxn_environ->env->SetObjectArrayElement(stringArray, i,
-					sxn_environ->env->NewStringUTF((iter->first).c_str()));
-			sxn_environ->env->SetObjectArrayElement(objectArray, i,
-					sxn_environ->env->NewStringUTF((iter->second).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->second).c_str()));
 		}
 	}
 	jobject result = (jobject)(
-			sxn_environ->env->CallObjectMethod(cppXP, mID,
-					sxn_environ->env->NewStringUTF(cwdXP.c_str()),
-					sxn_environ->env->NewStringUTF(xpathStr), stringArray, objectArray));
+			SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXP, mID,
+					SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXP.c_str()),
+					SaxonProcessor::sxn_environ->env->NewStringUTF(xpathStr), stringArray, objectArray));
 	if (size > 0) {
-		sxn_environ->env->DeleteLocalRef(stringArray);
-		sxn_environ->env->DeleteLocalRef(objectArray);
+		SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
+		SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
 	}
 	if (result) {
-		jclass atomicValueClass = lookForClass(sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
-		jclass nodeClass = lookForClass(sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
-		jclass functionItemClass = lookForClass(sxn_environ->env, "net/sf/saxon/s9api/XdmFunctionItem");
+		jclass atomicValueClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
+		jclass nodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
+		jclass functionItemClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmFunctionItem");
 		XdmItem * xdmItem = NULL;
-		if(sxn_environ->env->IsInstanceOf(result, atomicValueClass)           == JNI_TRUE) {
+		if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, atomicValueClass)           == JNI_TRUE) {
 			xdmItem = new XdmAtomicValue(result);
 
-		} else if(sxn_environ->env->IsInstanceOf(result, nodeClass)           == JNI_TRUE) {
+		} else if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, nodeClass)           == JNI_TRUE) {
 			
 			xdmItem = new XdmNode(result);
 
-		} else if (sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
+		} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
 			return NULL;
 		}
 		xdmItem->setProcessor(proc);
@@ -226,7 +226,7 @@ if (!mID) {
 			if(proc->exception != NULL) {
 				delete proc->exception;
 			}
-			proc->exception = proc->checkForExceptionCPP(sxn_environ->env, cppClass, NULL);
+			proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
 			proc->exceptionClear();
 	   		
      		}
@@ -256,16 +256,16 @@ void XPathProcessor::declareNamespace(const char *prefix, const char * uri){
 		return;
         }
 	jmethodID mID =
-		(jmethodID) sxn_environ->env->GetMethodID(cppClass, "declareNamespace",
+		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "declareNamespace",
 				"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
 	if (!mID) {
 	cerr << "Error: MyClassInDll." << "declareNameSpace" << " not found\n"
 			<< endl;
 
 	} else {
-			sxn_environ->env->CallObjectMethod(cppXP, mID,
-					sxn_environ->env->NewStringUTF(prefix),
-					sxn_environ->env->NewStringUTF(uri));
+			SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXP, mID,
+					SaxonProcessor::sxn_environ->env->NewStringUTF(prefix),
+					SaxonProcessor::sxn_environ->env->NewStringUTF(uri));
 	}
 
 }
@@ -277,7 +277,7 @@ void XPathProcessor::setBaseURI(const char * uriStr) {
         }
 setProperty("resources", proc->getResourcesDirectory());
 jmethodID mID =
-		(jmethodID) sxn_environ->env->GetMethodID(cppClass, "setBaseURI",
+		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "setBaseURI",
 				"(Ljava/lang/String;)Z");
 if (!mID) {
 	cerr << "Error: MyClassInDll." << "setBaseURI" << " not found\n"
@@ -285,8 +285,8 @@ if (!mID) {
 
 } else {
 
-	sxn_environ->env->CallObjectMethod(cppXP, mID,
-					sxn_environ->env->NewStringUTF(uriStr));
+	SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXP, mID,
+					SaxonProcessor::sxn_environ->env->NewStringUTF(uriStr));
 }
 
 }
@@ -298,7 +298,7 @@ bool XPathProcessor::effectiveBooleanValue(const char * xpathStr) {
         }
 setProperty("resources", proc->getResourcesDirectory());
 jmethodID mID =
-		(jmethodID) sxn_environ->env->GetMethodID(cppClass, "effectiveBooleanValue",
+		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "effectiveBooleanValue",
 				"(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Z");
 if (!mID) {
 	cerr << "Error: MyClassInDll." << "effectiveBooleanValue" << " not found\n"
@@ -307,44 +307,44 @@ if (!mID) {
 } else {
 	jobjectArray stringArray = NULL;
 	jobjectArray objectArray = NULL;
-	jclass objectClass = lookForClass(sxn_environ->env, "java/lang/Object");
-	jclass stringClass = lookForClass(sxn_environ->env, "java/lang/String");
+	jclass objectClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/Object");
+	jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/String");
 
 	int size = parameters.size() + properties.size();
 	if (size > 0) {
-		objectArray = sxn_environ->env->NewObjectArray((jint) size,
+		objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				objectClass, 0);
-		stringArray = sxn_environ->env->NewObjectArray((jint) size,
+		stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				stringClass, 0);
 		int i = 0;
 		for (map<std::string, XdmValue*>::iterator iter = parameters.begin();
 				iter != parameters.end(); ++iter, i++) {
-			sxn_environ->env->SetObjectArrayElement(stringArray, i,
-					sxn_environ->env->NewStringUTF((iter->first).c_str()));
-			sxn_environ->env->SetObjectArrayElement(objectArray, i,
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
 					(iter->second)->getUnderlyingValue(proc));
 		}
 		for (map<std::string, std::string>::iterator iter = properties.begin();
 				iter != properties.end(); ++iter, i++) {
-			sxn_environ->env->SetObjectArrayElement(stringArray, i,
-					sxn_environ->env->NewStringUTF((iter->first).c_str()));
-			sxn_environ->env->SetObjectArrayElement(objectArray, i,
-					sxn_environ->env->NewStringUTF((iter->second).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
+			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
+					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->second).c_str()));
 		}
 	}
 	jboolean result = (jboolean)(
-			sxn_environ->env->CallBooleanMethod(cppXP, mID,
-					sxn_environ->env->NewStringUTF(cwdXP.c_str()),
-					sxn_environ->env->NewStringUTF(xpathStr), stringArray, objectArray));
+			SaxonProcessor::sxn_environ->env->CallBooleanMethod(cppXP, mID,
+					SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXP.c_str()),
+					SaxonProcessor::sxn_environ->env->NewStringUTF(xpathStr), stringArray, objectArray));
 	if (size > 0) {
-		sxn_environ->env->DeleteLocalRef(stringArray);
-		sxn_environ->env->DeleteLocalRef(objectArray);
+		SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
+		SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
 	}
 	if(exceptionOccurred()) {
 			if(proc->exception != NULL) {
 				delete proc->exception;
 			}
-			proc->exception = proc->checkForExceptionCPP(sxn_environ->env, cppClass, NULL);
+			proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
 			proc->exceptionClear();
 	   		
      	}
@@ -414,7 +414,7 @@ void XPathProcessor::exceptionClear(){
 		proc->exception = NULL;	
 	}
 
-   sxn_environ->env->ExceptionClear();
+   SaxonProcessor::sxn_environ->env->ExceptionClear();
  
 }
 
@@ -442,6 +442,6 @@ const char * XPathProcessor::getErrorMessage(int i ){
 
 
     const char* XPathProcessor::checkException(){
-	return checkForException(*(sxn_environ), cppClass, cppXP);
+	return checkForException(*(SaxonProcessor::sxn_environ), cppClass, cppXP);
     }
 

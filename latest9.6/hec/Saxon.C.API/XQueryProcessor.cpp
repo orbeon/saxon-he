@@ -13,14 +13,14 @@
     proc = p;
 
   
-     cppClass = lookForClass(sxn_environ->env, "net/sf/saxon/option/cpp/XQueryEngine");
+     cppClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/option/cpp/XQueryEngine");
 
 
-    cppXQ = createSaxonProcessor2 (sxn_environ->env, cppClass, "(Lnet/sf/saxon/s9api/Processor;)V", proc->proc);
+    cppXQ = createSaxonProcessor2 (SaxonProcessor::sxn_environ->env, cppClass, "(Lnet/sf/saxon/s9api/Processor;)V", proc->proc);
     
 #ifdef DEBUG
-	jmethodID debugMID = sxn_environ->env->GetStaticMethodID(cppClass, "setDebugMode", "(Z)V");
-	sxn_environ->env->CallStaticVoidMethod(cppClass, debugMID, (jboolean)true);
+	jmethodID debugMID = SaxonProcessor::sxn_environ->env->GetStaticMethodID(cppClass, "setDebugMode", "(Z)V");
+	SaxonProcessor::sxn_environ->env->CallStaticVoidMethod(cppClass, debugMID, (jboolean)true);
 #endif
 
     proc->exception = NULL;
@@ -61,7 +61,7 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 		return;
         }
 	jmethodID mID =
-		(jmethodID) sxn_environ->env->GetMethodID(cppClass, "declareNamespace",
+		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "declareNamespace",
 				"(Ljava/lang/String;Ljava/lang/String;)V");
 	if (!mID) {
 	cerr << "Error: MyClassInDll." << "declareNameSpace" << " not found\n"
@@ -69,9 +69,9 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 
 	} else {
 	
-			sxn_environ->env->CallObjectMethod(cppXQ, mID,
-					sxn_environ->env->NewStringUTF(prefix),
-					sxn_environ->env->NewStringUTF(uri));
+			SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXQ, mID,
+					SaxonProcessor::sxn_environ->env->NewStringUTF(prefix),
+					SaxonProcessor::sxn_environ->env->NewStringUTF(uri));
 	}
 
 }
@@ -164,7 +164,7 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
     void XQueryProcessor::executeQueryToFile(const char * infilename, const char * ofilename, const char * query){
 	setProperty("resources", proc->getResourcesDirectory());  
 
-	jmethodID mID = (jmethodID)sxn_environ->env->GetMethodID (cppClass,"executeQueryToFile", "(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)V");
+	jmethodID mID = (jmethodID)SaxonProcessor::sxn_environ->env->GetMethodID (cppClass,"executeQueryToFile", "(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)V");
  	if (!mID) {
         cout<<"Error: MyClassInDll."<<"executeQueryToFile"<<" not found\n"<<endl;
     } else {
@@ -177,43 +177,43 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 	if(size >0) {
 
 	   int i=0;
-           jclass objectClass = lookForClass(sxn_environ->env, "java/lang/Object");
-	   jclass stringClass = lookForClass(sxn_environ->env, "java/lang/String");
-	   objectArray = sxn_environ->env->NewObjectArray( (jint)size, objectClass, 0 );
-	   stringArray = sxn_environ->env->NewObjectArray( (jint)size, stringClass, 0 );
+           jclass objectClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/Object");
+	   jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/String");
+	   objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray( (jint)size, objectClass, 0 );
+	   stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray( (jint)size, stringClass, 0 );
 	   if(query!= NULL) {
-	     sxn_environ->env->SetObjectArrayElement( stringArray, i, sxn_environ->env->NewStringUTF("qs") );
-     	     sxn_environ->env->SetObjectArrayElement( objectArray, i, sxn_environ->env->NewStringUTF(query));
+	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( stringArray, i, SaxonProcessor::sxn_environ->env->NewStringUTF("qs") );
+     	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( objectArray, i, SaxonProcessor::sxn_environ->env->NewStringUTF(query));
 	     i++;	
 	   }
 	   if(infilename!= NULL) {
-	     sxn_environ->env->SetObjectArrayElement( stringArray, i, sxn_environ->env->NewStringUTF("s") );
-     	     sxn_environ->env->SetObjectArrayElement( objectArray, i, sxn_environ->env->NewStringUTF(infilename));
+	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( stringArray, i, SaxonProcessor::sxn_environ->env->NewStringUTF("s") );
+     	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( objectArray, i, SaxonProcessor::sxn_environ->env->NewStringUTF(infilename));
 	     i++;	
 	   }
 	   for(map<std::string, XdmValue* >::iterator iter=parameters.begin(); iter!=parameters.end(); ++iter, i++) {
-	     sxn_environ->env->SetObjectArrayElement( stringArray, i, sxn_environ->env->NewStringUTF( (iter->first).c_str() ) );
-		bool checkCast = sxn_environ->env->IsInstanceOf((iter->second)->getUnderlyingValue(proc), lookForClass(sxn_environ->env, "net/sf/saxon/option/cpp/XdmValueForCpp") );
+	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( stringArray, i, SaxonProcessor::sxn_environ->env->NewStringUTF( (iter->first).c_str() ) );
+		bool checkCast = SaxonProcessor::sxn_environ->env->IsInstanceOf((iter->second)->getUnderlyingValue(proc), lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/option/cpp/XdmValueForCpp") );
 		if(( (bool)checkCast)==false ){
 			failure = "FAILURE in  array of XdmValueForCpp";
 		} 
-	     sxn_environ->env->SetObjectArrayElement( objectArray, i, (jobject)((iter->second)->getUnderlyingValue(proc)) );
+	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( objectArray, i, (jobject)((iter->second)->getUnderlyingValue(proc)) );
 	   }
   	   for(map<std::string, std::string >::iterator iter=properties.begin(); iter!=properties.end(); ++iter, i++) {
-	     sxn_environ->env->SetObjectArrayElement( stringArray, i, sxn_environ->env->NewStringUTF( (iter->first).c_str()  ));
-	     sxn_environ->env->SetObjectArrayElement( objectArray, i, (jobject)(sxn_environ->env->NewStringUTF((iter->second).c_str())) );
+	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( stringArray, i, SaxonProcessor::sxn_environ->env->NewStringUTF( (iter->first).c_str()  ));
+	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( objectArray, i, (jobject)(SaxonProcessor::sxn_environ->env->NewStringUTF((iter->second).c_str())) );
 	   }
 	}
 
-	 sxn_environ->env->CallObjectMethod(cppXQ, mID, sxn_environ->env->NewStringUTF(cwdXQ.c_str()), sxn_environ->env->NewStringUTF(ofilename), stringArray, objectArray );
-	  sxn_environ->env->DeleteLocalRef(objectArray);
-	  sxn_environ->env->DeleteLocalRef(stringArray);
+	 SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXQ, mID, SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXQ.c_str()), SaxonProcessor::sxn_environ->env->NewStringUTF(ofilename), stringArray, objectArray );
+	  SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
+	  SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
 
 	if(exceptionOccurred()) {
 			if(proc->exception != NULL) {
 				delete proc->exception;
 			}		
-		proc->exception = proc->checkForExceptionCPP(sxn_environ->env, cppClass, NULL);	
+		proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);	
 		proc->exceptionClear();
 	   		
      	}
@@ -226,7 +226,7 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 
     XdmValue * XQueryProcessor::executeQueryToValue(const char * infilename, const char * query){
 	setProperty("resources", proc->getResourcesDirectory()); 
- jmethodID mID = (jmethodID)sxn_environ->env->GetMethodID (cppClass,"executeQueryToValue", "(Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmValue;");
+ jmethodID mID = (jmethodID)SaxonProcessor::sxn_environ->env->GetMethodID (cppClass,"executeQueryToValue", "(Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmValue;");
  if (!mID) {
         cout<<"Error: MyClassInDll."<<"executeQueryToValue"<<" not found\n"<<endl;
     } else {
@@ -238,51 +238,51 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 	if(infilename!= NULL) size++;
 	if(size >0) {
 	   int i=0;
-           jclass objectClass = lookForClass(sxn_environ->env, "java/lang/Object");
-	   jclass stringClass = lookForClass(sxn_environ->env, "java/lang/String");
-	   objectArray = sxn_environ->env->NewObjectArray( (jint)size, objectClass, 0 );
-	   stringArray = sxn_environ->env->NewObjectArray( (jint)size, stringClass, 0 );
+           jclass objectClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/Object");
+	   jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/String");
+	   objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray( (jint)size, objectClass, 0 );
+	   stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray( (jint)size, stringClass, 0 );
 
 	   if(query!= NULL) {
-	     sxn_environ->env->SetObjectArrayElement( stringArray, i, sxn_environ->env->NewStringUTF("qs") );
-     	     sxn_environ->env->SetObjectArrayElement( objectArray, i, sxn_environ->env->NewStringUTF(query));
+	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( stringArray, i, SaxonProcessor::sxn_environ->env->NewStringUTF("qs") );
+     	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( objectArray, i, SaxonProcessor::sxn_environ->env->NewStringUTF(query));
 	     i++;	
 	   }
 	   if(infilename!= NULL) {
-	     sxn_environ->env->SetObjectArrayElement( stringArray, i, sxn_environ->env->NewStringUTF("s") );
-     	     sxn_environ->env->SetObjectArrayElement( objectArray, i, sxn_environ->env->NewStringUTF(infilename));
+	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( stringArray, i, SaxonProcessor::sxn_environ->env->NewStringUTF("s") );
+     	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( objectArray, i, SaxonProcessor::sxn_environ->env->NewStringUTF(infilename));
 	     i++;	
 	   }
 	   for(map<std::string, XdmValue* >::iterator iter=parameters.begin(); iter!=parameters.end(); ++iter, i++) {
-	     sxn_environ->env->SetObjectArrayElement( stringArray, i, sxn_environ->env->NewStringUTF( (iter->first).c_str() ) );
-		bool checkCast = sxn_environ->env->IsInstanceOf((iter->second)->getUnderlyingValue(proc), lookForClass(sxn_environ->env, "net/sf/saxon/option/cpp/XdmValueForCpp") );
+	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( stringArray, i, SaxonProcessor::sxn_environ->env->NewStringUTF( (iter->first).c_str() ) );
+		bool checkCast = SaxonProcessor::sxn_environ->env->IsInstanceOf((iter->second)->getUnderlyingValue(proc), lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/option/cpp/XdmValueForCpp") );
 		if(( (bool)checkCast)==false ){
 			failure = "FAILURE in  array of XdmValueForCpp";
 		} 
-	     sxn_environ->env->SetObjectArrayElement( objectArray, i, (jobject)((iter->second)->getUnderlyingValue(proc)) );
+	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( objectArray, i, (jobject)((iter->second)->getUnderlyingValue(proc)) );
 	   }
   	   for(map<std::string, std::string >::iterator iter=properties.begin(); iter!=properties.end(); ++iter, i++) {
-	     sxn_environ->env->SetObjectArrayElement( stringArray, i, sxn_environ->env->NewStringUTF( (iter->first).c_str()  ));
-	     sxn_environ->env->SetObjectArrayElement( objectArray, i, (jobject)(sxn_environ->env->NewStringUTF((iter->second).c_str())) );
+	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( stringArray, i, SaxonProcessor::sxn_environ->env->NewStringUTF( (iter->first).c_str()  ));
+	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( objectArray, i, (jobject)(SaxonProcessor::sxn_environ->env->NewStringUTF((iter->second).c_str())) );
 	   }
 	}
 
-	  jobject result = (jobject)(sxn_environ->env->CallObjectMethod(cppXQ, mID, sxn_environ->env->NewStringUTF(cwdXQ.c_str()), stringArray, objectArray ));
-	  sxn_environ->env->DeleteLocalRef(objectArray);
-	  sxn_environ->env->DeleteLocalRef(stringArray);
+	  jobject result = (jobject)(SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXQ, mID, SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXQ.c_str()), stringArray, objectArray ));
+	  SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
+	  SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
     if(result) {
-		jclass atomicValueClass = lookForClass(sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
-		jclass nodeClass = lookForClass(sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
-		jclass functionItemClass = lookForClass(sxn_environ->env, "net/sf/saxon/s9api/XdmFunctionItem");
+		jclass atomicValueClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
+		jclass nodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
+		jclass functionItemClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmFunctionItem");
 		XdmValue * xdmValue = NULL;
-		if(sxn_environ->env->IsInstanceOf(result, atomicValueClass)           == JNI_TRUE) {
+		if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, atomicValueClass)           == JNI_TRUE) {
 				xdmValue = new XdmAtomicValue(result);
 				
 
-			} else if(sxn_environ->env->IsInstanceOf(result, nodeClass)           == JNI_TRUE) {
+			} else if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, nodeClass)           == JNI_TRUE) {
 				xdmValue = new XdmNode(result);
 
-			} else if (sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
+			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
 				return NULL;
 			} else {
 				xdmValue = new XdmValue(result);
@@ -294,7 +294,7 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 			if(proc->exception != NULL) {
 				delete proc->exception;
 			}
-			proc->exception = proc->checkForExceptionCPP(sxn_environ->env, cppClass, NULL);
+			proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
 			proc->exceptionClear();
 	   		
      		} 
@@ -305,7 +305,7 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 
     const char * XQueryProcessor::executeQueryToString(const char * infilename, const char * query){
 	setProperty("resources", proc->getResourcesDirectory()); 
- jmethodID mID = (jmethodID)sxn_environ->env->GetMethodID (cppClass,"executeQueryToString", "(Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;");
+ jmethodID mID = (jmethodID)SaxonProcessor::sxn_environ->env->GetMethodID (cppClass,"executeQueryToString", "(Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;");
  if (!mID) {
         cout<<"Error: MyClassInDll."<<"executeQueryToString"<<" not found\n"<<endl;
     } else {
@@ -317,48 +317,48 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 	if(infilename!= NULL) size++;
 	if(size >0) {
 	   int i=0;
-           jclass objectClass = lookForClass(sxn_environ->env, "java/lang/Object");
-	   jclass stringClass = lookForClass(sxn_environ->env, "java/lang/String");
-	   objectArray = sxn_environ->env->NewObjectArray( (jint)size, objectClass, 0 );
-	   stringArray = sxn_environ->env->NewObjectArray( (jint)size, stringClass, 0 );
+           jclass objectClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/Object");
+	   jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/String");
+	   objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray( (jint)size, objectClass, 0 );
+	   stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray( (jint)size, stringClass, 0 );
 
 	   if(query!= NULL) {
-	     sxn_environ->env->SetObjectArrayElement( stringArray, i, sxn_environ->env->NewStringUTF("qs") );
-     	     sxn_environ->env->SetObjectArrayElement( objectArray, i, sxn_environ->env->NewStringUTF(query));
+	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( stringArray, i, SaxonProcessor::sxn_environ->env->NewStringUTF("qs") );
+     	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( objectArray, i, SaxonProcessor::sxn_environ->env->NewStringUTF(query));
 	     i++;	
 	   }
 	   if(infilename!= NULL) {
-	     sxn_environ->env->SetObjectArrayElement( stringArray, i, sxn_environ->env->NewStringUTF("s") );
-     	     sxn_environ->env->SetObjectArrayElement( objectArray, i, sxn_environ->env->NewStringUTF(infilename));
+	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( stringArray, i, SaxonProcessor::sxn_environ->env->NewStringUTF("s") );
+     	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( objectArray, i, SaxonProcessor::sxn_environ->env->NewStringUTF(infilename));
 	     i++;	
 	   }
 	   for(map<std::string, XdmValue* >::iterator iter=parameters.begin(); iter!=parameters.end(); ++iter, i++) {
-	     sxn_environ->env->SetObjectArrayElement( stringArray, i, sxn_environ->env->NewStringUTF( (iter->first).c_str() ) );
-		bool checkCast = sxn_environ->env->IsInstanceOf((iter->second)->getUnderlyingValue(proc), lookForClass(sxn_environ->env, "net/sf/saxon/option/cpp/XdmValueForCpp") );
+	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( stringArray, i, SaxonProcessor::sxn_environ->env->NewStringUTF( (iter->first).c_str() ) );
+		bool checkCast = SaxonProcessor::sxn_environ->env->IsInstanceOf((iter->second)->getUnderlyingValue(proc), lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/option/cpp/XdmValueForCpp") );
 		if(( (bool)checkCast)==false ){
 			failure = "FAILURE in  array of XdmValueForCpp";
 		} 
-	     sxn_environ->env->SetObjectArrayElement( objectArray, i, (jobject)((iter->second)->getUnderlyingValue(proc)) );
+	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( objectArray, i, (jobject)((iter->second)->getUnderlyingValue(proc)) );
 	   }
   	   for(map<std::string, std::string >::iterator iter=properties.begin(); iter!=properties.end(); ++iter, i++) {
-	     sxn_environ->env->SetObjectArrayElement( stringArray, i, sxn_environ->env->NewStringUTF( (iter->first).c_str()  ));
-	     sxn_environ->env->SetObjectArrayElement( objectArray, i, (jobject)(sxn_environ->env->NewStringUTF((iter->second).c_str())) );
+	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( stringArray, i, SaxonProcessor::sxn_environ->env->NewStringUTF( (iter->first).c_str()  ));
+	     SaxonProcessor::sxn_environ->env->SetObjectArrayElement( objectArray, i, (jobject)(SaxonProcessor::sxn_environ->env->NewStringUTF((iter->second).c_str())) );
 	   }
 	}
 
-	  jstring result = (jstring)(sxn_environ->env->CallObjectMethod(cppXQ, mID, sxn_environ->env->NewStringUTF(cwdXQ.c_str()), stringArray, objectArray ));
-	  sxn_environ->env->DeleteLocalRef(objectArray);
-	  sxn_environ->env->DeleteLocalRef(stringArray);
+	  jstring result = (jstring)(SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXQ, mID, SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXQ.c_str()), stringArray, objectArray ));
+	  SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
+	  SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
 
 	  if(result) {
-             const char * str = sxn_environ->env->GetStringUTFChars(result, NULL);
+             const char * str = SaxonProcessor::sxn_environ->env->GetStringUTFChars(result, NULL);
             //return "result should be ok";            
 	    return str;
 	   } else if(exceptionOccurred()) {
 			if(proc->exception != NULL) {
 				delete proc->exception;
 			}
-			proc->exception = proc->checkForExceptionCPP(sxn_environ->env, cppClass, NULL);
+			proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
 			proc->exceptionClear();
 	   		
      		}
@@ -401,7 +401,7 @@ void XQueryProcessor::exceptionClear(){
 	if(proc->exception != NULL) {
 		delete proc->exception;
 		proc->exception = NULL;	
-		sxn_environ->env->ExceptionClear();
+		SaxonProcessor::sxn_environ->env->ExceptionClear();
 	}
 
    
@@ -426,10 +426,10 @@ const char * XQueryProcessor::getErrorMessage(int i ){
 
 const char* XQueryProcessor::checkException(){
 	/*if(proc->exception == NULL) {
-		proc->exception = proc->checkForException(sxn_environ->env, cppClass, cppXQ);
+		proc->exception = proc->checkForException(SaxonProcessor::sxn_environ->env, cppClass, cppXQ);
 	}
         return proc->exception;*/
-	return checkForException(*(sxn_environ), cppClass, cppXQ);
+	return checkForException(*(SaxonProcessor::sxn_environ), cppClass, cppXQ);
 }
 
 

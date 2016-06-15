@@ -30,20 +30,20 @@
 	}
 	
 	if(proc != NULL) {
-		jclass xdmUtilsClass = lookForClass(sxn_environ->env, "net/sf/saxon/option/cpp/XdmUtils");
-		jmethodID xmID = (jmethodID) sxn_environ->env->GetStaticMethodID(xdmUtilsClass,"getPrimitiveTypeName",
+		jclass xdmUtilsClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/option/cpp/XdmUtils");
+		jmethodID xmID = (jmethodID) SaxonProcessor::sxn_environ->env->GetStaticMethodID(xdmUtilsClass,"getPrimitiveTypeName",
 					"(Lnet/sf/saxon/s9api/XdmAtomicValue;)Ljava/lang/String;");
 		if (!xmID) {
 			std::cerr << "Error: SaxonDll." << "getPrimitiveTypeName"
 				<< " not found\n" << std::endl;
 			return "";
 		}
-		jstring result = (jstring)(sxn_environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID,value->xdmvalue));
+		jstring result = (jstring)(SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID,value->xdmvalue));
 		if(result) {
-			const char * stri = sxn_environ->env->GetStringUTFChars(result,
+			const char * stri = SaxonProcessor::sxn_environ->env->GetStringUTFChars(result,
 					NULL);
 		
-		//sxn_environ->env->DeleteLocalRef(result);
+		//SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
 
 			return stri;
 		}
@@ -55,8 +55,8 @@
 
     bool XdmAtomicValue::getBooleanValue(){
 	if(proc != NULL) {
-		jclass xdmNodeClass = lookForClass(sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
-		jmethodID bmID = (jmethodID) sxn_environ->env->GetMethodID(xdmNodeClass,
+		jclass xdmNodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
+		jmethodID bmID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(xdmNodeClass,
 					"getBooleanValue",
 					"()Z");
 		if (!bmID) {
@@ -64,7 +64,7 @@
 				<< " not found\n" << std::endl;
 			return false;
 		} else {
-			jboolean result = (jboolean)(sxn_environ->env->CallBooleanMethod(value->xdmvalue, bmID));
+			jboolean result = (jboolean)(SaxonProcessor::sxn_environ->env->CallBooleanMethod(value->xdmvalue, bmID));
 			if(result) {
 				return (bool)result;
 			}
@@ -77,8 +77,8 @@
 
     double XdmAtomicValue::getDoubleValue(){
 	if(proc != NULL) {
-		jclass xdmNodeClass = lookForClass(sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
-		jmethodID bmID = (jmethodID) sxn_environ->env->GetMethodID(xdmNodeClass,
+		jclass xdmNodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
+		jmethodID bmID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(xdmNodeClass,
 					"getDoubleValue",
 					"()D");
 		if (!bmID) {
@@ -86,11 +86,11 @@
 				<< " not found\n" << std::endl;
 			return 0;
 		} else {
-			jdouble result = (jdouble)(sxn_environ->env->CallDoubleMethod(value->xdmvalue, bmID));
+			jdouble result = (jdouble)(SaxonProcessor::sxn_environ->env->CallDoubleMethod(value->xdmvalue, bmID));
 			if(result) {
 				return (double)result;
 			}
-checkForException(*(sxn_environ), xdmNodeClass, NULL);
+checkForException(*(SaxonProcessor::sxn_environ), xdmNodeClass, NULL);
 		}
 	} else {
 		std::cerr<<"Error: Processor not set in XdmAtomicValue"<<std::endl;
@@ -109,8 +109,8 @@ checkForException(*(sxn_environ), xdmNodeClass, NULL);
 
     long XdmAtomicValue::getLongValue(){
 		if(proc != NULL) {
-		jclass xdmNodeClass = lookForClass(sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
-		jmethodID bmID = (jmethodID) sxn_environ->env->GetMethodID(xdmNodeClass,
+		jclass xdmNodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
+		jmethodID bmID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(xdmNodeClass,
 					"getLongValue",
 					"()J");
 		if (!bmID) {
@@ -118,7 +118,7 @@ checkForException(*(sxn_environ), xdmNodeClass, NULL);
 				<< " not found\n" << std::endl;
 			return 0;
 		} else {
-			jlong result = (jlong)(sxn_environ->env->CallObjectMethod(value->xdmvalue, bmID));
+			jlong result = (jlong)(SaxonProcessor::sxn_environ->env->CallObjectMethod(value->xdmvalue, bmID));
 			if(result) {
 				return (long)result;
 			}

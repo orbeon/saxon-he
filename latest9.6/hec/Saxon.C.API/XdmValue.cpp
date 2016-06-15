@@ -33,7 +33,7 @@
 		values.clear();
 		if(valueType != NULL) {delete valueType;}
 		if(jValues && proc != NULL) {
-			sxn_environ->env->DeleteLocalRef(jValues);
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(jValues);
 		}
 		xdmSize=0;
 	}
@@ -73,7 +73,7 @@
 			proc = proci;	
 			jValues;
 			int i;
-			JNIEnv *env = sxn_environ->env;
+			JNIEnv *env = SaxonProcessor::sxn_environ->env;
 			int count = values.size();
 			if(count == 0) {
 				return NULL;
@@ -98,13 +98,13 @@
 	XdmItem * XdmValue::itemAt(int n){
 		/*if(jValues != NULL) {
 			values.clear();
-			int sizex = sxn_environ->env->GetArrayLength(jvalues);
+			int sizex = SaxonProcessor::sxn_environ->env->GetArrayLength(jvalues);
 			for (int p=0; p < sizex; ++p) 
 			{
-				jobject resulti = sxn_environ->env->GetObjectArrayElement(jValues, p);
+				jobject resulti = SaxonProcessor::sxn_environ->env->GetObjectArrayElement(jValues, p);
 				values->addUnderlyingValue(resulti);
 			}
-			sxn_environ->env->DeleteLocalRef(jValues);
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(jValues);
 			jValues = NULL;
 		}*/
 		if(n >= 0 && n< values.size()) {
