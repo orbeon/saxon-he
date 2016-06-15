@@ -28,9 +28,6 @@ import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.SequenceType;
 
-import java.util.HashMap;
-import java.util.Map;
-
 
 /**
  * A LetExpression represents the XQuery construct let $x := expr return expr. It is used
@@ -318,8 +315,15 @@ public class LetExpression extends Assignation implements TailCallReturner {
             if (!isIndexedVariable) {
                 verifyReferences();
                 if (references != null && references.size() < 2) {
-                    // We may have removed references to the variable; try again at inlining.
-                    return optimize(visitor, contextItemType);
+                    if (references.isEmpty()) {
+                        // We may have removed references to the variable; try again at eliminating this expression.
+                        return optimize(visitor, contextItemType);
+                    } else {
+                        // there is one remaining reference; try again at inlining if it's not in a loop
+                        if (!references.get(0).isInLoop()) {
+                            return optimize(visitor, contextItemType);
+                        }
+                    }
                 }
             }
         }

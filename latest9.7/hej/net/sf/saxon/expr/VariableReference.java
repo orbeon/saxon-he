@@ -27,9 +27,6 @@ import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.SequenceType;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Variable reference: a reference to a variable. This may be an XSLT-defined variable, a range
  * variable defined within the XPath expression, or a variable defined in some other static context.
@@ -222,11 +219,15 @@ public abstract class VariableReference extends Expression implements BindingRef
 //            }
 
         if (binding != null) {
-            inLoop = ExpressionTool.isLoopingReference(this, binding);
+            recomputeInLoop();
             binding.addReference(this, inLoop);
         }
 
         return this;
+    }
+
+    public void recomputeInLoop() {
+        inLoop = ExpressionTool.isLoopingReference(this, binding);
     }
 
     /**

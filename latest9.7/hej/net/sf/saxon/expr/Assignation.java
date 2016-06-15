@@ -515,6 +515,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
         if (exp instanceof LocalVariableReference) {
             LocalVariableReference ref = (LocalVariableReference) exp;
             if (ref.getBinding() == binding) {
+                ref.recomputeInLoop();
                 results[0] += ref.isInLoop() ? 10 : 1;
                 references.add((LocalVariableReference) exp);
             }
