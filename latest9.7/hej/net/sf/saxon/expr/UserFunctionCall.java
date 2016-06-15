@@ -491,8 +491,14 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
      */
     private Sequence callFunction(XPathContext context) throws XPathException {
         UserFunction targetFunction;
-        Sequence[] actualArgs;
+        Sequence[] actualArgs = evaluateArguments(context);
         XPathContextMajor c2;
+
+        if (isTailCall()) {
+            requestTailCall(context, actualArgs);
+            return EmptySequence.getInstance();
+        }
+
         if (bindingSlot >= 0) {
             Component target = getTargetComponent(context);
             targetFunction = (UserFunction)target.getCode();
@@ -500,21 +506,11 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
             if (targetComponent.getVisibility() == Visibility.ABSENT) {
                 throw new XPathException("Cannot call a function defined with visibility=absent", "XTDE3052");
             }
-            actualArgs = evaluateArguments(context);
-            if (isTailCall()) {
-                ((XPathContextMajor) context).requestTailCall(targetComponent, actualArgs);
-                return EmptySequence.getInstance();
-            }
             c2 = targetFunction.makeNewContext(context);
             c2.setCurrentComponent(targetComponent);
         } else {
             targetFunction = function;
             actualArgs = evaluateArguments(context);
-            if (isTailCall()) {
-                Component<UserFunction> targetComponent = targetFunction.getDeclaringComponent();
-                ((XPathContextMajor) context).requestTailCall(targetComponent, actualArgs);
-                return EmptySequence.getInstance();
-            }
             c2 = targetFunction.makeNewContext(context);
         }
 
@@ -526,6 +522,22 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
         }
     }
 
+    private void requestTailCall(XPathContext context, Sequence[] actualArgs) throws XPathException {
+        if (bindingSlot >= 0) {
+            TailCallLoop.TailCallComponent info = new TailCallLoop.TailCallComponent();
+            Component target = getTargetComponent(context);
+            info.component = target;
+            info.function = (UserFunction) target.getCode();
+            ((XPathContextMajor) context).requestTailCall(info, actualArgs);
+
+        } else {
+            TailCallLoop.TailCallFunction info = new TailCallLoop.TailCallFunction();
+            info.function = function;
+            ((XPathContextMajor) context).requestTailCall(info, actualArgs);
+        }
+
+    }
+
     /**
      * Process the function call in push mode
      *
@@ -534,29 +546,26 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
      */
 
     public void process(XPathContext context) throws XPathException {
+
+        Sequence[] actualArgs = evaluateArguments(context);
+
+        if (isTailCall()) {
+            requestTailCall(context, actualArgs);
+            return;
+        }
+
         if (bindingSlot >= 0) {
             Component target = getTargetComponent(context);
             UserFunction targetFunction = (UserFunction) target.getCode();
-            Component<UserFunction> targetComponent = (Component<UserFunction>) target;
-            if (targetComponent.getVisibility() == Visibility.ABSENT) {
+            if (target.getVisibility() == Visibility.ABSENT) {
                 throw new XPathException("Cannot call a function defined with visibility=absent", "XTDE3052");
             }
-            Sequence[] actualArgs = evaluateArguments(context);
-            if (isTailCall()) {
-                ((XPathContextMajor) context).requestTailCall(targetComponent, actualArgs);
-            } else {
-                XPathContextMajor c2 = targetFunction.makeNewContext(context);
-                c2.setCurrentComponent(targetComponent);
-                targetFunction.process(actualArgs, c2);
-            }
+            XPathContextMajor c2 = targetFunction.makeNewContext(context);
+            c2.setCurrentComponent(target);
+            targetFunction.process(actualArgs, c2);
         } else {
-            Sequence[] actualArgs = evaluateArguments(context);
-            if (isTailCall()) {
-                ((XPathContextMajor) context).requestTailCall(function.getDeclaringComponent(), actualArgs);
-            } else {
-                XPathContextMajor c2 = function.makeNewContext(context);
-                function.process(actualArgs, c2);
-            }
+            XPathContextMajor c2 = function.makeNewContext(context);
+            function.process(actualArgs, c2);
         }
     }
 
@@ -581,21 +590,24 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
      */
 
     public EventIterator iterateEvents(XPathContext context) throws XPathException {
+
+        Sequence[] actualArgs = evaluateArguments(context);
+
+        if (isTailCall()) {
+            requestTailCall(context, actualArgs);
+            return EmptyEventIterator.getInstance();
+        }
+
         Component target = getTargetComponent(context);
         UserFunction targetFunction = (UserFunction) target.getCode();
         Component<UserFunction> targetComponent = (Component<UserFunction>) target;
         if (targetComponent.getVisibility() == Visibility.ABSENT) {
             throw new XPathException("Cannot call a function defined with visibility=absent", "XTDE3052");
         }
-        Sequence[] actualArgs = evaluateArguments(context);
-        if (isTailCall()) {
-            ((XPathContextMajor) context).requestTailCall(targetComponent, actualArgs);
-            return EmptyEventIterator.getInstance();
-        } else {
-            XPathContextMajor c2 = targetFunction.makeNewContext(context);
-            c2.setCurrentComponent(targetComponent);
-            return targetFunction.iterateEvents(actualArgs, c2);
-        }
+        XPathContextMajor c2 = targetFunction.makeNewContext(context);
+        c2.setCurrentComponent(targetComponent);
+        return targetFunction.iterateEvents(actualArgs, c2);
+
     }
 
 

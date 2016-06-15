@@ -14,10 +14,7 @@ import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.RebindingMap;
-import net.sf.saxon.om.Item;
-import net.sf.saxon.om.Sequence;
-import net.sf.saxon.om.SequenceIterator;
-import net.sf.saxon.om.SequenceTool;
+import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.value.SequenceExtent;
@@ -103,15 +100,17 @@ public final class TailCallLoop extends UnaryExpression {
         final XPathContextMajor cm = (XPathContextMajor) context;
         while (true) {
             SequenceIterator iter = getBaseExpression().iterate(cm);
-            Sequence extent = SequenceExtent.makeSequenceExtent(iter);
-            Component<UserFunction> fn = cm.getTailCallFunction();
-            if (fn == null) {
+            GroundedValue extent = SequenceExtent.makeSequenceExtent(iter);
+            TailCallInfo tail = cm.getTailCallInfo();
+            if (tail == null) {
                 return extent.iterate();
+            } else {
+                UserFunction target = establishTargetFunction(tail, cm);
+                if (target != containingFunction) {
+                    return tailCallDifferentFunction(target, cm).iterate();
+                }
+                // otherwise, loop round to execute the tail call
             }
-            if (fn.getCode() != containingFunction) {
-                return tailCallDifferentFunction(fn, cm).iterate();
-            }
-            // otherwise, loop round to execute the tail call
         }
     }
 
@@ -123,14 +122,29 @@ public final class TailCallLoop extends UnaryExpression {
         final XPathContextMajor cm = (XPathContextMajor) context;
         while (true) {
             Item item = getBaseExpression().evaluateItem(context);
-            Component<UserFunction> fn = cm.getTailCallFunction();
-            if (fn == null) {
+
+            TailCallInfo tail = cm.getTailCallInfo();
+            if (tail == null) {
                 return item;
+            } else {
+                UserFunction target = establishTargetFunction(tail, cm);
+                if (target != containingFunction) {
+                    return tailCallDifferentFunction(target, cm).head();
+                }
+                // otherwise, loop round to execute the tail call
             }
-            if (fn.getCode() != containingFunction) {
-                return tailCallDifferentFunction(fn, cm).head();
-            }
-            // otherwise, loop round to execute the tail call
+        }
+    }
+
+    private UserFunction establishTargetFunction(TailCallInfo tail, XPathContextMajor cm) {
+        if (tail instanceof TailCallFunction) {
+            return ((TailCallFunction) tail).function;
+        } else if (tail instanceof TailCallComponent) {
+            Component targetComponent = ((TailCallComponent) tail).component;
+            cm.setCurrentComponent(targetComponent);
+            return (UserFunction) targetComponent.getCode();
+        } else {
+            throw new AssertionError();
         }
     }
 
@@ -146,15 +160,17 @@ public final class TailCallLoop extends UnaryExpression {
         Expression operand = getBaseExpression();
         while (true) {
             operand.process(context);
-            Component<UserFunction> fn = cm.getTailCallFunction();
-            if (fn == null) {
+            TailCallInfo tail = cm.getTailCallInfo();
+            if (tail == null) {
                 return;
+            } else {
+                UserFunction target = establishTargetFunction(tail, cm);
+                if (target != containingFunction) {
+                    SequenceTool.process(tailCallDifferentFunction(target, cm), cm, operand.getLocation());
+                    return;
+                }
+                // otherwise, loop round to execute the tail call
             }
-            if (fn.getCode() != containingFunction) {
-                SequenceTool.process(tailCallDifferentFunction(fn, cm), cm, operand.getLocation());
-                return;
-            }
-            // otherwise, loop round to execute the tail call
         }
     }
 
@@ -163,17 +179,15 @@ public final class TailCallLoop extends UnaryExpression {
      * where possible, but it does consume some Java stack space. It's still worth it, because we don't use
      * as much stack as we would if we didn't return down to the TailCallLoop level.
      *
-     * @param fn the function to be called
+     * @param userFunction the function to be called
      * @param cm the dynamic context
      * @return the result of calling the other function
      * @throws XPathException if the called function fails
      */
 
     /*@Nullable*/
-    private Sequence tailCallDifferentFunction(Component<UserFunction> fn, XPathContextMajor cm) throws XPathException {
-        UserFunction userFunction = fn.getCode();
+    private Sequence tailCallDifferentFunction(UserFunction userFunction, XPathContextMajor cm) throws XPathException {
         cm.resetStackFrameMap(userFunction.getStackFrameMap(), userFunction.getArity());
-        cm.setCurrentComponent(fn);
         try {
             return ExpressionTool.evaluate(userFunction.getBody(), userFunction.getEvaluationMode(), cm, 1);
         } catch (XPathException err) {
@@ -216,6 +230,21 @@ public final class TailCallLoop extends UnaryExpression {
     public String getExpressionName() {
         return "tailCallLoop";
     }
+
+
+
+    public interface TailCallInfo {};
+
+    protected static class TailCallComponent implements TailCallInfo {
+        public Component<UserFunction> component;
+        public UserFunction function;
+    }
+
+    protected static class TailCallFunction implements TailCallInfo {
+        public UserFunction function;
+    }
+
+
 
 
 }

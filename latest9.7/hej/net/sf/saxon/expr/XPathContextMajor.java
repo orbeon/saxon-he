@@ -36,7 +36,7 @@ public class XPathContextMajor extends XPathContextMinor {
 
     private ParameterSet localParameters;
     private ParameterSet tunnelParameters;
-    /*@Nullable*/ private Component<UserFunction> tailCallFunction;
+    /*@Nullable*/ private TailCallLoop.TailCallInfo tailCallInfo;
     private Component<? extends Mode> currentMode;
     /*@Nullable*/ private Rule currentTemplate;
     private GroupIterator currentGroupIterator;
@@ -118,7 +118,7 @@ public class XPathContextMajor extends XPathContextMinor {
         c.currentMergeGroupIterator = currentMergeGroupIterator;
         c.currentException = currentException;
         c.caller = this;
-        c.tailCallFunction = null;
+        c.tailCallInfo = null;
         c.temporaryOutputState = temporaryOutputState;
         c.threadManager = threadManager;
         c.currentComponent = currentComponent;
@@ -153,7 +153,7 @@ public class XPathContextMajor extends XPathContextMinor {
         c.currentRegexIterator = p.getCurrentRegexIterator();
         c.currentGroupIterator = p.getCurrentGroupIterator();
         c.caller = prev;
-        c.tailCallFunction = null;
+        c.tailCallInfo = null;
         c.threadManager = ((XPathContextMajor) p).threadManager;
         c.currentComponent = ((XPathContextMajor) p).currentComponent;
         c.errorListener = ((XPathContextMajor) p).errorListener;
@@ -367,16 +367,17 @@ public class XPathContextMajor extends XPathContextMinor {
      * @param variables the parameter to be supplied to the user function
      */
 
-    public void requestTailCall(Component<UserFunction> targetFn, Sequence[] variables) {
-        if (variables.length > stackFrame.slots.length) {
-            UserFunction fn = targetFn.getCode();
-            Sequence[] v2 = new Sequence[fn.getStackFrameMap().getNumberOfVariables()];
-            System.arraycopy(variables, 0, v2, 0, variables.length);
-            stackFrame.slots = v2;
-        } else {
-            System.arraycopy(variables, 0, stackFrame.slots, 0, variables.length);
+    public void requestTailCall(TailCallLoop.TailCallInfo targetFn, Sequence[] variables) {
+        if (variables != null) {
+            if (variables.length > stackFrame.slots.length) {
+                Sequence[] v2 = new Sequence[variables.length];
+                System.arraycopy(variables, 0, v2, 0, variables.length);
+                stackFrame.slots = v2;
+            } else {
+                System.arraycopy(variables, 0, stackFrame.slots, 0, variables.length);
+            }
         }
-        tailCallFunction = targetFn;
+        tailCallInfo = targetFn;
     }
 
 
@@ -386,9 +387,9 @@ public class XPathContextMajor extends XPathContextMinor {
      * @return null if no tail call has been requested, or the name of the function to be called otherwise
      */
 
-    public Component<UserFunction> getTailCallFunction() {
-        Component<UserFunction> fn = tailCallFunction;
-        tailCallFunction = null;
+    public TailCallLoop.TailCallInfo getTailCallInfo() {
+        TailCallLoop.TailCallInfo fn = tailCallInfo;
+        tailCallInfo = null;
         return fn;
     }
 
