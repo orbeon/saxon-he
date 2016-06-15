@@ -57,7 +57,7 @@ jobject XdmItem::getUnderlyingValue(SaxonProcessor * proc){
 }
 
     const char * XdmItem::getStringValue(SaxonProcessor * proc1){
-	if(proc1 != NULL) {	
+	if(proc != NULL && proc1 != NULL) {	
 		proc = proc1;
 	}
 	if(proc != NULL) {
