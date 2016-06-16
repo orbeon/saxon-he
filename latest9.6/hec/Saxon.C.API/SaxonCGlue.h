@@ -57,11 +57,11 @@ EXTERN_C
 
 static char tempDllname[] =
 #if defined (__linux__)
-        "/libsaxoneec.so";  
+        "/libsaxonhec.so";  
     #elif  defined (__APPLE__) && defined(__MACH__)
-        "/libsaxoneec.dylib";
+        "/libsaxonhec.dylib";
     #else
-         "\\libsaxoneec.dll";
+         "\\libsaxonhec.dll";
     #endif
 
 static char tempResources_dir[] = 
