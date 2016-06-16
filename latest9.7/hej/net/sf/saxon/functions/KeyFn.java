@@ -19,7 +19,6 @@ import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.EmptySequence;
-import org.jetbrains.annotations.NotNull;
 
 
 public class KeyFn extends SystemFunction {
@@ -175,7 +174,6 @@ public class KeyFn extends SystemFunction {
         return arg2;
     }
 
-    @NotNull
     private KeyDefinitionSet getKeyDefinitionSet(KeyManager keyManager, String keyName) throws XPathException {
         KeyDefinitionSet selectedKeySet;
         StructuredQName qName = null;
