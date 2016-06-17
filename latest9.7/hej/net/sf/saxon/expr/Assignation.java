@@ -503,7 +503,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
      */
 
     public void rebuildReferenceList(boolean force) {
-        int[] results = new int[]{0, force ? Integer.MAX_VALUE : 100};
+        int[] results = new int[]{0, force ? Integer.MAX_VALUE : 1000};
         List<VariableReference> references = new ArrayList<VariableReference>();
         countReferences(this, getAction(), references, results);
         this.references = results[1] <= 0 ? null : references;

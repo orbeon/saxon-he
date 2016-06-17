@@ -670,7 +670,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
             // if this results in the expression (let $x := $y return Z), replace all references to
             // to $x by references to $y in the Z part, and eliminate this LetExpression by
             // returning the action part.
-            if (getSequence() instanceof VariableReference && references != null && !needsEagerEvaluation) {
+            if (getSequence() instanceof VariableReference && !needsEagerEvaluation) {
                 verifyReferences();
                 if (references != null) {
                     inlineReferences();
