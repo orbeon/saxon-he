@@ -671,7 +671,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
             // to $x by references to $y in the Z part, and eliminate this LetExpression by
             // returning the action part.
             if (getSequence() instanceof VariableReference && !needsEagerEvaluation) {
-                verifyReferences();
+                rebuildReferenceList(true);
                 if (references != null) {
                     inlineReferences();
                     return getAction();
