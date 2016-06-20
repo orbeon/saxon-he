@@ -1147,7 +1147,6 @@ latest9.7/hej/net/sf/saxon/expr/PJConverter.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/expr/PackageData.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/expr/PairIterator.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/expr/PendingUpdateList.java svn_eol_002dstyle=native
-latest9.7/hej/net/sf/saxon/expr/PositionVariable.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/expr/PseudoExpression.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/expr/QuantifiedExpression.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/expr/RangeExpression.java svn_eol_002dstyle=native
