@@ -1,0 +1,47 @@
+package net.sf.saxon.functions;
+
+import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.lib.StringCollator;
+import net.sf.saxon.om.Sequence;
+import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.AtomicValue;
+
+/**
+ * Implements the collation-key function defined in the XSLT 3.0 and XPath 3.1 specifications
+ */
+public class CollationKeyFn extends CollatingFunctionFixed {
+
+
+    private static AtomicValue getCollationKey(String s, StringCollator collator) {
+        return collator.getCollationKey(s).asAtomic();
+    }
+
+    /**
+     * Call the Callable.
+     *
+     * @param context   the dynamic evaluation context
+     * @param arguments the values of the arguments, supplied as Sequences.
+     *                  <p>Generally it is advisable, if calling iterate() to process a supplied sequence, to
+     *                  call it only once; if the value is required more than once, it should first be converted
+     *                  to a {@link net.sf.saxon.om.GroundedValue} by calling the utility methd
+     *                  SequenceTool.toGroundedValue().</p>
+     *                  <p>If the expected value is a single item, the item should be obtained by calling
+     *                  Sequence.head(): it cannot be assumed that the item will be passed as an instance of
+     *                  {@link net.sf.saxon.om.Item} or {@link net.sf.saxon.value.AtomicValue}.</p>
+     *                  <p>It is the caller's responsibility to perform any type conversions required
+     *                  to convert arguments to the type expected by the callee. An exception is where
+     *                  this Callable is explicitly an argument-converting wrapper around the original
+     *                  Callable.</p>
+     * @return the result of the evaluation, in the form of a Sequence. It is the responsibility
+     *         of the callee to ensure that the type of result conforms to the expected result type.
+     * @throws net.sf.saxon.trans.XPathException
+     *          if a dynamic error occurs during the evaluation of the expression
+     */
+    public AtomicValue call(XPathContext context, Sequence[] arguments) throws XPathException {
+        String in = arguments[0].head().getStringValue();
+        StringCollator collator = getStringCollator();
+        return getCollationKey(in, collator);
+    }
+}
+
+// Copyright (c) 2015 Saxonica Limited.
