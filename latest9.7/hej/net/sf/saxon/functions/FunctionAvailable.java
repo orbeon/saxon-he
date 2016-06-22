@@ -50,7 +50,7 @@ public class FunctionAvailable extends SystemFunction {
             StaticContext env = visitor.getStaticContext();
             boolean b = false;
 
-            QNameParser qp = new QNameParser(env.getNamespaceResolver());
+            QNameParser qp = new QNameParser(getRetainedStaticContext());
             qp.setAcceptEQName(true);
             qp.setDefaultNamespace(env.getDefaultFunctionNamespace());
             qp.setErrorOnBadSyntax("XTDE1400");
