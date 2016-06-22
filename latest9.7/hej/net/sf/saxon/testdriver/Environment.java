@@ -904,7 +904,7 @@ public class Environment implements URIResolver {
             if (definesStylesheet != null) {
                 definesStylesheet = definesStylesheet.trim();
             }
-            if ("true".equals(definesStylesheet) || "1".equals(definesStylesheet)) {
+            if (("true".equals(definesStylesheet) || "1".equals(definesStylesheet)) && !driver.runWithJS) {
                 // try using an embedded stylesheet from the source document
                 try {
                     Source styleSource = environment.xsltCompiler.getAssociatedStylesheet(
