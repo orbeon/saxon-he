@@ -23,6 +23,7 @@ import net.sf.saxon.pattern.Pattern;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.type.ErrorType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.value.AtomicValue;
@@ -30,7 +31,6 @@ import net.sf.saxon.value.StringValue;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
 
 
 /**
@@ -233,6 +233,10 @@ public class ForEachGroup extends Instruction
         }
 
         ItemType selectedItemType = getSelectExpression().getItemType();
+        if (selectedItemType == ErrorType.getInstance()) {
+            return Literal.makeEmptySequence();
+        }
+
         ContextItemStaticInfo cit = new ContextItemStaticInfo(selectedItemType, false, getSelectExpression());
 
         actionOp.typeCheck(visitor, cit);
