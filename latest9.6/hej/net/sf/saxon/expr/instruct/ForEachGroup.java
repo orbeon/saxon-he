@@ -208,6 +208,10 @@ public class ForEachGroup extends Instruction
     /*@NotNull*/
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         select = visitor.typeCheck(select, contextInfo);
+        if (Literal.isEmptySequence(select)) {
+            return select;
+        }
+
         ItemType selectedItemType = select.getItemType();
         ContextItemStaticInfo cit = new ContextItemStaticInfo(selectedItemType, false, select);
         action = visitor.typeCheck(action, cit);
@@ -215,9 +219,7 @@ public class ForEachGroup extends Instruction
         if (collationNameExpression != null) {
             collationNameExpression = visitor.typeCheck(collationNameExpression, contextInfo);
         }
-        if (Literal.isEmptySequence(select)) {
-            return select;
-        }
+
         if (Literal.isEmptySequence(action)) {
             return action;
         }
