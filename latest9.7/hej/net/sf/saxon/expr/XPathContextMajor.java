@@ -152,6 +152,7 @@ public class XPathContextMajor extends XPathContextMinor {
         c.currentTemplate = p.getCurrentTemplateRule();
         c.currentRegexIterator = p.getCurrentRegexIterator();
         c.currentGroupIterator = p.getCurrentGroupIterator();
+        c.currentMergeGroupIterator = p.getCurrentMergeGroupIterator();
         c.caller = prev;
         c.tailCallInfo = null;
         c.threadManager = ((XPathContextMajor) p).threadManager;
