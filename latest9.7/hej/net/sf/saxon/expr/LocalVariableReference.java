@@ -65,9 +65,9 @@ public class LocalVariableReference extends VariableReference {
         ref.slotNumber = slotNumber;
         Binding newBinding = rebindings.get(binding);
         if (newBinding != null) {
-            binding = newBinding;
+            ref.binding = newBinding;
         }
-        binding.addReference(ref, isInLoop());
+        ref.binding.addReference(ref, isInLoop());
         return ref;
     }
 
