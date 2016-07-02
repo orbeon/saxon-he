@@ -688,7 +688,7 @@ public abstract class StandardFunction {
         register("path#0", ContextItemAccessorFunction.class, 0, 0, BuiltInAtomicType.STRING, OPT, XPATH30, CITEM|LATE);
 
         register("path#1", Path_1.class, 1, 1, BuiltInAtomicType.STRING, OPT, XPATH30, 0)
-                .arg(0, AnyNodeTest.getInstance(), OPT | StandardFunction.INS, null);
+                .arg(0, AnyNodeTest.getInstance(), OPT | NAV, null);
 
         register("position", PositionAndLast.Position.class, 0, 0, BuiltInAtomicType.INTEGER, ONE, CORE, POSN|LATE);
 
