@@ -110,6 +110,7 @@ public class NextMatch extends ApplyImports {
             //Template nh = (Template)rule.getAction();
             // clear all the local variables: they are no longer needed
             Arrays.fill(context.getStackFrame().getStackFrameValues(), null);
+            ((XPathContextMajor)context).setCurrentComponent(mode); // bug 2818
             return new NextMatchPackage(rule, params, tunnels, context);
         } else {
             TemplateRule nh = (TemplateRule) rule.getAction();
