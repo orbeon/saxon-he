@@ -1625,7 +1625,7 @@ public abstract class Expression implements /*InstructionInfo,*/ IdentityCompara
      * @return the posture and sweep of the expression
      */
 
-    public final PostureAndSweep getStreamability(boolean allowExtensions, ContextItemStaticInfo contextInfo, List<String> reasons) {
+    public PostureAndSweep getStreamability(boolean allowExtensions, ContextItemStaticInfo contextInfo, List<String> reasons) {
         if (postureAndSweep == null) {
             postureAndSweep = makeStreamingAdjunct(getConfiguration(), Expression.this)
                     .computeStreamability(allowExtensions, contextInfo, reasons);

@@ -128,18 +128,17 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             return;
         }
 
-        if (!env.usable) {
-            resultsDoc.writeTestcaseElement(testName, "notRun", "environment dependencies not satisfied");
-            notrun++;
-            return;
-        }
-
         if (env.failedToBuild) {
             resultsDoc.writeTestcaseElement(testName, "fail", "unable to build environment");
             failures++;
             return;
         }
 
+        if (!env.usable) {
+            resultsDoc.writeTestcaseElement(testName, "notRun", "environment dependencies not satisfied");
+            notrun++;
+            return;
+        }
 
         if (testName.contains("environment-variable")) {
             EnvironmentVariableResolver resolver = new EnvironmentVariableResolver() {

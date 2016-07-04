@@ -7,6 +7,8 @@
 
 package net.sf.saxon.pattern;
 
+import com.saxonica.ee.stream.Posture;
+import com.saxonica.ee.stream.PostureAndSweep;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.SlotManager;
@@ -26,7 +28,6 @@ import net.sf.saxon.type.UType;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A Pattern represents the result of parsing an XSLT pattern string. <br>
@@ -476,5 +477,28 @@ public abstract class Pattern extends PseudoExpression {
     public Pattern optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         return this;
     }
+
+    @Override
+    public String toShortString() {
+        return toString();
+    }
+
+    //#ifdefined STREAM
+
+    @Override
+    public PostureAndSweep getStreamability(boolean allowExtensions, ContextItemStaticInfo contextInfo, List<String> reasons) {
+        if (contextInfo.getContextItemPosture() == Posture.GROUNDED || isMotionless(allowExtensions)) {
+            return PostureAndSweep.GROUNDED_AND_MOTIONLESS;
+        } else {
+            if (reasons != null) {
+                reasons.add("The pattern " + toShortString() + " is not motionless");
+            }
+            return PostureAndSweep.ROAMING_AND_FREE_RANGING;
+        }
+    }
+
+    //#endif
+
+
 }
 

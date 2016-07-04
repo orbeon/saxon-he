@@ -22,7 +22,6 @@ import net.sf.saxon.type.Type;
 import net.sf.saxon.type.UType;
 
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Class for handling patterns with simple non-positional boolean predicates
@@ -293,6 +292,11 @@ public class PatternWithPredicate extends Pattern {
         return basePattern.toString() + "[" + predicate.toString() + "]";
     }
 
+
+    @Override
+    public String toShortString() {
+        return basePattern.toShortString() + "[" + predicate.toShortString() + "]";
+    }
 
     /**
      * Copy a pattern. This makes a deep copy.

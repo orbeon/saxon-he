@@ -1145,7 +1145,11 @@ public final class AxisExpression extends Expression {
         if (test == null) {
             fsb.append("node()");
         } else if (test instanceof NameTest) {
-            fsb.append(test.getMatchingNodeName().getDisplayName());
+            if (((NameTest) test).getNodeKind() != AxisInfo.principalNodeType[axis]) {
+                fsb.append(test.toString());
+            } else {
+                fsb.append(test.getMatchingNodeName().getDisplayName());
+            }
         } else {
             fsb.append(test.toString());
         }
