@@ -1657,7 +1657,14 @@ public class Controller implements ContextOriginator {
 
         // if parameters were supplied, set them up
 
-        executable.checkAllRequiredParamsArePresent(params);
+        try {
+            executable.checkAllRequiredParamsArePresent(params);
+        } catch (XPathException e) {
+            if (!e.hasBeenReported()) { // issue 2813
+                getErrorListener().fatalError(e);
+                throw e;
+            }
+        }
         //topLevelBindery.defineGlobalParameters(params);
         globalParameters = params;
 
