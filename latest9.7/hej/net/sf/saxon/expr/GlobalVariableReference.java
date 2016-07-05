@@ -109,12 +109,10 @@ public class GlobalVariableReference extends VariableReference implements Compon
      */
     @Override
     public Sequence evaluateVariable(XPathContext c) throws XPathException {
-
-        if (bindingSlot >= 0 && c.getCurrentComponent() != null) {
-            // TODO: we are avoiding package-based binding in cases such as si-for-each-801 when evaluating
-            // a patternized expression containing a global variable reference, because there
-            // is no current component in the context. If streaming and packages are used together,
-            // this could cause overrides of the global variable to be ignored.
+        if (bindingSlot >= 0) {
+            if (c.getCurrentComponent() == null) {
+                throw new AssertionError("No current component");
+            }
             Component target = c.getTargetComponent(bindingSlot);
             if (target.getVisibility() == Visibility.ABSENT) {
                 XPathException err = new XPathException("Cannot evaluate a variable declared with visibility=absent", "XTDE3052");
