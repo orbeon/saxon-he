@@ -834,6 +834,9 @@ public final class Tokenizer {
                     if (inputOffset < inputLength && input.charAt(inputOffset) == '{') {
                         // EQName, revised syntax as per bug 15399
                         int close = input.indexOf('}', inputOffset++);
+                        if(close<inputOffset) {
+                            throw new XPathException("Missing closing brace in EQName");
+                        }
                         String uri = input.substring(inputOffset, close);
                         inputOffset = close + 1;
                         int start = inputOffset;
