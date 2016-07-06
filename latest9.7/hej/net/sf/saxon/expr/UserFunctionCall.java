@@ -510,7 +510,6 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
             c2.setCurrentComponent(targetComponent);
         } else {
             targetFunction = function;
-            actualArgs = evaluateArguments(context);
             c2 = targetFunction.makeNewContext(context);
         }
 

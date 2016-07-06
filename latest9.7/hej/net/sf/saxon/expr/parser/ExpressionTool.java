@@ -42,7 +42,6 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -284,13 +283,15 @@ public class ExpressionTool {
 
             case MAKE_CLOSURE:
                 return Closure.make(exp, context, ref);
-            //return new SequenceExtent(exp.iterate(context));
+                //return SequenceExtent.makeSequenceExtent(exp.iterate(context));
 
             case MAKE_MEMO_CLOSURE:
                 return Closure.make(exp, context, ref == 1 ? 10 : ref);
+                //return SequenceExtent.makeSequenceExtent(exp.iterate(context));
 
             case MAKE_SINGLETON_CLOSURE:
                 return new SingletonClosure(exp, context);
+                //return SequenceExtent.makeSequenceExtent(exp.iterate(context));
 
             case RETURN_EMPTY_SEQUENCE:
                 return EmptySequence.getInstance();
