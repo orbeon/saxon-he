@@ -186,7 +186,12 @@ public class SQLInsert extends ExtensionInstruction {
                 int i = 1;
                 for (int c = FIRST_COLUMN; c < arguments.length; c++) {
                     AtomicValue v = (AtomicValue) arguments[c].head();
-                    String parameterClassName = metaData.getParameterClassName(c);
+                    String parameterClassName = null;
+                    try {
+                        parameterClassName = metaData.getParameterClassName(c);
+                    }catch(SQLException ex) {
+                        parameterClassName = "java.lang.String";
+                    }
                     Object value;
                     if (parameterClassName.equals("java.lang.String")) {
                         value = v.getStringValue();
