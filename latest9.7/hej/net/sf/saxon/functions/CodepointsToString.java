@@ -44,7 +44,7 @@ public class CodepointsToString extends SystemFunction implements Callable {
             }
             long next = nextInt.longValue();
             if (next < 0 || next > Integer.MAX_VALUE || !checker.matches((int) next)) {
-                throw new XPathException("Invalid XML character [x " + Integer.toHexString((int) next) + ']', "FOCH0001");
+                throw new XPathException("codepoints-to-string(): invalid XML character [x" + Integer.toHexString((int) next) + ']', "FOCH0001");
             }
             sb.appendWideChar((int) next);
         }
