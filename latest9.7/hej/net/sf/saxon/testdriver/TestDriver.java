@@ -15,7 +15,6 @@ import net.sf.saxon.om.TreeModel;
 import net.sf.saxon.s9api.*;
 
 import javax.xml.stream.XMLStreamException;
-import java.awt.im.spi.InputMethod;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -49,6 +48,7 @@ public abstract class TestDriver {
     protected String testSuiteDir;
     protected Processor driverProc = null;
     protected Serializer driverSerializer = null;
+    protected String exceptionsFileName = null;
     protected HashMap<String, XdmNode> exceptionsMap = new HashMap<String, XdmNode>();
     protected HashMap<String, String> optimizationAssertions = new HashMap<String, String>();
     protected Map<String, Environment> globalEnvironments = new HashMap<String, Environment>();
@@ -111,6 +111,9 @@ public abstract class TestDriver {
             }
             if (args[i].startsWith("-export")) {
                 export = true;
+            }
+            if (args[i].startsWith("-exceptions:")) {
+                exceptionsFileName = args[i].substring(12);
             }
             if (args[i].startsWith("-js")) {
                 export = true;
@@ -297,7 +300,11 @@ public abstract class TestDriver {
     }
 
     protected String getNameOfExceptionsFile() {
-        return "exceptions.xml";
+        if (exceptionsFileName != null) {
+            return exceptionsFileName;
+        } else {
+            return "exceptions.xml";
+        }
     }
 
     /**
