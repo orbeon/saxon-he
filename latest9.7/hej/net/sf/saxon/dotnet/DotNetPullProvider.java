@@ -216,7 +216,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      */
 
     public Location getSourceLocator() {
-        if (parser instanceof XmlTextReader || parser instanceof XmlValidatingReader) {
+        if (parser instanceof IXmlLineInfo || parser instanceof XmlValidatingReader) {
             return this;
         } else {
             return null;
