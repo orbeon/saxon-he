@@ -899,6 +899,32 @@ namespace Saxon.Api
         }
 
         /// <summary>
+        /// Get the line number of the node in a source document. For a document constructed using the document
+        /// builder, this is available only if the line numbering option was set wehn the document was built (and
+        /// then only for element nodes). If the line number is not available, the value -1 is returned.
+        /// Line numbers will typically be as reported by a SAX parser; this means that the line number for an element
+        /// node is the line number containing the closing ">" of the start tag.
+        /// </summary>
+
+        public int LineNumber
+        {
+            get { return ((JNodeInfo)value).getLineNumber(); }
+        }
+
+
+        /// <summary>
+        /// Get the column number of the node in a source document. For a document constructed using the document
+        /// builder, this is available only if the line numbering option was set wehn the document was built (and
+        /// then only for element nodes). If the column number is not available, the value -1 is returned.
+        /// Line numbers will typically be as reported by a SAX parser; this means that the column number for an element
+        /// node is the column number containing the closing ">" of the start tag.
+        /// </summary>
+        public int ColumnNumber
+        {
+            get { return ((JNodeInfo)value).getColumnNumber(); }
+        }
+
+        /// <summary>
         /// The typed value of the node, as an instance of <c>XdmValue</c>.
         /// </summary>
         /// <exception>
