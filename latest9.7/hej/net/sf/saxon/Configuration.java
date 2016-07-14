@@ -3698,6 +3698,9 @@ public class Configuration implements SourceResolver, NotationSet {
         if (source instanceof PullEventSource) {
             return source;
         }
+        if (source instanceof EventSource) {
+            return source;
+        }
         return null;
     }
 
