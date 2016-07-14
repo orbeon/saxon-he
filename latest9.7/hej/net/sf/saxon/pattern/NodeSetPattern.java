@@ -11,10 +11,10 @@ import com.saxonica.ee.stream.Sweep;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.parser.*;
-import net.sf.saxon.om.TreeInfo;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.om.TreeInfo;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.ManualIterator;
@@ -23,7 +23,6 @@ import net.sf.saxon.type.UType;
 import net.sf.saxon.value.SequenceType;
 
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * A NodeSetPattern is a pattern based on an expression that is evaluated to return a set of nodes;
@@ -219,6 +218,9 @@ public class NodeSetPattern extends Pattern {
      */
     @Override
     public UType getUType() {
+        if (itemType == null) {
+            itemType = expression.getItemType();
+        }
         return itemType.getUType();
     }
 

@@ -7,7 +7,6 @@
 
 package net.sf.saxon.expr.instruct;
 
-import com.saxonica.ee.bytecode.CompiledExpression;
 import com.saxonica.ee.stream.Posture;
 import com.saxonica.ee.stream.PostureAndSweep;
 import com.saxonica.ee.stream.TemplateInversion;
@@ -428,13 +427,7 @@ public class TemplateRule implements RuleTarget, Location {
     }
 
     public Expression getInterpretedBody() {
-        Expression original = body;
-//#ifdefined BYTECODE
-        if (original instanceof CompiledExpression) {
-            original = ((CompiledExpression) original).getOriginalExpression();
-        }
-//#endif
-        return original;
+        return body.getInterpretedExpression();
     }
 
 

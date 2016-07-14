@@ -122,6 +122,15 @@ public abstract class Expression implements /*InstructionInfo,*/ IdentityCompara
     }
 
     /**
+     * Get the interpreted form of the expression. This normally returns the expression itself,
+     * except for a CompiledExpression (bytecode-generated) in which case it returns the original
+     */
+
+    public Expression getInterpretedExpression() {
+        return this;
+    }
+
+    /**
      * Get the immediate sub-expressions of this expression, verifying that the parent pointers
      * in the child expressions are correct.
      * @return the list of sub-expressions, in the same way as with the {@link #operands()} method,
@@ -1356,7 +1365,7 @@ public abstract class Expression implements /*InstructionInfo,*/ IdentityCompara
     private static void gatherSlotsUsed(Expression exp, IntHashSet slots) {
 //#ifdefined BYTECODE
         if (exp instanceof CompiledExpression) {
-            exp = ((CompiledExpression)exp).getOriginalExpression();
+            exp = ((CompiledExpression)exp).getInterpretedExpression();
         }
 //#endif
         if (exp instanceof LocalVariableReference) {

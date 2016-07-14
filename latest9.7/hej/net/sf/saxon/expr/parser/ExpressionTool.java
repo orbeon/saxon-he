@@ -1176,6 +1176,7 @@ public class ExpressionTool {
      */
 
     public static boolean processExpressionTree(Expression root, Object result, ExpressionAction action) throws XPathException {
+        root = root.getInterpretedExpression();
         boolean done = action.process(root, result);
         if (!done) {
             for (Operand o : root.operands()) {
@@ -1338,7 +1339,7 @@ public class ExpressionTool {
     public static int expressionSize(Expression exp) {
 //#ifdefined BYTECODE
         if(exp instanceof CompiledExpression) {
-            exp = ((CompiledExpression)exp).getOriginalExpression();
+            exp = ((CompiledExpression)exp).getInterpretedExpression();
         }
 //#endif
         int total = 1;

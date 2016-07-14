@@ -7,9 +7,7 @@
 
 package net.sf.saxon.expr.instruct;
 
-import com.saxonica.ee.bytecode.CompiledExpression;
 import net.sf.saxon.expr.Expression;
-import net.sf.saxon.expr.Operand;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.StandardNames;
@@ -196,21 +194,7 @@ public class NamedTemplate extends ComponentCode<NamedTemplate> {
 
 
     public List<LocalParam> getLocalParams() {
-//        if (localParams == null) {
-//            localParams = new ArrayList<LocalParam>();
-//            gatherLocalParams(getInterpretedBody(), localParams);
-//        }
         return localParams;
-    }
-
-    private static void gatherLocalParams(Expression exp, List<LocalParam> result) {
-        if (exp instanceof LocalParamSetter) {
-            result.add(((LocalParamSetter) exp).getBinding());
-        } else {
-            for (Operand o : exp.operands()) {
-                gatherLocalParams(o.getChildExpression(), result);
-            }
-        }
     }
 
     /**
@@ -325,15 +309,6 @@ public class NamedTemplate extends ComponentCode<NamedTemplate> {
         presenter.emitAttribute("module", getSystemId());
     }
 
-    public Expression getInterpretedBody() {
-        Expression original = body;
-//#ifdefined BYTECODE
-        if (original instanceof CompiledExpression) {
-            original = ((CompiledExpression) original).getOriginalExpression();
-        }
-//#endif
-        return original;
-    }
 
 
 }
