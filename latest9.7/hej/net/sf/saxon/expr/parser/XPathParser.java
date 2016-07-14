@@ -7,6 +7,7 @@
 
 package net.sf.saxon.expr.parser;
 
+import com.saxonica.ee.extfn.js.JSFunctionLibrary;
 import net.sf.saxon.functions.ApplyFn;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Version;
@@ -3139,8 +3140,11 @@ public class XPathParser {
         }
         setLocation(fcall, offset);
         for (Expression argument : arguments) {
-            if (fcall != argument) {
+            if (fcall != argument && !functionName.hasURI(JSFunctionLibrary.NAMESPACE)) {
                 // avoid doing this when the function has already been optimized away, e.g. unordered()
+                // Also avoid doing this when a js: function is parsed into an ixsl:call()
+                // TODO move the adoptChildExpression into individual function libraries
+                // TODO:moveTo9.8
                 fcall.adoptChildExpression(argument);
             }
         }

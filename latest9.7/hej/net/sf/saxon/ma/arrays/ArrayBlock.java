@@ -43,6 +43,9 @@ public class ArrayBlock extends Expression {
 
     public ArrayBlock(List<Expression> children) {
         Expression[] kids = children.toArray(new Expression[children.size()]);
+        for (Expression e : children) {
+            adoptChildExpression(e);
+        }
         setOperanda(new OperandArray(this, kids, OperandRole.SAME_FOCUS_ACTION));
     }
 
