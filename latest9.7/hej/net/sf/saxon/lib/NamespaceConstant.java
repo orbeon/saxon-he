@@ -277,6 +277,12 @@ public class NamespaceConstant {
 
 
     /**
+     * URI for the user extension calls in Saxon.js
+     */
+    public static final String GLOBAL_JS = "http://saxonica.com/ns/globalJS";
+
+
+    /**
      * Private constructor: class is never instantiated
      */
 
