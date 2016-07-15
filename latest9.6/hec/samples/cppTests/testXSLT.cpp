@@ -520,6 +520,19 @@ int main()
     exampleParam(processor, trans);
 
     delete trans;
-     processor->release();
+delete processor;
+    // processor->release();
+
+
+ SaxonProcessor * processor2 = new SaxonProcessor(true);
+    cout<<"Test2: XsltProcessor with Saxon version="<<processor2->version()<<endl<<endl; 
+    //processor->setcwd("/home");
+    processor2->setConfigurationProperty("http://saxon.sf.net/feature/generateByteCode", "off");
+
+    XsltProcessor * trans2 = processor2->newXsltProcessor();
+testTransformToString1(processor2, trans2);
+  delete trans2;
+     processor2->release();
+
     return 0;
 }
