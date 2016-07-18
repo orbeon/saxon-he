@@ -37,6 +37,7 @@ public class IdentityTransformer extends Transformer {
 
     protected IdentityTransformer(Configuration config) {
         this.configuration = config;
+        this.uriResolver = config.getURIResolver();
     }
 
     /**
@@ -61,7 +62,7 @@ public class IdentityTransformer extends Transformer {
     @Override
     public void reset() {
         localOutputProperties = null;
-        uriResolver = null;
+        uriResolver = configuration.getURIResolver();
         errorListener = null;
     }
 
