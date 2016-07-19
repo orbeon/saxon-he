@@ -1,4 +1,11 @@
-#ifndef SAXONCGLUE_H 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2016 Saxonica Limited.
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+// If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// This Source Code Form is "Incompatible With Secondary Licenses", as defined by the Mozilla Public License, v. 2.0.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#ifndef SAXONCGLUE_H
 #define SAXONCGLUE_H
 #include <jni.h>
 
@@ -26,18 +33,18 @@
 
 #ifndef __cplusplus
 #ifndef _BOOL
-typedef unsigned char bool;
-static const bool false = 0;
-static const bool true = 1;
+typedef unsigned char booli;
+static const booli __false = 0;
+static const booli __true = 1;
 #endif
 #endif
 
-#ifndef __cplusplus 
-	#if defined(LICENSE)
-		#define license true;
-	#else
-		#define license false
-	#endif
+#ifndef __cplusplus
+#if defined(LICENSE)
+#define license __true;
+#else
+#define license __false
+#endif
 #endif
 
 
@@ -48,24 +55,45 @@ EXTERN_C
 
 
 
+static char tempDllname[] =
+#if defined (__linux__)
+"/libsaxonhec.so";
+#elif  defined (__APPLE__) && defined(__MACH__)
+"/libsaxonhec.dylib";
+#else
+"\\libsaxonhec.dll";
+#endif
 
-static char dllname[] =
-    #ifdef __linux__
-        "/usr/lib64/libsaxonhec.so";  //rename according to product edition (-hec or -pec) Also make change in the c file
-    #elif  defined (__APPLE__) && defined(__MACH__)
-        "/usr/lib/libsaxon-hec.dylib";
-    #else
-         "C:\\Program Files\\Saxonica\\SaxonHEC1.0.0\\libsaxon-hec.dll";
-    #endif
+static char tempResources_dir[] =
+#ifdef __linux__
+"/saxon-data";
+#elif  defined (__APPLE__) && defined(__MACH__)
+"/saxon-data";
+#else
+"\\saxon-data";
+#endif
 
-static char resources_dir[] = 
-     #ifdef __linux__
-        "/usr/lib/saxon-data";
-    #elif  defined (__APPLE__) && defined(__MACH__)
-        "/usr/lib/saxon-data";
-    #else
-         "C:\\Program Files\\Saxonica\\SaxonHEC1.0.0\\saxon-data";
-    #endif
+
+static char * dllname;/*[] =
+                       #ifdef __linux__
+                       "/usr/lib/libsaxonhec.so";  //rename according to product edition (hec or pec) Also make change in the c file
+                       #elif  defined (__APPLE__) && defined(__MACH__)
+                       "/usr/lib/libsaxoneec.dylib";
+                       #else
+                       "C:\\Program Files\\Saxonica\\SaxonHEC1.0.1\\libsaxonhec.dll";
+                       #endif*/
+
+static char *resources_dir;/*[] =
+                            #ifdef __linux__
+                            "/usr/lib/saxon-data";
+                            #elif  defined (__APPLE__) && defined(__MACH__)
+                            "/usr/lib/saxon-data";
+                            #else
+                            "C:\\Program Files\\Saxonica\\SaxonHEC1.0.1\\saxon-data";
+                            #endif*/
+
+// Static variable used to track when jvm has been created. Used to prevent creation more than once.
+static int jvmCreated =0;
 
 
 //===============================================================================================//
@@ -73,10 +101,10 @@ static char resources_dir[] =
  * <p/>
  */
 typedef struct {
-		JNIEnv *env;
-		HANDLE myDllHandle;
-		JavaVM *jvm;
-	} sxnc_environment;
+    JNIEnv *env;
+    HANDLE myDllHandle;
+    JavaVM *jvm;
+} sxnc_environment;
 
 
 //===============================================================================================//
@@ -85,9 +113,9 @@ typedef struct {
  * <p/>
  */
 typedef struct {
-		char* name;
-		jobject value;
-	} sxnc_parameter;
+    char* name;
+    jobject value;
+} sxnc_parameter;
 
 //===============================================================================================//
 
@@ -95,9 +123,9 @@ typedef struct {
  * <p/>
  */
 typedef struct {
-		char * name;
-		char * value;
-	} sxnc_property;
+    char * name;
+    char * value;
+} sxnc_property;
 
 
 
@@ -109,16 +137,22 @@ extern const char * failure;
 
 
 /*
-* Get Dll name.
-*/
+ * Get Dll name.
+ */
 
 char * getDllname();
 
 
 /*
-* Set Dll name. Also set the saxon resources directory. 
-* If the SAXON_HOME environmental variable is set then use that as base.
-*/
+ * Get Dll name.
+ */
+
+char * getResourceDirectory();
+
+/*
+ * Set Dll name. Also set the saxon resources directory.
+ * If the SAXON_HOME environmental variable is set then use that as base.
+ */
 void setDllname();
 
 /*
@@ -140,7 +174,7 @@ extern jint (JNICALL * JNI_GetDefaultJavaVMInitArgs_func) (void *args);
 extern jint (JNICALL * JNI_CreateJavaVM_func) (JavaVM **pvm, void **penv, void *args);
 
 /*
- * Initialize JET run-time with simplified method. The initJavaRT method will be called 
+ * Initialize JET run-time with simplified method. The initJavaRT method will be called
  * with the arguments expanded from environ
  * @param environ - the Evironment is passed
  */
@@ -191,40 +225,40 @@ jobject createSaxonProcessor (JNIEnv* penv, jclass myClassInDll, const char * ar
 jobject createSaxonProcessor2 (JNIEnv* penv, jclass myClassInDll, const char * arguments, jobject argument1);
 
 /*
- * Callback to check for exceptions. When called it returns the exception as a string 
+ * Callback to check for exceptions. When called it returns the exception as a string
  */
 const char * checkForException(sxnc_environment environ, jclass callingClass,  jobject callingObject);
 
 /*
- * Clean up and destroy Java VM to release memory used. 
+ * Clean up and destroy Java VM to release memory used.
  */
 void finalizeJavaRT (JavaVM* jvm);
 
 
 /*
- * Get a parameter from list 
+ * Get a parameter from list
  */
 jobject getParameter(sxnc_parameter *parameters,  int parLen, const char* namespacei, const char * name);
 
 /*
- * Get a property from list 
+ * Get a property from list
  */
 char* getProperty(sxnc_property * properties, int propLen, const char* namespacei, const char * name);
 
 
 /*
- * set a parameter 
+ * set a parameter
  */
 void setParameter(sxnc_parameter **parameters, int *parLen, int *parCap, const char * namespacei, const char * name, jobject value);
 
 
 /*
- * set a property 
+ * set a property
  */
 void setProperty(sxnc_property ** properties, int *propLen, int *propCap, const char* name, const char* value);
 
 /*
- * clear parameter 
+ * clear parameter
  */
 void clearSettings(sxnc_parameter **parameters, int *parLen, sxnc_property ** properties, int *propLen);
 
