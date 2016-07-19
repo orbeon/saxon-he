@@ -44,8 +44,8 @@ void setDllname(){
        		snprintf(dllname, 8+name_len+1, "%s%s", "/usr/lib", tempDllname);
 		snprintf(resources_dir, 8+rDir_len+1, "%s%s", "/usr/lib", tempResources_dir);
 #elif  defined (__APPLE__) && defined(__MACH__)
-       		snprintf(dllname, 8+name_len+1, "%s%s", "/usr/lib", tempDllname);
-		snprintf(resources_dir, 8+rDir_len+1, "%s%s", "/usr/lib", tempResources_dir);
+       		snprintf(dllname, 14+name_len+1, "%s%s", "/usr/local/lib", tempDllname);
+		snprintf(resources_dir, 14+rDir_len+1, "%s%s", "/usr/local/lib", tempResources_dir);
 #else
 		//TODO When windows version of Saxon/C is done we will have to fixup this
 		strncpy(dllname, "C:\\Program Files\\Saxonica\\SaxonHEC1.0.1", 42);
@@ -57,7 +57,7 @@ void setDllname(){
 	}
 		
 
-#ifdef DEBUG	
+#ifdef DEBUG
 
 		printf("Library length: %i\n", name_len);
 		printf("Env length: %i\n", env_len);
