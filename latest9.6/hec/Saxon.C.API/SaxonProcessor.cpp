@@ -323,7 +323,12 @@ const char * SaxonProcessor::version() {
     	}
 
     	jstring jstr = (jstring)(SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(saxonCAPIClass, MID_version, proc));
-    	versionStr = SaxonProcessor::sxn_environ->env->GetStringUTFChars(jstr, NULL);
+         const char * tempVersionStr = SaxonProcessor::sxn_environ->env->GetStringUTFChars(jstr, NULL);
+         int verLen = strlen(tempVersionStr)+22+strlen(CVERSION)+1;
+         versionStr =new char [verLen];
+         snprintf(versionStr, verLen, "Saxon/C %s %s %s", CVERSION, "running with", tempVersionStr);
+         delete tempVersionStr;
+
     }
     return versionStr;
 }

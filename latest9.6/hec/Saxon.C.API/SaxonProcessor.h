@@ -23,7 +23,7 @@
 #endif
 
 //#define DEBUG //remove
-
+#define CVERSION "1.0.2"
 #include <string>
 #include <iostream>
 #include <sstream>  
@@ -531,7 +531,7 @@ protected:
 	jclass  saxonCAPIClass;
 	std::string cwdV; /*!< current working directory */
 	//std::string resources_dir; /*!< current Saxon resources directory */
-	const char * versionStr;
+	char * versionStr;
 	std::map<std::string,XdmValue*> parameters; /*!< map of parameters used for the transformation as (string, value) pairs */
 	std::map<std::string,std::string> configProperties; /*!< map of properties used for the transformation as (string, string) pairs */	 
 	bool licensei; /*!< indicates whether the Processor requires a Saxon that needs a license file (i.e. Saxon-EE) other a Saxon-HE Processor is created  */

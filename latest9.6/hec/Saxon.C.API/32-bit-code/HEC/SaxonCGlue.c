@@ -10,8 +10,10 @@ void setDllname(){
     size_t rDir_len  = strlen(tempResources_dir);
     char * env = getenv("SAXONC_HOME");
     size_t env_len;
+    printf("tempDllname: %s\n", tempDllname);
+     printf("tempResources: %s\n", tempResources_dir);
     if(env!= NULL) {
-        
+        printf("entered env\n");
         
         env_len = strlen(env);
         dllname =malloc(sizeof(char)*name_len+env_len+1);
@@ -27,7 +29,13 @@ void setDllname(){
 #endif
         
     } else {
+#ifdef __linux__
         env_len = 8;
+#elif  defined (__APPLE__) && defined(__MACH__)
+        env_len = 14;
+#else
+        enc_len = 8; //not used under windows
+#endif
         dllname =malloc(sizeof(char)*name_len+env_len+1);
         resources_dir =malloc(sizeof(char)*rDir_len+env_len+1);
 #ifdef DEBUG
