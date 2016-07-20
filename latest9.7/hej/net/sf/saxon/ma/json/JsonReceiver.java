@@ -323,6 +323,9 @@ public class JsonReceiver implements Receiver {
                 case '\t':
                     out.append("\\t");
                     break;
+                case '/':
+                    out.append("\\/");  // spec bug 29665, saxon bug 2849
+                    break;
                 case '\\':
                     out.append("\\\\");
                     break;
