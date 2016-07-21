@@ -7,11 +7,11 @@
 4. [Technical](#tech)
 5. [Limitations](#limitations)
 
-Saxon/C 1.0.1 is the latest release of Saxon-HE/PE/EE on the C/C++ programming platform. The APIs support the specifications XSLT 2.0/3.0, XQuery 1.0/3.0, Schema Validation 1.0/1.1 and XPath 2.0/3.0 from C/C++ or PHP applications.
+Saxon/C 1.0.2 is the latest release of Saxon-HE/PE/EE on the C/C++ programming platform. The APIs support the specifications XSLT 2.0/3.0, XQuery 1.0/3.0, Schema Validation 1.0/1.1 and XPath 2.0/3.0 from C/C++ or PHP applications.
 
 Saxon/C is built from the Saxon 9.6.0.9 Java product using the Excelsior JET tool (version 11 MP2).
 
-Platforms supported: Linux Only. 
+Platforms supported: Linux and Mac OS Only. 
 Windows will be supported shortly
 
 Saxon/C is release in three separate editions which replicating the products on the Java platform: Enterprise (Saxon-EE/C), Professional Editon (Saxon-PE/C), and Home Edition (Saxon-HE/C)
@@ -19,8 +19,8 @@ Saxon/C is release in three separate editions which replicating the products on 
 <div id='installation'/>
 ## Installation: ##
 
-#### Saxon-HE/C, Saxon-PE/C and Saxon-EE/C: ####
-To install any of the Saxon/C releases, unzip the the file libsaxon-EDITION-setup-v#.#.#.zip and execute the command './libsaxon-EDITION-setup-v#.#.#'
+#### Linux: Saxon-HE/C, Saxon-PE/C and Saxon-EE/C: ####
+To install any of the Saxon/C releases, unzip the file libsaxon-EDITION-setup-v#.#.#.zip and execute the command './libsaxon-EDITION-setup-v#.#.#'
 First step is to select the destination of where the product files will be installed.
 The product files are unpacked in the directory 'Saxon-EDITIONC'
 
@@ -43,8 +43,21 @@ Link the jetvm library so it can be found. For example:
 The Saxon-EDITION API assumes the library is installed as follows: '/usr/lib/libsaxonhec.so', '/usr/lib/libsaxonpec.so' or '/usr/lib/libsaxoneec.so'
 The directory 'saxon-data' must be linked ot copied to '/usr/lib', alternatively you can use the ennvironment variable SAXONC_HOME to locate directory.
 
+ #### Mac OS: Saxon-HE/C, Saxon-PE/C and Saxon-EE/C: ####
+ To install any of the Saxon/C releases on the Mac OS system, unzip the self-contained file libsaxon-EDITION-mac-setup-v#.#.#.zip
+ 
+ The first step is to copy the library libsaxonEDITION.dylib, the saxon-data and rt directories to a your install location. The C/C++ interface by default assumes the library files and directories are installed in the directory '/usr/local/lib'. The location of the Saxon/C library can be set using the SAXONC_HOME environment variable.
+ 
+ The DYLD_LIBRARY_PATH environment variable must be set as follows:
+ 
+ export JET_HOME=/usr/local/lib/rt
+ export DYLD_LIBRARY_PATH=$JET_HOME/lib/lib/jetvm:$DYLD_LIBRARY_PATH
 
 #### PHP extension: ####
+ 
+A built php extension module is included in the Saxon/C distrubtion, see the directory 'php-library-module'.
+ See the file saxon.so (Available for Linux and Mac OS). This was built using the php 5.5 version.
+ 
 To build the php extension follow the steps below:
 
 Run the commands:
