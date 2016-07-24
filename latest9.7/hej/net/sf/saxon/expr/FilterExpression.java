@@ -28,8 +28,6 @@ import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
 
 import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -348,11 +346,12 @@ public final class FilterExpression extends BinaryExpression implements ContextS
                 }
                 return getBase();
             } else {
+                Expression result = Literal.makeEmptySequence();
+                ExpressionTool.copyLocationInfo(this, result);
                 if (debug) {
-                    opt.trace("Filter expression eliminated because predicate is always false",
-                            Literal.makeEmptySequence());
+                    opt.trace("Filter expression eliminated because predicate is always false", result);
                 }
-                return Literal.makeEmptySequence();
+                return result;
             }
         }
 
