@@ -15,6 +15,7 @@ import net.sf.saxon.event.TypeCheckingFilter;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.pattern.DocumentNodeTest;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.Err;
@@ -24,8 +25,6 @@ import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.IntegerValue;
-
-import java.util.Map;
 
 
 /**
@@ -66,6 +65,9 @@ public final class CardinalityChecker extends UnaryExpression {
 
     public static Expression makeCardinalityChecker(Expression sequence, int cardinality, RoleDiagnostic role) {
         Expression result;
+        if (sequence instanceof Literal && Cardinality.subsumes(cardinality, SequenceTool.getCardinality(((Literal)sequence).getValue()))) {
+            return sequence;
+        }
         if (sequence instanceof Atomizer && !Cardinality.allowsMany(cardinality)) {
             Expression base = ((Atomizer) sequence).getBaseExpression();
             result = new SingletonAtomizer(base, role, Cardinality.allowsZero(cardinality));

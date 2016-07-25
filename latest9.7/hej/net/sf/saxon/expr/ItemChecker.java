@@ -24,8 +24,6 @@ import net.sf.saxon.type.*;
 import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.IntegerValue;
 
-import java.util.Map;
-
 
 /**
  * A ItemChecker implements the item type checking of "treat as": that is,
@@ -113,11 +111,12 @@ public final class ItemChecker extends UnaryExpression {
             return operand;
         } else if (relation == TypeHierarchy.DISJOINT) {
             if (Cardinality.allowsZero(card)) {
-
-                String message = role.composeErrorMessage(
-                        requiredItemType, operand.getItemType());
-                visitor.getStaticContext().issueWarning("The only value that can pass type-checking is an empty sequence. " +
-                        message, getLocation());
+                if (!(operand instanceof Literal)) {
+                    String message = role.composeErrorMessage(
+                            requiredItemType, operand.getItemType());
+                    visitor.getStaticContext().issueWarning("The only value that can pass type-checking is an empty sequence. " +
+                            message, getLocation());
+                }
             } else if (requiredItemType.equals(BuiltInAtomicType.STRING) && th.isSubType(supplied, BuiltInAtomicType.ANY_URI)) {
                 // URI promotion will take care of this at run-time
                 return operand;
