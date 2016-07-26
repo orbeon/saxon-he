@@ -11,7 +11,6 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.Callable;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.number.*;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.lib.Numberer;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
@@ -23,7 +22,6 @@ import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.value.*;
 import net.sf.saxon.value.StringValue;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -379,7 +377,10 @@ public class FormatDate extends SystemFunction implements Callable {
     // the first term is redundant, but GNU Classpath can't cope with the others...
 
     private static Pattern digitsPattern =
-            Pattern.compile("\\p{Nd}*");
+            Pattern.compile("\\p{Nd}+");
+
+    private static Pattern digitsOrOptionalDigitsPattern =
+            Pattern.compile("[#\\p{Nd}]+");
 
     private static CharSequence formatNumber(String component, int value,
                                              String format, boolean defaultFormat, Numberer numberer, XPathContext context)
@@ -405,7 +406,7 @@ public class FormatDate extends SystemFunction implements Callable {
         int min = 1;
         int max = Integer.MAX_VALUE;
 
-        if (widths == null || "".equals(widths)) {
+        if ("".equals(widths)) {
             if (digitsPattern.matcher(primary).matches()) {
                 int len = StringValue.getStringLength(primary);
                 if (len > 1) {
@@ -456,22 +457,31 @@ public class FormatDate extends SystemFunction implements Callable {
             }
         } else if ("f".equals(component)) {
             // value is supplied as integer number of microseconds
+            UnicodeString uFormat = UnicodeString.makeUnicodeString(format);
+            // If there is no Unicode digit in the pattern, output is implementation defined, so do what comes easily
+            if (!digitsPattern.matcher(primary).find()) {
+                return formatNumber(component, value, "1", defaultFormat, numberer, context);
+            }
+            // if there are grouping separators, handle as a reverse integer as described in the 3.1 spec
+            if (!digitsOrOptionalDigitsPattern.matcher(primary).matches()) {
+                UnicodeString reverseFormat = reverse(uFormat);
+                UnicodeString reverseValue = reverse(UnicodeString.makeUnicodeString(""+value));
+                CharSequence reverseResult = formatNumber("s",
+                     Integer.parseInt(reverseValue.toString()), reverseFormat.toString(), false, numberer, context);
+                UnicodeString correctedResult = reverse(UnicodeString.makeUnicodeString(reverseResult));
+                if (correctedResult.uLength() > max) {
+                    correctedResult = correctedResult.uSubstring(0, max);
+                }
+                return correctedResult.toString();
+            }
             String s;
             if (value == 0) {
                 s = "0";
             } else {
                 s = ((1000000 + value) + "").substring(1);
                 if (s.length() > max) {
-                    DecimalValue dec = new DecimalValue(new BigDecimal("0." + s));
-                    dec = (DecimalValue) dec.roundHalfToEven(max);
-                    s = dec.getStringValue();
-                    if (s.length() > 2) {
-                        // strip the "0."
-                        s = s.substring(2);
-                    } else {
-                        // fractional seconds value was 0
-                        s = "";
-                    }
+                    // Spec bug 29749 says we should truncate rather than rounding
+                    s = s.substring(0, max);
                 }
             }
             while (s.length() < min) {
@@ -481,7 +491,7 @@ public class FormatDate extends SystemFunction implements Callable {
                 s = s.substring(0, s.length() - 1);
             }
             // for non standard decimal digit family
-            int zeroDigit = Alphanumeric.getDigitFamily(UnicodeString.makeUnicodeString(format).uCharAt(0));
+            int zeroDigit = Alphanumeric.getDigitFamily(uFormat.uCharAt(0));
             if (zeroDigit >= 0) {
                 int[] digits = new int[10];
                 for (int z = 0; z <= 9; z++) {
@@ -554,6 +564,14 @@ public class FormatDate extends SystemFunction implements Callable {
         return s;
     }
 
+    private static UnicodeString reverse(UnicodeString in) {
+        int[] out = new int[in.uLength()];
+        for (int i=in.uLength()-1, j=0; i>=0; i--,j++) {
+            out[j] = in.uCharAt(i);
+        }
+        return UnicodeString.makeUnicodeString(out);
+    }
+
     private static int[] getWidths(String widths) throws XPathException {
         try {
             int min = -1;
@@ -574,10 +592,14 @@ public class FormatDate extends SystemFunction implements Callable {
                     } else {
                         max = Integer.parseInt(smax);
                     }
+                    if (min < 1) {
+                        throw new XPathException("Invalid min value in format picture " + Err.wrap(widths, Err.VALUE), "FOFD1340");
+                    }
+                    if (max < 1 || max < min) {
+                        throw new XPathException("Invalid max value in format picture " + Err.wrap(widths, Err.VALUE), "FOFD1340");
+                    }
                 } else {
-                    XPathException error = new XPathException("Unrecognized width specifier " + Err.wrap(widths, Err.VALUE));
-                    error.setErrorCode("FOFD1340");
-                    throw error;
+                    throw new XPathException("Unrecognized width specifier in format picture " + Err.wrap(widths, Err.VALUE), "FOFD1340");
                 }
             }
 
