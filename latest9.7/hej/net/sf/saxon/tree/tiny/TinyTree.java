@@ -422,41 +422,22 @@ public final class TinyTree extends GenericTreeInfo {
                 (nodeKind.length - numberOfNodes > 20000)) {
 
             //System.err.println("-- copying node arrays");
-            int k = numberOfNodes + 1;
 
-            byte[] nodeKind2 = new byte[k];
-            int[] next2 = new int[k];
-            short[] depth2 = new short[k];
-            int[] alpha2 = new int[k];
-            int[] beta2 = new int[k];
-            int[] nameCode2 = new int[k];
+            nodeKind = Arrays.copyOf(nodeKind, numberOfNodes);
+            next = Arrays.copyOf(next, numberOfNodes);
+            depth = Arrays.copyOf(depth, numberOfNodes);
+            alpha = Arrays.copyOf(alpha, numberOfNodes);
+            beta = Arrays.copyOf(beta, numberOfNodes);
+            nameCode = Arrays.copyOf(nameCode, numberOfNodes);
 
-            System.arraycopy(nodeKind, 0, nodeKind2, 0, numberOfNodes);
-            System.arraycopy(next, 0, next2, 0, numberOfNodes);
-            System.arraycopy(depth, 0, depth2, 0, numberOfNodes);
-            System.arraycopy(alpha, 0, alpha2, 0, numberOfNodes);
-            System.arraycopy(beta, 0, beta2, 0, numberOfNodes);
-            System.arraycopy(nameCode, 0, nameCode2, 0, numberOfNodes);
             if (typeArray != null) {
-                SchemaType[] type2 = new SchemaType[k];
-                System.arraycopy(typeArray, 0, type2, 0, numberOfNodes);
-                typeArray = type2;
+                typeArray = Arrays.copyOf(typeArray, numberOfNodes);
             }
             if (lineNumbers != null) {
-                int[] lines2 = new int[k];
-                System.arraycopy(lineNumbers, 0, lines2, 0, numberOfNodes);
-                lineNumbers = lines2;
-                int[] columns2 = new int[k];
-                System.arraycopy(columnNumbers, 0, columns2, 0, numberOfNodes);
-                columnNumbers = columns2;
+                lineNumbers = Arrays.copyOf(lineNumbers, numberOfNodes);
+                columnNumbers = Arrays.copyOf(columnNumbers, numberOfNodes);
             }
 
-            nodeKind = nodeKind2;
-            next = next2;
-            depth = depth2;
-            alpha = alpha2;
-            beta = beta2;
-            nameCode = nameCode2;
         }
 
         if ((numberOfAttributes * 3 < attParent.length) ||
@@ -470,39 +451,20 @@ public final class TinyTree extends GenericTreeInfo {
                 attCode = IntArraySet.EMPTY_INT_ARRAY;
                 attValue = EMPTY_STRING_ARRAY;
                 attType = null;
+            } else {
+                attParent = Arrays.copyOf(attParent, numberOfAttributes);
+                attCode = Arrays.copyOf(attCode, numberOfAttributes);
+                attValue = Arrays.copyOf(attValue, numberOfAttributes);
             }
 
-            int[] attParent2 = new int[k];
-            int[] attCode2 = new int[k];
-            CharSequence[] attValue2 = new String[k];
-
-            System.arraycopy(attParent, 0, attParent2, 0, numberOfAttributes);
-            System.arraycopy(attCode, 0, attCode2, 0, numberOfAttributes);
-            System.arraycopy(attValue, 0, attValue2, 0, numberOfAttributes);
-
-            attParent = attParent2;
-            attCode = attCode2;
-            attValue = attValue2;
-
             if (attType != null) {
-                SimpleType[] attType2 = new SimpleType[k];
-                System.arraycopy(attType, 0, attType2, 0, numberOfAttributes);
-                attType = attType2;
+                attType = Arrays.copyOf(attType, numberOfAttributes);
             }
         }
 
         if (numberOfNamespaces * 3 < namespaceParent.length) {
-            int k = numberOfNamespaces;
-            int[] namespaceParent2 = new int[k];
-            NamespaceBinding[] namespaceCode2 = new NamespaceBinding[k];
-
-            //System.err.println("-- copying namespace arrays");
-
-            System.arraycopy(namespaceParent, 0, namespaceParent2, 0, numberOfNamespaces);
-            System.arraycopy(namespaceBinding, 0, namespaceCode2, 0, numberOfNamespaces);
-
-            namespaceParent = namespaceParent2;
-            namespaceBinding = namespaceCode2;
+            namespaceParent = Arrays.copyOf(namespaceParent, numberOfNamespaces);
+            namespaceBinding = Arrays.copyOf(namespaceBinding, numberOfNamespaces);
         }
 
         statistics.updateStatistics(numberOfNodes, numberOfAttributes, numberOfNamespaces, charBuffer.length());
