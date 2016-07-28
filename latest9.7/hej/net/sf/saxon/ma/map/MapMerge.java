@@ -13,14 +13,18 @@ import net.sf.saxon.expr.StaticContext;
 import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ExpressionTool;
+import net.sf.saxon.functions.InsertBefore;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.SequenceExtent;
 import net.sf.saxon.value.SequenceType;
+import net.sf.saxon.value.StringValue;
 
 
 /**
@@ -31,8 +35,19 @@ public class MapMerge extends ExtensionFunctionDefinition {
 
     public final static StructuredQName FUNCTION_NAME = new StructuredQName("map", NamespaceConstant.MAP_FUNCTIONS, "merge");
     private final static SequenceType[] ARG_TYPES = new SequenceType[]{
-            SequenceType.makeSequenceType(MapType.ANY_MAP_TYPE, StaticProperty.ALLOWS_ZERO_OR_MORE)
+            SequenceType.makeSequenceType(MapType.ANY_MAP_TYPE, StaticProperty.ALLOWS_ZERO_OR_MORE),
+            SequenceType.makeSequenceType(MapType.ANY_MAP_TYPE, StaticProperty.EXACTLY_ONE)
     };
+
+    @Override
+    public int getMaximumNumberOfArguments() {
+        return 2;
+    }
+
+    @Override
+    public int getMinimumNumberOfArguments() {
+        return 1;
+    }
 
     /**
      * Get the name of the function, as a QName.
@@ -112,6 +127,15 @@ public class MapMerge extends ExtensionFunctionDefinition {
 
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
 
+            String duplicates = "use-first";
+            if (arguments.length > 1) {
+                MapItem options = (MapItem)arguments[1].head();
+                Sequence dupValue = options.get(new StringValue("duplicates"));
+                if (dupValue != null) {
+                    duplicates = dupValue.head().getStringValue();
+                }
+            }
+
             SequenceIterator iter = arguments[0].iterate();
             MapItem baseMap = (MapItem) iter.next();
             if (baseMap == null) {
@@ -123,7 +147,24 @@ public class MapMerge extends ExtensionFunctionDefinition {
                 MapItem next;
                 while ((next = (MapItem) iter.next()) != null) {
                     for (KeyValuePair pair : next) {
-                         baseMap = ((HashTrieMap) baseMap).addEntry(pair.key, pair.value);
+                        Sequence existing = baseMap.get(pair.key);
+                        if (existing != null) {
+                            if (duplicates.equals("use-first") || duplicates.equals("unspecified")) {
+                                // no action
+                            } else if (duplicates.equals("use-last")) {
+                                baseMap = ((HashTrieMap) baseMap).addEntry(pair.key, pair.value);
+                            } else if (duplicates.equals("combine")) {
+                                InsertBefore.InsertIterator combinedIter =
+                                        new InsertBefore.InsertIterator(pair.value.iterate(), existing.iterate(), 1);
+                                Sequence combinedValue = SequenceExtent.makeSequenceExtent(combinedIter);
+                                baseMap = ((HashTrieMap) baseMap).addEntry(pair.key, combinedValue);
+                            } else {
+                                throw new XPathException("Duplicate key in constructed map: " +
+                                                                 Err.wrap(pair.key.getStringValueCS()), "FOJS0003");
+                            }
+                        } else {
+                            baseMap = ((HashTrieMap) baseMap).addEntry(pair.key, pair.value);
+                        }
                     }
                 }
                 return baseMap;
