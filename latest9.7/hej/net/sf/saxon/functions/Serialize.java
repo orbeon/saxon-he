@@ -168,8 +168,6 @@ public class Serialize extends SystemFunction implements Callable {
                     }
                 }
                 // Implementation-defined serialization parameters in an unrecognised namespace are ignored.
-            } else {
-                break;
             }
         }
         return result;

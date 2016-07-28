@@ -706,8 +706,6 @@ public class JsonParser {
                     converted = SequenceTool.toGroundedValue(converted);
                     result = result.addEntry(key, converted);
                 }
-            } else {
-                break;
             }
         }
         return result;

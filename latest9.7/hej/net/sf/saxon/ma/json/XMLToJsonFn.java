@@ -85,8 +85,6 @@ public class XMLToJsonFn extends SystemFunction {
                     converted = SequenceTool.toGroundedValue(converted);
                     result = result.addEntry(key, converted);
                 }
-            } else {
-                break;
             }
         }
         return result;

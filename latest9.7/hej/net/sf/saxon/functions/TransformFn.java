@@ -149,8 +149,6 @@ public class TransformFn extends SystemFunction implements Callable {
                     converted = SequenceTool.toGroundedValue(converted);
                     result = result.addEntry(key, converted);
                 }
-            } else {
-                break;
             }
         }
         return result;
@@ -170,8 +168,6 @@ public class TransformFn extends SystemFunction implements Callable {
                     stylesheetOptionFound = true;
                     styleOption = key;
                 }
-            } else {
-                break;
             }
         }
         if (styleOption == null) {
@@ -195,8 +191,6 @@ public class TransformFn extends SystemFunction implements Callable {
                     stylesheetOptionFound = true;
                     styleOption = key;
                 }
-            } else {
-                break;
             }
         }
         if (styleOption == null) {
@@ -222,8 +216,6 @@ public class TransformFn extends SystemFunction implements Callable {
                     invocationOptionFound = true;
                     invocationOption = key;
                 }
-            } else {
-                break;
             }
         }
         return invocationOption;
@@ -243,8 +235,6 @@ public class TransformFn extends SystemFunction implements Callable {
                     invocationOptionFound = true;
                     invocationOption = key;
                 }
-            } else {
-                break;
             }
         }
         return invocationOption;
