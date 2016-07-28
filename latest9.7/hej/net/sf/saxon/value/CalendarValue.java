@@ -393,14 +393,27 @@ public abstract class CalendarValue extends AtomicValue implements AtomicMatchKe
          *
          * @return an atomic value that encapsulates this match key
          */
-        public AtomicValue asAtomic() {
+        public CalendarValue asAtomic() {
             return CalendarValue.this;
         }
 
         @Override
         public boolean equals(Object obj) {
-            return obj instanceof CalendarValueMapKey &&
-                asAtomic().isIdentical(((CalendarValueMapKey)obj).asAtomic());
+            if (obj instanceof CalendarValueMapKey) {
+                CalendarValue a = CalendarValue.this;
+                CalendarValue b = ((CalendarValueMapKey) obj).asAtomic();
+                if (a.hasTimezone() == b.hasTimezone()) {
+                    if (a.hasTimezone()) {
+                        return a.adjustTimezone(b.tzMinutes).isIdentical(b);
+                    } else {
+                        return a.isIdentical(b);
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         }
 
         @Override
