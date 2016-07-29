@@ -96,11 +96,11 @@ public class NumberInstruction extends Expression {
                              boolean hasVariablesInPatterns,
                              boolean backwardsCompatible) {
 
-        if (select != null) {
-            selectOp = new Operand(this, select, OperandRole.SINGLE_ATOMIC);
-        }
         if (value != null) {
             valueOp = new Operand(this, value, OperandRole.SINGLE_ATOMIC);
+        }
+        if (select != null) {
+            selectOp = new Operand(this, select, new OperandRole(0, OperandUsage.NAVIGATION, SequenceType.SINGLE_NODE));
         }
         if (format != null) {
             formatOp = new Operand(this, format, OperandRole.SINGLE_ATOMIC);
@@ -343,6 +343,10 @@ public class NumberInstruction extends Expression {
         if (from != null) {
             from.promote(offer, this);
         }
+    }
+
+    public String toShortString() {
+        return "xsl:number";
     }
 
     public Item evaluateItem(XPathContext context) throws XPathException {

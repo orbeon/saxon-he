@@ -7,6 +7,7 @@
 
 package net.sf.saxon.style;
 
+import net.sf.saxon.expr.ContextItemExpression;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.Literal;
 import net.sf.saxon.expr.StringLiteral;
@@ -206,12 +207,17 @@ public class XSLNumber extends StyleElement {
         count = typeCheck("count", count);
         startAt = typeCheck("start-at", startAt);
 
+        String errorCode = "XTTE1000";
+        if (value == null && select == null) {
+            select = new ContextItemExpression();
+            select.setLocation(allocateLocation());
+            errorCode = "XTTE0990";
+        }
         if (select != null) {
             try {
                 RoleDiagnostic role =
                         new RoleDiagnostic(RoleDiagnostic.INSTRUCTION, "xsl:number/select", 0);
-                //role.setSourceLocator(new ExpressionLocation(this));
-                role.setErrorCode("XTTE1000");
+                role.setErrorCode(errorCode);
                 select = TypeChecker.staticTypeCheck(select,
                         SequenceType.SINGLE_NODE,
                         false, role, makeExpressionVisitor());
