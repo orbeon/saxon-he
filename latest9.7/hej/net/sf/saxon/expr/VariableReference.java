@@ -206,7 +206,9 @@ public abstract class VariableReference extends Expression implements BindingRef
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         if (constantValue != null) {
             binding = null;
-            return Literal.makeLiteral(constantValue);
+            Literal lit = Literal.makeLiteral(constantValue);
+            ExpressionTool.copyLocationInfo(this, lit);
+            return lit;
         }
 //        if (staticType == null) {
 //            throw new IllegalStateException("Variable $" + getDisplayName() + " has not been fixed up");
