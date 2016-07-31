@@ -676,8 +676,10 @@ public class REMatcher {
                                 }
                             }
                             UnicodeString captured = getParen(n);
-                            for (int j = 0; j < captured.uLength(); j++) {
-                                sb.appendWideChar(captured.uCharAt(j));
+                            if (captured != null) {
+                                for (int j = 0; j < captured.uLength(); j++) {
+                                    sb.appendWideChar(captured.uCharAt(j));
+                                }
                             }
                         }
                     } else {
