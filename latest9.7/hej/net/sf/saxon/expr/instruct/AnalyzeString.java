@@ -22,7 +22,6 @@ import net.sf.saxon.value.SequenceType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * An xsl:analyze-string element in the stylesheet. New at XSLT 2.0
@@ -38,6 +37,8 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
 
     private final static OperandRole ACTION =
             new OperandRole(OperandRole.USES_NEW_FOCUS | OperandRole.HIGHER_ORDER, OperandUsage.NAVIGATION);
+    private final static OperandRole SELECT =
+            new OperandRole(OperandRole.SETS_NEW_FOCUS, OperandUsage.ABSORPTION, SequenceType.SINGLE_STRING);
 
     private RegularExpression pattern;
 
@@ -59,7 +60,7 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
                          Expression matching,
                          Expression nonMatching,
                          RegularExpression pattern) {
-        selectOp = new Operand(this, select, OperandRole.SINGLE_ATOMIC);
+        selectOp = new Operand(this, select, SELECT);
         regexOp = new Operand(this, regex, OperandRole.SINGLE_ATOMIC);
         flagsOp = new Operand(this, flags, OperandRole.SINGLE_ATOMIC);
         if (matching != null) {
