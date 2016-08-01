@@ -256,7 +256,9 @@ public class PatternThatSetsCurrent extends Pattern {
 
     /*@NotNull*/
     public Pattern copy(RebindingMap rebindings) {
-        PatternThatSetsCurrent n = new PatternThatSetsCurrent(wrappedPattern.copy(rebindings));
+        LocalVariableBinding newCurrent = new LocalVariableBinding(Current.FN_CURRENT, SequenceType.SINGLE_ITEM);
+        rebindings.put(binding, newCurrent);
+        PatternThatSetsCurrent n = new PatternThatSetsCurrent(wrappedPattern.copy(rebindings), newCurrent);
         ExpressionTool.copyLocationInfo(this, n);
         return n;
     }
