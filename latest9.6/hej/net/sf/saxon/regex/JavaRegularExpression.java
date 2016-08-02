@@ -16,6 +16,7 @@ import net.sf.saxon.tree.iter.EmptyIterator;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * An implementation of RegularExpression that calls the JDK regular expression library directly.
@@ -38,7 +39,11 @@ public class JavaRegularExpression implements RegularExpression {
     public JavaRegularExpression(CharSequence javaRegex, String flags) throws XPathException {
         this.flagBits = setFlags(flags);
         this.javaRegex = javaRegex.toString();
-        pattern = Pattern.compile(this.javaRegex, flagBits & (~(Pattern.COMMENTS)));
+        try {
+            pattern = Pattern.compile(this.javaRegex, flagBits & (~(Pattern.COMMENTS)));
+        } catch (PatternSyntaxException e) {
+            throw new XPathException("Incorrect syntax for Java regular expression", e);
+        }
     }
 
     /**
