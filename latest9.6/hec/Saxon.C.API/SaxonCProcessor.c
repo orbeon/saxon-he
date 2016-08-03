@@ -51,12 +51,9 @@ const char * getProductVariantAndVersion(sxnc_environment environ) {
 }
 
 void initSaxonc(sxnc_environment ** environ, sxnc_processor ** proc, sxnc_parameter **param, sxnc_property ** prop, int cap, int propCap){
-    if(*param == NULL) {
-    	*param = (sxnc_parameter *)calloc(cap, sizeof(sxnc_parameter));
-    }
-     if(*prop == NULL){
-    	*prop = (sxnc_property *)calloc(propCap, sizeof(sxnc_property));
-    }
+    
+    *param = (sxnc_parameter *)calloc(cap, sizeof(sxnc_parameter));
+    *prop = (sxnc_property *)calloc(propCap, sizeof(sxnc_property));
     *environ =  (sxnc_environment *)malloc(sizeof(sxnc_environment));
     *proc = (sxnc_processor *)malloc(sizeof(sxnc_processor));
 }

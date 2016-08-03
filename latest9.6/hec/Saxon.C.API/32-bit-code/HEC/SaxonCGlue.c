@@ -10,10 +10,8 @@ void setDllname(){
     size_t rDir_len  = strlen(tempResources_dir);
     char * env = getenv("SAXONC_HOME");
     size_t env_len;
-    printf("tempDllname: %s\n", tempDllname);
-     printf("tempResources: %s\n", tempResources_dir);
+   
     if(env!= NULL) {
-        printf("entered env\n");
         
         env_len = strlen(env);
         dllname =malloc(sizeof(char)*name_len+env_len+1);

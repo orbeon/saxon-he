@@ -33,9 +33,9 @@
 
 #ifndef __cplusplus
 #ifndef _BOOL
-typedef unsigned char booli;
-static const booli __false = 0;
-static const booli __true = 1;
+typedef unsigned char bool;
+static const bool __false = 0;
+static const bool __true = 1;
 #endif
 #endif
 

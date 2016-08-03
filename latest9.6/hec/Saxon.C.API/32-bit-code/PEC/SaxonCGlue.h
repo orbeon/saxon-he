@@ -33,17 +33,17 @@
 
 #ifndef __cplusplus
 #ifndef _BOOL
-typedef unsigned char booli;
-static const booli __false = 0;
-static const booli __true = 1;
+typedef unsigned char bool;
+static const bool false = 0;
+static const bool true = 1;
 #endif
 #endif
 
 #ifndef __cplusplus
 #if defined(LICENSE)
-#define license __true;
+#define license true;
 #else
-#define license __false
+#define license false
 #endif
 #endif
 
