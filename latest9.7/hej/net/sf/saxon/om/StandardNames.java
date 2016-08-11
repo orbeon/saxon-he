@@ -709,11 +709,24 @@ public abstract class StandardNames {
      * Get a StructuredQName representing a system-defined name
      *
      * @param fingerprint the fingerprint of the name
-     * @return a StructuredQName representing the system-defined name
+     * @return a StructuredQName representing the system-defined name. The result will include
+     * the conventional prefix associated with the namespace, e.g. "xs" for the XSD namespace
      */
 
     public static StructuredQName getStructuredQName(int fingerprint) {
         return new StructuredQName(getPrefix(fingerprint), getURI(fingerprint), getLocalName(fingerprint));
+    }
+
+    /**
+     * Get an unprefixed StructuredQName representing a system-defined name
+     *
+     * @param fingerprint the fingerprint of the name
+     * @return a StructuredQName representing the system-defined name. The result will include
+     * no prefix
+     */
+
+    public static StructuredQName getUnprefixedStructuredQName(int fingerprint) {
+        return new StructuredQName("", getURI(fingerprint), getLocalName(fingerprint));
     }
 
 }
