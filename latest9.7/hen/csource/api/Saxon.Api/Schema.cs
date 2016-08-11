@@ -98,6 +98,19 @@ namespace Saxon.Api
             }
         }
 
+
+        /// <summary>
+        /// This property provides a way to set the catalog file which will be used by the Apache catalog resolver.
+        /// </summary>
+        /// <para>The value of the xml.catalog.files</para>
+        public String Catalog
+        {
+            set {
+                net.sf.saxon.trans.XmlCatalogResolver.setCatalog(value, this.config, false);
+            }
+        }
+
+
         /// <summary>
         /// The SchemaResolver is a user-supplied class used for resolving references to
         /// schema documents. It applies to references from one schema document to another
@@ -124,18 +137,6 @@ namespace Saxon.Api
             set
             {
                 schemaManager.setSchemaURIResolver(new DotNetSchemaURIResolver(value));
-            }
-        }
-
-        /// <summary>
-        /// This property provides a way to set the catalog file which will be used by the Apache catalog resolver.
-        /// </summary>
-        /// <para>The value of the xml.catalog.files</para>
-        public String Catalog
-        {
-            set
-            {
-                net.sf.saxon.trans.XmlCatalogResolver.setCatalog(value, this.config, false);
             }
         }
 
@@ -396,12 +397,21 @@ namespace Saxon.Api
 			this.invalidityHandler = new InvalidityHandlerWrapper(inHandler);
 		}
 
+        /// <summary>
+        /// Add an instance document to the list of documents to be validated.
+        /// </summary>
+        /// <param name="source">Stream source of the document</param>
+        /// <param name="baseUri">Base Uri of the source document</param>
 		public void AddSource(Stream source, Uri baseUri){
 			StreamSource ss = new StreamSource(new JDotNetInputStream(source));
 			ss.setSystemId(baseUri.ToString());
 			sources.Add (ss);
 		}
 
+        /// <summary>
+        /// Add an instance document to the list of documents to be validated
+        /// </summary>
+        /// <param name="uri">Uri of the source document</param>
 		public void AddSource(Uri uri){
 			StreamSource ss = new StreamSource(uri.ToString());
 			JAugmentedSource aug = JAugmentedSource.makeAugmentedSource(ss);
@@ -409,6 +419,10 @@ namespace Saxon.Api
 			sources.Add (aug);
 		}
 
+        /// <summary>
+        /// Add an instance document to the list of documents to be validated
+        /// </summary>
+        /// <param name="reader">Source document added a a XmlReader</param>
 		public void AddSource(XmlReader reader){
 			JPullProvider pp = new JDotNetPullProvider(reader);
 			JPipelineConfiguration pipe = config.makePipelineConfiguration();
@@ -420,6 +434,10 @@ namespace Saxon.Api
 			sources.Add (psource);
 		}
 
+        /// <summary>
+        /// Add an instance document to the list of documents to be validated.
+        /// </summary>
+        /// <param name="source">supplied as a XdmNode value</param>
 		public void AddSource(XdmNode source){
 			sources.Add((JNodeInfo)source.value);
 		}

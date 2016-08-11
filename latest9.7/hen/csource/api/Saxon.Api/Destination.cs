@@ -290,12 +290,21 @@ namespace Saxon.Api
             props.setProperty(name.ClarkName, value);
         }
 
-
+        /// <summary>
+        /// Set default output properties, for use when no explicit properties are set using SetProperty().
+        /// The values supplied are typically those specified in the stylesheet or query. In the case of XSLT,
+        /// they are the properties associated with unamed <c>xsl:output</c> declarations.
+        /// </summary>
+        /// <param name="props"></param>
 		public void SetDefaultOutputProperties(JProperties props)
 		{
 			this.defaultOutputProperties = props;
 		}
 
+        /// <summary>
+        /// Set a character map to be used
+        /// </summary>
+        /// <param name="charMap">the character map</param>
 		public void SetCharacterMap(JCharacterMapIndex charMap)
 		{
 			this.characterMap = charMap;
@@ -374,6 +383,7 @@ namespace Saxon.Api
             writer = new JDotNetWriter(textWriter);
             mustClose = false;
         }
+
 
         internal JReceiver GetReceiver(JConfiguration config)
         {
