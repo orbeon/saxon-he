@@ -52,7 +52,7 @@ namespace Saxon.Api
 {
 
     /// <summary>
-    /// An value in the XDM data model. A value is a sequence of zero or more
+    /// A value in the XDM data model. A value is a sequence of zero or more
     /// items, each item being either an atomic value or a node.
     /// </summary>
     /// <remarks>
@@ -80,9 +80,7 @@ namespace Saxon.Api
 
         internal JSequence value;
 
-        /// <summary>
-        /// Internal constructor
-        /// </summary>
+        // Internal constructor
 
         internal XdmValue() { }
 
@@ -905,9 +903,8 @@ namespace Saxon.Api
         /// Line numbers will typically be as reported by a SAX parser; this means that the line number for an element
         /// node is the line number containing the closing ">" of the start tag.
         /// </summary>
-
-        public int LineNumber
-        {
+         
+        public int LineNumber {
             get { return ((JNodeInfo)value).getLineNumber(); }
         }
 
@@ -1531,10 +1528,8 @@ namespace Saxon.Api
             return new QName("", namespaceURI, localName);
         }
 
-        /// <summary>
-        /// Factory method to construct a QName from Saxon's internal <c>StructuredQName</c>
-        /// representation.
-        /// </summary>
+        // internal method: Factory method to construct a QName from Saxon's internal <c>StructuredQName</c>
+        // representation.
 
         internal static QName FromStructuredQName(JStructuredQName sqn) {
             return new QName(sqn.getPrefix(), sqn.getURI(), sqn.getLocalPart());
@@ -1711,9 +1706,7 @@ namespace Saxon.Api
             return new XmlQualifiedName(local, uri);
         }
 
-        /// <summary>
-        /// Convert to a net.sf.saxon.value.QNameValue
-        /// </summary>
+		// internal method: Convert to a net.sf.saxon.value.QNameValue
 
         internal JQNameValue ToQNameValue()
         {
@@ -1725,13 +1718,8 @@ namespace Saxon.Api
             return new JStructuredQName(Prefix, Uri, LocalName);
         }
 
-        /// <summary>
-        /// Get the internal Saxon fingerprint of this name
-        /// </summary>
-        /// <param name="config">The Saxon configuration (the fingerprint for a QName is different in different configurations)</param>
-        /// <returns>
-        /// The integer fingerprint of the name
-        /// </returns>
+		// internal method: Get the internal Saxon fingerprint of this name, with the Saxon configuration supplied
+        // (the fingerprint for a QName is different in different configurations)
 
         internal int GetFingerprint(JConfiguration config)
         {

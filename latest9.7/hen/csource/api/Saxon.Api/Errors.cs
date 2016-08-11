@@ -26,9 +26,7 @@ namespace Saxon.Api
         private XPathException exception;
         internal bool isWarning;
 
-        /// <summary>
-        /// Create a new StaticError, wrapping a Saxon XPathException
-        /// </summary>
+		// internal constructor: Create a new StaticError, wrapping a Saxon XPathException
 
         internal StaticError(JException err)
         {
@@ -240,10 +238,7 @@ namespace Saxon.Api
             exception = new XPathException(message);
         }
 
-        /// <summary>
-        /// Create a new DynamicError, wrapping a Saxon XPathException
-        /// </summary>
-        /// <param name="err">The exception to be wrapped</param>
+		// internal constructor: Create a new DynamicError, wrapping a Saxon XPathException
 
         internal DynamicError(TransformerException err)
         {
@@ -385,14 +380,9 @@ namespace Saxon.Api
 
 
 
-    }
+	}
 
 	/// <summary>
-	/// Error gatherer. This class To provide customized error handling
-	/// If an application does <em>not</em> register its own custom
-	/// <code>ErrorListener</code>, the default <code>ErrorGatherer</code>
-	/// <para>Error gatherer. This class is used to provide customized error handling. </para>
-	/// <para>If an application does <em>not</em> register its own custom
 	/// Error gatherer. This class is used to provide customized error handling. </summary>
 	/// <remarks><para>If an application does <em>not</em> register its own custom
 	/// <code>ErrorListener</code>, the default <code>ErrorGatherer</code>
@@ -400,7 +390,7 @@ namespace Saxon.Api
 	/// and does not throw any <code>Exception</code>s.
 	/// Applications are <em>strongly</em> encouraged to register and use
 	/// <code>ErrorListener</code>s that insure proper behavior for warnings and
-	/// errors.
+	/// errors.</para>
 	/// </remarks>
     [Serializable]
     internal class ErrorGatherer : javax.xml.transform.ErrorListener
@@ -476,7 +466,7 @@ namespace Saxon.Api
         /// </summary>
         /// <param name="systemId">systemId optional; may be used to represent the destination of any
         /// report produced</param>
-        void startReporting(String systemId);
+		/**public**/ void startReporting(String systemId);
 
 
 		/// <summary>
@@ -484,7 +474,7 @@ namespace Saxon.Api
 		/// against a schema
 		/// </summary>
 		/// <param name="failure">failure details of the validation error</param>
-		void reportInvalidity (StaticError i);
+		/**public**/ void reportInvalidity (StaticError i);
 		
 
 		/// <summary>
@@ -495,28 +485,50 @@ namespace Saxon.Api
 		/// In the case of the InvalidityReportGenerator, this returns the XML document
 		/// containing the validation report. This will be the value returned as the value of
 	    /// the variable $err:value during try/catch processing</returns>
-		XdmValue endReporting(); 
+		/**public**/ XdmValue endReporting(); 
 		
 
 
 
 	}
 
+
+    /// <summary>
+    /// This class InvalidityHandlerWrapper extends the standard error handler for errors found during
+    /// validation of an instance document against a schema, used if user specifies -report option on validate.
+    /// Its effect is to output the validation errors found into the filename specified in an XML format.
+    /// This is a wrapper class to wrap a .NET InvalidatityHandler class for interfacing within Java.
+    /// </summary>
     public class InvalidityHandlerWrapper : net.sf.saxon.lib.InvalidityHandler
     {
 
         private IInvalidityHandler inHandler;
 
+        /// <summary>
+        /// reate a Standard Invalidity Handler
+        /// </summary>
+        /// <param name="inHandler">The .NEt IInvalidtityHandler</param>
         public InvalidityHandlerWrapper(IInvalidityHandler inHandler) {
             this.inHandler = inHandler;
         }
 
 
+        /// <summary>
+        /// Get the value to be associated with a validation exception. May return null.
+        /// In the case of the InvalidityGenerator, this returns the XML document
+        /// containing the validation report
+        /// </summary>
+        /// <returns>a value (or null). This will be the value returned as the value of the variable
+        /// $err:value during try/catch processor</returns>
         public Sequence endReporting()
         {
             return inHandler.endReporting().Unwrap();
         }
 
+        /// <summary>
+        /// Receive notification of a validity error.
+        /// </summary>
+        /// <param name="i">Information about the nature of the invalidity</param>
         public void reportInvalidity(Invalidity i)
         {
             if (i is JValidationFailure) { 
@@ -527,13 +539,18 @@ namespace Saxon.Api
             
         }
 
-        public void startReporting(string str)
+
+        /// <summary>
+        /// At the start of a validation episode, initialize the handler
+        /// </summary>
+        /// <param name="systemId">Is optional; may be used to represent the destination of any report produced</param>
+        public void startReporting(string systemId)
         {
-            inHandler.startReporting(str);
+            inHandler.startReporting(systemId);
         }
 
         
-    }
+	}
 
 
 
@@ -541,12 +558,8 @@ namespace Saxon.Api
 
 
 	/// <summary>
-	/// Error gatherer. This class To provide customized error handling
-	/// <p>If an application does <em>not</em> register its own custom
-	/// <para><code>ErrorListener</code>, the default <code>ErrorGatherer</code>
-	/// Error gatherer. This class To provide customized error handling
-	/// If an application does <em>not</em> register its own custom
-	/// <para><code>ErrorListener</code>, the default <code>ErrorGatherer</code>
+	/// <para>If an application does <em>not</em> register its own custom
+	/// <code>ErrorListener</code>, the default <code>ErrorGatherer</code>
 	/// is used which keeps track of all warnings and errors in a list.
 	/// and does not throw any <code>Exception</code>s.
 	/// Applications are <em>strongly</em> encouraged to register and use

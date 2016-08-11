@@ -330,33 +330,27 @@ namespace Saxon.Api
             }
         }
 
-
-        /// <summary>
-        /// Compile a stylesheet supplied as a Stream.
-        /// </summary>
-        /// <example>
-        /// <code>
-        /// Stream source = new FileStream("input.xsl", FileMode.Open, FileAccess.Read);
-        /// XsltExecutable q = compiler.Compile(source);
-        /// source.Close();
-        /// </code>
-        /// </example>
-        /// <param name="input">A stream containing the source text of the stylesheet</param>
-        /// <param name="theBaseUri">Specify the base Uri of the stream</param>
-        /// <param name="closeStream">Flag to indicate if the stream should be closed in the method</param>
-        /// <returns>An <c>XsltExecutable</c> which represents the compiled stylesheet object.
-        /// The XsltExecutable may be loaded as many times as required, in the same or a different
-        /// thread. The <c>XsltExecutable</c> is not affected by any changes made to the <c>XsltCompiler</c>
-        /// once it has been compiled.</returns>
-        /// <remarks>
-        /// <para>If the stylesheet contains any <c>xsl:include</c> or <c>xsl:import</c> declarations,
-        /// then the <c>BaseURI</c> property must be set to allow these to be resolved.</para>
-        /// <para>The stylesheet is contained in the part of the input stream between its current
-        /// position and the end of the stream. It is the caller's responsibility to close the input 
-        /// stream after use. If the compilation succeeded, then on exit the stream will be 
-        /// exhausted; if compilation failed, the current position of the stream on exit is
-        /// undefined.</para>
-        /// </remarks>
+		// internal method: Compile a stylesheet supplied as a Stream.
+		// For example:
+		// <code>
+		// Stream source = new FileStream("input.xsl", FileMode.Open, FileAccess.Read);
+		// XsltExecutable q = compiler.Compile(source);
+		// source.Close();
+		// </code>
+		// <param name="input">A stream containing the source text of the stylesheet</param>
+		// <param name="theBaseUri">Specify the base Uri of the stream</param>
+		// <param name="closeStream">Flag to indicate if the stream should be closed in the method</param>
+		// <returns>An <c>XsltExecutable</c> which represents the compiled stylesheet object.
+		// The XsltExecutable may be loaded as many times as required, in the same or a different
+		// thread. The <c>XsltExecutable</c> is not affected by any changes made to the <c>XsltCompiler</c>
+		// once it has been compiled.</returns>
+		// If the stylesheet contains any <c>xsl:include</c> or <c>xsl:import</c> declarations,
+		// then the <c>BaseURI</c> property must be set to allow these to be resolved.</para>
+		// <para>The stylesheet is contained in the part of the input stream between its current
+		// position and the end of the stream. It is the caller's responsibility to close the input 
+		// stream after use. If the compilation succeeded, then on exit the stream will be 
+		// exhausted; if compilation failed, the current position of the stream on exit is
+		// undefined.
 
         internal XsltExecutable Compile(Stream input, String theBaseUri, bool closeStream)
         {
@@ -481,16 +475,15 @@ namespace Saxon.Api
 
         /// <summary>
         ///  Load a compiled package from a file or from a remote location.
-        ///  The supplied URI represents the location of a resource which must have been originally.
         /// The supplied URI represents the location of a resource which must have been originally
-        /// created using XsltPackage#save(System.Stream).
+		/// created using XsltPackage#Save(System.Stream).
         /// The result of loading the package is returned as an<code> XsltPackage</code> object.
         /// Note that this package is not automatically imported to this <code>XsltCompiler</code>;
         /// if the package is required for use in subsequent compilations then it must be explicitly
         /// imported.
         /// </summary>
         /// <param name="location">the location from which the package is to be loaded, as a URI</param>
-        /// <returns>the compiled package loaded from the supplied file or remote location<returns>
+        /// <returns>the compiled package loaded from the supplied file or remote location</returns>
 
         public XsltPackage LoadLibraryPackage(Uri location)
         {
@@ -512,7 +505,7 @@ namespace Saxon.Api
         /// Load a compiled package from a file or from a remote location, with the intent to use this as a complete
         /// executable stylesheet, not as a library package.
         /// The supplied URI represents the location of a resource which must have been originally
-        /// created using XsltPackage#save(System.Stream).</p>
+        /// created using XsltPackage#Save(System.Stream).
         /// </summary>
         /// <param name="location"> the location from which the package is to be loaded, as a URI</param>
         /// <returns>the compiled package loaded from the supplied file or remote location</returns>
@@ -1086,7 +1079,7 @@ namespace Saxon.Api
         /// to construct or configure the returned Receiver.</param>
         public override JReceiver GetReceiver(JPipelineConfiguration pipe)
         {
-
+            
             if (staticParameter != null)
             {
                 controller.initializeController(staticParameter);
@@ -2437,7 +2430,14 @@ namespace Saxon.Api
 
 
 
-
+        /// <summary>
+        /// Invoke a transformation by calling a named template. The results of calling
+        /// the template are returned as a raw value, without wrapping in a document nnode
+        /// or serializing.
+        /// </summary>
+        /// <param name="templateName">the name of the initial temaplte. This must match the name of a
+        /// public named template in the stylesheet. If the value is null, the QName <c>xsl:initial-template</c> is used.</param>
+        /// <returns>the raw results of the called template, without wrapping in a document node or serialization.</returns>
         public XdmValue CallTemplate(QName templateName)
         {
             prime();
@@ -2556,11 +2556,7 @@ namespace Saxon.Api
         private Processor processor;
         private JXsltPackage package;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Saxon.Api.XsltPackage"/> class.
-        /// </summary>
-        /// <param name="p">Processor</param>
-        /// <param name="pp">XsltPackage</param>
+		// internal constructor: Initializes a new instance of the <see cref="Saxon.Api.XsltPackage"/> class.
         internal XsltPackage(Processor p, JXsltPackage pp)
         {
             this.processor = p;
