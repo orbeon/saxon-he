@@ -89,7 +89,7 @@ public class ExecutableFunctionLibrary implements FunctionLibrary {
         fc.setFunctionName(functionName.getComponentName());
         fc.setArguments(staticArgs);
         fc.setFunction(fn);
-        fc.checkFunctionCall(fn, visitor);
+        //fc.checkFunctionCall(fn, visitor);
         fc.setStaticType(fn.getResultType());
         return fc;
     }

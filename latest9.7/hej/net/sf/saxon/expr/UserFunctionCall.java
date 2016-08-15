@@ -320,14 +320,15 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
             return e;
         }
         if (function != null) {
+            checkFunctionCall(function, visitor);
             if (function.getFunctionName() == null) {
                 // This is an inline function item; add type-checking for the argument types and the result type
-                checkFunctionCall(function, visitor);
-                Expression body = function.getBody();
-                body = body.typeCheck(visitor, ContextItemStaticInfo.ABSENT);
-                RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.FUNCTION_RESULT, "", 0);
-                body = TypeChecker.staticTypeCheck(body, function.getResultType(), visitor.getStaticContext().isInBackwardsCompatibleMode(), role, visitor);
-                function.setBody(body);
+                throw new IllegalStateException(); //bug 2879
+//                Expression body = function.getBody();
+//                body = body.typeCheck(visitor, ContextItemStaticInfo.ABSENT);
+//                RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.FUNCTION_RESULT, "", 0);
+//                body = TypeChecker.staticTypeCheck(body, function.getResultType(), visitor.getStaticContext().isInBackwardsCompatibleMode(), role, visitor);
+//                function.setBody(body);
             }
             computeArgumentEvaluationModes();
             if (staticType == SequenceType.ANY_SEQUENCE) {

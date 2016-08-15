@@ -250,8 +250,9 @@ public class XQueryFunctionLibrary implements FunctionLibrary, XQueryFunctionBin
                 fd.registerReference(ufc);
             } else {
                 ufc.setFunction(fn);
-                ExpressionVisitor visitor = ExpressionVisitor.make(fd.getStaticContext());
-                ufc.checkFunctionCall(fn, visitor);
+                // commented out - bug 2879
+                //ExpressionVisitor visitor = ExpressionVisitor.make(fd.getStaticContext());
+                //ufc.checkFunctionCall(fn, visitor);
             }
             return ufc;
         } else {
