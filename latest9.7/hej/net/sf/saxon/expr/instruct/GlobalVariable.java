@@ -12,10 +12,7 @@ import net.sf.saxon.Controller;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.NamespaceConstant;
-import net.sf.saxon.om.GroundedValue;
-import net.sf.saxon.om.Sequence;
-import net.sf.saxon.om.StandardNames;
-import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.om.*;
 import net.sf.saxon.query.XQueryFunction;
 import net.sf.saxon.query.XQueryFunctionLibrary;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -28,11 +25,7 @@ import net.sf.saxon.tree.iter.ManualIterator;
 import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.TypeHierarchy;
-import net.sf.saxon.value.IntegerValue;
-import net.sf.saxon.value.SequenceExtent;
-import net.sf.saxon.value.SequenceType;
-import net.sf.saxon.value.SingletonClosure;
-import net.sf.saxon.value.Cardinality;
+import net.sf.saxon.value.*;
 
 import java.util.*;
 
@@ -421,7 +414,7 @@ public class GlobalVariable extends ComponentCode<GlobalVariable>
         if (this instanceof GlobalParam) {
             setRequiredParam(select == null);
         }
-        final SequenceType type = getRequiredType();
+        SequenceType type = getRequiredType();
         for (BindingReference ref : references) {
             ref.fixup(this);
             GroundedValue constantValue = null;
@@ -434,6 +427,7 @@ public class GlobalVariable extends ComponentCode<GlobalVariable>
                 int relation = th.relationship(select.getItemType(), type.getPrimaryType());
                 if (relation == TypeHierarchy.SAME_TYPE || relation == TypeHierarchy.SUBSUMED_BY) {
                     constantValue = ((Literal) select).getValue();
+                    type = SequenceType.makeSequenceType(SequenceTool.getItemType(constantValue, th), SequenceTool.getCardinality(constantValue));
                 }
             }
             if (select != null) {

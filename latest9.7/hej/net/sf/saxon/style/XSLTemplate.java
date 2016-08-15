@@ -7,7 +7,10 @@
 
 package net.sf.saxon.style;
 
-import net.sf.saxon.expr.*;
+import net.sf.saxon.expr.Component;
+import net.sf.saxon.expr.Expression;
+import net.sf.saxon.expr.Literal;
+import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.expr.instruct.*;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.Logger;
@@ -17,7 +20,10 @@ import net.sf.saxon.trace.LocationKind;
 import net.sf.saxon.trans.*;
 import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.tree.linked.NodeImpl;
-import net.sf.saxon.type.*;
+import net.sf.saxon.type.AnyItemType;
+import net.sf.saxon.type.ErrorType;
+import net.sf.saxon.type.ItemType;
+import net.sf.saxon.type.Type;
 import net.sf.saxon.value.DecimalValue;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.Whitespace;
