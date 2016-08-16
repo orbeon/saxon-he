@@ -169,6 +169,14 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
                 inputDetails.inputStream = connection.getInputStream();
                 inputDetails.contentType = connection.getContentType();
                 inputDetails.encoding = connection.getContentEncoding();
+                for (String param : inputDetails.contentType.replace(" ", "").split(";")) {
+                    if (param.startsWith("charset=")) {
+                        inputDetails.encoding = param.split("=", 2)[1];
+                    } else {
+                        inputDetails.contentType = param;
+                    }
+                }
+
 
             }
         } catch (URISyntaxException e) {
