@@ -1101,7 +1101,7 @@ public abstract class PJConverter {
             if (converter instanceof General) {
                 converter = Identity.INSTANCE;
             }
-            return converter.convert(value, targetClass, context);
+            return converter.convert(gv, targetClass, context);
         }
     }
 }
