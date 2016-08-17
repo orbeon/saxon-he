@@ -333,7 +333,13 @@ public abstract class TestDriver {
         QName edition = new QName("", "edition");
         String saxonEdition = driverProc.getSaxonEdition();
         try {
-            File exceptionsFile = new File(resultsDir + "/" + getNameOfExceptionsFile());
+            String suppliedName = getNameOfExceptionsFile();
+            File exceptionsFile;
+            if (suppliedName.startsWith("/") || suppliedName.matches("^[a-zA-Z]:.*")) {
+                exceptionsFile = new File(suppliedName);
+            } else {
+                exceptionsFile = new File(resultsDir + "/" + suppliedName);
+            }
             System.err.println("Loading exceptions file " + exceptionsFile.getAbsolutePath());
             exceptionsDoc = exceptBuilder.build(exceptionsFile);
             XdmSequenceIterator iter = exceptionsDoc.axisIterator(Axis.DESCENDANT, new QName("", "exception"));
