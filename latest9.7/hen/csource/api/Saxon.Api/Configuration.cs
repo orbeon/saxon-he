@@ -49,7 +49,13 @@ using JDotNetEnumerableCollection = net.sf.saxon.dotnet.DotNetEnumerableCollecti
 using JDotNetPullProvider = net.sf.saxon.dotnet.DotNetPullProvider;
 using JDotNetReader = net.sf.saxon.dotnet.DotNetReader;
 using JDotNetComparator = net.sf.saxon.dotnet.DotNetComparator;
-
+using JSpaceStrippingRule = net.sf.saxon.om.SpaceStrippingRule;
+using JWhitespace = net.sf.saxon.value.Whitespace;
+using JPreparedStylesheet = net.sf.saxon.PreparedStylesheet;
+using JFilterFactory = net.sf.saxon.@event.FilterFactory;
+using JProxyReceiver = net.sf.saxon.@event.ProxyReceiver;
+using net.sf.saxon.om;
+using net.sf.saxon.trace;
 
 namespace Saxon.Api
 {
@@ -63,9 +69,9 @@ namespace Saxon.Api
     /// </summary>
 
     [Serializable]
-    public class Processor 
+    public class Processor
     {
-        
+
         //Transformation data variables
         private SchemaManager schemaManager = null;
         /*internal JConfiguration config;
@@ -79,7 +85,7 @@ namespace Saxon.Api
 
         public Processor()
         {
-            
+
             /*config = JConfiguration.newConfiguration();
             config.registerExternalObjectModel(new DotNetObjectModelDefinition());
             config.setProcessor(this);*/
@@ -96,9 +102,10 @@ namespace Saxon.Api
         /// verify the license key. If false, the Processor will load a default Configuration that gives restricted
         /// capability and does not require a license, regardless of which version of the software is actually being run.</param>
 
-        public Processor(bool licensedEdition) 
+        public Processor(bool licensedEdition)
             // newline needed by documentation stylesheet
-            : this(licensedEdition, false) { }
+            : this(licensedEdition, false)
+        { }
 
         /// <summary>
         /// Create a Processor.
@@ -113,7 +120,7 @@ namespace Saxon.Api
         public Processor(bool licensedEdition, bool loadLocally)
         {
             processor = new JProcessor(licensedEdition);
-			processor.getUnderlyingConfiguration ().registerExternalObjectModel (new DotNetObjectModelDefinition());
+            processor.getUnderlyingConfiguration().registerExternalObjectModel(new DotNetObjectModelDefinition());
             /*if (licensedEdition)
             {
                 
@@ -185,13 +192,15 @@ namespace Saxon.Api
 
         public SchemaManager SchemaManager
         {
-            get {
+            get
+            {
                 if (schemaManager == null)
                 {
                     schemaManager = new SchemaManager(this);
                 }
-                
-                return schemaManager; }
+
+                return schemaManager;
+            }
         }
 
         /// <summary>
@@ -211,12 +220,15 @@ namespace Saxon.Api
         {
             get
             {
-				URIResolver resolver = processor.getUnderlyingConfiguration ().getURIResolver ();
-				if (resolver is JDotNetURIResolver) {
-					return ((JDotNetURIResolver)resolver).getXmlResolver ();
-				} else {
-					return new XmlUrlResolver();
-				}
+                URIResolver resolver = processor.getUnderlyingConfiguration().getURIResolver();
+                if (resolver is JDotNetURIResolver)
+                {
+                    return ((JDotNetURIResolver)resolver).getXmlResolver();
+                }
+                else
+                {
+                    return new XmlUrlResolver();
+                }
             }
             set
             {
@@ -232,22 +244,22 @@ namespace Saxon.Api
         /// <para>By default the <c>Console.Error</c> is used on the .NET platform.</para>
         /// <para>A user can supply their own TextWriter to redirect error messages from the standard output.</para>
         /// </remarks>
-        public TextWriter ErrorWriter 
+        public TextWriter ErrorWriter
         {
 
-            get 
+            get
             {
                 return textWriter;
-            
+
             }
-            set 
+            set
             {
                 textWriter = value;
-				StandardLogger logger = new StandardLogger (value); 
-				processor.getUnderlyingConfiguration ().setLogger (logger);
+                StandardLogger logger = new StandardLogger(value);
+                processor.getUnderlyingConfiguration().setLogger(logger);
             }
-        
-        
+
+
         }
 
         /// <summary>
@@ -309,7 +321,8 @@ namespace Saxon.Api
         /// Create a Serializer
         /// </summary>
         ///  <returns> a new Serializer </returns>
-        public Serializer NewSerializer() {
+        public Serializer NewSerializer()
+        {
             Serializer s = new Serializer();
             s.SetProcessor(this);
             return s;
@@ -456,9 +469,9 @@ namespace Saxon.Api
         {
             try
             {
-				JPipelineConfiguration pipe = processor.getUnderlyingConfiguration().makePipelineConfiguration();
-				JResult result = destination.GetReceiver(pipe);
-				JReceiver r = processor.getUnderlyingConfiguration().getSerializerFactory().getReceiver(result,
+                JPipelineConfiguration pipe = processor.getUnderlyingConfiguration().makePipelineConfiguration();
+                JResult result = destination.GetReceiver(pipe);
+                JReceiver r = processor.getUnderlyingConfiguration().getSerializerFactory().getReceiver(result,
                     pipe, destination.GetOutputProperties());
                 r = new JNamespaceReducer(r);
                 JTreeReceiver tree = new JTreeReceiver(r);
@@ -470,7 +483,9 @@ namespace Saxon.Api
                 }
                 tree.endDocument();
                 tree.close();
-            } catch(JXPathException err) {
+            }
+            catch (JXPathException err)
+            {
                 throw new DynamicError(err);
             }
         }
@@ -498,7 +513,7 @@ namespace Saxon.Api
 
         public net.sf.saxon.s9api.Processor JProcessor
         {
-            get { return processor;}
+            get { return processor; }
         }
 
         /// <summary>
@@ -563,7 +578,7 @@ namespace Saxon.Api
         private Uri baseUri;
         private QName topLevelElement;
         private TreeModel treeModel = TreeModel.Unspecified;
-		private XQueryExecutable projectionQuery;
+        private XQueryExecutable projectionQuery;
 
         internal DocumentBuilder(Processor processor)
         {
@@ -747,29 +762,30 @@ namespace Saxon.Api
         }
 
 
-		///<summary>
-     	/// Set a compiled query to be used for implementing document projection. The effect of using
-     	/// this option is that the tree constructed by the DocumentBuilder contains only those parts
-    	/// of the source document that are needed to answer this query. Running this query against
-    	/// the projected document should give the same results as against the raw document, but the
-     	/// projected document typically occupies significantly less memory. It is permissible to run
-    	/// other queries against the projected document, but unless they are carefully chosen, they
-    	/// will give the wrong answer, because the document being used is different from the original.
-		/// </summary>
-    	/// <para>The query should be written to use the projected document as its initial context item.
-    	/// For example, if the query is <code>//ITEM[COLOR='blue')</code>, then only <code>ITEM</code>
-    	/// elements and their <code>COLOR</code> children will be retained in the projected document.</para>
-    	/// <para>This facility is only available in Saxon-EE; if the facility is not available,
-    	/// calling this method has no effect.</para>
-		///<para>query the compiled query used to control document projection</para>
-    	/// @since 9.6
-    
+        ///<summary>
+        /// Set a compiled query to be used for implementing document projection. The effect of using
+        /// this option is that the tree constructed by the DocumentBuilder contains only those parts
+        /// of the source document that are needed to answer this query. Running this query against
+        /// the projected document should give the same results as against the raw document, but the
+        /// projected document typically occupies significantly less memory. It is permissible to run
+        /// other queries against the projected document, but unless they are carefully chosen, they
+        /// will give the wrong answer, because the document being used is different from the original.
+        /// </summary>
+        /// <para>The query should be written to use the projected document as its initial context item.
+        /// For example, if the query is <code>//ITEM[COLOR='blue')</code>, then only <code>ITEM</code>
+        /// elements and their <code>COLOR</code> children will be retained in the projected document.</para>
+        /// <para>This facility is only available in Saxon-EE; if the facility is not available,
+        /// calling this method has no effect.</para>
+        ///<para>query the compiled query used to control document projection</para>
+        /// @since 9.6
 
-		public XQueryExecutable DocumentProjectionQuery {
-			get { return projectionQuery;}
-			set { projectionQuery = value;}
 
-		}
+        public XQueryExecutable DocumentProjectionQuery
+        {
+            get { return projectionQuery; }
+            set { projectionQuery = value; }
+
+        }
 
         /// <summary>
         /// Load an XML document, retrieving it via a URI.
@@ -847,50 +863,51 @@ namespace Saxon.Api
         internal XdmNode Build(Stream input, Uri baseUri)
         {
             Source source;
-			JParseOptions options = new JParseOptions(config.getParseOptions());
+            JParseOptions options = new JParseOptions(config.getParseOptions());
 
             if (processor.GetProperty("http://saxon.sf.net/feature/preferJaxpParser") == "true")
             {
                 source = new StreamSource(new JDotNetInputStream(input), baseUri.ToString());
-				options.setEntityResolver(new JDotNetURIResolver(XmlResolver));
+                options.setEntityResolver(new JDotNetURIResolver(XmlResolver));
             }
             else
             {
 
                 XmlReaderSettings settings = new XmlReaderSettings();
-				settings.DtdProcessing = DtdProcessing.Parse;   // must expand entity references
+                settings.DtdProcessing = DtdProcessing.Parse;   // must expand entity references
 
 
                 //((XmlTextReader)parser).Normalization = true;
-                switch (whitespacePolicy)
+                if (whitespacePolicy != null)
                 {
-                    case WhitespacePolicy.PreserveAll:
-                        settings.IgnoreWhitespace = false;
-                        //((XmlTextReader)parser).WhitespaceHandling = WhitespaceHandling.All;
-                        break;
-                    case WhitespacePolicy.StripAll:
-                        settings.IgnoreWhitespace = true;
-                        //((XmlTextReader)parser).WhitespaceHandling = WhitespaceHandling.None;
-                        break;
-                    case WhitespacePolicy.StripIgnorable:
-                        settings.IgnoreWhitespace = true;
-                        //((XmlTextReader)parser).WhitespaceHandling = WhitespaceHandling.Significant;
-                        break;
+                    int optioni = whitespacePolicy.ordinal();
+                    if (optioni == JWhitespace.XSLT)
+                    {
+                        options.setStripSpace(JWhitespace.XSLT);
+                        options.addFilter(whitespacePolicy.makeStripper());
+                    }
+                    else
+                    {
+                        options.setStripSpace(optioni);
+                    }
+
+
                 }
+
                 if (xmlResolver != null)
                 {
                     settings.XmlResolver = xmlResolver;
                 }
-                
+
                 settings.ValidationType = (dtdValidation ? ValidationType.DTD : ValidationType.None);
-                
+
                 XmlReader parser = XmlReader.Create(input, settings, baseUri.ToString());
                 source = new JPullSource(new JDotNetPullProvider(parser));
                 source.setSystemId(baseUri.ToString());
             }
             augmentParseOptions(options);
-			JNodeInfo doc = config.buildDocument(source, options);
-			return (XdmNode)XdmValue.Wrap(doc);
+            JNodeInfo doc = config.buildDocument(source, options);
+            return (XdmNode)XdmValue.Wrap(doc);
         }
 
         /// <summary>
@@ -927,7 +944,7 @@ namespace Saxon.Api
         internal XdmNode Build(TextReader input, Uri baseUri)
         {
             Source source;
-			JParseOptions options = new JParseOptions(config.getParseOptions());
+            JParseOptions options = new JParseOptions(config.getParseOptions());
             if (processor.GetProperty("http://saxon.sf.net/feature/preferJaxpParser") == "true")
             {
                 source = new StreamSource(new JDotNetReader(input), baseUri.ToString());
@@ -937,24 +954,23 @@ namespace Saxon.Api
             {
 
                 XmlReaderSettings settings = new XmlReaderSettings();
-				settings.DtdProcessing = DtdProcessing.Parse;   // must expand entity references
+                settings.DtdProcessing = DtdProcessing.Parse;   // must expand entity references
 
 
                 //((XmlTextReader)parser).Normalization = true;
-                switch (whitespacePolicy)
+                if (whitespacePolicy != null)
                 {
-                    case WhitespacePolicy.PreserveAll:
-                        settings.IgnoreWhitespace = false;
-                        //((XmlTextReader)parser).WhitespaceHandling = WhitespaceHandling.All;
-                        break;
-                    case WhitespacePolicy.StripAll:
-                        settings.IgnoreWhitespace = true;
-                        //((XmlTextReader)parser).WhitespaceHandling = WhitespaceHandling.None;
-                        break;
-                    case WhitespacePolicy.StripIgnorable:
-                        settings.IgnoreWhitespace = true;
-                        //((XmlTextReader)parser).WhitespaceHandling = WhitespaceHandling.Significant;
-                        break;
+                    int option = whitespacePolicy.ordinal();
+                    if (option == JWhitespace.XSLT)
+                    {
+                        options.setStripSpace(JWhitespace.NONE);
+                        options.addFilter(whitespacePolicy.makeStripper());
+                    }
+                    else
+                    {
+                        options.setStripSpace(option);
+                    }
+
                 }
                 if (xmlResolver != null)
                 {
@@ -968,7 +984,7 @@ namespace Saxon.Api
                 source.setSystemId(baseUri.ToString());
             }
             augmentParseOptions(options);
-			JNodeInfo doc = config.buildDocument(source, options);
+            JNodeInfo doc = config.buildDocument(source, options);
             return (XdmNode)XdmValue.Wrap(doc);
         }
 
@@ -999,7 +1015,7 @@ namespace Saxon.Api
                 source = AugmentedSource.makeAugmentedSource(source);
                 ((AugmentedSource)source).setTopLevelElement(
                     new FingerprintedQName(
-						topLevelElement.Prefix, topLevelElement.Uri.ToString(), topLevelElement.LocalName).getStructuredQName());
+                        topLevelElement.Prefix, topLevelElement.Uri.ToString(), topLevelElement.LocalName).getStructuredQName());
             }
 
             if (whitespacePolicy != WhitespacePolicy.PreserveAll)
@@ -1040,96 +1056,101 @@ namespace Saxon.Api
                 source = AugmentedSource.makeAugmentedSource(source);
                 ((AugmentedSource)source).setDTDValidationMode(JValidation.STRICT);
             }
-			if (projectionQuery != null) {
-				net.sf.saxon.query.XQueryExpression exp = projectionQuery.getUnderlyingCompiledQuery();
-				net.sf.saxon.@event.FilterFactory ff = config.makeDocumentProjector(exp);
-				if (ff != null) {
-					source = AugmentedSource.makeAugmentedSource(source);
-					((AugmentedSource)source).addFilter (ff);
-				}
-			}
+            if (projectionQuery != null)
+            {
+                net.sf.saxon.query.XQueryExpression exp = projectionQuery.getUnderlyingCompiledQuery();
+                net.sf.saxon.@event.FilterFactory ff = config.makeDocumentProjector(exp);
+                if (ff != null)
+                {
+                    source = AugmentedSource.makeAugmentedSource(source);
+                    ((AugmentedSource)source).addFilter(ff);
+                }
+            }
             return source;
         }
 
 
-		private void augmentParseOptions(JParseOptions options)
-		{
-			if (validation != SchemaValidationMode.None)
-			{
-				
-				if (validation == SchemaValidationMode.Strict)
-				{
-					options.setSchemaValidationMode(JValidation.STRICT);
-				}
-				else if (validation == SchemaValidationMode.Lax)
-				{
-					options.setSchemaValidationMode(JValidation.LAX);
-				}
-				else if (validation == SchemaValidationMode.None)
-				{
-					options.setSchemaValidationMode(JValidation.STRIP);
-				}
-				else if (validation == SchemaValidationMode.Preserve)
-				{
-					options.setSchemaValidationMode(JValidation.PRESERVE);
-				}
-			}
-			if (topLevelElement != null)
-			{
-				
-				options.setTopLevelElement(
-					new FingerprintedQName(
-						topLevelElement.Prefix, topLevelElement.Uri.ToString(), topLevelElement.LocalName).getStructuredQName());
-			}
+        private void augmentParseOptions(JParseOptions options)
+        {
+            if (validation != SchemaValidationMode.None)
+            {
 
-			if (whitespacePolicy != WhitespacePolicy.PreserveAll)
-			{
-				
-				if (whitespacePolicy == WhitespacePolicy.StripIgnorable)
-				{
-					options.setStripSpace(Whitespace.IGNORABLE);
-				}
-				else
-				{
-					options.setStripSpace(Whitespace.ALL);
-				}
-			}
-			if (treeModel != TreeModel.Unspecified)
-			{
-				
-				if (treeModel == TreeModel.TinyTree)
-				{
-					options.setModel(net.sf.saxon.om.TreeModel.TINY_TREE);
-				}
-				else if (treeModel == TreeModel.TinyTreeCondensed)
-				{
-					options.setModel(net.sf.saxon.om.TreeModel.TINY_TREE_CONDENSED);
-				}
-				else
-				{
-					options.setModel(net.sf.saxon.om.TreeModel.LINKED_TREE);
-				}
-			}
-			if (lineNumbering)
-			{
+                if (validation == SchemaValidationMode.Strict)
+                {
+                    options.setSchemaValidationMode(JValidation.STRICT);
+                }
+                else if (validation == SchemaValidationMode.Lax)
+                {
+                    options.setSchemaValidationMode(JValidation.LAX);
+                }
+                else if (validation == SchemaValidationMode.None)
+                {
+                    options.setSchemaValidationMode(JValidation.STRIP);
+                }
+                else if (validation == SchemaValidationMode.Preserve)
+                {
+                    options.setSchemaValidationMode(JValidation.PRESERVE);
+                }
+            }
+            if (topLevelElement != null)
+            {
 
-				options.setLineNumbering(true);
-			}
-			if (dtdValidation)
-			{
-				
-				options.setDTDValidationMode(JValidation.STRICT);
-			}
-			if (projectionQuery != null) {
-				net.sf.saxon.query.XQueryExpression exp = projectionQuery.getUnderlyingCompiledQuery();
-				net.sf.saxon.@event.FilterFactory ff = config.makeDocumentProjector(exp);
-				if (ff != null) {
-					
-					options.addFilter (ff);
-				}
-			}
+                options.setTopLevelElement(
+                    new FingerprintedQName(
+                        topLevelElement.Prefix, topLevelElement.Uri.ToString(), topLevelElement.LocalName).getStructuredQName());
+            }
 
-		}
+            if (whitespacePolicy != null)
+            {
+                int option = whitespacePolicy.ordinal();
+                if (option == JWhitespace.XSLT)
+                {
+                    options.setStripSpace(JWhitespace.NONE);
+                    options.addFilter(whitespacePolicy.makeStripper());
+                }
+                else
+                {
+                    options.setStripSpace(option);
+                }
+            }
+            if (treeModel != TreeModel.Unspecified)
+            {
+
+                if (treeModel == TreeModel.TinyTree)
+                {
+                    options.setModel(net.sf.saxon.om.TreeModel.TINY_TREE);
+                }
+                else if (treeModel == TreeModel.TinyTreeCondensed)
+                {
+                    options.setModel(net.sf.saxon.om.TreeModel.TINY_TREE_CONDENSED);
+                }
+                else
+                {
+                    options.setModel(net.sf.saxon.om.TreeModel.LINKED_TREE);
+                }
+            }
+            if (lineNumbering)
+            {
+
+                options.setLineNumbering(true);
+            }
+            if (dtdValidation)
+            {
+
+                options.setDTDValidationMode(JValidation.STRICT);
+            }
+            if (projectionQuery != null)
+            {
+                net.sf.saxon.query.XQueryExpression exp = projectionQuery.getUnderlyingCompiledQuery();
+                net.sf.saxon.@event.FilterFactory ff = config.makeDocumentProjector(exp);
+                if (ff != null)
+                {
+
+                    options.addFilter(ff);
+                }
+            }
+
+        }
 
         /// <summary>
         /// Load an XML document, delivered using an XmlReader.
@@ -1172,10 +1193,10 @@ namespace Saxon.Api
             // pp = new PullTracer(pp);  /* diagnostics */
             Source source = new JPullSource(pp);
             source.setSystemId(reader.BaseURI);
-			JParseOptions options = new JParseOptions(config.getParseOptions());
+            JParseOptions options = new JParseOptions(config.getParseOptions());
 
             augmentParseOptions(options);
-			JNodeInfo doc = config.buildDocument(source, options);
+            JNodeInfo doc = config.buildDocument(source, options);
             return (XdmNode)XdmValue.Wrap(doc);
         }
 
@@ -1203,7 +1224,7 @@ namespace Saxon.Api
 
         public XdmNode Build(XdmNode source)
         {
-			return (XdmNode)XdmNode.Wrap(config.buildDocument(source.Implementation));
+            return (XdmNode)XdmNode.Wrap(config.buildDocument(source.Implementation));
         }
 
         /// <summary>
@@ -1226,71 +1247,81 @@ namespace Saxon.Api
         {
             String baseu = (baseUri == null ? null : baseUri.ToString());
             JDotNetDocumentWrapper wrapper = new JDotNetDocumentWrapper(doc, baseu, config);
-			return (XdmNode)XdmValue.Wrap(wrapper.getRootNode());
+            return (XdmNode)XdmValue.Wrap(wrapper.getRootNode());
         }
 
 
     }
-    
+
     /// <summary>The default Logger used by Saxon on the .NET platform. All messages are written by
     /// default to System.err. The logger can be configured by setting a different output
     /// destination, and by setting a minimum threshold for the severity of messages to be output.</summary>
 
-    public class StandardLogger : JLogger {
-        
-       private TextWriter outi = Console.Error;
-       JDotNetWriter writer;
-		int threshold = JLogger.INFO;
-		java.io.PrintStream stream;
+    public class StandardLogger : JLogger
+    {
 
-       public StandardLogger() {
-           writer = new JDotNetWriter(outi);
-       }
+        private TextWriter outi = Console.Error;
+        JDotNetWriter writer;
+        int threshold = JLogger.INFO;
+        java.io.PrintStream stream;
 
-       public StandardLogger(TextWriter w) {
-       	writer = new JDotNetWriter(w);
+        public StandardLogger()
+        {
+            writer = new JDotNetWriter(outi);
+        }
 
-       }
+        public StandardLogger(TextWriter w)
+        {
+            writer = new JDotNetWriter(w);
 
-		public JDotNetWriter UnderlyingTextWriter {
-			set {
-				writer = value;
-			}
-			get {
-				return writer;
-			}
+        }
+
+        public JDotNetWriter UnderlyingTextWriter
+        {
+            set
+            {
+                writer = value;
+            }
+            get
+            {
+                return writer;
+            }
 
 
-		}
+        }
 
 
-	/// <summary> Set the minimum threshold for the severity of messages to be output. Defaults to
-    /// <see cref="net.sf.saxon.lib.Logger#INFO"/>. Messages whose severity is below this threshold will be ignored </summary>
-    /// <param> threshold the minimum severity of messages to be output. </param>
-     
-		public int Threshold {
+        /// <summary> Set the minimum threshold for the severity of messages to be output. Defaults to
+        /// <see cref="net.sf.saxon.lib.Logger#INFO"/>. Messages whose severity is below this threshold will be ignored </summary>
+        /// <param> threshold the minimum severity of messages to be output. </param>
 
-			set { 
-				threshold = value;
-			}
+        public int Threshold
+        {
 
-			get { 
-				return threshold;
-			}
+            set
+            {
+                threshold = value;
+            }
 
-		}
+            get
+            {
+                return threshold;
+            }
+
+        }
 
         public override StreamResult asStreamResult()
         {
-            
-			return new StreamResult(writer);
+
+            return new StreamResult(writer);
         }
 
         public override void println(string str, int severity)
         {
-			if (severity >= threshold) {
-				writer.write (str);
-			}
+            if (severity >= threshold)
+            {
+                writer.write(str);
+            }
         }
     }
 
@@ -1314,18 +1345,69 @@ namespace Saxon.Api
         Unspecified
     }
 
-    /// <summary>
-    /// Enumeration identifying the various Whitespace stripping policies
-    /// </summary>
 
-    public enum WhitespacePolicy
+    /// <summary>
+    ///  WhitespaceStrippingPolicy is class defining the possible policies for handling
+    /// whitespace text nodess in a source document
+    /// Introduced in Saxon 9.8
+    /// </summary>
+    [Serializable]
+    public class WhitespacePolicy
     {
-        /// <summary>No whitespace is stripped</summary> 
-        PreserveAll,
-        /// <summary>Whitespace text nodes appearing in element-only content are stripped</summary>
-        StripIgnorable,
+        private int policy;
+        JSpaceStrippingRule stripperRules;
+
         /// <summary>All whitespace text nodes are stripped</summary>
-        StripAll
+        public static WhitespacePolicy StripAll = new WhitespacePolicy(JWhitespace.NONE);
+
+        /// <summary>Whitespace text nodes appearing in element-only content are stripped</summary>
+        public static WhitespacePolicy StripIgnorable = new WhitespacePolicy(JWhitespace.IGNORABLE);
+
+        /// <summary>No whitespace is stripped</summary>
+        public static WhitespacePolicy PreserveAll = new WhitespacePolicy(JWhitespace.ALL);
+
+        /// <summary>Unspecified means that no other value has been specifically requested</summary>
+        public static WhitespacePolicy Unspecified = new WhitespacePolicy(JWhitespace.UNSPECIFIED);
+
+        private WhitespacePolicy(int policy)
+        {
+            this.policy = policy;
+        }
+
+        internal WhitespacePolicy(JPreparedStylesheet executable)
+        {
+            policy = Whitespace.XSLT;
+            stripperRules = executable.getStripperRules();
+        }
+
+
+        internal int ordinal()
+        {
+            return policy;
+        }
+
+        internal net.sf.saxon.@event.FilterFactory makeStripper()
+        {
+            return new FilterFactory(stripperRules);
+        }
+
+
+
+    }
+
+  
+
+    internal class FilterFactory : JFilterFactory
+    {
+        JSpaceStrippingRule stripperRules;
+        public FilterFactory(JSpaceStrippingRule sr)
+        {
+            stripperRules = sr;
+        }
+        public JProxyReceiver makeFilter(JReceiver r)
+        {
+            return new net.sf.saxon.@event.Stripper(stripperRules, r);
+        }
     }
 
     /// <summary>

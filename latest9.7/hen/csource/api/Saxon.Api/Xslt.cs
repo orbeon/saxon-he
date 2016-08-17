@@ -330,27 +330,27 @@ namespace Saxon.Api
             }
         }
 
-		// internal method: Compile a stylesheet supplied as a Stream.
-		// For example:
-		// <code>
-		// Stream source = new FileStream("input.xsl", FileMode.Open, FileAccess.Read);
-		// XsltExecutable q = compiler.Compile(source);
-		// source.Close();
-		// </code>
-		// <param name="input">A stream containing the source text of the stylesheet</param>
-		// <param name="theBaseUri">Specify the base Uri of the stream</param>
-		// <param name="closeStream">Flag to indicate if the stream should be closed in the method</param>
-		// <returns>An <c>XsltExecutable</c> which represents the compiled stylesheet object.
-		// The XsltExecutable may be loaded as many times as required, in the same or a different
-		// thread. The <c>XsltExecutable</c> is not affected by any changes made to the <c>XsltCompiler</c>
-		// once it has been compiled.</returns>
-		// If the stylesheet contains any <c>xsl:include</c> or <c>xsl:import</c> declarations,
-		// then the <c>BaseURI</c> property must be set to allow these to be resolved.</para>
-		// <para>The stylesheet is contained in the part of the input stream between its current
-		// position and the end of the stream. It is the caller's responsibility to close the input 
-		// stream after use. If the compilation succeeded, then on exit the stream will be 
-		// exhausted; if compilation failed, the current position of the stream on exit is
-		// undefined.
+        // internal method: Compile a stylesheet supplied as a Stream.
+        // For example:
+        // <code>
+        // Stream source = new FileStream("input.xsl", FileMode.Open, FileAccess.Read);
+        // XsltExecutable q = compiler.Compile(source);
+        // source.Close();
+        // </code>
+        // <param name="input">A stream containing the source text of the stylesheet</param>
+        // <param name="theBaseUri">Specify the base Uri of the stream</param>
+        // <param name="closeStream">Flag to indicate if the stream should be closed in the method</param>
+        // <returns>An <c>XsltExecutable</c> which represents the compiled stylesheet object.
+        // The XsltExecutable may be loaded as many times as required, in the same or a different
+        // thread. The <c>XsltExecutable</c> is not affected by any changes made to the <c>XsltCompiler</c>
+        // once it has been compiled.</returns>
+        // If the stylesheet contains any <c>xsl:include</c> or <c>xsl:import</c> declarations,
+        // then the <c>BaseURI</c> property must be set to allow these to be resolved.</para>
+        // <para>The stylesheet is contained in the part of the input stream between its current
+        // position and the end of the stream. It is the caller's responsibility to close the input 
+        // stream after use. If the compilation succeeded, then on exit the stream will be 
+        // exhausted; if compilation failed, the current position of the stream on exit is
+        // undefined.
 
         internal XsltExecutable Compile(Stream input, String theBaseUri, bool closeStream)
         {
@@ -866,6 +866,17 @@ namespace Saxon.Api
             }
         }
 
+        /// <summary>
+        ///  Get the whitespace stripping policy defined by this stylesheet, that is, the policy
+        ///  defined by the xsl:strip-space and xsl:preserve-space elements in the stylesheet
+        /// </summary>
+        /// <returns> a newly constructed WhitespaceStrippingPolicy based on the declarations in this
+        ///  stylesheet.This policy can be used as input to a {@link DocumentBuilder}.</returns>
+        public WhitespacePolicy getWhitespaceStrippingPolicy()
+        {
+            return new WhitespacePolicy(pss);
+        }
+
 
         /// <summary>
         /// Get the names of the xsl:param elements defined in this stylesheet, with details
@@ -1079,7 +1090,7 @@ namespace Saxon.Api
         /// to construct or configure the returned Receiver.</param>
         public override JReceiver GetReceiver(JPipelineConfiguration pipe)
         {
-            
+
             if (staticParameter != null)
             {
                 controller.initializeController(staticParameter);
@@ -2556,7 +2567,7 @@ namespace Saxon.Api
         private Processor processor;
         private JXsltPackage package;
 
-		// internal constructor: Initializes a new instance of the <see cref="Saxon.Api.XsltPackage"/> class.
+        // internal constructor: Initializes a new instance of the <see cref="Saxon.Api.XsltPackage"/> class.
         internal XsltPackage(Processor p, JXsltPackage pp)
         {
             this.processor = p;
