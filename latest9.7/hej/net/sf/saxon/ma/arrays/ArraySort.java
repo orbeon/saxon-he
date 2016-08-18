@@ -7,38 +7,42 @@
 
 package net.sf.saxon.ma.arrays;
 
-import net.sf.saxon.type.SpecificFunctionType;
-import net.sf.saxon.expr.Atomizer;
-import net.sf.saxon.expr.StaticProperty;
-import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.*;
+import net.sf.saxon.expr.parser.RetainedStaticContext;
 import net.sf.saxon.expr.sort.*;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
 import net.sf.saxon.lib.NamespaceConstant;
+import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.NoDynamicContextException;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.UnfailingIterator;
+import net.sf.saxon.type.SpecificFunctionType;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.SequenceExtent;
 import net.sf.saxon.value.SequenceType;
+import net.sf.saxon.value.StringValue;
 
-import javax.xml.xpath.XPath;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Implementation of the extension function array:sort(array, function) => array
+ *
+ * Temporary 9.7 implementation that supports both the old and new signatures after bug 29722
  */
 public class ArraySort extends ExtensionFunctionDefinition {
 
     private final static StructuredQName name = new StructuredQName("array", NamespaceConstant.ARRAY_FUNCTIONS, "sort");
     private final static SequenceType[] ARG_TYPES = new SequenceType[]{
-            ArrayItem.SINGLE_ARRAY_TYPE, SequenceType.makeSequenceType(
-            new SpecificFunctionType(
+            ArrayItem.SINGLE_ARRAY_TYPE,
+            SequenceType.OPTIONAL_ITEM,
+            SequenceType.makeSequenceType(
+                new SpecificFunctionType(
                     new SequenceType[]{SequenceType.ANY_SEQUENCE},
                     SequenceType.ATOMIC_SEQUENCE),
-            StaticProperty.EXACTLY_ONE)};
+                StaticProperty.EXACTLY_ONE)};
 
     /**
      * Get the name of the function, as a QName.
@@ -68,7 +72,7 @@ public class ArraySort extends ExtensionFunctionDefinition {
      */
 
     public int getMaximumNumberOfArguments() {
-        return 2;
+        return 3;
     }
 
     /**
@@ -114,7 +118,7 @@ public class ArraySort extends ExtensionFunctionDefinition {
         return true;
     }
 
-    private static class MemberToBeSorted{
+    private static class MemberToBeSorted {
         public Sequence value;
         public GroundedValue sortKey;
         int originalPosition;
@@ -130,28 +134,71 @@ public class ArraySort extends ExtensionFunctionDefinition {
     public ExtensionFunctionCall makeCallExpression() {
         return new ExtensionFunctionCall() {
 
+            RetainedStaticContext rsc;
+
+            /**
+             * Supply static context information.
+             * <p>This method is called during compilation to provide information about the static context in which
+             * the function call appears. If the implementation of the function needs information from the static context,
+             * then it should save it now, as it will not be available later at run-time.</p>
+             * <p>The implementation also has the opportunity to examine the expressions that appear in the
+             * arguments to the function call at this stage. These might already have been modified from the original
+             * expressions as written by the user. The implementation must not modify any of these expressions.</p>
+             * <p>The default implementation of this method does nothing.</p>
+             *
+             * @param context    The static context in which the function call appears. The method must not modify
+             *                   the static context.
+             * @param locationId An integer code representing the location of the call to the extension function
+             *                   in the stylesheet; can be used in conjunction with the locationMap held in the static context for diagnostics
+             * @param arguments  The XPath expressions supplied in the call to this function. The method must not
+             *                   modify this array, or any of the expressions contained in the array.
+             * @throws XPathException if the implementation is able to detect a static error in the way the
+             *                        function is being called (for example it might require that the types of the arguments are
+             *                        consistent with each other).
+             */
+            @Override
+            public void supplyStaticContext(StaticContext context, int locationId, Expression[] arguments) throws XPathException {
+                rsc = context.makeRetainedStaticContext();
+            }
+
             public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
                 ArrayItem array = (ArrayItem) arguments[0].head();
                 final List<MemberToBeSorted> inputList = new ArrayList<MemberToBeSorted>(array.size());
                 int i = 0;
                 Function key = null;
-                if (arguments.length == 2){
-                    key = (Function) arguments[1].head();
+                StringCollator collation = null;
+                if (arguments.length == 1) {
+                    collation = context.getConfiguration().getCollation(rsc.getDefaultCollationName());
+                } else {
+                    Item second = arguments[1].head();
+                    if (second == null) {
+                        collation = context.getConfiguration().getCollation(rsc.getDefaultCollationName());
+                    } else if (second instanceof StringValue) {
+                        String collName = second.getStringValue();
+                        collation = context.getConfiguration().getCollation(collName, rsc.getStaticBaseUriString());
+                    } else if (second instanceof Function) {
+                        collation = context.getConfiguration().getCollation(rsc.getDefaultCollationName());
+                        key = (Function) second;
+                    } else {
+                        throw new XPathException("Second argument of array:sort must be either a collation or a comparison function", "XPTY0004");
+                    }
+                }
+                if (arguments.length == 3) {
+                    key = (Function)arguments[2].head();
                 }
                 for (Sequence seq: array){
                     MemberToBeSorted member = new MemberToBeSorted();
                     member.value = seq;
                     member.originalPosition = i++;
-                    if (arguments.length == 2) {
+                    if (key != null) {
                         member.sortKey = SequenceTool.toGroundedValue(key.call(context, new Sequence[]{seq}));
                     } else {
                         member.sortKey = atomize(seq);
                     }
                     inputList.add(member);
                 }
-                // TODO: default collation
                 final AtomicComparer atomicComparer =  AtomicSortComparer.makeSortComparer(
-                        CodepointCollator.getInstance(), StandardNames.XS_ANY_ATOMIC_TYPE, context);
+                        collation, StandardNames.XS_ANY_ATOMIC_TYPE, context);
                 Sortable sortable = new Sortable() {
                     public int compare(int a, int b) {
                         int result = compareSortKeys(inputList.get(a).sortKey, inputList.get(b).sortKey, atomicComparer);

@@ -2,6 +2,7 @@ package net.sf.saxon.functions;
 
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.sort.*;
+import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.ma.arrays.ArraySort;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
@@ -43,14 +44,14 @@ public class SortOne extends SystemFunction {
             member.sortKey = item.atomize();
             inputList.add(member);
         }
-        return doSort(inputList, context);
-
+        StringCollator collation = context.getConfiguration().getCollation(getRetainedStaticContext().getDefaultCollationName());
+        return doSort(inputList, collation, context);
     }
 
-    protected Sequence doSort(final List<ItemToBeSorted> inputList, XPathContext context) throws XPathException {
-        // TODO: default collation
+    protected Sequence doSort(final List<ItemToBeSorted> inputList, StringCollator collation, XPathContext context) throws XPathException {
         final AtomicComparer atomicComparer = AtomicSortComparer.makeSortComparer(
-                CodepointCollator.getInstance(), StandardNames.XS_ANY_ATOMIC_TYPE, context);
+                collation, StandardNames.XS_ANY_ATOMIC_TYPE, context);
+
         Sortable sortable = new Sortable() {
             public int compare(int a, int b) {
                 int result = ArraySort.compareSortKeys(inputList.get(a).sortKey, inputList.get(b).sortKey, atomicComparer);
