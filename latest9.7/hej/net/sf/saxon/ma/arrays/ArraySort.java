@@ -177,6 +177,8 @@ public class ArraySort extends ExtensionFunctionDefinition {
                         String collName = second.getStringValue();
                         collation = context.getConfiguration().getCollation(collName, rsc.getStaticBaseUriString());
                     } else if (second instanceof Function) {
+                        context.getController().getErrorListener().warning(
+                                new XPathException("Using obsolete function signature of array:sort()"));
                         collation = context.getConfiguration().getCollation(rsc.getDefaultCollationName());
                         key = (Function) second;
                     } else {
