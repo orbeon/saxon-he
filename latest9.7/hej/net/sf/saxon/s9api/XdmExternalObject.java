@@ -40,6 +40,7 @@ public class XdmExternalObject extends XdmItem {
      *          if the type is unknown, or is not atomic, or is namespace-sensitive;
      *          or if the value supplied in <tt>lexicalForm</tt> is not in the lexical space of the specified atomic
      *          type.
+     * @deprecated since 9.7.0.8: see Saxon bug 2894. This method serves no useful purpose.
      */
 
     public XdmExternalObject(String lexicalForm, ItemType type) throws SaxonApiException {
