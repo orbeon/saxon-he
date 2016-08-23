@@ -147,7 +147,9 @@ public class XPathEvaluator {
         ExpressionVisitor visitor = ExpressionVisitor.make(staticContext);
         ItemType contextItemType = staticContext.getRequiredContextItemType();
         ContextItemStaticInfo cit = new ContextItemStaticInfo(contextItemType, true);
+        visitor.setOptimizeForStreaming(true);
         exp = exp.typeCheck(visitor, cit).optimize(visitor, cit);
+        exp = postProcess(exp, visitor, cit);
         exp.setRetainedStaticContext(rsc);
         SlotManager map = staticContext.getStackFrameMap();
         int numberOfExternalVariables = map.getNumberOfVariables();
@@ -156,6 +158,20 @@ public class XPathEvaluator {
         xpe.setStackFrameMap(map, numberOfExternalVariables);
         return xpe;
     }
+
+    /**
+     * Customize the expression post-optimization. This method does nothing,
+     * but can be overridden in a subclass
+     *
+     * @param exp     the expression after optimization
+     * @param visitor an expression visitor that includes static context information
+     * @param cit     information about the context item type
+     */
+
+    protected Expression postProcess(Expression exp, ExpressionVisitor visitor, ContextItemStaticInfo cit) throws XPathException {
+        return exp;
+    }
+
 
     /**
      * Prepare (compile) an XSLT pattern for subsequent evaluation. The result is an XPathExpression

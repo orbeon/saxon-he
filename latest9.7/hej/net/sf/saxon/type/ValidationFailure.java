@@ -19,6 +19,9 @@ import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.value.AtomicValue;
 
 import javax.xml.transform.SourceLocator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This exception indicates a failure when validating an instance against a type
@@ -49,6 +52,7 @@ public class ValidationFailure
     /*@Nullable*/ private StructuredQName errorCode;
     private ValidationException exception;
     private boolean hasBeenReported;
+    private List<NodeInfo> offendingNodes;
 
 
     /**
@@ -162,6 +166,39 @@ public class ValidationFailure
     /*@NotNull*/
     public String getConstraintReference() {
         return constraintName + '.' + clause;
+    }
+
+    /**
+     * Add information about an "offending node". This is used for assertions, where the assertion on a
+     * particular node A places conditions on descendant nodes D: for example <code>every $n in .//* satisfies self::x</code>.
+     * With that kind of assertion, the nodes in <code>.//*</code> that do not satisfy the condition are reported
+     * as "offending nodes", although it is the root node containing the assertion that is technically invalid.
+     *
+     * @param node a node that fails to satisfy the conditions specified in an assertion
+     */
+
+    public void addOffendingNode(NodeInfo node) {
+        if (offendingNodes == null) {
+            offendingNodes = new ArrayList<NodeInfo>();
+        }
+        offendingNodes.add(node);
+    }
+
+    /**
+     * Get the list of "offending nodes". This is used for assertions, where the assertion on a
+     * particular node A places conditions on descendant nodes D: for example <code>every $n in .//* satisfies self::x</code>.
+     * With that kind of assertion, the nodes in <code>.//*</code> that do not satisfy the condition are reported
+     * as "offending nodes", although it is the root node containing the assertion that is technically invalid.
+     *
+     * @return the list of offending nodes
+     */
+
+    public List<NodeInfo> getOffendingNodes() {
+        if (offendingNodes == null) {
+            return Collections.emptyList();
+        } else {
+            return offendingNodes;
+        }
     }
 
 
@@ -353,6 +390,7 @@ public class ValidationFailure
             ve.setErrorCodeQName(errorCode);
         }
         ve.setHasBeenReported(hasBeenReported);
+        ve.offendingNodes = offendingNodes;
         exception = ve;
         return ve;
     }

@@ -26,6 +26,7 @@ import net.sf.saxon.trans.KeyDefinition;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.AttributeLocation;
 import net.sf.saxon.tree.util.Navigator;
+import net.sf.saxon.type.Type;
 import net.sf.saxon.type.ValidationException;
 import org.xml.sax.SAXException;
 
@@ -33,6 +34,7 @@ import javax.xml.transform.SourceLocator;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMLocator;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * <B>StandardErrorListener</B> is the standard error handler for XSLT and XQuery processing
@@ -229,7 +231,8 @@ public class StandardErrorListener implements UnfailingErrorListener {
                     wordWrap(explanation) +
                     wordWrap(validationLocation.isEmpty() ? "" : "\n  " + validationLocation) +
                     wordWrap(contextLocation.isEmpty() ? "" : "\n  " + contextLocation) +
-                    wordWrap(constraintReference == null ? "" : "\n  " + constraintReference);
+                    wordWrap(constraintReference == null ? "" : "\n  " + constraintReference) +
+                    getOffenderListText(((ValidationException) exception).offendingNodes);
         } else {
             String prefix = recoveryPolicy == Configuration.RECOVER_WITH_WARNINGS ?
                     "Recoverable error " : "Error ";
@@ -743,6 +746,32 @@ public class StandardErrorListener implements UnfailingErrorListener {
             ContextStackFrame frame = iterator.next();
             frame.print(out);
         }
+    }
+
+    public static String getOffenderListText(List<NodeInfo> offendingNodes) {
+        String message = "";
+        if (offendingNodes != null && !offendingNodes.isEmpty()) {
+            message += "\n  Nodes for which the assertion fails:";
+            for (NodeInfo offender : offendingNodes) {
+                String nodeDesc = Type.displayTypeName(offender);
+                if (offender.getNodeKind() == Type.TEXT) {
+                    nodeDesc += " " + Err.wrap(offender.getStringValueCS(), Err.VALUE);
+                }
+                if (offender.getLineNumber() != -1) {
+                    nodeDesc += " on line " + offender.getLineNumber();
+                    if (offender.getColumnNumber() != -1) {
+                        nodeDesc += " column " + offender.getColumnNumber();
+                    }
+                    if (offender.getSystemId() != null) {
+                        nodeDesc += " of " + offender.getSystemId();
+                    }
+                } else {
+                    nodeDesc += " at " + Navigator.getPath(offender);
+                }
+                message += "\n  * " + nodeDesc;
+            }
+        }
+        return message;
     }
 
 }

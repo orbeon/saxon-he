@@ -49,7 +49,7 @@ public abstract class FunctionCall extends Expression {
      * @return the data structure holding expression operands
      */
 
-    protected OperandArray getOperanda() {
+    public OperandArray getOperanda() {
         return operanda;
     }
 

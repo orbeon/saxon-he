@@ -16,6 +16,7 @@ import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.tree.util.Navigator;
 
 import javax.xml.transform.SourceLocator;
+import java.util.List;
 
 /**
  * This exception indicates a failure when validating an instance against a type
@@ -36,6 +37,7 @@ public class ValidationException extends XPathException
     private AbsolutePath path;
     private AbsolutePath contextPath;
     private SchemaType type;
+    public List<NodeInfo> offendingNodes;
 
     // TODO: during output validation, it would sometimes be useful to know what the position in the input file was.
 

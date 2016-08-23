@@ -101,7 +101,8 @@ public class StandardInvalidityHandler implements InvalidityHandler {
                 wordWrap(explanation) +
                 wordWrap(validationLocation.isEmpty() ? "" : "\n  " + validationLocation) +
                 wordWrap(contextLocation.isEmpty() ? "" : "\n  " + contextLocation) +
-                wordWrap(constraintReference == null ? "" : "\n  " + constraintReference);
+                wordWrap(constraintReference == null ? "" : "\n  " + constraintReference) +
+                StandardErrorListener.getOffenderListText(((ValidationFailure) failure).getOffendingNodes());
 
         localLogger.error(finalMessage);
     }
