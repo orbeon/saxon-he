@@ -767,7 +767,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
 
     protected XsltExecutable exportStylesheet(String testName, String testSetName, XsltCompiler compiler, XsltExecutable sheet, Source styleSource) throws SaxonApiException {
         try {
-            File exportFile = new File(resultsDir + "/export/" + testSetName + "/" + testName + ".xsltp");
+            File exportFile = new File(resultsDir + "/export/" + testSetName + "/" + testName + ".sef");
             XsltPackage compiledPack = compiler.compilePackage(styleSource);
             compiledPack.save(exportFile);
             sheet = reloadExportedStylesheet(compiler, exportFile);
