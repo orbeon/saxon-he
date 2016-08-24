@@ -13,6 +13,7 @@ import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.om.FingerprintedQName;
 import net.sf.saxon.om.NamePool;
+import net.sf.saxon.om.NamespaceBinding;
 import net.sf.saxon.om.NoNamespaceName;
 import net.sf.saxon.pull.UnparsedEntity;
 import net.sf.saxon.serialize.XMLEmitter;
@@ -285,6 +286,18 @@ public class StaxToEventBridge implements EventIterator, SourceLocator {
                     o.setNodeName(new FingerprintedQName(prefix, uri, local));
                     o.setStringValue(reader.getAttributeValue(index));
                     see.addAttribute(o);
+                }
+                int nscount = reader.getNamespaceCount();
+                for (int i = 0; i < nscount; i++) {
+                    String prefix = reader.getNamespacePrefix(i);
+                    if (prefix == null) {
+                        prefix = "";
+                    }
+                    String uri = reader.getNamespaceURI(i);
+                    if (uri == null) {
+                        uri = "";
+                    }
+                    see.addNamespace(new NamespaceBinding(prefix, uri));
                 }
                 see.namespaceFixup();
                 return see;
