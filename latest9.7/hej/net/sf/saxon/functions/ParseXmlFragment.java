@@ -54,6 +54,7 @@ public class ParseXmlFragment extends SystemFunction implements Callable {
     private NodeInfo evalParseXml(StringValue inputArg, XPathContext context) throws XPathException {
         NodeInfo node;
         final String baseURI = getStaticBaseUriString();
+        ParseXml.RetentiveErrorHandler errorHandler = new ParseXml.RetentiveErrorHandler();
 
         try {
             Controller controller = context.getController();
@@ -98,7 +99,7 @@ public class ParseXmlFragment extends SystemFunction implements Callable {
                 }
             });
             options.setStripSpace(Whitespace.XSLT);
-            options.setErrorListener(context.getConfiguration().getErrorListener());
+            options.setErrorHandler(errorHandler);
 
             if (controller.getExecutable().stripsInputTypeAnnotations()) {
                 s = configuration.getAnnotationStripper(s);
@@ -116,8 +117,11 @@ public class ParseXmlFragment extends SystemFunction implements Callable {
             node = b.getCurrentRoot();
             b.reset();
         } catch (XPathException err) {
-            throw new XPathException("First argument to parse-xml-fragment() is not a well-formed and namespace-well-formed XML fragment. XML parser reported: " +
+            XPathException xe = new XPathException("First argument to parse-xml-fragment() is not a well-formed and namespace-well-formed XML fragment. XML parser reported: " +
                     err.getMessage(), "FODC0006");
+            errorHandler.captureRetainedErrors(xe);
+            xe.maybeSetContext(context);
+            throw xe;
         }
         return node;
     }
