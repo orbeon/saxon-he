@@ -240,7 +240,7 @@ public class StaxToEventBridge implements EventIterator, SourceLocator, SourceLo
                 o.setNodeKind(Type.PROCESSING_INSTRUCTION);
                 String local = reader.getPITarget();
                 o.setNodeName(new NoNamespaceName(local));
-                o.setStringValue(reader.getText());
+                o.setStringValue(reader.getPIData());
                 return o;
             }
             case XMLStreamConstants.SPACE:
