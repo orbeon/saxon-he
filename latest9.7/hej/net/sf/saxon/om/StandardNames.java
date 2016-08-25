@@ -105,7 +105,8 @@ public abstract class StandardNames {
     public static final int XSL_RESULT_DOCUMENT = XSL + 65;
     public static final int XSL_SEQUENCE = XSL + 66;
     public static final int XSL_SORT = XSL + 67;
-    public static final int XSL_STREAM = XSL + 68;
+    public static final int XSL_SOURCE_DOCUMENT = XSL + 68;
+    public static final int XSL_STREAM = XSL + 69;  // retained for compatibility
     public static final int XSL_STRIP_SPACE = XSL + 70;
     public static final int XSL_STYLESHEET = XSL + 71;
     public static final int XSL_TEMPLATE = XSL + 72;
@@ -420,6 +421,7 @@ public abstract class StandardNames {
         bindXSLTName(XSL_RESULT_DOCUMENT, "result-document");
         bindXSLTName(XSL_SEQUENCE, "sequence");
         bindXSLTName(XSL_SORT, "sort");
+        bindXSLTName(XSL_SOURCE_DOCUMENT, "source-document");
         bindXSLTName(XSL_STREAM, "stream");
         bindXSLTName(XSL_STRIP_SPACE, "strip-space");
         bindXSLTName(XSL_STYLESHEET, "stylesheet");

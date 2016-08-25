@@ -10,6 +10,7 @@ package net.sf.saxon.event;
 import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.lib.StandardURIChecker;
 import net.sf.saxon.om.*;
+import net.sf.saxon.pull.NamespaceContextImpl;
 import net.sf.saxon.serialize.charcode.UTF16CharacterSet;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
@@ -74,12 +75,6 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
     private Receiver receiver;
 
     /**
-     * The Saxon NamePool
-     */
-
-    private NamePool namePool;
-
-    /**
      * The Checker used for testing valid characters
      */
 
@@ -138,8 +133,19 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
         this.receiver = inScopeNamespaces;
         //this.receiver = new TracingFilter(this.receiver);
         this.charChecker = pipe.getConfiguration().getValidCharacterChecker();
-        this.namePool = pipe.getConfiguration().getNamePool();
         this.setPrefixes.push(new ArrayList<NamespaceBinding>());
+        this.rootNamespaceContext = new NamespaceContextImpl(new NamespaceResolver() {
+            // See bug 2902; initialise rootNamespaceContext to an empty set of namespaces
+            @Override
+            public String getURIForPrefix(String prefix, boolean useDefault) {
+                return null;
+            }
+
+            @Override
+            public Iterator<String> iteratePrefixes() {
+                return Collections.emptyIterator();
+            }
+        });
     }
 
     /**
