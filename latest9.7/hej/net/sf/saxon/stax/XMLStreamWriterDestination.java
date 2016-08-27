@@ -32,6 +32,17 @@ public class XMLStreamWriterDestination implements Destination {
     }
 
     /**
+     * Get the XMLStreamWriter to which this XMLStreamWriterDestination is writing
+     *
+     * @return the XMLStreamWriter that was provided as the destination of this
+     * XMLStreamWriterDestination
+     */
+
+    public XMLStreamWriter getXMLStreamWriter() {
+        return writer;
+    }
+
+    /**
      * Return a Receiver. Saxon calls this method to obtain a Receiver, to which it then sends
      * a sequence of events representing the content of an XML document. The method is intended
      * primarily for internal use, and may give poor diagnostics if used incorrectly.

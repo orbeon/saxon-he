@@ -35,6 +35,15 @@ public class ReceiverToXMLStreamWriter implements Receiver {
         this.writer = writer;
     }
 
+    /**
+     * Get the XMLStreamWriter to which this Receiver is writing events
+     * @return the destination of this ReceiverToXMLStreamWriter
+     */
+
+    public XMLStreamWriter getXMLStreamWriter() {
+        return writer;
+    }
+
     public void setPipelineConfiguration(PipelineConfiguration pipe) {
         this.pipe = pipe;
         config = pipe.getConfiguration();

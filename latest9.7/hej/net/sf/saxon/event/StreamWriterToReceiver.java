@@ -149,6 +149,15 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
     }
 
     /**
+     * Get the Receiver to which this StreamWriterToReceiver is writing events
+     * @return the destination Receiver
+     */
+
+    public Receiver getReceiver() {
+        return receiver;
+    }
+
+    /**
      * Say whether prefixes are to be invented when none is specified by the user.
      * This method has no effect, and is deprecated
      *

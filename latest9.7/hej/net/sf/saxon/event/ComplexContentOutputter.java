@@ -177,6 +177,17 @@ public final class ComplexContentOutputter extends SequenceReceiver {
     }
 
     /**
+     * Get the next receiver in the processing pipeline
+     *
+     * @return the receiver which this ComplexContentOutputter writes to
+     */
+
+    public Receiver getReceiver() {
+        return nextReceiver;
+    }
+
+
+    /**
      * Start the output process
      */
 
