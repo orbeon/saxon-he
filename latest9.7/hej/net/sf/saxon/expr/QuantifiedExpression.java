@@ -22,8 +22,6 @@ import net.sf.saxon.type.ItemType;
 import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.SequenceType;
 
-import java.util.Map;
-
 /**
  * A QuantifiedExpression tests whether some/all items in a sequence satisfy
  * some condition.
@@ -194,7 +192,7 @@ public class QuantifiedExpression extends Assignation {
 
         if (visitor.isOptimizeForStreaming()) {
             Expression e3 = getConfiguration().obtainOptimizer().optimizeQuantifiedExpressionForStreaming(this);
-            if (e3 != this) {
+            if (e3 != null && e3 != this) {
                 return e3.optimize(visitor, contextItemType);
             }
         }

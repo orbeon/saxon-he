@@ -248,6 +248,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                 String fileName2 = ((XdmNode) pack).getAttributeValue(new QName("file"));
                 Source styleSource2 = new StreamSource(testCase.getBaseURI().resolve(fileName2).toString());
                 XsltPackage xpack = compiler.compilePackage(styleSource2);
+                xpack = exportImportPackage(testName, testSetName, outcome, compiler, xpack, collector);
                 compiler.importPackage(xpack);
             }
             sheet = exportImport(testName, testSetName, outcome, compiler, sheet, collector, styleSource);
@@ -763,6 +764,36 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             outcome.setErrorsReported(collector.getErrorCodes());
         }
         return sheet;
+    }
+
+    private XsltPackage exportImportPackage(String testName, String testSetName, TestOutcome outcome, XsltCompiler compiler, XsltPackage pack, ErrorCollector collector) {
+        try {
+            if (export) {
+                try {
+                    File exportFile = new File(resultsDir + "/export/" + testSetName + "/" + testName + ".base.sef");
+                    pack.save(exportFile);
+                    return compiler.loadLibraryPackage(exportFile.toURI());
+                } catch (SaxonApiException e) {
+                    System.err.println(e.getMessage());
+                    //e.printStackTrace();  //temporary, for debugging
+                    throw e;
+                }
+            } else {
+                return pack;
+            }
+        } catch (SaxonApiException err) {
+            outcome.setException(err);
+            if (err.getErrorCode() != null) {
+                collector.getErrorCodes().add(err.getErrorCode().getLocalName());
+            }
+            outcome.setErrorsReported(collector.getErrorCodes());
+        } catch (Exception err) {
+            err.printStackTrace();
+            System.err.println(err.getMessage());
+            outcome.setException(new SaxonApiException(err));
+            outcome.setErrorsReported(collector.getErrorCodes());
+        }
+        return pack;
     }
 
     protected XsltExecutable exportStylesheet(String testName, String testSetName, XsltCompiler compiler, XsltExecutable sheet, Source styleSource) throws SaxonApiException {

@@ -147,7 +147,7 @@ public class XPathEvaluator {
         ExpressionVisitor visitor = ExpressionVisitor.make(staticContext);
         ItemType contextItemType = staticContext.getRequiredContextItemType();
         ContextItemStaticInfo cit = new ContextItemStaticInfo(contextItemType, true);
-        visitor.setOptimizeForStreaming(true);
+        //visitor.setOptimizeForStreaming(true);
         exp = exp.typeCheck(visitor, cit).optimize(visitor, cit);
         exp = postProcess(exp, visitor, cit);
         exp.setRetainedStaticContext(rsc);
