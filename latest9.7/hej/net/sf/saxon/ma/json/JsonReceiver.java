@@ -289,6 +289,8 @@ public class JsonReceiver implements Receiver {
                     }
                     out.append(hex);
                 }
+            } else if (c == '/') {
+                out.append("\\/");
             } else {
                 out.append(c);
             }
