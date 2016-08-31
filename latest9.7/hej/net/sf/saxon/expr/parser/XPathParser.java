@@ -2249,7 +2249,7 @@ public class XPathParser {
      */
 
     /*@NotNull*/
-    protected CharSequence unescape(String token) throws XPathException {
+    public CharSequence unescape(String token) throws XPathException {
         return token;
     }
 

@@ -7,6 +7,8 @@
 
 package net.sf.saxon.om;
 
+import net.sf.saxon.expr.parser.XPathParser;
+import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.Whitespace;
 
@@ -19,6 +21,7 @@ public class QNameParser {
 
     private NamespaceResolver resolver;
     private boolean acceptEQName = false;
+    private XPathParser unescaper = null;
     private String defaultNamespace = null;
     private String errorOnBadSyntax = "XPST0003";
     private String errorOnUnresolvedPrefix = "XPST0081";
@@ -33,6 +36,10 @@ public class QNameParser {
 
     public void setAcceptEQName(boolean acceptEQName) {
         this.acceptEQName = acceptEQName;
+    }
+
+    public void setUnescaper(XPathParser unescaper) {
+        this.unescaper = unescaper;
     }
 
     public void setDefaultNamespace(String defaultNamespace) {
@@ -70,7 +77,13 @@ public class QNameParser {
             } else if (endBrace == name.length() - 1) {
                 throw new XPathException("Invalid EQName: local part is missing", errorOnBadSyntax);
             }
-            String uri = name.substring(2, endBrace);
+            String uri = Whitespace.collapseWhitespace(name.substring(2, endBrace)).toString();
+            if (unescaper != null && uri.contains("&")) {
+                uri = unescaper.unescape(uri).toString();
+            }
+            if (uri.equals(NamespaceConstant.XMLNS)) {
+                throw new XPathException("The string '" + NamespaceConstant.XMLNS + "' cannot be used as a namespace URI", "XQST0070");
+            }
             String local = name.substring(endBrace + 1);
             checkLocalName(local);
             return new StructuredQName("", uri, local);

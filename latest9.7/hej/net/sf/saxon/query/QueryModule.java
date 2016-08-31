@@ -242,6 +242,7 @@ public class QueryModule implements StaticContext {
         qp.setDisableCycleChecks(allowCycles);
         QNameParser qnp = new QNameParser(module.getLiveNamespaceResolver());
         qnp.setAcceptEQName(importer.getXPathVersion() >= 30);
+        qnp.setUnescaper(qp);
         qp.setQNameParser(qnp);
 
         qp.parseLibraryModule(query, module);

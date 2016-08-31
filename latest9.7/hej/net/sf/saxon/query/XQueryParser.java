@@ -399,6 +399,7 @@ public class XQueryParser extends XPathParser {
 
         QNameParser qp = new QNameParser(env.getLiveNamespaceResolver());
         qp.setAcceptEQName(allowXPath30Syntax);
+        qp.setUnescaper(this);
         setQNameParser(qp);
 
         parseProlog();
@@ -460,6 +461,7 @@ public class XQueryParser extends XPathParser {
         t.isXQuery = true;
         QNameParser qp = new QNameParser(env.getLiveNamespaceResolver());
         qp.setAcceptEQName(allowXPath30Syntax);
+        qp.setUnescaper(this);
         setQNameParser(qp);
         try {
             t.tokenize(queryString, 0, -1);
@@ -5254,7 +5256,7 @@ public class XQueryParser extends XPathParser {
      */
 
     /*@NotNull*/
-    protected CharSequence unescape(/*@NotNull*/ String token) throws XPathException {
+    public CharSequence unescape(/*@NotNull*/ String token) throws XPathException {
         FastStringBuffer sb = new FastStringBuffer(token.length());
         for (int i = 0; i < token.length(); i++) {
             char c = token.charAt(i);
