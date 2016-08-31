@@ -3615,7 +3615,7 @@ public class XQueryParser extends XPathParser {
             } else {
                 warning("Ignored pragma " + qname + " (unrecognized Saxon pragma)");
             }
-        } else if (uri.isEmpty()) {
+        } else if (uri.isEmpty() && !allowXPath31Syntax) {
             grumble("The QName identifying an option declaration must be prefixed", "XPST0081");
         }
 
