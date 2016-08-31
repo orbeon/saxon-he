@@ -7,8 +7,8 @@
 
 package net.sf.saxon.expr;
 
+import com.saxonica.ee.schema.UserSimpleType;
 import net.sf.saxon.functions.AbstractFunction;
-import net.sf.saxon.type.SpecificFunctionType;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
@@ -151,20 +151,22 @@ public class UnionConstructorFunction extends AbstractFunction {
         AtomicType label = value.getItemType();
         Iterable<PlainType> memberTypes = targetType.getPlainMemberTypes();
 
-        // 2a. Is the type annotation itself a member type of the union?
-        for (PlainType member : memberTypes) {
-            if (label.equals(member)) {
-                return value;
-            }
-        }
-        // 2b. Failing that, is some supertype of the type annotation a member type of the union?
-        for (PlainType member : memberTypes) {
-            AtomicType t = label;
-            while (t != null) {
-                if (t.equals(member)) {
+        // 2a. Is the type annotation itself a member type of the union, and of the union type itself?
+        if (targetType.getDerivationMethod() != SchemaType.DERIVATION_RESTRICTION) {
+            for (PlainType member : memberTypes) {
+                if (label.equals(member)) {
                     return value;
-                } else {
-                    t = t.getBaseType() instanceof AtomicType ? (AtomicType) t.getBaseType() : null;
+                }
+            }
+            // 2b. Failing that, is some supertype of the type annotation a member type of the union?
+            for (PlainType member : memberTypes) {
+                AtomicType t = label;
+                while (t != null) {
+                    if (t.equals(member)) {
+                        return value;
+                    } else {
+                        t = t.getBaseType() instanceof AtomicType ? (AtomicType) t.getBaseType() : null;
+                    }
                 }
             }
         }
@@ -177,7 +179,19 @@ public class UnionConstructorFunction extends AbstractFunction {
                 if (c != null) {
                     ConversionResult result = c.convert(value);
                     if (result instanceof AtomicValue) {
-                        return (AtomicValue) result;
+                        // 3b. if the union type has constraining facets then the value must satisfy these
+                        if (!(targetType.isPlainType())) {
+                            ValidationFailure vf = ((UserSimpleType)targetType).checkAgainstFacets(
+                                    (AtomicValue)result,
+                                    ((AtomicValue) result).getCanonicalLexicalRepresentation(),
+                                    ((UserSimpleType) targetType).getExtendedFacetList(),
+                                    rules);
+                            if (vf == null) {
+                                return (AtomicValue) result;
+                            }
+                        } else {
+                            return (AtomicValue) result;
+                        }
                     }
                 }
             }
