@@ -32,6 +32,8 @@ public class MapCreate extends ExtensionFunctionDefinition {
             SequenceType.makeSequenceType(MapType.ANY_MAP_TYPE, StaticProperty.ALLOWS_ZERO_OR_MORE)
     };
 
+    public String duplicateErrorCode = "XQDY0137";
+
     /**
      * Get the name of the function, as a QName.
      * <p>This method must be implemented in all subclasses</p>
@@ -111,7 +113,7 @@ public class MapCreate extends ExtensionFunctionDefinition {
                 while ((next = (MapItem) iter.next()) != null) {
                     for (KeyValuePair pair : next) {
                         if (baseMap.get(pair.key) != null) {
-                            throw new XPathException("Duplicate key value (" + pair.key + ") in map", "XQDY0137");
+                            throw new XPathException("Duplicate key value (" + pair.key + ") in map", duplicateErrorCode);
                         } else {
                             baseMap = ((HashTrieMap) baseMap).addEntry(pair.key, pair.value);
                         }
