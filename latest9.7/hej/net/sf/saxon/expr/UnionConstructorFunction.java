@@ -152,7 +152,7 @@ public class UnionConstructorFunction extends AbstractFunction {
         Iterable<PlainType> memberTypes = targetType.getPlainMemberTypes();
 
         // 2a. Is the type annotation itself a member type of the union, and of the union type itself?
-        if (targetType.getDerivationMethod() != SchemaType.DERIVATION_RESTRICTION) {
+        if (targetType.isPlainType()) {
             for (PlainType member : memberTypes) {
                 if (label.equals(member)) {
                     return value;
