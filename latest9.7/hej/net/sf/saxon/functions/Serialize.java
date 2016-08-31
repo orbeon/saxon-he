@@ -154,9 +154,7 @@ public class Serialize extends SystemFunction implements Callable {
                     result = result.addEntry(key, converted);
                 }
             } else if (key instanceof QNameValue) {
-                if (key.getComponent(AccessorFn.Component.NAMESPACE).getStringValue().equals("")) {
-                    throw new XPathException("A serialization parameter supplied with a QName key must have non-absent namespace", "SEPM0017");
-                } else if (key.getComponent(AccessorFn.Component.NAMESPACE).getStringValue().equals("http://saxon.sf.net/")) {
+                if (key.getComponent(AccessorFn.Component.NAMESPACE).getStringValue().equals("http://saxon.sf.net/")) {
                     // Capture Saxon serialization parameters
                     String keyName = ((QNameValue) key).getLocalName();
                     if (isParamNameSaxon(keyName)) {
