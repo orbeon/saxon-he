@@ -47,8 +47,8 @@ void setDllname(){
         memset(&resources_dir[0], 0, sizeof(resources_dir));
 #ifdef __linux__
         
-        snprintf(dllname, 8+name_len+1, "%s%s", "/usr/lib64", tempDllname);
-        snprintf(resources_dir, 8+rDir_len+1, "%s%s", "/usr/lib64", tempResources_dir);
+        snprintf(dllname, 10+name_len+1, "%s%s", "/usr/lib64", tempDllname);
+        snprintf(resources_dir, 10+rDir_len+1, "%s%s", "/usr/lib64", tempResources_dir);
 #elif  defined (__APPLE__) && defined(__MACH__)
         snprintf(dllname, 14+name_len+1, "%s%s", "/usr/local/lib", tempDllname);
         snprintf(resources_dir, 14+rDir_len+1, "%s%s", "/usr/local/lib", tempResources_dir);
