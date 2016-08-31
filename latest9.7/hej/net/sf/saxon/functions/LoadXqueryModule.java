@@ -34,6 +34,7 @@ import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.*;
 
 import javax.xml.transform.stream.StreamSource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -95,6 +96,16 @@ public class LoadXqueryModule extends SystemFunction implements Callable {
         Sequence contextItemOption = checkOption(options, "context-item", context);
         Sequence vendorOptionsOption = checkOption(options, "vendor-options", context);
 
+        int qv = 31;
+        if (xqueryVersionOption != null) {
+            BigDecimal decimalVn = ((DecimalValue) xqueryVersionOption.head()).getDecimalValue();
+            if (decimalVn.equals(new BigDecimal("1.0")) || decimalVn.equals(new BigDecimal("3.0")) || decimalVn.equals(new BigDecimal("3.1"))) {
+                qv = (decimalVn.multiply(BigDecimal.TEN)).intValue();
+            } else {
+                throw new XPathException("Unsupported XQuery version " + decimalVn, "FOQM0006");
+            }
+        }
+
         String moduleUri = args[0].head().getStringValue();
         if (moduleUri.isEmpty()) {
             throw new XPathException("First argument of fn:load-xquery-module() must not be a zero length string", "FOQM0001");
@@ -120,7 +131,7 @@ public class LoadXqueryModule extends SystemFunction implements Callable {
             moduleURIResolver = new StandardModuleURIResolver(config);
         }
         staticQueryContext.setModuleURIResolver(moduleURIResolver);
-        staticQueryContext.setLanguageVersion(31);
+        staticQueryContext.setLanguageVersion(qv);
         String baseURI = getRetainedStaticContext().getStaticBaseUriString();
         staticQueryContext.setBaseURI(baseURI);
         StreamSource[] streamSources;
