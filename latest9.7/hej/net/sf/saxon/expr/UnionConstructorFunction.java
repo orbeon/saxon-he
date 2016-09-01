@@ -7,7 +7,6 @@
 
 package net.sf.saxon.expr;
 
-import com.saxonica.ee.schema.UserSimpleType;
 import net.sf.saxon.functions.AbstractFunction;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.om.*;
@@ -181,11 +180,7 @@ public class UnionConstructorFunction extends AbstractFunction {
                     if (result instanceof AtomicValue) {
                         // 3b. if the union type has constraining facets then the value must satisfy these
                         if (!(targetType.isPlainType())) {
-                            ValidationFailure vf = ((UserSimpleType)targetType).checkAgainstFacets(
-                                    (AtomicValue)result,
-                                    ((AtomicValue) result).getCanonicalLexicalRepresentation(),
-                                    ((UserSimpleType) targetType).getExtendedFacetList(),
-                                    rules);
+                            ValidationFailure vf = targetType.checkAgainstFacets((AtomicValue)result, rules);
                             if (vf == null) {
                                 return (AtomicValue) result;
                             }

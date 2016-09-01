@@ -8,6 +8,8 @@
 package net.sf.saxon.type;
 
 
+import net.sf.saxon.lib.ConversionRules;
+import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.SequenceType;
 
 /**
@@ -42,6 +44,16 @@ public interface UnionType extends SimpleType, ItemType {
      */
 
     public SequenceType getResultTypeOfCast();
+
+    /**
+     * Check an atomic value that is known to be an instance of one of the member types
+     * against any facets defined at the level of the union itself
+     * @param value
+     * @param rules
+     * @return null if the value is valid
+     */
+
+    public ValidationFailure checkAgainstFacets(AtomicValue value, ConversionRules rules);
 
 }
 

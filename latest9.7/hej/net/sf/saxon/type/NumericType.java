@@ -12,10 +12,7 @@ import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.value.DoubleValue;
-import net.sf.saxon.value.NumericValue;
-import net.sf.saxon.value.SequenceType;
-import net.sf.saxon.value.Whitespace;
+import net.sf.saxon.value.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -273,6 +270,11 @@ public class NumericType implements UnionType, PlainType {
         } catch (NumberFormatException e) {
             return new ValidationFailure(e.getMessage());
         }
+    }
+
+    @Override
+    public ValidationFailure checkAgainstFacets(AtomicValue value, ConversionRules rules) {
+        return null;
     }
 
     /**

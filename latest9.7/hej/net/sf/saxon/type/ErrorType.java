@@ -394,6 +394,11 @@ public final class ErrorType extends NodeTest implements AtomicType, UnionType, 
         return new ValidationFailure("No content is ever valid against the type xs:error");
     }
 
+    @Override
+    public ValidationFailure checkAgainstFacets(AtomicValue value, ConversionRules rules) {
+        return null;
+    }
+
     /**
      * Test whether this type represents namespace-sensitive content
      *
