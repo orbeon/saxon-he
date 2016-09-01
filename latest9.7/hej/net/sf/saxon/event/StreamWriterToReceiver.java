@@ -143,7 +143,8 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
 
             @Override
             public Iterator<String> iteratePrefixes() {
-                return Collections.emptyIterator();
+                List<String> e = Collections.emptyList();
+                return e.iterator();
             }
         });
     }
