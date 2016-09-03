@@ -7,16 +7,19 @@
 
 package net.sf.saxon.style;
 
-import net.sf.saxon.expr.AxisExpression;
-import net.sf.saxon.expr.Expression;
+import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.ApplyTemplates;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
 import net.sf.saxon.expr.parser.TypeChecker;
 import net.sf.saxon.expr.sort.SortExpression;
 import net.sf.saxon.expr.sort.SortKeyDefinitionList;
 import net.sf.saxon.om.*;
+import net.sf.saxon.pattern.AnyNodeTest;
 import net.sf.saxon.pattern.NameTest;
-import net.sf.saxon.trans.*;
+import net.sf.saxon.trans.Err;
+import net.sf.saxon.trans.Mode;
+import net.sf.saxon.trans.RuleManager;
+import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.SequenceType;
@@ -139,7 +142,12 @@ public class XSLApplyTemplates extends StyleElement {
         }
 
         if (select == null) {
-            select = new AxisExpression(AxisInfo.CHILD, null);
+            Expression here = new ContextItemExpression();
+            RoleDiagnostic role =
+                    new RoleDiagnostic(RoleDiagnostic.CONTEXT_ITEM, "", 0);
+            role.setErrorCode("XTTE0510");
+            here = new ItemChecker(here, AnyNodeTest.getInstance(), role);
+            select = new SimpleStepExpression(here, new AxisExpression(AxisInfo.CHILD, null));
             select.setLocation(allocateLocation());
             select.setRetainedStaticContext(makeRetainedStaticContext());
         }
