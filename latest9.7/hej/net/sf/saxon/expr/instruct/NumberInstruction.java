@@ -76,7 +76,7 @@ public class NumberInstruction extends Expression {
      * @param startAt                the expression supplied in the start-at attribute
      * @param lang                   the expression supplied in the lang attribute
      * @param formatter              A NumberFormatter to be used
-     * @param hasVariablesInPatterns true if one or more of the patterns contains variable references
+     * @param hasVariablesInPatterns true if one or more of the patterns contains variable references. See bug 2925.
      * @param backwardsCompatible    true if running in 1.0 compatibility mode
      */
 
@@ -93,7 +93,7 @@ public class NumberInstruction extends Expression {
                              Expression startAt,
                              Expression lang,
                              NumberFormatter formatter,
-                             boolean hasVariablesInPatterns,
+                             boolean hasVariablesInPatterns,  // ignored
                              boolean backwardsCompatible) {
 
         if (value != null) {
@@ -131,7 +131,8 @@ public class NumberInstruction extends Expression {
         this.hasVariablesInPatterns = hasVariablesInPatterns;
         this.backwardsCompatible = backwardsCompatible;
 
-
+        this.hasVariablesInPatterns = count != null &&
+                ((count.getDependencies() & StaticProperty.DEPENDS_ON_LOCAL_VARIABLES) != 0);
 
     }
 
