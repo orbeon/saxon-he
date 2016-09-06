@@ -223,7 +223,7 @@ public class Controller {
      * is serially reused
      */
 
-    private void clearPerTransformationData() {
+    private synchronized void clearPerTransformationData() {
         userDataTable = new HashMap<String, Object>(20);
         principalResult = null;
         //principalResultURI = null;
@@ -2593,7 +2593,7 @@ public class Controller {
      * @param number the number of this node
      */
 
-    public void setRememberedNumber(NodeInfo node, int number) {
+    public synchronized void setRememberedNumber(NodeInfo node, int number) {
         lastRememberedNode = node;
         lastRememberedNumber = number;
     }
@@ -2607,7 +2607,7 @@ public class Controller {
      * @return the number of this node if known, else -1.
      */
 
-    public int getRememberedNumber(NodeInfo node) {
+    public synchronized int getRememberedNumber(NodeInfo node) {
         if (lastRememberedNode == node) {
             return lastRememberedNumber;
         }
