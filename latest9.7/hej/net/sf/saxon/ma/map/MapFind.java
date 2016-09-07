@@ -7,25 +7,33 @@
 
 package net.sf.saxon.ma.map;
 
+import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
 import net.sf.saxon.lib.NamespaceConstant;
+import net.sf.saxon.ma.arrays.ArrayItem;
+import net.sf.saxon.ma.arrays.ArrayItemType;
+import net.sf.saxon.ma.arrays.SimpleArrayItem;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
+import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.AtomicValue;
-import net.sf.saxon.value.EmptySequence;
 import net.sf.saxon.value.SequenceType;
 
-/**
- * Implementation of the XPath 3.1 function map:get(Map, key) => value
- */
-public class MapGet extends ExtensionFunctionDefinition {
+import java.util.ArrayList;
+import java.util.List;
 
-    public final static StructuredQName name = new StructuredQName("map", NamespaceConstant.MAP_FUNCTIONS, "get");
+/**
+ * Implementation of the (new) XPath 3.1 function map:find(sequence, key) => array
+ */
+public class MapFind extends ExtensionFunctionDefinition {
+
+    public final static StructuredQName name = new StructuredQName("map", NamespaceConstant.MAP_FUNCTIONS, "find");
     private final static SequenceType[] ARG_TYPES = new SequenceType[]{
-            HashTrieMap.SINGLE_MAP_TYPE, SequenceType.SINGLE_ATOMIC
+            SequenceType.ANY_SEQUENCE, SequenceType.SINGLE_ATOMIC
     };
 
     /**
@@ -75,7 +83,7 @@ public class MapGet extends ExtensionFunctionDefinition {
      */
 
     public SequenceType getResultType(SequenceType[] suppliedArgumentTypes) {
-        return SequenceType.ANY_SEQUENCE;
+        return SequenceType.makeSequenceType(ArrayItemType.ANY_ARRAY_TYPE, StaticProperty.ALLOWS_ONE);
     }
 
     /**
@@ -102,19 +110,34 @@ public class MapGet extends ExtensionFunctionDefinition {
     public ExtensionFunctionCall makeCallExpression() {
         return new ExtensionFunctionCall() {
             public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
-                MapItem map = (MapItem) arguments[0].head();
-                assert map != null;
+                List<Sequence> result = new ArrayList<Sequence>();
                 AtomicValue key = (AtomicValue) arguments[1].head();
-                Sequence value = map.get(key);
-                if (value == null) {
-                    return EmptySequence.getInstance();
-                } else {
-                    return value;
-                }
+                processSequence(arguments[0], key, result);
+                return new SimpleArrayItem(result);
             }
         };
     }
+
+    private void processSequence(Sequence in, AtomicValue key, List<Sequence> result) throws XPathException {
+        SequenceIterator iter = in.iterate();
+        Item item;
+        while ((item = iter.next()) != null) {
+            if (item instanceof ArrayItem) {
+                for (Sequence sequence : (ArrayItem) item) {
+                    processSequence(sequence, key, result);
+                }
+            } else if (item instanceof MapItem) {
+                Sequence value = ((MapItem) item).get(key);
+                if (value != null) {
+                    result.add(value);
+                }
+                for (KeyValuePair entry : (MapItem) item) {
+                    processSequence(entry.value, key, result);
+                }
+            }
+        }
+    }
 }
 
-// Copyright (c) 2010-2011 Saxonica Limited. All rights reserved.
+// Copyright (c) 2016 Saxonica Limited. All rights reserved.
 

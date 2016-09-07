@@ -1637,6 +1637,7 @@ latest9.7/hej/net/sf/saxon/ma/map/KeyValuePair.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/ma/map/MapContains.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/ma/map/MapCreate.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/ma/map/MapEntry.java svn_eol_002dstyle=native
+latest9.7/hej/net/sf/saxon/ma/map/MapFind.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/ma/map/MapForEach.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/ma/map/MapGet.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/ma/map/MapItem.java svn_eol_002dstyle=native

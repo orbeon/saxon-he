@@ -443,6 +443,7 @@ public class Configuration implements SourceResolver, NotationSet {
         registerExtensionFunction(new MapMerge());
         registerExtensionFunction(new MapEntry());
         registerExtensionFunction(new MapGet());
+        registerExtensionFunction(new MapFind());
         registerExtensionFunction(new MapPut());
         registerExtensionFunction(new MapContains());
         registerExtensionFunction(new MapRemove());
