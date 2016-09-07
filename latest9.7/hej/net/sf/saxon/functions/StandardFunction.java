@@ -243,11 +243,11 @@ public abstract class StandardFunction {
                 .arg(0, BuiltInAtomicType.INTEGER, STAR, null);
 
         register("collation-key#1", CollationKeyFn.class, 1, 1, BuiltInAtomicType.ANY_ATOMIC,
-                 OPT, StandardFunction.XPATH31 | StandardFunction.USE_WHEN, StandardFunction.DCOLL)
+                 OPT, XPATH31 | XSLT30 | USE_WHEN, StandardFunction.DCOLL)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null);
 
         register("collation-key#2", CollatingFunctionFree.class, 2, 2, BuiltInAtomicType.ANY_ATOMIC,
-                 OPT, StandardFunction.XPATH31 | StandardFunction.USE_WHEN, StandardFunction.DCOLL)
+                 OPT, XPATH31 | XSLT30 | USE_WHEN, StandardFunction.DCOLL)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null)
                 .arg(1, BuiltInAtomicType.STRING, ONE, null);
 
@@ -535,12 +535,12 @@ public abstract class StandardFunction {
                 .arg(0, BuiltInAtomicType.STRING, OPT, StringValue.EMPTY_STRING);
 
         register("json-doc", JsonDoc.class, 1, 2, AnyItemType.getInstance(),
-                OPT, StandardFunction.XPATH31, LATE)
+                OPT, XPATH31, LATE)
                 .arg(0, BuiltInAtomicType.STRING, OPT, null)
                 .arg(1, MapType.ANY_MAP_TYPE, ONE, null);
 
         register("json-to-xml", JsonToXMLFn.class, 1, 2, AnyItemType.getInstance(),
-                OPT, StandardFunction.XPATH31, LATE)
+                OPT, XPATH31 | XSLT30 | USE_WHEN, LATE)
                 .arg(0, BuiltInAtomicType.STRING, OPT, null)
                 .arg(1, MapType.ANY_MAP_TYPE, ONE, null);
 
