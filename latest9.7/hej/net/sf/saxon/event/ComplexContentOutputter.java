@@ -584,6 +584,14 @@ public final class ComplexContentOutputter extends SequenceReceiver {
                 }
                 characters(item.getStringValueCS(), locationId, 0);
                 previousAtomic = true;
+            } else if (item instanceof ArrayItem) {
+                for (Sequence member : (ArrayItem) item) {
+                    SequenceIterator iter = member.iterate();
+                    Item it;
+                    while ((it = iter.next()) != null) {
+                        append(it, locationId, copyNamespaces);
+                    }
+                }
             } else if (item instanceof Function) {
                 if (SequenceReceiver.isTrueSequenceReceiver(nextReceiver)) {
                     ((SequenceReceiver)nextReceiver).append(item);
@@ -591,8 +599,6 @@ public final class ComplexContentOutputter extends SequenceReceiver {
                     String kind = "a function item";
                     if (item instanceof MapItem) {
                         kind = "a map";
-                    } else if (item instanceof ArrayItem) {
-                        kind = "an array";
                     }
                     boolean isXSLT = getPipelineConfiguration().getHostLanguage() == Configuration.XSLT;
                     throw new XPathException("Cannot add " + kind + " to an XML tree", isXSLT ? "XTDE0450" : "FOTY0013");
