@@ -976,7 +976,6 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         needsEE.add("feature/higher_order_functions");
 
         alwaysOff.add("detect_accumulator_cycles");
-        alwaysOff.add("feature/higher_order_functions");
     }
 
     /**
