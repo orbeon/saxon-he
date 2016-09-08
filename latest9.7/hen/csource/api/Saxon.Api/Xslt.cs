@@ -870,8 +870,8 @@ namespace Saxon.Api
         ///  Get the whitespace stripping policy defined by this stylesheet, that is, the policy
         ///  defined by the xsl:strip-space and xsl:preserve-space elements in the stylesheet
         /// </summary>
-        /// <returns> a newly constructed WhitespaceStrippingPolicy based on the declarations in this
-        ///  stylesheet.This policy can be used as input to a {@link DocumentBuilder}.</returns>
+        /// <returns> a newly constructed WhitespacePolicy based on the declarations in this
+		///  stylesheet. This policy can be used as input to a <see cref="DocumentBuilder"/>.</returns>
         public WhitespacePolicy getWhitespaceStrippingPolicy()
         {
             return new WhitespacePolicy(pss);

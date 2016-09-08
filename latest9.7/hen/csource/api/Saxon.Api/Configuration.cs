@@ -1347,8 +1347,8 @@ namespace Saxon.Api
 
 
     /// <summary>
-    /// WhitespaceStrippingPolicy is class defining the possible policies for handling
-    /// whitespace text nodess in a source document
+    /// WhitespacePolicy is a class defining the possible policies for handling
+    /// whitespace text nodes in a source document.
     /// Please note that since Saxon 9.7.0.8 this class has been refactored from the enumeration
     /// type with the same name and therefore will work as before. 
     /// </summary>
