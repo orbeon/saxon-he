@@ -517,6 +517,7 @@ public abstract class TestDriver {
                         notrun++;
                     }
                     run = false;
+                    break;
                 }
             }
         }
