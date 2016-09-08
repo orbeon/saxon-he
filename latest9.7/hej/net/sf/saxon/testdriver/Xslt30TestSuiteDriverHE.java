@@ -973,6 +973,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         needsEE.add("feature/XPath_3.1");
         needsEE.add("feature/dynamic_evaluation");
         needsEE.add("feature/xquery_invocation");
+        needsEE.add("feature/higher_order_functions");
 
         alwaysOff.add("detect_accumulator_cycles");
         alwaysOff.add("feature/higher_order_functions");
