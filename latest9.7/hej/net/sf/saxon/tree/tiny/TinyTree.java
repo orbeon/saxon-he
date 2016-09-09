@@ -1099,6 +1099,19 @@ public final class TinyTree extends GenericTreeInfo {
         return false;
     }
 
+    /**
+     * Ask whether, somewhere in the tree, there is an attribute xml:space="preserve"
+     * @return true if some element in the tree has an xml:space attribute with the value preserve
+     */
+
+    public boolean hasXmlSpacePreserveAttribute() {
+        for (int i=0; i<numberOfAttributes; i++) {
+            if ((attCode[i] & NamePool.FP_MASK) == StandardNames.XML_SPACE && "preserve".equals(attValue[i].toString())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Set the system id of an element in the document. This identifies the external entity containing

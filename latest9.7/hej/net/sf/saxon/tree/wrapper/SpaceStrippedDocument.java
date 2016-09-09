@@ -11,6 +11,7 @@ import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.tree.iter.AxisIterator;
+import net.sf.saxon.tree.tiny.TinyTree;
 import net.sf.saxon.type.ComplexType;
 import net.sf.saxon.type.SchemaType;
 
@@ -123,15 +124,20 @@ public class SpaceStrippedDocument extends GenericTreeInfo {
      */
 
     private static boolean findPreserveSpace(/*@NotNull*/ TreeInfo doc) {
-        AxisIterator iter = doc.getRootNode().iterateAxis(AxisInfo.DESCENDANT, NodeKindTest.ELEMENT);
-        while (true) {
-            NodeInfo node = iter.next();
-            if (node == null) {
-                return false;
-            }
-            String val = node.getAttributeValue(NamespaceConstant.XML, "space");
-            if ("preserve".equals(val)) {
-                return true;
+        if (doc instanceof TinyTree) {
+            // Optimisation - see bug 2929. Makes a vast difference especially if there are few attributes in the tree
+            return ((TinyTree)doc).hasXmlSpacePreserveAttribute();
+        } else {
+            AxisIterator iter = doc.getRootNode().iterateAxis(AxisInfo.DESCENDANT, NodeKindTest.ELEMENT);
+            while (true) {
+                NodeInfo node = iter.next();
+                if (node == null) {
+                    return false;
+                }
+                String val = node.getAttributeValue(NamespaceConstant.XML, "space");
+                if ("preserve".equals(val)) {
+                    return true;
+                }
             }
         }
     }

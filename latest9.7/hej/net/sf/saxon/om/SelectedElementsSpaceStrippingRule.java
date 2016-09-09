@@ -33,7 +33,7 @@ public class SelectedElementsSpaceStrippingRule implements SpaceStrippingRule {
 
     private Rule anyElementRule = null;
     private Rule unnamedElementRuleChain = null;
-    private HashMap<NodeName, Rule> namedElementRules = new HashMap<NodeName, Rule>(32);
+    private HashMap<NodeName, Rule> namedElementRules = null;
     private int sequence = 0;
     private boolean rejectDuplicates; // in XSLT 3.0, duplicate conflicting rules are a static error
 
@@ -108,6 +108,9 @@ public class SelectedElementsSpaceStrippingRule implements SpaceStrippingRule {
             newRule.setAlwaysMatches(true);
             int fp = test.getFingerprint();
             CodedName key = new CodedName(fp, ((NameTest) test).getNamePool());
+            if (namedElementRules == null) {
+                namedElementRules = new HashMap<NodeName, Rule>(32);
+            }
             Rule chain = namedElementRules.get(key);
             namedElementRules.put(key, addRuleToList(newRule, chain, true));
         } else {
@@ -173,7 +176,10 @@ public class SelectedElementsSpaceStrippingRule implements SpaceStrippingRule {
 
         // search the specific list for this node type / node name
 
-        Rule bestRule = namedElementRules.get(nodeName);
+        Rule bestRule = null;
+        if (namedElementRules != null) {
+            namedElementRules.get(nodeName);
+        }
 
         // search the list for *:local and prefix:* node tests
 

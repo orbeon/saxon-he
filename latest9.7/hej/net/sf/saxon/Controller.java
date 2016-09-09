@@ -30,6 +30,7 @@ import net.sf.saxon.tree.iter.UnfailingIterator;
 import net.sf.saxon.tree.tiny.Statistics;
 import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.tree.wrapper.SpaceStrippedDocument;
+import net.sf.saxon.tree.wrapper.SpaceStrippedNode;
 import net.sf.saxon.tree.wrapper.TypeStrippedDocument;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.type.Untyped;
@@ -646,11 +647,11 @@ public class Controller implements ContextOriginator {
     /**
      * Set the initial named template to be used as the entry point, when the transformation is invoked
      * via the {@link #transform(Source, Receiver)} method.
-     *
+     * <p/>
      * <p>XSLT 2.0 allows a transformation to start by executing a named template, rather than
      * by matching an initial context node in a source document. This method may eventually
      * be superseded by a standard JAXP method once JAXP supports XSLT 2.0.</p>
-     *
+     * <p/>
      * <p>Note that any parameters supplied using {@link #initializeController(net.sf.saxon.expr.instruct.GlobalParameterSet)}
      * are used as the values of global stylesheet parameters. There is no way to supply values for local parameters
      * of the initial template.</p>
@@ -1045,6 +1046,10 @@ public class Controller implements ContextOriginator {
      */
 
     public void setGlobalContextItem(Item contextItem) {
+        // Bug 2929 - don't do space-stripping twice
+        if (globalContextItem instanceof SpaceStrippedNode && ((SpaceStrippedNode) globalContextItem).getUnderlyingNode() == contextItem) {
+            return;
+        }
         if (contextItem instanceof NodeInfo) {
             // In XSLT, apply strip-space and strip-type-annotations options
             contextItem = prepareInputTree((NodeInfo) contextItem);
@@ -1645,7 +1650,6 @@ public class Controller implements ContextOriginator {
     public void initializeController(GlobalParameterSet params) throws XPathException {
 
 
-
         // get a new bindery, to clear out any variables from previous runs
 
         //topLevelBindery = new Bindery();
@@ -1807,7 +1811,12 @@ public class Controller implements ContextOriginator {
                 underSource = s2;
             }
             if (wrap && (underSource instanceof NodeInfo || underSource instanceof DOMSource)) {
-                startNode = prepareInputTree(underSource);
+                // Bug 2929: don't do space-stripping twice
+                if (globalContextItem instanceof SpaceStrippedNode && ((SpaceStrippedNode) globalContextItem).getUnderlyingNode() == underSource) {
+                    startNode = (SpaceStrippedNode) globalContextItem;
+                } else {
+                    startNode = prepareInputTree(underSource);
+                }
                 String uri = underSource.getSystemId();
                 TreeInfo root = startNode.getTreeInfo();
                 if (root != null) {
@@ -1890,8 +1899,9 @@ public class Controller implements ContextOriginator {
 
     /**
      * Make a source tree from a source supplied as a StreamSource or SAXSource
-     * @param source the source
-     * @param close true if the source is to be closed after use
+     *
+     * @param source         the source
+     * @param close          true if the source is to be closed after use
      * @param validationMode indicates whether the source should be schema-validated
      * @return the root of the constructed tree
      * @throws XPathException if tree construction fails
@@ -2323,7 +2333,7 @@ public class Controller implements ContextOriginator {
             throws XPathException {
         checkReadiness();
         if (initialMode != null && !initialMode.getModeName().equals(
-                ((StylesheetPackage)getExecutable().getTopLevelPackage()).getDefaultMode())) {
+                ((StylesheetPackage) getExecutable().getTopLevelPackage()).getDefaultMode())) {
             throw new XPathException("Initial mode and template cannot both be defined", "XTDE0047");
         }
         openMessageEmitter();
