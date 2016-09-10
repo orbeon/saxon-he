@@ -9,16 +9,15 @@ package net.sf.saxon.functions;
 
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.RetainedStaticContext;
-import net.sf.saxon.expr.sort.DocumentOrderIterator;
 import net.sf.saxon.expr.sort.LocalOrderComparer;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.KeyDefinitionSet;
 import net.sf.saxon.trans.KeyManager;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.iter.EmptyIterator;
 import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.AtomicValue;
-import net.sf.saxon.value.EmptySequence;
 
 
 public class KeyFn extends SystemFunction {
@@ -204,37 +203,20 @@ public class KeyFn extends SystemFunction {
             return new LazySequence(keyManager.selectByCompositeKey(selectedKeySet, doc.getTreeInfo(), soughtKey, context));
 
         } else {
-            // If the second argument is a singleton, we evaluate the function
-            // directly; otherwise we recurse to evaluate it once for each Item
-            // in the sequence.
-
-            SequenceIterator allResults;
-            if (!(sought instanceof GroundedValue) || ((GroundedValue)sought).getLength() > 1) {
-                final XPathContext keyContext = context;
-                final TreeInfo document = doc.getTreeInfo();
-                final KeyDefinitionSet keySet = selectedKeySet;
-                MappingFunction map = new MappingFunction<AtomicValue, NodeInfo>() {
-                    // Map a value to the sequence of nodes having that value as a key value
-                    public SequenceIterator map(AtomicValue item) throws XPathException {
-                        return keyManager.selectByKey(
-                            keySet, document, item, keyContext);
-                    }
-                };
-
-                SequenceIterator keys = sought.iterate();
-                SequenceIterator allValues = new MappingIterator(keys, map);
-                allResults = new DocumentOrderIterator(allValues, LocalOrderComparer.getInstance());
-            } else {
-                try {
-                    AtomicValue keyValue = (AtomicValue) sought.head();
-                    if (keyValue == null) {
-                        return EmptySequence.getInstance();
-                    }
-                    allResults = keyManager.selectByKey(selectedKeySet, doc.getTreeInfo(), keyValue, context);
-                } catch (XPathException e) {
-                    //e.maybesetLocation(getLocation());
-                    throw e;
+            // Changed by bug 2929
+            SequenceIterator allResults = null;
+            SequenceIterator keys = sought.iterate();
+            AtomicValue keyValue;
+            while (((keyValue = (AtomicValue)keys.next()) != null)) {
+                SequenceIterator someResults = keyManager.selectByKey(selectedKeySet, doc.getTreeInfo(), keyValue, context);
+                if (allResults == null) {
+                    allResults = someResults;
+                } else {
+                    allResults = new UnionEnumeration(allResults, someResults, LocalOrderComparer.getInstance());
                 }
+            }
+            if (allResults == null) {
+                allResults = EmptyIterator.getInstance();
             }
             if (origin.isSameNodeInfo(doc)) {
                 return new LazySequence(allResults);
