@@ -484,7 +484,7 @@ public class DocumentFn extends SystemFunction implements Callable {
         if (resolver == null) {
             resolver = controller.getStandardURIResolver();
         }
-        return computeDocumentKey(href, baseURI, packageData, resolver);
+        return computeDocumentKey(href, baseURI, packageData, resolver, true);
     }
 
     /**
@@ -493,9 +493,10 @@ public class DocumentFn extends SystemFunction implements Callable {
      * @param baseURI  the base URI
      * @param packageData
      * @param resolver the URIResolver
+     * @param strip true if the document is subject to whitespace-stripping (true for source documents, false for stylesheets)
      */
 
-    public static DocumentURI computeDocumentKey(String href, String baseURI, PackageData packageData, URIResolver resolver) throws XPathException {
+    public static DocumentURI computeDocumentKey(String href, String baseURI, PackageData packageData, URIResolver resolver, boolean strip) throws XPathException {
         String documentKey;
         if (resolver instanceof RelativeURIResolver) {
             // If this is the case, the URIResolver is responsible for absolutization as well as dereferencing
@@ -529,7 +530,7 @@ public class DocumentFn extends SystemFunction implements Callable {
                 }
             }
         }
-        if (packageData instanceof StylesheetPackage &&
+        if (strip && packageData instanceof StylesheetPackage &&
                 ((StylesheetPackage) packageData).getSpaceStrippingRule() != NoElementsSpaceStrippingRule.getInstance()) {
             String name = ((StylesheetPackage) packageData).getPackageName();
             if (name != null) {
