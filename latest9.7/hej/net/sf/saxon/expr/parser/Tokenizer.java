@@ -7,6 +7,7 @@
 
 package net.sf.saxon.expr.parser;
 
+import net.sf.saxon.om.NameChecker;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.Whitespace;
 
@@ -602,17 +603,10 @@ public final class Tokenizer {
                     // disambiguation of MULT and STAR is now done later
                     if (inputOffset < inputLength
                             && input.charAt(inputOffset) == ':'
-                            && !(inputOffset + 1 < inputLength && input.charAt(inputOffset + 1) == '=')) {
+                            && inputOffset + 1 < inputLength
+                            && (input.charAt(inputOffset+1) > 127 || NameChecker.isNCNameStartChar(input.charAt(inputOffset + 1)))) {
                         inputOffset++;
                         nextToken = Token.SUFFIX;
-                        // we leave the parser to get the following name as a separate
-                        // token, but first check there's no intervening white space or comments
-                        if (inputOffset < inputLength) {
-                            char ahead = input.charAt(inputOffset);
-                            if (" \r\t\n(".indexOf(ahead) >= 0) {
-                                throw new XPathException("Whitespace and comments are not allowed after '*:'");
-                            }
-                        }
                         return;
                     }
                     nextToken = Token.STAR;
@@ -874,33 +868,37 @@ public final class Tokenizer {
                         c = input.charAt(inputOffset);
                         switch (c) {
                             case ':':
-                                if (precedingToken == Token.QMARK || precedingToken == Token.SUFFIX) {
-                                    // only NCName allowed after "? in a lookup expression, or after *:
-                                    nextTokenValue = input.substring(nextTokenStartOffset, inputOffset);
-                                    nextToken = Token.NAME;
-                                    return;
-                                }
-                                if (inputOffset + 1 < inputLength) {
-                                    char nc = input.charAt(inputOffset + 1);
-                                    if (nc == ':') {
-                                        nextTokenValue = input.substring(nextTokenStartOffset, inputOffset);
-                                        nextToken = Token.AXIS;
-                                        inputOffset += 2;
-                                        return;
-                                    } else if (nc == '*') {
-                                        nextTokenValue = input.substring(nextTokenStartOffset, inputOffset);
-                                        nextToken = Token.PREFIX;
-                                        inputOffset += 2;
-                                        return;
-                                    } else if (foundColon || !(nc == '_' || nc > 127 || Character.isLetter(nc))) {
-                                        // for example: "let $x:=2", "x:y:z", "x:2"
-                                        // end the token before the colon
+                                if (!foundColon) {
+                                    if (precedingToken == Token.QMARK || precedingToken == Token.SUFFIX) {
+                                        // only NCName allowed after "? in a lookup expression, or after *:
                                         nextTokenValue = input.substring(nextTokenStartOffset, inputOffset);
                                         nextToken = Token.NAME;
                                         return;
                                     }
+                                    if (inputOffset + 1 < inputLength) {
+                                        char nc = input.charAt(inputOffset + 1);
+                                        if (nc == ':') {
+                                            nextTokenValue = input.substring(nextTokenStartOffset, inputOffset);
+                                            nextToken = Token.AXIS;
+                                            inputOffset += 2;
+                                            return;
+                                        } else if (nc == '*') {
+                                            nextTokenValue = input.substring(nextTokenStartOffset, inputOffset);
+                                            nextToken = Token.PREFIX;
+                                            inputOffset += 2;
+                                            return;
+                                        } else if (!(nc == '_' || nc > 127 || Character.isLetter(nc))) {
+                                            // for example: "let $x:=2", "x:y:z", "x:2"
+                                            // end the token before the colon
+                                            nextTokenValue = input.substring(nextTokenStartOffset, inputOffset);
+                                            nextToken = Token.NAME;
+                                            return;
+                                        }
+                                    }
+                                    foundColon = true;
+                                } else {
+                                    break loop;
                                 }
-                                foundColon = true;
                                 break;
                             case '.':
                             case '-':
