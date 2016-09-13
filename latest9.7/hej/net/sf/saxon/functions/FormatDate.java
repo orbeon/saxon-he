@@ -15,6 +15,7 @@ import net.sf.saxon.lib.Numberer;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.om.ZeroOrOne;
+import net.sf.saxon.regex.Categories;
 import net.sf.saxon.regex.UnicodeString;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
@@ -418,7 +419,22 @@ public class FormatDate extends SystemFunction implements Callable {
                 min = len;
                 max = len;
             }
-
+        }
+        if ("Y".equals(component) && digitsPattern.matcher(primary).find()) {
+            UnicodeString uPrimary = UnicodeString.makeUnicodeString(primary);
+            min = max = 0;
+            for (int i=0; i<uPrimary.uLength(); i++) {
+                int c = uPrimary.uCharAt(i);
+                if (c == '#') {
+                    max++;
+                } else if ((c >= '0' && c <= '9') || Categories.ESCAPE_d.matches(c)) {
+                    min++;
+                    max++;
+                }
+            }
+            if (max == 1) {
+                max = Integer.MAX_VALUE;
+            }
         }
         if (primary.equals("I") || primary.equals("i")) {
             int[] range = getWidths(widths);
@@ -461,6 +477,10 @@ public class FormatDate extends SystemFunction implements Callable {
             if (max == Integer.MAX_VALUE) {
                 // if no max specified, use 4. An explicit greater value allows use of "noon" and "midnight"
                 max = 4;
+            }
+        } else if ("Y".equals(component)) {
+            if (max < Integer.MAX_VALUE) {
+                value = value % (int)Math.pow(10, max);
             }
         } else if ("f".equals(component)) {
             // value is supplied as integer number of microseconds
@@ -557,19 +577,6 @@ public class FormatDate extends SystemFunction implements Callable {
                 len = len + 1;
             }
             s = fsb.toString();
-        }
-        if (len > max) {
-            // the year is the only field we allow to be truncated
-            if (component.charAt(0) == 'Y') {
-                if (len == s.length()) {
-                    // no wide characters
-                    s = s.substring(s.length() - max);
-                } else {
-                    // assert: each character must be two bytes long
-                    s = s.substring(s.length() - 2 * max);
-                }
-
-            }
         }
         return s;
     }
