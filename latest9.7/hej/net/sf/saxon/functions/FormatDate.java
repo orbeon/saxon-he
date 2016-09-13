@@ -382,6 +382,9 @@ public class FormatDate extends SystemFunction implements Callable {
     private static Pattern digitsOrOptionalDigitsPattern =
             Pattern.compile("[#\\p{Nd}]+");
 
+    private static Pattern fractionalDigitsPattern =
+            Pattern.compile("\\p{Nd}+#*");
+
     private static CharSequence formatNumber(String component, int value,
                                              String format, boolean defaultFormat, Numberer numberer, XPathContext context)
             throws XPathException {
@@ -406,18 +409,18 @@ public class FormatDate extends SystemFunction implements Callable {
         int min = 1;
         int max = Integer.MAX_VALUE;
 
-        if ("".equals(widths)) {
-            if (digitsPattern.matcher(primary).matches()) {
-                int len = StringValue.getStringLength(primary);
-                if (len > 1) {
-                    // "A format token containing leading zeroes, such as 001, sets the minimum and maximum width..."
-                    // We interpret this literally: a format token of "1" does not set a maximum, because it would
-                    // cause the year 2006 to be formatted as "6".
-                    min = len;
-                    max = len;
-                }
+        if (digitsPattern.matcher(primary).matches()) {
+            int len = StringValue.getStringLength(primary);
+            if (len > 1) {
+                // "A format token containing leading zeroes, such as 001, sets the minimum and maximum width..."
+                // We interpret this literally: a format token of "1" does not set a maximum, because it would
+                // cause the year 2006 to be formatted as "6".
+                min = len;
+                max = len;
             }
-        } else if (primary.equals("I") || primary.equals("i")) {
+
+        }
+        if (primary.equals("I") || primary.equals("i")) {
             int[] range = getWidths(widths);
             min = range[0];
             //max = Integer.MAX_VALUE;
@@ -429,10 +432,14 @@ public class FormatDate extends SystemFunction implements Callable {
                 len++;
             }
             return s;
-        } else {
+        } else if (!widths.isEmpty()) {
             int[] range = getWidths(widths);
-            min = range[0];
-            max = range[1];
+            min = Math.max(min, range[0]);
+            if (max == Integer.MAX_VALUE) {
+                max = range[1];
+            } else {
+                max = Math.max(max, range[1]);
+            }
             if (defaultFormat) {
                 // if format was defaulted, the explicit widths override the implicit format
                 if (primary.endsWith("1") && min != primary.length()) {
@@ -474,6 +481,9 @@ public class FormatDate extends SystemFunction implements Callable {
                 }
                 return correctedResult.toString();
             }
+            if (!fractionalDigitsPattern.matcher(primary).matches()) {
+                throw new XPathException("Invalid picture for fractional seconds: " + primary, "FOFD1340");
+            }
             String s;
             if (value == 0) {
                 s = "0";
@@ -492,7 +502,7 @@ public class FormatDate extends SystemFunction implements Callable {
             }
             // for non standard decimal digit family
             int zeroDigit = Alphanumeric.getDigitFamily(uFormat.uCharAt(0));
-            if (zeroDigit >= 0) {
+            if (zeroDigit >= 0 && zeroDigit != '0') {
                 int[] digits = new int[10];
                 for (int z = 0; z <= 9; z++) {
                     digits[z] = zeroDigit + z;
