@@ -1,11 +1,16 @@
 package net.sf.saxon.type;
 
 import net.sf.saxon.expr.Expression;
+import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
+import net.sf.saxon.ma.arrays.ArrayItem;
 import net.sf.saxon.ma.arrays.ArrayItemType;
+import net.sf.saxon.ma.map.KeyValuePair;
+import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.ma.map.MapType;
 import net.sf.saxon.om.Function;
 import net.sf.saxon.om.Item;
+import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
@@ -207,6 +212,52 @@ public class SpecificFunctionType extends AnyFunctionType {
     public boolean matches(Item item, TypeHierarchy th) {
         if (!(item instanceof Function)) {
             return false;
+        }
+
+        if (item instanceof MapItem) {
+            // Bug 2938: Essentially a map is an instance of function(X) as Y
+            // if (a) X is a subtype of xs:anyAtomicType, and (b) all the values in the map are instances of Y
+            if (getArity() == 1 &&
+                    argTypes[0].getCardinality() == StaticProperty.EXACTLY_ONE &&
+                    argTypes[0].getPrimaryType().isPlainType()) {
+                for (KeyValuePair pair : ((MapItem)item)) {
+                    try {
+                        if (!resultType.matches(pair.value, th)) {
+                            return false;
+                        }
+                    } catch (XPathException e) {
+                        return false;
+                    }
+                }
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        if (item instanceof ArrayItem) {
+            // Bug 2938: Essentially a array is an instance of function(X) as Y
+            // if (a) X is a subtype of xs:integer, and (b) all the values in the array are instances of Y
+            if (getArity() == 1 &&
+                    argTypes[0].getCardinality() == StaticProperty.EXACTLY_ONE &&
+                    argTypes[0].getPrimaryType().isPlainType()) {
+                int rel = th.relationship(argTypes[0].getPrimaryType(), BuiltInAtomicType.INTEGER);
+                if (!(rel == TypeHierarchy.SAME_TYPE || rel == TypeHierarchy.SUBSUMED_BY)) {
+                    return false;
+                }
+                for (Sequence member : ((ArrayItem) item)) {
+                    try {
+                        if (!resultType.matches(member, th)) {
+                            return false;
+                        }
+                    } catch (XPathException e) {
+                        return false;
+                    }
+                }
+                return true;
+            } else {
+                return false;
+            }
         }
 
         int rel = th.relationship(((Function) item).getFunctionItemType(), this);
