@@ -18,6 +18,7 @@ import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.lib.SerializerFactory;
 import net.sf.saxon.ma.map.HashTrieMap;
+import net.sf.saxon.ma.map.KeyValuePair;
 import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.ma.map.MapType;
 import net.sf.saxon.om.*;
@@ -25,6 +26,7 @@ import net.sf.saxon.regex.UnicodeString;
 import net.sf.saxon.serialize.CharacterMap;
 import net.sf.saxon.serialize.CharacterMapIndex;
 import net.sf.saxon.serialize.SerializationParamsHandler;
+import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AtomicIterator;
 import net.sf.saxon.type.BuiltInAtomicType;
@@ -225,33 +227,24 @@ public class Serialize extends SystemFunction implements Callable {
 
 
     /**
-     * By the option parameter conventions, check the 'options' supplied in a character map:
-     * 1. any string is allowed as an option, QNames not recognised by product are ignored;
-     * 2. validate the types of the option values supplied (required type is always xs:string).
+     * By the option parameter conventions, check the character map:
+     * 1. the keys must all be single character strings;
+     * 2. the value must be a string.
+     * No conversions are applied.
      */
 
     private MapItem checkCharacterMapOptions(MapItem map, XPathContext context) throws XPathException {
-        HashTrieMap result = new HashTrieMap(context);
         TypeHierarchy th = context.getConfiguration().getTypeHierarchy();
-
-        AtomicIterator keysIterator = map.keys();
-        AtomicValue key;
-        while ((key = keysIterator.next()) != null) {
-            if (key instanceof StringValue) {
-                RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.CHARACTER_MAP_EXPANSION, key.getStringValue(), 0);
-                role.setErrorCode("XPTY0004");
-                Sequence converted = th.applyFunctionConversionRules(
-                    map.get(key), SequenceType.SINGLE_STRING, role, ExplicitLocation.UNKNOWN_LOCATION);
-                converted = SequenceTool.toGroundedValue(converted);
-                result = result.addEntry(key, converted);
-            } else if (key instanceof QNameValue) {
-                // An option name in an unrecognised namespace is ignored, by the option parameter conventions.
-                // In fact, any character map option name supplied as a QName is ignored.
-            } else {
-                break;
+        for (KeyValuePair pair : map) {
+            AtomicValue key = pair.key;
+            if (!(key instanceof StringValue && ((StringValue)key).getStringLength() == 1)) {
+                throw new XPathException("Keys in a character map must all be one-character strings. Found " + Err.wrap(key.toString()), "XPTY0004");
+            }
+            if (!SequenceType.SINGLE_STRING.matches(pair.value, th)) {
+                throw new XPathException("Values in a character map must all be single strings. Found " + Err.wrap(key.toString()), "XPTY0004");
             }
         }
-        return result;
+        return map;
     }
 
     // Convert a map defining a character map to a CharacterMap
