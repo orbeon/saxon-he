@@ -210,6 +210,7 @@ public class StyleNodeFactory implements NodeFactory {
                     temp = new AbsentExtensionElement();
                     temp.initialise(elemName, elemType, attlist, parent, sequence);
                     temp.setLocation(baseURI, lineNumber, columnNumber);
+                    temp.setCompilation(compilation);
                     try {
                         temp.processStandardAttributes("");
                         if (temp.getEffectiveVersion() > 20) {
