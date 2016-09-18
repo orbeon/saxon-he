@@ -10,6 +10,7 @@ package net.sf.saxon.pattern;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.tree.util.FastStringBuffer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,7 +21,7 @@ public class UnionQNameTest implements QNameTest {
     List<QNameTest> tests;
 
     public UnionQNameTest(List<QNameTest> tests) {
-        this.tests = tests;
+        this.tests = new ArrayList<QNameTest>(tests);
     }
 
     /**
