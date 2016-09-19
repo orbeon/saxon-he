@@ -28,6 +28,9 @@ public final class MultipleNodeKindTest extends NodeTest {
     public final static MultipleNodeKindTest DOC_ELEM_ATTR =
         new MultipleNodeKindTest(UType.DOCUMENT.union(UType.ELEMENT).union(UType.ATTRIBUTE));
 
+    public final static MultipleNodeKindTest LEAF =
+            new MultipleNodeKindTest(UType.TEXT.union(UType.COMMENT).union(UType.PI).union(UType.NAMESPACE).union(UType.ATTRIBUTE));
+
     UType uType;
     int nodeKindMask;
 

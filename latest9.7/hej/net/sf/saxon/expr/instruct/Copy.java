@@ -18,19 +18,16 @@ import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.lib.Validation;
 import net.sf.saxon.om.*;
-import net.sf.saxon.pattern.AnyNodeTest;
-import net.sf.saxon.pattern.ContentTypeTest;
-import net.sf.saxon.pattern.NodeKindTest;
-import net.sf.saxon.pattern.NodeTest;
+import net.sf.saxon.pattern.*;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.NamespaceIterator;
 import net.sf.saxon.type.*;
+import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.Whitespace;
 
 import java.util.Iterator;
-import java.util.Map;
 
 
 /**
@@ -327,6 +324,23 @@ public class Copy extends ElementCreator {
         if (exp == this) {
             if (resultItemType == null) {
                 resultItemType = computeItemType(getConfiguration().getTypeHierarchy());
+            }
+            if (visitor.isOptimizeForStreaming()) {
+                UType type = contextItemType.getItemType().getUType();
+                if (!type.intersection(MultipleNodeKindTest.LEAF.getUType()).equals(UType.VOID)) {
+                    Expression copyOf = new CopyOf(
+                            new ContextItemExpression(), false, getValidationAction(), getSchemaType(), false);
+                    NodeTest leafTest = new MultipleNodeKindTest(type.intersection(MultipleNodeKindTest.LEAF.getUType()));
+                    Expression[] conditions = new Expression[]{
+                            new InstanceOfExpression(
+                                    new ContextItemExpression(),
+                                    SequenceType.makeSequenceType(leafTest, StaticProperty.EXACTLY_ONE)),
+                            Literal.makeLiteral(BooleanValue.TRUE)};
+                    Expression[] actions = new Expression[]{copyOf, this};
+                    Choose choose = new Choose(conditions, actions);
+                    ExpressionTool.copyLocationInfo(this, choose);
+                    return choose;
+                }
             }
         }
         return exp;
