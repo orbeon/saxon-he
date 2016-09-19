@@ -178,7 +178,7 @@ public class SelectedElementsSpaceStrippingRule implements SpaceStrippingRule {
 
         Rule bestRule = null;
         if (namedElementRules != null) {
-            namedElementRules.get(nodeName);
+            bestRule = namedElementRules.get(nodeName);
         }
 
         // search the list for *:local and prefix:* node tests
