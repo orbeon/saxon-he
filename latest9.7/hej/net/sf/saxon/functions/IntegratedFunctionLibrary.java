@@ -113,6 +113,7 @@ public class IntegratedFunctionLibrary implements FunctionLibrary {
             ExtensionFunctionCall f = defn.makeCallExpression();
             FunctionItemType type = new SpecificFunctionType(
                     defn.getArgumentTypes(), defn.getResultType(defn.getArgumentTypes()));
+            f.supplyStaticContext(staticContext, 0, null);
             return new CallableFunction(functionName, f, type);
         } catch (Exception err) {
             throw new XPathException("Failed to create call to extension function " + functionName.getComponentName().getDisplayName(), err);
