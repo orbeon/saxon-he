@@ -1120,25 +1120,24 @@ public final class FilterExpression extends BinaryExpression implements ContextS
                         ExpressionTool.ebvError("sequence of two or more items starting with a numeric value");
                     } else {
                         // Filter is a constant number
-                        if (((NumericValue) first).isWholeNumber()) {
-                            int pos = (int) ((NumericValue) first).longValue();
-                            if (pos > 0) {
-                                if (getBase() instanceof VariableReference) {
-                                    Sequence baseVal = ((VariableReference) getBase()).evaluateVariable(context);
-                                    if (baseVal instanceof MemoClosure) {
-                                        Item m = ((MemoClosure) baseVal).itemAt(pos - 1);
-                                        return m == null ? EmptyIterator.emptyIterator() : m.iterate();
-                                    } else {
-                                        Item m = SequenceTool.toGroundedValue(baseVal).itemAt(pos - 1);
-                                        return m == null ? EmptyIterator.emptyIterator() : m.iterate();
-                                    }
-                                } else if (getBase() instanceof Literal) {
-                                    Item i = ((Literal) getBase()).getValue().itemAt(pos - 1);
-                                    return i == null ? EmptyIterator.getInstance() : i.iterate();
+                        NumericValue subscript = (NumericValue)first;
+                        if (subscript.isWholeNumber() && subscript.signum() > 0 && subscript.longValue() < Integer.MAX_VALUE) {
+                            int pos = (int) subscript.longValue();
+                            if (getBase() instanceof VariableReference) {
+                                Sequence baseVal = ((VariableReference) getBase()).evaluateVariable(context);
+                                if (baseVal instanceof MemoClosure) {
+                                    Item m = ((MemoClosure) baseVal).itemAt(pos - 1);
+                                    return m == null ? EmptyIterator.emptyIterator() : m.iterate();
                                 } else {
-                                    SequenceIterator baseIter = getBase().iterate(context);
-                                    return SubsequenceIterator.make(baseIter, pos, pos);
+                                    Item m = SequenceTool.toGroundedValue(baseVal).itemAt(pos - 1);
+                                    return m == null ? EmptyIterator.emptyIterator() : m.iterate();
                                 }
+                            } else if (getBase() instanceof Literal) {
+                                Item i = ((Literal) getBase()).getValue().itemAt(pos - 1);
+                                return i == null ? EmptyIterator.getInstance() : i.iterate();
+                            } else {
+                                SequenceIterator baseIter = getBase().iterate(context);
+                                return SubsequenceIterator.make(baseIter, pos, pos);
                             }
                         }
                         // a non-integer value or non-positive number will never be equal to position()

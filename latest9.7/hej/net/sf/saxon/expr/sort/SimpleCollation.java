@@ -7,10 +7,14 @@
 
 package net.sf.saxon.expr.sort;
 
+import com.saxonica.expr.sort.ICUSubstringMatcher;
+import com.saxonica.expr.sort.UCACollator;
 import net.sf.saxon.Platform;
 import net.sf.saxon.Version;
 import net.sf.saxon.lib.StringCollator;
+import net.sf.saxon.lib.SubstringMatcher;
 
+import java.text.RuleBasedCollator;
 import java.util.Comparator;
 
 /**
@@ -104,6 +108,23 @@ public class SimpleCollation implements StringCollator {
 
     public AtomicMatchKey getCollationKey(CharSequence s) {
         return platform.getCollationKey(this, s.toString());
+    }
+
+    /**
+     * If possible, get a collator capable of substring matching (in functions such as fn:contains()).
+     * @return a collator suitable for substring matching, or null if none is available
+     */
+
+    public SubstringMatcher getSubstringMatcher() {
+        if (comparator instanceof RuleBasedCollator) {
+            return new RuleBasedSubstringMatcher(uri, (RuleBasedCollator)comparator);
+        }
+        //#if EE==true
+        if (comparator instanceof UCACollator) {
+            return new ICUSubstringMatcher(uri, ((UCACollator)comparator).getRuleBasedCollator());
+        }
+        //#endif
+        return null;
     }
 
 }

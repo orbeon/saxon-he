@@ -11,7 +11,6 @@ import com.saxonica.ee.bytecode.ContainsCompiler;
 import com.saxonica.ee.bytecode.ExpressionCompiler;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.sort.CodepointCollator;
-import net.sf.saxon.expr.sort.RuleBasedSubstringMatcher;
 import net.sf.saxon.expr.sort.SimpleCollation;
 import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.lib.SubstringMatcher;
@@ -19,8 +18,6 @@ import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.StringValue;
-
-import java.text.RuleBasedCollator;
 
 /**
  * Implements the fn:contains() function, with the collation already known
@@ -40,9 +37,8 @@ public class Contains extends CollatingFunctionFixed {
             // fast path for this common case
             return s0.indexOf(s1, 0) >= 0;
         } else {
-            if (collator instanceof SimpleCollation &&
-                    ((SimpleCollation) collator).getComparator() instanceof RuleBasedCollator) {
-                collator = new RuleBasedSubstringMatcher(collator.getCollationURI(), (RuleBasedCollator) ((SimpleCollation) collator).getComparator());
+            if (collator instanceof SimpleCollation) {
+                collator = ((SimpleCollation)collator).getSubstringMatcher();
             }
 
             if (collator instanceof SubstringMatcher) {

@@ -242,6 +242,15 @@ public class RuleBasedSubstringMatcher extends SimpleCollation implements Substr
         return new CollationMatchKey(getRuleBasedCollator().getCollationKey(s.toString()));
     }
 
+    /**
+     * If possible, get a collator capable of substring matching (in functions such as fn:contains()).
+     *
+     * @return a collator suitable for substring matching, or null if none is available
+     */
+    @Override
+    public SubstringMatcher getSubstringMatcher() {
+        return this;
+    }
 
     /**
      * Test program to output the sequence of collation element iterators for a given input string

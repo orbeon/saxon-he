@@ -11,15 +11,12 @@ import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.SubstringAfterCompiler;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.sort.CodepointCollator;
-import net.sf.saxon.expr.sort.RuleBasedSubstringMatcher;
 import net.sf.saxon.expr.sort.SimpleCollation;
 import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.lib.SubstringMatcher;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.StringValue;
-
-import java.text.RuleBasedCollator;
 
 /**
  * Implements the fn:substring-after() function with the collation already known
@@ -69,9 +66,8 @@ public class SubstringAfter extends CollatingFunctionFixed {
             }
 
         } else {
-            if (collator instanceof SimpleCollation &&
-                    ((SimpleCollation) collator).getComparator() instanceof RuleBasedCollator) {
-                collator = new RuleBasedSubstringMatcher(collator.getCollationURI(), (RuleBasedCollator) ((SimpleCollation) collator).getComparator());
+            if (collator instanceof SimpleCollation) {
+                collator = ((SimpleCollation) collator).getSubstringMatcher();
             }
 
             if (collator instanceof SubstringMatcher) {
