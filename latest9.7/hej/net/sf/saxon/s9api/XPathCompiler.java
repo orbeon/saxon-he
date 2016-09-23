@@ -610,6 +610,8 @@ public class XPathCompiler {
                 symbols.setDecimalSeparator(value);
             } else if (property.equals("grouping-separator")) {
                 symbols.setGroupingSeparator(value);
+            } else if (property.equals("exponent-separator")) {
+                symbols.setExponentSeparator(value);
             } else if (property.equals("infinity")) {
                 symbols.setInfinity(value);
             } else if (property.equals("NaN")) {
