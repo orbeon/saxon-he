@@ -603,7 +603,7 @@ public class XPathCompiler {
             env.setDecimalFormatManager(dfm);
         }
 
-        DecimalSymbols symbols = dfm.getNamedDecimalFormat(format.getStructuredQName());
+        DecimalSymbols symbols = dfm.obtainNamedDecimalFormat(format.getStructuredQName());
 
         try {
             if (property.equals("decimal-separator")) {
