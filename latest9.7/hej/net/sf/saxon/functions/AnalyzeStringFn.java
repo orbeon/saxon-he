@@ -9,6 +9,8 @@ package net.sf.saxon.functions;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.Builder;
+import net.sf.saxon.event.NamespaceReducer;
+import net.sf.saxon.event.Receiver;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.lib.NamespaceConstant;
@@ -110,41 +112,42 @@ public class AnalyzeStringFn extends RegexFunction {
         }
 
         final Builder builder = context.getController().makeBuilder();
+        final Receiver out = new NamespaceReducer(builder);
         builder.open();
         builder.setBaseURI(getStaticBaseUriString());
-        builder.startElement(resultName, resultType, ExplicitLocation.UNKNOWN_LOCATION, 0);
-        builder.startContent();
+        out.startElement(resultName, resultType, ExplicitLocation.UNKNOWN_LOCATION, 0);
+        out.startContent();
         Item item;
         while ((item = iter.next()) != null) {
             if (iter.isMatching()) {
-                builder.startElement(matchName, matchType, ExplicitLocation.UNKNOWN_LOCATION, 0);
-                builder.startContent();
+                out.startElement(matchName, matchType, ExplicitLocation.UNKNOWN_LOCATION, 0);
+                out.startContent();
                 iter.processMatchingSubstring(new RegexIterator.MatchHandler() {
                     public void characters(CharSequence s) throws XPathException {
-                        builder.characters(s, ExplicitLocation.UNKNOWN_LOCATION, 0);
+                        out.characters(s, ExplicitLocation.UNKNOWN_LOCATION, 0);
                     }
 
                     public void onGroupStart(int groupNumber) throws XPathException {
-                        builder.startElement(groupName, groupType, ExplicitLocation.UNKNOWN_LOCATION, 0);
-                        builder.attribute(groupNrName, groupNrType, "" + groupNumber, ExplicitLocation.UNKNOWN_LOCATION, 0);
-                        builder.startContent();
+                        out.startElement(groupName, groupType, ExplicitLocation.UNKNOWN_LOCATION, 0);
+                        out.attribute(groupNrName, groupNrType, "" + groupNumber, ExplicitLocation.UNKNOWN_LOCATION, 0);
+                        out.startContent();
                     }
 
                     public void onGroupEnd(int groupNumber) throws XPathException {
-                        builder.endElement();
+                        out.endElement();
                     }
                 });
-                builder.endElement();
+                out.endElement();
             } else {
-                builder.startElement(nonMatchName, nonMatchType, ExplicitLocation.UNKNOWN_LOCATION, 0);
-                builder.startContent();
-                builder.characters(item.getStringValueCS(), ExplicitLocation.UNKNOWN_LOCATION, 0);
-                builder.endElement();
+                out.startElement(nonMatchName, nonMatchType, ExplicitLocation.UNKNOWN_LOCATION, 0);
+                out.startContent();
+                out.characters(item.getStringValueCS(), ExplicitLocation.UNKNOWN_LOCATION, 0);
+                out.endElement();
             }
         }
 
-        builder.endElement();
-        builder.close();
+        out.endElement();
+        out.close();
         return builder.getCurrentRoot();
 
     }
