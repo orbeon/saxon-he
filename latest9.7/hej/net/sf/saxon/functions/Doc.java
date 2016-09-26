@@ -7,11 +7,15 @@
 
 package net.sf.saxon.functions;
 
+import net.sf.saxon.Configuration;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.expr.*;
+import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.lib.FeatureKeys;
 import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
+import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.om.ZeroOrOne;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.AtomicValue;
@@ -72,6 +76,44 @@ public class Doc extends SystemFunction implements Callable {
         return arguments[0].getCardinality() & ~StaticProperty.ALLOWS_MANY;
     }
 
+    @Override
+    public Expression makeFunctionCall(Expression... arguments) {
+        if (!getRetainedStaticContext().getConfiguration().getBooleanProperty(FeatureKeys.PRE_EVALUATE_DOC_FUNCTION)) {
+            return new SystemFunctionCall(this, arguments) {
+                @Override
+                public Expression preEvaluate(ExpressionVisitor visitor) throws XPathException {
+                    // Suppress early evaluation
+                    return this;
+                }
+            };
+        } else {
+            // allow early evaluation
+            return new SystemFunctionCall(this, arguments) {
+                @Override
+                public Expression preEvaluate(ExpressionVisitor visitor) throws XPathException {
+                    Configuration config = visitor.getConfiguration();
+                    try {
+                        AtomicValue hrefVal = (AtomicValue) getArg(0).evaluateItem(null);
+                        if (hrefVal == null) {
+                            return null;
+                        }
+                        String href = hrefVal.getStringValue();
+                        if (href.indexOf('#') >= 0) {
+                            return this;
+                        }
+                        NodeInfo item = DocumentFn.preLoadDoc(href, getStaticBaseUriString(), config, getLocation());
+                        if (item != null) {
+                            return Literal.makeLiteral(SequenceTool.toGroundedValue(item));
+                        }
+                    } catch (Exception err) {
+                        // ignore the exception and try again at run-time
+                        return this;
+                    }
+                    return this;
+                }
+            };
+        }
+    }
 
     /**
      * Evaluate the expression
