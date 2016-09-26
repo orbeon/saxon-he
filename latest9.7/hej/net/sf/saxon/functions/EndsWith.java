@@ -25,7 +25,7 @@ import net.sf.saxon.value.StringValue;
 public class EndsWith extends CollatingFunctionFixed {
 
     public static boolean endsWith(StringValue arg0, StringValue arg1, StringCollator collator) throws XPathException {
-        if (arg1 == null || arg1.isZeroLength()) {
+        if (arg1 == null || arg1.isZeroLength() || collator.comparesEqual(arg1.getPrimitiveStringValue(), "")) {
             return true;
         }
         if (arg0 == null || arg0.isZeroLength()) {

@@ -26,7 +26,7 @@ import net.sf.saxon.value.StringValue;
 public class StartsWith extends CollatingFunctionFixed {
 
     public static boolean startsWith(StringValue arg0, StringValue arg1, StringCollator collator) throws XPathException {
-        if (arg1 == null || arg1.isZeroLength()) {
+        if (arg1 == null || arg1.isZeroLength() || collator.comparesEqual(arg1.getPrimitiveStringValue(), "")) {
             return true;
         }
 
