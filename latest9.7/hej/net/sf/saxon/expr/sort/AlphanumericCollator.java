@@ -143,7 +143,7 @@ public class AlphanumericCollator implements StringCollator, java.io.Serializabl
             // reached end?
 
             if (!b1) {
-                return new CodepointMatchKey(sb.toCharArray());
+                return new CodepointMatchKey(sb);
             }
 
             // handle a numeric part

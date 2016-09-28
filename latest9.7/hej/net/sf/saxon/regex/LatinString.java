@@ -122,9 +122,4 @@ public final class LatinString extends UnicodeString {
         return uSubstring(start, end);
     }
 
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);    //To change body of overridden methods use File | Settings | File Templates.
-    }
 }

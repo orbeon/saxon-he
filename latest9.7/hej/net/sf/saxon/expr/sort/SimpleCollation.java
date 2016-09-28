@@ -7,7 +7,6 @@
 
 package net.sf.saxon.expr.sort;
 
-import com.saxonica.expr.sort.ICUSubstringMatcher;
 import com.saxonica.expr.sort.UCACollator;
 import net.sf.saxon.Platform;
 import net.sf.saxon.Version;
@@ -121,7 +120,7 @@ public class SimpleCollation implements StringCollator {
         }
         //#if EE==true
         if (comparator instanceof UCACollator) {
-            return new ICUSubstringMatcher(uri, ((UCACollator)comparator).getRuleBasedCollator());
+            return ((UCACollator) comparator).makeSubstringMatcher();
         }
         //#endif
         return null;

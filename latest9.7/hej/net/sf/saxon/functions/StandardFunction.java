@@ -242,11 +242,11 @@ public abstract class StandardFunction {
         register("codepoints-to-string", CodepointsToString.class, 1, 1, BuiltInAtomicType.STRING, ONE, CORE, 0)
                 .arg(0, BuiltInAtomicType.INTEGER, STAR, null);
 
-        register("collation-key#1", CollationKeyFn.class, 1, 1, BuiltInAtomicType.ANY_ATOMIC,
+        register("collation-key#1", CollationKeyFn.class, 1, 1, BuiltInAtomicType.BASE64_BINARY,
                  OPT, XPATH31 | XSLT30 | USE_WHEN, StandardFunction.DCOLL)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null);
 
-        register("collation-key#2", CollatingFunctionFree.class, 2, 2, BuiltInAtomicType.ANY_ATOMIC,
+        register("collation-key#2", CollatingFunctionFree.class, 2, 2, BuiltInAtomicType.BASE64_BINARY,
                  OPT, XPATH31 | XSLT30 | USE_WHEN, StandardFunction.DCOLL)
                 .arg(0, BuiltInAtomicType.STRING, ONE, null)
                 .arg(1, BuiltInAtomicType.STRING, ONE, null);
@@ -338,7 +338,7 @@ public abstract class StandardFunction {
                 .arg(0, BuiltInAtomicType.ANY_ATOMIC, STAR, EMPTY)
                 .arg(1, BuiltInAtomicType.STRING, ONE, null);
 
-        register("doc", Doc.class, 1, 1, NodeKindTest.DOCUMENT, OPT, CORE, BASE | LATE)
+        register("doc", Doc.class, 1, 1, NodeKindTest.DOCUMENT, OPT, CORE, BASE)
                 .arg(0, BuiltInAtomicType.STRING, OPT, EMPTY);
 
         register("doc-available", DocAvailable.class, 1, 1, BuiltInAtomicType.BOOLEAN, ONE, CORE, BASE | LATE)

@@ -114,4 +114,5 @@ public final class BMPString extends UnicodeString {
     public CharSequence subSequence(int start, int end) {
         return src.subSequence(start, end);
     }
+
 }

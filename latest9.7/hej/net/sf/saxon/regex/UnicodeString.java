@@ -11,8 +11,8 @@ import net.sf.saxon.tree.util.FastStringBuffer;
 
 /**
  * An abstract class that efficiently handles Unicode strings including
- * non-BMP characters; it has two subclasses, one optimized for strings
- * whose characters are all in the BMP, the other handling the general case.
+ * non-BMP characters; it has three subclasses, respectively handling
+ * strings whose maximum character code is 255, 65535, or 1114111.
  */
 
 public abstract class UnicodeString implements CharSequence, Comparable<UnicodeString> {
@@ -231,5 +231,24 @@ public abstract class UnicodeString implements CharSequence, Comparable<UnicodeS
                 return c;
             }
         }
+    }
+
+    /**
+     * Get the codepoints of the string as a byte array, allocating three
+     * bytes per character. (Max unicode codepoint = x10FFFF)
+     * @return a byte array that can act as a collation key
+     */
+
+    public final byte[] getCodepointCollationKey() {
+        // TODO: in JDK 7, use a ByteBuffer
+        int len = uLength();
+        byte[] result = new byte[len * 3];
+        for (int i = 0, j = 0; i < len; i++) {
+            int c = uCharAt(i);
+            result[j++] = (byte) (c >> 16);
+            result[j++] = (byte) (c >> 8);
+            result[j++] = (byte) (c);
+        }
+        return result;
     }
 }
