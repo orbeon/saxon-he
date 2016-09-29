@@ -202,6 +202,7 @@ public class JsonParser {
 
     private void parseConstruct(JsonHandler handler, JsonTokenizer tokenizer, int flags, boolean toplevel, XPathContext context) throws XPathException {
         boolean debug = (flags & DEBUG) != 0;
+        boolean escape = (flags & ESCAPE) != 0;
         boolean checkAllowedAtTopLevel = false; // toplevel && ((flags & ALLOW_ANY_TOP_LEVEL) == 0);
         if (debug) {
             System.err.println("token:" + tokenizer.currentToken + " :" + tokenizer.currentTokenValue);
@@ -249,7 +250,10 @@ public class JsonParser {
                     disallowedAtTopLevel();
                 }
                 String literal = tokenizer.currentTokenValue.toString();
-                handler.writeString(unescape(literal, flags, ERR_GRAMMAR));
+                if (!escape) {
+                    literal = unescape(literal, flags, ERR_GRAMMAR);
+                }
+                handler.writeString(literal, escape);
                 break;
 
             default:
@@ -273,6 +277,7 @@ public class JsonParser {
 
     private void parseObject(JsonHandler handler, JsonTokenizer tokenizer, int flags, XPathContext context) throws XPathException {
         boolean liberal = (flags & LIBERAL) != 0;
+        boolean escape = (flags & ESCAPE) != 0;
         handler.startMap();
         int tok = tokenizer.next();
         while (tok != JsonTokenizer.RCURLY) {
@@ -280,14 +285,16 @@ public class JsonParser {
                 invalidJSON("Property name must be a string literal", ERR_GRAMMAR);
             }
             String key = tokenizer.currentTokenValue.toString();
-            key = unescape(key, flags, ERR_GRAMMAR);
-            String reEscaped = handler.reEscape(key, true);
+            if (!escape) {
+                key = unescape(key, flags, ERR_GRAMMAR);
+            }
+            //String reEscaped = handler.reEscape(key, true, false, false);
             tok = tokenizer.next();
             if (tok != JsonTokenizer.COLON) {
                 invalidJSON("Missing colon after \"" + Err.wrap(key) + "\"", ERR_GRAMMAR);
             }
             tokenizer.next();
-            boolean duplicate = handler.setKey(key, reEscaped);
+            boolean duplicate = handler.setKey(key, escape);
             if (duplicate && ((flags & DUPLICATES_REJECTED) != 0)) {
                 invalidJSON("Duplicate key value \"" + Err.wrap(key) + "\"", ERR_DUPLICATE);
             }

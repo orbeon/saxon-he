@@ -47,14 +47,12 @@ public class JsonHandler {
     /**
      * Set the key to be written for the next entry in an object/map
      *
-     * @param unEscaped the key for the entry (null implies no key) in unescaped form (backslashes,
-     *                  if present, do not signal an escape sequence)
-     * @param reEscaped the key for the entry (null implies no key) in reescaped form. In this form
-     *                  special characters are represented as backslash-escaped sequences if the escape
-     *                  option is yes; if escape=no, the reEscaped form is the same as the unEscaped form.
+     * @param key the key for the entry (null implies no key)
+     * @param isEscaped true if backslashes within the key are to be treated as signalling
+     *                  a JSON escape sequence
      * @return true if the key is already present in the map, false if it is not
      */
-    public boolean setKey(String unEscaped, String reEscaped) {
+    public boolean setKey(String key, boolean isEscaped) throws XPathException {
         return false;
     };
 
@@ -100,14 +98,30 @@ public class JsonHandler {
      *
      * @param val The string to be written (which may or may not contain JSON escape sequences, according to the
      * options that were set)
+     * @param isEscaped set to true if backslash is to be recognized as an escape character. This does not necessarily
+     *                  mean that all special characters are already escaped.
      * @throws XPathException if any error occurs
      */
-    public void writeString(String val) throws XPathException {};
+    public void writeString(String val, boolean isEscaped) throws XPathException {};
 
-    public String reEscape(String val, boolean isKey) throws XPathException {
+    /**
+     * Optionally apply escaping or unescaping to a value.
+     * @param val the string to be escaped or unEscaped
+     * @param isKey true if this string is a map key
+     * @param isEscaped true if a backslash in the existing string is to be interpreted as an escape
+     * @param requireEscaped true if the output is required to be escaped. In this case, any escape sequences
+     *                       already present in the input will be retained, and any "special" characters
+     *                       in the input that are not already escaped will become escaped. If false, existing
+     *                       escape sequences in the input will be unescaped, and characters that are invalid
+     *                       in XML will be rejected.
+     * @return the escaped or unescaped string
+     * @throws XPathException
+     */
+
+    public String reEscape(String val, boolean isKey, boolean isEscaped, boolean requireEscaped) throws XPathException {
         CharSequence escaped;
-        if (escape) {
-            escaped = JsonReceiver.escape(val, true, new IntPredicate() {
+        if (requireEscaped) {
+            escaped = JsonReceiver.escape(val, isEscaped, true, new IntPredicate() {
                 public boolean matches(int value) {
                     return (value >= 0 && value <= 0x1F) ||
                         (value >= 0x7F && value <= 0x9F) ||
@@ -117,6 +131,9 @@ public class JsonHandler {
             });
             //markAsEscaped(escaped, isKey);
         } else {
+            if (isEscaped) {
+                throw new AssertionError();
+            }
             FastStringBuffer buffer = new FastStringBuffer(val);
             handleInvalidCharacters(buffer);
             escaped = buffer;

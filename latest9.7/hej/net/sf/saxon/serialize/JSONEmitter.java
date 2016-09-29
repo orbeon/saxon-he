@@ -238,22 +238,18 @@ public class JSONEmitter extends SequenceWriter {
     }
 
     private CharSequence escape(String s) {
-        try {
-            CharSequence cs = JsonReceiver.escape(s, false, new IntPredicate() {
-                public boolean matches(int c) {
-                    return c < 31 || (c >= 127 && c <= 159) || !characterSet.inCharset(c);
-                }
-            });
-            if (normalizer != null) {
-                cs = normalizer.normalize(cs);
+        CharSequence cs = JsonReceiver.escape(s, false, false, new IntPredicate() {
+            public boolean matches(int c) {
+                return c < 31 || (c >= 127 && c <= 159) || !characterSet.inCharset(c);
             }
-            if (characterMap != null) {
-                cs = characterMap.map(cs, false);
-            }
-            return cs;
-        } catch (XPathException e) {
-            throw new AssertionError(e);
+        });
+        if (normalizer != null) {
+            cs = normalizer.normalize(cs);
         }
+        if (characterMap != null) {
+            cs = characterMap.map(cs, false);
+        }
+        return cs;
     }
 
     private String serializeNode(NodeInfo node) throws XPathException {

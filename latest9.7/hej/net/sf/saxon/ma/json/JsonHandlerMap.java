@@ -45,17 +45,16 @@ public class JsonHandlerMap extends JsonHandler {
     /**
      * Set the key to be written for the next entry in an object/map
      *
-     * @param unEscaped the key for the entry (null implies no key) in unescaped form (backslashes,
-     *                  if present, do not signal an escape sequence)
-     * @param reEscaped the key for the entry (null implies no key) in reescaped form. In this form
-     *                  special characters are represented as backslash-escaped sequences if the escape
-     *                  option is yes; if escape=no, the reEscaped form is the same as the unEscaped form.
+     * @param key       the key for the entry (null implies no key)
+     * @param isEscaped true if backslashes within the key are to be treated as signalling
+     *                  a JSON escape sequence
      * @return true if the key is already present in the map, false if it is not
      */
-    public boolean setKey(String unEscaped, String reEscaped) {
-        this.keys.push(unEscaped);
+    public boolean setKey(String key, boolean isEscaped) throws XPathException {
+        key = reEscape(key, false, isEscaped, escape);
+        this.keys.push(key);
         HashTrieMap map = (HashTrieMap) stack.peek();
-        return map.get(new StringValue(reEscaped)) != null;
+        return map.get(new StringValue(key)) != null;
     }
 
     /**
@@ -119,7 +118,8 @@ public class JsonHandlerMap extends JsonHandler {
             array.getMembers().add(val);
         } else {
             HashTrieMap map = (HashTrieMap) stack.peek();
-            StringValue key = new StringValue(reEscape(keys.pop(), true));
+            //StringValue key = new StringValue(reEscape(keys.pop(), true, false, false));
+            StringValue key = new StringValue(keys.pop());
             map.initialPut(key, val);
         }
     }
@@ -140,10 +140,11 @@ public class JsonHandlerMap extends JsonHandler {
      *
      * @param val The string to be written (which may or may not contain JSON escape sequences, according to the
      * options that were set)
+     * @param isEscaped true if backslash is to be treated as an escape character
      * @throws XPathException if a dynamic error occurs
      */
-    public void writeString(String val) throws XPathException {
-        writeItem(new StringValue(reEscape(val, false)));
+    public void writeString(String val, boolean isEscaped) throws XPathException {
+        writeItem(new StringValue(reEscape(val, false, isEscaped, escape)));
     }
 
     /**

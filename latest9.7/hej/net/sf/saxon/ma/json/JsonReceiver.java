@@ -125,7 +125,7 @@ public class JsonReceiver implements Receiver {
                                                      "' is not a valid xs:boolean", ERR_INPUT);
                 }
             }
-            key = (alreadyEscaped ? handleEscapedString(key) : escape(key, false, new ControlChar())).toString();
+            key = (alreadyEscaped ? handleEscapedString(key) : escape(key, false, false, new ControlChar())).toString();
 
             String normalizedKey = alreadyEscaped ? unescape(key) : key;
             boolean added = keyChecker.peek().add(normalizedKey);
@@ -245,7 +245,7 @@ public class JsonReceiver implements Receiver {
             if (escaped) {
                 output.append(handleEscapedString(str));
             } else {
-                output.append(escape(str, false, new ControlChar()));
+                output.append(escape(str, false, false, new ControlChar()));
             }
             output.append('"');
         } else if (!Whitespace.isWhite(textBuffer)) {
@@ -298,7 +298,17 @@ public class JsonReceiver implements Receiver {
         return out;
     }
 
-    public static CharSequence escape(CharSequence in, boolean forXml, IntPredicate hexEscapes) throws XPathException {
+    /**
+     * Escape a string using backslash escape sequences as defined in JSON
+     * @param in the input string
+     * @param isEscaped true if the input string already contains escape sequences (that is, if a backslash is to
+     *                  be treated as an escape character). Existing escape sequences will be retained unchanged.
+     * @param forXml    true if the output is for the json-to-xml functino
+     * @param hexEscapes a predicate identifying characters that should be output as hex escapes using \ u XXXX notation.
+     * @return the escaped string
+     */
+
+    public static CharSequence escape(CharSequence in, boolean isEscaped, boolean forXml, IntPredicate hexEscapes)  {
         FastStringBuffer out = new FastStringBuffer(in.length());
         for (int i=0; i<in.length(); i++) {
             char c = in.charAt(i);
@@ -329,7 +339,22 @@ public class JsonReceiver implements Receiver {
                     out.append("\\/");  // spec bug 29665, saxon bug 2849
                     break;
                 case '\\':
-                    out.append("\\\\");
+                    if (isEscaped) {
+                        // existing escape sequences are retained
+                        out.append("\\");
+                        c = in.charAt(++i);
+                        if (c == 'u') {
+                            out.append('u');
+                            out.append(in.charAt(++i));
+                            out.append(in.charAt(++i));
+                            out.append(in.charAt(++i));
+                            out.append(in.charAt(++i));
+                        } else {
+                            out.append(c);
+                        }
+                    } else {
+                        out.append("\\\\");
+                    }
                     break;
                 default:
                     if (hexEscapes.matches(c)) {
