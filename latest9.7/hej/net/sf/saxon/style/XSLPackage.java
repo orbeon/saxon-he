@@ -26,6 +26,7 @@ import net.sf.saxon.value.Whitespace;
  */
 public class XSLPackage extends XSLModuleRoot {
 
+    private boolean prepared = false;
     private String nameAtt = null;
     private PackageVersion packageVersion = null;
     private boolean declaredModes = true;
@@ -96,12 +97,14 @@ public class XSLPackage extends XSLModuleRoot {
 
     @Override
     protected void prepareAttributes() throws XPathException {
-        if (nameAtt != null) {
+        if (prepared) {
             // already done
             return;
         }
 
+        prepared = true;
         String inputTypeAnnotationsAtt = null;
+        String packageVersionAtt = null;
         AttributeCollection atts = getAttributeList();
 
         for (int a = 0; a < atts.getLength(); a++) {
@@ -115,13 +118,7 @@ public class XSLPackage extends XSLModuleRoot {
                     processVersionAttribute("");
                 }
             } else if (f.equals("package-version") && getLocalPart().equals("package")) {
-                String pversion = Whitespace.trim(atts.getValue(a));
-                try {
-                    packageVersion = new PackageVersion(pversion);
-                    //packageVersion = NestedIntegerValue.parse(pversion);
-                } catch (XPathException ex) {
-                    throw new XPathException("Error in xsl:package - The package-version attribute has incorrect character(s): " + pversion);
-                }
+                packageVersionAtt = Whitespace.trim(atts.getValue(a));
             } else if (f.equals("declared-modes") && getLocalPart().equals("package")) {
                 declaredModes = processBooleanAttribute("declared-modes", atts.getValue(a));
             } else if (f.equals("default-validation")) {
@@ -143,8 +140,15 @@ public class XSLPackage extends XSLModuleRoot {
             }
         }
 
-        if (packageVersion == null) {
+        if (packageVersionAtt == null) {
             packageVersion = PackageVersion.ONE;
+        } else {
+            try {
+                packageVersion = new PackageVersion(packageVersionAtt);
+            } catch (XPathException e) {
+                packageVersion = PackageVersion.ONE;
+                compileErrorInAttribute(e.getMessage(), e.getErrorCodeLocalPart(), "package-version");
+            }
         }
 
         if (version == -1) {
