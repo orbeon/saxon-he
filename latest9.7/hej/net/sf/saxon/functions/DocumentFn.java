@@ -80,51 +80,10 @@ public class DocumentFn extends SystemFunction implements Callable {
     }
 
 
-    /**
-     * Determine whether two expressions are equivalent
-     */
-//    @Override
-//    public boolean equals(Object o) {
-//        return (o instanceof DocumentFn) && super.equals(o)
-//                && ExpressionTool.equalOrNull(getStaticBaseURIString(), ((DocumentFn) o).getStaticBaseURIString());
-//    }
-
-
-//    /**
-//     * iterate() handles evaluation of the function:
-//     * it returns a sequence of Document nodes
-//     */
-//
-//    /*@NotNull*/
-//    public SequenceIterator iterate(XPathContext context) throws XPathException {
-//        int numArgs = getArity();
-//
-//        SequenceIterator hrefSequence = getArg(0).iterate(context);
-//        String baseURI = null;
-//        if (numArgs == 2) {
-//            // we can trust the type checking: it must be a node
-//            NodeInfo base = (NodeInfo) getArg(1).evaluateItem(context);
-//            baseURI = base.getBaseURI();
-//            if (baseURI == null) {
-//                throw new XPathException("The second argument to document() is a node with no base URI", "XTDE1162");
-//            }
-//        }
-//
-//        DocumentMappingFunction map = new DocumentMappingFunction(context);
-//        map.baseURI = baseURI;
-//        map.stylesheetURI = getStaticBaseURIString();
-//        map.locator = this;
-//
-//        ItemMappingIterator iter = new ItemMappingIterator(hrefSequence, map);
-//
-//        Expression expression = getArg(0);
-//        if (Cardinality.allowsMany(expression.getCardinality())) {
-//            return new DocumentOrderIterator(iter, GlobalOrderComparer.getInstance());
-//            // this is to make sure we eliminate duplicates: two href's might be the same
-//        } else {
-//            return iter;
-//        }
-//    }
+    @Override
+    public Expression makeFunctionCall(Expression... arguments) {
+        return Doc.maybePreEvaluate(this, arguments);
+    }
 
     /**
      * Evaluate the expression

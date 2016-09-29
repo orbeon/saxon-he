@@ -13,12 +13,10 @@ import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.lib.FeatureKeys;
 import net.sf.saxon.lib.ParseOptions;
-import net.sf.saxon.om.NodeInfo;
-import net.sf.saxon.om.Sequence;
-import net.sf.saxon.om.SequenceTool;
-import net.sf.saxon.om.ZeroOrOne;
+import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.AtomicValue;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Implement the fn:doc() function - a simplified form of the Document function
@@ -78,8 +76,14 @@ public class Doc extends SystemFunction implements Callable {
 
     @Override
     public Expression makeFunctionCall(Expression... arguments) {
-        if (!getRetainedStaticContext().getConfiguration().getBooleanProperty(FeatureKeys.PRE_EVALUATE_DOC_FUNCTION)) {
-            return new SystemFunctionCall(this, arguments) {
+        return maybePreEvaluate(this, arguments);
+    }
+
+    @NotNull
+    public static Expression maybePreEvaluate(final SystemFunction sf, final Expression[] arguments) {
+        if (arguments.length > 1 ||
+                !sf.getRetainedStaticContext().getConfiguration().getBooleanProperty(FeatureKeys.PRE_EVALUATE_DOC_FUNCTION)) {
+            return new SystemFunctionCall(sf, arguments) {
                 @Override
                 public Expression preEvaluate(ExpressionVisitor visitor) throws XPathException {
                     // Suppress early evaluation
@@ -88,20 +92,22 @@ public class Doc extends SystemFunction implements Callable {
             };
         } else {
             // allow early evaluation
-            return new SystemFunctionCall(this, arguments) {
+            return new SystemFunctionCall(sf, arguments) {
                 @Override
                 public Expression preEvaluate(ExpressionVisitor visitor) throws XPathException {
                     Configuration config = visitor.getConfiguration();
                     try {
-                        AtomicValue hrefVal = (AtomicValue) getArg(0).evaluateItem(null);
-                        if (hrefVal == null) {
+                        GroundedValue firstArg = ((Literal)getArg(0)).getValue();
+                        if (firstArg.getLength() == 0) {
                             return null;
+                        } else if (firstArg.getLength() > 1) {
+                            return this;
                         }
-                        String href = hrefVal.getStringValue();
+                        String href = firstArg.head().getStringValue();
                         if (href.indexOf('#') >= 0) {
                             return this;
                         }
-                        NodeInfo item = DocumentFn.preLoadDoc(href, getStaticBaseUriString(), config, getLocation());
+                        NodeInfo item = DocumentFn.preLoadDoc(href, sf.getStaticBaseUriString(), config, getLocation());
                         if (item != null) {
                             return Literal.makeLiteral(SequenceTool.toGroundedValue(item));
                         }
