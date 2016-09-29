@@ -79,11 +79,17 @@ public class PackageVersion implements Comparable {
         if (s.equals("")) {
             throw new XPathException("No numeric component of package-version: " + original, "XTSE0020");
         }
+        if (s.startsWith(".")) {
+            throw new XPathException("The package-version cannot start with '.'", "XTSE0020");
+        }
+        if (s.endsWith(".")) {
+            throw new XPathException("The package-version cannot end with '.'", "XTSE0020");
+        }
         for (String p : s.trim().split("\\.")) {
             try {
                 parts.add(new Integer(p));
             } catch (NumberFormatException e) {
-                throw new XPathException("Error in package-version: " + e.getMessage(), "XTSE0020");
+                throw new XPathException("Error in package-version: invalid integer " + p, "XTSE0020");
             }
         }
         trimTrailingZeroes();
