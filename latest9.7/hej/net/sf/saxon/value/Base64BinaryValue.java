@@ -300,7 +300,10 @@ public class Base64BinaryValue extends AtomicValue implements AtomicMatchKey, Co
                                 " one of [AQgw]", "FORG0001");
                     }
                     // number of padding characters must be the number required
-                    if (pad != ((4 - u) % 4) || pad > 2) {
+                    if (pad > 2) {
+                        throw new XPathException("Found " + pad + " padding characters at end of base64 value; max is 2", "FORG0001");
+                    }
+                    if (pad != ((4 - u) % 4)) {
                         throw new XPathException("Required " + ((4 - u) % 4) + " padding characters at end of base64 value; found " + pad, "FORG0001");
                     }
                     // append 0 sextets corresponding to number of padding characters
