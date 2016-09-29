@@ -86,9 +86,13 @@ public class Err {
         }
         String s;
         if ((valueType == ELEMENT || valueType == ATTRIBUTE) && sb.charAt(0) == '{') {
-            StructuredQName qn = StructuredQName.fromClarkName(sb.toString());
-            String uri = abbreviateURI(qn.getURI());
-            s = "Q{" + uri + "}" + qn.getLocalPart();
+            try {
+                StructuredQName qn = StructuredQName.fromClarkName(sb.toString());
+                String uri = abbreviateURI(qn.getURI());
+                s = "Q{" + uri + "}" + qn.getLocalPart();
+            } catch (Exception e) {
+                s = sb.toString();
+            }
         } else if (valueType == URI) {
             s = abbreviateURI(sb.toString());
         } else {

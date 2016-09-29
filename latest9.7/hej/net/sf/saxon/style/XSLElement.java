@@ -91,7 +91,7 @@ public class XSLElement extends StyleElement {
             if (elementName instanceof StringLiteral) {
                 if (!NameChecker.isQName(((StringLiteral) elementName).getStringValue())) {
                     compileError("Element name " +
-                            Err.wrap(((StringLiteral) elementName).getStringValue(), Err.ELEMENT) +
+                            Err.wrap(((StringLiteral) elementName).getStringValue()) +
                             " is not a valid QName", "XTDE0820");
                     // to prevent duplicate error messages:
                     elementName = new StringLiteral("saxon-error-element");
