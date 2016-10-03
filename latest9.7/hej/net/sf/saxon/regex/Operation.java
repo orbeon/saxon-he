@@ -324,7 +324,8 @@ public abstract class Operation {
                         }
                         iterators.pop();
                     }
-                    matcher.clearCapturedGroupsBeyond(position);
+                    //System.err.println("Clear to " + position);
+                    //matcher.clearCapturedGroupsBeyond(position);
                     return -1;
                 }
 
@@ -518,9 +519,7 @@ public abstract class Operation {
             while (p <= guard) {
                 IntIterator it = op.iterateMatches(matcher, p);
                 boolean matched = false;
-                while (it.hasNext()) {
-                    // although we know the length of the matches, we have to examine them all because
-                    // they might capture subgroups
+                if (it.hasNext()) {
                     matched = true;
                     it.next();
                 }
@@ -1037,6 +1036,7 @@ public abstract class Operation {
 
                     // Don't set paren if already set later on
                     //if (matcher.getParenStart(groupNr) == -1) {
+                        //System.err.println("Set group " + groupNr + " to (" + position + ", " + next + ")");
                         matcher.setParenStart(groupNr, position);
                         matcher.setParenEnd(groupNr, next);
                     //}
