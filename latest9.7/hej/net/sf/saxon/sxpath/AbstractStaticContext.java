@@ -266,7 +266,9 @@ public abstract class AbstractStaticContext implements StaticContext {
      */
 
     public void issueWarning(String s, Location locator) {
-        config.getErrorListener().warning(new XPathException(s));
+        XPathException xe = new XPathException(s);
+        xe.setLocation(locator);
+        config.getErrorListener().warning(xe);
     }
 
     /**
