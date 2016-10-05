@@ -7,6 +7,7 @@
 
 package net.sf.saxon.functions;
 
+import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
@@ -1071,6 +1072,20 @@ public class FormatNumber extends SystemFunction implements Callable {
 
     private static boolean isInDigitFamily(int ch, int zeroDigit) {
         return ch >= zeroDigit && ch < zeroDigit + 10;
+    }
+
+    /**
+     * Format a double as required by the adaptive serialization method
+     */
+
+    public static String formatExponential(DoubleValue value) {
+        try {
+            DecimalSymbols dfs = new DecimalSymbols(Configuration.XSLT, 31);
+            SubPicture[] pics = getSubPictures("0.0##########################e0", dfs);
+            return formatNumber(value, pics, dfs).toString();
+        } catch (XPathException e) {
+            return value.getStringValue();
+        }
     }
 
 }

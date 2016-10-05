@@ -9,6 +9,7 @@ package net.sf.saxon.serialize;
 
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.SequenceWriter;
+import net.sf.saxon.functions.FormatNumber;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.ma.arrays.ArrayItem;
@@ -19,6 +20,7 @@ import net.sf.saxon.query.QueryResult;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.AtomicValue;
+import net.sf.saxon.value.DoubleValue;
 import net.sf.saxon.value.QualifiedNameValue;
 
 import javax.xml.transform.stream.StreamResult;
@@ -106,9 +108,11 @@ public class AdaptiveEmitter extends SequenceWriter {
                 return value.effectiveBooleanValue() ? "true()" : "false()";
 
             case StandardNames.XS_DECIMAL:
-            case StandardNames.XS_DOUBLE:
             case StandardNames.XS_INTEGER:
-                return value.getStringValue(); // for now
+                return value.getStringValue();
+
+            case StandardNames.XS_DOUBLE:
+                return FormatNumber.formatExponential((DoubleValue)value);
 
             case StandardNames.XS_FLOAT:
             case StandardNames.XS_DURATION:
