@@ -118,7 +118,9 @@ public class MapMerge extends ExtensionFunctionDefinition {
         public void supplyStaticContext(StaticContext context, int locationId, Expression[] arguments) throws XPathException {
             // if the argument does not refer to any variables or functions, then any maps used as input to this one
             // can be destroyed in the process, because no-one else can ever use them.
-            selfContained = !ExpressionTool.refersToVariableOrFunction(arguments[0]);
+            if (arguments != null) {        // bug 2978
+                selfContained = !ExpressionTool.refersToVariableOrFunction(arguments[0]);
+            }
         }
 
         public void copyLocalData(ExtensionFunctionCall destination) {
