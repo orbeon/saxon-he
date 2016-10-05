@@ -1,6 +1,5 @@
 package net.sf.saxon.functions;
 
-import com.saxonica.functions.hof.AtomicConstructorFunction;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.instruct.UserFunction;
@@ -140,7 +139,7 @@ public class ApplyFn extends SystemFunction  {
                 SequenceType expected = fit.getArgumentTypes()[i];
                 RoleDiagnostic role;
                 if (isDynamicFunctionCall()) {
-                    role = new RoleDiagnostic(RoleDiagnostic.FUNCTION, dynamicFunctionCall, i);
+                    role = new RoleDiagnostic(RoleDiagnostic.FUNCTION, "result of " + dynamicFunctionCall, i);
                 } else {
                     role = new RoleDiagnostic(RoleDiagnostic.FUNCTION, "fn:apply", i + 1);
                 }
