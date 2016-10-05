@@ -420,20 +420,27 @@ public class FormatDate extends SystemFunction implements Callable {
                 max = len;
             }
         }
-        if ("Y".equals(component) && digitsPattern.matcher(primary).find()) {
-            UnicodeString uPrimary = UnicodeString.makeUnicodeString(primary);
+        if ("Y".equals(component)) {
             min = max = 0;
-            for (int i=0; i<uPrimary.uLength(); i++) {
-                int c = uPrimary.uCharAt(i);
-                if (c == '#') {
-                    max++;
-                } else if ((c >= '0' && c <= '9') || Categories.ESCAPE_d.matches(c)) {
-                    min++;
-                    max++;
+            if (!widths.isEmpty()) {
+                max = getWidths(widths)[1];
+            } else if (digitsPattern.matcher(primary).find()) {
+                UnicodeString uPrimary = UnicodeString.makeUnicodeString(primary);
+                for (int i = 0; i < uPrimary.uLength(); i++) {
+                    int c = uPrimary.uCharAt(i);
+                    if (c == '#') {
+                        max++;
+                    } else if ((c >= '0' && c <= '9') || Categories.ESCAPE_d.matches(c)) {
+                        min++;
+                        max++;
+                    }
                 }
             }
-            if (max == 1) {
+            if (max <= 1) {
                 max = Integer.MAX_VALUE;
+            }
+            if (max < 4 || (max < Integer.MAX_VALUE && value > 9999)) {
+                value = value % (int) Math.pow(10, max);
             }
         }
         if (primary.equals("I") || primary.equals("i")) {
