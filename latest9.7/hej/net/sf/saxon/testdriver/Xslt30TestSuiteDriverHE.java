@@ -88,6 +88,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
 
     protected boolean isSlow(String testName) {
         return testName.startsWith("regex-classes")
+                || testName.startsWith("unicode90")
                 || testName.equals("normalize-unicode-008")
                 || testName.equals("catalog-005");
     }

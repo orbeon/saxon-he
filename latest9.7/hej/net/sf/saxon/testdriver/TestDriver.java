@@ -197,7 +197,7 @@ public abstract class TestDriver {
         System.err.println("UsingXslt30Transformer: " + useXslt30Transformer);
 
         driverSerializer.setOutputStream(System.err);
-        driverSerializer.setOutputProperty(Serializer.Property.METHOD, "xml");
+        driverSerializer.setOutputProperty(Serializer.Property.METHOD, "adaptive");
         driverSerializer.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, "yes");
         driverSerializer.setOutputProperty(Serializer.Property.INDENT, "yes");
         processCatalog(new File(catalog));

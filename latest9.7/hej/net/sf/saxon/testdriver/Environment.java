@@ -339,7 +339,9 @@ public class Environment implements URIResolver {
             if (defaultAtt != null && (defaultAtt.trim().equals("true") || defaultAtt.trim().equals("1"))) {
                 environment.xpathCompiler.declareDefaultCollation(uri);
                 environment.xqueryCompiler.declareDefaultCollation(uri);
-                environment.xsltCompiler.declareDefaultCollation(uri);
+                if (environment.xsltCompiler != null) {
+                    environment.xsltCompiler.declareDefaultCollation(uri);
+                }
             }
         }
     }
@@ -426,7 +428,11 @@ public class Environment implements URIResolver {
                 value = sourceDoc;
             } else {
                 String select = ((XdmNode) param).getAttributeValue(new QName("select"));
-                value = xpc.evaluate(select, null);
+                XPathSelector xpe = environment.xpathCompiler.compile(select).load();
+                for (Map.Entry<QName, XdmValue> e : environment.params.entrySet()) {
+                    xpe.setVariable(e.getKey(), e.getValue());
+                }
+                value = xpe.evaluate();
             }
             QName varQName;
             int colon = varName.indexOf(':');

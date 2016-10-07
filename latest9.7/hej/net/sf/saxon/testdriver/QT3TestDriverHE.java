@@ -661,7 +661,10 @@ public class QT3TestDriverHE extends TestDriver {
                     if (debug) {
                         try {
                             println("*** TEST-FAILURE. Result:");
+                            StringWriter sw = new StringWriter();
+                            driverSerializer.setOutputWriter(sw);
                             driverSerializer.serializeXdmValue(outcome.getPrincipalResult());
+                            println(sw.toString());
                             println("<=======");
                         } catch (Exception err) {
                             // ignore exception

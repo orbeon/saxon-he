@@ -237,8 +237,8 @@ public class JSONEmitter extends SequenceWriter {
         }
     }
 
-    private CharSequence escape(String s) {
-        CharSequence cs = JsonReceiver.escape(s, false, false, new IntPredicate() {
+    private CharSequence escape(String s) throws XPathException {
+        CharSequence cs = JsonReceiver.escape(s, false, new IntPredicate() {
             public boolean matches(int c) {
                 return c < 31 || (c >= 127 && c <= 159) || !characterSet.inCharset(c);
             }
