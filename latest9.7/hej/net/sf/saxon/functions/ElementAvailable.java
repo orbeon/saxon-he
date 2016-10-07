@@ -125,6 +125,7 @@ public class ElementAvailable extends SystemFunction {
             case StandardNames.XSL_RESULT_DOCUMENT:
             case StandardNames.XSL_SEQUENCE:
             case StandardNames.XSL_SORT:
+            case StandardNames.XSL_SOURCE_DOCUMENT:
             case StandardNames.XSL_STREAM:
             case StandardNames.XSL_STRIP_SPACE:
             case StandardNames.XSL_STYLESHEET:
