@@ -1081,6 +1081,7 @@ public class FormatNumber extends SystemFunction implements Callable {
     public static String formatExponential(DoubleValue value) {
         try {
             DecimalSymbols dfs = new DecimalSymbols(Configuration.XSLT, 31);
+            dfs.setInfinity("INF");
             SubPicture[] pics = getSubPictures("0.0##########################e0", dfs);
             return formatNumber(value, pics, dfs).toString();
         } catch (XPathException e) {

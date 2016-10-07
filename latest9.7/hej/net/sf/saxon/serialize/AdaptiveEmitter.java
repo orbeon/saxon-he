@@ -97,6 +97,7 @@ public class AdaptiveEmitter extends SequenceWriter {
     private String serializeAtomicValue(AtomicValue value) throws XPathException {
         switch(value.getPrimitiveType().getFingerprint()) {
             case StandardNames.XS_STRING:
+            case StandardNames.XS_ANY_URI:
             case StandardNames.XS_UNTYPED_ATOMIC: {
                 String s = value.getStringValue();
                 if (s.contains("\"")) {
@@ -126,7 +127,6 @@ public class AdaptiveEmitter extends SequenceWriter {
             case StandardNames.XS_G_DAY:
             case StandardNames.XS_HEX_BINARY:
             case StandardNames.XS_BASE64_BINARY:
-            case StandardNames.XS_ANY_URI:
                 return value.getPrimitiveType().getDisplayName() + "(\"" + value.getStringValue() + "\")";
 
             case StandardNames.XS_DAY_TIME_DURATION:
