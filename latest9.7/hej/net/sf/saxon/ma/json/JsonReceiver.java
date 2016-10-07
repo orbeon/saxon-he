@@ -55,7 +55,7 @@ public class JsonReceiver implements Receiver {
 
     public void setPipelineConfiguration(PipelineConfiguration pipe) {
         this.pipe = pipe;
-        startTagBuffer = (StartTagBuffer)pipe.getComponent(StartTagBuffer.class.getName());
+        startTagBuffer = (StartTagBuffer) pipe.getComponent(StartTagBuffer.class.getName());
     }
 
     public PipelineConfiguration getPipelineConfiguration() {
@@ -99,7 +99,7 @@ public class JsonReceiver implements Receiver {
         //started.push(false);
         if (!elemName.hasURI(NamespaceConstant.JSON)) {
             throw new XPathException("xml-to-json: element found in wrong namespace: " +
-                elemName.getStructuredQName().getEQName(), ERR_INPUT);
+                                             elemName.getStructuredQName().getEQName(), ERR_INPUT);
         }
         if (!atStart) {
             output.append(',');
@@ -109,7 +109,7 @@ public class JsonReceiver implements Receiver {
         }
         if (inMap) {
             if (startTagBuffer == null) {
-                startTagBuffer = (StartTagBuffer)pipe.getComponent(StartTagBuffer.class.getName());
+                startTagBuffer = (StartTagBuffer) pipe.getComponent(StartTagBuffer.class.getName());
             }
             String key = startTagBuffer.getAttribute("", "key");
             if (key == null) {
@@ -125,7 +125,7 @@ public class JsonReceiver implements Receiver {
                                                      "' is not a valid xs:boolean", ERR_INPUT);
                 }
             }
-            key = (alreadyEscaped ? handleEscapedString(key) : escape(key, false, false, new ControlChar())).toString();
+            key = (alreadyEscaped ? handleEscapedString(key) : escape(key, false, new ControlChar())).toString();
 
             String normalizedKey = alreadyEscaped ? unescape(key) : key;
             boolean added = keyChecker.peek().add(normalizedKey);
@@ -171,7 +171,7 @@ public class JsonReceiver implements Receiver {
                     escaped = StringConverter.STRING_TO_BOOLEAN.convertString(escapeAtt).asAtomic().effectiveBooleanValue();
                 } catch (XPathException e) {
                     throw new XPathException("xml-to-json: value of escaped attribute (" +
-                        escapeAtt + ") is not a valid xs:boolean", ERR_INPUT);
+                                                     escapeAtt + ") is not a valid xs:boolean", ERR_INPUT);
                 }
             }
             checkParent(local, parent);
@@ -188,7 +188,7 @@ public class JsonReceiver implements Receiver {
     private void checkParent(String child, String parent) throws XPathException {
         if ("null".equals(parent) || "string".equals(parent) || "number".equals(parent) || "boolean".equals(parent)) {
             throw new XPathException("xml-to-json: A " + Err.wrap(child, Err.ELEMENT) +
-                " element cannot appear as a child of " + Err.wrap(parent, Err.ELEMENT), ERR_INPUT);
+                                             " element cannot appear as a child of " + Err.wrap(parent, Err.ELEMENT), ERR_INPUT);
         }
     }
 
@@ -201,14 +201,14 @@ public class JsonReceiver implements Receiver {
             boolean inMap = stack.size() >= 2 && stack.get(stack.size() - 2).getLocalPart().equals("map");
             if (!inMap) {
                 throw new XPathException("xml-to-json: The " + attName.getLocalPart() +
-                    " attribute is allowed only on elements within a map", ERR_INPUT);
+                                                 " attribute is allowed only on elements within a map", ERR_INPUT);
             }
         } else if (attName.hasURI("") && attName.getLocalPart().equals("escaped")) {
-                boolean inString = !stack.empty() && stack.peek().getLocalPart().equals("string");
-                if (!inString) {
-                    throw new XPathException("xml-to-json: The escaped" +
-                        " attribute is allowed only on the <string> element", ERR_INPUT);
-                }
+            boolean inString = !stack.empty() && stack.peek().getLocalPart().equals("string");
+            if (!inString) {
+                throw new XPathException("xml-to-json: The escaped" +
+                                                 " attribute is allowed only on the <string> element", ERR_INPUT);
+            }
         } else if (attName.hasURI("") || attName.hasURI(NamespaceConstant.JSON)) {
             throw new XPathException("xml-to-json: Disallowed attribute in input: " + attName.getDisplayName(), ERR_INPUT);
         }
@@ -245,7 +245,7 @@ public class JsonReceiver implements Receiver {
             if (escaped) {
                 output.append(handleEscapedString(str));
             } else {
-                output.append(escape(str, false, false, new ControlChar()));
+                output.append(escape(str, false, new ControlChar()));
             }
             output.append('"');
         } else if (!Whitespace.isWhite(textBuffer)) {
@@ -298,27 +298,13 @@ public class JsonReceiver implements Receiver {
         return out;
     }
 
-    /**
-     * Escape a string using backslash escape sequences as defined in JSON
-     * @param in the input string
-     * @param isEscaped true if the input string already contains escape sequences (that is, if a backslash is to
-     *                  be treated as an escape character). Existing escape sequences will be retained unchanged.
-     * @param forXml    true if the output is for the json-to-xml functino
-     * @param hexEscapes a predicate identifying characters that should be output as hex escapes using \ u XXXX notation.
-     * @return the escaped string
-     */
-
-    public static CharSequence escape(CharSequence in, boolean isEscaped, boolean forXml, IntPredicate hexEscapes)  {
+    public static CharSequence escape(CharSequence in, boolean forXml, IntPredicate hexEscapes) throws XPathException {
         FastStringBuffer out = new FastStringBuffer(in.length());
-        for (int i=0; i<in.length(); i++) {
+        for (int i = 0; i < in.length(); i++) {
             char c = in.charAt(i);
             switch (c) {
                 case '"':
-                    if (forXml) {
-                        out.append(c);
-                    } else {
-                        out.append("\\\"");
-                    }
+                    out.append(forXml ? "\"" : "\\\"");
                     break;
                 case '\b':
                     out.append("\\b");
@@ -336,25 +322,10 @@ public class JsonReceiver implements Receiver {
                     out.append("\\t");
                     break;
                 case '/':
-                    out.append("\\/");  // spec bug 29665, saxon bug 2849
+                    out.append(forXml ? "/" : "\\/");  // spec bug 29665, saxon bug 2849
                     break;
                 case '\\':
-                    if (isEscaped) {
-                        // existing escape sequences are retained
-                        out.append("\\");
-                        c = in.charAt(++i);
-                        if (c == 'u') {
-                            out.append('u');
-                            out.append(in.charAt(++i));
-                            out.append(in.charAt(++i));
-                            out.append(in.charAt(++i));
-                            out.append(in.charAt(++i));
-                        } else {
-                            out.append(c);
-                        }
-                    } else {
-                        out.append("\\\\");
-                    }
+                    out.append("\\\\");
                     break;
                 default:
                     if (hexEscapes.matches(c)) {
@@ -404,6 +375,7 @@ public class JsonReceiver implements Receiver {
 
     /**
      * On completion, get the assembled JSON string
+     *
      * @return the JSON string representing the supplied XML content.
      */
 
@@ -413,12 +385,13 @@ public class JsonReceiver implements Receiver {
 
     /**
      * Add indentation whitespace to the buffer
+     *
      * @param depth the level of indentation
      */
 
     private void indent(int depth) {
         output.append('\n');
-        for (int i=0; i<depth; i++) {
+        for (int i = 0; i < depth; i++) {
             output.append("  ");
         }
     }
@@ -474,7 +447,7 @@ public class JsonReceiver implements Receiver {
                             buffer.append((char) code);
                             i += 4;
                         } catch (Exception e) {
-                            throw new XPathException("Invalid hex escape sequence in string '" + Err.wrap(literal) +"'", "FOJS0007");
+                            throw new XPathException("Invalid hex escape sequence in string '" + Err.wrap(literal) + "'", "FOJS0007");
                         }
                         break;
                     default:
