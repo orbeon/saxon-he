@@ -9,8 +9,11 @@ package net.sf.saxon.event;
 
 import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.expr.parser.Location;
+import net.sf.saxon.ma.arrays.ArrayItem;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeName;
+import net.sf.saxon.om.Sequence;
+import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.value.AtomicValue;
@@ -113,12 +116,22 @@ public class SequenceNormalizer extends ProxyReceiver {
      */
     @Override
     public void append(Item item, Location locationId, int copyNamespaces) throws XPathException {
-        sep();
-        if (level==0 && item instanceof AtomicValue) {
-            CharSequence cs = item.getStringValueCS();
-            getUnderlyingReceiver().characters(cs, locationId, 0);
+        if (item instanceof ArrayItem) {
+            for (Sequence member : (ArrayItem)item) {
+                SequenceIterator iter = member.iterate();
+                Item it;
+                while ((it = iter.next()) != null) {
+                    append(it, locationId, copyNamespaces);
+                }
+            }
         } else {
-            ((SequenceReceiver)getUnderlyingReceiver()).append(item, locationId, copyNamespaces);
+            sep();
+            if (level == 0 && item instanceof AtomicValue) {
+                CharSequence cs = item.getStringValueCS();
+                getUnderlyingReceiver().characters(cs, locationId, 0);
+            } else {
+                ((SequenceReceiver) getUnderlyingReceiver()).append(item, locationId, copyNamespaces);
+            }
         }
     }
 

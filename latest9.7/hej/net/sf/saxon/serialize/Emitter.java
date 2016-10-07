@@ -365,7 +365,8 @@ public abstract class Emitter extends SequenceReceiver implements Result {
                 } else if (item instanceof ArrayItem) {
                     what = "an array";
                 }
-                throw new XPathException("Cannot serialize " + what + " using the " + getOutputProperties().getProperty("method") + " method");
+                throw new XPathException("Cannot serialize " + what +
+                                                 " using the " + getOutputProperties().getProperty("method") + " method", "SENR0001");
             } else if (((NodeInfo) item).getNodeKind() == Type.DOCUMENT) {
                 startDocument(0); // needed to ensure that illegal namespaces or attributes in the content are caught
                 SequenceIterator iter = ((NodeInfo) item).iterateAxis(AxisInfo.CHILD);
