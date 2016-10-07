@@ -183,6 +183,8 @@ public class Compilation {
         try {
             if (outermost instanceof XSLPackage) {
                 xslpackage = (XSLPackage) outermost;
+                // Validate the attributes now, to avoid getting in a mess if they're invalid
+                xslpackage.prepareAttributes();
             } else {
                 throw new XPathException("Outermost element must be xsl:package, xsl:stylesheet, or xsl:transform");
             }
