@@ -149,7 +149,7 @@ public class JsonHandlerXML extends JsonHandler {
             try {
                 Configuration config = context.getConfiguration();
                 //noinspection SynchronizationOnLocalVariableOrMethodParameter
-                synchronized (config) {
+                synchronized(config) {
                     config.checkLicensedFeature(Configuration.LicenseFeature.SCHEMA_VALIDATION, "validation", -1);
                     if (!config.isSchemaAvailable(JSON_NS)) {
                         InputSource is = StandardEntityResolver.getInstance().resolveEntity(null, SCHEMA_URI);
@@ -160,8 +160,8 @@ public class JsonHandlerXML extends JsonHandler {
                     }
                 }
                 String typeNames[] = {"mapType", "arrayType", "stringType", "numberType", "booleanType", "nullType",
-                    "mapWithinMapType", "arrayWithinMapType", "stringWithinMapType",
-                    "numberWithinMapType", "booleanWithinMapType", "nullWithinMapType"};
+                        "mapWithinMapType", "arrayWithinMapType", "stringWithinMapType",
+                        "numberWithinMapType", "booleanWithinMapType", "nullWithinMapType"};
                 for (String t : typeNames) {
                     setType(t, config.getSchemaType(new StructuredQName(PREFIX, JSON_NS, t)));
                 }
@@ -188,14 +188,16 @@ public class JsonHandlerXML extends JsonHandler {
     /**
      * Set the key to be written for the next entry in an object/map
      *
-     * @param key       the key for the entry (null implies no key)
-     * @param isEscaped true if backslashes within the key are to be treated as signalling
-     *                  a JSON escape sequence
+     * @param unEscaped the key for the entry (null implies no key) in unescaped form (backslashes,
+     *                  if present, do not signal an escape sequence)
+     * @param reEscaped the key for the entry (null implies no key) in reescaped form. In this form
+     *                  special characters are represented as backslash-escaped sequences if the escape
+     *                  option is yes; if escape=no, the reEscaped form is the same as the unEscaped form.
      * @return true if the key is already present in the map, false if it is not
      */
-    public boolean setKey(String key, boolean isEscaped) {
-        this.keys.push(key);
-        return checkForDuplicates && !mapKeys.peek().add(key);
+    public boolean setKey(String unEscaped, String reEscaped) {
+        this.keys.push(unEscaped);
+        return checkForDuplicates && !mapKeys.peek().add(reEscaped);
     }
 
     /**
@@ -246,7 +248,7 @@ public class JsonHandlerXML extends JsonHandler {
         out.startElement(qn, validate && st != null ? st : UNTYPED, ExplicitLocation.UNKNOWN_LOCATION, 0);
         if (isInMap()) {
             String k = keys.pop();
-            k = reEscape(k, true, false, false);
+            k = reEscape(k, true);
             if (escape) {
                 markAsEscaped(k, true);
             }
@@ -302,7 +304,7 @@ public class JsonHandlerXML extends JsonHandler {
      * @throws XPathException if a dynamic error occurs
      */
     public void startMap() throws XPathException {
-        startElement(mapQN, isInMap() ? "mapWithinMapType": "mapType");
+        startElement(mapQN, isInMap() ? "mapWithinMapType" : "mapType");
         if (checkForDuplicates) {
             mapKeys.push(new HashSet<String>());
         }
@@ -342,9 +344,9 @@ public class JsonHandlerXML extends JsonHandler {
      *            in the flags, otherwise it may contain JSON escape sequences
      * @throws XPathException if a dynamic error occurs
      */
-    public void writeString(String val, boolean isEscaped) throws XPathException {
+    public void writeString(String val) throws XPathException {
         startElement(stringQN, isInMap() ? "stringWithinMapType" : "stringType");
-        CharSequence escaped = reEscape(val, false, isEscaped, escape);
+        CharSequence escaped = reEscape(val, false);
         if (escape) {
             markAsEscaped(escaped, false);
         }
@@ -352,7 +354,7 @@ public class JsonHandlerXML extends JsonHandler {
         endElement();
     }
 
- @Override
+    @Override
     protected void markAsEscaped(CharSequence escaped, boolean isKey) throws XPathException {
         if (containsEscape(escaped.toString()) && escape) {
             NodeName name = isKey ? escapedKeyQN : escapedQN;
