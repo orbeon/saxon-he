@@ -54,6 +54,7 @@ public class JsonParser {
 
     /**
      * Create a JSON parser
+     *
      * @param charChecker a predicate that determines which characters are accepted
      */
 
@@ -64,9 +65,8 @@ public class JsonParser {
     /**
      * Parse the JSON string according to supplied options
      *
-     *
      * @param input   JSON input string
-     * @param flags options for the conversion as a map of xs:string : value pairs
+     * @param flags   options for the conversion as a map of xs:string : value pairs
      * @param handler event handler to which parsing events are notified
      * @param context XPath evaluation context
      * @throws XPathException if the syntax of the input is incorrect
@@ -158,7 +158,7 @@ public class JsonParser {
             RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.OPTION, option, 0);
             role.setErrorCode(ERR_OPTIONS);
             Sequence converted = th.applyFunctionConversionRules(
-                val, SequenceType.SINGLE_STRING, role, ExplicitLocation.UNKNOWN_LOCATION);
+                    val, SequenceType.SINGLE_STRING, role, ExplicitLocation.UNKNOWN_LOCATION);
             converted = SequenceTool.toGroundedValue(converted);
             return converted.head().getStringValue();
         } else {
@@ -202,7 +202,6 @@ public class JsonParser {
 
     private void parseConstruct(JsonHandler handler, JsonTokenizer tokenizer, int flags, boolean toplevel, XPathContext context) throws XPathException {
         boolean debug = (flags & DEBUG) != 0;
-        boolean escape = (flags & ESCAPE) != 0;
         boolean checkAllowedAtTopLevel = false; // toplevel && ((flags & ALLOW_ANY_TOP_LEVEL) == 0);
         if (debug) {
             System.err.println("token:" + tokenizer.currentToken + " :" + tokenizer.currentTokenValue);
@@ -250,10 +249,7 @@ public class JsonParser {
                     disallowedAtTopLevel();
                 }
                 String literal = tokenizer.currentTokenValue.toString();
-                if (!escape) {
-                    literal = unescape(literal, flags, ERR_GRAMMAR);
-                }
-                handler.writeString(literal, escape);
+                handler.writeString(unescape(literal, flags, ERR_GRAMMAR));
                 break;
 
             default:
@@ -277,7 +273,6 @@ public class JsonParser {
 
     private void parseObject(JsonHandler handler, JsonTokenizer tokenizer, int flags, XPathContext context) throws XPathException {
         boolean liberal = (flags & LIBERAL) != 0;
-        boolean escape = (flags & ESCAPE) != 0;
         handler.startMap();
         int tok = tokenizer.next();
         while (tok != JsonTokenizer.RCURLY) {
@@ -285,20 +280,18 @@ public class JsonParser {
                 invalidJSON("Property name must be a string literal", ERR_GRAMMAR);
             }
             String key = tokenizer.currentTokenValue.toString();
-            if (!escape) {
-                key = unescape(key, flags, ERR_GRAMMAR);
-            }
-            //String reEscaped = handler.reEscape(key, true, false, false);
+            key = unescape(key, flags, ERR_GRAMMAR);
+            String reEscaped = handler.reEscape(key, true);
             tok = tokenizer.next();
             if (tok != JsonTokenizer.COLON) {
                 invalidJSON("Missing colon after \"" + Err.wrap(key) + "\"", ERR_GRAMMAR);
             }
             tokenizer.next();
-            boolean duplicate = handler.setKey(key, escape);
+            boolean duplicate = handler.setKey(key, reEscaped);
             if (duplicate && ((flags & DUPLICATES_REJECTED) != 0)) {
                 invalidJSON("Duplicate key value \"" + Err.wrap(key) + "\"", ERR_DUPLICATE);
             }
-            if (!duplicate || ((flags & (DUPLICATES_LAST|DUPLICATES_RETAINED)) != 0)) {
+            if (!duplicate || ((flags & (DUPLICATES_LAST | DUPLICATES_RETAINED)) != 0)) {
                 parseConstruct(handler, tokenizer, flags, false, context);
             } else {
                 // retain first: parse the duplicate value but discard it
@@ -385,7 +378,7 @@ public class JsonParser {
                         t = t.substring(1);
                     }
                     if (t.startsWith("0") &&
-                        !(t.equals("0") || t.startsWith("0.") || t.startsWith("0e") || t.startsWith("0E"))) {
+                            !(t.equals("0") || t.startsWith("0.") || t.startsWith("0e") || t.startsWith("0E"))) {
                         invalidJSON("Redundant leading zeroes not allowed: " + token, ERR_GRAMMAR);
                     }
                     if (t.endsWith(".") || t.contains(".e") || t.contains(".E")) {
@@ -421,8 +414,8 @@ public class JsonParser {
     /**
      * Unescape a JSON string literal,
      *
-     * @param literal the string literal to be processed
-     * @param flags   parsing options
+     * @param literal   the string literal to be processed
+     * @param flags     parsing options
      * @param errorCode Error code
      * @return the result of parsing and conversion to XDM
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs (such as invalid JSON input)
@@ -492,9 +485,6 @@ public class JsonParser {
         }
         return buffer.toString();
     }
-
-
-
 
 
     /**
@@ -666,7 +656,7 @@ public class JsonParser {
                 default:
                     char c = input.charAt(--position);
                     invalidJSON("Unexpected character '" + c + "' (\\u" +
-                            Integer.toHexString(c) + ") at position " + position, ERR_GRAMMAR);
+                                        Integer.toHexString(c) + ") at position " + position, ERR_GRAMMAR);
                     return -1;
             }
         }
@@ -709,7 +699,7 @@ public class JsonParser {
                     RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.OPTION, keyName, 0);
                     role.setErrorCode("XPTY0004");
                     Sequence converted = th.applyFunctionConversionRules(
-                        map.get(key), requiredTypes.get(keyName), role, ExplicitLocation.UNKNOWN_LOCATION);
+                            map.get(key), requiredTypes.get(keyName), role, ExplicitLocation.UNKNOWN_LOCATION);
                     converted = SequenceTool.toGroundedValue(converted);
                     result = result.addEntry(key, converted);
                 }
