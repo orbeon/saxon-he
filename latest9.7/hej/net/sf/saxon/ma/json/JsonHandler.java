@@ -42,47 +42,65 @@ public class JsonHandler {
 
     public Sequence getResult() throws XPathException {
         return null;
-    };
+    }
+
+    ;
 
     /**
      * Set the key to be written for the next entry in an object/map
      *
-     * @param key the key for the entry (null implies no key)
-     * @param isEscaped true if backslashes within the key are to be treated as signalling
-     *                  a JSON escape sequence
+     * @param unEscaped the key for the entry (null implies no key) in unescaped form (backslashes,
+     *                  if present, do not signal an escape sequence)
+     * @param reEscaped the key for the entry (null implies no key) in reescaped form. In this form
+     *                  special characters are represented as backslash-escaped sequences if the escape
+     *                  option is yes; if escape=no, the reEscaped form is the same as the unEscaped form.
      * @return true if the key is already present in the map, false if it is not
      */
-    public boolean setKey(String key, boolean isEscaped) throws XPathException {
+    public boolean setKey(String unEscaped, String reEscaped) {
         return false;
-    };
+    }
+
+    ;
 
     /**
      * Open a new array
      *
      * @throws XPathException if any error occurs
      */
-    public void startArray() throws XPathException {};
+    public void startArray() throws XPathException {
+    }
+
+    ;
 
     /**
      * Close the current array
      *
      * @throws XPathException if any error occurs
      */
-    public void endArray() throws XPathException {};
+    public void endArray() throws XPathException {
+    }
+
+    ;
 
     /**
      * Start a new object/map
      *
      * @throws XPathException if any error occurs
      */
-    public void startMap() throws XPathException {};
+    public void startMap() throws XPathException {
+    }
+
+    ;
 
     /**
      * Close the current object/map
      *
      * @throws XPathException if any error occurs
      */
-    public void endMap() throws XPathException {};
+    public void endMap() throws XPathException {
+    }
+
+    ;
 
     /**
      * Write a numeric value
@@ -91,49 +109,36 @@ public class JsonHandler {
      * @param asDouble the double representation of the value
      * @throws XPathException if any error occurs
      */
-    public void writeNumeric(String asString, double asDouble) throws XPathException {};
+    public void writeNumeric(String asString, double asDouble) throws XPathException {
+    }
+
+    ;
 
     /**
      * Write a string value
      *
      * @param val The string to be written (which may or may not contain JSON escape sequences, according to the
-     * options that were set)
-     * @param isEscaped set to true if backslash is to be recognized as an escape character. This does not necessarily
-     *                  mean that all special characters are already escaped.
+     *            options that were set)
      * @throws XPathException if any error occurs
      */
-    public void writeString(String val, boolean isEscaped) throws XPathException {};
+    public void writeString(String val) throws XPathException {
+    }
 
-    /**
-     * Optionally apply escaping or unescaping to a value.
-     * @param val the string to be escaped or unEscaped
-     * @param isKey true if this string is a map key
-     * @param isEscaped true if a backslash in the existing string is to be interpreted as an escape
-     * @param requireEscaped true if the output is required to be escaped. In this case, any escape sequences
-     *                       already present in the input will be retained, and any "special" characters
-     *                       in the input that are not already escaped will become escaped. If false, existing
-     *                       escape sequences in the input will be unescaped, and characters that are invalid
-     *                       in XML will be rejected.
-     * @return the escaped or unescaped string
-     * @throws XPathException
-     */
+    ;
 
-    public String reEscape(String val, boolean isKey, boolean isEscaped, boolean requireEscaped) throws XPathException {
+    public String reEscape(String val, boolean isKey) throws XPathException {
         CharSequence escaped;
-        if (requireEscaped) {
-            escaped = JsonReceiver.escape(val, isEscaped, true, new IntPredicate() {
+        if (escape) {
+            escaped = JsonReceiver.escape(val, true, new IntPredicate() {
                 public boolean matches(int value) {
                     return (value >= 0 && value <= 0x1F) ||
-                        (value >= 0x7F && value <= 0x9F) ||
-                        !charChecker.matches(value) ||
-                        (value == 0x5C);
+                            (value >= 0x7F && value <= 0x9F) ||
+                            !charChecker.matches(value) ||
+                            (value == 0x5C);
                 }
             });
             //markAsEscaped(escaped, isKey);
         } else {
-            if (isEscaped) {
-                throw new AssertionError();
-            }
             FastStringBuffer buffer = new FastStringBuffer(val);
             handleInvalidCharacters(buffer);
             escaped = buffer;
@@ -143,47 +148,55 @@ public class JsonHandler {
 
     /**
      * Write a boolean value
+     *
      * @param value the boolean value to be written
      * @throws XPathException if any error occurs
      */
-    public void writeBoolean(boolean value) throws XPathException {};
+    public void writeBoolean(boolean value) throws XPathException {
+    }
+
+    ;
 
     /**
      * Write a null value
      *
      * @throws XPathException if any error occurs
      */
-    public void writeNull() throws XPathException {};
+    public void writeNull() throws XPathException {
+    }
+
+    ;
 
     /**
      * Deal with invalid characters in the JSON string
+     *
      * @param buffer the JSON string
      * @throws XPathException if any error occurs
      */
     protected void handleInvalidCharacters(FastStringBuffer buffer) throws XPathException {
         //if (checkSurrogates && !liberal) {
-            IntPredicate charChecker = context.getConfiguration().getValidCharacterChecker();
-            for (int i = 0; i < buffer.length(); i++) {
-                char ch = buffer.charAt(i);
-                if (UTF16CharacterSet.isHighSurrogate(ch)) {
-                    if (i + 1 >= buffer.length() || !UTF16CharacterSet.isLowSurrogate(buffer.charAt(i + 1))) {
-                        substitute(buffer, i, 1, context);
-                    }
-                } else if (UTF16CharacterSet.isLowSurrogate(ch)) {
-                    if (i == 0 || !UTF16CharacterSet.isHighSurrogate(buffer.charAt(i - 1))) {
-                        substitute(buffer, i, 1, context);
-                    } else {
-                        int pair = UTF16CharacterSet.combinePair(buffer.charAt(i - 1), ch);
-                        if (!charChecker.matches(pair)) {
-                            substitute(buffer, i - 1, 2, context);
-                        }
-                    }
+        IntPredicate charChecker = context.getConfiguration().getValidCharacterChecker();
+        for (int i = 0; i < buffer.length(); i++) {
+            char ch = buffer.charAt(i);
+            if (UTF16CharacterSet.isHighSurrogate(ch)) {
+                if (i + 1 >= buffer.length() || !UTF16CharacterSet.isLowSurrogate(buffer.charAt(i + 1))) {
+                    substitute(buffer, i, 1, context);
+                }
+            } else if (UTF16CharacterSet.isLowSurrogate(ch)) {
+                if (i == 0 || !UTF16CharacterSet.isHighSurrogate(buffer.charAt(i - 1))) {
+                    substitute(buffer, i, 1, context);
                 } else {
-                    if (!charChecker.matches(ch)) {
-                        substitute(buffer, i, 1, context);
+                    int pair = UTF16CharacterSet.combinePair(buffer.charAt(i - 1), ch);
+                    if (!charChecker.matches(pair)) {
+                        substitute(buffer, i - 1, 2, context);
                     }
                 }
+            } else {
+                if (!charChecker.matches(ch)) {
+                    substitute(buffer, i, 1, context);
+                }
             }
+        }
         //}
     }
 
@@ -195,15 +208,15 @@ public class JsonHandler {
      * Replace an character or two characters within a string buffer, either by executing the replacement function,
      * or using the default Unicode replacement character
      *
-     * @param buffer the string buffer, which is modified by this call
-     * @param offset the position of the characters to be replaced
-     * @param count the number of characters to be replaced
+     * @param buffer  the string buffer, which is modified by this call
+     * @param offset  the position of the characters to be replaced
+     * @param count   the number of characters to be replaced
      * @param context the XPath context
      * @throws XPathException if the callback function throws an exception
      */
     private void substitute(FastStringBuffer buffer, int offset, int count, XPathContext context) throws XPathException {
-        FastStringBuffer escaped = new FastStringBuffer(count*6);
-        for (int j=0; j<count; j++) {
+        FastStringBuffer escaped = new FastStringBuffer(count * 6);
+        for (int j = 0; j < count; j++) {
             escaped.append("\\u");
             String hex = Integer.toHexString(buffer.charAt(offset + j));
             while (hex.length() < 4) {
@@ -221,7 +234,7 @@ public class JsonHandler {
             for (int j = 0; j < count; j++) {
                 buffer.removeCharAt(offset + j);
             }
-            for (int j=0; j < replacement.length(); j++) {
+            for (int j = 0; j < replacement.length(); j++) {
                 buffer.insert(offset + j, replacement.charAt(j));
             }
         }
