@@ -1468,7 +1468,7 @@ public class XPathParser {
             }
         } else if (t.currentToken == Token.PERCENT) {
             /*Map<StructuredQName, Annotation> annotationAssertions =*/
-            checkAnnotations(parseAnnotationsList(), true);
+            parseAnnotationsList();
             // TODO retain the annotation assertions
             if (t.currentTokenValue.equals("function")) {
                 primaryType = parseFunctionItemType();
