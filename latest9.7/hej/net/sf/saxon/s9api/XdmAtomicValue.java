@@ -152,6 +152,37 @@ public class XdmAtomicValue extends XdmItem {
     }
 
     /**
+     * Compare two atomic values for equality. Provided that the supplied argument is also
+     * an XdmAtomicValue, the comparison follows the rules for the "same key" relationship
+     * in XPath 3.1, which means (a) it is defined over all atomic values, (b) it is context
+     * independent, (c) it is symmetric and transitive. In most cases the semantics will be
+     * the same as the "eq" operator using the Unicode codepoint collation. The main
+     * differences are: NaN is equal to NaN; values with timezones are never equal to
+     * values without timezones; values of non-comparable types return false rather than
+     * an error.
+     * @param obj the object to be compared
+     * @return true if the other value is also an atomic value and they satisfy the "same key"
+     * relationship
+     */
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof XdmAtomicValue
+                && ((AtomicValue)getUnderlyingValue()).asMapKey().equals(
+                ((AtomicValue) ((XdmAtomicValue)obj).getUnderlyingValue()).asMapKey());
+    }
+
+    /**
+     * Get a hash code corresponding to the semantics of the equals() method
+     * @return a suitable hash code
+     */
+
+    @Override
+    public int hashCode() {
+        return ((AtomicValue) getUnderlyingValue()).asMapKey().hashCode();
+    }
+
+    /**
      * Get the primitive type of this atomic value, as a QName. The primitive types for this purpose are
      * the 19 primitive types of XML Schema, plus xs:integer, xs:dayTimeDuration and xs:yearMonthDuration,
      * and xs:untypedAtomic. For external objects, the result is xs:anyAtomicType.
