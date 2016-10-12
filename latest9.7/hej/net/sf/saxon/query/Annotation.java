@@ -9,6 +9,7 @@ package net.sf.saxon.query;
 
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.AtomicValue;
 
 import java.util.ArrayList;
@@ -23,6 +24,11 @@ public class Annotation {
     public static final StructuredQName SIMPLE = new StructuredQName("", NamespaceConstant.XQUERY, "simple");
     public static final StructuredQName PRIVATE = new StructuredQName("", NamespaceConstant.XQUERY, "private");
     public static final StructuredQName PUBLIC = new StructuredQName("", NamespaceConstant.XQUERY, "public");
+
+    public static final int FUNCTION_DECLARATION = 1;
+    public static final int VARIABLE_DECLARATION = 2;
+    public static final int INLINE_FUNCTION = 4;
+    public static final int ANNOTATION_ASSERTION = 8;
 
     // The name of the annotation
     private StructuredQName qName = null;
@@ -74,24 +80,76 @@ public class Annotation {
         return annList;
     }
 
-    /**
-     * Determine whether two annotations are mutually exclusive
-     *
-     * @param one the first annotation
-     * @param two the second annotation
-     * @return true if these two annotations cannot appear together on the same function or variable declaration
-     */
-
-    public static boolean mutuallyExclusive(Annotation one, Annotation two) {
-        StructuredQName a = one.getAnnotationQName();
-        StructuredQName b = two.getAnnotationQName();
-        return (
-                (a.equals(PRIVATE) && b.equals(PUBLIC)) ||
-                        (a.equals(PUBLIC) && b.equals(PRIVATE)) ||
-                        (a.equals(UPDATING) && b.equals(SIMPLE)) ||
-                        (a.equals(SIMPLE) && b.equals(UPDATING))
-        );
-
+    public static boolean existsAnnotation(List<Annotation> annotationList, StructuredQName name) {
+        for (Annotation a : annotationList) {
+            if (a.getAnnotationQName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
+
+
+    public static void checkAnnotationList(List<Annotation> list, int where) throws XPathException {
+        for (int i=0; i<list.size(); i++) {
+            Annotation ann = list.get(i);
+            for (DisallowedCombination dc : blackList) {
+                if (dc.one.equals(ann.getAnnotationQName()) && (dc.where & where) != 0) {
+                    if (dc.two == null) {
+                        throw new XPathException("Annotation %" + ann.getAnnotationQName().getLocalPart() + " is not allowed here",
+                                                 dc.errorCode);
+                    } else {
+                        for (int j=0; j<i; j++) {
+                            Annotation other = list.get(j);
+                            if (dc.two.equals(other.getAnnotationQName())) {
+                                if (dc.two.equals(ann.getAnnotationQName())) {
+                                    throw new XPathException("Annotation %" + ann.getAnnotationQName().getLocalPart() +
+                                                                     " cannot appear more than once", dc.errorCode);
+                                } else {
+                                    throw new XPathException("Annotations %" + ann.getAnnotationQName().getLocalPart() +
+                                                                     " and " + other.getAnnotationQName().getLocalPart() + " cannot appear together",
+                                                             dc.errorCode);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static class DisallowedCombination {
+        public DisallowedCombination(StructuredQName one, StructuredQName two, String errorCode, int where) {
+            this.one = one;
+            this.two = two;
+            this.errorCode = errorCode;
+            this.where = where;
+        }
+        public StructuredQName one;
+        public StructuredQName two;
+        public String errorCode;
+        public int where;
+    }
+
+    private static DisallowedCombination[] blackList = {
+            new DisallowedCombination(SIMPLE, null, "XUST0032", VARIABLE_DECLARATION),
+            new DisallowedCombination(UPDATING, null, "XUST0032", VARIABLE_DECLARATION),
+            new DisallowedCombination(PUBLIC, null, "XQST0125", INLINE_FUNCTION),
+            new DisallowedCombination(PRIVATE, null, "XQST0125", INLINE_FUNCTION),
+            new DisallowedCombination(PRIVATE, PRIVATE, "XQST0106", FUNCTION_DECLARATION),
+            new DisallowedCombination(PRIVATE, PUBLIC, "XQST0106", FUNCTION_DECLARATION),
+            new DisallowedCombination(PUBLIC, PUBLIC, "XQST0106", FUNCTION_DECLARATION),
+            new DisallowedCombination(PUBLIC, PRIVATE, "XQST0106", FUNCTION_DECLARATION),
+            new DisallowedCombination(PRIVATE, PRIVATE, "XQST0116", VARIABLE_DECLARATION),
+            new DisallowedCombination(PRIVATE, PUBLIC, "XQST0116", VARIABLE_DECLARATION),
+            new DisallowedCombination(PUBLIC, PUBLIC, "XQST0116", VARIABLE_DECLARATION),
+            new DisallowedCombination(PUBLIC, PRIVATE, "XQST0116", VARIABLE_DECLARATION),
+            new DisallowedCombination(UPDATING, UPDATING, "XUST0033", FUNCTION_DECLARATION | INLINE_FUNCTION),
+            new DisallowedCombination(UPDATING, SIMPLE, "XUST0033", FUNCTION_DECLARATION | INLINE_FUNCTION),
+            new DisallowedCombination(SIMPLE, SIMPLE, "XUST0033", FUNCTION_DECLARATION | INLINE_FUNCTION),
+            new DisallowedCombination(SIMPLE, UPDATING, "XUST0033", FUNCTION_DECLARATION | INLINE_FUNCTION),
+    };
+
+
 }
 

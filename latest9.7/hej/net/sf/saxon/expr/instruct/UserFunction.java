@@ -8,6 +8,7 @@
 package net.sf.saxon.expr.instruct;
 
 //import com.saxonica.expr.MemoFunction;
+
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
 import net.sf.saxon.evpull.EventIterator;
@@ -32,7 +33,7 @@ import net.sf.saxon.type.SpecificFunctionType;
 import net.sf.saxon.value.EmptySequence;
 import net.sf.saxon.value.SequenceType;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * This object represents the compiled form of a user-written function
@@ -62,7 +63,7 @@ public class UserFunction extends ComponentCode<UserFunction> implements Functio
     protected int evaluationMode = ExpressionTool.UNDECIDED;
     private boolean isUpdating = false;
     private int inlineable = -1; // 0:no 1:yes -1:don't know
-    private Map<StructuredQName, Annotation> annotationMap;
+    private List<Annotation> annotations;
     private FunctionStreamability declaredStreamability = FunctionStreamability.UNCLASSIFIED;
     private Controller preallocatedController = null;
     private Determinism determinism = Determinism.PROACTIVE;
@@ -214,8 +215,17 @@ public class UserFunction extends ComponentCode<UserFunction> implements Functio
      * @param map the new set of annotations, which will replace any previous annotations on the function
      */
 
-    public void setAnnotationMap(Map<StructuredQName, Annotation> map) {
-        this.annotationMap = map;
+    public void setAnnotations(List<Annotation> map) {
+        this.annotations = map;
+    }
+
+    /**
+     * Get the list of annotations defined on this function
+     * @return the list of annotations
+     */
+
+    public List<Annotation> getAnnotations() {
+        return annotations;
     }
 
     /**

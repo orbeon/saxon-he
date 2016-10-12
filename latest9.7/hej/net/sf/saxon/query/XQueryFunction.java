@@ -40,7 +40,7 @@ public class XQueryFunction implements InstructionInfo, Declaration {
     private NamespaceResolver namespaceResolver;
     private QueryModule staticContext;
     private boolean isUpdating = false;
-    private Map<StructuredQName, Annotation> annotationMap = new HashMap<StructuredQName, Annotation>();
+    private List<Annotation> annotations = new ArrayList<Annotation>();
 
     /**
      * Create an XQuery function
@@ -289,11 +289,24 @@ public class XQueryFunction implements InstructionInfo, Declaration {
      * @param annotations the annotations, indexed by annotation name
      */
 
-    public void setAnnotations(Map<StructuredQName, Annotation> annotations) {
-        this.annotationMap = annotations;
-        if (annotations.get(Annotation.UPDATING) != null) {
+    public void setAnnotations(List<Annotation> annotations) {
+        this.annotations = annotations;
+        if (compiledFunction != null) {
+            compiledFunction.setAnnotations(annotations);
+        }
+        if (Annotation.existsAnnotation(annotations, Annotation.UPDATING)) {
             setUpdating(true);
         }
+    }
+
+    /**
+     * Ask whether an annotation with a particular name exists
+     * @param name the name of the required annotation
+     * @return true if there is an annotation with this name            
+     */
+    
+    public boolean hasAnnotation(StructuredQName name) {
+        return Annotation.existsAnnotation(annotations, name);
     }
 
     /**
@@ -303,7 +316,7 @@ public class XQueryFunction implements InstructionInfo, Declaration {
      */
 
     public boolean isPrivate() {
-        return annotationMap.get(Annotation.PRIVATE) != null;
+        return hasAnnotation(Annotation.PRIVATE);
     }
 
     /**
@@ -367,7 +380,7 @@ public class XQueryFunction implements InstructionInfo, Declaration {
                 compiledFunction.setSystemId(location.getSystemId());
                 compiledFunction.setStackFrameMap(map);
                 compiledFunction.setUpdating(isUpdating);
-                compiledFunction.setAnnotationMap(annotationMap);
+                compiledFunction.setAnnotations(annotations);
 
 //                for (UserFunctionParameter param : params) {
 //                    int refs = ExpressionTool.getReferenceCount(body, param, false);

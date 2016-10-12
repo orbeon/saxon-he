@@ -1965,9 +1965,9 @@ public class Controller implements ContextOriginator {
             }
 
             if (mode.isDeclaredStreamable()) {
-                throw new XPathException("Requested initial mode " +
+                warning("Requested initial mode " +
                                                  (initialMode == null ? "#unnamed" : initialMode.getModeName().getDisplayName()) +
-                                                 " is streamable: must supply a StreamSource or SAXSource");
+                                                 " is streamable, but the supplied input is not streamed", null);
             }
 
             openMessageEmitter();
@@ -2239,9 +2239,9 @@ public class Controller implements ContextOriginator {
 //                            " does not exist", "XTDE0045");
 //                }
                 if (mode.isDeclaredStreamable()) {
-                    throw new XPathException("Requested initial mode " +
+                    warning("Requested initial mode " +
                                                      (initialMode == null ? "" : initialMode.getModeName().getDisplayName()) +
-                                                     " is streamable: must supply a StreamSource or SAXSource");
+                                                     " is streamable, but the supplied input is not streamed", null);
                 }
                 if (startNode.getNodeKind() == Type.DOCUMENT && !getConfiguration().getBooleanProperty(FeatureKeys.SUPPRESS_XSLT_NAMESPACE_CHECK)) {
                     // Check for the common error where the source document is in a namespace, but the stylesheet is not

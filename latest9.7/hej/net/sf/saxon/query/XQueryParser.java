@@ -669,11 +669,11 @@ public class XQueryParser extends XPathParser {
                         expect(Token.PERCENT);
                         ArrayList<Annotation> annotationList = parseAnnotationsList();
                         if (isKeyword("function")) {
-                            Map<StructuredQName, Annotation> annotations = checkAnnotations(annotationList, true);
-                            parseFunctionDeclaration(annotations);
+                            Annotation.checkAnnotationList(annotationList, Annotation.FUNCTION_DECLARATION);
+                            parseFunctionDeclaration(annotationList);
                         } else if (isKeyword("variable")) {
-                            Map<StructuredQName, Annotation> annotations = checkAnnotations(annotationList, false);
-                            parseVariableDeclaration(annotations);
+                            Annotation.checkAnnotationList(annotationList, Annotation.FUNCTION_DECLARATION);
+                            parseVariableDeclaration(annotationList);
                         } else {
                             grumble("Annotations can appear only in 'declare variable' and 'declare function'");
                         }
@@ -854,106 +854,6 @@ public class XQueryParser extends XPathParser {
 
     /**
      * Parse the annotations that can appear in a variable or function declaration
-     *
-     * @return the annotations as a map, indexed by annotation name
-     */
-
-    protected Map<StructuredQName, Annotation> parseAnnotations() throws XPathException {
-        // we have read "declare" and have seen "%" as lookahead
-        if (!allowXPath30Syntax) {
-            grumble("Function and variable annotations require XQuery 3.0");
-        }
-        Map<StructuredQName, Annotation> annotations = new HashMap<StructuredQName, Annotation>();
-        int options = 0;
-        while (true) {
-            t.setState(Tokenizer.BARE_NAME_STATE);
-            nextToken();
-            expect(Token.NAME);
-            t.setState(Tokenizer.DEFAULT_STATE);
-            StructuredQName qName;
-            String uri;
-            if (t.currentTokenValue.indexOf(':') < 0) {
-                uri = NamespaceConstant.XQUERY;
-                qName = new StructuredQName("", uri, t.currentTokenValue);
-            } else {
-                qName = makeStructuredQName(t.currentTokenValue, "");
-                uri = qName.getURI();
-            }
-
-            Annotation annotation = new Annotation(qName);
-            if (annotations.get(qName) != null) {
-                grumble("Annotation " + qName.getDisplayName() + " appears more than once");
-            }
-            if (uri.equals(NamespaceConstant.XQUERY)) {
-                if (qName.equals(Annotation.PRIVATE) || qName.equals(Annotation.PUBLIC) ||
-                        qName.equals(Annotation.UPDATING) || qName.equals(Annotation.SIMPLE)) {
-                    // OK
-                } else {
-                    grumble("Unrecognized variable or function annotation " + qName.getDisplayName(), "XQST0045");
-                }
-                annotation.addAnnotationParameter(new Int64Value(options));
-
-            } else if (isReservedInQuery(uri)) {
-                grumble("The annotation " + t.currentTokenValue + " is in a reserved namespace", "XQST0045");
-            } else if (uri.equals("")) {
-                grumble("The annotation " + t.currentTokenValue + " is in no namespace", "XQST0045");
-            } else {
-                // no action - ignore namespaced annotations
-            }
-            for (Annotation other : annotations.values()) {
-                if (Annotation.mutuallyExclusive(annotation, other)) {
-                    grumble("The annotations %" + annotation.getAnnotationQName().getDisplayName() +
-                            " and %" + other.getAnnotationQName().getDisplayName() +
-                            " cannot both be present on the same function or variable");
-                }
-            }
-            annotations.put(qName, annotation);
-            nextToken();
-            if (t.currentToken == Token.LPAR) {
-                nextToken();
-                if (t.currentToken == Token.RPAR) {
-                    grumble("Annotation parameter list cannot be empty");
-                }
-                while (true) {
-                    // nextToken();
-                    Literal arg = null;
-                    switch (t.currentToken) {
-                        case Token.STRING_LITERAL:
-                            arg = (Literal)parseStringLiteral(false);
-                            break;
-
-                        case Token.NUMBER:
-                            arg = (Literal)parseNumericLiteral(false);
-                            break;
-
-                        default:
-                            grumble("Annotation parameter must be a literal");
-                            return null;
-                    }
-                    GroundedValue val = arg.getValue();
-                    if (val instanceof StringValue || val instanceof NumericValue) {
-                        annotation.addAnnotationParameter((AtomicValue) val);
-                    } else {
-                        grumble("Annotation parameter must be a string or number");
-                    }
-
-                    if (t.currentToken == Token.RPAR) {
-                        nextToken();
-                        break;
-                    }
-                    expect(Token.COMMA);
-                    nextToken();
-                }
-            }
-            if (t.currentToken != Token.PERCENT) {
-                return annotations;
-            }
-        }
-
-    }
-
-    /**
-     * Parse the annotations that can appear in a variable or function declaration
      * @return the annotations as a list
      * @throws XPathException in the event of a syntax error
      */
@@ -1037,38 +937,6 @@ public class XQueryParser extends XPathParser {
                 return annotations;
             }
         }
-    }
-
-    /**
-     * Check the list of annotations that appear in a variable or function declaration, for duplicates, etc.
-     * @return the annotations as a map, indexed by annotation name
-     * @throws XPathException in the event of a syntax error
-     */
-
-    protected Map<StructuredQName, Annotation> checkAnnotations(ArrayList<Annotation> annotationList, boolean isFunction) throws XPathException {
-        String mutuallyExclusiveErrorCode;
-        if (isFunction) {
-            mutuallyExclusiveErrorCode = "XQST0106";
-        } else {
-            mutuallyExclusiveErrorCode = "XQST0116";
-        }
-        StructuredQName qName;
-        Map<StructuredQName, Annotation> annotationsMap = new HashMap<StructuredQName, Annotation>();
-        for (Annotation ann : annotationList) {
-            qName = ann.getAnnotationQName();
-            if (annotationsMap.containsKey(qName)){
-                grumble("Annotation " + qName.getDisplayName() + " appears more than once", mutuallyExclusiveErrorCode);
-            } else {
-                annotationsMap.put(qName, ann);
-            }
-        }
-        if (annotationsMap.containsKey(Annotation.PRIVATE) && annotationsMap.containsKey(Annotation.PUBLIC)) {
-            grumble("The annotations %private and %public cannot both be present on the same function or variable", mutuallyExclusiveErrorCode);
-        }
-        if (annotationsMap.containsKey(Annotation.UPDATING) && annotationsMap.containsKey(Annotation.SIMPLE)) {
-            grumble("The annotations %updating and %simple cannot both be present on the same function or variable", mutuallyExclusiveErrorCode);
-        }
-        return annotationsMap;
     }
 
 
@@ -1895,14 +1763,14 @@ public class XQueryParser extends XPathParser {
      * @throws XPathException if a static error is found
      */
 
-    private void parseVariableDeclaration(Map<StructuredQName, Annotation> annotations) throws XPathException {
+    private void parseVariableDeclaration(List<Annotation> annotations) throws XPathException {
         int offset = t.currentTokenStartOffset;
         GlobalVariable var = new GlobalVariable();
         var.setPackageData(((QueryModule) env).getPackageData());
         var.setLineNumber(t.getLineNumber() + 1);
         var.setSystemId(env.getSystemId());
         if (annotations != null) {
-            var.setPrivate(annotations.get(Annotation.PRIVATE) != null);
+            var.setPrivate(Annotation.existsAnnotation(annotations, Annotation.PRIVATE));
         }
         nextToken();
         expect(Token.DOLLAR);
@@ -2138,7 +2006,7 @@ public class XQueryParser extends XPathParser {
      * @throws XPathException if a syntax error is found
      */
 
-    protected void parseFunctionDeclaration(Map<StructuredQName, Annotation> annotations) throws XPathException {
+    protected void parseFunctionDeclaration(List<Annotation> annotations) throws XPathException {
 
         // the next token should be the < QNAME "("> pair
         int offset = t.currentTokenStartOffset;
@@ -2187,7 +2055,7 @@ public class XQueryParser extends XPathParser {
         func.setStaticContext((QueryModule) env);
         func.setMemoFunction(memoFunction);
         if (annotations != null) {
-            func.setUpdating(annotations.get(Annotation.UPDATING) != null);
+            func.setUpdating(Annotation.existsAnnotation(annotations, Annotation.UPDATING));
             func.setAnnotations(annotations);
         }
 

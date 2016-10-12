@@ -1468,7 +1468,8 @@ public class XPathParser {
             }
         } else if (t.currentToken == Token.PERCENT) {
             /*Map<StructuredQName, Annotation> annotationAssertions =*/
-            parseAnnotationsList();
+            List<Annotation> annotations = parseAnnotationsList();
+            Annotation.checkAnnotationList(annotations, Annotation.ANNOTATION_ASSERTION);
             // TODO retain the annotation assertions
             if (t.currentTokenValue.equals("function")) {
                 primaryType = parseFunctionItemType();
@@ -2025,19 +2026,16 @@ public class XPathParser {
                 return pne;
 
             case Token.PERCENT: {
-                Map<StructuredQName, Annotation> annotations = checkAnnotations(parseAnnotationsList(), true);
+                List<Annotation> annotations = parseAnnotationsList();
                 if (!t.currentTokenValue.equals("function")) {
                     grumble("Expected 'function' to follow the annotation assertion");
                 }
-                if (annotations.containsKey(Annotation.PRIVATE) ||
-                        annotations.containsKey(Annotation.PUBLIC)) {
-                    grumble("Inline functions must not be annotated %private or %public", "XQST0125");
-                }
+                Annotation.checkAnnotationList(annotations, Annotation.INLINE_FUNCTION);
                 return parseInlineFunction(annotations);
             }
             case Token.NODEKIND:
                 if (t.currentTokenValue.equals("function")) {
-                    Map<StructuredQName, Annotation> annotations = new HashMap<StructuredQName, Annotation>();
+                    List<Annotation> annotations = Collections.emptyList();
                     return parseInlineFunction(annotations);
 //                } else if (t.currentTokenValue.equals("map")) {
 //                    return parseFunctionCall(null);
@@ -3297,35 +3295,12 @@ public class XPathParser {
     /**
      * Parse the annotations that can appear in a variable or function declaration
      *
-     * @return the annotations as a map, indexed by annotation name
-     * @throws XPathException in the event of a syntax error
-     */
-
-    protected Map<StructuredQName, Annotation> parseAnnotations() throws XPathException {
-        grumble("Inline functions are not allowed in Saxon-HE");
-        return null;
-    }
-
-    /**
-     * Parse the annotations that can appear in a variable or function declaration
-     *
      * @return the annotations as a list
      * @throws XPathException in the event of a syntax error
      */
 
     protected ArrayList<Annotation> parseAnnotationsList() throws XPathException {
-        grumble("Inline functions are not allowed in Saxon-HE");
-        return null;
-    }
-
-    /**
-     * Check the list of annotations that appear in a variable or function declaration, for duplicates, etc.
-     *
-     * @return the annotations as a map, indexed by annotation name
-     * @throws XPathException in the event of a syntax error
-     */
-
-    protected Map<StructuredQName, Annotation> checkAnnotations(ArrayList<Annotation> annotationList, boolean isFunction) throws XPathException {
+        grumble("Function annotations are not allowed in XPath");
         return null;
     }
 
@@ -3340,7 +3315,7 @@ public class XPathParser {
      */
 
     /*@NotNull*/
-    protected Expression parseInlineFunction(Map<StructuredQName, Annotation> annotations) throws XPathException {
+    protected Expression parseInlineFunction(List<Annotation> annotations) throws XPathException {
         grumble("Inline functions are not allowed in Saxon-HE");
         return new ErrorExpression();
     }
