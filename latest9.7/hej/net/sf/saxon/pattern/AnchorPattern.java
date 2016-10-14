@@ -25,15 +25,13 @@ import net.sf.saxon.type.UType;
  */
 public class AnchorPattern extends Pattern {
 
-    private NodeTest nodeTest = AnyNodeTest.getInstance();
-
     private static AnchorPattern THE_INSTANCE = new AnchorPattern();
 
     public static AnchorPattern getInstance() {
         return THE_INSTANCE;
     }
 
-    private AnchorPattern(){};
+    protected AnchorPattern(){};
 
     /**
      * Get a UType indicating which kinds of items this Pattern can match.
@@ -55,9 +53,6 @@ public class AnchorPattern extends Pattern {
      */
 
     public Pattern typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
-        if (contextItemType.getItemType() instanceof NodeTest) {
-            nodeTest = (NodeTest) contextItemType.getItemType();
-        }
         return this;
     }
 
@@ -98,7 +93,7 @@ public class AnchorPattern extends Pattern {
      */
 
     public ItemType getItemType() {
-        return nodeTest;
+        return AnyNodeTest.getInstance();
     }
 
     /*@NotNull*/
