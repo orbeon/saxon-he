@@ -46,7 +46,7 @@ public class ManualIterator implements FocusIterator, UnfailingIterator,
 
     public ManualIterator(Item value, int position) {
         assert value != null;
-        assert position > 0;
+        assert position >= 0;
         this.item = value;
         this.position = position;
     }

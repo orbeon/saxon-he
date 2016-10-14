@@ -1744,5 +1744,26 @@ public class ExpressionTool {
             e.printStackTrace();
         }
     }
+
+    public static Expression getFocusSettingContainer(Expression exp) {
+        Expression parent = exp.getParentExpression();
+        if (parent != null) {
+            Operand op = null;
+            for (Operand o : parent.operands()) {
+                if (o.getChildExpression() == exp) {
+                    op = o;
+                    break;
+                }
+            }
+            if (op != null) {
+                if (!op.hasSameFocus()) {
+                    return parent;
+                } else {
+                    return getFocusSettingContainer(parent);
+                }
+            }
+        }
+        return null;
+    }
 }
 
