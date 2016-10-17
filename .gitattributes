@@ -1787,6 +1787,7 @@ latest9.7/hej/net/sf/saxon/pattern/ContentTypeTest.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/pattern/CurrentGroupPartitionPattern.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/pattern/DocumentNodeTest.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/pattern/ExceptPattern.java svn_eol_002dstyle=native
+latest9.7/hej/net/sf/saxon/pattern/FirstInGroupPattern.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/pattern/GeneralNodePattern.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/pattern/GeneralPositionalPattern.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/pattern/IntersectPattern.java svn_eol_002dstyle=native

@@ -24,8 +24,6 @@ import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.ErrorType;
 import net.sf.saxon.type.ItemType;
 
-import java.util.Map;
-
 
 /**
  * This class represents the expression "(dot)", which always returns the context item.
@@ -127,6 +125,19 @@ public class ContextItemExpression extends Expression {
             err.setLocation(getLocation());
             throw err;
         }
+        // If streaming, rewrite "." as current-group()[1]. See bug 2972.
+//        if (visitor.isOptimizeForStreaming()) {
+//            Operand focusser = ExpressionTool.getFocusSettingContainerOperand(this);
+//            if (focusser != null && focusser.getParentExpression() instanceof ForEachGroup &&
+//                    focusser.getChildExpression() == ((ForEachGroup)focusser.getParentExpression()).getActionExpression()) {
+//                ForEachGroup feg = (ForEachGroup)focusser.getParentExpression();
+//                CurrentGroupCall cg = new CurrentGroupCall();
+//                cg.setControllingInstruction(
+//                        feg, feg.getSelectExpression().getItemType(), false);
+//                FilterExpression fe = new FilterExpression(cg, new Literal(Int64Value.PLUS_ONE));
+//                return fe;
+//            }
+//        }
         return this;
     }
 
