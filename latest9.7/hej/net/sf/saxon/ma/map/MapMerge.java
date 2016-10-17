@@ -7,7 +7,6 @@
 
 package net.sf.saxon.ma.map;
 
-import com.saxonica.ee.stream.adjunct.NewMapAdjunct;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.StaticContext;
 import net.sf.saxon.expr.StaticProperty;
@@ -175,15 +174,15 @@ public class MapMerge extends ExtensionFunctionDefinition {
         }
 
 //#ifdefined STREAM
-        /**
-         * Get a streamable implementation of this extension function. This interface is provisional
-         * and currently only really intended for internal use; it is subject to change. If the value
-         * returned is non-null, then it must be an instance of com.saxonica.ee.stream.adjunct
-         */
-        @Override
-        public Object getStreamingImplementation() {
-            return new NewMapAdjunct();
-        }
+//        /**
+//         * Get a streamable implementation of this extension function. This interface is provisional
+//         * and currently only really intended for internal use; it is subject to change. If the value
+//         * returned is non-null, then it must be an instance of com.saxonica.ee.stream.adjunct
+//         */
+//        @Override
+//        public Object getStreamingImplementation() {
+//            return new NewMapAdjunct();
+//        }
 //#endif
     }
 }
