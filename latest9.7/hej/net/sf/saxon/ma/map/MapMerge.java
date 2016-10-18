@@ -150,7 +150,7 @@ public class MapMerge extends ExtensionFunctionDefinition {
                     for (KeyValuePair pair : next) {
                         Sequence existing = baseMap.get(pair.key);
                         if (existing != null) {
-                            if (duplicates.equals("use-first") || duplicates.equals("unspecified")) {
+                            if (duplicates.equals("use-first") || duplicates.equals("unspecified") || duplicates.equals("use-any")) {
                                 // no action
                             } else if (duplicates.equals("use-last")) {
                                 baseMap = ((HashTrieMap) baseMap).addEntry(pair.key, pair.value);
