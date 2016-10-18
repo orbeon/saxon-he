@@ -198,7 +198,7 @@ public class JsonReceiver implements Receiver {
 
     public void attribute(NodeName attName, SimpleType typeCode, CharSequence value, Location locationId, int properties) throws XPathException {
         if (attName.hasURI("") && (attName.getLocalPart().equals("key") || attName.getLocalPart().equals("escaped-key"))) {
-            boolean inMap = stack.size() >= 2 && stack.get(stack.size() - 2).getLocalPart().equals("map");
+            boolean inMap = stack.size() == 1 || stack.get(stack.size() - 2).getLocalPart().equals("map");
             if (!inMap) {
                 throw new XPathException("xml-to-json: The " + attName.getLocalPart() +
                                                  " attribute is allowed only on elements within a map", ERR_INPUT);
