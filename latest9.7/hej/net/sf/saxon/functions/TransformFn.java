@@ -746,6 +746,9 @@ public class TransformFn extends SystemFunction implements Callable {
                                 paramValue = val.getStringValue();
                             } else if (val instanceof QNameValue) {
                                 paramValue = ((QNameValue) val).getClarkName();
+                            } else if (val instanceof MapItem && paramName.getClarkName().equals(SaxonOutputKeys.USE_CHARACTER_MAPS)) {
+                                // combine the maps - TODO
+                                throw new XPathException("Saxon does not currently allow character maps to be supplied via fn:transform", "FOXT0002");
                             }
                         }
                         if (paramValue == null) {
