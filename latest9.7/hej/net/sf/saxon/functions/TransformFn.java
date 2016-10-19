@@ -19,6 +19,7 @@ import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
 import net.sf.saxon.lib.AugmentedSource;
 import net.sf.saxon.lib.FeatureKeys;
+import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.lib.StandardOutputResolver;
 import net.sf.saxon.ma.arrays.ArrayItem;
 import net.sf.saxon.ma.arrays.ArrayItemType;
@@ -37,6 +38,7 @@ import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
 import org.xml.sax.InputSource;
 
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -716,16 +718,63 @@ public class TransformFn extends SystemFunction implements Callable {
          * @return a suitable Serializer
          */
 
-        protected Serializer makeSerializer(MapItem serializationParamsMap) {
+        protected Serializer makeSerializer(MapItem serializationParamsMap) throws XPathException {
             Serializer serializer = transformer.newSerializer();
             if (serializationParamsMap != null) {
                 AtomicIterator paramIterator = serializationParamsMap.keys();
                 AtomicValue param;
                 while ((param = paramIterator.next()) != null) {
-                    QName paramName = new QName(((QNameValue) param.head()).getStructuredQName());
-                    StringValue paramVal = (StringValue) serializationParamsMap.get(param);
-                    Serializer.Property prop = Serializer.getProperty(paramName);
-                    serializer.setOutputProperty(prop, paramVal.getStringValue());
+                    // See bug 29440/29443. For the time being, accept both the old and new forms of serialization params
+                    QName paramName;
+                    if (param instanceof StringValue) {
+                        paramName = new QName(param.getStringValue());
+                    } else if (param instanceof QNameValue) {
+                        paramName = new QName(((QNameValue) param.head()).getStructuredQName());
+                    } else {
+                        throw new XPathException("Serialization parameters must be strings or QNames", "XPTY0004");
+                    }
+                    String paramValue = null;
+                    GroundedValue supplied = (GroundedValue) serializationParamsMap.get(param);
+                    if (supplied.getLength() > 0) {
+                        if (supplied.getLength() == 1) {
+                            Item val = supplied.itemAt(0);
+                            if (val instanceof StringValue) {
+                                paramValue = val.getStringValue();
+                            } else if (val instanceof BooleanValue) {
+                                paramValue = ((BooleanValue) val).getBooleanValue() ? "yes" : "no";
+                            } else if (val instanceof DecimalValue) {
+                                paramValue = val.getStringValue();
+                            } else if (val instanceof QNameValue) {
+                                paramValue = ((QNameValue) val).getClarkName();
+                            }
+                        }
+                        if (paramValue == null) {
+                            // if more than one, the only possibility is a sequence of QNames
+                            SequenceIterator iter = supplied.iterate();
+                            Item it;
+                            paramValue = "";
+                            while ((it = iter.next()) != null) {
+                                if (it instanceof QNameValue) {
+                                    paramValue += " " + ((QNameValue) it).getClarkName();
+                                } else {
+                                    throw new XPathException("Value of serialization parameter " + paramName.getEQName() + " not recognized", "XPTY0004");
+                                }
+                            }
+                        }
+                        Serializer.Property prop = Serializer.getProperty(paramName);
+                        if (paramName.getClarkName().equals(OutputKeys.CDATA_SECTION_ELEMENTS)
+                                || paramName.getClarkName().equals(SaxonOutputKeys.SUPPRESS_INDENTATION)) {
+                            String existing = serializer.getCombinedOutputProperties().getProperty(paramName.getLocalName());
+                            if (existing == null) {
+                                serializer.setOutputProperty(prop, paramValue);
+                            } else {
+                                serializer.setOutputProperty(prop, existing + paramValue);
+                            }
+                        } else {
+                            serializer.setOutputProperty(prop, paramValue);
+                        }
+                    }
+
                 }
             }
             return serializer;
