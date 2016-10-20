@@ -16,7 +16,6 @@ import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.AtomicValue;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Implement the fn:doc() function - a simplified form of the Document function
@@ -79,7 +78,7 @@ public class Doc extends SystemFunction implements Callable {
         return maybePreEvaluate(this, arguments);
     }
 
-    @NotNull
+
     public static Expression maybePreEvaluate(final SystemFunction sf, final Expression[] arguments) {
         if (arguments.length > 1 ||
                 !sf.getRetainedStaticContext().getConfiguration().getBooleanProperty(FeatureKeys.PRE_EVALUATE_DOC_FUNCTION)) {
