@@ -576,6 +576,9 @@ public class JsonParser {
                     boolean afterBackslash = false;
                     while (true) {
                         char c = input.charAt(position++);
+                        if (c < 32) {
+                            invalidJSON("Unescaped control character (x" + Integer.toHexString(c) + ")", ERR_GRAMMAR);
+                        }
                         if (afterBackslash && c == 'u') {
                             try {
                                 String hex = input.substring(position, position + 4);
