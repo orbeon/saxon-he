@@ -82,7 +82,8 @@ public class DocumentFn extends SystemFunction implements Callable {
 
     @Override
     public Expression makeFunctionCall(Expression... arguments) {
-        return Doc.maybePreEvaluate(this, arguments);
+        Expression expr = Doc.maybePreEvaluate(this, arguments);
+               return expr == null ? super.makeFunctionCall(arguments) : expr;
     }
 
     /**

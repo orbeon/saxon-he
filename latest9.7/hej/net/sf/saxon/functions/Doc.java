@@ -75,49 +75,48 @@ public class Doc extends SystemFunction implements Callable {
 
     @Override
     public Expression makeFunctionCall(Expression... arguments) {
-        return maybePreEvaluate(this, arguments);
+        Expression expr = maybePreEvaluate(this, arguments);
+        return expr == null ? super.makeFunctionCall(arguments) : expr;
     }
 
 
     public static Expression maybePreEvaluate(final SystemFunction sf, final Expression[] arguments) {
         if (arguments.length > 1 ||
-                !sf.getRetainedStaticContext().getConfiguration().getBooleanProperty(FeatureKeys.PRE_EVALUATE_DOC_FUNCTION)) {
-            return new SystemFunctionCall(sf, arguments) {
-                @Override
-                public Expression preEvaluate(ExpressionVisitor visitor) throws XPathException {
-                    // Suppress early evaluation
-                    return this;
-                }
-            };
+                        !sf.getRetainedStaticContext().getConfiguration().getBooleanProperty(FeatureKeys.PRE_EVALUATE_DOC_FUNCTION)) {
+            sf.getDetails().properties = sf.getDetails().properties | StandardFunction.LATE;
+            return null;
+
         } else {
             // allow early evaluation
-            return new SystemFunctionCall(sf, arguments) {
-                @Override
-                public Expression preEvaluate(ExpressionVisitor visitor) throws XPathException {
-                    Configuration config = visitor.getConfiguration();
-                    try {
-                        GroundedValue firstArg = ((Literal)getArg(0)).getValue();
-                        if (firstArg.getLength() == 0) {
-                            return null;
-                        } else if (firstArg.getLength() > 1) {
-                            return this;
-                        }
-                        String href = firstArg.head().getStringValue();
-                        if (href.indexOf('#') >= 0) {
-                            return this;
-                        }
-                        NodeInfo item = DocumentFn.preLoadDoc(href, sf.getStaticBaseUriString(), config, getLocation());
-                        if (item != null) {
-                            return Literal.makeLiteral(SequenceTool.toGroundedValue(item));
-                        }
-                    } catch (Exception err) {
-                        // ignore the exception and try again at run-time
-                        return this;
-                    }
-                    return this;
-                }
-            };
+                        return new SystemFunctionCall(sf, arguments) {
+                            @Override
+                            public Expression preEvaluate(ExpressionVisitor visitor) throws XPathException {
+                                Configuration config = visitor.getConfiguration();
+                                try {
+                                    GroundedValue firstArg = ((Literal)getArg(0)).getValue();
+                                    if (firstArg.getLength() == 0) {
+                                        return null;
+                                    } else if (firstArg.getLength() > 1) {
+                                        return this;
+                                    }
+                                    String href = firstArg.head().getStringValue();
+                                    if (href.indexOf('#') >= 0) {
+                                        return this;
+                                    }
+                                    NodeInfo item = DocumentFn.preLoadDoc(href, sf.getStaticBaseUriString(), config, getLocation());
+                                    if (item != null) {
+                                        return Literal.makeLiteral(SequenceTool.toGroundedValue(item));
+                                    }
+                                } catch (Exception err) {
+                                    // ignore the exception and try again at run-time
+                                    return this;
+                                }
+                                return this;
+                            }
+                        };
+
         }
+
     }
 
     /**
