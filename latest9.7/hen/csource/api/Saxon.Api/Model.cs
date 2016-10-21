@@ -1172,6 +1172,14 @@ namespace Saxon.Api
                     val = val.Replace("<", "&lt;");
                     val = val.Replace("&", "&amp;");
                     return node.getDisplayName() + "=\"" + val + '"';
+                } else if (node.getNodeKind() == JType.NAMESPACE)
+                {
+                    String val = node.getStringValue().Replace("\"", "&quot;");
+                    val = val.Replace("<", "&lt;");
+                    val = val.Replace("&", "&amp;");
+                    String name = node.getDisplayName();
+                    name = (name.Equals("") ? "xmlns" : "xmlns:" + name);
+                    return name + "=\"" + val + '"';
                 }
 
                 Serializer serializer = new Serializer();
