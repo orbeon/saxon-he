@@ -723,7 +723,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
         NamedTemplate compiledTemplate = sourceTemplate.getCompiledNamedTemplate();
         Component declaringComponent = compiledTemplate.getDeclaringComponent();
         if (declaringComponent == null) {
-            declaringComponent = compiledTemplate.makeDeclaringComponent(sourceTemplate.getDeclaredVisibility(), getStylesheetPackage());
+            declaringComponent = compiledTemplate.makeDeclaringComponent(sourceTemplate.getVisibility(), getStylesheetPackage());
         }
         SymbolicName sName = sourceTemplate.getSymbolicName();
         if (sName != null) {
