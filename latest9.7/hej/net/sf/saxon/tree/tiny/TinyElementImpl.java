@@ -283,9 +283,10 @@ public final class TinyElementImpl extends TinyParentNodeImpl {
                         }
                     }
                     int nameCode = tree.nameCode[next];
-                    String prefix = pool.getPrefix(nameCode);
-                    String uri = pool.getURI(nameCode);
-                    String local = pool.getLocalName(nameCode);
+                    //StructuredQName sn = pool.getStructuredQName(nameCode);
+//                    String prefix = sn.getPrefix();
+//                    String uri = sn.getURI();
+//                    String local = sn.getLocalPart();
                     int options = !first && (copyOptions & CopyOptions.SOME_NAMESPACES) != 0
                             ? ReceiverOptions.NAMESPACE_OK
                             : 0;
@@ -295,7 +296,7 @@ public final class TinyElementImpl extends TinyParentNodeImpl {
                         location = new ExplicitLocation(systemId, tree.getLineNumber(next), getColumnNumber());
                     }
                     // bug 2209
-                    receiver.startElement(new FingerprintedQName(prefix, uri, local, nameCode),
+                    receiver.startElement(new CodedName(nameCode, pool),
                             typeCode, location, options);
 
                     // there is an element to close
@@ -347,7 +348,7 @@ public final class TinyElementImpl extends TinyParentNodeImpl {
                                     throw e;
                                 }
                             }
-                            receiver.attribute(new CodedName(attCode, getNamePool()), attType, tree.attValue[att], location, 0);
+                            receiver.attribute(new CodedName(attCode, pool), attType, tree.attValue[att], location, 0);
                             att++;
                         }
                     }

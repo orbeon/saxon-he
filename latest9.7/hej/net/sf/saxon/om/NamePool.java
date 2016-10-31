@@ -348,7 +348,9 @@ public final class NamePool {
      */
 
     public String getDisplayName(int nameCode) {
-        return getStructuredQName(nameCode).getDisplayName();
+        String prefix = getPrefix(nameCode);
+        String local = getLocalName(nameCode);
+        return prefix.isEmpty() ? local : prefix + ":" + local;
     }
 
     /**

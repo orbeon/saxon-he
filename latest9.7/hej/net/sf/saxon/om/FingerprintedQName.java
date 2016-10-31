@@ -32,6 +32,11 @@ public class FingerprintedQName implements NodeName {
         this.nameCode = pool.allocate(prefix, uri, localName);
     }
 
+    public FingerprintedQName(StructuredQName qName, int nameCode) {
+        this.qName = qName;
+        this.nameCode = nameCode;
+    }
+
     public FingerprintedQName(StructuredQName qName, NamePool pool) {
         this.qName = qName;
         this.nameCode = pool.allocate(qName.getPrefix(), qName.getURI(), qName.getLocalPart());
