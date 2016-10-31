@@ -51,7 +51,7 @@ public class CompressedWhitespace implements CharSequence {
         int outlength = 0;
         for (int i = 0; i < inlen; i++) {
             final char c = in.charAt(i);
-            if (c <= 32 && CODES[c] > 0) {
+            if (c <= 32 && CODES[c] >= 0) {
                 if (i == inlen - 1 || c != in.charAt(i + 1) || runlength == 63) {
                     runlength = 1;
                     outlength++;
