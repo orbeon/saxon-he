@@ -7,6 +7,7 @@
     
 	<import file="build-constants.xml"/>
     <import file="documentation.xml"/>
+    <import file="samples-common.xml"/>
 
         <!--<property file="ICU.properties"/>-->
     <target name="ICU"
@@ -18,8 +19,9 @@
     </target>
 		    
     <!-- directories holding C# source code -->
-    <!--<property name="vss-n.dir" value="${repo-os}/latest9.6/hen"/>-->
-     <property name="vss-n.dir" value="${repo-os}/../Saxon.Net"/>
+    <property name="vss-n.dir" value="${repo-os}/latest9.7/hen"/>
+    <!-- <property name="vss-n.dir" value="${repo-os}/../Saxon.Net"/>-->
+    <!--<property name="vss-n.dir" value="../Saxon.Net"/> -->
 
     <!-- directory holding C# source code as in Subversion -->
     <!--<property name="subversion-n.dir" value="${root}/saxon-svn2/latest9.0/bn/csource"/>-->	
@@ -30,12 +32,19 @@
     <property name="docout-n.dir" value="${build-resources.dir}/doc/dotnetdoc"/>
     		    
     <!-- location of the C# compiler value=gmcs-->
-  <condition  property="csharp.compiler" value="/Library/Frameworks/Mono.framework/Versions/4.2.1/bin/mcs">
+  <condition  property="csharp.compiler" value="/Library/Frameworks/Mono.framework/Versions/4.2.3/bin/mcs">
         <or>
           <os family="unix"/>
           <os family="mac"/>
         </or>
       </condition>
+    <!--<condition  property="csharp.compiler" value="/opt/local/bin/mcs">
+        <or>
+            <os family="unix"/>
+            <os family="mac"/>
+        </or>
+    </condition>-->
+
 <!--      <condition property="csharp.compiler" value="C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\csc.exe">
         <os family="windows"/>
       </condition>-->
@@ -94,12 +103,12 @@
    
     <!-- development source -->
         
-    <!--<property name="source-api-n.dir" value="${vss-n.dir}/csource/api"/>-->
-    <property name="source-api-n.dir" value="${vss-n.dir}"/>
-    <!--<property name="source-cmd-n.dir" value="${vss-n.dir}/csource/cmd"/>-->
-    <property name="source-cmd-n.dir" value="${vss-n.dir}"/>
-    <!--<property name="source-samples-n.dir" value="${vss-n.dir}/csource/samples"/>-->
-    <property name="source-samples-n.dir" value="${vss-n.dir}"/>
+    <property name="source-api-n.dir" value="${vss-n.dir}/csource/api"/>
+    <!--<property name="source-api-n.dir" value="${vss-n.dir}"/>-->
+    <property name="source-cmd-n.dir" value="${vss-n.dir}/csource/cmd"/>
+    <!--<property name="source-cmd-n.dir" value="${vss-n.dir}"/>-->
+    <property name="source-samples-n.dir" value="${vss-n.dir}/csource/samples"/>
+    <!--<property name="source-samples-n.dir" value="${vss-n.dir}"/>-->
     <taskdef resource="com/igormaznitsa/jcp/ant/tasks.properties" classpath="../lib/jcp-5.3.jar"/>
            
     <path id="classpath-n">
@@ -296,7 +305,7 @@
           [assembly: AssemblyConfiguration("")]
           [assembly: AssemblyCompany("Saxonica")]
           [assembly: AssemblyProduct("Saxon.Api")]
-          [assembly: AssemblyCopyright("Copyright © Saxonica 2013")]
+          [assembly: AssemblyCopyright("Copyright © Saxonica 2016")]
           [assembly: AssemblyTrademark("")]
           [assembly: AssemblyCulture("")]
           [assembly: ComVisible(false)]
@@ -310,7 +319,7 @@
             <include name="**/Transform.cs"/>
             <include name="**/Query.cs"/>
             <include name="**/Validate.cs"/>
-                <include name="**/StylesheetPackager.cs"/>
+             <!--   <include name="**/StylesheetPackager.cs"/> -->
           </fileset>
         </copy>
         
@@ -552,7 +561,7 @@
         <mkdir dir="${dll-n.dir}"/>
         <copy todir="${jar-n.dir}">
           <fileset dir="${lib.dir}">
-            <include name="tagsoup-1.2.jar"/>
+            <include name="tagsoup-1.2.1.jar"/>
             <include name="mail.jar"/>
             <include name="asm-${asm.version}.jar"/>
             <include name="asm-analysis-${asm.version}.jar"/>
@@ -669,7 +678,7 @@
           </fileset>
           <fileset dir="${lib.dir}">
               <include name="xerces.jar"/>
-              <include name="tagsoup-1.2.jar"/>
+              <include name="tagsoup-1.2.1.jar"/>
               <include name="mail.jar"/>
           </fileset>
           <reference path="mscorlib.dll"/>
@@ -718,7 +727,7 @@
           </fileset>
           <fileset dir="${lib.dir}">
               <include name="xerces.jar"/>
-            <include name="tagsoup-1.2.jar"/>
+            <include name="tagsoup-1.2.1.jar"/>
             <include name="mail.jar"/>
             <include name="asm-${asm.version}.jar"/>
             <include name="asm-analysis-${asm.version}.jar"/>
@@ -748,9 +757,11 @@
         
         <echo>[saxon9ee-debug.dll]</echo>
         <ikvmc IKVMC="${osDebug.dir}"
-               assembly="saxon9ee-debug" 
+               assembly="saxon9ee-debug"
+		keyfile="${saxondotnet.snk}" 
+               version="${version}" 
                target="library"
-               debug="false"
+               debug="true"
                srcpath="${temp-src-prep-een.dir}"
                out="${basedir}/${dll-n.dir}/ee/saxon9ee-debug.dll"
                verbose="true">
@@ -759,7 +770,7 @@
           </fileset>
           <fileset dir="${lib.dir}">
               <include name="xerces.jar"/>
-              <include name="tagsoup-1.2.jar"/>
+              <include name="tagsoup-1.2.1.jar"/>
             <include name="mail.jar"/>
             <include name="asm-${asm.version}.jar"/>
             <include name="asm-analysis-${asm.version}.jar"/>
@@ -825,7 +836,7 @@
           using System.Runtime.InteropServices;
           [assembly: AssemblyCompany("Saxonica")]
           [assembly: AssemblyProduct("Saxon.HE")]
-          [assembly: AssemblyCopyright("Copyright © Saxonica 2013")]
+          [assembly: AssemblyCopyright("Copyright © Saxonica 2016")]
           [assembly: AssemblyVersion("${version}")]
           [assembly: AssemblyFileVersion("${version}")]
         </echo>
@@ -911,7 +922,7 @@
           using System.Runtime.InteropServices;
           [assembly: AssemblyCompany("Saxonica")]
           [assembly: AssemblyProduct("Saxon.PE")]
-          [assembly: AssemblyCopyright("Copyright © Saxonica 2013")]
+          [assembly: AssemblyCopyright("Copyright © Saxonica 2016")]
           [assembly: AssemblyVersion("${version}")]
           [assembly: AssemblyFileVersion("${version}")]
         </echo>
@@ -952,7 +963,7 @@
 		     </reference>
 		</dn:csc>
 
-		<dn:csc targetType="exe" win32icon="${icon}"
+		<!-- <dn:csc targetType="exe" win32icon="${icon}"
 		     outputFile="${basedir}/${dll-n.dir}/pe/StylesheetPackager.exe"
 		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
@@ -965,10 +976,10 @@
          	    <include name="IKVM.OpenJDK.Util.dll"/>
          	    <include name="IKVM.OpenJDK.XML.API.dll"/>
 		        <include name="IKVM.Runtime.dll"/>
-		        <!--<include name="charsets.dll"/>-->
+		        
 		        <include name="saxon9pe.dll"/>
 		     </reference>
-		</dn:csc>
+		</dn:csc>-->
 
 		
     </target>    
@@ -1031,7 +1042,7 @@
           using System.Runtime.InteropServices;
           [assembly: AssemblyCompany("Saxonica")]
           [assembly: AssemblyProduct("Saxon.EE")]
-          [assembly: AssemblyCopyright("Copyright © Saxonica 2013")]
+          [assembly: AssemblyCopyright("Copyright © Saxonica 2016")]
           [assembly: AssemblyVersion("${version}")]
           [assembly: AssemblyFileVersion("${version}")]
         </echo>		
@@ -1089,7 +1100,7 @@
 		     </reference>
 		</dn:csc>
 
-		<dn:csc targetType="exe" win32icon="${icon}"
+		<!-- <dn:csc targetType="exe" win32icon="${icon}"
 		     outputFile="${basedir}/${dll-n.dir}/ee/StylesheetPackager.exe"
 		     extraOptions="-keyfile:${saxondotnet.snk}"
 		     executable="${csharp.compiler}">
@@ -1104,7 +1115,7 @@
 		        <include name="IKVM.Runtime.dll"/>
 		        <include name="saxon9ee.dll"/>
 		     </reference>
-		</dn:csc>
+		</dn:csc>-->
     </target> 
   
     
@@ -1213,7 +1224,7 @@
           <include name="saxon9pe-api.dll"/>
           <include name="Query.exe"/>
           <include name="Transform.exe"/>
-          <include name="StylesheetPackager.exe"/>
+         <!-- <include name="StylesheetPackager.exe"/> -->
         </fileset>
       </copy>
       
@@ -1234,7 +1245,7 @@
           <include name="Query.exe"/>
           <include name="Transform.exe"/>
           <include name="Validate.exe"/>
-          <include name="StylesheetPackager.exe"/>
+          <!--<include name="StylesheetPackager.exe"/> -->
         </fileset> 
       </copy> 
       
@@ -1316,7 +1327,8 @@
 			style="${doctools-n.dir}/parsecs.xsl"
 			out="${doctemp-n.dir}/names.xml">
           <classpath refid="saxon.class.path"/>
-          <param name="inputdir" expression="file:///${vss-n.dir}/csource/api/Saxon.Api"/>
+            <param name="inputdir" expression="${repository.uri}/build97/${temp-src-nc.dir}/api/Saxon.Api"/>
+          <!--<param name="inputdir" expression="file:///${vss-n.dir}/csource/api/Saxon.Api"/>-->
 			<factory name="com.saxonica.config.EnterpriseTransformerFactory">
 			    <attribute name="http://saxon.sf.net/feature/initialTemplate" value="main"/>
 			</factory>
@@ -1339,10 +1351,17 @@
 	    </xslt>
       	<xslt in="${doctemp-n.dir}/merged.xml"
 			style="${doctools-n.dir}/convert-to-jel-package.xsl"
-			out="${docout-n.dir}/../dotnetdoc-xml/packages/Saxon.Api.xml">
+			out="${product.dir}/dotnetdoc-xml/packages/Saxon.Api.xml">
 	      <classpath refid="saxon.class.path"/>
 			<factory name="com.saxonica.config.EnterpriseTransformerFactory"/>
 	    </xslt>
+
+      <copy todir="${viewer_app.dir}/dotnetdoc-xml">
+          <fileset dir="${product.dir}/dotnetdoc-xml">
+              <include name="*.*"/>
+              <include name="packages/*.*"/>
+          </fileset>
+      </copy>
 	             	            
       
       <copy file="${doctools-n.dir}/stylesheet.css"
@@ -1402,7 +1421,7 @@ SolidCompression=yes
 SourceDir=..\..\..\${build-hen.dir}\bin
 OutputDir=${basedir}\${issue.dir}
 OutputBaseFilename=SaxonHE${versionh}N-setup
-AppCopyright=Copyright (c) 2010 Saxonica
+AppCopyright=Copyright (c) 2016 Saxonica
 
 [Files]
 ; GAC Files
@@ -1469,7 +1488,7 @@ SolidCompression=yes
 SourceDir=..\..\..\${build-pen.dir}\bin
 OutputDir=${basedir}\${issue.dir}
 OutputBaseFilename=SaxonPE${versionh}N-setup
-AppCopyright=Copyright (c) 2010 Saxonica
+AppCopyright=Copyright (c) 2016 Saxonica
 
 [Files]
 ; GAC Files
@@ -1498,7 +1517,6 @@ Source: "..\notices\UNICODE.txt" ; DestDir: "{app}\notices"
 ; Program Files
 Source: "Query.exe"; DestDir: "{app}\bin"
 Source: "Transform.exe"; DestDir: "{app}\bin"
-Source: "StylesheetPackager.exe"; DestDir: "{app}\bin"
 
 [Registry]
 Root: HKCU; Subkey: "Software\Saxonica"; Flags: uninsdeletekeyifempty
@@ -1539,7 +1557,7 @@ SolidCompression=yes
 SourceDir=..\..\..\${build-een.dir}\bin
 OutputDir=${basedir}\${issue.dir}
 OutputBaseFilename=SaxonEE${versionh}N-setup
-AppCopyright=Copyright (c) 2010 Saxonica
+AppCopyright=Copyright (c) 2016 Saxonica
 
 [Files]
 ; GAC Files
@@ -1569,7 +1587,6 @@ Source: "..\notices\UNICODE.txt" ; DestDir: "{app}\notices"
 Source: "Query.exe"; DestDir: "{app}\bin"
 Source: "Transform.exe"; DestDir: "{app}\bin"
 Source: "Validate.exe"; DestDir: "{app}\bin"
-Source: "StylesheetPackager.exe"; DestDir: "{app}\bin"
 
 [Registry]
 Root: HKCU; Subkey: "Software\Saxonica"; Flags: uninsdeletekeyifempty

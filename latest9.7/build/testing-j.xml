@@ -14,10 +14,13 @@
     <property name="build.dir" value="${repository}/build97"/>
 
     <!-- directory holding test results -->
-    <property name="test-results.dir" value="${repository}/build97/test-results"/>
+    <property name="test-results.dir" value="${build.dir}/test-results"/>
 
     <!-- directory holding Saxon qt3extra tests -->
-    <property name="qt3extra.dir" value="${repository}/tests/qt3extra"/>
+    <property name="qt3extra.dir" value="${repository}/tests/qt3extra/9.7"/>
+
+    <!-- directory holding Saxon xslt30extra tests -->
+    <property name="xslt30extra.dir" value="${repository}/tests/xslt30extra/9.7"/>
 
 
 
@@ -63,6 +66,16 @@
         <generate-test-report test-suite="xslt30"/>
     </target>
 
+    <!-- ========= Main targets to run XSLT 3.0 extra test suite =========== -->
+
+    <!-- Running XSLT 3.0 extra test catalog with all editions -->
+    <target name="xslt30extra-tests-j" depends="xslt30extra-tests-pej, xslt30extra-tests-eej"/>
+
+    <!-- generate a report of the XSLT 3.0 extra test suite results for different Saxon editions/configurations -->
+    <target name="generate-xslt30extra-tests-report" depends="xslt30-test-results-dir">
+        <generate-test-report test-suite="xslt30extra"/>
+    </target>
+
 
     <!-- ========= Main targets to run QT3 test suite =========== -->
 
@@ -75,9 +88,9 @@
     </target>
 
 
-    <!-- ========= Main targets to run QT3 test suite =========== -->
+    <!-- ========= Main targets to run QT3 extra test suite =========== -->
 
-    <!-- Running QT3 test catalog with all editions -->
+    <!-- Running QT3 extra test catalog with all editions -->
     <target name="qt3extra-tests-j" depends="qt3extra-tests-pej, qt3extra-tests-eej"/>
 
     <!-- generate a report of the QT3extra test suite results for different Saxon editions/configurations -->
@@ -203,10 +216,10 @@
         <sequential>
             <exec executable="java"
                   failonerror="true">
-                <arg line="-cp ${license.dir}"/>
-                <arg line="-jar ${build-@{version}j.dir}/saxon9@{version}.jar"/>
+                <arg line="-cp ${build-@{version}j.dir}/saxon9@{version}.jar${Z}${license.dir}"/>
+                <arg line="net.sf.saxon.Transform"/>
                 <arg line="-it:main"/>
-                <arg line="${build-resources.dir}/samples/styles/tour.xsl"/>
+                <arg line="-xsl:${build-resources.dir}/samples/styles/tour.xsl"/>
                 <other-arg/>
                 <arg line="-o:${temp-output.dir}/@{version}j/tour-t.html"/>
             </exec>
@@ -222,7 +235,7 @@
                   failonerror="true">
                 <arg line="-cp ${build-@{version}j.dir}/saxon9@{version}.jar${Z}${license.dir}"/>
                 <arg line="net.sf.saxon.Query"/>
-                <arg line="${build-resources.dir}/samples/query/tour.xq"/>
+                <arg line="-q:${build-resources.dir}/samples/query/tour.xq"/>
                 <other-arg/>
                 <arg line="-o:${temp-output.dir}/@{version}j/tour-q.html"/>
             </exec>
@@ -241,8 +254,7 @@
             </other-arg>
         </cmd-knights-tour-xslt>
         <cmd-knights-tour-xslt version="ee"/>
-        <!--TODO: fix xquery tests -->
-        <!--<cmd-knights-tour-xquery version="he">
+        <cmd-knights-tour-xquery version="he">
             <other-arg>
                 <arg line="start=e5"/>
             </other-arg>
@@ -256,7 +268,7 @@
             <other-arg>
                 <arg line="end=61"/>
             </other-arg>
-        </cmd-knights-tour-xquery>-->
+        </cmd-knights-tour-xquery>
     </target>
 
     <!-- Command line Shakespeare transform tests -->
@@ -359,7 +371,7 @@
         <samples-s9api version="he" target="QueryC"/>
         <samples-s9api version="he" target="QueryD"/>
         <samples-s9api version="he" target="QueryE"/>
-        <samples-s9api version="he" target="QueryF"/>
+        <samples-s9api version="he" target="QueryF"/> <!-- This test should fail in HE -->
 <!--        <samples-s9api version="he" target="QueryG"/>-->
 <!--        <samples-s9api version="he" target="QueryUpdateA"/>-->
         <samples-s9api version="he" target="TransformA"/>
@@ -488,7 +500,7 @@
             <exec executable="java"
                   dir="${build-resources.dir}/samples"
                   failonerror="true">
-                <arg line="-cp ${basedir}/${build-resources.dir}/samples/java/classes${Z}${basedir}/${build-@{version}j.dir}/saxon9@{version}.jar${Z}${basedir}/${lib.dir}/jdom-2.0.4.jar${Z}${license.dir}"/>
+                <arg line="-cp ${basedir}/${build-resources.dir}/samples/java/classes${Z}${basedir}/${build-@{version}j.dir}/saxon9@{version}.jar${Z}${basedir}/${lib.dir}/jdom-2.0.4.jar${Z}${license.dir}${Z}${lib.dir}/xerces.jar${Z}${lib.dir}/xercesImpl.jar"/>
                 <arg line="ee/JDOM2Example"/>
                 <arg line="data/books.xml"/>
                 <arg line="styles/total.xsl"/>
@@ -623,11 +635,17 @@
         <copy file="${test-results.dir}/xslt30/exceptions.xml"
               tofile="${test-results.dir}/xslt30/${DSTAMP}/exceptions.xml">
         </copy>
+        <mkdir dir="${test-results.dir}/xslt30extra/${DSTAMP}"/>
+        <mkdir dir="${test-results.dir}/xslt30extra/${DSTAMP}/results"/>
+        <copy file="${test-results.dir}/xslt30extra/exceptions.xml"
+              tofile="${test-results.dir}/xslt30extra/${DSTAMP}/exceptions.xml">
+        </copy>
     </target>
 
     <!-- Running XSLT 3.0 test catalog -->
     <macrodef name="xslt30-tests"
               description="Run XSLT 3.0 test catalog">
+        <attribute name="catalog" default="xslt30"/>
         <attribute name="version"/>
         <attribute name="lang"/>
         <attribute name="bc" default=""/>
@@ -637,20 +655,20 @@
             <exec executable="java"
                   failonerror="true">
                 <arg line="-Xmx1G"/>
-                <arg line="-cp ${build.dir}/test-drivers${Z}${build-@{version}j.dir}/saxon9@{version}.jar${Z}${license.dir}${Z}${product.dir}/pej/saxon9-icu.jar"/>
+                <arg line="-cp ${build.dir}/test-drivers${Z}${build-@{version}j.dir}/saxon9@{version}.jar${Z}${build-@{version}j.dir}/saxon9-sql.jar${Z}${license.dir}${Z}${product.dir}/pej/saxon9-icu.jar${Z}${lib.dir}/tagsoup-1.2.1.jar${Z}${lib.dir}/xerces.jar${Z}${lib.dir}/xercesImpl.jar"/>
                 <!--                <arg line="-cp ${build.dir}/test-drivers;${build-@{version}j.dir}/saxon9@{version}.jar;${license.dir}"/>-->
                 <arg line="@{test-driver}"/>
-                <arg line="${xslt30.dir}"/>
-                <arg line="${xslt30.dir}/catalog.xml"/>
-                <arg line="-o:${test-results.dir}/xslt30/${DSTAMP}"/>
+                <arg line="${@{catalog}.dir}"/>
+                <arg line="catalog.xml"/>
+                <arg line="-o:${test-results.dir}/@{catalog}/${DSTAMP}"/>
                 <arg line="-lang:XT@{lang}0"/>
                 <arg line= "-ps:off"/>
                 <!--<arg line="-s:as"/>
                 <arg line="-t:as-0101"/>-->
                 <arg line="-debug"/>
                 <other-arg/>            </exec>
-            <copy file="${test-results.dir}/xslt30/${DSTAMP}/results_XSLT@{lang}.0_${version}.xml"
-                  tofile="${test-results.dir}/xslt30/${DSTAMP}/results/saxon-@{version}-XT@{lang}0@{bc}.xml">
+            <copy file="${test-results.dir}/@{catalog}/${DSTAMP}/results_XSLT@{lang}.0_${version}.xml"
+                  tofile="${test-results.dir}/@{catalog}/${DSTAMP}/results/saxon-@{version}-XT@{lang}0@{bc}.xml">
             </copy>
         </sequential>
     </macrodef>
@@ -663,7 +681,7 @@
  
     <!-- Running XSLT 3.0 test catalog with PE -->
     <target name="xslt30-tests-pej" depends="compile-testdrivers-j, xslt30-test-results-dir">
-        <!--<xslt30-tests version="pe" lang="2"/>-->
+        <xslt30-tests version="pe" lang="2"/>
         <xslt30-tests version="pe" lang="3"/>
     </target>
 
@@ -674,21 +692,58 @@
                 <arg line= "-bytecode:on"/>
             </other-arg>
         </xslt30-tests>
-        <!--<xslt30-tests version="ee" lang="2" bc="-off">
+        <xslt30-tests version="ee" lang="2" bc="-off">
             <other-arg>
                 <arg line= "-bytecode:off"/>
             </other-arg>
-        </xslt30-tests>-->
-        <!--<xslt30-tests version="ee" lang="3" bc="-on">
+        </xslt30-tests>
+        <xslt30-tests version="ee" lang="3" bc="-on">
             <other-arg>
                 <arg line= "-bytecode:on"/>
             </other-arg>
-        </xslt30-tests>-->
-        <!--<xslt30-tests version="ee" lang="3" bc="-off">
+        </xslt30-tests>
+        <xslt30-tests version="ee" lang="3" bc="-off">
             <other-arg>
                 <arg line= "-bytecode:off"/>
             </other-arg>
-        </xslt30-tests>-->
+        </xslt30-tests>
+    </target>
+
+
+    <!-- Running XSLT 3.0 extra test catalog with HE -->
+    <target name="xslt30extra-tests-hej" depends="compile-testdrivers-j, xslt30-test-results-dir">
+        <xslt30-tests catalog="xslt30extra" version="he" lang="2" test-driver="net.sf.saxon.testdriver.Xslt30TestSuiteDriverHE"/>
+        <!-- Saxon-HE does not support XSLT3.0-->
+    </target>
+
+    <!-- Running XSLT 3.0 extra test catalog with PE -->
+    <target name="xslt30extra-tests-pej" depends="compile-testdrivers-j, xslt30-test-results-dir">
+        <xslt30-tests catalog="xslt30extra" version="pe" lang="2"/>
+        <xslt30-tests catalog="xslt30extra" version="pe" lang="3"/>
+    </target>
+
+    <!-- Running XSLT 3.0 extra test catalog with EE -->
+    <target name="xslt30extra-tests-eej" depends="compile-testdrivers-j, xslt30-test-results-dir">
+        <xslt30-tests catalog="xslt30extra" version="ee" lang="2" bc="-on">
+            <other-arg>
+                <arg line= "-bytecode:on"/>
+            </other-arg>
+        </xslt30-tests>
+        <xslt30-tests catalog="xslt30extra" version="ee" lang="2" bc="-off">
+            <other-arg>
+                <arg line= "-bytecode:off"/>
+            </other-arg>
+        </xslt30-tests>
+        <xslt30-tests catalog="xslt30extra" version="ee" lang="3" bc="-on">
+            <other-arg>
+                <arg line= "-bytecode:on"/>
+            </other-arg>
+        </xslt30-tests>
+        <xslt30-tests catalog="xslt30extra" version="ee" lang="3" bc="-off">
+            <other-arg>
+                <arg line= "-bytecode:off"/>
+            </other-arg>
+        </xslt30-tests>
     </target>
 
 
@@ -708,12 +763,12 @@
     </target>
 
     <!-- Running QT3 test catalog -->
-    <property name="XQ31" value="XQuery3.1"/>
-    <property name="XP31" value="XPath3.1"/>
-    <property name="XQ30" value="XQuery3.0"/>
-    <property name="XP30" value="XPath3.0"/>
-    <property name="XQ10" value="XQuery1.0"/>
     <property name="XP20" value="XPath2.0"/>
+    <property name="XP30" value="XPath3.0"/>
+    <property name="XP31" value="XPath3.1"/>
+    <property name="XQ10" value="XQuery1.0"/>
+    <property name="XQ30" value="XQuery3.0"/>
+    <property name="XQ31" value="XQuery3.1"/>
     <macrodef name="qt3-tests"
               description="Run QT3 test catalog">
         <attribute name="catalog"/>
@@ -725,10 +780,10 @@
         <sequential>
             <exec executable="java"
                   failonerror="true">
-                <arg line="-cp ${build.dir}/test-drivers${Z}${build-@{version}j.dir}/saxon9@{version}.jar${Z}${license.dir}${Z}${lib.dir}/mail.jar${Z}${build-@{version}j.dir}/saxon9-icu.jar${Z}${build-@{version}j.dir}/saxon9-sql.jar"/>
+                <arg line="-cp ${build.dir}/test-drivers${Z}${build-@{version}j.dir}/saxon9@{version}.jar${Z}${license.dir}${Z}${lib.dir}/mail.jar${Z}${build-@{version}j.dir}/saxon9-icu.jar${Z}${lib.dir}/xerces.jar${Z}${lib.dir}/xercesImpl.jar"/> <!--${Z}${build-@{version}j.dir}/saxon9-sql.jar-->
                 <arg line="@{test-driver}"/>
                 <arg line="${@{catalog}.dir}"/>
-                <arg line="${@{catalog}.dir}/catalog.xml"/>
+                <arg line="catalog.xml"/>
                 <arg line="-o:${test-results.dir}/@{catalog}/${DSTAMP}"/>
                 <arg line="-lang:@{lang}"/>
                 <other-arg/>
@@ -751,18 +806,19 @@
 
     <!-- Running W3C QT3 test catalog with PE -->
     <target name="qt3-tests-pej" depends="compile-testdrivers-j, qt3-test-results-dir">
-        <!--<qt3-tests catalog="qt3" version="pe" lang="XP20"/>-->
+        <qt3-tests catalog="qt3" version="pe" lang="XP20"/>
         <qt3-tests catalog="qt3" version="pe" lang="XP30"/>
-        <!--<qt3-tests catalog="qt3" version="pe" lang="XP31"/>-->
-        <!--<qt3-tests catalog="qt3" version="pe" lang="XQ10"/>
-        <qt3-tests catalog="qt3" version="pe" lang="XQ30"/>-->
-        <!--<qt3-tests catalog="qt3" version="pe" lang="XQ31"/>-->
+        <qt3-tests catalog="qt3" version="pe" lang="XP31"/>
+        <qt3-tests catalog="qt3" version="pe" lang="XQ10"/>
+        <qt3-tests catalog="qt3" version="pe" lang="XQ30"/>
+        <qt3-tests catalog="qt3" version="pe" lang="XQ31"/>
     </target>
 
     <!-- Running W3C QT3 test catalog with EE 
-         These are split into 4 subtargets such that each can be run independently -->
+         These are split into 6 subtargets such that each can be run independently -->
     <target name="qt3-tests-eej" depends="compile-testdrivers-j, qt3-test-results-dir, 
-        qt3-tests-eej-XP20, qt3-tests-eej-XP30, qt3-tests-eej-XQ10, qt3-tests-eej-XQ30">
+        qt3-tests-eej-XP20, qt3-tests-eej-XP30, qt3-tests-eej-XP31,
+        qt3-tests-eej-XQ10, qt3-tests-eej-XQ30, qt3-tests-eej-XQ31">
     </target>
 
     <target name="qt3-tests-eej-XP20" depends="compile-testdrivers-j, qt3-test-results-dir">        
@@ -777,6 +833,30 @@
             </other-arg>
         </qt3-tests>
     </target>
+    <target name="qt3-tests-eej-XP30" depends="compile-testdrivers-j, qt3-test-results-dir">
+        <qt3-tests catalog="qt3" version="ee" lang="XP30" bc="-off">
+            <other-arg>
+                <arg line= "-bytecode:off"/>
+            </other-arg>
+        </qt3-tests>
+        <qt3-tests catalog="qt3" version="ee" lang="XP30" bc="-on">
+            <other-arg>
+                <arg line= "-bytecode:on"/>
+            </other-arg>
+        </qt3-tests>
+    </target>
+    <target name="qt3-tests-eej-XP31" depends="compile-testdrivers-j, qt3-test-results-dir">
+        <qt3-tests catalog="qt3" version="ee" lang="XP31" bc="-off">
+            <other-arg>
+                <arg line= "-bytecode:off"/>
+            </other-arg>
+        </qt3-tests>
+        <qt3-tests catalog="qt3" version="ee" lang="XP31" bc="-on">
+            <other-arg>
+                <arg line= "-bytecode:on"/>
+            </other-arg>
+        </qt3-tests>
+    </target>
     <target name="qt3-tests-eej-XQ10" depends="compile-testdrivers-j, qt3-test-results-dir">        
         <qt3-tests catalog="qt3" version="ee" lang="XQ10" bc="-off">
             <other-arg>
@@ -784,18 +864,6 @@
             </other-arg>
         </qt3-tests>
         <qt3-tests catalog="qt3" version="ee" lang="XQ10" bc="-on">
-            <other-arg>
-                <arg line= "-bytecode:on"/>
-            </other-arg>
-        </qt3-tests>
-    </target>
-    <target name="qt3-tests-eej-XP30" depends="compile-testdrivers-j, qt3-test-results-dir">        
-        <qt3-tests catalog="qt3" version="ee" lang="XP30" bc="-off">
-            <other-arg>
-                <arg line= "-bytecode:off"/>
-            </other-arg>
-        </qt3-tests>
-        <qt3-tests catalog="qt3" version="ee" lang="XP30" bc="-on">
             <other-arg>
                 <arg line= "-bytecode:on"/>
             </other-arg>
@@ -819,35 +887,23 @@
             </other-arg>
         </qt3-tests>
     </target>
-    <target name="qt3-tests-eej-XP31" depends="compile-testdrivers-j, qt3-test-results-dir">
-        <qt3-tests catalog="qt3" version="ee" lang="XP31" bc="-off">
-            <other-arg>
-                <arg line= "-bytecode:off"/>
-            </other-arg>
-        </qt3-tests>
-        <qt3-tests catalog="qt3" version="ee" lang="XP31" bc="-on">
-            <other-arg>
-                <arg line= "-bytecode:on"/>
-            </other-arg>
-        </qt3-tests>
-    </target>
     <target name="qt3-tests-eej-XQ31" depends="compile-testdrivers-j, qt3-test-results-dir">
-        <!--<qt3-tests catalog="qt3" version="ee" lang="XQ31" bc="-off">
+        <qt3-tests catalog="qt3" version="ee" lang="XQ31" bc="-off">
             <other-arg>
                 <arg line= "-bytecode:off"/>
             </other-arg>
-        </qt3-tests>-->
+        </qt3-tests>
         <qt3-tests catalog="qt3" version="ee" lang="XQ31" bc="-on">
             <other-arg>
                 <arg line= "-bytecode:on"/>
             </other-arg>
         </qt3-tests>
-        <!--<qt3-tests catalog="qt3" version="ee" lang="XQ31" bc="-on-unfolded">
+        <qt3-tests catalog="qt3" version="ee" lang="XQ31" bc="-on-unfolded">
             <other-arg>
                 <arg line= "-bytecode:on"/>
                 <arg line="-unfolded:yes"/>
             </other-arg>
-        </qt3-tests>-->
+        </qt3-tests>
     </target>
     
 
@@ -855,7 +911,7 @@
 
 
     <!-- Running Saxon's QT3extra test catalog with HE -->
-    <!--<target name="qt3extra-tests-hej" depends="compile-testdrivers-j, qt3-test-results-dir">
+   <!-- <target name="qt3extra-tests-hej" depends="compile-testdrivers-j, qt3-test-results-dir">
         <qt3-tests catalog="qt3extra" version="he" lang="XP20" test-driver="net.sf.saxon.testdriver.QT3TestDriverHE"/>
         <qt3-tests catalog="qt3extra" version="he" lang="XP30" test-driver="net.sf.saxon.testdriver.QT3TestDriverHE"/>
         <qt3-tests catalog="qt3extra" version="he" lang="XQ10" test-driver="net.sf.saxon.testdriver.QT3TestDriverHE"/>
@@ -866,8 +922,10 @@
     <target name="qt3extra-tests-pej" depends="compile-testdrivers-j, qt3-test-results-dir">
         <qt3-tests catalog="qt3extra" version="pe" lang="XP20"/>
         <qt3-tests catalog="qt3extra" version="pe" lang="XP30"/>
+        <qt3-tests catalog="qt3extra" version="pe" lang="XP31"/>
         <qt3-tests catalog="qt3extra" version="pe" lang="XQ10"/>
         <qt3-tests catalog="qt3extra" version="pe" lang="XQ30"/>
+        <qt3-tests catalog="qt3extra" version="pe" lang="XQ31"/>
     </target>
 
     <!-- Running Saxon's QT3extra test catalog with EE -->
@@ -892,6 +950,16 @@
                 <arg line= "-bytecode:on"/>
             </other-arg>
         </qt3-tests>
+        <qt3-tests catalog="qt3extra" version="ee" lang="XP31" bc="-off">
+            <other-arg>
+                <arg line= "-bytecode:off"/>
+            </other-arg>
+        </qt3-tests>
+        <qt3-tests catalog="qt3extra" version="ee" lang="XP31" bc="-on">
+            <other-arg>
+                <arg line= "-bytecode:on"/>
+            </other-arg>
+        </qt3-tests>
         <qt3-tests catalog="qt3extra" version="ee" lang="XQ10" bc="-off">
             <other-arg>
                 <arg line= "-bytecode:off"/>
@@ -908,6 +976,16 @@
             </other-arg>
         </qt3-tests>
         <qt3-tests catalog="qt3extra" version="ee" lang="XQ30" bc="-on">
+            <other-arg>
+                <arg line= "-bytecode:on"/>
+            </other-arg>
+        </qt3-tests>
+        <qt3-tests catalog="qt3extra" version="ee" lang="XQ31" bc="-off">
+            <other-arg>
+                <arg line= "-bytecode:off"/>
+            </other-arg>
+        </qt3-tests>
+        <qt3-tests catalog="qt3extra" version="ee" lang="XQ31" bc="-on">
             <other-arg>
                 <arg line= "-bytecode:on"/>
             </other-arg>

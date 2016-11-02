@@ -105,7 +105,7 @@
 
 
     <!--REMOVE COMMENT to incldue dotnet  <target name="samples" depends="samples-j, samples-n"/>  -->
-     <target name="samples" depends="samples-j"/>
+     <target name="samples" depends="samples-j, samples-n"/>
 
 
 

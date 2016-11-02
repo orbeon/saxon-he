@@ -34,12 +34,12 @@
     <import file="build-locations.xml"/>
     <!-- defines $repo-os and $repo-priv and other local machine directories -->
 
-    <property name="version" value="9.7.0.1"/>
-    <property name="versionh" value="9-7-0-1"/>
+    <property name="version" value="9.7.0.10"/>
+    <property name="versionh" value="9-7-0-10"/>
     <property name="major.version" value="9.7"/>
     <property name="major.versionh" value="9-7"/>
-    <property name="release.date" value="2015-11-27"/>
-    <property name="version.maven" value="9.7.0-1"/>
+    <property name="release.date" value="2016-10-21"/>
+    <property name="version.maven" value="9.7.0-10"/>
 
     <!-- REMEMBER ALSO TO SET THE VERSION IN Version.java -->
 
@@ -51,23 +51,34 @@
 
     <property name="repository" value=".."/>
     <property name="repository.uri" value="${basedir}/.."/>
+    <property name="repo-priv.uri" value="${basedir}/${repo-priv}"/>
 
-    <property name="development-j.dir" value="${repository}/src"/>
+    <!--<property name="development-j.dir" value="${repository}/src"/>
     <property name="development-data.dir" value="${development-j.dir}/he/data"/>
-    <property name="stats-data.dir" value="${development-j.dir}/ee/data"/>
-    <property name="source-hej.dir" value="${repo-os}/he/java"/>
-    <property name="source-eej.dir" value="${repo-priv}/ee/java"/>
+    <property name="stats-data.dir" value="${development-j.dir}/ee/data"/>-->
+    <property name="source-hej.dir" value="${repo-os}/latest${major.version}/hej"/>
+    <property name="source-eej.dir" value="${repo-priv}/latest${major.version}/eej"/>
+    <!--<property name="source-hej.dir" value="${repo-os}/he/java"/>
+    <property name="source-eej.dir" value="${repo-priv}/ee/java"/>  -->
+    <property name="development-data.dir" value="${source-hej.dir}/data"/>
+    <property name="stats-data.dir" value="${source-eej.dir}/data"/>
 
     <!-- a suitable saxon license file -->
     <property name="saxon.license" value="${license.dir}/saxon-license.lic"
         description="A Saxon license capable of running EE"/>
 
     <!-- directory holding XML user documentation -->
-    <property name="userdoc.dir" value="${repository}/userdoc"/>
+    <property name="userdoc.dir" value="${repo-priv}/latest${major.version}/userdoc"/>
 
     <!-- directories holding use cases and sample applications -->
     <property name="usecases.dir" value="${repository}/use-cases"/>
-    <property name="samples.dir" value="${repository}/samples"/>
+    <property name="samples.dir" value="${repo-os}/latest${major.version}/samples"/>
+
+    <!-- Location of Feature Keys Tools directory -->
+    <property name="featureKeys.dir" value="${userdoc.dir}/tools/featureKeys"
+              description="Feature Keys directory in archive repository"/>
+    <!--<property name="featureKeys.dir" value="${repository}/tools/featureKeys"
+              description="Feature Keys directory in development repository"/>-->
 
 
     <!-- following locations are relative to the build file -->
@@ -123,7 +134,7 @@
     <property name="build.compress" value="true"/>
 
     <!-- ICU locations and whether it should be in a separate JAR-->
-    <property name="ICU.version" value="52_1" description="Version number - currently 52_1|53_1"/>
+    <property name="ICU.version" value="57_1" description="Version number - currently 57_1"/>
     <property name="ICU.dir" value="${lib.dir}/ICU/icu4j-${ICU.version}"/>
     <property name="icu4j.classes.dir" value="${ICU.dir}/out/module/bin"/>
     <property name="ICU.separate.JARS" value="true" description="Create saxon9-icu.jar"/>

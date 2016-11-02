@@ -138,7 +138,7 @@ http\://www.w3.org/XML/XMLSchema/v1.1: com.saxonica.jaxp.SchemaFactoryImpl
 
     <target name="expand-icu" unless="ICU-exists">
       <echo>Expanding ICU source...</echo>
-      <untar src="${lib.dir}/icu4j-52_1.tar" dest="${ICU.dir}"/>
+      <untar src="${lib.dir}/icu4j-57_1.tar" dest="${ICU.dir}"/>
     </target>
 
     <target name="prepare-j" depends="create-meta-inf, expand-icu">
@@ -756,7 +756,6 @@ http\://www.w3.org/XML/XMLSchema/v1.1: com.saxonica.jaxp.SchemaFactoryImpl
 
         </jar>      -->
 
-
         <javadoc bottom="Copyright (c) 2004-2015 Saxonica Limited. All rights reserved."
             destdir="${product.dir}/maven/javadoc" doctitle="Saxon9 Java API Documentation" noindex="false"
             notree="false" access="protected" maxmemory="512M" source="1.5">
@@ -999,10 +998,9 @@ http\://www.w3.org/XML/XMLSchema/v1.1: com.saxonica.jaxp.SchemaFactoryImpl
 
     </target>
 
-
     <target name="product-javadoc" description="Generate Javadoc."
         depends="copysource-development-j">
-        <javadoc bottom="Copyright (c) 2004-2014 Saxonica Limited. All rights reserved."
+        <javadoc bottom="Copyright (c) 2004-2015 Saxonica Limited. All rights reserved."
             destdir="${javadoc.dir}" doctitle="Saxon9 Java API Documentation" noindex="false"
             notree="false" access="protected" maxmemory="512M" source="1.5">
             <packageset dir="${temp-src-j.dir}/eej">
@@ -1010,6 +1008,7 @@ http\://www.w3.org/XML/XMLSchema/v1.1: com.saxonica.jaxp.SchemaFactoryImpl
                 <include name="com/**"/>
                 <include name="javax/xml/query/**"/>
                 <exclude name="com/saxonica/testdriver/**"/>
+                <exclude name="net/sf/saxon/testdriver/**"/>
                 <exclude name="**/dotnet/**"/>
                 <exclude name="**/DotNetVerifier.java"/>
             </packageset>
