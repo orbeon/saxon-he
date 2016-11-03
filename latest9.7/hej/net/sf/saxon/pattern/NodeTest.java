@@ -292,7 +292,7 @@ public abstract class NodeTest implements ItemType {
      */
     public String generateJavaScriptItemTypeAcceptor(String errorCode) throws XPathException {
         return "function test(item) {" + generateJavaScriptItemTypeTest(AnyItemType.getInstance()) + "};" +
-                "if (test(val)) {return val;} else {throw XError('Conversion failed', '" + errorCode + "');}";
+                "if (test(val)) {return val;} else {throw SaxonJS.XError('Conversion failed', '" + errorCode + "');}";
     }
 }
 

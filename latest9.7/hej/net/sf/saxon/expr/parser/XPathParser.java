@@ -3141,7 +3141,6 @@ public class XPathParser {
                 // avoid doing this when the function has already been optimized away, e.g. unordered()
                 // Also avoid doing this when a js: function is parsed into an ixsl:call()
                 // TODO move the adoptChildExpression into individual function libraries
-                // TODO:moveTo9.8
                 fcall.adoptChildExpression(argument);
             }
         }
