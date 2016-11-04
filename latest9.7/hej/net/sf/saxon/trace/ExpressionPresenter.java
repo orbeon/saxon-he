@@ -195,13 +195,9 @@ public class ExpressionPresenter {
         props.setProperty(OutputKeys.INDENT, "yes");
         props.setProperty(SaxonOutputKeys.INDENT_SPACES, "1");
         props.setProperty(SaxonOutputKeys.LINE_LENGTH, "4096");
-        if (config.getXMLVersion() == Configuration.XML11) {
-            props.setProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-            props.setProperty(OutputKeys.VERSION, "1.1");
-        } else {
-            props.setProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            props.setProperty(OutputKeys.VERSION, "1.0");
-        }
+        props.setProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+        props.setProperty(OutputKeys.ENCODING, "utf-8");
+        props.setProperty(OutputKeys.VERSION, "1.0");
         return props;
     }
 
