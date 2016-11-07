@@ -12,9 +12,11 @@ import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.iter.*;
+import net.sf.saxon.tree.iter.GroundedIterator;
+import net.sf.saxon.tree.iter.ListIterator;
+import net.sf.saxon.tree.iter.ReverseListIterator;
+import net.sf.saxon.tree.iter.UnfailingIterator;
 import net.sf.saxon.tree.util.FastStringBuffer;
-import net.sf.saxon.type.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +30,6 @@ import java.util.List;
 
 public class SequenceExtent implements GroundedValue {
     private List<? extends Item> value;
-    private ItemType itemType = null;   // memoized
 
 
     /**
