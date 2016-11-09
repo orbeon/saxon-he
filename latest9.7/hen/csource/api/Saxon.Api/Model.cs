@@ -203,7 +203,7 @@ namespace Saxon.Api
             else if (value is JItem)
             {
                 ArrayList list = new ArrayList(1);
-                list.Add((JNodeInfo)value);
+                list.Add((XdmItem)XdmValue.Wrap(value));
                 return list;
             }
             else
