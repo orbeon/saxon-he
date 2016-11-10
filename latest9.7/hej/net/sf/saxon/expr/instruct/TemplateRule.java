@@ -384,7 +384,7 @@ public class TemplateRule implements RuleTarget, Location {
      * Output diagnostic explanation to an ExpressionPresenter
      */
 
-    public void export(ExpressionPresenter presenter) throws XPathException{
+    public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("template");
 
         explainProperties(presenter);
@@ -403,11 +403,14 @@ public class TemplateRule implements RuleTarget, Location {
         presenter.endElement();
     }
 
-    public void explainProperties(ExpressionPresenter presenter) {
+    public void explainProperties(ExpressionPresenter presenter) throws XPathException {
+        if ("JS".equals(presenter.getOption("target")) && (getRequiredContextItemType() != AnyItemType.getInstance()
+                || !mayOmitContextItem || !maySupplyContextItem)) {
+            throw new XPathException("xsl:context-item is not supported in Saxon-JS", SaxonErrorCode.SXJS0001);
+        }
         if (getRequiredContextItemType() != AnyItemType.getInstance()) {
             presenter.emitAttribute("cxt", getRequiredContextItemType().toString());
         }
-
         String flags = "";
         if (mayOmitContextItem) {
             flags = "o";

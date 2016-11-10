@@ -14,6 +14,7 @@ import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trace.LocationKind;
+import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.SymbolicName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.AnyItemType;
@@ -289,7 +290,11 @@ public class NamedTemplate extends ComponentCode<NamedTemplate> {
         presenter.endElement();
     }
 
-    public void explainProperties(ExpressionPresenter presenter) {
+    public void explainProperties(ExpressionPresenter presenter) throws XPathException {
+        if ("JS".equals(presenter.getOption("target")) && (getRequiredContextItemType() != AnyItemType.getInstance()
+                || !mayOmitContextItem || !maySupplyContextItem)) {
+            throw new XPathException("xsl:context-item is not supported in Saxon-JS", SaxonErrorCode.SXJS0001);
+        }
         if (getRequiredContextItemType() != AnyItemType.getInstance()) {
             presenter.emitAttribute("cxt", getRequiredContextItemType().toString());
         }
