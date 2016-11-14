@@ -350,7 +350,11 @@ public class JavaPlatform implements Platform {
      */
 
     public String getInstallationDirectory(String edition, Configuration config) {
-        return System.getenv("SAXON_HOME");
+        try {
+            return System.getenv("SAXON_HOME");
+        } catch (SecurityException e) {
+            return null;
+        }
     }
 
     /**
