@@ -27,11 +27,9 @@ import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
-import net.sf.saxon.value.StringValue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -355,7 +353,7 @@ public class Literal extends Expression {
     public void process(XPathContext context) throws XPathException {
         SequenceReceiver out = context.getReceiver();
         if (value instanceof Item) {
-            out.append((Item)value);
+            out.append((Item)value, getLocation(), NodeInfo.ALL_NAMESPACES);
         } else {
             SequenceIterator iter = value.iterate();
             Item it;
