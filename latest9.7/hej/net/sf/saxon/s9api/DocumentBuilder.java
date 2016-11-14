@@ -404,6 +404,7 @@ public class DocumentBuilder {
     public BuildingContentHandler newBuildingContentHandler() throws SaxonApiException {
         PipelineConfiguration pipe = config.makePipelineConfiguration();
         Builder builder = treeModel.makeBuilder(pipe);
+        builder.setSystemId(baseURI.toASCIIString());
         builder.setLineNumbering(lineNumbering);
         Receiver r = builder;
         r = new NamespaceReducer(r);
