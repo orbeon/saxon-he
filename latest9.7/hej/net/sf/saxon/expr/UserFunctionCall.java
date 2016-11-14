@@ -368,7 +368,7 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
      * Compute the evaluation mode of each argument
      */
 
-    public void computeArgumentEvaluationModes() {
+    public synchronized void computeArgumentEvaluationModes() {
         int numArgs = getArity();
         argumentEvaluationModes = new int[numArgs];
         for (int i = 0; i < numArgs; i++) {
