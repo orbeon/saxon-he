@@ -67,6 +67,7 @@ public abstract class StyleElement extends ElementImpl {
     private StructuredQName objectName;  // for instructions that define an XSLT named object, the name of that object
     private String baseURI;
     private Compilation compilation;
+    private ExplicitLocation savedLocation;
 
 
     // Conditions under which an error is to be reported
@@ -2065,7 +2066,7 @@ public abstract class StyleElement extends ElementImpl {
                     let.setSequence(sourceBinding.getSelectExpression());
                     let.setAction(tail);
                     sourceBinding.fixupBinding(let);
-                    locationId = allocateLocation();
+                    locationId = ((StyleElement)node).allocateLocation();
                     let.setLocation(locationId);
                     if (getCompilation().getCompilerInfo().isCompileWithTracing()) {
                         TraceExpression t = new TraceExpression(let);
@@ -2202,7 +2203,10 @@ public abstract class StyleElement extends ElementImpl {
      */
 
     protected Location allocateLocation() {
-        return this;
+        if (savedLocation == null) {
+            savedLocation = new ExplicitLocation(this);
+        }
+        return savedLocation;
     }
 
     /**
