@@ -549,7 +549,7 @@ public class Xslt30Transformer {
         prime();
         try {
             Receiver out = getDestinationReceiver(destination);
-            controller.initializeController(globalParameterSet);
+            //controller.initializeController(globalParameterSet);
             controller.transform(source, out);
         } catch (XPathException e) {
             if (!e.hasBeenReported()) {
@@ -587,7 +587,7 @@ public class Xslt30Transformer {
             PipelineConfiguration pipe = controller.makePipelineConfiguration();
             SequenceOutputter out = new SequenceOutputter(pipe, 1);
             controller.setBuildTree(false);
-            controller.initializeController(globalParameterSet);
+            //controller.initializeController(globalParameterSet);
             controller.transform(source, out);
             Sequence result = out.getSequence();
             return XdmValue.wrap(result);
