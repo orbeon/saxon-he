@@ -207,8 +207,10 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
         for (LocalParam lp0 : otherParams) {
             XSLLocalParam lp1 = getParam(lp0.getVariableQName());
             if (lp1 == null) {
-                compileError("The overridden template declares a parameter " +
-                        lp0.getVariableQName().getDisplayName() + " which is not declared in the overriding template", "XTSE3070");
+                if (!lp0.isTunnelParam()) {
+                    compileError("The overridden template declares a parameter " +
+                            lp0.getVariableQName().getDisplayName() + " which is not declared in the overriding template", "XTSE3070");
+                }
                 return;
             }
             if (!lp1.getRequiredType().equals(lp0.getRequiredType())) {
@@ -216,7 +218,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                         lp0.getVariableQName().getDisplayName() + " has a different required type in the overridden template", "XTSE3070");
                 return;
             }
-            if (lp1.isRequiredParam() != lp0.isRequiredParam()) {
+            if (lp1.isRequiredParam() != lp0.isRequiredParam() && !lp0.isTunnelParam()) {
                 lp1.compileError("The parameter " +
                         lp0.getVariableQName().getDisplayName() + " is " +
                         (lp1.isRequiredParam() ? "required" : "optional") +
