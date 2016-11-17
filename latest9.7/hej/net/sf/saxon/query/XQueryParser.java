@@ -2050,8 +2050,8 @@ public class XQueryParser extends XPathParser {
         func.setFunctionName(qName);
         func.setResultType(SequenceType.ANY_SEQUENCE);
         func.setBody(null);
-        Location loc = new ExplicitLocation(env.getSystemId(), t.getLineNumber(offset), t.getColumnNumber(offset));
-        func.setLocation(loc);
+        func.setLocation(
+                makeNestedLocation(env.getContainingLocation(), t.getLineNumber(offset), t.getColumnNumber(offset), null));
         func.setStaticContext((QueryModule) env);
         func.setMemoFunction(memoFunction);
         if (annotations != null) {

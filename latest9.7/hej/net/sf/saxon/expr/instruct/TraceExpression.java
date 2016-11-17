@@ -11,7 +11,6 @@ import com.saxonica.ee.bytecode.ExpressionCompiler;
 import com.saxonica.ee.bytecode.TraceExpressionCompiler;
 import net.sf.saxon.Controller;
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.expr.parser.PromotionOffer;
 import net.sf.saxon.expr.parser.RebindingMap;
@@ -176,7 +175,7 @@ public class TraceExpression extends Instruction implements InstructionInfo {
     /*@NotNull*/
     public Expression copy(RebindingMap rebindings) {
         TraceExpression t = new TraceExpression(getChild().copy(rebindings));
-        ExpressionTool.copyLocationInfo(this, t);
+        t.setLocation(getLocation());
         t.objectName = objectName;
         t.namespaceResolver = namespaceResolver;
         t.constructType = constructType;
