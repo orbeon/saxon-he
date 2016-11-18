@@ -8,7 +8,7 @@
 package net.sf.saxon.expr.parser;
 
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.instruct.LocalParamSetter;
+import net.sf.saxon.expr.instruct.LocalParam;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.GlobalVariableManager;
@@ -195,7 +195,7 @@ public class PromotionOffer {
             }
 
             case EXTRACT_GLOBAL_VARIABLES:
-                if (!(child instanceof Literal || child instanceof LocalParamSetter ||
+                if (!(child instanceof Literal || child instanceof LocalParam ||
                         (child == containingExpression) /*||
                         ExpressionTool.containsLocalParam(child)*/) &&
                         (child.getDependencies() & ~StaticProperty.DEPENDS_ON_RUNTIME_ENVIRONMENT) == 0 &&

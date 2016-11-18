@@ -12,11 +12,13 @@ import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.type.ErrorType;
+import net.sf.saxon.type.ItemType;
 import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.SequenceType;
 
-import javax.xml.transform.SourceLocator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,11 +33,13 @@ import java.util.List;
  * Global parameters (XQuery external variables) are handled using {@link GlobalParam}.</p>
  * <p/>
  * <p>The LocalParam class is also used to represent parameters with the saxon:iterate instruction</p>
+ * <p/>
+ * <p>Changed in Saxon 9.8 to combine the previously-separate LocalParamSetter and LocalParam classes into one</p>
  */
 
-public final class LocalParam implements LocalBinding, SourceLocator {
+public final class LocalParam extends Instruction implements LocalBinding {
 
-    /*@Nullable*/ private Expression conversion = null;
+    private Operand conversionOp = null;
     private int conversionEvaluationMode = ExpressionTool.UNDECIDED;
 
     private static final int REQUIRED = 4;
@@ -44,72 +48,12 @@ public final class LocalParam implements LocalBinding, SourceLocator {
     // value is not a valid instance of the type.
 
     private byte properties = 0;
-    Expression select = null;
+    private Operand selectOp = null;
     protected StructuredQName variableQName;
-    SequenceType requiredType;
+    private SequenceType requiredType;
     protected int slotNumber = -999;
     protected int referenceCount = 10;
     protected int evaluationMode = ExpressionTool.UNDECIDED;
-    private Location locationId = ExplicitLocation.UNKNOWN_LOCATION;
-
-    public LocalParam() {
-
-    }
-
-    /**
-     * Set the location on an expression.
-     *
-     * @param id the location
-     */
-
-    public void setLocationId(Location id) {
-        locationId = id;
-    }
-
-    /**
-     * Get the location of the expression
-     *
-     * @return a location identifier, which can be turned into real
-     *         location information by reference to a location provider
-     */
-
-    public final Location getLocationId() {
-        return locationId;
-    }
-
-    /**
-     * Get the line number of the expression
-     * @return the line number
-     */
-
-    public int getLineNumber() {
-        return locationId.getLineNumber();
-    }
-
-    /**
-     * Get the column number of the expression
-     * @return the column number
-     */
-
-    public int getColumnNumber() {
-        return locationId.getColumnNumber();
-    }
-
-    /**
-     * Get the systemId of the module containing the expression
-     */
-
-    public String getSystemId() {
-        return locationId.getSystemId();
-    }
-
-    /**
-     * Get the publicId of the module containing the expression (to satisfy the SourceLocator interface)
-     */
-
-    public final String getPublicId() {
-        return null;
-    }
 
 
     /**
@@ -119,7 +63,15 @@ public final class LocalParam implements LocalBinding, SourceLocator {
      */
 
     public void setSelectExpression(Expression select) {
-        this.select = select;
+        if (select != null) {
+            if (selectOp == null) {
+                selectOp = new Operand(this, select, OperandRole.NAVIGATE);
+            } else {
+                selectOp.setChildExpression(select);
+            }
+        } else {
+            selectOp = null;
+        }
         evaluationMode = ExpressionTool.UNDECIDED;
     }
 
@@ -130,7 +82,7 @@ public final class LocalParam implements LocalBinding, SourceLocator {
      */
 
     public Expression getSelectExpression() {
-        return select;
+        return selectOp == null ? null : selectOp.getChildExpression();
     }
 
     /**
@@ -217,7 +169,7 @@ public final class LocalParam implements LocalBinding, SourceLocator {
             if (referenceCount == FilterExpression.FILTERED) {
                 evaluationMode = ExpressionTool.MAKE_INDEXED_VARIABLE;
             } else {
-                evaluationMode = ExpressionTool.lazyEvaluationMode(select);
+                evaluationMode = ExpressionTool.lazyEvaluationMode(getSelectExpression());
             }
         }
         return evaluationMode;
@@ -282,42 +234,32 @@ public final class LocalParam implements LocalBinding, SourceLocator {
         return (properties & TUNNEL) != 0;
     }
 
-    /**
-     * Simplify this variable
-     *
-     * @param env the static context
-     * @throws XPathException if a failure occurs
-     */
 
-    public void simplify(StaticContext env) throws XPathException {
-        if (select != null) {
-            select = select.simplify();
-        }
-    }
-
-    public void typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
-        if (select != null) {
-            select = select.typeCheck(visitor, contextItemType);
-            //adoptChildExpression(select);
+    public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
+        Expression e2 = super.typeCheck(visitor, contextItemType);
+        if (e2 != this) {
+            return e2;
         }
         checkAgainstRequiredType(visitor);
+        return this;
     }
 
-    public void optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
-        if (select != null) {
-            select = select.optimize(visitor, contextItemType);
-            //adoptChildExpression(select);
+    public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
+        Expression e2 = super.optimize(visitor, contextItemType);
+        if (e2 != this) {
+            return e2;
+        }
+        if (selectOp != null) {
             computeEvaluationMode();
         }
+        return this;
     }
 
     public void computeEvaluationMode() {
-        if (isAssignable()) {
-            evaluationMode = ExpressionTool.eagerEvaluationMode(select);
-        } else if (referenceCount == FilterExpression.FILTERED) {
+        if (referenceCount == FilterExpression.FILTERED) {
             evaluationMode = ExpressionTool.MAKE_INDEXED_VARIABLE;
         } else {
-            evaluationMode = ExpressionTool.lazyEvaluationMode(select);
+            evaluationMode = ExpressionTool.lazyEvaluationMode(getSelectExpression());
         }
     }
 
@@ -325,23 +267,27 @@ public final class LocalParam implements LocalBinding, SourceLocator {
     /**
      * Copy an expression. This makes a deep copy.
      *
+     * @param rebindings a mutable list of (old binding, new binding) pairs
+     *                   that is used to update the bindings held in any
+     *                   local variable references that are copied.
      * @return the copy of the original expression
      */
 
     public LocalParam copy(RebindingMap rebindings) {
         LocalParam p2 = new LocalParam();
-        p2.conversion = conversion.copy(rebindings);
+        if (conversionOp != null) {
+            p2.setConversion(getConversion().copy(rebindings));
+        }
         p2.conversionEvaluationMode = conversionEvaluationMode;
         p2.properties = properties;
-        if (select != null) {
-            p2.select = select.copy(rebindings);
+        if (selectOp != null) {
+            p2.setSelectExpression(getSelectExpression().copy(rebindings));
         }
         p2.variableQName = variableQName;
         p2.requiredType = requiredType;
         p2.slotNumber = slotNumber;
         p2.referenceCount = referenceCount;
         p2.evaluationMode = evaluationMode;
-        p2.locationId = locationId;
         return p2;
     }
 
@@ -362,6 +308,7 @@ public final class LocalParam implements LocalBinding, SourceLocator {
         RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.VARIABLE, variableQName.getDisplayName(), 0);
         //role.setSourceLocator(this);
         SequenceType r = requiredType;
+        Expression select = getSelectExpression();
         if (r != null && select != null) {
             // check that the expression is consistent with the required type
             select = TypeChecker.staticTypeCheck(select, requiredType, false, role, visitor);
@@ -375,18 +322,18 @@ public final class LocalParam implements LocalBinding, SourceLocator {
      *
      * @param context the XPath dynamic context
      * @return the result of evaluating the variable
-     * @throws net.sf.saxon.trans.XPathException
-     *          if evaluation of the select expression fails
-     *          with a dynamic error
+     * @throws net.sf.saxon.trans.XPathException if evaluation of the select expression fails
+     *                                           with a dynamic error
      */
 
     public Sequence getSelectValue(XPathContext context) throws XPathException {
+        Expression select = getSelectExpression();
         if (select == null) {
             throw new AssertionError("Internal error: No select expression");
             // The value of the variable is a sequence of nodes and/or atomic values
         } else if (select instanceof Literal) {
             // fast path for common case
-            return ((Literal)select).getValue();
+            return ((Literal) select).getValue();
         } else {
             // There is a select attribute: do a lazy evaluation of the expression,
             // which will already contain any code to force conversion to the required type.
@@ -470,10 +417,14 @@ public final class LocalParam implements LocalBinding, SourceLocator {
      *                  referencing it using a VariableReference. The argument can be null to indicate
      *                  that no conversion is required.
      */
-    public void setConversion(/*@Nullable*/ Expression convertor) {
-        conversion = convertor;
+    public void setConversion(Expression convertor) {
         if (convertor != null) {
-            conversionEvaluationMode = ExpressionTool.eagerEvaluationMode(conversion);
+            if (conversionOp == null) {
+                conversionOp = new Operand(this, convertor, OperandRole.SINGLE_ATOMIC);
+            }
+            conversionEvaluationMode = ExpressionTool.eagerEvaluationMode(convertor);
+        } else {
+            conversionOp = null;
         }
     }
 
@@ -481,12 +432,12 @@ public final class LocalParam implements LocalBinding, SourceLocator {
      * Get the conversion expression
      *
      * @return the expression used to convert the value to the required type,
-     *         or null if there is none
+     * or null if there is none
      */
 
     /*@Nullable*/
     public Expression getConversion() {
-        return conversion;
+        return conversionOp == null ? null : conversionOp.getChildExpression();
     }
 
     public int getConversionEvaluationMode() {
@@ -495,6 +446,7 @@ public final class LocalParam implements LocalBinding, SourceLocator {
 
     /**
      * Get the name of this instruction for diagnostic and tracing purposes
+     *
      * @return the integer name code
      */
 
@@ -507,39 +459,20 @@ public final class LocalParam implements LocalBinding, SourceLocator {
      * Get all the XPath expressions associated with this instruction
      * (in XSLT terms, the expression present on attributes of the instruction,
      * as distinct from the child instructions in a sequence construction)
+     *
      * @return an iterator over the subexpressions
      */
 
-    public Iterable<Operand> operands(Expression parent) {
+    @Override
+    public Iterable<Operand> operands() {
         List<Operand> list = new ArrayList<Operand>();
-        if (select != null) {
-            list.add(new Operand(parent, select, OperandRole.NAVIGATE));
+        if (selectOp != null) {
+            list.add(selectOp);
         }
-        if (conversion != null) {
-            list.add(new Operand(parent, conversion, OperandRole.SINGLE_ATOMIC));
+        if (conversionOp != null) {
+            list.add(conversionOp);
         }
         return list;
-    }
-
-    /**
-     * Replace one subexpression by a replacement subexpression
-     *
-     * @param original    the original subexpression
-     * @param replacement the replacement subexpression
-     * @return true if the original subexpression is found
-     */
-
-    public boolean replaceSubExpression(Expression original, Expression replacement) {
-        boolean found = false;
-        if (select == original) {
-            select = replacement;
-            found = true;
-        }
-        if (conversion == original) {
-            conversion = replacement;
-            found = true;
-        }
-        return found;
     }
 
 
@@ -548,8 +481,7 @@ public final class LocalParam implements LocalBinding, SourceLocator {
      *
      * @param context the dynamic context
      * @return either null if processing is complete, or a tailcall if one is left outstanding
-     * @throws net.sf.saxon.trans.XPathException
-     *          if a dynamic error occurs in the evaluation
+     * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs in the evaluation
      */
 
     public TailCall processLeavingTail(XPathContext context) throws XPathException {
@@ -562,9 +494,9 @@ public final class LocalParam implements LocalBinding, SourceLocator {
             case ParameterSet.SUPPLIED:
                 // if a parameter was supplied by the caller, with no type-checking by the caller,
                 // then we may need to convert it to the type required
-                if (conversion != null) {
+                if (conversionOp != null) {
                     context.setLocalVariable(slotNumber,
-                            ExpressionTool.evaluate(conversion, conversionEvaluationMode, context, 10));
+                                             ExpressionTool.evaluate(getConversion(), conversionEvaluationMode, context, 10));
                     // We do an eager evaluation here for safety, because the result of the
                     // type conversion overwrites the slot where the actual supplied parameter
                     // is contained.
@@ -578,8 +510,8 @@ public final class LocalParam implements LocalBinding, SourceLocator {
                 if (isImplicitlyRequiredParam()) {
                     String name = "$" + getVariableQName().getDisplayName();
                     XPathException e = new XPathException("A value must be supplied for parameter "
-                            + name + " because " +
-                            "the default value is not a valid instance of the required type");
+                                                                  + name + " because " +
+                                                                  "the default value is not a valid instance of the required type");
                     e.setXPathContext(context);
                     e.setErrorCode("XTDE0700");
                     throw e;
@@ -631,6 +563,121 @@ public final class LocalParam implements LocalBinding, SourceLocator {
         }
         return true;
     }
+
+    /**
+     * Ask whether this expression is, or contains, the binding of a given variable
+     *
+     * @param binding the variable binding
+     * @return true if this expression is the variable binding (for example a ForExpression
+     * or LetExpression) or if it is a FLWOR expression that binds the variable in one of its
+     * clauses.
+     */
+    @Override
+    public boolean hasVariableBinding(Binding binding) {
+        return this == binding;
+    }
+
+    /**
+     * Get the item type of the items returned by evaluating this instruction
+     *
+     * @return the static item type of the instruction
+     */
+    /*@NotNull*/
+    @Override
+    public ItemType getItemType() {
+        return ErrorType.getInstance();
+    }
+
+    /**
+     * Get the cardinality of the sequence returned by evaluating this instruction
+     *
+     * @return the static cardinality
+     */
+    @Override
+    public int computeCardinality() {
+        return StaticProperty.ALLOWS_ZERO_OR_MORE;
+    }
+
+    /**
+     * Get the static properties of this expression (other than its type). The result is
+     * bit-signficant. These properties are used for optimizations. In general, if
+     * property bit is set, it is true, but if it is unset, the value is unknown.
+     *
+     * @return a set of flags indicating static properties of this expression
+     */
+    @Override
+    public int computeSpecialProperties() {
+        return StaticProperty.HAS_SIDE_EFFECTS;
+    }
+
+    /**
+     * Determine whether this instruction creates new nodes.
+     * This implementation returns a default value of false
+     *
+     * @return true if the instruction creates new nodes (or if it can't be proved that it doesn't)
+     */
+    @Override
+    public boolean createsNewNodes() {
+        return false;
+    }
+
+    /**
+     * Get a name identifying the kind of expression, in terms meaningful to a user.
+     *
+     * @return a name identifying the kind of expression, in terms meaningful to a user.
+     * The name will always be in the form of a lexical XML QName, and should match the name used
+     * in explain() output displaying the expression.
+     */
+    @Override
+    public String getExpressionName() {
+        return "param";
+    }
+
+    /**
+     * Diagnostic print of expression structure. The abstract expression tree
+     * is written to the supplied output destination.
+     */
+
+    public void export(ExpressionPresenter out) throws XPathException {
+        out.startElement("param", this);
+        out.emitAttribute("name", getVariableQName());
+        out.emitAttribute("slot", "" + getSlotNumber());
+        String flags = getFlags();
+        if (!flags.isEmpty()) {
+            out.emitAttribute("flags", flags);
+        }
+//        if (binding.isTunnelParam()) {
+//            out.emitAttribute("tunnel", "1");
+//        }
+        if (getRequiredType() != SequenceType.ANY_SEQUENCE) {
+            out.emitAttribute("as", getRequiredType().toString());
+        }
+        if (getSelectExpression() != null) {
+            out.setChildRole("select");
+            getSelectExpression().export(out);
+        }
+        Expression conversion = getConversion();
+        if (conversion != null) {
+            out.setChildRole("conversion");
+            conversion.export(out);
+        }
+        out.endElement();
+    }
+
+    private String getFlags() {
+        String flags = "";
+        if (isTunnelParam()) {
+            flags += "t";
+        }
+        if (isRequiredParam()) {
+            flags += "r";
+        }
+        if (isImplicitlyRequiredParam()) {
+            flags += "i";
+        }
+        return flags;
+    }
+
 
 }
 

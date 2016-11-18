@@ -299,8 +299,8 @@ public class TemplateRule implements RuleTarget, Location {
     }
 
     private static void gatherLocalParams(Expression exp, List<LocalParam> result) {
-        if (exp instanceof LocalParamSetter) {
-            result.add(((LocalParamSetter) exp).getBinding());
+        if (exp instanceof LocalParam) {
+            result.add((LocalParam) exp);
         } else {
             for (Operand o : exp.operands()) {
                 gatherLocalParams(o.getChildExpression(), result);

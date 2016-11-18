@@ -34,7 +34,7 @@ public class LocalParamBlock extends Instruction {
      * @param params the parameters
      */
 
-    public LocalParamBlock(LocalParamSetter[] params) {
+    public LocalParamBlock(LocalParam[] params) {
         operanda = new Operand[params.length];
         for (int i=0; i<params.length; i++) {
             operanda[i] = new Operand(this, params[i], OperandRole.NAVIGATE);
@@ -68,10 +68,10 @@ public class LocalParamBlock extends Instruction {
 
     /*@NotNull*/
     public Expression copy(RebindingMap rebindings) {
-        LocalParamSetter[] c2 = new LocalParamSetter[getNumberOfParams()];
+        LocalParam[] c2 = new LocalParam[getNumberOfParams()];
         int i=0;
         for (Operand o : operands()) {
-            c2[i++] = (LocalParamSetter)o.getChildExpression().copy(rebindings);
+            c2[i++] = (LocalParam)o.getChildExpression().copy(rebindings);
         }
         return new LocalParamBlock(c2);
     }
@@ -105,8 +105,8 @@ public class LocalParamBlock extends Instruction {
 
     protected void promoteChildren(PromotionOffer offer) throws XPathException {
         for (Operand o : operands()) {
-            LocalParamSetter p = (LocalParamSetter)o.getChildExpression();
-            p.getBinding().setSelectExpression(doPromotion(p.getBinding().getSelectExpression(), offer));
+            LocalParam p = (LocalParam)o.getChildExpression();
+            p.setSelectExpression(doPromotion(p.getSelectExpression(), offer));
         }
     }
 
@@ -127,9 +127,9 @@ public class LocalParamBlock extends Instruction {
     /*@Nullable*/
     public TailCall processLeavingTail(XPathContext context) throws XPathException {
         for (Operand o : operands()) {
-            LocalParamSetter param = (LocalParamSetter)o.getChildExpression();
+            LocalParam param = (LocalParam)o.getChildExpression();
             try {
-                context.setLocalVariable(param.getBinding().getSlotNumber(), param.getBinding().getSelectValue(context));
+                context.setLocalVariable(param.getSlotNumber(), param.getSelectValue(context));
             } catch (XPathException e) {
                 e.maybeSetLocation(param.getLocation());
                 e.maybeSetContext(context);

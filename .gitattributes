@@ -1267,7 +1267,6 @@ latest9.7/hej/net/sf/saxon/expr/instruct/InstructionDetails.java svn_eol_002dsty
 latest9.7/hej/net/sf/saxon/expr/instruct/InstructionWithComplexContent.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/expr/instruct/LocalParam.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/expr/instruct/LocalParamBlock.java svn_eol_002dstyle=native
-latest9.7/hej/net/sf/saxon/expr/instruct/LocalParamSetter.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/expr/instruct/Message.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/expr/instruct/NamedTemplate.java svn_eol_002dstyle=native
 latest9.7/hej/net/sf/saxon/expr/instruct/NamespaceConstructor.java svn_eol_002dstyle=native

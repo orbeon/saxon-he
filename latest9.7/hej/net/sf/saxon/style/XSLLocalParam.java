@@ -10,7 +10,6 @@ package net.sf.saxon.style;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.SuppliedParameterReference;
 import net.sf.saxon.expr.instruct.LocalParam;
-import net.sf.saxon.expr.instruct.LocalParamSetter;
 import net.sf.saxon.expr.instruct.NamedTemplate;
 import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
@@ -201,7 +200,7 @@ public class XSLLocalParam extends XSLGeneralVariable {
                     named.addLocalParam(binding);
                 }
             }
-            return new LocalParamSetter(binding);
+            return binding;
 
         }
     }

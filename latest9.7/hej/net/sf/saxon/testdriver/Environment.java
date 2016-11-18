@@ -384,12 +384,21 @@ public class Environment implements URIResolver {
                 String href = ((XdmNode) schema).getAttributeValue(new QName("file"));
                 String ns = ((XdmNode) schema).getAttributeValue(new QName("uri"));
                 if (href == null) {
-                    try {
-                        Source[] sources = manager.getSchemaURIResolver().resolve(ns, null, new String[0]);
-                        manager.load(sources[0]);
-                    } catch (Exception e) {
-                        System.err.println("*** Failed to load schema by URI: " + ns + " - " + e.getMessage());
-                        e.printStackTrace();
+                    if (ns.equals(NamespaceConstant.XML)) {
+                        // There doesn't seem to be any way to force the Schema Manager to load the XML namespace
+                        String dummyXsd = "<schema xmlns='http://www.w3.org/2001/XMLSchema'>" +
+                                "<import namespace='http://www.w3.org/XML/1998/namespace'/>" +
+                                "</schema>";
+                        Source source = new StreamSource(new StringReader(dummyXsd));
+                        manager.load(source);
+                    } else {
+                        try {
+                            Source[] sources = manager.getSchemaURIResolver().resolve(ns, null, new String[0]);
+                            manager.load(sources[0]);
+                        } catch (Exception e) {
+                            System.err.println("*** Failed to load schema by URI: " + ns + " - " + e.getMessage());
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     File file = new File(((XdmNode) env).getBaseURI().resolve(href));

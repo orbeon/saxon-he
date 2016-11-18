@@ -482,7 +482,7 @@ public class ExpressionTool {
     public static boolean containsLocalParam(Expression exp) {
         return contains(exp, true, new ExpressionPredicate() {
             public boolean matches(Expression e) {
-                return e instanceof LocalParamSetter;
+                return e instanceof LocalParam;
             }
         });
     }
@@ -731,8 +731,8 @@ public class ExpressionTool {
                 frame.allocateSlotNumber(((Assignation) exp).getVariableQName());
             }
         }
-        if (exp instanceof LocalParamSetter && ((LocalParamSetter)exp).getBinding().getSlotNumber() < 0) {
-            ((LocalParamSetter)exp).getBinding().setSlotNumber(nextFree++);
+        if (exp instanceof LocalParam && ((LocalParam)exp).getSlotNumber() < 0) {
+            ((LocalParam)exp).setSlotNumber(nextFree++);
         }
 
         if (exp instanceof FLWORExpression) {
