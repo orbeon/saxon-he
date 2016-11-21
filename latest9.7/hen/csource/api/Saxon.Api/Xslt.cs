@@ -85,6 +85,7 @@ namespace Saxon.Api
         private ErrorGatherer errorGatherer;
         private Hashtable variableList = new Hashtable();
         private JXsltCompiler xsltCompiler;
+        private XmlResolver xmlResolver = null;
 
         // internal constructor: the public interface is a factory method
         // on the Processor object
@@ -170,19 +171,29 @@ namespace Saxon.Api
         {
             get
             {
-                javax.xml.transform.URIResolver resolver = processor.Implementation.getURIResolver();
-                if (resolver is JDotNetURIResolver)
+                if (xmlResolver == null)
                 {
-                    return ((JDotNetURIResolver)resolver).getXmlResolver();
+                    javax.xml.transform.URIResolver resolver = xsltCompiler.getUnderlyingCompilerInfo().getURIResolver();
+                    if (resolver is JDotNetURIResolver)
+                    {
+                        return ((JDotNetURIResolver)resolver).getXmlResolver();
+                    }
+                    else
+                    {
+                        xmlResolver = new XmlUrlResolver();
+                        return xmlResolver;
+                    }
                 }
                 else
                 {
-                    return new XmlUrlResolver();
+                    return xmlResolver;
                 }
+
             }
             set
             {
-                xsltCompiler.getUnderlyingCompilerInfo().setURIResolver(new JDotNetURIResolver(value));
+                xmlResolver = value;
+                xsltCompiler.getUnderlyingCompilerInfo().setURIResolver(new JDotNetURIResolver(xmlResolver));
             }
         }
 
