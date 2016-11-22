@@ -14,6 +14,7 @@ import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.Type;
+import net.sf.saxon.value.AnyURIValue;
 import net.sf.saxon.value.StringValue;
 
 /**
@@ -106,7 +107,8 @@ public abstract class UnparsedEntity extends SystemFunction implements Callable 
             }
         }
         String[] ids = doc.getTreeInfo().getUnparsedEntity(arg0);
-        return ids == null ? StringValue.EMPTY_STRING : new StringValue(ids[operation]);
+        String result = ids == null ? "" : ids[operation];
+        return operation == URI ? new AnyURIValue(result) : new StringValue(result);
     }
 
     public static class UnparsedEntityUri extends UnparsedEntity {
