@@ -123,10 +123,11 @@ public class XsltExecutable {
 
     public void export(OutputStream destination) throws SaxonApiException {
         Configuration config = processor.getUnderlyingConfiguration();
-        ExpressionPresenter presenter = new ExpressionPresenter(config, new StreamResult(destination), true);
+        ExpressionPresenter presenter = new ExpressionPresenter();
         if (preparedStylesheet.getTopLevelPackage().getTargetEdition().equals("JS")) {
             presenter.setOption("target", "JS");
         }
+        presenter.init(config, new StreamResult(destination), true);
         try {
             ((StylesheetPackage)preparedStylesheet.getTopLevelPackage()).export(presenter);
         } catch (XPathException e) {
@@ -155,8 +156,9 @@ public class XsltExecutable {
 
     public void export(OutputStream destination, String target) throws SaxonApiException {
         Configuration config = processor.getUnderlyingConfiguration();
-        ExpressionPresenter presenter = new ExpressionPresenter(config, new StreamResult(destination), true);
+        ExpressionPresenter presenter = new ExpressionPresenter();
         presenter.setOption("target", target);
+        presenter.init(config, new StreamResult(destination), true);
         try {
             ((StylesheetPackage)preparedStylesheet.getTopLevelPackage()).export(presenter);
         } catch (XPathException e) {

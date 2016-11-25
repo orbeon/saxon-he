@@ -262,7 +262,14 @@ public class Environment implements URIResolver {
             String fileName = ((XdmNode) stylesheet).getAttributeValue(new QName("file"));
             Source styleSource = new StreamSource(((XdmNode) env).getBaseURI().resolve(fileName).toString());
             try {
-                environment.xsltExecutable = environment.xsltCompiler.compile(styleSource);
+                if (driver.export) {
+                    File exportFile = new File(driver.resultsDir + "/export/" + name + ".sef");
+                    XsltPackage compiledPack = environment.xsltCompiler.compilePackage(styleSource);
+                    compiledPack.save(exportFile);
+                    environment.xsltExecutable = environment.xsltCompiler.loadExecutablePackage(exportFile.toURI());
+                } else {
+                    environment.xsltExecutable = environment.xsltCompiler.compile(styleSource);
+                }
             } catch (SaxonApiException e) {
                 driver.println("**** failure while compiling environment-defined stylesheet " + fileName);
                 environment.failedToBuild = true;

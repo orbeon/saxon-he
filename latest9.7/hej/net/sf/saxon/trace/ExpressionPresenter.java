@@ -46,6 +46,12 @@ public class ExpressionPresenter {
     private Map<String, String> options = new HashMap<String,String>();
 
     /**
+     * Make an uncommitted ExpressionPresenter; this must be followed by a call on init()
+     */
+
+    public ExpressionPresenter() {}
+
+    /**
      * Make an ExpressionPresenter that writes indented output to the standard error output
      * destination of the Configuration
      *
@@ -73,15 +79,34 @@ public class ExpressionPresenter {
      *
      * @param config the Saxon configuration
      * @param out    the output destination
+     * @param checksum true if a checksum is to be computed and written at the end of the file
      */
 
     public ExpressionPresenter(Configuration config, StreamResult out, boolean checksum) {
+        init(config, out, checksum);
+    }
+
+    /**
+     * Initialize the ExpressionPresenter and its output
+     * @param config the Saxon configuration
+     * @param out    the output destination
+     * @param checksum true if a checksum is to be computed and written at the end of the file
+     */
+
+    public void init(Configuration config, StreamResult out, boolean checksum) {
         Properties props = makeDefaultProperties(config);
+        if (config.getXMLVersion() == Configuration.XML11) {
+            if ("JS".equals(getOption("target"))) {
+                config.getLogger().warning("For target=JS, the SEF file will use XML 1.0, which disallows control characters");
+            } else {
+                props.setProperty(OutputKeys.VERSION, "1.1");
+            }
+        }
         try {
             receiver = config.getSerializerFactory().getReceiver(
-                out,
-                config.makePipelineConfiguration(),
-                props);
+                    out,
+                    config.makePipelineConfiguration(),
+                    props);
             receiver = new NamespaceReducer(receiver);
             if (checksum) {
                 receiver = new CheckSumFilter(receiver);
@@ -99,7 +124,6 @@ public class ExpressionPresenter {
             throw new InternalError(err.getMessage());
         }
     }
-
 
     /**
      * Make an ExpressionPresenter that writes indented output to a specified output stream

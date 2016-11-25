@@ -120,10 +120,11 @@ public class XsltPackage {
 
     public void save(File file) throws SaxonApiException {
         StreamResult destination = new StreamResult(file);
-        ExpressionPresenter out = new ExpressionPresenter(processor.getUnderlyingConfiguration(), destination, true);
+        ExpressionPresenter out = new ExpressionPresenter();
         if (stylesheetPackage.getTargetEdition().equals("JS")) {
             out.setOption("target", "JS");
         }
+        out.init(processor.getUnderlyingConfiguration(), destination, true);
         try {
             stylesheetPackage.export(out);
         } catch (XPathException e) {
@@ -144,8 +145,9 @@ public class XsltPackage {
 
     public void save(File file, String target) throws SaxonApiException {
         StreamResult destination = new StreamResult(file);
-        ExpressionPresenter out = new ExpressionPresenter(processor.getUnderlyingConfiguration(), destination, true);
+        ExpressionPresenter out = new ExpressionPresenter();
         out.setOption("target", target);
+        out.init(processor.getUnderlyingConfiguration(), destination, true);
         try {
             stylesheetPackage.export(out);
         } catch (XPathException e) {
