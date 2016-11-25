@@ -87,7 +87,7 @@ public class XSLSequence extends StyleElement {
                         compileError("An " + getDisplayName() + " element with a select attribute must be empty", "XTSE3185");
                     }
                 } else {
-                    compileError("The only child node allowed for \" + getDisplayName() + \" is an xsl:fallback instruction", "XTSE0010");
+                    compileError("The only child node allowed for " + getDisplayName() + " is an xsl:fallback instruction", "XTSE0010");
                 }
                 break;
             }
