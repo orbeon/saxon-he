@@ -271,7 +271,7 @@ public class Environment implements URIResolver {
                     environment.xsltExecutable = environment.xsltCompiler.compile(styleSource);
                 }
             } catch (SaxonApiException e) {
-                driver.println("**** failure while compiling environment-defined stylesheet " + fileName);
+                driver.println("**** failure while compiling environment-defined stylesheet " + fileName + " - " + e.getMessage());
                 environment.failedToBuild = true;
                 environment.usable = false;
             }

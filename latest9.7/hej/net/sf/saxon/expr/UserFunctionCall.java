@@ -291,11 +291,6 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
             a2[i] = getArg(i).copy(rebindings);
         }
         ufc.setArguments(a2);
-        if (argumentEvaluationModes != null) {
-            int[] am2 = new int[argumentEvaluationModes.length];
-            System.arraycopy(argumentEvaluationModes, 0, am2, 0, am2.length);
-            ufc.argumentEvaluationModes = am2;
-        }
         ExpressionTool.copyLocationInfo(this, ufc);
         return ufc;
     }
@@ -330,7 +325,6 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
 //                body = TypeChecker.staticTypeCheck(body, function.getResultType(), visitor.getStaticContext().isInBackwardsCompatibleMode(), role, visitor);
 //                function.setBody(body);
             }
-            computeArgumentEvaluationModes();
             if (staticType == SequenceType.ANY_SEQUENCE) {
                 // try to get a better type
                 staticType = function.getResultType();
@@ -343,7 +337,6 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         Expression e = super.optimize(visitor, contextItemType);
         if (e == this && function != null) {
-            computeArgumentEvaluationModes();
             Expression e2 = getConfiguration().obtainOptimizer().tryInlineFunctionCall(
                     this, visitor, contextItemType);
             if (e2 != this) {
@@ -355,35 +348,25 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
     }
 
     /**
-     * Reset the static properties of the expression to -1, so that they have to be recomputed
-     * next time they are used.
-     */
-    @Override
-    public void resetLocalStaticProperties() {
-        super.resetLocalStaticProperties();
-        argumentEvaluationModes = null;
-    }
-
-    /**
      * Compute the evaluation mode of each argument
      */
 
     public synchronized void computeArgumentEvaluationModes() {
         int numArgs = getArity();
-        argumentEvaluationModes = new int[numArgs];
+        int[] argModes = new int[numArgs];
         for (int i = 0; i < numArgs; i++) {
             if (function.getParameterDefinitions()[i].isIndexedVariable()) {
-                argumentEvaluationModes[i] = ExpressionTool.MAKE_INDEXED_VARIABLE;
+                argModes[i] = ExpressionTool.MAKE_INDEXED_VARIABLE;
             } else {
                 Expression arg = getArg(i);
                 if ((arg.getDependencies() & StaticProperty.DEPENDS_ON_USER_FUNCTIONS) != 0) {
                     // if the argument contains a call to a user-defined function, then it might be a recursive call.
                     // It's better to evaluate it now, rather than waiting until we are on a new stack frame, as
                     // that can blow the stack if done repeatedly. (See test func42)
-                    argumentEvaluationModes[i] = ExpressionTool.eagerEvaluationMode(arg);
+                    argModes[i] = ExpressionTool.eagerEvaluationMode(arg);
                 } else if (!Cardinality.allowsMany(arg.getCardinality()) && arg.getCost() < 20) {
                     // the argument is cheap to evaluate and doesn't use much memory...
-                    argumentEvaluationModes[i] = ExpressionTool.eagerEvaluationMode(arg);
+                    argModes[i] = ExpressionTool.eagerEvaluationMode(arg);
                 } else if (arg instanceof Block && ((Block) arg).isCandidateForSharedAppend()) {
                     // If the expression is a Block, that is, it is appending a value to a sequence,
                     // then we have the opportunity to use a shared list underpinning the old value and
@@ -392,12 +375,13 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
                     // reference as one of its subexpressions. The most common case is that the first argument is a reference
                     // to an argument of recursive function, where the recursive function returns the result of
                     // appending to the sequence.
-                    argumentEvaluationModes[i] = ExpressionTool.SHARED_APPEND_EXPRESSION;
+                    argModes[i] = ExpressionTool.SHARED_APPEND_EXPRESSION;
                 } else {
-                    argumentEvaluationModes[i] = ExpressionTool.MAKE_MEMO_CLOSURE;
+                    argModes[i] = ExpressionTool.MAKE_MEMO_CLOSURE;
                 }
             }
         }
+        argumentEvaluationModes = argModes;
     }
 
 
@@ -614,9 +598,11 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
     public Sequence[] evaluateArguments(XPathContext c) throws XPathException {
         int numArgs = getArity();
         Sequence[] actualArgs = new Sequence[numArgs];
-        if (argumentEvaluationModes == null) {
-            // should have been done at compile time
-            computeArgumentEvaluationModes();
+        synchronized(this) {
+            if (argumentEvaluationModes == null) {
+                // should have been done at compile time
+                computeArgumentEvaluationModes();
+            }
         }
         for (int i = 0; i < numArgs; i++) {
 

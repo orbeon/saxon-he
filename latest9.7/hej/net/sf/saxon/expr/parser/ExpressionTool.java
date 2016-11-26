@@ -273,7 +273,15 @@ public class ExpressionTool {
         switch (evaluationMode) {
 
             case NO_EVALUATION_NEEDED:
-                return ((Literal) exp).getValue();
+                try {   // bug3022
+                    return ((Literal) exp).getValue();
+                } catch (ClassCastException cce) {
+                    context.getConfiguration().getLogger().warning("Wrong evaluation mode "
+                        + evaluationMode + " for " + exp.toShortString() +
+                        " within " + exp.getParentExpression().toShortString() + " at line " + exp.getLocation().getLineNumber() +
+                        " in " + exp.getLocation().getSystemId());
+                    return SequenceExtent.makeSequenceExtent(exp.iterate(context));
+                }
 
             case EVALUATE_VARIABLE:
                 return ((VariableReference) exp).evaluateVariable(context);
@@ -1100,6 +1108,14 @@ public class ExpressionTool {
             });
         }
         //#endif
+        ExpressionTool.processExpressionTree(body, null, new ExpressionAction() {
+            public boolean process(Expression expression, Object result) throws XPathException {
+                if (expression instanceof UserFunctionCall) {
+                    ((UserFunctionCall) expression).computeArgumentEvaluationModes();
+                }
+                return false;
+            }
+        });
         body.restoreParentPointers();
         return body;
     }
