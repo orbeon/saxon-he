@@ -145,7 +145,7 @@ public class AttributeSorter extends ProxyReceiver implements Sortable {
             // both null: sort on URI/local-name
             int x = n0.getURI().compareTo(n1.getURI());
             if (x == 0) {
-                x = n1.getLocalPart().compareTo(n1.getLocalPart());
+                x = n0.getLocalPart().compareTo(n1.getLocalPart());
             }
             return x;
         }
