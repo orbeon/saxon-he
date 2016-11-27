@@ -797,11 +797,12 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
             // level because we have more information now.
             body = body.typeCheck(visitor, cit);
             ExpressionTool.resetPropertiesWithinSubtree(body);
-            boolean needCopy = false;
+            //boolean needCopy = false;
 
             if (getTemplateName() != null) {
-                Expression namedTemplateBody = ExpressionTool.optimizeComponentBody(body, getCompilation(), visitor, cit, true);
-                needCopy = true;
+                Expression namedTemplateBody = compiledTemplateRules.isEmpty() ? body : body.copy(new RebindingMap());
+                namedTemplateBody = ExpressionTool.optimizeComponentBody(
+                        namedTemplateBody, getCompilation(), visitor, cit, true);
                 compiledNamedTemplate.setBody(namedTemplateBody);
                 allocateLocalSlots(namedTemplateBody);
                 if (isExplaining()) {
@@ -813,7 +814,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                 namedTemplateBody.restoreParentPointers();
             }
             for (TemplateRule compiledTemplateRule : compiledTemplateRules.values()) {
-                Expression templateRuleBody = needCopy ? body.copy(new RebindingMap()) : body;
+                Expression templateRuleBody = compiledTemplateRules.size() > 1 ? body.copy(new RebindingMap()) : body;
                 //#ifdefined STREAM
                 visitor.setOptimizeForStreaming(compiledTemplateRule.isDeclaredStreamable());
                 cit.setContextPostureStriding();
@@ -826,14 +827,13 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                     Pattern match = r.getPattern();
                     ContextItemStaticInfo info = new ContextItemStaticInfo(match.getItemType(), false, true);
                     Pattern m2 = match.optimize(visitor, info);
-                    if (needCopy) {
+                    if (compiledTemplateRules.size() > 1) {
                         m2 = m2.copy(new RebindingMap());
                     }
                     if (m2 != match) {
                         r.setPattern(m2);
                     }
                 }
-                needCopy = true;
                 if (isExplaining()) {
                     Logger err = getConfiguration().getLogger();
                     err.info("Optimized expression tree for template rule at line " +
