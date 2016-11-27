@@ -7,6 +7,8 @@
 
 package net.sf.saxon.expr.instruct;
 
+import com.saxonica.ee.bytecode.ExpressionCompiler;
+import com.saxonica.ee.bytecode.LocalParamCompiler;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.Sequence;
@@ -678,6 +680,18 @@ public final class LocalParam extends Instruction implements LocalBinding {
         return flags;
     }
 
+//#ifdefined BYTECODE
+
+    /**
+     * Return the compiler of the Filter expression
+     *
+     * @return the relevant ExpressionCompiler
+     */
+    @Override
+    public ExpressionCompiler getExpressionCompiler() {
+        return new LocalParamCompiler();
+    }
+//#endif
 
 }
 
