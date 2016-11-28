@@ -7,6 +7,7 @@
 
 package net.sf.saxon.dom;
 
+import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.NamespaceBinding;
@@ -28,6 +29,7 @@ class DOMAttributeMap implements NamedNodeMap {
 
     private NodeInfo parent;
     private int numberOfNamespaces = -1;
+    private boolean excludeNamespaceUndeclarations;
 
     /**
      * Construct an AttributeMap for a given element node
@@ -37,6 +39,34 @@ class DOMAttributeMap implements NamedNodeMap {
 
     public DOMAttributeMap(NodeInfo parent) {
         this.parent = parent;
+        if (parent.getConfiguration().getXMLVersion() == Configuration.XML10) {
+            excludeNamespaceUndeclarations = true;
+        }
+    }
+
+    /**
+     * Filter out namespace undeclarations (other than the undeclaration of the default namespace)
+     */
+
+    private NamespaceBinding[] removeUndeclarations(NamespaceBinding[] bindings) {
+        if (excludeNamespaceUndeclarations) {
+            int keep = 0;
+            for (NamespaceBinding b : bindings) {
+                if (b != null && (b.getPrefix().isEmpty() || !b.getURI().isEmpty())) {
+                    keep++;
+                }
+            }
+            NamespaceBinding[] b2 = new NamespaceBinding[keep];
+            keep = 0;
+            for (NamespaceBinding b : bindings) {
+                if (b != null && (b.getPrefix().isEmpty() || !b.getURI().isEmpty())) {
+                    b2[keep++] = b;
+                }
+            }
+            return b2;
+        } else {
+            return bindings;
+        }
     }
 
     /**
@@ -45,11 +75,11 @@ class DOMAttributeMap implements NamedNodeMap {
 
     public Node getNamedItem(String name) {
         if (name.equals("xmlns")) {
-            NamespaceBinding[] nsarray = parent.getDeclaredNamespaces(null);
+            NamespaceBinding[] nsarray = removeUndeclarations(parent.getDeclaredNamespaces(null));
             for (int i = 0; i < nsarray.length; i++) {
                 if (nsarray[i] == null) {
                     return null;
-                } else if (((nsarray[i].getPrefix().isEmpty()))) {
+                } else if (nsarray[i].getPrefix().isEmpty()) {
                     NamespaceNode nn =
                             new NamespaceNode(parent, nsarray[i], i + 1);
                     return NodeOverNodeInfo.wrap(nn);
@@ -63,8 +93,7 @@ class DOMAttributeMap implements NamedNodeMap {
                         new NamespaceNode(parent, NamespaceBinding.XML, 0);
                 return NodeOverNodeInfo.wrap(nn);
             }
-            NamespaceBinding[] buffer = new NamespaceBinding[8];
-            NamespaceBinding[] nsarray = parent.getDeclaredNamespaces(buffer);
+            NamespaceBinding[] nsarray = removeUndeclarations(parent.getDeclaredNamespaces(null));
             for (int i = 0; i < nsarray.length; i++) {
                 if (nsarray[i] == null) {
                     return null;
@@ -108,15 +137,14 @@ class DOMAttributeMap implements NamedNodeMap {
         }
         int nscount = getNumberOfNamespaces();
         if (index < nscount) {
-            NamespaceBinding[] buffer = new NamespaceBinding[8];
-            NamespaceBinding[] nsList = parent.getDeclaredNamespaces(buffer);
+            NamespaceBinding[] nsList = removeUndeclarations(parent.getDeclaredNamespaces(null));
             NamespaceBinding nscode = nsList[index - 1];
             NamespaceNode nn =
                     new NamespaceNode(parent, nscode, index);
             return NodeOverNodeInfo.wrap(nn);
         }
         int pos = 0;
-        int attNr = (index - nscount);
+        int attNr = index - nscount;
         AxisIterator atts = parent.iterateAxis(AxisInfo.ATTRIBUTE);
         while (true) {
             NodeInfo att = atts.next();
@@ -138,8 +166,7 @@ class DOMAttributeMap implements NamedNodeMap {
 
     private int getNumberOfNamespaces() {
         if (numberOfNamespaces == -1) {
-            NamespaceBinding[] buffer = new NamespaceBinding[8];
-            NamespaceBinding[] nsList = parent.getDeclaredNamespaces(buffer);
+            NamespaceBinding[] nsList = removeUndeclarations(parent.getDeclaredNamespaces(null));
             int count = nsList.length;
             for (int i = 0; i < count; i++) {
                 if (nsList[i] == null) {
