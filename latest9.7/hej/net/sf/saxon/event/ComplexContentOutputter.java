@@ -98,6 +98,14 @@ public final class ComplexContentOutputter extends SequenceReceiver {
     public static SequenceReceiver makeComplexContentReceiver(Receiver receiver, ParseOptions options)
         throws XPathException {
 //        System.err.println("CHANGE OUTPUT DESTINATION new=" + receiver);
+
+        String systemId = receiver.getSystemId();
+        boolean validate = options != null && options.getSchemaValidationMode() != Validation.PRESERVE;
+
+        if (receiver instanceof ComplexContentOutputter && !validate) {
+            return (ComplexContentOutputter)receiver;
+        }
+
         PipelineConfiguration pipe = receiver.getPipelineConfiguration();
         ComplexContentOutputter out = new ComplexContentOutputter(pipe);
         out.setHostLanguage(pipe.getHostLanguage());
@@ -110,12 +118,13 @@ public final class ComplexContentOutputter extends SequenceReceiver {
 
         // add a validator to the pipeline if required
 
-        if (options != null && options.getSchemaValidationMode() != Validation.PRESERVE) {
+        if (validate) {
             Configuration config = pipe.getConfiguration();
             receiver = config.getDocumentValidator(ne, receiver.getSystemId(), options);
         }
 
         out.setReceiver(receiver);
+        out.setSystemId(systemId);
         return out;
     }
 
