@@ -17,18 +17,29 @@ import java.io.InputStream;
 public class JSONResource implements Resource {
     private String href;
     private String jsonStr;
+    private String encoding;
     private InputStream inputStream;
     private String contentType = "application/json";
 
     public final static ResourceFactory FACTORY = new ResourceFactory() {
         public Resource makeResource(Configuration config, String resourceURI, String contentType, AbstractResourceCollection.InputDetails details) throws XPathException {
-            return new JSONResource(resourceURI, details.inputStream);
+            return new JSONResource(resourceURI, details);
         }
     };
 
     public JSONResource(String href, InputStream in) {
         this.href = href;
         this.inputStream = in;
+        this.encoding = "UTF-8";
+    }
+
+    public JSONResource(String href, AbstractResourceCollection.InputDetails details) {
+        this.href = href;
+        this.inputStream = details.inputStream;
+        this.encoding = details.encoding;
+        if (encoding == null) {
+            encoding = "UTF-8";
+        }
     }
 
 
@@ -37,9 +48,9 @@ public class JSONResource implements Resource {
     }
 
     public Item getItem(XPathContext context) throws XPathException {
-        if(jsonStr == null) {
+        if (jsonStr == null) {
             try {
-                StringBuilder sb = CatalogCollection.makeStringBuilderFromStream(inputStream);
+                StringBuilder sb = CatalogCollection.makeStringBuilderFromStream(inputStream, encoding);
                 jsonStr = sb.toString();
             } catch (IOException e) {
                 throw new XPathException(e);
@@ -49,7 +60,6 @@ public class JSONResource implements Resource {
         Item item = ParseJsonFn.parse(jsonStr, options, context);
         return item;
     }
-
 
 
     public String getContentType() {

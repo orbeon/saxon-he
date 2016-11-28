@@ -10,6 +10,7 @@ package net.sf.saxon.lib;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -159,12 +160,7 @@ public class StandardUnparsedTextResolver implements UnparsedTextURIResolver {
                 }
 
                 if (encoding == null || isXmlMediaType) {
-                    // Try to detect the encoding from the start of the content
-                    is.mark(100);
-                    byte[] start = new byte[100];
-                    int read = is.read(start, 0, 100);
-                    is.reset();
-                    encoding = inferEncoding(start, read, err);
+                    encoding = inferStreamEncoding(is, err);
                     if (debug) {
                         err.info("unparsed-text(): inferred encoding = " + encoding);
                     }
@@ -195,23 +191,42 @@ public class StandardUnparsedTextResolver implements UnparsedTextURIResolver {
     }
 
     /**
+     * Try to detect the encoding from the start of the input stream
+     * @param is the input stream
+     * @param err logger to be used for diagnostics, or null
+     * @return the inferred encoding, defaulting to UTF-8
+     * @throws IOException if it isn't possible to mark the current position on the input stream and read ahead
+     */
+
+    @NotNull
+    public static String inferStreamEncoding(InputStream is, Logger err) throws IOException {
+        is.mark(100);
+        byte[] start = new byte[100];
+        int read = is.read(start, 0, 100);
+        is.reset();
+        return inferEncoding(start, read, err);
+    }
+
+    /**
      * Infer the encoding of a file by reading the first few bytes of the file
      *
      * @param start the first few bytes of the file
      * @param read  the number of bytes that have been read
+     * @param logger Logger to receive diagnostic messages, or null
      * @return the inferred encoding
      */
 
-    private String inferEncoding(byte[] start, int read, /*@NotNull*/ Logger err) {
+    private static String inferEncoding(byte[] start, int read, Logger logger) {
+        boolean debug = logger != null;
         if (read >= 2) {
             if (ch(start[0]) == 0xFE && ch(start[1]) == 0xFF) {
                 if (debug) {
-                    err.info("unparsed-text(): found UTF-16 byte order mark");
+                    logger.info("unparsed-text(): found UTF-16 byte order mark");
                 }
                 return "UTF-16";
             } else if (ch(start[0]) == 0xFF && ch(start[1]) == 0xFE) {
                 if (debug) {
-                    err.info("unparsed-text(): found UTF-16LE byte order mark");
+                    logger.info("unparsed-text(): found UTF-16LE byte order mark");
                 }
                 return "UTF-16LE";
             }
@@ -219,7 +234,7 @@ public class StandardUnparsedTextResolver implements UnparsedTextURIResolver {
         if (read >= 3) {
             if (ch(start[0]) == 0xEF && ch(start[1]) == 0xBB && ch(start[2]) == 0xBF) {
                 if (debug) {
-                    err.info("unparsed-text(): found UTF-8 byte order mark");
+                    logger.info("unparsed-text(): found UTF-8 byte order mark");
                 }
                 return "UTF-8";
             }
@@ -228,7 +243,7 @@ public class StandardUnparsedTextResolver implements UnparsedTextURIResolver {
             if (ch(start[0]) == '<' && ch(start[1]) == '?' &&
                     ch(start[2]) == 'x' && ch(start[3]) == 'm' && ch(start[4]) == 'l') {
                 if (debug) {
-                    err.info("unparsed-text(): found XML declaration");
+                    logger.info("unparsed-text(): found XML declaration");
                 }
                 FastStringBuffer sb = new FastStringBuffer(read);
                 for (int b = 0; b < read; b++) {
@@ -246,33 +261,33 @@ public class StandardUnparsedTextResolver implements UnparsedTextURIResolver {
                         sb.append(p.charAt(v++));
                     }
                     if (debug) {
-                        err.info("unparsed-text(): encoding in XML declaration = " + sb.toString());
+                        logger.info("unparsed-text(): encoding in XML declaration = " + sb.toString());
                     }
                     return sb.toString();
                 }
                 if (debug) {
-                    err.info("unparsed-text(): no encoding found in XML declaration");
+                    logger.info("unparsed-text(): no encoding found in XML declaration");
                 }
             }
         } else if (read > 0 && start[0] == 0 && start[2] == 0 && start[4] == 0 && start[6] == 0) {
             if (debug) {
-                err.info("unparsed-text(): even-numbered bytes are zero, inferring UTF-16");
+                logger.info("unparsed-text(): even-numbered bytes are zero, inferring UTF-16");
             }
             return "UTF-16";
         } else if (read > 1 && start[1] == 0 && start[3] == 0 && start[5] == 0 && start[7] == 0) {
             if (debug) {
-                err.info("unparsed-text(): odd-numbered bytes are zero, inferring UTF-16LE");
+                logger.info("unparsed-text(): odd-numbered bytes are zero, inferring UTF-16LE");
             }
             return "UTF-16LE";
         }
         // If all else fails, assume UTF-8
         if (debug) {
-            err.info("unparsed-text(): assuming fallback encoding (UTF-8)");
+            logger.info("unparsed-text(): assuming fallback encoding (UTF-8)");
         }
         return "UTF-8";
     }
 
-    private int ch(byte b) {
+    private static int ch(byte b) {
         return ((int) b) & 0xff;
     }
 }

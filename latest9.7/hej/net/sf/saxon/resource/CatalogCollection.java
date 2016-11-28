@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -143,8 +144,8 @@ public class CatalogCollection extends AbstractResourceCollection {
         return stable;
     }
 
-    public static StringBuilder makeStringBuilderFromStream(InputStream in) throws IOException {
-        InputStreamReader is = new InputStreamReader(in);
+    public static StringBuilder makeStringBuilderFromStream(InputStream in, String encoding) throws IOException {
+        InputStreamReader is = new InputStreamReader(in, Charset.forName(encoding));
         StringBuilder sb = new StringBuilder();
         BufferedReader br = new BufferedReader(is);
         String read = br.readLine();

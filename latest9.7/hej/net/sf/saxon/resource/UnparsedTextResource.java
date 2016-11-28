@@ -4,6 +4,7 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.Resource;
 import net.sf.saxon.lib.ResourceFactory;
+import net.sf.saxon.lib.StandardUnparsedTextResolver;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.StringValue;
@@ -13,9 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * This class implements th interface Resource. We handle unparded text here.
+ * This class implements the interface Resource. We handle unparsed text here.
  * The Resource objects belong to a collection
  * It is used to support the fn:collection() and fn:uri-collection() functions.
+ *
  * @since 9.7
  */
 public class UnparsedTextResource implements Resource {
@@ -26,15 +28,16 @@ public class UnparsedTextResource implements Resource {
     private InputStream inputStream;
     private String contentType = null;
 
-    public UnparsedTextResource(Configuration config, String href, InputStream in){
+    public UnparsedTextResource(Configuration config, String href, AbstractResourceCollection.InputDetails in) {
         this.config = config;
         this.href = href;
-        inputStream = in;
+        this.inputStream = in.inputStream;
+        this.encoding = in.encoding;
     }
 
     public final static ResourceFactory FACTORY = new ResourceFactory() {
         public Resource makeResource(Configuration config, String resourceURI, String contentType, AbstractResourceCollection.InputDetails details) throws XPathException {
-            return new UnparsedTextResource(config, resourceURI, details.inputStream);
+            return new UnparsedTextResource(config, resourceURI, details);
         }
     };
 
@@ -43,10 +46,18 @@ public class UnparsedTextResource implements Resource {
     }
 
     public Item getItem(XPathContext context) throws XPathException {
-        if(unparsedText == null) {
-            StringBuilder builder = null;
+        if (unparsedText == null) {
+            StringBuilder builder;
+            String enc = encoding;
+            if (enc == null) {
+                try {
+                    enc = StandardUnparsedTextResolver.inferStreamEncoding(inputStream, null);
+                } catch (IOException e) {
+                    enc = "UTF-8";
+                }
+            }
             try {
-                builder = CatalogCollection.makeStringBuilderFromStream(inputStream);
+                builder = CatalogCollection.makeStringBuilderFromStream(inputStream, enc);
             } catch (FileNotFoundException e) {
                 throw new XPathException(e);
             } catch (IOException e) {
