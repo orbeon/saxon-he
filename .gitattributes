@@ -914,6 +914,7 @@ latest9.7/hej/data/w3c/xslt3/xslt30.xsd svn_eol_002dstyle=native
 latest9.7/hej/data/xml-to-json-indent.xsl svn_eol_002dstyle=native
 latest9.7/hej/data/xml-to-json-pkg.xsl svn_eol_002dstyle=native
 latest9.7/hej/data/xml-to-json.xsl svn_eol_002dstyle=native
+latest9.7/hej/data/xpath-functions.scm svn_eol_002dstyle=native
 latest9.7/hej/data/xpath-functions.xsd svn_eol_002dstyle=native
 latest9.7/hej/javax/xml/xquery/ConnectionPoolXQDataSource.java svn_eol_002dstyle=native
 latest9.7/hej/javax/xml/xquery/PooledXQConnection.java svn_eol_002dstyle=native
