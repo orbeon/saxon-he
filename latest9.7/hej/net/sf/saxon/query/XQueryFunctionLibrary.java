@@ -7,11 +7,13 @@
 
 package net.sf.saxon.query;
 
-import net.sf.saxon.functions.CallableFunction;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.UserFunction;
+import net.sf.saxon.expr.parser.ExpressionAction;
+import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.functions.CallableFunction;
 import net.sf.saxon.functions.FunctionLibrary;
 import net.sf.saxon.om.Function;
 import net.sf.saxon.om.Sequence;
@@ -329,6 +331,9 @@ public class XQueryFunctionLibrary implements FunctionLibrary, XQueryFunctionBin
     protected void optimizeGlobalFunctions() throws XPathException {
         for (XQueryFunction fn : functions.values()) {
             fn.optimize();
+        }
+        for (XQueryFunction fn : functions.values()) {
+            ExpressionTool.computeEvaluationModesForUserFunctionCalls(fn.getBody());
         }
     }
 

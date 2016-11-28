@@ -3081,7 +3081,7 @@ public class XPathParser {
                             if (fn != null) {
                                 ufCall.setFunction(fn);
                                 ufCall.checkFunctionCall(fn, visitor);
-                                ufCall.computeArgumentEvaluationModes();
+                                //ufCall.computeArgumentEvaluationModes();
                                 ufCall.setStaticType(fn.getResultType());
                             } else {
                                 XPathException err = new XPathException("There is no available function named " + ufCall.getDisplayName() +

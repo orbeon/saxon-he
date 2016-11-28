@@ -1108,7 +1108,18 @@ public class ExpressionTool {
             });
         }
         //#endif
-        ExpressionTool.processExpressionTree(body, null, new ExpressionAction() {
+        computeEvaluationModesForUserFunctionCalls(body);
+        body.restoreParentPointers();
+        return body;
+    }
+
+    /**
+     * Compute argument evaluation modes for all calls on user defined functions with
+     * a specified expression
+     */
+
+    public static void computeEvaluationModesForUserFunctionCalls(Expression exp) throws XPathException {
+        ExpressionTool.processExpressionTree(exp, null, new ExpressionAction() {
             public boolean process(Expression expression, Object result) throws XPathException {
                 if (expression instanceof UserFunctionCall) {
                     ((UserFunctionCall) expression).computeArgumentEvaluationModes();
@@ -1116,8 +1127,6 @@ public class ExpressionTool {
                 return false;
             }
         });
-        body.restoreParentPointers();
-        return body;
     }
 
     /**

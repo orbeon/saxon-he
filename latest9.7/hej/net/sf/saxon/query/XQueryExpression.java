@@ -95,7 +95,13 @@ public class XQueryExpression implements Location {
         }
         ExpressionTool.allocateSlots(exp, 0, stackFrameMap);
 
-
+        ExpressionTool.computeEvaluationModesForUserFunctionCalls(exp);
+        for (GlobalVariable var : getPackageData().getGlobalVariableList()) {
+            Expression top = var.getSelectExpression();
+            if (top != null) {
+                ExpressionTool.computeEvaluationModesForUserFunctionCalls(top);
+            }
+        }
         expression = exp;
         executable.setConfiguration(config);
     }

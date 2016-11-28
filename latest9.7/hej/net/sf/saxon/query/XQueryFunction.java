@@ -510,9 +510,9 @@ public class XQueryFunction implements InstructionInfo, Declaration {
     public void fixupReferences() throws XPathException {
         for (UserFunctionResolvable ufc : references) {
             ufc.setFunction(compiledFunction);
-            if (ufc instanceof UserFunctionCall) {
-                ((UserFunctionCall) ufc).computeArgumentEvaluationModes();
-            }
+//            if (ufc instanceof UserFunctionCall) {
+//                ((UserFunctionCall) ufc).computeArgumentEvaluationModes();
+//            }
         }
     }
 
@@ -527,7 +527,7 @@ public class XQueryFunction implements InstructionInfo, Declaration {
             if (ufr instanceof UserFunctionCall) {
                 UserFunctionCall ufc = (UserFunctionCall) ufr;
                 ufc.checkFunctionCall(compiledFunction, visitor);
-                ufc.computeArgumentEvaluationModes();
+                //ufc.computeArgumentEvaluationModes();
             }
         }
 
