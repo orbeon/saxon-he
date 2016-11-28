@@ -504,14 +504,15 @@ public class XQueryExpression implements Location {
             PipelineConfiguration pipe = config.makePipelineConfiguration();
             SequenceReceiver receiver = sf.getReceiver(destination, pipe, actualProperties);
 
-            //receiver = new NamespaceReducer(receiver);
             if ("yes".equals(actualProperties.getProperty(SaxonOutputKeys.WRAP))) {
                 receiver = config.getSerializerFactory().newSequenceWrapper(receiver);
-            } else {
-                //receiver = new TreeReceiver(receiver);
             }
             EventIterator iter = internalIterateEvents(controller, dynamicEnv);
-            EventIteratorToReceiver.copy(iter, (SequenceReceiver)receiver);
+            EventIteratorToReceiver.copy(iter, receiver);
+
+            if (controller.getTraceListener() != null) {
+                controller.getTraceListener().close();
+            }
         } catch (XPathException err) {
             config.reportFatalError(err);
             throw err;
@@ -543,6 +544,9 @@ public class XQueryExpression implements Location {
             Controller controller = newController(dynamicEnv);
             EventIterator iter = internalIterateEvents(controller, dynamicEnv);
             EventIteratorToReceiver.copy(iter, destination);
+            if (controller.getTraceListener() != null) {
+                controller.getTraceListener().close();
+            }
         } catch (XPathException err) {
             config.reportFatalError(err);
             throw err;
