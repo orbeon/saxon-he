@@ -107,6 +107,7 @@ public class ContextStackIterator implements Iterator<ContextStackFrame> {
             sf.setLocation(var.getLocation());
             sf.setContextItem(context.getContextItem());
             sf.setVariableName(var.getVariableQName());
+            sf.setComponent(var);
             next = getMajorCaller(context);
             return sf;
         } else {

@@ -245,6 +245,71 @@ public class SpaceStrippedNode extends AbstractVirtualNode implements WrappingFu
         node.copy(stripper, copyOptions, locationId);
     }
 
+    /**
+     * Ask whether a given node is preserved from whitespace stripping
+     * @param node the node we are asking about
+     * @param docWrapper the root of the space-stripped virtual tree
+     * @param actualParent the parent of the node we are asking about
+     * @return true if the node is not a whitespace text node that gets stripped
+     */
+
+    public static boolean isPreservedNode(NodeInfo node, SpaceStrippedDocument docWrapper, NodeInfo actualParent) {
+        if (node.getNodeKind() != Type.TEXT) {
+            return true;
+        }
+        if (!Whitespace.isWhite(node.getStringValueCS())) {
+            return true;
+        }
+
+        // if the node has a simple type annotation, it is preserved
+        SchemaType type = actualParent.getSchemaType();
+        if (type.isSimpleType() || ((ComplexType) type).isSimpleContent()) {
+            return true;
+        }
+
+        // if there is an ancestor with xml:space="preserve", it is preserved
+        if (docWrapper.containsPreserveSpace()) {
+            NodeInfo p = actualParent;
+            // the document contains one or more xml:space="preserve" attributes, so we need to see
+            // if one of them is on an ancestor of this node
+            while (p.getNodeKind() == Type.ELEMENT) {
+                String val = p.getAttributeValue(NamespaceConstant.XML, "space");
+                if (val != null) {
+                    if ("preserve".equals(val)) {
+                        return true;
+                    } else if ("default".equals(val)) {
+                        break;
+                    }
+                }
+                p = p.getParent();
+            }
+        }
+
+        // if there is an ancestor whose type has an assertion, it is preserved
+        if (docWrapper.containsAssertions()) {
+            NodeInfo p = actualParent;
+            // the document contains one or more xml:space="preserve" attributes, so we need to see
+            // if one of them is on an ancestor of this node
+            while (p.getNodeKind() == Type.ELEMENT) {
+                SchemaType t = p.getSchemaType();
+                if (t instanceof ComplexType && ((ComplexType) t).hasAssertions()) {
+                    return true;
+                }
+                p = p.getParent();
+            }
+        }
+
+        // otherwise it depends on xsl:strip-space
+        try {
+            byte preserve = docWrapper.getStrippingRule().isSpacePreserving(NameOfNode.makeName(actualParent));
+            return preserve == Stripper.ALWAYS_PRESERVE;
+        } catch (XPathException e) {
+            // Ambiguity between strip-space and preserve-space. Because we're in an axis iterator,
+            // we don't get an opportunity to fail, so take the recovery action.
+            return true;
+        }
+    }
+
 
     /**
      * A StrippingIterator delivers wrappers for the nodes delivered
@@ -296,62 +361,9 @@ public class SpaceStrippedNode extends AbstractVirtualNode implements WrappingFu
         }
 
         private boolean isPreserved(/*@NotNull*/ NodeInfo nextRealNode) {
-            if (nextRealNode.getNodeKind() != Type.TEXT) {
-                return true;
-            }
-            if (!Whitespace.isWhite(nextRealNode.getStringValueCS())) {
-                return true;
-            }
-            NodeInfo actualParent =
-                    parent == null ? nextRealNode.getParent() : parent.node;
+            NodeInfo actualParent = parent == null ? nextRealNode.getParent() : parent.node;
+            return isPreservedNode(nextRealNode, (SpaceStrippedDocument)docWrapper, actualParent);
 
-            // if the node has a simple type annotation, it is preserved
-            SchemaType type = actualParent.getSchemaType();
-            if (type.isSimpleType() || ((ComplexType) type).isSimpleContent()) {
-                return true;
-            }
-
-            // if there is an ancestor with xml:space="preserve", it is preserved
-            if (((SpaceStrippedDocument) docWrapper).containsPreserveSpace()) {
-                NodeInfo p = actualParent;
-                // the document contains one or more xml:space="preserve" attributes, so we need to see
-                // if one of them is on an ancestor of this node
-                while (p.getNodeKind() == Type.ELEMENT) {
-                    String val = p.getAttributeValue(NamespaceConstant.XML, "space");
-                    if (val != null) {
-                        if ("preserve".equals(val)) {
-                            return true;
-                        } else if ("default".equals(val)) {
-                            break;
-                        }
-                    }
-                    p = p.getParent();
-                }
-            }
-
-            // if there is an ancestor whose type has an assertion, it is preserved
-            if (((SpaceStrippedDocument) docWrapper).containsAssertions()) {
-                NodeInfo p = actualParent;
-                // the document contains one or more xml:space="preserve" attributes, so we need to see
-                // if one of them is on an ancestor of this node
-                while (p.getNodeKind() == Type.ELEMENT) {
-                    SchemaType t = p.getSchemaType();
-                    if (t instanceof ComplexType && ((ComplexType) t).hasAssertions()) {
-                        return true;
-                    }
-                    p = p.getParent();
-                }
-            }
-
-            // otherwise it depends on xsl:strip-space
-            try {
-                byte preserve = ((SpaceStrippedDocument) docWrapper).getStrippingRule().isSpacePreserving(NameOfNode.makeName(actualParent));
-                return preserve == Stripper.ALWAYS_PRESERVE;
-            } catch (XPathException e) {
-                // Ambiguity between strip-space and preserve-space. Because we're in an axis iterator,
-                // we don't get an opportunity to fail, so take the recovery action.
-                return true;
-            }
         }
 
         public void close() {

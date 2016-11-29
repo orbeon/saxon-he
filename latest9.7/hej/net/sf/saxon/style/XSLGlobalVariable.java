@@ -289,6 +289,8 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
                 inst.setSelectExpression(select);
             }
             inst.setRetainedStaticContext(makeRetainedStaticContext());
+            inst.setSystemId(getSystemId());
+            inst.setLineNumber(getLineNumber());
             initializeBinding(inst);
             inst.setAssignable(isAssignable());
             inst.setRequiredType(getRequiredType());

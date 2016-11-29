@@ -296,17 +296,17 @@ public abstract class ContextStackFrame {
                 return "attribute-set " + objectName;
             } else if (container instanceof KeyDefinition) {
                 return "key " + objectName;
+            } else if (container instanceof GlobalVariable) {
+                StructuredQName qName = ((GlobalVariable) container).getVariableQName();
+                if (qName.hasURI(NamespaceConstant.SAXON_GENERATED_VARIABLE)) {
+                    return "optimizer-created global variable";
+                } else {
+                    return "variable " + qName.getDisplayName();
+                }
             }
         } else if (container instanceof TemplateRule) {
             return "template match=\"" + ((TemplateRule) container).getMatchPattern().toString() + "\"";
-        } else if (container instanceof GlobalVariable) {
-            StructuredQName qName = ((GlobalVariable) container).getVariableQName();
-            if (qName.hasURI(NamespaceConstant.SAXON_GENERATED_VARIABLE)) {
-                return "optimizer-created global variable";
-            } else {
-                return "variable " + qName.getDisplayName();
-            }
-        } else {
+        }  else {
             return "";
         }
         return "";

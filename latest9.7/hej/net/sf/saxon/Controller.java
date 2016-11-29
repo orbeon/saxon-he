@@ -2121,7 +2121,8 @@ public class Controller implements ContextOriginator {
      * This method is intended for internal use.
      *
      * @param source the input tree. Must be either a DOMSource or a NodeInfo
-     * @return the NodeInfo representing the input node, suitably wrapped.
+     * @return the NodeInfo representing the input node, suitably wrapped. Exceptionally, if the source
+     * is itself a whitespace text node that gets stripped, return null;
      */
 
     public NodeInfo prepareInputTree(Source source) {
@@ -2129,6 +2130,9 @@ public class Controller implements ContextOriginator {
         if (stripSourceTrees && executable.stripsWhitespace()) {
             TreeInfo docInfo = start.getTreeInfo();
             SpaceStrippedDocument strippedDoc = new SpaceStrippedDocument(docInfo, getSpaceStrippingRule());
+            if (!SpaceStrippedNode.isPreservedNode(start, strippedDoc, start.getParent())) {
+                return null;
+            }
             start = strippedDoc.wrap(start);
         }
         if (executable.stripsInputTypeAnnotations()) {
