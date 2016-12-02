@@ -159,7 +159,7 @@ public class StandardUnparsedTextResolver implements UnparsedTextURIResolver {
                 }
 
                 if (encoding == null || isXmlMediaType) {
-                    encoding = inferStreamEncoding(is, err);
+                    encoding = inferStreamEncoding(is, debug ? err : null);
                     if (debug) {
                         err.info("unparsed-text(): inferred encoding = " + encoding);
                     }
