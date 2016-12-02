@@ -251,7 +251,7 @@ public class AnyFunctionType implements FunctionItemType {
      * value.
      */
     public String generateJavaScriptItemTypeAcceptor(String errorCode) throws XPathException {
-        return "throw SaxonJS.XError('Cannot convert JS value to a map or array')";
+        return "if (typeof val == 'object') {return val;} else {throw SaxonJS.XError('Cannot convert supplied JS value to a map or array');}";
     }
 }
 
