@@ -33,7 +33,6 @@ import net.sf.saxon.value.SequenceType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A ForExpression maps an expression over a sequence.
@@ -231,6 +230,7 @@ public class ForExpression extends Assignation {
             let.setSequence(getSequence());
             let.setAction(getAction());
             let.setSlotNumber(slotNumber);
+            let.setRetainedStaticContextLocally(getRetainedStaticContext());
             ExpressionTool.rebindVariableReferences(getAction(), this, let);
             return let.typeCheck(visitor, contextItemType).optimize(visitor, contextItemType);
         }
