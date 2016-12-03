@@ -1210,8 +1210,22 @@ public class Transform {
                     buildSourceTree = requirement.mayBeSupplied && !requirement.isDeclaredStreamable;
                 }
                 if (buildSourceTree) {
-                    XdmNode node = processor.newDocumentBuilder().build(source);
-                    transformer.setInitialContextItem(node);
+                    DocumentBuilder builder = processor.newDocumentBuilder();
+                    if (!pss.stripsInputTypeAnnotations()) {
+                        int validationMode = getConfiguration().getSchemaValidationMode();
+                        if (validationMode == Validation.STRICT) {
+                            builder.setSchemaValidator(processor.getSchemaManager().newSchemaValidator());
+                        } else if (validationMode == Validation.LAX) {
+                            SchemaValidator validator = processor.getSchemaManager().newSchemaValidator();
+                            validator.setLax(true);
+                            builder.setSchemaValidator(validator);
+                        }
+                    }
+                    if (pss.stripsWhitespace()) {
+                        builder.setWhitespaceStrippingPolicy(sheet.getWhitespaceStrippingPolicy());
+                    }
+                    XdmNode node = builder.build(source);
+                    transformer.setGlobalContextItem(node, true);
                     source = node.asSource();
                 }
             }

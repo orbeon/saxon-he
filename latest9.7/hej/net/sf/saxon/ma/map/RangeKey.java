@@ -459,7 +459,7 @@ public class RangeKey implements MapItem {
                 return null;
             } else {
                 pos++;
-                return new StringValue(curr.toString());
+                return new StringValue(curr.getValue());
             }
         }
 

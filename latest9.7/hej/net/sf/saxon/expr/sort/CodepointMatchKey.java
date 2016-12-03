@@ -30,6 +30,10 @@ public class CodepointMatchKey implements Comparable, AtomicMatchKey {
         }
     }
 
+    public UnicodeString getValue() {
+        return value;
+    }
+
     @Override
     public int hashCode() {
         return value.hashCode();

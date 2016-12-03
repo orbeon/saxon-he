@@ -100,9 +100,10 @@ public class Xslt30Transformer {
     private Processor processor;
     private Controller controller;
     private GlobalParameterSet globalParameterSet;
-    boolean primed = false;
-    boolean baseOutputUriWasSet = false;
-    Item globalContextItem = null;
+    private boolean primed = false;
+    private boolean baseOutputUriWasSet = false;
+    private Item globalContextItem = null;
+    private boolean alreadyStripped;
 
     /**
      * Protected constructor
@@ -159,42 +160,53 @@ public class Xslt30Transformer {
      *                         supplied.
      * @throws IllegalStateException if the transformation has already been evaluated by calling one of the methods
      *                               <code>applyTemplates</code>, <code>callTemplate</code>, or <code>callFunction</code>
-     * @throws SaxonApiException     if a required parameter is not present; if a parameter cannot be converted
-     *                               to the required type; if the context item cannot be converted to the required type.
      */
 
-    public void setGlobalContextItem(XdmItem globalContextItem) throws SaxonApiException {
+    public void setGlobalContextItem(XdmItem globalContextItem) {
+        setGlobalContextItem(globalContextItem, false);
+    }
+
+    /**
+     * Supply the context item to be used when evaluating global variables and parameters.
+     *
+     * @param globalContextItem the item to be used as the context item within the initializers
+     *                          of global variables and parameters. This argument can be null if no context item is to be
+     *                          supplied.
+     * @param alreadyStripped   set to true if any stripping of type annotations and whitespace text nodes
+     *                          requested by the stylesheet has already been performed
+     * @throws IllegalStateException if the transformation has already been evaluated by calling one of the methods
+     *                               <code>applyTemplates</code>, <code>callTemplate</code>, or <code>callFunction</code>
+     * @since 9.7.0.14
+     */
+
+    public void setGlobalContextItem(XdmItem globalContextItem, boolean alreadyStripped) {
         if (primed) {
             throw new IllegalStateException("Stylesheet has already been evaluated");
         }
-        this.globalContextItem = globalContextItem == null ? null : (Item)globalContextItem.getUnderlyingValue();
+        this.globalContextItem = globalContextItem == null ? null : (Item) globalContextItem.getUnderlyingValue();
+        this.alreadyStripped = alreadyStripped;
     }
 
     /**
      * Set the initial context node for the transformation.
      *
      * @param node the initial context node, or null if there is to be no initial context node
-     * @deprecated since 9.7.0.1 - use {@link #setInitialContextItem}
+     * @deprecated since 9.7.0.1 - use {@link #setGlobalContextItem}
      */
 
     public void setInitialContextNode(XdmNode node) {
-        if (primed) {
-            throw new IllegalStateException("Stylesheet has already been evaluated");
-        }
-        this.globalContextItem = node.getUnderlyingNode();
+        setGlobalContextItem(node, false);
     }
 
     /**
      * Set the initial context item for the transformation.
      *
      * @param item the initial context item, or null if there is to be no initial context item
+     * @deprecated since 9.7.0.14 - use {@link #setGlobalContextItem}
      */
 
     public void setInitialContextItem(XdmItem item) {
-        if (primed) {
-            throw new IllegalStateException("Stylesheet has already been evaluated");
-        }
-        this.globalContextItem = (Item)item.getUnderlyingValue();
+        setGlobalContextItem(item, false);
     }
 
     /**
@@ -231,7 +243,7 @@ public class Xslt30Transformer {
             if (globalParameterSet == null) {
                 globalParameterSet = new GlobalParameterSet();
             }
-            controller.setGlobalContextItem(globalContextItem);
+            controller.setGlobalContextItem(globalContextItem, alreadyStripped);
             try {
                 controller.initializeController(globalParameterSet);
             } catch (XPathException e) {

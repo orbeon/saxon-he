@@ -1041,18 +1041,44 @@ public class Controller implements ContextOriginator {
      * methods; by contrast, these overwrite the global context item with a value based on the node supplied
      * as the source of the transformation.
      *
+     * <p>Calling this method is equivalent to calling <code>>setGlobalContextItem(contextItem, false)</code>:
+     * so in the case of XSLT, any stripping of type annotations or whitespace text nodes will be implemented
+     * be attaching a stripping layer around this tree.</p>
+     *
      * @param contextItem the context item for evaluating global variables, or null if there is none
      * @since 9.7
      */
 
     public void setGlobalContextItem(Item contextItem) {
-        // Bug 2929 - don't do space-stripping twice
-        if (globalContextItem instanceof SpaceStrippedNode && ((SpaceStrippedNode) globalContextItem).getUnderlyingNode() == contextItem) {
-            return;
-        }
-        if (contextItem instanceof NodeInfo) {
-            // In XSLT, apply strip-space and strip-type-annotations options
-            contextItem = prepareInputTree((NodeInfo) contextItem);
+        setGlobalContextItem(contextItem, false);
+    }
+
+    /**
+     * Set the item used as the context for evaluating global variables. This value is used
+     * as the global context item by XQuery and XPath, and also by XSLT 3.0 interfaces such
+     * as {@link #applyTemplates(Sequence, Receiver)} and {@link #callTemplate(StructuredQName, Receiver)}.
+     * It is not used by the {@link #transform(Source, Receiver)} and {@link #transformDocument(NodeInfo, Receiver)}
+     * methods; by contrast, these overwrite the global context item with a value based on the node supplied
+     * as the source of the transformation.
+     *
+     * @param contextItem the context item for evaluating global variables, or null if there is none
+     * @param alreadyStripped should be set to true if any stripping of type annotations or whitespace
+     *                        text nodes specified in the stylesheet has already been done. Note that
+     *                        it is much more efficient to do this while building the tree, rather than
+     *                        afterwards.
+     * @since 9.7.0.14
+     */
+
+    public void setGlobalContextItem(Item contextItem, boolean alreadyStripped) {
+        if (!alreadyStripped) {
+            // Bug 2929 - don't do space-stripping twice
+            if (globalContextItem instanceof SpaceStrippedNode && ((SpaceStrippedNode) globalContextItem).getUnderlyingNode() == contextItem) {
+                return;
+            }
+            if (contextItem instanceof NodeInfo) {
+                // In XSLT, apply strip-space and strip-type-annotations options
+                contextItem = prepareInputTree((NodeInfo) contextItem);
+            }
         }
         this.globalContextItem = contextItem;
         this.globalContextItemPreset = true;
@@ -1814,6 +1840,9 @@ public class Controller implements ContextOriginator {
                 // Bug 2929: don't do space-stripping twice
                 if (globalContextItem instanceof SpaceStrippedNode && ((SpaceStrippedNode) globalContextItem).getUnderlyingNode() == underSource) {
                     startNode = (SpaceStrippedNode) globalContextItem;
+                } else if (globalContextItem == source) {
+                    // if globalContextItem exists, then it will already have been space-stripped
+                    startNode = (NodeInfo)globalContextItem;
                 } else {
                     startNode = prepareInputTree(underSource);
                 }
@@ -1898,7 +1927,8 @@ public class Controller implements ContextOriginator {
     }
 
     /**
-     * Make a source tree from a source supplied as a StreamSource or SAXSource
+     * Make a source tree from a source supplied as a StreamSource or SAXSource,
+     * and make the document node of this tree the global context item
      *
      * @param source         the source
      * @param close          true if the source is to be closed after use
