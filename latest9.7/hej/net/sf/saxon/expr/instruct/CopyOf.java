@@ -35,7 +35,6 @@ import net.sf.saxon.value.Whitespace;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
 
 
 /**
@@ -586,7 +585,28 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
                         if (validating) {
                             ParseOptions options = new ParseOptions();
                             options.setSchemaValidationMode(validation);
-                            options.setTopLevelType(schemaType);
+                            SchemaType type = schemaType;
+                            if (type == null) {
+                                // Bug 3062
+                                String xsitype = source.getAttributeValue(NamespaceConstant.SCHEMA_INSTANCE, "type");
+                                if (xsitype != null) {
+                                    StructuredQName typeName;
+                                    try {
+                                        typeName = StructuredQName.fromLexicalQName(
+                                                xsitype,
+                                                true,
+                                                false,
+                                                new InscopeNamespaceResolver(source));
+                                    } catch (XPathException e) {
+                                        throw new XPathException("Invalid QName in xsi:type attribute of element being validated: " + xsitype, "XTTE1510");
+                                    }
+                                    type = config.getSchemaType(typeName);
+                                    if (type == null) {
+                                        throw new XPathException("Unknown xsi:type in element being validated: " + xsitype, "XTTE1510");
+                                    }
+                                }
+                            }
+                            options.setTopLevelType(type);
                             options.setTopLevelElement(NameOfNode.makeName(source).getStructuredQName());
                             config.prepareValidationReporting(context, options);
                             eval = config.getElementValidator(out, options, getLocation());
