@@ -23,9 +23,6 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.Orphan;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
-import net.sf.saxon.value.StringValue;
-
-import java.util.Map;
 
 /**
  * An instruction derived from an xsl:attribute element in stylesheet, or from
@@ -224,7 +221,7 @@ public final class ComputedAttribute extends AttributeCreator {
                 if (val instanceof StringValue) {
                     String[] parts = NameChecker.checkQNameParts(val.getStringValueCS());
                     if (getNamespaceExp() == null) {
-                        String uri = getNamespaceResolver().getURIForPrefix(parts[0], true);
+                        String uri = getNamespaceResolver().getURIForPrefix(parts[0], false);
                         if (uri == null) {
                             XPathException se = new XPathException("Prefix " + parts[0] + " has not been declared");
                             if (isXSLT()) {
