@@ -486,7 +486,9 @@ public final class ComplexContentOutputter extends SequenceReceiver {
      * if not.
      *
      * @param nodeName the proposed name, including proposed prefix
-     * @param seq      sequence number, used for generating a substitute prefix when necessary
+     * @param seq      sequence number, used for generating a substitute prefix when necessary.
+     *                 The value 0 is used for element names; values greater than 0 are used
+     *                 for attribute names.
      * @return a nameCode to use in place of the proposed nameCode (or the original nameCode
      *         if no change is needed)
      * @throws net.sf.saxon.trans.XPathException
@@ -513,6 +515,14 @@ public final class ComplexContentOutputter extends SequenceReceiver {
             }
         }
         // no declaration of this prefix: declare it now
+        if (seq > 0 && nsprefix.isEmpty()) {
+            // This is an attribute and the prefix is "" - need to invent a prefix
+            // See bug 3068 and unit test ParserTest/testXercesSchemaDefaultedAttributes
+            String prefix = getSubstitutePrefix(binding, seq);
+            NodeName newName = new FingerprintedQName(prefix, nodeName.getURI(), nodeName.getLocalPart());
+            namespace(newName.getNamespaceBinding(), 0);
+            return newName;
+        }
         namespace(binding, 0);
         return nodeName;
     }
