@@ -104,7 +104,9 @@ public class ResolveURI extends SystemFunction  {
                 base = absoluteURI.toString();
             }
             URI resolved = makeAbsolute(relative, base);
-            resolved = resolved.normalize();
+            if(!resolved.toASCIIString().startsWith("file:////")) {
+                resolved = resolved.normalize();
+            }
             String result = escaped ? unescapeSpaces(resolved.toString()) : resolved.toString();
 
             // Test case XSLT3 resolve-uri-022. Java even after normalization can leave a URI with trailing "../" or ".." parts.
