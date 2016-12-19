@@ -80,7 +80,10 @@ public class UseAttributeSet extends Instruction implements ComponentInvocation,
     public static List<UseAttributeSet> makeUseAttributeSetInstructions(StructuredQName[] targets, StyleElement instruction) throws XPathException {
         List<UseAttributeSet> list = new ArrayList<UseAttributeSet>(targets.length);
         for (StructuredQName name : targets) {
-            list.add(makeUseAttributeSet(name, instruction));
+            UseAttributeSet use = makeUseAttributeSet(name, instruction);
+            if (use != null) {
+                list.add(use);
+            }
         }
         return list;
     }
@@ -118,7 +121,7 @@ public class UseAttributeSet extends Instruction implements ComponentInvocation,
             instruction.getPrincipalStylesheetModule().getAttributeSetDeclarations(name);
             if (invokee == null) {
                 instruction.compileError("Unknown attribute set " + name.getEQName(), "XTSE0710");
-                return null; // to prevent compile warnings
+                return null;
             }
             target = (AttributeSet) invokee.getCode();
         }
