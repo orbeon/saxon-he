@@ -39,6 +39,13 @@ public interface RegexIterator extends SequenceIterator {
     public String getRegexGroup(int number);
 
     /**
+     * Get the number of captured substrings
+     * @return the highest-numbered captured substring
+     */
+
+    public int getNumberOfGroups();
+
+    /**
      * Get a sequence containing all the regex captured groups relating to the current matching item
      * (except group 0, because we want to use indexing from 1).
      * This is used by the saxon:analyze-string() higher-order extension function.

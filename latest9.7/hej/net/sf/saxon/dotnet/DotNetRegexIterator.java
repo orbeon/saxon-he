@@ -172,6 +172,16 @@ public class DotNetRegexIterator implements RegexIterator {
     }
 
     /**
+     * Get the number of captured substrings
+     *
+     * @return the highest-numbered captured substring
+     */
+    @Override
+    public int getNumberOfGroups() {
+        return match.get_Groups().get_Count();
+    }
+
+    /**
      * Get a sequence containing all the regex groups (except group 0, because we want to use indexing from 1).
      * This is used by the saxon:analyze-string() higher-order extension function.
      */

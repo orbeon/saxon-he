@@ -170,6 +170,16 @@ public class JRegexIterator implements RegexIterator {
     }
 
     /**
+     * Get the number of captured substrings
+     *
+     * @return the highest-numbered captured substring
+     */
+    @Override
+    public int getNumberOfGroups() {
+        return matcher.groupCount();
+    }
+
+    /**
      * Get a sequence containing all the regex groups (except group 0, because we want to use indexing from 1).
      * This is used by the saxon:analyze-string() higher-order extension function.
      */
