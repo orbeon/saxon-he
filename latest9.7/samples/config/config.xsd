@@ -106,6 +106,12 @@
       <xs:documentation> Defines defaults for serialization properties. </xs:documentation>
     </xs:annotation>
     <xs:complexType>
+      <xs:attribute name="allow-duplicate-names" use="optional" type="c:yesOrNoType">
+        <xs:annotation>
+          <xs:documentation> Used only for JSON output. Determines whether duplicate keys with the
+            same string value are allowed in a JSON map; if not an error is raised. </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
       <xs:attribute name="byte-order-mark" use="optional" type="c:yesOrNoType">
         <xs:annotation>
           <xs:documentation>Indicates whether serialized output should include a byte order
@@ -164,6 +170,12 @@
         <xs:annotation>
           <xs:documentation>Defines separator to be used between items in serialized
             output.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="json-node-output-method" use="optional" type="xs:QName">
+        <xs:annotation>
+          <xs:documentation> Used only for JSON output. Defines the serialization method for nodes, 
+            for example 'xml' or 'html' or 'text'. </xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="media-type" use="optional" type="xs:string">
