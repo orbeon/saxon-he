@@ -1966,8 +1966,7 @@ public class XQueryParser extends XPathParser {
                     // we need to replace the required type by the intersection of the two types.
                     // ASSERT: if the types are non-disjoint and neither subsumes the other, then they must be nodetests
                     if (!(requiredType instanceof NodeTest && otherType instanceof NodeTest)) {
-                        // TODO: this can fail if both are function/map/array types
-                        throw new AssertionError("Overlapping types found that are not NodeTests");
+                        grumble("Saxon 9.7 restriction: separate modules cannot define conflicting requirements for the context item");
                     }
                     ItemType intersection = new CombinedNodeTest(
                             (NodeTest) requiredType,

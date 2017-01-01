@@ -383,6 +383,10 @@ public class TypeHierarchy {
                     Set<? extends PlainType> s1 = toSet(((PlainType) t1).getPlainMemberTypes());
                     Set<? extends PlainType> s2 = toSet(((PlainType) t2).getPlainMemberTypes());
 
+                    if (!unionOverlaps(s1, s2)) {
+                        return DISJOINT;
+                    }
+
                     boolean gt = s1.containsAll(s2);
                     boolean lt = s2.containsAll(s1);
                     if (gt && lt) {
@@ -391,56 +395,14 @@ public class TypeHierarchy {
                         return SUBSUMES;
                     } else if (lt) {
                         return SUBSUMED_BY;
+                    } else if (unionSubsumes(s1, s2)) {
+                        return SUBSUMES;
+                    } else if (unionSubsumes(s2, s1)) {
+                        return SUBSUMED_BY;
                     } else {
-                        // TODO: we could return a more precise result, e.g. union(string, decimal) subsumes union(string, int)
-                        boolean allSubsumed = true;
-                        boolean foundOverlap = false;
-                        for (PlainType a1 : s1) {
-                            boolean foundSupertype = false;
-                            for (PlainType a2 : s2) {
-                                int rel = relationship(a1, a2);
-                                if (rel == SUBSUMED_BY || rel == SAME_TYPE) {
-                                    foundSupertype = true;
-                                    break;
-                                }
-                                if (rel == SUBSUMES || rel == OVERLAPS) {
-                                    foundOverlap = true;
-                                }
-                            }
-                            if (!foundSupertype) {
-                                allSubsumed = false;
-                                break;
-                            }
-                        }
-                        if (allSubsumed) {
-                            return SUBSUMED_BY;
-                        }
-                        allSubsumed = true;
-                        for (PlainType a2 : s2) {
-                            boolean foundSupertype = false;
-                            for (PlainType a1 : s1) {
-                                int rel = relationship(a1, a2);
-                                if (rel == SUBSUMES || rel == SAME_TYPE) {
-                                    foundSupertype = true;
-                                    break;
-                                }
-                                if (rel == SUBSUMED_BY || rel == OVERLAPS) {
-                                    foundOverlap = true;
-                                }
-                            }
-                            if (!foundSupertype) {
-                                allSubsumed = false;
-                                break;
-                            }
-                        }
-                        if (allSubsumed) {
-                            return SUBSUMES;
-                        }
-                        if (foundOverlap) {
-                            return OVERLAPS;
-                        }
-                        return DISJOINT;
+                        return OVERLAPS;
                     }
+
                 } else if (t1 instanceof AtomicType) {
                     // relationship (atomic, union)
                     int r = relationship(t2, t1);
@@ -577,12 +539,67 @@ public class TypeHierarchy {
 
     }
 
+    /**
+     * Convert a collection to a set
+     * @param in the input collection
+     * @param <X> the member type of the collection
+     * @return a set with the same members as the supplied collection
+     */
+
     private static <X> Set<X> toSet(Iterable<X> in) {
         Set<X> s = new HashSet<X>();
         for (X x : in) {
             s.add(x);
         }
         return s;
+    }
+
+    /**
+     * Ask whether one union type subsumes another
+     *
+     * @param s1 the member types of the first union type
+     * @param s2 the member types of the second union type
+     * @return true if every type t2 in s2 is subsumed by the first union type; except that
+     * we assume this is the case only if t2 is subsumed by some member type of the first union type.
+     */
+
+    private boolean unionSubsumes(Set<? extends PlainType> s1, Set<? extends PlainType> s2) {
+        // s1 subsumes s2 if every t2 in s2 is subsumed by some t1 in s1 (we'll discount the possibility
+        // of some t2 in s2 being subsumed by a combination of multiple types in s1)
+        for (PlainType t2 : s2) {
+            boolean t2isSubsumed = false;
+            for (PlainType t1 : s1) {
+                int rel = relationship(t1, t2);
+                if (rel == SUBSUMES || rel == SAME_TYPE) {
+                    t2isSubsumed = true;
+                    break;
+                }
+            }
+            if (!t2isSubsumed) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Ask whether two union types are disjoint
+     *
+     * @param s1 the set of member types of the first union type
+     * @param s2 the set of member types of the second union type
+     * @return true if some S1 in s1 has instances in common with some S2 in s2
+     */
+
+    private boolean unionOverlaps(Set<? extends PlainType> s1, Set<? extends PlainType> s2) {
+        for (PlainType t2 : s2) {
+            for (PlainType t1 : s1) {
+                int rel = relationship(t1, t2);
+                if (rel != DISJOINT) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
