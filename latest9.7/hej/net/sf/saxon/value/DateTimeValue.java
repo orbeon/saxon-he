@@ -993,7 +993,7 @@ public final class DateTimeValue extends CalendarValue implements Comparable {
             case YEAR_ALLOWING_ZERO:
                 return Int64Value.makeIntegerValue(year);
             case YEAR:
-                return Int64Value.makeIntegerValue(year > 0 ? year : year - 1);
+                return Int64Value.makeIntegerValue(year > 0 || !xsd10rules ? year : year - 1); // bug 3096
             case MONTH:
                 return Int64Value.makeIntegerValue(month);
             case DAY:
