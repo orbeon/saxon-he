@@ -155,7 +155,6 @@ public abstract class Expression implements /*InstructionInfo,*/ IdentityCompara
                 } catch (Exception err) {
                     throw new IllegalStateException(message);
                 }
-                System.err.println();
                 child.setParentExpression(Expression.this);
             }
             if (child.getRetainedStaticContext() == null) {
