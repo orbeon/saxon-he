@@ -142,10 +142,21 @@ public abstract class Expression implements /*InstructionInfo,*/ IdentityCompara
         for (Operand o : ops) {
             Expression child = o.getChildExpression();
             if (child.getParentExpression() != this) {
-                System.err.println("*** Bad parent pointer found in " + child.toShortString() +
-                    " at " + child.getLocation().getLineNumber() + " ***");
+                String message = "*** Bad parent pointer found in " + child.toShortString() +
+                        " at " + child.getLocation().getLineNumber() + " ***";
+                try {
+                    Configuration config = getConfiguration();
+                    Logger logger = config == null ? null : config.getLogger();
+                    if (logger != null) {
+                        logger.warning(message);
+                    } else {
+                        throw new IllegalStateException(message);
+                    }
+                } catch (Exception err) {
+                    throw new IllegalStateException(message);
+                }
+                System.err.println();
                 child.setParentExpression(Expression.this);
-                //throw new IllegalStateException("Bad parent pointer");
             }
             if (child.getRetainedStaticContext() == null) {
                 child.setRetainedStaticContext(getRetainedStaticContext());
