@@ -358,6 +358,9 @@ public class UseWhenFilter extends ProxyReceiver {
                         }
                     }
                 }
+                if (elemName.getLocalPart().equals("import-schema")) {
+                    compilation.setSchemaAware(true);
+                }
                 if (elemName.getLocalPart().equals("use-package") && precedence.getDepth() > 1) {
                     throw new XPathException("xsl:use-package cannot appear in an imported stylesheet", "XTSE3008");
                 }

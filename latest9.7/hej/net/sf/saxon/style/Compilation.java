@@ -141,6 +141,7 @@ public class Compilation {
             pd.setXPathVersion(getProcessorVersion() == 30 ? 31 : getProcessorVersion());
             pd.setHostLanguage(Configuration.XSLT);
             pd.setTargetEdition(compilerInfo.getTargetEdition());
+            pd.setSchemaAware(schemaAware);
             packageData = pd;
         }
     }
@@ -208,7 +209,7 @@ public class Compilation {
         pack.setVersion(xslpackage.getVersion());
         pack.setPackageVersion(xslpackage.getPackageVersion());
         pack.setPackageName(xslpackage.getName());
-        pack.setSchemaAware(info.isSchemaAware());
+        pack.setSchemaAware(info.isSchemaAware() || isSchemaAware());
         pack.setXPathVersion(processorVersion >= 30 ? 31 : 20);
         pack.createFunctionLibrary();
         if (info.getExtensionFunctionLibrary() != null) {
