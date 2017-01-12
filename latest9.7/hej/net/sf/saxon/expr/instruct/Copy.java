@@ -546,7 +546,9 @@ public class Copy extends ElementCreator {
     public CopyAdjunct getStreamingAdjunct() {
         return new CopyAdjunct();
     }
+//#endif
 
+//#ifdefined BYTECODE
     /**
      * Return the compiler of the Copy expression
      *

@@ -239,7 +239,7 @@ public interface Platform {
     ModuleURIResolver makeStandardModuleURIResolver(Configuration config);
 
 
-//#if EE==true
+//#ifdefined BYTECODE
     /**
      * Return the class loader required to load the bytecode generated classes
      *
