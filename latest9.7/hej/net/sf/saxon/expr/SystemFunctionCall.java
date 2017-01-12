@@ -27,8 +27,6 @@ import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.IntegerValue;
 
-import java.util.Map;
-
 /**
  * A call to a system-defined function (specifically, a function implemented as an instance
  * of {@link net.sf.saxon.functions.SystemFunction})
