@@ -373,7 +373,7 @@
       </xs:attribute>
       <xs:anyAttribute namespace="##other" processContents="lax">
         <xs:annotation>
-          <xs:documentation> Additional attributes are passed to the user-defined LocalizaterFactory
+          <xs:documentation> Additional attributes are passed to the user-defined LocalizerFactory
             in a Properties object, the propety names are the local names of the attributes, and the
             namespace is ignored. </xs:documentation>
         </xs:annotation>
@@ -391,8 +391,9 @@
         <xs:element ref="c:extensionElement" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="c:patternOptimization" minOccurs="0"/>
       </xs:sequence>
-      <xs:attribute name="initialMode" use="optional" type="xs:QName"/>
-      <xs:attribute name="initialTemplate" use="optional" type="xs:QName"/>
+      <xs:attribute name="enableAssertions" use="optional" type="xs:boolean"/>
+      <xs:attribute name="initialMode" use="optional" type="c:EQName"/>
+      <xs:attribute name="initialTemplate" use="optional" type="c:EQName"/>
       <xs:attribute name="messageEmitter" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="outputUriResolver" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="recoveryPolicy" use="optional" type="c:recoveryPolicyType"/>
@@ -636,6 +637,23 @@
         </xs:annotation>
       </xs:enumeration>
     </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType name="EQName">
+    <xs:annotation>
+      <xs:documentation> 
+        <p>An extended QName. This may be either a local name, or a prefixed QName, or a name
+          written using Clark notation (allowing either {uri}local or the extended QName notation
+          Q{uri}local).</p>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:union memberTypes="xs:NCName xs:QName">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:pattern value="Q?\{.*\}\i\c*"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:union>
   </xs:simpleType>
 
   <xs:simpleType name="fileNameType">

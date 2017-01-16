@@ -1009,23 +1009,14 @@
          </xs:sequence>
          <xs:attribute name="defaultCountry" use="optional" type="xs:NCName">
             <xs:annotation>
-               <xs:documentation>
-                  <p> This determines the country that is used by <code>format-date()</code> and similar
-                functions if no country code is supplied explicitly. If no value is given for this
-                property, the default is taken from the Java Locale, which in turn typically depends
-                on settings for the current user in the operating system.</p>
-               </xs:documentation>
+               <xs:documentation> The default country code for format-date() and similar functions. For
+            example 'FR' for France. </xs:documentation>
             </xs:annotation>
          </xs:attribute>
          <xs:attribute name="defaultLanguage" use="optional" type="xs:NCName">
             <xs:annotation>
-               <xs:documentation>
-                  <p>This option determines the language that is used by <code>format-date()</code>,
-                    <code>xsl:number</code> and similar constructs if no language code is supplied
-                explicitly. If no value is given for this property, the default is taken from the
-                Java Locale, which in turn typically depends on settings for the current user in the
-                operating system.</p>
-               </xs:documentation>
+               <xs:documentation> The default language code for format-date() and similar functions. For
+            example 'en-GB' for British English. </xs:documentation>
             </xs:annotation>
          </xs:attribute>
       </xs:complexType>
@@ -1050,7 +1041,7 @@
          </xs:attribute>
          <xs:anyAttribute namespace="##other" processContents="lax">
             <xs:annotation>
-               <xs:documentation> Additional attributes are passed to the user-defined LocalizaterFactory
+               <xs:documentation> Additional attributes are passed to the user-defined LocalizerFactory
             in a Properties object, the propety names are the local names of the attributes, and the
             namespace is ignored. </xs:documentation>
             </xs:annotation>
@@ -1070,7 +1061,23 @@
 
             <xs:element ref="c:patternOptimization" minOccurs="0"/>
          </xs:sequence>
-         <xs:attribute name="initialMode" use="optional" type="xs:QName">
+         <xs:attribute name="enableAssertions" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>This property indicates whether assertions (XSLT 3.0 xsl:assert instructions) are enabled
+            or disabled. They are disabled by default. Setting this property on causes assertions
+            to be enabled at compile time for all XSLT packages compiled using the default configuration
+            options.</p>
+                  <p>This option can be set for a particular XSLT compilation. When the option is set
+                at the <code>Configuration</code> level (or on a <code>TransformerFactory</code>), it acts
+                as a default.</p>
+                  <p>If assertions have been enabled at compile time for a particular package, they can still
+            be disabled at run-time (for all packages) by setting an option on the <code>Xslt30Transformer</code>.
+            But if assertions were disabled at compile time, enabling them at run-time has no effect.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="initialMode" use="optional" type="c:EQName">
             <xs:annotation>
                <xs:documentation>
                   <p>This property indicates the name of a mode within a stylesheet in which execution
@@ -1081,7 +1088,7 @@
                </xs:documentation>
             </xs:annotation>
          </xs:attribute>
-         <xs:attribute name="initialTemplate" use="optional" type="xs:QName">
+         <xs:attribute name="initialTemplate" use="optional" type="c:EQName">
             <xs:annotation>
                <xs:documentation>
                   <p>This property indicates the name of a named template within a stylesheet where
@@ -1703,6 +1710,22 @@
             </xs:annotation>
          </xs:enumeration>
       </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="EQName">
+      <xs:annotation>
+         <xs:documentation>
+            <p>An extended QName. This may be either a local name, or a prefixed QName, or a name
+          written using Clark notation (allowing either {uri}local or the extended QName notation
+          Q{uri}local).</p>
+         </xs:documentation>
+      </xs:annotation>
+      <xs:union memberTypes="xs:NCName xs:QName">
+         <xs:simpleType>
+            <xs:restriction base="xs:token">
+               <xs:pattern value="Q?\{.*\}\i\c*"/>
+            </xs:restriction>
+         </xs:simpleType>
+      </xs:union>
    </xs:simpleType>
    <xs:simpleType name="fileNameType">
       <xs:annotation>
