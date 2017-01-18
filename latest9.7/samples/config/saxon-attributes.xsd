@@ -57,6 +57,14 @@
       </xs:documentation>
     </xs:annotation>
   </xs:attribute> 
+  <xs:attribute name="newline" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the string that is used by the text output method to represent a newline. Default
+        value x10.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute> 
   <xs:attribute name="next-in-chain" type="xs:anyURI">
     <xs:annotation>
       <xs:documentation>
