@@ -8,6 +8,7 @@
 package net.sf.saxon.option.cpp;
 
 
+import com.saxonica.functions.extfn.PhpCall;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Version;
 import net.sf.saxon.lib.*;
@@ -90,6 +91,12 @@ public class SaxonCAPI {
                 System.err.println("New processor created, Processor: " + System.identityHashCode(processor));
             }
         }
+    }
+
+    public static void setLibrary(String cwd, String libName){
+//#if EE==true || PE==true
+        PhpCall.loadLibrary(cwd, libName);
+//#endif
     }
 
 

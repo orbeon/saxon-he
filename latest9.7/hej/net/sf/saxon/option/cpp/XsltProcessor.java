@@ -423,6 +423,12 @@ public class XsltProcessor extends SaxonCAPI {
                             builder.setDTDValidation(false);
                         }
 
+                    } else if(params[i].equals("extc")){
+                        //extension function library path
+                        String libName = (String) values[i];
+                        SaxonCAPI.setLibrary("",libName);
+
+
                     } else if (params[i].equals("im")) {
                         if (values[i] instanceof String) {
                             initialMode = (String) values[i];
@@ -638,8 +644,9 @@ public class XsltProcessor extends SaxonCAPI {
                 XsltCompiler compiler = processor.newXsltCompiler();
                 source = resolveFileToSource(cwd, stylesheet);
                 compiler.setErrorListener(errorListener);
-
-                transformer = compiler.compile(source).load();
+                XsltExecutable tempExecutable =   compiler.compile(source);
+                tempExecutable.getUnderlyingCompiledStylesheet();
+                transformer = tempExecutable.load();
 
             }
             StringWriter sw = new StringWriter();
@@ -750,6 +757,9 @@ public class XsltProcessor extends SaxonCAPI {
         cpp.saveFromFile(cwd2, "xsl/foo.xsl", "xsl/foo.xslp");
         String resultStr = cpp.transformToString(cwd2, "xml/foo.xml", "xsl/foo.xslp", null, null);
         System.out.println(resultStr);
+
+         String resultStr4 = cpp.transformToString(cwd2, "xml/foo.xml", "xsl/fooExFunc.xsl", null, null);
+               System.out.println(resultStr4);
 
         String [] params0 = {"it"};
         Object [] values0 = {null};

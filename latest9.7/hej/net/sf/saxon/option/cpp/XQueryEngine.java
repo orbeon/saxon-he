@@ -37,7 +37,6 @@ public class XQueryEngine extends SaxonCAPI {
 
     /**
      * Default Constructor to initialise XQueryEngine. s9api Processor is created with license flag as false
-     *
      */
     public XQueryEngine() {
         super(false);
@@ -60,7 +59,7 @@ public class XQueryEngine extends SaxonCAPI {
     /**
      * Constructor to initialise XQueryEngine with processor and license flag
      *
-     * @param proc    - s9api processor
+     * @param proc - s9api processor
      */
     public XQueryEngine(Processor proc) {
         super(proc);
@@ -72,7 +71,7 @@ public class XQueryEngine extends SaxonCAPI {
     public XdmNode parseXMLString(String xml) throws SaxonApiException {
         try {
             return SaxonCAPI.parseXmlString(processor, null, xml);
-        } catch(SaxonApiException ex){
+        } catch (SaxonApiException ex) {
             saxonExceptions.add(new SaxonCException(ex));
             throw ex;
         }
@@ -81,7 +80,6 @@ public class XQueryEngine extends SaxonCAPI {
     public void setXQueryFile(String queryFileName) {
         queryFile = new File(queryFileName);
     }
-
 
 
     /**
@@ -174,9 +172,9 @@ public class XQueryEngine extends SaxonCAPI {
         }
 
         XQueryEvaluator eval = executable.load();
-        try{
+        try {
             applyXQueryProperties(this, cwd, serializer, processor, eval, params, values, props);
-        } catch(SaxonApiException ex){
+        } catch (SaxonApiException ex) {
             saxonExceptions.add(new SaxonCException(ex));
             throw ex;
         }
@@ -209,7 +207,7 @@ public class XQueryEngine extends SaxonCAPI {
     }
 
     public void executeQueryToFile(String cwd, String outFilename, String[] params, Object[] values) throws SaxonApiException {
-        try{
+        try {
             XQueryEvaluator eval = xqueryEvaluator(cwd, params, values);
             if (outFilename != null) {
                 serializer = resolveOutputFile(processor, cwd, outFilename);
@@ -217,7 +215,7 @@ public class XQueryEngine extends SaxonCAPI {
                 return;
             }
             eval.run();
-        } catch(SaxonApiException ex){
+        } catch (SaxonApiException ex) {
             SaxonCException saxonException = new SaxonCException(ex);
             saxonExceptions.add(saxonException);
             throw ex;
@@ -241,11 +239,10 @@ public class XQueryEngine extends SaxonCAPI {
         //Serializer serializer = processor.newSerializer();
         if (params != null && params.length != 0) {
             for (int i = 0; i < params.length; i++) {
-                if(params[i].equals("sa")) {
+                if (params[i].equals("sa")) {
 
 
-                }
-                else if (params[i].startsWith("!")) {
+                } else if (params[i].startsWith("!")) {
                     String name = params[i].substring(1);
                     Serializer.Property prop = null;//Serializer.Property.get(name);
                     serializer.setOutputProperty(prop, (String) values[i]);
@@ -265,6 +262,12 @@ public class XQueryEngine extends SaxonCAPI {
                     source = api.resolveFileToSource(cwd, (String) values[i]);
                     eval.setSource(source);
 
+                } else if (params[i].equals("extc")) {
+                    //extension function library path
+                    String libName = (String) values[i];
+                    SaxonCAPI.setLibrary("", libName);
+
+
                 } else if (params[i].equals("item") || params[i].equals("node")) {
                     Object value = values[i];
                     if (value instanceof XdmItem) {
@@ -273,11 +276,11 @@ public class XQueryEngine extends SaxonCAPI {
                     eval.setContextItem(item);
                 } else if (params[i].equals("resources")) {
                     if (SaxonCAPI.RESOURCES_DIR == null) {
-                        String dir1 = (String)values[i];
-                            if (!dir1.endsWith("/")) {
-                               dir1 = cwd.concat("/");
-                            }
-                            SaxonCAPI.RESOURCES_DIR = dir1;
+                        String dir1 = (String) values[i];
+                        if (!dir1.endsWith("/")) {
+                            dir1 = cwd.concat("/");
+                        }
+                        SaxonCAPI.RESOURCES_DIR = dir1;
                     }
 
                 } else if (params[i].startsWith("param:")) {
@@ -316,9 +319,9 @@ public class XQueryEngine extends SaxonCAPI {
         String q1 = "q1";
         String outfile = "outfile.xml";
         Processor processor = new Processor(true);
-        String [] paramcon = {"l"};
+        String[] paramcon = {"l"};
 
-        String [] valuesCon = {"on"};
+        String[] valuesCon = {"on"};
         SaxonCAPI.applyToConfiguration(processor, paramcon, valuesCon);
         XQueryEngine xquery = new XQueryEngine(processor);
         XdmNode doc = xquery.parseXmlString(null, "<bookstore>\n" +
@@ -347,8 +350,6 @@ public class XQueryEngine extends SaxonCAPI {
         // xquery.executeQueryToFile("/home/ond1/test/saxon9-5-1-1source", outfile, params1, values1);
         System.out.println("Result1=" + result);
         System.out.println("Result2" + result2);
-
-
 
 
         QName qname = QName.XS_INTEGER;
