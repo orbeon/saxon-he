@@ -27,7 +27,6 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
@@ -72,11 +71,12 @@ public class ParseXmlFragment extends SystemFunction implements Callable {
             Source source = new SAXSource(is);
             XMLReader reader = configuration.getSourceParser();
             if(reader.getEntityResolver() != null) {
-                try {
-                    reader = XMLReaderFactory.createXMLReader();
-                } catch (SAXException e) {
+                //try {
+                //XMLReaderFactory.createXMLReader();
+                /*} catch (SAXException e) {
                     throw new XPathException(e);
-                }
+                }  */
+                reader = configuration.createXMLParser();
             }
             ((SAXSource)source).setXMLReader(reader);
             source.setSystemId(baseURI);
