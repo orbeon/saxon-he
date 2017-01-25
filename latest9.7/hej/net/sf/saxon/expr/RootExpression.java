@@ -28,8 +28,6 @@ import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.type.TypeHierarchy;
 
-import java.util.Map;
-
 
 /**
  * An expression whose value is always a set of nodes containing a single node,
@@ -252,7 +250,7 @@ public class RootExpression extends Expression {
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         if (pathMapNodeSet == null) {
             ContextItemExpression cie = new ContextItemExpression();
-            //cie.setContainer(getContainer());
+            ExpressionTool.copyLocationInfo(this, cie);
             pathMapNodeSet = new PathMap.PathMapNodeSet(pathMap.makeNewRoot(cie));
         }
         return pathMapNodeSet.createArc(AxisInfo.ANCESTOR_OR_SELF, NodeKindTest.DOCUMENT);
