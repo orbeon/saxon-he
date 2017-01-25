@@ -11,6 +11,7 @@ import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.Operand;
 import net.sf.saxon.expr.OperandRole;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.parser.PathMap;
 import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
@@ -193,6 +194,11 @@ public class WindowClause extends Clause {
             vars[i++] = iter.next();
         }
         return vars;
+    }
+
+    @Override
+    public void addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
+       throw new UnsupportedOperationException("Document projection not supported for 'group by'");
     }
 
     /**

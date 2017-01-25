@@ -8,10 +8,7 @@
 package net.sf.saxon.expr.flwor;
 
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.RebindingMap;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
@@ -118,6 +115,11 @@ public class WhereClause extends Clause {
     @Override
     public void processOperands(OperandProcessor processor) throws XPathException {
         processor.processOperand(predicateOp);
+    }
+
+    @Override
+    public void addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
+        getPredicate().addToPathMap(pathMap, pathMapNodeSet);
     }
 
     /**

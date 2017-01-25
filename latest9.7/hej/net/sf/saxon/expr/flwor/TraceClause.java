@@ -8,6 +8,7 @@
 package net.sf.saxon.expr.flwor;
 
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.parser.PathMap;
 import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.NamespaceResolver;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -97,6 +98,11 @@ public class TraceClause extends Clause {
      */
     @Override
     public void processOperands(OperandProcessor processor) throws XPathException {
+    }
+
+    @Override
+    public void addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
+        // no action
     }
 
     /**

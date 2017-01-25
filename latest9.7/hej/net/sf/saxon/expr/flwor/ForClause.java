@@ -20,9 +20,7 @@ import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.SequenceType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A "for" clause in a FLWOR expression
@@ -380,6 +378,12 @@ public class ForClause extends Clause {
                     allowsEmpty ? StaticProperty.ALLOWS_ZERO_OR_ONE : StaticProperty.EXACTLY_ONE,
                     null, getSequence().getSpecialProperties());
         }
+    }
+
+    @Override
+    public void addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
+        PathMap.PathMapNodeSet varPath = getSequence().addToPathMap(pathMap, pathMapNodeSet);
+        pathMap.registerPathForVariable(rangeVariable, varPath);
     }
 
     /**

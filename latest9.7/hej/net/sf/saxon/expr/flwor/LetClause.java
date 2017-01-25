@@ -15,7 +15,6 @@ import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.ItemType;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * A "let" clause in a FLWOR expression
@@ -133,6 +132,12 @@ public class LetClause extends Clause {
                     seq.getSpecialProperties());
             ExpressionTool.resetStaticProperties(returnExpr);
         }
+    }
+
+    @Override
+    public void addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
+        PathMap.PathMapNodeSet varPath = getSequence().addToPathMap(pathMap, pathMapNodeSet);
+        pathMap.registerPathForVariable(rangeVariable, varPath);
     }
 
     /**

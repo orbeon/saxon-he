@@ -9,10 +9,7 @@ package net.sf.saxon.expr.flwor;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.Location;
-import net.sf.saxon.expr.parser.RebindingMap;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 
@@ -202,6 +199,14 @@ public abstract class Clause {
      */
 
     public abstract int getClauseKey();
+
+    /**
+     * Collect information about the navigation paths followed by this clause, for document projection purposes
+     * @param pathMap the path map in which the data is to be collected
+     * @param pathMapNodeSet the path map node set representing the paths to the context item
+     */
+
+    public abstract void addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet);
 }
 
 

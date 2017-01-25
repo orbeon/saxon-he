@@ -11,6 +11,7 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.PathMap;
 import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.expr.sort.GenericAtomicComparer;
 import net.sf.saxon.functions.DeepEqual;
@@ -314,6 +315,11 @@ public class GroupByClause extends Clause {
 
     public TupleComparisonKey getComparisonKey(Tuple t, GenericAtomicComparer[] comparers) {
         return new TupleComparisonKey(t.getMembers(), comparers);
+    }
+
+    @Override
+    public void addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
+        throw new UnsupportedOperationException("Document projection not supported for 'group by'");
     }
 
     /**

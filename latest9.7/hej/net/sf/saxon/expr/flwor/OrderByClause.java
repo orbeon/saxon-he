@@ -18,8 +18,6 @@ import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.SequenceType;
 
-import java.util.Map;
-
 /**
  * This class represents an "order by" clause in a FLWOR expression
  */
@@ -151,6 +149,15 @@ public class OrderByClause extends Clause {
         }
     }
 
+    @Override
+    public void addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
+        SortKeyDefinitionList sortKeys = getSortKeyDefinitions();
+        for (SortKeyDefinition skd : sortKeys) {
+            Expression sortKey = skd.getSortKey();
+            sortKey.addToPathMap(pathMap, pathMapNodeSet);
+
+        }
+    }
 
     /**
      * Diagnostic print of expression structure. The abstract expression tree

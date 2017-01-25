@@ -326,6 +326,8 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
         if (isCallOn(Doc.class) || isCallOn(DocumentFn.class) || isCallOn(CollectionFn.class)) {
             getArg(0).addToPathMap(pathMap, pathMapNodeSet);
             return new PathMap.PathMapNodeSet(pathMap.makeNewRoot(this));
+        } else if (isCallOn(KeyFn.class)) {
+            return ((KeyFn)getTargetFunction()).addToPathMap(pathMap, pathMapNodeSet);
         } else {
             return super.addToPathMap(pathMap, pathMapNodeSet);
         }
