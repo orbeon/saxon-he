@@ -5,6 +5,7 @@
 // This Source Code Form is "Incompatible With Secondary Licenses", as defined by the Mozilla Public License, v. 2.0.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 #ifndef SAXONCGLUE_H 
 #define SAXONCGLUE_H
 #include <jni.h>
@@ -14,7 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dlfcn.h>
-
+#include <stdio.h>
 
 #define HANDLE void*
 #define LoadLibrary(x) dlopen(x, RTLD_LAZY)
@@ -56,11 +57,22 @@ static const bool true = 1;
 
 EXTERN_C
 
+
+/*
+ * Class:     com_saxonica_functions_extfn_PhpCall_PhpFunctionCall
+ * Method:    _phpCall
+ * Signature: ([Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/Object;
+ */
+/*JNIEXPORT jobject JNICALL Java_com_saxonica_functions_extfn_PhpCall_00024PhpFunctionCall__1phpCall
+  (JNIEnv *, jobject, jobjectArray, jobjectArray);*/
+
+
+
  
 
 static char tempDllname[] =
 #if defined (__linux__)
-        "/libsaxonhec.so";  
+        "/libsaxoneec.so";  
     #elif  defined (__APPLE__) && defined(__MACH__)
         "/libsaxonhec.dylib";
     #else

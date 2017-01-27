@@ -353,6 +353,11 @@ jobject createSaxonProcessor2 (JNIEnv* penv, jclass myClassInDll, const char * a
     return obj;
 }
 
+/*JNIEXPORT jobject JNICALL Java_com_saxonica_functions_extfn_PhpCall_00024PhpFunctionCall__1phpCall
+  (JNIEnv * env, jobject thisObj, jobjectArray arr1, jobjectArray arr2){
+	return NULL;
+}*/
+
 
 /*
  * Callback to check for exceptions. When called it returns the exception as a string 

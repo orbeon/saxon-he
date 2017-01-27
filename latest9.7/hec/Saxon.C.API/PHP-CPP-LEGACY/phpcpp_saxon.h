@@ -11,6 +11,7 @@
 #include <phpcpp.h>
 #include <unistd.h>
 #include <iostream>
+#include <jni.h>
 #include "SaxonProcessor.h"
 #include "XdmValue.h"
 #include "XdmItem.h"
@@ -36,6 +37,22 @@ private:
 	const char* _cwd;
 
 public:
+
+
+
+
+
+/*
+ * Class:     com_saxonica_functions_extfn_PhpCall_PhpFunctionCall
+ * Method:    _phpCall
+ * Signature: ([Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_com_saxonica_functions_extfn_PhpCall_00024PhpFunctionCall__1phpCall
+  (JNIEnv *, jobject, jobjectArray, jobjectArray);
+
+
+
+
 
 	
 	    /**
@@ -115,70 +132,114 @@ public:
 
 class PHP_XsltProcessor : public Php::Base
 {
+private:
+	XsltProcessor *xsltProcessor;
 
+public:
+    PHP_XsltProcessor() = default;
 
+    /*void __construct(Php::Parameters &params){
 
-/*
-//PHP_METHOD(XsltProcessor,  __construct);
-    PHP_METHOD(XsltProcessor,  __destruct);
-    PHP_METHOD(XsltProcessor,  transformFileToFile);
-    PHP_METHOD(XsltProcessor,  transformFileToString);
-    PHP_METHOD(XsltProcessor,  transformFileToValue);
-    PHP_METHOD(XsltProcessor,  transformToString);
-    PHP_METHOD(XsltProcessor,  transformToValue);
-    PHP_METHOD(XsltProcessor,  transformToFile);
-    PHP_METHOD(XsltProcessor, compileFromFile);
-    PHP_METHOD(XsltProcessor, compileFromValue);
-    PHP_METHOD(XsltProcessor, compileFromString);
-    PHP_METHOD(XsltProcessor,  setOutputFile);
-    PHP_METHOD(XsltProcessor,  setSourceFromFile);
-    PHP_METHOD(XsltProcessor,  setSourceFromXdmValue);
-    PHP_METHOD(XsltProcessor,  setParameter);
-    PHP_METHOD(XsltProcessor,  setProperty);
-    PHP_METHOD(XsltProcessor,  clearParameters);
-    PHP_METHOD(XsltProcessor,  clearProperties);
-    PHP_METHOD(XsltProcessor,  exceptionClear);
-    PHP_METHOD(XsltProcessor,  exceptionOccurred);
-    PHP_METHOD(XsltProcessor,  getErrorCode);
-    PHP_METHOD(XsltProcessor,  getErrorMessage);
-    PHP_METHOD(XsltProcessor,  getExceptionCount);
-*/
+    }*/
+
+    virtual ~PHP_XsltProcessor(){
+	delete xsltProcessor;
+    }
+
+    PHP_XsltProcessor(XsltProcessor * value) {
+	xsltProcessor = value;
+    }
+
+    void transformFileToFile(Php::Parameters &params);
+
+    Php::Value  transformFileToString(Php::Parameters &params);
+
+    Php::Value  transformFileToValue(Php::Parameters &params);
+    Php::Value  transformToString(Php::Parameters &params);
+    Php::Value  transformToValue(Php::Parameters &params);
+    void  transformToFile(Php::Parameters &params);
+    void compileFromFile(Php::Parameters &params);
+    void compileFromValue(Php::Parameters &params);
+    void compileFromString(Php::Parameters &params);
+    void  setOutputFile(Php::Parameters &params);
+    void  setSourceFromFile(Php::Parameters &params);
+    void  setSourceFromXdmValue(Php::Parameters &params);
+    void  setParameter(Php::Parameters &params);
+    void  setProperty(Php::Parameters &params);
+    void  clearParameters();
+    void  clearProperties();
+    void  exceptionClear();
+    Php::Value  exceptionOccurred();
+    Php::Value  getErrorCode(Php::Parameters &params);
+    Php::Value  getErrorMessage(Php::Parameters &params);
+    Php::Value  getExceptionCount();
+
 
 };
 
 
-class PHP_XQueryProcesor : public Php::Base
+class PHP_XQueryProcessor : public Php::Base
 {
 
-/*
-// PHP_METHOD(XQueryProcesor,  __construct);
-    PHP_METHOD(XQueryProcesor,  __destruct);
-    PHP_METHOD(XQueryProcessor,  setQueryContent);
-    PHP_METHOD(XQueryProcessor,  setContextItem);
-    PHP_METHOD(XQueryProcessor,  setContextItemFromFile);
-    PHP_METHOD(XQueryProcessor,  setParameter);
-    PHP_METHOD(XQueryProcessor,  setProperty);
-    PHP_METHOD(XQueryProcessor,  clearParameters);
-    PHP_METHOD(XQueryProcessor,  clearProperties);
-   // PHP_METHOD(XQueryProcessor, setOutputFile);
-    PHP_METHOD(XQueryProcessor, runQueryToValue);
-    PHP_METHOD(XQueryProcessor, runQueryToString);
-    PHP_METHOD(XQueryProcessor, runQueryToFile);
-    PHP_METHOD(XQueryProcessor, setQueryFile);
-    PHP_METHOD(XQueryProcessor, setQueryBaseURI);
-    PHP_METHOD(XQueryProcessor, declareNamespace);
-    PHP_METHOD(XQueryProcessor,  exceptionClear);
-    PHP_METHOD(XQueryProcessor,  exceptionOccurred);
-    PHP_METHOD(XQueryProcessor,  getErrorCode);
-    PHP_METHOD(XQueryProcessor,  getErrorMessage);
-    PHP_METHOD(XQueryProcessor,  getExceptionCount);
-*/
+private:
+	XQueryProcessor *xqueryProcessor;
+
+public:
+    PHP_XQueryProcessor() = default;
+
+    
+
+    virtual ~PHP_XQueryProcessor(){
+	delete xqueryProcessor;
+    }
+
+    PHP_XQueryProcessor(XQueryProcessor * value) {
+	xqueryProcessor = value;
+    }
+
+    void  setQueryContent(Php::Parameters &params);
+    void  setContextItem(Php::Parameters &params);
+    void  setContextItemFromFile(Php::Parameters &params);
+    void  setParameter(Php::Parameters &params);
+    void  setProperty(Php::Parameters &params);
+    void  setOutputFile(Php::Parameters &params);
+    void  setQueryFile(Php::Parameters &params);
+    void  setQueryBaseURI(Php::Parameters &params);
+    void  declareNamespace(Php::Parameters &params);
+    void  clearParameters();
+    void  clearProperties();
+
+    Php::Value  runQueryToValue();
+    Php::Value  runQueryToString();
+    Php::Value  runQueryToFile(Php::Parameters &params);
+    void  exceptionClear();
+    Php::Value  exceptionOccurred();
+    Php::Value  getErrorCode(Php::Parameters &params);
+    Php::Value  getErrorMessage(Php::Parameters &params);
+    Php::Value  getExceptionCount();
 
 };
     
 
-   class PHP_XPathProcesor : public Php::Base
+   class PHP_XPathProcessor : public Php::Base
 {
+
+
+private:
+	XPathProcessor *xpathProcessor;
+
+public:
+    PHP_XPathProcessor() = default;
+
+    
+
+    virtual ~PHP_XPathProcessor(){
+	delete xpathProcessor;
+    }
+
+    PHP_XPathProcessor(XPathProcessor * value) {
+	xpathProcessor = value;
+    }
 /*
 // PHP_METHOD(XPathProcessor,  __construct);
     PHP_METHOD(XPathProcessor,  __destruct);
@@ -206,6 +267,23 @@ class PHP_XQueryProcesor : public Php::Base
 
    class PHP_SchemaValidator : public Php::Base
 {
+
+
+private:
+	SchemaValidator *schemaValidator;
+
+public:
+    PHP_SchemaValidator() = default;
+
+    
+
+    virtual ~PHP_SchemaValidator(){
+	delete schemaValidator;
+    }
+
+    PHP_SchemaValidator(SchemaValidator * value) {
+	schemaValidator = value;
+    }
 
 /*
  // PHP_METHOD(SchemaValidator,  __construct);
@@ -237,7 +315,7 @@ class PHP_XQueryProcesor : public Php::Base
 
    class PHP_XdmValue : public Php::Base
 {
-private:
+protected:
 	XdmValue * _value;
 
 public:
@@ -257,6 +335,12 @@ public:
 		_value = value;
 	}
 
+	XdmValue * getInternal(){
+		return _value;
+	}
+
+//TODO implement a __toString() method
+
 /*
 PHP_METHOD(XdmValue,  __construct);
     PHP_METHOD(XdmValue,  __destruct);
@@ -273,9 +357,18 @@ PHP_METHOD(XdmValue,  __construct);
 
 /*     ============== PHP Interface of   XdmItem =============== */
 
-   class PHP_XdmItem : public Php::Base
+   class PHP_XdmItem : public PHP_XdmValue
 {
 
+private:
+
+
+public:
+	
+	PHP_XdmItem(XdmItem * nodei) {
+		_value = (XdmValue*)nodei;
+	}
+//TODO implement a __toString() method
 /*
 PHP_METHOD(XdmItem,  __construct);
     PHP_METHOD(XdmItem,  __destruct);
@@ -292,17 +385,19 @@ PHP_METHOD(XdmItem,  __construct);
 
 /*     ============== PHP Interface of   XdmNode =============== */
 
-   class PHP_XdmNode : public Php::Base
+   class PHP_XdmNode : public PHP_XdmItem
 {
 
 private:
-	XdmNode * _node;
+	
 
 public:
-	PHP_XdmNode() = default;
+	
 	PHP_XdmNode(XdmNode * nodei) {
-		_node = nodei;
+		_value = (XdmValue*)nodei;
 	}
+
+//TODO implement a __toString() method
 
 /*
 PHP_METHOD(XdmNode,  __construct);
@@ -326,8 +421,20 @@ PHP_METHOD(XdmNode,  __construct);
 
 /*     ============== PHP Interface of   XdmAtomicValue =============== */
 
-   class PHP_XdmAtomicValue : public Php::Base
+   class PHP_XdmAtomicValue : public PHP_XdmItem
 {
+
+private:
+	
+
+public:
+	
+	PHP_XdmAtomicValue(XdmAtomicValue * value) {
+		_value = (XdmValue *)value;
+	}
+
+//TODO implement a __toString() method
+
 /*
 PHP_METHOD(XdmAtomicValue,  __construct);
     PHP_METHOD(XdmAtomicValue,  __destruct);

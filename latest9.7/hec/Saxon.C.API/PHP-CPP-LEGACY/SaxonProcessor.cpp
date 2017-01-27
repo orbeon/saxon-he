@@ -32,6 +32,7 @@ sxnc_environment * SaxonProcessor::sxn_environ = 0;
 int SaxonProcessor::refCount = 0;
 int SaxonProcessor::jvmCreatedCPP=0;
 
+
 bool SaxonProcessor::exceptionOccurred(){
 	return SaxonProcessor::sxn_environ->env->ExceptionCheck();
 }
