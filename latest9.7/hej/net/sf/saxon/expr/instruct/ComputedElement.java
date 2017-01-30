@@ -461,6 +461,9 @@ public class ComputedElement extends ElementCreator {
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("compElem", this);
         String flags = getInheritanceFlags();
+        if (isLocal()) {
+            flags += "l";
+        }
         if (!flags.isEmpty()) {
             out.emitAttribute("flags", flags);
         }

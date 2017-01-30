@@ -364,6 +364,9 @@ public final class ValueOf extends SimpleNodeConstructor {
         if (noNodeIfEmpty) {
             flags += "e";
         }
+        if (isLocal()) {
+            flags += "l";
+        }
         if (!flags.isEmpty()) {
             out.emitAttribute("flags", flags);
         }

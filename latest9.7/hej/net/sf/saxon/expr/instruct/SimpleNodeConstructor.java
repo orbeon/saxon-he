@@ -11,6 +11,7 @@ import com.saxonica.ee.stream.adjunct.SimpleNodeConstructorAdjunct;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
+import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.PromotionOffer;
 import net.sf.saxon.functions.String_1;
@@ -301,6 +302,10 @@ public abstract class SimpleNodeConstructor extends Instruction {
         super.promoteChildren(offer);
     }
 
+
+    public boolean isLocal() {
+        return ExpressionTool.isLocalConstructor(this);
+    }
 
 
 }

@@ -373,8 +373,15 @@ public class DocumentInstr extends ParentNodeConstructor {
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("doc", this);
         out.emitAttribute("base", getStaticBaseURIString());
+        String flags = "";
         if (textOnly) {
-            out.emitAttribute("flags", "t");
+            flags += "t";
+        }
+        if (isLocal()) {
+            flags += "l";
+        }
+        if (!flags.isEmpty()) {
+            out.emitAttribute("flags", flags);
         }
         if (constantText != null) {
             out.emitAttribute("text", constantText);

@@ -223,6 +223,13 @@ public class NamespaceConstructor extends SimpleNodeConstructor {
 
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("namespace", this);
+        String flags = "";
+        if (isLocal()) {
+            flags += "l";
+        }
+        if (!flags.isEmpty()) {
+            out.emitAttribute("flags", flags);
+        }
         out.setChildRole("name");
         getNameExp().export(out);
         out.setChildRole("select");

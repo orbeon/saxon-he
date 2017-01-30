@@ -581,6 +581,9 @@ public class FixedElement extends ElementCreator {
         if (!elementName.getURI().isEmpty() && elementName.getPrefix().isEmpty()) {
             flags += "d";  // "d" to indicate default namespace
         }
+        if (isLocal()) {
+            flags += "l";
+        }
         if (!flags.isEmpty()) {
             out.emitAttribute("flags", flags);
         }

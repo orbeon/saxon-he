@@ -508,6 +508,13 @@ public final class ComputedAttribute extends AttributeCreator {
         if (type != null) {
             out.emitAttribute("type", type.getStructuredQName().getEQName());
         }
+        String flags = "";
+        if (isLocal()) {
+            flags += "l";
+        }
+        if (!flags.isEmpty()) {
+            out.emitAttribute("flags", flags);
+        }
         out.setChildRole("name");
         getNameExp().export(out);
         if (getNamespaceExp() != null) {

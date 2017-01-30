@@ -278,6 +278,13 @@ public final class FixedAttribute extends AttributeCreator {
         if (getSchemaType() != null) {
             out.emitAttribute("type", getSchemaType().getEQName());
         }
+        String flags = "";
+        if (isLocal()) {
+            flags += "l";
+        }
+        if (!flags.isEmpty()) {
+            out.emitAttribute("flags", flags);
+        }
         getSelect().export(out);
         out.endElement();
     }

@@ -281,6 +281,13 @@ public class ProcessingInstruction extends SimpleNodeConstructor {
 
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("procInst", this);
+        String flags = "";
+        if (isLocal()) {
+            flags += "l";
+        }
+        if (!flags.isEmpty()) {
+            out.emitAttribute("flags", flags);
+        }
         out.setChildRole("name");
         getNameExp().export(out);
         out.setChildRole("select");

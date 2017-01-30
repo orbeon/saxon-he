@@ -1811,5 +1811,48 @@ public class ExpressionTool {
         }
         return null;
     }
+
+    /**
+     * Find the operand corresponding to a particular child expression
+     *
+     * @param parentExpression the parent expression
+     * @param childExpression  the child expression
+     * @return the relevant operand, or null if not found
+     */
+
+    public static Operand findOperand(Expression parentExpression, Expression childExpression) {
+        for (Operand o : parentExpression.operands()) {
+            if (o.getChildExpression() == childExpression) {
+                return o;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Ask whether a supplied expression is a nested node constructor. That is, return true if the child expression
+     * creates nodes that will only be used as children of some parent node (meaning that they never need to be copied).
+     * @param child child expression to be tested
+     * @return true if the node constructed by the child expression does not need to be copied.
+     */
+
+    public static boolean isLocalConstructor(Expression child) {
+        if (!(child instanceof ParentNodeConstructor || child instanceof SimpleNodeConstructor)) {
+            return false;
+        }
+        Expression parent = child.getParentExpression();
+        while (parent != null) {
+            if (parent instanceof ParentNodeConstructor) {
+                return true;
+            }
+            Operand o = findOperand(parent, child);
+            if (o.getUsage() != OperandUsage.TRANSMISSION) {
+                return false;
+            }
+            child = parent;
+            parent = parent.getParentExpression();
+        }
+        return false;
+    }
 }
 

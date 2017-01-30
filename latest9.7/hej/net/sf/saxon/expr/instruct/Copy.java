@@ -578,6 +578,9 @@ public class Copy extends ElementCreator {
         if (inheritNamespacesFromParent) {
             flags += "n";
         }
+        if (isLocal()) {
+            flags += "l";
+        }
         out.emitAttribute("flags", flags);
         out.setChildRole("content");
         getContentExpression().export(out);

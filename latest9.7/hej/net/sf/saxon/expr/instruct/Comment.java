@@ -179,6 +179,13 @@ public final class Comment extends SimpleNodeConstructor {
 
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("comment", this);
+        String flags = "";
+        if (isLocal()) {
+            flags += "l";
+        }
+        if (!flags.isEmpty()) {
+            out.emitAttribute("flags", flags);
+        }
         getSelect().export(out);
         out.endElement();
     }

@@ -8,10 +8,7 @@
 package net.sf.saxon.expr.instruct;
 
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.PathMap;
-import net.sf.saxon.expr.parser.PromotionOffer;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.lib.Validation;
 import net.sf.saxon.pattern.MultipleNodeKindTest;
@@ -319,6 +316,10 @@ public abstract class ParentNodeConstructor extends Instruction
 
     public boolean isPreservingTypes() {
         return preservingTypes;
+    }
+
+    public boolean isLocal() {
+        return ExpressionTool.isLocalConstructor(this);
     }
 }
 
