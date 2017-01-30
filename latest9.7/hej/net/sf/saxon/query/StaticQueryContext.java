@@ -1025,15 +1025,27 @@ public class StaticQueryContext {
     /**
      * Set the default collation.
      *
-     * @param name The collation name, as specified in the query prolog. The name
-     *             is not validated until it is used.
+     * @param name The collation name, as specified in the query prolog. Must be the name
+     *             of a known registered collation.
      * @throws NullPointerException if the supplied value is null
-     * @since 8.4. Changed in 8.6 so it no longer validates the collation name: this is
-     *        because the base URI is not necessarily known at the point where the default
-     *        collation is declared.
+     * @throws IllegalStateException if the supplied value is not a known collation URI registered with the
+     * configuration.
+     * @since 8.4. Changed in 9.7.0.15 so that it validates the collation name: see bug 3121.
      */
 
     public void declareDefaultCollation(String name) {
+        if (name == null) {
+            throw new NullPointerException();
+        }
+        StringCollator c;
+        try {
+            c = getConfiguration().getCollation(name);
+        } catch (XPathException e) {
+            c = null;
+        }
+        if (c == null) {
+            throw new IllegalStateException("Unknown collation " + name);
+        }
         this.defaultCollationName = name;
     }
 
