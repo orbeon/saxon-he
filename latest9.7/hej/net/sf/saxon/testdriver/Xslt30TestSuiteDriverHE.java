@@ -1040,6 +1040,8 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                 return !inverse;
             } else if ("simple-uca-fallback".equals(value)) {
                 return !inverse;
+            } else if ("advanced-uca-fallback".equals(value)) {
+                return !inverse;
             } else {
                 System.err.println("*** Unknown feature in HE: " + value);
                 return env.processor.getSaxonEdition().equals("HE") ? false : null;
