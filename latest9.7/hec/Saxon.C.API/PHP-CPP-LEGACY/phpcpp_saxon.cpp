@@ -66,61 +66,44 @@ JNIEXPORT jobject JNICALL PHP_SaxonProcessor::Java_com_saxonica_functions_extfn_
 
 Php::Value PHP_SaxonProcessor::createAtomicValue(Php::Parameters &params)
 {
-   /* XdmAtomicValue * xdmValue = NULL;
-    SaxonProcessor * proc;
-    char * source;
-    int len1;
-    zval *zvalue;
-    bool bVal;
-    char * sVal;
-    int len;
-    long iVal;
-    double dVal;
+	Php::Value _value = params[0];
+	Php::Type _type = ((Php::Value)params[0]).type();
+    XdmAtomicValue * xdmValue = NULL;
+   PHP_XdmAtomicValue * php_atomicValue =  NULL;
+    SaxonProcessor * proc = saxonProcessor;
+ 
 
-	switch (Z_TYPE_P(zvalue)) {
-            case IS_BOOL:
-                bVal = Z_BVAL_P(zvalue);
-                xdmValue = proc->makeBooleanValue((bool)bVal);
-            break;
-            case IS_LONG:
-                iVal = Z_LVAL_P(zvalue);
-		 xdmValue = proc->makeIntegerValue((int)iVal);
-            break;
-            case IS_STRING:
-                sVal = Z_STRVAL_P(zvalue);
-                len = Z_STRLEN_P(zvalue);
-                xdmValue = proc->makeStringValue((const char*)sVal);
-            break;
-            case IS_NULL:
+	if(_value.isBool()) {
+                //bVal = Z_BVAL_P(zvalue);
+                xdmValue = proc->makeBooleanValue((bool)_value);
+
+	} else if(_value.isNumeric()){
+           
+		 xdmValue = proc->makeIntegerValue((int)_value);
+	} else if(_value.isString()){
+           
+                xdmValue = proc->makeStringValue((const char*)_value);
+	} else if(_value.isNull()) {
+            
                 xdmValue = new XdmAtomicValue();
-            break;
-            case IS_DOUBLE:
-                dVal = (double)Z_DVAL_P(zvalue);
-		xdmValue = proc->makeDoubleValue((double)iVal);
-                break;
-            case IS_ARRAY:
+	} else if(_value.isFloat()){         
+		xdmValue = proc->makeDoubleValue((double)_value);
+	} else {
+               
+           // case IS_ARRAY:
                 // TODO: Should not be expected. Do this some other way
                 //break;
-            case IS_OBJECT:
+           // case IS_OBJECT:
                 // TODO: implement this
                 //break;
-            default:
-                obj = NULL;
-                zend_throw_exception(zend_exception_get_default(TSRMLS_C), "unknown type specified in XdmValue", 0 TSRMLS_CC); 
-                RETURN_NULL();
+           
+                throw Php::Exception("Unknown type specified in XdmValue");
+                //return NULL;
         }
-        if(xdmValue == NULL) {
-            RETURN_NULL();
-        }
-        if (object_init_ex(return_value, xdmAtomicValue_ce) != SUCCESS) {
-            RETURN_NULL();
-        } else {
-            struct xdmAtomicValue_object* vobj = (struct xdmAtomicValue_object *)zend_object_store_get_object(return_value TSRMLS_CC);
-            assert (vobj != NULL);
-            vobj->xdmAtomicValue = xdmValue;
-        }
-    } */
-	return NULL;
+        php_atomicValue = new PHP_XdmAtomicValue(xdmValue);
+	return Php::Object("Saxon\\XdmAtomicValue", php_atomicValue);
+        
+   
 }
 
 
@@ -408,8 +391,8 @@ Php::Value  PHP_XsltProcessor::getExceptionCount(){
     void  PHP_XQueryProcessor::setContextItem(Php::Parameters &params){
 		//TODO allow XdmNode, XdmItem and XdmValue - might not need to do this
 	if (params.size()== 1) {
-		Php:Value value = params[0];
-		xqueryProcessor->setContextItem((XdmItem *)value.implementation());
+		Php::Value value = params[0];
+		xqueryProcessor->setContextItem((XdmItem *)(value.implementation()));
 		//value.instanceOf("Xdm");
 		
 	}
@@ -558,6 +541,33 @@ Php::Value  PHP_XsltProcessor::getExceptionCount(){
 	}
 
 
+
+	Php::Value PHP_XdmAtomicValue::getStringValue(){
+
+		return ((XdmAtomicValue*)_value)->getStringValue();
+	}
+
+	Php::Value PHP_XdmAtomicValue::getLongValue(){
+
+		return (int)((XdmAtomicValue*)_value)->getLongValue();
+	}
+
+	Php::Value PHP_XdmAtomicValue::getBooleanValue(){
+
+		return ((XdmAtomicValue*)_value)->getBooleanValue();
+	}
+
+	Php::Value PHP_XdmAtomicValue::getDoubleValue(){
+
+		return ((XdmAtomicValue*)_value)->getDoubleValue();
+	}
+
+	Php::Value PHP_XdmAtomicValue::isAtomic(){
+
+		return ((XdmItem*)_value)->isAtomic();
+	}
+
+
 	
 /**
  *  tell the compiler that the get_module is a pure C function
@@ -599,6 +609,12 @@ extern "C" {
 	Php::Class<PHP_XdmNode> xdmNode("Saxon\\XdmNode");
 
 	Php::Class<PHP_XdmAtomicValue> xdmAtomicValue("Saxon\\XdmAtomicValue");
+	xdmAtomicValue.method<&PHP_XdmAtomicValue::getStringValue> ("getStringValue");
+	xdmAtomicValue.method<&PHP_XdmAtomicValue::getBooleanValue> ("getBooleanValue");
+	xdmAtomicValue.method<&PHP_XdmAtomicValue::getLongValue> ("getLongValue");
+	xdmAtomicValue.method<&PHP_XdmAtomicValue::getDoubleValue> ("getDoubleValue");
+	xdmAtomicValue.method<&PHP_XdmAtomicValue::isAtomic> ("isAtomic");
+	
 
 	xdmItem.extends(xdmValue);
 	xdmNode.extends(xdmValue);

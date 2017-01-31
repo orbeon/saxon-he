@@ -364,6 +364,8 @@ private:
 
 
 public:
+
+	PHP_XdmItem() {}
 	
 	PHP_XdmItem(XdmItem * nodei) {
 		_value = (XdmValue*)nodei;
@@ -433,7 +435,20 @@ public:
 		_value = (XdmValue *)value;
 	}
 
-//TODO implement a __toString() method
+	Php::Value getStringValue();
+
+	Php::Value getBooleanValue();
+
+	Php::Value getLongValue();
+
+	Php::Value getDoubleValue();
+
+	Php::Value isAtomic();
+
+	Php::Value __toString()
+   	 {
+        return getStringValue();
+    	}
 
 /*
 PHP_METHOD(XdmAtomicValue,  __construct);
