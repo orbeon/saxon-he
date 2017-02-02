@@ -67,8 +67,12 @@ JNIEXPORT jobject JNICALL Java_com_saxonica_functions_extfn_PhpCall_00024PhpFunc
 	void __construct(Php::Parameters &params)
     {
         // copy first parameter (if available)
-        if (params.size()== 1) {
-		_license = params[0];
+        if (params.size()< 2) {
+		if(params.size() == 1) {
+			_license = params[0];
+		} else {
+			_license = false;	
+		}
 		saxonProcessor = new SaxonProcessor(_license);
 #if !(defined (__linux__) || (defined (__APPLE__) && defined(__MACH__)))
 	    TCHAR s[256];
@@ -322,7 +326,12 @@ public:
 	PHP_XdmValue() = default;
 
 	virtual ~PHP_XdmValue(){
-		delete _value;
+		if(_value != NULL) {
+			_value->decrementRefCount();
+    			if(_value != NULL && _value->getRefCount()< 1){
+    				delete _value;
+    			}
+		}
 	}
 
 	/*void __construct(Php::Parameters &params)
@@ -370,6 +379,9 @@ public:
 	PHP_XdmItem(XdmItem * nodei) {
 		_value = (XdmValue*)nodei;
 	}
+
+	virtual ~PHP_XdmItem(){	
+	}
 //TODO implement a __toString() method
 /*
 PHP_METHOD(XdmItem,  __construct);
@@ -398,6 +410,12 @@ public:
 	PHP_XdmNode(XdmNode * nodei) {
 		_value = (XdmValue*)nodei;
 	}
+
+	virtual ~PHP_XdmNode(){
+		
+	}
+
+
 
 //TODO implement a __toString() method
 
@@ -435,6 +453,9 @@ public:
 		_value = (XdmValue *)value;
 	}
 
+	virtual ~PHP_XdmAtomicValue(){
+	}
+
 	Php::Value getStringValue();
 
 	Php::Value getBooleanValue();
@@ -449,16 +470,6 @@ public:
    	 {
         return getStringValue();
     	}
-
-/*
-PHP_METHOD(XdmAtomicValue,  __construct);
-    PHP_METHOD(XdmAtomicValue,  __destruct);
-    PHP_METHOD(XdmAtomicValue,  getStringValue);
-    PHP_METHOD(XdmAtomicValue,  getBooleanValue);
-    PHP_METHOD(XdmAtomicValue,  getDoubleValue);
-    PHP_METHOD(XdmAtomicValue,  getLongValue);
-    PHP_METHOD(XdmAtomicValue,  isAtomic);
-*/
 
 };
 

@@ -35,6 +35,7 @@ Php::Value  PHP_SaxonProcessor::parseXmlFromString(Php::Parameters &params)
     }
 }
 
+
 Php::Value  PHP_SaxonProcessor::parseXmlFromFile(Php::Parameters &params)
 {
    
@@ -317,6 +318,7 @@ void  PHP_XsltProcessor::setSourceFromXdmValue(Php::Parameters &params){
     	}
 
 }
+
 void  PHP_XsltProcessor::setParameter(Php::Parameters &params){
 	PHP_XdmValue * value;
 	const char * name;	
@@ -541,7 +543,6 @@ Php::Value  PHP_XsltProcessor::getExceptionCount(){
 	}
 
 
-
 	Php::Value PHP_XdmAtomicValue::getStringValue(){
 
 		return ((XdmAtomicValue*)_value)->getStringValue();
@@ -638,6 +639,7 @@ extern "C" {
 	xsltProcessor.method<&PHP_XsltProcessor::exceptionClear> ("exceptionClear");
 	xsltProcessor.method<&PHP_XsltProcessor::exceptionOccurred> ("exceptionOccurred");
 	xsltProcessor.method<&PHP_XsltProcessor::clearProperties> ("clearProperties");
+    	xsltProcessor.method<&PHP_XsltProcessor::getErrorCode>("getErrorCode");
 	xsltProcessor.method<&PHP_XsltProcessor::getErrorMessage> ("getErrorMessage");
 	xsltProcessor.method<&PHP_XsltProcessor::getExceptionCount> ("getExceptionCount");
 
