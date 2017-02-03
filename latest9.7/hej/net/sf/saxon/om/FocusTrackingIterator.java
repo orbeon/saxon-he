@@ -8,9 +8,9 @@
 package net.sf.saxon.om;
 
 import net.sf.saxon.expr.LastPositionFinder;
-import net.sf.saxon.functions.Count;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.LookaheadIterator;
+import net.sf.saxon.value.SequenceExtent;
 
 /**
  * An iterator that maintains the values of position() and current(), as a wrapper
@@ -112,14 +112,25 @@ public class FocusTrackingIterator implements FocusIterator, LookaheadIterator, 
 
     public int getLength() throws XPathException {
         if (last == -1) {
-            if (base instanceof LastPositionFinder) {
-                last = ((LastPositionFinder)base).getLength();
+            if ((base.getProperties() & SequenceIterator.LAST_POSITION_FINDER) != 0) {
+                last = ((LastPositionFinder) base).getLength();
             }
             if (last == -1) {
-                last = Count.count(base.getAnother());
+                GroundedValue residue = SequenceExtent.makeResidue(base);
+                last = pos + residue.getLength();
+                base = residue.iterate();
             }
         }
         return last;
+//        if (last == -1) {
+//            if (base instanceof LastPositionFinder) {
+//                last = ((LastPositionFinder)base).getLength();
+//            }
+//            if (last == -1) {
+//                last = Count.count(base.getAnother());
+//            }
+//        }
+//        return last;
     }
 
     /**

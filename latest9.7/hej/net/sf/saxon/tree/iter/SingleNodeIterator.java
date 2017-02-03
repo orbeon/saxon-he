@@ -9,6 +9,8 @@ package net.sf.saxon.tree.iter;
 
 import net.sf.saxon.expr.LastPositionFinder;
 import net.sf.saxon.om.*;
+import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.EmptySequence;
 
 
 /**
@@ -106,9 +108,13 @@ public class SingleNodeIterator implements AxisIterator,
 
     /*@NotNull*/
     public GroundedValue materialize() {
-        return new ZeroOrOne(item);
+        return new ZeroOrOne<NodeInfo>(item);
     }
 
+    @Override
+    public GroundedValue getResidue() throws XPathException {
+        return item == null ? EmptySequence.getInstance() : new One<NodeInfo>(item);
+    }
 
     /**
      * Get properties of this iterator, as a bit-significant integer.

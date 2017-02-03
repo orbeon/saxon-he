@@ -12,6 +12,8 @@ import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.ZeroOrOne;
+import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.EmptySequence;
 
 
 /**
@@ -110,6 +112,11 @@ public class SingletonIterator implements SequenceIterator, UnfailingIterator,
         } else {
             return new ZeroOrOne<Item>(item);
         }
+    }
+
+    @Override
+    public GroundedValue getResidue() throws XPathException {
+        return gone ? EmptySequence.getInstance() : materialize();
     }
 
     /**

@@ -54,7 +54,8 @@ public class SequenceTool {
      * Produce a GroundedValue containing the same values as a supplied sequence.
      *
      * @param iterator the supplied sequence. The iterator may or may not be consumed as a result of
-     *                 passing it to this method.
+     *                 passing it to this method. The result contains all items in the sequence
+     *                 backed by the iterator, not only those that have not yet been read.
      * @return a GroundedValue containing the same items
      * @throws XPathException if a failure occurs reading the input iterator
      */

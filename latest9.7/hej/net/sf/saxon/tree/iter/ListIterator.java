@@ -12,6 +12,7 @@ import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.One;
 import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.EmptySequence;
 import net.sf.saxon.value.SequenceExtent;
@@ -114,6 +115,15 @@ public class ListIterator
             }
         } else {
             return new SequenceExtent(list);
+        }
+    }
+
+    @Override
+    public GroundedValue getResidue() throws XPathException {
+        if (index == 0) {
+            return materialize();
+        } else {
+            return materialize().subsequence(index, Integer.MAX_VALUE);
         }
     }
 

@@ -128,6 +128,11 @@ public class EmptyIterator implements SequenceIterator,
         return EmptySequence.getInstance();
     }
 
+    @Override
+    public GroundedValue getResidue() {
+        return EmptySequence.getInstance();
+    }
+
     /**
      * Determine whether there are more items to come. Note that this operation
      * is stateless and it is not necessary (or usual) to call it before calling

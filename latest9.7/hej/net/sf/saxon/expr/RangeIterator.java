@@ -119,5 +119,10 @@ public class RangeIterator implements AtomicIterator,
     public GroundedValue materialize() {
         return new IntegerRange(start, limit);
     }
+
+    @Override
+    public GroundedValue getResidue() throws XPathException {
+        return new IntegerRange(currentValue, limit);
+    }
 }
 

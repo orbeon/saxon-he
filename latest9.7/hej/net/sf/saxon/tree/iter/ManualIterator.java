@@ -157,6 +157,11 @@ public class ManualIterator implements FocusIterator, UnfailingIterator,
         }
     }
 
+    @Override
+    public GroundedValue getResidue() throws XPathException {
+        return materialize();
+    }
+
     /**
      * Get properties of this iterator, as a bit-significant integer.
      *

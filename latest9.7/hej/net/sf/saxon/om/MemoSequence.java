@@ -16,6 +16,9 @@ import net.sf.saxon.tree.iter.SingletonIterator;
 import net.sf.saxon.value.EmptySequence;
 import net.sf.saxon.value.SequenceExtent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A Sequence implementation that represents a lazy evaluation of a supplied iterator
  */
@@ -231,6 +234,16 @@ public class MemoSequence implements Sequence {
             } else {
                 throw new IllegalStateException("Progressive iterator is not grounded until all items are read");
             }
+        }
+
+        @Override
+        public GroundedValue getResidue() throws XPathException {
+            List<Item> list = new ArrayList<Item>();
+            Item item;
+            while ((item = next()) != null) {
+                list.add(item);
+            }
+            return new SequenceExtent(list);
         }
 
         /**

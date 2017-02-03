@@ -29,11 +29,26 @@ public interface GroundedIterator extends SequenceIterator {
      * Return a GroundedValue containing all the items in the sequence returned by this
      * SequenceIterator. This should be an "in-memory" value, not a Closure.
      *
+     * <p>The method does not consume the iterator.</p>
+     *
      * @return the corresponding Value
      * @throws XPathException in the cases of subclasses (such as the iterator over a MemoClosure)
      * which cause evaluation of expressions while materializing the value.
      */
 
     public GroundedValue materialize() throws XPathException;
+
+    /**
+     * Return a GroundedValue containing all the items in the sequence returned by this
+     * SequenceIterator that have not already been read. This should be an "in-memory" value, not a Closure.
+     *
+     * <p>The method may or may not consume the iterator.</p>
+     *
+     * @return the corresponding GroundedValue
+     * @throws XPathException in the cases of subclasses (such as the iterator over a MemoClosure)
+     *                        which cause evaluation of expressions while materializing the value.
+     */
+
+    public GroundedValue getResidue() throws XPathException;
 }
 

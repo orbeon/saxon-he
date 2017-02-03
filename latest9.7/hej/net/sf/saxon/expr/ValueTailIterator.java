@@ -72,6 +72,15 @@ public class ValueTailIterator
         }
     }
 
+    @Override
+    public GroundedValue getResidue() throws XPathException {
+        if (start == 0 && pos == 0) {
+            return baseValue;
+        } else {
+            return baseValue.subsequence(start + pos, Integer.MAX_VALUE);
+        }
+    }
+
     /**
      * Get properties of this iterator, as a bit-significant integer.
      *

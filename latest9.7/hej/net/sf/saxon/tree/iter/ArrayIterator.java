@@ -11,6 +11,7 @@ import net.sf.saxon.expr.LastPositionFinder;
 import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.SequenceExtent;
 
 import java.util.Arrays;
@@ -206,6 +207,18 @@ public class ArrayIterator implements UnfailingIterator,
             seq =  new SequenceExtent(items);
         } else {
             List<Item> sublist = Arrays.asList(items).subList(start, end);
+            seq = new SequenceExtent(sublist);
+        }
+        return seq.reduce();
+    }
+
+    @Override
+    public GroundedValue getResidue() throws XPathException {
+        SequenceExtent seq;
+        if (start == 0 && index == 0 && end == items.length) {
+            seq = new SequenceExtent(items);
+        } else {
+            List<Item> sublist = Arrays.asList(items).subList(start + index, end);
             seq = new SequenceExtent(sublist);
         }
         return seq.reduce();

@@ -436,6 +436,16 @@ public class MemoClosure extends Closure {
             }
         }
 
+        @Override
+        public GroundedValue getResidue() throws XPathException {
+            List<Item> list = new ArrayList<Item>();
+            Item item;
+            while ((item = next()) != null) {
+                list.add(item);
+            }
+            return new SequenceExtent(list);
+        }
+
         /**
          * Get properties of this iterator, as a bit-significant integer.
          *

@@ -93,8 +93,9 @@ public class SequenceExtent implements GroundedValue {
     /**
      * Factory method to make a Value holding the contents of any SequenceIterator
      *
-     * @param iter a Sequence iterator that will be consumed to deliver the items in the sequence
-     * @return a ValueRepresentation holding the items delivered by the SequenceIterator. If the
+     * @param iter a Sequence iterator that will be consumed to deliver the items in the sequence.
+     *             The iterator must be positioned at the start.
+     * @return a GroundedValue holding the items delivered by the SequenceIterator. If the
      *         sequence is empty the result will be an instance of {@link EmptySequence}. If it is of length
      *         one, the result will be an {@link Item}. In all other cases, it will be an instance of
      *         {@link SequenceExtent}.
@@ -107,6 +108,28 @@ public class SequenceExtent implements GroundedValue {
     public static GroundedValue makeSequenceExtent(/*@NotNull*/ SequenceIterator iter) throws XPathException {
         if ((iter.getProperties() & SequenceIterator.GROUNDED) != 0) {
             return ((GroundedIterator) iter).materialize();
+        }
+        SequenceExtent extent = new SequenceExtent(iter);
+        return extent.reduce();
+    }
+
+    /**
+     * Factory method to make a Value holding the contents of any SequenceIterator, specifically
+     * those items delivered by the SequenceIterator that have not already been read.
+     *
+     * @param iter a Sequence iterator that will be consumed to deliver the items in the sequence.
+     * @return a GroundedValue holding the items delivered by the SequenceIterator. If the
+     * sequence is empty the result will be an instance of {@link EmptySequence}. If it is of length
+     * one, the result will be an {@link Item}. In all other cases, it will be an instance of
+     * {@link SequenceExtent}.
+     * @throws net.sf.saxon.trans.XPathException if an error occurs processing the values from
+     *                                           the iterator.
+     */
+
+    /*@NotNull*/
+    public static GroundedValue makeResidue(/*@NotNull*/ SequenceIterator iter) throws XPathException {
+        if ((iter.getProperties() & SequenceIterator.GROUNDED) != 0) {
+            return ((GroundedIterator) iter).getResidue();
         }
         SequenceExtent extent = new SequenceExtent(iter);
         return extent.reduce();

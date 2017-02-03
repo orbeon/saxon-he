@@ -370,6 +370,21 @@ public class Chain implements GroundedValue {
         public GroundedValue materialize() {
             return Chain.this;
         }
+
+        @Override
+        public GroundedValue getResidue() throws XPathException {
+
+            if (stack.size() == 1 && stack.get(0).offset == 0) {
+                return materialize();
+            } else {
+                List<Item> extent = new ArrayList<Item>();
+                Item item;
+                while ((item = next()) != null) {
+                    extent.add(item);
+                }
+                return new SequenceExtent(extent);
+            }
+        }
     }
 
 
