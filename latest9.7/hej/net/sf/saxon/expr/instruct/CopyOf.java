@@ -608,6 +608,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
                             }
                             options.setTopLevelType(type);
                             options.setTopLevelElement(NameOfNode.makeName(source).getStructuredQName());
+                            options.setErrorListener(context.getErrorListener());
                             config.prepareValidationReporting(context, options);
                             eval = config.getElementValidator(out, options, getLocation());
                         }
@@ -679,6 +680,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
                         ParseOptions options = new ParseOptions();
                         options.setSchemaValidationMode(validation);
                         options.setStripSpace(Whitespace.NONE);
+                        options.setErrorListener(context.getErrorListener());
                         options.setTopLevelType(schemaType);
                         config.prepareValidationReporting(context, options);
                         Receiver val = config.getDocumentValidator(out, source.getBaseURI(), options);
