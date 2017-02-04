@@ -12,6 +12,7 @@ import cli.System.Text.RegularExpressions.Group;
 import cli.System.Text.RegularExpressions.GroupCollection;
 import cli.System.Text.RegularExpressions.Match;
 import cli.System.Text.RegularExpressions.Regex;
+import net.sf.saxon.expr.LastPositionFinder;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
@@ -32,7 +33,7 @@ import java.util.List;
  * This implementation of RegexIterator uses the .NET regular expression engine.
  */
 
-public class DotNetRegexIterator implements RegexIterator {
+public class DotNetRegexIterator implements RegexIterator, LastPositionFinder<Item> {
 
     private String theString;   // the input string being matched
     private Regex pattern;    // the regex against which the string is matched
@@ -60,6 +61,16 @@ public class DotNetRegexIterator implements RegexIterator {
         this.pattern = pattern;
         matcher = pattern.Matches(string).GetEnumerator();
         next = null;
+    }
+
+    @Override
+    public int getLength() throws XPathException {
+        DotNetRegexIterator another = new DotNetRegexIterator(theString, pattern);
+        int n = 0;
+        while ((another.next() != null)) {
+            n++;
+        }
+        return n;
     }
 
     /**

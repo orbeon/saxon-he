@@ -26,7 +26,7 @@ import java.util.List;
  * A GroupMatchingIterator contains code shared between GroupStartingIterator and GroupEndingIterator
  */
 
-public abstract class GroupMatchingIterator implements LookaheadIterator, GroupIterator {
+public abstract class GroupMatchingIterator implements LookaheadIterator, LastPositionFinder<Item>, GroupIterator {
 
     protected FocusIterator population;
     protected Pattern pattern;
@@ -38,6 +38,15 @@ public abstract class GroupMatchingIterator implements LookaheadIterator, GroupI
     protected int position = 0;
     private int groupSlot = -1;
 
+    @Override
+    public int getLength() throws XPathException {
+        SequenceIterator another = getAnother();
+        int n = 0;
+        while ((another.next() != null)) {
+            n++;
+        }
+        return n;
+    }
 
     protected abstract void advance() throws XPathException;
 
@@ -82,7 +91,7 @@ public abstract class GroupMatchingIterator implements LookaheadIterator, GroupI
     }
 
     public int getProperties() {
-        return LOOKAHEAD;
+        return LOOKAHEAD | LAST_POSITION_FINDER;
     }
 
 //#if EE==true

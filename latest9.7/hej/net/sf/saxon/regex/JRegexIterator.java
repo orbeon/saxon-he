@@ -7,6 +7,7 @@
 
 package net.sf.saxon.regex;
 
+import net.sf.saxon.expr.LastPositionFinder;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
@@ -31,7 +32,7 @@ import java.util.regex.Pattern;
  * This implementation of RegexIterator uses the JDK regular expression engine.
  */
 
-public class JRegexIterator implements RegexIterator {
+public class JRegexIterator implements RegexIterator, LastPositionFinder<Item> {
 
     private String theString;   // the input string being matched
     private Pattern pattern;    // the regex against which the string is matched
@@ -59,6 +60,16 @@ public class JRegexIterator implements RegexIterator {
         this.pattern = pattern;
         matcher = pattern.matcher(string);
         next = null;
+    }
+
+    @Override
+    public int getLength() throws XPathException {
+        JRegexIterator another = new JRegexIterator(theString, pattern);
+        int n = 0;
+        while ((another.next() != null)) {
+            n++;
+        }
+        return n;
     }
 
     /**
@@ -138,7 +149,7 @@ public class JRegexIterator implements RegexIterator {
      */
 
     public int getProperties() {
-        return 0;
+        return LAST_POSITION_FINDER;
     }
 
     /**

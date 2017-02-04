@@ -31,7 +31,7 @@ import java.util.List;
  * leaving the members of that group in a saved list.
  */
 
-public class GroupAdjacentIterator implements GroupIterator, LookaheadIterator {
+public class GroupAdjacentIterator implements GroupIterator, LookaheadIterator, LastPositionFinder<Item> {
 
     private FocusIterator population;
     private Expression keyExpression;
@@ -66,6 +66,16 @@ public class GroupAdjacentIterator implements GroupIterator, LookaheadIterator {
             nextKey = getKey(runningContext);
             nextComparisonKey = getComparisonKey(nextKey, baseContext);
         }
+    }
+
+    @Override
+    public int getLength() throws XPathException {
+        GroupAdjacentIterator another = (GroupAdjacentIterator)getAnother();
+        int n = 0;
+        while ((another.next() != null)) {
+            n++;
+        }
+        return n;
     }
 
     private List<AtomicValue> getKey(XPathContext context) throws XPathException {
@@ -191,7 +201,7 @@ public class GroupAdjacentIterator implements GroupIterator, LookaheadIterator {
      */
 
     public int getProperties() {
-        return LOOKAHEAD;
+        return LOOKAHEAD | LAST_POSITION_FINDER;
     }
 
 
