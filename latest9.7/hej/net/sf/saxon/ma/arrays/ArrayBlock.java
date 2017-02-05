@@ -9,7 +9,7 @@ package net.sf.saxon.ma.arrays;
 
 import com.saxonica.ee.bytecode.ArrayBlockCompiler;
 import com.saxonica.ee.bytecode.ExpressionCompiler;
-import com.saxonica.ee.stream.adjunct.BlockAdjunct;
+import com.saxonica.ee.stream.adjunct.StreamingAdjunct;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.oper.OperandArray;
 import net.sf.saxon.expr.parser.ExpressionTool;
@@ -275,9 +275,9 @@ public class ArrayBlock extends Expression {
      * @return the relevant StreamingAdjunct, or null if none is available
      */
     @Override
-    public BlockAdjunct getStreamingAdjunct() {
-        // TODO
-        return new BlockAdjunct();
+    public StreamingAdjunct getStreamingAdjunct() {
+        // properly implemented in 9.8
+        return super.getStreamingAdjunct();
     }
 
     //#endif
