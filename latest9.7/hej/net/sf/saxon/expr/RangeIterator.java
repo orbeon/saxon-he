@@ -122,7 +122,7 @@ public class RangeIterator implements AtomicIterator,
 
     @Override
     public GroundedValue getResidue() throws XPathException {
-        return new IntegerRange(currentValue, limit);
+        return new IntegerRange(currentValue + 1, limit);
     }
 }
 

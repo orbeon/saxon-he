@@ -66,7 +66,7 @@ public class TailIterator
         } else if (base instanceof ArrayIterator) {
             return ((ArrayIterator) base).makeSliceIterator(start, Integer.MAX_VALUE);
         } else if ((base.getProperties() & SequenceIterator.GROUNDED) != 0) {
-            GroundedValue value = ((GroundedIterator) base).getResidue();
+            GroundedValue value = ((GroundedIterator) base).materialize();
             if (start > value.getLength()) {
                 return EmptyIterator.emptyIterator();
             } else {
