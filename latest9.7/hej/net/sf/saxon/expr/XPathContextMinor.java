@@ -202,16 +202,7 @@ public class XPathContextMinor implements XPathContext {
         if (last.value >= 0) {
             return last.value;
         }
-//        if ((currentIterator.getProperties() & SequenceIterator.LAST_POSITION_FINDER) == 0) {
-//            SequenceIterator another = currentIterator.getAnother();
-//            int count = 0;
-//            while (another.next() != null) {
-//                count++;
-//            }
-//            return last.value = count;
-//        } else {
-            return last.value = currentIterator.getLength();
-//        }
+        return last.value = currentIterator.getLength();
     }
 
     /**

@@ -174,6 +174,7 @@ public class XPathContextMajor extends XPathContextMinor {
     public static XPathContextMajor newThreadContext(XPathContextMinor prev) {
         XPathContextMajor c = newContext(prev);
         c.stackFrame = prev.stackFrame.copy();
+        c.last = new LastValue(-1);
         return c;
     }
 
