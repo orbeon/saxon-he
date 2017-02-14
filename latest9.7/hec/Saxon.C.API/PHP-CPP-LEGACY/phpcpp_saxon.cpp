@@ -393,8 +393,9 @@ Php::Value  PHP_XsltProcessor::getExceptionCount(){
     void  PHP_XQueryProcessor::setContextItem(Php::Parameters &params){
 		//TODO allow XdmNode, XdmItem and XdmValue - might not need to do this
 	if (params.size()== 1) {
-		Php::Value value = params[0];
-		xqueryProcessor->setContextItem((XdmItem *)(value.implementation()));
+		
+		PHP_XdmValue * value = (PHP_XdmValue *)params[0].implementation();
+		xqueryProcessor->setContextItem((XdmItem *)(value->getInternal()));
 		//value.instanceOf("Xdm");
 		
 	}
