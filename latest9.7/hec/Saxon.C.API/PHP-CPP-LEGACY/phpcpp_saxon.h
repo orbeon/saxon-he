@@ -230,7 +230,7 @@ public:
 
 
 private:
-	XPathProcessor *xpathProcessor;
+	XPathProcessor * xpathProcessor;
 
 public:
     PHP_XPathProcessor() = default;
@@ -244,26 +244,23 @@ public:
     PHP_XPathProcessor(XPathProcessor * value) {
 	xpathProcessor = value;
     }
-/*
-// PHP_METHOD(XPathProcessor,  __construct);
-    PHP_METHOD(XPathProcessor,  __destruct);
-    PHP_METHOD(XPathProcessor,  setContextItem);
-    PHP_METHOD(XPathProcessor,  setContextFile);
-    PHP_METHOD(XQueryProcessor, setBaseURI);
-    PHP_METHOD(XPathProcessor,  effectiveBooleanValue);
-    PHP_METHOD(XPathProcessor,  evaluate);
-    PHP_METHOD(XPathProcessor,  evaluateSingle);
-    PHP_METHOD(XPathProcessor, declareNamespace);
-    PHP_METHOD(XPathProcessor,  setParameter);
-    PHP_METHOD(XPathProcessor,  setProperty);
-    PHP_METHOD(XPathProcessor,  clearParameters);
-    PHP_METHOD(XPathProcessor,  clearProperties);
-    PHP_METHOD(XPathProcessor,  exceptionClear);
-    PHP_METHOD(XPathProcessor,  exceptionOccurred);
-    PHP_METHOD(XPathProcessor,  getErrorCode);
-    PHP_METHOD(XPathProcessor,  getErrorMessage);
-    PHP_METHOD(XPathProcessor,  getExceptionCount);
-*/
+
+    void setContextItem(Php::Parameters &params);
+    void setContextFile(Php::Parameters &params);
+    void setBaseURI(Php::Parameters &params);
+    Php::Value effectiveBooleanValue(Php::Parameters &params);
+    Php::Value evaluate(Php::Parameters &params);
+    Php::Value evaluateSingle(Php::Parameters &params);
+    void declareNamespace(Php::Parameters &params);
+    void  setParameter(Php::Parameters &params);
+    void  setProperty(Php::Parameters &params);
+    void  clearParameters();
+    void  clearProperties();
+    void  exceptionClear();
+    Php::Value  exceptionOccurred();
+    Php::Value  getErrorCode(Php::Parameters &params);
+    Php::Value  getErrorMessage(Php::Parameters &params);
+    Php::Value  getExceptionCount();
 
 };
 
@@ -326,8 +323,10 @@ public:
 	PHP_XdmValue() = default;
 
 	virtual ~PHP_XdmValue(){
+		//std::cerr<<"checkpoint 1 destructor XdmValue pointer: "<<(&_value)<<std::endl;
 		if(_value != NULL) {
 			_value->decrementRefCount();
+			//std::cerr<<"checkpoint 3destructor XdmValue refCount: "<<_value->getRefCount()<<std::endl;
     			if(_value != NULL && _value->getRefCount()< 1){
     				delete _value;
     			}
@@ -348,16 +347,16 @@ public:
 		return _value;
 	}
 
-//TODO implement a __toString() method
+	Php::Value getHead();
 
-/*
-PHP_METHOD(XdmValue,  __construct);
-    PHP_METHOD(XdmValue,  __destruct);
-    PHP_METHOD(XdmValue,  getHead);
-    PHP_METHOD(XdmValue,  itemAt);
-    PHP_METHOD(XdmValue,  size);
-    PHP_METHOD(XdmValue, addXdmItem);
-*/
+	Php::Value itemAt(Php::Parameters &params);
+
+	Php::Value size();
+
+	void addXdmItem(Php::Parameters &params);
+
+
+	
 
 };
 
@@ -382,16 +381,28 @@ public:
 
 	virtual ~PHP_XdmItem(){	
 	}
-//TODO implement a __toString() method
-/*
-PHP_METHOD(XdmItem,  __construct);
-    PHP_METHOD(XdmItem,  __destruct);
-    PHP_METHOD(XdmItem,  getStringValue);
-    PHP_METHOD(XdmItem,  isAtomic);
-    PHP_METHOD(XdmItem,  isNode);
-    PHP_METHOD(XdmItem,  getAtomicValue);
-    PHP_METHOD(XdmItem,  getNodeValue);
-*/
+
+	virtual Php::Value isAtomic(){
+		return ((XdmItem *)_value)->isAtomic();
+	}
+
+	virtual Php::Value isNode(){
+		return ((XdmItem *)_value)->getType() == XDM_NODE;
+	}
+
+	Php::Value getAtomicValue();
+
+	Php::Value getNodeValue();
+
+	Php::Value getStringValue(){
+		return ((XdmItem*)_value)->getStringValue();
+
+	}
+
+	Php::Value __toString(){
+		return getStringValue();
+	}
+
 
 };
 
@@ -415,24 +426,49 @@ public:
 		
 	}
 
+	Php::Value __toString()
+   	 {
+        return getStringValue();
+    	}
+
+	Php::Value getStringValue(){
+		return ((XdmNode*)_value)->getStringValue();
+
+	}
+
+	Php::Value getNodeKind();
+
+	Php::Value getNodeName();
 
 
-//TODO implement a __toString() method
 
-/*
-PHP_METHOD(XdmNode,  __construct);
-    PHP_METHOD(XdmNode,  __destruct);
-    PHP_METHOD(XdmNode,  getStringValue);
-    PHP_METHOD(XdmNode, getNodeKind);
-    PHP_METHOD(XdmNode, getNodeName);
-    PHP_METHOD(XdmNode,  isAtomic);
-    PHP_METHOD(XdmNode,  getChildCount);   
-    PHP_METHOD(XdmNode,  getAttributeCount); 
-    PHP_METHOD(XdmNode,  getChildNode);
-    PHP_METHOD(XdmNode,  getParent);
-    PHP_METHOD(XdmNode,  getAttributeNode);
-    PHP_METHOD(XdmNode,  getAttributeValue);
-*/
+	Php::Value getChildCount();
+
+	Php::Value getAttributeCount();
+
+	Php::Value getChildNode(Php::Parameters &params);
+
+	//TODO - mention that this is a new method in Saxon/C 1.1.0
+	Php::Value getChildren();
+
+	Php::Value getParent();
+
+	Php::Value getAttributeNode(Php::Parameters &params);
+
+	//TODO - mention that this is a new method in Saxon/C 1.1.0
+	Php::Value getAttributeNodes();
+
+	Php::Value getAttributeValue(Php::Parameters &params);
+
+ 	Php::Value isAtomic(){
+		return false;
+	}
+
+	Php::Value isNode(){
+		return true;
+	}
+
+
 
 };
 
@@ -470,6 +506,11 @@ public:
    	 {
         return getStringValue();
     	}
+
+
+	Php::Value isNode(){
+		return false;
+	}
 
 };
 

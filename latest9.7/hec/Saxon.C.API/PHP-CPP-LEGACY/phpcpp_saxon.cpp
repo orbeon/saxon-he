@@ -30,6 +30,7 @@ Php::Value  PHP_SaxonProcessor::parseXmlFromString(Php::Parameters &params)
 	source = params[0];
         XdmNode* node = saxonProcessor->parseXmlFromString(source);
 	PHP_XdmNode * php_node = new PHP_XdmNode(node);
+	node->incrementRefCount(); 
 	return Php::Object("Saxon\\XdmNode", php_node);
         
     }
@@ -45,7 +46,8 @@ Php::Value  PHP_SaxonProcessor::parseXmlFromFile(Php::Parameters &params)
     if (!params.empty()) {
 	source = params[0];
         XdmNode* node = saxonProcessor->parseXmlFromFile(source);
-	PHP_XdmNode * php_xdmNode = new PHP_XdmNode(node);     
+	PHP_XdmNode * php_xdmNode = new PHP_XdmNode(node);
+	node->incrementRefCount();      
 	return Php::Object("Saxon\\XdmNode", php_xdmNode);
     }
     return NULL;
@@ -101,7 +103,9 @@ Php::Value PHP_SaxonProcessor::createAtomicValue(Php::Parameters &params)
                 throw Php::Exception("Unknown type specified in XdmValue");
                 //return NULL;
         }
+	
         php_atomicValue = new PHP_XdmAtomicValue(xdmValue);
+	xdmValue->incrementRefCount(); 
 	return Php::Object("Saxon\\XdmAtomicValue", php_atomicValue);
         
    
@@ -110,31 +114,31 @@ Php::Value PHP_SaxonProcessor::createAtomicValue(Php::Parameters &params)
 
 Php::Value PHP_SaxonProcessor::newXPathProcessor()
 { 
-   	XPathProcessor * node = saxonProcessor->newXPathProcessor();
-	PHP_XPathProcessor * php_xpathProc = new PHP_XPathProcessor(node);     
+   	XPathProcessor * xpathProc = saxonProcessor->newXPathProcessor();
+	PHP_XPathProcessor * php_xpathProc = new PHP_XPathProcessor(xpathProc);      
 	return Php::Object("Saxon\\XPathProcessor", php_xpathProc);
           
 }
 
 Php::Value PHP_SaxonProcessor::newXsltProcessor()
 {
-   	XsltProcessor * node = saxonProcessor->newXsltProcessor();
-	PHP_XsltProcessor * php_xsltProc = new PHP_XsltProcessor(node);     
+   	XsltProcessor * xsltProc = saxonProcessor->newXsltProcessor();
+	PHP_XsltProcessor * php_xsltProc = new PHP_XsltProcessor(xsltProc);     
 	return Php::Object("Saxon\\XsltProcessor", php_xsltProc);
      
 }
 
 Php::Value PHP_SaxonProcessor::newXQueryProcessor()
 {
-   	XQueryProcessor * node = saxonProcessor->newXQueryProcessor();
-	PHP_XQueryProcessor * php_xqueryProc = new PHP_XQueryProcessor(node);     
+   	XQueryProcessor * xqueryProc = saxonProcessor->newXQueryProcessor();
+	PHP_XQueryProcessor * php_xqueryProc = new PHP_XQueryProcessor(xqueryProc);     
 	return Php::Object("Saxon\\XQueryProcessor", php_xqueryProc);   
  }
 
 Php::Value PHP_SaxonProcessor::newSchemaValidator()
 {
-   	SchemaValidator * node = saxonProcessor->newSchemaValidator();
-	PHP_SchemaValidator * php_schema = new PHP_SchemaValidator(node);     
+   	SchemaValidator * schemaVal = saxonProcessor->newSchemaValidator();
+	PHP_SchemaValidator * php_schema = new PHP_SchemaValidator(schemaVal);    
 	return Php::Object("Saxon\\SchemaValidator", php_schema);   
 	
 }
@@ -208,7 +212,8 @@ Php::Value  PHP_XsltProcessor::transformFileToValue(Php::Parameters &params){
 	styleFileName = params[1];
  	XdmValue * node = xsltProcessor->transformFileToValue(infilename, styleFileName);
         if(node != NULL) {
-		PHP_XdmValue * php_xdmValue = new PHP_XdmValue(node);     
+		PHP_XdmValue * php_xdmValue = new PHP_XdmValue(node);
+		node->incrementRefCount();     
 		return Php::Object("Saxon\\XdmValue", php_xdmValue);
         }
     }
@@ -239,7 +244,8 @@ Php::Value  PHP_XsltProcessor::transformToValue(Php::Parameters &params){
 
 	XdmValue * node = xsltProcessor->transformToValue();
         if(node != NULL) {
-		PHP_XdmValue * php_xdmValue = new PHP_XdmValue(node);     
+		PHP_XdmValue * php_xdmValue = new PHP_XdmValue(node); 
+		node->incrementRefCount();    
 		return Php::Object("Saxon\\XdmValue", php_xdmValue);
         }
 	return NULL;
@@ -474,7 +480,7 @@ Php::Value  PHP_XsltProcessor::getExceptionCount(){
  		xqueryProcessor->declareNamespace(prefix, ns);
 		
    	 }
-}
+    }
 
     void  PHP_XQueryProcessor::clearParameters(){
 	 	xqueryProcessor->clearParameters(true);
@@ -488,6 +494,7 @@ Php::Value  PHP_XsltProcessor::getExceptionCount(){
     Php::Value  PHP_XQueryProcessor::runQueryToValue(){
 	XdmValue * node = xqueryProcessor->runQueryToValue();
 	if(node != NULL) {
+		node->incrementRefCount();
 		PHP_XdmValue * php_xdmValue = new PHP_XdmValue(node);     
 		return Php::Object("Saxon\\XdmValue", php_xdmValue);
         }
@@ -544,6 +551,294 @@ Php::Value  PHP_XsltProcessor::getExceptionCount(){
 	}
 
 
+/* ====================== XPath 2.0/3.0/3.1 Processor ======================     */
+
+    void PHP_XPathProcessor::setContextItem(Php::Parameters &params){
+	if (params.size()== 1) {
+		XdmValue * value = (PHP_XdmValue *)params[0].implementation();
+		xpathProcessor->setContextItem((XdmItem *)value);
+	}
+    }
+
+
+    void PHP_XPathProcessor::setContextFile(Php::Parameters &params){
+	if (params.size()== 1) {
+		const char * value = params[0];
+		xpathProcessor->setContextFile(value);
+	}
+
+    }
+
+
+    void PHP_XPathProcessor::setBaseURI(Php::Parameters &params){
+	if (params.size()== 1) {
+		const char * value = params[0];
+		xpathProcessor->setBaseURI(value);
+	}
+
+    }
+
+
+    Php::Value PHP_XPathProcessor::effectiveBooleanValue(Php::Parameters &params){
+	if (params.size()== 1) {
+		const char * query = params[0];
+		return  xpathProcessor->effectiveBooleanValue(query);
+	}
+    }
+
+
+    Php::Value PHP_XPathProcessor::evaluate(Php::Parameters &params){
+
+	if (params.size()== 1) {
+		const char * query = params[0];
+		XdmValue* value = xpathProcessor->evaluate(query);
+	
+		PHP_XdmValue * php_xdmValue = new PHP_XdmValue(value);     
+		return Php::Object("Saxon\\XdmValue", php_xdmValue);
+	}
+    }
+
+    Php::Value PHP_XPathProcessor::evaluateSingle(Php::Parameters &params){
+
+	if (params.size()== 1) {
+		const char * query = params[0];
+		XdmItem* value = xpathProcessor->evaluateSingle(query);
+	
+		PHP_XdmItem * php_xdmItem = new PHP_XdmItem(value);     
+		return Php::Object("Saxon\\XdmItem", php_xdmItem);
+	}
+
+    }
+
+    void PHP_XPathProcessor::declareNamespace(Php::Parameters &params){
+	if (params.size()== 1) {
+		const char * value = params[0];
+		xpathProcessor->declareNamespace(value);
+	}
+    }
+
+
+    void  PHP_XPathProcessor::setParameter(Php::Parameters &params){
+	PHP_XdmValue * value;
+	const char * name;	
+	if (params.size()== 2) {
+		name = params[0];
+		value = (PHP_XdmValue *)params[1].implementation();
+		if(name != NULL && value != NULL) {
+			xpathProcessor->setParameter(name, value->getInternal());
+		}	
+	}
+    }
+
+
+    void  PHP_XPathProcessor::setProperty(Php::Parameters &params){
+	if (params.size()== 2) {
+
+		const char * name = params[0];
+		const char * value = params[1];
+		if(name != NULL && value != NULL) {
+ 			xpathProcessor->setProperty(name, value);
+		}
+
+   	 }
+    }
+
+
+    void  clearParameters(){
+	xpathProcessor->clearParameters(true);
+    }
+
+    void  PHP_XPathProcessor::clearProperties(){
+	xpathProcessor->clearProperties();
+    }
+
+
+
+void  PHP_XPathProcessor::exceptionClear(){
+	xpathProcessor->exceptionClear();
+}
+    Php::Value  PHP_XPathProcessor::exceptionOccurred(){
+	 bool result = xpathProcessor->exceptionOccurred();
+	return result;
+}
+    Php::Value  PHP_XPathProcessor::getErrorCode(Php::Parameters &params){
+	if (params.size()== 1) {
+		int index = params[0];
+		return xpathProcessor->getErrorCode(index);
+	}
+	return NULL;
+}
+
+    Php::Value  PHP_XPathProcessor::getErrorMessage(Php::Parameters &params){
+	if (params.size()== 1) {
+		int index = params[0];
+		return xpathProcessor->getErrorMessage(index);
+	}
+	return NULL;
+}
+
+    Php::Value  PHP_XPathProcessor::getExceptionCount(){
+	int count = xpathProcessor->exceptionCount();
+	return count;
+	}
+
+
+
+/* ====================== XdmValue ======================     */
+
+	Php::Value PHP_XdmValue::getHead(){
+		XdmItem * item = _value->getHead();
+		PHP_XdmItem * php_xdmItem = new PHP_XdmItem(item);
+		item->incrementRefCount(); 
+		return Php::Object("Saxon\\XdmItem", php_xdmItem);
+		
+	}
+
+	Php::Value PHP_XdmValue::itemAt(Php::Parameters &params){
+		if (params.size()== 1) {
+			int indexi = params[0];
+			XdmItem * item = _value->itemAt(indexi);
+			PHP_XdmItem * php_xdmItem = new PHP_XdmItem(item);
+			item->incrementRefCount(); 
+			return Php::Object("Saxon\\XdmItem", php_xdmItem);
+		}
+		return NULL;	
+
+	}
+
+	Php::Value PHP_XdmValue::size(){
+		return _value->size();
+	}
+
+	void PHP_XdmValue::addXdmItem(Php::Parameters &params){
+		if (params.size()== 1) {
+			PHP_XdmItem * value = (PHP_XdmItem *)params[0].implementation();
+			if(value != NULL) {
+				_value->addXdmItem((XdmItem *)value->getInternal());
+			}
+			
+		}
+	}
+
+
+
+/* ======================= XdmItem ====================     */
+
+
+
+	Php::Value PHP_XdmItem::getAtomicValue(){
+		if(_value != NULL && ((XdmItem *)_value)->isAtomic()){
+			PHP_XdmAtomicValue * php_atomicValue = new PHP_XdmAtomicValue((XdmAtomicValue*)_value);
+			_value->incrementRefCount(); 
+			return Php::Object("Saxon\\XdmAtomicValue", php_atomicValue);
+		} else {
+			return NULL;
+		}
+	}
+
+	Php::Value PHP_XdmItem::getNodeValue(){
+		if(_value != NULL && ((XdmItem *)_value)->getType() == XDM_NODE){
+			PHP_XdmNode * php_node = new PHP_XdmNode((XdmNode *)_value);
+			_value->incrementRefCount(); 
+			return Php::Object("Saxon\\XdmAtomicValue", php_node);
+		} else {
+			return NULL;
+		}
+	}
+
+
+/* ====================== XdmNode ======================     */
+
+
+
+	Php::Value PHP_XdmNode::getNodeName(){
+		return ((XdmNode *)_value)->getNodeName();
+	}
+
+
+
+	Php::Value PHP_XdmNode::getChildCount(){
+		return ((XdmNode*)_value)->getChildCount();
+
+	}
+
+	Php::Value PHP_XdmNode::getAttributeCount(){
+		return ((XdmNode*)_value)->getAttributeCount();
+	}
+
+	Php::Value PHP_XdmNode::getChildNode(Php::Parameters &params){
+		if (params.size()== 1) {
+			int indexi = params[0];
+			XdmNode * child = ((XdmNode*)_value)->getChildren()[indexi];
+			PHP_XdmNode * php_xdmNode = new PHP_XdmNode(child);
+			child->incrementRefCount(); 
+			return Php::Object("Saxon\\XdmNode", php_xdmNode);
+		}
+		return NULL;
+	}
+
+
+	Php::Value PHP_XdmNode::getChildren(){
+		XdmNode * node = (XdmNode *)_value;
+		XdmNode ** childNodes = node->getChildren();
+		Php::Value children;
+		int childCount = node->getChildCount();
+
+		for(int i =0; i<childCount;i++){
+			PHP_XdmNode * php_xdmNode = new PHP_XdmNode(childNodes[i]);
+			childNodes[i]->incrementRefCount(); 
+			children[i] = Php::Object("Saxon\\XdmNode", php_xdmNode);
+
+		}
+		return children;
+	}
+
+	Php::Value PHP_XdmNode::getParent(){
+		XdmNode * parent = ((XdmNode*)_value)->getParent();
+		PHP_XdmNode * php_xdmNode = new PHP_XdmNode(parent);
+		parent->incrementRefCount(); 
+		return Php::Object("Saxon\\XdmNode", php_xdmNode);
+	}
+
+	Php::Value PHP_XdmNode::getAttributeNode(Php::Parameters &params){
+		if (params.size()== 1) {
+			int indexi = params[0];
+			XdmNode * attNode = ((XdmNode*)_value)->getAttributeNodes()[indexi];
+			PHP_XdmNode * php_attNode = new PHP_XdmNode(attNode);
+			attNode->incrementRefCount(); 
+			return Php::Object("Saxon\\XdmNode", php_attNode);
+		}
+		return NULL;
+
+	}
+
+	Php::Value PHP_XdmNode::getAttributeNodes(){
+		XdmNode * node = (XdmNode *)_value;
+		XdmNode ** attrNodes = node->getChildren();
+		Php::Value attributes;
+		int attrCount = node->getAttributeCount();
+
+		for(int i =0; i<attrCount;i++){
+			PHP_XdmNode * php_xdmNode = new PHP_XdmNode(attrNodes[i]);
+			attrNodes[i]->incrementRefCount(); 
+			attributes[i] = Php::Object("Saxon\\XdmNode", php_xdmNode);
+
+		}
+		return attributes;
+
+	}
+
+	Php::Value PHP_XdmNode::getAttributeValue(Php::Parameters &params){
+
+		if (params.size()== 1) {
+			const char * name = params[0];
+			return  ((XdmNode *)_value)->getAttributeValue(name);
+			
+		}
+		return NULL;
+	}
+
+
 	Php::Value PHP_XdmAtomicValue::getStringValue(){
 
 		return ((XdmAtomicValue*)_value)->getStringValue();
@@ -566,7 +861,7 @@ Php::Value  PHP_XsltProcessor::getExceptionCount(){
 
 	Php::Value PHP_XdmAtomicValue::isAtomic(){
 
-		return ((XdmItem*)_value)->isAtomic();
+		return true;
 	}
 
 
@@ -605,10 +900,41 @@ extern "C" {
 
 	Php::Class<PHP_XdmValue> xdmValue("Saxon\\XdmValue");
 	//saxonProcessor.method<&PHP_SaxonProcessor::__construct> ("__construct");
+	xdmValue.method<&PHP_XdmValue::itemAt> ("itemAt");
+	xdmValue.method<&PHP_XdmValue::getHead> ("getHead");
+	xdmValue.method<&PHP_XdmValue::size> ("size");
+	xdmValue.method<&PHP_XdmValue::addXdmItem> ("addXdmItem");
+
+
+/*
+
+Php::Value getHead();
+	Php::Value itemAt(Php::Parameters &params);
+	Php::Value size();
+	Php::Value addXdmItem(Php::Parameters &params);
+*/
 
 	Php::Class<PHP_XdmItem> xdmItem("Saxon\\XdmItem");
+	xdmItem.method<&PHP_XdmItem::isAtomic> ("isAtomic");
+	xdmItem.method<&PHP_XdmItem::isNode> ("isNode");
+	xdmItem.method<&PHP_XdmItem::isNode> ("getAtomicValue");
+	xdmItem.method<&PHP_XdmItem::isNode> ("getNodeValue");
+	xdmItem.method<&PHP_XdmItem::getStringValue> ("getStringValue");
 
 	Php::Class<PHP_XdmNode> xdmNode("Saxon\\XdmNode");
+	xdmNode.method<&PHP_XdmNode::getStringValue> ("getStringValue");
+	xdmNode.method<&PHP_XdmNode::isAtomic> ("isAtomic");
+	xdmNode.method<&PHP_XdmNode::isNode> ("isNode");
+	xdmNode.method<&PHP_XdmNode::getNodeName> ("getNodeName");
+	xdmNode.method<&PHP_XdmNode::getChildCount> ("getChildCount");
+	xdmNode.method<&PHP_XdmNode::getAttributeCount> ("getAttributeCount");
+	xdmNode.method<&PHP_XdmNode::getChildren> ("getChildren");
+	xdmNode.method<&PHP_XdmNode::getParent> ("getParent");
+	xdmNode.method<&PHP_XdmNode::getAttributeNode> ("getAttributeNode");
+	xdmNode.method<&PHP_XdmNode::getAttributeValue> ("getAttributeValue");
+
+
+
 
 	Php::Class<PHP_XdmAtomicValue> xdmAtomicValue("Saxon\\XdmAtomicValue");
 	xdmAtomicValue.method<&PHP_XdmAtomicValue::getStringValue> ("getStringValue");
@@ -616,6 +942,7 @@ extern "C" {
 	xdmAtomicValue.method<&PHP_XdmAtomicValue::getLongValue> ("getLongValue");
 	xdmAtomicValue.method<&PHP_XdmAtomicValue::getDoubleValue> ("getDoubleValue");
 	xdmAtomicValue.method<&PHP_XdmAtomicValue::isAtomic> ("isAtomic");
+	xdmAtomicValue.method<&PHP_XdmAtomicValue::isNode> ("isNode");
 	
 
 	xdmItem.extends(xdmValue);
@@ -667,6 +994,28 @@ extern "C" {
     xqueryProcessor.method<&PHP_XQueryProcessor::getExceptionCount>("getExceptionCount");
 
 	Php::Class<PHP_XPathProcessor> xpathProcessor("Saxon\\XPathProcessor");
+	
+	xpathProcessor.method<&PHP_XPathProcessor::setContextItem>("setContextItem");
+	xpathProcessor.method<&PHP_XPathProcessor::setContextItem>("setContextItem");
+	xpathProcessor.method<&PHP_XPathProcessor::setContextFile>("setContextFile");
+	xpathProcessor.method<&PHP_XPathProcessor::setBaseURI>("setBaseURI");
+	xpathProcessor.method<&PHP_XPathProcessor::effectiveBooleanValue>("effectiveBooleanValue");
+	xpathProcessor.method<&PHP_XPathProcessor::evaluate>("evaluate");
+	xpathProcessor.method<&PHP_XPathProcessor::evaluateSingle>("evaluateSingle");
+	xpathProcessor.method<&PHP_XPathProcessor::declareNamespace>("declareNamespace");
+	xpathProcessor.method<&PHP_XPathProcessor::setParameter>("setParameter");
+	xpathProcessor.method<&PHP_XPathProcessor::setProperty>("setProperty");
+	xpathProcessor.method<&PHP_XPathProcessor::clearParameters>("clearParameters");
+	xpathProcessor.method<&PHP_XPathProcessor::clearProperties>("clearProperties");
+	xpathProcessor.method<&PHP_XPathProcessor::exceptionClear>("exceptionClear");
+	xpathProcessor.method<&PHP_XPathProcessor::exceptionOccurred>("exceptionOccurred");
+	xpathProcessor.method<&PHP_XPathProcessor::getErrorCode>("getErrorCode");
+	xpathProcessor.method<&PHP_XPathProcessor::getErrorMessage>("getErrorMessage");
+	xpathProcessor.method<&PHP_XPathProcessor::getExceptionCount>("getExceptionCount");
+
+
+
+
 
 	Php::Class<PHP_SchemaValidator> schemaValidator("Saxon\\SchemaValidator");
 
