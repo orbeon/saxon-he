@@ -317,6 +317,7 @@ public class QT3TestDriverHE extends TestDriver {
 
         Environment env = getEnvironment(testCase, xpc);
         if (env == null) {
+            writeTestcaseElement(testCaseName, "notRun", "test catalog error");
             notrun++;
             return;
         }
@@ -388,8 +389,11 @@ public class QT3TestDriverHE extends TestDriver {
                 specOpt = Spec.XP30;
             } */
             if (!ensureDependencySatisfied((XdmNode) dependency, env)) {
-                println("*** Dependency not satisfied: " + ((XdmNode) dependency).getAttributeValue(new QName("type")));
-                writeTestcaseElement(testCaseName, "n/a", "Dependency not satisfied");
+                if ("false".equals(((XdmNode) dependency).getAttributeValue(new QName("", "satisfied")))) {
+                    type = "!" + type;
+                }
+                println("*** Dependency not satisfied: " + type + ":" + value);
+                writeTestcaseElement(testCaseName, "n/a", "dependency not satisfied: " + type + ":" + value);
                 //run = false;
                 notrun++;
                 return;

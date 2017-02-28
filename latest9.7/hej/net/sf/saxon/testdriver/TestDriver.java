@@ -507,13 +507,37 @@ public abstract class TestDriver {
         XdmNode testSetDocNode = catbuilder.build(testSetFile);
         createLocalEnvironments(testSetDocNode);
         boolean run = true;
-        // TODO: this won't pick up any test-set level dependencies in the XSLT 3.0 catalog
+        // pick up any test-set level dependencies in the QT3 catalog
         if (((XdmAtomicValue) xpc.evaluate("exists(/test-set/dependency)", testSetDocNode).itemAt(0)).getBooleanValue()) {
             for (XdmItem dependency : xpc.evaluate("/test-set/dependency", testSetDocNode)) {
                 if (!ensureDependencySatisfied((XdmNode) dependency, localEnvironments.get("default"))) {
                     for (XdmItem testCase : xpc.evaluate("//test-case", testSetDocNode)) {
                         String testCaseName = ((XdmNode) testCase).getAttributeValue(new QName("name"));
                         resultsDoc.writeTestcaseElement(testCaseName, "n/a", "test-set dependencies not satisfied");
+                        notrun++;
+                    }
+                    run = false;
+                    break;
+                }
+            }
+        }
+        // pick up any test-set level dependencies in the XSLT 3.0 catalog
+        if (((XdmAtomicValue) xpc.evaluate("exists(/test-set/dependencies)", testSetDocNode).itemAt(0)).getBooleanValue()) {
+            for (XdmItem dependency : xpc.evaluate("/test-set/dependencies/*", testSetDocNode)) {
+                if (!ensureDependencySatisfied((XdmNode) dependency, localEnvironments.get("default"))) {
+                    for (XdmItem testCase : xpc.evaluate("//test-case", testSetDocNode)) {
+                        String type = ((XdmNode) dependency).getNodeName().getLocalName();
+                        String value = ((XdmNode) dependency).getAttributeValue(new QName("", "value"));
+                        if (value == null) {
+                            value = type;
+                        } else {
+                            value = type + ":" + value;
+                        }
+                        if ("false".equals(((XdmNode) dependency).getAttributeValue(new QName("", "satisfied")))) {
+                            value = "!" + value;
+                        }
+                        String testCaseName = ((XdmNode) testCase).getAttributeValue(new QName("name"));
+                        resultsDoc.writeTestcaseElement(testCaseName, "notRun", "test-set dependencies not satisfied: " + value);
                         notrun++;
                     }
                     run = false;
