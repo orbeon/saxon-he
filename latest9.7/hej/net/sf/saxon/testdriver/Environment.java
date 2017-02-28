@@ -263,10 +263,15 @@ public class Environment implements URIResolver {
             Source styleSource = new StreamSource(((XdmNode) env).getBaseURI().resolve(fileName).toString());
             try {
                 if (driver.export) {
-                    File exportFile = new File(driver.resultsDir + "/export/" + name + ".sef");
-                    XsltPackage compiledPack = environment.xsltCompiler.compilePackage(styleSource);
-                    compiledPack.save(exportFile);
-                    environment.xsltExecutable = environment.xsltCompiler.loadExecutablePackage(exportFile.toURI());
+                    if (driver.runWithJS) {
+                        String sourceFile = ((XdmNode) env).getBaseURI().resolve(fileName).toString();
+                        environment.exportedStylesheet = driver.exportStylesheet(environment.xsltCompiler, sourceFile);
+                    } else {
+                        File exportFile = new File(driver.resultsDir + "/export/" + name + ".sef");
+                        XsltPackage compiledPack = environment.xsltCompiler.compilePackage(styleSource);
+                        compiledPack.save(exportFile);
+                        environment.xsltExecutable = environment.xsltCompiler.loadExecutablePackage(exportFile.toURI());
+                    }
                 } else {
                     environment.xsltExecutable = environment.xsltCompiler.compile(styleSource);
                 }
@@ -274,10 +279,6 @@ public class Environment implements URIResolver {
                 driver.println("**** failure while compiling environment-defined stylesheet " + fileName + " - " + e.getMessage());
                 environment.failedToBuild = true;
                 environment.usable = false;
-            }
-            if (driver.runWithJS) {
-                String sourceFile = ((XdmNode) env).getBaseURI().resolve(fileName).toString();
-                environment.exportedStylesheet = driver.exportStylesheet(environment.xsltCompiler, sourceFile);
             }
         }
 
