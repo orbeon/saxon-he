@@ -22,6 +22,7 @@ import java.util.Properties;
 public class TemplatesImpl implements Templates {
 
     private XsltExecutable executable;
+    private boolean forceStreaming = false;
 
     public TemplatesImpl(XsltExecutable executable) {
         this.executable = executable;
@@ -35,7 +36,11 @@ public class TemplatesImpl implements Templates {
      *          if a Transformer can not be created.
      */
     public Transformer newTransformer() throws TransformerConfigurationException {
-        return new TransformerImpl(executable, executable.load());
+        if (forceStreaming) {
+            return new StreamingTransformerImpl(executable, executable.load30());
+        } else {
+            return new TransformerImpl(executable, executable.load());
+        }
     }
 
     /**
@@ -70,5 +75,13 @@ public class TemplatesImpl implements Templates {
     public Properties getOutputProperties() {
         Properties details = executable.getUnderlyingCompiledStylesheet().getDefaultOutputProperties();
         return new Properties(details);
+    }
+
+    public void setForceStreaming(boolean streaming) {
+        forceStreaming = streaming;
+    }
+
+    public boolean isForceStreaming() {
+        return forceStreaming;
     }
 }
