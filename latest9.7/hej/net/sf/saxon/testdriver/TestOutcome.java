@@ -115,7 +115,7 @@ public class TestOutcome {
         return principalResult;
     }
 
-    public synchronized void setSecondaryResult(URI uri, XdmNode value, String serialization) {
+    public synchronized void setSecondaryResult(URI uri, XdmValue value, String serialization) {
         SingleResultDoc result = xslResultDocuments.get(uri);
         if (result == null) {
             result = new SingleResultDoc(value, serialization);
