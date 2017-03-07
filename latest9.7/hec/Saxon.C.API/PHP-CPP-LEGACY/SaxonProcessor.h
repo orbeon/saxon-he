@@ -22,7 +22,7 @@
     #include <windows.h>
 #endif
 
-//#define DEBUG //remove
+#define DEBUG //remove
 #define CVERSION "1.1.0"
 #include <string>
 #include <iostream>
@@ -312,6 +312,21 @@ public:
       * Destructor
     */
     ~SaxonProcessor();
+
+
+/*
+ * Class:     com_saxonica_functions_extfn_PhpCall_PhpFunctionCall
+ * Method:    _phpCall
+ * Signature: (Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/Object;
+ */
+
+jobject JNICALL saxonCall
+  (JNIEnv *env, jobject, jstring funcName, jobjectArray arguments, jobjectArray arrayTypes){
+
+	return NULL;
+}
+
+
 	
    /*!
 

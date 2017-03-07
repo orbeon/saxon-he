@@ -19,7 +19,7 @@
 #include "XdmValue.cpp"*/
 //#include "php_saxon.cpp"
 #endif
-//#define DEBUG
+#define DEBUG
 #ifdef DEBUG
 #include <signal.h>
 #endif
@@ -31,6 +31,15 @@ const char * failure;
 sxnc_environment * SaxonProcessor::sxn_environ = 0;
 int SaxonProcessor::refCount = 0;
 int SaxonProcessor::jvmCreatedCPP=0;
+
+JNINativeMethod methods[] =
+{
+    {
+         "_phpCall",
+         "(Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/Object;",
+         (void *)&SaxonProcessor::saxonCall
+    }
+};
 
 
 bool SaxonProcessor::exceptionOccurred(){
@@ -163,7 +172,25 @@ SaxonProcessor::SaxonProcessor(bool l){
 
 }
 
- 
+ 	if(l){
+  
+
+    	int numMethods;
+    	numMethods = sizeof(methods) / sizeof(methods[0]);
+    	if (SaxonProcessor::sxn_environ->env->RegisterNatives(lookForClass(SaxonProcessor::sxn_environ->env, "com/saxonica/functions/extfn/PhpCall$PhpFunctionCall"), methods, numMethods) < 0){
+   		if (SaxonProcessor::sxn_environ->env->ExceptionOccurred())
+        {
+            std::cerr<<"JNI--Error running RegisterNatives exception occurred"<<std::endl;
+            SaxonProcessor::sxn_environ->env->ExceptionDescribe();
+        }
+        else
+        {
+            std::cerr<<"JNI--Error running RegisterNatives"<<std::endl;
+            
+        }
+    	}
+
+}
     versionClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/Version");
     procClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/Processor");
     saxonCAPIClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/option/cpp/SaxonCAPI");
@@ -199,7 +226,8 @@ SaxonProcessor::SaxonProcessor(const char * configFile){
      */
     initDefaultJavaRT (&SaxonProcessor::sxn_environ); 
     }
- 
+
+
     versionClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/Version");
 
     procClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/Processor");
@@ -573,6 +601,8 @@ void SaxonProcessor::release(){
 #endif
 	return result;
     }
+
+
 
 
 

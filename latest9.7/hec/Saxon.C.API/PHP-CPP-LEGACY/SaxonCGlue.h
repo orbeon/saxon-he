@@ -64,9 +64,9 @@ EXTERN_C
  * Signature: ([Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/Object;
  */
 /*JNIEXPORT jobject JNICALL Java_com_saxonica_functions_extfn_PhpCall_00024PhpFunctionCall__1phpCall
-  (JNIEnv *, jobject, jobjectArray, jobjectArray);*/
+  (JNIEnv *, jobject, jstring, jobjectArray, jobjectArray);
 
-
+*/
 
  
 

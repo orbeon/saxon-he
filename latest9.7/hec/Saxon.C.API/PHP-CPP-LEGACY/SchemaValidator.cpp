@@ -70,13 +70,15 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 	} else {
 		jobject result = (jobject)(
 			SaxonProcessor::sxn_environ->env->CallObjectMethod(cppV, mID));
-		
+		std::cerr<<"In C++ getValidationReport"<<std::endl;
 		if (result) {
+		std::cerr<<"In C++ getValidationReport checkpoint 1"<<std::endl;
 			XdmNode * node = new XdmNode(result);
 			node->setProcessor(proc);
 			return node;
 		}
 	}
+		std::cerr<<"In C++ getValidationReport checkpoint 2"<<std::endl;
 	return NULL;
 }
 

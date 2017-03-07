@@ -271,7 +271,7 @@ public:
 
 
 private:
-	SchemaValidator *schemaValidator;
+	SchemaValidator * schemaValidator;
 
 public:
     PHP_SchemaValidator() = default;
@@ -286,26 +286,31 @@ public:
 	schemaValidator = value;
     }
 
-/*
- // PHP_METHOD(SchemaValidator,  __construct);
-    PHP_METHOD(SchemaValidator,  __destruct);
-    PHP_METHOD(SchemaValidator,  setSourceNode);
-    PHP_METHOD(SchemaValidator,  setOutputFile);
-    PHP_METHOD(SchemaValidator, registerSchemaFromFile);
-    PHP_METHOD(SchemaValidator, registerSchemaFromString);
-    PHP_METHOD(SchemaValidator, validate); 
-    PHP_METHOD(SchemaValidator, validateToNode);
-    PHP_METHOD(SchemaValidator, getValidationReport);
-    PHP_METHOD(SchemaValidator,  setParameter);
-    PHP_METHOD(SchemaValidator,  setProperty);
-    PHP_METHOD(SchemaValidator,  clearParameters);
-    PHP_METHOD(SchemaValidator,  clearProperties);
-    PHP_METHOD(SchemaValidator,  exceptionClear);
-    PHP_METHOD(SchemaValidator,  exceptionOccurred);
-    PHP_METHOD(SchemaValidator,  getErrorCode);
-    PHP_METHOD(SchemaValidator,  getErrorMessage);
-    PHP_METHOD(SchemaValidator,  getExceptionCount);
-*/
+	void setOutputFile(Php::Parameters &params);
+
+	void setSourceNode(Php::Parameters &params);
+
+	void registerSchemaFromFile(Php::Parameters &params);
+
+	void registerSchemaFromString(Php::Parameters &params);
+
+	void validate(Php::Parameters &params);
+
+	Php::Value validateToNode(Php::Parameters &params);	
+
+	Php::Value getValidationReport();
+
+    	void  setParameter(Php::Parameters &params);
+    	void  setProperty(Php::Parameters &params);
+    	void  clearParameters();
+    	void  clearProperties();
+    	void  exceptionClear();
+    	Php::Value  exceptionOccurred();
+    	Php::Value  getErrorCode(Php::Parameters &params);
+    	Php::Value  getErrorMessage(Php::Parameters &params);
+    	Php::Value  getExceptionCount();
+
+	
 };
 
 
@@ -394,7 +399,7 @@ public:
 
 	Php::Value getNodeValue();
 
-	Php::Value getStringValue(){
+	virtual Php::Value getStringValue(){
 		return ((XdmItem*)_value)->getStringValue();
 
 	}
@@ -431,8 +436,18 @@ public:
         return getStringValue();
     	}
 
+
 	Php::Value getStringValue(){
-		return ((XdmNode*)_value)->getStringValue();
+std::cerr<<"checkpoint pp"<<std::endl;
+if(_value == NULL) {
+std::cerr<<"checkpoint -- _value is NULL"<<std::endl;
+}
+		if(((XdmItem*)_value)->getStringValue() == NULL) {
+			std:cerr<<"Error in stringValue"<<std::endl;
+		} else {
+			std::cerr<<"checkpoint zz: "<<(((XdmItem*)_value)->getStringValue())<<std::endl;
+		}
+		return ((XdmItem*)_value)->getStringValue();
 
 	}
 

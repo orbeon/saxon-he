@@ -2,7 +2,6 @@
 
 
 
-
 void PHP_SaxonProcessor::setResourcesDirectory(Php::Parameters &params)
 {
     
@@ -53,11 +52,12 @@ Php::Value  PHP_SaxonProcessor::parseXmlFromFile(Php::Parameters &params)
     return NULL;
 }
 
+
 void PHP_SaxonProcessor::registerPHPFunction(Php::Parameters &params){
 
  	if (!params.empty() && params.size() == 1) {
 		const char * func = params[0];
-	
+		
 	}
 }
 
@@ -551,11 +551,141 @@ Php::Value  PHP_XsltProcessor::getExceptionCount(){
 	}
 
 
+/* ====================== Schema Validator Processor ======================     */
+
+
+	void PHP_SchemaValidator::setOutputFile(Php::Parameters &params){
+		if (params.size()== 1) {
+			const char * filename = params[0];
+			if(filename != NULL) {
+				schemaValidator->setOutputFile(filename);
+			}	
+			
+		}
+	}
+
+	void PHP_SchemaValidator::setSourceNode(Php::Parameters &params){
+		//TODO check parameter is an XdmNode
+		if (params.size()== 1) {
+			PHP_XdmNode * node = (PHP_XdmNode *)params[0].implementation();
+			if(node != NULL) {
+				schemaValidator->setSourceNode((XdmNode *)node->getInternal());
+			}	
+			
+		}
+
+	}
+
+	void PHP_SchemaValidator::registerSchemaFromFile(Php::Parameters &params){
+		if (params.size()== 1) {
+			const char * name = params[0];
+			schemaValidator->registerSchemaFromFile(name);
+		}	
+	}
+
+	void PHP_SchemaValidator::registerSchemaFromString(Php::Parameters &params){
+		if (params.size()== 1) {
+			const char * schemaStr = params[0];
+			schemaValidator->registerSchemaFromString(schemaStr);
+		}
+	}
+
+	void PHP_SchemaValidator::validate(Php::Parameters &params){
+		if (params.size()== 0) {
+			schemaValidator->validate();
+		} else if (params.size()== 1) {
+			const char * name = params[0];
+			schemaValidator->validate(name);
+		}
+	}
+
+
+	Php::Value PHP_SchemaValidator::validateToNode(Php::Parameters &params){
+		if (params.size()== 1) {
+			const char * name = params[0];
+			XdmNode * node = schemaValidator->validateToNode(name);
+			PHP_XdmNode * php_xdmNode = new PHP_XdmNode(node);     
+			return Php::Object("Saxon\\XdmValue", php_xdmNode);
+		}
+		return NULL;
+	}	
+
+	Php::Value PHP_SchemaValidator::getValidationReport(){
+		XdmNode * node = schemaValidator->getValidationReport();
+		if(node == NULL) {
+			std::cerr<<"checkpoint -- node in getValidatorReport is NULL"<<std::endl;
+			return NULL;
+		}
+		PHP_XdmNode * php_xdmNode = new PHP_XdmNode(node);     
+		return Php::Object("Saxon\\XdmNode", php_xdmNode);
+	}
+
+    	void  PHP_SchemaValidator::setParameter(Php::Parameters &params){
+		PHP_XdmValue * value;
+		const char * name;	
+		if (params.size()== 2) {
+			name = params[0];
+			value = (PHP_XdmValue *)params[1].implementation();
+			if(name != NULL && value != NULL) {
+				schemaValidator->setParameter(name, value->getInternal());
+			}	
+		}
+	}
+
+    	void  PHP_SchemaValidator::setProperty(Php::Parameters &params){
+		if (params.size()== 2) {
+
+			const char * name = params[0];
+			const char * value = params[1];
+			if(name != NULL && value != NULL) {
+ 				schemaValidator->setProperty(name, value);
+			}
+
+   	 	}
+	}
+
+    	void  PHP_SchemaValidator::clearParameters(){
+		schemaValidator->clearParameters(true);
+	}
+
+    	void  PHP_SchemaValidator::clearProperties(){
+		schemaValidator->clearProperties();
+	}
+
+    void  PHP_SchemaValidator::exceptionClear(){
+	schemaValidator->exceptionClear();
+}
+    Php::Value  PHP_SchemaValidator::exceptionOccurred(){
+	 bool result = schemaValidator->exceptionOccurred();
+	return result;
+}
+    Php::Value  PHP_SchemaValidator::getErrorCode(Php::Parameters &params){
+	if (params.size()== 1) {
+		int index = params[0];
+		return schemaValidator->getErrorCode(index);
+	}
+	return NULL;
+}
+
+    Php::Value  PHP_SchemaValidator::getErrorMessage(Php::Parameters &params){
+	if (params.size()== 1) {
+		int index = params[0];
+		return schemaValidator->getErrorMessage(index);
+	}
+	return NULL;
+}
+
+    Php::Value  PHP_SchemaValidator::getExceptionCount(){
+	int count = schemaValidator->exceptionCount();
+	return count;
+	}
+
+
 /* ====================== XPath 2.0/3.0/3.1 Processor ======================     */
 
     void PHP_XPathProcessor::setContextItem(Php::Parameters &params){
 	if (params.size()== 1) {
-		XdmValue * value = (PHP_XdmValue *)params[0].implementation();
+		XdmValue * value = ((PHP_XdmValue *)params[0].implementation())->getInternal();
 		xpathProcessor->setContextItem((XdmItem *)value);
 	}
     }
@@ -611,9 +741,10 @@ Php::Value  PHP_XsltProcessor::getExceptionCount(){
     }
 
     void PHP_XPathProcessor::declareNamespace(Php::Parameters &params){
-	if (params.size()== 1) {
-		const char * value = params[0];
-		xpathProcessor->declareNamespace(value);
+	if (params.size()== 2) {
+		const char * prefix = params[0];
+		const char * namespacei = params[1];
+		xpathProcessor->declareNamespace(prefix, namespacei);
 	}
     }
 
@@ -644,7 +775,7 @@ Php::Value  PHP_XsltProcessor::getExceptionCount(){
     }
 
 
-    void  clearParameters(){
+    void  PHP_XPathProcessor::clearParameters(){
 	xpathProcessor->clearParameters(true);
     }
 
@@ -740,7 +871,7 @@ void  PHP_XPathProcessor::exceptionClear(){
 		if(_value != NULL && ((XdmItem *)_value)->getType() == XDM_NODE){
 			PHP_XdmNode * php_node = new PHP_XdmNode((XdmNode *)_value);
 			_value->incrementRefCount(); 
-			return Php::Object("Saxon\\XdmAtomicValue", php_node);
+			return Php::Object("Saxon\\XdmNode", php_node);
 		} else {
 			return NULL;
 		}
@@ -753,6 +884,10 @@ void  PHP_XPathProcessor::exceptionClear(){
 
 	Php::Value PHP_XdmNode::getNodeName(){
 		return ((XdmNode *)_value)->getNodeName();
+	}
+
+	Php::Value PHP_XdmNode::getNodeKind(){
+		return ((XdmNode *)_value)->getNodeKind();
 	}
 
 
@@ -906,6 +1041,7 @@ extern "C" {
 	xdmValue.method<&PHP_XdmValue::addXdmItem> ("addXdmItem");
 
 
+
 /*
 
 Php::Value getHead();
@@ -917,8 +1053,8 @@ Php::Value getHead();
 	Php::Class<PHP_XdmItem> xdmItem("Saxon\\XdmItem");
 	xdmItem.method<&PHP_XdmItem::isAtomic> ("isAtomic");
 	xdmItem.method<&PHP_XdmItem::isNode> ("isNode");
-	xdmItem.method<&PHP_XdmItem::isNode> ("getAtomicValue");
-	xdmItem.method<&PHP_XdmItem::isNode> ("getNodeValue");
+	xdmItem.method<&PHP_XdmItem::getAtomicValue> ("getAtomicValue");
+	xdmItem.method<&PHP_XdmItem::getNodeValue> ("getNodeValue");
 	xdmItem.method<&PHP_XdmItem::getStringValue> ("getStringValue");
 
 	Php::Class<PHP_XdmNode> xdmNode("Saxon\\XdmNode");
@@ -926,11 +1062,14 @@ Php::Value getHead();
 	xdmNode.method<&PHP_XdmNode::isAtomic> ("isAtomic");
 	xdmNode.method<&PHP_XdmNode::isNode> ("isNode");
 	xdmNode.method<&PHP_XdmNode::getNodeName> ("getNodeName");
+	xdmNode.method<&PHP_XdmNode::getNodeKind> ("getNodeKind");
 	xdmNode.method<&PHP_XdmNode::getChildCount> ("getChildCount");
 	xdmNode.method<&PHP_XdmNode::getAttributeCount> ("getAttributeCount");
 	xdmNode.method<&PHP_XdmNode::getChildren> ("getChildren");
+	xdmNode.method<&PHP_XdmNode::getChildNode> ("getChildNode");
 	xdmNode.method<&PHP_XdmNode::getParent> ("getParent");
 	xdmNode.method<&PHP_XdmNode::getAttributeNode> ("getAttributeNode");
+	xdmNode.method<&PHP_XdmNode::getAttributeNodes> ("getAttributeNodes");
 	xdmNode.method<&PHP_XdmNode::getAttributeValue> ("getAttributeValue");
 
 
@@ -996,7 +1135,6 @@ Php::Value getHead();
 	Php::Class<PHP_XPathProcessor> xpathProcessor("Saxon\\XPathProcessor");
 	
 	xpathProcessor.method<&PHP_XPathProcessor::setContextItem>("setContextItem");
-	xpathProcessor.method<&PHP_XPathProcessor::setContextItem>("setContextItem");
 	xpathProcessor.method<&PHP_XPathProcessor::setContextFile>("setContextFile");
 	xpathProcessor.method<&PHP_XPathProcessor::setBaseURI>("setBaseURI");
 	xpathProcessor.method<&PHP_XPathProcessor::effectiveBooleanValue>("effectiveBooleanValue");
@@ -1014,10 +1152,23 @@ Php::Value getHead();
 	xpathProcessor.method<&PHP_XPathProcessor::getExceptionCount>("getExceptionCount");
 
 
-
-
-
 	Php::Class<PHP_SchemaValidator> schemaValidator("Saxon\\SchemaValidator");
+	schemaValidator.method<&PHP_SchemaValidator::setSourceNode>("setSourceNode");
+	schemaValidator.method<&PHP_SchemaValidator::setOutputFile>("setOutputFile");
+	schemaValidator.method<&PHP_SchemaValidator::registerSchemaFromFile>("registerSchemaFromFile");
+	schemaValidator.method<&PHP_SchemaValidator::registerSchemaFromString>("registerSchemaFromString");
+	schemaValidator.method<&PHP_SchemaValidator::validate>("validate");
+	schemaValidator.method<&PHP_SchemaValidator::validateToNode>("validateToNode");
+	schemaValidator.method<&PHP_SchemaValidator::getValidationReport>("getValidationReport");
+	schemaValidator.method<&PHP_SchemaValidator::setParameter>("setParameter");
+	schemaValidator.method<&PHP_SchemaValidator::setProperty>("setProperty");
+	schemaValidator.method<&PHP_SchemaValidator::clearParameters>("clearParameters");
+	schemaValidator.method<&PHP_SchemaValidator::clearProperties>("clearProperties");
+	schemaValidator.method<&PHP_SchemaValidator::exceptionClear>("exceptionClear");
+	schemaValidator.method<&PHP_SchemaValidator::exceptionOccurred>("exceptionOccurred");
+	schemaValidator.method<&PHP_SchemaValidator::getErrorCode>("getErrorCode");
+	schemaValidator.method<&PHP_SchemaValidator::getErrorMessage>("getErrorMessage");
+	schemaValidator.method<&PHP_SchemaValidator::getExceptionCount>("getExceptionCount");
 
         // add the class to the extension
         extension.add(std::move(saxonProcessor));
