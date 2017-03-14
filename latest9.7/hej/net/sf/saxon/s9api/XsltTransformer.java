@@ -566,12 +566,12 @@ public class XsltTransformer implements Destination {
                     controller.setGlobalContextItem((NodeInfo)initialSource);
                 } else if (initialSource instanceof DOMSource) {
                     NodeInfo node = controller.prepareInputTree(initialSource);
-                    controller.setGlobalContextItem(node);
+                    controller.setGlobalContextItem(node, true);
                     initialSource = node;
                 } else {
                     boolean close = (initialSource instanceof AugmentedSource && ((AugmentedSource)initialSource).isPleaseCloseAfterUse());
                     NodeInfo node = controller.makeSourceTree(initialSource, close, getSchemaValidationMode().getNumber());
-                    controller.setGlobalContextItem(node);
+                    controller.setGlobalContextItem(node, true);
                     initialSource = node;
                 }
             }
