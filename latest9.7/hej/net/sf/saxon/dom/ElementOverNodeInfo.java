@@ -117,7 +117,7 @@ public class ElementOverNodeInfo extends NodeOverNodeInfo implements Element {
                 return null;
             }
             if (att.getDisplayName().equals(name)) {
-                return (Attr) att;
+                return (AttrOverNodeInfo) wrap(att);
             }
         }
     }
