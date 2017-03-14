@@ -134,8 +134,7 @@ public class KeyManager {
             sc.setXPathLanguageLevel(packageData.getXPathVersion());
             RetainedStaticContext rsc = new RetainedStaticContext(sc);
             Expression sf = SystemFunction.makeCall("string", rsc, new ContextItemExpression());
-            StringLiteral regex = new StringLiteral("\\s+");
-            Expression use = SystemFunction.makeCall("tokenize", rsc, sf, regex);
+            Expression use = SystemFunction.makeCall("tokenize", rsc, sf);  // The new tokenize#1 - bug 3166
             final StructuredQName qName = StandardNames.getStructuredQName(StandardNames.XS_IDREFS);
             SymbolicName symbolicName = new SymbolicName(StandardNames.XSL_KEY, qName);
             KeyDefinition key = new KeyDefinition(symbolicName, pp, use, null, null);

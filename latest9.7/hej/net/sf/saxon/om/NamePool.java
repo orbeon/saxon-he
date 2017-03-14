@@ -8,6 +8,7 @@
 package net.sf.saxon.om;
 
 import net.sf.saxon.lib.NamespaceConstant;
+import net.sf.saxon.tree.wrapper.VirtualNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -445,6 +446,23 @@ public final class NamePool {
         public NamePoolLimitException(String message) {
             super(message);
         }
+    }
+
+    public static boolean isFingerprintedNode(NodeInfo node) {
+        return node instanceof FingerprintedNode ||
+                (node instanceof VirtualNode && (((VirtualNode) node).getRealNode() instanceof FingerprintedNode));
+    }
+
+    public static int getFingerprintOfNode(NodeInfo node) {
+        if (node instanceof FingerprintedNode) {
+            return ((FingerprintedNode)node).getFingerprint();
+        } else if (node instanceof VirtualNode) {
+            Object real = ((VirtualNode)node).getRealNode();
+            if (real instanceof FingerprintedNode) {
+                return ((FingerprintedNode)real).getFingerprint();
+            }
+        }
+        return -1;
     }
 
 }

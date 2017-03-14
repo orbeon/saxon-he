@@ -181,7 +181,9 @@ public class NameTest extends NodeTest implements QNameTest {
         // DOM and JDOM nodes use string comparison of names
 
         if (node instanceof FingerprintedNode) {
-            return ((FingerprintedNode)node).getFingerprint() == fingerprint;
+            return ((FingerprintedNode) node).getFingerprint() == fingerprint;
+        } else if (NamePool.isFingerprintedNode(node)) {
+            return NamePool.getFingerprintOfNode(node) == fingerprint;
         } else {
             computeUriAndLocal();
             return localName.equals(node.getLocalPart()) && uri.equals(node.getURI());

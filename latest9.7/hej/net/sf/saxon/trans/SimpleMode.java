@@ -458,6 +458,8 @@ public class SimpleMode extends Mode {
                     Rule namedNodeChain;
                     if (node instanceof FingerprintedNode) {
                         namedNodeChain = namedElementRuleChains.get(((FingerprintedNode) node).getFingerprint());
+                    } else if (NamePool.isFingerprintedNode(node)) {
+                        namedNodeChain = namedElementRuleChains.get(NamePool.getFingerprintOfNode(node));
                     } else {
                         namedNodeChain = getNamedRuleChain(context, Type.ELEMENT, node.getURI(), node.getLocalPart());
                     }
@@ -471,7 +473,9 @@ public class SimpleMode extends Mode {
                     Rule namedNodeChain;
                     if (node instanceof FingerprintedNode) {
                         namedNodeChain = namedAttributeRuleChains.get(((FingerprintedNode) node).getFingerprint());
-                    } else {
+                    } else if (NamePool.isFingerprintedNode(node)) {
+                        namedNodeChain = namedAttributeRuleChains.get(NamePool.getFingerprintOfNode(node));
+                    }else {
                         namedNodeChain = getNamedRuleChain(context, Type.ATTRIBUTE, node.getURI(), node.getLocalPart());
                     }
                     if (namedNodeChain != null) {
@@ -687,6 +691,8 @@ public class SimpleMode extends Mode {
                     Rule namedNodeChain;
                     if (node instanceof FingerprintedNode) {
                         namedNodeChain = namedElementRuleChains.get(((FingerprintedNode) node).getFingerprint());
+                    } else if (NamePool.isFingerprintedNode(node)) {
+                        namedNodeChain = namedElementRuleChains.get(NamePool.getFingerprintOfNode(node));
                     } else {
                         namedNodeChain = getNamedRuleChain(context, Type.ELEMENT, node.getURI(), node.getLocalPart());
                     }
@@ -698,7 +704,9 @@ public class SimpleMode extends Mode {
                     Rule namedNodeChain;
                     if (node instanceof FingerprintedNode) {
                         namedNodeChain = namedAttributeRuleChains.get(((FingerprintedNode) node).getFingerprint());
-                    } else {
+                    } else if (NamePool.isFingerprintedNode(node)) {
+                        namedNodeChain = namedElementRuleChains.get(NamePool.getFingerprintOfNode(node));
+                    }else {
                         namedNodeChain = getNamedRuleChain(context, Type.ATTRIBUTE, node.getURI(), node.getLocalPart());
                     }
                     bestRule = searchRuleChain(item, context, null, namedNodeChain, ruleSearchState, filter);
