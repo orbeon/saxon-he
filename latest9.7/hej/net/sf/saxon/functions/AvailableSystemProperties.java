@@ -48,6 +48,7 @@ public class AvailableSystemProperties extends SystemFunction {
         myList.add(new QNameValue("xsl", NamespaceConstant.XSLT, "supports-namespace-axis"));
         myList.add(new QNameValue("xsl", NamespaceConstant.XSLT, "supports-streaming"));
         myList.add(new QNameValue("xsl", NamespaceConstant.XSLT, "supports-dynamic-evaluation"));
+        myList.add(new QNameValue("xsl", NamespaceConstant.XSLT, "supports-higher-order-functions"));
         myList.add(new QNameValue("xsl", NamespaceConstant.XSLT, "xpath-version"));
         myList.add(new QNameValue("xsl", NamespaceConstant.XSLT, "xsd-version"));
 //#if EE==true || PE==true
