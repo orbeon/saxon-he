@@ -14,6 +14,7 @@ import com.saxonica.ee.stream.adjunct.StreamingAdjunct;
 import net.sf.saxon.evpull.EventIterator;
 import net.sf.saxon.evpull.EventMappingFunction;
 import net.sf.saxon.evpull.EventMappingIterator;
+import net.sf.saxon.expr.flwor.OuterForExpression;
 import net.sf.saxon.expr.instruct.Choose;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.FeatureKeys;
@@ -80,7 +81,7 @@ public class ForExpression extends Assignation {
         // which in turn is required when type-checking the action part.
 
         getSequenceOp().typeCheck(visitor, contextInfo);
-        if (Literal.isEmptySequence(getSequence())) {
+        if (Literal.isEmptySequence(getSequence()) && !(this instanceof OuterForExpression)) {
             return getSequence();
         }
 
