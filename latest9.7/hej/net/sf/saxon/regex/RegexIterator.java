@@ -7,7 +7,6 @@
 
 package net.sf.saxon.regex;
 
-import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.trans.XPathException;
 
@@ -60,11 +59,6 @@ public interface RegexIterator extends SequenceIterator {
 
     public void processMatchingSubstring(MatchHandler action) throws XPathException;
 
-
-    /**
-     * Get a Regex sequence which is a snapshot of this sequence at the current position
-     */
-    public RegexIterator getSnapShot(XPathContext context) throws XPathException;
 
     /**
      * Interface defining a call-back action for processing captured groups

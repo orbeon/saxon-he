@@ -13,7 +13,6 @@ import cli.System.Text.RegularExpressions.GroupCollection;
 import cli.System.Text.RegularExpressions.Match;
 import cli.System.Text.RegularExpressions.Regex;
 import net.sf.saxon.expr.LastPositionFinder;
-import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.regex.RegexIterator;
@@ -327,13 +326,6 @@ public class DotNetRegexIterator implements RegexIterator, LastPositionFinder<It
             }
         }
 
-    }
-
-    public RegexIterator getSnapShot(XPathContext context) throws XPathException {
-        DotNetRegexIterator regexItr = new DotNetRegexIterator(theString, pattern);
-        regexItr.current = this.current;
-        regexItr.nestingTable = this.nestingTable;
-        return regexItr;
     }
 
     /**

@@ -745,4 +745,24 @@ public class REMatcher {
         }
         return false;
     }
+
+    public State captureState() {
+        State saved = new State();
+        saved.parenCount = parenCount;
+        saved.startn = Arrays.copyOf(startn, startn.length);
+        saved.endn = Arrays.copyOf(endn, endn.length);
+        return saved;
+    }
+
+    public void resetState(State state) {
+        parenCount = state.parenCount;
+        startn = Arrays.copyOf(state.startn, state.startn.length);
+        endn = Arrays.copyOf(state.endn, state.endn.length);
+    }
+
+    public static class State {
+        int parenCount;                     // Number of subexpressions matched (num open parens + 1)
+        int[] startn;                       // Lazily-allocated array of sub-expression starts
+        int[] endn;                         // Lazily-allocated array of sub-expression ends
+    };
 }

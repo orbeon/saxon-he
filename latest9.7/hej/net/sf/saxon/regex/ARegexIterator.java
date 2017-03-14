@@ -8,7 +8,6 @@
 package net.sf.saxon.regex;
 
 import net.sf.saxon.expr.LastPositionFinder;
-import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.trans.SaxonErrorCode;
@@ -326,16 +325,6 @@ public class ARegexIterator implements RegexIterator, LastPositionFinder<Item> {
             }
         }
 
-    }
-
-    public RegexIterator getSnapShot(XPathContext context) throws XPathException {
-        ARegexIterator regexItr = new ARegexIterator(theString, regex, matcher);
-        regexItr.position = this.position;
-        regexItr.current = this.current;
-        regexItr.nestingTable = this.nestingTable;
-        regexItr.prevEnd = this.prevEnd;
-
-        return regexItr;
     }
 
     /**

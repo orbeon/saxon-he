@@ -12,7 +12,10 @@ import net.sf.saxon.expr.sort.EmptyIntIterator;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.z.*;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * Represents an operation or instruction in the regular expression program. The class Operation
@@ -57,6 +60,17 @@ public abstract class Operation {
      */
 
     public abstract boolean matchesEmptyString();
+
+    /**
+     * Ask whether the expression contains any capturing sub-expressions
+     * @return true if the expression contains any capturing sub-expressions (but not
+     * if it is a capturing expression itself, unless it contains nested capturing
+     * expressions)
+     */
+
+    public boolean containsCapturingExpressions() {
+        return false;
+    }
 
     /**
      * Optimize the operation
@@ -122,6 +136,17 @@ public abstract class Operation {
             }
             return false;
         }
+
+        @Override
+        public boolean containsCapturingExpressions() {
+            for (Operation o : branches) {
+                if (o instanceof OpCapture || o.containsCapturingExpressions()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
 
         @Override
         public Operation optimize(REProgram program, REFlags flags) {
@@ -240,6 +265,16 @@ public abstract class Operation {
             return true;
         }
 
+        @Override
+        public boolean containsCapturingExpressions() {
+            for (Operation o : operations) {
+                if (o instanceof OpCapture || o.containsCapturingExpressions()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         /**
          * Display the operation as a regular expression, possibly in abbreviated form
          *
@@ -262,9 +297,6 @@ public abstract class Operation {
             } else if (operations.size() == 1) {
                 return operations.get(0);
             } else {
-//                if (operations.get(0) instanceof OpBOL) {
-//                    program.optimizationFlags |= REProgram.OPT_HASBOL;
-//                }
                 for (int i=0; i<operations.size()-1; i++) {
                     Operation o1 = operations.get(i);
                     Operation o2 = o1.optimize(program, flags);
@@ -293,6 +325,8 @@ public abstract class Operation {
 
             // A stack of iterators, one for each piece in the sequence
             final Stack<IntIterator> iterators = new Stack<IntIterator>();
+            final REMatcher.State savedState =
+                    containsCapturingExpressions() ? matcher.captureState() : null;
 
             return new IntIterator() {
 
@@ -324,7 +358,9 @@ public abstract class Operation {
                         }
                         iterators.pop();
                     }
-                    //System.err.println("Clear to " + position);
+                    if (savedState != null) {
+                        matcher.resetState(savedState);
+                    }
                     //matcher.clearCapturedGroupsBeyond(position);
                     return -1;
                 }
@@ -634,6 +670,11 @@ public abstract class Operation {
         @Override
         public boolean matchesEmptyString() {
             return min == 0 || op.matchesEmptyString();
+        }
+
+        @Override
+        public boolean containsCapturingExpressions() {
+            return op instanceof OpCapture || op.containsCapturingExpressions();
         }
 
         @Override
@@ -1036,7 +1077,6 @@ public abstract class Operation {
 
                     // Don't set paren if already set later on
                     //if (matcher.getParenStart(groupNr) == -1) {
-                        //System.err.println("Set group " + groupNr + " to (" + position + ", " + next + ")");
                         matcher.setParenStart(groupNr, position);
                         matcher.setParenEnd(groupNr, next);
                     //}
