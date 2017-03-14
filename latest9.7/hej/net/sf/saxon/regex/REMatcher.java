@@ -352,11 +352,7 @@ public class REMatcher {
      */
     protected boolean matchAt(int i, boolean anchored) {
         // Initialize start pointer, paren cache and paren count
-        startn = new int[3];
-        startn[0] = startn[1] = startn[2] = -1;
-        endn = new int[3];
-        endn[0] = endn[1] = endn[2] = -1;
-        parenCount = 1;
+        initCaptureState();
         anchoredMatch = anchored;
         setParenStart(0, i);
 
@@ -378,6 +374,14 @@ public class REMatcher {
         // Didn't match
         parenCount = 0;
         return false;
+    }
+
+    private void initCaptureState() {
+        startn = new int[3];
+        startn[0] = startn[1] = startn[2] = -1;
+        endn = new int[3];
+        endn[0] = endn[1] = endn[2] = -1;
+        parenCount = 1;
     }
 
     /**
@@ -406,6 +410,9 @@ public class REMatcher {
 
         // Save string to search
         this.search = search;
+
+        // Clear the captured group state
+        initCaptureState();
 
         // Can we optimize the search by looking for new lines?
         if ((program.optimizationFlags & REProgram.OPT_HASBOL) == REProgram.OPT_HASBOL) {
