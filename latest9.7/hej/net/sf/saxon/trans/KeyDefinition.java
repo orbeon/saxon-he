@@ -218,7 +218,7 @@ public class KeyDefinition extends ComponentCode<KeyDefinition> implements Conte
     @Override
     public void allocateAllBindingSlots(StylesheetPackage pack) {
         super.allocateAllBindingSlots(pack);
-        //allocateBindingSlotsRecursive(pack, this, match.getSelectionExpression());
+        allocateBindingSlotsRecursive(pack, this, match, getDeclaringComponent().getComponentBindings());
     }
 
     @Override
