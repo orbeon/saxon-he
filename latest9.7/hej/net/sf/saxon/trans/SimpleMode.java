@@ -544,10 +544,12 @@ public class SimpleMode extends Mode {
     protected Rule getNamedRuleChain(XPathContext c, int kind, String uri, String local) {
         // If this is the first attempt to match a non-fingerprinted node, build indexes
         // to the rule chains based on StructuredQName rather than fingerprint
-        if (qNamedElementRuleChains == null) {
-            synchronized (this) {
-                qNamedElementRuleChains = new HashMap<StructuredQName, Rule>(namedElementRuleChains.size());
-                qNamedAttributeRuleChains = new HashMap<StructuredQName, Rule>(namedAttributeRuleChains.size());
+        synchronized (this) {
+            if (qNamedElementRuleChains == null) {
+                qNamedElementRuleChains =
+                        new HashMap<StructuredQName, Rule>(namedElementRuleChains.size());
+                qNamedAttributeRuleChains =
+                        new HashMap<StructuredQName, Rule>(namedAttributeRuleChains.size());
                 NamePool pool = c.getNamePool();
                 IntIterator eIter = namedElementRuleChains.keyIterator();
                 while (eIter.hasNext()) {
