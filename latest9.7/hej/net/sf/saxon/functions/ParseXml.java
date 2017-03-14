@@ -71,7 +71,7 @@ public class ParseXml extends SystemFunction implements Callable {
 
             Builder b = TreeModel.TINY_TREE.makeBuilder(controller.makePipelineConfiguration());
             Receiver s = b;
-            ParseOptions options = new ParseOptions();
+            ParseOptions options = new ParseOptions(configuration.getParseOptions());
             options.setStripSpace(Whitespace.XSLT);
             options.setErrorHandler(errorHandler);
 
