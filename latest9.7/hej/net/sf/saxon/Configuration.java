@@ -470,6 +470,7 @@ public class Configuration implements SourceResolver, NotationSet {
         registerExtensionFunction(new ArrayForEachPair());
         registerExtensionFunction(new ArraySort());
         registerExtensionFunction(new ArrayFlatten());
+        registerExtensionFunction(new ArrayToSequence());
 
         registerFileExtension("xml", "application/xml");
         registerFileExtension("html", "application/html");

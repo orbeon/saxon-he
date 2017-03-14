@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implementation of the extension function array:_to-sequence(array) => item()*
+ * Implementation of the extension function array:flatten(array) => item()*
  */
 public class ArrayFlatten extends ExtensionFunctionDefinition {
 
