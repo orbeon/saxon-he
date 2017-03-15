@@ -96,7 +96,7 @@ public class XPathFunctionCall extends FunctionCall implements Callable {
 
     /*@NotNull*/
     public Expression copy(RebindingMap rebindings) {
-        throw new UnsupportedOperationException("XPathFunctionCall.copy()");
+        return new XPathFunctionCall(name, function);
     }
 
 
