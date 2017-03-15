@@ -24,9 +24,10 @@ import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.Cardinality;
 
+import javax.xml.transform.ErrorListener;
+import javax.xml.transform.TransformerException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -259,6 +260,7 @@ public class TryCatch extends Expression {
     public SequenceIterator iterate(XPathContext c) throws XPathException {
         XPathContextMajor c1 = c.newContext();
         c1.createThreadManager();
+        c1.setErrorListener(new FilteringErrorListener(c.getErrorListener()));
         try {
             // Need to do eager iteration of the first argument to flush any errors out
             Sequence v = ExpressionTool.eagerEvaluate(tryOp.getChildExpression(), c1);
@@ -321,6 +323,50 @@ public class TryCatch extends Expression {
         public int slotNumber = -1;
         public Operand catchOp;
         public QNameTest nameTest;
+    }
+
+    /**
+     * An error listener that filters out reporting of any errors that are caught be the try/catch
+     */
+
+    private class FilteringErrorListener implements ErrorListener {
+
+        private ErrorListener base;
+
+        FilteringErrorListener(ErrorListener base) {
+            this.base = base;
+        }
+
+        private boolean isCaught(TransformerException err) {
+            if (err instanceof XPathException) {
+                StructuredQName code = ((XPathException)err).getErrorCodeQName();
+                for (CatchClause clause : catchClauses) {
+                    if (clause.nameTest.matches(code)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public void warning(TransformerException exception) throws TransformerException {
+            base.warning(exception);
+        }
+
+        @Override
+        public void error(TransformerException exception) throws TransformerException {
+            if (!isCaught(exception)) {
+                base.error(exception);
+            }
+        }
+
+        @Override
+        public void fatalError(TransformerException exception) throws TransformerException {
+            if (!isCaught(exception)) {
+                base.fatalError(exception);
+            }
+        }
     }
 
 //#ifdefined BYTECODE
