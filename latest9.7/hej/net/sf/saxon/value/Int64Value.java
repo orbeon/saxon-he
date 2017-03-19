@@ -340,6 +340,8 @@ public final class Int64Value extends IntegerValue {
             return 1;
         } else if (other instanceof BigIntegerValue) {
             return BigInteger.valueOf(value).compareTo(((BigIntegerValue) other).asBigInteger());
+        } else if (other instanceof DecimalValue) {
+            return new BigDecimal(value).compareTo(((DecimalValue)other).getDecimalValue());
         } else {
             return super.compareTo(other);
         }
