@@ -352,10 +352,17 @@ jobject createSaxonProcessor2 (JNIEnv* penv, jclass myClassInDll, const char * a
       }
     return obj;
 }
-/*
-JNIEXPORT jobject JNICALL Java_com_saxonica_functions_extfn_PhpCall_00024PhpFunctionCall__1phpCall
-  (JNIEnv * env, jobject thisObj, jstring funcName, jobjectArray arr1, jobjectArray arr2){
 
+/*JNIEXPORT jobject JNICALL Java_com_saxonica_functions_extfn_PhpCall_00024PhpFunctionCall__1phpCall
+  (JNIEnv * env, jobject thisObj, jstring funcName, jobjectArray arr1, jobjectArray arr2){
+const char *name = (*env)->GetStringUTFChars(env, funcName, NULL);
+  if (name != NULL) {
+    jint i;
+   
+      printf("Hello %s\n", name);
+    }
+    (*env)->ReleaseStringUTFChars(env, funcName, name);
+  }
 	return NULL;
 }*/
 

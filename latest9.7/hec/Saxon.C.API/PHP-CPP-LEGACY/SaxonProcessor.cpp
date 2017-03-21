@@ -37,7 +37,7 @@ JNINativeMethod methods[] =
     {
          "_phpCall",
          "(Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/Object;",
-         (void *)&SaxonProcessor::saxonCall
+         (void *)&SaxonProcessor::saxonNativeCall
     }
 };
 
@@ -57,6 +57,22 @@ SaxonApiException * SaxonProcessor::getException(){
 SaxonProcessor::SaxonProcessor() {
     licensei = false;
     SaxonProcessor(licensei);
+}
+
+jobject JNICALL SaxonProcessor::saxonNativeCall
+  (JNIEnv *env, jobject, jstring funcName, jobjectArray arguments, jobjectArray arrayTypes){
+if(!funcName){
+std::cerr<<"checkpoint in phpNativeCall - funcName is null"<<std::endl;
+}else{
+
+const char *nativeString = SaxonProcessor::sxn_environ->env->GetStringUTFChars(funcName, NULL);
+
+if(nativeString == NULL) {
+std::cerr<<"checkpoint in phpNativeCall - null string"<<std::endl;
+}
+std::cerr<<"checkpoint in phpNativeCall - string="<<nativeString<<std::endl;
+}
+	return NULL;
 }
 
 
@@ -172,25 +188,16 @@ SaxonProcessor::SaxonProcessor(bool l){
 
 }
 
- 	if(l){
+ 	/*if(l){
   
+	registerNativeMethods(SaxonProcessor::sxn_environ->env, "com/saxonica/functions/extfn/PhpCall$PhpFunctionCall",
+    methods, sizeof(methods) / sizeof(methods[0]));
 
-    	int numMethods;
-    	numMethods = sizeof(methods) / sizeof(methods[0]);
-    	if (SaxonProcessor::sxn_environ->env->RegisterNatives(lookForClass(SaxonProcessor::sxn_environ->env, "com/saxonica/functions/extfn/PhpCall$PhpFunctionCall"), methods, numMethods) < 0){
-   		if (SaxonProcessor::sxn_environ->env->ExceptionOccurred())
-        {
-            std::cerr<<"JNI--Error running RegisterNatives exception occurred"<<std::endl;
-            SaxonProcessor::sxn_environ->env->ExceptionDescribe();
-        }
-        else
-        {
-            std::cerr<<"JNI--Error running RegisterNatives"<<std::endl;
-            
-        }
-    	}
+	}*/
 
-}
+	
+
+
     versionClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/Version");
     procClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/Processor");
     saxonCAPIClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/option/cpp/SaxonCAPI");

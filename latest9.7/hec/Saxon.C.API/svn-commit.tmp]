@@ -1,0 +1,8 @@
+Saxon/C update to the PHP API
+--This line, and those below, will be ignored--
+
+M    PHP-CPP-LEGACY/SaxonCGlue.c
+M    PHP-CPP-LEGACY/SaxonCGlue.h
+M    PHP-CPP-LEGACY/SaxonProcessor.cpp
+M    PHP-CPP-LEGACY/phpcpp_saxon.cpp
+M    PHP-CPP-LEGACY/phpcpp_saxon.h

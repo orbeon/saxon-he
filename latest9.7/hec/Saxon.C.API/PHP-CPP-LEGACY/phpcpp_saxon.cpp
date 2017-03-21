@@ -1,6 +1,13 @@
 #include "phpcpp_saxon.h"
 
-
+JNINativeMethod phpMethods[] =
+{
+    {
+         "_phpCall",
+         "(Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/Object;",
+         (void *)&PHP_SaxonProcessor::phpNativeCall
+    }
+};
 
 void PHP_SaxonProcessor::setResourcesDirectory(Php::Parameters &params)
 {
@@ -57,13 +64,43 @@ void PHP_SaxonProcessor::registerPHPFunction(Php::Parameters &params){
 
  	if (!params.empty() && params.size() == 1) {
 		const char * func = params[0];
-		
+		nativeFuncs.push_back(func);
+		saxonProcessor->registerNativeMethods(SaxonProcessor::sxn_environ->env, "com/saxonica/functions/extfn/PhpCall$PhpFunctionCall",
+    phpMethods, sizeof(phpMethods) / sizeof(phpMethods[0]));
 	}
+
+Php::Value data = Php::call("userFunction", "something");
+	
+	
+if(data == NULL) {
+std::cerr<<"checkpoint in phpNativeCall - data is NULL"<<std::endl;
+	
+} else {
+std::cerr<<"checkpoint in phpNativeCall - data is not null"<<std::endl;
 }
 
-JNIEXPORT jobject JNICALL PHP_SaxonProcessor::Java_com_saxonica_functions_extfn_PhpCall_00024PhpFunctionCall__1phpCall
-  (JNIEnv * env, jobject thisObj, jobjectArray arr1, jobjectArray arr2){
+}
+
+jobject JNICALL PHP_SaxonProcessor::phpNativeCall
+  (JNIEnv *env, jstring funcName, jobjectArray arguments, jobjectArray arrayTypes){
+
+
+	const char *nativeString = SaxonProcessor::sxn_environ->env->GetStringUTFChars(funcName, NULL);
+
+	Php::Value callback = nativeString;
+	zval namei;
+	Php::Value data = Php::call(nativeString, "something");
+	
+	SaxonProcessor::sxn_environ->env->ReleaseStringUTFChars(funcName, nativeString);
+if(data == NULL) {
+std::cerr<<"checkpoint in phpNativeCall - data is NULL"<<nativeString<<std::endl;
 	return NULL;
+} else {
+std::cerr<<"checkpoint in phpNativeCall - data is not null"<<nativeString<<std::endl;
+const char * dataChar = data; 
+jstring jstrBuf = SaxonProcessor::sxn_environ->env->NewStringUTF(dataChar);
+	return funcName;
+}
 }
 
 
@@ -225,7 +262,20 @@ Php::Value  PHP_XsltProcessor::transformToString(Php::Parameters &params){
 		throw Php::Exception("Wrong number of arguments");
 	
 	}
+/////
+//zval retval;
+Php::Value data = NULL;//do_exec(NULL, "userFunction", 0, NULL);
+	
+	
+	
+if(data == NULL) {
+std::cerr<<"checkpoint in phpNativeCallYYYY - data is NULL"<<std::endl;
+	return NULL;
+} else {
+std::cerr<<"checkpoint in phpNativeCallYYYYs - data is not null"<<data<<std::endl;
 
+}
+//////
 
 	const char * result = xsltProcessor->transformToString();
         if(result != NULL) {
@@ -1031,6 +1081,7 @@ extern "C" {
         saxonProcessor.method<&PHP_SaxonProcessor::newXQueryProcessor>     ("newXQueryProcessor");
 	saxonProcessor.method<&PHP_SaxonProcessor::newXPathProcessor>     ("newXPathProcessor");
 	saxonProcessor.method<&PHP_SaxonProcessor::newSchemaValidator>     ("newSchemaValidator");
+	saxonProcessor.method<&PHP_SaxonProcessor::registerPHPFunction>     ("registerPHPFunction");
 	saxonProcessor.method<&PHP_SaxonProcessor::version>     ("version");
 
 	Php::Class<PHP_XdmValue> xdmValue("Saxon\\XdmValue");

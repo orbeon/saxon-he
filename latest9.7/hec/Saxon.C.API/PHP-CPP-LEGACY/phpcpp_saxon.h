@@ -8,6 +8,13 @@
 #ifndef PHP_SAXON_H
 #define PHP_SAXON_H
 
+
+extern "C" {
+
+
+    #include "php.h"
+}
+
 #include <phpcpp.h>
 #include <unistd.h>
 #include <iostream>
@@ -17,6 +24,8 @@
 #include "XdmItem.h"
 #include "XdmNode.h"
 #include "XdmAtomicValue.h"
+#include <vector>
+
 
 
 
@@ -35,6 +44,7 @@ private:
 	 SaxonProcessor* saxonProcessor;
 	bool _license;
 	const char* _cwd;
+	std::vector<const char *> nativeFuncs;
 
 public:
 
@@ -47,8 +57,9 @@ public:
  * Method:    _phpCall
  * Signature: ([Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/Object;
  */
-JNIEXPORT jobject JNICALL Java_com_saxonica_functions_extfn_PhpCall_00024PhpFunctionCall__1phpCall
-  (JNIEnv *, jobject, jobjectArray, jobjectArray);
+
+jobject JNICALL phpNativeCall
+  (JNIEnv *env, jstring funcName, jobjectArray arguments, jobjectArray arrayTypes);
 
 
 

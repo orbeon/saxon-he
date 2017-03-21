@@ -48,7 +48,6 @@ class XdmItem;
 class XdmAtomicValue;
 
 
-
 // The Saxon XSLT interface class
 
 //std::mutex mtx;
@@ -320,12 +319,8 @@ public:
  * Signature: (Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/Object;
  */
 
-jobject JNICALL saxonCall
-  (JNIEnv *env, jobject, jstring funcName, jobjectArray arguments, jobjectArray arrayTypes){
-
-	return NULL;
-}
-
+jobject JNICALL saxonNativeCall
+  (JNIEnv *env, jobject, jstring funcName, jobjectArray arguments, jobjectArray arrayTypes);
 
 	
    /*!
@@ -523,6 +518,26 @@ jobject JNICALL saxonCall
      * @return char array
      */
     const char * version();
+
+/*
+ * Register several native methods for one class.
+ */
+static bool registerNativeMethods(JNIEnv* env, const char* className,
+    JNINativeMethod* gMethods, int numMethods)
+{
+    jclass clazz;
+    clazz = env->FindClass(className);
+    if (clazz == NULL) {
+        std::cerr<<"Native registration unable to find class "<< className<<std::endl;
+        return false;
+    }
+    if (env->RegisterNatives(clazz, gMethods, numMethods) < 0) {
+        std::cerr<<"RegisterNatives failed for "<< className<<std::endl;
+        return false;
+    }
+    return true;
+}
+
 
 
 
