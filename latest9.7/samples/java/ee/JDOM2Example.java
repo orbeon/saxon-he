@@ -22,10 +22,9 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * A simple example to show how SAXON can be used with a JDOM tree.
+ * A simple example to show how SAXON can be used with a JDOM2 tree.
  * It is designed to be used with the source document books.xml and the
  * stylesheet total.xsl
- * @author Michael H. Kay
  */
 public class JDOM2Example {
 

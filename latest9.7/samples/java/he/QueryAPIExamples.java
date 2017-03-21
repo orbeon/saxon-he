@@ -28,7 +28,7 @@ import java.util.Properties;
 
 /**
  * Some examples to show how the old Saxon XQuery API should be used.
- * This is legacy: the s9appi interface should be used in preference.
+ * This is legacy: the s9api interface should be used in preference.
  */
 public class QueryAPIExamples {
 
@@ -286,11 +286,12 @@ public class QueryAPIExamples {
         final StaticQueryContext sqc = config.newStaticQueryContext();
         final XQueryExpression exp = sqc.compileQuery(new FileReader("query/books-to-html.xq"));
         final DynamicQueryContext dynamicContext = new DynamicQueryContext(config);
-        dynamicContext.setContextItem(config.buildDocument(new StreamSource("data/books.xml")));
+        dynamicContext.setContextItem(config.buildDocumentTree(new StreamSource("data/books.xml")).getRootNode());
         final Properties props = new Properties();
         props.setProperty(OutputKeys.METHOD, "html");
         props.setProperty(OutputKeys.DOCTYPE_PUBLIC, "-//W3C//DTD HTML 4.01 Transitional//EN");
         exp.run(dynamicContext, new StreamResult(new File("booklist.html")), props);
+        System.out.println("Output written to booklist.html");
     }
 
     /**

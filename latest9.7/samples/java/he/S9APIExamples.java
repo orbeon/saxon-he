@@ -325,7 +325,7 @@ public class S9APIExamples {
             XdmItem locale = new ItemTypeFactory(proc).getExternalObject(Locale.ITALIAN);
             qe.setExternalVariable(new QName("locale"), locale);
             XdmAtomicValue result = (XdmAtomicValue) qe.evaluate();
-            System.err.println("Locale: " + result.getStringValue());
+            System.out.println("Locale: " + result.getStringValue());
 
         }
     }
@@ -356,12 +356,12 @@ public class S9APIExamples {
             XdmAtomicValue result1 = (XdmAtomicValue) comp.compile(
                     "import module namespace lib = 'http://example.com/library';\n" +
                             "lib:plus($lib:five, lib:subtract(10, 3))").load().evaluate();
-            System.err.println("Result1: " + result1.getStringValue());
+            System.out.println("Result1: " + result1.getStringValue());
 
             XdmAtomicValue result2 = (XdmAtomicValue) comp.compile(
                     "import module namespace lib = 'http://example.com/library';\n" +
                             "lib:plus($lib:five, lib:subtract(9, 6))").load().evaluate();
-            System.err.println("Result2: " + result2.getStringValue());
+            System.out.println("Result2: " + result2.getStringValue());
         }
     }
 
@@ -395,16 +395,25 @@ public class S9APIExamples {
                 XdmNode root = iter.next();
                 URI rootUri = root.getDocumentURI();
                 if (rootUri != null && rootUri.getScheme().equals("file")) {
-                    try {
+
+                    // Serialize the updated result to System.out
+                    Serializer out = proc.newSerializer(System.out);
+                    out.setOutputProperty(Serializer.Property.METHOD, "xml");
+                    out.setOutputProperty(Serializer.Property.INDENT, "yes");
+                    out.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, "yes");
+                    proc.writeXdmValue(root, out);
+
+                    // To serialize to the original source file, replace the above code with the following
+                    /*try {
                         Serializer out = proc.newSerializer(new FileOutputStream(new File(rootUri)));
                         out.setOutputProperty(Serializer.Property.METHOD, "xml");
                         out.setOutputProperty(Serializer.Property.INDENT, "yes");
                         out.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, "yes");
-                        System.err.println("Rewriting " + rootUri);
+                        System.out.println("Rewriting " + rootUri);
                         proc.writeXdmValue(root, out);
                     } catch (FileNotFoundException e) {
                         System.err.println("Could not write to file " + rootUri);
-                    }
+                    }*/
                 } else {
                     System.err.println("Updated document not rewritten: location unknown or not updatable");
                 }
@@ -538,10 +547,6 @@ public class S9APIExamples {
             XsltExecutable templates1 = comp.compile(new StreamSource(new File("styles/books.xsl")));
             XdmNode source = proc.newDocumentBuilder().build(new StreamSource(new File("data/books.xml")));
 
-
-            Serializer out = proc.newSerializer(new File("books.html"));
-            out.setOutputProperty(Serializer.Property.METHOD, "html");
-            out.setOutputProperty(Serializer.Property.INDENT, "yes");
             XsltTransformer trans1 = templates1.load();
             trans1.setInitialContextNode(source);
 
@@ -769,10 +774,6 @@ public class S9APIExamples {
      * Demonstrate navigation of an input document using XPath and native methods.
      */
 
-    /**
-     * Demonstrate navigation of an input document using XPath and native methods.
-     */
-
     private static class XPathA implements S9APIExamples.Test {
         public String name() {
             return "XPathA";
@@ -844,7 +845,7 @@ public class S9APIExamples {
             selector.setVariable(new QName("http://www.example.com/", "x"), new XdmAtomicValue(new BigDecimal("2.5")));
             selector.setVariable(new QName("http://www.example.com/", "y"), new XdmAtomicValue(new BigDecimal("3.61")));
             XdmAtomicValue result = (XdmAtomicValue) selector.evaluateSingle();
-            System.err.println("Result: " + result.getDecimalValue());
+            System.out.println("Result: " + result.getDecimalValue());
         }
 
     }
@@ -916,8 +917,7 @@ public class S9APIExamples {
     }
 
     /**
-     * Demonstrate use of an XPath expression against a DOM source document. For this
-     * sample, saxon9-dom.jar must be on the classpath
+     * Demonstrate use of an XPath expression against a DOM source document.
      */
 
     private static class XPathDOM implements S9APIExamples.Test {
@@ -1197,9 +1197,8 @@ public class S9APIExamples {
             out.setOutputProperty(Serializer.Property.CDATA_SECTION_ELEMENTS, "{http://example.com/out}script");
             XMLStreamWriter writer = out.getXMLStreamWriter();
             try {
-                writer.writeStartElement("doc");
+                writer.writeStartElement("http://example.com/out","doc");
                 writer.writeAttribute("version", "8");
-                writer.writeDefaultNamespace("http://example.com/out");
                 writer.writeStartElement("heading");
                 writer.writeCharacters("A Title");
                 writer.writeEndElement(); // heading

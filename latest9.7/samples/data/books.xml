@@ -1,4 +1,6 @@
-<?xml-stylesheet type="text/xsl" href="../styles/books.xsl"?><BOOKLIST xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<?xml-stylesheet type="text/xsl" href="../styles/books.xsl"?>
+<!DOCTYPE BOOKLIST SYSTEM "books.dtd">
+<BOOKLIST xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="books.xsd">
    <BOOKS>
       <ITEM CAT="MMP">
@@ -20,7 +22,7 @@
          <PUBLISHER>Penguin Classics</PUBLISHER>
          <PUB-DATE>2002-12-31</PUB-DATE>
          <LANGUAGE>English</LANGUAGE>
-         <PRICE>9.040000000000001</PRICE>
+         <PRICE>9</PRICE>
          <QUANTITY>113</QUANTITY>
          <ISBN>0141439556</ISBN>
          <PAGES>430</PAGES>

@@ -39,7 +39,7 @@ import java.util.Properties;
  * <p/>
  * <p>JAXP leaves some details implementation-defined, which means that
  * Saxon is not always 100% compatible with other implementations. (Also,
- * there is no published compatibiity test suite). This means that the
+ * there is no published compatibility test suite). This means that the
  * JAXP factory mechanism, which allows application code to run with
  * different XSLT or XPath engines depending on what it finds on the classpath,
  * can be dangerous, because it allows the application to be executed with
@@ -87,18 +87,6 @@ public class JAXPExamples {
         if (argv.length > 0) {
             test = argv[0];
         }
-
-//        String foo_xml = "xml/foo.xml";
-//        String foo_xsl = "xsl/foo.xsl";
-//        String baz_xml = "xml/baz.xml";
-//        String baz_xsl = "xsl/baz.xsl";
-//        String foo2_xsl = "xsl/foo2.xsl";
-//        String foo3_xsl = "xsl/foo3.xsl";
-//        String text_xsl = "xsl/text.xsl";
-//        String cities_xml = "xml/cities.xml";
-//        String embedded_xml = "xml/embedded.xml";
-//        String multidoc_xsl = "xsl/multidoc.xsl";
-//        String identity_xsl = "xsl/identity.xsl";
 
         System.setProperty("javax.xml.transform.TransformerFactory", "net.sf.saxon.TransformerFactoryImpl");
 
@@ -388,7 +376,7 @@ public class JAXPExamples {
         transformer.transform(new StreamSource(sourceID),
                 new StreamResult(new File("Simple2.out")));
 
-        System.out.println("\nOutput written to exampleSimple2.out\n");
+        System.out.println("\nOutput written to Simple2.out\n");
     }
 
     /**
@@ -522,9 +510,12 @@ public class JAXPExamples {
             // Get the Templates object (generated during the parsing of the stylesheet)
             // from the TemplatesHandler.
             Templates templates = templatesHandler.getTemplates();
+            Transformer transformer = templates.newTransformer();
+
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
             // Do the transformation
-            templates.newTransformer().transform(
+            transformer.transform(
                     new StreamSource(sourceID), new StreamResult(System.out));
 
         } else {
@@ -579,7 +570,7 @@ public class JAXPExamples {
 
             // Get the source as a StreamSource
             Reader xmlReader = new BufferedReader(new FileReader(sourceID));
-            StreamSource xmlSource = new StreamSource(xmlReader);
+            StreamSource xmlSource = new StreamSource(xmlReader, sourceID);
 
             // Set the result handling to be a serialization to System.out.
             Result result = new SAXResult(new ExampleContentHandler());
@@ -748,7 +739,7 @@ public class JAXPExamples {
                 // call transform2.parse, which will set itself as the
                 // content handler for transform1, and call transform1.parse,
                 // which will set itself as the content listener for the
-                // SAX parser, and call parser.parse(new InputSource(foo_xml)).
+                // SAX parser, and then call the parse method on the parser.
                 filter3.parse(new InputSource(new File(sourceID).toURI().toString()));
             } else {
                 System.out.println("The factory doesn't support newXMLFilter()");
@@ -761,7 +752,7 @@ public class JAXPExamples {
 
     /**
      * Show how to extract a subtree of a DOM by using the identity
-     * transformer starting at a non-root elememt of the supplied DOM
+     * transformer starting at a non-root element of the supplied DOM
      *
      * @param sourceID file name of the source file
      * @throws IOException                  if an input file is not available
@@ -785,8 +776,8 @@ public class JAXPExamples {
             DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
             System.err.println("Using DocumentBuilder " + docBuilder.getClass());
 
-            Document doc = docBuilder.parse(
-                    new InputSource(new File(sourceID).toURI().toString()));
+            String sourceURI = new File(sourceID).toURI().toString();
+            Document doc = docBuilder.parse(new InputSource(sourceURI));
             Node bar = doc.getDocumentElement().getFirstChild();
             while (bar.getNodeType() != Node.ELEMENT_NODE) {
                 bar = bar.getNextSibling();
@@ -795,7 +786,7 @@ public class JAXPExamples {
             System.err.println("Source document built OK");
 
             DOMSource ds = new DOMSource(bar);
-            ds.setSystemId(new File(sourceID).toURI().toString());
+            ds.setSystemId(sourceURI);
             transformer.transform(ds, new StreamResult(System.out));
             System.err.println("Transformation done OK");
         } else {
@@ -833,61 +824,41 @@ public class JAXPExamples {
         TransformerFactory tfactory = TransformerFactory.newInstance();
 
         if (tfactory.getFeature(DOMSource.FEATURE)) {
-            Templates templates;
-
-            {
-                DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
-                System.err.println("Using DocumentBuilderFactory " + dfactory.getClass());
-
-                dfactory.setNamespaceAware(true);
-
-                DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
-                System.err.println("Using DocumentBuilder " + docBuilder.getClass());
-
-                Node doc =
-                        docBuilder.parse(new InputSource(new File(xslID).toURI().toString()));
-                System.err.println("Stylesheet document built OK");
-                DOMSource dsource = new DOMSource(doc);
-
-                // If we don't do this, the transformer won't know how to
-                // resolve relative URLs in the stylesheet.
-                dsource.setSystemId(new File(xslID).toURI().toString());
-
-                templates = tfactory.newTemplates(dsource);
-            }
-
-            Transformer transformer = templates.newTransformer();
             DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+            System.err.println("Using DocumentBuilderFactory " + dfactory.getClass());
+
+            dfactory.setNamespaceAware(true);
+
             DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
+            System.err.println("Using DocumentBuilder " + docBuilder.getClass());
 
-            Document doc = docBuilder.parse(
-                    new InputSource(new File(sourceID).toURI().toString()));
-            Node bar = doc.getDocumentElement().getFirstChild();
-            while (bar.getNodeType() != Node.ELEMENT_NODE) {
-                bar = bar.getNextSibling();
-            }
+            String xslURI = new File(xslID).toURI().toString();
+            Node xsldoc = docBuilder.parse(new InputSource(xslURI));
+            System.err.println("Stylesheet document built OK");
+            DOMSource dsource = new DOMSource(xsldoc);
 
+            // If we don't do this, the transformer won't know how to
+            // resolve relative URLs in the stylesheet.
+            dsource.setSystemId(xslURI);
+
+            Templates templates = tfactory.newTemplates(dsource);
+            Transformer transformer = templates.newTransformer();
+
+            String sourceURI = new File(sourceID).toURI().toString();
+            Document doc = docBuilder.parse(new InputSource(sourceURI));
             System.err.println("Source document built OK");
 
-            DOMSource ds = new DOMSource(bar);
-            ds.setSystemId(new File(sourceID).toURI().toString());
+            DOMSource ds = new DOMSource(doc);
+            ds.setSystemId(sourceURI);
 
-            // create a skeleton output document, to which
-            // the transformation results will be added
-
+            // use a DOMResult holder for the transformation result DOM tree
             Document out = docBuilder.newDocument();
-            Element extra = out.createElement("extra");
-            out.appendChild(extra);
-
-
-            transformer.transform(ds, new DOMResult(extra));
+            transformer.transform(ds, new DOMResult(out));
             System.err.println("Transformation done OK");
 
             // Serialize the output so we can see the transformation actually worked
             Transformer serializer = tfactory.newTransformer();
-
-            serializer.transform(new DOMSource(out),
-                    new StreamResult(System.out));
+            serializer.transform(new DOMSource(out), new StreamResult(System.out));
 
         } else {
             throw new org.xml.sax.SAXNotSupportedException(
@@ -939,27 +910,29 @@ public class JAXPExamples {
     public static void exampleParam(String sourceID, String xslID)
             throws TransformerException {
 
+        // Create a transform factory instance.
         TransformerFactory tfactory = TransformerFactory.newInstance();
         Templates templates =
                 tfactory.newTemplates(new StreamSource(new File(xslID)));
+
+        // Create two transformers for the stylesheet.
         Transformer transformer1 = templates.newTransformer();
         Transformer transformer2 = templates.newTransformer();
 
-        transformer1.setParameter("a-param", "hello to you!");
+        System.out.println("\nTransform 1 and 2 use different transformers");
+        System.out.println("\n\n----- Transform 1: set top-author parameter -----");
+        transformer1.setParameter("top-author", "Jane Austen");
         transformer1.transform(new StreamSource(new File(sourceID)),
                 new StreamResult(System.out));
-        System.out.println("\n========= (and again with a different parameter value) ===");
-        transformer1.setParameter("a-param", "goodbye to you!");
-        transformer1.transform(new StreamSource(new File(sourceID)),
-                new StreamResult(System.out));
-        System.out.println("\n========= (and again with a no parameter value) ===");
-        transformer2.setOutputProperty(OutputKeys.INDENT, "yes");
+
+        System.out.println("\n\n----- Transform 2: set head-title parameter -----");
+        transformer2.setParameter("head-title", "A List of Books");
         transformer2.transform(new StreamSource(new File(sourceID)),
                 new StreamResult(System.out));
     }
 
     /**
-     * Show the that a transformer can be reused, and show resetting
+     * Show that a transformer can be reused, and show resetting
      * a parameter on the transformer.
      *
      * @param sourceID file name of the source file
@@ -976,14 +949,16 @@ public class JAXPExamples {
         Transformer transformer =
                 tfactory.newTransformer(new StreamSource(new File(xslID)));
 
-        transformer.setParameter("a-param", "hello to you!");
+        System.out.println("\nTransform 1 and 2 use the same transformer");
+        System.out.println("\n\n----- Transform 1: set top-author parameter -----");
+        transformer.setParameter("top-author", "Jane Austen");
 
         // Transform the source XML to System.out.
         transformer.transform(new StreamSource(new File(sourceID)),
                 new StreamResult(System.out));
-        System.out.println("\n=========\n");
-        transformer.setParameter("a-param", "hello to me!");
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+        System.out.println("\n\n----- Transform 2: reset top-author parameter -----");
+        transformer.setParameter("top-author", "Thomas Hardy");
 
         // Transform the source XML to System.out.
         transformer.transform(new StreamSource(new File(sourceID)),
@@ -1004,7 +979,7 @@ public class JAXPExamples {
         Templates templates =
                 tfactory.newTemplates(new StreamSource(new File(xslID)));
         Properties oprops = templates.getOutputProperties();
-        oprops.setProperty(OutputKeys.INDENT, "yes");
+        oprops.setProperty(OutputKeys.INDENT, "no");
 
         Transformer transformer = templates.newTransformer();
 

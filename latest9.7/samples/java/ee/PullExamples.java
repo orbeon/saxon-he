@@ -97,7 +97,7 @@ public class PullExamples {
         final StaticQueryContext sqc = config.newStaticQueryContext();
         final XQueryExpression exp = sqc.compileQuery(query);
         final DynamicQueryContext dynamicContext = new DynamicQueryContext(config);
-        dynamicContext.setContextItem(config.buildDocument(new PullSource(in)));
+        dynamicContext.setContextItem(config.buildDocumentTree(new PullSource(in)).getRootNode());
         Properties props = new Properties();
         props.setProperty(OutputKeys.INDENT, "yes");
         exp.run(dynamicContext, new StreamResult(out), props);
@@ -335,7 +335,7 @@ public class PullExamples {
                 case 'g': {
                     System.out.println("\n\n=== Obtain query results using a pull iterator ===\n");
 
-                    NodeInfo node = config.buildDocument(new StreamSource(input));
+                    NodeInfo node = config.buildDocumentTree(new StreamSource(input)).getRootNode();
                     PullProvider p = o.pullQueryResults(node,
 
                                                         "declare function local:f() {" +

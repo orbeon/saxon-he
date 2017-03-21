@@ -1,8 +1,8 @@
 package he;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.NamespaceConstant;
-import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.om.TreeInfo;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 import org.xml.sax.InputSource;
 
@@ -21,10 +21,6 @@ import java.util.List;
   * This class illustrates the use of the JAXP XPath API. It is a simple command-line application,
   * which prompts the user for a word, and replies with a list of all the lines containing that
   * word within a Shakespeare play.
-  *
-  *
-  * @author Michael H. Kay (Michael.H.Kay@ntlworld.com)
-  * @version October 2004: rewritten to use the JAXP API
   */
 
 public class XPathExample implements XPathVariableResolver, NamespaceContext {
@@ -65,10 +61,10 @@ public class XPathExample implements XPathVariableResolver, NamespaceContext {
 
         // Build the source document. This is outside the scope of the XPath API, and
         // is therefore Saxon-specific.
-        InputSource is = new InputSource(new File(filename).toURL().toString());
+        InputSource is = new InputSource(new File(filename).toURI().toString());
         SAXSource ss = new SAXSource(is);
         Configuration config = ((XPathFactoryImpl) xpf).getConfiguration();
-        DocumentInfo doc = config.buildDocument(ss);
+        TreeInfo doc = config.buildDocumentTree(ss);
 
         // Declare a variable resolver to return the value of variables used in XPath expressions
         xpe.setXPathVariableResolver(this);

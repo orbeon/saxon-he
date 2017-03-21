@@ -336,15 +336,15 @@ public class XQJExamples {
                 while (reader.hasNext()) {
                     int event = reader.next();
                     if (event == XMLStreamConstants.START_ELEMENT) {
-                        System.err.println("start {" + reader.getNamespaceURI() + "}" + reader.getLocalName());
+                        System.out.println("start {" + reader.getNamespaceURI() + "}" + reader.getLocalName());
                         for (int i=0; i<reader.getNamespaceCount(); i++) {
-                            System.err.println("  start namespace " +
+                            System.out.println("  start namespace " +
                                     reader.getNamespacePrefix(i) + "=" + reader.getNamespaceURI(i));
                         }
                     } else if (event == XMLStreamConstants.END_ELEMENT) {
-                        System.err.println("end {" + reader.getNamespaceURI() + "}" + reader.getLocalName());
+                        System.out.println("end {" + reader.getNamespaceURI() + "}" + reader.getLocalName());
                         for (int i=0; i<reader.getNamespaceCount(); i++) {
-                            System.err.println("  end namespace " +
+                            System.out.println("  end namespace " +
                                     reader.getNamespacePrefix(i) + "=" + reader.getNamespaceURI(i));
                         }
                     }
@@ -511,10 +511,11 @@ public class XQJExamples {
                     pro.setProperty("method", "xml");
                     pro.setProperty("indent", "yes");
 
-                    BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream("test.out"));
+                    BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream("testZ.out"));
                     result.writeSequence(fos, pro);
                     fos.flush();
                     fos.close();
+                    System.out.println("Output written to testZ.out");
                 }
             } catch (Exception e) {
                 e.printStackTrace();

@@ -4,7 +4,7 @@
 >
 
 <!-- This style sheet totals the prices of the books. It is designed to be used
-     with the JDOMExample sample application, which adds a VALUE attribute to the data
+     with the JDOM2Example sample application, which adds a VALUE attribute to the data
      in books.xml before doing a transformation -->
 
 

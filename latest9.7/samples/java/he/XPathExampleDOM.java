@@ -21,10 +21,6 @@ import java.io.InputStreamReader;
   * This class illustrates the use of the JAXP XPath API. It is a simple command-line application,
   * which prompts the user for a word, and replies with a list of all the lines containing that
   * word within a Shakespeare play.
-  *
-  *
-  * @author Michael H. Kay (Michael.H.Kay@ntlworld.com)
-  * @version Auguest 2005: modified to use DOM interfaces
   */
 
 public class XPathExampleDOM implements XPathVariableResolver {

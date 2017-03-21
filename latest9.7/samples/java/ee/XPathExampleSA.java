@@ -1,8 +1,8 @@
 package ee;
 import com.saxonica.config.EnterpriseXPathFactory;
 import net.sf.saxon.Configuration;
-import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.om.TreeInfo;
 import net.sf.saxon.xpath.XPathEvaluator;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 import org.xml.sax.InputSource;
@@ -25,10 +25,7 @@ import java.util.List;
  * processing.
  * <p>
  * The program is designed to run against the sample file books.xml. It produces a list of all books over 2cm
- * thick that were published during the previous year.
- *
- * @author Michael H. Kay (Michael.H.Kay@ntlworld.com)
- * @version September 2005: first version
+ * thick that were published during the 6 years since the start of 2000.
  */
 
 public class XPathExampleSA implements XPathVariableResolver, XPathFunctionResolver, NamespaceContext {
@@ -93,7 +90,7 @@ public class XPathExampleSA implements XPathVariableResolver, XPathFunctionResol
         InputSource is = new InputSource(new File(filename).toURI().toString());
         SAXSource ss = new SAXSource(is);
         Configuration config = ((XPathFactoryImpl) xpf).getConfiguration();
-        DocumentInfo doc = config.buildDocument(ss);
+        TreeInfo doc = config.buildDocumentTree(ss);
 
 
         // Compile the XPath expressions used by the application
@@ -103,10 +100,9 @@ public class XPathExampleSA implements XPathVariableResolver, XPathFunctionResol
         XPathExpression findBooks = null;
         try {
             findBooks = xpe.compile("//schema-element(ITEM)" +
-                                    "[PUB-DATE gt (current-date() - xs:yearMonthDuration($age))]" +
-                                    "[min((f:toCentimetres(data(DIMENSIONS) treat as dimensionType*, " +
-                                           "data(DIMENSIONS/@UNIT)))) gt $thickness]" +
-                                    "/TITLE");
+                    "[PUB-DATE gt (xs:date('2000-01-01'))][PUB-DATE lt (xs:date('2000-01-01') + xs:yearMonthDuration($age))]" +
+                    "[min((f:toCentimetres(data(DIMENSIONS) treat as dimensionType*, data(DIMENSIONS/@UNIT)))) gt $thickness]" +
+                    "/TITLE");
         } catch (XPathExpressionException e) {
             System.err.println("Error in XPath Expression");
             System.err.println(e.getCause().getMessage());

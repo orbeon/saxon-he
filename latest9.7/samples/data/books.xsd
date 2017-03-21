@@ -121,6 +121,7 @@
   <xs:simpleContent>
    <xs:extension base="xs:decimal">
     <xs:attribute name="UNIT" type="weightUnitType"/>
+    <xs:attribute name="EXTRA" type="xs:NMTOKEN" use="optional" default="Extra"/>
    </xs:extension> 
   </xs:simpleContent>
  </xs:complexType>

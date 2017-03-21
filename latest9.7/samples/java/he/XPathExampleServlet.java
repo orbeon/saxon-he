@@ -23,16 +23,13 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Class XPathExample:
+ * Class XPathExampleServlet:
  * This class illustrates the use of the JAXP XPath API within a Java Servlet.
  * The application prompts the user for a word, and replies with a list of all the lines containing that
  * word within a Shakespeare play. The document containing the play is cached.
  * <p/>
  * In principle this application should run with any XPath provider that provides
  * access to DOM documents.
- *
- * @author Michael H. Kay
- * @version October 2006: rewritten as a Java servlet
  */
 
 public class XPathExampleServlet extends HttpServlet {

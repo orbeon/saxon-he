@@ -7,7 +7,7 @@ import net.sf.saxon.Version;
 import net.sf.saxon.event.Sink;
 import net.sf.saxon.lib.FeatureKeys;
 import net.sf.saxon.lib.Validation;
-import net.sf.saxon.om.DocumentInfo;
+import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.StaticQueryContext;
 import net.sf.saxon.query.XQueryExpression;
@@ -135,7 +135,7 @@ public class XMarkBenchmark {
 
             Source streamSource = new StreamSource(file);
             long pstart = System.currentTimeMillis();
-            DocumentInfo doc = config.buildDocument(streamSource);
+            NodeInfo doc = config.buildDocumentTree(streamSource).getRootNode();
             long pend = System.currentTimeMillis();
 
             System.out.println("  <file name='" + tests[f] +
@@ -232,7 +232,7 @@ public class XMarkBenchmark {
 
             Source streamSource = new StreamSource(file);
             long pstart = System.currentTimeMillis();
-            DocumentInfo doc = config.buildDocument(streamSource);
+            NodeInfo doc = config.buildDocumentTree(streamSource).getRootNode();
             long pend = System.currentTimeMillis();
 
             System.out.println("  <file name='" + tests[f] +
