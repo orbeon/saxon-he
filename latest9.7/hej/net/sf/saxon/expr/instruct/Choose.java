@@ -32,7 +32,6 @@ import net.sf.saxon.value.SequenceType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -234,7 +233,15 @@ public class Choose extends Instruction {
         return this;
     }
 
-    private Expression removeRedundantBranches(ExpressionVisitor visitor) {
+    private Expression removeRedundantBranches() {
+        Expression result = removeRedundantBranches0();
+        if (result != this) {
+            ExpressionTool.copyLocationInfo(this, result);
+        }
+        return result;
+    }
+
+    private Expression removeRedundantBranches0() {
         // Eliminate a redundant if (false)
 
         boolean compress = false;
@@ -370,7 +377,7 @@ public class Choose extends Instruction {
                 }
             }
         }
-        return removeRedundantBranches(visitor);
+        return removeRedundantBranches();
     }
 
     /**
@@ -481,7 +488,7 @@ public class Choose extends Instruction {
         if (size == 0) {
             return Literal.makeEmptySequence();
         }
-        Expression e = removeRedundantBranches(visitor);
+        Expression e = removeRedundantBranches();
         boolean JSTarget = "JS".equals(e.getPackageData().getTargetEdition());
         if (!JSTarget && e instanceof Choose) {
             return getConfiguration().obtainOptimizer().trySwitch((Choose) e);
