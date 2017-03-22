@@ -3730,17 +3730,16 @@ public class Configuration implements SourceResolver, NotationSet {
      * Build a document tree, using options set on this Configuration and on the supplied source
      * object. Options set on the source object override options set in the Configuration. The Source
      * object must be one of the kinds of source recognized by Saxon, or a source that can be resolved
-     * using the registered {@link SourceResolver}.
+     * using the registered {@link SourceResolver}. This method always constructs a new tree, it never
+     * wraps or returns an existing tree.
      *
      * @param source the Source to be used. This may be an {@link AugmentedSource}, allowing options
      *               to be specified for the way in which this document will be built. If an AugmentedSource
-     *               is supplied then options set in the AugmentedSource take precendence over options
+     *               is supplied then options set in the AugmentedSource take precedence over options
      *               set in the Configuration.
-     *               <p>From Saxon 9.2, this method always creates a new tree, it never wraps or returns
-     *               an existing tree.</p>
      *               <p>If any error occurs reading or parsing the supplied Source, the error is notified
      *               to the {@link ErrorListener} registered with this {@link Configuration}.</p>
-     * @return the document node of the constructed document
+     * @return the constructed document as a TreeInfo
      * @throws XPathException if any errors occur during document parsing or validation. Detailed
      *                        errors occurring during schema validation will be written to the ErrorListener associated
      *                        with the AugmentedSource, if supplied, or with the Configuration otherwise.
@@ -3786,10 +3785,10 @@ public class Configuration implements SourceResolver, NotationSet {
      *                     are not explicitly set in parseOptions default first to the values supplied in the source
      *                     argument if it is an AugmentedSource, and then to the values set in this Configuration.
      *                     The supplied parseOptions object is not modified.
-     * @return the document node of the constructed document
+     * @return the constructed document as a TreeInfo
      * @throws XPathException if parsing fails, or if the Source represents a node other than
      *                        a document node
-     * @since 9.7; based on the original {@link #buildDocument(Source)} method, but adapted to return the
+     * @since 9.7; based on the original {@link #buildDocument(Source, ParseOptions)} method, but adapted to return the
      * TreeInfo containing information about the constructed tree, including a reference to its root node.
      */
 
@@ -3864,7 +3863,7 @@ public class Configuration implements SourceResolver, NotationSet {
      *
      * @param source the Source to be used. This may be an {@link AugmentedSource}, allowing options
      *               to be specified for the way in which this document will be built. If an AugmentedSource
-     *               is supplied then options set in the AugmentedSource take precendence over options
+     *               is supplied then options set in the AugmentedSource take precedence over options
      *               set in the Configuration.
      *               <p>From Saxon 9.2, this method always creates a new tree, it never wraps or returns
      *               an existing tree.</p>

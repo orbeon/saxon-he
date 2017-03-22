@@ -119,10 +119,9 @@ public class DynamicQueryContext {
     /**
      * Set the context item for evaluating the expression. If this method is not called,
      * the context node will be undefined. The context item is available as the value of
-     * the expression ".",.
+     * the expression ".".
      * To obtain a node by parsing a source document, see the method
-     * {@link net.sf.saxon.Configuration#buildDocumentTree buildDocument}
-     * in class QueryProcessor.
+     * {@link net.sf.saxon.Configuration#buildDocumentTree} in the Configuration class.
      *
      * @param item The item that is to be the context item for the query
      * @throws IllegalArgumentException if the supplied item is a node that was built under the wrong
@@ -150,7 +149,7 @@ public class DynamicQueryContext {
     }
 
     /**
-     * Get the context item for the query, as set using setContextItem() or setContextNode().
+     * Get the context item for the query, as set using setContextItem().
      *
      * @return the context item if set, or null otherwise.
      * @since 8.4

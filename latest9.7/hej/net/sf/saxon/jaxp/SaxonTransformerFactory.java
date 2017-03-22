@@ -43,7 +43,7 @@ import java.util.Comparator;
  * javax.xml.transform.TransformerFactory and javax.xml.transform.sax.SAXTransformerFactory
  * classes.</p>
  * <p/>
- * <p>In Saxon 9.6, the JAXP transformation interface is re-implemented as a layer
+ * <p>Since Saxon 9.6, the JAXP transformation interface is re-implemented as a layer
  * on top of the s9api interface. This will affect applications that attempt to
  * down-cast from JAXP interfaces to the underlying implementation classes.</p>
  */
