@@ -838,9 +838,8 @@ public class XsltCompiler {
      * <li>{@link javax.xml.transform.sax.SAXSource}, allowing the stylesheet to be supplied as a stream
      * of SAX events from a SAX2-compliant XML parser (or any other source of SAX events)</li>
      * <li>{@link javax.xml.transform.dom.DOMSource}, allowing the stylesheet to be supplied as a
-     * DOM tree. This option is available only if saxon9-dom.jar is on the classpath.</li>
-     * <li>Document wrappers for XOM, JDOM, or DOM4J trees, provided the appropriate support libraries
-     * are on the classpath</li>
+     * DOM tree</li>
+     * <li>Document wrappers for XOM, JDOM, or DOM4J trees</li>
      * <li>A Saxon NodeInfo, representing the root of a tree in any of the native tree formats supported
      * by Saxon</li>
      * <li>An {@link XdmNode} representing the document node of the stylesheet module</li>
