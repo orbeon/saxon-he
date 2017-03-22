@@ -9,7 +9,6 @@ package net.sf.saxon.expr.instruct;
 
 import com.saxonica.ee.bytecode.ChooseCompiler;
 import com.saxonica.ee.bytecode.ExpressionCompiler;
-import net.sf.saxon.expr.OperandUsage;
 import com.saxonica.ee.stream.adjunct.ChooseAdjunct;
 import net.sf.saxon.evpull.EmptyEventIterator;
 import net.sf.saxon.evpull.EventIterator;
@@ -173,6 +172,7 @@ public class Choose extends Instruction {
                     throw err;
                 } else {
                     actions[i] = new ErrorExpression(err);
+                    ExpressionTool.copyLocationInfo(this, actions[i]);
                 }
             }
         }
