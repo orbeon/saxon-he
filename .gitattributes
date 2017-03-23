@@ -2485,6 +2485,7 @@ latest9.7/samples/cs/SchemaExamples2.cs svn_eol_002dstyle=native
 latest9.7/samples/cs/XPathExample.cs svn_eol_002dstyle=native
 latest9.7/samples/cs/XQueryExamples.cs svn_eol_002dstyle=native
 latest9.7/samples/cs/XsltExamples.cs svn_eol_002dstyle=native
+latest9.7/samples/data/books-invalid.xml svn_eol_002dstyle=native
 latest9.7/samples/data/books.dtd svn_eol_002dstyle=native
 latest9.7/samples/data/books.xml svn_eol_002dstyle=native
 latest9.7/samples/data/books.xsd svn_eol_002dstyle=native
