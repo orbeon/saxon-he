@@ -511,6 +511,25 @@ public:
      */
     const char * version();
 
+/*
+ * Register several native methods for one class.
+ */
+static bool registerNativeMethods(JNIEnv* env, const char* className,
+    JNINativeMethod* gMethods, int numMethods)
+{
+    jclass clazz;
+    clazz = env->FindClass(className);
+    if (clazz == NULL) {
+        std::cerr<<"Native registration unable to find class "<< className<<std::endl;
+        return false;
+    }
+    if (env->RegisterNatives(clazz, gMethods, numMethods) < 0) {
+        std::cerr<<"RegisterNatives failed for "<< className<<std::endl;
+        return false;
+    }
+    return true;
+}
+
 
 
 //	XPathEngine

@@ -14,7 +14,7 @@ JNINativeMethod phpMethods[] =
 {
     {
          "_phpCall",
-         "(Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/Object;",
+         "(Ljava/lang/String;[Ljava/lang/Object;[Ljava/lang/String;)Ljava/lang/Object;",
          (void *)&phpNativeCall
     }
 };
@@ -489,6 +489,30 @@ PHP_METHOD(SaxonProcessor, setConfigurationProperty)
     
 }
 
+PHP_METHOD(SaxonProcessor, registerPHPFunction)
+{
+    SaxonProcessor *saxonProcessor;
+    char * libName;
+    int len1;
+ std::cerr<<"checkpoint in registerPHPFunction start"<<std::endl;
+    if (ZEND_NUM_ARGS()!= 1) {
+        WRONG_PARAM_COUNT;
+    }
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &libName, &len1) == FAILURE) {
+        RETURN_NULL();
+    }
+    saxonProcessor_object *obj = (saxonProcessor_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+    saxonProcessor = obj->saxonProcessor;
+    if (saxonProcessor != NULL && libName != NULL) {
+        saxonProcessor->setConfigurationProperty("extc", libName);
+    }
+saxonProcessor->registerNativeMethods(SaxonProcessor::sxn_environ->env, "com/saxonica/functions/extfn/PhpCall$PhpFunctionCall",
+    phpMethods, sizeof(phpMethods) / sizeof(phpMethods[0]));
+    std::cerr<<"checkpoint in registerPHPFunction end"<<std::endl;
+}
+
 /*     ============== XSLT10/20/30/31: PHP Interface of   XsltProcessor class =============== */
 
 void XsltProcessor_free_storage(void *object TSRMLS_DC)
@@ -626,20 +650,138 @@ PHP_METHOD(XsltProcessor, transformFileToString)
     }
 }
 
+enum saxonTypeEnum
+{
+	enumNode,
+	enumString,
+	enumInteger,
+	enumDouble,
+	enumFloat,
+	enumBool,
+	enumArrXdmValue
+};
+
 jobject JNICALL phpNativeCall
-  (JNIEnv *env, jstring funcName, jobjectArray arguments){
+  (JNIEnv *env, jobject object, jstring funcName, jobjectArray arguments, jobjectArray argTypes){
+std::cerr<<"phpNativeCall YYYY ----"<<std::endl;
+php_error(E_WARNING, "phpNativeCall");
 	JNIEnv *senv = SaxonProcessor::sxn_environ->env;
+
 	const char *nativeString = senv->GetStringUTFChars(funcName, NULL);
+
+	if(nativeString == NULL) {
+	php_error(E_WARNING, "nativeString is null!!");	
+	}
+
 	zval *function_name;
 	zval *retval;
+	
+	int argLength = 0;
+	zvalArr * php_argv= NULL;
+	if(arguments != NULL) {
+		argLength = (int)senv->GetArrayLength(arguments);
+		php_argv = new zvalArr[argLength];
+std::cerr<<"--- CHECKPOINT 0-1 --- nativeString ="<<nativeString<<" argLength="<<argLength<<std::endl;
 
+	}
+	zval **params[argLength];
+	if(argLength>0) {
+		(*params) = (zval**)malloc(sizeof(zval*) * argLength);
+	} else {
+		(*params) = NULL;
+	}
+	std::map<std::string, saxonTypeEnum> typeMap;
+	typeMap["node"] = enumNode;
+	typeMap["string"] = enumString;
+	typeMap["integer"] = enumInteger;
+	typeMap["double"] = enumDouble;
+	typeMap["float"] = enumFloat;
+	typeMap["boolean"] = enumBool;
+	typeMap["[xdmvalue"] = enumArrXdmValue;
+std::cerr<<"--- CHECKPOINT 0 --- nativeString ="<<nativeString<<std::endl;
+	for(int i=0; i<argLength;i++){
+std::cerr<<"phpNativeCall checkpoint 1 ----"<<std::endl;
+		jstring argType = (jstring)env->GetObjectArrayElement(argTypes, i);
+		jobject argObj = env->GetObjectArrayElement(arguments, i);
 
+		const char * str = senv->GetStringUTFChars(argType,NULL);
+		const char *stri = NULL;
+		double dnumber = 0;
+		long lnumber = 0;
+		bool bvalue = false;
+		float fnumber = 0;
+		sxnc_value* sresult = (sxnc_value *)malloc(sizeof(sxnc_value));
+         
+		struct xdmNode_object* vobj;
+		XdmNode * node = NULL;
+		std::map<std::string, saxonTypeEnum>::iterator it = typeMap.find(str);
+		zval * tempObj;
+		if (it != typeMap.end()){
+			switch (it->second)
+			{
+				case enumNode:
+					node = new XdmNode(argObj);
+					tempObj = php_argv[i]._val;
+					MAKE_STD_ZVAL(tempObj);
+					object_init_ex(tempObj, xdmNode_ce);
+   					vobj = (struct xdmNode_object *)zend_object_store_get_object(tempObj TSRMLS_CC);
+                			assert (vobj != NULL);
+                			vobj->xdmNode = node;
+					break;
+				case enumString:
+					stri = senv->GetStringUTFChars((jstring)argObj, NULL);
+					MAKE_STD_ZVAL(php_argv[i]._val);
+					ZVAL_STRING(php_argv[i]._val, stri, 1);
+					break;
+				case enumInteger:
+					sresult->xdmvalue = argObj; 
+					dnumber = getLongValue(*SaxonProcessor::sxn_environ, *sresult, 0);
+					MAKE_STD_ZVAL(php_argv[i]._val);
+					ZVAL_LONG(php_argv[i]._val, lnumber);					
+					break;
+				case enumDouble:
+					sresult->xdmvalue = argObj; 
+					lnumber = getDoubleValue(*SaxonProcessor::sxn_environ, *sresult, 0);
+					MAKE_STD_ZVAL(php_argv[i]._val);
+					ZVAL_DOUBLE(php_argv[i]._val, dnumber);
+					break;
+				case enumFloat:
+					sresult->xdmvalue = argObj; 
+					fnumber = getFloatValue(*SaxonProcessor::sxn_environ, *sresult, 0);
+					MAKE_STD_ZVAL(php_argv[i]._val);
+					ZVAL_DOUBLE(php_argv[i]._val, fnumber);					
+					break;
+				case enumBool:
+					sresult->xdmvalue = argObj; 
+					bvalue = getBooleanValue(*SaxonProcessor::sxn_environ, *sresult, 0);
+					MAKE_STD_ZVAL(php_argv[i]._val);
+					ZVAL_BOOL(php_argv[i]._val, bvalue);						
+					break;
+				case enumArrXdmValue:
+					//TODO - not currently supported
+					argLength--;
+					break;
+			}
+		} else {
+			//DoSomeOtherThing();
+		}
+
+		senv->ReleaseStringUTFChars(argType, str);
+
+// array of zvals to execute
+    
+
+ 
+    // convert all the values
+    for(int i = 0; i < argLength; i++) { params[i] = &php_argv[i]._val; }
+
+	}
 	//note: no implicit type conversion.
 
-
+	zval *argvv = NULL;//xparams;
 	MAKE_STD_ZVAL(function_name);
 	ZVAL_STRING(function_name, nativeString, 1);
-	if(call_user_function_ex(CG(function_table), NULL, function_name, &retval, 0, NULL, 0, NULL TSRMLS_CC) != SUCCESS)
+	if(call_user_function_ex(CG(function_table), NULL, function_name, &retval, argLength, params, 0, NULL TSRMLS_CC) != SUCCESS)
 	{
  	   zend_error(E_ERROR, "Function call failed");
 	}
@@ -654,15 +796,19 @@ jobject JNICALL phpNativeCall
 	int len = 0;
 	jobject obj = NULL;
 //TODO handle XdmValue wrapped object
+std::cerr<<"--- CHECKPOINT 2 ---"<<std::endl;
 	switch (Z_TYPE_P(retval)) {
             case IS_BOOL:
+std::cerr<<"--- CHECKPOINT 3 ---"<<std::endl;
                 obj= booleanValue(*SaxonProcessor::sxn_environ, Z_BVAL_P(retval));
                 break;
             
             case IS_LONG:
+std::cerr<<"--- CHECKPOINT 4 ---"<<std::endl;
                 obj= longValue(*SaxonProcessor::sxn_environ, Z_LVAL_P(retval));
                 break;
             case IS_STRING:
+		std::cerr<<"--- STRING TYPE RETURNING ---"<<std::endl;
                 sVal = Z_STRVAL_P(retval);
                 len = Z_STRLEN_P(retval);
 		obj = getJavaStringValue(*SaxonProcessor::sxn_environ,estrndup(sVal, len)); 
@@ -672,7 +818,7 @@ jobject JNICALL phpNativeCall
                 
             	break;
             case IS_DOUBLE:
-                
+                std::cerr<<"--- CHECKPOINT 5 ---"<<std::endl;
 		obj = doubleValue(*SaxonProcessor::sxn_environ, (double)Z_DVAL_P(retval));		
 		 break;
             
@@ -681,6 +827,7 @@ jobject JNICALL phpNativeCall
             case IS_OBJECT:
             //break;
             default:
+std::cerr<<"--- CHECKPOINT 3 ---"<<std::endl;
                 obj = NULL;
                 zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Unknown type specified in extension function", 0 TSRMLS_CC);
         }
@@ -3205,7 +3352,7 @@ zend_function_entry SaxonProcessor_methods[] = {
 //    PHP_ME(SaxonProcessor,  importDocument,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  setResourcesDirectory,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor, setConfigurationProperty,      NULL, ZEND_ACC_PUBLIC)
-//    PHP_ME(SaxonProcessor,  registerPHPFunction,      NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(SaxonProcessor,  registerPHPFunction,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  version,      NULL, ZEND_ACC_PUBLIC)
     {NULL, NULL, NULL}
 };

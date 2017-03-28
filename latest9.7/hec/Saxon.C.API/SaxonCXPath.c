@@ -69,7 +69,7 @@ jobject doubleValue(sxnc_environment environ, double d){
 		fflush (stdout);
            	return NULL;
 	 }
-	 jclass  doubleClass = lookForClass(environ.env, "net/sf/saxon/s9api/XdmAtomicValue");
+	 jclass  doubleClass = lookForClass(environ.env, "java/lang/Double");
 	 static jmethodID dbID = NULL;
 	if(!dbID) {
 		dbID = (jmethodID)findConstructor (environ.env, doubleClass, "(D)V");

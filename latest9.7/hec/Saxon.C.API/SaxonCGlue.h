@@ -58,13 +58,7 @@ static const bool true = 1;
 EXTERN_C
 
 
-/*
- * Class:     com_saxonica_functions_extfn_PhpCall_PhpFunctionCall
- * Method:    _phpCall
- * Signature: ([Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/Object;
- */
-JNIEXPORT jobject JNICALL Java_com_saxonica_functions_extfn_PhpCall_00024PhpFunctionCall__1phpCall
-  (JNIEnv *, jobject, jobjectArray, jobjectArray);
+
 
 
 

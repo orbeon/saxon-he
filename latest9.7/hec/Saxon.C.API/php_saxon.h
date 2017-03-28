@@ -51,6 +51,10 @@ class XdmValue;*/
 extern zend_module_entry saxon_module_entry;
 #define phpext_saxon_ptr &saxon_module_entry;
 
+struct zvalArr {
+    zval * _val;
+};
+
 struct saxonProcessor_object {
     zend_object std;
     SaxonProcessor * saxonProcessor;
@@ -107,7 +111,7 @@ struct xdmAtomicValue_object {
  */
 
 jobject JNICALL phpNativeCall
-  (JNIEnv *env, jstring funcName, jobjectArray arguments, jobjectArray arrayTypes);
+  (JNIEnv *env, jobject object, jstring funcName, jobjectArray arguments, jobjectArray arrayTypes);
 	
 	PHP_MSHUTDOWN_FUNCTION(saxon);
 	PHP_MINFO_FUNCTION(saxon);

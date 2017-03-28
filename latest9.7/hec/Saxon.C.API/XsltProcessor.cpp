@@ -467,6 +467,7 @@ void XsltProcessor::transformFileToFile(const char* source,
 }
 
 
+
 XdmValue * XsltProcessor::getXslMessages(){
 
 jmethodID mID =   (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
@@ -597,6 +598,7 @@ const char * XsltProcessor::transformFileToString(const char* source,
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
 		}
 		if (result) {
+			
 			const char * str = SaxonProcessor::sxn_environ->env->GetStringUTFChars(result,
 					NULL);
 			//return "result should be ok";
