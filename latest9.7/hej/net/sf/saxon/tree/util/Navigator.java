@@ -206,7 +206,7 @@ public final class Navigator {
             case Type.DOCUMENT:
                 return "/";
             case Type.ELEMENT:
-                if (parent == null) {
+                if (parent == null) {                                  
                     return node.getDisplayName();
                 } else {
                     pre = getPath(parent, context);

@@ -84,7 +84,7 @@ public class ParseXml extends SystemFunction implements Callable {
 
             TinyDocumentImpl node = (TinyDocumentImpl) b.getCurrentRoot();
             node.setBaseURI(baseURI);
-            node.setSystemId(null);
+            node.getTreeInfo().setUserData("saxon:document-uri", ""); // bug 3169
             b.reset();
             return node;
         } catch (XPathException err) {

@@ -31,6 +31,10 @@ public class DocumentUri_1 extends ScalarSystemFunction  {
 
     public static AnyURIValue getDocumentURI(NodeInfo node, XPathContext c) {
         if (node.getNodeKind() == Type.DOCUMENT) {
+            Object o = node.getTreeInfo().getUserData("saxon:document-uri");
+            if (o != null && o instanceof String) {
+                return o.toString().isEmpty() ? null : new AnyURIValue(o.toString());
+            }
             final Controller controller = c.getController();
             assert controller != null;
             DocumentPool pool = controller.getDocumentPool();
