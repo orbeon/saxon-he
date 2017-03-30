@@ -198,31 +198,47 @@ namespace Saxon.Api
 
         public string XQueryLanguageVersion
         {
-			get { 
-				if (env.getLanguageVersion() == 20) {
-						return "2.0";
-					}
-				else if (env.getLanguageVersion() == 30) {
-						return "3.0";
-					}
-				else if (env.getLanguageVersion() == 31) {
-						return "3.1";
-					}
-					else throw new StaticError(new net.sf.saxon.trans.XPathException("Unknown XPath version " + env.getLanguageVersion()));
-			}
-            set { 
-				int level = 20;
-				if (value.ToString() == "2.0") {
-					level = 20;
-				}
-				else if (value.ToString() == "3.0") {
-					level = 30;
-				}
-				else if (value.ToString() == "3.1") {
-					level = 31;
-				}
-				env.setLanguageVersion(level);
-			}
+            get
+            {
+                if (env.getLanguageVersion() == 10)
+                {
+                    return "1.0";
+                }
+                else if (env.getLanguageVersion() == 11)
+                {
+                    return "3.0";
+                }
+                else if (env.getLanguageVersion() == 30)
+                {
+                    return "3.0";
+                }
+                else if (env.getLanguageVersion() == 31)
+                {
+                    return "3.1";
+                }
+                else throw new StaticError(new net.sf.saxon.trans.XPathException("Unknown XQuery version " + env.getLanguageVersion()));
+            }
+            set
+            {
+                int level = 10;
+                if (value.ToString() == "1.0")
+                {
+                    level = 10;
+                }
+                else if (value.ToString() == "1.1")
+                {
+                    level = 30;
+                }
+                else if (value.ToString() == "3.0")
+                {
+                    level = 30;
+                }
+                else if (value.ToString() == "3.1")
+                {
+                    level = 31;
+                }
+                env.setLanguageVersion(level);
+            }
         }
 
 
