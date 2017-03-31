@@ -301,12 +301,12 @@ public final class FilterExpression extends BinaryExpression implements ContextS
         getLhs().optimize(visitor, contextItemType);
         getBase().setFiltered(true);
 
-        Expression originalFilter;
-        try {
-            originalFilter = getFilter().copy(new RebindingMap());
-        } catch (UnsupportedOperationException err) {
-            originalFilter = null;
-        }
+//        Expression originalFilter;
+//        try {
+//            originalFilter = getFilter().copy(new RebindingMap());
+//        } catch (UnsupportedOperationException err) {
+//            originalFilter = null;
+//        }
         ContextItemStaticInfo baseItemType = new ContextItemStaticInfo(getBase().getItemType(), false, getBase());
         getRhs().optimize(visitor, baseItemType);
 
@@ -364,17 +364,17 @@ public final class FilterExpression extends BinaryExpression implements ContextS
         // determine whether the filter is indexable
         if (!filterIsPositional && !visitor.isOptimizeForStreaming()) {
             int isIndexable = opt.isIndexableFilter(getFilter());
-            if (isIndexable == 0 && getFilter() != originalFilter && originalFilter != null) {
-                // perhaps the original filter was indexable; if so, revert to the original
-                // this happens when [@a = 1] is rewritten as [some $x in @a satisfies $x eq 1]
-                // TODO: this rollback mechanism is very unsatisfactory. Better: make the some expression indexable!
-                int origIndexable = opt.isIndexableFilter(originalFilter);
-                if (origIndexable != 0) {
-                    isIndexable = origIndexable;
-                    setFilter(originalFilter);
-                    adoptChildExpression(originalFilter);
-                }
-            }
+//            if (isIndexable == 0 && getFilter() != originalFilter && originalFilter != null) {
+//                // perhaps the original filter was indexable; if so, revert to the original
+//                // this happens when [@a = 1] is rewritten as [some $x in @a satisfies $x eq 1]
+//                // TODO: this rollback mechanism is very unsatisfactory. Better: make the some expression indexable!
+//                int origIndexable = opt.isIndexableFilter(originalFilter);
+//                if (origIndexable != 0) {
+//                    isIndexable = origIndexable;
+//                    setFilter(originalFilter);
+//                    adoptChildExpression(originalFilter);
+//                }
+//            }
             // If the filter is indexable consider creating a key, or an indexed filter expression
             // (This happens in Saxon-EE only)
             if (isIndexable != 0) {
