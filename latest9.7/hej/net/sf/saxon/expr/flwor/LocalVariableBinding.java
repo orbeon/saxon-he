@@ -129,6 +129,10 @@ public class LocalVariableBinding implements LocalBinding {
         refCount = FilterExpression.FILTERED;
     }
 
+    public boolean isIndexedVariable() {
+        return refCount == FilterExpression.FILTERED;
+    }
+
     /**
      * Set the name of the variable
      *
