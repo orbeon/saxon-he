@@ -21,8 +21,6 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
 
-import java.util.Map;
-
 
 /**
  * Cast Expression: implements "cast as data-type ( expression )". It also allows an internal
@@ -278,6 +276,19 @@ public class CastExpression extends CastingExpression implements Callable {
      */
     public ItemType getItemType() {
         return getTargetType();
+    }
+
+    /**
+     * Determine the special properties of this expression
+     * @return the expression properties.
+     */
+    @Override
+    public int computeSpecialProperties() {
+        int p = super.computeSpecialProperties();
+        if (getTargetType() == BuiltInAtomicType.UNTYPED_ATOMIC) {
+            p = p & ~StaticProperty.NOT_UNTYPED_ATOMIC;
+        }
+        return p;
     }
 
     /**
