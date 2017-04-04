@@ -993,7 +993,7 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
                 }
             }
             if (simple && decimalPoints == 0 && wholePartLength <= 15 && a1 instanceof Int64Value) {
-                long l0 = Long.parseLong(a0.getStringValue());
+                long l0 = Long.parseLong(cs.toString());
                 comp = new Long(l0).compareTo(a1.longValue());
             } else {
                 d0 = ((DoubleValue)BuiltInAtomicType.DOUBLE.getStringConverter(rules).convertString(cs).asAtomic()).getDoubleValue();
