@@ -70,6 +70,22 @@ public class XdmValueForCpp {
     }
 
 
+    public static XdmItem [] makeArrayFromXdmValue(XdmValue value) {
+        XdmItem [] items = new XdmItem[value.size()];
+
+        for(int i=0;i<value.size();i++) {
+            XdmItem item = value.itemAt(i);
+            items[i] = item;
+        }
+        return items;
+
+    }
+
+    public static Processor getProcessor(Object node){
+        return (Processor) ((XdmNode)node).getUnderlyingNode().getConfiguration().getProcessor();
+    }
+
+
     public XdmValue getXdmValue() {
         return value;
     }

@@ -283,6 +283,12 @@ public class NamespaceConstant {
 
 
     /**
+     * URI for the user extension calls in Saxon/C for PHP
+     */
+    public static final String PHP = "http://php.net/xsl";
+
+
+    /**
      * Private constructor: class is never instantiated
      */
 
