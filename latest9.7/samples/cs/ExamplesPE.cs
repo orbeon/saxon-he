@@ -26,7 +26,8 @@ namespace SaxonPE
         {
 
             Example[] examples = {
-                new XPathSimple(),
+				new XPathSimple(),
+				new XPathSimple2(),
                 new XPathVariables(),
                 new XPathUndeclaredVariables(),
                 new XPathWithStaticError(),
@@ -62,11 +63,11 @@ namespace SaxonPE
                 new XQueryToXdm(),
                 new XQueryCallFunction(),
                 new XQueryFromXmlReader(),
-                new XQueryMultiModule(),
                 new XQueryToSerializedSequence(),
-                new XQueryUsingParameter(),
-                new XQueryExtensibility(),
-                new XQueryTryCatch()
+				new XQueryUsingParameter(),
+				new XQueryMultiModule(),
+				new XQueryTryCatch(),
+                new XQueryExtensibility()
             };
 
             Boolean ask = true;
@@ -152,13 +153,15 @@ namespace SaxonPE
             {
                 Console.WriteLine("Invalid URI for samples directory: " + samplesPath);
                 return;
-            }
+			}
 
+			Boolean found = false;
             foreach (Example ex in examples)
             {
                 if (test == "all" || test == ex.testName)
                 {
-                    Console.WriteLine("\n\n===== " + ex.testName + " =======\n");
+					Console.WriteLine("\n\n===== " + ex.testName + " =======\n");
+					found = true;
                     try
                     {
                         ex.run(samplesDir);
@@ -190,7 +193,10 @@ namespace SaxonPE
                         }
                     }
                 }
-            }
+			}
+			if (!found) {
+				Console.WriteLine("Please supply a valid test name, or 'all' ('" + test + "' is invalid)");
+			}
             Console.WriteLine("\n==== done! ====");
         }
     }
@@ -213,7 +219,7 @@ namespace SaxonPE
     }
 
     /// <summary>
-    /// XPath expression selecting from a source document supplied as a URI
+	/// Evaluate an XPath expression selecting from a source document supplied as a URI
     /// </summary>
 
     public class XPathSimple : Example
@@ -223,10 +229,6 @@ namespace SaxonPE
         {
             get { return "XPathSimple"; }
         }
-
-        /// <summary>
-        /// Run a transformation: simplest possible script
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -249,10 +251,44 @@ namespace SaxonPE
                 Console.WriteLine("PRICE: " + xpath.EvaluateSingle("string(PRICE)", item));
             }
         }
-    }
+	}
+
+	/// <summary>
+	/// Evaluate an XPath expression against a source document, returning its effective boolean value
+	/// </summary>
+
+	public class XPathSimple2 : Example
+	{
+
+		public override String testName
+		{
+			get { return "XPathSimple2"; }
+		}
+
+		public override void run(Uri samplesDir)
+		{
+			// Create a Processor instance.
+			Processor processor = new Processor();
+
+			// Load the source document
+			XdmNode input = processor.NewDocumentBuilder().Build(new Uri(samplesDir, "data/books.xml"));
+
+			// Create an XPath compiler
+			XPathCompiler xpath = processor.NewXPathCompiler();
+
+			// Enable caching, so each expression is only compiled once
+			xpath.Caching = true;
+
+			// Compile and evaluate an XPath expression
+			XPathSelector selector = xpath.Compile("//ITEM").Load();
+			selector.ContextItem = input;
+			Console.WriteLine(selector.EffectiveBooleanValue());
+
+		}
+	}
 
     /// <summary>
-    /// XPath expression using variables (and no source document)
+	/// Evaluate an XPath expression using variables (and no source document)
     /// </summary>
 
     public class XPathVariables : Example
@@ -262,10 +298,6 @@ namespace SaxonPE
         {
             get { return "XPathVariables"; }
         }
-
-        /// <summary>
-        /// Run a transformation: simplest possible script
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -288,7 +320,7 @@ namespace SaxonPE
     }
 
     /// <summary>
-    /// XPath expression using variables without explicit declaration
+	/// Evaluate an XPath expression using variables without explicit declaration
     /// </summary>
 
     public class XPathUndeclaredVariables : Example
@@ -298,10 +330,6 @@ namespace SaxonPE
         {
             get { return "XPathUndeclaredVariables"; }
         }
-
-        /// <summary>
-        /// Execute an XPath expression containing undeclared variables
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -327,7 +355,7 @@ namespace SaxonPE
     }
 
     /// <summary>
-    /// XPath expression throwing a static error
+	/// Evaluate an XPath expression throwing a static error
     /// </summary>
 
     public class XPathWithStaticError : Example
@@ -337,10 +365,6 @@ namespace SaxonPE
         {
             get { return "XPathWithStaticError"; }
         }
-
-        /// <summary>
-        /// Execute an XPath expression that throws a dynamic error, and catch the error
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -359,7 +383,7 @@ namespace SaxonPE
     }
 
     /// <summary>
-    /// XPath expression throwing a dynamic error
+	/// Evaluate an XPath expression throwing a dynamic error
     /// </summary>
 
     public class XPathWithDynamicError : Example
@@ -369,10 +393,6 @@ namespace SaxonPE
         {
             get { return "XPathWithDynamicError"; }
         }
-
-        /// <summary>
-        /// Execute an XPath expression that throws a dynamic error
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -405,10 +425,6 @@ namespace SaxonPE
         {
             get { return "XsltSimple1"; }
         }
-
-        /// <summary>
-        /// Run a transformation: simplest possible script
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -445,11 +461,6 @@ namespace SaxonPE
             get { return "XsltSimple2"; }
         }
 
-        /// <summary>
-        /// Run the transformation, sending the serialized output to a file
-        /// </summary>
-
-
         public override void run(Uri samplesDir)
         {
             // Create a Processor instance.
@@ -469,7 +480,7 @@ namespace SaxonPE
             Serializer serializer = new Serializer();
             serializer.SetOutputStream(new FileStream(outfile, FileMode.Create, FileAccess.Write));
 
-            // Transform the source XML to System.out.
+			// Transform the source XML and serialize the result to the output file.
             transformer.Run(serializer);
 
             Console.WriteLine("\nOutput written to " + outfile + "\n");
@@ -477,7 +488,7 @@ namespace SaxonPE
     }
 
     /// <summary>
-    /// XSLT 2.0 transformation with source document and stylesheet supplied as URIs
+    /// XSLT 2.0 transformation with source document and stylesheet supplied as files
     /// </summary>
 
     public class XsltSimple3 : Example
@@ -487,10 +498,6 @@ namespace SaxonPE
         {
             get { return "XsltSimple3"; }
         }
-
-        /// <summary>
-        /// Run a transformation: supply input as a file
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -506,7 +513,6 @@ namespace SaxonPE
             Processor processor = new Processor();
 
             // Load the source document
-
             DocumentBuilder builder = processor.NewDocumentBuilder();
             builder.BaseUri = new Uri(samplesDir, "data/books.xml");
 
@@ -542,10 +548,6 @@ namespace SaxonPE
             get { return "XsltStripSpace"; }
         }
 
-        /// <summary>
-        /// Run a transformation: simplest possible script
-        /// </summary>
-
         public override void run(Uri samplesDir)
         {
             Processor processor = new Processor();
@@ -578,18 +580,19 @@ namespace SaxonPE
             // Set the root node of the source document to be the initial context node
             transformer.InitialContextNode = input;
 
-            // Create a serializer
+			// Create a serializer, with output to the standard output stream
             Serializer serializer = new Serializer();
             serializer.SetOutputWriter(Console.Out);
 
-            // Transform the source XML to System.out.
+			// Transform the source XML and serialize the result document
             transformer.Run(serializer);
         }
     }
 
 
     /// <summary>
-    /// Run a transformation, compiling the stylesheet once and using it to transform two different source documents
+	/// Run a transformation, compiling the stylesheet once (into an XsltExecutable) and using it to transform two 
+	/// different source documents
     /// </summary>
 
     public class XsltReuseExecutable : Example
@@ -599,15 +602,6 @@ namespace SaxonPE
         {
             get { return "XsltReuseExecutable"; }
         }
-
-        /// <summary>
-        /// Show that a stylesheet can be compiled once (into an XsltExecutable) and run many times
-        /// </summary>
-        /// <param name="fileNames">
-        /// 1. first source document
-        /// 2. second source document
-        /// 3. stylesheet used to transform both documents
-        /// </param>
 
         public override void run(Uri samplesDir)
         {
@@ -649,10 +643,6 @@ namespace SaxonPE
         {
             get { return "XsltReuseTransformer"; }
         }
-
-        /// <summary>
-        /// Show that the XsltTransformer is serially reusable (we run it twice with different parameter settings)
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -696,10 +686,6 @@ namespace SaxonPE
             get { return "XsltFilterChain"; }
         }
 
-        /// <summary>
-        /// Run the test
-        /// </summary>
-
         public override void run(Uri samplesDir)
         {
             // Create a Processor instance.
@@ -730,7 +716,6 @@ namespace SaxonPE
             //Console.WriteLine(results2.XdmNode.OuterXml);
 
             transformer3.InitialContextNode = results2.XdmNode;
-            //TextWriterDestination results3 = new TextWriterDestination(new XmlTextWriter(Console.Out));
             XdmDestination results3 = new XdmDestination();
             transformer3.Run(results3);
             Console.WriteLine("After phase 3:");
@@ -749,10 +734,6 @@ namespace SaxonPE
         {
             get { return "XsltXdmToXdm"; }
         }
-
-        /// <summary>
-        /// Transform from an XDM tree to an XDM tree
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -797,14 +778,6 @@ namespace SaxonPE
             get { return "XsltXdmElementToXdm"; }
         }
 
-        /// <summary>
-        /// Run an XSLT transformation from an Xdm tree, starting at a node that is not the document node
-        /// </summary>
-        /// <param name="fileNames">
-        /// 1. The source document
-        /// 2. The stylesheet
-        /// </param>
-
         public override void run(Uri samplesDir)
         {
             // Create a Processor instance.
@@ -846,13 +819,8 @@ namespace SaxonPE
             get { return "XsltDomToDom"; }
         }
 
-        /// <summary>
-        /// Run a transformation from a DOM (System.Xml.Document) input to a DOM output
-        /// </summary>
-
         public override void run(Uri samplesDir)
         {
-
             // Create a Processor instance.
             Processor processor = new Processor();
 
@@ -889,13 +857,6 @@ namespace SaxonPE
         {
             get { return "XsltProcessingInstruction"; }
         }
-
-        /// <summary>
-        /// Run a transformation driven by an xml-stylesheet processing instruction in the source document
-        /// </summary>
-        /// <param name="fileNames">
-        /// 1. The source document
-        /// </param>
 
         public override void run(Uri samplesDir)
         {
@@ -962,7 +923,7 @@ namespace SaxonPE
             transformer.InitialContextNode = input;
             XdmDestination results = new XdmDestination();
             transformer.Run(results);
-            Console.WriteLine("1: " + results.XdmNode.OuterXml);
+            Console.WriteLine(results.XdmNode.OuterXml);
 
         }
     }
@@ -978,10 +939,6 @@ namespace SaxonPE
         {
             get { return "XsltSettingOutputProperties"; }
         }
-
-        /// <summary>
-        /// Run an XSLT transformation setting serialization properties from the calling application
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -1021,10 +978,6 @@ namespace SaxonPE
         {
             get { return "XsltUsingSourceResolver"; }
         }
-
-        /// <summary>
-        /// Run an XSLT transformation making use of an XmlResolver to resolve URIs both at compile time and at run-time
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -1075,7 +1028,7 @@ namespace SaxonPE
             Serializer serializer = new Serializer();
             serializer.SetOutputWriter(Console.Out);
 
-            // Transform the source XML to System.out.
+			// Transform the source XML and serialize the result document
             transformer.Run(serializer);
 
         }
@@ -1092,10 +1045,6 @@ namespace SaxonPE
         {
             get { return "XsltDisplayingErrors"; }
         }
-
-        /// <summary>
-        /// Run an XSLT transformation displaying compile-time errors to the console
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -1145,10 +1094,6 @@ namespace SaxonPE
         {
             get { return "XsltCapturingErrors"; }
         }
-
-        /// <summary>
-        /// Run an XSLT transformation capturing compile-time errors within the application
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -1203,10 +1148,6 @@ namespace SaxonPE
             get { return "XsltCapturingMessages"; }
         }
 
-        /// <summary>
-        /// Run an XSLT transformation capturing run-time messages within the application
-        /// </summary>
-
         public override void run(Uri samplesDir)
         {
 
@@ -1239,11 +1180,11 @@ namespace SaxonPE
             // Create a Listener to which messages will be written
             transformer.MessageListener = new UserMessageListener();
 
-            // Create a serializer
+			// Create a serializer, with output to the standard output stream
             Serializer serializer = new Serializer();
             serializer.SetOutputWriter(Console.Out);
 
-            // Transform the source XML to System.out.
+			// Transform the source XML and serialize the result document
             transformer.Run(serializer);
         }
 
@@ -1265,6 +1206,7 @@ namespace SaxonPE
         }
     }
 
+
     /// <summary>
     /// Run an XSLT transformation showing source line numbers
     /// </summary>
@@ -1277,15 +1219,11 @@ namespace SaxonPE
             get { return "XsltShowingLineNumbers"; }
         }
 
-        /// <summary>
-        /// Run an XSLT transformation capturing run-time messages within the application
-        /// </summary>
-
         public override void run(Uri samplesDir)
         {
 
             // Create a Processor instance.
-            Processor processor = new Processor();
+            Processor processor = new Processor(true);
 
             // Ask for the JAXP parser to be used (or not to be used, if false)
             processor.SetProperty("http://saxon.sf.net/feature/preferJaxpParser", "false");
@@ -1320,11 +1258,11 @@ namespace SaxonPE
             // Set the root node of the source document to be the initial context node
             transformer.InitialContextNode = input;
 
-            // Create a serializer
+			// Create a serializer, with output to the standard output stream
             Serializer serializer = new Serializer();
             serializer.SetOutputWriter(Console.Out);
 
-            // Transform the source XML to System.out.
+			// Transform the source XML and serialize the result document
             transformer.Run(serializer);
         }
 
@@ -1341,10 +1279,6 @@ namespace SaxonPE
         {
             get { return "XsltMultipleOutput"; }
         }
-
-        /// <summary>
-        /// Run an XSLT transformation producing multiple output documents
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -1364,11 +1298,11 @@ namespace SaxonPE
             // Set the required stylesheet parameter
             transformer.SetParameter(new QName("", "", "dir"), new XdmAtomicValue(samplesDir.ToString() + "play"));
 
-            // Create a serializer
+			// Create a serializer, with output to the standard output stream
             Serializer serializer = new Serializer();
             serializer.SetOutputWriter(Console.Out);
 
-            // Transform the source XML to System.out.
+			// Transform the source XML and serialize the result document
             transformer.Run(serializer);
 
         }
@@ -1387,10 +1321,6 @@ namespace SaxonPE
         {
             get { return "XsltUsingIdFunction"; }
         }
-
-        /// <summary>
-        /// Run an XSLT transformation using the id() function, with DTD validation
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -1430,13 +1360,13 @@ namespace SaxonPE
             compiler.BaseUri = new Uri("http://localhost/stylesheet");
             XsltExecutable exec = compiler.Compile(new StringReader(stylesheet));
 
-            //Create a transformer for the stylesheet
+            // Create a transformer for the stylesheet
             XsltTransformer transformer = exec.Load();
 
             // Set the root node of the source document to be the initial context node
             transformer.InitialContextNode = input;
 
-            //Set the destination
+            // Set the destination
             XdmDestination results = new XdmDestination();
 
             // Transform the XML
@@ -1463,13 +1393,6 @@ namespace SaxonPE
         {
             get { return "XsltUsingResultHandler"; }
         }
-
-        /// <summary>
-        /// Show a transformation using a user-written result document handler. This example
-        /// captures each of the result documents in a DOM, and creates a Hashtable that indexes
-        /// the DOM trees according to their absolute URI. On completion, it writes all the DOMs
-        /// to the standard output.
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -1533,19 +1456,12 @@ namespace SaxonPE
             get { return "XsltUsingRegisteredCollection"; }
         }
 
-        /// <summary>
-        /// Show a transformation using a registered collection
-        /// </summary>
-
         public override void run(Uri samplesDir)
         {
             // Create a Processor instance.
             Processor processor = new Processor();
 
-            // Load the source document
-            XdmNode input = processor.NewDocumentBuilder().Build(new Uri(samplesDir, "data/othello.xml"));
-
-            // Define a stylesheet that splits the document up
+			// Define a stylesheet that uses the collection() function
             String stylesheet =
                 "<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>\n" +
                 "<xsl:template name='main'>\n" +
@@ -1560,6 +1476,7 @@ namespace SaxonPE
                 "</xsl:template>\n" +
                 "</xsl:stylesheet>";
 
+			// Register a named collection
             Uri[] documentList = new Uri[2];
             documentList[0] = new Uri(samplesDir, "data/othello.xml");
             documentList[1] = new Uri(samplesDir, "data/books.xml");
@@ -1572,10 +1489,10 @@ namespace SaxonPE
             // Create a transformer for the stylesheet.
             XsltTransformer transformer = exec.Load();
 
-            // Set the root node of the source document to be the initial context node
+			// Set the name of the initial template
             transformer.InitialTemplate = new QName("", "main");
 
-            //Set the destination
+            // Set the destination
             XdmDestination results = new XdmDestination();
 
             // Transform the XML
@@ -1588,7 +1505,7 @@ namespace SaxonPE
     }
 
     /// <summary>
-    /// Show a transformation using a registered collection
+	/// Show a transformation using a collection that maps to a directory
     /// </summary>
 
     public class XsltUsingDirectoryCollection : Example
@@ -1599,19 +1516,12 @@ namespace SaxonPE
             get { return "XsltUsingDirectoryCollection"; }
         }
 
-        /// <summary>
-        /// Show a transformation using a collection that maps to a directory
-        /// </summary>
-
         public override void run(Uri samplesDir)
         {
             // Create a Processor instance.
             Processor processor = new Processor();
 
-            // Load the source document
-            XdmNode input = processor.NewDocumentBuilder().Build(new Uri(samplesDir, "data/othello.xml"));
-
-            // Define a stylesheet that splits the document up
+			// Define a stylesheet that uses the collection() function
             String stylesheet =
                 "<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>\n" +
                 "<xsl:template name='main'>\n" +
@@ -1631,10 +1541,10 @@ namespace SaxonPE
             // Create a transformer for the stylesheet.
             XsltTransformer transformer = exec.Load();
 
-            // Set the root node of the source document to be the initial context node
+			// Set the name of the initial template
             transformer.InitialTemplate = new QName("", "main");
 
-            //Set the destination
+            // Set the destination
             XdmDestination results = new XdmDestination();
 
             // Transform the XML
@@ -1647,9 +1557,12 @@ namespace SaxonPE
 
     }
 
-    /// <summary>
-    /// Show a transformation using calls to extension functions
-    /// </summary>
+	/// <summary>
+	/// Demonstrate XSLT extensibility using user-written extension functions
+	/// </summary>
+	/// <remarks>Note: If SamplesExtensions is compiled to a different assembly than ExamplesPE, use 
+	/// the namespace URI clitype:SampleExtensions.SampleExtensions?asm=ASSEMBLY_NAME_HERE
+	/// </remarks>
 
     public class XsltExtensibility : Example
     {
@@ -1659,18 +1572,10 @@ namespace SaxonPE
             get { return "XsltExtensibility"; }
         }
 
-        /// <summary>
-        /// Demonstrate XSLT extensibility using user-written extension functions
-        /// </summary>
-        /// <remarks>Note: If SamplesExtensions is compiled to a different assembly than ExamplesPE, use 
-        /// the namespace URI clitype:SampleExtensions.SampleExtensions?asm=ASSEMBLY_NAME_HERE
-        /// </remarks>
-
         public override void run(Uri samplesDir)
         {
-
             // Create a Processor instance.
-            Processor processor = new Processor();
+            Processor processor = new Processor(true);
 
             // Identify the Processor version
             Console.WriteLine(processor.ProductVersion);
@@ -1702,7 +1607,6 @@ namespace SaxonPE
                 @" </xsl:template></xsl:transform>";
 
             // Register the integrated extension functions math:sqrt and env:defaultNamespace
-
             processor.RegisterExtensionFunction(new Sqrt());
             processor.RegisterExtensionFunction(new DefaultNamespace());
 
@@ -1721,12 +1625,12 @@ namespace SaxonPE
             transformer.SetParameter(new QName("", "timezone"),
                       XdmAtomicValue.WrapExternalObject(TimeZone.CurrentTimeZone));
 
-            // Create a serializer
+			// Create a serializer, with output to the standard output stream
             Serializer serializer = new Serializer();
             serializer.SetOutputWriter(Console.Out);
             serializer.SetOutputProperty(Serializer.INDENT, "yes");
 
-            // Transform the source XML to System.out.
+			// Transform the source XML and serialize the result document
             transformer.Run(serializer);
         }
 
@@ -1743,10 +1647,6 @@ namespace SaxonPE
         {
             get { return "XsltIntegratedExtension"; }
         }
-
-        /// <summary>
-        /// Show a transformation using calls to extension functions
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -1769,21 +1669,20 @@ namespace SaxonPE
                 @" </xsl:template></xsl:transform>";
 
             // Register the integrated extension function math:sqrt
-
             processor.RegisterExtensionFunction(new Sqrt());
 
             // Create a transformer for the stylesheet.
             XsltTransformer transformer = processor.NewXsltCompiler().Compile(new StringReader(s)).Load();
 
-            // Set the root node of the source document to be the initial context node
+			// Set the name of the initial template
             transformer.InitialTemplate = new QName("go");
 
-            // Create a serializer
+			// Create a serializer, with output to the standard output stream
             Serializer serializer = new Serializer();
             serializer.SetOutputWriter(Console.Out);
             serializer.SetOutputProperty(Serializer.INDENT, "yes");
 
-            // Transform the source XML to System.out.
+			// Transform the source XML and serialize the result document
             transformer.Run(serializer);
         }
 
@@ -1973,13 +1872,9 @@ namespace SaxonPE
             get { return "XQueryToStream"; }
         }
 
-        /// <summary>
-        /// Show a query producing a document as its result and serializing this to a FileStream
-        /// </summary>
-
         public override void run(Uri samplesDir)
         {
-            Processor processor = new Processor();
+            Processor processor = new Processor(true);
             XQueryCompiler compiler = processor.NewXQueryCompiler();
             compiler.BaseUri = samplesDir.ToString();
             compiler.DeclareNamespace("saxon", "http://saxon.sf.net/");
@@ -2009,11 +1904,6 @@ namespace SaxonPE
             get { return "XQueryToAtomicValue"; }
         }
 
-        /// <summary>
-        /// Show a query producing a single atomic value as its result and returning the value
-        /// to the C# application
-        /// </summary>
-
         public override void run(Uri samplesDir)
         {
             Processor processor = new Processor();
@@ -2025,7 +1915,39 @@ namespace SaxonPE
             Console.WriteLine("Result value: " + (decimal)result.Value);
         }
 
-    }
+	}
+
+	/// <summary>
+	/// Show a query producing a sequence as its result and returning the sequence
+	/// to the C# application in the form of an iterator. For each item in the
+	/// result, its string value is output.
+	/// </summary>
+
+	public class XQueryToSequence : Example
+	{
+
+		public override string testName
+		{
+			get { return "XQueryToSequence"; }
+		}
+
+		public override void run(Uri samplesDir)
+		{
+			Processor processor = new Processor();
+			XQueryCompiler compiler = processor.NewXQueryCompiler();
+			XQueryExecutable exp = compiler.Compile("for $i in 1 to 10 return $i * $i");
+			XQueryEvaluator eval = exp.Load();
+			XdmValue value = eval.Evaluate();
+			IEnumerator e = value.GetEnumerator();
+			while (e.MoveNext())
+			{
+				XdmItem item = (XdmItem)e.Current;
+				Console.WriteLine(item.ToString());
+			}
+
+		}
+
+	}
 
     /// <summary>
     /// Show a query producing a DOM as its input and producing a DOM as its output
@@ -2038,10 +1960,6 @@ namespace SaxonPE
         {
             get { return "XQueryToDom"; }
         }
-
-        /// <summary>
-        /// Show a query producing a DOM as its input and producing a DOM as its output
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -2075,10 +1993,6 @@ namespace SaxonPE
             get { return "XQueryToXdm"; }
         }
 
-        /// <summary>
-        /// Show a query producing a Saxon tree as its input and producing a Saxon tree as its output
-        /// </summary>
-
         public override void run(Uri samplesDir)
         {
             Processor processor = new Processor();
@@ -2111,10 +2025,6 @@ namespace SaxonPE
             get { return "XQueryCallFunction"; }
         }
 
-        /// <summary>
-        /// Show a direct call on a user-defined function defined within the query
-        /// </summary>
-
         public override void run(Uri samplesDir)
         {
             Processor processor = new Processor();
@@ -2139,46 +2049,6 @@ namespace SaxonPE
 
     }
 
-
-
-    /// <summary>
-    /// Show a query producing a sequence as its result and returning the sequence
-    /// to the C# application in the form of an iterator. For each item in the
-    /// result, its string value is output.
-    /// </summary>
-
-    public class XQueryToSequence : Example
-    {
-
-        public override string testName
-        {
-            get { return "XQueryToSequence"; }
-        }
-
-        /// <summary>
-        /// Show a query producing a sequence as its result and returning the sequence
-        /// to the C# application in the form of an iterator. For each item in the
-        /// result, its string value is output.
-        /// </summary>
-
-        public override void run(Uri samplesDir)
-        {
-            Processor processor = new Processor();
-            XQueryCompiler compiler = processor.NewXQueryCompiler();
-            XQueryExecutable exp = compiler.Compile("for $i in 1 to 10 return $i * $i");
-            XQueryEvaluator eval = exp.Load();
-            XdmValue value = eval.Evaluate();
-            IEnumerator e = value.GetEnumerator();
-            while (e.MoveNext())
-            {
-                XdmItem item = (XdmItem)e.Current;
-                Console.WriteLine(item.ToString());
-            }
-
-        }
-
-    }
-
     /// <summary>
     /// Show a query reading an input document using an XmlReader (the .NET XML parser)
     /// </summary>
@@ -2190,10 +2060,6 @@ namespace SaxonPE
         {
             get { return "XQueryFromXmlReader"; }
         }
-
-        /// <summary>
-        /// Show a query reading an input document using an XmlReader (the .NET XML parser)
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -2219,6 +2085,7 @@ namespace SaxonPE
             qout.SetOutputProperty(Serializer.METHOD, "xml");
             qout.SetOutputProperty(Serializer.INDENT, "yes");
             qout.SetOutputStream(new FileStream("testoutput2.xml", FileMode.Create, FileAccess.Write));
+			Console.WriteLine("Output written to testoutput2.xml");
             eval.Run(qout);
         }
 
@@ -2237,12 +2104,6 @@ namespace SaxonPE
         {
             get { return "XQueryToSerializedSequence"; }
         }
-
-        /// <summary>
-        /// Show a query producing a sequence as its result and returning the sequence
-        /// to the C# application in the form of an iterator. The sequence is then
-        /// output by serializing each item individually, with each item on a new line.
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -2287,12 +2148,6 @@ namespace SaxonPE
             get { return "XQueryUsingParameter"; }
         }
 
-        /// <summary>
-        /// Show a query that takes a parameter (external variable) as input.
-        /// The query produces a single atomic value as its result and returns the value
-        /// to the C# application. 
-        /// </summary>
-
         public override void run(Uri samplesDir)
         {
             Processor processor = new Processor();
@@ -2321,11 +2176,6 @@ namespace SaxonPE
         {
             get { return "XQueryMultiModule"; }
         }
-
-        /// <summary>
-        /// Show a query consisting of two modules, using a QueryResolver to resolve
-        /// the "import module" declaration
-        /// </summary>
 
         public override void run(Uri samplesDir)
         {
@@ -2379,8 +2229,7 @@ namespace SaxonPE
     }
 
     /// <summary>
-    /// A try-catch expression in the query, a feature of XQuery 3.0
-    /// to the C# application
+	/// Demonstrate using a try-catch expression in the query, a feature of XQuery 3.0
     /// </summary>
 
     public class XQueryTryCatch : Example
@@ -2391,15 +2240,14 @@ namespace SaxonPE
             get { return "XQueryTryCatch"; }
         }
 
-
         public override void run(Uri samplesDir)
         {
 
-            String query = "xquery version '1.1'; try {doc('book.xml')}catch * {\"XQuery 1.1 catch clause - file not found.\"}";
+            String query = "xquery version '3.0'; try {doc('book.xml')}catch * {\"XQuery 3.0 catch clause - file not found.\"}";
             Processor processor = new Processor();
 
             XQueryCompiler compiler = processor.NewXQueryCompiler();
-            compiler.XQueryLanguageVersion = "1.1";
+            compiler.XQueryLanguageVersion = "3.0";
             XQueryExecutable exp = compiler.Compile(query);
             XQueryEvaluator eval = exp.Load();
             Serializer qout = new Serializer();
@@ -2410,7 +2258,10 @@ namespace SaxonPE
 
     /// <summary>
     /// Demonstrate XQuery extensibility using user-written extension functions
-    /// </summary>
+	/// </summary>
+	/// <remarks>Note: If SamplesExtensions is compiled to a different assembly than ExamplesPE, use 
+	/// the namespace URI clitype:SampleExtensions.SampleExtensions?asm=ASSEMBLY_NAME_HERE
+	/// </remarks>
 
     public class XQueryExtensibility : Example
     {
@@ -2419,13 +2270,6 @@ namespace SaxonPE
         {
             get { return "XQueryExtensibility"; }
         }
-
-        /// <summary>
-        /// Demonstrate XQuery extensibility using user-written extension functions
-        /// </summary>
-        /// <remarks>Note: If SamplesExtensions is compiled to a different assembly than ExamplesPE, use 
-        /// the namespace URI clitype:SampleExtensions.SampleExtensions?asm=ASSEMBLY_NAME_HERE
-        /// </remarks>
 
         public override void run(Uri samplesDir)
         {
@@ -2438,7 +2282,7 @@ namespace SaxonPE
                 "  <language>{ext:hostLanguage()}</language>" +
                 "</out>";
 
-            Processor processor = new Processor();
+            Processor processor = new Processor(true);
             XQueryCompiler compiler = processor.NewXQueryCompiler();
             XQueryExecutable exp = compiler.Compile(query);
             XQueryEvaluator eval = exp.Load();
