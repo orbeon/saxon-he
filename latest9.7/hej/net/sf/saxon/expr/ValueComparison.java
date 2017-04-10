@@ -24,8 +24,7 @@ import net.sf.saxon.trans.NoDynamicContextException;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
-
-import java.util.Map;
+import net.sf.saxon.value.StringValue;
 
 /**
  * ValueComparison: a boolean expression that compares two atomic values
@@ -209,7 +208,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
                         (opt1 ? "?" : "") + " will fail unless " + which + " empty", getLocation());
                 needsRuntimeCheck = true;
             } else {
-                XPathException err = new XPathException("Cannot compare " + t0.toString() +
+                XPathException err = new XPathException("In {" + toShortString() + "}: cannot compare " + t0.toString() +
                         " to " + t1.toString());
                 err.setIsTypeError(true);
                 err.setErrorCode("XPTY0004");

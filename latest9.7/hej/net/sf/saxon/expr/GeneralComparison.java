@@ -269,7 +269,7 @@ public class GeneralComparison extends BinaryExpression implements ComparisonExp
             // then no static type checking is possible
         } else {
             if (!Type.isPossiblyComparable(pt0, pt1, Token.isOrderedOperator(singletonOperator))) {
-                String message = "Cannot compare " + t0.toString() + " to " + t1.toString();
+                String message = "In {" + toShortString() + "}: cannot compare " + t0.toString() + " to " + t1.toString();
                 if (Cardinality.allowsZero(c0) || Cardinality.allowsZero(c1)) {
                     if (!doneWarnings) { // avoid duplicate warnings
                         doneWarnings = true;
