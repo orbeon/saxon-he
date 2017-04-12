@@ -282,7 +282,11 @@ public class ExpressionPresenter {
                     String p = iter.next();
                     fsb.append(p);
                     fsb.append("=");
-                    fsb.append(sc.getURIForPrefix(p, true));
+                    String u = sc.getURIForPrefix(p, true);
+                    if (Whitespace.containsWhitespace(u)) {
+                        throw new XPathException("Cannot export a stylesheet if namespaces contain whitespace: '" + u + "'");
+                    }
+                    fsb.append(u);
                     fsb.append(" ");
                 }
                 emitAttribute("ns", Whitespace.trim(fsb));
