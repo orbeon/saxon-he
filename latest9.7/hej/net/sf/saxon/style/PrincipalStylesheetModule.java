@@ -862,7 +862,22 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
             Visibility vis = null;
             boolean explicitVisibility = false;
             boolean streamable = false;
-            for (ComponentDeclaration decl : entry.getValue()) {
+
+            // Bug 3195. If the same xsl:attribute-set element is present more than
+            // once in the list, we need to remove all but the last occurrence, otherwise
+            // the same expression will be present more than once in the tree. This can
+            // happen when a stylesheet module is included/imported more than once.
+            List<ComponentDeclaration> entries = new ArrayList<ComponentDeclaration>();
+            Set<XSLAttributeSet> elements = new HashSet<XSLAttributeSet>();
+            for (int i = entry.getValue().size()-1; i>=0; i--) {
+                ComponentDeclaration decl = entry.getValue().get(i);
+                XSLAttributeSet src = (XSLAttributeSet) decl.getSourceElement();
+                if (!elements.contains(src)) {
+                    entries.add(0, decl);
+                    elements.add(src);
+                }
+            }
+            for (ComponentDeclaration decl : entries) {
                 XSLAttributeSet src = (XSLAttributeSet) decl.getSourceElement();
                 streamable |= src.isDeclaredStreamable();
                 src.compileDeclaration(compilation, decl);
