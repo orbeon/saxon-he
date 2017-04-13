@@ -15,6 +15,7 @@ import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.RebindingMap;
+import net.sf.saxon.functions.NormalizeSpace_1;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.lib.Validation;
@@ -68,24 +69,15 @@ public final class FixedAttribute extends AttributeCreator {
     public NodeName getAttributeName() {
         return nodeName;
     }
-
-    /**
-     * Set the expression defining the value of the attribute. If this is a constant, and if
-     * validation against a schema type was requested, the validation is done immediately.
-     *
-     * @param select The expression defining the content of the attribute
-     *
-     */
-    public void setSelect(Expression select) {
-        super.setSelect(select);
-        // If attribute name is xml:id, add whitespace normalization
-        if (nodeName.equals(StandardNames.XML_ID_NAME)) {
-            select = SystemFunction.makeCall("normalize-space", getRetainedStaticContext(), select);
-            super.setSelect(select);
-        }
-    }
+    
 
     public void localTypeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
+        // If attribute name is xml:id, add whitespace normalization
+        if (nodeName.equals(StandardNames.XML_ID_NAME) && !getSelect().isCallOn(NormalizeSpace_1.class)) {
+            Expression select = SystemFunction.makeCall("normalize-space", getRetainedStaticContext(), getSelect());
+            setSelect(select);
+        }
+
         Configuration config = getConfiguration();
         final ConversionRules rules = config.getConversionRules();
         SimpleType schemaType = getSchemaType();
