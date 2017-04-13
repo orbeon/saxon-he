@@ -238,6 +238,17 @@ public final class ComplexContentOutputter extends SequenceReceiver {
         level--;
     }
 
+    /**
+     * Notify an unparsed entity URI.
+     *
+     * @param name     The name of the unparsed entity
+     * @param systemID The system identifier of the unparsed entity
+     * @param publicID The public identifier of the unparsed entity
+     */
+    @Override
+    public void setUnparsedEntity(String name, String systemID, String publicID) throws XPathException {
+        nextReceiver.setUnparsedEntity(name, systemID, publicID);
+    }
 
     /**
      * Produce text content output. <BR>

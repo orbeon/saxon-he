@@ -32,6 +32,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
 
 import javax.xml.transform.Result;
+import javax.xml.transform.sax.TransformerHandler;
 import java.util.Properties;
 import java.util.Stack;
 
@@ -191,7 +192,13 @@ public class ContentHandlerProxy implements Receiver {
      */
 
     public void setUnparsedEntity(String name, String systemID, String publicID) throws XPathException {
-        // no-op
+        if (handler instanceof TransformerHandler) {
+            try {
+                ((TransformerHandler) handler).unparsedEntityDecl(name, publicID, systemID, "unknown");
+            } catch (SAXException e) {
+                throw new XPathException(e);
+            }
+        }
     }
 
     /**
