@@ -52,7 +52,9 @@ public abstract class SystemFunction extends AbstractFunction {
         if (f == null) {
             return null;
         }
-        return f.makeFunctionCall(arguments);
+        Expression expr = f.makeFunctionCall(arguments);
+        expr.setRetainedStaticContext(rsc);
+        return expr;
     }
 
     /**
