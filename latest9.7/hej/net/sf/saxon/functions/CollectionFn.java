@@ -86,8 +86,18 @@ public class CollectionFn extends SystemFunction implements Callable {
         if (href == null) {
             absoluteURI = context.getConfiguration().getDefaultCollection();
         } else {
+            URI uri;
             try {
-                URI uri = new URI(href);
+                uri = new URI(href);
+            } catch (URISyntaxException e) {
+                href = IriToUri.iriToUri(href).toString();
+                try {
+                    uri = new URI(href);
+                } catch (URISyntaxException e2) {
+                    throw new XPathException(e2.getMessage(), "FODC0004");
+                }
+            }
+            try {
                 if (uri.isAbsolute()) {
                     absoluteURI = uri.toString();
                 } else {
