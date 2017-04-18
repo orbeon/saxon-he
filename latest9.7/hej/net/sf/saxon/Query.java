@@ -743,6 +743,7 @@ public class Query {
         } else if (queryFileName.startsWith("{") && queryFileName.endsWith("}")) {
             // query is inline on the command line
             String q = queryFileName.substring(1, queryFileName.length() - 1);
+            compiler.setBaseURI(new File(System.getProperty("user.dir")).toURI());
             exp = compiler.compile(q);
         } else if (useURLs || CommandLineOptions.isImplicitURI(queryFileName)) {
             ModuleURIResolver resolver = compiler.getModuleURIResolver();
