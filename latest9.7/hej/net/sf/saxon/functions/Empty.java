@@ -22,7 +22,7 @@ import net.sf.saxon.value.BooleanValue;
 
 
 /**
- * Implementation of the fn:exists function
+ * Implementation of the fn:empty function
  */
 public class Empty extends Aggregate {
 
