@@ -9,7 +9,11 @@ package net.sf.saxon.functions;
 
 import com.saxonica.ee.bytecode.ContainsCompiler;
 import com.saxonica.ee.bytecode.ExpressionCompiler;
+import net.sf.saxon.expr.Expression;
+import net.sf.saxon.expr.SystemFunctionCall;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.parser.ContextItemStaticInfo;
+import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.sort.CodepointCollator;
 import net.sf.saxon.expr.sort.SimpleCollation;
 import net.sf.saxon.lib.StringCollator;
@@ -23,6 +27,34 @@ import net.sf.saxon.value.StringValue;
  * Implements the fn:contains() function, with the collation already known
  */
 public class Contains extends CollatingFunctionFixed {
+
+    /**
+     * Allow the function to create an optimized call based on the values of the actual arguments
+     *
+     * @param visitor     the expression visitor
+     * @param contextInfo information about the context item
+     * @param arguments   the supplied arguments to the function call. Note: modifying the contents
+     *                    of this array should not be attempted, it is likely to have no effect.
+     * @return either a function call on this function, or an expression that delivers
+     * the same result, or null indicating that no optimization has taken place
+     * @throws XPathException if an error is detected
+     */
+    @Override
+    public Expression makeOptimizedFunctionCall(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo, final Expression... arguments) throws XPathException {
+        if (getStringCollator() == CodepointCollator.getInstance()) {
+            // Performance fast path: bug 3209
+            return new SystemFunctionCall(this, arguments) {
+                @Override
+                public boolean effectiveBooleanValue(XPathContext context) throws XPathException {
+                    String s0 = arguments[0].evaluateAsString(context).toString();
+                    String s1 = arguments[1].evaluateAsString(context).toString();
+                    return s0.contains(s1);
+                }
+            };
+        } else {
+            return super.makeOptimizedFunctionCall(visitor, contextInfo, arguments);
+        }
+    }
 
     private static boolean contains(StringValue arg0, StringValue arg1, StringCollator collator) throws XPathException {
         if (arg1 == null || arg1.isZeroLength() || collator.comparesEqual(arg1.getPrimitiveStringValue(), "")) {
