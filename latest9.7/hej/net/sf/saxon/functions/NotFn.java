@@ -19,6 +19,7 @@ import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.TypeChecker;
 import net.sf.saxon.om.Sequence;
+import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.BooleanValue;
@@ -94,6 +95,11 @@ public class NotFn extends SystemFunction {
         TypeHierarchy th = visitor.getStaticContext().getConfiguration().getTypeHierarchy();
         if (arguments[0] instanceof Negatable && ((Negatable) arguments[0]).isNegatable(th)) {
             return ((Negatable) arguments[0]).negate();
+        }
+        if (arguments[0].getItemType() instanceof NodeTest) {
+            SystemFunction empty = SystemFunction.makeFunction("empty", getRetainedStaticContext(), 1);
+            assert empty != null;
+            return empty.makeFunctionCall(arguments[0]).optimize(visitor, contextInfo);
         }
         return null;
     }
