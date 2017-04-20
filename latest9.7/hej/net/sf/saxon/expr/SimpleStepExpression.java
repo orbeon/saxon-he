@@ -54,6 +54,9 @@ public final class SimpleStepExpression extends SlashExpression {
         getRhs().typeCheck(visitor, cit);
 
         if (!(getStep() instanceof AxisExpression)) {
+            if (Literal.isEmptySequence(getStep())) {
+                return getStep();
+            }
             SlashExpression se = new SlashExpression(getStart(), getStep());
             ExpressionTool.copyLocationInfo(this, se);
             return se;

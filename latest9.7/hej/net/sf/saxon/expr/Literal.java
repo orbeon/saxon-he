@@ -640,7 +640,7 @@ public class Literal extends Expression {
     }
 
     /**
-     * Test if a literal represents the boolean value true
+     * Test if a literal represents the boolean value true (or false)
      *
      * @param exp   an expression
      * @param value true or false
@@ -652,6 +652,26 @@ public class Literal extends Expression {
         if (exp instanceof Literal) {
             GroundedValue b = ((Literal) exp).getValue();
             return b instanceof BooleanValue && ((BooleanValue) b).getBooleanValue() == value;
+        }
+        return false;
+    }
+
+    /**
+     * Test if a literal has the effective boolean value true (or false)
+     *
+     * @param exp   an expression
+     * @param value true or false
+     * @return true if the expression is a literal and the literal represents the boolean value given in the
+     * second argument
+     */
+
+    public static boolean hasEffectiveBooleanValue(Expression exp, boolean value) {
+        if (exp instanceof Literal) {
+            try {
+                return value == ((Literal) exp).getValue().effectiveBooleanValue();
+            } catch (XPathException err) {
+                return false;
+            }
         }
         return false;
     }

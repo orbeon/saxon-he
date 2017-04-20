@@ -247,8 +247,7 @@ public class Choose extends Instruction {
         boolean compress = false;
         for (int i = 0; i < size(); i++) {
             Expression condition = getCondition(i);
-            if (Literal.isConstantBoolean(condition, false) ||
-                    (i < size()-1 && Literal.isConstantBoolean(condition, true))) {
+            if (condition instanceof Literal) {
                 compress = true;
             }
         }
@@ -259,11 +258,11 @@ public class Choose extends Instruction {
             List<Expression> actions = new ArrayList<Expression>(size);
             for (int i = 0; i < size; i++) {
                 Expression condition = getCondition(i);
-                if (!Literal.isConstantBoolean(condition, false)) {
+                if (!Literal.hasEffectiveBooleanValue(condition, false)) {
                     conditions.add(condition);
                     actions.add(getAction(i));
                 }
-                if (Literal.isConstantBoolean(condition, true)) {
+                if (Literal.hasEffectiveBooleanValue(condition, true)) {
                     break;
                 }
             }
