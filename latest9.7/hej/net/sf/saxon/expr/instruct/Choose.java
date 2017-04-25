@@ -272,7 +272,7 @@ public class Choose extends Instruction {
                 return lit;
             } else if (conditions.size() == 1 && Literal.isConstantBoolean(conditions.get(0), true)) {
                 return actions.get(0);
-            } else {
+            } else if (conditions.size() != size) {
                 Expression[] c = conditions.toArray(new Expression[conditions.size()]);
                 Expression[] a = actions.toArray(new Expression[actions.size()]);
                 Choose result = new Choose(c, a);
