@@ -21,7 +21,7 @@ import java.util.Iterator;
  * Information about a sub-expression and its relationship to the parent expression
  */
 
-public class Operand implements Iterable<Operand> {
+public final class Operand implements Iterable<Operand> {
 
     private Expression parentExpression;
     private Expression childExpression;

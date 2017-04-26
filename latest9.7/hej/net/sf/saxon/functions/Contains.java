@@ -46,9 +46,14 @@ public class Contains extends CollatingFunctionFixed {
             return new SystemFunctionCall(this, arguments) {
                 @Override
                 public boolean effectiveBooleanValue(XPathContext context) throws XPathException {
-                    String s0 = arguments[0].evaluateAsString(context).toString();
-                    String s1 = arguments[1].evaluateAsString(context).toString();
+                    String s0 = getArg(0).evaluateAsString(context).toString();
+                    String s1 = getArg(1).evaluateAsString(context).toString();
                     return s0.contains(s1);
+                }
+
+                @Override
+                public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
+                    return this; // prevent infinite optimization loops
                 }
             };
         } else {

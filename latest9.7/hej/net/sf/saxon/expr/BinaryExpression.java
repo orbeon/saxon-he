@@ -86,7 +86,7 @@ public abstract class BinaryExpression extends Expression {
      * @return the left-hand operand child expression
      */
 
-    public Expression getLhsExpression() {
+    public final Expression getLhsExpression() {
         return lhs.getChildExpression();
     }
 
@@ -113,7 +113,7 @@ public abstract class BinaryExpression extends Expression {
      * @return the right-hand operand expression
      */
 
-    public Expression getRhsExpression() {
+    public final Expression getRhsExpression() {
         return rhs.getChildExpression();
     }
 
