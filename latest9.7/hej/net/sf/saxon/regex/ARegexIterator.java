@@ -335,26 +335,36 @@ public class ARegexIterator implements RegexIterator, LastPositionFinder<Item> {
      */
 
     private void computeNestingTable() {
+        // See bug 3211
         nestingTable = new IntToIntHashMap(16);
         UnicodeString s = regex;
         int[] stack = new int[s.uLength()];
         int tos = 0;
+        boolean[] captureStack = new boolean[s.uLength()];
+        int captureTos = 0;
         int group = 1;
         int inBrackets = 0;
         stack[tos++] = 0;
         for (int i = 0; i < s.uLength(); i++) {
             int ch = s.uCharAt(i);
-            if (ch == '\'') {
+            if (ch == '\\') {
                 i++;
             } else if (ch == '[') {
                 inBrackets++;
             } else if (ch == ']') {
                 inBrackets--;
-            } else if (ch == '(' && s.uCharAt(i + 1) != '?' && inBrackets == 0) {
-                nestingTable.put(group, stack[tos - 1]);
-                stack[tos++] = group++;
+            } else if (ch == '(' && inBrackets == 0) {
+                boolean capture = s.uCharAt(i + 1) != '?';
+                captureStack[captureTos++] = capture;
+                if (capture) {
+                    nestingTable.put(group, stack[tos - 1]);
+                    stack[tos++] = group++;
+                }
             } else if (ch == ')' && inBrackets == 0) {
-                tos--;
+                boolean capture = captureStack[captureTos--];
+                if (capture) {
+                    tos--;
+                }
             }
         }
     }
