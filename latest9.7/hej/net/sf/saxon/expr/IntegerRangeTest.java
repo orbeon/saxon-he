@@ -188,7 +188,13 @@ public class IntegerRangeTest extends Expression {
         while ((atom = (AtomicValue) iter.next()) != null) {
             if (minVal == null) {
                 minVal = (IntegerValue) getMin().evaluateItem(c);
+                if (minVal == null) {
+                    return BooleanValue.FALSE;
+                }
                 maxVal = (IntegerValue) getMax().evaluateItem(c);
+                if (maxVal == null || maxVal.compareTo(minVal) <= 0) {
+                    return BooleanValue.FALSE;
+                }
             }
             NumericValue v;
             if (atom instanceof UntypedAtomicValue) {
