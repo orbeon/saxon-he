@@ -8,6 +8,7 @@
 package net.sf.saxon.expr;
 
 import com.saxonica.ee.bytecode.ExpressionCompiler;
+import com.saxonica.ee.bytecode.InterpretedExpressionCompiler;
 import com.saxonica.ee.bytecode.TryCatchExpressionCompiler;
 import com.saxonica.ee.stream.adjunct.StreamingAdjunct;
 import com.saxonica.ee.stream.adjunct.TryCatchAdjunct;
@@ -378,7 +379,7 @@ public class TryCatch extends Expression {
      */
     @Override
     public ExpressionCompiler getExpressionCompiler() {
-        return new TryCatchExpressionCompiler();
+        return new InterpretedExpressionCompiler();
     }
 //#endif
 
