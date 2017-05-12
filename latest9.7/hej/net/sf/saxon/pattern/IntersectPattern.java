@@ -55,6 +55,17 @@ public class IntersectPattern extends VennPattern {
     }
 
     /**
+     * The default priority of an "intersect" pattern is the priority of the LH operand
+     *
+     * @return the priority of the LH operand
+     */
+
+    @Override
+    public double getDefaultPriority() {
+        return p1.getDefaultPriority();
+    }
+
+    /**
      * Determine if the supplied node matches the pattern
      *
      * @param item the node to be compared

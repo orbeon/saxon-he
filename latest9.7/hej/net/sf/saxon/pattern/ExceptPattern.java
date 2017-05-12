@@ -55,6 +55,16 @@ public class ExceptPattern extends VennPattern {
     }
 
     /**
+     * The default priority of an "except" pattern is the priority of the LH operand
+     * @return the priority of the LH operand
+     */
+
+    @Override
+    public double getDefaultPriority() {
+        return p1.getDefaultPriority();
+    }
+
+    /**
      * Determine if the supplied node matches the pattern
      *
      * @param item the node to be compared
