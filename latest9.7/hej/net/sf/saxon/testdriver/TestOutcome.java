@@ -46,6 +46,7 @@ public class TestOutcome {
     public static class SingleResultDoc {
         public XdmValue value;
         public String serialization;
+        public boolean wellFormed = true;
 
         public SingleResultDoc() {
         }

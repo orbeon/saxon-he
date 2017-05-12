@@ -335,7 +335,13 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                 setGlobalParameter(entry.getKey(), entry.getValue());
             }
             URI baseOut = new File(resultsDir + "/results/output.xml").toURI();
-            runJSTransform(env, outcome, initialTemplateName, initialModeName, baseOut);
+            try {
+                runJSTransform(env, outcome, initialTemplateName, initialModeName, baseOut);
+            } catch (StackOverflowError e) {
+                notrun++;
+                resultsDoc.writeTestcaseElement(testName, "tooBig", "Stack Overflow");
+                return;
+            }
             if ("*notJS*".equals(outcome.getComment())) {
                 return;
             }
