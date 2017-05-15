@@ -7,6 +7,8 @@
 
 package net.sf.saxon.z;
 
+import net.sf.saxon.tree.util.FastStringBuffer;
+
 /**
  * A hash table that maps int keys to int values.
  *
@@ -251,6 +253,25 @@ public class IntToIntHashMap implements IntToIntMap {
                 }
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        // For diagnostics
+        FastStringBuffer buffer = new FastStringBuffer(256);
+        IntIterator keys = keyIterator();
+        int count = 0;
+        while (keys.hasNext()) {
+            int k = keys.next();
+            int v = get(k);
+            buffer.append(" " + k + ":" + v + ",");
+            if (count++ >= 100) {
+                buffer.append("....");
+                break;
+            }
+        }
+        buffer.setLength(buffer.length()-1);
+        return buffer.toString();
     }
 
     /**

@@ -15,7 +15,9 @@ import cli.System.Text.RegularExpressions.Regex;
 import net.sf.saxon.expr.LastPositionFinder;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.regex.ARegexIterator;
 import net.sf.saxon.regex.RegexIterator;
+import net.sf.saxon.regex.UnicodeString;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.ArrayIterator;
 import net.sf.saxon.tree.iter.EmptyIterator;
@@ -274,7 +276,7 @@ public class DotNetRegexIterator implements RegexIterator, LastPositionFinder<It
                     // and match("a", "(a)(b?)") will both give the same result for group 2 (start=1, end=1).
                     // So we need to go back to the original regex to determine the group nesting
                     if (nestingTable == null) {
-                        computeNestingTable();
+                        nestingTable = ARegexIterator.computeNestingTable(UnicodeString.makeUnicodeString(pattern.toString()));
                     }
                     int parentGroup = nestingTable.get(i);
                     // insert the start and end events immediately before the end event for the parent group,
@@ -327,39 +329,7 @@ public class DotNetRegexIterator implements RegexIterator, LastPositionFinder<It
         }
 
     }
-
-    /**
-     * Compute a table showing for each captured group number (opening paren in the regex),
-     * the number of its parent group. This is done by reparsing the source of the regular
-     * expression. This is needed when the result of a match includes an empty group, to determine
-     * its position relative to other groups finishing at the same character position.
-     */
-
-    private void computeNestingTable() {
-        nestingTable = new IntToIntHashMap(16);
-        String s = theString;
-        int[] stack = new int[s.length()];
-        int tos = 0;
-        int group = 1;
-        int inBrackets = 0;
-        stack[tos++] = 0;
-        for (int i = 0; i < s.length(); i++) {
-            char ch = s.charAt(i);
-            if (ch == '\'') {
-                i++;
-            } else if (ch == '[') {
-                inBrackets++;
-            } else if (ch == ']') {
-                inBrackets--;
-            } else if (ch == '(' && s.charAt(i + 1) != '?' && inBrackets == 0) {
-                nestingTable.put(group, stack[tos - 1]);
-                stack[tos++] = group++;
-            } else if (ch == ')' && inBrackets == 0) {
-                tos--;
-            }
-        }
-    }
-
+    
     /**
      * Close the iterator. This indicates to the supplier of the data that the client
      * does not require any more items to be delivered by the iterator. This may enable the

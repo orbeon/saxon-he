@@ -273,7 +273,7 @@ public class ARegexIterator implements RegexIterator, LastPositionFinder<Item> {
                         // and match("a", "(a)(b?)") will both give the same result for group 2 (start=1, end=1).
                         // So we need to go back to the original regex to determine the group nesting
                         if (nestingTable == null) {
-                            computeNestingTable();
+                            nestingTable = computeNestingTable(regex);
                         }
                         int parentGroup = nestingTable.get(i);
                         // insert the start and end events immediately before the end event for the parent group,
@@ -334,19 +334,18 @@ public class ARegexIterator implements RegexIterator, LastPositionFinder<Item> {
      * its position relative to other groups finishing at the same character position.
      */
 
-    private void computeNestingTable() {
+    public static IntToIntHashMap computeNestingTable(UnicodeString regex) {
         // See bug 3211
-        nestingTable = new IntToIntHashMap(16);
-        UnicodeString s = regex;
-        int[] stack = new int[s.uLength()];
+        IntToIntHashMap nestingTable = new IntToIntHashMap(16);
+        int[] stack = new int[regex.uLength()];
         int tos = 0;
-        boolean[] captureStack = new boolean[s.uLength()];
+        boolean[] captureStack = new boolean[regex.uLength()];
         int captureTos = 0;
         int group = 1;
         int inBrackets = 0;
         stack[tos++] = 0;
-        for (int i = 0; i < s.uLength(); i++) {
-            int ch = s.uCharAt(i);
+        for (int i = 0; i < regex.uLength(); i++) {
+            int ch = regex.uCharAt(i);
             if (ch == '\\') {
                 i++;
             } else if (ch == '[') {
@@ -354,19 +353,20 @@ public class ARegexIterator implements RegexIterator, LastPositionFinder<Item> {
             } else if (ch == ']') {
                 inBrackets--;
             } else if (ch == '(' && inBrackets == 0) {
-                boolean capture = s.uCharAt(i + 1) != '?';
+                boolean capture = regex.uCharAt(i + 1) != '?';
                 captureStack[captureTos++] = capture;
                 if (capture) {
                     nestingTable.put(group, stack[tos - 1]);
                     stack[tos++] = group++;
                 }
             } else if (ch == ')' && inBrackets == 0) {
-                boolean capture = captureStack[captureTos--];
+                boolean capture = captureStack[--captureTos];
                 if (capture) {
                     tos--;
                 }
             }
         }
+        return nestingTable;
     }
 
 
