@@ -104,7 +104,7 @@ public class CodepointCollatingComparer implements AtomicComparer {
      */
 
     public boolean comparesEqual(AtomicValue a, AtomicValue b) {
-        return collator.comparesEqual(a.getStringValueCS(), b.getStringValueCS());
+        return ((StringValue) a).codepointEquals((StringValue) b);
     }
 
     /**

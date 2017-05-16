@@ -8,7 +8,6 @@
 package net.sf.saxon.value;
 
 import net.sf.saxon.expr.sort.AtomicMatchKey;
-import net.sf.saxon.expr.sort.CodepointCollator;
 import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.regex.BMPString;
 import net.sf.saxon.regex.LatinString;
@@ -370,7 +369,17 @@ public class StringValue extends AtomicValue {
      */
 
     public boolean codepointEquals(/*@NotNull*/ StringValue other) {
-        return CodepointCollator.getInstance().comparesEqual(value, other.value);
+        if (value instanceof String) {
+            return ((String) value).contentEquals(other.value);
+        } else if (value instanceof UnicodeString) {
+            if (!(other.value instanceof UnicodeString)) {
+                other.makeUnicodeString();
+            }
+            return value.equals(other.value);
+        } else {
+            // Avoid conversion to String unless the lengths are equal
+            return value.length() == other.value.length() && value.toString().equals(other.value.toString());
+        }
     }
 
     /**

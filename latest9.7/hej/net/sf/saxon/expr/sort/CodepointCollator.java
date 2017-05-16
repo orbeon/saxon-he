@@ -105,10 +105,12 @@ public class CodepointCollator implements StringCollator, SubstringMatcher {
      */
 
     public boolean comparesEqual(CharSequence s1, CharSequence s2) {
-        if (s1 instanceof String && s2 instanceof String) {
-            return s1.equals(s2);
+        if (s1 instanceof String) {
+            return ((String)s1).contentEquals(s2);
+        } else if (s1 instanceof UnicodeString) {
+            return s1.equals(UnicodeString.makeUnicodeString(s2));
         } else {
-            return new CodepointMatchKey(s1).equals(new CodepointMatchKey(s2));
+            return s1.length() == s2.length() && s1.toString().equals(s2.toString());
         }
     }
 
