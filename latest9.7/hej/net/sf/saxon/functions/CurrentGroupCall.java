@@ -105,7 +105,7 @@ public class CurrentGroupCall extends Expression implements Callable {
      */
     @Override
     protected int computeCardinality() {
-        return StaticProperty.ALLOWS_ONE_OR_MORE;
+        return StaticProperty.ALLOWS_ZERO_OR_MORE;
     }
 
     /**
