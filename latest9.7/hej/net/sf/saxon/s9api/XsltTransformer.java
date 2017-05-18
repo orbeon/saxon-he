@@ -575,6 +575,15 @@ public class XsltTransformer implements Destination {
                     initialSource = node;
                 }
             }
+            if (destination instanceof Serializer) {
+                String method = ((Serializer) destination).getOutputProperty(Serializer.Property.METHOD);
+                if (method == null) {
+                    method = controller.getExecutable().getDefaultOutputProperties().getProperty("method");
+                }
+                if ("json".equals(method) || "adaptive".equals(method)) {
+                    controller.setBuildTree(false);
+                }
+            }
             controller.initializeController(parameters);
             controller.transform(initialSource, out);
             destination.close();
