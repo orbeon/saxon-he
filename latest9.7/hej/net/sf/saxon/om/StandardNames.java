@@ -156,9 +156,11 @@ public abstract class StandardNames {
     public static final String SAXON_READ_ONCE = SAXON_B + "read-once";
     public static final String SAXON_INDENT_SPACES = SAXON_B + "indent-spaces";
     public static final String SAXON_LINE_LENGTH = SAXON_B + "line-length";
+    public static final String SAXON_NEWLINE = SAXON_B + "newline";
     public static final String SAXON_NEXT_IN_CHAIN = SAXON_B + "next-in-chain";
     public static final String SAXON_RECOGNIZE_BINARY = SAXON_B + "recognize-binary";
     public static final String SAXON_REQUIRE_WELL_FORMED = SAXON_B + "require-well-formed";
+    public static final String SAXON_SUPPLY_SOURCE_LOCATOR = SAXON_B + "suppress-indentation";
     public static final String SAXON_SUPPRESS_INDENTATION = SAXON_B + "suppress-indentation";
     public static final String SAXON_MEMO_FUNCTION = SAXON_B + "memo-function";
     public static final String SAXON_THREADS = SAXON_B + "threads";

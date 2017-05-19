@@ -62,12 +62,19 @@ public class XSLResultDocument extends StyleElement {
         fans.add("standalone");
         fans.add("suppress-indentation");
         fans.add("undeclare-prefixes");
-        fans.add(StandardNames.SAXON_NEXT_IN_CHAIN);
-        fans.add(StandardNames.SAXON_CHARACTER_REPRESENTATION);
-        fans.add(StandardNames.SAXON_INDENT_SPACES);
-        fans.add(StandardNames.SAXON_REQUIRE_WELL_FORMED);
-        fans.add(StandardNames.SAXON_SUPPRESS_INDENTATION);
+
         fans.add(StandardNames.SAXON_ATTRIBUTE_ORDER);
+        fans.add(StandardNames.SAXON_CHARACTER_REPRESENTATION);
+        fans.add(StandardNames.SAXON_DOUBLE_SPACE);
+        fans.add(StandardNames.SAXON_INDENT_SPACES);
+        fans.add(StandardNames.SAXON_LINE_LENGTH);
+        fans.add(StandardNames.SAXON_NEWLINE);
+        fans.add(StandardNames.SAXON_NEXT_IN_CHAIN);
+        fans.add(StandardNames.SAXON_RECOGNIZE_BINARY);
+        fans.add(StandardNames.SAXON_REQUIRE_WELL_FORMED);
+        fans.add(StandardNames.SAXON_SUPPLY_SOURCE_LOCATOR);
+        fans.add(StandardNames.SAXON_SUPPRESS_INDENTATION);
+
     }
 
     private Expression href;
