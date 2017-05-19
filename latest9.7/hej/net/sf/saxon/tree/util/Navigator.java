@@ -423,7 +423,7 @@ public final class Navigator {
         // we've found the ancestor to count from
 
         SequenceIterator preceding =
-                target.iterateAxis(AxisInfo.PRECEDING_SIBLING, (NodeTest) count.getItemType());
+                target.iterateAxis(AxisInfo.PRECEDING_SIBLING, getNodeTestForPattern(count));
         // pass the filter condition down to the axis enumeration where possible
         boolean alreadyChecked = count instanceof NodeTestPattern;
         int i = 1;
@@ -498,7 +498,7 @@ public final class Navigator {
         // Pass part of the filtering down to the axis iterator if possible
         NodeTest filter;
         if (from == null) {
-            filter = (NodeTest) count.getItemType();
+            filter = getNodeTestForPattern(count);
         } else if (from.getUType() == UType.ELEMENT && count.getUType() == UType.ELEMENT) {
             filter = NodeKindTest.ELEMENT;
         } else {
@@ -593,6 +593,21 @@ public final class Navigator {
         }
 
         return v;
+    }
+
+    /**
+     * Get a NodeTest to use as a filter for nodes, given a pattern.
+     */
+
+    private static NodeTest getNodeTestForPattern(Pattern pattern) {
+        ItemType type = pattern.getItemType();
+        if (type instanceof NodeTest) {
+            return (NodeTest)type;
+        } else if (pattern.getUType().overlaps(UType.ANY_NODE)) {
+            return AnyNodeTest.getInstance();
+        } else {
+            return ErrorType.getInstance();
+        }
     }
 
     /**
