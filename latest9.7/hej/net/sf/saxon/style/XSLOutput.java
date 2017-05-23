@@ -37,6 +37,7 @@ public class XSLOutput extends StyleElement {
     private String includeContentType = null;
     private String nextInChain = null;
     private String suppressIndentation = null;
+    private String jsonNodeOutputMethod = null;
     private String buildTree = null;
     private String doubleSpace = null;
     private String representation = null;
@@ -108,6 +109,8 @@ public class XSLOutput extends StyleElement {
                 undeclareNamespaces = Whitespace.trim(atts.getValue(a));
             } else if (f.equals("suppress-indentation")) {
                 suppressIndentation = Whitespace.trim(atts.getValue(a));
+            } else if (f.equals("json-node-output-method")) {
+                jsonNodeOutputMethod = Whitespace.trim(atts.getValue(a));
             } else if (f.equals("build-tree")) {
                 buildTree = Whitespace.trim(atts.getValue(a));
             } else if (f.equals(StandardNames.SAXON_CHARACTER_REPRESENTATION)) {
@@ -227,6 +230,33 @@ public class XSLOutput extends StyleElement {
                 }
             }
         }
+
+        if (jsonNodeOutputMethod != null) {
+            if ("xml".equals(jsonNodeOutputMethod) || "html".equals(jsonNodeOutputMethod) ||
+                    "text".equals(jsonNodeOutputMethod) || "xhtml".equals(jsonNodeOutputMethod)) {
+                checkAndPut(SaxonOutputKeys.JSON_NODE_OUTPUT_METHOD, jsonNodeOutputMethod, details, precedences, thisPrecedence);
+                //details.put(OutputKeys.METHOD, method);
+            } else {
+                String[] parts;
+                try {
+                    parts = NameChecker.getQNameParts(jsonNodeOutputMethod);
+                    String prefix = parts[0];
+                    if (prefix.isEmpty()) {
+                        compileError("json-node-output-method must be xml, html, xhtml, text, or a prefixed name", "XTSE1570");
+                    } else {
+                        String uri = getURIForPrefix(prefix, false);
+                        if (uri == null) {
+                            undeclaredNamespaceError(prefix, "XTSE0280", "jsonNodeOutputMethod");
+                        }
+                        checkAndPut(SaxonOutputKeys.JSON_NODE_OUTPUT_METHOD, '{' + uri + '}' + parts[1], details, precedences, thisPrecedence);
+                        //details.put(OutputKeys.METHOD, '{' + uri + '}' + parts[1] );
+                    }
+                } catch (QNameException e) {
+                    compileError("Invalid method name. " + e.getMessage(), "XTSE1570");
+                }
+            }
+        }
+
 
         if (byteOrderMark != null) {
             checkAndPut(SaxonOutputKeys.BYTE_ORDER_MARK, byteOrderMark, details, precedences, thisPrecedence);

@@ -19,6 +19,7 @@ import net.sf.saxon.query.QueryResult;
 import net.sf.saxon.serialize.charcode.CharacterSet;
 import net.sf.saxon.serialize.codenorm.Normalizer;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.NumericValue;
@@ -237,19 +238,38 @@ public class JSONEmitter extends SequenceWriter {
         }
     }
 
-    private CharSequence escape(String s) throws XPathException {
-        CharSequence cs = JsonReceiver.escape(s, false, new IntPredicate() {
+    private CharSequence escape(CharSequence cs) throws XPathException {
+        if (characterMap != null) {
+            FastStringBuffer out = new FastStringBuffer(cs.length());
+            cs = characterMap.map(cs, true);
+            String s = cs.toString();
+            int prev = 0;
+            while (true) {
+                int start = s.indexOf(0, prev);
+                if (start >= 0) {
+                    out.append(simpleEscape(s.substring(prev, start)));
+                    int end = s.indexOf(0, start + 1);
+                    out.append(s.substring(start + 1, end));
+                    prev = end + 1;
+                } else {
+                    out.append(simpleEscape(s.substring(prev)));
+                    return out;
+                }
+            }
+        } else {
+            return simpleEscape(cs);
+        }
+    }
+
+    private CharSequence simpleEscape(CharSequence cs) throws XPathException {
+        if (normalizer != null) {
+            cs = normalizer.normalize(cs);
+        }
+        return JsonReceiver.escape(cs, false, new IntPredicate() {
             public boolean matches(int c) {
                 return c < 31 || (c >= 127 && c <= 159) || !characterSet.inCharset(c);
             }
         });
-        if (normalizer != null) {
-            cs = normalizer.normalize(cs);
-        }
-        if (characterMap != null) {
-            cs = characterMap.map(cs, false);
-        }
-        return cs;
     }
 
     private String serializeNode(NodeInfo node) throws XPathException {

@@ -637,7 +637,7 @@ public class Xslt30Transformer {
             if (baseOutputUriWasSet) {
                 out.setSystemId(controller.getBaseOutputURI());
             }
-            controller.setBuildTree(true);
+            setBuildTreeConditionally(destination);
             controller.applyTemplates(selection.getUnderlyingValue(), out);
             destination.close();
         } catch (XPathException e) {
@@ -715,7 +715,7 @@ public class Xslt30Transformer {
             if (baseOutputUriWasSet) {
                 out.setSystemId(controller.getBaseOutputURI());
             }
-            controller.setBuildTree(true);
+            setBuildTreeConditionally(destination);
             controller.callTemplate(templateName.getStructuredQName(), out);
         } catch (XPathException e) {
             if (!e.hasBeenReported()) {
@@ -726,6 +726,18 @@ public class Xslt30Transformer {
                 }
             }
             throw new SaxonApiException(e);
+        }
+    }
+
+    private void setBuildTreeConditionally(Destination destination) {
+        if (destination instanceof Serializer) {
+            String method = ((Serializer) destination).getOutputProperty(Serializer.Property.METHOD);
+            if (method == null) {
+                method = controller.getExecutable().getDefaultOutputProperties().getProperty("method");
+            }
+            if ("json".equals(method) || "adaptive".equals(method)) {
+                controller.setBuildTree(false);
+            }
         }
     }
 

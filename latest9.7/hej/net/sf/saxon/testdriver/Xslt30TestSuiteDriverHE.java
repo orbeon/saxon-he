@@ -617,6 +617,8 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                 controller.setOutputURIResolver(
                         new OutputResolver(env.processor, outcome, false));
                 dest = new XdmDestination();
+            } else {
+                controller.setBuildTree(false);
             }
             if (resultSerialized) {
                 dest = serializer;
