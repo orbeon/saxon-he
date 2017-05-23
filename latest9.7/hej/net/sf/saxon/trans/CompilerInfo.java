@@ -95,6 +95,7 @@ public class CompilerInfo {
         assertionsEnabled = info.assertionsEnabled;
         targetEdition = info.targetEdition;
         patternOptimization = info.patternOptimization;      // project: pattern optimization
+        variableList = new GlobalParameterSet(info.variableList);
     }
 
     /**
