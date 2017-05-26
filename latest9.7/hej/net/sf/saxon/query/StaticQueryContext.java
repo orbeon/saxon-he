@@ -379,7 +379,7 @@ public class StaticQueryContext {
     /**
      * Get the language version
      *
-     * @return the language version. Either "1.0" or "1.1". Default is "1.0".
+     * @return the language version. Either 10, 30, or 31.
      * @since 9.2; changed in 9.3 to return a DecimalValue rather than a string;
      * changed in 9.7 to return an int (30 = "3.0" and so on)
      */

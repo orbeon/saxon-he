@@ -4789,7 +4789,16 @@ public class Configuration implements SourceResolver, NotationSet {
                 return getDefaultStaticQueryContext().getErrorListener().getClass().getName();
 
             } else if (name.equals(FeatureKeys.XQUERY_VERSION)) {
-                return getDefaultStaticQueryContext().getLanguageVersion();
+                int v = getDefaultStaticQueryContext().getLanguageVersion();
+                switch (v) {
+                    case 10:
+                        return "1.0";
+                    case 30:
+                        return "3.0";
+                    case 31:
+                    default:
+                        return "3.1";
+                }
             }
 
         } else if (name.equals(FeatureKeys.XSD_VERSION)) {
