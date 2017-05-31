@@ -158,7 +158,7 @@ public class DOMObjectModel extends TreeModel implements ExternalObjectModel {
                     return StaticProperty.ALLOWS_ZERO_OR_MORE;
                 }
             };
-        } else if (DOMSource.class == sourceClass) {
+        } else if (DOMSource.class.isAssignableFrom(sourceClass)) {
             return new JPConverter() {
                 public Sequence convert(Object obj, XPathContext context) throws XPathException {
                     return unravel((DOMSource) obj, context.getConfiguration());
