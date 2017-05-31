@@ -51,7 +51,7 @@ public class AnalyzeStringFn extends RegexFunction {
         return false;
     }
 
-    private synchronized void init(Configuration config, boolean schemaAware) {
+    private synchronized void init(Configuration config, boolean schemaAware) throws XPathException {
         resultName = new FingerprintedQName("", NamespaceConstant.FN, "analyze-string-result");
         nonMatchName = new FingerprintedQName("", NamespaceConstant.FN, "non-match");
         matchName = new FingerprintedQName("", NamespaceConstant.FN, "match");
@@ -64,6 +64,9 @@ public class AnalyzeStringFn extends RegexFunction {
             matchType = config.getSchemaType(new StructuredQName("", NamespaceConstant.FN, "match-type"));
             groupType = config.getSchemaType(new StructuredQName("", NamespaceConstant.FN, "group-type"));
             groupNrType = BuiltInAtomicType.POSITIVE_INTEGER;
+            if (resultType == null || matchType == null || groupType == null) {
+                throw new XPathException("Schema for analyze-string has not been successfully loaded");
+            }
         }
     }
 
