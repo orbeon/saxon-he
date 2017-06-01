@@ -307,7 +307,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
                     }
                     if (e != TypeHierarchy.DISJOINT || a != TypeHierarchy.DISJOINT) {
                         // it might be an element or attribute
-                        return AnyNodeTest.getInstance();
+                        return in instanceof NodeTest ? AnyNodeTest.getInstance() : AnyItemType.getInstance();
                     } else {
                         // it can't be an element or attribute, so stripping type annotations can't affect it
                         return in;
