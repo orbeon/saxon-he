@@ -28,6 +28,8 @@ import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.SequenceType;
 
+import java.util.ArrayList;
+
 
 /**
  * A LetExpression represents the XQuery construct let $x := expr return expr. It is used
@@ -107,10 +109,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
     @Override
     public void resetLocalStaticProperties() {
         super.resetLocalStaticProperties();
-        references = null;
-//        if (refCount != FilterExpression.FILTERED) {
-//            setRefCount(-1);
-//        }
+        references = new ArrayList<VariableReference>(); // bug 3233
     }
 
     /**
@@ -279,6 +278,18 @@ public class LetExpression extends Assignation implements TailCallReturner {
         if (considerRemoval && references.size() == 1 && ExpressionTool.dependsOnFocus(getSequence())) {
             if (visitor.isOptimizeForStreaming()) {
                 considerRemoval = false;
+            }
+            // Disallow inlining if the focus of the variable reference differs from the containing binding.
+            Expression child = references.get(0);
+            Expression parent = child.getParentExpression();
+            while (parent != null && parent != this) {
+                Operand o = ExpressionTool.findOperand(parent, child);
+                if (o == null || !o.hasSameFocus()) {
+                    considerRemoval = false;
+                    break;
+                }
+                child = parent;
+                parent = child.getParentExpression();
             }
         }
 
