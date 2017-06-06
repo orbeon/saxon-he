@@ -39,14 +39,8 @@ public class ListCastableFunction extends ListConstructorFunction {
      * @return the function item's type
      */
     public FunctionItemType getFunctionItemType() {
-        AtomicType resultType = BuiltInAtomicType.ANY_ATOMIC;
-        if (getMemberType().isAtomicType()) {
-            resultType = (AtomicType) getMemberType();
-        }
-
         return new SpecificFunctionType(
-                new SequenceType[]{SequenceType.ANY_SEQUENCE},
-                SequenceType.makeSequenceType(resultType, StaticProperty.ALLOWS_ZERO_OR_MORE));
+                new SequenceType[]{SequenceType.ANY_SEQUENCE}, SequenceType.SINGLE_BOOLEAN);
     }
 
     /**
