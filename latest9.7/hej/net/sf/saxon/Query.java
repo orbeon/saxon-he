@@ -28,9 +28,11 @@ import net.sf.saxon.trace.XQueryTraceListener;
 import net.sf.saxon.trans.CommandLineOptions;
 import net.sf.saxon.trans.LicenseException;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.type.ConversionResult;
 import net.sf.saxon.type.SchemaException;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.type.ValidationException;
+import net.sf.saxon.value.DateTimeValue;
 import net.sf.saxon.value.DecimalValue;
 import org.xml.sax.InputSource;
 
@@ -397,6 +399,15 @@ public class Query {
             exp.getUnderlyingCompiledQuery().setAllowDocumentProjection(projection);
             final XQueryEvaluator evaluator = exp.load();
             evaluator.setTraceFunctionDestination(traceDestination);
+            if (options.getOptionValue("now") != null) {
+                String now = options.getOptionValue("now");
+                ConversionResult dt = DateTimeValue.makeDateTimeValue(now, config.getConversionRules());
+                if (dt instanceof DateTimeValue) {
+                    evaluator.getUnderlyingQueryContext().setCurrentDateTime((DateTimeValue) dt);
+                } else {
+                    System.err.println("Invalid dateTime: " + now + " (ignored)");
+                }
+            }
             if (uriResolverClass != null) {
                 evaluator.setURIResolver(config.makeURIResolver(uriResolverClass));
             }
