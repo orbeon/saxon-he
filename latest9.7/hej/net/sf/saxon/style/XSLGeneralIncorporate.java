@@ -148,6 +148,7 @@ public abstract class XSLGeneralIncorporate extends StyleElement {
                     }
                     relative = relative.substring(0, hash);
                 }
+                if (fragment != null) {
                 Source source;
                 try {
                     source = resolver.resolve(relative, getBaseURI());
@@ -161,7 +162,7 @@ public abstract class XSLGeneralIncorporate extends StyleElement {
                     source = config.getSystemURIResolver().resolve(relative, getBaseURI());
                 }
 
-                if (fragment != null) {
+
                     final String fragmentFinal = fragment;
                     FilterFactory factory = new FilterFactory() {
                         public ProxyReceiver makeFilter(Receiver next) {
@@ -170,12 +171,13 @@ public abstract class XSLGeneralIncorporate extends StyleElement {
                     };
                     source = AugmentedSource.makeAugmentedSource(source);
                     ((AugmentedSource) source).addFilter(factory);
+                    // check for recursion
+                    if (checkForRecursion(importer, source)) {
+                        return null;
+                    }
                 }
 
-                // check for recursion
-                if (checkForRecursion(importer, source)) {
-                    return null;
-                }
+
                 //DocumentImpl includedDoc = StylesheetModule.loadStylesheetModule(source, getCompilation());
 
                 // allow the included document to use "Literal Result Element as Stylesheet" syntax
