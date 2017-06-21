@@ -187,13 +187,13 @@ public class DotNetRegularExpression implements RegularExpression {
                     flags |= RegexOptions.Multiline;
                     break;
                 case 'i':
-                    // flags |= RegexOptions.IgnoreCase;
+                    flags |= RegexOptions.IgnoreCase;
                     break;
                 case 's':
                     flags |= RegexOptions.Singleline;
                     break;
                 case 'x':
-                    //flags |= RegexOptions.IgnorePatternWhitespace;
+                    flags |= RegexOptions.IgnorePatternWhitespace;
                     break;
                 default:
                     XPathException err = new XPathException("Invalid character '" + c + "' in regular expression flags");
