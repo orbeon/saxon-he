@@ -75,7 +75,8 @@ public abstract class StyleElement extends ElementImpl {
     public static final int REPORT_ALWAYS = 1;
     public static final int REPORT_UNLESS_FORWARDS_COMPATIBLE = 2;
     public static final int REPORT_IF_INSTANTIATED = 3;
-    public static final int REPORT_UNLESS_FALLBACK_AVAILABLE = 4;
+    public static final int REPORT_STATICALLY_UNLESS_FALLBACK_AVAILABLE = 4;
+    public static final int REPORT_DYNAMICALLY_UNLESS_FALLBACK_AVAILABLE = 5;
 
     protected int actionsCompleted = 0;
     public static final int ACTION_VALIDATE = 1;
@@ -1710,7 +1711,7 @@ public abstract class StyleElement extends ElementImpl {
             } else if (reportingCircumstances == REPORT_UNLESS_FORWARDS_COMPATIBLE
                     && !forwardsCompatibleModeIsEnabled()) {
                 compileError(validationError);
-            } else if (reportingCircumstances == REPORT_UNLESS_FALLBACK_AVAILABLE) {
+            } else if (reportingCircumstances == REPORT_STATICALLY_UNLESS_FALLBACK_AVAILABLE) {
                 if (!forwardsCompatibleModeIsEnabled()) {
                     compileError(validationError);
                 } else {
@@ -1725,6 +1726,15 @@ public abstract class StyleElement extends ElementImpl {
                     }
                     if (!hasFallback) {
                         compileError(validationError);
+                    }
+                }
+
+            } else if (reportingCircumstances == REPORT_DYNAMICALLY_UNLESS_FALLBACK_AVAILABLE) {
+                AxisIterator kids = iterateAxis(AxisInfo.CHILD);
+                NodeInfo child;
+                while ((child = kids.next()) != null) {
+                    if (child instanceof XSLFallback) {
+                        ((XSLFallback) child).validateSubtree(decl, false);
                     }
                 }
             }
