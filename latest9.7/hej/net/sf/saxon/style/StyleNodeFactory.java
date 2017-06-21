@@ -215,7 +215,7 @@ public class StyleNodeFactory implements NodeFactory {
                         temp.processStandardAttributes("");
                         if (temp.getEffectiveVersion() > 20) {
                             temp.setValidationError(new XPathException("Unknown XSLT instruction"),
-                                    StyleElement.REPORT_UNLESS_FALLBACK_AVAILABLE);
+                                    StyleElement.REPORT_STATICALLY_UNLESS_FALLBACK_AVAILABLE);
                         } else {
                             temp.setValidationError(new XPathException("Unknown XSLT instruction"),
                                     StyleElement.REPORT_IF_INSTANTIATED);
@@ -267,7 +267,7 @@ public class StyleNodeFactory implements NodeFactory {
                 ((XPathException) reason).setErrorCode("XTSE0010");
                 ((XPathException) reason).setIsStaticError(true);
                 actualClass = AbsentExtensionElement.class;
-                temp.setValidationError(reason, StyleElement.REPORT_UNLESS_FALLBACK_AVAILABLE);
+                temp.setValidationError(reason, StyleElement.REPORT_STATICALLY_UNLESS_FALLBACK_AVAILABLE);
 
             } else if (temp.isExtensionNamespace(uri) && !toplevel) {
 
@@ -282,7 +282,7 @@ public class StyleNodeFactory implements NodeFactory {
                     temp.setValidationError(reason, StyleElement.REPORT_ALWAYS);
                 } else {
                     reason = new XPathException("Unknown extension instruction", "XTDE1450", temp);
-                    temp.setValidationError(reason, StyleElement.REPORT_IF_INSTANTIATED);
+                    temp.setValidationError(reason, StyleElement.REPORT_DYNAMICALLY_UNLESS_FALLBACK_AVAILABLE);
                 }
 
             } else {
