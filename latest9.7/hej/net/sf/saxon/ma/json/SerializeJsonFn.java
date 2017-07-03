@@ -117,7 +117,7 @@ public class SerializeJsonFn extends SystemFunction implements Callable {
         } else if (val.getLength() == 1) {
             writeItem(SequenceTool.asItem(val), flags, buffer, context);
         } else {
-            SequenceIterator iter = value.iterate();
+            SequenceIterator iter = val.iterate();
             buffer.append('[');
             indent(flags, buffer);
             Item member;
