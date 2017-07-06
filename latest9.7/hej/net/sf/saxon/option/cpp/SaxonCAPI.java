@@ -44,7 +44,7 @@ public class SaxonCAPI {
     protected XdmNode doc = null;
     protected List<SaxonCException> saxonExceptions = new ArrayList<SaxonCException>();
     protected List<SaxonCException> saxonWarnings = new ArrayList<SaxonCException>();
-    protected static boolean debug = false;
+    public static boolean debug = false;
     protected Serializer serializer = null;
     protected InputStream in = null;
     protected boolean schemaAware = false;
