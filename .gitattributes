@@ -3725,7 +3725,6 @@ latest9.8/hej/net/sf/saxon/pattern/BasePatternWithPredicate.java svn_eol_002dsty
 latest9.8/hej/net/sf/saxon/pattern/BooleanExpressionPattern.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/pattern/CombinedNodeTest.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/pattern/ContentTypeTest.java svn_eol_002dstyle=native
-latest9.8/hej/net/sf/saxon/pattern/CurrentGroupPattern.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/pattern/DocumentNodeTest.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/pattern/ExceptPattern.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/pattern/GeneralNodePattern.java svn_eol_002dstyle=native
