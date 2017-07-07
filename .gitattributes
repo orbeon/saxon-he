@@ -3940,7 +3940,6 @@ latest9.8/hej/net/sf/saxon/stax/package.html svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/style/AbsentExtensionElement.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/style/AttributeValueTemplate.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/style/Compilation.java svn_eol_002dstyle=native
-latest9.8/hej/net/sf/saxon/style/ComponentAcceptor.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/style/ComponentDeclaration.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/style/DataElement.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/style/ExpressionContext.java svn_eol_002dstyle=native
