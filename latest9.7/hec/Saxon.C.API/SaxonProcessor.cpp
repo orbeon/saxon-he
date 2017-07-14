@@ -384,11 +384,10 @@ int SaxonProcessor::getNodeKind(jobject obj){
 
 	jobject nodeKindObj = (SaxonProcessor::sxn_environ->env->CallObjectMethod(obj, nodeKindMID));
 	if(!nodeKindObj) {
-		std::cout<<"saxonProc nodeKind error"<<std::endl;
+		std::cerr<<"saxonProc nodeKind error"<<std::endl;
 		return 0;
 	}
 	jclass xdmUtilsClass = lookForClass(SaxonProcessor::sxn_environ->env, "Lnet/sf/saxon/option/cpp/XdmUtils;");
-
 
 	jmethodID mID2 = (jmethodID) SaxonProcessor::sxn_environ->env->GetStaticMethodID(xdmUtilsClass,"convertNodeKindType", "(Lnet/sf/saxon/s9api/XdmNodeKind;)I");
 
@@ -401,7 +400,6 @@ int SaxonProcessor::getNodeKind(jobject obj){
 		return 0;	
 	}
 	int nodeKind = (long)(SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(xdmUtilsClass, mID2, nodeKindObj));
-
 	return nodeKind;
 }
 

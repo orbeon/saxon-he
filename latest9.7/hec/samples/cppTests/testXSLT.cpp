@@ -4,12 +4,22 @@
 #include "../../Saxon.C.API/XdmValue.h"
 #include "../../Saxon.C.API/XdmItem.h"
 #include "../../Saxon.C.API/XdmNode.h"
+#include "cppExtensionFunction.cpp"
 #include <string>
 
 // TODO: write test case for checking parameters which are null
 
 
 using namespace std;
+
+JNINativeMethod cppMethods[] =
+{
+    {
+         "_phpCall",
+         "(Ljava/lang/String;[Ljava/lang/Object;[Ljava/lang/String;)Ljava/lang/Object;",
+         (void *)&cppNativeCall
+    }
+};
 
 
 /*
@@ -31,6 +41,31 @@ void testTransformToString1(SaxonProcessor * processor, XsltProcessor * trans){
 	delete output;
 
 }
+
+/*
+* Test transform to String. Source and stylesheet supplied as arguments
+*/
+void testTransformToStringExtensionFunc(SaxonProcessor * processor, XsltProcessor * trans){
+	
+  cout<<endl<<"Test: TransformToStringExtensionFunc:"<<endl;
+trans->setProperty("extc", "/home/ond1/work/new-svn/latest9.7-hec/hec/samples/cppTests/cppExtensionFunction");
+cout<<endl<<"Test: checkpoint 1:"<<endl;
+processor->registerNativeMethods(SaxonProcessor::sxn_environ->env, "com/saxonica/functions/extfn/PhpCall$PhpFunctionCall",
+    cppMethods, sizeof(cppMethods) / sizeof(cppMethods[0]));
+cout<<endl<<"Test: checkpoint 2:"<<endl;
+    const char * output = trans->transformFileToString("cat.xml", "testExtension.xsl");
+   if(output == NULL) {
+      printf("result is null \n");
+
+    }else {
+      printf("%s", output);
+      printf("result is OK \n");
+    }
+      fflush(stdout);
+	delete output;
+
+}
+
 
 
 /*
@@ -490,7 +525,7 @@ int main()
     processor->setConfigurationProperty("http://saxon.sf.net/feature/generateByteCode", "off");
 
     XsltProcessor * trans = processor->newXsltProcessor();
-    exampleSimple1Err(trans);
+  /*  exampleSimple1Err(trans);
    exampleSimple1(trans);
     exampleSimple2(trans);
     exampleSimple3(processor, trans);
@@ -517,7 +552,9 @@ int main()
 
     testXdmNodeOutput(trans);
 
-    exampleParam(processor, trans);
+    exampleParam(processor, trans);*/
+
+testTransformToStringExtensionFunc(processor, trans);
 
     delete trans;
 delete processor;

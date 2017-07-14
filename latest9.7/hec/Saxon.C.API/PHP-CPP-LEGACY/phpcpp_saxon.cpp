@@ -93,10 +93,10 @@ jobject JNICALL PHP_SaxonProcessor::phpNativeCall
 	
 	SaxonProcessor::sxn_environ->env->ReleaseStringUTFChars(funcName, nativeString);
 if(data == NULL) {
-std::cerr<<"checkpoint in phpNativeCall - data is NULL"<<nativeString<<std::endl;
+
 	return NULL;
 } else {
-std::cerr<<"checkpoint in phpNativeCall - data is not null"<<nativeString<<std::endl;
+
 const char * dataChar = data; 
 jstring jstrBuf = SaxonProcessor::sxn_environ->env->NewStringUTF(dataChar);
 	return funcName;

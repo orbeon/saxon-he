@@ -30,6 +30,17 @@ class XdmItem;
 
 typedef enum eXdmType { XDM_VALUE=1, XDM_ITEM=2, XDM_NODE=3, XDM_ATOMIC_VALUE=4, XDM_FUNCTION_ITEM=5 } XDM_TYPE;
 
+typedef enum saxonTypeEnum
+{
+	enumNode,
+	enumString,
+	enumInteger,
+	enumDouble,
+	enumFloat,
+	enumBool,
+	enumArrXdmValue
+} PRIMITIVE_TYPE;
+
 class XdmValue {
 
 

@@ -401,7 +401,20 @@ int getIntegerValue(sxnc_environment environ, sxnc_value value,  int failureVal)
 		return failureVal;	
 	}}
 
-bool getBooleanValue(sxnc_environment environ, sxnc_value value){return false;}
+bool getBooleanValue(sxnc_environment environ, sxnc_value value){
+	jclass booleanClass = lookForClass(environ.env,"java/lang/Boolean");
+	static jmethodID strMID = NULL;
+	if(!strMID) {
+		strMID = (jmethodID)(*(environ.env))->GetMethodID(environ.env, booleanClass, "booleanValue", "()Z");
+		if(!strMID) {
+	 		 printf("\nError: Boolean %s() not found\n","booleanValue");
+  	 		 fflush (stdout);
+         		 return false;
+		}
+        }
+	jboolean result = (jboolean)((*(environ.env))->CallBooleanMethod(environ.env, value.xdmvalue, strMID));
+	return (bool)result;
+}
 
 long getLongValue(sxnc_environment environ, sxnc_value value,  long failureVal){
 	const char * valueStr = getStringValue(environ, value);
@@ -419,7 +432,22 @@ long getLongValue(sxnc_environment environ, sxnc_value value,  long failureVal){
 	}
 }
 
-float getFloatValue(sxnc_environment environ, sxnc_value value,  float failureVal){return 0;}
+float getFloatValue(sxnc_environment environ, sxnc_value value,  float failureVal){
+	jclass floatClass = lookForClass(environ.env,"java/lang/Float");
+	static jmethodID strMID = NULL;
+	if(!strMID) {
+		strMID = (jmethodID)(*(environ.env))->GetMethodID(environ.env, floatClass, "floatValue", "()F");
+		if(!strMID) {
+	 		 printf("\nError: Float %s() not found\n","floatValue");
+  	 		 fflush (stdout);
+         		 return 0;
+		}
+        }
+	jfloat result = (jfloat)((*(environ.env))->CallFloatMethod(environ.env, value.xdmvalue, strMID));
+	return (float)result;
+
+
+}
 
 double getDoubleValue(sxnc_environment environ, sxnc_value value, double failureVal){
 	const char * valueStr = getStringValue(environ, value);

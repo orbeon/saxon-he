@@ -17,7 +17,6 @@ bool XdmNode::isAtomic() {
 } 
     
     XDM_NODE_KIND XdmNode::getNodeKind(){
-
 	if(nodeKind == UNKNOWN && proc != NULL) {
 		nodeKind = static_cast<XDM_NODE_KIND>(proc->getNodeKind(value->xdmvalue));
 	} 

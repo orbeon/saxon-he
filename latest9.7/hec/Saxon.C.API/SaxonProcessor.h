@@ -23,7 +23,7 @@
 #endif
 
 //#define DEBUG //remove
-#define CVERSION "1.0.2"
+#define CVERSION "1.1.0"
 #include <string>
 #include <iostream>
 #include <sstream>  
@@ -512,7 +512,54 @@ public:
     const char * version();
 
 /*
+     * Add a native method.
+     * @param name of the native method
+     * @param signature of the native method
+     * @param fnPtr Pointer to the native method
+ */
+void addNativeMethod(char *name, char* signature, void * fnPtr){
+
+	JNINativeMethod method;
+	method.name = name;
+	method.signature = signature;
+	method.fnPtr = fnPtr;
+
+	nativeMethodVect.push_back(method);
+
+	
+
+}
+
+/*
+     * Register several native methods for one class.
+     * @param libName name of the library which contains the function(s). Loads the library
+     * @param gMethods Register native methods. Default is NULL, also NULL allowed in which cause assumption is made the user has added native methods using the method addNativeMethod .
+ * @return bool success of registered native method
+ */
+bool registerCPPFunction(char * libName, JNINativeMethod * gMethods=NULL){
+	if(libName != NULL) {
+		setConfigurationProperty("extc", libName);
+			
+	}
+
+	if(gMethods == NULL && nativeMethodVect.size()==0) {
+		//error
+	} else {
+		if(gMethods == NULL) {
+			//copy vector to gMethods
+			gMethods = new JNINativeMethod[nativeMethodVect.size()];
+		} 
+		registerNativeMethods(sxn_environ->env, "com/saxonica/functions/extfn/CppCall$PhpFunctionCall",
+    gMethods, sizeof(gMethods) / sizeof(gMethods[0]));
+	
+
+	}
+	
+}
+
+/*
  * Register several native methods for one class.
+ * @return bool success of registered native method
  */
 static bool registerNativeMethods(JNIEnv* env, const char* className,
     JNINativeMethod* gMethods, int numMethods)
@@ -529,6 +576,8 @@ static bool registerNativeMethods(JNIEnv* env, const char* className,
     }
     return true;
 }
+
+
 
 
 
@@ -558,6 +607,9 @@ protected:
 	bool licensei; /*!< indicates whether the Processor requires a Saxon that needs a license file (i.e. Saxon-EE) other a Saxon-HE Processor is created  */
 	bool closed;
 	SaxonApiException* exception; /*!< Pointer to any potential exception thrown */
+
+	JNINativeMethod * nativeMethods;
+	std::vector<JNINativeMethod> nativeMethodVect; /*!< Vector of native methods defined by user */
 
 private:
 

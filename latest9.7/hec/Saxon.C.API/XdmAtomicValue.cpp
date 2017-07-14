@@ -44,7 +44,7 @@
 					NULL);
 		
 		//SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
-
+			valType = stri;
 			return stri;
 		}
 
