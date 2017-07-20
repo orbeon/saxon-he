@@ -3576,7 +3576,6 @@ latest9.8/hej/net/sf/saxon/expr/accum/AccumulatorRegistry.java svn_eol_002dstyle
 latest9.8/hej/net/sf/saxon/expr/accum/AccumulatorRule.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/expr/accum/FailedAccumulatorData.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/expr/accum/IAccumulatorData.java svn_eol_002dstyle=native
-latest9.8/hej/net/sf/saxon/expr/accum/IAccumulatorManager.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/expr/accum/VirtualAccumulatorData.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/expr/accum/package.html svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/expr/flwor/Clause.java svn_eol_002dstyle=native
