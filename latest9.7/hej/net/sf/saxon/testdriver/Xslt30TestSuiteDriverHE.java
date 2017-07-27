@@ -963,6 +963,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         alwaysOn.add("feature/dtd");
         alwaysOn.add("feature/backwards_compatibility");
         alwaysOn.add("feature/built_in_derived_types");
+        alwaysOn.add("feature/remote_http");
         alwaysOn.add("feature/xsl-stylesheet-processing-instruction");
         alwaysOn.add("available_documents");
         alwaysOn.add("ordinal_scheme_name");
