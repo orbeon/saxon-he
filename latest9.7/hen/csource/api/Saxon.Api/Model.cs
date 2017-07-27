@@ -46,6 +46,7 @@ using JType = net.sf.saxon.type.Type;
 using JStringToDouble = net.sf.saxon.type.StringToDouble;
 using JSequenceTool =  net.sf.saxon.om.SequenceTool;
 using JExplicitLocation = net.sf.saxon.expr.parser.ExplicitLocation;
+using JObjectValue = net.sf.saxon.value.ObjectValue;
 
 
 namespace Saxon.Api
@@ -161,6 +162,11 @@ namespace Saxon.Api
             else if (value is JOne)
             {
                 return Wrap(((JOne)value).head());
+            }
+            else if (value is JObjectValue)
+            {
+                result = new XdmExternalObjectValue(first);
+                return result;
             }
             else
             {
@@ -352,7 +358,7 @@ namespace Saxon.Api
         /// <param name="o">the supplied .NET object</param>
         public XdmExternalObjectValue(object o)
         {
-            value = new net.sf.saxon.value.ObjectValue(o);
+            value = new JObjectValue(o);
         }
 
         /// <summary>
@@ -372,7 +378,7 @@ namespace Saxon.Api
         /// <returns>the wrapped object</returns>
         public object GetExternalObject()
         {
-            return ((net.sf.saxon.value.ObjectValue)value).getObject();
+            return ((JObjectValue)value).getObject();
         }
 
         /// <summary>
