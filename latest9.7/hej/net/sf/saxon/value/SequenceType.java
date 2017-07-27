@@ -16,9 +16,8 @@ import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * SequenceType: a sequence type consists of a primary type, which indicates the type of item,
@@ -34,7 +33,7 @@ public final class SequenceType {
     private int cardinality;    // the required cardinality
 
     private static Map<ItemType, SequenceType[]> pool =
-            Collections.synchronizedMap(new HashMap<ItemType, SequenceType[]>(50));
+            new ConcurrentHashMap<ItemType, SequenceType[]>(50);
 
     /**
      * A type that allows any sequence of items
