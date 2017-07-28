@@ -165,7 +165,7 @@ namespace Saxon.Api
             }
             else if (value is JObjectValue)
             {
-                result = new XdmExternalObjectValue(first);
+                result = new XdmExternalObjectValue(value);
                 return result;
             }
             else
