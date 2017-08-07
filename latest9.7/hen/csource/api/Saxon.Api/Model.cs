@@ -450,7 +450,7 @@ namespace Saxon.Api
 
         public XdmAtomicValue(decimal d)
         {
-            this.value = new JDecimalValue(new JBigDecimal(d.ToString()));
+            this.value = new JDecimalValue(new JBigDecimal(d.ToString(System.Globalization.CultureInfo.InvariantCulture)));
         }
 
         /// <summary>
