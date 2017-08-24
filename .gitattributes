@@ -3054,6 +3054,7 @@ latest9.8/hej/javax/xml/xquery/XQSequenceType.java svn_eol_002dstyle=native
 latest9.8/hej/javax/xml/xquery/XQStackTraceElement.java svn_eol_002dstyle=native
 latest9.8/hej/javax/xml/xquery/XQStackTraceVariable.java svn_eol_002dstyle=native
 latest9.8/hej/javax/xml/xquery/XQStaticContext.java svn_eol_002dstyle=native
+latest9.8/hej/net/sf/saxon/BasicTransformerFactory.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/Configuration.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/Controller.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/Platform.java svn_eol_002dstyle=native
