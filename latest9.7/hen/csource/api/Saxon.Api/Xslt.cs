@@ -1039,13 +1039,19 @@ namespace Saxon.Api
         public XdmNode InitialContextNode
         {
             get { return (initialContextNode == null ? null : (XdmNode)XdmValue.Wrap(initialContextNode)); }
-            set { initialContextNode = (value == null ? null : (JNodeInfo)value.Unwrap());
-                JNodeInfo doc = initialContextNode.getRoot();
-                if (doc != null)
-                {
-                    controller.registerDocument(doc.getTreeInfo(), (doc.getBaseURI() == null ? null : new JDocumentURI(doc.getBaseURI())));
+            set {
+                if (value == null) {
+                    initialContextNode = null;
+                    controller.setGlobalContextItem(null);
+                } else {
+                    initialContextNode = (JNodeInfo)value.Unwrap();
+                    JNodeInfo doc = initialContextNode.getRoot();
+                    if (doc != null)
+                    {
+                        controller.registerDocument(doc.getTreeInfo(), (doc.getBaseURI() == null ? null : new JDocumentURI(doc.getBaseURI())));
+                    }
+                    controller.setGlobalContextItem(doc);
                 }
-                controller.setGlobalContextItem(doc);
             }
         }
 
