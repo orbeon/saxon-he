@@ -2645,6 +2645,7 @@ latest9.8/hec/command/buildpec-command.sh svn_eol_002dstyle=native
 latest9.8/hec/command/query svn_mime_002dtype=application%2Foctet-stream
 latest9.8/hec/command/transform svn_mime_002dtype=application%2Foctet-stream
 latest9.8/hec/command/validate svn_mime_002dtype=application%2Foctet-stream
+latest9.8/hec/php-library-module/php5/64-bit/saxon.so svn_mime_002dtype=application%2Foctet-stream
 latest9.8/hec/php-library-module/php5/saxon.so svn_mime_002dtype=application%2Foctet-stream
 latest9.8/hec/samples/cTests/build-linux.sh svn_eol_002dstyle=native
 latest9.8/hec/samples/cTests/build.sh svn_eol_002dstyle=native
