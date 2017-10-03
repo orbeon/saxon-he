@@ -219,7 +219,11 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
         for (int i = 0; i < args.length; i++) {
             args[i] = getArg(i).copy(rebindings);
         }
-        return new SystemFunctionCall(getTargetFunction(), args);
+        SystemFunction target = getTargetFunction();
+        if (target instanceof StatefulSystemFunction) {
+            target = ((StatefulSystemFunction) target).copy();
+        }
+        return target.makeFunctionCall(args);
     }
 
     /**
