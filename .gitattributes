@@ -4379,6 +4379,7 @@ latest9.8/hej/net/sf/saxon/serialize/HTMLURIEscaper.java svn_eol_002dstyle=nativ
 latest9.8/hej/net/sf/saxon/serialize/HexCharacterReferenceGenerator.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/serialize/ImplicitResultChecker.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/serialize/JSONEmitter.java svn_eol_002dstyle=native
+latest9.8/hej/net/sf/saxon/serialize/JSONWriter.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/serialize/MessageEmitter.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/serialize/MessageWarner.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/serialize/MetaTagAdjuster.java svn_eol_002dstyle=native
