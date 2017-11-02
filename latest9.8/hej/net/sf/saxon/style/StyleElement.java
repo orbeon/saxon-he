@@ -2072,8 +2072,9 @@ public abstract class StyleElement extends ElementImpl {
                     // handle literal text nodes by generating an xsl:value-of instruction, unless expand-text is enabled
                     AxisIterator lookahead = node.iterateAxis(AxisInfo.FOLLOWING_SIBLING);
                     NodeInfo sibling = lookahead.next();
-                    if (!(sibling instanceof XSLLocalParam || sibling instanceof XSLSort)) {
-                        // The test for XSLParam and XSLSort is to eliminate whitespace nodes that have been retained
+                    if (!(sibling instanceof XSLLocalParam || sibling instanceof XSLSort ||
+                                  sibling instanceof XSLContextItem || sibling instanceof XSLOnCompletion)) {
+                        // The test for XSLParam and XSLSort (etc) is to eliminate whitespace nodes that have been retained
                         // because of xml:space="preserve"
                         Expression text = new ValueOf(new StringLiteral(node.getStringValue()), false, false);
                         text.setLocation(allocateLocation());
