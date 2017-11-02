@@ -63,6 +63,7 @@ public class ShallowCopyRuleSet implements BuiltInRuleSet {
                     XPathContextMajor c2 = context.newContext();
                     c2.setOrigin(this);
                     c2.setCurrentIterator(iter);
+                    c2.setCurrentComponent(context.getCurrentMode());
                     TailCall tc = context.getCurrentMode().getActor().applyTemplates(parameters, tunnelParams, c2, locationId);
                     while (tc != null) {
                         tc = tc.processLeavingTail();
@@ -77,6 +78,7 @@ public class ShallowCopyRuleSet implements BuiltInRuleSet {
                     NamespaceIterator.sendNamespaces(node, out);
 
                     XPathContextMajor c2 = context.newContext();
+                    c2.setCurrentComponent(context.getCurrentMode());
 
                     // apply-templates to all attributes
                     AxisIterator attributes = node.iterateAxis(AxisInfo.ATTRIBUTE);
