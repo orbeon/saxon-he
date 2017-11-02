@@ -62,6 +62,7 @@ public class TextOnlyCopyRuleSet implements BuiltInRuleSet {
                     XPathContextMajor c2 = context.newContext();
                     c2.setOrigin(this);
                     c2.setCurrentIterator(iter);
+                    c2.setCurrentComponent(c2.getCurrentMode());  // Bug 3508
                     TailCall tc = c2.getCurrentMode().getCode().applyTemplates(parameters, tunnelParams, c2, locationId);
                     while (tc != null) {
                         tc = tc.processLeavingTail();
