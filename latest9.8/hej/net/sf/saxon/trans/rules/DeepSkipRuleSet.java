@@ -8,9 +8,11 @@
 package net.sf.saxon.trans.rules;
 
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.XPathContextMajor;
 import net.sf.saxon.expr.instruct.ParameterSet;
+import net.sf.saxon.expr.instruct.TailCall;
 import net.sf.saxon.expr.parser.Location;
-import net.sf.saxon.om.Item;
+import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.Type;
 
@@ -48,7 +50,18 @@ public class DeepSkipRuleSet implements BuiltInRuleSet {
     public void process(Item item, ParameterSet parameters,
                         ParameterSet tunnelParams, XPathContext context,
                         Location locationId) throws XPathException {
-        // do nothing
+        if (item instanceof NodeInfo && ((NodeInfo)item).getNodeKind() == Type.DOCUMENT) {
+            FocusIterator iter = new FocusTrackingIterator(((NodeInfo) item).iterateAxis(AxisInfo.CHILD));
+            XPathContextMajor c2 = context.newContext();
+            c2.setOrigin(this);
+            c2.setCurrentIterator(iter);
+            c2.setCurrentComponent(c2.getCurrentMode());
+            TailCall tc = c2.getCurrentMode().getActor().applyTemplates(parameters, tunnelParams, c2, locationId);
+            while (tc != null) {
+                tc = tc.processLeavingTail();
+            }
+        }
+        // otherwise, do nothing
     }
 
     /**
