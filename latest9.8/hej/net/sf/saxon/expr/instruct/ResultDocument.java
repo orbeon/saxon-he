@@ -410,7 +410,9 @@ public class ResultDocument extends Instruction
         }
 
         Properties computedLocalProps = gatherOutputProperties(context);
-        computedLocalProps.setProperty(SaxonOutputKeys.PARAMETER_DOCUMENT_BASE_URI, getStaticBaseURIString());
+        if (getStaticBaseURIString() != null) {
+            computedLocalProps.setProperty(SaxonOutputKeys.PARAMETER_DOCUMENT_BASE_URI, getStaticBaseURIString());
+        }
         String nextInChain = computedLocalProps.getProperty(SaxonOutputKeys.NEXT_IN_CHAIN);
         //TODO: reinstate this code
 //        if (nextInChain != null && nextInChain.length() > 0) {
