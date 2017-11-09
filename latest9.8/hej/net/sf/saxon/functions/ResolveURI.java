@@ -230,7 +230,7 @@ public class ResolveURI extends SystemFunction {
                         return makeAbsolute(relativeURI, expandedBase);
                     }
                 }
-            } else if (base != null && (base.startsWith("jar:") || base.startsWith("file:////"))) {
+            } else if (base.startsWith("jar:") || base.startsWith("file:////")) {
 
                 // jar: URIs can't be resolved by the java.net.URI class, because they don't actually
                 // conform with the RFC standards for hierarchic URI schemes (quite apart from not being
@@ -249,8 +249,11 @@ public class ResolveURI extends SystemFunction {
                 } catch (MalformedURLException err) {
                     throw new URISyntaxException(base + " " + relativeURI, err.getMessage());
                 }
-            } else if (base != null && base.startsWith("classpath:")) {
-                absoluteURI = new URI("classpath:" + relativeURI);
+            } else if (base.startsWith("classpath:")) {
+                absoluteURI = new URI(relativeURI);
+                if (!absoluteURI.isAbsolute()) {
+                    absoluteURI = new URI("classpath:" + relativeURI);
+                }
             } else {
                 URI baseURI;
                 try {
