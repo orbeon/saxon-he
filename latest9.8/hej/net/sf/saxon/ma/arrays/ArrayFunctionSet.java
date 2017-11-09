@@ -162,6 +162,22 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
         return "array";
     }
 
+    /**
+     * Check that a number proposed for use as a subscript is greater than zero and less than
+     * the maximum subscript allowed by the implementation (2^31-1), returning the value
+     * as a Java int
+     * @param subscript the proposed subscript
+     * @return the proposed subscript as an int, if it is in range
+     * @throws XPathException if the subscript is 0, negative, or outside the permitted range
+     */
+    private static int checkSubscript(IntegerValue subscript) throws XPathException {
+        int index = subscript.asSubscript();
+        if (index <= 0) {
+            throw new XPathException("Array subscript " + subscript.getStringValue() + " is out of range", "FOAY0001");
+        }
+        return index;
+    }
+
 
     /**
      * Implementation of the extension function array:append(array, item()*) => array
@@ -315,7 +331,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             IntegerValue index = (IntegerValue) arguments[1].head();
-            return array.get((int)index.longValue() - 1);
+            return array.get(checkSubscript(index) - 1);
         }
 
     }
@@ -345,9 +361,9 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             assert array != null;
-            int index = (int)((IntegerValue) arguments[1].head()).longValue() - 1;
+            int index = checkSubscript((IntegerValue) arguments[1].head()) - 1;
             if (index < 0 || index > array.arrayLength()){
-                throw new XPathException("Specified position is not in range","FOAY0001");
+                throw new XPathException("Insertion position " + (index+1) + " is not in range","FOAY0001");
             }
             Sequence newMember = arguments[2];
             List<Sequence> list = new ArrayList<Sequence>(1);
@@ -390,9 +406,9 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
         @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
-            int index = (int) ((IntegerValue) arguments[1].head()).longValue();
+            int index = checkSubscript((IntegerValue) arguments[1].head()) - 1;
             GroundedValue newVal = SequenceExtent.makeSequenceExtent(arguments[2].iterate());
-            return array.put(index-1, newVal);
+            return array.put(index, newVal);
         }
 
     }
@@ -406,9 +422,9 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             if (arguments[1] instanceof IntegerValue) {
-                int index = (int) ((IntegerValue) arguments[1]).longValue() - 1;
+                int index = checkSubscript((IntegerValue) arguments[1]) - 1;
                 if (index < 0 || index >= array.arrayLength()) {
-                    throw new XPathException("Position " + index + " is not in range", "FOAY0001");
+                    throw new XPathException("Position " + (index+1) + " is not in range", "FOAY0001");
                 }
                 return array.remove(index);
             }
@@ -416,9 +432,9 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
             IntegerValue pos;
             IntSet positions = new IntHashSet();
             while ((pos = (IntegerValue) iter.next()) != null) {
-                int index = (int) pos.longValue() - 1;
+                int index = checkSubscript(pos) - 1;
                 if (index < 0 || index >= array.arrayLength()) {
-                    throw new XPathException("Position " + index + " is not in range", "FOAY0001");
+                    throw new XPathException("Position " + (index+1) + " is not in range", "FOAY0001");
                 }
                 positions.add(index);
             }
@@ -467,10 +483,15 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             assert array != null;
-            int start = (int) ((IntegerValue) arguments[1].head()).longValue();
+            int start = checkSubscript((IntegerValue) arguments[1].head());
             int length;
             if (arguments.length == 3) {
-                length = (int) ((IntegerValue) arguments[2].head()).longValue();
+                IntegerValue len = ((IntegerValue) arguments[2].head());
+                int signum = len.signum();
+                if (signum < 0) {
+                    throw new XPathException("Specified length of subarray is less than zero", "FOAY0002");
+                }
+                length = signum == 0 ? 0 : checkSubscript(len);
             }
             else {
                 length = array.arrayLength() - start + 1;
@@ -480,9 +501,6 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
             }
             if (start > array.arrayLength() + 1) {
                 throw new XPathException("Start position is out of bounds","FOAY0001");
-            }
-            if (length < 0) {
-                throw new XPathException("Specified length of subarray is less than zero","FOAY0002");
             }
             if (start + length > array.arrayLength() + 1) {
                 throw new XPathException("Specified length of subarray is too great for start position given","FOAY0001");
