@@ -12,6 +12,8 @@ import net.sf.saxon.expr.XPathContextMajor;
 import net.sf.saxon.expr.instruct.ParameterSet;
 import net.sf.saxon.expr.instruct.TailCall;
 import net.sf.saxon.expr.parser.Location;
+import net.sf.saxon.ma.arrays.ArrayFunctionSet;
+import net.sf.saxon.ma.arrays.ArrayItem;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.rules.BuiltInRuleSet;
 import net.sf.saxon.type.Type;
@@ -84,6 +86,18 @@ public class ShallowSkipRuleSet implements BuiltInRuleSet {
                 case Type.PROCESSING_INSTRUCTION:
                 case Type.NAMESPACE:
                     // no action
+            }
+        } else if (item instanceof ArrayItem) {
+            Sequence seq = ArrayFunctionSet.ArrayToSequence.toSequence((ArrayItem) item);
+            SequenceIterator members = seq.iterate();
+            FocusIterator iter = new FocusTrackingIterator(members);
+            XPathContextMajor c2 = context.newContext();
+            c2.setOrigin(this);
+            c2.setCurrentIterator(iter);
+            c2.setCurrentComponent(c2.getCurrentMode()); 
+            TailCall tc = c2.getCurrentMode().getActor().applyTemplates(parameters, tunnelParams, c2, locationId);
+            while (tc != null) {
+                tc = tc.processLeavingTail();
             }
         } else {
             // no action (e.g. for atomic values and function items
