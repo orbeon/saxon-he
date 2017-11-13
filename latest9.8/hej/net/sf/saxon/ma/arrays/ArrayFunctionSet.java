@@ -542,7 +542,14 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
             for (int i = 0; i < array.arrayLength(); i++) {
                 results.add(SequenceTool.toGroundedValue(array.get(i)));
             }
-            assert array != null;
+            return new Chain(results);
+        }
+
+        public static Sequence toSequence(ArrayItem array) throws XPathException {
+            List<GroundedValue> results = new ArrayList<GroundedValue>();
+            for (int i = 0; i < array.arrayLength(); i++) {
+                results.add(SequenceTool.toGroundedValue(array.get(i)));
+            }
             return new Chain(results);
         }
     }
