@@ -690,13 +690,13 @@ public abstract class JPConverter {
         public Sequence convert(Object object, XPathContext context) throws XPathException {
             Item[] array = new Item[((byte[]) object).length];
             for (int i = 0; i < array.length; i++) {
-                array[i] = Int64Value.makeDerived(255 & (int) ((byte[]) object)[i], BuiltInAtomicType.BYTE);
+                array[i] = Int64Value.makeDerived(255 & (int) ((byte[]) object)[i], BuiltInAtomicType.UNSIGNED_BYTE);
             }
             return new SequenceExtent(array);
         }
 
         public ItemType getItemType() {
-            return BuiltInAtomicType.BYTE;
+            return BuiltInAtomicType.UNSIGNED_BYTE;
         }
 
         public int getCardinality() {
