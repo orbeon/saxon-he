@@ -125,7 +125,8 @@ public abstract class Minimax extends CollatingFunctionFixed {
             if (it instanceof BuiltInAtomicType && ((BuiltInAtomicType)it).isOrdered(false)) {
                 TypeHierarchy th = visitor.getConfiguration().getTypeHierarchy();
                 if (th.relationship(it, BuiltInAtomicType.UNTYPED_ATOMIC) != TypeHierarchy.DISJOINT) {
-                    return new UntypedSequenceConverter(arguments[0], BuiltInAtomicType.DOUBLE).typeCheck(visitor, contextInfo);
+                    return UntypedSequenceConverter.makeUntypedSequenceConverter(
+                            visitor.getConfiguration(), arguments[0], BuiltInAtomicType.DOUBLE).typeCheck(visitor, contextInfo);
                 } else {
                     return arguments[0];
                 }

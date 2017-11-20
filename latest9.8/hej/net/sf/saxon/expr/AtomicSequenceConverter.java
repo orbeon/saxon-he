@@ -49,12 +49,18 @@ public class AtomicSequenceConverter extends UnaryExpression {
         this.requiredItemType = requiredItemType;
     }
 
-    public void allocateConverter(Configuration config, boolean allowNull) {
-        allocateConverter(config, allowNull, getBaseExpression().getItemType());
+    public Converter allocateConverter(Configuration config, boolean allowNull) {
+        converter = allocateConverter(config, allowNull, getBaseExpression().getItemType());
+        return converter;
     }
 
-    public void allocateConverter(Configuration config, boolean allowNull, ItemType sourceType) {
+    private Converter getDynamicConverter(Configuration config) {
+        return allocateConverter(config, false, getBaseExpression().getItemType());
+    }
+
+    public Converter allocateConverter(Configuration config, boolean allowNull, ItemType sourceType) {
         final ConversionRules rules = config.getConversionRules();
+        Converter converter = null;
         if (sourceType instanceof ErrorType) {
             converter = Converter.IDENTITY_CONVERTER;
         } else if (!(sourceType instanceof AtomicType)) {
@@ -79,7 +85,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
                 }
             };
         }
-
+        return converter;
     }
 
     protected OperandRole getOperandRole() {
@@ -252,14 +258,15 @@ public class AtomicSequenceConverter extends UnaryExpression {
     /*@NotNull*/
     public SequenceIterator iterate(final XPathContext context) throws XPathException {
         SequenceIterator base = getBaseExpression().iterate(context);
-        if (converter == null) {
-            allocateConverter(context.getConfiguration(), false);
+        Converter conv = converter;
+        if (conv == null) {
+            conv = getDynamicConverter(context.getConfiguration());
         }
-        if (converter == Converter.TO_STRING) {
+        if (conv == Converter.TO_STRING) {
             return new ItemMappingIterator(base, TO_STRING_MAPPER, true);
         } else {
             AtomicSequenceMappingFunction mapper = new AtomicSequenceMappingFunction();
-            mapper.setConverter(converter);
+            mapper.setConverter(conv);
             return new ItemMappingIterator(base, mapper, true);
         }
     }
@@ -297,14 +304,15 @@ public class AtomicSequenceConverter extends UnaryExpression {
      */
 
     public AtomicValue evaluateItem(XPathContext context) throws XPathException {
-        if (converter == null) {
-            allocateConverter(context.getConfiguration(), false);
+        Converter conv = converter;
+        if (conv == null) {
+            conv = getDynamicConverter(context.getConfiguration());
         }
         AtomicValue item = (AtomicValue) getBaseExpression().evaluateItem(context);
         if (item == null) {
             return null;
         }
-        return converter.convert(item).asAtomic();
+        return conv.convert(item).asAtomic();
     }
 
     /**
