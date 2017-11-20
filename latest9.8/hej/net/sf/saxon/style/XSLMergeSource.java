@@ -246,7 +246,7 @@ public class XSLMergeSource extends StyleElement {
                 compileError("Streaming on xsl:merge-source is possible only when @for-each-source is used", "XTSE3195");
             }
         } else if (forEachSource != null) {
-            streamable = true;
+            streamable = false;
         }
 
         if (useAccumulatorsAtt == null) {
