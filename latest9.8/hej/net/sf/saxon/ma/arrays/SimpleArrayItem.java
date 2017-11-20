@@ -187,7 +187,7 @@ public class SimpleArrayItem extends AbstractItem implements ArrayItem {
                 throw new XPathException("Array index (" + (index + 1) + ") out of range (1 to " + members.size() + ")", "FOAY0001");
             }
         }
-        newList.set(index, newValue);
+        newList.set(index, SequenceTool.makeRepeatable(newValue));
         SimpleArrayItem result = new SimpleArrayItem(newList);
         if (knownToBeGrounded && newValue instanceof GroundedValue) {
             result.knownToBeGrounded = true;

@@ -187,7 +187,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             assert array != null;
-            Sequence other = arguments[1];
+            Sequence other = SequenceTool.makeRepeatable(arguments[1]);
             List<Sequence> list = new ArrayList<Sequence>(1);
             list.add(other);
             SimpleArrayItem otherArray = new SimpleArrayItem(list);
