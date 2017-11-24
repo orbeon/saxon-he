@@ -26,15 +26,18 @@ public class Remove extends SystemFunction {
     public Expression makeFunctionCall(Expression[] arguments) {
 
         if (Literal.isAtomic(arguments[1])) {
-            try {
-                long value = ((IntegerValue) ((Literal) arguments[1]).getValue()).longValue();
-                if (value <= 0) {
-                    return arguments[0];
-                } else if (value == 1) {
-                    return new TailExpression(arguments[0], 2);
+            Sequence index = ((Literal) arguments[1]).getValue();
+            if (index instanceof IntegerValue) {
+                try {
+                    long value = ((IntegerValue) index).longValue();
+                    if (value <= 0) {
+                        return arguments[0];
+                    } else if (value == 1) {
+                        return new TailExpression(arguments[0], 2);
+                    }
+                } catch (XPathException err) {
+                    //
                 }
-            } catch (XPathException err) {
-                //
             }
         }
 
