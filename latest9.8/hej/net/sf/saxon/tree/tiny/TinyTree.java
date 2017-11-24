@@ -1242,7 +1242,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
         if (columnNumbers != null) {
             // find the nearest preceding node that has a known column number, and return it
             for (int i = sequence; i >= 0; i--) {
-                int c = columnNumbers[sequence];
+                int c = columnNumbers[i];
                 if (c > 0) {
                     return c;
                 }

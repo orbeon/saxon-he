@@ -471,6 +471,10 @@ public class TinyBuilder extends Builder {
         prevAtDepth[currentDepth] = nodeNr;
         siblingsAtDepth[currentDepth]++;
 
+        if (lineNumbering) {
+            tt.setLineNumber(nodeNr, locationId.getLineNumber(), locationId.getColumnNumber());
+        }
+
     }
 
     /**

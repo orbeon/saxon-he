@@ -24,6 +24,9 @@ import net.sf.saxon.value.StringValue;
 public class CommentImpl extends NodeImpl {
 
     String comment;
+    String systemId;
+    int lineNumber = -1;
+    int columnNumber = -1;
 
     public CommentImpl(String content) {
         this.comment = content;
@@ -65,5 +68,45 @@ public class CommentImpl extends NodeImpl {
     public void replaceStringValue(/*@NotNull*/ CharSequence stringValue) {
         comment = stringValue.toString();
     }
+
+    /**
+     * Set the system ID and line number
+     *
+     * @param uri        the system identifier
+     * @param lineNumber the line number
+     */
+
+    public void setLocation(String uri, int lineNumber, int columnNumber) {
+        this.systemId = uri;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
+    }
+
+    /**
+     * Get the system ID for the entity containing this node.
+     *
+     * @return the system identifier
+     */
+
+    public String getSystemId() {
+        return systemId;
+    }
+
+    /**
+     * Get the line number of the node within its source entity
+     */
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    /**
+     * Get the column number of the node within its source entity
+     */
+
+    public int getColumnNumber() {
+        return columnNumber;
+    }
+
 }
 

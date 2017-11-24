@@ -328,7 +328,7 @@ public class LinkedTreeBuilder extends Builder
         }
         ProcInstImpl pi = new ProcInstImpl(name, remainder.toString());
         currentNode.addChild(pi, size[depth]++);
-        pi.setLocation(locationId.getSystemId(), locationId.getLineNumber());
+        pi.setLocation(locationId.getSystemId(), locationId.getLineNumber(), locationId.getColumnNumber());
     }
 
     /**
@@ -341,6 +341,7 @@ public class LinkedTreeBuilder extends Builder
         }
         CommentImpl comment = new CommentImpl(chars.toString());
         currentNode.addChild(comment, size[depth]++);
+        comment.setLocation(locationId.getSystemId(), locationId.getLineNumber(), locationId.getColumnNumber());
     }
 
     /**

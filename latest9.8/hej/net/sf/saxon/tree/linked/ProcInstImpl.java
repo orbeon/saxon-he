@@ -30,6 +30,7 @@ public class ProcInstImpl extends NodeImpl {
     String name;
     String systemId;
     int lineNumber = -1;
+    int columnNumber = -1;
 
     public ProcInstImpl(String name, String content) {
         this.name = name;
@@ -73,9 +74,10 @@ public class ProcInstImpl extends NodeImpl {
      * @param lineNumber the line number
      */
 
-    public void setLocation(String uri, int lineNumber) {
+    public void setLocation(String uri, int lineNumber, int columnNumber) {
         this.systemId = uri;
         this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
 
     /**
@@ -94,6 +96,14 @@ public class ProcInstImpl extends NodeImpl {
 
     public int getLineNumber() {
         return lineNumber;
+    }
+
+    /**
+     * Get the column number of the node within its source entity
+     */
+
+    public int getColumnNumber() {
+        return columnNumber;
     }
 
     /**
