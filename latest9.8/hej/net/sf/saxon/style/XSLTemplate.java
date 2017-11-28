@@ -325,7 +325,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
         }
 
         try {
-            if (nameAtt != null) {
+            if (nameAtt != null && compiledNamedTemplate != null /*bug3549*/) {
                 StructuredQName qName = makeQName(nameAtt);
                 setObjectName(qName);
                 compiledNamedTemplate.setTemplateName(qName);
