@@ -1208,7 +1208,7 @@ public class ExpressionTool {
         StaticContext env = visitor.getStaticContext();
         boolean compileWithTracing = config.isCompileWithTracing();
         if (!compileWithTracing) {
-            // Bug 3496 - desperate attempts to discover whether tracing was enabled for this particular compilation
+            // Bug 3472 - desperate attempts to discover whether tracing was enabled for this particular compilation
             if (compilation != null) {
                 compileWithTracing = compilation.getCompilerInfo().isCompileWithTracing();
             } else if (env instanceof QueryModule) {
