@@ -224,12 +224,7 @@ public abstract class SimpleExpression extends Expression implements Callable {
      */
 
     public void export(ExpressionPresenter destination) throws XPathException {
-        destination.startElement("userExpression", this);
-        destination.emitAttribute("class", getExpressionType());
-        for (Operand o : operands()) {
-            o.getChildExpression().export(destination);
-        }
-        destination.endElement();
+        throw new XPathException("In general, stylesheets using extension instructions cannot be exported");
     }
 
     /**
