@@ -293,6 +293,7 @@ public class Doctype extends Instruction {
 
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("saxonDoctype", this);
+        getContent().export(out);
         out.endElement();
     }
 
