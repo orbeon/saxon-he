@@ -4799,6 +4799,9 @@ public class Configuration implements SourceResolver, NotationSet {
         } else if (name.equals(FeatureKeys.COLLECTION_URI_RESOLVER_CLASS)) {
             return getCollectionURIResolver().getClass().getName();
 
+        } else if (name.equals(FeatureKeys.CONFIGURATION)) {
+            return this;
+
         } else if (name.equals(FeatureKeys.DEFAULT_COLLATION)) {
             return defaultCollationName;
 
