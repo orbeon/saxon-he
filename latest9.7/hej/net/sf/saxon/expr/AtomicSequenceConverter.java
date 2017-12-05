@@ -52,8 +52,9 @@ public class AtomicSequenceConverter extends UnaryExpression {
         this.requiredItemType = requiredItemType;
     }
 
-    public void allocateConverter(Configuration config, boolean allowNull) {
-        allocateConverter(config, allowNull, getBaseExpression().getItemType());
+    public Converter allocateConverter(Configuration config, boolean allowNull) {
+        converter = allocateConverter(config, allowNull, getBaseExpression().getItemType());
+        return converter;
     }
 
     private Converter allocateConverterDynamically(Configuration config, boolean allowNull) {
