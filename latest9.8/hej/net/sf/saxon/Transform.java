@@ -418,7 +418,7 @@ public class Transform {
             value = options.getOptionValue("nogo");
             if (value != null) {
                 run = false;
-                jit = false;
+                compiler.setJustInTimeCompilation(false);;
             }
 
             value = options.getOptionValue("p");
