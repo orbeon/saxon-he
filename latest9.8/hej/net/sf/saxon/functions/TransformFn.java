@@ -523,7 +523,7 @@ public class TransformFn extends SystemFunction implements Callable {
 
         Processor processor = new Processor(false);
         processor.setConfigurationProperty(FeatureKeys.CONFIGURATION, context.getConfiguration());
-        boolean isXslt30Processor = context.getConfiguration().isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION);
+        boolean isXslt30Processor = true;
         checkTransformOptions(options, context, isXslt30Processor);
         boolean useXslt30Processor = isXslt30Processor;
         if (options.get("xslt-version") != null) {
