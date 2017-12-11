@@ -21,6 +21,7 @@ public class ExpressionVisitor  {
 
     private StaticContext staticContext;
     private boolean optimizeForStreaming = false;
+    private boolean optimizeForPatternMatching = false;
     private Configuration config;
     private int depth = 0;
 
@@ -119,6 +120,27 @@ public class ExpressionVisitor  {
     public boolean isOptimizeForStreaming() {
         return optimizeForStreaming;
     }
+
+    /**
+     * Tell the visitor to optimize expressions for pattern matching
+     *
+     * @param option true if optimizing for pattern matching
+     */
+
+    public void setOptimizeForPatternMatching(boolean option) {
+        optimizeForPatternMatching = option;
+    }
+
+    /**
+     * Ask whether the visitor is to optimize expressions for pattern matching
+     *
+     * @return true if optimizing for pattern matching
+     */
+
+    public boolean isOptimizeForPatternMatching() {
+        return optimizeForPatternMatching;
+    }
+
 
     /**
      * Increment and test depth

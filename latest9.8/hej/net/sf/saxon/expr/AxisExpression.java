@@ -503,7 +503,9 @@ public final class AxisExpression extends Expression {
                                     getLocation());
                             return Literal.makeEmptySequence();
                         }
-                        if (!Cardinality.allowsMany(computedCardinality)) {
+                        if (!Cardinality.allowsMany(computedCardinality) &&
+                                !(getParentExpression() instanceof FirstItemExpression) &&
+                                !visitor.isOptimizeForPatternMatching()) {
                             // if there can be at most one child of this name, create a FirstItemExpression
                             // to stop the search after the first one is found
                             return FirstItemExpression.makeFirstItemExpression(this);

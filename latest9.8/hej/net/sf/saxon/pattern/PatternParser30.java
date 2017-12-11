@@ -120,6 +120,7 @@ public class PatternParser30 extends XPathParser implements PatternParser {
                 checkNoPredicatePattern(((VennExpression) exp).getRhsExpression());
             }
             ExpressionVisitor visitor = ExpressionVisitor.make(env);
+            visitor.setOptimizeForPatternMatching(true);
             ContextItemStaticInfo cit = visitor.getConfiguration().makeContextItemStaticInfo(AnyNodeTest.getInstance(), true);
             Pattern pat;
             try {
