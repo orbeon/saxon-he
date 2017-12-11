@@ -335,7 +335,7 @@ public class Accumulator extends Actor {
         out.emitAttribute("name", getObjectName().getEQName());
         out.emitAttribute("line", getLineNumber() + "");
         out.emitAttribute("module", getSystemId());
-        out.emitAttribute("as", type.toString());
+        out.emitAttribute("as", type.toExportString());
         out.emitAttribute("streamable", streamable ? "1" : "0");
         out.emitAttribute("slots", getSlotManagerForInitialValueExpression().getNumberOfVariables()+"");
         if (componentIdMap != null) {

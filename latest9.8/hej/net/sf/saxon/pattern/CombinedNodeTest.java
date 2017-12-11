@@ -169,6 +169,41 @@ public class CombinedNodeTest extends NodeTest {
         }
     }
 
+    /**
+     * Return a string representation of this SequenceType suitable for use in export (SEF) files.
+     * The difference from the toString() method is that the representation will not contain
+     * references to anonymous types.
+     *
+     * @return the string representation as an instance of the XPath
+     * SequenceType construct, using only names that will be in-scope if the target environment
+     * imports the same schema as the source environment
+     */
+    @Override
+    public String toExportString() {
+        if (nodetest1 instanceof NameTest && operator == Token.INTERSECT) {
+            int kind = nodetest1.getPrimitiveType();
+            String skind = kind == Type.ELEMENT ? "element(" : "attribute(";
+            String content = "";
+            if (nodetest2 instanceof ContentTypeTest) {
+                final SchemaType schemaType = ((ContentTypeTest) nodetest2).getNearestNamedType();
+                content = ", " + schemaType.getEQName();
+                if (nodetest2.isNillable()) {
+                    content += "?";
+                }
+            }
+            String name;
+            if (nodetest1 instanceof NameTest) {
+                name = nodetest1.getMatchingNodeName().getEQName();
+            } else {
+                name = nodetest1.toString();
+            }
+            return skind + name + content + ')';
+        } else {
+            String nt1 = nodetest1 == null ? "item()" : nodetest1.toString();
+            String nt2 = nodetest2 == null ? "item()" : nodetest2.toString();
+            return '(' + nt1 + ' ' + Token.tokens[operator] + ' ' + nt2 + ')';
+        }
+    }
 
     /**
      * Get a mask indicating which kinds of nodes this NodeTest can match. This is a combination

@@ -727,6 +727,14 @@ public abstract class Expression implements IdentityComparable {
     public abstract ItemType getItemType();
 
     /**
+     * Get the static type of the expression as a SequenceType
+     */
+
+    public SequenceType getStaticType() {
+        return SequenceType.makeSequenceType(getItemType(), getCardinality());
+    }
+
+    /**
      * Get the static type of the expression as a UType, following precisely the type
      * inference rules defined in the XSLT 3.0 specification.
      * @return the static item type of the expression according to the XSLT 3.0 defined rules

@@ -618,6 +618,20 @@ public class NumericType implements UnionType, PlainType {
     }
 
     /**
+     * Return a string representation of this SequenceType suitable for use in export (SEF) files.
+     * The difference from the toString() method is that the representation will not contain
+     * references to anonymous types.
+     *
+     * @return the string representation as an instance of the XPath
+     * SequenceType construct, using only names that will be in-scope if the target environment
+     * imports the same schema as the source environment
+     */
+    @Override
+    public String toExportString() {
+        return toString();
+    }
+
+    /**
      * Generate Javascript code to test whether an item conforms to this item type
      *
      * @return a Javascript instruction or sequence of instructions, which can be used as the body

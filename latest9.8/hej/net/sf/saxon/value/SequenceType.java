@@ -429,6 +429,9 @@ public final class SequenceType {
                     // fall through
             }
         }
+        if (cardinality == StaticProperty.ALLOWS_ZERO) {
+            return SequenceType.EMPTY_SEQUENCE;
+        }
         return new SequenceType(primaryType, cardinality);
     }
 
@@ -490,6 +493,23 @@ public final class SequenceType {
             return "empty-sequence()";
         } else {
             return primaryType.toString() + Cardinality.getOccurrenceIndicator(cardinality);
+        }
+    }
+
+    /**
+     * Return a string representation of this SequenceType suitable for use in export (SEF) files.
+     * The difference from the toString() method is that the representation will not contain
+     * references to anonymous types.
+     * @return the string representation as an instance of the XPath
+     * SequenceType construct, using only names that will be in-scope if the target environment
+     * imports the same schema as the source environment
+     */
+
+    public String toExportString() {
+        if (cardinality == StaticProperty.ALLOWS_ZERO) {
+            return "empty-sequence()";
+        } else {
+            return primaryType.toExportString() + Cardinality.getOccurrenceIndicator(cardinality);
         }
     }
 

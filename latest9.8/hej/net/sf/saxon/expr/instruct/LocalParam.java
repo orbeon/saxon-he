@@ -637,7 +637,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
 //            out.emitAttribute("tunnel", "1");
 //        }
         if (getRequiredType() != SequenceType.ANY_SEQUENCE) {
-            out.emitAttribute("as", getRequiredType().toString());
+            out.emitAttribute("as", getRequiredType().toExportString());
         }
         if (getSelectExpression() != null) {
             out.setChildRole("select");

@@ -744,12 +744,12 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
                 break;
         }
         presenter.emitAttribute("flags", flags);
-        presenter.emitAttribute("as", getDeclaredResultType().toString());
+        presenter.emitAttribute("as", getDeclaredResultType().toExportString());
         presenter.emitAttribute("slots", getStackFrameMap().getNumberOfVariables() + "");
         for (UserFunctionParameter p : parameterDefinitions) {
             presenter.startElement("arg");
             presenter.emitAttribute("name", p.getVariableQName());
-            presenter.emitAttribute("as", p.getRequiredType().toString());
+            presenter.emitAttribute("as", p.getRequiredType().toExportString());
             presenter.endElement();
         }
         presenter.setChildRole("body");

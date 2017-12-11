@@ -477,7 +477,7 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
             // Function was implemented as an IntegratedFunctionCall in 9.7 and we retain the same export format
             out.startElement("ifCall", this);
             out.emitAttribute("name", getFunctionName().getEQName());
-            out.emitAttribute("type", getTargetFunction().getFunctionItemType().getResultType().toString());
+            out.emitAttribute("type", getTargetFunction().getFunctionItemType().getResultType().toExportString());
             getTargetFunction().exportAttributes(out);
             for (Operand o : operands()) {
                 o.getChildExpression().export(out);

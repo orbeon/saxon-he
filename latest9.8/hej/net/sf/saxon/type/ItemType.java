@@ -119,6 +119,17 @@ public interface ItemType {
     boolean isAtomizable();
 
     /**
+     * Return a string representation of this SequenceType suitable for use in export (SEF) files.
+     * The difference from the toString() method is that the representation will not contain
+     * references to anonymous types.
+     * @return the string representation as an instance of the XPath
+     * SequenceType construct, using only names that will be in-scope if the target environment
+     * imports the same schema as the source environment
+     */
+
+    String toExportString();
+
+    /**
      * Visit all the schema components used in this ItemType definition
      *
      * @param visitor the visitor class to be called when each component is visited

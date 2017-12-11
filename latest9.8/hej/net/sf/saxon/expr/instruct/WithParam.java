@@ -268,7 +268,7 @@ public class WithParam  {
                     out.emitAttribute("flags", flags);
                 }
                 if (param.getRequiredType() != SequenceType.ANY_SEQUENCE) {
-                    out.emitAttribute("as", param.getRequiredType().toString());
+                    out.emitAttribute("as", param.getRequiredType().toExportString());
                 }
                 if (param.getSlotNumber() != -1) {
                     out.emitAttribute("slot", param.getSlotNumber() + "");

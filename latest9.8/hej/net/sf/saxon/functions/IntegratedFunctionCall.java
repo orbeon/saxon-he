@@ -245,7 +245,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("ifCall", this);
         out.emitAttribute("name", getFunctionName().getEQName());
-        out.emitAttribute("type", resultType.toString());
+        out.emitAttribute("type", resultType.toExportString());
         for (Operand o : operands()) {
             o.getChildExpression().export(out);
         }

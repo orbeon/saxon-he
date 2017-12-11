@@ -855,7 +855,7 @@ public class GlobalVariable extends Actor
     public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement(this instanceof GlobalParam ? "globalParam" : "globalVariable");
         presenter.emitAttribute("name", getVariableQName().getEQName());
-        presenter.emitAttribute("type", getRequiredType().toString());
+        presenter.emitAttribute("type", getRequiredType().toExportString());
         presenter.emitAttribute("line", getLineNumber() + "");
         presenter.emitAttribute("module", getSystemId());
         if (getStackFrameMap() != null) {

@@ -428,7 +428,7 @@ public class TemplateRule implements RuleTarget, Location, ExpressionOwner {
         }
         presenter.emitAttribute("flags", flags);
         if (getRequiredType() != SequenceType.ANY_SEQUENCE) {
-            presenter.emitAttribute("as", getRequiredType().toString());
+            presenter.emitAttribute("as", getRequiredType().toExportString());
         }
         presenter.emitAttribute("line", getLineNumber() + "");
         presenter.emitAttribute("module", getSystemId());

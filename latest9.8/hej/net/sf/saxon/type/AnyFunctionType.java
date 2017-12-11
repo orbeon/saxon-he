@@ -164,6 +164,20 @@ public class AnyFunctionType implements FunctionItemType {
     }
 
     /**
+     * Return a string representation of this SequenceType suitable for use in export (SEF) files.
+     * The difference from the toString() method is that the representation will not contain
+     * references to anonymous types.
+     *
+     * @return the string representation as an instance of the XPath
+     * SequenceType construct, using only names that will be in-scope if the target environment
+     * imports the same schema as the source environment
+     */
+    @Override
+    public String toExportString() {
+        return toString();
+    }
+
+    /**
      * Get the item type of the atomic values that will be produced when an item
      * of this type is atomized
      *

@@ -17,7 +17,6 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.UType;
-import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.SequenceType;
 
@@ -759,8 +758,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("let", this);
         out.emitAttribute("var", variableName);
-        out.emitAttribute("as", getSequence().getItemType().toString() +
-                Cardinality.getOccurrenceIndicator(getSequence().getCardinality()));
+        out.emitAttribute("as", getSequence().getStaticType().toExportString());
         if (isIndexedVariable()) {
             out.emitAttribute("indexable", "true");
         }
