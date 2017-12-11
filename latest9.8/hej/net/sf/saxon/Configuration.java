@@ -3505,13 +3505,15 @@ public class Configuration implements SourceResolver, NotationSet {
      *
      * @param context the initial XPath context
      * @param mode    the initial mode, which must be a streaming mode
+     * @param ordinaryParams
+     * @param tunnelParams
      * @return a Receiver to which the streamed input document will be pushed
      * @throws XPathException if a streaming transformer cannot be created (which
      *                        is always the case in Saxon-HE and Saxon-PE)
      */
 
     /*@NotNull*/
-    public Receiver makeStreamingTransformer(XPathContext context, Mode mode) throws XPathException {
+    public Receiver makeStreamingTransformer(XPathContext context, Mode mode, ParameterSet ordinaryParams, ParameterSet tunnelParams) throws XPathException {
         throw new XPathException("Streaming is only available in Saxon-EE");
     }
 

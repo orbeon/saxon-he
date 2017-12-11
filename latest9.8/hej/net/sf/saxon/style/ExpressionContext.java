@@ -113,7 +113,11 @@ public class ExpressionContext implements XSLTStaticContext {
 
     public Location getContainingLocation() {
         if (containingLocation == null) {
-            containingLocation = new AttributeLocation(element, attributeName);
+            if (attributeName == null) {
+                containingLocation = element;
+            } else {
+                containingLocation = new AttributeLocation(element, attributeName);
+            }
         }
         return containingLocation;
     }

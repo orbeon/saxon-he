@@ -371,7 +371,7 @@ public final class SequenceType {
      */
 
     public static final SequenceType EMPTY_SEQUENCE =
-            makeSequenceType(ErrorType.getInstance(), StaticProperty.EMPTY);
+            new SequenceType(ErrorType.getInstance(), StaticProperty.EMPTY);
 
     /**
      * A type that only permits a non-empty sequence

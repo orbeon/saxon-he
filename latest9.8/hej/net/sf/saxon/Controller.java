@@ -1948,7 +1948,7 @@ public class Controller implements ContextOriginator {
                     throw new XPathException("Requested initial mode does not exist", "XTDE0045");
                 }
                 if (mode.isDeclaredStreamable()) {
-                    if (source instanceof StreamSource || source instanceof SAXSource) {
+                    if (source instanceof StreamSource || source instanceof SAXSource || source instanceof EventSource) {
                         streaming = true;
                         transformStream(source, initialMode, receiver);
                     } else {
@@ -2590,6 +2590,15 @@ public class Controller implements ContextOriginator {
 
             globalContextItem = null;
 
+            ParameterSet ordinaryParams = null;
+            if (initialTemplateParams != null) {
+                ordinaryParams = new ParameterSet(initialTemplateParams);
+            }
+            ParameterSet tunnelParams = null;
+            if (initialTemplateTunnelParams != null) {
+                tunnelParams = new ParameterSet(initialTemplateTunnelParams);
+            }
+
             result = openResult(result, initialContext);
 
             // Process the source document by applying template rules to the initial context node
@@ -2605,7 +2614,7 @@ public class Controller implements ContextOriginator {
                     throw new XPathException("mode supplied to transformStream() must be streamable");
                 }
             }
-            Receiver despatcher = config.makeStreamingTransformer(initialContext, mode.getActor());
+            Receiver despatcher = config.makeStreamingTransformer(initialContext, mode.getActor(), ordinaryParams, tunnelParams);
             if (despatcher == null) {
                 throw new XPathException("Streaming requires Saxon-EE");
             }
@@ -2690,7 +2699,8 @@ public class Controller implements ContextOriginator {
         if (!mode.isDeclaredStreamable()) {
             throw new XPathException("mode supplied to getStreamingReceiver() must be streamable");
         }
-        Receiver despatcher = config.makeStreamingTransformer(initialContext, mode);
+        Receiver despatcher = config.makeStreamingTransformer(
+                initialContext, mode, ParameterSet.EMPTY_PARAMETER_SET, ParameterSet.EMPTY_PARAMETER_SET);
         if (despatcher == null) {
             throw new XPathException("Streaming requires Saxon-EE");
         }

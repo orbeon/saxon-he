@@ -8,8 +8,10 @@
 package net.sf.saxon.s9api;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.event.EventSource;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.lib.InvalidityHandler;
+import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.SchemaType;
 
 import javax.xml.transform.ErrorListener;
@@ -338,6 +340,53 @@ public abstract class SchemaValidator implements Destination {
     public abstract void validateMultiple(Iterable<Source> sources) throws SaxonApiException;
 
     public abstract Receiver getReceiver(Configuration config) throws SaxonApiException;
+
+    /**
+     * Construct a Source object that applies validation to an underlying input Source.
+     * This method does not cause validation to take place immediately: the
+     * validation happens only when the returned {@code Source} is consumed. The {@code Destination}
+     * associated with this SchemaValidator is ignored; indeed, it is overwritten. After
+     * calling this method, the {@code SchemaValidator} should not be used again for any
+     * other purpose.
+     *
+     * @param input the input Source to be validated
+     * @return a Source object that reads the supplied input source and returns events
+     * corresponding to the result of validating the input source. The Source object
+     * will be recognized by all Saxon methods that expect a {@code Source} as input,
+     * but not (in general) by other products.
+     * @since 9.9
+     */
+
+    public Source asSource(final Source input) {
+        return new EventSource() {
+            {
+                setSystemId(input.getSystemId());
+            }
+
+            @Override
+            public void send(final Receiver out) throws XPathException {
+                setDestination(new Destination() {
+                    public Receiver getReceiver(Configuration config) throws SaxonApiException {
+                        return out;
+                    }
+
+                    public void close() throws SaxonApiException {
+                        try {
+                            out.close();
+                        } catch (XPathException e) {
+                            throw new SaxonApiException(e);
+                        }
+                    }
+                });
+                try {
+                    validate(input);
+                } catch (SaxonApiException e) {
+                    throw XPathException.makeXPathException(e);
+                }
+            }
+        };
+    }
+
 
     /**
      * Close the destination, allowing resources to be released. Saxon calls this method when
