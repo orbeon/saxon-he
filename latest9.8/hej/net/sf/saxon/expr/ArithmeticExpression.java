@@ -7,7 +7,6 @@
 
 package net.sf.saxon.expr;
 
-import com.saxonica.expr.compat.ArithmeticExpression10;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.GroundedValue;
@@ -21,7 +20,7 @@ import net.sf.saxon.value.*;
 /**
  * Arithmetic Expression: an expression using one of the operators
  * plus, minus, multiply, div, idiv, mod. Note that this code does not handle backwards
- * compatibility mode: see {@link ArithmeticExpression10}
+ * compatibility mode: see net.sf.saxon.expr.compat.ArithmeticExpression10
  */
 
 public class ArithmeticExpression extends BinaryExpression {

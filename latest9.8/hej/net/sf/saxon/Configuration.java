@@ -7,6 +7,7 @@
 
 package net.sf.saxon;
 
+import net.sf.saxon.expr.compat.TypeChecker10;
 import net.sf.saxon.event.*;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.accum.AccumulatorRegistry;
@@ -174,6 +175,7 @@ public class Configuration implements SourceResolver, NotationSet {
     private String defaultRegexEngine = "S";
     protected transient TypeHierarchy typeHierarchy;
     private TypeChecker typeChecker = new TypeChecker();
+    private TypeChecker10 typeChecker10 = new TypeChecker10();
 
     private transient URIResolver uriResolver;
     protected FunctionLibraryList builtInExtensionLibraryList;
@@ -2540,33 +2542,7 @@ public class Configuration implements SourceResolver, NotationSet {
 
     public TypeChecker getTypeChecker(boolean backwardsCompatible) {
         if (backwardsCompatible) {
-            // XSLT 3.0 says that when backwards compatibility is requested and is not available, execution
-            // fails with a dynamic error. XPath 3.1 has nothing to say on the subject, so we do the same
-            return new TypeChecker() {
-                @Override
-                public Expression staticTypeCheck(Expression supplied, SequenceType req, RoleDiagnostic role, ExpressionVisitor visitor) throws XPathException {
-                    Expression e2 = new ErrorExpression(
-                            new XPathException("XPath 1.0 Compatibility Mode is not available in this configuration", "XTDE0160"));
-                    ExpressionTool.copyLocationInfo(supplied, e2);
-                    return e2;
-                }
-
-                @Override
-                public Expression makeArithmeticExpression(Expression lhs, int operator, Expression rhs) {
-                    Expression e2 = new ErrorExpression(
-                            new XPathException("XPath 1.0 Compatibility Mode is not available in this configuration", "XTDE0160"));
-                    ExpressionTool.copyLocationInfo(lhs, e2);
-                    return e2;
-                }
-
-                @Override
-                public Expression makeGeneralComparison(Expression lhs, int operator, Expression rhs) {
-                    Expression e2 = new ErrorExpression(
-                            new XPathException("XPath 1.0 Compatibility Mode is not available in this configuration", "XTDE0160"));
-                    ExpressionTool.copyLocationInfo(lhs, e2);
-                    return e2;
-                }
-            };
+            return typeChecker10;
         } else {
             return typeChecker;
         }

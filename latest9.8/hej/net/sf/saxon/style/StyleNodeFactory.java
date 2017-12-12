@@ -165,13 +165,13 @@ public class StyleNodeFactory implements NodeFactory {
                 e.setValidationError(err, StyleElement.REPORT_ALWAYS);
             }
 
-            if (e.isInstruction() && e.getEffectiveVersion() == 10 &&
-                    !config.isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION)) {
-                e.setValidationError(
-                        new XPathException("XSLT 1.0 compatibility mode is not available in this configuration", "XTDE0160"),
-                        StyleElement.REPORT_IF_INSTANTIATED
-                );
-            }
+//            if (e.isInstruction() && e.getEffectiveVersion() == 10 &&
+//                    !config.isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION)) {
+//                e.setValidationError(
+//                        new XPathException("XSLT 1.0 compatibility mode is not available in this configuration", "XTDE0160"),
+//                        StyleElement.REPORT_IF_INSTANTIATED
+//                );
+//            }
 
             if (toplevel && !e.isDeclaration() && e.forwardsCompatibleModeIsEnabled()) {
                 DataElement d = new DataElement();
