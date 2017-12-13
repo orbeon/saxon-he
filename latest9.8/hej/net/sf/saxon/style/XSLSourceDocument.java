@@ -194,7 +194,7 @@ public class XSLSourceDocument extends StyleElement {
             action = action.simplify();
             action = action.typeCheck(visitor, config.makeContextItemStaticInfo(NodeKindTest.DOCUMENT, false));
 
-            if (streaming) {
+            if (streaming && "EE".equals(getCompilation().getCompilerInfo().getTargetEdition())) {
                 return config.makeStreamInstruction(
                         href, action, parseOptions, null, allocateLocation(),
                         makeRetainedStaticContext());

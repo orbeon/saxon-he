@@ -141,6 +141,13 @@ public class ExpressionVisitor  {
         return optimizeForPatternMatching;
     }
 
+    /**
+     * Get the target edition for which we are optimizing
+     */
+
+    public String getTargetEdition() {
+        return getStaticContext().getPackageData().getTargetEdition();
+    }
 
     /**
      * Increment and test depth

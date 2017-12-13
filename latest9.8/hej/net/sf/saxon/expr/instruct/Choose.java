@@ -526,9 +526,8 @@ public class Choose extends Instruction {
             return Literal.makeEmptySequence();
         }
         Expression e = removeRedundantBranches(visitor);
-        boolean JSTarget = "JS".equals(e.getPackageData().getTargetEdition());
-        if (!JSTarget && e instanceof Choose) {
-            return visitor.getConfiguration().obtainOptimizer().trySwitch((Choose) e);
+        if (e instanceof Choose) {
+            return visitor.getConfiguration().obtainOptimizer().trySwitch((Choose) e, visitor);
         } else {
             return e;
         }

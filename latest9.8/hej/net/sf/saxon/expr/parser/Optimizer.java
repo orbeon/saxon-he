@@ -298,10 +298,11 @@ public class Optimizer {
      * Try to convert a Choose expression into a switch
      *
      * @param choose the Choose expression
+     * @param visitor
      * @return the result of optimizing this (the original expression if no optimization was possible)
      */
 
-    public Expression trySwitch(Choose choose) {
+    public Expression trySwitch(Choose choose, ExpressionVisitor visitor) {
         return choose;
     }
 
