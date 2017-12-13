@@ -372,6 +372,9 @@ public final class DateTimeValue extends CalendarValue implements Comparable {
                     return badDate("Decimal point must be followed by digits", s);
                 }
                 part = (String) tok.nextElement();
+                if (part.length() > 9 && part.matches("^[0-9]+$")) {
+                    part = part.substring(0, 9);
+                }
                 value = DurationValue.simpleInteger(part);
                 if (value < 0) {
                     return badDate("Non-numeric fractional seconds component", s);

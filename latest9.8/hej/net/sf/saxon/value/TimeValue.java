@@ -171,6 +171,9 @@ public final class TimeValue extends CalendarValue implements Comparable {
                     return badTime("decimal point must be followed by digits", s);
                 }
                 part = (String) tok.nextElement();
+                if (part.length() > 9 && part.matches("^[0-9]+$")) {
+                    part = part.substring(0, 9);
+                }
                 value = DurationValue.simpleInteger(part);
                 if (value < 0) {
                     return badTime("Non-numeric fractional seconds component", s);
