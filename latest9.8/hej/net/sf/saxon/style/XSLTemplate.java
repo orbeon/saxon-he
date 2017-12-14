@@ -325,10 +325,12 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
         }
 
         try {
-            if (nameAtt != null && compiledNamedTemplate != null /*bug3549*/) {
+            if (nameAtt != null) {
                 StructuredQName qName = makeQName(nameAtt);
                 setObjectName(qName);
-                compiledNamedTemplate.setTemplateName(qName);
+                if(compiledNamedTemplate != null /*bug3549*/) {
+                    compiledNamedTemplate.setTemplateName(qName);
+                }
                 diagnosticId = nameAtt;
             }
         } catch (NamespaceException err) {
