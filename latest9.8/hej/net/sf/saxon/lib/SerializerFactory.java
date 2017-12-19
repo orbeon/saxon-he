@@ -433,7 +433,7 @@ public class SerializerFactory {
             target = newCDATAFilter(target, props);
         }
 
-        if (SaxonOutputKeys.isXhtmlHtmlVersion5(props)) {
+        if (SaxonOutputKeys.isHtmlVersion5(props)) {
             target = addHtml5Component(target, props);
         }
 
