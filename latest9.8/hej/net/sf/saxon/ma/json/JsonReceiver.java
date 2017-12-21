@@ -270,13 +270,22 @@ public class JsonReceiver implements Receiver {
         atStart = false;
     }
 
+    /**
+     * Handle a string that is already escaped, and that should remain escaped, while normalizing
+     * escape sequences to standard format
+     * @param str the input string
+     * @return the result string
+     * @throws XPathException if the input contains invalid escape sequences
+     */
+
     private static CharSequence handleEscapedString(String str) throws XPathException {
         // check that escape sequences are valid
         unescape(str);
         FastStringBuffer out = new FastStringBuffer(str.length() * 2);
+        boolean afterEscapeChar = false;
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
-            if (c == '"' && (i == 0 || str.charAt(i - 1) != '\\')) {
+            if (c == '"' && !afterEscapeChar) {
                 out.append("\\\"");
             } else if (c < 32 || (c >= 127 && c < 160)) {
                 if (c == '\b') {
@@ -297,8 +306,11 @@ public class JsonReceiver implements Receiver {
                     }
                     out.append(hex);
                 }
-            } else if (c == '/') {
+            } else if (c == '/' && !afterEscapeChar) {
                 out.append("\\/");
+            } else if (c == '\\') {
+                out.append(c);
+                afterEscapeChar = !afterEscapeChar;
             } else {
                 out.append(c);
             }
