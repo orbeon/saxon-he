@@ -3554,7 +3554,7 @@ public class XQueryParser extends XPathParser {
             invalidExtendedQName(in, "no local name after URI");
         }
         String uri = in.substring(2, end);
-        String localName = in.substring(end + 2);
+        String localName = in.substring(end + 1);
         if (!NameChecker.isValidNCName(localName)) {
             invalidExtendedQName(in, "invalid local name after colon");
         }
