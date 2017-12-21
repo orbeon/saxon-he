@@ -573,6 +573,15 @@ public class SerializerFactory {
         return makeSequenceNormalizer(target, props);
     }
 
+    /**
+     * This method constructs a step in the output pipeline to perform namespace-related
+     * tasks for HTML5 serialization. The default implementation adds a NamespaceReducer
+     * and an XHTMLPrefixRemover
+     * @param target the Receiver that receives the output of this step
+     * @param outputProperties the serialization properties
+     * @return a new Receiver to perform HTML5-related namespace manipulation
+     */
+
     public Receiver addHtml5Component(Receiver target, Properties outputProperties) {
         target = new NamespaceReducer(target);
         target = new XHTMLPrefixRemover(target);

@@ -1085,7 +1085,7 @@ public abstract class StyleElement extends ElementImpl {
         int code = Validation.getCode(value);
         if (code == Validation.INVALID) {
             String prefix = this instanceof LiteralResultElement ? "xsl:" : "";
-            compileError("Invalid value of " + prefix + "validation attribute", "XTSE0020");
+            compileError("Invalid value of " + prefix + "validation attribute: '" + value + "'" , "XTSE0020");
             code = getDefaultValidation();
         }
         if (!isSchemaAware()) {
