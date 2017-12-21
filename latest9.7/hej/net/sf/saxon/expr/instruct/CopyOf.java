@@ -586,7 +586,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
                             ParseOptions options = new ParseOptions();
                             options.setSchemaValidationMode(validation);
                             SchemaType type = schemaType;
-                            if (type == null) {
+                            if (type == null && (validation == Validation.STRICT || validation == Validation.LAX)) {
                                 // Bug 3062
                                 String xsitype = source.getAttributeValue(NamespaceConstant.SCHEMA_INSTANCE, "type");
                                 if (xsitype != null) {
