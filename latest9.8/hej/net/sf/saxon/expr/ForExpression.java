@@ -507,7 +507,7 @@ public class ForExpression extends Assignation {
         out.startElement("for", this);
         explainSpecializedAttributes(out);
         out.emitAttribute("var", getVariableName());
-        out.emitAttribute("as", getSequence().getItemType().toString());
+        out.emitAttribute("as", getSequence().getItemType().toExportString());
         out.emitAttribute("slot", "" + getLocalSlotNumber());
         out.setChildRole("in");
         getSequence().export(out);

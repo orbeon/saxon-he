@@ -293,7 +293,7 @@ public final class InstanceOfExpression extends UnaryExpression {
         if (targetCardinality == StaticProperty.ALLOWS_ZERO) {
             out.emitAttribute("of", "empty-sequence()");
         } else {
-            out.emitAttribute("of", targetType.toString() + Cardinality.getOccurrenceIndicator(targetCardinality));
+            out.emitAttribute("of", targetType.toExportString() + Cardinality.getOccurrenceIndicator(targetCardinality));
         }
         if ("JS".equals(out.getOption("target"))) {
             int targetVersion = out.getIntOption("targetVersion", 1);

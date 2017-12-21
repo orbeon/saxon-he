@@ -323,7 +323,7 @@ public class ContextItemExpression extends Expression {
         destination.startElement("dot", this);
         ItemType type = getItemType();
         if (!(type == AnyItemType.getInstance())) {
-            destination.emitAttribute("type", type.toString());
+            destination.emitAttribute("type", type.toExportString());
         }
         if (staticInfo.isPossiblyAbsent()) {
             destination.emitAttribute("flags", "a");

@@ -72,7 +72,7 @@ public class GlobalContextRequirement {
         }
         out.emitAttribute("use", use);
         if (!getRequiredItemType().equals(AnyItemType.getInstance())) {
-            out.emitAttribute("type", getRequiredItemType().toString());
+            out.emitAttribute("type", getRequiredItemType().toExportString());
         }
         if ("JS".equals(out.getOption("target"))) {
             int targetVersion = out.getIntOption("targetVersion", 1);

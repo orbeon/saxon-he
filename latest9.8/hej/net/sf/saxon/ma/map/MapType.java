@@ -158,6 +158,12 @@ public class MapType extends AnyFunctionType {
      * @return a string representation of the type, in notation resembling but not necessarily
      *         identical to XPath syntax
      */
+    /**
+     * Produce a representation of this type name for use in error messages.
+     *
+     * @return a string representation of the type, in notation resembling but not necessarily
+     * identical to XPath syntax
+     */
     public String toString() {
         if (this == ANY_MAP_TYPE) {
             return "map(*)";
@@ -169,6 +175,32 @@ public class MapType extends AnyFunctionType {
             sb.append(keyType.toString());
             sb.append(", ");
             sb.append(valueType.toString());
+            sb.append(")");
+            return sb.toString();
+        }
+    }
+
+    /**
+     * Return a string representation of this ItemType suitable for use in stylesheet
+     * export files. This differs from the result of toString() in that it will not contain
+     * any references to anonymous types. Note that it may also use the Saxon extended syntax
+     * for union types and tuple types. The default implementation returns the result of
+     * calling {@code toString()}.
+     *
+     * @return the string representation as an instance of the XPath SequenceType construct
+     */
+    @Override
+    public String toExportString() {
+        if (this == ANY_MAP_TYPE) {
+            return "map(*)";
+        } else if (this == EMPTY_MAP_TYPE) {
+            return "map(\u00B0)";
+        } else {
+            FastStringBuffer sb = new FastStringBuffer(100);
+            sb.append("map(");
+            sb.append(keyType.toExportString());
+            sb.append(", ");
+            sb.append(valueType.toExportString());
             sb.append(")");
             return sb.toString();
         }

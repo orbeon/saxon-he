@@ -212,5 +212,7 @@ public interface ItemType {
 
     }
 
+    String toString();
+
 }
 

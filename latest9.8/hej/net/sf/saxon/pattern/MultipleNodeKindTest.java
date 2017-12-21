@@ -145,12 +145,31 @@ public final class MultipleNodeKindTest extends NodeTest {
         return fsb.toString();
     }
 
+    public String toExportString() {
+        FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.C64);
+        LinkedList<PrimitiveUType> types = new LinkedList<PrimitiveUType>(uType.decompose());
+        formatForExport(types, fsb);
+        return fsb.toString();
+    }
+
     private void format(LinkedList<PrimitiveUType> list, FastStringBuffer fsb) {
         if (list.size() == 1) {
             fsb.append(list.get(0).toItemType().toString());
         } else {
             fsb.append('(');
             fsb.append(list.removeFirst().toItemType().toString());
+            fsb.append('|');
+            format(list, fsb);
+            fsb.append(')');
+        }
+    }
+
+    private void formatForExport(LinkedList<PrimitiveUType> list, FastStringBuffer fsb) {
+        if (list.size() == 1) {
+            fsb.append(list.get(0).toItemType().toExportString());
+        } else {
+            fsb.append('(');
+            fsb.append(list.removeFirst().toItemType().toExportString());
             fsb.append('|');
             format(list, fsb);
             fsb.append(')');

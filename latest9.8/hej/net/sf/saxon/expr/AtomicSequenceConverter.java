@@ -379,8 +379,8 @@ public class AtomicSequenceConverter extends UnaryExpression {
 
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("convert", this);
-        destination.emitAttribute("from", getBaseExpression().getItemType().toString());
-        destination.emitAttribute("to", requiredItemType.toString());
+        destination.emitAttribute("from", getBaseExpression().getItemType().toExportString());
+        destination.emitAttribute("to", requiredItemType.toExportString());
         if (converter instanceof Converter.PromoterToDouble || converter instanceof Converter.PromoterToFloat) {
             destination.emitAttribute("flags", "p");
         }

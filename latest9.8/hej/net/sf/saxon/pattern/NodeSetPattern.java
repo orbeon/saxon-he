@@ -241,7 +241,7 @@ public class NodeSetPattern extends Pattern {
     public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.nodeSet");
         if (itemType != null) {
-            presenter.emitAttribute("type", itemType.toString());
+            presenter.emitAttribute("type", itemType.toExportString());
         }
         getSelectionExpression().export(presenter);
         presenter.endElement();

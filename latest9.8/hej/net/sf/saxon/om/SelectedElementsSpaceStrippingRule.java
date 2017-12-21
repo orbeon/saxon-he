@@ -324,7 +324,7 @@ public class SelectedElementsSpaceStrippingRule implements SpaceStrippingRule {
     private static void exportRule(Rule rule, ExpressionPresenter presenter) {
         String which = rule.getAction() == Stripper.STRIP ? "s" : "p";
         presenter.startElement(which);
-        presenter.emitAttribute("test", rule.getPattern().getItemType().toString());
+        presenter.emitAttribute("test", rule.getPattern().getItemType().toExportString());
         presenter.emitAttribute("prec", rule.getPrecedence()+"");
         presenter.endElement();
     }
