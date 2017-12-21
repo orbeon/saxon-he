@@ -705,15 +705,6 @@ public class QT3TestDriverHE extends TestDriver {
         return applicable;
     }
 
-    private void copySchemaNamespaces(Environment env, XPathCompiler testXpc) {
-        Configuration config = env.xpathCompiler.getProcessor().getUnderlyingConfiguration();
-        //if (config instanceof EnterpriseConfiguration) {
-        for (String s : config.getImportedNamespaces()) {
-            testXpc.importSchemaNamespace(s);
-        }
-        //}
-    }
-
     private String truncate(String in) {
         if (in.length() > 80) {
             return in.substring(0, 80) + "...";

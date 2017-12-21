@@ -681,5 +681,14 @@ public abstract class TestDriver {
 
     public abstract boolean ensureDependencySatisfied(XdmNode dependency, Environment env);
 
+    protected void copySchemaNamespaces(Environment env, XPathCompiler testXpc) {
+        Configuration config = env.xpathCompiler.getProcessor().getUnderlyingConfiguration();
+        //if (config instanceof EnterpriseConfiguration) {
+        for (String s : config.getImportedNamespaces()) {
+            testXpc.importSchemaNamespace(s);
+        }
+        //}
+    }
+
 }
 
