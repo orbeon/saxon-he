@@ -600,7 +600,8 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
                                         false,
                                         new InscopeNamespaceResolver(item));
                             } catch (XPathException e) {
-                                throw new XPathException("Invalid QName in xsi:type attribute of element being validated: " + xsitype, "XTTE1510");
+                                throw new XPathException("Invalid QName in xsi:type attribute of element being validated: "
+                                                                 + xsitype + ". " + e.getMessage(), "XTTE1510");
                             }
                             type = config.getSchemaType(typeName);
                             if (type == null) {
