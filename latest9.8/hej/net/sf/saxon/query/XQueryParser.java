@@ -3305,20 +3305,9 @@ public class XQueryParser extends XPathParser {
 
         boolean validateType = false;
         boolean streaming = false;
-        String uri;
-        String localName;
-        if (qname.startsWith("Q{")) {
-            StructuredQName sq = parseExtendedQName(qname);
-            uri = sq.getURI();
-            localName = sq.getLocalPart();
-        } else if (!NameChecker.isQName(qname)) {
-            grumble("First token in pragma must be a valid QName, terminated by whitespace");
-            return new ErrorExpression();
-        } else {
-            StructuredQName name = makeStructuredQName(qname, "");
-            uri = name.getURI();
-            localName = name.getLocalPart();
-        }
+        StructuredQName pragmaName = makeStructuredQName(qname, "");
+        String uri = pragmaName.getURI();
+        String localName = pragmaName.getLocalPart();
         if (uri.equals(NamespaceConstant.SAXON)) {
             if (localName.equals("validate-type")) {
                 if (!env.getConfiguration().isLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XQUERY)) {
@@ -3402,40 +3391,6 @@ public class XQueryParser extends XPathParser {
 
     protected Expression makeSaxonStreamCall(Expression exp) throws XPathException {
         return exp;
-    }
-
-    /**
-     * Convert an EQName in format Q{uri}local to a StructuredQName. We have already established
-     * that the string starts with "Q{"
-     *
-     *
-     * @param in      the string to be checked/parsed
-     * @return the expanded QName
-     * @throws XPathException if the input syntax is incorrect
-     */
-
-    /*@NotNull*/
-    private static StructuredQName parseExtendedQName(/*@NotNull*/ String in) throws XPathException {
-        if (in.length() < 4) {
-            invalidExtendedQName(in, "too short");
-        }
-        int end = in.indexOf('}', 1);
-        if (end < 0) {
-            invalidExtendedQName(in, "no closing '}'");
-        }
-        if (end + 1 >= in.length()) {
-            invalidExtendedQName(in, "no local name after URI");
-        }
-        String uri = in.substring(2, end);
-        String localName = in.substring(end + 2);
-        if (!NameChecker.isValidNCName(localName)) {
-            invalidExtendedQName(in, "invalid local name after colon");
-        }
-        return new StructuredQName("", uri, localName);
-    }
-
-    private static void invalidExtendedQName(String in, String msg) throws XPathException {
-        throw new XPathException("Invalid EQName " + in + " - " + msg, "XPST0003");
     }
 
     /**
