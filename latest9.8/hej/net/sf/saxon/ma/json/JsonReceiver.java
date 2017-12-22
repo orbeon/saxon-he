@@ -308,12 +308,10 @@ public class JsonReceiver implements Receiver {
                 }
             } else if (c == '/' && !afterEscapeChar) {
                 out.append("\\/");
-            } else if (c == '\\') {
-                out.append(c);
-                afterEscapeChar = !afterEscapeChar;
             } else {
                 out.append(c);
             }
+            afterEscapeChar = c == '\\' && !afterEscapeChar;
         }
         return out;
     }
