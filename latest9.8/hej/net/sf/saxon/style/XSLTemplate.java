@@ -848,6 +848,17 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
 
                 if (mode.isDeclaredStreamable()) {
                     rule.setDeclaredStreamable(true);
+                    if (!match2.isMotionless()) {
+                        boolean fallback = getConfiguration().getBooleanProperty(FeatureKeys.STREAMING_FALLBACK);
+                        String message = "Template rule is declared streamable but the match pattern is not motionless";
+                        if (fallback) {
+                            message += "\n  * Falling back to non-streaming implementation";
+                            getStaticContext().issueWarning(message, this);
+                            rule.setDeclaredStreamable(false);
+                        } else {
+                            throw new XPathException(message, "XTSE3430", this);
+                        }
+                    }
                 }
 
                 // if adding a rule to the omniMode (mode='all') add it to all
