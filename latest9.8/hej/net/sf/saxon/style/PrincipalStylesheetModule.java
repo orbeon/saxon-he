@@ -19,6 +19,7 @@ import net.sf.saxon.functions.DocumentFn;
 import net.sf.saxon.functions.ExecutableFunctionLibrary;
 import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.om.*;
+import net.sf.saxon.pattern.NameTest;
 import net.sf.saxon.query.XQueryFunction;
 import net.sf.saxon.query.XQueryFunctionLibrary;
 import net.sf.saxon.serialize.CharacterMap;
@@ -27,6 +28,7 @@ import net.sf.saxon.trans.*;
 import net.sf.saxon.trans.rules.RuleManager;
 import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.tree.linked.DocumentImpl;
+import net.sf.saxon.type.Type;
 import net.sf.saxon.value.Whitespace;
 import net.sf.saxon.z.IntHashMap;
 
@@ -1529,7 +1531,79 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
      */
 
     public void adjustExposedVisibility() throws XPathException {
-        // no action in HE
+        List<XSLExpose> exposeDeclarations = new ArrayList<XSLExpose>(); // xsl:expose declarations in reverse order
+        for (ComponentDeclaration decl : topLevel) {
+            if (decl.getSourceElement() instanceof XSLExpose) {
+                exposeDeclarations.add(0, (XSLExpose) decl.getSourceElement());
+            }
+        }
+        if (exposeDeclarations.isEmpty()) {
+            return;
+        }
+
+        NamePool pool = getConfiguration().getNamePool();
+        for (ComponentDeclaration decl : topLevel) {
+            StyleElement e = decl.getSourceElement();
+            int fp = e.getFingerprint();
+            if (fp == StandardNames.XSL_VARIABLE ||
+                    fp == StandardNames.XSL_ATTRIBUTE_SET ||
+                    fp == StandardNames.XSL_FUNCTION ||
+                    fp == StandardNames.XSL_MODE ||
+                    (fp == StandardNames.XSL_TEMPLATE && ((XSLTemplate) e).getTemplateName() != null)) {
+                Component component;
+                if (fp == StandardNames.XSL_MODE) {
+                    component = getRuleManager().obtainMode(e.getObjectName(), false).getDeclaringComponent();
+                } else {
+                    component = ((StylesheetComponent) e).getActor().getDeclaringComponent();
+                }
+                ComponentTest exactNameTest =
+                        new ComponentTest(e.getFingerprint(),
+                                          new NameTest(Type.ELEMENT, new FingerprintedQName(e.getObjectName(), pool), pool), -1);
+                ComponentTest exactFunctionTest = null;
+                if (fp == StandardNames.XSL_FUNCTION) {
+                    exactFunctionTest =
+                            new ComponentTest(fp,
+                                              new NameTest(Type.ELEMENT,
+                                                           new FingerprintedQName(e.getObjectName(), pool), pool), ((XSLFunction) e).getNumberOfArguments());
+                }
+                boolean matched = false;
+                for (XSLExpose exposure : exposeDeclarations) {
+                    Set<ComponentTest> explicitComponentTests = exposure.getExplicitComponentTests();
+                    if (explicitComponentTests.contains(exactNameTest) ||
+                            (exactFunctionTest != null && explicitComponentTests.contains(exactFunctionTest))) {
+                        component.setVisibility(exposure.getVisibility(), false);
+                        matched = true;
+                        break;
+                    }
+                }
+                if (!matched && e.getAttributeValue("", "visibility") == null) {
+                    // Look for a matching wildcard
+                    partialWildcardSearch:
+                    for (XSLExpose exposure : exposeDeclarations) {
+                        for (ComponentTest test : exposure.getWildcardComponentTests()) {
+                            if (test.isPartialWildcard() && test.matches(component.getActor())) {
+                                component.setVisibility(exposure.getVisibility(), false);
+                                matched = true;
+                                break partialWildcardSearch;
+                            }
+                        }
+                    }
+                    if (!matched) {
+                        anyWildcardSearch:
+                        for (XSLExpose exposure : exposeDeclarations) {
+                            for (ComponentTest test : exposure.getWildcardComponentTests()) {
+                                if (test.matches(component.getActor())) {
+                                    component.setVisibility(exposure.getVisibility(), false);
+                                    matched = true;
+                                    break anyWildcardSearch;
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
     }
 
     /**

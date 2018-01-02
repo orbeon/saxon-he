@@ -250,10 +250,10 @@ public class Environment implements URIResolver {
         // compile any stylesheet packages defined as part of the environment
         // Support this only in EE - an unusable environment in PE/HE
         for (XdmItem stylesheet : xpc.evaluate("package[@role='secondary']", env)) {
-            if (!"EE".equals(environment.processor.getSaxonEdition())) {
-                environment.usable = false;
-                break;
-            }
+//            if (!"EE".equals(environment.processor.getSaxonEdition())) {
+//                environment.usable = false;
+//                break;
+//            }
             String fileName = ((XdmNode) stylesheet).getAttributeValue(new QName("file"));
             Source styleSource = new StreamSource(((XdmNode) env).getBaseURI().resolve(fileName).toString());
             try {

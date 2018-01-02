@@ -45,6 +45,11 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         new Xslt30TestSuiteDriverHE().go(args);
     }
 
+    public void go(String[] args) throws Exception {
+        driverProc = new Processor(false);
+        super.go(args);
+    }
+
     protected static void usage() {
         System.err.println("java com.saxonica.testdriver.Xslt30TestSuiteDriver[HE] testsuiteDir catalog [-o:resultsdir] [-s:testSetName]" +
                                    " [-t:testNamePattern] [-bytecode:on|off|debug] [-export] [-tree] [-lang] [-save] [-streaming:off|std|ext]" +
