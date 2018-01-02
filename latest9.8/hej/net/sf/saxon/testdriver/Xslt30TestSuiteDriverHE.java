@@ -46,7 +46,9 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
     }
 
     public void go(String[] args) throws Exception {
-        driverProc = new Processor(false);
+        if (driverProc == null) {
+            driverProc = new Processor(false);
+        }
         super.go(args);
     }
 

@@ -117,7 +117,7 @@ public abstract class TestDriver {
             if (args[i].startsWith("-export") && !args[i].equals("-export:off")) {
                 export = true;
             }
-            if (args[i].startsWith("-jit")) {
+            if (args[i].startsWith("-jit") && !args[i].equals("-jit:off")) {
                 jitFlag = true;
             }
             if (args[i].startsWith("-js")) {
