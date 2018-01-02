@@ -735,7 +735,9 @@ public class Transform {
                     out.setOutputProperty(Serializer.Property.METHOD, "xml");
                     out.setOutputProperty(Serializer.Property.INDENT, "yes");
                     out.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, "yes");
-                    out.setOutputProperty(Serializer.Property.SAXON_INDENT_SPACES, "2");
+                    if (!"HE".equals(processor.getSaxonEdition())) {
+                        out.setOutputProperty(Serializer.Property.SAXON_INDENT_SPACES, "2");
+                    }
                     sheet.explain(out);
                 }
                 if (export) {
