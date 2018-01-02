@@ -111,7 +111,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      */
     @Override
     public boolean isLiftable() {
-        return !needsEagerEvaluation;
+        return super.isLiftable() && !needsEagerEvaluation;
     }
 
     @Override
