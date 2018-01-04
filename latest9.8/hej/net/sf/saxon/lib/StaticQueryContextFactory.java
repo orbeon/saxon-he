@@ -23,6 +23,6 @@ public class StaticQueryContextFactory {
      */
 
     public StaticQueryContext newStaticQueryContext(Configuration config) {
-        return new StaticQueryContext(config, false);
+        return new StaticQueryContext(config.getDefaultStaticQueryContext());
     }
 }

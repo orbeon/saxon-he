@@ -102,7 +102,7 @@ public class StaticQueryContext {
      */
 
     public StaticQueryContext(/*@NotNull*/ Configuration config) {
-        this(config.getDefaultStaticQueryContext());
+        //copyFrom(config.getDefaultStaticQueryContext());
         this.config = config;
         namePool = config.getNamePool();
         errorListener = config.getErrorListener();
@@ -125,30 +125,6 @@ public class StaticQueryContext {
      * @param initial if set, this is the StaticQueryContext owned by the Configuration
      */
 
-    public StaticQueryContext(/*@NotNull*/ Configuration config, boolean initial) {
-        if (initial) {
-            this.config = config;
-            namePool = config.getNamePool();
-            errorListener = config.getErrorListener();
-            //moduleURIResolver = config.getModuleURIResolver();
-            if (errorListener instanceof StandardErrorListener) {
-                errorListener = ((StandardErrorListener) errorListener).makeAnother(Configuration.XQUERY);
-                ((StandardErrorListener) errorListener).setRecoveryPolicy(Configuration.DO_NOT_RECOVER);
-            }
-            //collationMap = new CollationMap(config.getCollationMap());
-            //locationMap = new LocationMap();
-            //schemaAware = (Boolean)config.getConfigurationProperty(FeatureKeys.XQUERY_SCHEMA_AWARE);
-//             executable = new Executable(config);
-//             executable.setCollationTable(new CollationMap(config.getCollationMap()));
-//             executable.setHostLanguage(Configuration.XQUERY);
-//             executable.setLocationMap(new LocationMap());
-            reset();
-        } else {
-            copyFrom(config.getDefaultStaticQueryContext());
-        }
-    }
-
-
     /**
      * Create a copy of a supplied StaticQueryContext
      *
@@ -159,7 +135,7 @@ public class StaticQueryContext {
         copyFrom(c);
     }
 
-    protected void copyFrom(/*@NotNull*/ StaticQueryContext c) {
+    public void copyFrom(/*@NotNull*/ StaticQueryContext c) {
         config = c.config;
         namePool = c.namePool;
         baseURI = c.baseURI;
@@ -183,15 +159,6 @@ public class StaticQueryContext {
         errorListener = c.errorListener;
         codeInjector = c.codeInjector;
         isUpdating = c.isUpdating;
-        //collationMap = new CollationMap(c.collationMap);
-        //locationMap = new LocationMap();
-        //schemaAware = c.schemaAware;
-        //streaming = c.streaming;
-//        executable = new Executable(config);
-//        executable.setCollationTable(new CollationMap(c.executable.getCollationTable()));
-//        executable.setHostLanguage(Configuration.XQUERY);
-//        executable.setLocationMap(new LocationMap());
-//        executable.setSchemaAware(c.executable.isSchemaAware());
     }
 
 

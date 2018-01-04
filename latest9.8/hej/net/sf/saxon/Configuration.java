@@ -1291,14 +1291,9 @@ public class Configuration implements SourceResolver, NotationSet {
                 defaultXsltCompilerInfo.setCodeInjector(null);
             }
         }
-        if (defaultStaticQueryContext != null) {
-            if (trace) {
-                defaultStaticQueryContext.setCodeInjector(new TraceCodeInjector());
-            } else {
-                defaultStaticQueryContext.setCodeInjector(null);
-            }
-        }
-    }
+        StaticQueryContext sqc = getDefaultStaticQueryContext();
+        sqc.setCodeInjector(trace ? new TraceCodeInjector() : null);
+}
 
     /**
      * Create an instance of a TraceListener with a specified class name
@@ -1991,9 +1986,14 @@ public class Configuration implements SourceResolver, NotationSet {
 
     public StaticQueryContext getDefaultStaticQueryContext() {
         if (defaultStaticQueryContext == null) {
-            defaultStaticQueryContext = new StaticQueryContext(this, true);
+            defaultStaticQueryContext = makeAppropriateStaticQueryContext();
+            defaultStaticQueryContext.reset();
         }
         return defaultStaticQueryContext;
+    }
+
+    protected StaticQueryContext makeAppropriateStaticQueryContext() {
+        return new StaticQueryContext(this);
     }
 
     /**
