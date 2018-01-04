@@ -4306,7 +4306,12 @@ public class Configuration implements SourceResolver, NotationSet {
                 optimizerOptions = v==0 ? new OptimizerOptions(0) : OptimizerOptions.FULL_EE_OPTIMIZATION;
             } else {
                 String s = requireString(name, value);
-                optimizerOptions = new OptimizerOptions(s);
+                if (s.matches("[0-9]+")) {
+                    // Allow integer values for backwards compatibility
+                    optimizerOptions = "0".equals(s) ? new OptimizerOptions(0) : OptimizerOptions.FULL_EE_OPTIMIZATION;
+                } else {
+                    optimizerOptions = new OptimizerOptions(s);
+                }
             }
 
             if (optimizer != null) {
@@ -5022,10 +5027,7 @@ public class Configuration implements SourceResolver, NotationSet {
      */
 
     public boolean isGenerateByteCode(int hostLanguage) {
-        return getBooleanProperty(FeatureKeys.GENERATE_BYTE_CODE) &&
-                isLicensedFeature(hostLanguage == XSLT ?
-                        LicenseFeature.ENTERPRISE_XSLT :
-                        LicenseFeature.ENTERPRISE_XQUERY);
+        return false;
     }
 
     /**
@@ -5039,14 +5041,11 @@ public class Configuration implements SourceResolver, NotationSet {
      * @return true if the option is switched on
      */
     public boolean isDeferredByteCode(int hostLanguage) {
-        return byteCodeThreshold >0 &&
-                isLicensedFeature(hostLanguage == XSLT ?
-                        LicenseFeature.ENTERPRISE_XSLT :
-                        LicenseFeature.ENTERPRISE_XQUERY);
+        return false;
     }
 
     public boolean isJITEnabled(int hostLanguage) {
-        return optimizerOptions.isSet(OptimizerOptions.JIT);
+        return false;
     }
 
     /**
