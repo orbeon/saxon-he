@@ -15,6 +15,7 @@ import net.sf.saxon.functions.*;
 import net.sf.saxon.functions.Error;
 import net.sf.saxon.functions.registry.BuiltInFunctionSet;
 import net.sf.saxon.lib.NamespaceConstant;
+import net.sf.saxon.ma.map.MapFunctionSet;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.pattern.NodeSetPattern;
@@ -214,6 +215,17 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
         } else {
             return super.getScopingExpression();
         }
+    }
+
+    /**
+     * Ask whether the expression can be lifted out of a loop, assuming it has no dependencies
+     * on the controlling variable/focus of the loop
+     *
+     * @param forStreaming true if the expression is being optimized for streaming
+     */
+    @Override
+    public boolean isLiftable(boolean forStreaming) {
+        return !forStreaming || !isCallOn(MapFunctionSet.MapEntry.class);
     }
 
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {

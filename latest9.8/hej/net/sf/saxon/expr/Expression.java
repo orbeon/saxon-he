@@ -294,9 +294,10 @@ public abstract class Expression implements IdentityComparable {
     /**
      * Ask whether the expression can be lifted out of a loop, assuming it has no dependencies
      * on the controlling variable/focus of the loop
+     * @param forStreaming true if the expression is being optimized for streaming
      */
 
-    public boolean isLiftable() {
+    public boolean isLiftable(boolean forStreaming) {
         int p = getSpecialProperties();
         return (p & StaticProperty.NON_CREATIVE) != 0 && (p & StaticProperty.HAS_SIDE_EFFECTS) == 0
                 && ((getDependencies() & StaticProperty.DEPENDS_ON_ASSIGNABLE_GLOBALS) == 0);

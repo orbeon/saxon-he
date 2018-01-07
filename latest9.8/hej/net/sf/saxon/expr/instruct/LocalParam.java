@@ -545,9 +545,10 @@ public final class LocalParam extends Instruction implements LocalBinding {
     /**
      * Ask whether the expression can be lifted out of a loop, assuming it has no dependencies
      * on the controlling variable/focus of the loop
+     * @param forStreaming
      */
     @Override
-    public boolean isLiftable() {
+    public boolean isLiftable(boolean forStreaming) {
         return false;
     }
 

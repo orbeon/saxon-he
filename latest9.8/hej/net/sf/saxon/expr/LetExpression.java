@@ -108,10 +108,11 @@ public class LetExpression extends Assignation implements TailCallReturner {
     /**
      * Ask whether the expression can be lifted out of a loop, assuming it has no dependencies
      * on the controlling variable/focus of the loop
+     * @param forStreaming
      */
     @Override
-    public boolean isLiftable() {
-        return super.isLiftable() && !needsEagerEvaluation;
+    public boolean isLiftable(boolean forStreaming) {
+        return super.isLiftable(forStreaming) && !needsEagerEvaluation;
     }
 
     @Override

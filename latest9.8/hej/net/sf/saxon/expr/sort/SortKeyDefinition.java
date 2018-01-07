@@ -75,9 +75,10 @@ public class SortKeyDefinition extends PseudoExpression {
     /**
      * Ask whether the expression can be lifted out of a loop, assuming it has no dependencies
      * on the controlling variable/focus of the loop
+     * @param forStreaming
      */
 
-    public boolean isLiftable() {
+    public boolean isLiftable(boolean forStreaming) {
         return false;
     }
 

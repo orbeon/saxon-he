@@ -172,7 +172,7 @@ public class LoopLifter {
         ExpInfo info = expInfoMap.get(exp);
         if (!info.multiThreaded) {
             if (info.loopLevel > 0 && exp.getNetCost() > 0) {
-                if (info.dependees.isEmpty() && exp.isLiftable() && !mayReturnStreamedNodes(exp)) {
+                if (info.dependees.isEmpty() && exp.isLiftable(streaming) && !mayReturnStreamedNodes(exp)) {
                     root = lift(exp, root);
                 } else {
                     Expression child = exp;
@@ -183,7 +183,7 @@ public class LoopLifter {
                             ExpInfo childInfo = expInfoMap.get(child);
                             if (expInfo.loopLevel != childInfo.loopLevel) {
                                 Operand o = ExpressionTool.findOperand(parent, child);
-                                if (exp.isLiftable() && !(child instanceof PseudoExpression) && !o.getOperandRole().isConstrainedClass()) {
+                                if (exp.isLiftable(streaming) && !(child instanceof PseudoExpression) && !o.getOperandRole().isConstrainedClass()) {
                                     Expression lifted = lift(exp, child);
                                     o.setChildExpression(lifted);
                                 }
