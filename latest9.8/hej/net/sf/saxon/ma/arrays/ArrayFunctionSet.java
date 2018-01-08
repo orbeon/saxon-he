@@ -8,6 +8,8 @@
 package net.sf.saxon.ma.arrays;
 
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.functions.Fold;
+import net.sf.saxon.functions.FoldingFunction;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.functions.registry.BuiltInFunctionSet;
 import net.sf.saxon.lib.NamespaceConstant;
@@ -559,9 +561,56 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
      * is used internally for the implementation of array{} and of the saxon:array extension
      */
 
-    public static class ArrayFromSequence extends SystemFunction {
+    public static class ArrayFromSequence extends FoldingFunction {
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             return SimpleArrayItem.makeSimpleArrayItem(arguments[0].iterate());
+        }
+
+        /**
+         * Create the Fold object which is used to perform a streamed evaluation
+         *
+         * @param context             the dynamic evaluation context
+         * @param additionalArguments the values of all arguments other than the first.
+         * @return the Fold object used to compute the function
+         * @throws XPathException if a dynamic error occurs
+         */
+        @Override
+        public Fold getFold(XPathContext context, Sequence... additionalArguments) throws XPathException {
+            return new Fold() {
+                List<Sequence> members = new ArrayList<Sequence>();
+                /**
+                 * Process one item in the input sequence, returning a new copy of the working data
+                 *
+                 * @param item the item to be processed from the input sequence
+                 */
+                @Override
+                public void processItem(Item item) {
+                    members.add(item);
+                }
+
+                /**
+                 * Ask whether the computation has completed. A function that can deliver its final
+                 * result without reading the whole input should return true; this will be followed
+                 * by a call on result() to deliver the final result.
+                 *
+                 * @return true if the result of the function is now available even though not all
+                 * items in the sequence have been processed
+                 */
+                @Override
+                public boolean isFinished() {
+                    return false;
+                }
+
+                /**
+                 * Compute the final result of the function, when all the input has been processed
+                 *
+                 * @return the result of the function
+                 */
+                @Override
+                public Sequence result() {
+                    return new SimpleArrayItem(members);
+                }
+            };
         }
     }
 }
