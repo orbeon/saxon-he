@@ -268,7 +268,7 @@ public class RawSlashExpression extends BinaryExpression
 
     /*@NotNull*/
     public RawSlashExpression copy(RebindingMap rebindings) {
-        RawSlashExpression exp = (RawSlashExpression)ExpressionTool.makePathExpression(getStart().copy(rebindings), getStep().copy(rebindings), false);
+        RawSlashExpression exp = (RawSlashExpression)ExpressionTool.makeRawPathExpression(getStart().copy(rebindings), getStep().copy(rebindings), false);
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;
     }
