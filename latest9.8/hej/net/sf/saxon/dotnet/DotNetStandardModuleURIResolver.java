@@ -16,6 +16,8 @@ import net.sf.saxon.lib.ModuleURIResolver;
 import net.sf.saxon.trans.XPathException;
 
 import javax.xml.transform.stream.StreamSource;
+import java.io.File;
+import java.net.URISyntaxException;
 
 
 /**
@@ -65,7 +67,15 @@ public class DotNetStandardModuleURIResolver implements ModuleURIResolver {
         } else {
             // One or more locations given: import modules from all these locations
             if(baseURI == null) {
-                baseURI =  getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
+                try {
+                    baseURI =  getClass().getProtectionDomain().getCodeSource().getLocation().toURI().toString();
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                    XPathException se = new XPathException("Cannot resolve relative URI " + moduleURI, e);
+                    se.setErrorCode("XQST0059");
+                    se.setIsStaticError(true);
+                    throw se;
+                }
             }
             Uri base = new Uri(baseURI);
             StreamSource[] sources = new StreamSource[locations.length];
