@@ -64,6 +64,9 @@ public class DotNetStandardModuleURIResolver implements ModuleURIResolver {
             throw err;
         } else {
             // One or more locations given: import modules from all these locations
+            if(baseURI == null) {
+                baseURI =  getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
+            }
             Uri base = new Uri(baseURI);
             StreamSource[] sources = new StreamSource[locations.length];
             for (int m = 0; m < locations.length; m++) {
