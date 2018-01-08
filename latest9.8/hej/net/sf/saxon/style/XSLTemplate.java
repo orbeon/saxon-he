@@ -852,12 +852,9 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                         boolean fallback = getConfiguration().getBooleanProperty(FeatureKeys.STREAMING_FALLBACK);
                         String message = "Template rule is declared streamable but the match pattern is not motionless";
                         if (fallback) {
-                            message += "\n  * Falling back to non-streaming implementation";
-                            getStaticContext().issueWarning(message, this);
-                            rule.setDeclaredStreamable(false);
-                        } else {
-                            throw new XPathException(message, "XTSE3430", this);
+                            compileWarning("Streaming fallback is not available (see issue 3584)", "SXWN0001");
                         }
+                        throw new XPathException(message, "XTSE3430", this);
                     }
                 }
 
