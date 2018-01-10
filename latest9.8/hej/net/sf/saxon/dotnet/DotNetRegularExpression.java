@@ -39,6 +39,7 @@ public class DotNetRegularExpression implements RegularExpression {
         String translated = "";
         try {
             pattern = new Regex(regex.toString(), setFlags(flags));
+            groupCount = pattern.GetGroupNumbers().length;
             if (false) {
                 // to keep the compiler happy
                 throw new ArgumentException();
