@@ -159,13 +159,13 @@ public class RoleDiagnostic {
             case EVALUATE_RESULT:
                 return "result of the expression {" + name + "} evaluated by xsl:evaluate";
             case CONTEXT_ITEM:
-                return "the context item";
+                return "context item";
             case AXIS_STEP:
-                return "the context item for the " + AxisInfo.axisName[operand] + " axis";
+                return "context item for the " + AxisInfo.axisName[operand] + " axis";
             case OPTION:
-                return "the value of the " + name + " option";
+                return "value of the " + name + " option";
             case CHARACTER_MAP_EXPANSION:
-                return "the substitute value for character '" + name + "' in the character map";
+                return "substitute value for character '" + name + "' in the character map";
             case DOCUMENT_ORDER:
                 return "document-order sorter";
             case MAP_CONSTRUCTOR:
