@@ -751,8 +751,11 @@ public class TransformFn extends SystemFunction implements Callable {
                 }
             }
         } catch (SaxonApiException e) {
+            XPathException e2;
             if (e.getCause() instanceof XPathException) {
-                throw (XPathException) e.getCause();
+                e2 = (XPathException) e.getCause();
+                e2.setIsGlobalError(false);
+                throw e2;
             } else {
                 throw new XPathException(e);
             }
