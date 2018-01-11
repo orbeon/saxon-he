@@ -376,16 +376,18 @@ public class TransformFn extends SystemFunction implements Callable {
                 originalListener.fatalError(exception);
             }
         });
-        BooleanValue cacheBool = BooleanValue.TRUE;
+        boolean cacheable = options.get("static-params") == null;
         if (options.get("cache") != null) {
-            cacheBool = (BooleanValue) options.get("cache").head();
+            cacheable &= ((BooleanValue) options.get("cache").head()).getBooleanValue();
         }
 
         StylesheetCache cache = context.getController().getStylesheetCache();
         XsltExecutable executable = null;
         if (styleOptionStr.equals("stylesheet-location")) {
             String stylesheetLocation = styleOptionItem.getStringValue();
-            executable = cache.getStylesheetByLocation(stylesheetLocation); // if stylesheet is already cached
+            if (cacheable) {
+                executable = cache.getStylesheetByLocation(stylesheetLocation); // if stylesheet is already cached
+            }
             if (executable == null) {
                 Source style;
                 try {
@@ -408,7 +410,7 @@ public class TransformFn extends SystemFunction implements Callable {
                 } catch (SaxonApiException e) {
                     return reportCompileError(e, compileErrors);
                 }
-                if (cacheBool == BooleanValue.TRUE) {
+                if (cacheable) {
                     cache.setStylesheetByLocation(stylesheetLocation, executable);
                 }
             }
@@ -443,7 +445,9 @@ public class TransformFn extends SystemFunction implements Callable {
                 stylesheetNode = builder.getCurrentRoot();
             }
 
-            executable = cache.getStylesheetByNode(stylesheetNode); // if stylesheet is already cached
+            if (cacheable) {
+                executable = cache.getStylesheetByNode(stylesheetNode); // if stylesheet is already cached
+            }
             if (executable == null) {
                 Source source = stylesheetNode;
                 if (styleBaseUri != null) {
@@ -455,13 +459,15 @@ public class TransformFn extends SystemFunction implements Callable {
                 } catch (SaxonApiException e) {
                     reportCompileError(e, compileErrors);
                 }
-                if (cacheBool == BooleanValue.TRUE) {
+                if (cacheable) {
                     cache.setStylesheetByNode(stylesheetNode, executable);
                 }
             }
         } else if (styleOptionStr.equals("stylesheet-text")) {
             String stylesheetText = styleOptionItem.getStringValue();
-            executable = cache.getStylesheetByText(stylesheetText); // if stylesheet is already cached
+            if (cacheable) {
+                executable = cache.getStylesheetByText(stylesheetText); // if stylesheet is already cached
+            }
             if (executable == null) {
                 StringReader sr = new StringReader(stylesheetText);
                 SAXSource style = new SAXSource(new InputSource(sr));
@@ -473,7 +479,7 @@ public class TransformFn extends SystemFunction implements Callable {
                 } catch (SaxonApiException e) {
                     reportCompileError(e, compileErrors);
                 }
-                if (cacheBool == BooleanValue.TRUE) {
+                if (cacheable) {
                     cache.setStylesheetByText(stylesheetText, executable);
                 }
             }
