@@ -209,7 +209,7 @@ public class TransformFn extends SystemFunction implements Callable {
         AtomicIterator optionIterator = vendorOptions.keys();
         while (true) {
             AtomicValue option = optionIterator.next();
-            if (option != null) {
+            if (option instanceof QNameValue) {
                 QName optionName = new QName(((QNameValue) option.head()).getStructuredQName());
                 XdmValue optionVal = XdmValue.wrap(vendorOptions.get(option));
                 if (((QNameValue) option.head()).getNamespaceURI().equals("http://saxon.sf.net/feature/")) {
