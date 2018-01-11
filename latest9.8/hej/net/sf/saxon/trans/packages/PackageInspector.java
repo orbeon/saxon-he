@@ -33,7 +33,7 @@ import java.io.File;
 public class PackageInspector extends ProxyReceiver {
 
     private String packageName;
-    private String packageVersion;
+    private String packageVersion = "1";
     private int elementCount = 0;
 
     private PackageInspector(PipelineConfiguration pipe) {
@@ -74,7 +74,7 @@ public class PackageInspector extends ProxyReceiver {
     }
 
     private VersionedPackageName getNameAndVersion() {
-        if (packageName == null || packageVersion == null) {
+        if (packageName == null) {
             return null;
         }
         try {
