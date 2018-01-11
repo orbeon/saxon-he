@@ -246,9 +246,8 @@ public class JavaPlatform implements Platform {
      */
 
     public boolean canReturnCollationKeys(StringCollator collation) {
-        return (collation instanceof CodepointCollator) ||
-                ((collation instanceof SimpleCollation) &&
-                        (((SimpleCollation) collation).getComparator() instanceof Collator));
+        return !(collation instanceof SimpleCollation) ||
+                ((SimpleCollation) collation).getComparator() instanceof Collator;
     }
 
     /**
