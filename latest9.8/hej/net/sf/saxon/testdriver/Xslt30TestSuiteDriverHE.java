@@ -388,7 +388,6 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
 
         if (runWithJS && !outcome.isException()) {
             initializeForSaxonJS(xpath, outcome, testName, env, testInput, initialMode, initialTemplate, initialModeName, initialTemplateName, initialFunctionName);
-            return;
         }
 
         if (sheet != null && !runWithJS) {
@@ -463,8 +462,11 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         }
     }
 
-    protected void initializeForSaxonJS(XPathCompiler xpath, TestOutcome outcome, String testName, Environment env, XdmNode testInput, XdmNode initialMode, XdmNode initialTemplate, QName initialModeName, QName initialTemplateName, QName initialFunctionName) throws SaxonApiException {
-
+    protected void initializeForSaxonJS(XPathCompiler xpath, TestOutcome outcome, String testName,
+                                        Environment env, XdmNode testInput, XdmNode initialMode,
+                                        XdmNode initialTemplate, QName initialModeName, QName initialTemplateName,
+                                        QName initialFunctionName) throws SaxonApiException {
+        // exists to be overridden
     }
 
     public void runJSTransform(Environment env, TestOutcome outcome, QName initialTemplateName,
