@@ -86,6 +86,7 @@ public class TransformFn extends SystemFunction implements Callable {
         op.addAllowedOption("stylesheet-base-uri", SequenceType.SINGLE_STRING);
         op.addAllowedOption("base-output-uri", SequenceType.SINGLE_STRING);
         op.addAllowedOption("stylesheet-params", SequenceType.makeSequenceType(MapType.ANY_MAP_TYPE, StaticProperty.EXACTLY_ONE));
+        op.addAllowedOption("initial-match-selection", SequenceType.ANY_SEQUENCE);
         op.addAllowedOption("source-node", SequenceType.SINGLE_NODE);
         op.addAllowedOption("source-location", SequenceType.SINGLE_STRING); // Saxon extension
         op.addAllowedOption("initial-mode", SequenceType.SINGLE_QNAME);
@@ -196,9 +197,10 @@ public class TransformFn extends SystemFunction implements Callable {
         boolean first = true;
         FastStringBuffer buffer = new FastStringBuffer(256);
         for (String k : keys) {
-            if (!first) {
-                buffer.append(" | ");
+            if (first) {
                 first = false;
+            } else {
+                buffer.append(" | ");
             }
             buffer.append(k);
         }
@@ -548,8 +550,7 @@ public class TransformFn extends SystemFunction implements Callable {
         String invocationOption;
         String invocationName = "invocation";
         String styleOption;
-        oneOf(options, "source-node", "source-location");
-        boolean sourceNodeSupplied = options.get("source-node") != null || options.get("source-location") != null;
+        String initialSelection = oneOf(options, "initial-match-selection", "source-node", "source-location");
         if (useXslt30Processor) {
             // source-location is a Saxon extension, for streaming
             invocationOption = checkInvocationMutualExclusion30(options);
@@ -557,8 +558,8 @@ public class TransformFn extends SystemFunction implements Callable {
             if (invocationOption != null) {
                 invocationName = invocationOption;
             }
-            if (!invocationName.equals("initial-template") && !invocationName.equals("initial-function") && !sourceNodeSupplied) {
-                throw new XPathException("A transform must have at least one of the following options: source-node|source-location|initial-template|initial-function", "FOXT0002");
+            if (!invocationName.equals("initial-template") && !invocationName.equals("initial-function") && initialSelection == null) {
+                throw new XPathException("A transform must have at least one of the following options: source-node|source-location|initial-match-selection|initial-template|initial-function", "FOXT0002");
             }
             // if invocation option is initial-function, then check for function-params
             if (invocationName.equals("initial-function") && options.get("function-params") == null) {
@@ -575,8 +576,8 @@ public class TransformFn extends SystemFunction implements Callable {
             if (invocationOption != null) {
                 invocationName = invocationOption;
             }
-            if (!invocationName.equals("initial-template") && !sourceNodeSupplied) {
-                throw new XPathException("A transform must have at least one of the following options: source-node|source-location|initial-template", "FOXT0002");
+            if (!invocationName.equals("initial-template") && initialSelection == null) {
+                throw new XPathException("A transform must have at least one of the following options: source-node|source-location|initial-match-selection|initial-template", "FOXT0002");
             }
             styleOption = checkStylesheetMutualExclusion(options);
         }
@@ -606,6 +607,7 @@ public class TransformFn extends SystemFunction implements Callable {
         String deliveryFormat = "document";
         NodeInfo sourceNode = null;
         String sourceLocation = null;
+        XdmValue initialMatchSelection = null;
         QName initialTemplate = null;
         QName initialMode = null;
         String baseOutputUri = null;
@@ -627,6 +629,8 @@ public class TransformFn extends SystemFunction implements Callable {
                 sourceNode = (NodeInfo) source.head();
             } else if (name.equals("source-location")) {
                 sourceLocation = options.get(name).head().getStringValue();
+            } else if (name.equals("initial-match-selection")) {
+                initialMatchSelection = XdmValue.wrap(options.get(name));
             } else if (name.equals("initial-template")) {
                 initialTemplate = new QName(((QNameValue) options.get(name).head()).getStructuredQName());
             } else if (name.equals("initial-mode")) {
@@ -759,7 +763,10 @@ public class TransformFn extends SystemFunction implements Callable {
                 if (initialMode != null) {
                     transformer.setInitialMode(initialMode);
                 }
-                if (sourceLocation != null) {
+                if (initialMatchSelection == null && sourceNode != null) {
+                    initialMatchSelection = XdmValue.wrap(sourceNode);
+                }
+                if (initialMatchSelection == null) {
                     StreamSource stream = new StreamSource(sourceLocation);
                     if (deliveryFormat.equals("raw")) {
                         result = transformer.applyTemplates(stream).getUnderlyingValue();
@@ -770,10 +777,10 @@ public class TransformFn extends SystemFunction implements Callable {
                     }
                 } else {
                     if (deliveryFormat.equals("raw")) {
-                        result = transformer.applyTemplates(sourceNode).getUnderlyingValue();
+                        result = transformer.applyTemplates(initialMatchSelection).getUnderlyingValue();
                         result = deliverer.postProcess(principalResultKey, result);
                     } else {
-                        transformer.applyTemplates(sourceNode, destination);
+                        transformer.applyTemplates(initialMatchSelection, destination);
                         result = deliverer.getPrimaryResult();
                     }
                 }
