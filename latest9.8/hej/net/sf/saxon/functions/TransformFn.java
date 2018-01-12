@@ -40,7 +40,11 @@ import org.xml.sax.InputSource;
 import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import javax.xml.transform.stream.StreamSource;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -83,6 +87,7 @@ public class TransformFn extends SystemFunction implements Callable {
         op.addAllowedOption("base-output-uri", SequenceType.SINGLE_STRING);
         op.addAllowedOption("stylesheet-params", SequenceType.makeSequenceType(MapType.ANY_MAP_TYPE, StaticProperty.EXACTLY_ONE));
         op.addAllowedOption("source-node", SequenceType.SINGLE_NODE);
+        op.addAllowedOption("source-location", SequenceType.SINGLE_STRING); // Saxon extension
         op.addAllowedOption("initial-mode", SequenceType.SINGLE_QNAME);
         op.addAllowedOption("initial-template", SequenceType.SINGLE_QNAME);
         op.addAllowedOption("delivery-format", SequenceType.SINGLE_STRING);
@@ -543,14 +548,17 @@ public class TransformFn extends SystemFunction implements Callable {
         String invocationOption;
         String invocationName = "invocation";
         String styleOption;
+        oneOf(options, "source-node", "source-location");
+        boolean sourceNodeSupplied = options.get("source-node") != null || options.get("source-location") != null;
         if (useXslt30Processor) {
+            // source-location is a Saxon extension, for streaming
             invocationOption = checkInvocationMutualExclusion30(options);
             // if invocation option is not initial-function or initial-template then check for source-node
             if (invocationOption != null) {
                 invocationName = invocationOption;
             }
-            if (!invocationName.equals("initial-template") && !invocationName.equals("initial-function") && options.get("source-node") == null) {
-                throw new XPathException("A transform must have at least one of the following options: source-node|initial-template|initial-function", "FOXT0002");
+            if (!invocationName.equals("initial-template") && !invocationName.equals("initial-function") && !sourceNodeSupplied) {
+                throw new XPathException("A transform must have at least one of the following options: source-node|source-location|initial-template|initial-function", "FOXT0002");
             }
             // if invocation option is initial-function, then check for function-params
             if (invocationName.equals("initial-function") && options.get("function-params") == null) {
@@ -567,8 +575,8 @@ public class TransformFn extends SystemFunction implements Callable {
             if (invocationOption != null) {
                 invocationName = invocationOption;
             }
-            if (!invocationName.equals("initial-template") && options.get("source-node") == null) {
-                throw new XPathException("A transform must have at least one of the following options: source-node|initial-template", "FOXT0002");
+            if (!invocationName.equals("initial-template") && !sourceNodeSupplied) {
+                throw new XPathException("A transform must have at least one of the following options: source-node|source-location|initial-template", "FOXT0002");
             }
             styleOption = checkStylesheetMutualExclusion(options);
         }
@@ -597,6 +605,7 @@ public class TransformFn extends SystemFunction implements Callable {
         //Destination destination = new XdmDestination();
         String deliveryFormat = "document";
         NodeInfo sourceNode = null;
+        String sourceLocation = null;
         QName initialTemplate = null;
         QName initialMode = null;
         String baseOutputUri = null;
@@ -616,6 +625,8 @@ public class TransformFn extends SystemFunction implements Callable {
             if (name.equals("source-node")) {
                 Sequence source = options.get(name);
                 sourceNode = (NodeInfo) source.head();
+            } else if (name.equals("source-location")) {
+                sourceLocation = options.get(name).head().getStringValue();
             } else if (name.equals("initial-template")) {
                 initialTemplate = new QName(((QNameValue) options.get(name).head()).getStructuredQName());
             } else if (name.equals("initial-mode")) {
@@ -748,12 +759,23 @@ public class TransformFn extends SystemFunction implements Callable {
                 if (initialMode != null) {
                     transformer.setInitialMode(initialMode);
                 }
-                if (deliveryFormat.equals("raw")) {
-                    result = transformer.applyTemplates(sourceNode).getUnderlyingValue();
-                    result = deliverer.postProcess(principalResultKey, result);
+                if (sourceLocation != null) {
+                    StreamSource stream = new StreamSource(sourceLocation);
+                    if (deliveryFormat.equals("raw")) {
+                        result = transformer.applyTemplates(stream).getUnderlyingValue();
+                        result = deliverer.postProcess(principalResultKey, result);
+                    } else {
+                        transformer.applyTemplates(stream, destination);
+                        result = deliverer.getPrimaryResult();
+                    }
                 } else {
-                    transformer.applyTemplates(sourceNode, destination);
-                    result = deliverer.getPrimaryResult();
+                    if (deliveryFormat.equals("raw")) {
+                        result = transformer.applyTemplates(sourceNode).getUnderlyingValue();
+                        result = deliverer.postProcess(principalResultKey, result);
+                    } else {
+                        transformer.applyTemplates(sourceNode, destination);
+                        result = deliverer.getPrimaryResult();
+                    }
                 }
             }
         } catch (SaxonApiException e) {
