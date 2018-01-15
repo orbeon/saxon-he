@@ -9,6 +9,7 @@ package net.sf.saxon.pattern;
 
 import com.saxonica.ee.stream.Streamability;
 import com.saxonica.ee.stream.Sweep;
+import com.saxonica.ee.trans.ContextItemStaticInfoEE;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
@@ -254,7 +255,7 @@ public class BasePatternWithPredicate extends Pattern implements PatternWithPred
     //#ifdefined STREAM
     @Override
     public boolean isMotionless() {
-        ContextItemStaticInfo cio = getConfiguration().makeContextItemStaticInfo(getItemType(), false);
+        ContextItemStaticInfoEE cio = (ContextItemStaticInfoEE)getConfiguration().makeContextItemStaticInfo(getItemType(), false);
         cio.setContextPostureStriding();
         Streamability.getStreamability(getPredicate(), cio, null);
         return getBasePattern().isMotionless() &&

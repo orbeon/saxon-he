@@ -9,6 +9,7 @@ package net.sf.saxon.pattern;
 
 import com.saxonica.ee.stream.Streamability;
 import com.saxonica.ee.stream.Sweep;
+import com.saxonica.ee.trans.ContextItemStaticInfoEE;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.SlotManager;
@@ -340,7 +341,7 @@ public class GeneralPositionalPattern extends Pattern {
      */
 
     public boolean isMotionless() {
-        ContextItemStaticInfo csi = getConfiguration().makeContextItemStaticInfo(getItemType(), false);
+        ContextItemStaticInfoEE csi = (ContextItemStaticInfoEE)getConfiguration().makeContextItemStaticInfo(getItemType(), false);
         csi.setContextPostureStriding();
         Streamability.getStreamability(positionExpr, csi, null);
         return Streamability.getSweep(positionExpr) == Sweep.MOTIONLESS;

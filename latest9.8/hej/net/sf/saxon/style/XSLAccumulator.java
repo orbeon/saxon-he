@@ -20,7 +20,10 @@ import net.sf.saxon.expr.accum.AccumulatorRegistry;
 import net.sf.saxon.expr.accum.AccumulatorRule;
 import net.sf.saxon.expr.instruct.Actor;
 import net.sf.saxon.expr.instruct.SlotManager;
-import net.sf.saxon.expr.parser.*;
+import net.sf.saxon.expr.parser.ExpressionTool;
+import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.Optimizer;
+import net.sf.saxon.expr.parser.RoleDiagnostic;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.NodeTest;
@@ -365,7 +368,7 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
             if (!pattern.isMotionless()) {
                 rule.compileError("The patterns for the accumulator rules in a streaming accumulator must be motionless", "XTSE3430");
             }
-            ContextItemStaticInfo csi = getConfiguration().makeContextItemStaticInfo(pattern.getItemType(), false);
+            ContextItemStaticInfoEE csi = (ContextItemStaticInfoEE)getConfiguration().makeContextItemStaticInfo(pattern.getItemType(), false);
             csi.setContextPostureStriding();
             List<String> reasons = new ArrayList<String>(4);
             PostureAndSweep ps = Streamability.getStreamability(newValueExp, csi, reasons);
