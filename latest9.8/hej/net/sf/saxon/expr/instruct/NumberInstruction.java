@@ -259,6 +259,10 @@ public class NumberInstruction extends Expression {
         return new ListIterator(vec);
     }
 
+    @Override
+    public String getExpressionName() {
+        return "xsl:number";
+    }
 
     /**
      * Diagnostic print of expression structure. The abstract expression tree
