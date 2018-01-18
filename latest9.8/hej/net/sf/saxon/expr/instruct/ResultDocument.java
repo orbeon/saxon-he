@@ -425,6 +425,7 @@ public class ResultDocument extends Instruction
 
         Receiver out;
         OutputURIResolver resolver = null;
+        CloseableResult closeableResult = null;
         Result result = null;
         boolean buildTree = SaxonOutputKeys.isBuildTree(computedLocalProps);
         if (getHref() == null) {
@@ -453,7 +454,8 @@ public class ResultDocument extends Instruction
             resolver = controller.getOutputURIResolver().newInstance();
 
             try {
-                result = getResult(getHref(), getStaticBaseURIString(), context, resolver, resolveAgainstStaticBase);
+                closeableResult = getResult(getHref(), getStaticBaseURIString(), context, resolver, resolveAgainstStaticBase);
+                result = closeableResult.result;
             } catch (XPathException e) {
                 e.maybeSetLocation(getLocation());
                 throw e;
@@ -489,20 +491,27 @@ public class ResultDocument extends Instruction
         }
         context.setReceiver(saved);
         context.setCurrentOutputUri(savedOutputUri);
-        if (resolver != null) {
+        if (closeableResult != null) {
             try {
-                resolver.close(result);
+                closeableResult.close();
             } catch (TransformerException e) {
                 throw XPathException.makeXPathException(e);
             }
         }
     }
 
-    public static Result getResult(Expression href, String baseURI,
+    public static class CloseableResult {
+        public Result result;
+        public void close() throws TransformerException {};
+    }
+
+    public static CloseableResult getResult(Expression href, String baseURI,
                                    XPathContext context, OutputURIResolver resolver,
                                    boolean resolveAgainstStaticBase) throws XPathException {
         String resultURI;
         Result result;
+        CloseableResult closeable;
+        boolean resultFromResolver = false;
         Controller controller = context.getController();
         if (href == null) {
             result = controller.getPrincipalResult();
@@ -510,6 +519,8 @@ public class ResultDocument extends Instruction
             if (resultURI == null) {
                 resultURI = Controller.ANONYMOUS_PRINCIPAL_OUTPUT_URI;
             }
+            closeable = new CloseableResult();
+            closeable.result = result;
         } else {
             try {
                 String base;
@@ -526,6 +537,8 @@ public class ResultDocument extends Instruction
                     if (resultURI == null) {
                         resultURI = Controller.ANONYMOUS_PRINCIPAL_OUTPUT_URI;
                     }
+                    closeable = new CloseableResult();
+                    closeable.result = result;
                 } else {
                     try {
                         result = resolver == null ? null : resolver.resolve(hrefValue, base);
@@ -540,6 +553,14 @@ public class ResultDocument extends Instruction
                         resolver = StandardOutputResolver.getInstance();
                         result = resolver.resolve(hrefValue, base);
                     }
+                    final OutputURIResolver finalResolver = resolver;
+                    closeable = new CloseableResult() {
+                        @Override
+                        public void close() throws TransformerException {
+                            finalResolver.close(result);
+                        }
+                    };
+                    closeable.result = result;
                     resultURI = result.getSystemId();
                     if (resultURI == null) {
                         try {
@@ -556,7 +577,7 @@ public class ResultDocument extends Instruction
         }
         checkAcceptableUri(context, resultURI);
         traceDestination(context, result);
-        return result;
+        return closeable;
     }
 
     public static void traceDestination(XPathContext context, Result result) {
