@@ -55,6 +55,13 @@ public class ReconfigurableSerializer extends ProxyReceiver {
     public void reconfigure(Properties outputProperties, CharacterMapIndex charMapIndex) throws XPathException {
         SerializerFactory sf = getConfiguration().getSerializerFactory();
         Properties combinedProps = new Properties(outputProperties);
+//        // Only take the "top layer" of the API defined properties, ignoring defaults obtained from the stylesheet or configuration
+//        for (Object k : apiDefinedProperties.keySet()) {
+//            if (k instanceof String) {
+//                String s = (String)k;
+//                combinedProps.setProperty(s, apiDefinedProperties.getProperty(s));
+//            }
+//        }
         for (String s : apiDefinedProperties.stringPropertyNames()) {
             combinedProps.setProperty(s, apiDefinedProperties.getProperty(s));
         }

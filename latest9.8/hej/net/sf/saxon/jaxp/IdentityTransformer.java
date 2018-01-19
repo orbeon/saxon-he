@@ -161,9 +161,7 @@ public class IdentityTransformer extends Transformer {
         if (properties == null) {
             localOutputProperties = null;
         } else {
-            Enumeration keys = properties.propertyNames();
-            while (keys.hasMoreElements()) {
-                String key = (String) keys.nextElement();
+            for (String key : properties.stringPropertyNames()) {
                 setOutputProperty(key, properties.getProperty(key));
             }
         }
@@ -186,9 +184,6 @@ public class IdentityTransformer extends Transformer {
      */
 
     public Properties getOutputProperties() {
-        if (localOutputProperties == null) {
-            localOutputProperties = new Properties(getStylesheetOutputProperties());
-        }
 
         // Make a copy, so that modifications to the returned properties object have no effect (even on the
         // local output properties)
@@ -230,9 +225,19 @@ public class IdentityTransformer extends Transformer {
 
     protected Properties getLocalOutputProperties() {
         if (localOutputProperties == null) {
-            localOutputProperties = new Properties();
+            makeLocalOutputProperties();
         }
         return localOutputProperties;
+    }
+
+    /**
+     * Make the localOutputProperties object. This is a Properties object containing
+     * the properties set by calls on setOutputProperty or setOutputProperties; it does not include
+     * properties set in the stylesheet or in the configuration.
+     */
+
+    private void makeLocalOutputProperties() {
+        localOutputProperties = new Properties();
     }
 
     /**
@@ -260,10 +265,14 @@ public class IdentityTransformer extends Transformer {
         } catch (XPathException err) {
             throw new IllegalArgumentException(err.getMessage());
         }
-        if (localOutputProperties == null) {
-            localOutputProperties = getStylesheetOutputProperties();
+        String value = null;
+        if (localOutputProperties != null) {
+            value = localOutputProperties.getProperty(name);
         }
-        return localOutputProperties.getProperty(name);
+        if (value == null) {
+            value = getStylesheetOutputProperties().getProperty(name);
+        }
+        return value;
     }
 
     /**
@@ -294,7 +303,7 @@ public class IdentityTransformer extends Transformer {
     @Override
     public void setOutputProperty(String name, String value) throws IllegalArgumentException {
         if (localOutputProperties == null) {
-            localOutputProperties = getOutputProperties();
+            makeLocalOutputProperties();
         }
         try {
             value = getConfiguration().getSerializerFactory().checkOutputProperty(name, value);

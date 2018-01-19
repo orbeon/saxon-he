@@ -345,7 +345,7 @@ public class Serializer implements Destination {
      * @param defaultProperties the default output properties to be used
      */
 
-    protected void setDefaultOutputProperties(Properties defaultProperties) {
+    public void setDefaultOutputProperties(Properties defaultProperties) {
         this.defaultOutputProperties = defaultProperties;
     }
 
@@ -764,12 +764,13 @@ public class Serializer implements Destination {
      */
 
     protected Receiver getReceiver(Executable executable) throws SaxonApiException {
+        // Note: used only for XQuery. The equivalent logic for XSLT is in XsltTransformer.setDestination()
         try {
             Configuration config = executable.getConfiguration();
             SerializerFactory sf = config.getSerializerFactory();
             PipelineConfiguration pipe = config.makePipelineConfiguration();
             pipe.setHostLanguage(executable.getHostLanguage());
-            Properties baseProps = executable.getDefaultOutputProperties();
+            Properties baseProps = new Properties(executable.getDefaultOutputProperties());
 
             CharacterMapIndex charMapIndex = executable.getCharacterMapIndex();
             if (charMapIndex.isEmpty()) {

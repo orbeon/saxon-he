@@ -14,6 +14,7 @@ import net.sf.saxon.expr.JPConverter;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
+import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.s9api.*;
 import net.sf.saxon.trans.XPathException;
@@ -101,11 +102,15 @@ abstract class AbstractTransformerImpl extends IdentityTransformer {
             } else {
                 throw new IllegalArgumentException("StreamResult supplies neither an OutputStream nor a Writer");
             }
-            // Copy the local output properties to the Serializer
+            // Copy the local (API-defined) output properties to the Serializer.
+            // (The stylesheet-defined properties will be copied later)
             Properties localOutputProperties = getLocalOutputProperties();
             for (String key : localOutputProperties.stringPropertyNames()) {
-                ((Serializer) destination).setOutputProperty(QName.fromClarkName(key),
-                                                             localOutputProperties.getProperty(key));
+                QName propertyName = QName.fromClarkName(key);
+                if (!(propertyName.getNamespaceURI().equals(NamespaceConstant.SAXON) && propertyName.getLocalName().equals("next-in-chain"))) {
+                    ((Serializer) destination).setOutputProperty(QName.fromClarkName(key),
+                                                                 localOutputProperties.getProperty(key));
+                }
             }
         } else if (outputTarget instanceof SAXResult) {
             destination = new SAXDestination(((SAXResult) outputTarget).getHandler());
