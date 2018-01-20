@@ -306,6 +306,8 @@ public class LetExpression extends Assignation implements TailCallReturner {
             } else if ((getSequence().getDependencies() & StaticProperty.DEPENDS_ON_CURRENT_GROUP) != 0) {
                 // Don't inline variables that depend on current-group() or current-grouping-key()
                 considerRemoval = false;
+            } else if (references.get(0).isInLoop()) {
+                considerRemoval = false;
             }
         }
 
