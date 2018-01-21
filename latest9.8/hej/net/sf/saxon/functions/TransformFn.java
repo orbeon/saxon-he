@@ -7,6 +7,7 @@
 
 package net.sf.saxon.functions;
 
+import com.saxonica.config.ProfessionalConfiguration;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
 import net.sf.saxon.Version;
@@ -141,7 +142,7 @@ public class TransformFn extends SystemFunction implements Callable {
     private String checkStylesheetMutualExclusion30(Map<String, Sequence> map) throws XPathException {
         String styleOption = exactlyOneOf(map, "stylesheet-location", "stylesheet-node", "stylesheet-text",
                                           "package-name", "package-node", "package-location");
-        if (styleOption.equals("package-node") || styleOption.equals("package-location")) {
+        if (styleOption.equals("package-location")) {
             throw new XPathException("The transform option " + styleOption + " is not implemented in Saxon", "FOXT0002");
         }
         return styleOption;
@@ -421,7 +422,7 @@ public class TransformFn extends SystemFunction implements Callable {
                     cache.setStylesheetByLocation(stylesheetLocation, executable);
                 }
             }
-        } else if (styleOptionStr.equals("stylesheet-node")) {
+        } else if (styleOptionStr.equals("stylesheet-node") || styleOptionStr.equals("package-node")) {
             NodeInfo stylesheetNode = (NodeInfo) styleOptionItem;
 
             if (styleBaseUri != null && !stylesheetNode.getBaseURI().equals(styleBaseUri.getStringValue())) {
@@ -534,8 +535,22 @@ public class TransformFn extends SystemFunction implements Callable {
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         Map<String, Sequence> options = getDetails().optionDetails.processSuppliedOptions((MapItem) arguments[0].head(), context);
 
-        Processor processor = new Processor(false);
-        processor.setConfigurationProperty(FeatureKeys.CONFIGURATION, context.getConfiguration());
+        Sequence vendorOptionsValue = options.get("vendor-options");
+        MapItem vendorOptions = vendorOptionsValue == null ? null : (MapItem) vendorOptionsValue.head();
+
+        Configuration targetConfig = context.getConfiguration();
+        if (vendorOptions != null) {
+            Sequence targetConfigValue = vendorOptions.get(new QNameValue("", NamespaceConstant.SAXON, "configuration"));
+            if (targetConfigValue != null) {
+                NodeInfo configFile = (NodeInfo) targetConfigValue.head();
+                targetConfig = Configuration.readConfiguration(configFile, targetConfig);
+                if (context.getConfiguration() instanceof ProfessionalConfiguration && targetConfig instanceof ProfessionalConfiguration) {
+                    ((ProfessionalConfiguration)targetConfig).importLicenseDetails(((ProfessionalConfiguration)context.getConfiguration()));
+                }
+            }
+        }
+        Processor processor = new Processor(true);
+        processor.setConfigurationProperty(FeatureKeys.CONFIGURATION, targetConfig);
         boolean isXslt30Processor = true;
         checkTransformOptions(options, context, isXslt30Processor);
         boolean useXslt30Processor = isXslt30Processor;
@@ -546,48 +561,48 @@ public class TransformFn extends SystemFunction implements Callable {
             }
             useXslt30Processor = xsltVersion.compareTo(BigDecimalValue.THREE) == 0;
         }
+
+        String principalInput = oneOf(options, "source-node", "source-location", "initial-match-selection");
+
         // Check the rules and restrictions for combinations of transform options
         String invocationOption;
         String invocationName = "invocation";
         String styleOption;
-        String initialSelection = oneOf(options, "initial-match-selection", "source-node", "source-location");
-        if (useXslt30Processor) {
-            // source-location is a Saxon extension, for streaming
-            invocationOption = checkInvocationMutualExclusion30(options);
-            // if invocation option is not initial-function or initial-template then check for source-node
-            if (invocationOption != null) {
-                invocationName = invocationOption;
-            }
-            if (!invocationName.equals("initial-template") && !invocationName.equals("initial-function") && initialSelection == null) {
-                throw new XPathException("A transform must have at least one of the following options: source-node|source-location|initial-match-selection|initial-template|initial-function", "FOXT0002");
-            }
-            // if invocation option is initial-function, then check for function-params
-            if (invocationName.equals("initial-function") && options.get("function-params") == null) {
-                throw new XPathException("Use of the transform option initial-function requires the function parameters to be supplied using the option function-params", "FOXT0002");
-            }
-            // function-params should only be used if invocation option is initial-function
-            if (!invocationName.equals("initial-function") && options.get("function-params") != null) {
-                throw new XPathException("The transform option function-params can only be used if the option initial-function is also used", "FOXT0002");
-            }
-            styleOption = checkStylesheetMutualExclusion30(options);
-        } else {
-            invocationOption = checkInvocationMutualExclusion(options);
-            // if invocation option is not initial-template then check for source-node
-            if (invocationOption != null) {
-                invocationName = invocationOption;
-            }
-            if (!invocationName.equals("initial-template") && initialSelection == null) {
-                throw new XPathException("A transform must have at least one of the following options: source-node|source-location|initial-match-selection|initial-template", "FOXT0002");
-            }
-            styleOption = checkStylesheetMutualExclusion(options);
+
+        invocationOption = checkInvocationMutualExclusion30(options);
+        // if invocation option is not initial-function or initial-template then check for source-node
+        if (invocationOption != null) {
+            invocationName = invocationOption;
         }
+        if (!invocationName.equals("initial-template") && !invocationName.equals("initial-function") && principalInput == null) {
+            //throw new XPathException("A transform must have at least one of the following options: source-node|initial-template|initial-function", "FOXT0002");
+            invocationName = "initial-template";
+            options.put("initial-template", new QNameValue("", NamespaceConstant.XSLT, "initial-template"));
+        }
+        // if invocation option is initial-function, then check for function-params
+        if (invocationName.equals("initial-function") && options.get("function-params") == null) {
+            throw new XPathException("Use of the transform option initial-function requires the function parameters to be supplied using the option function-params", "FOXT0002");
+        }
+        // function-params should only be used if invocation option is initial-function
+        if (!invocationName.equals("initial-function") && options.get("function-params") != null) {
+            throw new XPathException("The transform option function-params can only be used if the option initial-function is also used", "FOXT0002");
+        }
+        styleOption = checkStylesheetMutualExclusion30(options);
+
+
+
+
+
+
+
+
         // Set the vendor options (configuration features) on the processor
         if (options.get("requested-properties") != null) {
             setRequestedProperties(options, processor);
         }
-        if (options.get("vendor-options") != null) {
-            setVendorOptions(options, processor);
-        }
+//        if (options.get("vendor-options") != null) {
+//            setVendorOptions(options, processor);
+//        }
 
         XsltCompiler xsltCompiler = processor.newXsltCompiler();
         xsltCompiler.setURIResolver(context.getURIResolver());
@@ -652,12 +667,15 @@ public class TransformFn extends SystemFunction implements Callable {
                 serializationParamsMap = (MapItem) options.get(name).head();
 
             } else if (name.equals("stylesheet-params")) {
-                MapItem params = (MapItem) options.get(name).head(); //Check this map?? (i.e. validate type of keys)
+                MapItem params = (MapItem) options.get(name).head();
                 AtomicIterator paramIterator = params.keys();
                 while (true) {
                     AtomicValue param = paramIterator.next();
                     if (param != null) {
-                        QName paramName = new QName(((QNameValue) param.head()).getStructuredQName());
+                        if (!(param instanceof QNameValue)) {
+                            throw new XPathException("The names of parameters in stylesheet-params must be supplied as QNames");
+                        }
+                        QName paramName = new QName(((QNameValue) param).getStructuredQName());
                         XdmValue paramVal = XdmValue.wrap(params.get(param));
                         stylesheetParams.put(paramName, paramVal);
                     } else {
@@ -672,6 +690,9 @@ public class TransformFn extends SystemFunction implements Callable {
                 while (true) {
                     AtomicValue param = paramIterator.next();
                     if (param != null) {
+                        if (!(param instanceof QNameValue)) {
+                            throw new XPathException("The names of parameters in template-params must be supplied as QNames");
+                        }
                         QName paramName = new QName(((QNameValue) param.head()).getStructuredQName());
                         XdmValue paramVal = XdmValue.wrap(params.get(param));
                         templateParams.put(paramName, paramVal);
@@ -685,6 +706,9 @@ public class TransformFn extends SystemFunction implements Callable {
                 while (true) {
                     AtomicValue param = paramIterator.next();
                     if (param != null) {
+                        if (!(param instanceof QNameValue)) {
+                            throw new XPathException("The names of parameters in tunnel-params must be supplied as QNames");
+                        }
                         QName paramName = new QName(((QNameValue) param.head()).getStructuredQName());
                         XdmValue paramVal = XdmValue.wrap(params.get(param));
                         tunnelParams.put(paramName, paramVal);
@@ -703,6 +727,14 @@ public class TransformFn extends SystemFunction implements Callable {
                 }
             } else if (name.equals("post-process")) {
                 postProcessor = (Function)options.get(name).head();
+            } else if (name.equals("vendor-options")) {
+                //MapItem vendorOptions = (MapItem)options.get(name).head();
+                Sequence value;
+                value = vendorOptions.get(new QNameValue("saxon", NamespaceConstant.SAXON, "schema-validation-mode"));
+                if (value != null) {
+                    String mode = value.head().getStringValue();
+                    transformer.setSchemaValidationMode(ValidationMode.get(Validation.getCode(mode)));
+                }
             }
         }
 
@@ -1070,9 +1102,12 @@ public class TransformFn extends SystemFunction implements Callable {
 
         @Override
         public void close(Result result) throws XPathException {
-            String output = workInProgress.get(result.getSystemId()).toString();
-            results.put(result.getSystemId(), output);
-            workInProgress.remove(result.getSystemId());
+            StringWriter work = workInProgress.get(result.getSystemId());
+            if (work != null) {
+                String output = workInProgress.get(result.getSystemId()).toString();
+                results.put(result.getSystemId(), output);
+                workInProgress.remove(result.getSystemId());
+            }
         }
 
         @Override
