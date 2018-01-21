@@ -673,7 +673,7 @@ public class TransformFn extends SystemFunction implements Callable {
                     AtomicValue param = paramIterator.next();
                     if (param != null) {
                         if (!(param instanceof QNameValue)) {
-                            throw new XPathException("The names of parameters in stylesheet-params must be supplied as QNames");
+                            throw new XPathException("The names of parameters in stylesheet-params must be supplied as QNames", "FOXT0002");
                         }
                         QName paramName = new QName(((QNameValue) param).getStructuredQName());
                         XdmValue paramVal = XdmValue.wrap(params.get(param));
@@ -691,7 +691,7 @@ public class TransformFn extends SystemFunction implements Callable {
                     AtomicValue param = paramIterator.next();
                     if (param != null) {
                         if (!(param instanceof QNameValue)) {
-                            throw new XPathException("The names of parameters in template-params must be supplied as QNames");
+                            throw new XPathException("The names of parameters in template-params must be supplied as QNames", "FOXT0002");
                         }
                         QName paramName = new QName(((QNameValue) param.head()).getStructuredQName());
                         XdmValue paramVal = XdmValue.wrap(params.get(param));
@@ -707,7 +707,7 @@ public class TransformFn extends SystemFunction implements Callable {
                     AtomicValue param = paramIterator.next();
                     if (param != null) {
                         if (!(param instanceof QNameValue)) {
-                            throw new XPathException("The names of parameters in tunnel-params must be supplied as QNames");
+                            throw new XPathException("The names of parameters in tunnel-params must be supplied as QNames", "FOXT0002");
                         }
                         QName paramName = new QName(((QNameValue) param.head()).getStructuredQName());
                         XdmValue paramVal = XdmValue.wrap(params.get(param));
