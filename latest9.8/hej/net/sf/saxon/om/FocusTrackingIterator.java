@@ -8,8 +8,10 @@
 package net.sf.saxon.om;
 
 import net.sf.saxon.expr.LastPositionFinder;
+import net.sf.saxon.expr.sort.GroupIterator;
 import net.sf.saxon.pattern.AnyNodeTest;
 import net.sf.saxon.pattern.NodeTest;
+import net.sf.saxon.regex.RegexIterator;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.tree.iter.GroundedIterator;
@@ -31,6 +33,13 @@ import net.sf.saxon.value.SequenceExtent;
  */
 public class FocusTrackingIterator implements FocusIterator, LookaheadIterator, GroundedIterator, LastPositionFinder {
 
+    // The ability to memoize the focus sequence is introduced by issue 3636. To use the facility, it must be enabled
+    // first by compiling the Saxon code with MEMOIZABLE set to true, and then by setting the mutable static variable
+    // MEMOIZE to true. This ensures that the facility has no run-time overhead if not enabled.
+
+    public final static boolean MEMOIZABLE = false;
+    public static boolean MEMOIZE = false;
+
     private SequenceIterator base;
     private Item curr;
     private int pos = 0;
@@ -38,7 +47,16 @@ public class FocusTrackingIterator implements FocusIterator, LookaheadIterator, 
     private SiblingMemory siblingMemory = null;
 
     public FocusTrackingIterator(SequenceIterator base) {
-        this.base = base;
+        if (MEMOIZABLE && MEMOIZE && (base.getProperties() & GROUNDED) == 0 &&
+                !(base instanceof GroupIterator) && !(base instanceof RegexIterator)) {
+            try {
+                this.base = new MemoSequence(base).iterate();
+            } catch (XPathException e) {
+                this.base = base;
+            }
+        } else {
+            this.base = base;
+        }
     }
 
     /**
@@ -151,7 +169,8 @@ public class FocusTrackingIterator implements FocusIterator, LookaheadIterator, 
 
     /**
      * Return a GroundedValue containing all the items in the sequence returned by this
-     * SequenceIterator. This should be an "in-memory" value, not a Closure.
+     * SequenceIterator. This should be an "in-memory" value, not a Closure. This method
+     * must not consume the iterator.
      *
      * @return the corresponding Value
      * @throws XPathException in the cases of subclasses (such as the iterator over a MemoClosure)
@@ -164,7 +183,8 @@ public class FocusTrackingIterator implements FocusIterator, LookaheadIterator, 
 
     /**
      * Return a GroundedValue containing all the remaining items in the sequence returned by this
-     * SequenceIterator, starting at the current position. This should be an "in-memory" value, not a Closure.
+     * SequenceIterator, starting at the current position. This should be an "in-memory" value, not a
+     * Closure.  This method must not consume the iterator.
      *
      * @return the corresponding Value
      * @throws XPathException in the cases of subclasses (such as the iterator over a MemoClosure)

@@ -277,8 +277,14 @@ public class MemoSequence implements Sequence {
             } else if (state == EMPTY) {
                 return EmptySequence.getInstance();
             } else {
+                // save the current position
+                int savePos = position;
                 // fill the reservoir
-                while (next() != null) {}
+                while (next() != null) {
+                }
+                // reset the current position
+                position = savePos;
+                // return all the items
                 return makeExtent();
             }
         }
@@ -293,7 +299,21 @@ public class MemoSequence implements Sequence {
 
         @Override
         public GroundedValue getResidue() throws XPathException {
-            return new SequenceExtent(this);
+            if (state == EMPTY || position >= used || position == -2) {
+                return EmptySequence.getInstance();
+            } else if (state == ALL_READ) {
+                return SequenceExtent.makeSequenceExtent(Arrays.asList(reservoir).subList(position + 1, used));
+            } else {
+                // save the current position
+                int savePos = position;
+                // fill the reservoir
+                while (next() != null) {
+                }
+                // reset the current position
+                position = savePos;
+                // return all the items
+                return SequenceExtent.makeSequenceExtent(Arrays.asList(reservoir).subList(position+1, used));
+            }
         }
 
         /**
