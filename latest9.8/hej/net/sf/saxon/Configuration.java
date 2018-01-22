@@ -7,10 +7,10 @@
 
 package net.sf.saxon;
 
-import net.sf.saxon.expr.compat.TypeChecker10;
 import net.sf.saxon.event.*;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.accum.AccumulatorRegistry;
+import net.sf.saxon.expr.compat.TypeChecker10;
 import net.sf.saxon.expr.instruct.*;
 import net.sf.saxon.expr.number.Numberer_en;
 import net.sf.saxon.expr.parser.*;
@@ -413,6 +413,20 @@ public class Configuration implements SourceResolver, NotationSet {
     }
 
     /**
+     * Factory method to construct a Configuration object by reading a configuration file.
+     *
+     * @param source Source object containing the configuration file
+     * @return the resulting Configuration
+     * @throws net.sf.saxon.trans.XPathException if the configuration file cannot be read
+     *                                           or is invalid
+     */
+
+    public static Configuration readConfiguration(Source source, Configuration baseConfiguration) throws XPathException {
+        Configuration tempConfig = newConfiguration();
+        return tempConfig.readConfigurationFile(source, baseConfiguration);
+    }
+
+    /**
      * Read the configuration file an construct a new Configuration (the real one)
      *
      * @param source the source of the configuration file
@@ -421,7 +435,17 @@ public class Configuration implements SourceResolver, NotationSet {
      */
 
     protected Configuration readConfigurationFile(Source source) throws XPathException {
-        return new ConfigurationReader().makeConfiguration(source);
+        return makeConfigurationReader().makeConfiguration(source);
+    }
+
+    protected Configuration readConfigurationFile(Source source, Configuration baseConfiguration) throws XPathException {
+        ConfigurationReader reader = makeConfigurationReader();
+        reader.setBaseConfiguration(baseConfiguration);
+        return reader.makeConfiguration(source);
+    }
+
+    protected ConfigurationReader makeConfigurationReader() {
+        return new ConfigurationReader();
     }
 
 

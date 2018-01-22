@@ -93,12 +93,22 @@ public class PackageLibrary {
         compilerInfo = info;
         config = info.getConfiguration();
         for (File file : files) {
-            PackageDetails details = PackageInspector.getPackageDetails(file, config);
-            if (details == null) {
-                throw new XPathException("Unable to get package name and version for file " + file.getName());
-            }
-            addPackage(details);
+            addPackage(file);
         }
+    }
+
+    /**
+     * Add a package supplied in the form of a file: either a source XSLT package, or
+     * an exported package
+     * @param file  a file to be added to the package library
+     */
+
+    public void addPackage(File file) throws XPathException {
+        PackageDetails details = PackageInspector.getPackageDetails(file, config);
+        if (details == null) {
+            throw new XPathException("Unable to get package name and version for file " + file.getName());
+        }
+        addPackage(details);
     }
 
     /**

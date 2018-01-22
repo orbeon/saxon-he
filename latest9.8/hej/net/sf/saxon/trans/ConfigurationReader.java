@@ -10,6 +10,7 @@ package net.sf.saxon.trans;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Version;
+import net.sf.saxon.event.ContentHandlerProxy;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.instruct.ResultDocument;
 import net.sf.saxon.expr.parser.ExplicitLocation;
@@ -17,10 +18,7 @@ import net.sf.saxon.expr.parser.Token;
 import net.sf.saxon.expr.parser.XPathParser;
 import net.sf.saxon.functions.ResolveURI;
 import net.sf.saxon.lib.*;
-import net.sf.saxon.om.NamespaceResolver;
-import net.sf.saxon.om.QNameParser;
-import net.sf.saxon.om.Sequence;
-import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.om.*;
 import net.sf.saxon.sxpath.IndependentContext;
 import net.sf.saxon.trans.packages.PackageDetails;
 import net.sf.saxon.trans.packages.PackageLibrary;
@@ -36,6 +34,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -58,8 +57,13 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
     private Stack<List<String[]>> namespaceStack = new Stack<List<String[]>>();
     private PackageLibrary packageLibrary;
     private PackageDetails currentPackage;
+    private Configuration baseConfiguration;
 
     public ConfigurationReader() {
+    }
+
+    public ConfigurationReader(Configuration baseConfiguration) {
+        this.baseConfiguration = baseConfiguration;
     }
 
     /**
@@ -74,6 +78,16 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
     }
 
     /**
+     * Set a base Configuration to be used by the new Configuration. The new Configuration
+     * shares a NamePool and document number allocator with the base Configuration
+     * @param base the base configuration to be used
+     */
+
+    public void setBaseConfiguration(Configuration base) {
+        this.baseConfiguration = base;
+    }
+
+    /**
      * Create a Configuration based on the contents of this configuration file
      *
      * @param source the Source of the configuration file
@@ -84,52 +98,82 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
     public Configuration makeConfiguration(Source source) throws XPathException {
         InputSource is;
         XMLReader parser = null;
-        if (source instanceof SAXSource) {
-            parser = ((SAXSource) source).getXMLReader();
-            is = ((SAXSource) source).getInputSource();
-        } else if (source instanceof StreamSource) {
-            is = new InputSource(source.getSystemId());
-            is.setCharacterStream(((StreamSource) source).getReader());
-            is.setByteStream(((StreamSource) source).getInputStream());
-        } else {
-            throw new XPathException("Source for configuration file must be a StreamSource or SAXSource");
-        }
-        if (parser == null) {
-            // Don't use the parser from the pool, it might be validating
-            parser = Version.platform.loadParser();
-            try {
-                parser.setFeature("http://xml.org/sax/features/namespaces", true);
-                parser.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
-            } catch (SAXNotRecognizedException e) {
-                throw new TransformerFactoryConfigurationError(e);
-            } catch (SAXNotSupportedException e) {
-                throw new TransformerFactoryConfigurationError(e);
-            }
-        }
-        try {
-            parser.setContentHandler(this);
-            parser.parse(is);
-        } catch (IOException e) {
-            throw new XPathException("Failed to read config file", e);
-        } catch (SAXException e) {
-            throw new XPathException("Failed to parse config file", e);
-        }
-
-        if (!errors.isEmpty()) {
-            ErrorListener listener;
-            if (config == null) {
-                listener = new StandardErrorListener();
-            } else {
-                listener = config.getErrorListener();
-            }
-            try {
-                for (XPathException err : errors) {
-                    listener.warning(err);
+        if (source instanceof NodeInfo) {
+            ContentHandlerProxy proxy = new ContentHandlerProxy() {
+                @Override
+                public void startDocument(int properties) throws XPathException {
+                    try {
+                        getUnderlyingContentHandler().startDocument();
+                    } catch (SAXException e) {
+                        throw XPathException.makeXPathException(e);
+                    }
                 }
-            } catch (TransformerException e) {
-                //
+
+                @Override
+                public void endDocument() throws XPathException {
+                    try {
+                        getUnderlyingContentHandler().endDocument();
+                    } catch (SAXException e) {
+                        throw XPathException.makeXPathException(e);
+                    }
+                }
+            };
+            proxy.setUnderlyingContentHandler(this);
+            proxy.setPipelineConfiguration(((NodeInfo)source).getConfiguration().makePipelineConfiguration());
+            proxy.open();
+            proxy.startDocument(0);
+            ((NodeInfo)source).copy(proxy, CopyOptions.ALL_NAMESPACES, ExplicitLocation.UNKNOWN_LOCATION);
+            proxy.endDocument();
+            proxy.close();
+            return config;
+        } else {
+            if (source instanceof SAXSource) {
+                parser = ((SAXSource) source).getXMLReader();
+                is = ((SAXSource) source).getInputSource();
+            } else if (source instanceof StreamSource) {
+                is = new InputSource(source.getSystemId());
+                is.setCharacterStream(((StreamSource) source).getReader());
+                is.setByteStream(((StreamSource) source).getInputStream());
+            } else {
+                throw new XPathException("Source for configuration file must be a StreamSource or SAXSource");
             }
-            throw errors.get(0);
+            if (parser == null) {
+                // Don't use the parser from the pool, it might be validating
+                parser = Version.platform.loadParser();
+                try {
+                    parser.setFeature("http://xml.org/sax/features/namespaces", true);
+                    parser.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
+                } catch (SAXNotRecognizedException e) {
+                    throw new TransformerFactoryConfigurationError(e);
+                } catch (SAXNotSupportedException e) {
+                    throw new TransformerFactoryConfigurationError(e);
+                }
+            }
+            try {
+                parser.setContentHandler(this);
+                parser.parse(is);
+            } catch (IOException e) {
+                throw new XPathException("Failed to read config file", e);
+            } catch (SAXException e) {
+                throw new XPathException("Failed to parse config file", e);
+            }
+
+            if (!errors.isEmpty()) {
+                ErrorListener listener;
+                if (config == null) {
+                    listener = new StandardErrorListener();
+                } else {
+                    listener = config.getErrorListener();
+                }
+                try {
+                    for (XPathException err : errors) {
+                        listener.warning(err);
+                    }
+                } catch (TransformerException e) {
+                    //
+                }
+                throw errors.get(0);
+            }
         }
         return config;
     }
@@ -175,6 +219,10 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
                 } else {
                     error("configuration", "edition", edition, "HE|PE|EE");
                     config = new Configuration();
+                }
+                if (baseConfiguration != null) {
+                    config.setNamePool(baseConfiguration.getNamePool());
+                    config.setDocumentNumberAllocator(baseConfiguration.getDocumentNumberAllocator());
                 }
                 packageLibrary = new PackageLibrary(config.getDefaultXsltCompilerInfo());
                 String licenseLoc = atts.getValue("licenseFileLocation");
@@ -463,49 +511,76 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
     protected void readXsltPackage(Attributes atts) {
 
         String name = atts.getValue("name");
-        String version = atts.getValue("version");
-        VersionedPackageName vpn = null;
-        PackageDetails details = new PackageDetails();
-        try {
-            vpn = new VersionedPackageName(name, version);
-        } catch (XPathException err) {
-            error("package", "version", version, null);
-        }
-        details.nameAndVersion = vpn;
-        currentPackage = details;
-        String sourceLoc = atts.getValue("sourceLocation");
-        StreamSource source = null;
-        if (sourceLoc != null) {
+        if (name == null) {
+            String attName = "exportLocation";
+            String location = atts.getValue("exportLocation");
+            URI uri = null;
+            if (location == null) {
+                attName = "sourceLocation";
+                location = atts.getValue("sourceLocation");
+            }
+            if (location == null) {
+                error("package", attName, null, null);
+            }
             try {
-                source = new StreamSource(
-                        ResolveURI.makeAbsolute(sourceLoc, locator.getSystemId()).toString());
+                uri = ResolveURI.makeAbsolute(location, locator.getSystemId());
             } catch (URISyntaxException e) {
-                error("package", "sourceLocation", sourceLoc, "Requires a valid URI.");
+                error("package", attName, location, "Requires a valid URI.");
             }
-            details.sourceLocation = source;
-        }
-        String exportLoc = atts.getValue("exportLocation");
-        if (exportLoc != null) {
+            File file = new File(uri);
             try {
-                source = new StreamSource(
-                        ResolveURI.makeAbsolute(exportLoc, locator.getSystemId()).toString());
-            } catch (URISyntaxException e) {
-                error("package", "exportLocation", exportLoc, "Requires a valid URI.");
+                packageLibrary.addPackage(file);
+            } catch (XPathException e) {
+                error(e);
             }
-            details.exportLocation = source;
-        }
-        String priority = atts.getValue("priority");
-        if (priority != null) {
+        } else {
+            String version = atts.getValue("version");
+            if (version == null) {
+                version = "1";
+            }
+            VersionedPackageName vpn = null;
+            PackageDetails details = new PackageDetails();
             try {
-                details.priority = Integer.parseInt(priority);
-            } catch (NumberFormatException err) {
-                error("package", "priority", priority, "Requires an integer.");
+                vpn = new VersionedPackageName(name, version);
+            } catch (XPathException err) {
+                error("package", "version", version, null);
             }
-        }
-        details.baseName = atts.getValue("base");
-        details.shortName = atts.getValue("shortName");
+            details.nameAndVersion = vpn;
+            currentPackage = details;
+            String sourceLoc = atts.getValue("sourceLocation");
+            StreamSource source = null;
+            if (sourceLoc != null) {
+                try {
+                    source = new StreamSource(
+                            ResolveURI.makeAbsolute(sourceLoc, locator.getSystemId()).toString());
+                } catch (URISyntaxException e) {
+                    error("package", "sourceLocation", sourceLoc, "Requires a valid URI.");
+                }
+                details.sourceLocation = source;
+            }
+            String exportLoc = atts.getValue("exportLocation");
+            if (exportLoc != null) {
+                try {
+                    source = new StreamSource(
+                            ResolveURI.makeAbsolute(exportLoc, locator.getSystemId()).toString());
+                } catch (URISyntaxException e) {
+                    error("package", "exportLocation", exportLoc, "Requires a valid URI.");
+                }
+                details.exportLocation = source;
+            }
+            String priority = atts.getValue("priority");
+            if (priority != null) {
+                try {
+                    details.priority = Integer.parseInt(priority);
+                } catch (NumberFormatException err) {
+                    error("package", "priority", priority, "Requires an integer.");
+                }
+            }
+            details.baseName = atts.getValue("base");
+            details.shortName = atts.getValue("shortName");
 
-        packageLibrary.addPackage(details);
+            packageLibrary.addPackage(details);
+        }
     }
 
     protected void readWithParam(Attributes atts) {

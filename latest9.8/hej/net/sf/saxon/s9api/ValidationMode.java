@@ -46,7 +46,7 @@ public enum ValidationMode {
     }
 
     /*@NotNull*/
-    protected static ValidationMode get(int number) {
+    public static ValidationMode get(int number) {
         switch (number) {
             case Validation.STRICT:
                 return STRICT;
