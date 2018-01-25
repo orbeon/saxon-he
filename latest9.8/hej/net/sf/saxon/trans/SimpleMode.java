@@ -946,10 +946,15 @@ public class SimpleMode extends Mode {
     public static void forceAllocateAllBindingSlots(
             final StylesheetPackage pack, final SimpleMode mode, final List<ComponentBinding> bindings) {
         final Set<TemplateRule> rulesProcessed = new HashSet<TemplateRule>();
+        final IdentityHashMap<Pattern, Boolean> patternsProcessed = new IdentityHashMap<Pattern, Boolean>();
         try {
             mode.processRules(new RuleAction() {
                 public void processRule(Rule r) {
-                    allocateBindingSlotsRecursive(pack, mode, r.getPattern(), bindings);
+                    Pattern pattern = r.getPattern();
+                    if (!patternsProcessed.containsKey(pattern)) {
+                        allocateBindingSlotsRecursive(pack, mode, pattern, bindings);
+                        patternsProcessed.put(pattern, true);
+                    }
                     TemplateRule tr = (TemplateRule) r.getAction();
                     if (tr.getBody() != null && !rulesProcessed.contains(tr)) {
                         // A rule can appear twice if it uses a union pattern; only process it once
