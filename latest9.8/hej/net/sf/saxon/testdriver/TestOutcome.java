@@ -607,7 +607,71 @@ public class TestOutcome {
         }
     }
 
+    private String resultVar;
+    public void setResultVar(String variableName) {
+        resultVar = variableName;
+    }
+
+
     private boolean assertXPath(XdmNode assertion, SingleResultDoc result, XPathCompiler assertXpc, boolean debug) throws SaxonApiException {
+        if (isException()) {
+            return false;
+        } else {
+            XdmSequenceIterator iter = assertion.axisIterator(Axis.NAMESPACE);
+            while (iter.hasNext()) {
+                XdmNode namespace = (XdmNode) iter.next();
+                if (namespace.getNodeName() != null) {
+                    assertXpc.declareNamespace(namespace.getNodeName().getLocalName(), namespace.getStringValue());
+                }
+            }
+            if (resultVar != null) {
+                assertXpc.declareVariable(new QName("result"));
+            }
+            driver.println("Testing " + assertion.getStringValue());
+            XPathExecutable exp = assertXpc.compile(assertion.getStringValue());
+            XPathSelector s = exp.load();
+            QName resultVarName = new QName("result");
+            if (resultVar != null) {
+                s.setVariable(new QName(resultVar), result.value);
+            } else if (exp.getRequiredCardinalityForVariable(resultVarName) == null) {
+                if (result.value instanceof XdmItem) { // this path used in XSLT tests
+                    s.setContextItem((XdmItem) result.value);
+                }
+            } else {
+                s.setVariable(resultVarName, result.value);
+            }
+            boolean b = s.effectiveBooleanValue();
+            if (!b && debug) {
+                driver.println("XPath assertion " + assertion.getStringValue() + " failed");
+                try {
+                    String ass = assertion.getStringValue();
+                    // Try to evaluate the expression on the lhs of an "=" operator in the assertion
+                    int eq = ass.indexOf("=");
+                    if (eq > 0) {
+                        ass = ass.substring(0, eq);
+                        exp = assertXpc.compile(ass);
+                        s = exp.load();
+                        if (exp.getRequiredCardinalityForVariable(resultVarName) == null) {
+                            if (result.value instanceof XdmItem) { // this path used in XSLT tests
+                                s.setContextItem((XdmItem) result.value);
+                            }
+                        } else {
+                            s.setVariable(resultVarName, result.value);
+                        }
+                        XdmValue val = s.evaluate();
+                        driver.println("Actual result of " + ass + ": " + val.toString());
+                    }
+                } catch (Exception err) {
+                    // Occurs for example with an assertion like /x[a = 2] where what precedes the '=' is not an expression
+                }
+                driver.println("Actual results: " + result.value);
+            }
+            return b;
+        }
+    }
+
+
+    private boolean assertXPathOLD(XdmNode assertion, SingleResultDoc result, XPathCompiler assertXpc, boolean debug) throws SaxonApiException {
         if (isException()) {
             return false;
         } else {

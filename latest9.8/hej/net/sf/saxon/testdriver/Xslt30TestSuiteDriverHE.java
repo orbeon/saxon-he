@@ -624,6 +624,10 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             if (needsTree != null) {
                 resultAsTree = needsTree.getStringValue().equals("yes");
             }
+            XdmNode resultVarAtt = (XdmNode) xpath.evaluateSingle("output/@result-var", testInput);
+            if (resultVarAtt != null) {
+                outcome.setResultVar(resultVarAtt.getStringValue());
+            }
             XdmNode needsSerialization = (XdmNode) xpath.evaluateSingle("output/@serialize", testInput);
             if (needsSerialization != null) {
                 serializationDeclared = needsSerialization.getStringValue().equals("yes");
