@@ -383,6 +383,15 @@ public class MergeInstr extends Instruction {
                         fixupGroupReferences(skd.getCollationNameExpression(), instr, isInLoop);
                         fixupGroupReferences(skd.getOrder(), instr, isInLoop);
                     }
+                    if (m.forEachItemOp != null) {
+                        fixupGroupReferences(m.getForEachItem(), instr, isInLoop);
+                    }
+                    if (m.forEachStreamOp != null) {
+                        fixupGroupReferences(m.getForEachSource(), instr, isInLoop);
+                    }
+                    if (m.rowSelectOp != null) {
+                        fixupGroupReferences(m.getRowSelect(), instr, isInLoop);
+                    }
                 }
             }
 

@@ -161,6 +161,7 @@ public class LoopLifter {
                     expInfoMap.get(parent).dependees.put(variableSetter, true);
                 } catch (NullPointerException e) {
                     e.printStackTrace();
+                    throw e;
                 }
                 parent = parent.getParentExpression();
             }

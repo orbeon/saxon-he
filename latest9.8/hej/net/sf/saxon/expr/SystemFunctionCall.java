@@ -225,7 +225,8 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
      */
     @Override
     public boolean isLiftable(boolean forStreaming) {
-        return !forStreaming || !isCallOn(MapFunctionSet.MapEntry.class);
+        return !isCallOn(CurrentMergeGroup.class) && !isCallOn(CurrentMergeKey.class) &&
+                (!forStreaming || !isCallOn(MapFunctionSet.MapEntry.class));
     }
 
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
