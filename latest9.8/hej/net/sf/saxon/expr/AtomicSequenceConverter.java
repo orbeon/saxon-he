@@ -227,7 +227,13 @@ public class AtomicSequenceConverter extends UnaryExpression {
      */
 
     public int computeSpecialProperties() {
-        return super.computeSpecialProperties() | StaticProperty.NON_CREATIVE;
+        int p = super.computeSpecialProperties() | StaticProperty.NON_CREATIVE;
+        if (requiredItemType == BuiltInAtomicType.UNTYPED_ATOMIC) {
+            p &= ~StaticProperty.NOT_UNTYPED_ATOMIC;
+        } else {
+            p |= StaticProperty.NOT_UNTYPED_ATOMIC;
+        }
+        return p;
     }
 
 
