@@ -7,6 +7,7 @@
 
 package net.sf.saxon.expr.instruct;
 
+import net.sf.saxon.Configuration;
 import net.sf.saxon.event.ReceiverOptions;
 import net.sf.saxon.event.SequenceReceiver;
 import net.sf.saxon.expr.*;
@@ -186,7 +187,8 @@ public class NamespaceConstructor extends SimpleNodeConstructor {
             throw dynamicError(getLocation(), err, context);
         }
 
-        if (!StandardURIChecker.getInstance().isValidURI(uri)) {
+        if (context.getConfiguration().getXsdVersion() == Configuration.XSD10 &&
+                !StandardURIChecker.getInstance().isValidURI(uri)) {
             XPathException de = new XPathException(
                 "The string value of the constructed namespace node must be a valid URI", "XTDE0905", getLocation());
             throw dynamicError(getLocation(), de, context);
