@@ -305,6 +305,8 @@ public final class ComplexContentOutputter extends SequenceReceiver {
         previousAtomic = false;
         if (currentLevelIsDocument.length < level + 1) {
             currentLevelIsDocument = Arrays.copyOf(currentLevelIsDocument, level * 2);
+        }
+        if (copyNamespacesStack.length < level + 1) {
             copyNamespacesStack = Arrays.copyOf(copyNamespacesStack, level * 2);
         }
         currentLevelIsDocument[level] = false;
