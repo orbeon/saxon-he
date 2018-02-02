@@ -225,7 +225,8 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
      */
     @Override
     public boolean isLiftable(boolean forStreaming) {
-        return !isCallOn(CurrentMergeGroup.class) && !isCallOn(CurrentMergeKey.class) &&
+        return super.isLiftable(forStreaming) &&
+                !isCallOn(CurrentMergeGroup.class) && !isCallOn(CurrentMergeKey.class) &&
                 (!forStreaming || !isCallOn(MapFunctionSet.MapEntry.class));
     }
 
