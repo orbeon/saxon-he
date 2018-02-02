@@ -793,8 +793,9 @@ public class XMLEmitter extends Emitter {
         while (segstart < clength) {
             int i = segstart;
             // find a maximal sequence of "ordinary" characters
+            char c = 0;
             while (i < clength) {
-                final char c = chars.charAt(i);
+                c = chars.charAt(i);
                 if (c < 127) {
                     if (specialChars[c]) {
                         break;
@@ -830,7 +831,7 @@ public class XMLEmitter extends Emitter {
             }
 
             // examine the special character that interrupted the scan
-            final char c = chars.charAt(i);
+            //final char c = chars.charAt(i);
             if (c == 0) {
                 // used to switch escaping on and off
                 disabled = !disabled;

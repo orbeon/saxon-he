@@ -7,7 +7,6 @@
 
 package net.sf.saxon.functions;
 
-import com.saxonica.config.ProfessionalConfiguration;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
 import net.sf.saxon.Version;
@@ -210,24 +209,6 @@ public class TransformFn extends SystemFunction implements Callable {
 
     private String checkInvocationMutualExclusion30(Map<String, Sequence> map) throws XPathException {
         return oneOf(map, "initial-mode", "initial-template", "initial-function");
-    }
-
-    private void setVendorOptions(Map<String, Sequence> options, Processor processor) throws XPathException {
-        MapItem vendorOptions = (MapItem) options.get("vendor-options").head();
-        AtomicIterator optionIterator = vendorOptions.keys();
-        while (true) {
-            AtomicValue option = optionIterator.next();
-            if (option instanceof QNameValue) {
-                QName optionName = new QName(((QNameValue) option.head()).getStructuredQName());
-                XdmValue optionVal = XdmValue.wrap(vendorOptions.get(option));
-                if (((QNameValue) option.head()).getNamespaceURI().equals("http://saxon.sf.net/feature/")) {
-                    processor.setConfigurationProperty(optionName.getNamespaceURI().concat(optionName.getLocalName()), optionVal.toString());
-                    //booleans can be accepted as strings, anything other than strings or booleans will be ignored
-                }
-            } else {
-                break;
-            }
-        }
     }
 
     private void unsuitable(String option, String value) throws XPathException {
@@ -538,15 +519,15 @@ public class TransformFn extends SystemFunction implements Callable {
         Sequence vendorOptionsValue = options.get("vendor-options");
         MapItem vendorOptions = vendorOptionsValue == null ? null : (MapItem) vendorOptionsValue.head();
 
+        boolean allowTypedNodes = true;
         Configuration targetConfig = context.getConfiguration();
         if (vendorOptions != null) {
             Sequence targetConfigValue = vendorOptions.get(new QNameValue("", NamespaceConstant.SAXON, "configuration"));
             if (targetConfigValue != null) {
                 NodeInfo configFile = (NodeInfo) targetConfigValue.head();
                 targetConfig = Configuration.readConfiguration(configFile, targetConfig);
-                if (context.getConfiguration() instanceof ProfessionalConfiguration && targetConfig instanceof ProfessionalConfiguration) {
-                    ((ProfessionalConfiguration)targetConfig).importLicenseDetails(((ProfessionalConfiguration)context.getConfiguration()));
-                }
+                targetConfig.importLicenseDetails(context.getConfiguration());
+                allowTypedNodes = false;
             }
         }
         Processor processor = new Processor(true);
@@ -637,21 +618,28 @@ public class TransformFn extends SystemFunction implements Callable {
         XdmValue[] functionParams = null;
         Function postProcessor = null;
         String principalResultKey = "output";
+        int schemaValidation = Validation.DEFAULT;
 
         for (String name : options.keySet()) {
+            Sequence value = options.get(name);
             if (name.equals("source-node")) {
-                Sequence source = options.get(name);
-                sourceNode = (NodeInfo) source.head();
+                sourceNode = (NodeInfo) value.head();
+                if (!allowTypedNodes) {
+                    checkSequenceIsUntyped(value);
+                }
             } else if (name.equals("source-location")) {
-                sourceLocation = options.get(name).head().getStringValue();
+                sourceLocation = value.head().getStringValue();
             } else if (name.equals("initial-match-selection")) {
-                initialMatchSelection = XdmValue.wrap(options.get(name));
+                if (!allowTypedNodes) {
+                    checkSequenceIsUntyped(value);
+                }
+                initialMatchSelection = XdmValue.wrap(value);
             } else if (name.equals("initial-template")) {
-                initialTemplate = new QName(((QNameValue) options.get(name).head()).getStructuredQName());
+                initialTemplate = new QName(((QNameValue) value.head()).getStructuredQName());
             } else if (name.equals("initial-mode")) {
-                initialMode = new QName(((QNameValue) options.get(name).head()).getStructuredQName());
+                initialMode = new QName(((QNameValue) value.head()).getStructuredQName());
             } else if (name.equals("delivery-format")) {
-                deliveryFormat = options.get(name).head().getStringValue();
+                deliveryFormat = value.head().getStringValue();
                 if (!isXslt30Processor) {
                     if (!deliveryFormat.equals("document") && !deliveryFormat.equals("serialized")) {
                         throw new XPathException("The transform option delivery-format should be one of: document|serialized ", "FOXT0002");
@@ -660,14 +648,14 @@ public class TransformFn extends SystemFunction implements Callable {
                     throw new XPathException("The transform option delivery-format should be one of: document|serialized|raw ", "FOXT0002");
                 }
             } else if (name.equals("base-output-uri")) {
-                baseOutputUri = options.get(name).head().getStringValue();
+                baseOutputUri = value.head().getStringValue();
                 principalResultKey = baseOutputUri;
 
             } else if (name.equals("serialization-params")) {
-                serializationParamsMap = (MapItem) options.get(name).head();
+                serializationParamsMap = (MapItem) value.head();
 
             } else if (name.equals("stylesheet-params")) {
-                MapItem params = (MapItem) options.get(name).head();
+                MapItem params = (MapItem) value.head();
                 AtomicIterator paramIterator = params.keys();
                 while (true) {
                     AtomicValue param = paramIterator.next();
@@ -676,16 +664,20 @@ public class TransformFn extends SystemFunction implements Callable {
                             throw new XPathException("The names of parameters in stylesheet-params must be supplied as QNames", "FOXT0002");
                         }
                         QName paramName = new QName(((QNameValue) param).getStructuredQName());
-                        XdmValue paramVal = XdmValue.wrap(params.get(param));
+                        Sequence argVal = params.get(param);
+                        if (!allowTypedNodes) {
+                            checkSequenceIsUntyped(argVal);
+                        }
+                        XdmValue paramVal = XdmValue.wrap(argVal);
                         stylesheetParams.put(paramName, paramVal);
                     } else {
                         break;
                     }
                 }
             } else if (name.equals("global-context-item") && useXslt30Processor) {
-                globalContextItem = (XdmItem)XdmValue.wrap(options.get(name).head());
+                globalContextItem = (XdmItem)XdmValue.wrap(value.head());
             } else if (name.equals("template-params")) {
-                MapItem params = (MapItem) options.get(name).head();
+                MapItem params = (MapItem) value.head();
                 AtomicIterator paramIterator = params.keys();
                 while (true) {
                     AtomicValue param = paramIterator.next();
@@ -694,14 +686,18 @@ public class TransformFn extends SystemFunction implements Callable {
                             throw new XPathException("The names of parameters in template-params must be supplied as QNames", "FOXT0002");
                         }
                         QName paramName = new QName(((QNameValue) param.head()).getStructuredQName());
-                        XdmValue paramVal = XdmValue.wrap(params.get(param));
+                        Sequence argVal = params.get(param);
+                        if (!allowTypedNodes) {
+                            checkSequenceIsUntyped(argVal);
+                        }
+                        XdmValue paramVal = XdmValue.wrap(argVal);
                         templateParams.put(paramName, paramVal);
                     } else {
                         break;
                     }
                 }
             } else if (name.equals("tunnel-params")) {
-                MapItem params = (MapItem) options.get(name).head();
+                MapItem params = (MapItem) value.head();
                 AtomicIterator paramIterator = params.keys();
                 while (true) {
                     AtomicValue param = paramIterator.next();
@@ -710,7 +706,11 @@ public class TransformFn extends SystemFunction implements Callable {
                             throw new XPathException("The names of parameters in tunnel-params must be supplied as QNames", "FOXT0002");
                         }
                         QName paramName = new QName(((QNameValue) param.head()).getStructuredQName());
-                        XdmValue paramVal = XdmValue.wrap(params.get(param));
+                        Sequence argVal = params.get(param);
+                        if (!allowTypedNodes) {
+                            checkSequenceIsUntyped(argVal);
+                        }
+                        XdmValue paramVal = XdmValue.wrap(argVal);
                         tunnelParams.put(paramName, paramVal);
                     } else {
                         break;
@@ -718,22 +718,25 @@ public class TransformFn extends SystemFunction implements Callable {
 
                 }
             } else if (name.equals("initial-function")) {
-                initialFunction = new QName(((QNameValue) options.get(name).head()).getStructuredQName());
+                initialFunction = new QName(((QNameValue) value.head()).getStructuredQName());
             } else if (name.equals("function-params")) {
-                ArrayItem functionParamsArray = (ArrayItem) options.get(name).head();
+                ArrayItem functionParamsArray = (ArrayItem) value.head();
                 functionParams = new XdmValue[functionParamsArray.arrayLength()];
                 for (int i = 0; i < functionParams.length; i++) {
-                    functionParams[i] = XdmValue.wrap(functionParamsArray.get(i));
+                    Sequence argVal = functionParamsArray.get(i);
+                    if (!allowTypedNodes) {
+                        checkSequenceIsUntyped(argVal);
+                    }
+                    functionParams[i] = XdmValue.wrap(argVal);
                 }
             } else if (name.equals("post-process")) {
-                postProcessor = (Function)options.get(name).head();
+                postProcessor = (Function) value.head();
             } else if (name.equals("vendor-options")) {
                 //MapItem vendorOptions = (MapItem)options.get(name).head();
-                Sequence value;
-                value = vendorOptions.get(new QNameValue("saxon", NamespaceConstant.SAXON, "schema-validation-mode"));
-                if (value != null) {
-                    String mode = value.head().getStringValue();
-                    transformer.setSchemaValidationMode(ValidationMode.get(Validation.getCode(mode)));
+                Sequence optionValue;
+                optionValue = vendorOptions.get(new QNameValue("saxon", NamespaceConstant.SAXON, "schema-validation"));
+                if (optionValue != null) {
+                    schemaValidation = Validation.getCode(optionValue.head().getStringValue());
                 }
             }
         }
@@ -768,6 +771,23 @@ public class TransformFn extends SystemFunction implements Callable {
             transformer.setBaseOutputURI(baseOutputUri);
             transformer.setInitialTemplateParameters(templateParams, false);
             transformer.setInitialTemplateParameters(tunnelParams, true);
+
+            if (schemaValidation == Validation.STRICT || schemaValidation == Validation.LAX) {
+                if (sourceNode != null) {
+                    sourceNode = validate(sourceNode, targetConfig, schemaValidation);
+                } else if (sourceLocation != null) {
+                    StreamSource ss = new StreamSource(sourceLocation);
+                    ParseOptions parseOptions = new ParseOptions(targetConfig.getParseOptions());
+                    parseOptions.setSchemaValidationMode(schemaValidation);
+                    TreeInfo tree = targetConfig.buildDocumentTree(ss, parseOptions);
+                    sourceNode = tree.getRootNode();
+                    sourceLocation = null;
+                }
+                if (globalContextItem instanceof XdmNode) {
+                    NodeInfo v = validate(((XdmNode)globalContextItem).getUnderlyingNode(), targetConfig, schemaValidation);
+                    globalContextItem = (XdmNode)XdmValue.wrap(v);
+                }
+            }
 
             if (sourceNode != null && globalContextItem == null) {
                 transformer.setGlobalContextItem(new XdmNode(sourceNode.getRoot()));
@@ -842,6 +862,23 @@ public class TransformFn extends SystemFunction implements Callable {
         }
         return resultMap;
 
+    }
+
+
+    private static void checkSequenceIsUntyped(Sequence value) throws XPathException {
+        SequenceIterator iter = value.iterate();
+        Item item;
+        while ((item = iter.next()) != null) {
+            if (item instanceof NodeInfo && ((NodeInfo) item).getTreeInfo().isTyped()) {
+                throw new XPathException("Schema-validated nodes cannot be passed to fn:transform() when it runs under a different Saxon Configuration", "FOXT0002");
+            }
+        }
+    }
+
+    private static NodeInfo validate(NodeInfo node, Configuration config, int validation) throws XPathException {
+        ParseOptions options = new ParseOptions(config.getParseOptions());
+        options.setSchemaValidationMode(validation);
+        return config.buildDocumentTree(node, options).getRootNode();
     }
 
     /**

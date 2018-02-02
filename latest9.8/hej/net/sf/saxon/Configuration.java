@@ -550,6 +550,16 @@ public class Configuration implements SourceResolver, NotationSet {
     }
 
     /**
+     * Share licensing data stored in one configuration with another configuration.
+     * This method has no effect if either configuration is an HE (unlicensed) configuration.
+     *
+     * @param other another Configuration, whose license information will be imported into this Configuration.
+     */
+
+    public void importLicenseDetails(Configuration other) {
+    }
+
+    /**
      * Save the Processor object that owns this Configuration in the relevant API.
      *
      * @param processor This can be any object, but it is actually used to hold one of the

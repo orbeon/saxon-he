@@ -15,6 +15,7 @@ import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
 import net.sf.saxon.expr.parser.TypeChecker;
 import net.sf.saxon.lib.FeatureKeys;
+import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.ma.map.MapType;
 import net.sf.saxon.om.AttributeCollection;
 import net.sf.saxon.om.AxisInfo;
@@ -42,6 +43,7 @@ public class XSLEvaluate extends StyleElement {
     Expression baseUri = null;
     Expression schemaAware = null;
     Expression withParams = null;
+    private boolean allowAnySchemaNamespace = false;
 
     /**
      * Determine whether this node is an instruction.
@@ -117,6 +119,8 @@ public class XSLEvaluate extends StyleElement {
             } else if (f.equals("with-params")) {
                 withParamsAtt = atts.getValue(a);
                 withParams = makeExpression(withParamsAtt, a);
+            } else if (atts.getURI(a).equals(NamespaceConstant.SAXON) && atts.getLocalName(a).equals("allow-any-schema-namespace")) {
+                allowAnySchemaNamespace = processBooleanAttribute("saxon:allow-any-schema-namespace", atts.getValue(a));
             } else {
                 checkUnknownAttribute(atts.getNodeName(a));
             }
@@ -227,6 +231,10 @@ public class XSLEvaluate extends StyleElement {
 
     public SequenceType getRequiredType() {
         return requiredType;
+    }
+
+    public boolean isAllowAnySchemaNamespace() {
+        return allowAnySchemaNamespace;
     }
 
     /*@Nullable*/
