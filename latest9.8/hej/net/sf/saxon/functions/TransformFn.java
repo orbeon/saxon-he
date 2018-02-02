@@ -534,6 +534,9 @@ public class TransformFn extends SystemFunction implements Callable {
                 NodeInfo configFile = (NodeInfo) targetConfigValue.head();
                 targetConfig = Configuration.readConfiguration(configFile, targetConfig);
                 targetConfig.importLicenseDetails(context.getConfiguration());
+                if (!context.getConfiguration().getBooleanProperty(FeatureKeys.ALLOW_EXTERNAL_FUNCTIONS)) {
+                    targetConfig.setBooleanProperty(FeatureKeys.ALLOW_EXTERNAL_FUNCTIONS, false);
+                }
                 allowTypedNodes = false;
             }
         }
