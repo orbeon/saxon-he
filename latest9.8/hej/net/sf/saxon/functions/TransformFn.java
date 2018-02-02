@@ -317,14 +317,21 @@ public class TransformFn extends SystemFunction implements Callable {
         }
     }
 
-    private void setStaticParams(Map<String, Sequence> options, XsltCompiler xsltCompiler) throws XPathException {
+    private void setStaticParams(Map<String, Sequence> options, XsltCompiler xsltCompiler, boolean allowTypedNodes) throws XPathException {
         MapItem staticParamsMap = (MapItem) options.get("static-params").head();
         AtomicIterator paramIterator = staticParamsMap.keys();
         while (true) {
             AtomicValue param = paramIterator.next();
             if (param != null) {
-                QName paramName = new QName(((QNameValue) param.head()).getStructuredQName());
-                XdmValue paramVal = XdmValue.wrap(staticParamsMap.get(param));
+                if (!(param instanceof QNameValue)) {
+                    throw new XPathException("Parameter names in static-params must be supplied as QNames", "FOXT0002");
+                }
+                QName paramName = new QName(((QNameValue) param).getStructuredQName());
+                Sequence value = staticParamsMap.get(param);
+                if (!allowTypedNodes) {
+                    checkSequenceIsUntyped(value);
+                }
+                XdmValue paramVal = XdmValue.wrap(value);
                 xsltCompiler.setParameter(paramName, paramVal);
             } else {
                 break;
@@ -587,13 +594,11 @@ public class TransformFn extends SystemFunction implements Callable {
 
         XsltCompiler xsltCompiler = processor.newXsltCompiler();
         xsltCompiler.setURIResolver(context.getURIResolver());
-//        if (useXslt30Processor) {
-//            xsltCompiler.setXsltLanguageVersion("3.0");
-//        }
         xsltCompiler.setJustInTimeCompilation(false);
+
         // Set static params on XsltCompiler before compiling stylesheet (XSLT 3.0 processing only)
         if (options.get("static-params") != null) {
-            setStaticParams(options, xsltCompiler);
+            setStaticParams(options, xsltCompiler, allowTypedNodes);
         }
 
         XsltExecutable sheet = getStylesheet(options, xsltCompiler, styleOption, context);
@@ -603,7 +608,6 @@ public class TransformFn extends SystemFunction implements Callable {
         String deliveryFormat = "document";
         NodeInfo sourceNode = null;
         String sourceLocation = null;
-        XdmValue initialMatchSelection = null;
         QName initialTemplate = null;
         QName initialMode = null;
         String baseOutputUri = null;
@@ -612,6 +616,7 @@ public class TransformFn extends SystemFunction implements Callable {
         StringWriter serializedResult = null;
         File serializedResultFile = null;
         XdmItem globalContextItem = null;
+        XdmValue initialMatchSelection = null;
         Map<QName, XdmValue> templateParams = new HashMap<QName, XdmValue>();
         Map<QName, XdmValue> tunnelParams = new HashMap<QName, XdmValue>();
         QName initialFunction = null;
@@ -622,105 +627,55 @@ public class TransformFn extends SystemFunction implements Callable {
 
         for (String name : options.keySet()) {
             Sequence value = options.get(name);
+            Item head = value.head();
             if (name.equals("source-node")) {
-                sourceNode = (NodeInfo) value.head();
+                sourceNode = (NodeInfo) head;
                 if (!allowTypedNodes) {
-                    checkSequenceIsUntyped(value);
+                    checkSequenceIsUntyped(sourceNode);
                 }
             } else if (name.equals("source-location")) {
-                sourceLocation = value.head().getStringValue();
+                sourceLocation = head.getStringValue();
+            } else if (name.equals("initial-template")) {
+                initialTemplate = new QName(((QNameValue) head).getStructuredQName());
+            } else if (name.equals("initial-mode")) {
+                initialMode = new QName(((QNameValue) head).getStructuredQName());
             } else if (name.equals("initial-match-selection")) {
+                initialMatchSelection = XdmValue.wrap(value);
                 if (!allowTypedNodes) {
                     checkSequenceIsUntyped(value);
                 }
-                initialMatchSelection = XdmValue.wrap(value);
-            } else if (name.equals("initial-template")) {
-                initialTemplate = new QName(((QNameValue) value.head()).getStructuredQName());
-            } else if (name.equals("initial-mode")) {
-                initialMode = new QName(((QNameValue) value.head()).getStructuredQName());
             } else if (name.equals("delivery-format")) {
-                deliveryFormat = value.head().getStringValue();
-                if (!isXslt30Processor) {
-                    if (!deliveryFormat.equals("document") && !deliveryFormat.equals("serialized")) {
-                        throw new XPathException("The transform option delivery-format should be one of: document|serialized ", "FOXT0002");
-                    }
-                } else if (!deliveryFormat.equals("document") && !deliveryFormat.equals("serialized") && !deliveryFormat.equals("raw")) {
+                deliveryFormat = head.getStringValue();
+                if (!deliveryFormat.equals("document") && !deliveryFormat.equals("serialized") && !deliveryFormat.equals("raw")) {
                     throw new XPathException("The transform option delivery-format should be one of: document|serialized|raw ", "FOXT0002");
                 }
             } else if (name.equals("base-output-uri")) {
-                baseOutputUri = value.head().getStringValue();
+                baseOutputUri = head.getStringValue();
                 principalResultKey = baseOutputUri;
 
             } else if (name.equals("serialization-params")) {
-                serializationParamsMap = (MapItem) value.head();
+                serializationParamsMap = (MapItem) head;
 
             } else if (name.equals("stylesheet-params")) {
-                MapItem params = (MapItem) value.head();
-                AtomicIterator paramIterator = params.keys();
-                while (true) {
-                    AtomicValue param = paramIterator.next();
-                    if (param != null) {
-                        if (!(param instanceof QNameValue)) {
-                            throw new XPathException("The names of parameters in stylesheet-params must be supplied as QNames", "FOXT0002");
-                        }
-                        QName paramName = new QName(((QNameValue) param).getStructuredQName());
-                        Sequence argVal = params.get(param);
-                        if (!allowTypedNodes) {
-                            checkSequenceIsUntyped(argVal);
-                        }
-                        XdmValue paramVal = XdmValue.wrap(argVal);
-                        stylesheetParams.put(paramName, paramVal);
-                    } else {
-                        break;
+                MapItem params = (MapItem) head;
+                processParams(params, stylesheetParams, allowTypedNodes);
+            } else if (name.equals("global-context-item")) {
+                if (useXslt30Processor) {
+                    globalContextItem = (XdmItem)XdmValue.wrap(head);
+                    if (!allowTypedNodes && globalContextItem instanceof NodeInfo && ((NodeInfo) globalContextItem).getTreeInfo().isTyped()) {
+                        throw new XPathException("Schema-validated nodes cannot be passed to fn:transform() when it runs under a different Saxon Configuration", "FOXT0002");
                     }
                 }
-            } else if (name.equals("global-context-item") && useXslt30Processor) {
-                globalContextItem = (XdmItem)XdmValue.wrap(value.head());
             } else if (name.equals("template-params")) {
-                MapItem params = (MapItem) value.head();
-                AtomicIterator paramIterator = params.keys();
-                while (true) {
-                    AtomicValue param = paramIterator.next();
-                    if (param != null) {
-                        if (!(param instanceof QNameValue)) {
-                            throw new XPathException("The names of parameters in template-params must be supplied as QNames", "FOXT0002");
-                        }
-                        QName paramName = new QName(((QNameValue) param.head()).getStructuredQName());
-                        Sequence argVal = params.get(param);
-                        if (!allowTypedNodes) {
-                            checkSequenceIsUntyped(argVal);
-                        }
-                        XdmValue paramVal = XdmValue.wrap(argVal);
-                        templateParams.put(paramName, paramVal);
-                    } else {
-                        break;
-                    }
-                }
+                MapItem params = (MapItem) head;
+                processParams(params, templateParams, allowTypedNodes);
             } else if (name.equals("tunnel-params")) {
-                MapItem params = (MapItem) value.head();
-                AtomicIterator paramIterator = params.keys();
-                while (true) {
-                    AtomicValue param = paramIterator.next();
-                    if (param != null) {
-                        if (!(param instanceof QNameValue)) {
-                            throw new XPathException("The names of parameters in tunnel-params must be supplied as QNames", "FOXT0002");
-                        }
-                        QName paramName = new QName(((QNameValue) param.head()).getStructuredQName());
-                        Sequence argVal = params.get(param);
-                        if (!allowTypedNodes) {
-                            checkSequenceIsUntyped(argVal);
-                        }
-                        XdmValue paramVal = XdmValue.wrap(argVal);
-                        tunnelParams.put(paramName, paramVal);
-                    } else {
-                        break;
-                    }
-
-                }
+                MapItem params = (MapItem) head;
+                processParams(params, tunnelParams, allowTypedNodes);
             } else if (name.equals("initial-function")) {
-                initialFunction = new QName(((QNameValue) value.head()).getStructuredQName());
+                initialFunction = new QName(((QNameValue) head).getStructuredQName());
             } else if (name.equals("function-params")) {
-                ArrayItem functionParamsArray = (ArrayItem) value.head();
+                ArrayItem functionParamsArray = (ArrayItem) head;
                 functionParams = new XdmValue[functionParamsArray.arrayLength()];
                 for (int i = 0; i < functionParams.length; i++) {
                     Sequence argVal = functionParamsArray.get(i);
@@ -730,14 +685,7 @@ public class TransformFn extends SystemFunction implements Callable {
                     functionParams[i] = XdmValue.wrap(argVal);
                 }
             } else if (name.equals("post-process")) {
-                postProcessor = (Function) value.head();
-            } else if (name.equals("vendor-options")) {
-                //MapItem vendorOptions = (MapItem)options.get(name).head();
-                Sequence optionValue;
-                optionValue = vendorOptions.get(new QNameValue("saxon", NamespaceConstant.SAXON, "schema-validation"));
-                if (optionValue != null) {
-                    schemaValidation = Validation.getCode(optionValue.head().getStringValue());
-                }
+                postProcessor = (Function)head;
             }
         }
 
@@ -864,8 +812,38 @@ public class TransformFn extends SystemFunction implements Callable {
 
     }
 
+    /**
+     * Process options such as stylesheet-params, static-params, etc
+     * @param suppliedParams an XDM map from QNames to arbitrary values
+     * @param checkedParams a Java map which on return will contain the same data, but as a Java map,
+     *                      and using s9api representations of the parameter names and values
+     * @param allowTypedNodes true if the value of the parameter is allowed to contain schema-validated
+     *                        nodes
+     * @throws XPathException for example if a parameter is supplied as a string rather than as a QName
+     */
 
-    private static void checkSequenceIsUntyped(Sequence value) throws XPathException {
+    private void processParams(MapItem suppliedParams, Map<QName, XdmValue> checkedParams, boolean allowTypedNodes) throws XPathException {
+        AtomicIterator paramIterator = suppliedParams.keys();
+        while (true) {
+            AtomicValue param = paramIterator.next();
+            if (param != null) {
+                if (!(param instanceof QNameValue)) {
+                    throw new XPathException("The names of parameters must be supplied as QNames", "FOXT0002");
+                }
+                QName paramName = new QName(((QNameValue) param).getStructuredQName());
+                Sequence value = suppliedParams.get(param);
+                if (!allowTypedNodes) {
+                    checkSequenceIsUntyped(value);
+                }
+                XdmValue paramVal = XdmValue.wrap(value);
+                checkedParams.put(paramName, paramVal);
+            } else {
+                break;
+            }
+        }
+    }
+
+    private void checkSequenceIsUntyped(Sequence value) throws XPathException {
         SequenceIterator iter = value.iterate();
         Item item;
         while ((item = iter.next()) != null) {
@@ -1040,10 +1018,9 @@ public class TransformFn extends SystemFunction implements Callable {
 
         public Sequence postProcess(String uri, Sequence result) throws XPathException {
             if (postProcessor != null) {
-                return postProcessor.call(context.newCleanContext(), new Sequence[]{new StringValue(uri), result});
-            } else {
-                return result;
+                result = postProcessor.call(context.newCleanContext(), new Sequence[]{new StringValue(uri), result});
             }
+            return SequenceTool.makeRepeatable(result);
         }
     }
 
