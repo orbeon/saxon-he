@@ -2560,7 +2560,7 @@ namespace Saxon.Api
             {
                 JPipelineConfiguration pipe = controller.makePipelineConfiguration();
                 JSequenceOutputter outi = new JSequenceOutputter(pipe);
-
+                controller.setBuildTree(false);
                 controller.callTemplate(templateName.ToStructuredQName(), outi);
                 return XdmValue.Wrap(outi.getSequence());
             }

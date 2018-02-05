@@ -451,7 +451,7 @@ namespace Saxon.Api
         /// Serialize an arbitary XdmValue to the selected output destination using this serializer.
         /// The supplied sequence is first wrapped in a document node according to the rules given in section 2
         /// (Sequence Normalization) of the document nodes is then serialized using the serialization parameters 
-        /// defined in this serializer.
+        /// defined in this serializer. A call on this method will close the writer or output stream internally.
         /// </summary>
         /// <param name="value"> The value to be serialized</param>
         /// <remarks>since 9.8</remarks>
