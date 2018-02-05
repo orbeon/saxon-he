@@ -291,6 +291,9 @@ public class CommandLineOptions {
                 }
                 value = sourceInput.getSystemId();
 
+            }  else {
+
+                value = (new File(value)).toURI().toASCIIString();
             }
 
             try {
