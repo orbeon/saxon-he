@@ -705,7 +705,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
      */
 
     void ensurePriorIndex() {
-        if (prior == null) {
+        if (prior == null || prior.length < numberOfNodes) { // bug 3665
             makePriorIndex();
         }
     }
