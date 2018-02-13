@@ -194,7 +194,7 @@ public class IntegerRangeTest extends Expression {
                     return BooleanValue.FALSE;
                 }
                 maxVal = (IntegerValue) getMax().evaluateItem(c);
-                if (maxVal == null || maxVal.compareTo(minVal) <= 0) {
+                if (maxVal == null || maxVal.compareTo(minVal) < 0) {
                     return BooleanValue.FALSE;
                 }
             }
