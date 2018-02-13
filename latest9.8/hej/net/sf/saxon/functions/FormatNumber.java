@@ -264,6 +264,7 @@ public class FormatNumber extends SystemFunction implements Callable {
         String prefix = "";
         String suffix = "";
         int[] wholePartGroupingPositions = null;
+        boolean regular;
         int[] fractionalPartGroupingPositions = null;
         boolean is30 = false;
         boolean is31 = false;
@@ -654,8 +655,10 @@ public class FormatNumber extends SystemFunction implements Callable {
                     wholePartGroupingPositions[i] =
                             maxWholePartSize - wholePartPositions.get(n - i - 1);
                 }
-                if (n > 1) {
-                    boolean regular = true;
+                if (n == 1) {
+                    regular = wholePartGroupingPositions[0] * 2 >= maxWholePartSize;
+                } else if (n > 1) {
+                    regular = true;
                     int first = wholePartGroupingPositions[0];
                     for (int i = 1; i < n; i++) {
                         if (wholePartGroupingPositions[i] != (i+1) * first) {
@@ -786,7 +789,7 @@ public class FormatNumber extends SystemFunction implements Callable {
             // Add the whole-part grouping separators
 
             if (wholePartGroupingPositions != null) {
-                if (wholePartGroupingPositions.length == 1) {
+                if (regular) {
                     // grouping separators are at regular positions
                     int g = wholePartGroupingPositions[0];
                     int p = point - g;
