@@ -15,6 +15,7 @@ import net.sf.saxon.expr.XPathContextMajor;
 import net.sf.saxon.expr.instruct.ApplyTemplates;
 import net.sf.saxon.expr.instruct.CallTemplate;
 import net.sf.saxon.expr.instruct.GlobalVariable;
+import net.sf.saxon.expr.instruct.UserFunction;
 import net.sf.saxon.trans.rules.BuiltInRuleSet;
 
 import java.util.Iterator;
@@ -78,7 +79,16 @@ public class ContextStackIterator implements Iterator<ContextStackFrame> {
             next = getMajorCaller(context);
             return new ContextStackFrame.BuiltInTemplateRule(context);
         }
-        if (origin instanceof UserFunctionCall) {
+        if (origin instanceof UserFunction) {
+            ContextStackFrame.FunctionCall sf = new ContextStackFrame.FunctionCall();
+            UserFunction ufc = (UserFunction) origin;
+            sf.setLocation(ufc.getLocation());
+            sf.setFunctionName(ufc.getFunctionName());
+            sf.setContextItem(context.getContextItem());
+            next = getMajorCaller(context);
+            return sf;
+        } else if (origin instanceof UserFunctionCall) {
+            // No longer used - bug 3672
             ContextStackFrame.FunctionCall sf = new ContextStackFrame.FunctionCall();
             UserFunctionCall ufc = (UserFunctionCall) origin;
             sf.setLocation(ufc.getLocation());
