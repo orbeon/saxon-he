@@ -32,6 +32,7 @@ import net.sf.saxon.value.*;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
+import java.io.File;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -95,15 +96,21 @@ public class UseWhenFilter extends ProxyReceiver {
 
     public void open() throws XPathException {
         nextReceiver.open();
-        try {
+
             String sysId = getSystemId();
             if (sysId == null) {
                 sysId = "";
             }
             systemIdStack.push(sysId);
+        try {
             baseUriStack.push(new URI(sysId));
         } catch (URISyntaxException e) {
-            throw new XPathException("Invalid URI for stylesheet: " + getSystemId());
+            try {
+                baseUriStack.push(new File(sysId).toURI());
+            } catch(Exception ex) {
+                //throw new XPathException("Invalid URI for stylesheet: " + getSystemId());
+            }
+
         }
     }
 
