@@ -590,6 +590,7 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
             targetFunction.process(actualArgs, c2);
         } else {
             XPathContextMajor c2 = function.makeNewContext(context);
+            c2.setOrigin(this);
             function.process(actualArgs, c2);
         }
     }
