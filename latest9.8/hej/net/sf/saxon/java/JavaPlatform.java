@@ -286,7 +286,12 @@ public class JavaPlatform implements Platform {
      */
 
     public StringCollator makeUcaCollator(String uri, Configuration config) throws XPathException {
-        return new UcaCollatorUsingJava(uri);
+        UcaCollatorUsingJava collator = new UcaCollatorUsingJava(uri);
+        if ("yes".equals(collator.getProperties().getProperty("numeric"))) {
+            return new AlphanumericCollator(collator);
+        } else {
+            return collator;
+        }
     }
 
     /**

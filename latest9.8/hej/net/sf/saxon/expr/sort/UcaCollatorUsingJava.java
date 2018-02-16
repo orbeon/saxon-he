@@ -34,6 +34,7 @@ public class UcaCollatorUsingJava implements SubstringMatcher {
     private String uri;
     private RuleBasedCollator uca;
     private Strength strengthLevel;
+    private Properties properties;
 
 
     private static String keywords[] = {"fallback", "lang", "version", "strength",
@@ -47,6 +48,11 @@ public class UcaCollatorUsingJava implements SubstringMatcher {
         uca = (RuleBasedCollator) RuleBasedCollator.getInstance();
         setProps(parseProps(uri));
     }
+
+    public Properties getProperties() {
+        return properties;
+    }
+
 
     public RuleBasedCollator getRuleBasedCollator() {
         return uca;
@@ -114,7 +120,8 @@ public class UcaCollatorUsingJava implements SubstringMatcher {
      * @param props the set of properties parsed from the UCA parameters
      * @throws XPathException
      */
-    public void setProps(Properties props) throws XPathException {
+    private void setProps(Properties props) throws XPathException {
+        this.properties = props;
         boolean fallbackError = false;
         String fallback = props.getProperty("fallback");
         if (fallback != null) {
