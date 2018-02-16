@@ -4003,7 +4003,7 @@ public class Configuration implements SourceResolver, NotationSet {
             options = ((AugmentedSource) source).getParseOptions();
             underlyingSource = ((AugmentedSource) source).getContainedSource();
         } else {
-            options = new ParseOptions();
+            options = new ParseOptions(defaultParseOptions);  // changed by bug 3678
         }
 
         source = underlyingSource;
