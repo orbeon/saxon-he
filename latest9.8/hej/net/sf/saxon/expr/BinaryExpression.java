@@ -424,7 +424,7 @@ public abstract class BinaryExpression extends Expression {
 
     @Override
     public String toShortString() {
-        return parenthesize(getLhsExpression()) + " " + displayOperator() + " " + parenthesize(getRhsExpression());
+        return parenthesize(getLhsExpression()) + displayOperator() + parenthesize(getRhsExpression());
     }
 
     private String parenthesize(Expression operand) {

@@ -930,10 +930,10 @@ public class SlashExpression extends BinaryExpression
         return ExpressionTool.parenthesize(getStart()) + "/" + ExpressionTool.parenthesize(getStep());
     }
 
-//    @Override
-//    public String toShortString() {
-//        return getStart().toShortString() + "/" +  getStep().toShortString();
-//    }
+    @Override
+    public String toShortString() {
+        return ExpressionTool.parenthesizeShort(getStart()) + "/" + ExpressionTool.parenthesizeShort(getStep());
+    }
 
     /**
      * Get the first step in this expression. A path expression A/B/C is represented as (A/B)/C, but

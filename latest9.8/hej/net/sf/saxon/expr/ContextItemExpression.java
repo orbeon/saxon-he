@@ -93,6 +93,7 @@ public class ContextItemExpression extends Expression {
         if (contextInfo.getItemType() == ErrorType.getInstance()) {
             visitor.issueWarning("Evaluation will always fail: there is no context item", getLocation());
             ErrorExpression ee = new ErrorExpression("There is no context item", getErrorCodeForUndefinedContext(), true);
+            ee.setOriginalExpression(this);
             ExpressionTool.copyLocationInfo(this, ee);
             return ee;
         } else {

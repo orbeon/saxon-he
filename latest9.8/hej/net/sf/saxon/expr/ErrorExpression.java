@@ -31,6 +31,7 @@ public class ErrorExpression extends Expression {
     private String message;
     private String errorCode;
     private boolean isTypeError;
+    private Expression original;
 
     /**
      * This constructor is never executed, but it is used in the expression parser
@@ -87,6 +88,15 @@ public class ErrorExpression extends Expression {
 
     public String getErrorCodeLocalPart() {
         return exception == null ? errorCode : exception.getErrorCodeLocalPart();
+    }
+
+    /**
+     * Set the original expression (for diagnostics)
+     * @param original the expression that this error expression replaces
+     */
+
+    public void setOriginalExpression(Expression original) {
+        this.original = original;
     }
 
     /**
@@ -183,10 +193,12 @@ public class ErrorExpression extends Expression {
     public Expression copy(RebindingMap rebindings) {
         if (exception != null) {
             ErrorExpression e2 = new ErrorExpression(exception);
+            e2.setOriginalExpression(original);
             ExpressionTool.copyLocationInfo(this, e2);
             return e2;
         } else {
             ErrorExpression e2 = new ErrorExpression(message, errorCode, isTypeError);
+            e2.setOriginalExpression(original);
             ExpressionTool.copyLocationInfo(this, e2);
             return e2;
         }
@@ -206,12 +218,20 @@ public class ErrorExpression extends Expression {
 
     @Override
     public String toString() {
-        return "error(\"" + message + "\")";
+        if (original != null) {
+            return original.toString();
+        } else {
+            return "error(\"" + message + "\")";
+        }
     }
 
     @Override
     public String toShortString() {
-        return toString();
+        if (original != null) {
+            return original.toShortString();
+        } else {
+            return "error(\"" + message + "\")";
+        }
     }
 
     /**

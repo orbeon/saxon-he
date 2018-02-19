@@ -44,6 +44,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -1964,11 +1965,28 @@ public class ExpressionTool {
      */
 
     public static String parenthesize(Expression exp) {
-        if (exp.operands().iterator().hasNext()) {
+        if (hasTwoOrMoreOperands(exp)) {
             return "(" + exp.toString() + ")";
         } else {
             return exp.toString();
         }
+    }
+
+    public static String parenthesizeShort(Expression exp) {
+        if (hasTwoOrMoreOperands(exp)) {
+            return "(" + exp.toShortString() + ")";
+        } else {
+            return exp.toShortString();
+        }
+    }
+
+    private static boolean hasTwoOrMoreOperands(Expression exp) {
+        Iterator ops = exp.operands().iterator();
+        if (!ops.hasNext()) {
+            return false;
+        }
+        ops.next();
+        return ops.hasNext();
     }
 
     public static void validateTree(Expression exp) {
