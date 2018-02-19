@@ -130,7 +130,7 @@ public class Controller implements ContextOriginator {
     private boolean buildTree = true;
     private Map<StructuredQName, Sequence> initialTemplateParams;
     private Map<StructuredQName, Sequence> initialTemplateTunnelParams;
-    private Stack<AttributeSet> attributeSetEvaluationStack = new Stack<AttributeSet>();
+    private Map<Long, Stack<AttributeSet>> attributeSetEvaluationStacks = new HashMap<Long, Stack<AttributeSet>>();
     private StylesheetCache stylesheetCache = null;
     private AccumulatorManager accumulatorManager = null;
     private CollectionFinder collectionFinder = null;
@@ -2990,8 +2990,19 @@ public class Controller implements ContextOriginator {
      * @return the attribute set evaluation stack
      */
 
-    public Stack<AttributeSet> getAttributeSetEvaluationStack() {
-        return attributeSetEvaluationStack;
+    public synchronized Stack<AttributeSet> getAttributeSetEvaluationStack() {
+        long thread = Thread.currentThread().getId();
+        Stack<AttributeSet> stack = attributeSetEvaluationStacks.get(thread);
+        if (stack == null) {
+            stack = new Stack<AttributeSet>();
+            attributeSetEvaluationStacks.put(thread, stack);
+        }
+        return stack;
+    }
+
+    public synchronized void releaseAttributeSetEvaluationStack() {
+        long thread = Thread.currentThread().getId();
+        attributeSetEvaluationStacks.remove(thread);
     }
 
     /**

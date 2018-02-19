@@ -109,6 +109,9 @@ public class AttributeSet extends Actor {
         stack.push(this);
         getBody().process(context);
         stack.pop();
+        if (stack.isEmpty()) {
+            context.getController().releaseAttributeSetEvaluationStack();
+        }
     }
 
     /**
