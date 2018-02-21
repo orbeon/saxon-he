@@ -20,6 +20,7 @@ import net.sf.saxon.functions.ExecutableFunctionLibrary;
 import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.NameTest;
+import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.query.XQueryFunction;
 import net.sf.saxon.query.XQueryFunctionLibrary;
 import net.sf.saxon.serialize.CharacterMap;
@@ -770,6 +771,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
                 Component declaringComponent = compiledTemplate.makeDeclaringComponent(sourceTemplate.getVisibility(), getStylesheetPackage());
                 componentIndex.put(sName, declaringComponent);
                 templateIndex.put(sName.getComponentName(), decl);
+                setLocalParamDetails(sourceTemplate, compiledTemplate);
                 return compiledTemplate;
             } else {
                 if (other.getDeclaringPackage() == getStylesheetPackage()) {
@@ -789,6 +791,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
                         Component declaringComponent = compiledTemplate.makeDeclaringComponent(sourceTemplate.getVisibility(), getStylesheetPackage());
                         componentIndex.put(sName, declaringComponent);
                         templateIndex.put(sName.getComponentName(), decl);
+                        setLocalParamDetails(sourceTemplate, compiledTemplate);
                         return compiledTemplate;
                     }
                 } else if (sourceTemplate.findAncestorElement(StandardNames.XSL_OVERRIDE) != null) {
@@ -806,6 +809,25 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
             }
         }
         return null;
+    }
+
+    private static void setLocalParamDetails(XSLTemplate source, NamedTemplate nt) throws XPathException {
+        NodeInfo child;
+        AxisIterator kids = source.iterateAxis(AxisInfo.CHILD, NodeKindTest.ELEMENT);
+        List<NamedTemplate.LocalParamInfo> details = new ArrayList<NamedTemplate.LocalParamInfo>();
+        while ((child = kids.next()) != null) {
+            if (child instanceof XSLLocalParam) {
+                XSLLocalParam lp = (XSLLocalParam)child;
+                lp.prepareAttributes();
+                NamedTemplate.LocalParamInfo info = new NamedTemplate.LocalParamInfo();
+                info.name = lp.getVariableQName();
+                info.requiredType = lp.getRequiredType();
+                info.isRequired = lp.isRequiredParam();
+                info.isTunnel = lp.isTunnelParam();
+                details.add(info);
+            }
+        }
+        nt.setLocalParamDetails(details);
     }
 
     /**

@@ -42,6 +42,7 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
     private boolean doneAttributes = false;
     /*@Nullable*/ private String nameAtt = null;
     private String asAtt = null;
+    private String extraAsAtt = null;
     private SequenceType resultType = SequenceType.ANY_SEQUENCE;
     private SlotManager stackFrameMap;
     private boolean memoFunction = false;
@@ -145,8 +146,12 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
                 } else {
                     checkUnknownAttribute(atts.getNodeName(a));
                 }
-            } else if (local.equals("memo-function") && uri.equals(NamespaceConstant.SAXON)) {
-                memoFunction = processBooleanAttribute("saxon:memo-function", atts.getValue(a));
+            } else if (uri.equals(NamespaceConstant.SAXON)) {
+                if (local.equals("memo-function")) {
+                    memoFunction = processBooleanAttribute("saxon:memo-function", atts.getValue(a));
+                } else if (local.equals("as")) {
+                    extraAsAtt = atts.getValue(a);
+                }
             } else {
                 checkUnknownAttribute(atts.getNodeName(a));
             }
@@ -162,6 +167,25 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
                 resultType = makeSequenceType(asAtt);
             } catch (XPathException e) {
                 compileErrorInAttribute(e.getMessage(), e.getErrorCodeLocalPart(), "as");
+            }
+        }
+
+        if (extraAsAtt != null) {
+            SequenceType extraResultType = null;
+            try {
+                extraResultType = makeExtendedSequenceType(extraAsAtt);
+            } catch (XPathException e) {
+                compileErrorInAttribute(e.getMessage(), e.getErrorCodeLocalPart(), "saxon:as");
+            }
+            if (asAtt != null) {
+                int rel = getConfiguration().getTypeHierarchy().sequenceTypeRelationship(extraResultType, resultType);
+                if (rel == TypeHierarchy.SAME_TYPE || rel == TypeHierarchy.SUBSUMED_BY) {
+                    resultType = extraResultType;
+                } else {
+                    compileErrorInAttribute("When both are present, @saxon:as must be a subtype of @as", "SXER7TBA", "saxon:as");
+                }
+            } else {
+                resultType = extraResultType;
             }
         }
 

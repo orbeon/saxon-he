@@ -13,6 +13,7 @@ import net.sf.saxon.expr.instruct.*;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.FeatureKeys;
 import net.sf.saxon.lib.Logger;
+import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.Pattern;
 import net.sf.saxon.trace.LocationKind;
@@ -24,6 +25,7 @@ import net.sf.saxon.tree.linked.NodeImpl;
 import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.ErrorType;
 import net.sf.saxon.type.ItemType;
+import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.BigDecimalValue;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.Whitespace;
@@ -278,6 +280,8 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
 
     public void prepareAttributes() throws XPathException {
 
+        String extraAsAtt = null;
+
         AttributeCollection atts = getAttributeList();
 
         for (int a = 0; a < atts.getLength(); a++) {
@@ -294,6 +298,10 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                 asAtt = atts.getValue(a);
             } else if (f.equals("visibility")) {
                 visibilityAtt = Whitespace.trim(atts.getValue(a));
+            } else if (atts.getURI(a).equals(NamespaceConstant.SAXON)) {
+                if (atts.getLocalName(a).equals("as")) {
+                    extraAsAtt = atts.getValue(a);
+                }
             } else {
                 checkUnknownAttribute(atts.getNodeName(a));
             }
@@ -376,6 +384,26 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                 requiredType = makeSequenceType(asAtt);
             } catch (XPathException e) {
                 compileErrorInAttribute(e.getMessage(), e.getErrorCodeLocalPart(), "as");
+            }
+        }
+
+        if (extraAsAtt != null) {
+            SequenceType extraResultType = null;
+            try {
+                extraResultType = makeExtendedSequenceType(extraAsAtt);
+            } catch (XPathException e) {
+                compileErrorInAttribute(e.getMessage(), e.getErrorCodeLocalPart(), "saxon:as");
+                extraResultType = requiredType; // error recovery
+            }
+            if (asAtt != null) {
+                int rel = getConfiguration().getTypeHierarchy().sequenceTypeRelationship(extraResultType, requiredType);
+                if (rel == TypeHierarchy.SAME_TYPE || rel == TypeHierarchy.SUBSUMED_BY) {
+                    requiredType = extraResultType;
+                } else {
+                    compileErrorInAttribute("When both are present, @saxon:as must be a subtype of @as", "SXER7TBA", "saxon:as");
+                }
+            } else {
+                requiredType = extraResultType;
             }
         }
 

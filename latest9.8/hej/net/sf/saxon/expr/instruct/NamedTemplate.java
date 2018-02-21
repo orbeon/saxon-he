@@ -57,6 +57,7 @@ public class NamedTemplate extends Actor {
     private boolean mayOmitContextItem = true;
     private boolean absentFocus = false;
     private List<LocalParam> localParams = new ArrayList<LocalParam>(4);
+    private List<LocalParamInfo> localParamDetails = new ArrayList<LocalParamInfo>(4);
 
     /**
      * Create a named template
@@ -322,6 +323,21 @@ public class NamedTemplate extends Actor {
         }
         presenter.emitAttribute("line", getLineNumber() + "");
         presenter.emitAttribute("module", getSystemId());
+    }
+
+    public void setLocalParamDetails(List<LocalParamInfo> details) {
+        localParamDetails = details;
+    }
+
+    public List<LocalParamInfo> getLocalParamDetails() {
+        return localParamDetails;
+    }
+
+    public static class LocalParamInfo {
+        public StructuredQName name;
+        public SequenceType requiredType;
+        public boolean isRequired;
+        public boolean isTunnel;
     }
 
 

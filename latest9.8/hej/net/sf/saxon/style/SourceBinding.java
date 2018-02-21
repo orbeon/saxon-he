@@ -83,6 +83,7 @@ public class SourceBinding {
         String assignableAtt = null;
         String staticAtt = null;
         String visibilityAtt = null;
+        String extraAsAtt = null;
 
         for (int a = 0; a < atts.getLength(); a++) {
             String f = atts.getQName(a);
@@ -107,8 +108,14 @@ public class SourceBinding {
                 staticAtt = Whitespace.trim(atts.getValue(a));
             } else if (f.equals("visibility") && ((permittedAttributes & VISIBILITY) != 0)) {
                 visibilityAtt = Whitespace.trim(atts.getValue(a));
-            } else if (atts.getLocalName(a).equals("assignable") && NamespaceConstant.SAXON.equals(atts.getURI(a)) && ((permittedAttributes & ASSIGNABLE) != 0)) {
-                assignableAtt = Whitespace.trim(atts.getValue(a));
+            } else if (NamespaceConstant.SAXON.equals(atts.getURI(a))) {
+                if (atts.getLocalName(a).equals("assignable") && ((permittedAttributes & ASSIGNABLE) != 0)) {
+                    assignableAtt = Whitespace.trim(atts.getValue(a));
+                } else if (atts.getLocalName(a).equals("as")) {
+                    extraAsAtt = atts.getValue(a);
+                } else {
+                    sourceElement.checkUnknownAttribute(atts.getNodeName(a));
+                }
             } else {
                 sourceElement.checkUnknownAttribute(atts.getNodeName(a));
             }
@@ -162,6 +169,27 @@ public class SourceBinding {
                 sourceElement.compileErrorInAttribute(e.getMessage(), e.getErrorCodeLocalPart(), "as");
             }
         }
+
+        if (extraAsAtt != null) {
+            SequenceType extraResultType = null;
+            try {
+                extraResultType = sourceElement.makeExtendedSequenceType(extraAsAtt);
+            } catch (XPathException e) {
+                sourceElement.compileErrorInAttribute(e.getMessage(), e.getErrorCodeLocalPart(), "saxon:as");
+                extraResultType = SequenceType.ANY_SEQUENCE;
+            }
+            if (asAtt != null) {
+                int rel = sourceElement.getConfiguration().getTypeHierarchy().sequenceTypeRelationship(extraResultType, declaredType);
+                if (rel == TypeHierarchy.SAME_TYPE || rel == TypeHierarchy.SUBSUMED_BY) {
+                    declaredType = extraResultType;
+                } else {
+                    sourceElement.compileErrorInAttribute("When both are present, @saxon:as must be a subtype of @as", "SXER7TBA", "as");
+                }
+            } else {
+                declaredType = extraResultType;
+            }
+        }
+
 
         if (visibilityAtt != null) {
             if (hasProperty(PARAM)) {

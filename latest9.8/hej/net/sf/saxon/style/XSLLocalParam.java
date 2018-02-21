@@ -39,6 +39,7 @@ public class XSLLocalParam extends XSLGeneralVariable {
     /*@Nullable*/ Expression conversion = null;
     private int slotNumber = -9876;  // initial value designed solely to show up when debugging
     private LocalParam compiledParam;
+    private boolean prepared = false;
 
     /**
      * Ask whether this element contains a binding for a variable with a given name; and if it does,
@@ -68,20 +69,23 @@ public class XSLLocalParam extends XSLGeneralVariable {
 
     @Override
     public void prepareAttributes() throws XPathException {
-        sourceBinding.setProperty(SourceBinding.PARAM, true);
-        if (getParent() instanceof XSLFunction) {
-            permittedAttributes &= ~SourceBinding.SELECT;
-            sourceBinding.setProperty(SourceBinding.DISALLOWS_CONTENT, true);
-        }
-        sourceBinding.prepareAttributes(permittedAttributes);
-        if (sourceBinding.hasProperty(SourceBinding.TUNNEL) && !(getParent() instanceof XSLTemplate)) {
-            compileError("For attribute 'tunnel' within an " + getParent().getDisplayName() +
-                    " parameter, the only permitted value is 'no'", "XTSE0020");
-        }
-        if (getParent() instanceof XSLFunction && getAttributeValue("", "required") != null) {
-            if (!sourceBinding.hasProperty(SourceBinding.REQUIRED)) {
-                compileError("For attribute 'required' within an " + getParent().getDisplayName() +
-                    " parameter, the only permitted value is 'yes'", "XTSE0020");
+        if (!prepared) {
+            prepared = true;
+            sourceBinding.setProperty(SourceBinding.PARAM, true);
+            if (getParent() instanceof XSLFunction) {
+                permittedAttributes &= ~SourceBinding.SELECT;
+                sourceBinding.setProperty(SourceBinding.DISALLOWS_CONTENT, true);
+            }
+            sourceBinding.prepareAttributes(permittedAttributes);
+            if (sourceBinding.hasProperty(SourceBinding.TUNNEL) && !(getParent() instanceof XSLTemplate)) {
+                compileError("For attribute 'tunnel' within an " + getParent().getDisplayName() +
+                        " parameter, the only permitted value is 'no'", "XTSE0020");
+            }
+            if (getParent() instanceof XSLFunction && getAttributeValue("", "required") != null) {
+                if (!sourceBinding.hasProperty(SourceBinding.REQUIRED)) {
+                    compileError("For attribute 'required' within an " + getParent().getDisplayName() +
+                        " parameter, the only permitted value is 'yes'", "XTSE0020");
+                }
             }
         }
     }

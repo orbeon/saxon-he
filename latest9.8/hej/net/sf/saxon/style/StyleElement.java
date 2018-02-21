@@ -921,6 +921,20 @@ public abstract class StyleElement extends ElementImpl {
         return parser.parseSequenceType(sequenceType, staticContext);
     }
 
+    public SequenceType makeExtendedSequenceType(String sequenceType)
+            throws XPathException {
+        getStaticContext();
+        XPathParser parser =
+                getConfiguration().newExpressionParser("XP", false, 31);
+        QNameParser qp = new QNameParser(staticContext.getNamespaceResolver());
+        qp.setAcceptEQName(staticContext.getXPathVersion() >= 30);
+        qp.setDefaultNamespace("");
+        qp.setErrorOnBadSyntax("XPST0003");
+        qp.setErrorOnUnresolvedPrefix("XPST0081");
+        parser.setQNameParser(qp);
+        return parser.parseExtendedSequenceType(sequenceType, staticContext);
+    }
+
     /**
      * Process the [xsl:]extension-element-prefixes attribute if there is one
      *

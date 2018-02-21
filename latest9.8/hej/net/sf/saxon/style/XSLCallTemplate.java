@@ -9,7 +9,6 @@ package net.sf.saxon.style;
 
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.instruct.CallTemplate;
-import net.sf.saxon.expr.instruct.LocalParam;
 import net.sf.saxon.expr.instruct.NamedTemplate;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
@@ -107,41 +106,42 @@ public class XSLCallTemplate extends StyleElement {
         // check that a parameter is supplied for each required parameter
         // of the called template
 
-        if (template != null && template.getBody() != null) {
+        if (template != null /*&& template.getBody() != null*/) {
             checkParams();
         } else {
-            final XSLCallTemplate call = this;
-            // this is a forwards reference
-            getPrincipalStylesheetModule().addCompletionAction(new PrincipalStylesheetModule.Action() {
-                @Override
-                public void doAction() throws XPathException {
-                    call.checkParams();
-                }
-            });
+            throw new AssertionError("Target template not known");
+//            final XSLCallTemplate call = this;
+//            // this is a forwards reference
+//            getPrincipalStylesheetModule().addCompletionAction(new PrincipalStylesheetModule.Action() {
+//                @Override
+//                public void doAction() throws XPathException {
+//                    call.checkParams();
+//                }
+//            });
         }
     }
 
     private void checkParams() throws XPathException {
-        if (template.getBody() == null) {
-            compileError("Internal error: Cannot check template params before target template is compiled");
-            return;
-        }
-        List<LocalParam> declaredParams = template.getLocalParams();
-        for (LocalParam param : declaredParams) {
-            if (param.isRequiredParam() && !param.isTunnelParam()) {
+//        if (template.getBody() == null) {
+//            compileError("Internal error: Cannot check template params before target template is compiled");
+//            return;
+//        }
+        List<NamedTemplate.LocalParamInfo> declaredParams = template.getLocalParamDetails();
+        for (NamedTemplate.LocalParamInfo param : declaredParams) {
+            if (param.isRequired && !param.isTunnel) {
                 AxisIterator actualParams = iterateAxis(AxisInfo.CHILD);
                 boolean ok = false;
                 NodeInfo withParam;
                 while ((withParam = actualParams.next()) != null) {
                     if (withParam instanceof XSLWithParam &&
-                            ((XSLWithParam) withParam).getVariableQName().equals(param.getVariableQName())) {
+                            ((XSLWithParam) withParam).getVariableQName().equals(param.name)) {
                         ok = true;
                         break;
                     }
                 }
                 if (!ok) {
                     compileError("No value supplied for required parameter " +
-                            Err.wrap(param.getVariableQName().getDisplayName(), Err.VARIABLE), "XTSE0690");
+                            Err.wrap(param.name.getDisplayName(), Err.VARIABLE), "XTSE0690");
                 }
             }
         }
@@ -155,11 +155,11 @@ public class XSLCallTemplate extends StyleElement {
             if (w instanceof XSLWithParam && !((XSLWithParam) w).isTunnelParam()) {
                 XSLWithParam withParam = (XSLWithParam) w;
                 boolean ok = false;
-                for (LocalParam param : declaredParams) {
-                    if (param.getVariableQName().equals(withParam.getVariableQName()) && !param.isTunnelParam()) {
+                for (NamedTemplate.LocalParamInfo param : declaredParams) {
+                    if (param.name.equals(withParam.getVariableQName()) && !param.isTunnel) {
                         // Note: see bug 10534
                         ok = true;
-                        SequenceType required = param.getRequiredType();
+                        SequenceType required = param.requiredType;
                         withParam.checkAgainstRequiredType(required);
                         break;
                     }
