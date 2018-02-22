@@ -74,7 +74,7 @@ public abstract class SystemFunction extends AbstractFunction {
         SystemFunction fn = rsc.getConfiguration().makeSystemFunction(name, arity);
         if (fn == null) {
             rsc.getConfiguration().makeSystemFunction(name, arity);
-            throw new IllegalStateException(name);
+            throw new IllegalStateException(name + '#' + arity);
         }
         fn.setRetainedStaticContext(rsc);
         return fn;

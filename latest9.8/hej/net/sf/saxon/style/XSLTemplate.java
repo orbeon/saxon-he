@@ -64,6 +64,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
     //private boolean maySupplyContextItem = true;
     private boolean absentFocus = false;
     //private Expression body;
+    private boolean jitCompilationDone = false;
 
     /**
      * Get the corresponding NamedTemplate object that results from the compilation of this
@@ -808,6 +809,38 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
         templateRule.setHasRequiredParams(hasRequiredParams);
         templateRule.setRequiredType(requiredType);
         templateRule.setContextItemRequirements(requiredContextItemType, absentFocus);
+    }
+
+    public synchronized void jitCompile(Compilation compilation, ComponentDeclaration decl) throws XPathException {
+        if (!jitCompilationDone) {
+            jitCompilationDone = true;
+            compilation.setPreScan(false);
+            processAllAttributes();
+
+            if (compilation.getErrorCount() > 0) {
+                XPathException e = new XPathException("Errors were reported during stylesheet compilation");
+                e.setHasBeenReported(true); // only intended as an exception message, not something to report to ErrorListener
+                throw e;
+            }
+
+            validateSubtree(decl, false);
+
+            if (compilation.getErrorCount() > 0) {
+                XPathException e = new XPathException("Errors were reported during stylesheet compilation");
+                e.setHasBeenReported(true); // only intended as an exception message, not something to report to ErrorListener
+                throw e;
+            }
+
+            compileDeclaration(compilation, decl);
+            // xslTemplate.optimize(decl);
+            //allocateBindingSlots();
+            if (compilation.getErrorCount() > 0) {
+                XPathException e = new XPathException("Errors were reported during stylesheet compilation");
+                e.setHasBeenReported(true); // only intended as an exception message, not something to report to ErrorListener
+                throw e;
+            }
+        }
+
     }
 
     /**

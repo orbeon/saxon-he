@@ -118,7 +118,7 @@ public class Transform {
                                     "User-supplied net.sf.saxon.lib.Initializer class to initialize the Saxon Configuration");
         options.addRecognizedOption("it", CommandLineOptions.TYPE_QNAME,
                                     "Name of initial template");
-        options.addRecognizedOption("jit", CommandLineOptions.TYPE_QNAME,
+        options.addRecognizedOption("jit", CommandLineOptions.TYPE_BOOLEAN,
                                     "Just-in-time compilation");
         options.addRecognizedOption("l", CommandLineOptions.TYPE_BOOLEAN,
                                     "Maintain line numbers for source documents");
@@ -418,7 +418,7 @@ public class Transform {
             value = options.getOptionValue("nogo");
             if (value != null) {
                 run = false;
-                compiler.setJustInTimeCompilation(false);;
+                compiler.setJustInTimeCompilation(false);
             }
 
             value = options.getOptionValue("p");
