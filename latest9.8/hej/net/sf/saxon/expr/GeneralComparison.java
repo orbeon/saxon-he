@@ -212,7 +212,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
         // If either operand is statically empty, return false
 
         if (Literal.isEmptySequence(getLhsExpression()) || Literal.isEmptySequence(getRhsExpression())) {
-            return Literal.makeLiteral(BooleanValue.FALSE);
+            return Literal.makeLiteral(BooleanValue.FALSE, this);
         }
 
         // Neither operand needs to be sorted
@@ -243,7 +243,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
         ItemType t1 = getRhsExpression().getItemType();  // this is always an atomic type or union type or xs:error
 
         if (t0 instanceof ErrorType || t1 instanceof ErrorType) {
-            return Literal.makeLiteral(BooleanValue.FALSE);
+            return Literal.makeLiteral(BooleanValue.FALSE, this);
         }
 
         if (((PlainType) t0).isExternalType() || ((PlainType) t1).isExternalType()) {
@@ -261,7 +261,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
         int c1 = getRhsExpression().getCardinality();
 
         if (c0 == StaticProperty.EMPTY || c1 == StaticProperty.EMPTY) {
-            return Literal.makeLiteral(BooleanValue.FALSE);
+            return Literal.makeLiteral(BooleanValue.FALSE, this);
         }
 
         if (t0.equals(BuiltInAtomicType.ANY_ATOMIC) || t0.equals(BuiltInAtomicType.UNTYPED_ATOMIC) ||
@@ -356,7 +356,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
         // evaluate the expression now if both arguments are constant
 
         if ((getLhsExpression() instanceof Literal) && (getRhsExpression() instanceof Literal)) {
-            return Literal.makeLiteral(evaluateItem(env.makeEarlyEvaluationContext()));
+            return Literal.makeLiteral(evaluateItem(env.makeEarlyEvaluationContext()), this);
         }
         return this;
     }
@@ -397,7 +397,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
         // If either operand is statically empty, return false
 
         if (Literal.isEmptySequence(getLhsExpression()) || Literal.isEmptySequence(getRhsExpression())) {
-            return Literal.makeLiteral(BooleanValue.FALSE);
+            return Literal.makeLiteral(BooleanValue.FALSE, this);
         }
 
         // Neither operand needs to be sorted
@@ -407,7 +407,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
 
         if (getLhsExpression() instanceof Literal && getRhsExpression() instanceof Literal) {
             return Literal.makeLiteral(
-                    SequenceTool.toGroundedValue(evaluateItem(visitor.getStaticContext().makeEarlyEvaluationContext()))
+                    SequenceTool.toGroundedValue(evaluateItem(visitor.getStaticContext().makeEarlyEvaluationContext())), this
             );
         }
 
@@ -470,8 +470,8 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
                     long min = ((IntegerRange) value0).getStart();
                     long max = ((IntegerRange) value0).getEnd();
                     IntegerRangeTest ir = new IntegerRangeTest(getRhsExpression(),
-                            Literal.makeLiteral(Int64Value.makeIntegerValue(min)),
-                            Literal.makeLiteral(Int64Value.makeIntegerValue(max)));
+                            Literal.makeLiteral(Int64Value.makeIntegerValue(min), this),
+                            Literal.makeLiteral(Int64Value.makeIntegerValue(max), this));
                     ExpressionTool.copyLocationInfo(this, ir);
                     return ir;
                 }
@@ -483,8 +483,8 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
                     long min = ((IntegerRange) value1).getStart();
                     long max = ((IntegerRange) value1).getEnd();
                     IntegerRangeTest ir = new IntegerRangeTest(getLhsExpression(),
-                            Literal.makeLiteral(Int64Value.makeIntegerValue(min)),
-                            Literal.makeLiteral(Int64Value.makeIntegerValue(max)));
+                            Literal.makeLiteral(Int64Value.makeIntegerValue(min), this),
+                            Literal.makeLiteral(Int64Value.makeIntegerValue(max), this));
                     ExpressionTool.copyLocationInfo(this, ir);
                     return ir;
                 }
@@ -539,7 +539,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
         // evaluate the expression now if both arguments are constant
 
         if ((getLhsExpression() instanceof Literal) && (getRhsExpression() instanceof Literal)) {
-            return Literal.makeLiteral(evaluateItem(env.makeEarlyEvaluationContext()));
+            return Literal.makeLiteral(evaluateItem(env.makeEarlyEvaluationContext()), this);
         }
 
         // Finally, convert to use the GeneralComparisonEE algorithm if in Saxon-EE

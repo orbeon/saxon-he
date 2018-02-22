@@ -140,11 +140,11 @@ public final class ValueComparison extends BinaryExpression implements Compariso
         StaticContext env = visitor.getStaticContext();
 
         if (Literal.isEmptySequence(getLhsExpression())) {
-            return resultWhenEmpty == null ? getLhsExpression() : Literal.makeLiteral(resultWhenEmpty);
+            return resultWhenEmpty == null ? getLhsExpression() : Literal.makeLiteral(resultWhenEmpty, this);
         }
 
         if (Literal.isEmptySequence(getRhsExpression())) {
-            return resultWhenEmpty == null ? getRhsExpression() : Literal.makeLiteral(resultWhenEmpty);
+            return resultWhenEmpty == null ? getRhsExpression() : Literal.makeLiteral(resultWhenEmpty, this);
         }
 
         if (comparer instanceof UntypedNumericComparer) {
@@ -285,7 +285,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
         if ((value0 != null) && (value1 != null)) {
             try {
                 AtomicValue r = evaluateItem(visitor.getStaticContext().makeEarlyEvaluationContext());
-                return Literal.makeLiteral(r == null ? EmptySequence.getInstance() : r);
+                return Literal.makeLiteral(r == null ? EmptySequence.getInstance() : r, this);
             } catch (NoDynamicContextException e) {
                 // early evaluation failed, typically because the implicit context isn't available.
                 // Try again at run-time
@@ -322,9 +322,9 @@ public final class ValueComparison extends BinaryExpression implements Compariso
                 case Token.FGT:
                     return SystemFunction.makeCall("boolean", getRetainedStaticContext(), arg);
                 case Token.FGE:
-                    return Literal.makeLiteral(BooleanValue.TRUE);
+                    return Literal.makeLiteral(BooleanValue.TRUE, this);
                 case Token.FLT:
-                    return Literal.makeLiteral(BooleanValue.FALSE);
+                    return Literal.makeLiteral(BooleanValue.FALSE, this);
             }
         }
 
@@ -341,9 +341,9 @@ public final class ValueComparison extends BinaryExpression implements Compariso
                 case Token.FLT:
                     return SystemFunction.makeCall("boolean", getRetainedStaticContext(), arg);
                 case Token.FLE:
-                    return Literal.makeLiteral(BooleanValue.TRUE);
+                    return Literal.makeLiteral(BooleanValue.TRUE, this);
                 case Token.FGT:
-                    return Literal.makeLiteral(BooleanValue.FALSE);
+                    return Literal.makeLiteral(BooleanValue.FALSE, this);
             }
         }
 
@@ -412,9 +412,9 @@ public final class ValueComparison extends BinaryExpression implements Compariso
                     ExpressionTool.copyLocationInfo(this, ilefalse);
                     return ilefalse;
                 case Token.FGT:
-                    return Literal.makeLiteral(BooleanValue.FALSE);
+                    return Literal.makeLiteral(BooleanValue.FALSE, this);
                 case Token.FLE:
-                    return Literal.makeLiteral(BooleanValue.TRUE);
+                    return Literal.makeLiteral(BooleanValue.TRUE, this);
             }
         }
         if (getLhsExpression().isCallOn(PositionAndLast.Last.class) &&
@@ -431,9 +431,9 @@ public final class ValueComparison extends BinaryExpression implements Compariso
                     ExpressionTool.copyLocationInfo(this, ilefalse);
                     return ilefalse;
                 case Token.FLT:
-                    return Literal.makeLiteral(BooleanValue.FALSE);
+                    return Literal.makeLiteral(BooleanValue.FALSE, this);
                 case Token.FGE:
-                    return Literal.makeLiteral(BooleanValue.TRUE);
+                    return Literal.makeLiteral(BooleanValue.TRUE, this);
             }
         }
 
@@ -529,23 +529,23 @@ public final class ValueComparison extends BinaryExpression implements Compariso
                 return result;
             } else if (op == Token.FGE) {
                 // rewrite count(x)>=0 as true()
-                return Literal.makeLiteral(BooleanValue.TRUE);
+                return Literal.makeLiteral(BooleanValue.TRUE, this);
             } else {  // singletonOperator == Token.FLT
                 // rewrite count(x)<0 as false()
-                return Literal.makeLiteral(BooleanValue.FALSE);
+                return Literal.makeLiteral(BooleanValue.FALSE, this);
             }
         } else if (literalOperand instanceof NumericValue) {
             long operand;
             if (literalOperand instanceof IntegerValue) {
                 operand = ((IntegerValue) literalOperand).longValue();
             } else if (literalOperand.isNaN()) {
-                return Literal.makeLiteral(BooleanValue.get(op == Token.FNE));
+                return Literal.makeLiteral(BooleanValue.get(op == Token.FNE), this);
             } else if (((NumericValue) literalOperand).isWholeNumber()) {
                 operand = ((NumericValue) literalOperand).longValue();
             } else if (op == Token.FEQ) {
-                return Literal.makeLiteral(BooleanValue.FALSE);
+                return Literal.makeLiteral(BooleanValue.FALSE, this);
             } else if (op == Token.FNE) {
-                return Literal.makeLiteral(BooleanValue.TRUE);
+                return Literal.makeLiteral(BooleanValue.TRUE, this);
             } else if (op == Token.FGT || op == Token.FGE) {
                 operand = ((NumericValue) literalOperand).ceiling().longValue();
                 op = Token.FGE;
@@ -558,9 +558,9 @@ public final class ValueComparison extends BinaryExpression implements Compariso
                     case Token.FEQ:
                     case Token.FLT:
                     case Token.FLE:
-                        return Literal.makeLiteral(BooleanValue.FALSE);
+                        return Literal.makeLiteral(BooleanValue.FALSE, this);
                     default:
-                        return Literal.makeLiteral(BooleanValue.TRUE);
+                        return Literal.makeLiteral(BooleanValue.TRUE, this);
                 }
             }
             if (operand > Integer.MAX_VALUE) {
@@ -568,9 +568,9 @@ public final class ValueComparison extends BinaryExpression implements Compariso
                     case Token.FEQ:
                     case Token.FGT:
                     case Token.FGE:
-                        return Literal.makeLiteral(BooleanValue.FALSE);
+                        return Literal.makeLiteral(BooleanValue.FALSE, this);
                     default:
-                        return Literal.makeLiteral(BooleanValue.TRUE);
+                        return Literal.makeLiteral(BooleanValue.TRUE, this);
                 }
             }
             if (sequence instanceof TailExpression || sequence.isCallOn(Subsequence_2.class)) {
@@ -585,8 +585,8 @@ public final class ValueComparison extends BinaryExpression implements Compariso
                     // rewrite count(E) op N as count(subsequence(E, 1, N+1)) op N
                     Expression ss = SystemFunction.makeCall("subsequence",
                         getRetainedStaticContext(), sequence,
-                        Literal.makeLiteral(IntegerValue.PLUS_ONE),
-                        Literal.makeLiteral(Int64Value.makeIntegerValue(operand + 1)));
+                        Literal.makeLiteral(IntegerValue.PLUS_ONE, this),
+                        Literal.makeLiteral(Int64Value.makeIntegerValue(operand + 1)), this);
                     Expression ct = SystemFunction.makeCall("count", getRetainedStaticContext(), ss);
                     CompareToIntegerConstant ctic = new CompareToIntegerConstant(ct, op, operand);
                     opt.trace("Rewrite count()~N as:", ctic);

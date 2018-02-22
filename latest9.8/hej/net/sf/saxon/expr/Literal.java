@@ -758,6 +758,21 @@ public class Literal extends Expression {
     }
 
     /**
+     * Make a literal, taking the retained static context and location information from another
+     * expression which is being simplified/optimized
+     * @param value the literal value
+     * @param origin the expression whose context and location information is to be retained
+     * @return
+     */
+
+    public static Literal makeLiteral(GroundedValue value, Expression origin) {
+        Literal lit = makeLiteral(value);
+        lit.setRetainedStaticContext(origin.getRetainedStaticContext());
+        ExpressionTool.copyLocationInfo(origin, lit);
+        return lit;
+    }
+
+    /**
      * Get the (partial) name of a class that supports streaming of this kind of expression
      *
      * @return the partial name of a class that can be instantiated to provide streaming support in Saxon-EE,
