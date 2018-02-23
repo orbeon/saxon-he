@@ -586,7 +586,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
                     Expression ss = SystemFunction.makeCall("subsequence",
                         getRetainedStaticContext(), sequence,
                         Literal.makeLiteral(IntegerValue.PLUS_ONE, this),
-                        Literal.makeLiteral(Int64Value.makeIntegerValue(operand + 1)), this);
+                        Literal.makeLiteral(Int64Value.makeIntegerValue(operand + 1), this));
                     Expression ct = SystemFunction.makeCall("count", getRetainedStaticContext(), ss);
                     CompareToIntegerConstant ctic = new CompareToIntegerConstant(ct, op, operand);
                     opt.trace("Rewrite count()~N as:", ctic);
