@@ -96,6 +96,7 @@ public class XSLEvaluate extends StyleElement {
         String namespaceContextAtt = null;
         String schemaAwareAtt = null;
         String withParamsAtt = null;
+        boolean foundXPathDefaultNamespace = false;
 
         for (int a = 0; a < atts.getLength(); a++) {
             String f = atts.getQName(a);
@@ -122,6 +123,9 @@ public class XSLEvaluate extends StyleElement {
             } else if (atts.getURI(a).equals(NamespaceConstant.SAXON) && atts.getLocalName(a).equals("allow-any-schema-namespace")) {
                 allowAnySchemaNamespace = processBooleanAttribute("saxon:allow-any-schema-namespace", atts.getValue(a));
             } else {
+                if (f.equals("xpath-default-namespace")) {
+                    foundXPathDefaultNamespace = true;
+                }
                 checkUnknownAttribute(atts.getNodeName(a));
             }
         }
@@ -152,6 +156,10 @@ public class XSLEvaluate extends StyleElement {
         if (withParamsAtt == null) {
             withParamsAtt = "map{}";
             withParams = makeExpression(withParamsAtt, -1);
+        }
+
+        if (namespaceContextAtt != null && foundXPathDefaultNamespace) {
+            issueWarning("When @xpath-context is present, @xpath-default-namespace has no effect on the target expression", this);
         }
     }
 

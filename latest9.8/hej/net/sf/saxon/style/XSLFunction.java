@@ -176,6 +176,7 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
                 extraResultType = makeExtendedSequenceType(extraAsAtt);
             } catch (XPathException e) {
                 compileErrorInAttribute(e.getMessage(), e.getErrorCodeLocalPart(), "saxon:as");
+                extraResultType = resultType;
             }
             if (asAtt != null) {
                 int rel = getConfiguration().getTypeHierarchy().sequenceTypeRelationship(extraResultType, resultType);

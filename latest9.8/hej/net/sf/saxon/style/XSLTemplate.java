@@ -813,7 +813,6 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
 
     public synchronized void jitCompile(Compilation compilation, ComponentDeclaration decl) throws XPathException {
         if (!jitCompilationDone) {
-            jitCompilationDone = true;
             compilation.setPreScan(false);
             processAllAttributes();
 
@@ -839,6 +838,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                 e.setHasBeenReported(true); // only intended as an exception message, not something to report to ErrorListener
                 throw e;
             }
+            jitCompilationDone = true;
         }
 
     }
