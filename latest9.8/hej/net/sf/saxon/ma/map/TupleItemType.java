@@ -8,6 +8,7 @@
 package net.sf.saxon.ma.map;
 
 import net.sf.saxon.expr.Expression;
+import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
@@ -189,10 +190,21 @@ public class TupleItemType extends AnyFunctionType {
             if (keyRel == TypeHierarchy.DISJOINT) {
                 return TypeHierarchy.DISJOINT;
             }
-            // Let's keep the analysis simple...
-            return TypeHierarchy.OVERLAPS;
+            // Handle map(xs:string, item()*)
+            if (f2.getValueType().getPrimaryType().equals(AnyItemType.getInstance()) && f2.getValueType().getCardinality() == StaticProperty.ALLOWS_ZERO_OR_MORE) {
+                return TypeHierarchy.SUBSUMED_BY;
+            } else {
+                // The type of every field in the tuple must be a subtype of the map value type
+                for (SequenceType entry : fields.values()) {
+                     int rel = th.sequenceTypeRelationship(entry, f2.getValueType());
+                     if (!(rel == TypeHierarchy.SUBSUMED_BY || rel == TypeHierarchy.SAME_TYPE) ) {
+                         return TypeHierarchy.OVERLAPS;
+                     }
+                }
+                return TypeHierarchy.SUBSUMED_BY;
+            }
         } else {
-            int rel = TypeHierarchy.DISJOINT;
+            int rel;
             rel = new SpecificFunctionType(getArgumentTypes(), getResultType()).relationship(other, th);
             return rel;
         }
