@@ -638,7 +638,7 @@ public final class ComplexContentOutputter extends SequenceReceiver {
                         kind = "a map";
                     }
                     boolean isXSLT = getPipelineConfiguration().getHostLanguage() == Configuration.XSLT;
-                    throw new XPathException("Cannot add " + kind + " to an XML tree", isXSLT ? "XTDE0450" : "FOTY0013");
+                    throw new XPathException("Cannot add " + kind + " to an XML tree", isXSLT ? "XTDE0450" : "FOTY0013", locationId);
                 }
             } else if (((NodeInfo) item).getNodeKind() == Type.DOCUMENT) {
                 startDocument(0);
