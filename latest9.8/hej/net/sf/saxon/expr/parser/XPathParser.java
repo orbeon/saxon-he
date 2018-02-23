@@ -550,7 +550,8 @@ public class XPathParser {
     }
 
     /**
-     * Parse a string representing a sequence type with syntax extensions used in exported stylesheets
+     * Parse a string representing a sequence type with syntax extensions used in exported stylesheets;
+     * also allows Saxon-specific extensions to SequenceType syntax, such as tuple types.
      *
      * @param input the string, which should conform to the XPath SequenceType
      *              production
@@ -564,6 +565,7 @@ public class XPathParser {
         language = EXTENDED_ITEM_TYPE;
         t = new Tokenizer();
         t.languageLevel = env.getXPathVersion();
+        t.allowSaxonExtensions = true;
         try {
             t.tokenize(input, 0, -1);
         } catch (XPathException err) {
@@ -3000,7 +3002,7 @@ public class XPathParser {
      */
 
     public void checkSyntaxExtensions(String construct) throws XPathException {
-        if (!env.getConfiguration().getBooleanProperty(FeatureKeys.ALLOW_SYNTAX_EXTENSIONS)) {
+        if (!t.allowSaxonExtensions) {
             grumble("Saxon XPath syntax extensions have not been enabled: " + construct + " is not allowed");
         }
     }
