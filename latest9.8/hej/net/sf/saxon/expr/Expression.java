@@ -1121,7 +1121,11 @@ public abstract class Expression implements IdentityComparable {
      */
 
     public final Location getLocation() {
-        return location;
+        if ((location == null || location == ExplicitLocation.UNKNOWN_LOCATION) && getParentExpression() != null) {
+            return getParentExpression().getLocation();
+        } else {
+            return location;
+        }
     }
 
     /**
