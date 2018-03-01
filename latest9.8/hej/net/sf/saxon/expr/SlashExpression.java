@@ -214,6 +214,11 @@ public class SlashExpression extends BinaryExpression
             return getStart();
         }
 
+        if (getStep() instanceof AxisExpression && ((AxisExpression)getStep()).getAxis() == AxisInfo.SELF &&
+                config.getTypeHierarchy().isSubType(startType, getStep().getItemType())) {
+            return getStart();
+        }
+
         return this;
     }
 
