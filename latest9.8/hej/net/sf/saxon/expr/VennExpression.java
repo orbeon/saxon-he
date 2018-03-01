@@ -396,12 +396,16 @@ public class VennExpression extends BinaryExpression {
             final AxisExpression a1 = (AxisExpression) lhs;
             final AxisExpression a2 = (AxisExpression) rhs;
             if (a1.getAxis() == a2.getAxis()) {
-                AxisExpression ax = new AxisExpression(a1.getAxis(),
-                        new CombinedNodeTest(a1.getNodeTest(),
-                                operator,
-                                a2.getNodeTest()));
-                ExpressionTool.copyLocationInfo(this, ax);
-                return ax;
+                if (a1.getNodeTest().equals(a2.getNodeTest())) {
+                    return operator == Token.EXCEPT ? Literal.makeEmptySequence() : a1;
+                } else {
+                    AxisExpression ax = new AxisExpression(a1.getAxis(),
+                                                           new CombinedNodeTest(a1.getNodeTest(),
+                                                                                operator,
+                                                                                a2.getNodeTest()));
+                    ExpressionTool.copyLocationInfo(this, ax);
+                    return ax;
+                }
             }
         }
 
