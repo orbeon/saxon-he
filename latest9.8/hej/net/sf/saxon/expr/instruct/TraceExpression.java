@@ -434,6 +434,14 @@ public class TraceExpression extends Instruction implements InstructionInfo {
         return this;
     }
 
-
+    /**
+     * Produce a short string identifying the expression for use in error messages
+     *
+     * @return a short string, sufficient to identify the expression
+     */
+    @Override
+    public String toShortString() {
+        return getChild().toShortString();
+    }
 }
 
