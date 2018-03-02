@@ -960,6 +960,11 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                         nextFree = 1;
                     }
                     int slots = match.allocateSlots(getSlotManager(), nextFree);
+                    // if the pattern calls user-defined functions, allocate at least one slot,
+                    // to force a new context to be created for evaluating patterns (bug 3706)
+                    if (slots == 0 && ((match.getDependencies() & StaticProperty.DEPENDS_ON_USER_FUNCTIONS) != 0)) {
+                        slots = 1;
+                    }
                     if (slots > 0) {
                         RuleManager mgr = getCompilation().getPrincipalStylesheetModule().getRuleManager();
                         boolean appliesToAll = false;

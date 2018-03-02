@@ -177,7 +177,7 @@ public class GeneralPositionalPattern extends Pattern {
 
     public int getDependencies() {
         // the only dependency that's interesting is a dependency on local variables
-        return positionExpr.getDependencies() & StaticProperty.DEPENDS_ON_LOCAL_VARIABLES;
+        return positionExpr.getDependencies() & (StaticProperty.DEPENDS_ON_LOCAL_VARIABLES | StaticProperty.DEPENDS_ON_USER_FUNCTIONS);
     }
 
     /**

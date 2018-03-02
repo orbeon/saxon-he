@@ -128,12 +128,13 @@ public final class GeneralNodePattern extends Pattern {
     }
 
     /**
-     * Get the dependencies of the pattern. The only possible dependency for a pattern is
-     * on local variables. This is analyzed in those patterns where local variables may appear.
+     * Get the dependencies of the pattern. The only interesting dependencies for a pattern are
+     * on local variables and user-defined functions. This is analyzed in those patterns where
+     * local variables may appear.
      */
 
     public int getDependencies() {
-        return equivalentExpr.getDependencies() & StaticProperty.DEPENDS_ON_LOCAL_VARIABLES;
+        return equivalentExpr.getDependencies() & (StaticProperty.DEPENDS_ON_LOCAL_VARIABLES | StaticProperty.DEPENDS_ON_USER_FUNCTIONS);
     }
 
     /**

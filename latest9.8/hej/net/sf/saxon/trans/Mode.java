@@ -274,6 +274,9 @@ public abstract class Mode extends Actor {
         XPathContextMajor c2 = context.newContext();
         c2.setOrigin(context.getController());   // WHY?
         c2.openStackFrame(getStackFrameSlotsNeeded());
+        if (!(context.getCurrentComponent().getActor() instanceof Accumulator)) {
+            c2.setCurrentComponent(context.getCurrentMode());
+        }
         return c2;
     }
 
