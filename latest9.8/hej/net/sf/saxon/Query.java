@@ -449,6 +449,8 @@ public class Query {
                         quit(e.getMessage(), 2);
                     }
                     if (updating && exp.isUpdateQuery()) {
+                        serializer.setDefaultOutputProperties(
+                                exp.getUnderlyingCompiledQuery().getExecutable().getDefaultOutputProperties());
                         runUpdate(exp, evaluator, serializer);
                     } else {
                         runQuery(exp, evaluator, sourceInput, serializer);

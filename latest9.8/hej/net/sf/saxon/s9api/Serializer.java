@@ -763,7 +763,7 @@ public class Serializer implements Destination {
      * @throws SaxonApiException if any failure occurs
      */
 
-    protected Receiver getReceiver(Executable executable) throws SaxonApiException {
+    public Receiver getReceiver(Executable executable) throws SaxonApiException {
         // Note: used only for XQuery. The equivalent logic for XSLT is in XsltTransformer.setDestination()
         try {
             Configuration config = executable.getConfiguration();
