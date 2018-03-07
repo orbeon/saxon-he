@@ -1122,7 +1122,8 @@ public abstract class Expression implements IdentityComparable {
 
     public final Location getLocation() {
         if ((location == null || location == ExplicitLocation.UNKNOWN_LOCATION) && getParentExpression() != null) {
-            return getParentExpression().getLocation();
+            // Only go up one level to avoid risk of infinite recursion: see bug 3703#1
+            return getParentExpression().location;
         } else {
             return location;
         }
