@@ -15,16 +15,14 @@ import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.lib.FunctionAnnotationHandler;
 import net.sf.saxon.ma.map.MapType;
 import net.sf.saxon.om.*;
-import net.sf.saxon.pattern.AnyNodeTest;
-import net.sf.saxon.pattern.DocumentNodeTest;
-import net.sf.saxon.pattern.NodeTest;
-import net.sf.saxon.pattern.SameNameTest;
+import net.sf.saxon.pattern.*;
 import net.sf.saxon.query.Annotation;
 import net.sf.saxon.query.AnnotationList;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.*;
 import net.sf.saxon.z.IntHashSet;
 import net.sf.saxon.z.IntSet;
+import net.sf.saxon.z.IntUniversalSet;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -502,32 +500,38 @@ public class TypeHierarchy {
                             nodeKindRelationship = OVERLAPS;
                         }
 
-                        // now find the relationship between the node names allowed. Note that although
-                        // NamespaceTest and LocalNameTest are NodeTests, they do not occur in SequenceTypes,
-                        // so we don't need to consider them.
+                        // now find the relationship between the node names allowed.
                         int nodeNameRelationship;
+
                         IntSet n1 = ((NodeTest) t1).getRequiredNodeNames(); // null means all names allowed
                         IntSet n2 = ((NodeTest) t2).getRequiredNodeNames(); // null means all names allowed
-                        if (n1 == null) {
-                            if (n2 == null) {
-                                nodeNameRelationship = SAME_TYPE;
-                            } else {
-                                nodeNameRelationship = SUBSUMES;
-                            }
-                        } else if (n2 == null) {
-                            nodeNameRelationship = SUBSUMED_BY;
-                        } else if (n1.containsAll(n2)) {
-                            if (n1.size() == n2.size()) {
-                                nodeNameRelationship = SAME_TYPE;
-                            } else {
-                                nodeNameRelationship = SUBSUMES;
-                            }
-                        } else if (n2.containsAll(n1)) {
-                            nodeNameRelationship = SUBSUMED_BY;
-                        } else if (IntHashSet.containsSome(n1, n2)) {
-                            nodeNameRelationship = OVERLAPS;
+
+                        if (t1 instanceof LocalNameTest || t1 instanceof NamespaceTest ||
+                                t2 instanceof LocalNameTest || t2 instanceof NamespaceTest) {
+                            // Bug 3712
+                            nodeNameRelationship = t1.equals(t2) ? SAME_TYPE : OVERLAPS;
                         } else {
-                            nodeNameRelationship = DISJOINT;
+                            if (n1 == null || n1 instanceof IntUniversalSet) {
+                                if (n2 == null || n2 instanceof IntUniversalSet) {
+                                    nodeNameRelationship = SAME_TYPE;
+                                } else {
+                                    nodeNameRelationship = SUBSUMES;
+                                }
+                            } else if (n2 == null || n2 instanceof IntUniversalSet) {
+                                nodeNameRelationship = SUBSUMED_BY;
+                            } else if (n1.containsAll(n2)) {
+                                if (n1.size() == n2.size()) {
+                                    nodeNameRelationship = SAME_TYPE;
+                                } else {
+                                    nodeNameRelationship = SUBSUMES;
+                                }
+                            } else if (n2.containsAll(n1)) {
+                                nodeNameRelationship = SUBSUMED_BY;
+                            } else if (IntHashSet.containsSome(n1, n2)) {
+                                nodeNameRelationship = OVERLAPS;
+                            } else {
+                                nodeNameRelationship = DISJOINT;
+                            }
                         }
 
                         // now find the relationship between the content types allowed
