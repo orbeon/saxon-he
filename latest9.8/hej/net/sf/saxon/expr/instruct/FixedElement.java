@@ -289,7 +289,7 @@ public class FixedElement extends ElementCreator {
                             config.checkTypeDerivationIsOK(xsiType, declaredType, 0);
                         } catch (SchemaException e) {
                             ValidationFailure ve = new ValidationFailure("The specified xsi:type " + xsiType.getDescription() +
-                                " is not validly derived from the required type " + schemaType.getDescription());
+                                " is not validly derived from the required type " + declaredType.getDescription());
                             ve.setConstraintReference(1, "cvc-elt", "4.3");
                             ve.setErrorCode(instr.isXSLT() ? "XTTE1515" : "XQDY0027");
                             ve.setLocator(instr.getLocation());
