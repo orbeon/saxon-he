@@ -11,7 +11,6 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.sort.AtomicComparer;
 import net.sf.saxon.expr.sort.GenericAtomicComparer;
-import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.SameNameTest;
 import net.sf.saxon.trans.NoDynamicContextException;
@@ -222,13 +221,14 @@ public class DeepEqual extends CollatingFunctionFixed {
             reason = "sequences contain non-comparable values";
         } catch (NoDynamicContextException err) {
             throw err;
-        } catch (XPathException err) {
-            // comparison errors are masked
-            if ("FOTY0015".equals(err.getErrorCodeLocalPart()) && NamespaceConstant.ERR.equals(err.getErrorCodeNamespace())) {
-                throw err;
-            }
-            result = false;
-            reason = "error occurred while comparing two values (" + err.getMessage() + ')';
+// code deleted by bug 3714
+//        } catch (XPathException err) {
+//            // comparison errors are masked
+//            if ("FOTY0015".equals(err.getErrorCodeLocalPart()) && NamespaceConstant.ERR.equals(err.getErrorCodeNamespace())) {
+//                throw err;
+//            }
+//            result = false;
+//            reason = "error occurred while comparing two values (" + err.getMessage() + ')';
         }
 
         if (!result) {
