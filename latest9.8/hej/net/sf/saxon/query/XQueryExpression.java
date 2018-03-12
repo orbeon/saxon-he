@@ -79,10 +79,10 @@ public class XQueryExpression implements Location, ExpressionOwner {
                 e2.setRetainedStaticContext(exp.getRetainedStaticContext());
                 exp = e2;
             }
-            if (optimizer.getOptimizerOptions().isSet(OptimizerOptions.MISCELLANEOUS)) {
+            if (optimizer.isOptionSet(OptimizerOptions.MISCELLANEOUS)) {
                 exp = exp.optimize(visitor, cit);
             }
-            if (optimizer.getOptimizerOptions().isSet(OptimizerOptions.LOOP_LIFTING)) {
+            if (optimizer.isOptionSet(OptimizerOptions.LOOP_LIFTING)) {
                 exp = LoopLifter.process(exp, visitor, cit);
             }
         } catch (XPathException err) {

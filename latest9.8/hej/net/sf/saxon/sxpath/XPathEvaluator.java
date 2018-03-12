@@ -139,7 +139,11 @@ public class XPathEvaluator {
         ItemType contextItemType = staticContext.getRequiredContextItemType();
         ContextItemStaticInfo cit = config.makeContextItemStaticInfo(contextItemType, true);
         exp = exp.typeCheck(visitor, cit).optimize(visitor, cit);
-        exp = LoopLifter.process(exp, visitor, cit);
+        exp.setParentExpression(null);
+        Optimizer opt = config.obtainOptimizer();
+        if (opt.isOptionSet(OptimizerOptions.LOOP_LIFTING)) {
+            exp = LoopLifter.process(exp, visitor, cit);
+        }
         exp = postProcess(exp, visitor, cit);
         exp.setRetainedStaticContext(rsc);
         SlotManager map = staticContext.getStackFrameMap();

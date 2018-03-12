@@ -435,10 +435,10 @@ public class XQueryFunction implements InstructionInfo, Declaration {
         Optimizer opt = config.obtainOptimizer();
         int arity = arguments.size();
         if (opt.getOptimizerOptions().isSet(OptimizerOptions.MISCELLANEOUS)) {
-            //body.verifyParentPointers();
             body = body.optimize(visitor, ContextItemStaticInfo.ABSENT);
-            //body.verifyParentPointers();
-            body = LoopLifter.process(body, visitor, ContextItemStaticInfo.ABSENT);
+            if (opt.isOptionSet(OptimizerOptions.LOOP_LIFTING)) {
+                body = LoopLifter.process(body, visitor, ContextItemStaticInfo.ABSENT);
+            }
             final Executable exec = ((QueryModule)getStaticContext()).getExecutable();
             GlobalVariableManager manager = new GlobalVariableManager() {
                 public void addGlobalVariable(GlobalVariable variable) throws XPathException {
