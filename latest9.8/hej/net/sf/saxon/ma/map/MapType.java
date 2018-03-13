@@ -247,22 +247,22 @@ public class MapType extends AnyFunctionType {
         } else if (other instanceof TupleItemType) {
             return TypeHierarchy.inverseRelationship(other.relationship(this, th));
         } else if (other instanceof MapType) {
+            // See bug 3720. Two map types can never be disjoint because the empty
+            // map is an instance of every map type
             MapType f2 = (MapType) other;
             int keyRel = th.relationship(keyType, f2.keyType);
             if (keyRel == TypeHierarchy.DISJOINT) {
-                return TypeHierarchy.DISJOINT;
+                return TypeHierarchy.OVERLAPS;
             }
             int valueRel = th.sequenceTypeRelationship(valueType, f2.valueType);
 
-            if (keyRel == TypeHierarchy.DISJOINT || valueRel == TypeHierarchy.DISJOINT) {
-                return TypeHierarchy.DISJOINT;
+            if (valueRel == TypeHierarchy.DISJOINT) {
+                return TypeHierarchy.OVERLAPS;
             }
             if (keyRel == valueRel) {
                 return keyRel;
             }
-            if (keyRel == TypeHierarchy.SAME_TYPE && valueRel == TypeHierarchy.SAME_TYPE) {
-                return TypeHierarchy.SAME_TYPE;
-            }
+            
             if ((keyRel == TypeHierarchy.SAME_TYPE || keyRel == TypeHierarchy.SUBSUMES) &&
                     (valueRel == TypeHierarchy.SAME_TYPE || valueRel == TypeHierarchy.SUBSUMES)) {
                 return TypeHierarchy.SUBSUMES;
