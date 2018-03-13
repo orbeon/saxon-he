@@ -197,9 +197,11 @@ public class ArrayItemType extends AnyFunctionType {
         } else if (other.isMapType()){
             return TypeHierarchy.DISJOINT;
         } else if (other instanceof ArrayItemType) {
+            // See bug 3720. Array types are never disjoint, because the empty array
+            // is an instance of every array type
             ArrayItemType f2 = (ArrayItemType) other;
-            return th.sequenceTypeRelationship(memberType, f2.memberType);
-
+            int rel = th.sequenceTypeRelationship(memberType, f2.memberType);
+            return rel == TypeHierarchy.DISJOINT ? TypeHierarchy.OVERLAPS : rel;
         } else {
             int rel = TypeHierarchy.DISJOINT;
             //#ifdefined HOF
@@ -228,6 +230,8 @@ public class ArrayItemType extends AnyFunctionType {
     public void visitNamedSchemaComponents(SchemaComponentVisitor visitor) throws XPathException {
         memberType.getPrimaryType().visitNamedSchemaComponents(visitor);
     }
+
+
 
     /**
      * Generate Javascript code to test whether an item conforms to this item type
