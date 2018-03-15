@@ -11,10 +11,13 @@ import net.sf.saxon.expr.CardinalityChecker;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.instruct.Instruction;
 import net.sf.saxon.expr.parser.ExpressionTool;
+import net.sf.saxon.ma.arrays.ArrayItem;
+import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.om.*;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.AtomicValue;
+import net.sf.saxon.value.ObjectValue;
 import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.Whitespace;
 
@@ -146,8 +149,16 @@ public class Err {
                 default:
                     return "";
             }
-        } else {
+        } else if (item instanceof MapItem) {
+            return "map{(:size " + ((MapItem)item).size() + ":)}";
+        } else if (item instanceof ArrayItem) {
+            return "array{(:size " + ((ArrayItem) item).arrayLength() + ":)}";
+        } else if (item instanceof Function){
             return "function item";
+        } else if (item instanceof ObjectValue){
+            return "external object (" + ((ObjectValue) item).displayTypeName() + ")";
+        } else {
+            return item.getClass().getSimpleName();
         }
     }
 

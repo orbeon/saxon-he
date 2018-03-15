@@ -888,7 +888,7 @@ public class SimpleMode extends Mode {
         if (item instanceof NodeInfo) {
             path = Navigator.getPath((NodeInfo) item);
         } else {
-            path = item.getStringValue();
+            path = Err.depict(item).toString();
         }
 
         Pattern pat1 = r1.getPattern();
