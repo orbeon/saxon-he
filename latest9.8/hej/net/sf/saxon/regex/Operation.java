@@ -1187,7 +1187,7 @@ public abstract class Operation {
 
         @Override
         public boolean matchesEmptyString() {
-            return true;
+            return false;
         }
 
         @Override

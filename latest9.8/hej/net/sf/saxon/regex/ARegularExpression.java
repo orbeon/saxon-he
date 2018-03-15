@@ -65,8 +65,8 @@ public class ARegularExpression implements RegularExpression {
      * @return true if the string matches, false otherwise
      */
     public boolean matches(CharSequence input) {
-        if (StringValue.isEmpty(input)) {
-            return regex.isNullable();
+        if (StringValue.isEmpty(input) && regex.isNullable()) {
+            return true;
         }
         REMatcher matcher = new REMatcher(regex);
         return matcher.anchoredMatch(UnicodeString.makeUnicodeString(input));
