@@ -357,6 +357,10 @@ public class SequenceTool {
         }
     }
 
+    public static SequenceType getSequenceType(Sequence value, TypeHierarchy th) {
+        return SequenceType.makeSequenceType(getItemType(value, th), getCardinality(value));
+    }
+
     /**
      * Get the UType of the items in a sequence. If the sequence is heterogeneous,
      * the method returns the lowest common supertype. If the sequence is empty, it returns

@@ -11,6 +11,8 @@ import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
 import net.sf.saxon.expr.parser.Token;
+import net.sf.saxon.ma.map.HashTrieMap;
+import net.sf.saxon.ma.map.TupleItemType;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NamespaceBindingSet;
 import net.sf.saxon.om.NodeName;
@@ -19,10 +21,7 @@ import net.sf.saxon.pattern.ContentTypeTest;
 import net.sf.saxon.pattern.NameTest;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.ItemType;
-import net.sf.saxon.type.SchemaType;
-import net.sf.saxon.type.SimpleType;
-import net.sf.saxon.type.Type;
+import net.sf.saxon.type.*;
 import net.sf.saxon.value.Cardinality;
 
 import java.util.HashSet;
@@ -273,8 +272,13 @@ public class TypeCheckingFilter extends ProxyReceiver {
     }
 
     private void checkItem(Item item, Location locationId) throws XPathException {
-        if (!itemType.matches(item, getConfiguration().getTypeHierarchy())) {
-            throwTypeError(Type.getItemType(item, getConfiguration().getTypeHierarchy()), locationId);
+        TypeHierarchy th = getConfiguration().getTypeHierarchy();
+        if (!itemType.matches(item, th)) {
+            ItemType actual = Type.getItemType(item, th);
+            if (itemType instanceof TupleItemType && item instanceof HashTrieMap) {
+                actual = ((HashTrieMap)item).asTupleType(th);
+            }
+            throwTypeError(actual, locationId);
         }
     }
 

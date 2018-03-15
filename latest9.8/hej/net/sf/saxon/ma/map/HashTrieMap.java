@@ -25,12 +25,11 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AtomicIterator;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.*;
-import net.sf.saxon.value.AtomicValue;
-import net.sf.saxon.value.Cardinality;
-import net.sf.saxon.value.EmptySequence;
-import net.sf.saxon.value.SequenceType;
+import net.sf.saxon.value.*;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * An immutable map. This is the Saxon 9.6 implementation, which uses a hash trie
@@ -731,6 +730,23 @@ public class HashTrieMap extends AbstractItem implements MapItem, GroundedValue 
 
     public boolean effectiveBooleanValue() throws XPathException {
         throw new XPathException("A map item has no effective boolean value");
+    }
+
+    public TupleItemType asTupleType(TypeHierarchy th) {
+        List<String> names = new ArrayList<String>();
+        List<SequenceType> types = new ArrayList<SequenceType>();
+        AtomicIterator keys = keys();
+        AtomicValue key;
+        while ((key = keys.next()) != null) {
+            Sequence thisValue = get(key);
+            if (!(key instanceof StringValue)) {
+                return null;
+            }
+            SequenceType thisType = SequenceTool.getSequenceType(thisValue, th);
+            names.add(key.getStringValue());
+            types.add(thisType);
+        }
+        return new TupleItemType(names, types);
     }
 
     /**

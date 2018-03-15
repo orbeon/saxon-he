@@ -216,7 +216,7 @@ public class RoleDiagnostic {
     public String composeErrorMessage(ItemType requiredItemType, Expression supplied, ItemType suppliedItemType) {
         return "Required item type of " + getMessage() +
                 " is " + requiredItemType.toString() +
-                "; supplied value (" + supplied.toShortString() + ") has item type " +
+                "; supplied expression (" + supplied.toShortString() + ") has item type " +
                 suppliedItemType.toString();
     }
 

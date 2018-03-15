@@ -7,7 +7,6 @@
 
 package net.sf.saxon.functions;
 
-import net.sf.saxon.type.SpecificFunctionType;
 import net.sf.saxon.expr.Callable;
 import net.sf.saxon.expr.ContextItemExpression;
 import net.sf.saxon.expr.Expression;
@@ -15,6 +14,7 @@ import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.FunctionItemType;
+import net.sf.saxon.type.SpecificFunctionType;
 import net.sf.saxon.value.DoubleValue;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;

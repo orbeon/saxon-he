@@ -10,6 +10,8 @@ package net.sf.saxon.expr;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
+import net.sf.saxon.ma.map.HashTrieMap;
+import net.sf.saxon.ma.map.TupleItemType;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
@@ -54,7 +56,14 @@ public class ItemTypeCheckingFunction implements ItemMappingFunction {
         } else if (requiredItemType.getUType().subsumes(UType.STRING) && BuiltInAtomicType.ANY_URI.matches(item, th)) {
             // OK, no action
         } else {
-            String message = role.composeErrorMessage(requiredItemType, Type.getItemType(item, th));
+            ItemType actual = Type.getItemType(item, th);
+            if (requiredItemType instanceof TupleItemType && item instanceof HashTrieMap) {
+                TupleItemType tupleType = ((HashTrieMap)item).asTupleType(config.getTypeHierarchy());
+                if (tupleType != null) {
+                    actual = tupleType;
+                }
+            }
+            String message = role.composeErrorMessage(requiredItemType, actual);
 
             String errorCode = role.getErrorCode();
             if ("XPDY0050".equals(errorCode)) {
