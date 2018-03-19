@@ -255,9 +255,7 @@ public class SourceBinding {
                 declaredType = extraResultType;
             }
         }
-        if (declaredType == null) {
-            declaredType = SequenceType.ANY_SEQUENCE;
-        }
+
         return declaredType;
     }
 
