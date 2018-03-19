@@ -818,7 +818,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
         while ((child = kids.next()) != null) {
             if (child instanceof XSLLocalParam) {
                 XSLLocalParam lp = (XSLLocalParam)child;
-                lp.prepareAttributes();
+                lp.prepareTemplateSignatureAttributes();
                 NamedTemplate.LocalParamInfo info = new NamedTemplate.LocalParamInfo();
                 info.name = lp.getVariableQName();
                 info.requiredType = lp.getRequiredType();

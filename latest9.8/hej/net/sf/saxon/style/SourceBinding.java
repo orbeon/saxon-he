@@ -162,6 +162,72 @@ public class SourceBinding {
             }
         }
 
+        declaredType = combineTypeAttributes(asAtt, extraAsAtt);
+
+        if (visibilityAtt != null) {
+            if (hasProperty(PARAM)) {
+                sourceElement.compileErrorInAttribute("The visibility attribute is not allowed on xsl:param", "XTSE0020", "visibility");
+            } else {
+                sourceElement.check30attribute("visibility");
+                visibility = sourceElement.interpretVisibilityValue(visibilityAtt, "");
+            }
+            if (!hasProperty(GLOBAL)) {
+                sourceElement.compileErrorInAttribute("The visibility attribute is allowed only on global declarations", "XTSE0020", "visibility");
+            }
+        }
+
+        if (hasProperty(STATIC) && visibility != Visibility.PRIVATE && visibilityAtt != null) {
+            sourceElement.compileErrorInAttribute("A static variable or parameter must be private", "XTSE0020", "static");
+        }
+    }
+
+    /**
+     * This method is called to establish basic signature information for local parameters of a named template,
+     * so that this can be checked against xsl:call-template instructions. It is called while a named template
+     * is being indexed: see bug 3722.
+     * @throws XPathException
+     */
+
+    public void prepareTemplateSignatureAttributes() throws XPathException {
+
+        AttributeCollection atts = sourceElement.getAttributeList();
+
+        String asAtt = null;
+        String extraAsAtt = null;
+
+        for (int a = 0; a < atts.getLength(); a++) {
+            String f = atts.getQName(a);
+            if (f.equals("name")) {
+                if (name == null || name.equals(errorName())) {
+                    processVariableName(atts.getValue(a));
+                }
+            } else if (f.equals("as")) {
+                asAtt = atts.getValue(a);
+            } else if (f.equals("required")) {
+                String requiredAtt = Whitespace.trim(atts.getValue(a));
+                boolean required = sourceElement.processBooleanAttribute("required", requiredAtt);
+                setProperty(REQUIRED, required);
+            } else if (f.equals("tunnel")) {
+                String tunnelAtt = Whitespace.trim(atts.getValue(a));
+                boolean tunnel = sourceElement.processBooleanAttribute("tunnel", tunnelAtt);
+                setProperty(TUNNEL, tunnel);
+            } else if (NamespaceConstant.SAXON.equals(atts.getURI(a))) {
+                if (atts.getLocalName(a).equals("as")) {
+                    extraAsAtt = atts.getValue(a);
+                }
+            }
+        }
+
+        if (name == null) {
+            sourceElement.reportAbsence("name");
+            name = errorName();
+        }
+
+        declaredType = combineTypeAttributes(asAtt, extraAsAtt);
+    }
+
+    private SequenceType combineTypeAttributes(String asAtt, String extraAsAtt) throws XPathException {
+        SequenceType declaredType = null;
         if (asAtt != null) {
             try {
                 declaredType = sourceElement.makeSequenceType(asAtt);
@@ -189,24 +255,12 @@ public class SourceBinding {
                 declaredType = extraResultType;
             }
         }
-
-
-        if (visibilityAtt != null) {
-            if (hasProperty(PARAM)) {
-                sourceElement.compileErrorInAttribute("The visibility attribute is not allowed on xsl:param", "XTSE0020", "visibility");
-            } else {
-                sourceElement.check30attribute("visibility");
-                visibility = sourceElement.interpretVisibilityValue(visibilityAtt, "");
-            }
-            if (!hasProperty(GLOBAL)) {
-                sourceElement.compileErrorInAttribute("The visibility attribute is allowed only on global declarations", "XTSE0020", "visibility");
-            }
+        if (declaredType == null) {
+            declaredType = SequenceType.ANY_SEQUENCE;
         }
-
-        if (hasProperty(STATIC) && visibility != Visibility.PRIVATE && visibilityAtt != null) {
-            sourceElement.compileErrorInAttribute("A static variable or parameter must be private", "XTSE0020", "static");
-        }
+        return declaredType;
     }
+
 
     /**
      * Get the declaration in the stylesheet

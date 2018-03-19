@@ -90,6 +90,14 @@ public class XSLLocalParam extends XSLGeneralVariable {
         }
     }
 
+    public void prepareTemplateSignatureAttributes() throws XPathException {
+        if (!prepared) {
+            sourceBinding.setProperty(SourceBinding.PARAM, true);
+            sourceBinding.prepareTemplateSignatureAttributes();
+        }
+    }
+
+
     public void validate(ComponentDeclaration decl) throws XPathException {
 
         StructuredQName name = sourceBinding.getVariableQName();
