@@ -482,7 +482,10 @@ public class SlashExpression extends BinaryExpression
      */
     @Override
     public int getCost() {
-        return (1 + getLhsExpression().getCost()) * getRhsExpression().getCost();
+        int lh = getLhsExpression().getCost() + 1;
+        int rh = getRhsExpression().getCost();
+        double product = (double)lh * (double)rh;
+        return product > 1e7 ? 10000000 : Math.max(lh * rh, 10000000);
     }
 
     public Expression tryToMakeSorted(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {

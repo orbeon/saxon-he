@@ -459,6 +459,9 @@ public final class FilterExpression extends BinaryExpression implements ContextS
                 FilterExpression fe1 = new FilterExpression(base, predicate2);
                 FilterExpression fe2 = new FilterExpression(fe1, predicate1);
                 ExpressionTool.copyLocationInfo(this, fe2);
+                if (tracing) {
+                    opt.trace("Reordered predicates in filter expression", fe2);
+                }
                 return fe2.optimize(visitor, contextItemType);
             }
 

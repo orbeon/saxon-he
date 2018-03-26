@@ -210,7 +210,10 @@ public class RawSlashExpression extends BinaryExpression
      */
     @Override
     public int getCost() {
-        return getLhsExpression().getCost() * getRhsExpression().getCost();
+        int lh = getLhsExpression().getCost();
+        int rh = getRhsExpression().getCost();
+        double product = (double) lh * (double) rh;
+        return product > 1e7 ? 10000000 : Math.max(lh * rh, 10000000);
     }
 
 
