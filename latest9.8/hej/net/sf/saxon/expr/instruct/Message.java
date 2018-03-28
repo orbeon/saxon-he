@@ -160,16 +160,22 @@ public class Message extends Instruction {
         Receiver emitter = controller.getMessageEmitter();
         if (emitter != null) {
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
+            String code;
+            try {
+                code = getErrorCode().evaluateAsString(context).toString();
+            } catch (XPathException err) {
+                // use the error code of the failure in place of the intended error code
+                code = err.getErrorCodeQName().getEQName();
+            }
             synchronized (emitter) {
                 // In Saxon-EE, multithreading can cause different messages to be entangled unless we synchronize.
-
                 StructuredQName errorCode = null;
                 try {
-                    String code = getErrorCode().evaluateAsString(context).toString();
                     errorCode = StructuredQName.fromLexicalQName(
                             code, false, true, getRetainedStaticContext());
                 } catch (XPathException err) {
-                    // no action, ignore the error
+                    // The spec says we fall back to XTMM9000
+                    errorCode = new StructuredQName("err", NamespaceConstant.ERR, "XTMM9000");
                 }
 
                 context.getController().incrementMessageCounter(errorCode);
