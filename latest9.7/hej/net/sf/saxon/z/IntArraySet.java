@@ -277,7 +277,7 @@ public class IntArraySet extends AbstractIntSet implements IntSet {
                     }
                 }
                 sb.append(contents[i] + "-" + contents[j - 1] + ",");
-                i = j;
+                i = j - 1;
             }
         }
         return sb.toString();
