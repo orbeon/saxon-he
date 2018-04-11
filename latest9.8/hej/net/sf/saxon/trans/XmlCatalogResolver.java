@@ -51,7 +51,9 @@ public class XmlCatalogResolver {
                     }
                 }
             };
-            CatalogManager.getStaticManager().setVerbosity(2);
+            if (CatalogManager.getStaticManager().getVerbosity() < 2) {
+                CatalogManager.getStaticManager().setVerbosity(2);
+            }
         }
         config.setSourceParserClass("org.apache.xml.resolver.tools.ResolvingXMLReader");
         config.setStyleParserClass("org.apache.xml.resolver.tools.ResolvingXMLReader");
