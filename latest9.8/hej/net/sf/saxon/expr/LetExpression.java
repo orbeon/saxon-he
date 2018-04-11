@@ -256,12 +256,20 @@ public class LetExpression extends Assignation implements TailCallReturner {
 
         hasLoopingReference |= removeDeadReferences();
 
+        // Force evaluation if the select expression is known to have side-effects
+        if ((getSequence().getSpecialProperties() & StaticProperty.HAS_SIDE_EFFECTS) != 0) {
+            needsEagerEvaluation = true;
+        }
+
         // If there are less than two references, and none is in a loop, then there is potential
         // for optimization. But we now need to be absolutely sure that we have an accurate list
         // of references.
 
-        boolean considerRemoval = ((references != null && references.size() < 2) || getSequence() instanceof VariableReference) &&
-                !isIndexedVariable && !hasLoopingReference && !needsEagerEvaluation;
+        boolean considerRemoval =
+                ((references != null && references.size() < 2) || getSequence() instanceof VariableReference) &&
+                        !isIndexedVariable &&
+                        !hasLoopingReference &&
+                        !needsEagerEvaluation;
 
         if (considerRemoval) {
             verifyReferences();
@@ -339,7 +347,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
             if (act0 == getAction()) {
                 break;
             }
-            if (!isIndexedVariable) {
+            if (!isIndexedVariable && !needsEagerEvaluation) {
                 verifyReferences();
                 if (references != null && references.size() < 2) {
                     if (references.isEmpty()) {
