@@ -362,7 +362,7 @@ public class Serialize extends SystemFunction implements Callable {
             props.setProperty("escape-uri-attributes", toYesNoTypeString(seqVal));
         }
         if ((seqVal = map.get("html-version")) != null) {
-            props.setProperty("html-version", (String) ((BigDecimalValue) seqVal.head()).getPrimitiveStringValue()); // TODO is this right??
+            props.setProperty("html-version", ((BigDecimalValue) seqVal.head()).getPrimitiveStringValue().toString());
         }
         if ((seqVal = map.get("include-content-type")) != null) {
             props.setProperty("include-content-type", toYesNoTypeString(seqVal));
