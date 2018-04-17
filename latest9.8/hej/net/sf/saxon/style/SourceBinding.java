@@ -11,6 +11,7 @@ import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.DocumentInstr;
 import net.sf.saxon.expr.instruct.GlobalVariable;
 import net.sf.saxon.expr.instruct.SlotManager;
+import net.sf.saxon.expr.instruct.ValueOf;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
@@ -529,7 +530,11 @@ public class SourceBinding {
                     b = Literal.makeEmptySequence();
                 }
                 boolean textonly = UType.TEXT.subsumes(b.getItemType().getUType());
-                DocumentInstr doc = new DocumentInstr(textonly, constantText);
+                String constant = null;  // bug 3748
+                if (textonly && b instanceof ValueOf && ((ValueOf)b).getSelect() instanceof StringLiteral) {
+                    constant = ((StringLiteral)((ValueOf) b).getSelect()).getStringValue();
+                }
+                DocumentInstr doc = new DocumentInstr(textonly, constant);
                 doc.setContentExpression(b);
                 doc.setRetainedStaticContext(sourceElement.makeRetainedStaticContext());
                 select = doc;
