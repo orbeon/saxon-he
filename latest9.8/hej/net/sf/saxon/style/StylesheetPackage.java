@@ -832,7 +832,7 @@ public class StylesheetPackage extends PackageData {
         functionLibrary.addFunctionLibrary(new StylesheetFunctionLibrary(this, true));
         functionLibrary.addFunctionLibrary(config.getBuiltInExtensionLibraryList());
         functionLibrary.addFunctionLibrary(new ConstructorFunctionLibrary(config));
-        if ("JS".equals(getTargetEdition())) {
+        if ("JS".equals(getTargetEdition()) || "JS2".equals(getTargetEdition())) {
             addIxslFunctionLibrary(functionLibrary);
         }
 
