@@ -349,12 +349,13 @@ abstract class ParentNodeImpl extends NodeImpl {
      */
 
     protected synchronized void insertChildrenAt(/*@NotNull*/ NodeInfo[] source, int index, boolean inherit) {
+        NodeImpl[] source2 = new NodeImpl[source.length];
         if (source.length == 0) {
             return;
         }
         for (int i = 0; i < source.length; i++) {
-            source[i] = convertForeignNode(source[i]);
-            NodeImpl child = (NodeImpl) source[i];
+            source2[i] = convertForeignNode(source[i]);
+            NodeImpl child = (NodeImpl) source2[i];
             child.setRawParent(this);
             if (child instanceof ElementImpl) {
                 // If the child has no xmlns="xxx" declaration, then add an xmlns="" to prevent false inheritance
@@ -363,41 +364,40 @@ abstract class ParentNodeImpl extends NodeImpl {
             }
         }
         if (children == null) {
-            if (source.length == 1) {
-                children = source[0];
+            if (source2.length == 1) {
+                children = source2[0];
+                ((NodeImpl)children).setSiblingPosition(0);
             } else {
-                NodeImpl[] n2 = new NodeImpl[source.length];
-                System.arraycopy(source, 0, n2, 0, source.length);
-                children = n2;
+                children = cleanUpChildren(source2);
             }
         } else if (children instanceof NodeImpl) {
-            int adjacent = index == 0 ? source.length - 1 : 0;
-            if (children instanceof TextImpl && source[adjacent] instanceof TextImpl) {
+            int adjacent = index == 0 ? source2.length - 1 : 0;
+            if (children instanceof TextImpl && source2[adjacent] instanceof TextImpl) {
                 if (index == 0) {
-                    ((TextImpl) source[adjacent]).replaceStringValue(
-                            source[adjacent].getStringValue() + ((TextImpl) children).getStringValue());
+                    source2[adjacent].replaceStringValue(
+                            source2[adjacent].getStringValue() + ((TextImpl) children).getStringValue());
                 } else {
-                    ((TextImpl) source[adjacent]).replaceStringValue(
-                            ((TextImpl) children).getStringValue() + source[adjacent].getStringValue());
+                    source2[adjacent].replaceStringValue(
+                            ((TextImpl) children).getStringValue() + source2[adjacent].getStringValue());
                 }
-                children = Arrays.copyOf(source, source.length);
+                children = cleanUpChildren(source2);
             } else {
-                NodeImpl[] n2 = new NodeImpl[source.length + 1];
+                NodeImpl[] n2 = new NodeImpl[source2.length + 1];
                 if (index == 0) {
-                    System.arraycopy(source, 0, n2, 0, source.length);
-                    n2[source.length] = (NodeImpl) children;
+                    System.arraycopy(source2, 0, n2, 0, source2.length);
+                    n2[source2.length] = (NodeImpl) children;
                 } else {
                     n2[0] = (NodeImpl) children;
-                    System.arraycopy(source, 0, n2, 1, source.length);
+                    System.arraycopy(source2, 0, n2, 1, source2.length);
                 }
                 children = cleanUpChildren(n2);
             }
         } else {
             NodeImpl[] n0 = (NodeImpl[]) children;
-            NodeImpl[] n2 = new NodeImpl[n0.length + source.length];
+            NodeImpl[] n2 = new NodeImpl[n0.length + source2.length];
             System.arraycopy(n0, 0, n2, 0, index);
-            System.arraycopy(source, 0, n2, index, source.length);
-            System.arraycopy(n0, index, n2, index + source.length, n0.length - index);
+            System.arraycopy(source2, 0, n2, index, source2.length);
+            System.arraycopy(n0, index, n2, index + source2.length, n0.length - index);
             children = cleanUpChildren(n2);
         }
     }
@@ -456,6 +456,7 @@ abstract class ParentNodeImpl extends NodeImpl {
                 children = null;
             } else if (source.length == 1) {
                 children = source[0];
+                ((NodeImpl)children).setSiblingPosition(0);
             } else {
                 NodeImpl[] n2 = new NodeImpl[source.length];
                 System.arraycopy(source, 0, n2, 0, source.length);
