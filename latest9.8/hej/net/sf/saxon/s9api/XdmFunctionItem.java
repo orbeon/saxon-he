@@ -8,6 +8,7 @@
 package net.sf.saxon.s9api;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.Controller;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
@@ -112,7 +113,9 @@ public class XdmFunctionItem extends XdmItem {
                 }
                 argVals[i] = val;
             }
-            XPathContext context = processor.getUnderlyingConfiguration().getConversionContext();
+            Configuration config = processor.getUnderlyingConfiguration();
+            Controller controller = new Controller(config);
+            XPathContext context = controller.newXPathContext();
             Sequence result = fi.call(context, argVals);
             if (!fi.isTrustedResultType()) {
                 net.sf.saxon.value.SequenceType required = type.getResultType();
