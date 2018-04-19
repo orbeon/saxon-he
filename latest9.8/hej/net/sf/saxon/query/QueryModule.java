@@ -1866,30 +1866,30 @@ public class QueryModule implements StaticContext {
 
     private void checkSchemaNamespaceImported(StructuredQName componentName, /*@NotNull*/ Declaration declaration)
             throws XPathException {
-        String uri = componentName.getURI();
-        if (!uri.equals(NamespaceConstant.SCHEMA) && !uri.equals(NamespaceConstant.ANONYMOUS) &&
-                !uri.equals(NamespaceConstant.JAVA_TYPE) && !isImportedSchema(uri)) {
-            String msg = "Schema component " + componentName.getDisplayName() + " used in ";
-            if (declaration instanceof GlobalVariable) {
-                msg += "declaration of imported variable " +
-                        ((GlobalVariable) declaration).getVariableQName().getDisplayName();
-            } else {
-                msg += "signature of imported function " +
-                        ((XQueryFunction) declaration).getDisplayName();
-            }
-            msg += " is not declared in any schema imported by ";
-            String module = getModuleNamespace();
-            if (module == null) {
-                msg += "the main query module";
-            } else {
-                msg += "query module " + module;
-            }
-            XPathException err = new XPathException(msg);
-            err.setErrorCode("XQST0036");
-            err.setIsStaticError(true);
-            err.setLocator(declaration);
-            throw err;
-        }
+//        String uri = componentName.getURI();
+//        if (!uri.equals(NamespaceConstant.SCHEMA) && !uri.equals(NamespaceConstant.ANONYMOUS) &&
+//                !uri.equals(NamespaceConstant.JAVA_TYPE) && !isImportedSchema(uri)) {
+//            String msg = "Schema component " + componentName.getDisplayName() + " used in ";
+//            if (declaration instanceof GlobalVariable) {
+//                msg += "declaration of imported variable " +
+//                        ((GlobalVariable) declaration).getVariableQName().getDisplayName();
+//            } else {
+//                msg += "signature of imported function " +
+//                        ((XQueryFunction) declaration).getDisplayName();
+//            }
+//            msg += " is not declared in any schema imported by ";
+//            String module = getModuleNamespace();
+//            if (module == null) {
+//                msg += "the main query module";
+//            } else {
+//                msg += "query module " + module;
+//            }
+//            XPathException err = new XPathException(msg);
+//            err.setErrorCode("XQST0036");
+//            err.setIsStaticError(true);
+//            err.setLocator(declaration);
+//            throw err;
+//        }
     }
 
     /**
