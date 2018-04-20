@@ -132,7 +132,7 @@ public class PatternParser30 extends XPathParser implements PatternParser {
                 grumble("A predicatePattern can appear only at the outermost level (parentheses not allowed)");
             }
             if (exp instanceof FilterExpression && pat instanceof NodeTestPattern) {
-                // the pattern has been simplified but needs to retain a default priority based on its syntactic form (test match89)
+                // the pattern has been simplified but needs to retain a default priority based on its syntactic form (test match-058)
                 pat.setPriority(0.5);
             }
             return pat;

@@ -163,6 +163,7 @@ public class NodeTestPattern extends Pattern {
     /*@NotNull*/
     public Pattern copy(RebindingMap rebindings) {
         NodeTestPattern n = new NodeTestPattern(nodeTest.copy());
+        n.setPriority(getDefaultPriority());
         ExpressionTool.copyLocationInfo(this, n);
         return n;
     }
