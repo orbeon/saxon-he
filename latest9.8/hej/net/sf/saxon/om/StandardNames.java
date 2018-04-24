@@ -565,7 +565,6 @@ public abstract class StandardNames {
         bindXSName(XS_ANY_ATOMIC_TYPE, "anyAtomicType");
         bindXSName(XS_YEAR_MONTH_DURATION, "yearMonthDuration");
         bindXSName(XS_DAY_TIME_DURATION, "dayTimeDuration");
-        bindXSName(XS_NUMERIC, "_numeric_");
 
         bindXSIName(XSI_TYPE, "type");
         bindXSIName(XSI_NIL, "nil");
