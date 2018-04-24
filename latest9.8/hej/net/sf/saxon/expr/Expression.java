@@ -299,8 +299,11 @@ public abstract class Expression implements IdentityComparable {
 
     public boolean isLiftable(boolean forStreaming) {
         int p = getSpecialProperties();
+        int d = getDependencies();
         return (p & StaticProperty.NON_CREATIVE) != 0 && (p & StaticProperty.HAS_SIDE_EFFECTS) == 0
-                && ((getDependencies() & StaticProperty.DEPENDS_ON_ASSIGNABLE_GLOBALS) == 0);
+                && ((d & StaticProperty.DEPENDS_ON_ASSIGNABLE_GLOBALS) == 0)
+                && ((d & StaticProperty.DEPENDS_ON_POSITION) == 0)
+                && ((d & StaticProperty.DEPENDS_ON_LAST) == 0);
     }
 
     /**
