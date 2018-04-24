@@ -7,6 +7,7 @@
 
 package net.sf.saxon.functions;
 
+import com.saxonica.functions.hof.UserFunctionReference;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
 import net.sf.saxon.expr.Callable;
@@ -214,11 +215,13 @@ public class LoadXqueryModule extends SystemFunction implements Callable {
                 functionQName = new QNameValue(function.getFunctionName(), BuiltInAtomicType.QNAME);
                 if (functionQName.getNamespaceURI().equals(moduleUri)) {
                     UserFunction userFunction = function.getUserFunction();
-                    userFunction.setPreallocatedController(newController);
+                    UserFunctionReference.BoundUserFunction buf =
+                            new UserFunctionReference.BoundUserFunction(userFunction, null, newController );
+                    //userFunction.setPreallocatedController(newController);
                     if (functionsMap.get(functionQName) != null) {
-                        newMap = ((HashTrieMap) functionsMap.get(functionQName)).addEntry(new Int64Value(function.getNumberOfArguments()), function.getUserFunction());
+                        newMap = ((HashTrieMap) functionsMap.get(functionQName)).addEntry(new Int64Value(function.getNumberOfArguments()), buf);
                     } else {
-                        newMap = HashTrieMap.singleton(new Int64Value(function.getNumberOfArguments()), function.getUserFunction(), context);
+                        newMap = HashTrieMap.singleton(new Int64Value(function.getNumberOfArguments()), buf, context);
                     }
                     functionsMap = functionsMap.addEntry(functionQName, newMap);
                 }

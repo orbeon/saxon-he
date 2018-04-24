@@ -109,6 +109,18 @@ public abstract class AbstractFunction extends AbstractItem implements Function 
     }
 
     /**
+     * Prepare an XPathContext object for evaluating the function
+     *
+     * @param callingContext the XPathContext of the function calling expression
+     * @return a suitable context for evaluating the function (which may or may
+     * not be the same as the caller's context)
+     */
+
+    public XPathContext makeNewContext(XPathContext callingContext) {
+        return callingContext;
+    }
+
+    /**
      * Type check the function (may modify it by adding code for converting the arguments)
      *
      * @param visitor         the expression visitor, supplies context information

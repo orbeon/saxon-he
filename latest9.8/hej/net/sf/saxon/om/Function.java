@@ -86,6 +86,15 @@ public interface Function extends Item, Callable, GroundedValue {
     AnnotationList getAnnotations();
 
     /**
+     * Prepare an XPathContext object for evaluating the function
+     * @param callingContext the XPathContext of the function calling expression
+     * @return a suitable context for evaluating the function (which may or may
+     * not be the same as the caller's context)
+     */
+
+    XPathContext makeNewContext(XPathContext callingContext);
+
+    /**
      * Invoke the function
      *
      * @param context the XPath dynamic evaluation context

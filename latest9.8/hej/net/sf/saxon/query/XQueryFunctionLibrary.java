@@ -7,11 +7,12 @@
 
 package net.sf.saxon.query;
 
+import com.saxonica.functions.hof.UserFunctionReference;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.UserFunction;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.functions.CallableFunction;
+import net.sf.saxon.functions.AbstractFunction;
 import net.sf.saxon.functions.FunctionLibrary;
 import net.sf.saxon.om.Function;
 import net.sf.saxon.om.Sequence;
@@ -112,9 +113,9 @@ public class XQueryFunctionLibrary implements FunctionLibrary, XQueryFunctionBin
      * @return if a function of this name and arity is available for calling, then a corresponding
      *         function item; or null if the function does not exist
      */
-    public Function getFunctionItem(SymbolicName.F functionName, StaticContext staticContext)
+    public Function getFunctionItem(final SymbolicName.F functionName, StaticContext staticContext)
             throws XPathException {
-        XQueryFunction fd = functions.get(functionName);
+        final XQueryFunction fd = functions.get(functionName);
         if (fd != null) {
             if (fd.isPrivate() && !fd.getSystemId().equals(staticContext.getStaticBaseURI())) {
                 throw new XPathException("Cannot call the private function " +
@@ -124,12 +125,19 @@ public class XQueryFunctionLibrary implements FunctionLibrary, XQueryFunctionBin
             FunctionItemType type = new SpecificFunctionType(
                     fd.getArgumentTypes(), fd.getResultType(), fd.getAnnotations());
             if (fn == null) {
-                // not yet compiled
-                UnresolvedCallable uc = new UnresolvedCallable(functionName);
-                fd.registerReference(uc);
-                CallableFunction cf = new CallableFunction(functionName, uc, type);
-                cf.setAnnotations(fd.getAnnotations());
-                return cf;
+                // not yet compiled: create a dummy
+                UserFunction uf = new UserFunction();
+                uf.setFunctionName(functionName.getComponentName());
+                uf.setResultType(fd.getResultType());
+                uf.setParameterDefinitions(fd.getParameterDefinitions());
+                final UserFunctionReference ref = new UserFunctionReference(uf);
+                fd.registerReference(ref);
+                return new UnresolvedXQueryFunctionItem(fd, functionName, ref);
+//                UnresolvedCallable uc = new UnresolvedCallable(functionName);
+//                fd.registerReference(uc);
+//                CallableFunction cf = new CallableFunction(functionName, uc, type);
+//                cf.setAnnotations(fd.getAnnotations());
+//                return cf;
             } else {
                 return fn;
             }
@@ -381,4 +389,44 @@ public class XQueryFunctionLibrary implements FunctionLibrary, XQueryFunctionBin
         return qfl;
     }
 
+    public static class UnresolvedXQueryFunctionItem extends AbstractFunction {
+        private final XQueryFunction fd;
+        private final SymbolicName.F functionName;
+        private final UserFunctionReference ref;
+
+        public UnresolvedXQueryFunctionItem(XQueryFunction fd, SymbolicName.F functionName, UserFunctionReference ref) {
+            this.fd = fd;
+            this.functionName = functionName;
+            this.ref = ref;
+        }
+
+        @Override
+        public FunctionItemType getFunctionItemType() {
+            return new SpecificFunctionType(fd.getArgumentTypes(), fd.getResultType());
+        }
+
+        @Override
+        public StructuredQName getFunctionName() {
+            return functionName.getComponentName();
+        }
+
+        @Override
+        public int getArity() {
+            return fd.getNumberOfArguments();
+        }
+
+        @Override
+        public Sequence call(XPathContext context, Sequence[] args) throws XPathException {
+            return ((Function) ref.evaluateItem(context)).call(context, args);
+        }
+
+        @Override
+        public String getDescription() {
+            return functionName.toString();
+        }
+
+        public UserFunctionReference getFunctionReference() {
+            return ref;
+        }
+    }
 }

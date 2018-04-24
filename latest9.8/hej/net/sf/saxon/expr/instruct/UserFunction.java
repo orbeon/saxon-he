@@ -62,7 +62,6 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
     private boolean overrideExtensionFunction = true;
     private AnnotationList annotations;
     private FunctionStreamability declaredStreamability = FunctionStreamability.UNCLASSIFIED;
-    private Controller preallocatedController = null;
     private Determinism determinism = Determinism.PROACTIVE;
     private int refCount = 0;
 
@@ -201,18 +200,6 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
 
     public void setOverrideExtensionFunction(boolean overrideExtensionFunction) {
         this.overrideExtensionFunction = overrideExtensionFunction;
-    }
-
-
-    /**
-     * Supply the controller to be used when evaluating this function. This is used when the function is dynamically loaded
-     * when using the load-xquery-module function.
-     *
-     * @param controller the controller to be used (which may differ from the controller used by the caller)
-     */
-
-    public void setPreallocatedController(Controller controller) {
-        preallocatedController = controller;
     }
 
     /**
@@ -557,11 +544,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
 
     public XPathContextMajor makeNewContext(XPathContext oldContext) {
         XPathContextMajor c2;
-        if (preallocatedController == null) {
-            c2 = oldContext.newCleanContext();
-        } else {
-            c2 = preallocatedController.newXPathContext();
-        }
+        c2 = oldContext.newCleanContext();
         c2.setOrigin(this);
         c2.setReceiver(oldContext.getReceiver());
         c2.setTemporaryOutputState(StandardNames.XSL_FUNCTION);
