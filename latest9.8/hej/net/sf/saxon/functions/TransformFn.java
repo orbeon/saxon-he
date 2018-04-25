@@ -96,7 +96,7 @@ public class TransformFn extends SystemFunction implements Callable {
         op.addAllowedOption("vendor-options", SequenceType.makeSequenceType(MapType.ANY_MAP_TYPE, StaticProperty.EXACTLY_ONE));
         op.addAllowedOption("cache", SequenceType.SINGLE_BOOLEAN);
         op.addAllowedOption("package-name", SequenceType.SINGLE_STRING);
-        op.addAllowedOption("package-version", SequenceType.SINGLE_DECIMAL);
+        op.addAllowedOption("package-version", SequenceType.SINGLE_STRING);
         op.addAllowedOption("package-node", SequenceType.SINGLE_NODE);
         op.addAllowedOption("package-location", SequenceType.SINGLE_STRING);
         op.addAllowedOption("static-params", SequenceType.makeSequenceType(MapType.ANY_MAP_TYPE, StaticProperty.EXACTLY_ONE));
@@ -480,27 +480,24 @@ public class TransformFn extends SystemFunction implements Callable {
                 }
             }
         } else if (styleOptionStr.equals("package-name")) {
-            String packageName = styleOptionItem.getStringValue();
-            /*URI packageNameUri = URI.create(packageName); // TODO do we want this or not? package identifier should be a URI but Saxon accepts any string
-            if (!packageNameUri.isAbsolute()) {
-                throw new XPathException("The transform option package-name is not an absolute URI", "FOXT0002");
-            }*/
+            String packageName = Whitespace.trim(styleOptionItem.getStringValue());
             String packageVersion = null;
             if (options.get("package-version") != null) {
                 packageVersion = options.get("package-version").head().getStringValue();
             }
-            // retrieve the compiled package (as an XsltPackage) from the PackageLibrary
-            /*StylesheetPackage stylesheetPackage = context.getConfiguration().getDefaultXsltCompilerInfo().getPackageLibrary().getPackage(packageName, new PackageVersionRanges(packageVersion));
-            XsltPackage xsltPackage = new XsltPackage(xsltCompiler.getProcessor(), stylesheetPackage);
             try {
-                executable = xsltPackage.link(); // load the already compiled package
+                XsltPackage pack = xsltCompiler.obtainPackage(packageName, packageVersion);
+                if (pack == null) {
+                    throw new XPathException("Cannot locate package " + packageName + " version " + packageVersion, "FOXT0002");
+                }
+                executable = pack.link(); // load the already compiled package
             } catch (SaxonApiException e) {
                 if (e.getCause() instanceof XPathException) {
                     throw (XPathException) e.getCause();
                 } else {
                     throw new XPathException(e);
                 }
-            }*/
+            }
         }
         return executable;
     }

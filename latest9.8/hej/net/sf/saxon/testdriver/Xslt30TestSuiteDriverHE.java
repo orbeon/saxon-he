@@ -298,6 +298,9 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                 XsltPackage xpack = compiler.compilePackage(styleSource2);
                 xpack = exportImportPackage(testName, testSetName, outcome, compiler, xpack, collector);
                 compiler.importPackage(xpack);
+                // Following needed for dynamic loading of packages using fn:transform()
+                env.processor.getUnderlyingConfiguration().getDefaultXsltCompilerInfo().getPackageLibrary().addPackage(xpack.getUnderlyingPreparedPackage());
+
             }
             sheet = exportImport(testName, testSetName, outcome, compiler, sheet, collector, styleSource);
 
@@ -814,6 +817,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             } else {
                 outcome.setErrorsReported(collector.getErrorCodes());
             }
+            return false;
         } catch (Exception err) {
             err.printStackTrace();
             noteFailure(testSetName, testName);
