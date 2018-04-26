@@ -275,17 +275,10 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
         // Inherit the properties of the function being called if possible. But we have to prevent
         // looping when the function is recursive. For safety, we only consider the properties of the
         // function body if it contains no further function calls.
-        // TODO: this approach is not safe if the function can be overridden in another package
         if (function == null) {
             return super.computeSpecialProperties();
-//        } else if (function.getDeclaredStreamability() != FunctionStreamability.UNCLASSIFIED) {
-//            // TODO: this is a first approximation. Need to consider grounded nodes in the result...
-//            int p = StaticProperty.ORDERED_NODESET;
-//            if (function.getDeclaredStreamability() == FunctionStreamability.SHALLOW_DESCENT) {
-//                p |= StaticProperty.PEER_NODESET;
-//            }
-//            return p;
-        } else if (function.getBody() != null) {
+        } else if (function.getBody() != null &&
+                (function.getDeclaredVisibility() == Visibility.PRIVATE || function.getDeclaredVisibility() == Visibility.FINAL)) {
             int props;
             List<UserFunction> calledFunctions = new ArrayList<UserFunction>();
             ExpressionTool.gatherCalledFunctions(function.getBody(), calledFunctions);
