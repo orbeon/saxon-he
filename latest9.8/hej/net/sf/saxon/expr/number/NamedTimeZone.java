@@ -22,6 +22,7 @@ public class NamedTimeZone {
 
     static Set<String> knownTimeZones = new HashSet<String>(50);
     static HashMap<String, List<String>> idForCountry = new HashMap<String, List<String>>(50);
+    static List<String> worldTimeZones = new ArrayList<String>(20);
 
     static {
         Collections.addAll(knownTimeZones, TimeZone.getAvailableIDs());
@@ -44,16 +45,35 @@ public class NamedTimeZone {
         idForCountry.put(country, list);
     }
 
+    /**
+     * Register a timezone in use in a particular country, and mark it as a major world
+     * timezone so it is also recognized in other countries. Note that some countries use multiple
+     * time zones
+     *
+     * @param country the two-character code for the country
+     * @param zoneId  the Olsen timezone name for the timezone
+     * @param major   true if this is a major world timezone, meaning that its name is recognized
+     *                by people outside its own country
+     */
+
+    static void tz(String country, String zoneId, boolean major) {
+        tz(country, zoneId);
+        if (major) {
+            worldTimeZones.add(zoneId);
+        }
+    }
+
     static {
 
         // The table starts with countries that use multiple timezones, then proceeds in alphabetical order
 
-        tz("us", "America/New_York");
-        tz("us", "America/Chicago");
-        tz("us", "America/Denver");
-        tz("us", "America/Los_Angeles");
-        tz("us", "America/Anchorage");
-        tz("us", "America/Halifax");
+        tz("us", "America/New_York", true);
+        tz("us", "America/Chicago", true);
+        tz("us", "America/Denver", true);
+        tz("us", "America/Los_Angeles", true);
+        tz("us", "America/Anchorage", true);
+        tz("us", "America/Halifax", true);
+        tz("us", "Pacific/Honolulu", true);
 
         tz("ca", "Canada/Pacific");
         tz("ca", "Canada/Mountain");
@@ -61,11 +81,11 @@ public class NamedTimeZone {
         tz("ca", "Canada/Eastern");
         tz("ca", "Canada/Atlantic");
 
-        tz("au", "Australia/Sydney");
-        tz("au", "Australia/Darwin");
-        tz("au", "Australia/Perth");
+        tz("au", "Australia/Sydney", true);
+        tz("au", "Australia/Darwin", true);
+        tz("au", "Australia/Perth", true);
 
-        tz("ru", "Europe/Moscow");
+        tz("ru", "Europe/Moscow", true);
         tz("ru", "Europe/Samara");
         tz("ru", "Asia/Yekaterinburg");
         tz("ru", "Asia/Novosibirsk");
@@ -89,7 +109,7 @@ public class NamedTimeZone {
         tz("ba", "Europe/Sarajevo");
         tz("bb", "America/Barbados");
         tz("bd", "Asia/Dhaka");
-        tz("be", "Europe/Brussels");
+        tz("be", "Europe/Brussels", true);
         tz("bf", "Africa/Ouagadougou");
         tz("bg", "Europe/Sofia");
         tz("bh", "Asia/Bahrain");
@@ -150,8 +170,8 @@ public class NamedTimeZone {
 
         tz("id", "Asia/Jakarta");
         tz("ie", "Europe/Dublin");
-        tz("il", "Asia/Tel_Aviv");
-        tz("in", "Asia/Calcutta");
+        tz("il", "Asia/Tel_Aviv", true);
+        tz("in", "Asia/Calcutta", true);
         tz("iq", "Asia/Baghdad");
         tz("ir", "Asia/Tehran");
         tz("is", "Atlantic/Reykjavik");
@@ -159,7 +179,7 @@ public class NamedTimeZone {
 
         tz("jm", "America/Jamaica");
         tz("jo", "Asia/Amman");
-        tz("jp", "Asia/Tokyo");
+        tz("jp", "Asia/Tokyo", true);
 
         tz("ke", "Africa/Nairobi");
         tz("kg", "Asia/Bishkek");
@@ -249,7 +269,7 @@ public class NamedTimeZone {
 
         tz("ua", "Europe/Kiev");
         tz("ug", "Africa/Kampala");
-        tz("uk", "Europe/London");
+        tz("uk", "Europe/London", true);
         tz("uy", "America/Montevideo");
         tz("uz", "Asia/Tashkent");
 
@@ -283,21 +303,38 @@ public class NamedTimeZone {
         if (place == null) {
             return formatTimeZoneOffset(date);
         }
-        TimeZone zone;
+        TimeZone zone = null;
         List<String> possibleZones;
+        int tzMinutes = date.getTimezoneInMinutes();
         if (place.contains("/")) {
             zone = getNamedTimeZone(place);
-            possibleZones = new ArrayList<String>(1);
-            possibleZones.add(place);
+            //possibleZones = new ArrayList<String>(1);
+            //possibleZones.add(place);
         } else {
             possibleZones = idForCountry.get(place.toLowerCase());
-            String exampleId;
             if (possibleZones == null) {
-                return formatTimeZoneOffset(date);
-            } else {
-                exampleId = possibleZones.get(0);
+                possibleZones = new ArrayList<String>();
             }
-            zone = TimeZone.getTimeZone(exampleId);
+            long epochDate = date.getCalendar().getTime().getTime();
+            for (String z : possibleZones) {
+                TimeZone tz = TimeZone.getTimeZone(z);
+                if (tz != null && tz.getOffset(epochDate) == tzMinutes * 60000) {
+                    zone = tz;
+                    break;
+                }
+            }
+            if (zone == null) {
+                for (String z : worldTimeZones) {
+                    TimeZone tz = TimeZone.getTimeZone(z);
+                    if (tz != null && tz.getOffset(epochDate) == tzMinutes * 60000) {
+                        zone = tz;
+                        break;
+                    }
+                }
+            }
+            if (zone == null) {
+                return formatTimeZoneOffset(date);
+            }
         }
         Date javaDate;
         try {
@@ -307,15 +344,15 @@ public class NamedTimeZone {
             return formatTimeZoneOffset(date);
         }
         boolean inSummerTime = zone != null && zone.inDaylightTime(javaDate);
-        int tzMinutes = date.getTimezoneInMinutes();
-        for (String possibleZone : possibleZones) {
-            TimeZone possibleTimeZone = TimeZone.getTimeZone(possibleZone);
-            int offset = possibleTimeZone.getOffset(javaDate.getTime());
-            if (offset == tzMinutes * 60000) {
-                return possibleTimeZone.getDisplayName(inSummerTime, TimeZone.SHORT);
-            }
-        }
-        return formatTimeZoneOffset(date);
+        return zone.getDisplayName(inSummerTime, TimeZone.SHORT);
+//        for (String possibleZone : possibleZones) {
+//            TimeZone possibleTimeZone = TimeZone.getTimeZone(possibleZone);
+//            int offset = possibleTimeZone.getOffset(javaDate.getTime());
+//            if (offset == tzMinutes * 60000) {
+//                return possibleTimeZone.getDisplayName(inSummerTime, TimeZone.SHORT);
+//            }
+//        }
+//        return formatTimeZoneOffset(date);
     }
 
     /**

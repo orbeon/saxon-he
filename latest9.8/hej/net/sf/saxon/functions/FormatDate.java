@@ -82,13 +82,13 @@ public class FormatDate extends SystemFunction implements Callable {
      * @param value    the value to be formatted
      * @param format   the supplied format picture
      * @param language the chosen language
-     * @param country  the chosen country
+     * @param place  the chosen country or timezone name
      * @param context  the XPath dynamic evaluation context
      * @return the formatted date/time
      * @throws XPathException if a dynamic error occurs
      */
 
-    private static CharSequence formatDate(CalendarValue value, String format, String language, String country, XPathContext context)
+    private static CharSequence formatDate(CalendarValue value, String format, String language, String place, XPathContext context)
             throws XPathException {
 
         Configuration config = context.getConfiguration();
@@ -97,11 +97,20 @@ public class FormatDate extends SystemFunction implements Callable {
         if (language == null) {
             language = config.getDefaultLanguage();
         }
-        if (country == null) {
-            country = config.getDefaultCountry();
+        if (place == null) {
+            place = config.getDefaultCountry();
         }
 
-        Numberer numberer = config.makeNumberer(language, country);
+        // if the value has a timezone and the place is a timezone name, the value is adjusted to that timezone
+        if (value.hasTimezone() && place.contains("/")) {
+            TimeZone tz = TimeZone.getTimeZone(place);
+            if (tz != null) {
+                int milliOffset = tz.getOffset(value.toDateTime().getCalendar().getTime().getTime());
+                value = value.adjustTimezone(milliOffset / 60000);
+            }
+        }
+
+        Numberer numberer = config.makeNumberer(language, place);
         FastStringBuffer sb = new FastStringBuffer(FastStringBuffer.C64);
         if (numberer.getClass() == Numberer_en.class && !"en".equals(language) && !languageDefaulted) {
             sb.append("[Language: en]");
@@ -144,7 +153,7 @@ public class FormatDate extends SystemFunction implements Callable {
                 }
                 String componentFormat = format.substring(i, close);
                 sb.append(formatComponent(value, Whitespace.removeAllWhitespace(componentFormat),
-                                          numberer, country, context));
+                                          numberer, place, context));
                 i = close + 1;
             }
         }
@@ -324,7 +333,27 @@ public class FormatDate extends SystemFunction implements Callable {
                 }
             case 'z':
             case 'Z':
-                return formatTimeZone(value.toDateTime(), component.charAt(0), format, country);
+                DateTimeValue dtv;
+                if (value instanceof TimeValue) {
+                    // See bug 3761. We need to pad the time with a date. 1972-12-31 or 1970-01-01 won't do because
+                    // timezones were different then (Alaska changed in 1983, for example). Today's date isn't ideal
+                    // because it's better to choose a date that isn't in summer time. We'll choose the first of
+                    // January in the current year, unless that's in summer time in the country in question, in which
+                    // case we'll choose first of July.
+                    DateTimeValue now = DateTimeValue.getCurrentDateTime(context);
+                    int year = now.getYear();
+                    int tzoffset = value.getTimezoneInMinutes();
+                    DateTimeValue baseDate =
+                            new DateTimeValue(year, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, 0, tzoffset, false);
+                    Boolean b = NamedTimeZone.inSummerTime(baseDate, country);
+                    if (b != null & b) {
+                        baseDate = new DateTimeValue(year, (byte) 7, (byte) 1, (byte) 0, (byte) 0, (byte) 0, 0, tzoffset, false);
+                    }
+                    dtv = DateTimeValue.makeDateTimeValue(baseDate.toDateValue(), (TimeValue) value);
+                } else {
+                    dtv = value.toDateTime();
+                }
+                return formatTimeZone(dtv, component.charAt(0), format, country);
 
             case 'F':       // day of week
                 if (ignoreDate) {

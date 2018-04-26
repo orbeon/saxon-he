@@ -387,10 +387,14 @@ public final class TimeValue extends CalendarValue implements Comparable {
     /*@NotNull*/
     public GregorianCalendar getCalendar() {
         // create a calendar using the specified timezone
-        int tz = (hasTimezone() ? getTimezoneInMinutes() : 0);
-        TimeZone zone = new SimpleTimeZone(tz * 60000, "LLL");
+        int tz = (hasTimezone() ? getTimezoneInMinutes()*60000 : 0);
+        TimeZone zone = new SimpleTimeZone(tz, "LLL");
         GregorianCalendar calendar = new GregorianCalendar(zone);
         calendar.setLenient(false);
+
+        if (tz < calendar.getMinimum(Calendar.ZONE_OFFSET) || tz > calendar.getMaximum(Calendar.ZONE_OFFSET)) {
+            return adjustTimezone(0).getCalendar();
+        }
 
         // use a reference date of 1972-12-31
         int year = 1972;
@@ -400,7 +404,7 @@ public final class TimeValue extends CalendarValue implements Comparable {
 
         calendar.set(year, month, day, hour, minute, second);
         calendar.set(Calendar.MILLISECOND, microsecond / 1000);
-        calendar.set(Calendar.ZONE_OFFSET, tz * 60000);
+        calendar.set(Calendar.ZONE_OFFSET, tz);
         calendar.set(Calendar.DST_OFFSET, 0);
 
         calendar.getTime();

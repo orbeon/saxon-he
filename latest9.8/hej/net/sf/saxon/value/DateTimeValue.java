@@ -758,6 +758,9 @@ public final class DateTimeValue extends CalendarValue implements Comparable {
         GregorianCalendar calendar = new GregorianCalendar(zone);
         calendar.setGregorianChange(new Date(Long.MIN_VALUE));
         calendar.setLenient(false);
+        if (tz < calendar.getMinimum(Calendar.ZONE_OFFSET) || tz > calendar.getMaximum(Calendar.ZONE_OFFSET)) {
+            return adjustTimezone(0).getCalendar();
+        }
         int yr = year;
         if (year <= 0) {
             yr = xsd10rules ? 1 - year : 0 - year;

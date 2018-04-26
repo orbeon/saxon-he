@@ -66,19 +66,22 @@ public abstract class GDateValue extends CalendarValue {
     /*@NotNull*/
     public GregorianCalendar getCalendar() {
 
-        int tz = (hasTimezone() ? getTimezoneInMinutes() : 0);
-        TimeZone zone = new SimpleTimeZone(tz * 60000, "LLL");
+        int tz = (hasTimezone() ? getTimezoneInMinutes()*60000 : 0);
+        TimeZone zone = new SimpleTimeZone(tz, "LLL");
         GregorianCalendar calendar = new GregorianCalendar(zone);
         calendar.setGregorianChange(new Date(Long.MIN_VALUE));
         calendar.clear();
         calendar.setLenient(false);
+        if (tz < calendar.getMinimum(Calendar.ZONE_OFFSET) || tz > calendar.getMaximum(Calendar.ZONE_OFFSET)) {
+            return adjustTimezone(0).getCalendar();
+        }
         int yr = year;
         if (year <= 0) {
             yr = (xsd10rules ? 1 - year : 0 - year);
             calendar.set(Calendar.ERA, GregorianCalendar.BC);
         }
         calendar.set(yr, month - 1, day);
-        calendar.set(Calendar.ZONE_OFFSET, tz * 60000);
+        calendar.set(Calendar.ZONE_OFFSET, tz);
         calendar.set(Calendar.DST_OFFSET, 0);
         calendar.getTime();
         return calendar;
