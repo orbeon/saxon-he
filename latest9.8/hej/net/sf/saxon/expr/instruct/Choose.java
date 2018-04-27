@@ -50,7 +50,7 @@ public class Choose extends Instruction {
 
 
 
-    private final static OperandRole CHOICE_ACTION =
+    public final static OperandRole CHOICE_ACTION =
             new OperandRole(OperandRole.IN_CHOICE_GROUP, OperandUsage.TRANSMISSION, SequenceType.ANY_SEQUENCE);
 
     
