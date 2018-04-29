@@ -198,7 +198,7 @@ public class AnyFunctionType implements FunctionItemType {
      */
 
     public boolean isAtomizable() {
-        return false;
+        return true;
     }
 
     /**

@@ -91,6 +91,11 @@ public class MapType extends AnyFunctionType {
         return false;
     }
 
+    @Override
+    public boolean isAtomizable() {
+        return false;
+    }
+
     /**
      * Test whether a given item conforms to this type
      *

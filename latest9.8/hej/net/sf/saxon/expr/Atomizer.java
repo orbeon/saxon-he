@@ -533,42 +533,6 @@ public final class Atomizer extends UnaryExpression {
         return getBaseExpression().toShortString();
     }
 
-    /**
-     * Implement the mapping function. This is stateless, so there is a singleton instance.
-     */
-
-    public static class AtomizingFunction implements MappingFunction {
-
-        /**
-         * Private constructor, ensuring that everyone uses the singleton instance
-         */
-
-        private AtomizingFunction() {
-        }
-
-        private static final AtomizingFunction theInstance = new AtomizingFunction();
-
-        /**
-         * Get the singleton instance
-         *
-         * @return the singleton instance of this mapping function
-         */
-
-        public static AtomizingFunction getInstance() {
-            return theInstance;
-        }
-
-        public AtomicIterator map(Item item) throws XPathException {
-            if (item instanceof NodeInfo) {
-                return ((NodeInfo) item).atomize().iterate();
-            } else if (item instanceof AtomicValue) {
-                return new SingleAtomicIterator((AtomicValue)item);
-            } else {
-                throw new XPathException("Cannot atomize a function item or external object", "FOTY0013");
-            }
-        }
-    }
-
 
 }
 
