@@ -41,6 +41,12 @@ public class SerializationParamsHandler {
         new String[]{"character", "map-string"}
     ));
 
+    public SerializationParamsHandler(){}
+
+    public SerializationParamsHandler(Properties props) {
+        this.properties = props;
+    }
+
     /**
      * Set the location of the instruction to be used for error message reporting
      * @param locator the location for error reporting
@@ -59,7 +65,9 @@ public class SerializationParamsHandler {
      */
 
     public void setSerializationParams(NodeInfo node) throws XPathException {
-        properties = new Properties();
+        if (properties == null) {
+            properties = new Properties();
+        }
         if (node.getNodeKind() == Type.DOCUMENT) {
             node = Navigator.getOutermostElement(node.getTreeInfo());
         }

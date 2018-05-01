@@ -88,6 +88,7 @@ public class XQueryParser extends XPathParser {
     /*@NotNull*/ List<Import> moduleImports = new ArrayList<Import>(5);
 
     private Set<StructuredQName> outputPropertiesSeen = new HashSet<StructuredQName>(4);
+    private Properties parameterDocProperties;
 
 
     /**
@@ -149,7 +150,8 @@ public class XQueryParser extends XPathParser {
             if (outputProps.getProperty(OutputKeys.METHOD) == null) {
                 outputProps.setProperty(OutputKeys.METHOD, "xml");
             }
-            exec.setDefaultOutputProperties(outputProps);
+            parameterDocProperties = new Properties(outputProps);
+            exec.setDefaultOutputProperties(new Properties(parameterDocProperties));
 
             //exec.setLocationMap(new LocationMap());
             FunctionLibraryList libList = new FunctionLibraryList();
@@ -2143,21 +2145,17 @@ public class XQueryParser extends XPathParser {
             ParseOptions options = new ParseOptions();
             options.setSchemaValidationMode(Validation.LAX);
             TreeInfo doc = env.getConfiguration().buildDocumentTree(source);
-            SerializationParamsHandler ph = new SerializationParamsHandler();
+            SerializationParamsHandler ph = new SerializationParamsHandler(parameterDocProperties);
             ph.setSerializationParams(doc.getRootNode());
-            // TODO: handle override semantics
-            Properties baseProps = ph.getSerializationProperties();
-            Properties props = getExecutable().getDefaultOutputProperties();
-            for (String prop : baseProps.stringPropertyNames()) {
-                props.setProperty(prop, baseProps.getProperty(prop));
-            }
+
             CharacterMap characterMap = ph.getCharacterMap();
             if (characterMap != null) {
                 CharacterMapIndex index = new CharacterMapIndex();
                 index.putCharacterMap(characterMap.getName(), characterMap);
                 getExecutable().setCharacterMapIndex(index);
-                props.setProperty(SaxonOutputKeys.USE_CHARACTER_MAPS, characterMap.getName().getClarkName());
+                parameterDocProperties.setProperty(SaxonOutputKeys.USE_CHARACTER_MAPS, characterMap.getName().getClarkName());
             }
+
         } else if (localName.equals("use-character-maps")) {
             grumble("Output declaration use-character-maps cannot appear except in a parameter file", "XQST0109");
         } else {
