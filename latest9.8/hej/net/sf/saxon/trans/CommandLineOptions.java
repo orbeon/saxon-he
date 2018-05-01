@@ -292,8 +292,11 @@ public class CommandLineOptions {
                 value = sourceInput.getSystemId();
 
             }  else {
-
-                value = (new File(value)).toURI().toASCIIString();
+                File catalogFile = new File(value);
+                if (!catalogFile.exists())  {
+                    throw new XPathException("Catalog file not found: " + value);
+                }
+                value = catalogFile.toURI().toASCIIString();
             }
 
             try {
