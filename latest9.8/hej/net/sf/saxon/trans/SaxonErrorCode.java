@@ -241,6 +241,12 @@ public class SaxonErrorCode {
 
     public static final String SXST0068 = "SXST0068";
 
+    /**
+     * SXST0068: cannot export a stylesheet that incorporates XQuery functions
+     */
+
+    public static final String SXST0069 = "SXST0069";
+
 
     /**
      * SXTA0001: unresolved type alias
