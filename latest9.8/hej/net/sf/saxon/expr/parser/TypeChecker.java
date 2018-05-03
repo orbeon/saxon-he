@@ -267,13 +267,15 @@ public class TypeChecker {
 
             } else if (reqItemType instanceof FunctionItemType && !((FunctionItemType) reqItemType).isMapType()
                     && !((FunctionItemType) reqItemType).isArrayType()) {
-                if (!(suppliedItemType instanceof FunctionItemType)) {
-                    exp = new ItemChecker(exp, th.getGenericFunctionItemType(), role);
-                    suppliedItemType = th.getGenericFunctionItemType();
+                int r = th.relationship(suppliedItemType, th.getGenericFunctionItemType());
+                if (r != TypeHierarchy.DISJOINT) {
+                    if (!(suppliedItemType instanceof FunctionItemType)) {
+                        exp = new ItemChecker(exp, th.getGenericFunctionItemType(), role);
+                        suppliedItemType = th.getGenericFunctionItemType();
+                    }
+                    exp = makeFunctionSequenceCoercer(exp, (FunctionItemType) reqItemType, visitor, role);
+                    itemTypeOK = true;
                 }
-                exp = makeFunctionSequenceCoercer(exp, (FunctionItemType) reqItemType, visitor, role);
-                itemTypeOK = true;
-
             } else if (reqItemType instanceof JavaExternalObjectType &&
                     /*Sequence.class.isAssignableFrom(((JavaExternalObjectType) reqItemType).getJavaClass()) &&  */
                     reqCard == StaticProperty.EXACTLY_ONE) {
