@@ -60,7 +60,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
     private boolean isUpdating = false;
     private int inlineable = -1; // 0:no 1:yes -1:don't know
     private boolean overrideExtensionFunction = true;
-    private AnnotationList annotations;
+    private AnnotationList annotations = AnnotationList.EMPTY;
     private FunctionStreamability declaredStreamability = FunctionStreamability.UNCLASSIFIED;
     private Determinism determinism = Determinism.PROACTIVE;
     private int refCount = 0;
@@ -135,7 +135,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
             UserFunctionParameter ufp = parameterDefinitions[i];
             argTypes[i] = ufp.getRequiredType();
         }
-        return new SpecificFunctionType(argTypes, resultType);
+        return new SpecificFunctionType(argTypes, resultType, annotations);
     }
 
     /**

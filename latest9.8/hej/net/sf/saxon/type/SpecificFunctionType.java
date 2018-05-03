@@ -180,7 +180,7 @@ public class SpecificFunctionType extends AnyFunctionType {
      */
 
     public int relationship(FunctionItemType other, TypeHierarchy th) {
-        if (other == AnyFunctionType.getInstance()) {
+        if (other == AnyFunctionType.getInstance() || other instanceof AnyFunctionTypeWithAssertions) {
             return TypeHierarchy.SUBSUMED_BY;
         } else if (equals(other)) {
             return TypeHierarchy.SAME_TYPE;
