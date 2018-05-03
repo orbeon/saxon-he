@@ -872,16 +872,17 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                         return;
                     }
                 }
-                Pattern match2 = match;
+                Pattern match1 = match.copy(new RebindingMap());
                 String typed = mode.getActivePart().getPropertyValue("typed");
                 if ("strict".equals(typed) || "lax".equals(typed)) {
+                    Pattern match2;
                     try {
-                        match2 = match.convertToTypedPattern(typed);
+                        match2 = match1.convertToTypedPattern(typed);
                     } catch (XPathException e) {
                         e.maybeSetLocation(this);
                         throw e;
                     }
-                    if (match2 != match) {
+                    if (match2 != match1) {
                         ContextItemStaticInfo info = getConfiguration().makeContextItemStaticInfo(AnyItemType.getInstance(), false);
                         ExpressionTool.copyLocationInfo(match, match2);
                         //match2.setPackageData(match.getPackageData());
@@ -889,6 +890,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                         //match2.setSystemId(match.getSystemId());
                         //match2.setLineNumber(match.getLineNumber());
                         match2 = match2.typeCheck(visitor, info);
+                        match1 = match2;
                     }
                     if (modeNames.length == 1) {
                         // If this is the only mode for the template, then we can use this enhanced match pattern
@@ -905,11 +907,11 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                 }
 
                 double prio = prioritySpecified ? priority : Double.NaN;
-                mgr.setTemplateRule(match2, rule, mode, module, prio);
+                mgr.setTemplateRule(match1, rule, mode, module, prio);
 
                 if (mode.isDeclaredStreamable()) {
                     rule.setDeclaredStreamable(true);
-                    if (!match2.isMotionless()) {
+                    if (!match1.isMotionless()) {
                         boolean fallback = getConfiguration().getBooleanProperty(FeatureKeys.STREAMING_FALLBACK);
                         String message = "Template rule is declared streamable but the match pattern is not motionless";
                         if (fallback) {
@@ -926,7 +928,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
 
                 if (mode.getModeName().equals(Mode.OMNI_MODE)) {
                     compiledTemplateRules.put(Mode.UNNAMED_MODE_NAME, rule);
-                    mgr.setTemplateRule(match2, rule, mgr.getUnnamedMode(), module, prio);
+                    mgr.setTemplateRule(match1, rule, mgr.getUnnamedMode(), module, prio);
                     for (Mode m : mgr.getAllNamedModes()) {
                         if (m instanceof SimpleMode) {
                             TemplateRule ruleCopy = rule.copy();
@@ -934,7 +936,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                                 ruleCopy.setDeclaredStreamable(true);
                             }
                             compiledTemplateRules.put(m.getModeName(), ruleCopy);
-                            mgr.setTemplateRule(match2.copy(new RebindingMap()), ruleCopy, m, module, prio);
+                            mgr.setTemplateRule(match1.copy(new RebindingMap()), ruleCopy, m, module, prio);
                         }
                     }
                 }
