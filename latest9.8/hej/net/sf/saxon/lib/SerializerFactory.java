@@ -203,7 +203,9 @@ public class SerializerFactory {
             props = props2;
             CharacterMap characterMap = ph.getCharacterMap();
             if (characterMap != null) {
-                CharacterMapIndex index = new CharacterMapIndex();
+                if (charMapIndex == null) {
+                    charMapIndex = new CharacterMapIndex();
+                }
                 charMapIndex.putCharacterMap(characterMap.getName(), characterMap);
                 props.setProperty(SaxonOutputKeys.USE_CHARACTER_MAPS, characterMap.getName().getClarkName());
             }
