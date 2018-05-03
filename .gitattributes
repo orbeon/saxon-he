@@ -3868,7 +3868,6 @@ latest9.8/hej/net/sf/saxon/functions/IriToUri.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/functions/IsIdRef.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/functions/KeyFn.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/functions/Lang.java svn_eol_002dstyle=native
-latest9.8/hej/net/sf/saxon/functions/LoadXqueryModule.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/functions/LocalName_1.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/functions/LowerCase.java svn_eol_002dstyle=native
 latest9.8/hej/net/sf/saxon/functions/Matches.java svn_eol_002dstyle=native
