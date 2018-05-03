@@ -10,9 +10,12 @@ package net.sf.saxon.query;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.value.AtomicValue;
+import net.sf.saxon.value.NumericValue;
+import net.sf.saxon.value.StringValue;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * This class represents an annotation that appears in a function or variable declarations
@@ -28,7 +31,7 @@ public class Annotation {
     // The name of the annotation
     private StructuredQName qName = null;
 
-    // The list of paramters (all strings or numbers) associated with the annotation
+    // The list of parameters (all strings or numbers) associated with the annotation
     private List<AtomicValue> annotationParameters = null;
 
     /**
@@ -79,15 +82,32 @@ public class Annotation {
     }
 
     public boolean equals(Object other) {
-        return other instanceof Annotation &&
+        if (!(other instanceof Annotation &&
                 qName.equals(((Annotation)other).qName) &&
-                annotationParameters.equals(((Annotation)other).annotationParameters);
+                getAnnotationParameters().size() == ((Annotation) other).getAnnotationParameters().size())) {
+            return false;
+        }
+        for (int i=0; i<annotationParameters.size(); i++) {
+            if (!annotationParamEqual(annotationParameters.get(i), ((Annotation) other).annotationParameters.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean annotationParamEqual(AtomicValue a, AtomicValue b) {
+        if (a instanceof StringValue && b instanceof StringValue) {
+            return a.getStringValue().equals(b.getStringValue());
+        } else if (a instanceof NumericValue && b instanceof NumericValue) {
+            return ((NumericValue) a).getDoubleValue() == ((NumericValue) b).getDoubleValue();
+        } else {
+            return false;
+        }
     }
 
     public int hashCode() {
         return qName.hashCode() ^ annotationParameters.hashCode();
     }
-
 
 }
 
