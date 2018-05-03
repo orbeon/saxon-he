@@ -389,6 +389,7 @@ public class XQueryFunctionLibrary implements FunctionLibrary, XQueryFunctionBin
         return qfl;
     }
 
+    //#ifdefined HOF
     public static class UnresolvedXQueryFunctionItem extends AbstractFunction {
         private final XQueryFunction fd;
         private final SymbolicName.F functionName;
@@ -429,4 +430,5 @@ public class XQueryFunctionLibrary implements FunctionLibrary, XQueryFunctionBin
             return ref;
         }
     }
+    //#endif
 }

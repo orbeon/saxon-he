@@ -7,9 +7,7 @@
 
 package net.sf.saxon.functions;
 
-import com.saxonica.functions.hof.UserFunctionReference;
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.instruct.UserFunction;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.RetainedStaticContext;
@@ -450,12 +448,7 @@ public abstract class SystemFunction extends AbstractFunction {
      */
 
     public static Sequence dynamicCall(Function f, XPathContext context, Sequence[] args) throws XPathException {
-        if (f instanceof UserFunction) {
-            context = ((UserFunction)f).makeNewContext(context);
-        } else if (f instanceof UserFunctionReference.BoundUserFunction) {
-            context = ((UserFunctionReference.BoundUserFunction) f).makeNewContext(context);
-        }
-        return f.call(context, args);
+        return f.call(f.makeNewContext(context), args);
     }
 
 
