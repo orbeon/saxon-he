@@ -2160,10 +2160,9 @@ public abstract class StyleElement extends ElementImpl {
                         if (snode.changesRetainedStaticContext()) {
                             child.setRetainedStaticContext(snode.makeRetainedStaticContext());
                         }
-                        if (includeParams || !(node instanceof XSLLocalParam)) {
-                            if (getCompilation().getCompilerInfo().isCompileWithTracing()) {
-                                child = makeTraceInstruction(snode, child);
-                            }
+                        if ((includeParams || !(node instanceof XSLLocalParam))
+                                && getCompilation().getCompilerInfo().isCompileWithTracing()) {
+                            child = makeTraceInstruction(snode, child);
                         }
                     }
                 }
@@ -2219,6 +2218,10 @@ public abstract class StyleElement extends ElementImpl {
         if (child instanceof TraceExpression && !(source instanceof StylesheetComponent)) {
             return child;
             // this can happen, for example, after optimizing a compile-time xsl:if
+        }
+        if (source instanceof XSLOnEmpty || source instanceof XSLOnNonEmpty) {
+            // Cannot wrap these in a trace instruction because this changes the scope of the "emptiness" test (bug 3774)
+            return child;
         }
         CodeInjector injector = source.getCompilation().getCompilerInfo().getCodeInjector();
         if (injector != null) {
