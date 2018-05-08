@@ -758,7 +758,7 @@ public class SlashExpression extends BinaryExpression
 
         // The result is sorted if the step is creative (e.g. a call to copy-of())
 
-        if ((stepProperties & StaticProperty.NON_CREATIVE) == 0) {
+        if ((stepProperties & StaticProperty.ALL_NODES_NEWLY_CREATED) != 0) {
             return true;
         }
 
