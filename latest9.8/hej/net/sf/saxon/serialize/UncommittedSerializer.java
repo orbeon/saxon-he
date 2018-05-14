@@ -9,6 +9,7 @@ package net.sf.saxon.serialize;
 
 import net.sf.saxon.event.ProxyReceiver;
 import net.sf.saxon.event.Receiver;
+import net.sf.saxon.event.SequenceReceiver;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.SaxonOutputKeys;
@@ -145,7 +146,7 @@ public class UncommittedSerializer extends ProxyReceiver {
      * Output an element start tag. <br>
      * This can only be called once: it switches to a substitute output generator for XML, XHTML, or HTML,
      * depending on the element name.
-     *  @param elemName   The element name (tag)
+     * @param elemName   The element name (tag)
      * @param typeCode   The type annotation
      * @param location
      * @param properties Bit field holding special properties of the element
@@ -181,7 +182,7 @@ public class UncommittedSerializer extends ProxyReceiver {
         Properties newProperties = new Properties(outputProperties);
         newProperties.setProperty(OutputKeys.METHOD, method);
         SerializerFactory sf = getConfiguration().getSerializerFactory();
-        Receiver target = sf.getReceiver(finalResult, getPipelineConfiguration(), newProperties, charMapIndex);
+        SequenceReceiver target = sf.getReceiver(finalResult, getPipelineConfiguration(), newProperties, charMapIndex);
         committed = true;
         target.open();
         target.startDocument(0);
@@ -216,10 +217,12 @@ public class UncommittedSerializer extends ProxyReceiver {
     @Override
     public void append(Item item, Location locationId, int copyNamespaces) throws XPathException {
         if (item instanceof NodeInfo) {
-            ((NodeInfo)item).copy(this, NodeInfo.ALL_NAMESPACES, locationId);
+            ((NodeInfo) item).copy(this, NodeInfo.ALL_NAMESPACES, locationId);
         } else {
-            // Need to do something more intelligent here
-            characters(item.getStringValueCS(), locationId, 0);
+            if (!committed) {
+                switchToMethod("xml");
+            }
+            ((SequenceReceiver) getUnderlyingReceiver()).append(item);
         }
     }
 
