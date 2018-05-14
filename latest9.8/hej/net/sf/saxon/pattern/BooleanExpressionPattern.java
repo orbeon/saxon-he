@@ -136,16 +136,14 @@ public class BooleanExpressionPattern extends Pattern implements PatternWithPred
      * @return true if the item matches the Pattern, false otherwise
      */
 
-    public boolean matches(Item item, XPathContext context) {
+    public boolean matches(Item item, XPathContext context) throws XPathException {
         XPathContext c2 = context.newMinorContext();
         ManualIterator iter = new ManualIterator(item);
         c2.setCurrentIterator(iter);
         try {
-//            if (comp != null) {
-//                return comp.effectiveBooleanValue(c2);
-//            }
             return getPredicate().effectiveBooleanValue(c2);
-        } catch (XPathException e) {
+        } catch (XPathException ex) {
+            handleDynamicError(ex, c2);
             return false;
         }
     }

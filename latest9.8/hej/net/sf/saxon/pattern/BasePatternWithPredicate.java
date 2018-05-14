@@ -127,15 +127,7 @@ public class BasePatternWithPredicate extends Pattern implements PatternWithPred
         } catch (XPathException.Circularity e) {
             throw e;
         } catch (XPathException ex) {
-            if ("XTDE0640".equals(ex.getErrorCodeLocalPart())) {
-                // Treat circularity error as fatal (test error213)
-                throw ex;
-            }
-            XPathException err = new XPathException("An error occurred matching pattern {" + toString() + "}: ", ex);
-            err.setXPathContext(c2);
-            err.setErrorCodeQName(ex.getErrorCodeQName());
-            err.setLocation(getLocation());
-            c2.getController().recoverableError(err);
+            handleDynamicError(ex, c2);
             return false;
         }
     }

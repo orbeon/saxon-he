@@ -237,11 +237,7 @@ public final class GeneralNodePattern extends Pattern {
         } catch (XPathException.Circularity e) {
             throw e;
         } catch (XPathException e) {
-            XPathException err = new XPathException("An error occurred matching pattern {" + toString() + "}: ", e);
-            err.setXPathContext(c2);
-            err.setErrorCodeQName(e.getErrorCodeQName());
-            err.setLocation(getLocation());
-            c2.getController().recoverableError(err);
+            handleDynamicError(e, c2);
             return false;
         }
     }

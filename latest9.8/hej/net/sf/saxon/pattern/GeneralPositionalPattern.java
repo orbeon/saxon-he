@@ -255,15 +255,7 @@ public class GeneralPositionalPattern extends Pattern {
         } catch (XPathException.Circularity e) {
             throw e;
         } catch (XPathException e) {
-            if ("XTDE0640".equals(e.getErrorCodeLocalPart())) {
-                // Treat circularity error as fatal (test error213)
-                throw e;
-            }
-            XPathException err = new XPathException("An error occurred matching pattern {" + toString() + "}: ", e);
-            err.setXPathContext(c2);
-            err.setErrorCodeQName(e.getErrorCodeQName());
-            err.setLocation(getLocation());
-            c2.getController().recoverableError(err);
+            handleDynamicError(e, c2);
             return false;
         }
     }

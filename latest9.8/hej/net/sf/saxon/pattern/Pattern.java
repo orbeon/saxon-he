@@ -32,6 +32,7 @@ import net.sf.saxon.type.UType;
 public abstract class Pattern extends PseudoExpression {
 
     private double priority = 0.5;
+    private boolean recoverable = true;
 
     /**
      * Static factory method to make a Pattern by parsing a String. <br>
@@ -126,6 +127,32 @@ public abstract class Pattern extends PseudoExpression {
     public void setOriginalText(String text) {
         /*originalText = text;*/
     }
+
+
+    public boolean isRecoverable() {
+        return recoverable;
+    }
+
+    public void setRecoverable(boolean recoverable) {
+        this.recoverable = recoverable;
+    }
+
+    protected void handleDynamicError(XPathException ex, XPathContext context) throws XPathException {
+        if ("XTDE0640".equals(ex.getErrorCodeLocalPart())) {
+            // Treat circularity error as fatal (test error213)
+            throw ex;
+        }
+        if (!isRecoverable()) {
+            // Typically happens when this is a pseudo-pattern used for scannable expressions when streaming
+            throw ex;
+        }
+        XPathException err = new XPathException("An error occurred matching pattern {" + toString() + "}: ", ex);
+        err.setXPathContext(context);
+        err.setErrorCodeQName(ex.getErrorCodeQName());
+        err.setLocation(getLocation());
+        context.getController().recoverableError(err);
+    }
+
 
     /**
      * Simplify the pattern by applying any context-independent optimisations.
