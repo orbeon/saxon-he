@@ -21,7 +21,6 @@ import net.sf.saxon.z.IntPredicate;
 
 import java.io.Reader;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -65,7 +64,7 @@ public class JsonDoc extends SystemFunction  {
         }
         CharSequence content;
         try {
-            content = UnparsedTextFunction.readFile(checker, reader, context);
+            content = UnparsedTextFunction.readFile(checker, reader);
         } catch (java.io.UnsupportedEncodingException encErr) {
             XPathException e = new XPathException("Unknown encoding " + Err.wrap(encoding), encErr);
             e.setErrorCode("FOUT1190");

@@ -7,6 +7,7 @@
 
 package net.sf.saxon.query;
 
+import net.sf.saxon.functions.UnparsedTextFunction;
 import net.sf.saxon.serialize.charcode.UTF16CharacterSet;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
@@ -127,53 +128,14 @@ public class QueryReader {
 
     private static String readQueryFromReader(Reader reader, IntPredicate charChecker) throws XPathException {
         try {
-            FastStringBuffer sb = new FastStringBuffer(2048);
-            char[] buffer = new char[2048];
-            boolean first = true;
-            int actual;
-            int line = 1;   // track line/column position for reporting bad characters
-            int column = 1;
-            while (true) {
-                actual = reader.read(buffer, 0, 2048);
-                if (actual < 0) {
-                    break;
-                }
-                for (int c = 0; c < actual; ) {
-                    int ch32 = buffer[c++];
-                    if (ch32 == '\n') {
-                        line++;
-                        column = 0;
-                    }
-                    column++;
-                    if (UTF16CharacterSet.isHighSurrogate(ch32)) {
-                        char low = buffer[c++];
-                        ch32 = UTF16CharacterSet.combinePair((char) ch32, low);
-                    }
-                    if (!charChecker.matches(ch32)) {
-                        XPathException err = new XPathException(
-                                "The query file contains a character that is illegal in the selected version of XML " +
-                                " (line=" + line +
-                                " column=" + column +
-                                " value=x" + Integer.toHexString(ch32) + ')');
-                        err.setErrorCode("XPST0003");
-                        err.setIsStaticError(true);
-                        throw err;
-                    }
-                }
-                if (first) {
-                    first = false;
-                    if (buffer[0] == '\ufeff') {
-                        sb.append(buffer, 1, actual - 1);
-                    } else {
-                        sb.append(buffer, 0, actual);
-                    }
-                } else {
-                    sb.append(buffer, 0, actual);
-                }
-            }
-            return sb.condense().toString();
+            CharSequence content = UnparsedTextFunction.readFile(charChecker, reader);
+            return content.toString();
+        } catch (XPathException err) {
+            err.setErrorCode("XPST0003");
+            err.setIsStaticError(true);
+            throw err;
         } catch (IOException ioErr) {
-            throw new XPathException("Failed to read input file", ioErr);
+            throw new XPathException("Failed to read supplied query file", ioErr);
         }
     }
 

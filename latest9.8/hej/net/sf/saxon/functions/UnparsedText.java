@@ -64,7 +64,7 @@ public class UnparsedText extends UnparsedTextFunction {
                         String existing = cache.get(absoluteURI);
                         if (existing != null) {
                             if (existing.startsWith(errorValue)) {
-                                throw new XPathException(existing.substring(1), getErrorCodePrefix(context) + "1170");
+                                throw new XPathException(existing.substring(1), "FOUT" + "1170");
                             }
                             return new StringValue(existing);
                         }
@@ -90,7 +90,7 @@ public class UnparsedText extends UnparsedTextFunction {
             }
             result = new StringValue(content);
         } catch (XPathException err) {
-            err.maybeSetErrorCode(getErrorCodePrefix(context) + "1170");
+            err.maybeSetErrorCode("FOUT" + "1170");
             throw err;
         }
         return result;

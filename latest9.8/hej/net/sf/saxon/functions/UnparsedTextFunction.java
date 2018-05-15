@@ -43,16 +43,6 @@ public abstract class UnparsedTextFunction extends SystemFunction {
         }
     }
 
-    /**
-     * Get the prefix of the error code for dynamic errors: "XTDE" for XSLT 2.0, "FOUT" for XPath 3.0
-     * @param context the dynamic context
-     * @return the first four characters of the error code to be used
-     */
-
-    protected static String getErrorCodePrefix(XPathContext context) {
-        return "FOUT";
-    }
-
 
     /**
      * Supporting routine to load one external file given a URI (href) and a baseURI
@@ -75,14 +65,14 @@ public abstract class UnparsedTextFunction extends SystemFunction {
         try {
             reader = context.getController().getUnparsedTextURIResolver().resolve(absoluteURI, encoding, config);
         } catch (XPathException err) {
-            err.maybeSetErrorCode(getErrorCodePrefix(context) + "1170");
+            err.maybeSetErrorCode("FOUT1170");
             throw err;
         }
         try {
-            return readFile(checker, reader, context);
+            return readFile(checker, reader);
         } catch (java.io.UnsupportedEncodingException encErr) {
             XPathException e = new XPathException("Unknown encoding " + Err.wrap(encoding), encErr);
-            e.setErrorCode(getErrorCodePrefix(context) + "1190");
+            e.setErrorCode("FOUT1190");
             throw e;
         } catch (java.io.IOException ioErr) {
 //            System.err.println("ProxyHost: " + System.getProperty("http.proxyHost"));
@@ -98,13 +88,13 @@ public abstract class UnparsedTextFunction extends SystemFunction {
             absoluteURI = ResolveURI.makeAbsolute(href, baseURI);
         } catch (java.net.URISyntaxException err) {
             XPathException e = new XPathException(err.getReason() + ": " + err.getInput(), err);
-            e.setErrorCode(getErrorCodePrefix(context) + "1170");
+            e.setErrorCode("FOUT1170");
             throw e;
         }
 
         if (absoluteURI.getFragment() != null) {
             XPathException e = new XPathException("URI for unparsed-text() must not contain a fragment identifier");
-            e.setErrorCode(getErrorCodePrefix(context) + "1170");
+            e.setErrorCode("FOUT1170");
             throw e;
         }
 
@@ -126,13 +116,13 @@ public abstract class UnparsedTextFunction extends SystemFunction {
         String errorCode = "FOUT1200";
         if (context != null) {
             if (ioErr instanceof MalformedInputException) {
-                errorCode = getErrorCodePrefix(context) + "1200";
+                errorCode = "FOUT1200";
             } else if (ioErr instanceof CharacterCodingException) {
-                errorCode = getErrorCodePrefix(context) + "1200";
+                errorCode = "FOUT1200";
             } else if (ioErr instanceof UnmappableCharacterException) {
-                errorCode = getErrorCodePrefix(context) + "1190";
+                errorCode = "FOUT1190";
             } else {
-                errorCode = getErrorCodePrefix(context) + "1170";
+                errorCode = "FOUT1170";
             }
         }
         e.setErrorCode(errorCode);
@@ -150,7 +140,7 @@ public abstract class UnparsedTextFunction extends SystemFunction {
      * @throws XPathException if the file contains illegal characters
      */
 
-    public static CharSequence readFile(IntPredicate checker, Reader reader, XPathContext context) throws IOException, XPathException {
+    public static CharSequence readFile(IntPredicate checker, Reader reader) throws IOException, XPathException {
         FastStringBuffer sb = new FastStringBuffer(2048);
         char[] buffer = new char[2048];
         boolean first = true;
@@ -189,9 +179,9 @@ public abstract class UnparsedTextFunction extends SystemFunction {
                     }
                 }
                 if (!checker.matches(ch32)) {
-                    XPathException err = new XPathException("The unparsed-text file contains a character that is illegal in XML (line=" +
+                    XPathException err = new XPathException("The input file contains a character that is illegal in XML (line=" +
                             line + " column=" + column + " value=hex " + Integer.toHexString(ch32) + ')');
-                    err.setErrorCode(getErrorCodePrefix(context) + "1190");
+                    err.setErrorCode("FOUT1190");
                     throw err;
                 }
             }

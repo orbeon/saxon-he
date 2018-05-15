@@ -427,7 +427,7 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
                 try {
                     Reader reader = new FileReader(file);
                     IntPredicate checker = pipe.getConfiguration().getValidCharacterChecker();
-                    CharSequence content = UnparsedTextFunction.readFile(checker, reader, null);
+                    CharSequence content = UnparsedTextFunction.readFile(checker, reader);
                     String uri = file.toURI().toString();
                     TextFragmentValue doc = new TextFragmentValue(pipe.getConfiguration(), content, uri);
                     doc.setSystemId(file.toURI().toString());
