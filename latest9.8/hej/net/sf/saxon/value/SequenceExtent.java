@@ -256,13 +256,16 @@ public class SequenceExtent implements GroundedValue {
         int len = getLength();
         if (len == 0) {
             return false;
-        } else if (value.get(0) instanceof NodeInfo) {
-            return true;
-        } else if (len > 1) {
-            // this is a type error - reuse the error messages
-            return ExpressionTool.effectiveBooleanValue(iterate());
         } else {
-            return ((AtomicValue) value.get(0)).effectiveBooleanValue();
+            Item first = value.get(0);
+            if (first instanceof NodeInfo) {
+                return true;
+            } else if (len == 1 && first instanceof AtomicValue) {
+                return ((AtomicValue) first).effectiveBooleanValue();
+            } else {
+                // this will fail - reuse the error messages
+                return ExpressionTool.effectiveBooleanValue(iterate());
+            }
         }
     }
 
