@@ -159,7 +159,7 @@ public abstract class UnparsedTextFunction extends SystemFunction {
         int column = 1;
         boolean latin = true;
         while (true) {
-            actual = reader.read(buffer, 0, 2048);
+            actual = reader.read(buffer, 0, buffer.length);
             if (actual < 0) {
                 break;
             }
@@ -173,9 +173,16 @@ public abstract class UnparsedTextFunction extends SystemFunction {
                 if (ch32 > 255) {
                     latin = false;
                     if (UTF16CharacterSet.isHighSurrogate(ch32)) {
-                        if (c == actual) {
-                            actual = reader.read(buffer, 0, 2048);
-                            c = 0;
+                        if (c == actual) { // bug 3785, test case fn-unparsed-text-055
+                            // We've got a high surrogate right at the end of the buffer.
+                            // The path of least resistance is to extend the buffer.
+                            char[] buffer2 = new char[2048];
+                            int actual2 = reader.read(buffer2, 0, 2048);
+                            char[] buffer3 = new char[actual + actual2];
+                            System.arraycopy(buffer, 0, buffer3, 0, actual);
+                            System.arraycopy(buffer2, 0, buffer3, actual, actual2);
+                            buffer = buffer3;
+                            actual = actual + actual2;
                         }
                         char low = buffer[c++];
                         ch32 = UTF16CharacterSet.combinePair((char) ch32, low);
