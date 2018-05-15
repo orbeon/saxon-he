@@ -304,6 +304,14 @@ namespace Saxon.Api
 		}
 
         /// <summary>
+        /// Get a character map
+        /// </summary>
+        public JCharacterMapIndex GetCharacterMap()
+        {
+            return this.characterMap;
+        }
+
+        /// <summary>
         /// Set a character map to be used
         /// </summary>
         /// <param name="charMap">the character map</param>
@@ -401,6 +409,8 @@ namespace Saxon.Api
 		public override JReceiver GetReceiver(JPipelineConfiguration pipe){
 			return GetReceiver (pipe.getConfiguration());
 		}
+
+       
 
 
         /// <summary inherit="yes"/>

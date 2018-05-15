@@ -6,6 +6,7 @@ using System.Globalization;
 using JConfiguration = net.sf.saxon.Configuration;
 using JController = net.sf.saxon.Controller;
 using JItem = net.sf.saxon.om.Item;
+using JReceiver = net.sf.saxon.@event.Receiver;
 using JGroundedValue = net.sf.saxon.om.GroundedValue;
 using JNodeInfo = net.sf.saxon.om.NodeInfo;
 using JSequence = net.sf.saxon.om.Sequence;
@@ -25,6 +26,9 @@ using JStreamSource = javax.xml.transform.stream.StreamSource;
 using JUserFunction = net.sf.saxon.expr.instruct.UserFunction;
 using JBoolean = java.lang.Boolean;
 using JDecimalValue = net.sf.saxon.value.DecimalValue;
+using JProperties = java.util.Properties;
+using JPipelineConfiguration = net.sf.saxon.@event.PipelineConfiguration;
+using JCharacterMapIndex = net.sf.saxon.serialize.CharacterMapIndex;
 
 
 namespace Saxon.Api
@@ -648,6 +652,48 @@ namespace Saxon.Api
             }
         }
 
+        internal JReceiver GetReceiver(Serializer serializer)
+        {
+            net.sf.saxon.expr.instruct.Executable executable = exp.getExecutable();
+            JConfiguration config = executable.getConfiguration();
+            JPipelineConfiguration pipe = config.makePipelineConfiguration();
+            pipe.setHostLanguage(executable.getHostLanguage());
+            JProperties baseProps = new JProperties(executable.getDefaultOutputProperties());
+
+            JCharacterMapIndex charMapIndex = executable.getCharacterMapIndex();
+            JCharacterMapIndex characterMap = serializer.GetCharacterMap();
+            if (charMapIndex.isEmpty())
+            {
+                charMapIndex = characterMap;
+            }
+            else if (characterMap != null && !characterMap.isEmpty() && charMapIndex != characterMap)
+            {
+                // Merge the character maps
+                java.util.Iterator mapIter = characterMap.iterator();
+                while (mapIter.hasNext())
+                {
+                    net.sf.saxon.serialize.CharacterMap map = (net.sf.saxon.serialize.CharacterMap)mapIter.next();
+                    charMapIndex.putCharacterMap(map.getName(), map);
+                }
+            }
+
+            JProperties properties = serializer.GetOutputProperties();
+            object [] propSet =  properties.entrySet().toArray();
+
+            for (int i=0;i< properties.size();i++)
+            {
+                    java.util.Map.Entry entry = (java.util.Map.Entry)propSet[i];
+                    net.sf.saxon.om.StructuredQName name = (net.sf.saxon.om.StructuredQName)entry.getKey();
+                    net.sf.saxon.expr.instruct.ResultDocument.setSerializationProperty(
+                    baseProps, name.getURI(), name.getLocalPart(), (String)entry.getValue(), null, true, config);
+            }
+            serializer.SetDefaultOutputProperties(baseProps);
+            serializer.SetCharacterMap(charMapIndex);
+                
+            JReceiver target = serializer.GetReceiver(pipe);
+            return target;
+        }
+
         /// <summary>
         /// Evaluate the query, sending the result to a specified destination.
         /// </summary>
@@ -663,7 +709,14 @@ namespace Saxon.Api
         {
             try
             {
-                exp.run(context, destination.GetReceiver(context.getConfiguration().makePipelineConfiguration()), destination.GetOutputProperties());
+                if (destination is Serializer)
+                {
+                    exp.run(context, GetReceiver((Serializer)destination), destination.GetOutputProperties());
+                }
+                else
+                {
+                    exp.run(context, destination.GetReceiver(context.getConfiguration().makePipelineConfiguration()), destination.GetOutputProperties());
+                }
             }
             catch (JXPathException err)
             {
