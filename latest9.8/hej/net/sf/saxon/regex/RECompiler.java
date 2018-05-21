@@ -184,7 +184,7 @@ public class RECompiler {
      */
 
     static Operation trace(Operation base) {
-        if (TRACING) {
+        if (TRACING && !(base instanceof Operation.OpTrace)) {
             return new Operation.OpTrace(base);
         } else {
             return base;

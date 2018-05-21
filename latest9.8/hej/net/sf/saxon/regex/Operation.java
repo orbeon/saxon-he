@@ -115,7 +115,6 @@ public abstract class Operation {
     public static class OpChoice extends Operation {
 
         List<Operation> branches;
-        boolean mutuallyExclusive = false;
 
         public OpChoice(List<Operation> branches) {
             this.branches = branches;
@@ -330,7 +329,7 @@ public abstract class Operation {
 
         @Override
         public Operation optimize(REProgram program, REFlags flags) {
-            if (operations.size() == 0) {
+            if (operations.isEmpty()) {
                 return new OpNothing();
             } else if (operations.size() == 1) {
                 return operations.get(0);
@@ -830,7 +829,7 @@ public abstract class Operation {
                         int p = top.next();
                         positions.pop();
                         positions.push(p);
-                        while (iterators.size() <= bound) {
+                        while (iterators.size() < bound) {  // bug 3787
                             IntIterator it = op.iterateMatches(matcher, p);
                             if (it.hasNext()) {
                                 p = it.next();
@@ -1296,9 +1295,12 @@ public abstract class Operation {
         public IntIterator iterateMatches(REMatcher matcher, int position) {
             final IntIterator baseIter = base.iterateMatches(matcher, position);
             final int iterNr = counter++;
+            String clName = baseIter.getClass().getName();
+            int lastDot = clName.lastIndexOf(".");
+            String iterName = clName.substring(lastDot+1);
             System.err.println("Iterating over " + base.getClass().getSimpleName() + " " +
                     base.display() + " at position " + position + " returning " +
-                    baseIter.getClass().getSimpleName() + " " + iterNr);
+                    iterName + " " + iterNr);
             return new IntIterator() {
                 public boolean hasNext() {
                     boolean b = baseIter.hasNext();
