@@ -1223,6 +1223,9 @@ public class ExpressionTool {
             body = body.optimize(visitor, cit);
             body.setParentExpression(null);
             if (opt.isOptionSet(OptimizerOptions.LOOP_LIFTING)) {
+                if (opt.tracing) {
+                    body.verifyParentPointers();
+                }
                 body = LoopLifter.process(body, visitor, cit);
             }
             if (extractGlobals && compilation != null) {

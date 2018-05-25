@@ -453,6 +453,7 @@ public class Optimizer {
             err.info("OPT : At line " + exp.getLocation().getLineNumber() + " of " + exp.getLocation().getSystemId());
             err.info("OPT : " + message);
             err.info("OPT : Expression after rewrite: " + exp.toString());
+            exp.verifyParentPointers();
         }
     }
 
@@ -462,6 +463,7 @@ public class Optimizer {
             err.info("OPT : At line " + exp.getLocation().getLineNumber() + " of " + exp.getLocation().getSystemId());
             err.info("OPT : " + message);
             err.info("OPT : Expression after rewrite: " + exp.toString());
+            exp.verifyParentPointers();
         }
     }
 
