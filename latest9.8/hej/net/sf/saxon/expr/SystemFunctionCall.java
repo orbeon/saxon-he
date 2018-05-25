@@ -133,8 +133,11 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
     @Override
     public int getIntrinsicDependencies() {
         int properties = getTargetFunction().getDetails().properties;
+        int dep = 0;
+        if ((properties & BuiltInFunctionSet.LATE) != 0) {
+            dep = StaticProperty.DEPENDS_ON_RUNTIME_ENVIRONMENT;
+        }
         if ((properties & BuiltInFunctionSet.FOCUS) != 0) {
-            int dep = 0;
             if ((properties & BuiltInFunctionSet.CDOC) != 0) {
                 dep |= StaticProperty.DEPENDS_ON_CONTEXT_DOCUMENT;
             }
@@ -149,17 +152,17 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
             }
             return dep;
         } else if ((properties & BuiltInFunctionSet.BASE) != 0) {
-            return StaticProperty.DEPENDS_ON_STATIC_CONTEXT;
+            return dep | StaticProperty.DEPENDS_ON_STATIC_CONTEXT;
         } else if ((properties & BuiltInFunctionSet.DCOLL) != 0) {
-            return StaticProperty.DEPENDS_ON_STATIC_CONTEXT;
+            return dep | StaticProperty.DEPENDS_ON_STATIC_CONTEXT;
         } else if (isCallOn(RegexGroup.class)) {
-            return StaticProperty.DEPENDS_ON_CURRENT_GROUP;
+            return dep | StaticProperty.DEPENDS_ON_CURRENT_GROUP;
         } else if (isCallOnSystemFunction("current-merge-group")) {
-            return StaticProperty.DEPENDS_ON_CURRENT_GROUP;
+            return dep | StaticProperty.DEPENDS_ON_CURRENT_GROUP;
         } else if (isCallOnSystemFunction("current-merge-key")) {
-            return StaticProperty.DEPENDS_ON_CURRENT_GROUP;
+            return dep | StaticProperty.DEPENDS_ON_CURRENT_GROUP;
         } else {
-            return 0;
+            return dep;
         }
     }
 

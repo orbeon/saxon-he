@@ -534,6 +534,7 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
             Sequence s = targetFunction.call(c2, actualArgs);
             return s;
         } catch (StackOverflowError err) {
+            //err.printStackTrace();
             throw new XPathException("Too many nested function calls. May be due to infinite recursion",
                                      SaxonErrorCode.SXLM0001, getLocation());
         }
