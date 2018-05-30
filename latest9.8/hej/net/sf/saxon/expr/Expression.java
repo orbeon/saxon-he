@@ -230,6 +230,10 @@ public abstract class Expression implements IdentityComparable, ExportAgent {
                 throw new IllegalStateException("Incorrect parent pointer in " + parent.toShortString() +
                                                         " subexpression " + o.getChildExpression().toShortString());
             }
+            if (o.getChildExpression().getRetainedStaticContext() == null) {
+                throw new IllegalStateException("No retained static context in " + parent.toShortString() +
+                                                        " subexpression " + o.getChildExpression().toShortString());
+            }
             o.getChildExpression().verifyParentPointers();
         }
         return this;
@@ -396,12 +400,14 @@ public abstract class Expression implements IdentityComparable, ExportAgent {
      */
 
     public void setRetainedStaticContext(RetainedStaticContext rsc) {
-        retainedStaticContext = rsc;
-        for (Operand o : operands()) {
-            if (o != null) {
-                Expression child = o.getChildExpression();
-                if (child != null && child.retainedStaticContext == null) {
-                    child.setRetainedStaticContext(rsc);
+        if (rsc != null) {
+            retainedStaticContext = rsc;
+            for (Operand o : operands()) {
+                if (o != null) {
+                    Expression child = o.getChildExpression();
+                    if (child != null && child.retainedStaticContext == null) {
+                        child.setRetainedStaticContext(rsc);
+                    }
                 }
             }
         }
@@ -416,22 +422,21 @@ public abstract class Expression implements IdentityComparable, ExportAgent {
      */
 
     public void setRetainedStaticContextThoroughly(RetainedStaticContext rsc) {
-//        if (rsc != null) {
-//            System.err.println("setRSC " + toShortString() + " - " + rsc);
-//        }
-        retainedStaticContext = rsc;
-        for (Operand o : operands()) {
-            if (o != null) {
-                Expression child = o.getChildExpression();
-                if (child != null) {
-                    if (child.getLocalRetainedStaticContext() == null) {
-                        child.setRetainedStaticContextThoroughly(rsc);
-                    } else {
-                        rsc = child.getLocalRetainedStaticContext();
-                        for (Operand p : child.operands()) {
-                            Expression grandchild = p.getChildExpression();
-                            if (grandchild != null) {
-                                grandchild.setRetainedStaticContextThoroughly(rsc);
+        if (rsc != null) {
+            retainedStaticContext = rsc;
+            for (Operand o : operands()) {
+                if (o != null) {
+                    Expression child = o.getChildExpression();
+                    if (child != null) {
+                        if (child.getLocalRetainedStaticContext() == null) {
+                            child.setRetainedStaticContextThoroughly(rsc);
+                        } else {
+                            rsc = child.getLocalRetainedStaticContext();
+                            for (Operand p : child.operands()) {
+                                Expression grandchild = p.getChildExpression();
+                                if (grandchild != null) {
+                                    grandchild.setRetainedStaticContextThoroughly(rsc);
+                                }
                             }
                         }
                     }
