@@ -136,13 +136,17 @@ public class ErrorExpression extends Expression {
             // copy the exception for thread-safety, because we want to add context information
             XPathException err = new XPathException(exception.getMessage());
             err.setLocation(exception.getLocator());
+            err.maybeSetLocation(getLocation());
             err.setErrorCodeQName(exception.getErrorCodeQName());
-            err.setXPathContext(context);
+            err.setXPathContext(exception.getXPathContext());
+            err.maybeSetContext(context);
             err.setIsTypeError(exception.isTypeError());
+            err.setIsStaticError(exception.isStaticError());
+            err.setIsGlobalError(exception.isGlobalError());
             throw err;
         } else {
             XPathException err = new XPathException(message);
-            err.setLocation(exception.getLocator());
+            err.setLocation(getLocation());
             err.setErrorCode(errorCode);
             err.setXPathContext(context);
             err.setIsTypeError(isTypeError);
