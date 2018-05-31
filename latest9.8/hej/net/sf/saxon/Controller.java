@@ -56,28 +56,28 @@ import java.util.*;
  * an executing instance of a transformation or query. Multiple concurrent executions of
  * the same transformation or query will use different Controller instances. This class is
  * therefore not thread-safe.
- * <p/>
+ * <p>
  * The Controller is serially reusable: when one transformation or query
  * is finished, it can be used to run another. However, there is no advantage in doing this
  * rather than allocating a new Controller each time.
- * <p/>
+ * <p>
  * A dummy Controller is created when running free-standing XPath expressions.
- * <p/>
+ * <p>
  * The Controller holds those parts of the dynamic context that do not vary during the course
  * of a transformation or query, or that do not change once their value has been computed.
  * This also includes those parts of the static context that are required at run-time.
- * <p/>
+ * <p>
  * Many methods on the Controller are designed for internal use and should not be
  * considered stable. From release 8.4 onwards, those methods that are considered sufficiently
  * stable to constitute path of the Saxon public API are labelled with the JavaDoc tag "since":
  * the value indicates the release at which the method was added to the public API.
- * <p/>
+ * <p>
  * <p>Prior to Saxon 9.6 the Controller implemented (extended) the JAXP {@link Transformer}
  * interface, and advanced applications were able to down-cast the Transformer to a Controller.
  * This is no longer the case. Instead, the JAXP factory delivers an instance of {@link net.sf.saxon.jaxp.TransformerImpl},
  * from which the Controller is accessible if required. Because the Controller is no longer required
  * to implement the JAXP interface, it has been possible to make it less monolithic, so some of the
- * things it did are now done elsewhere: for example, it no longer handles global parameters</p>
+ * things it did are now done elsewhere: for example, it no longer handles global parameters
  *
  * @author Michael H. Kay
  * @since 8.4 From 9.6 this class should no longer be considered a public API.
@@ -170,25 +170,25 @@ public class Controller implements ContextOriginator {
     }
 
     /**
-     * <p>Reset this <code>Transformer</code> to its original configuration.</p>
-     * <p/>
-     * <p><code>Transformer</code> is reset to the same state as when it was created with
+     * <p>Reset this {@code Transformer} to its original configuration.
+     * <p>
+     * <p>{@code Transformer} is reset to the same state as when it was created with
      * {@link javax.xml.transform.TransformerFactory#newTransformer()},
      * {@link javax.xml.transform.TransformerFactory#newTransformer(javax.xml.transform.Source source)} or
      * {@link javax.xml.transform.Templates#newTransformer()}.
-     * <code>reset()</code> is designed to allow the reuse of existing <code>Transformer</code>s
-     * thus saving resources associated with the creation of new <code>Transformer</code>s.</p>
+     * {@code reset()} is designed to allow the reuse of existing {@code Transformer}s
+     * thus saving resources associated with the creation of new {@code Transformer}s.
      * <p>
      * <i>The above is from the JAXP specification. With Saxon, it's unlikely that reusing a Transformer will
      * give any performance benefits over creating a new one. The one case where it might be beneficial is
      * to reuse the document pool (the set of documents that have been loaded using the doc() or document()
      * functions). Therefore, this method does not clear the document pool. If you want to clear the document
      * pool, call the method {@link #clearDocumentPool} as well.</i>
-     * <p/>
-     * <p>The reset <code>Transformer</code> is not guaranteed to have the same {@link javax.xml.transform.URIResolver}
-     * or {@link javax.xml.transform.ErrorListener} <code>Object</code>s, e.g. {@link Object#equals(Object obj)}.
-     * It is guaranteed to have a functionally equal <code>URIResolver</code>
-     * and <code>ErrorListener</code>.</p>
+     * <p>
+     * <p>The reset {@code Transformer} is not guaranteed to have the same {@link javax.xml.transform.URIResolver}
+     * or {@link javax.xml.transform.ErrorListener} {@code Object}s, e.g. {@link Object#equals(Object obj)}.
+     * It is guaranteed to have a functionally equal {@code URIResolver}
+     * and {@code ErrorListener}.
      *
      * @since 1.5
      */
@@ -268,11 +268,11 @@ public class Controller implements ContextOriginator {
 
     /**
      * Set the initial mode for the transformation.
-     * <p/>
+     * <p>
      * XSLT 2.0 allows a transformation to be started in a mode other than the default mode.
      * The transformation then starts by looking for the template rule in this mode that best
      * matches the initial context node.
-     * <p/>
+     * <p>
      * This method may eventually be superseded by a standard JAXP method.
      *
      * @param expandedModeName the name of the initial mode.  The mode is
@@ -432,13 +432,13 @@ public class Controller implements ContextOriginator {
 
     /**
      * Set the base output URI.
-     * <p/>
+     * <p>
      * <p>This defaults to the system ID of the Result object for the principal output
      * of the transformation if this is known; if it is not known, it defaults
-     * to the current directory.</p>
-     * <p/>
-     * <p> The base output URI is used for resolving relative URIs in the <code>href</code> attribute
-     * of the <code>xsl:result-document</code> instruction.</p>
+     * to the current directory.
+     * <p>
+     * <p> The base output URI is used for resolving relative URIs in the {@code href} attribute
+     * of the {@code xsl:result-document} instruction.
      *
      * @param uri the base output URI
      * @since 8.4
@@ -450,13 +450,13 @@ public class Controller implements ContextOriginator {
 
     /**
      * Get the base output URI.
-     * <p/>
+     * <p>
      * <p>This returns the value set using the {@link #setBaseOutputURI} method. If no value has been set
      * explicitly, then the method returns null if called before the transformation, or the computed
-     * default base output URI if called after the transformation.</p>
-     * <p/>
-     * <p> The base output URI is used for resolving relative URIs in the <code>href</code> attribute
-     * of the <code>xsl:result-document</code> instruction.</p>
+     * default base output URI if called after the transformation.
+     * <p>
+     * <p> The base output URI is used for resolving relative URIs in the {@code href} attribute
+     * of the {@code xsl:result-document} instruction.
      *
      * @return the base output URI
      * @since 8.4
@@ -495,7 +495,7 @@ public class Controller implements ContextOriginator {
     /**
      * Get the principal result destination.
      * <p>This method is intended for internal use only. It is typically called by Saxon during the course
-     * of a transformation, to discover the result that was supplied in the transform() call.</p>
+     * of a transformation, to discover the result that was supplied in the transform() call.
      *
      * @return the Result object supplied as the principal result destination.
      */
@@ -511,7 +511,7 @@ public class Controller implements ContextOriginator {
      *
      * @param uri the URI to be used as the output destination
      * @return true if the URI is available for use; false if it has already been used.
-     * <p/>
+     * <p>
      * This method is intended for internal use only.
      */
 
@@ -670,11 +670,11 @@ public class Controller implements ContextOriginator {
      *
      * <p>XSLT 2.0 allows a transformation to start by executing a named template, rather than
      * by matching an initial context node in a source document. This method may eventually
-     * be superseded by a standard JAXP method once JAXP supports XSLT 2.0.</p>
+     * be superseded by a standard JAXP method once JAXP supports XSLT 2.0.
      *
      * <p>Note that any parameters supplied using {@link #initializeController(net.sf.saxon.expr.instruct.GlobalParameterSet)}
      * are used as the values of global stylesheet parameters. There is no way to supply values for local parameters
-     * of the initial template.</p>
+     * of the initial template.
      *
      * @param qName The expanded name of the template, or null to indicate that there should be no initial template.
      * @throws XPathException if there is no named template with this name
@@ -752,7 +752,7 @@ public class Controller implements ContextOriginator {
 
     /**
      * Make a PipelineConfiguration based on the properties of this Controller.
-     * <p/>
+     * <p>
      * This interface is intended primarily for internal use, although it may be necessary
      * for applications to call it directly if they construct pull or push pipelines
      *
@@ -788,7 +788,7 @@ public class Controller implements ContextOriginator {
 
     /**
      * Make a Receiver to be used for xsl:message output.
-     * <p/>
+     * <p>
      * This method is intended for internal use only.
      *
      * @return The newly constructed message Emitter
@@ -815,31 +815,36 @@ public class Controller implements ContextOriginator {
      * output of xsl:message is sent to the registered ErrorListener. Saxon
      * does not implement this convention. Instead, the output is sent
      * to a default message emitter, which is a slightly customised implementation
-     * of the standard Saxon Emitter interface.</p>
+     * of the standard Saxon Emitter interface.
      * <p>
      * This interface can be used to change the way in which Saxon outputs
-     * xsl:message output.</p>
+     * xsl:message output.
      * <p>
      * It is not necessary to use this interface in order to change the destination
      * to which messages are written: that can be achieved by obtaining the standard
-     * message emitter and calling its {@link Emitter#setWriter} method.</p>
+     * message emitter and calling its {@link Emitter#setWriter} method.
      * <p>
-     * Although any <code>Receiver</code> can be supplied as the destination for messages,
+     * Although any {@code Receiver} can be supplied as the destination for messages,
      * applications may find it convenient to implement a subclass of {@link net.sf.saxon.event.SequenceWriter},
-     * in which only the abstract <code>write()</code> method is implemented. This will have the effect that the
-     * <code>write()</code> method is called to output each message as it is generated, with the <code>Item</code>
-     * that is passed to the <code>write()</code> method being the document node at the root of an XML document
+     * in which only the abstract {@code write()} method is implemented. This will have the effect that the
+     * {@code write()} method is called to output each message as it is generated, with the {@code Item}
+     * that is passed to the {@code write()} method being the document node at the root of an XML document
      * containing the contents of the message.
      * <p>
      * This method is intended for use by advanced applications. The Receiver interface
-     * itself is subject to change in new Saxon releases.</p>
+     * itself is subject to change in new Saxon releases.
      * <p>
      * The supplied Receiver will have its open() method called once at the start of
-     * the transformation, and its close() method will be called once at the end of the
-     * transformation. Each individual call of an xsl:message instruction is wrapped by
+     * each transformation, and its close() method will be called once at the end of each
+     * transformation. A "transformation" in this sense is a single call on a method such as
+     * {@link #callTemplate}, or {@link #applyTemplates}. In addition, if tracing is enabled,
+     * global variables are pre-evaluated, and the message receiver is opened at the start
+     * of this process, and closed at the end.
+     * <p>
+     * Each individual call of an xsl:message instruction is wrapped by
      * calls of startDocument() and endDocument(). If terminate="yes" is specified on the
      * xsl:message call, the properties argument of the startDocument() call will be set
-     * to the value {@link ReceiverOptions#TERMINATE}.</p>
+     * to the value {@link ReceiverOptions#TERMINATE}.
      *
      * @param receiver The receiver to receive xsl:message output.
      * @since 8.4; changed in 8.9 to supply a Receiver rather than an Emitter
@@ -905,15 +910,15 @@ public class Controller implements ContextOriginator {
 
     /**
      * Set the policy for handling recoverable XSLT errors.
-     * <p/>
+     * <p>
      * <p>Since 9.3 this call has no effect unless the error listener in use is a {@link StandardErrorListener}
      * or a subclass thereof. Calling this method then results in a call to the StandardErrorListener
      * to set the recovery policy, and the action that is taken on calls of the various methods
-     * error(), fatalError(), and warning() is then the responsibility of the ErrorListener itself.</p>
-     * <p/>
+     * error(), fatalError(), and warning() is then the responsibility of the ErrorListener itself.
+     * <p>
      * <p>Since 9.2 the policy for handling the most common recoverable error, namely the ambiguous template
      * match that arises when a node matches more than one match pattern, is a compile-time rather than run-time
-     * setting, and can be controlled using {@link net.sf.saxon.trans.CompilerInfo#setRecoveryPolicy(int)} </p>
+     * setting, and can be controlled using {@link net.sf.saxon.trans.CompilerInfo#setRecoveryPolicy(int)} 
      *
      * @param policy the recovery policy to be used. The options are {@link Configuration#RECOVER_SILENTLY},
      *               {@link Configuration#RECOVER_WITH_WARNINGS}, or {@link Configuration#DO_NOT_RECOVER}.
@@ -970,7 +975,7 @@ public class Controller implements ContextOriginator {
      * Report a recoverable error. This is an XSLT concept: by default, such an error results in a warning
      * message, and processing continues. In XQuery, however, there are no recoverable errors so a fatal
      * error is reported.
-     * <p/>
+     * <p>
      * This method is intended for internal use only.
      *
      * @param err An exception holding information about the error
@@ -1027,7 +1032,7 @@ public class Controller implements ContextOriginator {
 
     /**
      * Get the Executable object.
-     * <p/>
+     * <p>
      * This method is intended for internal use only.
      *
      * @return the Executable (which represents the compiled stylesheet)
@@ -1039,7 +1044,7 @@ public class Controller implements ContextOriginator {
 
     /**
      * Get the document pool. This is used only for source documents, not for stylesheet modules.
-     * <p/>
+     * <p>
      * This method is intended for internal use only.
      *
      * @return the source document pool
@@ -1065,7 +1070,7 @@ public class Controller implements ContextOriginator {
 
     /**
      * Get the bindery for the global variables in a particular package.
-     * <p/>
+     * <p>
      * This method is intended for internal use only.
      *
      * @param packageData the package for which the variables are required
@@ -1159,10 +1164,10 @@ public class Controller implements ContextOriginator {
 
     /**
      * Get the URI resolver.
-     * <p/>
+     * <p>
      * <p><i>This method changed in Saxon 8.5, to conform to the JAXP specification. If there
      * is no user-specified URIResolver, it now returns null; previously it returned the system
-     * default URIResolver.</i></p>
+     * default URIResolver.</i>
      *
      * @return the user-supplied URI resolver if there is one, or null otherwise.
      */
@@ -1174,7 +1179,7 @@ public class Controller implements ContextOriginator {
     /**
      * Get the fallback URI resolver. This is the URIResolver that Saxon uses when
      * the user-supplied URI resolver returns null.
-     * <p/>
+     * <p>
      * This method is intended for internal use only.
      *
      * @return the the system-defined URIResolver
@@ -1186,13 +1191,13 @@ public class Controller implements ContextOriginator {
 
     /**
      * Set the URI resolver for secondary output documents.
-     * <p/>
+     * <p>
      * XSLT 2.0 introduces the <code>xsl:result-document</code instruction,
      * allowing a transformation to have multiple result documents. JAXP does
      * not yet support this capability. This method allows an OutputURIResolver
      * to be specified that takes responsibility for deciding the destination
      * (and, if it wishes, the serialization properties) of secondary output files.
-     * <p/>
+     * <p>
      * In Saxon 9.5, because xsl:result-document is now multi-threaded, the
      * supplied resolver is cloned each time a new result document is created.
      * The cloned resolved is therefore able to maintain information about
@@ -1320,7 +1325,7 @@ public class Controller implements ContextOriginator {
      * @param uri the collection URI of the default collection. May be null, to cause
      *            fallback to the collection name registered with the Configuration. The name will be passed
      *            to the collection URI resolver to identify the documents in the collection, unless
-     *            the name is <code>http://saxon.sf.net/collection/empty</code> which always refers
+     *            the name is {@code http://saxon.sf.net/collection/empty} which always refers
      *            to the empty collection.
      * @since 9.4
      */
@@ -1375,7 +1380,7 @@ public class Controller implements ContextOriginator {
 
     /**
      * Get the KeyManager.
-     * <p/>
+     * <p>
      * This method is intended for internal use only.
      *
      * @return the KeyManager, which holds details of all key declarations
@@ -1443,7 +1448,7 @@ public class Controller implements ContextOriginator {
      * while building the source tree, but slows it down if it is applied to a tree that
      * has already been built. So if the same source tree is used as input to a number
      * of transformations, it is better to strip the whitespace once at the time of
-     * tree construction, rather than doing it on-the-fly during each transformation.</p>
+     * tree construction, rather than doing it on-the-fly during each transformation.
      *
      * @param strip true if whitespace is to be stripped from supplied source trees
      *              as defined by xsl:strip-space; false to suppress whitespace stripping
@@ -1496,7 +1501,7 @@ public class Controller implements ContextOriginator {
     /**
      * Make a Stripper configured to implement the whitespace stripping rules.
      * In the case of XSLT the whitespace stripping rules are normally defined
-     * by <code>xsl:strip-space</code> and <code>xsl:preserve-space</code elements
+     * by {@code xsl:strip-space} and {@code xsl:preserve-space} elements
      * in the stylesheet. Alternatively, stripping of all whitespace text nodes
      * may be defined at the level of the Configuration, using the code
      * {@code Configuration.getParseOptions().setSpaceStrippingRules(AllElementsSpaceStrippingRule.getInstance()}.
@@ -1541,7 +1546,7 @@ public class Controller implements ContextOriginator {
      * Add a document to the document pool, and check that it is suitable for use in this query or
      * transformation. This check rejects the document if document has been validated (and thus carries
      * type annotations) but the query or transformation is not schema-aware.
-     * <p/>
+     * <p>
      * This method is intended for internal use only.
      *
      * @param doc the root node of the document to be added. Must not be null.
@@ -1577,7 +1582,7 @@ public class Controller implements ContextOriginator {
 
     /**
      * Get the Rule Manager.
-     * <p/>
+     * <p>
      * This method is intended for internal use only.
      *
      * @return the Rule Manager, used to hold details of template rules for
@@ -1595,7 +1600,7 @@ public class Controller implements ContextOriginator {
     /**
      * Set a TraceListener, replacing any existing TraceListener
      * <p>This method has no effect unless the stylesheet or query was compiled
-     * with tracing enabled.</p>
+     * with tracing enabled.
      *
      * @param listener the TraceListener to be set. May be null, in which case
      *                 trace events will not be reported
@@ -1797,7 +1802,7 @@ public class Controller implements ContextOriginator {
      * an arbitrary object that may be regarded as the container of the data (originally, and
      * typically still, a node in a tree), and a name. The name serves to distingush data objects
      * associated with the same node by different client applications.
-     * <p/>
+     * <p>
      * This method is intended primarily for internal use, though it may also be
      * used by advanced applications.
      *
@@ -1819,7 +1824,7 @@ public class Controller implements ContextOriginator {
      * an arbitrary object that may be regarded as the container of the data (originally, and
      * typically still, a node in a tree), and a name. The name serves to distingush data objects
      * associated with the same node by different client applications.
-     * <p/>
+     * <p>
      * This method is intended primarily for internal use, though it may also be
      * used by advanced applications.
      *
@@ -2215,7 +2220,7 @@ public class Controller implements ContextOriginator {
      * that implements the NodeInfo interface, and/or adding a space-stripping wrapper
      * if the stylesheet strips whitespace nodes, and/or adding a type-stripping wrapper
      * if the stylesheet strips input type annotations.
-     * <p/>
+     * <p>
      * This method is intended for internal use.
      *
      * @param source the input tree. Must be either a DOMSource or a NodeInfo
@@ -2247,10 +2252,10 @@ public class Controller implements ContextOriginator {
 
     /**
      * Transform a source XML document supplied as a tree. <br>
-     * <p/>
+     * <p>
      * This method is intended for internal use. External applications should use
      * the {@link #transform} method, which is part of the JAXP interface. Note that
-     * <code>NodeInfo</code> implements the JAXP <code>Source</code> interface, so
+     * {@code NodeInfo} implements the JAXP {@code Source} interface, so
      * it may be supplied directly to the transform() method.
      *
      * @param startNode         A Node that identifies the source document to be
@@ -2440,10 +2445,10 @@ public class Controller implements ContextOriginator {
 
     /**
      * Transform a source XML document supplied as a tree. <br>
-     * <p/>
+     * <p>
      * This method is intended for internal use. External applications should use
      * the {@link #transform} method, which is part of the JAXP interface. Note that
-     * <code>NodeInfo</code> implements the JAXP <code>Source</code> interface, so
+     * {@code NodeInfo} implements the JAXP {@code Source} interface, so
      * it may be supplied directly to the transform() method.
      *
      * @param initialTemplateName the entry point, the name of a named template
@@ -2555,10 +2560,10 @@ public class Controller implements ContextOriginator {
 
     /**
      * Transform a source XML document supplied as a stream, in streaming mode. <br>
-     * <p/>
+     * <p>
      * This method is intended for internal use. External applications should use
      * the {@link #transform} method, which is part of the JAXP interface. Note that
-     * <code>NodeInfo</code> implements the JAXP <code>Source</code> interface, so
+     * {@code NodeInfo} implements the JAXP {@code Source} interface, so
      * it may be supplied directly to the transform() method.
      *
      * @param source the principal input document, supplied as a
@@ -2652,12 +2657,12 @@ public class Controller implements ContextOriginator {
     /**
      * Get a receiver to which the input to this transformation can be supplied
      * as a stream of events, causing the transformation to be executed in streaming mode. <br>
-     * <p/>
+     * <p>
      * This method is intended for internal use. External applications should use
      * the {@link #transform} method, which is part of the JAXP interface. Note that
-     * <code>NodeInfo</code> implements the JAXP <code>Source</code> interface, so
+     * {@code NodeInfo} implements the JAXP {@code Source} interface, so
      * it may be supplied directly to the transform() method.
-     * <p/>
+     * <p>
      *
      * @param mode   the initial mode, which must be a streaming mode
      * @param result The output destination
@@ -2800,7 +2805,7 @@ public class Controller implements ContextOriginator {
 
     /**
      * Pre-evaluate global variables (when debugging/tracing).
-     * <p/>
+     * <p>
      * This method is intended for internal use.
      *
      * @param context the dynamic context for evaluating the global variables
@@ -2808,6 +2813,7 @@ public class Controller implements ContextOriginator {
      */
 
     public void preEvaluateGlobals(XPathContext context) throws XPathException {
+        openMessageEmitter();
         for (PackageData pack : getExecutable().getPackages()) {
             for (GlobalVariable var : pack.getGlobalVariableList()) {
                 if (!var.isUnused()) {
@@ -2821,6 +2827,7 @@ public class Controller implements ContextOriginator {
                 }
             }
         }
+        closeMessageEmitter();
     }
 
     /**
@@ -2865,9 +2872,9 @@ public class Controller implements ContextOriginator {
      * This method is provided primarily for testing purposes, to allow tests to be run with
      * a fixed date and time. The supplied date/time must include a timezone, which is used
      * as the implicit timezone.
-     * <p/>
+     * <p>
      * <p>Note that comparisons of date/time values currently use the implicit timezone
-     * taken from the system clock, not from the value supplied here.</p>
+     * taken from the system clock, not from the value supplied here.
      *
      * @param dateTime the date/time value to be used as the current date and time
      * @throws IllegalStateException             if a current date/time has already been
@@ -2920,7 +2927,7 @@ public class Controller implements ContextOriginator {
 
     /**
      * Make an XPathContext object for expression evaluation.
-     * <p/>
+     * <p>
      * This method is intended for internal use.
      *
      * @return the new XPathContext
@@ -2934,7 +2941,7 @@ public class Controller implements ContextOriginator {
 
     /**
      * Set the last remembered node, for node numbering purposes.
-     * <p/>
+     * <p>
      * This method is strictly for internal use only.
      *
      * @param node   the node in question
@@ -2948,7 +2955,7 @@ public class Controller implements ContextOriginator {
 
     /**
      * Get the number of a node if it is the last remembered one.
-     * <p/>
+     * <p>
      * This method is strictly for internal use only.
      *
      * @param node the node for which remembered information is required
