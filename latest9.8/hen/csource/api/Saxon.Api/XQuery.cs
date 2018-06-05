@@ -711,7 +711,7 @@ namespace Saxon.Api
             {
                 if (destination is Serializer)
                 {
-                    exp.run(context, GetReceiver((Serializer)destination), destination.GetOutputProperties());
+                    exp.run(context, GetReceiver((Serializer)destination), null);
                 }
                 else
                 {
