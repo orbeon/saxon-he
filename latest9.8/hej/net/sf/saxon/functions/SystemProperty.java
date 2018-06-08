@@ -145,8 +145,7 @@ public class SystemProperty extends SystemFunction implements Callable {
             } else if (local.equals("supports-serialization")) {
                 return yesOrNo(!"JS".equals(edition));
             } else if (local.equals("supports-backwards-compatibility")) {
-                return yesOrNo(!"HE".equals(edition) &&
-                        config.isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION));
+                return "yes";
             } else if (local.equals("supports-namespace-axis")) {
                 return "yes";
             } else if (local.equals("supports-streaming")) {
