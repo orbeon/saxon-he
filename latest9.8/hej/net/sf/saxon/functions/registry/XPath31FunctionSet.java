@@ -117,19 +117,19 @@ public class XPath31FunctionSet extends BuiltInFunctionSet {
 
         register("parse-json", 1, ParseJsonFn.class, AnyItemType.getInstance(),
                  OPT, XPATH30, 0)
-                .arg(0, BuiltInAtomicType.STRING, ONE, null);
+                .arg(0, BuiltInAtomicType.STRING, OPT, EMPTY);
 
         register("parse-json", 2, ParseJsonFn.class, AnyItemType.getInstance(),
                  OPT, XPATH30, 0)
-                .arg(0, BuiltInAtomicType.STRING, ONE, null)
+                .arg(0, BuiltInAtomicType.STRING, OPT, EMPTY)
                 .arg(1, MapType.ANY_MAP_TYPE, ONE, null)
                 .optionDetails(ParseJsonFn.OPTION_DETAILS);
 
-        register("parse-xml", 1, ParseXml.class, NodeKindTest.DOCUMENT, ONE, XPATH30, LATE)
-                .arg(0, BuiltInAtomicType.STRING, ONE, null);
+        register("parse-xml", 1, ParseXml.class, NodeKindTest.DOCUMENT, OPT, XPATH30, LATE)
+                .arg(0, BuiltInAtomicType.STRING, OPT, EMPTY);
 
-        register("parse-xml-fragment", 1, ParseXmlFragment.class, NodeKindTest.DOCUMENT, ONE, XPATH30, LATE)
-                .arg(0, BuiltInAtomicType.STRING, ONE, null);
+        register("parse-xml-fragment", 1, ParseXmlFragment.class, NodeKindTest.DOCUMENT, OPT, XPATH30, LATE)
+                .arg(0, BuiltInAtomicType.STRING, OPT, null);
 
         register("serialize", 2, Serialize.class, BuiltInAtomicType.STRING, ONE, XPATH31, 0)
                 .arg(0, AnyItemType.getInstance(), STAR, null)
