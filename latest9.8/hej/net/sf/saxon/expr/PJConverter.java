@@ -110,6 +110,10 @@ public abstract class PJConverter {
     public static SequenceType getEquivalentSequenceType(Class javaClass) {
         if (javaClass.isArray()) {
             Class memberClass = javaClass.getComponentType();
+            if (memberClass == byte.class) {
+                // special case byte[], see bugs 3525 and 3818
+                return SequenceType.makeSequenceType(BuiltInAtomicType.UNSIGNED_BYTE, StaticProperty.ALLOWS_ZERO_OR_MORE);
+            }
             SequenceType memberType = getEquivalentSequenceType(memberClass);
             if (memberType != null) {
                 return SequenceType.makeSequenceType(memberType.getPrimaryType(), StaticProperty.ALLOWS_ZERO_OR_MORE);
