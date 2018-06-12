@@ -95,16 +95,11 @@ public class XPathCompiler {
      *
      * @param option true if XPath 1.0 backwards compatibility is to be enabled, false if it is to
      *               be disabled.
-     * @throws SaxonApiException if backwards compatible processing is requested, and
-     *                           is not available in this Saxon Configuration (The feature requires a license
-     *                           for Saxon-PE or higher).
-     * @since 9.1; changed in 9.8 to throw IllegalStateException if the feature is not available
+     * @since 9.1; changed in 9.8 to throw IllegalStateException if the feature is not available; change reverted
+     * by bug 3817
      */
 
-    public void setBackwardsCompatible(boolean option) throws IllegalStateException {
-        if (option && !processor.getUnderlyingConfiguration().isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION)) {
-            throw new IllegalStateException("XPath 1.0 Compatibility requires a license for Saxon-PE or higher");
-        }
+    public void setBackwardsCompatible(boolean option) {
         if (cache != null) {
             cache.clear();
         }
