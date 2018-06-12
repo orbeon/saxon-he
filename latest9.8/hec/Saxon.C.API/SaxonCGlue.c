@@ -32,7 +32,7 @@ void setDllname(){
 #elif  defined (__APPLE__) && defined(__MACH__)
            env_len = 14;
 #else
-           enc_len = 8; //not used under windows
+           env_len = 8; //not used under windows
 #endif
 		dllname =malloc(sizeof(char)*name_len+env_len+1);
 		resources_dir =malloc(sizeof(char)*rDir_len+env_len+1);
@@ -297,7 +297,7 @@ jmethodID findConstructor (JNIEnv* penv, jclass myClassInDll, char* arguments)
 /*
  * Create the Java SaxonProcessor
  */
-jobject createSaxonProcessor (JNIEnv* penv, jclass myClassInDll, const char * arguments, jobject argument1, jboolean license)
+jobject createXsltProcessor (JNIEnv* penv, jclass myClassInDll, const char * arguments, jobject argument1, jboolean license)
 {
     jmethodID MID_initi;
 
