@@ -764,8 +764,12 @@ public class ResultDocument extends Instruction
                                                 boolean prevalidated, Configuration config)
             throws XPathException {
         SerializerFactory sf = config.getSerializerFactory();
+        String clarkName = lname;
+        if (!uri.isEmpty()) {
+            clarkName = '{' + uri + '}' + lname;
+        }
         if (uri.isEmpty() || NamespaceConstant.SAXON.equals(uri)) {
-            if (lname.equals("method")) {
+            if (clarkName.equals("method")) {
                 value = Whitespace.trim(value);
                 if (value.startsWith("Q{}") && value.length() > 3) {
                     value = value.substring(3);
@@ -806,22 +810,22 @@ public class ResultDocument extends Instruction
                         throw err;
                     }
                 }
-            } else if (lname.equals("use-character-maps")) {
+            } else if (clarkName.equals("use-character-maps")) {
                 // The use-character-maps attribute is always turned into a Clark-format name at compile time
                 String existing = details.getProperty(SaxonOutputKeys.USE_CHARACTER_MAPS);
                 if (existing == null) {
                     existing = "";
                 }
                 details.setProperty(SaxonOutputKeys.USE_CHARACTER_MAPS, existing + value);
-            } else if (lname.equals("cdata-section-elements")) {
+            } else if (clarkName.equals("cdata-section-elements")) {
                 processListOfNodeNames(details, OutputKeys.CDATA_SECTION_ELEMENTS, value, nsResolver, true, prevalidated);
-            } else if (lname.equals("suppress-indentation")) {
+            } else if (clarkName.equals("suppress-indentation")) {
                 processListOfNodeNames(details, SaxonOutputKeys.SUPPRESS_INDENTATION, value, nsResolver, true, prevalidated);
-            } else if (lname.equals("double-space")) {
+            } else if (clarkName.equals(SaxonOutputKeys.DOUBLE_SPACE)) {
                 processListOfNodeNames(details, SaxonOutputKeys.DOUBLE_SPACE, value, nsResolver, true, prevalidated);
-            } else if (lname.equals("attribute-order")) {
+            } else if (clarkName.equals(SaxonOutputKeys.ATTRIBUTE_ORDER)) {
                 processListOfNodeNames(details, SaxonOutputKeys.ATTRIBUTE_ORDER, value, nsResolver, false, prevalidated);
-            } else if (lname.equals("next-in-chain")) {
+            } else if (clarkName.equals(SaxonOutputKeys.NEXT_IN_CHAIN)) {
 //                XPathException e = new XPathException("saxon:next-in-chain property is available only on xsl:output");
 //                e.setErrorCodeQName(
 //                        new StructuredQName("saxon", NamespaceConstant.SAXON, SaxonErrorCode.SXWN9004));
@@ -831,10 +835,7 @@ public class ResultDocument extends Instruction
                 if (lname.equals("output-version")) {
                     lname = "version";
                 }
-                String clarkName = lname;
-                if (uri.length() != 0) {
-                    clarkName = '{' + uri + '}' + lname;
-                }
+
                 if (!prevalidated) {
                     try {
                         if (!SaxonOutputKeys.ITEM_SEPARATOR.equals(clarkName)) {

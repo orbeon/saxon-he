@@ -697,6 +697,8 @@ public abstract class StyleElement extends ElementImpl {
             compileErrorInAttribute("Attribute " + Err.wrap(nc.getDisplayName(), Err.ATTRIBUTE) +
                                             " is not allowed on element " + Err.wrap(getDisplayName(), Err.ELEMENT),
                                     "XTSE0090", clarkName);
+        } else if (NamespaceConstant.SAXON.equals(attributeURI)) {
+            compileWarning("Unrecognized attribute in Saxon namespace: " + nc.getDisplayName(), "XTSE0090");
         }
     }
 
