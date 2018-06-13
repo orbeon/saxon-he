@@ -417,7 +417,7 @@ public abstract class CalendarValue extends AtomicValue implements AtomicMatchKe
 
         @Override
         public int hashCode() {
-            return asAtomic().identityHashCode();
+            return asAtomic().hashCode();
         }
     }
 }
