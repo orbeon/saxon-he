@@ -832,8 +832,8 @@ public class ResultDocument extends Instruction
 //                throw e;
             } else {
                 // all other properties in the default or Saxon namespaces
-                if (lname.equals("output-version")) {
-                    lname = "version";
+                if (clarkName.equals("output-version")) {
+                    clarkName = "version";
                 }
 
                 if (!prevalidated) {
