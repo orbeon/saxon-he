@@ -20,15 +20,19 @@ import java.util.*;
 /**
  * A map in the XDM data model. A map is a list of zero or more entries, each of which
  * is a pair comprising a key (which is an atomic value) and a value (which is an arbitrary value).
- * The map itself is an XDM item, and is also an implementation of a Java {@link java.util.Map}.
+ * The map itself is an XDM item.
  * <p/>
- * <p>An XdmMap is immutable.</p>
+ * An XdmMap is immutable.
  * <p/>
- *
+ * As originally issued in Saxon 9.8, this class implemented the {@link java.util.Map} interface.
+ * It no longer does so, because it was found that the methods {@link #size()}, {@link #put(XdmAtomicValue, XdmValue)},
+ * and {@link #remove} did not adhere to the semantic contract of that interface. Instead, it is now
+ * possible to obtain a view of this object as an immutable Java {@link java.util.Map} by calling the
+ * method {@link #asImmutableMap()}. See bug 3824.
  * @since 9.8
  */
 
-public class XdmMap extends XdmFunctionItem implements Map<XdmAtomicValue, XdmValue> {
+public class XdmMap extends XdmFunctionItem {
 
     /**
      * Create an empty XdmMap
@@ -95,7 +99,7 @@ public class XdmMap extends XdmFunctionItem implements Map<XdmAtomicValue, XdmVa
 
     public XdmMap put(XdmAtomicValue key, XdmValue value) {
         XdmMap map2 = new XdmMap();
-        map2.setValue(((MapItem) getUnderlyingValue()).addEntry(key.getUnderlyingValue(), value.getUnderlyingValue()));
+        map2.setValue(getUnderlyingValue().addEntry(key.getUnderlyingValue(), value.getUnderlyingValue()));
         return map2;
     }
 
@@ -117,6 +121,7 @@ public class XdmMap extends XdmFunctionItem implements Map<XdmAtomicValue, XdmVa
      * Get the keys present in the map in the form of a list.
      * @return a list of the keys present in this map, in arbitrary order.
      */
+    @NotNull
     public Set<XdmAtomicValue> keySet() {
         Set<XdmAtomicValue> result = new HashSet<XdmAtomicValue>();
         AtomicIterator iter = getUnderlyingValue().keys();
@@ -128,7 +133,86 @@ public class XdmMap extends XdmFunctionItem implements Map<XdmAtomicValue, XdmVa
     }
 
     /**
-     * Return a corresponding Java Map.
+     * Return this map as an immutable instance of {@link java.util.Map}
+     *
+     * @return an immutable instance of {@link java.util.Map} backed by this map.
+     * Methods such as {@link #remove} and {@link #put} applied to the result will
+     * always throw {@link UnsupportedOperationException}.
+     */
+
+    public Map<XdmAtomicValue, XdmValue> asImmutableMap() {
+        // See bug 3824
+        final XdmMap base = this;
+        return new AbstractMap<XdmAtomicValue, XdmValue>() {
+            @Override
+            public Set<Entry<XdmAtomicValue, XdmValue>> entrySet() {
+                return base.entrySet();
+            }
+
+            @Override
+            public int size() {
+                return base.mapSize();
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return base.isEmpty();
+            }
+
+            @Override
+            public boolean containsValue(Object value) {
+                for (Entry<XdmAtomicValue, XdmValue> e : entrySet()) {
+                    if (value.equals(e.getValue())) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public boolean containsKey(Object key) {
+                return base.containsKey(key);
+            }
+
+            @Override
+            public XdmValue get(Object key) {
+                return base.get(key);
+            }
+
+            @Override
+            public XdmValue put(XdmAtomicValue key, XdmValue value) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public XdmValue remove(Object key) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void putAll(Map<? extends XdmAtomicValue, ? extends XdmValue> m) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void clear() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public Set<XdmAtomicValue> keySet() {
+                return base.keySet();
+            }
+
+            @Override
+            public Collection<XdmValue> values() {
+                return base.values();
+            }
+        };
+    }
+
+    /**
+     * Return a mutable Java Map containing the same entries as this map.
      *
      * @return a mutable Map from atomic values to (sequence) values, containing the
      * same entries as this map
@@ -136,8 +220,9 @@ public class XdmMap extends XdmFunctionItem implements Map<XdmAtomicValue, XdmVa
      */
 
     public Map<XdmAtomicValue, XdmValue> asMap() {
-        return new HashMap<XdmAtomicValue, XdmValue>(this);
+        return new HashMap<XdmAtomicValue, XdmValue>(asImmutableMap());
     }
+
 
     /**
      * Removes all of the mappings from this map (optional operation).
@@ -240,33 +325,14 @@ public class XdmMap extends XdmFunctionItem implements Map<XdmAtomicValue, XdmVa
 
     /**
      * Removes the mapping for a key from this map if it is present
-     * (optional operation).   More formally, if this map contains a mapping
-     * from key <tt>k</tt> to value <tt>v</tt> such that
-     * <code>(key==null ?  k==null : key.equals(k))</code>, that mapping
-     * is removed.  (The map can contain at most one such mapping.)
-     * <p/>
-     * <p>Returns the value to which this map previously associated the key,
-     * or <tt>null</tt> if the map contained no mapping for the key.
-     * <p/>
-     * <p>If this map permits null values, then a return value of
-     * <tt>null</tt> does not <i>necessarily</i> indicate that the map
-     * contained no mapping for the key; it's also possible that the map
-     * explicitly mapped the key to <tt>null</tt>.
-     * <p/>
-     * <p>The map will not contain a mapping for the specified key once the
-     * call returns.
+     * (optional operation). This map implementation is immutable
+     * so the method always throws {@link UnsupportedOperationException}.
      *
      * @param key key whose mapping is to be removed from the map
      * @return the previous value associated with <tt>key</tt>, or
      * <tt>null</tt> if there was no mapping for <tt>key</tt>.
      * @throws UnsupportedOperationException if the <tt>remove</tt> operation
      *                                       is not supported by this map
-     * @throws ClassCastException            if the key is of an inappropriate type for
-     *                                       this map
-     *                                       (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
-     * @throws NullPointerException          if the specified key is null and this
-     *                                       map does not permit null keys
-     *                                       (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
      */
     public XdmValue remove(Object key) {
         throw new UnsupportedOperationException("XdmMap is immutable");
@@ -274,24 +340,14 @@ public class XdmMap extends XdmFunctionItem implements Map<XdmAtomicValue, XdmVa
 
     /**
      * Copies all of the mappings from the specified map to this map
-     * (optional operation).  The effect of this call is equivalent to that
-     * of calling {@link #put(Object, Object) put(k, v)} on this map once
-     * for each mapping from key <tt>k</tt> to value <tt>v</tt> in the
-     * specified map.  The behavior of this operation is undefined if the
-     * specified map is modified while the operation is in progress.
+     * (optional operation).  This map implementation is immutable
+     * so the method always throws {@link UnsupportedOperationException}.
      *
      * @param m mappings to be stored in this map
      * @throws UnsupportedOperationException if the <tt>putAll</tt> operation
      *                                       is not supported by this map
-     * @throws ClassCastException            if the class of a key or value in the
-     *                                       specified map prevents it from being stored in this map
-     * @throws NullPointerException          if the specified map is null, or if
-     *                                       this map does not permit null keys or values, and the
-     *                                       specified map contains null keys or values
-     * @throws IllegalArgumentException      if some property of a key or value in
-     *                                       the specified map prevents it from being stored in this map
      */
-    public void putAll(Map<? extends XdmAtomicValue, ? extends XdmValue> m) {
+    public void putAll(@NotNull Map<? extends XdmAtomicValue, ? extends XdmValue> m) {
         throw new UnsupportedOperationException("XdmMap is immutable");
     }
 
@@ -325,10 +381,10 @@ public class XdmMap extends XdmFunctionItem implements Map<XdmAtomicValue, XdmVa
      * @return a set view of the mappings contained in this map
      */
     @NotNull
-    public Set<Entry<XdmAtomicValue, XdmValue>> entrySet() {
-        Set<Entry<XdmAtomicValue, XdmValue>> result = new HashSet<Entry<XdmAtomicValue, XdmValue>>();
+    public Set<Map.Entry<XdmAtomicValue, XdmValue>> entrySet() {
+        Set<Map.Entry<XdmAtomicValue, XdmValue>> result = new HashSet<Map.Entry<XdmAtomicValue, XdmValue>>();
         for (KeyValuePair keyValuePair : getUnderlyingValue()) {
-            Entry<XdmAtomicValue, XdmValue> entry = new XdmMapEntry(keyValuePair);
+            Map.Entry<XdmAtomicValue, XdmValue> entry = new XdmMapEntry(keyValuePair);
             result.add(entry);
         }
         return result;
@@ -369,9 +425,6 @@ public class XdmMap extends XdmFunctionItem implements Map<XdmAtomicValue, XdmVa
          * Returns the key corresponding to this entry.
          *
          * @return the key corresponding to this entry
-         * @throws IllegalStateException implementations may, but are not
-         *                               required to, throw this exception if the entry has been
-         *                               removed from the backing map.
          */
         @Override
         public XdmAtomicValue getKey() {
@@ -379,14 +432,9 @@ public class XdmMap extends XdmFunctionItem implements Map<XdmAtomicValue, XdmVa
         }
 
         /**
-         * Returns the value corresponding to this entry.  If the mapping
-         * has been removed from the backing map (by the iterator's
-         * <tt>remove</tt> operation), the results of this call are undefined.
+         * Returns the value corresponding to this entry.
          *
          * @return the value corresponding to this entry
-         * @throws IllegalStateException implementations may, but are not
-         *                               required to, throw this exception if the entry has been
-         *                               removed from the backing map.
          */
         @Override
         public XdmValue getValue() {
@@ -395,23 +443,8 @@ public class XdmMap extends XdmFunctionItem implements Map<XdmAtomicValue, XdmVa
 
         /**
          * Replaces the value corresponding to this entry with the specified
-         * value (optional operation).  (Writes through to the map.)  The
-         * behavior of this call is undefined if the mapping has already been
-         * removed from the map (by the iterator's <tt>remove</tt> operation).
-         *
-         * @param value new value to be stored in this entry
-         * @return old value corresponding to the entry
-         * @throws UnsupportedOperationException if the <tt>put</tt> operation
-         *                                       is not supported by the backing map
-         * @throws ClassCastException            if the class of the specified value
-         *                                       prevents it from being stored in the backing map
-         * @throws NullPointerException          if the backing map does not permit
-         *                                       null values, and the specified value is null
-         * @throws IllegalArgumentException      if some property of this value
-         *                                       prevents it from being stored in the backing map
-         * @throws IllegalStateException         implementations may, but are not
-         *                                       required to, throw this exception if the entry has been
-         *                                       removed from the backing map.
+         * value (optional operation). Always throws {@link UnsupportedOperationException}
+         * @throws UnsupportedOperationException always
          */
         @Override
         public XdmValue setValue(XdmValue value) {
