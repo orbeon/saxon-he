@@ -32,7 +32,7 @@ using JSingletonIterator = net.sf.saxon.tree.iter.SingletonIterator;
 using JQNameValue = net.sf.saxon.value.QNameValue;
 using JStringValue = net.sf.saxon.value.StringValue;
 using JInt64Value = net.sf.saxon.value.Int64Value;
-using JDecimalValue = net.sf.saxon.value.DecimalValue;
+using JBigDecimalValue = net.sf.saxon.value.BigDecimalValue;
 using JFloatValue = net.sf.saxon.value.FloatValue;
 using JDoubleValue = net.sf.saxon.value.DoubleValue;
 using JBooleanValue = net.sf.saxon.value.BooleanValue;
@@ -45,10 +45,16 @@ using JAtomicType = net.sf.saxon.type.AtomicType;
 using JSchemaType = net.sf.saxon.type.SchemaType;
 using JType = net.sf.saxon.type.Type;
 using JStringToDouble = net.sf.saxon.type.StringToDouble;
-using JSequenceTool =  net.sf.saxon.om.SequenceTool;
+using JSequenceTool = net.sf.saxon.om.SequenceTool;
 using JExplicitLocation = net.sf.saxon.expr.parser.ExplicitLocation;
+using JHashTrieMap = net.sf.saxon.ma.map.HashTrieMap;
+using JMapItem = net.sf.saxon.ma.map.MapItem;
+using JArrayItem = net.sf.saxon.ma.arrays.ArrayItem;
+using JKeyValuePair = net.sf.saxon.ma.map.KeyValuePair;
+using JSimpleArrayItem = net.sf.saxon.ma.arrays.SimpleArrayItem;
+using JDecimalValue = net.sf.saxon.value.DecimalValue;
 using JObjectValue = net.sf.saxon.value.ObjectValue;
-
+using System.Collections.Generic;
 
 namespace Saxon.Api
 {
@@ -112,13 +118,16 @@ namespace Saxon.Api
         /// <param name="otherValue">
         /// The other XdmValue, whose items are to be appended to the items from this XdmValue
         /// </param>
-        
-        public XdmValue Append(XdmValue otherValue) {
+
+        public XdmValue Append(XdmValue otherValue)
+        {
             JArrayList list = new JArrayList();
-            foreach (XdmItem item in this) {
+            foreach (XdmItem item in this)
+            {
                 list.add(item.Unwrap());
             }
-            foreach (XdmItem item in otherValue) {
+            foreach (XdmItem item in otherValue)
+            {
                 list.add(item.Unwrap());
             }
             return XdmValue.Wrap(new JSequenceExtent(list));
@@ -139,42 +148,155 @@ namespace Saxon.Api
 
         public static XdmValue Wrap(JSequence value)
         {
-            XdmValue result;
             if (value == null)
-            {
-                return null;
-            }
-            if (value is JEmptySequence)
             {
                 return XdmEmptySequence.INSTANCE;
             }
-            else if (value is JAtomicValue)
+            net.sf.saxon.om.GroundedValue gv;
+            try
             {
-                result = new XdmAtomicValue();
+                gv = JSequenceTool.toGroundedValue(value);
             }
-            else if (value is JNodeInfo)
+            catch (Exception e)
             {
-                result = new XdmNode();
+                throw new DynamicError(e.Message);
             }
-            else if (value is JZeroOrOne)
+            XdmValue result;
+            if (gv.getLength() == 0)
             {
-                return Wrap(((JZeroOrOne)value).head());
+
+                return XdmEmptySequence.INSTANCE;
             }
-            else if (value is JOne)
+            else if (gv.getLength() == 1)
             {
-                return Wrap(((JOne)value).head());
-            }
-            else if (value is JObjectValue)
-            {
-                result = new XdmExternalObjectValue(value);
-                return result;
+                JItem first = gv.head();
+                if (first is JAtomicValue)
+                {
+                    result = new XdmAtomicValue();
+                    result.value = (JAtomicValue)first;
+                    return result;
+                }
+                else if (first is JNodeInfo)
+                {
+                    result = new XdmNode();
+                    result.value = (JNodeInfo)first;
+                    return result;
+                }
+                else if (first is JZeroOrOne)
+                {
+                    return Wrap(((JZeroOrOne)value).head());
+                }
+                else if (first is JOne)
+                {
+                    return Wrap(((JOne)value).head());
+                }
+                else if (first is JMapItem)
+                {
+                    result = new XdmMap();
+                    result.value = (JMapItem)first;
+                    return result;
+                }
+                else if (first is JArrayItem)
+                {
+                    result = new XdmArray();
+                    result.value = (JArrayItem)first;
+                    return result;
+                }
+                else if (first is JFunction)
+                {
+                    result = new XdmFunctionItem();
+                    result.value = (JFunction)first;
+                    return result;
+                }
+                else if (first is JObjectValue)
+                {
+                    result = new XdmExternalObjectValue(((JObjectValue)first).getObject());
+                    return result;
+                }
+                else
+                {
+                    result = new XdmValue();
+                    result.value = first;
+                    return result;
+                }
+
             }
             else
             {
                 result = new XdmValue();
+                result.value = gv;
+                return result;
             }
-            result.value = value;
-            return result;
+
+        }
+
+        /// <summary>
+        /// Make an XDM value from a .Net object. The supplied object may be any of the following
+        /// An  instance of XdmValue (for example an XdmAtomicValue, XdmMap, XdmArray or XdmNode),
+        /// an instance of IDictionary which is wrapped as an XdmMap,
+        /// an instance and array which is wrapped as an XdmArray.
+        /// </summary>
+        /// <param name="o">The supplied object</param>
+        /// <returns>the result of conversion if successful</returns>
+        public static XdmValue MakeValue(object o)
+        {
+
+            if (o == null)
+            {
+                return null;
+            }
+            if (o is JSequence)
+            {
+                return XdmValue.Wrap((JSequence)o);
+            }
+            else if (o is XdmValue)
+            {
+                return (XdmValue)o;
+            }
+            else if (o is IDictionary)
+            {
+                return XdmMap.MakeMap((IDictionary)o);
+            }
+            else if (o.GetType().IsArray)
+            {
+                return XdmArray.MakeArray((object[])o);
+            }
+            else if (o is IEnumerable)
+            {
+                return XdmValue.MakeSequence((IEnumerable)o);
+            }
+
+            else
+            {
+                return XdmAtomicValue.MakeAtomicValue(o);
+
+            }
+
+        }
+
+        private static XdmValue MakeSequence(IEnumerable o)
+        {
+            JArrayList list = new JArrayList();
+
+            if (o is string)
+            {
+                return XdmAtomicValue.MakeAtomicValue((object)o);
+            }
+            foreach (object oi in o)
+            {
+                XdmValue v = XdmValue.MakeValue(oi);
+                if (v is XdmItem)
+                {
+                    list.add((JItem)v.Unwrap());
+                }
+                else
+                {
+                    list.add(new XdmArray(v).Unwrap());
+                }
+
+            }
+            JSequence value = new JSequenceExtent(list);
+            return XdmValue.Wrap(value);
         }
 
 
@@ -254,11 +376,35 @@ namespace Saxon.Api
             }
         }
 
+
+        /// <summary>
+        /// Return a new XdmValue containing the nodes present in this XdmValue,
+        /// with duplicates eliminated, and sorted into document order.
+        /// </summary>
+        /// <returns>the same nodes, sorted into document order, with duplicates eliminated</returns>
+        /// <remarks>Added since 9.9</remarks>
+        public XdmValue DocumentOrder()
+        {
+            try
+            {
+                JSequenceIterator iter = value.iterate();
+                JSequenceIterator sorted = new net.sf.saxon.expr.sort.DocumentOrderIterator(iter, new net.sf.saxon.expr.sort.GlobalOrderComparer());
+                XdmValue val = new XdmValue();
+                val.value = JSequenceExtent.makeSequenceExtent(sorted);
+                return val;
+            }
+            catch (net.sf.saxon.trans.XPathException e)
+            {
+                throw new DynamicError(e);
+            }
+        }
+
         /// <summary>
         /// Get the number of items in the sequence
         /// </summary>
         /// <returns>
-        /// The number of items in the sequence
+        /// The number of items in the sequence. Note that for a single item (including
+        /// a map or an array) this always returns 1 (one).
         /// </returns> 
 
         public int Count
@@ -342,7 +488,22 @@ namespace Saxon.Api
 
         public abstract bool IsAtomic();
 
+
+        /// <summary>
+        /// Get the string value of the item. For a node, this gets the string
+        /// value of the node. For an atomic value, it has the same effect as casting the value to a string.
+        /// In all cases the result is the same as applying  the XPath string() function.
+        /// For atomc values, the result is the same as the result of calling toString. This
+        /// is not the case for nodes, where toString returns an XML serialization of the node.
+        /// </summary>
+        /// <returns>The result of converting the item to a string</returns>
+        public String GetStringValue()
+        {
+            return ((JItem)value).getStringValue();
+        }
+
     }
+
 
     /// <summary>
     /// The class XdmExternalObject represents an XDM item that wraps an external .NET object.
@@ -445,13 +606,22 @@ namespace Saxon.Api
         }
 
         /// <summary>
+        /// Construct an atomic value of type <c>xs:integer</c>
+        /// </summary>
+        /// <param name="i">The integer value</param>
+        public XdmAtomicValue(byte i)
+        {
+            this.value = new JInt64Value(i);
+        }
+
+        /// <summary>
         /// Construct an atomic value of type <c>xs:decimal</c>
         /// </summary>
         /// <param name="d">The decimal value</param>
 
         public XdmAtomicValue(decimal d)
         {
-            this.value = new JDecimalValue(new JBigDecimal(d.ToString(CultureInfo.InvariantCulture)));
+            this.value = new JBigDecimalValue(new JBigDecimal(d.ToString(CultureInfo.InvariantCulture)));
         }
 
         /// <summary>
@@ -527,13 +697,13 @@ namespace Saxon.Api
 
         public XdmAtomicValue(String lexicalForm, QName type, Processor processor)
         {
-			JConfiguration jconfig = processor.Implementation;
+            JConfiguration jconfig = processor.Implementation;
             int fp = jconfig.getNamePool().getFingerprint(type.Uri, type.LocalName);
             if (fp == -1)
             {
                 throw new ArgumentException("Unknown name " + type);
             }
-			JSchemaType st = jconfig.getSchemaType(new JStructuredQName("", type.Uri.ToString(), type.LocalName));
+            JSchemaType st = jconfig.getSchemaType(new JStructuredQName("", type.Uri.ToString(), type.LocalName));
             if (st == null)
             {
                 throw new ArgumentException("Unknown type " + type);
@@ -546,8 +716,8 @@ namespace Saxon.Api
             {
                 throw new ArgumentException("Specified type " + type + " is namespace-sensitive");
             }
-			JConversionResult result = ((JAtomicType)st).getStringConverter(jconfig.getConversionRules()).convertString((JCharSequence)lexicalForm);
- 
+            JConversionResult result = ((JAtomicType)st).getStringConverter(jconfig.getConversionRules()).convertString((JCharSequence)lexicalForm);
+
             if (result is JValidationFailure)
             {
                 throw new ArgumentException(((JValidationFailure)result).getMessage());
@@ -578,6 +748,70 @@ namespace Saxon.Api
             return (XdmAtomicValue)XdmValue.Wrap(new JDotNetObjectValue(external));
         }
 
+        public static XdmAtomicValue MakeAtomicValue(object value)
+        {
+            if (value is JAtomicValue)
+            {
+                return (XdmAtomicValue)XdmValue.Wrap((JAtomicValue)value);
+            }
+            else if (value is Boolean)
+            {
+                return new XdmAtomicValue((Boolean)value);
+            }
+            else if (value is int)
+            {
+                return new XdmAtomicValue((int)value);
+            }
+            else if (value is long)
+            {
+                return new XdmAtomicValue((long)value);
+            }
+            else if (value is short)
+            {
+                return new XdmAtomicValue((short)value);
+            }
+            else if (value is Char)
+            {
+                return new XdmAtomicValue((Char)value);
+            }
+            else if (value is Byte)
+            {
+                return new XdmAtomicValue((Byte)value);
+            }
+            else if (value is String)
+            {
+                return new XdmAtomicValue((String)value);
+            }
+            else if (value is Double)
+            {
+                return new XdmAtomicValue((Double)value);
+            }
+            else if (value is decimal)
+            {
+                return new XdmAtomicValue((decimal)value);
+            }
+            else if (value is long)
+            {
+                return new XdmAtomicValue((long)value);
+            }
+            else if (value is Uri)
+            {
+                return new XdmAtomicValue((Uri)value);
+            }
+            else if (value is QName)
+            {
+                return new XdmAtomicValue((QName)value);
+            }
+            if (value is XdmAtomicValue)
+            {
+                return (XdmAtomicValue)value;
+            }
+            else
+            {
+                throw new ArgumentException(value.ToString());
+            }
+        }
+
 
         /// <summary>
         /// Get the value converted to a boolean using the XPath casting rules
@@ -588,14 +822,21 @@ namespace Saxon.Api
         public bool GetBooleanValue()
         {
             JAtomicValue av = (JAtomicValue)this.value;
-            if (av is JBooleanValue) {
+            if (av is JBooleanValue)
+            {
                 return ((JBooleanValue)av).getBooleanValue();
-            } else if (av is JNumericValue) {
+            }
+            else if (av is JNumericValue)
+            {
                 return !av.isNaN() && ((JNumericValue)av).signum() != 0;
-            } else if (av is JStringValue) {
+            }
+            else if (av is JStringValue)
+            {
                 String s = av.getStringValue().Trim();
                 return "1".Equals(s) || "true".Equals(s);
-            } else {
+            }
+            else
+            {
                 throw new ArgumentException("Cannot cast item to a boolean");
             }
         }
@@ -608,19 +849,29 @@ namespace Saxon.Api
 
         public long GetLongValue()
         {
-            JAtomicValue av = (JAtomicValue)this.Value;
-            if (av is JBooleanValue) {
+            JAtomicValue av = (JAtomicValue)this.value;
+            if (av is JBooleanValue)
+            {
                 return ((JBooleanValue)av).getBooleanValue() ? 0L : 1L;
-            } else if (av is JNumericValue) {
-            try {
-                return ((JNumericValue)av).longValue();
-            } catch (Exception) {
-                throw new ArgumentException("Cannot cast item to an integer");
             }
-            } else if (av is JStringValue) {
+            else if (av is JNumericValue)
+            {
+                try
+                {
+                    return ((JNumericValue)av).longValue();
+                }
+                catch (Exception)
+                {
+                    throw new ArgumentException("Cannot cast item to an integer");
+                }
+            }
+            else if (av is JStringValue)
+            {
                 JStringToDouble converter = JStringToDouble.getInstance();
                 return (long)converter.stringToNumber(av.getStringValueCS());
-            } else {
+            }
+            else
+            {
                 throw new ArgumentException("Cannot cast item to an integer");
             }
         }
@@ -636,42 +887,62 @@ namespace Saxon.Api
         public double GetDoubleValue()
         {
             JAtomicValue av = (JAtomicValue)this.value;
-            if (av is JBooleanValue) {
+            if (av is JBooleanValue)
+            {
                 return ((JBooleanValue)av).getBooleanValue() ? 0.0 : 1.0;
-            } else if (av is JNumericValue) {
-                return ((JNumericValue)av).getDoubleValue();
-            } else if (av is JStringValue) {
-            try {
-                JStringToDouble converter = JStringToDouble11.getInstance();
-                return converter.stringToNumber(av.getStringValueCS());
-            } catch (Exception e) {
-                throw new ArgumentException(e.Message);
             }
-            } else {
+            else if (av is JNumericValue)
+            {
+                return ((JNumericValue)av).getDoubleValue();
+            }
+            else if (av is JStringValue)
+            {
+                try
+                {
+                    JStringToDouble converter = JStringToDouble11.getInstance();
+                    return converter.stringToNumber(av.getStringValueCS());
+                }
+                catch (Exception e)
+                {
+                    throw new ArgumentException(e.Message);
+                }
+            }
+            else
+            {
                 throw new ArgumentException("Cannot cast item to a double");
             }
         }
 
 
-         /// <summary>
+        /// <summary>
         /// Get the value converted to a decimal using the XPath casting rules
         /// </summary>
         /// <returns>return the result of converting to a decimal</returns>
 
-        public Decimal GetDecimalValue() 
+        public Decimal GetDecimalValue()
         {
             JAtomicValue av = (JAtomicValue)this.value;
-            if (av is JBooleanValue) {
-                return ((JBooleanValue)av).getBooleanValue() ? 0  : 1;
-            } else if (av is JNumericValue) {
-                try {
+            if (av is JBooleanValue)
+            {
+                return ((JBooleanValue)av).getBooleanValue() ? 0 : 1;
+            }
+            else if (av is JNumericValue)
+            {
+                try
+                {
                     return Convert.ToDecimal(((JNumericValue)av).getDecimalValue().toString(), CultureInfo.InvariantCulture);
-                } catch (Exception) {
+                }
+                catch (Exception)
+                {
                     throw new ArgumentException("Cannot cast item to a decimal");
-                }   
-            } else if (av is JStringValue) {
+                }
+            }
+            else if (av is JStringValue)
+            {
                 return Convert.ToDecimal(av.getStringValueCS().toString());
-            } else {
+            }
+            else
+            {
                 throw new ArgumentException("Cannot cast item to a decimal");
             }
         }
@@ -690,23 +961,48 @@ namespace Saxon.Api
         }
 
         /// <summary>
+        /// Compare two atomic values for equality
+        /// </summary>
+        /// <returns>The result of the equality comparison, using the rules of the
+        /// op:is-same-key() comparison used for comparing key values in maps</returns>
+
+        public override Boolean Equals(object other)
+        {
+            if (other is XdmAtomicValue)
+            {
+                return ((JAtomicValue)value).asMapKey().Equals(((JAtomicValue)((XdmAtomicValue)other).value).asMapKey());
+
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Get a hash code to support equality comparison
+        /// </summary>
+        /// <returns>A suitable hash code</returns>
+
+        public override int GetHashCode()
+        {
+            return ((JAtomicValue)value).asMapKey().GetHashCode();
+        }
+
+        /// <summary>
         /// Get the name of the value's XDM type
         /// </summary>
-        /// <param name="processor">The <c>Processor</c> object. 
-        /// This is needed for access to the NamePool,
-        /// which maps the internal form of type names to their external form.</param>
-        /// <returns>The type of the value, as a QName. This may be a built-in type or a user-defined
-        /// atomic type.
-        /// </returns>
+        /// <param name="processor">The <code>Processor</code> object. 
+        ///This parameter is no longer required</param>
+        /// <returns>The type of the value, as a QName.
 
 
         public QName GetTypeName(Processor processor)
         {
-            int fp = ((JAtomicType)((JAtomicValue)value).getItemType()).getFingerprint();
-			JNamePool pool = processor.Implementation.getNamePool();
-            return new QName(pool.getPrefix(fp),
-                             pool.getURI(fp),
-                             pool.getLocalName(fp));
+            JStructuredQName sqname = ((JAtomicValue)value).getItemType().getStructuredQName();
+            return new QName(sqname.getPrefix(),
+                             sqname.getURI(),
+                             sqname.getLocalPart());
         }
 
         /// <summary>
@@ -809,7 +1105,7 @@ namespace Saxon.Api
         /// <summary>
         /// The name of the function, as a QName. The result will be null if the function is anonymous.
         /// </summary>
-        
+
         public QName FunctionName
         {
             get
@@ -857,12 +1153,504 @@ namespace Saxon.Api
             {
                 args[i] = arguments[i].Unwrap();
             }
-			JXPathContext context = processor.Implementation.getConversionContext();
+            JXPathContext context = processor.Implementation.getConversionContext();
             JSequence result = ((JFunction)value).call(context, args);
             return XdmValue.Wrap(result);
         }
     }
 
+    /// <summary inherits="XdmFunctionItem">
+    /// The class <c>XdmArray</c> represents an array item in an XPath 3.1 sequence.
+    /// An array in the XDM data model. An array is a list of zero or more members, each of which
+    /// is an arbitrary XDM value.The array itself is an XDM item.
+    /// </summary>
+    [Serializable]
+    public class XdmArray : XdmFunctionItem
+    {
+
+
+        ///<summary> Constructor to create an empty XdmArray</summary>
+        public XdmArray()
+        {
+            this.value = JSimpleArrayItem.EMPTY_ARRAY;
+        }
+
+        public XdmArray(XdmValue value)
+        {
+            int length = value.Count;
+            JArrayList list = new JArrayList(length);
+            foreach (XdmItem item in value.GetList())
+            {
+                list.add(item.Unwrap());
+            }
+            this.value = new JSimpleArrayItem(list);
+        }
+
+
+
+        ///<summary> Create an XdmArray supplying the members as an array of XdmValue objects</summary>
+        /// <param name="members"> Members an array of XdmValue objects. Note that subsequent changes 
+        /// to the array will have no effect on the XdmValue.</param>
+
+
+        public XdmArray(XdmValue[] members)
+        {
+            JArrayList list = new JArrayList(members.Length);
+            for (int i = 0; i < members.Length; i++)
+            {
+                list.add(members[i].Unwrap());
+            }
+            this.value = new JSimpleArrayItem(list);
+        }
+
+        internal XdmArray(JArrayList list)
+        {
+            this.value = new JSimpleArrayItem(list);
+        }
+
+        internal XdmArray(JArrayItem array)
+        {
+            this.value = array;
+        }
+
+
+        /// <summary>Create an XdmArray supplying the members as a collection of XdmValue objects</summary>
+        /// <param name="members"> members a sequence of XdmValue objects. Note that if this is supplied as 
+        /// a list or similar collection, subsequent changes to the list/collection will have no effect on 
+        /// the XdmValue.</param>
+        /// <remarks>Note that the argument can be a single XdmValue representing a sequence, in which case the
+        ///  constructed array will have one member for each item in the supplied sequence.</remarks>
+
+        public XdmArray(List<XdmValue> members)
+        {
+            JArrayList list = new JArrayList(members.Count);
+            for (int i = 0; i < members.Count; i++)
+            {
+                list.add(members[i].Unwrap());
+            }
+            this.value = new JSimpleArrayItem(list);
+        }
+
+        /// <summary>
+        /// Get the number of members in the array
+        /// </summary>
+        /// <returns>the number of members in the array.</returns> 
+        /// <remarks>(Note that the {@link #size()} method returns 1 (one),
+        /// because an XDM array is an item.)</remarks>
+        public int ArrayLength()
+        {
+            return ((JArrayItem)value).arrayLength();
+        }
+
+        /// <summary>
+        /// Get the n'th member in the array, counting from zero.
+        /// </summary>
+        /// <param name="n">the member that is required, counting the first member in the array as member zero</param>
+        /// <returns>the n'th member in the sequence making up the array, counting from zero</returns>
+        public XdmValue Get(int n)
+        {
+            try
+            {
+                JSequence member = ((JArrayItem)value).get(n);
+                return XdmValue.Wrap(member);
+            }
+            catch (Exception)
+            {
+                throw new IndexOutOfRangeException();
+            }
+        }
+
+
+        /// <summary>
+        /// Create a new array in which one member is replaced with a new value.
+        /// </summary>
+        /// <param name="n">the position of the member that is to be replaced, counting the first member
+        /// in the array as member zero</param>
+        /// <param name="value"></param>
+        /// <returns>a new array, the same length  as the original, with one member replaced</returns>
+        public XdmArray Put(int n, XdmValue valuei)
+        {
+            try
+            {
+                JSequence member = valuei.Unwrap();
+                return (XdmArray)XdmValue.Wrap(((JArrayItem)this.value).put(n, member));
+            }
+            catch (Exception)
+            {
+                throw new IndexOutOfRangeException();
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="valuei"></param>
+        /// <returns></returns>
+        public XdmArray Append(XdmValue valuei)
+        {
+            try
+            {
+                JSequence member = valuei.Unwrap();
+                JArrayItem newArray = net.sf.saxon.ma.arrays.ArrayFunctionSet.ArrayAppend.append(Unwrap(), member);
+                return (XdmArray)XdmValue.Wrap(newArray);
+            }
+            catch (Exception)
+            {
+                throw new IndexOutOfRangeException();
+            }
+        }
+
+        /// <summary>
+        /// Get the members of the array in the form of a list.
+        /// </summary>
+        /// <returns>A list of the members of this array.</returns>
+        public List<XdmValue> AsList()
+        {
+
+            JSimpleArrayItem val = (JSimpleArrayItem)value;
+            java.util.Iterator iter = val.iterator();
+            List<XdmValue> result = new List<XdmValue>(val.getLength());
+            while (iter.hasNext())
+            {
+                result.Add(XdmValue.Wrap((JSequence)iter.next()));
+
+            }
+            return result;
+        }
+
+        public XdmArray Append(XdmValue valuei) {
+
+        }
+
+        /// <summary>
+        /// Make an XDM array from an object array. Each member of the supplied array
+        /// is converted to a single member in the result array using the method
+        /// {@link XdmValue#MakeValue(Object)}        
+        /// </summary>
+        /// <param name="o">the array of objects</param>
+        /// <returns>the result of the conversion if successful</returns>
+        public static XdmArray MakeArray(object[] o)
+        {
+            JArrayList list = new JArrayList(o.Length);
+            for (int i = 0; i < o.Length; i++)
+            {
+                list.add(XdmValue.MakeValue(o[i]).Unwrap());
+            }
+            return new XdmArray(list);
+        }
+
+        /// <summary>
+        /// Make an XdmArray whose members are xs:boolean values       
+        /// </summary>
+        /// <param name="o">input the input array of booleans</param>
+        /// <returns>an XdmArray whose members are xs:boolean values corresponding one-to-one with the input</returns>
+        public static XdmArray MakeArray(bool[] o)
+        {
+            JArrayList list = new JArrayList(o.Length);
+            for (int i = 0; i < o.Length; i++)
+            {
+                list.add(new XdmAtomicValue(o[i]).Unwrap());
+            }
+            return new XdmArray(list);
+        }
+
+
+        /// <summary>
+        /// Make an XdmArray whose members are xs:long values      
+        /// </summary>
+        /// <param name="o">input the input array of integers</param>
+        /// <returns>an XdmArray whose members are xs:integer values corresponding one-to-one with the input</returns>
+        public static XdmArray MakeArray(long[] o)
+        {
+            JArrayList list = new JArrayList(o.Length);
+            for (int i = 0; i < o.Length; i++)
+            {
+                list.add(new XdmAtomicValue(o[i]).Unwrap());
+            }
+            return new XdmArray(list);
+        }
+
+
+        /// <summary>
+        /// Make an XdmArray whose members are xs:integer values      
+        /// </summary>
+        /// <param name="o">input the input array of integers</param>
+        /// <returns>an XdmArray whose members are xs:integer values corresponding one-to-one with the input</returns>
+        public static XdmArray MakeArray(int[] o)
+        {
+            JArrayList list = new JArrayList(o.Length);
+            for (int i = 0; i < o.Length; i++)
+            {
+                list.add(new XdmAtomicValue(o[i]).Unwrap());
+            }
+            return new XdmArray(list);
+        }
+
+        /// <summary>
+        /// Make an XdmArray whose members are xs:integer values      
+        /// </summary>
+        /// <param name="o">input the input array of integers</param>
+        /// <returns>an XdmArray whose members are xs:integer values corresponding one-to-one with the input</returns>
+        public static XdmArray MakeArray(byte[] o)
+        {
+            JArrayList list = new JArrayList(o.Length);
+            for (int i = 0; i < o.Length; i++)
+            {
+                list.add(new XdmAtomicValue(o[i]).Unwrap());
+            }
+            return new XdmArray(list);
+        }
+    }
+
+    /// <summary inherits="XdmFunctionItem">
+    /// The class <c>XdmMap</c> represents a map item in an XPath 3.1 sequence.
+    /// A map in the XDM data model. A map is a list of zero or more entries, each of which
+    /// is a pair comprising a key(which is an atomic value) and a value(which is an arbitrary value).
+    /// The map itself is an XDM item
+    /// </summary>
+
+
+    [Serializable]
+    public class XdmMap : XdmFunctionItem
+    {
+
+
+        /// <summary>
+        /// Create an empty XdmMap
+        /// </summary>
+        public XdmMap() { this.value = new JHashTrieMap(); }
+
+        internal XdmMap(JHashTrieMap map) { this.value = map; }
+
+
+        /*public XdmMap(Dictionary<XdmAtomicValue, T >  map ) where T : XdmValue  {
+            JHashTrieMap val = new JHashTrieMap();
+            foreach(KeyValuePair<XdmAtomicValue, T> entry in map) {
+                val.initialPut((JAtomicValue)entry.Key.Unwrap(), entry.Value.Unwrap());
+            }
+            this.value = val;
+        }*/
+
+        /// <summary>
+        /// Get the number of entries in the map
+        /// </summary>
+        /// <remarks>the number of entries in the map. (Note that the {@link #size()} method returns 1 (one),
+        /// because an XDM map is an item.)</remarks>
+        public int Size
+        {
+            get
+            {
+                return ((JMapItem)value).size();
+            }
+
+        }
+
+
+        /// <summary>
+        /// Is empty check on the XdmMap
+        /// </summary>
+        /// <returns>Returns <code>true</code> if this map contains no key-value mappings.</returns>
+        public bool IsEmpty()
+        {
+            return ((JMapItem)value).isEmpty();
+
+        }
+
+        /// <summary>
+        ///  Create a new map containing an additional (key, value) pair.
+        /// If there is an existing entry with the same key, it is removed
+        /// </summary>
+        /// <param name="key">a new map containing the additional entry. The original map is unchanged.</param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public XdmMap Put(XdmAtomicValue key, XdmValue value)
+        {
+            XdmMap map2 = new XdmMap();
+            map2.value = ((JMapItem)this.value).addEntry((JAtomicValue)key.Unwrap(), value.Unwrap());
+            return map2;
+        }
+
+
+        /// <summary>
+        /// Create a new map in which the entry for a given key has been removed.
+        /// If there is no entry with the same key, the new map has the same content as the old(it may or may not
+        /// be the same .NET object)
+        /// </summary>
+        /// <param name="key">The key to which entry to be removed</param>
+        /// <returns>a map without the specified entry. The original map is unchanged.</returns>
+        public XdmMap Remove(XdmAtomicValue key)
+        {
+            XdmMap map2 = new XdmMap();
+            map2.value = ((JMapItem)this.value).remove((JAtomicValue)key.Unwrap());
+            return map2;
+        }
+
+
+        /// <summary>
+        ///  Return a corresponding .NET Dictionary collection of keys and values.
+        /// </summary>
+        /// <returns>a mutable Dictionary from atomic values to (sequence) values, containing the
+        /// same entries as this map</returns>
+        public Dictionary<XdmAtomicValue, XdmValue> AsDictionary()
+        {
+            Dictionary<XdmAtomicValue, XdmValue> map = new Dictionary<XdmAtomicValue, XdmValue>();
+            JMapItem jmap = (JMapItem)value;
+            java.util.Iterator iter = jmap.iterator();
+            JKeyValuePair pair = null;
+            while (iter.hasNext())
+            {
+                pair = (JKeyValuePair)iter.next();
+                map.Add((XdmAtomicValue)XdmValue.Wrap(pair.key), XdmValue.Wrap(pair.value));
+            }
+            return map;
+        }
+
+
+        /// <summary>
+        /// Get the keys present in the map in the form of a set.
+        /// </summary>
+        /// <returns>a set of the keys present in this map, in arbitrary order.</returns>
+        public HashSet<XdmAtomicValue> KeySet()
+        {
+            HashSet<XdmAtomicValue> result = new HashSet<XdmAtomicValue>();
+            JMapItem jmap = (JMapItem)value;
+            net.sf.saxon.tree.iter.AtomicIterator iter = jmap.keys();
+            JAtomicValue key = null;
+            while ((key = iter.next()) != null)
+            {
+                result.Add((XdmAtomicValue)XdmValue.Wrap(key));
+            }
+            return result;
+        }
+
+
+        /// <summary>
+        /// Returns <code>true</code> if this map contains a mapping for the specified
+        /// key. More formally, returns <code>true</code> if and only if
+        /// this map contains a mapping for a key<code>k</code> such that
+        /// <code>(key==null ? k==null : key.Equals(k))</code>.  (There can be
+        /// at most one such mapping.)
+        /// </summary>
+        /// <param name="key">key key whose presence in this map is to be tested</param>
+        /// <returns><tt>true</tt> if this map contains a mapping for the specified key</returns>
+        public bool ContainsKey(object key)
+        {
+            JAtomicValue k = (JAtomicValue)((XdmAtomicValue)key).value;
+            return ((JMapItem)value).get(k) != null;
+        }
+
+
+        /// <summary>
+        ///  Returns the value to which the specified key is mapped,
+        /// or {@code null} if this map contains no mapping for the key.
+        /// </summary>
+        /// <param name="key"> key the key whose associated value is to be returned. If this is
+        ///            not an XdmAtomicValue, the method attempts to construct an
+        ///            XdmAtomicValue using the method {@link XdmAtomicValue#MakeAtomicValue(Object)};
+        /// it is therefore possible to pass a simple key such as a string or integer.</param>
+        /// <returns>the value to which the specified key is mapped, or
+        /// {@code null} if this map contains no mapping for the key</returns>
+        public XdmValue Get(object key)
+        {
+            if (key == null)
+            {
+                throw new ArgumentNullException();
+            }
+            if (!(key is XdmAtomicValue))
+            {
+                try
+                {
+                    key = XdmAtomicValue.MakeAtomicValue(key);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidCastException(ex.ToString());
+                }
+            }
+            JAtomicValue k = (JAtomicValue)((XdmAtomicValue)key).value;
+            JSequence v = ((JMapItem)value).get(k);
+            return v == null ? null : XdmValue.Wrap(v);
+        }
+
+        /// <summary>
+        /// Returns a {@link Collection} view of the values contained in this map.
+        /// The collection is backed by the map, so changes to the map are
+        /// reflected in the collection, and vice-versa.If the map is
+        /// modified while an iteration over the collection is in progress
+        /// (except through the iterator's own <code>remove</code> operation),
+        /// the results of the iteration are undefined.The collection
+        /// supports element removal, which removes the corresponding
+        /// mapping from the map, via the<code> Iterator.remove</code>,
+        /// <code>Collection.remove</code>, <code>removeAll</code>,
+        /// <code>retainAll</code> and <code>clear</code> operations.  It does not
+        /// support the <code>add</code> or <code>addAll</code> operations.
+        /// </summary>
+        /// <returns>A collection view of the values contained in this map</returns>
+        public ICollection Values()
+        {
+            List<XdmValue> result = new List<XdmValue>();
+
+            JMapItem jmap = (JMapItem)value;
+            java.util.Iterator iter = jmap.iterator();
+            JKeyValuePair pair = null;
+            while ((pair = (JKeyValuePair)iter.next()) != null)
+            {
+                result.Add((XdmAtomicValue)XdmValue.Wrap(pair.value));
+            }
+
+            return result;
+        }
+
+
+        /// <summary>
+        /// Returns a {@link Set} view of the mappings contained in this map.
+        /// </summary>
+        /// <returns>a set view of the mappings contained in this map</returns>
+        public HashSet<DictionaryEntry> EntrySet()
+        {
+            HashSet<DictionaryEntry> result = new HashSet<DictionaryEntry>();
+            JMapItem jmap = (JMapItem)value;
+            java.util.Iterator iter = jmap.iterator();
+            JKeyValuePair pair = null;
+            while ((pair = (JKeyValuePair)iter.next()) != null)
+            {
+                result.Add(new DictionaryEntry(pair.key, pair.value));
+            }
+            return result;
+        }
+
+
+        /// <summary>
+        /// Static factory method to construct an XDM map by converting each entry
+        /// in a supplied generic collection of key/value pairs; <code>IDictionary</code>.The keys in the 
+        /// Dictionary must be convertible to XDM atomic values using the 
+        /// {@link XdmAtomicValue#MakeAtomicValue(Object)} method. The associated values 
+        /// must be convertible to XDM sequences
+        /// using the {@link XdmValue#MakeValue(Object)} method.
+        /// </summary>
+        /// <param name="input">input the supplied map</param>
+        /// <returns>the resulting XdmMap</returns>
+        public static XdmMap MakeMap(IDictionary input)
+        {
+            JHashTrieMap result = new JHashTrieMap();
+            XdmAtomicValue key;
+            XdmValue value;
+
+            foreach (object keyi in input.Keys)
+            {
+                key = XdmAtomicValue.MakeAtomicValue(keyi);
+                value = XdmValue.MakeValue(input[keyi]);
+                result.initialPut((JAtomicValue)key.Unwrap(), value.Unwrap());
+            }
+
+            return new XdmMap(result);
+        }
+
+
+
+
+    }
 
     /// <summary inherits="XdmItem">
     /// The class <c>XdmNode</c> represents a Node in the XDM Data Model. A Node
@@ -958,8 +1746,9 @@ namespace Saxon.Api
         /// Line numbers will typically be as reported by a SAX parser; this means that the line number for an element
         /// node is the line number containing the closing ">" of the start tag.
         /// </summary>
-         
-        public int LineNumber {
+
+        public int LineNumber
+        {
             get { return ((JNodeInfo)value).getLineNumber(); }
         }
 
@@ -1024,9 +1813,10 @@ namespace Saxon.Api
 
         public XdmNode Parent
         {
-            get {
+            get
+            {
                 JNodeInfo parent = ((JNodeInfo)value).getParent();
-                return (parent == null ? null : (XdmNode)XdmValue.Wrap(parent)); 
+                return (parent == null ? null : (XdmNode)XdmValue.Wrap(parent));
             }
         }
 
@@ -1118,8 +1908,7 @@ namespace Saxon.Api
                     break;
             }
             JNamePool pool = ((JNodeInfo)value).getConfiguration().getNamePool();
-            int nameCode = pool.allocate("", nodeName.Uri, nodeName.LocalName);
-            JNameTest test = new JNameTest(kind, nameCode, pool);
+            JNameTest test = new JNameTest(kind, nodeName.Uri, nodeName.LocalName, pool);
             return new SequenceEnumerator(((JNodeInfo)value).iterateAxis(GetAxisNumber(axis), test));
         }
 
@@ -1150,13 +1939,15 @@ namespace Saxon.Api
 
         public Uri BaseUri
         {
-            get { 
-				string baseUriStr = ((JNodeInfo)value).getBaseURI();
-				if (baseUriStr == null || baseUriStr.Equals("")) {
-					return null;
-				}
-				return new Uri(baseUriStr); 
-			}
+            get
+            {
+                string baseUriStr = ((JNodeInfo)value).getBaseURI();
+                if (baseUriStr == null || baseUriStr.Equals(""))
+                {
+                    return null;
+                }
+                return new Uri(baseUriStr);
+            }
         }
 
         /// <summary>
@@ -1194,7 +1985,7 @@ namespace Saxon.Api
             JDotNetReceiver receiver = new JDotNetReceiver(writer);
             receiver.setPipelineConfiguration(node.getConfiguration().makePipelineConfiguration());
             receiver.open();
-			node.copy(receiver, net.sf.saxon.om.CopyOptions.ALL_NAMESPACES, JExplicitLocation.UNKNOWN_LOCATION);
+            node.copy(receiver, net.sf.saxon.om.CopyOptions.ALL_NAMESPACES, JExplicitLocation.UNKNOWN_LOCATION);
             receiver.close();
         }
 
@@ -1227,7 +2018,8 @@ namespace Saxon.Api
                     val = val.Replace("<", "&lt;");
                     val = val.Replace("&", "&amp;");
                     return node.getDisplayName() + "=\"" + val + '"';
-                } else if (node.getNodeKind() == JType.NAMESPACE)
+                }
+                else if (node.getNodeKind() == JType.NAMESPACE)
                 {
                     String val = node.getStringValue().Replace("\"", "&quot;");
                     val = val.Replace("<", "&lt;");
@@ -1244,7 +2036,7 @@ namespace Saxon.Api
 
                 StringWriter sw = new StringWriter();
                 serializer.SetOutputWriter(sw);
-				node.copy(serializer.GetReceiver(node.getConfiguration()), net.sf.saxon.om.CopyOptions.ALL_NAMESPACES, JExplicitLocation.UNKNOWN_LOCATION);
+                node.copy(serializer.GetReceiver(node.getConfiguration()), net.sf.saxon.om.CopyOptions.ALL_NAMESPACES, JExplicitLocation.UNKNOWN_LOCATION);
                 return sw.ToString();
             }
         }
@@ -1254,7 +2046,7 @@ namespace Saxon.Api
         /// method returns the same result as the XPath "is" operator.
         /// </summary>
         /// <param name="obj">The object node to be compared</param>
-         
+
         public override bool Equals(object obj)
         {
             return obj is XdmNode && ((JNodeInfo)value).equals((JNodeInfo)((XdmNode)obj).value);
@@ -1337,12 +2129,12 @@ namespace Saxon.Api
     public sealed class QName
     {
 
-        private String prefix;
-        private String uri;
-        private String local;
-        int hashcode = -1;      // evaluated lazily
-        int fingerprint = -1;   // evaluated only if the QName is registered with the Processor
-        private JNamePool pool = null;
+        private JStructuredQName sqName;
+        //private String prefix;
+        //private String uri;
+        //private String local;
+        //int hashcode = -1;      // evaluated lazily
+
 
         private static String XS = NamespaceConstant.SCHEMA;
 
@@ -1389,9 +2181,16 @@ namespace Saxon.Api
         public QName(String local)
         {
             // TODO: check for validity
-            this.prefix = String.Empty;
-            this.uri = String.Empty;
-            this.local = local;
+            int colon = local.IndexOf(':');
+            if (colon < 0)
+            {
+                sqName = new JStructuredQName("", "", local);
+            }
+            else
+            {
+
+                throw new ArgumentException("Local name contains a colon");
+            }
         }
 
         /// <summary>
@@ -1413,17 +2212,18 @@ namespace Saxon.Api
         public QName(String uri, String lexical)
         {
             // TODO: check for validity
-            this.uri = (uri == null ? "" : uri);
+            uri = (uri == null ? "" : uri);
             int colon = lexical.IndexOf(':');
             if (colon < 0)
             {
-                this.prefix = String.Empty;
-                this.local = lexical;
+                sqName = new JStructuredQName("", uri, lexical);
             }
             else
             {
-                this.prefix = lexical.Substring(0, colon);
-                this.local = lexical.Substring(colon + 1);
+
+                string prefix = lexical.Substring(0, colon);
+                string local = lexical.Substring(colon + 1);
+                sqName = new JStructuredQName(prefix, uri, local);
             }
         }
 
@@ -1445,9 +2245,7 @@ namespace Saxon.Api
 
         public QName(String prefix, String uri, String local)
         {
-            this.uri = (uri == null ? String.Empty : uri);
-            this.local = local;
-            this.prefix = (prefix == null ? String.Empty : prefix);
+            sqName = new JStructuredQName(prefix, uri, local);
         }
 
         /// <summary>
@@ -1474,12 +2272,9 @@ namespace Saxon.Api
         {
             try
             {
-				
                 JNodeInfo node = (JNodeInfo)element.value;
-				JStructuredQName qname = JStructuredQName.fromLexicalQName(lexicalQName, true, true, new JInscopeNamespaceResolver(node));
-				this.uri = qname.getURI();
-				this.local = qname.getLocalPart();
-				this.prefix = qname.getPrefix();
+                sqName = JStructuredQName.fromLexicalQName(lexicalQName, true, true, new JInscopeNamespaceResolver(node));
+
             }
             catch (net.sf.saxon.trans.XPathException err)
             {
@@ -1499,18 +2294,17 @@ namespace Saxon.Api
 
         public QName(XmlQualifiedName qualifiedName)
         {
-            this.uri = qualifiedName.Namespace;
-            this.local = qualifiedName.Name;
-            this.prefix = String.Empty;
+            string uri = qualifiedName.Namespace;
+            string local = qualifiedName.Name;
+            string prefix = String.Empty;
+            sqName = new JStructuredQName(prefix, uri, prefix);
         }
 
         //  internal constructor from a QNameValue
 
         internal QName(JQNameValue q)
         {
-            this.uri = q.getNamespaceURI();
-            this.prefix = q.getPrefix();
-            this.local = q.getLocalName();
+            sqName = new JStructuredQName(q.getPrefix(), q.getNamespaceURI(), q.getLocalName());
         }
 
         /// <summary>
@@ -1551,19 +2345,19 @@ namespace Saxon.Api
         }
 
 
-       /// <summary>
-       ///Factory method to construct a QName from a string containing the expanded
-       ///QName in EQName notation, that is, <c>Q{uri}local</c>
-       /// </summary>
-       /// <remarks>
-       ///The prefix part of the <c>QName</c> will be set to an empty string.
-       /// </remarks>
-       /// <param name="expandedName">The URI in EQName notation: <c>{uri}local</c> if the
-       /// name is in a namespace. For a name in no namespace, either of the
-       /// forms <c>Q{}local</c> or simply <c>local</c> are accepted.</param>
-       ///<returns> the QName corresponding to the supplied name in EQName notation. This will always
-       ///have an empty prefix.</returns>
-       
+        /// <summary>
+        ///Factory method to construct a QName from a string containing the expanded
+        ///QName in EQName notation, that is, <c>Q{uri}local</c>
+        /// </summary>
+        /// <remarks>
+        ///The prefix part of the <c>QName</c> will be set to an empty string.
+        /// </remarks>
+        /// <param name="expandedName">The URI in EQName notation: <c>{uri}local</c> if the
+        /// name is in a namespace. For a name in no namespace, either of the
+        /// forms <c>Q{}local</c> or simply <c>local</c> are accepted.</param>
+        ///<returns> the QName corresponding to the supplied name in EQName notation. This will always
+        ///have an empty prefix.</returns>
+
         public static QName FromEQName(String expandedName)
         {
             String namespaceURI;
@@ -1594,28 +2388,23 @@ namespace Saxon.Api
         // internal method: Factory method to construct a QName from Saxon's internal <c>StructuredQName</c>
         // representation.
 
-        internal static QName FromStructuredQName(JStructuredQName sqn) {
+        internal static QName FromStructuredQName(JStructuredQName sqn)
+        {
             return new QName(sqn.getPrefix(), sqn.getURI(), sqn.getLocalPart());
         }
 
         /// <summary>
         /// Register a QName with the <c>Processor</c>. This makes comparison faster
         /// when the QName is compared with others that are also registered with the <c>Processor</c>.
+        /// Depreacted method.
         /// </summary>
         /// <remarks>
         /// A given <c>QName</c> object can only be registered with one <c>Processor</c>.
         /// </remarks>
         /// <param name="processor">The Processor in which the name is to be registered.</param>
-
+        [System.Obsolete("This method is no longer in use")]
         public void Register(Processor processor)
-        {
-			if (pool != null && pool != processor.Implementation.getNamePool())
-            {
-                throw new InvalidOperationException("A QName cannot be registered with more than one Processor");
-            }
-			pool = processor.Implementation.getNamePool();
-            fingerprint = pool.allocate(prefix, uri, local) & 0xfffff;
-        }
+        { }
 
         /// <summary>
         /// Validate the QName against the XML 1.0 or XML 1.1 rules for valid names.
@@ -1626,14 +2415,14 @@ namespace Saxon.Api
 
         public bool IsValid(Processor processor)
         {
-            if (prefix != String.Empty)
+            if (this.Prefix != String.Empty)
             {
-                if (!JNameChecker.isValidNCName(prefix))
+                if (!JNameChecker.isValidNCName(Prefix))
                 {
                     return false;
                 }
             }
-            if (!JNameChecker.isValidNCName(local))
+            if (!JNameChecker.isValidNCName(this.LocalName))
             {
                 return false;
             }
@@ -1650,7 +2439,7 @@ namespace Saxon.Api
 
         public String Prefix
         {
-            get { return prefix; }
+            get { return sqName.getPrefix(); }
         }
 
         /// <summary>The namespace URI of the QName. Returns "" (the zero-length string) if the
@@ -1659,14 +2448,14 @@ namespace Saxon.Api
 
         public String Uri
         {
-            get { return uri; }
+            get { return sqName.getURI(); }
         }
 
         /// <summary>The local part of the QName</summary>
 
         public String LocalName
         {
-            get { return local; }
+            get { return sqName.getLocalPart(); }
         }
 
         /// <summary>The expanded name, as a string using the notation devised by James Clark.
@@ -1678,14 +2467,25 @@ namespace Saxon.Api
         {
             get
             {
-                if (uri == "")
+                string uri = Uri;
+                if (uri.Equals(""))
                 {
-                    return local;
+                    return LocalName;
                 }
                 else
                 {
-                    return "{" + uri + "}" + local;
+                    return "{" + uri + "}" + LocalName;
                 }
+            }
+        }
+
+        /// <summary>The expanded name in EQName format that is <c>Q{uri}local</c>. A no namespace name is returned as <c>Q{}local</c>.
+        /// </summary>
+        public String EQName
+        {
+            get
+            {
+                return "Q{" + Uri + "}" + LocalName;
             }
         }
 
@@ -1696,13 +2496,14 @@ namespace Saxon.Api
 
         public override String ToString()
         {
-            if (prefix == "")
+
+            if (Prefix.Equals(""))
             {
-                return local;
+                return LocalName;
             }
             else
             {
-				return prefix + ":" + LocalName;
+                return Prefix + ":" + LocalName;
             }
         }
 
@@ -1718,11 +2519,7 @@ namespace Saxon.Api
 
         public override int GetHashCode()
         {
-            if (hashcode == -1)
-            {
-                hashcode = ClarkName.GetHashCode();
-            }
-            return hashcode;
+            return sqName.hashCode();
         }
 
         /// <summary>
@@ -1744,16 +2541,7 @@ namespace Saxon.Api
             {
                 return false;
             }
-            if (pool != null && pool == ((QName)other).pool)
-            {
-                return fingerprint == ((QName)other).fingerprint;
-            }
-            if (GetHashCode() != ((QName)other).GetHashCode())
-            {
-                return false;
-            }
-            return ClarkName == ((QName)other).ClarkName;
-            //TODO: avoid computing ClarkName more than once
+            return sqName.equals(((QName)other).sqName);
         }
 
         /// <summary>
@@ -1766,14 +2554,14 @@ namespace Saxon.Api
 
         public XmlQualifiedName ToXmlQualifiedName()
         {
-            return new XmlQualifiedName(local, uri);
+            return new XmlQualifiedName(LocalName, Uri);
         }
 
-		// internal method: Convert to a net.sf.saxon.value.QNameValue
+        // internal method: Convert to a net.sf.saxon.value.QNameValue
 
         internal JQNameValue ToQNameValue()
         {
-            return new JQNameValue(prefix, uri, local, null);
+            return new JQNameValue(sqName.getPrefix(), sqName.getURI(), sqName.getLocalPart(), null);
         }
 
         internal JStructuredQName ToStructuredQName()
@@ -1781,18 +2569,6 @@ namespace Saxon.Api
             return new JStructuredQName(Prefix, Uri, LocalName);
         }
 
-		// internal method: Get the internal Saxon fingerprint of this name, with the Saxon configuration supplied
-        // (the fingerprint for a QName is different in different configurations)
-
-        internal int GetFingerprint(JConfiguration config)
-        {
-            JNamePool namePool = config.getNamePool();
-            if (fingerprint != -1 && pool == namePool)
-            {
-                return fingerprint;
-            }
-            return namePool.allocate(prefix, uri, local) & 0xfffff;
-        }
 
 
 
@@ -1822,7 +2598,8 @@ namespace Saxon.Api
         /// A new XdmEnumerator over the same sequence of XDM items, positioned at the start of the sequence.
         /// </returns>
 
-        /**public**/ IXdmEnumerator GetAnother();
+        /**public**/
+        IXdmEnumerator GetAnother();
     }
 
     /// <summary>
@@ -1839,12 +2616,12 @@ namespace Saxon.Api
     {
 
         private JSequenceIterator iter;
-		private JItem current;
+        private JItem current;
 
         internal SequenceEnumerator(JSequenceIterator iter)
         {
             this.iter = iter;
-			current = null;
+            current = null;
         }
 
         /// <summary>Return the current item in the sequence</summary>
@@ -1852,7 +2629,11 @@ namespace Saxon.Api
 
         public object Current
         {
-			get { return XdmValue.Wrap(current); }
+            get
+            {
+                if (current == null) return null;
+                return XdmValue.Wrap(current);
+            }
         }
 
         /// <summary>Move to the next item in the sequence</summary>
@@ -1860,31 +2641,31 @@ namespace Saxon.Api
 
         public bool MoveNext()
         {
-			JItem nextItem = iter.next ();
-			current = nextItem;
-			return (nextItem != null);
+            JItem nextItem = iter.next();
+            current = nextItem;
+            return (nextItem != null);
         }
 
-        /// <summary>Reset the enumeration so that the next call of
+        /// <summary>Deprecated. Reset the enumeration so that the next call of
         /// <c>MoveNext</c> will position the enumeration at the
         /// first item in the sequence</summary>
-
+        [System.Obsolete("MethodAccessException no longer used")]
         public void Reset()
         {
-            iter = iter.getAnother();
+
         }
 
         /// <summary>
-        /// Create another XdmEnumerator over the same sequence of values, positioned at the start
+        /// Deprecated. Create another XdmEnumerator over the same sequence of values, positioned at the start
         /// of the sequence, with no change to this XdmEnumerator.
         /// </summary>
         /// <returns>
         /// A new XdmEnumerator over the same sequence of XDM items, positioned at the start of the sequence.
         /// </returns>
-
+        [System.Obsolete("MethodAccessException no longer used")]
         public IXdmEnumerator GetAnother()
         {
-            return new SequenceEnumerator(iter.getAnother());
+            throw new NotImplementedException();
         }
     }
 

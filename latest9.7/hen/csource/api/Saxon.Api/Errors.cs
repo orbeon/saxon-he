@@ -77,8 +77,14 @@ namespace Saxon.Api
         public String InnerMessage
         {
             get {
-
-                return exception.getMessage() +": " + exception.getCause().Message;
+                if (exception.getCause() != null)
+                {
+                    return exception.getMessage() + ": " + exception.getCause().Message;
+                }
+                else
+                {
+                    return exception.getMessage();
+                }
             }
         
         }
