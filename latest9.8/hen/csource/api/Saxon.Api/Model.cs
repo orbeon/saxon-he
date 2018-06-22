@@ -201,7 +201,7 @@ namespace Saxon.Api
                     result.value = (JFunction)first;
                     return result;
                 } else if (first is JObjectValue) {
-                    result = new XdmExternalObjectValue(first);
+                    result = new XdmExternalObjectValue(((JObjectValue)first).getObject());
                     return result;
                 }
                 else {
