@@ -373,7 +373,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
             for (i=0; i < index; i++) {
                 list.add(array.get(i));
             }
-            list.add(newMember);
+            list.add(SequenceTool.toGroundedValue(newMember));
             for (i = index; i < array.arrayLength(); i++) {
                 list.add(array.get(i));
             }
