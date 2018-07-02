@@ -13,6 +13,7 @@ import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.lib.Resource;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SpaceStrippingRule;
+import net.sf.saxon.trans.UncheckedXPathException;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.Base64BinaryValue;
 import net.sf.saxon.value.DateTimeValue;
@@ -225,7 +226,15 @@ public class JarCollection extends AbstractResourceCollection {
         }
 
         public boolean hasNext() {
-            return next != null;
+            boolean more = next != null;
+            if (!more) {
+                try {
+                    zipInputStream.close();
+                } catch (IOException e) {
+                    throw new UncheckedXPathException(new XPathException(e));
+                }
+            }
+            return more;
         }
 
         public Resource next() {
