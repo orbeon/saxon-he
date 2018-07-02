@@ -50,7 +50,7 @@ public class TransformerImpl extends AbstractTransformerImpl {
      * @param xmlSource    The XML input to transform.
      * @param outputTarget The <code>Result</code> of transforming the
      *                     <code>xmlSource</code>.
-     * @throws javax.xml.transform.TransformerException
+     * @throws XPathException
      *          If an unrecoverable error occurs
      *          during the course of the transformation.
      */
@@ -190,6 +190,12 @@ public class TransformerImpl extends AbstractTransformerImpl {
 
     public XMLFilter newXMLFilter() {
         return new FilterImpl(this);
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        getUnderlyingController().reset();
     }
 }
 
