@@ -43,7 +43,7 @@ public class XSLSourceDocument extends StyleElement {
 
     private Expression href = null;
     private Set<Accumulator> accumulators = new HashSet<Accumulator>();
-    private boolean streaming = true;
+    private boolean streaming = false;
     private ParseOptions parseOptions;
 
 

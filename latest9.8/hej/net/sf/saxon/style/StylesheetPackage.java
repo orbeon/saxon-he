@@ -1074,6 +1074,14 @@ public class StylesheetPackage extends PackageData {
         }
     }
 
+    public boolean isJustInTimeCompilation() {
+        return false; // not available in Saxon-HE
+    }
+
+    public void setJustInTimeCompilation(boolean justInTimeCompilation) {
+        // no action for Saxon-HE
+    }
+
 
 }
 

@@ -127,6 +127,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
         declaredModes = sourceElement.isDeclaredModes();
         stylesheetPackage = getConfiguration().makeStylesheetPackage();
         CompilerInfo compilerInfo = sourceElement.getCompilation().getCompilerInfo();
+        stylesheetPackage.setJustInTimeCompilation(compilerInfo.isJustInTimeCompilation());
         stylesheetPackage.setTargetEdition(compilerInfo.getTargetEdition());
         stylesheetPackage.setRelocatable(compilerInfo.isRelocatable());
 
