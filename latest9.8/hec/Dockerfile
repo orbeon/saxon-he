@@ -20,12 +20,10 @@ RUN ldconfig
 
 WORKDIR /Saxonica/Saxon-HEC1.1.0/Saxon.C.API/
 
-RUN wget https://dev.saxonica.com/repos/archive/opensource/latest9.8/hec/Saxon.C.API/HEC/SaxonCGlue.h
-RUN wget https://dev.saxonica.com/repos/archive/opensource/latest9.8/hec/Saxon.C.API/SaxonCProcessor.c 
 RUN wget https://dev.saxonica.com/repos/archive/opensource/latest9.8/hec/Saxon.C.API/jni/jni.h
 RUN wget https://dev.saxonica.com/repos/archive/opensource/latest9.8/hec/Saxon.C.API/jni/jni_md.h 
 
-RUN phpize && ./configure --enable-saxon && make && make install
+RUN phpize && ./configure --enable-saxon CPPFLAGS="-Ijni" && make && make install
 RUN echo extension=saxon.so >> /etc/php/7.2/apache2/conf.d/saxon.ini
 RUN echo extension=saxon.so >> /etc/php/7.2/mods-available/saxon.ini
 RUN phpenmod saxon
