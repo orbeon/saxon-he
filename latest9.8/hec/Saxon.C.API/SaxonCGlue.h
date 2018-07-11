@@ -8,7 +8,7 @@
 
 #ifndef SAXONCGLUE_H 
 #define SAXONCGLUE_H
-#include "jni.h"
+#include <jni.h>
 
 
 #if defined __linux__ || defined __APPLE__
