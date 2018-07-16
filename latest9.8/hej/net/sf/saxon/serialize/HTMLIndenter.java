@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2017 Saxonica Limited.
+// Copyright (c) 2018 Saxonica Limited.
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 // If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 // This Source Code Form is "Incompatible With Secondary Licenses", as defined by the Mozilla Public License, v. 2.0.
@@ -34,6 +34,9 @@ import java.util.HashSet;
 
 public class HTMLIndenter extends ProxyReceiver {
 
+    // TODO: some of the logic in this class is probably redundant, e.g. the "sameLine" flag. However,
+    // indentation is under-tested in the W3C test suites, so it's safest to avoid unnecessary changes.
+
     private int level = 0;
 
     protected char[] indentChars = {'\n', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
@@ -42,6 +45,7 @@ public class HTMLIndenter extends ProxyReceiver {
     private boolean inFormattedTag = false;
     private boolean afterInline = false;
     private boolean afterFormatted = true;    // to prevent a newline at the start
+    private boolean afterEndElement = false;
     /*@NotNull*/ private int[] propertyStack = new int[20];
     private NameClassifier classifier;
 
@@ -66,16 +70,24 @@ public class HTMLIndenter extends ProxyReceiver {
 
     }
 
+    // When elements are classified as inline, indenting whitespace is not added adjacent to the element.
+
+    // See Saxon bug 3839 and W3C bug 30276. We use a list of inline elements that is the union of
+    // the HTML4 and HTML5 lists, on the basis that no harm is done treating an element as inline
+    // even if the spec doesn't require us to do so. This also means we include elements such as
+    // "ins", "del", and "area" that are sometimes inline and sometimes not.
+
     final private static String[] inlineTags = {
-            "tt", "i", "b", "u", "s", "strike", "big", "small", "em", "strong", "dfn", "code", "samp",
-            "kbd", "var", "cite", "abbr", "acronym", "a", "img", "applet", "object", "font",
-            "basefont", "br", "script", "map", "q", "sub", "sup", "span", "bdo", "iframe", "input",
-            "select", "textarea", "label", "button", "ins", "del"};
+            "a", "abbr", "acronym", "applet", "area",
+            "audio", "b", "basefont", "bdi", "bdo", "big", "br", "button", "canvas", "cite", "code", "data",
+            "datalist", "del", "dfn", "em", "embed", "font", "i", "iframe", "img", "input", "ins",
+            "kbd", "label", "link", "map",
+            "mark", "math", "meter", "noscript", "object", "output", "picture",
+            "progress", "q", "ruby", "s", "samp", "script", "select", "small", "span",
+            "strike", "strong", "sub", "sup", "svg", "template", "textarea",
+            "time", "tt", "u", "var", "video", "wbr"};
 
-    // INS and DEL are not actually inline elements, but the SGML DTD for HTML
-    // (apparently) permits them to be used as if they were.
-
-    final static String[] formattedTags = {"pre", "script", "style", "textarea", "xmp"};
+    final static String[] formattedTags = {"pre", "script", "style", "textarea", "title", "xmp"};
     // "xmp" is obsolete but still encountered!
 
     /**
@@ -84,16 +96,18 @@ public class HTMLIndenter extends ProxyReceiver {
 
     static class HTMLNameClassifier implements NameClassifier {
 
-        // the list of inline tags is from the HTML 4.0 (loose) spec. The significance is that we
-        // mustn't add spaces immediately before or after one of these elements.
-
         final static HTMLNameClassifier THE_INSTANCE = new HTMLNameClassifier();
 
         private static HTMLTagHashSet inlineTable = new HTMLTagHashSet(101);
+        private static HTMLTagHashSet formattedTable = new HTMLTagHashSet(23);
 
         static {
             for (String inlineTag : inlineTags) {
                 inlineTable.add(inlineTag);
+            }
+
+            for (String formattedTag : formattedTags) {
+                formattedTable.add(formattedTag);
             }
         }
 
@@ -116,25 +130,16 @@ public class HTMLIndenter extends ProxyReceiver {
             return r;
         }
 
-        // Table of preformatted elements
 
-        private static HTMLTagHashSet formattedTable = new HTMLTagHashSet(23);
-
-
-        static {
-            for (String formattedTag : formattedTags) {
-                formattedTable.add(formattedTag);
-            }
-        }
     }
 
     /**
-     * Class to classify XHTML names
+     * Class to classify XHTML names for html-version 4
      */
 
-    static class XHTMLNameClassifier implements NameClassifier {
+    static class XHTML4NameClassifier implements NameClassifier {
 
-        final static XHTMLNameClassifier THE_INSTANCE = new XHTMLNameClassifier();
+        final static XHTML4NameClassifier THE_INSTANCE = new XHTML4NameClassifier();
 
         private final static HashSet<NodeName> inlineTagSet;
         private final static HashSet<NodeName> formattedTagSet;
@@ -143,7 +148,13 @@ public class HTMLIndenter extends ProxyReceiver {
             inlineTagSet = new HashSet<NodeName>(50);
             formattedTagSet = new HashSet<NodeName>(10);
             for (String inlineTag : inlineTags) {
-                inlineTagSet.add(new FingerprintedQName("", NamespaceConstant.XHTML, inlineTag));
+                String ns = NamespaceConstant.XHTML;
+                if (inlineTag.equals("math")) {
+                    ns = NamespaceConstant.MATH;
+                } else if (inlineTag.equals("svg")) {
+                    ns = NamespaceConstant.SVG;
+                }
+                inlineTagSet.add(new FingerprintedQName("", ns, inlineTag));
             }
             for (String formattedTag : formattedTags) {
                 formattedTagSet.add(new FingerprintedQName("", NamespaceConstant.XHTML, formattedTag));
@@ -171,10 +182,61 @@ public class HTMLIndenter extends ProxyReceiver {
 
     }
 
+    /**
+     * Class to classify XHTML names for html-version 5
+     */
+
+    static class XHTML5NameClassifier implements NameClassifier {
+
+        final static XHTML5NameClassifier THE_INSTANCE = new XHTML5NameClassifier();
+
+        private static HTMLTagHashSet inlineTable = new HTMLTagHashSet(101);
+        private static HTMLTagHashSet formattedTable = new HTMLTagHashSet(23);
+        private static NodeName SVG = new FingerprintedQName("svg", NamespaceConstant.SVG, "svg");
+        private static NodeName MATH = new FingerprintedQName("math", NamespaceConstant.MATHML, "math");
+
+        static {
+            for (String inlineTag : inlineTags) {
+                inlineTable.add(inlineTag);
+            }
+
+            for (String formattedTag : formattedTags) {
+                formattedTable.add(formattedTag);
+            }
+        }
+
+        /**
+         * Classify an element name as inline, formatted, or both or neither.
+         * This method is overridden in the XHTML indenter
+         *
+         * @param name the element name
+         * @return a bit-significant integer containing flags IS_INLINE and/or IS_FORMATTED
+         */
+
+        public int classifyTag(NodeName name) {
+            if (name.hasURI(NamespaceConstant.XHTML) || name.hasURI("") || name.equals(SVG) || name.equals(MATH)) {
+                int r = 0;
+                if (inlineTable.contains(name.getLocalPart())) {
+                    r |= IS_INLINE;
+                }
+                if (formattedTable.contains(name.getLocalPart())) {
+                    r |= IS_FORMATTED;
+                }
+                return r;
+            } else {
+                return 0;
+            }
+        }
+
+    }
+
+
     public HTMLIndenter(Receiver next, String method) {
         super(next);
         if ("xhtml".equals(method)) {
-            classifier = XHTMLNameClassifier.THE_INSTANCE;
+            classifier = XHTML4NameClassifier.THE_INSTANCE;
+        } else if ("xhtml5".equals(method)) {
+            classifier = XHTML5NameClassifier.THE_INSTANCE;
         } else {
             classifier = HTMLNameClassifier.THE_INSTANCE;
         }
@@ -187,7 +249,7 @@ public class HTMLIndenter extends ProxyReceiver {
     public void startElement(NodeName nameCode, SchemaType typeCode, Location location, int properties) throws XPathException {
         int tagProps = classifier.classifyTag(nameCode);
         if (level >= propertyStack.length) {
-            propertyStack = Arrays.copyOf(propertyStack, level*2);
+            propertyStack = Arrays.copyOf(propertyStack, level * 2);
         }
         propertyStack[level] = tagProps;
         boolean inlineTag = (tagProps & NameClassifier.IS_INLINE) != 0;
@@ -202,6 +264,7 @@ public class HTMLIndenter extends ProxyReceiver {
         sameLine = true;
         afterInline = false;
         afterFormatted = false;
+        afterEndElement = false;
     }
 
     /**
@@ -212,7 +275,10 @@ public class HTMLIndenter extends ProxyReceiver {
         level--;
         boolean thisInline = (propertyStack[level] & NameClassifier.IS_INLINE) != 0;
         boolean thisFormatted = (propertyStack[level] & NameClassifier.IS_FORMATTED) != 0;
-        if (!thisInline && !thisFormatted && !afterInline &&
+        // See bug 3842. The test on afterEndElement is needed for conformance (indenting whitespace
+        // isn't allowed before the end tag) but the change is potentially disruptive so is being
+        // held back to the next major release.
+        if (/*afterEndElement &&*/ !thisInline && !thisFormatted && !afterInline &&
                 !sameLine && !afterFormatted && !inFormattedTag) {
             indent();
             afterInline = false;
@@ -224,6 +290,7 @@ public class HTMLIndenter extends ProxyReceiver {
         nextReceiver.endElement();
         inFormattedTag = inFormattedTag && !thisFormatted;
         sameLine = false;
+        afterEndElement = true;
     }
 
     /**
@@ -256,6 +323,7 @@ public class HTMLIndenter extends ProxyReceiver {
             }
         }
         afterInline = false;
+        afterEndElement = false;
     }
 
     /**
@@ -265,13 +333,13 @@ public class HTMLIndenter extends ProxyReceiver {
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         indent();
         nextReceiver.comment(chars, locationId, properties);
+        afterEndElement = false;
     }
 
     /**
      * Output white space to reflect the current indentation level
      *
-     * @throws net.sf.saxon.trans.XPathException
-     *          if an error occurs downstream in the pipeline
+     * @throws net.sf.saxon.trans.XPathException if an error occurs downstream in the pipeline
      */
 
     private void indent() throws XPathException {

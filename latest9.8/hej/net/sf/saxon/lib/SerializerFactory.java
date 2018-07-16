@@ -810,7 +810,12 @@ public class SerializerFactory {
      */
 
     protected ProxyReceiver newXHTMLIndenter(Receiver next, Properties outputProperties) {
-        return new HTMLIndenter(next, "xhtml");
+        String method = "xhtml";
+        String htmlVersion = outputProperties.getProperty("html-version");
+        if (htmlVersion != null && htmlVersion.startsWith("5")) {
+            method = "xhtml5";
+        }
+        return new HTMLIndenter(next, method);
     }
 
     /**
