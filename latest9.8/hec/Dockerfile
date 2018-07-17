@@ -31,6 +31,11 @@ RUN php -m | grep saxon -i
 RUN echo export LD_LIBRARY_PATH=/usr/lib/rt/lib/amd64:$LD_LIBRARY_PATH >> /etc/apache2/envvars 
 # CMD ["apachectl", "-DFOREGROUND"]
 
+RUN apt-get clean \
+    && apt-get remove -y unzip wget \
+    && apt-get autoremove -y \
+    && rm -rf /var/lib/apt/lists/
+
 RUN sed -i "s/short_open_tag = Off/short_open_tag = On/" /etc/php/7.2/apache2/php.ini
 RUN sed -i "s/error_reporting = .*$/error_reporting = E_ERROR | E_WARNING | E_PARSE/" /etc/php/7.2/apache2/php.ini
 
