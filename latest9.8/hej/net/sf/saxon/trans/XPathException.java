@@ -160,7 +160,9 @@ public class XPathException extends TransformerException {
     }
 
     public void setLocation(Location loc) {
-        setLocator(loc.saveLocation());
+        if (loc != null) {
+            setLocator(loc.saveLocation());
+        }
     }
 
     /**
