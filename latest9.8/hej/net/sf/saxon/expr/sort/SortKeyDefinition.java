@@ -630,11 +630,23 @@ public class SortKeyDefinition extends PseudoExpression {
 
     public boolean equals(Object other) {
         if (other instanceof SortKeyDefinition) {
-            SortKeyDefinition skd2 = (SortKeyDefinition) other;
-            return getSortKey().hashCode() == skd2.getSortKey().hashCode() && hashCode() == skd2.hashCode();
-
+            SortKeyDefinition s2 = (SortKeyDefinition) other;
+            return eq(getSortKey(), s2.getSortKey()) &&
+                    eq(getOrder(), s2.getOrder()) &&
+                    eq(getLanguage(), s2.getLanguage()) &&
+                    eq(getDataTypeExpression(), s2.getDataTypeExpression()) &&
+                    eq(getStable(), s2.getStable()) &&
+                    eq(getCollationNameExpression(), s2.getCollationNameExpression());
         } else {
             return false;
+        }
+    }
+
+    private static boolean eq(Expression a, Expression b) {
+        if (a == null) {
+            return b == null;
+        } else {
+            return a.equals(b);
         }
     }
 
@@ -647,6 +659,7 @@ public class SortKeyDefinition extends PseudoExpression {
     @Override
     public int computeHashCode() {
         int h = 0;
+        h ^= getSortKey().hashCode();
         h ^= getOrder().hashCode();
         h ^= getCaseOrder().hashCode();
         h ^= getLanguage().hashCode();
