@@ -141,7 +141,7 @@ public final class IsLastExpression extends Expression {
      * Hashcode supporting equals()
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         return condition ? 0x236b91a0 : 0x896b92a0;
     }
 

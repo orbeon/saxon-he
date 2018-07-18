@@ -200,7 +200,7 @@ public class ContextItemExpression extends Expression {
      * get HashCode for comparing two expressions
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         return "ContextItemExpression".hashCode();
     }
 

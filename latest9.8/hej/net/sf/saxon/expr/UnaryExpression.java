@@ -70,7 +70,8 @@ public abstract class UnaryExpression extends Expression {
 
     /*@NotNull*/
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
-        typeCheckChildren(visitor, contextInfo);
+        //typeCheckChildren(visitor, contextInfo);
+        operand.typeCheck(visitor, contextInfo);
 
         // if the operand value is known, pre-evaluate the expression
         try {
@@ -168,8 +169,8 @@ public abstract class UnaryExpression extends Expression {
      * result for (A op B) and for (B op A), whether or not the operator is commutative.
      */
 
-    public int hashCode() {
-        return ("UnaryExpression " + getClass()).hashCode() ^ getBaseExpression().hashCode();
+    public int computeHashCode() {
+        return ("UnaryExpression " + getClass()).hashCode() ^ getBaseExpression().computeHashCode();
     }
 
     /**

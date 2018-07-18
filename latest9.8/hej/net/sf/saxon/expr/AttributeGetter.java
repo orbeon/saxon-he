@@ -144,7 +144,7 @@ public final class AttributeGetter extends Expression {
     }
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         return 83571 ^ attributeName.hashCode();
     }
 

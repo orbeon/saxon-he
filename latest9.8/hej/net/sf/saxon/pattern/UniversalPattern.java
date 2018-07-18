@@ -101,7 +101,7 @@ public class UniversalPattern extends Pattern {
      * Hashcode supporting equals()
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         return 0x7aeccea8;
     }
 

@@ -220,8 +220,18 @@ public class NodeSetPattern extends Pattern {
      * Hashcode supporting equals()
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         return 0x73108728 ^ getSelectionExpression().hashCode();
+    }
+
+    /**
+     * Get a string representation of the pattern. This will be in a form similar to the
+     * original pattern text, but not necessarily identical. It is not guaranteed to be
+     * in legal pattern syntax.
+     */
+
+    public String toString() {
+        return getSelectionExpression().toString();
     }
 
     /**

@@ -344,7 +344,7 @@ public final class AncestorQualifiedPattern extends Pattern {
      * hashcode supporting equals()
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         return 88267 ^ basePattern.hashCode() ^ upperPattern.hashCode() ^ (upwardsAxis << 22);
     }
 

@@ -492,11 +492,11 @@ public class Literal extends Expression {
      * Return a hash code to support the equals() function
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         if (value instanceof AtomicSequence) {
             return ((AtomicSequence) value).getSchemaComparable().hashCode();
         } else {
-            return super.hashCode();
+            return super.computeHashCode();
         }
     }
 

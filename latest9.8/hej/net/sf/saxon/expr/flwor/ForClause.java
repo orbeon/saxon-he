@@ -338,7 +338,7 @@ public class ForClause extends Clause {
             } else {
                 Expression path = ExpressionTool.makePathExpression(head, selection, false);
                 if (!(path instanceof SlashExpression)) {
-                    return changed;
+                    return true;
                 }
                 ExpressionTool.copyLocationInfo(condition, path);
                 Expression k = getConfiguration().obtainOptimizer().convertPathExpressionToKey((SlashExpression) path, visitor);

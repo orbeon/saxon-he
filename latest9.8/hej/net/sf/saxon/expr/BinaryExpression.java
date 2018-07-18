@@ -131,7 +131,9 @@ public abstract class BinaryExpression extends Expression {
     /*@NotNull*/
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         resetLocalStaticProperties();
-        typeCheckChildren(visitor, contextInfo);
+        //typeCheckChildren(visitor, contextInfo);
+        lhs.typeCheck(visitor, contextInfo);
+        rhs.typeCheck(visitor, contextInfo);
 
         // if both operands are known, pre-evaluate the expression
         try {
@@ -349,10 +351,10 @@ public abstract class BinaryExpression extends Expression {
                 ((BinaryExpression) getLhsExpression()).operator == operator) {
             ((BinaryExpression) getLhsExpression()).flattenExpression(list);
         } else {
-            int h = getLhsExpression().hashCode();
+            int h = getLhsExpression().computeHashCode();
             list.add(getLhsExpression());
             int i = list.size() - 1;
-            while (i > 0 && h > list.get(i - 1).hashCode()) {
+            while (i > 0 && h > list.get(i - 1).computeHashCode()) {
                 list.set(i, list.get(i - 1));
                 list.set(i - 1, getLhsExpression());
                 i--;
@@ -362,10 +364,10 @@ public abstract class BinaryExpression extends Expression {
                 ((BinaryExpression) getRhsExpression()).operator == operator) {
             ((BinaryExpression) getRhsExpression()).flattenExpression(list);
         } else {
-            int h = getRhsExpression().hashCode();
+            int h = getRhsExpression().computeHashCode();
             list.add(getRhsExpression());
             int i = list.size() - 1;
-            while (i > 0 && h > list.get(i - 1).hashCode()) {
+            while (i > 0 && h > list.get(i - 1).computeHashCode()) {
                 list.set(i, list.get(i - 1));
                 list.set(i - 1, getRhsExpression());
                 i--;
@@ -399,13 +401,13 @@ public abstract class BinaryExpression extends Expression {
      * result for (A op B) and for (B op A), whether or not the operator is commutative.
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         // Ensure that an operator and its inverse get the same hash code,
         // so that (A lt B) has the same hash code as (B gt A)
         int op = Math.min(operator, Token.inverse(operator));
         return ("BinaryExpression " + op).hashCode()
-                ^ getLhsExpression().hashCode()
-                ^ getRhsExpression().hashCode();
+                ^ getLhsExpression().computeHashCode()
+                ^ getRhsExpression().computeHashCode();
     }
 
     /**

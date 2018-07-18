@@ -115,8 +115,8 @@ public class TailExpression extends UnaryExpression {
                 start == ((TailExpression) other).start;
     }
 
-    public int hashCode() {
-        return super.hashCode() ^ start;
+    public int computeHashCode() {
+        return super.computeHashCode() ^ start;
     }
 
     /**

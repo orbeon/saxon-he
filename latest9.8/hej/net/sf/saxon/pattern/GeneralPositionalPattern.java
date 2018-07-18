@@ -317,7 +317,7 @@ public class GeneralPositionalPattern extends Pattern {
      * hashcode supporting equals()
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         return nodeTest.hashCode() ^ positionExpr.hashCode();
     }
 

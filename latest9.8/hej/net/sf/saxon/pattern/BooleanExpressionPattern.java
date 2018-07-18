@@ -190,7 +190,7 @@ public class BooleanExpressionPattern extends Pattern implements PatternWithPred
      * Hashcode supporting equals()
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         return 0x7aeffea9 ^ getPredicate().hashCode();
     }
 

@@ -136,7 +136,7 @@ public class IntersectPattern extends VennPattern {
      * Hashcode supporting equals()
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         return 0x13d7dfa6 ^ p1.hashCode() ^ p2.hashCode();
     }
 

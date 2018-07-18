@@ -483,7 +483,6 @@ public abstract class Pattern extends PseudoExpression {
         return this;
     }
 
-
     @Override
     public String toShortString() {
         return toString();

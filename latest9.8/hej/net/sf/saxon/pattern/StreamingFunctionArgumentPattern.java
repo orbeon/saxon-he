@@ -128,5 +128,15 @@ public class StreamingFunctionArgumentPattern extends Pattern {
     public Pattern copy(RebindingMap rebindings) {
         return this;
     }
+
+    @Override
+    public int computeHashCode() {
+        return 0x8ad31821;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof StreamingFunctionArgumentPattern;
+    }
 }
 

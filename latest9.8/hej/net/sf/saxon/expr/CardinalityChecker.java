@@ -393,8 +393,8 @@ public final class CardinalityChecker extends UnaryExpression {
      */
 
     @Override
-    public int hashCode() {
-        return super.hashCode() ^ requiredCardinality;
+    public int computeHashCode() {
+        return super.computeHashCode() ^ requiredCardinality;
     }
 
     /**

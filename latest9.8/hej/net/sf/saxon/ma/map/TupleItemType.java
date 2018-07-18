@@ -243,7 +243,7 @@ public class TupleItemType extends AnyFunctionType {
      */
     @Override
     public String generateJavaScriptItemTypeTest(ItemType knownToBe, int targetVersion) throws XPathException {
-        throw new UnsupportedOperationException();
+        return "return SaxonJS.U.isMap(item)";
     }
 }
 

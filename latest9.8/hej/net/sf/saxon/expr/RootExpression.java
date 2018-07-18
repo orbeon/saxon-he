@@ -177,7 +177,7 @@ public class RootExpression extends Expression {
      * get HashCode for comparing two expressions
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         return "RootExpression".hashCode();
     }
 

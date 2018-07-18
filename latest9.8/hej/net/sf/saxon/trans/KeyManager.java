@@ -225,18 +225,50 @@ public class KeyManager {
      */
 
     public KeyDefinitionSet findKeyDefinition(Pattern finder, Expression use, String collationName) {
-        for (KeyDefinitionSet keySet : keyDefinitions.values()) {
-            if (keySet.getKeyDefinitions().size() == 1) {
-                for (KeyDefinition keyDef : keySet.getKeyDefinitions()) {
-                    if (keyDef.getMatch().equals(finder) &&
-                            keyDef.getUse().equals(use) &&
-                            keyDef.getCollationName().equals(collationName)) {
-                        return keySet;
-                    }
-                }
-            }
-        }
+        //System.err.println("findKeyDefinition " + finder + " count=" + keyDefinitions.size());  // KILROY
+//        for (KeyDefinitionSet keySet : keyDefinitions.values()) {
+//            if (keySet.getKeyDefinitions().size() == 1) {
+//                for (KeyDefinition keyDef : keySet.getKeyDefinitions()) {
+//                    if (keyDef.getMatch().isSameExpression(finder) &&
+//                            keyDef.getUse().isSameExpression(use) &&
+//                            keyDef.getCollationName().equals(collationName)) {
+//                        return keySet;
+//                    }
+//                }
+//            }
+//        }
         return null;
+    }
+
+    private static int patternCount = 0;
+    private static int patternFails = 0;
+    private static int patternQuickFails = 0;
+    private static int expressionCount = 0;
+
+    private boolean isSamePattern(Pattern one, Pattern two) {
+//        if ((patternCount++ % 1000) == 0) {
+//            System.err.println("Pattern comparisons: " + patternCount);
+//        }
+        if (one.hashCode() != two.hashCode()) {
+//            System.err.println("Pattern quick comparison failures: " + patternQuickFails++ + " of " + patternCount);
+            return false;
+        }
+        boolean b = one.equals(two);
+//        if (!b && (patternFails++ % 1000) == 0) {
+//            System.err.println("Pattern comparison failures: " + patternFails + " of " + patternCount);
+//        }
+//        if (!b && one.toString().equals(two.toString())) {
+//            System.err.println("Non-match on pattern " + one.toString());
+//            one.equals(two);
+//        }
+        return b;
+    }
+
+    private boolean isSameExpression(Expression one, Expression two) {
+        if ((expressionCount++ % 1000) == 0) {
+            System.err.println("Expression comparisons: " + expressionCount);
+        }
+        return one.equals(two);
     }
 
     /**

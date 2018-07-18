@@ -650,7 +650,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
             if (Cardinality.allowsZero(card)) {
                 LetExpression let = new LetExpression();
                 let.setRequiredType(SequenceType.makeSequenceType(comparand.getItemType(), card));
-                let.setVariableQName(new StructuredQName("pp", NamespaceConstant.SAXON, "pp" + let.hashCode()));
+                let.setVariableQName(new StructuredQName("pp", NamespaceConstant.SAXON, "pp" + let.computeHashCode()));
                 let.setSequence(comparand);
                 comparand = new LocalVariableReference(let);
                 LocalVariableReference existsArg = new LocalVariableReference(let);
@@ -693,7 +693,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
 
             LetExpression let = new LetExpression();
             let.setRequiredType(SequenceType.SINGLE_INTEGER);
-            let.setVariableQName(new StructuredQName("nn", NamespaceConstant.SAXON, "nn" + let.hashCode()));
+            let.setVariableQName(new StructuredQName("nn", NamespaceConstant.SAXON, "nn" + let.computeHashCode()));
             let.setSequence(min);
             min = new LocalVariableReference(let);
             LocalVariableReference min2 = new LocalVariableReference(let);
@@ -785,7 +785,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
                     LetExpression let = new LetExpression();
                     let.setRequiredType(SequenceType.makeSequenceType(
                             comparand.getItemType(), StaticProperty.ALLOWS_ONE));
-                    let.setVariableQName(new StructuredQName("pp", NamespaceConstant.SAXON, "pp" + let.hashCode()));
+                    let.setVariableQName(new StructuredQName("pp", NamespaceConstant.SAXON, "pp" + let.computeHashCode()));
                     let.setSequence(comparand);
                     LocalVariableReference isWholeArg = new LocalVariableReference(let);
                     LocalVariableReference arithArg = new LocalVariableReference(let);
@@ -813,7 +813,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
                     ExpressionTool.copyLocationInfo(start, let);
                     let.setRequiredType(SequenceType.makeSequenceType(
                             comparand.getItemType(), StaticProperty.ALLOWS_ONE));
-                    let.setVariableQName(new StructuredQName("pp", NamespaceConstant.SAXON, "pp" + let.hashCode()));
+                    let.setVariableQName(new StructuredQName("pp", NamespaceConstant.SAXON, "pp" + let.computeHashCode()));
                     let.setSequence(comparand);
                     LocalVariableReference isWholeArg = new LocalVariableReference(let);
                     LocalVariableReference castArg = new LocalVariableReference(let);
@@ -833,7 +833,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
                     LetExpression let = new LetExpression();
                     let.setRequiredType(SequenceType.makeSequenceType(
                             comparand.getItemType(), StaticProperty.ALLOWS_ONE));
-                    let.setVariableQName(new StructuredQName("pp", NamespaceConstant.SAXON, "pp" + let.hashCode()));
+                    let.setVariableQName(new StructuredQName("pp", NamespaceConstant.SAXON, "pp" + let.computeHashCode()));
                     let.setSequence(comparand);
                     LocalVariableReference isWholeArg = new LocalVariableReference(let);
                     LocalVariableReference arithArg = new LocalVariableReference(let);
@@ -1018,8 +1018,8 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      * @return the hash code
      */
 
-    public int hashCode() {
-        return "FilterExpression".hashCode() + getBase().hashCode() + getFilter().hashCode();
+    public int computeHashCode() {
+        return "FilterExpression".hashCode() + getBase().computeHashCode() + getFilter().computeHashCode();
     }
 
     /**

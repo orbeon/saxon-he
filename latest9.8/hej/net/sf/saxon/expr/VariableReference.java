@@ -434,7 +434,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      * get HashCode for comparing two expressions
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         return binding == null ? 73619830 : binding.hashCode();
     }
 

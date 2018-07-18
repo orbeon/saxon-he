@@ -116,7 +116,7 @@ public class JAXPVariableReference extends Expression implements Callable {
      * get HashCode for comparing two expressions
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         return name.hashCode();
     }
 

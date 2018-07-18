@@ -75,6 +75,7 @@ public abstract class Expression implements IdentityComparable, ExportAgent {
     private int evaluationMethod;
     private Map<String, Object> extraProperties;
     private int cost = -1;
+    private int cachedHashCode = -1;
 
 //    public int serial;  // used to identify expressions for internal diagnostics
 //    private static int nextSerial = 0;
@@ -559,7 +560,7 @@ public abstract class Expression implements IdentityComparable, ExportAgent {
     /*@NotNull*/
     protected final void typeCheckChildren(ExpressionVisitor visitor,
                                 ContextItemStaticInfo contextInfo) throws XPathException {
-        for (Operand o : checkedOperands()) {
+        for (Operand o : operands()) {
             o.typeCheck(visitor, contextInfo);
         }
     }
@@ -1603,6 +1604,22 @@ public abstract class Expression implements IdentityComparable, ExportAgent {
      */
     public int identityHashCode() {
         return System.identityHashCode(Expression.this.getLocation());
+    }
+
+
+    public int hashCode() {
+        if (cachedHashCode == -1) {
+            cachedHashCode = computeHashCode();
+        }
+        return cachedHashCode;
+    }
+
+    public int computeHashCode() {
+        return super.hashCode();
+    }
+
+    public boolean isSameExpression(Expression other) {
+        return hashCode() == other.hashCode() && equals(other);
     }
 
     /**

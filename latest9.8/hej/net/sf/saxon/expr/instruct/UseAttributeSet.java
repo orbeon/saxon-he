@@ -396,7 +396,7 @@ public class UseAttributeSet extends Instruction implements ComponentInvocation,
      * Compute a hashcode
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         return 0x86423719 ^ targetName.hashCode();
     }
 

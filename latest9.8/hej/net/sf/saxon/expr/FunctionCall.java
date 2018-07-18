@@ -515,13 +515,13 @@ public abstract class FunctionCall extends Expression {
      * Get hashCode in support of equals() method
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         if (getFunctionName() == null) {
-            return super.hashCode();
+            return super.computeHashCode();
         }
         int h = getFunctionName().hashCode();
         for (int i = 0; i < getArity(); i++) {
-            h ^= getArg(i).hashCode();
+            h ^= getArg(i).computeHashCode();
         }
         return h;
     }

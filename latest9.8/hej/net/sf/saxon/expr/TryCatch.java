@@ -191,12 +191,12 @@ public class TryCatch extends Expression {
      * Hashcode supporting equals()
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         int h = 0x836b12a0;
         for (int i = 0; i < catchClauses.size(); i++) {
             h ^= catchClauses.get(i).hashCode()<<i;
         }
-        return h + tryOp.getChildExpression().hashCode();
+        return h + tryOp.getChildExpression().computeHashCode();
     }
 
     /**

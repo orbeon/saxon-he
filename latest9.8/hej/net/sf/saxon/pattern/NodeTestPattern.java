@@ -105,7 +105,7 @@ public class NodeTestPattern extends Pattern {
      * Hashcode supporting equals()
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         return 0x7aeffea8 ^ nodeTest.hashCode();
     }
 

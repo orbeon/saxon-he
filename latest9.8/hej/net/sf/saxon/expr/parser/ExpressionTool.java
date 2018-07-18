@@ -1601,14 +1601,6 @@ public class ExpressionTool {
     public static Expression makePathExpression(
             /*@NotNull*/ Expression start, /*@NotNull*/ Expression step, boolean sortAndDeduplicate) {
 
-//        if (sortAndDeduplicate) {
-//            // if the final expression is to be sorted and deduplicated, then there is no need to apply this process
-//            // to the results of subexpressions
-        // code removed 2011-11-01 MHK - causes test expr36 to fail
-//            start = removeSorting(start);
-//            step = removeSorting(step);
-//        }
-
         // the expression /.. is sometimes used to represent the empty node-set. Applying this simplification
         // now avoids generating warnings for this case.
         if (start instanceof RootExpression &&

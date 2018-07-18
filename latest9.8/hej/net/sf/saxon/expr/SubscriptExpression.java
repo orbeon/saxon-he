@@ -120,11 +120,11 @@ public class SubscriptExpression extends SingleItemFilter {
     public boolean equals(Object other) {
         return other instanceof SubscriptExpression &&
                 getBaseExpression().equals(((SubscriptExpression) other).getBaseExpression()) &&
-                getSubscript() == ((SubscriptExpression) other).getSubscript();
+                getSubscript().equals(((SubscriptExpression) other).getSubscript());
     }
 
-    public int hashCode() {
-        return getBaseExpression().hashCode() ^ getSubscript().hashCode();
+    public int computeHashCode() {
+        return getBaseExpression().computeHashCode() ^ getSubscript().computeHashCode();
     }
 
     /**

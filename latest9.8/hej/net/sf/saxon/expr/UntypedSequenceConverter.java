@@ -209,8 +209,8 @@ public final class UntypedSequenceConverter extends AtomicSequenceConverter {
      */
 
     @Override
-    public int hashCode() {
-        return super.hashCode();
+    public int computeHashCode() {
+        return super.computeHashCode();
     }
 
     @Override

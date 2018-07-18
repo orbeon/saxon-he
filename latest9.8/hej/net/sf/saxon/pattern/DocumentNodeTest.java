@@ -61,6 +61,9 @@ public class DocumentNodeTest extends NodeTest {
      */
     @Override
     public boolean matches(int nodeKind, NodeName name, SchemaType annotation) {
+        if (nodeKind != Type.DOCUMENT) {
+            return false;
+        }
         throw new UnsupportedOperationException("DocumentNodeTest doesn't support this method");
     }
 

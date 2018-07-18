@@ -293,9 +293,10 @@ public class BasePatternWithPredicate extends Pattern implements PatternWithPred
     }
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         return getBasePattern().hashCode() ^ getPredicate().hashCode();
     }
+
 
     public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.withPredicate");

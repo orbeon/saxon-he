@@ -171,9 +171,9 @@ public class IntegerRangeTest extends Expression {
      * Hashcode supporting equals()
      */
 
-    public int hashCode() {
-        int h = getValue().hashCode() + 77;
-        h ^= getMin().hashCode() ^ getMax().hashCode();
+    public int computeHashCode() {
+        int h = getValue().computeHashCode() + 77;
+        h ^= getMin().computeHashCode() ^ getMax().computeHashCode();
         return h;
     }
 

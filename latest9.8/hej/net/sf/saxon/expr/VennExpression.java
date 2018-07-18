@@ -595,8 +595,8 @@ public class VennExpression extends BinaryExpression {
         return false;
     }
 
-    public int hashCode() {
-        return getLhsExpression().hashCode() ^ getRhsExpression().hashCode();
+    public int computeHashCode() {
+        return getLhsExpression().computeHashCode() ^ getRhsExpression().computeHashCode();
     }
 
     /**

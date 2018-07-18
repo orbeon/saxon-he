@@ -700,7 +700,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
         } else {
             flags += "d";
         }
-        if (isMemoFunction()) {
+        if (isMemoFunction() && !"JS".equals(presenter.getOption("target"))) {
             flags += "m";
         }
         switch (declaredStreamability) {

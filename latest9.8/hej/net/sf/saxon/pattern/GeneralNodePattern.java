@@ -293,7 +293,7 @@ public final class GeneralNodePattern extends Pattern {
      * hashcode supporting equals()
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         return 83641 ^ equivalentExpr.hashCode();
     }
 

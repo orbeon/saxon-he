@@ -123,30 +123,33 @@ public final class AxisExpression extends Expression {
         }
         Configuration config = visitor.getConfiguration();
         TypeHierarchy th = config.getTypeHierarchy();
-        int relation = th.relationship(contextInfo.getItemType(), AnyNodeTest.getInstance());
+        ItemType contextItemType = contextInfo.getItemType();
+        if (!(contextItemType instanceof NodeTest)) {
+            int relation = th.relationship(contextInfo.getItemType(), AnyNodeTest.getInstance());
 
-        if (relation == TypeHierarchy.DISJOINT) {
-            XPathException err = new XPathException("Axis step " + toString() +
-                                                            " cannot be used here: the context item is not a node");
-            err.setIsTypeError(true);
-            err.setErrorCode("XPTY0020");
-            err.setLocation(getLocation());
-            throw err;
-        } else if (relation == TypeHierarchy.OVERLAPS || relation == TypeHierarchy.SUBSUMES) {
-            // need to insert a dynamic check of the context item type
-            Expression thisExp = checkPlausibility(visitor, contextInfo, !noWarnings);
-            if (Literal.isEmptySequence(thisExp)) {
-                return thisExp;
+            if (relation == TypeHierarchy.DISJOINT) {
+                XPathException err = new XPathException("Axis step " + toString() +
+                                                                " cannot be used here: the context item is not a node");
+                err.setIsTypeError(true);
+                err.setErrorCode("XPTY0020");
+                err.setLocation(getLocation());
+                throw err;
+            } else if (relation == TypeHierarchy.OVERLAPS || relation == TypeHierarchy.SUBSUMES) {
+                // need to insert a dynamic check of the context item type
+                Expression thisExp = checkPlausibility(visitor, contextInfo, !noWarnings);
+                if (Literal.isEmptySequence(thisExp)) {
+                    return thisExp;
+                }
+                ContextItemExpression exp = new ContextItemExpression();
+                ExpressionTool.copyLocationInfo(this, exp);
+                RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.AXIS_STEP, "", axis);
+                role.setErrorCode("XPTY0020");
+                ItemChecker checker = new ItemChecker(exp, AnyNodeTest.getInstance(), role);
+                ExpressionTool.copyLocationInfo(this, checker);
+                SimpleStepExpression step = new SimpleStepExpression(checker, thisExp);
+                ExpressionTool.copyLocationInfo(this, step);
+                return step;
             }
-            ContextItemExpression exp = new ContextItemExpression();
-            ExpressionTool.copyLocationInfo(this, exp);
-            RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.AXIS_STEP, "", axis);
-            role.setErrorCode("XPTY0020");
-            ItemChecker checker = new ItemChecker(exp, AnyNodeTest.getInstance(), role);
-            ExpressionTool.copyLocationInfo(this, checker);
-            SimpleStepExpression step = new SimpleStepExpression(checker, thisExp);
-            ExpressionTool.copyLocationInfo(this, step);
-            return step;
         }
 
         return checkPlausibility(visitor, contextInfo, !noWarnings);
@@ -731,7 +734,7 @@ public final class AxisExpression extends Expression {
      * get HashCode for comparing two expressions
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         // generate an arbitrary hash code that depends on the axis and the node test
         int h = 9375162 + axis << 20;
         if (test != null) {

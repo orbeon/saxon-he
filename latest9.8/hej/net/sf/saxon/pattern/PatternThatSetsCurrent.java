@@ -271,5 +271,15 @@ public class PatternThatSetsCurrent extends Pattern {
         return wrappedPattern;
     }
 
+    @Override
+    public int computeHashCode() {
+        return wrappedPattern.hashCode() ^ 0x77332211;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof PatternThatSetsCurrent && wrappedPattern.equals(((PatternThatSetsCurrent)obj).wrappedPattern);
+    }
+
 }
 

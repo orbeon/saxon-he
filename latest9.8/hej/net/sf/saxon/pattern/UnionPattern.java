@@ -128,7 +128,7 @@ public class UnionPattern extends VennPattern {
      * Hashcode supporting equals()
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         return 0x9bd723a6 ^ p1.hashCode() ^ p2.hashCode();
     }
 

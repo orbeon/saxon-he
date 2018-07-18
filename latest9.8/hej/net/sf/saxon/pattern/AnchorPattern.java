@@ -127,5 +127,16 @@ public class AnchorPattern extends Pattern {
     public Pattern copy(RebindingMap rebindings) {
         return this;
     }
+
+//    int computeHashCode() {
+//        return 0x8ad48721;
+//    }
+
+
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof AnchorPattern;
+    }
 }
 

@@ -409,7 +409,7 @@ public class SortKeyDefinition extends PseudoExpression {
      */
 
     public SortKeyDefinition typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
-        for (Operand o : checkedOperands()) {
+        for (Operand o : operands()) {
             if (o.hasSameFocus()) {
                 o.typeCheck(visitor, contextItemType);
             }
@@ -644,7 +644,8 @@ public class SortKeyDefinition extends PseudoExpression {
      * @return a hashcode based sortkey attribute values.
      */
 
-    public int hashCode() {
+    @Override
+    public int computeHashCode() {
         int h = 0;
         h ^= getOrder().hashCode();
         h ^= getCaseOrder().hashCode();

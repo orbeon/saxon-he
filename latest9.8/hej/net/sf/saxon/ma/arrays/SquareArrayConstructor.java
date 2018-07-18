@@ -141,7 +141,7 @@ public class SquareArrayConstructor extends Expression {
      * Hashcode supporting equals()
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         int h = 0x878b92a0;
         for (Operand o : operands()) {
             h ^= o.getChildExpression().hashCode();

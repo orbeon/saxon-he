@@ -340,7 +340,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
 
     public String getVariableName() {
         if (variableName == null) {
-            return "zz:var" + hashCode();
+            return "zz:var" + computeHashCode();
         } else {
             return variableName.getDisplayName();
         }
@@ -356,7 +356,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
 
     public String getVariableEQName() {
         if (variableName == null) {
-            return "Q{http://ns.saxonica.com/anonymous-var}var" + hashCode();
+            return "Q{http://ns.saxonica.com/anonymous-var}var" + computeHashCode();
         } else if (variableName.hasURI("")) {
             return variableName.getLocalPart();
         } else {

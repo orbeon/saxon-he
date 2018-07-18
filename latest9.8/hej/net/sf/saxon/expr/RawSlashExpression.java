@@ -353,8 +353,8 @@ public class RawSlashExpression extends BinaryExpression
      * get HashCode for comparing two expressions
      */
 
-    public int hashCode() {
-        return "SlashExpression".hashCode() + getStart().hashCode() + getStep().hashCode();
+    public int computeHashCode() {
+        return "SlashExpression".hashCode() + getStart().computeHashCode() + getStep().computeHashCode();
     }
 
     /**

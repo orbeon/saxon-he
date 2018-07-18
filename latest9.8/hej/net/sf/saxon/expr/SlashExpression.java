@@ -313,7 +313,7 @@ public class SlashExpression extends BinaryExpression
 
             Expression newPath = ExpressionTool.makePathExpression(startPath.getStart(), newStep, false);
             if (!(newPath instanceof SlashExpression)) {
-                throw new AssertionError();
+                return null;
             }
             ExpressionTool.copyLocationInfo(this, newPath);
             return (SlashExpression) newPath;
@@ -451,6 +451,9 @@ public class SlashExpression extends BinaryExpression
                 RootExpression root = new RootExpression();
                 ExpressionTool.copyLocationInfo(this, root);
                 Expression path = ExpressionTool.makePathExpression(root, this.copy(new RebindingMap()), false);
+                if (!(path instanceof SlashExpression)) {
+                    return null;
+                }
                 ExpressionTool.copyLocationInfo(this, path);
                 return (SlashExpression) path;
             }
@@ -644,8 +647,8 @@ public class SlashExpression extends BinaryExpression
      */
 
     /*@NotNull*/
-    public SlashExpression copy(RebindingMap rebindings) {
-        SlashExpression exp = (SlashExpression)ExpressionTool.makePathExpression(getStart().copy(rebindings), getStep().copy(rebindings), false);
+    public Expression copy(RebindingMap rebindings) {
+        Expression exp = ExpressionTool.makePathExpression(getStart().copy(rebindings), getStep().copy(rebindings), false);
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;
     }
@@ -879,8 +882,8 @@ public class SlashExpression extends BinaryExpression
      * get HashCode for comparing two expressions
      */
 
-    public int hashCode() {
-        return "SlashExpression".hashCode() + getStart().hashCode() + getStep().hashCode();
+    public int computeHashCode() {
+        return "SlashExpression".hashCode() + getStart().computeHashCode() + getStep().computeHashCode();
     }
 
     /**

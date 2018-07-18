@@ -419,8 +419,8 @@ public class CastExpression extends CastingExpression implements Callable {
      */
 
     @Override
-    public int hashCode() {
-        return super.hashCode() ^ getTargetType().hashCode();
+    public int computeHashCode() {
+        return super.computeHashCode() ^ getTargetType().hashCode();
     }
 
     /**

@@ -140,8 +140,8 @@ public final class CastableExpression extends CastingExpression {
      */
 
     @Override
-    public int hashCode() {
-        return super.hashCode() ^ 0x5555;
+    public int computeHashCode() {
+        return super.computeHashCode() ^ 0x5555;
     }
 
     /**

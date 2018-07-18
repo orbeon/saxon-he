@@ -135,9 +135,9 @@ public class CompareToIntegerConstant extends UnaryExpression implements Compari
      * Hashcode supporting equals()
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         int h = 0x836b12a0;
-        return h + getLhsExpression().hashCode() ^ (int)comparand;
+        return h + getLhsExpression().computeHashCode() ^ (int)comparand;
     }
 
 

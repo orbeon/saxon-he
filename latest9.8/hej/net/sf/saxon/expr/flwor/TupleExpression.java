@@ -145,7 +145,7 @@ public class TupleExpression extends Expression {
      * Hashcode supporting equals()
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         int h = 77;
         for (Operand o : operands()) {
             h ^= o.getChildExpression().hashCode();

@@ -118,7 +118,7 @@ public final class SimplePositionalPattern extends Pattern {
      * hashcode supporting equals()
      */
 
-    public int hashCode() {
+    public int computeHashCode() {
         return nodeTest.hashCode() ^ (position<<3);
     }
 

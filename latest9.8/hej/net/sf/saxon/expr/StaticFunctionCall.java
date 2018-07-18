@@ -215,6 +215,24 @@ public class StaticFunctionCall extends FunctionCall implements Callable {
                 o.getChildExpression().export(out);
             }
             out.endElement();
+        } else if (target instanceof UnionCastableFunction) {
+            // Bug 2611. Bug 3822.
+            out.startElement("castable", this);
+            out.emitAttribute("emptiable", ((UnionCastableFunction) target).isAllowEmpty() ? "1" : "0");
+            out.emitAttribute("as", ((UnionCastableFunction) target).getTargetType().getStructuredQName());
+            for (Operand o : operands()) {
+                o.getChildExpression().export(out);
+            }
+            out.endElement();
+        } else if (target instanceof ListCastableFunction) {
+            // Bug 2611. Bug 3822.
+            out.startElement("castable", this);
+            out.emitAttribute("emptiable", ((ListCastableFunction) target).isAllowEmpty() ? "1" : "0");
+            out.emitAttribute("as", ((ListCastableFunction) target).getTargetType().getStructuredQName());
+            for (Operand o : operands()) {
+                o.getChildExpression().export(out);
+            }
+            out.endElement();
         } else if (target instanceof UnionConstructorFunction) {
             // Bug 2611.
             out.startElement("cast", this);
@@ -229,24 +247,6 @@ public class StaticFunctionCall extends FunctionCall implements Callable {
             out.startElement("cast", this);
             out.emitAttribute("emptiable", ((ListConstructorFunction) target).isAllowEmpty() ? "1" : "0");
             out.emitAttribute("as", ((ListConstructorFunction) target).getTargetType().getStructuredQName());
-            for (Operand o : operands()) {
-                o.getChildExpression().export(out);
-            }
-            out.endElement();
-        } else if (target instanceof UnionCastableFunction) {
-            // Bug 2611.
-            out.startElement("castable", this);
-            out.emitAttribute("emptiable", ((UnionCastableFunction) target).isAllowEmpty() ? "1" : "0");
-            out.emitAttribute("as", ((UnionCastableFunction) target).getTargetType().getStructuredQName());
-            for (Operand o : operands()) {
-                o.getChildExpression().export(out);
-            }
-            out.endElement();
-        } else if (target instanceof ListCastableFunction) {
-            // Bug 2611.
-            out.startElement("castable", this);
-            out.emitAttribute("emptiable", ((ListCastableFunction) target).isAllowEmpty() ? "1" : "0");
-            out.emitAttribute("as", ((ListCastableFunction) target).getTargetType().getStructuredQName());
             for (Operand o : operands()) {
                 o.getChildExpression().export(out);
             }

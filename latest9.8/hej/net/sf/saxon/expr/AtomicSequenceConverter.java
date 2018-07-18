@@ -356,8 +356,8 @@ public class AtomicSequenceConverter extends UnaryExpression {
      */
 
     @Override
-    public int hashCode() {
-        return super.hashCode() ^ requiredItemType.hashCode();
+    public int computeHashCode() {
+        return super.computeHashCode() ^ requiredItemType.hashCode();
     }
 
 

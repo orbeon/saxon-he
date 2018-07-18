@@ -178,8 +178,8 @@ public final class InstanceOfExpression extends UnaryExpression {
      */
 
     @Override
-    public int hashCode() {
-        return super.hashCode() ^ targetType.hashCode() ^ targetCardinality;
+    public int computeHashCode() {
+        return super.computeHashCode() ^ targetType.hashCode() ^ targetCardinality;
     }
 
     /**

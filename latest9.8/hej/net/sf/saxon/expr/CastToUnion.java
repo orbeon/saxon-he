@@ -367,8 +367,8 @@ public class CastToUnion extends UnaryExpression {
      */
 
     @Override
-    public int hashCode() {
-        return super.hashCode() ^ targetType.hashCode();
+    public int computeHashCode() {
+        return super.computeHashCode() ^ targetType.hashCode();
     }
 
     /**
