@@ -527,7 +527,15 @@ namespace Saxon.Api
         /// $err:value during try/catch processor</returns>
         public Sequence endReporting()
         {
-            return inHandler.endReporting().Unwrap();
+            XdmValue value = inHandler.endReporting();
+            if (value == null)
+            {
+                return null;
+            }
+            else
+            {
+                return value.Unwrap();
+            }
         }
 
         /// <summary>
