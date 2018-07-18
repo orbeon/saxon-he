@@ -128,8 +128,8 @@ public class XPath31FunctionSet extends BuiltInFunctionSet {
         register("parse-xml", 1, ParseXml.class, NodeKindTest.DOCUMENT, OPT, XPATH30, LATE)
                 .arg(0, BuiltInAtomicType.STRING, OPT, EMPTY);
 
-        register("parse-xml-fragment", 1, ParseXmlFragment.class, NodeKindTest.DOCUMENT, OPT, XPATH30, LATE)
-                .arg(0, BuiltInAtomicType.STRING, OPT, null);
+        register("parse-xml-fragment", 1, ParseXmlFragment.class, NodeKindTest.DOCUMENT, OPT, XPATH30, LATE | NEW)
+                .arg(0, BuiltInAtomicType.STRING, OPT, EMPTY);
 
         register("serialize", 2, Serialize.class, BuiltInAtomicType.STRING, ONE, XPATH31, 0)
                 .arg(0, AnyItemType.getInstance(), STAR, null)

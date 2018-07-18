@@ -16,10 +16,7 @@ import net.sf.saxon.expr.Callable;
 import net.sf.saxon.expr.PackageData;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ParseOptions;
-import net.sf.saxon.om.IgnorableSpaceStrippingRule;
-import net.sf.saxon.om.NodeInfo;
-import net.sf.saxon.om.Sequence;
-import net.sf.saxon.om.TreeModel;
+import net.sf.saxon.om.*;
 import net.sf.saxon.style.StylesheetPackage;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.tiny.TinyDocumentImpl;
@@ -48,10 +45,13 @@ public class ParseXml extends SystemFunction implements Callable {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
-    public NodeInfo call(XPathContext context, Sequence[] arguments) throws XPathException {
-        return evalParseXml(
-                (StringValue) arguments[0].head(),
-                context);
+    public ZeroOrOne<NodeInfo> call(XPathContext context, Sequence[] arguments) throws XPathException {
+        StringValue input = (StringValue) arguments[0].head();
+        if (input == null) {
+            return ZeroOrOne.empty();
+        } else {
+            return new ZeroOrOne<NodeInfo>(evalParseXml(input, context));
+        }
     }
 
     private NodeInfo evalParseXml(StringValue inputArg, XPathContext context) throws XPathException {
