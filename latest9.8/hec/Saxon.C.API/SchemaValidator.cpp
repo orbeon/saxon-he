@@ -451,7 +451,7 @@ bool SchemaValidator::exceptionOccurred() {
 
 const char* SchemaValidator::checkException() {
 	/*if(proc->exception == NULL) {
-	 proc->exception = proc->checkForException(environ, cppClass, cpp);
+	 proc->exception = proc->checkForException(environi, cppClass, cpp);
 	 }
 	 return proc->exception;*/
 	return checkForException(*(SaxonProcessor::sxn_environ), cppClass, cppV);
