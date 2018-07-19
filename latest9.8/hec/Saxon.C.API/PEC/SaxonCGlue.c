@@ -32,7 +32,7 @@ void setDllname(){
 #elif  defined (__APPLE__) && defined(__MACH__)
            env_len = 14;
 #else
-           enc_len = 8; //not used under windows
+           env_len = 8; //not used under windows
 #endif
 		dllname =malloc(sizeof(char)*name_len+env_len+1);
 		resources_dir =malloc(sizeof(char)*rDir_len+env_len+1);
