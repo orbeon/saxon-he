@@ -7,19 +7,19 @@
      * Create boxed Boolean value
      * @param val - boolean value
      */
-jobject booleanValue(sxnc_environment environ, bool b){ 
+jobject booleanValue(sxnc_environment environi, bool b){ 
 	
-	 if(environ.env == NULL) {
+	 if(environi.env == NULL) {
 		printf("Error: Saxon-C env variable is null\n");
 		fflush (stdout);
            	return NULL;
 	 }
-	 jclass  booleanClass = lookForClass(environ.env, "java/lang/Boolean");
+	 jclass  booleanClass = lookForClass(environi.env, "java/lang/Boolean");
 	 static jmethodID MID_init = NULL;
 	 if(!MID_init) {
-  	   MID_init = (jmethodID)findConstructor (environ.env, booleanClass, "(Z)V");
+  	   MID_init = (jmethodID)findConstructor (environi.env, booleanClass, "(Z)V");
 	 }
-	 jobject booleanValue = (jobject)(*(environ.env))->NewObject(environ.env, booleanClass, MID_init, (jboolean)b);
+	 jobject booleanValue = (jobject)(*(environi.env))->NewObject(environi.env, booleanClass, MID_init, (jboolean)b);
       	 if (!booleanValue) {
 	    	printf("Error: failed to allocate Boolean object\n");
 		fflush (stdout);
@@ -32,27 +32,27 @@ jobject booleanValue(sxnc_environment environ, bool b){
      * Create an boxed Integer value
      * @param val - int value
      */
-jobject integerValue(sxnc_environment environ, int i){ 
-	 if(environ.env == NULL) {
+jobject integerValue(sxnc_environment environi, int i){ 
+	 if(environi.env == NULL) {
 		printf("Error: Saxon-C env variable is null\n");
 		fflush (stdout);
            	return NULL;
 	 }
 
-	 jclass  integerClass = lookForClass(environ.env, "java/lang/Integer");
+	 jclass  integerClass = lookForClass(environi.env, "java/lang/Integer");
  	/*static */ jmethodID intMID = NULL;
 	 //if(!intMID){
-		intMID = (jmethodID)(*(environ.env))->GetMethodID (environ.env, integerClass, "<init>", "(I)V");
+		intMID = (jmethodID)(*(environi.env))->GetMethodID (environi.env, integerClass, "<init>", "(I)V");
 	 //}
 if(!intMID){
 	printf("error in intMID");
 }	
-	 jobject intValue = (*(environ.env))->NewObject(environ.env, integerClass, intMID, (jint)i);
+	 jobject intValue = (*(environi.env))->NewObject(environi.env, integerClass, intMID, (jint)i);
       	 if (!intValue) {
 	    	printf("Error: failed to allocate Integer object\n");
 printf("Value to build: %i",i);
 		fflush (stdout);
-//(*(environ.env))->ExceptionDescribe(environ.env); //remove line
+//(*(environi.env))->ExceptionDescribe(environi.env); //remove line
         	return NULL;
       	 }
 	 return intValue;
@@ -63,18 +63,18 @@ printf("Value to build: %i",i);
      * Create an boxed Double value
      * @param val - double value
      */
-jobject doubleValue(sxnc_environment environ, double d){ 
-	 if(environ.env == NULL) {
+jobject doubleValue(sxnc_environment environi, double d){ 
+	 if(environi.env == NULL) {
 		printf("Error: Saxon-C env variable is null\n");
 		fflush (stdout);
            	return NULL;
 	 }
-	 jclass  doubleClass = lookForClass(environ.env, "java/lang/Double");
+	 jclass  doubleClass = lookForClass(environi.env, "java/lang/Double");
 	 static jmethodID dbID = NULL;
 	if(!dbID) {
-		dbID = (jmethodID)findConstructor (environ.env, doubleClass, "(D)V");
+		dbID = (jmethodID)findConstructor (environi.env, doubleClass, "(D)V");
 	}	
-	 jobject doubleValue = (jobject)(*(environ.env))->NewObject(environ.env, doubleClass, dbID, (jdouble)d);
+	 jobject doubleValue = (jobject)(*(environi.env))->NewObject(environi.env, doubleClass, dbID, (jdouble)d);
       	 if (!doubleValue) {
 	    	printf("Error: failed to allocate Double object\n");
 		fflush (stdout);
@@ -87,18 +87,18 @@ jobject doubleValue(sxnc_environment environ, double d){
      * Create an boxed Float value
      * @param val - float value
      */
-jobject floatValue(sxnc_environment environ, float f){ 
-	 if(environ.env == NULL) {
+jobject floatValue(sxnc_environment environi, float f){ 
+	 if(environi.env == NULL) {
 		printf("Error: Saxon-C env variable is null\n");
 		fflush (stdout);
            	return NULL;
 	 }
-	 jclass  floatClass = lookForClass(environ.env, "java/lang/Float");
+	 jclass  floatClass = lookForClass(environi.env, "java/lang/Float");
 	 static jmethodID fID = NULL;
 	 if(!fID){
-	 	fID = (jmethodID)findConstructor (environ.env, floatClass, "(F)V");
+	 	fID = (jmethodID)findConstructor (environi.env, floatClass, "(F)V");
 	 }
-	 jobject floatValue = (jobject)(*(environ.env))->NewObject(environ.env, floatClass, fID, (jfloat)f);
+	 jobject floatValue = (jobject)(*(environi.env))->NewObject(environi.env, floatClass, fID, (jfloat)f);
       	 if (!floatValue) {
 	    	printf("Error: failed to allocate float object\n");
 		fflush (stdout);
@@ -112,18 +112,18 @@ jobject floatValue(sxnc_environment environ, float f){
      * Create an boxed Long value
      * @param val - Long value
      */
-jobject longValue(sxnc_environment environ, long l){ 
-	 if(environ.env == NULL) {
+jobject longValue(sxnc_environment environi, long l){ 
+	 if(environi.env == NULL) {
 		printf("Error: Saxon-C env variable is null\n");
 		fflush (stdout);
            	return NULL;
 	 }
-	 jclass  longClass = lookForClass(environ.env, "java/lang/Long");
+	 jclass  longClass = lookForClass(environi.env, "java/lang/Long");
 	 static jmethodID lID = NULL;
 	 if(lID) {
-		  lID = (jmethodID)findConstructor (environ.env, longClass, "(L)V");
+		  lID = (jmethodID)findConstructor (environi.env, longClass, "(L)V");
 	}	
-	 jobject longValue = (jobject)(*(environ.env))->NewObject(environ.env, longClass, lID, (jlong)l);
+	 jobject longValue = (jobject)(*(environi.env))->NewObject(environi.env, longClass, lID, (jlong)l);
       	 if (!longValue) {
 	    	printf("Error: failed to allocate long object\n");
 		fflush (stdout);
@@ -136,16 +136,16 @@ jobject longValue(sxnc_environment environ, long l){
      * Create an boxed String value
      * @param val - as char array value
      */
-jobject getJavaStringValue(sxnc_environment environ, const char *str){ 
-	 if(environ.env == NULL) {
+jobject getJavaStringValue(sxnc_environment environi, const char *str){ 
+	 if(environi.env == NULL) {
 		printf("Error: Saxon-C env variable is null\n");
 		fflush (stdout);
            	return NULL;
 	 }
 	if(str == NULL) {
-		return (*(environ.env))->NewStringUTF(environ.env, "");	
+		return (*(environi.env))->NewStringUTF(environi.env, "");	
 	}
-	jstring jstrBuf = (*(environ.env))->NewStringUTF(environ.env, str);
+	jstring jstrBuf = (*(environi.env))->NewStringUTF(environi.env, str);
 	 
       	 if (!jstrBuf) {
 	    	printf("Error: failed to allocate String object\n");
@@ -157,9 +157,9 @@ jobject getJavaStringValue(sxnc_environment environ, const char *str){
 
 
 
-jobject xdmValueAsObj(sxnc_environment environ, const char* type, const char* str){ 
-	jclass  saxoncClass = lookForClass(environ.env, "net/sf/saxon/option/cpp/SaxonCAPI");
-	 if(environ.env == NULL) {
+jobject xdmValueAsObj(sxnc_environment environi, const char* type, const char* str){ 
+	jclass  saxoncClass = lookForClass(environi.env, "net/sf/saxon/option/cpp/SaxonCAPI");
+	 if(environi.env == NULL) {
 		printf("Error: Saxon-C env variable is null\n");
 		fflush (stdout);
            	return NULL;
@@ -169,14 +169,14 @@ jobject xdmValueAsObj(sxnc_environment environ, const char* type, const char* st
 		
 	static jmethodID MID_xdmValueo = NULL;
 	if(!MID_xdmValueo) {
-		MID_xdmValueo = (jmethodID)(*(environ.env))->GetStaticMethodID(environ.env, saxoncClass, methodName, args);
+		MID_xdmValueo = (jmethodID)(*(environi.env))->GetStaticMethodID(environi.env, saxoncClass, methodName, args);
 	}
        if (!MID_xdmValueo) {
 	  printf("\nError: MyClassInDll %s() not found\n",methodName);
   	  fflush (stdout);
           return NULL;
       }
-   jobject resultObj = ((*(environ.env))->CallStaticObjectMethod(environ.env, saxoncClass, MID_xdmValueo, type, str));
+   jobject resultObj = ((*(environi.env))->CallStaticObjectMethod(environi.env, saxoncClass, MID_xdmValueo, type, str));
    if(resultObj) {
 	return resultObj;
    } 
@@ -188,9 +188,9 @@ jobject xdmValueAsObj(sxnc_environment environ, const char* type, const char* st
      * @param type - specify target type of the value as the local name of the xsd built in type. For example 'gYearMonth' 
      * @param val - Value to convert
      */
-sxnc_value * xdmValue(sxnc_environment environ, const char* type, const char* str){ 
-	jclass  saxoncClass = lookForClass(environ.env, "net/sf/saxon/option/cpp/SaxonCAPI");
-	 if(environ.env == NULL) {
+sxnc_value * xdmValue(sxnc_environment environi, const char* type, const char* str){ 
+	jclass  saxoncClass = lookForClass(environi.env, "net/sf/saxon/option/cpp/SaxonCAPI");
+	 if(environi.env == NULL) {
 		printf("Error: Saxon-C env variable is null\n");
 		fflush (stdout);
            	return NULL;
@@ -200,14 +200,14 @@ sxnc_value * xdmValue(sxnc_environment environ, const char* type, const char* st
 		
 	static jmethodID MID_xdmValue = NULL;
 	if(!MID_xdmValue) {
-		MID_xdmValue = (jmethodID)(*(environ.env))->GetStaticMethodID(environ.env, saxoncClass, methodName, args);
+		MID_xdmValue = (jmethodID)(*(environi.env))->GetStaticMethodID(environi.env, saxoncClass, methodName, args);
 	}
        if (!MID_xdmValue) {
 	  printf("\nError: MyClassInDll %s() not found\n",methodName);
   	  fflush (stdout);
           return NULL;
       }
-   jobject resultObj = ((*(environ.env))->CallStaticObjectMethod(environ.env, saxoncClass, MID_xdmValue, type, str));
+   jobject resultObj = ((*(environi.env))->CallStaticObjectMethod(environi.env, saxoncClass, MID_xdmValue, type, str));
    if(resultObj) {
 	sxnc_value* result = (sxnc_value *)malloc(sizeof(sxnc_value));
          result->xdmvalue = resultObj; 
@@ -216,16 +216,16 @@ sxnc_value * xdmValue(sxnc_environment environ, const char* type, const char* st
    return NULL;
 }
 
-sxnc_value * evaluate(sxnc_environment environ, sxnc_processor ** proc, char * cwd, char * xpathStr, sxnc_parameter *parameters, sxnc_property * properties, int parLen, int propLen){
+sxnc_value * evaluate(sxnc_environment environi, sxnc_processor ** proc, char * cwd, char * xpathStr, sxnc_parameter *parameters, sxnc_property * properties, int parLen, int propLen){
 static jmethodID emID = NULL; //cache the methodID
-	jclass cppClass = lookForClass(environ.env, "net/sf/saxon/option/cpp/XPathProcessor");
+	jclass cppClass = lookForClass(environi.env, "net/sf/saxon/option/cpp/XPathProcessor");
 
 	if(!cpp) {
-		cpp = (jobject) createSaxonProcessor (environ.env, cppClass, "(Z)V", NULL, (jboolean)license);
+		cpp = (jobject) createSaxonProcessor (environi.env, cppClass, "(Z)V", NULL, (jboolean)license);
 	}
 
 	if(emID == NULL) {
-		emID = (jmethodID)(*(environ.env))->GetMethodID (environ.env, cppClass,"evaluateSingle", "(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmItem;");
+		emID = (jmethodID)(*(environi.env))->GetMethodID (environi.env, cppClass,"evaluateSingle", "(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmItem;");
 		if (!emID) {
 		        printf("Error: MyClassInDll. evaluateSingle not found\n");
 			fflush (stdout);
@@ -238,57 +238,57 @@ static jmethodID emID = NULL; //cache the methodID
 	int size = parLen + propLen+1; //We add one here for the resources-dir property
 
 	if(size >0) {
-           jclass objectClass = lookForClass(environ.env, "java/lang/Object");
-	   jclass stringClass = lookForClass(environ.env, "java/lang/String");
-	   objectArray = (*(environ.env))->NewObjectArray(environ.env, (jint)size, objectClass, 0 );
-	   stringArray = (*(environ.env))->NewObjectArray(environ.env, (jint)size, stringClass, 0 );
+           jclass objectClass = lookForClass(environi.env, "java/lang/Object");
+	   jclass stringClass = lookForClass(environi.env, "java/lang/String");
+	   objectArray = (*(environi.env))->NewObjectArray(environi.env, (jint)size, objectClass, 0 );
+	   stringArray = (*(environi.env))->NewObjectArray(environi.env, (jint)size, stringClass, 0 );
 	   if((!objectArray) || (!stringArray)) { return 0;}
 	   int i=0;
 	   for(i =0; i< parLen; i++) {
 		
-	     (*(environ.env))->SetObjectArrayElement(environ.env, stringArray, i, (*(environ.env))->NewStringUTF(environ.env, parameters[i].name) );
-	     (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)(parameters[i].value) );
+	     (*(environi.env))->SetObjectArrayElement(environi.env, stringArray, i, (*(environi.env))->NewStringUTF(environi.env, parameters[i].name) );
+	     (*(environi.env))->SetObjectArrayElement(environi.env, objectArray, i, (jobject)(parameters[i].value) );
 	
 	   }
 
-	   (*(environ.env))->SetObjectArrayElement(environ.env, stringArray, i, (*(environ.env))->NewStringUTF(environ.env,"resources"));
-	     (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)((*(environ.env))->NewStringUTF(environ.env, getResourceDirectory())) );
+	   (*(environi.env))->SetObjectArrayElement(environi.env, stringArray, i, (*(environi.env))->NewStringUTF(environi.env,"resources"));
+	     (*(environi.env))->SetObjectArrayElement(environi.env, objectArray, i, (jobject)((*(environi.env))->NewStringUTF(environi.env, getResourceDirectory())) );
 	    i++;
 	   int j=0;	
   	   for(; j < propLen; j++, i++) {
-	     (*(environ.env))->SetObjectArrayElement(environ.env, stringArray, i, (*(environ.env))->NewStringUTF(environ.env, properties[j].name));
-	     (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)((*(environ.env))->NewStringUTF(environ.env, properties[j].value)) );
+	     (*(environi.env))->SetObjectArrayElement(environi.env, stringArray, i, (*(environi.env))->NewStringUTF(environi.env, properties[j].name));
+	     (*(environi.env))->SetObjectArrayElement(environi.env, objectArray, i, (jobject)((*(environi.env))->NewStringUTF(environi.env, properties[j].value)) );
 	   }
 	  
 	}
-      jobject resultObj = (jstring)((*(environ.env))->CallObjectMethod(environ.env, cpp, emID, (cwd== NULL ? (*(environ.env))->NewStringUTF(environ.env, "") : (*(environ.env))->NewStringUTF(environ.env, cwd)), (*(environ.env))->NewStringUTF(environ.env,xpathStr), stringArray, objectArray ));
+      jobject resultObj = (jstring)((*(environi.env))->CallObjectMethod(environi.env, cpp, emID, (cwd== NULL ? (*(environi.env))->NewStringUTF(environi.env, "") : (*(environi.env))->NewStringUTF(environi.env, cwd)), (*(environi.env))->NewStringUTF(environi.env,xpathStr), stringArray, objectArray ));
 
-      (*(environ.env))->DeleteLocalRef(environ.env, objectArray);
-      (*(environ.env))->DeleteLocalRef(environ.env, stringArray);
+      (*(environi.env))->DeleteLocalRef(environi.env, objectArray);
+      (*(environi.env))->DeleteLocalRef(environi.env, stringArray);
       if(resultObj) {
 	 sxnc_value* result = (sxnc_value *)malloc(sizeof(sxnc_value));
          result->xdmvalue = resultObj;  
 	
-	//checkForException(environ, cppClass, cpp);     
+	//checkForException(environi, cppClass, cpp);     
 	return result;
      }
 
-    checkForException(environ, cppClass, cpp);
+    checkForException(environi, cppClass, cpp);
     return 0;
 
 }
 
 
-bool effectiveBooleanValue(sxnc_environment environ, sxnc_processor ** proc, char * cwd, char * xpathStr, sxnc_parameter *parameters, sxnc_property * properties, int parLen, int propLen){
+bool effectiveBooleanValue(sxnc_environment environi, sxnc_processor ** proc, char * cwd, char * xpathStr, sxnc_parameter *parameters, sxnc_property * properties, int parLen, int propLen){
 	static jmethodID bmID = NULL; //cache the methodID
-	jclass cppClass = lookForClass(environ.env, "net/sf/saxon/option/cpp/XPathProcessor");
+	jclass cppClass = lookForClass(environi.env, "net/sf/saxon/option/cpp/XPathProcessor");
 
 	if(!cpp) {
-		cpp = (jobject) createSaxonProcessor (environ.env, cppClass, "(Z)V", NULL, (jboolean)license);
+		cpp = (jobject) createSaxonProcessor (environi.env, cppClass, "(Z)V", NULL, (jboolean)license);
 	}
 
 	if(bmID == NULL) {
-		bmID = (jmethodID)(*(environ.env))->GetMethodID (environ.env, cppClass,"effectiveBooleanValue", "(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Z");
+		bmID = (jmethodID)(*(environi.env))->GetMethodID (environi.env, cppClass,"effectiveBooleanValue", "(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Z");
 		if (!bmID) {
 		        printf("Error: MyClassInDll. effectiveBooleanValue not found\n");
 			fflush (stdout);
@@ -301,10 +301,10 @@ bool effectiveBooleanValue(sxnc_environment environ, sxnc_processor ** proc, cha
 	int size = parLen + propLen+1; //We add one here for the resources-dir property
 
 	if(size >0) {
-           jclass objectClass = lookForClass(environ.env, "java/lang/Object");
-	   jclass stringClass = lookForClass(environ.env, "java/lang/String");
-	   objectArray = (*(environ.env))->NewObjectArray(environ.env, (jint)size, objectClass, 0 );
-	   stringArray = (*(environ.env))->NewObjectArray(environ.env, (jint)size, stringClass, 0 );
+           jclass objectClass = lookForClass(environi.env, "java/lang/Object");
+	   jclass stringClass = lookForClass(environi.env, "java/lang/String");
+	   objectArray = (*(environi.env))->NewObjectArray(environi.env, (jint)size, objectClass, 0 );
+	   stringArray = (*(environi.env))->NewObjectArray(environi.env, (jint)size, stringClass, 0 );
 	   if((!objectArray) || (!stringArray)) { 
 		printf("Error: parameter and property arrays have some inconsistencies \n");
 		fflush (stdout);		
@@ -312,46 +312,46 @@ bool effectiveBooleanValue(sxnc_environment environ, sxnc_processor ** proc, cha
 	   int i=0;
 	   for(i =0; i< parLen; i++) {
 		
-	     (*(environ.env))->SetObjectArrayElement(environ.env, stringArray, i, (*(environ.env))->NewStringUTF(environ.env, parameters[i].name) );
-	     (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)(parameters[i].value) );
+	     (*(environi.env))->SetObjectArrayElement(environi.env, stringArray, i, (*(environi.env))->NewStringUTF(environi.env, parameters[i].name) );
+	     (*(environi.env))->SetObjectArrayElement(environi.env, objectArray, i, (jobject)(parameters[i].value) );
 	
 	   }
 
-	   (*(environ.env))->SetObjectArrayElement(environ.env, stringArray, i, (*(environ.env))->NewStringUTF(environ.env,"resources"));
-	     (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)((*(environ.env))->NewStringUTF(environ.env, getResourceDirectory())) );
+	   (*(environi.env))->SetObjectArrayElement(environi.env, stringArray, i, (*(environi.env))->NewStringUTF(environi.env,"resources"));
+	     (*(environi.env))->SetObjectArrayElement(environi.env, objectArray, i, (jobject)((*(environi.env))->NewStringUTF(environi.env, getResourceDirectory())) );
 	    i++;
 	   int j=0;	
   	   for(; j<propLen; j++, i++) {
-	     (*(environ.env))->SetObjectArrayElement(environ.env, stringArray, i, (*(environ.env))->NewStringUTF(environ.env, properties[j].name));
-	     (*(environ.env))->SetObjectArrayElement(environ.env, objectArray, i, (jobject)((*(environ.env))->NewStringUTF(environ.env, properties[j].value)) );
+	     (*(environi.env))->SetObjectArrayElement(environi.env, stringArray, i, (*(environi.env))->NewStringUTF(environi.env, properties[j].name));
+	     (*(environi.env))->SetObjectArrayElement(environi.env, objectArray, i, (jobject)((*(environi.env))->NewStringUTF(environi.env, properties[j].value)) );
 	   }
 	  
 	}
-      jboolean resultObj = (jboolean)((*(environ.env))->CallBooleanMethod(environ.env, cpp, bmID, (cwd== NULL ? (*(environ.env))->NewStringUTF(environ.env, "") : (*(environ.env))->NewStringUTF(environ.env, cwd)), (*(environ.env))->NewStringUTF(environ.env,xpathStr), (jobjectArray)stringArray, (jobjectArray)objectArray ));
+      jboolean resultObj = (jboolean)((*(environi.env))->CallBooleanMethod(environi.env, cpp, bmID, (cwd== NULL ? (*(environi.env))->NewStringUTF(environi.env, "") : (*(environi.env))->NewStringUTF(environi.env, cwd)), (*(environi.env))->NewStringUTF(environi.env,xpathStr), (jobjectArray)stringArray, (jobjectArray)objectArray ));
 
-      (*(environ.env))->DeleteLocalRef(environ.env, objectArray);
-      (*(environ.env))->DeleteLocalRef(environ.env, stringArray);
+      (*(environi.env))->DeleteLocalRef(environi.env, objectArray);
+      (*(environi.env))->DeleteLocalRef(environi.env, stringArray);
       if(resultObj) {
-	 checkForException(environ, cppClass, cpp);    
+	 checkForException(environi, cppClass, cpp);    
 	return resultObj;
      }
 
-    checkForException(environ, cppClass, cpp);
+    checkForException(environi, cppClass, cpp);
     return false;
 }
 
-const char * getStringValue(sxnc_environment environ, sxnc_value value){
-	return stringValue(environ, value.xdmvalue);
+const char * getStringValue(sxnc_environment environi, sxnc_value value){
+	return stringValue(environi, value.xdmvalue);
 }
 
-int size(sxnc_environment environ, sxnc_value val){
+int size(sxnc_environment environi, sxnc_value val){
 	//TODO write method up
 	return 0;
 }
 
-sxnc_value * itemAt(sxnc_environment environ, sxnc_value val, int i){
-jclass  xdmValueClass = lookForClass(environ.env, "net/sf/saxon/s9api/XdmValue");
-	 if(environ.env == NULL) {
+sxnc_value * itemAt(sxnc_environment environi, sxnc_value val, int i){
+jclass  xdmValueClass = lookForClass(environi.env, "net/sf/saxon/s9api/XdmValue");
+	 if(environi.env == NULL) {
 		printf("Error: Saxon-C env variable is null\n");
 		fflush (stdout);
            	return NULL;
@@ -361,23 +361,23 @@ jclass  xdmValueClass = lookForClass(environ.env, "net/sf/saxon/s9api/XdmValue")
 		
 	static jmethodID MID_xdmValue = NULL;
 	if(!MID_xdmValue) {
-		MID_xdmValue = (jmethodID)(*(environ.env))->GetMethodID(environ.env, xdmValueClass, methodName, args);
+		MID_xdmValue = (jmethodID)(*(environi.env))->GetMethodID(environi.env, xdmValueClass, methodName, args);
 	}
        if (!MID_xdmValue) {
 	  printf("\nError: MyClassInDll %s() not found\n",methodName);
   	  fflush (stdout);
           return NULL;
       }
-      jobject xdmItemObj = (*(environ.env))->CallObjectMethod(environ.env,val.xdmvalue, MID_xdmValue, i);
+      jobject xdmItemObj = (*(environi.env))->CallObjectMethod(environi.env,val.xdmvalue, MID_xdmValue, i);
       if(xdmItemObj) {   
 	 sxnc_value* result = (sxnc_value *)malloc(sizeof(sxnc_value));
          result->xdmvalue = xdmItemObj;  
 	
-	//checkForException(environ, cppClass, cpp);     
+	//checkForException(environi, cppClass, cpp);     
 	return result;
      }
 
-    checkForException(environ, xdmValueClass, val.xdmvalue);
+    checkForException(environi, xdmValueClass, val.xdmvalue);
     return NULL;
 }
 
@@ -386,8 +386,8 @@ bool isAtomicvalue(sxnc_value value){
 	return false;
 }
 
-int getIntegerValue(sxnc_environment environ, sxnc_value value,  int failureVal){
-	const char * valueStr = getStringValue(environ, value);
+int getIntegerValue(sxnc_environment environi, sxnc_value value,  int failureVal){
+	const char * valueStr = getStringValue(environi, value);
 	if(valueStr != NULL) {		
 		int value = atoi(valueStr);
 		if(value != 0) {
@@ -401,23 +401,23 @@ int getIntegerValue(sxnc_environment environ, sxnc_value value,  int failureVal)
 		return failureVal;	
 	}}
 
-bool getBooleanValue(sxnc_environment environ, sxnc_value value){
-	jclass booleanClass = lookForClass(environ.env,"java/lang/Boolean");
+bool getBooleanValue(sxnc_environment environi, sxnc_value value){
+	jclass booleanClass = lookForClass(environi.env,"java/lang/Boolean");
 	static jmethodID strMID = NULL;
 	if(!strMID) {
-		strMID = (jmethodID)(*(environ.env))->GetMethodID(environ.env, booleanClass, "booleanValue", "()Z");
+		strMID = (jmethodID)(*(environi.env))->GetMethodID(environi.env, booleanClass, "booleanValue", "()Z");
 		if(!strMID) {
 	 		 printf("\nError: Boolean %s() not found\n","booleanValue");
   	 		 fflush (stdout);
          		 return false;
 		}
         }
-	jboolean result = (jboolean)((*(environ.env))->CallBooleanMethod(environ.env, value.xdmvalue, strMID));
+	jboolean result = (jboolean)((*(environi.env))->CallBooleanMethod(environi.env, value.xdmvalue, strMID));
 	return (bool)result;
 }
 
-long getLongValue(sxnc_environment environ, sxnc_value value,  long failureVal){
-	const char * valueStr = getStringValue(environ, value);
+long getLongValue(sxnc_environment environi, sxnc_value value,  long failureVal){
+	const char * valueStr = getStringValue(environi, value);
 	if(valueStr != NULL) {		
 		long value = atol(valueStr);
 		if(value != 0) {
@@ -432,25 +432,25 @@ long getLongValue(sxnc_environment environ, sxnc_value value,  long failureVal){
 	}
 }
 
-float getFloatValue(sxnc_environment environ, sxnc_value value,  float failureVal){
-	jclass floatClass = lookForClass(environ.env,"java/lang/Float");
+float getFloatValue(sxnc_environment environi, sxnc_value value,  float failureVal){
+	jclass floatClass = lookForClass(environi.env,"java/lang/Float");
 	static jmethodID strMID = NULL;
 	if(!strMID) {
-		strMID = (jmethodID)(*(environ.env))->GetMethodID(environ.env, floatClass, "floatValue", "()F");
+		strMID = (jmethodID)(*(environi.env))->GetMethodID(environi.env, floatClass, "floatValue", "()F");
 		if(!strMID) {
 	 		 printf("\nError: Float %s() not found\n","floatValue");
   	 		 fflush (stdout);
          		 return 0;
 		}
         }
-	jfloat result = (jfloat)((*(environ.env))->CallFloatMethod(environ.env, value.xdmvalue, strMID));
+	jfloat result = (jfloat)((*(environi.env))->CallFloatMethod(environi.env, value.xdmvalue, strMID));
 	return (float)result;
 
 
 }
 
-double getDoubleValue(sxnc_environment environ, sxnc_value value, double failureVal){
-	const char * valueStr = getStringValue(environ, value);
+double getDoubleValue(sxnc_environment environi, sxnc_value value, double failureVal){
+	const char * valueStr = getStringValue(environi, value);
 	if(valueStr != NULL) {		
 		double value = atof(valueStr);
 		if(value != 0) {
