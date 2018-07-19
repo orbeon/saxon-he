@@ -265,7 +265,7 @@ public class TransformFn extends SystemFunction implements Callable {
                             }
                         } else {
                             if (processor.getUnderlyingConfiguration().isLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XSLT)) {
-                                processor.setConfigurationProperty(FeatureKeys.XSLT_SCHEMA_AWARE, false);
+                                unsuitable("is-schema-aware", value.getStringValue());
                             }
                         }
                     } else if (localName.equals("supports-serialization")) {
