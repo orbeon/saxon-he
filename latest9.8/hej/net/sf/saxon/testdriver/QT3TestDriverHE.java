@@ -252,7 +252,7 @@ public class QT3TestDriverHE extends TestDriver {
             } else if ("fn-transform-XSLT".equals(value)) {
                 return !inverse;
             } else if ("fn-transform-XSLT30".equals(value)) {
-                return (edition.equals("PE") || edition.equals("EE")) ^ inverse;
+                return !inverse;
             } else if ("fn-load-xquery-module".equals(value)) {
                 return edition.equals("EE") ^ inverse;
             } else if ("fn-format-integer-CLDR".equals(value)) {
@@ -443,6 +443,28 @@ public class QT3TestDriverHE extends TestDriver {
             } catch (SaxonApiException err) {
                 println("*** Failed to read query: " + err.getMessage());
                 outcome.setException(err);
+            }
+
+            if (exp != null && env.processor.getSaxonEdition().equals("HE") && testSetName.equals("app-spec-examples")) {
+                // Some tests in app-spec-examples do not have their dependencies tagged
+
+                if (exp.contains("http://www.w3.org/2013/collation/UCA?lang=en;alternate=blanked;strength=primary")) {
+                    writeTestcaseElement(testCaseName, "notRun", "requires ICU");
+                    notrun++;
+                    return;
+                }
+
+                if (exp.contains("validate lax")) {
+                    writeTestcaseElement(testCaseName, "notRun", "requires schema-awareness");
+                    notrun++;
+                    return;
+                }
+
+                if (exp.contains("'fallback':function($s)")) {
+                    writeTestcaseElement(testCaseName, "notRun", "requires HOF");
+                    notrun++;
+                    return;
+                }
             }
 
             //noinspection ThrowableResultOfMethodCallIgnored

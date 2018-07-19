@@ -257,9 +257,16 @@ public class TransformFn extends SystemFunction implements Callable {
                         }
                     } else if (localName.equals("is-schema-aware")) {
                         boolean b = asBoolean(value);
-                        processor.setConfigurationProperty(FeatureKeys.XSLT_SCHEMA_AWARE, b);
-                        if (!b && processor.getUnderlyingConfiguration().isLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XSLT)) {
-                            unsuitable("is-schema-aware", value.getStringValue());
+                        if (b) {
+                            if (processor.getUnderlyingConfiguration().isLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XSLT)) {
+                                processor.setConfigurationProperty(FeatureKeys.XSLT_SCHEMA_AWARE, true);
+                            } else {
+                                unsuitable("is-schema-aware", value.getStringValue());
+                            }
+                        } else {
+                            if (processor.getUnderlyingConfiguration().isLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XSLT)) {
+                                processor.setConfigurationProperty(FeatureKeys.XSLT_SCHEMA_AWARE, false);
+                            }
                         }
                     } else if (localName.equals("supports-serialization")) {
                         boolean b = asBoolean(value);
@@ -278,17 +285,29 @@ public class TransformFn extends SystemFunction implements Callable {
                         }
                     } else if (localName.equals("supports-streaming")) {
                         boolean b = asBoolean(value);
-                        if (!b) {
-                            unsuitable("supports-streaming", value.getStringValue());
+                        if (b) {
+                            if (!processor.getUnderlyingConfiguration().isLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XSLT)) {
+                                unsuitable("supports-streaming", value.getStringValue());
+                            }
+                        } else {
+                            if (processor.getUnderlyingConfiguration().isLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XSLT)) {
+                                processor.setConfigurationProperty(FeatureKeys.STREAMABILITY, "off");
+                            }
                         }
                     } else if (localName.equals("supports-dynamic-evaluation")) {
-                        boolean backwards = asBoolean(value);
-                        if (!backwards) {
-                            unsuitable("supports-dynamic-evaluation", value.getStringValue());
+                        boolean b = asBoolean(value);
+                        if (b) {
+                            if (!processor.getUnderlyingConfiguration().isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION)) {
+                                unsuitable("supports-dynamic-evaluation", value.getStringValue());
+                            }
+                        } else {
+                            if (processor.getUnderlyingConfiguration().isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION)) {
+                                processor.setConfigurationProperty(FeatureKeys.DISABLE_XSL_EVALUATE, true);
+                            }
                         }
                     } else if (localName.equals("supports-higher-order-functions")) {
                         boolean b = asBoolean(value);
-                        if (!b) {
+                        if (b != processor.getUnderlyingConfiguration().isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION)) {
                             unsuitable("supports-higher-order-functions", value.getStringValue());
                         }
                     } else if (localName.equals("xpath-version")) {
