@@ -1060,8 +1060,8 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         alwaysOn.add("unparsed_text_encoding");
         alwaysOn.add("recognize_id_as_uri_fragment");
         alwaysOn.add("feature/XPath_3.1");
+        alwaysOn.add("feature/backwards_compatibility");
 
-        needsPE.add("feature/backwards_compatibility");
         needsPE.add("feature/Saxon-PE");
         needsPE.add("feature/dynamic_evaluation");
 
