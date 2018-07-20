@@ -799,6 +799,10 @@ public class Controller implements ContextOriginator {
 
     /*@NotNull*/
     private Receiver makeMessageReceiver() throws XPathException {
+        if (messageReceiverClassName == null) {
+            // for example, it might be XQuery
+            return new Sink(makePipelineConfiguration());
+        }
         Object messageReceiver = config.getInstance(messageReceiverClassName, null);
         if (!(messageReceiver instanceof Receiver)) {
             throw new XPathException(messageReceiverClassName + " is not a Receiver");
