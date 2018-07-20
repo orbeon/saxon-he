@@ -166,21 +166,7 @@
          <xs:attribute name="defaultRegexEngine" use="optional" type="c:regexEngineType">
             <xs:annotation>
                <xs:documentation>
-                  <p>Determines which regular expression engine should be used for evaluating regular expressions occuring in constructs
-            such as <code>fn:matches()</code>, <code>fn:replace</code>, and <code>xsl:analyze-string</code>, and also
-            in the pattern facet of a schema.</p>
-                  <p>On the Java platform the permitted values are "S" (default), and "J". The value "J" selects the regex engine
-            provided in the JDK in preference to the Saxon regular expression engine. This means that regular expressions must
-            follow the Java syntax and semantics rather than the XPath syntax and semantics.</p>
-                  <p>On the .NET platform the permitted values are "S" (default), "J", and "N". The value "J" selects the regex engine
-                provided in the IKVMC run-time, which is derived from OpenJDK. The value "N" selects the regex engine provided
-            in the Microsoft .NET platform. In each case, the regular expression must follow the syntax and semantics of the selected
-            regex engine.</p>
-                  <p>The choice of regular expression may be overridden in a particular invocation by appending the value ";s",
-            ";j", or ";n" to the flags argument of the relevant call. (This does not apply to XSD patterns, where no flags argument is available)</p>
-                  <p>Use of this feature is not conformant with W3C specifications. Use of the setting "N", however, can be useful
-            when schemas have been written with the Microsoft schema processor in mind, since this uses the Microsoft regular
-            expression dialect rather than the W3C dialect.</p>
+                  <p>Determines which regular expression engine should be used for evaluating regular expressions.</p>
                </xs:documentation>
             </xs:annotation>
          </xs:attribute>
@@ -295,6 +281,13 @@
             <xs:annotation>
                <xs:documentation>
                   <p>Places a limit on the number of classes for which Saxon will generate bytecode.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+         <xs:attribute name="monitorHotSpotByteCode" use="optional" type="xs:boolean">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>Enables monitoring of hot-spot byte-code generation.</p>
                </xs:documentation>
             </xs:annotation>
          </xs:attribute>
@@ -432,7 +425,7 @@
          <xs:attribute name="suppressXPathWarnings" use="optional" type="xs:boolean">
             <xs:annotation>
                <xs:documentation>
-                  <p>Suppresses all warnings from the XPath/XQuery parser.</p>
+                  <p>Suppresses all warnings issued by the XPath and XQuery parsers.</p>
                </xs:documentation>
             </xs:annotation>
          </xs:attribute>

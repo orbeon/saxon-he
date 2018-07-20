@@ -76,6 +76,7 @@
       <xs:attribute name="lineNumbering" use="optional" type="xs:boolean"/>
       <xs:attribute name="markDefaultedAttributes" use="optional" type="xs:boolean"/>
       <xs:attribute name="maxCompiledClasses" use="optional" type="xs:nonNegativeInteger"/>
+      <xs:attribute name="monitorHotSpotByteCode" use="optional" type="xs:boolean"/>
       <xs:attribute name="optimizationLevel" use="optional" type="xs:integer"/>
       <xs:attribute name="parser" use="optional" type="c:javaClassNameType"/>
       <xs:attribute name="preEvaluateDoc" use="optional" type="xs:boolean"/>
