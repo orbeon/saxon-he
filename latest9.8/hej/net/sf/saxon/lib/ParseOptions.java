@@ -403,7 +403,7 @@ public class ParseOptions {
      *
      * @return one of {@link net.sf.saxon.event.Builder#TINY_TREE}, {@link net.sf.saxon.event.Builder#LINKED_TREE},
      * or {@link net.sf.saxon.event.Builder#TINY_TREE_CONDENSED},
-     * or {link Builder#UNSPECIFIED_TREE_MODEL} if no call on setTreeModel() has been made
+     * or {@link net.sf.saxon.event.Builder#UNSPECIFIED_TREE_MODEL} if no call on setTreeModel() has been made
      */
 
     public int getTreeModel() {

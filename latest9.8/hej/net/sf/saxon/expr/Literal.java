@@ -762,7 +762,7 @@ public class Literal extends Expression {
      * expression which is being simplified/optimized
      * @param value the literal value
      * @param origin the expression whose context and location information is to be retained
-     * @return
+     * @return the Literal
      */
 
     public static Literal makeLiteral(GroundedValue value, Expression origin) {

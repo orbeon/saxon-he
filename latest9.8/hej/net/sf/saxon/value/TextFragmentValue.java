@@ -141,9 +141,9 @@ public final class TextFragmentValue extends GenericTreeInfo implements NodeInfo
 
     /**
      * Ask whether this NodeInfo implementation holds a fingerprint identifying the name of the
-     * node in the NamePool. If the answer is true, then the {link #getFingerprint} method must
-     * return the fingerprint of the node. If the answer is false, then the {link #getFingerprint}
-     * method should throw an {@link UnsupportedOperationException}. In the case of unnamed nodes
+     * node in the NamePool. If the answer is true, then the {@link #getFingerprint} method must
+     * return the fingerprint of the node. If the answer is false, then the {@link #getFingerprint}
+     * method should throw an {@code UnsupportedOperationException}. In the case of unnamed nodes
      * such as text nodes, the result can be either true (in which case getFingerprint() should
      * return -1) or false (in which case getFingerprint may throw an exception).
      *
@@ -640,9 +640,9 @@ public final class TextFragmentValue extends GenericTreeInfo implements NodeInfo
 
         /**
          * Ask whether this NodeInfo implementation holds a fingerprint identifying the name of the
-         * node in the NamePool. If the answer is true, then the {link #getFingerprint} method must
-         * return the fingerprint of the node. If the answer is false, then the {link #getFingerprint}
-         * method should throw an {@link UnsupportedOperationException}. In the case of unnamed nodes
+         * node in the NamePool. If the answer is true, then the {@link #getFingerprint} method must
+         * return the fingerprint of the node. If the answer is false, then the {@link #getFingerprint}
+         * method should throw an {@code UnsupportedOperationException}. In the case of unnamed nodes
          * such as text nodes, the result can be either true (in which case getFingerprint() should
          * return -1) or false (in which case getFingerprint may throw an exception).
          *

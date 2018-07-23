@@ -137,7 +137,7 @@ public class XdmMap extends XdmFunctionItem {
      *
      * @return an immutable instance of {@link java.util.Map} backed by this map.
      * Methods such as {@link #remove} and {@link #put} applied to the result will
-     * always throw {@link UnsupportedOperationException}.
+     * always throw {@code UnsupportedOperationException}.
      */
 
     public Map<XdmAtomicValue, XdmValue> asImmutableMap() {
@@ -326,7 +326,7 @@ public class XdmMap extends XdmFunctionItem {
     /**
      * Removes the mapping for a key from this map if it is present
      * (optional operation). This map implementation is immutable
-     * so the method always throws {@link UnsupportedOperationException}.
+     * so the method always throws {@code UnsupportedOperationException}.
      *
      * @param key key whose mapping is to be removed from the map
      * @return the previous value associated with <tt>key</tt>, or
@@ -341,7 +341,7 @@ public class XdmMap extends XdmFunctionItem {
     /**
      * Copies all of the mappings from the specified map to this map
      * (optional operation).  This map implementation is immutable
-     * so the method always throws {@link UnsupportedOperationException}.
+     * so the method always throws {@code UnsupportedOperationException}.
      *
      * @param m mappings to be stored in this map
      * @throws UnsupportedOperationException if the <tt>putAll</tt> operation
@@ -443,7 +443,7 @@ public class XdmMap extends XdmFunctionItem {
 
         /**
          * Replaces the value corresponding to this entry with the specified
-         * value (optional operation). Always throws {@link UnsupportedOperationException}
+         * value (optional operation). Always throws {@code UnsupportedOperationException}
          * @throws UnsupportedOperationException always
          */
         @Override
