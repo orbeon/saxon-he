@@ -3,7 +3,7 @@
  xmlns:xs="http://www.w3.org/2001/XMLSchema"
  xmlns:f="http://localhost/functions"
  exclude-result-prefixes="xs f"
- version="2.0"
+ version="3.0"
 >
 
 <!-- This stylesheet summarizes the contents of the input XML file, displaying
@@ -22,7 +22,7 @@
   </summary>
 </xsl:template>
 
-<xsl:function name="f:path" as="xs:string">
+<xsl:function name="f:path" as="xs:string" visibility="public">
   <xsl:param name="node" as="node()"/>
   <xsl:sequence select="$node/(
     if (. instance of attribute())

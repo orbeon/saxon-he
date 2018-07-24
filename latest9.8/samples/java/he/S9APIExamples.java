@@ -879,7 +879,7 @@ public class S9APIExamples {
 
             DocumentBuilder builder = proc.newDocumentBuilder();
             builder.setLineNumbering(true);
-            builder.setWhitespaceStrippingPolicy(WhitespaceStrippingPolicy.ALL);
+            builder.setWhitespaceStrippingPolicy(WhitespaceStrippingPolicy.IGNORABLE);
             builder.setSchemaValidator(sv);
             XdmNode booksDoc = builder.build(new File("data/books.xml"));
 
