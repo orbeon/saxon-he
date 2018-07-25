@@ -9,6 +9,9 @@ WORKDIR /
 RUN a2enmod php7.2
 RUN a2enmod rewrite
 
+# remove after testing
+ADD web /var/www/html
+
 RUN wget http://www.saxonica.com/saxon-c/libsaxon-HEC-setup64-v1.1.0.zip && unzip libsaxon-HEC-setup64-v1.1.0.zip
 RUN yes "" | ./libsaxon-HEC-setup64-v1.1.0
 RUN ln -s /Saxonica/Saxon-HEC1.1.0/samples/php /var/www/html/
