@@ -683,7 +683,7 @@ namespace Saxon.Api
             for (int i=0;i< properties.size();i++)
             {
                     java.util.Map.Entry entry = (java.util.Map.Entry)propSet[i];
-                    net.sf.saxon.om.StructuredQName name = (net.sf.saxon.om.StructuredQName)entry.getKey();
+                    net.sf.saxon.om.StructuredQName name = net.sf.saxon.om.StructuredQName.fromClarkName((String)entry.getKey());
                     net.sf.saxon.expr.instruct.ResultDocument.setSerializationProperty(
                     baseProps, name.getURI(), name.getLocalPart(), (String)entry.getValue(), null, true, config);
             }
