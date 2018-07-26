@@ -333,7 +333,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
             Expression seq0 = getSequence();
             getSequenceOp().optimize(visitor, contextItemType);
             if (getSequence() instanceof Literal && !isIndexedVariable) {
-                return getAction().optimize(visitor, contextItemType);
+                return optimize(visitor, contextItemType);
             }
             if (seq0 == getSequence()) {
                 break;
