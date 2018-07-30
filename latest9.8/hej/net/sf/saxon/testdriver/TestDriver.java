@@ -127,6 +127,9 @@ public abstract class TestDriver {
                 if (args[i].startsWith("-js:")) {
                     jsBase = args[i].substring(4);
                 }
+                if (args[i].startsWith("-js2:")) {
+                    jsBase = args[i].substring(5);
+                }
             }
             if (args[i].equals("-unfolded")) {
                 unfolded = true;
