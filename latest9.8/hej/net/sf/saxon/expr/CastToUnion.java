@@ -172,6 +172,16 @@ public class CastToUnion extends UnaryExpression {
         return BuiltInAtomicType.ANY_ATOMIC;
     }
 
+    /**
+     * Get the expression's dependencies. If the target type is namespace-sensitive, then the expression
+     * has a dependency on the namespace bindings in the static context
+     *
+     * @return the expression's dependencies.
+     */
+    @Override
+    public int getIntrinsicDependencies() {
+        return getTargetType().isNamespaceSensitive() ? StaticProperty.DEPENDS_ON_STATIC_CONTEXT : 0;
+    }
 
     /**
      * Get the static type of the expression as a UType, following precisely the type

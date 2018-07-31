@@ -310,7 +310,7 @@ public abstract class BinaryExpression extends Expression {
      */
 
     public boolean equals(Object other) {
-        if (other instanceof BinaryExpression) {
+        if (other instanceof BinaryExpression && hasCompatibleStaticContext((Expression)other)) {
             BinaryExpression b = (BinaryExpression) other;
             if (operator == b.operator) {
                 if (getLhsExpression().equals(b.getLhsExpression()) &&

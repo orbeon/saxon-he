@@ -150,6 +150,15 @@ public abstract class CastingExpression extends UnaryExpression {
         return getRetainedStaticContext();
     }
 
+    /**
+     * Get the expression's dependencies. If the target type is namespace-sensitive, then the expression
+     * has a dependency on the namespace bindings in the static context
+     * @return the expression's dependencies.
+     */
+    @Override
+    public int getIntrinsicDependencies() {
+        return getTargetType().isNamespaceSensitive() ? StaticProperty.DEPENDS_ON_STATIC_CONTEXT : 0;
+    }
 
     /**
      * Simplify the expression

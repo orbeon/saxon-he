@@ -223,6 +223,21 @@ public class GenericAtomicComparer implements AtomicComparer {
     public String save() {
         return "GAC|" + collator.getCollationURI();
     }
+
+
+    @Override
+    public int hashCode() {
+        return collator.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        // In considering whether two GenericAtomicComparers are equal, we ignore the dynamic context, because this
+        // is only ever used to test the implicit timezone, and in all reasonable scenarios, the implicit timezone
+        // is global.
+        return obj instanceof GenericAtomicComparer && collator.equals(((GenericAtomicComparer) obj).collator);
+    }
+
 }
 
 

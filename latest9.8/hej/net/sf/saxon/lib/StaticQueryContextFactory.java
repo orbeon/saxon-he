@@ -17,9 +17,15 @@ import net.sf.saxon.query.StaticQueryContext;
 public class StaticQueryContextFactory {
 
     /**
-     * Create a new instance of StaticQueryContext
+     * Create a new instance of {@link StaticQueryContext}. The default implementation
+     * creates a new {@code StaticQueryContext} as a copy of the {@code Configuration}'s
+     * default static query context. User implementations are encouraged to do the same,
+     * but this is not mandatory. If the {@code Configuration}'s default static query context
+     * is ignored, then configuration settings specific to XQuery (construction mode,
+     * default element namespace, default function namespace, etc) are ignored for
+     * queries created under this {@code StaticQueryContext}
      * @param config the configuration
-     * @return the new StaticQueryContext instance
+     * @return the new {@code StaticQueryContext} instance
      */
 
     public StaticQueryContext newStaticQueryContext(Configuration config) {

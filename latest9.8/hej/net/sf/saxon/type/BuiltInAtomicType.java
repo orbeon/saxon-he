@@ -803,7 +803,8 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * Test whether this simple type is namespace-sensitive, that is, whether
      * it is derived from xs:QName or xs:NOTATION
      *
-     * @return true if this type is derived from xs:QName or xs:NOTATION
+     * @return true if this type is derived from xs:QName or xs:NOTATION. Note that
+     * the result for xs:anyAtomicType is false, even though an instance might be a QName.
      */
 
     public boolean isNamespaceSensitive() {

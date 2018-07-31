@@ -380,6 +380,33 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
         }
     }
 
+    @Override
+    public int getIntrinsicDependencies() {
+        // The expression is dependent on the static namespace context if one operand might deliver
+        // untypedAtomic and the other might deliver a QName
+        TypeHierarchy th = getConfiguration().getTypeHierarchy();
+        if (mayInvolveCastToQName(th, getLhsExpression(), getRhsExpression()) ||
+                mayInvolveCastToQName(th, getRhsExpression(), getLhsExpression())) {
+            return StaticProperty.DEPENDS_ON_STATIC_CONTEXT;
+        } else {
+            return 0;
+        }
+    }
+
+    private boolean mayInvolveCastToQName(TypeHierarchy th, Expression e1, Expression e2) {
+        SimpleType s1 = (SimpleType) e1.getItemType().getAtomizedItemType();
+        return (s1 == BuiltInAtomicType.ANY_ATOMIC || s1.isNamespaceSensitive()) &&
+                th.relationship(e2.getItemType().getAtomizedItemType(), BuiltInAtomicType.UNTYPED_ATOMIC) != TypeHierarchy.DISJOINT &&
+                (e2.getSpecialProperties() & StaticProperty.NOT_UNTYPED_ATOMIC) == 0;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof GeneralComparison &&
+                super.equals(other) &&
+                comparer.equals(((GeneralComparison) other).comparer);
+    }
+
     /**
      * Optimize the expression
      *
@@ -837,8 +864,11 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
                     StringConverter sc = a1.getItemType().getPrimitiveItemType().getStringConverter(rules);
                     if (a1 instanceof QualifiedNameValue) {
                         sc = (StringConverter)sc.setNamespaceResolver(nsResolver);
+                        // avoid using cached results - bug 3862
+                        a0 = sc.convertString(a0.getStringValueCS()).asAtomic();
+                    } else {
+                        a0 = ((UntypedAtomicValue) a0).obtainConversionResult(a1.getItemType().getPrimitiveType(), sc).asAtomic();
                     }
-                    a0 = ((UntypedAtomicValue)a0).obtainConversionResult(a1.getItemType().getPrimitiveType(), sc).asAtomic();
                 }
             } else {
                 // a1 is untyped atomic
@@ -850,8 +880,11 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
                     StringConverter sc = a0.getItemType().getPrimitiveItemType().getStringConverter(rules);
                     if (a0 instanceof QualifiedNameValue) {
                         sc = (StringConverter)sc.setNamespaceResolver(nsResolver);
+                        // avoid using cached results - bug 3862
+                        a1 = sc.convertString(a1.getStringValueCS()).asAtomic();
+                    } else {
+                        a1 = ((UntypedAtomicValue) a1).obtainConversionResult(a0.getItemType().getPrimitiveType(), sc).asAtomic();
                     }
-                    a1 = ((UntypedAtomicValue) a1).obtainConversionResult(a0.getItemType().getPrimitiveType(), sc).asAtomic();
                 }
             }
             checkTypes = false; // No further checking needed if conversion succeeded

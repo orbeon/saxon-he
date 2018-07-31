@@ -87,7 +87,7 @@ public abstract class StaticProperty {
     /**
      * Bit setting: Expression depends on the static context, specifically, a part of the static
      * context that can vary from one expression in a query/stylesheet to another; the main
-     * examples of this are the static base URI and the default collation
+     * examples of this are the static base URI, the default collation, and the in-scope namespaces
      */
 
     public static final int DEPENDS_ON_STATIC_CONTEXT = 1 << 11;
@@ -378,6 +378,9 @@ public abstract class StaticProperty {
         }
         if ((props & DEPENDS_ON_RUNTIME_ENVIRONMENT) != 0) {
             s.append("E");
+        }
+        if ((props & DEPENDS_ON_STATIC_CONTEXT) != 0) {
+            s.append("S");
         }
         s.append(") C(");
         boolean m = Cardinality.allowsMany(props);

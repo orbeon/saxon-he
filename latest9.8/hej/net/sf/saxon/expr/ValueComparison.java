@@ -657,6 +657,12 @@ public final class ValueComparison extends BinaryExpression implements Compariso
         return v instanceof NumericValue && ((NumericValue) v).compareTo(0) == 0;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof ValueComparison &&
+                super.equals(other) &&
+                comparer.equals(((ValueComparison)other).comparer);
+    }
 
     /**
      * Copy an expression. This makes a deep copy.

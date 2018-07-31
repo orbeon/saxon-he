@@ -1622,6 +1622,18 @@ public abstract class Expression implements IdentityComparable, ExportAgent {
         return hashCode() == other.hashCode() && equals(other);
     }
 
+    protected boolean hasCompatibleStaticContext(Expression other) {
+        boolean d1 = (getIntrinsicDependencies() & StaticProperty.DEPENDS_ON_STATIC_CONTEXT) != 0;
+        boolean d2 = (other.getIntrinsicDependencies() & StaticProperty.DEPENDS_ON_STATIC_CONTEXT) != 0;
+        if (d1 != d2) {
+            return false;
+        }
+        if (d1) {
+            return getRetainedStaticContext().equals(other.getRetainedStaticContext());
+        }
+        return true;
+    }
+
     /**
      * Set an extra property on the expression. (Used for Saxon-EE properties, e.g. properties
      * relating to streaming).
