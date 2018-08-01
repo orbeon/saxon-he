@@ -205,7 +205,8 @@ public final class Cardinality {
             case StaticProperty.EMPTY:
                 return "\u00B0";
             default:
-                throw new AssertionError("unknown cardinality value");
+                return "*";
+            // Covers no bits set (which shouldn't arise) and zero_or_many (which can arise, but is too specific for our purposes)
         }
     }
 

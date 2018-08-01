@@ -39,7 +39,7 @@ public class Subsequence_2 extends SystemFunction implements Callable {
      */
 
     public int getCardinality(Expression[] arguments) {
-        return arguments[0].getCardinality() | StaticProperty.ALLOWS_ZERO;
+        return arguments[0].getCardinality() | StaticProperty.ALLOWS_ZERO_OR_ONE;
     }
 
     /**
