@@ -478,7 +478,9 @@ public class JsonReceiver implements Receiver {
                         }
                         break;
                     default:
-                        throw new XPathException("Unknown escape sequence \\" + literal.charAt(i), "FOJS0007");
+                        char next = literal.charAt(i);
+                        String xx = next < 256 ? next + "" : "x" + Integer.toHexString(next);
+                        throw new XPathException("Unknown escape sequence \\" + xx, "FOJS0007");
                 }
             } else {
                 buffer.append(c);

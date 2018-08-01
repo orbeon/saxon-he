@@ -208,13 +208,17 @@ public class JsonParser {
             if (duplicate && ((flags & DUPLICATES_REJECTED) != 0)) {
                 invalidJSON("Duplicate key value \"" + Err.wrap(key) + "\"", ERR_DUPLICATE);
             }
-            if (!duplicate || ((flags & (DUPLICATES_LAST|DUPLICATES_RETAINED)) != 0)) {
-                parseConstruct(handler, tokenizer, flags, context);
-            } else {
-                // retain first: parse the duplicate value but discard it
-                JsonHandler h2 = new JsonHandler();
-                h2.setContext(context);
-                parseConstruct(h2, tokenizer, flags, context);
+            try {
+                if (!duplicate || ((flags & (DUPLICATES_LAST | DUPLICATES_RETAINED)) != 0)) {
+                    parseConstruct(handler, tokenizer, flags, context);
+                } else {
+                    // retain first: parse the duplicate value but discard it
+                    JsonHandler h2 = new JsonHandler();
+                    h2.setContext(context);
+                    parseConstruct(h2, tokenizer, flags, context);
+                }
+            } catch (StackOverflowError e) {
+                invalidJSON("Objects are too deeply nested", ERR_GRAMMAR);
             }
             tok = tokenizer.next();
             if (tok == JsonTokenizer.COMMA) {
@@ -254,7 +258,11 @@ public class JsonParser {
             return;
         }
         while (true) {
-            parseConstruct(handler, tokenizer, flags, context);
+            try {
+                parseConstruct(handler, tokenizer, flags, context);
+            } catch (StackOverflowError e) {
+                invalidJSON("Arrays are too deeply nested", ERR_GRAMMAR);
+            }
             tok = tokenizer.next();
             if (tok == JsonTokenizer.COMMA) {
                 tok = tokenizer.next();
@@ -378,7 +386,9 @@ public class JsonParser {
                         if (liberal) {
                             buffer.append(literal.charAt(i));
                         } else {
-                            throw new XPathException("Unknown escape sequence \\" + literal.charAt(i), errorCode);
+                            char next = literal.charAt(i);
+                            String xx = next < 256 ? next + "" : "x" + Integer.toHexString(next);
+                            throw new XPathException("Unknown escape sequence \\" + xx, errorCode);
                         }
                 }
             } else {
@@ -477,6 +487,9 @@ public class JsonParser {
                     currentTokenValue.setLength(0);
                     boolean afterBackslash = false;
                     while (true) {
+                        if (position >= input.length()) {
+                            invalidJSON("Unclosed quotes in string literal", ERR_GRAMMAR);
+                        }
                         char c = input.charAt(position++);
                         if (c < 32) {
                             invalidJSON("Unescaped control character (x" + Integer.toHexString(c) + ")", ERR_GRAMMAR);
@@ -495,9 +508,6 @@ public class JsonParser {
                         } else {
                             currentTokenValue.append(c);
                             afterBackslash = c == '\\' && !afterBackslash;
-                        }
-                        if (position >= input.length()) {
-                            invalidJSON("Unclosed quotes in string literal", ERR_GRAMMAR);
                         }
                     }
                     return STRING_LITERAL;
