@@ -180,7 +180,7 @@ public class QName {
      * The prefix part of the <code>QName</code> will be set to an empty string.
      * </p>
      *
-     * @param expandedName The URI in EQName notation: <code>{uri}local</code> if the
+     * @param expandedName The URI in EQName notation: <code>Q{uri}local</code> if the
      *                     name is in a namespace. For a name in no namespace, either of the
      *                     forms <code>Q{}local</code> or simply <code>local</code> are accepted.
      * @return the QName corresponding to the supplied name in EQName notation. This will always

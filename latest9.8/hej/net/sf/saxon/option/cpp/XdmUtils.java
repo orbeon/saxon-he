@@ -111,7 +111,7 @@ public class XdmUtils {
 
   /*
    * The expanded name, as a string using the notation devised by EQName.
-   * If the name is in a namespace, the resulting string takes the form <code>{uri}local</code>.
+   * If the name is in a namespace, the resulting string takes the form <code>Q{uri}local</code>.
    * Otherwise, the value is the local part of the name.
    * @param qname
    *
