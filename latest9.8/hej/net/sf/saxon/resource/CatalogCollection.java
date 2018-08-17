@@ -158,7 +158,7 @@ public class CatalogCollection extends AbstractResourceCollection {
             if (top == null) {
                 message = "No outermost element found in collection catalog";
             } else {
-                message = "Outermost element of collection catalog should be Q{}catalog " +
+                message = "Outermost element of collection catalog should be Q{}collection " +
                     "(found Q{" + top.getURI() + "}" + top.getLocalPart() + ")";
             }
             XPathException err = new XPathException(message);
