@@ -25,7 +25,6 @@ import net.sf.saxon.trans.Mode;
 import net.sf.saxon.trans.SymbolicName;
 import net.sf.saxon.trans.Visibility;
 import net.sf.saxon.trans.XPathException;
-import org.jetbrains.annotations.NotNull;
 
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Source;
@@ -853,7 +852,6 @@ public class Xslt30Transformer {
         }
     }
 
-    @NotNull
     private Component getFunctionComponent(QName function, XdmValue[] arguments) throws XPathException {
         SymbolicName fName = new SymbolicName.F(function.getStructuredQName(), arguments.length);
         PreparedStylesheet pss = (PreparedStylesheet) controller.getExecutable();
@@ -867,7 +865,6 @@ public class Xslt30Transformer {
         return f;
     }
 
-    @NotNull
     private Sequence[] typeCheckFunctionArguments(UserFunction uf, XdmValue[] arguments) throws XPathException {
         Configuration config = processor.getUnderlyingConfiguration();
         UserFunctionParameter[] params = uf.getParameterDefinitions();

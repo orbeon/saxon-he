@@ -10,7 +10,6 @@ package net.sf.saxon.lib;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -200,7 +199,6 @@ public class StandardUnparsedTextResolver implements UnparsedTextURIResolver {
      * @throws IOException if it isn't possible to mark the current position on the input stream and read ahead
      */
 
-    @NotNull
     public static String inferStreamEncoding(InputStream is, Logger err) throws IOException {
         is.mark(100);
         byte[] start = new byte[100];

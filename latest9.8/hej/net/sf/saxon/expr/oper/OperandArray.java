@@ -10,7 +10,6 @@ package net.sf.saxon.expr.oper;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.Operand;
 import net.sf.saxon.expr.OperandRole;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,7 +58,6 @@ public class OperandArray implements Iterable<Operand> {
      *
      * @return an Iterator.
      */
-    @NotNull
     @Override
     public Iterator<Operand> iterator() {
         return Arrays.asList(operandArray).iterator();

@@ -13,7 +13,6 @@ import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.tree.iter.AtomicIterator;
 import net.sf.saxon.value.AtomicValue;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -121,7 +120,6 @@ public class XdmMap extends XdmFunctionItem {
      * Get the keys present in the map in the form of a list.
      * @return a list of the keys present in this map, in arbitrary order.
      */
-    @NotNull
     public Set<XdmAtomicValue> keySet() {
         Set<XdmAtomicValue> result = new HashSet<XdmAtomicValue>();
         AtomicIterator iter = getUnderlyingValue().keys();
@@ -347,7 +345,7 @@ public class XdmMap extends XdmFunctionItem {
      * @throws UnsupportedOperationException if the <tt>putAll</tt> operation
      *                                       is not supported by this map
      */
-    public void putAll(@NotNull Map<? extends XdmAtomicValue, ? extends XdmValue> m) {
+    public void putAll(Map<? extends XdmAtomicValue, ? extends XdmValue> m) {
         throw new UnsupportedOperationException("XdmMap is immutable");
     }
 
@@ -366,7 +364,6 @@ public class XdmMap extends XdmFunctionItem {
      *
      * @return a collection view of the values contained in this map
      */
-    @NotNull
     public Collection<XdmValue> values() {
         List<XdmValue> result = new ArrayList<XdmValue>();
         for (KeyValuePair keyValuePair : getUnderlyingValue()) {
@@ -380,7 +377,6 @@ public class XdmMap extends XdmFunctionItem {
      *
      * @return a set view of the mappings contained in this map
      */
-    @NotNull
     public Set<Map.Entry<XdmAtomicValue, XdmValue>> entrySet() {
         Set<Map.Entry<XdmAtomicValue, XdmValue>> result = new HashSet<Map.Entry<XdmAtomicValue, XdmValue>>();
         for (KeyValuePair keyValuePair : getUnderlyingValue()) {

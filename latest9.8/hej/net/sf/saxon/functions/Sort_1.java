@@ -17,7 +17,6 @@ import net.sf.saxon.ma.arrays.ArraySort;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.SequenceExtent;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +47,6 @@ public class Sort_1 extends SystemFunction {
         return doSort(inputList, collation, context);
     }
 
-    @NotNull
     protected List<ItemToBeSorted> getItemsToBeSorted(Sequence input) throws XPathException {
         final List<ItemToBeSorted> inputList = new ArrayList<ItemToBeSorted>();
         int i = 0;

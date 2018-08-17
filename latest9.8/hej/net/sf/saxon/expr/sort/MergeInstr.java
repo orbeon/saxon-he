@@ -37,7 +37,6 @@ import net.sf.saxon.type.Type;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.ObjectValue;
 import net.sf.saxon.value.SequenceType;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -630,7 +629,6 @@ public class MergeInstr extends Instruction {
      * of the merge key definitions
      */
 
-    @NotNull
     private AtomicComparer[] getComparators(XPathContext context) throws XPathException {
         // First establish an array of comparators to be used for comparing items according to their
         // merge keys. Ideally this will have been done at compile time.

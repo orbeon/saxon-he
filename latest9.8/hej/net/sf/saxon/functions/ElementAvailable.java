@@ -20,7 +20,6 @@ import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.Whitespace;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * This class supports the XSLT element-available function.  Note that when running in a 2.0 processor,
@@ -292,7 +291,6 @@ public class ElementAvailable extends SystemFunction {
         }
     }
 
-    @NotNull
     private StructuredQName getElementName(String lexicalName) throws XPathException {
         StructuredQName qName;
         try {
