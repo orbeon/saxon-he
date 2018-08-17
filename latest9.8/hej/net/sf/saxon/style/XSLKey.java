@@ -282,7 +282,7 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
                 //role.setSourceLocator(new ExpressionLocation(this));
                 use = config.getTypeChecker(false).staticTypeCheck(
                         use,
-                        SequenceType.OPTIONAL_ATOMIC,
+                        SequenceType.ATOMIC_SEQUENCE,
                         role, makeExpressionVisitor());
                 // Do a further check that the use expression makes sense in the context of the match pattern
                 assert match != null;
