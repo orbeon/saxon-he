@@ -3779,12 +3779,12 @@ public class Configuration implements SourceResolver, NotationSet {
      *               be a DOMSource, but it may be a similar Source recognized by some other registered external
      *               object model.
      * @return If the Source is a DOMSource and the underlying node is a wrapper around a Saxon NodeInfo,
-     *         returns the wrapped Saxon NodeInfo. If the Source is a DOMSource and the undelying node is not such a wrapper,
+     *         returns the wrapped Saxon NodeInfo. If the Source is a DOMSource and the underlying node is not such a wrapper,
      *         returns a new Saxon NodeInfo that wraps the DOM Node. If the Source is any other kind of source, it
      *         is offered to each registered external object model for similar treatment. The result is the
      *         NodeInfo object obtained by wrapping or unwrapping the supplied external node.
      * @throws IllegalArgumentException if the source object is not of a recognized class. This method does
-     *                                  <emph>not</emph> call the registered {@link SourceResolver to resolve the Source}.
+     *                                  <em>not</em> call the registered {@link SourceResolver to resolve the Source}.
      */
 
     public NodeInfo unravel(Source source) {
