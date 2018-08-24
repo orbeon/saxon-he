@@ -390,10 +390,15 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
                 argumentEvaluationModes[i] = ExpressionTool.MAKE_INDEXED_VARIABLE;
             } else {
                 Expression arg = getArg(i);
-                if ((arg.getDependencies() & StaticProperty.DEPENDS_ON_USER_FUNCTIONS) != 0) {
-                    // if the argument contains a call to a user-defined function, then it might be a recursive call.
+                final int nasties = StaticProperty.DEPENDS_ON_POSITION | StaticProperty.DEPENDS_ON_LAST |
+                        StaticProperty.DEPENDS_ON_XSLT_CONTEXT | StaticProperty.DEPENDS_ON_USER_FUNCTIONS;
+                if ((arg.getDependencies() & nasties) != 0) {
+                    // If the argument contains a call to a user-defined function, then it might be a recursive call.
                     // It's better to evaluate it now, rather than waiting until we are on a new stack frame, as
                     // that can blow the stack if done repeatedly. (See test func42)
+                    // If the argument contains calls to position(), last(), regex-group(), current-group(),
+                    // current-merge-group(), etc, then in general we can't save the values in a Closure
+                    // so we need to evaluate the argument eagerly. (Tests position-0103, merge-096).
                     argumentEvaluationModes[i] = ExpressionTool.eagerEvaluationMode(arg);
                 } else if (!Cardinality.allowsMany(arg.getCardinality()) && arg.getCost() < 20) {
                     // the argument is cheap to evaluate and doesn't use much memory...
