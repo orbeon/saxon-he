@@ -329,14 +329,20 @@ public final class TinyElementImpl extends TinyParentNodeImpl {
                                 NamespaceIterator.sendNamespaces(this, receiver);
                             }
                         } else {
+                            boolean foundUndeclaration = false;
                             int ns = tree.beta[next]; // by convention
                             if (ns > 0) {
                                 while (ns < tree.numberOfNamespaces &&
                                         tree.namespaceParent[ns] == next) {
                                     NamespaceBinding nscode = tree.namespaceBinding[ns];
+                                    foundUndeclaration = foundUndeclaration || nscode.isDefaultUndeclaration();
                                     receiver.namespace(nscode, 0);
                                     ns++;
                                 }
+                            }
+                            // Bug 3889. For a no-namespace element, output an xmlns="" undeclaration just in case
+                            if (prefix.isEmpty() && !foundUndeclaration && getNamePool().getURI(fp).isEmpty()) {
+                                receiver.namespace(NamespaceBinding.DEFAULT_UNDECLARATION, 0);
                             }
                         }
                     }
