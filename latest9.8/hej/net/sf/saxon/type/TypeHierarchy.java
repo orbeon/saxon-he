@@ -111,7 +111,8 @@ public class TypeHierarchy {
 
             // step 2: convert untyped atomic values to target item type
 
-            if (relationship(suppliedItemType, BuiltInAtomicType.UNTYPED_ATOMIC) != DISJOINT) {
+            if (relationship(suppliedItemType, BuiltInAtomicType.UNTYPED_ATOMIC) != DISJOINT &&
+                    !isSubType(BuiltInAtomicType.UNTYPED_ATOMIC, requiredItemType)) {
                 final boolean nsSensitive = ((SimpleType) requiredItemType).isNamespaceSensitive();
                 ItemMappingFunction converter;
                 if (nsSensitive) {
