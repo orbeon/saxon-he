@@ -543,6 +543,9 @@ public abstract class StyleElement extends ElementImpl {
         if (defaultCollationName != null) {
             return true;
         }
+        if (defaultXPathNamespace != null) {
+            return true;
+        }
         if (getDeclaredNamespaces(NamespaceBinding.EMPTY_ARRAY).length != 0) {
             return true;
         }
