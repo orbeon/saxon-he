@@ -155,15 +155,20 @@ public class DeepEqual extends CollatingFunctionFixed {
                 }
 
                 if (item1 instanceof Function || item2 instanceof Function) {
+                    if (!(item1 instanceof Function && item2 instanceof Function)) {
+                        reason = "if one item is a function then both must be functions (position " + pos1 + ")";
+                        result = false;
+                        break;
+                    }
                     // two maps or arrays can be deep-equal
                     //XPathContext context = new EarlyEvaluationContext(config, config.getCollationMap());
                     boolean fe = ((Function) item1).deepEquals((Function) item2, context, comparer, flags);
                     if (!fe) {
                         result = false;
-                        reason = "maps at position " + pos1 + " differ";
+                        reason = "functions at position " + pos1 + " differ";
                         break;
                     }
-                    return fe;
+                    continue;
                 }
 
                 if (item1 instanceof ObjectValue || item2 instanceof ObjectValue) {
@@ -174,7 +179,7 @@ public class DeepEqual extends CollatingFunctionFixed {
                             reason = "external objects at position " + pos1 + " differ";
                             break;
                         }
-                        return oe;
+                        continue;
                     } else {
                         result = false;
                         reason = "external object at position " + pos1;
