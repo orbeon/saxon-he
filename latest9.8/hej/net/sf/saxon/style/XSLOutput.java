@@ -65,7 +65,10 @@ public class XSLOutput extends StyleElement {
                 serializationAttributes.put(f, val);
                 serializationAttributes.put(SaxonOutputKeys.PARAMETER_DOCUMENT_BASE_URI, getBaseURI());
             } else if (XSLResultDocument.fans.contains(f) && !f.equals("output-version")) {
-                String val = Whitespace.trim(atts.getValue(a));
+                String val = atts.getValue(a);
+                if (!(SaxonOutputKeys.ITEM_SEPARATOR.equals(f) || SaxonOutputKeys.NEWLINE.equals(f))) {
+                    val = Whitespace.trim(val);
+                }
                 serializationAttributes.put(f, val);
             } else {
                 String attributeURI = atts.getURI(a);

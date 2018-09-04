@@ -137,7 +137,10 @@ public class XSLResultDocument extends StyleElement {
                 useCharacterMapsAtt = Whitespace.trim(atts.getValue(a));
             } else if (fans.contains(f) || (f.startsWith("{") && !StandardNames.SAXON_THREADS.equals(f))) {
                 // this is a serialization attribute
-                String val = Whitespace.trim(atts.getValue(a));
+                String val = atts.getValue(a);
+                if (!(SaxonOutputKeys.ITEM_SEPARATOR.equals(f) || SaxonOutputKeys.NEWLINE.equals(f))) {
+                    val = Whitespace.trim(val);
+                }
                 Expression exp = makeAttributeValueTemplate(val, a);
                 serializationAttributes.put(name, exp);
             } else if (name.getLocalPart().equals("asynchronous") && name.hasURI(NamespaceConstant.SAXON)) {

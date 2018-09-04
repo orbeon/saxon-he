@@ -838,7 +838,7 @@ public class ResultDocument extends Instruction
 
                 if (!prevalidated) {
                     try {
-                        if (!SaxonOutputKeys.ITEM_SEPARATOR.equals(clarkName)) {
+                        if (!SaxonOutputKeys.ITEM_SEPARATOR.equals(clarkName) && !SaxonOutputKeys.NEWLINE.equals(clarkName)) {
                             // TODO: whitespace rules seem to vary for different interfaces
                             value = Whitespace.trim(value);
                         }
