@@ -20,8 +20,10 @@ import net.sf.saxon.lib.SerializerFactory;
 import net.sf.saxon.lib.StandardErrorListener;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trace.ExpressionPresenter;
+import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
+import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.Whitespace;
 
 import javax.xml.transform.OutputKeys;
@@ -184,7 +186,7 @@ public class Message extends Instruction {
                 rec = new MessageAdapter(rec, errorCode.getEQName(), getLocation());
 
                 SequenceReceiver saved = context.getReceiver();
-                int savedOutputState = context.getTemporaryOutputState();
+                //int savedOutputState = context.getTemporaryOutputState();
 
                 Properties props = new Properties();
                 props.setProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
@@ -194,7 +196,7 @@ public class Message extends Instruction {
                 pipe.setHostLanguage(Configuration.XSLT);
                 SequenceReceiver receiver = sf.getReceiver(rec, pipe, props);
                 context.setReceiver(receiver);
-                context.setTemporaryOutputState(StandardNames.XSL_MESSAGE);
+                //context.setTemporaryOutputState(StandardNames.XSL_MESSAGE);
 
                 boolean abort = false;
                 String term = Whitespace.trim(getTerminate().evaluateAsString(context));
@@ -212,16 +214,21 @@ public class Message extends Instruction {
 
                 rec.startDocument(abort ? ReceiverOptions.TERMINATE : 0);
 
-                SequenceIterator iter = getSelect().iterate(context);
-                Item item;
-                while ((item = iter.next()) != null) {
-                    rec.append(item, getLocation(), NodeInfo.ALL_NAMESPACES);
+                try {
+                    SequenceIterator iter = getSelect().iterate(context);
+                    Item item;
+                    while ((item = iter.next()) != null) {
+                        rec.append(item, getLocation(), NodeInfo.ALL_NAMESPACES);
+                    }
+                } catch (XPathException e) {
+                    rec.append(new StringValue("Error " + e.getErrorCodeLocalPart() +
+                                                       " while evaluating xsl:message content: " + e.getMessage()));
                 }
 
                 rec.endDocument();
 
                 context.setReceiver(saved);
-                context.setTemporaryOutputState(savedOutputState);
+                //context.setTemporaryOutputState(savedOutputState);
                 if (abort) {
                     TerminationException te = new TerminationException(
                             "Processing terminated by " + StandardErrorListener.getInstructionName(this) +
@@ -326,6 +333,10 @@ public class Message extends Instruction {
                     ((NodeInfo) item).copy(this, 0, locationId);
                     return;
                 }
+            } else if (item instanceof Function) {
+                CharSequence representation = ((Function) item).isMap() ? Err.depict(item) : "Function " + Err.depict(item);
+                nextReceiver.characters(representation, locationId, 0);
+                return;
             }
             ((SequenceReceiver) nextReceiver).append(item, locationId, copyNamespaces);
         }
