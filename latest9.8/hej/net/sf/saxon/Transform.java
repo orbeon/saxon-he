@@ -13,6 +13,7 @@ import net.sf.saxon.lib.*;
 import net.sf.saxon.s9api.*;
 import net.sf.saxon.style.StylesheetPackage;
 import net.sf.saxon.trace.AbstractTraceListener;
+import net.sf.saxon.trace.Instrumentation;
 import net.sf.saxon.trace.TimingCodeInjector;
 import net.sf.saxon.trace.TimingTraceListener;
 import net.sf.saxon.trans.CommandLineOptions;
@@ -1271,6 +1272,10 @@ public class Transform {
                 if (repeat > 1) {
                     System.err.println("-------------------------------");
                     Runtime.getRuntime().gc();
+                }
+                if (Instrumentation.ACTIVE) {
+                    Instrumentation.report();
+                    Instrumentation.reset();
                 }
             }
             if (repeat == 999999 && totalTime > 60000) {
