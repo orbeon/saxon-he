@@ -8,6 +8,7 @@
 package net.sf.saxon.expr.instruct;
 
 import net.sf.saxon.expr.*;
+import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
@@ -34,7 +35,9 @@ public class BreakInstr extends Instruction implements TailCallLoop.TailCallInfo
 
     /*@NotNull*/
     public Expression copy(RebindingMap rebindings) {
-        return this;
+        BreakInstr b2 = new BreakInstr();
+        ExpressionTool.copyLocationInfo(this, b2);
+        return b2;
     }
 
 
