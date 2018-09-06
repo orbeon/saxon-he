@@ -689,13 +689,9 @@ public final class ComplexContentOutputter extends SequenceReceiver {
             return;
         }
 
-        int props = startElementProperties;
-        NodeName elcode = pendingStartTag;
-        if (declaresDefaultNamespace || pendingStartTag.getPrefix().length() != 0) {
-            // skip this check if the element is unprefixed and no xmlns="abc" declaration has been encountered
-            elcode = checkProposedPrefix(pendingStartTag, 0);
-            props = startElementProperties | ReceiverOptions.NAMESPACE_OK;
-        }
+        NodeName elcode = checkProposedPrefix(pendingStartTag, 0);
+        int props = startElementProperties | ReceiverOptions.NAMESPACE_OK;
+
         nextReceiver.startElement(elcode, currentSimpleType, startElementLocationId, props);
 
         for (int a = 0; a < pendingAttListSize; a++) {
