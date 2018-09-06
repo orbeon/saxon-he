@@ -221,15 +221,13 @@ public class SaxonDuration extends Duration {
             return;
         }
         try {
-            calendar.add(getYears() * sign, Calendar.YEAR);
-            calendar.add(getMonths() * sign, Calendar.MONTH);
-            calendar.add(getDays() * sign, Calendar.DAY_OF_MONTH);
-            calendar.add(getHours() * sign, Calendar.HOUR_OF_DAY);
-            calendar.add(getMinutes() * sign, Calendar.MINUTE);
-            calendar.add((int) ((Int64Value) duration.getComponent(AccessorFn.Component.WHOLE_SECONDS)).longValue() * sign,
-                    Calendar.SECOND);
-            calendar.add((int) ((Int64Value) duration.getComponent(AccessorFn.Component.MICROSECONDS)).longValue() * sign / 1000,
-                    Calendar.MILLISECOND);
+            calendar.add(Calendar.YEAR, getYears() * sign);
+            calendar.add(Calendar.MONTH, getMonths() * sign);
+            calendar.add(Calendar.DAY_OF_MONTH, getDays() * sign);
+            calendar.add(Calendar.HOUR_OF_DAY, getHours() * sign);
+            calendar.add(Calendar.MINUTE, getMinutes() * sign);
+            calendar.add(Calendar.SECOND, (int) ((Int64Value) duration.getComponent(AccessorFn.Component.WHOLE_SECONDS)).longValue() * sign);
+            calendar.add(Calendar.MILLISECOND, (int) ((Int64Value) duration.getComponent(AccessorFn.Component.MICROSECONDS)).longValue() * sign / 1000);
         } catch (XPathException e) {
             throw new IllegalStateException(e.getMessage());
         }
