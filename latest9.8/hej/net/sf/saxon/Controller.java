@@ -2034,9 +2034,11 @@ public class Controller implements ContextOriginator {
         }
         //Sender sender = new Sender(sourceBuilder.getPipelineConfiguration());
         Receiver r = sourceBuilder;
+        SpaceStrippingRule spaceStrippingRule = NoElementsSpaceStrippingRule.getInstance();
         if (config.isStripsAllWhiteSpace() || isStylesheetContainingStripSpace() ||
                 validationMode == Validation.STRICT || validationMode == Validation.LAX) {
-            r = makeStripper(sourceBuilder);
+            Stripper stripper = makeStripper(sourceBuilder);
+            spaceStrippingRule = stripper.getSpaceStrippingRule();
         }
         if (isStylesheetStrippingTypeAnnotations()) {
             r = config.getAnnotationStripper(r);
@@ -2053,6 +2055,9 @@ public class Controller implements ContextOriginator {
         sourceBuilder.reset();
         if (source.getSystemId() != null) {
             registerDocument(doc.getTreeInfo(), new DocumentURI(source.getSystemId()));
+        }
+        if (spaceStrippingRule != NoElementsSpaceStrippingRule.getInstance()) {
+            doc.getTreeInfo().setUserData("saxon:spaceStrippingRule", spaceStrippingRule);
         }
         return doc;
     }
@@ -2147,12 +2152,16 @@ public class Controller implements ContextOriginator {
 
                         if (isStylesheetContainingStripSpace() && isStripSourceTree() && !(node instanceof SpaceStrippedNode)
                                 && node != globalContextItem) {
-                            SpaceStrippedDocument strippedDoc = new SpaceStrippedDocument(node.getTreeInfo(), getSpaceStrippingRule());
-                            // Edge case: the item might itself be a whitespace text node that is stripped
-                            if (!SpaceStrippedNode.isPreservedNode(node, strippedDoc, node.getParent())) {
-                                return EmptyIterator.getInstance();
+                            SpaceStrippingRule rule = getSpaceStrippingRule();
+                            if (!SpaceStrippedDocument.isAlreadyStripped(node.getTreeInfo(), rule)) {
+                                SpaceStrippedDocument strippedDoc = new SpaceStrippedDocument(node.getTreeInfo(), rule);
+                                // Stripping might have been unnecessary if it already happened during document building
+                                // Edge case: the item might itself be a whitespace text node that is stripped
+                                if (!SpaceStrippedNode.isPreservedNode(node, (SpaceStrippedDocument) strippedDoc, node.getParent())) {
+                                    return EmptyIterator.getInstance();
+                                }
+                                node = strippedDoc.wrap(node);
                             }
-                            node = strippedDoc.wrap(node);
                         }
 
                         if (getAccumulatorManager() != null) {
@@ -2244,6 +2253,9 @@ public class Controller implements ContextOriginator {
         }
         if (stripSourceTrees && isStylesheetContainingStripSpace()) {
             TreeInfo docInfo = start.getTreeInfo();
+            if (SpaceStrippedDocument.isAlreadyStripped(docInfo, getSpaceStrippingRule())) {
+                return start;
+            }
             SpaceStrippedDocument strippedDoc = new SpaceStrippedDocument(docInfo, getSpaceStrippingRule());
             // Edge case: the global context item might itself be a whitespace text node that is stripped
             if (!SpaceStrippedNode.isPreservedNode(start, strippedDoc, start.getParent())) {

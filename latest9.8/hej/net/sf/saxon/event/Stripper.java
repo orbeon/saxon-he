@@ -197,6 +197,10 @@ public class Stripper extends ProxyReceiver {
         return true;
     }
 
+    public SpaceStrippingRule getSpaceStrippingRule() {
+        return rule;
+    }
+
     public static class StripRuleTarget implements RuleTarget {
         public void export(ExpressionPresenter presenter) throws XPathException {
             // no-op

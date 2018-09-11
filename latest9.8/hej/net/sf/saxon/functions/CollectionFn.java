@@ -251,13 +251,14 @@ public class CollectionFn extends SystemFunction implements Callable {
         if (whitespaceRule != null) {
             final SpaceStrippingRule rule = whitespaceRule;
             ItemMappingFunction stripper = new ItemMappingFunction() {
-                public Item mapItem(Item item) throws XPathException {
+                public Item mapItem(Item item) {
                     if (item instanceof NodeInfo && ((NodeInfo) item).getNodeKind() == Type.DOCUMENT) {
-                        SpaceStrippedDocument ssd = new SpaceStrippedDocument(((NodeInfo) item).getTreeInfo(), rule);
-                        return ssd.getRootNode();
-                    } else {
-                        return item;
+                        TreeInfo tree = ((NodeInfo)item).getTreeInfo();
+                        if (!SpaceStrippedDocument.isAlreadyStripped(tree, rule)) {
+                            return new SpaceStrippedDocument(tree, rule).getRootNode();
+                        }
                     }
+                    return item;
                 }
             };
             result = new ItemMappingIterator(result, stripper);

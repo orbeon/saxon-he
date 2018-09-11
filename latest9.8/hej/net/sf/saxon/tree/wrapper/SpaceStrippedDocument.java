@@ -46,6 +46,10 @@ public class SpaceStrippedDocument extends GenericTreeInfo {
         containsAssertions = findAssertions(doc);
     }
 
+    public static boolean isAlreadyStripped(TreeInfo doc, SpaceStrippingRule strippingRule) {
+        return doc.getUserData("saxon:spaceStrippingRule") == strippingRule;
+    }
+
 
     /**
      * Create a wrapped node within this document
