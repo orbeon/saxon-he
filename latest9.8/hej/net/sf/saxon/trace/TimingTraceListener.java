@@ -13,19 +13,19 @@ import net.sf.saxon.PreparedStylesheet;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.event.StreamWriterToReceiver;
 import net.sf.saxon.event.TransformerReceiver;
-import net.sf.saxon.expr.Expression;
-import net.sf.saxon.expr.FunctionCall;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.instruct.Executable;
 import net.sf.saxon.expr.instruct.GlobalParameterSet;
-import net.sf.saxon.expr.instruct.TraceExpression;
 import net.sf.saxon.lib.Logger;
 import net.sf.saxon.lib.StandardLogger;
 import net.sf.saxon.lib.TraceListener;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.StandardNames;
+import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.style.Compilation;
 import net.sf.saxon.trans.CompilerInfo;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.StringValue;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -63,6 +63,7 @@ public class TimingTraceListener implements TraceListener {
     private InstructionInfo instructStack[] = new InstructionInfo[1500];
     private int stackDepth = 0;
     private int lang = Configuration.XSLT;
+    private Executable exec;
 
     /**
      * Set the PrintStream to which the output will be written.
@@ -83,7 +84,8 @@ public class TimingTraceListener implements TraceListener {
 
     public void open(/*@NotNull*/ Controller controller) {
         config = controller.getConfiguration();
-        lang = controller.getExecutable().getHostLanguage();
+        exec = controller.getExecutable();
+        lang = exec.getHostLanguage();
         t_total = System.nanoTime();
     }
 
@@ -135,10 +137,6 @@ public class TimingTraceListener implements TraceListener {
                 writer.writeAttribute("construct", (ins.instruct.getConstructType() == StandardNames.XSL_FUNCTION ? "function" : (ins.instruct.getConstructType() == StandardNames.XSL_VARIABLE ? "variable" : "template")));
                 String file = ins.instruct.getSystemId();
                 if (file != null) {
-                    /*if (file.length() > 15) {
-                        file = "*" + file.substring(file.length() - 14);
-                    }
-                    writer.writeAttribute("file", "\"" + file + "\"");*/
                     writer.writeAttribute("file", file);
                 }
                 writer.writeAttribute("count", Long.toString(ins.count/ repeat)) ;
@@ -238,80 +236,136 @@ public class TimingTraceListener implements TraceListener {
      */
     /*@NotNull*/
     public PreparedStylesheet getStyleSheet() throws XPathException {
-        String process = this.lang == Configuration.XSLT ? "Stylesheet" : "Query";
-        String templateOr = this.lang == Configuration.XSLT ? "template, " : "";
-        String templatesAnd = this.lang == Configuration.XSLT ? "templates and " : "";
-        String xsl = "<?xml version='1.0' encoding='UTF-8'?>" +
-                "<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' " +
-                "xmlns:xs='http://www.w3.org/2001/XMLSchema' exclude-result-prefixes='xs' version='2.0'>" +
-                "<xsl:template match='*'>" +
-                "<html>" +
-                "<head>" +
-                "<title>Analysis of " + process + " Execution Time</title>" +
-                "</head>" +
-                "<body>" +
-                "<h1>Analysis of " + process + " Execution Time</h1>" +
-                "<p>Total time: <xsl:value-of select='format-number(@t-total, \"#0.000\")'/> milliseconds</p>" +
-                "<h2>Time spent in each " + templateOr + "function or global variable:</h2>" +
-                "<p>The table below is ordered by the total net time spent in the " + templateOr +
-                "   function or global variable. Gross time means the time including called " + templatesAnd + "functions (recursive calls only count from the original entry);" +
-                "  net time means time excluding time spent in called " + templatesAnd + "functions.</p>" +
-                "<table border='border' cellpadding='10'>" +
-                "   <thead>" +
-                "      <tr>" +
-                "         <th>file</th>" +
-                "        <th>line</th>" +
-                "       <th>instruction</th>" +
-                "      <th>count</th>" +
-                "     <th>average time (gross/ms)</th>" +
-                "    <th>total time (gross/ms)</th>" +
-                "   <th>average time (net/ms)</th>" +
-                "  <th>total time (net/ms)</th>" +
-                "</tr>" +
-                "</thead>" +
-                "<tbody>" +
-                "   <xsl:for-each select='fn'>" +
-                /*"<xsl:sort select='@file'/>" +
-            "<xsl:sort select='@line'/>" +
-            "<xsl:sort select='@name'/>" +
-            "<xsl:sort select='@match'/>" +*/
-                "  <xsl:sort select='number(@t-sum-net)' order='descending'/>" +
-                "      <tr>" +
-                "         <td>" +
-                "            \"<xsl:value-of select='if(string-length(@file) gt 15) then \"*\" else (),substring(@file,string-length(@file) - 15)' separator=''/>\"" +
-                "       </td>" +
-                "      <td>" +
-                "         <xsl:value-of select='@line'/>" +
-                "    </td>" +
-                "   <td>" +
-                "      <xsl:value-of select='@construct, @name, @match'/>" +
-                " </td>" +
-                "<td align='right'>" +
-                "    <xsl:value-of select=\"format-number(@count,',##0')\"/>" +
-                "</td>" +
-                "    <td align='right'>" +
-                "       <xsl:value-of select=\"format-number(@t-avg, '#0.000')\"/>" +
-                "  </td>" +
-                " <td align='right'>" +
-                "    <xsl:value-of select=\"format-number(@t-sum, ',##0.000')\"/>" +
-                "</td>" +
-                " <td align='right'>" +
-                "    <xsl:value-of select=\"format-number(@t-avg-net, '#0.000')\"/>" +
-                "</td>" +
-                "<td align='right'>" +
-                "   <xsl:value-of select=\"format-number(@t-sum-net, ',##0.000')\"/>" +
-                " </td>" +
-                "</tr>" +
-                " </xsl:for-each>" +
-                "</tbody>" +
-                "</table>" +
-                "</body>" +
-                "</html>" +
-                "</xsl:template>" +
-                "</xsl:stylesheet>";
+        String xsl = "<?xml version='1.0' encoding='UTF-8'?>\n"
+                + "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\n"
+                + "    xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"\n"
+                + "    xmlns:f=\"http://saxonica.com/ns/profile-functions\"\n"
+                + "    exclude-result-prefixes=\"xs\"\n"
+                + "    expand-text=\"yes\"\n"
+                + "    version=\"3.0\">\n"
+                + "    \n"
+                + "    <xsl:param name=\"lang\" as=\"xs:string\" static=\"yes\" required=\"yes\"/>\n"
+                + "    \n"
+                + "    <xsl:variable name=\"process\" as=\"xs:string\" static=\"yes\" select=\"if ($lang = 'XSLT') then 'Stylesheet' else 'Query'\"/>\n"
+                + "    <xsl:variable name=\"templateOr\" select=\"if ($lang = 'XSLT') then 'template, ' else ''\"/>\n"
+                + "    <xsl:variable name=\"templatesAnd\" select=\"if ($lang = 'XSLT') then 'templates and ' else ''\"/>\n"
+                + "\n"
+                + "    <xsl:variable name=\"style\" as=\"xs:string\" expand-text=\"no\">\n"
+                + "        \n"
+                + "        \n"
+                + "        body {\n"
+                + "        background: #e4eef0;\n"
+                + "        }\n"
+                + "        \n"
+                + "        h1 {\n"
+                + "        font-family: Verdana, Arial, Helvetica, sans-serif;\n"
+                + "        font-size: 14pt;\n"
+                + "        font-style: normal;\n"
+                + "        color: #3D5B96;\n"
+                + "        font-weight: bold;\n"
+                + "        }\n"
+                + "        \n"
+                + "        h2 {\n"
+                + "        font-family: Verdana, Arial, Helvetica, sans-serif;\n"
+                + "        font-size: 12pt;\n"
+                + "        font-style: normal;\n"
+                + "        color: #96433D;\n"
+                + "        font-weight: bold;\n"
+                + "        }\t\t\n"
+                + "        \n"
+                + "        p {\n"
+                + "        font-family: Verdana, Arial, Helvetica, sans-serif;\n"
+                + "        font-size: 9pt;\n"
+                + "        font-style: normal;\n"
+                + "        color: #3D5B96;\n"
+                + "        font-weight: normal;\n"
+                + "        line-height: 1.3em;\n"
+                + "        padding-right:15px;\n"
+                + "        }\n"
+                + "        \n"
+                + "        table {\n"
+                + "        border-collapse: collapse;\n"
+                + "        border: 1px solid black;\n"
+                + "        }\n"
+                + "        \n"
+                + "        th, td {\n"
+                + "        border: 1px solid black;\n"
+                + "        font-family: Verdana, Arial, Helvetica, sans-serif;\n"
+                + "        font-size: 9pt;\n"
+                + "        font-style: normal;\n"
+                + "        color: #3D5B96;\n"
+                + "        text-decoration: none;\n"
+                + "        line-height: 1.3em;\n"
+                + "        padding-left: 15px;\n"
+                + "        text-indent: -15px;\n"
+                + "        padding-right: 15px;\n"
+                + "        padding-top: 0px;\n"
+                + "        padding-bottom: 0px;\n"
+                + "        }\n"
+                + "        \n"
+                + "        th {\n"
+                + "        background: #B1CCC7;\n"
+                + "        font-weight: bold;\n"
+                + "        }\n"
+                + "        \n"
+                + "        td {\n"
+                + "        font-weight: normal;\n"
+                + "        }\n"
+                + "        \n"
+                + "    </xsl:variable>\n"
+                + "    \n"
+                + "    <xsl:template match=\"*\">\n"
+                + "        <html>\n"
+                + "            <head>\n"
+                + "                <title>Analysis of {$process} + Execution Time</title>\n"
+                + "                <style>{$style}</style>\n"
+                + "            </head>\n"
+                + "            <body>\n"
+                + "                <h1>Analysis of {$process} Execution Time</h1>\n"
+                + "                <p>Total time: {format-number(@t-total, \"#0.000\")} milliseconds</p>\n"
+                + "                <h2>Time spent in each {$templateOr} function or global variable:</h2>\n"
+                + "                <p>The table below is ordered by the total net time spent in the {$templateOr} \n"
+                + "                    function or global variable. Gross time means the time including called\n"
+                + "                    {$templatesAnd} functions (recursive calls only count from the original entry);\n"
+                + "                    net time means time excluding time spent in called {$templatesAnd} functions.</p>\n"
+                + "                <table>\n"
+                + "                    <thead>\n"
+                + "                        <tr>\n"
+                + "                            <th>module</th>\n"
+                + "                            <th>line</th>\n"
+                + "                            <th>instruction</th>\n"
+                + "                            <th>count</th>\n"
+                + "                            <th>average time (gross/ms)</th>\n"
+                + "                            <th>total time (gross/ms)</th>\n"
+                + "                            <th>average time (net/ms)</th>\n"
+                + "                            <th>total time (net/ms)</th>\n"
+                + "                        </tr>\n"
+                + "                    </thead>\n"
+                + "                    <tbody>\n"
+                + "                        <xsl:for-each select=\"fn\"> \n"
+                + "                            <xsl:sort select=\"number(@t-sum-net)\" order=\"descending\"/>\n"
+                + "                            <tr>\n"
+                + "                                <td><a href=\"{@file}\">{tokenize(@file, '/')[last()]}</a></td>\n"
+                + "                                <td align=\"right\">{@line}</td>\n"
+                + "                                <td>{@construct, @name, @match}</td>\n"
+                + "                                <td align=\"right\">{format-number(@count, ',##0')}</td>\n"
+                + "                                <td align=\"right\">{format-number(@t-avg, '#0.000')}</td>\n"
+                + "                                <td align=\"right\">{format-number(@t-sum, ',##0.000')}</td>\n"
+                + "                                <td align=\"right\">{format-number(@t-avg-net, '#0.000')}</td>\n"
+                + "                                <td align=\"right\">{format-number(@t-sum-net, ',##0.000')}</td>\n"
+                + "                            </tr>\n"
+                + "                        </xsl:for-each>\n"
+                + "                    </tbody>\n"
+                + "                </table>\n"
+                + "            </body>\n"
+                + "        </html>\n"
+                + "    </xsl:template>\n"
+                + "</xsl:stylesheet>\n";
 
         Source styleSource = new StreamSource(new StringReader(xsl));
         CompilerInfo compilerInfo = config.getDefaultXsltCompilerInfo();
+        compilerInfo.setParameter(new StructuredQName("", "", "lang"),
+                                  new StringValue(this.lang == Configuration.XSLT ? "XSLT" : "XQuery"));
         compilerInfo.setCodeInjector(null);
         return Compilation.compileSingletonPackage(config, compilerInfo, styleSource);
 
