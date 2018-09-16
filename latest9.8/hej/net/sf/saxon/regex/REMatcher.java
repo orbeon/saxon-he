@@ -464,22 +464,28 @@ public class REMatcher {
         } else {
             // Prefix-anchored matching is possible
             UnicodeString prefix = program.prefix;
-            for (; !search.isEnd(i + prefix.uLength() - 1); i++) {
-                int j = i;
-                int k = 0;
-
-                if (program.flags.isCaseIndependent()) {
-                    do {
-                        // If there's a mismatch of any character in the prefix, give up
-                    } while (equalCaseBlind(search.uCharAt(j++), prefix.uCharAt(k++)) && k < prefix.uLength());
+            int prefixLength = prefix.uLength();
+            boolean ignoreCase = program.flags.isCaseIndependent();
+            for (; !search.isEnd(i + prefixLength - 1); i++) {
+                boolean prefixOK = true;
+                if (ignoreCase) {
+                    for (int j = i, k = 0; k < prefixLength; j++, k++) {
+                        if (!equalCaseBlind(search.uCharAt(j), prefix.uCharAt(k))) {
+                            prefixOK = false;
+                            break;
+                        }
+                    }
                 } else {
-                    do {
-                        // If there's a mismatch of any character in the prefix, give up
-                    } while ((search.uCharAt(j++) == prefix.uCharAt(k++)) && k < prefix.uLength());
+                    for (int j = i, k = 0; k < prefixLength; j++, k++) {
+                        if (search.uCharAt(j) != prefix.uCharAt(k)) {
+                            prefixOK = false;
+                            break;
+                        }
+                    }
                 }
 
                 // See if the whole prefix string matched
-                if (k == prefix.uLength()) {
+                if (prefixOK) {
                     // We matched the full prefix at firstChar, so try it
                     if (matchAt(i, false)) {
                         return true;

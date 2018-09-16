@@ -17,7 +17,6 @@ import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.z.*;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
@@ -769,7 +768,7 @@ public abstract class Operation {
         }
 
         @Override
-        public IntIterator iterateMatches(final REMatcher matcher, int position) {
+        public IntIterator iterateMatches(final REMatcher matcher, final int position) {
             final Stack<IntIterator> iterators = new Stack<IntIterator>();
             final Stack<Integer> positions = new Stack<Integer>();
             final int bound = Math.min(max, matcher.search.uLength() - position + 1);
@@ -781,90 +780,102 @@ public abstract class Operation {
                     iterators.push(new IntSingletonIterator(position));
                     positions.push(p);
                 }
-                for (int i=0; i<bound; i++) {
+                for (int i = 0; i < bound; i++) {
                     IntIterator it = op.iterateMatches(matcher, p);
                     if (it.hasNext()) {
                         p = it.next();
                         iterators.push(it);
                         positions.push(p);
                     } else if (iterators.isEmpty()) {
-                        //if (min == 0) {
-                        //    return new IntSingletonIterator(position);
-                        //} else {
-                            return EmptyIntIterator.getInstance();
-                        //}
+                        return EmptyIntIterator.getInstance();
                     } else {
                         break;
                     }
                 }
-            } else {
-                LinkedList<Integer> posSet = new LinkedList<Integer>();
-                posSet.add(p);
-                while (!posSet.isEmpty()) {
-                    int q = posSet.getFirst();
-                    IntIterator it = op.iterateMatches(matcher, q);
-                    while (it.hasNext()) {
-                        int q2 = it.next();
-                        if (q2 != q) {
-                            iterators.push(it);
-                            positions.push(q2);
-                            posSet.add(q2);
-                        }
-                    }
-                    posSet.removeFirst();
-                }
-            }
-            // Now return an iterator which returns all the matching positions in order
-            IntIterator base = new IntIterator() {
-                boolean primed = true;
+                // Now return an iterator which returns all the matching positions in order
+                IntIterator base = new IntIterator() {
+                    boolean primed = true;
 
-                /**
-                 * advance() moves to the next (potential) match position,
-                 * ignoring constraints on the minimum number of occurrences
-                 */
+                    /**
+                     * advance() moves to the next (potential) match position,
+                     * ignoring constraints on the minimum number of occurrences
+                     */
 
-                private void advance() {
-                    IntIterator top = iterators.peek();
-                    if (top.hasNext()) {
-                        int p = top.next();
-                        positions.pop();
-                        positions.push(p);
-                        while (iterators.size() < bound) {  // bug 3787
-                            IntIterator it = op.iterateMatches(matcher, p);
-                            if (it.hasNext()) {
-                                p = it.next();
-                                iterators.push(it);
-                                positions.push(p);
-                            } else {
-                                break;
+                    private void advance() {
+                        IntIterator top = iterators.peek();
+                        if (top.hasNext()) {
+                            int p = top.next();
+                            positions.pop();
+                            positions.push(p);
+                            while (iterators.size() < bound) {  // bug 3787
+                                IntIterator it = op.iterateMatches(matcher, p);
+                                if (it.hasNext()) {
+                                    p = it.next();
+                                    iterators.push(it);
+                                    positions.push(p);
+                                } else {
+                                    break;
+                                }
                             }
+                        } else {
+                            iterators.pop();
+                            positions.pop();
                         }
-                    } else {
-                        iterators.pop();
-                        positions.pop();
                     }
-                }
 
-                public boolean hasNext() {
-                    if (primed && iterators.size() >= min) {
-                        return !iterators.isEmpty();
-                    } else if (iterators.isEmpty()) {
-                        return false;
-                    } else {
+                    public boolean hasNext() {
+                        if (primed && iterators.size() >= min) {
+                            return !iterators.isEmpty();
+                        } else if (iterators.isEmpty()) {
+                            return false;
+                        } else {
+                            do {
+                                advance();
+                            } while (iterators.size() < min && !iterators.isEmpty());
+                            return !iterators.isEmpty();
+                        }
+                    }
+
+                    public int next() {
+                        primed = false;
+                        return positions.peek();
+                    }
+                };
+                return new ForceProgressIterator(base);
+            } else {
+                // reluctant (non-greedy) repeat.
+                // rewritten for bug 3902
+                IntIterator iter = new IntIterator() {
+                    private int pos = position;
+                    private int counter = 0;
+
+                    private void advance() {
+                        IntIterator it = op.iterateMatches(matcher, pos);
+                        if (it.hasNext()) {
+                            pos = it.next();
+                            if (++counter > max) {
+                                pos = -1;
+                            }
+                        } else if (min == 0 && counter == 0) {
+                            counter++;
+                        } else {
+                            pos = -1;
+                        }
+                    }
+
+                    public boolean hasNext() {
                         do {
                             advance();
-                        } while (iterators.size() < min && !iterators.isEmpty());
-                        return !iterators.isEmpty();
+                        } while (counter < min && pos >= 0);
+                        return pos >= 0;
                     }
-                }
 
-                public int next() {
-                    primed = false;
-                    return positions.peek();
-                }
-            };
-            return new ForceProgressIterator(base);
-            //return base;
+                    public int next() {
+                        return pos;
+                    }
+                };
+                return new ForceProgressIterator(iter);
+            }
         }
 
         /**
