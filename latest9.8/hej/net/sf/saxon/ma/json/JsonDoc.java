@@ -18,6 +18,7 @@ import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.EmptySequence;
 import net.sf.saxon.z.IntPredicate;
+import net.sf.saxon.z.IntPredicateTrue;
 
 import java.io.Reader;
 import java.net.URI;
@@ -47,7 +48,7 @@ public class JsonDoc extends SystemFunction  {
         String href = arg0.getStringValue();
 
         final Configuration config = context.getConfiguration();
-        IntPredicate checker = config.getValidCharacterChecker();
+        IntPredicate checker = IntPredicateTrue.getInstance();
 
         // Use the URI machinery to validate and resolve the URIs
 
