@@ -360,15 +360,14 @@ public class TransformFn extends SystemFunction implements Callable {
 
     private XsltExecutable getStylesheet(Map<String, Sequence> options, XsltCompiler xsltCompiler, String styleOptionStr, XPathContext context) throws XPathException {
         Item styleOptionItem = options.get(styleOptionStr).head();
-        StringValue styleBaseUri = null;
+        URI styleBaseUri = null;
         Sequence seq;
         if ((seq = options.get("stylesheet-base-uri")) != null) {
-            styleBaseUri = (StringValue) seq.head();
-            URI styleBase = URI.create(styleBaseUri.getStringValue());
-            if (!styleBase.isAbsolute()) {
+            StringValue styleBase = (StringValue) seq.head();
+            styleBaseUri = URI.create(styleBase.getStringValue());
+            if (!styleBaseUri.isAbsolute()) {
                 URI staticBase = getRetainedStaticContext().getStaticBaseUri();
-                styleBase = staticBase.resolve(styleBase);
-                //throw new XPathException("The transform option stylesheet-base-uri is not an absolute URI", "FOXT0002");
+                styleBaseUri = staticBase.resolve(styleBaseUri);
             }
         }
         final List<TransformerException> compileErrors = new ArrayList<TransformerException>();
@@ -432,13 +431,13 @@ public class TransformFn extends SystemFunction implements Callable {
         } else if (styleOptionStr.equals("stylesheet-node") || styleOptionStr.equals("package-node")) {
             NodeInfo stylesheetNode = (NodeInfo) styleOptionItem;
 
-            if (styleBaseUri != null && !stylesheetNode.getBaseURI().equals(styleBaseUri.getStringValue())) {
+            if (styleBaseUri != null && !stylesheetNode.getBaseURI().equals(styleBaseUri.toASCIIString())) {
 
                 // If the stylesheet is supplied as a node, and the stylesheet-base-uri option is supplied, and doesn't match
                 // the base URIs of the nodes (tests fn-transform-19 and fn-transform-41), then we have a bit of a problem.
                 // So copy the stylesheet to a new tree having the desired base URI.
 
-                final String sysId = styleBaseUri.getStringValue();
+                final String sysId = styleBaseUri.toASCIIString();
                 Builder builder = context.getController().makeBuilder();
                 builder.setSystemId(sysId);
                 //builder.freezeSystemIdAndBaseURI();
@@ -467,7 +466,7 @@ public class TransformFn extends SystemFunction implements Callable {
                 Source source = stylesheetNode;
                 if (styleBaseUri != null) {
                     source = AugmentedSource.makeAugmentedSource(source);
-                    source.setSystemId(styleBaseUri.getStringValue());
+                    source.setSystemId(styleBaseUri.toASCIIString());
                 }
                 try {
                     executable = xsltCompiler.compile(source);
@@ -487,7 +486,7 @@ public class TransformFn extends SystemFunction implements Callable {
                 StringReader sr = new StringReader(stylesheetText);
                 SAXSource style = new SAXSource(new InputSource(sr));
                 if (styleBaseUri != null) {
-                    style.setSystemId(styleBaseUri.getStringValue());
+                    style.setSystemId(styleBaseUri.toASCIIString());
                 }
                 try {
                     executable = xsltCompiler.compile(style);
