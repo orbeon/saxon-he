@@ -15,6 +15,7 @@ import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
+import net.sf.saxon.tree.linked.NodeImpl;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.Whitespace;
 
@@ -63,6 +64,14 @@ public class XSLApplyImports extends StyleElement {
                 compileError("Child element " + child.getDisplayName() +
                         " is not allowed as a child of xsl:apply-imports", "XTSE0010");
             }
+        }
+
+        NodeImpl parent = getParent();
+        while (parent != null) {
+            if (parent instanceof XSLOverride) {
+                compileError("xsl:apply-imports cannot be used in a template rule declared within xsl:override", "XTSE3460");
+            }
+            parent = parent.getParent();
         }
     }
 
