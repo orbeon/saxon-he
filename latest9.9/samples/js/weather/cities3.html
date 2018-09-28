@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+   
+<head>
+    <title>A List of Cities</title>
+    <link rel="stylesheet" href="style.css" type="text/css"/>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <meta http-equiv="Content-Script-Type" content="text/javascript"> 
+        <script src="../js3/BrowserPlatform.js"></script>
+        <script src="../js3/SaxonJS.js"></script>  
+        <script>
+      window.onload = function() {
+        BrowserPlatform.transform({
+           "stylesheet-location":"cities3.xsltp",
+           "initial-template":"main",
+           "destination":"html-page"
+           })
+      }     
+      </script>
+
+</head>
+
+<body>
+
+<h1 id="title">A List of Cities</h1>
+
+<div id="body">
+
+  <div id="target"></div>
+        
+</div>
+    
+</body>
+</html>

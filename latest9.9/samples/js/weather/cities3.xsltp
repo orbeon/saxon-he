@@ -1,0 +1,358 @@
+<package xmlns="http://ns.saxonica.com/xslt/export" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vv="http://saxon.sf.net/generated-variable" xmlns:java-type="http://saxon.sf.net/java-type" version="30" packageVersion="1">
+ <co id="0" binds="">
+  <function name="Q{http://openweathermap.org/w}fetch" line="14" module="file:/Users/debbie/Work/Saxon-JS-Project/SaxonJS/weather/cities3.xsl" eval="8" flags="pU" as="item()?" slots="1">
+   <arg name="uri" as="item()*"/>
+   <fn role="body" vn="31" baseUri="file:/Users/debbie/Work/Saxon-JS-Project/SaxonJS/weather/cities3.xsl" ns="=http://www.w3.org/1999/xhtml xsl=http://www.w3.org/1999/XSL/Transform prop=http://saxonica.com/ns/html-property w=http://openweathermap.org/w ixsl=http://saxonica.com/ns/interactiveXSLT style=http://saxonica.com/ns/html-style-property xs=http://www.w3.org/2001/XMLSchema" line="16" name="parse-json">
+    <check card="1" diag="0|0||parse-json">
+     <fn name="unparsed-text">
+      <treat as="xs:string" jsTest="return SaxonJS.Atomic.string.matches(item);" diag="0|0||unparsed-text">
+       <check card="?" diag="0|0||unparsed-text">
+        <cvUntyped to="xs:string">
+         <data>
+          <varRef name="uri" slot="0"/>
+         </data>
+        </cvUntyped>
+       </check>
+      </treat>
+     </fn>
+    </check>
+   </fn>
+  </function>
+ </co>
+ <co id="1" binds="">
+  <template name="Q{}show-all" flags="os" line="19" module="file:/Users/debbie/Work/Saxon-JS-Project/SaxonJS/weather/cities3.xsl" slots="10">
+   <sequence role="body" vn="31" baseUri="file:/Users/debbie/Work/Saxon-JS-Project/SaxonJS/weather/cities3.xsl" ns="=http://www.w3.org/1999/xhtml xsl=http://www.w3.org/1999/XSL/Transform prop=http://saxonica.com/ns/html-property w=http://openweathermap.org/w ixsl=http://saxonica.com/ns/interactiveXSLT style=http://saxonica.com/ns/html-style-property xs=http://www.w3.org/2001/XMLSchema" line="20">
+    <resultDoc global="#&#xA;#Tue May 10 12:19:02 BST 2016&#xA;" local="#&#xA;#Tue May 10 12:19:02 BST 2016&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;">
+     <str role="href" val="#title"/>
+     <valueOf role="content" flags="e">
+      <fn name="concat">
+       <str val="&#xA;            A List of Cities Beginning With "/>
+       <fn name="string-join">
+        <convert from="xs:anyAtomicType" to="xs:string">
+         <data>
+          <first>
+           <sequence>
+            <ifCall xmlns:map="http://www.w3.org/2005/xpath-functions/map" name="map:get" type="item()*">
+             <ifCall xmlns:ixsl="http://saxonica.com/ns/interactiveXSLT" name="ixsl:query-params" type="map(*)"/>
+             <str val="select"/>
+            </ifCall>
+            <str val="A"/>
+           </sequence>
+          </first>
+         </data>
+        </convert>
+        <str val=" "/>
+       </fn>
+       <str val="&#xA;           &#xA;        "/>
+      </fn>
+     </valueOf>
+    </resultDoc>
+    <resultDoc line="24" global="#&#xA;#Tue May 10 12:19:02 BST 2016&#xA;" local="#&#xA;#Tue May 10 12:19:02 BST 2016&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;">
+     <str role="href" val="#target"/>
+     <elem role="content" line="28" name="table" nsuri="http://www.w3.org/1999/xhtml" flags="d" namespaces="=http://www.w3.org/1999/xhtml">
+      <sequence>
+       <elem name="thead" nsuri="http://www.w3.org/1999/xhtml" flags="d">
+        <elem name="tr" nsuri="http://www.w3.org/1999/xhtml" flags="d">
+         <sequence>
+          <elem name="td" nsuri="http://www.w3.org/1999/xhtml" flags="d">
+           <valueOf flags="Se">
+            <str val="City"/>
+           </valueOf>
+          </elem>
+          <elem line="29" name="td" nsuri="http://www.w3.org/1999/xhtml" flags="d">
+           <valueOf flags="Se">
+            <str val="Country"/>
+           </valueOf>
+          </elem>
+          <elem line="30" name="td" nsuri="http://www.w3.org/1999/xhtml" flags="d">
+           <valueOf flags="Se">
+            <str val="Longitude"/>
+           </valueOf>
+          </elem>
+          <elem line="31" name="td" nsuri="http://www.w3.org/1999/xhtml" flags="d">
+           <valueOf flags="Se">
+            <str val="Latitude"/>
+           </valueOf>
+          </elem>
+         </sequence>
+        </elem>
+       </elem>
+       <elem line="34" name="tbody" nsuri="http://www.w3.org/1999/xhtml" flags="d">
+        <forEach line="36">
+         <sort>
+          <for role="select" var="qq:qq385242642" as="function(*)" slot="0">
+           <treat role="in" as="function(*)" jsTest="return item instanceof SaxonJS.HashTrie || item instanceof SaxonJS.Expr.XdmArray;" diag="3|0||qq:qq385242642">
+            <fn line="16" name="parse-json">
+             <check card="1" diag="0|0||parse-json">
+              <fn name="unparsed-text">
+               <fn line="36" name="concat">
+                <fn name="concat">
+                 <str val="http://127.0.0.1:8000/SaxonJS/weather/cities/"/>
+                 <atomSing line="35" card="?" diag="0|1||concat">
+                  <first>
+                   <sequence>
+                    <ifCall xmlns:map="http://www.w3.org/2005/xpath-functions/map" name="map:get" type="item()*">
+                     <ifCall xmlns:ixsl="http://saxonica.com/ns/interactiveXSLT" name="ixsl:query-params" type="map(*)"/>
+                     <str val="select"/>
+                    </ifCall>
+                    <str val="A"/>
+                   </sequence>
+                  </first>
+                 </atomSing>
+                </fn>
+                <str val=".json"/>
+               </fn>
+              </fn>
+             </check>
+            </fn>
+           </treat>
+           <choose role="return">
+            <instance of="map(*)" jsTest="return item instanceof SaxonJS.HashTrie">
+             <varRef xmlns:qq="http://saxon.sf.net/" name="qq:qq385242642" slot="0"/>
+            </instance>
+            <let var="vv:loc697960108" as="map(*)" slot="1" eval="7">
+             <treat as="map(*)" jsTest="return item instanceof SaxonJS.HashTrie" diag="0|0||map:get">
+              <varRef xmlns:qq="http://saxon.sf.net/" name="qq:qq385242642" slot="0"/>
+             </treat>
+             <for var="qq:qq824009085" as="xs:anyAtomicType" slot="2">
+              <ifCall xmlns:map="http://www.w3.org/2005/xpath-functions/map" role="in" name="map:keys" type="xs:anyAtomicType*">
+               <treat as="map(*)" jsTest="return item instanceof SaxonJS.HashTrie" diag="0|0||map:keys">
+                <varRef xmlns:qq="http://saxon.sf.net/" name="qq:qq385242642" slot="0"/>
+               </treat>
+              </ifCall>
+              <ifCall xmlns:map="http://www.w3.org/2005/xpath-functions/map" role="return" name="map:get" type="item()*">
+               <varRef name="vv:loc697960108" slot="1"/>
+               <varRef xmlns:qq="http://saxon.sf.net/" name="qq:qq824009085" slot="2"/>
+              </ifCall>
+             </for>
+            </let>
+            <instance of="array(*)" jsTest="return item instanceof SaxonJS.Expr.XdmArray">
+             <varRef xmlns:qq="http://saxon.sf.net/" name="qq:qq385242642" slot="0"/>
+            </instance>
+            <ifCall xmlns:array="http://www.w3.org/2005/xpath-functions/array" name="array:_to-sequence" type="item()*">
+             <treat as="array(*)" jsTest="return item instanceof SaxonJS.Expr.XdmArray" diag="0|0||array:_to-sequence">
+              <varRef xmlns:qq="http://saxon.sf.net/" name="qq:qq385242642" slot="0"/>
+             </treat>
+            </ifCall>
+            <true/>
+            <error message="First argument of '?' must be a sequence of arrays and/or maps" code="XPTY0004" isTypeErr="0"/>
+           </choose>
+          </for>
+          <sortKey line="37" comp="AtSC|632|http://www.w3.org/2005/xpath-functions/collation/codepoint">
+           <atomSing role="select" card="?" diag="4|0|XTTE1020|xsl:sort/select">
+            <let xmlns:qq="http://saxon.sf.net/" var="qq:qq2085857771" as="function(*)" slot="3" eval="7">
+             <treat as="function(*)" jsTest="return item instanceof SaxonJS.HashTrie || item instanceof SaxonJS.Expr.XdmArray;" diag="3|0||qq:qq2085857771">
+              <dot/>
+             </treat>
+             <choose>
+              <instance of="map(*)" jsTest="return item instanceof SaxonJS.HashTrie">
+               <varRef name="qq:qq2085857771" slot="3"/>
+              </instance>
+              <ifCall xmlns:map="http://www.w3.org/2005/xpath-functions/map" name="map:get" type="item()*">
+               <treat as="map(*)" jsTest="return item instanceof SaxonJS.HashTrie" diag="0|0||map:get">
+                <varRef name="qq:qq2085857771" slot="3"/>
+               </treat>
+               <str val="name"/>
+              </ifCall>
+              <true/>
+              <error message="First argument of '?' must be a sequence of maps" code="XPTY0004" isTypeErr="0"/>
+             </choose>
+            </let>
+           </atomSing>
+           <str role="order" val="ascending"/>
+           <str role="lang" val=""/>
+           <str role="caseOrder" val="#default"/>
+           <str role="stable" val="yes"/>
+           <str role="collation" val="http://www.w3.org/2005/xpath-functions/collation/codepoint"/>
+          </sortKey>
+         </sort>
+         <elem line="39" name="tr" nsuri="http://www.w3.org/1999/xhtml" flags="d" namespaces="=http://www.w3.org/1999/xhtml">
+          <sequence>
+           <elem name="td" nsuri="http://www.w3.org/1999/xhtml" flags="d">
+            <valueOf flags="e">
+             <fn name="string-join">
+              <convert from="xs:anyAtomicType" to="xs:string">
+               <data>
+                <mergeAdj>
+                 <let xmlns:qq="http://saxon.sf.net/" var="qq:qq344560770" as="function(*)" slot="4" eval="7">
+                  <treat as="function(*)" jsTest="return item instanceof SaxonJS.HashTrie || item instanceof SaxonJS.Expr.XdmArray;" diag="3|0||qq:qq344560770">
+                   <dot/>
+                  </treat>
+                  <choose>
+                   <instance of="map(*)" jsTest="return item instanceof SaxonJS.HashTrie">
+                    <varRef name="qq:qq344560770" slot="4"/>
+                   </instance>
+                   <ifCall xmlns:map="http://www.w3.org/2005/xpath-functions/map" name="map:get" type="item()*">
+                    <treat as="map(*)" jsTest="return item instanceof SaxonJS.HashTrie" diag="0|0||map:get">
+                     <varRef name="qq:qq344560770" slot="4"/>
+                    </treat>
+                    <str val="name"/>
+                   </ifCall>
+                   <true/>
+                   <error message="First argument of '?' must be a sequence of maps" code="XPTY0004" isTypeErr="0"/>
+                  </choose>
+                 </let>
+                </mergeAdj>
+               </data>
+              </convert>
+              <str val=" "/>
+             </fn>
+            </valueOf>
+           </elem>
+           <elem line="40" name="td" nsuri="http://www.w3.org/1999/xhtml" flags="d">
+            <valueOf flags="e">
+             <fn name="string-join">
+              <convert from="xs:anyAtomicType" to="xs:string">
+               <data>
+                <mergeAdj>
+                 <let xmlns:qq="http://saxon.sf.net/" var="qq:qq716083600" as="function(*)" slot="5" eval="7">
+                  <treat as="function(*)" jsTest="return item instanceof SaxonJS.HashTrie || item instanceof SaxonJS.Expr.XdmArray;" diag="3|0||qq:qq716083600">
+                   <dot/>
+                  </treat>
+                  <choose>
+                   <instance of="map(*)" jsTest="return item instanceof SaxonJS.HashTrie">
+                    <varRef name="qq:qq716083600" slot="5"/>
+                   </instance>
+                   <ifCall xmlns:map="http://www.w3.org/2005/xpath-functions/map" name="map:get" type="item()*">
+                    <treat as="map(*)" jsTest="return item instanceof SaxonJS.HashTrie" diag="0|0||map:get">
+                     <varRef name="qq:qq716083600" slot="5"/>
+                    </treat>
+                    <str val="country"/>
+                   </ifCall>
+                   <true/>
+                   <error message="First argument of '?' must be a sequence of maps" code="XPTY0004" isTypeErr="0"/>
+                  </choose>
+                 </let>
+                </mergeAdj>
+               </data>
+              </convert>
+              <str val=" "/>
+             </fn>
+            </valueOf>
+           </elem>
+           <elem line="41" name="td" nsuri="http://www.w3.org/1999/xhtml" flags="d">
+            <valueOf flags="e">
+             <fn name="string-join">
+              <convert from="xs:anyAtomicType" to="xs:string">
+               <data>
+                <mergeAdj>
+                 <for var="qq:qq1288141870" as="function(*)" slot="6">
+                  <treat role="in" as="function(*)" jsTest="return item instanceof SaxonJS.HashTrie || item instanceof SaxonJS.Expr.XdmArray;" diag="3|0||qq:qq1288141870">
+                   <let xmlns:qq="http://saxon.sf.net/" var="qq:qq2001112025" as="function(*)" slot="7" eval="7">
+                    <treat as="function(*)" jsTest="return item instanceof SaxonJS.HashTrie || item instanceof SaxonJS.Expr.XdmArray;" diag="3|0||qq:qq2001112025">
+                     <dot/>
+                    </treat>
+                    <choose>
+                     <instance of="map(*)" jsTest="return item instanceof SaxonJS.HashTrie">
+                      <varRef name="qq:qq2001112025" slot="7"/>
+                     </instance>
+                     <ifCall xmlns:map="http://www.w3.org/2005/xpath-functions/map" name="map:get" type="item()*">
+                      <treat as="map(*)" jsTest="return item instanceof SaxonJS.HashTrie" diag="0|0||map:get">
+                       <varRef name="qq:qq2001112025" slot="7"/>
+                      </treat>
+                      <str val="coord"/>
+                     </ifCall>
+                     <true/>
+                     <error message="First argument of '?' must be a sequence of maps" code="XPTY0004" isTypeErr="0"/>
+                    </choose>
+                   </let>
+                  </treat>
+                  <choose role="return">
+                   <instance of="map(*)" jsTest="return item instanceof SaxonJS.HashTrie">
+                    <varRef xmlns:qq="http://saxon.sf.net/" name="qq:qq1288141870" slot="6"/>
+                   </instance>
+                   <ifCall xmlns:map="http://www.w3.org/2005/xpath-functions/map" name="map:get" type="item()*">
+                    <treat as="map(*)" jsTest="return item instanceof SaxonJS.HashTrie" diag="0|0||map:get">
+                     <varRef xmlns:qq="http://saxon.sf.net/" name="qq:qq1288141870" slot="6"/>
+                    </treat>
+                    <str val="lon"/>
+                   </ifCall>
+                   <true/>
+                   <error message="First argument of '?' must be a sequence of maps" code="XPTY0004" isTypeErr="0"/>
+                  </choose>
+                 </for>
+                </mergeAdj>
+               </data>
+              </convert>
+              <str val=" "/>
+             </fn>
+            </valueOf>
+           </elem>
+           <elem line="42" name="td" nsuri="http://www.w3.org/1999/xhtml" flags="d">
+            <valueOf flags="e">
+             <fn name="string-join">
+              <convert from="xs:anyAtomicType" to="xs:string">
+               <data>
+                <mergeAdj>
+                 <for var="qq:qq116211441" as="function(*)" slot="8">
+                  <treat role="in" as="function(*)" jsTest="return item instanceof SaxonJS.HashTrie || item instanceof SaxonJS.Expr.XdmArray;" diag="3|0||qq:qq116211441">
+                   <let xmlns:qq="http://saxon.sf.net/" var="qq:qq966808741" as="function(*)" slot="9" eval="7">
+                    <treat as="function(*)" jsTest="return item instanceof SaxonJS.HashTrie || item instanceof SaxonJS.Expr.XdmArray;" diag="3|0||qq:qq966808741">
+                     <dot/>
+                    </treat>
+                    <choose>
+                     <instance of="map(*)" jsTest="return item instanceof SaxonJS.HashTrie">
+                      <varRef name="qq:qq966808741" slot="9"/>
+                     </instance>
+                     <ifCall xmlns:map="http://www.w3.org/2005/xpath-functions/map" name="map:get" type="item()*">
+                      <treat as="map(*)" jsTest="return item instanceof SaxonJS.HashTrie" diag="0|0||map:get">
+                       <varRef name="qq:qq966808741" slot="9"/>
+                      </treat>
+                      <str val="coord"/>
+                     </ifCall>
+                     <true/>
+                     <error message="First argument of '?' must be a sequence of maps" code="XPTY0004" isTypeErr="0"/>
+                    </choose>
+                   </let>
+                  </treat>
+                  <choose role="return">
+                   <instance of="map(*)" jsTest="return item instanceof SaxonJS.HashTrie">
+                    <varRef xmlns:qq="http://saxon.sf.net/" name="qq:qq116211441" slot="8"/>
+                   </instance>
+                   <ifCall xmlns:map="http://www.w3.org/2005/xpath-functions/map" name="map:get" type="item()*">
+                    <treat as="map(*)" jsTest="return item instanceof SaxonJS.HashTrie" diag="0|0||map:get">
+                     <varRef xmlns:qq="http://saxon.sf.net/" name="qq:qq116211441" slot="8"/>
+                    </treat>
+                    <str val="lat"/>
+                   </ifCall>
+                   <true/>
+                   <error message="First argument of '?' must be a sequence of maps" code="XPTY0004" isTypeErr="0"/>
+                  </choose>
+                 </for>
+                </mergeAdj>
+               </data>
+              </convert>
+              <str val=" "/>
+             </fn>
+            </valueOf>
+           </elem>
+          </sequence>
+         </elem>
+        </forEach>
+       </elem>
+      </sequence>
+     </elem>
+    </resultDoc>
+   </sequence>
+  </template>
+ </co>
+ <co id="2" binds="1">
+  <template name="Q{}main" flags="os" line="10" module="file:/Users/debbie/Work/Saxon-JS-Project/SaxonJS/weather/cities3.xsl" slots="0">
+   <callT role="body" vn="31" baseUri="file:/Users/debbie/Work/Saxon-JS-Project/SaxonJS/weather/cities3.xsl" ns="=http://www.w3.org/1999/xhtml xsl=http://www.w3.org/1999/XSL/Transform prop=http://saxonica.com/ns/html-property w=http://openweathermap.org/w ixsl=http://saxonica.com/ns/interactiveXSLT style=http://saxonica.com/ns/html-style-property xs=http://www.w3.org/2001/XMLSchema" line="11" name="show-all" bSlot="0"/>
+  </template>
+ </co>
+ <co id="3" binds="1">
+  <mode onNo="TC" flags="dW" patternSlots="0">
+   <templateRule prec="0" prio="-0.5" seq="0" rank="0" minImp="0" slots="0" flags="os" line="10" module="file:/Users/debbie/Work/Saxon-JS-Project/SaxonJS/weather/cities3.xsl">
+    <p.nodeTest role="match" test="document-node()" jsTest="return item instanceof Node &amp;&amp; (item.nodeType==9||item.nodeType==11);"/>
+    <callT role="action" vn="31" baseUri="file:/Users/debbie/Work/Saxon-JS-Project/SaxonJS/weather/cities3.xsl" ns="=http://www.w3.org/1999/xhtml xsl=http://www.w3.org/1999/XSL/Transform prop=http://saxonica.com/ns/html-property w=http://openweathermap.org/w ixsl=http://saxonica.com/ns/interactiveXSLT style=http://saxonica.com/ns/html-style-property xs=http://www.w3.org/2001/XMLSchema" line="11" name="show-all" bSlot="0"/>
+   </templateRule>
+  </mode>
+ </co>
+ <overridden/>
+ <output>
+  <property name="{http://saxon.sf.net/}stylesheet-version" value="30"/>
+ </output>
+ <decimalFormat decimal-separator="46" grouping-separator="44" digit="35" minus-sign="45" percent="37" per-mille="8240" zero-digit="48" exponent-separator="101" pattern-separator="59" infinity="Infinity" NaN="NaN"/>
+</package>
+<?Σ f99f7063?>
