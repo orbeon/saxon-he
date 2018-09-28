@@ -7,6 +7,7 @@
 
 package net.sf.saxon.lib;
 
+import net.sf.saxon.event.CloseNotifier;
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.expr.XPathContext;
@@ -17,6 +18,8 @@ import net.sf.saxon.trans.XPathException;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.TransformerException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -59,13 +62,17 @@ public class OutputURIResolverWrapper implements ResultDocumentResolver {
                     throw new UncheckedXPathException(XPathException.makeXPathException(te));
                 }
             };
+            Receiver out;
             if (result instanceof Receiver) {
-                return (Receiver)result;
+                out = (Receiver)result;
             } else {
                 SerializerFactory factory = context.getConfiguration().getSerializerFactory();
                 PipelineConfiguration pipe = context.getController().makePipelineConfiguration();
-                return factory.getReceiver(result, properties, pipe);
+                out = factory.getReceiver(result, properties, pipe);
             }
+            List<Action> actions = new ArrayList<>();
+            actions.add(onClose);
+            return new CloseNotifier(out, actions);
         } catch (TransformerException e) {
             throw XPathException.makeXPathException(e);
         }
