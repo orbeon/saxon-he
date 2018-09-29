@@ -133,7 +133,7 @@ public class NamespaceReducer extends ProxyReceiver implements NamespaceResolver
             if (isNeeded(ns)) {
                 addToStack(ns);
                 countStack[depth - 1]++;
-                nextReceiver.namespace(namespaceBindings, properties);
+                nextReceiver.namespace(ns, properties);
             }
         }
     }
