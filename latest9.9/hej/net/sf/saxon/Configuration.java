@@ -3013,7 +3013,7 @@ public class Configuration implements SourceResolver, NotationSet {
      * @param baseURI        the base URI of the instruction requesting the reading of the schema
      * @param schemaLocation the location of the schema to be read
      * @param expected       The expected targetNamespace of the schema being read, or null if there is no expectation
-     * @return the target namespace of the schema; null if there is no expectation
+     * @return the target namespace of the schema; null if no schema has been read
      * @throws UnsupportedOperationException     when called in the non-schema-aware version of the product
      * @throws net.sf.saxon.type.SchemaException if the schema cannot be read
      */
