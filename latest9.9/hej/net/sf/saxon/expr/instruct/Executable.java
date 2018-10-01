@@ -286,6 +286,29 @@ public class Executable {
     }
 
     /**
+     * Get the properties for xsl:output. The object returned will
+     * be a clone of the internal values, and thus it can be mutated
+     * without mutating the Executable object.
+     * <p>The returned properties object is a new, empty, Properties object that is
+     * backed by the live properties to supply default values for missing properties.
+     * This means that the property values must be read using the getProperty() method.
+     * Calling the get() method on the underlying Hashtable will return null.</p>
+     * <p>This method gets the output properties for the unnamed output
+     * format in the stylesheet.</p>
+     *
+     * @return A Properties object reflecting the output properties defined
+     * for the default (unnamed) output format in the stylesheet. It may
+     * be mutated and supplied to the setOutputProperties() method of the
+     * Transformer, without affecting other transformations that use the
+     * same stylesheet.
+     * @see javax.xml.transform.Transformer#setOutputProperties
+     */
+
+    public Properties getOutputProperties() {
+        return new Properties(defaultOutputProperties);
+    }
+    
+    /**
      * Get a named output format
      *
      * @param qName the name of the output format
