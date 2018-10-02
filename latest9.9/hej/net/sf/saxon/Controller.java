@@ -177,6 +177,7 @@ public class Controller implements ContextOriginator {
 
     public void reset() {
         globalParameters = new GlobalParameterSet();
+        focusTrackerFactory = config.getFocusTrackerFactory(executable);
         standardURIResolver = config.getSystemURIResolver();
         userURIResolver = config.getURIResolver();
         unparsedTextResolver = config.getUnparsedTextURIResolver();
@@ -1573,7 +1574,7 @@ public class Controller implements ContextOriginator {
     /**
      * Set a factory function that will be used to create new instances of FocusTrackingIterator.
      * The standard function for instantiating a FocusTrackingIterator can be overridden to deliver
-     * one with extra diagnostic capability for use in debuggers
+     * one with extra diagnostic capability for use in debuggers.
      *
      * @param focusTrackerFactory a factory function that is used to create FocusTrackingIterator instances
      */

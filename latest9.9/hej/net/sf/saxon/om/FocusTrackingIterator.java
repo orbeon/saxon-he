@@ -250,7 +250,7 @@ public class FocusTrackingIterator<T extends Item>
         NodeInfo prior;
         int count = 1;
         while ((prior = prev.next()) != null) {
-            if (s.mostRecentNode != null && prior.equals(s.mostRecentNode) && nodeTest.equals(s.mostRecentNodeTest)) {
+            if (prior.equals(s.mostRecentNode) && nodeTest.equals(s.mostRecentNodeTest)) {
                 int result = count + s.mostRecentPosition;
                 s.mostRecentNode = node;
                 s.mostRecentPosition = result;
