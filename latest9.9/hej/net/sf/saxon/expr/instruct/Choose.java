@@ -531,7 +531,9 @@ public class Choose extends Instruction implements ConditionalInstruction {
             }
             if (getAction(i) instanceof ErrorExpression &&
                     ((ErrorExpression)getAction(i)).isTypeError() &&
-                    !Literal.isConstantBoolean(getCondition(i), false)) {
+                    !Literal.isConstantBoolean(getCondition(i), false) &&
+                    !Literal.isConstantBoolean(getCondition(i), true)) {
+                // Bug 3933: avoid the warning for an implicit xsl:otherwise branch (constant condition = true)
                 visitor.issueWarning("Branch " + (i + 1) + " of conditional will fail with a type error if executed. "
                         + ((ErrorExpression) getAction(i)).getMessage(), getAction(i).getLocation());
             }
