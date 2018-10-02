@@ -108,6 +108,13 @@ public class XSLImportSchema extends StyleElement {
                     compileError("The schema-location attribute must be absent if an inline schema is present", "XTSE0215");
                 }
 
+                if (namespace.isEmpty()) {
+                    namespace = inlineSchema.getAttributeValue("", "targetNamespace");
+                    if (namespace == null) {
+                        namespace = "";
+                    }
+                }
+
                 namespace = config.readInlineSchema(inlineSchema, namespace,
                         getCompilation().getCompilerInfo().getErrorListener());
                 getPrincipalStylesheetModule().addImportedSchema(namespace);
