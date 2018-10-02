@@ -29,6 +29,12 @@ import net.sf.saxon.value.SequenceExtent;
  * and (b) that all calls on next() to advance the iterator are directed at the
  * FocusTrackingIterator, and not at the wrapped SequenceIterator.</p>
  *
+ * <p>The methods on this class are synchronized in resolution of bug 3927, concerning calls to
+ * <code>last()</code> when executing asynchronous calls on <code>xsl:result-document</code>.
+ * These do not make the iterator fully thread-safe; they merely protect it against calls on
+ * {@link #getLength()} made in a thread other than the thread that is making successive calls
+ * on {@link #next()}.</p>
+ *
  * @since 9.6
  */
 public class FocusTrackingIterator implements FocusIterator, LookaheadIterator, GroundedIterator, LastPositionFinder {
@@ -64,7 +70,7 @@ public class FocusTrackingIterator implements FocusIterator, LookaheadIterator, 
      * @return the iterator underlying this FocusIterator
      */
 
-    public SequenceIterator getUnderlyingIterator() {
+    public synchronized SequenceIterator getUnderlyingIterator() {
         return base;
     }
 
@@ -81,7 +87,7 @@ public class FocusTrackingIterator implements FocusIterator, LookaheadIterator, 
      *          if an error occurs retrieving the next item
      * @since 8.4
      */
-    public Item next() throws XPathException {
+    public synchronized Item next() throws XPathException {
         curr = base.next();
         if (curr == null) {
             pos = -1;
@@ -101,7 +107,7 @@ public class FocusTrackingIterator implements FocusIterator, LookaheadIterator, 
      *         of the sequence has been reached.
      * @since 8.4
      */
-    public Item current() {
+    public synchronized Item current() {
         return curr;
     }
 
@@ -124,7 +130,7 @@ public class FocusTrackingIterator implements FocusIterator, LookaheadIterator, 
      *         value is -1.
      * @since 8.4
      */
-    public int position() {
+    public synchronized int position() {
         return pos;
     }
 
@@ -137,7 +143,7 @@ public class FocusTrackingIterator implements FocusIterator, LookaheadIterator, 
      * @throws XPathException if a failure occurs reading the sequence
      */
 
-    public int getLength() throws XPathException {
+    public synchronized int getLength() throws XPathException {
         if (last == -1) {
             if ((base.getProperties() & SequenceIterator.LAST_POSITION_FINDER) != 0) {
                 last = ((LastPositionFinder)base).getLength();
@@ -163,7 +169,7 @@ public class FocusTrackingIterator implements FocusIterator, LookaheadIterator, 
      * @return true if there are more items in the sequence
      * @throws ClassCastException if the base iterator does not support lookahead processing
      */
-    public boolean hasNext() {
+    public synchronized boolean hasNext() {
         return ((LookaheadIterator)base).hasNext();
     }
 
@@ -177,7 +183,7 @@ public class FocusTrackingIterator implements FocusIterator, LookaheadIterator, 
      *                        which cause evaluation of expressions while materializing the value.
      */
     @Override
-    public GroundedValue materialize() throws XPathException {
+    public synchronized GroundedValue materialize() throws XPathException {
         return ((GroundedIterator)base).materialize();
     }
 
@@ -191,7 +197,7 @@ public class FocusTrackingIterator implements FocusIterator, LookaheadIterator, 
      *                        which cause evaluation of expressions while materializing the value.
      */
     @Override
-    public GroundedValue getResidue() throws XPathException {
+    public synchronized GroundedValue getResidue() throws XPathException {
         return ((GroundedIterator) base).getResidue();
     }
 
@@ -208,7 +214,7 @@ public class FocusTrackingIterator implements FocusIterator, LookaheadIterator, 
      *
      * @since 9.1
      */
-    public void close() {
+    public synchronized void close() {
         base.close();
     }
 
@@ -222,7 +228,7 @@ public class FocusTrackingIterator implements FocusIterator, LookaheadIterator, 
      *         It is acceptable for the properties of the iterator to change depending on its state.
      * @since 8.6
      */
-    public int getProperties() {
+    public synchronized int getProperties() {
         return base.getProperties();
     }
 
