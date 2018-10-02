@@ -135,7 +135,7 @@ public class XSLResultDocument extends StyleElement {
                 typeAtt = Whitespace.trim(atts.getValue(a));
             } else if (f.equals("use-character-maps")) {
                 useCharacterMapsAtt = Whitespace.trim(atts.getValue(a));
-            } else if (fans.contains(f) || (f.startsWith("{") && !StandardNames.SAXON_THREADS.equals(f))) {
+            } else if (fans.contains(f) || (f.startsWith("{") && !StandardNames.SAXON_ASYNCHRONOUS.equals(f))) {
                 // this is a serialization attribute
                 String val = atts.getValue(a);
                 if (!(SaxonOutputKeys.ITEM_SEPARATOR.equals(f) || SaxonOutputKeys.NEWLINE.equals(f))) {
