@@ -148,6 +148,7 @@ public abstract class StandardNames {
 
     private static final String SAXON_B = '{' + NamespaceConstant.SAXON + '}';
     public static final String SAXON_ASSIGNABLE = SAXON_B + "assignable";
+    public static final String SAXON_ASYCHRONOUS = SAXON_B + "asynchronous";
     public static final String SAXON_EXPLAIN = SAXON_B + "explain";
     public static final String SAXON_READ_ONCE = SAXON_B + "read-once";
     public static final String SAXON_MEMO_FUNCTION = SAXON_B + "memo-function";
