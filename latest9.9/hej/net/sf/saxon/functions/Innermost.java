@@ -10,6 +10,8 @@ package net.sf.saxon.functions;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.parser.ContextItemStaticInfo;
+import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.sort.DocumentOrderIterator;
 import net.sf.saxon.expr.sort.GlobalOrderComparer;
 import net.sf.saxon.om.NodeInfo;
@@ -34,6 +36,28 @@ public class Innermost extends SystemFunction {
     @Override
     public int getSpecialProperties(Expression[] arguments) {
         return StaticProperty.ORDERED_NODESET | StaticProperty.PEER_NODESET;
+    }
+
+    /**
+     * Allow the function to create an optimized call based on the values of the actual arguments
+     *
+     * @param visitor     the expression visitor
+     * @param contextInfo information about the context item
+     * @param arguments   the supplied arguments to the function call. Note: modifying the contents
+     *                    of this array should not be attempted, it is likely to have no effect.
+     * @return either a function call on this function, or an expression that delivers
+     * the same result, or null indicating that no optimization has taken place
+     * @throws XPathException if an error is detected
+     */
+    @Override
+    public Expression makeOptimizedFunctionCall(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo, Expression... arguments) throws XPathException {
+        if ((arguments[0].getSpecialProperties() & StaticProperty.PEER_NODESET) != 0) {
+            return arguments[0];
+        }
+        if ((arguments[0].getSpecialProperties() & StaticProperty.ORDERED_NODESET) != 0) {
+            presorted = true;
+        }
+        return super.makeOptimizedFunctionCall(visitor, contextInfo, arguments);
     }
 
     /**
