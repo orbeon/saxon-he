@@ -70,23 +70,21 @@ public class RebasedNode extends AbstractVirtualNode implements WrappingFunction
         return wrapper;
     }
 
-    private Function<String, String> getBaseUriMappingFunction() {
+    private Function<NodeInfo, String> getBaseUriMappingFunction() {
         return ((RebasedDocument)docWrapper).getBaseUriMapper();
     }
 
-    private Function<String, String> getSystemIdMappingFunction() {
+    private Function<NodeInfo, String> getSystemIdMappingFunction() {
         return ((RebasedDocument) docWrapper).getSystemIdMapper();
     }
 
     /**
      * Get the Base URI for the node, that is, the URI used for resolving a relative URI contained
-     * in the node. In the JDOM model, base URIs are held only an the document level. We don't
-     * currently take any account of xml:base attributes.
+     * in the node.
      */
     @Override
     public String getBaseURI() {
-        String underBase = node.getBaseURI();
-        return getBaseUriMappingFunction().apply(underBase == null ? "" : underBase);
+        return getBaseUriMappingFunction().apply(node);
     }
 
     /**
@@ -98,8 +96,7 @@ public class RebasedNode extends AbstractVirtualNode implements WrappingFunction
      */
     @Override
     public String getSystemId() {
-        String underBase = node.getSystemId();
-        return getSystemIdMappingFunction().apply(underBase == null ? "" : underBase);
+        return getSystemIdMappingFunction().apply(node);
     }
 
     /**

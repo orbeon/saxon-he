@@ -34,22 +34,22 @@ import java.util.function.Function;
 public class RebasedDocument extends GenericTreeInfo {
 
     private TreeInfo underlyingTree;
-    private Function<String, String> baseUriMapper;
-    private Function<String, String> systemIdMapper;
+    private Function<NodeInfo, String> baseUriMapper;
+    private Function<NodeInfo, String> systemIdMapper;
 
 
     /**
      * Create a type-stripped view of a document
      * @param doc the underlying document
-     * @param baseUriMapper a function that is applied to the base URI of a node in the original document
+     * @param baseUriMapper a function that is applied to a node in the original document
      * (as returned by its {@link NodeInfo#getBaseURI()} method) to deliver the base URI of the corresponding
      * node in the rebased document
-     * @param systemIdMapper a function that is applied to the system ID of a node in the original document
+     * @param systemIdMapper a function that is applied to a node in the original document
      * (as returned by its {@link NodeInfo#getSystemId()} method) to deliver the system ID of the corresponding
      * node in the rebased document
      */
 
-    public RebasedDocument(TreeInfo doc, Function<String, String> baseUriMapper, Function<String, String> systemIdMapper) {
+    public RebasedDocument(TreeInfo doc, Function<NodeInfo, String> baseUriMapper, Function<NodeInfo, String> systemIdMapper) {
         super(doc.getConfiguration());
         this.baseUriMapper = baseUriMapper;
         this.systemIdMapper = systemIdMapper;
@@ -109,21 +109,21 @@ public class RebasedDocument extends GenericTreeInfo {
     }
 
     /**
-     * Get the function that is used to map base URIs of nodes in the underlying tree to a new base URI
+     * Get the function that is used to map nodes in the underlying tree to a new base URI
      * @return the base URI mapping function
      */
 
-    public Function<String, String> getBaseUriMapper() {
+    public Function<NodeInfo, String> getBaseUriMapper() {
         return baseUriMapper;
     }
 
     /**
-     * Get the function that is used to map system IDs of nodes in the underlying tree to a new system ID
+     * Get the function that is used to map nodes in the underlying tree to a new system ID
      *
      * @return the system ID mapping function
      */
 
-    public Function<String, String> getSystemIdMapper() {
+    public Function<NodeInfo, String> getSystemIdMapper() {
         return systemIdMapper;
     }
 
