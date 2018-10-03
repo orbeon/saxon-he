@@ -373,9 +373,9 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
             csi.setContextPostureStriding();
             List<String> reasons = new ArrayList<String>(4);
             PostureAndSweep ps = Streamability.getStreamability(newValueExp, csi, reasons);
-            if (ps.getSweep() != Sweep.MOTIONLESS) {
+            if (!ps.equals(PostureAndSweep.GROUNDED_AND_MOTIONLESS)) {
                 String message = "The xsl:accumulator-rule/@select expression (or contained sequence constructor) " +
-                        "for a streaming accumulator must be motionless";
+                        "for a streaming accumulator must be grounded and motionless";
                 for (String reason : reasons) {
                     message += ". " + reason;
                 }
