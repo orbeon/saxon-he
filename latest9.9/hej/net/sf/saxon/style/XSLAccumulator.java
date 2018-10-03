@@ -20,7 +20,10 @@ import net.sf.saxon.expr.accum.AccumulatorRegistry;
 import net.sf.saxon.expr.accum.AccumulatorRule;
 import net.sf.saxon.expr.instruct.Actor;
 import net.sf.saxon.expr.instruct.SlotManager;
-import net.sf.saxon.expr.parser.*;
+import net.sf.saxon.expr.parser.ExpressionTool;
+import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.Optimizer;
+import net.sf.saxon.expr.parser.RoleDiagnostic;
 import net.sf.saxon.lib.Feature;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
@@ -373,15 +376,15 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
             csi.setContextPostureStriding();
             List<String> reasons = new ArrayList<String>(4);
             PostureAndSweep ps = Streamability.getStreamability(newValueExp, csi, reasons);
-            if (ps.getSweep() != Sweep.MOTIONLESS && !rule.isCapture()) {
+            if (!ps.equals(PostureAndSweep.GROUNDED_AND_MOTIONLESS) && !rule.isCapture()) {
                 // saxon:capture="yes" captures a snapshot of the element for access in the phase="end" rule, which
                 // therefore no longer needs to be motionless
-                String message = "The xsl:accumulator-rule/@select expression (or contained sequence constructor) " +
-                        "for a streaming accumulator must be motionless";
+                StringBuilder message = new StringBuilder("The xsl:accumulator-rule/@select expression (or contained sequence constructor) " +
+                                                                  "for a streaming accumulator must be grounded and motionless");
                 for (String reason : reasons) {
-                    message += ". " + reason;
+                    message.append(". ").append(reason);
                 }
-                notStreamable(rule, message);
+                notStreamable(rule, message.toString());
             }
         }
         //#endif
