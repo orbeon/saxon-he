@@ -146,7 +146,8 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
                 } catch (XPathException e) {
                     compileErrorInAttribute(e.getMessage(), e.getErrorCodeLocalPart(), "as");
                 }
-
+            } else if (atts.getURI(a).equals(NamespaceConstant.SAXON) && atts.getLocalName(a).equals("trace")) {
+                accumulator.setTracing(processBooleanAttribute("saxon:trace", atts.getValue(a)));
             } else {
                 checkUnknownAttribute(atts.getNodeName(a));
             }
