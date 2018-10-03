@@ -360,6 +360,13 @@ public class SlashExpression extends BinaryExpression
             return getStep();
         }
 
+        // Try to simplify descendant-or-self::node()/child::node
+
+        Expression e2 = simplifyDescendantPath(visitor.getStaticContext());
+        if (e2 != null) {
+            return e2.optimize(visitor, contextItemType);
+        }
+
         // Rewrite a/b[filter] as (a/b)[filter] to improve the chance of indexing
 
         Expression firstStep = getFirstStep();
@@ -385,7 +392,7 @@ public class SlashExpression extends BinaryExpression
         // Replace //x/y by descendant::y[parent::x] to eliminate the need for sorting
         // into document order, and to make the expression streamable
 
-        Expression e2 = tryToMakeSorted(visitor, contextItemType);
+        e2 = tryToMakeSorted(visitor, contextItemType);
         if (e2 != null) {
             return e2;
         }

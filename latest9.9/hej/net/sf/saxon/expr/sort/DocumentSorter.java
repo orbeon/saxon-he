@@ -123,7 +123,8 @@ public class DocumentSorter extends UnaryExpression {
                     ConditionalSorter c = (ConditionalSorter) lhs;
                     DocumentSorter d = c.getDocumentSorter();
                     Expression condition = c.getCondition();
-                    SlashExpression s = new SlashExpression(d.getBaseExpression(), rhs);
+                    Expression s = new SlashExpression(d.getBaseExpression(), rhs);
+                    s = s.optimize(visitor, contextInfo);
                     return new ConditionalSorter(condition, new DocumentSorter(s));
                 }
                 // docOrder(docOrder(A)/B) can be rewritten as docOrder(A/B). However, this may not always
