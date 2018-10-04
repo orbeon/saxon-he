@@ -131,7 +131,7 @@ public class Configuration implements SourceResolver, NotationSet {
     protected transient StaticQueryContext defaultStaticQueryContext;
     private StaticQueryContextFactory staticQueryContextFactory = new StaticQueryContextFactory();
     protected OptimizerOptions optimizerOptions = OptimizerOptions.FULL_HE_OPTIMIZATION;
-    private CompilerInfo defaultXsltCompilerInfo = makeCompilerInfo();
+    protected CompilerInfo defaultXsltCompilerInfo = makeCompilerInfo();
 
     private String label = null;
 

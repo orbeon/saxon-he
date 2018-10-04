@@ -143,10 +143,11 @@ abstract class AbstractXsltTransformer {
      * to {@code xsl:result-document}, resolved against the base output URI of the transformation),
      * and returns a {@link Destination}, which will be used as the destination for the result document.
      * <p>If the {@code href} argument of the {@code xsl:result-document} instruction is absent or if
-     * it is set to a zero length string, then the callback function is called supplying the base output
-     * URI as its argument, and the resulting {@code Destination} is used in the normal way. (Note
-     * that this is allowed only if no output is written directly to the principal output destination;
-     * so the {@code Destination} supplied as the primary output destination will effectively be ignored.)</p>
+     * it is set to a zero length string, then the callback function is not normally called; instead
+     * a {@code Receiver} for the secondary output is obtained by making a second call on {@link Destination#getReceiver(PipelineConfiguration, SerializationProperties)}
+     * for the principal destination of the transformation. In that situation, this result document handler
+     * is invoked only if the call on {@link Destination#getReceiver(PipelineConfiguration, SerializationProperties)}
+     * returns null. </p>
      * <p>If the base output URI is absent (perhaps because the principal output destination for the
      * transformation was supplied as a {@link OutputStream} or {@link Writer} with no associated
      * URI or systemId), then the value of the {@code href} attribute is used <i>as is</i> if it
@@ -440,6 +441,7 @@ abstract class AbstractXsltTransformer {
 
     public Receiver getDestinationReceiver(XsltController controller, Destination destination) throws SaxonApiException {
         Receiver receiver;
+        controller.setPrincipalDestination(destination);
         PipelineConfiguration pipe = controller.makePipelineConfiguration();
         SerializationProperties params = controller.getExecutable().getPrimarySerializationProperties();
         receiver = destination.getReceiver(pipe, params);
@@ -460,27 +462,6 @@ abstract class AbstractXsltTransformer {
         return receiver;
 
     }
-
-//    protected SequenceReceiver makeSequenceReceiver(Destination destination, Receiver out) {
-//        SequenceReceiver sOut;
-//        Properties stylesheetProps = controller.getExecutable().getDefaultOutputProperties();
-//        if (destination.isRequiresTree(stylesheetProps)) {
-//            sOut = getUnderlyingController().getConfiguration().getSerializerFactory().
-//                    makeSequenceNormalizer(out, destination.getCombinedOutputProperties(stylesheetProps));
-//            if (destination instanceof Serializer && controller.getExecutable().createsSecondaryResult()) {
-//                // This is for the case where the stylesheet writes no output to the primary destination,
-//                // and then calls xsl:result-document will a null or empty href, in which case the xsl:result-document
-//                // output is sent to the primary output destination, but with different serialization properties.
-//                sOut = new ReconfigurableSerializer(sOut, ((Serializer)destination).getLocalOutputProperties(),
-//                                                    ((Serializer)destination).getResult());
-//            }
-//        } else if (out instanceof SequenceReceiver) {
-//            sOut = (SequenceReceiver)out;
-//        } else {
-//            sOut = new TreeReceiver(out);
-//        }
-//        return sOut;
-//    }
 
     /**
      * Return a Receiver which can be used to supply the principal source document for the transformation.

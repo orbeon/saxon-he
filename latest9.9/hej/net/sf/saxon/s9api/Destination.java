@@ -9,7 +9,6 @@ package net.sf.saxon.s9api;
 
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.Receiver;
-import net.sf.saxon.lib.ReceiverFactory;
 import net.sf.saxon.serialize.SerializationProperties;
 
 import java.net.URI;
@@ -43,14 +42,14 @@ import java.util.function.Consumer;
  * and name pools.
  * <p>
  * In general a Destination is not thread-safe (cannot be used from more than one thread),
- * and is not serially reusable. So a Destination should only be used once.
+ * and is not serially reusable. So a Destination should only be used once. A Destination
+ * supplied to Saxon may be modified by Saxon.
+ * <p>
  * The {@link #close} method is called by the system when
  * it finishes writing the document, and this should cause all resources held by the Destination
  * to be released.
- * <p>
- * A Destination should only be used once.
  */
-public interface Destination extends ReceiverFactory {
+public interface Destination {
 
     /**
      * Set the base URI of the resource being written to this destination
@@ -67,11 +66,19 @@ public interface Destination extends ReceiverFactory {
     URI getDestinationBaseURI();
 
     /**
-     * Return a Receiver. Saxon calls this method to obtain a Receiver, to which it then sends
+     * Return a {@link Receiver}. Saxon calls this method to obtain a Receiver, to which it then sends
      * a sequence of events representing an XDM value. The method is intended
      * primarily for internal use, and may give poor diagnostics if used incorrectly.
+     * <p>
+     * This method is normally only called once. However, in the case where a stylesheet includes
+     * a call of <code>xsl:result-document</code> with no <code>href</code> attribute (or with an
+     * <code>href</code> attribute that resolves to the base output URI of the transformation), the
+     * method may be called a second time (with a potentially different set of serialization parameters,
+     * and perhaps a different validation request) to return a second {@link Receiver}, which will typically
+     * write to the same destination. The XSLT rules ensure that it is not possible to write principal and
+     * secondary output to the same destination, so only one of these Receivers will actually be used.
      *
-     * @param pipe The pipelinr configuration. This is supplied so that the destination can
+     * @param pipe The pipeline configuration. This is supplied so that the destination can
      *               use information from the configuration (for example, a reference to the name pool)
      *               to construct or configure the returned Receiver.
      * @param params Serialization parameters known to the caller of the method; typically,
@@ -82,6 +89,13 @@ public interface Destination extends ReceiverFactory {
      *               defined on the (serializer) destination itself: for example if {@code indent=yes}
      *               was explicitly specified on a {@code Serializer}, this takes precedence
      *               over {@code indent=no} defined in a query or stylesheet.
+     *               <p>
+     *               The {@link SerializationProperties} object may also contain a factory object for
+     *               generating a validator to add to the output pipeline. The {@link Destination} object
+     *               is responsible for instantiating this validator and inserting it into the pipeline.
+     *               In most cases this is done by invoking the helper method
+     *               {@link SerializationProperties#makeSequenceNormalizer(Receiver)}. Validation can be skipped
+     *               in the case of non-XML destinations.
      * @return the Receiver to which events are to be sent.
      *         <p>It is the caller's responsibility to
      *         initialize this Receiver with a {@link net.sf.saxon.event.PipelineConfiguration} before calling
@@ -100,8 +114,9 @@ public interface Destination extends ReceiverFactory {
      *         method is called, this results in all registered {@code onClose} actions being invoked.
      *         An implementation returning a {@code SequenceNormalizer} can achieve this by registering
      *         the actions with the {@link net.sf.saxon.event.SequenceNormalizer#onClose} method.</p>
-     *         <p>Only a single call on this method should be made during the lifetime of the {@code Destination}
-     *         object. The effect of making multiple calls is undefined.</p>
+     *         <p>Only a single call on this method will be made during the lifetime of the {@code Destination}
+     *         object, with the exception of the case noted above where a secondary result document is written
+     *         to the same destination as the principal transformation result.</p>
      * @throws SaxonApiException if the Receiver cannot be created
      */
 

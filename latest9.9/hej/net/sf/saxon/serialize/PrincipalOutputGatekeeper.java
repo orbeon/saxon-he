@@ -12,6 +12,8 @@ import net.sf.saxon.event.Receiver;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeName;
+import net.sf.saxon.s9api.Destination;
+import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.trans.XsltController;
 import net.sf.saxon.type.SchemaType;
@@ -35,6 +37,7 @@ import net.sf.saxon.type.SchemaType;
 
 public class PrincipalOutputGatekeeper extends ProxyReceiver {
 
+    private XsltController controller;
     private boolean usedAsPrimaryResult = false;
     private boolean usedAsSecondaryResult = false;
     private boolean open = false;
@@ -43,6 +46,7 @@ public class PrincipalOutputGatekeeper extends ProxyReceiver {
 
     public PrincipalOutputGatekeeper(XsltController controller, Receiver next) {
         super(next);
+        this.controller = controller;
     }
 
     public void open() throws XPathException {
@@ -123,6 +127,18 @@ public class PrincipalOutputGatekeeper extends ProxyReceiver {
         usedAsSecondaryResult = true;
     }
 
+    public Receiver makeReceiver(SerializationProperties params) {
+        try {
+            Destination dest = controller.getPrincipalDestination();
+            if (dest != null) {
+                return dest.getReceiver(controller.makePipelineConfiguration(), params);
+            }
+        } catch (SaxonApiException e) {
+            return null;
+        }
+        return null;
+    }
+
     private String identifySystemId() {
         String uri = getSystemId();
         return uri==null ? "(no URI supplied)" : uri;
@@ -131,7 +147,7 @@ public class PrincipalOutputGatekeeper extends ProxyReceiver {
 
     public void close() throws XPathException {
         closed = true;
-        if(usedAsPrimaryResult || usedAsSecondaryResult) {
+        if (usedAsPrimaryResult) {
             nextReceiver.close();
         }
     }

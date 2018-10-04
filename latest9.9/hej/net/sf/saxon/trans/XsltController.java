@@ -57,7 +57,7 @@ public class XsltController extends Controller {
     private Map<Long, Stack<AttributeSet>> attributeSetEvaluationStacks = new HashMap<>();
     private AccumulatorManager accumulatorManager = new AccumulatorManager();
     private PrincipalOutputGatekeeper gatekeeper = null;
-    private ReceiverFactory newReceiverFactory;
+    private Destination principalDestination;
 
     public XsltController(Configuration config, PreparedStylesheet pss) {
         super(config, pss);
@@ -118,7 +118,6 @@ public class XsltController extends Controller {
         globalContextItem = null;
         messageReceiver = null;
         initialMode = null;
-        newReceiverFactory = null;
         clearPerTransformationData();
     }
 
@@ -560,14 +559,24 @@ public class XsltController extends Controller {
     }
 
     /**
-     * Set a resolver factory to be used when xsl:result-document attempts to write using a null or empty
-     * href attribute. This is defined to direct output to the principal output destination, provided
-     * it is not also written to directly
+     * Supply the Controller with information about the principal destination of the transformation
+     *
+     * @param destination the principal destination
      */
 
-    public void setNewReceiverFactory(ReceiverFactory factory) {
-        this.newReceiverFactory = factory;
+    public void setPrincipalDestination(Destination destination) {
+        principalDestination = destination;
     }
+
+    /**
+     * Get the principal destination that was supplied to the Controller
+     * @return the principal destination
+     */
+
+    public Destination getPrincipalDestination() {
+        return principalDestination;
+    }
+
 
     /**
      * Ask whether assertions (xsl:assert instructions) have been enabled at run time. By default

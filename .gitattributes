@@ -5906,7 +5906,6 @@ latest9.9/hej/net/sf/saxon/lib/OutputURIResolver.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/lib/OutputURIResolverWrapper.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/lib/ParseOptions.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/lib/RawResult.java svn_eol_002dstyle=native
-latest9.9/hej/net/sf/saxon/lib/ReceiverFactory.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/lib/RelativeURIResolver.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/lib/Resource.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/lib/ResourceCollection.java svn_eol_002dstyle=native

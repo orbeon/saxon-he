@@ -417,20 +417,6 @@ public class ResultDocument extends Instruction
         }
         SerializationProperties serParams = new SerializationProperties(computedLocalProps, characterMapIndex);
 
-        Receiver out = null;
-        ResultDocumentResolver resolver = null;
-        String hrefValue = "";
-        if (getHref() != null) {
-            hrefValue = IriToUri.iriToUri(getHref().evaluateAsString(context)).toString();
-        }
-        if (hrefValue.isEmpty() || hrefValue.equals(controller.getBaseOutputURI())) {
-            PrincipalOutputGatekeeper rs = controller.getGatekeeper();
-            if (rs != null) {
-                rs.useAsSecondary();
-            }
-        }
-        resolver = controller.getResultDocumentResolver();
-
         // If validation was requested, create a function that instantiates a validator
         // which can then be injected at an appropriate point into the output pipeline
 
@@ -441,18 +427,36 @@ public class ResultDocument extends Instruction
                         // need to follow it with a namespace reducer
                         NamespaceReducer nr = new NamespaceReducer(output);
                         return config.getDocumentValidator(
-                            nr, output.getSystemId(), validationOptions, getLocation());
+                                nr, output.getSystemId(), validationOptions, getLocation());
                     }
             );
         }
 
-        try {
-            out = makeReceiver(hrefValue, getStaticBaseURIString(), context,
-                               resolver, serParams, resolveAgainstStaticBase);
-        } catch (XPathException e) {
-            e.maybeSetLocation(getLocation());
-            e.maybeSetContext(context);
-            throw e;
+        Receiver out = null;
+        ResultDocumentResolver resolver = null;
+        String hrefValue = "";
+        if (getHref() != null) {
+            hrefValue = IriToUri.iriToUri(getHref().evaluateAsString(context)).toString();
+        }
+        if (hrefValue.isEmpty() || hrefValue.equals(controller.getBaseOutputURI())) {
+            PrincipalOutputGatekeeper gateKeeper = controller.getGatekeeper();
+            if (gateKeeper != null) {
+                gateKeeper.useAsSecondary();
+                out = gateKeeper.makeReceiver(serParams);
+            }
+        }
+
+        if (out == null) {
+            try {
+                resolver = controller.getResultDocumentResolver();
+                out = makeReceiver(hrefValue, getStaticBaseURIString(), context,
+                                   resolver, serParams, resolveAgainstStaticBase);
+                traceDestination(context, out);
+            } catch (XPathException e) {
+                e.maybeSetLocation(getLocation());
+                e.maybeSetContext(context);
+                throw e;
+            }
         }
         out.getPipelineConfiguration().setController(controller);
         String systemId = out.getSystemId();
