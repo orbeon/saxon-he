@@ -425,7 +425,7 @@ public class Optimizer {
     }
 
     public Expression makeByteCodeCandidate(ExpressionOwner owner, Expression expr, String objectName, int requiredEvaluationModes) {
-        return null;
+        return expr;
     }
 
     public void injectByteCodeCandidates(Expression exp) throws XPathException {
