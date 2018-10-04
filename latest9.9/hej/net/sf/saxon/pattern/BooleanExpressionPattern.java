@@ -151,6 +151,12 @@ public class BooleanExpressionPattern extends Pattern implements PatternWithPred
      */
 
     public ItemType getItemType() {
+        if (getPredicate() instanceof InstanceOfExpression) {
+            InstanceOfExpression ioe = (InstanceOfExpression)getPredicate();
+            if (ioe.getBaseExpression() instanceof ContextItemExpression) {
+                return ioe.getRequiredItemType();
+            }
+        }
         return AnyItemType.getInstance();
     }
 
