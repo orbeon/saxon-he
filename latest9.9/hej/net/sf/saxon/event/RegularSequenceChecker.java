@@ -138,7 +138,8 @@ public class RegularSequenceChecker extends ProxyReceiver {
     }
 
     /**
-     * Append an arbitrary item (node or atomic value) to the output
+     * Append an arbitrary item (node or atomic value) to the output. In a regular sequence, append
+     * events occur only at the top level, that is, when the document / element stack is empty.
      *
      * @param item           the item to be appended
      * @param locationId     the location of the calling instruction, for diagnostics
@@ -154,8 +155,36 @@ public class RegularSequenceChecker extends ProxyReceiver {
     }
 
     /**
-     * Notify an attribute. Attributes are notified after the startElement event, and before any
-     * children. Namespaces and attributes may be intermingled.
+     * Notify an attribute. An attribute is either free-standing attribute, or a parented attribute. A free-standing
+     * attribute is one that occurs when the startElement / startDocument stack is empty; a parented attribute
+     * occurs between a startElement event and a startContent event.
+     * <p>
+     * All attributes must satisfy the following constraints:
+     * <ol>
+     *     <li>The namespace prefix and URI must either both be present (non-zero-length) or both absent</li>
+     *     <li>The prefix "xml" and the URI "http://www.w3.org/XML/1998/namespace"
+     *     are allowed only in combination.</li>
+     *     <li>The namespace URI "http://www.w3.org/2000/xmlns/" is not allowed.</li>
+     *     <li>The namespace prefix "xmlns" is not allowed.</li>
+     *     <li>The local name "xmlns" is not allowed in the absence of a namespace prefix and URI.</li>
+     * </ol>
+     * <p>
+     * For a parented attribute, the following additional constraints apply to the set of attributes between
+     * a startElement event and the next startContent event:
+     * <ol>
+     *     <li>No two attributes may have the same (local-name, namespace URI) combination.</li>
+     *     <li>No namespace prefix may be used in conjunction with more than one namespace URI.</li>
+     *     <li>Every (namespace prefix, namespace URI) combination must correspond to an in-scope namespace:
+     *     that is, unless the (prefix, URI) pair is ("", "") or ("xml", "http://www.w3.org/XML/1998/namespace"),
+     *     it must be the subject of a {@link #namespace(NamespaceBindingSet, int)} event applicable to this
+     *     element or to some parent element, that has not been cancelled by a namespace undeclaration on
+     *     an inner element. If the namespace event appears on the same element as the attribute event then they
+     *     may arrive in either order.</li>
+     * </ol>
+     * <p>
+     * These constraints are not currently enforced by this class.
+     * </p>
+     * 
      *
      * @param nameCode   The name of the attribute
      * @param typeCode   The type of the attribute
@@ -175,11 +204,16 @@ public class RegularSequenceChecker extends ProxyReceiver {
     }
 
     /**
-     * Character data
+     * Character data (corresponding to a text node). For character data within content (that is, events occurring
+     * when the startDocument / startElement stack is non-empty), character data events will never be consecutive
+     * and will never be zero-length.
      */
 
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         transition("text");
+        if (chars.length() == 0 && !stack.isEmpty()) {
+            throw new IllegalStateException("Zero-length text nodes not allowed within document/element content");
+        }
         nextReceiver.characters(chars, locationId, properties);
     }
 
