@@ -14,8 +14,8 @@ import java.util.function.Function;
 
 
 /**
- * A TypeStrippedNode is a view of a node, in a virtual tree that has type
- * annotations stripped from it.
+ * A RebasedNode is a view of a node, in a virtual tree that maps the base URI and/or
+ * system ID to new values
  */
 
 public class RebasedNode extends AbstractVirtualNode implements WrappingFunction {
@@ -64,7 +64,7 @@ public class RebasedNode extends AbstractVirtualNode implements WrappingFunction
      */
 
     /*@NotNull*/
-    public VirtualNode makeWrapper(NodeInfo node, VirtualNode parent) {
+    public RebasedNode makeWrapper(NodeInfo node, VirtualNode parent) {
         RebasedNode wrapper = new RebasedNode(node, (RebasedNode) parent);
         wrapper.docWrapper = this.docWrapper;
         return wrapper;

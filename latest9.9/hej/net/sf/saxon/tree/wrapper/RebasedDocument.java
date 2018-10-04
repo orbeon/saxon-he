@@ -15,7 +15,7 @@ import java.util.function.Function;
 
 
 /**
- * A RebasedDocument represents a view of a real Document in which all nodes are mapped to a different
+ * A <tt>RebasedDocument</tt> represents a view of a real Document in which all nodes are mapped to a different
  * base URI and/or system ID using supplied mapping functions.
  *
  * <p>It is possible to map either base URIs or system IDs or both.</p>
@@ -23,10 +23,8 @@ import java.util.function.Function;
  * <p>All properties of the nodes other than the base URI and system ID are unchanged.</p>
  *
  * <p>The user-supplied functions supplied to compute the base URI and system ID will be applied
- * to the base URI or system ID obtained by calling {@link NodeInfo#getBaseURI()} or {@link NodeInfo#getSystemId()}
- * respectively. It is of course possible to supply a function that ignores the supplied input. If the underlying
- * value of {@link NodeInfo#getBaseURI()} or {@link NodeInfo#getSystemId()} is null, the value supplied to the mapping
- * function will be a zero-length string.</p>
+ * to the underlying node in the "real" document. It is of course possible to supply a function that
+ * ignores the supplied input.
  *
  * @since 9.9.0.2
  */
@@ -39,14 +37,12 @@ public class RebasedDocument extends GenericTreeInfo {
 
 
     /**
-     * Create a type-stripped view of a document
+     * Create a rebased view of a document
      * @param doc the underlying document
      * @param baseUriMapper a function that is applied to a node in the original document
-     * (as returned by its {@link NodeInfo#getBaseURI()} method) to deliver the base URI of the corresponding
-     * node in the rebased document
+     *                      to deliver the base URI of the corresponding node in the rebased document
      * @param systemIdMapper a function that is applied to a node in the original document
-     * (as returned by its {@link NodeInfo#getSystemId()} method) to deliver the system ID of the corresponding
-     * node in the rebased document
+     *                       to deliver the system ID of the corresponding node in the rebased document
      */
 
     public RebasedDocument(TreeInfo doc, Function<NodeInfo, String> baseUriMapper, Function<NodeInfo, String> systemIdMapper) {
@@ -59,7 +55,7 @@ public class RebasedDocument extends GenericTreeInfo {
 
     /**
      * Create a wrapped node within this document
-     * @param node the node to be wrapped
+     * @param node the node to be wrapped - must be a node in the base document
      */
 
     public RebasedNode wrap(NodeInfo node) {
