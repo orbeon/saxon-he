@@ -448,8 +448,22 @@ public class Optimizer {
         return null;
     }
 
+    /**
+     * Insert a ByteCodeCandidate into the expression tree. A ByteCodeCandidate monitors how many
+     * times it is executed, and after reaching a certain threshold, generates bytecode for faster
+     * evaluation of its target expression
+     *
+     * @param owner                   the owning construct in the expression tree
+     * @param expr                    the child (target) expression
+     * @param objectName              name to be used in forming the name of the bytecode class
+     * @param requiredEvaluationModes the evaluation modes for which code should be generated
+     * @return a new ByteCodeCandidate if the expression is suitable for bytecode generation,
+     * or the supplied target expression otherwise.
+     */
+
+
     public Expression makeByteCodeCandidate(ExpressionOwner owner, Expression expr, String objectName, int requiredEvaluationModes) {
-        return null;
+        return expr;
     }
 
     public void injectByteCodeCandidates(Expression exp) throws XPathException {
