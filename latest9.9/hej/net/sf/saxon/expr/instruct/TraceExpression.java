@@ -172,6 +172,17 @@ public class TraceExpression extends Instruction implements InstructionInfo {
     }
 
     /**
+     * Get the (partial) name of a class that supports streaming of this kind of expression
+     *
+     * @return the partial name of a class that can be instantiated to provide streaming support in Saxon-EE,
+     * or null if there is no such class
+     */
+    @Override
+    public String getStreamerName() {
+        return "TraceExpr";
+    }
+
+    /**
      * Get the InstructionInfo details about the construct. This is to satisfy the InstructionInfoProvider
      * interface.
      *
