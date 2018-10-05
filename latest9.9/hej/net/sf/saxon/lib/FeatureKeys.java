@@ -22,6 +22,10 @@ package net.sf.saxon.lib;
 
 public abstract class FeatureKeys {
 
+    // TODO: regenerate
+    public final static String THRESHOLD_FOR_FUNCTION_INLINING =
+            "http://saxon.sf.net/feature/thresholdForFunctionInlining";
+
 
     /**
     *            <p>ALLOW_EXTERNAL_FUNCTIONS determines whether calls to reflexive external functions are

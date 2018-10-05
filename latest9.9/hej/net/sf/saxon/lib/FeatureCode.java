@@ -22,6 +22,9 @@ package net.sf.saxon.lib;
 
 public abstract class FeatureCode {
 
+    // TODO: regenerate
+    public static final int THRESHOLD_FOR_FUNCTION_INLINING = 122;
+
     /** @see Feature#ALLOW_EXTERNAL_FUNCTIONS  */
     public final static int ALLOW_EXTERNAL_FUNCTIONS = 1;
     /** @see Feature#ALLOW_MULTITHREADING  */

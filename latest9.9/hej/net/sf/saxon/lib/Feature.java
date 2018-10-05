@@ -44,7 +44,9 @@ public class Feature<T> {
         return index.get(name);
     }
 
-
+    // TODO: regenerate
+    public final static Feature<Integer> THRESHOLD_FOR_FUNCTION_INLINING =
+            new Feature<>("http://saxon.sf.net/feature/thresholdForFunctionInlining", 122, EE, Integer.class, 100);
 
     /**
     *            <p>ALLOW_EXTERNAL_FUNCTIONS determines whether calls to reflexive external functions are
