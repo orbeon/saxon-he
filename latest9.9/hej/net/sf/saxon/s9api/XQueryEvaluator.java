@@ -9,15 +9,13 @@ package net.sf.saxon.s9api;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
-import net.sf.saxon.event.Builder;
-import net.sf.saxon.event.PipelineConfiguration;
-import net.sf.saxon.event.Receiver;
-import net.sf.saxon.event.SequenceNormalizer;
+import net.sf.saxon.event.*;
 import net.sf.saxon.expr.instruct.Executable;
 import net.sf.saxon.expr.instruct.GlobalContextRequirement;
 import net.sf.saxon.expr.instruct.UserFunction;
 import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
+import net.sf.saxon.java.JavaPlatform;
 import net.sf.saxon.lib.Logger;
 import net.sf.saxon.lib.TraceListener;
 import net.sf.saxon.om.*;
@@ -488,7 +486,12 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
     private Receiver getDestinationReceiver(Destination destination) throws SaxonApiException {
         Executable exec = expression.getExecutable();
         PipelineConfiguration pipe = expression.getConfiguration().makePipelineConfiguration();
-        return destination.getReceiver(pipe, exec.getPrimarySerializationProperties());
+        Receiver out = destination.getReceiver(pipe, exec.getPrimarySerializationProperties());
+        if (JavaPlatform.isAssertionsEnabled()) {
+            return new RegularSequenceChecker(out);
+        } else {
+            return out;
+        }
     }
 
     /**

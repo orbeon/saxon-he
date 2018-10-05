@@ -112,7 +112,7 @@ public class RegularSequenceChecker extends ProxyReceiver {
         edge(State.Content, "endElement", State.Content); // or Open if the stack is empty
         edge(State.Content, "endDocument", State.Open);
         edge(State.Open, "close", State.Final);
-        edge(State.Final, "close", State.Final);  // TODO: another concession to poor practice...
+        //edge(State.Final, "close", State.Final);  // This was a concession to poor practice, but apparently no longer needed
     }
 
     private void transition(String event) {
