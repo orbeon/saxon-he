@@ -124,6 +124,8 @@ public class Controller implements ContextOriginator {
     private java.util.function.Function<SequenceIterator, FocusIterator> focusTrackerFactory =
             FocusTrackingIterator::new;
 
+    private java.util.function.Function<SequenceIterator, FocusIterator> multiThreadedFocusTrackerFactory;
+
     /**
      * Create a Controller and initialise variables. Note: XSLT applications should
      * create the Controller by using the JAXP newTransformer() method, or in S9API
@@ -177,7 +179,8 @@ public class Controller implements ContextOriginator {
 
     public void reset() {
         globalParameters = new GlobalParameterSet();
-        focusTrackerFactory = config.getFocusTrackerFactory(executable);
+        focusTrackerFactory = config.getFocusTrackerFactory(executable, false);
+        multiThreadedFocusTrackerFactory = config.getFocusTrackerFactory(executable, true);
         standardURIResolver = config.getSystemURIResolver();
         userURIResolver = config.getURIResolver();
         unparsedTextResolver = config.getUnparsedTextURIResolver();
@@ -1564,11 +1567,15 @@ public class Controller implements ContextOriginator {
      * Get the factory function that is used to create new instances of FocusTrackingIterator.
      * The standard function for instantiating a FocusTrackingIterator can be overridden to deliver
      * one with extra diagnostic capability for use in debuggers
+     * @param multithreaded true if the focus tracker must be suitable for executing a multi-threaded
+     *                      xsl:for-each iteration
      * @return a factory function that is used to create FocusTrackingIterator instances
      */
 
-    public Function<SequenceIterator, FocusIterator> getFocusTrackerFactory() {
-        return focusTrackerFactory;
+    public Function<SequenceIterator, FocusIterator> getFocusTrackerFactory(boolean multithreaded) {
+        return multithreaded && multiThreadedFocusTrackerFactory != null ?
+                multiThreadedFocusTrackerFactory :
+                focusTrackerFactory;
     }
 
     /**
@@ -1581,6 +1588,19 @@ public class Controller implements ContextOriginator {
 
     public void setFocusTrackerFactory(Function<SequenceIterator, FocusIterator> focusTrackerFactory) {
         this.focusTrackerFactory = focusTrackerFactory;
+    }
+
+    /**
+     * Set a factory function that will be used to create new instances of FocusTrackingIterator for
+     * multithreaded operation.
+     * The standard function for instantiating a FocusTrackingIterator can be overridden to deliver
+     * one with extra diagnostic capability for use in debuggers.
+     *
+     * @param focusTrackerFactory a factory function that is used to create FocusTrackingIterator instances
+     */
+
+    public void setMultithreadedFocusTrackerFactory(Function<SequenceIterator, FocusIterator> focusTrackerFactory) {
+        this.multiThreadedFocusTrackerFactory = focusTrackerFactory;
     }
 
     /**

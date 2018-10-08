@@ -3597,10 +3597,13 @@ public class Configuration implements SourceResolver, NotationSet {
      * <code>xsl:result-document</code>; for this reason this method is overridden for a Saxon-EE configuration.
      * @param exec the executable; supplied so that the factory can be sensitive to whether calls on xsl:result-document
      *             are possible
+     * @param multithreaded set to true to get a factory suitable for creating focus tracking iterators for a
+     *                      multi-threaded xsl:for-each instruction
      * @return a suitable factory function
      */
 
-    public java.util.function.Function<SequenceIterator, FocusIterator> getFocusTrackerFactory(Executable exec) {
+    public java.util.function.Function<SequenceIterator, FocusIterator> getFocusTrackerFactory(
+            Executable exec, boolean multithreaded) {
         return FocusTrackingIterator::new;
     }
 

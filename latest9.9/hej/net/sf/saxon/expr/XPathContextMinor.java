@@ -167,10 +167,25 @@ public class XPathContextMinor implements XPathContext {
      */
 
     public <T extends Item> FocusIterator<T> trackFocus(SequenceIterator<T> iter) {
-        FocusIterator<T> fit = controller.getFocusTrackerFactory().apply(iter);
+        FocusIterator<T> fit = controller.getFocusTrackerFactory(false).apply(iter);
         setCurrentIterator(fit);
         return fit;
     }
+
+    /**
+     * Create, set, and return a focus tracking iterator that wraps a supplied sequence iterator,
+     * suitable for use in a multithreaded xsl:for-each iteration
+     *
+     * @param iter the current iterator. The context item, position, and size are determined by reference
+     *             to the current iterator.
+     */
+
+    public <T extends Item> FocusIterator<T> trackFocusMultithreaded(SequenceIterator<T> iter) {
+        FocusIterator<T> fit = controller.getFocusTrackerFactory(true).apply(iter);
+        setCurrentIterator(fit);
+        return fit;
+    }
+
 
     /**
      * Get the current iterator.
