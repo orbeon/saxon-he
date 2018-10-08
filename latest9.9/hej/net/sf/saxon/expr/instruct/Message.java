@@ -10,10 +10,7 @@ package net.sf.saxon.expr.instruct;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.*;
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.ExplicitLocation;
-import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.expr.parser.Location;
-import net.sf.saxon.expr.parser.RebindingMap;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.SerializerFactory;
 import net.sf.saxon.lib.StandardErrorListener;
@@ -153,6 +150,34 @@ public class Message extends Instruction {
         return true;
     }
 
+    /**
+     * Perform optimisation of an expression and its subexpressions. This is the third and final
+     * phase of static optimization.
+     * <p>This method is called after all references to functions and variables have been resolved
+     * to the declaration of the function or variable, and after all type checking has been done.</p>
+     *
+     * @param visitor     an expression visitor
+     * @param contextInfo the static type of "." at the point where this expression is invoked.
+     *                    The parameter is set to null if it is known statically that the context item will be undefined.
+     *                    If the type of the context item is not known statically, the argument is set to
+     *                    {@link Type#ITEM_TYPE}
+     * @return the original expression, rewritten if appropriate to optimize execution
+     * @throws XPathException if an error is discovered during this phase
+     *                        (typically a type error)
+     */
+    @Override
+    public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
+        Expression e = super.optimize(visitor, contextInfo);
+        if (e != this) {
+            return e;
+        }
+//        if (visitor.isOptimizeForStreaming()) {
+//            DocumentInstr doc = new DocumentInstr(false, null);
+//            doc.setContentExpression(getSelect());
+//            setSelect(doc);
+//        }
+        return this;
+    }
 
     public TailCall processLeavingTail(XPathContext context) throws XPathException {
         XsltController controller = (XsltController)context.getController();

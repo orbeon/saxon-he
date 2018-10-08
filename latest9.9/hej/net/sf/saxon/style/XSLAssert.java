@@ -49,7 +49,7 @@ public final class XSLAssert extends StyleElement {
         return true;
     }
 
-    public void prepareAttributes() throws XPathException {
+    public void prepareAttributes() {
 
         String testAtt = null;
         String selectAtt = null;
@@ -58,17 +58,22 @@ public final class XSLAssert extends StyleElement {
 
         for (int a = 0; a < atts.getLength(); a++) {
             String f = atts.getQName(a);
-            if (f.equals("test")) {
-                testAtt = atts.getValue(a);
-                test = makeExpression(testAtt, a);
-            } else if (f.equals("select")) {
-                selectAtt = atts.getValue(a);
-                select = makeExpression(selectAtt, a);
-            } else if (f.equals("error-code")) {
-                errorCodeAtt = atts.getValue(a);
-                errorCode = makeAttributeValueTemplate(errorCodeAtt, a);
-            } else {
-                checkUnknownAttribute(atts.getNodeName(a));
+            switch (f) {
+                case "test":
+                    testAtt = atts.getValue(a);
+                    test = makeExpression(testAtt, a);
+                    break;
+                case "select":
+                    selectAtt = atts.getValue(a);
+                    select = makeExpression(selectAtt, a);
+                    break;
+                case "error-code":
+                    errorCodeAtt = atts.getValue(a);
+                    errorCode = makeAttributeValueTemplate(errorCodeAtt, a);
+                    break;
+                default:
+                    checkUnknownAttribute(atts.getNodeName(a));
+                    break;
             }
         }
 

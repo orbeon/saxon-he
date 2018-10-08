@@ -58,23 +58,30 @@ public final class XSLMessage extends StyleElement {
 
         for (int a = 0; a < atts.getLength(); a++) {
             String f = atts.getQName(a);
-            if (f.equals("terminate")) {
-                terminateAtt = Whitespace.trim(atts.getValue(a));
-                terminate = makeAttributeValueTemplate(terminateAtt, a);
-            } else if (f.equals("select")) {
-                selectAtt = atts.getValue(a);
-                select = makeExpression(selectAtt, a);
-            } else if (f.equals("error-code")) {
-                errorCodeAtt = atts.getValue(a);
-                errorCode = makeAttributeValueTemplate(errorCodeAtt, a);
-            } else if (atts.getURI(a).equals(NamespaceConstant.SAXON) && atts.getLocalName(a).equals("time")) {
-                boolean timed = processBooleanAttribute("saxon:time", atts.getValue(a));
-                if (timed) {
-                    timer = makeExpression(
-                            "format-dateTime(Q{http://saxon.sf.net/}timestamp(),'[Y0001]-[M01]-[D01]T[H01]:[m01]:[s01].[f,3-3] - ')", a);
-                }
-            } else {
-                checkUnknownAttribute(atts.getNodeName(a));
+            switch (f) {
+                case "terminate":
+                    terminateAtt = Whitespace.trim(atts.getValue(a));
+                    terminate = makeAttributeValueTemplate(terminateAtt, a);
+                    break;
+                case "select":
+                    selectAtt = atts.getValue(a);
+                    select = makeExpression(selectAtt, a);
+                    break;
+                case "error-code":
+                    errorCodeAtt = atts.getValue(a);
+                    errorCode = makeAttributeValueTemplate(errorCodeAtt, a);
+                    break;
+                default:
+                    if (atts.getURI(a).equals(NamespaceConstant.SAXON) && atts.getLocalName(a).equals("time")) {
+                        boolean timed = processBooleanAttribute("saxon:time", atts.getValue(a));
+                        if (timed) {
+                            timer = makeExpression(
+                                    "format-dateTime(Q{http://saxon.sf.net/}timestamp(),'[Y0001]-[M01]-[D01]T[H01]:[m01]:[s01].[f,3-3] - ')", a);
+                        }
+                    } else {
+                        checkUnknownAttribute(atts.getNodeName(a));
+                    }
+                    break;
             }
         }
 
