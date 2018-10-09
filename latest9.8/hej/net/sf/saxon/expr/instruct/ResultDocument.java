@@ -469,6 +469,8 @@ public class ResultDocument extends Instruction
             if (buildTree) {
                 out = ComplexContentOutputter.makeComplexContentReceiver(out, getValidationOptions());
             }
+            out.getPipelineConfiguration().setLocationIsCodeLocation(true); //see bug 3956
+            out.setSystemId(result.getSystemId());
             context.setReceiver((SequenceReceiver) out);
             context.setCurrentOutputUri(result.getSystemId());
         }
