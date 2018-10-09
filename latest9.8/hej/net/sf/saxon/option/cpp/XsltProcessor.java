@@ -11,6 +11,7 @@ import com.saxonica.functions.extfn.cpp.CPPFunctionSet;
 import com.saxonica.functions.extfn.cpp.PHPFunctionSet;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.FeatureKeys;
+import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.AtomicArray;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.s9api.*;
@@ -445,9 +446,17 @@ public class XsltProcessor extends SaxonCAPI {
                             transformer.setDestination(api.serializer);
                         }
                     } else if (params[i].equals("it")) {
-                        if (values[i] instanceof String) {
+                        if(values[i] == null) {
+                            transformer.setInitialTemplate(new QName("xsl", NamespaceConstant.XSLT, "initial-template"));
+                        } else if (values[i] instanceof String) {
                             initialTemplate = (String) values[i];
-                            transformer.setInitialTemplate(new QName(initialTemplate));
+                            QName templateName = null;
+                            if(initialTemplate.equals("xsl:initial-template")){
+                                templateName = new QName("xsl", NamespaceConstant.XSLT, "initial-template");
+                            } else {
+                                templateName = new QName(initialTemplate);
+                            }
+                            transformer.setInitialTemplate(templateName);
                         } else if (debug) {
                             System.err.println("DEBUG: value error for property 'it'");
                         }
