@@ -1326,6 +1326,7 @@ public class Controller implements ContextOriginator {
             ((SAXSource) source).setXMLReader(null);
         }
         Builder sourceBuilder = makeBuilder();
+        sourceBuilder.setUseEventLocation(true);
         if (sourceBuilder instanceof TinyBuilder) {
             ((TinyBuilder) sourceBuilder).setStatistics(Statistics.SOURCE_DOCUMENT_STATISTICS);
         }

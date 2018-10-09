@@ -109,6 +109,7 @@ public abstract class SequenceWriter extends SequenceReceiver {
         builder.setSystemId(systemId);
         builder.setBaseURI(systemId);
         builder.setTiming(false);
+        builder.setUseEventLocation(false);
 
         NamespaceReducer reducer = new NamespaceReducer(builder);
 

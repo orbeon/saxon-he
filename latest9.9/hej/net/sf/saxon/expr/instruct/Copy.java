@@ -505,7 +505,6 @@ public class Copy extends ElementCreator {
         Receiver saved = context.getReceiver();
         SequenceOutputter seq = controller.allocateSequenceOutputter(1);
         seq.getPipelineConfiguration().setHostLanguage(getPackageData().getHostLanguage());
-        seq.getPipelineConfiguration().setLocationIsCodeLocation(true);
         context.setReceiver(seq);
         process(context);
         seq.close();

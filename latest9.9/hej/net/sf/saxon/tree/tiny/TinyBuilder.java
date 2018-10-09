@@ -269,11 +269,17 @@ public class TinyBuilder extends Builder {
         prevAtDepth[currentDepth] = -1;
         siblingsAtDepth[currentDepth] = 0;
 
-        if (!pipe.isLocationIsCodeLocation() && location.getSystemId() != null) {
+//        if (!pipe.isLocationIsCodeLocation() && location.getSystemId() != null) {
+//            tt.setSystemId(nodeNr, location.getSystemId());
+//        } else if (currentDepth == 1) {
+//            tt.setSystemId(nodeNr, systemId);
+//        }
+        if (isUseEventLocation() && location.getSystemId() != null) {
             tt.setSystemId(nodeNr, location.getSystemId());
         } else if (currentDepth == 1) {
             tt.setSystemId(nodeNr, systemId);
         }
+
         if (lineNumbering) {
             tt.setLineNumber(nodeNr, location.getLineNumber(), location.getColumnNumber());
         }

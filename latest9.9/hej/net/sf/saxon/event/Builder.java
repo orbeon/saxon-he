@@ -8,11 +8,14 @@
 package net.sf.saxon.event;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.om.NamePool;
 import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.om.NodeName;
 import net.sf.saxon.trans.CommandLineOptions;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.tiny.TinyDocumentImpl;
+import net.sf.saxon.type.SchemaType;
 
 /**
  * The abstract Builder class is responsible for taking a stream of SAX events
@@ -59,6 +62,7 @@ public abstract class Builder implements Receiver {
     protected String baseURI;
     protected NodeInfo currentRoot;
     protected boolean lineNumbering = false;
+    protected boolean useEventLocation = true;
 
     protected boolean started = false;
     protected boolean timing = false;
@@ -114,6 +118,39 @@ public abstract class Builder implements Receiver {
     /*@Nullable*/
     public BuilderMonitor getBuilderMonitor() {
         return null;
+    }
+
+    /**
+     * Say that the system IDs of constructed nodes (especially element nodes) are to be
+     * taken from the system ID property of the {@link Location} object passed as a parameter to
+     * the {@link #startElement(NodeName, SchemaType, Location, int)} event. This property
+     * should be set to true when building a document from events originating with an XML parser,
+     * because the {@link Location} object in this case will have a system ID that changes
+     * as external entities are processed. The base URI of a node in this case is determined
+     * by the system ID, modified by any <code>xml:base</code> attributes. If the property
+     * is set to false, all nodes in the tree have the same system ID, this being supplied
+     * as the systemID property of the builder. This will typically be the static base URI
+     * of the instruction in the query or stylesheet that was used to construct the root node;
+     * in the case of <code>xsl:result-document</code>, it will be the absolutized value of the
+     * <code>href</code> attribute of the instruction.
+     * @param useEventLocation true if the system ID is to be taken from the Location parameter of
+     *                    each event. The default value is true.
+     */
+
+    public void setUseEventLocation(boolean useEventLocation) {
+        this.useEventLocation = useEventLocation;
+    }
+
+    /**
+     * Ask whether the system IDs of constructed nodes (especially element nodes) are to be
+     * taken from the system ID property of the {@link Location} object passed as a parameter to
+     * the {@link #startElement(NodeName, SchemaType, Location, int)} event.
+     * @return true if the system ID is to be taken from the Location parameter of
+     *      each event. The default value is true.
+     */
+
+    public boolean isUseEventLocation() {
+        return useEventLocation;
     }
 
     /**

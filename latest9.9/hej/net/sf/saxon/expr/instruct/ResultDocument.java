@@ -389,7 +389,6 @@ public class ResultDocument extends Instruction
         final Configuration config = controller.getConfiguration();
         Receiver saved = context.getReceiver();
         PipelineConfiguration pipe = saved.getPipelineConfiguration();
-
         String savedOutputUri = context.getCurrentOutputUri();
         Receiver out = processLeft(context);
         try {
@@ -463,7 +462,7 @@ public class ResultDocument extends Instruction
 
         NamespaceReducer nr = new NamespaceReducer(out);
         out = new ComplexContentOutputter(nr);
-
+        out.setSystemId(systemId);
         context.setReceiver(out);
         context.setCurrentOutputUri(systemId);
 

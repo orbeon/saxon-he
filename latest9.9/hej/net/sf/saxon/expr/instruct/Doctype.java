@@ -85,7 +85,6 @@ public class Doctype extends Instruction {
 
         Receiver out = context.getReceiver();
         PipelineConfiguration pipe = controller.makePipelineConfiguration();
-        pipe.setLocationIsCodeLocation(true);
         pipe.setHostLanguage(getPackageData().getHostLanguage());
         TinyBuilder builder = new TinyBuilder(pipe);
         builder.setStatistics(Statistics.RESULT_TREE_STATISTICS);

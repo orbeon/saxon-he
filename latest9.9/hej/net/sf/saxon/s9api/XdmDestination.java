@@ -124,6 +124,7 @@ public class XdmDestination extends AbstractDestination {
         builder = model.makeBuilder(pipe);
         String systemId = getBaseURI() == null ? null : getBaseURI().toASCIIString();
         if (systemId != null) {
+            builder.setUseEventLocation(false);
             builder.setBaseURI(systemId);
         }
         SequenceNormalizer sn = params.makeSequenceNormalizer(builder);

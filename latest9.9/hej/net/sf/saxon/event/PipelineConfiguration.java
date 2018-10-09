@@ -35,7 +35,6 @@ public class PipelineConfiguration {
     private ParseOptions parseOptions;
     private int hostLanguage = Configuration.XSLT;
     private Map<String, Object> components;
-    private boolean locationIsCodeLocation = false;
 
     /**
      * Create a PipelineConfiguration. Note: the normal way to create
@@ -69,7 +68,6 @@ public class PipelineConfiguration {
         if (p.components != null) {
             components = new HashMap<>(p.components);
         }
-        locationIsCodeLocation = p.locationIsCodeLocation;
         currentApplyStack = null;
     }
 
@@ -346,14 +344,6 @@ public class PipelineConfiguration {
         } else {
             return components.get(name);
         }
-    }
-
-    public boolean isLocationIsCodeLocation() {
-        return locationIsCodeLocation;
-    }
-
-    public void setLocationIsCodeLocation(boolean locationIsCodeLocation) {
-        this.locationIsCodeLocation = locationIsCodeLocation;
     }
 
 }

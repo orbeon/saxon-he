@@ -879,7 +879,6 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
         }
         Receiver saved = context.getReceiver();
         PipelineConfiguration pipe = controller.makePipelineConfiguration();
-        pipe.setLocationIsCodeLocation(true);
         SequenceOutputter out = new SequenceOutputter(pipe);
         if (copyForUpdate) {
             out.setTreeModel(TreeModel.LINKED_TREE);

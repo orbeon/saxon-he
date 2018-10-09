@@ -279,6 +279,7 @@ public class DocumentInstr extends ParentNodeConstructor {
 
                 Builder builder;
                 builder = controller.makeBuilder();
+                builder.setUseEventLocation(false);
 
                 if (builder instanceof TinyBuilder) {
                     ((TinyBuilder) builder).setStatistics(Statistics.SOURCE_DOCUMENT_STATISTICS);
@@ -288,8 +289,6 @@ public class DocumentInstr extends ParentNodeConstructor {
                 builder.setTiming(false);
 
                 pipe.setHostLanguage(getPackageData().getHostLanguage());
-                pipe.setLocationIsCodeLocation(true);
-                //pipe.setBaseURI(baseURI);
                 builder.setPipelineConfiguration(pipe);
 
                 Receiver out = ComplexContentOutputter.makeComplexContentReceiver(builder, getValidationOptions());

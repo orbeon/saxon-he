@@ -390,7 +390,6 @@ public abstract class ElementCreator extends ParentNodeConstructor {
             Receiver saved = context.getReceiver();
             SequenceOutputter seq = controller.allocateSequenceOutputter(1);
             seq.getPipelineConfiguration().setHostLanguage(getPackageData().getHostLanguage());
-            seq.getPipelineConfiguration().setLocationIsCodeLocation(true);
 
             NodeName elemName = getElementName(context, copiedNode);
             SchemaType typeCode = getValidationAction() == Validation.PRESERVE ? AnyType.getInstance() : Untyped.getInstance();

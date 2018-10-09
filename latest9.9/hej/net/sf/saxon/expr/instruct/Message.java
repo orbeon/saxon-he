@@ -216,7 +216,6 @@ public class Message extends Instruction {
                 props.setProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
                 SerializerFactory sf = context.getConfiguration().getSerializerFactory();
                 PipelineConfiguration pipe = controller.makePipelineConfiguration();
-                pipe.setLocationIsCodeLocation(true);
                 pipe.setHostLanguage(Configuration.XSLT);
                 Receiver receiver = sf.getReceiver(rec, props, pipe);
                 context.setReceiver(receiver);
