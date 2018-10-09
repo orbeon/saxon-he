@@ -589,7 +589,14 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
                         System.err.println("parameter length:" + params[i].length());
                     }
                     if (params[i].equals("lax")) {
-                        validator.setLax(((Boolean) values[i]).booleanValue());
+
+                        boolean valueb = false;
+                        if(values[i] instanceof Boolean) {
+                            valueb = ((Boolean) values[i]).booleanValue();
+                        } if(values[i] instanceof String) {
+                            valueb =  Boolean.getBoolean((String) values[i]);
+                        }
+                        validator.setLax(valueb);
                     } else if (params[i].equals("element-name")) {
                         String paramName = (String) values[i];
                         QName qname = QName.fromClarkName(paramName);
