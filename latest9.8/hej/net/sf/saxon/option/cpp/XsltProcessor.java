@@ -855,17 +855,18 @@ public class XsltProcessor extends SaxonCAPI {
         String stylesheet12 = "xslt/overzicht-resultaten.xslt";//"cadenaoriginal_3_2.xslt";//""saxon_php3/q8.xsl";//"test.xsl";
         String outfile = "outfile.html";
         Processor processor = new Processor(true);
+
         XsltProcessor cpp = new XsltProcessor(processor);
         //cpp.createStylesheetFromFile(cwd2, "xsl/foo.xsl");
-        cpp.compileFromFileAndSave(cwd2, "xsl/foo.xsl", "xsl/foo.xslp");
-        String resultStr = cpp.transformToString(cwd2, "xml/foo.xml", "xsl/foo.xslp", null, null);
-        System.out.println(resultStr);
+        //cpp.compileFromFileAndSave(cwd2, "xsl/foo.xsl", "xsl/foo.xslp");
+        //String resultStr = cpp.transformToString(cwd2, "xml/foo.xml", "xsl/foo.xslp", null, null);
+        //System.out.println(resultStr);
 
-         String resultStr4 = cpp.transformToString(cwd2, "xml/foo.xml", "xsl/fooExFunc.xsl", null, null);
-               System.out.println(resultStr4);
+        // String resultStr4 = cpp.transformToString(cwd2, "xml/foo.xml", "xsl/fooExFunc.xsl", null, null);
+          //     System.out.println(resultStr4);
 
         String [] params0 = {"it"};
-        Object [] values0 = {null};
+        Object [] values0 = {"xsl:initial-template"};
         String resultStr3 = cpp.transformToString(cwd2, null, "xsl/foo4.xsl",params0, values0);
                 System.out.println("Using initial-template: " + resultStr3);
 
