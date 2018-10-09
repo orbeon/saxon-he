@@ -223,7 +223,7 @@ SaxonProcessor::SaxonProcessor(const char * configFile){
 		return ;	
 	}
 	
-   
+     licensei = true;
 #ifdef DEBUG
 
      std::cerr<<"SaxonProc constructor(configFile)"<<std::endl;
