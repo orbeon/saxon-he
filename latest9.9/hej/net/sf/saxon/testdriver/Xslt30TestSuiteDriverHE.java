@@ -1309,14 +1309,14 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                 env.xsltCompiler.getUnderlyingCompilerInfo().setRecoveryPolicy(Configuration.RECOVER_SILENTLY);
             }
             return true;
-        } else if ("ignore-doc-failure".equals(type)) {
+        } else if ("ignore_doc_failure".equals(type)) {
             env.resetActions.add(new Environment.ResetAction() {
                 @Override
                 public void reset(Environment env) {
                     env.xsltCompiler.getUnderlyingCompilerInfo().setRecoveryPolicy(Configuration.RECOVER_WITH_WARNINGS);
                 }
             });
-            if (value.equals("false")) {
+            if (inverse) {
                 env.xsltCompiler.getUnderlyingCompilerInfo().setRecoveryPolicy(Configuration.DO_NOT_RECOVER);
             } else {
                 env.xsltCompiler.getUnderlyingCompilerInfo().setRecoveryPolicy(Configuration.RECOVER_SILENTLY);
