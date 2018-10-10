@@ -540,19 +540,25 @@ public class TransformFn extends SystemFunction implements Callable {
 
         Sequence vendorOptionsValue = options.get("vendor-options");
         MapItem vendorOptions = vendorOptionsValue == null ? null : (MapItem) vendorOptionsValue.head();
+        int schemaValidation = Validation.DEFAULT;
 
         boolean allowTypedNodes = true;
         Configuration targetConfig = context.getConfiguration();
         if (vendorOptions != null) {
-            Sequence targetConfigValue = vendorOptions.get(new QNameValue("", NamespaceConstant.SAXON, "configuration"));
-            if (targetConfigValue != null) {
-                NodeInfo configFile = (NodeInfo) targetConfigValue.head();
+            Sequence optionValue = vendorOptions.get(new QNameValue("", NamespaceConstant.SAXON, "configuration"));
+            if (optionValue != null) {
+                NodeInfo configFile = (NodeInfo) optionValue.head();
                 targetConfig = Configuration.readConfiguration(configFile, targetConfig);
                 targetConfig.importLicenseDetails(context.getConfiguration());
                 if (!context.getConfiguration().getBooleanProperty(FeatureKeys.ALLOW_EXTERNAL_FUNCTIONS)) {
                     targetConfig.setBooleanProperty(FeatureKeys.ALLOW_EXTERNAL_FUNCTIONS, false);
                 }
                 allowTypedNodes = false;
+            }
+            optionValue = vendorOptions.get(new QNameValue("", NamespaceConstant.SAXON, "schema-validation"));
+            if (optionValue != null) {
+                String valOption = optionValue.head().getStringValue();
+                schemaValidation = Validation.getCode(valOption);
             }
         }
         Processor processor = new Processor(true);
@@ -595,13 +601,6 @@ public class TransformFn extends SystemFunction implements Callable {
         }
         styleOption = checkStylesheetMutualExclusion30(options);
 
-
-
-
-
-
-
-
         // Set the vendor options (configuration features) on the processor
         if (options.get("requested-properties") != null) {
             setRequestedProperties(options, processor);
@@ -641,7 +640,6 @@ public class TransformFn extends SystemFunction implements Callable {
         XdmValue[] functionParams = null;
         Function postProcessor = null;
         String principalResultKey = "output";
-        int schemaValidation = Validation.DEFAULT;
 
         for (String name : options.keySet()) {
             Sequence value = options.get(name);
