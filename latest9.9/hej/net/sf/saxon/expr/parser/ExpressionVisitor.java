@@ -26,6 +26,8 @@ public class ExpressionVisitor  {
     private Optimizer optimizer;
     private int depth = 0;
 
+    private boolean suppressWarnings = false;
+
     private final static int MAX_DEPTH = 500;
 
 
@@ -89,7 +91,9 @@ public class ExpressionVisitor  {
      */
 
     public void issueWarning(String message, Location locator) {
-        staticContext.issueWarning(message, locator);
+        if (!isSuppressWarnings()) {
+            staticContext.issueWarning(message, locator);
+        }
     }
 
     /**
@@ -180,6 +184,26 @@ public class ExpressionVisitor  {
 
     public void decrementDepth() {
         depth--;
+    }
+
+    /**
+     * Ask if warnings have been suppressed. This typically happens when processing code that has been copied,
+     * to prevent multiple warnings for the same code
+     * @return true if warnings are suppressed
+     */
+
+    public boolean isSuppressWarnings() {
+        return suppressWarnings;
+    }
+
+    /**
+     * Say whether warnings should be suppressed. This is typically done when processing code that has been
+     * copied, to prevent multiple warnings for the same code
+     * @param suppressWarnings set to true to suppress warnings
+     */
+
+    public void setSuppressWarnings(boolean suppressWarnings) {
+        this.suppressWarnings = suppressWarnings;
     }
 
 }

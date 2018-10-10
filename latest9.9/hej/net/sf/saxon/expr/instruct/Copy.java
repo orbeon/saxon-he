@@ -119,12 +119,17 @@ public class Copy extends ElementCreator {
                 case Type.ELEMENT:
                     this.resultItemType = NodeKindTest.ELEMENT;
                     break;
-                case Type.ATTRIBUTE:
-                    this.resultItemType = NodeKindTest.ATTRIBUTE;
-                    break;
                 case Type.DOCUMENT:
                     this.resultItemType = NodeKindTest.DOCUMENT;
                     break;
+                case Type.ATTRIBUTE:
+                case Type.TEXT:
+                case Type.COMMENT:
+                case Type.PROCESSING_INSTRUCTION:
+                case Type.NAMESPACE:
+                    CopyOf c = new CopyOf(new ContextItemExpression(), copyNamespaces, getValidationAction(), getSchemaType(), false);
+                    ExpressionTool.copyLocationInfo(this, c);
+                    return c.typeCheck(visitor, contextInfo);
                 default:
                     this.resultItemType = selectItemType;
             }
