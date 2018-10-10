@@ -571,16 +571,23 @@ public class TransformFn extends SystemFunction implements Callable {
 
         Configuration targetConfig = context.getConfiguration();
         boolean allowTypedNodes = true;
+        int schemaValidation = Validation.DEFAULT;
+        
         if (vendorOptions != null) {
-            Sequence targetConfigValue = vendorOptions.get(new QNameValue("", NamespaceConstant.SAXON, "configuration"));
-            if (targetConfigValue != null) {
-                NodeInfo configFile = (NodeInfo) targetConfigValue.head();
+            Sequence optionValue = vendorOptions.get(new QNameValue("", NamespaceConstant.SAXON, "configuration"));
+            if (optionValue != null) {
+                NodeInfo configFile = (NodeInfo) optionValue.head();
                 targetConfig = Configuration.readConfiguration(configFile, targetConfig);
                 targetConfig.importLicenseDetails(context.getConfiguration());
                 allowTypedNodes = false;
                 if (!context.getConfiguration().getBooleanProperty(Feature.ALLOW_EXTERNAL_FUNCTIONS)) {
                     targetConfig.setBooleanProperty(Feature.ALLOW_EXTERNAL_FUNCTIONS, false);
                 }
+            }
+            optionValue = vendorOptions.get(new QNameValue("", NamespaceConstant.SAXON, "schema-validation"));
+            if (optionValue != null) {
+                String valOption = optionValue.head().getStringValue();
+                schemaValidation = Validation.getCode(valOption);
             }
         }
         Processor processor = new Processor(true);
@@ -658,7 +665,6 @@ public class TransformFn extends SystemFunction implements Callable {
         XdmValue[] functionParams = null;
         Function postProcessor = null;
         String principalResultKey = "output";
-        int schemaValidation = Validation.DEFAULT;
 
         for (String name : options.keySet()) {
             Sequence value = options.get(name);
@@ -810,9 +816,13 @@ public class TransformFn extends SystemFunction implements Callable {
                 if (initialMatchSelection == null && sourceNode != null) {
                     initialMatchSelection = XdmValue.wrap(sourceNode);
                 }
-                if (initialMatchSelection == null) {
+                if (initialMatchSelection == null && sourceLocation != null) {
                     StreamSource stream = new StreamSource(sourceLocation);
-                    transformer.applyTemplates(stream, destination);
+                    if (transformer.getUnderlyingController().getInitialMode().isDeclaredStreamable()) {
+                        transformer.applyTemplates(stream, destination);
+                    } else {
+                        transformer.transform(stream,destination);
+                    }
                     result = deliverer.getPrimaryResult();
                 } else {
                     transformer.applyTemplates(initialMatchSelection, destination);

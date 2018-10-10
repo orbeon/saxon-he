@@ -27,6 +27,7 @@ import net.sf.saxon.trans.XsltController;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.dom.DOMSource;
 import java.io.File;
 import java.io.OutputStream;
 import java.io.Writer;
@@ -109,7 +110,12 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
      * Supply the context item to be used when evaluating global variables and parameters. A call on
      * <code>setGlobalContextItem(node)</code> is equivalent to a call on <code>setGlobalContextItem(node, false)</code>:
      * that is, it is assumed that stripping of type annotations and whitespace text nodes has not yet been
-     * performed. It is more efficient to do this stripping while constructing the source tree.
+     * performed.
+     *
+     * <p>Note: It is more efficient to do whitespace stripping while constructing the source tree. This can be
+     * achieved by building the source tree using a {@link DocumentBuilder} initialized using
+     * {@link DocumentBuilder#setWhitespaceStrippingPolicy(WhitespaceStrippingPolicy)}, supplying a
+     * {@link WhitespaceStrippingPolicy} obtained by calling {@link XsltExecutable#getWhitespaceStrippingPolicy()}.</p>
      *
      * @param globalContextItem the item to be used as the context item within the initializers
      *                          of global variables and parameters. This argument can be null if no context item is to be
@@ -134,8 +140,7 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
      *                          by the stylesheet has already taken place
      * @throws IllegalStateException if the transformation has already been evaluated by calling one of the methods
      *                               <code>applyTemplates</code>, <code>callTemplate</code>, or <code>callFunction</code>
-     * @throws SaxonApiException     if a required parameter is not present; if a parameter cannot be converted
-     *                               to the required type; if the context item cannot be converted to the required type.
+     * @throws SaxonApiException Not thrown, but retained in the method signature for compatibility reasons.
      */
 
     public void setGlobalContextItem(XdmItem globalContextItem, boolean alreadyStripped) throws SaxonApiException {
@@ -171,7 +176,7 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
         if (primed) {
             throw new IllegalStateException("Stylesheet has already been evaluated");
         }
-        this.globalContextItem = (Item) item.getUnderlyingValue();
+        this.globalContextItem = item.getUnderlyingValue();
     }
 
     /**
@@ -266,6 +271,9 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
      * in a document node) to a given Destination. The invocation uses any initial mode set using {@link #setInitialMode(QName)},
      * and any template parameters set using {@link #setInitialTemplateParameters(java.util.Map, boolean)}.
      *
+     * <p>This method does not set the global context item for the transformation. If that is required, it
+     * can be done separately using the method {@link #setGlobalContextItem(XdmItem)}.</p>
+     *
      * @param source      the source document. For streamed processing, this must be a SAXSource or StreamSource.
      *                    <p>Note: supplying a <code>DOMSource</code> is allowed, but is much less efficient than using a
      *                    <code>StreamSource</code> or <code>SAXSource</code> and leaving Saxon to build the tree in its own
@@ -323,6 +331,73 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
         applyTemplates(source, raw);
         return raw.getXdmValue();
     }
+
+    /**
+     * Invoke the stylesheet by applying templates to a supplied Source document, sending the results (wrapped
+     * in a document node) to a given Destination. The invocation uses any initial mode set using {@link #setInitialMode(QName)},
+     * and any template parameters set using {@link #setInitialTemplateParameters(java.util.Map, boolean)}.
+     *
+     * <p>The document supplied in the <code>source</code> argument also acts as the global
+     * context item for the transformation. Any item previously supplied using {@link #setGlobalContextItem(XdmItem)}
+     * is ignored.</p>
+     *
+     * <p>Because this method sets the global context item to the root node of the supplied <code>source</code>,
+     * it cannot be used when the stylesheet is designed to process streamed input. For streamed processing,
+     * use {@link #applyTemplates(Source, Destination)} instead.</p>
+     *
+     * @param source      the source document.
+     *                    <p>Note: supplying a <code>DOMSource</code> is allowed, but is much less efficient than using a
+     *                    <code>StreamSource</code> or <code>SAXSource</code> and leaving Saxon to build the tree in its own
+     *                    internal format. To apply more than one transformation to the same source document, the source document
+     *                    tree can be pre-built using a {@link DocumentBuilder}.</p>
+     * @param destination the destination of the principal result of the transformation.
+     *                    If the destination is a {@link Serializer}, then the serialization
+     *                    parameters set in the serializer are combined with those defined in the stylesheet
+     *                    (the parameters set in the serializer take precedence).
+     * @throws SaxonApiException if the transformation fails, or if the initial mode in the stylesheet is
+     * declared to be streamable.
+     * @since 9.9.0.2
+     */
+
+    public void transform(Source source, Destination destination) throws SaxonApiException {
+
+        Objects.requireNonNull(destination);
+        if (source == null) {
+            XPathException err = new XPathException("No initial match selection supplied", "XTDE0044");
+            throw new SaxonApiException(err);
+        }
+        if (controller.getInitialMode().isDeclaredStreamable()) {
+            throw new SaxonApiException("Cannot use the transform() method when the initial mode is streamable");
+        }
+        prime();
+        try {
+            NodeInfo sourceNode;
+            if (source instanceof NodeInfo) {
+                controller.setGlobalContextItem((NodeInfo)source);
+                sourceNode = (NodeInfo) source;
+            } else if (source instanceof DOMSource) {
+                sourceNode = controller.prepareInputTree(source);
+                controller.setGlobalContextItem(sourceNode);
+            } else {
+                sourceNode = controller.makeSourceTree(source, getSchemaValidationMode().getNumber());
+                controller.setGlobalContextItem(sourceNode);
+            }
+
+            Receiver sOut = getDestinationReceiver(controller, destination);
+            controller.applyTemplates(sourceNode, sOut);
+            destination.closeAndNotify();
+        } catch (XPathException e) {
+            if (!e.hasBeenReported()) {
+                try {
+                    getErrorListener().fatalError(e);
+                } catch (TransformerException e1) {
+                    // ignore secondary error
+                }
+            }
+            throw new SaxonApiException(e);
+        }
+    }
+
 
     /**
      * Invoke the stylesheet by applying templates to a supplied input sequence, sending the results (wrapped
