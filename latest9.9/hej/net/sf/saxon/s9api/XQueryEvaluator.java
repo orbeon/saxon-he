@@ -15,7 +15,6 @@ import net.sf.saxon.expr.instruct.GlobalContextRequirement;
 import net.sf.saxon.expr.instruct.UserFunction;
 import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
-import net.sf.saxon.java.JavaPlatform;
 import net.sf.saxon.lib.Logger;
 import net.sf.saxon.lib.TraceListener;
 import net.sf.saxon.om.*;
@@ -487,7 +486,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
         Executable exec = expression.getExecutable();
         PipelineConfiguration pipe = expression.getConfiguration().makePipelineConfiguration();
         Receiver out = destination.getReceiver(pipe, exec.getPrimarySerializationProperties());
-        if (JavaPlatform.isAssertionsEnabled()) {
+        if (Configuration.isAssertionsEnabled()) {
             return new RegularSequenceChecker(out);
         } else {
             return out;

@@ -14,7 +14,6 @@ import net.sf.saxon.event.*;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.instruct.GlobalParameterSet;
 import net.sf.saxon.functions.ResolveURI;
-import net.sf.saxon.java.JavaPlatform;
 import net.sf.saxon.lib.*;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.StructuredQName;
@@ -446,7 +445,7 @@ abstract class AbstractXsltTransformer {
         PipelineConfiguration pipe = controller.makePipelineConfiguration();
         SerializationProperties params = controller.getExecutable().getPrimarySerializationProperties();
         receiver = destination.getReceiver(pipe, params);
-        if (JavaPlatform.isAssertionsEnabled()) {
+        if (Configuration.isAssertionsEnabled()) {
             receiver = new RegularSequenceChecker(receiver);
         }
         receiver.getPipelineConfiguration().setController(controller);

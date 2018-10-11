@@ -463,6 +463,21 @@ public class Configuration implements SourceResolver, NotationSet {
         return (Configuration) theClass.newInstance();
     }
 
+    /**
+     * Ask if Java is being run with assertions enabled (-ea option)
+     * @return true if the -ea option is set
+     */
+
+    public static boolean isAssertionsEnabled() {
+        // Highly devious logic here. If assertions are enabled, the assertion is false, and a deliberate side-effect
+        // of evaluating the assertion is that assertsEnabled is set to true. If assertions are not enabled, the assert
+        // statement is not executed, so assertsEnabled is left as false.
+        boolean assertsEnabled = false;
+        //noinspection AssertWithSideEffects
+        assert assertsEnabled = true;
+        return assertsEnabled;
+    }
+
 
     /**
      * Read the configuration file an construct a new Configuration (the real one)
