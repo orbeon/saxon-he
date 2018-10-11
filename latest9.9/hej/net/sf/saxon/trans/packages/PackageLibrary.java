@@ -184,7 +184,7 @@ public class PackageLibrary {
                 }
             }
         }
-        if (candidates.size() == 0) {
+        if (candidates.isEmpty()) {
             return null;
         } else if (candidates.size() == 1) {
             return candidates.iterator().next();
@@ -272,6 +272,7 @@ public class PackageLibrary {
             compilation.setUsingPackages(disallowed);
             compilation.setExpectedNameAndVersion(details.nameAndVersion);
             compilation.clearParameters();
+            compilation.setLibraryPackage(true);
             if (details.staticParams != null) {
                 for (Map.Entry<StructuredQName, GroundedValue> entry : details.staticParams.entrySet()) {
                     compilation.setParameter(entry.getKey(), entry.getValue());
@@ -301,7 +302,7 @@ public class PackageLibrary {
             }
             buffer.append("and ");
             buffer.append(details.nameAndVersion.packageName);
-            throw new XPathException("There is a cycle of package dependencies involving " + buffer.toString(), "XTSE3005");
+            throw new XPathException("There is a cycle of package dependencies involving " + buffer, "XTSE3005");
         }
     }
 
