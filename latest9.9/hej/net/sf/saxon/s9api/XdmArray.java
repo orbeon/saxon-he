@@ -133,10 +133,10 @@ public class XdmArray extends XdmFunctionItem {
      * @param value the new member
      * @return a new array, one item longer than the original
      * @throws SaxonApiUncheckedException if the value is lazily evaluated, and evaluation fails
-     * @since 9.9
+     * @since 9.9. (See bug 3968: on first release of 9.9, the method was mistakenly named <code>append</code>).
      */
 
-    public XdmArray append(XdmValue value) {
+    public XdmArray addMember(XdmValue value) {
         try {
             GroundedValue member = value.getUnderlyingValue();
             ArrayItem newArray = ArrayFunctionSet.ArrayAppend.append(getUnderlyingValue(), member);
