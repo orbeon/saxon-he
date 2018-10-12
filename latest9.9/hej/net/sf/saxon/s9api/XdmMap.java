@@ -10,9 +10,12 @@ package net.sf.saxon.s9api;
 import net.sf.saxon.ma.map.HashTrieMap;
 import net.sf.saxon.ma.map.KeyValuePair;
 import net.sf.saxon.ma.map.MapItem;
-import net.sf.saxon.om.Sequence;
+import net.sf.saxon.om.GroundedValue;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.tree.jiter.MappingJavaIterator;
-import net.sf.saxon.value.AtomicValue;
+import net.sf.saxon.value.DoubleValue;
+import net.sf.saxon.value.Int64Value;
+import net.sf.saxon.value.StringValue;
 
 import java.util.*;
 
@@ -168,23 +171,13 @@ public class XdmMap extends XdmFunctionItem {
             }
 
             @Override
-            public boolean containsValue(Object value) {
-                for (Entry<XdmAtomicValue, XdmValue> e : entrySet()) {
-                     if (value.equals(e.getValue())) {
-                         return true;
-                     }
-                }
-                return false;
-            }
-
-            @Override
             public boolean containsKey(Object key) {
-                return base.containsKey(key);
+                return key instanceof XdmAtomicValue && base.containsKey((XdmAtomicValue) key);
             }
 
             @Override
             public XdmValue get(Object key) {
-                return base.get(key);
+                return key instanceof XdmAtomicValue ? base.get((XdmAtomicValue)key) : null;
             }
 
             @Override
@@ -259,49 +252,83 @@ public class XdmMap extends XdmFunctionItem {
      * at most one such mapping.)
      *
      * @param key key whose presence in this map is to be tested
-     * @return <tt>true</tt> if this map contains a mapping for the specified
-     * key
-     * @throws ClassCastException   if the key is of an inappropriate type for
-     *                              this map
-     *                              (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
-     * @throws NullPointerException if the specified key is null and this map
-     *                              does not permit null keys
-     *                              (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
+     * @return <tt>true</tt> if this map contains a mapping for the specified key
+     * @since 9.8. Changed the method signature in 9.9.0.2 to match the implementation: see bug 3969.
      */
-    public boolean containsKey(Object key) {
-        AtomicValue k = ((XdmAtomicValue)key).getUnderlyingValue();
-        return getUnderlyingValue().get(k) != null;
+    public boolean containsKey(XdmAtomicValue key) {
+        return getUnderlyingValue().get(key.getUnderlyingValue()) != null;
     }
 
     /**
      * Returns the value to which the specified key is mapped,
      * or {@code null} if this map contains no mapping for the key.
      *
-     * @param key the key whose associated value is to be returned. If this is
-     *            not an XdmAtomicValue, the method attempts to construct an
-     *            XdmAtomicValue using the method {@link XdmAtomicValue#makeAtomicValue(Object)};
-     *            it is therefore possible to pass a simple key such as a string or integer.
+     * @param key the key whose associated value is to be returned.
      * @return the value to which the specified key is mapped, or
      * {@code null} if this map contains no mapping for the key
-     * @throws ClassCastException   if the key is of an inappropriate type for
-     *                              this map (in this case, XdmAtomicValue)
-     *                              (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
-     * @throws NullPointerException if the specified key is null
-     *                              (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
+     * @throws ClassCastException   if the supplied key cannot be converted to an XdmAtomicValue
+     * @throws NullPointerException if the supplied key is null
      */
-    public XdmValue get(Object key) {
+    public XdmValue get(XdmAtomicValue key) {
         if (key == null) {
             throw new NullPointerException();
         }
-        if (!(key instanceof XdmAtomicValue)) {
-            try {
-                key = XdmAtomicValue.makeAtomicValue(key);
-            } catch (IllegalArgumentException err) {
-                throw new ClassCastException(err.toString());
-            }
+        GroundedValue<? extends Item> v = getUnderlyingValue().get(key.getUnderlyingValue());
+        return v == null ? null : XdmValue.wrap(v);
+    }
+
+    /**
+     * Returns the value to which the specified string-valued key is mapped,
+     * or {@code null} if this map contains no mapping for the key. This is a convenience
+     * method to save the trouble of converting the String to an <code>XdmAtomicValue</code>.
+     *
+     * @param key the key whose associated value is to be returned. This is treated
+     *            as an instance of <code>xs:string</code> (which will also match
+     *            entries whose key is <code>xs:untypedAtomic</code> or <code>xs:anyURI</code>)
+     * @return the value to which the specified key is mapped, or
+     * {@code null} if this map contains no mapping for the key
+     * @throws NullPointerException if the supplied key is null
+     */
+    public XdmValue get(String key) {
+        if (key == null) {
+            throw new NullPointerException();
         }
-        AtomicValue k = ((XdmAtomicValue) key).getUnderlyingValue();
-        Sequence v = getUnderlyingValue().get(k);
+        GroundedValue<? extends Item> v = getUnderlyingValue().get(new StringValue(key));
+        return v == null ? null : XdmValue.wrap(v);
+    }
+
+    /**
+     * Returns the value to which the specified integer-valued key is mapped,
+     * or {@code null} if this map contains no mapping for the key. This is a convenience
+     * method to save the trouble of converting the integer to an <code>XdmAtomicValue</code>.
+     *
+     * @param key the key whose associated value is to be returned. This is treated
+     *            as an instance of <code>xs:integer</code> (which will also match
+     *            entries whose key belongs to another numeric type)
+     * @return the value to which the specified key is mapped, or
+     * {@code null} if this map contains no mapping for the key
+     * @throws NullPointerException if the supplied key is null
+     */
+    public XdmValue get(long key) {
+        GroundedValue<? extends Item> v = getUnderlyingValue().get(new Int64Value(key));
+        return v == null ? null : XdmValue.wrap(v);
+    }
+
+    /**
+     * Returns the value to which the specified double-valued key is mapped,
+     * or {@code null} if this map contains no mapping for the key. This is a convenience
+     * method to save the trouble of converting the double to an <code>XdmAtomicValue</code>.
+     *
+     * @param key the key whose associated value is to be returned. This is treated
+     *            as an instance of <code>xs:double</code> (which will also match
+     *            entries whose key belongs to another numeric type)
+     * @return the value to which the specified key is mapped, or
+     * {@code null} if this map contains no mapping for the key
+     * @throws NullPointerException if the supplied key is null
+     */
+
+    public XdmValue get(double key) {
+        GroundedValue<? extends Item> v = getUnderlyingValue().get(new DoubleValue(key));
         return v == null ? null : XdmValue.wrap(v);
     }
 
