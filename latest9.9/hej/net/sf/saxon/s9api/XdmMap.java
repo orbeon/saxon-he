@@ -306,19 +306,11 @@ public class XdmMap extends XdmFunctionItem {
     }
 
     /**
-     * Returns a {@link Collection} view of the values contained in this map.
-     * The collection is backed by the map, so changes to the map are
-     * reflected in the collection, and vice-versa.  If the map is
-     * modified while an iteration over the collection is in progress
-     * (except through the iterator's own <tt>remove</tt> operation),
-     * the results of the iteration are undefined.  The collection
-     * supports element removal, which removes the corresponding
-     * mapping from the map, via the <tt>Iterator.remove</tt>,
-     * <tt>Collection.remove</tt>, <tt>removeAll</tt>,
-     * <tt>retainAll</tt> and <tt>clear</tt> operations.  It does not
-     * support the <tt>add</tt> or <tt>addAll</tt> operations.
+     * Returns a {@link Collection} containing the values found in this map,
+     * that is, the value parts of the key-value pairs.
      *
-     * @return a collection view of the values contained in this map
+     * @return a collection containing the values found in this map. The result
+     * may contain duplicates, and the ordering of the collection is unpredictable.
      */
     public Collection<XdmValue> values() {
         List<XdmValue> result = new ArrayList<>();
@@ -329,9 +321,9 @@ public class XdmMap extends XdmFunctionItem {
     }
 
     /**
-     * Returns a {@link Set} view of the mappings contained in this map.
+     * Returns a {@link Set} of the key-value pairs contained in this map.
      *
-     * @return a set view of the mappings contained in this map
+     * @return a set of the mappings contained in this map
      */
     public Set<Map.Entry<XdmAtomicValue, XdmValue>> entrySet() {
         Set<Map.Entry<XdmAtomicValue, XdmValue>> result = new HashSet<>();
