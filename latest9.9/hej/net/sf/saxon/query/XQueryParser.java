@@ -3473,7 +3473,12 @@ public class XQueryParser extends XPathParser {
     /*@NotNull*/
     private Expression parseDocumentConstructor(int offset) throws XPathException {
         nextToken();
-        Expression content = parseExpression();
+        Expression content;
+        if (t.currentToken == Token.RCURLY && allowXPath31Syntax) {
+            content = Literal.makeEmptySequence();
+        } else {
+            content = parseExpression();
+        }
         expect(Token.RCURLY);
         lookAhead();  // must be done manually after an RCURLY
         nextToken();
@@ -3856,7 +3861,12 @@ public class XQueryParser extends XPathParser {
         }
         int offset = t.currentTokenStartOffset;
         nextToken();
-        Expression tryExpr = parseExpression();
+        Expression tryExpr;
+        if (t.currentToken == Token.RCURLY && allowXPath31Syntax) {
+            tryExpr = Literal.makeEmptySequence();
+        } else {
+            tryExpr = parseExpression();
+        }
         TryCatch tryCatch = new TryCatch(tryExpr);
         setLocation(tryCatch, offset);
         expect(Token.RCURLY);
@@ -3926,7 +3936,12 @@ public class XQueryParser extends XPathParser {
                 test = new UnionQNameTest(tests);
             }
             catchDepth++;
-            Expression catchExpr = parseExpression();
+            Expression catchExpr;
+            if (t.currentToken == Token.RCURLY && allowXPath31Syntax) {
+                catchExpr = Literal.makeEmptySequence();
+            } else {
+                catchExpr = parseExpression();
+            }
             tryCatch.addCatchExpression(test, catchExpr);
             expect(Token.RCURLY);
             lookAhead();  // must be done manually after an RCURLY
