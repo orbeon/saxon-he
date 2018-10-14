@@ -204,7 +204,10 @@ public class XPathExpression {
 
     /*@Nullable*/
     public Item evaluateSingle(XPathDynamicContext context) throws XPathException {
-        return expression.iterate(context.getXPathContextObject()).next();
+        SequenceIterator iter = expression.iterate(context.getXPathContextObject());
+        Item result = iter.next();
+        iter.close();
+        return result;
     }
 
     /**
