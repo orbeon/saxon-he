@@ -259,7 +259,7 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
      */
 
     public <T extends XdmValue> void setInitialTemplateParameters(Map<QName, T> parameters, boolean tunnel) throws SaxonApiException {
-        Map<StructuredQName, Sequence> templateParams = new HashMap<StructuredQName, Sequence>();
+        Map<StructuredQName, Sequence> templateParams = new HashMap<>();
         for (Map.Entry<QName, T> entry : parameters.entrySet()) {
             templateParams.put(entry.getKey().getStructuredQName(), entry.getValue().getUnderlyingValue());
         }
@@ -333,9 +333,10 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
     }
 
     /**
-     * Invoke the stylesheet by applying templates to a supplied Source document, sending the results (wrapped
-     * in a document node) to a given Destination. The invocation uses any initial mode set using {@link #setInitialMode(QName)},
-     * and any template parameters set using {@link #setInitialTemplateParameters(java.util.Map, boolean)}.
+     * Invoke the stylesheet by applying templates to a supplied Source document, sending the results
+     * to a given Destination. The invocation uses the initial mode set using {@link #setInitialMode(QName)}
+     * (defaulting to the default mode defined in the stylesheet itself, which by default is the unnamed mode).
+     * It also uses any template parameters set using {@link #setInitialTemplateParameters(java.util.Map, boolean)}.
      *
      * <p>The document supplied in the <code>source</code> argument also acts as the global
      * context item for the transformation. Any item previously supplied using {@link #setGlobalContextItem(XdmItem)}
@@ -557,8 +558,8 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
             XPathContextMajor context = controller.newXPathContext();
             context.setCurrentComponent(f);
             context.setTemporaryOutputState(StandardNames.XSL_FUNCTION);
-            Sequence result = uf.call(context, vr);
-            result = ((Sequence<Item>) result).materialize();
+            Sequence<? extends Item> result = uf.call(context, vr);
+            result = result.materialize();
             return XdmValue.wrap(result);
         } catch (XPathException e) {
             if (!e.hasBeenReported()) {
