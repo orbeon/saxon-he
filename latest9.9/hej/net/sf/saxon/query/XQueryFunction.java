@@ -24,7 +24,9 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.jiter.PairIterator;
 import net.sf.saxon.value.SequenceType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A user-defined function in an XQuery module
@@ -494,11 +496,17 @@ public class XQueryFunction implements InstructionInfo, Declaration {
         compiledFunction.computeEvaluationMode();
         ExpressionTool.allocateSlots(body, arity, compiledFunction.getStackFrameMap());
         if (config.isGenerateByteCode(Configuration.XQUERY)) {
-            ICompilerService compilerService = config.makeCompilerService(Configuration.XQUERY);
-            Expression cbody = opt.compileToByteCode(compilerService, body, getFunctionName().getDisplayName(),
-                                                     Expression.PROCESS_METHOD | Expression.ITERATE_METHOD);
-            if (cbody != null) {
-                body = cbody;
+            if (config.getCountDown() == 0) {
+                ICompilerService compilerService = config.makeCompilerService(Configuration.XQUERY);
+                Expression cbody = opt.compileToByteCode(compilerService, body, getFunctionName().getDisplayName(),
+                                                         Expression.PROCESS_METHOD | Expression.ITERATE_METHOD);
+                if (cbody != null) {
+                    body = cbody;
+                }
+            } else {
+                opt.injectByteCodeCandidates(body);
+                body = opt.makeByteCodeCandidate(compiledFunction, body, getDisplayName(),
+                                                 Expression.PROCESS_METHOD | Expression.ITERATE_METHOD);
             }
             compiledFunction.setBody(body);
             compiledFunction.computeEvaluationMode();
