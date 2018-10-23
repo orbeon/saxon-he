@@ -379,7 +379,32 @@ public class MapFunctionSet extends BuiltInFunctionSet {
         @Override
         public ItemType getResultItemType(Expression[] args) {
             ItemType it = args[0].getItemType();
-            return it == ErrorType.getInstance() ? MapType.EMPTY_MAP_TYPE : it;
+            if (it == ErrorType.getInstance()) {
+                return MapType.EMPTY_MAP_TYPE;
+            } else if (it instanceof MapType) {
+                boolean maybeCombined = true;  // see bug 3980
+                if (args.length == 1) {
+                    maybeCombined = false;
+                } else if (args[1] instanceof Literal) {
+                    MapItem options = (MapItem) ((Literal) args[1]).getValue().head();
+                    Sequence dupes = options.get(new StringValue("duplicates"));
+                    try {
+                        if (!"combine".equals(dupes.head().getStringValue())) {
+                            maybeCombined = false;
+                        }
+                    } catch (XPathException e) {
+                        //
+                    }
+                }
+                if (maybeCombined) {
+                    return new MapType(((MapType) it).getKeyType(),
+                                       SequenceType.makeSequenceType(((MapType) it).getValueType().getPrimaryType(), StaticProperty.ALLOWS_ZERO_OR_MORE));
+                } else {
+                    return it;
+                }
+            } else {
+                return super.getResultItemType(args);
+            }
         }
 
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
