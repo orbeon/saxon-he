@@ -153,7 +153,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
                 if (arguments[1] instanceof Literal) {
                     String key = ((Literal)arguments[1]).getValue().getStringValue();
                     if (((TupleType)it).getFieldType(key) == null) {
-                        XPathException xe = new XPathException("Field " + key + " is not defined for tuple type " + it.toString(), "SXTT0001");
+                        XPathException xe = new XPathException("Field " + key + " is not defined for tuple type " + it, "SXTT0001");
                         xe.setIsTypeError(true);
                         throw xe;
                     }
@@ -407,13 +407,35 @@ public class MapFunctionSet extends BuiltInFunctionSet {
         @Override
         public ItemType getResultItemType(Expression[] args) {
             ItemType it = args[0].getItemType();
-            return it == ErrorType.getInstance() ? MapType.EMPTY_MAP_TYPE : it;
+            if (it == ErrorType.getInstance()) {
+                return MapType.EMPTY_MAP_TYPE;
+            } else if (it instanceof MapType) {
+                boolean maybeCombined = true;  // see bug 3980
+                if (args.length == 1) {
+                    maybeCombined = false;
+                } else if (args[1] instanceof Literal) {
+                    MapItem options = (MapItem) ((Literal) args[1]).getValue().head();
+                    GroundedValue dupes = options.get(new StringValue("duplicates"));
+                    try {
+                        if (!"combine".equals(dupes.getStringValue())) {
+                            maybeCombined = false;
+                        }
+                    } catch (XPathException e) {
+                        //
+                    }
+                }
+                if (maybeCombined) {
+                    return new MapType(((MapType) it).getKeyType(),
+                                       SequenceType.makeSequenceType(((MapType) it).getValueType().getPrimaryType(), StaticProperty.ALLOWS_ZERO_OR_MORE));
+                } else {
+                    return it;
+                }
+            } else {
+                return super.getResultItemType(args);
+            }
         }
 
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
-//            if (Instrumentation.ACTIVE) {
-//                Instrumentation.count("map:merge");
-//            }
             String duplicates = this.duplicates;
             String duplicatesErrorCode = this.duplicatesErrorCode;
             if (arguments.length > 1) {
@@ -500,7 +522,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
             }
 
             AtomicValue key = (AtomicValue) arguments[1].head();
-            GroundedValue value = ((Sequence<Item>) arguments[2]).materialize();
+            GroundedValue<? extends Item> value = arguments[2].materialize();
             KeyValuePair pair = new KeyValuePair(key, value);
             return ((HashTrieMap) baseMap).addEntry(pair.key, pair.value);
         }
