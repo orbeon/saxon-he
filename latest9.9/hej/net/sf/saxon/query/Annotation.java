@@ -15,7 +15,6 @@ import net.sf.saxon.value.StringValue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * This class represents an annotation that appears in a function or variable declarations
@@ -31,7 +30,7 @@ public class Annotation {
     // The name of the annotation
     private StructuredQName qName = null;
 
-    // The list of paramters (all strings or numbers) associated with the annotation
+    // The list of parameters (all strings or numbers) associated with the annotation
     private List<AtomicValue> annotationParameters = null;
 
     /**
@@ -78,7 +77,6 @@ public class Annotation {
         if (annotationParameters == null) {
             annotationParameters = new ArrayList<>();
         }
-        Objects o;
         return annotationParameters;
     }
 

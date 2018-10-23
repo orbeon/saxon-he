@@ -23,6 +23,11 @@ public class AnyFunctionTypeWithAssertions extends AnyFunctionType {
 
     private AnnotationList assertions;
 
+    /**
+     * Construct an item type representing the item type function(*) with a list of annotation assertions
+     * @param assertions the annotation assertions
+     */
+
     public AnyFunctionTypeWithAssertions(AnnotationList assertions) {
         this.assertions = assertions;
     }
@@ -41,7 +46,7 @@ public class AnyFunctionTypeWithAssertions extends AnyFunctionType {
      * Test whether a given item conforms to this type
      *
      * @param item The item to be tested
-     * @param th
+     * @param th the type hierarchy cache
      * @return true if the item is an instance of this type; false otherwise
      */
     @Override
@@ -49,7 +54,7 @@ public class AnyFunctionTypeWithAssertions extends AnyFunctionType {
         return item instanceof Function && checkAnnotationAssertions(assertions, (Function) item, th.getConfiguration());
     }
 
-    public static boolean checkAnnotationAssertions(AnnotationList assertions, Function item, Configuration config) {
+    private static boolean checkAnnotationAssertions(AnnotationList assertions, Function item, Configuration config) {
         AnnotationList annotations = item.getAnnotations();
         for (Annotation ann : assertions) {
             FunctionAnnotationHandler handler = config.getFunctionAnnotationHandler(ann.getAnnotationQName().getURI());

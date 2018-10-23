@@ -16,7 +16,7 @@ import net.sf.saxon.trans.XPathException;
 import java.util.*;
 
 /**
- * A list of function or variable annotations, or of annotation assertions
+ * An immutable list of function or variable annotations, or of annotation assertions
  */
 
 public class AnnotationList implements Iterable<Annotation> {
@@ -24,12 +24,20 @@ public class AnnotationList implements Iterable<Annotation> {
 
     private List<Annotation> list;
 
-    private static List<Annotation> EMPTY_BASE_LIST = Collections.emptyList();
-    public static AnnotationList EMPTY = new AnnotationList(EMPTY_BASE_LIST);
+    /**
+     * An empty annotation list
+     */
+    public static AnnotationList EMPTY = new AnnotationList(Collections.emptyList());
 
     public AnnotationList(List<Annotation> list) {
         this.list = list;
     }
+
+    /**
+     * Construct an annotation list containing a single annotation
+     * @param ann the single annotation in the annotation list
+     * @return a singleton annotation list
+     */
 
     public static AnnotationList singleton(Annotation ann) {
         return new AnnotationList(Collections.singletonList(ann));
@@ -68,6 +76,13 @@ public class AnnotationList implements Iterable<Annotation> {
         return result;
     }
 
+    /**
+     * Filter the annotation list by the namespace URI part of the annotation name
+     * @param ns the namespace URI required
+     * @return an annotation list containing the subset of this annotation list where the
+     * annotation names have the required namespace
+     */
+
     public AnnotationList filterByNamespace(String ns) {
         List<Annotation> out = new ArrayList<>();
         for (Annotation ann : list) {
@@ -89,13 +104,29 @@ public class AnnotationList implements Iterable<Annotation> {
         return list.iterator();
     }
 
+    /**
+     * Ask whether the list of annotations is empty
+     * @return true if the list of annotations is empty
+     */
+
     public boolean isEmpty() {
         return list.isEmpty();
     }
 
+    /**
+     * The number of annotations in the list
+     * @return the number of annotations in the list of annotations
+     */
+
     public int size() {
         return list.size();
     }
+
+    /**
+     * Get the i'th annotation in the list (counting from zero)
+     * @param i the index of the required annotation (counting from zero)
+     * @return the annotation at the specified position
+     */
 
     public Annotation get(int i) {
         return list.get(i);
