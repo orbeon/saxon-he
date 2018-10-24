@@ -19,6 +19,7 @@ import net.sf.saxon.lib.*;
 import net.sf.saxon.om.*;
 import net.sf.saxon.s9api.Destination;
 import net.sf.saxon.serialize.Emitter;
+import net.sf.saxon.serialize.MessageEmitter;
 import net.sf.saxon.serialize.PrincipalOutputGatekeeper;
 import net.sf.saxon.style.StylesheetPackage;
 import net.sf.saxon.tree.iter.EmptyIterator;
@@ -34,6 +35,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * This class is an extension of the Controller class, used when executing XSLT stylesheets.
@@ -44,8 +46,8 @@ import java.util.*;
 public class XsltController extends Controller {
 
     private final Map<StructuredQName, Integer> messageCounters = new HashMap<>();
-    private String messageReceiverClassName;
-    private Receiver messageReceiver;
+    private Receiver explicitMessageReceiver = null;
+    private Supplier<Receiver> messageFactory = MessageEmitter::new;
     private boolean assertionsEnabled = true;
     private ResultDocumentResolver resultDocumentResolver;
     private HashSet<DocumentURI> allOutputDestinations;
@@ -116,7 +118,6 @@ public class XsltController extends Controller {
         setModel(config.getParseOptions().getModel());
 
         globalContextItem = null;
-        messageReceiver = null;
         initialMode = null;
         clearPerTransformationData();
     }
@@ -325,35 +326,65 @@ public class XsltController extends Controller {
     }
 
     /**
-     * Set the message receiver class name
+     * Supply a factory function that is called every time xsl:message is executed; the factory function
+     * is responsible for creating a {@link Receiver} that receives the content of the message, and does
+     * what it will with it.
+     * @param messageReceiverFactory a factory function whose job it is to create a {@link Receiver} for
+     *                               xsl:message output; the function should supply a new {@code Receiver}
+     *                               each time it is called, because xsl:message calls may arise in different
+     *                               threads and the Receiver is unlikely to be thread-safe.
+     */
+
+    public void setMessageFactory(Supplier<Receiver> messageReceiverFactory) {
+        this.messageFactory = messageReceiverFactory;
+    }
+
+    /**
+     * Set the message receiver class name. This is an alternative way (retained for compatibility)
+     * of providing a factory for message receivers; it causes a message factory to be established
+     * that instantiates the supplied class
      *
      * @param name the full name of the class to be instantiated to provide a receiver for xsl:message output. The name must
      *             be the name of a class that implements the {@link net.sf.saxon.event.Receiver} interface
      */
 
     public void setMessageReceiverClassName(String name) {
-        this.messageReceiverClassName = name;
+        if (!name.equals(MessageEmitter.class.getName())) {
+            this.messageFactory = () -> {
+                try {
+                    Object messageReceiver = getConfiguration().getInstance(name, null);
+                    if (!(messageReceiver instanceof Receiver)) {
+                        throw new XPathException(name + " is not a Receiver");
+                    }
+                    return (Receiver) messageReceiver;
+                } catch (XPathException e) {
+                    throw new UncheckedXPathException(e);
+                }
+            };
+        }
     }
 
     /**
      * Make a Receiver to be used for xsl:message output.
-     * <p>This method is intended for internal use only.</p>
+     * <p>This method is intended for internal use only. From 9.9.0.2 (bug 3979) this method
+     * is called to obtain a new Receiver each time an xsl:message instruction is evaluated.</p>
      *
-     * @return The newly constructed message Emitter
+     * @return The newly constructed message Receiver
      * @throws XPathException if any dynamic error occurs; in
      *                        particular, if the registered MessageEmitter class is not an
      *                        Emitter
      */
 
     /*@NotNull*/
-    private Receiver makeMessageReceiver() throws XPathException {
-        Object messageReceiver = getConfiguration().getInstance(messageReceiverClassName, null);
-        if (!(messageReceiver instanceof Receiver)) {
-            throw new XPathException(messageReceiverClassName + " is not a Receiver");
-        }
-        ((Receiver) messageReceiver).setPipelineConfiguration(makePipelineConfiguration());
-        setMessageEmitter((Receiver) messageReceiver);
-        return (Receiver) messageReceiver;
+    public Receiver makeMessageReceiver() throws XPathException {
+        return messageFactory.get();
+//        Object messageReceiver = getConfiguration().getInstance(messageReceiverClassName, null);
+//        if (!(messageReceiver instanceof Receiver)) {
+//            throw new XPathException(messageReceiverClassName + " is not a Receiver");
+//        }
+//        ((Receiver) messageReceiver).setPipelineConfiguration(makePipelineConfiguration());
+//        setMessageEmitter((Receiver) messageReceiver);
+//        return (Receiver) messageReceiver;
     }
 
     /**
@@ -390,11 +421,15 @@ public class XsltController extends Controller {
      * to the value {@link ReceiverOptions#TERMINATE}.</p>
      *
      * @param receiver The receiver to receive xsl:message output.
-     * @since 8.4; changed in 8.9 to supply a Receiver rather than an Emitter
+     * @since 8.4; changed in 8.9 to supply a Receiver rather than an Emitter. Changed
+     * in 9.9.0.2 so it is no longer supported in a configuration that allows multi-threading.
      */
 
-    public void setMessageEmitter(/*@NotNull*/ Receiver receiver) {
-        messageReceiver = receiver;
+    public void setMessageEmitter(Receiver receiver) {
+        if (getConfiguration().getBooleanProperty(Feature.ALLOW_MULTITHREADING)) {
+            throw new IllegalStateException("XsltController#setMessageEmitter() is not supported for a configuration that allows multi-threading. Use setMessageFactory() instead");
+        }
+        final Receiver messageReceiver = explicitMessageReceiver = receiver;
         receiver.setPipelineConfiguration(makePipelineConfiguration());
         if (receiver instanceof Emitter && ((Emitter) receiver).getOutputProperties() == null) {
             try {
@@ -407,6 +442,17 @@ public class XsltController extends Controller {
                 // no action
             }
         }
+        setMessageFactory(() -> new ProxyReceiver(messageReceiver) {
+            /**
+             * End of output. Note that closing this receiver also closes the rest of the
+             * pipeline.
+             */
+            @Override
+            public void close() throws XPathException {
+                //super.close();
+            }
+        });
+
     }
 
     /**
@@ -416,11 +462,12 @@ public class XsltController extends Controller {
      *
      * @return the Receiver being used for xsl:message output
      * @since 8.4; changed in 8.9 to return a Receiver rather than an Emitter
+     * @deprecated since 9.9.0.2; always returns null.
      */
 
     /*@Nullable*/
     public Receiver getMessageEmitter() {
-        return messageReceiver;
+        return explicitMessageReceiver;
     }
 
     /**
@@ -1021,9 +1068,6 @@ public class XsltController extends Controller {
             if (close && source instanceof AugmentedSource) {
                 ((AugmentedSource) source).close();
             }
-            if (messageReceiver != null) {
-                messageReceiver.close();
-            }
             if (traceListener != null) {
                 traceListener.close();
             }
@@ -1092,20 +1136,25 @@ public class XsltController extends Controller {
     }
 
     private void openMessageEmitter() throws XPathException {
-        if (getMessageEmitter() == null) {
-            Receiver me = makeMessageReceiver();
-            setMessageEmitter(me);
-            if (me instanceof Emitter && ((Emitter) me).getWriter() == null) {
-                ((Emitter) me).setStreamResult(getConfiguration().getLogger().asStreamResult());
+        if (explicitMessageReceiver != null) {
+            explicitMessageReceiver.open();
+            if (explicitMessageReceiver instanceof Emitter && ((Emitter) explicitMessageReceiver).getWriter() == null) {
+                ((Emitter) explicitMessageReceiver).setStreamResult(getConfiguration().getLogger().asStreamResult());
             }
         }
-        getMessageEmitter().open();
+//        if (getMessageEmitter() == null) {
+//            Receiver me = makeMessageReceiver();
+//            setMessageEmitter(me);
+//            if (me instanceof Emitter && ((Emitter) me).getWriter() == null) {
+//                ((Emitter) me).setStreamResult(getConfiguration().getLogger().asStreamResult());
+//            }
+//        }
+//        getMessageEmitter().open();
     }
 
     private void closeMessageEmitter() throws XPathException {
-        Receiver me = getMessageEmitter();
-        if (me != null) {
-            me.close();
+        if (explicitMessageReceiver != null) {
+            explicitMessageReceiver.close();
         }
     }
 

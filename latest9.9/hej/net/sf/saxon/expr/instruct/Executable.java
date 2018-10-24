@@ -528,13 +528,27 @@ public class Executable {
     }
 
     /**
-     * Check that all required parameters have been supplied. Used in XSLT only.
+     * Get the global parameter with a given name, if there is one
+     * @param name the parameter name
+     * @return the global parameter with this name, if it exists, or null otherwise
+     */
+
+    public GlobalParam getGlobalParameter(StructuredQName name) {
+        return globalParams.get(name);
+    }
+
+    /**
+     * Check the supplied parameters. Checks that all required parameters have been supplied, and that
+     * no parameters supplied at run-time are declared static in the stylesheet, or were supplied
+     * eagerly at compile-time.
+     *
+     * <p>Used in XSLT only.</p>
      *
      * @param params the set of parameters that have been supplied (null represents an empty set)
      * @throws XPathException if there is a required parameter for which no value has been supplied
      */
 
-    public void checkAllRequiredParamsArePresent(GlobalParameterSet params) throws XPathException {
+    public void checkSuppliedParameters(GlobalParameterSet params) throws XPathException {
         for (Map.Entry<StructuredQName, GlobalParam> entry : globalParams.entrySet()) {
             if (entry.getValue().isRequiredParam()) {
                 StructuredQName req = entry.getKey();

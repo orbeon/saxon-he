@@ -710,9 +710,9 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             }
 
             Map<QName, XdmValue> caseGlobalParams = getNamedParameters(xpath, testInput, false, false);
-            Map<QName, XdmValue> caseStaticParams = getNamedParameters(xpath, testInput, true, false);
-            Map<QName, XdmValue> globalParams = new HashMap<QName, XdmValue>(env.params);
-            globalParams.putAll(caseStaticParams);
+            //Map<QName, XdmValue> caseStaticParams = getNamedParameters(xpath, testInput, true, false);
+            Map<QName, XdmValue> globalParams = new HashMap<>(env.params);
+            //globalParams.putAll(caseStaticParams);
             globalParams.putAll(caseGlobalParams);  // has to be this way to ensure test-local overrides global
             transformer.setStylesheetParameters(globalParams);
 
@@ -994,7 +994,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
      * @throws SaxonApiException
      */
     protected Map<QName, XdmValue> getNamedParameters(XPathCompiler xpath, XdmNode node, boolean getStatic, boolean tunnel) throws SaxonApiException {
-        Map<QName, XdmValue> params = new HashMap<QName, XdmValue>();
+        Map<QName, XdmValue> params = new HashMap<>();
         int i = 1;
         String staticTest = getStatic ? "@static='yes'" : "not(@static='yes')";
         for (XdmItem param : xpath.evaluate("param[" + staticTest + "]", node)) {
@@ -1035,10 +1035,10 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
      * @return Array of the parameter values
      */
     protected XdmValue[] getParameters(XPathCompiler xpath, XdmNode node) {
-        ArrayList<XdmValue> params = new ArrayList<XdmValue>();
+        ArrayList<XdmValue> params = new ArrayList<>();
 
         node.select(child("param").where(not(isTrue("static")))).forEach(param -> {
-            String select = ((XdmNode) param).attribute("select");
+            String select = param.attribute("select");
             XdmValue value;
             try {
                 value = xpath.evaluate(select, null);
@@ -1048,7 +1048,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             }
             params.add(value);
         });
-        return params.toArray(new XdmValue[params.size()]);
+        return params.toArray(new XdmValue[0]);
     }
 
     @SuppressWarnings({"ResultOfMethodCallIgnored"})

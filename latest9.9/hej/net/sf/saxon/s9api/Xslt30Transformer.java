@@ -103,7 +103,7 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
 
     protected Xslt30Transformer(Processor processor, XsltController controller, GlobalParameterSet staticParameters) {
         super(processor, controller);
-        globalParameterSet = new GlobalParameterSet(staticParameters);
+        globalParameterSet = new GlobalParameterSet(/*staticParameters*/);
     }
 
     /**
@@ -180,19 +180,31 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
     }
 
     /**
-     * Supply the values of global stylesheet variables and parameters.
+     * Supply the values of global stylesheet parameters.
+     *
+     * <p>If a value is supplied for a parameter with a particular name, and the stylesheet does not declare
+     * a parameter with that name, then the value is simply ignored.</p>
+     *
+     * <p>If a value is supplied for a parameter with a particular name, and the stylesheet declaration of
+     * that parameter declares a required type, then the supplied value will be checked against that type
+     * when the value of the parameter is first used (and any error will be reported only then). Parameter
+     * values are converted to the required type using the function conversion rules.</p>
+     *
+     * <p>If a value is supplied for a parameter with a particular name, and the stylesheet declaration of
+     * that parameter declares it with the attribute <code>static="yes"</code>, then an error will be reported
+     * when the transformation is initiated.</p>
+     *
+     * <p>If a value is supplied for a parameter with a particular name, and a parameter with the same
+     * name was supplied at compile time using {@link XsltCompiler#setParameter(QName, XdmValue)},
+     * then an error will be reported with the transformation is initiated.</p>
      *
      * @param parameters a map whose keys are QNames identifying global stylesheet parameters,
-     *                   and whose corresponding values are the values to be assigned to those parameters. If necessary
-     *                   the supplied values are converted to the declared type of the parameter.
+     *                   and whose corresponding values are the values to be assigned to those parameters.
      *                   The contents of the supplied map are copied by this method,
      *                   so subsequent changes to the map have no effect.
      * @throws IllegalStateException if the transformation has already been evaluated by calling one of the methods
      *                               <code>applyTemplates</code>, <code>callTemplate</code>, or <code>callFunction</code>
-     * @throws SaxonApiException     if a required parameter is not present; if a parameter cannot be converted
-     *                               to the required type; if the context item cannot be converted to the required type.
-     *                               Note that this method may detect any errors immediately, or may cause the
-     *                               errors to be reported later, when the value of the parameter is actually used.
+     * @throws SaxonApiException     currently occurs only if the supplied value of a parameter cannot be evaluated
      */
 
     public <T extends XdmValue> void setStylesheetParameters(Map<QName, T> parameters) throws SaxonApiException {
@@ -203,8 +215,9 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
             globalParameterSet = new GlobalParameterSet();
         }
         for (Map.Entry<QName, T> param : parameters.entrySet()) {
+            StructuredQName name = param.getKey().getStructuredQName();
             try {
-                globalParameterSet.put(param.getKey().getStructuredQName(),
+                globalParameterSet.put(name,
                                        ((Sequence<? extends Item>) param.getValue().getUnderlyingValue()).materialize());
             } catch (XPathException e) {
                 throw new SaxonApiException(e);
@@ -254,8 +267,7 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
      * @param parameters the parameters to be used for the initial template
      * @param tunnel     true if these values are to be used for setting tunnel parameters;
      *                   false if they are to be used for non-tunnel parameters
-     * @throws SaxonApiException if running as an XSLT 2.0 processor, in which case initial template
-     *                           parameters are not allowed
+     * @throws SaxonApiException not currently used, but retained in the method signature for compatibility reasons
      */
 
     public <T extends XdmValue> void setInitialTemplateParameters(Map<QName, T> parameters, boolean tunnel) throws SaxonApiException {

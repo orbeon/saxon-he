@@ -37,6 +37,7 @@ import java.nio.charset.*;
 import java.util.*;
 
 import static net.sf.saxon.s9api.streams.Steps.child;
+import static net.sf.saxon.testdriver.Xslt30TestSuiteDriverHE.isTrue;
 
 /**
  * This class represents a collection of resources (source documents, schemas, collections etc) used for a number
@@ -117,7 +118,7 @@ public class Environment implements URIResolver {
             environment.xsltCompiler.setCompileWithTracing(true);
         }
         environment.processor.getUnderlyingConfiguration().setDefaultCollection(null);
-        environment.processor.setConfigurationProperty(FeatureKeys.STABLE_UNPARSED_TEXT, true);
+        environment.processor.setConfigurationProperty(Feature.STABLE_UNPARSED_TEXT, true);
         return environment;
     }
 
@@ -157,9 +158,9 @@ public class Environment implements URIResolver {
         configureByteCode(driver, environment, driver.generateByteCode);
 
         environment.xpathCompiler = environment.processor.newXPathCompiler();
-        environment.xpathCompiler.setBaseURI(((XdmNode) env).getBaseURI());
+        environment.xpathCompiler.setBaseURI(env.getBaseURI());
         environment.xqueryCompiler = environment.processor.newXQueryCompiler();
-        environment.xqueryCompiler.setBaseURI(((XdmNode) env).getBaseURI());
+        environment.xqueryCompiler.setBaseURI(env.getBaseURI());
         if (driver.spec.shortSpecName.equals("XT")) {
             environment.xsltCompiler = environment.processor.newXsltCompiler();
             //environment.xsltCompiler.setXsltLanguageVersion(driver.spec.version);
@@ -282,7 +283,7 @@ public class Environment implements URIResolver {
             try {
                 if (driver.export) {
                     if (driver.runWithJS) {
-                        String sourceFile = ((XdmNode) env).getBaseURI().resolve(fileName).toString();
+                        String sourceFile = env.getBaseURI().resolve(fileName).toString();
                         environment.exportedStylesheet = driver.exportStylesheet(environment.xsltCompiler, sourceFile);
                     } else {
                         File exportFile = new File(driver.resultsDir + "/export/" + name + ".sef");
@@ -465,7 +466,7 @@ public class Environment implements URIResolver {
                 String select = param.attribute("select");
                 value = xpc.evaluate(select, null);
             }
-            boolean isStatic = "true".equals(param.attribute("static"));
+            boolean isStatic = isTrue("static").test(param);
             QName varQName;
             int colon = varName.indexOf(':');
             if (colon >= 0) {
@@ -475,10 +476,8 @@ public class Environment implements URIResolver {
             } else {
                 varQName = new QName(varName);
             }
-            environment.params.put(varQName, value);
             environment.xpathCompiler.declareVariable(varQName);
-            String declared = param.attribute("declared");
-            if ("true".equals(declared) || "1".equals(declared)) {
+            if (isTrue("declared").test(param)) {
                 // no action
             } else {
                 environment.paramDeclarations.append("declare variable $" + varName + " external; ");
@@ -486,6 +485,8 @@ public class Environment implements URIResolver {
             if (isStatic) {
                 environment.xsltCompiler.setParameter(varQName, value);
                 System.err.println("set " + varQName + " = " + value);
+            } else {
+                environment.params.put(varQName, value);
             }
         }
     }

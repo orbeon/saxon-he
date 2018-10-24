@@ -88,11 +88,11 @@ class MessageListenerProxy extends SequenceWriter {
 
 
     /**
-     * Produce text content output. <BR>
+     * Produce text content output.
      *
      * @param s          The String to be output
      * @param locationId the location of the node in the source, or of the instruction that created it
-     *@param properties bit-significant flags for extra information, e.g. disable-output-escaping  @throws net.sf.saxon.trans.XPathException
+     * @param properties bit-significant flags for extra information, e.g. disable-output-escaping  @throws net.sf.saxon.trans.XPathException
      *          for any failure
      */
 

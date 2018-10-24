@@ -52,6 +52,7 @@ public class GlobalVariable extends Actor
     private GlobalVariable originalVariable;
     private int binderySlotNumber;
     private boolean isRequiredParam;
+    private boolean isStatic;
 
     /**
      * Create a global variable
@@ -102,6 +103,24 @@ public class GlobalVariable extends Actor
 
     public Expression getSelectExpression() {
         return select;
+    }
+
+    /**
+     * Say whether this variable is declared to be static
+     * @param statick true if the variable is static
+     */
+
+    public void setStatic(boolean statick) {
+        isStatic = statick;
+    }
+
+    /**
+     * Ask whether this variable is declared to be static
+     * @return true if the variable is declared to be static
+     */
+
+    public boolean isStatic() {
+        return this.isStatic;
     }
 
     /**

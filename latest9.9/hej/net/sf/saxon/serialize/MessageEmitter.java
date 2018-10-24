@@ -7,16 +7,48 @@
 
 package net.sf.saxon.serialize;
 
+import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.trans.XPathException;
+
+import javax.xml.transform.OutputKeys;
+import java.util.Properties;
 
 
 /**
  * MessageEmitter is the default Receiver for xsl:message output.
- * It is the same as XMLEmitter except for an extra newline at the end of the message
+ * It is the same as XMLEmitter except that (a) it adds an extra newline at the end of the message, and
+ * (b) it recognizes a processing-instruction with name "error-code" specially; this is assumed to contain
+ * the error-code requested on the {@code xsl:message} instruction. These changes can be overridden
+ * in a user-supplied subclass.
  */
 
 public class MessageEmitter extends XMLEmitter {
+
+    public MessageEmitter() {
+
+    }
+
+    @Override
+    public void setPipelineConfiguration(PipelineConfiguration pipelineConfiguration) {
+        super.setPipelineConfiguration(pipelineConfiguration);
+        if (writer == null && outputStream == null) {
+            try {
+                setOutputStream(getConfiguration().getStandardErrorOutput());
+            } catch (XPathException e) {
+                throw new AssertionError(e);
+            }
+        }
+        try {
+            Properties props = new Properties();
+            props.setProperty(OutputKeys.METHOD, "xml");
+            props.setProperty(OutputKeys.INDENT, "yes");
+            props.setProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            setOutputProperties(props);
+        } catch (XPathException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) throws XPathException {

@@ -71,7 +71,7 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
 
     protected XsltTransformer(Processor processor, XsltController controller, GlobalParameterSet staticParameters) {
         super(processor, controller);
-        parameters = new GlobalParameterSet(staticParameters);
+        parameters = new GlobalParameterSet(/*staticParameters*/);
     }
 
     /**
@@ -210,7 +210,21 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
     }
 
     /**
-     * Set the value of a stylesheet parameter
+     * Set the value of a stylesheet parameter.
+     *
+     * <p>If the stylesheet does not have a parameter with this name, then the supplied value will
+     * simply be ignored (no error occurs)</p>
+     *
+     * <p>If the stylesheet has a parameter with this name, and the supplied value does not match the
+     * required type, then no error will be reported at this stage, but a dynamic error will occur
+     * when the parameter value is first used. Supplied values are converted to the required type
+     * using the function conversion rules.</p>
+     *
+     * <p>If the stylesheet has a parameter with this name, and the parameter is declared
+     * with <code>static="yes"</code>, or if a parameter with the same name was supplied to the
+     * {@link XsltCompiler}, then no error will be reported at this stage, but an error
+     * will be reported when the transformation is initiated. Static parameters must be initialized
+     * using {@link XsltCompiler#setParameter(QName, XdmValue)}.</p>
      *
      * @param name  the name of the stylesheet parameter, as a QName
      * @param value the value of the stylesheet parameter, or null to clear a previously set value

@@ -45,6 +45,9 @@ abstract class AbstractXsltTransformer {
     protected XsltController controller;
     protected boolean baseOutputUriWasSet = false;
     private ResultDocumentResolver resultDocumentHandler = null;
+    private MessageListener messageListener;
+    private MessageListener2 messageListener2;
+
 
     AbstractXsltTransformer(Processor processor, XsltController controller) {
         this.processor = processor;
@@ -202,7 +205,8 @@ abstract class AbstractXsltTransformer {
      */
 
     public void setMessageListener(MessageListener listener) {
-        controller.setMessageEmitter(new MessageListenerProxy(listener, controller.makePipelineConfiguration()));
+        this.messageListener = listener;
+        controller.setMessageFactory(() -> new MessageListenerProxy(listener, controller.makePipelineConfiguration()));
     }
 
     /**
@@ -218,7 +222,8 @@ abstract class AbstractXsltTransformer {
      */
 
     public void setMessageListener(MessageListener2 listener) {
-        controller.setMessageEmitter(new MessageListener2Proxy(listener, controller.makePipelineConfiguration()));
+        this.messageListener2 = listener;
+        controller.setMessageFactory(() -> new MessageListener2Proxy(listener, controller.makePipelineConfiguration()));
     }
 
     /**
@@ -230,12 +235,19 @@ abstract class AbstractXsltTransformer {
      */
 
     public MessageListener getMessageListener() {
-        Receiver r = controller.getMessageEmitter();
-        if (r instanceof MessageListenerProxy) {
-            return ((MessageListenerProxy) r).getMessageListener();
-        } else {
-            return null;
-        }
+        return messageListener;
+    }
+
+    /**
+     * Get the MessageListener2 to be notified whenever the stylesheet evaluates an
+     * <code>xsl:message</code> instruction. If no MessageListener2 has been nominated,
+     * return null
+     *
+     * @return the user-supplied MessageListener2, or null if none has been supplied
+     */
+
+    public MessageListener2 getMessageListener2() {
+        return messageListener2;
     }
 
     /**

@@ -1172,7 +1172,8 @@ public class Controller implements ContextOriginator {
      * users (it is done automatically when transform() is invoked). However, it is available as a low-level API
      * especially for use with XQuery.
      *
-     * @param params the values of stylesheet parameters. This must include static parameters as well as non-static parameters.
+     * @param params the values of stylesheet parameters. Changed in 9.9.0.2 so this no longer includes
+     *               static parameters (which are already available in the {@link PreparedStylesheet}).
      * @throws XPathException if an error occurs, for example if a required parameter is not supplied.
      */
 
@@ -1186,7 +1187,7 @@ public class Controller implements ContextOriginator {
         // if parameters were supplied, set them up
 
         try {
-            executable.checkAllRequiredParamsArePresent(params);
+            executable.checkSuppliedParameters(params);
         } catch (XPathException e) {
             if (!e.hasBeenReported()) {
                 getErrorListener().fatalError(e);

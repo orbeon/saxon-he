@@ -138,6 +138,32 @@ public class PreparedStylesheet extends Executable {
         return compileTimeParams;
     }
 
+    /**
+     * Check that all required parameters have been supplied. Used in XSLT only.
+     *
+     * @param params the set of parameters that have been supplied (null represents an empty set)
+     * @throws XPathException if there is a required parameter for which no value has been supplied
+     */
+
+    @Override
+    public void checkSuppliedParameters(GlobalParameterSet params) throws XPathException {
+        super.checkSuppliedParameters(params);
+        for (StructuredQName name : params.getKeys()) {
+            GlobalParam decl = getGlobalParameter(name);
+            if (decl != null && decl.isStatic()) {
+                throw new XPathException("Parameter $" + name.getDisplayName() +
+                                                 " cannot be supplied dynamically because it is declared as static");
+            }
+            if (compileTimeParams.containsKey(name)) {
+                throw new XPathException("Parameter $" + name.getDisplayName() +
+                                                 " cannot be supplied dynamically because a value was already supplied at compile time");
+            }
+        }
+        for (StructuredQName name : compileTimeParams.getKeys()) {
+            params.put(name, compileTimeParams.get(name));
+        }
+    }
+
     @Override
     public StylesheetPackage getTopLevelPackage() {
         return (StylesheetPackage)super.getTopLevelPackage();
