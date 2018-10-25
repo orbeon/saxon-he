@@ -107,16 +107,16 @@ public class GlobalVariable extends Actor
 
     /**
      * Say whether this variable is declared to be static
-     * @param statick true if the variable is static
+     * @param declaredStatic true if the variable is declared with static="yes"
      */
 
-    public void setStatic(boolean statick) {
-        isStatic = statick;
+    public void setStatic(boolean declaredStatic) {
+        isStatic = declaredStatic;
     }
 
     /**
      * Ask whether this variable is declared to be static
-     * @return true if the variable is declared to be static
+     * @return true if the variable is declared with static="yes"
      */
 
     public boolean isStatic() {
@@ -415,18 +415,14 @@ public class GlobalVariable extends Actor
     }
 
     /**
-     * Create a compiled representation of this global variable
+     * Create a compiled representation of this global variable. Used in XQuery only.
      *
      * @param exec the executable
      * @param slot the slot number allocated to this variable
      * @throws XPathException if compile-time errors are found.
      */
 
-    public void compile(/*@NotNull*/ Executable exec, int slot) throws XPathException {
-        // Not used in XSLT
-//        if (references.isEmpty()) {
-//            return;
-//        }
+    public void compile(Executable exec, int slot) throws XPathException {
         TypeHierarchy th = getConfiguration().getTypeHierarchy();
 
         setBinderySlotNumber(slot);
@@ -608,7 +604,7 @@ public class GlobalVariable extends Actor
                 ((GlobalVariable) b).lookForCycles(referees, globalFunctionLibrary);
             }
         }
-        List<SymbolicName> flist = new ArrayList<SymbolicName>();
+        List<SymbolicName> flist = new ArrayList<>();
         ExpressionTool.gatherCalledFunctionNames(body, flist);
         for (SymbolicName s : flist) {
             XQueryFunction qf = globalFunctionLibrary.getDeclarationByKey(s);

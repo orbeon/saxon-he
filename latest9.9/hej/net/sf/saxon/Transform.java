@@ -7,7 +7,9 @@
 
 package net.sf.saxon;
 
+import net.sf.saxon.expr.instruct.Executable;
 import net.sf.saxon.expr.instruct.GlobalContextRequirement;
+import net.sf.saxon.expr.instruct.GlobalParam;
 import net.sf.saxon.expr.instruct.TerminationException;
 import net.sf.saxon.lib.*;
 import net.sf.saxon.s9api.*;
@@ -1054,9 +1056,11 @@ public class Transform {
     protected Xslt30Transformer newTransformer(
             XsltExecutable sheet, CommandLineOptions options, Logger traceDestination) throws SaxonApiException {
         final Xslt30Transformer transformer = sheet.load30();
-        final Map<QName, XdmValue> params = new HashMap<QName, XdmValue>();
-        options.setParams(processor, new CommandLineOptions.ParamSetter() {
-            public void setParam(QName qName, XdmValue value) {
+        final Map<QName, XdmValue> params = new HashMap<>();
+        Executable exec = transformer.getUnderlyingController().getExecutable();
+        options.setParams(processor, (qName, value) -> {
+            GlobalParam param = exec.getGlobalParameter(qName.getStructuredQName());
+            if (param != null && !param.isStatic()) {
                 params.put(qName, value);
             }
         });

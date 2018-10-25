@@ -35,7 +35,6 @@ public class GlobalVariableReference extends VariableReference implements Compon
         super(var);
     }
 
-
     /*@NotNull*/
     public Expression copy(RebindingMap rebindings) {
         if (binding == null) {

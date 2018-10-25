@@ -259,6 +259,14 @@ public abstract class VariableReference extends Expression implements BindingRef
             Optimizer.trace(visitor.getConfiguration(), "Replaced variable " + getDisplayName() + " by its value", result);
             return result;
         }
+        if (binding instanceof GlobalParam && ((GlobalParam)binding).isStatic()) {
+            Expression select = ((GlobalParam)binding).getSelectExpression();
+            if (select instanceof Literal) {
+                binding = null;
+                Optimizer.trace(visitor.getConfiguration(), "Replaced static parameter " + getDisplayName() + " by its value", select);
+                return select;
+            }
+        }
         return this;
     }
 
