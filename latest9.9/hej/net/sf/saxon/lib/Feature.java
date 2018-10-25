@@ -44,15 +44,13 @@ public class Feature<T> {
         return index.get(name);
     }
 
-    // TODO: regenerate
-    public final static Feature<Integer> THRESHOLD_FOR_FUNCTION_INLINING =
-            new Feature<>("http://saxon.sf.net/feature/thresholdForFunctionInlining", 122, EE, Integer.class, 100);
+
 
     /**
     *            <p>ALLOW_EXTERNAL_FUNCTIONS determines whether calls to reflexive external functions are
-    *                allowed. More specifically, if set to <b>false</b> it disallows all of the
+    *                allowed.</p>
+    *            <p>More specifically, if set to <b>false</b> it disallows all of the
     *                following:</p>
-    *
     *            <ul>
     *                <li>Calls to reflexive Java extension functions</li>
     *                <li>Use of the XSLT <code>system-property()</code> function to access Java system
@@ -60,19 +58,15 @@ public class Feature<T> {
     *                <li>Use of a URI in the <code>href</code> attribute of an <code>xsl:result-document</code> instruction</li>
     *                <li>Calls to XSLT extension instructions</li>
     *            </ul>
-    *
     *            <p>The default value is <b>true</b>. The setting <b>false</b> is recommended in an
     *                environment where untrusted stylesheets may be executed.</p>
-    *
     *            <p>This option does not disable use of the <code>doc()</code> function or similar
     *                functions to access the filestore of the machine where the transformation or query
     *                is running. That should be done using a user-supplied <code>URIResolver</code>.</p>
-    *
     *            <p>Note that integrated extension functions are trusted; calls to such functions are
     *                allowed even if this configuration option is false. In cases where an integrated
     *                extension function is used to load and execute untrusted code, it should check this
     *                configuration option before doing so.</p>
-    *            
     *            <p>If the value of the property is false, then it will also be set to false on any new
     *            Configuration created using the <code>fn:transform()</code> function.</p>
     *        
@@ -133,9 +127,7 @@ public class Feature<T> {
     *            Saxon releases.</p>
     *            <p>Syntax extensions in Saxon 9.8 include the use of type aliases (<code>~aliasName</code> where
     *                an item type is expected, and <code>declare type NAME = item-type</code> in the XQuery Prolog); 
-    *                and simple inline functions (for example <code>fn{. + 1}</code>),
-    *            </p>
-    *            
+    *                and simple inline functions (for example <code>fn{. + 1}</code>).</p>
     *        
     **/
 
@@ -191,8 +183,8 @@ public class Feature<T> {
 
     /**
     *            <p>The supplied <code>CollectionFinder</code> is used to retrieve a {@link net.sf.saxon.lib.ResourceCollection} object given by any URI defined in
-    *                calls to the <code>collection()</code> or the <code>uri-collection()</code> function.
-    *                If the argument is not specified then a default <code>ResourceCollection</code> should be handled.
+    *                calls to the <code>collection()</code> or the <code>uri-collection()</code> function.</p>
+    *            <p>If the argument is not specified then a default <code>ResourceCollection</code> should be handled.
     *                <code>CollectionFinder</code> returns a {@link net.sf.saxon.lib.ResourceCollection} which is used to map the URI of collection into a
     *                sequence of {@link net.sf.saxon.lib.Resource} objects
     *                (which are then resolved in the same way as URIs passed to the <code>doc()</code>
@@ -247,7 +239,8 @@ public class Feature<T> {
 
     /**
     *            <p>If run-time tracing of stylesheet or query execution is required, then the code must
-    *                be compiled with tracing enabled. Default is false. This option causes code to be
+    *                be compiled with tracing enabled.</p>
+    *            <p>Default is false. This option causes code to be
     *                compiled that makes calls to a {@link net.sf.saxon.lib.TraceListener}, but this
     *                has no effect unless a <code>TraceListener</code> is registered at execution
     *                time.</p>
@@ -263,9 +256,9 @@ public class Feature<T> {
     /**
     *            <p>This attribute cannot be set on the {@link net.sf.saxon.Configuration} itself,
     *                but it can be set on various JAXP factory objects such as a
-    *                    <code>TransformerFactory</code> or <code>DocumentBuilderFactory</code>, to
-    *                ensure that several such factories use the same <code>Configuration</code>. Note
-    *                that other configuration options are held in the <code>Configuration</code> object,
+    *                <code>TransformerFactory</code> or <code>DocumentBuilderFactory</code>, to
+    *                ensure that several such factories use the same <code>Configuration</code>.</p>
+    *            <p>Note that other configuration options are held in the <code>Configuration</code> object,
     *                so setting this attribute will cancel all others that have been set. Also, if two
     *                factories share the same <code>Configuration</code>, then setting an attribute on
     *                one affects all the others.</p>
@@ -279,8 +272,8 @@ public class Feature<T> {
 
 
     /**
-    *            <p>Defines a configuration file to be applied to the configuration. This attribute
-    *                cannot be set on the {@link net.sf.saxon.Configuration} itself, but it can be
+    *            <p>Defines a configuration file to be applied to the configuration.</p>
+    *            <p>This attribute cannot be set on the {@link net.sf.saxon.Configuration} itself, but it can be
     *                set on various JAXP factory objects such as a <code>TransformerFactory</code> or
     *                    <code>DocumentBuilderFactory</code>. It is particularly useful when running
     *                transformations via the Ant xslt task, where it can be set as follows to define all
@@ -353,7 +346,7 @@ public class Feature<T> {
 
 
     /**
-    *            <p> This determines the collection that is used when the <code>fn:collection()</code>
+    *            <p>This determines the collection that is used when the <code>fn:collection()</code>
     *                function is called with no arguments; the effect is the same as if it were called
     *                passing the URI that is the value of this configuration property.</p>
     *        
@@ -366,7 +359,7 @@ public class Feature<T> {
 
 
     /**
-    *            <p> This determines the country that is used by <code>format-date()</code> and similar
+    *            <p>This determines the country that is used by <code>format-date()</code> and similar
     *                functions if no country code is supplied explicitly. If no value is given for this
     *                property, the default is taken from the Java Locale, which in turn typically depends
     *                on settings for the current user in the operating system.</p>
@@ -420,10 +413,10 @@ public class Feature<T> {
 
 
     /**
-    *            <p>This option disables the <code>xsl:evaluate</code> instruction. If set at stylesheet compile time,
-    *               the feature is statically disabled. If set at run-time it is dynamically
-    *               disabled. (These terms are defined in the XSLT 3.0 spec. The feature is always
-    *               disabled (statically) in Saxon-HE.</p>
+    *            <p>This option disables the <code>xsl:evaluate</code> instruction.</p>
+    *            <p>If set at stylesheet compile time, the feature is statically disabled. If set at 
+    *                run-time it is dynamically disabled. (These terms are defined in the XSLT 3.0 spec.) 
+    *                The feature is always disabled (statically) in Saxon-HE.</p>
     *        
     **/
 
@@ -553,8 +546,8 @@ public class Feature<T> {
 
     /**
     *            <p><code>ERROR_LISTENER_CLASS</code> is the name of the class used to implement the JAXP
-    *                    <code>ErrorListener</code>. This is used both at compile time and at run-time.
-    *                Currently if this option is specified, the class is instantiated, and the same
+    *                <code>ErrorListener</code>. This is used both at compile time and at run-time.</p>
+    *            <p>Currently if this option is specified, the class is instantiated, and the same
     *                instance is used for all processes running under this configuration. This may change
     *                in future so that a new instance is created for each compilation or evaluation.</p>
     *            <p>Finer control can be obtained by setting the <code>ErrorListener</code> for a
@@ -571,7 +564,8 @@ public class Feature<T> {
     /**
     *            <p><code>EXPAND_ATTRIBUTE_DEFAULTS</code> determines whether fixed and default values
     *                defined in a schema or DTD will be expanded (both on input and on output documents,
-    *                if validation is requested). By default (and for conformance with the specification)
+    *                if validation is requested).</p>
+    *            <p>By default (and for conformance with the specification)
     *                validation against a DTD or schema will cause default values defined in the schema
     *                or DTD to be inserted into the document. Setting this feature to false suppresses
     *                this behavior. In the case of DTD-defined defaults this only works if the XML parser
@@ -675,8 +669,9 @@ public class Feature<T> {
 
     /**
     *            <p><code>LICENSE_FILE_LOCATION</code> holds the filename in which the Saxon license file
-    *                is held. This is the full file name, for example
-    *                    <code>c:/saxon/license/license.lic</code>. Setting this property causes Saxon to
+    *                is held.</p>
+    *            <p>This is the full file name, for example <code>c:/saxon/license/license.lic</code>. 
+    *                Setting this property causes Saxon to
     *                immediately read the specified file and register the license data, assuming it can
     *                be found at this location. The property is not recognized for reading, and it is not
     *                recognized for writing except in Saxon-PE and Saxon-EE.</p>
@@ -728,6 +723,7 @@ public class Feature<T> {
 
 
     /**
+    *            <p>Places a limit on the number of classes for which Saxon will generate bytecode.</p>
     *            <p>If bytecode generation is enabled, Saxon will generate bytecode for frequently used constructs appearing
     *                in stylesheets or queries. This can become problematic if a configuration uses a very large number
     *                of different stylesheets and queries, because it creates memory pressure (in some environments classes
@@ -748,7 +744,7 @@ public class Feature<T> {
     *                    <code>net.sf.saxon.event.Receiver</code> interface. This interface is similar to
     *                a SAX <code>ContentHandler</code>, in that it takes a stream of events to generate
     *                output.</p>
-    *            <p> By default the standard XML emitter is used, configured to write to the standard
+    *            <p>By default the standard XML emitter is used, configured to write to the standard
     *                error stream, and to include no XML declaration. </p>
     *            <p>In general the content of a message is an XML fragment. Each message is output as a
     *                new document. The sequence of calls to this <code>Receiver</code> is as follows:
@@ -805,10 +801,8 @@ public class Feature<T> {
     /**
     *            <p>When set from the Transform or Query command line, a report on bytecode generation is
     *                produced at the end of the transformation or query.</p>
-    *
     *            <p>When set from an application, the bytecode report is produced only on request, by
     *                calling <code>Configuration.createByteCodeReport(fileName)</code>.</p>
-    *
     *            <p>The bytecode report is an XML file containing one entry for each expression that has
     *                been compiled into bytecode. Each entry contains the following details, where
     *                applicable:</p>
@@ -838,7 +832,8 @@ public class Feature<T> {
 
     /**
     *            <p>Affects schema construction (whether for standalone validation, or in the context of
-    *                XSLT or XQuery). If set to true, the schema processor attempts to fetch a schema
+    *                XSLT or XQuery).</p>
+    *            <p>If set to true, the schema processor attempts to fetch a schema
     *                document appearing in an <code>xs:import</code> directive, whether or not a schema
     *                for that namespace has already been loaded, unless the absolute URI formed from the
     *                    <code>schemaLocation</code> is the same as the absolute URI that was used to
@@ -848,14 +843,12 @@ public class Feature<T> {
     *                value to true might cause spurious errors due to like-named schema components being
     *                loaded more than once. On the other hand, setting the value to false might result in
     *                validation failing because schema components are missing.</p>
-    *
     *            <p>Note: Both settings are conformant with the W3C recommendation, which leaves the
     *                details implementation-defined. It is possible (and advisable) to write schemas in
     *                such a way that this setting makes no difference, by ensuring that all imports for a
     *                particular namespace go via a "home" schema document for that namespace, where the
     *                home schema document contains <code>xs:include</code> declarations for all the
     *                schema documents defining components in that namespace.</p>
-    *
     *        
     **/
 
@@ -868,8 +861,8 @@ public class Feature<T> {
     /**
     *            <p>Indicates that the supplied <code>NamePool</code> should be used as the target
     *                (run-time) <code>NamePool</code> by all stylesheets compiled (using
-    *                    <code>newTemplates()</code>) after this call on <code>setAttribute</code>.
-    *                Normally a single system-allocated <code>NamePool</code> is used for all stylesheets
+    *                <code>newTemplates()</code>) after this call on <code>setAttribute</code>.</p>
+    *            <p>Normally a single system-allocated <code>NamePool</code> is used for all stylesheets
     *                compiled while the Java VM remains loaded; this attribute allows user control over
     *                the allocation of name pools. Note that source trees used as input to a
     *                transformation must be built using the same <code>NamePool</code> that is used when
@@ -889,14 +882,14 @@ public class Feature<T> {
 
     /**
     *            <p><code>OCCURRENCE_LIMITS</code> determines the largest values of
-    *                    <code>minOccurs</code> and <code>maxOccurs</code> that can be accommodated when
+    *                <code>minOccurs</code> and <code>maxOccurs</code> that can be accommodated when
     *                compiling an "expanded" finite state machine to represent an XSD content model
-    *                grammar. These limits do not apply in the common cases where the grammar can be
+    *                grammar.</p>
+    *            <p>These limits do not apply in the common cases where the grammar can be
     *                implemented using a counting finite-state-machine, but in those cases where this is
     *                not possible, any <code>minOccurs</code> value greater than the first integer is
     *                reduced to the value of the first integer, and any <code>maxOccurs</code> value
     *                greater than the second integer is treated as "unbounded".</p>
-    *
     *            <p>Setting these values too high may cause an <code>OutOfMemoryException</code> since
     *                the size of the finite state machine constructed by Saxon increases linearly with
     *                the values of <code>minOccurs</code> and <code>maxOccurs</code>.</p>
@@ -910,8 +903,8 @@ public class Feature<T> {
 
 
     /**
-    *            <p>Allows individual optimizations to be enabled or disabled selectively. There is a set
-    *                of single-letter flags identifying particular optimizations:</p>
+    *            <p>Allows individual optimizations to be enabled or disabled selectively.</p>
+    *            <p>There is a set of single-letter flags identifying particular optimizations:</p>
     *            <ul>
     *                <li>c: generate bytecode</li>
     *                <li>e: cache regular expressions</li>
@@ -978,10 +971,10 @@ public class Feature<T> {
     *            <p>If true, calls on the <code>doc()</code> and <code>document()</code> functions, if
     *                their arguments are known at compile time, will be evaluated at compile time, and
     *                the resulting document will be stored as part of the Saxon
-    *                    {@link net.sf.saxon.Configuration} and shared by all queries and
-    *                transformations running within that <code>Configuration</code>. This is useful for
-    *                reference documents that have stable content and are used by many different queries
-    *                and transformations. The default is false, which means each query or transformation
+    *                {@link net.sf.saxon.Configuration} and shared by all queries and
+    *                transformations running within that <code>Configuration</code>.</p>
+    *            <p>This is useful for reference documents that have stable content and are used by many different 
+    *                queries and transformations. The default is false, which means each query or transformation
     *                will reload the document from disk.</p>
     *            <p>In XSLT 3.0 a better way of having external documents pre-loaded at stylesheet
     *                compile time is to use the new facility of static global variables.</p>
@@ -995,6 +988,8 @@ public class Feature<T> {
 
 
     /**
+    *            <p>Relevant only on .NET, determines whether the Java Classpath parser is used in
+    *                preference to the Microsoft .NET parser.</p>
     *            <p>This option has no effect on the Java platform. The default is <b>true</b>. When
     *                running on the .NET platform, if the option is true it causes the Apache Xerces
     *                parser (cross-compiled using IKVMC) to be used in preference to the .NET XML parser.
@@ -1011,10 +1006,10 @@ public class Feature<T> {
 
 
     /**
-    *            <p>True if the the standard URI resolver is to recognize query parameters included in
+    *            <p>True if the standard URI resolver is to recognize query parameters included in
     *                the URI (for example, <code>?val=strict</code>). Such parameters can then be used in
     *                URIs passed to the <code>doc()</code> or <code>document()</code> functions. For
-    *                details of the query parameters available, see <a>Source Documents</a>. The default is false.</p>
+    *                details of the query parameters available, see <span class="link" data-href="/sourcedocs">Source Documents</span>. The default is false.</p>
     *            <p>This option has no effect if a user-supplied <code>URIResolver</code> is in use,
     *                unless the user-supplied <code>URIResolver</code> chooses to inherit this
     *                functionality from the standard <code>URIResolver</code>.</p>
@@ -1033,10 +1028,10 @@ public class Feature<T> {
 
     /**
     *            <p>An integer, one of {@link net.sf.saxon.Configuration#RECOVER_SILENTLY},
-    *                    {@link net.sf.saxon.Configuration#RECOVER_WITH_WARNINGS}, or
-    *                    {@link net.sf.saxon.Configuration#DO_NOT_RECOVER}. Indicates the policy for
-    *                handling dynamic errors that the XSLT specification defines as recoverable. 0 means
-    *                recover silently; 1 means recover after signalling a warning to the
+    *                {@link net.sf.saxon.Configuration#RECOVER_WITH_WARNINGS}, or
+    *                {@link net.sf.saxon.Configuration#DO_NOT_RECOVER}. Indicates the policy for
+    *                handling dynamic errors that the XSLT specification defines as recoverable.</p>
+    *            <p>0 means recover silently; 1 means recover after signalling a warning to the
     *                    <code>ErrorListener</code>; 2 means treat the error as fatal. An example of a
     *                recoverable error is when two template rules match the same node.</p>
     *            <p>Note that XSLT 3.0 has eliminated all "recoverable errors" from the
@@ -1052,7 +1047,8 @@ public class Feature<T> {
 
     /**
     *            <p>Indicates the policy for handling dynamic errors that the XSLT specification defines
-    *                as recoverable. "recoverSilently" means recover silently; "recoverWithWarnings"
+    *                as recoverable.</p>
+    *            <p>"recoverSilently" means recover silently; "recoverWithWarnings"
     *                means recover after signalling a warning to the <code>ErrorListener</code>;
     *                "doNotRecover" means treat the error as fatal. An example of a recoverable error is
     *                when two template rules match the same node. </p>
@@ -1163,8 +1159,8 @@ public class Feature<T> {
 
     /**
     *            <p>The class will be instantiated and the resulting <code>SerializerFactory</code> will
-    *                be used to create the serialization pipeline for XSLT and XQuery results. By
-    *                subclassing the standard <code>SerializerFactory</code> it is possible to customize
+    *                be used to create the serialization pipeline for XSLT and XQuery results.</p>
+    *            <p>By subclassing the standard <code>SerializerFactory</code> it is possible to customize
     *                many aspects of the output produced by the Serializer, or to introduce new
     *                serialization methods and parameters.</p>
     *        
@@ -1177,6 +1173,7 @@ public class Feature<T> {
 
 
     /**
+    *            <p>XML parser used for source documents.</p>
     *            <p>The class will be instantiated. If it is an <code>XMLReader</code> it is used
     *                directly; if it is a <code>SAXParserFactory</code> it is used to instantiate an
     *                    <code>XMLReader</code>. The resulting <code>XMLReader</code> will be used to
@@ -1243,7 +1240,6 @@ public class Feature<T> {
     *            <p>Setting this option may be expensive because it requires that the file contents be
     *                saved in memory; it is rarely necessary in practice, but is required for strict
     *                conformance with the W3C specifications.</p>
-    *
     *        
     **/
 
@@ -1288,7 +1284,6 @@ public class Feature<T> {
     *                by default are (in nearly all cases) identical to the W3C rules, but by default they
     *                are applied to the expression tree after type-checking and optimization, which makes
     *                some constructs streamable that would not be so otherwise.</p>
-    *
     *            <p>Whichever option is chosen, the <code>STREAMING_FALLBACK</code> option can be used to
     *                control what happens when code is deemed non-streamable; it provides a choice
     *                between throwing a static (compile-time) error, and falling back to a non-streaming
@@ -1303,6 +1298,8 @@ public class Feature<T> {
 
 
     /**
+    *            <p>Causes the XSLT processor to verify that constructs that are declared streamable are
+    *                in fact "guaranteed streamable" according to the W3C rules.</p>
     *            <p>Normally, Saxon performs a variety of simplifications and optimizations on the
     *                expression tree before performing streamability analysis. Sometimes these tree
     *                rewrites will turn a non-streamable expression into a streamable one. An obvious
@@ -1345,7 +1342,8 @@ public class Feature<T> {
     /**
     *            <p>Indicates whether all whitespace, no whitespace, or whitespace in elements defined in
     *                a DTD or schema as having element-only content should be stripped from source
-    *                documents. The default is "ignorable". This whitespace stripping is additional to
+    *                documents.</p>
+    *            <p>The default is "ignorable". This whitespace stripping is additional to
     *                any stripping done as a result of the <code>xsl:strip-space</code> declaration in an
     *                XSLT stylesheet.</p>
     *        
@@ -1358,6 +1356,7 @@ public class Feature<T> {
 
 
     /**
+    *            <p>XML parser used for stylesheets and schema documents.</p>
     *            <p>The class will be instantiated. If it is an <code>XMLReader</code> it is used
     *                directly; if it is a <code>SAXParserFactory</code> it is used to instantiate an
     *                    <code>XMLReader</code>. The resulting <code>XMLReader</code> will be used to
@@ -1413,6 +1412,8 @@ public class Feature<T> {
 
 
     /**
+    *            <p>Indicates how often an XSD simple type definition must be used before Saxon generates
+    *                bytecode to implement validation of input data against that type.</p>
     *            <p>By default, Saxon-EE generates Java bytecode to speed up the validation of input
     *                strings against user-defined simple types after the type has been used 100 times
     *                (during the life of a Saxon Configuration). This threshold may be changed using this
@@ -1429,7 +1430,8 @@ public class Feature<T> {
 
     /**
     *            <p>This is set to true to cause basic timing and tracing information to be output to the
-    *                standard error output stream. The name of the feature is poorly chosen, since much
+    *                standard error output stream.</p>
+    *            <p>The name of the feature is poorly chosen, since much
     *                of the information that is output has nothing to do with timing, for example the
     *                names of output files for <code>xsl:result-document</code> are traced, as are the
     *                names of schema documents loaded.</p>
@@ -1608,8 +1610,8 @@ public class Feature<T> {
 
     /**
     *            <p>This option is relevant only when the TinyTree is used; it determines whether (for a
-    *                validated document) a cache will be maintained containing the typed values of nodes.
-    *                Typed values are held in the cache only for elements and attributes whose type is
+    *                validated document) a cache will be maintained containing the typed values of nodes.</p>
+    *            <p>Typed values are held in the cache only for elements and attributes whose type is
     *                other than string, untypedAtomic, or anyURI. The default value is true. Setting this
     *                value to false can reduce memory requirements at the cost of requiring recomputation
     *                of typed values on each access.</p>
@@ -1665,14 +1667,11 @@ public class Feature<T> {
     *                option is on, no exception is thrown, and the output is written as if validation had
     *                been successful. Note in this case that any type annotations present in a result
     *                document are unreliable.</p>
-    *
     *            <p>If this option is set when running XSLT or XQuery, it is ignored as far as input
     *                files are concerned: validation errors in input files are still fatal. However, if
     *                the option is set and a validation error occurs in a final output file, the output
     *                file is still written and the process terminates as if successful.</p>
-    *
     *            <p>The detailed interpretation of this option changed in Saxon 9.5.</p>
-    *
     *        
     **/
 
@@ -1684,12 +1683,11 @@ public class Feature<T> {
 
     /**
     *            <p>Indicates whether a warning message should be notified (to the
-    *                    <code>ErrorListener</code>) if running Saxon against an XSLT stylesheet that
-    *                specifies <code>version="1.0"</code>. The warning that an XSLT 1.0 stylesheet is
-    *                being processed using an XSLT 2.0 processor is output by default (because the W3C
-    *                specification requires it), but it may be suppressed using this option.</p>
-    *            <p>From Saxon 9.8, the warning is no longer output (since an XSLT 3.0 does not require
+    *                <code>ErrorListener</code>) if running Saxon against an XSLT stylesheet that
+    *                specifies <code>version="1.0"</code>.</p>
+    *            <p>From Saxon 9.8, the warning is no longer output (since XSLT 3.0 does not require
     *                it), so this option is ignored.</p>
+    *            
     *        
     **/
 
@@ -1700,8 +1698,8 @@ public class Feature<T> {
 
 
     /**
-    *            <p>Indicates whether source documents should have any XInclude directives expanded. The
-    *                default is false. The option applies to all input XML documents, including
+    *            <p>Indicates whether source documents should have any XInclude directives expanded.</p>
+    *            <p>The default is false. The option applies to all input XML documents, including
     *                stylesheets and schema documents. It can be overridden for individual documents
     *                using the {@link net.sf.saxon.lib.ParseOptions} class.</p>
     *            <p>This option relies on support in the underlying XML parser. If the XML parser does
@@ -1737,7 +1735,7 @@ public class Feature<T> {
     /**
     *            <p>Sets the value of a parser feature flag. The feature name is any fully-qualified
     *                URI.</p>
-    *            <p> For example if the parser supports a feature
+    *            <p>For example if the parser supports a feature
     *                    <code>http://xml.org/sax/features/external-parameter-entities</code> then this
     *                can be set by setting the value of the Configuration property:
     *                    <code>http://saxon.sf.net/feature/parserFeature?uri=http%3A//xml.org/sax/features/external-parameter-entities</code>
@@ -1769,9 +1767,9 @@ public class Feature<T> {
 
 
     /**
-    *            <p>Determines whether XQuery Update syntax is accepted. If true, update syntax is
-    *                accepted, if false, it is not accepted. Setting the value to true does not mean that
-    *                the query has to use update syntax, only that it may do so.</p>
+    *            <p>Determines whether XQuery Update syntax is accepted.</p>
+    *            <p>If true, update syntax is accepted, if false, it is not accepted. Setting the value to 
+    *                true does not mean that the query has to use update syntax, only that it may do so.</p>
     *            <p>From Saxon 9.6, XQuery Update syntax and XQuery 3.0 syntax can be mixed, although
     *                this combination is not defined by any W3C specification at the time of writing.</p>
     *            <p>This option can be set for a particular XQuery compilation. When the option is set at
@@ -1867,8 +1865,6 @@ public class Feature<T> {
     *                as a reference to the existing module. If the value is true, the system first checks
     *                whether the supplied "location hints" match the known location of the existing
     *                module, and the existing module is used only if there is a match.</p>
-    *
-    *
     *        
     **/
 
@@ -1971,7 +1967,8 @@ public class Feature<T> {
 
     /**
     *            <p>This property determines the version of XML Schema used by the
-    *                <code>Configuration</code>. From Saxon 9.8, the default is XSD 1.1. If XSD 1.0 is
+    *                <code>Configuration</code>.</p>
+    *            <p>From Saxon 9.8, the default is XSD 1.1. If XSD 1.0 is
     *                selected, XSD 1.1 features will be rejected, with the exception of the version
     *                control attributes that allow sections of the schema to be marked as requiring XSD
     *                1.0 or XSD 1.1.</p>
@@ -2152,6 +2149,17 @@ public class Feature<T> {
 
     public final static Feature<Integer> XPATH_VERSION_FOR_XSLT = new Feature<Integer>(
             "http://saxon.sf.net/feature/xpathVersionForXslt", 121, HE, Integer.class, null);
+
+// AUTO-GENERATED FROM FeatureKeys.xml - DO NOT EDIT THIS FILE
+
+
+    /**
+    *            <p>TODO</p>
+    *        
+    **/
+
+    public final static Feature<Integer> THRESHOLD_FOR_FUNCTION_INLINING = new Feature<Integer>(
+            "http://saxon.sf.net/feature/thresholdForFunctionInlining", 122, EE, Integer.class, null);
 
 // AUTO-GENERATED FROM FeatureKeys.xml - DO NOT EDIT THIS FILE
 

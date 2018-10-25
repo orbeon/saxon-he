@@ -22,9 +22,6 @@ package net.sf.saxon.lib;
 
 public abstract class FeatureCode {
 
-    // TODO: regenerate
-    public static final int THRESHOLD_FOR_FUNCTION_INLINING = 122;
-
     /** @see Feature#ALLOW_EXTERNAL_FUNCTIONS  */
     public final static int ALLOW_EXTERNAL_FUNCTIONS = 1;
     /** @see Feature#ALLOW_MULTITHREADING  */
@@ -267,9 +264,11 @@ public abstract class FeatureCode {
     public final static int XPATH_VERSION_FOR_XSD = 120;
     /** @see Feature#XPATH_VERSION_FOR_XSLT  */
     public final static int XPATH_VERSION_FOR_XSLT = 121;
+    /** @see Feature#THRESHOLD_FOR_FUNCTION_INLINING  */
+    public final static int THRESHOLD_FOR_FUNCTION_INLINING = 122;
 
 
-    public final static int MAX = 122;
+    public final static int MAX = 123;
 
 }
         
