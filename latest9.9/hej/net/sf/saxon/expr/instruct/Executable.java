@@ -523,8 +523,8 @@ public class Executable {
      * @return a list of all the stylesheet parameters (XSLT) or external variables (XQuery)
      */
 
-    public Iterable<GlobalParam> getGlobalParameters() {
-        return globalParams.values();
+    public Map<StructuredQName, GlobalParam> getGlobalParameters() {
+        return globalParams;
     }
 
     /**
@@ -549,17 +549,7 @@ public class Executable {
      */
 
     public void checkSuppliedParameters(GlobalParameterSet params) throws XPathException {
-        for (Map.Entry<StructuredQName, GlobalParam> entry : globalParams.entrySet()) {
-            if (entry.getValue().isRequiredParam()) {
-                StructuredQName req = entry.getKey();
-                if (params == null || params.get(req) == null) {
-                    XPathException err = new XPathException("No value supplied for required parameter " +
-                        req.getDisplayName());
-                    err.setErrorCode(getHostLanguage() == Configuration.XQUERY ? "XPDY0002" : "XTDE0050");
-                    throw err;
-                }
-            }
-        }
+
     }
 
 

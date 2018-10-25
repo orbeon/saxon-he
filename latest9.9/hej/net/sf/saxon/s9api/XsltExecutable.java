@@ -20,6 +20,7 @@ import net.sf.saxon.value.SequenceType;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An XsltExecutable represents the compiled form of a stylesheet.
@@ -185,7 +186,7 @@ public class XsltExecutable {
      * Get the names of the xsl:param elements defined in this stylesheet, with details
      * of each parameter including its required type, and whether it is required or optional
      *
-     * @return a HashMap whose keys are the names of global parameters in the stylesheet,
+     * @return a Map whose keys are the names of global parameters in the stylesheet,
      *         and whose values are {@link ParameterDetails} objects giving information about the
      *         corresponding parameter.
      * @since 9.3
@@ -193,12 +194,9 @@ public class XsltExecutable {
 
     /*@NotNull*/
     public HashMap<QName, ParameterDetails> getGlobalParameters() {
-        Iterable<GlobalParam> globals = preparedStylesheet.getGlobalParameters();
-        if (globals == null) {
-            return new HashMap<QName, ParameterDetails>(1);
-        }
-        HashMap<QName, ParameterDetails> params = new HashMap<QName, ParameterDetails>();
-        for (GlobalParam v : globals) {
+        Map<StructuredQName, GlobalParam> globals = preparedStylesheet.getGlobalParameters();
+        HashMap<QName, ParameterDetails> params = new HashMap<>();
+        for (GlobalParam v : globals.values()) {
             ParameterDetails details = new ParameterDetails(v.getRequiredType(), v.isRequiredParam());
             params.put(new QName(v.getVariableQName()), details);
         }

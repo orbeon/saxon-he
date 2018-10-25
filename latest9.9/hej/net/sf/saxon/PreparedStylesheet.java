@@ -139,15 +139,27 @@ public class PreparedStylesheet extends Executable {
     }
 
     /**
-     * Check that all required parameters have been supplied. Used in XSLT only.
+     * Check that all required parameters have been supplied. Also checks that the supplied
+     * parameters dynamically do not conflict with parameters supplied statically. Used in XSLT only.
      *
-     * @param params the set of parameters that have been supplied (null represents an empty set)
+     * @param params the set of parameters that have been supplied dynamically to the transformer
+     *               (null represents an empty set).
      * @throws XPathException if there is a required parameter for which no value has been supplied
      */
 
     @Override
     public void checkSuppliedParameters(GlobalParameterSet params) throws XPathException {
-        super.checkSuppliedParameters(params);
+        for (Map.Entry<StructuredQName, GlobalParam> entry : getGlobalParameters().entrySet()) {
+            if (entry.getValue().isRequiredParam()) {
+                StructuredQName req = entry.getKey();
+                if (getCompileTimeParams().get(req) == null && (params == null || params.get(req) == null)) {
+                    XPathException err = new XPathException("No value supplied for required parameter " +
+                                                                    req.getDisplayName());
+                    err.setErrorCode(getHostLanguage() == Configuration.XQUERY ? "XPDY0002" : "XTDE0050");
+                    throw err;
+                }
+            }
+        }
         for (StructuredQName name : params.getKeys()) {
             GlobalParam decl = getGlobalParameter(name);
             if (decl != null && decl.isStatic()) {
