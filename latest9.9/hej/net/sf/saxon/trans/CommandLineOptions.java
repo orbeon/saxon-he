@@ -621,7 +621,8 @@ public class CommandLineOptions {
 
 
     /**
-     * Apply XSLT 3.0 static parameters to a compilerInfo
+     * Apply XSLT 3.0 static parameters to a compilerInfo. Actually this sets all parameter values, whether static or dynamic.
+     * This is possible because the stylesheet is compiled for once-only use.
      *
      * @param compiler The XsltCompiler object into which the parameters are copied
      * @throws SaxonApiException if invalid options are found

@@ -9,7 +9,6 @@ package net.sf.saxon;
 
 import net.sf.saxon.expr.instruct.Executable;
 import net.sf.saxon.expr.instruct.GlobalContextRequirement;
-import net.sf.saxon.expr.instruct.GlobalParam;
 import net.sf.saxon.expr.instruct.TerminationException;
 import net.sf.saxon.lib.*;
 import net.sf.saxon.s9api.*;
@@ -74,12 +73,9 @@ public class Transform {
      * <p>This program applies the XSL style sheet in style-file to the source XML document in source-file.</p>
      *
      * @param args List of arguments supplied on operating system command line
-     * @throws java.lang.Exception Indicates that a compile-time or
-     *                             run-time error occurred
      */
 
-    public static void main(String args[])
-            throws java.lang.Exception {
+    public static void main(String args[]) {
         // the real work is delegated to another routine so that it can be used in a subclass
         new Transform().doTransform(args, "java net.sf.saxon.Transform");
     }
@@ -477,14 +473,19 @@ public class Transform {
 
                 value = options.getOptionValue("Tlevel");
                 if (value != null && traceListener instanceof AbstractTraceListener) {
-                    if (value.equals("none")) {
-                        ((AbstractTraceListener)traceListener).setLevelOfDetail(0);
-                    } else if (value.equals("low")) {
-                        ((AbstractTraceListener) traceListener).setLevelOfDetail(1);
-                    } else if (value.equals("normal")) {
-                        ((AbstractTraceListener) traceListener).setLevelOfDetail(2);
-                    } else if (value.equals("high")) {
-                        ((AbstractTraceListener) traceListener).setLevelOfDetail(3);
+                    switch (value) {
+                        case "none":
+                            ((AbstractTraceListener) traceListener).setLevelOfDetail(0);
+                            break;
+                        case "low":
+                            ((AbstractTraceListener) traceListener).setLevelOfDetail(1);
+                            break;
+                        case "normal":
+                            ((AbstractTraceListener) traceListener).setLevelOfDetail(2);
+                            break;
+                        case "high":
+                            ((AbstractTraceListener) traceListener).setLevelOfDetail(3);
+                            break;
                     }
                 }
             }
@@ -501,7 +502,7 @@ public class Transform {
                 processor.setConfigurationProperty(Feature.TRACE_LISTENER, traceListener);
                 processor.setConfigurationProperty(Feature.LINE_NUMBERING, true);
                 compiler.getUnderlyingCompilerInfo().setCodeInjector(new TimingCodeInjector());
-                if (value.length() > 0) {
+                if (!value.isEmpty()) {
                     traceListener.setOutputDestination(
                             new StandardLogger(new File(value)));
                 }
@@ -513,15 +514,20 @@ public class Transform {
                     traceDestination = config.getLogger();
                 }
             } else {
-                if (value.equals("#err")) {
-                    traceDestination = new StandardLogger();
-                } else if (value.equals("#out")) {
-                    traceDestination = new StandardLogger(System.out);
-                } else if (value.equals("#null")) {
-                    traceDestination = null;
-                } else {
-                    traceDestination = new StandardLogger(new File(value));
-                    closeTraceDestination = true;
+                switch (value) {
+                    case "#err":
+                        traceDestination = new StandardLogger();
+                        break;
+                    case "#out":
+                        traceDestination = new StandardLogger(System.out);
+                        break;
+                    case "#null":
+                        traceDestination = null;
+                        break;
+                    default:
+                        traceDestination = new StandardLogger(new File(value));
+                        closeTraceDestination = true;
+                        break;
                 }
             }
 
@@ -626,7 +632,7 @@ public class Transform {
                 CommandLineOptions.loadAdditionalSchemas(config, additionalSchemas);
             }
 
-            List<Source> sources = new ArrayList<Source>();
+            List<Source> sources = new ArrayList<>();
             if (sourceFileName != null) {
                 boolean useSAXSource = sourceParserName != null || dtdValidation;
                 wholeDirectory = CommandLineOptions.loadDocuments(sourceFileName, useURLs, processor, useSAXSource, sources);
@@ -814,13 +820,8 @@ public class Transform {
         } catch (SaxonApiException err) {
             //err.printStackTrace();
             quit(err.getMessage(), 2);
-        } catch (TransformerException err) {
+        } catch (TransformerException | LicenseException | TransformerFactoryConfigurationError err) {
             //err.printStackTrace();
-            quit("Transformation failed: " + err.getMessage(), 2);
-        } catch (TransformerFactoryConfigurationError err) {
-            //err.printStackTrace();
-            quit("Transformation failed: " + err.getMessage(), 2);
-        } catch (LicenseException err) {
             quit("Transformation failed: " + err.getMessage(), 2);
         } catch (Exception err2) {
             err2.printStackTrace();
@@ -1058,13 +1059,6 @@ public class Transform {
         final Xslt30Transformer transformer = sheet.load30();
         final Map<QName, XdmValue> params = new HashMap<>();
         Executable exec = transformer.getUnderlyingController().getExecutable();
-        options.setParams(processor, (qName, value) -> {
-            GlobalParam param = exec.getGlobalParameter(qName.getStructuredQName());
-            if (param != null && !param.isStatic()) {
-                params.put(qName, value);
-            }
-        });
-        transformer.setStylesheetParameters(params);
         transformer.setTraceFunctionDestination(traceDestination);
         String initialMode = options.getOptionValue("im");
         if (initialMode != null) {
