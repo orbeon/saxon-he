@@ -354,6 +354,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
         if ((p0 == StandardNames.XS_STRING ||
                 p0 == StandardNames.XS_ANY_URI ||
                 p0 == StandardNames.XS_UNTYPED_ATOMIC) &&
+                resultWhenEmpty != BooleanValue.TRUE &&
                 getRhsExpression() instanceof Literal &&
                 ((Literal) getRhsExpression()).getValue() instanceof StringValue &&
                 ((StringValue) ((Literal) getRhsExpression()).getValue()).isZeroLength() &&
@@ -377,6 +378,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
         if ((p1 == StandardNames.XS_STRING ||
                 p1 == StandardNames.XS_ANY_URI ||
                 p1 == StandardNames.XS_UNTYPED_ATOMIC) &&
+                resultWhenEmpty != BooleanValue.TRUE &&
                 getLhsExpression() instanceof Literal &&
                 ((Literal) getLhsExpression()).getValue() instanceof StringValue &&
                 ((StringValue) ((Literal) getLhsExpression()).getValue()).isZeroLength() &&
