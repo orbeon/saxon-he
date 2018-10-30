@@ -563,7 +563,7 @@ public class TransformFn extends SystemFunction implements Callable {
     }
 
 
-    public Sequence<? extends Item> call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
         Map<String, Sequence<? extends Item<?>>> options = getDetails().optionDetails.processSuppliedOptions((MapItem) arguments[0].head(), context);
 
         Sequence vendorOptionsValue = options.get("vendor-options");

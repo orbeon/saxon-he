@@ -14,7 +14,6 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.tree.iter.GroundedIterator;
 import net.sf.saxon.tree.iter.LookaheadIterator;
-import net.sf.saxon.tree.iter.UnfailingIterator;
 import net.sf.saxon.tree.wrapper.SiblingCountingNode;
 import net.sf.saxon.value.SequenceExtent;
 
@@ -126,9 +125,9 @@ public class FocusTrackingIterator<T extends Item<?>>
                 last = ((LastPositionFinder)base).getLength();
             }
             if (last == -1) {
-                GroundedValue residue = SequenceExtent.makeResidue(base);
+                GroundedValue<T> residue = SequenceExtent.makeResidue(base);
                 last = pos + residue.getLength();
-                base = (UnfailingIterator<T>)residue.iterate();
+                base = residue.iterate();
             }
         }
         return last;

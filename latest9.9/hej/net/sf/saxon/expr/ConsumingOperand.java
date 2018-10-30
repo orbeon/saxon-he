@@ -124,11 +124,11 @@ public class ConsumingOperand extends UnaryExpression {
      * @throws net.sf.saxon.trans.XPathException if the variable is undefined
      */
 
-    public Sequence evaluate(XPathContext c) throws XPathException {
+    public Sequence<? extends Item<?>> evaluate(XPathContext c) throws XPathException {
         if (c.getStackFrame().holdsDynamicValue()) {
             return c.getStackFrame().popDynamicValue();
         } else {
-            return new LazySequence(getBaseExpression().iterate(c));
+            return new LazySequence<>(getBaseExpression().iterate(c));
         }
     }
 
@@ -141,7 +141,7 @@ public class ConsumingOperand extends UnaryExpression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         return evaluate(context).iterate();
     }
 

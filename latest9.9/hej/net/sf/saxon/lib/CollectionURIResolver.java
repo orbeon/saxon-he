@@ -57,7 +57,7 @@ public interface CollectionURIResolver {
      */
 
 
-    SequenceIterator<? extends Item> resolve(String href, String base, XPathContext context) throws XPathException;
+    SequenceIterator<? extends Item<?>> resolve(String href, String base, XPathContext context) throws XPathException;
 
 
 }

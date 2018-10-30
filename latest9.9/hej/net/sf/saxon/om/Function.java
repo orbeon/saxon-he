@@ -155,7 +155,7 @@ public interface Function<T extends Item<?>> extends Item<T>, Callable, Grounded
     }
 
     @SafeVarargs
-    static Sequence<? extends Item>[] argumentArray(Sequence<? extends Item>... args) {
+    static Sequence<? extends Item<?>>[] argumentArray(Sequence<? extends Item<?>>... args) {
         return args;
     }
 }

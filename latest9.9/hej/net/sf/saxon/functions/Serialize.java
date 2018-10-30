@@ -451,7 +451,7 @@ public class Serialize extends SystemFunction implements Callable {
             arguments.length == 1 ? null : arguments[1].head(), context);
     }
 
-    private StringValue evalSerialize(SequenceIterator<? extends Item> iter, Item param, XPathContext context) throws XPathException {
+    private StringValue evalSerialize(SequenceIterator<? extends Item<?>> iter, Item param, XPathContext context) throws XPathException {
 
         SerializationProperties params = null;
 

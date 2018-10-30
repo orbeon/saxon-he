@@ -161,7 +161,7 @@ public class ErrorExpression extends Expression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         evaluateItem(context);
         return null;    // to fool the compiler
     }

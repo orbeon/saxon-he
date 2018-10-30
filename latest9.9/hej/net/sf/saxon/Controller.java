@@ -86,7 +86,7 @@ public class Controller implements ContextOriginator {
     private Configuration config;
     protected Executable executable;
 
-    protected Item globalContextItem;
+    protected Item<?> globalContextItem;
     private boolean globalContextItemPreset;
     private Map<PackageData, Bindery> binderies;
     private GlobalParameterSet globalParameters;

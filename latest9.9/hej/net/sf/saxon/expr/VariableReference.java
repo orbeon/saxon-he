@@ -294,7 +294,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      * @param properties    additional static properties of the variable's initializer
      */
 
-    public void refineVariableType(ItemType type, int cardinality, /*@Nullable*/ GroundedValue constantValue, int properties) {
+    public void refineVariableType(ItemType type, int cardinality, GroundedValue<? extends Item<?>> constantValue, int properties) {
         TypeHierarchy th = getConfiguration().getTypeHierarchy();
         ItemType oldItemType = getItemType();
         ItemType newItemType = oldItemType;
@@ -551,9 +551,9 @@ public abstract class VariableReference extends Expression implements BindingRef
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext c) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext c) throws XPathException {
         try {
-            Sequence<? extends Item> actual = evaluateVariable(c);
+            Sequence<? extends Item<?>> actual = evaluateVariable(c);
             assert actual != null;
             return actual.iterate();
         } catch (XPathException err) {
@@ -587,7 +587,7 @@ public abstract class VariableReference extends Expression implements BindingRef
 
     public void process(XPathContext c) throws XPathException {
         try {
-            SequenceIterator<? extends Item> iter = evaluateVariable(c).iterate();
+            SequenceIterator<? extends Item<?>> iter = evaluateVariable(c).iterate();
             Receiver out = c.getReceiver();
             Location loc = getLocation();
             iter.forEachOrFail(item -> out.append(item, loc, ReceiverOptions.ALL_NAMESPACES));
@@ -606,7 +606,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      */
 
     /*@NotNull*/
-    public Sequence<? extends Item> evaluateVariable(XPathContext c) throws XPathException {
+    public Sequence<? extends Item<?>> evaluateVariable(XPathContext c) throws XPathException {
         try {
             return binding.evaluateVariable(c);
         } catch (NullPointerException err) {

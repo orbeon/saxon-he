@@ -470,7 +470,7 @@ public abstract class BuiltInFunctionSet implements FunctionLibrary {
          * @return this entry (to allow chaining)
          */
 
-        public Entry arg(int a, ItemType type, int options, /*@Nullable*/ Sequence resultIfEmpty) {
+        public Entry arg(int a, ItemType type, int options, Sequence<? extends Item<?>> resultIfEmpty) {
             int cardinality = options & StaticProperty.CARDINALITY_MASK;
             OperandUsage usage = OperandUsage.NAVIGATION;
             if ((options & ABS) != 0) {

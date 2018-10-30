@@ -28,8 +28,8 @@ import java.util.List;
 public class ArraySort extends SystemFunction {
 
     private static class MemberToBeSorted{
-        public GroundedValue<? extends Item> value;
-        public GroundedValue<? extends Item> sortKey;
+        public GroundedValue<? extends Item<?>> value;
+        public GroundedValue<? extends Item<?>> sortKey;
         int originalPosition;
     }
 
@@ -95,7 +95,7 @@ public class ArraySort extends SystemFunction {
             err.setErrorCode("XPTY0004");
             throw err;
         }
-        List<GroundedValue<? extends Item>> outputList = new ArrayList<>(array.arrayLength());
+        List<GroundedValue<? extends Item<?>>> outputList = new ArrayList<>(array.arrayLength());
         for (MemberToBeSorted member: inputList){
             outputList.add(member.value);
         }

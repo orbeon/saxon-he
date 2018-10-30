@@ -224,7 +224,7 @@ public class RangeExpression extends BinaryExpression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         IntegerValue av1 = (IntegerValue) getLhsExpression().evaluateItem(context);
         IntegerValue av2 = (IntegerValue) getRhsExpression().evaluateItem(context);
         return RangeIterator.makeRangeIterator(av1, av2);

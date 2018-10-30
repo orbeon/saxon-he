@@ -180,7 +180,7 @@ public abstract class SimpleExpression extends Expression implements Callable {
      */
 
     /*@NotNull*/
-    public final SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public final SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         return call(context, evaluateArguments(context)).iterate();
     }
 
@@ -192,7 +192,7 @@ public abstract class SimpleExpression extends Expression implements Callable {
      */
 
     public final void process(XPathContext context) throws XPathException {
-        SequenceIterator<? extends Item> iter = call(context, evaluateArguments(context)).iterate();
+        SequenceIterator<? extends Item<?>> iter = call(context, evaluateArguments(context)).iterate();
         iter.forEachOrFail(
                 it -> context.getReceiver().append(it, getLocation(), ReceiverOptions.ALL_NAMESPACES)
         );

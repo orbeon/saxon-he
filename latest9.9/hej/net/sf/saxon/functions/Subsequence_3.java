@@ -53,7 +53,7 @@ public class Subsequence_3 extends SystemFunction implements Callable {
      * @return the result of the function call
      * @throws XPathException if evaluation of the arguments fails
      */
-    public Sequence<? extends Item> call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
         return SequenceTool.toLazySequence(subSequence(
                 arguments[0].iterate(),
                 (NumericValue) arguments[1].head(),
@@ -62,7 +62,7 @@ public class Subsequence_3 extends SystemFunction implements Callable {
     }
 
 
-    public static SequenceIterator<? extends Item> subSequence(
+    public static SequenceIterator<? extends Item<?>> subSequence(
             SequenceIterator seq, NumericValue startVal, NumericValue lengthVal, XPathContext context)
             throws XPathException {
 

@@ -240,8 +240,8 @@ public abstract class SimpleNodeConstructor extends Instruction {
      * Evaluate as an expression.
      */
 
-    public Item evaluateItem(XPathContext context) throws XPathException {
-        Item contentItem = getSelect().evaluateItem(context);
+    public Item<?> evaluateItem(XPathContext context) throws XPathException {
+        Item<?> contentItem = getSelect().evaluateItem(context);
         String content;
         if (contentItem == null) {
             content = "";
@@ -284,7 +284,7 @@ public abstract class SimpleNodeConstructor extends Instruction {
     }
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         return SingletonIterator.makeIterator(evaluateItem(context));
     }
 

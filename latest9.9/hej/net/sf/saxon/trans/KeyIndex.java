@@ -159,7 +159,7 @@ public class KeyIndex {
         // Evaluate the "use" expression against this context node
 
         Expression use = keydef.getUse();
-        SequenceIterator<? extends Item> useval = use.iterate(xc);
+        SequenceIterator<? extends Item<?>> useval = use.iterate(xc);
         if (keydef.isComposite()) {
             List<AtomicMatchKey> amks = new ArrayList<>(4);
             useval.forEachOrFail(

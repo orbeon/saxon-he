@@ -35,8 +35,8 @@ public class MergeGroupingIterator implements GroupIterator, LookaheadIterator<I
     private SequenceIterator baseItr;
     private ObjectValue<ItemWithMergeKeys> currenti = null;
     private ObjectValue<ItemWithMergeKeys> next;
-    private List<Item> currentMembers;
-    private Map<String, List<Item>> currentSourceMembers;
+    private List<Item<?>> currentMembers;
+    private Map<String, List<Item<?>>> currentSourceMembers;
     private ItemOrderComparer comparer;
     private int position = 0;
     List<AtomicValue> compositeMergeKey;
@@ -75,7 +75,7 @@ public class MergeGroupingIterator implements GroupIterator, LookaheadIterator<I
         String source = currenti.getObject().sourceName;
         currentMembers.add(currentItem);
         if (source != null) {
-            List<Item> list = new ArrayList<>();
+            List<Item<?>> list = new ArrayList<>();
             list.add(currentItem);
             currentSourceMembers.put(source, list);
         }
@@ -93,7 +93,7 @@ public class MergeGroupingIterator implements GroupIterator, LookaheadIterator<I
                     source = nextCandidate.getObject().sourceName;
                     currentMembers.add(currentItem);
                     if (source != null) {
-                        List<Item> list = currentSourceMembers.computeIfAbsent(source, k -> new ArrayList<>());
+                        List<Item<?>> list = currentSourceMembers.computeIfAbsent(source, k -> new ArrayList<>());
                         list.add(currentItem);
                     }
                 } else if (c > 0) {
@@ -149,12 +149,12 @@ public class MergeGroupingIterator implements GroupIterator, LookaheadIterator<I
         return new AtomicArray(compositeMergeKey);
     }
 
-    public SequenceIterator<? extends Item> iterateCurrentGroup() {
+    public SequenceIterator<? extends Item<?>> iterateCurrentGroup() {
         return new ListIterator<>(currentMembers);
     }
 
-    public SequenceIterator<? extends Item> iterateCurrentGroup(String source) {
-        List<Item> sourceMembers = currentSourceMembers.get(source);
+    public SequenceIterator<? extends Item<?>> iterateCurrentGroup(String source) {
+        List<Item<?>> sourceMembers = currentSourceMembers.get(source);
         if (sourceMembers == null) {
             return EmptyIterator.emptyIterator();
         } else {
@@ -165,7 +165,7 @@ public class MergeGroupingIterator implements GroupIterator, LookaheadIterator<I
     //#if EE==true
     public class ManualMergeGroupingIterator extends ManualGroupIterator {
 
-        List<Item> currentGroup = currentMembers;
+        List<Item<?>> currentGroup = currentMembers;
         AtomicSequence currentGroupingKey = getCurrentGroupingKey();
 
         public ManualMergeGroupingIterator() {
@@ -173,7 +173,7 @@ public class MergeGroupingIterator implements GroupIterator, LookaheadIterator<I
             setLastPositionFinder(() -> currentMembers.size());
         }
 
-        public SequenceIterator<? extends Item> iterateCurrentGroup() {
+        public SequenceIterator<? extends Item<?>> iterateCurrentGroup() {
             return new ListIterator<>(currentGroup);
         }
 

@@ -157,7 +157,7 @@ public class EarlyEvaluationContext implements XPathContext {
      *         (which means the context item, position, and size are undefined).
      */
 
-    public FocusTrackingIterator<? extends Item> getCurrentIterator() {
+    public FocusTrackingIterator<? extends Item<?>> getCurrentIterator() {
         return null;
     }
 
@@ -332,7 +332,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * Set a new sequence iterator.
      */
 
-    public void setCurrentIterator(FocusIterator<? extends Item> iter) {
+    public void setCurrentIterator(FocusIterator<? extends Item<?>> iter) {
         notAllowed();
     }
 

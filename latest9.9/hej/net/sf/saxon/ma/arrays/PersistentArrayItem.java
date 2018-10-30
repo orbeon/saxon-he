@@ -23,16 +23,16 @@ import java.util.Arrays;
 
 public class PersistentArrayItem extends AbstractArrayItem {
 
-    private TreePVector<GroundedValue<? extends Item>> vector;
+    private TreePVector<GroundedValue<? extends Item<?>>> vector;
 
     public PersistentArrayItem(ArrayItem other) {
         this.vector = TreePVector.empty();
-        for (GroundedValue<? extends Item> member : other.members()) {
+        for (GroundedValue<? extends Item<?>> member : other.members()) {
             vector = vector.plus(member);
         }
     }
 
-    private PersistentArrayItem(TreePVector<GroundedValue<? extends Item>> vector) {
+    private PersistentArrayItem(TreePVector<GroundedValue<? extends Item<?>>> vector) {
         this.vector = vector;
     }
     
@@ -44,7 +44,7 @@ public class PersistentArrayItem extends AbstractArrayItem {
      * @throws XPathException if the index is out of range
      */
     @Override
-    public GroundedValue<? extends Item> get(int index) throws XPathException {
+    public GroundedValue<? extends Item<?>> get(int index) throws XPathException {
         try {
             return vector.get(index);
         } catch (IndexOutOfBoundsException e) {
@@ -63,7 +63,7 @@ public class PersistentArrayItem extends AbstractArrayItem {
     @Override
     public ArrayItem put(int index, GroundedValue newValue) throws XPathException {
         try {
-            TreePVector<GroundedValue<? extends Item>> v2 = vector.with(index, newValue);
+            TreePVector<GroundedValue<? extends Item<?>>> v2 = vector.with(index, newValue);
             return v2 == vector ? this : new PersistentArrayItem(v2);
         } catch (IndexOutOfBoundsException e) {
             throw new XPathException(e.getMessage(), "FOAY0001");
@@ -79,8 +79,8 @@ public class PersistentArrayItem extends AbstractArrayItem {
      * @throws IndexOutOfBoundsException if position is out of range
      */
     @Override
-    public ArrayItem insert(int position, GroundedValue<? extends Item> member) {
-        TreePVector<GroundedValue<? extends Item>> v2 = vector.plus(position, member);
+    public ArrayItem insert(int position, GroundedValue<? extends Item<?>> member) {
+        TreePVector<GroundedValue<? extends Item<?>>> v2 = vector.plus(position, member);
         return new PersistentArrayItem(v2);
     }
 
@@ -112,7 +112,7 @@ public class PersistentArrayItem extends AbstractArrayItem {
      * @return an iterator over the members of the array
      */
     @Override
-    public Iterable<GroundedValue<? extends Item>> members() {
+    public Iterable<GroundedValue<? extends Item<?>>> members() {
         return vector;
     }
 
@@ -141,13 +141,13 @@ public class PersistentArrayItem extends AbstractArrayItem {
         if (other.arrayLength() == 0) {
             return this;
         }
-        TreePVector<GroundedValue<? extends Item>> v1;
+        TreePVector<GroundedValue<? extends Item<?>>> v1;
         if (other instanceof PersistentArrayItem) {
             v1 = ((PersistentArrayItem)other).vector;
         } else {
             v1 = new PersistentArrayItem(other).vector;
         }
-        TreePVector<GroundedValue<? extends Item>> v2 = vector.plusAll(v1);
+        TreePVector<GroundedValue<? extends Item<?>>> v2 = vector.plusAll(v1);
         return new PersistentArrayItem(v2);
     }
 
@@ -161,7 +161,7 @@ public class PersistentArrayItem extends AbstractArrayItem {
     @Override
     public ArrayItem remove(int index) {
         //try {
-            TreePVector<GroundedValue<? extends Item>> v2 = vector.minus(index);
+            TreePVector<GroundedValue<? extends Item<?>>> v2 = vector.minus(index);
             return v2 == vector ? this : new PersistentArrayItem(v2);
 //        } catch (IndexOutOfBoundsException e) {
 //            throw new XPathException(e.getMessage(), "FOAR0001");
@@ -184,7 +184,7 @@ public class PersistentArrayItem extends AbstractArrayItem {
             p[i++] = ii.next();
         }
         Arrays.sort(p);
-        TreePVector<GroundedValue<? extends Item>> v2 = vector;
+        TreePVector<GroundedValue<? extends Item<?>>> v2 = vector;
         for (int j=p.length-1; j>=0; j--) {
             v2 = v2.minus(p[j]);
         }

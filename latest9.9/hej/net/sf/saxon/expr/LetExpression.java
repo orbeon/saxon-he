@@ -498,11 +498,11 @@ public class LetExpression extends Assignation implements TailCallReturner {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         // minimize stack consumption by evaluating nested LET expressions iteratively
         LetExpression let = this;
         while (true) {
-            Sequence val = let.eval(context);
+            Sequence<? extends Item<?>> val = let.eval(context);
             context.setLocalVariable(let.getLocalSlotNumber(), val);
             if (let.getAction() instanceof LetExpression) {
                 let = (LetExpression) let.getAction();
@@ -521,14 +521,14 @@ public class LetExpression extends Assignation implements TailCallReturner {
      * @return the result of evaluating the expression that is bound to the variable
      */
 
-    public Sequence eval(XPathContext context) throws XPathException {
+    public Sequence<? extends Item<?>> eval(XPathContext context) throws XPathException {
         if (evaluator == null) {
             setEvaluator(ExpressionTool.lazyEvaluator(getSequence(), getNominalReferenceCount() > 1));
         }
         try {
             int savedOutputState = context.getTemporaryOutputState();
             context.setTemporaryOutputState(StandardNames.XSL_VARIABLE);
-            Sequence result = evaluator.evaluate(getSequence(), context);
+            Sequence<? extends Item<?>> result = evaluator.evaluate(getSequence(), context);
             context.setTemporaryOutputState(savedOutputState);
             return result;
         } catch (ClassCastException e) {
@@ -536,7 +536,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
             assert false;
             int savedOutputState = context.getTemporaryOutputState();
             context.setTemporaryOutputState(StandardNames.XSL_VARIABLE);
-            Sequence result = Evaluator.EAGER_SEQUENCE.evaluate(getSequence(), context);
+            Sequence<? extends Item<?>> result = Evaluator.EAGER_SEQUENCE.evaluate(getSequence(), context);
             context.setTemporaryOutputState(savedOutputState);
             return result;
         }
@@ -550,7 +550,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
         // minimize stack consumption by evaluating nested LET expressions iteratively
         LetExpression let = this;
         while (true) {
-            Sequence val = let.eval(context);
+            Sequence<? extends Item<?>> val = let.eval(context);
             context.setLocalVariable(let.getLocalSlotNumber(), val);
             if (let.getAction() instanceof LetExpression) {
                 let = (LetExpression) let.getAction();
@@ -577,7 +577,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
         // minimize stack consumption by evaluating nested LET expressions iteratively
         LetExpression let = this;
         while (true) {
-            Sequence val = let.eval(context);
+            Sequence<? extends Item<?>> val = let.eval(context);
             context.setLocalVariable(let.getLocalSlotNumber(), val);
             if (let.getAction() instanceof LetExpression) {
                 let = (LetExpression) let.getAction();
@@ -597,7 +597,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
         // minimize stack consumption by evaluating nested LET expressions iteratively
         LetExpression let = this;
         while (true) {
-            Sequence val = let.eval(context);
+            Sequence<? extends Item<?>> val = let.eval(context);
             context.setLocalVariable(let.getLocalSlotNumber(), val);
             if (let.getAction() instanceof LetExpression) {
                 let = (LetExpression) let.getAction();
@@ -626,7 +626,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      * inference rules defined in the XSLT 3.0 specification.
      *
      * @return the static item type of the expression according to the XSLT 3.0 defined rules
-     * @param contextItemType
+     * @param contextItemType the type of the context item
      */
     @Override
     public UType getStaticUType(UType contextItemType) {

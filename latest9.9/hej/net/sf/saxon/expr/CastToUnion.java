@@ -239,7 +239,7 @@ public class CastToUnion extends UnaryExpression {
      * Evaluate the expression
      */
 
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         ConversionRules rules = context.getConfiguration().getConversionRules();
         AtomicValue value = (AtomicValue) getBaseExpression().evaluateItem(context);
         if (value == null) {

@@ -118,7 +118,7 @@ public class CallableFunction extends AbstractFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs within the function
      */
-    public Sequence<? extends Item> call(XPathContext context, Sequence[] args) throws XPathException {
+    public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] args) throws XPathException {
         return callable.call(context, args);
     }
 

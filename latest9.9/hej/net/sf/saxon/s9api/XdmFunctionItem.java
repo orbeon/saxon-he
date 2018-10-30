@@ -152,7 +152,7 @@ public class XdmFunctionItem extends XdmItem {
         try {
             Function fi = (Function) getUnderlyingValue();
             FunctionItemType type = fi.getFunctionItemType();
-            Sequence<? extends Item>[] argVals = new Sequence[arguments.length];
+            Sequence<? extends Item<?>>[] argVals = new Sequence[arguments.length];
             TypeHierarchy th = processor.getUnderlyingConfiguration().getTypeHierarchy();
             for (int i = 0; i < arguments.length; i++) {
                 net.sf.saxon.value.SequenceType required = type.getArgumentTypes()[i];
@@ -168,7 +168,7 @@ public class XdmFunctionItem extends XdmItem {
             XPathContext context = controller.newXPathContext();
             context = fi.makeNewContext(context);
 
-            Sequence<? extends Item> result = fi.call(context, argVals);
+            Sequence<? extends Item<?>> result = fi.call(context, argVals);
             if (!fi.isTrustedResultType()) {
                 result = result.materialize();
                 net.sf.saxon.value.SequenceType required = type.getResultType();

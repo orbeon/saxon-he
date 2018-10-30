@@ -132,7 +132,7 @@ public interface XPathContext {
      *             to the current iterator.
      */
 
-    void setCurrentIterator(FocusIterator<? extends Item> iter);
+    void setCurrentIterator(FocusIterator<? extends Item<?>> iter);
 
     /**
      * Get the current iterator.
@@ -142,7 +142,7 @@ public interface XPathContext {
      *         (which means the context item, position, and size are undefined).
      */
 
-    FocusIterator<? extends Item> getCurrentIterator();
+    FocusIterator<? extends Item<?>> getCurrentIterator();
 
     /**
      * Get the context item

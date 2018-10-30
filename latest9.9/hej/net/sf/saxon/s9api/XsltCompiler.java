@@ -122,7 +122,7 @@ public class XsltCompiler {
     public void setParameter(QName name, XdmValue value) {
         try {
             compilerInfo.setParameter(name.getStructuredQName(),
-                                      ((Sequence<? extends Item>) value.getUnderlyingValue()).materialize());
+                                      ((Sequence<? extends Item<?>>) value.getUnderlyingValue()).materialize());
         } catch (XPathException e) {
             throw new SaxonApiUncheckedException(e);
         }

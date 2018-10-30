@@ -672,12 +672,12 @@ public class GlobalVariable extends Actor
      * Evaluate the variable
      */
 
-    public GroundedValue<? extends Item> evaluateVariable(XPathContext context) throws XPathException {
+    public GroundedValue<? extends Item<?>> evaluateVariable(XPathContext context) throws XPathException {
         final Controller controller = context.getController();
         assert controller != null;
         final Bindery b = controller.getBindery(getPackageData());
 
-        final GroundedValue<? extends Item> v = b.getGlobalVariable(getBinderySlotNumber());
+        final GroundedValue<? extends Item<?>> v = b.getGlobalVariable(getBinderySlotNumber());
 
         if (v != null) {
             return v;

@@ -825,7 +825,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
     }
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         final Controller controller = context.getController();
         assert controller != null;
         if (schemaType == null /*&& copyNamespaces*/ && !copyForUpdate) {

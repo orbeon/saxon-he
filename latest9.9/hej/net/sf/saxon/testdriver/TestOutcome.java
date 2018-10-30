@@ -815,7 +815,7 @@ public class TestOutcome {
                 flag |= DeepEqual.WARNING_IF_FALSE;
             }
             try {
-                SequenceIterator<? extends Item> iter0;
+                SequenceIterator<? extends Item<?>> iter0;
                 if (result == null) {
                     System.err.println("Result value is null");
                     return false;
@@ -830,10 +830,10 @@ public class TestOutcome {
                 } else {
                     iter0 = value.getUnderlyingValue().iterate();
                 }
-                GroundedValue<? extends Item> val0 = iter0.materialize();
-                SequenceIterator<? extends Item> iter1 = expected.axisIterator(Axis.CHILD).next()
+                GroundedValue<? extends Item<?>> val0 = iter0.materialize();
+                SequenceIterator<? extends Item<?>> iter1 = expected.axisIterator(Axis.CHILD).next()
                         .getUnderlyingValue().iterateAxis(AxisInfo.CHILD);
-                GroundedValue<? extends Item> val1 = iter1.materialize();
+                GroundedValue<? extends Item<?>> val1 = iter1.materialize();
                 boolean success = DeepEqual.deepEqual(
                     val0.iterate(), val1.iterate(),
                     new GenericAtomicComparer(CodepointCollator.getInstance(), null),

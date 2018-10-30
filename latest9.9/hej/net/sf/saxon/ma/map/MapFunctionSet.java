@@ -268,20 +268,20 @@ public class MapFunctionSet extends BuiltInFunctionSet {
     public static class MapFind extends SystemFunction {
 
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
-            List<GroundedValue<? extends Item>> result = new ArrayList<>();
+            List<GroundedValue<? extends Item<?>>> result = new ArrayList<>();
             AtomicValue key = (AtomicValue) arguments[1].head();
             processSequence(arguments[0], key, result);
             return new SimpleArrayItem(result);
         }
 
-        private void processSequence(Sequence in, AtomicValue key, List<GroundedValue<? extends Item>> result) throws XPathException {
+        private void processSequence(Sequence in, AtomicValue key, List<GroundedValue<? extends Item<?>>> result) throws XPathException {
             in.iterate().forEachOrFail(item -> {
                 if (item instanceof ArrayItem) {
                     for (Sequence sequence : ((ArrayItem) item).members()) {
                         processSequence(sequence, key, result);
                     }
                 } else if (item instanceof MapItem) {
-                    GroundedValue<? extends Item> value = ((MapItem) item).get(key);
+                    GroundedValue<? extends Item<?>> value = ((MapItem) item).get(key);
                     if (value != null) {
                         result.add(value);
                     }
@@ -456,7 +456,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
                 MapItem next;
                 while ((next = (MapItem) iter.next()) != null) {
                     for (KeyValuePair pair : next.keyValuePairs()) {
-                        Sequence<? extends Item> existing = baseMap.get(pair.key);
+                        Sequence<? extends Item<?>> existing = baseMap.get(pair.key);
                         if (existing != null) {
                             switch (duplicates) {
                                 case "use-first":
@@ -522,7 +522,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
             }
 
             AtomicValue key = (AtomicValue) arguments[1].head();
-            GroundedValue<? extends Item> value = arguments[2].materialize();
+            GroundedValue<? extends Item<?>> value = arguments[2].materialize();
             KeyValuePair pair = new KeyValuePair(key, value);
             return ((HashTrieMap) baseMap).addEntry(pair.key, pair.value);
         }

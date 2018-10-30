@@ -218,7 +218,7 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
             StructuredQName name = param.getKey().getStructuredQName();
             try {
                 globalParameterSet.put(name,
-                                       ((Sequence<? extends Item>) param.getValue().getUnderlyingValue()).materialize());
+                                       ((Sequence<? extends Item<?>>) param.getValue().getUnderlyingValue()).materialize());
             } catch (XPathException e) {
                 throw new SaxonApiException(e);
             }
@@ -570,7 +570,7 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
             XPathContextMajor context = controller.newXPathContext();
             context.setCurrentComponent(f);
             context.setTemporaryOutputState(StandardNames.XSL_FUNCTION);
-            Sequence<? extends Item> result = uf.call(context, vr);
+            Sequence<? extends Item<?>> result = uf.call(context, vr);
             result = result.materialize();
             return XdmValue.wrap(result);
         } catch (XPathException e) {

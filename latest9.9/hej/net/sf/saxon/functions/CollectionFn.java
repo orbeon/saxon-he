@@ -172,7 +172,7 @@ public class CollectionFn extends SystemFunction implements Callable {
      * @throws XPathException if a dynamic error occurs
      */
 
-    public Sequence<? extends Item> call(final XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<? extends Item<?>> call(final XPathContext context, Sequence[] arguments) throws XPathException {
         String href;
         if (getArity() == 0) {
             // No arguments supplied: this gets the default collection
@@ -207,7 +207,7 @@ public class CollectionFn extends SystemFunction implements Callable {
             }
         }
 
-        GroundedValue<? extends Item> cachedCollection = (GroundedValue<? extends Item>)context.getController().getUserData("saxon:collections", collectionKey);
+        GroundedValue<? extends Item<?>> cachedCollection = (GroundedValue<? extends Item<?>>)context.getController().getUserData("saxon:collections", collectionKey);
         if (cachedCollection != null) {
             return cachedCollection;
         }

@@ -23,7 +23,7 @@ import net.sf.saxon.value.StringValue;
 /**
  * A compiled xsl:where-populated instruction (formerly xsl:conditional-content).
  */
-public class WherePopulated extends UnaryExpression implements ItemMappingFunction {
+public class WherePopulated extends UnaryExpression implements ItemMappingFunction<Item<?>, Item<?>> {
 
 
     /**
@@ -89,7 +89,7 @@ public class WherePopulated extends UnaryExpression implements ItemMappingFuncti
      *                                           expression
      */
     @Override
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         return new ItemMappingIterator(getBaseExpression().iterate(context), this);
     }
 

@@ -228,7 +228,7 @@ public class CastToList extends UnaryExpression {
      * Evaluate the expression
      */
 
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         AtomicValue value = (AtomicValue) getBaseExpression().evaluateItem(context);
         if (value == null) {
             if (allowEmpty) {

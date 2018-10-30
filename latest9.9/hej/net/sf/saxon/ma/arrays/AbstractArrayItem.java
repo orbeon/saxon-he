@@ -155,7 +155,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
      * @throws XPathException if a dynamic error occurs within the function
      */
 
-    public GroundedValue<? extends Item> call(XPathContext context, Sequence[] args) throws XPathException {
+    public GroundedValue<? extends Item<?>> call(XPathContext context, Sequence[] args) throws XPathException {
         IntegerValue subscript = (IntegerValue) args[0].head();
         return get(ArrayFunctionSet.checkSubscript(subscript) - 1);
     }

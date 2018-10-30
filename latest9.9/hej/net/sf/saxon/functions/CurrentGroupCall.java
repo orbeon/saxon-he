@@ -188,7 +188,7 @@ public class CurrentGroupCall extends Expression implements Callable {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext c) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext c) throws XPathException {
         GroupIterator gi = c.getCurrentGroupIterator();
         if (gi == null) {
             XPathException err = new XPathException("There is no current group", "XTDE1061");
@@ -218,7 +218,7 @@ public class CurrentGroupCall extends Expression implements Callable {
      * of the callee to ensure that the type of result conforms to the expected result type.
      * @throws XPathException if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence<? extends Item> call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
         return SequenceTool.toLazySequence(iterate(context));
     }
 

@@ -299,7 +299,7 @@ public class LookupExpression extends BinaryExpression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(final XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(final XPathContext context) throws XPathException {
         Configuration config = context.getConfiguration();
         if (isArrayLookup) {
             if (isSingleContainer && isSingleEntry) {
@@ -307,15 +307,15 @@ public class LookupExpression extends BinaryExpression {
                 IntegerValue subscript = (IntegerValue) getRhsExpression().evaluateItem(context);
                 return array.get((int) subscript.longValue() - 1).iterate();
             } else if (isSingleEntry) {
-                SequenceIterator<? extends Item> baseIterator = getLhsExpression().iterate(context);
+                SequenceIterator<? extends Item<?>> baseIterator = getLhsExpression().iterate(context);
                 int subscript = (int) ((IntegerValue) getRhsExpression().evaluateItem(context)).longValue() - 1;
                 return new MappingIterator<>(baseIterator,
                                            baseItem -> ((ArrayItem) baseItem).get(subscript).iterate());
             } else {
-                SequenceIterator<? extends Item> baseIterator = getLhsExpression().iterate(context);
-                GroundedValue<? extends Item> rhs = getRhsExpression().iterate(context).materialize();
+                SequenceIterator<? extends Item<?>> baseIterator = getLhsExpression().iterate(context);
+                GroundedValue<? extends Item<?>> rhs = getRhsExpression().iterate(context).materialize();
                 return new MappingIterator<>(baseIterator, baseItem -> new MappingIterator<>(
-                        (SequenceIterator<? extends Item>) rhs.iterate(),
+                        (SequenceIterator<? extends Item<?>>) rhs.iterate(),
                         index -> ((ArrayItem) baseItem).get((int) ((IntegerValue) index).longValue() - 1).iterate()));
             }
         } else if (isMapLookup) {
@@ -325,19 +325,19 @@ public class LookupExpression extends BinaryExpression {
                 GroundedValue value = map.get(key);
                 return value == null ? EmptyIterator.emptyIterator() : value.iterate();
             } else if (isSingleEntry) {
-                SequenceIterator<? extends Item> baseIterator = getLhsExpression().iterate(context);
+                SequenceIterator<? extends Item<?>> baseIterator = getLhsExpression().iterate(context);
                 AtomicValue key = (AtomicValue) getRhsExpression().evaluateItem(context);
                 return new MappingIterator<>(baseIterator, baseItem -> {
-                    GroundedValue<? extends Item> value = ((MapItem) baseItem).get(key);
+                    GroundedValue<? extends Item<?>> value = ((MapItem) baseItem).get(key);
                     return value == null ? EmptyIterator.emptyIterator() : value.iterate();
                 });
             } else {
-                SequenceIterator<? extends Item> baseIterator = getLhsExpression().iterate(context);
-                GroundedValue<? extends Item> rhs = getRhsExpression().iterate(context).materialize();
+                SequenceIterator<? extends Item<?>> baseIterator = getLhsExpression().iterate(context);
+                GroundedValue<? extends Item<?>> rhs = getRhsExpression().iterate(context).materialize();
                 return new MappingIterator<>(
                         baseIterator,
                         baseItem -> new MappingIterator<>(rhs.iterate(), index -> {
-                            GroundedValue<? extends Item> value = ((MapItem) baseItem).get((AtomicValue) index);
+                            GroundedValue<? extends Item<?>> value = ((MapItem) baseItem).get((AtomicValue) index);
                             return value == null ? EmptyIterator.emptyIterator() : value.iterate();
                         }));
             }
@@ -354,7 +354,7 @@ public class LookupExpression extends BinaryExpression {
                 if (baseItem instanceof ArrayItem) {
                     MappingFunction<Item<?>, Item<?>> arrayAccess = index -> {
                         if (index instanceof IntegerValue) {
-                            GroundedValue<? extends Item> member = ((ArrayItem) baseItem).get((int) ((IntegerValue) index).longValue() - 1);
+                            GroundedValue<? extends Item<?>> member = ((ArrayItem) baseItem).get((int) ((IntegerValue) index).longValue() - 1);
                             return member.iterate();
                         } else {
                             XPathException exception = new XPathException(

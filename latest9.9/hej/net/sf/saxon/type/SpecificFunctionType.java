@@ -395,7 +395,7 @@ public class SpecificFunctionType extends AnyFunctionType {
                                 "; an array can only be supplied for a function that expects an integer";
                         return Optional.of(s);
                     } else {
-                        for (GroundedValue member : (ArrayItem) item) {
+                        for (GroundedValue<? extends Item<?>> member : (ArrayItem) item) {
                             try {
                                 if (!resultType.matches(member, th)) {
                                     String s = "The supplied array contains an entry (" + Err.depictSequence(member) +

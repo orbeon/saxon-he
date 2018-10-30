@@ -177,7 +177,7 @@ public class SuppliedParameterReference extends Expression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         return evaluateVariable(context).iterate();
     }
 

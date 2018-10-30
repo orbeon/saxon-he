@@ -134,7 +134,7 @@ public class XPathFunctionCall extends FunctionCall implements Callable {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(/*@NotNull*/ XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(/*@NotNull*/ XPathContext context) throws XPathException {
         Sequence[] argValues = new Sequence[getArity()];
         for (int i = 0; i < argValues.length; i++) {
             argValues[i] = SequenceTool.toLazySequence(getArg(i).iterate(context));
@@ -153,7 +153,7 @@ public class XPathFunctionCall extends FunctionCall implements Callable {
      */
 
     /*@Nullable*/
-    public Sequence<? extends Item> call(/*@NotNull*/ XPathContext context, Sequence[] argValues /*@NotNull*/) throws XPathException {
+    public Sequence<? extends Item<?>> call(/*@NotNull*/ XPathContext context, Sequence[] argValues /*@NotNull*/) throws XPathException {
         // An argument is supplied to the extension function as a List, unless it is a singleton.
         // The items within the list are converted to the "natural Java representation", for example
         // a double is passed as a Double, a string as a String.

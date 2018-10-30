@@ -32,10 +32,10 @@ public class CopyOfFn extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence<? extends Item> call(final XPathContext context, Sequence[] arguments) throws XPathException {
-        Sequence<? extends Item> in = arguments.length == 0 ? context.getContextItem() : arguments[0];
-        SequenceIterator<? extends Item> input = in.iterate();
-        SequenceIterator<? extends Item> output = new ItemMappingIterator<>(input, item -> {
+    public Sequence<? extends Item<?>> call(final XPathContext context, Sequence[] arguments) throws XPathException {
+        Sequence<? extends Item<?>> in = arguments.length == 0 ? context.getContextItem() : arguments[0];
+        SequenceIterator<? extends Item<?>> input = in.iterate();
+        SequenceIterator<? extends Item<?>> output = new ItemMappingIterator<>(input, item -> {
         if (!(item instanceof NodeInfo)) {
             return item;
         } else {

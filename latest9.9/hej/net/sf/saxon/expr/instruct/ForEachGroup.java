@@ -35,7 +35,7 @@ import java.net.URISyntaxException;
  */
 
 public class ForEachGroup extends Instruction
-        implements SortKeyEvaluator, ContextMappingFunction<Item>, ContextSwitchingExpression {
+        implements SortKeyEvaluator, ContextMappingFunction<Item<?>>, ContextSwitchingExpression {
 
     public static final int GROUP_BY = 0;
     public static final int GROUP_ADJACENT = 1;
@@ -654,7 +654,7 @@ public class ForEachGroup extends Instruction
                     coll = getCollator(context);
                 }
                 XPathContext c2 = context.newMinorContext();
-                FocusIterator<? extends Item> population = c2.trackFocus(select.iterate(context));
+                FocusIterator<? extends Item<?>> population = c2.trackFocus(select.iterate(context));
                 groupIterator = new GroupByIterator(population, getGroupingKey(), c2, coll, composite);
                 break;
             }
@@ -712,7 +712,7 @@ public class ForEachGroup extends Instruction
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         GroupIterator master = getGroupIterator(context);
         XPathContextMajor c2 = context.newContext();
         c2.setOrigin(this);
@@ -732,7 +732,7 @@ public class ForEachGroup extends Instruction
      *         sequence.
      */
 
-    public SequenceIterator<? extends Item> map(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> map(XPathContext context) throws XPathException {
         return getActionExpression().iterate(context);
     }
 

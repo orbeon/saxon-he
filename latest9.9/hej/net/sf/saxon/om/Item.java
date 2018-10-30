@@ -190,7 +190,8 @@ public interface Item<T extends Item<?>> extends GroundedValue<T> {
         return false;
     }
 
-    static Sequence<? extends Item>[] asArgumentArray(Item item) {
+    static Sequence<? extends Item<?>>[] asArgumentArray(Item item) {
+        //noinspection unchecked
         return new Sequence[]{item};
     }
 

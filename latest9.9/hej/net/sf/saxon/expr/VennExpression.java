@@ -662,7 +662,7 @@ public class VennExpression extends BinaryExpression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(final XPathContext c) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(final XPathContext c) throws XPathException {
         SequenceIterator<? extends NodeInfo> i1 =
                 (SequenceIterator<? extends NodeInfo>)getLhsExpression().iterate(c);
         SequenceIterator<? extends NodeInfo> i2 =

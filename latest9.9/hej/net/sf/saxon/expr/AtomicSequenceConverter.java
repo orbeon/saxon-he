@@ -293,8 +293,8 @@ public class AtomicSequenceConverter extends UnaryExpression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(final XPathContext context) throws XPathException {
-        SequenceIterator<? extends Item> base = getBaseExpression().iterate(context);
+    public SequenceIterator<? extends Item<?>> iterate(final XPathContext context) throws XPathException {
+        SequenceIterator<? extends Item<?>> base = getBaseExpression().iterate(context);
         Converter conv = getConverterDynamically(context);
         if (conv == Converter.ToStringConverter.INSTANCE) {
             return new ItemMappingIterator(base, TO_STRING_MAPPER, true);

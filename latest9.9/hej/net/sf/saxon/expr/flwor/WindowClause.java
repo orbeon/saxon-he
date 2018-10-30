@@ -180,7 +180,7 @@ public class WindowClause extends Clause {
         }
         ItemTypeCheckingFunction checker = getItemTypeChecker();
         if (checker != null) {
-            SequenceIterator<? extends Item> check =
+            SequenceIterator<? extends Item<?>> check =
                     new ItemMappingIterator<>(new ListIterator<>(w.contents), checker);
             Count.count(check); // a convenient way to consume the iterator and thus perform the checking
         }

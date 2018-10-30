@@ -11,9 +11,9 @@ import net.sf.saxon.expr.FilterExpression;
 import net.sf.saxon.expr.LocalBinding;
 import net.sf.saxon.expr.VariableReference;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
-import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.SequenceType;
 
@@ -167,7 +167,7 @@ public class LocalVariableBinding implements LocalBinding {
      * Get the value of the range variable
      */
 
-    public Sequence evaluateVariable(XPathContext context) throws XPathException {
+    public Sequence<? extends Item<?>> evaluateVariable(XPathContext context) {
         return context.evaluateLocalVariable(slotNumber);
     }
 

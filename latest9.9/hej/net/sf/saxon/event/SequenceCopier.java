@@ -29,7 +29,7 @@ public class SequenceCopier {
      * @throws XPathException if a failure occurs reading the input or writing the output
      */
 
-    public static void copySequence(SequenceIterator<? extends Item> in, Receiver out) throws XPathException {
+    public static void copySequence(SequenceIterator<? extends Item<?>> in, Receiver out) throws XPathException {
         out.open();
         in.forEachOrFail(out::append);
         out.close();

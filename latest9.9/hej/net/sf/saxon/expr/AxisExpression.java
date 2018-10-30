@@ -1060,7 +1060,7 @@ public final class AxisExpression extends Expression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         Item item = context.getContextItem();
         if (item == null) {
             // Might as well do the test anyway, whether or not contextMaybeUndefined is set

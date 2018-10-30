@@ -49,7 +49,7 @@ import java.util.stream.StreamSupport;
 
 public class XdmValue implements Iterable<XdmItem> {
 
-    private GroundedValue<? extends Item> value;
+    private GroundedValue<? extends Item<?>> value;
 
     protected XdmValue() {
         // must be followed by setValue()
@@ -64,7 +64,7 @@ public class XdmValue implements Iterable<XdmItem> {
      */
 
     public XdmValue(Iterable<? extends XdmItem> items) {
-        List<Item> values = new ArrayList<>();
+        List<Item<?>> values = new ArrayList<>();
         for (XdmItem item : items) {
             values.add(item.getUnderlyingValue());
         }
@@ -81,7 +81,7 @@ public class XdmValue implements Iterable<XdmItem> {
 
     public XdmValue(Iterator<? extends XdmItem> iterator) throws SaxonApiException {
         try {
-            List<Item> values = new ArrayList<>();
+            List<Item<?>> values = new ArrayList<>();
             while (iterator.hasNext()) {
                 values.add(iterator.next().getUnderlyingValue());
             }
@@ -100,13 +100,13 @@ public class XdmValue implements Iterable<XdmItem> {
         this(stream.iterator());
     }
 
-    protected static XdmValue fromGroundedValue(GroundedValue<? extends Item> value) {
+    protected static XdmValue fromGroundedValue(GroundedValue<? extends Item<?>> value) {
         XdmValue xv = new XdmValue();
         xv.setValue(value);
         return xv;
     }
 
-    protected void setValue(GroundedValue<? extends Item> value) {
+    protected void setValue(GroundedValue<? extends Item<?>> value) {
         this.value = value;
     }
 
@@ -129,11 +129,11 @@ public class XdmValue implements Iterable<XdmItem> {
      * @since 9.5 (previously a protected method)
      */
 
-    public static XdmValue wrap(Sequence<? extends Item> value) {
+    public static XdmValue wrap(Sequence<? extends Item<?>> value) {
         if (value == null) {
             return XdmEmptySequence.getInstance();
         }
-        GroundedValue<? extends Item> gv;
+        GroundedValue<? extends Item<?>> gv;
         try {
             gv = value.materialize();
         } catch (XPathException e) {
@@ -264,7 +264,7 @@ public class XdmValue implements Iterable<XdmItem> {
      * @return the underlying implementation object representing the value
      */
 
-    public GroundedValue<? extends Item> getUnderlyingValue() {
+    public GroundedValue<? extends Item<?>> getUnderlyingValue() {
         return value;
     }
 
@@ -312,8 +312,8 @@ public class XdmValue implements Iterable<XdmItem> {
      * @throws IllegalArgumentException if conversion is not possible
      */
 
-    public static XdmValue makeSequence(Iterable list) throws IllegalArgumentException {
-        List<Item> result = new ArrayList<>();
+    public static XdmValue makeSequence(Iterable<?> list) throws IllegalArgumentException {
+        List<Item<?>> result = new ArrayList<>();
         for (Object o : list) {
             XdmValue v = XdmValue.makeValue(o);
             if (v instanceof XdmItem) {

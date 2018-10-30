@@ -110,6 +110,7 @@ public class Chain<T extends Item<?>> implements GroundedValue<T> {
             throw new IllegalStateException();
         }
         if (item != null) {
+            //noinspection unchecked
             children.add((GroundedValue<T>)item);
         }
     }
@@ -173,7 +174,7 @@ public class Chain<T extends Item<?>> implements GroundedValue<T> {
                 newEnd = extent.size();
             }
         }
-        return new SequenceExtent(extent.subList(newStart, newEnd));
+        return new SequenceExtent<>(extent.subList(newStart, newEnd));
     }
 
     /**

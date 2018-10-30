@@ -525,7 +525,7 @@ public abstract class FunctionCall extends Expression {
      *                                           expression
      */
     @Override
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         Function target = getTargetFunction(context);
         Sequence[] actualArgs = evaluateArguments(context);
         try {

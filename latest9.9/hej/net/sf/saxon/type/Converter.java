@@ -44,7 +44,7 @@ public abstract class Converter<F extends AtomicValue, T extends AtomicValue> {
 
     public static AtomicValue convert(AtomicValue value, AtomicType targetType, ConversionRules rules)
             throws ValidationException {
-        Converter<? super AtomicValue, ? extends AtomicValue> converter =
+        Converter converter =
                 rules.getConverter(value.getPrimitiveType(), targetType);
         if (converter == null) {
             ValidationFailure ve = new ValidationFailure("Cannot convert value from " + value.getPrimitiveType() + " to " + targetType);
@@ -250,7 +250,7 @@ public abstract class Converter<F extends AtomicValue, T extends AtomicValue> {
 
         /*@Nullable*/
         public static TwoPhaseConverter makeTwoPhaseConverter(/*@NotNull*/ AtomicType inputType, /*@NotNull*/ AtomicType viaType, /*@NotNull*/ AtomicType outputType, ConversionRules rules) {
-            return new TwoPhaseConverter<>(
+            return new TwoPhaseConverter(
                     rules.getConverter(inputType, viaType),
                     rules.getConverter(viaType, outputType));
         }
@@ -289,7 +289,7 @@ public abstract class Converter<F extends AtomicValue, T extends AtomicValue> {
      */
 
     public static class ToUntypedAtomicConverter<F extends AtomicValue> extends UnfailingConverter<F, UntypedAtomicValue> {
-        public static final ToUntypedAtomicConverter INSTANCE = new ToUntypedAtomicConverter();
+        public static final ToUntypedAtomicConverter INSTANCE = new ToUntypedAtomicConverter<>();
         public UntypedAtomicValue convert(F input) {
             return new UntypedAtomicValue(input.getStringValueCS());
         }

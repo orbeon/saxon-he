@@ -376,7 +376,7 @@ public class SequenceTool {
             }
         }
         try {
-            SequenceIterator<? extends Item> iter = sequence.iterate();
+            SequenceIterator<? extends Item<?>> iter = sequence.iterate();
             Item item = iter.next();
             if (item == null) {
                 return StaticProperty.ALLOWS_ZERO;
@@ -413,7 +413,7 @@ public class SequenceTool {
      *                                           a closure that needs to be evaluated)
      */
 
-    public static void process(Sequence<? extends Item> value, XPathContext context, Location locationId) throws XPathException {
+    public static void process(Sequence<? extends Item<?>> value, XPathContext context, Location locationId) throws XPathException {
         Receiver out = context.getReceiver();
         value.iterate().forEachOrFail(it -> out.append(it, locationId, ReceiverOptions.ALL_NAMESPACES));
     }

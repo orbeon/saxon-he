@@ -36,7 +36,7 @@ import java.util.List;
  */
 
 public class RawSlashExpression extends BinaryExpression
-        implements ContextSwitchingExpression, ContextMappingFunction<Item> {
+        implements ContextSwitchingExpression, ContextMappingFunction<Item<?>> {
 
     // TODO: (2018-03-27) is this class actually needed? It gets created by the ExpressionParser, and
     // the typecheck() method then turns it into a regular SlashExpression, optionally with sorting
@@ -386,7 +386,7 @@ public class RawSlashExpression extends BinaryExpression
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(final XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(final XPathContext context) throws XPathException {
 
         // This class delivers the result of the path expression in unsorted order,
         // without removal of duplicates. If sorting and deduplication are needed,
@@ -402,7 +402,7 @@ public class RawSlashExpression extends BinaryExpression
      * returned by the child.
      */
 
-    public SequenceIterator<? extends Item> map(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> map(XPathContext context) throws XPathException {
         return getStep().iterate(context);
     }
 

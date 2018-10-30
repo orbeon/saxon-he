@@ -49,7 +49,7 @@ public class RangeKey implements MapItem {
      * @param key     the value of the key
      * @return the value associated with the given key, or null if the key is not present in the map
      */
-    public GroundedValue<? extends Item> get(AtomicValue key)  {
+    public GroundedValue<? extends Item<?>> get(AtomicValue key)  {
         CodepointMatchKey k = new CodepointMatchKey(key.getStringValue());
         if ((min == null || min.compareTo(k) <= 0) &&
                 (max == null || max.compareTo(k) >= 0)) {

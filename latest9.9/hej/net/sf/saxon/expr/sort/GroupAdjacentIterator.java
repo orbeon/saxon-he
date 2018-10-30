@@ -134,7 +134,7 @@ public class GroupAdjacentIterator implements GroupIterator, LastPositionFinder,
         return currentKey;
     }
 
-    public SequenceIterator<? extends Item> iterateCurrentGroup() {
+    public SequenceIterator<? extends Item<?>> iterateCurrentGroup() {
         return new ListIterator<>(currentMembers);
     }
 

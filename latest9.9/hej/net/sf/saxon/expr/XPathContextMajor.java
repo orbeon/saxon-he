@@ -92,8 +92,8 @@ public class XPathContextMajor extends XPathContextMinor {
                 new XsltController(exec.getConfiguration(), (PreparedStylesheet)exec) :
                 new Controller(exec.getConfiguration(), exec);
         if (item != null) {
-            UnfailingIterator iter = SingletonIterator.makeIterator(item);
-            currentIterator = new FocusTrackingIterator(iter);
+            UnfailingIterator<? extends Item<?>> iter = SingletonIterator.makeIterator(item);
+            currentIterator = new FocusTrackingIterator<>(iter);
             try {
                 currentIterator.next();
             } catch (XPathException e) {

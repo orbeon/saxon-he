@@ -149,7 +149,7 @@ public abstract class DotNetObjectModel implements ExternalObjectModel {
      * @return the underlying Value
      */
 
-    public abstract Sequence unwrapXdmValue(Object object);
+    public abstract Sequence<? extends Item<?>> unwrapXdmValue(Object object);
 
     /**
      * Wrap a Value as an XdmValue
@@ -158,7 +158,7 @@ public abstract class DotNetObjectModel implements ExternalObjectModel {
      * @return the resulting XdmValue
      */
 
-    public abstract Object wrapAsXdmValue(Sequence value);
+    public abstract Object wrapAsXdmValue(Sequence<? extends Item<?>> value);
 
     /**
      * Test whether the supplied type is a subtype of System.Xml.XmlNode
@@ -182,7 +182,7 @@ public abstract class DotNetObjectModel implements ExternalObjectModel {
      *          if conversion fails
      */
 
-    public Sequence convertObjectToXPathValue(Object object, Configuration config) throws XPathException {
+    public Sequence<? extends Item<?>> convertObjectToXPathValue(Object object, Configuration config) throws XPathException {
         if (object instanceof XmlNode) {
             XmlNode node = (XmlNode) object;
             DotNetDocumentWrapper dw = new DotNetDocumentWrapper(

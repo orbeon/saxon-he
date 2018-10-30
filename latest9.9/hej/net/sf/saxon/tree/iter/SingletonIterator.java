@@ -115,6 +115,7 @@ public class SingletonIterator<T extends Item<?>> implements SequenceIterator<T>
     /*@NotNull*/
     public GroundedValue<T> materialize() {
         if (item instanceof GroundedValue) {
+            // noinspection unchecked
             return (GroundedValue<T>)item;
         } else {
             return new ZeroOrOne<>(null);

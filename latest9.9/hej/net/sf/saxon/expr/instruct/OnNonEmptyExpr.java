@@ -155,7 +155,7 @@ public class OnNonEmptyExpr extends UnaryExpression {
      *                                           expression
      */
     @Override
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         return getBaseExpression().iterate(context);
     }
 

@@ -523,7 +523,7 @@ public class MergeInstr extends Instruction {
 
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
 
         try {
             AtomicComparer[] comps = getComparators(context);
@@ -825,7 +825,7 @@ public class MergeInstr extends Instruction {
             throws XPathException {
 
         Receiver out = context.getReceiver();
-        try (SequenceIterator<? extends Item> iter = iterate(context)) {
+        try (SequenceIterator<? extends Item<?>> iter = iterate(context)) {
             iter.forEachOrFail(it -> out.append(it, getLocation(), ReceiverOptions.ALL_NAMESPACES));
         } catch (XPathException e) {
             e.maybeSetLocation(getLocation());

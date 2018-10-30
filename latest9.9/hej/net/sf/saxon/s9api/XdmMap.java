@@ -273,7 +273,7 @@ public class XdmMap extends XdmFunctionItem {
         if (key == null) {
             throw new NullPointerException();
         }
-        GroundedValue<? extends Item> v = getUnderlyingValue().get(key.getUnderlyingValue());
+        GroundedValue<? extends Item<?>> v = getUnderlyingValue().get(key.getUnderlyingValue());
         return v == null ? null : XdmValue.wrap(v);
     }
 
@@ -293,7 +293,7 @@ public class XdmMap extends XdmFunctionItem {
         if (key == null) {
             throw new NullPointerException();
         }
-        GroundedValue<? extends Item> v = getUnderlyingValue().get(new StringValue(key));
+        GroundedValue<? extends Item<?>> v = getUnderlyingValue().get(new StringValue(key));
         return v == null ? null : XdmValue.wrap(v);
     }
 
@@ -310,7 +310,7 @@ public class XdmMap extends XdmFunctionItem {
      * @throws NullPointerException if the supplied key is null
      */
     public XdmValue get(long key) {
-        GroundedValue<? extends Item> v = getUnderlyingValue().get(new Int64Value(key));
+        GroundedValue<? extends Item<?>> v = getUnderlyingValue().get(new Int64Value(key));
         return v == null ? null : XdmValue.wrap(v);
     }
 
@@ -328,7 +328,7 @@ public class XdmMap extends XdmFunctionItem {
      */
 
     public XdmValue get(double key) {
-        GroundedValue<? extends Item> v = getUnderlyingValue().get(new DoubleValue(key));
+        GroundedValue<? extends Item<?>> v = getUnderlyingValue().get(new DoubleValue(key));
         return v == null ? null : XdmValue.wrap(v);
     }
 

@@ -486,7 +486,7 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext c) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext c) throws XPathException {
         return callFunction(c).iterate();
     }
 
@@ -516,7 +516,7 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
      * @return the result of the function
      * @throws XPathException if dynamic errors occur
      */
-    private Sequence<? extends Item> callFunction(XPathContext context) throws XPathException {
+    private Sequence<? extends Item<?>> callFunction(XPathContext context) throws XPathException {
         UserFunction targetFunction;
         Sequence[] actualArgs = evaluateArguments(context);
         XPathContextMajor c2;

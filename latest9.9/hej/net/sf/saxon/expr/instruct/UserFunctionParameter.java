@@ -10,10 +10,10 @@ package net.sf.saxon.expr.instruct;
 import net.sf.saxon.expr.LocalBinding;
 import net.sf.saxon.expr.VariableReference;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.FunctionStreamability;
-import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.SequenceType;
 
@@ -189,10 +189,9 @@ public class UserFunctionParameter implements LocalBinding {
      *
      * @param context the XPath dynamic context
      * @return the value of the parameter
-     * @throws XPathException if an error occurs
      */
 
-    public Sequence evaluateVariable(XPathContext context) throws XPathException {
+    public Sequence<? extends Item<?>> evaluateVariable(XPathContext context) {
         return context.evaluateLocalVariable(slotNumber);
     }
 

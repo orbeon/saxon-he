@@ -21,12 +21,15 @@ import net.sf.saxon.type.Type;
  * and merges adjacent text nodes from the underlying iterator
  */
 
-public class AdjacentTextNodeMergingIterator implements LookaheadIterator {
+public class AdjacentTextNodeMergingIterator implements LookaheadIterator<Item<?>> {
 
-    private SequenceIterator base;
-    /*@Nullable*/ private Item next;
+    // Ideally we would specify bounds: AdjacentTextNodeMergingIterator<? extends Item super NodeInfo>,
+    // but Java doesn't allow both an upper and a lower bound
 
-    public AdjacentTextNodeMergingIterator(/*@NotNull*/ SequenceIterator base) throws XPathException {
+    private SequenceIterator<? extends Item<?>> base;
+    private Item<?> next;
+
+    public AdjacentTextNodeMergingIterator(SequenceIterator<? extends Item<?>> base) throws XPathException {
         this.base = base;
         next = base.next();
     }
@@ -46,7 +49,7 @@ public class AdjacentTextNodeMergingIterator implements LookaheadIterator {
         if (AdjacentTextNodeMerger.isTextNode(current)) {
             FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.C256);
             fsb.append(current.getStringValueCS());
-            while (next != null && AdjacentTextNodeMerger.isTextNode(next)) {
+            while (AdjacentTextNodeMerger.isTextNode(next)) {
                 fsb.append(next.getStringValueCS() /*.toString() */);
                 // NOTE: toString() shouldn't be necessary - added 2011-05-05 for bug workaround; removed again 2011-07-14
                 next = base.next();

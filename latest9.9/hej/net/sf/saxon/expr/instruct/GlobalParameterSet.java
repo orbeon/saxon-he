@@ -54,7 +54,7 @@ public class GlobalParameterSet {
      * @param value The value of the parameter, or null if the parameter is to be removed
      */
 
-    public void put(StructuredQName qName, /*@Nullable*/ GroundedValue value) {
+    public void put(StructuredQName qName, GroundedValue<? extends Item<?>> value) {
         if (value == null) {
             params.remove(qName);
         } else {

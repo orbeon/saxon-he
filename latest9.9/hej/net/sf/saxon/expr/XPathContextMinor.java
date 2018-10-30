@@ -34,7 +34,7 @@ import java.util.Iterator;
 public class XPathContextMinor implements XPathContext {
 
     Controller controller;
-    FocusIterator<? extends Item> currentIterator;
+    FocusIterator<? extends Item<?>> currentIterator;
     /*@Nullable*/ LastValue last = null;
     Receiver currentReceiver;
 
@@ -154,7 +154,7 @@ public class XPathContextMinor implements XPathContext {
      * Set a new sequence iterator.
      */
 
-    public void setCurrentIterator(FocusIterator<? extends Item> iter) {
+    public void setCurrentIterator(FocusIterator<? extends Item<?>> iter) {
         currentIterator = iter;
         last = new LastValue(-1);
     }
@@ -169,6 +169,7 @@ public class XPathContextMinor implements XPathContext {
     public <T extends Item<?>> FocusIterator<T> trackFocus(SequenceIterator<T> iter) {
         FocusTrackingFactory factory =
                 controller.getFocusTrackerFactory(false);
+        //noinspection unchecked
         FocusIterator<T> fit = (FocusIterator<T>)factory.apply(iter);
         setCurrentIterator(fit);
         return fit;
@@ -198,7 +199,7 @@ public class XPathContextMinor implements XPathContext {
      *         (which means the context item, position, and size are undefined).
      */
 
-    public final FocusIterator<? extends Item> getCurrentIterator() {
+    public final FocusIterator<? extends Item<?>> getCurrentIterator() {
         return currentIterator;
     }
 
@@ -315,6 +316,7 @@ public class XPathContextMinor implements XPathContext {
 
     public void makeStackFrameMutable() {
         if (stackFrame == StackFrame.EMPTY) {
+            //noinspection unchecked
             stackFrame = new StackFrame(null, new Sequence[0]);
         }
     }

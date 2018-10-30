@@ -143,8 +143,8 @@ public abstract class Assignation extends Expression implements LocalBinding {
      * Get the value of the range variable
      */
 
-    public Sequence evaluateVariable(XPathContext context) throws XPathException {
-        Sequence actual = context.evaluateLocalVariable(slotNumber);
+    public Sequence<? extends Item<?>> evaluateVariable(XPathContext context) throws XPathException {
+        Sequence<? extends Item<?>> actual = context.evaluateLocalVariable(slotNumber);
         if (!(actual instanceof GroundedValue || actual instanceof NodeInfo)) {
             actual = actual.materialize();
             context.setLocalVariable(slotNumber, actual);

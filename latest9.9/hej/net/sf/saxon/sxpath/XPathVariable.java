@@ -10,6 +10,7 @@ package net.sf.saxon.sxpath;
 import net.sf.saxon.expr.LocalBinding;
 import net.sf.saxon.expr.VariableReference;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.value.IntegerValue;
@@ -178,7 +179,7 @@ public final class XPathVariable implements LocalBinding {
      * @return The value of the variable
      */
 
-    public Sequence evaluateVariable(XPathContext context) {
+    public Sequence<? extends Item<?>> evaluateVariable(XPathContext context) {
         return context.evaluateLocalVariable(slotNumber);
     }
 

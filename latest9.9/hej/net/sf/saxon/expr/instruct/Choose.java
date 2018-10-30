@@ -963,7 +963,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         int i = choose(context);
         return i < 0 ? EmptyIterator.emptyIterator() : getAction(i).iterate(context);
     }

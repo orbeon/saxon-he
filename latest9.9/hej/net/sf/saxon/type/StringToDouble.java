@@ -14,7 +14,7 @@ import net.sf.saxon.value.Whitespace;
 /**
  * This class converts a string to an xs:double according to the rules in XML Schema 1.0
  */
-public class StringToDouble extends StringConverter {
+public class StringToDouble extends StringConverter<DoubleValue> {
 
     private static StringToDouble THE_INSTANCE = new StringToDouble();
 

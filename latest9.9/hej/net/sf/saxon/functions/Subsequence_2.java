@@ -62,13 +62,13 @@ public class Subsequence_2 extends SystemFunction implements Callable {
      * @throws XPathException if a dynamic error occurs
      */
 
-    public Sequence<? extends Item> call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
         return SequenceTool.toLazySequence(
             subSequence(arguments[0].iterate(), (NumericValue) arguments[1].head()));
     }
 
-    public static SequenceIterator<? extends Item> subSequence(
-            SequenceIterator<? extends Item> seq, NumericValue startVal)
+    public static SequenceIterator<? extends Item<?>> subSequence(
+            SequenceIterator<? extends Item<?>> seq, NumericValue startVal)
             throws XPathException {
 
         long lstart;

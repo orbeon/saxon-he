@@ -95,7 +95,7 @@ public class EmptyTextNodeRemover extends UnaryExpression
 
     /*@NotNull*/
     @Override
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         return new ItemMappingIterator(getBaseExpression().iterate(context), this);
     }
 

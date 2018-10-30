@@ -177,7 +177,7 @@ abstract class AbstractTransformerImpl extends IdentityTransformer {
         }
         Configuration config = getConfiguration();
         net.sf.saxon.value.SequenceType required = details.getUnderlyingDeclaredType();
-        Sequence<? extends Item> converted;
+        Sequence<? extends Item<?>> converted;
         try {
             if (value instanceof Sequence) {
                 converted = (Sequence)value;

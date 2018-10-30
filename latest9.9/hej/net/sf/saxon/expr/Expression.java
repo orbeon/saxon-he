@@ -862,8 +862,8 @@ public abstract class Expression implements IdentityComparable, ExportAgent {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
-        Item value = evaluateItem(context);
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+        Item<?> value = evaluateItem(context);
         return value == null ? EmptyIterator.emptyIterator() : SingletonIterator.rawIterator(value);
     }
 

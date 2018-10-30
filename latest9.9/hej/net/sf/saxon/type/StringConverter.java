@@ -780,7 +780,7 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts string to base64
      */
 
-    public static class StringToBase64Binary extends StringConverter {
+    public static class StringToBase64Binary extends StringConverter<Base64BinaryValue> {
         public static final StringToBase64Binary INSTANCE = new StringToBase64Binary();
 
         public ConversionResult convertString(/*@NotNull*/ CharSequence input) {

@@ -8,6 +8,7 @@
 package net.sf.saxon.expr;
 
 import net.sf.saxon.expr.parser.RebindingMap;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
@@ -106,7 +107,7 @@ public class LocalVariableReference extends VariableReference {
      */
 
     /*@NotNull*/
-    public Sequence evaluateVariable(XPathContext c) throws XPathException {
+    public Sequence<? extends Item<?>> evaluateVariable(XPathContext c) throws XPathException {
         try {
             return c.getStackFrame().slots[slotNumber];
         } catch (ArrayIndexOutOfBoundsException err) {

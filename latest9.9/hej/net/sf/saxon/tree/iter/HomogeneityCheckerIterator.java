@@ -23,16 +23,16 @@ import java.util.List;
  * all nodes, or all non-nodes; if they are all nodes, it delivers them in document order.
  */
 
-public class HomogeneityCheckerIterator implements SequenceIterator {
+public class HomogeneityCheckerIterator<T extends Item<?>> implements SequenceIterator<T> {
 
-    /*@Nullable*/ SequenceIterator base = null;
+    SequenceIterator<T> base = null;
     Location loc;
     int state;
     // state = 0: initial state, will accept either nodes or atomic values
     // state = +1: have seen a node, all further items must be nodes
     // state = -1: have seen an atomic value or function item, all further items must be the same
 
-    public HomogeneityCheckerIterator(SequenceIterator base, Location loc) throws XPathException {
+    public HomogeneityCheckerIterator(SequenceIterator<T> base, Location loc) {
         this.base = base;
         this.loc = loc;
         state = 0;
@@ -55,15 +55,15 @@ public class HomogeneityCheckerIterator implements SequenceIterator {
     }
 
     /*@Nullable*/
-    public Item next() throws XPathException {
-        Item item = base.next();
+    public T next() throws XPathException {
+        T item = base.next();
         if (item == null) {
             return null;
         }
         //first item in iterator
         if (state == 0) {
             if (item instanceof NodeInfo) {
-                List<Item> nodes = new ArrayList<Item>(50);
+                List<Item<?>> nodes = new ArrayList<>(50);
                 nodes.add(item);
                 while ((item = base.next()) != null) {
                     if (!(item instanceof NodeInfo)) {
@@ -72,7 +72,7 @@ public class HomogeneityCheckerIterator implements SequenceIterator {
                         nodes.add(item);
                     }
                 }
-                base = new DocumentOrderIterator(new ListIterator(nodes), GlobalOrderComparer.getInstance());
+                base = new DocumentOrderIterator(new ListIterator<>(nodes), GlobalOrderComparer.getInstance());
                 state = 1; // first item is a node
                 return base.next();
             } else {

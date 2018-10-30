@@ -109,7 +109,7 @@ public class SQLDelete extends ExtensionInstruction {
         }
 
         /*@Nullable*/
-        public Sequence<? extends Item> call(XPathContext context, Sequence[] arguments) throws XPathException {
+        public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
             // Prepare the SQL statement (only do this once)
 
             Connection connection = SQLFunctionSet.expectConnection(arguments[CONNECTION], context);

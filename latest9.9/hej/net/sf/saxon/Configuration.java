@@ -3744,7 +3744,7 @@ public class Configuration implements SourceResolver, NotationSet {
     public Sequence<? extends Item<?>> makeClosure(Expression expression, int ref, XPathContext context) throws XPathException {
         if (getBooleanProperty(Feature.EAGER_EVALUATION)) {
             // Using eager evaluation can make for easier debugging
-            SequenceIterator<? extends Item> iter = expression.iterate(context);
+            SequenceIterator<? extends Item<?>> iter = expression.iterate(context);
             return iter.materialize();
         }
 
@@ -4382,6 +4382,7 @@ public class Configuration implements SourceResolver, NotationSet {
                 throw new IllegalArgumentException("Unrecognized configuration feature: " + name);
             }
         } else {
+            //noinspection unchecked
             setConfigurationProperty(feature, value);
         }
     }
@@ -5045,7 +5046,7 @@ public class Configuration implements SourceResolver, NotationSet {
     }
 
 
-    protected Object instantiateClassName(String propertyName, Object value, Class requiredClass) {
+    protected Object instantiateClassName(String propertyName, Object value, Class<?> requiredClass) {
         if (!(value instanceof String)) {
             throw new IllegalArgumentException(
                     propertyName + " must be a String");

@@ -912,7 +912,7 @@ public class SlashExpression extends BinaryExpression
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(final XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(final XPathContext context) throws XPathException {
 
         // This class delivers the result of the path expression in unsorted order,
         // without removal of duplicates. If sorting and deduplication are needed,

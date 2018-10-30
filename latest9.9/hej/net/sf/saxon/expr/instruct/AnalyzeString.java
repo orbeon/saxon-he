@@ -449,7 +449,7 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         RegexIterator iter = getRegexIterator(context);
         XPathContextMajor c2 = context.newContext();
         c2.setOrigin(this);

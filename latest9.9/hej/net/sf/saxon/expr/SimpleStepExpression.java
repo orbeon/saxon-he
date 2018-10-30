@@ -116,7 +116,7 @@ public final class SimpleStepExpression extends SlashExpression {
      */
     /*@NotNull*/
     @Override
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         NodeInfo origin = null;
         try {
             origin = (NodeInfo) getStart().evaluateItem(context);

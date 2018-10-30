@@ -33,7 +33,7 @@ public interface ArrayItem extends Function<ArrayItem> {
      * @throws XPathException if the index is out of range
      */
 
-    GroundedValue<? extends Item> get(int index) throws XPathException;
+    GroundedValue<? extends Item<?>> get(int index) throws XPathException;
 
     /**
      * Replace a member of the array
@@ -44,7 +44,7 @@ public interface ArrayItem extends Function<ArrayItem> {
      * @throws XPathException if the index is out of range
      */
 
-    ArrayItem put(int index, GroundedValue<? extends Item> newValue) throws XPathException;
+    ArrayItem put(int index, GroundedValue<? extends Item<?>> newValue) throws XPathException;
 
     /**
      * Get the number of members in the array
@@ -69,7 +69,7 @@ public interface ArrayItem extends Function<ArrayItem> {
      * @return an iterator over the members of the array
      */
 
-    Iterable<GroundedValue<? extends Item>> members();
+    Iterable<GroundedValue<? extends Item<?>>> members();
 
     /**
      * Concatenate this array with another
@@ -120,7 +120,7 @@ public interface ArrayItem extends Function<ArrayItem> {
      * @return a new array item with the new member inserted
      */
 
-    ArrayItem insert(int position, GroundedValue<? extends Item> member);
+    ArrayItem insert(int position, GroundedValue<? extends Item<?>> member);
 
     /**
      * Get the lowest common item type of the members of the array

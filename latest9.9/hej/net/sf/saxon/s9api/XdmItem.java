@@ -43,7 +43,7 @@ public abstract class XdmItem extends XdmValue {
      * @since 9.5 (previously a protected constructor)
      */
 
-    public XdmItem(Item item) {
+    public XdmItem(Item<?> item) {
         super();
         setValue(item);
     }
@@ -51,7 +51,7 @@ public abstract class XdmItem extends XdmValue {
     // internal factory mathod to wrap an Item
 
     /*@Nullable*/
-    protected static XdmItem wrapItem(Item item) {
+    protected static XdmItem wrapItem(Item<?> item) {
         return item == null ? null : (XdmItem) XdmValue.wrap(item);
     }
 
@@ -72,7 +72,7 @@ public abstract class XdmItem extends XdmValue {
      * @since 9.8 (previously inherited from XdmValue which returns a Sequence)
      */
     @Override
-    public Item getUnderlyingValue() {
+    public Item<?> getUnderlyingValue() {
         return (Item)super.getUnderlyingValue();
     }
 

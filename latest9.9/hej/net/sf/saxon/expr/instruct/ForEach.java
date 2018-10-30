@@ -460,7 +460,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
 
         XPathContextMajor c2 = context.newContext();
         c2.setOrigin(this);
-        FocusIterator<? extends Item> iter = c2.trackFocus(getSelect().iterate(context));
+        FocusIterator<? extends Item<?>> iter = c2.trackFocus(getSelect().iterate(context));
         c2.setCurrentTemplateRule(null);
 
         Expression action = getAction();

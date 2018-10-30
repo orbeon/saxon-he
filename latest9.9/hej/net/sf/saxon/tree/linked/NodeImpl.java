@@ -531,15 +531,13 @@ public abstract class NodeImpl
                         nodeTest.getPrimitiveType() == Type.ELEMENT) {
                     return ((DocumentImpl) this).getAllElements(nodeTest.getFingerprint());
                 } else if (hasChildNodes()) {
-                    return new SteppingNavigator.DescendantAxisIterator(this, false, nodeTest);
-                    //return new DescendantEnumeration(this, nodeTest, false);
+                    return new SteppingNavigator.DescendantAxisIterator<>(this, false, nodeTest);
                 } else {
                     return EmptyIterator.OfNodes.THE_INSTANCE;
                 }
 
             case AxisInfo.DESCENDANT_OR_SELF:
-                return new SteppingNavigator.DescendantAxisIterator(this, true, nodeTest);
-            //return new DescendantEnumeration(this, nodeTest, true);
+                return new SteppingNavigator.DescendantAxisIterator<>(this, true, nodeTest);
 
             case AxisInfo.FOLLOWING:
                 return new FollowingEnumeration(this, nodeTest);

@@ -478,7 +478,7 @@ public class KeyManager {
         IntHashMap<KeyIndex> docIndexes =
                 (IntHashMap<KeyIndex>)controller.getUserData(doc, "saxon:unshared-key-index-list");
         if (docIndexes == null) {
-            docIndexes = new IntHashMap<KeyIndex>();
+            docIndexes = new IntHashMap<>();
             controller.setUserData(doc, "saxon:unshared-key-index-list", docIndexes);
         }
         docIndexes.put(keyFingerprint, index);

@@ -93,7 +93,7 @@ public class RangeIterator implements AtomicIterator,
         return LOOKAHEAD | LAST_POSITION_FINDER | GROUNDED;
     }
 
-    public SequenceIterator getReverseIterator() {
+    public SequenceIterator<AtomicValue> getReverseIterator() {
         try {
             return new ReverseRangeIterator(limit, start);
         } catch (XPathException err) {
@@ -108,12 +108,12 @@ public class RangeIterator implements AtomicIterator,
      * @return the corresponding Value
      */
 
-    public GroundedValue materialize() {
+    public GroundedValue<AtomicValue> materialize() {
         return new IntegerRange(start, limit);
     }
 
     @Override
-    public GroundedValue getResidue() throws XPathException {
+    public GroundedValue<AtomicValue> getResidue() {
         return new IntegerRange(currentValue, limit);
     }
 }

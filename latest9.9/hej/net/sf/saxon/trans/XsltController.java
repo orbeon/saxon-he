@@ -721,7 +721,7 @@ public class XsltController extends Controller {
                 tunnelParams = new ParameterSet(initialTemplateTunnelParams);
             }
 
-            SequenceIterator<? extends Item> iter = source.iterate();
+            SequenceIterator<? extends Item<?>> iter = source.iterate();
 
             MappingFunction preprocessor = getInputPreprocessor(mode);
             iter = new MappingIterator(iter, preprocessor);

@@ -170,7 +170,7 @@ public class XPathExpression {
      *                        cases, the error will only be detected when the iterator is actually used).
      */
 
-    public SequenceIterator<? extends Item> iterate(XPathDynamicContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathDynamicContext context) throws XPathException {
         context.checkExternalVariables(stackFrameMap, numberOfExternalVariables);
         return expression.iterate(context.getXPathContextObject());
     }

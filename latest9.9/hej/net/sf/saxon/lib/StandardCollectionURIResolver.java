@@ -91,7 +91,8 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
      * or transformation.
      */
 
-    public SequenceIterator resolve(/*@Nullable*/ String href, String base, XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> resolve(
+            String href, String base, XPathContext context) throws XPathException {
 
         StandardCollectionFinder.checkNotNull(href, context);
 
@@ -232,7 +233,7 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
             });
         }
         FileExpander expander = new FileExpander(params, newPipe);
-        SequenceIterator base = new ArrayIterator(fileValues);
+        SequenceIterator<? extends Item<?>> base = new ArrayIterator<>(fileValues);
         return new MappingIterator(base, expander);
     }
 
@@ -349,7 +350,7 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
      */
 
 
-    protected static class FileExpander implements MappingFunction {
+    protected static class FileExpander implements MappingFunction<ExternalObject<File>, Item<?>> {
 
         private URIQueryParameters params;
         boolean recurse = false;
@@ -403,8 +404,8 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
          * sequence.
          */
 
-        public SequenceIterator map(Item item) throws XPathException {
-            File file = ((ExternalObject<File>)item).getObject();
+        public SequenceIterator<? extends Item<?>> map(ExternalObject<File> item) throws XPathException {
+            File file = item.getObject();
             if (file.isDirectory()) {
                 if (recurse) {
                     File[] files;
@@ -414,13 +415,13 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
                         files = file.listFiles(filter);
                     }
 
-                    ObjectValue[] fileValues = new ObjectValue[files.length];
+                    ObjectValue<File>[] fileValues = new ObjectValue[files.length];
                     for (int f = 0; f < files.length; f++) {
                         fileValues[f] = new ObjectValue<File>(files[f]);
                     }
 
                     FileExpander expander = new FileExpander(params, pipe);
-                    return new MappingIterator(new ArrayIterator(fileValues), expander);
+                    return new MappingIterator<>(new ArrayIterator<>(fileValues), expander);
                 } else {
                     return null;
                 }

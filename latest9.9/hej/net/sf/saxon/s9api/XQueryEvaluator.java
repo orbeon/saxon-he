@@ -179,7 +179,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
     public void setExternalVariable(QName name, XdmValue value) {
         try {
             context.setParameter(name.getStructuredQName(),
-                                 value == null ? null : ((Sequence<? extends Item>) value.getUnderlyingValue()).materialize());
+                                 value == null ? null : ((Sequence<? extends Item<?>>) value.getUnderlyingValue()).materialize());
         } catch (XPathException e) {
             throw new SaxonApiUncheckedException(e);
         }
@@ -425,7 +425,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
             throw new IllegalStateException("Query is updating");
         }
         try {
-            SequenceIterator<? extends Item> iter = expression.iterator(context);
+            SequenceIterator<? extends Item<?>> iter = expression.iterator(context);
             Sequence result = iter.materialize();
             return XdmValue.wrap(result);
         } catch (XPathException e) {

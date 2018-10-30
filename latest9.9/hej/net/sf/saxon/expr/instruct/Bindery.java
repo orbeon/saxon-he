@@ -63,7 +63,7 @@ public final class Bindery {
      * @param value   the value of the variable
      */
 
-    public void setGlobalVariable(GlobalVariable binding, GroundedValue<? extends Item> value) {
+    public void setGlobalVariable(GlobalVariable binding, GroundedValue<? extends Item<?>> value) {
         globals[binding.getBinderySlotNumber()] = value;
     }
 

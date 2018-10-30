@@ -54,7 +54,7 @@ public class XdmArray extends XdmFunctionItem {
      */
 
     public XdmArray(XdmValue[] members) {
-        List<GroundedValue<? extends Item>> values = new ArrayList<>();
+        List<GroundedValue<? extends Item<?>>> values = new ArrayList<>();
         for (XdmValue member : members) {
             values.add(member.getUnderlyingValue());
         }
@@ -71,7 +71,7 @@ public class XdmArray extends XdmFunctionItem {
      */
 
     public XdmArray(Iterable<? extends XdmValue> members) {
-        List<GroundedValue<? extends Item>> values = new ArrayList<>();
+        List<GroundedValue<? extends Item<?>>> values = new ArrayList<>();
         for (XdmValue member : members) {
             values.add(member.getUnderlyingValue());
         }
@@ -167,7 +167,7 @@ public class XdmArray extends XdmFunctionItem {
      * @return a list of the members of this array.
      */
     public List<XdmValue> asList() {
-        Iterator<GroundedValue<? extends Item>> members = getUnderlyingValue().members().iterator();
+        Iterator<GroundedValue<? extends Item<?>>> members = getUnderlyingValue().members().iterator();
         List<XdmValue> result = new ArrayList<XdmValue>(getUnderlyingValue().getLength());
         while (members.hasNext()) {
             result.add(XdmValue.wrap(members.next()));

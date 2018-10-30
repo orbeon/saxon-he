@@ -194,7 +194,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
         }
 
         public static ArrayItem append(ArrayItem array, Sequence member) throws XPathException {
-            List<GroundedValue<? extends Item>> list = new ArrayList<>(1);
+            List<GroundedValue<? extends Item<?>>> list = new ArrayList<>(1);
             list.add(member.materialize());
             SimpleArrayItem otherArray = new SimpleArrayItem(list);
             return array.concat(otherArray);
@@ -212,7 +212,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
             ArrayItem array = (ArrayItem) arguments[0].head();
             assert array != null;
             Function fn = (Function) arguments[1].head();
-            List<GroundedValue<? extends Item>> list = new ArrayList<>(1);
+            List<GroundedValue<? extends Item<?>>> list = new ArrayList<>(1);
             int i;
             for (i=0; i < array.arrayLength(); i++) {
                 if (((BooleanValue) dynamicCall(fn, context, new Sequence[]{array.get(i)}).head()).getBooleanValue()) {
@@ -296,7 +296,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
             ArrayItem array = (ArrayItem) arguments[0].head();
             assert array != null;
             Function fn = (Function) arguments[1].head();
-            List<GroundedValue<? extends Item>> list = new ArrayList<>(1);
+            List<GroundedValue<? extends Item<?>>> list = new ArrayList<>(1);
             int i;
             for (i=0; i < array.arrayLength(); i++) {
                 list.add(dynamicCall(fn, context, new GroundedValue[]{array.get(i)}).materialize());
@@ -318,7 +318,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
             ArrayItem array2 = (ArrayItem) arguments[1].head();
             assert array2 != null;
             Function fn = (Function) arguments[2].head();
-            List<GroundedValue<? extends Item>> list = new ArrayList<>(1);
+            List<GroundedValue<? extends Item<?>>> list = new ArrayList<>(1);
             int i;
             for (i=0; i < array1.arrayLength() && i < array2.arrayLength(); i++) {
                 list.add(dynamicCall(fn, context, new Sequence[]{array1.get(i), array2.get(i)}).materialize());
@@ -369,7 +369,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
             if (index < 0 || index > array.arrayLength()){
                 throw new XPathException("Specified position is not in range","FOAY0001");
             }
-            Sequence<? extends Item> newMember = arguments[2];
+            Sequence<? extends Item<?>> newMember = arguments[2];
             return array.insert(index, newMember.materialize());
         }
 
@@ -445,7 +445,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             assert array != null;
-            List<GroundedValue<? extends Item>> list = new ArrayList<>(1);
+            List<GroundedValue<? extends Item<?>>> list = new ArrayList<>(1);
             int i;
             for (i=0; i < array.arrayLength(); i++) {
                 list.add(array.get(array.arrayLength()-i-1));
@@ -559,7 +559,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
         @Override
         public Fold getFold(XPathContext context, Sequence... additionalArguments) {
             return new Fold() {
-                List<GroundedValue<? extends Item>> members = new ArrayList<>();
+                List<GroundedValue<? extends Item<?>>> members = new ArrayList<>();
 
                 /**
                  * Process one item in the input sequence, returning a new copy of the working data

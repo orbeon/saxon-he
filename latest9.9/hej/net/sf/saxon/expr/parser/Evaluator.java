@@ -130,7 +130,7 @@ public abstract class Evaluator {
 
     public final static Evaluator VARIABLE = new Evaluator() {
         @Override
-        public Sequence<? extends Item> evaluate(Expression expr, XPathContext context) throws XPathException {
+        public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) throws XPathException {
             try {
                 return ((VariableReference) expr).evaluateVariable(context);
             } catch (ClassCastException e) {
@@ -431,7 +431,7 @@ public abstract class Evaluator {
 
     public final static Evaluator PROCESS = new Evaluator() {
         @Override
-        public Sequence<? extends Item> evaluate(Expression expr, XPathContext context) throws XPathException {
+        public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) throws XPathException {
             Controller controller = context.getController();
             Receiver saved = context.getReceiver();
             SequenceOutputter seq = controller.allocateSequenceOutputter(20);
@@ -441,7 +441,7 @@ public abstract class Evaluator {
             expr.process(context);
             seq.close();
             context.setReceiver(saved);
-            Sequence<? extends Item> val = seq.getSequence();
+            Sequence<? extends Item<?>> val = seq.getSequence();
             seq.reset();
             return val;
         }

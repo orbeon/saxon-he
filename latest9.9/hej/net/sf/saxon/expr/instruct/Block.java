@@ -761,7 +761,7 @@ public class Block extends Instruction {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         if (size() == 0) {
             return EmptyIterator.emptyIterator();
         } else if (size() == 1) {

@@ -327,7 +327,7 @@ public class ExpressionTool {
                 return EmptySequence.getInstance();
 
             case EVALUATE_AND_MATERIALIZE_VARIABLE:
-                Sequence<? extends Item> v = ((VariableReference) exp).evaluateVariable(context);
+                Sequence<? extends Item<?>> v = ((VariableReference) exp).evaluateVariable(context);
                 if (v instanceof Closure) {
                     return v.iterate().materialize();
                 } else {
@@ -439,7 +439,7 @@ public class ExpressionTool {
      *                                           expression
      */
 
-    public static GroundedValue<? extends Item> eagerEvaluate(Expression exp, XPathContext context) throws XPathException {
+    public static GroundedValue<? extends Item<?>> eagerEvaluate(Expression exp, XPathContext context) throws XPathException {
         Evaluator evaluator = eagerEvaluator(exp);
         return evaluator.evaluate(exp, context).materialize();
     }

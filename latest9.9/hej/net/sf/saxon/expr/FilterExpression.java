@@ -1050,7 +1050,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
 
         // Fast path where the filter value is independent of the focus
 

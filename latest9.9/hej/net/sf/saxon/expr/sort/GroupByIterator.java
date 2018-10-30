@@ -45,7 +45,7 @@ public class GroupByIterator implements GroupIterator, LastPositionFinder, Looka
     // as a list of items in population order), a list of grouping keys, and a list of
     // the initial items of the groups.
 
-    private SequenceIterator<? extends Item> population;
+    private SequenceIterator<? extends Item<?>> population;
     protected Expression keyExpression;
     private StringCollator collator;
     private XPathContext keyContext;
@@ -76,7 +76,7 @@ public class GroupByIterator implements GroupIterator, LastPositionFinder, Looka
      * @throws XPathException if an error occurs
      */
 
-    public GroupByIterator(SequenceIterator<? extends Item> population, Expression keyExpression,
+    public GroupByIterator(SequenceIterator<? extends Item<?>> population, Expression keyExpression,
                            XPathContext keyContext, StringCollator collator, boolean composite)
             throws XPathException {
         this.population = population;
@@ -215,7 +215,7 @@ public class GroupByIterator implements GroupIterator, LastPositionFinder, Looka
      * @return the iterator
      */
 
-    public SequenceIterator<? extends Item> iterateCurrentGroup() {
+    public SequenceIterator<? extends Item<?>> iterateCurrentGroup() {
         return new ListIterator<>(groups.get(position - 1));
     }
 
