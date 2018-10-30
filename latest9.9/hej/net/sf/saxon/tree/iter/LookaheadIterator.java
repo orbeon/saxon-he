@@ -17,7 +17,7 @@ import net.sf.saxon.om.SequenceIterator;
  * after the current node.
  */
 
-public interface LookaheadIterator<T extends Item> extends SequenceIterator<T> {
+public interface LookaheadIterator<T extends Item<?>> extends SequenceIterator<T> {
 
     /**
      * Determine whether there are more items to come. Note that this operation

@@ -445,7 +445,7 @@ public abstract class SystemFunction extends AbstractFunction {
      * @throws XPathException if a dynamic error occurs within the function
      */
 
-    public static Sequence dynamicCall(Function f, XPathContext context, Sequence[] args) throws XPathException {
+    public static Sequence<? extends Item<?>> dynamicCall(Function f, XPathContext context, Sequence[] args) throws XPathException {
         context = f.makeNewContext(context);
         return f.call(context, args);
     }
@@ -491,7 +491,7 @@ public abstract class SystemFunction extends AbstractFunction {
      * @param out the export destination
      */
 
-    public void exportAttributes(ExpressionPresenter out) {};
+    public void exportAttributes(ExpressionPresenter out) {}
 
     /**
      * Export any implicit arguments held in optimized form within the SystemFunction call

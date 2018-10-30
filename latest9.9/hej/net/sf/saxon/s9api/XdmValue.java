@@ -187,14 +187,14 @@ public class XdmValue implements Iterable<XdmItem> {
      */
 
     public XdmValue append(XdmValue otherValue) {
-        List<Item> values = new ArrayList<>();
+        List<Item<?>> values = new ArrayList<>();
         for (XdmItem item : this) {
             values.add(item.getUnderlyingValue());
         }
         for (XdmItem item : otherValue) {
             values.add(item.getUnderlyingValue());
         }
-        GroundedValue<Item> gv = SequenceExtent.makeSequenceExtent(values);
+        GroundedValue<Item<?>> gv = SequenceExtent.makeSequenceExtent(values);
         return XdmValue.fromGroundedValue(gv);
     }
 
@@ -231,7 +231,7 @@ public class XdmValue implements Iterable<XdmItem> {
             throw new IndexOutOfBoundsException("" + n);
         }
         try {
-            Item item = SequenceTool.itemAt(value, n);
+            Item<?> item = SequenceTool.itemAt(value, n);
             return (XdmItem)XdmItem.wrap(item);
         } catch (XPathException e) {
             throw new SaxonApiUncheckedException(e);
@@ -350,7 +350,7 @@ public class XdmValue implements Iterable<XdmItem> {
 
     public static XdmValue makeValue(Object o) throws IllegalArgumentException {
         if (o instanceof Sequence) {
-            return XdmValue.wrap((Sequence) o);
+            return XdmValue.wrap((Sequence<? extends Item<?>>) o);
         } else if (o instanceof XdmValue) {
             return (XdmValue) o;
         } else if (o instanceof Map) {
@@ -376,9 +376,9 @@ public class XdmValue implements Iterable<XdmItem> {
 
     public XdmValue documentOrder() throws SaxonApiException {
         try {
-            SequenceIterator iter = value.iterate();
-            SequenceIterator sorted = new DocumentOrderIterator(iter, GlobalOrderComparer.getInstance());
-            return XdmValue.fromGroundedValue(((SequenceIterator<Item>) sorted).materialize());
+            SequenceIterator<? extends Item<?>> iter = value.iterate();
+            SequenceIterator<? extends Item<?>> sorted = new DocumentOrderIterator(iter, GlobalOrderComparer.getInstance());
+            return XdmValue.fromGroundedValue(sorted.materialize());
         } catch (XPathException e) {
             throw new SaxonApiException(e);
         }

@@ -18,7 +18,7 @@ import java.util.Iterator;
  * A value that exists in memory and that can be directly addressed
  * @since 9.5.  Generified in 9.9.
  */
-public interface GroundedValue<T extends Item> extends Sequence<T>, Iterable<T> {
+public interface GroundedValue<T extends Item<?>> extends Sequence<T>, Iterable<T> {
 
     /**
      * Get an iterator over all the items in the sequence. This differs from the superclass method

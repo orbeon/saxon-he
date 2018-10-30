@@ -30,18 +30,17 @@ import java.util.List;
  * leaving the members of that group in a saved list.</p>
  */
 
-public class GroupAdjacentIterator implements GroupIterator, LastPositionFinder, LookaheadIterator<Item> {
+public class GroupAdjacentIterator implements GroupIterator, LastPositionFinder, LookaheadIterator<Item<?>> {
 
     private Expression select;
     private FocusIterator population;
     private Expression keyExpression;
     private StringCollator collator;
-    //private AtomicComparer comparer;
     private XPathContext baseContext;
     private XPathContext runningContext;
     private List<AtomicMatchKey> currentComparisonKey;
     private AtomicSequence currentKey;
-    private List<Item> currentMembers;
+    private List<Item<?>> currentMembers;
     private List<AtomicMatchKey> nextComparisonKey;
     private List<AtomicValue> nextKey = null;
     private Item next;
@@ -188,7 +187,7 @@ public class GroupAdjacentIterator implements GroupIterator, LastPositionFinder,
 
     private class ManualGroupAdjacentIterator extends ManualGroupIterator {
 
-        List<Item> cMembers = currentMembers;
+        List<Item<?>> cMembers = currentMembers;
         XPathContext savedcontext = runningContext.newMinorContext();
 
         ManualGroupAdjacentIterator() {
@@ -197,7 +196,7 @@ public class GroupAdjacentIterator implements GroupIterator, LastPositionFinder,
             setLastPositionFinder(() -> savedcontext.getLast());
         }
 
-        public SequenceIterator<Item> iterateCurrentGroup() {
+        public SequenceIterator<Item<?>> iterateCurrentGroup() {
             return new ListIterator<>(cMembers);
         }
 

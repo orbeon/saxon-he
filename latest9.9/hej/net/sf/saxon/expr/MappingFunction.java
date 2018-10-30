@@ -19,7 +19,7 @@ import net.sf.saxon.trans.XPathException;
  * <p>It maps an item of class F to a sequence of items of class T, returned as an iterator.</p>
  */
 
-public interface MappingFunction<F extends Item, T extends Item> {
+public interface MappingFunction<F extends Item<?>, T extends Item<?>> {
 
     /**
      * Map one item to a sequence.

@@ -511,10 +511,10 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         XPathContextMinor c2 = context.newMinorContext();
         c2.trackFocus(getSelect().iterate(context));
-        return new ContextMappingIterator<Item>(this, c2);
+        return new ContextMappingIterator<Item<?>>(this, c2);
     }
 
     /**

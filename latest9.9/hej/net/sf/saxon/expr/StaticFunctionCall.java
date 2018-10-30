@@ -177,7 +177,7 @@ public class StaticFunctionCall extends FunctionCall implements Callable {
      * of the callee to ensure that the type of result conforms to the expected result type.
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence<? extends Item> call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<? extends Item<?>> call(XPathContext context, Sequence<? extends Item<?>>[] arguments) throws XPathException {
         return target.call(context, arguments);
     }
 
@@ -194,10 +194,10 @@ public class StaticFunctionCall extends FunctionCall implements Callable {
     }
 
     /**
-     * Diagnostic print of expression structure. The abstract expression tree
+     * Serialized output of expression structure. The abstract expression tree
      * is written to the supplied output destination.
      *
-     * @param out
+     * @param out destination of the SEF output
      */
     @Override
     public void export(ExpressionPresenter out) throws XPathException {

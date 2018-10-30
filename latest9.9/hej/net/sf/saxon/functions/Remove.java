@@ -66,7 +66,7 @@ public class Remove extends SystemFunction {
      * at a specified position.
      */
 
-    public static class RemoveIterator<T extends Item> implements SequenceIterator<T>, LastPositionFinder {
+    public static class RemoveIterator<T extends Item<?>> implements SequenceIterator<T>, LastPositionFinder {
 
         SequenceIterator<T> base;
         int removePosition;

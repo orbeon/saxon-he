@@ -24,7 +24,7 @@ import java.util.List;
  * checking in the same way as for a native XSLT/XQuery function declaring the type as xs:integer*.
  */
 
-public class ZeroOrMore<T extends Item> implements GroundedValue<T> {
+public class ZeroOrMore<T extends Item<?>> implements GroundedValue<T> {
 
     private List<T> content;
 
@@ -81,7 +81,7 @@ public class ZeroOrMore<T extends Item> implements GroundedValue<T> {
      *               of the sequence
      * @return the required subsequence.
      */
-    public GroundedValue subsequence(int start, int length) {
+    public GroundedValue<T> subsequence(int start, int length) {
         if (start < 0) {
             start = 0;
         }
@@ -145,13 +145,13 @@ public class ZeroOrMore<T extends Item> implements GroundedValue<T> {
      *
      * @return the simplified sequence
      */
-    public GroundedValue reduce() {
+    public GroundedValue<T> reduce() {
         if (content.isEmpty()) {
             return EmptySequence.getInstance();
         } else if (content.size() == 1) {
-            Item first = content.get(0);
+            T first = content.get(0);
             if (first instanceof AtomicValue) {
-                return (AtomicValue)first;
+                return (GroundedValue<T>)first;
             } else {
                 return new One<T>(head());
             }

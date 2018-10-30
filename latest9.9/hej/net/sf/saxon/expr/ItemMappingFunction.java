@@ -18,7 +18,7 @@ import net.sf.saxon.trans.XPathException;
  * the output item type</p>
  */
 
-public interface ItemMappingFunction<F extends Item, T extends Item> {
+public interface ItemMappingFunction<F extends Item<?>, T extends Item<?>> {
 
     /**
      * Map one item to another item.

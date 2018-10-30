@@ -842,7 +842,7 @@ public abstract class Expression implements IdentityComparable, ExportAgent {
      */
 
     /*@Nullable*/
-    public Item evaluateItem(XPathContext context) throws XPathException {
+    public Item<?> evaluateItem(XPathContext context) throws XPathException {
         return iterate(context).next();
     }
 

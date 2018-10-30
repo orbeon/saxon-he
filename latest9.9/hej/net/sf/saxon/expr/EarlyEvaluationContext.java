@@ -337,7 +337,7 @@ public class EarlyEvaluationContext implements XPathContext {
     }
 
     @Override
-    public <T extends Item> FocusIterator<T> trackFocus(SequenceIterator<T> iter) {
+    public <T extends Item<?>> FocusIterator<T> trackFocus(SequenceIterator<T> iter) {
         notAllowed();
         return null;
     }
@@ -346,7 +346,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * Set the value of a local variable, identified by its slot number
      */
 
-    public void setLocalVariable(int slotNumber, Sequence value) {
+    public void setLocalVariable(int slotNumber, Sequence<? extends Item<?>> value) {
         notAllowed();
     }
 
@@ -368,7 +368,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * @param isTunnel    True if a tunnel parameter is required, else false  @return true if a parameter of this name was supplied, false if not
      */
 
-    public int useLocalParameter(StructuredQName parameterId, int slotNumber, boolean isTunnel) throws XPathException {
+    public int useLocalParameter(StructuredQName parameterId, int slotNumber, boolean isTunnel) {
         return ParameterSet.NOT_SUPPLIED;
     }
 

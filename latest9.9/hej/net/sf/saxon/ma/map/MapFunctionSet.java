@@ -299,10 +299,10 @@ public class MapFunctionSet extends BuiltInFunctionSet {
      */
     public static class MapEntry extends SystemFunction {
 
-        public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+        public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
             AtomicValue key = (AtomicValue) arguments[0].head();
             assert key != null;
-            GroundedValue value = ((SequenceIterator<Item>) arguments[1].iterate()).materialize();
+            GroundedValue<? extends Item<?>> value = arguments[1].iterate().materialize();
             return HashTrieMap.singleton(key, value);
         }
 
@@ -336,13 +336,13 @@ public class MapFunctionSet extends BuiltInFunctionSet {
      */
     public static class MapForEach extends SystemFunction {
 
-        public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+        public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
             MapItem map = (MapItem) arguments[0].head();
             Function fn = (Function) arguments[1].head();
             List<GroundedValue> results = new ArrayList<>();
             for (KeyValuePair pair : map.keyValuePairs()) {
-                Sequence seq = dynamicCall(fn, context, new Sequence[]{pair.key, pair.value});
-                results.add(((Sequence<Item>) seq).materialize());
+                Sequence<? extends Item<?>> seq = dynamicCall(fn, context, new Sequence[]{pair.key, pair.value});
+                results.add(seq.materialize());
             }
             return new Chain(results);
         }
@@ -353,7 +353,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
      */
     public static class MapKeys extends SystemFunction {
 
-        public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+        public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
             MapItem map = (MapItem) arguments[0].head();
             assert map != null;
             return SequenceTool.toLazySequence(map.keys());
@@ -386,7 +386,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
         public Expression makeOptimizedFunctionCall(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo, Expression... arguments) throws XPathException {
             if (arguments.length == 2 && arguments[1] instanceof Literal) {
                 MapItem options = (MapItem) ((Literal)arguments[1]).getValue().head();
-                Map<String, Sequence> values = getDetails().optionDetails.processSuppliedOptions(
+                Map<String, Sequence<? extends Item<?>>> values = getDetails().optionDetails.processSuppliedOptions(
                         options, visitor.getStaticContext().makeEarlyEvaluationContext());
                 String duplicates = ((StringValue) values.get("duplicates")).getStringValue();
                 String duplicatesErrorCode = ((StringValue) values.get("duplicates-error-code")).getStringValue();
@@ -440,7 +440,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
             String duplicatesErrorCode = this.duplicatesErrorCode;
             if (arguments.length > 1) {
                 MapItem options = (MapItem) arguments[1].head();
-                Map<String, Sequence> values = getDetails().optionDetails.processSuppliedOptions(options, context);
+                Map<String, Sequence<? extends Item<?>>> values = getDetails().optionDetails.processSuppliedOptions(options, context);
                 duplicates = ((StringValue) values.get("duplicates")).getStringValue();
                 duplicatesErrorCode = ((StringValue) values.get("duplicates-error-code")).getStringValue();
             }

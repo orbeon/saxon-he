@@ -271,7 +271,7 @@ public abstract class JPConverter {
         public static final FromSequenceIterator INSTANCE = new FromSequenceIterator();
 
         public Sequence convert(Object object, XPathContext context) throws XPathException {
-            return ((SequenceIterator<Item>) (SequenceIterator) object).materialize();
+            return ((SequenceIterator<Item<?>>)object).materialize();
         }
 
         public ItemType getItemType() {
@@ -320,9 +320,9 @@ public abstract class JPConverter {
             this.cardinality = cardinality;
         }
 
-        public Sequence convert(Object object, XPathContext context) throws XPathException {
+        public Sequence<? extends Item<?>> convert(Object object, XPathContext context) throws XPathException {
             return object instanceof Closure ?
-                    ((SequenceIterator<Item>) ((Closure) object).iterate()).materialize() :
+                    ((Closure) object).iterate().materialize() :
                     (Sequence) object;
         }
 

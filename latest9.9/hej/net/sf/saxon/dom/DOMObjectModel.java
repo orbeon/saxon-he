@@ -110,13 +110,13 @@ public class DOMObjectModel extends TreeModel implements ExternalObjectModel {
     public PJConverter getPJConverter(Class targetClass) {
         if (Node.class.isAssignableFrom(targetClass) && !NodeOverNodeInfo.class.isAssignableFrom(targetClass)) {
             return new PJConverter() {
-                public Object convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
+                public Object convert(Sequence<? extends Item<?>> value, Class targetClass, XPathContext context) throws XPathException {
                     return convertXPathValueToObject(value, targetClass);
                 }
             };
         } else if (NodeList.class == targetClass) {
             return new PJConverter() {
-                public Object convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
+                public Object convert(Sequence<? extends Item<?>> value, Class targetClass, XPathContext context) throws XPathException {
                     return convertXPathValueToObject(value, targetClass);
                 }
             };
@@ -201,7 +201,7 @@ public class DOMObjectModel extends TreeModel implements ExternalObjectModel {
                 (node instanceof VirtualNode && ((VirtualNode) node).getRealNode() instanceof Node)) {
             return new PJConverter() {
                 /*@Nullable*/
-                public Object convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
+                public Object convert(Sequence<? extends Item<?>> value, Class targetClass, XPathContext context) throws XPathException {
                     return convertXPathValueToObject(value, NodeList.class);
                 }
             };

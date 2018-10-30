@@ -17,6 +17,7 @@ import net.sf.saxon.functions.OptionsParameter;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.Function;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.SymbolicName;
@@ -442,7 +443,7 @@ public abstract class BuiltInFunctionSet implements FunctionLibrary {
          * as the value of this argument allows the result to be determined irrespective of the values of the
          * other arguments; null if there is no such calculation possible
          */
-        public Sequence[] resultIfEmpty;
+        public Sequence<? extends Item<?>>[] resultIfEmpty;
         /**
          * Any additional properties. Various bit settings are defined: for example SAME_AS_FIRST_ARGUMENT indicates that
          * the result type is the same as the type of the first argument

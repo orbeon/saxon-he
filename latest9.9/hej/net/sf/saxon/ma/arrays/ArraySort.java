@@ -59,12 +59,12 @@ public class ArraySort extends SystemFunction {
         if (arguments.length == 3){
             key = (Function) arguments[2].head();
         }
-        for (GroundedValue seq: array.members()){
+        for (GroundedValue<? extends Item<?>> seq: array.members()){
             MemberToBeSorted member = new MemberToBeSorted();
             member.value = seq;
             member.originalPosition = i++;
             if (key != null) {
-                member.sortKey = ((Sequence<Item>) dynamicCall(key, context, new Sequence[]{seq})).materialize();
+                member.sortKey = dynamicCall(key, context, new Sequence[]{seq}).materialize();
             } else {
                 member.sortKey = atomize(seq);
             }
@@ -134,9 +134,9 @@ public class ArraySort extends SystemFunction {
         }
     }
 
-    private static GroundedValue atomize(Sequence input) throws XPathException {
-        SequenceIterator iterator = input.iterate();
-        SequenceIterator mapper = Atomizer.getAtomizingIterator(iterator, false);
-        return ((SequenceIterator<Item>) mapper).materialize();
+    private static GroundedValue<? extends AtomicValue> atomize(Sequence<? extends Item<?>> input) throws XPathException {
+        SequenceIterator<? extends Item<?>> iterator = input.iterate();
+        SequenceIterator<? extends AtomicValue> mapper = Atomizer.getAtomizingIterator(iterator, false);
+        return mapper.materialize();
     }
 }

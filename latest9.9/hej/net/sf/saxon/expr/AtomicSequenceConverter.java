@@ -338,8 +338,8 @@ public class AtomicSequenceConverter extends UnaryExpression {
      */
 
     public static class ToStringMappingFunction
-            implements ItemMappingFunction<Item, StringValue> {
-        public StringValue mapItem(Item item) {
+            implements ItemMappingFunction<Item<?>, StringValue> {
+        public StringValue mapItem(Item<?> item) {
             return StringValue.makeStringValue(item.getStringValueCS());
         }
     }

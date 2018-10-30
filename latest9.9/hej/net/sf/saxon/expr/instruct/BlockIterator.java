@@ -18,7 +18,7 @@ import net.sf.saxon.trans.XPathException;
  * into a single combined sequence.
  */
 
-public class BlockIterator implements SequenceIterator<Item> {
+public class BlockIterator implements SequenceIterator<Item<?>> {
 
     private Operand[] operanda;
     private int currentChildExpr = 0;

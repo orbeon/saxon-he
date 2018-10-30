@@ -13,7 +13,6 @@ import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.functions.Count;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.iter.GroundedIterator;
 import net.sf.saxon.tree.iter.UnfailingIterator;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.tree.wrapper.VirtualNode;
@@ -41,7 +40,7 @@ public class SequenceTool {
      * @throws XPathException if a failure occurs reading the input iterator
      */
 
-    public static <T extends Item> GroundedValue<T> toGroundedValue(SequenceIterator<T> iterator) throws XPathException {
+    public static <T extends Item<?>> GroundedValue<T> toGroundedValue(SequenceIterator<T> iterator) throws XPathException {
         return iterator.materialize();
     }
 
@@ -56,9 +55,9 @@ public class SequenceTool {
      * @throws XPathException if a failure occurs reading the input iterator
      */
 
-    public static <T extends Item> Sequence<T> toMemoSequence(SequenceIterator<T> iterator) throws XPathException {
+    public static <T extends Item<?>> Sequence<T> toMemoSequence(SequenceIterator<T> iterator) throws XPathException {
         if ((iterator.getProperties() & SequenceIterator.GROUNDED) != 0) {
-            return ((GroundedIterator<T>) iterator).materialize();
+            return iterator.materialize();
         } else {
             return new MemoSequence<>(iterator);
         }
@@ -76,7 +75,7 @@ public class SequenceTool {
      * @throws XPathException if a failure occurs reading the input iterator
      */
 
-    public static <T extends Item> Sequence<T> toLazySequence(SequenceIterator<T> iterator) throws XPathException {
+    public static <T extends Item<?>> Sequence<T> toLazySequence(SequenceIterator<T> iterator) throws XPathException {
         if ((iterator.getProperties() & SequenceIterator.GROUNDED) != 0 &&
                 !(iterator instanceof RangeIterator) &&
                 !(iterator instanceof ReverseRangeIterator)) {
@@ -172,7 +171,7 @@ public class SequenceTool {
      *                        evaluated, and evaluation fails
      */
 
-    public static <T extends Item> T itemAt(Sequence<T> sequence, int index) throws XPathException {
+    public static <T extends Item<?>> T itemAt(Sequence<T> sequence, int index) throws XPathException {
         if (sequence instanceof Item && index == 0) {
             return (T) sequence;
         }
@@ -189,7 +188,7 @@ public class SequenceTool {
      */
 
     /*@Nullable*/
-    public static <T extends Item> T asItem(Sequence<T> sequence) throws XPathException {
+    public static <T extends Item<?>> T asItem(Sequence<T> sequence) throws XPathException {
         if (sequence instanceof Item) {
             return (T) sequence;
         }
@@ -275,7 +274,7 @@ public class SequenceTool {
      *                        for example a function item
      */
 
-    public static <T extends Item> String getStringValue(Sequence<T> sequence) throws XPathException {
+    public static <T extends Item<?>> String getStringValue(Sequence<T> sequence) throws XPathException {
         FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.C64);
         sequence.iterate().forEachOrFail(item -> {
             if (!fsb.isEmpty()) {
@@ -361,7 +360,7 @@ public class SequenceTool {
      * a sequence with more than one item)
      */
 
-    public static int getCardinality(Sequence<? extends Item> sequence) {
+    public static int getCardinality(Sequence<? extends Item<?>> sequence) {
         if (sequence instanceof Item) {
             return StaticProperty.EXACTLY_ONE;
         }
@@ -396,7 +395,7 @@ public class SequenceTool {
      * @return the best available sequence type to which the supplied value conforms
      */
 
-    public static SequenceType getSequenceType(Sequence<? extends Item> value, TypeHierarchy th) {
+    public static SequenceType getSequenceType(Sequence<? extends Item<?>> value, TypeHierarchy th) {
         return SequenceType.makeSequenceType(getItemType(value, th), getCardinality(value));
     }
 

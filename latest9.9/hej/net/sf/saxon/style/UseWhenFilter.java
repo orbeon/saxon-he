@@ -348,10 +348,10 @@ public class UseWhenFilter extends ProxyReceiver {
             }
 
             if (isSupplied) {
-                Sequence suppliedValue = compilation.getParameters()
+                Sequence<? extends Item<?>> suppliedValue = compilation.getParameters()
                         .convertParameterValue(varName, requiredType, true, staticContext.makeEarlyEvaluationContext());
 
-                compilation.declareStaticVariable(varName, ((Sequence<Item>) suppliedValue).materialize(), precedence, isParam);
+                compilation.declareStaticVariable(varName, suppliedValue.materialize(), precedence, isParam);
             }
         }
 
@@ -374,8 +374,8 @@ public class UseWhenFilter extends ProxyReceiver {
             } else {
                 try {
                     staticContext.setContainingLocation(attLoc);
-                    Sequence seq = evaluateStatic(selectStr, location, staticContext);
-                    value = ((Sequence<Item>) seq).materialize();
+                    Sequence<? extends Item<?>> seq = evaluateStatic(selectStr, location, staticContext);
+                    value = seq.materialize();
                 } catch (XPathException e) {
                     throw createXPathException("Error in " + elemName.getLocalPart() + " expression. " + e.getMessage(),
                             e.getErrorCodeLocalPart(), attLoc);
@@ -384,8 +384,8 @@ public class UseWhenFilter extends ProxyReceiver {
             RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.VARIABLE, varName.getDisplayName(), 0);
             role.setErrorCode("XTDE0050");
             TypeHierarchy th = getConfiguration().getTypeHierarchy();
-            Sequence seq = th.applyFunctionConversionRules(value, requiredType, role, attLoc);
-            value = ((Sequence<Item>) seq).materialize();
+            Sequence<? extends Item<?>> seq = th.applyFunctionConversionRules(value, requiredType, role, attLoc);
+            value = seq.materialize();
             try {
                 compilation.declareStaticVariable(varName, value, precedence, isParam);
             } catch (XPathException e) {

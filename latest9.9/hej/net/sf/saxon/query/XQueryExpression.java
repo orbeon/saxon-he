@@ -567,11 +567,11 @@ public class XQueryExpression implements Location, ExpressionOwner {
 
     protected XPathContextMajor initialContext(DynamicQueryContext dynamicEnv, Controller controller) throws XPathException {
 
-        Item contextItem = controller.getGlobalContextItem();
+        Item<?> contextItem = controller.getGlobalContextItem();
         XPathContextMajor context = controller.newXPathContext();
 
         if (contextItem != null) {
-            ManualIterator<Item> single = new ManualIterator<Item>(contextItem);
+            ManualIterator<Item<?>> single = new ManualIterator<>(contextItem);
             context.setCurrentIterator(single);
             controller.setGlobalContextItem(contextItem);
         }
@@ -742,7 +742,7 @@ public class XQueryExpression implements Location, ExpressionOwner {
      * any exceptions that are raised to the ErrorListener
      */
 
-    private class ErrorReportingIterator<T extends Item> implements SequenceIterator<T> {
+    private class ErrorReportingIterator<T extends Item<?>> implements SequenceIterator<T> {
         private SequenceIterator<T> base;
         private UnfailingErrorListener listener;
 

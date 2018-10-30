@@ -14,6 +14,7 @@ import net.sf.saxon.expr.sort.DocumentSorter;
 import net.sf.saxon.lib.Feature;
 import net.sf.saxon.lib.Logger;
 import net.sf.saxon.om.GroundedValue;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.pattern.Pattern;
@@ -203,7 +204,7 @@ public class Optimizer {
      * @throws UnsupportedOperationException: this method should not be called in Saxon-HE
      */
 
-    public GroundedValue makeIndexedValue(SequenceIterator iter) throws XPathException {
+    public <T extends Item<?>> GroundedValue<T> makeIndexedValue(SequenceIterator<? extends T> iter) throws XPathException {
         throw new UnsupportedOperationException("Indexing requires Saxon-EE");
     }
 

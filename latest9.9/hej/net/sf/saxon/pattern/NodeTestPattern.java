@@ -49,7 +49,7 @@ public class NodeTestPattern extends Pattern {
      * @return true if the item matches the Pattern, false otherwise
      */
 
-    public boolean matches(Item item, XPathContext context) {
+    public boolean matches(Item<?> item, XPathContext context) {
         return item instanceof NodeInfo && nodeTest.matchesNode((NodeInfo)item);
     }
 

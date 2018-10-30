@@ -68,7 +68,7 @@ public class StreamingFunctionArgumentPattern extends Pattern {
      * @return true if the node matches the Pattern, false otherwise
      */
 
-    public boolean matches(Item item, XPathContext context) throws XPathException {
+    public boolean matches(Item<?> item, XPathContext context) throws XPathException {
         Sequence arg = context.getStackFrame().getStackFrameValues()[0];
         SequenceIterator iter = arg.iterate();
         Item j;

@@ -90,11 +90,11 @@ public class TypeHierarchy {
      *          if the value cannot be converted to the required type
      */
 
-    public Sequence applyFunctionConversionRules(Sequence value, SequenceType requiredType, final RoleDiagnostic role, Location locator)
+    public Sequence<? extends Item<?>> applyFunctionConversionRules(Sequence<? extends Item<?>> value, SequenceType requiredType, final RoleDiagnostic role, Location locator)
             throws XPathException {
         ItemType suppliedItemType = SequenceTool.getItemType(value, this);
 
-        SequenceIterator<? extends Item> iterator = value.iterate();
+        SequenceIterator<? extends Item<?>> iterator = value.iterate();
         final ItemType requiredItemType = requiredType.getPrimaryType();
 
         if (requiredItemType.isPlainType()) {
@@ -118,7 +118,7 @@ public class TypeHierarchy {
             if (relationship(suppliedItemType, BuiltInAtomicType.UNTYPED_ATOMIC) != DISJOINT &&
                     !isSubType(BuiltInAtomicType.UNTYPED_ATOMIC, requiredItemType)) {
                 final boolean nsSensitive = ((SimpleType) requiredItemType).isNamespaceSensitive();
-                ItemMappingFunction<Item, Item> converter;
+                ItemMappingFunction<Item<?>, Item<?>> converter;
                 if (nsSensitive) {
                     converter = item -> {
                         if (item instanceof UntypedAtomicValue) {
@@ -163,7 +163,7 @@ public class TypeHierarchy {
             // step 3: apply numeric promotion
 
             if (requiredItemType.equals(BuiltInAtomicType.DOUBLE)) {
-                ItemMappingFunction<Item, Item> promoter = item -> {
+                ItemMappingFunction<Item<?>, Item<?>> promoter = item -> {
                     if (item instanceof NumericValue) {
                         return (DoubleValue) Converter.convert(
                                 (NumericValue)item, BuiltInAtomicType.DOUBLE, config.getConversionRules()).asAtomic();
@@ -175,7 +175,7 @@ public class TypeHierarchy {
                 };
                 iterator = new ItemMappingIterator<>(iterator, promoter, true);
             } else if (requiredItemType.equals(BuiltInAtomicType.FLOAT)) {
-                ItemMappingFunction<Item, Item> promoter = item -> {
+                ItemMappingFunction<Item<?>, Item<?>> promoter = item -> {
                     if (item instanceof DoubleValue) {
                         throw new XPathException(
                                 "Failed to convert the " + role.getMessage() + ": " +
@@ -196,7 +196,7 @@ public class TypeHierarchy {
 
             if (requiredItemType.equals(BuiltInAtomicType.STRING) &&
                     relationship(suppliedItemType, BuiltInAtomicType.ANY_URI) != DISJOINT) {
-                ItemMappingFunction<Item, Item> promoter = item -> {
+                ItemMappingFunction<Item<?>, Item<?>> promoter = item -> {
                     if (item instanceof AnyURIValue) {
                         return new StringValue(item.getStringValueCS());
                     } else {
@@ -216,13 +216,13 @@ public class TypeHierarchy {
         int relation = relationship(suppliedItemType, requiredItemType);
 
         if (!(relation == SAME_TYPE || relation == SUBSUMED_BY)) {
-            ItemTypeCheckingFunction itemChecker =
-                    new ItemTypeCheckingFunction(requiredItemType, role, locator, config);
-            iterator = new ItemMappingIterator(iterator, itemChecker, true);
+            ItemTypeCheckingFunction<Item<?>> itemChecker =
+                    new ItemTypeCheckingFunction<>(requiredItemType, role, locator, config);
+            iterator = new ItemMappingIterator<>(iterator, itemChecker, true);
         }
 
         if (requiredType.getCardinality() != StaticProperty.ALLOWS_ZERO_OR_MORE) {
-            iterator = new CardinalityCheckingIterator(iterator, requiredType.getCardinality(), role, locator);
+            iterator = new CardinalityCheckingIterator<>(iterator, requiredType.getCardinality(), role, locator);
         }
 
         return SequenceTool.toMemoSequence(iterator);
@@ -240,7 +240,7 @@ public class TypeHierarchy {
      * @return an iterator over the converted value
      */
 
-    protected SequenceIterator applyFunctionCoercion(SequenceIterator iterator,
+    protected SequenceIterator<? extends Item<?>> applyFunctionCoercion(SequenceIterator<? extends Item<?>> iterator,
                                                      ItemType suppliedItemType, ItemType requiredItemType,
                                                      Location locator) {
         return iterator;

@@ -13,6 +13,7 @@ import net.sf.saxon.ma.trie.ImmutableHashTrieMap;
 import net.sf.saxon.ma.trie.ImmutableMap;
 import net.sf.saxon.ma.trie.Tuple2;
 import net.sf.saxon.om.GroundedValue;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.trans.Err;
@@ -86,10 +87,7 @@ public class HashTrieMap implements MapItem {
      * @return a singleton map
      */
 
-    public static HashTrieMap singleton(AtomicValue key, GroundedValue value) {
-//        if (Instrumentation.ACTIVE) {
-//            Instrumentation.count("singletons");
-//        }
+    public static HashTrieMap singleton(AtomicValue key, GroundedValue<? extends Item<?>> value) {
         return new HashTrieMap().addEntry(key, value);
     }
 
@@ -99,9 +97,6 @@ public class HashTrieMap implements MapItem {
      */
 
     public HashTrieMap(ImmutableMap<AtomicMatchKey, KeyValuePair> imap) {
-//        if (Instrumentation.ACTIVE) {
-//            Instrumentation.count("new maps");
-//        }
         this.imap = imap;
         entries = -1;
     }
@@ -134,7 +129,7 @@ public class HashTrieMap implements MapItem {
      * @param wasEmpty true if the map was empty before adding these values
      */
 
-    private void updateTypeInformation(AtomicValue key, Sequence val, boolean wasEmpty) {
+    private void updateTypeInformation(AtomicValue key, Sequence<? extends Item<?>> val, boolean wasEmpty) {
 //        if (Instrumentation.ACTIVE) {
 //            Instrumentation.count("updateTypeInformation");
 //        }
@@ -280,7 +275,7 @@ public class HashTrieMap implements MapItem {
         AtomicIterator keyIter = keys();
         AtomicValue key;
         while ((key = keyIter.next()) != null) {
-            Sequence val = get(key);
+            Sequence<? extends Item<?>> val = get(key);
             if (keyType == null) {
                 keyType = key.getItemType();
                 valueType = SequenceTool.getItemType(val, th);
@@ -325,10 +320,7 @@ public class HashTrieMap implements MapItem {
      * @return the new map containing the additional entry
      */
 
-    public HashTrieMap addEntry(AtomicValue key, GroundedValue value) {
-//        if (Instrumentation.ACTIVE) {
-//            Instrumentation.count("addEntry");
-//        }
+    public HashTrieMap addEntry(AtomicValue key, GroundedValue<? extends Item<?>> value) {
         boolean empty = isEmpty();
         ImmutableMap<AtomicMatchKey, KeyValuePair> imap2 = imap.put(makeKey(key), new KeyValuePair(key, value));
         HashTrieMap t2 = new HashTrieMap(imap2);
@@ -351,7 +343,7 @@ public class HashTrieMap implements MapItem {
      * @return true if an existing entry with the same key was replaced
      */
 
-    public boolean initialPut(AtomicValue key, GroundedValue value) {
+    public boolean initialPut(AtomicValue key, GroundedValue<? extends Item<?>> value) {
 //        if (Instrumentation.ACTIVE) {
 //            Instrumentation.count("initialPut");
 //        }
@@ -400,10 +392,7 @@ public class HashTrieMap implements MapItem {
      * @return the value associated with the given key, or null if the key is not present in the map
      */
 
-    public GroundedValue get(AtomicValue key)  {
-//        if (Instrumentation.ACTIVE) {
-//            Instrumentation.count("get");
-//        }
+    public GroundedValue<? extends Item<?>> get(AtomicValue key)  {
         KeyValuePair o = imap.get(makeKey(key));
         return o==null ? null : o.value;
     }
@@ -416,9 +405,6 @@ public class HashTrieMap implements MapItem {
      */
 
     public KeyValuePair getKeyValuePair(AtomicValue key) {
-//        if (Instrumentation.ACTIVE) {
-//            Instrumentation.count("getKVP");
-//        }
         return imap.get(makeKey(key));
     }
 
@@ -428,9 +414,6 @@ public class HashTrieMap implements MapItem {
      */
 
     public AtomicIterator keys() {
-//        if (Instrumentation.ACTIVE) {
-//            Instrumentation.count("keys");
-//        }
         return new AtomicIterator() {
 
             Iterator<Tuple2<AtomicMatchKey, KeyValuePair>> base = imap.iterator();
@@ -503,7 +486,7 @@ public class HashTrieMap implements MapItem {
                 Tuple2<AtomicMatchKey, KeyValuePair> entry = iter.next();
                 AtomicMatchKey k1 = entry._1;
                 AtomicValue k2 = entry._2.key;
-                Sequence v = entry._2.value;
+                Sequence<? extends Item<?>> v = entry._2.value;
                 buff.append(k2.toShortString());
                 buff.append(':');
                 buff.append(Err.depictSequence(v).toString().trim());

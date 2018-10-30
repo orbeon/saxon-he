@@ -78,7 +78,7 @@ public class JsonDoc extends SystemFunction  {
             throw e;
         }
 
-        Map<String, Sequence> checkedOptions;
+        Map<String, Sequence<? extends Item<?>>> checkedOptions;
         if (getArity() == 2) {
             MapItem options = (MapItem) arguments[1].head();
             checkedOptions = getDetails().optionDetails.processSuppliedOptions(options, context);

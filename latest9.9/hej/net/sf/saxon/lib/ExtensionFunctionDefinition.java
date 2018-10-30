@@ -10,6 +10,7 @@ package net.sf.saxon.lib;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.functions.AbstractFunction;
 import net.sf.saxon.om.Function;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
@@ -163,7 +164,7 @@ public abstract class ExtensionFunctionDefinition {
              * @throws XPathException if a dynamic error occurs within the function
              */
             @Override
-            public Sequence call(XPathContext context, Sequence[] args) throws XPathException {
+            public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] args) throws XPathException {
                 return makeCallExpression().call(context, args);
             }
 

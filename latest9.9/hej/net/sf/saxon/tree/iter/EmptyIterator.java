@@ -18,11 +18,11 @@ import net.sf.saxon.value.EmptySequence;
  * getInstance() method.
  */
 
-public class EmptyIterator<T extends Item> implements SequenceIterator<T>,
+public class EmptyIterator<T extends Item<?>> implements SequenceIterator<T>,
         ReversibleIterator<T>, LastPositionFinder, GroundedIterator<T>,
         LookaheadIterator<T>, UnfailingIterator<T>, AtomizedValueIterator<T> {
 
-    private static EmptyIterator<? extends Item> theInstance = new EmptyIterator<>();
+    private static EmptyIterator<? extends Item<?>> theInstance = new EmptyIterator<>();
 
     /**
      * Get an EmptyIterator, an iterator over an empty sequence.
@@ -36,7 +36,7 @@ public class EmptyIterator<T extends Item> implements SequenceIterator<T>,
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends Item> EmptyIterator<T> emptyIterator() {
+    public static <T extends Item<?>> EmptyIterator<T> emptyIterator() {
         return (EmptyIterator<T>)theInstance;
     }
 

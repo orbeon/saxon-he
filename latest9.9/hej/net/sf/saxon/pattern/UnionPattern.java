@@ -66,7 +66,7 @@ public class UnionPattern extends VennPattern {
      * @return true if the node matches either of the operand patterns
      */
 
-    public boolean matches(Item item, XPathContext context) throws XPathException {
+    public boolean matches(Item<?> item, XPathContext context) throws XPathException {
         return p1.matches(item, context) || p2.matches(item, context);
     }
 

@@ -914,7 +914,7 @@ public class StaticQueryContext {
      */
 
     public void declareGlobalVariable(
-            StructuredQName qName, /*@NotNull*/ SequenceType type, /*@Nullable*/ Sequence value, boolean external)
+            StructuredQName qName, SequenceType type, Sequence<? extends Item<?>> value, boolean external)
             throws XPathException {
         if (value == null && !external) {
             throw new NullPointerException("No initial value for declared variable");
@@ -923,16 +923,11 @@ public class StaticQueryContext {
             throw new XPathException("Value of declared variable does not match its type");
         }
         GlobalVariable var = external ? new GlobalParam() : new GlobalVariable();
-//        PackageData pd = new PackageData(config);
-//        pd.setXPathVersion(getLanguageVersion());
-//        pd.setHostLanguage(Configuration.XQUERY);
-//        pd.setSchemaAware(isSchemaAware());
-//        var.setPackageData(pd);
 
         var.setVariableQName(qName);
         var.setRequiredType(type);
         if (value != null) {
-            var.setSelectExpression(Literal.makeLiteral(((Sequence<Item>) value).materialize()));
+            var.setSelectExpression(Literal.makeLiteral(value.materialize()));
         }
         if (userDeclaredVariables == null) {
             userDeclaredVariables = new HashSet<>();

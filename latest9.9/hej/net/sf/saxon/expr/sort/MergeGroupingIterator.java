@@ -30,7 +30,7 @@ import java.util.*;
  * groups of adjacent items having the same merge key value
  */
 
-public class MergeGroupingIterator implements GroupIterator, LookaheadIterator<Item>, LastPositionFinder {
+public class MergeGroupingIterator implements GroupIterator, LookaheadIterator<Item<?>>, LastPositionFinder {
 
     private SequenceIterator baseItr;
     private ObjectValue<ItemWithMergeKeys> currenti = null;

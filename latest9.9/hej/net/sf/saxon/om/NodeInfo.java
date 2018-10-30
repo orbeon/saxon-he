@@ -55,7 +55,7 @@ import javax.xml.transform.SourceLocator;
  * a new implementation of this interface.
  */
 
-public interface NodeInfo extends Source, Item, Location {
+public interface NodeInfo extends Source, Item<NodeInfo>, Location {
 
     /**
      * Get information about the tree to which this NodeInfo belongs

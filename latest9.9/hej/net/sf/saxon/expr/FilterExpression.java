@@ -507,7 +507,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
     }
 
 
-    private Sequence tryEarlyEvaluation(ExpressionVisitor visitor) throws XPathException {
+    private Sequence<? extends Item<?>> tryEarlyEvaluation(ExpressionVisitor visitor) throws XPathException {
         // Attempt early evaluation of a filter expression if the base sequence is constant and the
         // filter depends only on the context. (This can't be done if, for example, the predicate uses
         // local variables, even variables declared within the predicate)
@@ -516,7 +516,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
                     !ExpressionTool.refersToVariableOrFunction(getFilter()) &&
                     (getFilter().getDependencies() & ~StaticProperty.DEPENDS_ON_FOCUS) == 0) {
                 XPathContext context = visitor.getStaticContext().makeEarlyEvaluationContext();
-                return ((SequenceIterator<Item>) iterate(context)).materialize();
+                return iterate(context).materialize();
             }
         } catch (XPathException e) {
             // can happen for a variety of reasons, for example the filter references a global parameter,

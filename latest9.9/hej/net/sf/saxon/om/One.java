@@ -16,7 +16,7 @@ import net.sf.saxon.value.*;
  *
  * <p>To extract the wrapped item, use {@link #head()}.</p>
  */
-public class One<T extends Item> extends ZeroOrOne<T> {
+public class One<T extends Item<?>> extends ZeroOrOne<T> {
 
     /**
      * Create an instance of the class

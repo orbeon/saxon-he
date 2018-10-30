@@ -12,7 +12,7 @@ import net.sf.saxon.trans.XPathException;
 /**
  * A sequence that wraps an iterator, without being materialized. It can only be used once.
  */
-public class LazySequence<T extends Item> implements Sequence<T> {
+public class LazySequence<T extends Item<?>> implements Sequence<T> {
 
     SequenceIterator<T> iterator;
     boolean used = false;

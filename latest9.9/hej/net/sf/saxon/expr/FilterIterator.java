@@ -21,7 +21,7 @@ import net.sf.saxon.value.StringValue;
  * so this class does no optimizations for numeric predicates.
  */
 
-public class FilterIterator<T extends Item> implements SequenceIterator<T> {
+public class FilterIterator<T extends Item<?>> implements SequenceIterator<T> {
 
     protected FocusIterator<T> base;
     protected Expression filter;
@@ -49,9 +49,9 @@ public class FilterIterator<T extends Item> implements SequenceIterator<T> {
      * @param context the context in which the (outer) filter expression is evaluated
      */
 
-    public void setSequence(SequenceIterator base, XPathContext context) {
+    public void setSequence(SequenceIterator<? extends Item<?>> base, XPathContext context) {
         filterContext = context.newMinorContext();
-        this.base = filterContext.trackFocus(base);
+        this.base = (FocusIterator<T>)filterContext.trackFocus(base);
     }
 
     /**

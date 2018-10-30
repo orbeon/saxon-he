@@ -530,10 +530,10 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
             return toSequence(array);
         }
 
-        public static Sequence toSequence(ArrayItem array) throws XPathException {
-            List<GroundedValue> results = new ArrayList<GroundedValue>();
-            for (Sequence seq : array.members()) {
-                results.add(((Sequence<Item>) seq).materialize());
+        public static Sequence<? extends Item<?>> toSequence(ArrayItem array) throws XPathException {
+            List<GroundedValue<? extends Item<?>>> results = new ArrayList<>();
+            for (Sequence<? extends Item<?>> seq : array.members()) {
+                results.add(seq.materialize());
             }
             return new Chain(results);
         }

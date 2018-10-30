@@ -17,7 +17,7 @@ import net.sf.saxon.trans.XPathException;
  * without actually instantiating the nodes themselves.</p>
  */
 
-public interface AtomizedValueIterator<T extends Item> extends SequenceIterator<T> {
+public interface AtomizedValueIterator<T extends Item<?>> extends SequenceIterator<T> {
 
     /**
      * Deliver the atomic value that is next in the atomized result

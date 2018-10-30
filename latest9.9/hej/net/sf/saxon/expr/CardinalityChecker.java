@@ -291,7 +291,7 @@ public final class CardinalityChecker extends UnaryExpression {
             if (second != null) {
                 Item[] leaders = new Item[]{first, second};
                 typeError("A sequence of more than one item is not allowed as the " +
-                    role.getMessage() + depictSequenceStart(new ArrayIterator<Item>(leaders), 2), role.getErrorCode(), context);
+                    role.getMessage() + depictSequenceStart(new ArrayIterator<Item<?>>(leaders), 2), role.getErrorCode(), context);
                 return null;
             }
         }

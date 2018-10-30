@@ -89,7 +89,7 @@ public class CastToUnion extends UnaryExpression {
         if (operand instanceof Literal) {
             GroundedValue literalOperand = ((Literal) operand).getValue();
             if (literalOperand instanceof AtomicValue) {
-                GroundedValue av = ((SequenceIterator<Item>) iterate(visitor.getStaticContext().makeEarlyEvaluationContext())).materialize();
+                GroundedValue<? extends Item<?>> av = ((SequenceIterator<? extends Item<?>>) iterate(visitor.getStaticContext().makeEarlyEvaluationContext())).materialize();
                 return Literal.makeLiteral(av, this);
             }
             if (literalOperand.getLength() == 0) {

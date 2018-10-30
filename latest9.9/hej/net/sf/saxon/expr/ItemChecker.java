@@ -236,7 +236,7 @@ public final class ItemChecker extends UnaryExpression {
      *         as the input sequence, unless the dynamic type checking reveals an error.
      */
 
-    public ItemMappingFunction<Item, Item> getMappingFunction(XPathContext context) {
+    public ItemMappingFunction<Item<?>, Item<?>> getMappingFunction(XPathContext context) {
         return new ItemTypeCheckingFunction(requiredItemType, role, getBaseExpression(), context.getConfiguration());
     }
 

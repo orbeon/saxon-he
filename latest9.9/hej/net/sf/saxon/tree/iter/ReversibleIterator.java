@@ -17,7 +17,7 @@ import net.sf.saxon.om.SequenceIterator;
  * do so).
  */
 
-public interface ReversibleIterator<T extends Item> extends SequenceIterator<T> {
+public interface ReversibleIterator<T extends Item<?>> extends SequenceIterator<T> {
 
     /**
      * Get a new SequenceIterator that returns the same items in reverse order.

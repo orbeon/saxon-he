@@ -16,11 +16,15 @@ import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.functions.OptionsParameter;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.ma.map.MapItem;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.Type;
-import net.sf.saxon.value.*;
+import net.sf.saxon.value.BooleanValue;
+import net.sf.saxon.value.EmptySequence;
+import net.sf.saxon.value.SequenceType;
+import net.sf.saxon.value.StringValue;
 
 import java.util.Map;
 
@@ -44,7 +48,7 @@ public class XMLToJsonFn extends SystemFunction {
         boolean indent = false;
         if (getArity() > 1) {
             MapItem suppliedOptions = (MapItem) arguments[1].head();
-            Map<String, Sequence> options = getDetails().optionDetails.processSuppliedOptions(suppliedOptions, context);
+            Map<String, Sequence<? extends Item<?>>> options = getDetails().optionDetails.processSuppliedOptions(suppliedOptions, context);
             indent = ((BooleanValue)options.get("indent").head()).getBooleanValue();
         }
 

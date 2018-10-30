@@ -24,7 +24,7 @@ import net.sf.saxon.value.Cardinality;
  * the checks; after that we can simply return the items from the base sequence.
  */
 
-public final class CardinalityCheckingIterator<T extends Item> implements SequenceIterator<T> {
+public final class CardinalityCheckingIterator<T extends Item<?>> implements SequenceIterator<T> {
 
     private SequenceIterator<T> base;
     private Location locator;

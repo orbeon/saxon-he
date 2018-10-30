@@ -37,7 +37,7 @@ import java.util.List;
 
 public class Literal extends Expression {
 
-    private GroundedValue value;
+    private GroundedValue<? extends Item<?>> value;
 
     /**
      * Create a literal as a wrapper around a Value
@@ -45,7 +45,7 @@ public class Literal extends Expression {
      * @param value the value of this literal
      */
 
-    protected Literal(GroundedValue value) {
+    protected Literal(GroundedValue<? extends Item<?>> value) {
         this.value = value.reduce();
     }
 
@@ -70,7 +70,7 @@ public class Literal extends Expression {
      * @return the constant value
      */
 
-    public GroundedValue getValue() {
+    public GroundedValue<? extends Item<?>> getValue() {
         return value;
     }
 
@@ -235,7 +235,7 @@ public class Literal extends Expression {
     /**
      * Copy an expression. This makes a deep copy.
      *
-     * @param rebindings
+     * @param rebindings variables that need to be re-bound
      * @return a copy of the original literal. Note that the
      * underlying value is not copied; the code relies on the caller
      * treating the underlying value as immutable.
@@ -351,9 +351,7 @@ public class Literal extends Expression {
         if (value instanceof Item) {
             out.append((Item) value, getLocation(), ReceiverOptions.ALL_NAMESPACES);
         } else {
-            value.iterate().forEachOrFail(it -> {
-                out.append(it, getLocation(), ReceiverOptions.ALL_NAMESPACES);
-            });
+            value.iterate().forEachOrFail(it -> out.append(it, getLocation(), ReceiverOptions.ALL_NAMESPACES));
         }
     }
 
@@ -436,11 +434,11 @@ public class Literal extends Expression {
         if (!(obj instanceof Literal)) {
             return false;
         }
-        GroundedValue v0 = value;
-        GroundedValue v1 = ((Literal) obj).value;
+        GroundedValue<? extends Item<?>> v0 = value;
+        GroundedValue<? extends Item<?>> v1 = ((Literal) obj).value;
         try {
-            SequenceIterator i0 = v0.iterate();
-            SequenceIterator i1 = v1.iterate();
+            SequenceIterator<? extends Item<?>> i0 = v0.iterate();
+            SequenceIterator<? extends Item<?>> i1 = v1.iterate();
             while (true) {
                 Item m0 = i0.next();
                 Item m1 = i1.next();
@@ -459,7 +457,7 @@ public class Literal extends Expression {
                     return false;
                 }
                 if (n0) {
-                    if (((NodeInfo) m0).equals((NodeInfo) m1)) {
+                    if (m0.equals(m1)) {
                         continue;
                     } else {
                         return false;
@@ -630,7 +628,7 @@ public class Literal extends Expression {
         } else if (value instanceof AtomicValue) {
             return value.toString();
         } else {
-            return "(" + value.head().toString() + ",...)";
+            return "(" + value.head() + ",...)";
         }
     }
 
@@ -742,7 +740,7 @@ public class Literal extends Expression {
      * @return the Literal
      */
 
-    public static <T extends Item> Literal makeLiteral(GroundedValue<T> value) {
+    public static <T extends Item<?>> Literal makeLiteral(GroundedValue<T> value) {
         value = value.reduce();
         if (value instanceof StringValue) {
             return new StringLiteral((StringValue) value);
@@ -765,7 +763,7 @@ public class Literal extends Expression {
      * @return the Literal
      */
 
-    public static Literal makeLiteral(GroundedValue value, Expression origin) {
+    public static Literal makeLiteral(GroundedValue<? extends Item<?>> value, Expression origin) {
         Literal lit = makeLiteral(value);
         //lit.setRetainedStaticContextLocally(origin.getLocalRetainedStaticContext());
         ExpressionTool.copyLocationInfo(origin, lit);

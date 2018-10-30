@@ -189,7 +189,7 @@ public final class AncestorQualifiedPattern extends Pattern {
      * @return true if the pattern matches, else false
      */
 
-    public boolean matches(Item item, XPathContext context) throws XPathException {
+    public boolean matches(Item<?> item, XPathContext context) throws XPathException {
         return item instanceof NodeInfo && matchesBeneathAnchor((NodeInfo) item, null, context);
     }
 

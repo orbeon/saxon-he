@@ -591,7 +591,7 @@ public class Block extends Instruction {
      */
 
     private void flatten(List<Expression> targetList) throws XPathException {
-        List<Item> currentLiteralList = null;
+        List<Item<?>> currentLiteralList = null;
         for (Operand o : operands()) {
             Expression child = o.getChildExpression();
             if (Literal.isEmptySequence(child)) {
@@ -601,7 +601,7 @@ public class Block extends Instruction {
                 currentLiteralList = null;
                 ((Block) child).flatten(targetList);
             } else if (child instanceof Literal && !(((Literal) child).getValue() instanceof IntegerRange)) {
-                SequenceIterator iterator = ((Literal) child).getValue().iterate();
+                SequenceIterator<? extends Item<?>> iterator = ((Literal) child).getValue().iterate();
                 if (currentLiteralList == null) {
                     currentLiteralList = new ArrayList<>(10);
                 }
@@ -619,9 +619,9 @@ public class Block extends Instruction {
         flushCurrentLiteralList(currentLiteralList, targetList);
     }
 
-    private void flushCurrentLiteralList(List<Item> currentLiteralList, List<Expression> list) throws XPathException {
+    private void flushCurrentLiteralList(List<Item<?>> currentLiteralList, List<Expression> list) throws XPathException {
         if (currentLiteralList != null) {
-            ListIterator<Item> iter = new ListIterator<>(currentLiteralList);
+            ListIterator<Item<?>> iter = new ListIterator<>(currentLiteralList);
             Literal lit = Literal.makeLiteral(iter.materialize(), this);
             list.add(lit);
         }

@@ -816,7 +816,7 @@ public class XsltController extends Controller {
         return gatekeeper;
     }
 
-    private MappingFunction<Item, Item> getInputPreprocessor(Mode finalMode) {
+    private MappingFunction<Item<?>, Item<?>> getInputPreprocessor(Mode finalMode) {
         return item -> {
             if (item instanceof NodeInfo) {
                 NodeInfo node = (NodeInfo) item;

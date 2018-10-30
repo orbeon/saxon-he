@@ -26,7 +26,7 @@ import java.util.*;
  * by allocating memory to each item in the sequence.
  */
 
-public class SequenceExtent<T extends Item> implements GroundedValue<T> {
+public class SequenceExtent<T extends Item<?>> implements GroundedValue<T> {
     private List<T> value;
 
     /**
@@ -99,7 +99,7 @@ public class SequenceExtent<T extends Item> implements GroundedValue<T> {
      * @deprecated since 9.9: use {@link SequenceIterator#materialize()}
      */
 
-    public static <T extends Item> GroundedValue<T> makeSequenceExtent(SequenceIterator<T> iter) throws XPathException {
+    public static <T extends Item<?>> GroundedValue<T> makeSequenceExtent(SequenceIterator<T> iter) throws XPathException {
         return iter.materialize();
     }
 
@@ -121,7 +121,7 @@ public class SequenceExtent<T extends Item> implements GroundedValue<T> {
      * @deprecated since 9.9: use {@link SequenceIterator#materialize()}
      */
 
-    public static <T extends Item> GroundedValue<T> fromIterator(SequenceIterator<T> iter) throws XPathException {
+    public static <T extends Item<?>> GroundedValue<T> fromIterator(SequenceIterator<T> iter) throws XPathException {
         return new SequenceExtent<>(iter).reduce();
     }
 
@@ -139,7 +139,7 @@ public class SequenceExtent<T extends Item> implements GroundedValue<T> {
      *                                           the iterator.
      */
 
-    public static <T extends Item> GroundedValue<T> makeResidue(SequenceIterator<T> iter) throws XPathException {
+    public static <T extends Item<?>> GroundedValue<T> makeResidue(SequenceIterator<T> iter) throws XPathException {
         if ((iter.getProperties() & SequenceIterator.GROUNDED) != 0) {
             return ((GroundedIterator) iter).getResidue();
         }
@@ -158,12 +158,12 @@ public class SequenceExtent<T extends Item> implements GroundedValue<T> {
      *         {@link SequenceExtent}.
      */
 
-    public static <T extends Item> GroundedValue<T> makeSequenceExtent(/*@NotNull*/ List<T> input) {
+    public static <T extends Item<?>> GroundedValue<T> makeSequenceExtent(/*@NotNull*/ List<T> input) {
         int len = input.size();
         if (len == 0) {
             return EmptySequence.getInstance();
         } else if (len == 1) {
-            return input.get(0);
+            return (GroundedValue<T>)input.get(0);
         } else {
             return new SequenceExtent<>(input);
         }

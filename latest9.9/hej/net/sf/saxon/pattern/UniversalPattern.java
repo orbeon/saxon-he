@@ -40,7 +40,7 @@ public class UniversalPattern extends Pattern {
      * @return true if the item matches the Pattern, false otherwise
      */
 
-    public boolean matches(Item item, XPathContext context) {
+    public boolean matches(Item<?> item, XPathContext context) {
         return true;
     }
 

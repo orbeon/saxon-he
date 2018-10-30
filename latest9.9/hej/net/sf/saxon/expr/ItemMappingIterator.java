@@ -21,7 +21,7 @@ import net.sf.saxon.tree.iter.LookaheadIterator;
  * output item.</p>
  */
 
-public class ItemMappingIterator<F extends Item, T extends Item>
+public class ItemMappingIterator<F extends Item<?>, T extends Item<?>>
         implements SequenceIterator<T>, LookaheadIterator<T>, LastPositionFinder {
 
     private SequenceIterator<? extends F> base;

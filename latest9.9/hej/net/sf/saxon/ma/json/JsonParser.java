@@ -8,6 +8,7 @@
 package net.sf.saxon.ma.json;
 
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NameChecker;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.Err;
@@ -76,7 +77,7 @@ public class JsonParser {
     }
 
 
-    public static int getFlags(Map<String, Sequence> options, XPathContext context, Boolean allowValidate) throws XPathException {
+    public static int getFlags(Map<String, Sequence<? extends Item<?>>> options, XPathContext context, Boolean allowValidate) throws XPathException {
         int flags = 0;
         BooleanValue debug = (BooleanValue) options.get("debug");
         if (debug != null && debug.getBooleanValue()) {

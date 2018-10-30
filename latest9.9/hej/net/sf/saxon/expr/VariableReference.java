@@ -35,7 +35,7 @@ public abstract class VariableReference extends Expression implements BindingRef
     /*@Nullable*/ protected Binding binding = null;     // This will be null until fixup() is called; it will also be null
     // if the variable reference has been inlined
     protected SequenceType staticType = null;
-    protected GroundedValue constantValue = null;
+    protected GroundedValue<? extends Item<?>> constantValue = null;
     private StructuredQName variableName = null;
     private boolean flattened = false;
     private boolean inLoop = false;
@@ -116,13 +116,12 @@ public abstract class VariableReference extends Expression implements BindingRef
      * as supplying the static type, it may also supply a compile-time value for the variable.
      * As well as the type information, other static properties of the value are supplied:
      * for example, whether the value is an ordered node-set.
-     *
-     * @param type       the static type of the variable
+     *  @param type       the static type of the variable
      * @param value      the value of the variable if this is a compile-time constant, or null otherwise
      * @param properties static properties of the expression to which the variable is bound
      */
 
-    public void setStaticType(SequenceType type, /*@Nullable*/ GroundedValue value, int properties) {
+    public void setStaticType(SequenceType type, GroundedValue<? extends Item<?>> value, int properties) {
         // System.err.println(this + " Set static type = " + type);
         if (type == null) {
             type = SequenceType.ANY_SEQUENCE;

@@ -23,10 +23,10 @@ import net.sf.saxon.tree.iter.LookaheadIterator;
  * Class to do a sorted iteration
  */
 
-public class SortedIterator implements SequenceIterator<Item>, LastPositionFinder, LookaheadIterator<Item>, Sortable {
+public class SortedIterator implements SequenceIterator<Item<?>>, LastPositionFinder, LookaheadIterator<Item<?>>, Sortable {
 
     // the items to be sorted
-    protected SequenceIterator base;
+    protected SequenceIterator<? extends Item<?>> base;
 
     // the call-back function used to evaluate sort keys
     protected SortKeyEvaluator sortKeyEvaluator;
@@ -65,7 +65,7 @@ public class SortedIterator implements SequenceIterator<Item>, LastPositionFinde
      * @param createNewContext true if sort keys are computed relative to the item being sorted (as in XSLT but not XQuery)
      */
 
-    public SortedIterator(XPathContext context, SequenceIterator<? extends Item> base,
+    public SortedIterator(XPathContext context, SequenceIterator<? extends Item<?>> base,
                           SortKeyEvaluator sortKeyEvaluator, AtomicComparer[] comparators, boolean createNewContext) {
 
         if (createNewContext) {

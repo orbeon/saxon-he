@@ -21,7 +21,7 @@ import java.util.List;
  */
 
 
-public class ReverseListIterator<T extends Item> implements UnfailingIterator<T>,
+public class ReverseListIterator<T extends Item<?>> implements UnfailingIterator<T>,
         ReversibleIterator<T>, LookaheadIterator<T>, LastPositionFinder {
 
     List<T> items;

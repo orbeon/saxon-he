@@ -108,7 +108,7 @@ public class PatternThatSetsCurrent extends Pattern {
      * @return true if the item matches the Pattern, false otherwise
      */
     @Override
-    public boolean matches(Item item, XPathContext context) throws XPathException {
+    public boolean matches(Item<?> item, XPathContext context) throws XPathException {
         context.setLocalVariable(binding.getLocalSlotNumber(), item);
         return wrappedPattern.matches(item, context);
     }

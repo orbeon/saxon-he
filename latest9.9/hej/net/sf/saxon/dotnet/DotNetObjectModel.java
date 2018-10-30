@@ -59,7 +59,7 @@ public abstract class DotNetObjectModel implements ExternalObjectModel {
     public PJConverter getPJConverter(Class targetClass) {
         if (isRecognizedNodeClass(targetClass)) {
             return new PJConverter() {
-                public Object convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
+                public Object convert(Sequence<? extends Item<?>> value, Class targetClass, XPathContext context) throws XPathException {
                     if (value instanceof ZeroOrOne) {
                         NodeInfo node = (NodeInfo) ((ZeroOrOne) value).head();
                         if (node instanceof VirtualNode) {
@@ -218,8 +218,8 @@ public abstract class DotNetObjectModel implements ExternalObjectModel {
                 ((ZeroOrOne) value).head() instanceof DotNetNodeWrapper) {
             return ((DotNetNodeWrapper) ((ZeroOrOne) value).head()).getRealNode();
         } else if (isXdmAtomicValueType(targetClass)) {
-            SequenceIterator atomIterator = Atomizer.getAtomizingIterator(value.iterate(), false);
-            GroundedValue extent = ((SequenceIterator<Item>) atomIterator).materialize();
+            SequenceIterator<? extends AtomicValue> atomIterator = Atomizer.getAtomizingIterator(value.iterate(), false);
+            GroundedValue<? extends AtomicValue> extent = atomIterator.materialize();
             if (extent.getLength() == 0) {
                 return null;
             } else if (extent instanceof AtomicValue) {

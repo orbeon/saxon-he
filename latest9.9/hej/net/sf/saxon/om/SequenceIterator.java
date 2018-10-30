@@ -30,7 +30,7 @@ import java.io.Closeable;
  * @since 8.4; significant changes in 9.6.
  */
 
-public interface SequenceIterator<T extends Item> extends Closeable {
+public interface SequenceIterator<T extends Item<?>> extends Closeable {
 
     /**
      * Get the next item in the sequence. This method changes the state of the
@@ -63,7 +63,7 @@ public interface SequenceIterator<T extends Item> extends Closeable {
      * @since 9.1. Default implementation added in 9.9.
      */
 
-    default void close() {};
+    default void close() {}
 
     /**
      * Get properties of this iterator, as a bit-significant integer.

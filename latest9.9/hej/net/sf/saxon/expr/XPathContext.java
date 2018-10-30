@@ -123,7 +123,7 @@ public interface XPathContext {
      *             to the current iterator.
      */
 
-    <T extends Item> FocusIterator<T> trackFocus(SequenceIterator<T> iter);
+    <T extends Item<?>> FocusIterator<T> trackFocus(SequenceIterator<T> iter);
 
     /**
      * Set a new sequence iterator.
@@ -150,7 +150,7 @@ public interface XPathContext {
      * @return the context item, or null if the context item is undefined
      */
 
-    Item getContextItem();
+    Item<?> getContextItem();
 
     /**
      * Get the context size (the position of the last item in the current node list)
@@ -236,17 +236,16 @@ public interface XPathContext {
      * @return the value of the variable.
      */
 
-    Sequence evaluateLocalVariable(int slotnumber);
+    Sequence<? extends Item<?>> evaluateLocalVariable(int slotnumber);
 
     /**
      * Set the value of a local variable, identified by its slot number
-     *
-     * @param slotNumber the slot number allocated at compile time to the variable,
+     *  @param slotNumber the slot number allocated at compile time to the variable,
      *                   which identifies its position within the local stack frame
      * @param value      the value of the variable
      */
 
-    void setLocalVariable(int slotNumber, Sequence value) throws XPathException;
+    void setLocalVariable(int slotNumber, Sequence<? extends Item<?>> value) throws XPathException;
 
     /**
      * Set the XSLT output state to "temporary" or "final"

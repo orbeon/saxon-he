@@ -55,7 +55,7 @@ public interface SchemaComponent {
      * @return the schema component represented as a function from property names to property values.
      */
 
-    Function getComponentAsFunction();
+    Function<?> getComponentAsFunction();
 
 
     /**

@@ -24,7 +24,7 @@ import net.sf.saxon.value.Closure;
  *
  * @since 9.5. Generified in 9.9.
  */
-public interface Sequence<T extends Item> {
+public interface Sequence<T extends Item<?>> {
 
     /**
      * Get the first item in the sequence.

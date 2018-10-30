@@ -125,9 +125,7 @@ public class KeyIndex {
             xc.openStackFrame(map);
         }
 
-        match.selectNodes(doc, xc).forEachOrFail(node -> {
-            processNode(node, keydef, xc, isFirst);
-        });
+        match.selectNodes(doc, xc).forEachOrFail(node -> processNode(node, keydef, xc, isFirst));
 
     }
 
@@ -152,7 +150,7 @@ public class KeyIndex {
         // Make the node we are testing the context node,
         // with context position and context size set to 1
 
-        ManualIterator si = new ManualIterator(node);
+        ManualIterator<NodeInfo> si = new ManualIterator<>(node);
         xc.setCurrentIterator(si);
 
         StringCollator collation = keydef.getCollation();
@@ -307,11 +305,10 @@ public class KeyIndex {
      * @throws XPathException if a dynamic error is encountered
      */
 
-    public List<NodeInfo> getComposite(SequenceIterator<? extends Item> soughtValue) throws XPathException {
+    public List<NodeInfo> getComposite(SequenceIterator<? extends Item<?>> soughtValue) throws XPathException {
         List<AtomicMatchKey> amks = new ArrayList<>(4);
-        soughtValue.forEachOrFail(keyVal -> {
-            amks.add(getCollationKey((AtomicValue)keyVal, collation, implicitTimezone));
-        });
+        soughtValue.forEachOrFail(
+                keyVal -> amks.add(getCollationKey((AtomicValue)keyVal, collation, implicitTimezone)));
         return index.get(new CompositeAtomicMatchKey(amks));
     }
 

@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * order of first appearance.
  */
 
-public class GroupEndingIterator extends GroupMatchingIterator implements GroupIterator, LookaheadIterator<Item> {
+public class GroupEndingIterator extends GroupMatchingIterator implements GroupIterator, LookaheadIterator<Item<?>> {
 
     public GroupEndingIterator(Expression select, Pattern endPattern,
                                XPathContext context)

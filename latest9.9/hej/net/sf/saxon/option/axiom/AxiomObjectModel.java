@@ -16,6 +16,7 @@ import net.sf.saxon.expr.PJConverter;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExternalObjectModel;
 import net.sf.saxon.lib.NamespaceConstant;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.TreeModel;
@@ -99,7 +100,7 @@ public class AxiomObjectModel extends TreeModel implements ExternalObjectModel {
     public PJConverter getPJConverter(Class targetClass) {
         if (isRecognizedNodeClass(targetClass)) {
             return new PJConverter() {
-                public Object convert(Sequence value, Class targetClass, XPathContext context) throws XPathException {
+                public Object convert(Sequence<? extends Item<?>> value, Class targetClass, XPathContext context) throws XPathException {
                     return convertXPathValueToObject(value, targetClass);
                 }
             };

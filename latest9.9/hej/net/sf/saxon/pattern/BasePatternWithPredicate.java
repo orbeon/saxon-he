@@ -110,16 +110,16 @@ public class BasePatternWithPredicate extends Pattern implements PatternWithPred
      * @return true if the node matches the Pattern, false otherwise
      */
     @Override
-    public boolean matches(Item item, XPathContext context) throws XPathException {
+    public boolean matches(Item<?> item, XPathContext context) throws XPathException {
         if (!getBasePattern().matches(item, context)) {
             return false;
         }
         return matchesPredicate(item, context);
     }
 
-    private boolean matchesPredicate(Item item, XPathContext context) throws XPathException {
+    private boolean matchesPredicate(Item<?> item, XPathContext context) throws XPathException {
         XPathContext c2 = context.newMinorContext();
-        ManualIterator<Item> si = new ManualIterator<Item>(item);
+        ManualIterator<Item<?>> si = new ManualIterator<>(item);
         c2.setCurrentIterator(si);
         try {
             return getPredicate().effectiveBooleanValue(c2);

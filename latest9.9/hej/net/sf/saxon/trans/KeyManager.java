@@ -316,10 +316,10 @@ public class KeyManager {
      * @throws XPathException if a dynamic error is encountered
      */
 
-    public SequenceIterator selectByCompositeKey(
+    public SequenceIterator selectByCompositeKey (
             KeyDefinitionSet keySet,
             TreeInfo doc,
-            SequenceIterator soughtValue,
+            SequenceIterator<? extends Item<?>> soughtValue,
             XPathContext context) throws XPathException {
 
 
@@ -329,7 +329,7 @@ public class KeyManager {
         if (nodes == null) {
             return EmptyIterator.emptyIterator();
         } else {
-            return new ListIterator(nodes);
+            return new ListIterator<>(nodes);
         }
 
     }

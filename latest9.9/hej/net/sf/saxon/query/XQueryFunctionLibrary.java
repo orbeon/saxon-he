@@ -187,23 +187,19 @@ public class XQueryFunctionLibrary implements FunctionLibrary, XQueryFunctionBin
          * @throws net.sf.saxon.trans.XPathException
          *          if a dynamic error occurs during the evaluation of the expression
          */
-        public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+        public Sequence<? extends Item<?>> call(XPathContext context, Sequence<? extends Item<?>>[] arguments) throws XPathException {
             if (function == null) {
                 throw new XPathException("Forwards reference to XQuery function has not been resolved");
             }
             Sequence[] args = new Sequence[arguments.length];
             for (int i = 0; i < arguments.length; i++) {
-                args[i] = ((SequenceIterator<Item>) arguments[i].iterate()).materialize();
+                args[i] = ((SequenceIterator<? extends Item<?>>) arguments[i].iterate()).materialize();
             }
             return function.call(context.newCleanContext(), args);
         }
 
         public void setFunction(UserFunction function) {
             this.function = function;
-            //if (functionItem != null) {
-            //    functionItem.setCallable(function.asCallable());
-            //    functionItem.setType(function.getFunctionType());
-            //}
         }
 
         public UserFunction getFunction() {

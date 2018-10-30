@@ -153,7 +153,7 @@ public class XPathExpression {
             TypeHierarchy th = env.getConfiguration().getTypeHierarchy();
             if (!type.matches(contextItem, th)) {
                 throw new XPathException("Supplied context item does not match required context item type " +
-                        type.toString());
+                                                 type);
             }
         }
     }
@@ -184,8 +184,8 @@ public class XPathExpression {
      * @throws XPathException if a dynamic error occurs while evaluation the expression
      */
 
-    public List<Item> evaluate(XPathDynamicContext context) throws XPathException {
-        List<Item> list = new ArrayList<Item>(20);
+    public List<Item<?>> evaluate(XPathDynamicContext context) throws XPathException {
+        List<Item<?>> list = new ArrayList<>(20);
         expression.iterate(context.getXPathContextObject()).forEachOrFail(list::add);
         return list;
     }
@@ -204,7 +204,7 @@ public class XPathExpression {
 
     /*@Nullable*/
     public Item evaluateSingle(XPathDynamicContext context) throws XPathException {
-        SequenceIterator iter = expression.iterate(context.getXPathContextObject());
+        SequenceIterator<? extends Item<?>> iter = expression.iterate(context.getXPathContextObject());
         Item result = iter.next();
         iter.close();
         return result;

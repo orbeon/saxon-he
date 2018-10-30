@@ -33,7 +33,7 @@ import net.sf.saxon.value.ObjectValue;
 
 public final class Bindery {
 
-    private GroundedValue[] globals;          // values of global variables and parameters
+    private GroundedValue<? extends Item<?>>[] globals;          // values of global variables and parameters
     private long[] busy;                 // set to current thread id while variable is being evaluated
 
 
@@ -142,7 +142,8 @@ public final class Bindery {
      *         the variable is initialized using the collection() function.
      */
 
-    public synchronized GroundedValue saveGlobalVariableValue(GlobalVariable binding, GroundedValue value) {
+    public synchronized GroundedValue<? extends Item<?>> saveGlobalVariableValue(
+            GlobalVariable binding, GroundedValue<? extends Item<?>> value) {
         int slot = binding.getBinderySlotNumber();
         if (globals[slot] != null) {
             // another thread has already evaluated the value
@@ -162,7 +163,7 @@ public final class Bindery {
      * @return the Value of the variable if defined, null otherwise.
      */
 
-    public GroundedValue getGlobalVariableValue(GlobalVariable binding) {
+    public GroundedValue<? extends Item<?>> getGlobalVariableValue(GlobalVariable binding) {
         return globals[binding.getBinderySlotNumber()];
     }
 
@@ -173,7 +174,7 @@ public final class Bindery {
      * @return the Value of the variable if defined, null otherwise.
      */
 
-    public GroundedValue<? extends Item> getGlobalVariable(int slot) {
+    public GroundedValue<? extends Item<?>> getGlobalVariable(int slot) {
         return globals[slot];
     }
 

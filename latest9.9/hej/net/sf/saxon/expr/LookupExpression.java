@@ -342,17 +342,17 @@ public class LookupExpression extends BinaryExpression {
                         }));
             }
         } else if (isObjectLookup) {
-            SequenceIterator<? extends Item> baseIterator = getLhsExpression().iterate(context);
-            GroundedValue<? extends Item> rhs = getRhsExpression().iterate(context).materialize();
+            SequenceIterator<? extends Item<?>> baseIterator = getLhsExpression().iterate(context);
+            GroundedValue<? extends Item<?>> rhs = getRhsExpression().iterate(context).materialize();
             String key = rhs.getStringValue();
             return new ItemMappingIterator<>(baseIterator,
-                                           item -> (Item)config.externalObjectAsMap(((ObjectValue)item), key).get((StringValue)rhs));
+                                           item -> (Item<?>)config.externalObjectAsMap((ObjectValue)item, key).get((StringValue)rhs));
         } else {
-            SequenceIterator<? extends Item> baseIterator = getLhsExpression().iterate(context);
-            GroundedValue<? extends Item> rhs = getRhsExpression().iterate(context).materialize();
-            MappingFunction<? extends Item, ? extends Item> mappingFunction = baseItem -> {
+            SequenceIterator<? extends Item<?>> baseIterator = getLhsExpression().iterate(context);
+            GroundedValue<? extends Item<?>> rhs = getRhsExpression().iterate(context).materialize();
+            MappingFunction<? extends Item<?>, ? extends Item<?>> mappingFunction = baseItem -> {
                 if (baseItem instanceof ArrayItem) {
-                    MappingFunction<Item, Item> arrayAccess = index -> {
+                    MappingFunction<Item<?>, Item<?>> arrayAccess = index -> {
                         if (index instanceof IntegerValue) {
                             GroundedValue<? extends Item> member = ((ArrayItem) baseItem).get((int) ((IntegerValue) index).longValue() - 1);
                             return member.iterate();
@@ -366,12 +366,12 @@ public class LookupExpression extends BinaryExpression {
                             throw exception;
                         }
                     };
-                    SequenceIterator<? extends Item> rhsIter = rhs.iterate();
+                    SequenceIterator<? extends Item<?>> rhsIter = rhs.iterate();
                     return new MappingIterator<>(rhsIter, arrayAccess);
                 } else if (baseItem instanceof MapItem) {
-                    SequenceIterator<? extends Item> rhsIter = rhs.iterate();
+                    SequenceIterator<? extends Item<?>> rhsIter = rhs.iterate();
                     return new MappingIterator<>(rhsIter, key -> {
-                        GroundedValue<? extends Item> value = ((MapItem) baseItem).get((AtomicValue) key);
+                        GroundedValue<? extends Item<?>> value = ((MapItem) baseItem).get((AtomicValue) key);
                         return value == null ? EmptyIterator.emptyIterator() : value.iterate();
                     });
                 } else if (baseItem instanceof ObjectValue) {
@@ -385,7 +385,7 @@ public class LookupExpression extends BinaryExpression {
                         throw exception;
                     }
                     String key = rhs.getStringValue();
-                    return config.externalObjectAsMap(((ObjectValue) baseItem), key).get((StringValue) rhs).iterate();
+                    return config.externalObjectAsMap((ObjectValue) baseItem, key).get((StringValue) rhs).iterate();
                 } else {
                     mustBeArrayOrMap(this, baseItem);
                     return null;

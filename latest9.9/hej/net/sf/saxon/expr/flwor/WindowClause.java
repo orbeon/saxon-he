@@ -393,7 +393,7 @@ public class WindowClause extends Clause {
         public int endPosition = 0;
         public Item endPreviousItem;
         public Item endNextItem;
-        public List<Item> contents;
+        public List<Item<?>> contents;
         public boolean isDespatched = false;
 
         /**

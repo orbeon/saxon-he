@@ -39,7 +39,7 @@ import java.util.List;
 
 public final class SequenceOutputter extends SequenceWriter {
 
-    private List<Item> list;
+    private List<Item<?>> list;
 
 
     /**
@@ -96,7 +96,7 @@ public final class SequenceOutputter extends SequenceWriter {
      * @return the value (sequence of items) that have been written to this SequenceOutputter
      */
 
-    public Sequence<? extends Item> getSequence() {
+    public Sequence<? extends Item<?>> getSequence() {
         switch (list.size()) {
             case 0:
                 return EmptySequence.getInstance();
@@ -114,7 +114,7 @@ public final class SequenceOutputter extends SequenceWriter {
      * @return an iterator over the items that have been written to this SequenceOutputter
      */
 
-    public SequenceIterator<Item> iterate() {
+    public SequenceIterator<Item<?>> iterate() {
         if (list.isEmpty()) {
             return EmptyIterator.emptyIterator();
         } else {
@@ -128,7 +128,7 @@ public final class SequenceOutputter extends SequenceWriter {
      * @return the list of items that have been written to this SequenceOutputter
      */
 
-    public List<Item> getList() {
+    public List<Item<?>> getList() {
         return list;
     }
 

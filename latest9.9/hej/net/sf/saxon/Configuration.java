@@ -2403,7 +2403,7 @@ public class Configuration implements SourceResolver, NotationSet {
      * @throws XPathException if (for example) a dynamic error occurs while priming the queue
      */
 
-    public <F extends Item, T extends Item> SequenceIterator<T> getMultithreadedItemMappingIterator(
+    public <F extends Item<?>, T extends Item<?>> SequenceIterator<T> getMultithreadedItemMappingIterator(
             SequenceIterator<F> base, ItemMappingFunction<F, T> action) throws XPathException {
         return new ItemMappingIterator<>(base, action);
     }
@@ -3606,7 +3606,7 @@ public class Configuration implements SourceResolver, NotationSet {
     /**
      * Get a factory function that can be used to wrap a SequenceIterator in a FocusTrackingIterator. This
      * is called by the {@link Controller} to get a default factory function; the value can be overridden
-     * by the application using {@link Controller#setFocusTrackerFactory(java.util.function.Function)}.
+     * by the application using {@link Controller#setFocusTrackerFactory(FocusTrackingFactory)}.
      * The {@link FocusTrackingIterator} that is created by the factory must be thread-safe if it is
      * to be used for iterating over a sequence where the items might be processed asynchronously using
      * <code>xsl:result-document</code>; for this reason this method is overridden for a Saxon-EE configuration.
@@ -3617,7 +3617,7 @@ public class Configuration implements SourceResolver, NotationSet {
      * @return a suitable factory function
      */
 
-    public java.util.function.Function<SequenceIterator, FocusIterator> getFocusTrackerFactory(
+    public FocusTrackingFactory getFocusTrackerFactory(
             Executable exec, boolean multithreaded) {
         return FocusTrackingIterator::new;
     }
@@ -3741,7 +3741,7 @@ public class Configuration implements SourceResolver, NotationSet {
      * @throws XPathException if a failure occurs constructing the Closure
      */
 
-    public Sequence makeClosure(Expression expression, int ref, XPathContext context) throws XPathException {
+    public Sequence<? extends Item<?>> makeClosure(Expression expression, int ref, XPathContext context) throws XPathException {
         if (getBooleanProperty(Feature.EAGER_EVALUATION)) {
             // Using eager evaluation can make for easier debugging
             SequenceIterator<? extends Item> iter = expression.iterate(context);
@@ -3766,7 +3766,7 @@ public class Configuration implements SourceResolver, NotationSet {
      * @throws XPathException if evaluation of the expression fails
      */
 
-    public GroundedValue makeSequenceExtent(Expression expression, int ref, XPathContext context) throws XPathException {
+    public GroundedValue<? extends Item<?>> makeSequenceExtent(Expression expression, int ref, XPathContext context) throws XPathException {
         return expression.iterate(context).materialize();
     }
 

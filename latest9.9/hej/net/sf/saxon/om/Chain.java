@@ -39,7 +39,7 @@ import java.util.*;
  * second phase occurs when any of the methods itemAt(), reduce(), or subsequence()
  * is called.</p>
  */
-public class Chain<T extends Item> implements GroundedValue<T> {
+public class Chain<T extends Item<?>> implements GroundedValue<T> {
 
     private List<GroundedValue<T>> children = new ArrayList<>();
     private List<T> extent = null;
@@ -110,11 +110,7 @@ public class Chain<T extends Item> implements GroundedValue<T> {
             throw new IllegalStateException();
         }
         if (item != null) {
-            if (item instanceof GroundedValue) {
-                children.add(item);
-            } else {
-                children.add(new One<T>(item));
-            }
+            children.add((GroundedValue<T>)item);
         }
     }
 
@@ -157,7 +153,7 @@ public class Chain<T extends Item> implements GroundedValue<T> {
      *               of the sequence
      * @return the required subsequence.
      */
-    public GroundedValue subsequence(int start, int length) {
+    public GroundedValue<T> subsequence(int start, int length) {
         consolidate();
         int newStart;
         if (start < 0) {
@@ -242,12 +238,12 @@ public class Chain<T extends Item> implements GroundedValue<T> {
      *
      * @return the simplified sequence
      */
-    public GroundedValue reduce() {
+    public GroundedValue<T> reduce() {
         consolidate();
         return SequenceExtent.makeSequenceExtent(extent);
     }
 
-    private static class ChainIterator<T extends Item> implements UnfailingIterator<T>, GroundedIterator<T> {
+    private static class ChainIterator<T extends Item<?>> implements UnfailingIterator<T>, GroundedIterator<T> {
 
         private class ChainPosition {
             Chain<T> chain;

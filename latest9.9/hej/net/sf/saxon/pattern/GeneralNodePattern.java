@@ -167,7 +167,7 @@ public final class GeneralNodePattern extends Pattern {
      * @return true if the pattern matches, else false
      */
 
-    public boolean matches(Item item, XPathContext context) throws XPathException {
+    public boolean matches(Item<?> item, XPathContext context) throws XPathException {
         TypeHierarchy th = context.getConfiguration().getTypeHierarchy();
         if (!itemType.matches(item, th)) {
             return false;

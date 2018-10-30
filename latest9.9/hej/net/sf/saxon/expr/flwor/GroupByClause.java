@@ -291,16 +291,16 @@ public class GroupByClause extends Clause {
             context.setLocalVariable(bindings[j].getLocalSlotNumber(), v);
         }
         for (int j = groupingValues.length; j < bindings.length; j++) {
-            List<Item> concatenatedValue = new ArrayList<>();
+            List<Item<?>> concatenatedValue = new ArrayList<>();
             for (ObjectToBeGrouped otbg : group) {
-                Sequence val = otbg.retainedValues.getMembers()[j - groupingValues.length];
-                SequenceIterator si = val.iterate();
-                Item it;
+                Sequence<? extends Item<?>> val = otbg.retainedValues.getMembers()[j - groupingValues.length];
+                SequenceIterator<? extends Item<?>> si = val.iterate();
+                Item<?> it;
                 while ((it = si.next()) != null) {
                     concatenatedValue.add(it);
                 }
             }
-            SequenceExtent<Item> se = new SequenceExtent<>(concatenatedValue);
+            SequenceExtent<Item<?>> se = new SequenceExtent<>(concatenatedValue);
             context.setLocalVariable(bindings[j].getLocalSlotNumber(), se);
         }
     }

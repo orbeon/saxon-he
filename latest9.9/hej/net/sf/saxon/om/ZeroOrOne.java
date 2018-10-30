@@ -17,18 +17,18 @@ import net.sf.saxon.value.EmptySequence;
  * A value that is a sequence containing zero or one items.
  */
 
-public class ZeroOrOne<T extends Item> implements GroundedValue<T> {
+public class ZeroOrOne<T extends Item<?>> implements GroundedValue<T> {
 
     private T item; // may be null, to represent an empty sequence
 
-    private static ZeroOrOne<Item> EMPTY = new ZeroOrOne<>(null);
+    private static ZeroOrOne<Item<?>> EMPTY = new ZeroOrOne<>(null);
 
     /**
      * Return the instance of ZeroOrOne that represents the empty sequence
      * @return a representation of the empty sequence that satisfies the type ZeroOrOne
      */
 
-    public static <T extends Item> ZeroOrOne<T> empty() {
+    public static <T extends Item<?>> ZeroOrOne<T> empty() {
         return (ZeroOrOne<T>) EMPTY;
     }
 

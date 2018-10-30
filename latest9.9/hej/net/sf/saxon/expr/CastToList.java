@@ -80,8 +80,9 @@ public class CastToList extends UnaryExpression {
             GroundedValue literalOperand = ((Literal) operand).getValue();
             if (literalOperand instanceof AtomicValue) {
                 try {
-                    SequenceIterator seq = iterate(visitor.getStaticContext().makeEarlyEvaluationContext());
-                    return Literal.makeLiteral(((SequenceIterator<Item>) seq).materialize(), this);
+                    SequenceIterator<? extends Item<?>> seq =
+                            iterate(visitor.getStaticContext().makeEarlyEvaluationContext());
+                    return Literal.makeLiteral(seq.materialize(), this);
                 } catch (XPathException err) {
                     err.maybeSetErrorCode("FORG0001");
                     err.setLocation(getLocation());

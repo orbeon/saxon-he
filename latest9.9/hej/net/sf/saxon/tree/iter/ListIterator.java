@@ -21,7 +21,7 @@ import java.util.List;
  * Class ListIterator, iterates over a sequence of items held in a Java List
  */
 
-public class ListIterator<T extends Item>
+public class ListIterator<T extends Item<?>>
         implements UnfailingIterator<T>, LastPositionFinder, LookaheadIterator<T>, GroundedIterator<T>, ReversibleIterator<T> {
 
     private int index = 0;

@@ -23,15 +23,14 @@ public interface BindingReference {
      * Fix up the static type of this variable reference; optionally, supply a constant value for
      * the variable. Also supplies other static properties of the expression to which the variable
      * is bound, for example whether it is an ordered node-set.
-     *
-     * @param type          The static type of the variable reference, typically either the declared type
+     *  @param type          The static type of the variable reference, typically either the declared type
      *                      of the variable, or the static type of the expression to which the variable is bound
      * @param constantValue if non-null, indicates that the value of the variable is known at compile
      *                      time, and supplies the value
      * @param properties    static properties of the expression to which the variable is bound
      */
 
-    public void setStaticType(SequenceType type, /*@Nullable*/ GroundedValue constantValue, int properties);
+    void setStaticType(SequenceType type, GroundedValue<? extends Item<?>> constantValue, int properties);
 
     /**
      * Fix up this binding reference to a binding
@@ -39,7 +38,7 @@ public interface BindingReference {
      * @param binding the Binding to which the variable refers
      */
 
-    public void fixup(Binding binding);
+    void fixup(Binding binding);
 
 }
 

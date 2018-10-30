@@ -31,7 +31,7 @@ import net.sf.saxon.tree.iter.ManualIterator;
  * of these context variables.</p>
  */
 
-public class Closure implements Sequence, ContextOriginator {
+public class Closure implements Sequence<Item<?>>, ContextOriginator {
 
     protected Expression expression;
     /*@Nullable*/ protected XPathContextMajor savedXPathContext;
@@ -41,7 +41,7 @@ public class Closure implements Sequence, ContextOriginator {
     // to the reservoir. It only ever has one instance (for each Closure) and each
     // item is read only once.
 
-    protected SequenceIterator inputIterator;
+    protected SequenceIterator<Item<?>> inputIterator;
 
     /**
      * Constructor should not be called directly, instances should be made using the make() method.
@@ -63,7 +63,8 @@ public class Closure implements Sequence, ContextOriginator {
      */
 
     /*@NotNull*/
-    public static Sequence make(/*@NotNull*/ Expression expression, /*@NotNull*/ XPathContext context, int ref) throws XPathException {
+    public static Sequence<? extends Item<?>> make(
+            Expression expression, XPathContext context, int ref) throws XPathException {
         return context.getConfiguration().makeClosure(expression, ref, context);
     }
 
@@ -77,7 +78,7 @@ public class Closure implements Sequence, ContextOriginator {
 
         if ((expression.getDependencies() & StaticProperty.DEPENDS_ON_LOCAL_VARIABLES) != 0) {
             StackFrame localStackFrame = context.getStackFrame();
-            Sequence[] local = localStackFrame.getStackFrameValues();
+            Sequence<? extends Item<?>>[] local = localStackFrame.getStackFrameValues();
             int[] slotsUsed = expression.getSlotsUsed();  // computed on first call
             if (local != null) {
                 final SlotManager stackFrameMap = localStackFrame.getStackFrameMap();
@@ -87,7 +88,7 @@ public class Closure implements Sequence, ContextOriginator {
                     if (local[i] instanceof Closure) {
                         int cdepth = ((Closure) local[i]).depth;
                         if (cdepth >= 10) {
-                            local[i] = ((SequenceIterator<Item>) local[i].iterate()).materialize();
+                            local[i] = local[i].iterate().materialize();
                         } else if (cdepth + 1 > depth) {
                             depth = cdepth + 1;
                         }
@@ -102,8 +103,8 @@ public class Closure implements Sequence, ContextOriginator {
         // Make a copy of the context item
         FocusIterator currentIterator = context.getCurrentIterator();
         if (currentIterator != null) {
-            Item contextItem = currentIterator.current();
-            ManualIterator single = new ManualIterator(contextItem);
+            Item<?> contextItem = currentIterator.current();
+            ManualIterator<? extends Item<?>> single = new ManualIterator<>(contextItem);
             savedXPathContext.setCurrentIterator(single);
             // we don't save position() and last() because we have no way
             // of restoring them. So the caller must ensure that a Closure is not
@@ -148,10 +149,10 @@ public class Closure implements Sequence, ContextOriginator {
      */
 
     /*@NotNull*/
-    public SequenceIterator iterate() throws XPathException {
+    public SequenceIterator<Item<?>> iterate() throws XPathException {
 
         if (inputIterator == null) {
-            return inputIterator = expression.iterate(savedXPathContext);
+            return inputIterator = (SequenceIterator<Item<?>>)expression.iterate(savedXPathContext);
         } else {
             // In an ideal world this shouldn't happen: if the value is needed more than once, we should
             // have chosen a MemoClosure.
@@ -174,12 +175,12 @@ public class Closure implements Sequence, ContextOriginator {
      * @throws XPathException if an error occurs doing the lazy evaluation
      */
 
-    public GroundedValue reduce() throws XPathException {
-        return ((SequenceIterator<Item>) iterate()).materialize();
+    public GroundedValue<? extends Item<?>> reduce() throws XPathException {
+        return iterate().materialize();
     }
 
     @Override
-    public Sequence makeRepeatable() throws XPathException {
+    public Sequence<Item<?>> makeRepeatable() throws XPathException {
         return materialize();
     }
 }

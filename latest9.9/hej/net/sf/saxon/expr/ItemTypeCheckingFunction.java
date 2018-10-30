@@ -22,7 +22,7 @@ import net.sf.saxon.type.UType;
  * all the items in a sequence are instances of a given item type
  *
  */
-public class ItemTypeCheckingFunction implements ItemMappingFunction<Item, Item> {
+public class ItemTypeCheckingFunction<T extends Item<?>> implements ItemMappingFunction<T, T> {
 
     private ItemType requiredItemType;
     private RoleDiagnostic role;
@@ -54,12 +54,12 @@ public class ItemTypeCheckingFunction implements ItemMappingFunction<Item, Item>
         this.config = config;
     }
 
-    public Item mapItem(Item item) throws XPathException {
+    public T mapItem(T item) throws XPathException {
         testConformance(item, config);
         return item;
     }
 
-    private void testConformance(Item item, Configuration config) throws XPathException {
+    private void testConformance(T item, Configuration config) throws XPathException {
         final TypeHierarchy th = config.getTypeHierarchy();
         if (requiredItemType.matches(item, th)) {
             // OK, no action

@@ -81,7 +81,7 @@ public class JSONResource implements Resource {
                 throw new XPathException(e);
             }
         }
-        Map<String, Sequence> options = new HashMap<String, Sequence>();
+        Map<String, Sequence<? extends Item<?>>> options = new HashMap<>();
         options.put("liberal", BooleanValue.FALSE);
         options.put("duplicates", new StringValue("use-first"));
         options.put("escape", BooleanValue.FALSE);

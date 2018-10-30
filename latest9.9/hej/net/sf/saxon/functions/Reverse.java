@@ -70,7 +70,7 @@ public class Reverse extends SystemFunction {
 //    }
 
 
-    public static <T extends Item> SequenceIterator<T> getReverseIterator(SequenceIterator<T> forwards) throws XPathException {
+    public static <T extends Item<?>> SequenceIterator<T> getReverseIterator(SequenceIterator<T> forwards) throws XPathException {
         if (forwards instanceof ReversibleIterator) {
             return ((ReversibleIterator<T>) forwards).getReverseIterator();
         } else {

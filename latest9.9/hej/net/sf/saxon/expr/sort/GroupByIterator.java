@@ -36,7 +36,7 @@ import java.util.List;
  * current group is available via the getCurrentGroupingKey() method.</p>
  */
 
-public class GroupByIterator implements GroupIterator, LastPositionFinder, LookaheadIterator<Item> {
+public class GroupByIterator implements GroupIterator, LastPositionFinder, LookaheadIterator<Item<?>> {
 
     // The implementation of group-by is not pipelined. All the items in the population
     // are read at the start, their grouping keys are calculated, and the groups are formed
@@ -54,7 +54,7 @@ public class GroupByIterator implements GroupIterator, LastPositionFinder, Looka
     // Main data structure holds one entry for each group. The entry is also an ArrayList,
     // which contains the Items that are members of the group, in population order.
     // The groups are arranged in order of first appearance within the population.
-    protected List<List<Item>> groups = new ArrayList<>(40);
+    protected List<List<Item<?>>> groups = new ArrayList<>(40);
 
     // This parallel structure identifies the grouping key for each group. The list
     // corresponds one-to-one with the list of groups.
@@ -103,7 +103,7 @@ public class GroupByIterator implements GroupIterator, LastPositionFinder, Looka
      */
 
     private void buildIndexedGroups() throws XPathException {
-        HashMap<AtomicMatchKey, List<Item>> index = new HashMap<>(40);
+        HashMap<AtomicMatchKey, List<Item<?>>> index = new HashMap<>(40);
         XPathContext c2 = keyContext.newMinorContext();
         FocusIterator focus = c2.trackFocus(population);
         int implicitTimezone = c2.getImplicitTimezone();
@@ -122,9 +122,9 @@ public class GroupByIterator implements GroupIterator, LastPositionFinder, Looka
                 } else {
                     comparisonKey = key.getXPathComparable(false, collator, implicitTimezone);
                 }
-                List<Item> g = index.get(comparisonKey);
+                List<Item<?>> g = index.get(comparisonKey);
                 if (g == null) {
-                    List<Item> newGroup = new ArrayList<>(20);
+                    List<Item<?>> newGroup = new ArrayList<>(20);
                     newGroup.add(item);
                     groups.add(newGroup);
                     groupKeys.add(key);
@@ -156,7 +156,7 @@ public class GroupByIterator implements GroupIterator, LastPositionFinder, Looka
      */
 
     private void buildIndexedGroupsComposite() throws XPathException {
-        HashMap<List<AtomicMatchKey>, List<Item>> index = new HashMap<>(40);
+        HashMap<List<AtomicMatchKey>, List<Item<?>>> index = new HashMap<>(40);
         XPathContext c2 = keyContext.newMinorContext();
         FocusIterator focus = c2.trackFocus(population);
         int implicitTimezone = c2.getImplicitTimezone();
@@ -180,9 +180,9 @@ public class GroupByIterator implements GroupIterator, LastPositionFinder, Looka
                 ckList.add(comparisonKey);
             }
 
-            List<Item> g = index.get(ckList);
+            List<Item<?>> g = index.get(ckList);
             if (g == null) {
-                List<Item> newGroup = new ArrayList<>(20);
+                List<Item<?>> newGroup = new ArrayList<>(20);
                 newGroup.add(item);
                 groups.add(newGroup);
                 groupKeys.add(new AtomicArray(compositeKey));
@@ -285,7 +285,7 @@ public class GroupByIterator implements GroupIterator, LastPositionFinder, Looka
 
     public class ManualGroupByIterator extends ManualGroupIterator {
 
-        List<Item> currentGroup = groups.get(position - 1);
+        List<Item<?>> currentGroup = groups.get(position - 1);
         AtomicSequence currentGroupingKey = groupKeys.get(position - 1);
 
         public ManualGroupByIterator() {
@@ -293,7 +293,7 @@ public class GroupByIterator implements GroupIterator, LastPositionFinder, Looka
             setLastPositionFinder(() -> groups.size());
         }
 
-        public SequenceIterator<Item> iterateCurrentGroup()  {
+        public SequenceIterator<Item<?>> iterateCurrentGroup()  {
             return new ListIterator<>(currentGroup);
         }
 

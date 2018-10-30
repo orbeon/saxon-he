@@ -87,7 +87,7 @@ public class XPathContextMajor extends XPathContextMinor {
      * @param exec the Executable
      */
 
-    public XPathContextMajor(Item item, Executable exec) {
+    public XPathContextMajor(Item<?> item, Executable exec) {
         controller = exec instanceof PreparedStylesheet ?
                 new XsltController(exec.getConfiguration(), (PreparedStylesheet)exec) :
                 new Controller(exec.getConfiguration(), exec);

@@ -32,7 +32,7 @@ import java.util.Iterator;
  *
  */
 
-public interface Item<T extends Item> extends GroundedValue<T> {
+public interface Item<T extends Item<?>> extends GroundedValue<T> {
 
     /**
      * Get the genre of this item (to distinguish the top-level categories of item,

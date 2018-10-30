@@ -297,7 +297,8 @@ public class ExpressionTool {
      *                        expression
      */
 
-    public static Sequence evaluate(Expression exp, int evaluationMode, XPathContext context, int ref)
+    public static Sequence<? extends Item<?>> evaluate(
+            Expression exp, int evaluationMode, XPathContext context, int ref)
             throws XPathException {
         switch (evaluationMode) {
 
@@ -358,10 +359,10 @@ public class ExpressionTool {
             case LAZY_TAIL_EXPRESSION: {
                 TailExpression tail = (TailExpression) exp;
                 VariableReference vr = (VariableReference) tail.getBaseExpression();
-                Sequence base = evaluate(vr, EVALUATE_VARIABLE, context, ref);
+                Sequence<? extends Item<?>> base = evaluate(vr, EVALUATE_VARIABLE, context, ref);
                 if (base instanceof MemoClosure) {
-                    SequenceIterator it = base.iterate();
-                    base = ((SequenceIterator<Item>) it).materialize();
+                    SequenceIterator<? extends Item<?>> it = base.iterate();
+                    base = it.materialize();
                 }
                 if (base instanceof IntegerRange) {
                     long start = ((IntegerRange) base).getStart() + tail.getStart() - 1;
@@ -761,7 +762,8 @@ public class ExpressionTool {
      * @throws XPathException if a dynamic error occurs
      */
 
-    public static SequenceIterator getIteratorFromProcessMethod(Expression exp, XPathContext context) throws XPathException {
+    public static SequenceIterator<? extends Item<?>> getIteratorFromProcessMethod(
+            Expression exp, XPathContext context) throws XPathException {
         Controller controller = context.getController();
         assert controller != null;
         Receiver saved = context.getReceiver();

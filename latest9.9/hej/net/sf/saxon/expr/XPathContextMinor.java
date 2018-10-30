@@ -166,8 +166,10 @@ public class XPathContextMinor implements XPathContext {
      *             to the current iterator.
      */
 
-    public <T extends Item> FocusIterator<T> trackFocus(SequenceIterator<T> iter) {
-        FocusIterator<T> fit = controller.getFocusTrackerFactory(false).apply(iter);
+    public <T extends Item<?>> FocusIterator<T> trackFocus(SequenceIterator<T> iter) {
+        FocusTrackingFactory factory =
+                controller.getFocusTrackerFactory(false);
+        FocusIterator<T> fit = (FocusIterator<T>)factory.apply(iter);
         setCurrentIterator(fit);
         return fit;
     }
@@ -180,8 +182,9 @@ public class XPathContextMinor implements XPathContext {
      *             to the current iterator.
      */
 
-    public <T extends Item> FocusIterator<T> trackFocusMultithreaded(SequenceIterator<T> iter) {
-        FocusIterator<T> fit = controller.getFocusTrackerFactory(true).apply(iter);
+    public <T extends Item<?>> FocusIterator<T> trackFocusMultithreaded(SequenceIterator<T> iter) {
+        FocusTrackingFactory factory = controller.getFocusTrackerFactory(true);
+        FocusIterator<T> fit = (FocusIterator<T>)factory.apply(iter);
         setCurrentIterator(fit);
         return fit;
     }
@@ -320,7 +323,7 @@ public class XPathContextMinor implements XPathContext {
      * Get the value of a local variable, identified by its slot number
      */
 
-    public final Sequence evaluateLocalVariable(int slotnumber) {
+    public final Sequence<? extends Item<?>> evaluateLocalVariable(int slotnumber) {
         return stackFrame.slots[slotnumber];
     }
 
@@ -328,7 +331,7 @@ public class XPathContextMinor implements XPathContext {
      * Set the value of a local variable, identified by its slot number
      */
 
-    public final void setLocalVariable(int slotNumber, Sequence value) throws XPathException {
+    public final void setLocalVariable(int slotNumber, Sequence<? extends Item<?>> value) throws XPathException {
 
         // The following code is deep defence against attempting to store a non-memo Closure in a variable.
         // This should not happen, and if it does, it means that the evaluation mode has been miscalculated.

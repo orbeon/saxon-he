@@ -23,7 +23,7 @@ import net.sf.saxon.trans.XPathException;
  * used in the implementation of the document(), key(), and id() functions.</p>
  */
 
-public class MappingIterator<F extends Item, T extends Item> implements SequenceIterator<T> {
+public class MappingIterator<F extends Item<?>, T extends Item<?>> implements SequenceIterator<T> {
 
     private SequenceIterator<F> base;
     private MappingFunction<? super F, ? extends T> action;

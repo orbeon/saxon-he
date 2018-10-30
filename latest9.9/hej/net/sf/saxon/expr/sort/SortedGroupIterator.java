@@ -54,7 +54,7 @@ public class SortedGroupIterator extends SortedIterator implements GroupIterator
         count = 0;
 
         XPathContextMajor c2 = context.newContext();
-        c2.setCurrentIterator((FocusIterator<Item>)base);
+        c2.setCurrentIterator((FocusIterator<Item<?>>)base);
         GroupIterator groupIter = (GroupIterator)((FocusTrackingIterator)base).getUnderlyingIterator();
         c2.setCurrentGroupIterator(groupIter);
 

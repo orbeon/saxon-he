@@ -14,7 +14,10 @@ import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.ma.arrays.ArrayItem;
 import net.sf.saxon.ma.map.KeyValuePair;
 import net.sf.saxon.ma.map.MapItem;
-import net.sf.saxon.om.*;
+import net.sf.saxon.om.GroundedValue;
+import net.sf.saxon.om.Item;
+import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.om.Sequence;
 import net.sf.saxon.query.QueryResult;
 import net.sf.saxon.serialize.charcode.CharacterSet;
 import net.sf.saxon.serialize.codenorm.Normalizer;
@@ -25,7 +28,6 @@ import net.sf.saxon.value.StringValue;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.stream.StreamResult;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
 
@@ -50,7 +52,7 @@ public class JSONSerializer extends SequenceWriter implements ReceiverWithOutput
     private Comparator<AtomicValue> propertySorter;
 
     private boolean unfailing = false;
-    
+
     public JSONSerializer(PipelineConfiguration pipe, JSONEmitter emitter, Properties outputProperties) throws XPathException {
         super(pipe);
         setOutputProperties(outputProperties);
@@ -95,6 +97,7 @@ public class JSONSerializer extends SequenceWriter implements ReceiverWithOutput
 
     /**
      * Get the output properties
+     *
      * @return the properties that were set using setOutputProperties
      */
 
@@ -104,6 +107,7 @@ public class JSONSerializer extends SequenceWriter implements ReceiverWithOutput
 
     /**
      * Set the Unicode normalizer to be used for normalizing strings.
+     *
      * @param normalizer the normalizer to be used
      */
 
@@ -113,6 +117,7 @@ public class JSONSerializer extends SequenceWriter implements ReceiverWithOutput
 
     /**
      * Set the CharacterMap to be used, if any
+     *
      * @param map the character map
      */
 
@@ -123,7 +128,7 @@ public class JSONSerializer extends SequenceWriter implements ReceiverWithOutput
     /**
      * Append an arbitrary item (node or atomic value) to the output
      *
-     * @param item           the item to be appended
+     * @param item the item to be appended
      * @throws net.sf.saxon.trans.XPathException if the operation fails
      */
     @Override
@@ -131,54 +136,52 @@ public class JSONSerializer extends SequenceWriter implements ReceiverWithOutput
         if (level == 0 && ++topLevelCount >= 2) {
             throw new XPathException("JSON output method cannot handle sequences of two or more items", "SERE0023");
         }
-        try {
-            if (item instanceof AtomicValue) {
-                emitter.writeAtomicValue((AtomicValue)item);
-            } else if (item instanceof MapItem) {
-                Set<String> keys = null;
-                if (!allowDuplicateKeys) {
-                    keys = new HashSet<>();
-                }
-                boolean oneLiner = !isIndenting || isOneLinerMap((MapItem) item);
-                emitter.startMap(oneLiner);
-                boolean first = true;
-                List<AtomicValue> keyList = new ArrayList<>();
-                for (KeyValuePair pair : ((MapItem) item).keyValuePairs()) {
-                    keyList.add(pair.key);
-                }
-                if (propertySorter != null) {
-                    keyList.sort(propertySorter);
-                }
-                for (AtomicValue key : keyList) {
-                    String stringKey = key.getStringValue();
-                    emitter.writeKey(stringKey);
-                    if (!allowDuplicateKeys && !keys.add(stringKey)) {
-                        throw new XPathException("Key value \"" + stringKey + "\" occurs more than once in JSON map", "SERE0022");
-                    }
-                    Sequence value = ((MapItem)item).get(key);
-                    writeSequence(((Sequence<Item>) value).materialize());
-                }
-                emitter.endMap();
-            } else if (item instanceof ArrayItem) {
-                boolean oneLiner = !isIndenting || isOneLinerArray((ArrayItem) item);
-                emitter.startArray(oneLiner);
-                boolean first = true;
-                for (Sequence member : ((ArrayItem) item).members()) {
-                    writeSequence(((Sequence<Item>) member).materialize());
-                }
-                emitter.endArray();
-            } else if (item instanceof NodeInfo) {
-                String s = serializeNode((NodeInfo) item);
-                emitter.writeAtomicValue(new StringValue(s));
-            } else if (unfailing) {
-                String s = item.getStringValue();
-                emitter.writeAtomicValue(new StringValue(s));
-            } else {
-                throw new XPathException("JSON output method cannot handle an item of type " + item.getClass(), "SERE0021");
+
+        if (item instanceof AtomicValue) {
+            emitter.writeAtomicValue((AtomicValue) item);
+        } else if (item instanceof MapItem) {
+            Set<String> keys = null;
+            if (!allowDuplicateKeys) {
+                keys = new HashSet<>();
             }
-        } catch (IOException err) {
-            throw new XPathException("Failure writing to " + getSystemId(), err);
+            boolean oneLiner = !isIndenting || isOneLinerMap((MapItem) item);
+            emitter.startMap(oneLiner);
+            boolean first = true;
+            List<AtomicValue> keyList = new ArrayList<>();
+            for (KeyValuePair pair : ((MapItem) item).keyValuePairs()) {
+                keyList.add(pair.key);
+            }
+            if (propertySorter != null) {
+                keyList.sort(propertySorter);
+            }
+            for (AtomicValue key : keyList) {
+                String stringKey = key.getStringValue();
+                emitter.writeKey(stringKey);
+                if (!allowDuplicateKeys && !keys.add(stringKey)) {
+                    throw new XPathException("Key value \"" + stringKey + "\" occurs more than once in JSON map", "SERE0022");
+                }
+                Sequence<? extends Item<?>> value = ((MapItem) item).get(key);
+                writeSequence(value.materialize());
+            }
+            emitter.endMap();
+        } else if (item instanceof ArrayItem) {
+            boolean oneLiner = !isIndenting || isOneLinerArray((ArrayItem) item);
+            emitter.startArray(oneLiner);
+            boolean first = true;
+            for (Sequence<? extends Item<?>> member : ((ArrayItem) item).members()) {
+                writeSequence(member.materialize());
+            }
+            emitter.endArray();
+        } else if (item instanceof NodeInfo) {
+            String s = serializeNode((NodeInfo) item);
+            emitter.writeAtomicValue(new StringValue(s));
+        } else if (unfailing) {
+            String s = item.getStringValue();
+            emitter.writeAtomicValue(new StringValue(s));
+        } else {
+            throw new XPathException("JSON output method cannot handle an item of type " + item.getClass(), "SERE0021");
         }
+
     }
 
     private boolean isOneLinerArray(ArrayItem array) {
@@ -207,7 +210,7 @@ public class JSONSerializer extends SequenceWriter implements ReceiverWithOutput
             if (!(entry.value instanceof AtomicValue)) {
                 return false;
             }
-            totalSize += entry.key.getStringValueCS().length() + ((AtomicValue)entry.value).getStringValueCS().length() + 4;
+            totalSize += entry.key.getStringValueCS().length() + ((AtomicValue) entry.value).getStringValueCS().length() + 4;
             if (totalSize > maxLineLength) {
                 return false;
             }
@@ -226,7 +229,7 @@ public class JSONSerializer extends SequenceWriter implements ReceiverWithOutput
         return sw.toString().trim();
     }
 
-    private void writeSequence(GroundedValue seq) throws XPathException, IOException {
+    private void writeSequence(GroundedValue seq) throws XPathException {
         int len = seq.getLength();
         if (len == 0) {
             emitter.writeAtomicValue(null);
@@ -245,7 +248,7 @@ public class JSONSerializer extends SequenceWriter implements ReceiverWithOutput
      */
     @Override
     public void close() throws XPathException {
-        if (topLevelCount==0) {
+        if (topLevelCount == 0) {
             emitter.writeAtomicValue(null);
         }
         emitter.close();

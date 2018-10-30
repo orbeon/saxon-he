@@ -12,6 +12,7 @@ import net.sf.saxon.Controller;
 import net.sf.saxon.expr.Component;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.GroundedValue;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.trans.XPathException;
 
 /**
@@ -53,11 +54,11 @@ public final class GlobalParam extends GlobalVariable {
      * Evaluate the variable
      */
     @Override
-    public GroundedValue evaluateVariable(XPathContext context, Component target) throws XPathException {
+    public GroundedValue<? extends Item<?>> evaluateVariable(XPathContext context, Component target) throws XPathException {
         Controller controller = context.getController();
         assert controller != null;
         Bindery b = controller.getBindery(getPackageData());
-        GroundedValue val = b.getGlobalVariableValue(this);
+        GroundedValue<? extends Item<?>> val = b.getGlobalVariableValue(this);
         if (val != null) {
             if (val instanceof Bindery.FailureValue) {
                 throw ((Bindery.FailureValue)val).getObject();
@@ -93,7 +94,7 @@ public final class GlobalParam extends GlobalVariable {
      */
 
     @Override
-    public GroundedValue evaluateVariable(XPathContext context) throws XPathException {
+    public GroundedValue<? extends Item<?>> evaluateVariable(XPathContext context) throws XPathException {
         return evaluateVariable(context, null);
     }
 

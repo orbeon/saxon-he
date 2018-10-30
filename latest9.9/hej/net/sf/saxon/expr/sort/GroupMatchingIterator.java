@@ -26,14 +26,14 @@ import java.util.List;
  * A GroupMatchingIterator contains code shared between GroupStartingIterator and GroupEndingIterator
  */
 
-public abstract class GroupMatchingIterator implements LookaheadIterator<Item>, LastPositionFinder, GroupIterator {
+public abstract class GroupMatchingIterator implements LookaheadIterator<Item<?>>, LastPositionFinder, GroupIterator {
 
     protected Expression select;
     protected FocusIterator population;
     protected Pattern pattern;
     protected XPathContext baseContext;
     protected XPathContext runningContext;
-    protected List<Item> currentMembers;
+    protected List<Item<?>> currentMembers;
     /*@Nullable*/ protected Item next;
     protected Item current = null;
     protected int position = 0;
@@ -45,7 +45,7 @@ public abstract class GroupMatchingIterator implements LookaheadIterator<Item>, 
         return null;
     }
 
-    public SequenceIterator<Item> iterateCurrentGroup() {
+    public SequenceIterator<Item<?>> iterateCurrentGroup() {
         return new ListIterator<>(currentMembers);
     }
 
@@ -81,7 +81,7 @@ public abstract class GroupMatchingIterator implements LookaheadIterator<Item>, 
     }
 
     private class ManualGroupMatchingIterator extends ManualGroupIterator {
-        List<Item> cMembers = currentMembers;
+        List<Item<?>> cMembers = currentMembers;
         XPathContext savedcontext = runningContext.newMinorContext();
 
         ManualGroupMatchingIterator() {
@@ -93,7 +93,7 @@ public abstract class GroupMatchingIterator implements LookaheadIterator<Item>, 
             return null;
         }
 
-        public SequenceIterator<Item> iterateCurrentGroup() {
+        public SequenceIterator<Item<?>> iterateCurrentGroup() {
             return new ListIterator<>(cMembers);
         }
 

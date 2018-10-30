@@ -339,7 +339,7 @@ public class Serialize extends SystemFunction implements Callable {
     }
 
     private SerializationProperties serializationParamsFromMap(
-            Map<String, Sequence> map, XPathContext context) throws XPathException {
+            Map<String, Sequence<? extends Item<?>>> map, XPathContext context) throws XPathException {
         Sequence seqVal;
         Properties props = new Properties();
         CharacterMapIndex charMapIndex = new CharacterMapIndex();
@@ -482,7 +482,7 @@ public class Serialize extends SystemFunction implements Callable {
                         paramMap = paramMap.addEntry(new StringValue(s), paramMap.get(k));
                     }
                 }
-                Map<String, Sequence> checkedOptions = getDetails().optionDetails.processSuppliedOptions(paramMap, context);
+                Map<String, Sequence<? extends Item<?>>> checkedOptions = getDetails().optionDetails.processSuppliedOptions(paramMap, context);
                 params = serializationParamsFromMap(checkedOptions, context);
             } else {
                 throw new XPathException("Second argument to fn:serialize() must either be an element named {"

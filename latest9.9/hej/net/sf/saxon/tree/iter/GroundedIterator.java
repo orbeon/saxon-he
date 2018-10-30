@@ -24,7 +24,7 @@ import net.sf.saxon.trans.XPathException;
  * the iterator can raise an exception.</p>
  */
 
-public interface GroundedIterator<T extends Item> extends SequenceIterator<T> {
+public interface GroundedIterator<T extends Item<?>> extends SequenceIterator<T> {
 
     /**
      * Return a GroundedValue containing all the items in the sequence returned by this

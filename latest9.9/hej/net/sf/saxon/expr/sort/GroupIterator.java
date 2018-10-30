@@ -22,7 +22,7 @@ import net.sf.saxon.trans.XPathException;
  * members of the current group.
  */
 
-public interface GroupIterator extends SequenceIterator<Item> {
+public interface GroupIterator extends SequenceIterator<Item<?>> {
 
     /**
      * Get the grouping key of the current group

@@ -17,7 +17,7 @@ import net.sf.saxon.trans.XPathException;
  * to one that iterates over A-OR-SELF.
  */
 
-public class PrependSequenceIterator<T extends Item> implements SequenceIterator<T> {
+public class PrependSequenceIterator<T extends Item<?>> implements SequenceIterator<T> {
     T start;
     SequenceIterator<T> base;
 

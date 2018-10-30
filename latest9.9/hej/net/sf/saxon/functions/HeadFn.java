@@ -35,8 +35,8 @@ public class HeadFn extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
-    public ZeroOrOne<Item> call(XPathContext context, Sequence[] arguments) throws XPathException {
-        Item head = arguments[0].head();
-        return new ZeroOrOne<Item>(head);
+    public ZeroOrOne<Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
+        Item<?> head = arguments[0].head();
+        return new ZeroOrOne<>(head);
     }
 }

@@ -925,7 +925,7 @@ public class SlashExpression extends BinaryExpression
 
         XPathContext context2 = context.newMinorContext();
         context2.trackFocus(getStart().iterate(context));
-        return new ContextMappingIterator<Item>(this, context2);
+        return new ContextMappingIterator<Item<?>>(this, context2);
     }
 
     /**

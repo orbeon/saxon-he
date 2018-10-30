@@ -44,8 +44,8 @@ public class TailExpression extends UnaryExpression {
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().optimize(visitor, contextInfo);
         if (getBaseExpression() instanceof Literal) {
-            GroundedValue value =
-                    ((SequenceIterator<Item>) iterate(visitor.getStaticContext().makeEarlyEvaluationContext())).materialize();
+            GroundedValue<? extends Item<?>> value =
+                    iterate(visitor.getStaticContext().makeEarlyEvaluationContext()).materialize();
             return Literal.makeLiteral(value, this);
         }
         return this;
@@ -55,7 +55,7 @@ public class TailExpression extends UnaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
-     * @param rebindings
+     * @param rebindings variables that need to be re-bound
      */
 
     /*@NotNull*/
@@ -131,8 +131,8 @@ public class TailExpression extends UnaryExpression {
     }
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item> iterate(XPathContext context) throws XPathException {
-        SequenceIterator baseIter = getBaseExpression().iterate(context);
+    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+        SequenceIterator<? extends Item<?>> baseIter = getBaseExpression().iterate(context);
         return TailIterator.make(baseIter, start);
     }
 
@@ -173,7 +173,7 @@ public class TailExpression extends UnaryExpression {
     @Override
     public String toString() {
         if (start == 2) {
-            return "tail(" + getBaseExpression().toString() + ")";
+            return "tail(" + getBaseExpression() + ")";
         } else {
             return ExpressionTool.parenthesize(getBaseExpression()) + "[position() ge " + start + "]";
         }

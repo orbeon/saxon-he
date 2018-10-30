@@ -68,7 +68,7 @@ public abstract class NodeImpl
      * @return a singleton iterator that returns this item
      */
 
-    public UnfailingIterator iterate() {
+    public UnfailingIterator<NodeInfo> iterate() {
         return SingletonIterator.makeIterator(this);
     }
 

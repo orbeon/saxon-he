@@ -855,20 +855,20 @@ public class MergeInstr extends Instruction {
         private MergeSource ms;
         private XPathContext baseContext;
         private XPathContext keyContext;
-        private ManualIterator manualIterator;
+        private ManualIterator<Item<?>> manualIterator;
 
         public MergeKeyMappingFunction(XPathContext baseContext, MergeSource ms) {
             this.baseContext = baseContext;
             this.ms = ms;
             keyContext = baseContext.newMinorContext();
             keyContext.setTemporaryOutputState(StandardNames.XSL_MERGE_KEY);
-            manualIterator = new ManualIterator();
+            manualIterator = new ManualIterator<>();
             manualIterator.setPosition(1);
             keyContext.setCurrentIterator(manualIterator);
         }
-        public SequenceIterator map(XPathContext context)
+        public SequenceIterator<ObjectValue<?>> map(XPathContext context)
                             throws XPathException {
-            Item currentItem = context.getContextItem();
+            Item<?> currentItem = context.getContextItem();
             manualIterator.setContextItem(currentItem);
             ItemWithMergeKeys newItem = new ItemWithMergeKeys(currentItem, ms.mergeKeyDefinitions, ms.sourceName, keyContext);
             return SingletonIterator.makeIterator(new ObjectValue<>(newItem));

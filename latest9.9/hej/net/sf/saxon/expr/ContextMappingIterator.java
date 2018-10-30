@@ -22,7 +22,7 @@ import net.sf.saxon.trans.XPathException;
  * sets each item being processed as the context item</p>
  */
 
-public final class ContextMappingIterator<T extends Item> implements SequenceIterator<T> {
+public final class ContextMappingIterator<T extends Item<?>> implements SequenceIterator<T> {
 
     private FocusIterator<? extends Item> base;
     private ContextMappingFunction<T> action;

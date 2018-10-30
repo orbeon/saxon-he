@@ -20,7 +20,7 @@ import net.sf.saxon.tree.iter.LookaheadIterator;
  * supports efficient direct addressing.
  */
 
-public class ValueTailIterator<T extends Item>
+public class ValueTailIterator<T extends Item<?>>
         implements SequenceIterator<T>, GroundedIterator<T>, LookaheadIterator<T> {
 
     private GroundedValue<T> baseValue;

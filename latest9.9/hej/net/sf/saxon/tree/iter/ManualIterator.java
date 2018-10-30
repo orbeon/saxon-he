@@ -17,7 +17,7 @@ import net.sf.saxon.trans.XPathException;
  * which are set manually. Calling last() is an error. Calling next() always returns null.
  */
 
-public class ManualIterator<T extends Item> implements FocusIterator<T>, UnfailingIterator<T>,
+public class ManualIterator<T extends Item<?>> implements FocusIterator<T>, UnfailingIterator<T>,
         ReversibleIterator<T>, LastPositionFinder, GroundedIterator<T>, LookaheadIterator<T> {
 
     private T item;

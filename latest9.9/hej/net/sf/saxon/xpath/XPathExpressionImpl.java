@@ -225,8 +225,8 @@ public class XPathExpressionImpl implements XPathExpression {
                 }
 
             } else if (qName.equals(XPathConstants.NODE)) {
-                SequenceIterator iter = expression.iterate(context);
-                Item first = iter.next();
+                SequenceIterator<? extends Item<?>> iter = expression.iterate(context);
+                Item<?> first = iter.next();
                 if (first instanceof VirtualNode) {
                     return ((VirtualNode) first).getRealNode();
                 }
@@ -236,8 +236,8 @@ public class XPathExpressionImpl implements XPathExpression {
                 throw new XPathExpressionException("Expression result is not a node");
             } else if (qName.equals(XPathConstants.NODESET)) {
                 context.openStackFrame(stackFrameMap);
-                SequenceIterator iter = expression.iterate(context);
-                GroundedValue extent = ((SequenceIterator<Item>) iter).materialize();
+                SequenceIterator<? extends Item<?>> iter = expression.iterate(context);
+                GroundedValue<? extends Item<?>> extent = iter.materialize();
                 PJConverter converter = PJConverter.allocateNodeListCreator(config, node);
                 return converter.convert(extent, Object.class, context);
             } else {

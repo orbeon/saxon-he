@@ -47,9 +47,9 @@ import net.sf.saxon.tree.iter.EmptyIterator;
  * is prevented by synchronizing the evaluation methods.</p>
  */
 
-public class MemoClosure extends Closure implements Sequence {
+public class MemoClosure extends Closure implements Sequence<Item<?>> {
 
-    private Sequence sequence;
+    private Sequence<Item<?>> sequence;
 
     /**
      * Constructor should not be called directly, instances should be made using the make() method.
@@ -73,14 +73,14 @@ public class MemoClosure extends Closure implements Sequence {
      */
 
     /*@NotNull*/
-    public synchronized SequenceIterator iterate() throws XPathException {
+    public synchronized SequenceIterator<Item<?>> iterate() throws XPathException {
         makeSequence();
         return sequence.iterate();
     }
 
     private void makeSequence() throws XPathException {
         if (sequence == null) {
-            inputIterator = expression.iterate(savedXPathContext);
+            inputIterator = (SequenceIterator<Item<?>>)expression.iterate(savedXPathContext);
             if (inputIterator instanceof EmptyIterator) {
                 sequence = EmptySequence.getInstance();
             } else if ((inputIterator.getProperties() & SequenceIterator.GROUNDED) != 0) {
@@ -120,16 +120,16 @@ public class MemoClosure extends Closure implements Sequence {
      */
 
     /*@Nullable*/
-    public GroundedValue reduce() throws XPathException {
+    public GroundedValue<? extends Item<?>> reduce() throws XPathException {
         if (sequence instanceof GroundedValue) {
-            return (GroundedValue)sequence;
+            return (GroundedValue<? extends Item<?>>)sequence;
         } else {
-            return ((SequenceIterator<Item>) iterate()).materialize();
+            return iterate().materialize();
         }
     }
 
     @Override
-    public Sequence makeRepeatable() {
+    public Sequence<Item<?>> makeRepeatable() {
         return this;
     }
 

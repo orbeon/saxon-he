@@ -131,11 +131,12 @@ public class CollectionFn extends SystemFunction implements Callable {
      * @throws XPathException if a dynamic error occurs
      */
 
-    private SequenceIterator getSequenceIterator(final ResourceCollection collection, final XPathContext context) throws XPathException {
+    private SequenceIterator<Item<?>> getSequenceIterator(
+            final ResourceCollection collection, final XPathContext context) throws XPathException {
 
         final Iterator<? extends Resource> sources = collection.getResources(context);
 
-        return new SequenceIterator() {
+        return new SequenceIterator<Item<?>>() {
 
             public Item next() {
                 if (sources.hasNext()) {
@@ -231,10 +232,10 @@ public class CollectionFn extends SystemFunction implements Callable {
         }
 
         // Get an iterator over the resources in the collection
-        SequenceIterator sourceSeq = getSequenceIterator(collection, context);
+        SequenceIterator<? extends Item<?>> sourceSeq = getSequenceIterator(collection, context);
 
         // Get an iterator over the items representing the resources
-        SequenceIterator<? extends Item> result = context.getConfiguration()
+        SequenceIterator<? extends Item<?>> result = context.getConfiguration()
                 .getMultithreadedItemMappingIterator(sourceSeq,
                                                      item1 -> ((ExternalObject<Resource>)item1).getObject().getItem(context));
 
@@ -250,7 +251,7 @@ public class CollectionFn extends SystemFunction implements Callable {
                 }
                 return item;
             };
-            result = new ItemMappingIterator(result, stripper);
+            result = new ItemMappingIterator<>(result, stripper);
         }
 
         // If the collection is stable, cache the result

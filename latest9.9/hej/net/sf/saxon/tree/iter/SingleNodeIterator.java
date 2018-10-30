@@ -85,11 +85,11 @@ public class SingleNodeIterator implements AxisIterator,
 
 
     /*@NotNull*/
-    public SequenceIterator getReverseIterator() {
+    public SequenceIterator<NodeInfo> getReverseIterator() {
         return new SingleNodeIterator(item);
     }
 
-    public Item getValue() {
+    public NodeInfo getValue() {
         return item;
     }
 
@@ -102,13 +102,13 @@ public class SingleNodeIterator implements AxisIterator,
      */
 
     /*@NotNull*/
-    public GroundedValue materialize() {
-        return new ZeroOrOne<Item>(item);
+    public GroundedValue<NodeInfo> materialize() {
+        return new ZeroOrOne<>(item);
     }
 
     @Override
-    public GroundedValue getResidue() throws XPathException {
-        return item==null ? EmptySequence.getInstance() : new One<Item>(item);
+    public GroundedValue<NodeInfo> getResidue() throws XPathException {
+        return item==null ? EmptySequence.getInstance() : new One<>(item);
     }
 
     /**

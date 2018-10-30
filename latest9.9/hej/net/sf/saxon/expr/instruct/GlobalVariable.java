@@ -432,7 +432,7 @@ public class GlobalVariable extends Actor
         SequenceType type = getRequiredType();
         for (BindingReference ref : references) {
             ref.fixup(this);
-            GroundedValue constantValue = null;
+            GroundedValue<? extends Item<?>> constantValue = null;
             int properties = 0;
             Expression select = getSelectExpression();
             if (select instanceof Literal && !(this instanceof GlobalParam)) {
@@ -626,7 +626,7 @@ public class GlobalVariable extends Actor
      * @throws XPathException if a dynamic error occurs during evaluation
      */
 
-    public GroundedValue getSelectValue(XPathContext context, Component target) throws XPathException {
+    public GroundedValue<? extends Item<?>> getSelectValue(XPathContext context, Component target) throws XPathException {
         if (select == null) {
             throw new AssertionError("*** No select expression for global variable $" +
                     getVariableQName().getDisplayName() + "!!");
@@ -638,7 +638,8 @@ public class GlobalVariable extends Actor
                 XPathContextMajor c2 = context.newCleanContext();
                 c2.setOrigin(this);
                 if (target == null || target.getDeclaringPackage().isRootPackage()) {
-                    ManualIterator mi = new ManualIterator(context.getController().getGlobalContextItem());
+                    ManualIterator<? extends Item<?>> mi =
+                            new ManualIterator<>(context.getController().getGlobalContextItem());
                     c2.setCurrentIterator(mi);
                 } else {
                     c2.setCurrentIterator(null);
@@ -650,7 +651,7 @@ public class GlobalVariable extends Actor
                 int savedOutputState = c2.getTemporaryOutputState();
                 c2.setTemporaryOutputState(StandardNames.XSL_VARIABLE);
                 c2.setCurrentOutputUri(null);
-                GroundedValue result;
+                GroundedValue<? extends Item<?>> result;
                 if (indexed) {
                     result = c2.getConfiguration().makeSequenceExtent(select, FilterExpression.FILTERED, c2);
                 } else {
@@ -719,7 +720,7 @@ public class GlobalVariable extends Actor
      * @throws XPathException if evaluation fails
      */
 
-    protected GroundedValue<? extends Item> actuallyEvaluate(XPathContext context, Component target) throws XPathException {
+    protected GroundedValue<? extends Item<?>> actuallyEvaluate(XPathContext context, Component target) throws XPathException {
         final Controller controller = context.getController();
         assert controller != null;
         final Bindery b = controller.getBindery(getPackageData());
@@ -738,7 +739,7 @@ public class GlobalVariable extends Actor
                 return b.getGlobalVariable(getBinderySlotNumber());
             }
 
-            GroundedValue value = getSelectValue(context, target);
+            GroundedValue<? extends Item<?>> value = getSelectValue(context, target);
             if (indexed) {
                 value = controller.getConfiguration().obtainOptimizer().makeIndexedValue(value.iterate());
             }

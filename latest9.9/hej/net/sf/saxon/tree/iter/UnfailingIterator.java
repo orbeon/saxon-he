@@ -22,7 +22,7 @@ import java.util.function.Predicate;
  * is a SequenceIterator that throws no checked exceptions.
  */
 
-public interface UnfailingIterator<T extends Item> extends SequenceIterator<T> {
+public interface UnfailingIterator<T extends Item<?>> extends SequenceIterator<T> {
 
     /**
      * Get the next item in the sequence.

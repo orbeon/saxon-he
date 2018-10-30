@@ -25,7 +25,7 @@ import java.util.List;
  */
 
 
-public class ArrayIterator<T extends Item> implements UnfailingIterator<T>,
+public class ArrayIterator<T extends Item<?>> implements UnfailingIterator<T>,
         LastPositionFinder, LookaheadIterator<T>, GroundedIterator<T> {
 
     protected T[] items;

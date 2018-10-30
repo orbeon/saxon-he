@@ -66,7 +66,7 @@ public final class SimplePositionalPattern extends Pattern {
      * @return true if the pattern matches, else false
      */
 
-    public boolean matches(Item item, XPathContext context) {
+    public boolean matches(Item<?> item, XPathContext context) {
         return item instanceof NodeInfo && matchesBeneathAnchor((NodeInfo) item, null, context);
     }
 

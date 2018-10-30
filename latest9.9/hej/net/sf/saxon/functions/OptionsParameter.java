@@ -13,6 +13,7 @@ import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.ma.map.MapItem;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
@@ -33,7 +34,7 @@ import java.util.*;
 public class OptionsParameter {
 
     private Map<String, SequenceType> allowedOptions = new HashMap<>(8);
-    private Map<String, Sequence> defaultValues = new HashMap<>(8);
+    private Map<String, Sequence<? extends Item<?>>> defaultValues = new HashMap<>(8);
     private Set<String> requiredOptions = new HashSet<>(4);
     private Map<String, Set<String>> allowedValues = new HashMap<>(8);
     private String errorCodeForDisallowedValue;
@@ -102,8 +103,8 @@ public class OptionsParameter {
      * @throws XPathException if any supplied options are invalid
      */
 
-    public Map<String, Sequence> processSuppliedOptions(MapItem supplied, XPathContext context) throws XPathException {
-        Map<String, Sequence> result = new HashMap<>();
+    public Map<String, Sequence<? extends Item<?>>> processSuppliedOptions(MapItem supplied, XPathContext context) throws XPathException {
+        Map<String, Sequence<? extends Item<?>>> result = new HashMap<>();
         TypeHierarchy th = context.getConfiguration().getTypeHierarchy();
 
         for (String req : requiredOptions) {
@@ -115,7 +116,7 @@ public class OptionsParameter {
         for (Map.Entry<String, SequenceType> allowed : allowedOptions.entrySet()) {
             String key = allowed.getKey();
             SequenceType required = allowed.getValue();
-            Sequence actual = supplied.get(new StringValue(key));
+            Sequence<? extends Item<?>> actual = supplied.get(new StringValue(key));
             if (actual != null) {
                 if (!required.matches(actual, th)) {
                     boolean ok = false;
@@ -165,9 +166,9 @@ public class OptionsParameter {
      * @return a map containing the default values
      */
 
-    public Map<String, Sequence> getDefaultOptions()  {
-        Map<String, Sequence> result = new HashMap<>();
-        for (Map.Entry<String, Sequence> entry : defaultValues.entrySet()) {
+    public Map<String, Sequence<? extends Item<?>>> getDefaultOptions()  {
+        Map<String, Sequence<? extends Item<?>>> result = new HashMap<>();
+        for (Map.Entry<String, Sequence<? extends Item<?>>> entry : defaultValues.entrySet()) {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;

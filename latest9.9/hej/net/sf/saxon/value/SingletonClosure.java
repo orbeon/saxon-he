@@ -28,7 +28,7 @@ import net.sf.saxon.tree.iter.SingletonIterator;
  * of these context variables.</p>
  */
 
-public class SingletonClosure extends Closure implements Sequence {
+public class SingletonClosure extends Closure implements Sequence<Item<?>> {
 
     private boolean built = false;
     /*@Nullable*/ private Item value = null;
@@ -53,7 +53,7 @@ public class SingletonClosure extends Closure implements Sequence {
      */
 
     /*@NotNull*/
-    public SequenceIterator iterate() throws XPathException {
+    public SequenceIterator<Item<?>> iterate() throws XPathException {
         return SingletonIterator.makeIterator(asItem());
     }
 

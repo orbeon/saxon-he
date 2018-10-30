@@ -42,7 +42,7 @@ public interface Resource {
      * @throws XPathException if a failure occurs materializing the resource
      */
 
-    Item getItem(XPathContext context) throws XPathException;
+    Item<?> getItem(XPathContext context) throws XPathException;
 
     /**
      * Get the media type (MIME type) of the resource if known

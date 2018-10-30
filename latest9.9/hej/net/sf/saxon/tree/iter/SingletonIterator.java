@@ -19,7 +19,7 @@ import java.util.function.Consumer;
  * SingletonIterator: an iterator over a sequence of zero or one values
  */
 
-public class SingletonIterator<T extends Item> implements SequenceIterator<T>, UnfailingIterator<T>,
+public class SingletonIterator<T extends Item<?>> implements SequenceIterator<T>, UnfailingIterator<T>,
         ReversibleIterator<T>, LastPositionFinder, GroundedIterator<T>, LookaheadIterator<T> {
 
     private T item;
@@ -44,7 +44,7 @@ public class SingletonIterator<T extends Item> implements SequenceIterator<T>, U
      */
 
     /*@NotNull*/
-    public static <T extends Item> UnfailingIterator<T> makeIterator(T item) {
+    public static <T extends Item<?>> UnfailingIterator<T> makeIterator(T item) {
         if (item == null) {
             return EmptyIterator.emptyIterator();
         } else {
@@ -60,7 +60,7 @@ public class SingletonIterator<T extends Item> implements SequenceIterator<T>, U
      */
 
 
-    public static <T extends Item> SingletonIterator<T> rawIterator(T item) {
+    public static <T extends Item<?>> SingletonIterator<T> rawIterator(T item) {
         assert item != null;
         return new SingletonIterator<>(item);
     }
@@ -97,7 +97,7 @@ public class SingletonIterator<T extends Item> implements SequenceIterator<T>, U
 
     /*@NotNull*/
     public SingletonIterator<T> getReverseIterator() {
-        return new SingletonIterator<T>(item);
+        return new SingletonIterator<>(item);
     }
 
     public Item getValue() {
@@ -115,14 +115,14 @@ public class SingletonIterator<T extends Item> implements SequenceIterator<T>, U
     /*@NotNull*/
     public GroundedValue<T> materialize() {
         if (item instanceof GroundedValue) {
-            return item;
+            return (GroundedValue<T>)item;
         } else {
-            return new ZeroOrOne<>(item);
+            return new ZeroOrOne<>(null);
         }
     }
 
     @Override
-    public GroundedValue getResidue() {
+    public GroundedValue<T> getResidue() {
         return gone ? EmptySequence.getInstance() : materialize();
     }
 

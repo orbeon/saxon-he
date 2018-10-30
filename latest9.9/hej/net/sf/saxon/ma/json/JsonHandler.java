@@ -240,7 +240,7 @@ public class JsonHandler {
         }
     }
 
-    public void setFallbackFunction(Map<String, Sequence> options, XPathContext context) throws XPathException {
+    public void setFallbackFunction(Map<String, Sequence<? extends Item<?>>> options, XPathContext context) throws XPathException {
         Sequence val = options.get("fallback");
         if (val != null) {
             Item fn = val.head();

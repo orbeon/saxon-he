@@ -21,7 +21,7 @@ import net.sf.saxon.type.FunctionItemType;
  * implement this interface.
  */
 
-public interface Function<T extends Item> extends Item<T>, Callable, GroundedValue<T> {
+public interface Function<T extends Item<?>> extends Item<T>, Callable, GroundedValue<T> {
 
     /**
      * Ask whether this function item is a map
@@ -95,7 +95,7 @@ public interface Function<T extends Item> extends Item<T>, Callable, GroundedVal
      * @throws XPathException if a dynamic error occurs within the function
      */
 
-    Sequence<? extends Item> call(XPathContext context, Sequence<? extends Item>[] args) throws XPathException;
+    Sequence<? extends Item<?>> call(XPathContext context, Sequence[] args) throws XPathException;
 
     /**
      * Test whether this FunctionItem is deep-equal to another function item,

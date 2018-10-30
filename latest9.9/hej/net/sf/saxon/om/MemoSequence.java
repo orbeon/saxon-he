@@ -25,7 +25,7 @@ import java.util.Arrays;
  * to the end) contains the entire value.
  */
 
-public class MemoSequence<T extends Item> implements Sequence<T> {
+public class MemoSequence<T extends Item<?>> implements Sequence<T> {
 
     SequenceIterator<T> inputIterator;
 
@@ -294,7 +294,7 @@ public class MemoSequence<T extends Item> implements Sequence<T> {
                 if (used == 0) {
                     return EmptySequence.getInstance();
                 } else if (used == 1) {
-                    return reservoir[0];
+                    return (GroundedValue<T>)reservoir[0];
                 } else {
                     return new SequenceExtent<>(reservoir);
                 }

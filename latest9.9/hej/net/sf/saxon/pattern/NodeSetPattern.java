@@ -169,7 +169,7 @@ public class NodeSetPattern extends Pattern {
      * @return true if the node matches the Pattern, false otherwise
      */
 
-    public boolean matches(Item item, XPathContext context) throws XPathException {
+    public boolean matches(Item<?> item, XPathContext context) throws XPathException {
         if (item instanceof NodeInfo) {
             SequenceIterator iter = getSelectionExpression().iterate(context);
             return SingletonIntersectExpression.containsNode(iter, (NodeInfo)item);

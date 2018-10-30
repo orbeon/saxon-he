@@ -573,7 +573,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs while evaluating the function
      */
 
-    public Sequence<? extends Item> call(XPathContext context, Sequence[] actualArgs)
+    public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] actualArgs)
             throws XPathException {
         if (evaluator == null) {
             // should have been done at compile time
@@ -582,7 +582,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
 
         XPathContextMajor c2 = (XPathContextMajor) context;
         c2.setStackFrame(getStackFrameMap(), actualArgs);
-        Sequence result;
+        Sequence<? extends Item<?>> result;
         try {
             result = evaluator.evaluate(getBody(), c2);
         } catch (XPathException err) {

@@ -30,7 +30,7 @@ import net.sf.saxon.value.SequenceExtent;
  *
  * @since 9.6
  */
-public class FocusTrackingIterator<T extends Item>
+public class FocusTrackingIterator<T extends Item<?>>
         implements FocusIterator<T>, LookaheadIterator<T>, GroundedIterator<T>, LastPositionFinder {
 
     private SequenceIterator<T> base;

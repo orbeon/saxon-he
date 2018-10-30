@@ -20,7 +20,7 @@ import net.sf.saxon.tree.iter.LookaheadIterator;
  * The base sequence is represented by an iterator which is consumed in the process
  */
 
-public class TailIterator<T extends Item>
+public class TailIterator<T extends Item<?>>
         implements SequenceIterator<T>, LastPositionFinder, LookaheadIterator<T> {
 
     private SequenceIterator<T> base;
@@ -59,7 +59,7 @@ public class TailIterator<T extends Item>
      *          if a dynamic error occurs
      */
 
-    public static <T extends Item> SequenceIterator<T> make(SequenceIterator<T> base, int start) throws XPathException {
+    public static <T extends Item<?>> SequenceIterator<T> make(SequenceIterator<T> base, int start) throws XPathException {
         if (start <= 1) {
             return base;
         } else if (base instanceof ArrayIterator) {

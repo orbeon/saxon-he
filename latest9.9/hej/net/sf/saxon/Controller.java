@@ -50,7 +50,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 
 import static net.sf.saxon.om.SequenceIterator.GROUNDED;
 
@@ -121,10 +120,9 @@ public class Controller implements ContextOriginator {
     public final static String ANONYMOUS_PRINCIPAL_OUTPUT_URI = "dummy:/anonymous/principal/result";
     private StylesheetCache stylesheetCache = null;
 
-    private java.util.function.Function<SequenceIterator, FocusIterator> focusTrackerFactory =
-            FocusTrackingIterator::new;
+    private FocusTrackingFactory focusTrackerFactory = FocusTrackingIterator::new;
 
-    private java.util.function.Function<SequenceIterator, FocusIterator> multiThreadedFocusTrackerFactory;
+    private FocusTrackingFactory multiThreadedFocusTrackerFactory;
 
     /**
      * Create a Controller and initialise variables. Note: XSLT applications should
@@ -268,9 +266,10 @@ public class Controller implements ContextOriginator {
      * against the required type.
      */
 
-    public GroundedValue getConvertedParameter(StructuredQName name, SequenceType requiredType, XPathContext context)
+    public GroundedValue<? extends Item<?>> getConvertedParameter(StructuredQName name, SequenceType requiredType, XPathContext context)
             throws XPathException {
-        GroundedValue val = globalParameters.convertParameterValue(name, requiredType, convertParameters, context);
+        GroundedValue<? extends Item<?>> val =
+                globalParameters.convertParameterValue(name, requiredType, convertParameters, context);
         if (val != null) {
 
             // Check that any nodes belong to the right configuration
@@ -653,7 +652,7 @@ public class Controller implements ContextOriginator {
      */
 
     /*@Nullable*/
-    public Item getGlobalContextItem() {
+    public Item<?> getGlobalContextItem() {
         return globalContextItem;
         // See W3C bug 5224, which points out that the rules for XQuery 1.0 weren't clearly defined
     }
@@ -1574,7 +1573,7 @@ public class Controller implements ContextOriginator {
      * @return a factory function that is used to create FocusTrackingIterator instances
      */
 
-    public Function<SequenceIterator, FocusIterator> getFocusTrackerFactory(boolean multithreaded) {
+    public FocusTrackingFactory getFocusTrackerFactory(boolean multithreaded) {
         return multithreaded && multiThreadedFocusTrackerFactory != null ?
                 multiThreadedFocusTrackerFactory :
                 focusTrackerFactory;
@@ -1588,7 +1587,7 @@ public class Controller implements ContextOriginator {
      * @param focusTrackerFactory a factory function that is used to create FocusTrackingIterator instances
      */
 
-    public void setFocusTrackerFactory(Function<SequenceIterator, FocusIterator> focusTrackerFactory) {
+    public void setFocusTrackerFactory(FocusTrackingFactory focusTrackerFactory) {
         this.focusTrackerFactory = focusTrackerFactory;
     }
 
@@ -1601,7 +1600,7 @@ public class Controller implements ContextOriginator {
      * @param focusTrackerFactory a factory function that is used to create FocusTrackingIterator instances
      */
 
-    public void setMultithreadedFocusTrackerFactory(Function<SequenceIterator, FocusIterator> focusTrackerFactory) {
+    public void setMultithreadedFocusTrackerFactory(FocusTrackingFactory focusTrackerFactory) {
         this.multiThreadedFocusTrackerFactory = focusTrackerFactory;
     }
 

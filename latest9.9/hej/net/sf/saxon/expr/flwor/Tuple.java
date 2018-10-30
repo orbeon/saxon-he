@@ -7,19 +7,20 @@
 
 package net.sf.saxon.expr.flwor;
 
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.value.ObjectValue;
 
 /**
  * A tuple, as it appears in an XQuery tuple stream handled by extended FLWOR expressions.
  */
-public class Tuple extends ObjectValue<Sequence[]> {
+public class Tuple extends ObjectValue<Sequence<? extends Item<?>>[]> {
 
-    public Tuple(Sequence[] members) {
+    public Tuple(Sequence<? extends Item<?>>[] members) {
         super(members);
     }
 
-    public Sequence[] getMembers() {
+    public Sequence<? extends Item<?>>[] getMembers() {
         return getObject();
     }
 }

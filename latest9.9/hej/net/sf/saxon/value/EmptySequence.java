@@ -19,7 +19,7 @@ import java.util.Collections;
  */
 
 
-public final class EmptySequence<T extends Item> implements GroundedValue<T> {
+public final class EmptySequence<T extends Item<?>> implements GroundedValue<T> {
 
     // This class has a single instance
     /*@NotNull*/ private static EmptySequence THE_INSTANCE = new EmptySequence();
@@ -39,7 +39,7 @@ public final class EmptySequence<T extends Item> implements GroundedValue<T> {
      */
 
     @SuppressWarnings("unchecked")
-    public static <T extends Item> EmptySequence<T> getInstance() {
+    public static <T extends Item<?>> EmptySequence<T> getInstance() {
         return (EmptySequence<T>)THE_INSTANCE;
     }
 

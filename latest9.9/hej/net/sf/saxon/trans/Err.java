@@ -77,7 +77,7 @@ public class Err {
             }
         }
         String s;
-        if ((valueType == ELEMENT || valueType == ATTRIBUTE) && sb.length() > 0 && sb.charAt(0) == '{') {
+        if ((valueType == ELEMENT || valueType == ATTRIBUTE) && !sb.isEmpty() && sb.charAt(0) == '{') {
             try {
                 StructuredQName qn = StructuredQName.fromClarkName(sb.toString());
                 String uri = abbreviateURI(qn.getURI());
@@ -88,7 +88,7 @@ public class Err {
         } else if (valueType == URI) {
             s = abbreviateURI(sb.toString());
         } else {
-            s = (len > 30 ? sb.toString().substring(0, 30) + "..." : sb.toString());
+            s = len > 30 ? sb.toString().substring(0, 30) + "..." : sb.toString();
         }
         switch (valueType) {
             case ELEMENT:
@@ -136,9 +136,9 @@ public class Err {
         }
     }
 
-    public static CharSequence depictSequence(Sequence seq) {
+    public static CharSequence depictSequence(Sequence<? extends Item<?>> seq) {
         try {
-            GroundedValue val = ((Sequence<Item>) seq).materialize();
+            GroundedValue<? extends Item<?>> val = seq.materialize();
             if (val.getLength() == 0) {
                 return "()";
             } else if (val.getLength() == 1) {
@@ -179,7 +179,7 @@ public class Err {
         if (cs.length() <= 30) {
             return Whitespace.collapseWhitespace(cs);
         } else {
-            return Whitespace.collapseWhitespace(cs.subSequence(0, 30)).toString() + "...";
+            return Whitespace.collapseWhitespace(cs.subSequence(0, 30)) + "...";
         }
     }
 
@@ -204,7 +204,7 @@ public class Err {
 
     public static String wrap(Expression exp) {
         if (ExpressionTool.expressionSize(exp) < 10 && !(exp instanceof Instruction)) {
-            return "{" + exp.toString() + "}";
+            return "{" + exp + "}";
         } else {
             return exp.getExpressionName();
         }

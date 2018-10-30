@@ -263,7 +263,7 @@ public abstract class Pattern extends PseudoExpression {
      *                        treat this the same as a false result)
      */
 
-    public abstract boolean matches(Item item, XPathContext context) throws XPathException;
+    public abstract boolean matches(Item<?> item, XPathContext context) throws XPathException;
 
     /**
      * Determine whether this pattern matches a given Node within the subtree rooted at a given
@@ -323,17 +323,17 @@ public abstract class Pattern extends PseudoExpression {
         } else {
             byte axis = uType.subsumes(UType.DOCUMENT) ? AxisInfo.DESCENDANT_OR_SELF : AxisInfo.DESCENDANT;
             AxisIterator allChildren = doc.iterateAxis(axis);
-            MappingFunction processElement = item -> {
-                AxisIterator mapper = SingleNodeIterator.makeIterator((NodeInfo)item);
+            MappingFunction<NodeInfo, NodeInfo> processElement = item -> {
+                AxisIterator mapper = SingleNodeIterator.makeIterator(item);
                 if (uType.subsumes(UType.NAMESPACE)) {
-                    mapper = new ConcatenatingAxisIterator(mapper, ((NodeInfo) item).iterateAxis(AxisInfo.NAMESPACE));
+                    mapper = new ConcatenatingAxisIterator(mapper, item.iterateAxis(AxisInfo.NAMESPACE));
                 }
                 if (uType.subsumes(UType.ATTRIBUTE)) {
-                    mapper = new ConcatenatingAxisIterator(mapper, ((NodeInfo) item).iterateAxis(AxisInfo.ATTRIBUTE));
+                    mapper = new ConcatenatingAxisIterator(mapper, item.iterateAxis(AxisInfo.ATTRIBUTE));
                 }
                 return mapper;
             };
-            SequenceIterator<NodeInfo> attributesOrSelf = new MappingIterator(allChildren, processElement);
+            SequenceIterator<NodeInfo> attributesOrSelf = new MappingIterator<>(allChildren, processElement);
             ItemMappingFunction<NodeInfo, NodeInfo> test = item -> {
                 if (matches(item, context)) {
                     return item;

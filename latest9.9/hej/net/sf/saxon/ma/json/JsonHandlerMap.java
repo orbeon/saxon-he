@@ -112,12 +112,12 @@ public class JsonHandlerMap extends JsonHandler {
      * @param val   the value/map to be written
      * @throws XPathException if an error occurs writing to the map
      */
-    private void writeItem(GroundedValue val) throws XPathException {
+    private void writeItem(GroundedValue<? extends Item<?>> val) throws XPathException {
         if (stack.empty()) {
             stack.push(val);
         } else if (stack.peek() instanceof ArrayItem) {
             SimpleArrayItem array = (SimpleArrayItem) stack.peek();
-            array.getMembers().add(((Sequence<Item>) val).materialize());
+            array.getMembers().add(val.materialize());
         } else {
             HashTrieMap map = (HashTrieMap) stack.peek();
             //StringValue key = new StringValue(reEscape(keys.pop(), true, false, false));

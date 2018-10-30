@@ -18,12 +18,12 @@ import net.sf.saxon.trans.XPathException;
  * of the tuples in a supplied tuple stream, returning the result as an iterator
  */
 
-public class ReturnClauseIterator implements SequenceIterator<Item> {
+public class ReturnClauseIterator implements SequenceIterator<Item<?>> {
 
     private TuplePull base;
     private Expression action;
     private XPathContext context;
-    private SequenceIterator results = null;
+    private SequenceIterator<? extends Item<?>> results = null;
 
     /**
      * Construct an iterator over the results of the FLWOR expression.

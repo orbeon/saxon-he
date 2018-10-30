@@ -19,7 +19,7 @@ import net.sf.saxon.tree.iter.LookaheadIterator;
  * A SubsequenceIterator selects a subsequence of a sequence
  */
 
-public class SubsequenceIterator<T extends Item> implements SequenceIterator<T>, LastPositionFinder, LookaheadIterator<T> {
+public class SubsequenceIterator<T extends Item<?>> implements SequenceIterator<T>, LastPositionFinder, LookaheadIterator<T> {
 
     private SequenceIterator<T> base;
     private int basePosition = 0;
@@ -70,7 +70,7 @@ public class SubsequenceIterator<T extends Item> implements SequenceIterator<T>,
      * @throws XPathException if a dynamic error occurs
      */
 
-    public static <T extends Item> SequenceIterator<T> make(SequenceIterator<T> base, int min, int max) throws XPathException {
+    public static <T extends Item<?>> SequenceIterator<T> make(SequenceIterator<T> base, int min, int max) throws XPathException {
         if (base instanceof ArrayIterator) {
             return ((ArrayIterator<T>) base).makeSliceIterator(min, max);
         } else if (max == Integer.MAX_VALUE) {

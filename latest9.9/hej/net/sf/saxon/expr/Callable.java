@@ -40,6 +40,6 @@ public interface Callable {
      */
 
     /*@Nullable*/
-    Sequence<? extends Item> call(XPathContext context, Sequence<? extends Item>[] arguments) throws XPathException;
+    Sequence<? extends Item<?>> call(XPathContext context, Sequence<? extends Item<?>>[] arguments) throws XPathException;
 
 }
