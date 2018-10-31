@@ -17,6 +17,7 @@ import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.ZeroOrOne;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
+import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.StringValue;
 
@@ -83,7 +84,7 @@ public class StringJoin extends FoldingFunction {
         }
         int card = arguments[0].getCardinality();
         if (!Cardinality.allowsMany(card)) {
-            if (Cardinality.allowsZero(card)) {
+            if (Cardinality.allowsZero(card) || arguments[0].getItemType().getPrimitiveItemType() != BuiltInAtomicType.STRING) {
                 return SystemFunction.makeCall("string", getRetainedStaticContext(), arguments[0]);
             } else {
                 return arguments[0];
