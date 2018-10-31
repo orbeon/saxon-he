@@ -137,7 +137,7 @@ public class RangeKey implements MapItem {
      * @return the new map containing the additional entry
      */
     @Override
-    public MapItem addEntry(AtomicValue key, GroundedValue value) {
+    public MapItem addEntry(AtomicValue key, GroundedValue<?> value) {
         return HashTrieMap.copy(this).addEntry(key, value);
     }
 

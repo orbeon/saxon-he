@@ -120,7 +120,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
                 wrapper.nodeKind = Type.NAMESPACE;
                 break;
             default:
-                throw new IllegalArgumentException("Bad node type in dom4j! " + node.getClass() + " instance " + node.toString());
+                throw new IllegalArgumentException("Bad node type in dom4j! " + node.getClass() + " instance " + node);
         }
         wrapper.treeInfo = docWrapper;
         return wrapper;
@@ -128,7 +128,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
 
     public DOM4JDocumentWrapper getTreeInfo() {
         return (DOM4JDocumentWrapper)treeInfo;
-    };
+    }
 
     /**
      * Get the underlying DOM4J node, to implement the VirtualNode interface
@@ -521,11 +521,11 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
     @Override
     protected AxisIterator iterateDescendants(NodeTest nodeTest, boolean includeSelf) {
         if (includeSelf) {
-            return new SteppingNavigator.DescendantAxisIterator(this, true, nodeTest);
+            return new SteppingNavigator.DescendantAxisIterator<>(this, true, nodeTest);
 
         } else {
             if (hasChildNodes()) {
-                return new SteppingNavigator.DescendantAxisIterator(this, false, nodeTest);
+                return new SteppingNavigator.DescendantAxisIterator<>(this, false, nodeTest);
             } else {
                 return EmptyIterator.OfNodes.THE_INSTANCE;
             }
@@ -635,7 +635,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
     }
 
     public DOM4JNodeWrapper getSuccessorElement(DOM4JNodeWrapper anchor, String uri, String local) {
-        Node stop = (anchor == null ? null : anchor.node);
+        Node stop = anchor == null ? null : anchor.node;
         Node next = node;
         do {
             next = getFollowingNode(next, stop, (DOM4JNodeWrapper) treeInfo.getRootNode());
@@ -864,7 +864,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
             if (count == 0) {
                 return NamespaceBinding.EMPTY_ARRAY;
             } else {
-                NamespaceBinding[] result = (buffer == null || count > buffer.length ? new NamespaceBinding[count] : buffer);
+                NamespaceBinding[] result = buffer == null || count > buffer.length ? new NamespaceBinding[count] : buffer;
                 int n = 0;
                 for (Namespace namespace : namespaces) {
                     final String prefix = namespace.getPrefix();

@@ -24,7 +24,6 @@ import net.sf.saxon.value.StringValue;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -80,11 +79,11 @@ public class DirectoryCollection extends AbstractResourceCollection {
         return true;
     }
 
-    public Iterator<String> getResourceURIs(XPathContext context) throws XPathException {
+    public Iterator<String> getResourceURIs(XPathContext context) {
         return directoryContents(dirFile, params);
     }
 
-    public Iterator<Resource> getResources(final XPathContext context) throws XPathException {
+    public Iterator<Resource> getResources(final XPathContext context) {
         final ParseOptions options = optionsFromQueryParameters(params, context);
         options.setSpaceStrippingRule(whitespaceRules);
         Boolean metadataParam = params.getMetaData();
@@ -129,7 +128,7 @@ public class DirectoryCollection extends AbstractResourceCollection {
      */
 
     private MetadataResource makeMetadataResource(Resource resource, InputDetails details) {
-        Map<String, GroundedValue> properties = new HashMap<String, GroundedValue>();
+        Map<String, GroundedValue<?>> properties = new HashMap<>();
         try {
 
             URI uri = new URI(resource.getResourceURI());
@@ -158,11 +157,7 @@ public class DirectoryCollection extends AbstractResourceCollection {
                 properties.put("length", new Int64Value(file.length()));
 
             }
-        } catch (URISyntaxException e) {
-            // ignore
-        } catch (MalformedURLException e) {
-            // ignore
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             // ignore
         }
 
@@ -194,7 +189,7 @@ public class DirectoryCollection extends AbstractResourceCollection {
             }
         }
 
-        Stack<Iterator<File>> directories = new Stack<Iterator<File>>();
+        Stack<Iterator<File>> directories = new Stack<>();
         directories.push(Arrays.asList(directory.listFiles(filter)).iterator());
         return new DirectoryIterator(directories, recurse, filter);
 

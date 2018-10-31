@@ -170,7 +170,7 @@ public class JAXPXPathStaticContext extends AbstractStaticContext
      * This method is provided for use by the XPath parser, and it should not be called by the user of
      * the API.
      *
-     * @param qName
+     * @param qName the name of the variable to be bound
      * @throws XPathException if no VariableResolver has been supplied.
      */
 
@@ -287,7 +287,7 @@ public class JAXPXPathStaticContext extends AbstractStaticContext
          * the default namespace (prefix="") and the XML namespace where appropriate
          */
 
-        public Iterator iteratePrefixes() {
+        public Iterator<String> iteratePrefixes() {
             String[] prefixes = {"", "xml", "xs", "xsi", "saxon"};
             return Arrays.asList(prefixes).iterator();
         }

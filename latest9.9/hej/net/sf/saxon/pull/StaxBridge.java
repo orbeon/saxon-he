@@ -265,7 +265,7 @@ public class StaxBridge implements PullProvider {
      *         that has just been notified.
      */
 
-    public AttributeCollection getAttributes() throws XPathException {
+    public AttributeCollection getAttributes() {
         return attributes;
     }
 
@@ -286,7 +286,7 @@ public class StaxBridge implements PullProvider {
      * one of the methods skipToEnd(), getStringValue(), or getTypedValue().</p>
      */
 
-    public NamespaceBinding[] getNamespaceDeclarations() throws XPathException {
+    public NamespaceBinding[] getNamespaceDeclarations() {
         int n = reader.getNamespaceCount();
         if (n == 0) {
             return NamespaceBinding.EMPTY_ARRAY;
@@ -795,7 +795,7 @@ public class StaxBridge implements PullProvider {
             } else if (ent.getClass().getName().equals("com.ctc.wstx.ent.UnparsedExtEntity")) {
                 // Woodstox 3.0.0 returns this: use introspection to get the data we need
                 try {
-                    Class woodstoxClass = ent.getClass();
+                    Class<?> woodstoxClass = ent.getClass();
                     Class<?>[] noArgClasses = new Class<?>[0];
                     Object[] noArgs = new Object[0];
                     Method method = woodstoxClass.getMethod("getName", noArgClasses);
@@ -836,8 +836,7 @@ public class StaxBridge implements PullProvider {
     private class StaxErrorReporter implements XMLReporter {
 
         public void report(String message, String errorType,
-                           Object relatedInformation, Location location)
-                throws XMLStreamException {
+                           Object relatedInformation, Location location) {
             ExplicitLocation loc = translateLocation(location);
             XPathException err = new XPathException("Error reported by XML parser: " + message + " (" + errorType + ')');
             err.setLocator(loc);

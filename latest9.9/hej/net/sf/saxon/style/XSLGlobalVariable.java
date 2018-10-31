@@ -16,6 +16,7 @@ import net.sf.saxon.expr.instruct.GlobalVariable;
 import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.GroundedValue;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trace.LocationKind;
@@ -278,7 +279,8 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
             }
             if (sourceBinding.isStatic()) {
                 inst.setStatic(true);
-                GroundedValue value = compilation.getStaticVariable(sourceBinding.getVariableQName());
+                GroundedValue<? extends Item<?>> value =
+                        compilation.getStaticVariable(sourceBinding.getVariableQName());
                 if (value == null) {
                     throw new AssertionError();
                 }

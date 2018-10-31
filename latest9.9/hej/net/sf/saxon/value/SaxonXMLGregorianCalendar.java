@@ -632,9 +632,9 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
     public GregorianCalendar toGregorianCalendar(TimeZone timezone, Locale aLocale, /*@NotNull*/ XMLGregorianCalendar defaults) {
         GregorianCalendar gc = new GregorianCalendar(timezone, aLocale);
         gc.setGregorianChange(new Date(Long.MIN_VALUE));
-        gc.set(Calendar.ERA, (year == null ? (defaults.getYear() > 0 ? +1 : -1) : year.signum()));
-        gc.set(Calendar.YEAR, (year == null ? defaults.getYear() : year.abs().intValue()));
-        gc.set(Calendar.MONTH, (month == DatatypeConstants.FIELD_UNDEFINED ? defaults.getMonth() : month));
+        gc.set(Calendar.ERA, year == null ? defaults.getYear() > 0 ? +1 : -1 : year.signum());
+        gc.set(Calendar.YEAR, year == null ? defaults.getYear() : year.abs().intValue());
+        gc.set(Calendar.MONTH, month == DatatypeConstants.FIELD_UNDEFINED ? defaults.getMonth() : month);
         gc.set(Calendar.DAY_OF_MONTH, day == DatatypeConstants.FIELD_UNDEFINED ? defaults.getDay() : day);
         gc.set(Calendar.HOUR, hour == DatatypeConstants.FIELD_UNDEFINED ? defaults.getHour() : hour);
         gc.set(Calendar.MINUTE, minute == DatatypeConstants.FIELD_UNDEFINED ? defaults.getMinute() : minute);

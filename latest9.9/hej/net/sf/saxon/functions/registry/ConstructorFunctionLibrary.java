@@ -8,16 +8,13 @@
 package net.sf.saxon.functions.registry;
 
 import com.saxonica.functions.hof.AtomicConstructorFunction;
-import net.sf.saxon.expr.ListConstructorFunction;
-import net.sf.saxon.functions.CallableFunction;
-import net.sf.saxon.functions.FunctionLibrary;
-import net.sf.saxon.type.SpecificFunctionType;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
+import net.sf.saxon.functions.CallableFunction;
+import net.sf.saxon.functions.FunctionLibrary;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.Function;
 import net.sf.saxon.om.NamespaceResolver;
-import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.SymbolicName;
 import net.sf.saxon.trans.XPathException;
@@ -79,14 +76,12 @@ public class ConstructorFunctionLibrary implements FunctionLibrary {
         } else if (type instanceof ListType) {
             return new ListConstructorFunction((ListType)type, resolver, true);
         } else {
-            Callable callable = new Callable() {
-                public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
-                    AtomicValue value = (AtomicValue) arguments[0].head();
-                    if (value == null) {
-                        return EmptySequence.getInstance();
-                    }
-                    return CastToUnion.cast(value, (UnionType) type, resolver, context.getConfiguration().getConversionRules());
+            Callable callable = (context, arguments) -> {
+                AtomicValue value = (AtomicValue) arguments[0].head();
+                if (value == null) {
+                    return EmptySequence.getInstance();
                 }
+                return CastToUnion.cast(value, (UnionType) type, resolver, context.getConfiguration().getConversionRules());
             };
             SequenceType returnType = ((UnionType) type).getResultTypeOfCast();
             return new CallableFunction(1, callable,

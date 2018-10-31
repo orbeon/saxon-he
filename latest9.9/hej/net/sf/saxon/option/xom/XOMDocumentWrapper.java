@@ -45,8 +45,9 @@ public class XOMDocumentWrapper extends XOMNodeWrapper implements TreeInfo {
      */
     public XOMDocumentWrapper(Node root, Configuration config) {
         super(root, null, 0);
-        if (root.getParent() != null)
+        if (root.getParent() != null) {
             throw new IllegalArgumentException("root node must not have a parent node");
+        }
         docWrapper = this;
         treeInfo = this;
         setConfiguration(config);
@@ -142,7 +143,7 @@ public class XOMDocumentWrapper extends XOMNodeWrapper implements TreeInfo {
      * Get the element with a given ID, if any
      *
      * @param id        the required ID value
-     * @param getParent
+     * @param getParent true if the parent of the element of type ID is requird
      * @return the element with the given ID, or null if there is no such ID
      *         present (or if the parser has not notified attributes as being of
      *         type ID).
@@ -162,7 +163,7 @@ public class XOMDocumentWrapper extends XOMNodeWrapper implements TreeInfo {
                 default:
                     return null;
             }
-            idIndex = new HashMap<String, NodeInfo>(50);
+            idIndex = new HashMap<>(50);
             buildIDIndex(elem);
         }
         return idIndex.get(id);
@@ -195,7 +196,7 @@ public class XOMDocumentWrapper extends XOMNodeWrapper implements TreeInfo {
      */
 
     public Iterator<String> getUnparsedEntityNames() {
-        return Collections.EMPTY_LIST.iterator();
+        return Collections.emptyIterator();
     }
 
     /**
@@ -250,7 +251,7 @@ public class XOMDocumentWrapper extends XOMNodeWrapper implements TreeInfo {
 
     public void setUserData(String key, Object value) {
         if (userData == null) {
-            userData = new HashMap(4);
+            userData = new HashMap<>(4);
         }
         if (value == null) {
             userData.remove(key);

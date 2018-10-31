@@ -39,7 +39,7 @@ public class XMLToJsonFn extends SystemFunction {
         return xmlToJsonOptions;
     }
 
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         NodeInfo xml = (NodeInfo) arguments[0].head();
         if (xml == null) {
             return EmptySequence.getInstance();

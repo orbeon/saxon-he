@@ -107,7 +107,7 @@ public class JDOMNodeWrapper extends AbstractNodeWrapper implements SiblingCount
         } else if (node instanceof Namespace) {
             throw new IllegalArgumentException("Cannot wrap JDOM namespace objects");
         } else {
-            throw new IllegalArgumentException("Bad node type in JDOM! " + node.getClass() + " instance " + node.toString());
+            throw new IllegalArgumentException("Bad node type in JDOM! " + node.getClass() + " instance " + node);
         }
         wrapper.treeInfo = docWrapper;
         return wrapper;
@@ -446,8 +446,8 @@ public class JDOMNodeWrapper extends AbstractNodeWrapper implements SiblingCount
         } else {
             descendants = ((Parent) node).getDescendants();
         }
-        NodeWrappingFunction wrappingFunct =
-                (NodeWrappingFunction<Content, NodeInfo>) node -> makeWrapper(node, getTreeInfo());
+        NodeWrappingFunction<Content, NodeInfo> wrappingFunct =
+                node -> makeWrapper(node, getTreeInfo());
         AxisIterator wrappedDescendants = new DescendantWrappingIterator(descendants, wrappingFunct);
 
         if (includeSelf && nodeTest.matchesNode(this)) {

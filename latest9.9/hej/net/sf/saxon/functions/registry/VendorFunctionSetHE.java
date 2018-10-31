@@ -112,11 +112,11 @@ public class VendorFunctionSetHE extends BuiltInFunctionSet {
         public Expression makeOptimizedFunctionCall(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo, Expression... arguments) throws XPathException {
             if (arguments[0].getItemType().getPrimitiveItemType() == BuiltInAtomicType.INTEGER) {
                 return Literal.makeLiteral(BooleanValue.TRUE);
-            };
+            }
             return null;
         }
 
-        public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+        public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
             NumericValue val = (NumericValue) arguments[0].head();
             return BooleanValue.get(val != null && val.isWholeNumber());
         }
@@ -145,7 +145,7 @@ public class VendorFunctionSetHE extends BuiltInFunctionSet {
             return 0; // treat as creative to avoid loop-lifting: test case try-catch-err-code-variable-14
         }
 
-        public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+        public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
             String var = arguments[0].head().getStringValue();
             @SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
             XPathException error = context.getCurrentException();
@@ -153,49 +153,50 @@ public class VendorFunctionSetHE extends BuiltInFunctionSet {
                 return EmptySequence.getInstance();
             }
             SourceLocator locator = error.getLocator();
-            if (var.equals("code")) {
-                StructuredQName errorCodeQName = error.getErrorCodeQName();
-                if (errorCodeQName == null) {
+            switch (var) {
+                case "code":
+                    StructuredQName errorCodeQName = error.getErrorCodeQName();
+                    if (errorCodeQName == null) {
+                        return EmptySequence.getInstance();
+                    } else {
+                        return new QNameValue(errorCodeQName, BuiltInAtomicType.QNAME);
+                    }
+                case "description":
+                    String s = error.getMessage();
+                    if (error.getCause() != null) {
+                        s += "(" + error.getCause().getMessage() + ")";
+                    }
+                    return new StringValue(s);
+                case "value":
+                    Sequence value = error.getErrorObject();
+                    if (value == null) {
+                        return EmptySequence.getInstance();
+                    } else {
+                        return value;
+                    }
+                case "module":
+                    String module = locator == null ? null : locator.getSystemId();
+                    if (module == null) {
+                        return EmptySequence.getInstance();
+                    } else {
+                        return new StringValue(module);
+                    }
+                case "line-number":
+                    int line = locator == null ? -1 : locator.getLineNumber();
+                    if (line == -1) {
+                        return EmptySequence.getInstance();
+                    } else {
+                        return new Int64Value(line);
+                    }
+                case "column-number":
+                    int column = locator == null ? -1 : locator.getColumnNumber();
+                    if (column == -1) {
+                        return EmptySequence.getInstance();
+                    } else {
+                        return new Int64Value(column);
+                    }
+                default:
                     return EmptySequence.getInstance();
-                } else {
-                    return new QNameValue(errorCodeQName, BuiltInAtomicType.QNAME);
-                }
-            } else if (var.equals("description")) {
-                String s = error.getMessage();
-                if (error.getCause() != null) {
-                    s += "(" + error.getCause().getMessage() + ")";
-                }
-                return new StringValue(s);
-            } else if (var.equals("value")) {
-                Sequence value = error.getErrorObject();
-                if (value == null) {
-                    return EmptySequence.getInstance();
-                } else {
-                    return value;
-                }
-            } else if (var.equals("module")) {
-                String module = locator == null ? null : locator.getSystemId();
-                if (module == null) {
-                    return EmptySequence.getInstance();
-                } else {
-                    return new StringValue(module);
-                }
-            } else if (var.equals("line-number")) {
-                int line = locator == null ? -1 : locator.getLineNumber();
-                if (line == -1) {
-                    return EmptySequence.getInstance();
-                } else {
-                    return new Int64Value(line);
-                }
-            } else if (var.equals("column-number")) {
-                int column = locator == null ? -1 : locator.getColumnNumber();
-                if (column == -1) {
-                    return EmptySequence.getInstance();
-                } else {
-                    return new Int64Value(column);
-                }
-            } else {
-                return EmptySequence.getInstance();
             }
 
         }

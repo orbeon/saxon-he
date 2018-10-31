@@ -31,7 +31,7 @@ import java.util.Iterator;
 
 public class UriCollection extends SystemFunction {
 
-    private SequenceIterator getUris(final String href, final XPathContext context) throws XPathException {
+    private SequenceIterator<AnyURIValue> getUris(final String href, final XPathContext context) throws XPathException {
         ResourceCollection rCollection = context.getConfiguration().getCollectionFinder().findCollection(context, href);
         if (rCollection == null) {
             // Should not happen, we're calling user code so we check for it.
@@ -42,9 +42,9 @@ public class UriCollection extends SystemFunction {
 
         }
         final Iterator<String> sources = rCollection.getResourceURIs(context);
-        return new SequenceIterator() {
+        return new SequenceIterator<AnyURIValue>() {
 
-            public Item next() {
+            public AnyURIValue next() {
                 if (sources.hasNext()) {
                     return new AnyURIValue(sources.next());
                 } else {
@@ -74,7 +74,7 @@ public class UriCollection extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<AnyURIValue> call(XPathContext context, Sequence[] arguments) throws XPathException {
         if (arguments.length == 0) {
             return getDefaultUriCollection(context);
         } else {
@@ -101,12 +101,12 @@ public class UriCollection extends SystemFunction {
 
     }
 
-    private Sequence getDefaultUriCollection(XPathContext context) throws XPathException {
+    private Sequence<AnyURIValue> getDefaultUriCollection(XPathContext context) throws XPathException {
         String href = context.getConfiguration().getDefaultCollection();
         if (href == null) {
             throw new XPathException("No default collection has been defined", "FODC0002");
         } else {
-            return new LazySequence(getUris(href, context));
+            return new LazySequence<>(getUris(href, context));
         }
     }
 

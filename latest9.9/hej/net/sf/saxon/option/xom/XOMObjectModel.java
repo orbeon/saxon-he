@@ -84,7 +84,7 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
     }
 
     /*@Nullable*/
-    public PJConverter getPJConverter(Class targetClass) {
+    public PJConverter getPJConverter(Class<?> targetClass) {
         if (isRecognizedNodeClass(targetClass)) {
             return new PJConverter() {
                 public Object convert(Sequence<? extends Item<?>> value, Class<?> targetClass, XPathContext context) throws XPathException {
@@ -99,7 +99,7 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
     public JPConverter getJPConverter(Class sourceClass, Configuration config) {
         if (isRecognizedNodeClass(sourceClass)) {
             return new JPConverter() {
-                public Sequence convert(Object object, XPathContext context) throws XPathException {
+                public Sequence<? extends Item<?>> convert(Object object, XPathContext context)  {
                     return convertObjectToXPathValue(object, context.getConfiguration());
                 }
 
@@ -131,7 +131,7 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
      */
 
     public boolean isRecognizedNode(Object object) {
-        return (object instanceof nu.xom.Node);
+        return object instanceof Node;
     }
 
     /**
@@ -162,7 +162,7 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
      * Otherwise, return false.
      */
 
-    public boolean sendSource(Source source, Receiver receiver) throws XPathException {
+    public boolean sendSource(Source source, Receiver receiver) {
         return false;
     }
 
@@ -182,7 +182,7 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
      * be converted, an exception should be thrown
      */
 
-    private Sequence convertObjectToXPathValue(Object object, Configuration config) throws XPathException {
+    private Sequence<? extends Item<?>> convertObjectToXPathValue(Object object, Configuration config)  {
         if (object instanceof Node) {
             return wrapNode((Node) object, config);
         } else if (object instanceof Node[]) {
@@ -190,7 +190,7 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
             for (int i = 0; i < nodes.length; i++) {
                 nodes[i] = wrapNode(((Node[]) object)[i], config);
             }
-            return new SequenceExtent(nodes);
+            return new SequenceExtent<>(nodes);
         } else {
             return null;
         }
@@ -208,27 +208,26 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
      * Value to see whether they belong to this object model.
      */
 
-    public Object convertXPathValueToObject(Sequence value, Object targetClass)
+    public Object convertXPathValueToObject(Sequence value, Class<?> targetClass)
             throws XPathException {
         // We accept the object if (a) the target class is Node or Node[],
         // or (b) the supplied object is a node, or sequence of nodes, that wrap XOM nodes,
         // provided that the target class is Object or a collection class
-        Class target = (Class) targetClass;
         boolean requireXOM =
-                (Node.class.isAssignableFrom(target) ||
-                        (target.isArray() && Node.class.isAssignableFrom(target.getComponentType())));
+                Node.class.isAssignableFrom(targetClass) ||
+                        (targetClass.isArray() && Node.class.isAssignableFrom(targetClass.getComponentType()));
 
         // Note: we allow the declared type of the method argument to be a subclass of Node. If the actual
         // node supplied is the wrong kind of node, this will result in a Java exception.
 
         boolean allowXOM =
-                (target == Object.class || target.isAssignableFrom(ArrayList.class) ||
-                        target.isAssignableFrom(HashSet.class) ||
-                        (target.isArray() && target.getComponentType() == Object.class));
+                targetClass == Object.class || targetClass.isAssignableFrom(ArrayList.class) ||
+                        targetClass.isAssignableFrom(HashSet.class) ||
+                        (targetClass.isArray() && targetClass.getComponentType() == Object.class);
         if (!(requireXOM || allowXOM)) {
             return null;
         }
-        List nodes = new ArrayList(20);
+        List<Node> nodes = new ArrayList<>(20);
 
         SequenceIterator iter = value.iterate();
         while (true) {
@@ -239,16 +238,16 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
             if (item instanceof VirtualNode) {
                 Object o = ((VirtualNode) item).getRealNode();
                 if (o instanceof Node) {
-                    nodes.add(o);
+                    nodes.add((Node)o);
                 } else {
                     if (requireXOM) {
-                        throw new XPathException("Extension function required class " + target.getName() +
+                        throw new XPathException("Extension function required class " + targetClass.getName() +
                                 "; supplied value of class " + item.getClass().getName() +
                                 " could not be converted");
                     }
                 }
             } else if (requireXOM) {
-                throw new XPathException("Extension function required class " + target.getName() +
+                throw new XPathException("Extension function required class " + targetClass.getName() +
                         "; supplied value of class " + item.getClass().getName() +
                         " could not be converted");
             } else {
@@ -259,20 +258,20 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
         if (nodes.isEmpty() && !requireXOM) {
             return null;  // empty sequence supplied - try a different mapping
         }
-        if (Node.class.isAssignableFrom(target)) {
+        if (Node.class.isAssignableFrom(targetClass)) {
             if (nodes.size() != 1) {
                 throw new XPathException("Extension function requires a single XOM Node" +
                         "; supplied value contains " + nodes.size() + " nodes");
             }
             return nodes.get(0);
-        } else if (target.isArray() && Node.class.isAssignableFrom(target.getComponentType())) {
-            Node[] array = (Node[]) Array.newInstance(target.getComponentType(), nodes.size());
+        } else if (targetClass.isArray() && Node.class.isAssignableFrom(targetClass.getComponentType())) {
+            Node[] array = (Node[]) Array.newInstance(targetClass.getComponentType(), nodes.size());
             nodes.toArray(array);
             return array;
-        } else if (target.isAssignableFrom(ArrayList.class)) {
+        } else if (targetClass.isAssignableFrom(ArrayList.class)) {
             return nodes;
-        } else if (target.isAssignableFrom(HashSet.class)) {
-            return new HashSet(nodes);
+        } else if (targetClass.isAssignableFrom(HashSet.class)) {
+            return new HashSet<>(nodes);
         } else {
             // after all this work, give up
             return null;

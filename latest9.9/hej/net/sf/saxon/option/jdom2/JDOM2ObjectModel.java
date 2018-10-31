@@ -18,7 +18,6 @@ import net.sf.saxon.lib.ExternalObjectModel;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.AnyNodeTest;
-import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.wrapper.VirtualNode;
 import net.sf.saxon.type.ItemType;
 import org.jdom2.*;
@@ -95,10 +94,10 @@ public class JDOM2ObjectModel extends TreeModel implements ExternalObjectModel {
     }
 
 
-    public PJConverter getPJConverter(Class targetClass) {
+    public PJConverter getPJConverter(Class<?> targetClass) {
         if (isRecognizedNodeClass(targetClass)) {
             return new PJConverter() {
-                public Object convert(Sequence<? extends Item<?>> value, Class<?> targetClass, XPathContext context) throws XPathException {
+                public Object convert(Sequence<? extends Item<?>> value, Class<?> targetClass, XPathContext context) {
                     return convertXPathValueToObject(value, targetClass);
                 }
             };
@@ -110,7 +109,7 @@ public class JDOM2ObjectModel extends TreeModel implements ExternalObjectModel {
     public JPConverter getJPConverter(Class sourceClass, Configuration config) {
         if (isRecognizedNodeClass(sourceClass)) {
             return new JPConverter() {
-                public Sequence convert(Object object, XPathContext context) throws XPathException {
+                public Sequence<?> convert(Object object, XPathContext context) {
                     return convertObjectToXPathValue(object, context.getConfiguration());
                 }
 
@@ -172,7 +171,7 @@ public class JDOM2ObjectModel extends TreeModel implements ExternalObjectModel {
      * Otherwise, return false.
      */
 
-    public boolean sendSource(Source source, Receiver receiver) throws XPathException {
+    public boolean sendSource(Source source, Receiver receiver) {
         return false;
     }
 
@@ -195,11 +194,10 @@ public class JDOM2ObjectModel extends TreeModel implements ExternalObjectModel {
      * @param object the object to be converted . If this is not a JDOM node, the method returns null
      * @param config the Saxon Configuration
      * @return either an XPath node that wraps the supplied JDOM node, or null
-     * @throws XPathException if conversion fails
      */
 
     /*@Nullable*/
-    private Sequence convertObjectToXPathValue(Object object, Configuration config) throws XPathException {
+    private Sequence<?> convertObjectToXPathValue(Object object, Configuration config) {
         if (isRecognizedNode(object)) {
             if (object instanceof Document) {
                 return wrapDocument(object, config).getRootNode();
@@ -221,13 +219,12 @@ public class JDOM2ObjectModel extends TreeModel implements ExternalObjectModel {
      * Value to see whether they belong to this object model.
      *
      * @param value       the XPath value to be converted
-     * @param targetClass the Java class required for the result of the conversion
+     * @param target      the Java class required for the result of the conversion
      * @return the object that results from conversion if conversion is possible, or null otherwise
      */
 
     /*@Nullable*/
-    private Object convertXPathValueToObject(Sequence value, Object targetClass) {
-        Class target = (Class) targetClass;
+    private Object convertXPathValueToObject(Sequence value, Class<?> target) {
         if (value instanceof VirtualNode) {
             Object u = ((VirtualNode) value).getRealNode();
             if (target.isAssignableFrom(u.getClass())) {

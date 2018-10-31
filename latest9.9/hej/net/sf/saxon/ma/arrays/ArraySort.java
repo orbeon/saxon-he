@@ -40,9 +40,9 @@ public class ArraySort extends SystemFunction {
      * @return an expression representing a call of this extension function
      */
     @Override
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public ArrayItem call(XPathContext context, Sequence[] arguments) throws XPathException {
         ArrayItem array = (ArrayItem) arguments[0].head();
-        final List<MemberToBeSorted> inputList = new ArrayList<MemberToBeSorted>(array.arrayLength());
+        final List<MemberToBeSorted> inputList = new ArrayList<>(array.arrayLength());
         int i = 0;
         StringCollator collation;
         if (arguments.length == 1) {

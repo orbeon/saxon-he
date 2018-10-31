@@ -9,9 +9,12 @@ package net.sf.saxon.value;
 
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.om.*;
+import net.sf.saxon.om.Item;
+import net.sf.saxon.om.Sequence;
+import net.sf.saxon.om.ZeroOrOne;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.SingletonIterator;
+import net.sf.saxon.tree.iter.UnfailingIterator;
 
 /**
  * A SingletonClosure represents a value that has not yet been evaluated: the value is represented
@@ -53,7 +56,7 @@ public class SingletonClosure extends Closure implements Sequence<Item<?>> {
      */
 
     /*@NotNull*/
-    public SequenceIterator<Item<?>> iterate() throws XPathException {
+    public UnfailingIterator<Item<?>> iterate() throws XPathException {
         return SingletonIterator.makeIterator(asItem());
     }
 
@@ -65,7 +68,7 @@ public class SingletonClosure extends Closure implements Sequence<Item<?>> {
      */
 
     /*@Nullable*/
-    public Item asItem() throws XPathException {
+    public Item<?> asItem() throws XPathException {
         if (!built) {
             value = expression.evaluateItem(savedXPathContext);
             built = true;
@@ -80,7 +83,7 @@ public class SingletonClosure extends Closure implements Sequence<Item<?>> {
      */
 
     /*@Nullable*/
-    public Item itemAt(int n) throws XPathException {
+    public Item<?> itemAt(int n) throws XPathException {
         if (n != 0) {
             return null;
         }
@@ -102,13 +105,12 @@ public class SingletonClosure extends Closure implements Sequence<Item<?>> {
      * @return the corresponding value
      */
 
-    public GroundedValue materialize() throws XPathException {
-        Item item = asItem();
-        return item==null ? EmptySequence.getInstance() : item;
+    public ZeroOrOne<Item<?>> materialize() throws XPathException {
+        return new ZeroOrOne<>(asItem());
     }
 
     @Override
-    public Sequence makeRepeatable() {
+    public SingletonClosure makeRepeatable() {
         return this;
     }
 

@@ -542,7 +542,7 @@ public abstract class JPConverter {
 
         }
 
-        public EmptySequence convert(Object object, XPathContext context) throws XPathException {
+        public EmptySequence<Item<?>> convert(Object object, XPathContext context) throws XPathException {
             return EmptySequence.getInstance();
         }
 

@@ -56,11 +56,10 @@ public class XPathFunctionCall extends FunctionCall implements Callable {
      * Get the target function to be called
      *
      * @param context the dynamic evaluation context
-     * @return the target function
-     * @throws net.sf.saxon.trans.XPathException if the target function cannot be determined
+     * @return always null
      */
     @Override
-    public Function getTargetFunction(XPathContext context) throws XPathException {
+    public Function getTargetFunction(XPathContext context) {
         return null;
     }
 
@@ -91,7 +90,7 @@ public class XPathFunctionCall extends FunctionCall implements Callable {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
-     * @param rebindings
+     * @param rebindings variables that need to be re-bound
      */
 
     /*@NotNull*/

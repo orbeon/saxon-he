@@ -11,6 +11,7 @@ import com.saxonica.functions.sql.SQLFunctionSet;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.AxisInfo;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.style.Compilation;
@@ -83,7 +84,7 @@ public class SQLUpdate extends ExtensionInstruction {
         connection = typeCheck("connection", connection);
         AxisIterator kids = iterateAxis(AxisInfo.CHILD);
         while (true) {
-            NodeInfo curr = (NodeInfo) kids.next();
+            NodeInfo curr = kids.next();
             if (curr == null) {
                 break;
             }
@@ -108,12 +109,14 @@ public class SQLUpdate extends ExtensionInstruction {
         NodeInfo child;
         int cols = 0;
         while (true) {
-            child = (NodeInfo) kids.next();
+            child = kids.next();
             if (child == null) {
                 break;
             }
             if (child instanceof SQLColumn) {
-                if (cols++ > 0) statement.append(',');
+                if (cols++ > 0) {
+                    statement.append(',');
+                }
                 String colname = ((SQLColumn) child).getColumnName();
                 statement.append(colname);
                 statement.append("=?");
@@ -124,8 +127,8 @@ public class SQLUpdate extends ExtensionInstruction {
     }
 
     /*@NotNull*/
-    public List getColumnInstructions(Compilation exec, ComponentDeclaration decl) throws XPathException {
-        List list = new ArrayList(10);
+    public List<Expression> getColumnInstructions(Compilation exec, ComponentDeclaration decl) throws XPathException {
+        List<Expression> list = new ArrayList<>(10);
 
         AxisIterator kids = iterateAxis(AxisInfo.CHILD);
         NodeInfo child;
@@ -150,7 +153,7 @@ public class SQLUpdate extends ExtensionInstruction {
         public static final int FIRST_COLUMN = 2;
         String statement;
 
-        private UpdateInstruction(){};
+        private UpdateInstruction(){}
 
         public UpdateInstruction(Expression connection, String statement, List columnInstructions, Expression where) {
             Expression[] sub = new Expression[columnInstructions.size() + 2];
@@ -182,22 +185,20 @@ public class SQLUpdate extends ExtensionInstruction {
             return u2.copyOperandsFrom(this);
         }
 
-        public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+        public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
 
             // Prepare the SQL statement (only do this once)
 
             Connection connection = SQLFunctionSet.expectConnection(arguments[CONNECTION], context);
-            PreparedStatement ps = null;
 
             String dbWhere = arguments[WHERE].head().getStringValue();
             String localstmt = statement;
 
-            if (dbWhere.length() != 0) {
+            if (!dbWhere.isEmpty()) {
                 localstmt += " WHERE " + dbWhere;
             }
 
-            try {
-                ps = connection.prepareStatement(localstmt);
+            try (PreparedStatement ps = connection.prepareStatement(localstmt)) {
                 ParameterMetaData metaData = ps.getParameterMetaData();
 
                 // Add the actual column values to be inserted
@@ -207,18 +208,22 @@ public class SQLUpdate extends ExtensionInstruction {
                     AtomicValue v = (AtomicValue) arguments[c].head();
                     String parameterClassName = metaData.getParameterClassName(i);
                     Object value;
-                    if (parameterClassName.equals("java.lang.String")) {
-                        value = v.getStringValue();
-                    } else if (parameterClassName.equals("java.sql.Date")) {
-                        value = java.sql.Date.valueOf(v.getStringValue());
-                    } else {
-                        try {
-                            Class targetClass = Class.forName(parameterClassName);
-                            PJConverter converter = PJConverter.allocate(context.getConfiguration(), v.getPrimitiveType(), StaticProperty.ALLOWS_ONE, targetClass);
-                            value = converter.convert(v, targetClass, context);
-                        } catch (ClassNotFoundException err) {
-                            throw new XPathException("xsl:insert - cannot convert value to required class " + parameterClassName);
-                        }
+                    switch (parameterClassName) {
+                        case "java.lang.String":
+                            value = v.getStringValue();
+                            break;
+                        case "java.sql.Date":
+                            value = java.sql.Date.valueOf(v.getStringValue());
+                            break;
+                        default:
+                            try {
+                                Class targetClass = Class.forName(parameterClassName);
+                                PJConverter converter = PJConverter.allocate(context.getConfiguration(), v.getPrimitiveType(), StaticProperty.ALLOWS_ONE, targetClass);
+                                value = converter.convert(v, targetClass, context);
+                            } catch (ClassNotFoundException err) {
+                                throw new XPathException("xsl:insert - cannot convert value to required class " + parameterClassName);
+                            }
+                            break;
                     }
                     //System.err.println("Set statement parameter " + i + " to " + val);
                     ps.setObject(i++, value);
@@ -232,13 +237,6 @@ public class SQLUpdate extends ExtensionInstruction {
 
             } catch (SQLException ex) {
                 dynamicError("SQL UPDATE failed: " + ex.getMessage(), SaxonErrorCode.SXSQ0004, context);
-            } finally {
-                if (ps != null) {
-                    try {
-                        ps.close();
-                    } catch (SQLException ignore) {
-                    }
-                }
             }
 
             return EmptySequence.getInstance();

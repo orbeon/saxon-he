@@ -147,13 +147,16 @@ public class TreePVector<E> extends AbstractList<E> implements PSequence<E> {
     }
 
     public TreePVector<E> plusAll(int i, final Collection<? extends E> list) {
-        if (i < 0 || i > size())
+        if (i < 0 || i > size()) {
             throw new IndexOutOfBoundsException();
-        if (list.size() == 0)
+        }
+        if (list.isEmpty()) {
             return this;
+        }
         IntTreePMap<E> map = this.map.withKeysChangedAbove(i, list.size());
-        for (E e : list)
+        for (E e : list) {
             map = map.plus(i++, e);
+        }
         return new TreePVector<E>(map);
     }
 

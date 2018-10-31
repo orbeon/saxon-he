@@ -103,9 +103,9 @@ public class Categories {
 
     static void build() {
 
-        CATEGORIES = new HashMap<String, Category>(30);
+        CATEGORIES = new HashMap<>(30);
 
-        InputStream in = Configuration.locateResource("categories.xml", new ArrayList(), new ArrayList());
+        InputStream in = Configuration.locateResource("categories.xml", new ArrayList<>(), new ArrayList<>());
         if (in == null) {
             throw new RuntimeException("Unable to read categories.xml file");
         }
@@ -152,19 +152,13 @@ public class Categories {
 
     public final static CharacterClass ESCAPE_S = new InverseCharacterClass(ESCAPE_s);
 
-    public final static PredicateCharacterClass ESCAPE_i = new PredicateCharacterClass(new IntPredicate() {
-        public boolean test(int value) {
-            return XMLCharacterData.isNCNameStart11(value) || value == ':';
-        }
-    });
+    public final static PredicateCharacterClass ESCAPE_i =
+            new PredicateCharacterClass(value -> XMLCharacterData.isNCNameStart11(value) || value == ':');
 
     public final static CharacterClass ESCAPE_I = new InverseCharacterClass(ESCAPE_i);
 
-    public final static PredicateCharacterClass ESCAPE_c = new PredicateCharacterClass(new IntPredicate() {
-        public boolean test(int value) {
-            return XMLCharacterData.isNCName11(value) || value == ':';
-        }
-    });
+    public final static PredicateCharacterClass ESCAPE_c =
+            new PredicateCharacterClass(value -> XMLCharacterData.isNCName11(value) || value == ':');
 
     public final static CharacterClass ESCAPE_C = new InverseCharacterClass(ESCAPE_c);
 
@@ -176,11 +170,8 @@ public class Categories {
     static Category CATEGORY_Z = getCategory("Z");
     static Category CATEGORY_C = getCategory("C");
 
-    public final static PredicateCharacterClass ESCAPE_w = new PredicateCharacterClass(new IntPredicate() {
-        public boolean test(int value) {
-            return !(CATEGORY_P.test(value) || CATEGORY_Z.test(value) || CATEGORY_C.test(value));
-        }
-    });
+    public final static PredicateCharacterClass ESCAPE_w =
+            new PredicateCharacterClass(value -> !(CATEGORY_P.test(value) || CATEGORY_Z.test(value) || CATEGORY_C.test(value)));
 
     public final static CharacterClass ESCAPE_W = new InverseCharacterClass(ESCAPE_w);
 

@@ -91,7 +91,7 @@ public final class WhitespaceTextImpl extends TinyNodeImpl {
      * @since 8.5
      */
 
-    public AtomicSequence atomize() throws XPathException {
+    public AtomicSequence atomize() {
         return new UntypedAtomicValue(getStringValueCS());
     }
 

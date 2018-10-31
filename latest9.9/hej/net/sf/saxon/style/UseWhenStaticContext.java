@@ -112,7 +112,7 @@ public class UseWhenStaticContext extends AbstractStaticContext implements XSLTS
      */
 
     public Expression bindVariable(StructuredQName qName) throws XPathException {
-        GroundedValue val = compilation.getStaticVariable(qName);
+        GroundedValue<? extends Item<?>> val = compilation.getStaticVariable(qName);
         if (val != null) {
             return Literal.makeLiteral(val);
         } else {
@@ -133,17 +133,6 @@ public class UseWhenStaticContext extends AbstractStaticContext implements XSLTS
     public FunctionLibrary getFunctionLibrary() {
         return functionLibrary;
     }
-
-    /**
-     * Get a named collation.
-     *
-     * @param name The name of the required collation. Supply null to get the default collation.
-     * @return the collation; or null if the required collation is not found.
-     */
-
-//    /*@Nullable*/ public StringCollator getCollation(String name) {
-//        return null;
-//    }
 
     /**
      * Get the name of the default collation.

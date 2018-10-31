@@ -55,12 +55,12 @@ public class UseWhenFilter extends ProxyReceiver {
     private StartTagBuffer startTag;
     private int depthOfHole = 0;
     private boolean emptyStylesheetElement = false;
-    private Stack<String> defaultNamespaceStack = new Stack<String>();
-    private Stack<Integer> versionStack = new Stack<Integer>();
+    private Stack<String> defaultNamespaceStack = new Stack<>();
+    private Stack<Integer> versionStack = new Stack<>();
     private DateTimeValue currentDateTime = DateTimeValue.getCurrentDateTime(null);
     private Compilation compilation;
-    private Stack<String> systemIdStack = new Stack<String>();
-    private Stack<URI> baseUriStack = new Stack<URI>();
+    private Stack<String> systemIdStack = new Stack<>();
+    private Stack<URI> baseUriStack = new Stack<>();
     private NestedIntegerValue precedence;
     private int importCount = 0;
     private boolean dropUnderscoredAttributes;
@@ -118,9 +118,9 @@ public class UseWhenFilter extends ProxyReceiver {
 
     /**
      * Notify the start of an element.
-     *  @param elemName   the name of the element.
+     * @param elemName   the name of the element.
      * @param typeCode   integer code identifying the element's type within the name pool.
-     * @param location
+     * @param location   location where the event originated
      * @param properties bit-significant properties of the element node
      */
 
@@ -357,7 +357,7 @@ public class UseWhenFilter extends ProxyReceiver {
 
         if (isVariable || !isSupplied) {
             String selectStr = startTag.getAttribute("", "select");
-            GroundedValue value;
+            GroundedValue<? extends Item<?>> value;
             if (selectStr == null) {
                 if (isVariable) {
                     throw createXPathException(
@@ -471,7 +471,7 @@ public class UseWhenFilter extends ProxyReceiver {
         return expr.evaluateAsString(dynamicContext).toString();
     }
 
-    public XPathException createXPathException(String message, String errorCode, Location location) throws XPathException {
+    public XPathException createXPathException(String message, String errorCode, Location location) {
         XPathException err = new XPathException(message);
         err.setErrorCode(errorCode);
         err.setIsStaticError(true);
@@ -653,7 +653,7 @@ public class UseWhenFilter extends ProxyReceiver {
      * @throws XPathException if evaluation of the expression fails
      */
 
-    public Sequence evaluateStatic(String expression, Location locationId, UseWhenStaticContext staticContext) throws XPathException {
+    public Sequence<? extends Item<?>> evaluateStatic(String expression, Location locationId, UseWhenStaticContext staticContext) throws XPathException {
         setNamespaceBindings(staticContext);
         Expression expr = ExpressionTool.make(expression, staticContext,
             0, Token.EOF, null);

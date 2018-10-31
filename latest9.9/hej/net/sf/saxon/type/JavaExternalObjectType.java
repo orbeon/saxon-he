@@ -114,7 +114,7 @@ public class JavaExternalObjectType extends ExternalObjectType {
      * @return the corresponding Java class
      */
 
-    public Class getJavaClass() {
+    public Class<?> getJavaClass() {
         return javaClass;
     }
 

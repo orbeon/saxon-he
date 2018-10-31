@@ -27,7 +27,7 @@ import net.sf.saxon.value.Cardinality;
  * is known that the rhs delivers atomic values.
  */
 
-public class ForEach extends Instruction implements ContextMappingFunction, ContextSwitchingExpression {
+public class ForEach extends Instruction implements ContextMappingFunction<Item<?>>, ContextSwitchingExpression {
 
     protected boolean containsTailCall;
     protected Operand selectOp;
@@ -240,7 +240,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      * inference rules defined in the XSLT 3.0 specification.
      *
      * @return the static item type of the expression according to the XSLT 3.0 defined rules
-     * @param contextItemType
+     * @param contextItemType static type of the context item
      */
     @Override
     public UType getStaticUType(UType contextItemType) {
@@ -352,7 +352,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
-     * @param rebindings
+     * @param rebindings variables that need to be re-bound
      */
 
     /*@NotNull*/
@@ -362,25 +362,6 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
         f2.setInstruction(isInstruction());
         return f2;
     }
-
-    /**
-     * Compute the dependencies of an expression, as the union of the
-     * dependencies of its subexpressions. (This is overridden for path expressions
-     * and filter expressions, where the dependencies of a subexpression are not all
-     * propogated). This method should be called only once, to compute the dependencies;
-     * after that, getDependencies should be used.
-     *
-     * @return the depencies, as a bit-mask
-     */
-
-//    public int computeDependencies() {
-//        // Some of the dependencies aren't relevant. Note that the sort keys are absorbed into the select
-//        // expression.
-//        int dependencies = 0;
-//        dependencies |= getSelect().getDependencies();
-//        dependencies |= getAction().getDependencies() & ~StaticProperty.DEPENDS_ON_FOCUS;
-//        return dependencies;
-//    }
 
     /**
      * Get the static properties of this expression (other than its type). The result is
@@ -514,7 +495,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
     public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
         XPathContextMinor c2 = context.newMinorContext();
         c2.trackFocus(getSelect().iterate(context));
-        return new ContextMappingIterator<Item<?>>(this, c2);
+        return new ContextMappingIterator<>(this, c2);
     }
 
     /**
@@ -526,7 +507,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      *         item maps to
      */
 
-    public SequenceIterator map(XPathContext context) throws XPathException {
+    public SequenceIterator<? extends Item<?>> map(XPathContext context) throws XPathException {
         return getAction().iterate(context);
     }
 

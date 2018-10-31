@@ -92,18 +92,22 @@ public class SQLExecute extends ExtensionInstruction {
             return "sql:statement";
         }
 
-        public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+        public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
             Connection connection = SQLFunctionSet.expectConnection(arguments[CONNECTION], context);
             String statementText = arguments[STATEMENT].head().getStringValue();
 
             try {
-                if ("COMMIT WORK".equals(statementText)) {
-                    connection.commit();
-                } else if ("ROLLBACK WORK".equals(statementText)) {
-                    connection.rollback();
-                } else {
-                    Statement s = connection.createStatement();
-                    s.execute(statementText);
+                switch (statementText) {
+                    case "COMMIT WORK":
+                        connection.commit();
+                        break;
+                    case "ROLLBACK WORK":
+                        connection.rollback();
+                        break;
+                    default:
+                        Statement s = connection.createStatement();
+                        s.execute(statementText);
+                        break;
                 }
 
             } catch (SQLException ex) {

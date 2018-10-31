@@ -42,9 +42,9 @@ public class CaseVariants {
     static void build() {
 
         monoVariants = new IntToIntHashMap(2500);
-        polyVariants = new IntHashMap<int[]>(100);
+        polyVariants = new IntHashMap<>(100);
 
-        InputStream in = Configuration.locateResource("casevariants.xml", new ArrayList(), new ArrayList());
+        InputStream in = Configuration.locateResource("casevariants.xml", new ArrayList<>(), new ArrayList<>());
         if (in == null) {
             throw new RuntimeException("Unable to read casevariants.xml file");
         }

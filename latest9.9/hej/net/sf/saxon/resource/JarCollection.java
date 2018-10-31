@@ -303,7 +303,7 @@ public class JarCollection extends AbstractResourceCollection {
                         String resourceURI = makeResourceURI(entry.getName());
                         next = makeResource(context.getConfiguration(), details, resourceURI);
                         if (metadata) {
-                            Map<String, GroundedValue> properties = makeProperties(entry);
+                            Map<String, GroundedValue<?>> properties = makeProperties(entry);
                             next = new MetadataResource(resourceURI, next, properties);
                         }
                         return;
@@ -329,8 +329,8 @@ public class JarCollection extends AbstractResourceCollection {
      * entry-name, size, and last-modified.
      */
 
-    protected Map<String, GroundedValue> makeProperties(ZipEntry entry) {
-        HashMap<String, GroundedValue> map = new HashMap<String, GroundedValue>(10);
+    protected Map<String, GroundedValue<?>> makeProperties(ZipEntry entry) {
+        HashMap<String, GroundedValue<?>> map = new HashMap<>(10);
         map.put("comment", StringValue.makeStringValue(entry.getComment()));
         map.put("compressed-size", new Int64Value(entry.getCompressedSize()));
         map.put("crc", new Int64Value(entry.getCrc()));

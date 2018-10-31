@@ -76,7 +76,7 @@ public class DOMEnvelope implements ExternalObjectModel {
         return XPathConstants.DOM_OBJECT_MODEL;
     }
 
-    public PJConverter getPJConverter(Class targetClass) {
+    public PJConverter getPJConverter(Class<?> targetClass) {
         if (NodeOverNodeInfo.class.isAssignableFrom(targetClass)) {
             return new PJConverter() {
                 public Object convert(Sequence<? extends Item<?>> value, Class<?> targetClass, XPathContext context) throws XPathException {

@@ -23,9 +23,9 @@ import net.sf.saxon.trans.XPathException;
  */
 public class MapCreate extends SystemFunction {
 
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
 
-        SequenceIterator iter = arguments[0].iterate();
+        SequenceIterator<?> iter = arguments[0].iterate();
         MapItem baseMap = (MapItem) iter.next();
         if (baseMap == null) {
             return new HashTrieMap();

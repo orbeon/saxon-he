@@ -54,7 +54,7 @@ public class DOM4JDocumentWrapper extends GenericTreeInfo {
      * Get the element with a given ID, if any
      *
      * @param id        the required ID value
-     * @param getParent
+     * @param getParent true if the parent of the element having ID type is required
      * @return null: dom4j does not provide any information about attribute types.
      */
 

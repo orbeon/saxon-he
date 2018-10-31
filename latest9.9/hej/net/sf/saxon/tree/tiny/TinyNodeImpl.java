@@ -82,7 +82,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * @return a singleton iterator that returns this item
      */
 
-    public UnfailingIterator iterate() {
+    public UnfailingIterator<NodeInfo> iterate() {
         return SingletonIterator.makeIterator(this);
     }
 
@@ -279,7 +279,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      */
 
     public int getFingerprint() {
-        int nc = tree.nameCode[nodeNr];;
+        int nc = tree.nameCode[nodeNr];
         if (nc == -1) {
             return -1;
         }

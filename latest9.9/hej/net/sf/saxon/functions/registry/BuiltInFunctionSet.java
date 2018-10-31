@@ -36,7 +36,7 @@ import java.util.List;
  */
 public abstract class BuiltInFunctionSet implements FunctionLibrary {
 
-    public static Sequence EMPTY = EmptySequence.getInstance();
+    public static Sequence<? extends Item<?>> EMPTY = EmptySequence.getInstance();
 
     /**
      * Categories of functions, bit significant
@@ -97,7 +97,7 @@ public abstract class BuiltInFunctionSet implements FunctionLibrary {
     public static final int NAV = 1 << 27;   // = usage NAVIGATION (function navigates from this node)
 
 
-    private HashMap<String, Entry> functionTable = new HashMap<String, Entry>(200);
+    private HashMap<String, Entry> functionTable = new HashMap<>(200);
     //private List<BuiltInFunctionSet> importedFunctions = new ArrayList<BuiltInFunctionSet>();
 
     /**
@@ -176,9 +176,6 @@ public abstract class BuiltInFunctionSet implements FunctionLibrary {
      *                     functions could be used.
      * @return An expression equivalent to a call on the specified function, if one is found;
      * null if no function was found matching the required name and arity.
-     * @throws XPathException if a function is found with the required name and arity, but
-     *                        the implementation of the function cannot be loaded or used; or if an error occurs
-     *                        while searching for the function.
      */
     @Override
     public Expression bind(SymbolicName.F symbolicName, Expression[] staticArgs, StaticContext env, List<String> reasons) {
@@ -414,10 +411,6 @@ public abstract class BuiltInFunctionSet implements FunctionLibrary {
          * The arity of the function
          */
         public int arity;
-        /**
-         * The maximum number of arguments permitted
-         */
-        //public int maxArguments;
         /**
          * The item type of the result of the function
          */

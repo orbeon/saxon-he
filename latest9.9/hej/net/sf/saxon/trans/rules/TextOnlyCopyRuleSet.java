@@ -82,8 +82,8 @@ public class TextOnlyCopyRuleSet implements BuiltInRuleSet {
                     // no action
             }
         } else if (item instanceof ArrayItem) {
-            Sequence seq = ArrayFunctionSet.ArrayToSequence.toSequence((ArrayItem)item);
-            SequenceIterator members = seq.iterate();
+            Sequence<? extends Item<?>> seq = ArrayFunctionSet.ArrayToSequence.toSequence((ArrayItem)item);
+            SequenceIterator<? extends Item<?>> members = seq.iterate();
             XPathContextMajor c2 = context.newContext();
             c2.setOrigin(this);
             c2.trackFocus(members);

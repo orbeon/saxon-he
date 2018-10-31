@@ -166,7 +166,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
             Configuration config = getConfiguration();
             allocateConverterStatically(config, true);
             if (converter != null) {
-                GroundedValue val = iterate(new EarlyEvaluationContext(config)).materialize();
+                GroundedValue<? extends Item<?>> val = iterate(new EarlyEvaluationContext(config)).materialize();
                 return Literal.makeLiteral(val, operand);
             }
         }
@@ -293,18 +293,18 @@ public class AtomicSequenceConverter extends UnaryExpression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(final XPathContext context) throws XPathException {
+    public SequenceIterator<? extends AtomicValue> iterate(final XPathContext context) throws XPathException {
         SequenceIterator<? extends Item<?>> base = getBaseExpression().iterate(context);
         Converter conv = getConverterDynamically(context);
         if (conv == Converter.ToStringConverter.INSTANCE) {
-            return new ItemMappingIterator(base, TO_STRING_MAPPER, true);
+            return new ItemMappingIterator<>(base, TO_STRING_MAPPER, true);
         } else {
             AtomicSequenceMappingFunction mapper = new AtomicSequenceMappingFunction();
             mapper.setConverter(conv);
             if (roleDiagnostic != null) {
                 mapper.setErrorCode(roleDiagnostic.getErrorCode());
             }
-            return new ItemMappingIterator(base, mapper, true);
+            return new ItemMappingIterator<>((SequenceIterator<? extends AtomicValue>)base, mapper, true);
         }
     }
 
@@ -312,7 +312,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
      * Mapping function wrapped around a converter
      */
 
-    public static class AtomicSequenceMappingFunction implements ItemMappingFunction {
+    public static class AtomicSequenceMappingFunction implements ItemMappingFunction<AtomicValue, AtomicValue> {
         private Converter converter;
         private String errorCode;
 
@@ -324,8 +324,8 @@ public class AtomicSequenceConverter extends UnaryExpression {
             this.errorCode = code;
         }
 
-        public AtomicValue mapItem(Item item) throws XPathException {
-            ConversionResult result = converter.convert((AtomicValue) item);
+        public AtomicValue mapItem(AtomicValue item) throws XPathException {
+            ConversionResult result = converter.convert(item);
             if (errorCode != null && result instanceof ValidationFailure) {
                 ((ValidationFailure)result).setErrorCode(errorCode);
             }

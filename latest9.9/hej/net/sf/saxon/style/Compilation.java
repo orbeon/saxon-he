@@ -560,7 +560,7 @@ public class Compilation {
      * @return the value of the variable if there is one, or null if the variable is undeclared
      */
 
-    public GroundedValue getStaticVariable(StructuredQName name) {
+    public GroundedValue<? extends Item<?>> getStaticVariable(StructuredQName name) {
         ValueAndPrecedence vp = staticVariables.get(name);
         return vp == null ? null : vp.value;
     }

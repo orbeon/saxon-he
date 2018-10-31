@@ -8,13 +8,14 @@
 package net.sf.saxon.expr;
 
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * An iterator that combines the results of a sequence of iterators
  */
 public class MultiIterator<T> implements Iterator<T> {
 
-    private Iterator<T>[] array;
+    private List<Iterator<T>> array;
     private int current;
 
     /**
@@ -23,7 +24,7 @@ public class MultiIterator<T> implements Iterator<T> {
      * @param array the iterators to be concatenated
      */
 
-    public MultiIterator(Iterator<T>[] array) {
+    public MultiIterator(List<Iterator<T>> array) {
         this.array = array;
         current = 0;
     }
@@ -38,10 +39,10 @@ public class MultiIterator<T> implements Iterator<T> {
 
     public boolean hasNext() {
         while (true) {
-            if (current >= array.length) {
+            if (current >= array.size()) {
                 return false;
             }
-            if (array[current].hasNext()) {
+            if (array.get(current).hasNext()) {
                 return true;
             }
             current++;
@@ -56,7 +57,7 @@ public class MultiIterator<T> implements Iterator<T> {
      *          iteration has no more elements.
      */
     public T next() {
-        return array[current].next();
+        return array.get(current).next();
     }
 
     /**

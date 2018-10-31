@@ -56,7 +56,7 @@ public abstract class DotNetObjectModel implements ExternalObjectModel {
         return NamespaceConstant.OBJECT_MODEL_DOT_NET_DOM;
     }
 
-    public PJConverter getPJConverter(Class targetClass) {
+    public PJConverter getPJConverter(Class<?> targetClass) {
         if (isRecognizedNodeClass(targetClass)) {
             return new PJConverter() {
                 public Object convert(Sequence<? extends Item<?>> value, Class<?> targetClass, XPathContext context) throws XPathException {

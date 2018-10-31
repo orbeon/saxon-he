@@ -46,7 +46,7 @@ class UnicodeDataParserFromXML {
     static NormalizerData build(Configuration config) throws XPathException {
 
         InputStream in = Configuration.locateResource(
-            "normalizationData.xml", new ArrayList<String>(), new ArrayList<ClassLoader>());
+            "normalizationData.xml", new ArrayList<>(), new ArrayList<>());
         if (in == null) {
             throw new XPathException("Unable to read normalizationData.xml file");
         }
@@ -92,7 +92,7 @@ class UnicodeDataParserFromXML {
         readCanonicalClassTable(canonicalClassKeys.getStringValue(), canonicalClassValues.getStringValue(), canonicalClass);
 
 
-        IntHashMap decompose = new IntHashMap(18000);
+        IntHashMap<String> decompose = new IntHashMap<>(18000);
         IntToIntMap compose = new IntToIntHashMap(15000);
         compose.setDefaultValue(NormalizerData.NOT_COMPOSITE);
 
@@ -134,13 +134,13 @@ class UnicodeDataParserFromXML {
      */
 
     private static void readCanonicalClassTable(String keyString, String valueString, IntToIntMap canonicalClasses) {
-        ArrayList keys = new ArrayList(5000);
+        List<Integer> keys = new ArrayList<>(5000);
 
         StringTokenizer st = new StringTokenizer(keyString);
         while (st.hasMoreTokens()) {
             String tok = st.nextToken();
             int value = Integer.parseInt(tok, 32);
-            keys.add(Integer.valueOf(value));
+            keys.add(value);
         }
 
         int k = 0;
@@ -157,7 +157,7 @@ class UnicodeDataParserFromXML {
                 clss = Integer.parseInt(tok.substring(star + 1), 32);
             }
             for (int i = 0; i < repeat; i++) {
-                canonicalClasses.put(((Integer) keys.get(k++)).intValue(), clss);
+                canonicalClasses.put(keys.get(k++), clss);
             }
         }
     }
@@ -168,15 +168,15 @@ class UnicodeDataParserFromXML {
 
     private static void readDecompositionTable(
             String decompositionKeyString, String decompositionValuesString,
-            IntHashMap decompose, IntToIntMap compose,
+            IntHashMap<String> decompose, IntToIntMap compose,
             BitSet isExcluded, /*@NotNull*/ BitSet isCompatibility) {
         int k = 0;
 
-        List<String> values = new ArrayList<String>(1000);
+        List<String> values = new ArrayList<>(1000);
         StringTokenizer st = new StringTokenizer(decompositionValuesString);
         while (st.hasMoreTokens()) {
             String tok = st.nextToken();
-            String value = "";
+            StringBuilder value = new StringBuilder();
             for (int c = 0; c < tok.length(); ) {
                 char h0 = tok.charAt(c++);
                 char h1 = tok.charAt(c++);
@@ -185,10 +185,10 @@ class UnicodeDataParserFromXML {
                 int code = ("0123456789abcdef".indexOf(h0) << 12) +
                         ("0123456789abcdef".indexOf(h1) << 8) +
                         ("0123456789abcdef".indexOf(h2) << 4) +
-                        ("0123456789abcdef".indexOf(h3));
-                value += (char) code;
+                        "0123456789abcdef".indexOf(h3);
+                value.append((char) code);
             }
-            values.add(value);
+            values.add(value.toString());
         }
 
 

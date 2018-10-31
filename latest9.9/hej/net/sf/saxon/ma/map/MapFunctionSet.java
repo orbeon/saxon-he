@@ -274,7 +274,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
             return new SimpleArrayItem(result);
         }
 
-        private void processSequence(Sequence in, AtomicValue key, List<GroundedValue<? extends Item<?>>> result) throws XPathException {
+        private void processSequence(Sequence<?> in, AtomicValue key, List<GroundedValue<? extends Item<?>>> result) throws XPathException {
             in.iterate().forEachOrFail(item -> {
                 if (item instanceof ArrayItem) {
                     for (Sequence sequence : ((ArrayItem) item).members()) {
@@ -302,7 +302,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
         public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
             AtomicValue key = (AtomicValue) arguments[0].head();
             assert key != null;
-            GroundedValue<? extends Item<?>> value = arguments[1].iterate().materialize();
+            GroundedValue<? extends Item<?>> value = ((Sequence<?>)arguments[1]).iterate().materialize();
             return HashTrieMap.singleton(key, value);
         }
 

@@ -72,7 +72,7 @@ public abstract class ImmutableHashTrieMap<K, V>
         @Override
         ImmutableHashTrieMap<K, V> put(final int shift, final K key,
                                        final V value) {
-            return new EntryHashNode<K, V>(key, value);
+            return new EntryHashNode<>(key, value);
         }
 
         @Override
@@ -118,11 +118,11 @@ public abstract class ImmutableHashTrieMap<K, V>
                                        final V value) {
             if (this.key.equals(key)) {
                 // Overwriting this entry
-                return new EntryHashNode<K, V>(key, value);
+                return new EntryHashNode<>(key, value);
             } else if (this.key.hashCode() == key.hashCode()) {
                 // This is a collision. Return a new ListHashNode.
-                return new ListHashNode<K, V>(new Tuple2<K,V>(this.key, this.value),
-                        new Tuple2<K,V>(key, value));
+                return new ListHashNode<>(new Tuple2<>(this.key, this.value),
+                                          new Tuple2<>(key, value));
             }
             // Split this node into an ArrayHashNode with this and the new value
             // as entries.
@@ -153,7 +153,7 @@ public abstract class ImmutableHashTrieMap<K, V>
         }
 
         public Iterator<Tuple2<K, V>> iterator() {
-            return Collections.singleton(new Tuple2<K, V>(key, value)).iterator();
+            return Collections.singleton(new Tuple2<>(key, value)).iterator();
         }
     }
 
@@ -189,8 +189,8 @@ public abstract class ImmutableHashTrieMap<K, V>
                         entries.head()._1.hashCode(),
                         this,
                         key.hashCode(),
-                        new EntryHashNode<K, V>(
-                                key, value));
+                                        new EntryHashNode<>(
+                                                key, value));
             }
             ImmutableList<Tuple2<K, V>> newList = ImmutableList.nil();
             boolean found = false;
@@ -198,7 +198,7 @@ public abstract class ImmutableHashTrieMap<K, V>
                 if (entry._1.equals(key)) {
                     // Node replacement
                     newList =
-                            newList.prepend(new Tuple2<K, V>(key, value));
+                            newList.prepend(new Tuple2<>(key, value));
                     found = true;
                 } else {
                     newList = newList.prepend(entry);
@@ -206,9 +206,9 @@ public abstract class ImmutableHashTrieMap<K, V>
             }
             if (!found) {
                 // Adding a new entry
-                newList = newList.prepend(new Tuple2<K, V>(key, value));
+                newList = newList.prepend(new Tuple2<>(key, value));
             }
-            return new ListHashNode<K,V>(newList);
+            return new ListHashNode<>(newList);
         }
 
         @Override
@@ -224,9 +224,9 @@ public abstract class ImmutableHashTrieMap<K, V>
             }
             if (size == 1) {
                 Tuple2<K, V> entry = newList.head();
-                return new EntryHashNode<K,V>(entry._1, entry._2);
+                return new EntryHashNode<>(entry._1, entry._2);
             }
-            return new ListHashNode<K,V>(newList);
+            return new ListHashNode<>(newList);
         }
 
         @Override
@@ -287,7 +287,7 @@ public abstract class ImmutableHashTrieMap<K, V>
         int curShift = shift;
         int h1 = hash1 >> shift & MASK;
         int h2 = hash2 >> shift & MASK;
-        List<Integer> buckets = new LinkedList<Integer>();
+        List<Integer> buckets = new LinkedList<>();
         while (h1 == h2) {
             buckets.add(0, h1);
             curShift += BITS;
@@ -379,12 +379,11 @@ public abstract class ImmutableHashTrieMap<K, V>
                 ImmutableHashTrieMap<K, V> orphanedEntry =
                         subnodes[orphanedBucket];
                 if (orphanedEntry.isArrayNode()) {
-                    return new SingletonArrayHashNode<K,V>(orphanedBucket,
-                            orphanedEntry);
+                    return new SingletonArrayHashNode<>(orphanedBucket, orphanedEntry);
                 }
                 return orphanedEntry;
             }
-            return new BranchedArrayHashNode<K,V>(newSize, newNodes);
+            return new BranchedArrayHashNode<>(newSize, newNodes);
         }
 
         @Override
@@ -442,11 +441,11 @@ public abstract class ImmutableHashTrieMap<K, V>
                                        final V value) {
             final int bucket = getBucket(shift, key);
             if (bucket == this.bucket) {
-                return new SingletonArrayHashNode<K,V>(bucket,
-                        subnode.put(shift + BITS, key, value));
+                return new SingletonArrayHashNode<>(bucket,
+                                                    subnode.put(shift + BITS, key, value));
             }
-            return new BranchedArrayHashNode<K,V>(this.bucket, subnode,
-                    bucket, new EntryHashNode<K,V>(key, value));
+            return new BranchedArrayHashNode<>(this.bucket, subnode,
+                                               bucket, new EntryHashNode<>(key, value));
         }
 
         @Override
@@ -458,7 +457,7 @@ public abstract class ImmutableHashTrieMap<K, V>
                 if (!newNode.isArrayNode()) {
                     return newNode;
                 }
-                return new SingletonArrayHashNode<K,V>(bucket, newNode);
+                return new SingletonArrayHashNode<>(bucket, newNode);
             }
             return this;
         }

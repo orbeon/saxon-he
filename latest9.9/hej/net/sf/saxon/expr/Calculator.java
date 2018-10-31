@@ -222,8 +222,8 @@ public abstract class Calculator {
      * Table mapping argument types to the Calculator class used to implement them
      */
 
-    private static IntHashMap<Calculator[]> table = new IntHashMap(100);
-    private static IntHashMap<String> nameTable = new IntHashMap(100);
+    private static IntHashMap<Calculator[]> table = new IntHashMap<>(100);
+    private static IntHashMap<String> nameTable = new IntHashMap<>(100);
 
     private static void def(int typeA, int typeB, Calculator[] calculatorSet, String setName) {
         int key = (typeA & 0xffff) << 16 | (typeB & 0xffff);

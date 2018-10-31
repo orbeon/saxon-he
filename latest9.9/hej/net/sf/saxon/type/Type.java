@@ -446,7 +446,7 @@ public abstract class Type {
         }
     }
 
-    private static Class leastCommonSuperClass(Class class1, Class class2) {
+    private static Class<?> leastCommonSuperClass(Class<?> class1, Class<?> class2) {
         if (class1 == class2) {
             return class1;
         }

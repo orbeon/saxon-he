@@ -77,8 +77,8 @@ public class SQLInsert extends ExtensionInstruction {
 
         // Collect names of columns to be added
 
-        StringBuffer statement = new StringBuffer(120);
-        statement.append("INSERT INTO " + table + " (");
+        StringBuilder statement = new StringBuilder(120);
+        statement.append("INSERT INTO ").append(table).append(" (");
 
         AxisIterator kids = iterateAxis(AxisInfo.CHILD);
         NodeInfo child;
@@ -110,7 +110,7 @@ public class SQLInsert extends ExtensionInstruction {
 
     /*@NotNull*/
     public List<Expression> getColumnInstructions(Compilation exec, ComponentDeclaration decl) throws XPathException {
-        List<Expression> list = new ArrayList<Expression>(10);
+        List<Expression> list = new ArrayList<>(10);
         AxisIterator kids = iterateAxis(AxisInfo.CHILD);
         kids.forEachOrFail(child -> {
             if (child instanceof SQLColumn) {
@@ -149,15 +149,13 @@ public class SQLInsert extends ExtensionInstruction {
             return "sql:insert";
         }
 
-        public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+        public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
 
             // Prepare the SQL statement (only do this once)
 
             Connection connection = SQLFunctionSet.expectConnection(arguments[CONNECTION], context);
-            PreparedStatement ps = null;
 
-            try {
-                ps = connection.prepareStatement(statement);
+            try (PreparedStatement ps = connection.prepareStatement(statement)) {
                 ParameterMetaData metaData = ps.getParameterMetaData();
 
                 // Add the actual column values to be inserted
@@ -168,22 +166,26 @@ public class SQLInsert extends ExtensionInstruction {
                     String parameterClassName = null;
                     try {
                         parameterClassName = metaData.getParameterClassName(c);
-                    }catch(SQLException ex) {
+                    } catch (SQLException ex) {
                         parameterClassName = "java.lang.String";
                     }
                     Object value;
-                    if (parameterClassName.equals("java.lang.String")) {
-                        value = v.getStringValue();
-                    } else if (parameterClassName.equals("java.sql.Date")) {
-                        value = java.sql.Date.valueOf(v.getStringValue());
-                    } else {
-                        try {
-                            Class targetClass = Class.forName(parameterClassName);
-                            PJConverter converter = PJConverter.allocate(context.getConfiguration(), v.getPrimitiveType(), StaticProperty.ALLOWS_ONE, targetClass);
-                            value = converter.convert(v, targetClass, context);
-                        } catch (ClassNotFoundException err) {
-                            throw new XPathException("xsl:insert - cannot convert value to required class " + parameterClassName);
-                        }
+                    switch (parameterClassName) {
+                        case "java.lang.String":
+                            value = v.getStringValue();
+                            break;
+                        case "java.sql.Date":
+                            value = java.sql.Date.valueOf(v.getStringValue());
+                            break;
+                        default:
+                            try {
+                                Class targetClass = Class.forName(parameterClassName);
+                                PJConverter converter = PJConverter.allocate(context.getConfiguration(), v.getPrimitiveType(), StaticProperty.ALLOWS_ONE, targetClass);
+                                value = converter.convert(v, targetClass, context);
+                            } catch (ClassNotFoundException err) {
+                                throw new XPathException("xsl:insert - cannot convert value to required class " + parameterClassName);
+                            }
+                            break;
                     }
 
                     ps.setObject(i++, value);
@@ -197,13 +199,6 @@ public class SQLInsert extends ExtensionInstruction {
 
             } catch (SQLException ex) {
                 dynamicError("SQL INSERT failed: " + ex.getMessage(), SaxonErrorCode.SXSQ0004, context);
-            } finally {
-                if (ps != null) {
-                    try {
-                        ps.close();
-                    } catch (SQLException ignore) {
-                    }
-                }
             }
 
             return EmptySequence.getInstance();

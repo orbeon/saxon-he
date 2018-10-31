@@ -111,9 +111,9 @@ public class XSLIterate extends StyleElement {
     /*@Nullable*/
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         SequenceIterator children = iterateAxis(AxisInfo.CHILD);
-        List<NodeInfo> nonFinallyChildren = new ArrayList<NodeInfo>();
+        List<NodeInfo> nonFinallyChildren = new ArrayList<>();
         Expression finallyExp = null;
-        List<XSLLocalParam> params = new ArrayList<XSLLocalParam>();
+        List<XSLLocalParam> params = new ArrayList<>();
         while (true) {
             NodeInfo node = (NodeInfo) children.next();
             if (node == null) {
@@ -135,7 +135,7 @@ public class XSLIterate extends StyleElement {
             }
         }
         LocalParamBlock paramBlock = new LocalParamBlock(compiledParams);
-        Expression action = compileSequenceConstructor(exec, decl, new ListIterator(nonFinallyChildren), false);
+        Expression action = compileSequenceConstructor(exec, decl, new ListIterator<>(nonFinallyChildren), false);
         if (action == null) {
             // body of xsl:iterate is empty: it's a no-op.
             return Literal.makeEmptySequence();

@@ -7,11 +7,9 @@
 
 package net.sf.saxon.om;
 
-import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AtomicIterator;
 import net.sf.saxon.tree.iter.EmptyIterator;
 import net.sf.saxon.value.AtomicValue;
-import net.sf.saxon.value.EmptySequence;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -89,11 +87,11 @@ public enum EmptyAtomicSequence implements AtomicSequence {
      *               of the sequence
      * @return the required subsequence. If min is
      */
-    public GroundedValue subsequence(int start, int length) {
+    public EmptyAtomicSequence subsequence(int start, int length) {
         return this;
     }
 
-    public boolean effectiveBooleanValue() throws XPathException {
+    public boolean effectiveBooleanValue() {
         return false;
     }
 
@@ -105,8 +103,8 @@ public enum EmptyAtomicSequence implements AtomicSequence {
      *
      * @return the simplified sequence
      */
-    public GroundedValue reduce() {
-        return EmptySequence.getInstance();
+    public EmptyAtomicSequence reduce() {
+        return this;
     }
 
     /**

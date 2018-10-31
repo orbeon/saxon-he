@@ -44,7 +44,7 @@ public abstract class ImmutableList<T> implements Iterable<T> {
             return true;
         }
         Iterator<T> thisIter = this.iterator();
-        Iterator<T> otherIter = ((ImmutableList) o).iterator();
+        Iterator<?> otherIter = ((ImmutableList) o).iterator();
         while (thisIter.hasNext() && otherIter.hasNext()) {
             if (!thisIter.next().equals(otherIter.next())) {
                 return false;

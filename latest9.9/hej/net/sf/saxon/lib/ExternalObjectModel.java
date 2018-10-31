@@ -61,7 +61,7 @@ public interface ExternalObjectModel {
      *         otherwise null
      */
 
-    PJConverter getPJConverter(Class targetClass);
+    PJConverter getPJConverter(Class<?> targetClass);
 
     /**
      * Get a converter from values in the external object model to XPath values.

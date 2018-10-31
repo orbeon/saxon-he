@@ -131,7 +131,7 @@ public class ArrayItemType extends AnyFunctionType {
      * Test whether a given item conforms to this type
      *
      * @param item The item to be tested
-     * @param th
+     * @param th  The type hierarchy cache
      * @return true if the item is an instance of this type; false otherwise
      */
     @Override
@@ -277,7 +277,7 @@ public class ArrayItemType extends AnyFunctionType {
         if (item instanceof ArrayItem) {
             for (int i=0; i<((ArrayItem)item).arrayLength(); i++) {
                 try {
-                    GroundedValue member = ((ArrayItem) item).get(i);
+                    GroundedValue<?> member = ((ArrayItem) item).get(i);
                     if (!memberType.matches(member, th)) {
                         String s = "The " + RoleDiagnostic.ordinal(i+1) +
                                 " member of the supplied array {" +
@@ -302,7 +302,7 @@ public class ArrayItemType extends AnyFunctionType {
      * Generate Javascript code to test whether an item conforms to this item type
      *
      * @param knownToBe a type that this item is known to conform to
-     * @param targetVersion
+     * @param targetVersion the version of Saxon-JS SEF format
      * @return a Javascript instruction or sequence of instructions, which can be used as the body
      * of a Javascript function, and which returns a boolean indication whether the value of the
      * variable "item" is an instance of this item type.

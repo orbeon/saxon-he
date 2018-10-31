@@ -40,7 +40,7 @@ public class JsonDoc extends SystemFunction  {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
 
         Item arg0 = arguments[0].head();
         if (arg0 == null) {
@@ -74,8 +74,7 @@ public class JsonDoc extends SystemFunction  {
         } catch (java.io.IOException ioErr) {
 //            System.err.println("ProxyHost: " + System.getProperty("http.proxyHost"));
 //            System.err.println("ProxyPort: " + System.getProperty("http.proxyPort"));
-            XPathException e = UnparsedTextFunction.handleIOError(absoluteURI, ioErr, context);
-            throw e;
+            throw UnparsedTextFunction.handleIOError(absoluteURI, ioErr, context);
         }
 
         Map<String, Sequence<? extends Item<?>>> checkedOptions;

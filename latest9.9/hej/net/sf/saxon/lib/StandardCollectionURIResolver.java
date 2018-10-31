@@ -167,7 +167,7 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
      * @return an iterator over the documents in the collection
      */
 
-    protected SequenceIterator directoryContents(File directory, URIQueryParameters params, XPathContext context) {
+    protected SequenceIterator<?> directoryContents(File directory, URIQueryParameters params, XPathContext context) {
 
         FilenameFilter filter = null;
 
@@ -187,7 +187,7 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
 
         ObjectValue<File>[] fileValues = new ObjectValue[files.length];
         for (int f = 0; f < files.length; f++) {
-            fileValues[f] = new ObjectValue<File>(files[f]);
+            fileValues[f] = new ObjectValue<>(files[f]);
         }
 
         // If the URI requested suppression of errors, or that errors should be treated
@@ -248,7 +248,7 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
      * @throws XPathException if any failures occur
      */
 
-    protected SequenceIterator catalogContents(String href, String baseURI, String absURI, final XPathContext context)
+    protected SequenceIterator<?> catalogContents(String href, String baseURI, String absURI, final XPathContext context)
             throws XPathException {
 
         boolean stable = true;
@@ -417,7 +417,7 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
 
                     ObjectValue<File>[] fileValues = new ObjectValue[files.length];
                     for (int f = 0; f < files.length; f++) {
-                        fileValues[f] = new ObjectValue<File>(files[f]);
+                        fileValues[f] = new ObjectValue<>(files[f]);
                     }
 
                     FileExpander expander = new FileExpander(params, pipe);

@@ -124,12 +124,16 @@ public class SQLQuery extends ExtensionInstruction {
         // Attribute output-escaping
         String disableAtt = getAttributeValue("", "disable-output-escaping");
         if (disableAtt != null) {
-            if (disableAtt.equals("yes")) {
-                disable = true;
-            } else if (disableAtt.equals("no")) {
-                disable = false;
-            } else {
-                compileError("disable-output-escaping attribute must be either yes or no");
+            switch (disableAtt) {
+                case "yes":
+                    disable = true;
+                    break;
+                case "no":
+                    disable = false;
+                    break;
+                default:
+                    compileError("disable-output-escaping attribute must be either yes or no");
+                    break;
             }
         }
 
@@ -170,10 +174,10 @@ public class SQLQuery extends ExtensionInstruction {
             setArguments(sub);
             this.rowTag = rowTag;
             this.colTag = colTag;
-            this.options = (disable ? ReceiverOptions.DISABLE_ESCAPING : 0);
+            this.options = disable ? ReceiverOptions.DISABLE_ESCAPING : 0;
         }
 
-        private QueryInstruction(){};
+        private QueryInstruction(){}
 
         /**
          * A subclass must provide one of the methods evaluateItem(), iterate(), or process().
@@ -197,7 +201,7 @@ public class SQLQuery extends ExtensionInstruction {
             return qi2;
         }
 
-        public Sequence call(XPathContext context, Sequence[] arguments /*@NotNull*/) throws XPathException {
+        public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments /*@NotNull*/) throws XPathException {
             // Prepare the SQL statement (only do this once)
 
             Controller controller = context.getController();
@@ -207,7 +211,7 @@ public class SQLQuery extends ExtensionInstruction {
             String dbWhere = arguments[WHERE].head().getStringValue();
 
 
-            Set<String> validNames = new HashSet<String>();
+            Set<String> validNames = new HashSet<>();
             NodeName rowCode;
             if (rowTag.equals("#auto")) {
                 if (NameChecker.isValidNCName(dbTab)) {
@@ -218,14 +222,14 @@ public class SQLQuery extends ExtensionInstruction {
             } else {
                 rowCode = new NoNamespaceName(rowTag);
             }
-            NodeName colCode = ("#auto".equals(colTag) ? null : new NoNamespaceName(colTag));
+            NodeName colCode = "#auto".equals(colTag) ? null : new NoNamespaceName(colTag);
 
             PreparedStatement ps = null;
             ResultSet rs = null;
             XPathException de = null;
 
             try {
-                StringBuffer statement = new StringBuffer();
+                StringBuilder statement = new StringBuilder();
                 statement.append("SELECT ").append(dbCol).append(" FROM ").append(dbTab);
                 if (!dbWhere.equals("")) {
                     statement.append(" WHERE ").append(dbWhere);
@@ -296,7 +300,7 @@ public class SQLQuery extends ExtensionInstruction {
                 de.setXPathContext(context);
                 throw de;
             } finally {
-                boolean wasDEThrown = (de != null);
+                boolean wasDEThrown = de != null;
                 if (rs != null) {
                     try {
                         rs.close();
