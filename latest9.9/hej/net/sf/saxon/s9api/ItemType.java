@@ -14,6 +14,7 @@ import net.sf.saxon.ma.arrays.ArrayItem;
 import net.sf.saxon.ma.arrays.ArrayItemType;
 import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.ma.map.MapType;
+import net.sf.saxon.om.Function;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.StructuredQName;
@@ -65,6 +66,30 @@ public abstract class ItemType {
 
         public net.sf.saxon.type.ItemType getUnderlyingItemType() {
             return AnyItemType.getInstance();
+        }
+    };
+
+
+    /**
+     * ItemType representing the type function(*), that is, any function
+     */
+
+    public static ItemType ANY_FUNCTION = new ItemType() {
+
+        public ConversionRules getConversionRules() {
+            return defaultConversionRules;
+        }
+
+        public boolean matches(XdmItem item) {
+            return item.getUnderlyingValue() instanceof Function;
+        }
+
+        public boolean subsumes(ItemType other) {
+            return other.getUnderlyingItemType() instanceof FunctionItemType ;
+        }
+
+        public net.sf.saxon.type.ItemType getUnderlyingItemType() {
+            return AnyFunctionType.getInstance();
         }
     };
 
