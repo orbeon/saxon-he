@@ -134,12 +134,7 @@ public class ManualIterator<T extends Item<?>> implements FocusIterator<T>, Unfa
 
     /*@Nullable*/
     public GroundedValue<T> materialize() {
-        if (item instanceof GroundedValue) {
-            //noinspection unchecked
-            return (GroundedValue<T>) item;
-        } else {
-            return ZeroOrOne.empty();
-        }
+        return (GroundedValue<T>)item;
     }
 
     @Override

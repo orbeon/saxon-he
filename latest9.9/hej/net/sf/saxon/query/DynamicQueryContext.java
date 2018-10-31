@@ -174,7 +174,7 @@ public class DynamicQueryContext {
      *        Changed in 9.9 to require the second argument to be a GroundedValue
      */
 
-    public void setParameter(StructuredQName expandedName, GroundedValue value) {
+    public void setParameter(StructuredQName expandedName, GroundedValue<? extends Item<?>> value) {
         if (parameters == null) {
             parameters = new GlobalParameterSet();
         }
@@ -194,11 +194,12 @@ public class DynamicQueryContext {
      *
      * @param expandedName the name of the required parameter
      * @return the value of the parameter, if it exists, or null otherwise
-     * @since 8.4. Changed in 9.6 to take a StructuredQName for the name
+     * @since 8.4. Changed in 9.6 to take a StructuredQName for the name. Changed in 9.9.0.2
+     * to return a generified GroundedValue.
      */
 
     /*@Nullable*/
-    public Sequence getParameter(StructuredQName expandedName) {
+    public GroundedValue<? extends Item<?>> getParameter(StructuredQName expandedName) {
         if (parameters == null) {
             return null;
         }

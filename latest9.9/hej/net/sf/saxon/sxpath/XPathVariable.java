@@ -33,7 +33,7 @@ public final class XPathVariable implements LocalBinding {
 
     private StructuredQName name;
     private SequenceType requiredType = SequenceType.ANY_SEQUENCE;
-    private Sequence defaultValue;
+    private Sequence<? extends Item<?>> defaultValue;
     private int slotNumber;
 
     /**
@@ -156,7 +156,7 @@ public final class XPathVariable implements LocalBinding {
      * @param defaultValue the default value for the variable
      */
 
-    public void setDefaultValue(Sequence defaultValue) {
+    public void setDefaultValue(Sequence<? extends Item<?>> defaultValue) {
         this.defaultValue = defaultValue;
     }
 
@@ -166,7 +166,7 @@ public final class XPathVariable implements LocalBinding {
      * @return the default value if one has been registered, or null otherwise
      */
 
-    public Sequence getDefaultValue() {
+    public Sequence<? extends Item<?>> getDefaultValue() {
         return defaultValue;
     }
 

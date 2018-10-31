@@ -10,10 +10,7 @@ package net.sf.saxon.expr;
 import net.sf.saxon.expr.instruct.Block;
 import net.sf.saxon.expr.instruct.UserFunction;
 import net.sf.saxon.expr.parser.*;
-import net.sf.saxon.om.Item;
-import net.sf.saxon.om.Sequence;
-import net.sf.saxon.om.SequenceIterator;
-import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.om.*;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trace.LocationKind;
 import net.sf.saxon.trans.*;
@@ -518,7 +515,7 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
      */
     private Sequence<? extends Item<?>> callFunction(XPathContext context) throws XPathException {
         UserFunction targetFunction;
-        Sequence[] actualArgs = evaluateArguments(context);
+        Sequence<? extends Item<?>>[] actualArgs = evaluateArguments(context);
         XPathContextMajor c2;
         if (isTailCall()) {
             requestTailCall(context, actualArgs);
@@ -555,7 +552,7 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
         }
     }
 
-    private void requestTailCall(XPathContext context, Sequence[] actualArgs) {
+    private void requestTailCall(XPathContext context, Sequence<? extends Item<?>>[] actualArgs) {
         if (bindingSlot >= 0) {
             TailCallLoop.TailCallComponent info = new TailCallLoop.TailCallComponent();
             Component target = getTargetComponent(context);
@@ -580,7 +577,7 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
 
     public void process(XPathContext context) throws XPathException {
 
-        Sequence[] actualArgs = evaluateArguments(context);
+        Sequence<? extends Item<?>>[] actualArgs = evaluateArguments(context);
 
         if (isTailCall()) {
             requestTailCall(context, actualArgs);
@@ -617,14 +614,14 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
         return (UserFunction) getTargetComponent(context).getActor();
     }
 
-    public Sequence[] evaluateArguments(XPathContext c) throws XPathException {
+    public Sequence<? extends Item<?>>[] evaluateArguments(XPathContext c) throws XPathException {
         return evaluateArguments(c, false);
     }
 
 
-    public Sequence[] evaluateArguments(XPathContext c, boolean streamed) throws XPathException {
+    public Sequence<? extends Item<?>>[] evaluateArguments(XPathContext c, boolean streamed) throws XPathException {
         int numArgs = getArity();
-        Sequence[] actualArgs = new Sequence[numArgs];
+        Sequence<? extends Item<?>>[] actualArgs = SequenceTool.makeSequenceArray(numArgs);
         synchronized(this) {
             if (argumentEvaluators == null) {
                 // should have been done at compile time
@@ -632,7 +629,6 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
             }
         }
         for (int i = 0; i < numArgs; i++) {
-
             Evaluator eval = argumentEvaluators[i];
             if (eval == Evaluator.STREAMING_ARGUMENT && !streamed) {
                 eval = Evaluator.EAGER_SEQUENCE;

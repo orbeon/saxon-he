@@ -18,7 +18,7 @@ import net.sf.saxon.value.AnyURIValue;
 public class StaticBaseUri extends SystemFunction {
 
     @Override
-    public Sequence call(XPathContext context, Sequence[] args) throws XPathException {
+    public AnyURIValue call(XPathContext context, Sequence[] args) throws XPathException {
         return new AnyURIValue(getRetainedStaticContext().getStaticBaseUriString());
     }
 

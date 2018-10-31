@@ -26,9 +26,9 @@ public class StackFrame {
 
     public static final StackFrame EMPTY = new StackFrame(SlotManager.EMPTY, new Sequence[0]);
 
-    public StackFrame(SlotManager map, Sequence<? extends Item<?>>[] slots) {
+    public StackFrame(SlotManager map, Sequence[] slots) {
         this.map = map;
-        this.slots = slots;
+        this.slots = (Sequence<? extends Item<?>>[])slots;
     }
 
     public SlotManager getStackFrameMap() {
@@ -39,8 +39,8 @@ public class StackFrame {
         return slots;
     }
 
-    public void setStackFrameValues(Sequence<? extends Item<?>>[] values) {
-        slots = values;
+    public void setStackFrameValues(Sequence[] values) {
+        slots = (Sequence<? extends Item<?>>[])values;
     }
 
     public StackFrame copy() {

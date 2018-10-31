@@ -9,7 +9,6 @@ package net.sf.saxon.tree.iter;
 
 import net.sf.saxon.expr.LastPositionFinder;
 import net.sf.saxon.om.GroundedValue;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.EmptySequence;
 
@@ -87,7 +86,7 @@ public class SingleAtomicIterator implements AtomicIterator,
     }
 
     @Override
-    public GroundedValue<? extends Item<?>> getResidue() {
+    public GroundedValue<AtomicValue> getResidue() {
         return gone ? EmptySequence.getInstance() : item;
     }
 

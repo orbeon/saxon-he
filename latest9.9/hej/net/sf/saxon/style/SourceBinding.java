@@ -45,7 +45,7 @@ public class SourceBinding {
     private SequenceType inferredType = null;
     protected SlotManager slotManager = null;  // used only for global variable declarations
     private Visibility visibility;
-    private GroundedValue constantValue = null;
+    private GroundedValue<? extends Item<?>> constantValue = null;
 
     private int properties;
 
@@ -185,7 +185,7 @@ public class SourceBinding {
      * so that this can be checked against xsl:call-template instructions. It is called while a named template
      * is being indexed: see bug 3722.
      *
-     * @throws XPathException
+     * @throws XPathException if things go wrong
      */
 
     public void prepareTemplateSignatureAttributes() throws XPathException {
@@ -227,7 +227,7 @@ public class SourceBinding {
     }
 
 
-    private SequenceType combineTypeDeclarations(String asAtt, String extraAsAtt) throws XPathException {
+    private SequenceType combineTypeDeclarations(String asAtt, String extraAsAtt) {
         SequenceType declaredType = null;
 
         if (asAtt != null) {
@@ -653,8 +653,8 @@ public class SourceBinding {
     }
 
 
-    public GroundedValue getConstantValue() {
-        if(constantValue == null) {
+    public GroundedValue<? extends Item<?>> getConstantValue() {
+        if (constantValue == null) {
             final SequenceType type = getInferredType(true);
             final TypeHierarchy th = sourceElement.getConfiguration().getTypeHierarchy();
             if (!hasProperty(ASSIGNABLE) && !hasProperty(PARAM) && !(visibility == Visibility.PUBLIC || visibility == Visibility.ABSTRACT)) {
@@ -676,10 +676,9 @@ public class SourceBinding {
      * Notify all references to this variable of the data type
      *
      * @param compiledGlobalVariable null if this is a local variable; otherwise, the compiled global variable
-     * @throws XPathException if the declaration is invalid
      */
 
-    public void fixupReferences(GlobalVariable compiledGlobalVariable) throws XPathException {
+    public void fixupReferences(GlobalVariable compiledGlobalVariable) {
         final SequenceType type = getInferredType(true);
         final TypeHierarchy th = sourceElement.getConfiguration().getTypeHierarchy();
         GroundedValue constantValue = null;

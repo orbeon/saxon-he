@@ -111,7 +111,7 @@ public class Sum extends FoldingFunction {
          * @param item the item to be processed from the input sequence
          * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs
          */
-        public void processItem(Item item) throws XPathException {
+        public void processItem(Item<?> item) throws XPathException {
             AtomicValue next = (AtomicValue)item;
             if (atStart) {
                 atStart = false;
@@ -183,7 +183,7 @@ public class Sum extends FoldingFunction {
          *
          * @return the result of the function
          */
-        public Sequence result() {
+        public Sequence<? extends Item<?>> result() {
             if (atStart) {
                 return zeroValue == null ? EmptySequence.getInstance() : zeroValue;
             } else {

@@ -158,7 +158,7 @@ public class FilterIterator<T extends Item<?>> implements SequenceIterator<T> {
      * that the filter cannot return a numeric value
      */
 
-    public static final class NonNumeric extends FilterIterator {
+    public static final class NonNumeric<T extends Item<?>> extends FilterIterator<T> {
 
         /**
          * Create a CompiledFilterIterator for the situation where it is known that the filter
@@ -171,7 +171,7 @@ public class FilterIterator<T extends Item<?>> implements SequenceIterator<T> {
          *                A new context will be created to evaluate the predicate.
          */
 
-        public NonNumeric(SequenceIterator base, Expression filter,
+        public NonNumeric(SequenceIterator<T> base, Expression filter,
                           XPathContext context) {
             super(base, filter, context);
         }

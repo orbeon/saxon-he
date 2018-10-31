@@ -601,7 +601,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         IndependentContext env = new IndependentContext(config);
         env.setNamespaceResolver(this);
         XPathParser parser = new XPathParser();
-        GroundedValue value = null;
+        GroundedValue<? extends Item<?>> value = null;
         try {
             Expression exp = parser.parse(select, 0, Token.EOF, env);
             value = exp.iterate(env.makeEarlyEvaluationContext()).materialize();
@@ -609,7 +609,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
             error(e);
         }
         if (currentPackage.staticParams == null) {
-            currentPackage.staticParams = new HashMap<StructuredQName, GroundedValue>();
+            currentPackage.staticParams = new HashMap<>();
         }
         currentPackage.staticParams.put(qName, value);
     }

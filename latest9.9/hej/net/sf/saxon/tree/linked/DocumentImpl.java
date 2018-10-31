@@ -49,7 +49,7 @@ public final class DocumentImpl extends ParentNodeImpl implements TreeInfo, Muta
     private HashMap<String, String[]> entityTable;
     private Set<ElementImpl> nilledElements;
     private Set<ElementImpl> topWithinEntityElements;
-    /*@Nullable*/ private IntHashMap<List<NodeImpl>> elementList;
+    private IntHashMap<List<NodeInfo>> elementList;
     private HashMap<String, Object> userData;
     private Configuration config;
     private LineNumberMap lineNumberMap;
@@ -312,7 +312,7 @@ public final class DocumentImpl extends ParentNodeImpl implements TreeInfo, Muta
 
     public void addNilledElement(ElementImpl element) {
         if (nilledElements == null) {
-            nilledElements = new HashSet<ElementImpl>();
+            nilledElements = new HashSet<>();
         }
         nilledElements.add(element);
     }
@@ -437,8 +437,8 @@ public final class DocumentImpl extends ParentNodeImpl implements TreeInfo, Muta
         if (elementList == null) {
             elementList = new IntHashMap<>(500);
         }
-        IntHashMap<List<NodeImpl>> eList = elementList;
-        List<NodeImpl> list = eList.get(fingerprint);
+        IntHashMap<List<NodeInfo>> eList = elementList;
+        List<NodeInfo> list = eList.get(fingerprint);
         if (list == null) {
             list = new ArrayList<>(500);
             NodeImpl next = getNextInDocument(this);
@@ -451,7 +451,7 @@ public final class DocumentImpl extends ParentNodeImpl implements TreeInfo, Muta
             }
             eList.put(fingerprint, list);
         }
-        return new ListIterator.OfNodes((List)list);
+        return new ListIterator.OfNodes(list);
     }
 
     /**
@@ -462,9 +462,9 @@ public final class DocumentImpl extends ParentNodeImpl implements TreeInfo, Muta
 
     public void deIndex(/*@NotNull*/ NodeImpl node) {
         if (node instanceof ElementImpl) {
-            IntHashMap<List<NodeImpl>> eList = elementList;
+            IntHashMap<List<NodeInfo>> eList = elementList;
             if (eList != null) {
-                List<NodeImpl> list = eList.get(node.getFingerprint());
+                List<NodeInfo> list = eList.get(node.getFingerprint());
                 if (list == null) {
                     return;
                 }
@@ -489,7 +489,7 @@ public final class DocumentImpl extends ParentNodeImpl implements TreeInfo, Muta
         if (idTable != null) {
             return;      // ID's are already indexed
         }
-        idTable = new HashMap<String, NodeInfo>(256);
+        idTable = new HashMap<>(256);
 
         NodeImpl curr = this;
         NodeImpl root = curr;
@@ -522,13 +522,10 @@ public final class DocumentImpl extends ParentNodeImpl implements TreeInfo, Muta
     protected void registerID(NodeInfo e, String id) {
         // the XPath spec (5.2.1) says ignore the second ID if it's not unique
         if (idTable == null) {
-            idTable = new HashMap<String, NodeInfo>(256);
+            idTable = new HashMap<>(256);
         }
         HashMap<String, NodeInfo> table = idTable;
-        Object old = table.get(id);
-        if (old == null) {
-            table.put(id, e);
-        }
+        table.putIfAbsent(id, e);
     }
 
     /**
@@ -579,7 +576,7 @@ public final class DocumentImpl extends ParentNodeImpl implements TreeInfo, Muta
     public void setUnparsedEntity(String name, String uri, String publicId) {
         // System.err.println("setUnparsedEntity( " + name + "," + uri + ")");
         if (entityTable == null) {
-            entityTable = new HashMap<String, String[]>(10);
+            entityTable = new HashMap<>(10);
         }
         String[] ids = new String[2];
         ids[0] = uri;
@@ -724,7 +721,7 @@ public final class DocumentImpl extends ParentNodeImpl implements TreeInfo, Muta
     public void setUserData(String key, Object value) {
         /*@Nullable*/
         if (userData == null) {
-            userData = new HashMap<String, Object>(4);
+            userData = new HashMap<>(4);
         }
         if (value == null) {
             userData.remove(key);

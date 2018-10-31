@@ -7,6 +7,7 @@
 
 package net.sf.saxon.expr.accum;
 
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
@@ -33,7 +34,7 @@ public interface IAccumulatorData {
      * @return the value of the accumulator for this node
      */
 
-    Sequence getValue(NodeInfo node, boolean postDescent) throws XPathException;
+    Sequence<? extends Item<?>> getValue(NodeInfo node, boolean postDescent) throws XPathException;
 
 
 }

@@ -17,9 +17,11 @@ import net.sf.saxon.trans.XPathException;
  * sequence. It takes as inputs an iteration, and a mapping function to be
  * applied to each Item returned by that iteration. The mapping function itself
  * returns another iteration. The result is an iteration of the concatenation of all
- * the iterations returned by the mapping function.
- * <p>This is a specialization of the MappingIterator class: it differs in that it
+ * the iterations returned by the mapping function: often referred to as a flat-map operation.
+ * <p>This is related to the {@link MappingIterator} class: it differs in that it
  * sets each item being processed as the context item</p>
+ * @param <T> the type of items returned by the mapping iterator (that is, the same
+ *           as the type of items returned by the mapping function).
  */
 
 public final class ContextMappingIterator<T extends Item<?>> implements SequenceIterator<T> {
@@ -27,7 +29,7 @@ public final class ContextMappingIterator<T extends Item<?>> implements Sequence
     private FocusIterator<? extends Item<?>> base;
     private ContextMappingFunction<T> action;
     private XPathContext context;
-    /*@Nullable*/ private SequenceIterator<? extends T> stepIterator = null;
+    private SequenceIterator<? extends T> stepIterator = null;
 
     /**
      * Construct a ContextMappingIterator that will apply a specified ContextMappingFunction to

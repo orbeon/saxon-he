@@ -709,7 +709,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
         // minimize stack consumption by evaluating nested LET expressions iteratively
         LetExpression let = this;
         while (true) {
-            Sequence val = let.eval(context);
+            Sequence<? extends Item<?>> val = let.eval(context);
             context.setLocalVariable(let.getLocalSlotNumber(), val);
             if (let.getAction() instanceof LetExpression) {
                 let = (LetExpression) let.getAction();
@@ -738,7 +738,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
         // minimize stack consumption by evaluating nested LET expressions iteratively
         LetExpression let = this;
         while (true) {
-            Sequence val = let.eval(context);
+            Sequence<? extends Item<?>> val = let.eval(context);
             context.setLocalVariable(let.getLocalSlotNumber(), val);
             if (let.getAction() instanceof LetExpression) {
                 let = (LetExpression) let.getAction();
@@ -759,7 +759,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      */
 
     public String toString() {
-        return "let $" + getVariableEQName() + " := " + getSequence().toString() +
+        return "let $" + getVariableEQName() + " := " + getSequence() +
                 " return " + ExpressionTool.parenthesize(getAction());
     }
 

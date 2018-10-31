@@ -2326,7 +2326,7 @@ public class PackageLoaderHE implements IPackageLoader {
                 if (key == null) {
                     key = (AtomicValue)((Literal)child).getValue();
                 } else {
-                    GroundedValue value = ((Literal) child).getValue();
+                    GroundedValue<? extends Item<?>> value = ((Literal) child).getValue();
                     map.initialPut(key, value);
                     key = null;
                 }

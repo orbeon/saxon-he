@@ -8,6 +8,7 @@
 package net.sf.saxon.expr.accum;
 
 import net.sf.saxon.functions.AccumulatorFn;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
@@ -105,10 +106,10 @@ public class AccumulatorRegistry {
      * @param accumulator the accumulator whose value is required
      * @param phase       pre-descent or post-descent
      * @return the value of the accumulator, or null if the context node is not streamed
-     * @throws XPathException
+     * @throws XPathException if a dynamic error occurs
      */
 
-    public Sequence getStreamingAccumulatorValue(NodeInfo node, Accumulator accumulator, AccumulatorFn.Phase phase)
+    public Sequence<? extends Item<?>> getStreamingAccumulatorValue(NodeInfo node, Accumulator accumulator, AccumulatorFn.Phase phase)
             throws XPathException {
         return null;
     }

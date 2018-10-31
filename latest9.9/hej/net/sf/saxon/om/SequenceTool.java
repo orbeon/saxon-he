@@ -417,5 +417,25 @@ public class SequenceTool {
         Receiver out = context.getReceiver();
         value.iterate().forEachOrFail(it -> out.append(it, locationId, ReceiverOptions.ALL_NAMESPACES));
     }
+
+    /**
+     * Make an array of general-purpose Sequence objects of a given length
+     * @param length the length of the returned array
+     */
+
+    public static Sequence<? extends Item<?>>[] makeSequenceArray(int length) {
+        return (Sequence<? extends Item<?>>[])new Sequence[length];
+    }
+
+    /**
+     * Make an array of general-purpose Sequence objects with supplied contents
+     */
+
+    public static Sequence<? extends Item<?>>[] fromItems(Item<?>... items) {
+        Sequence<? extends Item<?>>[] seq = (Sequence<? extends Item<?>>[]) new Sequence[items.length];
+        System.arraycopy(items, 0, seq, 0, items.length);
+        return seq;
+    }
+
 }
 

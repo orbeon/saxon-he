@@ -119,7 +119,7 @@ public class StringJoin extends FoldingFunction {
          * @param item the item to be processed from the input sequence
          * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs
          */
-        public void processItem(Item item) throws XPathException {
+        public void processItem(Item<?> item) throws XPathException {
             if (position == 0) {
                 data.append(item.getStringValueCS());
                 position = 1;

@@ -376,7 +376,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
 
     public void refineTypeInformation(final ItemType type,
                                       final int cardinality,
-                                      final GroundedValue constantValue,
+                                      final GroundedValue<? extends Item<?>> constantValue,
                                       final int properties,
                                       final Assignation currentExpression) throws XPathException {
         ExpressionTool.processExpressionTree(currentExpression.getAction(), null, (exp, result) -> {
@@ -479,7 +479,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
 
     public void rebuildReferenceList(boolean force) {
         int[] results = new int[]{0, force ? Integer.MAX_VALUE : 500};
-        List<VariableReference> references = new ArrayList<VariableReference>();
+        List<VariableReference> references = new ArrayList<>();
         countReferences(this, getAction(), references, results);
         this.references = results[1] <= 0 ? null : references;
     }
@@ -525,11 +525,9 @@ public abstract class Assignation extends Expression implements LocalBinding {
      * @param seq the expression
      * @return true if the variable was successfully inlined. (Returns false, for example,
      * if a variable reference occurs inside a try/catch, which inhibits inlining).
-     * @throws net.sf.saxon.trans.XPathException if a failure occurs
-     *
      */
 
-    public boolean replaceVariable(Expression seq) throws XPathException {
+    public boolean replaceVariable(Expression seq) {
         boolean done = ExpressionTool.inlineVariableReferences(getAction(), this, seq);
         if (done && isIndexedVariable() && seq instanceof VariableReference) {
             Binding newBinding = ((VariableReference) seq).getBinding();

@@ -21,7 +21,7 @@ import net.sf.saxon.type.FunctionItemType;
  * implement this interface.
  */
 
-public interface Function<T extends Item<?>> extends Item<T>, Callable, GroundedValue<T> {
+public interface Function extends Item<Function>, Callable, GroundedValue<Function> {
 
     /**
      * Ask whether this function item is a map

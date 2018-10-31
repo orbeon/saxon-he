@@ -1612,16 +1612,18 @@ public class Controller implements ContextOriginator {
 
     public void setMemoizingFocusTrackerFactory() {
         setFocusTrackerFactory(base -> {
+            FocusTrackingIterator<? extends Item<?>> fti;
             if ((base.getProperties() & GROUNDED) == 0 &&
                     !(base instanceof GroupIterator) && !(base instanceof RegexIterator)) {
                 try {
-                    return new FocusTrackingIterator(new MemoSequence(base).iterate());
+                    fti = FocusTrackingIterator.track(MemoSequence.makeMemoSequence(base).iterate());
                 } catch (XPathException e) {
-                    return new FocusTrackingIterator(base);
+                    fti = FocusTrackingIterator.track(base);
                 }
             } else {
-                return new FocusTrackingIterator(base);
+                fti = FocusTrackingIterator.track(base);
             }
+            return fti;
         });
     }
 

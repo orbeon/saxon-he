@@ -141,7 +141,7 @@ public class XPathSelector implements Iterable<XdmItem> {
      */
 
     public XdmValue evaluate() throws SaxonApiException {
-        Sequence value;
+        Sequence<? extends Item<?>> value;
         try {
             value = exp.iterate(dynamicContext).materialize();
         } catch (XPathException e) {
@@ -163,7 +163,7 @@ public class XPathSelector implements Iterable<XdmItem> {
 
     public XdmItem evaluateSingle() throws SaxonApiException {
         try {
-            Item i = exp.evaluateSingle(dynamicContext);
+            Item<?> i = exp.evaluateSingle(dynamicContext);
             if (i == null) {
                 return null;
             }

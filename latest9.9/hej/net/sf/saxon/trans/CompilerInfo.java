@@ -15,6 +15,7 @@ import net.sf.saxon.functions.FunctionLibrary;
 import net.sf.saxon.lib.OutputURIResolver;
 import net.sf.saxon.lib.StandardOutputResolver;
 import net.sf.saxon.om.GroundedValue;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.query.QueryLibrary;
 import net.sf.saxon.trans.packages.PackageLibrary;
@@ -162,7 +163,7 @@ public class CompilerInfo {
      * @param seq  the value of the stylesheet parameter
      */
 
-    public void setParameter(StructuredQName name, GroundedValue seq) {
+    public void setParameter(StructuredQName name, GroundedValue<? extends Item<?>> seq) {
         suppliedParameters.put(name, seq);
     }
 

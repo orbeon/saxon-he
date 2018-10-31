@@ -7,6 +7,7 @@
 
 package net.sf.saxon.type;
 
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
 
@@ -18,7 +19,7 @@ import java.util.HashMap;
  * <p>The implementation is just a HashMap; giving the class a name helps type safety.</p>
  */
 
-public class ValidationParams extends HashMap<StructuredQName, Sequence> {
+public class ValidationParams extends HashMap<StructuredQName, Sequence<? extends Item<?>>> {
 
     public ValidationParams() {
         super(20);

@@ -161,7 +161,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
      */
 
     public XdmItem getContextItem() {
-        Item item = context.getContextItem();
+        Item<?> item = context.getContextItem();
         if (item == null) {
             return null;
         }
@@ -193,11 +193,11 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
      */
 
     public XdmValue getExternalVariable(QName name) {
-        Object oval = context.getParameter(name.getStructuredQName());
+        GroundedValue<? extends Item<?>> oval = context.getParameter(name.getStructuredQName());
         if (oval == null) {
             return null;
         }
-        return XdmValue.wrap((Sequence) oval);
+        return XdmValue.wrap(oval);
     }
 
     /**
@@ -426,8 +426,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
         }
         try {
             SequenceIterator<? extends Item<?>> iter = expression.iterator(context);
-            Sequence result = iter.materialize();
-            return XdmValue.wrap(result);
+            return XdmValue.wrap(iter.materialize());
         } catch (XPathException e) {
             throw new SaxonApiException(e);
         }
@@ -447,8 +446,8 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
 
     public XdmItem evaluateSingle() throws SaxonApiException {
         try {
-            SequenceIterator iter = expression.iterator(context);
-            Item next = iter.next();
+            SequenceIterator<? extends Item<?>> iter = expression.iterator(context);
+            Item<?> next = iter.next();
             return next == null ? null : (XdmItem) XdmValue.wrap(next);
         } catch (XPathException e) {
             throw new SaxonApiException(e);
@@ -507,7 +506,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
      * @param pipe The Saxon configuration. This is supplied so that the destination can
      *               use information from the configuration (for example, a reference to the name pool)
      *               to construct or configure the returned Receiver.
-     * @param params
+     * @param params the output serialization properties
      * @return the Receiver to which events are to be sent.
      * @throws SaxonApiException     if the Receiver cannot be created
      * @throws IllegalStateException if no Destination has been supplied
@@ -553,9 +552,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
      */
 
     public void close() throws SaxonApiException {
-//        if (sourceTreeBuilder != null) {
-//
-//        }
+
     }
 
 
@@ -605,8 +602,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
                 context.initializeController(controller);
             }
             Configuration config = processor.getUnderlyingConfiguration();
-            Sequence[] vr = new Sequence[arguments.length];
-
+            Sequence<? extends Item<?>>[] vr = SequenceTool.makeSequenceArray(arguments.length);
             for (int i = 0; i < arguments.length; i++) {
                 net.sf.saxon.value.SequenceType type = fn.getParameterDefinitions()[i].getRequiredType();
                 vr[i] = arguments[i].getUnderlyingValue();
@@ -618,7 +614,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
                     vr[i] = th.applyFunctionConversionRules(vr[i], type, role, ExplicitLocation.UNKNOWN_LOCATION);
                 }
             }
-            Sequence result = fn.call(vr, controller);
+            Sequence<? extends Item<?>> result = fn.call(vr, controller);
             return XdmValue.wrap(result);
         } catch (XPathException e) {
             throw new SaxonApiException(e);

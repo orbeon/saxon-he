@@ -237,7 +237,7 @@ public abstract class Evaluator {
         @Override
         public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) throws XPathException {
             SequenceIterator<? extends Item<?>> iter = expr.iterate(context);
-            return new LazySequence(iter);
+            return new LazySequence<>(iter);
         }
 
         /**
@@ -260,7 +260,7 @@ public abstract class Evaluator {
         @Override
         public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) throws XPathException {
             SequenceIterator<? extends Item<?>> iter = expr.iterate(context);
-            return new MemoSequence(iter);
+            return new MemoSequence<>(iter);
         }
 
         /**
@@ -359,7 +359,7 @@ public abstract class Evaluator {
                     if (Cardinality.allowsMany(child.getCardinality())) {
                         subsequences.add(child.iterate(context).materialize());
                     } else {
-                        Item j = child.evaluateItem(context);
+                        Item<?> j = child.evaluateItem(context);
                         if (j != null) {
                             subsequences.add(j);
                         }
@@ -487,13 +487,14 @@ public abstract class Evaluator {
                 }
             }
             if (base instanceof SequenceExtent) {
+                SequenceExtent<? extends Item<?>> baseSeq = (SequenceExtent<? extends Item<?>>)base;
                 if (tail.getStart() > ((SequenceExtent) base).getLength()) {
                     return EmptySequence.getInstance();
                 } else {
-                    return new SequenceExtent(
-                            (SequenceExtent) base,
+                    return new SequenceExtent<>(
+                            baseSeq,
                             tail.getStart() - 1,
-                            ((SequenceExtent) base).getLength() - tail.getStart() + 1).reduce();
+                            baseSeq.getLength() - tail.getStart() + 1).reduce();
                 }
             }
 

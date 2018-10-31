@@ -48,7 +48,7 @@ public final class Bindery {
 
     private void allocateGlobals(SlotManager map) {
         int n = map.getNumberOfVariables() + 1;
-        globals = new GroundedValue[n];
+        globals = (GroundedValue<? extends Item<?>>[])new GroundedValue[n];
         busy = new long[n];
         for (int i = 0; i < n; i++) {
             globals[i] = null;

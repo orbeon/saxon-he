@@ -148,7 +148,7 @@ public class Configuration implements SourceResolver, NotationSet {
 
     private IntSet enabledProperties = new IntHashSet(64);
 
-    private List<ExternalObjectModel> externalObjectModels = new ArrayList<ExternalObjectModel>(4);
+    private List<ExternalObjectModel> externalObjectModels = new ArrayList<>(4);
 
     private DocumentPool globalDocumentPool = new DocumentPool();
     private IntegratedFunctionLibrary integratedFunctionLibrary = new IntegratedFunctionLibrary();

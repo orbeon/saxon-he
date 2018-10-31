@@ -67,7 +67,7 @@ public class Average extends FoldingFunction {
          * @param item the item to be processed from the input sequence
          * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs
          */
-        public void processItem(Item item) throws XPathException {
+        public void processItem(Item<?> item) throws XPathException {
             AtomicValue next = (AtomicValue)item;
             if (next instanceof UntypedAtomicValue) {
                 next = toDouble.convert((UntypedAtomicValue)next).asAtomic();
@@ -132,7 +132,7 @@ public class Average extends FoldingFunction {
          * @throws net.sf.saxon.trans.XPathException
          *          if a dynamic error occurs
          */
-        public Sequence result() throws XPathException {
+        public Sequence<? extends Item<?>> result() throws XPathException {
             if (atStart) {
                 return EmptySequence.getInstance();
             } else if (data instanceof NumericValue) {

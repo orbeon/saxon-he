@@ -38,6 +38,11 @@ public class FocusTrackingIterator<T extends Item<?>>
     private int last = -1;
     private SiblingMemory siblingMemory;
 
+
+    public static <T extends Item<?>> FocusTrackingIterator<T> track(SequenceIterator<T> base) {
+        return new FocusTrackingIterator<>(base);
+    }
+
     public FocusTrackingIterator(SequenceIterator<T> base) {
         this.base = base;
     }
@@ -173,7 +178,7 @@ public class FocusTrackingIterator<T extends Item<?>>
      */
     @Override
     public GroundedValue<T> getResidue() throws XPathException {
-        return ((GroundedIterator) base).getResidue();
+        return new SequenceExtent<>(this);
     }
 
     /**

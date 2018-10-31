@@ -11,7 +11,6 @@ import net.sf.saxon.expr.sort.LRUCache;
 import net.sf.saxon.om.NotationSet;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.type.*;
-import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.StringToDouble11;
 
 /**
@@ -194,7 +193,7 @@ public class ConversionRules {
      */
 
     /*@Nullable*/
-    public Converter<?, ? extends AtomicValue> getConverter(AtomicType source, AtomicType target) {
+    public Converter getConverter(AtomicType source, AtomicType target) {
         // Handle some common cases before looking in the cache
         if (source == target) {
             return StringConverter.IdentityConverter.INSTANCE;
@@ -208,7 +207,7 @@ public class ConversionRules {
         // For a lookup key, use the primitive type of the source type (always 10 bits) and the
         // fingerprint of the target type (20 bits)
         int key = (source.getPrimitiveType() << 20) | target.getFingerprint();
-        Converter<?, ?> converter = converterCache.get(key);
+        Converter converter = converterCache.get(key);
         if (converter == null) {
             converter = makeConverter(source, target);
             if (converter != null) {
@@ -231,7 +230,7 @@ public class ConversionRules {
      */
 
     /*@Nullable*/
-    private Converter makeConverter(/*@NotNull*/ AtomicType sourceType, /*@NotNull*/ AtomicType targetType) {
+    private Converter makeConverter(AtomicType sourceType, AtomicType targetType) {
         if (sourceType == targetType) {
             return StringConverter.IdentityConverter.INSTANCE;
         }

@@ -27,7 +27,7 @@ import net.sf.saxon.value.SequenceType;
 /**
  * Interface supported by different implementations of an XDM map item
  */
-public interface MapItem extends Function<MapItem> {
+public interface MapItem extends Function {
 
     /**
      * Get an entry from the Map

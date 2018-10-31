@@ -343,7 +343,7 @@ public abstract class BuiltInFunctionSet implements FunctionLibrary {
             e.usage = new OperandUsage[1];
         } else {
             e.argumentTypes = new SequenceType[arity];
-            e.resultIfEmpty = new Sequence[arity];
+            e.resultIfEmpty = (Sequence<? extends Item<?>>[])new Sequence[arity];
             e.usage = new OperandUsage[arity];
         }
         functionTable.put(name + "#" + arity, e);
@@ -367,7 +367,7 @@ public abstract class BuiltInFunctionSet implements FunctionLibrary {
             e.applicability = master.applicability;
             e.properties = master.properties;
             e.argumentTypes = new SequenceType[arity];
-            e.resultIfEmpty = new Sequence[arity];
+            e.resultIfEmpty = (Sequence<? extends Item<?>>[])new Sequence[arity];
             e.usage = new OperandUsage[arity];
             for (int i=0; i<arity; i++) {
                 e.argumentTypes[i] = master.argumentTypes[i];

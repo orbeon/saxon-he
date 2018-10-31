@@ -495,7 +495,7 @@ public class GlobalVariable extends Actor
                     final ItemType itemType = value.getItemType();
                     final int cardinality = value.getCardinality();
                     setRequiredType(SequenceType.makeSequenceType(itemType, cardinality));
-                    GroundedValue constantValue = null;
+                    GroundedValue<? extends Item<?>> constantValue = null;
                     if (value2 instanceof Literal) {
                         constantValue = ((Literal) value2).getValue();
                     }

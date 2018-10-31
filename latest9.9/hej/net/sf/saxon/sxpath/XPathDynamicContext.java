@@ -51,7 +51,7 @@ public class XPathDynamicContext {
      * @throws XPathException if the node is in a document that was built under the wrong configuration
      */
 
-    public void setContextItem(Item item) throws XPathException {
+    public void setContextItem(Item<?> item) throws XPathException {
         if (item instanceof NodeInfo) {
             if (!((NodeInfo) item).getConfiguration().isCompatible(contextObject.getConfiguration())) {
                 throw new XPathException(
@@ -62,9 +62,9 @@ public class XPathDynamicContext {
         TypeHierarchy th = contextObject.getConfiguration().getTypeHierarchy();
         if (!contextItemType.matches(item, th)) {
             throw new XPathException("Supplied context item does not match required context item type " +
-                                             contextItemType.toString());
+                                             contextItemType);
         }
-        ManualIterator iter = new ManualIterator(item);
+        ManualIterator<Item<?>> iter = new ManualIterator<>(item);
         contextObject.setCurrentIterator(iter);
     }
 
@@ -90,7 +90,7 @@ public class XPathDynamicContext {
      *                        (or another Configuration that shares the same namePool)
      */
 
-    public void setVariable(XPathVariable variable, Sequence value) throws XPathException {
+    public void setVariable(XPathVariable variable, Sequence<? extends Item<?>> value) throws XPathException {
         SequenceType requiredType = variable.getRequiredType();
         if (requiredType != SequenceType.ANY_SEQUENCE) {
             XPathException err = TypeChecker.testConformance(value, requiredType, contextObject);
@@ -98,8 +98,8 @@ public class XPathDynamicContext {
                 throw err;
             }
         }
-        SequenceIterator iter = value.iterate();
-        Item item;
+        SequenceIterator<? extends Item<?>> iter = value.iterate();
+        Item<?> item;
         while ((item = iter.next()) != null) {
             if (item instanceof NodeInfo && !((NodeInfo) item).getConfiguration().isCompatible(contextObject.getConfiguration())) {
                 throw new XPathException(

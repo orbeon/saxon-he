@@ -24,7 +24,7 @@ public interface Fold {
      * @throws XPathException if a dynamic error occurs
      */
 
-    void processItem(Item item) throws XPathException;
+    void processItem(Item<?> item) throws XPathException;
 
     /**
      * Ask whether the computation has completed. A function that can deliver its final
@@ -42,7 +42,7 @@ public interface Fold {
      * @throws XPathException if a dynamic error occurs
      */
 
-    Sequence result() throws XPathException;
+    Sequence<? extends Item<?>> result() throws XPathException;
 
 }
 

@@ -35,7 +35,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
     private int primitiveFingerprint;
     private UType uType;
     private boolean ordered = false;
-    public StringConverter<? extends AtomicValue> stringConverter; // may be null for types where conversion rules can vary
+    public StringConverter stringConverter; // may be null for types where conversion rules can vary
     private SequenceType _one;
     private SequenceType _oneOrMore;
     private SequenceType _zeroOrOne;
@@ -907,7 +907,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      */
  
     
-    public StringConverter<? extends AtomicValue> getStringConverter(ConversionRules rules) {
+    public StringConverter getStringConverter(ConversionRules rules) {
         if (stringConverter != null) {
             return stringConverter;
         }

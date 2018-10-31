@@ -68,8 +68,8 @@ public abstract class AbstractArrayItem implements ArrayItem {
      * @throws XPathException if atomization is not allowed for this kind of item
      */
     public AtomicSequence atomize() throws XPathException {
-        List<AtomicValue> list = new ArrayList<AtomicValue>(arrayLength());
-        for (GroundedValue seq : members()) {
+        List<AtomicValue> list = new ArrayList<>(arrayLength());
+        for (GroundedValue<? extends Item<?>> seq : members()) {
             seq.iterate().forEachOrFail(item -> {
                 AtomicSequence atoms = item.atomize();
                 for (AtomicValue atom : atoms) {
@@ -283,7 +283,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
                 } else {
                     ItemType contentType = null;
                     int contentCard = StaticProperty.EXACTLY_ONE;
-                    for (GroundedValue s : members()) {
+                    for (GroundedValue<? extends Item<?>> s : members()) {
                         if (contentType == null) {
                             contentType = SequenceTool.getItemType(s, th);
                             contentCard = SequenceTool.getCardinality(s);

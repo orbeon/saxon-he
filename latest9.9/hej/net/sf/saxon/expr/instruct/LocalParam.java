@@ -9,6 +9,7 @@ package net.sf.saxon.expr.instruct;
 
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.om.StructuredQName;
@@ -325,7 +326,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
      *          with a dynamic error
      */
 
-    public Sequence getSelectValue(XPathContext context) throws XPathException {
+    public Sequence<? extends Item<?>> getSelectValue(XPathContext context) throws XPathException {
         Expression select = getSelectExpression();
         if (select == null) {
             throw new AssertionError("Internal error: No select expression");
@@ -338,7 +339,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
             // which will already contain any code to force conversion to the required type.
             int savedOutputState = context.getTemporaryOutputState();
             context.setTemporaryOutputState(StandardNames.XSL_WITH_PARAM);
-            Sequence result = evaluator.evaluate(select, context);
+            Sequence<? extends Item<?>> result = evaluator.evaluate(select, context);
             context.setTemporaryOutputState(savedOutputState);
             return result;
         }
@@ -513,7 +514,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
      * Evaluate the variable
      */
 
-    public Sequence evaluateVariable(XPathContext c) {
+    public Sequence<? extends Item<?>> evaluateVariable(XPathContext c) {
         return c.evaluateLocalVariable(slotNumber);
     }
 

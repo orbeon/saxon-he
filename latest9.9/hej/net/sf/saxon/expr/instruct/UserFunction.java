@@ -44,7 +44,7 @@ import java.util.Objects;
 
 public class UserFunction extends Actor implements Function, ContextOriginator {
 
-    public enum Determinism {DETERMINISTIC, PROACTIVE, ELIDABLE};
+    public enum Determinism {DETERMINISTIC, PROACTIVE, ELIDABLE}
 
     private StructuredQName functionName;  // null for an anonymous function
     private boolean tailCalls = false;
@@ -635,7 +635,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs while evaluating the function.
      */
 
-    public Sequence call(Sequence[] actualArgs, Controller controller) throws XPathException {
+    public Sequence<? extends Item<?>> call(Sequence[] actualArgs, Controller controller) throws XPathException {
         return call(controller.newXPathContext(), actualArgs);
     }
 
@@ -753,7 +753,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
      *
      * @return an iterator over all the items
      */
-    public UnfailingIterator iterate() {
+    public UnfailingIterator<Function> iterate() {
         return SingletonIterator.makeIterator(this);
     }
 
@@ -799,7 +799,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
      * @param n the index of the required item, with 0 representing the first item in the sequence
      * @return the n'th item if it exists, or null otherwise
      */
-    public Item itemAt(int n) {
+    public Function itemAt(int n) {
         return n == 0 ? this : null;
     }
 
@@ -815,7 +815,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
      *               of the sequence
      * @return the required subsequence.
      */
-    public GroundedValue subsequence(int start, int length) {
+    public GroundedValue<Function> subsequence(int start, int length) {
         return start <= 0 && (start + length) > 0 ? this : EmptySequence.getInstance();
     }
 
@@ -846,7 +846,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
      *
      * @return the simplified sequence
      */
-    public GroundedValue reduce() {
+    public UserFunction reduce() {
         return this;
     }
 
@@ -857,7 +857,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
      * @return the first item in the sequence if there is one, or null if the sequence
      * is empty
      */
-    public Item head() {
+    public UserFunction head() {
         return this;
     }
 

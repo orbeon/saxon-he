@@ -9,9 +9,11 @@ package net.sf.saxon.s9api;
 
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.s9api.streams.XdmStream;
 import net.sf.saxon.value.AtomicValue;
 
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * The class XdmItem represents an item in a sequence, as defined by the XDM data model.
@@ -123,6 +125,16 @@ public abstract class XdmItem extends XdmValue {
 
     public Map<XdmAtomicValue, XdmValue> asMap() {
         return null; // Overridden in XdmMap. The method is retained on this interface for compatibility reasons.
+    }
+
+    /**
+     * Get a stream comprising the items in this value
+     *
+     * @return a Stream over the items in this value
+     * @since 9.9
+     */
+    public XdmStream<? extends XdmItem> stream() {
+        return new XdmStream<>(Stream.of(this));
     }
 
 }

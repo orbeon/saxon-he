@@ -14,6 +14,7 @@ import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.lib.NamespaceConstant;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
 
@@ -128,7 +129,7 @@ public class CollatingFunctionFree extends SystemFunction {
      * @return the result of invoking the function
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs within the function
      */
-    public Sequence call(XPathContext context, Sequence[] args) throws XPathException {
+    public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] args) throws XPathException {
         int c = getCollationArgument();
         String collation = args[c].head().getStringValue();
         collation = expandCollationURI(collation, getRetainedStaticContext().getStaticBaseUri());

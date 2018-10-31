@@ -262,7 +262,7 @@ public class ForExpression extends Assignation {
         if (Choose.isSingleBranchChoice(getAction())) {
             Expression condition = ((Choose) getAction()).getCondition(0);
             Binding[] bindingList = new Binding[]{this};
-            List<Expression> list = new ArrayList<Expression>(5);
+            List<Expression> list = new ArrayList<>(5);
             Expression promotedCondition = null;
             BooleanExpression.listAndComponents(condition, list);
             for (int i = list.size() - 1; i >= 0; i--) {
@@ -303,7 +303,7 @@ public class ForExpression extends Assignation {
     /**
      * Copy an expression. This makes a deep copy.
      *
-     * @param rebindings
+     * @param rebindings variables that need to be re-bound
      * @return the copy of the original expression
      */
 
@@ -387,11 +387,11 @@ public class ForExpression extends Assignation {
         MappingAction map = new MappingAction(context, getLocalSlotNumber(), getAction());
         switch (actionCardinality) {
             case StaticProperty.EXACTLY_ONE:
-                return new ItemMappingIterator(base, map, true);
+                return new ItemMappingIterator<>(base, map, true);
             case StaticProperty.ALLOWS_ZERO_OR_ONE:
-                return new ItemMappingIterator(base, map, false);
+                return new ItemMappingIterator<>(base, map, false);
             default:
-                return new MappingIterator(base, map);
+                return new MappingIterator<>(base, map);
         }
     }
 
@@ -442,7 +442,7 @@ public class ForExpression extends Assignation {
      * Get the static type of the expression as a UType, following precisely the type
      * inference rules defined in the XSLT 3.0 specification.
      *
-     * @param contextItemType
+     * @param contextItemType the static type of the context item
      * @return the static item type of the expression according to the XSLT 3.0 defined rules
      */
     @Override

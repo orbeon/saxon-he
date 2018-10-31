@@ -30,7 +30,7 @@ import java.util.List;
 public class AccumulatorData implements IAccumulatorData {
 
     private Accumulator accumulator;
-    private List<DataPoint> values = new ArrayList<DataPoint>();
+    private List<DataPoint> values = new ArrayList<>();
     private boolean building = false;
 
     public AccumulatorData(Accumulator acc) {
@@ -68,8 +68,8 @@ public class AccumulatorData implements IAccumulatorData {
         SlotManager sf = accumulator.getSlotManagerForInitialValueExpression();
         Sequence[] slots = new Sequence[sf.getNumberOfVariables()];
         c2.setStackFrame(sf, slots);
-        c2.setCurrentIterator(new ManualIterator(doc));
-        Sequence val = initialValue.iterate(c2).materialize();
+        c2.setCurrentIterator(new ManualIterator<>(doc));
+        Sequence<? extends Item<?>> val = initialValue.iterate(c2).materialize();
         values.add(new DataPoint(new Visit(doc, false), val));
         val = visit(doc, val, c2);
         values.add(new DataPoint(new Visit(doc, true), val));
@@ -78,7 +78,7 @@ public class AccumulatorData implements IAccumulatorData {
         //diagnosticPrint();
     }
 
-    /**
+    /*
      * Diagnostic output of the entire data structure
      */
 
@@ -100,7 +100,7 @@ public class AccumulatorData implements IAccumulatorData {
      */
 
     @SuppressWarnings({"InfiniteRecursion"}) //Spurious warning from IntelliJ
-    private Sequence visit(NodeInfo node, Sequence value, XPathContext context) throws XPathException {
+    private Sequence<? extends Item<?>> visit(NodeInfo node, Sequence<? extends Item<?>> value, XPathContext context) throws XPathException {
         ((ManualIterator)context.getCurrentIterator()).setContextItem(node);
         Rule rule = accumulator.getPreDescentRules().getRule(node, context);
         if (rule != null) {
@@ -139,13 +139,13 @@ public class AccumulatorData implements IAccumulatorData {
      * @throws XPathException if a dynamic error occurs during the evaluation
      */
 
-    private Sequence processRule(Rule rule, NodeInfo node, boolean isPostDescent, Sequence value, XPathContext context) throws XPathException {
+    private Sequence<? extends Item<?>> processRule(Rule rule, NodeInfo node, boolean isPostDescent, Sequence<? extends Item<?>> value, XPathContext context) throws XPathException {
         AccumulatorRule target = (AccumulatorRule) rule.getAction();
         Expression delta = target.getNewValueExpression();
         XPathContextMajor c2 = context.newCleanContext();
         final Controller controller = c2.getController();
         assert controller != null;
-        ManualIterator initialNode = new ManualIterator(node);
+        ManualIterator<NodeInfo> initialNode = new ManualIterator<>(node);
         c2.setCurrentIterator(initialNode);
         c2.openStackFrame(target.getStackFrameMap());
         c2.setLocalVariable(0, value);
@@ -171,11 +171,10 @@ public class AccumulatorData implements IAccumulatorData {
 //        return search(0, values.size(), visit);
 //    }
 
-    public Sequence getValue(NodeInfo node, boolean postDescent) {
+    public Sequence<? extends Item<?>> getValue(NodeInfo node, boolean postDescent) {
         Visit visit = new Visit(node, postDescent);
-        Sequence seq = search(0, values.size(), visit);
+        return search(0, values.size(), visit);
         //System.err.println("Searched " + values.size() + " " + ((TinyNodeImpl) visit.node).getNodeNumber() + " : " + seq);
-        return seq;
     }
 
     /**
@@ -187,7 +186,7 @@ public class AccumulatorData implements IAccumulatorData {
      * @return the value associated with this node
      */
 
-    private Sequence search(int start, int end, Visit sought) {
+    private Sequence<? extends Item<?>> search(int start, int end, Visit sought) {
         //System.err.println("-- Search " + start + ".." + end);
         if (start == end) {
             // sometimes we want the value for the visit we've found, sometimes for the previous visit
@@ -263,9 +262,9 @@ public class AccumulatorData implements IAccumulatorData {
 
     private static class DataPoint {
         public Visit visit;
-        public Sequence value;
+        public Sequence<? extends Item<?>> value;
 
-        public DataPoint(Visit visit, Sequence value) {
+        public DataPoint(Visit visit, Sequence<? extends Item<?>> value) {
             this.visit = visit;
             this.value = value;
         }

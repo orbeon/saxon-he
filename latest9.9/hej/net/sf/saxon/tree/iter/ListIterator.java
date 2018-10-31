@@ -33,7 +33,7 @@ public class ListIterator<T extends Item<?>>
      * @param list the list: all objects in the list must be instances of {@link Item}
      */
 
-    public ListIterator(/*@NotNull*/ List<T> list) {
+    public ListIterator(List<T> list) {
         index = 0;
         this.list = list;
     }
@@ -81,8 +81,8 @@ public class ListIterator<T extends Item<?>>
     }
 
     @Override
-    public GroundedValue<? extends T> getResidue()  {
-        List<? extends T> l2 = list;
+    public GroundedValue<T> getResidue()  {
+        List<T> l2 = list;
         if (index != 0) {
             l2 = l2.subList(index, l2.size());
         }

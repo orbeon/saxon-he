@@ -8,6 +8,7 @@
 package net.sf.saxon.trans.packages;
 
 import net.sf.saxon.om.GroundedValue;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.style.StylesheetPackage;
 
@@ -77,7 +78,7 @@ public class PackageDetails {
      * contains this alias; the baseName contains the original name as defined in the XSLT source
      * code.
      */
-    public Map<StructuredQName, GroundedValue> staticParams;
+    public Map<StructuredQName, GroundedValue<? extends Item<?>>> staticParams;
     /**
      * During processing (compilation) of a package, the <code>beingProcessed</code> field
      * indicates the thread in which this processing is taking place; at other times, the field

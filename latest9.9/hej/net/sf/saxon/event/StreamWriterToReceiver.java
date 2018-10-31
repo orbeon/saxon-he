@@ -754,7 +754,7 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
     public javax.xml.namespace.NamespaceContext getNamespaceContext() {
         return new NamespaceContext() {
             final NamespaceContext rootNamespaceContext = StreamWriterToReceiver.this.rootNamespaceContext;
-            final Map<String, String> bindings = new HashMap<String, String>();
+            final Map<String, String> bindings = new HashMap<>();
 
             {
                 for (List<NamespaceBinding> list : setPrefixes) {
@@ -781,16 +781,16 @@ public class StreamWriterToReceiver implements XMLStreamWriter {
                 return rootNamespaceContext.getPrefix(namespaceURI);
             }
 
-            public Iterator getPrefixes(String namespaceURI) {
-                List<String> prefixes = new ArrayList<String>();
+            public Iterator<String> getPrefixes(String namespaceURI) {
+                List<String> prefixes = new ArrayList<>();
                 for (Map.Entry<String, String> entry : bindings.entrySet()) {
                     if (entry.getValue().equals(namespaceURI)) {
                         prefixes.add(entry.getKey());
                     }
                 }
-                Iterator<String> root = rootNamespaceContext.getPrefixes(namespaceURI);
+                Iterator root = rootNamespaceContext.getPrefixes(namespaceURI);
                 while (root.hasNext()) {
-                    prefixes.add(root.next());
+                    prefixes.add((String)root.next());
                 }
                 return prefixes.iterator();
             }

@@ -22,7 +22,7 @@ import net.sf.saxon.value.ObjectValue;
 public class JavaExternalObjectType extends ExternalObjectType {
 
     protected Configuration config;
-    protected Class javaClass;
+    protected Class<?> javaClass;
 
     /**
      * Create an external object type.
@@ -30,7 +30,7 @@ public class JavaExternalObjectType extends ExternalObjectType {
      * @param javaClass the Java class to which this type corresponds
      */
 
-    public JavaExternalObjectType(Configuration config, Class javaClass) {
+    public JavaExternalObjectType(Configuration config, Class<?> javaClass) {
         this.config = config;
         this.javaClass = javaClass;
     }
@@ -94,7 +94,7 @@ public class JavaExternalObjectType extends ExternalObjectType {
      */
 
     public int getRelationship(/*@NotNull*/ JavaExternalObjectType other) {
-        Class j2 = other.javaClass;
+        Class<?> j2 = other.javaClass;
         if (javaClass.equals(j2)) {
             return TypeHierarchy.SAME_TYPE;
         } else if (javaClass.isAssignableFrom(j2)) {

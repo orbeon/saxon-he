@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  * <p>A StringConverter also provides a method to validate that a string is valid against the target type,
  * without actually performing the conversion.</p>
  */
-public abstract class StringConverter<T extends AtomicValue> extends Converter<StringValue, T> {
+public abstract class StringConverter extends Converter {
 
     // Constants are defined only for converters that are independent of the conversion rules
 
@@ -59,8 +59,8 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * succeeded), or a {@link ValidationFailure} if conversion failed.
      */
 
-    /*@NotNull*/
-    public abstract ConversionResult convertString(/*@NotNull*/ CharSequence input);
+    
+    public abstract ConversionResult convertString( CharSequence input);
 
     /**
      * Validate a string for conformance to the target type, without actually performing
@@ -72,14 +72,14 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      */
 
     /*@Nullable*/
-    public ValidationFailure validate(/*@NotNull*/ CharSequence input) {
+    public ValidationFailure validate( CharSequence input) {
         ConversionResult result = convertString(input);
         return result instanceof ValidationFailure ? (ValidationFailure) result : null;
     }
 
-    /*@NotNull*/
+    
     @Override
-    public ConversionResult convert(StringValue input) {
+    public ConversionResult convert(AtomicValue input) {
         return convertString(input.getStringValueCS());
     }
 
@@ -89,7 +89,7 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * string for validating against lexical facets such as pattern.
      */
 
-    public static class StringToNonStringDerivedType extends StringConverter<AtomicValue> {
+    public static class StringToNonStringDerivedType extends StringConverter {
         private StringConverter phaseOne;
         private DownCastingConverter phaseTwo;
 
@@ -105,7 +105,7 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
                     (DownCastingConverter) phaseTwo.setNamespaceResolver(resolver));
         }
 
-        /*@NotNull*/
+        
         public ConversionResult convert(StringValue input) {
             CharSequence in = input.getStringValueCS();
             try {
@@ -120,8 +120,8 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
             return phaseTwo.convert((AtomicValue) temp, in);
         }
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             try {
                 input = phaseTwo.getTargetType().preprocess(input);
             } catch (ValidationException err) {
@@ -161,21 +161,21 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts from xs:string or xs:untypedAtomic to xs:String
      */
 
-    public static class StringToString extends StringConverter<StringValue> {
+    public static class StringToString extends StringConverter {
         public static final StringToString INSTANCE = new StringToString();
 
         @Override
-        public ConversionResult convert(StringValue input) {
+        public ConversionResult convert(AtomicValue input) {
             return new StringValue(input.getStringValueCS());
         }
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             return new StringValue(input);
         }
 
         /*@Nullable*/
-        public ValidationFailure validate(/*@NotNull*/ CharSequence input) {
+        public ValidationFailure validate( CharSequence input) {
             return null;
         }
 
@@ -188,21 +188,21 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts from xs:string or xs:untypedAtomic to xs:untypedAtomic
      */
 
-    public static class StringToUntypedAtomic extends StringConverter<UntypedAtomicValue> {
+    public static class StringToUntypedAtomic extends StringConverter {
         public static final StringToUntypedAtomic INSTANCE = new StringToUntypedAtomic();
 
         @Override
-        public UntypedAtomicValue convert(StringValue input) {
+        public UntypedAtomicValue convert(AtomicValue input) {
             return new UntypedAtomicValue(input.getStringValueCS());
         }
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             return new UntypedAtomicValue(input);
         }
 
         /*@Nullable*/
-        public ValidationFailure validate(/*@NotNull*/ CharSequence input) {
+        public ValidationFailure validate( CharSequence input) {
             return null;
         }
 
@@ -216,15 +216,15 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts from xs:string to xs:normalizedString
      */
 
-    public static class StringToNormalizedString extends StringConverter<StringValue> {
+    public static class StringToNormalizedString extends StringConverter {
         public static final StringToNormalizedString INSTANCE = new StringToNormalizedString();
 
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        public ConversionResult convertString( CharSequence input) {
             return new StringValue(Whitespace.normalizeWhitespace(input), BuiltInAtomicType.NORMALIZED_STRING);
         }
 
         /*@Nullable*/
-        public ValidationFailure validate(/*@NotNull*/ CharSequence input) {
+        public ValidationFailure validate( CharSequence input) {
             return null;
         }
 
@@ -237,15 +237,15 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts from xs:string to xs:token
      */
 
-    public static class StringToToken extends StringConverter<StringValue> {
+    public static class StringToToken extends StringConverter {
         public static final StringToToken INSTANCE = new StringToToken();
 
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        public ConversionResult convertString( CharSequence input) {
             return new StringValue(Whitespace.collapseWhitespace(input), BuiltInAtomicType.TOKEN);
         }
 
         /*@Nullable*/
-        public ValidationFailure validate(/*@NotNull*/ CharSequence input) {
+        public ValidationFailure validate( CharSequence input) {
             return null;
         }
 
@@ -258,13 +258,13 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts from xs:string to xs:language
      */
 
-    public static class StringToLanguage extends StringConverter<StringValue> {
+    public static class StringToLanguage extends StringConverter {
         private final static Pattern regex = Pattern.compile("[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*");
         // See erratum E2-25 to XML Schema Part 2.
         public static final StringToLanguage INSTANCE = new StringToLanguage();
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             CharSequence trimmed = Whitespace.trimWhitespace(input);
             if (!regex.matcher(trimmed).matches()) {
                 return new ValidationFailure("The value '" + input + "' is not a valid xs:language");
@@ -273,7 +273,7 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
         }
 
         /*@Nullable*/
-        public ValidationFailure validate(/*@NotNull*/ CharSequence input) {
+        public ValidationFailure validate( CharSequence input) {
             if (regex.matcher(Whitespace.trimWhitespace(input)).matches()) {
                 return null;
             } else {
@@ -286,7 +286,7 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts from xs:string to xs:NCName, xs:ID, xs:IDREF, or xs:ENTITY
      */
 
-    public static class StringToNCName extends StringConverter<StringValue> {
+    public static class StringToNCName extends StringConverter {
 
         public static final StringToNCName TO_ID = new StringToNCName(BuiltInAtomicType.ID);
         public static final StringToNCName TO_ENTITY = new StringToNCName(BuiltInAtomicType.ENTITY);
@@ -299,8 +299,8 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
             this.targetType = targetType;
         }
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             CharSequence trimmed = Whitespace.trimWhitespace(input);
             if (NameChecker.isValidNCName(trimmed)) {
                 return new StringValue(trimmed, targetType);
@@ -310,7 +310,7 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
         }
 
         /*@Nullable*/
-        public ValidationFailure validate(/*@NotNull*/ CharSequence input) {
+        public ValidationFailure validate( CharSequence input) {
             if (NameChecker.isValidNCName(Whitespace.trimWhitespace(input))) {
                 return null;
             } else {
@@ -323,12 +323,12 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts from xs:string to xs:NMTOKEN
      */
 
-    public static class StringToNMTOKEN extends StringConverter<StringValue> {
+    public static class StringToNMTOKEN extends StringConverter {
 
         public final static StringToNMTOKEN INSTANCE = new StringToNMTOKEN();
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             CharSequence trimmed = Whitespace.trimWhitespace(input);
             if (NameChecker.isValidNmtoken(trimmed)) {
                 return new StringValue(trimmed, BuiltInAtomicType.NMTOKEN);
@@ -338,7 +338,7 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
         }
 
         /*@Nullable*/
-        public ValidationFailure validate(/*@NotNull*/ CharSequence input) {
+        public ValidationFailure validate( CharSequence input) {
             if (NameChecker.isValidNmtoken(Whitespace.trimWhitespace(input))) {
                 return null;
             } else {
@@ -359,8 +359,8 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
             super(BuiltInAtomicType.NAME);
         }
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             ValidationFailure vf = validate(input);
             if (vf == null) {
                 return new StringValue(Whitespace.trimWhitespace(input), BuiltInAtomicType.NAME);
@@ -370,7 +370,7 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
         }
 
         /*@Nullable*/
-        public ValidationFailure validate(/*@NotNull*/ CharSequence input) {
+        public ValidationFailure validate( CharSequence input) {
             // if it's valid as an NCName then it's OK
             CharSequence trimmed = Whitespace.trimWhitespace(input);
             if (NameChecker.isValidNCName(trimmed)) {
@@ -397,18 +397,18 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts from xs:string to a user-defined type derived directly from xs:string
      */
 
-    public static class StringToStringSubtype extends StringConverter<StringValue> {
+    public static class StringToStringSubtype extends StringConverter {
         AtomicType targetType;
         int whitespaceAction;
 
-        public StringToStringSubtype(ConversionRules rules, /*@NotNull*/ AtomicType targetType) {
+        public StringToStringSubtype(ConversionRules rules,  AtomicType targetType) {
             super(rules);
             this.targetType = targetType;
             this.whitespaceAction = targetType.getWhitespaceAction();
         }
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             CharSequence cs = Whitespace.applyWhitespaceNormalization(whitespaceAction, input);
             try {
                 cs = targetType.preprocess(cs);
@@ -425,7 +425,7 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
             }
         }
 
-        public ValidationFailure validate(/*@NotNull*/ CharSequence input) {
+        public ValidationFailure validate( CharSequence input) {
             CharSequence cs = Whitespace.applyWhitespaceNormalization(whitespaceAction, input);
             try {
                 cs = targetType.preprocess(cs);
@@ -440,20 +440,20 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts from xs;string to a user-defined type derived from a built-in subtype of xs:string
      */
 
-    public static class StringToDerivedStringSubtype extends StringConverter<StringValue> {
+    public static class StringToDerivedStringSubtype extends StringConverter {
         AtomicType targetType;
         StringConverter builtInValidator;
         int whitespaceAction;
 
-        public StringToDerivedStringSubtype(/*@NotNull*/ ConversionRules rules, /*@NotNull*/ AtomicType targetType) {
+        public StringToDerivedStringSubtype( ConversionRules rules,  AtomicType targetType) {
             super(rules);
             this.targetType = targetType;
             this.whitespaceAction = targetType.getWhitespaceAction();
             builtInValidator = ((AtomicType) targetType.getBuiltInBaseType()).getStringConverter(rules);
         }
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             CharSequence cs = Whitespace.applyWhitespaceNormalization(whitespaceAction, input);
             ValidationFailure f = builtInValidator.validate(cs);
             if (f != null) {
@@ -480,13 +480,13 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts a string to xs:float
      */
 
-    public static class StringToFloat extends StringConverter<FloatValue> {
+    public static class StringToFloat extends StringConverter {
         public StringToFloat(ConversionRules rules) {
             super(rules);
         }
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             try {
                 float flt = (float) getConversionRules().getStringToDoubleConverter().stringToNumber(input);
                 return new FloatValue(flt);
@@ -502,16 +502,16 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts a string to an xs:decimal
      */
 
-    public static class StringToDecimal extends StringConverter<DecimalValue> {
+    public static class StringToDecimal extends StringConverter {
         public static final StringToDecimal INSTANCE = new StringToDecimal();
 
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        public ConversionResult convertString( CharSequence input) {
             return BigDecimalValue.makeDecimalValue(input, true);
         }
 
         /*@Nullable*/
         @Override
-        public ValidationFailure validate(/*@NotNull*/ CharSequence input) {
+        public ValidationFailure validate( CharSequence input) {
             if (BigDecimalValue.castableAsDecimal(input)) {
                 return null;
             } else {
@@ -524,20 +524,20 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts a string to an integer
      */
 
-    public static class StringToInteger extends StringConverter<IntegerValue> {
+    public static class StringToInteger extends StringConverter {
         public static final StringToInteger INSTANCE = new StringToInteger();
 
         public ConversionResult convert(StringValue input) {
             return IntegerValue.stringToInteger(input.getStringValueCS());
         }
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             return IntegerValue.stringToInteger(input);
         }
 
         @Override
-        public ValidationFailure validate(/*@NotNull*/ CharSequence input) {
+        public ValidationFailure validate( CharSequence input) {
             return IntegerValue.castableAsInteger(input);
         }
     }
@@ -546,7 +546,7 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts a string to a built-in subtype of integer
      */
 
-    public static class StringToIntegerSubtype extends StringConverter<Int64Value> {
+    public static class StringToIntegerSubtype extends StringConverter {
 
         BuiltInAtomicType targetType;
 
@@ -554,8 +554,8 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
             this.targetType = targetType;
         }
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             ConversionResult iv = IntegerValue.stringToInteger(input);
             if (iv instanceof Int64Value) {
                 boolean ok = IntegerValue.checkRange(((Int64Value) iv).longValue(), targetType);
@@ -583,10 +583,10 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts a string to a duration
      */
 
-    public static class StringToDuration extends StringConverter<DurationValue> {
+    public static class StringToDuration extends StringConverter {
         public static final StringToDuration INSTANCE = new StringToDuration();
 
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        public ConversionResult convertString( CharSequence input) {
             return DurationValue.makeDuration(input);
         }
     }
@@ -596,7 +596,7 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      */
 
 
-    public static class StringToDayTimeDuration extends StringConverter<DayTimeDurationValue> {
+    public static class StringToDayTimeDuration extends StringConverter {
         public static final StringToDayTimeDuration INSTANCE = new StringToDayTimeDuration();
 
         public ConversionResult convertString(CharSequence input) {
@@ -608,10 +608,10 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts a string to a yearMonthDuration
      */
 
-    public static class StringToYearMonthDuration extends StringConverter<YearMonthDurationValue> {
+    public static class StringToYearMonthDuration extends StringConverter {
         public static final StringToYearMonthDuration INSTANCE = new StringToYearMonthDuration();
 
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        public ConversionResult convertString( CharSequence input) {
             return YearMonthDurationValue.makeYearMonthDurationValue(input);
         }
     }
@@ -620,13 +620,13 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts a string to a dateTime
      */
 
-    public static class StringToDateTime extends StringConverter<DateTimeValue> {
+    public static class StringToDateTime extends StringConverter {
         public StringToDateTime(ConversionRules rules) {
             super(rules);
         }
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             return DateTimeValue.makeDateTimeValue(input, getConversionRules());
         }
     }
@@ -635,13 +635,13 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts a string to a dateTimeStamp
      */
 
-    public static class StringToDateTimeStamp extends StringConverter<DateTimeValue> {
+    public static class StringToDateTimeStamp extends StringConverter {
         public StringToDateTimeStamp(ConversionRules rules) {
             super(rules);
         }
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             ConversionResult val = DateTimeValue.makeDateTimeValue(input, getConversionRules());
             if (val instanceof DateTimeValue) {
                 if (!((DateTimeValue) val).hasTimezone()) {
@@ -658,13 +658,13 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts a string to a date
      */
 
-    public static class StringToDate extends StringConverter<DateValue> {
+    public static class StringToDate extends StringConverter {
         public StringToDate(ConversionRules rules) {
             super(rules);
         }
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             return DateValue.makeDateValue(input, getConversionRules());
         }
     }
@@ -673,10 +673,10 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts a string to a gMonth
      */
 
-    public static class StringToGMonth extends StringConverter<GMonthValue> {
+    public static class StringToGMonth extends StringConverter {
         public static final StringToGMonth INSTANCE = new StringToGMonth();
 
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        public ConversionResult convertString( CharSequence input) {
             return GMonthValue.makeGMonthValue(input);
         }
     }
@@ -685,13 +685,13 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts a string to a gYearMonth
      */
 
-    public static class StringToGYearMonth extends StringConverter<GYearMonthValue> {
+    public static class StringToGYearMonth extends StringConverter {
         public StringToGYearMonth(ConversionRules rules) {
             super(rules);
         }
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             return GYearMonthValue.makeGYearMonthValue(input, getConversionRules());
         }
     }
@@ -700,13 +700,13 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts a string to a gYear
      */
 
-    public static class StringToGYear extends StringConverter<GYearValue> {
+    public static class StringToGYear extends StringConverter {
         public StringToGYear(ConversionRules rules) {
             super(rules);
         }
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             return GYearValue.makeGYearValue(input, getConversionRules());
         }
     }
@@ -715,7 +715,7 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts a string to a gMonthDay
      */
 
-    public static class StringToGMonthDay extends StringConverter<GMonthDayValue> {
+    public static class StringToGMonthDay extends StringConverter {
         public static final StringToGMonthDay INSTANCE = new StringToGMonthDay();
 
         public ConversionResult convertString(CharSequence input) {
@@ -727,11 +727,11 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts a string to a gDay
      */
 
-    public static class StringToGDay extends StringConverter<GDayValue> {
+    public static class StringToGDay extends StringConverter {
         public static final StringToGDay INSTANCE = new StringToGDay();
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             return GDayValue.makeGDayValue(input);
         }
     }
@@ -740,7 +740,7 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts a string to a time
      */
 
-    public static class StringToTime extends StringConverter<TimeValue> {
+    public static class StringToTime extends StringConverter {
         public static final StringToTime INSTANCE = new StringToTime();
 
         public ConversionResult convertString(CharSequence input) {
@@ -752,10 +752,10 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts a string to a boolean
      */
 
-    public static class StringToBoolean extends StringConverter<BooleanValue> {
+    public static class StringToBoolean extends StringConverter {
         public static final StringToBoolean INSTANCE = new StringToBoolean();
 
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        public ConversionResult convertString( CharSequence input) {
             return BooleanValue.fromString(input);
         }
     }
@@ -764,10 +764,10 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts a string to hexBinary
      */
 
-    public static class StringToHexBinary extends StringConverter<HexBinaryValue> {
+    public static class StringToHexBinary extends StringConverter {
         public static final StringToHexBinary INSTANCE = new StringToHexBinary();
 
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        public ConversionResult convertString( CharSequence input) {
             try {
                 return new HexBinaryValue(input);
             } catch (XPathException e) {
@@ -780,10 +780,10 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts string to base64
      */
 
-    public static class StringToBase64Binary extends StringConverter<Base64BinaryValue> {
+    public static class StringToBase64Binary extends StringConverter {
         public static final StringToBase64Binary INSTANCE = new StringToBase64Binary();
 
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        public ConversionResult convertString( CharSequence input) {
             try {
                 return new Base64BinaryValue(input);
             } catch (XPathException e) {
@@ -797,7 +797,7 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts String to QName
      */
 
-    public static class StringToQName extends StringConverter<QNameValue> {
+    public static class StringToQName extends StringConverter {
 
         NamespaceResolver nsResolver;
 
@@ -816,8 +816,8 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
             return nsResolver;
         }
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             if (nsResolver == null) {
                 throw new UnsupportedOperationException("Cannot validate a QName without a namespace resolver");
             }
@@ -843,7 +843,7 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts String to NOTATION
      */
 
-    public static class StringToNotation extends StringConverter<NotationValue> {
+    public static class StringToNotation extends StringConverter {
 
         NamespaceResolver nsResolver;
 
@@ -863,8 +863,8 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
             return nsResolver;
         }
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             if (getNamespaceResolver() == null) {
                 throw new UnsupportedOperationException("Cannot validate a NOTATION without a namespace resolver");
             }
@@ -892,13 +892,13 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converts string to anyURI
      */
 
-    public static class StringToAnyURI extends StringConverter<AnyURIValue> {
+    public static class StringToAnyURI extends StringConverter {
         public StringToAnyURI(ConversionRules rules) {
             super(rules);
         }
 
-        /*@NotNull*/
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        
+        public ConversionResult convertString( CharSequence input) {
             if (getConversionRules().isValidURI(input)) {
                 return new AnyURIValue(input);
             } else {
@@ -908,7 +908,7 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
 
         /*@Nullable*/
         @Override
-        public ValidationFailure validate(/*@NotNull*/ CharSequence input) {
+        public ValidationFailure validate( CharSequence input) {
             if (getConversionRules().isValidURI(input)) {
                 return null;
             } else {
@@ -921,7 +921,7 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
      * Converter from string to plain union types
      */
 
-    public static class StringToUnionConverter extends StringConverter<AtomicValue> {
+    public static class StringToUnionConverter extends StringConverter {
 
         SimpleType targetType;
         ConversionRules rules;
@@ -944,9 +944,9 @@ public abstract class StringConverter<T extends AtomicValue> extends Converter<S
          * @return either an {@link net.sf.saxon.value.AtomicValue} of the appropriate type for this converter (if conversion
          * succeeded), or a {@link net.sf.saxon.type.ValidationFailure} if conversion failed.
          */
-        /*@NotNull*/
+        
         @Override
-        public ConversionResult convertString(/*@NotNull*/ CharSequence input) {
+        public ConversionResult convertString( CharSequence input) {
             try {
                 return targetType.getTypedValue(input, null, rules).head();
             } catch (ValidationException err) {

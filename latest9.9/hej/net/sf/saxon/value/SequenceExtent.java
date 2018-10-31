@@ -49,7 +49,7 @@ public class SequenceExtent<T extends Item<?>> implements GroundedValue<T> {
      * @param length The number of items in the new SequenceExtent
      */
 
-    public SequenceExtent(/*@NotNull*/ SequenceExtent<T> ext, int start, int length) {
+    public SequenceExtent(SequenceExtent<T> ext, int start, int length) {
         value = ext.value.subList(start, start+length);
     }
 
@@ -99,7 +99,7 @@ public class SequenceExtent<T extends Item<?>> implements GroundedValue<T> {
      * @deprecated since 9.9: use {@link SequenceIterator#materialize()}
      */
 
-    public static <T extends Item<?>> GroundedValue<T> makeSequenceExtent(SequenceIterator<T> iter) throws XPathException {
+    public static <T extends Item<?>> GroundedValue<? extends T> makeSequenceExtent(SequenceIterator<T> iter) throws XPathException {
         return iter.materialize();
     }
 

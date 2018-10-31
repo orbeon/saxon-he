@@ -17,6 +17,7 @@ import net.sf.saxon.value.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class implements extension functions in the
@@ -74,16 +75,20 @@ public abstract class Math {
      * The items are returned in the order of the original sequence.
      */
 
-    public static Sequence highest(XPathContext context, SequenceIterator nsv) throws XPathException {
+    public static Sequence<? extends Item<?>> highest(XPathContext context, SequenceIterator<? extends Item<?>> nsv) throws XPathException {
         double max = Double.NEGATIVE_INFINITY;
         StringToDouble converter = context.getConfiguration().getConversionRules().getStringToDoubleConverter();
         try {
-            ArrayList highest = new ArrayList();
+            List<Item<?>> highest = new ArrayList<>();
             while (true) {
-                Item it = nsv.next();
-                if (it == null) break;
+                Item<?> it = nsv.next();
+                if (it == null) {
+                    break;
+                }
                 double x = converter.stringToNumber(it.getStringValueCS());
-                if (Double.isNaN(x)) return EmptySequence.getInstance();
+                if (Double.isNaN(x)) {
+                    return EmptySequence.getInstance();
+                }
                 if (x == max) {
                     highest.add(it);
                 } else if (x > max) {
@@ -92,7 +97,7 @@ public abstract class Math {
                     highest.add(it);
                 }
             }
-            return new SequenceExtent(highest);
+            return new SequenceExtent<>(highest);
         } catch (NumberFormatException e) {
             return EmptySequence.getInstance();
         }
@@ -104,16 +109,20 @@ public abstract class Math {
      * The items are returned in the order of the original sequence.
      */
 
-    public static Sequence lowest(XPathContext context, SequenceIterator nsv) throws XPathException {
+    public static Sequence<? extends Item<?>> lowest(XPathContext context, SequenceIterator nsv) throws XPathException {
         double min = Double.POSITIVE_INFINITY;
         StringToDouble converter = context.getConfiguration().getConversionRules().getStringToDoubleConverter();
         try {
-            ArrayList lowest = new ArrayList();
+            List<Item<?>> lowest = new ArrayList<>();
             while (true) {
-                Item it = nsv.next();
-                if (it == null) break;
+                Item<?> it = nsv.next();
+                if (it == null) {
+                    break;
+                }
                 double x = converter.stringToNumber(it.getStringValueCS());
-                if (Double.isNaN(x)) return EmptySequence.getInstance();
+                if (Double.isNaN(x)) {
+                    return EmptySequence.getInstance();
+                }
                 if (x == min) {
                     lowest.add(it);
                 } else if (x < min) {
@@ -122,7 +131,7 @@ public abstract class Math {
                     lowest.add(it);
                 }
             }
-            return new SequenceExtent(lowest);
+            return new SequenceExtent<>(lowest);
         } catch (NumberFormatException e) {
             return EmptySequence.getInstance();
         }

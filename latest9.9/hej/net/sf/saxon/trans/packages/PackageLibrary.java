@@ -10,6 +10,7 @@ package net.sf.saxon.trans.packages;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.GroundedValue;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.style.*;
 import net.sf.saxon.trans.CompilerInfo;
@@ -274,7 +275,7 @@ public class PackageLibrary {
             compilation.clearParameters();
             compilation.setLibraryPackage(true);
             if (details.staticParams != null) {
-                for (Map.Entry<StructuredQName, GroundedValue> entry : details.staticParams.entrySet()) {
+                for (Map.Entry<StructuredQName, GroundedValue<? extends Item<?>>> entry : details.staticParams.entrySet()) {
                     compilation.setParameter(entry.getKey(), entry.getValue());
                 }
             }

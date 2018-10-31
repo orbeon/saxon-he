@@ -20,7 +20,7 @@ import net.sf.saxon.z.IntSet;
 /**
  * Interface supported by different implementations of an XDM array item
  */
-public interface ArrayItem extends Function<ArrayItem> {
+public interface ArrayItem extends Function {
 
     SequenceType SINGLE_ARRAY_TYPE =
             SequenceType.makeSequenceType(ArrayItemType.ANY_ARRAY_TYPE, StaticProperty.EXACTLY_ONE);

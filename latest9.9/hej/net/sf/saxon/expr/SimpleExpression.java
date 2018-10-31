@@ -82,7 +82,7 @@ public abstract class SimpleExpression extends Expression implements Callable {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
-     * @param rebindings
+     * @param rebindings variables that need to be re-bound
      */
 
     /*@NotNull*/
@@ -206,8 +206,9 @@ public abstract class SimpleExpression extends Expression implements Callable {
      * @throws XPathException if a dynamic error occurs
      */
 
-    private Sequence[] evaluateArguments(XPathContext context) throws XPathException {
-        Sequence[] iters = new Sequence[getOperanda().getNumberOfOperands()];
+    private Sequence<? extends Item<?>>[] evaluateArguments(XPathContext context) throws XPathException {
+        Sequence<? extends Item<?>>[] iters =
+                SequenceTool.makeSequenceArray(getOperanda().getNumberOfOperands());
         int i=0;
         for (Operand o : operands()) {
              iters[i++] = SequenceTool.toLazySequence(o.getChildExpression().iterate(context));

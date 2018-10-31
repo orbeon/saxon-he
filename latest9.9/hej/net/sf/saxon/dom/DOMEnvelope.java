@@ -79,13 +79,13 @@ public class DOMEnvelope implements ExternalObjectModel {
     public PJConverter getPJConverter(Class targetClass) {
         if (NodeOverNodeInfo.class.isAssignableFrom(targetClass)) {
             return new PJConverter() {
-                public Object convert(Sequence<? extends Item<?>> value, Class targetClass, XPathContext context) throws XPathException {
+                public Object convert(Sequence<? extends Item<?>> value, Class<?> targetClass, XPathContext context) throws XPathException {
                     return DOMObjectModel.convertXPathValueToObject(value, targetClass);
                 }
             };
         } else if (NodeList.class.isAssignableFrom(targetClass)) {
             return new PJConverter() {
-                public Object convert(Sequence<? extends Item<?>> value, Class targetClass, XPathContext context) throws XPathException {
+                public Object convert(Sequence<? extends Item<?>> value, Class<?> targetClass, XPathContext context) throws XPathException {
                     return DOMObjectModel.convertXPathValueToObject(value, targetClass);
                 }
             };

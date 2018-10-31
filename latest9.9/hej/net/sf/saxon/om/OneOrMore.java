@@ -19,7 +19,7 @@ import java.util.List;
  * checking in the same way as for a native XSLT/XQuery function declaring the type as xs:integer+.
  */
 
-public class OneOrMore<T extends Item> extends SequenceExtent {
+public class OneOrMore<T extends Item<?>> extends SequenceExtent<T> {
 
     /**
      * Create a sequence containing zero or one items
@@ -34,14 +34,20 @@ public class OneOrMore<T extends Item> extends SequenceExtent {
         }
     }
 
-    public static OneOrMore makeOneOrMore(Sequence sequence) throws XPathException {
-        List<Item> content = new ArrayList<Item>();
+    public OneOrMore(List<T> content) {
+        super(content);
+        if (content.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public static <T extends Item<?>> OneOrMore<T> makeOneOrMore(Sequence<T> sequence) throws XPathException {
+        List<T> content = new ArrayList<>();
         sequence.iterate().forEachOrFail(content::add);
         if (content.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        Item[] array = content.toArray(new Item[1]);
-        return new OneOrMore(array);
+        return new OneOrMore<>(content);
     }
 
 }

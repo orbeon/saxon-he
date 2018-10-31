@@ -39,12 +39,20 @@ import java.util.*;
  * second phase occurs when any of the methods itemAt(), reduce(), or subsequence()
  * is called.</p>
  */
-public class Chain<T extends Item<?>> implements GroundedValue<T> {
+public class Chain implements GroundedValue<Item<?>> {
 
-    private List<GroundedValue<T>> children = new ArrayList<>();
-    private List<T> extent = null;
+    private List<GroundedValue<? extends Item<?>>> children = new ArrayList<>();
+    private List<Item<?>> extent = null;
 
-    public Chain(List<GroundedValue<T>> children) {
+    /**
+     * Create a chain from a list of grounded values
+     * @param children the list of grounded values. The implementation may or may not copy
+     *                 this list, and it may or may not modify the list during execution
+     *                 of the {@link #append(Item)} method. The caller must not attempt to
+     *                 modify the list after return from this constructor.
+     */
+
+    public Chain(List<GroundedValue<? extends Item<?>>> children) {
         this.children = children;
 
         int size = 0;
@@ -63,10 +71,10 @@ public class Chain<T extends Item<?>> implements GroundedValue<T> {
         }
         if (copy) {
             this.children = new ArrayList<>(size);
-            for (GroundedValue<T> gv : children) {
+            for (GroundedValue<? extends Item<?>> gv : children) {
                 if (gv instanceof Chain) {
                     if (((Chain) gv).children.size() < 30) {
-                        this.children.addAll(((Chain<T>) gv).children);
+                        this.children.addAll(((Chain) gv).children);
                     } else {
                         this.children.add(gv);
                     }
@@ -79,9 +87,9 @@ public class Chain<T extends Item<?>> implements GroundedValue<T> {
         }
     }
 
-    public T head() {
-        for (GroundedValue<T> seq : children) {
-            T head = seq.head();
+    public Item<?> head() {
+        for (GroundedValue<? extends Item<?>> seq : children) {
+            Item<?> head = seq.head();
             if (head != null) {
                 return head;
             }
@@ -89,11 +97,11 @@ public class Chain<T extends Item<?>> implements GroundedValue<T> {
         return null;
     }
 
-    public UnfailingIterator<T> iterate() {
+    public UnfailingIterator<Item<?>> iterate() {
         if (extent != null) {
             return new net.sf.saxon.tree.iter.ListIterator<>(extent);
         } else {
-            return new ChainIterator<>(this);
+            return new ChainIterator(this);
         }
     }
 
@@ -105,13 +113,13 @@ public class Chain<T extends Item<?>> implements GroundedValue<T> {
      */
 
 
-    public void append(T item) {
+    public void append(Item item) {
         if (extent != null) {
             throw new IllegalStateException();
         }
         if (item != null) {
             //noinspection unchecked
-            children.add((GroundedValue<T>)item);
+            children.add((GroundedValue<? extends Item<?>>)item);
         }
     }
 
@@ -132,7 +140,7 @@ public class Chain<T extends Item<?>> implements GroundedValue<T> {
      * @param n the index of the required item, with 0 representing the first item in the sequence
      * @return the n'th item if it exists, or null otherwise
      */
-    public T itemAt(int n) {
+    public Item<?> itemAt(int n) {
         // TODO: avoid consolidating the chain beyond the required item
         consolidate();
         if (n >= 0 && n < extent.size()) {
@@ -154,7 +162,7 @@ public class Chain<T extends Item<?>> implements GroundedValue<T> {
      *               of the sequence
      * @return the required subsequence.
      */
-    public GroundedValue<T> subsequence(int start, int length) {
+    public GroundedValue<Item<?>> subsequence(int start, int length) {
         consolidate();
         int newStart;
         if (start < 0) {
@@ -239,30 +247,30 @@ public class Chain<T extends Item<?>> implements GroundedValue<T> {
      *
      * @return the simplified sequence
      */
-    public GroundedValue<T> reduce() {
+    public GroundedValue<Item<?>> reduce() {
         consolidate();
         return SequenceExtent.makeSequenceExtent(extent);
     }
 
-    private static class ChainIterator<T extends Item<?>> implements UnfailingIterator<T>, GroundedIterator<T> {
+    private static class ChainIterator implements UnfailingIterator<Item<?>>, GroundedIterator<Item<?>> {
 
         private class ChainPosition {
-            Chain<T> chain;
+            Chain chain;
             int offset;
 
-            public ChainPosition(Chain<T> chain, int offset) {
+            public ChainPosition(Chain chain, int offset) {
                 this.chain = chain;
                 this.offset = offset;
             }
         }
 
-        private Queue<UnfailingIterator<T>> queue = new LinkedList<>();
+        private Queue<UnfailingIterator<Item<?>>> queue = new LinkedList<>();
 
         private Stack<ChainPosition> stack;
 
-        private Chain<T> thisChain;
+        private Chain thisChain;
 
-        public ChainIterator(Chain<T> thisChain) {
+        public ChainIterator(Chain thisChain) {
             this.thisChain = thisChain;
             stack = new Stack<>();
             stack.push(new ChainPosition(thisChain, 0));
@@ -277,14 +285,14 @@ public class Chain<T extends Item<?>> implements GroundedValue<T> {
          * @return the next item, or null if there are no more items.
          */
 
-        public T next() {
+        public Item<?> next() {
 
             // If there are iterators on the queue waiting to be processed, then take the first
             // item from the first iterator on the queue.
             while (!queue.isEmpty()) {
-                UnfailingIterator<T> ui = queue.peek();
+                UnfailingIterator<Item<?>> ui = queue.peek();
                 while (ui != null) {
-                    T current = ui.next();
+                    Item<?> current = ui.next();
                     if (current != null) {
                         return current;
                     } else {
@@ -305,13 +313,13 @@ public class Chain<T extends Item<?>> implements GroundedValue<T> {
                     stack.pop();
                     continue;
                 }
-                GroundedValue<T> gv = cp.chain.children.get(cp.offset++);
+                GroundedValue<? extends Item<?>> gv = cp.chain.children.get(cp.offset++);
                 if (gv instanceof Chain) {
                     stack.push(new ChainPosition((Chain) gv, 0));
                 } else if (gv instanceof Item) {
-                    return (T)gv;
+                    return (Item<?>)gv;
                 } else {
-                    queue.offer(gv.iterate());
+                    queue.offer((UnfailingIterator<Item<?>>)gv.iterate());
                     return next();
                 }
             }
@@ -346,7 +354,7 @@ public class Chain<T extends Item<?>> implements GroundedValue<T> {
          * @return the corresponding Value
          */
 
-        public GroundedValue<T> materialize() {
+        public GroundedValue<Item<?>> materialize() {
             return thisChain;
         }
 
@@ -359,8 +367,8 @@ public class Chain<T extends Item<?>> implements GroundedValue<T> {
          *                        which cause evaluation of expressions while materializing the value.
          */
 
-        public GroundedValue<T> getResidue() throws XPathException {
-            return new SequenceExtent<T>(this);
+        public GroundedValue<Item<?>> getResidue() throws XPathException {
+            return new SequenceExtent<>(this);
         }
     }
 

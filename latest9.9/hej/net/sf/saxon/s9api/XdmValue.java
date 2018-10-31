@@ -377,7 +377,7 @@ public class XdmValue implements Iterable<XdmItem> {
     public XdmValue documentOrder() throws SaxonApiException {
         try {
             SequenceIterator<? extends Item<?>> iter = value.iterate();
-            SequenceIterator<? extends Item<?>> sorted = new DocumentOrderIterator(iter, GlobalOrderComparer.getInstance());
+            SequenceIterator<NodeInfo> sorted = new DocumentOrderIterator(iter, GlobalOrderComparer.getInstance());
             return XdmValue.fromGroundedValue(sorted.materialize());
         } catch (XPathException e) {
             throw new SaxonApiException(e);

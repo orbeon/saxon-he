@@ -82,7 +82,7 @@ public class DOM4JObjectModel extends TreeModel implements ExternalObjectModel {
     public PJConverter getPJConverter(Class targetClass) {
         if (isRecognizedNodeClass(targetClass)) {
             return new PJConverter() {
-                public Object convert(Sequence<? extends Item<?>> value, Class targetClass, XPathContext context) throws XPathException {
+                public Object convert(Sequence<? extends Item<?>> value, Class<?> targetClass, XPathContext context) throws XPathException {
                     return convertXPathValueToObject(value, targetClass);
                 }
             };

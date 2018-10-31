@@ -24,7 +24,7 @@ import javax.xml.transform.Source;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.function.Predicate;
-import java.util.stream.StreamSupport;
+import java.util.stream.Stream;
 
 /**
  * This class represents a node in the XDM data model. A Node is an {@link XdmItem}, and is therefore an
@@ -522,7 +522,7 @@ public class XdmNode extends XdmItem {
      * @since 9.9
      */
     public XdmStream<XdmNode> stream() {
-        return new XdmStream(StreamSupport.stream(spliterator(), false));
+        return new XdmStream<>(Stream.of(this));
     }
 
 

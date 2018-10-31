@@ -446,11 +446,8 @@ public class JDOMNodeWrapper extends AbstractNodeWrapper implements SiblingCount
         } else {
             descendants = ((Parent) node).getDescendants();
         }
-        NodeWrappingFunction wrappingFunct = new NodeWrappingFunction<Content, NodeInfo>() {
-            public NodeInfo wrap(Content node) {
-                return makeWrapper(node, getTreeInfo());
-            }
-        };
+        NodeWrappingFunction wrappingFunct =
+                (NodeWrappingFunction<Content, NodeInfo>) node -> makeWrapper(node, getTreeInfo());
         AxisIterator wrappedDescendants = new DescendantWrappingIterator(descendants, wrappingFunct);
 
         if (includeSelf && nodeTest.matchesNode(this)) {

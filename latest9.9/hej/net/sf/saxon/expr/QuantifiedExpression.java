@@ -286,14 +286,14 @@ public class QuantifiedExpression extends Assignation {
 
         // First create an iteration of the base sequence.
 
-        SequenceIterator base = getSequence().iterate(context);
+        SequenceIterator<? extends Item<?>> base = getSequence().iterate(context);
 
         // Now test to see if some or all of the tests are true. The same
         // logic is used for the SOME and EVERY operators
 
         final boolean some = operator == Token.SOME;
         int slot = getLocalSlotNumber();
-        Item it;
+        Item<?> it;
         while ((it = base.next()) != null) {
             context.setLocalVariable(slot, it);
             if (some == getAction().effectiveBooleanValue(context)) {
@@ -338,7 +338,7 @@ public class QuantifiedExpression extends Assignation {
 
     public String toString() {
         return (operator == Token.SOME ? "some" : "every") + " $" + getVariableEQName() +
-                " in " + getSequence().toString() + " satisfies " +
+                " in " + getSequence() + " satisfies " +
                 ExpressionTool.parenthesize(getAction());
     }
 

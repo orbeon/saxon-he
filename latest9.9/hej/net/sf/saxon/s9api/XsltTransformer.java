@@ -256,7 +256,7 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
      */
 
     public XdmValue getParameter(QName name) {
-        Sequence oval = parameters.get(name.getStructuredQName());
+        Sequence<? extends Item<?>> oval = parameters.get(name.getStructuredQName());
         return oval == null ? null : XdmValue.wrap(oval);
     }
 

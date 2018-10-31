@@ -43,7 +43,7 @@ import java.util.*;
 
 public abstract class JPConverter {
 
-    private static HashMap<Class, JPConverter> converterMap = new HashMap<Class, JPConverter>();
+    private static HashMap<Class<?>, JPConverter> converterMap = new HashMap<>();
 
     static {
         converterMap.put(XdmValue.class, new FromXdmValue(AnyItemType.getInstance(), StaticProperty.ALLOWS_ZERO_OR_MORE));
@@ -94,7 +94,7 @@ public abstract class JPConverter {
 
     }
 
-    private static Map<Class, ItemType> itemTypeMap = new HashMap<Class, ItemType>();
+    private static Map<Class<?>, ItemType> itemTypeMap = new HashMap<>();
 
     static {
         itemTypeMap.put(BooleanValue.class, BuiltInAtomicType.BOOLEAN);
@@ -128,7 +128,7 @@ public abstract class JPConverter {
         itemTypeMap.put(UntypedAtomicValue.class, BuiltInAtomicType.UNTYPED_ATOMIC);
     }
 
-    private static Map<Class, Integer> cardinalityMap = new HashMap<Class, Integer>();
+    private static Map<Class<?>, Integer> cardinalityMap = new HashMap<>();
 
     static {
         cardinalityMap.put(Sequence.class, StaticProperty.ALLOWS_ZERO_OR_MORE);
@@ -188,7 +188,7 @@ public abstract class JPConverter {
         if (Source.class.isAssignableFrom(javaClass) && !DOMSource.class.isAssignableFrom(javaClass)) {
             return FromSource.INSTANCE;
         }
-        for (Map.Entry<Class, JPConverter> e : converterMap.entrySet()) {
+        for (Map.Entry<Class<?>, JPConverter> e : converterMap.entrySet()) {
             if (e.getKey().isAssignableFrom(javaClass)) {
                 return e.getValue();
             }
@@ -224,7 +224,7 @@ public abstract class JPConverter {
      */
 
     /*@Nullable*/
-    public abstract Sequence convert(Object object, XPathContext context) throws XPathException;
+    public abstract Sequence<? extends Item<?>> convert(Object object, XPathContext context) throws XPathException;
 
     /**
      * Get the item type of the XPath value that will result from the conversion
@@ -248,7 +248,7 @@ public abstract class JPConverter {
     public static class FromObject extends JPConverter {
         public static final FromObject INSTANCE = new FromObject();
 
-        public Sequence convert(Object object, XPathContext context) throws XPathException {
+        public Sequence<? extends Item<?>> convert(Object object, XPathContext context) throws XPathException {
             Class theClass = object.getClass();
             JPConverter instanceConverter = allocate(theClass, null, context.getConfiguration());
             if (instanceConverter instanceof FromObject) {
@@ -270,7 +270,7 @@ public abstract class JPConverter {
     public static class FromSequenceIterator extends JPConverter {
         public static final FromSequenceIterator INSTANCE = new FromSequenceIterator();
 
-        public Sequence convert(Object object, XPathContext context) throws XPathException {
+        public Sequence<? extends Item<?>> convert(Object object, XPathContext context) throws XPathException {
             return ((SequenceIterator<Item<?>>)object).materialize();
         }
 
@@ -293,7 +293,7 @@ public abstract class JPConverter {
             this.cardinality = cardinality;
         }
 
-        public Sequence convert(Object object, XPathContext context) throws XPathException {
+        public Sequence<? extends Item<?>> convert(Object object, XPathContext context) throws XPathException {
             return ((XdmValue)object).getUnderlyingValue();
         }
 
@@ -323,7 +323,7 @@ public abstract class JPConverter {
         public Sequence<? extends Item<?>> convert(Object object, XPathContext context) throws XPathException {
             return object instanceof Closure ?
                     ((Closure) object).iterate().materialize() :
-                    (Sequence) object;
+                    (Sequence<? extends Item<?>>) object;
         }
 
         public ItemType getItemType() {
@@ -339,7 +339,7 @@ public abstract class JPConverter {
     public static class FromString extends JPConverter {
         public static final FromString INSTANCE = new FromString();
 
-        public Sequence convert(Object object, XPathContext context) throws XPathException {
+        public StringValue convert(Object object, XPathContext context) throws XPathException {
             return new StringValue((String) object);
         }
 
@@ -352,7 +352,7 @@ public abstract class JPConverter {
     public static class FromBoolean extends JPConverter {
         public static final FromBoolean INSTANCE = new FromBoolean();
 
-        public Sequence convert(Object object, XPathContext context) throws XPathException {
+        public BooleanValue convert(Object object, XPathContext context) throws XPathException {
             return BooleanValue.get((Boolean) object);
         }
 
@@ -365,7 +365,7 @@ public abstract class JPConverter {
     public static class FromDouble extends JPConverter {
         public static final FromDouble INSTANCE = new FromDouble();
 
-        public Sequence convert(Object object, XPathContext context) throws XPathException {
+        public DoubleValue convert(Object object, XPathContext context) throws XPathException {
             return new DoubleValue((Double) object);
         }
 
@@ -377,7 +377,7 @@ public abstract class JPConverter {
     public static class FromFloat extends JPConverter {
         public static final FromFloat INSTANCE = new FromFloat();
 
-        public Sequence convert(Object object, XPathContext context) throws XPathException {
+        public FloatValue convert(Object object, XPathContext context) throws XPathException {
             return new FloatValue((Float) object);
         }
 
@@ -558,13 +558,13 @@ public abstract class JPConverter {
 
         public static final FromCollection INSTANCE = new FromCollection();
 
-        public Sequence convert(Object object, XPathContext context) throws XPathException {
-            List<Item> list = new ArrayList<Item>(((Collection) object).size());
+        public Sequence<? extends Item<?>> convert(Object object, XPathContext context) throws XPathException {
+            List<Item<?>> list = new ArrayList<>(((Collection) object).size());
             int a = 0;
             for (Object obj : (Collection) object) {
                 JPConverter itemConverter = allocate(obj.getClass(), null, context.getConfiguration());
                 try {
-                    Item item = SequenceTool.asItem(itemConverter.convert(obj, context));
+                    Item<?> item = SequenceTool.asItem(itemConverter.convert(obj, context));
                     if (item != null) {
                         list.add(item);
                     }
@@ -575,7 +575,7 @@ public abstract class JPConverter {
                             SaxonErrorCode.SXJE0051);
                 }
             }
-            return new SequenceExtent(list);
+            return new SequenceExtent<>(list);
         }
 
         public ItemType getItemType() {
@@ -618,12 +618,12 @@ public abstract class JPConverter {
 
         public static final FromLongArray INSTANCE = new FromLongArray();
 
-        public Sequence convert(Object object, XPathContext context) throws XPathException {
-            Item[] array = new Item[((long[]) object).length];
+        public Sequence<? extends Item<?>> convert(Object object, XPathContext context) throws XPathException {
+            Item<?>[] array = new Item[((long[]) object).length];
             for (int i = 0; i < array.length; i++) {
                 array[i] = Int64Value.makeDerived(((long[]) object)[i], BuiltInAtomicType.LONG);
             }
-            return new SequenceExtent(array);
+            return new SequenceExtent<>(array);
         }
 
         public ItemType getItemType() {
@@ -640,12 +640,12 @@ public abstract class JPConverter {
 
         public static final FromIntArray INSTANCE = new FromIntArray();
 
-        public Sequence convert(Object object, XPathContext context) throws XPathException {
-            Item[] array = new Item[((int[]) object).length];
+        public Sequence<? extends Item<?>> convert(Object object, XPathContext context) throws XPathException {
+            Item<?>[] array = new Item[((int[]) object).length];
             for (int i = 0; i < array.length; i++) {
                 array[i] = Int64Value.makeDerived(((int[]) object)[i], BuiltInAtomicType.INT);
             }
-            return new SequenceExtent(array);
+            return new SequenceExtent<>(array);
         }
 
         public ItemType getItemType() {
@@ -662,12 +662,12 @@ public abstract class JPConverter {
 
         public static final FromShortArray INSTANCE = new FromShortArray();
 
-        public Sequence convert(Object object, XPathContext context) throws XPathException {
-            Item[] array = new Item[((short[]) object).length];
+        public Sequence<? extends Item<?>> convert(Object object, XPathContext context) throws XPathException {
+            Item<?>[] array = new Item[((short[]) object).length];
             for (int i = 0; i < array.length; i++) {
                 array[i] = Int64Value.makeDerived(((short[]) object)[i], BuiltInAtomicType.SHORT);
             }
-            return new SequenceExtent(array);
+            return new SequenceExtent<>(array);
         }
 
         public ItemType getItemType() {
@@ -686,12 +686,12 @@ public abstract class JPConverter {
 
         public static final FromByteArray INSTANCE = new FromByteArray();
 
-        public Sequence convert(Object object, XPathContext context) throws XPathException {
-            Item[] array = new Item[((byte[]) object).length];
+        public Sequence<? extends Item<?>> convert(Object object, XPathContext context) throws XPathException {
+            Item<?>[] array = new Item[((byte[]) object).length];
             for (int i = 0; i < array.length; i++) {
                 array[i] = Int64Value.makeDerived(255 & (int) ((byte[]) object)[i], BuiltInAtomicType.UNSIGNED_BYTE);
             }
-            return new SequenceExtent(array);
+            return new SequenceExtent<>(array);
         }
 
         public ItemType getItemType() {
@@ -722,12 +722,12 @@ public abstract class JPConverter {
 
         public static final FromDoubleArray INSTANCE = new FromDoubleArray();
 
-        public Sequence convert(Object object, XPathContext context) throws XPathException {
-            Item[] array = new Item[((double[]) object).length];
+        public Sequence<? extends Item<?>> convert(Object object, XPathContext context) throws XPathException {
+            Item<?>[] array = new Item[((double[]) object).length];
             for (int i = 0; i < array.length; i++) {
                 array[i] = new DoubleValue(((double[]) object)[i]);
             }
-            return new SequenceExtent(array);
+            return new SequenceExtent<>(array);
         }
 
         public ItemType getItemType() {
@@ -744,12 +744,12 @@ public abstract class JPConverter {
 
         public static final FromFloatArray INSTANCE = new FromFloatArray();
 
-        public Sequence convert(Object object, XPathContext context) throws XPathException {
-            Item[] array = new Item[((float[]) object).length];
+        public Sequence<? extends Item<?>> convert(Object object, XPathContext context) throws XPathException {
+            Item<?>[] array = new Item[((float[]) object).length];
             for (int i = 0; i < array.length; i++) {
                 array[i] = new DoubleValue(((float[]) object)[i]);
             }
-            return new SequenceExtent(array);
+            return new SequenceExtent<>(array);
         }
 
         public ItemType getItemType() {
@@ -766,12 +766,12 @@ public abstract class JPConverter {
 
         public static final FromBooleanArray INSTANCE = new FromBooleanArray();
 
-        public Sequence convert(Object object, XPathContext context) throws XPathException {
-            Item[] array = new Item[((boolean[]) object).length];
+        public Sequence<? extends Item<?>> convert(Object object, XPathContext context) throws XPathException {
+            Item<?>[] array = new Item[((boolean[]) object).length];
             for (int i = 0; i < array.length; i++) {
                 array[i] = BooleanValue.get(((boolean[]) object)[i]);
             }
-            return new SequenceExtent(array);
+            return new SequenceExtent<>(array);
         }
 
         public ItemType getItemType() {
@@ -792,14 +792,14 @@ public abstract class JPConverter {
             this.itemConverter = itemConverter;
         }
 
-        public Sequence convert(Object object, XPathContext context) throws XPathException {
+        public Sequence<? extends Item<?>> convert(Object object, XPathContext context) throws XPathException {
             Object[] arrayObject = (Object[]) object;
-            List<Item> newArray = new ArrayList<Item>(arrayObject.length);
+            List<Item<?>> newArray = new ArrayList<>(arrayObject.length);
             int a = 0;
             for (Object member : arrayObject) {
                 if (member != null) {
                     try {
-                        Item newItem = SequenceTool.asItem(itemConverter.convert(member, context));
+                        Item<?> newItem = SequenceTool.asItem(itemConverter.convert(member, context));
                         if (newItem != null) {
                             newArray.add(newItem);
                         }
@@ -813,7 +813,7 @@ public abstract class JPConverter {
                     throw new XPathException("Returned array contains null values: cannot convert to items", SaxonErrorCode.SXJE0051);
                 }
             }
-            return new SequenceExtent(newArray);
+            return new SequenceExtent<>(newArray);
         }
 
         public ItemType getItemType() {

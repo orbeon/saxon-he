@@ -629,7 +629,7 @@ public class Processor implements Configuration.ApiProvider {
                         /*@NotNull*/ XPathContext context, Sequence[] arguments) throws XPathException {
                     XdmValue[] args = new XdmValue[arguments.length];
                     for (int i = 0; i < args.length; i++) {
-                        Sequence val = arguments[i].materialize();
+                        GroundedValue<? extends Item<?>> val = (GroundedValue<? extends Item<?>>)arguments[i].materialize();
                         args[i] = XdmValue.wrap(val);
                     }
                     try {

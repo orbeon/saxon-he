@@ -229,7 +229,7 @@ public class JSONSerializer extends SequenceWriter implements ReceiverWithOutput
         return sw.toString().trim();
     }
 
-    private void writeSequence(GroundedValue seq) throws XPathException {
+    private void writeSequence(GroundedValue<? extends Item<?>> seq) throws XPathException {
         int len = seq.getLength();
         if (len == 0) {
             emitter.writeAtomicValue(null);

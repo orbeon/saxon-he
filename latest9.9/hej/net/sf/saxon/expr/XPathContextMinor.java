@@ -316,8 +316,7 @@ public class XPathContextMinor implements XPathContext {
 
     public void makeStackFrameMutable() {
         if (stackFrame == StackFrame.EMPTY) {
-            //noinspection unchecked
-            stackFrame = new StackFrame(null, new Sequence[0]);
+            stackFrame = new StackFrame(null, SequenceTool.makeSequenceArray(0));
         }
     }
 
@@ -341,17 +340,6 @@ public class XPathContextMinor implements XPathContext {
         // value as it is calculated.
         
         value = value.makeRepeatable();
-        //value = value.materialize();
-
-//        String val = "*lazy*";
-//        if (value instanceof GroundedValue) {
-//            val = Err.depictSequence(value).toString();
-//        }
-//        System.err.println("set var " +
-//                                   getStackFrame().getStackFrameMap().getVariableMap().get(slotNumber) +
-//                                   " := " +
-//                                   val +
-//                                   " -- " + value.getClass().getSimpleName());
         try {
             stackFrame.slots[slotNumber] = value;
         } catch (ArrayIndexOutOfBoundsException e) {

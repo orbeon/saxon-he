@@ -75,7 +75,7 @@ public class Innermost extends SystemFunction {
 
     public SequenceIterator<? extends NodeInfo> innermost(SequenceIterator<? extends NodeInfo> in) throws XPathException {
         if (!presorted) {
-            in = new DocumentOrderIterator<>(in, GlobalOrderComparer.getInstance());
+            in = new DocumentOrderIterator(in, GlobalOrderComparer.getInstance());
         }
         return new InnermostIterator(in);
     }

@@ -103,7 +103,7 @@ public interface AtomicType extends SimpleType, PlainType {
      * @return a StringConverter to do the conversion, or null if no built-in converter is available.
      */
 
-    StringConverter<? extends AtomicValue> getStringConverter(ConversionRules rules);
+    StringConverter getStringConverter(ConversionRules rules);
 
     /**
      * Get extra diagnostic information about why a supplied item does not conform to this

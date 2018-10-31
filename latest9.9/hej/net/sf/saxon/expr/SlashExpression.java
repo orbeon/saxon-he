@@ -37,7 +37,7 @@ import java.util.Stack;
  */
 
 public class SlashExpression extends BinaryExpression
-        implements ContextSwitchingExpression, ContextMappingFunction {
+        implements ContextSwitchingExpression {
 
     boolean contextFree;
 
@@ -410,8 +410,6 @@ public class SlashExpression extends BinaryExpression
                 contextFree = true;
             }
         }
-
-
 
         if (getStart() instanceof RootExpression && getStep().isCallOn(KeyFn.class)) {
             // This happens after optimizations to convert filter expressions to key() calls
@@ -919,23 +917,25 @@ public class SlashExpression extends BinaryExpression
         // this is achieved by wrapping the path expression in a DocumentSorter
 
         if (contextFree) {
-            return new MappingIterator<>((SequenceIterator<? extends NodeInfo>)getStart().iterate(context),
-                                         ((AxisExpression) getRhsExpression())::iterate);
+            return new MappingIterator<>(
+                    getStart().iterate(context),
+                    (MappingFunction<Item<?>, NodeInfo>) item ->
+                            ((AxisExpression) getRhsExpression()).iterate((NodeInfo)item));
         }
 
         XPathContext context2 = context.newMinorContext();
         context2.trackFocus(getStart().iterate(context));
-        return new ContextMappingIterator<Item<?>>(this, context2);
+        return new ContextMappingIterator<Item<?>>(c1 -> getStep().iterate(c1), context2);
     }
 
-    /**
-     * Mapping function, from a node returned by the start iteration, to a sequence
-     * returned by the child.
-     */
-
-    public SequenceIterator map(XPathContext context) throws XPathException {
-        return getStep().iterate(context);
-    }
+//    /**
+//     * Mapping function, from a node returned by the start iteration, to a sequence
+//     * returned by the child.
+//     */
+//
+//    public SequenceIterator<? extends Item<?>> map(XPathContext context) throws XPathException {
+//        return getStep().iterate(context);
+//    }
 
     /**
      * Diagnostic print of expression structure. The abstract expression tree

@@ -22,6 +22,5 @@ public interface AxisIterator extends UnfailingIterator<NodeInfo> {
 
     NodeInfo next();
 
-
 }
 

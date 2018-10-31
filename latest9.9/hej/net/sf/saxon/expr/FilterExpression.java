@@ -118,7 +118,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      * Get the static type of the expression as a UType, following precisely the type
      * inference rules defined in the XSLT 3.0 specification.
      *
-     * @param contextItemType
+     * @param contextItemType the static type of the context item
      * @return the static item type of the expression according to the XSLT 3.0 defined rules
      */
     @Override
@@ -331,7 +331,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
             AxisExpression fs = new AxisExpression(AxisInfo.FOLLOWING_SIBLING, test);
             setFilter(SystemFunction.makeCall("empty", getRetainedStaticContext(), fs));
             if (tracing) {
-                opt.trace(config, "Replaced [last()] predicate by test for following-sibling", this);
+                Optimizer.trace(config, "Replaced [last()] predicate by test for following-sibling", this);
             }
         }
 
@@ -452,9 +452,9 @@ public final class FilterExpression extends BinaryExpression implements ContextS
             }
         }
 
-        final Sequence sequence = tryEarlyEvaluation(visitor);
+        final Sequence<? extends Item<?>> sequence = tryEarlyEvaluation(visitor);
         if (sequence != null) {
-            GroundedValue value = sequence.materialize();
+            GroundedValue<? extends Item<?>> value = sequence.materialize();
             return Literal.makeLiteral(value, this);
         }
 
@@ -507,7 +507,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
     }
 
 
-    private Sequence<? extends Item<?>> tryEarlyEvaluation(ExpressionVisitor visitor) throws XPathException {
+    private Sequence<? extends Item<?>> tryEarlyEvaluation(ExpressionVisitor visitor) {
         // Attempt early evaluation of a filter expression if the base sequence is constant and the
         // filter depends only on the context. (This can't be done if, for example, the predicate uses
         // local variables, even variables declared within the predicate)
@@ -550,7 +550,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      * @return an expression that wraps the given expression in a call to the fn:boolean() function
      */
 
-    private static Expression forceToBoolean(Expression in) throws XPathException {
+    private static Expression forceToBoolean(Expression in) {
         if (in.getItemType().getPrimitiveType() == StandardNames.XS_BOOLEAN) {
             return in;
         }
@@ -1071,17 +1071,17 @@ public final class FilterExpression extends BinaryExpression implements ContextS
                             if (getBase() instanceof VariableReference) {
                                 Sequence baseVal = ((VariableReference) getBase()).evaluateVariable(context);
                                 if (baseVal instanceof MemoClosure) {
-                                    Item m = ((MemoClosure) baseVal).itemAt(pos - 1);
+                                    Item<?> m = ((MemoClosure) baseVal).itemAt(pos - 1);
                                     return m == null ? EmptyIterator.emptyIterator() : m.iterate();
                                 } else {
-                                    Item m = baseVal.materialize().itemAt(pos - 1);
+                                    Item<?> m = baseVal.materialize().itemAt(pos - 1);
                                     return m == null ? EmptyIterator.emptyIterator() : m.iterate();
                                 }
                             } else if (getBase() instanceof Literal) {
-                                Item i = ((Literal) getBase()).getValue().itemAt(pos - 1);
-                                return i == null ? EmptyIterator.getInstance() : i.iterate();
+                                Item<?> i = ((Literal) getBase()).getValue().itemAt(pos - 1);
+                                return i == null ? EmptyIterator.emptyIterator() : i.iterate();
                             } else {
-                                SequenceIterator baseIter = getBase().iterate(context);
+                                SequenceIterator<? extends Item<?>> baseIter = getBase().iterate(context);
                                 return SubsequenceIterator.make(baseIter, pos, pos);
                             }
                         }
@@ -1120,7 +1120,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
 
         // get an iterator over the base nodes
 
-        SequenceIterator baseIter = getBase().iterate(context);
+        SequenceIterator<? extends Item<?>> baseIter = getBase().iterate(context);
 
         // quick exit for an empty sequence
 
@@ -1129,9 +1129,9 @@ public final class FilterExpression extends BinaryExpression implements ContextS
         }
 
         if (filterIsPositional && !filterIsSingletonBoolean) {
-            return new FilterIterator(baseIter, getFilter(), context);
+            return new FilterIterator<>(baseIter, getFilter(), context);
         } else {
-            return new FilterIterator.NonNumeric(baseIter, getFilter(), context);
+            return new FilterIterator.NonNumeric<>(baseIter, getFilter(), context);
         }
 
     }

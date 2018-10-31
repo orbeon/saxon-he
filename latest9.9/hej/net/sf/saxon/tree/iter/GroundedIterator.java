@@ -50,6 +50,6 @@ public interface GroundedIterator<T extends Item<?>> extends SequenceIterator<T>
      *                        which cause evaluation of expressions while materializing the value.
      */
 
-    GroundedValue<? extends Item<?>> getResidue() throws XPathException;
+    GroundedValue<T> getResidue() throws XPathException;
 }
 

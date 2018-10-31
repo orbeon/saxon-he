@@ -7,6 +7,7 @@
 
 package net.sf.saxon.expr.instruct;
 
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
@@ -23,7 +24,7 @@ import java.util.Map;
 
 public class ParameterSet {
     private StructuredQName[] keys;
-    private Sequence[] values;
+    private Sequence<? extends Item<?>>[] values;
     private boolean[] typeChecked;
     private int used = 0;
 
@@ -45,7 +46,7 @@ public class ParameterSet {
 
     public ParameterSet(int capacity) {
         keys = new StructuredQName[capacity];
-        values = new Sequence[capacity];
+        values = (Sequence<? extends Item<?>>[])new Sequence[capacity];
         typeChecked = new boolean[capacity];
     }
 
@@ -54,10 +55,10 @@ public class ParameterSet {
      * @param map the supplied map
      */
 
-    public ParameterSet(Map<StructuredQName, Sequence> map) {
+    public ParameterSet(Map<StructuredQName, Sequence<? extends Item<?>>> map) {
         this(map.size());
         int i = 0;
-        for (Map.Entry<StructuredQName, Sequence> entry : map.entrySet()) {
+        for (Map.Entry<StructuredQName, Sequence<? extends Item<?>>> entry : map.entrySet()) {
             keys[i] = entry.getKey();
             values[i] = entry.getValue();
             typeChecked[i++] = false;
@@ -87,7 +88,7 @@ public class ParameterSet {
      * @param checked True if the caller has done static type checking against the required type
      */
 
-    public void put(StructuredQName id, Sequence value, boolean checked) {
+    public void put(StructuredQName id, Sequence<? extends Item<?>> value, boolean checked) {
         for (int i = 0; i < used; i++) {
             if (keys[i].equals(id)) {
                 values[i] = value;
@@ -138,7 +139,7 @@ public class ParameterSet {
      * @return the value of the parameter at that position
      */
 
-    public Sequence getValue(int index) {
+    public Sequence<? extends Item<?>> getValue(int index) {
         return values[index];
     }
 

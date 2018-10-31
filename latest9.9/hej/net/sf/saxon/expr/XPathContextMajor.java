@@ -16,10 +16,7 @@ import net.sf.saxon.expr.sort.GroupIterator;
 import net.sf.saxon.lib.DelegatingErrorListener;
 import net.sf.saxon.lib.StandardURIResolver;
 import net.sf.saxon.lib.UnfailingErrorListener;
-import net.sf.saxon.om.FocusTrackingIterator;
-import net.sf.saxon.om.Item;
-import net.sf.saxon.om.Sequence;
-import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.om.*;
 import net.sf.saxon.regex.RegexIterator;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.trans.XsltController;
@@ -310,7 +307,7 @@ public class XPathContextMajor extends XPathContextMinor {
                         "Attempting to set more local variables (" + variables.length +
                                 ") than the stackframe can accommodate (" + map.getNumberOfVariables() + ")");
             }
-            stackFrame.slots = new Sequence[map.getNumberOfVariables()];
+            stackFrame.slots = (Sequence<? extends Item<?>>[])new Sequence[map.getNumberOfVariables()];
             System.arraycopy(variables, 0, stackFrame.slots, 0, variables.length);
         }
     }
@@ -326,7 +323,8 @@ public class XPathContextMajor extends XPathContextMinor {
     public void resetStackFrameMap(SlotManager map, int numberOfParams) {
         stackFrame.map = map;
         if (stackFrame.slots.length != map.getNumberOfVariables()) {
-            Sequence[] v2 = new Sequence[map.getNumberOfVariables()];
+            Sequence<? extends Item<?>>[] v2 =
+                    (Sequence<? extends Item<?>>[])new Sequence[map.getNumberOfVariables()];
             System.arraycopy(stackFrame.slots, 0, v2, 0, numberOfParams);
             stackFrame.slots = v2;
         } else {
@@ -376,7 +374,7 @@ public class XPathContextMajor extends XPathContextMinor {
      * @param variables the parameter to be supplied to the user function
      */
 
-    public void requestTailCall(TailCallLoop.TailCallInfo targetFn, Sequence[] variables) {
+    public void requestTailCall(TailCallLoop.TailCallInfo targetFn, Sequence<? extends Item<?>>[] variables) {
         if (variables != null) {
             if (variables.length > stackFrame.slots.length) {
                 stackFrame.slots = Arrays.copyOf(variables, variables.length);
@@ -425,7 +423,7 @@ public class XPathContextMajor extends XPathContextMinor {
 
     public void openStackFrame(int numberOfVariables) {
         stackFrame = new StackFrame(new SlotManager(numberOfVariables),
-                new Sequence[numberOfVariables]);
+                                    SequenceTool.makeSequenceArray(numberOfVariables));
     }
 
     /**
@@ -568,7 +566,7 @@ public class XPathContextMajor extends XPathContextMinor {
         if (index < 0) {
             return ParameterSet.NOT_SUPPLIED;
         }
-        Sequence val = params.getValue(index);
+        Sequence<? extends Item<?>> val = params.getValue(index);
         stackFrame.slots[slotNumber] = val;
         boolean checked = params.isTypeChecked(index);
         return checked ? ParameterSet.SUPPLIED_AND_CHECKED : ParameterSet.SUPPLIED;

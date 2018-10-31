@@ -73,7 +73,7 @@ public class OptionsParameter {
      * @param defaultValue the default value if the option is not specified; or null
      *                                 if no default is defined
      */
-    public void addAllowedOption(String name, SequenceType type, Sequence defaultValue) {
+    public void addAllowedOption(String name, SequenceType type, Sequence<? extends Item<?>> defaultValue) {
         allowedOptions.put(name, type);
         if (defaultValue != null) {
             defaultValues.put(name, defaultValue);
@@ -150,7 +150,7 @@ public class OptionsParameter {
                 }
                 result.put(key, actual);
             } else {
-                Sequence def = defaultValues.get(key);
+                Sequence<? extends Item<?>> def = defaultValues.get(key);
                 if (def != null) {
                     result.put(key, def);
                 }

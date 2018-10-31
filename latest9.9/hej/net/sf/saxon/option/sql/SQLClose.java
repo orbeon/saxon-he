@@ -12,6 +12,7 @@ import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.SimpleExpression;
 import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.style.Compilation;
 import net.sf.saxon.style.ComponentDeclaration;
@@ -75,7 +76,7 @@ public class SQLClose extends ExtensionInstruction {
             return StaticProperty.ALLOWS_ZERO_OR_ONE;
         }
 
-        public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+        public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
             Connection connection = SQLFunctionSet.expectConnection(arguments[CONNECTION], context);
             try {
                 connection.close();
