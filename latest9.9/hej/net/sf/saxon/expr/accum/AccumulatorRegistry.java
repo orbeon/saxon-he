@@ -109,7 +109,7 @@ public class AccumulatorRegistry {
      * @throws XPathException if a dynamic error occurs
      */
 
-    public Sequence<? extends Item<?>> getStreamingAccumulatorValue(NodeInfo node, Accumulator accumulator, AccumulatorFn.Phase phase)
+    public Sequence<?> getStreamingAccumulatorValue(NodeInfo node, Accumulator accumulator, AccumulatorFn.Phase phase)
             throws XPathException {
         return null;
     }

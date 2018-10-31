@@ -224,7 +224,7 @@ public class NumberInstruction extends Expression {
         return this;
     }
 
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         List<IntegerValue> vec = new ArrayList<>(1);
         NodeInfo source = (NodeInfo) selectOp.getChildExpression().evaluateItem(context);
 

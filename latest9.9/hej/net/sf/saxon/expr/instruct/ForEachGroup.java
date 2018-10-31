@@ -654,7 +654,7 @@ public class ForEachGroup extends Instruction
                     coll = getCollator(context);
                 }
                 XPathContext c2 = context.newMinorContext();
-                FocusIterator<? extends Item<?>> population = c2.trackFocus(select.iterate(context));
+                FocusIterator<?> population = c2.trackFocus(select.iterate(context));
                 groupIterator = new GroupByIterator(population, getGroupingKey(), c2, coll, composite);
                 break;
             }
@@ -712,7 +712,7 @@ public class ForEachGroup extends Instruction
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         GroupIterator master = getGroupIterator(context);
         XPathContextMajor c2 = context.newContext();
         c2.setOrigin(this);
@@ -732,7 +732,7 @@ public class ForEachGroup extends Instruction
      *         sequence.
      */
 
-    public SequenceIterator<? extends Item<?>> map(XPathContext context) throws XPathException {
+    public SequenceIterator<?> map(XPathContext context) throws XPathException {
         return getActionExpression().iterate(context);
     }
 

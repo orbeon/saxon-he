@@ -90,7 +90,7 @@ public class XPathDynamicContext {
      *                        (or another Configuration that shares the same namePool)
      */
 
-    public void setVariable(XPathVariable variable, Sequence<? extends Item<?>> value) throws XPathException {
+    public void setVariable(XPathVariable variable, Sequence<?> value) throws XPathException {
         SequenceType requiredType = variable.getRequiredType();
         if (requiredType != SequenceType.ANY_SEQUENCE) {
             XPathException err = TypeChecker.testConformance(value, requiredType, contextObject);
@@ -98,7 +98,7 @@ public class XPathDynamicContext {
                 throw err;
             }
         }
-        SequenceIterator<? extends Item<?>> iter = value.iterate();
+        SequenceIterator<?> iter = value.iterate();
         Item<?> item;
         while ((item = iter.next()) != null) {
             if (item instanceof NodeInfo && !((NodeInfo) item).getConfiguration().isCompatible(contextObject.getConfiguration())) {

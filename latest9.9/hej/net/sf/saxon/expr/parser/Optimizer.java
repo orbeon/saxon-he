@@ -225,7 +225,7 @@ public class Optimizer {
      * @return the (nominal) result of the evaluation
      */
 
-    public Sequence<? extends Item<?>> evaluateStreamingArgument(Expression expr, XPathContext context) throws XPathException {
+    public Sequence<?> evaluateStreamingArgument(Expression expr, XPathContext context) throws XPathException {
         // non-streaming fallback implementation
         return ExpressionTool.eagerEvaluate(expr, context);
     }

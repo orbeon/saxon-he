@@ -284,7 +284,7 @@ public abstract class SimpleNodeConstructor extends Instruction {
     }
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         return SingletonIterator.makeIterator(evaluateItem(context));
     }
 

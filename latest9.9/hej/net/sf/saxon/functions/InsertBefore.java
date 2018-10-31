@@ -35,7 +35,7 @@ public class InsertBefore extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         NumericValue n = (NumericValue) arguments[1].head();
         int pos = (int) n.longValue();
         return SequenceTool.toLazySequence(
@@ -59,13 +59,13 @@ public class InsertBefore extends SystemFunction {
 
     public static class InsertIterator implements SequenceIterator<Item<?>> {
 
-        private SequenceIterator<? extends Item<?>> base;
-        private SequenceIterator<? extends Item<?>> insert;
+        private SequenceIterator<?> base;
+        private SequenceIterator<?> insert;
         private int insertPosition;
         private int position = 0;
         private boolean inserting = false;
 
-        public InsertIterator(SequenceIterator<? extends Item<?>> base, SequenceIterator<? extends Item<?>> insert, int insertPosition) {
+        public InsertIterator(SequenceIterator<?> base, SequenceIterator<?> insert, int insertPosition) {
             this.base = base;
             this.insert = insert;
             this.insertPosition = insertPosition < 1 ? 1 : insertPosition;

@@ -41,7 +41,7 @@ import java.util.*;
  */
 public class Chain implements GroundedValue<Item<?>> {
 
-    private List<GroundedValue<? extends Item<?>>> children = new ArrayList<>();
+    private List<GroundedValue<?>> children = new ArrayList<>();
     private List<Item<?>> extent = null;
 
     /**
@@ -52,7 +52,7 @@ public class Chain implements GroundedValue<Item<?>> {
      *                 modify the list after return from this constructor.
      */
 
-    public Chain(List<GroundedValue<? extends Item<?>>> children) {
+    public Chain(List<GroundedValue<?>> children) {
         this.children = children;
 
         int size = 0;
@@ -71,7 +71,7 @@ public class Chain implements GroundedValue<Item<?>> {
         }
         if (copy) {
             this.children = new ArrayList<>(size);
-            for (GroundedValue<? extends Item<?>> gv : children) {
+            for (GroundedValue<?> gv : children) {
                 if (gv instanceof Chain) {
                     if (((Chain) gv).children.size() < 30) {
                         this.children.addAll(((Chain) gv).children);
@@ -88,7 +88,7 @@ public class Chain implements GroundedValue<Item<?>> {
     }
 
     public Item<?> head() {
-        for (GroundedValue<? extends Item<?>> seq : children) {
+        for (GroundedValue<?> seq : children) {
             Item<?> head = seq.head();
             if (head != null) {
                 return head;
@@ -119,7 +119,7 @@ public class Chain implements GroundedValue<Item<?>> {
         }
         if (item != null) {
             //noinspection unchecked
-            children.add((GroundedValue<? extends Item<?>>)item);
+            children.add((GroundedValue<?>)item);
         }
     }
 
@@ -313,7 +313,7 @@ public class Chain implements GroundedValue<Item<?>> {
                     stack.pop();
                     continue;
                 }
-                GroundedValue<? extends Item<?>> gv = cp.chain.children.get(cp.offset++);
+                GroundedValue<?> gv = cp.chain.children.get(cp.offset++);
                 if (gv instanceof Chain) {
                     stack.push(new ChainPosition((Chain) gv, 0));
                 } else if (gv instanceof Item) {

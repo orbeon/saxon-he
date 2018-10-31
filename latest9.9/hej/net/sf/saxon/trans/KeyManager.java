@@ -319,7 +319,7 @@ public class KeyManager {
     public SequenceIterator selectByCompositeKey (
             KeyDefinitionSet keySet,
             TreeInfo doc,
-            SequenceIterator<? extends Item<?>> soughtValue,
+            SequenceIterator<?> soughtValue,
             XPathContext context) throws XPathException {
 
 

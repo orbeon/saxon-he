@@ -58,7 +58,7 @@ public class Remove extends SystemFunction {
         if (pos < 1) {
             return arguments[0];
         }
-        return SequenceTool.toLazySequence(new RemoveIterator(arguments[0].iterate(), pos));
+        return SequenceTool.toLazySequence2(new RemoveIterator<>(arguments[0].iterate(), pos));
     }
 
     /**

@@ -281,9 +281,9 @@ public class SquareArrayConstructor extends Expression {
      */
     @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
-        List<GroundedValue<? extends Item<?>>> value = new ArrayList<>(getOperanda().getNumberOfOperands());
+        List<GroundedValue<?>> value = new ArrayList<>(getOperanda().getNumberOfOperands());
         for (Operand o : operands()) {
-            GroundedValue<? extends Item<?>> s = ExpressionTool.eagerEvaluate(o.getChildExpression(), context);
+            GroundedValue<?> s = ExpressionTool.eagerEvaluate(o.getChildExpression(), context);
             value.add(s);
         }
         return new SimpleArrayItem(value);

@@ -40,7 +40,7 @@ public final class DocumentOrderIterator implements SequenceIterator<NodeInfo>, 
      * that is not a node
      */
 
-    public DocumentOrderIterator(SequenceIterator<? extends Item<?>> base, ItemOrderComparer comparer) throws XPathException {
+    public DocumentOrderIterator(SequenceIterator<?> base, ItemOrderComparer comparer) throws XPathException {
 
         this.comparer = comparer;
 

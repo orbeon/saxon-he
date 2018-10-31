@@ -54,7 +54,7 @@ public class CollectionURIResolverWrapper implements CollectionFinder {
 
             public Iterator<String> getResourceURIs(XPathContext context) throws XPathException {
                 List<String> uris = new ArrayList<String>();
-                SequenceIterator<? extends Item<?>> iter = collectionURIResolver.resolve(collectionURI, "", context);
+                SequenceIterator<?> iter = collectionURIResolver.resolve(collectionURI, "", context);
                 iter.forEachOrFail(item -> {
                     if (item instanceof AnyURIValue) {
                         uris.add(item.getStringValue());
@@ -69,7 +69,7 @@ public class CollectionURIResolverWrapper implements CollectionFinder {
 
             public Iterator<XmlResource> getResources(XPathContext context) throws XPathException {
                 List<XmlResource> resources = new ArrayList<XmlResource>();
-                SequenceIterator<? extends Item<?>> iter = collectionURIResolver.resolve(collectionURI, "", context);
+                SequenceIterator<?> iter = collectionURIResolver.resolve(collectionURI, "", context);
                 Configuration config = context.getConfiguration();
                 URIResolver uriResolver = config.getURIResolver();
                 ParseOptions options = new ParseOptions(config.getParseOptions());

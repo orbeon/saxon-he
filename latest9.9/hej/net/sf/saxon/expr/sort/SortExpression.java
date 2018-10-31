@@ -363,9 +363,9 @@ public class SortExpression extends Expression
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
 
-        SequenceIterator<? extends Item<?>> iter = getSelect().iterate(context);
+        SequenceIterator<?> iter = getSelect().iterate(context);
         if (iter instanceof EmptyIterator) {
             return iter;
         }

@@ -35,7 +35,7 @@ public abstract class VariableReference extends Expression implements BindingRef
     /*@Nullable*/ protected Binding binding = null;     // This will be null until fixup() is called; it will also be null
     // if the variable reference has been inlined
     protected SequenceType staticType = null;
-    protected GroundedValue<? extends Item<?>> constantValue = null;
+    protected GroundedValue<?> constantValue = null;
     private StructuredQName variableName = null;
     private boolean flattened = false;
     private boolean inLoop = false;
@@ -121,7 +121,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      * @param properties static properties of the expression to which the variable is bound
      */
 
-    public void setStaticType(SequenceType type, GroundedValue<? extends Item<?>> value, int properties) {
+    public void setStaticType(SequenceType type, GroundedValue<?> value, int properties) {
         // System.err.println(this + " Set static type = " + type);
         if (type == null) {
             type = SequenceType.ANY_SEQUENCE;
@@ -294,7 +294,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      * @param properties    additional static properties of the variable's initializer
      */
 
-    public void refineVariableType(ItemType type, int cardinality, GroundedValue<? extends Item<?>> constantValue, int properties) {
+    public void refineVariableType(ItemType type, int cardinality, GroundedValue<?> constantValue, int properties) {
         TypeHierarchy th = getConfiguration().getTypeHierarchy();
         ItemType oldItemType = getItemType();
         ItemType newItemType = oldItemType;
@@ -551,9 +551,9 @@ public abstract class VariableReference extends Expression implements BindingRef
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext c) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext c) throws XPathException {
         try {
-            Sequence<? extends Item<?>> actual = evaluateVariable(c);
+            Sequence<?> actual = evaluateVariable(c);
             assert actual != null;
             return actual.iterate();
         } catch (XPathException err) {
@@ -587,7 +587,7 @@ public abstract class VariableReference extends Expression implements BindingRef
 
     public void process(XPathContext c) throws XPathException {
         try {
-            SequenceIterator<? extends Item<?>> iter = evaluateVariable(c).iterate();
+            SequenceIterator<?> iter = evaluateVariable(c).iterate();
             Receiver out = c.getReceiver();
             Location loc = getLocation();
             iter.forEachOrFail(item -> out.append(item, loc, ReceiverOptions.ALL_NAMESPACES));
@@ -606,7 +606,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      */
 
     /*@NotNull*/
-    public Sequence<? extends Item<?>> evaluateVariable(XPathContext c) throws XPathException {
+    public Sequence<?> evaluateVariable(XPathContext c) throws XPathException {
         try {
             return binding.evaluateVariable(c);
         } catch (NullPointerException err) {

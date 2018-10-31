@@ -275,7 +275,7 @@ public class PackageLibrary {
             compilation.clearParameters();
             compilation.setLibraryPackage(true);
             if (details.staticParams != null) {
-                for (Map.Entry<StructuredQName, GroundedValue<? extends Item<?>>> entry : details.staticParams.entrySet()) {
+                for (Map.Entry<StructuredQName, GroundedValue<?>> entry : details.staticParams.entrySet()) {
                     compilation.setParameter(entry.getKey(), entry.getValue());
                 }
             }

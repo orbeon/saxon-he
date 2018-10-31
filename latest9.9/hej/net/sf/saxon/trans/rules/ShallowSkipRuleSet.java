@@ -86,8 +86,8 @@ public class ShallowSkipRuleSet implements BuiltInRuleSet {
                     // no action
             }
         } else if (item instanceof ArrayItem) {
-            Sequence<? extends Item<?>> seq = ArrayFunctionSet.ArrayToSequence.toSequence((ArrayItem) item);
-            SequenceIterator<? extends Item<?>> members = seq.iterate();
+            Sequence<?> seq = ArrayFunctionSet.ArrayToSequence.toSequence((ArrayItem) item);
+            SequenceIterator<?> members = seq.iterate();
             XPathContextMajor c2 = context.newContext();
             c2.setOrigin(this);
             c2.trackFocus(members);

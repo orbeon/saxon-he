@@ -441,7 +441,7 @@ public class ForEach extends Instruction implements ContextMappingFunction<Item<
 
         XPathContextMajor c2 = context.newContext();
         c2.setOrigin(this);
-        FocusIterator<? extends Item<?>> iter = c2.trackFocus(getSelect().iterate(context));
+        FocusIterator<?> iter = c2.trackFocus(getSelect().iterate(context));
         c2.setCurrentTemplateRule(null);
 
         Expression action = getAction();
@@ -492,7 +492,7 @@ public class ForEach extends Instruction implements ContextMappingFunction<Item<
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         XPathContextMinor c2 = context.newMinorContext();
         c2.trackFocus(getSelect().iterate(context));
         return new ContextMappingIterator<>(this, c2);
@@ -507,7 +507,7 @@ public class ForEach extends Instruction implements ContextMappingFunction<Item<
      *         item maps to
      */
 
-    public SequenceIterator<? extends Item<?>> map(XPathContext context) throws XPathException {
+    public SequenceIterator<?> map(XPathContext context) throws XPathException {
         return getAction().iterate(context);
     }
 

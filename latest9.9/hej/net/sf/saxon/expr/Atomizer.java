@@ -327,7 +327,7 @@ public final class Atomizer extends UnaryExpression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         SequenceIterator base = getBaseExpression().iterate(context);
         return getAtomizingIterator(base, untyped && operandItemType instanceof NodeTest);
     }

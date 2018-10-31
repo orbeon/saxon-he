@@ -22,7 +22,7 @@ public class EmptyIterator<T extends Item<?>> implements SequenceIterator<T>,
         ReversibleIterator<T>, LastPositionFinder, GroundedIterator<T>,
         LookaheadIterator<T>, UnfailingIterator<T>, AtomizedValueIterator<T> {
 
-    private static EmptyIterator<? extends Item<?>> theInstance = new EmptyIterator<>();
+    private static EmptyIterator<?> theInstance = new EmptyIterator<>();
 
     /**
      * Get an EmptyIterator, an iterator over an empty sequence.

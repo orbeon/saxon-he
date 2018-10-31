@@ -201,7 +201,7 @@ public class SQLQuery extends ExtensionInstruction {
             return qi2;
         }
 
-        public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments /*@NotNull*/) throws XPathException {
+        public Sequence<?> call(XPathContext context, Sequence[] arguments /*@NotNull*/) throws XPathException {
             // Prepare the SQL statement (only do this once)
 
             Controller controller = context.getController();

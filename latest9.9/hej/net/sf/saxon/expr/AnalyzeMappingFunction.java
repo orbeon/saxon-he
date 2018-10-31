@@ -44,7 +44,7 @@ public class AnalyzeMappingFunction implements ContextMappingFunction<Item> {
      *         sequence.
      */
 
-    public SequenceIterator<? extends Item<?>> map(XPathContext context) throws XPathException {
+    public SequenceIterator<?> map(XPathContext context) throws XPathException {
         if (base.isMatching()) {
             if (matchingExpr != null) {
                 return matchingExpr.iterate(c2);

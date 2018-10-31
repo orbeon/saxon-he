@@ -132,7 +132,7 @@ public class Average extends FoldingFunction {
          * @throws net.sf.saxon.trans.XPathException
          *          if a dynamic error occurs
          */
-        public Sequence<? extends Item<?>> result() throws XPathException {
+        public Sequence<?> result() throws XPathException {
             if (atStart) {
                 return EmptySequence.getInstance();
             } else if (data instanceof NumericValue) {

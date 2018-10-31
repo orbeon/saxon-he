@@ -34,7 +34,7 @@ import java.util.Iterator;
 public class XPathContextMinor implements XPathContext {
 
     Controller controller;
-    FocusIterator<? extends Item<?>> currentIterator;
+    FocusIterator<?> currentIterator;
     /*@Nullable*/ LastValue last = null;
     Receiver currentReceiver;
 
@@ -154,7 +154,7 @@ public class XPathContextMinor implements XPathContext {
      * Set a new sequence iterator.
      */
 
-    public void setCurrentIterator(FocusIterator<? extends Item<?>> iter) {
+    public void setCurrentIterator(FocusIterator<?> iter) {
         currentIterator = iter;
         last = new LastValue(-1);
     }
@@ -199,7 +199,7 @@ public class XPathContextMinor implements XPathContext {
      *         (which means the context item, position, and size are undefined).
      */
 
-    public final FocusIterator<? extends Item<?>> getCurrentIterator() {
+    public final FocusIterator<?> getCurrentIterator() {
         return currentIterator;
     }
 
@@ -324,7 +324,7 @@ public class XPathContextMinor implements XPathContext {
      * Get the value of a local variable, identified by its slot number
      */
 
-    public final Sequence<? extends Item<?>> evaluateLocalVariable(int slotnumber) {
+    public final Sequence<?> evaluateLocalVariable(int slotnumber) {
         return stackFrame.slots[slotnumber];
     }
 
@@ -332,7 +332,7 @@ public class XPathContextMinor implements XPathContext {
      * Set the value of a local variable, identified by its slot number
      */
 
-    public final void setLocalVariable(int slotNumber, Sequence<? extends Item<?>> value) throws XPathException {
+    public final void setLocalVariable(int slotNumber, Sequence<?> value) throws XPathException {
 
         // The following code is deep defence against attempting to store a non-memo Closure in a variable.
         // This should not happen, and if it does, it means that the evaluation mode has been miscalculated.

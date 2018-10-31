@@ -21,26 +21,26 @@ import java.util.Stack;
 
 public class StackFrame {
     protected SlotManager map;
-    protected Sequence<? extends Item<?>>[] slots;
-    protected Stack<Sequence<? extends Item<?>>> dynamicStack;
+    protected Sequence<?>[] slots;
+    protected Stack<Sequence<?>> dynamicStack;
 
     public static final StackFrame EMPTY = new StackFrame(SlotManager.EMPTY, new Sequence[0]);
 
     public StackFrame(SlotManager map, Sequence[] slots) {
         this.map = map;
-        this.slots = (Sequence<? extends Item<?>>[])slots;
+        this.slots = (Sequence<?>[])slots;
     }
 
     public SlotManager getStackFrameMap() {
         return map;
     }
 
-    public Sequence<? extends Item<?>>[] getStackFrameValues() {
+    public Sequence<?>[] getStackFrameValues() {
         return slots;
     }
 
     public void setStackFrameValues(Sequence[] values) {
-        slots = (Sequence<? extends Item<?>>[])values;
+        slots = (Sequence<?>[])values;
     }
 
     public StackFrame copy() {
@@ -53,7 +53,7 @@ public class StackFrame {
         return s;
     }
 
-    public void pushDynamicValue(Sequence<? extends Item<?>> value) {
+    public void pushDynamicValue(Sequence<?> value) {
         if (this == StackFrame.EMPTY) {
             throw new IllegalStateException("Immutable stack frame");
         }
@@ -63,7 +63,7 @@ public class StackFrame {
         dynamicStack.push(value);
     }
 
-    public Sequence<? extends Item<?>> popDynamicValue() {
+    public Sequence<?> popDynamicValue() {
         return dynamicStack.pop();
     }
 

@@ -54,8 +54,8 @@ public class XsltController extends Controller {
     private Component.M initialMode = null;
     private Function initialFunction = null;
     private int recoveryPolicy;
-    private Map<StructuredQName, Sequence<? extends Item<?>>> initialTemplateParams;
-    private Map<StructuredQName, Sequence<? extends Item<?>>> initialTemplateTunnelParams;
+    private Map<StructuredQName, Sequence<?>> initialTemplateParams;
+    private Map<StructuredQName, Sequence<?>> initialTemplateTunnelParams;
     private Map<Long, Stack<AttributeSet>> attributeSetEvaluationStacks = new HashMap<>();
     private AccumulatorManager accumulatorManager = new AccumulatorManager();
     private PrincipalOutputGatekeeper gatekeeper = null;
@@ -303,7 +303,7 @@ public class XsltController extends Controller {
      * @since 9.6
      */
 
-    public void setInitialTemplateParameters(Map<StructuredQName, Sequence<? extends Item<?>>> params, boolean tunnel) {
+    public void setInitialTemplateParameters(Map<StructuredQName, Sequence<?>> params, boolean tunnel) {
         if (tunnel) {
             this.initialTemplateTunnelParams = params;
         } else {
@@ -321,7 +321,7 @@ public class XsltController extends Controller {
      * @since 9.6
      */
 
-    public Map<StructuredQName, Sequence<? extends Item<?>>> getInitialTemplateParameters(boolean tunnel) {
+    public Map<StructuredQName, Sequence<?>> getInitialTemplateParameters(boolean tunnel) {
         return tunnel ? initialTemplateTunnelParams : initialTemplateParams;
     }
 
@@ -680,7 +680,7 @@ public class XsltController extends Controller {
      *                        xsl:message terminate="yes".
      */
 
-    public void applyTemplates(Sequence<? extends Item<?>> source, Receiver out) throws XPathException {
+    public void applyTemplates(Sequence<?> source, Receiver out) throws XPathException {
 
         checkReadiness();
         openMessageEmitter();
@@ -721,7 +721,7 @@ public class XsltController extends Controller {
                 tunnelParams = new ParameterSet(initialTemplateTunnelParams);
             }
 
-            SequenceIterator<? extends Item<?>> iter = source.iterate();
+            SequenceIterator<?> iter = source.iterate();
 
             MappingFunction<Item<?>, Item<?>> preprocessor = getInputPreprocessor(mode);
             iter = new MappingIterator<>(iter, preprocessor);

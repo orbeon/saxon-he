@@ -107,7 +107,7 @@ public class LocalVariableReference extends VariableReference {
      */
 
     /*@NotNull*/
-    public Sequence<? extends Item<?>> evaluateVariable(XPathContext c) throws XPathException {
+    public Sequence<?> evaluateVariable(XPathContext c) throws XPathException {
         try {
             return c.getStackFrame().slots[slotNumber];
         } catch (ArrayIndexOutOfBoundsException err) {

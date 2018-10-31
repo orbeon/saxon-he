@@ -282,7 +282,7 @@ public class ContextItemExpression extends Expression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         Item<?> item = context.getContextItem();
         if (item == null) {
             dynamicError("The context item is absent", getErrorCodeForUndefinedContext(), context);

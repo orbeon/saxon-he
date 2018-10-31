@@ -1497,7 +1497,7 @@ public class PackageLoaderHE implements IPackageLoader {
 
         eMap.put("array", (loader, element) -> {
             List<Expression> children = getChildExpressionList(loader, element);
-            List<GroundedValue<? extends Item<?>>> values = new ArrayList<>(children.size());
+            List<GroundedValue<?>> values = new ArrayList<>(children.size());
             for (Expression child : children) {
                 values.add(((Literal) child).getValue());
             }
@@ -2326,7 +2326,7 @@ public class PackageLoaderHE implements IPackageLoader {
                 if (key == null) {
                     key = (AtomicValue)((Literal)child).getValue();
                 } else {
-                    GroundedValue<? extends Item<?>> value = ((Literal) child).getValue();
+                    GroundedValue<?> value = ((Literal) child).getValue();
                     map.initialPut(key, value);
                     key = null;
                 }

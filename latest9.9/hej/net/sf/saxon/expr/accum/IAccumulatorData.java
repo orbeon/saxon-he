@@ -34,7 +34,7 @@ public interface IAccumulatorData {
      * @return the value of the accumulator for this node
      */
 
-    Sequence<? extends Item<?>> getValue(NodeInfo node, boolean postDescent) throws XPathException;
+    Sequence<?> getValue(NodeInfo node, boolean postDescent) throws XPathException;
 
 
 }

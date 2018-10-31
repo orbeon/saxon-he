@@ -79,7 +79,7 @@ public class JsonToXMLFn extends SystemFunction {
     protected Item eval(String input, MapItem options, XPathContext context) throws XPathException {
         JsonParser parser = new JsonParser();
         int flags = 0;
-        Map<String, Sequence<? extends Item<?>>> checkedOptions = null;
+        Map<String, Sequence<?>> checkedOptions = null;
         if (options != null) {
             checkedOptions = getDetails().optionDetails.processSuppliedOptions(options, context);
             flags = JsonParser.getFlags(checkedOptions, context, true);

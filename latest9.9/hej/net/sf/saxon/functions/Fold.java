@@ -42,7 +42,7 @@ public interface Fold {
      * @throws XPathException if a dynamic error occurs
      */
 
-    Sequence<? extends Item<?>> result() throws XPathException;
+    Sequence<?> result() throws XPathException;
 
 }
 

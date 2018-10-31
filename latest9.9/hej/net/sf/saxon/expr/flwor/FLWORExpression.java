@@ -774,7 +774,7 @@ public class FLWORExpression extends Expression {
      */
     /*@NotNull*/
     @Override
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         TuplePull stream = new SingularityPull();
         for (Clause c : clauses) {
             stream = c.getPullStream(stream, context);

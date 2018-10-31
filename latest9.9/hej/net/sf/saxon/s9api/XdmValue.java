@@ -49,7 +49,7 @@ import java.util.stream.StreamSupport;
 
 public class XdmValue implements Iterable<XdmItem> {
 
-    private GroundedValue<? extends Item<?>> value;
+    private GroundedValue<?> value;
 
     protected XdmValue() {
         // must be followed by setValue()
@@ -100,13 +100,13 @@ public class XdmValue implements Iterable<XdmItem> {
         this(stream.iterator());
     }
 
-    protected static XdmValue fromGroundedValue(GroundedValue<? extends Item<?>> value) {
+    protected static XdmValue fromGroundedValue(GroundedValue<?> value) {
         XdmValue xv = new XdmValue();
         xv.setValue(value);
         return xv;
     }
 
-    protected void setValue(GroundedValue<? extends Item<?>> value) {
+    protected void setValue(GroundedValue<?> value) {
         this.value = value;
     }
 
@@ -129,11 +129,11 @@ public class XdmValue implements Iterable<XdmItem> {
      * @since 9.5 (previously a protected method)
      */
 
-    public static XdmValue wrap(Sequence<? extends Item<?>> value) {
+    public static XdmValue wrap(Sequence<?> value) {
         if (value == null) {
             return XdmEmptySequence.getInstance();
         }
-        GroundedValue<? extends Item<?>> gv;
+        GroundedValue<?> gv;
         try {
             gv = value.materialize();
         } catch (XPathException e) {
@@ -264,7 +264,7 @@ public class XdmValue implements Iterable<XdmItem> {
      * @return the underlying implementation object representing the value
      */
 
-    public GroundedValue<? extends Item<?>> getUnderlyingValue() {
+    public GroundedValue<?> getUnderlyingValue() {
         return value;
     }
 
@@ -350,7 +350,7 @@ public class XdmValue implements Iterable<XdmItem> {
 
     public static XdmValue makeValue(Object o) throws IllegalArgumentException {
         if (o instanceof Sequence) {
-            return XdmValue.wrap((Sequence<? extends Item<?>>) o);
+            return XdmValue.wrap((Sequence<?>) o);
         } else if (o instanceof XdmValue) {
             return (XdmValue) o;
         } else if (o instanceof Map) {
@@ -376,7 +376,7 @@ public class XdmValue implements Iterable<XdmItem> {
 
     public XdmValue documentOrder() throws SaxonApiException {
         try {
-            SequenceIterator<? extends Item<?>> iter = value.iterate();
+            SequenceIterator<?> iter = value.iterate();
             SequenceIterator<NodeInfo> sorted = new DocumentOrderIterator(iter, GlobalOrderComparer.getInstance());
             return XdmValue.fromGroundedValue(sorted.materialize());
         } catch (XPathException e) {

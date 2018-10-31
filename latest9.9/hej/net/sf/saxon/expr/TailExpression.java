@@ -44,7 +44,7 @@ public class TailExpression extends UnaryExpression {
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().optimize(visitor, contextInfo);
         if (getBaseExpression() instanceof Literal) {
-            GroundedValue<? extends Item<?>> value =
+            GroundedValue<?> value =
                     iterate(visitor.getStaticContext().makeEarlyEvaluationContext()).materialize();
             return Literal.makeLiteral(value, this);
         }
@@ -131,8 +131,8 @@ public class TailExpression extends UnaryExpression {
     }
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
-        SequenceIterator<? extends Item<?>> baseIter = getBaseExpression().iterate(context);
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
+        SequenceIterator<?> baseIter = getBaseExpression().iterate(context);
         return TailIterator.make(baseIter, start);
     }
 

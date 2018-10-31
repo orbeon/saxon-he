@@ -54,11 +54,11 @@ public final class GlobalParam extends GlobalVariable {
      * Evaluate the variable
      */
     @Override
-    public GroundedValue<? extends Item<?>> evaluateVariable(XPathContext context, Component target) throws XPathException {
+    public GroundedValue<?> evaluateVariable(XPathContext context, Component target) throws XPathException {
         Controller controller = context.getController();
         assert controller != null;
         Bindery b = controller.getBindery(getPackageData());
-        GroundedValue<? extends Item<?>> val = b.getGlobalVariableValue(this);
+        GroundedValue<?> val = b.getGlobalVariableValue(this);
         if (val != null) {
             if (val instanceof Bindery.FailureValue) {
                 throw ((Bindery.FailureValue)val).getObject();
@@ -94,7 +94,7 @@ public final class GlobalParam extends GlobalVariable {
      */
 
     @Override
-    public GroundedValue<? extends Item<?>> evaluateVariable(XPathContext context) throws XPathException {
+    public GroundedValue<?> evaluateVariable(XPathContext context) throws XPathException {
         return evaluateVariable(context, null);
     }
 

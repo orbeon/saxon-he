@@ -87,7 +87,7 @@ public class HashTrieMap implements MapItem {
      * @return a singleton map
      */
 
-    public static HashTrieMap singleton(AtomicValue key, GroundedValue<? extends Item<?>> value) {
+    public static HashTrieMap singleton(AtomicValue key, GroundedValue<?> value) {
         return new HashTrieMap().addEntry(key, value);
     }
 
@@ -129,7 +129,7 @@ public class HashTrieMap implements MapItem {
      * @param wasEmpty true if the map was empty before adding these values
      */
 
-    private void updateTypeInformation(AtomicValue key, Sequence<? extends Item<?>> val, boolean wasEmpty) {
+    private void updateTypeInformation(AtomicValue key, Sequence<?> val, boolean wasEmpty) {
 //        if (Instrumentation.ACTIVE) {
 //            Instrumentation.count("updateTypeInformation");
 //        }
@@ -275,7 +275,7 @@ public class HashTrieMap implements MapItem {
         AtomicIterator keyIter = keys();
         AtomicValue key;
         while ((key = keyIter.next()) != null) {
-            Sequence<? extends Item<?>> val = get(key);
+            Sequence<?> val = get(key);
             if (keyType == null) {
                 keyType = key.getItemType();
                 valueType = SequenceTool.getItemType(val, th);
@@ -320,7 +320,7 @@ public class HashTrieMap implements MapItem {
      * @return the new map containing the additional entry
      */
 
-    public HashTrieMap addEntry(AtomicValue key, GroundedValue<? extends Item<?>> value) {
+    public HashTrieMap addEntry(AtomicValue key, GroundedValue<?> value) {
         boolean empty = isEmpty();
         ImmutableMap<AtomicMatchKey, KeyValuePair> imap2 = imap.put(makeKey(key), new KeyValuePair(key, value));
         HashTrieMap t2 = new HashTrieMap(imap2);
@@ -343,7 +343,7 @@ public class HashTrieMap implements MapItem {
      * @return true if an existing entry with the same key was replaced
      */
 
-    public boolean initialPut(AtomicValue key, GroundedValue<? extends Item<?>> value) {
+    public boolean initialPut(AtomicValue key, GroundedValue<?> value) {
 //        if (Instrumentation.ACTIVE) {
 //            Instrumentation.count("initialPut");
 //        }
@@ -392,7 +392,7 @@ public class HashTrieMap implements MapItem {
      * @return the value associated with the given key, or null if the key is not present in the map
      */
 
-    public GroundedValue<? extends Item<?>> get(AtomicValue key)  {
+    public GroundedValue<?> get(AtomicValue key)  {
         KeyValuePair o = imap.get(makeKey(key));
         return o==null ? null : o.value;
     }
@@ -486,7 +486,7 @@ public class HashTrieMap implements MapItem {
                 Tuple2<AtomicMatchKey, KeyValuePair> entry = iter.next();
                 AtomicMatchKey k1 = entry._1;
                 AtomicValue k2 = entry._2.key;
-                Sequence<? extends Item<?>> v = entry._2.value;
+                Sequence<?> v = entry._2.value;
                 buff.append(k2.toShortString());
                 buff.append(':');
                 buff.append(Err.depictSequence(v).toString().trim());

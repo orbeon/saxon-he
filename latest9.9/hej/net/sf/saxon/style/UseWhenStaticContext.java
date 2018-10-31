@@ -112,7 +112,7 @@ public class UseWhenStaticContext extends AbstractStaticContext implements XSLTS
      */
 
     public Expression bindVariable(StructuredQName qName) throws XPathException {
-        GroundedValue<? extends Item<?>> val = compilation.getStaticVariable(qName);
+        GroundedValue<?> val = compilation.getStaticVariable(qName);
         if (val != null) {
             return Literal.makeLiteral(val);
         } else {

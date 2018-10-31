@@ -33,7 +33,7 @@ import net.sf.saxon.value.ObjectValue;
 
 public final class Bindery {
 
-    private GroundedValue<? extends Item<?>>[] globals;          // values of global variables and parameters
+    private GroundedValue<?>[] globals;          // values of global variables and parameters
     private long[] busy;                 // set to current thread id while variable is being evaluated
 
 
@@ -48,7 +48,7 @@ public final class Bindery {
 
     private void allocateGlobals(SlotManager map) {
         int n = map.getNumberOfVariables() + 1;
-        globals = (GroundedValue<? extends Item<?>>[])new GroundedValue[n];
+        globals = (GroundedValue<?>[])new GroundedValue[n];
         busy = new long[n];
         for (int i = 0; i < n; i++) {
             globals[i] = null;
@@ -63,7 +63,7 @@ public final class Bindery {
      * @param value   the value of the variable
      */
 
-    public void setGlobalVariable(GlobalVariable binding, GroundedValue<? extends Item<?>> value) {
+    public void setGlobalVariable(GlobalVariable binding, GroundedValue<?> value) {
         globals[binding.getBinderySlotNumber()] = value;
     }
 
@@ -142,8 +142,8 @@ public final class Bindery {
      *         the variable is initialized using the collection() function.
      */
 
-    public synchronized GroundedValue<? extends Item<?>> saveGlobalVariableValue(
-            GlobalVariable binding, GroundedValue<? extends Item<?>> value) {
+    public synchronized GroundedValue<?> saveGlobalVariableValue(
+            GlobalVariable binding, GroundedValue<?> value) {
         int slot = binding.getBinderySlotNumber();
         if (globals[slot] != null) {
             // another thread has already evaluated the value
@@ -163,7 +163,7 @@ public final class Bindery {
      * @return the Value of the variable if defined, null otherwise.
      */
 
-    public GroundedValue<? extends Item<?>> getGlobalVariableValue(GlobalVariable binding) {
+    public GroundedValue<?> getGlobalVariableValue(GlobalVariable binding) {
         return globals[binding.getBinderySlotNumber()];
     }
 
@@ -174,7 +174,7 @@ public final class Bindery {
      * @return the Value of the variable if defined, null otherwise.
      */
 
-    public GroundedValue<? extends Item<?>> getGlobalVariable(int slot) {
+    public GroundedValue<?> getGlobalVariable(int slot) {
         return globals[slot];
     }
 

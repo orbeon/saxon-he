@@ -281,7 +281,7 @@ public class TypeCheckingFilter extends ProxyReceiver {
 
     private void checkItemType(ItemType type, Supplier<? extends Item<?>> itemSupplier, Location locationId) throws XPathException {
         if (!getConfiguration().getTypeHierarchy().isSubType(type, itemType)) {
-            throwTypeError(type, itemSupplier == null? null : itemSupplier.get(), locationId);
+            throwTypeError(type, itemSupplier == null ? null : itemSupplier.get(), locationId);
         }
     }
 

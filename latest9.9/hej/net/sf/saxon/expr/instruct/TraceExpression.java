@@ -376,7 +376,7 @@ public class TraceExpression extends Instruction implements InstructionInfo {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         Controller controller = context.getController();
         assert controller != null;
         if (controller.isTracing()) {

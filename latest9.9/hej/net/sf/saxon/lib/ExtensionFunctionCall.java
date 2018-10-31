@@ -159,7 +159,7 @@ public abstract class ExtensionFunctionCall implements Callable {
      *                        code will add information about the error location.
      */
 
-    public abstract Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException;
+    public abstract Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException;
 
     /**
      * Compute the effective boolean value of the result.

@@ -69,7 +69,7 @@ public class AccumulatorData implements IAccumulatorData {
         Sequence[] slots = new Sequence[sf.getNumberOfVariables()];
         c2.setStackFrame(sf, slots);
         c2.setCurrentIterator(new ManualIterator<>(doc));
-        Sequence<? extends Item<?>> val = initialValue.iterate(c2).materialize();
+        Sequence<?> val = initialValue.iterate(c2).materialize();
         values.add(new DataPoint(new Visit(doc, false), val));
         val = visit(doc, val, c2);
         values.add(new DataPoint(new Visit(doc, true), val));
@@ -100,7 +100,7 @@ public class AccumulatorData implements IAccumulatorData {
      */
 
     @SuppressWarnings({"InfiniteRecursion"}) //Spurious warning from IntelliJ
-    private Sequence<? extends Item<?>> visit(NodeInfo node, Sequence<? extends Item<?>> value, XPathContext context) throws XPathException {
+    private Sequence<?> visit(NodeInfo node, Sequence<?> value, XPathContext context) throws XPathException {
         ((ManualIterator)context.getCurrentIterator()).setContextItem(node);
         Rule rule = accumulator.getPreDescentRules().getRule(node, context);
         if (rule != null) {
@@ -139,7 +139,7 @@ public class AccumulatorData implements IAccumulatorData {
      * @throws XPathException if a dynamic error occurs during the evaluation
      */
 
-    private Sequence<? extends Item<?>> processRule(Rule rule, NodeInfo node, boolean isPostDescent, Sequence<? extends Item<?>> value, XPathContext context) throws XPathException {
+    private Sequence<?> processRule(Rule rule, NodeInfo node, boolean isPostDescent, Sequence<?> value, XPathContext context) throws XPathException {
         AccumulatorRule target = (AccumulatorRule) rule.getAction();
         Expression delta = target.getNewValueExpression();
         XPathContextMajor c2 = context.newCleanContext();
@@ -171,7 +171,7 @@ public class AccumulatorData implements IAccumulatorData {
 //        return search(0, values.size(), visit);
 //    }
 
-    public Sequence<? extends Item<?>> getValue(NodeInfo node, boolean postDescent) {
+    public Sequence<?> getValue(NodeInfo node, boolean postDescent) {
         Visit visit = new Visit(node, postDescent);
         return search(0, values.size(), visit);
         //System.err.println("Searched " + values.size() + " " + ((TinyNodeImpl) visit.node).getNodeNumber() + " : " + seq);
@@ -186,7 +186,7 @@ public class AccumulatorData implements IAccumulatorData {
      * @return the value associated with this node
      */
 
-    private Sequence<? extends Item<?>> search(int start, int end, Visit sought) {
+    private Sequence<?> search(int start, int end, Visit sought) {
         //System.err.println("-- Search " + start + ".." + end);
         if (start == end) {
             // sometimes we want the value for the visit we've found, sometimes for the previous visit
@@ -262,9 +262,9 @@ public class AccumulatorData implements IAccumulatorData {
 
     private static class DataPoint {
         public Visit visit;
-        public Sequence<? extends Item<?>> value;
+        public Sequence<?> value;
 
-        public DataPoint(Visit visit, Sequence<? extends Item<?>> value) {
+        public DataPoint(Visit visit, Sequence<?> value) {
             this.visit = visit;
             this.value = value;
         }

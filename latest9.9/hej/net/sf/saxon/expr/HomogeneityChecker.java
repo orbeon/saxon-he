@@ -121,13 +121,13 @@ public class HomogeneityChecker extends UnaryExpression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(final XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(final XPathContext context) throws XPathException {
 
         // This class delivers the result of the path expression in unsorted order,
         // without removal of duplicates. If sorting and deduplication are needed,
         // this is achieved by wrapping the path expression in a DocumentSorter
 
-        SequenceIterator<? extends Item<?>> base = getBaseExpression().iterate(context);
+        SequenceIterator<?> base = getBaseExpression().iterate(context);
         return new HomogeneityCheckerIterator(base, getLocation());
     }
 

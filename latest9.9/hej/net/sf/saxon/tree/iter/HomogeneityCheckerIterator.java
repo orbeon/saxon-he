@@ -25,14 +25,14 @@ import java.util.List;
 
 public class HomogeneityCheckerIterator implements SequenceIterator<Item<?>> {
 
-    SequenceIterator<? extends Item<?>> base = null;
+    SequenceIterator<?> base = null;
     Location loc;
     int state;
     // state = 0: initial state, will accept either nodes or atomic values
     // state = +1: have seen a node, all further items must be nodes
     // state = -1: have seen an atomic value or function item, all further items must be the same
 
-    public HomogeneityCheckerIterator(SequenceIterator<? extends Item<?>> base, Location loc) {
+    public HomogeneityCheckerIterator(SequenceIterator<?> base, Location loc) {
         this.base = base;
         this.loc = loc;
         state = 0;

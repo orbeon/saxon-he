@@ -11,7 +11,9 @@ import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.TailExpression;
 import net.sf.saxon.expr.TailIterator;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
+import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.trans.XPathException;
 
@@ -30,8 +32,8 @@ public class TailFn extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
-        return SequenceTool.toLazySequence(TailIterator.make(arguments[0].iterate(), 2));
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
+        return SequenceTool.toLazySequence(TailIterator.make((SequenceIterator<Item<?>>)arguments[0].iterate(), 2));
     }
 
     /**

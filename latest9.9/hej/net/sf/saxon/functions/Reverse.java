@@ -80,7 +80,7 @@ public class Reverse extends SystemFunction {
     }
 
 
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         return SequenceTool.toLazySequence(getReverseIterator(arguments[0].iterate()));
     }
 

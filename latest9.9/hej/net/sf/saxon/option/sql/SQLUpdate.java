@@ -185,7 +185,7 @@ public class SQLUpdate extends ExtensionInstruction {
             return u2.copyOperandsFrom(this);
         }
 
-        public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
+        public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
 
             // Prepare the SQL statement (only do this once)
 

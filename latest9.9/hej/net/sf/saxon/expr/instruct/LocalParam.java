@@ -326,7 +326,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
      *          with a dynamic error
      */
 
-    public Sequence<? extends Item<?>> getSelectValue(XPathContext context) throws XPathException {
+    public Sequence<?> getSelectValue(XPathContext context) throws XPathException {
         Expression select = getSelectExpression();
         if (select == null) {
             throw new AssertionError("Internal error: No select expression");
@@ -339,7 +339,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
             // which will already contain any code to force conversion to the required type.
             int savedOutputState = context.getTemporaryOutputState();
             context.setTemporaryOutputState(StandardNames.XSL_WITH_PARAM);
-            Sequence<? extends Item<?>> result = evaluator.evaluate(select, context);
+            Sequence<?> result = evaluator.evaluate(select, context);
             context.setTemporaryOutputState(savedOutputState);
             return result;
         }
@@ -514,7 +514,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
      * Evaluate the variable
      */
 
-    public Sequence<? extends Item<?>> evaluateVariable(XPathContext c) {
+    public Sequence<?> evaluateVariable(XPathContext c) {
         return c.evaluateLocalVariable(slotNumber);
     }
 

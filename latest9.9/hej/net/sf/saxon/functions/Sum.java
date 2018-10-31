@@ -75,7 +75,7 @@ public class Sum extends FoldingFunction {
      * @throws XPathException if a dynamic error occurs
      */
 
-    public static AtomicValue total(SequenceIterator<? extends Item<?>> in, XPathContext context, Location locator) throws XPathException {
+    public static AtomicValue total(SequenceIterator<?> in, XPathContext context, Location locator) throws XPathException {
         try {
             SumFold fold = new SumFold(context, null);
             in.forEachOrFail(fold::processItem);
@@ -183,7 +183,7 @@ public class Sum extends FoldingFunction {
          *
          * @return the result of the function
          */
-        public Sequence<? extends Item<?>> result() {
+        public Sequence<?> result() {
             if (atStart) {
                 return zeroValue == null ? EmptySequence.getInstance() : zeroValue;
             } else {

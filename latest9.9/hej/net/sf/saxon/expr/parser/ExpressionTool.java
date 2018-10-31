@@ -297,7 +297,7 @@ public class ExpressionTool {
      *                        expression
      */
 
-    public static Sequence<? extends Item<?>> evaluate(
+    public static Sequence<?> evaluate(
             Expression exp, int evaluationMode, XPathContext context, int ref)
             throws XPathException {
         switch (evaluationMode) {
@@ -327,7 +327,7 @@ public class ExpressionTool {
                 return EmptySequence.getInstance();
 
             case EVALUATE_AND_MATERIALIZE_VARIABLE:
-                Sequence<? extends Item<?>> v = ((VariableReference) exp).evaluateVariable(context);
+                Sequence<?> v = ((VariableReference) exp).evaluateVariable(context);
                 if (v instanceof Closure) {
                     return v.iterate().materialize();
                 } else {
@@ -359,9 +359,9 @@ public class ExpressionTool {
             case LAZY_TAIL_EXPRESSION: {
                 TailExpression tail = (TailExpression) exp;
                 VariableReference vr = (VariableReference) tail.getBaseExpression();
-                Sequence<? extends Item<?>> base = evaluate(vr, EVALUATE_VARIABLE, context, ref);
+                Sequence<?> base = evaluate(vr, EVALUATE_VARIABLE, context, ref);
                 if (base instanceof MemoClosure) {
-                    SequenceIterator<? extends Item<?>> it = base.iterate();
+                    SequenceIterator<?> it = base.iterate();
                     base = it.materialize();
                 }
                 if (base instanceof IntegerRange) {
@@ -439,7 +439,7 @@ public class ExpressionTool {
      *                                           expression
      */
 
-    public static GroundedValue<? extends Item<?>> eagerEvaluate(Expression exp, XPathContext context) throws XPathException {
+    public static GroundedValue<?> eagerEvaluate(Expression exp, XPathContext context) throws XPathException {
         Evaluator evaluator = eagerEvaluator(exp);
         return evaluator.evaluate(exp, context).materialize();
     }
@@ -762,7 +762,7 @@ public class ExpressionTool {
      * @throws XPathException if a dynamic error occurs
      */
 
-    public static SequenceIterator<? extends Item<?>> getIteratorFromProcessMethod(
+    public static SequenceIterator<?> getIteratorFromProcessMethod(
             Expression exp, XPathContext context) throws XPathException {
         Controller controller = context.getController();
         assert controller != null;

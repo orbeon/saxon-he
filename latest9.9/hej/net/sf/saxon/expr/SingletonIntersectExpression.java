@@ -93,7 +93,7 @@ public class SingletonIntersectExpression extends VennExpression {
 
     /*@NotNull*/
     @Override
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext c) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext c) throws XPathException {
         NodeInfo m = (NodeInfo) getLhsExpression().evaluateItem(c);
         if (m == null) {
             return EmptyIterator.getInstance();

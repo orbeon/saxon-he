@@ -253,7 +253,7 @@ public class DocumentSorter extends UnaryExpression {
     }
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         return new DocumentOrderIterator(getBaseExpression().iterate(context), comparer);
     }
 

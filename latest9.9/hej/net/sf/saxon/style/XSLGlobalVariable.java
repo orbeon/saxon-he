@@ -279,7 +279,7 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
             }
             if (sourceBinding.isStatic()) {
                 inst.setStatic(true);
-                GroundedValue<? extends Item<?>> value =
+                GroundedValue<?> value =
                         compilation.getStaticVariable(sourceBinding.getVariableQName());
                 if (value == null) {
                     throw new AssertionError();

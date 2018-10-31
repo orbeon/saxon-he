@@ -286,7 +286,7 @@ public class QuantifiedExpression extends Assignation {
 
         // First create an iteration of the base sequence.
 
-        SequenceIterator<? extends Item<?>> base = getSequence().iterate(context);
+        SequenceIterator<?> base = getSequence().iterate(context);
 
         // Now test to see if some or all of the tests are true. The same
         // logic is used for the SOME and EVERY operators

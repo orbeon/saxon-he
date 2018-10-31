@@ -51,7 +51,7 @@ public interface Binding {
      *          the variable
      */
 
-    Sequence<? extends Item<?>> evaluateVariable(XPathContext context) throws XPathException;
+    Sequence<?> evaluateVariable(XPathContext context) throws XPathException;
 
     /**
      * Indicate whether the binding is local or global. A global binding is one that has a fixed

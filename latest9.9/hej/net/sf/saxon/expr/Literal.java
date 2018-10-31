@@ -37,7 +37,7 @@ import java.util.List;
 
 public class Literal extends Expression {
 
-    private GroundedValue<? extends Item<?>> value;
+    private GroundedValue<?> value;
 
     /**
      * Create a literal as a wrapper around a Value
@@ -45,7 +45,7 @@ public class Literal extends Expression {
      * @param value the value of this literal
      */
 
-    protected Literal(GroundedValue<? extends Item<?>> value) {
+    protected Literal(GroundedValue<?> value) {
         this.value = value.reduce();
     }
 
@@ -70,7 +70,7 @@ public class Literal extends Expression {
      * @return the constant value
      */
 
-    public GroundedValue<? extends Item<?>> getValue() {
+    public GroundedValue<?> getValue() {
         return value;
     }
 
@@ -306,7 +306,7 @@ public class Literal extends Expression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         return value.iterate();
     }
 
@@ -434,11 +434,11 @@ public class Literal extends Expression {
         if (!(obj instanceof Literal)) {
             return false;
         }
-        GroundedValue<? extends Item<?>> v0 = value;
-        GroundedValue<? extends Item<?>> v1 = ((Literal) obj).value;
+        GroundedValue<?> v0 = value;
+        GroundedValue<?> v1 = ((Literal) obj).value;
         try {
-            SequenceIterator<? extends Item<?>> i0 = v0.iterate();
-            SequenceIterator<? extends Item<?>> i1 = v1.iterate();
+            SequenceIterator<?> i0 = v0.iterate();
+            SequenceIterator<?> i1 = v1.iterate();
             while (true) {
                 Item m0 = i0.next();
                 Item m1 = i1.next();
@@ -763,7 +763,7 @@ public class Literal extends Expression {
      * @return the Literal
      */
 
-    public static Literal makeLiteral(GroundedValue<? extends Item<?>> value, Expression origin) {
+    public static Literal makeLiteral(GroundedValue<?> value, Expression origin) {
         Literal lit = makeLiteral(value);
         //lit.setRetainedStaticContextLocally(origin.getLocalRetainedStaticContext());
         ExpressionTool.copyLocationInfo(origin, lit);

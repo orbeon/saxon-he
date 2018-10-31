@@ -47,7 +47,7 @@ import net.sf.saxon.tree.iter.EmptyIterator;
  * is prevented by synchronizing the evaluation methods.</p>
  */
 
-public class MemoClosure extends Closure implements Sequence<Item<?>> {
+public class MemoClosure extends Closure {
 
     private Sequence<Item<?>> sequence;
 
@@ -80,11 +80,11 @@ public class MemoClosure extends Closure implements Sequence<Item<?>> {
 
     private void makeSequence() throws XPathException {
         if (sequence == null) {
-            inputIterator = (SequenceIterator<Item<?>>)expression.iterate(savedXPathContext);
+            inputIterator = expression.iterate(savedXPathContext);
             if (inputIterator instanceof EmptyIterator) {
                 sequence = EmptySequence.getInstance();
             } else if ((inputIterator.getProperties() & SequenceIterator.GROUNDED) != 0) {
-                sequence = inputIterator.materialize();
+                sequence = (GroundedValue<Item<?>>)inputIterator.materialize();
             } else {
                 sequence = new MemoSequence(inputIterator);
             }
@@ -120,9 +120,9 @@ public class MemoClosure extends Closure implements Sequence<Item<?>> {
      */
 
     /*@Nullable*/
-    public GroundedValue<? extends Item<?>> reduce() throws XPathException {
+    public GroundedValue<?> reduce() throws XPathException {
         if (sequence instanceof GroundedValue) {
-            return (GroundedValue<? extends Item<?>>)sequence;
+            return (GroundedValue<?>)sequence;
         } else {
             return iterate().materialize();
         }

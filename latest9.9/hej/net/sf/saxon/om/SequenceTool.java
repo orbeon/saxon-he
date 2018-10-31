@@ -85,6 +85,16 @@ public class SequenceTool {
         }
     }
 
+    public static Sequence<?> toLazySequence2(SequenceIterator<?> iterator) throws XPathException {
+        if ((iterator.getProperties() & SequenceIterator.GROUNDED) != 0 &&
+                !(iterator instanceof RangeIterator) &&
+                !(iterator instanceof ReverseRangeIterator)) {
+            return iterator.materialize();
+        } else {
+            return new LazySequence<>(iterator);
+        }
+    }
+
     public static boolean isUnrepeatable(Sequence seq) {
         return seq instanceof LazySequence ||
                 (seq instanceof Closure && !(seq instanceof MemoClosure || seq instanceof SingletonClosure));
@@ -360,7 +370,7 @@ public class SequenceTool {
      * a sequence with more than one item)
      */
 
-    public static int getCardinality(Sequence<? extends Item<?>> sequence) {
+    public static int getCardinality(Sequence<?> sequence) {
         if (sequence instanceof Item) {
             return StaticProperty.EXACTLY_ONE;
         }
@@ -376,7 +386,7 @@ public class SequenceTool {
             }
         }
         try {
-            SequenceIterator<? extends Item<?>> iter = sequence.iterate();
+            SequenceIterator<?> iter = sequence.iterate();
             Item item = iter.next();
             if (item == null) {
                 return StaticProperty.ALLOWS_ZERO;
@@ -395,7 +405,7 @@ public class SequenceTool {
      * @return the best available sequence type to which the supplied value conforms
      */
 
-    public static SequenceType getSequenceType(Sequence<? extends Item<?>> value, TypeHierarchy th) {
+    public static SequenceType getSequenceType(Sequence<?> value, TypeHierarchy th) {
         return SequenceType.makeSequenceType(getItemType(value, th), getCardinality(value));
     }
 
@@ -413,7 +423,7 @@ public class SequenceTool {
      *                                           a closure that needs to be evaluated)
      */
 
-    public static void process(Sequence<? extends Item<?>> value, XPathContext context, Location locationId) throws XPathException {
+    public static void process(Sequence<?> value, XPathContext context, Location locationId) throws XPathException {
         Receiver out = context.getReceiver();
         value.iterate().forEachOrFail(it -> out.append(it, locationId, ReceiverOptions.ALL_NAMESPACES));
     }
@@ -423,16 +433,16 @@ public class SequenceTool {
      * @param length the length of the returned array
      */
 
-    public static Sequence<? extends Item<?>>[] makeSequenceArray(int length) {
-        return (Sequence<? extends Item<?>>[])new Sequence[length];
+    public static Sequence<?>[] makeSequenceArray(int length) {
+        return (Sequence<?>[])new Sequence[length];
     }
 
     /**
      * Make an array of general-purpose Sequence objects with supplied contents
      */
 
-    public static Sequence<? extends Item<?>>[] fromItems(Item<?>... items) {
-        Sequence<? extends Item<?>>[] seq = (Sequence<? extends Item<?>>[]) new Sequence[items.length];
+    public static Sequence<?>[] fromItems(Item<?>... items) {
+        Sequence<?>[] seq = (Sequence<?>[]) new Sequence[items.length];
         System.arraycopy(items, 0, seq, 0, items.length);
         return seq;
     }

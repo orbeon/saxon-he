@@ -297,7 +297,7 @@ public class WithParam  {
      *          with a dynamic error
      */
 
-    public Sequence<? extends Item<?>> getSelectValue(XPathContext context) throws XPathException {
+    public Sequence<?> getSelectValue(XPathContext context) throws XPathException {
         // There is a select attribute: do a lazy evaluation of the expression,
         // which will already contain any code to force conversion to the required type.
         if (evaluator == null) {
@@ -305,7 +305,7 @@ public class WithParam  {
         }
         int savedOutputState = context.getTemporaryOutputState();
         context.setTemporaryOutputState(StandardNames.XSL_WITH_PARAM);
-        Sequence<? extends Item<?>> result = evaluator.evaluate(selectOp.getChildExpression(), context);
+        Sequence<?> result = evaluator.evaluate(selectOp.getChildExpression(), context);
         context.setTemporaryOutputState(savedOutputState);
         return result;
     }

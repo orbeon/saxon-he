@@ -166,7 +166,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
             Configuration config = getConfiguration();
             allocateConverterStatically(config, true);
             if (converter != null) {
-                GroundedValue<? extends Item<?>> val = iterate(new EarlyEvaluationContext(config)).materialize();
+                GroundedValue<?> val = iterate(new EarlyEvaluationContext(config)).materialize();
                 return Literal.makeLiteral(val, operand);
             }
         }
@@ -294,7 +294,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
 
     /*@NotNull*/
     public SequenceIterator<? extends AtomicValue> iterate(final XPathContext context) throws XPathException {
-        SequenceIterator<? extends Item<?>> base = getBaseExpression().iterate(context);
+        SequenceIterator<?> base = getBaseExpression().iterate(context);
         Converter conv = getConverterDynamically(context);
         if (conv == Converter.ToStringConverter.INSTANCE) {
             return new ItemMappingIterator<>(base, TO_STRING_MAPPER, true);

@@ -160,7 +160,7 @@ public class JSONSerializer extends SequenceWriter implements ReceiverWithOutput
                 if (!allowDuplicateKeys && !keys.add(stringKey)) {
                     throw new XPathException("Key value \"" + stringKey + "\" occurs more than once in JSON map", "SERE0022");
                 }
-                Sequence<? extends Item<?>> value = ((MapItem) item).get(key);
+                Sequence<?> value = ((MapItem) item).get(key);
                 writeSequence(value.materialize());
             }
             emitter.endMap();
@@ -168,7 +168,7 @@ public class JSONSerializer extends SequenceWriter implements ReceiverWithOutput
             boolean oneLiner = !isIndenting || isOneLinerArray((ArrayItem) item);
             emitter.startArray(oneLiner);
             boolean first = true;
-            for (Sequence<? extends Item<?>> member : ((ArrayItem) item).members()) {
+            for (Sequence<?> member : ((ArrayItem) item).members()) {
                 writeSequence(member.materialize());
             }
             emitter.endArray();
@@ -229,7 +229,7 @@ public class JSONSerializer extends SequenceWriter implements ReceiverWithOutput
         return sw.toString().trim();
     }
 
-    private void writeSequence(GroundedValue<? extends Item<?>> seq) throws XPathException {
+    private void writeSequence(GroundedValue<?> seq) throws XPathException {
         int len = seq.getLength();
         if (len == 0) {
             emitter.writeAtomicValue(null);

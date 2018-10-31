@@ -155,7 +155,7 @@ public class SubscriptExpression extends SingleItemFilter {
         int intindex = index.asSubscript();
         if (intindex != -1) {
             Item item;
-            SequenceIterator<? extends Item<?>> iter = getBaseExpression().iterate(context);
+            SequenceIterator<?> iter = getBaseExpression().iterate(context);
             if (intindex == 1) {
                 item = iter.next();
             } else if (iter instanceof MemoSequence.ProgressiveIterator) {

@@ -386,7 +386,7 @@ public class RawSlashExpression extends BinaryExpression
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(final XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(final XPathContext context) throws XPathException {
 
         // This class delivers the result of the path expression in unsorted order,
         // without removal of duplicates. If sorting and deduplication are needed,
@@ -402,7 +402,7 @@ public class RawSlashExpression extends BinaryExpression
      * returned by the child.
      */
 
-    public SequenceIterator<? extends Item<?>> map(XPathContext context) throws XPathException {
+    public SequenceIterator<?> map(XPathContext context) throws XPathException {
         return getStep().iterate(context);
     }
 

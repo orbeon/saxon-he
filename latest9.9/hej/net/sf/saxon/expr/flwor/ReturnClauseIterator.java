@@ -23,7 +23,7 @@ public class ReturnClauseIterator implements SequenceIterator<Item<?>> {
     private TuplePull base;
     private Expression action;
     private XPathContext context;
-    private SequenceIterator<? extends Item<?>> results = null;
+    private SequenceIterator<?> results = null;
 
     /**
      * Construct an iterator over the results of the FLWOR expression.

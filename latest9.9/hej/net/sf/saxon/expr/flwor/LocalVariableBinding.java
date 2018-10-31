@@ -167,7 +167,7 @@ public class LocalVariableBinding implements LocalBinding {
      * Get the value of the range variable
      */
 
-    public Sequence<? extends Item<?>> evaluateVariable(XPathContext context) {
+    public Sequence<?> evaluateVariable(XPathContext context) {
         return context.evaluateLocalVariable(slotNumber);
     }
 

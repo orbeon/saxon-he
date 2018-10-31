@@ -159,7 +159,7 @@ public class KeyIndex {
         // Evaluate the "use" expression against this context node
 
         Expression use = keydef.getUse();
-        SequenceIterator<? extends Item<?>> useval = use.iterate(xc);
+        SequenceIterator<?> useval = use.iterate(xc);
         if (keydef.isComposite()) {
             List<AtomicMatchKey> amks = new ArrayList<>(4);
             useval.forEachOrFail(
@@ -305,7 +305,7 @@ public class KeyIndex {
      * @throws XPathException if a dynamic error is encountered
      */
 
-    public List<NodeInfo> getComposite(SequenceIterator<? extends Item<?>> soughtValue) throws XPathException {
+    public List<NodeInfo> getComposite(SequenceIterator<?> soughtValue) throws XPathException {
         List<AtomicMatchKey> amks = new ArrayList<>(4);
         soughtValue.forEachOrFail(
                 keyVal -> amks.add(getCollationKey((AtomicValue)keyVal, collation, implicitTimezone)));

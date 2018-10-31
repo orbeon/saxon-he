@@ -17,9 +17,9 @@ import net.sf.saxon.value.AtomicValue;
 
 public class KeyValuePair {
     public AtomicValue key;
-    public GroundedValue<? extends Item<?>> value;
+    public GroundedValue<?> value;
 
-    public KeyValuePair(AtomicValue key, GroundedValue<? extends Item<?>> value) {
+    public KeyValuePair(AtomicValue key, GroundedValue<?> value) {
         this.key = key;
         this.value = value;
     }

@@ -129,7 +129,7 @@ public class CollatingFunctionFree extends SystemFunction {
      * @return the result of invoking the function
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs within the function
      */
-    public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] args) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] args) throws XPathException {
         int c = getCollationArgument();
         String collation = args[c].head().getStringValue();
         collation = expandCollationURI(collation, getRetainedStaticContext().getStaticBaseUri());

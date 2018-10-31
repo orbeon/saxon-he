@@ -53,7 +53,7 @@ public class ParseJsonFn extends JsonToXMLFn {
      */
     @Override
     protected Item eval(String input, MapItem options, XPathContext context) throws XPathException {
-        Map<String, Sequence<? extends Item<?>>> checkedOptions = null;
+        Map<String, Sequence<?>> checkedOptions = null;
         if (options != null) {
             checkedOptions = getDetails().optionDetails.processSuppliedOptions(options, context);
         }
@@ -70,7 +70,7 @@ public class ParseJsonFn extends JsonToXMLFn {
      * @throws XPathException if the syntax of the input is incorrect
      */
 
-    public static Item parse(String input, Map<String, Sequence<? extends Item<?>>> options, XPathContext context) throws XPathException {
+    public static Item parse(String input, Map<String, Sequence<?>> options, XPathContext context) throws XPathException {
         JsonParser parser = new JsonParser();
         int flags = 0;
         if (options != null) {

@@ -66,7 +66,7 @@ public class Doc_2 extends SystemFunction implements Callable {
 
 
     private ParseOptions setParseOptions(
-            Map<String, Sequence<? extends Item<?>>> checkedOptions, XPathContext context) throws XPathException {
+            Map<String, Sequence<?>> checkedOptions, XPathContext context) throws XPathException {
         ParseOptions result = new ParseOptions(context.getConfiguration().getParseOptions());
 
         Sequence value = checkedOptions.get("validation");
@@ -146,7 +146,7 @@ public class Doc_2 extends SystemFunction implements Callable {
         }
         String href = hrefVal.getStringValue();
         Item param = arguments[1].head();
-        Map<String, Sequence<? extends Item<?>>> checkedOptions =
+        Map<String, Sequence<?>> checkedOptions =
                 getDetails().optionDetails.processSuppliedOptions((MapItem) param, context);
         ParseOptions parseOptions = setParseOptions(checkedOptions, context);
 

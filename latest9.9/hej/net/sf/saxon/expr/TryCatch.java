@@ -262,13 +262,13 @@ public class TryCatch extends Expression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext c) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext c) throws XPathException {
         XPathContextMajor c1 = c.newContext();
         c1.createThreadManager();
         c1.setErrorListener(new FilteringErrorListener(c.getErrorListener()));
         try {
             // Need to do eager iteration of the first argument to flush any errors out
-            Sequence<? extends Item<?>> v = ExpressionTool.eagerEvaluate(tryOp.getChildExpression(), c1);
+            Sequence<?> v = ExpressionTool.eagerEvaluate(tryOp.getChildExpression(), c1);
             c1.waitForChildThreads();
             // check for xsl:break within xsl:try - test iterate-035
             TailCallLoop.TailCallInfo tci = c1.getTailCallInfo();
@@ -287,7 +287,7 @@ public class TryCatch extends Expression {
                         XPathContextMajor c2 = c.newContext();
                         c2.setCurrentException(err);
                         // check for xsl:break within xsl:catch - test iterate-036
-                        Sequence<? extends Item<?>> v = ExpressionTool.eagerEvaluate(caught, c2);
+                        Sequence<?> v = ExpressionTool.eagerEvaluate(caught, c2);
                         TailCallLoop.TailCallInfo tci = c2.getTailCallInfo();
                         if (tci instanceof BreakInstr) {
                             ((BreakInstr) tci).markContext(c);
@@ -346,12 +346,12 @@ public class TryCatch extends Expression {
                         XPathContextMajor c2 = context.newContext();
                         c2.setCurrentException(err);
                         // check for xsl:break within xsl:catch - test iterate-036
-                        Sequence<? extends Item<?>> v = ExpressionTool.eagerEvaluate(caught, c2);
+                        Sequence<?> v = ExpressionTool.eagerEvaluate(caught, c2);
                         TailCallLoop.TailCallInfo tci = c2.getTailCallInfo();
                         if (tci instanceof BreakInstr) {
                             ((BreakInstr) tci).markContext(context);
                         }
-                        ((GroundedValue<? extends Item<?>>) v).iterate().forEachOrFail(
+                        ((GroundedValue<?>) v).iterate().forEachOrFail(
                                 item -> c2.getReceiver().append(item)
                         );
                         return;

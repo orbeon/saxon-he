@@ -34,7 +34,7 @@ import java.util.*;
 public class OptionsParameter {
 
     private Map<String, SequenceType> allowedOptions = new HashMap<>(8);
-    private Map<String, Sequence<? extends Item<?>>> defaultValues = new HashMap<>(8);
+    private Map<String, Sequence<?>> defaultValues = new HashMap<>(8);
     private Set<String> requiredOptions = new HashSet<>(4);
     private Map<String, Set<String>> allowedValues = new HashMap<>(8);
     private String errorCodeForDisallowedValue;
@@ -73,7 +73,7 @@ public class OptionsParameter {
      * @param defaultValue the default value if the option is not specified; or null
      *                                 if no default is defined
      */
-    public void addAllowedOption(String name, SequenceType type, Sequence<? extends Item<?>> defaultValue) {
+    public void addAllowedOption(String name, SequenceType type, Sequence<?> defaultValue) {
         allowedOptions.put(name, type);
         if (defaultValue != null) {
             defaultValues.put(name, defaultValue);
@@ -103,8 +103,8 @@ public class OptionsParameter {
      * @throws XPathException if any supplied options are invalid
      */
 
-    public Map<String, Sequence<? extends Item<?>>> processSuppliedOptions(MapItem supplied, XPathContext context) throws XPathException {
-        Map<String, Sequence<? extends Item<?>>> result = new HashMap<>();
+    public Map<String, Sequence<?>> processSuppliedOptions(MapItem supplied, XPathContext context) throws XPathException {
+        Map<String, Sequence<?>> result = new HashMap<>();
         TypeHierarchy th = context.getConfiguration().getTypeHierarchy();
 
         for (String req : requiredOptions) {
@@ -116,7 +116,7 @@ public class OptionsParameter {
         for (Map.Entry<String, SequenceType> allowed : allowedOptions.entrySet()) {
             String key = allowed.getKey();
             SequenceType required = allowed.getValue();
-            Sequence<? extends Item<?>> actual = supplied.get(new StringValue(key));
+            Sequence<?> actual = supplied.get(new StringValue(key));
             if (actual != null) {
                 if (!required.matches(actual, th)) {
                     boolean ok = false;
@@ -150,7 +150,7 @@ public class OptionsParameter {
                 }
                 result.put(key, actual);
             } else {
-                Sequence<? extends Item<?>> def = defaultValues.get(key);
+                Sequence<?> def = defaultValues.get(key);
                 if (def != null) {
                     result.put(key, def);
                 }
@@ -166,9 +166,9 @@ public class OptionsParameter {
      * @return a map containing the default values
      */
 
-    public Map<String, Sequence<? extends Item<?>>> getDefaultOptions()  {
-        Map<String, Sequence<? extends Item<?>>> result = new HashMap<>();
-        for (Map.Entry<String, Sequence<? extends Item<?>>> entry : defaultValues.entrySet()) {
+    public Map<String, Sequence<?>> getDefaultOptions()  {
+        Map<String, Sequence<?>> result = new HashMap<>();
+        for (Map.Entry<String, Sequence<?>> entry : defaultValues.entrySet()) {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;

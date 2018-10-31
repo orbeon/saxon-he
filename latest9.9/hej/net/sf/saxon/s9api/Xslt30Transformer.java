@@ -218,7 +218,7 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
             StructuredQName name = param.getKey().getStructuredQName();
             try {
                 globalParameterSet.put(name,
-                                       ((Sequence<? extends Item<?>>) param.getValue().getUnderlyingValue()).materialize());
+                                       ((Sequence<?>) param.getValue().getUnderlyingValue()).materialize());
             } catch (XPathException e) {
                 throw new SaxonApiException(e);
             }
@@ -271,7 +271,7 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
      */
 
     public <T extends XdmValue> void setInitialTemplateParameters(Map<QName, T> parameters, boolean tunnel) throws SaxonApiException {
-        Map<StructuredQName, Sequence<? extends Item<?>>> templateParams = new HashMap<>();
+        Map<StructuredQName, Sequence<?>> templateParams = new HashMap<>();
         for (Map.Entry<QName, T> entry : parameters.entrySet()) {
             templateParams.put(entry.getKey().getStructuredQName(), entry.getValue().getUnderlyingValue());
         }
@@ -570,7 +570,7 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
             XPathContextMajor context = controller.newXPathContext();
             context.setCurrentComponent(f);
             context.setTemporaryOutputState(StandardNames.XSL_FUNCTION);
-            Sequence<? extends Item<?>> result = uf.call(context, vr);
+            Sequence<?> result = uf.call(context, vr);
             result = result.materialize();
             return XdmValue.wrap(result);
         } catch (XPathException e) {
@@ -601,14 +601,14 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
     private Sequence[] typeCheckFunctionArguments(UserFunction uf, XdmValue[] arguments) throws XPathException {
         Configuration config = processor.getUnderlyingConfiguration();
         UserFunctionParameter[] params = uf.getParameterDefinitions();
-        GroundedValue<? extends Item<?>>[] vr =
-                (GroundedValue<? extends Item<?>>[])new GroundedValue[arguments.length];
+        GroundedValue<?>[] vr =
+                (GroundedValue<?>[])new GroundedValue[arguments.length];
         for (int i = 0; i < arguments.length; i++) {
             net.sf.saxon.value.SequenceType type = params[i].getRequiredType();
             vr[i] = arguments[i].getUnderlyingValue();
             if (!type.matches(vr[i], config.getTypeHierarchy())) {
                 RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.FUNCTION, uf.getFunctionName().getDisplayName(), i);
-                Sequence<? extends Item<?>> converted = config.getTypeHierarchy().applyFunctionConversionRules(vr[i], type, role, ExplicitLocation.UNKNOWN_LOCATION);
+                Sequence<?> converted = config.getTypeHierarchy().applyFunctionConversionRules(vr[i], type, role, ExplicitLocation.UNKNOWN_LOCATION);
                 vr[i] = converted.materialize();
             }
         }

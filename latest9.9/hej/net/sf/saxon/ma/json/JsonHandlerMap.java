@@ -112,7 +112,7 @@ public class JsonHandlerMap extends JsonHandler {
      * @param val   the value/map to be written
      * @throws XPathException if an error occurs writing to the map
      */
-    private void writeItem(GroundedValue<? extends Item<?>> val) throws XPathException {
+    private void writeItem(GroundedValue<?> val) throws XPathException {
         if (stack.empty()) {
             stack.push(val);
         } else if (stack.peek() instanceof ArrayItem) {

@@ -248,11 +248,11 @@ public class MapFunctionSet extends BuiltInFunctionSet {
             }
         }
 
-        public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
+        public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
             MapItem map = (MapItem) arguments[0].head();
             assert map != null;
             AtomicValue key = (AtomicValue) arguments[1].head();
-            Sequence<? extends Item<?>> value = map.get(key);
+            Sequence<?> value = map.get(key);
             if (value == null) {
                 return EmptySequence.getInstance();
             } else {
@@ -268,20 +268,20 @@ public class MapFunctionSet extends BuiltInFunctionSet {
     public static class MapFind extends SystemFunction {
 
         public ArrayItem call(XPathContext context, Sequence[] arguments) throws XPathException {
-            List<GroundedValue<? extends Item<?>>> result = new ArrayList<>();
+            List<GroundedValue<?>> result = new ArrayList<>();
             AtomicValue key = (AtomicValue) arguments[1].head();
             processSequence(arguments[0], key, result);
             return new SimpleArrayItem(result);
         }
 
-        private void processSequence(Sequence<?> in, AtomicValue key, List<GroundedValue<? extends Item<?>>> result) throws XPathException {
+        private void processSequence(Sequence<?> in, AtomicValue key, List<GroundedValue<?>> result) throws XPathException {
             in.iterate().forEachOrFail(item -> {
                 if (item instanceof ArrayItem) {
                     for (Sequence sequence : ((ArrayItem) item).members()) {
                         processSequence(sequence, key, result);
                     }
                 } else if (item instanceof MapItem) {
-                    GroundedValue<? extends Item<?>> value = ((MapItem) item).get(key);
+                    GroundedValue<?> value = ((MapItem) item).get(key);
                     if (value != null) {
                         result.add(value);
                     }
@@ -299,10 +299,10 @@ public class MapFunctionSet extends BuiltInFunctionSet {
      */
     public static class MapEntry extends SystemFunction {
 
-        public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
+        public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
             AtomicValue key = (AtomicValue) arguments[0].head();
             assert key != null;
-            GroundedValue<? extends Item<?>> value = ((Sequence<?>)arguments[1]).iterate().materialize();
+            GroundedValue<?> value = ((Sequence<?>)arguments[1]).iterate().materialize();
             return HashTrieMap.singleton(key, value);
         }
 
@@ -336,12 +336,12 @@ public class MapFunctionSet extends BuiltInFunctionSet {
      */
     public static class MapForEach extends SystemFunction {
 
-        public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
+        public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
             MapItem map = (MapItem) arguments[0].head();
             Function fn = (Function) arguments[1].head();
-            List<GroundedValue<? extends Item<?>>> results = new ArrayList<>();
+            List<GroundedValue<?>> results = new ArrayList<>();
             for (KeyValuePair pair : map.keyValuePairs()) {
-                Sequence<? extends Item<?>> seq = dynamicCall(fn, context, new Sequence[]{pair.key, pair.value});
+                Sequence<?> seq = dynamicCall(fn, context, new Sequence[]{pair.key, pair.value});
                 results.add(seq.materialize());
             }
             return new Chain(results);
@@ -386,7 +386,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
         public Expression makeOptimizedFunctionCall(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo, Expression... arguments) throws XPathException {
             if (arguments.length == 2 && arguments[1] instanceof Literal) {
                 MapItem options = (MapItem) ((Literal)arguments[1]).getValue().head();
-                Map<String, Sequence<? extends Item<?>>> values = getDetails().optionDetails.processSuppliedOptions(
+                Map<String, Sequence<?>> values = getDetails().optionDetails.processSuppliedOptions(
                         options, visitor.getStaticContext().makeEarlyEvaluationContext());
                 String duplicates = ((StringValue) values.get("duplicates")).getStringValue();
                 String duplicatesErrorCode = ((StringValue) values.get("duplicates-error-code")).getStringValue();
@@ -440,7 +440,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
             String duplicatesErrorCode = this.duplicatesErrorCode;
             if (arguments.length > 1) {
                 MapItem options = (MapItem) arguments[1].head();
-                Map<String, Sequence<? extends Item<?>>> values = getDetails().optionDetails.processSuppliedOptions(options, context);
+                Map<String, Sequence<?>> values = getDetails().optionDetails.processSuppliedOptions(options, context);
                 duplicates = ((StringValue) values.get("duplicates")).getStringValue();
                 duplicatesErrorCode = ((StringValue) values.get("duplicates-error-code")).getStringValue();
             }
@@ -456,7 +456,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
                 MapItem next;
                 while ((next = (MapItem) iter.next()) != null) {
                     for (KeyValuePair pair : next.keyValuePairs()) {
-                        Sequence<? extends Item<?>> existing = baseMap.get(pair.key);
+                        Sequence<?> existing = baseMap.get(pair.key);
                         if (existing != null) {
                             switch (duplicates) {
                                 case "use-first":
@@ -470,7 +470,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
                                 case "combine":
                                     InsertBefore.InsertIterator combinedIter =
                                             new InsertBefore.InsertIterator(pair.value.iterate(), existing.iterate(), 1);
-                                    GroundedValue<? extends Item<?>> combinedValue = combinedIter.materialize();
+                                    GroundedValue<?> combinedValue = combinedIter.materialize();
                                     baseMap = ((HashTrieMap) baseMap).addEntry(pair.key, combinedValue);
                                     break;
                                 default:
@@ -522,8 +522,8 @@ public class MapFunctionSet extends BuiltInFunctionSet {
             }
 
             AtomicValue key = (AtomicValue) arguments[1].head();
-            GroundedValue<? extends Item<?>> value =
-                    ((Sequence<? extends Item<?>>)arguments[2]).materialize();
+            GroundedValue<?> value =
+                    ((Sequence<?>)arguments[2]).materialize();
             KeyValuePair pair = new KeyValuePair(key, value);
             return ((HashTrieMap) baseMap).addEntry(pair.key, pair.value);
         }

@@ -136,9 +136,9 @@ public class Err {
         }
     }
 
-    public static CharSequence depictSequence(Sequence<? extends Item<?>> seq) {
+    public static CharSequence depictSequence(Sequence<?> seq) {
         try {
-            GroundedValue<? extends Item<?>> val = seq.materialize();
+            GroundedValue<?> val = seq.materialize();
             if (val.getLength() == 0) {
                 return "()";
             } else if (val.getLength() == 1) {

@@ -72,7 +72,7 @@ public abstract class Evaluator {
      * @throws XPathException if any dynamic error occurs during the evaluation
      */
 
-    public abstract Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) throws XPathException;
+    public abstract Sequence<?> evaluate(Expression expr, XPathContext context) throws XPathException;
 
     /**
      * Get an integer code identifying this evaluator (for use in the SEF file). The codes are chosen
@@ -88,7 +88,7 @@ public abstract class Evaluator {
 
     public final static Evaluator EMPTY_SEQUENCE = new Evaluator() {
         @Override
-        public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) {
+        public Sequence<?> evaluate(Expression expr, XPathContext context) {
             return EmptySequence.getInstance();
         }
 
@@ -109,7 +109,7 @@ public abstract class Evaluator {
 
     public final static Evaluator LITERAL = new Evaluator() {
         @Override
-        public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) {
+        public Sequence<?> evaluate(Expression expr, XPathContext context) {
             return ((Literal)expr).getValue();
         }
 
@@ -130,7 +130,7 @@ public abstract class Evaluator {
 
     public final static Evaluator VARIABLE = new Evaluator() {
         @Override
-        public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) throws XPathException {
+        public Sequence<?> evaluate(Expression expr, XPathContext context) throws XPathException {
             try {
                 return ((VariableReference) expr).evaluateVariable(context);
             } catch (ClassCastException e) {
@@ -158,7 +158,7 @@ public abstract class Evaluator {
 
     public final static Evaluator SUPPLIED_PARAMETER = new Evaluator() {
         @Override
-        public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) throws XPathException {
+        public Sequence<?> evaluate(Expression expr, XPathContext context) throws XPathException {
             try {
                 return ((SuppliedParameterReference) expr).evaluateVariable(context);
             } catch (ClassCastException e) {
@@ -209,7 +209,7 @@ public abstract class Evaluator {
 
     public final static Evaluator OPTIONAL_ITEM = new Evaluator() {
         @Override
-        public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) throws XPathException {
+        public Sequence<?> evaluate(Expression expr, XPathContext context) throws XPathException {
             Item<?> item = expr.evaluateItem(context);
             return item==null ? EmptySequence.getInstance() : item;
         }
@@ -235,8 +235,8 @@ public abstract class Evaluator {
 
     public final static Evaluator LAZY_SEQUENCE = new Evaluator() {
         @Override
-        public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) throws XPathException {
-            SequenceIterator<? extends Item<?>> iter = expr.iterate(context);
+        public Sequence<?> evaluate(Expression expr, XPathContext context) throws XPathException {
+            SequenceIterator<?> iter = expr.iterate(context);
             return new LazySequence<>(iter);
         }
 
@@ -258,8 +258,8 @@ public abstract class Evaluator {
 
     public final static Evaluator MEMO_SEQUENCE = new Evaluator() {
         @Override
-        public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) throws XPathException {
-            SequenceIterator<? extends Item<?>> iter = expr.iterate(context);
+        public Sequence<?> evaluate(Expression expr, XPathContext context) throws XPathException {
+            SequenceIterator<?> iter = expr.iterate(context);
             return new MemoSequence<>(iter);
         }
 
@@ -281,7 +281,7 @@ public abstract class Evaluator {
 
     public final static Evaluator MEMO_CLOSURE = new Evaluator() {
         @Override
-        public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) throws XPathException {
+        public Sequence<?> evaluate(Expression expr, XPathContext context) throws XPathException {
             return new MemoClosure(expr, context);
         }
 
@@ -303,7 +303,7 @@ public abstract class Evaluator {
 
     public final static Evaluator SINGLETON_CLOSURE = new Evaluator() {
         @Override
-        public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) throws XPathException {
+        public Sequence<?> evaluate(Expression expr, XPathContext context) throws XPathException {
             return new SingletonClosure(expr, context);
         }
 
@@ -326,8 +326,8 @@ public abstract class Evaluator {
 
     public final static Evaluator EAGER_SEQUENCE = new Evaluator() {
         @Override
-        public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) throws XPathException {
-            SequenceIterator<? extends Item<?>> iter = expr.iterate(context);
+        public Sequence<?> evaluate(Expression expr, XPathContext context) throws XPathException {
+            SequenceIterator<?> iter = expr.iterate(context);
             return iter.materialize();
         }
 
@@ -349,11 +349,11 @@ public abstract class Evaluator {
 
     public final static Evaluator SHARED_APPEND = new Evaluator() {
         @Override
-        public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) throws XPathException {
+        public Sequence<?> evaluate(Expression expr, XPathContext context) throws XPathException {
             if (expr instanceof Block) {
                 Block block = (Block) expr;
                 Operand[] children = block.getOperanda();
-                List<GroundedValue<? extends Item<?>>> subsequences = new ArrayList<>(children.length);
+                List<GroundedValue<?>> subsequences = new ArrayList<>(children.length);
                 for (Operand o : children) {
                     Expression child = o.getChildExpression();
                     if (Cardinality.allowsMany(child.getCardinality())) {
@@ -389,7 +389,7 @@ public abstract class Evaluator {
 
     public final static Evaluator STREAMING_ARGUMENT = new Evaluator() {
         @Override
-        public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) throws XPathException {
+        public Sequence<?> evaluate(Expression expr, XPathContext context) throws XPathException {
             return context.getConfiguration().obtainOptimizer().evaluateStreamingArgument(expr, context);
         }
 
@@ -410,7 +410,7 @@ public abstract class Evaluator {
 
     public final static Evaluator MAKE_INDEXED_VARIABLE = new Evaluator() {
         @Override
-        public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) throws XPathException {
+        public Sequence<?> evaluate(Expression expr, XPathContext context) throws XPathException {
             return context.getConfiguration().obtainOptimizer().makeIndexedValue(expr.iterate(context));
         }
 
@@ -431,7 +431,7 @@ public abstract class Evaluator {
 
     public final static Evaluator PROCESS = new Evaluator() {
         @Override
-        public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) throws XPathException {
+        public Sequence<?> evaluate(Expression expr, XPathContext context) throws XPathException {
             Controller controller = context.getController();
             Receiver saved = context.getReceiver();
             SequenceOutputter seq = controller.allocateSequenceOutputter(20);
@@ -441,7 +441,7 @@ public abstract class Evaluator {
             expr.process(context);
             seq.close();
             context.setReceiver(saved);
-            Sequence<? extends Item<?>> val = seq.getSequence();
+            Sequence<?> val = seq.getSequence();
             seq.reset();
             return val;
         }
@@ -467,12 +467,12 @@ public abstract class Evaluator {
 
     public final static Evaluator LAZY_TAIL = new Evaluator() {
         @Override
-        public Sequence<? extends Item<?>> evaluate(Expression expr, XPathContext context) throws XPathException {
+        public Sequence<?> evaluate(Expression expr, XPathContext context) throws XPathException {
             TailExpression tail = (TailExpression) expr;
             VariableReference vr = (VariableReference) tail.getBaseExpression();
-            Sequence<? extends Item<?>> base = Evaluator.VARIABLE.evaluate(vr, context);
+            Sequence<?> base = Evaluator.VARIABLE.evaluate(vr, context);
             if (base instanceof MemoClosure) {
-                SequenceIterator<? extends Item<?>> it = base.iterate();
+                SequenceIterator<?> it = base.iterate();
                 base = it.materialize();
             }
             if (base instanceof IntegerRange) {
@@ -487,7 +487,7 @@ public abstract class Evaluator {
                 }
             }
             if (base instanceof SequenceExtent) {
-                SequenceExtent<? extends Item<?>> baseSeq = (SequenceExtent<? extends Item<?>>)base;
+                SequenceExtent<?> baseSeq = (SequenceExtent<?>)base;
                 if (tail.getStart() > ((SequenceExtent) base).getLength()) {
                     return EmptySequence.getInstance();
                 } else {

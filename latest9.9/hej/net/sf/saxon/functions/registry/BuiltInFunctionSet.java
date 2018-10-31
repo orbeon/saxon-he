@@ -36,7 +36,7 @@ import java.util.List;
  */
 public abstract class BuiltInFunctionSet implements FunctionLibrary {
 
-    public static Sequence<? extends Item<?>> EMPTY = EmptySequence.getInstance();
+    public static Sequence<?> EMPTY = EmptySequence.getInstance();
 
     /**
      * Categories of functions, bit significant
@@ -340,7 +340,7 @@ public abstract class BuiltInFunctionSet implements FunctionLibrary {
             e.usage = new OperandUsage[1];
         } else {
             e.argumentTypes = new SequenceType[arity];
-            e.resultIfEmpty = (Sequence<? extends Item<?>>[])new Sequence[arity];
+            e.resultIfEmpty = (Sequence<?>[])new Sequence[arity];
             e.usage = new OperandUsage[arity];
         }
         functionTable.put(name + "#" + arity, e);
@@ -364,7 +364,7 @@ public abstract class BuiltInFunctionSet implements FunctionLibrary {
             e.applicability = master.applicability;
             e.properties = master.properties;
             e.argumentTypes = new SequenceType[arity];
-            e.resultIfEmpty = (Sequence<? extends Item<?>>[])new Sequence[arity];
+            e.resultIfEmpty = (Sequence<?>[])new Sequence[arity];
             e.usage = new OperandUsage[arity];
             for (int i=0; i<arity; i++) {
                 e.argumentTypes[i] = master.argumentTypes[i];
@@ -436,7 +436,7 @@ public abstract class BuiltInFunctionSet implements FunctionLibrary {
          * as the value of this argument allows the result to be determined irrespective of the values of the
          * other arguments; null if there is no such calculation possible
          */
-        public Sequence<? extends Item<?>>[] resultIfEmpty;
+        public Sequence<?>[] resultIfEmpty;
         /**
          * Any additional properties. Various bit settings are defined: for example SAME_AS_FIRST_ARGUMENT indicates that
          * the result type is the same as the type of the first argument
@@ -463,7 +463,7 @@ public abstract class BuiltInFunctionSet implements FunctionLibrary {
          * @return this entry (to allow chaining)
          */
 
-        public Entry arg(int a, ItemType type, int options, Sequence<? extends Item<?>> resultIfEmpty) {
+        public Entry arg(int a, ItemType type, int options, Sequence<?> resultIfEmpty) {
             int cardinality = options & StaticProperty.CARDINALITY_MASK;
             OperandUsage usage = OperandUsage.NAVIGATION;
             if ((options & ABS) != 0) {

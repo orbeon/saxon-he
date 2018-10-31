@@ -83,7 +83,7 @@ public class SortedGroupIterator extends SortedIterator implements GroupIterator
         return ((GroupToBeSorted) values[position - 1]).currentGroupingKey;
     }
 
-    public SequenceIterator<? extends Item<?>> iterateCurrentGroup() throws XPathException {
+    public SequenceIterator<?> iterateCurrentGroup() throws XPathException {
         return ((GroupToBeSorted) values[position - 1]).currentGroup.iterate();
     }
 

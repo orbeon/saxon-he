@@ -32,7 +32,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
     public static final SimpleArrayItem EMPTY_ARRAY =
             new SimpleArrayItem(new ArrayList<>());
 
-    private List<GroundedValue<? extends Item<?>>> members;
+    private List<GroundedValue<?>> members;
     private boolean knownToBeGrounded = false;
     private SequenceType memberType = null; // computed on demand
 
@@ -42,7 +42,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      *                The values must be repeatable sequences (not LazySequences); this is not checked.
      */
 
-    public SimpleArrayItem(List<GroundedValue<? extends Item<?>>> members) {
+    public SimpleArrayItem(List<GroundedValue<?>> members) {
         this.members = members;
     }
 
@@ -53,11 +53,11 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      * @throws XPathException if evaluating the SequenceIterator fails
      */
 
-    public static SimpleArrayItem makeSimpleArrayItem(SequenceIterator<? extends Item<?>> input) throws XPathException {
-        List<GroundedValue<? extends Item<?>>> members = new ArrayList<>();
+    public static SimpleArrayItem makeSimpleArrayItem(SequenceIterator<?> input) throws XPathException {
+        List<GroundedValue<?>> members = new ArrayList<>();
         input.forEachOrFail(item -> {
             if (item.getClass().getName().equals("com.saxonica.functions.extfn.ArrayMemberValue")) {
-                members.add((GroundedValue<? extends Item<?>>) ((ExternalObject) item).getObject());
+                members.add((GroundedValue<?>) ((ExternalObject) item).getObject());
             } else {
                 members.add(item);
             }
@@ -86,7 +86,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
         if (!knownToBeGrounded) {
             synchronized(this) {
                 for (int i=0; i<members.size(); i++) {
-                    members.set(i, ((Sequence<? extends Item<?>>) members.get(i)).materialize());
+                    members.set(i, ((Sequence<?>) members.get(i)).materialize());
                 }
                 knownToBeGrounded = true;
             }
@@ -133,7 +133,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      */
 
 
-    public GroundedValue<? extends Item<?>> get(int index) throws XPathException {
+    public GroundedValue<?> get(int index) throws XPathException {
         if (index < 0 || index >= members.size()) {
             throw new XPathException("Array index (" + (index+1) + ") out of range (1 to " + members.size() + ")", "FOAY0001");
         }
@@ -195,7 +195,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      * @return an iterator over the members of the array
      */
 
-    public Iterable<GroundedValue<? extends Item<?>>> members() {
+    public Iterable<GroundedValue<?>> members() {
         return members;
     }
 
@@ -268,7 +268,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      * @throws IndexOutOfBoundsException if position is out of range
      */
     @Override
-    public ArrayItem insert(int position, GroundedValue<? extends Item<?>> member) {
+    public ArrayItem insert(int position, GroundedValue<?> member) {
         PersistentArrayItem a2 = new PersistentArrayItem(this);
         return a2.insert(position, member);
     }
@@ -311,7 +311,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      * has finished.
      */
 
-    public List<GroundedValue<? extends Item<?>>> getMembers() {
+    public List<GroundedValue<?>> getMembers() {
         return members;
     }
 
@@ -331,7 +331,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
         } else {
             FastStringBuffer buff = new FastStringBuffer(256);
             buff.append("[");
-            for (GroundedValue<? extends Item<?>> entry : members()) {
+            for (GroundedValue<?> entry : members()) {
                 buff.append(Err.depictSequence(entry).toString().trim());
                 buff.append(", ");
             }

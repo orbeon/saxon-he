@@ -107,11 +107,11 @@ public class Trace extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         Controller controller = context.getController();
         String label = arguments.length == 1 ? "*" : arguments[1].head().getStringValue();
         if (controller.isTracing()) {
-            Sequence<? extends Item<?>> value = arguments[0].iterate().materialize();
+            Sequence<?> value = arguments[0].iterate().materialize();
             notifyListener(label, value, location, context);
             return value;
         } else {

@@ -293,8 +293,8 @@ public class GroupByClause extends Clause {
         for (int j = groupingValues.length; j < bindings.length; j++) {
             List<Item<?>> concatenatedValue = new ArrayList<>();
             for (ObjectToBeGrouped otbg : group) {
-                Sequence<? extends Item<?>> val = otbg.retainedValues.getMembers()[j - groupingValues.length];
-                SequenceIterator<? extends Item<?>> si = val.iterate();
+                Sequence<?> val = otbg.retainedValues.getMembers()[j - groupingValues.length];
+                SequenceIterator<?> si = val.iterate();
                 Item<?> it;
                 while ((it = si.next()) != null) {
                     concatenatedValue.add(it);

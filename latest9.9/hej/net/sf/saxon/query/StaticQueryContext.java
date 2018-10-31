@@ -914,7 +914,7 @@ public class StaticQueryContext {
      */
 
     public void declareGlobalVariable(
-            StructuredQName qName, SequenceType type, Sequence<? extends Item<?>> value, boolean external)
+            StructuredQName qName, SequenceType type, Sequence<?> value, boolean external)
             throws XPathException {
         if (value == null && !external) {
             throw new NullPointerException("No initial value for declared variable");

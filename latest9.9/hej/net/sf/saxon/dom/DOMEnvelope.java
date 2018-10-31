@@ -14,7 +14,6 @@ import net.sf.saxon.expr.JPConverter;
 import net.sf.saxon.expr.PJConverter;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExternalObjectModel;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.pattern.AnyNodeTest;
@@ -79,13 +78,13 @@ public class DOMEnvelope implements ExternalObjectModel {
     public PJConverter getPJConverter(Class<?> targetClass) {
         if (NodeOverNodeInfo.class.isAssignableFrom(targetClass)) {
             return new PJConverter() {
-                public Object convert(Sequence<? extends Item<?>> value, Class<?> targetClass, XPathContext context) throws XPathException {
+                public Object convert(Sequence<?> value, Class<?> targetClass, XPathContext context) throws XPathException {
                     return DOMObjectModel.convertXPathValueToObject(value, targetClass);
                 }
             };
         } else if (NodeList.class.isAssignableFrom(targetClass)) {
             return new PJConverter() {
-                public Object convert(Sequence<? extends Item<?>> value, Class<?> targetClass, XPathContext context) throws XPathException {
+                public Object convert(Sequence<?> value, Class<?> targetClass, XPathContext context) throws XPathException {
                     return DOMObjectModel.convertXPathValueToObject(value, targetClass);
                 }
             };

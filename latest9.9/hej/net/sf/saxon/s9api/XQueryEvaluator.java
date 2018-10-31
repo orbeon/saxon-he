@@ -179,7 +179,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
     public void setExternalVariable(QName name, XdmValue value) {
         try {
             context.setParameter(name.getStructuredQName(),
-                                 value == null ? null : ((Sequence<? extends Item<?>>) value.getUnderlyingValue()).materialize());
+                                 value == null ? null : ((Sequence<?>) value.getUnderlyingValue()).materialize());
         } catch (XPathException e) {
             throw new SaxonApiUncheckedException(e);
         }
@@ -193,7 +193,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
      */
 
     public XdmValue getExternalVariable(QName name) {
-        GroundedValue<? extends Item<?>> oval = context.getParameter(name.getStructuredQName());
+        GroundedValue<?> oval = context.getParameter(name.getStructuredQName());
         if (oval == null) {
             return null;
         }
@@ -425,7 +425,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
             throw new IllegalStateException("Query is updating");
         }
         try {
-            SequenceIterator<? extends Item<?>> iter = expression.iterator(context);
+            SequenceIterator<?> iter = expression.iterator(context);
             return XdmValue.wrap(iter.materialize());
         } catch (XPathException e) {
             throw new SaxonApiException(e);
@@ -446,7 +446,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
 
     public XdmItem evaluateSingle() throws SaxonApiException {
         try {
-            SequenceIterator<? extends Item<?>> iter = expression.iterator(context);
+            SequenceIterator<?> iter = expression.iterator(context);
             Item<?> next = iter.next();
             return next == null ? null : (XdmItem) XdmValue.wrap(next);
         } catch (XPathException e) {
@@ -602,7 +602,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
                 context.initializeController(controller);
             }
             Configuration config = processor.getUnderlyingConfiguration();
-            Sequence<? extends Item<?>>[] vr = SequenceTool.makeSequenceArray(arguments.length);
+            Sequence<?>[] vr = SequenceTool.makeSequenceArray(arguments.length);
             for (int i = 0; i < arguments.length; i++) {
                 net.sf.saxon.value.SequenceType type = fn.getParameterDefinitions()[i].getRequiredType();
                 vr[i] = arguments[i].getUnderlyingValue();
@@ -614,7 +614,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
                     vr[i] = th.applyFunctionConversionRules(vr[i], type, role, ExplicitLocation.UNKNOWN_LOCATION);
                 }
             }
-            Sequence<? extends Item<?>> result = fn.call(vr, controller);
+            Sequence<?> result = fn.call(vr, controller);
             return XdmValue.wrap(result);
         } catch (XPathException e) {
             throw new SaxonApiException(e);

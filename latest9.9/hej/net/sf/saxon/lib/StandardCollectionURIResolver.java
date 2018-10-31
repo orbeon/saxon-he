@@ -91,7 +91,7 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
      * or transformation.
      */
 
-    public SequenceIterator<? extends Item<?>> resolve(
+    public SequenceIterator<?> resolve(
             String href, String base, XPathContext context) throws XPathException {
 
         StandardCollectionFinder.checkNotNull(href, context);
@@ -233,7 +233,7 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
             });
         }
         FileExpander expander = new FileExpander(params, newPipe);
-        SequenceIterator<? extends Item<?>> base = new ArrayIterator<>(fileValues);
+        SequenceIterator<?> base = new ArrayIterator<>(fileValues);
         return new MappingIterator(base, expander);
     }
 
@@ -404,7 +404,7 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
          * sequence.
          */
 
-        public SequenceIterator<? extends Item<?>> map(ExternalObject<File> item) throws XPathException {
+        public SequenceIterator<?> map(ExternalObject<File> item) throws XPathException {
             File file = item.getObject();
             if (file.isDirectory()) {
                 if (recurse) {

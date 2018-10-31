@@ -137,7 +137,7 @@ public class JAXPVariableReference extends Expression implements Callable {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         return call(context, null).iterate();
     }
 

@@ -45,7 +45,7 @@ public interface GroupIterator extends SequenceIterator<Item<?>> {
      *          if a dynamic error occurs
      */
 
-    SequenceIterator<? extends Item<?>> iterateCurrentGroup() throws XPathException;
+    SequenceIterator<?> iterateCurrentGroup() throws XPathException;
 
     //#if EE==true
 

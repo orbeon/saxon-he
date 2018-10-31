@@ -48,7 +48,7 @@ public class XMLToJsonFn extends SystemFunction {
         boolean indent = false;
         if (getArity() > 1) {
             MapItem suppliedOptions = (MapItem) arguments[1].head();
-            Map<String, Sequence<? extends Item<?>>> options = getDetails().optionDetails.processSuppliedOptions(suppliedOptions, context);
+            Map<String, Sequence<?>> options = getDetails().optionDetails.processSuppliedOptions(suppliedOptions, context);
             indent = ((BooleanValue)options.get("indent").head()).getBooleanValue();
         }
 

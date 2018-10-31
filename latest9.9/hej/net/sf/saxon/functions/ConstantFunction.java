@@ -24,9 +24,9 @@ import net.sf.saxon.value.IntegerValue;
 
 public class ConstantFunction extends SystemFunction  {
 
-    public GroundedValue<? extends Item<?>> value;
+    public GroundedValue<?> value;
 
-    public ConstantFunction(GroundedValue<? extends Item<?>> value) {
+    public ConstantFunction(GroundedValue<?> value) {
         this.value = value;
     }
 

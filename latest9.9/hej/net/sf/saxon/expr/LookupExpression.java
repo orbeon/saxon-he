@@ -299,7 +299,7 @@ public class LookupExpression extends BinaryExpression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(final XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(final XPathContext context) throws XPathException {
         Configuration config = context.getConfiguration();
         if (isArrayLookup) {
             if (isSingleContainer && isSingleEntry) {
@@ -307,15 +307,15 @@ public class LookupExpression extends BinaryExpression {
                 IntegerValue subscript = (IntegerValue) getRhsExpression().evaluateItem(context);
                 return array.get((int) subscript.longValue() - 1).iterate();
             } else if (isSingleEntry) {
-                SequenceIterator<? extends Item<?>> baseIterator = getLhsExpression().iterate(context);
+                SequenceIterator<?> baseIterator = getLhsExpression().iterate(context);
                 int subscript = (int) ((IntegerValue) getRhsExpression().evaluateItem(context)).longValue() - 1;
                 return new MappingIterator<>(baseIterator,
                                            baseItem -> ((ArrayItem) baseItem).get(subscript).iterate());
             } else {
-                SequenceIterator<? extends Item<?>> baseIterator = getLhsExpression().iterate(context);
-                GroundedValue<? extends Item<?>> rhs = getRhsExpression().iterate(context).materialize();
+                SequenceIterator<?> baseIterator = getLhsExpression().iterate(context);
+                GroundedValue<?> rhs = getRhsExpression().iterate(context).materialize();
                 return new MappingIterator<>(baseIterator, baseItem -> new MappingIterator<>(
-                        (SequenceIterator<? extends Item<?>>) rhs.iterate(),
+                        (SequenceIterator<?>) rhs.iterate(),
                         index -> ((ArrayItem) baseItem).get((int) ((IntegerValue) index).longValue() - 1).iterate()));
             }
         } else if (isMapLookup) {
@@ -325,36 +325,36 @@ public class LookupExpression extends BinaryExpression {
                 GroundedValue value = map.get(key);
                 return value == null ? EmptyIterator.emptyIterator() : value.iterate();
             } else if (isSingleEntry) {
-                SequenceIterator<? extends Item<?>> baseIterator = getLhsExpression().iterate(context);
+                SequenceIterator<?> baseIterator = getLhsExpression().iterate(context);
                 AtomicValue key = (AtomicValue) getRhsExpression().evaluateItem(context);
                 return new MappingIterator<>(baseIterator, baseItem -> {
-                    GroundedValue<? extends Item<?>> value = ((MapItem) baseItem).get(key);
+                    GroundedValue<?> value = ((MapItem) baseItem).get(key);
                     return value == null ? EmptyIterator.emptyIterator() : value.iterate();
                 });
             } else {
-                SequenceIterator<? extends Item<?>> baseIterator = getLhsExpression().iterate(context);
-                GroundedValue<? extends Item<?>> rhs = getRhsExpression().iterate(context).materialize();
+                SequenceIterator<?> baseIterator = getLhsExpression().iterate(context);
+                GroundedValue<?> rhs = getRhsExpression().iterate(context).materialize();
                 return new MappingIterator<>(
                         baseIterator,
                         baseItem -> new MappingIterator<>(rhs.iterate(), index -> {
-                            GroundedValue<? extends Item<?>> value = ((MapItem) baseItem).get((AtomicValue) index);
+                            GroundedValue<?> value = ((MapItem) baseItem).get((AtomicValue) index);
                             return value == null ? EmptyIterator.emptyIterator() : value.iterate();
                         }));
             }
         } else if (isObjectLookup) {
-            SequenceIterator<? extends Item<?>> baseIterator = getLhsExpression().iterate(context);
-            GroundedValue<? extends Item<?>> rhs = getRhsExpression().iterate(context).materialize();
+            SequenceIterator<?> baseIterator = getLhsExpression().iterate(context);
+            GroundedValue<?> rhs = getRhsExpression().iterate(context).materialize();
             String key = rhs.getStringValue();
             return new ItemMappingIterator<>(baseIterator,
                                            item -> (Item<?>)config.externalObjectAsMap((ObjectValue)item, key).get((StringValue)rhs));
         } else {
-            SequenceIterator<? extends Item<?>> baseIterator = getLhsExpression().iterate(context);
-            GroundedValue<? extends Item<?>> rhs = getRhsExpression().iterate(context).materialize();
+            SequenceIterator<?> baseIterator = getLhsExpression().iterate(context);
+            GroundedValue<?> rhs = getRhsExpression().iterate(context).materialize();
             MappingFunction<? extends Item<?>, ? extends Item<?>> mappingFunction = baseItem -> {
                 if (baseItem instanceof ArrayItem) {
                     MappingFunction<Item<?>, Item<?>> arrayAccess = index -> {
                         if (index instanceof IntegerValue) {
-                            GroundedValue<? extends Item<?>> member = ((ArrayItem) baseItem).get((int) ((IntegerValue) index).longValue() - 1);
+                            GroundedValue<?> member = ((ArrayItem) baseItem).get((int) ((IntegerValue) index).longValue() - 1);
                             return member.iterate();
                         } else {
                             XPathException exception = new XPathException(
@@ -366,12 +366,12 @@ public class LookupExpression extends BinaryExpression {
                             throw exception;
                         }
                     };
-                    SequenceIterator<? extends Item<?>> rhsIter = rhs.iterate();
+                    SequenceIterator<?> rhsIter = rhs.iterate();
                     return new MappingIterator<>(rhsIter, arrayAccess);
                 } else if (baseItem instanceof MapItem) {
-                    SequenceIterator<? extends Item<?>> rhsIter = rhs.iterate();
+                    SequenceIterator<?> rhsIter = rhs.iterate();
                     return new MappingIterator<>(rhsIter, key -> {
-                        GroundedValue<? extends Item<?>> value = ((MapItem) baseItem).get((AtomicValue) key);
+                        GroundedValue<?> value = ((MapItem) baseItem).get((AtomicValue) key);
                         return value == null ? EmptyIterator.emptyIterator() : value.iterate();
                     });
                 } else if (baseItem instanceof ObjectValue) {

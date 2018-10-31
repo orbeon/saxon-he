@@ -345,7 +345,7 @@ public abstract class Instruction extends Expression implements TailCallReturner
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         int m = getImplementationMethod();
         if ((m & EVALUATE_METHOD) != 0) {
             Item<?> item = evaluateItem(context);

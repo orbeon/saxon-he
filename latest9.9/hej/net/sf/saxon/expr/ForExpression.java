@@ -374,7 +374,7 @@ public class ForExpression extends Assignation {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
 
         // First create an iteration of the base sequence.
 
@@ -383,7 +383,7 @@ public class ForExpression extends Assignation {
         // expression, wrapped in a MappingAction object that is responsible also for
         // setting the range variable at each step.
 
-        SequenceIterator<? extends Item<?>> base = getSequence().iterate(context);
+        SequenceIterator<?> base = getSequence().iterate(context);
         MappingAction map = new MappingAction(context, getLocalSlotNumber(), getAction());
         switch (actionCardinality) {
             case StaticProperty.EXACTLY_ONE:
@@ -524,7 +524,7 @@ public class ForExpression extends Assignation {
         }
 
         /*@Nullable*/
-        public SequenceIterator<? extends Item<?>> map(Item<?> item) throws XPathException {
+        public SequenceIterator<?> map(Item<?> item) throws XPathException {
             context.setLocalVariable(slotNumber, item);
             return action.iterate(context);
         }

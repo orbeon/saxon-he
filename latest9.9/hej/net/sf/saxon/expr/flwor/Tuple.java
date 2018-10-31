@@ -14,13 +14,13 @@ import net.sf.saxon.value.ObjectValue;
 /**
  * A tuple, as it appears in an XQuery tuple stream handled by extended FLWOR expressions.
  */
-public class Tuple extends ObjectValue<Sequence<? extends Item<?>>[]> {
+public class Tuple extends ObjectValue<Sequence<?>[]> {
 
-    public Tuple(Sequence<? extends Item<?>>[] members) {
+    public Tuple(Sequence<?>[] members) {
         super(members);
     }
 
-    public Sequence<? extends Item<?>>[] getMembers() {
+    public Sequence<?>[] getMembers() {
         return getObject();
     }
 }

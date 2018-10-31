@@ -266,9 +266,9 @@ public class Controller implements ContextOriginator {
      * against the required type.
      */
 
-    public GroundedValue<? extends Item<?>> getConvertedParameter(StructuredQName name, SequenceType requiredType, XPathContext context)
+    public GroundedValue<?> getConvertedParameter(StructuredQName name, SequenceType requiredType, XPathContext context)
             throws XPathException {
-        GroundedValue<? extends Item<?>> val =
+        GroundedValue<?> val =
                 globalParameters.convertParameterValue(name, requiredType, convertParameters, context);
         if (val != null) {
 
@@ -1612,7 +1612,7 @@ public class Controller implements ContextOriginator {
 
     public void setMemoizingFocusTrackerFactory() {
         setFocusTrackerFactory(base -> {
-            FocusTrackingIterator<? extends Item<?>> fti;
+            FocusTrackingIterator<?> fti;
             if ((base.getProperties() & GROUNDED) == 0 &&
                     !(base instanceof GroupIterator) && !(base instanceof RegexIterator)) {
                 try {

@@ -66,12 +66,12 @@ public class Outermost extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
-        SequenceIterator in = arguments[0].iterate();
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
+        SequenceIterator<?> in = arguments[0].iterate();
         if (!presorted) {
             in = new DocumentOrderIterator(in, GlobalOrderComparer.getInstance());
         }
-        SequenceIterator out = new OutermostIterator(in);
+        SequenceIterator<?> out = new OutermostIterator(in);
         return SequenceTool.toLazySequence(out);
     }
 

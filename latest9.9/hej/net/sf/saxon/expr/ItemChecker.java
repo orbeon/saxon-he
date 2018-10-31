@@ -222,8 +222,8 @@ public final class ItemChecker extends UnaryExpression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
-        SequenceIterator<? extends Item<?>> base = getBaseExpression().iterate(context);
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
+        SequenceIterator<?> base = getBaseExpression().iterate(context);
         return new ItemMappingIterator<>(base, getMappingFunction(context), true);
     }
 

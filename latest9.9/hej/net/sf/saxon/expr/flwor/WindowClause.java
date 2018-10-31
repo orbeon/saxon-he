@@ -39,7 +39,7 @@ public class WindowClause extends Clause {
     private Operand startConditionOp;
     private Operand endConditionOp;
     private IntHashMap<LocalVariableBinding> windowVars = new IntHashMap<>(10);
-    private ItemTypeCheckingFunction itemTypeChecker;
+    private ItemTypeCheckingFunction<Item<?>> itemTypeChecker;
     private boolean windowMustBeSingleton;
 
     public static final int WINDOW_VAR = 0;
@@ -131,7 +131,7 @@ public class WindowClause extends Clause {
         return windowVars.get(role);
     }
 
-    public ItemTypeCheckingFunction getItemTypeChecker() {
+    public ItemTypeCheckingFunction<Item<?>> getItemTypeChecker() {
         return itemTypeChecker;
     }
 
@@ -157,12 +157,12 @@ public class WindowClause extends Clause {
                 RoleDiagnostic role = new RoleDiagnostic(
                         RoleDiagnostic.VARIABLE,
                         getVariableBinding(WindowClause.WINDOW_VAR).getVariableQName().getDisplayName(), 0);
-                itemTypeChecker = new ItemTypeCheckingFunction(
+                itemTypeChecker = new ItemTypeCheckingFunction<>(
                         required, role, getLocation(), config);
                 break;
             case TypeHierarchy.DISJOINT:
                 String message = "The items in the window will always be instances of "
-                        + supplied.toString() + ", never of the required type " + required.toString();
+                        + supplied + ", never of the required type " + required;
                 throw new XPathException(message, "XPTY0004", getLocation());
         }
         windowMustBeSingleton = !Cardinality.allowsMany(requiredType.getCardinality());
@@ -178,9 +178,9 @@ public class WindowClause extends Clause {
             throw new XPathException("Required type of window allows only a single item; window has length " + w.contents.size(),
                                      "XPTY0004", getLocation());
         }
-        ItemTypeCheckingFunction checker = getItemTypeChecker();
+        ItemTypeCheckingFunction<Item<?>> checker = getItemTypeChecker();
         if (checker != null) {
-            SequenceIterator<? extends Item<?>> check =
+            SequenceIterator<?> check =
                     new ItemMappingIterator<>(new ListIterator<>(w.contents), checker);
             Count.count(check); // a convenient way to consume the iterator and thus perform the checking
         }

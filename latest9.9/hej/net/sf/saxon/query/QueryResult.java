@@ -129,7 +129,7 @@ public class QueryResult {
      */
 
     public static void serializeSequence(
-            SequenceIterator<? extends Item<?>> iterator, Configuration config, OutputStream destination, Properties outputProps)
+            SequenceIterator<?> iterator, Configuration config, OutputStream destination, Properties outputProps)
             throws XPathException {
         serializeSequence(iterator, config, new StreamResult(destination), outputProps);
         try {
@@ -152,7 +152,7 @@ public class QueryResult {
      */
 
     public static void serializeSequence(
-            SequenceIterator<? extends Item<?>> iterator, Configuration config, Writer writer, Properties outputProps)
+            SequenceIterator<?> iterator, Configuration config, Writer writer, Properties outputProps)
             throws XPathException {
         serializeSequence(iterator, config, new StreamResult(writer), outputProps);
         try {
@@ -175,7 +175,7 @@ public class QueryResult {
      */
 
     public static void serializeSequence(
-            /*@NotNull*/ SequenceIterator<? extends Item<?>> iterator, Configuration config, Result result, Properties outputProperties)
+            /*@NotNull*/ SequenceIterator<?> iterator, Configuration config, Result result, Properties outputProperties)
             throws XPathException {
         SerializerFactory sf = config.getSerializerFactory();
         Receiver tr = sf.getReceiver(result, new SerializationProperties(outputProperties));

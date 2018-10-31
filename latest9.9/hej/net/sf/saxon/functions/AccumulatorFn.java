@@ -27,7 +27,7 @@ public abstract class AccumulatorFn extends SystemFunction {
     public abstract Phase getPhase();
 
 
-    private Sequence<? extends Item<?>> getAccumulatorValue(String name, Phase phase, XPathContext context) throws XPathException {
+    private Sequence<?> getAccumulatorValue(String name, Phase phase, XPathContext context) throws XPathException {
         StructuredQName qName;
             try {
                 qName = StructuredQName.fromLexicalQName(name, false, true, getRetainedStaticContext());
@@ -52,7 +52,7 @@ public abstract class AccumulatorFn extends SystemFunction {
             throw new XPathException("Context item for evaluation of accumulator function must not be an attribute or namespace node", "XTTE3360", context);
         }
 
-        Sequence<? extends Item<?>> streamedAccVal = registry.getStreamingAccumulatorValue((NodeInfo) node, accumulator, phase);
+        Sequence<?> streamedAccVal = registry.getStreamingAccumulatorValue((NodeInfo) node, accumulator, phase);
         if (streamedAccVal != null) {
             return streamedAccVal;
         }
@@ -88,7 +88,7 @@ public abstract class AccumulatorFn extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         String name = arguments[0].head().getStringValue();
         return getAccumulatorValue(name, getPhase(), context);
     }

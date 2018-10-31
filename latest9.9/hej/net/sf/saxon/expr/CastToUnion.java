@@ -89,7 +89,7 @@ public class CastToUnion extends UnaryExpression {
         if (operand instanceof Literal) {
             GroundedValue literalOperand = ((Literal) operand).getValue();
             if (literalOperand instanceof AtomicValue) {
-                GroundedValue<? extends Item<?>> av = ((SequenceIterator<? extends Item<?>>) iterate(visitor.getStaticContext().makeEarlyEvaluationContext())).materialize();
+                GroundedValue<?> av = ((SequenceIterator<?>) iterate(visitor.getStaticContext().makeEarlyEvaluationContext())).materialize();
                 return Literal.makeLiteral(av, this);
             }
             if (literalOperand.getLength() == 0) {
@@ -239,7 +239,7 @@ public class CastToUnion extends UnaryExpression {
      * Evaluate the expression
      */
 
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         ConversionRules rules = context.getConfiguration().getConversionRules();
         AtomicValue value = (AtomicValue) getBaseExpression().evaluateItem(context);
         if (value == null) {

@@ -77,7 +77,7 @@ public class JsonParser {
     }
 
 
-    public static int getFlags(Map<String, Sequence<? extends Item<?>>> options, XPathContext context, Boolean allowValidate) throws XPathException {
+    public static int getFlags(Map<String, Sequence<?>> options, XPathContext context, Boolean allowValidate) throws XPathException {
         int flags = 0;
         BooleanValue debug = (BooleanValue) options.get("debug");
         if (debug != null && debug.getBooleanValue()) {

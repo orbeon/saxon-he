@@ -78,7 +78,7 @@ public class PackageDetails {
      * contains this alias; the baseName contains the original name as defined in the XSLT source
      * code.
      */
-    public Map<StructuredQName, GroundedValue<? extends Item<?>>> staticParams;
+    public Map<StructuredQName, GroundedValue<?>> staticParams;
     /**
      * During processing (compilation) of a package, the <code>beingProcessed</code> field
      * indicates the thread in which this processing is taking place; at other times, the field

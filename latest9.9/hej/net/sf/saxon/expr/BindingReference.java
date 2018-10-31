@@ -30,7 +30,7 @@ public interface BindingReference {
      * @param properties    static properties of the expression to which the variable is bound
      */
 
-    void setStaticType(SequenceType type, GroundedValue<? extends Item<?>> constantValue, int properties);
+    void setStaticType(SequenceType type, GroundedValue<?> constantValue, int properties);
 
     /**
      * Fix up this binding reference to a binding

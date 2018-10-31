@@ -35,7 +35,7 @@ public interface MapItem extends Function {
      * @return the value associated with the given key, or null if the key is not present in the map.
      */
 
-    GroundedValue<? extends Item<?>> get(AtomicValue key);
+    GroundedValue<?> get(AtomicValue key);
 
     /**
      * Get the size of the map
@@ -78,7 +78,7 @@ public interface MapItem extends Function {
      * @return the new map containing the additional entry
      */
 
-    MapItem addEntry(AtomicValue key, GroundedValue<? extends Item<?>> value);
+    MapItem addEntry(AtomicValue key, GroundedValue<?> value);
 
     /**
      * Remove an entry from the map
@@ -339,9 +339,9 @@ public interface MapItem extends Function {
      * @throws XPathException if an error occurs evaluating
      *                        the supplied argument
      */
-    default Sequence<? extends Item<?>> call(XPathContext context, Sequence[] args) throws XPathException {
+    default Sequence<?> call(XPathContext context, Sequence[] args) throws XPathException {
         AtomicValue key = (AtomicValue) args[0].head();
-        Sequence<? extends Item<?>> value = get(key);
+        Sequence<?> value = get(key);
         if (value == null) {
             return EmptySequence.getInstance();
         } else {

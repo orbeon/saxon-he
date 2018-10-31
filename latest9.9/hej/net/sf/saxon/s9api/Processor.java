@@ -625,11 +625,11 @@ public class Processor implements Configuration.ApiProvider {
         public ExtensionFunctionCall makeCallExpression() {
             return new ExtensionFunctionCall() {
                 @Override
-                public Sequence<? extends Item<?>> call(
+                public Sequence<?> call(
                         /*@NotNull*/ XPathContext context, Sequence[] arguments) throws XPathException {
                     XdmValue[] args = new XdmValue[arguments.length];
                     for (int i = 0; i < args.length; i++) {
-                        GroundedValue<? extends Item<?>> val = (GroundedValue<? extends Item<?>>)arguments[i].materialize();
+                        GroundedValue<?> val = (GroundedValue<?>)arguments[i].materialize();
                         args[i] = XdmValue.wrap(val);
                     }
                     try {

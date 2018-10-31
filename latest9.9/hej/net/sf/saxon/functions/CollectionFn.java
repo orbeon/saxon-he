@@ -172,7 +172,7 @@ public class CollectionFn extends SystemFunction implements Callable {
      * @throws XPathException if a dynamic error occurs
      */
 
-    public Sequence<? extends Item<?>> call(final XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(final XPathContext context, Sequence[] arguments) throws XPathException {
         String href;
         if (getArity() == 0) {
             // No arguments supplied: this gets the default collection
@@ -207,7 +207,7 @@ public class CollectionFn extends SystemFunction implements Callable {
             }
         }
 
-        GroundedValue<? extends Item<?>> cachedCollection = (GroundedValue<? extends Item<?>>)context.getController().getUserData("saxon:collections", collectionKey);
+        GroundedValue<?> cachedCollection = (GroundedValue<?>)context.getController().getUserData("saxon:collections", collectionKey);
         if (cachedCollection != null) {
             return cachedCollection;
         }
@@ -232,10 +232,10 @@ public class CollectionFn extends SystemFunction implements Callable {
         }
 
         // Get an iterator over the resources in the collection
-        SequenceIterator<? extends Item<?>> sourceSeq = getSequenceIterator(collection, context);
+        SequenceIterator<?> sourceSeq = getSequenceIterator(collection, context);
 
         // Get an iterator over the items representing the resources
-        SequenceIterator<? extends Item<?>> result = context.getConfiguration()
+        SequenceIterator<?> result = context.getConfiguration()
                 .getMultithreadedItemMappingIterator(sourceSeq,
                                                      item1 -> ((ExternalObject<Resource>)item1).getObject().getItem(context));
 

@@ -26,10 +26,10 @@ public class AdjacentTextNodeMergingIterator implements LookaheadIterator<Item<?
     // Ideally we would specify bounds: AdjacentTextNodeMergingIterator<? extends Item super NodeInfo>,
     // but Java doesn't allow both an upper and a lower bound
 
-    private SequenceIterator<? extends Item<?>> base;
+    private SequenceIterator<?> base;
     private Item<?> next;
 
-    public AdjacentTextNodeMergingIterator(SequenceIterator<? extends Item<?>> base) throws XPathException {
+    public AdjacentTextNodeMergingIterator(SequenceIterator<?> base) throws XPathException {
         this.base = base;
         next = base.next();
     }

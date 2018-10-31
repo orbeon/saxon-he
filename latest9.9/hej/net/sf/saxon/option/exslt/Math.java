@@ -75,7 +75,7 @@ public abstract class Math {
      * The items are returned in the order of the original sequence.
      */
 
-    public static Sequence<? extends Item<?>> highest(XPathContext context, SequenceIterator<? extends Item<?>> nsv) throws XPathException {
+    public static Sequence<?> highest(XPathContext context, SequenceIterator<?> nsv) throws XPathException {
         double max = Double.NEGATIVE_INFINITY;
         StringToDouble converter = context.getConfiguration().getConversionRules().getStringToDoubleConverter();
         try {
@@ -109,7 +109,7 @@ public abstract class Math {
      * The items are returned in the order of the original sequence.
      */
 
-    public static Sequence<? extends Item<?>> lowest(XPathContext context, SequenceIterator nsv) throws XPathException {
+    public static Sequence<?> lowest(XPathContext context, SequenceIterator nsv) throws XPathException {
         double min = Double.POSITIVE_INFINITY;
         StringToDouble converter = context.getConfiguration().getConversionRules().getStringToDoubleConverter();
         try {

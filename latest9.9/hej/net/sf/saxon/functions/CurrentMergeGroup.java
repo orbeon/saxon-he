@@ -117,7 +117,7 @@ public class CurrentMergeGroup extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence call(XPathContext context, Sequence[] arguments /*@NotNull*/) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments /*@NotNull*/) throws XPathException {
         String source = null;
         if (arguments.length > 0) {
             source = arguments[0].head().getStringValue();
@@ -133,7 +133,7 @@ public class CurrentMergeGroup extends SystemFunction {
      * @throws XPathException if a dynamic error occurs
      */
 
-    private SequenceIterator currentGroup(String source, XPathContext c) throws XPathException {
+    private SequenceIterator<?> currentGroup(String source, XPathContext c) throws XPathException {
         GroupIterator gi = c.getCurrentMergeGroupIterator();
         if (gi == null) {
             throw new XPathException("There is no current merge group", "XTDE3480");

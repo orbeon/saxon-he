@@ -348,7 +348,7 @@ public class UseWhenFilter extends ProxyReceiver {
             }
 
             if (isSupplied) {
-                Sequence<? extends Item<?>> suppliedValue = compilation.getParameters()
+                Sequence<?> suppliedValue = compilation.getParameters()
                         .convertParameterValue(varName, requiredType, true, staticContext.makeEarlyEvaluationContext());
 
                 compilation.declareStaticVariable(varName, suppliedValue.materialize(), precedence, isParam);
@@ -357,7 +357,7 @@ public class UseWhenFilter extends ProxyReceiver {
 
         if (isVariable || !isSupplied) {
             String selectStr = startTag.getAttribute("", "select");
-            GroundedValue<? extends Item<?>> value;
+            GroundedValue<?> value;
             if (selectStr == null) {
                 if (isVariable) {
                     throw createXPathException(
@@ -374,7 +374,7 @@ public class UseWhenFilter extends ProxyReceiver {
             } else {
                 try {
                     staticContext.setContainingLocation(attLoc);
-                    Sequence<? extends Item<?>> seq = evaluateStatic(selectStr, location, staticContext);
+                    Sequence<?> seq = evaluateStatic(selectStr, location, staticContext);
                     value = seq.materialize();
                 } catch (XPathException e) {
                     throw createXPathException("Error in " + elemName.getLocalPart() + " expression. " + e.getMessage(),
@@ -384,7 +384,7 @@ public class UseWhenFilter extends ProxyReceiver {
             RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.VARIABLE, varName.getDisplayName(), 0);
             role.setErrorCode("XTDE0050");
             TypeHierarchy th = getConfiguration().getTypeHierarchy();
-            Sequence<? extends Item<?>> seq = th.applyFunctionConversionRules(value, requiredType, role, attLoc);
+            Sequence<?> seq = th.applyFunctionConversionRules(value, requiredType, role, attLoc);
             value = seq.materialize();
             try {
                 compilation.declareStaticVariable(varName, value, precedence, isParam);
@@ -653,7 +653,7 @@ public class UseWhenFilter extends ProxyReceiver {
      * @throws XPathException if evaluation of the expression fails
      */
 
-    public Sequence<? extends Item<?>> evaluateStatic(String expression, Location locationId, UseWhenStaticContext staticContext) throws XPathException {
+    public Sequence<?> evaluateStatic(String expression, Location locationId, UseWhenStaticContext staticContext) throws XPathException {
         setNamespaceBindings(staticContext);
         Expression expr = ExpressionTool.make(expression, staticContext,
             0, Token.EOF, null);

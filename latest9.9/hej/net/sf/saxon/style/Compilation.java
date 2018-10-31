@@ -560,7 +560,7 @@ public class Compilation {
      * @return the value of the variable if there is one, or null if the variable is undeclared
      */
 
-    public GroundedValue<? extends Item<?>> getStaticVariable(StructuredQName name) {
+    public GroundedValue<?> getStaticVariable(StructuredQName name) {
         ValueAndPrecedence vp = staticVariables.get(name);
         return vp == null ? null : vp.value;
     }
@@ -684,7 +684,7 @@ public class Compilation {
      * @param seq  the value of the stylesheet parameter
      */
 
-    public void setParameter(StructuredQName name, GroundedValue<? extends Item<?>> seq) {
+    public void setParameter(StructuredQName name, GroundedValue<?> seq) {
         suppliedParameters.put(name, seq);
     }
 

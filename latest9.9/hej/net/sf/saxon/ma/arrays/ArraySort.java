@@ -28,8 +28,8 @@ import java.util.List;
 public class ArraySort extends SystemFunction {
 
     private static class MemberToBeSorted{
-        public GroundedValue<? extends Item<?>> value;
-        public GroundedValue<? extends Item<?>> sortKey;
+        public GroundedValue<?> value;
+        public GroundedValue<?> sortKey;
         int originalPosition;
     }
 
@@ -59,7 +59,7 @@ public class ArraySort extends SystemFunction {
         if (arguments.length == 3){
             key = (Function) arguments[2].head();
         }
-        for (GroundedValue<? extends Item<?>> seq: array.members()){
+        for (GroundedValue<?> seq: array.members()){
             MemberToBeSorted member = new MemberToBeSorted();
             member.value = seq;
             member.originalPosition = i++;
@@ -95,7 +95,7 @@ public class ArraySort extends SystemFunction {
             err.setErrorCode("XPTY0004");
             throw err;
         }
-        List<GroundedValue<? extends Item<?>>> outputList = new ArrayList<>(array.arrayLength());
+        List<GroundedValue<?>> outputList = new ArrayList<>(array.arrayLength());
         for (MemberToBeSorted member: inputList){
             outputList.add(member.value);
         }
@@ -134,8 +134,8 @@ public class ArraySort extends SystemFunction {
         }
     }
 
-    private static GroundedValue<? extends AtomicValue> atomize(Sequence<? extends Item<?>> input) throws XPathException {
-        SequenceIterator<? extends Item<?>> iterator = input.iterate();
+    private static GroundedValue<? extends AtomicValue> atomize(Sequence<?> input) throws XPathException {
+        SequenceIterator<?> iterator = input.iterate();
         SequenceIterator<? extends AtomicValue> mapper = Atomizer.getAtomizingIterator(iterator, false);
         return mapper.materialize();
     }

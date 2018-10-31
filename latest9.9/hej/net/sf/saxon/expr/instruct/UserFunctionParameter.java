@@ -191,7 +191,7 @@ public class UserFunctionParameter implements LocalBinding {
      * @return the value of the parameter
      */
 
-    public Sequence<? extends Item<?>> evaluateVariable(XPathContext context) {
+    public Sequence<?> evaluateVariable(XPathContext context) {
         return context.evaluateLocalVariable(slotNumber);
     }
 

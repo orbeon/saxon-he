@@ -16,7 +16,6 @@ import net.sf.saxon.expr.PJConverter;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExternalObjectModel;
 import net.sf.saxon.lib.NamespaceConstant;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.TreeModel;
@@ -100,7 +99,7 @@ public class AxiomObjectModel extends TreeModel implements ExternalObjectModel {
     public PJConverter getPJConverter(Class<?> targetClass) {
         if (isRecognizedNodeClass(targetClass)) {
             return new PJConverter() {
-                public Object convert(Sequence<? extends Item<?>> value, Class<?> targetClass, XPathContext context) throws XPathException {
+                public Object convert(Sequence<?> value, Class<?> targetClass, XPathContext context)  {
                     return convertXPathValueToObject(value, targetClass);
                 }
             };
@@ -174,7 +173,7 @@ public class AxiomObjectModel extends TreeModel implements ExternalObjectModel {
      * Otherwise, return false.
      */
 
-    public boolean sendSource(Source source, Receiver receiver) throws XPathException {
+    public boolean sendSource(Source source, Receiver receiver)  {
         return false;
     }
 
@@ -196,15 +195,13 @@ public class AxiomObjectModel extends TreeModel implements ExternalObjectModel {
      * @param object the object to be converted . If this is not a JDOM node, the method returns null
      * @param config the Saxon Configuration
      * @return either an XPath node that wraps the supplied JDOM node, or null
-     * @throws net.sf.saxon.trans.XPathException
-     *          if conversion fails
      */
 
     /*@Nullable*/
-    private Sequence convertObjectToXPathValue(Object object, Configuration config) throws XPathException {
+    private Sequence convertObjectToXPathValue(Object object, Configuration config) {
         if (isRecognizedNode(object)) {
             if (object instanceof OMDocument) {
-                return new AxiomDocument(((OMDocument) object), "", config).getRootNode();
+                return new AxiomDocument((OMDocument) object, "", config).getRootNode();
             } else if (object instanceof OMNode) {
                 AxiomDocument docWrapper = new AxiomDocument(getOMDocument((OMNode) object), "", config);
                 return wrapNode(docWrapper, object);
@@ -241,14 +238,13 @@ public class AxiomObjectModel extends TreeModel implements ExternalObjectModel {
      * Value to see whether they belong to this object model.
      *
      * @param value       the XPath value to be converted
-     * @param targetClass the Java class required for the result of the conversion
+     * @param target the Java class required for the result of the conversion
      * @return the object that results from conversion if conversion is possible, or null otherwise
      */
 
 
     /*@Nullable*/
-    private Object convertXPathValueToObject(Sequence value, Object targetClass) {
-        Class target = (Class) targetClass;
+    private Object convertXPathValueToObject(Sequence<?> value, Class<?> target) {
         if (value instanceof VirtualNode) {
             Object u = ((VirtualNode) value).getRealNode();
             if (target.isAssignableFrom(u.getClass())) {

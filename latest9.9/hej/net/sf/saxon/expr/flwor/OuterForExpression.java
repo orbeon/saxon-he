@@ -83,7 +83,7 @@ public class OuterForExpression extends ForExpression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
 
         // First create an iteration of the base sequence.
 

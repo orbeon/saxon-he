@@ -96,7 +96,7 @@ public final class SequenceOutputter extends SequenceWriter {
      * @return the value (sequence of items) that have been written to this SequenceOutputter
      */
 
-    public Sequence<? extends Item<?>> getSequence() {
+    public Sequence<?> getSequence() {
         switch (list.size()) {
             case 0:
                 return EmptySequence.getInstance();

@@ -26,11 +26,11 @@ import java.util.Map;
  */
 public class MetadataResource implements Resource {
 
-    private Map<String, GroundedValue<? extends Item<?>>> properties;
+    private Map<String, GroundedValue<?>> properties;
     private String resourceURI;
     private Resource content;
 
-    public MetadataResource(String resourceURI, Resource content, Map<String, GroundedValue<? extends Item<?>>> properties) {
+    public MetadataResource(String resourceURI, Resource content, Map<String, GroundedValue<?>> properties) {
         this.resourceURI = resourceURI;
         this.content = content;
         this.properties = properties;
@@ -50,7 +50,7 @@ public class MetadataResource implements Resource {
         HashTrieMap map = new HashTrieMap();
 
         // Add the custom properties of the resource
-        for (Map.Entry<String, GroundedValue<? extends Item<?>>> entry : properties.entrySet()) {
+        for (Map.Entry<String, GroundedValue<?>> entry : properties.entrySet()) {
              map = map.addEntry(StringValue.makeStringValue(entry.getKey()), entry.getValue());
         }
 

@@ -265,7 +265,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(final XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(final XPathContext context) throws XPathException {
         ExtensionFunctionDefinition definition = function.getDefinition();
         Sequence[] argValues = new Sequence[getArity()];
         for (int i = 0; i < argValues.length; i++) {
@@ -275,7 +275,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
         final Configuration config = context.getConfiguration();
         final TypeHierarchy th = config.getTypeHierarchy();
 
-        SequenceIterator<? extends Item<?>> result;
+        SequenceIterator<?> result;
         try {
             result = function.call(context, argValues).iterate();
         } catch (XPathException e) {
@@ -329,7 +329,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
         }
     }
 
-    public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         return function.call(context, arguments);
     }
 

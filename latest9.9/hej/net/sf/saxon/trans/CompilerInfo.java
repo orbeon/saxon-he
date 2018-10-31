@@ -163,7 +163,7 @@ public class CompilerInfo {
      * @param seq  the value of the stylesheet parameter
      */
 
-    public void setParameter(StructuredQName name, GroundedValue<? extends Item<?>> seq) {
+    public void setParameter(StructuredQName name, GroundedValue<?> seq) {
         suppliedParameters.put(name, seq);
     }
 

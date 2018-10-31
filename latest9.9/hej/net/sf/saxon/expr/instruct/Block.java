@@ -601,7 +601,7 @@ public class Block extends Instruction {
                 currentLiteralList = null;
                 ((Block) child).flatten(targetList);
             } else if (child instanceof Literal && !(((Literal) child).getValue() instanceof IntegerRange)) {
-                SequenceIterator<? extends Item<?>> iterator = ((Literal) child).getValue().iterate();
+                SequenceIterator<?> iterator = ((Literal) child).getValue().iterate();
                 if (currentLiteralList == null) {
                     currentLiteralList = new ArrayList<>(10);
                 }
@@ -761,7 +761,7 @@ public class Block extends Instruction {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         if (size() == 0) {
             return EmptyIterator.emptyIterator();
         } else if (size() == 1) {

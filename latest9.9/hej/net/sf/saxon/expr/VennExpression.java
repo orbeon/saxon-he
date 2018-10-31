@@ -15,7 +15,6 @@ import net.sf.saxon.expr.sort.GlobalOrderComparer;
 import net.sf.saxon.functions.CurrentGroupCall;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.om.AxisInfo;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.pattern.*;
@@ -662,7 +661,7 @@ public class VennExpression extends BinaryExpression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(final XPathContext c) throws XPathException {
+    public SequenceIterator<?> iterate(final XPathContext c) throws XPathException {
         SequenceIterator<? extends NodeInfo> i1 =
                 (SequenceIterator<? extends NodeInfo>)getLhsExpression().iterate(c);
         SequenceIterator<? extends NodeInfo> i2 =

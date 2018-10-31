@@ -90,11 +90,11 @@ public class TypeHierarchy {
      *          if the value cannot be converted to the required type
      */
 
-    public Sequence<? extends Item<?>> applyFunctionConversionRules(Sequence<? extends Item<?>> value, SequenceType requiredType, final RoleDiagnostic role, Location locator)
+    public Sequence<?> applyFunctionConversionRules(Sequence<?> value, SequenceType requiredType, final RoleDiagnostic role, Location locator)
             throws XPathException {
         ItemType suppliedItemType = SequenceTool.getItemType(value, this);
 
-        SequenceIterator<? extends Item<?>> iterator = value.iterate();
+        SequenceIterator<?> iterator = value.iterate();
         final ItemType requiredItemType = requiredType.getPrimaryType();
 
         if (requiredItemType.isPlainType()) {
@@ -240,7 +240,7 @@ public class TypeHierarchy {
      * @return an iterator over the converted value
      */
 
-    protected SequenceIterator<? extends Item<?>> applyFunctionCoercion(SequenceIterator<? extends Item<?>> iterator,
+    protected SequenceIterator<?> applyFunctionCoercion(SequenceIterator<?> iterator,
                                                      ItemType suppliedItemType, ItemType requiredItemType,
                                                      Location locator) {
         return iterator;

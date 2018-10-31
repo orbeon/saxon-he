@@ -76,7 +76,7 @@ public class SQLClose extends ExtensionInstruction {
             return StaticProperty.ALLOWS_ZERO_OR_ONE;
         }
 
-        public Sequence<? extends Item<?>> call(XPathContext context, Sequence[] arguments) throws XPathException {
+        public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
             Connection connection = SQLFunctionSet.expectConnection(arguments[CONNECTION], context);
             try {
                 connection.close();

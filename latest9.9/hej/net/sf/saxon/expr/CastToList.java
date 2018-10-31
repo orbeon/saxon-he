@@ -80,7 +80,7 @@ public class CastToList extends UnaryExpression {
             GroundedValue literalOperand = ((Literal) operand).getValue();
             if (literalOperand instanceof AtomicValue) {
                 try {
-                    SequenceIterator<? extends Item<?>> seq =
+                    SequenceIterator<?> seq =
                             iterate(visitor.getStaticContext().makeEarlyEvaluationContext());
                     return Literal.makeLiteral(seq.materialize(), this);
                 } catch (XPathException err) {
@@ -228,7 +228,7 @@ public class CastToList extends UnaryExpression {
      * Evaluate the expression
      */
 
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         AtomicValue value = (AtomicValue) getBaseExpression().evaluateItem(context);
         if (value == null) {
             if (allowEmpty) {

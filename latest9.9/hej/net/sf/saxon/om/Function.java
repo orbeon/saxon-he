@@ -95,7 +95,7 @@ public interface Function extends Item<Function>, Callable, GroundedValue<Functi
      * @throws XPathException if a dynamic error occurs within the function
      */
 
-    Sequence<? extends Item<?>> call(XPathContext context, Sequence[] args) throws XPathException;
+    Sequence<?> call(XPathContext context, Sequence[] args) throws XPathException;
 
     /**
      * Test whether this FunctionItem is deep-equal to another function item,
@@ -155,7 +155,7 @@ public interface Function extends Item<Function>, Callable, GroundedValue<Functi
     }
 
     @SafeVarargs
-    static Sequence<? extends Item<?>>[] argumentArray(Sequence<? extends Item<?>>... args) {
+    static Sequence<?>[] argumentArray(Sequence<?>... args) {
         return args;
     }
 }

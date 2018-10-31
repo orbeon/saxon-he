@@ -45,7 +45,7 @@ public class SourceBinding {
     private SequenceType inferredType = null;
     protected SlotManager slotManager = null;  // used only for global variable declarations
     private Visibility visibility;
-    private GroundedValue<? extends Item<?>> constantValue = null;
+    private GroundedValue<?> constantValue = null;
 
     private int properties;
 
@@ -653,7 +653,7 @@ public class SourceBinding {
     }
 
 
-    public GroundedValue<? extends Item<?>> getConstantValue() {
+    public GroundedValue<?> getConstantValue() {
         if (constantValue == null) {
             final SequenceType type = getInferredType(true);
             final TypeHierarchy th = sourceElement.getConfiguration().getTypeHierarchy();

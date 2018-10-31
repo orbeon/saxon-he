@@ -149,11 +149,11 @@ public class MergeGroupingIterator implements GroupIterator, LookaheadIterator<I
         return new AtomicArray(compositeMergeKey);
     }
 
-    public SequenceIterator<? extends Item<?>> iterateCurrentGroup() {
+    public SequenceIterator<?> iterateCurrentGroup() {
         return new ListIterator<>(currentMembers);
     }
 
-    public SequenceIterator<? extends Item<?>> iterateCurrentGroup(String source) {
+    public SequenceIterator<?> iterateCurrentGroup(String source) {
         List<Item<?>> sourceMembers = currentSourceMembers.get(source);
         if (sourceMembers == null) {
             return EmptyIterator.emptyIterator();
@@ -173,7 +173,7 @@ public class MergeGroupingIterator implements GroupIterator, LookaheadIterator<I
             setLastPositionFinder(() -> currentMembers.size());
         }
 
-        public SequenceIterator<? extends Item<?>> iterateCurrentGroup() {
+        public SequenceIterator<?> iterateCurrentGroup() {
             return new ListIterator<>(currentGroup);
         }
 

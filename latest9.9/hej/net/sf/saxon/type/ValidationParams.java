@@ -19,7 +19,7 @@ import java.util.HashMap;
  * <p>The implementation is just a HashMap; giving the class a name helps type safety.</p>
  */
 
-public class ValidationParams extends HashMap<StructuredQName, Sequence<? extends Item<?>>> {
+public class ValidationParams extends HashMap<StructuredQName, Sequence<?>> {
 
     public ValidationParams() {
         super(20);

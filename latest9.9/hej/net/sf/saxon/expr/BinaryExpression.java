@@ -132,7 +132,7 @@ public abstract class BinaryExpression extends Expression {
         // if both operands are known, pre-evaluate the expression
         try {
             if ((getLhsExpression() instanceof Literal) && (getRhsExpression() instanceof Literal)) {
-                GroundedValue<? extends Item<?>> v = evaluateItem(visitor.getStaticContext().makeEarlyEvaluationContext()).materialize();
+                GroundedValue<?> v = evaluateItem(visitor.getStaticContext().makeEarlyEvaluationContext()).materialize();
                 return Literal.makeLiteral(v, this);
             }
         } catch (XPathException err) {
@@ -167,7 +167,7 @@ public abstract class BinaryExpression extends Expression {
             if ((getLhsExpression() instanceof Literal) && (getRhsExpression() instanceof Literal)) {
                 Item<?> item = evaluateItem(visitor.getStaticContext().makeEarlyEvaluationContext());
                 if (item != null) {
-                    GroundedValue<? extends Item<?>> v = item.materialize();
+                    GroundedValue<?> v = item.materialize();
                     return Literal.makeLiteral(v, this);
                 }
             }

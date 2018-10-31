@@ -226,7 +226,7 @@ public class ConditionalSorter extends Expression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         boolean b = getCondition().effectiveBooleanValue(context);
         if (b) {
             return getDocumentSorter().iterate(context);

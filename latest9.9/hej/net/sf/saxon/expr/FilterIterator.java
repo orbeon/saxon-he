@@ -49,7 +49,7 @@ public class FilterIterator<T extends Item<?>> implements SequenceIterator<T> {
      * @param context the context in which the (outer) filter expression is evaluated
      */
 
-    public void setSequence(SequenceIterator<? extends Item<?>> base, XPathContext context) {
+    public void setSequence(SequenceIterator<?> base, XPathContext context) {
         filterContext = context.newMinorContext();
         this.base = (FocusIterator<T>)filterContext.trackFocus(base);
     }

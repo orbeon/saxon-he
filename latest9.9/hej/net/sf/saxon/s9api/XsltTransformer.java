@@ -234,7 +234,7 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
     public void setParameter(QName name, XdmValue value) {
         try {
             parameters.put(name.getStructuredQName(),
-                    value == null ? null : ((Sequence<? extends Item<?>>) value.getUnderlyingValue()).materialize());
+                    value == null ? null : ((Sequence<?>) value.getUnderlyingValue()).materialize());
         } catch (XPathException e) {
             throw new SaxonApiUncheckedException(e);
         }
@@ -256,7 +256,7 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
      */
 
     public XdmValue getParameter(QName name) {
-        Sequence<? extends Item<?>> oval = parameters.get(name.getStructuredQName());
+        Sequence<?> oval = parameters.get(name.getStructuredQName());
         return oval == null ? null : XdmValue.wrap(oval);
     }
 

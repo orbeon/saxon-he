@@ -156,7 +156,7 @@ public class SuppliedParameterReference extends Expression {
      * @throws XPathException if the variable is undefined
      */
 
-    public Sequence<? extends Item<?>> evaluateVariable(XPathContext c) {
+    public Sequence<?> evaluateVariable(XPathContext c) {
         if (slotNumber == -1) {
             return c.getStackFrame().popDynamicValue();
         }
@@ -177,7 +177,7 @@ public class SuppliedParameterReference extends Expression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         return evaluateVariable(context).iterate();
     }
 

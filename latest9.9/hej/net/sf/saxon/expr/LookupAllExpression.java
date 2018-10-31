@@ -219,7 +219,7 @@ public class LookupAllExpression extends UnaryExpression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(final XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(final XPathContext context) throws XPathException {
 
         return new SequenceIterator() {
 

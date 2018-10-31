@@ -601,7 +601,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         IndependentContext env = new IndependentContext(config);
         env.setNamespaceResolver(this);
         XPathParser parser = new XPathParser();
-        GroundedValue<? extends Item<?>> value = null;
+        GroundedValue<?> value = null;
         try {
             Expression exp = parser.parse(select, 0, Token.EOF, env);
             value = exp.iterate(env.makeEarlyEvaluationContext()).materialize();

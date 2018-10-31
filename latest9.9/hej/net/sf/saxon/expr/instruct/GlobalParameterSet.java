@@ -28,7 +28,7 @@ import java.util.HashMap;
  */
 
 public class GlobalParameterSet {
-    private HashMap<StructuredQName, GroundedValue<? extends Item<?>>> params =
+    private HashMap<StructuredQName, GroundedValue<?>> params =
             new HashMap<>(10);
 
     /**
@@ -54,7 +54,7 @@ public class GlobalParameterSet {
      * @param value The value of the parameter, or null if the parameter is to be removed
      */
 
-    public void put(StructuredQName qName, GroundedValue<? extends Item<?>> value) {
+    public void put(StructuredQName qName, GroundedValue<?> value) {
         if (value == null) {
             params.remove(qName);
         } else {
@@ -69,7 +69,7 @@ public class GlobalParameterSet {
      * @return The value of the parameter, or null if not defined
      */
 
-    public GroundedValue<? extends Item<?>> get(StructuredQName qName) {
+    public GroundedValue<?> get(StructuredQName qName) {
         return params.get(qName);
     }
 
@@ -90,10 +90,10 @@ public class GlobalParameterSet {
      * @throws XPathException if the value is of the wrong type
      */
 
-    public GroundedValue<? extends Item<?>> convertParameterValue(
+    public GroundedValue<?> convertParameterValue(
             StructuredQName qName, SequenceType requiredType, boolean convert, XPathContext context)
             throws XPathException {
-        Sequence<? extends Item<?>> val = get(qName);
+        Sequence<?> val = get(qName);
         if (val == null) {
             return null;
         }

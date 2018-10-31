@@ -295,7 +295,7 @@ public class RootExpression extends Expression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         return SingletonIterator.makeIterator(getNode(context));
     }
 

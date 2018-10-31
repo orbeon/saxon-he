@@ -92,11 +92,11 @@ public final class TailCallLoop extends UnaryExpression {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         final XPathContextMajor cm = (XPathContextMajor) context;
         while (true) {
-            SequenceIterator<? extends Item<?>> iter = getBaseExpression().iterate(cm);
-            GroundedValue<? extends Item<?>> extent = iter.materialize();
+            SequenceIterator<?> iter = getBaseExpression().iterate(cm);
+            GroundedValue<?> extent = iter.materialize();
             TailCallInfo tail = cm.getTailCallInfo();
             if (tail == null) {
                 return extent.iterate();
@@ -182,7 +182,7 @@ public final class TailCallLoop extends UnaryExpression {
      */
 
     /*@Nullable*/
-    private Sequence<? extends Item<?>> tailCallDifferentFunction(UserFunction userFunction, XPathContextMajor cm) throws XPathException {
+    private Sequence<?> tailCallDifferentFunction(UserFunction userFunction, XPathContextMajor cm) throws XPathException {
         cm.resetStackFrameMap(userFunction.getStackFrameMap(), userFunction.getArity());
         try {
             return userFunction.getEvaluator().evaluate(userFunction.getBody(), cm);

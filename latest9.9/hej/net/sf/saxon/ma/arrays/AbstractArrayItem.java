@@ -69,7 +69,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
      */
     public AtomicSequence atomize() throws XPathException {
         List<AtomicValue> list = new ArrayList<>(arrayLength());
-        for (GroundedValue<? extends Item<?>> seq : members()) {
+        for (GroundedValue<?> seq : members()) {
             seq.iterate().forEachOrFail(item -> {
                 AtomicSequence atoms = item.atomize();
                 for (AtomicValue atom : atoms) {
@@ -155,7 +155,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
      * @throws XPathException if a dynamic error occurs within the function
      */
 
-    public GroundedValue<? extends Item<?>> call(XPathContext context, Sequence[] args) throws XPathException {
+    public GroundedValue<?> call(XPathContext context, Sequence[] args) throws XPathException {
         IntegerValue subscript = (IntegerValue) args[0].head();
         return get(ArrayFunctionSet.checkSubscript(subscript) - 1);
     }
@@ -283,7 +283,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
                 } else {
                     ItemType contentType = null;
                     int contentCard = StaticProperty.EXACTLY_ONE;
-                    for (GroundedValue<? extends Item<?>> s : members()) {
+                    for (GroundedValue<?> s : members()) {
                         if (contentType == null) {
                             contentType = SequenceTool.getItemType(s, th);
                             contentCard = SequenceTool.getCardinality(s);

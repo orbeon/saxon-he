@@ -3741,10 +3741,10 @@ public class Configuration implements SourceResolver, NotationSet {
      * @throws XPathException if a failure occurs constructing the Closure
      */
 
-    public Sequence<? extends Item<?>> makeClosure(Expression expression, int ref, XPathContext context) throws XPathException {
+    public Sequence<?> makeClosure(Expression expression, int ref, XPathContext context) throws XPathException {
         if (getBooleanProperty(Feature.EAGER_EVALUATION)) {
             // Using eager evaluation can make for easier debugging
-            SequenceIterator<? extends Item<?>> iter = expression.iterate(context);
+            SequenceIterator<?> iter = expression.iterate(context);
             return iter.materialize();
         }
 
@@ -3766,7 +3766,7 @@ public class Configuration implements SourceResolver, NotationSet {
      * @throws XPathException if evaluation of the expression fails
      */
 
-    public GroundedValue<? extends Item<?>> makeSequenceExtent(Expression expression, int ref, XPathContext context) throws XPathException {
+    public GroundedValue<?> makeSequenceExtent(Expression expression, int ref, XPathContext context) throws XPathException {
         return expression.iterate(context).materialize();
     }
 

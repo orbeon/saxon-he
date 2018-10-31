@@ -62,7 +62,7 @@ public abstract class PseudoExpression extends Expression {
     }
 
     @Override
-    public final SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public final SequenceIterator<?> iterate(XPathContext context) throws XPathException {
         cannotEvaluate();
         return null;
     }

@@ -87,7 +87,7 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
     public PJConverter getPJConverter(Class<?> targetClass) {
         if (isRecognizedNodeClass(targetClass)) {
             return new PJConverter() {
-                public Object convert(Sequence<? extends Item<?>> value, Class<?> targetClass, XPathContext context) throws XPathException {
+                public Object convert(Sequence<?> value, Class<?> targetClass, XPathContext context) throws XPathException {
                     return convertXPathValueToObject(value, targetClass);
                 }
             };
@@ -99,7 +99,7 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
     public JPConverter getJPConverter(Class sourceClass, Configuration config) {
         if (isRecognizedNodeClass(sourceClass)) {
             return new JPConverter() {
-                public Sequence<? extends Item<?>> convert(Object object, XPathContext context)  {
+                public Sequence<?> convert(Object object, XPathContext context)  {
                     return convertObjectToXPathValue(object, context.getConfiguration());
                 }
 
@@ -182,7 +182,7 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
      * be converted, an exception should be thrown
      */
 
-    private Sequence<? extends Item<?>> convertObjectToXPathValue(Object object, Configuration config)  {
+    private Sequence<?> convertObjectToXPathValue(Object object, Configuration config)  {
         if (object instanceof Node) {
             return wrapNode((Node) object, config);
         } else if (object instanceof Node[]) {

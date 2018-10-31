@@ -452,9 +452,9 @@ public final class FilterExpression extends BinaryExpression implements ContextS
             }
         }
 
-        final Sequence<? extends Item<?>> sequence = tryEarlyEvaluation(visitor);
+        final Sequence<?> sequence = tryEarlyEvaluation(visitor);
         if (sequence != null) {
-            GroundedValue<? extends Item<?>> value = sequence.materialize();
+            GroundedValue<?> value = sequence.materialize();
             return Literal.makeLiteral(value, this);
         }
 
@@ -507,7 +507,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
     }
 
 
-    private Sequence<? extends Item<?>> tryEarlyEvaluation(ExpressionVisitor visitor) {
+    private Sequence<?> tryEarlyEvaluation(ExpressionVisitor visitor) {
         // Attempt early evaluation of a filter expression if the base sequence is constant and the
         // filter depends only on the context. (This can't be done if, for example, the predicate uses
         // local variables, even variables declared within the predicate)
@@ -1050,7 +1050,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterate(XPathContext context) throws XPathException {
+    public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
 
         // Fast path where the filter value is independent of the focus
 
@@ -1081,7 +1081,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
                                 Item<?> i = ((Literal) getBase()).getValue().itemAt(pos - 1);
                                 return i == null ? EmptyIterator.emptyIterator() : i.iterate();
                             } else {
-                                SequenceIterator<? extends Item<?>> baseIter = getBase().iterate(context);
+                                SequenceIterator<?> baseIter = getBase().iterate(context);
                                 return SubsequenceIterator.make(baseIter, pos, pos);
                             }
                         }
@@ -1120,7 +1120,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
 
         // get an iterator over the base nodes
 
-        SequenceIterator<? extends Item<?>> baseIter = getBase().iterate(context);
+        SequenceIterator<?> baseIter = getBase().iterate(context);
 
         // quick exit for an empty sequence
 

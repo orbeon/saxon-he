@@ -63,13 +63,13 @@ public abstract class SuperId extends SystemFunction {
      * @throws XPathException if an error occurs
      */
 
-    public static SequenceIterator getIdSingle(TreeInfo doc, String idrefs, int operation) throws XPathException {
+    public static SequenceIterator<?> getIdSingle(TreeInfo doc, String idrefs, int operation) throws XPathException {
         if (Whitespace.containsWhitespace(idrefs)) {
             Whitespace.Tokenizer tokens = new Whitespace.Tokenizer(idrefs);
             IdMappingFunction map = new IdMappingFunction();
             map.document = doc;
             map.operation = operation;
-            SequenceIterator result = new MappingIterator(tokens, map);
+            SequenceIterator result = new MappingIterator<>(tokens, map);
             return new DocumentOrderIterator(result, LocalOrderComparer.getInstance());
         } else {
             return SingletonIterator.makeIterator(doc.selectID(idrefs, operation == ELEMENT_WITH_ID));
@@ -89,11 +89,11 @@ public abstract class SuperId extends SystemFunction {
      */
 
     public static SequenceIterator getIdMultiple(
-        TreeInfo doc, SequenceIterator idrefs, int operation) throws XPathException {
+        TreeInfo doc, SequenceIterator<?> idrefs, int operation) throws XPathException {
         IdMappingFunction map = new IdMappingFunction();
         map.document = doc;
         map.operation = operation;
-        SequenceIterator result = new MappingIterator(idrefs, map);
+        SequenceIterator<?> result = new MappingIterator<>(idrefs, map);
         return new DocumentOrderIterator(result, LocalOrderComparer.getInstance());
     }
 
@@ -114,17 +114,17 @@ public abstract class SuperId extends SystemFunction {
                     " the tree being searched must be one whose root is a document node", "FODC0001", context);
         }
         TreeInfo doc = arg1.getTreeInfo();
-        SequenceIterator result;
+        SequenceIterator<?> result;
         if (arguments[0] instanceof AtomicValue) {
             result = getIdSingle(doc, ((AtomicValue)arguments[0]).getStringValue(), getOp());
         } else {
-            SequenceIterator idrefs = arguments[0].iterate();
+            SequenceIterator<?> idrefs = arguments[0].iterate();
             result = getIdMultiple(doc, idrefs, getOp());
         }
         return SequenceTool.toLazySequence(result);
     }
 
-    private static class IdMappingFunction implements MappingFunction {
+    private static class IdMappingFunction implements MappingFunction<Item<?>, Item<?>> {
 
         public TreeInfo document;
         private int operation;
@@ -134,7 +134,7 @@ public abstract class SuperId extends SystemFunction {
          * (implements the MappingFunction interface)
          */
 
-        public SequenceIterator map(Item item) throws XPathException {
+        public SequenceIterator<?> map(Item item) {
 
             String idrefs = Whitespace.trim(item.getStringValueCS());
 
@@ -146,7 +146,7 @@ public abstract class SuperId extends SystemFunction {
                 IdMappingFunction submap = new IdMappingFunction();
                 submap.document = document;
                 submap.operation = operation;
-                return new MappingIterator(tokens, submap);
+                return new MappingIterator<>(tokens, submap);
 
             } else {
                 return SingletonIterator.makeIterator(document.selectID(idrefs, operation == ELEMENT_WITH_ID));

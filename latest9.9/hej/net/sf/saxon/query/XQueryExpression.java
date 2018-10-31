@@ -298,7 +298,7 @@ public class XQueryExpression implements Location, ExpressionOwner {
      */
 
     /*@NotNull*/
-    public SequenceIterator<? extends Item<?>> iterator(/*@NotNull*/ DynamicQueryContext env) throws XPathException {
+    public SequenceIterator<?> iterator(/*@NotNull*/ DynamicQueryContext env) throws XPathException {
         if (isUpdateQuery()) {
             throw new XPathException("Cannot call iterator() on an updating query");
         }
@@ -322,7 +322,7 @@ public class XQueryExpression implements Location, ExpressionOwner {
 
             context.openStackFrame(stackFrameMap);
 
-            SequenceIterator<? extends Item<?>> iterator = expression.iterate(context);
+            SequenceIterator<?> iterator = expression.iterate(context);
             if ((iterator.getProperties() & SequenceIterator.GROUNDED) != 0) {
                 return iterator;
             } else {
