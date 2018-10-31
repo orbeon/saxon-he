@@ -31,7 +31,7 @@ import java.util.Arrays;
 public class Concat extends SystemFunction {
 
     @Override
-    protected Sequence resultIfEmpty(int arg) {
+    protected Sequence<?> resultIfEmpty(int arg) {
         return null;
     }
 
@@ -112,7 +112,7 @@ public class Concat extends SystemFunction {
 
     public StringValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.C64);
-        for (Sequence arg : arguments) {
+        for (Sequence<?> arg : arguments) {
             Item item = arg.head();
             if (item != null) {
                 fsb.append(item.getStringValueCS());

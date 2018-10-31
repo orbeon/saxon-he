@@ -74,7 +74,7 @@ public class SortedGroupIterator extends SortedIterator implements GroupIterator
             }
             gtbs.originalPosition = count++;
             gtbs.currentGroupingKey = groupIter.getCurrentGroupingKey();
-            gtbs.currentGroup = new MemoSequence(groupIter.iterateCurrentGroup());
+            gtbs.currentGroup = new MemoSequence<>(groupIter.iterateCurrentGroup());
         }
     }
 

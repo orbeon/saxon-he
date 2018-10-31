@@ -475,9 +475,9 @@ public final class SequenceType {
      *                        won't happen if the sequence is grounded)
      */
 
-    public boolean matches(Sequence value, TypeHierarchy th) throws XPathException {
+    public boolean matches(Sequence<?> value, TypeHierarchy th) throws XPathException {
         int count = 0;
-        SequenceIterator iter = value.iterate();
+        SequenceIterator<?> iter = value.iterate();
         Item item;
         while ((item = iter.next()) != null) {
             count++;

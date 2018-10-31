@@ -97,7 +97,7 @@ public class DOMEnvelope implements ExternalObjectModel {
         if (NodeOverNodeInfo.class.isAssignableFrom(sourceClass)) {
             return new JPConverter() {
                 /*@Nullable*/
-                public Sequence convert(Object object, XPathContext context) {
+                public Sequence<?> convert(Object object, XPathContext context) {
                     return convertObjectToXPathValue(object);
                 }
 
@@ -207,7 +207,7 @@ public class DOMEnvelope implements ExternalObjectModel {
      * @return the value after conversion
      */
 
-    private Sequence convertObjectToXPathValue(Object object)  {
+    private Sequence<?> convertObjectToXPathValue(Object object)  {
         if (object instanceof NodeList) {
             // NodeList needs great care, because Xerces element nodes implement the NodeList interface,
             // with the actual list being the children of the node in question. So we only recognize a

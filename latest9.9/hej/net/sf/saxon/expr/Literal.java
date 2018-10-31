@@ -515,7 +515,7 @@ public class Literal extends Expression {
         exportValue(value, out);
     }
 
-    public static void exportValue(Sequence value, ExpressionPresenter out) throws XPathException {
+    public static void exportValue(Sequence<?> value, ExpressionPresenter out) throws XPathException {
         if (value.head() == null) {
             out.startElement("empty");
             out.endElement();

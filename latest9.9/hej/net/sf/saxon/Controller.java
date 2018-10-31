@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import static net.sf.saxon.om.SequenceIterator.GROUNDED;
 
@@ -120,9 +121,9 @@ public class Controller implements ContextOriginator {
     public final static String ANONYMOUS_PRINCIPAL_OUTPUT_URI = "dummy:/anonymous/principal/result";
     private StylesheetCache stylesheetCache = null;
 
-    private FocusTrackingFactory focusTrackerFactory = FocusTrackingIterator::new;
+    private Function<SequenceIterator<?>, FocusTrackingIterator<?>> focusTrackerFactory = FocusTrackingIterator::new;
 
-    private FocusTrackingFactory multiThreadedFocusTrackerFactory;
+    private Function<SequenceIterator<?>, FocusTrackingIterator<?>> multiThreadedFocusTrackerFactory;
 
     /**
      * Create a Controller and initialise variables. Note: XSLT applications should
@@ -250,7 +251,7 @@ public class Controller implements ContextOriginator {
      * even if there is a default defined in the stylesheet or query.
      */
 
-    public Sequence getParameter(StructuredQName name) {
+    public Sequence<?> getParameter(StructuredQName name) {
         return globalParameters.get(name);
     }
 
@@ -1573,7 +1574,7 @@ public class Controller implements ContextOriginator {
      * @return a factory function that is used to create FocusTrackingIterator instances
      */
 
-    public FocusTrackingFactory getFocusTrackerFactory(boolean multithreaded) {
+    public Function<SequenceIterator<?>, FocusTrackingIterator<?>> getFocusTrackerFactory(boolean multithreaded) {
         return multithreaded && multiThreadedFocusTrackerFactory != null ?
                 multiThreadedFocusTrackerFactory :
                 focusTrackerFactory;
@@ -1587,7 +1588,7 @@ public class Controller implements ContextOriginator {
      * @param focusTrackerFactory a factory function that is used to create FocusTrackingIterator instances
      */
 
-    public void setFocusTrackerFactory(FocusTrackingFactory focusTrackerFactory) {
+    public void setFocusTrackerFactory(Function<SequenceIterator<?>, FocusTrackingIterator<?>> focusTrackerFactory) {
         this.focusTrackerFactory = focusTrackerFactory;
     }
 
@@ -1600,7 +1601,7 @@ public class Controller implements ContextOriginator {
      * @param focusTrackerFactory a factory function that is used to create FocusTrackingIterator instances
      */
 
-    public void setMultithreadedFocusTrackerFactory(FocusTrackingFactory focusTrackerFactory) {
+    public void setMultithreadedFocusTrackerFactory(Function<SequenceIterator<?>, FocusTrackingIterator<?>> focusTrackerFactory) {
         this.multiThreadedFocusTrackerFactory = focusTrackerFactory;
     }
 
@@ -1616,7 +1617,8 @@ public class Controller implements ContextOriginator {
             if ((base.getProperties() & GROUNDED) == 0 &&
                     !(base instanceof GroupIterator) && !(base instanceof RegexIterator)) {
                 try {
-                    fti = FocusTrackingIterator.track(MemoSequence.makeMemoSequence(base).iterate());
+                    MemoSequence<?> ms = new MemoSequence<>(base);
+                    fti = FocusTrackingIterator.track(ms.iterate());
                 } catch (XPathException e) {
                     fti = FocusTrackingIterator.track(base);
                 }

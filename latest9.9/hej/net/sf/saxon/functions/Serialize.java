@@ -203,7 +203,7 @@ public class Serialize extends SystemFunction implements Callable {
                     role.setErrorCode("XPTY0004");
                     //If any serialization error occurs, including the detection of an invalid value for a serialization
                     // parameter, this results in the fn:serialize call failing with a dynamic error.
-                    Sequence converted = th.applyFunctionConversionRules(
+                    Sequence<?> converted = th.applyFunctionConversionRules(
                         map.get(key), requiredTypes.get(keyName), role, ExplicitLocation.UNKNOWN_LOCATION);
                     result = result.addEntry(key, converted.materialize());
                 }
@@ -215,7 +215,7 @@ public class Serialize extends SystemFunction implements Callable {
                     String keyName = ((QNameValue) key).getLocalName();
                     if (isParamNameSaxon(keyName)) {
                         RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.OPTION, keyName, 0);
-                        Sequence converted = th.applyFunctionConversionRules(
+                        Sequence<?> converted = th.applyFunctionConversionRules(
                                 map.get(key), requiredTypesSaxon.get(keyName), role, ExplicitLocation.UNKNOWN_LOCATION);
                         result = result.addEntry(key, converted.materialize());
                     }
@@ -230,7 +230,7 @@ public class Serialize extends SystemFunction implements Callable {
 
     // Convert a boolean value to a yes-no-type string.
 
-    private String toYesNoTypeString(Sequence seqVal) throws XPathException {
+    private String toYesNoTypeString(Sequence<?> seqVal) throws XPathException {
         String s;
         boolean booleanValue = ((BooleanValue) seqVal.head()).getBooleanValue();
         if (booleanValue) {
@@ -243,7 +243,7 @@ public class Serialize extends SystemFunction implements Callable {
 
     // Convert a value to a yes-no-omit-type string.
 
-    private String toYesNoOmitTypeString(Sequence seqVal) throws XPathException {
+    private String toYesNoOmitTypeString(Sequence<?> seqVal) throws XPathException {
         String stringVal = "";
         if (seqVal instanceof EmptySequence) {
             stringVal = "omit";
@@ -256,8 +256,8 @@ public class Serialize extends SystemFunction implements Callable {
 
     // Convert a sequence of QNames to a qnames-type string (containing a space-separated list of the QNames).
 
-    private String toQNamesTypeString(Sequence seqVal) throws XPathException {
-        SequenceIterator iterator = seqVal.iterate();
+    private String toQNamesTypeString(Sequence<?> seqVal) throws XPathException {
+        SequenceIterator<?> iterator = seqVal.iterate();
         Item item;
         StringBuilder stringVal = new StringBuilder();
         while ((item = iterator.next()) != null) {
@@ -272,7 +272,7 @@ public class Serialize extends SystemFunction implements Callable {
 
     // Convert a QName or string value to a method-type (or json-node-output-method-type) string.
 
-    private String toMethodTypeString(Sequence seqVal) throws XPathException {
+    private String toMethodTypeString(Sequence<?> seqVal) throws XPathException {
         String stringVal;
         if (seqVal.head() instanceof QNameValue) {
             QNameValue qNameValue = (QNameValue) seqVal.head();
@@ -310,7 +310,7 @@ public class Serialize extends SystemFunction implements Callable {
 
     // Convert a map defining a character map to a CharacterMap
 
-    private CharacterMap toCharacterMap(Sequence seqVal, XPathContext context) throws XPathException {
+    private CharacterMap toCharacterMap(Sequence<?> seqVal, XPathContext context) throws XPathException {
         MapItem charMap = checkCharacterMapOptions((MapItem) seqVal.head(), context);
         return toCharacterMap(charMap);
     }

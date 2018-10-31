@@ -370,7 +370,7 @@ public class WindowClause extends Clause {
         return clause.getEndCondition().effectiveBooleanValue(context);
     }
 
-    protected static Sequence makeValue(/*@Nullable*/ Item item) {
+    protected static Sequence<?> makeValue(/*@Nullable*/ Item item) {
         if (item == null) {
             return EmptySequence.getInstance();
         } else {

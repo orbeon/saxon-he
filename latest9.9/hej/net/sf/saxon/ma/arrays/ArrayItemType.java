@@ -142,7 +142,7 @@ public class ArrayItemType extends AnyFunctionType {
         if (this == ANY_ARRAY_TYPE) {
             return true;
         } else {
-            for (Sequence s : ((ArrayItem) item).members()){
+            for (Sequence<?> s : ((ArrayItem) item).members()){
                 if (!memberType.matches(s, th)){
                     return false;
                 }

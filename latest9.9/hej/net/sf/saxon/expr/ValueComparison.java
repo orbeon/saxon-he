@@ -268,8 +268,8 @@ public final class ValueComparison extends BinaryExpression implements Compariso
         getLhs().optimize(visitor, contextInfo);
         getRhs().optimize(visitor, contextInfo);
 
-        Sequence value0 = null;
-        Sequence value1 = null;
+        Sequence<?> value0 = null;
+        Sequence<?> value1 = null;
 
         if (getLhsExpression() instanceof Literal) {
             value0 = ((Literal) getLhsExpression()).getValue();
@@ -655,7 +655,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
      * @return true if the operand is the constant zero (of any numeric data type)
      */
 
-    private static boolean isZero(Sequence v) {
+    private static boolean isZero(Sequence<?> v) {
         return v instanceof NumericValue && ((NumericValue) v).compareTo(0) == 0;
     }
 

@@ -518,13 +518,13 @@ public final class Atomizer extends UnaryExpression {
         }
     }
 
-    public static AtomicSequence atomize(Sequence sequence) throws XPathException {
+    public static AtomicSequence atomize(Sequence<?> sequence) throws XPathException {
         if (sequence instanceof AtomicSequence) {
             return (AtomicSequence)sequence;
         } else if (sequence instanceof EmptySequence) {
             return EmptyAtomicSequence.getInstance();
         } else {
-            SequenceIterator iter = getAtomizingIterator(sequence.iterate(), false);
+            SequenceIterator<? extends AtomicValue> iter = getAtomizingIterator(sequence.iterate(), false);
             return new AtomicArray(iter);
         }
     }

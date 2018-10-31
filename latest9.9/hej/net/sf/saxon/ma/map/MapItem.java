@@ -201,13 +201,13 @@ public interface MapItem extends Function {
      * be efficiently determined
      */
 
-    static boolean isKnownToConform(Sequence value, ItemType itemType) {
+    static boolean isKnownToConform(Sequence<?> value, ItemType itemType) {
         // Problem is we don't have access to a TypeHierarchy object...
         if (itemType == AnyItemType.getInstance()) {
             return true;
         }
         try {
-            SequenceIterator iter = value.iterate();
+            SequenceIterator<?> iter = value.iterate();
             Item item;
             while ((item = iter.next()) != null) {
                 if (item instanceof AtomicValue) {
@@ -245,7 +245,7 @@ public interface MapItem extends Function {
      * values in the sequence are known to conform to this type; otherwise item().
      */
 
-    static ItemType getItemTypeOfSequence(Sequence val) {
+    static ItemType getItemTypeOfSequence(Sequence<?> val) {
         try {
             Item first = val.head();
             if (first == null) {
@@ -422,8 +422,8 @@ public interface MapItem extends Function {
             AtomicIterator keys = keys();
             AtomicValue key;
             while ((key = keys.next()) != null) {
-                Sequence thisValue = get(key);
-                Sequence otherValue = ((MapItem) other).get(key);
+                Sequence<?> thisValue = get(key);
+                Sequence<?> otherValue = ((MapItem) other).get(key);
                 if (otherValue == null) {
                     return false;
                 }

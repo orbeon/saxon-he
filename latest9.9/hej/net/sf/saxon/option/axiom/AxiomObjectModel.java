@@ -112,7 +112,7 @@ public class AxiomObjectModel extends TreeModel implements ExternalObjectModel {
     public JPConverter getJPConverter(Class sourceClass, Configuration config) {
         if (isRecognizedNodeClass(sourceClass)) {
             return new JPConverter() {
-                public Sequence convert(Object object, XPathContext context) throws XPathException {
+                public Sequence<?> convert(Object object, XPathContext context) throws XPathException {
                     return convertObjectToXPathValue(object, context.getConfiguration());
                 }
 
@@ -198,7 +198,7 @@ public class AxiomObjectModel extends TreeModel implements ExternalObjectModel {
      */
 
     /*@Nullable*/
-    private Sequence convertObjectToXPathValue(Object object, Configuration config) {
+    private Sequence<?> convertObjectToXPathValue(Object object, Configuration config) {
         if (isRecognizedNode(object)) {
             if (object instanceof OMDocument) {
                 return new AxiomDocument((OMDocument) object, "", config).getRootNode();

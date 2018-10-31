@@ -68,8 +68,8 @@ public class RawResult implements Result {
      * On completion, get the sequence that has been written to this result object
      */
 
-    public Sequence getResultSequence() {
-        return new SequenceExtent(content);
+    public Sequence<?> getResultSequence() {
+        return new SequenceExtent<>(content);
     }
 }
 

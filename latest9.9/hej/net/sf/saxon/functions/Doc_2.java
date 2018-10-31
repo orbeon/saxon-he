@@ -69,7 +69,7 @@ public class Doc_2 extends SystemFunction implements Callable {
             Map<String, Sequence<?>> checkedOptions, XPathContext context) throws XPathException {
         ParseOptions result = new ParseOptions(context.getConfiguration().getParseOptions());
 
-        Sequence value = checkedOptions.get("validation");
+        Sequence<?> value = checkedOptions.get("validation");
         if (value != null) {
             String valStr = value.head().getStringValue();
             if ("skip".equals(valStr)) {

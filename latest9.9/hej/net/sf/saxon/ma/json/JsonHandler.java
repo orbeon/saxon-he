@@ -43,7 +43,7 @@ public class JsonHandler {
         return context;
     }
 
-    public Sequence getResult() throws XPathException {
+    public Sequence<?> getResult() throws XPathException {
         return null;
     }
 
@@ -230,9 +230,9 @@ public class JsonHandler {
      */
     private String replace(String s, XPathContext context) throws XPathException {
         if (fallbackFunction != null) {
-            Sequence[] args = new Sequence[1];
+            Sequence<?>[] args = new Sequence[1];
             args[0] = new StringValue(s);
-            Sequence result = SystemFunction.dynamicCall(fallbackFunction, context, args).head();
+            Sequence<?> result = SystemFunction.dynamicCall(fallbackFunction, context, args).head();
             Item first = result.head();
             return first == null ? "" : first.getStringValue();
         } else {
@@ -241,7 +241,7 @@ public class JsonHandler {
     }
 
     public void setFallbackFunction(Map<String, Sequence<?>> options, XPathContext context) throws XPathException {
-        Sequence val = options.get("fallback");
+        Sequence<?> val = options.get("fallback");
         if (val != null) {
             Item fn = val.head();
             if (fn instanceof Function) {

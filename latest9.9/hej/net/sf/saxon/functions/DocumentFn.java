@@ -97,7 +97,7 @@ public class DocumentFn extends SystemFunction implements Callable {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         int numArgs = getArity();
 
         SequenceIterator hrefSequence = arguments[0].iterate();

@@ -168,7 +168,7 @@ public class XPathExpressionImpl implements XPathExpression {
             contextItem = (Item) node;
         } else {
             JPConverter converter = JPConverter.allocate(node.getClass(), null, config);
-            Sequence val;
+            Sequence<?> val;
             try {
                 val = converter.convert(node, new EarlyEvaluationContext(config));
             } catch (XPathException e) {

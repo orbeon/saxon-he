@@ -13,7 +13,6 @@ import net.sf.saxon.ma.trie.ImmutableHashTrieMap;
 import net.sf.saxon.ma.trie.ImmutableMap;
 import net.sf.saxon.ma.trie.Tuple2;
 import net.sf.saxon.om.GroundedValue;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.trans.Err;
@@ -465,7 +464,7 @@ public class HashTrieMap implements MapItem {
             Tuple2<AtomicMatchKey, KeyValuePair> entry = iter.next();
             AtomicMatchKey k1 = entry._1;
             AtomicValue k2 = entry._2.key;
-            Sequence v = entry._2.value;
+            Sequence<?> v = entry._2.value;
             System.err.println(k1.getClass() + " " + k1 +
                                        " #:" + k1.hashCode() +
                                        " = (" + k2.getClass() + " " + k2 + " : " + v + ")");

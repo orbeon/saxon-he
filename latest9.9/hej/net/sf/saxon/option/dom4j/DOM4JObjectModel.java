@@ -94,7 +94,7 @@ public class DOM4JObjectModel extends TreeModel implements ExternalObjectModel {
     public JPConverter getJPConverter(Class sourceClass, Configuration config) {
         if (isRecognizedNodeClass(sourceClass)) {
             return new JPConverter() {
-                public Sequence convert(Object object, XPathContext context) throws XPathException {
+                public Sequence<?> convert(Object object, XPathContext context) throws XPathException {
                     return convertObjectToXPathValue((Node) object, context.getConfiguration());
                 }
 
@@ -201,7 +201,7 @@ public class DOM4JObjectModel extends TreeModel implements ExternalObjectModel {
      *          wrapped
      */
 
-    private Sequence convertObjectToXPathValue(Node object, Configuration config) throws XPathException {
+    private Sequence<?> convertObjectToXPathValue(Node object, Configuration config) throws XPathException {
         if (isRecognizedNode(object)) {
             if (object instanceof Document) {
                 return wrapDocument(object, "", config).getRootNode();
@@ -223,10 +223,10 @@ public class DOM4JObjectModel extends TreeModel implements ExternalObjectModel {
      * Value to see whether they belong to this object model.
      */
 
-    private Object convertXPathValueToObject(Sequence value, Object targetClass) {
+    private Object convertXPathValueToObject(Sequence<?> value, Class<?> targetClass) {
         if (value instanceof VirtualNode) {
             Object u = ((VirtualNode) value).getRealNode();
-            if (((Class) targetClass).isAssignableFrom(u.getClass())) {
+            if (targetClass.isAssignableFrom(u.getClass())) {
                 return u;
             }
         }

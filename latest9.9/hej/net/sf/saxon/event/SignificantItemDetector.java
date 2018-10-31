@@ -99,9 +99,9 @@ public class SignificantItemDetector extends ProxyReceiver {
             if (((ArrayItem) item).isEmpty()) {
                 return true;
             } else {
-                for (Sequence mem : ((ArrayItem) item).members()) {
+                for (Sequence<?> mem : ((ArrayItem) item).members()) {
                     try {
-                        SequenceIterator memIter = mem.iterate();
+                        SequenceIterator<?> memIter = mem.iterate();
                         Item it;
                         while ((it = memIter.next()) != null) {
                             if (isSignificant(it)) {

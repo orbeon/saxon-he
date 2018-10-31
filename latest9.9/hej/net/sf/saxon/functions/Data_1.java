@@ -47,7 +47,7 @@ public class Data_1 extends SystemFunction  {
      *          if a dynamic error occurs during the evaluation of the expression
      */
     public Sequence<? extends AtomicValue> call(XPathContext context, Sequence[] arguments) throws XPathException {
-        Sequence arg = arguments[0];
+        Sequence<?> arg = arguments[0];
         if (arg instanceof Item) {
             return ((Item)arg).atomize();
         } else {

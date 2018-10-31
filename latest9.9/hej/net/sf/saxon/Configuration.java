@@ -3606,7 +3606,7 @@ public class Configuration implements SourceResolver, NotationSet {
     /**
      * Get a factory function that can be used to wrap a SequenceIterator in a FocusTrackingIterator. This
      * is called by the {@link Controller} to get a default factory function; the value can be overridden
-     * by the application using {@link Controller#setFocusTrackerFactory(FocusTrackingFactory)}.
+     * by the application using {@link Controller#setFocusTrackerFactory(java.util.function.Function)}.
      * The {@link FocusTrackingIterator} that is created by the factory must be thread-safe if it is
      * to be used for iterating over a sequence where the items might be processed asynchronously using
      * <code>xsl:result-document</code>; for this reason this method is overridden for a Saxon-EE configuration.
@@ -3617,7 +3617,7 @@ public class Configuration implements SourceResolver, NotationSet {
      * @return a suitable factory function
      */
 
-    public FocusTrackingFactory getFocusTrackerFactory(
+    public java.util.function.Function<SequenceIterator<?>, FocusTrackingIterator<?>> getFocusTrackerFactory(
             Executable exec, boolean multithreaded) {
         return FocusTrackingIterator::new;
     }

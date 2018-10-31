@@ -44,7 +44,7 @@ public interface InvalidityHandler {
      * @throws XPathException if an error occurs creating any validation report
      */
 
-    Sequence endReporting() throws XPathException;
+    Sequence<?> endReporting() throws XPathException;
 }
 
 

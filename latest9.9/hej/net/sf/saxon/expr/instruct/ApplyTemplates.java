@@ -526,14 +526,14 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
 
     protected static class ApplyTemplatesPackage implements TailCall {
 
-        private Sequence selectedItems;
+        private Sequence<?> selectedItems;
         private Component.M targetMode;
         private ParameterSet params;
         private ParameterSet tunnelParams;
         private XPathContextMajor evaluationContext;
         private Location locationId;
 
-        ApplyTemplatesPackage(Sequence selectedItems,
+        ApplyTemplatesPackage(Sequence<?> selectedItems,
                               Component.M targetMode,
                               ParameterSet params,
                               ParameterSet tunnelParams,

@@ -55,7 +55,7 @@ public class RegexFunctionSansFlags extends SystemFunction {
      * @return the result of invoking the function
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs within the function
      */
-    public Sequence call(XPathContext context, Sequence[] args) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] args) throws XPathException {
         SystemFunction withFlags = addFlagsArgument();
         Sequence[] newArgs = new Sequence[args.length + 1];
         System.arraycopy(args, 0, newArgs, 0, args.length);

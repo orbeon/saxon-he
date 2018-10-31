@@ -107,7 +107,7 @@ public class GlobalVariableReference extends VariableReference implements Compon
      * @throws net.sf.saxon.trans.XPathException if any error occurs
      */
     @Override
-    public Sequence evaluateVariable(XPathContext c) throws XPathException {
+    public Sequence<?> evaluateVariable(XPathContext c) throws XPathException {
 
         if (bindingSlot >= 0) {
             if (c.getCurrentComponent() == null) {

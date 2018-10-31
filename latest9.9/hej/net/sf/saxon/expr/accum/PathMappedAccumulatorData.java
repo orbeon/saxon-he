@@ -40,7 +40,7 @@ public class PathMappedAccumulatorData implements IAccumulatorData {
     }
 
     @Override
-    public Sequence getValue(NodeInfo node, boolean postDescent) throws XPathException {
+    public Sequence<?> getValue(NodeInfo node, boolean postDescent) throws XPathException {
         return originalData.getValue(map(node), postDescent);
     }
 

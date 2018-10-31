@@ -11,7 +11,6 @@ import net.sf.saxon.ma.arrays.ArrayFunctionSet;
 import net.sf.saxon.ma.arrays.ArrayItem;
 import net.sf.saxon.ma.arrays.SimpleArrayItem;
 import net.sf.saxon.om.GroundedValue;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
 
@@ -100,7 +99,7 @@ public class XdmArray extends XdmFunctionItem {
 
     public XdmValue get(int n) throws IndexOutOfBoundsException {
         try {
-            Sequence member = getUnderlyingValue().get(n);
+            Sequence<?> member = getUnderlyingValue().get(n);
             return XdmValue.wrap(member);
         } catch (XPathException e) {
             throw new IndexOutOfBoundsException();

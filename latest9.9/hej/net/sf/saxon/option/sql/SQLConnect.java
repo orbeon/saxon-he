@@ -200,7 +200,7 @@ public class SQLConnect extends ExtensionInstruction {
 
         }
 
-        private String str(/*@NotNull*/ Sequence iterator) throws XPathException {
+        private String str(/*@NotNull*/ Sequence<?> iterator) throws XPathException {
             Item item = iterator.head();
             return item == null ? "" : item.getStringValue();
         }

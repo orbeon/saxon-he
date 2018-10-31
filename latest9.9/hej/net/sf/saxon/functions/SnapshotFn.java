@@ -47,13 +47,13 @@ public class SnapshotFn extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
-        Sequence in = arguments.length == 0 ? context.getContextItem() : arguments[0];
-        SequenceIterator iter = snapshotSequence(in.iterate(), context);
-        return new LazySequence(iter);
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
+        Sequence<?> in = arguments.length == 0 ? context.getContextItem() : arguments[0];
+        SequenceIterator<?> iter = snapshotSequence(in.iterate(), context);
+        return new LazySequence<>(iter);
     }
 
-    public static SequenceIterator snapshotSequence(SequenceIterator nodes, final XPathContext context) {
+    public static SequenceIterator<?> snapshotSequence(SequenceIterator<?> nodes, final XPathContext context) {
         return new ItemMappingIterator(nodes, getMappingFunction());
     }
 
@@ -62,7 +62,7 @@ public class SnapshotFn extends SystemFunction {
      * @return a suitable mapping function
      */
 
-    public static ItemMappingFunction getMappingFunction() {
+    public static ItemMappingFunction<Item<?>, Item<?>> getMappingFunction() {
         return SnapshotFn::snapshotSingle;
     }
 

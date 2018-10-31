@@ -35,7 +35,7 @@ public class AvailableSystemProperties extends SystemFunction {
      * @throws XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         List<QNameValue> myList = new ArrayList<>();
         myList.add(new QNameValue("xsl", NamespaceConstant.XSLT, "version"));
         myList.add(new QNameValue("xsl", NamespaceConstant.XSLT, "vendor"));

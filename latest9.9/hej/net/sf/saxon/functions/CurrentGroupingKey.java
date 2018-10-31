@@ -41,7 +41,7 @@ public class CurrentGroupingKey extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         throw new XPathException("Dynamic call on current-grouping-key() fails (the current group is absent)", "XTDE1071");
     }
 

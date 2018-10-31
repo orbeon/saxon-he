@@ -10,7 +10,6 @@ package net.sf.saxon.xpath;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.RebindingMap;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
@@ -122,7 +121,7 @@ public class JAXPVariableReference extends Expression implements Callable {
     }
 
     @Override
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         Configuration config = context.getConfiguration();
         Object value = resolver.resolveVariable(name.toJaxpQName());
         if (value == null) {

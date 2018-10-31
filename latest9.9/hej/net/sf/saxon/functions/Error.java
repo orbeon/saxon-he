@@ -108,7 +108,7 @@ public class Error extends SystemFunction implements Callable {
         e.setErrorCodeQName(qname.getStructuredQName());
         e.setXPathContext(context);
         if (getArity() > 2 && errObject != null) {
-            Sequence errorObject = errObject.materialize();
+            Sequence<?> errorObject = errObject.materialize();
             if (errorObject instanceof ZeroOrOne) {
                 Item root = ((ZeroOrOne) errorObject).head();
                 if ((root instanceof NodeInfo) && ((NodeInfo) root).getNodeKind() == Type.DOCUMENT) {
@@ -132,7 +132,7 @@ public class Error extends SystemFunction implements Callable {
     }
 
 
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         int len = arguments.length;
 
         switch (len) {

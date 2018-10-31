@@ -277,7 +277,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
         private void processSequence(Sequence<?> in, AtomicValue key, List<GroundedValue<?>> result) throws XPathException {
             in.iterate().forEachOrFail(item -> {
                 if (item instanceof ArrayItem) {
-                    for (Sequence sequence : ((ArrayItem) item).members()) {
+                    for (Sequence<?> sequence : ((ArrayItem) item).members()) {
                         processSequence(sequence, key, result);
                     }
                 } else if (item instanceof MapItem) {

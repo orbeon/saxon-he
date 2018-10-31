@@ -414,7 +414,7 @@ public class XPathException extends TransformerException {
      * @param value the error object, as supplied to the fn:error() function
      */
 
-    public void setErrorObject(Sequence value) {
+    public void setErrorObject(Sequence<?> value) {
         errorObject = value;
     }
 
@@ -424,7 +424,7 @@ public class XPathException extends TransformerException {
      * @return the error object, as supplied to the fn:error() function
      */
 
-    public Sequence getErrorObject() {
+    public Sequence<?> getErrorObject() {
         return errorObject;
     }
 

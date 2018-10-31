@@ -37,7 +37,7 @@ public class OriginalFunction extends AbstractFunction implements Function, Cont
      * @return the result of invoking the function
      * @throws XPathException if a dynamic error occurs within the function
      */
-    public Sequence call(XPathContext context, Sequence[] args) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] args) throws XPathException {
         XPathContextMajor c2 = userFunction.makeNewContext(context);
         c2.setCurrentComponent(component);
         return userFunction.call(c2, args);

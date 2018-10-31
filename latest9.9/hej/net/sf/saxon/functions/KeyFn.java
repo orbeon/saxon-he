@@ -171,7 +171,7 @@ public class KeyFn extends SystemFunction {
      * @return the result of the evaluation, in the form of a Sequence
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         NodeInfo origin;
         if (arguments.length == 3) {
             origin = (NodeInfo) getOrigin(context, arguments[2]);
@@ -203,7 +203,7 @@ public class KeyFn extends SystemFunction {
         return ((NodeInfo) contextItem).getRoot();
     }
 
-    private static Item getOrigin(XPathContext context, Sequence argument2) throws XPathException {
+    private static Item getOrigin(XPathContext context, Sequence<?> argument2) throws XPathException {
         Item arg2;
         try {
             arg2 = argument2.head();
@@ -242,7 +242,7 @@ public class KeyFn extends SystemFunction {
     }
 
     protected static Sequence<NodeInfo> search(
-            final KeyManager keyManager, XPathContext context, Sequence sought, NodeInfo origin, KeyDefinitionSet selectedKeySet) throws XPathException {
+            final KeyManager keyManager, XPathContext context, Sequence<? extends AtomicValue> sought, NodeInfo origin, KeyDefinitionSet selectedKeySet) throws XPathException {
 
 
 //        if (internal) {

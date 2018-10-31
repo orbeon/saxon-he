@@ -75,7 +75,7 @@ public class Put extends SystemFunction {
          *          if a dynamic error occurs during the evaluation of the expression
          */
 
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         throw new XPathException("Dynamic evaluation of fn:put() is not supported");
     }
 

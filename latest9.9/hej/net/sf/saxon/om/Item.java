@@ -180,6 +180,10 @@ public interface Item<T extends Item<?>> extends GroundedValue<T> {
         return this;
     }
 
+    static <T extends Item<?>> GroundedValue<T> toGroundedValue(Item<T> item) {
+        return item.reduce();
+    }
+
     /**
      * Ask whether this is a node in a streamed document
      *

@@ -31,7 +31,7 @@ public class Tokenize_1 extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         AtomicValue sv = (AtomicValue) arguments[0].head();
         if (sv == null) {
             return EmptySequence.getInstance();

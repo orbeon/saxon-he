@@ -85,7 +85,7 @@ public class GroupByClausePush extends TuplePush {
 
     protected static void checkGroupingValues(Sequence[] groupingValues) throws XPathException {
         for (int i = 0; i < groupingValues.length; i++) {
-            Sequence v = groupingValues[i];
+            Sequence<?> v = groupingValues[i];
             if (!(v instanceof EmptySequence || v instanceof AtomicValue)) {
                 v = Atomizer.getAtomizingIterator(v.iterate(), false).materialize();
                 if (SequenceTool.getLength(v) > 1) {

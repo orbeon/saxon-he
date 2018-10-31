@@ -18,6 +18,7 @@ import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.tree.wrapper.VirtualNode;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
+import org.apache.axiom.om.impl.util.EmptyIterator;
 
 /**
  * Utility class for manipulating sequences. Some of these methods should be regarded
@@ -56,7 +57,9 @@ public class SequenceTool {
      */
 
     public static <T extends Item<?>> Sequence<T> toMemoSequence(SequenceIterator<T> iterator) throws XPathException {
-        if ((iterator.getProperties() & SequenceIterator.GROUNDED) != 0) {
+        if (iterator instanceof EmptyIterator) {
+            return EmptySequence.getInstance();
+        } else if ((iterator.getProperties() & SequenceIterator.GROUNDED) != 0) {
             return iterator.materialize();
         } else {
             return new MemoSequence<>(iterator);
@@ -95,7 +98,7 @@ public class SequenceTool {
         }
     }
 
-    public static boolean isUnrepeatable(Sequence seq) {
+    public static boolean isUnrepeatable(Sequence<?> seq) {
         return seq instanceof LazySequence ||
                 (seq instanceof Closure && !(seq instanceof MemoClosure || seq instanceof SingletonClosure));
     }
@@ -108,7 +111,7 @@ public class SequenceTool {
      * @throws XPathException if an error occurs (due to lazy evaluation)
      */
 
-    public static int getLength(Sequence sequence) throws XPathException {
+    public static int getLength(Sequence<?> sequence) throws XPathException {
         if (sequence instanceof GroundedValue) {
             return ((GroundedValue) sequence).getLength();
         }
@@ -305,7 +308,7 @@ public class SequenceTool {
      * @return the lowest common supertype of the types of the items in the sequence
      */
 
-    public static ItemType getItemType(Sequence sequence, TypeHierarchy th) {
+    public static ItemType getItemType(Sequence<?> sequence, TypeHierarchy th) {
         if (sequence instanceof Item) {
             return Type.getItemType((Item) sequence, th);
         } else if (sequence instanceof GroundedValue) {
@@ -341,7 +344,7 @@ public class SequenceTool {
      * @return the lowest common supertype of the types of the items in the sequence
      */
 
-    public static UType getUType(Sequence sequence) {
+    public static UType getUType(Sequence<?> sequence) {
         if (sequence instanceof Item) {
             return UType.getUType((Item) sequence);
         } else if (sequence instanceof GroundedValue) {

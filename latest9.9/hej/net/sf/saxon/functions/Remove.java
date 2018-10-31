@@ -26,7 +26,7 @@ public class Remove extends SystemFunction {
     public Expression makeFunctionCall(Expression[] arguments) {
 
         if (Literal.isAtomic(arguments[1])) {
-            Sequence index = ((Literal) arguments[1]).getValue();
+            Sequence<?> index = ((Literal) arguments[1]).getValue();
             if (index instanceof IntegerValue) {
                 try {
                     long value = ((IntegerValue) index).longValue();
@@ -52,7 +52,7 @@ public class Remove extends SystemFunction {
      * @return the result of the evaluation, in the form of a SequenceIterator
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         NumericValue n = (NumericValue) arguments[1].head();
         int pos = (int) n.longValue();
         if (pos < 1) {

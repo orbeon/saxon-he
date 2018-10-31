@@ -224,7 +224,7 @@ public class JDOM2ObjectModel extends TreeModel implements ExternalObjectModel {
      */
 
     /*@Nullable*/
-    private Object convertXPathValueToObject(Sequence value, Class<?> target) {
+    private Object convertXPathValueToObject(Sequence<?> value, Class<?> target) {
         if (value instanceof VirtualNode) {
             Object u = ((VirtualNode) value).getRealNode();
             if (target.isAssignableFrom(u.getClass())) {

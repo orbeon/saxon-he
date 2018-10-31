@@ -69,8 +69,8 @@ public class StreamingFunctionArgumentPattern extends Pattern {
      */
 
     public boolean matches(Item<?> item, XPathContext context) throws XPathException {
-        Sequence arg = context.getStackFrame().getStackFrameValues()[0];
-        SequenceIterator iter = arg.iterate();
+        Sequence<?> arg = context.getStackFrame().getStackFrameValues()[0];
+        SequenceIterator<?> iter = arg.iterate();
         Item j;
         while ((j = iter.next()) != null) {
             if (j == item) {

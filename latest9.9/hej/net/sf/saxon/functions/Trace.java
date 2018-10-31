@@ -54,7 +54,7 @@ public class Trace extends SystemFunction {
         return arguments[0].getCardinality();
     }
 
-    public void notifyListener(String label, Sequence val, SourceLocator loc, XPathContext context) {
+    public void notifyListener(String label, Sequence<?> val, SourceLocator loc, XPathContext context) {
         InstructionDetails info = new InstructionDetails();
         info.setConstructType(LocationKind.TRACE_CALL);
         info.setLineNumber(loc.getLineNumber());

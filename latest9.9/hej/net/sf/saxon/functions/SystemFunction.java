@@ -150,7 +150,7 @@ public abstract class SystemFunction extends AbstractFunction {
      * @return the value to be returned when this argument is an empty sequence, or null if unknown / not applicable
      */
 
-    protected Sequence resultIfEmpty(int arg) {
+    protected Sequence<?> resultIfEmpty(int arg) {
         return details.resultIfEmpty[arg];
     }
 

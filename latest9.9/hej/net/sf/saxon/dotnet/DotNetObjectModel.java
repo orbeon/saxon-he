@@ -85,7 +85,7 @@ public abstract class DotNetObjectModel implements ExternalObjectModel {
     public JPConverter getJPConverter(Class sourceClass, Configuration config) {
         if (isRecognizedNodeClass(sourceClass)) {
             return new JPConverter() {
-                public Sequence convert(Object object, XPathContext context) throws XPathException {
+                public Sequence<?> convert(Object object, XPathContext context) throws XPathException {
                     return unwrapXdmValue(object);
                 }
 
@@ -211,7 +211,7 @@ public abstract class DotNetObjectModel implements ExternalObjectModel {
      *          supplied value cannot be converted to the appropriate class
      */
 
-    public Object convertXPathValueToObject(Sequence value, cli.System.Type targetClass) throws XPathException {
+    public Object convertXPathValueToObject(Sequence<?> value, cli.System.Type targetClass) throws XPathException {
         //System.err.println("CONVERT TO: " + targetClass.toString());
         if (isXmlNodeType(targetClass) &&
                 value instanceof ZeroOrOne &&

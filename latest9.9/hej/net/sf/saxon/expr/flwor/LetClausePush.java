@@ -29,7 +29,7 @@ public class LetClausePush extends TuplePush {
      */
     @Override
     public void processTuple(XPathContext context) throws XPathException {
-        Sequence val = letClause.getEvaluator().evaluate(letClause.getSequence(), context);
+        Sequence<?> val = letClause.getEvaluator().evaluate(letClause.getSequence(), context);
         context.setLocalVariable(letClause.getRangeVariable().getLocalSlotNumber(), val);
         destination.processTuple(context);
     }

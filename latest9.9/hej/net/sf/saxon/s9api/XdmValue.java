@@ -247,7 +247,7 @@ public class XdmValue implements Iterable<XdmItem> {
      */
     public Iterator<XdmItem> iterator() throws SaxonApiUncheckedException {
         try {
-            Sequence v = getUnderlyingValue();
+            Sequence<?> v = getUnderlyingValue();
             return new XdmSequenceIterator<>(v.iterate());
         } catch (XPathException e) {
             throw new SaxonApiUncheckedException(e);

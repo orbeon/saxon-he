@@ -382,7 +382,7 @@ public class TransformFn extends SystemFunction implements Callable {
     private XsltExecutable getStylesheet(Map<String, Sequence<?>> options, XsltCompiler xsltCompiler, String styleOptionStr, XPathContext context) throws XPathException {
         Item styleOptionItem = options.get(styleOptionStr).head();
         URI stylesheetBaseUri = null;
-        Sequence seq;
+        Sequence<?> seq;
         if ((seq = options.get("stylesheet-base-uri")) != null) {
             StringValue styleBaseUri = (StringValue) seq.head();
             stylesheetBaseUri = URI.create(styleBaseUri.getStringValue());
@@ -566,7 +566,7 @@ public class TransformFn extends SystemFunction implements Callable {
     public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         Map<String, Sequence<?>> options = getDetails().optionDetails.processSuppliedOptions((MapItem) arguments[0].head(), context);
 
-        Sequence vendorOptionsValue = options.get("vendor-options");
+        Sequence<?> vendorOptionsValue = options.get("vendor-options");
         MapItem vendorOptions = vendorOptionsValue == null ? null : (MapItem) vendorOptionsValue.head();
 
         Configuration targetConfig = context.getConfiguration();
@@ -574,7 +574,7 @@ public class TransformFn extends SystemFunction implements Callable {
         int schemaValidation = Validation.DEFAULT;
         
         if (vendorOptions != null) {
-            Sequence optionValue = vendorOptions.get(new QNameValue("", NamespaceConstant.SAXON, "configuration"));
+            Sequence<?> optionValue = vendorOptions.get(new QNameValue("", NamespaceConstant.SAXON, "configuration"));
             if (optionValue != null) {
                 NodeInfo configFile = (NodeInfo) optionValue.head();
                 targetConfig = Configuration.readConfiguration(configFile, targetConfig);
@@ -736,7 +736,7 @@ public class TransformFn extends SystemFunction implements Callable {
                     ArrayItem functionParamsArray = (ArrayItem) head;
                     functionParams = new XdmValue[functionParamsArray.arrayLength()];
                     for (int i = 0; i < functionParams.length; i++) {
-                        Sequence argVal = functionParamsArray.get(i);
+                        Sequence<?> argVal = functionParamsArray.get(i);
                         if (!allowTypedNodes) {
                             checkSequenceIsUntyped(argVal);
                         }
@@ -773,7 +773,7 @@ public class TransformFn extends SystemFunction implements Callable {
         controller.setResultDocumentResolver(deliverer);
 
         Destination destination = deliverer.getPrimaryDestination(serializationParamsMap);
-        Sequence result;
+        Sequence<?> result;
         try {
             transformer.setStylesheetParameters(stylesheetParams);
             transformer.setBaseOutputURI(baseOutputUri);
@@ -874,7 +874,7 @@ public class TransformFn extends SystemFunction implements Callable {
                     throw new XPathException("The names of parameters must be supplied as QNames", "FOXT0002");
                 }
                 QName paramName = new QName(((QNameValue) param).getStructuredQName());
-                Sequence value = suppliedParams.get(param);
+                Sequence<?> value = suppliedParams.get(param);
                 if (!allowTypedNodes) {
                     checkSequenceIsUntyped(value);
                 }
@@ -1065,13 +1065,13 @@ public class TransformFn extends SystemFunction implements Callable {
          * @return the primary result, or null if there is no primary result (after post-processing if any)
          */
 
-        public abstract Sequence getPrimaryResult() throws XPathException;
+        public abstract Sequence<?> getPrimaryResult() throws XPathException;
 
         /**
          * Post-process the result if required
          */
 
-        public GroundedValue postProcess(String uri, Sequence result) throws XPathException {
+        public GroundedValue<?> postProcess(String uri, Sequence<?> result) throws XPathException {
             if (postProcessor != null) {
                 result = postProcessor.call(context.newCleanContext(), new Sequence[]{new StringValue(uri), result});
             }
@@ -1096,7 +1096,7 @@ public class TransformFn extends SystemFunction implements Callable {
         }
 
         @Override
-        public Sequence getPrimaryResult() throws XPathException {
+        public Sequence<?> getPrimaryResult() throws XPathException {
             XdmNode node = destination.getXdmNode();
             return node == null ? null : postProcess(baseOutputUri, node.getUnderlyingNode());
         }
@@ -1144,7 +1144,7 @@ public class TransformFn extends SystemFunction implements Callable {
         }
 
         @Override
-        public Sequence getPrimaryResult() throws XPathException {
+        public Sequence<?> getPrimaryResult() throws XPathException {
             String str = primaryWriter.toString();
             if (str.isEmpty()) {
                 return null;
@@ -1195,8 +1195,8 @@ public class TransformFn extends SystemFunction implements Callable {
         }
 
         @Override
-        public Sequence getPrimaryResult() throws XPathException {
-            Sequence actualResult = primaryDestination.getXdmValue().getUnderlyingValue();
+        public Sequence<?> getPrimaryResult() throws XPathException {
+            Sequence<?> actualResult = primaryDestination.getXdmValue().getUnderlyingValue();
             return postProcess(baseOutputUri, actualResult);
         }
 

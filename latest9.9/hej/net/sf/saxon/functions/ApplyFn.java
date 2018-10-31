@@ -120,7 +120,7 @@ public class ApplyFn extends SystemFunction  {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         final Function function = (Function) arguments[0].head();
         ArrayItem args = (ArrayItem)arguments[1].head();
 
@@ -149,12 +149,12 @@ public class ApplyFn extends SystemFunction  {
                 } else {
                     role = new RoleDiagnostic(RoleDiagnostic.FUNCTION, "fn:apply", i + 1);
                 }
-                Sequence converted = th.applyFunctionConversionRules(
+                Sequence<?> converted = th.applyFunctionConversionRules(
                     args.get(i), expected, role, ExplicitLocation.UNKNOWN_LOCATION);
                 argArray[i] = converted.materialize();
             }
         }
-        Sequence rawResult = dynamicCall(function, context, argArray);
+        Sequence<?> rawResult = dynamicCall(function, context, argArray);
         if (function.isTrustedResultType()) {
             // trust system functions to return a result of the correct type
             return rawResult;

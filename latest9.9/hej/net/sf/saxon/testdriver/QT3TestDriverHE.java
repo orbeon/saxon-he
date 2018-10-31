@@ -860,7 +860,7 @@ public class QT3TestDriverHE extends TestDriver {
      * @return the supplied value, unchanged
      */
 
-    public static Sequence lazyLiteral(Sequence value) {
+    public static Sequence<?> lazyLiteral(Sequence value) {
         return value;
     }
 

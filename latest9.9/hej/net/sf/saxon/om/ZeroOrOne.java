@@ -162,7 +162,8 @@ public class ZeroOrOne<T extends Item<?>> implements GroundedValue<T> {
     public GroundedValue<T> reduce() {
         if (item == null) {
             return EmptySequence.getInstance();
+        } else {
+            return (Item<T>) item;
         }
-        return this;
     }
 }

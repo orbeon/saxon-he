@@ -635,7 +635,7 @@ public class StandardErrorListener implements UnfailingErrorListener {
         }
 
         if (err instanceof XPathException) {
-            Sequence errorObject = ((XPathException) err).getErrorObject();
+            Sequence<?> errorObject = ((XPathException) err).getErrorObject();
             if (errorObject != null) {
                 String errorObjectDesc = getErrorObjectString(errorObject);
                 if (errorObjectDesc != null) {
@@ -689,7 +689,7 @@ public class StandardErrorListener implements UnfailingErrorListener {
      */
 
     @SuppressWarnings({"UnusedParameters"})
-    public String getErrorObjectString(Sequence errorObject) {
+    public String getErrorObjectString(Sequence<?> errorObject) {
         return null;
     }
 

@@ -189,7 +189,7 @@ public class JSONSerializer extends SequenceWriter implements ReceiverWithOutput
         if (array.arrayLength() < 2) {
             return true;
         }
-        for (Sequence member : array.members()) {
+        for (Sequence<?> member : array.members()) {
             if (!(member instanceof AtomicValue)) {
                 return false;
             }

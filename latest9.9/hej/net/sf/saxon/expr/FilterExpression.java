@@ -1069,7 +1069,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
                         int pos = ((NumericValue)first).asSubscript();
                         if (pos != -1) {
                             if (getBase() instanceof VariableReference) {
-                                Sequence baseVal = ((VariableReference) getBase()).evaluateVariable(context);
+                                Sequence<?> baseVal = ((VariableReference) getBase()).evaluateVariable(context);
                                 if (baseVal instanceof MemoClosure) {
                                     Item<?> m = ((MemoClosure) baseVal).itemAt(pos - 1);
                                     return m == null ? EmptyIterator.emptyIterator() : m.iterate();

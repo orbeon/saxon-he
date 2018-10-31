@@ -12,7 +12,6 @@ import net.sf.saxon.ma.arrays.ArrayItem;
 import net.sf.saxon.ma.arrays.SimpleArrayItem;
 import net.sf.saxon.ma.map.HashTrieMap;
 import net.sf.saxon.om.GroundedValue;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.BooleanValue;
@@ -28,19 +27,19 @@ import java.util.Stack;
  * representing the content of the JSON text.
  */
 public class JsonHandlerMap extends JsonHandler {
-    Stack<Sequence> stack;
+    Stack<Sequence<?>> stack;
 
     protected Stack<String> keys;
 
     public JsonHandlerMap(XPathContext context, int flags) {
         setContext(context);
-        stack = new Stack<Sequence>();
-        keys = new Stack<String>();
+        stack = new Stack<>();
+        keys = new Stack<>();
         escape = (flags & JsonParser.ESCAPE) != 0;
         charChecker = context.getConfiguration().getValidCharacterChecker();
     }
 
-    public Sequence getResult() throws XPathException {
+    public Sequence<?> getResult() {
         return stack.peek();
     }
 

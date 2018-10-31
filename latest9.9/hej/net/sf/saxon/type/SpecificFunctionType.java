@@ -317,7 +317,7 @@ public class SpecificFunctionType extends AnyFunctionType {
                 if (!(rel == TypeHierarchy.SAME_TYPE || rel == TypeHierarchy.SUBSUMED_BY)) {
                     return false;
                 }
-                for (Sequence member : ((ArrayItem) item).members()) {
+                for (Sequence<?> member : ((ArrayItem) item).members()) {
                     try {
                         if (!resultType.matches(member, th)) {
                             return false;

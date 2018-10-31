@@ -92,7 +92,7 @@ public class Count extends SystemFunction {
      *          if a dynamic error occurs during the evaluation of the expression
      */
     public IntegerValue call(XPathContext context, Sequence[] arguments) throws XPathException {
-        Sequence arg = arguments[0];
+        Sequence<?> arg = arguments[0];
         int size = arg instanceof GroundedValue ? ((GroundedValue)arg).getLength() : count(arg.iterate());
         return Int64Value.makeIntegerValue(size);
     }

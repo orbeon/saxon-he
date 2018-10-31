@@ -208,7 +208,7 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
      * Value to see whether they belong to this object model.
      */
 
-    public Object convertXPathValueToObject(Sequence value, Class<?> targetClass)
+    public Object convertXPathValueToObject(Sequence<?> value, Class<?> targetClass)
             throws XPathException {
         // We accept the object if (a) the target class is Node or Node[],
         // or (b) the supplied object is a node, or sequence of nodes, that wrap XOM nodes,

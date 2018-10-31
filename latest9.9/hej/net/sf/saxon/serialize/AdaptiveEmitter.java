@@ -196,7 +196,7 @@ public class AdaptiveEmitter extends SequenceWriter implements ReceiverWithOutpu
     private void serializeArray(ArrayItem array) throws XPathException {
         emit("[");
         boolean first = true;
-        for (Sequence seq: array.members()) {
+        for (Sequence<?> seq: array.members()) {
             if (first) {
                 first = false;
             } else {
@@ -218,7 +218,7 @@ public class AdaptiveEmitter extends SequenceWriter implements ReceiverWithOutpu
             }
             serializeItem(pair.key);
             emit(":");
-            Sequence value = pair.value;
+            Sequence<?> value = pair.value;
             outputInternalSequence(value);
         }
         emit("}");

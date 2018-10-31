@@ -583,10 +583,10 @@ public class TypeChecker {
 
     /*@Nullable*/
     public static XPathException testConformance(
-            Sequence val, SequenceType requiredType, XPathContext context)
+            Sequence<?> val, SequenceType requiredType, XPathContext context)
             throws XPathException {
         ItemType reqItemType = requiredType.getPrimaryType();
-        SequenceIterator iter = val.iterate();
+        SequenceIterator<?> iter = val.iterate();
         int count = 0;
         Item item;
         while ((item = iter.next()) != null) {

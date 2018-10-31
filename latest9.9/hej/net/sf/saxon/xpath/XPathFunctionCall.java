@@ -158,7 +158,7 @@ public class XPathFunctionCall extends FunctionCall implements Callable {
         // a double is passed as a Double, a string as a String.
         List<Object> convertedArgs = new ArrayList<>(argValues.length);
         Configuration config = context.getConfiguration();
-        for (Sequence argValue : argValues) {
+        for (Sequence<?> argValue : argValues) {
             List<Object> target = new ArrayList<>();
             argValue.iterate().forEachOrFail(item -> {
                 PJConverter converter = PJConverter.allocate(

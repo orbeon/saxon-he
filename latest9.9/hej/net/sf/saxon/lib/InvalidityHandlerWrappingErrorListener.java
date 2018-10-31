@@ -56,7 +56,7 @@ public class InvalidityHandlerWrappingErrorListener implements InvalidityHandler
      * @return a value (or null). This will be the value returned as the value of
      * the variable $err:value during try/catch processing
      */
-    public Sequence endReporting() {
+    public Sequence<?> endReporting() {
         return null;
     }
 }

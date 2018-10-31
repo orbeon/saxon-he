@@ -41,16 +41,16 @@ public class Sort_1 extends SystemFunction {
      * @return the result of the evaluation, in the form of a SequenceIterator
      * @throws XPathException if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         final List<ItemToBeSorted> inputList = getItemsToBeSorted(arguments[0]);
         StringCollator collation = context.getConfiguration().getCollation(getRetainedStaticContext().getDefaultCollationName());
         return doSort(inputList, collation, context);
     }
 
-    protected List<ItemToBeSorted> getItemsToBeSorted(Sequence input) throws XPathException {
+    protected List<ItemToBeSorted> getItemsToBeSorted(Sequence<?> input) throws XPathException {
         final List<ItemToBeSorted> inputList = new ArrayList<>();
         int i = 0;
-        SequenceIterator iterator = input.iterate();
+        SequenceIterator<?> iterator = input.iterate();
         Item item;
         while ((item = iterator.next()) != null) {
             ItemToBeSorted member = new ItemToBeSorted();
@@ -62,7 +62,7 @@ public class Sort_1 extends SystemFunction {
         return inputList;
     }
 
-    protected Sequence doSort(final List<ItemToBeSorted> inputList, StringCollator collation, XPathContext context) throws XPathException {
+    protected Sequence<?> doSort(final List<ItemToBeSorted> inputList, StringCollator collation, XPathContext context) throws XPathException {
         final AtomicComparer atomicComparer = AtomicSortComparer.makeSortComparer(
                 collation, StandardNames.XS_ANY_ATOMIC_TYPE, context);
         Sortable sortable = new Sortable() {

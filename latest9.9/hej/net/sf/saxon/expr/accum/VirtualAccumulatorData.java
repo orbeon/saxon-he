@@ -37,7 +37,7 @@ public class VirtualAccumulatorData implements IAccumulatorData {
      * @return the value of the accumulator for this node
      */
 
-    public Sequence getValue(NodeInfo node, boolean postDescent) throws XPathException {
+    public Sequence<?> getValue(NodeInfo node, boolean postDescent) throws XPathException {
         NodeInfo original = ((VirtualCopy)node).getOriginalNode();
         return realData.getValue(original, postDescent);
     }

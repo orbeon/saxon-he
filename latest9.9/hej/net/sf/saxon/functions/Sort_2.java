@@ -29,12 +29,12 @@ public class Sort_2 extends Sort_1 {
      * @return the result of the evaluation, in the form of a SequenceIterator
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs during the evaluation of the expression
      */
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         final List<ItemToBeSorted> inputList = getItemsToBeSorted(arguments[0]);
         return doSort(inputList, getCollation(context, arguments[1]), context);
     }
 
-    protected StringCollator getCollation(XPathContext context, Sequence collationArg) throws XPathException {
+    protected StringCollator getCollation(XPathContext context, Sequence<?> collationArg) throws XPathException {
         StringValue secondArg = (StringValue)collationArg.head();
         if (secondArg == null) {
             return  context.getConfiguration().getCollation(getRetainedStaticContext().getDefaultCollationName());

@@ -156,7 +156,7 @@ public class XdmFunctionItem extends XdmItem {
             TypeHierarchy th = processor.getUnderlyingConfiguration().getTypeHierarchy();
             for (int i = 0; i < arguments.length; i++) {
                 net.sf.saxon.value.SequenceType required = type.getArgumentTypes()[i];
-                Sequence val = arguments[i].getUnderlyingValue();
+                Sequence<?> val = arguments[i].getUnderlyingValue();
                 if (!required.matches(val, th)) {
                     RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.FUNCTION, "", i);
                     val = th.applyFunctionConversionRules(val, required, role, ExplicitLocation.UNKNOWN_LOCATION);
@@ -177,7 +177,7 @@ public class XdmFunctionItem extends XdmItem {
                     result = th.applyFunctionConversionRules(result.materialize(), required, role, ExplicitLocation.UNKNOWN_LOCATION);
                 }
             }
-            Sequence se = result.iterate().materialize();
+            Sequence<?> se = result.iterate().materialize();
             return XdmValue.wrap(se);
         } catch (XPathException e) {
             throw new SaxonApiException(e);

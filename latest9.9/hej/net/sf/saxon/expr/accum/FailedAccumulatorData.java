@@ -31,7 +31,7 @@ public class FailedAccumulatorData implements IAccumulatorData {
     }
 
     @Override
-    public Sequence getValue(NodeInfo node, boolean postDescent) throws XPathException {
+    public Sequence<?> getValue(NodeInfo node, boolean postDescent) throws XPathException {
         throw error;
     }
 }

@@ -11,7 +11,6 @@ import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.iter.EmptyIterator;
 
 /**
  * A MemoClosure represents a value that has not yet been evaluated: the value is represented
@@ -49,7 +48,7 @@ import net.sf.saxon.tree.iter.EmptyIterator;
 
 public class MemoClosure extends Closure {
 
-    private Sequence<Item<?>> sequence;
+    private Sequence<?> sequence;
 
     /**
      * Constructor should not be called directly, instances should be made using the make() method.
@@ -75,19 +74,13 @@ public class MemoClosure extends Closure {
     /*@NotNull*/
     public synchronized SequenceIterator<Item<?>> iterate() throws XPathException {
         makeSequence();
-        return sequence.iterate();
+        return (SequenceIterator<Item<?>>)sequence.iterate();
     }
 
     private void makeSequence() throws XPathException {
         if (sequence == null) {
             inputIterator = expression.iterate(savedXPathContext);
-            if (inputIterator instanceof EmptyIterator) {
-                sequence = EmptySequence.getInstance();
-            } else if ((inputIterator.getProperties() & SequenceIterator.GROUNDED) != 0) {
-                sequence = (GroundedValue<Item<?>>)inputIterator.materialize();
-            } else {
-                sequence = new MemoSequence(inputIterator);
-            }
+            sequence = SequenceTool.toMemoSequence(inputIterator);
         }
     }
 

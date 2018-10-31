@@ -38,7 +38,7 @@ public class LetClausePull extends TuplePull {
         if (!base.nextTuple(context)) {
             return false;
         }
-        Sequence val = letClause.getEvaluator().evaluate(letClause.getSequence(), context);
+        Sequence<?> val = letClause.getEvaluator().evaluate(letClause.getSequence(), context);
         context.setLocalVariable(letClause.getRangeVariable().getLocalSlotNumber(), val);
         return true;
     }

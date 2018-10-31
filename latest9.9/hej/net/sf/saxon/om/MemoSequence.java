@@ -50,10 +50,6 @@ public class MemoSequence<T extends Item<?>> implements Sequence<T> {
     // State in which we know that the value is an empty sequence
     protected static final int EMPTY = 5;
 
-    public static <T extends Item<?>> MemoSequence<T> makeMemoSequence(SequenceIterator<T> base) {
-        return new MemoSequence<>(base);
-    }
-
     public MemoSequence(SequenceIterator<T> iterator) {
         this.inputIterator = iterator;
     }
@@ -297,7 +293,8 @@ public class MemoSequence<T extends Item<?>> implements Sequence<T> {
                 if (used == 0) {
                     return EmptySequence.getInstance();
                 } else if (used == 1) {
-                    return (GroundedValue<T>)reservoir[0];
+                    T item = reservoir[0];
+                    return (Item<T>)reservoir[0];
                 } else {
                     return new SequenceExtent<>(reservoir);
                 }

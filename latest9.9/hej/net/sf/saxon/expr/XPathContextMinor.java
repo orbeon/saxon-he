@@ -24,6 +24,7 @@ import net.sf.saxon.value.DateTimeValue;
 
 import javax.xml.transform.URIResolver;
 import java.util.Iterator;
+import java.util.function.Function;
 
 /**
  * This class represents a minor change in the dynamic context in which an XPath expression is evaluated:
@@ -167,7 +168,7 @@ public class XPathContextMinor implements XPathContext {
      */
 
     public <T extends Item<?>> FocusIterator<T> trackFocus(SequenceIterator<T> iter) {
-        FocusTrackingFactory factory =
+        Function<SequenceIterator<?>, FocusTrackingIterator<?>> factory =
                 controller.getFocusTrackerFactory(false);
         //noinspection unchecked
         FocusIterator<T> fit = (FocusIterator<T>)factory.apply(iter);
@@ -184,7 +185,7 @@ public class XPathContextMinor implements XPathContext {
      */
 
     public <T extends Item<?>> FocusIterator<T> trackFocusMultithreaded(SequenceIterator<T> iter) {
-        FocusTrackingFactory factory = controller.getFocusTrackerFactory(true);
+        Function<SequenceIterator<?>, FocusTrackingIterator<?>> factory = controller.getFocusTrackerFactory(true);
         FocusIterator<T> fit = (FocusIterator<T>)factory.apply(iter);
         setCurrentIterator(fit);
         return fit;

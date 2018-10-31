@@ -576,7 +576,7 @@ public abstract class VariableReference extends Expression implements BindingRef
 
     public Item evaluateItem(XPathContext c) throws XPathException {
         try {
-            Sequence actual = evaluateVariable(c);
+            Sequence<?> actual = evaluateVariable(c);
             assert actual != null;
             return actual.head();
         } catch (XPathException err) {

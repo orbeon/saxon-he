@@ -338,7 +338,7 @@ public class CastExpression extends CastingExpression implements Callable {
         return EVALUATE_METHOD;
     }
 
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         AtomicValue result = doCast((AtomicValue)arguments[0].head(), context);
         return result == null ? EmptySequence.getInstance() : result;
     }

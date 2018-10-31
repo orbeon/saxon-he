@@ -7,8 +7,10 @@
 
 package net.sf.saxon.tree.iter;
 
+import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.value.SequenceExtent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +57,10 @@ public interface UnfailingIterator<T extends Item<?>> extends SequenceIterator<T
         List<T> list = new ArrayList<>();
         forEach(list::add);
         return list;
+    }
+
+    default GroundedValue<T> toGroundedValue() {
+        return SequenceExtent.makeSequenceExtent(toList());
     }
 }
 

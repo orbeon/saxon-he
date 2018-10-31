@@ -104,7 +104,7 @@ public class InvalidityReportGenerator extends StandardInvalidityHandler {
         // no action
     }
 
-    public Sequence endReporting() throws XPathException {
+    public Sequence<?> endReporting() throws XPathException {
        return null;
 
     }

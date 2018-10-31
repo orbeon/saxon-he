@@ -137,7 +137,7 @@ public class TupleItemType extends AnyFunctionType implements TupleType {
         }
         MapItem map = (MapItem)item;
         for (Map.Entry<String, SequenceType> field : fields.entrySet()) {
-            Sequence val = map.get(new StringValue(field.getKey()));
+            Sequence<?> val = map.get(new StringValue(field.getKey()));
             if (val == null) {
                 if (!optionalFields.contains(field.getKey())) {
                     return false;

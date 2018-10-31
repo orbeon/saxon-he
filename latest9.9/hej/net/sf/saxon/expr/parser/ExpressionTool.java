@@ -424,7 +424,7 @@ public class ExpressionTool {
      *                        expression
      */
 
-    public static Sequence lazyEvaluate(Expression exp, XPathContext context, boolean repeatable) throws XPathException {
+    public static Sequence<?> lazyEvaluate(Expression exp, XPathContext context, boolean repeatable) throws XPathException {
         Evaluator evaluator = lazyEvaluator(exp, repeatable);
         return evaluator.evaluate(exp, context);
     }

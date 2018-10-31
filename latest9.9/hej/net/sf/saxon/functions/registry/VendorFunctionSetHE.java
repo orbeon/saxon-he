@@ -168,7 +168,7 @@ public class VendorFunctionSetHE extends BuiltInFunctionSet {
                     }
                     return new StringValue(s);
                 case "value":
-                    Sequence value = error.getErrorObject();
+                    Sequence<?> value = error.getErrorObject();
                     if (value == null) {
                         return EmptySequence.getInstance();
                     } else {

@@ -154,7 +154,7 @@ public class RangeKey implements MapItem {
         AtomicIterator keyIter = keys();
         AtomicValue key;
         while ((key = keyIter.next()) != null) {
-            Sequence value = get(key);
+            Sequence<?> value = get(key);
             try {
                 if (!valueType.matches(value, th)) {
                     return false;

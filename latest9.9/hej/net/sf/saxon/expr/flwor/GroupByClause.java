@@ -285,9 +285,9 @@ public class GroupByClause extends Clause {
 
     public void processGroup(List<ObjectToBeGrouped> group, XPathContext context) throws XPathException {
         LocalVariableBinding[] bindings = getRangeVariables();
-        Sequence[] groupingValues = group.get(0).groupingValues.getMembers();
+        Sequence<?>[] groupingValues = group.get(0).groupingValues.getMembers();
         for (int j = 0; j < groupingValues.length; j++) {
-            Sequence v = groupingValues[j];
+            Sequence<?> v = groupingValues[j];
             context.setLocalVariable(bindings[j].getLocalSlotNumber(), v);
         }
         for (int j = groupingValues.length; j < bindings.length; j++) {

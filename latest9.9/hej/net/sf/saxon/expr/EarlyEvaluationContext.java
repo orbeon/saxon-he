@@ -51,7 +51,7 @@ public class EarlyEvaluationContext implements XPathContext {
      */
 
     /*@Nullable*/
-    public Sequence evaluateLocalVariable(int slotnumber) {
+    public Sequence<?> evaluateLocalVariable(int slotnumber) {
         notAllowed();
         return null;
     }

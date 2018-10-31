@@ -11,7 +11,6 @@ import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.Literal;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.GroundedValue;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.BooleanValue;
@@ -30,7 +29,7 @@ public class ConstantFunction extends SystemFunction  {
         this.value = value;
     }
 
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
         return value;
     }
 

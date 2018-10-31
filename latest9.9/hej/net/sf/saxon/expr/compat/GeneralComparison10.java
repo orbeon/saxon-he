@@ -204,7 +204,7 @@ public class GeneralComparison10 extends BinaryExpression implements Callable {
      * @throws XPathException if a dynamic error occurs during the evaluation of the expression
      */
 
-    public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         return BooleanValue.get(effectiveBooleanValue(arguments[0].iterate(), arguments[1].iterate(), context));
     }
 
