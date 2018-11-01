@@ -17,6 +17,8 @@ import net.sf.saxon.value.Cardinality;
 
 public abstract class StaticProperty {
 
+    // TODO: use an EnumSet
+
     /**
      * Bit setting: Expression depends on current() item
      */

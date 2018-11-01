@@ -16,7 +16,10 @@ import net.sf.saxon.expr.sort.CodepointMatchKey;
 import net.sf.saxon.expr.sort.LocalOrderComparer;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.lib.StringCollator;
-import net.sf.saxon.om.*;
+import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.om.StandardNames;
+import net.sf.saxon.om.TreeInfo;
 import net.sf.saxon.pattern.Pattern;
 import net.sf.saxon.tree.iter.ManualIterator;
 import net.sf.saxon.type.BuiltInAtomicType;
@@ -32,19 +35,21 @@ import java.util.*;
  * keys and keys added by the optimizer. Each key index supports one key definition (a set of xsl:key
  * declarations with the same name) applied to one document tree.
  *
- * The index can support a mixture of atomic keys of different types; there is no error caused by comparing
+ * <p>The index can support a mixture of atomic keys of different types; there is no error caused by comparing
  * values of different types. This relies on the fact that XPathComparable values are identical for comparable
- * values (e.g. integers and doubles), and distinct otherwise.
+ * values (e.g. integers and doubles), and distinct otherwise.</p>
  *
- * With the XSLT xsl:key construct, untypedAtomic values are treated as strings. However, this structure is
+ * <p>With the XSLT xsl:key construct, untypedAtomic values are treated as strings. However, this structure is
  * also used to support internally-generated keys with general comparison semantics, where untyped values
  * are converted to the type of the other operand. To enable this to work, we maintain a list of all
  * untypedAtomic keys present in the index; and if a search is made for some type like xs:date, we then go
  * through this list converting each untypedAtomic value to a date and indexing it as such. In principle this
  * can happen for an arbitrary number of data types, though it is unlikely in practice because not many
- * types have overlapping lexical spaces.
+ * types have overlapping lexical spaces.</p>
  */
 public class KeyIndex {
+
+    public enum Status {UNDER_CONSTRUCTION, BUILT, FAILED}
 
     private Map <AtomicMatchKey, List<NodeInfo>> index;
     private UType keyTypesPresent = UType.VOID;
@@ -53,9 +58,13 @@ public class KeyIndex {
     private ConversionRules rules;
     private int implicitTimezone;
     private StringCollator collation;
+    private long creatingThread;
+    private Status status;
 
     public KeyIndex(boolean isRangeKey) {
         index = isRangeKey ? new TreeMap<>() : new HashMap<>(100);
+        creatingThread = Thread.currentThread().getId();
+        status = Status.UNDER_CONSTRUCTION;
     }
 
     /**
@@ -65,6 +74,33 @@ public class KeyIndex {
 
     public Map <AtomicMatchKey, List<NodeInfo>> getUnderlyingMap() {
         return index;
+    }
+
+    /**
+     * Ask if the index was created in the current thread
+     * @return true if this index was created in this thread
+     */
+
+    public boolean isCreatedInThisThread() {
+        return creatingThread == Thread.currentThread().getId();
+    }
+
+    /**
+     * Ask if the index is under construction
+     * @return true if the index is still under construction
+     */
+
+    public Status getStatus() {
+        return status;
+    }
+
+    /**
+     * Say whether the index is under construction
+     * @param status
+     */
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     /**

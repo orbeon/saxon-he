@@ -37,6 +37,7 @@ import net.sf.saxon.type.Type;
 import net.sf.saxon.type.Untyped;
 import net.sf.saxon.value.DateTimeValue;
 import net.sf.saxon.value.SequenceType;
+import net.sf.saxon.z.IntHashMap;
 
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Source;
@@ -106,6 +107,7 @@ public class Controller implements ContextOriginator {
     protected UnfailingErrorListener errorListener;
     private TreeModel treeModel = TreeModel.TINY_TREE;
     private DocumentPool sourceDocumentPool;
+    private IntHashMap<Map<Long, KeyIndex>> localIndexes;
     private HashMap<String, Object> userDataTable;
     private NodeInfo lastRememberedNode = null;
     private int lastRememberedNumber = -1;
@@ -226,6 +228,7 @@ public class Controller implements ContextOriginator {
         lastRememberedNode = null;
         lastRememberedNumber = -1;
         stylesheetCache = null;
+        localIndexes = null;
         if (!globalContextItemPreset) {
             globalContextItem = null;
         }
@@ -572,7 +575,7 @@ public class Controller implements ContextOriginator {
      * @return the Bindery (in which values of all variables for the requested package are held)
      */
 
-    public Bindery getBindery(PackageData packageData) {
+    public synchronized Bindery getBindery(PackageData packageData) {
         Bindery b = binderies.get(packageData);
         if (b == null) {
             b = new Bindery(packageData);
@@ -1260,6 +1263,24 @@ public class Controller implements ContextOriginator {
         } else {
             userDataTable.put(keyVal, data);
         }
+    }
+
+    /**
+     * Get the table of local indexes supporting xsl:key (or implicit keys created
+     * by the optimizer). Indexes are held at Controller level (rather than being
+     * shared across transformations) if the key definition is dependent on local
+     * information, for example stylesheet parameters.
+     * @return the index of indexes. The master index is created if it does not
+     * already exist. The master index is a two-level index: the first level is indexed
+     * by the integer fingerprint of the key name; the second level is indexed by
+     * the document number (a long) for the specific document or temporary tree.
+     */
+
+    public synchronized IntHashMap<Map<Long, KeyIndex>> getLocalIndexes() {
+        if (localIndexes == null) {
+            localIndexes = new IntHashMap<>();
+        };
+        return localIndexes;
     }
 
     /**

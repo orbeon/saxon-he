@@ -35,6 +35,10 @@ import net.sf.saxon.z.IntHashMap;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
+import static net.sf.saxon.trans.KeyIndex.Status.BUILT;
+import static net.sf.saxon.trans.KeyIndex.Status.FAILED;
+import static net.sf.saxon.trans.KeyIndex.Status.UNDER_CONSTRUCTION;
+
 
 /**
  * KeyManager manages the set of key definitions in a stylesheet, and the indexes
@@ -82,9 +86,6 @@ public class KeyManager {
 
     private PackageData packageData;
 
-    // a dummy index, always empty, to act as a marker
-    private final static KeyIndex underConstruction = new KeyIndex(false);
-
     private HashMap<StructuredQName, KeyDefinitionSet> keyDefinitions;
     // one entry for each named key; the entry contains
     // a KeyDefinitionSet holding the key definitions with that name
@@ -97,13 +98,13 @@ public class KeyManager {
      * Create a KeyManager and initialise variables
      *
      * @param config the Saxon configuration
-     * @param pack the package in which these keys are available
+     * @param pack   the package in which these keys are available
      */
 
     public KeyManager(Configuration config, PackageData pack) {
         packageData = pack;
-        keyDefinitions = new HashMap<StructuredQName, KeyDefinitionSet>(10);
-        docIndexes = new WeakHashMap<TreeInfo, WeakReference<IntHashMap<KeyIndex>>>(10);
+        keyDefinitions = new HashMap<>(10);
+        docIndexes = new WeakHashMap<>(10);
         // Create a key definition for the idref() function
         registerIdrefKey(config);
     }
@@ -120,8 +121,8 @@ public class KeyManager {
 
     private void registerIdrefKey(Configuration config) {
         BasePatternWithPredicate pp = new BasePatternWithPredicate(
-            new NodeTestPattern(new MultipleNodeKindTest(UType.ELEMENT_OR_ATTRIBUTE)),
-            IntegratedFunctionLibrary.makeFunctionCall(new IsIdRef(), new Expression[]{})
+                new NodeTestPattern(new MultipleNodeKindTest(UType.ELEMENT_OR_ATTRIBUTE)),
+                IntegratedFunctionLibrary.makeFunctionCall(new IsIdRef(), new Expression[]{})
         );
         try {
             IndependentContext sc = new IndependentContext(config);
@@ -160,13 +161,12 @@ public class KeyManager {
      * Register a key definition. Note that multiple key definitions with the same name are
      * allowed
      *
-     *
-     * @param keyName Structured QName representing the name of the key
-     * @param keydef  The details of the key's definition
+     * @param keyName  Structured QName representing the name of the key
+     * @param keydef   The details of the key's definition
      * @param reusable Set to true if indexes using this key definition can be used across multiple transformations, false if
-     * the indexes need to be rebuilt for each transformation. Indexes are not reusable if the key definition contains references
-     * to global variables or parameters, or calls used-defined functions or templates that might contain such references.
-     * @param config  The configuration
+     *                 the indexes need to be rebuilt for each transformation. Indexes are not reusable if the key definition contains references
+     *                 to global variables or parameters, or calls used-defined functions or templates that might contain such references.
+     * @param config   The configuration
      * @throws XPathException if this key definition is inconsistent with existing key definitions having the same name
      */
 
@@ -212,8 +212,9 @@ public class KeyManager {
 
     /**
      * Look for a key definition that matches a proposed new key
-     * @param finder matches/selects the nodes to be indexed
-     * @param use computes the value on which the nodes are indexed
+     *
+     * @param finder        matches/selects the nodes to be indexed
+     * @param use           computes the value on which the nodes are indexed
      * @param collationName collation to be used
      * @return a KeyDefinitionSet containing a key with the required characteristics if there
      * is one, or null otherwise
@@ -237,10 +238,9 @@ public class KeyManager {
     /**
      * Build the index for a particular document for a named key
      *
-     *
-     * @param keySet         The set of key definitions with this name
-     * @param doc            The source document in question
-     * @param context        The dynamic context
+     * @param keySet  The set of key definitions with this name
+     * @param doc     The source document in question
+     * @param context The dynamic context
      * @return the index in question, as a Map mapping a key value onto a List of nodes
      * @throws XPathException if a dynamic error is encountered
      */
@@ -248,10 +248,29 @@ public class KeyManager {
     private synchronized KeyIndex buildIndex(KeyDefinitionSet keySet,
                                              TreeInfo doc,
                                              XPathContext context) throws XPathException {
-
+        // KILROY
+        System.err.println("Building index " + keySet.getKeyName() + " for doc " + doc.getDocumentNumber() + " in thread " + Thread.currentThread().getId());
         KeyIndex index = new KeyIndex(keySet.isRangeKey());
         index.buildIndex(keySet, doc, context);
+        System.err.println("Done building index " + keySet.getKeyName() + " for doc " + doc.getDocumentNumber() + " in thread " + Thread.currentThread().getId());
+
         return index;
+    }
+
+    private void buildIndex(KeyIndex index,
+                            KeyDefinitionSet keySet,
+                            TreeInfo doc,
+                            XPathContext context) throws XPathException {
+        index.buildIndex(keySet, doc, context);
+    }
+
+    private static int getContextDepth(XPathContext c) {
+        int i = 0;
+        while (c != null) {
+            c = c.getCaller();
+            i++;
+        }
+        return i;
     }
 
 
@@ -316,7 +335,7 @@ public class KeyManager {
      * @throws XPathException if a dynamic error is encountered
      */
 
-    public SequenceIterator selectByCompositeKey (
+    public SequenceIterator selectByCompositeKey(
             KeyDefinitionSet keySet,
             TreeInfo doc,
             SequenceIterator<?> soughtValue,
@@ -338,47 +357,66 @@ public class KeyManager {
      * Get the index supporting a particular key definition for a particular document. The index is created
      * if it does not already exist.
      *
-     * @param keySet the set of xsl:key definitions making up this key
-     * @param doc the document to which the index applies
+     * @param keySet  the set of xsl:key definitions making up this key
+     * @param doc     the document to which the index applies
      * @param context the dynamic evaluation context
      * @return the relevant index
      * @throws XPathException if any failure occurs
      */
 
     public KeyIndex obtainIndex(KeyDefinitionSet keySet, TreeInfo doc, XPathContext context) throws XPathException {
-        if (keySet.isReusable()) {
+        if (keySet.isReusable()) { 
             return obtainSharedIndex(keySet, doc, context);
         } else {
             return obtainLocalIndex(keySet, doc, context);
         }
     }
 
-
     private KeyIndex obtainSharedIndex(KeyDefinitionSet keySet, TreeInfo doc, XPathContext context) throws XPathException {
         KeyIndex index;
         int keySetNumber = keySet.getKeySetNumber();
-        //noinspection SynchronizationOnLocalVariableOrMethodParameter
-        synchronized (doc) {
-            // Need to synchronize to prevent two threads that use the same stylesheet indexing the same source
-            // document simultaneously. We could synchronize on either the key definition or the document
-            // (ideally we would use the combination of the two), but the document is less likely to cause
-            // unnecessary contention: it's more likely that an index definition applies to large numbers of
-            // documents than that a document has large numbers of indexes.
-            index = getSharedIndex(doc, keySetNumber);
-            if (index == underConstruction) {
-                // index is under construction
-                XPathException de = new XPathException("Key definition is circular");
-                de.setXPathContext(context);
-                de.setErrorCode("XTDE0640");
-                throw de;
-            }
 
-            // If the index does not yet exist, then create it.
-            if (index == null) {
-                // Mark the index as being under construction, in case the definition is circular
-                putSharedIndex(doc, keySetNumber, underConstruction, context);
-                index = buildIndex(keySet, doc, context);
-                putSharedIndex(doc, keySetNumber, index, context);
+        index = getSharedIndex(doc, keySetNumber);
+        if (index != null) {
+            KeyIndex.Status status = index.getStatus();
+            if (status == UNDER_CONSTRUCTION) {
+                if (index.isCreatedInThisThread()) {
+                    XPathException de = new XPathException(
+                            "Key definition " + keySet.getKeyName().getDisplayName() + " is circular");
+                    de.setXPathContext(context);
+                    de.setErrorCode("XTDE0640");
+                    throw de;
+                } else {
+                    // if the index is under construction in another thread, then we plough on regardless.
+                    // Both threads will construct the index, but only one will be saved
+                    index = null;
+                }
+            } else if (status == FAILED) {
+                throw new XPathException("Construction of index for key " + keySet.getKeyName().getDisplayName() + " was unsuccessful");
+            }
+        }
+
+        // If the index does not yet exist, then create it.
+        if (index == null) {
+            // Mark the index as being under construction, in case the definition is circular
+            index = new KeyIndex(keySet.isRangeKey());
+            synchronized(this) {
+                index.setStatus(UNDER_CONSTRUCTION);
+                KeyIndex index2 = putSharedIndex(doc, keySetNumber, index, context);
+                if (index2.getStatus() == BUILT) {
+                    // last chance to bail out - another thread got there first
+                    return index2;
+                } else {
+                    index = index2;
+                }
+            }
+            // Now we build the index (which isn't synchronized because it doesn't write to any shared data)
+            buildIndex(index, keySet, doc, context);
+            // On completion we synchronize again, and decide whether to use this index, or one that was
+            // completed earlier by a different thread.
+            synchronized(this) {
+                index.setStatus(BUILT);
+                index = putSharedIndex(doc, keySetNumber, index, context);
             }
         }
         return index;
@@ -387,45 +425,72 @@ public class KeyManager {
     private KeyIndex obtainLocalIndex(KeyDefinitionSet keySet, TreeInfo doc, XPathContext context) throws XPathException {
         KeyIndex index;
         int keySetNumber = keySet.getKeySetNumber();
-        //noinspection SynchronizationOnLocalVariableOrMethodParameter
-        synchronized (doc) {
-            // Need to synchronize to prevent two threads that use the same stylesheet indexing the same source
-            // document simultaneously. We could synchronize on either the key definition or the document
-            // (ideally we would use the combination of the two), but the document is less likely to cause
-            // unnecessary contention: it's more likely that an index definition applies to large numbers of
-            // documents than that a document has large numbers of indexes.
-            index = getLocalIndex(doc, keySetNumber, context);
-            if (index == underConstruction) {
-                // index is under construction
-                XPathException de = new XPathException("Key definition is circular");
-                de.setXPathContext(context);
-                de.setErrorCode("XTDE0640");
-                throw de;
-            }
 
-            // If the index does not yet exist, then create it.
-            if (index == null) {
-                // Mark the index as being under construction, in case the definition is circular
-                putLocalIndex(doc, keySetNumber, underConstruction, context);
-                index = buildIndex(keySet, doc, context);
-                putLocalIndex(doc, keySetNumber, index, context);
+        // We don't synchronize the index construction (see bug 3984) because holding synchronization
+        // locks while executing user code (the xsl:key/@use expression) can easily lead to deadlock.
+        // Instead, we check if a completely constructed index exists; if it does, we use it. If an
+        // index exists that is currently under construction, then if it's under construction in this
+        // thread, we report a circularity. If it's being constructed by a different thread, then
+        // we continue constructing the index, and at the end, the index that completes construction
+        // first is used by all threads (which involves synchronizing for a very short time).
+
+        index = getLocalIndex(doc, keySetNumber, context);
+        if (index != null) {
+            KeyIndex.Status status = index.getStatus();
+            if (status == UNDER_CONSTRUCTION) {
+                if (index.isCreatedInThisThread()) {
+                    XPathException de = new XPathException(
+                            "Key definition " + keySet.getKeyName().getDisplayName() + " is circular");
+                    de.setXPathContext(context);
+                    de.setErrorCode("XTDE0640");
+                    throw de;
+                } else {
+                    // if the index is under construction in another thread, then we plough on regardless.
+                    // Both threads will construct the index, but only one will be saved
+                    index = null;
+                }
+            } else if (status == FAILED) {
+                throw new XPathException("Construction of index for key " + keySet.getKeyName().getDisplayName() + " was unsuccessful");
+            }
+        }
+
+        // If the index does not yet exist, then create it.
+        if (index == null) {
+            // Mark the index as being under construction, in case the definition is circular
+            // putLocalIndex(doc, keySetNumber, underConstruction, context);
+            index = new KeyIndex(keySet.isRangeKey());
+            synchronized(this) {
+                index.setStatus(UNDER_CONSTRUCTION);
+                KeyIndex index2 = putLocalIndex(doc, keySetNumber, index, context);
+                if (index2.getStatus() == BUILT) {
+                    // last chance to bail out - another thread got there first
+                    return index2;
+                } else {
+                    index = index2;
+                }
+            }
+            // Now we build the index (which isn't synchronized because it doesn't write to any shared data)
+            buildIndex(index, keySet, doc, context);
+            // On completion we synchronize again, and decide whether to use this index, or one that was
+            // completed earlier by a different thread.
+            synchronized(this) {
+                index.setStatus(BUILT);
+                index = putLocalIndex(doc, keySetNumber, index, context);
             }
         }
         return index;
     }
 
-
-
     /**
      * Save the index associated with a particular key, a particular item type,
-     * and a particular document. This
-     * needs to be done in such a way that the index is discarded by the garbage collector
-     * if the document is discarded. We therefore use a WeakHashMap indexed on the DocumentInfo,
-     * which returns HashMap giving the index for each key fingerprint. This index is itself another
-     * HashMap.
-     * The methods need to be synchronized because several concurrent transformations (which share
+     * and a particular document. This needs to be done in such a way that the index is
+     * discarded by the garbage collector if the document is discarded. We therefore use a
+     * WeakHashMap indexed on the DocumentInfo, which returns HashMap giving the index for
+     * each key fingerprint. This index is itself another HashMap.
+     *
+     * <p>The methods need to be synchronized because several concurrent transformations (which share
      * the same KeyManager) may be creating indexes for the same or different documents at the same
-     * time.
+     * time. In addition, multiple threads within the same transformation may be active.</p>
      *
      * @param doc            the document being indexed
      * @param keyFingerprint represents the name of the key definition
@@ -433,15 +498,15 @@ public class KeyManager {
      * @param context        the dynamic evaluation context
      */
 
-    private synchronized void putSharedIndex(TreeInfo doc, int keyFingerprint, KeyIndex index, XPathContext context) {
+    private synchronized KeyIndex putSharedIndex(TreeInfo doc, int keyFingerprint, KeyIndex index, XPathContext context) {
         if (docIndexes == null) {
             // it's transient, so it will be null when reloading a compiled stylesheet
-            docIndexes = new WeakHashMap<TreeInfo, WeakReference<IntHashMap<KeyIndex>>>(10);
+            docIndexes = new WeakHashMap<>(10);
         }
         WeakReference<IntHashMap<KeyIndex>> indexRef = docIndexes.get(doc);
         IntHashMap<KeyIndex> indexList;
         if (indexRef == null || indexRef.get() == null) {
-            indexList = new IntHashMap<KeyIndex>(10);
+            indexList = new IntHashMap<>(10);
             // Ensure there is a firm reference to the indexList for the duration of a transformation
             // But for keys associated with temporary trees, or documents that have been discarded from
             // the document pool, keep the reference within the document node itself.
@@ -451,11 +516,17 @@ public class KeyManager {
             } else {
                 doc.setUserData("saxon:key-index-list", indexList);
             }
-            docIndexes.put(doc, new WeakReference<IntHashMap<KeyIndex>>(indexList));
+            docIndexes.put(doc, new WeakReference<>(indexList));
         } else {
             indexList = indexRef.get();
         }
-        indexList.put(keyFingerprint, index);
+        KeyIndex result = indexList.get(keyFingerprint);
+        if (result == null || result.getStatus() != BUILT) {
+            // Use this index in preference to one that is under construction in another thread
+            indexList.put(keyFingerprint, index);
+            result = index;
+        }
+        return result;
     }
 
     /**
@@ -473,22 +544,27 @@ public class KeyManager {
      * @param context        the dynamic evaluation context
      */
 
-    private synchronized void putLocalIndex(TreeInfo doc, int keyFingerprint, KeyIndex index, XPathContext context) {
+    private synchronized KeyIndex putLocalIndex(TreeInfo doc, int keyFingerprint, KeyIndex index, XPathContext context) {
         Controller controller = context.getController();
-        IntHashMap<KeyIndex> docIndexes =
-                (IntHashMap<KeyIndex>)controller.getUserData(doc, "saxon:unshared-key-index-list");
+        IntHashMap<Map<Long, KeyIndex>> masterIndex = controller.getLocalIndexes();
+        Map<Long, KeyIndex> docIndexes = masterIndex.get(keyFingerprint);
         if (docIndexes == null) {
-            docIndexes = new IntHashMap<>();
-            controller.setUserData(doc, "saxon:unshared-key-index-list", docIndexes);
+            docIndexes = new HashMap<>();
+            masterIndex.put(keyFingerprint, docIndexes);
         }
-        docIndexes.put(keyFingerprint, index);
+        KeyIndex result = docIndexes.get(doc.getDocumentNumber());
+        if (result == null || result.getStatus() != BUILT) {
+            // Use this index in preference to one that is under construction in another thread
+            docIndexes.put(doc.getDocumentNumber(), index);
+            result = index;
+        }
+        return result;
     }
 
 
     /**
      * Get the shared index associated with a particular key, a particular source document,
      * and a particular primitive item type
-     *
      *
      * @param doc            the document whose index is required
      * @param keyFingerprint the name of the key definition
@@ -498,7 +574,7 @@ public class KeyManager {
     private synchronized KeyIndex getSharedIndex(TreeInfo doc, int keyFingerprint) {
         if (docIndexes == null) {
             // it's transient, so it will be null when reloading a compiled stylesheet
-            docIndexes = new WeakHashMap<TreeInfo, WeakReference<IntHashMap<KeyIndex>>>(10);
+            docIndexes = new WeakHashMap<>(10);
         }
         WeakReference<IntHashMap<KeyIndex>> ref = docIndexes.get(doc);
         if (ref == null) {
@@ -515,7 +591,6 @@ public class KeyManager {
      * Get the non-shared index associated with a particular key, a particular source document,
      * and a particular primitive item type
      *
-     *
      * @param doc            the document whose index is required
      * @param keyFingerprint the name of the key definition
      * @param context        the dynamic evaluation context
@@ -524,12 +599,13 @@ public class KeyManager {
 
     private synchronized KeyIndex getLocalIndex(TreeInfo doc, int keyFingerprint, XPathContext context) {
         Controller controller = context.getController();
-        IntHashMap<KeyIndex> docIndexes =
-                (IntHashMap<KeyIndex>)controller.getUserData(doc, "saxon:unshared-key-index-list");
+        IntHashMap<Map<Long, KeyIndex>> masterIndex = controller.getLocalIndexes();
+        Map<Long, KeyIndex> docIndexes = masterIndex.get(keyFingerprint);
         if (docIndexes == null) {
             return null;
+        } else {
+            return docIndexes.get(doc.getDocumentNumber());
         }
-        return docIndexes.get(keyFingerprint);
     }
 
 
@@ -546,6 +622,7 @@ public class KeyManager {
 
     /**
      * Get all the key definition sets
+     *
      * @return a set containing all the key definition sets
      */
 

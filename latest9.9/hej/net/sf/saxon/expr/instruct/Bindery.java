@@ -9,7 +9,6 @@ package net.sf.saxon.expr.instruct;
 
 import net.sf.saxon.expr.PackageData;
 import net.sf.saxon.om.GroundedValue;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.ObjectValue;

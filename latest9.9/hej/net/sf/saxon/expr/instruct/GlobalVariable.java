@@ -724,7 +724,6 @@ public class GlobalVariable extends Actor
         final Controller controller = context.getController();
         assert controller != null;
         final Bindery b = controller.getBindery(getPackageData());
-        //System.err.println("EVAL GV " + this + " " + getVariableQName().getDisplayName() + " in slot " + getBinderySlotNumber());
 
         try {
             // This is the first reference to a global variable; try to evaluate it now.
