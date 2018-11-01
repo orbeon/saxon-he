@@ -279,25 +279,31 @@ public class CommandLineOptions {
             if (getOptionValue("y") != null) {
                 throw new XPathException("Cannot use -catalog and -y together");
             }
+            StringBuilder sb = new StringBuilder();
             if ((getOptionValue("u") != null) || isImplicitURI(value)) {
-                Source sourceInput = null;
-                try {
-                    sourceInput = config.getURIResolver().resolve(value, null);
-                } catch (TransformerException e) {
+                for (String s : value.split(";")) {
+                    Source sourceInput = null;
+                    try {
+                        sourceInput = config.getURIResolver().resolve(s, null);
+                    } catch (TransformerException e) {
+                        // no action - try the standard URI resolver instead
+                    }
+                    if (sourceInput == null) {
+                        sourceInput = config.getSystemURIResolver().resolve(s, null);
+                    }
+                    sb.append(sourceInput.getSystemId()).append(';');
+                }
 
+            } else {
+                for (String s : value.split(";")) {
+                    File catalogFile = new File(s);
+                    if (!catalogFile.exists()) {
+                        throw new XPathException("Catalog file not found: " + s);
+                    }
+                    sb.append(catalogFile.toURI().toASCIIString()).append(';');
                 }
-                if (sourceInput == null) {
-                    sourceInput = config.getSystemURIResolver().resolve(value, null);
-                }
-                value = sourceInput.getSystemId();
-
-            }  else {
-                File catalogFile = new File(value);
-                if (!catalogFile.exists())  {
-                    throw new XPathException("Catalog file not found: " + value);
-                }
-                value = catalogFile.toURI().toASCIIString();
             }
+            value = sb.toString();
 
             try {
                 config.getClass("org.apache.xml.resolver.CatalogManager", false, null);
