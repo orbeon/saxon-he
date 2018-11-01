@@ -130,9 +130,9 @@ public class SerializerFactory {
      * a serialization pipeline. The method can be overridden in a subclass; alternatively, the
      * subclass can override the various methods used to instantiate components of the serialization
      * pipeline.
-     * <p>This version of the method calls {@link #getReceiver(Result, SerializationProperties, PipelineConfiguration)
+     * <p>This version of the method calls {@link #getReceiver(Result, SerializationProperties, PipelineConfiguration)}
      * supplying default output properties, and a {@code PipelineConfiguration} newly constructed using
-     * {@link Configuration#makePipelineConfiguration()}}.</p>
+     * {@link Configuration#makePipelineConfiguration()}.</p>
      *
      * @param result The final destination of the serialized output. Usually a StreamResult,
      *               but other kinds of Result are possible.
@@ -148,8 +148,8 @@ public class SerializerFactory {
      * a serialization pipeline. The method can be overridden in a subclass; alternatively, the
      * subclass can override the various methods used to instantiate components of the serialization
      * pipeline.
-     * <p>This version of the method calls {@link #getReceiver(Result, SerializationProperties, PipelineConfiguration)
-     * supplying a {@code PipelineConfiguration} newly constructed using {@link Configuration#makePipelineConfiguration()}}.</p>
+     * <p>This version of the method calls {@link #getReceiver(Result, SerializationProperties, PipelineConfiguration)}
+     * supplying a {@code PipelineConfiguration} newly constructed using {@link Configuration#makePipelineConfiguration()}.</p>
      *
      * @param result The final destination of the serialized output. Usually a StreamResult,
      *               but other kinds of Result are possible.
