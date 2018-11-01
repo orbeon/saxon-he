@@ -13,12 +13,12 @@ import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.functions.Count;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.iter.EmptyIterator;
 import net.sf.saxon.tree.iter.UnfailingIterator;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.tree.wrapper.VirtualNode;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
-import org.apache.axiom.om.impl.util.EmptyIterator;
 
 /**
  * Utility class for manipulating sequences. Some of these methods should be regarded
