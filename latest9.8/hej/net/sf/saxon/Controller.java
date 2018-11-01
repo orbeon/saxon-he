@@ -1081,7 +1081,7 @@ public class Controller implements ContextOriginator {
      * @return the Bindery (in which values of all variables for the requested package are held)
      */
 
-    public Bindery getBindery(PackageData packageData) {
+    public synchronized Bindery getBindery(PackageData packageData) {
         Bindery b = binderies.get(packageData);
         if (b == null) {
             b = new Bindery(packageData);
