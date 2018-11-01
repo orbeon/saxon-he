@@ -48,13 +48,13 @@ public class CommandLineOptions {
     public static final int VALUE_REQUIRED = 1 << 8;
     public static final int VALUE_PROHIBITED = 2 << 8;
 
-    /*@NotNull*/ HashMap<String, Integer> recognizedOptions = new HashMap<String, Integer>();
-    /*@NotNull*/ HashMap<String, String> optionHelp = new HashMap<String, String>();
+    /*@NotNull*/ HashMap<String, Integer> recognizedOptions = new HashMap<>();
+    /*@NotNull*/ HashMap<String, String> optionHelp = new HashMap<>();
     /*@NotNull*/ protected Properties namedOptions = new Properties();
     /*@NotNull*/ Properties configOptions = new Properties();
-    /*@NotNull*/ Map<String, Set<String>> permittedValues = new HashMap<String, Set<String>>();
-    /*@NotNull*/ Map<String, String> defaultValues = new HashMap<String, String>();
-    /*@NotNull*/ List<String> positionalOptions = new ArrayList<String>();
+    /*@NotNull*/ Map<String, Set<String>> permittedValues = new HashMap<>();
+    /*@NotNull*/ Map<String, String> defaultValues = new HashMap<>();
+    /*@NotNull*/ List<String> positionalOptions = new ArrayList<>();
     /*@NotNull*/ Properties paramValues = new Properties();
     /*@NotNull*/ Properties paramExpressions = new Properties();
     /*@NotNull*/ Properties paramFiles = new Properties();
@@ -86,8 +86,7 @@ public class CommandLineOptions {
      */
 
     public void setPermittedValues(String option, String[] values, /*@Nullable*/ String defaultValue) {
-        Set<String> valueSet = new HashSet<String>();
-        valueSet.addAll(Arrays.asList(values));
+        Set<String> valueSet = new HashSet<>(Arrays.asList(values));
         permittedValues.put(option, valueSet);
         if (defaultValue != null) {
             defaultValues.put(option, defaultValue);
@@ -484,7 +483,7 @@ public class CommandLineOptions {
 
     public String displayPermittedOptions() {
         String[] options = new String[recognizedOptions.size()];
-        options = new ArrayList<String>(recognizedOptions.keySet()).toArray(options);
+        options = new ArrayList<>(recognizedOptions.keySet()).toArray(options);
         Arrays.sort(options, Collator.getInstance());
         FastStringBuffer sb = new FastStringBuffer(100);
         for (String opt : options) {
@@ -578,7 +577,7 @@ public class CommandLineOptions {
             String value = paramFiles.getProperty(name);
             List<Source> sourceList = new ArrayList<>();
             loadDocuments(value, useURLs, processor, true, sourceList);
-            if (sourceList.size() > 0) {
+            if (!sourceList.isEmpty()) {
                 List<XdmNode> nodeList = new ArrayList<>(sourceList.size());
                 DocumentBuilder builder = processor.newDocumentBuilder();
                 for (Source s : sourceList) {
@@ -621,7 +620,7 @@ public class CommandLineOptions {
         }
     }
 
-    public static interface ParamSetter {
+    public interface ParamSetter {
         void setParam(QName qName, XdmValue value);
     }
 
@@ -707,18 +706,20 @@ public class CommandLineOptions {
             if (sourceFile.isDirectory()) {
                 parser = config.getSourceParser();
                 String[] files = sourceFile.list();
-                for (String file1 : files) {
-                    File file = new File(sourceFile, file1);
-                    if (!file.isDirectory()) {
-                        if (useSAXSource) {
-                            InputSource eis = new InputSource(file.toURI().toString());
-                            sourceInput = new SAXSource(parser, eis);
-                            // it's safe to use the same parser for each document, as they
-                            // will be processed one at a time.
-                        } else {
-                            sourceInput = new StreamSource(file.toURI().toString());
+                if (files != null) {
+                    for (String file1 : files) {
+                        File file = new File(sourceFile, file1);
+                        if (!file.isDirectory()) {
+                            if (useSAXSource) {
+                                InputSource eis = new InputSource(file.toURI().toString());
+                                sourceInput = new SAXSource(parser, eis);
+                                // it's safe to use the same parser for each document, as they
+                                // will be processed one at a time.
+                            } else {
+                                sourceInput = new StreamSource(file.toURI().toString());
+                            }
+                            sources.add(sourceInput);
                         }
-                        sources.add(sourceInput);
                     }
                 }
                 return true;
@@ -764,7 +765,7 @@ public class CommandLineOptions {
         } else {
             try {
                 double millisecs = nanosecs/1e6;
-                DayTimeDurationValue d = (DayTimeDurationValue)milliSecond.multiply(millisecs);
+                DayTimeDurationValue d = milliSecond.multiply(millisecs);
                 long days = ((NumericValue) d.getComponent(AccessorFn.Component.DAY)).longValue();
                 long hours = ((NumericValue) d.getComponent(AccessorFn.Component.HOURS)).longValue();
                 long minutes = ((NumericValue) d.getComponent(AccessorFn.Component.MINUTES)).longValue();
@@ -780,7 +781,7 @@ public class CommandLineOptions {
                     fsb.append(minutes + "m ");
                 }
                 fsb.append(seconds + "s");
-                return fsb.toString() + " (" + nanosecs / 1e6 + "ms)";
+                return fsb + " (" + nanosecs / 1e6 + "ms)";
             } catch (XPathException e) {
                 return nanosecs / 1e6 + "ms";
             }
