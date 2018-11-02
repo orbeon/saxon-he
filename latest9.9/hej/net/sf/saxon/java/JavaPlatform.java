@@ -394,7 +394,7 @@ public class JavaPlatform implements Platform {
     }
 
 
-
+//#if EE==true
     /**
      * Return the class loader required to load the bytecode generated classes
      * @param config           The saxon configuration
@@ -402,23 +402,17 @@ public class JavaPlatform implements Platform {
      * @return the class loader object
      * @since 9.6.0.3
      */
-    public ClassLoader makeGeneratedClassLoader(Configuration config, Class thisClass){
-        ClassLoader myclassLoader = thisClass.getClassLoader();
+    public ClassLoader makeGeneratedClassLoader(Configuration config, Class thisClass) {
         ClassLoader parentClassLoader = config.getDynamicLoader().getClassLoader();
-
         if (parentClassLoader == null) {
             parentClassLoader = Thread.currentThread().getContextClassLoader();
         }
         if (parentClassLoader == null) {
             parentClassLoader = thisClass.getClassLoader();
         }
-//#if BYTECODE==true
-        myclassLoader = new GeneratedClassLoader(parentClassLoader);
-//#endif
-
-         return myclassLoader;
-
+        return new GeneratedClassLoader(parentClassLoader);
     }
+//#endif
 
 
 }
