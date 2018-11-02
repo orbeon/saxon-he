@@ -3631,6 +3631,17 @@ public class Configuration implements SourceResolver, NotationSet {
     }
 
     /**
+     * Ask whether a given node is a streamed node
+     * @param node the node in question
+     * @return true if the node is a node in a streamed document
+     */
+
+    public boolean isStreamedNode(NodeInfo node) {
+        return false; // streaming needs Saxon-EE
+        // TODO: make this a property of a node (or of a TreeInfo)
+    }
+
+    /**
      * Get the optimization options in use
      * @return the configured optimization options
      */

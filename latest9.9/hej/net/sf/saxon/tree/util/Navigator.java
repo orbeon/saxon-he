@@ -217,7 +217,11 @@ public final class Navigator {
     }
 
     /**
-     * Get an absolute XPath expression that identifies a given node within its document
+     * Get an absolute XPath expression that identifies a given node within its document. The
+     * resulting path is intended for human readers, not for software evaluation. It uses lexical
+     * QNames (prefix:localname) for element and attribute names, with the original prefix as it
+     * appears in the source document. The sibling position of an element (a/b[2]) is included
+     * unless the node is a streamed node.
      *
      * @param node    the node whose path is required. If null is supplied,
      *                an empty string is returned - this fact is used in making a recursive call
@@ -231,6 +235,7 @@ public final class Navigator {
             return "";
         }
         String pre;
+        boolean streamed = node.getConfiguration().isStreamedNode(node);
         NodeInfo parent = node.getParent();
         // System.err.println("node = " + node + " parent = " + parent);
 
@@ -245,43 +250,26 @@ public final class Navigator {
                     if (pre.equals("/")) {
                         return '/' + node.getDisplayName();
                     } else {
-                        try {
-                            return pre + '/' + node.getDisplayName() + '[' + getNumberSimple(node, context) + ']';
-                        } catch (UnsupportedOperationException e) {
-                            // Happens when streaming
-                            return pre + '/' + node.getDisplayName();
-                        }
+                        return pre + '/' + node.getDisplayName() + (streamed ? "" : '[' + getNumberSimple(node, context) + ']');
                     }
                 }
             case Type.ATTRIBUTE:
                 return getPath(parent, context) + "/@" + node.getDisplayName();
             case Type.TEXT:
                 pre = getPath(parent, context);
-                try {
-                    return (pre.equals("/") ? "" : pre) +
-                            "/text()[" + getNumberSimple(node, context) + ']';
-                } catch (UnsupportedOperationException e) {
-                    // Happens when streaming
-                    return pre + "/text()";
-                }
+                return (pre.equals("/") ? "" : pre) +
+                            "/text()" + (streamed ? "" : '[' + getNumberSimple(node, context) + ']');
+
             case Type.COMMENT:
                 pre = getPath(parent, context);
-                try {
-                    return (pre.equals("/") ? "" : pre) +
-                            "/comment()[" + getNumberSimple(node, context) + ']';
-                } catch (UnsupportedOperationException e) {
-                    // Happens when streaming
-                    return pre + "/comment()";
-                }
+                return (pre.equals("/") ? "" : pre) +
+                            "/comment()" + (streamed ? "" : '[' + getNumberSimple(node, context) + ']');
+
             case Type.PROCESSING_INSTRUCTION:
                 pre = getPath(parent, context);
-                try {
-                    return (pre.equals("/") ? "" : pre) +
-                            "/processing-instruction()[" + getNumberSimple(node, context) + ']';
-                } catch (UnsupportedOperationException e) {
-                    // Happens when streaming
-                    return pre + "/processing-instruction()";
-                }
+                return (pre.equals("/") ? "" : pre) +
+                            "/processing-instruction()" + (streamed ? "" : '[' + getNumberSimple(node, context) + ']');
+                
             case Type.NAMESPACE:
                 String test = node.getLocalPart();
                 if (test.isEmpty()) {
