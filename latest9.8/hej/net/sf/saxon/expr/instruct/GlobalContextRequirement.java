@@ -29,8 +29,9 @@ public class GlobalContextRequirement {
 
     private boolean mayBeOmitted = true;
     private boolean absentFocus;
-    private List<ItemType> requiredItemTypes = new ArrayList();
+    private List<ItemType> requiredItemTypes = new ArrayList<ItemType>();
     private Expression defaultValue = null;  // Used in XQuery only
+    private boolean external; // Used in Xquery only
 
     public ItemType getRequiredItemType() {
         if (requiredItemTypes.isEmpty()) {
@@ -101,6 +102,27 @@ public class GlobalContextRequirement {
 
     public boolean isMayBeOmitted() {
         return mayBeOmitted;
+    }
+
+
+    /**
+     * Say whether (in XQuery) the global context item is declared as external
+     *
+     * @param external true if the global context item is declared as external
+     */
+
+    public void setExternal(boolean external) {
+        this.external = external;
+    }
+
+    /**
+     * Ask whether (in XQuery) the global context item is declared as external
+     *
+     * @return true if the global context item is declared as external
+     */
+
+    public boolean isExternal() {
+        return external;
     }
 }
 

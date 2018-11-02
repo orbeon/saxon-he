@@ -11,6 +11,7 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
 import net.sf.saxon.event.Builder;
 import net.sf.saxon.event.Receiver;
+import net.sf.saxon.expr.instruct.GlobalContextRequirement;
 import net.sf.saxon.expr.instruct.UserFunction;
 import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
@@ -139,14 +140,19 @@ public class XQueryEvaluator implements Iterable<XdmItem>, Destination {
      * Set the initial context item for the query
      *
      * @param item the initial context item, or null if there is to be no initial context item
+     * @throws SaxonApiUncheckedException if the query declares the context item and does not define
+     *                           it to be external
      */
 
-    public void setContextItem(XdmItem item) {
+    public void setContextItem(XdmItem item) throws SaxonApiUncheckedException {
         if (item != null) {
-            context.setContextItem((Item) item.getUnderlyingValue());
+            GlobalContextRequirement gcr = expression.getExecutable().getGlobalContextRequirement();
+            if (gcr != null && !gcr.isExternal()) {
+                throw new SaxonApiUncheckedException(new SaxonApiException("The context item for the query is not defined as external"));
+            }
+            context.setContextItem(item.getUnderlyingValue());
         }
     }
-
     /**
      * Get the initial context item for the query, if one has been set
      *

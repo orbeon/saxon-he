@@ -1869,8 +1869,10 @@ public class XQueryParser extends XPathParser {
             exp.setRetainedStaticContext(env.makeRetainedStaticContext());
             exp = exp.typeCheck(visitor, info);
             req.setDefaultValue(exp);
+            req.setExternal(false);
         } else if (t.currentToken == Token.NAME && "external".equals(t.currentTokenValue)) {
             req.setAbsentFocus(false);
+            req.setExternal(true);
             nextToken();
             if (t.currentToken == Token.ASSIGN) {
                 if (!((QueryModule) env).isMainModule()) {
