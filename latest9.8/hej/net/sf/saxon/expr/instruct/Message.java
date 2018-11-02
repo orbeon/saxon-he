@@ -15,6 +15,7 @@ import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.expr.parser.RebindingMap;
+import net.sf.saxon.lib.FeatureKeys;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.SerializerFactory;
 import net.sf.saxon.lib.StandardErrorListener;
@@ -161,6 +162,8 @@ public class Message extends Instruction {
         }
         Receiver emitter = controller.getMessageEmitter();
         if (emitter != null) {
+            // See bug 3979. If the configuration allows multithreading then we buffer the
+            // xsl:message output locally while it is bing created
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             String code;
             try {
@@ -169,77 +172,87 @@ public class Message extends Instruction {
                 // use the error code of the failure in place of the intended error code
                 code = err.getErrorCodeQName().getEQName();
             }
-            synchronized (emitter) {
-                // In Saxon-EE, multithreading can cause different messages to be entangled unless we synchronize.
-                StructuredQName errorCode = null;
-                try {
-                    errorCode = StructuredQName.fromLexicalQName(
-                            code, false, true, getRetainedStaticContext());
-                } catch (XPathException err) {
-                    // The spec says we fall back to XTMM9000
-                    errorCode = new StructuredQName("err", NamespaceConstant.ERR, "XTMM9000");
-                }
 
-                context.getController().incrementMessageCounter(errorCode);
-
-                SequenceReceiver rec = new TreeReceiver(emitter);
-                rec = new MessageAdapter(rec, errorCode.getEQName(), getLocation());
-
-                SequenceReceiver saved = context.getReceiver();
-                //int savedOutputState = context.getTemporaryOutputState();
-
-                Properties props = new Properties();
-                props.setProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-                SerializerFactory sf = context.getConfiguration().getSerializerFactory();
-                PipelineConfiguration pipe = controller.makePipelineConfiguration();
-                pipe.setLocationIsCodeLocation(true);
-                pipe.setHostLanguage(Configuration.XSLT);
-                SequenceReceiver receiver = sf.getReceiver(rec, pipe, props);
-                context.setReceiver(receiver);
-                //context.setTemporaryOutputState(StandardNames.XSL_MESSAGE);
-
-                boolean abort = false;
-                String term = Whitespace.trim(getTerminate().evaluateAsString(context));
-                if (term.equals("no")||term.equals("false")||term.equals("0")) {
-                    // no action
-                } else if (term.equals("yes")||term.equals("true")||term.equals("1")) {
-                    abort = true;
-                } else {
-                    XPathException e = new XPathException("The terminate attribute of xsl:message must be yes|no|true|false|1|0");
-                    e.setXPathContext(context);
-                    e.setErrorCode("XTDE0030");
-                    throw e;
-                }
-
-
-                rec.startDocument(abort ? ReceiverOptions.TERMINATE : 0);
-
-                try {
-                    SequenceIterator iter = getSelect().iterate(context);
-                    Item item;
-                    while ((item = iter.next()) != null) {
-                        rec.append(item, getLocation(), NodeInfo.ALL_NAMESPACES);
-                    }
-                } catch (XPathException e) {
-                    rec.append(new StringValue("Error " + e.getErrorCodeLocalPart() +
-                                                       " while evaluating xsl:message content: " + e.getMessage()));
-                }
-
-                rec.endDocument();
-
-                context.setReceiver(saved);
-                //context.setTemporaryOutputState(savedOutputState);
-                if (abort) {
-                    TerminationException te = new TerminationException(
-                            "Processing terminated by " + StandardErrorListener.getInstructionName(this) +
-                                    " at line " + getLocation().getLineNumber() +
-                                    " in " + StandardErrorListener.abbreviatePath(getLocation().getSystemId()));
-                    te.setLocation(getLocation());
-                    te.setErrorCodeQName(errorCode);
-                    throw te;
-                }
-                return null;
+            boolean buffered = controller.getConfiguration().getBooleanProperty(FeatureKeys.ALLOW_MULTITHREADING);
+            Receiver out = buffered ? controller.allocateSequenceOutputter(10) : emitter;
+            StructuredQName errorCode = null;
+            try {
+                errorCode = StructuredQName.fromLexicalQName(
+                        code, false, true, getRetainedStaticContext());
+            } catch (XPathException err) {
+                // The spec says we fall back to XTMM9000
+                errorCode = new StructuredQName("err", NamespaceConstant.ERR, "XTMM9000");
             }
+
+            context.getController().incrementMessageCounter(errorCode);
+
+            SequenceReceiver rec = new TreeReceiver(out);
+            rec = new MessageAdapter(rec, errorCode.getEQName(), getLocation());
+
+            SequenceReceiver saved = context.getReceiver();
+            //int savedOutputState = context.getTemporaryOutputState();
+
+            Properties props = new Properties();
+            props.setProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            SerializerFactory sf = context.getConfiguration().getSerializerFactory();
+            PipelineConfiguration pipe = controller.makePipelineConfiguration();
+            pipe.setLocationIsCodeLocation(true);
+            pipe.setHostLanguage(Configuration.XSLT);
+            SequenceReceiver receiver = sf.getReceiver(rec, pipe, props);
+            context.setReceiver(receiver);
+            //context.setTemporaryOutputState(StandardNames.XSL_MESSAGE);
+
+            boolean abort = false;
+            String term = Whitespace.trim(getTerminate().evaluateAsString(context));
+            if (term.equals("no")||term.equals("false")||term.equals("0")) {
+                // no action
+            } else if (term.equals("yes")||term.equals("true")||term.equals("1")) {
+                abort = true;
+            } else {
+                XPathException e = new XPathException("The terminate attribute of xsl:message must be yes|no|true|false|1|0");
+                e.setXPathContext(context);
+                e.setErrorCode("XTDE0030");
+                throw e;
+            }
+
+
+            rec.startDocument(abort ? ReceiverOptions.TERMINATE : 0);
+
+            try {
+                SequenceIterator iter = getSelect().iterate(context);
+                Item item;
+                while ((item = iter.next()) != null) {
+                    rec.append(item, getLocation(), NodeInfo.ALL_NAMESPACES);
+                }
+            } catch (XPathException e) {
+                rec.append(new StringValue("Error " + e.getErrorCodeLocalPart() +
+                                                   " while evaluating xsl:message content: " + e.getMessage()));
+            }
+
+            rec.endDocument();
+
+            if (buffered) {
+                synchronized(controller) {
+                    SequenceReceiver sr = emitter instanceof SequenceReceiver ? (SequenceReceiver)emitter : new TreeReceiver(emitter);
+                    for (Item item : ((SequenceOutputter) out).getList()) {
+                        sr.append(item);
+                    }
+                }
+            }
+
+            context.setReceiver(saved);
+            //context.setTemporaryOutputState(savedOutputState);
+            if (abort) {
+                TerminationException te = new TerminationException(
+                        "Processing terminated by " + StandardErrorListener.getInstructionName(this) +
+                                " at line " + getLocation().getLineNumber() +
+                                " in " + StandardErrorListener.abbreviatePath(getLocation().getSystemId()));
+                te.setLocation(getLocation());
+                te.setErrorCodeQName(errorCode);
+                throw te;
+            }
+            return null;
+
         } else {
             return null;
         }
