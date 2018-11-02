@@ -275,8 +275,8 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
 
         needsRuntimeCheck = !Type.isGuaranteedGenerallyComparable(pt0, pt1, Token.isOrderedOperator(singletonOperator));
 
-        if (c0 == StaticProperty.EXACTLY_ONE &&
-                c1 == StaticProperty.EXACTLY_ONE &&
+        if (!Cardinality.allowsMany(c0) /*c0 == StaticProperty.EXACTLY_ONE*/ &&
+                !Cardinality.allowsMany(c1) /*c1 == StaticProperty.EXACTLY_ONE */ &&
                 !t0.equals(BuiltInAtomicType.ANY_ATOMIC) &&
                 !t1.equals(BuiltInAtomicType.ANY_ATOMIC)) {
 
