@@ -150,9 +150,13 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
     }
 
     public void checkCompatibility(Component component) throws XPathException {
+        SequenceType st1 = getSourceBinding().getDeclaredType();
+        if (st1 == null) {
+            st1 = SequenceType.ANY_SEQUENCE;
+        }
         GlobalVariable other = (GlobalVariable) component.getActor();
         TypeHierarchy th = component.getDeclaringPackage().getConfiguration().getTypeHierarchy();
-        int relation = th.sequenceTypeRelationship(getRequiredType(), other.getRequiredType());
+        int relation = th.sequenceTypeRelationship(st1, other.getRequiredType());
         if (relation != TypeHierarchy.SAME_TYPE) {
             compileError(
                 "The declared type of the overriding variable $" + getVariableQName().getDisplayName() +
