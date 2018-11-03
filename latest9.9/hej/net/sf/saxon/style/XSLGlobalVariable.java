@@ -14,9 +14,11 @@ import net.sf.saxon.expr.instruct.Actor;
 import net.sf.saxon.expr.instruct.GlobalParam;
 import net.sf.saxon.expr.instruct.GlobalVariable;
 import net.sf.saxon.expr.instruct.SlotManager;
-import net.sf.saxon.expr.parser.*;
+import net.sf.saxon.expr.parser.ExpressionTool;
+import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.Optimizer;
+import net.sf.saxon.expr.parser.RetainedStaticContext;
 import net.sf.saxon.om.GroundedValue;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trace.LocationKind;
@@ -28,8 +30,9 @@ import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.SequenceType;
 
 /**
- * Handler for xsl:variable elements appearing as a child of xsl:stylesheet. <br>
- * The xsl:variable element has mandatory attribute name and optional attribute select
+ * Handler for xsl:variable elements appearing as a child of xsl:stylesheet.
+ * <p>The xsl:variable element has mandatory attribute {@code name} and
+ * optional attribute {@code select} (inter alia)</p>
  */
 
 public class XSLGlobalVariable extends StyleElement implements StylesheetComponent {
@@ -150,10 +153,14 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
         return new SymbolicName(StandardNames.XSL_VARIABLE, getObjectName());
     }
 
-    public void checkCompatibility(Component component) throws XPathException {
+    public void checkCompatibility(Component component) {
+        SequenceType st1 = getSourceBinding().getDeclaredType();
+        if (st1 == null) {
+            st1 = SequenceType.ANY_SEQUENCE;
+        }
         GlobalVariable other = (GlobalVariable) component.getActor();
         TypeHierarchy th = component.getDeclaringPackage().getConfiguration().getTypeHierarchy();
-        int relation = th.sequenceTypeRelationship(getRequiredType(), other.getRequiredType());
+        int relation = th.sequenceTypeRelationship(st1, other.getRequiredType());
         if (relation != TypeHierarchy.SAME_TYPE) {
             compileError(
                 "The declared type of the overriding variable $" + getVariableQName().getDisplayName() +
@@ -315,12 +322,9 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
      * Initialize - common code called from the compile() method of all subclasses
      *
      * @param var the representation of the variable declaration in the compiled executable
-     * @throws net.sf.saxon.trans.XPathException
-     *          if an error is detected
      */
 
-    protected void initializeBinding(GlobalVariable var)
-            throws XPathException {
+    protected void initializeBinding(GlobalVariable var) {
 
         Expression select = var.getSelectExpression();
         Expression exp2 = select;
