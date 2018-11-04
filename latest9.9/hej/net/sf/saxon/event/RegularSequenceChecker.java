@@ -93,7 +93,6 @@ public class RegularSequenceChecker extends ProxyReceiver {
 
     static {
         edge(State.Initial, "open", State.Open);
-        //edge(State.Open, "open", State.Open); // TODO: we're only allowing this because it happens...
         edge(State.Open, "append", State.Open);
         edge(State.Open, "text", State.Open);
         edge(State.Open, "comment", State.Open);
