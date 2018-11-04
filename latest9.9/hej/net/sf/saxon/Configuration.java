@@ -115,7 +115,7 @@ import java.util.function.IntPredicate;
 
 public class Configuration implements SourceResolver, NotationSet {
 
-    protected static Set<Feature> booleanFeatures = new HashSet<Feature>(40);
+    protected static Set<Feature> booleanFeatures = new HashSet<>(40);
     private transient ApiProvider apiProcessor = null;
     private transient CharacterSetFactory characterSetFactory;
 
@@ -5083,6 +5083,7 @@ public class Configuration implements SourceResolver, NotationSet {
         booleanFeatures.add(Feature.ASSERTIONS_CAN_SEE_COMMENTS);
         booleanFeatures.add(Feature.COMPILE_WITH_TRACING);
         booleanFeatures.add(Feature.DEBUG_BYTE_CODE);
+        booleanFeatures.add(Feature.DISABLE_XSL_EVALUATE);
         booleanFeatures.add(Feature.DISPLAY_BYTE_CODE);
         booleanFeatures.add(Feature.DTD_VALIDATION);
         booleanFeatures.add(Feature.EAGER_EVALUATION);

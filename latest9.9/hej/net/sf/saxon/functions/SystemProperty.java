@@ -156,7 +156,8 @@ public class SystemProperty extends SystemFunction implements Callable {
                 case "supports-dynamic-evaluation":
                     return yesOrNo(
                             !"JS".equals(edition) &&
-                                    config.isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION));
+                                    config.isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION) &&
+                                    !config.getBooleanProperty(Feature.DISABLE_XSL_EVALUATE));
                 case "supports-higher-order-functions":
                     return yesOrNo(
                             !"JS".equals(edition) &&

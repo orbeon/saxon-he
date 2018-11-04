@@ -7,25 +7,33 @@
 
 package net.sf.saxon.style;
 
-import net.sf.saxon.expr.Expression;
-import net.sf.saxon.expr.Literal;
-import net.sf.saxon.expr.StaticProperty;
-import net.sf.saxon.expr.StringLiteral;
+import net.sf.saxon.expr.*;
+import net.sf.saxon.expr.instruct.Block;
+import net.sf.saxon.expr.instruct.Choose;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
+import net.sf.saxon.expr.parser.Token;
 import net.sf.saxon.expr.parser.TypeChecker;
+import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.lib.Feature;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.ma.map.MapType;
 import net.sf.saxon.om.AttributeCollection;
 import net.sf.saxon.om.AxisInfo;
+import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.pattern.AnyNodeTest;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
+import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.Whitespace;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Handler for xsl:evaluate elements in XSLT 3.0 stylesheet. <br>
@@ -41,6 +49,7 @@ public class XSLEvaluate extends StyleElement {
     Expression schemaAware = null;
     Expression withParams = null;
     Expression options = null;
+    boolean hasFallbackChildren;
 
     /**
      * Determine whether this node is an instruction.
@@ -179,8 +188,10 @@ public class XSLEvaluate extends StyleElement {
         options = typeCheck("options", options);
 
         iterateAxis(AxisInfo.CHILD).forEachOrFail(child -> {
-            if (child instanceof XSLWithParam || child instanceof XSLFallback) {
+            if (child instanceof XSLWithParam) {
                 // OK
+            } else if (child instanceof XSLFallback) {
+                hasFallbackChildren = true;
             } else if (child.getNodeKind() == Type.TEXT) {
                 // with xml:space=preserve, white space nodes may still be there
                 if (!Whitespace.isWhite(child.getStringValueCS())) {
@@ -261,7 +272,35 @@ public class XSLEvaluate extends StyleElement {
             validationError = new XPathException("xsl:evaluate is not available in this configuration", "XTDE3175");
             return fallbackProcessing(exec, decl, this);
         } else {
-            return getConfiguration().makeEvaluateInstruction(this, decl);
+            Expression evaluateExpr = getConfiguration().makeEvaluateInstruction(this, decl);
+            if (evaluateExpr instanceof ErrorExpression) {
+                return evaluateExpr;
+            }
+            // If there are any xsl:fallback children, we need to compile them, in case xsl:evaluate
+            // is dynamically disabled at run-time.
+            if (hasFallbackChildren) {
+                // Generate a conditional expression switched on the value of system-property('xsl:supports-dynamic-evaluation')
+                Expression[] conditions = new Expression[2];
+                Expression sysProp = SystemFunction.makeCall("system-property",
+                                                        makeRetainedStaticContext(),
+                                                        new StringLiteral("Q{" + NamespaceConstant.XSLT + "}supports-dynamic-evaluation"));
+                conditions[0] = new ValueComparison(sysProp, Token.FEQ, new StringLiteral("no"));
+                conditions[1] = Literal.makeLiteral(BooleanValue.TRUE);
+                Expression[] actions = new Expression[2];
+                List<Expression> fallbackExpressions = new ArrayList<>();
+                NodeInfo child;
+                AxisIterator kids = iterateChildren(AnyNodeTest.getInstance());
+                while ((child = kids.next()) != null) {
+                    if (child instanceof XSLFallback) {
+                        fallbackExpressions.add(((XSLFallback)child).compileSequenceConstructor(exec, decl, false));
+                    }
+                }
+                actions[0] = new Block(fallbackExpressions.toArray(new Expression[0]));
+                actions[1] = evaluateExpr;
+                return new Choose(conditions, actions);
+            } else {
+                return evaluateExpr;
+            }
         }
     }
 
