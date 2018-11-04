@@ -307,9 +307,6 @@ public class SerializerFactory {
 
                 }
                 case "adaptive": {
-                    TEXTEmitter te = new TEXTEmitter();
-                    te.setPipelineConfiguration(pipe);
-                    te.setOutputProperties(props);                          // TODO: is the TEXTEmitter used?
                     Writer writer = ((StreamResult) result).getWriter();
                     if (writer == null) {
                         OutputStream os = ((StreamResult) result).getOutputStream();
@@ -325,8 +322,6 @@ public class SerializerFactory {
                     }
                     AdaptiveEmitter je = new AdaptiveEmitter(pipe, writer);
                     je.setOutputProperties(props);
-                    StreamResult sr = (StreamResult) result;
-                    te.setStreamResult(sr);
                     return customizeAdaptiveSerializer(je, props, characterMapExpander, normalizer);
                 }
                 default: {
@@ -665,7 +660,7 @@ public class SerializerFactory {
             target = injectCharacterMapExpander(params, target, true);
         }
         String cdataElements = props.getProperty(OutputKeys.CDATA_SECTION_ELEMENTS);
-        if (cdataElements != null && cdataElements.length() > 0 && !canonical) {
+        if (cdataElements != null && !cdataElements.isEmpty() && !canonical) {
             target = newCDATAFilter(target, props);
         }
         if (canonical) {
