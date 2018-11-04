@@ -4761,6 +4761,7 @@ public class Configuration implements SourceResolver, NotationSet {
         booleanPropertyNames.add(FeatureKeys.ASSERTIONS_CAN_SEE_COMMENTS);
         booleanPropertyNames.add(FeatureKeys.COMPILE_WITH_TRACING);
         booleanPropertyNames.add(FeatureKeys.DEBUG_BYTE_CODE);
+        booleanPropertyNames.add(FeatureKeys.DISABLE_XSL_EVALUATE);
         booleanPropertyNames.add(FeatureKeys.DISPLAY_BYTE_CODE);
         booleanPropertyNames.add(FeatureKeys.DTD_VALIDATION);
         booleanPropertyNames.add(FeatureKeys.EAGER_EVALUATION);

@@ -156,7 +156,8 @@ public class SystemProperty extends SystemFunction implements Callable {
             } else if (local.equals("supports-dynamic-evaluation")) {
                 return yesOrNo(
                         !"JS".equals(edition) &&
-                        config.isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION));
+                        config.isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION) &&
+                        !config.getBooleanProperty(FeatureKeys.DISABLE_XSL_EVALUATE));
             } else if (local.equals("supports-higher-order-functions")) {
                 return yesOrNo(
                         !"JS".equals(edition) &&
