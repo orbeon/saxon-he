@@ -21,8 +21,6 @@ import net.sf.saxon.value.Whitespace;
 /**
  * UnicodeNormalizer: This ProxyReceiver performs unicode normalization on the contents
  * of attribute and text nodes.
- *
- * @author Michael Kay
  */
 
 
@@ -33,20 +31,24 @@ public class UnicodeNormalizer extends ProxyReceiver {
     public UnicodeNormalizer(String form, Receiver next) throws XPathException {
         super(next);
         byte fb;
-        if (form.equals("NFC")) {
-            fb = Normalizer.C;
-        } else if (form.equals("NFD")) {
-            fb = Normalizer.D;
-        } else if (form.equals("NFKC")) {
-            fb = Normalizer.KC;
-        } else if (form.equals("NFKD")) {
-            fb = Normalizer.KD;
-        } else {
-            XPathException err = new XPathException("Unknown normalization form " + form);
-            err.setErrorCode("SESU0011");
-            throw err;
+        switch (form) {
+            case "NFC":
+                fb = Normalizer.C;
+                break;
+            case "NFD":
+                fb = Normalizer.D;
+                break;
+            case "NFKC":
+                fb = Normalizer.KC;
+                break;
+            case "NFKD":
+                fb = Normalizer.KD;
+                break;
+            default:
+                XPathException err = new XPathException("Unknown normalization form " + form);
+                err.setErrorCode("SESU0011");
+                throw err;
         }
-
         normalizer = new Normalizer(fb, getConfiguration());
     }
 
@@ -104,5 +106,5 @@ public class UnicodeNormalizer extends ProxyReceiver {
         }
     }
 
-};
+}
 
