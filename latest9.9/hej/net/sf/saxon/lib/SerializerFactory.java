@@ -257,18 +257,6 @@ public class SerializerFactory {
 
             Emitter emitter = null;
 
-            CharacterMapExpander characterMapExpander = null;  // TODO: drop this
-            String useMaps = props.getProperty(SaxonOutputKeys.USE_CHARACTER_MAPS);
-            if (useMaps != null) {
-                characterMapExpander = charMapIndex.makeCharacterMapExpander(useMaps, new Sink(pipe), this);
-            }
-
-            ProxyReceiver normalizer = null;  // TODO: drop this
-            String normForm = props.getProperty(SaxonOutputKeys.NORMALIZATION_FORM);
-            if (normForm != null && !normForm.equals("none")) {
-                normalizer = newUnicodeNormalizer(new Sink(pipe), props);
-            }
-
             switch (method) {
                 case "html": {
                     emitter = newHTMLEmitter(props);
@@ -303,6 +291,8 @@ public class SerializerFactory {
                     if (sortOrder != null) {
                         js.setPropertySorter(getPropertySorter(sortOrder));
                     }
+                    CharacterMapExpander characterMapExpander = makeCharacterMapExpander(pipe, props, charMapIndex);
+                    ProxyReceiver normalizer = makeUnicodeNormalizer(pipe, props);
                     return customizeJSONSerializer(js, props, characterMapExpander, normalizer);
 
                 }
@@ -322,10 +312,14 @@ public class SerializerFactory {
                     }
                     AdaptiveEmitter je = new AdaptiveEmitter(pipe, writer);
                     je.setOutputProperties(props);
+                    CharacterMapExpander characterMapExpander = makeCharacterMapExpander(pipe, props, charMapIndex);
+                    ProxyReceiver normalizer = makeUnicodeNormalizer(pipe, props);
                     return customizeAdaptiveSerializer(je, props, characterMapExpander, normalizer);
                 }
                 default: {
                     if (method.startsWith("{" + NamespaceConstant.SAXON + "}")) {
+                        CharacterMapExpander characterMapExpander = makeCharacterMapExpander(pipe, props, charMapIndex);
+                        ProxyReceiver normalizer = makeUnicodeNormalizer(pipe, props);
                         target = createSaxonSerializationMethod(
                                 method, params, pipe, characterMapExpander, normalizer, (StreamResult)result);
                         if (target instanceof Emitter) {
@@ -360,6 +354,22 @@ public class SerializerFactory {
             return getReceiverForNonSerializedResult(result, props, pipe);
 
         }
+    }
+
+    private ProxyReceiver makeUnicodeNormalizer(PipelineConfiguration pipe, Properties props) throws XPathException {
+        String normForm = props.getProperty(SaxonOutputKeys.NORMALIZATION_FORM);
+        if (normForm != null && !normForm.equals("none")) {
+            return newUnicodeNormalizer(new Sink(pipe), props);
+        }
+        return null;
+    }
+
+    private CharacterMapExpander makeCharacterMapExpander(PipelineConfiguration pipe, Properties props, CharacterMapIndex charMapIndex) throws XPathException {
+        String useMaps = props.getProperty(SaxonOutputKeys.USE_CHARACTER_MAPS);
+        if (useMaps != null) {
+            return charMapIndex.makeCharacterMapExpander(useMaps, new Sink(pipe), this);
+        }
+        return null;
     }
 
     /**
@@ -590,7 +600,7 @@ public class SerializerFactory {
         target = injectUnicodeNormalizer(params, target);
         target = injectCharacterMapExpander(params, target, true);
         String cdataElements = props.getProperty(OutputKeys.CDATA_SECTION_ELEMENTS);
-        if (cdataElements != null && cdataElements.length() > 0) {
+        if (cdataElements != null && !cdataElements.isEmpty()) {
             target = newCDATAFilter(target, props);
         }
 
@@ -969,7 +979,7 @@ public class SerializerFactory {
      * @return the newly created filter.
      */
 
-    protected Receiver newAttributeSorter(Receiver next, Properties outputProperties)  throws XPathException {
+    protected Receiver newAttributeSorter(Receiver next, Properties outputProperties) throws XPathException {
         return next;
     }
 
