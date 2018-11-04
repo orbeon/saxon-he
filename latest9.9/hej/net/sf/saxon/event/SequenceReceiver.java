@@ -177,7 +177,7 @@ public abstract class SequenceReceiver implements Receiver {
             } else {
                 NodeInfo node = (NodeInfo)item;
                 if (node instanceof Orphan && ((Orphan) node).isDisableOutputEscaping()) {
-                    // see test case doe-0185 - needed for output buffered within try/catch  // TODO: is this still used?
+                    // see test case doe-0801, -2 -3 - needed for output buffered within try/catch, xsl:fork etc
                     characters(item.getStringValueCS(), locationId, ReceiverOptions.DISABLE_ESCAPING);
                     previousAtomic = false;
                 } else if (node.getNodeKind() == Type.DOCUMENT) {
