@@ -41,7 +41,7 @@ public class AdaptiveEmitter extends SequenceWriter implements ReceiverWithOutpu
     private String itemSeparator = "\n";
     private boolean started = false;
 
-    public AdaptiveEmitter(PipelineConfiguration pipe, Writer writer) {
+    public AdaptiveEmitter(PipelineConfiguration pipe, Writer writer)  {
         super(pipe);
         this.writer = writer;
     }
@@ -77,6 +77,9 @@ public class AdaptiveEmitter extends SequenceWriter implements ReceiverWithOutpu
         if (started) {
             emit(itemSeparator);
         } else {
+            if (writer == null) {
+
+            }
             started = true;
         }
         serializeItem(item);

@@ -29,9 +29,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stax.StAXResult;
 import javax.xml.transform.stream.StreamResult;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -297,19 +294,8 @@ public class SerializerFactory {
 
                 }
                 case "adaptive": {
-                    Writer writer = ((StreamResult) result).getWriter();
-                    if (writer == null) {
-                        OutputStream os = ((StreamResult) result).getOutputStream();
-                        String encoding = props.getProperty("encoding");
-                        if (encoding == null) {
-                            encoding = "UTF-8";
-                        }
-                        try {
-                            writer = new OutputStreamWriter(os, encoding);
-                        } catch (UnsupportedEncodingException e) {
-                            throw new XPathException(e);
-                        }
-                    }
+                    ExpandedStreamResult esr = new ExpandedStreamResult(pipe.getConfiguration(), (StreamResult)result, props);
+                    Writer writer = esr.obtainWriter();
                     AdaptiveEmitter je = new AdaptiveEmitter(pipe, writer);
                     je.setOutputProperties(props);
                     CharacterMapExpander characterMapExpander = makeCharacterMapExpander(pipe, props, charMapIndex);
@@ -833,17 +819,6 @@ public class SerializerFactory {
     protected Emitter newTEXTEmitter() {
         return new TEXTEmitter();
     }
-
-    /**
-     * Create a new Adaptive Emitter. This method exists so that it can be overridden in a subclass.
-     *
-     * @return the newly created adaptive emitter.
-     */
-
-    protected SequenceWriter newAdaptiveEmitter(PipelineConfiguration pipe, Writer writer) {
-        return new AdaptiveEmitter(pipe, writer);
-    }
-
 
     /**
      * Create a new XML Indenter. This method exists so that it can be overridden in a subclass.
