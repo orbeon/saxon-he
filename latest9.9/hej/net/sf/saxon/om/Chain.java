@@ -82,12 +82,13 @@ public class Chain implements GroundedValue<Item<?>> {
                     this.children.add(gv);
                 }
             }
-        } else {
-            this.children = children;
         }
     }
 
     public Item<?> head() {
+        if (extent != null) {
+            return extent.isEmpty() ? null : extent.get(0);
+        }
         for (GroundedValue<?> seq : children) {
             Item<?> head = seq.head();
             if (head != null) {
@@ -141,12 +142,15 @@ public class Chain implements GroundedValue<Item<?>> {
      * @return the n'th item if it exists, or null otherwise
      */
     public Item<?> itemAt(int n) {
-        // TODO: avoid consolidating the chain beyond the required item
-        consolidate();
-        if (n >= 0 && n < extent.size()) {
-            return extent.get(n);
+        if (n == 0) {
+            return head();
         } else {
-            return null;
+            consolidate();
+            if (n >= 0 && n < extent.size()) {
+                return extent.get(n);
+            } else {
+                return null;
+            }
         }
     }
 
