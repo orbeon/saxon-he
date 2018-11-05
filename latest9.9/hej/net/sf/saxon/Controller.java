@@ -20,7 +20,6 @@ import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.expr.parser.PathMap;
 import net.sf.saxon.expr.sort.GroupIterator;
 import net.sf.saxon.functions.AccessorFn;
-import net.sf.saxon.functions.IriToUri;
 import net.sf.saxon.lib.*;
 import net.sf.saxon.om.*;
 import net.sf.saxon.regex.RegexIterator;
@@ -44,7 +43,6 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXSource;
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -101,7 +99,6 @@ public class Controller implements ContextOriginator {
     private URIResolver userURIResolver;
     protected Receiver principalResult;
     protected String principalResultURI;
-    private String cookedPrincipalResultURI;
     private UnparsedTextURIResolver unparsedTextResolver;
     private String defaultCollectionURI;
     protected UnfailingErrorListener errorListener;
@@ -346,31 +343,6 @@ public class Controller implements ContextOriginator {
     }
 
     /**
-     * Get the base output URI after processing. The processing consists of (a) defaulting
-     * to the current user directory if no base URI is available and if the stylesheet is trusted,
-     * and (b) applying IRI-to-URI escaping
-     *
-     * @return the base output URI after processing.
-     */
-
-    /*@Nullable*/
-    public String getCookedBaseOutputURI() {     // TODO: no longer used
-        if (cookedPrincipalResultURI == null) {
-            String base = getBaseOutputURI();
-            if (base == null && config.getBooleanProperty(Feature.ALLOW_EXTERNAL_FUNCTIONS)) {
-                // if calling external functions is allowed, then the stylesheet is trusted, so
-                // we allow it to write to files relative to the current directory
-                base = new File(System.getProperty("user.dir")).toURI().toString();
-            }
-            if (base != null) {
-                base = IriToUri.iriToUri(base).toString();
-            }
-            cookedPrincipalResultURI = base;
-        }
-        return cookedPrincipalResultURI;
-    }
-
-    /**
      * Get the principal result destination.
      * <p>This method is intended for internal use only. It is typically called by Saxon during the course
      * of a transformation, to discover the result that was supplied in the transform() call.</p>
@@ -396,17 +368,6 @@ public class Controller implements ContextOriginator {
         PipelineConfiguration pipe = makePipelineConfiguration();
         return new SequenceOutputter(pipe, size);
     }
-
-    /**
-     * Accept a SequenceOutputter that is now available for reuse
-     *
-     * @param out the SequenceOutputter that is available for reuse
-     */
-
-    public void reuseSequenceOutputter(SequenceOutputter out) {
-        SequenceOutputter reusableSequenceOutputter = out;
-    }
-
 
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -1234,7 +1195,7 @@ public class Controller implements ContextOriginator {
      * @return the value of the required property
      */
 
-    public Object getUserData(Object key, String name) {
+    public synchronized Object getUserData(Object key, String name) {
         String keyValue = key.hashCode() + " " + name;
         // System.err.println("getUserData " + name + " on object returning " + userDataTable.get(key));
         return userDataTable.get(keyValue);
@@ -1255,7 +1216,7 @@ public class Controller implements ContextOriginator {
      *             for the key is removed.
      */
 
-    public void setUserData(Object key, String name, /*@Nullable*/ Object data) {
+    public synchronized void setUserData(Object key, String name, /*@Nullable*/ Object data) {
         // System.err.println("setUserData " + name + " on object to " + data);
         String keyVal = key.hashCode() + " " + name;
         if (data == null) {
@@ -1279,7 +1240,7 @@ public class Controller implements ContextOriginator {
     public synchronized IntHashMap<Map<Long, KeyIndex>> getLocalIndexes() {
         if (localIndexes == null) {
             localIndexes = new IntHashMap<>();
-        };
+        }
         return localIndexes;
     }
 
