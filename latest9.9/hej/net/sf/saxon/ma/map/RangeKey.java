@@ -12,7 +12,10 @@ import net.sf.saxon.expr.sort.AtomicComparer;
 import net.sf.saxon.expr.sort.AtomicMatchKey;
 import net.sf.saxon.expr.sort.CodepointMatchKey;
 import net.sf.saxon.functions.Count;
-import net.sf.saxon.om.*;
+import net.sf.saxon.om.Function;
+import net.sf.saxon.om.GroundedValue;
+import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AtomicIterator;
@@ -22,7 +25,7 @@ import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.type.UType;
 import net.sf.saxon.value.*;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -100,10 +103,23 @@ public class RangeKey implements MapItem {
      * @return an iterator over the key-value pairs
      */
     public Iterable<KeyValuePair> keyValuePairs() {
-        // TODO: avoid constructing the list in memory
-        List<KeyValuePair> list = new ArrayList<>();
-        keys().forEach(key -> list.add(new KeyValuePair(key, get(key))));
-        return list;
+        return () -> new Iterator<KeyValuePair>() {
+            AtomicIterator keys = keys();
+            AtomicValue next = keys.next();
+            public boolean hasNext() {
+                return next != null;
+            }
+
+            public KeyValuePair next() {
+                if (next == null) {
+                    return null;
+                } else {
+                    KeyValuePair kvp = new KeyValuePair(next, get(next));
+                    next = keys.next();
+                    return kvp;
+                }
+            }
+        };
     }
 
     /**

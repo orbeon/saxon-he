@@ -201,7 +201,6 @@ public abstract class ItemType {
         }
 
         public static BuiltInAtomicItemType makeVariant(BuiltInAtomicItemType type, ConversionRules conversionRules) {
-            // TODO: allocate from a pool
             return new BuiltInAtomicItemType(type.underlyingType, conversionRules);
         }
 
