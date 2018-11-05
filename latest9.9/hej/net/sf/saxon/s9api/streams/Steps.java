@@ -9,10 +9,13 @@
 package net.sf.saxon.s9api.streams;
 
 import net.sf.saxon.lib.ConversionRules;
+import net.sf.saxon.ma.arrays.ArrayItem;
+import net.sf.saxon.om.AtomicSequence;
 import net.sf.saxon.om.NameChecker;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.s9api.*;
+import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.UnfailingIterator;
 import net.sf.saxon.type.AtomicType;
 import net.sf.saxon.type.Converter;
@@ -65,13 +68,20 @@ public class Steps {
                     return Stream.of((XdmAtomicValue)item);
                 } else if (item instanceof XdmNode) {
                     try {
-                        return (Stream<XdmAtomicValue>)((XdmNode)item).getTypedValue().stream();
+                        return (XdmStream<XdmAtomicValue>) ((XdmNode) item).getTypedValue().stream();
                     } catch (SaxonApiException e) {
                         throw new SaxonApiUncheckedException(e);
                     }
+                } else if (item instanceof XdmArray) {
+                    try {
+                        ArrayItem arrayItem = ((XdmArray)item).getUnderlyingValue();
+                        AtomicSequence data = arrayItem.atomize();
+                        return (XdmStream<XdmAtomicValue>)XdmValue.wrap(data).stream();
+                    } catch (XPathException e) {
+                        throw new SaxonApiUncheckedException(new SaxonApiException(e));
+                    }
                 } else {
-                    // TODO: atomize arrays
-                    return Stream.empty();
+                    throw new SaxonApiUncheckedException(new SaxonApiException("Cannot atomize supplied value"));
                 }
             }
         };
