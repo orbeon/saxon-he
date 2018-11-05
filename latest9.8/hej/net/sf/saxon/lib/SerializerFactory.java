@@ -7,7 +7,6 @@
 
 package net.sf.saxon.lib;
 
-import net.sf.saxon.serialize.XHTMLPrefixRemover;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.*;
 import net.sf.saxon.om.NameChecker;
@@ -27,9 +26,6 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Enumeration;
 import java.util.List;
@@ -310,26 +306,10 @@ public class SerializerFactory {
                 return customizeJSONSerializer(je, props, characterMapExpander, normalizer);
 
             } else if ("adaptive".equals(method)) {
-                TEXTEmitter te = new TEXTEmitter();
-                te.setPipelineConfiguration(pipe);
-                te.setOutputProperties(props);
-                Writer writer = ((StreamResult)result).getWriter();
-                if (writer == null) {
-                    OutputStream os = ((StreamResult) result).getOutputStream();
-                    String encoding = props.getProperty("encoding");
-                    if (encoding == null) {
-                        encoding = "UTF-8";
-                    }
-                    try {
-                        writer = new OutputStreamWriter(os, encoding);
-                    } catch (UnsupportedEncodingException e) {
-                        throw new XPathException(e);
-                    }
-                }
+                ExpandedStreamResult esr = new ExpandedStreamResult(pipe.getConfiguration(), (StreamResult) result, props);
+                Writer writer = esr.obtainWriter();
                 AdaptiveEmitter je = new AdaptiveEmitter(pipe, writer);
                 je.setOutputProperties(props);
-                StreamResult sr = (StreamResult) result;
-                te.setStreamResult(sr);
                 return customizeAdaptiveSerializer(je, props, characterMapExpander, normalizer);
 
             } else if (method.startsWith("{" + NamespaceConstant.SAXON + "}")) {
