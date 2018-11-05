@@ -9,16 +9,15 @@ package net.sf.saxon.event;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
+import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.lib.SchemaURIResolver;
 import net.sf.saxon.lib.UnfailingErrorListener;
-import net.sf.saxon.om.Item;
 
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.URIResolver;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Stack;
 
 /**
  * A PipelineConfiguration sets options that apply to all the operations in a pipeline.
@@ -31,10 +30,10 @@ public class PipelineConfiguration {
     private URIResolver uriResolver;
     private SchemaURIResolver schemaURIResolver;
     private Controller controller;
-    private Stack<Item> currentApplyStack;
     private ParseOptions parseOptions;
     private int hostLanguage = Configuration.XSLT;
     private Map<String, Object> components;
+    private XPathContext context;
 
     /**
      * Create a PipelineConfiguration. Note: the normal way to create
@@ -68,7 +67,7 @@ public class PipelineConfiguration {
         if (p.components != null) {
             components = new HashMap<>(p.components);
         }
-        currentApplyStack = null;
+        context = p.context;
     }
 
     /**
@@ -243,39 +242,6 @@ public class PipelineConfiguration {
     }
 
     /**
-     * Set the context item. Used only for diagnostics, to indicate
-     * what part of the source document is being processed. Maintained
-     * only by xsl:apply-templates
-     *
-     * @param item the context item
-     */
-
-    public void pushCurrentAppliedItem(Item item) {
-        // TODO: this stack is only used by ValidatingFilter, and it's not clear that it's useful there.
-        if (currentApplyStack == null) {
-            currentApplyStack = new Stack<>();
-        }
-        currentApplyStack.push(item);
-    }
-
-
-    public void popCurrentAppliedItem() {
-        currentApplyStack.pop();
-    }
-
-    public Item peekCurrentAppliedItem() {
-        if (currentApplyStack != null && !currentApplyStack.isEmpty()) {
-            return currentApplyStack.peek();
-        } else {
-            return null;
-        }
-    }
-
-    public Stack<Item> getAppliedItemStack() {
-        return currentApplyStack;
-    }
-
-    /**
      * Set the Controller associated with this pipelineConfiguration
      *
      * @param controller the Controller
@@ -344,6 +310,27 @@ public class PipelineConfiguration {
         } else {
             return components.get(name);
         }
+    }
+
+    /**
+     * Set the XPathContext. Used during validation, for diagnostics, to identify the source node that was
+     * being processed at the time a validation error in the result document was found
+     * @param context the XPath dynamic context.
+     */
+
+    public void setXPathContext(XPathContext context) {
+        this.context = context;
+    }
+
+    /**
+     * Get the XPathContext. Used during validation, for diagnostics, to identify the source node that was
+     * being processed at the time a validation error in the result document was found
+     *
+     * @return the XPath dynamic context.
+     */
+
+    public XPathContext getXPathContext() {
+        return context;
     }
 
 }

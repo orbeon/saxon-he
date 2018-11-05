@@ -7,6 +7,7 @@
 
 package net.sf.saxon.expr.instruct;
 
+import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.TraceListener;
@@ -366,6 +367,8 @@ public final class IterateInstr extends Instruction implements ContextSwitchingE
         c2.setOrigin(this);
         FocusIterator iter = c2.trackFocus(getSelectExpression().iterate(context));
         c2.setCurrentTemplateRule(null);
+        PipelineConfiguration pipe = c2.getReceiver().getPipelineConfiguration();
+        pipe.setXPathContext(c2);
 
         boolean tracing = context.getController().isTracing();
         TraceListener listener = tracing ? context.getController().getTraceListener() : null;
@@ -402,6 +405,7 @@ public final class IterateInstr extends Instruction implements ContextSwitchingE
                 break;
             }
         }
+        pipe.setXPathContext(context);
         return null;
     }
 

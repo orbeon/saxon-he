@@ -185,7 +185,11 @@ public class Message extends Instruction {
             return null;
         }
         Receiver emitter = controller.makeMessageReceiver();
-        emitter.setPipelineConfiguration(controller.makePipelineConfiguration());
+        PipelineConfiguration pipe = controller.makePipelineConfiguration();
+        pipe.setHostLanguage(Configuration.XSLT);
+        pipe.setXPathContext(context);
+        emitter.setPipelineConfiguration(pipe);
+
         String code;
         try {
             code = getErrorCode().evaluateAsString(context).toString();
@@ -213,8 +217,7 @@ public class Message extends Instruction {
         SerializationProperties props = new SerializationProperties();
         props.setProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         SerializerFactory sf = context.getConfiguration().getSerializerFactory();
-        PipelineConfiguration pipe = controller.makePipelineConfiguration();
-        pipe.setHostLanguage(Configuration.XSLT);
+
         Receiver receiver = sf.getReceiver(rec, props, pipe);
         context.setReceiver(receiver);
 

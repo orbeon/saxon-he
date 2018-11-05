@@ -7,6 +7,7 @@
 
 package net.sf.saxon.trans.rules;
 
+import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.XPathContextMajor;
@@ -58,26 +59,31 @@ public class ShallowCopyRuleSet implements BuiltInRuleSet {
             switch (node.getNodeKind()) {
                 case Type.DOCUMENT: {
                     Receiver out = context.getReceiver();
+                    PipelineConfiguration pipe = out.getPipelineConfiguration();
                     out.startDocument(0);
                     XPathContextMajor c2 = context.newContext();
                     c2.setOrigin(this);
                     c2.trackFocus(node.iterateAxis(AxisInfo.CHILD));
                     c2.setCurrentComponent(c2.getCurrentMode());  // Bug 3508
+                    pipe.setXPathContext(c2);
                     TailCall tc = context.getCurrentMode().getActor().applyTemplates(parameters, tunnelParams, c2, locationId);
                     while (tc != null) {
                         tc = tc.processLeavingTail();
                     }
                     out.endDocument();
+                    pipe.setXPathContext(context);
                     return;
                 }
                 case Type.ELEMENT: {
                     Receiver out = context.getReceiver();
+                    PipelineConfiguration pipe = out.getPipelineConfiguration();
                     NodeName fqn = NameOfNode.makeName(node);
                     out.startElement(fqn, node.getSchemaType(), locationId, 0);
                     NamespaceIterator.sendNamespaces(node, out);
 
                     XPathContextMajor c2 = context.newContext();
                     c2.setCurrentComponent(c2.getCurrentMode());  // Bug 3508
+                    pipe.setXPathContext(c2);
 
                     // apply-templates to all attributes
                     AxisIterator attributes = node.iterateAxis(AxisInfo.ATTRIBUTE);
@@ -99,6 +105,7 @@ public class ShallowCopyRuleSet implements BuiltInRuleSet {
                         }
                     }
                     out.endElement();
+                    pipe.setXPathContext(context);
                     return;
                 }
                 case Type.TEXT:

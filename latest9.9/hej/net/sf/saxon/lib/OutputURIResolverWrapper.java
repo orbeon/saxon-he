@@ -68,6 +68,7 @@ public class OutputURIResolverWrapper implements ResultDocumentResolver {
             } else {
                 SerializerFactory factory = context.getConfiguration().getSerializerFactory();
                 PipelineConfiguration pipe = context.getController().makePipelineConfiguration();
+                pipe.setXPathContext(context);
                 out = factory.getReceiver(result, properties, pipe);
             }
             List<Action> actions = new ArrayList<>();

@@ -276,6 +276,7 @@ public class DocumentInstr extends ParentNodeConstructor {
             try {
                 Receiver saved = context.getReceiver();
                 PipelineConfiguration pipe = controller.makePipelineConfiguration();
+                pipe.setXPathContext(context);
 
                 Builder builder;
                 builder = controller.makeBuilder();

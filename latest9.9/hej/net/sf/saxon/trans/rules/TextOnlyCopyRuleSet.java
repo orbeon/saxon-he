@@ -7,6 +7,7 @@
 
 package net.sf.saxon.trans.rules;
 
+import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.XPathContextMajor;
 import net.sf.saxon.expr.instruct.ParameterSet;
@@ -61,14 +62,17 @@ public class TextOnlyCopyRuleSet implements BuiltInRuleSet {
             switch (node.getNodeKind()) {
                 case Type.DOCUMENT:
                 case Type.ELEMENT:
+                    PipelineConfiguration pipe = context.getReceiver().getPipelineConfiguration();
                     XPathContextMajor c2 = context.newContext();
                     c2.setOrigin(this);
                     c2.trackFocus(node.iterateAxis(AxisInfo.CHILD));
                     c2.setCurrentComponent(c2.getCurrentMode());  // Bug 3508
+                    pipe.setXPathContext(c2);
                     TailCall tc = c2.getCurrentMode().getActor().applyTemplates(parameters, tunnelParams, c2, locationId);
                     while (tc != null) {
                         tc = tc.processLeavingTail();
                     }
+                    pipe.setXPathContext(context);
                     return;
                 case Type.TEXT:
                     // NOTE: I tried changing this to use the text node's copy() method, but

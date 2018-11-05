@@ -7,6 +7,7 @@
 
 package net.sf.saxon.expr.instruct;
 
+import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.*;
@@ -292,6 +293,8 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
         if (inStreamableConstruct) {
             c2.setCurrentGroupIterator(null);
         }
+        PipelineConfiguration pipe = c2.getReceiver().getPipelineConfiguration();
+        pipe.setXPathContext(c2);
 
         try {
             TailCall tc = thisMode.applyTemplates(params, tunnels, c2, getLocation());
@@ -305,7 +308,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
             err.setXPathContext(context);
             throw err;
         }
-
+        pipe.setXPathContext(context);
         return null;
 
     }

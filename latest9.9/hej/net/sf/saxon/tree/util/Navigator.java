@@ -290,10 +290,13 @@ public final class Navigator {
      */
 
     public static AbsolutePath getAbsolutePath(NodeInfo node) {
+        boolean streamed = node.getConfiguration().isStreamedNode(node);
         List<AbsolutePath.PathElement> path = new LinkedList<>();
         String sysId = node.getSystemId();
         while (node != null && node.getNodeKind() != Type.DOCUMENT) {
-            path.add(0, new AbsolutePath.PathElement(node.getNodeKind(), NameOfNode.makeName(node), getNumberSimple(node, null)));
+            path.add(0, new AbsolutePath.PathElement(node.getNodeKind(),
+                                                     NameOfNode.makeName(node),
+                                                     streamed ? -1 : getNumberSimple(node, null)));
             node = node.getParent();
         }
         AbsolutePath a = new AbsolutePath(path);

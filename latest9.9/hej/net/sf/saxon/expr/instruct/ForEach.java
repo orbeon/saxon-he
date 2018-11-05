@@ -8,10 +8,14 @@
 package net.sf.saxon.expr.instruct;
 
 import net.sf.saxon.Controller;
+import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.TraceListener;
-import net.sf.saxon.om.*;
+import net.sf.saxon.om.FocusIterator;
+import net.sf.saxon.om.Item;
+import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ErrorType;
@@ -465,6 +469,8 @@ public class ForEach extends Instruction implements ContextMappingFunction<Item<
                 return ((TailCallReturner) action).processLeavingTail(c2);
             }
         } else {
+            PipelineConfiguration pipe = c2.getReceiver().getPipelineConfiguration();
+            pipe.setXPathContext(c2);
             if (controller.isTracing()) {
                 TraceListener listener = controller.getTraceListener();
                 assert listener != null;
@@ -477,6 +483,7 @@ public class ForEach extends Instruction implements ContextMappingFunction<Item<
             } else {
                 iter.forEachOrFail(item -> action.process(c2));
             }
+            pipe.setXPathContext(context);
         }
         return null;
     }

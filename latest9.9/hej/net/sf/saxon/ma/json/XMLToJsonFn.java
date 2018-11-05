@@ -16,7 +16,6 @@ import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.functions.OptionsParameter;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.ma.map.MapItem;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
@@ -53,6 +52,7 @@ public class XMLToJsonFn extends SystemFunction {
         }
 
         PipelineConfiguration pipe = context.getController().makePipelineConfiguration();
+        pipe.setXPathContext(context);
         JsonReceiver receiver = new JsonReceiver(pipe);
         receiver.setIndenting(indent);
         Receiver r = receiver;

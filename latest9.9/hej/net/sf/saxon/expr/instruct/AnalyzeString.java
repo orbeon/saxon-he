@@ -8,6 +8,7 @@
 package net.sf.saxon.expr.instruct;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.FocusIterator;
@@ -383,6 +384,9 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
         FocusIterator focusIter = c2.trackFocus(iter);
         c2.setCurrentRegexIterator(iter);
 
+        PipelineConfiguration pipe = c2.getReceiver().getPipelineConfiguration();
+        pipe.setXPathContext(c2);
+
         Item it;
         while ((it = focusIter.next()) != null) {
             if (iter.isMatching()) {
@@ -396,6 +400,7 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
             }
         }
 
+        pipe.setXPathContext(context);
         return null;
 
     }

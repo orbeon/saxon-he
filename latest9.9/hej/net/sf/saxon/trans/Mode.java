@@ -445,8 +445,6 @@ public abstract class Mode extends Actor {
                 }
             }
 
-            pipe.pushCurrentAppliedItem(item);
-
             // find the template rule for this node
 
             if (tracing && traceListener instanceof TraceListener2) {
@@ -487,8 +485,6 @@ public abstract class Mode extends Actor {
                     tc = template.applyLeavingTail(context);
                 }
             }
-
-            pipe.popCurrentAppliedItem();
         }
 
         // return the TailCall returned from the last node processed

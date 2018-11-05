@@ -8,6 +8,7 @@
 package net.sf.saxon.expr.instruct;
 
 import net.sf.saxon.Controller;
+import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.expr.sort.*;
@@ -575,6 +576,7 @@ public class ForEachGroup extends Instruction
     public TailCall processLeavingTail(XPathContext context) throws XPathException {
         Controller controller = context.getController();
         assert controller != null;
+        PipelineConfiguration pipe = context.getReceiver().getPipelineConfiguration();
 
         GroupIterator groupIterator = getGroupIterator(context);
         XPathContextMajor c2 = context.newContext();
@@ -582,6 +584,7 @@ public class ForEachGroup extends Instruction
         FocusIterator focusIterator = c2.trackFocus(groupIterator);
         c2.setCurrentGroupIterator(groupIterator);
         c2.setCurrentTemplateRule(null);
+        pipe.setXPathContext(c2);
 
         if (controller.isTracing()) {
             TraceListener listener = controller.getTraceListener();
@@ -598,6 +601,7 @@ public class ForEachGroup extends Instruction
             }
         }
 
+        pipe.setXPathContext(context);
         return null;
     }
 

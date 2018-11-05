@@ -150,7 +150,8 @@ public class AbsolutePath {
          *
          * @param nodeKind the kind of node
          * @param name     the name of the node
-         * @param index    the position of the node relative to siblings of the same node kind and name
+         * @param index    the position of the node relative to siblings of the same node kind and name.
+         *                 The value -1 indicates "not known", which will typically be the case for streamed nodes.
          */
         public PathElement(int nodeKind, NodeName name, int index) {
             this.nodeKind = nodeKind;
@@ -180,7 +181,8 @@ public class AbsolutePath {
         /**
          * Get the position of the node
          *
-         * @return relative to siblings of the same node kind and name
+         * @return the position relative to siblings of the same node kind and name.
+         * The value -1 indicates "not known", which will typically be the case for streamed nodes.
          */
 
         public int getIndex() {
@@ -209,7 +211,7 @@ public class AbsolutePath {
                             fsb.append("}");
                         } else if (option == 'p') {
                             String prefix = name.getPrefix();
-                            if (prefix.length() != 0) {
+                            if (!prefix.isEmpty()) {
                                 fsb.append(prefix);
                                 fsb.append(':');
                             }
@@ -228,37 +230,32 @@ public class AbsolutePath {
                         fsb.append("}");
                     } else if (option == 'p') {
                         String prefix = name.getPrefix();
-                        if (prefix.length() != 0) {
+                        if (!prefix.isEmpty()) {
                             fsb.append(prefix);
                             fsb.append(':');
                         }
                     } else if (option == 's') {
-                        if (name.getURI().length() != 0) {
+                        if (!name.getURI().isEmpty()) {
                             fsb.append("Q{");
                             fsb.append(Err.abbreviateURI(name.getURI()));
                             fsb.append("}");
                         }
                     }
                     fsb.append(name.getLocalPart());
-                    fsb.append('[');
-                    fsb.append(getIndex() + "");
-                    fsb.append(']');
+                    appendPredicate(fsb);
                     break;
                 case Type.TEXT:
                     fsb.append("text()");
                     break;
                 case Type.COMMENT:
                     fsb.append("comment()");
-                    fsb.append('[');
-                    fsb.append(getIndex() + "");
-                    fsb.append(']');
+                    appendPredicate(fsb);
                     break;
                 case Type.PROCESSING_INSTRUCTION:
                     fsb.append("processing-instruction(");
                     fsb.append(name.getLocalPart());
-                    fsb.append(")[");
-                    fsb.append(getIndex() + "");
-                    fsb.append(']');
+                    fsb.append(")");
+                    appendPredicate(fsb);
                     break;
                 case Type.NAMESPACE:
                     fsb.append("namespace::");
@@ -271,7 +268,18 @@ public class AbsolutePath {
                 default:
             }
         }
+
+        private void appendPredicate(FastStringBuffer fsb) {
+            int index = getIndex();
+            if (index != -1) {
+                fsb.append('[');
+                fsb.append(getIndex() + "");
+                fsb.append(']');
+            }
+        }
     }
+
+
 
 
 }

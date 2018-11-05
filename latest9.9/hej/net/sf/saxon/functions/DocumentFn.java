@@ -630,6 +630,7 @@ public class DocumentFn extends SystemFunction implements Callable {
         PipelineConfiguration pipe = out.getPipelineConfiguration();
         if (pipe == null) {
             pipe = c.getController().makePipelineConfiguration();
+            pipe.setXPathContext(c);
             out.setPipelineConfiguration(pipe);
         }
 
