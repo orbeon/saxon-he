@@ -38,6 +38,10 @@ public class GraftedElement extends TinyElementImpl {
         this.externalNodeCopy.setDropNamespaces(!copyNamespaces);
     }
 
+    public NodeInfo getExternalNode() {
+        return externalNode;
+    }
+
     @Override
     public boolean hasChildNodes() {
         return externalNodeCopy.hasChildNodes();

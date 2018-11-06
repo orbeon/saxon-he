@@ -6167,6 +6167,7 @@ latest9.9/hej/net/sf/saxon/pull/PullPushCopier.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/pull/PullPushTee.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/pull/PullSource.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/pull/StaxBridge.java svn_eol_002dstyle=native
+latest9.9/hej/net/sf/saxon/pull/UnfailingPullProvider.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/pull/UnparsedEntity.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/pull/package.html svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/query/Annotation.java svn_eol_002dstyle=native
