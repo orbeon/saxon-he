@@ -187,7 +187,7 @@ public class Message extends Instruction {
             context.getController().incrementMessageCounter(errorCode);
 
             SequenceReceiver rec = new TreeReceiver(out);
-            rec = new MessageAdapter(rec, errorCode.getEQName(), getLocation());
+            rec = new MessageAdapter(rec, (buffered ? null : errorCode.getEQName()), getLocation());
 
             SequenceReceiver saved = context.getReceiver();
             //int savedOutputState = context.getTemporaryOutputState();
@@ -234,6 +234,7 @@ public class Message extends Instruction {
             if (buffered) {
                 synchronized(controller) {
                     SequenceReceiver sr = emitter instanceof SequenceReceiver ? (SequenceReceiver)emitter : new TreeReceiver(emitter);
+                    sr.processingInstruction("error-code", errorCode.getEQName(), getLocation(), 0);
                     for (Item item : ((SequenceOutputter) out).getList()) {
                         sr.append(item);
                     }
@@ -299,7 +300,9 @@ public class Message extends Instruction {
         @Override
         public void startDocument(int properties) throws XPathException {
             super.startDocument(properties);
-            processingInstruction("error-code", errorCode, location, 0);
+            if(errorCode != null) {
+                processingInstruction("error-code", errorCode, location, 0);
+            }
         }
 
         @Override
