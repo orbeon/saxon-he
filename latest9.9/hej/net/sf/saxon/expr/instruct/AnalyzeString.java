@@ -421,11 +421,8 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
             String flagstr = getFlags().evaluateAsString(context).toString();
             String dialect = "XP30";
             StringValue regexString = (StringValue)getRegex().evaluateItem(context);
-            re = regexString.getPrecompiledRegularExpression();
-            if (re == null || !re.getFlags().equals(flagstr)) {
-                re = context.getConfiguration().compileRegularExpression(
+            re = context.getConfiguration().compileRegularExpression(
                         getRegex().evaluateAsString(context), flagstr, dialect, null);
-            }
             if ((dialect.equals("XP20") || !useXsltErrorCodes) && re.matches("")) {
                 dynamicError("The regular expression must not be one that matches a zero-length string",
                         useXsltErrorCodes ? "XTDE1150" : "FORX0003", context);
@@ -434,9 +431,6 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
 
         return re.analyze(input);
     }
-
-    // TODO: use the new RegexStringValue mechanism for cases where the regex is known statically, to
-    // avoid having two separate mechanism.
 
     /**
      * Return an Iterator to iterate over the values of a sequence. The value of every

@@ -120,26 +120,20 @@ public abstract class RegexFunction extends SystemFunction implements StatefulSy
         }
         Configuration config = getRetainedStaticContext().getConfiguration();
         StringValue regexArg = (StringValue)args[1].head();
-        RegularExpression regex = regexArg.getPrecompiledRegularExpression();
         String re = regexArg.getStringValue();
         String flags = args[args.length - 1].head().getStringValue();
-        if (regex == null || !flags.equals(regex.getFlags())) {
-            String hostLang = "XP30";
-            if (config.getXsdVersion() == Configuration.XSD11) {
-                hostLang += "/XSD11";
-            }
-            List<String> warnings = new ArrayList<>(1);
-            regex = config.compileRegularExpression(re, flags, hostLang, warnings);
+        String hostLang = "XP30";
+        if (config.getXsdVersion() == Configuration.XSD11) {
+            hostLang += "/XSD11";
         }
+        List<String> warnings = new ArrayList<>(1);
+        RegularExpression regex = config.compileRegularExpression(re, flags, hostLang, warnings);
+
         if (!allowRegexMatchingEmptyString() && regex.matches("")) {
             throw new XPathException("The regular expression must not be one that matches a zero-length string", "FORX0003");
         }
         return regex;
     }
-
-    // TODO: the new 9.9 mechanism of encapsulating the compiled regex in a subclass of StringValue
-    // means the old technique of static precompilation could be greatly simplified: it just needs
-    // the StringLiteral holding the regex to be held as a RegexStringValue.
 
 }
 

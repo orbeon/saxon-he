@@ -478,16 +478,6 @@ public class StringValue extends AtomicValue {
     }
 
     /**
-     * For a string that represents a regular expression, get the contained regular expression.
-     * This will return null in all cases except for a string value that was created using the
-     * saxon:regex() extension function (which requires Saxon-PE or higher).
-     */
-
-    public RegularExpression getPrecompiledRegularExpression() {
-        return null;
-    }
-
-    /**
      * CharacterIterator is used to iterate over the characters in a string,
      * returning them as integers representing the Unicode code-point.
      */
