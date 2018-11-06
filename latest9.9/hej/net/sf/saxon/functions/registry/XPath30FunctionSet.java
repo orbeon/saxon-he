@@ -14,6 +14,7 @@ import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.type.NumericType;
 import net.sf.saxon.type.Type;
+import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.StringValue;
 
 /**
@@ -197,11 +198,11 @@ public class XPath30FunctionSet extends BuiltInFunctionSet {
 
         register("unparsed-text-available", 1, UnparsedTextAvailable.class,
                  BuiltInAtomicType.BOOLEAN, ONE, XSLT | XPATH30, BASE | LATE)
-                .arg(0, BuiltInAtomicType.STRING, ONE, null);
+                .arg(0, BuiltInAtomicType.STRING, OPT, BooleanValue.FALSE);
 
         register("unparsed-text-available", 2, UnparsedTextAvailable.class,
                  BuiltInAtomicType.BOOLEAN, ONE, XSLT | XPATH30, BASE | LATE)
-                .arg(0, BuiltInAtomicType.STRING, ONE, null)
+                .arg(0, BuiltInAtomicType.STRING, OPT, BooleanValue.FALSE)
                 .arg(1, BuiltInAtomicType.STRING, ONE, null);
 
         register("unparsed-text-lines", 1, UnparsedTextLines.class, BuiltInAtomicType.STRING, STAR, XPATH30, BASE | LATE)
