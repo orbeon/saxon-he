@@ -1064,6 +1064,9 @@ namespace Saxon.Api
             this.value = JSimpleArrayItem.EMPTY_ARRAY;
         }
 
+		///<summary>Create an <c>XdmArray</c> whose members are single items, corresponding
+		///one-to-one with the items making up a supplied sequence.</summary>
+		///<param name="value">A sequence of items; each item becomes a member of the array.</param>
         public XdmArray(XdmValue value) {
             int length = value.Count;
             JArrayList list = new JArrayList(length);
