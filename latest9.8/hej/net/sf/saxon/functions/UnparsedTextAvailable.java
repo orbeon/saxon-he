@@ -28,6 +28,9 @@ public class UnparsedTextAvailable extends UnparsedTextFunction implements Calla
      */
     public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         StringValue hrefVal = (StringValue) arguments[0].head();
+        if (hrefVal == null) {
+            return BooleanValue.FALSE;
+        }
         String encoding = getArity() == 2 ? arguments[1].head().getStringValue() : null;
         return BooleanValue.get(
                 evalUnparsedTextAvailable(hrefVal, encoding, context));
