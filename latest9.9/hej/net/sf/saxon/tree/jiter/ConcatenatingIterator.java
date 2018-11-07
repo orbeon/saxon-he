@@ -1,0 +1,54 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2018 Saxonica Limited.
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+// If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// This Source Code Form is "Incompatible With Secondary Licenses", as defined by the Mozilla Public License, v. 2.0.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+package net.sf.saxon.tree.jiter;
+
+import java.util.Iterator;
+
+/**
+ * An iterator over nodes, that concatenates the nodes returned by two supplied iterators.
+ */
+
+public class ConcatenatingIterator<E> implements Iterator<E> {
+
+    Iterator<? extends E> first;
+    Iterator<? extends E> second;
+    Iterator<? extends E> active;
+
+    public ConcatenatingIterator(Iterator<? extends E> first, Iterator<? extends E> second) {
+        if (first == second) {
+            throw new IllegalArgumentException();
+        }
+        this.first = first;
+        this.second = second;
+        this.active = first;
+    }
+
+    @Override
+    public boolean hasNext() {
+        if (active.hasNext()) {
+            return true;
+        } else if (active == first) {
+            active = second;
+            return second.hasNext();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Get the next item in the sequence.
+     * @return the next Item. If there are no more items, return null.
+     */
+
+    /*@Nullable*/
+    public E next() {
+        return active.next();
+    }
+
+}
+

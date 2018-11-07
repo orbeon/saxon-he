@@ -7,9 +7,8 @@
 
 package net.sf.saxon.ma.arrays;
 
-import net.sf.saxon.ma.parray.TreePVector;
+import net.sf.saxon.ma.parray.ImmList;
 import net.sf.saxon.om.GroundedValue;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.z.IntIterator;
 import net.sf.saxon.z.IntSet;
@@ -21,18 +20,15 @@ import java.util.Arrays;
  * that "update" the array do not have to copy the whole array
  */
 
-public class PersistentArrayItem extends AbstractArrayItem {
+public class ImmutableArrayItem extends AbstractArrayItem {
 
-    private TreePVector<GroundedValue<?>> vector;
+    private ImmList<GroundedValue<?>> vector;
 
-    public PersistentArrayItem(ArrayItem other) {
-        this.vector = TreePVector.empty();
-        for (GroundedValue<?> member : other.members()) {
-            vector = vector.plus(member);
-        }
+    public ImmutableArrayItem(SimpleArrayItem other) {
+        this.vector = ImmList.fromList(other.getMembers());
     }
 
-    private PersistentArrayItem(TreePVector<GroundedValue<?>> vector) {
+    private ImmutableArrayItem(ImmList<GroundedValue<?>> vector) {
         this.vector = vector;
     }
     
@@ -63,8 +59,8 @@ public class PersistentArrayItem extends AbstractArrayItem {
     @Override
     public ArrayItem put(int index, GroundedValue newValue) throws XPathException {
         try {
-            TreePVector<GroundedValue<?>> v2 = vector.with(index, newValue);
-            return v2 == vector ? this : new PersistentArrayItem(v2);
+            ImmList<GroundedValue<?>> v2 = vector.replace(index, newValue);
+            return v2 == vector ? this : new ImmutableArrayItem(v2);
         } catch (IndexOutOfBoundsException e) {
             throw new XPathException(e.getMessage(), "FOAY0001");
         }
@@ -80,8 +76,8 @@ public class PersistentArrayItem extends AbstractArrayItem {
      */
     @Override
     public ArrayItem insert(int position, GroundedValue<?> member) {
-        TreePVector<GroundedValue<?>> v2 = vector.plus(position, member);
-        return new PersistentArrayItem(v2);
+        ImmList<GroundedValue<?>> v2 = vector.insert(position, member);
+        return new ImmutableArrayItem(v2);
     }
 
     /**
@@ -126,7 +122,7 @@ public class PersistentArrayItem extends AbstractArrayItem {
      */
     @Override
     public ArrayItem subArray(int start, int end) {
-        return new PersistentArrayItem(vector.subList(start, end));
+        return new ImmutableArrayItem(vector.subList(start, end));
     }
 
     /**
@@ -141,14 +137,14 @@ public class PersistentArrayItem extends AbstractArrayItem {
         if (other.arrayLength() == 0) {
             return this;
         }
-        TreePVector<GroundedValue<?>> v1;
-        if (other instanceof PersistentArrayItem) {
-            v1 = ((PersistentArrayItem)other).vector;
+        ImmList<GroundedValue<?>> v1;
+        if (other instanceof ImmutableArrayItem) {
+            v1 = ((ImmutableArrayItem)other).vector;
         } else {
-            v1 = new PersistentArrayItem(other).vector;
+            v1 = new ImmutableArrayItem((SimpleArrayItem)other).vector;
         }
-        TreePVector<GroundedValue<?>> v2 = vector.plusAll(v1);
-        return new PersistentArrayItem(v2);
+        ImmList<GroundedValue<?>> v2 = vector.appendList(v1);
+        return new ImmutableArrayItem(v2);
     }
 
     /**
@@ -161,8 +157,8 @@ public class PersistentArrayItem extends AbstractArrayItem {
     @Override
     public ArrayItem remove(int index) {
         //try {
-            TreePVector<GroundedValue<?>> v2 = vector.minus(index);
-            return v2 == vector ? this : new PersistentArrayItem(v2);
+        ImmList<GroundedValue<?>> v2 = vector.remove(index);
+            return v2 == vector ? this : new ImmutableArrayItem(v2);
 //        } catch (IndexOutOfBoundsException e) {
 //            throw new XPathException(e.getMessage(), "FOAR0001");
 //        }
@@ -184,11 +180,11 @@ public class PersistentArrayItem extends AbstractArrayItem {
             p[i++] = ii.next();
         }
         Arrays.sort(p);
-        TreePVector<GroundedValue<?>> v2 = vector;
+        ImmList<GroundedValue<?>> v2 = vector;
         for (int j=p.length-1; j>=0; j--) {
-            v2 = v2.minus(p[j]);
+            v2 = v2.remove(p[j]);
         }
-        return v2 == vector ? this : new PersistentArrayItem(v2);
+        return v2 == vector ? this : new ImmutableArrayItem(v2);
     }
     
 }

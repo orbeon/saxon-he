@@ -150,23 +150,8 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      */
     @Override
     public ArrayItem put(int index, GroundedValue newValue) throws XPathException {
-        PersistentArrayItem a2 = new PersistentArrayItem(this);
+        ImmutableArrayItem a2 = new ImmutableArrayItem(this);
         return a2.put(index, newValue);
-//        List<Sequence> newList = new ArrayList<Sequence>(members.size());
-//        newList.addAll(members);
-//        if (index < 0 || index >= members.size()) {
-//            if (members.size() == 0) {
-//                throw new XPathException("Array is empty", "FOAY0001");
-//            } else {
-//                throw new XPathException("Array index (" + (index + 1) + ") out of range (1 to " + members.size() + ")", "FOAY0001");
-//            }
-//        }
-//        newList.set(index, newValue);
-//        SimpleArrayItem result = new SimpleArrayItem(newList);
-//        if (knownToBeGrounded && newValue instanceof GroundedValue) {
-//            result.knownToBeGrounded = true;
-//        }
-//        return result;
     }
 
     /**
@@ -208,7 +193,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      */
 
     public ArrayItem removeSeveral(IntSet positions) {
-        PersistentArrayItem a2 = new PersistentArrayItem(this);
+        ImmutableArrayItem a2 = new ImmutableArrayItem(this);
         return a2.removeSeveral(positions);
 //        List<Sequence> newList = new ArrayList<Sequence>(members.size() - 1);
 //        for (int i = 0; i < members.size(); i++) {
@@ -233,7 +218,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      */
 
     public ArrayItem remove(int pos) {
-        PersistentArrayItem a2 = new PersistentArrayItem(this);
+        ImmutableArrayItem a2 = new ImmutableArrayItem(this);
         return a2.remove(pos);
 //        List<Sequence> newList = new ArrayList<Sequence>(members.size() - 1);
 //        newList.addAll(members.subList(0, pos));
@@ -269,7 +254,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      */
     @Override
     public ArrayItem insert(int position, GroundedValue<?> member) {
-        PersistentArrayItem a2 = new PersistentArrayItem(this);
+        ImmutableArrayItem a2 = new ImmutableArrayItem(this);
         return a2.insert(position, member);
     }
 
@@ -282,7 +267,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      */
 
     public ArrayItem concat(ArrayItem other) {
-        PersistentArrayItem a2 = new PersistentArrayItem(this);
+        ImmutableArrayItem a2 = new ImmutableArrayItem(this);
         return a2.concat(other);
 //        List<Sequence> newList = new ArrayList<Sequence>(members.size() + other.arrayLength());
 //        newList.addAll(members);

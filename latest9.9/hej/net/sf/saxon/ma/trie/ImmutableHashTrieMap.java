@@ -170,7 +170,7 @@ public abstract class ImmutableHashTrieMap<K, V>
                             Tuple2<K, V> entry2) {
             // These entries must collide
             assert entry1._1.hashCode() == entry2._1.hashCode();
-            entries = ImmutableList.<Tuple2<K, V>>nil().prepend(entry1)
+            entries = ImmutableList.<Tuple2<K, V>>empty().prepend(entry1)
                     .prepend(entry2);
         }
 
@@ -192,7 +192,7 @@ public abstract class ImmutableHashTrieMap<K, V>
                                         new EntryHashNode<>(
                                                 key, value));
             }
-            ImmutableList<Tuple2<K, V>> newList = ImmutableList.nil();
+            ImmutableList<Tuple2<K, V>> newList = ImmutableList.empty();
             boolean found = false;
             for (Tuple2<K, V> entry : entries) {
                 if (entry._1.equals(key)) {
@@ -214,7 +214,7 @@ public abstract class ImmutableHashTrieMap<K, V>
         @Override
         ImmutableHashTrieMap<K, V> remove(final int shift,
                                           final K key) {
-            ImmutableList<Tuple2<K, V>> newList = ImmutableList.nil();
+            ImmutableList<Tuple2<K, V>> newList = ImmutableList.empty();
             int size = 0;
             for (Tuple2<K, V> entry : entries) {
                 if (!entry._1.equals(key)) {

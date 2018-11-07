@@ -10,12 +10,40 @@ package net.sf.saxon.ma.trie;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/**
+ * An immutable list implementation that only supports sequential traversal using an iterator,
+ * prepending an item to the start, and extraction of the head()/tail() of the list. Unlike
+ * {@link net.sf.saxon.ma.parray.ImmList}, it is optimized for sequential access rather than
+ * direct access.
+ * @param <T> the type of the elements in the list
+ */
+
 public abstract class ImmutableList<T> implements Iterable<T> {
+
+    /**
+     * Get the first item in the list
+     * @return the first item in the list
+     */
     public abstract T head();
+
+    /**
+     * Get all items in the list other than the first
+     * @return a list containing all items except the first
+     */
 
     public abstract ImmutableList<T> tail();
 
+    /**
+     * Ask whether the list is empty
+     * @return true if and only if the list contains no items
+     */
+
     public abstract boolean isEmpty();
+
+    /**
+     * Get the size of the list (the number of items). Note that this is an O(n) operation.
+     * @return the size of the list.
+     */
 
     public final int size() {
         ImmutableList<T> input = this;
@@ -27,14 +55,31 @@ public abstract class ImmutableList<T> implements Iterable<T> {
         return size;
     }
 
+    /**
+     * Return a list with a new item added at the start
+     * @param element the item to be added at the start
+     * @return a new list
+     */
 
     public ImmutableList<T> prepend(T element) {
-        return new NonEmptyList<T>(element, this);
+        return new NonEmptyList<>(element, this);
     }
 
-    public static <T> ImmutableList<T> nil() {
+    /**
+     * Return an empty list
+     * @param <T> the nominal item type of the list elements
+     * @return an empty list
+     */
+    public static <T> ImmutableList<T> empty() {
         return EMPTY_LIST;
     }
+
+    /**
+     * Test whether two lists are equal
+     * @param o the other list
+     * @return true if the other object is an instance of this ImmutableList class, and the
+     * elements of the two lists are pairwise equal.
+     */
 
     public boolean equals(Object o) {
         if (!(o instanceof ImmutableList)) {
@@ -53,6 +98,11 @@ public abstract class ImmutableList<T> implements Iterable<T> {
         return thisIter.hasNext() == otherIter.hasNext();
     }
 
+    /**
+     * Get an iterator over the elements of the list
+     * @return an iterator over the list
+     */
+
     public Iterator<T> iterator() {
         return new Iterator<T>() {
             private ImmutableList<T> list = ImmutableList.this;
@@ -66,12 +116,13 @@ public abstract class ImmutableList<T> implements Iterable<T> {
                 list = list.tail();
                 return element;
             }
-
-            public void remove() {
-                throw new RuntimeException("Cannot remove from immutable list");
-            }
         };
     }
+
+    /**
+     * Return a string representation of the list contents
+     * @return a string in the form "[item1, item2, ...]"
+     */
 
     @Override
     public String toString() {
@@ -90,6 +141,10 @@ public abstract class ImmutableList<T> implements Iterable<T> {
 
     private static final EmptyList EMPTY_LIST = new EmptyList();
 
+    /**
+     * An empty immutable list
+     */
+
     private static class EmptyList extends ImmutableList {
         @Override
         public Object head() {
@@ -106,6 +161,11 @@ public abstract class ImmutableList<T> implements Iterable<T> {
             return true;
         }
     }
+
+    /**
+     * A non-empty immutable list, implemented as a one-way linked list
+     * @param <T> the type of the items in the list
+     */
 
     private static class NonEmptyList<T> extends ImmutableList<T> {
         private final T element;
