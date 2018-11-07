@@ -347,8 +347,8 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             compiler.setErrorListener(collector);
             compiler.clearParameters();
             testInput.select(child("param").where(isTrue("static"))).forEach(param -> {
-                String name = ((XdmNode) param).attribute("name");
-                String select = ((XdmNode) param).attribute("select");
+                String name = param.attribute("name");
+                String select = param.attribute("select");
                 XdmValue value;
                 try {
                     value = xpath.evaluate(select, null);
@@ -557,8 +557,8 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                 }
             }
             testInput.select(child("param").where(not(isTrue("static")))).forEach(param -> {
-                String name = ((XdmNode) param).attribute("name");
-                String select = ((XdmNode) param).attribute("select");
+                String name = param.attribute("name");
+                String select = param.attribute("select");
                 XdmValue value;
                 try {
                     value = xpath.evaluate(select, null);
@@ -996,12 +996,16 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
     protected Map<QName, XdmValue> getNamedParameters(XPathCompiler xpath, XdmNode node, boolean getStatic, boolean tunnel) throws SaxonApiException {
         Map<QName, XdmValue> params = new HashMap<>();
         int i = 1;
-        String staticTest = getStatic ? "@static='yes'" : "not(@static='yes')";
-        for (XdmItem param : xpath.evaluate("param[" + staticTest + "]", node)) {
-            QName name = getQNameAttribute(xpath, (XdmNode)param, attribute("name"));
-            String select = ((XdmNode) param).attribute("select");
-            String tunnelled = ((XdmNode) param).attribute("tunnel");
-            QName as = getQNameAttribute(xpath, (XdmNode)param, attribute("as"));
+        Predicate<? super XdmNode> staticTest = isTrue("static");
+        if (!getStatic) {
+            staticTest = not(staticTest);
+        }
+        List<XdmNode> paramElements = node.select(child("param").where(staticTest)).asListOfNodes();
+        for (XdmNode param : paramElements) {
+            QName name = getQNameAttribute(xpath, param, attribute("name"));
+            String select = param.attribute("select");
+            String tunnelled = param.attribute("tunnel");
+            QName as = getQNameAttribute(xpath, param, attribute("as"));
                 // TODO: it won't always be a QName, could be a sequence type
             boolean required = tunnel == (tunnelled != null && tunnelled.equals("yes"));
             XdmValue value;

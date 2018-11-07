@@ -117,7 +117,7 @@ public class ImmList2<E> extends ImmList<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return new ConcatenatingIterator<>(left.iterator(), right.iterator());
+        return new ConcatenatingIterator<>(left.iterator(), () -> right.iterator());
     }
 
     private static final int THRESHOLD = 10;

@@ -8,6 +8,7 @@
 package net.sf.saxon.tree.jiter;
 
 import java.util.Iterator;
+import java.util.function.Supplier;
 
 /**
  * An iterator over nodes, that concatenates the nodes returned by two supplied iterators.
@@ -16,13 +17,17 @@ import java.util.Iterator;
 public class ConcatenatingIterator<E> implements Iterator<E> {
 
     Iterator<? extends E> first;
-    Iterator<? extends E> second;
+    Supplier<Iterator<? extends E>> second;
     Iterator<? extends E> active;
 
-    public ConcatenatingIterator(Iterator<? extends E> first, Iterator<? extends E> second) {
-        if (first == second) {
-            throw new IllegalArgumentException();
-        }
+    /**
+     * Create an iterator that concatenates the results of two supplied iterator. The
+     * second iterator isn't created until it is actually needed.
+     * @param first the first iterator
+     * @param second a function that can be called to supply the second iterator
+     */
+
+    public ConcatenatingIterator(Iterator<? extends E> first, Supplier<Iterator<? extends E>> second) {
         this.first = first;
         this.second = second;
         this.active = first;
@@ -33,8 +38,9 @@ public class ConcatenatingIterator<E> implements Iterator<E> {
         if (active.hasNext()) {
             return true;
         } else if (active == first) {
-            active = second;
-            return second.hasNext();
+            first = null;
+            active = second.get();
+            return active.hasNext();
         } else {
             return false;
         }
