@@ -1087,12 +1087,9 @@ public class XsltController extends Controller {
     /*@Nullable*/
     public Receiver getStreamingReceiver(Mode mode, Receiver result)
             throws XPathException {
-        // TODO: this method does not check that the Controller is not already in use, nor does it mark it as being in use.
         // System.err.println("*** TransformDocument");
-        if (executable == null) {
-            throw new XPathException("Stylesheet has not been compiled");
-        }
 
+        checkReadiness();
         openMessageEmitter();
 
         // Determine whether we need to close the output stream at the end. We
@@ -1130,6 +1127,7 @@ public class XsltController extends Controller {
                 }
                 closeMessageEmitter();
                 finalResult.close();
+                inUse = false;
             }
         };
 

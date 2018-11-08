@@ -2486,6 +2486,7 @@ public class PackageLoaderHE implements IPackageLoader {
             NodeInfo node = loader.config.buildDocumentTree(source).getRootNode();
             if (kind == Type.ELEMENT) {
                 // TODO: this is pretty inefficient...
+                // (But it doesn't happen often; mainly with node-valued static variables)
                 node = VirtualCopy.makeVirtualCopy(node.iterateAxis(AxisInfo.CHILD, NodeKindTest.ELEMENT).next());
             }
             return Literal.makeLiteral(new One<>(node));
@@ -2925,7 +2926,7 @@ public class PackageLoaderHE implements IPackageLoader {
             Expression lang = loader.getExpressionWithRole(element, "lang");
             String flags = element.getAttributeValue("", "flags");
             boolean backwardsCompatible = flags != null && flags.contains("1");
-            NumberFormatter formatter = null; // TODO: preinitialize if format is a literal
+            NumberFormatter formatter = null;
 
             Pattern count = loader.getPatternWithRole(element, "count");
             Pattern from = loader.getPatternWithRole(element, "from");
@@ -2945,7 +2946,7 @@ public class PackageLoaderHE implements IPackageLoader {
                     ordinal,
                     startAt,
                     lang,
-                    formatter,
+                    formatter,  // initialized by the NumberSequenceFormatter where possible.
                     backwardsCompatible);
             ni.preallocateNumberer(loader.config);
             return ni;
