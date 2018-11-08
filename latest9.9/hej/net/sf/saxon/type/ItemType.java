@@ -62,6 +62,18 @@ public interface ItemType {
     boolean isPlainType();
 
     /**
+     * Ask whether this {@code ItemType} actually represents an item type in the XDM sense
+     * of the term. The only instances that aren't true item types are user-defined union types
+     * derived by restriction from other union types or containing list types in their transitive
+     * membership ("impure union types")
+     * @return true if this is a true item type in the XDM sense
+     */
+
+    default boolean isTrueItemType() {
+        return true;
+    }
+
+    /**
      * Test whether a given item conforms to this type
      *
      *

@@ -27,10 +27,7 @@ import net.sf.saxon.z.IntHashSet;
 import net.sf.saxon.z.IntSet;
 import net.sf.saxon.z.IntUniversalSet;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -332,7 +329,17 @@ public class TypeHierarchy {
     }
 
     /**
-     * Determine the relationship of one item type to another.
+     * Determine the relationship of one item type to another. This should be equivalent to the
+     * rules for subtype-itemType(t1, t2) (in the XPath31 specification section 2.5.6.2), except that
+     * we are computing a more precise relationship:
+     *
+     * <ul>
+     *     <li>If subtype(A, B) and subtype(B, A) then SAME_TYPE</li>
+     *     <li>Else, if subtype(A, B) then SUBSUMED_BY</li>
+     *     <li>Else, if subtype(A, B) then SUBSUMES</li>
+     *     <li>Else, if the value spaces of A and B have a non-empty intersection then OVERLAPS</li>
+     *     <li>Else, DISJOINT.</li>
+     * </ul>
      *
      * @param t1 the first item type
      * @param t2 the second item type
@@ -343,8 +350,10 @@ public class TypeHierarchy {
      *         subsumes the other); {@link #DISJOINT} if the two types are disjoint (have an empty intersection)
      */
 
-    private int computeRelationship(/*@NotNull*/ ItemType t1, /*@NotNull*/ ItemType t2) {
+    private int computeRelationship(ItemType t1, ItemType t2) {
         //System.err.println("computeRelationship " + t1 + ", " + t2);
+        requireTrueItemType(t1);
+        requireTrueItemType(t2);
         try {
             if (t1 == t2) {
                 return SAME_TYPE;
@@ -394,7 +403,7 @@ public class TypeHierarchy {
                     }
                     return DISJOINT;
 
-                } else if (!t1.isAtomicType() && t2 instanceof PlainType) {
+                } else if (!t1.isAtomicType() && t2.isPlainType()) {
                     // relationship(union, atomic) or relationship(union, union)
                     Set<? extends PlainType> s1 = toSet(((PlainType) t1).getPlainMemberTypes());
                     Set<? extends PlainType> s2 = toSet(((PlainType) t2).getPlainMemberTypes());
@@ -428,24 +437,6 @@ public class TypeHierarchy {
                     // all options exhausted
                     throw new IllegalStateException();
                 }
-            } else if (t1 instanceof UnionType) {
-                // it is a union type but not a plain type, so it is typically derived from another union
-                // type by restriction
-                // TODO: what about the inverse?
-                SchemaType st = (SchemaType)t1;
-                if (t2 instanceof SchemaType) {
-                    SchemaType t2s = (SchemaType)t2;
-                    while (true) {
-                        if (st.getFingerprint() == t2s.getFingerprint()) {
-                            return SUBSUMED_BY;
-                        }
-                        st = st.getBaseType();
-                        if (st == null) {
-                            return DISJOINT;
-                        }
-                    }
-                }
-                return DISJOINT;
             } else if (t1 instanceof NodeTest) {
                 if (t2.isPlainType() || t2 instanceof FunctionItemType) {
                     return DISJOINT;
@@ -628,7 +619,13 @@ public class TypeHierarchy {
         } catch (MissingComponentException e) {
             return OVERLAPS;
         }
+    }
 
+    private static void requireTrueItemType(ItemType t) {
+        Objects.requireNonNull(t);
+        if (!t.isTrueItemType()) {
+            throw new AssertionError(t + " is a non-pure union type");
+        }
     }
 
     private static int nameTestRelationship(QNameTest t1, QNameTest t2) {
@@ -873,8 +870,21 @@ public class TypeHierarchy {
          if (s2 instanceof Untyped && (s1 == BuiltInAtomicType.ANY_ATOMIC || s1 == BuiltInAtomicType.UNTYPED_ATOMIC)) {
              return OVERLAPS;
          }
-         if (s1 instanceof ItemType && s2 instanceof ItemType) {
+         if (s1 instanceof PlainType && ((PlainType)s1).isPlainType()
+                 && s2 instanceof PlainType && ((PlainType) s2).isPlainType()) {
              return relationship((ItemType)s1, (ItemType)s2);
+
+             // See bug 4007. Technically, this isn't quite right. If U is union(X,Y), and V is union(X,Y,Z),
+             // then itemType-subtype(U, V) is true (XPath31 2.5.6.2 rule 2), but derives-from(U, V) is false.
+             // We're computing the derives-from relationship here (for example, to assess whether element(*, U)
+             // is substitutable for element(*, V) in a function signature), and by delegating to test the
+             // item type relationship, we are returning true for this case when it should be false.
+             // It's not clear whether this difference in the spec is intentional, and it doesn't cause
+             // any test cases to fail, so I decided to leave it.  I don't think it causes any problems
+             // with type safety, because elements and attributes validated against union(X, Y) will have
+             // a type annotation of either X or Y, which means they will be accepted as instances of
+             // element(*, union(X,Y,Z)): that is, the instances of element(*, union(X,Y)) are indeed
+             // a subset of the instances of element(*, union(X,Y,Z)).               MHK 2018-11-08.
          }
          SchemaType t1 = s1;
          while ((t1 = t1.getBaseType()) != null) {
