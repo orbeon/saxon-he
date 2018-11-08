@@ -2515,7 +2515,7 @@ public class PackageLoaderHE implements IPackageLoader {
             Expression lang = loader.getExpressionWithRole(element, "lang");
             String flags = element.getAttributeValue("", "flags");
             boolean backwardsCompatible = flags != null && flags.contains("1");
-            NumberFormatter formatter = null; // TODO: preinitialize if format is a literal
+            NumberFormatter formatter = null; // gets initialized by the NumberSequenceFormatter when possible
 
             NumberSequenceFormatter ni = new NumberSequenceFormatter(value, format, groupSize, groupSeparator,
                                                          letterValue, ordinal, startAt, lang, formatter, backwardsCompatible);

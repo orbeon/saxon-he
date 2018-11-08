@@ -103,6 +103,11 @@ public class NumberSequenceFormatter extends Expression {
 
         this.formatter = formatter;
         this.backwardsCompatible = backwardsCompatible;
+
+        if (formatter == null && format instanceof StringLiteral) {
+            this.formatter = new NumberFormatter();
+            this.formatter.prepare(((StringLiteral)format).getStringValue());
+        }
     }
 
     /**
