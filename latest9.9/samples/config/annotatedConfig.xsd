@@ -445,6 +445,15 @@
                </xs:documentation>
             </xs:annotation>
          </xs:attribute>
+         <xs:attribute name="thresholdForFunctionInlining"
+                       use="optional"
+                       type="xs:integer">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>Defines a limit on the size of user-defined functions that will be inlined.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
          <xs:attribute name="timing" use="optional" type="xs:boolean">
             <xs:annotation>
                <xs:documentation>
