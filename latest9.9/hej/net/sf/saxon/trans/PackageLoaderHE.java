@@ -60,7 +60,6 @@ public class PackageLoaderHE implements IPackageLoader {
     public final List<Action> completionActions = new ArrayList<>();
     private List<Component> unnamedComponents = new ArrayList<>();
     public final Map<String, StylesheetPackage> allPackages = new HashMap<>();
-        // TODO: what if a package is referenced more than once?
     private Stack<LocalBinding> localBindings;
     private ExecutableFunctionLibrary overriding;
     private ExecutableFunctionLibrary underriding;
@@ -2445,12 +2444,15 @@ public class PackageLoaderHE implements IPackageLoader {
             List<WithParam> params = new ArrayList<>();
             while ((wp = kids.next()) != null) {
                 WithParam withParam = new WithParam();
+                String flags = wp.getAttributeValue("", "flags");
                 StructuredQName paramName = loader.getQNameAttribute(wp, "name");
                 withParam.setVariableQName(paramName);
                 int slot = loader.getIntegerAttribute(wp, "slot");
                 withParam.setSlotNumber(slot);
-                withParam.setRequiredType(SequenceType.ANY_SEQUENCE); // TODO: set required type
+                withParam.setRequiredType(SequenceType.ANY_SEQUENCE);
                 withParam.setSelectExpression(inst, loader.getFirstChildExpression(wp));
+                withParam.setRequiredType(loader.parseSequenceType(wp, "as"));
+                withParam.setTypeChecked(flags != null && flags.contains("c"));
                 params.add(withParam);
             }
             inst.setParameters(params.toArray(new WithParam[0]));
