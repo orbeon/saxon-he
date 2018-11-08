@@ -12,6 +12,7 @@ import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.type.Type;
+import net.sf.saxon.type.UType;
 
 import java.util.function.IntPredicate;
 
@@ -31,6 +32,8 @@ final class GraftingDescendantIterator implements AxisIterator {
     private final NodeTest test;
     private final IntPredicate matcher;
     private AxisIterator nestedIterator;
+    private NodeInfo pending = null;
+    private boolean includeTextNodes;
 
     /**
      * Create an iterator over the descendant axis
@@ -47,12 +50,18 @@ final class GraftingDescendantIterator implements AxisIterator {
         nextNodeNr = node.nodeNr;
         startDepth = doc.depth[nextNodeNr];
         matcher = nodeTest.getMatcher(doc);
+        includeTextNodes = nodeTest.getUType().overlaps(UType.TEXT);
         // TODO: handle TextualElement nodes
     }
 
     /*@Nullable*/
     public NodeInfo next() {
         while (true) {
+            if (pending != null) {
+                NodeInfo p = pending;
+                pending = null;
+                return p;
+            }
             if (nestedIterator != null) {
                 NodeInfo nested = nestedIterator.next();
                 if (nested != null) {
@@ -63,15 +72,18 @@ final class GraftingDescendantIterator implements AxisIterator {
             }
             nextNodeNr++;
             try {
+                if (tree.depth[nextNodeNr] <= startDepth) {
+                    nextNodeNr = -1;
+                    return null;
+                }
                 if (tree.nodeKind[nextNodeNr] == Type.EXTERNAL_NODE_REFERENCE) {
                     byte axis = nextNodeNr == startNode.nodeNr ? AxisInfo.DESCENDANT : AxisInfo.DESCENDANT_OR_SELF;
                     nestedIterator = tree.externalNodes.get(tree.alpha[nextNodeNr])
                             .iterateAxis(axis, test);
                     continue;
                 }
-                if (tree.depth[nextNodeNr] <= startDepth) {
-                    nextNodeNr = -1;
-                    return null;
+                if (includeTextNodes && tree.nodeKind[nextNodeNr] == Type.TEXTUAL_ELEMENT) {
+                    pending = ((TinyTextualElement) tree.getNode(nextNodeNr)).getTextNode();
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
                 // this shouldn't happen. If it does happen, it means the tree wasn't properly closed
