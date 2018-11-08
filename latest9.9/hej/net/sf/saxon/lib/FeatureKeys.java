@@ -2131,7 +2131,11 @@ public abstract class FeatureKeys {
 
 
     /**
-    *            <p>TODO</p>
+    *            <p>Saxon-EE performs inlining of user-defined functions that are sufficiently simple: they must not be recursive,
+    *                and they must be below a certain size. This option defines the size.</p>
+    *            <p>The value is (roughly) the number of nodes in the expression tree representing the function body. This
+    *                includes both explicit subexpressions, and subexpressions added by Saxon itself to perform implicit
+    *                operations such as type checking or conversion of function arguments. The default value is 15.</p>
     *        
     **/
 
