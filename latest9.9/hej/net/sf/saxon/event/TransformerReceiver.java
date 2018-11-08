@@ -38,6 +38,7 @@ public class TransformerReceiver extends ProxyReceiver {
         super(controller.makeBuilder());
         this.controller = controller;
         this.builder = (Builder) getNextReceiver();
+        this.builder.setUseEventLocation(false);
     }
 
     /**
