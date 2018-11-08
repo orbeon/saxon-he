@@ -10,7 +10,6 @@ package net.sf.saxon.trans.packages;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.GroundedValue;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.style.*;
 import net.sf.saxon.trans.CompilerInfo;
@@ -108,7 +107,7 @@ public class PackageLibrary {
      *
      * @param packageIn The stylesheet package to be added
      */
-    public void addPackage(StylesheetPackage packageIn) {
+    public synchronized void addPackage(StylesheetPackage packageIn) {
         String name = packageIn.getPackageName();
         PackageVersion version = packageIn.getPackageVersion();
         VersionedPackageName vp = new VersionedPackageName(name, version);
@@ -128,7 +127,7 @@ public class PackageLibrary {
      *                or validation takes place at this stage.
      */
 
-    public void addPackage(PackageDetails details) {
+    public synchronized void addPackage(PackageDetails details) {
         VersionedPackageName vp = details.nameAndVersion;
         String name = vp.packageName;
         PackageVersion version = vp.packageVersion;
@@ -168,7 +167,7 @@ public class PackageLibrary {
      * then the one with highest version number is taken.
      */
 
-    public PackageDetails findPackage(String name, PackageVersionRanges ranges) {
+    public synchronized PackageDetails findPackage(String name, PackageVersionRanges ranges) {
         Set<PackageDetails> candidates = new HashSet<>();
         List<PackageVersion> available = packageVersions.get(name);
         if (available == null) {
@@ -220,7 +219,7 @@ public class PackageLibrary {
      * @throws IllegalStateException if there is more than one entry with the requested shortName
      */
 
-    public PackageDetails findDetailsForAlias(String shortName) {
+    public synchronized PackageDetails findDetailsForAlias(String shortName) {
         assert shortName != null;
         PackageDetails selected = null;
         for (PackageDetails details : packages.values()) {
@@ -236,7 +235,7 @@ public class PackageLibrary {
     }
 
     /**
-     * Obtain a loaded a package, given details of the package.
+     * Obtain a loaded package, given details of the package.
      * This will return the package if it is already loaded; otherwise it will attempt to
      * compile and/or load the package from XSLT source or from an export file.
      * It will also load all the packages on which it depends, recursively, and will report
@@ -253,7 +252,6 @@ public class PackageLibrary {
      */
 
     public StylesheetPackage obtainLoadedPackage(PackageDetails details, List<VersionedPackageName> disallowed) throws XPathException {
-        // TODO: consider thread safety
         if (details.loadedPackage != null) {
             return details.loadedPackage;
         } else if (details.exportLocation != null) {
@@ -335,7 +333,7 @@ public class PackageLibrary {
      *
      * @return every package indexed
      */
-    public List<StylesheetPackage> getPackages() {
+    public synchronized List<StylesheetPackage> getPackages() {
         List<StylesheetPackage> result = new ArrayList<>();
         for (PackageDetails details : packages.values()) {
             if (details.loadedPackage != null) {
