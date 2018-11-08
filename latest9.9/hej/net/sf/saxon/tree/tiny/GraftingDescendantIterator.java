@@ -51,7 +51,6 @@ final class GraftingDescendantIterator implements AxisIterator {
         startDepth = doc.depth[nextNodeNr];
         matcher = nodeTest.getMatcher(doc);
         includeTextNodes = nodeTest.getUType().overlaps(UType.TEXT);
-        // TODO: handle TextualElement nodes
     }
 
     /*@Nullable*/
