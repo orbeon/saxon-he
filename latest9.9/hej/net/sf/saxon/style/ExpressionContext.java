@@ -359,15 +359,14 @@ public class ExpressionContext implements XSLTStaticContext {
     /**
      * Get the XPath language level supported, as an integer (being the actual version
      * number times ten). In Saxon 9.9, for XSLT, the possible values are
-     * 31 (XPath 3.1), and 305 (XPath 3.0 plus the extensions defined in XSLT 3.0).
+     * 30 (XPath 3.0), 31 (XPath 3.1), and 305 (XPath 3.0 plus the extensions defined in XSLT 3.0).
      *
-     * @return the XPath language level; the return value will be either 305, or 31
+     * @return the XPath language level; the return value will be either 30, 305, or 31
      * @since 9.7
      */
 
     public int getXPathVersion() {
-        int lang = getConfiguration().getConfigurationProperty(Feature.XPATH_VERSION_FOR_XSLT);
-        return lang == 30 ? 305 : 31;
+        return getConfiguration().getConfigurationProperty(Feature.XPATH_VERSION_FOR_XSLT);
     }
 
     /**

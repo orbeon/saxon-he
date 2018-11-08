@@ -4792,8 +4792,8 @@ public class Configuration implements SourceResolver, NotationSet {
                 }
                 case FeatureCode.XPATH_VERSION_FOR_XSLT: {
                     int val = requireInteger(name, value);
-                    if (val != 30 && val != 31) {
-                        throw new IllegalArgumentException("XPath version for XSLT must be 30 (XPath 3.0) or 31 (XPath 3.1)");
+                    if (val != 20 && val != 30 && val != 305 && val != 31) {
+                        throw new IllegalArgumentException("XPath version for XSLT must be 20 (XPath 2.0), 30 (XPath 3.0), 31 (XPath 3.1), or 305 (XPath 3.0 with XSLT-defined extensions)");
                     }
                     xpathVersionForXslt = val;
                     break;
