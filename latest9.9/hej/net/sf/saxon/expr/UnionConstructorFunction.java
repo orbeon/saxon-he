@@ -217,6 +217,76 @@ public class UnionConstructorFunction extends AbstractFunction {
         return cast(val, context);
     }
 
+    /**
+     * Static method to perform the cast of an atomic value to a union type
+     *
+     * @param value      the input value to be converted. Must not be null.
+     * @param targetType the union type to which the value is to be converted
+     * @param nsResolver the namespace context, required if the type is namespace-sensitive
+     * @param rules      the conversion rules
+     * @return the result of the conversion (may be a sequence if the union includes list types in its membership)
+     * @throws XPathException if the conversion fails
+     */
+
+    public static AtomicSequence cast(AtomicValue value, UnionType targetType,
+                                      NamespaceResolver nsResolver, ConversionRules rules)
+            throws XPathException {
+        //ConversionRules rules = context.getConfiguration().getConversionRules();
+        if (value == null) {
+            throw new NullPointerException();
+        }
+
+        // 1. If the value is a string or untypedAtomic, try casting to each of the member types
+
+        if (value instanceof StringValue && !(value instanceof AnyURIValue)) {
+            try {
+                return targetType.getTypedValue(value.getStringValueCS(), nsResolver, rules);
+            } catch (ValidationException e) {
+                e.setErrorCode("FORG0001");
+                throw e;
+            }
+        }
+
+        // 2. If the value is an instance of a type in the transitive membership of the union, return it unchanged
+
+        AtomicType label = value.getItemType();
+        Iterable<PlainType> memberTypes = targetType.getPlainMemberTypes();
+
+        // 2a. Is the type annotation itself a member type of the union?
+        for (PlainType member : memberTypes) {
+            if (label.equals(member)) {
+                return value;
+            }
+        }
+        // 2b. Failing that, is some supertype of the type annotation a member type of the union?
+        for (PlainType member : memberTypes) {
+            AtomicType t = label;
+            while (t != null) {
+                if (t.equals(member)) {
+                    return value;
+                } else {
+                    t = t.getBaseType() instanceof AtomicType ? (AtomicType) t.getBaseType() : null;
+                }
+            }
+        }
+
+        // 3. if the value can be cast to any of the member types, return the result of that cast
+
+        for (PlainType type : memberTypes) {
+            if (type instanceof AtomicType) {
+                Converter c = rules.getConverter(value.getItemType(), (AtomicType) type);
+                if (c != null) {
+                    ConversionResult result = c.convert(value);
+                    if (result instanceof AtomicValue) {
+                        return (AtomicValue) result;
+                    }
+                }
+            }
+        }
+
+        throw new XPathException("Cannot convert the supplied value to " + targetType.getDescription(), "FORG0001");
+    }
+
 
 }
 

@@ -10,7 +10,6 @@ package net.sf.saxon.expr.instruct;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.PackageData;
 import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.expr.parser.ICompilerService;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
 import net.sf.saxon.functions.FunctionLibraryList;
 import net.sf.saxon.om.Item;
@@ -91,9 +90,6 @@ public class Executable {
 
     // Requirements for the initial context item
     private GlobalContextRequirement globalContextRequirement = null;
-
-    // Class handling byte code generation for this Executable
-    private ICompilerService compilerService = null;
 
     /**
      * Create a new Executable (a collection of stylesheet modules and/or query modules)
@@ -683,37 +679,6 @@ public class Executable {
     public boolean isSchemaAware() {
         return schemaAware;
     }
-
-
-    /**
-     * Get the compiler service providing byte code generation capability for this executable
-     * @return the compiler service, or null if none
-     */
-    public ICompilerService getCompilerService() {
-        return compilerService;
-    }
-
-    /**
-     * Get the compiler service providing byte code generation capability for this executable
-     *
-     * @return the compiler service, or null if none
-     */
-    public ICompilerService obtainCompilerService() {
-        if (compilerService == null) {
-            compilerService = config.makeCompilerService(getHostLanguage());
-        }
-        return compilerService;
-    }
-
-    /**
-     * Set the compiler service providing byte code generation capability for this executable
-     * @param compilerService the compiler service, or null if none
-     */
-
-    public void setCompilerService(ICompilerService compilerService) {
-        this.compilerService = compilerService;
-    }
-
 
 }
 

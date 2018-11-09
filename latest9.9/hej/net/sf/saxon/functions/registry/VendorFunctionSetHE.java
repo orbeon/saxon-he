@@ -121,10 +121,6 @@ public class VendorFunctionSetHE extends BuiltInFunctionSet {
             return BooleanValue.get(val != null && val.isWholeNumber());
         }
 
-        public String getCompilerName() {
-            return "IsWholeNumberCompiler";
-        }
-
     }
 
     /**

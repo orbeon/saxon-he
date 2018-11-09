@@ -902,11 +902,11 @@ public class Steps {
      */
 
     @SafeVarargs
-    public static Step<? extends XdmItem> path(Step<? extends XdmItem>... steps) {
+    public static Step<? extends XdmNode> path(Step<? extends XdmNode>... steps) {
         return pathFromList(Arrays.asList(steps));
     }
 
-    private static Step<? extends XdmItem> pathFromList(List<Step<? extends XdmItem>> steps) {
+    private static Step<? extends XdmNode> pathFromList(List<Step<? extends XdmNode>> steps) {
         if (steps.isEmpty()) {
             return nothing();
         } else if (steps.size() == 1) {
@@ -939,8 +939,8 @@ public class Steps {
      *              to these rules.
      */
 
-    public static Step<? extends XdmItem> path(String... steps) {
-        List<Step<? extends XdmItem>> pathSteps = new ArrayList<>();
+    public static Step<? extends XdmNode> path(String... steps) {
+        List<Step<? extends XdmNode>> pathSteps = new ArrayList<>();
         for (String step : steps) {
             if (step.equals("/")) {
                 pathSteps.add(root().where(isDocument()));

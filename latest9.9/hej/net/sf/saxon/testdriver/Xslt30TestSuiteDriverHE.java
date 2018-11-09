@@ -22,7 +22,6 @@ import net.sf.saxon.value.QNameValue;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
-import javax.xml.transform.SourceLocator;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -142,8 +141,8 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             return;
         }
 
-        Step testSetDependencies = path("/", "test-set", "dependencies");
-        Step testCaseDependencies = child("dependencies");
+        Step<XdmNode> testSetDependencies = root().then(child("test-set").then(child("dependencies")));
+        Step<XdmNode> testCaseDependencies = child("dependencies");
         XdmValue allDependencies = testCase.select(testSetDependencies.cat(testCaseDependencies)).asXdmValue();
 
         Optional<XdmNode> lastSpecValue = allDependencies.select(path("spec", "@value")).last().asOptionalNode();
@@ -194,7 +193,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         if (testName.contains("environment-variable")) {
             EnvironmentVariableResolver resolver = new EnvironmentVariableResolver() {
                 public Set<String> getAvailableEnvironmentVariables() {
-                    Set<String> strings = new HashSet<String>();
+                    Set<String> strings = new HashSet<>();
                     strings.add("QTTEST");
                     strings.add("QTTEST2");
                     strings.add("QTTESTEMPTY");
@@ -202,14 +201,15 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                 }
 
                 public String getEnvironmentVariable(String name) {
-                    if (name.equals("QTTEST")) {
-                        return "42";
-                    } else if (name.equals("QTTEST2")) {
-                        return "other";
-                    } else if (name.equals("QTTESTEMPTY")) {
-                        return "";
-                    } else {
-                        return null;
+                    switch (name) {
+                        case "QTTEST":
+                            return "42";
+                        case "QTTEST2":
+                            return "other";
+                        case "QTTESTEMPTY":
+                            return "";
+                        default:
+                            return null;
                     }
                 }
             };
@@ -217,18 +217,17 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         }
 
         if (testName.contains("load-xquery-module")) {
-            env.processor.getUnderlyingConfiguration().setModuleURIResolver(new ModuleURIResolver() {
-                public StreamSource[] resolve(String moduleURI, String baseURI, String[] locations) throws XPathException {
-                    File file = queryModules.get(moduleURI);
-                    if (file == null) {
-                        return null;
-                    }
-                    try {
-                        StreamSource ss = new StreamSource(new FileInputStream(file), baseURI);
-                        return new StreamSource[]{ss};
-                    } catch (FileNotFoundException e) {
-                        throw new XPathException(e);
-                    }
+            env.processor.getUnderlyingConfiguration().setModuleURIResolver(
+                    (moduleURI, baseURI, locations) -> {
+                File file = queryModules.get(moduleURI);
+                if (file == null) {
+                    return null;
+                }
+                try {
+                    StreamSource ss = new StreamSource(new FileInputStream(file), baseURI);
+                    return new StreamSource[]{ss};
+                } catch (FileNotFoundException e) {
+                    throw new XPathException(e);
                 }
             });
         }
@@ -259,11 +258,10 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         }
         String xsltLanguageVersion = specAtt.contains("XSLT30") || specAtt.contains("XSLT20+") ? "3.0" : "2.0";
 
-        if (postureAndSweep.isPresent() && runPostureAndSweepTests) {
-            runStreamabilityTests(xpath, testCase);
-            return;
-        }
-        if (postureAndSweep.isPresent() && !runPostureAndSweepTests) {
+        if (postureAndSweep.isPresent()) {
+            if (runPostureAndSweepTests) {
+                runStreamabilityTests(xpath, testCase);
+            }
             return;
         }
 
@@ -387,7 +385,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         }
         if (runWithNodeJS && !outcome.isException()) {
             /* TODO - add case where expecting a static error but compiled OK */
-            URI r = (new File(resultsDir)).toURI();
+            URI r = new File(resultsDir).toURI();
             if (env.exportedStylesheet != null) {
                 URI s = env.exportedStylesheet.toURI();
                 s = r.relativize(s);
@@ -587,11 +585,9 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             } else {
                 transformer.setBaseOutputURI(new File(resultsDir + "/results/output.xml").toURI().toString());
             }*/
-            transformer.setMessageListener(new MessageListener() {
-                public void message(XdmNode content, boolean terminate, SourceLocator locator) {
-                    outcome.addXslMessage(content);
-                    System.err.println(content.getStringValue());
-                }
+            transformer.setMessageListener((content, terminate, locator) -> {
+                outcome.addXslMessage(content);
+                System.err.println(content.getStringValue());
             });
 
 
@@ -991,7 +987,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
      * @param getStatic Whether to collect static or non-static sets
      * @param tunnel    Whether to collect tunnelled or non-tunnelled sets
      * @return Map of the evaluated parameters, keyed by QName
-     * @throws SaxonApiException
+     * @throws SaxonApiException if things go wrong
      */
     protected Map<QName, XdmValue> getNamedParameters(XPathCompiler xpath, XdmNode node, boolean getStatic, boolean tunnel) throws SaxonApiException {
         Map<QName, XdmValue> params = new HashMap<>();
@@ -1100,19 +1096,19 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
     // where feature is the feature name (element name of a child of the dependencies element)
     // and value is the value of the "value" attribute.
 
-    protected Set<String> alwaysOn = new HashSet<String>();
+    protected Set<String> alwaysOn = new HashSet<>();
 
     // Dependencies which are always satisfied in Saxon-EE but not in Saxon-HE or -PE
 
-    protected Set<String> needsEE = new HashSet<String>();
+    protected Set<String> needsEE = new HashSet<>();
 
     // Dependencies which are always satisfied in Saxon-PE and -EE but not in Saxon-HE
 
-    protected Set<String> needsPE = new HashSet<String>();
+    protected Set<String> needsPE = new HashSet<>();
 
     // Dependencies which are never satisfied in Saxon
 
-    protected Set<String> alwaysOff = new HashSet<String>();
+    protected Set<String> alwaysOff = new HashSet<>();
 
     protected void setDependencyData() {
         alwaysOn.add("feature/disabling_output_escaping");
@@ -1167,8 +1163,11 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
     public boolean ensureDependencySatisfied(XdmNode dependency, Environment env) {
         String type = dependency.getNodeName().getLocalName();
         String value = dependency.attribute("value");
+        if (value == null) {
+            value = "*";
+        }
 
-        String tv = type + "/" + (value == null ? "*" : value);
+        String tv = type + "/" + value;
 
         boolean inverse = "false".equals(dependency.attribute("satisfied"));
         boolean needed = !"false".equals(dependency.attribute("satisfied"));
@@ -1187,159 +1186,166 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             return edition.equals("EE") == needed;
         }
 
-        if ("spec".equals(type)) {
-            boolean atLeast = value.endsWith("+");
-            value = value.replace("+", "");
-            String specName = spec.specAndVersion.replace("XT", "XSLT");
-            int order = value.compareTo(specName);
-            return atLeast ? order <= 0 : order == 0;
-            //return !(value.equals("XSLT20") && spec == Spec.XT30);
-        } else if ("feature".equals(type)) {
+        switch (type) {
+            case "spec":
+                boolean atLeast = value.endsWith("+");
+                value = value.replace("+", "");
+                String specName = spec.specAndVersion.replace("XT", "XSLT");
+                int order = value.compareTo(specName);
+                return atLeast ? order <= 0 : order == 0;
 
-            if ("XML_1.1".equals(value)) {
-                String requiredVersion = inverse ? "1.0" : "1.1";
-                final String oldVersion = env.processor.getXmlVersion();
-                if (env != null) {
-                    env.resetActions.add(new Environment.ResetAction() {
-                        @Override
-                        public void reset(Environment env) {
-                            env.processor.setXmlVersion(oldVersion);
-                        }
-                    });
-                    env.processor.setXmlVersion(requiredVersion);
-                    return true;
-                } else {
-                    return false;
-                }
-            } else if ("XSD_1.1".equals(value)) {
-                    String requiredVersion = inverse ? "1.0" : "1.1";
-                    final String oldVersion = (String)env.processor.getConfigurationProperty(Feature.XSD_VERSION);
-                    if (!oldVersion.equals(requiredVersion)) {
-                        env.processor.setConfigurationProperty(Feature.XSD_VERSION, requiredVersion);
+            case "feature":
+                switch (value) {
+                    case "XML_1.1": {
+                        String requiredVersion = inverse ? "1.0" : "1.1";
+                        final String oldVersion = env.processor.getXmlVersion();
                         env.resetActions.add(new Environment.ResetAction() {
                             @Override
                             public void reset(Environment env) {
-                                env.processor.setConfigurationProperty(Feature.XSD_VERSION, oldVersion);
+                                env.processor.setXmlVersion(oldVersion);
                             }
                         });
+                        env.processor.setXmlVersion(requiredVersion);
+                        return true;
                     }
-                    return true;
-            } else if ("higher_order_functions".equals(value)) {
-                return (edition.equals("PE") || edition.equals("EE")) ^ inverse;
-            } else if ("simple-uca-fallback".equals(value)) {
-                return !inverse;
-            } else if ("advanced-uca-fallback".equals(value)) {
-                return (edition.equals("PE") || edition.equals("EE")) ^ inverse;
-            } else if ("streaming-fallback".equals(value)) {
-                boolean required = !inverse;
-                final boolean old = (Boolean) env.processor.getConfigurationProperty(Feature.STREAMING_FALLBACK);
-                if (old != required) {
-                    env.processor.setConfigurationProperty(Feature.STREAMING_FALLBACK, required);
+                    case "XSD_1.1": {
+                        String requiredVersion = inverse ? "1.0" : "1.1";
+                        final String oldVersion = env.processor.getConfigurationProperty(Feature.XSD_VERSION);
+                        if (!oldVersion.equals(requiredVersion)) {
+                            env.processor.setConfigurationProperty(Feature.XSD_VERSION, requiredVersion);
+                            env.resetActions.add(new Environment.ResetAction() {
+                                @Override
+                                public void reset(Environment env) {
+                                    env.processor.setConfigurationProperty(Feature.XSD_VERSION, oldVersion);
+                                }
+                            });
+                        }
+                        return true;
+                    }
+                    case "higher_order_functions":
+                        return (edition.equals("PE") || edition.equals("EE")) ^ inverse;
+                    case "simple-uca-fallback":
+                        return !inverse;
+                    case "advanced-uca-fallback":
+                        return (edition.equals("PE") || edition.equals("EE")) ^ inverse;
+                    case "streaming-fallback":
+                        boolean required = !inverse;
+                        final boolean old = env.processor.getConfigurationProperty(Feature.STREAMING_FALLBACK);
+                        if (old != required) {
+                            env.processor.setConfigurationProperty(Feature.STREAMING_FALLBACK, required);
+                            env.resetActions.add(new Environment.ResetAction() {
+                                @Override
+                                public void reset(Environment env) {
+                                    env.processor.setConfigurationProperty(Feature.STREAMING_FALLBACK, old);
+                                }
+                            });
+                        }
+                        return true;
+                    default:
+                        System.err.println("*** Unknown feature in HE: " + value);
+                        return env.processor.getSaxonEdition().equals("HE") ? false : null;
+                }
+
+            case "default_language_for_numbering": {
+                final String old = env.processor.getConfigurationProperty(Feature.DEFAULT_LANGUAGE);
+                if (!value.equals(old)) {
+                    env.processor.setConfigurationProperty(Feature.DEFAULT_LANGUAGE, value);
                     env.resetActions.add(new Environment.ResetAction() {
-                        @Override
                         public void reset(Environment env) {
-                            env.processor.setConfigurationProperty(Feature.STREAMING_FALLBACK, old);
+                            env.processor.setConfigurationProperty(Feature.DEFAULT_LANGUAGE, old);
                         }
                     });
                 }
                 return true;
-            } else {
-                System.err.println("*** Unknown feature in HE: " + value);
-                return env.processor.getSaxonEdition().equals("HE") ? false : null;
             }
-
-        } else if ("default_language_for_numbering".equals(type)) {
-            final String old = (String) env.processor.getConfigurationProperty(Feature.DEFAULT_LANGUAGE);
-            if (!value.equals(old)) {
-                env.processor.setConfigurationProperty(Feature.DEFAULT_LANGUAGE, value);
+            case "enable_assertions": {
+                boolean on = !inverse;
+                final boolean old = env.xsltCompiler.isAssertionsEnabled();
+                env.xsltCompiler.setAssertionsEnabled(on);
                 env.resetActions.add(new Environment.ResetAction() {
                     public void reset(Environment env) {
-                        env.processor.setConfigurationProperty(Feature.DEFAULT_LANGUAGE, old);
+                        env.xsltCompiler.setAssertionsEnabled(old);
                     }
                 });
+                return true;
             }
-            return true;
-        } else if ("enable_assertions".equals(type)) {
-            boolean on = !inverse;
-            final boolean old = env.xsltCompiler.isAssertionsEnabled();
-            env.xsltCompiler.setAssertionsEnabled(on);
-            env.resetActions.add(new Environment.ResetAction() {
-                public void reset(Environment env) {
-                    env.xsltCompiler.setAssertionsEnabled(old);
+            case "extension-function":
+                if (value.equals("Q{http://relaxng.org/ns/structure/1.0}schema-report#1")) {
+                    try {
+                        Configuration config = env.processor.getUnderlyingConfiguration();
+                        Object sf = config.getInstance("net.cfoster.saxonjing.SchemaFunction", null);
+                        env.processor.registerExtensionFunction((ExtensionFunctionDefinition) sf);
+                        Object sfd = config.getInstance("net.cfoster.saxonjing.SchemaReportFunction", null);
+                        env.processor.registerExtensionFunction((ExtensionFunctionDefinition) sfd);
+                        return true;
+                    } catch (XPathException err) {
+                        System.err.println("Failed to load Saxon-Jing extension functions");
+                        return false;
+                    }
                 }
-            });
-            return true;
-        } else if ("extension-function".equals(type)) {
-            if (value.equals("Q{http://relaxng.org/ns/structure/1.0}schema-report#1")) {
-                try {
-                    Configuration config = env.processor.getUnderlyingConfiguration();
-                    Object sf = config.getInstance("net.cfoster.saxonjing.SchemaFunction", null);
-                    env.processor.registerExtensionFunction((ExtensionFunctionDefinition) sf);
-                    Object sfd = config.getInstance("net.cfoster.saxonjing.SchemaReportFunction", null);
-                    env.processor.registerExtensionFunction((ExtensionFunctionDefinition) sfd);
-                    return true;
-                } catch (XPathException err) {
-                    System.err.println("Failed to load Saxon-Jing extension functions");
-                    return false;
-                }
-            }
-            return false;
-        } else if ("year_component_values".equals(type)) {
-            if ("support year zero".equals(value)) {
-                if (env != null) {
-                    env.processor.setConfigurationProperty(Feature.XSD_VERSION, inverse ? "1.0" : "1.1");
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-            return !inverse;
-        } else if ("additional_normalization_form".equals(type)) {
-            if (value.equals("support FULLY-NORMALIZED")) {
-                return inverse;
-            }
-            return !inverse;
-
-        } else if ("on-multiple-match".equals(type)) {
-            env.resetActions.add(new Environment.ResetAction() {
-                @Override
-                public void reset(Environment env) {
-                    env.xsltCompiler.getUnderlyingCompilerInfo().setRecoveryPolicy(Configuration.RECOVER_WITH_WARNINGS);
-                }
-            });
-            if (value.equals("error")) {
-                env.xsltCompiler.getUnderlyingCompilerInfo().setRecoveryPolicy(Configuration.DO_NOT_RECOVER);
-            } else {
-                env.xsltCompiler.getUnderlyingCompilerInfo().setRecoveryPolicy(Configuration.RECOVER_SILENTLY);
-            }
-            return true;
-        } else if ("ignore_doc_failure".equals(type)) {
-            env.resetActions.add(new Environment.ResetAction() {
-                @Override
-                public void reset(Environment env) {
-                    env.xsltCompiler.getUnderlyingCompilerInfo().setRecoveryPolicy(Configuration.RECOVER_WITH_WARNINGS);
-                }
-            });
-            if (inverse) {
-                env.xsltCompiler.getUnderlyingCompilerInfo().setRecoveryPolicy(Configuration.DO_NOT_RECOVER);
-            } else {
-                env.xsltCompiler.getUnderlyingCompilerInfo().setRecoveryPolicy(Configuration.RECOVER_SILENTLY);
-            }
-            return true;
-        } else if ("combinations_for_numbering".equals(type)) {
-            if (value.equals("COPTIC EPACT DIGIT ONE") || value.equals("SINHALA ARCHAIC DIGIT ONE") || value.equals("MENDE KIKAKUI DIGIT ONE")) {
                 return false;
-            }
-            return !inverse;
-        } else if ("xsd-version".equals(type)) {
-            return env.processor.getSaxonEdition().equals("HE") ? false : null;
-        } else if ("sweep_and_posture".equals(type)) {
-            return env.processor.getSaxonEdition().equals("HE") ? inverse : null;
-        } else if ("unicode-version".equals(type)) {
-            return value.equals("6.0"); // Avoid running Unicode 9.0 tests - they are slow!
-        } else {
-            println("**** dependency not recognized for HE: " + type);
-            return false;
+            case "year_component_values":
+                if ("support year zero".equals(value)) {
+                    if (env != null) {
+                        env.processor.setConfigurationProperty(Feature.XSD_VERSION, inverse ? "1.0" : "1.1");
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+                return !inverse;
+            case "additional_normalization_form":
+                if ("support FULLY-NORMALIZED".equals(value)) {
+                    return inverse;
+                }
+                return !inverse;
+
+            case "on-multiple-match":
+                env.resetActions.add(new Environment.ResetAction() {
+                    @Override
+                    public void reset(Environment env) {
+                        env.xsltCompiler.getUnderlyingCompilerInfo().setRecoveryPolicy(Configuration.RECOVER_WITH_WARNINGS);
+                    }
+                });
+                if ("error".equals(value)) {
+                    env.xsltCompiler.getUnderlyingCompilerInfo().setRecoveryPolicy(Configuration.DO_NOT_RECOVER);
+                } else {
+                    env.xsltCompiler.getUnderlyingCompilerInfo().setRecoveryPolicy(Configuration.RECOVER_SILENTLY);
+                }
+                return true;
+
+            case "ignore_doc_failure":
+                env.resetActions.add(new Environment.ResetAction() {
+                    @Override
+                    public void reset(Environment env) {
+                        env.xsltCompiler.getUnderlyingCompilerInfo().setRecoveryPolicy(Configuration.RECOVER_WITH_WARNINGS);
+                    }
+                });
+                if (inverse) {
+                    env.xsltCompiler.getUnderlyingCompilerInfo().setRecoveryPolicy(Configuration.DO_NOT_RECOVER);
+                } else {
+                    env.xsltCompiler.getUnderlyingCompilerInfo().setRecoveryPolicy(Configuration.RECOVER_SILENTLY);
+                }
+                return true;
+
+            case "combinations_for_numbering":
+                if (value.equals("COPTIC EPACT DIGIT ONE") || value.equals("SINHALA ARCHAIC DIGIT ONE") || value.equals("MENDE KIKAKUI DIGIT ONE")) {
+                    return false;
+                }
+                return !inverse;
+
+            case "xsd-version":
+                return env.processor.getSaxonEdition().equals("HE") ? false : null;
+
+            case "sweep_and_posture":
+                return env.processor.getSaxonEdition().equals("HE") ? inverse : null;
+
+            case "unicode-version":
+                return value.equals("6.0"); // Avoid running Unicode 9.0 tests - they are slow!
+
+            default:
+                println("**** dependency not recognized for HE: " + type);
+                return false;
         }
     }
 
@@ -1351,10 +1357,9 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
      * @param contextItem   Context item
      * @param attributePath Path to the required (singleton?) attribute
      * @return the value of the attribute as a QName
-     * @throws SaxonApiException
      */
 
-    protected static QName getQNameAttribute(XPathCompiler compiler, XdmNode contextItem, Step attributePath) throws SaxonApiException {
+    protected static QName getQNameAttribute(XPathCompiler compiler, XdmNode contextItem, Step<? extends XdmNode> attributePath) {
         Optional<XdmNode> att = contextItem.select(attributePath).asOptionalNode();
         if (att.isPresent()) {
             String val = att.get().getStringValue().trim();
@@ -1406,80 +1411,22 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                 Serializer destination = proc.newSerializer(stringWriter);
                 destination.setDestinationBaseURI(uri);
                 if (uri.equals(baseOutputURI)) {
-                    destination.onClose(() -> {
-                        outcome.setPrincipalSerializedResult(stringWriter.toString());
-                    });
+                    destination.onClose(() -> outcome.setPrincipalSerializedResult(stringWriter.toString()));
                 } else {
-                    destination.onClose(() -> {
-                        outcome.setSecondaryResult(uri, null, stringWriter.toString());
-                    });
+                    destination.onClose(() -> outcome.setSecondaryResult(uri, null, stringWriter.toString()));
                 }
                 return destination;
             } else {
                 XdmDestination destination = new XdmDestination();
                 destination.setBaseURI(uri);
                 if (uri.equals(baseOutputURI)) {
-                    destination.onClose(() -> {
-                        outcome.setPrincipalResult(destination.getXdmNode());
-                    });
+                    destination.onClose(() -> outcome.setPrincipalResult(destination.getXdmNode()));
                 } else {
-                    destination.onClose(() -> {
-                        outcome.setSecondaryResult(uri, destination.getXdmNode(), null);
-                    });
+                    destination.onClose(() -> outcome.setSecondaryResult(uri, destination.getXdmNode(), null));
                 }
                 return destination;
             }
         }
-
-//        @Override
-//        public ResultDocumentInstance openResultDocument(XPathContext context, String href, String baseUri, SerializationParameters params) throws XPathException {
-//            try {
-//                URI uri = new URI(baseUri).resolve(href);
-//                if (serialized) {
-//                    StringWriter stringWriter = new StringWriter();
-//                    Serializer destination = proc.newSerializer(stringWriter);
-//                    destination.setDefaultOutputProperties(params.getProperties());
-//                    destination.setCharacterMap(params.getCharacterMapIndex());
-//                    return new ResultDocumentInstance() {
-//                        @Override
-//                        public Receiver getReceiver() throws XPathException {
-//                            try {
-//                                Receiver out = destination.getReceiver(context.getConfiguration());
-//                                out.setSystemId(uri.toASCIIString());
-//                                return out;
-//                            } catch (SaxonApiException e) {
-//                                throw XPathException.makeXPathException(e);
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void close(Receiver receiver) throws XPathException {
-//                            receiver.close();
-//                            outcome.setSecondaryResult(uri, null, stringWriter.toString());
-//                        }
-//                    };
-//                } else {
-//                    XdmDestination destination = new XdmDestination();
-//                    destination.setBaseURI(uri);
-//                    return new ResultDocumentInstance() {
-//                        @Override
-//                        public Receiver getReceiver() {
-//                            Receiver out = destination.getReceiver(context.getConfiguration());
-//                            out.setSystemId(uri.toASCIIString());
-//                            return out;
-//                        }
-//
-//                        @Override
-//                        public void close(Receiver receiver) throws XPathException {
-//                            outcome.setSecondaryResult(destination.getBaseURI(), destination.getXdmNode(), null);
-//                        }
-//                    };
-//                }
-//            } catch (URISyntaxException e) {
-//                throw new AssertionError(e);
-//            }
-//        }
-
 
     }
 
@@ -1517,13 +1464,11 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
 //                    return r;
                 } else {
                     destination = new XdmDestination();
-                    ((XdmDestination) destination).setDestinationBaseURI(uri);
+                    destination.setDestinationBaseURI(uri);
                     return destination.getReceiver(null, null); // TBA
                     //return new SequenceNormalizerWithSpaceSeparator(r);
                 }
-            } catch (SaxonApiException e) {
-                throw new XPathException(e);
-            } catch (URISyntaxException e) {
+            } catch (SaxonApiException | URISyntaxException e) {
                 throw new XPathException(e);
             }
         }

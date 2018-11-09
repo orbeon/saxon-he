@@ -13,7 +13,6 @@ import net.sf.saxon.expr.instruct.Choose;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.Feature;
 import net.sf.saxon.om.Item;
-import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -28,7 +27,6 @@ import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.SequenceType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -509,7 +507,7 @@ public class ForExpression extends Assignation {
      */
 
     public static class MappingAction
-            implements MappingFunction<Item<?>, Item<?>>, ItemMappingFunction<Item<?>, Item<?>>, StatefulMappingFunction {
+            implements MappingFunction<Item<?>, Item<?>>, ItemMappingFunction<Item<?>, Item<?>> {
 
         protected XPathContext context;
         private int slotNumber;
@@ -535,16 +533,6 @@ public class ForExpression extends Assignation {
             return action.evaluateItem(context);
         }
 
-        public StatefulMappingFunction getAnother() {
-            // Create a copy of the stack frame, so that changes made to local variables by the cloned
-            // iterator are not seen by the original iterator
-            XPathContextMajor c2 = context.newContext();
-            StackFrame oldstack = context.getStackFrame();
-            Sequence[] vars = oldstack.getStackFrameValues();
-            Sequence[] newvars = Arrays.copyOf(vars, vars.length);
-            c2.setStackFrame(oldstack.getStackFrameMap(), newvars);
-            return new MappingAction(c2, slotNumber, action);
-        }
     }
 
     /**

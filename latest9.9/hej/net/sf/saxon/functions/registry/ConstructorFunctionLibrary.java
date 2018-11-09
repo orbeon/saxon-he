@@ -81,7 +81,7 @@ public class ConstructorFunctionLibrary implements FunctionLibrary {
                 if (value == null) {
                     return EmptySequence.getInstance();
                 }
-                return CastToUnion.cast(value, (UnionType) type, resolver, context.getConfiguration().getConversionRules());
+                return UnionConstructorFunction.cast(value, (UnionType) type, resolver, context.getConfiguration().getConversionRules());
             };
             SequenceType returnType = ((UnionType) type).getResultTypeOfCast();
             return new CallableFunction(1, callable,
