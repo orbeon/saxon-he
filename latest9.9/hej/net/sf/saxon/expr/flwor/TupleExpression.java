@@ -31,7 +31,7 @@ public class TupleExpression extends Expression {
     private OperandArray operanda;
 
     public TupleExpression() {
-
+        int i=0; // KILROY
     }
 
     /**
