@@ -250,16 +250,14 @@ public final class Atomizer extends UnaryExpression {
             }
             if (untyped && operand instanceof AxisExpression &&
                     ((AxisExpression)operand).getAxis() == AxisInfo.ATTRIBUTE &&
-                    ((AxisExpression) operand).getNodeTest() instanceof NameTest) {
+                    ((AxisExpression) operand).getNodeTest() instanceof NameTest &&
+                    !((AxisExpression) operand).isContextPossiblyUndefined()) {
                 StructuredQName name = ((AxisExpression) operand).getNodeTest().getMatchingNodeName();
                 FingerprintedQName qName = new FingerprintedQName(name, visitor.getConfiguration().getNamePool());
                 AttributeGetter ag = new AttributeGetter(qName);
                 int checks = 0;
-                if (((AxisExpression) operand).isContextPossiblyUndefined()) {
-                    checks |= AttributeGetter.CHECK_CONTEXT_ITEM_PRESENT;
-                }
                 if (!(((AxisExpression) operand).getContextItemType() instanceof NodeTest)) {
-                    checks |= AttributeGetter.CHECK_CONTEXT_ITEM_IS_NODE;
+                    checks = AttributeGetter.CHECK_CONTEXT_ITEM_IS_NODE;
                 }
                 ag.setRequiredChecks(checks);
                 ExpressionTool.copyLocationInfo(this, ag);

@@ -31,11 +31,11 @@ import net.sf.saxon.value.UntypedAtomicValue;
 
 public final class AttributeGetter extends Expression {
 
-    public static final int CHECK_CONTEXT_ITEM_PRESENT = 1;
+    //public static final int CHECK_CONTEXT_ITEM_PRESENT = 1;
     public static final int CHECK_CONTEXT_ITEM_IS_NODE = 2;
 
     private FingerprintedQName attributeName;
-    private int requiredChecks = CHECK_CONTEXT_ITEM_PRESENT | CHECK_CONTEXT_ITEM_IS_NODE;
+    private int requiredChecks = CHECK_CONTEXT_ITEM_IS_NODE;
 
     public AttributeGetter(FingerprintedQName attributeName) {
         this.attributeName = attributeName;
@@ -107,6 +107,7 @@ public final class AttributeGetter extends Expression {
             return val == null ? null : new UntypedAtomicValue(val);
         }
         if (item == null) {
+            // This doesn't actually happen, we don't create an AttributeGetter unless we know statically
             dynamicError("The context item for @" + attributeName.getDisplayName() +
                                  " is absent", "XPDY0002", context);
         }
