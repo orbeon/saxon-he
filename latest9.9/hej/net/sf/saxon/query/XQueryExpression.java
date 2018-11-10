@@ -27,6 +27,7 @@ import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.ManualIterator;
+import net.sf.saxon.type.ItemType;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -73,7 +74,8 @@ public class XQueryExpression implements Location, ExpressionOwner {
             visitor.setOptimizeForStreaming(streaming);
             exp = exp.simplify();
             exp.checkForUpdatingSubexpressions();
-            ContextItemStaticInfo cit = config.makeContextItemStaticInfo(mainModule.getUserQueryContext().getRequiredContextItemType(), true);
+            ItemType req = exec.getGlobalContextRequirement().getRequiredItemType();
+            ContextItemStaticInfo cit = config.makeContextItemStaticInfo(req, true);
             Expression e2 = exp.typeCheck(visitor, cit);
             if (e2 != exp) {
                 e2.setRetainedStaticContext(exp.getRetainedStaticContext());
