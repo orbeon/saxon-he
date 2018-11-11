@@ -125,7 +125,7 @@ public class SuppliedParameterReference extends Expression {
      * Copy an expression. This makes a deep copy.
      *
      * @return the copy of the original expression
-     * @param rebindings
+     * @param rebindings variables that need to be re-bound
      */
 
     /*@NotNull*/
@@ -153,7 +153,6 @@ public class SuppliedParameterReference extends Expression {
      *
      * @param c the XPathContext which contains the relevant variable bindings
      * @return the value of the variable, if it is defined
-     * @throws XPathException if the variable is undefined
      */
 
     public Sequence<?> evaluateVariable(XPathContext c) {
