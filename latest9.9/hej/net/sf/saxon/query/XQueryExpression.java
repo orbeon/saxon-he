@@ -15,6 +15,7 @@ import net.sf.saxon.expr.ExpressionOwner;
 import net.sf.saxon.expr.PackageData;
 import net.sf.saxon.expr.XPathContextMajor;
 import net.sf.saxon.expr.instruct.Executable;
+import net.sf.saxon.expr.instruct.GlobalContextRequirement;
 import net.sf.saxon.expr.instruct.GlobalVariable;
 import net.sf.saxon.expr.instruct.SlotManager;
 import net.sf.saxon.expr.parser.*;
@@ -27,6 +28,7 @@ import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.ManualIterator;
+import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.ItemType;
 
 import javax.xml.transform.Result;
@@ -74,7 +76,8 @@ public class XQueryExpression implements Location, ExpressionOwner {
             visitor.setOptimizeForStreaming(streaming);
             exp = exp.simplify();
             exp.checkForUpdatingSubexpressions();
-            ItemType req = exec.getGlobalContextRequirement().getRequiredItemType();
+            GlobalContextRequirement contextReq = exec.getGlobalContextRequirement();
+            ItemType req = contextReq == null ? AnyItemType.getInstance() : contextReq.getRequiredItemType();
             ContextItemStaticInfo cit = config.makeContextItemStaticInfo(req, true);
             Expression e2 = exp.typeCheck(visitor, cit);
             if (e2 != exp) {

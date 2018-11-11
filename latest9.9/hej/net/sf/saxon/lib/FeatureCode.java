@@ -267,8 +267,10 @@ public abstract class FeatureCode {
     /** @see Feature#THRESHOLD_FOR_FUNCTION_INLINING  */
     public final static int THRESHOLD_FOR_FUNCTION_INLINING = 122;
 
+    public final static int THRESHOLD_FOR_HOTSPOT_BYTE_CODE = 123;
 
-    public final static int MAX = 123;
+
+    public final static int MAX = 124;
 
 }
         

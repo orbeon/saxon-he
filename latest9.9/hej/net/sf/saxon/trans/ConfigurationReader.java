@@ -51,9 +51,9 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
     private FastStringBuffer buffer = new FastStringBuffer(100);
     protected Configuration config;
     private ClassLoader classLoader = null;
-    private List<XPathException> errors = new ArrayList<XPathException>();
+    private List<XPathException> errors = new ArrayList<>();
     private Locator locator;
-    private Stack<List<String[]>> namespaceStack = new Stack<List<String[]>>();
+    private Stack<List<String[]>> namespaceStack = new Stack<>();
     private PackageLibrary packageLibrary;
     private PackageDetails currentPackage;
     private Configuration baseConfiguration;
@@ -88,7 +88,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
      *
      * @param source the Source of the configuration file
      * @return the constructed Configuration
-     * @throws XPathException
+     * @throws XPathException if a failure occurs, typically an invalid configuration file
      */
 
     public Configuration makeConfiguration(Source source) throws XPathException {
@@ -138,9 +138,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
             try {
                 parser.setFeature("http://xml.org/sax/features/namespaces", true);
                 parser.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
-            } catch (SAXNotRecognizedException e) {
-                throw new TransformerFactoryConfigurationError(e);
-            } catch (SAXNotSupportedException e) {
+            } catch (SAXNotRecognizedException | SAXNotSupportedException e) {
                 throw new TransformerFactoryConfigurationError(e);
             }
         }
@@ -176,24 +174,24 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         this.locator = locator;
     }
 
-    public void startDocument() throws SAXException {
-        namespaceStack.push(new ArrayList<String[]>());
+    public void startDocument() {
+        namespaceStack.push(new ArrayList<>());
     }
 
-    public void endDocument() throws SAXException {
+    public void endDocument() {
         namespaceStack.pop();
         config.getDefaultXsltCompilerInfo().setPackageLibrary(packageLibrary);
     }
 
-    public void startPrefixMapping(String prefix, String uri) throws SAXException {
+    public void startPrefixMapping(String prefix, String uri) {
         namespaceStack.peek().add(new String[]{prefix, uri});
     }
 
-    public void endPrefixMapping(String prefix) throws SAXException {
+    public void endPrefixMapping(String prefix) {
 
     }
 
-    public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+    public void startElement(String uri, String localName, String qName, Attributes atts) {
         buffer.setLength(0);
         if (NamespaceConstant.SAXON_CONFIGURATION.equals(uri)) {
             if (level == 0) {
@@ -204,15 +202,20 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
                 if (edition == null) {
                     edition = "HE";
                 }
-                if (edition.equals("HE")) {
-                    config = new Configuration();
-                } else if (edition.equals("PE")) {
-                    config = Configuration.makeLicensedConfiguration(classLoader, "com.saxonica.config.ProfessionalConfiguration");
-                } else if (edition.equals("EE")) {
-                    config = Configuration.makeLicensedConfiguration(classLoader, "com.saxonica.config.EnterpriseConfiguration");
-                } else {
-                    error("configuration", "edition", edition, "HE|PE|EE");
-                    config = new Configuration();
+                switch (edition) {
+                    case "HE":
+                        config = new Configuration();
+                        break;
+                    case "PE":
+                        config = Configuration.makeLicensedConfiguration(classLoader, "com.saxonica.config.ProfessionalConfiguration");
+                        break;
+                    case "EE":
+                        config = Configuration.makeLicensedConfiguration(classLoader, "com.saxonica.config.EnterpriseConfiguration");
+                        break;
+                    default:
+                        error("configuration", "edition", edition, "HE|PE|EE");
+                        config = new Configuration();
+                        break;
                 }
 
                 if (baseConfiguration != null) {
@@ -262,33 +265,39 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
                 }
             } else if (level == 2) {
                 subsection = localName;
-                if ("resources".equals(section)) {
-                    if ("fileExtension".equals(localName)) {
-                        readFileExtension(atts);
-                    }
-                    // no action until endElement()
-                } else if ("collations".equals(section)) {
-                    if (!"collation".equals(localName)) {
-                        error(localName, null, null, "collation");
-                    } else {
-                        readCollation(atts);
-                    }
-                } else if ("localizations".equals(section)) {
-                    if (!"localization".equals(localName)) {
-                        error(localName, null, null, "localization");
-                    } else {
-                        readLocalization(atts);
-                    }
-                } else if ("xslt".equals(section)) {
-                    if ("extensionElement".equals(localName)) {
-                        readExtensionElement(atts);
-                    } else {
-                        error(localName, null, null, null);
-                    }
-                } else if ("xsltPackages".equals(section)) {
-                    if ("package".equals(localName)) {
-                        readXsltPackage(atts);
-                    }
+                switch (section) {
+                    case "resources":
+                        if ("fileExtension".equals(localName)) {
+                            readFileExtension(atts);
+                        }
+                        // no action until endElement()
+                        break;
+                    case "collations":
+                        if (!"collation".equals(localName)) {
+                            error(localName, null, null, "collation");
+                        } else {
+                            readCollation(atts);
+                        }
+                        break;
+                    case "localizations":
+                        if (!"localization".equals(localName)) {
+                            error(localName, null, null, "localization");
+                        } else {
+                            readLocalization(atts);
+                        }
+                        break;
+                    case "xslt":
+                        if ("extensionElement".equals(localName)) {
+                            readExtensionElement(atts);
+                        } else {
+                            error(localName, null, null, null);
+                        }
+                        break;
+                    case "xsltPackages":
+                        if ("package".equals(localName)) {
+                            readXsltPackage(atts);
+                        }
+                        break;
                 }
             } else if (level == 3) {
                 if ("package".equals(subsection)) {
@@ -303,7 +312,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
             errors.add(new XPathException("Configuration elements must be in namespace " + NamespaceConstant.SAXON_CONFIGURATION));
         }
         level++;
-        namespaceStack.push(new ArrayList<String[]>());
+        namespaceStack.push(new ArrayList<>());
     }
 
     private void readGlobalElement(Attributes atts) {
@@ -311,7 +320,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         for (int i = 0; i < atts.getLength(); i++) {
             String name = atts.getLocalName(i);
             String value = atts.getValue(i);
-            if (value.length() != 0 && atts.getURI(i).isEmpty()) {
+            if (!value.isEmpty() && atts.getURI(i).isEmpty()) {
                 props.put(name, value);
             }
         }
@@ -360,6 +369,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         applyProperty(props, "suppressEvaluationExpiryWarning", FeatureKeys.SUPPRESS_EVALUATION_EXPIRY_WARNING);
         applyProperty(props, "suppressXPathWarnings", FeatureKeys.SUPPRESS_XPATH_WARNINGS);
         applyProperty(props, "suppressXsltNamespaceCheck", FeatureKeys.SUPPRESS_XSLT_NAMESPACE_CHECK);
+        applyProperty(props, "thresholdForHotspotByteCode", FeatureKeys.THRESHOLD_FOR_HOTSPOT_BYTECODE);
         applyProperty(props, "timing", FeatureKeys.TIMING);
         applyProperty(props, "traceExternalFunctions", FeatureKeys.TRACE_EXTERNAL_FUNCTIONS);
         applyProperty(props, "traceListener", FeatureKeys.TRACE_LISTENER_CLASS);
@@ -448,10 +458,10 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
             if (atts.getURI(i).isEmpty()) {
                 String name = atts.getLocalName(i);
                 String value = atts.getValue(i);
-                if ("defaultLanguage".equals(name) && value.length() > 0) {
+                if ("defaultLanguage".equals(name) && !value.isEmpty()) {
                     config.setConfigurationProperty(FeatureKeys.DEFAULT_LANGUAGE, value);
                 }
-                if ("defaultCountry".equals(name) && value.length() > 0) {
+                if ("defaultCountry".equals(name) && !value.isEmpty()) {
                     config.setConfigurationProperty(FeatureKeys.DEFAULT_COUNTRY, value);
                 }
             }
@@ -465,9 +475,9 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
             if (atts.getURI(i).isEmpty()) {
                 String name = atts.getLocalName(i);
                 String value = atts.getValue(i);
-                if ("lang".equals(name) && value.length() > 0) {
+                if ("lang".equals(name) && !value.isEmpty()) {
                     lang = value;
-                } else if (value.length() > 0) {
+                } else if (!value.isEmpty()) {
                     properties.setProperty(name, value);
                 }
             }
@@ -620,7 +630,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         for (int i = 0; i < atts.getLength(); i++) {
             String name = atts.getLocalName(i);
             String value = atts.getValue(i);
-            if (value.length() != 0 && atts.getURI(i).isEmpty()) {
+            if (!value.isEmpty() && atts.getURI(i).isEmpty()) {
                 props.put(name, value);
             }
         }
@@ -645,7 +655,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         for (int i = 0; i < atts.getLength(); i++) {
             String name = atts.getLocalName(i);
             String value = atts.getValue(i);
-            if (value.length() != 0 && atts.getURI(i).isEmpty()) {
+            if (!value.isEmpty() && atts.getURI(i).isEmpty()) {
                 props.put(name, value);
             }
         }
@@ -672,7 +682,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         for (int i = 0; i < atts.getLength(); i++) {
             String name = atts.getLocalName(i);
             String value = atts.getValue(i);
-            if (value.length() != 0 && atts.getURI(i).isEmpty()) {
+            if (!value.isEmpty() && atts.getURI(i).isEmpty()) {
                 props.put(name, value);
             }
         }
@@ -716,29 +726,23 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         errors.add(err);
     }
 
-    public void endElement(String uri, String localName, String qName) throws SAXException {
+    public void endElement(String uri, String localName, String qName) {
         if (level == 3 && "resources".equals(section)) {
             String content = buffer.toString();
-            if (content.length() != 0) {
+            if (!content.isEmpty()) {
                 if ("externalObjectModel".equals(localName)) {
                     try {
                         ExternalObjectModel model = (ExternalObjectModel) config.getInstance(content, null);
                         config.registerExternalObjectModel(model);
-                    } catch (XPathException e) {
+                    } catch (XPathException | ClassCastException e) {
                         errorClass("externalObjectModel", null, content, ExternalObjectModel.class, e);
-                    } catch (ClassCastException cce) {
-                        errorClass("externalObjectModel", null, content, ExternalObjectModel.class, cce);
                     }
                 } else if ("extensionFunction".equals(localName)) {
                     try {
                         ExtensionFunctionDefinition model = (ExtensionFunctionDefinition) config.getInstance(content, null);
                         config.registerExtensionFunction(model);
-                    } catch (XPathException e) {
+                    } catch (XPathException | ClassCastException | IllegalArgumentException e) {
                         errorClass("extensionFunction", null, content, ExtensionFunctionDefinition.class, e);
-                    } catch (ClassCastException cce) {
-                        errorClass("extensionFunction", null, content, ExtensionFunctionDefinition.class, cce);
-                    } catch (IllegalArgumentException iae) {
-                        errorClass("extensionFunction", null, content, ExtensionFunctionDefinition.class, iae);
                     }
                 } else if ("schemaDocument".equals(localName)) {
                     try {
@@ -778,19 +782,19 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         }
     }
 
-    public void characters(char ch[], int start, int length) throws SAXException {
+    public void characters(char ch[], int start, int length) {
         buffer.append(ch, start, length);
     }
 
-    public void ignorableWhitespace(char ch[], int start, int length) throws SAXException {
+    public void ignorableWhitespace(char ch[], int start, int length) {
 
     }
 
-    public void processingInstruction(String target, String data) throws SAXException {
+    public void processingInstruction(String target, String data) {
 
     }
 
-    public void skippedEntity(String name) throws SAXException {
+    public void skippedEntity(String name) {
 
     }
 
@@ -829,7 +833,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
      */
     
     public Iterator<String> iteratePrefixes() {
-        Set<String> prefixes = new HashSet<String>();
+        Set<String> prefixes = new HashSet<>();
         for (List<String[]> list : namespaceStack) {
             for (String[] pair : list) {
                 prefixes.add(pair[0]);
