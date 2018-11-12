@@ -139,6 +139,16 @@ public class XQueryParser extends XPathParser {
                 setExecutable(exec);
                 //mainModule.setExecutable(exec);
             }
+            GlobalContextRequirement requirement = exec.getGlobalContextRequirement();
+            if (requirement != null) {
+                requirement.addRequiredItemType(mainModule.getRequiredContextItemType());
+            } else if (mainModule.getRequiredContextItemType() != null
+                    && mainModule.getRequiredContextItemType() != AnyItemType.getInstance()) {
+                GlobalContextRequirement req = new GlobalContextRequirement();
+                req.setExternal(true);
+                req.addRequiredItemType(mainModule.getRequiredContextItemType());
+                exec.setGlobalContextRequirement(req);
+            }
 
 //            setDefaultContainer(new SimpleContainer(mainModule.getPackageData()));
 
