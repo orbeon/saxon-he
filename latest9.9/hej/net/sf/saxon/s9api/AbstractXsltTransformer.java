@@ -251,22 +251,7 @@ abstract class AbstractXsltTransformer {
     }
 
     /**
-     * Ask whether assertions (xsl:assert instructions) have been enabled at run time. By default
-     * they are disabled at compile time. If assertions are enabled at compile time, then by
-     * default they will also be enabled at run time; but they can be disabled at run time by
-     * specific request. At compile time, assertions can be enabled for some packages and
-     * disabled for others; at run-time, they can only be enabled or disabled globally.
-     *
-     * @return true if assertions are enabled at run time
-     * @since 9.7
-     */
-
-    public boolean isAssertionsEnabled() {
-        return controller.isAssertionsEnabled();
-    }
-
-    /**
-     * Ask whether assertions (xsl:assert instructions) have been enabled at run time. By default
+     * Say whether assertions (xsl:assert instructions) should be enabled at run time. By default
      * they are disabled at compile time. If assertions are enabled at compile time, then by
      * default they will also be enabled at run time; but they can be disabled at run time by
      * specific request. At compile time, assertions can be enabled for some packages and
@@ -279,6 +264,21 @@ abstract class AbstractXsltTransformer {
 
     public void setAssertionsEnabled(boolean enabled) {
         controller.setAssertionsEnabled(enabled);
+    }
+
+    /**
+     * Ask whether assertions (xsl:assert instructions) have been enabled at run time. By default
+     * they are disabled at compile time. If assertions are enabled at compile time, then by
+     * default they will also be enabled at run time; but they can be disabled at run time by
+     * specific request. At compile time, assertions can be enabled for some packages and
+     * disabled for others; at run-time, they can only be enabled or disabled globally.
+     *
+     * @return true if assertions are enabled at run time
+     * @since 9.7
+     */
+
+    public boolean isAssertionsEnabled() {
+        return controller.isAssertionsEnabled();
     }
 
     /**

@@ -57,7 +57,6 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
     private GlobalParameterSet parameters;
     /*@Nullable*/ private Source initialSource;
     private Destination destination;
-    private Receiver sourceTreeBuilder;
     private DestinationHelper destinationHelper = new DestinationHelper(this);
     private URI destinationBaseUri;
 
@@ -140,6 +139,10 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
      * <p>To run a transformation in streaming mode, the source should be supplied as an instance
      * of {@link javax.xml.transform.stream.StreamSource} or {@link javax.xml.transform.sax.SAXSource}.
      * </p>
+     * <p>Some kinds of {@code Source} (for example {@code StreamSource} and
+     * {@code SAXSource}are consumed by use; others (such as {@code DOMSource}) are immutable.
+     * In the general case, therefore, the {@code Source} object that is supplied by this method
+     * does not survive a call on {@link #transform()}.</p>
      *
      * @param source the principal source document for the transformation
      */
@@ -266,26 +269,16 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
      * This method can be used to chain transformations into a pipeline, by using one
      * {@link XsltTransformer} as the destination of another
      * <p>
-     * If the destination is a {@link Serializer}, then this call has two side-effects:
-     * <p><ul>
-     * <li>It sets the base output URI for the transformation. This acts as the base URI for resolving
-     * the {@code href} attribute of any {@code xsl:result-document} instruction.</li>
-     *
-     * <li>It modifies the supplied Serializer to make it aware of the serialization properties
-     * defined in the default xsl:output declaration of the stylesheet.
-     * The serialization parameters defined in the {@code Serializer} override any
-     * serialization parameters defined using {@code xsl:output} for the principal
-     * output of the transformation. However, they have no effect on any output produced
-     * using {@code xsl:result-document}.</li>
-     * </ul>
+     * The {@code Destination} object will generally be modified by a transformation
+     * (that is, by a call on {@link #transform()}), and in general a {@code Destination}
+     * cannot be used more than once. Therefore, if this {@code XsltTransformer} is used
+     * for multiple transformations then a new {@code Destination} should be set for each one.
      *
      * @param destination the destination to be used for the result of this transformation
      */
 
     public void setDestination(Destination destination) {
         this.destination = destination;
-//        controller.setNewReceiverFactory(
-//                props -> destination.getReceiver(controller.makePipelineConfiguration(), props));
     }
 
     /**
@@ -300,13 +293,21 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
 
     /**
      * Perform the transformation. If this method is used, a destination must have been supplied
-     * previously
+     * previously.
+     *
+     * <p>Calling this method will in general consume any {@code Source} and {@code Destination}
+     * that have been supplied, so a new {@code Source} and {@code Destination} are needed for each
+     * transformation. Other properties of this {@code XsltTransformer} (for example, the values
+     * of parameters, the initial template, and initial mode) are left unchanged after the
+     * transformation completes.</p>
      *
      * @throws SaxonApiException     if any dynamic error occurs during the transformation
      * @throws IllegalStateException if no destination has been supplied
      */
 
     public void transform() throws SaxonApiException {
+        Source initialSelection = initialSource;
+        boolean reset = false;
         if (destination == null) {
             throw new IllegalStateException("No destination has been supplied");
         }
@@ -314,17 +315,17 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
         try {
             Receiver out = getDestinationReceiver(controller, destination);
             GlobalContextRequirement gcr = controller.getExecutable().getGlobalContextRequirement();
-            if ((gcr == null || !gcr.isAbsentFocus()) && initialSource != null) {
-                if (initialSource instanceof NodeInfo) {
-                    maybeSetGlobalContextItem((NodeInfo)initialSource);
-                } else if (initialSource instanceof DOMSource) {
-                    NodeInfo node = controller.prepareInputTree(initialSource);
-                    maybeSetGlobalContextItem(node);
-                    initialSource = node;
+            if ((gcr == null || !gcr.isAbsentFocus()) && initialSelection != null) {
+                if (initialSelection instanceof NodeInfo) {
+                    reset = maybeSetGlobalContextItem((NodeInfo) initialSelection);
+                } else if (initialSelection instanceof DOMSource) {
+                    NodeInfo node = controller.prepareInputTree(initialSelection);
+                    reset = maybeSetGlobalContextItem(node);
+                    initialSelection = node;
                 } else {
-                    NodeInfo node = controller.makeSourceTree(initialSource, getSchemaValidationMode().getNumber());
-                    maybeSetGlobalContextItem(node);
-                    initialSource = node;
+                    NodeInfo node = controller.makeSourceTree(initialSelection, getSchemaValidationMode().getNumber());
+                    reset = maybeSetGlobalContextItem(node);
+                    initialSelection = node;
                 }
             }
 
@@ -333,12 +334,10 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
             }
             controller.initializeController(parameters);
 
-
-
             if (initialTemplateName != null) {
                 controller.callTemplate(initialTemplateName.getStructuredQName(), out);
             } else {
-                applyTemplatesToSource(initialSource, out);
+                applyTemplatesToSource(initialSelection, out);
             }
             destination.closeAndNotify();
 
@@ -351,12 +350,19 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
                 }
             }
             throw new SaxonApiException(e);
+        } finally {
+            if (reset) {
+                controller.clearGlobalContextItem();
+            }
         }
     }
 
-    private void maybeSetGlobalContextItem(Item item) throws XPathException {
+    private boolean maybeSetGlobalContextItem(Item item) throws XPathException {
         if (controller.getGlobalContextItem() == null) {
             controller.setGlobalContextItem(item, true);
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -394,7 +400,6 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
         Receiver rt = getReceivingTransformer(controller, parameters, destination);
         rt = new SequenceNormalizerWithSpaceSeparator(rt);
         rt.setPipelineConfiguration(pipe);
-        sourceTreeBuilder = rt;
         return rt;
     }
 

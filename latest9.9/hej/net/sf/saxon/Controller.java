@@ -606,6 +606,16 @@ public class Controller implements ContextOriginator {
         this.globalContextItemPreset = true;
     }
 
+    /**
+     * Reset the global context item to null. This clears any previous setting of the global context
+     * item.
+     */
+
+    public void clearGlobalContextItem() {
+        this.globalContextItem = null;
+        this.globalContextItemPreset = false;
+    }
+
 
     /**
      * Get the item used as the context for evaluating global variables. In XQuery this
