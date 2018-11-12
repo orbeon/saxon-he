@@ -137,5 +137,18 @@ public abstract class XdmItem extends XdmValue {
         return new XdmStream<>(Stream.of(this));
     }
 
+
+
+    /**
+     * Determine whether this item matches a given item type.
+     *
+     * @param type the item type to be tested against this item
+     * @return true if the item matches this item type, false if it does not match.
+     * @since 9.9
+     */
+    public boolean matches(ItemType type){
+        return type.matches(this);
+    }
+
 }
 
