@@ -436,6 +436,11 @@ public final class BigDecimalValue extends DecimalValue {
         // If the value is positive, we use ROUND_HALF_UP; if it is negative, we use ROUND_HALF_DOWN (here "UP"
         // means "away from zero")
 
+        if (scale >= value.scale()) {
+            // no-op - see bug #4027
+            return this;
+        }
+
         switch (value.signum()) {
             case -1:
                 return new BigDecimalValue(value.setScale(scale, RoundingMode.HALF_DOWN));
@@ -455,6 +460,9 @@ public final class BigDecimalValue extends DecimalValue {
      */
 
     public NumericValue roundHalfToEven(int scale) {
+        if (scale >= value.scale()) {
+            return this;
+        }
         BigDecimal scaledValue = value.setScale(scale, RoundingMode.HALF_EVEN);
         return new BigDecimalValue(scaledValue.stripTrailingZeros());
     }
