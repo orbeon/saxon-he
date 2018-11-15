@@ -4632,31 +4632,16 @@ public class Configuration implements SourceResolver, NotationSet {
                     break;
 
                 case FeatureCode.SCHEMA_VALIDATION: {
-                    Object v = value;
-                    if (v instanceof String) {
-                        try {
-                            v = Integer.parseInt((String) value);
-                        } catch (NumberFormatException ex) {
-                            throw new IllegalArgumentException("SCHEMA_VALIDATION must be an integer");
-                        }
-                    } else if (!(v instanceof Integer)) {
-                        throw new IllegalArgumentException("SCHEMA_VALIDATION must be an integer");
-                    }
-                    setSchemaValidationMode((Integer) v);
+                    setSchemaValidationMode(requireInteger(feature.name, value));
                     break;
                 }
                 case FeatureCode.SCHEMA_VALIDATION_MODE:
-                    if (!(value instanceof String)) {
-                        throw new IllegalArgumentException("SCHEMA_VALIDATION_MODE must be a string");
-                    }
-                    setSchemaValidationMode(Validation.getCode((String) value));
+                    String mode = requireString(feature.name, value);
+                    setSchemaValidationMode(Validation.getCode(mode));
                     break;
 
                 case FeatureCode.SOURCE_PARSER_CLASS:
-                    if (!(value instanceof String)) {
-                        throw new IllegalArgumentException("SOURCE_PARSER_CLASS class must be a String");
-                    }
-                    setSourceParserClass((String) value);
+                    setSourceParserClass(requireString(feature.name, value));
                     break;
 
                 case FeatureCode.SOURCE_RESOLVER_CLASS:
@@ -4678,7 +4663,6 @@ public class Configuration implements SourceResolver, NotationSet {
 
                 case FeatureCode.STRIP_WHITESPACE: {
                     String s = requireString(name, value);
-                    int ival;
                     switch (s) {
                         case "all":
                             defaultParseOptions.setSpaceStrippingRule(AllElementsSpaceStrippingRule.getInstance());
@@ -4944,10 +4928,11 @@ public class Configuration implements SourceResolver, NotationSet {
      * @throws IllegalArgumentException if the supplied value cannot be validated as a recognized boolean value
      */
 
-    protected boolean requireBoolean(String propertyName, Object value) {
+    public static boolean requireBoolean(String propertyName, Object value) {
         if (value instanceof Boolean) {
             return (Boolean) value;
         } else if (value instanceof String) {
+            value = ((String)value).trim();
             if ("true".equals(value) || "on".equals(value) || "yes".equals(value) || "1".equals(value)) {
                 return true;
             } else if ("false".equals(value) || "off".equals(value) || "no".equals(value) || "0".equals(value)) {

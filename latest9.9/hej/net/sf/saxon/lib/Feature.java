@@ -40,11 +40,9 @@ public class Feature<T> {
         index.put(name, this);
     }
 
-    public static Feature<? extends Object> byName(String name) {
+    public static Feature<?> byName(String name) {
         return index.get(name);
     }
-
-
 
     /**
     *            <p>ALLOW_EXTERNAL_FUNCTIONS determines whether calls to reflexive external functions are

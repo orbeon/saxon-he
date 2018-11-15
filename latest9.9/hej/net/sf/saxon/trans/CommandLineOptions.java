@@ -257,10 +257,25 @@ public class CommandLineOptions {
         for (Enumeration e = configOptions.propertyNames(); e.hasMoreElements(); ) {
             String name = (String) e.nextElement();
             String value = configOptions.getProperty(name);
+            String fullName = "http://saxon.sf.net/feature/" + name;
+            Feature<?> f = Feature.byName(fullName);
+            if (f == null) {
+                throw new XPathException("Unknown configuration feature " + name);
+            }
             try {
-                processor.setConfigurationProperty("http://saxon.sf.net/feature/" + name, value);
+                Object typedValue;
+                if (f.type == Boolean.class) {
+                    typedValue = Configuration.requireBoolean(name, value);
+                } else if (f.type == Integer.class) {
+                    typedValue = Integer.valueOf(value);
+                } else if (f.type == String.class) {
+                    typedValue = value;
+                } else {
+                    throw new XPathException("Property --" + name + " cannot be supplied as a string");
+                }
+                processor.getUnderlyingConfiguration().setConfigurationProperty(fullName, value);
             } catch (IllegalArgumentException err) {
-                throw new XPathException(err.getMessage());
+                throw new XPathException("Incorrect value for --" + name + ": " + err.getMessage());
             }
         }
 
@@ -335,22 +350,26 @@ public class CommandLineOptions {
 
         value = getOptionValue("ea");
         if (value != null) {
-            config.getDefaultXsltCompilerInfo().setAssertionsEnabled("on".equals(value));
+            boolean on = Configuration.requireBoolean("ea", value);
+            config.getDefaultXsltCompilerInfo().setAssertionsEnabled(on);
         }
 
         value = getOptionValue("expand");
         if (value != null) {
-            config.getParseOptions().setExpandAttributeDefaults("on".equals(value));
+            boolean on = Configuration.requireBoolean("expand", value);
+            config.getParseOptions().setExpandAttributeDefaults(on);
         }
 
         value = getOptionValue("ext");
         if (value != null) {
-            config.setBooleanProperty(Feature.ALLOW_EXTERNAL_FUNCTIONS, "on".equals(value));
+            boolean on = Configuration.requireBoolean("ext", value);
+            config.setBooleanProperty(Feature.ALLOW_EXTERNAL_FUNCTIONS, on);
         }
 
         value = getOptionValue("l");
         if (value != null) {
-            config.setBooleanProperty(Feature.LINE_NUMBERING, "on".equals(value));
+            boolean on = Configuration.requireBoolean("l", value);
+            config.setBooleanProperty(Feature.LINE_NUMBERING, on);
         }
 
         value = getOptionValue("m");
@@ -397,8 +416,8 @@ public class CommandLineOptions {
 
         value = getOptionValue("TJ");
         if (value != null) {
-            config.setBooleanProperty(Feature.TRACE_EXTERNAL_FUNCTIONS,
-                    "on".equals(value));
+            boolean on = Configuration.requireBoolean("TJ", value);
+            config.setBooleanProperty(Feature.TRACE_EXTERNAL_FUNCTIONS, on);
         }
 
         value = getOptionValue("tree");
@@ -442,7 +461,8 @@ public class CommandLineOptions {
 
         value = getOptionValue("xi");
         if (value != null) {
-            processor.setConfigurationProperty(Feature.XINCLUDE, "on".equals(value));
+            boolean on = Configuration.requireBoolean("xi", value);
+            processor.setConfigurationProperty(Feature.XINCLUDE, on);
         }
 
         value = getOptionValue("xmlversion");
@@ -457,7 +477,8 @@ public class CommandLineOptions {
 
         value = getOptionValue("xsiloc");
         if (value != null) {
-            processor.setConfigurationProperty(Feature.USE_XSI_SCHEMA_LOCATION, "on".equals(value));
+            boolean on = Configuration.requireBoolean("xsiloc", value);
+            processor.setConfigurationProperty(Feature.USE_XSI_SCHEMA_LOCATION, on);
         }
 
         value = getOptionValue("y");
