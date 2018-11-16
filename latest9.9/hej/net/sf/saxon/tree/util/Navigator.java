@@ -250,7 +250,7 @@ public final class Navigator {
                     if (pre.equals("/")) {
                         return '/' + node.getDisplayName();
                     } else {
-                        return pre + '/' + node.getDisplayName() + (streamed ? "" : '[' + getNumberSimple(node, context) + ']');
+                        return pre + '/' + node.getDisplayName() + (streamed ? "" : "[" + getNumberSimple(node, context) + "]");
                     }
                 }
             case Type.ATTRIBUTE:
