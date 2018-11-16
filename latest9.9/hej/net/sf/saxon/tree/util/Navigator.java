@@ -258,17 +258,17 @@ public final class Navigator {
             case Type.TEXT:
                 pre = getPath(parent, context);
                 return (pre.equals("/") ? "" : pre) +
-                            "/text()" + (streamed ? "" : '[' + getNumberSimple(node, context) + ']');
+                            "/text()" + (streamed ? "" : "[" + getNumberSimple(node, context) + "]");
 
             case Type.COMMENT:
                 pre = getPath(parent, context);
                 return (pre.equals("/") ? "" : pre) +
-                            "/comment()" + (streamed ? "" : '[' + getNumberSimple(node, context) + ']');
+                            "/comment()" + (streamed ? "" : "[" + getNumberSimple(node, context) + "]");
 
             case Type.PROCESSING_INSTRUCTION:
                 pre = getPath(parent, context);
                 return (pre.equals("/") ? "" : pre) +
-                            "/processing-instruction()" + (streamed ? "" : '[' + getNumberSimple(node, context) + ']');
+                            "/processing-instruction()" + (streamed ? "" : "[" + getNumberSimple(node, context) + "]");
                 
             case Type.NAMESPACE:
                 String test = node.getLocalPart();
