@@ -39,7 +39,7 @@ public class ReceiverOptions {
     public static final int NO_SPECIAL_CHARS = 4;
 
     /**
-     * Flag indicating that an attribute value was added by the schema processor
+     * Flag indicating that an attribute value or text node was added by the schema processor
      * because a default value was specified
      */
 

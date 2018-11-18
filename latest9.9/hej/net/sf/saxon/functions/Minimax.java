@@ -347,10 +347,6 @@ public abstract class Minimax extends CollatingFunctionFixed {
         }
     }
 
-    public String getCompilerName() {
-        return "MinimaxCompiler";
-    }
-
     public String getStreamerName() {
         return "Minimax";
     }
