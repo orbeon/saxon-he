@@ -427,7 +427,7 @@ public class SortKeyDefinition extends PseudoExpression {
             // Otherwise rely on the containing SortExpression to type-check the sort key
         }
         Expression lang = getLanguage();
-        if (lang instanceof StringLiteral && ((StringLiteral) lang).getStringValue().length() != 0) {
+        if (lang instanceof StringLiteral && !((StringLiteral) lang).getStringValue().isEmpty()) {
             ValidationFailure vf = StringConverter.StringToLanguage.INSTANCE.validate(((StringLiteral) lang).getStringValue());
             if (vf != null) {
                 throw new XPathException("The lang attribute of xsl:sort must be a valid language code", "XTDE0030");
@@ -517,7 +517,7 @@ public class SortKeyDefinition extends PseudoExpression {
             String uri = "http://saxon.sf.net/collation";
             boolean firstParam = true;
             Properties props = new Properties();
-            if (languageX.length() != 0) {
+            if (!languageX.isEmpty()) {
                 ValidationFailure vf = StringConverter.StringToLanguage.INSTANCE.validate(languageX);
                 if (vf != null) {
                     throw new XPathException("The lang attribute of xsl:sort must be a valid language code", "XTDE0030");

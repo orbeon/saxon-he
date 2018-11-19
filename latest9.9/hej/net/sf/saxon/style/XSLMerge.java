@@ -111,11 +111,10 @@ public class XSLMerge extends StyleElement {
      * are used in the merge key definitions, the validation is postponed until run-time
      *
      * @param sources the xsl:merge-source children
-     * @throws XPathException if the condition is not satisfied
      */
 
 
-    private void checkCompatibleMergeKeys(MergeSource[] sources) throws XPathException {
+    private void checkCompatibleMergeKeys(MergeSource[] sources) {
         for (int i = 0; i < sources[0].mergeKeyDefinitions.size(); i++) {
             if (!sources[0].mergeKeyDefinitions.getSortKeyDefinition(i).isFixed()) {
                 break;
@@ -124,6 +123,7 @@ public class XSLMerge extends StyleElement {
                 if (!sources[z].mergeKeyDefinitions.getSortKeyDefinition(i).isFixed()) {
                     break;
                 }
+                // Both definitions are fixed: compare them now
                 if (!compareSortKeyDefinitions(sources[z].mergeKeyDefinitions.getSortKeyDefinition(i),
                         sources[0].mergeKeyDefinitions.getSortKeyDefinition(i))) {
                     compileError("The " + RoleDiagnostic.ordinal(i + 1) + " merge key definition of the "
@@ -136,37 +136,27 @@ public class XSLMerge extends StyleElement {
     }
 
     /**
-     * Compare two sort key definitions whose defining attributes are known at compile time
+     * Compare two sort key definitions whose defining attributes are known at compile time.
+     * The comparison compares all subexpressions other than the actual sort key
      *
-     * @param sDefs1 the first sort key definition
-     * @param sDefs2 the second sort key definition
-     * @return true if the two sort key definitions are the same
+     * @param sd1 the first sort key definition
+     * @param sd2 the second sort key definition
+     * @return true if the two sort key definitions are compatible according to the definition
+     * used by xsl:merge (the sort keys can be different, but the other properties of the sort
+     * must be the same)
      */
 
-    private boolean compareSortKeyDefinitions(SortKeyDefinition sDefs1, SortKeyDefinition sDefs2) {
+    private boolean compareSortKeyDefinitions(SortKeyDefinition sd1, SortKeyDefinition sd2) {
 
-        if (sDefs1.getLanguage().toString().hashCode() != sDefs2.getLanguage().toString().hashCode()) {
-            return false;
-        }
-        if (sDefs1.getOrder().toString().hashCode() != sDefs2.getOrder().toString().hashCode()) {
-            return false;
-        }
-        if (sDefs1.getCollationNameExpression() != null && sDefs2.getCollationNameExpression() != null) {
-            if (sDefs1.getCollationNameExpression().toString().hashCode() != sDefs2.getCollationNameExpression().toString().hashCode()) {
-                return false;
-            }
-        }
-        if (sDefs1.getCaseOrder().toString().hashCode() != sDefs2.getCaseOrder().toString().hashCode()) {
-            return false;
-        }
-        if (sDefs1.getDataTypeExpression() != null && sDefs2.getDataTypeExpression() != null) {
-            if (sDefs1.getDataTypeExpression().toString().hashCode() != sDefs2.getDataTypeExpression().toString().hashCode()) {
-                return false;
-            }
-        }
+        return sameFixedExpression(sd1.getLanguage(), sd2.getLanguage()) &&
+                sameFixedExpression(sd1.getOrder(), sd2.getOrder()) &&
+                sameFixedExpression(sd1.getCollationNameExpression(), sd2.getCollationNameExpression()) &&
+                sameFixedExpression(sd1.getCaseOrder(), sd2.getCaseOrder()) &&
+                sameFixedExpression(sd1.getDataTypeExpression(), sd2.getDataTypeExpression());
+    }
 
-        return true;
-
+    private boolean sameFixedExpression(Expression e1, Expression e2) {
+        return (e1==null && e2==null) || (e1!=null && e1.equals(e2));
     }
 
     @Override
