@@ -530,7 +530,7 @@ public class TypeChecker {
                     String msg = "Required item type of " + role.getMessage() +
                             " is " + reqItemType +
                             "; supplied value (" + supplied.toShortString() + ") has item type " +
-                            suppliedItemType.toString() +
+                            suppliedItemType +
                             ". The expression can succeed only if the supplied value is an empty sequence.";
                     env.issueWarning(msg, supplied.getLocation());
                 }

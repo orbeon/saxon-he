@@ -23,6 +23,6 @@ public interface SortKeyEvaluator {
      */
 
     /*@Nullable*/
-    public AtomicValue evaluateSortKey(int n, XPathContext context) throws XPathException;
+    AtomicValue evaluateSortKey(int n, XPathContext context) throws XPathException;
 }
 

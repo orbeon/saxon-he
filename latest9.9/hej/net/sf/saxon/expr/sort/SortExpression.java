@@ -9,7 +9,6 @@ package net.sf.saxon.expr.sort;
 
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;

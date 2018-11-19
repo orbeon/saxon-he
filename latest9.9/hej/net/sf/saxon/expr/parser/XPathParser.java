@@ -1922,7 +1922,9 @@ public class XPathParser {
             nextToken();
             Expression next = parseStepExpression(false);
             if (op == Token.SLASH) {
-                exp = ExpressionTool.makeRawPathExpression(exp, next, true);
+
+                //return new RawSlashExpression(start, step);
+                exp = new HomogeneityChecker(new SlashExpression(exp, next));
             } else /* (op == Token.SLASH_SLASH)*/ {
                 // add implicit descendant-or-self::node() step
                 AxisExpression ae = new AxisExpression(AxisInfo.DESCENDANT_OR_SELF, null);
@@ -1955,7 +1957,9 @@ public class XPathParser {
         while (true) {
             Expression next = parseStepExpression(false);
             if (op == Token.SLASH) {
-                exp = ExpressionTool.makeRawPathExpression(exp, next, true);
+
+                //return new RawSlashExpression(start, step);
+                exp = new HomogeneityChecker(new SlashExpression(exp, next));
             } else if (op == Token.SLASH_SLASH) {
                 // add implicit descendant-or-self::node() step
                 AxisExpression descOrSelf = new AxisExpression(AxisInfo.DESCENDANT_OR_SELF, null);

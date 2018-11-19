@@ -1598,12 +1598,6 @@ public class ExpressionTool {
         return expr;
     }
 
-    public static Expression makeRawPathExpression(
-            /*@NotNull*/ Expression start, /*@NotNull*/ Expression step, boolean sortAndDeduplicate) {
-
-        return new RawSlashExpression(start, step);
-    }
-
 
     /**
      * Find the operand corresponding to a particular child expression

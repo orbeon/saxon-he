@@ -5434,7 +5434,6 @@ latest9.9/hej/net/sf/saxon/expr/PseudoExpression.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/expr/QuantifiedExpression.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/expr/RangeExpression.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/expr/RangeIterator.java svn_eol_002dstyle=native
-latest9.9/hej/net/sf/saxon/expr/RawSlashExpression.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/expr/ReverseRangeIterator.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/expr/RootExpression.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/expr/SimpleExpression.java svn_eol_002dstyle=native
