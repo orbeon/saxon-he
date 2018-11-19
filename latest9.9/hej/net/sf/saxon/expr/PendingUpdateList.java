@@ -24,7 +24,7 @@ public interface PendingUpdateList {
      *
      * @param context        the XPath dynamic evaluation context
      * @param validationMode the revalidation mode from the static context
-     * @throws XPathException
+     * @throws XPathException if the operation fails
      */
 
     void apply(XPathContext context, int validationMode) throws XPathException;
