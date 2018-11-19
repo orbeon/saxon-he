@@ -595,7 +595,6 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
                     " and arity " + arguments.length + " has been declared in the query");
         }
         try {
-            // TODO: use the same controller in other interfaces such as run(), and expose it in a trapdoor API
             if (controller == null) {
                 controller = expression.newController(context);
             } else {

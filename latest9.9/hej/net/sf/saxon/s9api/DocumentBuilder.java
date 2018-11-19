@@ -49,8 +49,6 @@ public class DocumentBuilder {
     private URI baseURI;
     private XQueryExecutable projectionQuery;
 
-    // TODO: combine the functionality of this class with that of XdmDestination
-
     /**
      * Create a DocumentBuilder. This is a protected constructor. Users should construct a DocumentBuilder
      * by calling the factory method {@link net.sf.saxon.s9api.Processor#newDocumentBuilder()}.
@@ -398,14 +396,21 @@ public class DocumentBuilder {
         builder.setLineNumbering(lineNumbering);
         Receiver r = builder;
         r = new NamespaceReducer(r);
-        if (schemaValidator != null) {
-            r = schemaValidator.getReceiver(pipe, config.obtainDefaultSerializationProperties());
-            r.setPipelineConfiguration(pipe);
-            if (r instanceof ProxyReceiver) {
-                ((ProxyReceiver) r).setUnderlyingReceiver(builder);
-            }
-        }
+        r = injectValidator(r, builder);
         return new BuildingContentHandlerImpl(r, builder);
+    }
+
+    private Receiver injectValidator(Receiver r, Builder builder) throws SaxonApiException {
+        if (schemaValidator != null) {
+            PipelineConfiguration pipe = builder.getPipelineConfiguration();
+            Receiver val = schemaValidator.getReceiver(pipe, config.obtainDefaultSerializationProperties());
+            val.setPipelineConfiguration(pipe);
+            if (val instanceof ProxyReceiver) {
+                ((ProxyReceiver) val).setUnderlyingReceiver(r);
+            }
+            return val;
+        }
+        return r;
     }
 
     /**
@@ -423,7 +428,7 @@ public class DocumentBuilder {
             this.builder = b;
         }
 
-        public XdmNode getDocumentNode() throws SaxonApiException {
+        public XdmNode getDocumentNode() {
             return new XdmNode(builder.getCurrentRoot());
         }
     }
@@ -447,13 +452,7 @@ public class DocumentBuilder {
         builder.setLineNumbering(lineNumbering);
         Receiver r = builder;
         r = new NamespaceReducer(r);
-        if (schemaValidator != null) {
-            r = schemaValidator.getReceiver(pipe, config.obtainDefaultSerializationProperties());
-            r.setPipelineConfiguration(pipe);
-            if (r instanceof ProxyReceiver) {
-                ((ProxyReceiver) r).setUnderlyingReceiver(builder);
-            }
-        }
+        r = injectValidator(r, builder);
         return new BuildingStreamWriterImpl(r, builder);
     }
 
@@ -495,7 +494,7 @@ public class DocumentBuilder {
             try {
                 JPConverter converter = JPConverter.allocate(node.getClass(), null, config);
                 NodeInfo nodeInfo = (NodeInfo) converter.convert(node, new EarlyEvaluationContext(config));
-                return (XdmNode) XdmItem.wrapItem(nodeInfo);
+                return XdmItem.wrapItem(nodeInfo);
             } catch (XPathException e) {
                 throw new IllegalArgumentException(e.getMessage());
             }

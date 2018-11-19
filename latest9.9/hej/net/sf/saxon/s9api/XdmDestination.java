@@ -106,7 +106,8 @@ public class XdmDestination extends AbstractDestination {
      * @param pipe The Saxon configuration. This is supplied so that the destination can
      *               use information from the configuration (for example, a reference to the name pool)
      *               to construct or configure the returned Receiver.
-     * @param params
+     * @param params The serialization properties requested. Largely irrelevant for this {@code Destination},
+     *               except perhaps for {@code item-separator}.
      * @return the Receiver to which events are to be sent.
      */
 
@@ -170,88 +171,6 @@ public class XdmDestination extends AbstractDestination {
         builder = null;
     }
 
-//    /**
-//     * TreeProtector is a filter that ensures that the events reaching the Builder constitute a single
-//     * tree rooted at an element or document node (because anything else will crash the builder)
-//     */
-//
-//    private static class TreeProtector extends ProxyReceiver {
-//
-//        private int level = 0;
-//        private boolean ended = false;
-//
-//        public TreeProtector(Receiver next) {
-//            super(next);
-//        }
-//
-//        @Override
-//        public void startDocument(int properties) throws XPathException {
-//            if (ended) {
-//                throw new XPathException("Only a single document can be written to an XdmDestination");
-//            }
-//            super.startDocument(properties);
-//            level++;
-//        }
-//
-//        @Override
-//        public void endDocument() throws XPathException {
-//            super.endDocument();
-//            level--;
-//            if (level == 0) {
-//                ended = true;
-//            }
-//        }
-//
-//        @Override
-//        public void startElement(NodeName nameCode, SchemaType typeCode, Location location, int properties) throws XPathException {
-//            if (ended) {
-//                throw new XPathException("Only a single root node can be written to an XdmDestination");
-//            }
-//            super.startElement(nameCode, typeCode, location, properties);
-//            level++;
-//        }
-//
-//        @Override
-//        public void endElement() throws XPathException {
-//            super.endElement();
-//            level--;
-//            if (level == 0) {
-//                ended = true;
-//            }
-//        }
-//
-//        @Override
-//        public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
-//            if (level == 0) {
-//                throw new XPathException("When writing to an XdmDestination, text nodes are only allowed within a document or element node");
-//            }
-//            super.characters(chars, locationId, properties);
-//        }
-//
-//        @Override
-//        public void processingInstruction(String target, CharSequence data, Location locationId, int properties) throws XPathException {
-//            if (level == 0) {
-//                throw new XPathException("When writing to an XdmDestination, processing instructions are only allowed within a document or element node");
-//            }
-//            super.processingInstruction(target, data, locationId, properties);
-//        }
-//
-//        @Override
-//        public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
-//            if (level == 0) {
-//                throw new XPathException("When writing to an XdmDestination, comment nodes are only allowed within a document or element node");
-//            }
-//            super.comment(chars, locationId, properties);
-//        }
-//
-//        @Override
-//        public void append(Item item, Location locationId, int copyNamespaces) throws XPathException {
-//            if (level == 0 && !(item instanceof NodeInfo)) {
-//                throw new XPathException("When writing to an XdmDestination, atomic values are only allowed within a document or element node");
-//            }
-//            super.append(item, locationId, copyNamespaces);
-//        }
-//
-//    }
+
 }
 

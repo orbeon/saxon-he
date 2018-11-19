@@ -51,11 +51,9 @@ import java.net.URI;
  */
 public class XsltTransformer extends AbstractXsltTransformer implements Destination {
 
-    // TODO: when input is piped into an XsltTransformer, do a streamed transformation where appropriate.
-
     private QName initialTemplateName;
     private GlobalParameterSet parameters;
-    /*@Nullable*/ private Source initialSource;
+    private Source initialSource;
     private Destination destination;
     private DestinationHelper destinationHelper = new DestinationHelper(this);
     private URI destinationBaseUri;
@@ -409,28 +407,8 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
      * to the destination.
      */
 
-    public void close() throws SaxonApiException {
-//        if (sourceTreeBuilder != null) {
-//            try {
-//                sourceTreeBuilder.close();
-//            } catch (XPathException e) {
-//                throw new SaxonApiException(e);
-//            }
-////            NodeInfo doc = sourceTreeBuilder.getCurrentRoot();
-////            sourceTreeBuilder = null;
-////            if (doc != null) {
-////                Receiver sOut = getDestinationReceiver(controller, destination);
-////                try {
-////                    sOut.open();
-////                    controller.setGlobalContextItem(doc);
-////                    controller.applyTemplates(doc, sOut);
-////                    sOut.close();
-////                } catch (TransformerException e) {
-////                    throw new SaxonApiException(e);
-////                }
-////            }
-//            destination.closeAndNotify();
-//        }
+    public void close() {
+
     }
 
 }
