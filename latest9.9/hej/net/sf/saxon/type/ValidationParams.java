@@ -7,11 +7,14 @@
 
 package net.sf.saxon.type;
 
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.sxpath.XPathDynamicContext;
+import net.sf.saxon.sxpath.XPathVariable;
+import net.sf.saxon.trans.XPathException;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class represents a collection of parameter values for use in schema validation;
@@ -25,5 +28,16 @@ public class ValidationParams extends HashMap<StructuredQName, Sequence<?>> {
         super(20);
     }
 
+    public static void setValidationParams(Map<StructuredQName, XPathVariable> declaredParams, ValidationParams actualParams, XPathDynamicContext context) throws XPathException {
+        for (StructuredQName p : declaredParams.keySet()) {
+            XPathVariable var = declaredParams.get(p);
+            Sequence<?> paramValue = actualParams.get(p);
+            if (paramValue != null) {
+                context.setVariable(var, paramValue);
+            } else {
+                context.setVariable(var, var.getDefaultValue());
+            }
+        }
+    }
 }
 
