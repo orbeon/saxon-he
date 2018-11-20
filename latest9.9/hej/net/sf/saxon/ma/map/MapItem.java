@@ -7,6 +7,7 @@
 
 package net.sf.saxon.ma.map;
 
+import net.sf.saxon.expr.Literal;
 import net.sf.saxon.expr.OperandRole;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.sort.AtomicComparer;
@@ -468,11 +469,15 @@ public interface MapItem extends Function {
     }
 
     /**
-     * Output information about this function item to the diagnostic explain() output
+     * Export information about this function item to the export() or explain() output
      */
     default void export(ExpressionPresenter out) throws XPathException {
         out.startElement("map");
-        out.emitAttribute("size", size() + "");
+        out.emitAttribute("size", "" + size());
+        for (KeyValuePair kvp : keyValuePairs()) {
+            Literal.exportAtomicValue(kvp.key, out);
+            Literal.exportValue(kvp.value, out);
+        }
         out.endElement();
     }
 

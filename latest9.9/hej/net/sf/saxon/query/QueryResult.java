@@ -11,11 +11,13 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.event.*;
 import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.lib.SerializerFactory;
-import net.sf.saxon.om.*;
+import net.sf.saxon.om.CopyOptions;
+import net.sf.saxon.om.DocumentInfo;
+import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.serialize.SerializationProperties;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.SingletonIterator;
-import net.sf.saxon.tree.tiny.Statistics;
 import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.type.Type;
 
@@ -74,7 +76,7 @@ public class QueryResult {
     public static DocumentInfo wrap(SequenceIterator iterator, /*@NotNull*/ Configuration config) throws XPathException {
         PipelineConfiguration pipe = config.makePipelineConfiguration();
         TinyBuilder builder = new TinyBuilder(pipe);
-        builder.setStatistics(Statistics.SOURCE_DOCUMENT_STATISTICS);
+        builder.setStatistics(config.getTreeStatistics().SOURCE_DOCUMENT_STATISTICS);
         NamespaceReducer reducer = new NamespaceReducer(builder);
         ComplexContentOutputter outputter = new ComplexContentOutputter(reducer);
         sendWrappedSequence(iterator, outputter);

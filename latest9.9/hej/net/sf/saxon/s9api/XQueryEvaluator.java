@@ -22,7 +22,6 @@ import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.serialize.SerializationProperties;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.tiny.Statistics;
 import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.type.TypeHierarchy;
 
@@ -527,7 +526,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
         }
         sourceTreeBuilder = controller.makeBuilder();
         if (sourceTreeBuilder instanceof TinyBuilder) {
-            ((TinyBuilder) sourceTreeBuilder).setStatistics(Statistics.SOURCE_DOCUMENT_STATISTICS);
+            ((TinyBuilder) sourceTreeBuilder).setStatistics(context.getConfiguration().getTreeStatistics().SOURCE_DOCUMENT_STATISTICS);
         }
         Receiver out = controller.makeStripper(sourceTreeBuilder);
         SequenceNormalizer sn = params.makeSequenceNormalizer(out);

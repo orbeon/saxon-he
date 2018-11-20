@@ -39,7 +39,7 @@ public class TinyBuilder extends Builder {
     private int currentDepth = 0;
     private int nodeNr = 0;             // this is the local sequence within this document
     private boolean ended = false;
-    private Statistics statistics = Statistics.TEMPORARY_TREE_STATISTICS;
+    private Statistics statistics;
     private boolean markDefaultedAttributes = false;
     private int textualElementEligibilityState = 0;
 
@@ -52,6 +52,7 @@ public class TinyBuilder extends Builder {
     public TinyBuilder(/*@NotNull*/ PipelineConfiguration pipe) {
         super(pipe);
         Configuration config = pipe.getConfiguration();
+        statistics = config.getTreeStatistics().TEMPORARY_TREE_STATISTICS;
         //markDefaultedAttributes = true;
         markDefaultedAttributes = config.isExpandAttributeDefaults() && config.getBooleanProperty(Feature.MARK_DEFAULTED_ATTRIBUTES);
         //System.err.println("TinyBuilder " + this);
@@ -190,7 +191,7 @@ public class TinyBuilder extends Builder {
         currentDepth = 0;
         nodeNr = 0;
         ended = false;
-        statistics = Statistics.TEMPORARY_TREE_STATISTICS;
+        statistics = config.getTreeStatistics().TEMPORARY_TREE_STATISTICS;
     }
 
     public void close() throws XPathException {

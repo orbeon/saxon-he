@@ -8,7 +8,10 @@
 package net.sf.saxon.expr.instruct;
 
 import net.sf.saxon.Controller;
-import net.sf.saxon.event.*;
+import net.sf.saxon.event.ComplexContentOutputter;
+import net.sf.saxon.event.PipelineConfiguration;
+import net.sf.saxon.event.Receiver;
+import net.sf.saxon.event.ReceiverOptions;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.Operand;
 import net.sf.saxon.expr.OperandRole;
@@ -20,7 +23,6 @@ import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.tiny.Statistics;
 import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.type.Type;
@@ -88,7 +90,7 @@ public class Doctype extends Instruction {
         pipe.setXPathContext(context);
         pipe.setHostLanguage(getPackageData().getHostLanguage());
         TinyBuilder builder = new TinyBuilder(pipe);
-        builder.setStatistics(Statistics.RESULT_TREE_STATISTICS);
+        builder.setStatistics(pipe.getConfiguration().getTreeStatistics().RESULT_TREE_STATISTICS);
         builder.open();
         builder.startDocument(0);
         context.setReceiver(ComplexContentOutputter.makeComplexContentReceiver(builder, null));

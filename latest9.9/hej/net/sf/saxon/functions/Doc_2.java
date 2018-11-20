@@ -21,7 +21,6 @@ import net.sf.saxon.om.*;
 import net.sf.saxon.style.StylesheetPackage;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.trans.XsltController;
-import net.sf.saxon.tree.tiny.Statistics;
 import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.value.AtomicValue;
@@ -183,7 +182,7 @@ public class Doc_2 extends SystemFunction implements Callable {
         } else {
             Builder b = controller.makeBuilder();
             if (b instanceof TinyBuilder) {
-                ((TinyBuilder) b).setStatistics(Statistics.SOURCE_DOCUMENT_STATISTICS);
+                ((TinyBuilder) b).setStatistics(config.getTreeStatistics().SOURCE_DOCUMENT_STATISTICS);
             }
 
             b.setPipelineConfiguration(b.getPipelineConfiguration());

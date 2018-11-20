@@ -17,7 +17,6 @@ import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.lib.Validation;
 import net.sf.saxon.om.NoElementsSpaceStrippingRule;
 import net.sf.saxon.om.NodeInfo;
-import net.sf.saxon.tree.tiny.Statistics;
 import net.sf.saxon.tree.tiny.TinyBuilder;
 import org.xml.sax.SAXException;
 
@@ -60,7 +59,7 @@ public class TransformerHandlerImpl extends ReceivingContentHandler implements T
         int validation = controller.getSchemaValidationMode();
         builder = controller.makeBuilder();
         if (builder instanceof TinyBuilder) {
-            ((TinyBuilder) builder).setStatistics(Statistics.SOURCE_DOCUMENT_STATISTICS);
+            ((TinyBuilder) builder).setStatistics(config.getTreeStatistics().SOURCE_DOCUMENT_STATISTICS);
         }
         PipelineConfiguration pipe = builder.getPipelineConfiguration();
         ParseOptions options = pipe.getParseOptions();

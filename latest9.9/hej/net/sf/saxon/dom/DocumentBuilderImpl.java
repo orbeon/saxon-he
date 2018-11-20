@@ -12,7 +12,6 @@ import net.sf.saxon.event.Sender;
 import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.lib.Validation;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.tiny.Statistics;
 import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.tree.tiny.TinyDocumentImpl;
 import org.w3c.dom.DOMImplementation;
@@ -144,7 +143,7 @@ public class DocumentBuilderImpl extends DocumentBuilder {
                 config = new Configuration();
             }
             TinyBuilder builder = new TinyBuilder(config.makePipelineConfiguration());
-            builder.setStatistics(Statistics.SOURCE_DOCUMENT_STATISTICS);
+            builder.setStatistics(config.getTreeStatistics().SOURCE_DOCUMENT_STATISTICS);
             SAXSource source = new SAXSource(in);
             source.setSystemId(in.getSystemId());
             Sender.send(source, builder, parseOptions);

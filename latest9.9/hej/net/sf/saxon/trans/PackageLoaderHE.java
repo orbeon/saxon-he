@@ -2485,8 +2485,7 @@ public class PackageLoaderHE implements IPackageLoader {
             StreamSource source = new StreamSource(new StringReader(content), baseURI);
             NodeInfo node = loader.config.buildDocumentTree(source).getRootNode();
             if (kind == Type.ELEMENT) {
-                // TODO: this is pretty inefficient...
-                // (But it doesn't happen often; mainly with node-valued static variables)
+                // TODO: see bug 4035
                 node = VirtualCopy.makeVirtualCopy(node.iterateAxis(AxisInfo.CHILD, NodeKindTest.ELEMENT).next());
             }
             return Literal.makeLiteral(new One<>(node));

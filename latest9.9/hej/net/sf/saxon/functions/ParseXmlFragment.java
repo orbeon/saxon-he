@@ -18,18 +18,14 @@ import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.om.*;
 import net.sf.saxon.style.StylesheetPackage;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.tiny.Statistics;
 import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.value.StringValue;
-import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
-import java.io.IOException;
 import java.io.StringReader;
 
 public class ParseXmlFragment extends SystemFunction implements Callable {
@@ -81,19 +77,17 @@ public class ParseXmlFragment extends SystemFunction implements Callable {
 
             Builder b = controller.makeBuilder();
             if (b instanceof TinyBuilder) {
-                ((TinyBuilder) b).setStatistics(Statistics.FN_PARSE_STATISTICS);
+                ((TinyBuilder) b).setStatistics(controller.getConfiguration().getTreeStatistics().FN_PARSE_STATISTICS);
             }
             Receiver s = b;
             ParseOptions options = new ParseOptions();
-            reader.setEntityResolver(new EntityResolver() {
-                public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-                    if ("http://www.saxonica.com/parse-xml-fragment/actual.xml".equals(systemId)) {
-                        InputSource is = new InputSource(fragmentReader);
-                        is.setSystemId(baseURI);
-                        return is;
-                    } else {
-                        return null;
-                    }
+            reader.setEntityResolver((publicId, systemId) -> {
+                if ("http://www.saxonica.com/parse-xml-fragment/actual.xml".equals(systemId)) {
+                    InputSource is1 = new InputSource(fragmentReader);
+                    is1.setSystemId(baseURI);
+                    return is1;
+                } else {
+                    return null;
                 }
             });
             PackageData pd = getRetainedStaticContext().getPackageData();
@@ -109,11 +103,7 @@ public class ParseXmlFragment extends SystemFunction implements Callable {
 
             s.setPipelineConfiguration(b.getPipelineConfiguration());
 
-            options.addFilter(new FilterFactory() {
-                public ProxyReceiver makeFilter(Receiver next) {
-                    return new OuterElementStripper(next);
-                }
-            });
+            options.addFilter(OuterElementStripper::new);
 
             Sender.send(source, s, options);
 
@@ -144,9 +134,9 @@ public class ParseXmlFragment extends SystemFunction implements Callable {
 
         /**
          * Notify the start of an element
-         *  @param elemName   integer code identifying the name of the element within the name pool.
+         * @param elemName   integer code identifying the name of the element within the name pool.
          * @param typeCode   integer code identifying the element's type within the name pool.
-         * @param location
+         * @param location   location of the origin of the event
          * @param properties properties of the element node
          */
         @Override

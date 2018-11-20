@@ -44,6 +44,7 @@ import net.sf.saxon.trace.TraceCodeInjector;
 import net.sf.saxon.trace.XSLTTraceCodeInjector;
 import net.sf.saxon.trans.*;
 import net.sf.saxon.trans.packages.IPackageLoader;
+import net.sf.saxon.tree.tiny.TreeStatistics;
 import net.sf.saxon.tree.util.DocumentNumberAllocator;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
@@ -192,6 +193,8 @@ public class Configuration implements SourceResolver, NotationSet {
     private Map<String, FunctionAnnotationHandler> functionAnnotationHandlers = new HashMap<>();
     protected int byteCodeThreshold = 100;
     private int regexBacktrackingLimit = 10000000;
+
+    private TreeStatistics treeStatistics = new TreeStatistics();
 
     /**
      * Constant indicating that the processor should take the recovery action
@@ -4310,6 +4313,16 @@ public class Configuration implements SourceResolver, NotationSet {
         TreeInfo tree = buildDocumentTree(source, parseOptions);
         NodeInfo root = tree.getRootNode();
         return new DocumentInfo(root);
+    }
+
+    /**
+     * Get the collection of tree-builder statistics for this configuration, used
+     * for learning suitable amounts of space to allocate for different kinds of tree
+     * @return the object in which tree statistics are accumulated
+     */
+
+    public TreeStatistics getTreeStatistics() {
+        return treeStatistics;
     }
 
     /**

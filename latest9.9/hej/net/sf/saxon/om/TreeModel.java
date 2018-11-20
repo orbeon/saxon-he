@@ -10,7 +10,6 @@ package net.sf.saxon.om;
 import net.sf.saxon.event.Builder;
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.tree.linked.LinkedTreeBuilder;
-import net.sf.saxon.tree.tiny.Statistics;
 import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.tree.tiny.TinyBuilderCondensed;
 
@@ -128,7 +127,7 @@ public abstract class TreeModel {
 
         public Builder makeBuilder(PipelineConfiguration pipe) {
             TinyBuilder builder = new TinyBuilder(pipe);
-            builder.setStatistics(Statistics.SOURCE_DOCUMENT_STATISTICS);
+            builder.setStatistics(pipe.getConfiguration().getTreeStatistics().SOURCE_DOCUMENT_STATISTICS);
             return builder;
         }
 
@@ -148,7 +147,7 @@ public abstract class TreeModel {
     private static class TinyTreeCondensed extends TreeModel {
         public Builder makeBuilder(PipelineConfiguration pipe) {
             TinyBuilderCondensed tbc = new TinyBuilderCondensed(pipe);
-            tbc.setStatistics(Statistics.SOURCE_DOCUMENT_STATISTICS);
+            tbc.setStatistics(pipe.getConfiguration().getTreeStatistics().SOURCE_DOCUMENT_STATISTICS);
             return tbc;
         }
 

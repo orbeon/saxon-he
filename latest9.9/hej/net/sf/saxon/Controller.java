@@ -27,7 +27,6 @@ import net.sf.saxon.resource.CollectionURIResolverWrapper;
 import net.sf.saxon.trace.TraceEventMulticaster;
 import net.sf.saxon.trans.*;
 import net.sf.saxon.trans.rules.RuleManager;
-import net.sf.saxon.tree.tiny.Statistics;
 import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.tree.wrapper.SpaceStrippedDocument;
 import net.sf.saxon.tree.wrapper.SpaceStrippedNode;
@@ -1321,7 +1320,7 @@ public class Controller implements ContextOriginator {
         Builder sourceBuilder = makeBuilder();
         sourceBuilder.setUseEventLocation(true);
         if (sourceBuilder instanceof TinyBuilder) {
-            ((TinyBuilder) sourceBuilder).setStatistics(Statistics.SOURCE_DOCUMENT_STATISTICS);
+            ((TinyBuilder) sourceBuilder).setStatistics(config.getTreeStatistics().SOURCE_DOCUMENT_STATISTICS);
         }
         Receiver r = sourceBuilder;
         SpaceStrippingRule spaceStrippingRule = NoElementsSpaceStrippingRule.getInstance();

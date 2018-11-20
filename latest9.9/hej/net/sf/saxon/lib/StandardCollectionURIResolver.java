@@ -26,7 +26,6 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.ArrayIterator;
 import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.tree.iter.SingletonIterator;
-import net.sf.saxon.tree.tiny.Statistics;
 import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.value.AnyURIValue;
@@ -471,7 +470,7 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
                     if (pipe.getController() != null) {
                         Builder b = pipe.getController().makeBuilder();
                         if (b instanceof TinyBuilder) {
-                            ((TinyBuilder) b).setStatistics(Statistics.SOURCE_DOCUMENT_STATISTICS);
+                            ((TinyBuilder) b).setStatistics(pipe.getConfiguration().getTreeStatistics().SOURCE_DOCUMENT_STATISTICS);
                         }
                         Receiver s = b;
                         if (pipe.getController().isStylesheetStrippingTypeAnnotations()) {

@@ -21,7 +21,6 @@ import net.sf.saxon.serialize.SerializationProperties;
 import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.trans.XsltController;
-import net.sf.saxon.tree.tiny.Statistics;
 import net.sf.saxon.tree.tiny.TinyBuilder;
 
 import javax.xml.transform.ErrorListener;
@@ -493,6 +492,7 @@ abstract class AbstractXsltTransformer {
      */
 
     protected Receiver getReceivingTransformer(XsltController controller, GlobalParameterSet parameters, Destination finalDestination) throws SaxonApiException {
+        Configuration config = controller.getConfiguration();
         try {
             controller.initializeController(parameters);
         } catch (XPathException e) {
@@ -509,7 +509,7 @@ abstract class AbstractXsltTransformer {
         } else {
             final Builder sourceTreeBuilder = controller.makeBuilder();
             if (sourceTreeBuilder instanceof TinyBuilder) {
-                ((TinyBuilder) sourceTreeBuilder).setStatistics(Statistics.SOURCE_DOCUMENT_STATISTICS);
+                ((TinyBuilder) sourceTreeBuilder).setStatistics(config.getTreeStatistics().SOURCE_DOCUMENT_STATISTICS);
             }
             Receiver stripper = controller.makeStripper(sourceTreeBuilder);
             if (controller.isStylesheetStrippingTypeAnnotations()) {

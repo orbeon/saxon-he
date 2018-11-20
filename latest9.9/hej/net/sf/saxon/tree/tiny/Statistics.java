@@ -12,14 +12,6 @@ package net.sf.saxon.tree.tiny;
  */
 public class Statistics {
 
-    //TODO: don't hold the stastics in static, hold them in the configuration
-
-    public final static Statistics SOURCE_DOCUMENT_STATISTICS = new Statistics();
-    public final static Statistics TEMPORARY_TREE_STATISTICS = new Statistics();
-    public final static Statistics RESULT_TREE_STATISTICS = new Statistics();
-    public final static Statistics ASSERTION_TREE_STATISTICS = new Statistics();
-    public final static Statistics FN_PARSE_STATISTICS = new Statistics();
-
     // We maintain statistics, recording how large the trees created under this Java VM
     // turned out to be. These figures are then used when allocating space for new trees, on the assumption
     // that there is likely to be some uniformity. The statistics are initialized to an arbitrary value

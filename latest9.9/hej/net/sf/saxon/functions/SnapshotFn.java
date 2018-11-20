@@ -16,7 +16,6 @@ import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.tiny.Statistics;
 import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.tree.wrapper.SnapshotNode;
 import net.sf.saxon.tree.wrapper.VirtualCopy;
@@ -96,7 +95,7 @@ public class SnapshotFn extends SystemFunction {
     public static BuilderMonitor openAncestors(NodeInfo origin, List<NodeInfo> ancestors, XPathContext context) throws XPathException {
         NodeInfo root = origin.getRoot();
         TinyBuilder builder = new TinyBuilder(context.getController().makePipelineConfiguration());
-        builder.setStatistics(Statistics.TEMPORARY_TREE_STATISTICS);
+        builder.setStatistics(context.getConfiguration().getTreeStatistics().TEMPORARY_TREE_STATISTICS);
         builder.setSystemId(root.getSystemId());
         builder.setTiming(false);
 

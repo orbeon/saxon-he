@@ -24,7 +24,6 @@ import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.tiny.Statistics;
 import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.*;
@@ -255,6 +254,7 @@ public class DocumentInstr extends ParentNodeConstructor {
 
     public NodeInfo evaluateItem(XPathContext context) throws XPathException {
         Controller controller = context.getController();
+        Configuration config = controller.getConfiguration();
         assert controller != null;
 
         NodeInfo root;
@@ -271,7 +271,7 @@ public class DocumentInstr extends ParentNodeConstructor {
                 }
                 textValue = sb.condense();
             }
-            root = new TextFragmentValue(controller.getConfiguration(), textValue, getStaticBaseURIString());
+            root = new TextFragmentValue(config, textValue, getStaticBaseURIString());
         } else {
             try {
                 Receiver saved = context.getReceiver();
@@ -283,7 +283,7 @@ public class DocumentInstr extends ParentNodeConstructor {
                 builder.setUseEventLocation(false);
 
                 if (builder instanceof TinyBuilder) {
-                    ((TinyBuilder) builder).setStatistics(Statistics.SOURCE_DOCUMENT_STATISTICS);
+                    ((TinyBuilder) builder).setStatistics(config.getTreeStatistics().SOURCE_DOCUMENT_STATISTICS);
                 }
 
                 builder.setBaseURI(getStaticBaseURIString());
