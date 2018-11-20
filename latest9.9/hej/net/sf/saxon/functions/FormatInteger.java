@@ -9,14 +9,19 @@ package net.sf.saxon.functions;
 
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.expr.Expression;
+import net.sf.saxon.expr.Literal;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.number.*;
+import net.sf.saxon.expr.parser.ContextItemStaticInfo;
+import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.lib.Numberer;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.regex.ARegularExpression;
 import net.sf.saxon.regex.RegularExpression;
 import net.sf.saxon.regex.UnicodeString;
 import net.sf.saxon.regex.charclass.Categories;
+import net.sf.saxon.trans.UncheckedXPathException;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.value.IntegerValue;
@@ -26,11 +31,10 @@ import net.sf.saxon.z.IntSet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.IntPredicate;
 
-public class FormatInteger extends SystemFunction {
-
-    //TODO - PERF - initialise Numberer and prepare the picture at compile time if possible
+public class FormatInteger extends SystemFunction implements StatefulSystemFunction {
 
     private static final RegularExpression badHashPattern;
     private static final RegularExpression modifierPattern;
@@ -46,6 +50,29 @@ public class FormatInteger extends SystemFunction {
         } catch (Exception e) {
             throw new AssertionError(e);
         }
+    }
+
+    private Function<IntegerValue, String> formatter = null;
+
+    @Override
+    public Expression makeOptimizedFunctionCall(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo, Expression... arguments) throws XPathException {
+        boolean opt = true;
+        if (!(arguments[1] instanceof Literal)) {
+            opt = false;
+        }
+        if (arguments.length == 3 && !(arguments[2] instanceof Literal)) {
+            opt = false;
+        }
+        if (!opt) {
+            return super.makeOptimizedFunctionCall(visitor, contextInfo, arguments);
+        }
+        Configuration config = visitor.getConfiguration();
+
+        String language = arguments.length == 3 ? ((Literal)arguments[2]).getValue().getStringValue() : config.getDefaultLanguage();
+        Numberer numb = config.makeNumberer(language, null);
+
+        formatter = makeFormatter(numb, ((Literal)arguments[1]).getValue().getStringValue());
+        return super.makeOptimizedFunctionCall(visitor, contextInfo, arguments);
     }
 
     /**
@@ -72,20 +99,30 @@ public class FormatInteger extends SystemFunction {
             return StringValue.EMPTY_STRING;
         }
 
-        String languageVal;
-        if (language != null) {
-            languageVal = language.getStringValue();
-        } else {
-            //default language
-            languageVal = config.getDefaultLanguage();
+        Function<IntegerValue, String> localFormatter = formatter;
+
+        if (localFormatter == null) {
+            String languageVal;
+            if (language != null) {
+                languageVal = language.getStringValue();
+            } else {
+                //default language
+                languageVal = config.getDefaultLanguage();
+            }
+            Numberer numb = config.makeNumberer(languageVal, null);
+            localFormatter = makeFormatter(numb, picture.getStringValue());
         }
 
-        boolean hasSign = false;
-        if (num.signum() == -1) {
-            hasSign = true;
+
+        try {
+            return new StringValue(localFormatter.apply(num));
+        } catch (UncheckedXPathException e) {
+            throw e.getXPathException();
         }
-        num = (IntegerValue) num.abs();
-        String pic = picture.getStringValue();
+
+    }
+
+    private Function<IntegerValue, String> makeFormatter(Numberer numb, String pic) throws XPathException {
         if (pic.isEmpty()) {
             throw new XPathException(preface + "the picture cannot be empty", "FODF1310");
         }
@@ -122,7 +159,6 @@ public class FormatInteger extends SystemFunction {
         String letterValue = alphabetic ? "alphabetic" : "traditional";
         String ordinalValue = ordinal ? "".equals(parenthetical) ? "yes" : parenthetical : "";
 
-        Numberer numb = config.makeNumberer(languageVal, null);
 
         UnicodeString primary = UnicodeString.makeUnicodeString(primaryToken);
         IntPredicate isDecimalDigit = Categories.getCategory("Nd");
@@ -137,16 +173,28 @@ public class FormatInteger extends SystemFunction {
             if (!decimalDigitPattern.matches(primaryToken)) {
                 throw new XPathException(
                         preface + "the primary format token contains a decimal digit but does not " +
-                            "meet the rules for a decimal digit pattern", "FODF1310");
+                                "meet the rules for a decimal digit pattern", "FODF1310");
             }
             NumericGroupFormatter picGroupFormat = getPicSeparators(primaryToken);
             UnicodeString adjustedPicture = picGroupFormat.getAdjustedPicture();
-            String str = numb.format(num.longValue(), adjustedPicture, picGroupFormat, letterValue, ordinalValue);
-            return hasSign ? new StringValue("-" + str) : new StringValue(str);
+            return num -> {
+                try {
+                    String s = numb.format(num.abs().longValue(), adjustedPicture, picGroupFormat, letterValue, ordinalValue);
+                    return num.signum() < 0 ? ("-" + s) : s;
+                } catch (XPathException e) {
+                    throw new UncheckedXPathException(e);
+                }
+            };
         } else {
             UnicodeString token = UnicodeString.makeUnicodeString(primaryToken);
-            String str = numb.format(num.longValue(), token, null, letterValue, ordinalValue);
-            return hasSign ? new StringValue("-" + str) : new StringValue(str);
+            return num -> {
+                try {
+                    String s = numb.format(num.abs().longValue(), token, null, letterValue, ordinalValue);
+                    return num.signum() < 0 ? ("-" + s) : s;
+                } catch (XPathException e) {
+                    throw new UncheckedXPathException(e);
+                }
+            };
         }
     }
 
@@ -291,6 +339,12 @@ public class FormatInteger extends SystemFunction {
         return UnicodeString.makeUnicodeString(fsb);
     }
 
+    @Override
+    public SystemFunction copy() {
+        FormatInteger fi2 = new FormatInteger();
+        fi2.formatter = formatter;
+        return fi2;
+    }
 }
 
-//Copyright (c) 2010 Saxonica Limited.
+//Copyright (c) 2010-2018 Saxonica Limited.
