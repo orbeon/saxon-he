@@ -1264,6 +1264,10 @@ public final class DateTimeValue extends CalendarValue
      * If the date-time cannot return the value, because the field is unsupported or for
      * some other reason, an exception will be thrown.</p>
      *
+     * <p>The specification requires some fields (for example {@link ChronoField#EPOCH_DAY} to
+     * reflect the local time. The Saxon implementation does not have access to the local time,
+     * so it adjusts to UTC instead.</p>
+     *
      * @param field the field to get, not null
      * @return the value for the field
      * @throws DateTimeException                if a value for the field cannot be obtained
@@ -1325,7 +1329,7 @@ public final class DateTimeValue extends CalendarValue
                     return DateValue.getDayWithinYear(year, month, day);
                 case EPOCH_DAY:
                     BigDecimal secs = secondsSinceEpoch();
-                    long days = secondsSinceEpoch().longValue() / (24*60*60); // TODO: timezone semantics?
+                    long days = secondsSinceEpoch().longValue() / (24*60*60);
                     return secs.signum() < 0 ? days-1 : days;
                 case ALIGNED_WEEK_OF_MONTH:
                     return (day - 1) / 7 + 1;
