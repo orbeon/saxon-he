@@ -258,7 +258,6 @@ public class UseWhenFilter extends ProxyReceiver {
             throw new XPathException("Missing href attribute on " + elemName.getDisplayName(), "XTSE0010");
         }
 
-        // TODO: handle fragments
         URIResolver resolver = compilation.getCompilerInfo().getURIResolver();
         String baseUriStr = baseUri.toString();
         DocumentURI key = DocumentFn.computeDocumentKey(href, baseUriStr, compilation.getPackageData(), resolver, false);
