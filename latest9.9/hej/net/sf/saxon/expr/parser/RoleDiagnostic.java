@@ -173,10 +173,6 @@ public class RoleDiagnostic {
                 return "value of the " + name + " option";
             case CHARACTER_MAP_EXPANSION:
                 return "substitute value for character '" + name + "' in the character map";
-//            case DOCUMENT_ORDER:
-//                return "document-order sorter";
-//            case MAP_CONSTRUCTOR:
-//                return "xsl:map sequence constructor";
             case MATCH_PATTERN:
                 return "match pattern";
             case MISC:
@@ -195,7 +191,7 @@ public class RoleDiagnostic {
 
     public String composeRequiredMessage(ItemType requiredItemType) {
         return "The required item type of the " + getMessage() +
-                " is " + requiredItemType.toString();
+                " is " + requiredItemType;
     }
 
     /**
@@ -209,7 +205,7 @@ public class RoleDiagnostic {
     public String composeErrorMessage(ItemType requiredItemType, ItemType suppliedItemType) {
         return composeRequiredMessage(requiredItemType) +
                 "; supplied value has item type " +
-                suppliedItemType.toString();
+                suppliedItemType;
     }
 
     /**
@@ -233,7 +229,7 @@ public class RoleDiagnostic {
         }
         return composeRequiredMessage(requiredItemType) +
                 "; supplied expression (" + supplied.toShortString() + ") has item type " +
-                supplied.getItemType().toString();
+                supplied.getItemType();
     }
 
 
@@ -278,7 +274,7 @@ public class RoleDiagnostic {
     public String composeErrorMessage(ItemType requiredItemType, UType suppliedItemType) {
         return composeRequiredMessage(requiredItemType) +
                 "; supplied value has item type " +
-                suppliedItemType.toString();
+                suppliedItemType;
     }
 
     /**

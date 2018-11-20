@@ -270,6 +270,12 @@ public class SaxonErrorCode {
     public static final String SXTA0001 = "SXTA0001";
 
     /**
+     * SXTM0001: tabulate-maps: selecting an item with no pedigree
+     */
+    public static final String SXTM0001 = "SXTM0001";
+
+
+    /**
      * SXTT0001: field name not defined in tuple type
      */
     public static final String SXTT0001 = "SXTT0001";

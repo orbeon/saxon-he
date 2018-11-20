@@ -539,7 +539,7 @@ public final class SequenceType {
         if (cardinality == StaticProperty.ALLOWS_ZERO) {
             return "empty-sequence()";
         } else {
-            return primaryType.toString() + Cardinality.getOccurrenceIndicator(cardinality);
+            return primaryType + Cardinality.getOccurrenceIndicator(cardinality);
         }
     }
 
