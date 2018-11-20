@@ -26,6 +26,7 @@ import java.util.Locale;
 public abstract class AbstractNumberer implements Numberer {
 
     private String country;
+    private String language;
 
     public static final int UPPER_CASE = 0;
     public static final int LOWER_CASE = 1;
@@ -50,6 +51,24 @@ public abstract class AbstractNumberer implements Numberer {
         this.country = country;
     }
 
+    /**
+     * Set the language used by this numberer. Useful because it can potentially handle variants of English
+     * (and subclasses can handle other languages)
+     * @param language the requested language. Note that "en-x-hyphen" is recognized as a request to hyphenate
+     *            numbers in the range 21-99.
+     */
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    /**
+     * Get the language used by this numberer
+     */
+
+    public String getLanguage() {
+        return language;
+    }
 
     /**
      * Get the country used by this numberer.
@@ -133,7 +152,7 @@ public abstract class AbstractNumberer implements Numberer {
             case '0':
             case '1':
                 sb.append(toRadical(number, westernDigits, pictureLength, numGroupFormatter));
-                if (ordinal != null && ordinal.length() > 0) {
+                if (ordinal != null && !ordinal.isEmpty()) {
                     sb.append(ordinalSuffix(ordinal, number));
                 }
                 break;
@@ -163,7 +182,7 @@ public abstract class AbstractNumberer implements Numberer {
                     // includes cases like "ww" or "Wz". The action here is conformant, but it's not clear what's best
                     wordCase = TITLE_CASE;
                 }
-                if (ordinal != null && ordinal.length() > 0) {
+                if (ordinal != null && !ordinal.isEmpty()) {
                     return toOrdinalWords(ordinal, number, wordCase);
                 } else {
                     return toWords(number, wordCase);
@@ -196,7 +215,7 @@ public abstract class AbstractNumberer implements Numberer {
             case '\u2460':
                 // circled digits
                 if (number == 0) {
-                    return "" + (char) (0x24EA);
+                    return "" + (char) 0x24EA;
                 }
                 if (number > 20 && number <= 35) {
                     return "" + (char) (0x3251 + number - 21);
@@ -219,7 +238,7 @@ public abstract class AbstractNumberer implements Numberer {
             case '\u2488':
                 // digit full stop
                 if (number == 0) {
-                    return "" + (char) (0xD83C) + (char) (0xDD00);
+                    return "" + (char) 0xD83C + (char) 0xDD00;
                 }
                 if (number > 20) {
                     return "" + number;
@@ -229,7 +248,7 @@ public abstract class AbstractNumberer implements Numberer {
             case '\u2776':
                 // dingbat negative circled digits
                 if (number == 0) {
-                    return "" + (char) (0x24FF);
+                    return "" + (char) 0x24FF;
                 }
                 if (number > 10 && number <= 20) {
                     return "" + (char) (0x24EB + number - 11);
@@ -242,7 +261,7 @@ public abstract class AbstractNumberer implements Numberer {
             case '\u2780':
                 // double circled sans-serif digits
                 if (number == 0) {
-                    return "" + (char) (0xD83C) + (char) (0xDD0B);
+                    return "" + (char) 0xD83C + (char) 0xDD0B;
                 }
                 if (number > 10) {
                     return "" + number;
@@ -259,7 +278,7 @@ public abstract class AbstractNumberer implements Numberer {
             case '\u278A':
                 // dingbat negative circled sans-serif digits
                 if (number == 0) {
-                    return "" + (char) (0xD83C) + (char) (0xDD0C);
+                    return "" + (char) 0xD83C + (char) 0xDD0C;
                 }
                 if (number > 10) {
                     return "" + number;
@@ -400,7 +419,7 @@ public abstract class AbstractNumberer implements Numberer {
                     } else {
                         // fallback to western numbering
                         sb.append(toRadical(number, westernDigits, pictureLength, numGroupFormatter));
-                        if (ordinal != null && ordinal.length() > 0) {
+                        if (ordinal != null && !ordinal.isEmpty()) {
                             sb.append(ordinalSuffix(ordinal, number));
                         }
                         //return toRadical(number, westernDigits, pictureLength, numGroupFormatter);
@@ -731,12 +750,13 @@ public abstract class AbstractNumberer implements Numberer {
         } else {
             s = toWords(number);
         }
-        if (wordCase == UPPER_CASE) {
-            return s.toUpperCase();
-        } else if (wordCase == LOWER_CASE) {
-            return s.toLowerCase();
-        } else {
-            return s;
+        switch (wordCase) {
+            case UPPER_CASE:
+                return s.toUpperCase();
+            case LOWER_CASE:
+                return s.toLowerCase();
+            default:
+                return s;
         }
     }
 
@@ -838,7 +858,7 @@ public abstract class AbstractNumberer implements Numberer {
      */
 
     public String getEraName(int year) {
-        return (year > 0 ? "AD" : "BC");
+        return year > 0 ? "AD" : "BC";
     }
 
     /**

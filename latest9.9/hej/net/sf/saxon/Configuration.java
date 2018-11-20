@@ -1993,7 +1993,10 @@ public class Configuration implements SourceResolver, NotationSet {
 
     public Numberer makeNumberer(/*@Nullable*/ String language, /*@Nullable*/ String country) {
         if (localizerFactory == null) {
-            return new Numberer_en();
+            Numberer_en numberer = new Numberer_en();
+            numberer.setLanguage(language);
+            numberer.setCountry(country);
+            return numberer;
         } else {
             Numberer numberer = localizerFactory.getNumberer(language, country);
             if (numberer == null) {

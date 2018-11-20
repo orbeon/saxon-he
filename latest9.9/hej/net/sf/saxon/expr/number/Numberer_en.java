@@ -48,6 +48,25 @@ public class Numberer_en extends AbstractNumberer {
     }
 
     /**
+     * Set the language used by this numberer. Useful because it can potentially handle variants of English
+     * (and subclasses can handle other languages)
+     *
+     * @param language the requested language. Note that "en-x-hyphen" is recognized as a request to hyphenate
+     *                 numbers in the range 21-99.
+     */
+
+    public void setLanguage(String language) {
+        super.setLanguage(language);
+        if (language.endsWith("-x-hyphen")) {
+            setTensUnitsSeparatorOrdinal("-");
+            setTensUnitsSeparatorCardinal("-");
+        } else if (language.endsWith("-x-nohyphen")) {
+            setTensUnitsSeparatorOrdinal(" ");
+            setTensUnitsSeparatorCardinal(" ");
+        }
+    }
+
+    /**
      * Construct the ordinal suffix for a number, for example "st", "nd", "rd"
      *
      * @param ordinalParam the value of the ordinal attribute (used in non-English
@@ -57,7 +76,7 @@ public class Numberer_en extends AbstractNumberer {
      */
 
     protected String ordinalSuffix(String ordinalParam, long number) {
-        int penult = ((int) (number % 100)) / 10;
+        int penult = (int) (number % 100) / 10;
         int ult = (int) (number % 10);
         if (penult == 1) {
             // e.g. 11th, 12th, 13th
@@ -101,7 +120,9 @@ public class Numberer_en extends AbstractNumberer {
             return toWords(number / 100) + " Hundred" +
                     (rem == 0 ? "" : " and " + toWords(rem));
         } else {
-            if (number < 20) return englishUnits[(int) number];
+            if (number < 20) {
+                return englishUnits[(int) number];
+            }
             int rem = (int) (number % 10);
             return englishTens[(int) number / 10] +
                     (rem == 0 ? "" : tensUnitsSeparatorCardinal + englishUnits[rem]);
@@ -196,9 +217,11 @@ public class Numberer_en extends AbstractNumberer {
         if (name.length() > maxWidth) {
             name = name.substring(0, maxWidth);
         }
-        while (name.length() < minWidth) {
-            name = name + ' ';
+        StringBuilder nameBuilder = new StringBuilder(name);
+        while (nameBuilder.length() < minWidth) {
+            nameBuilder.append(' ');
         }
+        name = nameBuilder.toString();
         return name;
     }
 
@@ -226,9 +249,11 @@ public class Numberer_en extends AbstractNumberer {
                 name = name.substring(0, maxWidth);
             }
         }
-        while (name.length() < minWidth) {
-            name = name + ' ';
+        StringBuilder nameBuilder = new StringBuilder(name);
+        while (nameBuilder.length() < minWidth) {
+            nameBuilder.append(' ');
         }
+        name = nameBuilder.toString();
         if (minWidth == 1 && maxWidth == 2) {
             // special case
             name = name.substring(0, minUniqueDayLength[day - 1]);
