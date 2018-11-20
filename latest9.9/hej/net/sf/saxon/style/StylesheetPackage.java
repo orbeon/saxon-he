@@ -673,7 +673,9 @@ public class StylesheetPackage extends PackageData {
             newC.setBaseComponent(oldC);
 
             if (overrides.contains(name)) {
-                // TODO: overrides is all the overrides, not only those for this xsl:use-package
+                // Note: overrides is all the overrides, not only those for this xsl:use-package;
+                // but we have already checked that xsl:override declarations match something in the
+                // right package.
                 overriddenComponents.put(name, newC);
                 if (newV != Visibility.ABSTRACT) {
                     abstractComponents.remove(name);
@@ -1082,8 +1084,8 @@ public class StylesheetPackage extends PackageData {
                 }
             }
             throw new XPathException(
-                "The package is not executable, because it contains abstract components: " +
-                    buff.toString(), "XTSE3080");
+                    "The package is not executable, because it contains abstract components: " +
+                            buff, "XTSE3080");
         }
     }
 
