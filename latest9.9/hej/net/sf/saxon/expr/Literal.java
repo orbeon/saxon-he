@@ -530,8 +530,15 @@ public class Literal extends Expression {
             out.startElement("node");
             out.emitAttribute("kind", ((NodeInfo) value).getNodeKind() + "");
             out.emitAttribute("baseUri", ((NodeInfo) value).getBaseURI());
-            String ser = QueryResult.serialize((NodeInfo) value);
-            out.emitAttribute("content", ser);
+            if (!((ExpressionPresenter.ExportOptions) out.getOptions()).explaining) {
+                String ser = QueryResult.serialize((NodeInfo) value);
+                out.emitAttribute("content", ser);
+            } else {
+                String name = ((NodeInfo)value).getDisplayName();
+                if (!name.isEmpty()) {
+                    out.emitAttribute("name", name);
+                }
+            }
             out.endElement();
         } else if (value instanceof MapItem) {
             out.startElement("map");
@@ -544,19 +551,19 @@ public class Literal extends Expression {
         } else if (value instanceof Function) {
             ((Function) value).export(out);
         } else if (value instanceof ExternalObject) {
-            out.startElement("externalObject");
-            out.emitAttribute("class", ((ExternalObject) value).getObject().getClass().getName());
-            out.endElement();
+            if (((ExpressionPresenter.ExportOptions)out.getOptions()).explaining) {
+                out.startElement("externalObject");
+                out.emitAttribute("class", ((ExternalObject)value).getObject().getClass().getName());
+                out.endElement();
+            } else {
+                throw new XPathException("Cannot export a stylesheet containing literal values bound to external Java objects");
+            }
         } else {
             out.startElement("literal");
             if (value instanceof GroundedValue) {
                 out.emitAttribute("count", ((GroundedValue) value).getLength() + "");
             }
-            SequenceIterator iter = value.iterate();
-            Item it;
-            while ((it = iter.next()) != null) {
-                exportValue(it, out);
-            }
+            value.iterate().forEachOrFail(it -> exportValue(it, out));
             out.endElement();
 
         }

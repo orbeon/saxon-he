@@ -674,6 +674,7 @@ public class ExpressionPresenter {
         public StylesheetPackage rootPackage;
         public Map<Component, Integer> componentMap;
         public Map<StylesheetPackage, Integer> packageMap;
+        public boolean explaining;
     }
 }
 

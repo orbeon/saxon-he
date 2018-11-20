@@ -1039,6 +1039,9 @@ public abstract class Expression implements IdentityComparable, ExportAgent {
 
     public final void explain(Logger out) {
         ExpressionPresenter ep = new ExpressionPresenter(getConfiguration(), out);
+        ExpressionPresenter.ExportOptions options = new ExpressionPresenter.ExportOptions();
+        options.explaining = true;
+        ep.setOptions(options);
         try {
             export(ep);
         } catch (XPathException e) {
