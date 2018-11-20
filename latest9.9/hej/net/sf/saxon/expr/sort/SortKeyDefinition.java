@@ -116,6 +116,15 @@ public class SortKeyDefinition extends PseudoExpression {
     }
 
     /**
+     * Get the sort key operand
+     * @return the operand that computes the sort key
+     */
+
+    public Operand getSortKeyOperand() {
+        return sortKey;
+    }
+
+    /**
      * Ask whether the sortkey is to be evaluated with the item-being-sorted
      * as the context item
      *
