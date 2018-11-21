@@ -114,37 +114,42 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
             //        final PipelineConfiguration newPipe = new PipelineConfiguration(oldPipe);
             final UnfailingErrorListener oldErrorListener =
                     controller == null ? new StandardErrorListener() : controller.getErrorListener();
-            if (onError == URIQueryParameters.ON_ERROR_IGNORE) {
-                options.setErrorListener(new UnfailingErrorListener() {
-                    public void warning(TransformerException exception) {
-                    }
 
-                    public void error(TransformerException exception) {
-                    }
-
-                    public void fatalError(TransformerException exception) {
-                    }
-                });
-            } else if (onError == URIQueryParameters.ON_ERROR_WARNING) {
-                options.setErrorListener(new UnfailingErrorListener() {
-                    public void warning(TransformerException exception) {
-                        oldErrorListener.warning(exception);
-                    }
-
-                    public void error(TransformerException exception) {
-                        oldErrorListener.warning(exception);
-                        XPathException supp = new XPathException("The document will be excluded from the collection");
-                        supp.setLocator(exception.getLocator());
-                        oldErrorListener.warning(supp);
-                    }
-
-                    public void fatalError(TransformerException exception) {
-                        error(exception);
-                    }
-                });
-            }
+            setupErrorHandlingForCollection(options, onError, oldErrorListener);
         }
         return options;
+    }
+
+    public static void setupErrorHandlingForCollection(ParseOptions options, int onError, UnfailingErrorListener oldErrorListener) {
+        if (onError == URIQueryParameters.ON_ERROR_IGNORE) {
+            options.setErrorListener(new UnfailingErrorListener() {
+                public void warning(TransformerException exception) {
+                }
+
+                public void error(TransformerException exception) {
+                }
+
+                public void fatalError(TransformerException exception) {
+                }
+            });
+        } else if (onError == URIQueryParameters.ON_ERROR_WARNING) {
+            options.setErrorListener(new UnfailingErrorListener() {
+                public void warning(TransformerException exception) {
+                    oldErrorListener.warning(exception);
+                }
+
+                public void error(TransformerException exception) {
+                    oldErrorListener.warning(exception);
+                    XPathException supp = new XPathException("The document will be excluded from the collection");
+                    supp.setLocator(exception.getLocator());
+                    oldErrorListener.warning(supp);
+                }
+
+                public void fatalError(TransformerException exception) {
+                    error(exception);
+                }
+            });
+        }
     }
 
     public static class InputDetails {
@@ -166,7 +171,6 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
                 File file = new File(uri);
                 inputDetails.inputStream = new BufferedInputStream(new FileInputStream(file));
             } else {
-                //TODO: check for redirects
                 URL url = uri.toURL();
                 URLConnection connection = url.openConnection();
                 inputDetails.inputStream = connection.getInputStream();

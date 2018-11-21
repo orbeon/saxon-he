@@ -19,6 +19,7 @@ import net.sf.saxon.functions.URIQueryParameters;
 import net.sf.saxon.functions.UnparsedTextFunction;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.NodeKindTest;
+import net.sf.saxon.resource.AbstractResourceCollection;
 import net.sf.saxon.resource.StandardCollectionFinder;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.Maker;
@@ -35,7 +36,6 @@ import net.sf.saxon.value.TextFragmentValue;
 import org.xml.sax.XMLReader;
 
 import javax.xml.transform.Source;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.net.URI;
@@ -202,35 +202,9 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
         final PipelineConfiguration newPipe = new PipelineConfiguration(oldPipe);
         final UnfailingErrorListener oldErrorListener =
                 controller == null ? new StandardErrorListener() : controller.getErrorListener();
-        if (onError == URIQueryParameters.ON_ERROR_IGNORE) {
-            newPipe.setErrorListener(new UnfailingErrorListener() {
-                public void warning(TransformerException exception) {
-                }
+        AbstractResourceCollection.setupErrorHandlingForCollection(
+                newPipe.getParseOptions(), onError, oldErrorListener);
 
-                public void error(TransformerException exception) {
-                }
-
-                public void fatalError(TransformerException exception) {
-                }
-            });
-        } else if (onError == URIQueryParameters.ON_ERROR_WARNING) {
-            newPipe.setErrorListener(new UnfailingErrorListener() {
-                public void warning(TransformerException exception) {
-                    oldErrorListener.warning(exception);
-                }
-
-                public void error(TransformerException exception) {
-                    oldErrorListener.warning(exception);
-                    XPathException supp = new XPathException("The document will be excluded from the collection");
-                    supp.setLocator(exception.getLocator());
-                    oldErrorListener.warning(supp);
-                }
-
-                public void fatalError(TransformerException exception) {
-                    error(exception);
-                }
-            });
-        }
         FileExpander expander = new FileExpander(params, newPipe);
         SequenceIterator<?> base = new ArrayIterator<>(fileValues);
         return new MappingIterator(base, expander);
@@ -268,11 +242,11 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
         AxisIterator iter =
                 catalog.iterateAxis(AxisInfo.CHILD, NodeKindTest.ELEMENT);
         NodeInfo top = iter.next();
-        if (top == null || !("collection".equals(top.getLocalPart()) && top.getURI().length() == 0)) {
+        if (top == null || !("collection".equals(top.getLocalPart()) && top.getURI().isEmpty())) {
             String message;
             if (top == null) {
                 message = "No outermost element found in collection catalog";
-            } else if (top.getURI().length() != 0) {
+            } else if (!top.getURI().isEmpty()) {
                 message = "Collection catalog should not use a namespace";
             } else {
                 message = "Collection catalog outermost element should be <catalog> (found " + top.getLocalPart() + ">)";
@@ -303,39 +277,36 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
         AxisIterator documents =
                 top.iterateAxis(AxisInfo.CHILD, NodeKindTest.ELEMENT);
 
-        ItemMappingFunction catalogueMapper = new ItemMappingFunction() {
-            public Item mapItem(Item item) throws XPathException {
-                NodeInfo node = (NodeInfo)item;
-                if (!("doc".equals(node.getLocalPart()) &&
-                        node.getURI().length() == 0)) {
-                    XPathException err = new XPathException("children of <collection> element must be <doc> elements");
-                    err.setErrorCode("FODC0004");
-                    err.setXPathContext(context);
-                    throw err;
-                }
-                String href = Navigator.getAttributeValue(node, "", "href");
-                if (href == null) {
-                    XPathException err = new XPathException("\"<doc> element in catalog has no @href attribute\"");
-                    err.setErrorCode("FODC0004");
-                    err.setXPathContext(context);
-                    throw err;
-                }
-                String uri;
-                try {
-                    uri = new URI(node.getBaseURI()).resolve(href).toString();
-                } catch (URISyntaxException e) {
-                    XPathException err = new XPathException("Invalid base URI or href URI in collection catalog: ("
-                                                                    + node.getBaseURI() + ", " + href + ")");
-                    err.setErrorCode("FODC0004");
-                    err.setXPathContext(context);
-                    throw err;
-                }
-                if (finalStable) {
-                    return new AnyURIValue(uri);
-                } else {
-                    // stability not required, bypass the document pool and URI resolver
-                    return context.getConfiguration().buildDocument(new StreamSource(uri));
-                }
+        ItemMappingFunction<Item<?>, Item<?>> catalogueMapper = item -> {
+            NodeInfo node = (NodeInfo)item;
+            if (!("doc".equals(node.getLocalPart()) && node.getURI().isEmpty())) {
+                XPathException err = new XPathException("children of <collection> element must be <doc> elements");
+                err.setErrorCode("FODC0004");
+                err.setXPathContext(context);
+                throw err;
+            }
+            String href1 = Navigator.getAttributeValue(node, "", "href");
+            if (href1 == null) {
+                XPathException err = new XPathException("\"<doc> element in catalog has no @href attribute\"");
+                err.setErrorCode("FODC0004");
+                err.setXPathContext(context);
+                throw err;
+            }
+            String uri;
+            try {
+                uri = new URI(node.getBaseURI()).resolve(href1).toString();
+            } catch (URISyntaxException e) {
+                XPathException err = new XPathException("Invalid base URI or href URI in collection catalog: ("
+                                                                + node.getBaseURI() + ", " + href1 + ")");
+                err.setErrorCode("FODC0004");
+                err.setXPathContext(context);
+                throw err;
+            }
+            if (finalStable) {
+                return new AnyURIValue(uri);
+            } else {
+                // stability not required, bypass the document pool and URI resolver
+                return context.getConfiguration().buildDocument(new StreamSource(uri));
             }
         };
 
