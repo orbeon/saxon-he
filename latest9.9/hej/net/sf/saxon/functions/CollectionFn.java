@@ -138,11 +138,15 @@ public class CollectionFn extends SystemFunction implements Callable {
 
         return new SequenceIterator<Item<?>>() {
 
-            public Item next() {
-                if (sources.hasNext()) {
-                    return new ObjectValue<Resource>(sources.next());
-                } else {
-                    return null;
+            public Item next() throws XPathException {
+                try {
+                    if (sources.hasNext()) {
+                        return new ObjectValue<Resource>(sources.next());
+                    } else {
+                        return null;
+                    }
+                } catch (Exception e) {
+                    throw XPathException.makeXPathException(e);
                 }
             }
 
@@ -242,7 +246,7 @@ public class CollectionFn extends SystemFunction implements Callable {
         // In XSLT, apply space-stripping to document nodes in the collection
         if (whitespaceRule != null) {
             final SpaceStrippingRule rule = whitespaceRule;
-            ItemMappingFunction stripper = item -> {
+            ItemMappingFunction<Item<? extends Item>, Item<? extends Item>> stripper = item -> {
                 if (item instanceof NodeInfo && ((NodeInfo) item).getNodeKind() == Type.DOCUMENT) {
                     TreeInfo treeInfo = ((NodeInfo) item).getTreeInfo();
                     if (treeInfo.getSpaceStrippingRule() != rule) {
@@ -251,7 +255,7 @@ public class CollectionFn extends SystemFunction implements Callable {
                 }
                 return item;
             };
-            result = new ItemMappingIterator<>(result, stripper);
+            result = new ItemMappingIterator(result, stripper);
         }
 
         // If the collection is stable, cache the result
@@ -259,7 +263,7 @@ public class CollectionFn extends SystemFunction implements Callable {
             Controller controller = context.getController();
             DocumentPool docPool = controller.getDocumentPool();
             cachedCollection = result.materialize();
-            SequenceIterator iter = cachedCollection.iterate();
+            SequenceIterator<?> iter = cachedCollection.iterate();
             Item item;
             while ((item = iter.next()) != null) {
                 if (item instanceof NodeInfo && ((NodeInfo)item).getNodeKind() == Type.DOCUMENT) {
@@ -273,7 +277,7 @@ public class CollectionFn extends SystemFunction implements Callable {
             return cachedCollection;
         }
 
-        return new LazySequence(result);
+        return new LazySequence<>(result);
     }
 
 }

@@ -95,7 +95,7 @@ public class JarCollection extends AbstractResourceCollection {
      * @return a list of all the URIs of resources within the collection. The resources are identified
      * by URIs of the form collection-uri!entry-path
      * @throws XPathException if any error occurs accessing the JAR file contents
-     * @param context
+     * @param context dynamic evaluation context
      */
 
     public Iterator<String> getResourceURIs(XPathContext context) throws XPathException {
@@ -116,7 +116,7 @@ public class JarCollection extends AbstractResourceCollection {
         }
 
         ZipInputStream zipInputStream = getZipInputStream();
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         try {
             ZipEntry entry;
             String dirStr = "";
@@ -173,6 +173,13 @@ public class JarCollection extends AbstractResourceCollection {
         return new ZipInputStream(stream);
     }
 
+    /**
+     * Get an iterator over the resources in the collection
+     * @param context the XPath evaluation context
+     * @return an iterator over the resources in the collection. This may include instances of
+     * {@link FailedResource} if there are resources that cannot be processed for some reason.
+     * @throws XPathException if it is not possible to get an iterator.
+     */
 
     public Iterator<Resource> getResources(XPathContext context) throws XPathException {
         FilenameFilter filter = null;
@@ -256,9 +263,8 @@ public class JarCollection extends AbstractResourceCollection {
                         return;
                     }
                 } catch (IOException e) {
-                    // TODO error handling
-                    e.printStackTrace();
-                    return;
+                    next = new FailedResource(null, new XPathException(e));
+                    break;
                 }
                 if (entry.isDirectory()) {
                     dirStr = entry.getName();
@@ -276,6 +282,7 @@ public class JarCollection extends AbstractResourceCollection {
                             continue;
                         }
                     }
+                    String resourceURI = null;
                     try {
                         InputStream is = zipInputStream;
                         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -286,13 +293,13 @@ public class JarCollection extends AbstractResourceCollection {
                                 output.write(buffer, 0, len);
                             }
                         } catch (IOException err) {
-                            err.printStackTrace();
+                            throw new UncheckedXPathException(new XPathException(err));
                         } finally {
                             // we must always close the output file
                             try {
                                 output.close();
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                next = new FailedResource(null, new XPathException(e));
                             }
                         }
                         InputStream entryContent = new ByteArrayInputStream(output.toByteArray());
@@ -300,7 +307,7 @@ public class JarCollection extends AbstractResourceCollection {
                         details.inputStream = entryContent;
                         details.contentType = guessContentType(entry.getName(), entryContent);
                         details.parseOptions = options;
-                        String resourceURI = makeResourceURI(entry.getName());
+                        resourceURI = makeResourceURI(entry.getName());
                         next = makeResource(context.getConfiguration(), details, resourceURI);
                         if (metadata) {
                             Map<String, GroundedValue<?>> properties = makeProperties(entry);
@@ -308,8 +315,7 @@ public class JarCollection extends AbstractResourceCollection {
                         }
                         return;
                     } catch (XPathException e) {
-                        // TODO: error handling
-                        e.printStackTrace();
+                        next = new FailedResource(resourceURI, e);
                     }
                 }
             }
