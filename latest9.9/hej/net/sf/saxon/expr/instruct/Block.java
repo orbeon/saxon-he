@@ -165,7 +165,7 @@ public class Block extends Instruction {
      */
 
     public static Expression makeBlock(List<Expression> list) {
-        if (list.size() == 0) {
+        if (list.isEmpty()) {
             return Literal.makeEmptySequence();
         } else if (list.size() == 1) {
             return list.get(0);
@@ -619,7 +619,7 @@ public class Block extends Instruction {
         flushCurrentLiteralList(currentLiteralList, targetList);
     }
 
-    private void flushCurrentLiteralList(List<Item<?>> currentLiteralList, List<Expression> list) throws XPathException {
+    private void flushCurrentLiteralList(List<Item<?>> currentLiteralList, List<Expression> list) {
         if (currentLiteralList != null) {
             ListIterator<Item<?>> iter = new ListIterator<>(currentLiteralList);
             Literal lit = Literal.makeLiteral(iter.materialize(), this);

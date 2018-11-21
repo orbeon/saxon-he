@@ -254,9 +254,9 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
     /*@NotNull*/
     public Expression copy(RebindingMap rebindings) {
         CopyOf c = new CopyOf(getSelect().copy(rebindings), copyNamespaces, validation, schemaType, rejectDuplicateAttributes);
+        ExpressionTool.copyLocationInfo(this, c);
         c.setCopyForUpdate(copyForUpdate);
         c.setCopyLineNumbers(copyLineNumbers);
-        //c.setReadOnce(readOnce);
         c.isSchemaAware = isSchemaAware;
         c.setCopyAccumulators(copyAccumulators);
         return c;

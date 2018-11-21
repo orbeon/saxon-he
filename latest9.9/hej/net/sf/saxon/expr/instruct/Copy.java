@@ -127,7 +127,9 @@ public class Copy extends ElementCreator {
                 case Type.COMMENT:
                 case Type.PROCESSING_INSTRUCTION:
                 case Type.NAMESPACE:
-                    CopyOf c = new CopyOf(new ContextItemExpression(), copyNamespaces, getValidationAction(), getSchemaType(), false);
+                    ContextItemExpression dot = new ContextItemExpression();
+                    ExpressionTool.copyLocationInfo(this, dot);
+                    CopyOf c = new CopyOf(dot, copyNamespaces, getValidationAction(), getSchemaType(), false);
                     ExpressionTool.copyLocationInfo(this, c);
                     return c.typeCheck(visitor, contextInfo);
                 default:
