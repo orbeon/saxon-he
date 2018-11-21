@@ -9,14 +9,10 @@ package net.sf.saxon.functions;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Version;
-import net.sf.saxon.event.Builder;
-import net.sf.saxon.event.ProxyReceiver;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.expr.Callable;
 import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.expr.parser.ExplicitLocation;
-import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.lib.*;
 import net.sf.saxon.ma.arrays.ArrayItem;
 import net.sf.saxon.ma.arrays.ArrayItemType;
@@ -33,7 +29,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.trans.XsltController;
 import net.sf.saxon.tree.iter.AtomicIterator;
 import net.sf.saxon.tree.util.FastStringBuffer;
-import net.sf.saxon.type.SchemaType;
+import net.sf.saxon.tree.wrapper.RebasedDocument;
 import net.sf.saxon.type.SpecificFunctionType;
 import net.sf.saxon.value.*;
 import net.sf.saxon.value.SequenceType;
@@ -456,29 +452,15 @@ public class TransformFn extends SystemFunction implements Callable {
 
                     // If the stylesheet is supplied as a node, and the stylesheet-base-uri option is supplied, and doesn't match
                     // the base URIs of the nodes (tests fn-transform-19 and fn-transform-41), then we have a bit of a problem.
-                    // We copy the stylesheet to a new tree having the desired base URI.
+                    // We wrap the stylesheet into a new virtual tree having the desired base URI.
 
-                    // TODO: allow a virtual tree that differs from the base tree only in its base URI.
+                    String newBaseUri = stylesheetBaseUri.toASCIIString();
+                    RebasedDocument rebased = new RebasedDocument(
+                            stylesheetNode.getTreeInfo(),
+                            node -> newBaseUri,
+                            node -> newBaseUri);
 
-                    final String sysId = stylesheetBaseUri.toASCIIString();
-                    Builder builder = context.getController().makeBuilder();
-                    builder.setSystemId(sysId);
-                    final ExplicitLocation fixedLocation = new ExplicitLocation(sysId, -1, -1);
-                    ProxyReceiver filter = new ProxyReceiver(builder) {
-                        @Override
-                        public void startElement(NodeName elemName, SchemaType typeCode, Location location, int properties) throws XPathException {
-                            super.startElement(elemName, typeCode, fixedLocation, properties);
-                        }
-
-                        @Override
-                        public void setSystemId(String systemId) {
-                            super.setSystemId(sysId);
-                        }
-                    };
-                    builder.open();
-                    stylesheetNode.copy(filter, 0, ExplicitLocation.UNKNOWN_LOCATION);
-                    builder.close();
-                    stylesheetNode = builder.getCurrentRoot();
+                    stylesheetNode = rebased.getRootNode();
                 }
 
                 if (cacheable) {

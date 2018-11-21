@@ -28,7 +28,7 @@ public class RebasedNode extends AbstractVirtualNode implements WrappingFunction
      * factory method
      *
      * @param node   The node to be wrapped
-     * @param parent The StrippedNode that wraps the parent of this node
+     * @param parent The RebasedNode that wraps the parent of this node
      */
 
     protected RebasedNode(NodeInfo node, RebasedNode parent) {
