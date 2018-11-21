@@ -533,7 +533,11 @@ public class ItemTypeFactory {
      */
 
     public XdmMap newMap(Map<?, ?> map) throws SaxonApiException {
-        return XdmMap.makeMap(map);
+        try {
+            return XdmMap.makeMap(map);
+        } catch (IllegalArgumentException e) {
+            throw new SaxonApiException(e);
+        }
     }
 
     /**

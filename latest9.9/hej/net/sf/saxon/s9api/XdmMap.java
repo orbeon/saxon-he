@@ -11,7 +11,6 @@ import net.sf.saxon.ma.map.HashTrieMap;
 import net.sf.saxon.ma.map.KeyValuePair;
 import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.om.GroundedValue;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.tree.jiter.MappingJavaIterator;
 import net.sf.saxon.value.DoubleValue;
 import net.sf.saxon.value.Int64Value;
