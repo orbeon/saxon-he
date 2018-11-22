@@ -17,7 +17,6 @@ import net.sf.saxon.trans.CompilerInfo;
 import net.sf.saxon.trans.XPathException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -30,11 +29,11 @@ import java.io.IOException;
 
 public class XsltPackage {
 
-    private Processor processor;
+    private XsltCompiler compiler;
     private StylesheetPackage stylesheetPackage;
 
-    protected XsltPackage(Processor p, StylesheetPackage pp) {
-        this.processor = p;
+    protected XsltPackage(XsltCompiler compiler, StylesheetPackage pp) {
+        this.compiler = compiler;
         this.stylesheetPackage = pp;
     }
 
@@ -45,7 +44,7 @@ public class XsltPackage {
      */
 
     public Processor getProcessor() {
-        return processor;
+        return compiler.getProcessor();
     }
 
     /**
@@ -105,14 +104,14 @@ public class XsltPackage {
 
     public XsltExecutable link() throws SaxonApiException {
         try {
-            Configuration config = processor.getUnderlyingConfiguration();
-            CompilerInfo info = config.makeCompilerInfo();
+            Configuration config = getProcessor().getUnderlyingConfiguration();
+            CompilerInfo info = compiler.getUnderlyingCompilerInfo();
             Compilation compilation = new Compilation(config, info);
             stylesheetPackage.checkForAbstractComponents();
             PreparedStylesheet pss = new PreparedStylesheet(compilation);
             stylesheetPackage.updatePreparedStylesheet(pss);
             pss.addPackage(stylesheetPackage);
-            return new XsltExecutable(processor, pss);
+            return new XsltExecutable(getProcessor(), pss);
         } catch (XPathException e) {
             throw new SaxonApiException(e);
         }

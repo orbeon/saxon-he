@@ -12,7 +12,6 @@ import net.sf.saxon.PreparedStylesheet;
 import net.sf.saxon.expr.parser.OptimizerOptions;
 import net.sf.saxon.lib.ErrorGatherer;
 import net.sf.saxon.lib.StringCollator;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.style.*;
@@ -510,7 +509,7 @@ public class XsltCompiler {
                 compilation = new Compilation(config, new CompilerInfo(compilerInfo));
             }
             compilation.setLibraryPackage(true);
-            XsltPackage pack = new XsltPackage(processor, compilation.compilePackage(source).getStylesheetPackage());
+            XsltPackage pack = new XsltPackage(this, compilation.compilePackage(source).getStylesheetPackage());
             int errors = compilation.getErrorCount();
             if (errors > 0) {
                 String count = errors == 1 ? "one error" : errors + " errors";
@@ -582,7 +581,7 @@ public class XsltCompiler {
             IPackageLoader loader = processor.getUnderlyingConfiguration().makePackageLoader();
             if(loader != null){
                 StylesheetPackage pack = loader.loadPackage(input);
-                return new XsltPackage(processor, pack);
+                return new XsltPackage(this, pack);
             }
             throw new SaxonApiException("Loading library package requires Saxon PE or higher");
         } catch (XPathException e) {
@@ -691,7 +690,7 @@ public class XsltCompiler {
             PackageDetails details = getPackageLibrary().findPackage(packageName, pvr);
             if (details != null) {
                 if (details.loadedPackage != null) {
-                    return new XsltPackage(processor, details.loadedPackage);
+                    return new XsltPackage(this, details.loadedPackage);
                 } else if (details.sourceLocation != null) {
                     XsltPackage pack = compilePackage(details.sourceLocation);
                     details.loadedPackage = pack.getUnderlyingPreparedPackage();
@@ -719,7 +718,7 @@ public class XsltCompiler {
         }
         try {
             StylesheetPackage pack = getPackageLibrary().obtainLoadedPackage(details, new ArrayList<>());
-            return new XsltPackage(processor, pack);
+            return new XsltPackage(this, pack);
         } catch (XPathException e) {
             throw new SaxonApiException(e);
         }
