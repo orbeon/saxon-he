@@ -1018,8 +1018,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                 body.explain(err);
             }
             body.restoreParentPointers();
-            // TODO: generate byte code?
-            if (config.isDeferredByteCode(Configuration.XSLT)) {
+            if (config.isDeferredByteCode(Configuration.XSLT) && !isTailRecursive) {
                 Optimizer opt = config.obtainOptimizer();
                 int evaluationModes = Expression.ITERATE_METHOD | Expression.PROCESS_METHOD;
                 compiledNamedTemplate.setBody(opt.makeByteCodeCandidate(compiledNamedTemplate, body, diagnosticId, evaluationModes));
@@ -1068,7 +1067,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                             }
                         }
 
-                        if (visitor.getConfiguration().isDeferredByteCode(Configuration.XSLT)) {
+                        if (visitor.getConfiguration().isDeferredByteCode(Configuration.XSLT) && !isTailRecursive) {
                             int evaluationModes = Expression.ITERATE_METHOD | Expression.PROCESS_METHOD;
                             compiledTemplateRule.setBody(opt.makeByteCodeCandidate(compiledTemplateRule, templateRuleBody, diagnosticId, evaluationModes));
                         }
