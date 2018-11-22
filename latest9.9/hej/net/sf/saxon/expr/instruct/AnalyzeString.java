@@ -45,8 +45,6 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
 
     private RegularExpression pattern;
 
-    private boolean useXsltErrorCodes = true;
-
     /**
      * Construct an AnalyzeString instruction
      *
@@ -149,13 +147,6 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
     }
 
     /**
-     * @return if allow XSLT 3.0 features
-     */
-    public boolean isAllow30features() {
-        return true;
-    }
-
-    /**
      * Ask whether common subexpressions found in the operands of this expression can
      * be extracted and evaluated outside the expression itself. The result is irrelevant
      * in the case of operands evaluated with a different focus, which will never be
@@ -166,27 +157,6 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
     @Override
     public boolean allowExtractingCommonSubexpressions() {
         return false;
-    }
-
-    /**
-     * Say whether the expression should return the error codes for the fn:analyze-string function
-     * or the xsl:analyze-string instruction
-     *
-     * @param xslt if true use the error codes for  xsl:analyze-string, otherwise use the error codes for fn:analyze-string
-     */
-    public void setUseXsltErrorCodes(boolean xslt) {
-        useXsltErrorCodes = xslt;
-    }
-
-    /**
-     * Ask whether the expression should return the error codes for the fn:analyze-string function
-     * or the xsl:analyze-string instruction
-     *
-     * @return true if using the error codes for  xsl:analyze-string, otherwise use the error codes for fn:analyze-string
-     */
-
-    public boolean isUseXsltErrorCodes() {
-        return useXsltErrorCodes;
     }
 
     /*@NotNull*/
@@ -236,36 +206,35 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
             nonMatchingOp.optimize(visitor, config.makeContextItemStaticInfo(BuiltInAtomicType.STRING, false));
         }
 
+        List<String> warnings = new ArrayList<>();
+        precomputeRegex(config, warnings);
+        for (String w : warnings) {
+            visitor.getStaticContext().issueWarning(w, getLocation());
+        }
+
+        return this;
+    }
+
+    public void precomputeRegex(Configuration config, List<String> warnings) throws XPathException {
         if (pattern == null && getRegex() instanceof StringLiteral && getFlags() instanceof StringLiteral) {
             try {
                 final CharSequence regex = ((StringLiteral) this.getRegex()).getStringValue();
                 final CharSequence flagstr = ((StringLiteral) getFlags()).getStringValue();
 
                 String hostLang = "XP30";
-                List<String> warnings = new ArrayList<>();
                 pattern = config.compileRegularExpression(regex, flagstr.toString(), hostLang, warnings);
-                for (String w : warnings) {
-                    visitor.getStaticContext().issueWarning(w, getLocation());
-                }
 
-                if ((!isAllow30features() || !useXsltErrorCodes) && pattern.matches("")) {
-                    // prevent it being reported more than once
-                    pattern = config.compileRegularExpression("x", "", "XP20", warnings);
-                    invalidRegex("The regular expression must not be one that matches a zero-length string",
-                            useXsltErrorCodes ? "XTDE1150" : "FORX0003");
-                }
             } catch (XPathException err) {
                 if ("XTDE1150".equals(err.getErrorCodeLocalPart())) {
                     throw err;
                 }
                 if ("FORX0001".equals(err.getErrorCodeLocalPart())) {
-                    invalidRegex("Error in regular expression flags: " + err, useXsltErrorCodes ? "XTDE1145" : "FORX0001");
+                    invalidRegex("Error in regular expression flags: " + err, "FORX0001");
                 } else {
-                    invalidRegex("Error in regular expression: " + err, useXsltErrorCodes ? "XTDE1140" : err.getErrorCodeLocalPart());
+                    invalidRegex("Error in regular expression: " + err, err.getErrorCodeLocalPart());
                 }
             }
         }
-        return this;
     }
 
     private void invalidRegex(String message, String errorCode) throws XPathException {
@@ -419,14 +388,9 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
         RegularExpression re = pattern;
         if (re == null) {
             String flagstr = getFlags().evaluateAsString(context).toString();
-            String dialect = "XP30";
             StringValue regexString = (StringValue)getRegex().evaluateItem(context);
             re = context.getConfiguration().compileRegularExpression(
-                        getRegex().evaluateAsString(context), flagstr, dialect, null);
-            if ((dialect.equals("XP20") || !useXsltErrorCodes) && re.matches("")) {
-                dynamicError("The regular expression must not be one that matches a zero-length string",
-                        useXsltErrorCodes ? "XTDE1150" : "FORX0003", context);
-            }
+                        getRegex().evaluateAsString(context), flagstr, "XP30", null);
         }
 
         return re.analyze(input);
@@ -456,7 +420,7 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
         c2.setCurrentRegexIterator(iter);
 
         AnalyzeMappingFunction fn = new AnalyzeMappingFunction(iter, c2, getNonMatching(), getMatching());
-        return new ContextMappingIterator(fn, c2);
+        return new ContextMappingIterator<>(fn, c2);
     }
 
     /**

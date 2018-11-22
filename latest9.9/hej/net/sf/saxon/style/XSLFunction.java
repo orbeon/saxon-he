@@ -365,21 +365,6 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
         top.indexFunction(decl);
     }
 
-    /**
-     * Notify all references to this function of the data type.
-     *
-     * @throws XPathException
-     */
-
-    public void fixupReferences() throws XPathException {
-//        for (UserFunctionReference reference : references) {
-//            if (reference instanceof UserFunctionCall) {
-//                ((UserFunctionCall) reference).setStaticType(resultType);
-//            }
-//        }
-        super.fixupReferences();
-    }
-
     public void validate(ComponentDeclaration decl) throws XPathException {
 
         stackFrameMap = getConfiguration().makeSlotManager();
@@ -401,7 +386,7 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
      * all references to the function to the executable representation
      * (a UserFunction object)
      *
-     * @throws XPathException
+     * @throws XPathException if compilation fails
      */
 
     public void compileDeclaration(Compilation compilation, ComponentDeclaration decl) throws XPathException {

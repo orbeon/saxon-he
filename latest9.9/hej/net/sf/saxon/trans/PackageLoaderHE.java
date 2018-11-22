@@ -405,18 +405,22 @@ public class PackageLoaderHE implements IPackageLoader {
                 NodeInfo grandchild = child.iterateAxis(AxisInfo.CHILD, NodeKindTest.ELEMENT).next();
                 Actor cc = null;
                 String kind = grandchild.getLocalPart();
+                boolean codeGen = false;
                 switch (kind) {
                     case "template":
                         cc = readNamedTemplate(grandchild);
+                        codeGen = true;
                         break;
                     case "globalVariable":
                         cc = readGlobalVariable(grandchild);
+                        codeGen = true;
                         break;
                     case "globalParam":
                         cc = readGlobalParam(grandchild);
                         break;
                     case "function":
                         cc = readGlobalFunction(grandchild);
+                        codeGen = ((UserFunction)cc).getDeclaredStreamability() == FunctionStreamability.UNCLASSIFIED;
                         break;
                     case "mode":
                         cc = readMode(grandchild);
@@ -430,6 +434,20 @@ public class PackageLoaderHE implements IPackageLoader {
                 component = Component.makeComponent(cc, vis, pack, declaringPackage);
                 cc.setDeclaringComponent(component);
                 cc.setDeclaredVisibility(vis);
+                Optimizer optimizer = config.obtainOptimizer();
+                StructuredQName name = cc.getObjectName();
+                if (codeGen) {
+                    String objectName = name == null ? ("h" + component.hashCode()) : name.getLocalPart();
+                    cc.setBody(optimizer.makeByteCodeCandidate(cc, cc.getBody(), objectName, 0));
+                    optimizer.injectByteCodeCandidates(cc.getBody());
+                } else if (cc instanceof Mode) {
+                    ((Mode)cc).processRules(rule -> {
+                        TemplateRule tr = (TemplateRule)rule.getAction();
+                        String objectName = "match=\"" + tr.getMatchPattern() + '"';
+                        tr.setBody(optimizer.makeByteCodeCandidate(tr, tr.getBody(), objectName, 0));
+                        optimizer.injectByteCodeCandidates(tr.getBody());
+                    });
+                }
             }
             externalReferences.put(component, binds);
             componentIdMap.put(id, component);
@@ -586,6 +604,7 @@ public class PackageLoaderHE implements IPackageLoader {
         } else if (flags.contains("d")) {
             function.setDeterminism(UserFunction.Determinism.DETERMINISTIC);
         }
+        // Ignore the "m" flag - handled in subclass for Saxon-PE
 
         boolean streaming = false;
         if (flags.contains("U")) {
@@ -622,7 +641,7 @@ public class PackageLoaderHE implements IPackageLoader {
             arg.setVariableQName(getQNameAttribute(argElement, "name"));
             arg.setRequiredType(parseSequenceType(argElement, "as"));
             params.add(arg);
-            // TOOD: additional attributes inlineable etc
+            // TODO: additional attributes inlineable etc
             localBindings.push(arg);
         }
         function.setParameterDefinitions(params.toArray(new UserFunctionParameter[0]));
@@ -1417,7 +1436,9 @@ public class PackageLoaderHE implements IPackageLoader {
             Expression flags = loader.getExpressionWithRole(element, "flags");
             Expression matching = loader.getExpressionWithRole(element, "matching");
             Expression nonMatching = loader.getExpressionWithRole(element, "nonMatching");
-            return new AnalyzeString(select, regex, flags, matching, nonMatching, null);
+            AnalyzeString instr = new AnalyzeString(select, regex, flags, matching, nonMatching, null);
+            instr.precomputeRegex(loader.getConfiguration(), null);
+            return instr;
         });
 
         eMap.put("and", (loader, element) -> {
