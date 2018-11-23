@@ -310,6 +310,9 @@ public class DocumentFn extends SystemFunction implements Callable {
                     //options.setStripSpace(Whitespace.XSLT);
                     options.setSchemaValidationMode(controller.getSchemaValidationMode());
                 }
+                if (options.isLineNumbering()) {
+                    b.setLineNumbering(true);
+                }
                 if (silent) {
                     StandardErrorHandler eh = new StandardErrorHandler(controller.getErrorListener());
                     eh.setSilent(true);

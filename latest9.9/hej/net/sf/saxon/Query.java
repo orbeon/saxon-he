@@ -74,6 +74,7 @@ public class Query {
     private boolean closeTraceDestination = false;
     private boolean allowExit = true;
 
+
     /**
      * Get the configuration in use
      *
@@ -407,13 +408,7 @@ public class Query {
                         if (outputFile.isDirectory()) {
                             quit("Output is a directory", 2);
                         }
-                        if (!outputFile.exists()) {
-                            File directory = outputFile.getParentFile();
-                            if (directory != null && !directory.exists()) {
-                                directory.mkdirs();
-                            }
-                            outputFile.createNewFile();
-                        }
+                        createFileIfNecessary(outputFile);
                         out = new FileOutputStream(outputFile);
                     } else {
                         out = System.out;
@@ -598,7 +593,7 @@ public class Query {
             config.setTraceListener(listener);
             config.setLineNumbering(true);
             config.getDefaultStaticQueryContext().setCodeInjector(new TimingCodeInjector());
-            if (value.length() > 0) {
+            if (!value.isEmpty()) {
                 try {
                     listener.setOutputDestination(
                             new StandardLogger(new File(value)));
@@ -1077,13 +1072,27 @@ public class Query {
         System.err.println("  ?param=expression     Set query parameter using XPath");
         System.err.println("  !param=value          Set serialization parameter");
         if (allowExit) {
-            if ("".equals(message)) {
-                System.exit(0);
-            } else {
-                System.exit(2);
-            }
+            System.exit("".equals(message) ? 0 : 2);
         } else {
             throw new RuntimeException(message);
+        }
+    }
+
+    /**
+     * Utility method to create a file if it does not already exist, including creation of any
+     * necessary directories named in the file path
+     * @param file the file that is required to exist
+     * @throws IOException if file creation fails
+     */
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static void createFileIfNecessary(File file) throws IOException {
+        if (!file.exists()) {
+            File directory = file.getParentFile();
+            if (directory != null && !directory.exists()) {
+                directory.mkdirs();
+            }
+            file.createNewFile();
         }
     }
 }

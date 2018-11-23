@@ -397,12 +397,14 @@ public class UseWhenFilter extends ProxyReceiver {
         AttributeCollection atts = startTag.getAllAttributes();
         for (int a=0; a<atts.getLength(); a++) {
             String local = atts.getLocalName(a);
-            if (local.startsWith("_") && atts.getURI(a).equals("") && local.length() >= 2) {
+            String uri = atts.getURI(a);
+            if (local.startsWith("_") && (uri.isEmpty() || uri.equals(NamespaceConstant.SAXON)) && local.length() >= 2) {
                 String value = atts.getValue(a);
                 AttributeLocation attLocation = new AttributeLocation(elemName.getStructuredQName(), atts.getNodeName(a).getStructuredQName(), location);
                 String newValue = processShadowAttribute(value, baseUri.toString(), attLocation);
                 String plainName = local.substring(1);
-                NodeName newName = new NoNamespaceName(plainName);
+                NodeName newName = uri.isEmpty() ?
+                        new NoNamespaceName(plainName) : new FingerprintedQName(atts.getPrefix(a), NamespaceConstant.SAXON, plainName);
                 // if a corresponding attribute exists with no underscore, overwrite it. The attribute()
                 // method ensures that the shadow attribute won't be passed down the pipeline.
                 // Otherwise overwrite the shadow attribute itself.

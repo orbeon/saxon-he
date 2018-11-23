@@ -9,6 +9,7 @@ package net.sf.saxon.s9api;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.PreparedStylesheet;
+import net.sf.saxon.Query;
 import net.sf.saxon.style.Compilation;
 import net.sf.saxon.style.PackageVersion;
 import net.sf.saxon.style.StylesheetPackage;
@@ -150,13 +151,7 @@ public class XsltPackage {
 
     public void save(File file, String target) throws SaxonApiException {
         try {
-            if (!file.exists()) {
-                File directory = file.getParentFile();
-                if (directory != null && !directory.exists()) {
-                    directory.mkdirs();
-                }
-                file.createNewFile();
-            }
+            Query.createFileIfNecessary(file);
             ExpressionPresenter presenter = getProcessor().getUnderlyingConfiguration()
                     .newExpressionExporter(target, new FileOutputStream(file), stylesheetPackage);
             presenter.setRelocatable(stylesheetPackage.isRelocatable());

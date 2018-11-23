@@ -9,6 +9,7 @@ package net.sf.saxon.testdriver;
 
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.Query;
 import net.sf.saxon.functions.ResolveQName;
 import net.sf.saxon.lib.*;
 import net.sf.saxon.om.StructuredQName;
@@ -1054,13 +1055,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
     @SuppressWarnings({"ResultOfMethodCallIgnored"})
     protected void saveResultsToFile(String content, File file) {
         try {
-            if (!file.exists()) {
-                File directory = file.getParentFile();
-                if (directory != null && !directory.exists()) {
-                    directory.mkdirs();
-                }
-                file.createNewFile();
-            }
+            Query.createFileIfNecessary(file);
             FileWriter writer = new FileWriter(file);
             writer.append(content);
             writer.close();
