@@ -641,7 +641,6 @@ public class PackageLoaderHE implements IPackageLoader {
             arg.setVariableQName(getQNameAttribute(argElement, "name"));
             arg.setRequiredType(parseSequenceType(argElement, "as"));
             params.add(arg);
-            // TODO: additional attributes inlineable etc
             localBindings.push(arg);
         }
         function.setParameterDefinitions(params.toArray(new UserFunctionParameter[0]));
@@ -2506,7 +2505,6 @@ public class PackageLoaderHE implements IPackageLoader {
             StreamSource source = new StreamSource(new StringReader(content), baseURI);
             NodeInfo node = loader.config.buildDocumentTree(source).getRootNode();
             if (kind == Type.ELEMENT) {
-                // TODO: see bug 4035
                 node = VirtualCopy.makeVirtualCopy(node.iterateAxis(AxisInfo.CHILD, NodeKindTest.ELEMENT).next());
             }
             return Literal.makeLiteral(new One<>(node));

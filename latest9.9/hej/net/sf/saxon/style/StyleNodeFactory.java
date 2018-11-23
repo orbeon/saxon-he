@@ -204,17 +204,13 @@ public class StyleNodeFactory implements NodeFactory {
                     temp.initialise(elemName, elemType, attlist, parent, sequence);
                     temp.setLocation(baseURI, lineNumber, columnNumber);
                     temp.setCompilation(compilation);
-                    try {
-                        temp.processStandardAttributes("");
-                        if (temp.getEffectiveVersion() > 20) {
-                            temp.setValidationError(new XPathException("Unknown XSLT instruction"),
-                                    StyleElement.REPORT_STATICALLY_UNLESS_FALLBACK_AVAILABLE);
-                        } else {
-                            temp.setValidationError(new XPathException("Unknown XSLT instruction"),
-                                    StyleElement.REPORT_IF_INSTANTIATED);
-                        }
-                    } catch (XPathException err) {
-                        temp.setValidationError(err, StyleElement.REPORT_ALWAYS);
+                    temp.processStandardAttributes("");
+                    if (temp.getEffectiveVersion() > 20) {
+                        temp.setValidationError(new XPathException("Unknown XSLT instruction"),
+                                                StyleElement.REPORT_STATICALLY_UNLESS_FALLBACK_AVAILABLE);
+                    } else {
+                        temp.setValidationError(new XPathException("Unknown XSLT instruction"),
+                                                StyleElement.REPORT_IF_INSTANTIATED);
                     }
                 }
             }
@@ -245,15 +241,10 @@ public class StyleNodeFactory implements NodeFactory {
             }
 
             temp.setNamespaceDeclarations(namespaces, namespacesUsed);
-
-            try {
-                temp.setCompilation(compilation);
-                temp.initialise(elemName, elemType, attlist, parent, sequence);
-                temp.setLocation(baseURI, lineNumber, columnNumber);
-                temp.processStandardAttributes(NamespaceConstant.XSLT);
-            } catch (XPathException err) {
-                temp.setValidationError(err, StyleElement.REPORT_ALWAYS);
-            }
+            temp.setCompilation(compilation);
+            temp.initialise(elemName, elemType, attlist, parent, sequence);
+            temp.setLocation(baseURI, lineNumber, columnNumber);
+            temp.processStandardAttributes(NamespaceConstant.XSLT);
 
             // Now we work out what class of element we really wanted, and change it if necessary
 

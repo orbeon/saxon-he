@@ -1584,8 +1584,10 @@ public class Configuration implements SourceResolver, NotationSet {
      *
      * @param collationName the collation name as an absolute URI
      * @return the StringCollator with this name if known, or null if not known
-     * @throws XPathException if the collation URI is recognized but is invalid in this
-     *                        environment.
+     * @throws XPathException if the collation URI is recognized but is invalid; for example,
+     * if it is a URI that takes parameters, and the parameters are invalid. If a user-supplied
+     * collation URI resolver is in use, then any exception thrown by that resolver is passed
+     * on to the caller.
      */
 
 

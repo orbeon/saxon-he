@@ -64,7 +64,7 @@ public class SourceBinding {
     public static final int IMPLICITLY_DECLARED = 8192;
 
     // List of VariableReference objects that reference this XSLVariableDeclaration
-    private List<BindingReference> references = new ArrayList<BindingReference>(10);
+    private List<BindingReference> references = new ArrayList<>(10);
 
     public SourceBinding(StyleElement sourceElement) {
         this.sourceElement = sourceElement;
@@ -592,12 +592,7 @@ public class SourceBinding {
         if (inferredType != null) {
             return inferredType;
         }
-        Visibility visibility;
-        try {
-            visibility = sourceElement.getVisibility();
-        } catch (XPathException err) {
-            visibility = Visibility.PUBLIC; // error will be caught some time
-        }
+        Visibility visibility = sourceElement.getVisibility();
         if (hasProperty(PARAM) || hasProperty(ASSIGNABLE) ||
                 !(visibility == Visibility.PRIVATE || visibility == Visibility.FINAL)) {
             SequenceType declared = getDeclaredType();

@@ -238,12 +238,13 @@ public abstract class StyleElement extends ElementImpl {
     /**
      * Get the visibility of the component. Returns the actual value of the visibility attribute,
      * after validation, unless this is absent, in which case it returns the default value of PRIVATE.
+     *  Invokes {@link #invalidAttribute(String, String)} if the value is invalid.
      *
-     * @return the declared visibility of the component, or PRIVATE if the visibility attribute is absent.
-     * @throws XPathException if the visibility attribute is invalid
+     * @return the declared visibility of the component, or {@link Visibility#PRIVATE}
+     * if the visibility attribute is absent.
      */
 
-    public Visibility getVisibility() throws XPathException {
+    public Visibility getVisibility() {
         String vis = getAttributeValue("", "visibility");
         if (vis == null) {
             return Visibility.PRIVATE;
@@ -559,15 +560,31 @@ public abstract class StyleElement extends ElementImpl {
     }
 
     /**
-     * Process the standard attributes such as [xsl:]default-collation
+     * Process the standard attributes such as {@code [xsl:]expand-text}. Invokes
+     * {@link #compileError(String)} or similar if the value of any of these attributes
+     * is invalid.
+     *
+     * <p>The method processes:</p>
+     * <ul>
+     * <li>{@code extension-element-prefixes}</li>
+     * <li>{@code exclude-result-prefixes}</li>
+     * <li>{@code version}</li>
+     * <li>{@code default-xpath-namespace}</li>
+     * <li>{@code default-validation}</li>
+     * <li>{@code expand-text}</li>
+     * </ul>
+     *
+     * <p>but not:</p>
+     * <ul>
+     * <li>{@code default-collation}</li>
+     * <li>{@code default-mode}</li>
+     * </ul>
      *
      * @param namespace either "" to find the attributes in the null namespace,
      *                  or NamespaceConstant.XSLT to find them in the XSLT namespace
-     * @throws net.sf.saxon.trans.XPathException if any of the standard attributes is incorrect
      */
 
-    public void processStandardAttributes(String namespace) throws XPathException {
-        //processDefaultCollationAttribute(namespace);
+    public void processStandardAttributes(String namespace) {
         processExtensionElementAttribute(namespace);
         processExcludedNamespaces(namespace);
         processVersionAttribute(namespace);
@@ -1082,22 +1099,20 @@ public abstract class StyleElement extends ElementImpl {
     }
 
     /**
-     * Process the [xsl:]default-collation attribute if there is one
+     * Process the [xsl:]default-collation attribute if there is one. 
      *
-     * @throws net.sf.saxon.trans.XPathException if the value is not a valid URI, or not a recognized collation URI
+     * @throws XPathException if the value is not a valid URI, or not a recognized collation URI
      */
 
     protected void processDefaultCollationAttribute() throws XPathException {
         String ns = getURI().equals(NamespaceConstant.XSLT) ? "" : NamespaceConstant.XSLT;
         String v = getAttributeValue(ns, "default-collation");
+        StringBuilder reasons = new StringBuilder();
         if (v != null) {
             StringTokenizer st = new StringTokenizer(v, " \t\n\r", false);
             while (st.hasMoreTokens()) {
                 String uri = st.nextToken();
                 if (uri.equals(NamespaceConstant.CODEPOINT_COLLATION_URI)) {
-                    defaultCollationName = uri;
-                    return;
-                } else if (uri.startsWith("http://saxon.sf.net/")) {
                     defaultCollationName = uri;
                     return;
                 } else {
@@ -1114,25 +1129,34 @@ public abstract class StyleElement extends ElementImpl {
                         uri = NamespaceConstant.CODEPOINT_COLLATION_URI;
                     }
 
-                    if (uri.startsWith("http://saxon.sf.net/")) {
-                        defaultCollationName = uri;
-                        return;
-                    }
+                    try {
+                        if (getConfiguration().getCollation(uri) != null) {
+                            defaultCollationName = uri;
+                            return;
+                        } else {
+                            if (reasons.length() != 0) {
+                                reasons.append("; ");
+                            }
+                            reasons.append("Collation ").append(uri).append(" is not recognized");
 
-                    if (uri.startsWith("http://www.w3.org/2013/collation/UCA")) {
-                        defaultCollationName = uri;
-                        return;
-                    }
-
-                    if (getConfiguration().getCollation(uri) != null) {
-                        defaultCollationName = uri;
-                        return;
+                        }
+                    } catch (XPathException e) {
+                        if (reasons.length() != 0) {
+                            reasons.append("; ");
+                        }
+                        reasons.append("Collation ").append(uri).append(" is not recognized (").append(e.getMessage()).append(")");
+                        // Ignore an unrecognized collation URI
                     }
 
                 }
                 // if not recognized, try the next URI in order
             }
-            compileErrorInAttribute("No recognized collation URI found in default-collation attribute", "XTSE0125",
+            String msg = "No recognized collation URI found in default-collation attribute";
+            if (reasons.length() != 0) {
+                msg += ". ";
+                msg += reasons.toString();
+            }
+            compileErrorInAttribute(msg, "XTSE0125",
                                     new StructuredQName("", ns, "default-collation").getClarkName());
         }
     }
@@ -2301,7 +2325,8 @@ public abstract class StyleElement extends ElementImpl {
     }
 
     /**
-     * Process the value of the visibility attribute (XSLT 3.0)
+     * Process the value of the visibility attribute (XSLT 3.0). Invokes
+     * {@link #invalidAttribute(String, String)} if the value is invalid.
      *
      * @param s     the value of the attribute after whitespace collapsing
      * @param flags contains "h" if the value "hidden" is allowed, "a" if the value "absent" is allowed

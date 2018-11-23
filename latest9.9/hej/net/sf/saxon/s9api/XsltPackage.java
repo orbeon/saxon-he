@@ -107,6 +107,7 @@ public class XsltPackage {
             Configuration config = getProcessor().getUnderlyingConfiguration();
             CompilerInfo info = compiler.getUnderlyingCompilerInfo();
             Compilation compilation = new Compilation(config, info);
+            compilation.setPackageData(stylesheetPackage);
             stylesheetPackage.checkForAbstractComponents();
             PreparedStylesheet pss = new PreparedStylesheet(compilation);
             stylesheetPackage.updatePreparedStylesheet(pss);
