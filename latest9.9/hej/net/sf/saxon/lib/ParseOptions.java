@@ -54,7 +54,6 @@ public class ParseOptions {
     /*@Nullable*/ private transient EntityResolver entityResolver = null;
     /*@Nullable*/ private transient ErrorHandler errorHandler = null;
     /*@Nullable*/ private List<FilterFactory> filters = null;
-    private boolean sourceIsXQJ = false;
     private boolean continueAfterValidationErrors = false;
     private boolean addCommentsAfterValidationErrors = false;
     private boolean expandAttributeDefaults = true;
@@ -104,7 +103,6 @@ public class ParseOptions {
         if (p.filters != null) {
             filters = new ArrayList<>(p.filters);
         }
-        sourceIsXQJ = p.sourceIsXQJ;
         setExpandAttributeDefaults(p.expandAttributeDefaults);
         useXsiSchemaLocation = p.useXsiSchemaLocation;
         validationErrorLimit = p.validationErrorLimit;
@@ -193,9 +191,6 @@ public class ParseOptions {
                 parserProperties = new HashMap<>();
             }
             parserProperties.putAll(options.parserProperties);
-        }
-        if (options.sourceIsXQJ) {
-            sourceIsXQJ = true;
         }
         if (!options.expandAttributeDefaults) {
             // expand defaults unless the other options says don't
