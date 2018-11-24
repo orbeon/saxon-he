@@ -13,7 +13,6 @@ import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.ma.map.MapItem;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
@@ -174,18 +173,39 @@ public class OptionsParameter {
         return result;
     }
 
+    /**
+     * Get the error code to be used when a required option is not supplied
+     * @return the local part of the error code to be used
+     */
+
     public String getErrorCodeForAbsentValue() {
         return errorCodeForAbsentValue;
     }
+
+    /**
+     * Set the error code to be used when a required option is not supplied
+     * @param errorCodeForAbsentValue the local part of the error code to be used
+     */
 
     public void setErrorCodeForAbsentValue(String errorCodeForAbsentValue) {
         this.errorCodeForAbsentValue = errorCodeForAbsentValue;
     }
 
+    /**
+     * Ask whether it is is permissible to supply the value as a string, which is cast to the
+     * required type, rather than supplying the required type directly. Normally false.
+     * @return true if is is permitted to supply the value as a string
+     */
 
     public boolean isAllowCastFromString() {
         return allowCastFromString;
     }
+
+    /**
+     * Say whether it is is permissible to supply the value as a string, which is cast to the
+     * required type, rather than supplying the required type directly. Normally false.
+     * @param allowCastFromString true if is is permitted to supply the value as a string
+     */
 
     public void setAllowCastFromString(boolean allowCastFromString) {
         this.allowCastFromString = allowCastFromString;
