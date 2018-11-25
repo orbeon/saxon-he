@@ -636,10 +636,12 @@ public class PackageLoaderHE implements IPackageLoader {
         AxisIterator argIterator = functionElement.iterateAxis(AxisInfo.CHILD,
                                                                new NameTest(Type.ELEMENT, NamespaceConstant.SAXON_XSLT_EXPORT, "arg", config.getNamePool()));
         NodeInfo argElement;
+        int slot = 0;
         while ((argElement = argIterator.next()) != null) {
             UserFunctionParameter arg = new UserFunctionParameter();
             arg.setVariableQName(getQNameAttribute(argElement, "name"));
             arg.setRequiredType(parseSequenceType(argElement, "as"));
+            arg.setSlotNumber(slot++);
             params.add(arg);
             localBindings.push(arg);
         }
