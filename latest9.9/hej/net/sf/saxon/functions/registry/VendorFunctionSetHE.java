@@ -7,29 +7,27 @@
 
 package net.sf.saxon.functions.registry;
 
-import net.sf.saxon.functions.Doc_2;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.Literal;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.functions.ApplyFn;
+import net.sf.saxon.functions.Doc_2;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.ma.arrays.ArrayItemType;
 import net.sf.saxon.ma.map.MapCreate;
 import net.sf.saxon.ma.map.MapType;
 import net.sf.saxon.ma.map.MapUntypedContains;
+import net.sf.saxon.om.NamespaceBinding;
+import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.AnyFunctionType;
-import net.sf.saxon.type.AnyItemType;
-import net.sf.saxon.type.BuiltInAtomicType;
-import net.sf.saxon.type.NumericType;
+import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
-import net.sf.saxon.value.StringValue;
 
 import javax.xml.transform.SourceLocator;
 
@@ -75,6 +73,10 @@ public class VendorFunctionSetHE extends BuiltInFunctionSet {
                 .arg(1, MapType.ANY_MAP_TYPE, ONE, EMPTY)
                 .optionDetails(Doc_2.makeOptionsParameter());
 
+        // Ask whether the supplied element node has any local namespace declarations
+        register("has-local-namespaces", 1, HasLocalNamespaces.class, BuiltInAtomicType.BOOLEAN, ONE, 0, 0)
+                .arg(0, NodeKindTest.ELEMENT, ONE, null);
+
         // Function analogous to map:contains except in the way it handles untyped key values
         register("map-untyped-contains", 2, MapUntypedContains.class, BuiltInAtomicType.BOOLEAN, ONE, 0, 0)
                 .arg(0, MapType.ANY_MAP_TYPE, STAR, null)
@@ -119,6 +121,31 @@ public class VendorFunctionSetHE extends BuiltInFunctionSet {
         public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
             NumericValue val = (NumericValue) arguments[0].head();
             return BooleanValue.get(val != null && val.isWholeNumber());
+        }
+
+    }
+
+    /**
+     * Implement saxon:has-local-namespaces. The function takes an element node as input and returns
+     * true if (a) the element is parentless, or (b) the parent is a document node, or (c) the
+     * element has namespace declarations or undeclarations that differ from those of the parent
+     * element (that is, if its in-scope namespace bindings are different from those of the parent
+     * element).
+     *
+     * <p>This function is provided for use by the XSLT-compiler-in-XSLT, so that it can decide
+     * efficiently whether to generate an "ns" element containing namespace bindings in the SEF file.</p>
+     */
+
+    public static class HasLocalNamespaces extends SystemFunction {
+
+        // TODO: this is experimental and not yet publicly documented
+
+        public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
+            NodeInfo val = (NodeInfo) arguments[0].head();
+            NodeInfo parent = val.getParent();
+            return BooleanValue.get(
+                    parent == null || parent.getNodeKind() == Type.DOCUMENT ||
+                    val.getDeclaredNamespaces(NamespaceBinding.EMPTY_ARRAY).length > 0);
         }
 
     }
