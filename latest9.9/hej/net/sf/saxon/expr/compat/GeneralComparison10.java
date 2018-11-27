@@ -23,10 +23,7 @@ import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.EmptyIterator;
 import net.sf.saxon.tree.iter.PrependSequenceIterator;
-import net.sf.saxon.type.BuiltInAtomicType;
-import net.sf.saxon.type.ItemType;
-import net.sf.saxon.type.NumericType;
-import net.sf.saxon.type.TypeHierarchy;
+import net.sf.saxon.type.*;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.DoubleValue;
@@ -152,6 +149,17 @@ public class GeneralComparison10 extends BinaryExpression implements Callable {
         }
 
         if (!maybeBoolean0 && !maybeBoolean1) {
+            // First atomize the operands where necessary. We didn't do this earlier because of the
+            // special 1.0 (node-set=boolean) semantics, but if we don't have a boolean we can do it now.
+            if (!(type0 instanceof AtomicType)) {
+                setLhsExpression(Atomizer.makeAtomizer(getLhsExpression()).simplify());
+                type0 = getLhsExpression().getItemType();
+            }
+            if (!(type1 instanceof AtomicType)) {
+                setRhsExpression(Atomizer.makeAtomizer(getRhsExpression()).simplify());
+                type1 = getRhsExpression().getItemType();
+            }
+            // Now consider numeric operands
             int n0 = th.relationship(type0, NumericType.getInstance());
             int n1 = th.relationship(type1, NumericType.getInstance());
             boolean maybeNumeric0 = n0 != TypeHierarchy.DISJOINT;
@@ -160,6 +168,7 @@ public class GeneralComparison10 extends BinaryExpression implements Callable {
             boolean numeric1 = n1 == TypeHierarchy.SUBSUMED_BY || n1 == TypeHierarchy.SAME_TYPE;
             // Use the 2.0 path if we don't have to deal with the possibility of boolean values,
             // or the complications of converting values to numbers
+
             if (operator == Token.EQUALS || operator == Token.NE) {
                 if ((!maybeNumeric0 && !maybeNumeric1) || (numeric0 && numeric1)) {
                     GeneralComparison gc = new GeneralComparison20(getLhsExpression(), operator, getRhsExpression());
