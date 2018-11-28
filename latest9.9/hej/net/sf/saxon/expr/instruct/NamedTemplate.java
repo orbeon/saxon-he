@@ -49,8 +49,7 @@ public class NamedTemplate extends Actor {
     private ItemType requiredContextItemType = AnyItemType.getInstance();
     private boolean mayOmitContextItem = true;
     private boolean absentFocus = false;
-    private List<LocalParam> localParams = new ArrayList<LocalParam>(4);
-    private List<LocalParamInfo> localParamDetails = new ArrayList<LocalParamInfo>(4);
+    private List<LocalParamInfo> localParamDetails = new ArrayList<>(4);
 
     /**
      * Create a named template
@@ -125,14 +124,6 @@ public class NamedTemplate extends Actor {
 
     public StructuredQName getObjectName() {
         return templateName;
-    }
-
-    public void resetLocalParams() {
-        localParams.clear();
-    }
-
-    public void addLocalParam(LocalParam param) {
-        localParams.add(param);
     }
 
     /**

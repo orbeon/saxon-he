@@ -630,9 +630,6 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
             //System.err.println("Deferred - " + ++lazy);
             return;
         }
-        if (compiledNamedTemplate != null) {
-            compiledNamedTemplate.resetLocalParams();
-        }
         isTailRecursive = markTailCalls();
         Expression body = compileSequenceConstructor(compilation, decl, true);
         body.restoreParentPointers();
@@ -1032,7 +1029,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
             match.resetLocalStaticProperties();
             match = match.optimize(visitor, cisi);
 
-            if (!isDeferredCompilation(getCompilation())) {
+            if (!isDeferredCompilation(getCompilation()) && !isTailRecursive) {
                 Expression body = compiledTemplateRules.values().stream().findFirst().map(TemplateRule::getBody).orElse(null);
                 // Until now, all template rules share the same body.
 
