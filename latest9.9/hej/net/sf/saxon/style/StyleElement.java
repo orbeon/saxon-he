@@ -408,7 +408,8 @@ public abstract class StyleElement extends ElementImpl {
             err.setErrorCode("XTSE0080");
             throw err;
         }
-        if (getContainingPackage().isDocumentationNamespace(qName.getNamespaceBinding())) {
+        StylesheetPackage pack = getContainingPackage();  // may be null if not yet initialized
+        if (pack != null && pack.isDocumentationNamespace(qName.getNamespaceBinding())) {
             XPathException err = new XPathException("Documentation namespace " + qName.getPrefix() +
                                                             " can be used only for stylesheet documentation", SaxonErrorCode.SXPK0004);
             err.setIsStaticError(true);
@@ -1844,11 +1845,12 @@ public abstract class StyleElement extends ElementImpl {
      * Get the containing package (the principal stylesheet module of the package in which
      * this XSLT element appears)
      *
-     * @return the containing package
+     * @return the containing package. May be null if the method is called during initialization.
      */
 
     public StylesheetPackage getContainingPackage() {
-        return getPrincipalStylesheetModule().getStylesheetPackage();
+        PrincipalStylesheetModule psm = getPrincipalStylesheetModule();
+        return psm==null ? null : psm.getStylesheetPackage();
     }
 
     /**

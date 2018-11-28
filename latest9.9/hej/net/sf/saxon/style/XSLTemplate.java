@@ -1029,7 +1029,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
             match.resetLocalStaticProperties();
             match = match.optimize(visitor, cisi);
 
-            if (!isDeferredCompilation(getCompilation()) && !isTailRecursive) {
+            if (!isDeferredCompilation(getCompilation())) {
                 Expression body = compiledTemplateRules.values().stream().findFirst().map(TemplateRule::getBody).orElse(null);
                 // Until now, all template rules share the same body.
 
