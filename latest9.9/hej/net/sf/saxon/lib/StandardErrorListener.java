@@ -54,6 +54,7 @@ import java.util.List;
 public class StandardErrorListener implements UnfailingErrorListener {
 
     private int recoveryPolicy = Configuration.RECOVER_WITH_WARNINGS;
+    private int requestedRecoveryPolicy = Configuration.RECOVER_WITH_WARNINGS;
     private int warningCount = 0;
     private int maximumNumberOfWarnings = 25;
     private int maxOrdinaryCharacter = 255;
@@ -78,9 +79,7 @@ public class StandardErrorListener implements UnfailingErrorListener {
         StandardErrorListener sel;
         try {
             sel = this.getClass().newInstance();
-        } catch (InstantiationException e) {
-            sel = new StandardErrorListener();
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             sel = new StandardErrorListener();
         }
         sel.logger = logger;
@@ -122,6 +121,7 @@ public class StandardErrorListener implements UnfailingErrorListener {
 
     public void setRecoveryPolicy(int policy) {
         recoveryPolicy = policy;
+        requestedRecoveryPolicy = policy;
     }
 
     /**
@@ -135,6 +135,17 @@ public class StandardErrorListener implements UnfailingErrorListener {
 
     public int getRecoveryPolicy() {
         return recoveryPolicy;
+    }
+
+    /**
+     * Get the requested recovery policy. This returns the original policy, which may differ
+     * from the current policy, in the case where the current policy has switched from "warnings"
+     * to "silent" because too many warnings have been issued
+     * @return the original requested recovery policy
+     */
+
+    public int getRequestedRecoveryPolicy() {
+        return requestedRecoveryPolicy;
     }
 
     /**
@@ -340,7 +351,7 @@ public class StandardErrorListener implements UnfailingErrorListener {
 
         if (exception instanceof XPathException) {
             XPathContext context = ((XPathException) exception).getXPathContext();
-            if (context != null && getRecoveryPolicy() != Configuration.RECOVER_SILENTLY) {
+            if (context != null && getRequestedRecoveryPolicy() != Configuration.RECOVER_SILENTLY) {
                 outputStackTrace(logger, context);
             }
         }
@@ -437,10 +448,10 @@ public class StandardErrorListener implements UnfailingErrorListener {
     }
 
     public static String getOffenderListText(ValidationFailure failure) {
-        String message = "";
+        StringBuilder message = new StringBuilder();
         List<NodeInfo> offendingNodes = failure.getOffendingNodes();
         if (!offendingNodes.isEmpty()) {
-            message += "\n  Nodes for which the assertion fails:";
+            message.append("\n  Nodes for which the assertion fails:");
             for (NodeInfo offender : offendingNodes) {
                 String nodeDesc = Type.displayTypeName(offender);
                 if (offender.getNodeKind() == Type.TEXT) {
@@ -457,10 +468,10 @@ public class StandardErrorListener implements UnfailingErrorListener {
                 } else {
                     nodeDesc += " at " + Navigator.getPath(offender);
                 }
-                message += "\n  * " + nodeDesc;
+                message.append("\n  * ").append(nodeDesc);
             }
         }
-        return message;
+        return message.toString();
     }
 
     /**
@@ -581,7 +592,7 @@ public class StandardErrorListener implements UnfailingErrorListener {
                 // no action (can fail with NPE if the expression tree is corrupt)
             }
         }
-        if (systemId != null && systemId.length() != 0) {
+        if (systemId != null && !systemId.isEmpty()) {
             locMessage += (containsLineNumber ? "of " : "in ") + abbreviatePath(systemId) + ':';
         }
         return locMessage;
