@@ -19,6 +19,7 @@ import net.sf.saxon.functions.FunctionLibrary;
 import net.sf.saxon.functions.FunctionLibraryList;
 import net.sf.saxon.functions.registry.ConstructorFunctionLibrary;
 import net.sf.saxon.om.Action;
+import net.sf.saxon.om.NamespaceBinding;
 import net.sf.saxon.om.SpaceStrippingRule;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.pattern.NodeTest;
@@ -67,6 +68,7 @@ public class StylesheetPackage extends PackageData {
 
     // table of imported schemas. The members of this set are strings holding the target namespace.
     protected Set<String> schemaIndex = new HashSet<>(10);
+    protected Set<NamespaceBinding> documentationNamespaces = new HashSet<>(4);
 
 
     private FunctionLibraryList functionLibrary;
@@ -129,6 +131,48 @@ public class StylesheetPackage extends PackageData {
 
     public void addUsedPackage(StylesheetPackage pack) {
         usedPackages.add(pack);
+    }
+
+    /**
+     * Supply the set of namespace bindings that are used exclusively for documentation
+     * in this package. Documentation namespaces are marked by the extension
+     * attribute saxon:documentation-prefixes appearing on the outermost element of some
+     * module in the package (it applies to the whole package, however). If a namespace is
+     * marked as a documentation namespace then it must not be used for naming functions,
+     * variables, or templates in the package, and it is not copied into the retained
+     * static context available at run-time
+     * @param bindings the prefix=uri namespace bindings that are to be treated as a documentation
+     * namespace, rather than as part of the static context for the stylesheet.
+     */
+
+    public void setDocumentationNamespaces(Set<NamespaceBinding> bindings) {
+        this.documentationNamespaces = bindings;
+    }
+
+    /**
+     * Add a documentation namespace. Documentation namespaces are marked by the extension
+     * attribute saxon:documentation-prefixes appearing on the outermost element of some
+     * module in the package (it applies to the whole package, however). If a namespace is
+     * marked as a documentation namespace then it must not be used for naming functions,
+     * variables, or templates in the package, and it is not copied into the retained
+     * static context available at run-time
+     * @param binding the prefix=uri namespace binding that is to be treated as a documentation
+     *                namespace, rather than as part of the static context for the stylesheet.
+     *
+     */
+
+    public void addDocumentationNamespace(NamespaceBinding binding) {
+        documentationNamespaces.add(binding);
+    }
+
+    /**
+     * Ask whether a particular namespace binding is registered as a documentation namespace
+     * binding
+     * @param binding the namespace binding in question
+     */
+
+    public boolean isDocumentationNamespace(NamespaceBinding binding) {
+        return documentationNamespaces.contains(binding);
     }
 
     /**

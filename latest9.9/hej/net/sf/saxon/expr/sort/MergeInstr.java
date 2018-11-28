@@ -581,7 +581,7 @@ public class MergeInstr extends Instruction {
                 SequenceIterator<?> uriIter = ms.getForEachSource().iterate(c1);
                 XsltController controller = (XsltController)context.getController();
                 final AccumulatorManager accumulatorManager = controller.getAccumulatorManager();
-                anchorsIter = new ItemMappingIterator(uriIter, baseItem -> {
+                anchorsIter = new ItemMappingIterator<>(uriIter, baseItem -> {
                     String uri = baseItem.getStringValue();
                     NodeInfo node = DocumentFn.makeDoc(uri, getRetainedStaticContext().getStaticBaseUriString(),
                                                        getPackageData(), options, c1, getLocation(), true);
@@ -595,7 +595,7 @@ public class MergeInstr extends Instruction {
                     FocusIterator rowIntr = c4.trackFocus(ms.getRowSelect().iterate(c2));
                     MergeKeyMappingFunction addMergeKeys = new MergeKeyMappingFunction(c4, ms);
                     ContextMappingIterator<ExternalObject<ItemWithMergeKeys>> contextMapKeysItr =
-                            new ContextMappingIterator(addMergeKeys, c4);
+                            new ContextMappingIterator<>(addMergeKeys, c4);
                     inputIterator = makeMergeIterator(inputIterator, comps, ms, contextMapKeysItr);
                 }
             } else if (ms.getForEachItem() != null) {

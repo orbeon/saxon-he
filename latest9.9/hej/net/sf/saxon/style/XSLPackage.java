@@ -18,6 +18,10 @@ import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.Whitespace;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringTokenizer;
+
 /**
  * Handler for xsl:package elements. Explicit xsl:package elements are not permitted in Saxon-HE, but
  * implicit packages are created, so the class is present in HE. The top-level module of a stylesheet/package
@@ -30,6 +34,7 @@ public class XSLPackage extends XSLModuleRoot {
     private PackageVersion packageVersion = null;
     private boolean declaredModes = true;
     private boolean prepared = false;
+    private Set<NamespaceBinding> documentationNamespaces = new HashSet<>(4);
 
     /**
      * Initialise a new ElementImpl with an element name
@@ -126,23 +131,24 @@ public class XSLPackage extends XSLModuleRoot {
 
             } else if (f.equals("declared-modes") && getLocalPart().equals("package")) {
                 declaredModes = processBooleanAttribute("declared-modes", atts.getValue(a));
-//            } else if (f.equals("default-validation")) {
-//                // already handled
-//                String val = Whitespace.trim(atts.getValue(a));
-//                defaultValidation = Validation.getCode(val);
-//                if (defaultValidation == Validation.INVALID ||
-//                    defaultValidation == Validation.STRICT || defaultValidation == Validation.LAX) {
-//                    compileError("Invalid value for default-validation attribute. " +
-//                        "Permitted values are (preserve, strip)", "XTSE0020");
-//                } else if (!isSchemaAware() && defaultValidation != Validation.STRIP) {
-//                    defaultValidation = Validation.STRIP;
-//                    compileError("default-validation='" + val + "' requires a schema-aware processor",
-//                            "XTSE1660");
-//                }
+
             } else if (f.equals("input-type-annotations")) {
                 inputTypeAnnotationsAtt = atts.getValue(a);
             } else {
-                checkUnknownAttribute(atts.getNodeName(a));
+                if (atts.getURI(a).equals(NamespaceConstant.SAXON) && atts.getLocalName(a).equals("documentation-prefixes")) {
+                    StringTokenizer st1 = new StringTokenizer(atts.getValue(a), " \t\n\r", false);
+                    while (st1.hasMoreTokens()) {
+                        String prefix = st1.nextToken();
+                        String uri = getURIForPrefix(prefix, false);
+                        if (uri == null) {
+                            compileErrorInAttribute("Undeclared namespace prefix '" + prefix + "'", "XTSE0010", "saxon:documentation-prefixes");
+                        } else {
+                            documentationNamespaces.add(new NamespaceBinding(prefix, uri));
+                        }
+                    }
+                } else {
+                    checkUnknownAttribute(atts.getNodeName(a));
+                }
             }
         }
 
@@ -161,29 +167,24 @@ public class XSLPackage extends XSLModuleRoot {
             reportAbsence("version");
         }
         if (inputTypeAnnotationsAtt != null) {
-            if (inputTypeAnnotationsAtt.equals("strip")) {
-                //setInputTypeAnnotations(ANNOTATION_STRIP);
-            } else if (inputTypeAnnotationsAtt.equals("preserve")) {
-                //setInputTypeAnnotations(ANNOTATION_PRESERVE);
-            } else if (inputTypeAnnotationsAtt.equals("unspecified")) {
-                //
-            } else {
-                compileError("Invalid value for input-type-annotations attribute. " +
-                        "Permitted values are (strip, preserve, unspecified)", "XTSE0020");
+            switch (inputTypeAnnotationsAtt) {
+                case "strip":
+                    //setInputTypeAnnotations(ANNOTATION_STRIP);
+                    break;
+                case "preserve":
+                    //setInputTypeAnnotations(ANNOTATION_PRESERVE);
+                    break;
+                case "unspecified":
+                    //
+                    break;
+                default:
+                    compileError("Invalid value for input-type-annotations attribute. " +
+                                         "Permitted values are (strip, preserve, unspecified)", "XTSE0020");
+                    break;
             }
         }
 
     }
-
-    /**
-     * Determine whether forwards-compatible mode is enabled for this element
-     *
-     * @return true if forwards-compatible mode is enabled
-     */
-
-//    public boolean forwardsCompatibleModeIsEnabled() {
-//        return false;
-//    }
 
     /**
      * Ask whether it is required that modes be explicitly declared
@@ -201,6 +202,15 @@ public class XSLPackage extends XSLModuleRoot {
             }
         }
         return declaredModes;
+    }
+
+    /**
+     * Get the namespace bindings declared as documentation namespaces (using saxon:documentation-prefixes)
+     * @return the namespace bindings used solely for documentation
+     */
+
+    public Set<NamespaceBinding> getDocumentationNamespaces() {
+        return documentationNamespaces;
     }
 
     /**

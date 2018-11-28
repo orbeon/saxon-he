@@ -23,7 +23,7 @@ import java.util.Map;
 
 
 /**
- * Abstract class to represent xsl:include or xsl:import element in the stylesheet. <br>
+ * Abstract class to represent an xsl:include or xsl:import element in the stylesheet.
  * The xsl:include and xsl:import elements have mandatory attribute href
  */
 
@@ -74,7 +74,7 @@ public abstract class XSLGeneralIncorporate extends StyleElement {
         validateInstruction();
     }
 
-    public void validateInstruction() throws XPathException {
+    public void validateInstruction() {
         checkEmpty();
         checkTopLevel(isImport() ? "XTSE0190" : "XTSE0170", false);
     }
@@ -85,12 +85,10 @@ public abstract class XSLGeneralIncorporate extends StyleElement {
      * @param importer   the module that requested the include or import (used to check for cycles)
      * @param precedence the import precedence to be allocated to the included or imported module
      * @return the xsl:stylesheet element at the root of the included/imported module
-     * @throws XPathException if any failure occurs
      */
 
     /*@Nullable*/
-    public StylesheetModule getIncludedStylesheet(StylesheetModule importer, int precedence)
-            throws XPathException {
+    public StylesheetModule getIncludedStylesheet(StylesheetModule importer, int precedence) {
 
         if (href == null) {
             // error already reported
@@ -174,7 +172,7 @@ public abstract class XSLGeneralIncorporate extends StyleElement {
         }
     }
 
-    private boolean checkForRecursion(StylesheetModule importer, Source source) throws XPathException {
+    private boolean checkForRecursion(StylesheetModule importer, Source source) {
         StylesheetModule anc = importer;
 
         if (source.getSystemId() != null) {
@@ -191,7 +189,7 @@ public abstract class XSLGeneralIncorporate extends StyleElement {
         return false;
     }
 
-    public void compileDeclaration(Compilation compilation, ComponentDeclaration decl) throws XPathException {
+    public void compileDeclaration(Compilation compilation, ComponentDeclaration decl) {
         // no action. The node will never be compiled, because it replaces itself
         // by the contents of the included file.
     }

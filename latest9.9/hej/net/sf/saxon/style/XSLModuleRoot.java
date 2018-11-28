@@ -19,33 +19,6 @@ public abstract class XSLModuleRoot extends StyleElement {
     public static final int ANNOTATION_STRIP = 1;
     public static final int ANNOTATION_PRESERVE = 2;
 
-    //protected int defaultValidation = Validation.STRIP;
-
-    /**
-     * Get the default mode
-     *
-     * @return the default mode name for this stylesheet module. If no default mode was specified, Mode.UNNAMED_MODE_NAME
-     * is returned
-     */
-
-//    public StructuredQName getDefaultMode() {
-//        if (defaultMode == null) {
-//            defaultMode = Mode.UNNAMED_MODE_NAME;
-//        }
-//        return defaultMode;
-//    }
-
-//    /**
-//     * Get the value of the default validation attribute
-//     *
-//     * @return the value of the default-validation attribute, as a constant such
-//     * as {@link net.sf.saxon.lib.Validation#STRIP}
-//     */
-//
-//    public int getDefaultValidation() {
-//        return defaultValidation;
-//    }
-
     /**
      * Ask whether it is required that modes be explicitly declared
      *
@@ -75,7 +48,7 @@ public abstract class XSLModuleRoot extends StyleElement {
 
 
     @Override
-    public void index(ComponentDeclaration decl, PrincipalStylesheetModule top) throws XPathException {
+    public void index(ComponentDeclaration decl, PrincipalStylesheetModule top) {
         compileError(getDisplayName() + " can appear only as the outermost element", "XTSE0010");
     }
 
@@ -85,21 +58,22 @@ public abstract class XSLModuleRoot extends StyleElement {
      * {@link #ANNOTATION_STRIP} and {@link #ANNOTATION_PRESERVE}
      *
      * @return the value if the input-type-annotations attribute in this stylesheet module
-     * @throws net.sf.saxon.trans.XPathException if an error is detected
      */
 
-    public int getInputTypeAnnotationsAttribute() throws XPathException {
+    public int getInputTypeAnnotationsAttribute()  {
         String inputTypeAnnotationsAtt = getAttributeValue("", "input-type-annotations");
         if (inputTypeAnnotationsAtt != null) {
-            if (inputTypeAnnotationsAtt.equals("strip")) {
-                return ANNOTATION_STRIP;
-            } else if (inputTypeAnnotationsAtt.equals("preserve")) {
-                return ANNOTATION_PRESERVE;
-            } else if (inputTypeAnnotationsAtt.equals("unspecified")) {
-                return ANNOTATION_UNSPECIFIED;
-            } else {
-                compileError("Invalid value for input-type-annotations attribute. " +
-                    "Permitted values are (strip, preserve, unspecified)", "XTSE0020");
+            switch (inputTypeAnnotationsAtt) {
+                case "strip":
+                    return ANNOTATION_STRIP;
+                case "preserve":
+                    return ANNOTATION_PRESERVE;
+                case "unspecified":
+                    return ANNOTATION_UNSPECIFIED;
+                default:
+                    compileError("Invalid value for input-type-annotations attribute. " +
+                                         "Permitted values are (strip, preserve, unspecified)", "XTSE0020");
+                    return ANNOTATION_UNSPECIFIED;
             }
         }
         return -1;

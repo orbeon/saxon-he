@@ -36,7 +36,7 @@ public class RetainedStaticContext implements NamespaceResolver {
     private String staticBaseUriString;
     private String defaultCollationName;
     private Map<String, String> namespaces;
-    private String defaultFunctionNamespace;
+    private String defaultFunctionNamespace = NamespaceConstant.FN;
     private String defaultElementNamespace;
     private DecimalFormatManager decimalFormatManager;
     private boolean backwardsCompatibility;

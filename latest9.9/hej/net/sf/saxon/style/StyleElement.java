@@ -7,7 +7,6 @@
 
 package net.sf.saxon.style;
 
-
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.*;
@@ -15,7 +14,10 @@ import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.expr.sort.SortKeyDefinition;
 import net.sf.saxon.expr.sort.SortKeyDefinitionList;
 import net.sf.saxon.functions.Current;
-import net.sf.saxon.lib.*;
+import net.sf.saxon.lib.Feature;
+import net.sf.saxon.lib.NamespaceConstant;
+import net.sf.saxon.lib.StringCollator;
+import net.sf.saxon.lib.Validation;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.*;
 import net.sf.saxon.trace.InstructionInfo;
@@ -40,7 +42,9 @@ import javax.xml.transform.TransformerException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.lang.String;
 import java.util.*;
+
 
 /**
  * Abstract superclass for all element nodes in the stylesheet.
@@ -238,7 +242,7 @@ public abstract class StyleElement extends ElementImpl {
     /**
      * Get the visibility of the component. Returns the actual value of the visibility attribute,
      * after validation, unless this is absent, in which case it returns the default value of PRIVATE.
-     *  Invokes {@link #invalidAttribute(String, String)} if the value is invalid.
+     * Invokes {@link #invalidAttribute(String, String)} if the value is invalid.
      *
      * @return the declared visibility of the component, or {@link Visibility#PRIVATE}
      * if the visibility attribute is absent.
@@ -361,8 +365,8 @@ public abstract class StyleElement extends ElementImpl {
      *                     will be trimmed. If XSLT 3.0 is enabled, then the EQName syntax "Q{uri}local" is also
      *                     accepted.
      * @return the StructuredQName representation of this lexical QName
-     * @throws XPathException     if the qname is not a lexically-valid QName, or if the name
-     *                            is in a reserved namespace.
+     * @throws XPathException if the qname is not a lexically-valid QName, or if the name
+     *                        is in a reserved namespace.
      */
 
     public final StructuredQName makeQName(String lexicalQName)
@@ -402,6 +406,12 @@ public abstract class StyleElement extends ElementImpl {
                                                             qName.getPrefix() + " refers to a reserved namespace");
             err.setIsStaticError(true);
             err.setErrorCode("XTSE0080");
+            throw err;
+        }
+        if (getContainingPackage().isDocumentationNamespace(qName.getNamespaceBinding())) {
+            XPathException err = new XPathException("Documentation namespace " + qName.getPrefix() +
+                                                            " can be used only for stylesheet documentation", SaxonErrorCode.SXPK0004);
+            err.setIsStaticError(true);
             throw err;
         }
         return qName;
@@ -499,7 +509,10 @@ public abstract class StyleElement extends ElementImpl {
      */
 
     public SavedNamespaceContext makeNamespaceContext() {
-        return new SavedNamespaceContext(NamespaceIterator.iterateNamespaces(this));
+        StylesheetPackage pack = getPackageData();
+        return new SavedNamespaceContext(
+                NamespaceIterator.iterateNamespaces(this),
+                pack::isDocumentationNamespace);
     }
 
     public RetainedStaticContext makeRetainedStaticContext() {
@@ -866,6 +879,7 @@ public abstract class StyleElement extends ElementImpl {
         }
         return streamable;
     }
+
     /**
      * Process an attribute whose value is a SequenceType
      *
@@ -1003,7 +1017,7 @@ public abstract class StyleElement extends ElementImpl {
      * @param ns the namespace URI of the attribute required, either the XSLT namespace or ""
      */
 
-    protected void processVersionAttribute(String ns)  {
+    protected void processVersionAttribute(String ns) {
         String v = Whitespace.trim(getAttributeValue(ns, "version"));
         if (v != null) {
             ConversionResult val = BigDecimalValue.makeDecimalValue(v, true);
@@ -1047,11 +1061,12 @@ public abstract class StyleElement extends ElementImpl {
 
     /**
      * Get the effective version in a form suitable for display (for example "1.0" or "2.0")
+     *
      * @return the version number in conventional format
      */
 
     public String getEffectiveVersionAsString() {
-        return Double.toString(getEffectiveVersion()/10);
+        return Double.toString(getEffectiveVersion() / 10);
     }
 
     /**
@@ -1099,7 +1114,7 @@ public abstract class StyleElement extends ElementImpl {
     }
 
     /**
-     * Process the [xsl:]default-collation attribute if there is one. 
+     * Process the [xsl:]default-collation attribute if there is one.
      *
      * @throws XPathException if the value is not a valid URI, or not a recognized collation URI
      */
@@ -1893,7 +1908,7 @@ public abstract class StyleElement extends ElementImpl {
      * Convenience method to check that the stylesheet element is empty
      */
 
-    public void checkEmpty()  {
+    public void checkEmpty() {
         if (hasChildNodes()) {
             compileError("Element must be empty", "XTSE0260");
         }
@@ -2047,7 +2062,7 @@ public abstract class StyleElement extends ElementImpl {
                     AxisIterator lookahead = node.iterateAxis(AxisInfo.FOLLOWING_SIBLING);
                     NodeInfo sibling = lookahead.next();
                     if (!(sibling instanceof XSLLocalParam || sibling instanceof XSLSort
-                            || sibling instanceof XSLContextItem || sibling instanceof XSLOnCompletion)) {
+                                  || sibling instanceof XSLContextItem || sibling instanceof XSLOnCompletion)) {
                         // The test for XSLParam and XSLSort is to eliminate whitespace nodes that have been retained
                         // because of xml:space="preserve"
                         Expression text = new ValueOf(new StringLiteral(node.getStringValue()), false, false);
@@ -2439,7 +2454,7 @@ public abstract class StyleElement extends ElementImpl {
      * @param errorCode the error code. May be null if not known or not defined
      */
 
-    public void compileError(String message, StructuredQName errorCode)  {
+    public void compileError(String message, StructuredQName errorCode) {
         XPathException tce = new XPathException(message);
         tce.setErrorCodeQName(errorCode);
         tce.setLocator(this);
@@ -2544,6 +2559,7 @@ public abstract class StyleElement extends ElementImpl {
      * Ask whether this is an instruction that is known to be constructing nodes which
      * will become children of a parent document or element node, and will not have an
      * independent existence of their own.
+     *
      * @return true if it is known that this is an instruction that creates nodes that
      * will immediately be attached to a parent element or document node
      */
@@ -2554,11 +2570,11 @@ public abstract class StyleElement extends ElementImpl {
         }
         NodeInfo parent = getParent();
         while (true) {
-            if (!(parent instanceof StyleElement && ((StyleElement)parent).isInstruction())) {
+            if (!(parent instanceof StyleElement && ((StyleElement) parent).isInstruction())) {
                 return false;
             }
             if (parent instanceof XSLGeneralVariable) {
-                return ((XSLGeneralVariable)parent).getAttributeValue("as") == null;
+                return ((XSLGeneralVariable) parent).getAttributeValue("as") == null;
             }
             if (parent instanceof XSLElement || parent instanceof LiteralResultElement || parent instanceof XSLDocument || parent instanceof XSLCopy) {
                 return true;
@@ -2735,7 +2751,7 @@ public abstract class StyleElement extends ElementImpl {
     public Iterator<String> getProperties() {
         List<String> list = new ArrayList<>(10);
         iterateAxis(AxisInfo.ATTRIBUTE).forEach(a ->
-            list.add(NameOfNode.makeName(a).getStructuredQName().getClarkName())
+                                                        list.add(NameOfNode.makeName(a).getStructuredQName().getClarkName())
         );
         return list.iterator();
     }

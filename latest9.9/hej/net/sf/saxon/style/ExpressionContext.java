@@ -65,6 +65,11 @@ public class ExpressionContext implements XSLTStaticContext {
         return element.getConfiguration();
     }
 
+    /**
+     * Get the containing XSLT package
+     * @return the containing XSLT package
+     */
+
     public StylesheetPackage getPackageData() {
         return element.getPackageData();
     }

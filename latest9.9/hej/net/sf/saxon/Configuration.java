@@ -2083,7 +2083,6 @@ public class Configuration implements SourceResolver, NotationSet {
     /**
      * Set the URI resolver to be used for resolving URIs passed to the unparsed-text(),
      * unparsed-text-available(), and unparsed-text-lines() functions
-     *
      * @param resolver the URI resolver to be used for these functions.
      */
 

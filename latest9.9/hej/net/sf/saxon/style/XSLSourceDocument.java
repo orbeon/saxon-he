@@ -16,10 +16,7 @@ import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.lib.Validation;
-import net.sf.saxon.om.AllElementsSpaceStrippingRule;
-import net.sf.saxon.om.AttributeCollection;
-import net.sf.saxon.om.IgnorableSpaceStrippingRule;
-import net.sf.saxon.om.NoElementsSpaceStrippingRule;
+import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
@@ -122,8 +119,11 @@ public class XSLSourceDocument extends StyleElement {
                             case "#ignorable":
                                 parseOptions.setSpaceStrippingRule(IgnorableSpaceStrippingRule.getInstance());
                                 break;
+                            case "#default":
+                                parseOptions.setSpaceStrippingRule(null);
+                                break;
                             default:
-                                // ???
+                                invalidAttribute("saxon:strip-space", "#all|#none|#ignorable|#default");
                                 break;
                         }
                         break;
@@ -178,7 +178,9 @@ public class XSLSourceDocument extends StyleElement {
     /*@Nullable*/
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         Configuration config = getConfiguration();
-        parseOptions.setSpaceStrippingRule(getPackageData().getSpaceStrippingRule());
+        if (parseOptions.getSpaceStrippingRule() == null) {
+            parseOptions.setSpaceStrippingRule(getPackageData().getSpaceStrippingRule());
+        }
         parseOptions.setApplicableAccumulators(accumulators);
         Expression action = compileSequenceConstructor(exec, decl, false);
         if (action == null) {

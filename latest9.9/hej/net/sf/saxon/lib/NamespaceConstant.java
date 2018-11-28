@@ -361,6 +361,10 @@ public class NamespaceConstant {
                 return SAXON;
             case "vv":
                 return SAXON_GENERATED_VARIABLE;
+            case "map":
+                return MAP_FUNCTIONS;
+            case "array":
+                return ARRAY_FUNCTIONS;
             default:
                 return null;
         }

@@ -264,9 +264,6 @@ public class Compilation {
             throw e;
         }
         CompilerInfo info = getCompilerInfo();
-//        if (info.getXsltVersion() == 0) {
-//            setProcessorVersion(getXPathVersion());
-//        }
         StyleNodeFactory factory = getStyleNodeFactory(true);
         PrincipalStylesheetModule psm = factory.newPrincipalModule(xslpackage);
         StylesheetPackage pack = psm.getStylesheetPackage();
@@ -275,6 +272,7 @@ public class Compilation {
         pack.setPackageName(xslpackage.getName());
         pack.setSchemaAware(info.isSchemaAware() || isSchemaAware());
         pack.createFunctionLibrary();
+        pack.setDocumentationNamespaces(xslpackage.getDocumentationNamespaces());
         if (info.getExtensionFunctionLibrary() != null) {
             pack.getFunctionLibrary().addFunctionLibrary(info.getExtensionFunctionLibrary());
         }

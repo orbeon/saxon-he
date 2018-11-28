@@ -582,7 +582,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
             for (NamespaceBinding aNamespaceList : namespaceList) {
                 if (aNamespaceList.getPrefix().equals(prefix)) {
                     String uri = aNamespaceList.getURI();
-                    return uri.isEmpty() && prefix.length() != 0 ? null : uri;
+                    return uri.isEmpty() && !prefix.isEmpty() ? null : uri;
                 }
             }
         }
@@ -674,7 +674,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
             return;
         }
 
-        Set<NamespaceBinding> childNamespaces = new HashSet<NamespaceBinding>();
+        Set<NamespaceBinding> childNamespaces = new HashSet<>();
         if (namespaceList != null) {
             childNamespaces.addAll(Arrays.asList(namespaceList));
         }
@@ -683,7 +683,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
 
         // If the child is in the null namespace but the parent has a default namespace, xmlns="" should be added.
 
-        if (getURI().isEmpty() && inscope.getURIForPrefix("", true).length() != 0) {
+        if (getURI().isEmpty() && !inscope.getURIForPrefix("", true).isEmpty()) {
             childNamespaces.add(NamespaceBinding.DEFAULT_UNDECLARATION);
         }
 

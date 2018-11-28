@@ -35,6 +35,7 @@ public class XSLStylesheet extends XSLModuleRoot {
      */
 
     public void prepareAttributes() throws XPathException {
+        // NOT USED: we convert to an XSLPackage before examining the attributes.
         processDefaultCollationAttribute();
         processDefaultMode();
         String inputTypeAnnotationsAtt = null;
@@ -42,33 +43,45 @@ public class XSLStylesheet extends XSLModuleRoot {
         for (int a = 0; a < atts.getLength(); a++) {
 
             String f = atts.getQName(a);
-            if (f.equals("version")) {
-                // already processed
-            } else if (f.equals("id")) {
-                //
-            } else if (f.equals("extension-element-prefixes")) {
-                //
-            } else if (f.equals("exclude-result-prefixes")) {
-                //
-            } else if (f.equals("input-type-annotations")) {
-                inputTypeAnnotationsAtt = atts.getValue(a);
-            } else {
-                checkUnknownAttribute(atts.getNodeName(a));
+            switch (f) {
+                case "version":
+                    // already processed
+                    break;
+                case "id":
+                    //
+                    break;
+                case "extension-element-prefixes":
+                    //
+                    break;
+                case "exclude-result-prefixes":
+                    //
+                    break;
+                case "input-type-annotations":
+                    inputTypeAnnotationsAtt = atts.getValue(a);
+                    break;
+                default:
+                    checkUnknownAttribute(atts.getNodeName(a));
+                    break;
             }
         }
-        if (version == -1 && getParent().getNodeKind() == Type.DOCUMENT) {
+        if (version == -1 && (getParent() == null || getParent().getNodeKind() == Type.DOCUMENT)) {
             reportAbsence("version");
         }
 
         if (inputTypeAnnotationsAtt != null) {
-            if (inputTypeAnnotationsAtt.equals("strip")) {
-                //setInputTypeAnnotations(ANNOTATION_STRIP);
-            } else if (inputTypeAnnotationsAtt.equals("preserve")) {
-                //setInputTypeAnnotations(ANNOTATION_PRESERVE);
-            } else if (inputTypeAnnotationsAtt.equals("unspecified")) {
-                //
-            } else {
-                invalidAttribute("input-type-annotations", "strip|preserve|unspecified");
+            switch (inputTypeAnnotationsAtt) {
+                case "strip":
+                    //setInputTypeAnnotations(ANNOTATION_STRIP);
+                    break;
+                case "preserve":
+                    //setInputTypeAnnotations(ANNOTATION_PRESERVE);
+                    break;
+                case "unspecified":
+                    //
+                    break;
+                default:
+                    invalidAttribute("input-type-annotations", "strip|preserve|unspecified");
+                    break;
             }
         }
 
@@ -86,7 +99,7 @@ public class XSLStylesheet extends XSLModuleRoot {
         if (validationError != null) {
             compileError(validationError);
         }
-        if (getParent().getNodeKind() != Type.DOCUMENT) {
+        if (getParent() != null && getParent().getNodeKind() != Type.DOCUMENT) {
             compileError(getDisplayName() + " must be the outermost element", "XTSE0010");
         }
 
@@ -102,9 +115,11 @@ public class XSLStylesheet extends XSLModuleRoot {
             } else if (curr instanceof AbsentExtensionElement && ((StyleElement) curr).forwardsCompatibleModeIsEnabled()) {
                 // this is OK: an unknown XSLT element is allowed in forwards compatibility mode
             } else if (NamespaceConstant.XSLT.equals(curr.getURI())) {
+                assert curr instanceof StyleElement;
                 ((StyleElement) curr).compileError("Element " + curr.getDisplayName() +
                         " must not appear directly within " + getDisplayName(), "XTSE0010");
             } else {
+                assert curr instanceof StyleElement;
                 ((StyleElement) curr).compileError("Element " + curr.getDisplayName() +
                         " must not appear directly within " + getDisplayName() +
                         " because it is not in a namespace", "XTSE0130");

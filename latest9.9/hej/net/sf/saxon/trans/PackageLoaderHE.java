@@ -1140,11 +1140,11 @@ public class PackageLoaderHE implements IPackageLoader {
         if (val == null) {
             return null;
         }
-        if (val.contains("(")) {
-            // typically, an extended type such as union(a,b)
-            IndependentContext env = makeStaticContext(element);
-            return (SimpleType)parser.parseExtendedItemType(val, env);
-        }
+//        if (val.contains("(")) {
+//            // typically, an extended type such as union(a,b)
+//            IndependentContext env = makeStaticContext(element);
+//            return (SimpleType)parser.parseExtendedItemType(val, env);
+//        }
         if (val.startsWith("xs:")) {
             return config.getSchemaType(new StructuredQName("xs", NamespaceConstant.SCHEMA, val.substring(3)));
         } else {

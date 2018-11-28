@@ -12,6 +12,7 @@ import net.sf.saxon.om.NamespaceBinding;
 import net.sf.saxon.om.NamespaceResolver;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * An object representing a list of Namespaces. Used when the namespace
@@ -46,10 +47,28 @@ public final class SavedNamespaceContext implements NamespaceResolver {
      *                   list will be searched from the "high" end.
      */
 
-    public SavedNamespaceContext(/*@NotNull*/ Iterator<NamespaceBinding> nsBindings) {
+    public SavedNamespaceContext(Iterator<NamespaceBinding> nsBindings) {
         while (nsBindings.hasNext()) {
             NamespaceBinding next = nsBindings.next();
             bindings.put(next.getPrefix(), next.getURI());
+        }
+    }
+
+    /**
+     * Create a NamespaceContext object, excluding some namespaces
+     *
+     * @param nsBindings an array of namespace bindings. Each namespace code is an integer
+     *                   in which the first 16 bits represent the prefix (zero if it's the default namespace)
+     *                   and the next 16 bits represent the uri. These are codes held in the NamePool. The
+     *                   list will be searched from the "high" end.
+     */
+
+    public SavedNamespaceContext(Iterator<NamespaceBinding> nsBindings, Predicate<NamespaceBinding> excluded) {
+        while (nsBindings.hasNext()) {
+            NamespaceBinding next = nsBindings.next();
+            if (!excluded.test(next)) {
+                bindings.put(next.getPrefix(), next.getURI());
+            }
         }
     }
 

@@ -150,37 +150,39 @@ public class DocumentFn extends SystemFunction implements Callable {
             try {
                 return makeDoc(item.getStringValue(), b, packageData, null, context, locator, false);
             } catch (XPathException xerr) {
-                if (xerr.getErrorCodeLocalPart().equals("XTRE1160")) {
-                    // Invalid fragment identifier: error code changes in XSLT 3.0
-                    xerr.setErrorCode("XTDE1160");
-                    // Report a "recoverable error"
-                    try {
-                        context.getController().recoverableError(xerr);
-                    } catch (XPathException err2) {
-                        throw xerr;
-                    }
-                    // If recovering, the recovery action is to ignore the fragment identifier
-                    String href = item.getStringValue();
-                    int hash = href.indexOf('#');
-                    href = href.substring(0, hash);
-                    return makeDoc(href, b, packageData, null, context, locator, false);
-                } else if (xerr.getErrorCodeLocalPart().equals("XTDE1162")) {
-                    // non-recoverable error
-                    throw xerr;
-                } else {
-                    // Other errors
-                    if (!xerr.hasBeenReported()) {
-                        xerr.maybeSetLocation(locator);
-                        String code = (xerr.getException() instanceof URISyntaxException) ? "FODC0005" : "FODC0002";
-                        xerr.maybeSetErrorCode(code);
+                switch (xerr.getErrorCodeLocalPart()) {
+                    case "XTRE1160":
+                        // Invalid fragment identifier: error code changes in XSLT 3.0
+                        xerr.setErrorCode("XTDE1160");
+                        // Report a "recoverable error"
                         try {
                             context.getController().recoverableError(xerr);
                         } catch (XPathException err2) {
                             throw xerr;
                         }
-                    } else {
+                        // If recovering, the recovery action is to ignore the fragment identifier
+                        String href = item.getStringValue();
+                        int hash = href.indexOf('#');
+                        href = href.substring(0, hash);
+                        return makeDoc(href, b, packageData, null, context, locator, false);
+                    case "XTDE1162":
+                        // non-recoverable error
                         throw xerr;
-                    }
+                    default:
+                        // Other errors
+                        if (!xerr.hasBeenReported()) {
+                            xerr.maybeSetLocation(locator);
+                            String code = (xerr.getException() instanceof URISyntaxException) ? "FODC0005" : "FODC0002";
+                            xerr.maybeSetErrorCode(code);
+                            try {
+                                context.getController().recoverableError(xerr);
+                            } catch (XPathException err2) {
+                                throw xerr;
+                            }
+                        } else {
+                            throw xerr;
+                        }
+                        break;
                 }
                 return null;
             }
@@ -298,6 +300,7 @@ public class DocumentFn extends SystemFunction implements Callable {
                 if (b instanceof TinyBuilder) {
                     ((TinyBuilder) b).setStatistics(config.getTreeStatistics().SOURCE_DOCUMENT_STATISTICS);
                 }
+
                 Receiver s = b;
                 if (options == null) {
                     options = new ParseOptions(b.getPipelineConfiguration().getParseOptions());
@@ -307,12 +310,13 @@ public class DocumentFn extends SystemFunction implements Callable {
                             options.setSpaceStrippingRule(rule);
                         }
                     }
-                    //options.setStripSpace(Whitespace.XSLT);
                     options.setSchemaValidationMode(controller.getSchemaValidationMode());
                 }
+                b.getPipelineConfiguration().setParseOptions(options);
                 if (options.isLineNumbering()) {
                     b.setLineNumbering(true);
                 }
+
                 if (silent) {
                     StandardErrorHandler eh = new StandardErrorHandler(controller.getErrorListener());
                     eh.setSilent(true);
@@ -381,7 +385,7 @@ public class DocumentFn extends SystemFunction implements Callable {
      * @param documentKey the absolute URI if already available, or null otherwise
      * @param context  the dynamic context
      * @return a Source representing the document to be read
-     * @throws XPathException
+     * @throws XPathException if the relative URI cannot be resolved
      */
 
     public static Source resolveURI(String href, String baseURI, String documentKey, XPathContext context)
@@ -462,13 +466,15 @@ public class DocumentFn extends SystemFunction implements Callable {
      * Compute a document key (an absolute URI that can be used to see if a document is already loaded)
      * @param href     the relative URI
      * @param baseURI  the base URI
-     * @param packageData
+     * @param packageData the package in which the call to doc() or document() appears (affects options
+     *                    such as strip-space)
      * @param resolver the URIResolver
      * @param strip true if the document is subject to whitespace stripping (typically a source document), false
      *              otherwise (typically a stylesheet module)
      */
 
-    public static DocumentURI computeDocumentKey(String href, String baseURI, PackageData packageData, URIResolver resolver, boolean strip) throws XPathException {
+    public static DocumentURI computeDocumentKey(
+            String href, String baseURI, PackageData packageData, URIResolver resolver, boolean strip) {
         String documentKey;
         if (resolver instanceof RelativeURIResolver) {
             // If this is the case, the URIResolver is responsible for absolutization as well as dereferencing
