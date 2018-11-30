@@ -369,7 +369,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         applyProperty(props, "suppressEvaluationExpiryWarning", FeatureKeys.SUPPRESS_EVALUATION_EXPIRY_WARNING);
         applyProperty(props, "suppressXPathWarnings", FeatureKeys.SUPPRESS_XPATH_WARNINGS);
         applyProperty(props, "suppressXsltNamespaceCheck", FeatureKeys.SUPPRESS_XSLT_NAMESPACE_CHECK);
-        applyProperty(props, "thresholdForHotspotByteCode", FeatureKeys.THRESHOLD_FOR_HOTSPOT_BYTECODE);
+        applyProperty(props, "thresholdForHotspotByteCode", FeatureKeys.THRESHOLD_FOR_HOTSPOT_BYTE_CODE);
         applyProperty(props, "timing", FeatureKeys.TIMING);
         applyProperty(props, "traceExternalFunctions", FeatureKeys.TRACE_EXTERNAL_FUNCTIONS);
         applyProperty(props, "traceListener", FeatureKeys.TRACE_LISTENER_CLASS);
