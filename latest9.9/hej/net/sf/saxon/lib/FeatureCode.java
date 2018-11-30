@@ -266,7 +266,7 @@ public abstract class FeatureCode {
     public final static int XPATH_VERSION_FOR_XSLT = 121;
     /** @see Feature#THRESHOLD_FOR_FUNCTION_INLINING  */
     public final static int THRESHOLD_FOR_FUNCTION_INLINING = 122;
-
+    /** @see Feature#THRESHOLD_FOR_HOTSPOT_BYTE_CODE  */
     public final static int THRESHOLD_FOR_HOTSPOT_BYTE_CODE = 123;
 
 
