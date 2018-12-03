@@ -22,7 +22,6 @@ import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.tree.jiter.MappingJavaIterator;
-import net.sf.saxon.tree.util.Navigator;
 
 import javax.xml.transform.Source;
 import java.io.BufferedReader;
@@ -191,7 +190,7 @@ public class CatalogCollection extends AbstractResourceCollection {
                 err.setXPathContext(context);
                 throw err;
             }
-            String hrefAtt = Navigator.getAttributeValue(item, "", "href");
+            String hrefAtt = item.getAttributeValue("", "href");
             if (hrefAtt == null) {
                 XPathException err = new XPathException("A <doc> element in the collection catalog has no @href attribute");
                 err.setErrorCode("FODC0004");

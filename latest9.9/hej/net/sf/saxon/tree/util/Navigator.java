@@ -151,7 +151,9 @@ public final class Navigator {
 
     /*@Nullable*/
     public static String getBaseURI(/*@NotNull*/ NodeInfo node, Predicate<NodeInfo> isTopElementWithinEntity) {
-        String xmlBase = node.getAttributeValue(NamespaceConstant.XML, "base");
+        String xmlBase = node instanceof TinyElementImpl ?
+                ((TinyElementImpl)node).getAttributeValue(StandardNames.XML_BASE) :
+                node.getAttributeValue(NamespaceConstant.XML, "base");
         if (xmlBase != null) {
             URI baseURI;
             try {

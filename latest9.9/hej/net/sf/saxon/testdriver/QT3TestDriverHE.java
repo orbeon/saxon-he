@@ -540,7 +540,7 @@ public class QT3TestDriverHE extends TestDriver {
                         ErrorCollector errorCollector = new ErrorCollector();
                         testXqc.setErrorListener(errorCollector);
                         String decVars = env.paramDecimalDeclarations.toString();
-                        if (decVars.length() != 0) {
+                        if (!decVars.isEmpty()) {
                             int x = exp.indexOf("(:%DECL%:)");
                             if (x < 0) {
                                 exp = decVars + exp;
@@ -549,7 +549,7 @@ public class QT3TestDriverHE extends TestDriver {
                             }
                         }
                         String vars = env.paramDeclarations.toString();
-                        if (vars.length() != 0) {
+                        if (!vars.isEmpty()) {
                             int x = exp.indexOf("(:%VARDECL%:)");
                             if (x < 0) {
                                 exp = vars + exp;

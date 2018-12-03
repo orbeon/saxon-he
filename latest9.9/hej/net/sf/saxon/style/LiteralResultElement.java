@@ -92,7 +92,8 @@ public class LiteralResultElement extends StyleElement {
             for (int i = 0; i < num; i++) {
 
                 int fp = atts.getFingerprint(i);
-                String attURI = namePool.getURI(fp);
+                NodeName name = atts.getNodeName(i);
+                String attURI = name.getURI();
 
                 if (attURI.equals(NamespaceConstant.XSLT)) {
 
@@ -129,7 +130,7 @@ public class LiteralResultElement extends StyleElement {
                                              Err.wrap(atts.getNodeName(i).getDisplayName(), Err.ATTRIBUTE), "XTSE0805");
                     }
                 } else {
-                    attributeNames[numberOfAttributes] = new FingerprintedQName(atts.getPrefix(i), atts.getURI(i), atts.getLocalName(i), fp);
+                    attributeNames[numberOfAttributes] = name;
                     Expression exp = makeAttributeValueTemplate(atts.getValue(i), i);
                     attributeValues[numberOfAttributes] = exp;
                     numberOfAttributes++;

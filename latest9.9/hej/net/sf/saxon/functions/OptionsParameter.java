@@ -14,12 +14,15 @@ import net.sf.saxon.expr.parser.RoleDiagnostic;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.om.Sequence;
+import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.AtomicType;
+import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.type.Converter;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.AtomicValue;
+import net.sf.saxon.value.QNameValue;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
 
@@ -113,9 +116,15 @@ public class OptionsParameter {
         }
 
         for (Map.Entry<String, SequenceType> allowed : allowedOptions.entrySet()) {
-            String key = allowed.getKey();
+            String nominalKey = allowed.getKey();
+            AtomicValue actualKey;
+            if (nominalKey.startsWith("Q{")) {
+                actualKey = new QNameValue(StructuredQName.fromEQName(nominalKey), BuiltInAtomicType.QNAME);
+            } else {
+                actualKey = new StringValue(nominalKey);
+            }
             SequenceType required = allowed.getValue();
-            Sequence<?> actual = supplied.get(new StringValue(key));
+            Sequence<?> actual = supplied.get(actualKey);
             if (actual != null) {
                 if (!required.matches(actual, th)) {
                     boolean ok = false;
@@ -129,17 +138,17 @@ public class OptionsParameter {
                         }
                     }
                     if (!ok) {
-                        RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.OPTION, key, 0);
+                        RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.OPTION, nominalKey, 0);
                         role.setErrorCode("XPTY0004");
                         actual = th.applyFunctionConversionRules(
                                 actual, required, role, ExplicitLocation.UNKNOWN_LOCATION);
                     }
                 }
                 actual = actual.materialize();
-                Set<String> permitted = allowedValues.get(key);
+                Set<String> permitted = allowedValues.get(nominalKey);
                 if (permitted != null) {
                     if (!(actual instanceof AtomicValue) || !permitted.contains(((AtomicValue)actual).getStringValue())) {
-                        StringBuilder message = new StringBuilder("Invalid option " + key + "=" + Err.depictSequence(actual) + ". Valid values are:");
+                        StringBuilder message = new StringBuilder("Invalid option " + nominalKey + "=" + Err.depictSequence(actual) + ". Valid values are:");
                         int i = 0;
                         for (String v : permitted) {
                             message.append(i++ == 0 ? " " : ", ").append(v);
@@ -147,11 +156,11 @@ public class OptionsParameter {
                         throw new XPathException(message.toString(), errorCodeForDisallowedValue);
                     }
                 }
-                result.put(key, actual);
+                result.put(nominalKey, actual);
             } else {
-                Sequence<?> def = defaultValues.get(key);
+                Sequence<?> def = defaultValues.get(nominalKey);
                 if (def != null) {
-                    result.put(key, def);
+                    result.put(nominalKey, def);
                 }
             }
         }

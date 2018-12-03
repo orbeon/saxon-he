@@ -12,7 +12,6 @@ import net.sf.saxon.om.NamePool;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.pattern.NameTest;
 import net.sf.saxon.tree.iter.AxisIterator;
-import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.Type;
@@ -167,7 +166,8 @@ public class ElementOverNodeInfo extends NodeOverNodeInfo implements Element {
      */
 
     public String getAttributeNS(String namespaceURI, String localName) {
-        String val = Navigator.getAttributeValue(node, namespaceURI == null ? "" : namespaceURI, localName);
+        String uri = namespaceURI == null ? "" : namespaceURI;
+        String val = node.getAttributeValue(uri, localName);
         if (val == null) {
             return "";
         }
@@ -297,7 +297,8 @@ public class ElementOverNodeInfo extends NodeOverNodeInfo implements Element {
      */
 
     public boolean hasAttributeNS(String namespaceURI, String localName) {
-        return Navigator.getAttributeValue(node, namespaceURI == null ? "" : namespaceURI, localName) != null;
+        String uri = namespaceURI == null ? "" : namespaceURI;
+        return node.getAttributeValue(uri, localName) != null;
     }
 
     /**

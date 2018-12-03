@@ -1,37 +1,42 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2018 Saxonica Limited.
-// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
-// This Source Code Form is "Incompatible With Secondary Licenses", as defined by the Mozilla Public License, v. 2.0.
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package net.sf.saxon.ma.map;
 
 import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AtomicIterator;
-import net.sf.saxon.tree.iter.SingleAtomicIterator;
-import net.sf.saxon.tree.jiter.MonoIterator;
-import net.sf.saxon.type.AtomicType;
-import net.sf.saxon.type.ItemType;
-import net.sf.saxon.type.TypeHierarchy;
-import net.sf.saxon.type.UType;
+import net.sf.saxon.type.*;
 import net.sf.saxon.value.AtomicValue;
+import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.SequenceType;
+import net.sf.saxon.value.StringValue;
+
+import java.util.*;
 
 /**
- * A key and a corresponding value to be held in a Map. A key-value pair also acts as a singleton
- * map in its own right.
+ * A simple implementation of MapItem where the strings are keys, and modification is unlikely.
+ * This implementation is used in a number of cases where it can be determined that it is suitable,
+ * for example when parsing JSON input, or when creating a fixed map to use in an options argument.
  */
 
-public class KeyValuePair implements MapItem {
-    public AtomicValue key;
-    public GroundedValue<?> value;
+public class Dictionary implements MapItem {
 
-    public KeyValuePair(AtomicValue key, GroundedValue<?> value) {
-        this.key = key;
-        this.value = value;
+    private HashMap<String, GroundedValue<?>> hashMap;
+
+    /**
+     * Create an empty dictionary, to which entries can be added using {@link #initialPut(String, GroundedValue)},
+     * provided this is done before the map is exposed to the outside world.
+     */
+
+    public Dictionary() {
+        hashMap = new HashMap<>();
+    }
+
+    /**
+     * During initial construction of the map, add a key-value pair
+     */
+
+    public void initialPut(String key, GroundedValue<?> value) {
+        hashMap.put(key, value);
     }
 
     /**
@@ -42,7 +47,11 @@ public class KeyValuePair implements MapItem {
      */
     @Override
     public GroundedValue<?> get(AtomicValue key) {
-        return this.key.asMapKey().equals(key.asMapKey()) ? value : null;
+        if (key instanceof StringValue) {
+            return hashMap.get(key.getStringValue());
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -52,7 +61,7 @@ public class KeyValuePair implements MapItem {
      */
     @Override
     public int size() {
-        return 1;
+        return hashMap.size();
     }
 
     /**
@@ -62,7 +71,7 @@ public class KeyValuePair implements MapItem {
      */
     @Override
     public boolean isEmpty() {
-        return false;
+        return hashMap.isEmpty();
     }
 
     /**
@@ -72,7 +81,8 @@ public class KeyValuePair implements MapItem {
      */
     @Override
     public AtomicIterator keys() {
-        return new SingleAtomicIterator(key);
+        Iterator<String> base = hashMap.keySet().iterator();
+        return () -> base.hasNext() ? new StringValue(base.next()) : null;
     }
 
     /**
@@ -82,7 +92,9 @@ public class KeyValuePair implements MapItem {
      */
     @Override
     public Iterable<KeyValuePair> keyValuePairs() {
-        return () -> new MonoIterator<>(this);
+        List<KeyValuePair> pairs = new ArrayList<>();
+        hashMap.forEach((k, v) -> pairs.add(new KeyValuePair(new StringValue(k), v)));
+        return pairs;
     }
 
     /**
@@ -108,7 +120,7 @@ public class KeyValuePair implements MapItem {
      */
     @Override
     public MapItem remove(AtomicValue key) {
-        return (get(key) == null) ? this : new HashTrieMap();
+        return toHashTrieMap().remove(key);
     }
 
     /**
@@ -121,12 +133,25 @@ public class KeyValuePair implements MapItem {
      */
     @Override
     public boolean conforms(AtomicType keyType, SequenceType valueType, TypeHierarchy th) {
-        try {
-            return keyType.matches(key, th) && valueType.matches(value, th);
-        } catch (XPathException e) {
-            throw new AssertionError(e);
+        if (isEmpty()) {
+            return true;
         }
-
+        if (!(keyType == BuiltInAtomicType.STRING || keyType == BuiltInAtomicType.ANY_ATOMIC)) {
+            return false;
+        }
+        if (valueType.equals(SequenceType.ANY_SEQUENCE)) {
+            return true;
+        }
+        for (GroundedValue<?> val : hashMap.values()) {
+            try {
+                if (!valueType.matches(val, th)) {
+                    return false;
+                }
+            } catch (XPathException e) {
+                throw new AssertionError(e); // cannot happen when value is grounded
+            }
+        }
+        return true;
     }
 
     /**
@@ -138,9 +163,27 @@ public class KeyValuePair implements MapItem {
      */
     @Override
     public ItemType getItemType(TypeHierarchy th) {
-        return new MapType(key.getItemType(), SequenceType.makeSequenceType(
-                SequenceTool.getItemType(value, th),
-                SequenceTool.getCardinality(value)));
+        ItemType valueType = null;
+        int valueCard = 0;
+        // we need to test the entries individually
+        AtomicIterator keyIter = keys();
+        AtomicValue key;
+        for (Map.Entry<String, GroundedValue<?>> entry : hashMap.entrySet()) {
+            GroundedValue<?> val = entry.getValue();
+            if (valueType == null) {
+                valueType = SequenceTool.getItemType(val, th);
+                valueCard = SequenceTool.getCardinality(val);
+            } else {
+                valueType = Type.getCommonSuperType(valueType, SequenceTool.getItemType(val, th), th);
+                valueCard = Cardinality.union(valueCard, SequenceTool.getCardinality(val));
+            }
+        }
+        if (valueType == null) {
+            // empty map
+            return MapType.EMPTY_MAP_TYPE;
+        } else {
+            return new MapType(BuiltInAtomicType.STRING, SequenceType.makeSequenceType(valueType, valueCard));
+        }
     }
 
     /**
@@ -151,7 +194,7 @@ public class KeyValuePair implements MapItem {
      */
     @Override
     public UType getKeyUType() {
-        return key.getUType();
+        return hashMap.isEmpty() ? UType.VOID : UType.STRING;
     }
 
     /**
@@ -159,10 +202,10 @@ public class KeyValuePair implements MapItem {
      */
 
     private HashTrieMap toHashTrieMap() {
+        //System.err.println("Dictionary rewrite!!!!");
         HashTrieMap target = new HashTrieMap();
-        target.initialPut(key, value);
+        hashMap.forEach((k, v) -> target.initialPut(new StringValue(k), v));
         return target;
     }
 }
 
-// Copyright (c) 2010-2018 Saxonica Limited.

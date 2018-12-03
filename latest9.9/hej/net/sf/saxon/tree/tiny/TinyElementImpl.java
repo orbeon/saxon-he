@@ -173,9 +173,10 @@ public class TinyElementImpl extends TinyParentNodeImpl {
         }
         NamePool pool = getNamePool();
         while (a < tree.numberOfAttributes && tree.attParent[a] == nodeNr) {
-            int fp = tree.attCode[a] & NamePool.FP_MASK;
+            int nc = tree.attCode[a];
             // Avoid allocating a name code for an ad-hoc request
-            if (pool.getLocalName(fp).equals(local) && pool.getURI(fp).equals(uri)) {
+            StructuredQName name = pool.getUnprefixedQName(nc);
+            if (name.getLocalPart().equals(local) && name.hasURI(uri)) {
                 return tree.attValue[a].toString();
             }
             a++;

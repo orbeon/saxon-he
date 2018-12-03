@@ -10,11 +10,11 @@ package net.sf.saxon.option.sql;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
 import net.sf.saxon.om.AttributeCollection;
+import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.style.Compilation;
 import net.sf.saxon.style.ComponentDeclaration;
 import net.sf.saxon.style.StyleElement;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.Whitespace;
 
@@ -100,7 +100,7 @@ public class SQLColumn extends StyleElement {
     }
 
     public String getColumnName() {
-        return Navigator.getAttributeValue(this, "", "name");
+        return ((NodeInfo) this).getAttributeValue("", "name");
     }
 
 

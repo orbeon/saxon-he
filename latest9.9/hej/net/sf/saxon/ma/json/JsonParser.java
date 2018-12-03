@@ -8,7 +8,6 @@
 package net.sf.saxon.ma.json;
 
 import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NameChecker;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.Err;
@@ -110,16 +109,22 @@ public class JsonParser {
 
         if (options.containsKey("duplicates")) {
             String duplicates = ((StringValue) options.get("duplicates")).getStringValue();
-            if ("reject".equals(duplicates)) {
-                flags |= DUPLICATES_REJECTED;
-            } else if ("use-last".equals(duplicates)) {
-                flags |= DUPLICATES_LAST;
-            } else if ("use-first".equals(duplicates)) {
-                flags |= DUPLICATES_FIRST;
-            } else if ("retain".equals(duplicates)) {
-                flags |= DUPLICATES_RETAINED;
-            } else {
-                error("Invalid value for 'duplicates' option", ERR_OPTIONS);
+            switch (duplicates) {
+                case "reject":
+                    flags |= DUPLICATES_REJECTED;
+                    break;
+                case "use-last":
+                    flags |= DUPLICATES_LAST;
+                    break;
+                case "use-first":
+                    flags |= DUPLICATES_FIRST;
+                    break;
+                case "retain":
+                    flags |= DUPLICATES_RETAINED;
+                    break;
+                default:
+                    error("Invalid value for 'duplicates' option", ERR_OPTIONS);
+                    break;
             }
             if (validate && "retain".equals(duplicates)) {
                 error("The options validate:true and duplicates:retain cannot be used together", ERR_OPTIONS);

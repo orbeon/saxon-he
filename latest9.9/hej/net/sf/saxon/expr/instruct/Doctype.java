@@ -24,7 +24,6 @@ import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.tiny.TinyBuilder;
-import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.type.Type;
 
 /**
@@ -107,9 +106,9 @@ public class Doctype extends Instruction {
             e.setXPathContext(context);
             throw e;
         }
-        String name = Navigator.getAttributeValue(docType, "", "name");
-        String system = Navigator.getAttributeValue(docType, "", "system");
-        String publicid = Navigator.getAttributeValue(docType, "", "public");
+        String name = docType.getAttributeValue("", "name");
+        String system = docType.getAttributeValue("", "system");
+        String publicid = docType.getAttributeValue("", "public");
 
         if (name == null) {
             XPathException e = new XPathException("dtd:doctype must have a name attribute");
@@ -139,8 +138,8 @@ public class Doctype extends Instruction {
             String localname = child.getLocalPart();
 
             if ("element".equals(localname)) {
-                String elname = Navigator.getAttributeValue(child, "", "name");
-                String content = Navigator.getAttributeValue(child, "", "content");
+                String elname = child.getAttributeValue("", "name");
+                String content = child.getAttributeValue("", "content");
                 if (elname == null) {
                     XPathException e = new XPathException("dtd:element must have a name attribute");
                     e.setXPathContext(context);
@@ -154,7 +153,7 @@ public class Doctype extends Instruction {
                 write(out, "\n  <!ELEMENT " + elname + ' ' + content + '>');
 
             } else if (localname.equals("attlist")) {
-                String elname = Navigator.getAttributeValue(child, "", "element");
+                String elname = child.getAttributeValue("", "element");
                 if (elname == null) {
                     XPathException e = new XPathException("dtd:attlist must have an attribute named 'element'");
                     e.setXPathContext(context);
@@ -171,9 +170,9 @@ public class Doctype extends Instruction {
 
                     if ("attribute".equals(attDef.getLocalPart())) {
 
-                        String atname = Navigator.getAttributeValue(attDef, "", "name");
-                        String type = Navigator.getAttributeValue(attDef, "", "type");
-                        String value = Navigator.getAttributeValue(attDef, "", "value");
+                        String atname = attDef.getAttributeValue("", "name");
+                        String type = attDef.getAttributeValue("", "type");
+                        String value = attDef.getAttributeValue("", "value");
                         if (atname == null) {
                             XPathException e = new XPathException("dtd:attribute must have a name attribute");
                             e.setXPathContext(context);
@@ -200,11 +199,11 @@ public class Doctype extends Instruction {
 
             } else if (localname.equals("entity")) {
 
-                String entname = Navigator.getAttributeValue(child, "", "name");
-                String parameter = Navigator.getAttributeValue(child, "", "parameter");
-                String esystem = Navigator.getAttributeValue(child, "", "system");
-                String epublicid = Navigator.getAttributeValue(child, "", "public");
-                String notation = Navigator.getAttributeValue(child, "", "notation");
+                String entname = child.getAttributeValue("", "name");
+                String parameter = child.getAttributeValue("", "parameter");
+                String esystem = child.getAttributeValue("", "system");
+                String epublicid = child.getAttributeValue("", "public");
+                String notation = child.getAttributeValue("", "notation");
 
                 if (entname == null) {
                     XPathException e = new XPathException("dtd:entity must have a name attribute");
@@ -241,9 +240,9 @@ public class Doctype extends Instruction {
                 write(out, ">");
 
             } else if (localname.equals("notation")) {
-                String notname = Navigator.getAttributeValue(child, "", "name");
-                String nsystem = Navigator.getAttributeValue(child, "", "system");
-                String npublicid = Navigator.getAttributeValue(child, "", "public");
+                String notname = child.getAttributeValue("", "name");
+                String nsystem = child.getAttributeValue("", "system");
+                String npublicid = child.getAttributeValue("", "public");
                 if (notname == null) {
                     XPathException e = new XPathException("dtd:notation must have a name attribute");
                     e.setXPathContext(context);

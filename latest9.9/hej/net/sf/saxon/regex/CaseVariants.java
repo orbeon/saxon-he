@@ -15,7 +15,6 @@ import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.pattern.NameTest;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
-import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.z.IntArraySet;
 import net.sf.saxon.z.IntHashMap;
@@ -65,9 +64,9 @@ public class CaseVariants {
             if (item == null) {
                 break;
             }
-            String code = Navigator.getAttributeValue(item, "", "n");
+            String code = item.getAttributeValue("", "n");
             int icode = Integer.parseInt(code, 16);
-            String variants = Navigator.getAttributeValue(item, "", "v");
+            String variants = item.getAttributeValue("", "v");
             String[] vhex = variants.split(",");
             int[] vint = new int[vhex.length];
             for (int i=0; i<vhex.length; i++) {

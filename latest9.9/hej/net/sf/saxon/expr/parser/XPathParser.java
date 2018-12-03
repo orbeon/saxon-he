@@ -22,9 +22,7 @@ import net.sf.saxon.ma.arrays.ArrayFunctionSet;
 import net.sf.saxon.ma.arrays.ArrayItemType;
 import net.sf.saxon.ma.arrays.SimpleArrayItem;
 import net.sf.saxon.ma.arrays.SquareArrayConstructor;
-import net.sf.saxon.ma.map.HashTrieMap;
-import net.sf.saxon.ma.map.MapFunctionSet;
-import net.sf.saxon.ma.map.MapType;
+import net.sf.saxon.ma.map.*;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.*;
 import net.sf.saxon.query.AnnotationList;
@@ -3102,8 +3100,16 @@ public class XPathParser {
                 expect(Token.COLON);
                 nextToken();
                 Expression value = parseExprSingle();
-                Expression fcall = MapFunctionSet.getInstance().makeFunction("entry", 2).makeFunctionCall(key, value);
-                entries.add(fcall);
+                Expression entry;
+                if (key instanceof Literal && ((Literal)key).getValue() instanceof AtomicValue
+                        && value instanceof Literal) {
+                    entry = Literal.makeLiteral(
+                            new KeyValuePair((AtomicValue) ((Literal)key).getValue(),
+                                             ((Literal)value).getValue()));
+                } else {
+                    entry = MapFunctionSet.getInstance().makeFunction("entry", 2).makeFunctionCall(key, value);
+                }
+                entries.add(entry);
                 if (t.currentToken == Token.RCURLY) {
                     break;
                 } else {
@@ -3114,12 +3120,24 @@ public class XPathParser {
         }
         t.lookAhead(); //manual lookahead after an RCURLY
         nextToken();
-        Expression[] entriesArray = new Expression[entries.size()];
-        Block block = new Block(entries.toArray(entriesArray));
-        HashTrieMap options = new HashTrieMap();
-        options.initialPut(new StringValue("duplicates"), new StringValue("reject"));
-        options.initialPut(new StringValue("duplicates-error-code"), new StringValue("XQDY0137"));
-        Expression result = MapFunctionSet.getInstance().makeFunction("merge", 2).makeFunctionCall(block, Literal.makeLiteral(options));
+
+        Expression result;
+        switch (entries.size()) {
+            case 0:
+                result = Literal.makeLiteral(new HashTrieMap());
+                break;
+            case 1:
+                result = entries.get(0);
+                break;
+            default:
+                Expression[] entriesArray = new Expression[entries.size()];
+                Block block = new Block(entries.toArray(entriesArray));
+                Dictionary options = new Dictionary();
+                options.initialPut("duplicates", new StringValue("reject"));
+                options.initialPut("duplicates-error-code", new StringValue("XQDY0137"));
+                result = MapFunctionSet.getInstance().makeFunction("merge", 2).makeFunctionCall(block, Literal.makeLiteral(options));
+                break;
+        }
         setLocation(result, offset);
         return result;
 

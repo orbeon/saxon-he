@@ -264,9 +264,6 @@ public class HashTrieMap implements MapItem {
      */
     @Override
     public MapType getItemType(TypeHierarchy th) {
-//        if (Instrumentation.ACTIVE) {
-//            Instrumentation.count("getItemType");
-//        }
         AtomicType keyType = null;
         ItemType valueType = null;
         int valueCard = 0;

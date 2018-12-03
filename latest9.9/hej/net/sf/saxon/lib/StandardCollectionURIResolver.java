@@ -28,7 +28,6 @@ import net.sf.saxon.tree.iter.ArrayIterator;
 import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.tree.iter.SingletonIterator;
 import net.sf.saxon.tree.tiny.TinyBuilder;
-import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.value.AnyURIValue;
 import net.sf.saxon.value.ExternalObject;
 import net.sf.saxon.value.ObjectValue;
@@ -285,7 +284,7 @@ public class StandardCollectionURIResolver implements CollectionURIResolver {
                 err.setXPathContext(context);
                 throw err;
             }
-            String href1 = Navigator.getAttributeValue(node, "", "href");
+            String href1 = node.getAttributeValue("", "href");
             if (href1 == null) {
                 XPathException err = new XPathException("\"<doc> element in catalog has no @href attribute\"");
                 err.setErrorCode("FODC0004");

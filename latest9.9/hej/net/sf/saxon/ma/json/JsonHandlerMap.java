@@ -10,7 +10,8 @@ package net.sf.saxon.ma.json;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.ma.arrays.ArrayItem;
 import net.sf.saxon.ma.arrays.SimpleArrayItem;
-import net.sf.saxon.ma.map.HashTrieMap;
+import net.sf.saxon.ma.map.Dictionary;
+import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
@@ -55,7 +56,7 @@ public class JsonHandlerMap extends JsonHandler {
      */
     public boolean setKey(String unEscaped, String reEscaped) {
         this.keys.push(reEscaped);
-        HashTrieMap map = (HashTrieMap) stack.peek();
+        MapItem map = (MapItem) stack.peek();
         return map.get(new StringValue(reEscaped)) != null;
     }
 
@@ -70,10 +71,8 @@ public class JsonHandlerMap extends JsonHandler {
 
     /**
      * Close the current array
-     *
-     * @throws XPathException
      */
-    public void endArray() throws XPathException {
+    public void endArray() {
         ArrayItem map = (ArrayItem) stack.pop();
         if (stack.empty()) {
             stack.push(map); // the end
@@ -84,21 +83,17 @@ public class JsonHandlerMap extends JsonHandler {
 
     /**
      * Start a new object/map
-     *
-     * @throws XPathException
      */
-    public void startMap() throws XPathException {
-        HashTrieMap map = new HashTrieMap();
+    public void startMap() {
+        Dictionary map = new Dictionary();
         stack.push(map);
     }
 
     /**
      * Close the current object/map
-     *
-     * @throws XPathException
      */
-    public void endMap() throws XPathException {
-        HashTrieMap map = (HashTrieMap) stack.pop();
+    public void endMap() {
+        Dictionary map = (Dictionary) stack.pop();
         if (stack.empty()) {
             stack.push(map); // the end
         } else {
@@ -109,19 +104,18 @@ public class JsonHandlerMap extends JsonHandler {
     /**
      * Write an item into the current map, with the preselected key
      * @param val   the value/map to be written
-     * @throws XPathException if an error occurs writing to the map
      */
-    private void writeItem(GroundedValue<?> val) throws XPathException {
+    private void writeItem(GroundedValue<?> val) {
         if (stack.empty()) {
             stack.push(val);
         } else if (stack.peek() instanceof ArrayItem) {
             SimpleArrayItem array = (SimpleArrayItem) stack.peek();
             array.getMembers().add(val.materialize());
         } else {
-            HashTrieMap map = (HashTrieMap) stack.peek();
+            Dictionary map = (Dictionary) stack.peek();
             //StringValue key = new StringValue(reEscape(keys.pop(), true, false, false));
-            StringValue key = new StringValue(keys.pop());
-            map.initialPut(key, val);
+            //StringValue key = new StringValue(keys.pop());
+            map.initialPut(keys.pop(), val);
         }
     }
 
@@ -130,9 +124,8 @@ public class JsonHandlerMap extends JsonHandler {
      *
      * @param asString the string representation of the value
      * @param asDouble the double representation of the value
-     * @throws XPathException if a dynamic error occurs
      */
-    public void writeNumeric(String asString, double asDouble) throws XPathException {
+    public void writeNumeric(String asString, double asDouble) {
         writeItem(new DoubleValue(asDouble));
     }
 
@@ -151,18 +144,15 @@ public class JsonHandlerMap extends JsonHandler {
      * Write a boolean value
      *
      * @param value the boolean value to be written
-     * @throws XPathException if a dynamic error occurs
      */
-    public void writeBoolean(boolean value) throws XPathException {
+    public void writeBoolean(boolean value)  {
         writeItem(BooleanValue.get(value));
     }
 
     /**
      * Write a null value
-     *
-     * @throws XPathException if a dynamic error occurs
      */
-    public void writeNull() throws XPathException {
+    public void writeNull() {
         writeItem(EmptySequence.getInstance());
     }
 

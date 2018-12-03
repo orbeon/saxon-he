@@ -111,7 +111,8 @@ public class SelectedElementsSpaceStrippingRule implements SpaceStrippingRule {
         } else if (test instanceof NameTest) {
             newRule.setAlwaysMatches(true);
             int fp = test.getFingerprint();
-            CodedName key = new CodedName(fp, "", ((NameTest) test).getNamePool());
+            NamePool pool = ((NameTest) test).getNamePool();
+            FingerprintedQName key = new FingerprintedQName(pool.getUnprefixedQName(fp), pool);
             Rule chain = namedElementRules.get(key);
             namedElementRules.put(key, addRuleToList(newRule, chain, true));
         } else {

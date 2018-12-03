@@ -248,11 +248,11 @@ public class LookupAllExpression extends UnaryExpression {
                     } else {
                         if (level1.hasNext()) {
                             Object nextEntry = level1.next();
-                            if (nextEntry instanceof GroundedValue) {
-                                level2 = ((GroundedValue)nextEntry).iterate();
-                            } else if (nextEntry instanceof KeyValuePair) {
+                            if (nextEntry instanceof KeyValuePair) {
                                 GroundedValue value = ((KeyValuePair)nextEntry).value;
                                 level2 = value.iterate();
+                            } else if (nextEntry instanceof GroundedValue) {
+                                level2 = ((GroundedValue) nextEntry).iterate();
                             } else {
                                 throw new IllegalStateException();
                             }

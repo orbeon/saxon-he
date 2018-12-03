@@ -55,6 +55,8 @@ public class MapFunctionSet extends BuiltInFunctionSet {
         // duplicates=unspecified is retained because that's what the XSLT 3.0 Rec incorrectly uses
         mergeOptionDetails.setAllowedValues("duplicates", "FOJS0005", "use-first", "use-last", "combine", "reject", "unspecified", "use-any");
         mergeOptionDetails.addAllowedOption("duplicates-error-code", SequenceType.SINGLE_STRING, new StringValue("FOJS0003"));
+        mergeOptionDetails.addAllowedOption("Q{" + NamespaceConstant.SAXON + "}key-type", SequenceType.SINGLE_STRING, new StringValue("anyAtomicType"));
+        mergeOptionDetails.addAllowedOption("Q{" + NamespaceConstant.SAXON + "}final", SequenceType.SINGLE_BOOLEAN, BooleanValue.FALSE);
 
         register("merge", 2, MapMerge.class, MapType.ANY_MAP_TYPE, ONE, 0, 0)
                 .arg(0, MapType.ANY_MAP_TYPE, STAR, null)
@@ -303,7 +305,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
             AtomicValue key = (AtomicValue) arguments[0].head();
             assert key != null;
             GroundedValue<?> value = ((Sequence<?>)arguments[1]).iterate().materialize();
-            return HashTrieMap.singleton(key, value);
+            return new KeyValuePair(key, value);
         }
 
         /**
@@ -370,6 +372,8 @@ public class MapFunctionSet extends BuiltInFunctionSet {
 
         private String duplicates = "use-first";
         private String duplicatesErrorCode = "FOJS0003";
+        private boolean allStringKeys = false;
+        private boolean treatAsFinal = false;
 
         /**
          * Allow the function to create an optimized call based on the values of the actual arguments
@@ -390,9 +394,13 @@ public class MapFunctionSet extends BuiltInFunctionSet {
                         options, visitor.getStaticContext().makeEarlyEvaluationContext());
                 String duplicates = ((StringValue) values.get("duplicates")).getStringValue();
                 String duplicatesErrorCode = ((StringValue) values.get("duplicates-error-code")).getStringValue();
+                boolean isFinal = ((BooleanValue) values.get("Q{" + NamespaceConstant.SAXON + "}final")).getBooleanValue();
+                String keyType = ((StringValue) values.get("Q{" + NamespaceConstant.SAXON + "}key-type")).getStringValue();
                 MapMerge mm2 = (MapMerge)MapFunctionSet.getInstance().makeFunction("merge", 1);
                 mm2.duplicates = duplicates;
                 mm2.duplicatesErrorCode = duplicatesErrorCode;
+                mm2.allStringKeys = keyType.equals("string");
+                mm2.treatAsFinal = isFinal;
                 return mm2.makeFunctionCall(arguments[0]);
             }
             return super.makeOptimizedFunctionCall(visitor, contextInfo, arguments);
@@ -438,51 +446,110 @@ public class MapFunctionSet extends BuiltInFunctionSet {
         public MapItem call(XPathContext context, Sequence[] arguments) throws XPathException {
             String duplicates = this.duplicates;
             String duplicatesErrorCode = this.duplicatesErrorCode;
+            boolean allStringKeys = this.allStringKeys;
+            boolean treatAsFinal = this.treatAsFinal;
             if (arguments.length > 1) {
                 MapItem options = (MapItem) arguments[1].head();
                 Map<String, Sequence<?>> values = getDetails().optionDetails.processSuppliedOptions(options, context);
                 duplicates = ((StringValue) values.get("duplicates")).getStringValue();
                 duplicatesErrorCode = ((StringValue) values.get("duplicates-error-code")).getStringValue();
+                treatAsFinal = ((BooleanValue) values.get("Q{" + NamespaceConstant.SAXON + "}final")).getBooleanValue();
+                allStringKeys = "string".equals(((StringValue)values.get("Q{" + NamespaceConstant.SAXON + "}key-type")).getStringValue());
             }
 
-            SequenceIterator iter = arguments[0].iterate();
-            MapItem baseMap = (MapItem) iter.next();
-            if (baseMap == null) {
-                return new HashTrieMap();
-            } else {
-                if (!(baseMap instanceof HashTrieMap)) {
-                    baseMap = HashTrieMap.copy(baseMap);
-                }
+            if (treatAsFinal && allStringKeys) {
+                // Optimize for a map with string-valued keys that's unlikely to be modified
+                SequenceIterator iter = arguments[0].iterate();
+                Dictionary baseMap = new Dictionary();
                 MapItem next;
-                while ((next = (MapItem) iter.next()) != null) {
-                    for (KeyValuePair pair : next.keyValuePairs()) {
-                        Sequence<?> existing = baseMap.get(pair.key);
-                        if (existing != null) {
-                            switch (duplicates) {
-                                case "use-first":
-                                case "unspecified":
-                                case "use-any":
-                                    // no action
-                                    break;
-                                case "use-last":
-                                    baseMap = ((HashTrieMap) baseMap).addEntry(pair.key, pair.value);
-                                    break;
-                                case "combine":
-                                    InsertBefore.InsertIterator combinedIter =
-                                            new InsertBefore.InsertIterator(pair.value.iterate(), existing.iterate(), 1);
-                                    GroundedValue<?> combinedValue = combinedIter.materialize();
-                                    baseMap = ((HashTrieMap) baseMap).addEntry(pair.key, combinedValue);
-                                    break;
-                                default:
-                                    throw new XPathException("Duplicate key in constructed map: " +
-                                                                     Err.wrap(pair.key.getStringValueCS()), duplicatesErrorCode);
+                switch (duplicates) {
+                    // Code is structured (a) to avoid testing "duplicates" within the loop unnecessarily,
+                    // and (b) to avoid the "get" operation to look for duplicates when it's not needed.
+                    case "unspecified":
+                    case "use-any":
+                    case "use-last":
+                        while ((next = (MapItem) iter.next()) != null) {
+                            for (KeyValuePair pair : next.keyValuePairs()) {
+                                if (!(pair.key instanceof StringValue)) {
+                                    throw new XPathException("The keys in this map must all be strings (found " + pair.key.getItemType() + ")");
+                                }
+                                baseMap.initialPut(pair.key.getStringValue(), pair.value);
                             }
-                        } else {
-                            baseMap = ((HashTrieMap) baseMap).addEntry(pair.key, pair.value);
+                        }
+                    default:
+                        while ((next = (MapItem) iter.next()) != null) {
+                            for (KeyValuePair pair : next.keyValuePairs()) {
+                                if (!(pair.key instanceof StringValue)) {
+                                    throw new XPathException("The keys in this map must all be strings (found " + pair.key.getItemType() + ")");
+                                }
+                                Sequence<?> existing = baseMap.get(pair.key);
+                                if (existing != null) {
+                                    switch (duplicates) {
+                                        case "use-first":
+                                        case "unspecified":
+                                        case "use-any":
+                                            // no action
+                                            break;
+                                        case "use-last":
+                                            baseMap.initialPut(pair.key.getStringValue(), pair.value);
+                                            break;
+                                        case "combine":
+                                            InsertBefore.InsertIterator combinedIter =
+                                                    new InsertBefore.InsertIterator(pair.value.iterate(), existing.iterate(), 1);
+                                            GroundedValue<?> combinedValue = combinedIter.materialize();
+                                            baseMap.initialPut(pair.key.getStringValue(), combinedValue);
+                                            break;
+                                        default:
+                                            throw new XPathException("Duplicate key in constructed map: " +
+                                                                             Err.wrap(pair.key.getStringValueCS()), duplicatesErrorCode);
+                                    }
+                                } else {
+                                    baseMap.initialPut(pair.key.getStringValue(), pair.value);
+                                }
+                            }
+                        }
+                        return baseMap;
+                }
+            } else {
+                SequenceIterator iter = arguments[0].iterate();
+                MapItem baseMap = (MapItem) iter.next();
+                if (baseMap == null) {
+                    return new HashTrieMap();
+                } else {
+                    if (!(baseMap instanceof HashTrieMap)) {
+                        baseMap = HashTrieMap.copy(baseMap);
+                    }
+                    MapItem next;
+                    while ((next = (MapItem) iter.next()) != null) {
+                        for (KeyValuePair pair : next.keyValuePairs()) {
+                            Sequence<?> existing = baseMap.get(pair.key);
+                            if (existing != null) {
+                                switch (duplicates) {
+                                    case "use-first":
+                                    case "unspecified":
+                                    case "use-any":
+                                        // no action
+                                        break;
+                                    case "use-last":
+                                        baseMap = baseMap.addEntry(pair.key, pair.value);
+                                        break;
+                                    case "combine":
+                                        InsertBefore.InsertIterator combinedIter =
+                                                new InsertBefore.InsertIterator(pair.value.iterate(), existing.iterate(), 1);
+                                        GroundedValue<?> combinedValue = combinedIter.materialize();
+                                        baseMap = baseMap.addEntry(pair.key, combinedValue);
+                                        break;
+                                    default:
+                                        throw new XPathException("Duplicate key in constructed map: " +
+                                                                         Err.wrap(pair.key.getStringValueCS()), duplicatesErrorCode);
+                                }
+                            } else {
+                                baseMap = baseMap.addEntry(pair.key, pair.value);
+                            }
                         }
                     }
+                    return baseMap;
                 }
-                return baseMap;
             }
 
         }
@@ -525,7 +592,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
             GroundedValue<?> value =
                     ((Sequence<?>)arguments[2]).materialize();
             KeyValuePair pair = new KeyValuePair(key, value);
-            return ((HashTrieMap) baseMap).addEntry(pair.key, pair.value);
+            return baseMap.addEntry(pair.key, pair.value);
         }
     }
 

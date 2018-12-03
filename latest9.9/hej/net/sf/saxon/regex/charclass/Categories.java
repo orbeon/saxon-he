@@ -8,6 +8,7 @@
 package net.sf.saxon.regex.charclass;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.event.Builder;
 import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.lib.Validation;
 import net.sf.saxon.om.AxisInfo;
@@ -17,16 +18,16 @@ import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.serialize.charcode.XMLCharacterData;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
-import net.sf.saxon.tree.util.Navigator;
+import net.sf.saxon.tree.tiny.TinyElementImpl;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.z.*;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.InputStream;
-import java.util.function.IntPredicate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.IntPredicate;
 
 /**
  * Data for Regular expression character categories. The data is in an XML file derived from the Unicode
@@ -113,6 +114,7 @@ public class Categories {
         Configuration config = new Configuration();
         ParseOptions options = new ParseOptions();
         options.setSchemaValidationMode(Validation.SKIP);
+        options.setTreeModel(Builder.TINY_TREE);
         NodeInfo doc;
         try {
             doc = config.buildDocumentTree(new StreamSource(in, "categories.xml"), options).getRootNode();
@@ -120,14 +122,18 @@ public class Categories {
             throw new RuntimeException("Failed to build categories.xml", e);
         }
 
+        int fp_name = config.getNamePool().allocateFingerprint("", "name");
+        int fp_f = config.getNamePool().allocateFingerprint("", "f");
+        int fp_t = config.getNamePool().allocateFingerprint("", "t");
+
         AxisIterator iter = doc.iterateAxis(AxisInfo.DESCENDANT, new NameTest(Type.ELEMENT, "", "cat", config.getNamePool()));
         iter.forEach(item -> {
-            String cat = Navigator.getAttributeValue(item, "", "name");
+            String cat = ((TinyElementImpl)item).getAttributeValue(fp_name);
             IntRangeSet irs = new IntRangeSet();
             AxisIterator iter2 = item.iterateAxis(AxisInfo.CHILD, NodeKindTest.ELEMENT);
             iter2.forEach(r -> {
-                String from = Navigator.getAttributeValue(r, "", "f");
-                String to = Navigator.getAttributeValue(r, "", "t");
+                String from = ((TinyElementImpl)r).getAttributeValue(fp_f);
+                String to = ((TinyElementImpl) r).getAttributeValue(fp_t);
                 irs.addRange(Integer.parseInt(from, 16), Integer.parseInt(to, 16));
             });
             CATEGORIES.put(cat, new Category(cat, new IntSetPredicate(irs)));

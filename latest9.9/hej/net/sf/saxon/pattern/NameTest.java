@@ -181,11 +181,10 @@ public class NameTest extends NodeTest implements QNameTest {
     }
 
     private void computeUriAndLocal() {
-        if (uri == null) {
-            uri = namePool.getURI(fingerprint);
-        }
-        if (localName == null) {
-            localName = namePool.getLocalName(fingerprint);
+        if (uri == null || localName == null) {
+            StructuredQName name = namePool.getUnprefixedQName(fingerprint);
+            uri = name.getURI();
+            localName = name.getLocalPart();
         }
     }
 

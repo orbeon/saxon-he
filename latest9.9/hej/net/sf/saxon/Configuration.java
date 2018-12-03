@@ -21,8 +21,8 @@ import net.sf.saxon.functions.*;
 import net.sf.saxon.functions.registry.*;
 import net.sf.saxon.lib.*;
 import net.sf.saxon.ma.arrays.ArrayFunctionSet;
-import net.sf.saxon.ma.map.HashTrieMap;
 import net.sf.saxon.ma.map.MapFunctionSet;
+import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.PatternParser30;
 import net.sf.saxon.pull.PullSource;
@@ -3949,7 +3949,7 @@ public class Configuration implements SourceResolver, NotationSet {
      * @throws UnsupportedOperationException except in subclasses
      */
 
-    public HashTrieMap externalObjectAsMap(ObjectValue value, String required) {
+    public MapItem externalObjectAsMap(ObjectValue value, String required) {
         throw new UnsupportedOperationException();
     }
 

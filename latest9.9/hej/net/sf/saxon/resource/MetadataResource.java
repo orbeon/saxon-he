@@ -11,7 +11,7 @@ import net.sf.saxon.expr.Callable;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.functions.CallableFunction;
 import net.sf.saxon.lib.Resource;
-import net.sf.saxon.ma.map.HashTrieMap;
+import net.sf.saxon.ma.map.Dictionary;
 import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.type.FunctionItemType;
@@ -47,15 +47,15 @@ public class MetadataResource implements Resource {
     public Item getItem(XPathContext context)  {
 
         // Create a map for the result
-        HashTrieMap map = new HashTrieMap();
+        Dictionary map = new Dictionary();
 
         // Add the custom properties of the resource
         for (Map.Entry<String, GroundedValue<?>> entry : properties.entrySet()) {
-             map = map.addEntry(StringValue.makeStringValue(entry.getKey()), entry.getValue());
+             map.initialPut(entry.getKey(), entry.getValue());
         }
 
         // Add the resourceURI of the resource as the "name" property
-        map = map.addEntry(StringValue.makeStringValue("name"), StringValue.makeStringValue(resourceURI));
+        map.initialPut("name", StringValue.makeStringValue(resourceURI));
 
         // Add a fetch() function, which can be used to fetch the resource
         Callable fetcher = (context1, arguments) -> content.getItem(context1);
@@ -63,7 +63,7 @@ public class MetadataResource implements Resource {
         FunctionItemType fetcherType = new SpecificFunctionType(new SequenceType[0], SequenceType.SINGLE_ITEM);
         CallableFunction fetcherFunction = new CallableFunction(0, fetcher, fetcherType);
 
-        map = map.addEntry(StringValue.makeStringValue("fetch"), fetcherFunction);
+        map.initialPut("fetch", fetcherFunction);
         return map;
     }
 }
