@@ -2465,13 +2465,16 @@ namespace SaxonEE
 
         public override void run(Uri samplesDir)
         {
-            Processor processor = new Processor(true);
+			Processor processor = new Processor(true);
 
-            // Create the stylesheet
-            String s = "<xsl:transform version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:saxon='http://saxon.sf.net/'>\n" +
-                " <xsl:template name='main'> " +
-                " <xsl:value-of select=\"count(saxon:stream(doc('" + new Uri(samplesDir, "data/othello.xml").ToString() + "')//LINE[count(tokenize(.,'/s')) &gt; 0] ))\" />" +
-                " </xsl:template></xsl:transform>";
+			// Create the stylesheet
+			String s = "<xsl:transform version='3.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>\n" +
+				" <xsl:template name='main'>\n" +
+				"  <xsl:source-document streamable='yes' href='" + new Uri(samplesDir, "data/othello.xml").ToString() + "'>\n" +
+				"   <xsl:value-of select=\"count(copy-of(//LINE)[count(tokenize(.)) &gt; 0] )\" />\n" +
+				"  </xsl:source-document>\n";
+				" </xsl:template>\n" +
+				"</xsl:transform>";
 
             // Create a transformer for the stylesheet.
             XsltTransformer transformer = processor.NewXsltCompiler().Compile(new StringReader(s)).Load();
