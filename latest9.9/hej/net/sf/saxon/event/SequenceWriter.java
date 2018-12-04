@@ -12,6 +12,7 @@ import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.linked.LinkedTreeBuilder;
+import net.sf.saxon.tree.tiny.TinyElementImpl;
 import net.sf.saxon.tree.util.Orphan;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.SimpleType;
@@ -299,6 +300,19 @@ public abstract class SequenceWriter extends SequenceReceiver {
     @Override
     public boolean usesTypeAnnotations() {
         return outputter == null || outputter.usesTypeAnnotations();
+    }
+
+
+    public boolean isReadyForGrafting() {
+        return level > 0 && outputter instanceof ComplexContentOutputter &&
+                ((ComplexContentOutputter)outputter).isReadyForGrafting();
+    }
+
+    public void graftElementNode(TinyElementImpl node, int copyOptions) throws XPathException {
+        if (inStartTag) {
+            startContent();
+        }
+        ((ComplexContentOutputter) outputter).graftElementNode(node, copyOptions);
     }
 }
 

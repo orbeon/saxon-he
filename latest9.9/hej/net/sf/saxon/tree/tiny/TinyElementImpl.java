@@ -215,55 +215,34 @@ public class TinyElementImpl extends TinyParentNodeImpl {
 
     public void copy(/*@NotNull*/ Receiver receiver, int copyOptions, Location location) throws XPathException {
 
-        boolean typed = CopyOptions.includes(copyOptions, CopyOptions.TYPE_ANNOTATIONS);
+        boolean copyTypes = CopyOptions.includes(copyOptions, CopyOptions.TYPE_ANNOTATIONS);
 
         // Fast path for copying to another TinyTree
-        if (TinyTree.useFastCopy) {
-            boolean copyTypes = typed;
-            Receiver r1 = receiver;
-            if (isSkipValidator(r1)) {
-                copyTypes = false;
-                r1 = ((ProxyReceiver) r1).getNextReceiver();
-            }
-            if (r1 instanceof ComplexContentOutputter && !copyTypes) {
-                Receiver r2 = ((ComplexContentOutputter) r1).getReceiver();
-                if (r2 instanceof NamespaceReducer) {
-                    Receiver r3 = ((NamespaceReducer) r2).getNextReceiver();
-                    if (r3 instanceof TinyBuilder) {
-                        ((ComplexContentOutputter) r1).beforeBulkCopy();
-                        TinyBuilder target = (TinyBuilder) r3;
-                        target.bulkCopy(getTree(), nodeNr);
-                        ((ComplexContentOutputter) r1).afterBulkCopy();
-                        return;
-                    }
-                }
-            }
-        } else if (TinyTree.useGraft && (copyOptions & CopyOptions.FOR_UPDATE) == 0) {
-            boolean copyTypes = typed;
-            Receiver r1 = receiver;
-            if (isSkipValidator(r1)) {
-                copyTypes = false;
-                r1 = ((ProxyReceiver) r1).getNextReceiver();
-            }
-            if (r1 instanceof ComplexContentOutputter && !copyTypes) {
-                Receiver r2 = ((ComplexContentOutputter) r1).getReceiver();
-                if (r2 instanceof NamespaceReducer) {
-                    if (!((NamespaceReducer)r2).isDisinheritingNamespaces()) {
-                        Receiver r3 = ((NamespaceReducer) r2).getNextReceiver();
-                        if (r3 instanceof TinyBuilder && ((TinyBuilder) r3).isPositionedAtElement()) {
-                            ((ComplexContentOutputter) r1).beforeBulkCopy();
-                            TinyBuilder target = (TinyBuilder) r3;
-                            boolean copyNamespaces = CopyOptions.includes(copyOptions, CopyOptions.ALL_NAMESPACES);
-                            target.graft(this, copyNamespaces);
-                            ((ComplexContentOutputter) r1).afterBulkCopy();
-                            return;
-                        }
-                    }
-                }
-            }
+//        if (TinyTree.useFastCopy) {
+//            Receiver r1 = receiver;
+//            if (isSkipValidator(r1)) {
+//                copyTypes = false;
+//                r1 = ((ProxyReceiver) r1).getNextReceiver();
+//            }
+//            if (r1 instanceof ComplexContentOutputter && !copyTypes) {
+//                Receiver r2 = ((ComplexContentOutputter) r1).getReceiver();
+//                if (r2 instanceof NamespaceReducer) {
+//                    Receiver r3 = ((NamespaceReducer) r2).getNextReceiver();
+//                    if (r3 instanceof TinyBuilder) {
+//                        ((ComplexContentOutputter) r1).beforeBulkCopy();
+//                        TinyBuilder target = (TinyBuilder) r3;
+//                        target.bulkCopy(getTree(), nodeNr);
+//                        ((ComplexContentOutputter) r1).afterBulkCopy();
+//                        return;
+//                    }
+//                }
+//            }
+//        } else
+        boolean grafted = tryGraft(copyOptions, receiver);
+        if (grafted) {
+            return;
         }
 
-        // control vars
         short level = -1;
         boolean closePending = false;
         short startLevel = tree.depth[nodeNr];
@@ -278,6 +257,7 @@ public class TinyElementImpl extends TinyParentNodeImpl {
         CopyInformee<Location> informee = (CopyInformee<Location>) receiver.getPipelineConfiguration().getComponent(CopyInformee.class.getName());
         SchemaType elementType = Untyped.getInstance();
         SimpleType attributeType = BuiltInAtomicType.UNTYPED_ATOMIC;
+
 
         do {
 
@@ -304,7 +284,7 @@ public class TinyElementImpl extends TinyParentNodeImpl {
                 case Type.TEXTUAL_ELEMENT: {
 
                     // start element
-                    if (typed) {
+                    if (copyTypes) {
                         elementType = tree.getSchemaType(next);
                         if (disallowNamespaceSensitiveContent) {
                             try {
@@ -390,7 +370,7 @@ public class TinyElementImpl extends TinyParentNodeImpl {
                             while (att < tree.numberOfAttributes && tree.attParent[att] == next) {
                                 int attCode = tree.attCode[att];
                                 int attfp = attCode & NamePool.FP_MASK;
-                                if (typed) {
+                                if (copyTypes) {
                                     attributeType = tree.getAttributeType(att);
                                     if (disallowNamespaceSensitiveContent) {
                                         try {
@@ -483,6 +463,32 @@ public class TinyElementImpl extends TinyParentNodeImpl {
         for (; level > startLevel; level--) {
             receiver.endElement();
         }
+    }
+
+    private boolean tryGraft(int copyOptions, Receiver out) throws XPathException {
+        if (TinyTree.useGraft &&
+                (copyOptions & CopyOptions.FOR_UPDATE) == 0 &&
+                (copyOptions & CopyOptions.ALL_NAMESPACES) != 0) {
+            if (isSkipValidator(out)) {
+                return false;
+                // Can't currently use grafting copy with validation="strip" because of the
+                // complications of ID and IDREF attributes (test case copy-5034)
+                //r1 = ((ProxyReceiver) r1).getNextReceiver();
+            }
+            if (tree.isTyped()) {
+                return false;
+            }
+            if (out instanceof SequenceWriter && ((SequenceWriter) out).isReadyForGrafting()) {
+                ((SequenceWriter) out).graftElementNode(this, copyOptions);
+                return true;
+            } else if (out instanceof ComplexContentOutputter) {
+                if (((ComplexContentOutputter) out).isReadyForGrafting()) {
+                    ((ComplexContentOutputter) out).graftElementNode(this, copyOptions);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

@@ -16,6 +16,8 @@ import net.sf.saxon.lib.Validation;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.tiny.TinyBuilder;
+import net.sf.saxon.tree.tiny.TinyElementImpl;
 import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.SimpleType;
@@ -680,14 +682,37 @@ public final class ComplexContentOutputter extends SequenceReceiver {
         return nextReceiver.usesTypeAnnotations();
     }
 
-    public void beforeBulkCopy() throws XPathException {
+    public boolean isReadyForGrafting() {
+        Receiver r2 = getReceiver();
+        if (r2 instanceof NamespaceReducer) {
+            if (!((NamespaceReducer) r2).isDisinheritingNamespaces()) {
+                Receiver r3 = ((NamespaceReducer) r2).getNextReceiver();
+                return r3 instanceof TinyBuilder &&
+                        ((state == StartTag &&
+                                  (startElementProperties & ReceiverOptions.DISINHERIT_NAMESPACES) == 0)
+                                 || ((TinyBuilder) r3).isPositionedAtElement());
+            }
+        }
+        return false;
+    }
+
+    public void graftElementNode(TinyElementImpl elementNode, int copyOptions) throws XPathException {
+        NamespaceReducer r2 = (NamespaceReducer)getReceiver();
+        TinyBuilder target = (TinyBuilder)r2.getNextReceiver();
+        beforeBulkCopy();
+        boolean copyNamespaces = CopyOptions.includes(copyOptions, CopyOptions.ALL_NAMESPACES);
+        target.graft(elementNode, copyNamespaces);
+        afterBulkCopy();
+    }
+
+    private void beforeBulkCopy() throws XPathException {
         level++;
         if (state == StartTag) {
             startContent();
         }
     }
 
-    public void afterBulkCopy() {
+    private void afterBulkCopy() {
         level--;
         previousAtomic = false;
     }

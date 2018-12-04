@@ -86,7 +86,7 @@ public class NamespaceIterator implements Iterator<NamespaceBinding> {
 
     private NamespaceIterator(/*@NotNull*/ NodeInfo element) {
         this.element = element;
-        undeclaredPrefixes = new HashSet<String>(8);
+        undeclaredPrefixes = new HashSet<>(8);
         index = 0;
         localDeclarations = element.getDeclaredNamespaces(null);
     }

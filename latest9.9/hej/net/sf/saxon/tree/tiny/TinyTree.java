@@ -179,7 +179,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
      * element nodes from one TinyTree to another. This code is currently disabled by default until
      * it has been more thoroughly tested.
      */
-    public static boolean useFastCopy = false;
+    public final static boolean useFastCopy = false;
     public static boolean useGraft = true;
 
     /**

@@ -15,8 +15,13 @@ import net.sf.saxon.pattern.AnyNodeTest;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
+import net.sf.saxon.tree.util.NamespaceIterator;
 import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.tree.wrapper.VirtualCopy;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This class represents an element node in a TinyTree that is actually a reference to an element
@@ -30,6 +35,16 @@ public class GraftedElement extends TinyElementImpl {
 
     private NodeInfo externalNode;
     private VirtualCopy externalNodeCopy;
+    private NamespaceBinding[] declaredNamespaces;
+
+    /**
+     * Created a grafted element node
+     * @param tree the host tree that is to contain a reference to an external node
+     * @param nodeNr the node number at which the external reference is to appear
+     * @param externalNode the external node, in some other tree
+     * @param copyNamespaces indicates whether namespaces in the external tree are
+     *                       retained in the virtual copy.
+     */
 
     public GraftedElement(TinyTree tree, int nodeNr, NodeInfo externalNode, boolean copyNamespaces) {
         super(tree, nodeNr);
@@ -139,6 +154,29 @@ public class GraftedElement extends TinyElementImpl {
         }
     }
 
-
+    @Override
+    public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
+        if (declaredNamespaces == null) {
+            List<NamespaceBinding> bindings = new ArrayList<>();
+            Iterator<NamespaceBinding> iter = NamespaceIterator.iterateNamespaces(externalNode);
+            boolean foundDefaultNamespace = false;
+            NamespaceBinding binding;
+            while (iter.hasNext()) {
+                binding = iter.next();
+                if (binding.getPrefix().isEmpty()) {
+                    foundDefaultNamespace = true;
+                }
+                bindings.add(binding);
+            }
+            if (!foundDefaultNamespace) {
+                String defaultNamespace = new InscopeNamespaceResolver(getParent()).getURIForPrefix("", true);
+                if (defaultNamespace != null && !defaultNamespace.isEmpty()) {
+                    bindings.add(NamespaceBinding.DEFAULT_UNDECLARATION);
+                }
+            }
+            declaredNamespaces = bindings.toArray(NamespaceBinding.EMPTY_ARRAY);
+        }
+        return declaredNamespaces;
+    }
 }
 

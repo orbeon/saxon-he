@@ -594,7 +594,7 @@ public class VirtualCopy implements NodeInfo {
     public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
         if (getNodeKind() == Type.ELEMENT) {
             if (dropNamespaces) {
-                List<NamespaceBinding> allNamespaces = new ArrayList<NamespaceBinding>(5);
+                List<NamespaceBinding> allNamespaces = new ArrayList<>(5);
                 String ns = getURI();
                 if (ns.isEmpty()) {
                     if (getParent() != null && !getParent().getURI().isEmpty()) {

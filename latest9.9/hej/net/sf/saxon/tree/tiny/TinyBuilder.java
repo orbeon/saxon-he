@@ -524,7 +524,7 @@ public class TinyBuilder extends Builder {
     }
 
     public boolean isPositionedAtElement() {
-        return (tree.nodeKind[tree.numberOfNodes-1]&0x0f) == Type.ELEMENT;
+        return tree.numberOfNodes > 0 && (tree.nodeKind[tree.numberOfNodes-1]&0x0f) == Type.ELEMENT;
     }
 
     /**
@@ -554,7 +554,7 @@ public class TinyBuilder extends Builder {
 
     public void graft(NodeInfo node, boolean copyNamespaces) {
         int newNodeNr = tree.numberOfNodes;
-        tree.graft(node, nodeNr, currentDepth, copyNamespaces);
+        tree.graft(node, newNodeNr, currentDepth, copyNamespaces);
         int prev = prevAtDepth[currentDepth];
         if (prev > 0) {
             tree.next[prev] = newNodeNr;

@@ -98,6 +98,12 @@ public abstract class TinyParentNodeImpl extends TinyNodeImpl {
                     sb = new FastStringBuffer(FastStringBuffer.C256);
                 }
                 WhitespaceTextImpl.appendStringValue(tree, next, sb);
+            } else if (kind == Type.EXTERNAL_NODE_REFERENCE) {
+                GraftedElement graft = (GraftedElement) tree.getNode(next);
+                if (sb == null) {
+                    sb = new FastStringBuffer(FastStringBuffer.C256);
+                }
+                sb.append(graft.getStringValueCS());
             }
             next++;
         }
