@@ -512,7 +512,7 @@ public class S9APIExamples {
 
     /**
      * Show a stylesheet being compiled once and then executed several times with different
-     * source documents. The XsltTransformer object is serially reusable, but not thread-safe.
+     * source documents. The Xslt30Transformer object is serially reusable, but not thread-safe.
      * The Serializer object is also serially reusable.
      */
 
