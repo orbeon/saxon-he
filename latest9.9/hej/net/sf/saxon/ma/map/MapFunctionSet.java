@@ -460,7 +460,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
             if (treatAsFinal && allStringKeys) {
                 // Optimize for a map with string-valued keys that's unlikely to be modified
                 SequenceIterator iter = arguments[0].iterate();
-                Dictionary baseMap = new Dictionary();
+                DictionaryMap baseMap = new DictionaryMap();
                 MapItem next;
                 switch (duplicates) {
                     // Code is structured (a) to avoid testing "duplicates" within the loop unnecessarily,

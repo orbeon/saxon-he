@@ -303,9 +303,21 @@ public abstract class SequenceWriter extends SequenceReceiver {
     }
 
 
+    public boolean isReadyForBulkCopy() {
+        return level > 0 && outputter instanceof ComplexContentOutputter &&
+                ((ComplexContentOutputter)outputter).isReadyForBulkCopy();
+    }
+
+    public void bulkCopyElementNode(TinyElementImpl node, int copyOptions) throws XPathException {
+        if (inStartTag) {
+            startContent();
+        }
+        ((ComplexContentOutputter) outputter).bulkCopyElementNode(node, copyOptions);
+    }
+
     public boolean isReadyForGrafting() {
         return level > 0 && outputter instanceof ComplexContentOutputter &&
-                ((ComplexContentOutputter)outputter).isReadyForGrafting();
+                ((ComplexContentOutputter) outputter).isReadyForGrafting();
     }
 
     public void graftElementNode(TinyElementImpl node, int copyOptions) throws XPathException {

@@ -34,7 +34,7 @@ public class PrefixPool {
 
     /**
      * Get the prefix code corresponding to a given prefix, allocating a new code if necessary
-     * @param prefix
+     * @param prefix the namespace prefix. If empty, the prefix code is always zero.
      * @return the integer prefix code (always fits in 10 bits)
      */
 
@@ -72,7 +72,7 @@ public class PrefixPool {
     }
 
     private void makeIndex() {
-        index = new HashMap<String, Integer>(used);
+        index = new HashMap<>(used);
         for (int i=0; i<used; i++) {
             index.put(prefixes[i], i);
         }

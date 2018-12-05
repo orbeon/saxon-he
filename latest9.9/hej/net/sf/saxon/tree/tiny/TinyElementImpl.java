@@ -206,6 +206,17 @@ public class TinyElementImpl extends TinyParentNodeImpl {
         return null;
     }
 
+    private int subtreeSize() {
+        int next = tree.next[nodeNr];
+        while (next < nodeNr) {
+            if (next < 0) {
+                return tree.numberOfNodes - nodeNr;
+            }
+            next = tree.next[next];
+        }
+        return nodeNr - next;
+    }
+
     /**
      * Copy this node to a given receiver
      *
@@ -217,31 +228,19 @@ public class TinyElementImpl extends TinyParentNodeImpl {
 
         boolean copyTypes = CopyOptions.includes(copyOptions, CopyOptions.TYPE_ANNOTATIONS);
 
-        // Fast path for copying to another TinyTree
-//        if (TinyTree.useFastCopy) {
-//            Receiver r1 = receiver;
-//            if (isSkipValidator(r1)) {
-//                copyTypes = false;
-//                r1 = ((ProxyReceiver) r1).getNextReceiver();
-//            }
-//            if (r1 instanceof ComplexContentOutputter && !copyTypes) {
-//                Receiver r2 = ((ComplexContentOutputter) r1).getReceiver();
-//                if (r2 instanceof NamespaceReducer) {
-//                    Receiver r3 = ((NamespaceReducer) r2).getNextReceiver();
-//                    if (r3 instanceof TinyBuilder) {
-//                        ((ComplexContentOutputter) r1).beforeBulkCopy();
-//                        TinyBuilder target = (TinyBuilder) r3;
-//                        target.bulkCopy(getTree(), nodeNr);
-//                        ((ComplexContentOutputter) r1).afterBulkCopy();
-//                        return;
-//                    }
-//                }
-//            }
-//        } else
-        boolean grafted = tryGraft(copyOptions, receiver);
-        if (grafted) {
+        boolean fastCopied = tryBulkCopy(copyOptions, receiver);
+        if (fastCopied) {
             return;
         }
+
+//        boolean grafted = tryGraft(copyOptions, receiver);
+//        if (grafted) {
+//            Instrumentation.count("GRAFT");
+//            Instrumentation.count("GRAFT NODES ", Count.count(iterateAxis(AxisInfo.DESCENDANT_OR_SELF, NodeKindTest.ELEMENT)));
+//            return;
+//        }
+//        Instrumentation.count("NON-GRAFT");
+
 
         short level = -1;
         boolean closePending = false;
@@ -327,7 +326,7 @@ public class TinyElementImpl extends TinyParentNodeImpl {
                     } else {
                         // there is an element to close
                         closePending = true;
-                        
+
                         // output namespaces
                         if ((copyOptions & CopyOptions.SOME_NAMESPACES) != 0 && tree.usesNamespaces) {
                             String defaultNS = null;
@@ -466,6 +465,9 @@ public class TinyElementImpl extends TinyParentNodeImpl {
     }
 
     private boolean tryGraft(int copyOptions, Receiver out) throws XPathException {
+        if (subtreeSize() < 100) {
+            return false;
+        }
         if (TinyTree.useGraft &&
                 (copyOptions & CopyOptions.FOR_UPDATE) == 0 &&
                 (copyOptions & CopyOptions.ALL_NAMESPACES) != 0 &&
@@ -486,6 +488,35 @@ public class TinyElementImpl extends TinyParentNodeImpl {
             } else if (out instanceof ComplexContentOutputter) {
                 if (((ComplexContentOutputter) out).isReadyForGrafting()) {
                     ((ComplexContentOutputter) out).graftElementNode(this, copyOptions);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean tryBulkCopy(int copyOptions, Receiver out) throws XPathException {
+        // Fast path for copying to another TinyTree
+        if (TinyTree.useBulkCopy &&
+                    (copyOptions & CopyOptions.FOR_UPDATE) == 0 &&
+                    (copyOptions & CopyOptions.ALL_NAMESPACES) != 0 &&
+                    // don't allow a subtree that already contains external nodes to be grafted to another tree
+                    tree.externalNodes == null) {
+            if (isSkipValidator(out)) {
+                return false;
+                // Can't currently use grafting copy with validation="strip" because of the
+                // complications of ID and IDREF attributes (test case copy-5034)
+                //r1 = ((ProxyReceiver) r1).getNextReceiver();
+            }
+            if (tree.isTyped()) {
+                return false;
+            }
+            if (out instanceof SequenceWriter && ((SequenceWriter) out).isReadyForBulkCopy()) {
+                ((SequenceWriter) out).bulkCopyElementNode(this, copyOptions);
+                return true;
+            } else if (out instanceof ComplexContentOutputter) {
+                if (((ComplexContentOutputter) out).isReadyForBulkCopy()) {
+                    ((ComplexContentOutputter) out).bulkCopyElementNode(this, copyOptions);
                     return true;
                 }
             }

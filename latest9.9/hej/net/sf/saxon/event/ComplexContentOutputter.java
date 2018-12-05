@@ -705,6 +705,29 @@ public final class ComplexContentOutputter extends SequenceReceiver {
         afterBulkCopy();
     }
 
+    public boolean isReadyForBulkCopy() {
+        Receiver r2 = getReceiver();
+        if (r2 instanceof NamespaceReducer) {
+            if (!((NamespaceReducer) r2).isDisinheritingNamespaces()) {
+                Receiver r3 = ((NamespaceReducer) r2).getNextReceiver();
+                return r3 instanceof TinyBuilder &&
+                        ((state == StartTag &&
+                                  (startElementProperties & ReceiverOptions.DISINHERIT_NAMESPACES) == 0)
+                                 || ((TinyBuilder) r3).isPositionedAtElement());
+            }
+        }
+        return false;
+    }
+
+    public void bulkCopyElementNode(TinyElementImpl elementNode, int copyOptions) throws XPathException {
+        NamespaceReducer r2 = (NamespaceReducer) getReceiver();
+        TinyBuilder target = (TinyBuilder) r2.getNextReceiver();
+        beforeBulkCopy();
+        boolean copyNamespaces = CopyOptions.includes(copyOptions, CopyOptions.ALL_NAMESPACES);
+        target.bulkCopy(elementNode, copyNamespaces);
+        afterBulkCopy();
+    }
+
     private void beforeBulkCopy() throws XPathException {
         level++;
         if (state == StartTag) {

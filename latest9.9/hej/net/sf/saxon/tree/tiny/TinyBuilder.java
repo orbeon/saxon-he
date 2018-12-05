@@ -529,13 +529,14 @@ public class TinyBuilder extends Builder {
 
     /**
      * Copy an element node and its subtree from another TinyTree instance
-     * @param source the TinyTree from which a subtree is to be copied
-     * @param nodeNr the node number of the element node to be copied
+     * @param sourceNode the element at the root of the subtree to be copied
      */
 
-    public void bulkCopy(TinyTree source, int nodeNr) {
+    public void bulkCopy(TinyElementImpl sourceNode, boolean copyNamespaces) {
+        TinyTree sourceTree = sourceNode.tree;
+        int oldNodeNr = sourceNode.nodeNr;
         int newNodeNr = tree.numberOfNodes;
-        tree.bulkCopy(source, nodeNr, currentDepth);
+        tree.bulkCopy(sourceTree, oldNodeNr, currentDepth);
         int prev = prevAtDepth[currentDepth];
         if (prev > 0) {
             tree.next[prev] = newNodeNr;

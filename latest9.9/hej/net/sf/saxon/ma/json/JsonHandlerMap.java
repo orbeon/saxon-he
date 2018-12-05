@@ -10,7 +10,7 @@ package net.sf.saxon.ma.json;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.ma.arrays.ArrayItem;
 import net.sf.saxon.ma.arrays.SimpleArrayItem;
-import net.sf.saxon.ma.map.Dictionary;
+import net.sf.saxon.ma.map.DictionaryMap;
 import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.Sequence;
@@ -85,7 +85,7 @@ public class JsonHandlerMap extends JsonHandler {
      * Start a new object/map
      */
     public void startMap() {
-        Dictionary map = new Dictionary();
+        DictionaryMap map = new DictionaryMap();
         stack.push(map);
     }
 
@@ -93,7 +93,7 @@ public class JsonHandlerMap extends JsonHandler {
      * Close the current object/map
      */
     public void endMap() {
-        Dictionary map = (Dictionary) stack.pop();
+        DictionaryMap map = (DictionaryMap) stack.pop();
         if (stack.empty()) {
             stack.push(map); // the end
         } else {
@@ -112,7 +112,7 @@ public class JsonHandlerMap extends JsonHandler {
             SimpleArrayItem array = (SimpleArrayItem) stack.peek();
             array.getMembers().add(val.materialize());
         } else {
-            Dictionary map = (Dictionary) stack.peek();
+            DictionaryMap map = (DictionaryMap) stack.peek();
             //StringValue key = new StringValue(reEscape(keys.pop(), true, false, false));
             //StringValue key = new StringValue(keys.pop());
             map.initialPut(keys.pop(), val);

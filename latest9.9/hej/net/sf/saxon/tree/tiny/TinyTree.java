@@ -179,8 +179,8 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
      * element nodes from one TinyTree to another. This code is currently disabled by default until
      * it has been more thoroughly tested.
      */
-    public final static boolean useFastCopy = false;
-    public static boolean useGraft = true;
+    public final static boolean useBulkCopy = true;
+    public static boolean useGraft = false; // KILROY
 
     /**
      * Create a tree with a specified initial size
@@ -1695,6 +1695,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
             end = source.numberOfNodes - 1;
         }
         int length = end - nodeNr;
+        assert length > 0;
         ensureNodeCapacity(Type.ELEMENT, length);
         System.arraycopy(source.nodeKind, nodeNr, nodeKind, numberOfNodes, length);
         int depthDiff = currentDepth - source.depth[nodeNr];
@@ -1715,7 +1716,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
                         }
                         int atts = lastAtt - firstAtt;
                         ensureAttributeCapacity(atts);
-                        int aFrom = source.alpha[from];
+                        int aFrom = firstAtt;
                         int aTo = numberOfAttributes;
                         alpha[to] = aTo;
                         System.arraycopy(source.attValue, firstAtt, attValue, aTo, atts);
@@ -1724,7 +1725,9 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
                             int attNameCode = attCode[aTo] = source.attCode[aFrom];
                             if (NamePool.isPrefixed(attNameCode)) {
                                 String prefix = source.prefixPool.getPrefix(attNameCode >> 20);
-                                attCode[aTo] |= prefixPool.obtainPrefixCode(prefix) << 20;
+                                attCode[aTo] = (attNameCode & 0xfffff) | (prefixPool.obtainPrefixCode(prefix) << 20);
+                            } else {
+                                attCode[aTo] = attNameCode;
                             }
                             if (source.isIdAttribute(aFrom)) {
                                 registerID(getNode(to), source.attValue[aFrom].toString());
@@ -1740,22 +1743,87 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
                     } else {
                         alpha[to] = -1;
                     }
-                    int firstNS = source.beta[from];
-                    if (firstNS >= 0) {
-                        int lastNS = firstNS;
-                        while (lastNS < source.numberOfNamespaces && source.namespaceParent[lastNS] == from) {
-                            lastNS++;
+                    // Copy the namespaces. For the top-level element node, this needs special
+                    // attention: we need to ensure that all the in-scope namespaces of the
+                    // source node are declared in the new tree. We may also need to undeclare
+                    // a default namespace that is present in the target tree, but unwanted in the
+                    // new element node.
+                    if (i==0) {
+                        List<NamespaceBinding> inScopeNamespaces = new ArrayList<>();
+                        int anc = from;
+                        boolean foundDefaultNamespace = false;
+                        while (anc >= 0 && source.nodeKind[anc] == Type.ELEMENT) {
+                            int ns = source.beta[anc];
+                            if (ns >= 0) {
+                                while (ns < source.numberOfNamespaces && source.namespaceParent[ns] == anc) {
+                                    NamespaceBinding sourceNs = source.namespaceBinding[ns];
+                                    String prefix = sourceNs.getPrefix();
+                                    if (prefix.isEmpty()) {
+                                        foundDefaultNamespace = true;
+                                    }
+                                    if (inScopeNamespaces.stream().noneMatch(
+                                            binding -> binding.getPrefix().equals(prefix))) {
+                                        inScopeNamespaces.add(sourceNs);
+                                    }
+                                    ns++;
+                                }
+                            }
+                            anc = TinyNodeImpl.getParentNodeNr(source, anc);
                         }
-                        int nrOfNamespaces = lastNS - firstNS;
-                        ensureNamespaceCapacity(nrOfNamespaces);
+                        if (!foundDefaultNamespace) {
+                            // if there is no default namespace in force for the copied subtree,
+                            // but there is a default namespace for the target tree, then we need
+                            // to insert an xmlns="" undeclaration to ensure that the default namespace
+                            // does not leak into the subtree. (Arguably we should do this only if
+                            // the subtree contains elements that use the default namespace??)
+                            // TODO: search only ancestors of the insertion position
+                            boolean targetDeclaresDefaultNamespace = false;
+                            for (int n = 0; n < numberOfNamespaces; n++) {
+                                if (namespaceBinding[n].getPrefix().isEmpty()) {
+                                    targetDeclaresDefaultNamespace = true;
+                                }
+                            }
+                            if (targetDeclaresDefaultNamespace) {
+                                inScopeNamespaces.add(NamespaceBinding.DEFAULT_UNDECLARATION);
+                            }
+                        }
                         int nTo = numberOfNamespaces;
+                        ensureNamespaceCapacity(inScopeNamespaces.size());
                         beta[to] = nTo;
-                        System.arraycopy(source.namespaceBinding, firstNS, namespaceBinding, nTo, nrOfNamespaces);
-                        Arrays.fill(namespaceParent, nTo, nTo + nrOfNamespaces, to);
-                        numberOfNamespaces += nrOfNamespaces;
+                        for (NamespaceBinding nb : inScopeNamespaces) {
+                            namespaceBinding[nTo++] = nb;
+                        }
+                        Arrays.fill(namespaceParent, numberOfNamespaces, nTo, to);
+                        numberOfNamespaces = nTo;
+
                     } else {
-                        beta[to] = -1;
+                        int firstNS = source.beta[from];
+                        if (firstNS >= 0) {
+                            int lastNS = firstNS;
+                            while (lastNS < source.numberOfNamespaces && source.namespaceParent[lastNS] == from) {
+                                lastNS++;
+                            }
+                            int nrOfNamespaces = lastNS - firstNS;
+                            ensureNamespaceCapacity(nrOfNamespaces);
+                            int nTo = numberOfNamespaces;
+                            beta[to] = nTo;
+                            System.arraycopy(source.namespaceBinding, firstNS, namespaceBinding, nTo, nrOfNamespaces);
+                            Arrays.fill(namespaceParent, nTo, nTo + nrOfNamespaces, to);
+                            numberOfNamespaces += nrOfNamespaces;
+                        } else {
+                            beta[to] = -1;
+                        }
                     }
+                    break;
+                }
+                case Type.TEXTUAL_ELEMENT: {
+                    int start = source.alpha[from];
+                    int len = source.beta[from];
+                    nameCode[to] = (source.nameCode[from] & NamePool.FP_MASK) |
+                            (prefixPool.obtainPrefixCode(source.getPrefix(from)) << 20);
+                    alpha[to] = charBuffer.length();
+                    appendChars(source.charBuffer.subSequence(start, start + len));
+                    beta[to] = len;
                     break;
                 }
                 case Type.TEXT: {

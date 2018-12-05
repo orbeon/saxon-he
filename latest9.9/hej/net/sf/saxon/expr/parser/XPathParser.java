@@ -3132,7 +3132,7 @@ public class XPathParser {
             default:
                 Expression[] entriesArray = new Expression[entries.size()];
                 Block block = new Block(entries.toArray(entriesArray));
-                Dictionary options = new Dictionary();
+                DictionaryMap options = new DictionaryMap();
                 options.initialPut("duplicates", new StringValue("reject"));
                 options.initialPut("duplicates-error-code", new StringValue("XQDY0137"));
                 result = MapFunctionSet.getInstance().makeFunction("merge", 2).makeFunctionCall(block, Literal.makeLiteral(options));

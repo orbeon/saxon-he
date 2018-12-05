@@ -11,7 +11,7 @@ import net.sf.saxon.expr.Callable;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.functions.CallableFunction;
 import net.sf.saxon.lib.Resource;
-import net.sf.saxon.ma.map.Dictionary;
+import net.sf.saxon.ma.map.DictionaryMap;
 import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.type.FunctionItemType;
@@ -47,7 +47,7 @@ public class MetadataResource implements Resource {
     public Item getItem(XPathContext context)  {
 
         // Create a map for the result
-        Dictionary map = new Dictionary();
+        DictionaryMap map = new DictionaryMap();
 
         // Add the custom properties of the resource
         for (Map.Entry<String, GroundedValue<?>> entry : properties.entrySet()) {

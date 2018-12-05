@@ -18,7 +18,7 @@ import java.util.*;
  * for example when parsing JSON input, or when creating a fixed map to use in an options argument.
  */
 
-public class Dictionary implements MapItem {
+public class DictionaryMap implements MapItem {
 
     private HashMap<String, GroundedValue<?>> hashMap;
 
@@ -27,7 +27,7 @@ public class Dictionary implements MapItem {
      * provided this is done before the map is exposed to the outside world.
      */
 
-    public Dictionary() {
+    public DictionaryMap() {
         hashMap = new HashMap<>();
     }
 
