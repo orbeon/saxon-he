@@ -248,11 +248,10 @@ public class KeyManager {
     private synchronized KeyIndex buildIndex(KeyDefinitionSet keySet,
                                              TreeInfo doc,
                                              XPathContext context) throws XPathException {
-        // KILROY
-        System.err.println("Building index " + keySet.getKeyName() + " for doc " + doc.getDocumentNumber() + " in thread " + Thread.currentThread().getId());
+        //System.err.println("Building index " + keySet.getKeyName() + " for doc " + doc.getDocumentNumber() + " in thread " + Thread.currentThread().getId());
         KeyIndex index = new KeyIndex(keySet.isRangeKey());
         index.buildIndex(keySet, doc, context);
-        System.err.println("Done building index " + keySet.getKeyName() + " for doc " + doc.getDocumentNumber() + " in thread " + Thread.currentThread().getId());
+        //System.err.println("Done building index " + keySet.getKeyName() + " for doc " + doc.getDocumentNumber() + " in thread " + Thread.currentThread().getId());
 
         return index;
     }

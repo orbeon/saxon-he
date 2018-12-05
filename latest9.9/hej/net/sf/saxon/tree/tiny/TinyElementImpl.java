@@ -468,7 +468,9 @@ public class TinyElementImpl extends TinyParentNodeImpl {
     private boolean tryGraft(int copyOptions, Receiver out) throws XPathException {
         if (TinyTree.useGraft &&
                 (copyOptions & CopyOptions.FOR_UPDATE) == 0 &&
-                (copyOptions & CopyOptions.ALL_NAMESPACES) != 0) {
+                (copyOptions & CopyOptions.ALL_NAMESPACES) != 0 &&
+                // don't allow a subtree that already contains external nodes to be grafted to another tree
+                tree.externalNodes == null) {
             if (isSkipValidator(out)) {
                 return false;
                 // Can't currently use grafting copy with validation="strip" because of the

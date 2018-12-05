@@ -24,9 +24,7 @@ import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.Type;
 
 import javax.xml.transform.SourceLocator;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class represents a node that is a virtual copy of another node: that is, it behaves as a node that's the
@@ -440,7 +438,7 @@ public class VirtualCopy implements NodeInfo {
     /*@Nullable*/
     public NodeInfo getParent() {
         if (original.equals(root)) {
-            return graftingHost;
+            return graftingHost==null ? null : graftingHost.getParent();
         }
         if (parent == null) {
             NodeInfo basep = original.getParent();
@@ -492,6 +490,8 @@ public class VirtualCopy implements NodeInfo {
                     return EmptyIterator.OfNodes.THE_INSTANCE;
                 }
                 return NamespaceNode.makeIterator(this, nodeTest);
+            case AxisInfo.PARENT:
+                return Navigator.filteredSingleton(getParent(), nodeTest);
             case AxisInfo.PRECEDING:
                 return new Navigator.AxisFilter(
                         new Navigator.PrecedingEnumeration(this, false), nodeTest);
@@ -613,12 +613,24 @@ public class VirtualCopy implements NodeInfo {
                 });
                 return allNamespaces.toArray(NamespaceBinding.EMPTY_ARRAY);
             } else {
-                List<NamespaceBinding> allNamespaces = new ArrayList<>(20);
-                Iterator<NamespaceBinding> iter = NamespaceIterator.iterateNamespaces(original);
-                while (iter.hasNext()) {
-                    allNamespaces.add(iter.next());
+                if (original == root) {
+                    List<NamespaceBinding> bindings = new ArrayList<>();
+                    Iterator<NamespaceBinding> iter = NamespaceIterator.iterateNamespaces(original);
+                    boolean declaresDefaultNamespace = false;
+                    while (iter.hasNext()) {
+                        NamespaceBinding binding = iter.next();
+                        bindings.add(binding);
+                        if (binding.getPrefix().isEmpty()) {
+                            declaresDefaultNamespace = true;
+                        }
+                    }
+                    if (!declaresDefaultNamespace && graftingHost != null && graftingHost.hasDefaultNamespace()) {
+                        bindings.add(NamespaceBinding.DEFAULT_UNDECLARATION);
+                    }
+                    return bindings.toArray(NamespaceBinding.EMPTY_ARRAY);
+                } else {
+                    return original.getDeclaredNamespaces(buffer);
                 }
-                return allNamespaces.toArray(NamespaceBinding.EMPTY_ARRAY);
             }
         } else {
             return null;

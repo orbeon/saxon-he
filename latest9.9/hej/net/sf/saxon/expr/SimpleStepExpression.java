@@ -126,9 +126,6 @@ public final class SimpleStepExpression extends SlashExpression {
             } else {
                 throw e;
             }
-        } catch (ClassCastException cce) {
-            // KILROY
-            throw cce;
         }
         if (origin == null) {
             return EmptyIterator.getInstance();

@@ -15,13 +15,10 @@ import net.sf.saxon.pattern.AnyNodeTest;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
-import net.sf.saxon.tree.util.NamespaceIterator;
 import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.tree.wrapper.VirtualCopy;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Optional;
 
 /**
  * This class represents an element node in a TinyTree that is actually a reference to an element
@@ -35,7 +32,7 @@ public class GraftedElement extends TinyElementImpl {
 
     private NodeInfo externalNode;
     private VirtualCopy externalNodeCopy;
-    private NamespaceBinding[] declaredNamespaces;
+    private Optional<Boolean> hasDefaultNamespace = Optional.empty();
 
     /**
      * Created a grafted element node
@@ -155,28 +152,21 @@ public class GraftedElement extends TinyElementImpl {
     }
 
     @Override
-    public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
-        if (declaredNamespaces == null) {
-            List<NamespaceBinding> bindings = new ArrayList<>();
-            Iterator<NamespaceBinding> iter = NamespaceIterator.iterateNamespaces(externalNode);
-            boolean foundDefaultNamespace = false;
-            NamespaceBinding binding;
-            while (iter.hasNext()) {
-                binding = iter.next();
-                if (binding.getPrefix().isEmpty()) {
-                    foundDefaultNamespace = true;
-                }
-                bindings.add(binding);
-            }
-            if (!foundDefaultNamespace) {
-                String defaultNamespace = new InscopeNamespaceResolver(getParent()).getURIForPrefix("", true);
-                if (defaultNamespace != null && !defaultNamespace.isEmpty()) {
-                    bindings.add(NamespaceBinding.DEFAULT_UNDECLARATION);
-                }
-            }
-            declaredNamespaces = bindings.toArray(NamespaceBinding.EMPTY_ARRAY);
+    public String getAttributeValue(String uri, String local) {
+        return externalNode.getAttributeValue(uri, local);
+    }
+
+    public boolean hasDefaultNamespace() {
+        if (!hasDefaultNamespace.isPresent()) {
+            hasDefaultNamespace = Optional.of(
+                    !new InscopeNamespaceResolver(getParent()).getURIForPrefix("", true).isEmpty());
         }
-        return declaredNamespaces;
+        return hasDefaultNamespace.get();
+    }
+
+    @Override
+    public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
+        return externalNodeCopy.getDeclaredNamespaces(buffer);
     }
 }
 
