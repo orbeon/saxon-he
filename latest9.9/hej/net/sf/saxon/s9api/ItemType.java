@@ -19,6 +19,7 @@ import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.pattern.AnyNodeTest;
+import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.AtomicValue;
@@ -115,6 +116,178 @@ public abstract class ItemType {
             return AnyNodeTest.getInstance();
         }
     };
+
+
+        /**
+         * ItemType representing the ATTRIBUTE node() type
+         */
+
+        public static final ItemType ATTRIBUTE_NODE = new ItemType() {
+
+            public ConversionRules getConversionRules() {
+                return defaultConversionRules;
+            }
+
+            public boolean matches(XdmItem item) {
+                return item.getUnderlyingValue() instanceof NodeInfo;
+            }
+
+            public boolean subsumes(ItemType other) {
+                return other.getUnderlyingItemType() instanceof NodeTest;
+            }
+
+            public net.sf.saxon.type.ItemType getUnderlyingItemType() {
+                return NodeKindTest.ATTRIBUTE;
+            }
+        };
+
+
+        /**
+         * ItemType representing the COMMENT node() type
+         */
+
+        public static final ItemType COMMENT_NODE = new ItemType() {
+
+            public ConversionRules getConversionRules() {
+                return defaultConversionRules;
+            }
+
+            public boolean matches(XdmItem item) {
+                return item.getUnderlyingValue() instanceof NodeInfo;
+            }
+
+            public boolean subsumes(ItemType other) {
+                return other.getUnderlyingItemType() instanceof NodeTest;
+            }
+
+            public net.sf.saxon.type.ItemType getUnderlyingItemType() {
+                return NodeKindTest.COMMENT;
+            }
+        };
+
+
+
+        /**
+         * ItemType representing the TEXT node() type
+         */
+
+        public static final ItemType TEXT_NODE = new ItemType() {
+
+            public ConversionRules getConversionRules() {
+                return defaultConversionRules;
+            }
+
+            public boolean matches(XdmItem item) {
+                return item.getUnderlyingValue() instanceof NodeInfo;
+            }
+
+            public boolean subsumes(ItemType other) {
+                return other.getUnderlyingItemType() instanceof NodeTest;
+            }
+
+            public net.sf.saxon.type.ItemType getUnderlyingItemType() {
+                return NodeKindTest.TEXT;
+            }
+        };
+
+
+
+
+        /**
+         * ItemType representing the ELEMENT node() type
+         */
+
+        public static final ItemType ELEMENT_NODE = new ItemType() {
+
+            public ConversionRules getConversionRules() {
+                return defaultConversionRules;
+            }
+
+            public boolean matches(XdmItem item) {
+                return item.getUnderlyingValue() instanceof NodeInfo;
+            }
+
+            public boolean subsumes(ItemType other) {
+                return other.getUnderlyingItemType() instanceof NodeTest;
+            }
+
+            public net.sf.saxon.type.ItemType getUnderlyingItemType() {
+                return NodeKindTest.ELEMENT;
+            }
+        };
+
+    /**
+     * ItemType representing the DOCUMENT node() type
+     */
+
+    public static final ItemType DOCUMENT_NODE = new ItemType() {
+
+        public ConversionRules getConversionRules() {
+            return defaultConversionRules;
+        }
+
+        public boolean matches(XdmItem item) {
+            return item.getUnderlyingValue() instanceof NodeInfo;
+        }
+
+        public boolean subsumes(ItemType other) {
+            return other.getUnderlyingItemType() instanceof NodeTest;
+        }
+
+        public net.sf.saxon.type.ItemType getUnderlyingItemType() {
+            return NodeKindTest.DOCUMENT;
+        }
+    };
+
+
+
+    /**
+     * ItemType representing the NAMESPACE node() type
+     */
+
+    public static final ItemType NAMESPACE_NODE = new ItemType() {
+
+        public ConversionRules getConversionRules() {
+            return defaultConversionRules;
+        }
+
+        public boolean matches(XdmItem item) {
+            return item.getUnderlyingValue() instanceof NodeInfo;
+        }
+
+        public boolean subsumes(ItemType other) {
+            return other.getUnderlyingItemType() instanceof NodeTest;
+        }
+
+        public net.sf.saxon.type.ItemType getUnderlyingItemType() {
+            return NodeKindTest.NAMESPACE;
+        }
+    };
+
+
+    /**
+     * ItemType representing the NAMESPACE node() type
+     */
+
+    public static final ItemType PROCESSING_INSTRUCTION_NODE = new ItemType() {
+
+        public ConversionRules getConversionRules() {
+            return defaultConversionRules;
+        }
+
+        public boolean matches(XdmItem item) {
+            return item.getUnderlyingValue() instanceof NodeInfo;
+        }
+
+        public boolean subsumes(ItemType other) {
+            return other.getUnderlyingItemType() instanceof NodeTest;
+        }
+
+        public net.sf.saxon.type.ItemType getUnderlyingItemType() {
+            return NodeKindTest.PROCESSING_INSTRUCTION;
+        }
+    };
+
 
     /**
      * ItemType representing the type map(*), that is, any map
