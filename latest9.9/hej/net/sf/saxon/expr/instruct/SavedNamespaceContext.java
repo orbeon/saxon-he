@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 
 public final class SavedNamespaceContext implements NamespaceResolver {
 
-    private Map<String, String> bindings = new HashMap<String, String>();
+    private Map<String, String> bindings = new HashMap<>();
 
     /**
      * Create a NamespaceContext object
@@ -122,10 +122,8 @@ public final class SavedNamespaceContext implements NamespaceResolver {
      */
 
     public Iterator<String> iteratePrefixes() {
-        List<String> prefixes = new ArrayList<String>(bindings.size() + 1);
-        for (String s : bindings.keySet()) {
-            prefixes.add(s);
-        }
+        List<String> prefixes = new ArrayList<>(bindings.size() + 1);
+        prefixes.addAll(bindings.keySet());
         prefixes.add("xml");
         return prefixes.iterator();
     }

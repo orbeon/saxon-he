@@ -116,7 +116,7 @@ public final class Atomizer extends UnaryExpression {
                     if (((Function)i).isArray()) {
                         return this;
                     } else if (((Function)i).isMap()) {
-                        XPathException err = new XPathException("Cannot atomize a map", "FOTY0013");
+                        XPathException err = new XPathException("Cannot atomize a map (" + i.toShortString() + ")", "FOTY0013");
                         err.setIsTypeError(true);
                         err.setLocation(getLocation());
                         throw err;

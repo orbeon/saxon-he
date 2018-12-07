@@ -68,6 +68,7 @@ public class PackageLoaderHE implements IPackageLoader {
     private final Map<String, IntHashMap<Location>> locationMap = new HashMap<>();
     private final Map<Integer, Component> componentIdMap = new HashMap<>();
     private final Map<Component, String> externalReferences = new HashMap<>();
+    private String relocatableBase = null;
 
     public PackageLoaderHE(Configuration config) {
         this.config = config;
@@ -213,6 +214,7 @@ public class PackageLoaderHE implements IPackageLoader {
         String packageName = packageElement.getAttributeValue("", "name");
         String packageId = packageElement.getAttributeValue("", "id");
         String packageKey = packageId == null ? packageName : packageId; // for backwards compatibility with 9.8
+        boolean relocatable = "true".equals(packageElement.getAttributeValue("", "relocatable"));
         if (packageName != null) {
             pack.setPackageName(packageName);
             allPackages.put(packageKey, pack);
@@ -261,6 +263,11 @@ public class PackageLoaderHE implements IPackageLoader {
         pack.setFunctionLibraryDetails(functionLibrary, overriding, underriding);
 
         RetainedStaticContext rsc = new RetainedStaticContext(config);
+        if (relocatable) {
+            // For a relocatable package, take the base URI from the location of the SEF file
+            relocatableBase = packageElement.getBaseURI();
+            rsc.setStaticBaseUriString(relocatableBase);
+        }
         rsc.setPackageData(pack);
         contextStack.push(rsc);
         localBindings = new Stack<>();
@@ -1069,6 +1076,8 @@ public class PackageLoaderHE implements IPackageLoader {
             }
             if (baseURIAtt != null) {
                 rsc.setStaticBaseUriString(baseURIAtt);
+            } else if (relocatableBase != null) {
+                rsc.setStaticBaseUriString(relocatableBase);
             }
             if (nsAtt != null && !nsAtt.isEmpty()) {
                 String[] namespaces = nsAtt.split(" ");
@@ -1949,6 +1958,7 @@ public class PackageLoaderHE implements IPackageLoader {
                             prefix = "";
                         }
                         String uri = rsc.getURIForPrefix(prefix, true);
+                        assert uri != null;
                         bindings[i++] = new NamespaceBinding(prefix, uri);
                     }
                 }

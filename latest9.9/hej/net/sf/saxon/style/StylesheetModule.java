@@ -205,6 +205,7 @@ public class StylesheetModule {
         // Pipeline for compiled XSLT code
 
         TinyBuilder packageBuilder = new TinyBuilder(pipe);
+        packageBuilder.setSystemId(styleSource.getSystemId());
         CheckSumFilter checksummer = new CheckSumFilter(packageBuilder);
         checksummer.setCheckExistingChecksum(true);
 

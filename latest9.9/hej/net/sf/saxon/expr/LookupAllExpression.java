@@ -310,5 +310,9 @@ public class LookupAllExpression extends UnaryExpression {
         return ExpressionTool.parenthesize(getBaseExpression()) + "?*";
     }
 
+    public String toShortString() {
+        return getBaseExpression().toShortString() + "?*";
+    }
+
 }
 

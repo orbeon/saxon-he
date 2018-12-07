@@ -44,7 +44,7 @@ public class LiteralResultElement extends StyleElement {
     private Expression[] attributeValues;
     private int numberOfAttributes;
     private boolean toplevel;
-    private List<NamespaceBinding> namespaceCodes = new ArrayList<NamespaceBinding>();
+    private List<NamespaceBinding> namespaceCodes = new ArrayList<>();
     private StructuredQName[] attributeSets;
     /*@Nullable*/ private SchemaType schemaType = null;
     private int validation = Validation.STRIP;
@@ -248,7 +248,7 @@ public class LiteralResultElement extends StyleElement {
                     NodeName alias = anameCode;
                     String attURI = anameCode.getURI();
 
-                    if (attURI.length() != 0) {    // attribute has a namespace prefix
+                    if (!attURI.isEmpty()) {    // attribute has a namespace prefix
                         NamespaceBinding newBinding = sheet.getNamespaceAlias(attURI);
                         if (newBinding != null && !newBinding.getURI().equals(attURI)) {
                             alias = new FingerprintedQName(
@@ -300,7 +300,7 @@ public class LiteralResultElement extends StyleElement {
             return null;
         }
 
-        NamespaceBinding[] bindings = namespaceCodes.toArray(new NamespaceBinding[namespaceCodes.size()]);
+        NamespaceBinding[] bindings = namespaceCodes.toArray(NamespaceBinding.EMPTY_ARRAY);
         FixedElement inst = new FixedElement(
                 resultNodeName,
                 bindings,

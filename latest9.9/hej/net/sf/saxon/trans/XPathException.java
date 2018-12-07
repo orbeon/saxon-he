@@ -135,7 +135,8 @@ public class XPathException extends TransformerException {
     }
 
     /**
-     * Breakpoint for debugging when we need to catch an error
+     * Breakpoint for debugging when we need to catch an error. Change to "assert false" to get
+     * a stack trace when an exception is created.
      */
 
     private static void breakPoint() {

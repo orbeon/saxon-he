@@ -178,7 +178,11 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      */
 
     public final String getURI() {
-        return tree.getNamePool().getURI(tree.attCode[nodeNr]);
+        int code = tree.attCode[nodeNr];
+        if (!NamePool.isPrefixed(code)) {
+            return "";
+        }
+        return tree.getNamePool().getURI(code);
     }
 
     /**

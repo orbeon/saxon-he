@@ -97,7 +97,7 @@ public final class SingletonAtomizer extends UnaryExpression {
         if (!operandType.isAtomizable(visitor.getConfiguration().getTypeHierarchy())) {
             XPathException err;
             if (operandType instanceof MapType) {
-                err = new XPathException("Cannot atomize a map", "FOTY0013");
+                err = new XPathException("Cannot atomize a map (" + toShortString() + ")", "FOTY0013");
             } else if (operandType instanceof FunctionItemType) {
                 err = new XPathException("Cannot atomize a function item", "FOTY0013");
             } else {

@@ -462,9 +462,9 @@ public abstract class SystemFunction extends AbstractFunction {
         String name = qName.hasURI(NamespaceConstant.FN) ? qName.getLocalPart() : qName.getEQName();
         out.emitAttribute("name", name);
         out.emitAttribute("arity", getArity() + "");
-        if ((getDetails().properties & BuiltInFunctionSet.DEPENDS_ON_STATIC_CONTEXT) != 0) {
-            out.emitRetainedStaticContext(getRetainedStaticContext(), null);
-        }
+//        if ((getDetails().properties & BuiltInFunctionSet.DEPENDS_ON_STATIC_CONTEXT) != 0) {
+//            out.emitRetainedStaticContext(getRetainedStaticContext(), null);
+//        }
         out.endElement();
     }
 

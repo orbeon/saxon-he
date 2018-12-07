@@ -345,19 +345,23 @@ public class ExpressionPresenter {
             }
             if (parentSC == null || !sc.declaresSameNamespaces(parentSC)) {
                 FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.C256);
+                //StylesheetPackage pack = (StylesheetPackage)sc.getPackageData();
                 for (Iterator<String> iter = sc.iteratePrefixes(); iter.hasNext(); ) {
                     String p = iter.next();
-                    fsb.append(p);
-                    fsb.append("=");
                     String uri = sc.getURIForPrefix(p, true);
-                    if (Whitespace.containsWhitespace(uri)) {
-                        throw new XPathException("Cannot export a stylesheet if namespaces contain whitespace: '" + uri + "'");
-                    }
-                    if (uri.equals(NamespaceConstant.getUriForConventionalPrefix(p))) {
-                        uri = "~";
-                    }
-                    fsb.append(uri);
-                    fsb.append(" ");
+                    //if (!pack.isDevelopmentNamespace(new NamespaceBinding(p, uri))) {
+                        fsb.append(p);
+                        fsb.append("=");
+
+                        if (Whitespace.containsWhitespace(uri)) {
+                            throw new XPathException("Cannot export a stylesheet if namespaces contain whitespace: '" + uri + "'");
+                        }
+                        if (uri.equals(NamespaceConstant.getUriForConventionalPrefix(p))) {
+                            uri = "~";
+                        }
+                        fsb.append(uri);
+                        fsb.append(" ");
+                    //}
                 }
                 emitAttribute("ns", Whitespace.trim(fsb));
             }
