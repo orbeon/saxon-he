@@ -191,6 +191,9 @@ public class Err {
      */
 
     public static String abbreviateURI(String uri) {
+        if (uri==null) {
+            return "";
+        }
         int lastSlash = (uri.endsWith("/") ? uri.substring(0, uri.length()-1) : uri).lastIndexOf('/');
         if (lastSlash < 0) {
             if (uri.length() > 15) {
