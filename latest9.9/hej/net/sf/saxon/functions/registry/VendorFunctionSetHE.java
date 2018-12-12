@@ -17,13 +17,16 @@ import net.sf.saxon.functions.Doc_2;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.ma.arrays.ArrayItemType;
-import net.sf.saxon.ma.map.*;
+import net.sf.saxon.ma.map.MapCreate;
+import net.sf.saxon.ma.map.MapType;
+import net.sf.saxon.ma.map.MapUntypedContains;
 import net.sf.saxon.om.NamespaceBinding;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.tiny.TinyElementImpl;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
 
@@ -73,6 +76,10 @@ public class VendorFunctionSetHE extends BuiltInFunctionSet {
 
         // Ask whether the supplied element node has any local namespace declarations
         register("has-local-namespaces", 1, HasLocalNamespaces.class, BuiltInAtomicType.BOOLEAN, ONE, 0, 0)
+                .arg(0, NodeKindTest.ELEMENT, ONE, null);
+
+        // Ask whether the supplied element node has consistent in scope namespaces throughout its subtree
+        register("has-uniform-namespaces", 1, HasUniformNamespaces.class, BuiltInAtomicType.BOOLEAN, ONE, 0, 0)
                 .arg(0, NodeKindTest.ELEMENT, ONE, null);
 
         // Function analogous to map:contains except in the way it handles untyped key values
@@ -138,7 +145,7 @@ public class VendorFunctionSetHE extends BuiltInFunctionSet {
 
         // TODO: this is experimental and not yet publicly documented
 
-        public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
+        public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
             NodeInfo val = (NodeInfo) arguments[0].head();
             NodeInfo parent = val.getParent();
             return BooleanValue.get(
@@ -147,6 +154,34 @@ public class VendorFunctionSetHE extends BuiltInFunctionSet {
         }
 
     }
+
+    /**
+     * Implement saxon:has-uniform-namespaces. The function takes an element node as input and returns
+     * true if it can be guaranteed that all descendant elements have the same namespace context as
+     * the target element. (If the result is false, there may or may not be descendant elements
+     * with new namespace declarations or undeclarations.)
+     *
+     * <p>This function is provided for use by the XSLT-compiler-in-XSLT, so that it can decide
+     * efficiently whether to generate an "ns" element containing namespace bindings in the SEF file.</p>
+     *
+     * <p>Currently returns false for any non-TinyTree element.</p>
+     */
+
+    public static class HasUniformNamespaces extends SystemFunction {
+
+        // TODO: this is experimental and not yet publicly documented
+
+        public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
+            NodeInfo val = (NodeInfo) arguments[0].head();
+            if (val instanceof TinyElementImpl) {
+                return BooleanValue.get(((TinyElementImpl)val).hasUniformNamespaces());
+            } else {
+                return BooleanValue.FALSE;
+            }
+        }
+
+    }
+
 
     /**
      * Implement saxon:dynamic-error-info
