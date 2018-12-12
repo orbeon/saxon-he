@@ -445,7 +445,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
 
             case AxisInfo.FOLLOWING:
                 if (type == Type.ATTRIBUTE || type == Type.NAMESPACE) {
-                    return new FollowingIterator(tree, (TinyNodeImpl) getParent(), nodeTest, true);
+                    return new FollowingIterator(tree, getParent(), nodeTest, true);
                 } else if (tree.depth[nodeNr] == 0) {
                     return EmptyIterator.OfNodes.THE_INSTANCE;
                 } else {
@@ -471,7 +471,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
 
             case AxisInfo.PRECEDING:
                 if (type == Type.ATTRIBUTE || type == Type.NAMESPACE) {
-                    return new PrecedingIterator(tree, (TinyNodeImpl) getParent(), nodeTest, false);
+                    return new PrecedingIterator(tree, getParent(), nodeTest, false);
                 } else if (tree.depth[nodeNr] == 0) {
                     return EmptyIterator.OfNodes.THE_INSTANCE;
                 } else {
@@ -493,7 +493,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
                     return EmptyIterator.OfNodes.THE_INSTANCE;
                 } else if (type == Type.ATTRIBUTE || type == Type.NAMESPACE) {
                     // See test numb32.
-                    TinyNodeImpl el = (TinyNodeImpl) getParent();
+                    TinyNodeImpl el = getParent();
                     return new PrependAxisIterator(el, new PrecedingIterator(tree, el, nodeTest, true));
                 } else {
                     return new PrecedingIterator(tree, this, nodeTest, true);
@@ -511,7 +511,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      */
 
     /*@Nullable*/
-    public NodeInfo getParent() {
+    public TinyNodeImpl getParent() {
         if (parent != null) {
             return parent;
         }

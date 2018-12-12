@@ -42,7 +42,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      * Get the parent node
      */
 
-    public NodeInfo getParent() {
+    public TinyNodeImpl getParent() {
         return tree.getNode(tree.attParent[nodeNr]);
     }
 

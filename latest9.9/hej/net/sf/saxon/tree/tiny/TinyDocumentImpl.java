@@ -143,7 +143,7 @@ public final class TinyDocumentImpl extends TinyParentNodeImpl {
      */
 
     /*@Nullable*/
-    public NodeInfo getParent() {
+    public TinyNodeImpl getParent() {
         return null;
     }
 

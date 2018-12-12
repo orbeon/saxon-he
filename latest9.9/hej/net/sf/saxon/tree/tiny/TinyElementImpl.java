@@ -153,6 +153,35 @@ public class TinyElementImpl extends TinyParentNodeImpl {
         }
     }
 
+    /**
+     * Ask whether the element is the root of a subtree in which no descendant element
+     * has any local namespace declarations or undeclarations; that is, all elements
+     * in the subtree have the same in-scope namespace bindings.
+     * @return true if it is known that no descendant elements have in-scope namespaces
+     * different from those of this element.
+     */
+
+    public boolean hasUniformNamespaces() {
+        int ns = tree.beta[nodeNr];
+        while (ns == -1) {
+            TinyElementImpl anc = this;
+            TinyNodeImpl parent = getParent();
+            if (parent instanceof TinyDocumentImpl) {
+                return !tree.usesNamespaces;
+            } else {
+                ns = tree.beta[parent.nodeNr];
+                anc = (TinyElementImpl)parent;
+            }
+        }
+        // Find the first namespace binding with a different parent
+        while (ns < tree.numberOfNamespaces && tree.namespaceParent[ns] == nodeNr) {
+            ns++;
+        }
+        // Return true if none is found, or if the element owning this namespace binding
+        // is outside the subtree
+        return ns >= tree.numberOfNamespaces || !isAncestorOrSelf(tree.getNode(tree.namespaceParent[ns]));
+    }
+
 
     /**
      * Get the string value of a given attribute of this node
@@ -382,7 +411,7 @@ public class TinyElementImpl extends TinyParentNodeImpl {
                                     }
                                 }
                                 String attPrefix = tree.prefixPool.getPrefix(attCode >> 20);
-                                receiver.attribute(new CodedName(attfp, attPrefix, pool), attributeType, tree.attValue[att], location, 0);
+                                receiver.attribute(new CodedName(attfp, attPrefix, pool), attributeType, tree.attValue[att], location, ReceiverOptions.NOT_A_DUPLICATE);
                                 att++;
                             }
                         }
