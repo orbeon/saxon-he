@@ -12,7 +12,10 @@ import net.sf.saxon.Controller;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.NamespaceConstant;
-import net.sf.saxon.om.*;
+import net.sf.saxon.om.GroundedValue;
+import net.sf.saxon.om.SequenceTool;
+import net.sf.saxon.om.StandardNames;
+import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.query.XQueryFunction;
 import net.sf.saxon.query.XQueryFunctionLibrary;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -25,7 +28,9 @@ import net.sf.saxon.tree.iter.ManualIterator;
 import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.TypeHierarchy;
-import net.sf.saxon.value.*;
+import net.sf.saxon.value.Cardinality;
+import net.sf.saxon.value.IntegerValue;
+import net.sf.saxon.value.SequenceType;
 
 import java.util.*;
 
