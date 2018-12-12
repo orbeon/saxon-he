@@ -305,11 +305,10 @@ public final class ComplexContentOutputter extends SequenceReceiver {
 
     public void namespace(NamespaceBindingSet nsBindings, int properties)
             throws XPathException {
-
         // Optimization for recursive shallow-copy added in 9.8 - see bug 3011.
         if (nsBindings instanceof InScopeNamespaces) {
             copyNamespacesStack[level] = (InScopeNamespaces)nsBindings;
-            if (level > 1 && copyNamespacesStack[level - 1] != null &&
+            if (level > 0 && copyNamespacesStack[level - 1] != null &&
                     copyNamespacesStack[level - 1].getElement().equals(((InScopeNamespaces)nsBindings).getElement())) {
                 // Ignore these namespaces if they are the same as the namespaces for the parent element
                 return;
@@ -335,11 +334,10 @@ public final class ComplexContentOutputter extends SequenceReceiver {
             boolean rejectDuplicates = (properties & ReceiverOptions.REJECT_DUPLICATES) != 0;
 
             for (int i = 0; i < pendingNSListSize; i++) {
-                if (nsBindings.equals(pendingNSList[i])) {
-                    // same prefix and URI: ignore this duplicate
-                    return;
-                }
                 if (ns.getPrefix().equals(pendingNSList[i].getPrefix())) {
+                    if (ns.getURI().equals(pendingNSList[i].getURI())) {
+                        return; // duplicate namespace, no action needed
+                    }
                     if (pendingNSList[i].isDefaultUndeclaration() || ns.isDefaultUndeclaration()) {
                         // xmlns="" overridden by xmlns="abc"
                         pendingNSList[i] = ns;
@@ -414,10 +412,10 @@ public final class ComplexContentOutputter extends SequenceReceiver {
             throw err;
         }
 
-        // if this is a duplicate attribute, overwrite the original, unless
-        // the REJECT_DUPLICATES option is set.
+        // if this is a duplicate attribute, overwrite the original in XSLT; throw an error in XQuery.
+        // No check needed if the NOT_A_DUPLICATE property is set (typically, during a deep copy operation)
 
-        if (level >= 0) {
+        if (level >= 0 && ((properties & ReceiverOptions.NOT_A_DUPLICATE)==0)) {
             for (int a = 0; a < pendingAttListSize; a++) {
                 if (pendingAttCode[a].equals(attName)) {
                     if (hostLanguage == Configuration.XSLT) {

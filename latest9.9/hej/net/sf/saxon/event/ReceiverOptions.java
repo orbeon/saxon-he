@@ -151,6 +151,11 @@ public class ReceiverOptions {
      */
     public static final int ALL_NAMESPACES = 0x80000;
 
+    /**
+     * Flag set on attribute() to indicate that there is no need to check for duplicate attributes
+     */
+    public static final int NOT_A_DUPLICATE = 0x100000;
+
 
 }
 
