@@ -59,7 +59,7 @@ public class XSLPreserveSpace extends StyleElement {
     }
 
     @Override
-    public void index(ComponentDeclaration decl, PrincipalStylesheetModule top) throws XPathException {
+    public void index(ComponentDeclaration decl, PrincipalStylesheetModule top) {
         if (getFingerprint() == StandardNames.XSL_STRIP_SPACE) {
             if (getFingerprint() == StandardNames.XSL_STRIP_SPACE) {
                 String elements = getAttributeValue("", "elements");
@@ -70,9 +70,9 @@ public class XSLPreserveSpace extends StyleElement {
         }
     }
 
-    public void compileDeclaration(Compilation compilation, /*@NotNull*/ ComponentDeclaration decl) throws XPathException {
+    public void compileDeclaration(Compilation compilation, ComponentDeclaration decl)  {
         Stripper.StripRuleTarget preserve =
-                (getFingerprint() == StandardNames.XSL_PRESERVE_SPACE ? Stripper.PRESERVE : Stripper.STRIP);
+                getFingerprint() == StandardNames.XSL_PRESERVE_SPACE ? Stripper.PRESERVE : Stripper.STRIP;
         PrincipalStylesheetModule psm = getCompilation().getPrincipalStylesheetModule();
         SpaceStrippingRule stripperRules = psm.getStylesheetPackage().getStripperRules();
         if (!(stripperRules instanceof SelectedElementsSpaceStrippingRule)) {
@@ -82,7 +82,7 @@ public class XSLPreserveSpace extends StyleElement {
 
         SelectedElementsSpaceStrippingRule rules = (SelectedElementsSpaceStrippingRule) stripperRules;
 
-        // elements is a space-separated list of element names
+        // elements is a space-separated list of element names or name tests
 
         StringTokenizer st = new StringTokenizer(elements, " \t\n\r", false);
         try {
@@ -98,7 +98,7 @@ public class XSLPreserveSpace extends StyleElement {
                         compileError("No prefix before ':*'");
                     }
                     String prefix = s.substring(0, s.length() - 2);
-                    String uri = getURIForPrefix(prefix, false);
+                    String uri = makeQName(prefix + ":z").getURI();
                     if (uri == null) {
                         undeclaredNamespaceError(prefix, "XTSE0280", "elements");
                     }

@@ -71,7 +71,6 @@ public abstract class StyleElement extends ElementImpl {
     private ExplicitLocation savedLocation = null;
     private int defaultValidation = Validation.DEFAULT;
 
-
     // Conditions under which an error is to be reported
 
     public static final int REPORT_ALWAYS = 1;
@@ -129,7 +128,6 @@ public abstract class StyleElement extends ElementImpl {
     public ExpressionContext getStaticContext(StructuredQName attributeName) {
         return new ExpressionContext(this, attributeName);
     }
-
 
     /**
      * Get the base URI of the element, which acts as the static base URI for XPath expressions defined
@@ -408,13 +406,6 @@ public abstract class StyleElement extends ElementImpl {
             err.setErrorCode("XTSE0080");
             throw err;
         }
-        StylesheetPackage pack = getContainingPackage();  // may be null if not yet initialized
-        if (pack != null && pack.isDocumentationNamespace(qName.getNamespaceBinding())) {
-            XPathException err = new XPathException("Documentation namespace " + qName.getPrefix() +
-                                                            " can be used only for stylesheet documentation", SaxonErrorCode.SXPK0004);
-            err.setIsStaticError(true);
-            throw err;
-        }
         return qName;
     }
 
@@ -511,9 +502,7 @@ public abstract class StyleElement extends ElementImpl {
 
     public SavedNamespaceContext makeNamespaceContext() {
         StylesheetPackage pack = getPackageData();
-        return new SavedNamespaceContext(
-                NamespaceIterator.iterateNamespaces(this),
-                pack::isDocumentationNamespace);
+        return new SavedNamespaceContext(NamespaceIterator.iterateNamespaces(this));
     }
 
     public RetainedStaticContext makeRetainedStaticContext() {

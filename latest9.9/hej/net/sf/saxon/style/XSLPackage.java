@@ -18,10 +18,6 @@ import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.Whitespace;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringTokenizer;
-
 /**
  * Handler for xsl:package elements. Explicit xsl:package elements are not permitted in Saxon-HE, but
  * implicit packages are created, so the class is present in HE. The top-level module of a stylesheet/package
@@ -34,7 +30,6 @@ public class XSLPackage extends XSLModuleRoot {
     private PackageVersion packageVersion = null;
     private boolean declaredModes = true;
     private boolean prepared = false;
-    private Set<NamespaceBinding> documentationNamespaces = new HashSet<>(4);
 
     /**
      * Initialise a new ElementImpl with an element name
@@ -117,38 +112,25 @@ public class XSLPackage extends XSLModuleRoot {
         AttributeCollection atts = getAttributeList();
 
         for (int a = 0; a < atts.getLength(); a++) {
-            String f = atts.getQName(a);
-            if (f.equals("name") && getLocalPart().equals("package")) {
+            String lexicalName = atts.getQName(a);
+            if (lexicalName.equals("name") && getLocalPart().equals("package")) {
                 nameAtt = Whitespace.trim(atts.getValue(a));
-            } else if (f.equals("id")) {
+            } else if (lexicalName.equals("id")) {
                 // no action
-            } else if (f.equals("version")) {
+            } else if (lexicalName.equals("version")) {
                 if (version == -1) {
                     processVersionAttribute("");
                 }
-            } else if (f.equals("package-version") && getLocalPart().equals("package")) {
+            } else if (lexicalName.equals("package-version") && getLocalPart().equals("package")) {
                 packageVersionAtt = Whitespace.trim(atts.getValue(a));
 
-            } else if (f.equals("declared-modes") && getLocalPart().equals("package")) {
+            } else if (lexicalName.equals("declared-modes") && getLocalPart().equals("package")) {
                 declaredModes = processBooleanAttribute("declared-modes", atts.getValue(a));
 
-            } else if (f.equals("input-type-annotations")) {
+            } else if (lexicalName.equals("input-type-annotations")) {
                 inputTypeAnnotationsAtt = atts.getValue(a);
             } else {
-                if (atts.getURI(a).equals(NamespaceConstant.SAXON) && atts.getLocalName(a).equals("documentation-prefixes")) {
-                    StringTokenizer st1 = new StringTokenizer(atts.getValue(a), " \t\n\r", false);
-                    while (st1.hasMoreTokens()) {
-                        String prefix = st1.nextToken();
-                        String uri = getURIForPrefix(prefix, false);
-                        if (uri == null) {
-                            compileErrorInAttribute("Undeclared namespace prefix '" + prefix + "'", "XTSE0010", "saxon:documentation-prefixes");
-                        } else {
-                            documentationNamespaces.add(new NamespaceBinding(prefix, uri));
-                        }
-                    }
-                } else {
-                    checkUnknownAttribute(atts.getNodeName(a));
-                }
+                checkUnknownAttribute(atts.getNodeName(a));
             }
         }
 
@@ -202,15 +184,6 @@ public class XSLPackage extends XSLModuleRoot {
             }
         }
         return declaredModes;
-    }
-
-    /**
-     * Get the namespace bindings declared as documentation namespaces (using saxon:documentation-prefixes)
-     * @return the namespace bindings used solely for documentation
-     */
-
-    public Set<NamespaceBinding> getDocumentationNamespaces() {
-        return documentationNamespaces;
     }
 
     /**

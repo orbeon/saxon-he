@@ -272,7 +272,6 @@ public class Compilation {
         pack.setPackageName(xslpackage.getName());
         pack.setSchemaAware(info.isSchemaAware() || isSchemaAware());
         pack.createFunctionLibrary();
-        pack.setDocumentationNamespaces(xslpackage.getDocumentationNamespaces());
         if (info.getExtensionFunctionLibrary() != null) {
             pack.getFunctionLibrary().addFunctionLibrary(info.getExtensionFunctionLibrary());
         }
