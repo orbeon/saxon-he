@@ -216,14 +216,15 @@ public abstract class Instruction extends Expression implements TailCallReturner
         if (existingParams == null) {
             return assembleParams(context, actualParams);
         }
-        ParameterSet newParams = new ParameterSet(existingParams, actualParams == null ? 0 : actualParams.length);
         if (actualParams == null || actualParams.length == 0) {
-            return newParams;
+            return existingParams;
         }
+
+        ParameterSet newParams = new ParameterSet(existingParams, actualParams.length);
         for (WithParam actualParam : actualParams) {
             newParams.put(actualParam.getVariableQName(),
-                    actualParam.getSelectValue(context),
-                    false);
+                          actualParam.getSelectValue(context),
+                          false);
         }
         return newParams;
     }
