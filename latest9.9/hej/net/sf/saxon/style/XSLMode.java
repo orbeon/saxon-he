@@ -42,6 +42,7 @@ public class XSLMode extends StyleElement {
     private boolean failOnMultipleMatch = false;
     private boolean warningOnNoMatch = false;
     private boolean warningOnMultipleMatch = true;
+    private boolean traceMatching = false;
     private BuiltInRuleSet defaultRules = TextOnlyCopyRuleSet.getInstance();
 
     /**
@@ -227,7 +228,12 @@ public class XSLMode extends StyleElement {
 
                     break;
                 default:
-                    checkUnknownAttribute(atts.getNodeName(a));
+                    if (atts.getURI(a).equals(NamespaceConstant.SAXON) && atts.getLocalName(a).equals("trace")) {
+                        String att = Whitespace.trim(atts.getValue(a));
+                        traceMatching = processBooleanAttribute("saxon:trace", att);
+                    } else {
+                        checkUnknownAttribute(atts.getNodeName(a));
+                    }
                     break;
             }
         }
@@ -272,6 +278,8 @@ public class XSLMode extends StyleElement {
         if (mode.getDeclaringComponent() == null) {
             mode.makeDeclaringComponent(visibility, getContainingPackage());
         }
+
+        mode.setTraceMatching(traceMatching);
 
         getContainingPackage().getComponent(mode.getSymbolicName()).setVisibility(visibility, visibilityAtt != null);
 
