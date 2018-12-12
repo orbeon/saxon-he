@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Instrumentation {
 
-    public static final boolean ACTIVE = true;  // KILROY
+    public static final boolean ACTIVE = false;
 
     public static HashMap<String, Integer> counters = new HashMap<>();
 
