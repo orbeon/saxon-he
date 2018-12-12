@@ -17,8 +17,10 @@ import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.trace.ExpressionPresenter;
-import net.sf.saxon.trans.rules.Rule;
+import net.sf.saxon.trans.Err;
+import net.sf.saxon.trans.Mode;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.trans.rules.Rule;
 
 import java.util.Arrays;
 
@@ -79,25 +81,46 @@ public class NextMatch extends ApplyNextMatchingTemplate {
             e.setLocation(getLocation());
             throw e;
         }
-        Component.M mode = context.getCurrentMode();
-        if (mode == null) {
+        Component.M modeComponent = context.getCurrentMode();
+        if (modeComponent == null) {
             throw new AssertionError("Current mode is null");
         }
+        Mode mode = modeComponent.getActor();
 
         Item currentItem = context.getCurrentIterator().current();
 
-        Rule rule = mode.getActor().getNextMatchRule(currentItem, currentRule, context);
+        Rule rule = mode.getNextMatchRule(currentItem, currentRule, context);
         //Rule rule = controller.getRuleManager().getNextMatchHandler(currentItem, mode.getCode(), currentRule, context);
 
         if (rule == null) {             // use the default action for the node
-            mode.getActor().getBuiltInRuleSet().process(currentItem, params, tunnels, context, getLocation());
+            mode.getBuiltInRuleSet().process(currentItem, params, tunnels, context, getLocation());
+            if (mode.isTraceMatching()) {
+                controller.getConfiguration().getLogger().info(
+                        mode.getModeTitle() + " next-match on " + Err.depict(currentItem) + " using built-in template rule"
+                );
+            }
         } else if (useTailRecursion) {
             // clear all the local variables: they are no longer needed
+            if (mode.isTraceMatching()) {
+                TemplateRule nh = (TemplateRule) rule.getAction();
+                controller.getConfiguration().getLogger().info(
+                        mode.getModeTitle() + " next-match tail-call on " + Err.depict(currentItem) +
+                                " using template rule with match=\"" + nh.getMatchPattern().toShortString() +
+                                "\" on line " + nh.getLineNumber() + " of " + nh.getSystemId()
+                );
+            }
             Arrays.fill(context.getStackFrame().getStackFrameValues(), null);
-            ((XPathContextMajor) context).setCurrentComponent(mode); // bug 2818
+            ((XPathContextMajor) context).setCurrentComponent(modeComponent); // bug 2818
             return new NextMatchPackage(rule, params, tunnels, context);
         } else {
             TemplateRule nh = (TemplateRule) rule.getAction();
+            if (mode.isTraceMatching()) {
+                controller.getConfiguration().getLogger().info(
+                        mode.getModeTitle() + " next-match on " + Err.depict(currentItem) +
+                                " using template rule with match=\"" + nh.getMatchPattern().toShortString() +
+                                "\" on line " + nh.getLineNumber() + " of " + nh.getSystemId()
+                );
+            }
             nh.initialize();
             XPathContextMajor c2 = context.newContext();
             c2.setOrigin(this);
@@ -106,7 +129,7 @@ public class NextMatch extends ApplyNextMatchingTemplate {
             c2.setLocalParameters(params);
             c2.setTunnelParameters(tunnels);
             c2.setCurrentTemplateRule(rule);
-            c2.setCurrentComponent(mode); // needed in the case where next-match is called from a named template
+            c2.setCurrentComponent(modeComponent); // needed in the case where next-match is called from a named template
             nh.apply(c2);
         }
         return null;

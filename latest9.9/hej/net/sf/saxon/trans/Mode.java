@@ -57,6 +57,7 @@ public abstract class Mode extends Actor {
     public boolean mustBeUntyped = false;
     boolean hasRules = false;
     boolean bindingSlotsAllocated = false;
+    boolean traceMatching = false;
 
     private Set<? extends Accumulator> accumulators;
 
@@ -142,6 +143,17 @@ public abstract class Mode extends Actor {
         return isUnnamedMode() ? "The unnamed mode" : "Mode " + getModeName().getDisplayName();
     }
 
+    /**
+     * Switch tracing on or off
+     */
+
+    public void setTraceMatching(boolean tracing) {
+        this.traceMatching = tracing;
+    }
+
+    public boolean isTraceMatching() {
+        return traceMatching;
+    }
 
     /**
      * Get the list of accumulators declared on the xsl:mode/@use-accumulators attribute
@@ -458,10 +470,22 @@ public abstract class Mode extends Actor {
 
             if (rule == null) {             // Use the default action for the node
                 // No need to open a new stack frame!
+                if (traceMatching) {
+                    controller.getConfiguration().getLogger().info(
+                            getModeTitle() + " processing " + Err.depict(item) + " using built-in template rules"
+                    );
+                }
                 getBuiltInRuleSet().process(item, parameters, tunnelParameters, context, locationId);
 
             } else {
+
                 TemplateRule template = (TemplateRule) rule.getAction();
+                if (traceMatching) {
+                    controller.getConfiguration().getLogger().info(
+                            getModeTitle() + " processing " + Err.depict(item) + " using template rule with match=\"" +
+                                    rule.getPattern().toShortString() + "\" on line " + template.getLineNumber() + " of " + template.getSystemId()
+                    );
+                }
                 if (template != previousTemplate) {
                     // Reuse the previous stackframe unless it's a different template rule
                     previousTemplate = template;
