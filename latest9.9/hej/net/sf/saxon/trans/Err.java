@@ -137,6 +137,9 @@ public class Err {
     }
 
     public static CharSequence depictSequence(Sequence<?> seq) {
+        if (seq == null) {
+            return "(*null*)";
+        }
         try {
             GroundedValue<?> val = seq.materialize();
             if (val.getLength() == 0) {
@@ -146,7 +149,7 @@ public class Err {
             } else {
                 return depictSequenceStart(val.iterate(), 3, val.getLength());
             }
-        } catch (XPathException e) {
+        } catch (Exception e) {
             return "(*unreadable*)";
         }
     }

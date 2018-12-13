@@ -7,6 +7,8 @@
 
 package net.sf.saxon.expr.instruct;
 
+import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.lib.Logger;
 import net.sf.saxon.om.StructuredQName;
 
 import java.util.ArrayList;
@@ -100,6 +102,17 @@ public class SlotManager {
     /*@NotNull*/
     public List<StructuredQName> getVariableMap() {
         return variableMap;
+    }
+
+    /**
+     * Display the values of the variables and parameters in an XPathContext stack frame
+     * to a Logger
+     * @param context the XPathContext holding the stack frame
+     * @param logger the destination for the output
+     */
+
+    public void showStackFrame(XPathContext context, Logger logger) {
+        // Saxon-HE version does nothing
     }
 
 }

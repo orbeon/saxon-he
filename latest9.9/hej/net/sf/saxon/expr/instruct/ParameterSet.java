@@ -7,7 +7,6 @@
 
 package net.sf.saxon.expr.instruct;
 
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
@@ -78,6 +77,15 @@ public class ParameterSet {
         for (int i = 0; i < existing.used; i++) {
             put(existing.keys[i], existing.values[i], existing.typeChecked[i]);
         }
+    }
+
+    /**
+     * Get the number of parameters in the parameter set
+     * @return the number of parameters
+     */
+
+    public int size() {
+        return used;
     }
 
     /**

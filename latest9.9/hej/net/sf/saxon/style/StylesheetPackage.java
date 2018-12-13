@@ -495,7 +495,7 @@ public class StylesheetPackage extends PackageData {
      */
 
     public void allocateBinderySlots() {
-        SlotManager slotManager = new SlotManager();
+        SlotManager slotManager = getConfiguration().makeSlotManager();
         for (Component c : componentIndex.values()) {
             registerGlobalVariable(c, slotManager);
         }

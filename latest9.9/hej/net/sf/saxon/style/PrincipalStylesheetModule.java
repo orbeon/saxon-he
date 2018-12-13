@@ -906,7 +906,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
             aSet.setDeclaredStreamable(streamable);
             Expression block = Block.makeBlock(content);
             aSet.setBody(block);
-            SlotManager frame = new SlotManager();
+            SlotManager frame = getConfiguration().makeSlotManager();
             ExpressionTool.allocateSlots(block, 0, frame);
             aSet.setStackFrameMap(frame);
             aSet.getDeclaringComponent().setVisibility(vis, explicitVisibility);

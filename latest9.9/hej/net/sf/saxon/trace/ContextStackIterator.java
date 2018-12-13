@@ -84,6 +84,7 @@ public class ContextStackIterator implements Iterator<ContextStackFrame> {
             sf.setLocation(ufc.getLocation());
             sf.setFunctionName(ufc.getFunctionName());
             sf.setContextItem(context.getContextItem());
+            sf.setContext(context);
             next = getMajorCaller(context);
             return sf;
         } else if (origin instanceof UserFunctionCall) {
@@ -93,6 +94,7 @@ public class ContextStackIterator implements Iterator<ContextStackFrame> {
             sf.setLocation(ufc.getLocation());
             sf.setFunctionName(ufc.getFunctionName());
             sf.setContextItem(context.getContextItem());
+            sf.setContext(context);
             next = getMajorCaller(context);
             return sf;
         } else if (origin instanceof ApplyTemplates) {
@@ -100,6 +102,7 @@ public class ContextStackIterator implements Iterator<ContextStackFrame> {
             ApplyTemplates loc = (ApplyTemplates) origin;
             sf.setLocation(loc.getLocation());
             sf.setContextItem(context.getContextItem());
+            sf.setContext(context);
             next = getMajorCaller(context);
             return sf;
         } else if (origin instanceof CallTemplate) {
@@ -108,6 +111,7 @@ public class ContextStackIterator implements Iterator<ContextStackFrame> {
             sf.setLocation(loc.getLocation());
             sf.setTemplateName(loc.getObjectName());
             sf.setContextItem(context.getContextItem());
+            sf.setContext(context);
             next = getMajorCaller(context);
             return sf;
         } else if (origin instanceof GlobalVariable) {
@@ -117,6 +121,7 @@ public class ContextStackIterator implements Iterator<ContextStackFrame> {
             sf.setContextItem(context.getContextItem());
             sf.setVariableName(var.getVariableQName());
             sf.setComponent(var);
+            sf.setContext(context);
             next = getMajorCaller(context);
             return sf;
         } else {

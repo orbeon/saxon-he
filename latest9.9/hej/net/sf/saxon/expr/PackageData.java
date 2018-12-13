@@ -32,7 +32,7 @@ public class PackageData {
     protected KeyManager keyManager = null;
     private AccumulatorRegistry accumulatorRegistry = null;
     private List<GlobalVariable> globalVariables = new ArrayList<GlobalVariable>();
-    private SlotManager globalSlotManager = new SlotManager();
+    private SlotManager globalSlotManager;
     private int localLicenseId = -1;
     private String targetEdition;
     private boolean relocatable;
@@ -50,6 +50,7 @@ public class PackageData {
         }
         this.config = config;
         targetEdition = config.getEditionCode();
+        globalSlotManager = config.makeSlotManager();
     }
 
     /**

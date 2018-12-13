@@ -28,6 +28,7 @@ import net.sf.saxon.value.AtomicValue;
  */
 public abstract class ContextStackFrame {
 
+    private XPathContext context;
     private Location location;
     private Item contextItem;
     private Object container;
@@ -88,6 +89,26 @@ public abstract class ContextStackFrame {
     }
 
     /**
+     * Set the value of the context at this level of the context stack
+     *
+     * @param context the context as it was when this new context was created
+     */
+
+    public void setContext(XPathContext context) {
+        this.context = context;
+    }
+
+    /**
+     * Get the value of the context at this level of the context stack
+     *
+     * @return the context as it was when this new context was created
+     */
+
+    public XPathContext getContext() {
+        return context;
+    }
+
+    /**
      * Set the value of the context item at this level of the context stack
      *
      * @param contextItem the context item as it was when this new context was created
@@ -132,6 +153,8 @@ public abstract class ContextStackFrame {
             return "(" + getSystemId() + "#" + getLineNumber() + ")";
         }
     }
+
+
 
     /**
      * Subclass of ContextStackFrame representing the outermost stack frame,
@@ -210,6 +233,7 @@ public abstract class ContextStackFrame {
         public void print(Logger out) {
             out.error("  at " + (functionName == null ? "(anonymous)" : functionName.getDisplayName()) + "() " + showLocation());
         }
+
     }
 
     /**

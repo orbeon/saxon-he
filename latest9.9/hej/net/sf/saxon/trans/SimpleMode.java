@@ -1265,7 +1265,7 @@ public class SimpleMode extends Mode {
     public void allocateAllPatternSlots() {
         final List<Integer> count = new ArrayList<>(1);  // used to allow inner class to have side-effects
         count.add(0);
-        final SlotManager slotManager = new SlotManager();
+        final SlotManager slotManager = new SlotManager(); // TODO: allocate this via the Configuration
         final RuleAction slotAllocator = r -> {
             int slots = r.getPattern().allocateSlots(slotManager, 0);
             int max = Math.max(count.get(0), slots);

@@ -181,7 +181,7 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
             RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.INSTRUCTION, "xsl:accumulator-rule/select", 0);
             init = config.getTypeChecker(false).staticTypeCheck(init, accumulator.getType(), role, visitor);
             init = init.optimize(visitor, config.getDefaultContextItemStaticInfo());
-            SlotManager stackFrameMap = new SlotManager();
+            SlotManager stackFrameMap = config.makeSlotManager();
             ExpressionTool.allocateSlots(init, 0, stackFrameMap);
             accumulator.setSlotManagerForInitialValueExpression(stackFrameMap);
             checkInitialStreamability(init);
@@ -202,7 +202,7 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
                 RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.INSTRUCTION, "xsl:accumulator-rule/select", 0);
                 newValueExp = config.getTypeChecker(false).staticTypeCheck(newValueExp, accumulator.getType(), role, visitor);
                 newValueExp = newValueExp.optimize(visitor, getConfiguration().makeContextItemStaticInfo(pattern.getItemType(), false));
-                SlotManager stackFrameMap = new SlotManager();
+                SlotManager stackFrameMap = getConfiguration().makeSlotManager();
                 stackFrameMap.allocateSlotNumber(new StructuredQName("", "", "value"));
                 ExpressionTool.allocateSlots(newValueExp, 1, stackFrameMap);
                 boolean isPreDescent = !rule.isPostDescent();

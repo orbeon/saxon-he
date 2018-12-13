@@ -58,6 +58,7 @@ public class StandardErrorListener implements UnfailingErrorListener {
     private int warningCount = 0;
     private int maximumNumberOfWarnings = 25;
     private int maxOrdinaryCharacter = 255;
+    private int stackTraceDetail = 2;
     protected transient Logger logger = new StandardLogger();
 
     /**
@@ -168,6 +169,33 @@ public class StandardErrorListener implements UnfailingErrorListener {
 
     public int getMaximumNumberOfWarnings() {
         return this.maximumNumberOfWarnings;
+    }
+
+    /**
+     * Set the level of information to be included in a stack trace when a dynamic
+     * error occurs.
+     * @param level set to 0 (zero) for no stack trace; 1 (one) for a stack trace
+     *              showing the templates and functions being executed; 2 (two) to
+     *              add values of local variables and parameters (available in Saxon-EE only)
+     *              Default is the maximum level available.
+     */
+
+    public void setStackTraceDetail(int level) {
+        stackTraceDetail = level;
+    }
+
+    /**
+     * Get the level of information to be included in a stack trace when a dynamic
+     * error occurs.
+     *
+     * @return 0 (zero) for no stack trace; 1 (one) for a stack trace
+     *              showing the templates and functions being executed; 2 (two) to
+     *              add values of local variables and parameters (available in Saxon-EE only)
+     *              Default is the maximum level available.
+     */
+
+    public int getStackTraceDetail() {
+        return stackTraceDetail;
     }
 
     /**
@@ -482,7 +510,7 @@ public class StandardErrorListener implements UnfailingErrorListener {
      */
 
     protected void outputStackTrace(Logger out, XPathContext context) {
-        printStackTrace(out, context);
+        printStackTrace(context, out, stackTraceDetail);
     }
 
     /**
@@ -806,16 +834,23 @@ public class StandardErrorListener implements UnfailingErrorListener {
     /**
      * Print a stack trace to a specified output destination
      *
-     * @param out     the print stream to which the stack trace will be output
      * @param context the XPath dynamic execution context (which holds the head of a linked
      *                list of context objects, representing the execution stack)
+     * @param out     the print stream to which the stack trace will be output
+     * @param level   the level of detail: 0=none, 1=name and location of function/template,
+     *                2=values of variables
      */
 
-    public static void printStackTrace(Logger out, XPathContext context) {
-        Iterator<ContextStackFrame> iterator = new ContextStackIterator(context);
-        while (iterator.hasNext()) {
-            ContextStackFrame frame = iterator.next();
-            frame.print(out);
+    public static void printStackTrace(XPathContext context, Logger out, int level) {
+        if (level > 0) {
+            Iterator<ContextStackFrame> iterator = new ContextStackIterator(context);
+            while (iterator.hasNext()) {
+                ContextStackFrame frame = iterator.next();
+                frame.print(out);
+                if (level > 1) {
+                    context.getStackFrame().getStackFrameMap().showStackFrame(context, out);
+                }
+            }
         }
     }
 
