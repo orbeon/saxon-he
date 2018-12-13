@@ -10,6 +10,7 @@ package net.sf.saxon.value;
 import net.sf.saxon.expr.sort.AtomicMatchKey;
 import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.om.SequenceTool;
+import net.sf.saxon.serialize.charcode.UTF16CharacterSet;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.AtomicType;
@@ -347,7 +348,11 @@ public class Base64BinaryValue extends AtomicValue implements AtomicMatchKey, Co
     private static int decodeChar(char c) throws XPathException {
         int d = c < 128 ? decoding[c] : -1;
         if (d == -1) {
-            throw new XPathException("Invalid character '" + c + "' in base64 value", "FORG0001");
+            if (UTF16CharacterSet.isSurrogate(c)) {
+                throw new XPathException("Invalid character (surrogate pair) in base64 value", "FORG0001");
+            } else {
+                throw new XPathException("Invalid character '" + c + "' in base64 value", "FORG0001");
+            }
         }
         return d;
     }
