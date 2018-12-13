@@ -13,7 +13,9 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.*;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.WeekFields;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -526,15 +528,8 @@ public class DateValue extends GDateValue implements Comparable {
      */
 
     public static int getWeekNumber(int year, int month, int day) {
-        int d = getDayWithinYear(year, month, day);
-        int firstDay = getDayOfWeek(year, 1, 1);
-        if (firstDay > 4 && (firstDay + d) <= 8) {
-            // days before week one are part of the last week of the previous year (52 or 53)
-            return getWeekNumber(year - 1, 12, 31);
-        }
-        int inc = firstDay < 5 ? 1 : 0;   // implements the First Thursday rule
-        return ((d + firstDay - 2) / 7) + inc;
-
+        LocalDate date = LocalDate.of(year, month, day);
+        return date.get(WeekFields.ISO.weekOfWeekBasedYear());
     }
 
     /**
