@@ -882,22 +882,6 @@ public class ExpressionTool {
                 nextFree = allocateSlots(o.getChildExpression(), nextFree, frame);
             }
         }
-        //#if PE==true || EE==true
-//        if (exp instanceof NextIteration) {
-//            WithParam.setSlotNumbers(((NextIteration)exp).getParameters());
-//        }
-        if (exp instanceof IterateInstr) {
-            nextFree = ((IterateInstr) exp).allocateParameterSlots(nextFree);
-        }
-//#endif
-//#if PE==true || EE==true
-//        if (exp instanceof NextIteration) {
-//            WithParam.setSlotNumbers(((NextIteration)exp).getParameters());
-//        }
-        if (exp instanceof IterateInstr) {
-            nextFree = ((IterateInstr) exp).allocateParameterSlots(nextFree);
-        }
-//#endif
         return nextFree;
 
         // Note, we allocate a distinct slot to each range variable, even if the

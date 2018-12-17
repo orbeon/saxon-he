@@ -9,15 +9,18 @@ package net.sf.saxon.expr.instruct;
 
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.expr.*;
-import net.sf.saxon.expr.parser.*;
+import net.sf.saxon.expr.parser.ContextItemStaticInfo;
+import net.sf.saxon.expr.parser.ExpressionTool;
+import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.lib.TraceListener;
-import net.sf.saxon.om.*;
+import net.sf.saxon.om.FocusIterator;
+import net.sf.saxon.om.Item;
+import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.SequenceType;
-
-import java.util.HashMap;
 
 /**
  * An IterateInstr is the compiled form of an xsl:iterate instruction
@@ -195,43 +198,6 @@ public final class IterateInstr extends Instruction implements ContextSwitchingE
             return found;
         }
     }
-
-    /**
-     * Ensure that slots are allocated to parameters and with-param instructions.
-     * This is normally done during compilation, but not in the case of an xsl:iterate
-     * instruction constructed dynamically to support xsl:copy/@on-empty
-     * @param nextFree the next slot available to be allocated, before allocating slots to this expression
-     * @return the next slot available to be allocated, after allocating slots to this expression
-     */
-
-    public int allocateParameterSlots(int nextFree) {
-        HashMap<StructuredQName, Integer> slotMap = new HashMap<>();
-        for (Operand o : getInitiallyExp().operands()) {
-            LocalParam b = (LocalParam)o.getChildExpression();
-            if (b.getLocalSlotNumber() >= 0) {
-                slotMap.put(b.getVariableQName(), b.getLocalSlotNumber());
-            } else {
-                int slot = nextFree++;
-                b.setSlotNumber(slot);
-                slotMap.put(b.getVariableQName(), slot);
-            }
-        }
-        setWithParamSlots(getActionExpression(), slotMap);
-        return nextFree;
-    }
-
-    private static void setWithParamSlots(Expression exp, HashMap<StructuredQName, Integer> slotMap) {
-        if (exp instanceof NextIteration) {
-            for (WithParam p : ((NextIteration) exp).getParameters()) {
-                p.setSlotNumber(slotMap.get(p.getVariableQName()));
-            }
-        } else if (!(exp instanceof IterateInstr)) {
-            for (Operand o : exp.operands()) {
-                setWithParamSlots(o.getChildExpression(), slotMap);
-            }
-        } // Else no action - bug 2561
-    }
-
 
     /**
      * Determine the data type of the items returned by this expression
