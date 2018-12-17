@@ -242,7 +242,10 @@ public class DotNetPlatform implements Platform {
                     } else {
                         return r2;
                     }
-                } else if (r instanceof StreamSource && !isSame(r, input)) {
+                } else if (r instanceof StreamSource) {
+                    if(isSame(r, input)) {
+                        return input;
+                    }
                     Source r2 = getParserSource(pipe, (StreamSource) r, validation, dtdValidation, stripspace, depth+1);
                     AugmentedSource as = AugmentedSource.makeAugmentedSource(r2);
                     as.setPleaseCloseAfterUse(true);
