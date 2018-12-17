@@ -23,7 +23,7 @@ public interface ExtensionFunction {
      *
      * @return the name of the function, as a QName.
      */
-    public QName getName();
+    QName getName();
 
     /**
      * Declare the result type of the external function
@@ -31,7 +31,7 @@ public interface ExtensionFunction {
      * @return the result type of the external function
      */
 
-    public SequenceType getResultType();
+    SequenceType getResultType();
 
     /**
      * Declare the types of the arguments
@@ -40,7 +40,7 @@ public interface ExtensionFunction {
      *         representing the expected types of the arguments
      */
 
-    public SequenceType[] getArgumentTypes();
+    SequenceType[] getArgumentTypes();
 
     /**
      * Call the function. The implementation of this method represents the body of the external function.
@@ -55,5 +55,5 @@ public interface ExtensionFunction {
      */
 
     /*@NotNull*/
-    public XdmValue call(XdmValue[] arguments) throws SaxonApiException;
+    XdmValue call(XdmValue[] arguments) throws SaxonApiException;
 }
