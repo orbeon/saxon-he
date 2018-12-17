@@ -180,7 +180,9 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
 
     public void endDocument() {
         namespaceStack.pop();
-        config.getDefaultXsltCompilerInfo().setPackageLibrary(packageLibrary);
+        if (config != null) {
+            config.getDefaultXsltCompilerInfo().setPackageLibrary(packageLibrary);
+        }
     }
 
     public void startPrefixMapping(String prefix, String uri) {
