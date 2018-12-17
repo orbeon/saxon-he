@@ -63,6 +63,32 @@ public final class Navigator {
     }
 
     /**
+     * Get the string value of an inherited attribute of a given element, given the URI and
+     * local part of the attribute name. If the element does not have such an attribute, go up
+     * the ancestor axis to find such an attribute
+     *
+     * @param element   the element where the search should start
+     * @param uri       The namespace URI of the attribute name.
+     *                  The "no namespace" case is represented as an empty string.
+     * @param localName The local part of the attribute name.
+     * @return the attribute value, or null if the attribute is not present on any ancestor
+     * @since 9.9
+     */
+
+    public static String getInheritedAttributeValue(NodeInfo element, String uri, String localName) {
+        NodeInfo node = element;
+        while (node != null) {
+            String value = node.getAttributeValue(uri, localName);
+            if (value == null) {
+                node = node.getParent();
+            } else {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Helper method to get the name of a node as a structuredQName. Used from bytecode
      * @param node the node
      * @return the name of the node if it has a name, or null otherwise
