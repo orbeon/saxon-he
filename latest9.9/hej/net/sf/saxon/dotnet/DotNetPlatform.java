@@ -150,6 +150,14 @@ public class DotNetPlatform implements Platform {
 
     public Source getParserSource(PipelineConfiguration pipe, StreamSource input, int validation, boolean dtdValidation,
                                   int stripspace) {
+            return getParserSource(pipe,input, validation, dtdValidation, stripspace, 0);
+    }
+
+    private Source getParserSource(PipelineConfiguration pipe, StreamSource input, int validation, boolean dtdValidation,
+                                      int stripspace, int depth) {
+        if(depth > 2) {
+            return input;
+        }
         Configuration config = pipe.getConfiguration();
         boolean preferJaxp = config.getConfigurationProperty(Feature.PREFER_JAXP_PARSER);
         InputStream is = input.getInputStream();
@@ -229,13 +237,13 @@ public class DotNetPlatform implements Platform {
                 } else if (r instanceof AugmentedSource) {
                     Source r2 = ((AugmentedSource) r).getContainedSource();
                     if (r2 instanceof StreamSource) {
-                        r2 = getParserSource(pipe, (StreamSource) r2, validation, dtdValidation, stripspace);
+                        r2 = getParserSource(pipe, (StreamSource) r2, validation, dtdValidation, stripspace, depth+1);
                         return r2;
                     } else {
                         return r2;
                     }
-                } else if (r instanceof StreamSource && r != input) {
-                    Source r2 = getParserSource(pipe, (StreamSource) r, validation, dtdValidation, stripspace);
+                } else if (r instanceof StreamSource && !isSame(r, input)) {
+                    Source r2 = getParserSource(pipe, (StreamSource) r, validation, dtdValidation, stripspace, depth+1);
                     AugmentedSource as = AugmentedSource.makeAugmentedSource(r2);
                     as.setPleaseCloseAfterUse(true);
                     return as;
@@ -247,6 +255,33 @@ public class DotNetPlatform implements Platform {
             }
         }
         return input;
+    }
+
+    private static boolean isSame(Source first, Source second){
+        if(first == second) {
+            return true;
+        }
+
+
+        if((first instanceof StreamSource) && (second instanceof StreamSource)) {
+            StreamSource ssFirst = (StreamSource)first;
+            StreamSource ssSecond = (StreamSource)second;
+
+            if(ssFirst.getInputStream() != null && ssSecond.getInputStream() != null) {
+                return ssFirst.getInputStream() == ssSecond.getInputStream();
+            }
+            if(ssFirst.getReader() != null && ssSecond.getReader() != null) {
+                return ssFirst.getReader() == ssSecond.getReader();
+            }
+
+            if(ssFirst.getSystemId()!= null && ssSecond.getSystemId() != null ) {
+                return ssFirst.getSystemId().equals(ssSecond.getSystemId());
+            }
+
+
+        }
+        return false;
+
     }
 
     /**
