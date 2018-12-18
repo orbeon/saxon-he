@@ -10,9 +10,11 @@ package net.sf.saxon.tree.tiny;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.expr.parser.Location;
+import net.sf.saxon.om.AtomicSequence;
+import net.sf.saxon.om.AxisInfo;
+import net.sf.saxon.om.CopyOptions;
+import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.pattern.NameTest;
-import net.sf.saxon.z.IntHashMap;
-import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
@@ -22,8 +24,11 @@ import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.type.Untyped;
 import net.sf.saxon.value.UntypedAtomicValue;
+import net.sf.saxon.z.IntHashMap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 
 /**

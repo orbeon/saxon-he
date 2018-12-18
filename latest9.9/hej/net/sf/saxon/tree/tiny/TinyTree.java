@@ -18,6 +18,7 @@ import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
 import net.sf.saxon.z.IntArraySet;
+import net.sf.saxon.z.IntHashMap;
 import net.sf.saxon.z.IntHashSet;
 import net.sf.saxon.z.IntSet;
 
@@ -173,6 +174,8 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
     private NodeInfo copiedFrom;
 
     protected List<GraftedElement> externalNodes;
+
+    protected IntHashMap<String> knownBaseUris;
 
     /**
      * Temporary flag introduced in Saxon 9.8.0.5 to enable or disable fast-path code for copying

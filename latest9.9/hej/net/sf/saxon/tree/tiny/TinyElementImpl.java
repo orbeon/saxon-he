@@ -18,6 +18,7 @@ import net.sf.saxon.tree.util.NamespaceIterator;
 import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.AtomicValue;
+import net.sf.saxon.z.IntHashMap;
 
 
 /**
@@ -59,8 +60,16 @@ public class TinyElementImpl extends TinyParentNodeImpl {
      */
 
     public String getBaseURI() {
-        return Navigator.getBaseURI(this,
-                                    n -> ((TinyElementImpl) n).getTree().isTopWithinEntity(((TinyElementImpl) n).getNodeNumber()));
+        if (tree.knownBaseUris == null) {
+            tree.knownBaseUris = new IntHashMap<>();
+        }
+        String uri = tree.knownBaseUris.get(nodeNr);
+        if (uri == null) {
+            uri = Navigator.getBaseURI(this,
+                                       n -> tree.isTopWithinEntity(((TinyElementImpl) n).getNodeNumber()));
+            tree.knownBaseUris.put(nodeNr, uri);
+        }
+        return uri;
     }
 
     /**
@@ -163,9 +172,9 @@ public class TinyElementImpl extends TinyParentNodeImpl {
 
     public boolean hasUniformNamespaces() {
         int ns = tree.beta[nodeNr];
+        TinyElementImpl anc = this;
         while (ns == -1) {
-            TinyElementImpl anc = this;
-            TinyNodeImpl parent = getParent();
+            TinyNodeImpl parent = anc.getParent();
             if (parent instanceof TinyDocumentImpl) {
                 return !tree.usesNamespaces;
             } else {
