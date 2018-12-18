@@ -848,7 +848,7 @@ public class StandardErrorListener implements UnfailingErrorListener {
                 ContextStackFrame frame = iterator.next();
                 frame.print(out);
                 if (level > 1) {
-                    context.getStackFrame().getStackFrameMap().showStackFrame(context, out);
+                    context.getStackFrame().getStackFrameMap().showStackFrame(frame.getContext(), out);
                 }
             }
         }
