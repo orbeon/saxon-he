@@ -398,7 +398,7 @@ public final class ComplexContentOutputter extends SequenceReceiver {
      */
 
     public void attribute(NodeName attName, SimpleType typeCode, CharSequence value, Location locationId, int properties) throws XPathException {
-        //System.err.println("Write attribute " + nameCode + "=" + value + " to Outputter " + this);
+        //System.err.println("Write attribute " + attName + "=" + value + " to Outputter " + this);
         if (level >= 0 && state != StartTag) {
             // The complexity here is in identifying the right error message and error code
 
