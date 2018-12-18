@@ -640,6 +640,34 @@ public class XPathParser {
         if (e != null) {
             return e;
         }
+        // Short-circuit for a single-token expression
+        int peek = t.peekAhead();
+        if (peek == Token.EOF || peek == Token.COMMA || peek == Token.RPAR || peek == Token.RSQB) {
+            switch (t.currentToken) {
+                case Token.STRING_LITERAL:
+                    return parseStringLiteral(true);
+                case Token.NUMBER:
+                    return parseNumericLiteral(true);
+                case Token.NAME:
+                case Token.PREFIX:
+                case Token.SUFFIX:
+                case Token.STAR:
+                    return parseBasicStep(true);
+                case Token.DOT:
+                    nextToken();
+                    Expression cie = new ContextItemExpression();
+                    setLocation(cie);
+                    return cie;
+                case Token.DOTDOT:
+                    nextToken();
+                    Expression pne = new AxisExpression(AxisInfo.PARENT, null);
+                    setLocation(pne);
+                    return pne;
+                case Token.EOF:
+                    // fall through
+                default:
+            }
+        }
         switch (t.currentToken) {
             case Token.EOF:
                 grumble("Expected an expression, but reached the end of the input");
