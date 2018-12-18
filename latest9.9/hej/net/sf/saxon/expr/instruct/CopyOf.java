@@ -49,7 +49,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
     private boolean rejectDuplicateAttributes;
     //private boolean readOnce = false;
     private boolean validating;
-    private boolean copyLineNumbers = true;
+    private boolean copyLineNumbers = false;
     private boolean copyForUpdate = false;
     private boolean isSchemaAware = true;
 
