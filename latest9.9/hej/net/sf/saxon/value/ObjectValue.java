@@ -8,6 +8,7 @@
 package net.sf.saxon.value;
 
 import net.sf.saxon.om.Genre;
+import net.sf.saxon.trans.Err;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.TypeHierarchy;
 
@@ -173,6 +174,14 @@ public class ObjectValue<T> implements ExternalObject<T> {
         return value.hashCode();
     }
 
-
+    @Override
+    public String toShortString() {
+        String v = value.toString();
+        if (v.startsWith(value.getClass().getName())) {
+            return v;
+        } else {
+            return "(" + value.getClass().getSimpleName() + ")" + Err.truncate30(value.toString());
+        }
+    }
 }
 
