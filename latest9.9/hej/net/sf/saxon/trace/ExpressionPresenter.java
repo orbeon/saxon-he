@@ -329,7 +329,7 @@ public class ExpressionPresenter {
 
     public void emitRetainedStaticContext(RetainedStaticContext sc, RetainedStaticContext parentSC) {
         try {
-            if (!relocatable && sc.getStaticBaseUri() != null && (parentSC == null || !sc.getStaticBaseUri().equals(parentSC.getStaticBaseUri()))) {
+            if (!((ExportOptions) options).suppressStaticContext && !relocatable && sc.getStaticBaseUri() != null && (parentSC == null || !sc.getStaticBaseUri().equals(parentSC.getStaticBaseUri()))) {
                 emitAttribute("baseUri", sc.getStaticBaseUriString());
             }
             if (!sc.getDefaultCollationName().equals(NamespaceConstant.CODEPOINT_COLLATION_URI) &&
@@ -343,7 +343,7 @@ public class ExpressionPresenter {
             if (!NamespaceConstant.FN.equals(sc.getDefaultFunctionNamespace())) {
                 emitAttribute("defaultFunctionNS", sc.getDefaultFunctionNamespace());
             }
-            if (parentSC == null || !sc.declaresSameNamespaces(parentSC)) {
+            if (!((ExportOptions)options).suppressStaticContext && (parentSC == null || !sc.declaresSameNamespaces(parentSC))) {
                 FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.C256);
                 for (Iterator<String> iter = sc.iteratePrefixes(); iter.hasNext(); ) {
                     String p = iter.next();
@@ -678,6 +678,7 @@ public class ExpressionPresenter {
         public Map<Component, Integer> componentMap;
         public Map<StylesheetPackage, Integer> packageMap;
         public boolean explaining;
+        public boolean suppressStaticContext;
     }
 }
 
