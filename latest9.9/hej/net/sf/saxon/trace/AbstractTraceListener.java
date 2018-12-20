@@ -34,9 +34,9 @@ import java.util.Iterator;
  */
 
 public abstract class AbstractTraceListener implements TraceListener2 {
-    private int indent = 0;
+    protected int indent = 0;
     private int detail = 2; // none=0; low=1; normal=2; high=3
-    private Logger out = new StandardLogger();
+    protected Logger out = new StandardLogger();
     /*@NotNull*/ private static StringBuffer spaceBuffer = new StringBuffer("                ");
 
     /**
@@ -221,7 +221,7 @@ public abstract class AbstractTraceListener implements TraceListener2 {
      * Get n spaces
      */
 
-    private static String spaces(int n) {
+    protected static String spaces(int n) {
         while (spaceBuffer.length() < n) {
             spaceBuffer.append(AbstractTraceListener.spaceBuffer);
         }

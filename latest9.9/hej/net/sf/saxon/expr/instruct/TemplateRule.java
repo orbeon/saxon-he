@@ -17,17 +17,20 @@ import net.sf.saxon.pattern.Pattern;
 import net.sf.saxon.style.Compilation;
 import net.sf.saxon.style.ComponentDeclaration;
 import net.sf.saxon.trace.ExpressionPresenter;
+import net.sf.saxon.trace.InstructionInfo;
 import net.sf.saxon.trace.LocationKind;
 import net.sf.saxon.trans.UncheckedXPathException;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.trans.rules.Rule;
 import net.sf.saxon.trans.rules.RuleTarget;
+import net.sf.saxon.tree.jiter.MonoIterator;
 import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.SequenceType;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -40,7 +43,7 @@ import java.util.List;
  * <p>From Saxon 9.8, a subclass is used in Saxon-EE</p>
  */
 
-public class TemplateRule implements RuleTarget, Location, ExpressionOwner {
+public class TemplateRule implements RuleTarget, Location, ExpressionOwner, InstructionInfo {
 
     // The body of the template is represented by an expression,
     // which is responsible for any type checking that's needed.
@@ -500,6 +503,21 @@ public class TemplateRule implements RuleTarget, Location, ExpressionOwner {
 
     public void setChildExpression(Expression expr) {
         setBody(expr);
+    }
+
+    @Override
+    public StructuredQName getObjectName() {
+        return StandardNames.getStructuredQName(StandardNames.XSL_TEMPLATE);
+    }
+
+    @Override
+    public Object getProperty(String name) {
+        return name.equals("match") ? getMatchPattern().toShortString() : null;
+    }
+
+    @Override
+    public Iterator<String> getProperties() {
+        return new MonoIterator<>("match");
     }
 
 

@@ -17,7 +17,6 @@ import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.trace.ExpressionPresenter;
-import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.Mode;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.trans.rules.Rule;
@@ -94,33 +93,13 @@ public class NextMatch extends ApplyNextMatchingTemplate {
 
         if (rule == null) {             // use the default action for the node
             mode.getBuiltInRuleSet().process(currentItem, params, tunnels, context, getLocation());
-            if (mode.isTraceMatching()) {
-                controller.getConfiguration().getLogger().info(
-                        mode.getModeTitle() + " next-match on " + Err.depict(currentItem) + " using built-in template rule"
-                );
-            }
         } else if (useTailRecursion) {
             // clear all the local variables: they are no longer needed
-            if (mode.isTraceMatching()) {
-                TemplateRule nh = (TemplateRule) rule.getAction();
-                controller.getConfiguration().getLogger().info(
-                        mode.getModeTitle() + " next-match tail-call on " + Err.depict(currentItem) +
-                                " using template rule with match=\"" + nh.getMatchPattern().toShortString() +
-                                "\" on line " + nh.getLineNumber() + " of " + nh.getSystemId()
-                );
-            }
             Arrays.fill(context.getStackFrame().getStackFrameValues(), null);
             ((XPathContextMajor) context).setCurrentComponent(modeComponent); // bug 2818
             return new NextMatchPackage(rule, params, tunnels, context);
         } else {
             TemplateRule nh = (TemplateRule) rule.getAction();
-            if (mode.isTraceMatching()) {
-                controller.getConfiguration().getLogger().info(
-                        mode.getModeTitle() + " next-match on " + Err.depict(currentItem) +
-                                " using template rule with match=\"" + nh.getMatchPattern().toShortString() +
-                                "\" on line " + nh.getLineNumber() + " of " + nh.getSystemId()
-                );
-            }
             nh.initialize();
             XPathContextMajor c2 = context.newContext();
             c2.setOrigin(this);
@@ -229,5 +208,7 @@ public class NextMatch extends ApplyNextMatchingTemplate {
     public String getStreamerName() {
         return "NextMatch";
     }
+
+
 }
 

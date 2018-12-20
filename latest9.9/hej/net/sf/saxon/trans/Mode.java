@@ -24,6 +24,7 @@ import net.sf.saxon.lib.TraceListener;
 import net.sf.saxon.lib.TraceListener2;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trace.ExpressionPresenter;
+import net.sf.saxon.trace.ModeTraceListener;
 import net.sf.saxon.trans.rules.*;
 import net.sf.saxon.tree.iter.LookaheadIterator;
 import net.sf.saxon.type.BuiltInAtomicType;
@@ -57,7 +58,7 @@ public abstract class Mode extends Actor {
     public boolean mustBeUntyped = false;
     boolean hasRules = false;
     boolean bindingSlotsAllocated = false;
-    boolean traceMatching = false;
+    boolean modeTracing = false;
 
     private Set<? extends Accumulator> accumulators;
 
@@ -147,12 +148,12 @@ public abstract class Mode extends Actor {
      * Switch tracing on or off
      */
 
-    public void setTraceMatching(boolean tracing) {
-        this.traceMatching = tracing;
+    public void setModeTracing(boolean tracing) {
+        this.modeTracing = tracing;
     }
 
-    public boolean isTraceMatching() {
-        return traceMatching;
+    public boolean isModeTracing() {
+        return modeTracing;
     }
 
     /**
@@ -403,11 +404,19 @@ public abstract class Mode extends Actor {
             Location locationId)
             throws XPathException {
         Controller controller = context.getController();
-        boolean tracing = controller.isTracing();
+        boolean tracing = modeTracing || controller.isTracing();
         PipelineConfiguration pipe = context.getReceiver().getPipelineConfiguration();
         SequenceIterator iterator = context.getCurrentIterator();
         TailCall tc = null;
-        TraceListener traceListener = tracing ? controller.getTraceListener() : null;
+        TraceListener traceListener = null;
+        if (tracing) {
+            traceListener = controller.getTraceListener();
+            if (traceListener == null) {
+                traceListener = new ModeTraceListener();
+                controller.setTraceListener(traceListener);
+                traceListener.open(controller);
+            }
+        }
 
         // Iterate over this sequence
 
@@ -470,22 +479,22 @@ public abstract class Mode extends Actor {
 
             if (rule == null) {             // Use the default action for the node
                 // No need to open a new stack frame!
-                if (traceMatching) {
-                    controller.getConfiguration().getLogger().info(
-                            getModeTitle() + " processing " + Err.depict(item) + " using built-in template rules"
-                    );
-                }
+//                if (modeTracing) {
+//                    controller.getConfiguration().getLogger().info(
+//                            getModeTitle() + " processing " + Err.depict(item) + " using built-in template rules"
+//                    );
+//                }
                 getBuiltInRuleSet().process(item, parameters, tunnelParameters, context, locationId);
 
             } else {
 
                 TemplateRule template = (TemplateRule) rule.getAction();
-                if (traceMatching) {
-                    controller.getConfiguration().getLogger().info(
-                            getModeTitle() + " processing " + Err.depict(item) + " using template rule with match=\"" +
-                                    rule.getPattern().toShortString() + "\" on line " + template.getLineNumber() + " of " + template.getSystemId()
-                    );
-                }
+//                if (modeTracing) {
+//                    controller.getConfiguration().getLogger().info(
+//                            getModeTitle() + " processing " + Err.depict(item) + " using template rule with match=\"" +
+//                                    rule.getPattern().toShortString() + "\" on line " + template.getLineNumber() + " of " + template.getSystemId()
+//                    );
+//                }
                 if (template != previousTemplate) {
                     // Reuse the previous stackframe unless it's a different template rule
                     previousTemplate = template;
@@ -497,12 +506,18 @@ public abstract class Mode extends Actor {
                 context.setCurrentTemplateRule(rule);
                 if (tracing) {
                     traceListener.startCurrentItem(item);
+                    if (modeTracing) {
+                        traceListener.enter(template, context);
+                    }
                     tc = template.applyLeavingTail(context);
                     if (tc != null) {
                         // disable tail call optimization while tracing
                         do {
                             tc = tc.processLeavingTail();
                         } while (tc != null);
+                    }
+                    if (modeTracing) {
+                        traceListener.leave(template);
                     }
                     traceListener.endCurrentItem(item);
                 } else {

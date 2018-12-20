@@ -6486,6 +6486,7 @@ latest9.9/hej/net/sf/saxon/trace/ExpressionPresenter.java svn_eol_002dstyle=nati
 latest9.9/hej/net/sf/saxon/trace/InstructionInfo.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/trace/Instrumentation.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/trace/LocationKind.java svn_eol_002dstyle=native
+latest9.9/hej/net/sf/saxon/trace/ModeTraceListener.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/trace/TimingCodeInjector.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/trace/TimingTraceListener.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/trace/TraceCodeInjector.java svn_eol_002dstyle=native

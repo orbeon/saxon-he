@@ -279,7 +279,7 @@ public class XSLMode extends StyleElement {
             mode.makeDeclaringComponent(visibility, getContainingPackage());
         }
 
-        mode.setTraceMatching(traceMatching);
+        mode.setModeTracing(traceMatching);
 
         getContainingPackage().getComponent(mode.getSymbolicName()).setVisibility(visibility, visibilityAtt != null);
 

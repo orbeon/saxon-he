@@ -251,8 +251,11 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
             evaluator = ExpressionTool.eagerEvaluator(getBody());
 //        } else if ((getBody().getSpecialProperties() & StaticProperty.ALL_NODES_NEWLY_CREATED) != 0) {
 //            evaluationMode = ExpressionTool.PROCESS;
+//        } else if (getFunctionName().getLocalPart().equals("check-syntax-primary")) {  // KILROY
+//            evaluator = ExpressionTool.eagerEvaluator(getBody());
         } else {
             evaluator = ExpressionTool.lazyEvaluator(getBody(), true);
+            //evaluator = ExpressionTool.eagerEvaluator(getBody());
         }
     }
 

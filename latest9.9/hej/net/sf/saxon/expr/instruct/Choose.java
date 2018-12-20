@@ -891,10 +891,11 @@ public class Choose extends Instruction implements ConditionalInstruction {
     public TailCall processLeavingTail(XPathContext context) throws XPathException {
         int i = choose(context);
         if (i >= 0) {
-            if (getAction(i) instanceof TailCallReturner) {
-                return ((TailCallReturner) getAction(i)).processLeavingTail(context);
+            Expression action = getAction(i);
+            if (action instanceof TailCallReturner) {
+                return ((TailCallReturner) action).processLeavingTail(context);
             } else {
-                getAction(i).process(context);
+                action.process(context);
                 return null;
             }
         }

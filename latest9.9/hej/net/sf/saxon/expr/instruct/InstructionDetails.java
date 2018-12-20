@@ -7,6 +7,7 @@
 
 package net.sf.saxon.expr.instruct;
 
+import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.om.StructuredQName;
@@ -30,6 +31,14 @@ public final class InstructionDetails implements InstructionInfo {
     private HashMap<String, Object> properties = new HashMap<String, Object>(5);
 
     public InstructionDetails() {
+    }
+
+    public InstructionDetails(Expression expr) {
+        setConstructType(expr.getConstructType());
+        setLineNumber(expr.getLocation().getLineNumber());
+        setSystemId(expr.getLocation().getSystemId());
+        setColumnNumber(expr.getLocation().getColumnNumber());
+        setProperty("name", expr.getExpressionName());
     }
 
     /**
