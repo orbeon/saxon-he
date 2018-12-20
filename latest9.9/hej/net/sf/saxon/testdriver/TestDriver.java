@@ -74,6 +74,8 @@ public abstract class TestDriver {
     protected boolean isAltova = false;
     protected Map<String, Integer> failSummary = new TreeMap<>();
     protected boolean quiet = false;
+    protected String xxCompilerLocation;
+    protected XsltExecutable xxCompiler;
 
     static Set<String> unsharedEnvironments = new HashSet<>();
     static {
@@ -219,6 +221,11 @@ public abstract class TestDriver {
             // Set optimization flags
             if (args[i].startsWith("-opt:")) {
                 optimizerFlags = argValue;
+            }
+            // Use the XSLT-in-XSLT compiler for generating export files. The option
+            // gives the location of the compiler stylesheet
+            if (args[i].startsWith("-XX:")) {
+                xxCompilerLocation = argValue;
             }
         }
         if (resultsDoc == null) {

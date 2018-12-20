@@ -138,7 +138,7 @@ public class Environment implements URIResolver {
             throws SaxonApiException {
         Environment environment = new Environment();
         String name;
-        name = ((XdmNode) env).attribute("name");
+        name = env.attribute("name");
         if (name != null && !driver.quiet) {
             System.err.println("Loading environment " + name);
         }
@@ -279,12 +279,23 @@ public class Environment implements URIResolver {
         // use the XSLT processor version associated with the stylesheet/@version attribute
         for (XdmItem stylesheet : xpc.evaluate("stylesheet[not(@role='secondary')]", env)) {
             String fileName = ((XdmNode) stylesheet).attribute("file");
-            Source styleSource = new StreamSource(((XdmNode) env).getBaseURI().resolve(fileName).toString());
+            Source styleSource = new StreamSource(env.getBaseURI().resolve(fileName).toString());
             try {
                 if (driver.export) {
                     if (driver.runWithJS) {
                         String sourceFile = env.getBaseURI().resolve(fileName).toString();
                         environment.exportedStylesheet = driver.exportStylesheet(environment.xsltCompiler, sourceFile);
+                    } else if (driver.xxCompilerLocation != null) {
+                        if (driver.xxCompiler == null) {
+                            XsltCompiler c = driver.driverProc.newXsltCompiler();
+                            driver.xxCompiler = c.compile(new StreamSource(new File(driver.xxCompilerLocation)));
+                        }
+                        File exportFile = new File(driver.resultsDir + "/export/" + name + ".sef");
+                        Xslt30Transformer transformer = driver.xxCompiler.load30();
+                        transformer.setInitialMode(new QName("compile-complete"));
+                        Serializer serializer = driver.driverProc.newSerializer(exportFile);
+                        transformer.applyTemplates(styleSource, serializer);
+                        environment.xsltExecutable = environment.xsltCompiler.loadExecutablePackage(exportFile.toURI());
                     } else {
                         File exportFile = new File(driver.resultsDir + "/export/" + name + ".sef");
                         XsltPackage compiledPack = environment.xsltCompiler.compilePackage(styleSource);
@@ -893,9 +904,9 @@ public class Environment implements URIResolver {
                 }
             }
 
-            String href = ((XdmNode) source).attribute("file");
-            String select = ((XdmNode) source).attribute("select");
-            String xinc = ((XdmNode) source).attribute("xinclude");
+            String href = source.attribute("file");
+            String select = source.attribute("select");
+            String xinc = source.attribute("xinclude");
             if ("true".equals(streaming)) {
                 if (".".equals(role)) {
                     if (href == null) {
@@ -935,10 +946,10 @@ public class Environment implements URIResolver {
                 StringReader stringReader = null;
                 String baseUri = null;
                 if (href != null) {
-                    URI fileLoc = ((XdmNode) env).getBaseURI().resolve(href);
+                    URI fileLoc = env.getBaseURI().resolve(href);
                     baseUri = fileLoc.toString();
                     if (fileLoc.getScheme().equals("file")) {
-                        file = new File(((XdmNode) env).getBaseURI().resolve(href));
+                        file = new File(env.getBaseURI().resolve(href));
                         if (res.uri == null) {
                             res.uri = file.toURI().toString();
                         }
@@ -964,7 +975,7 @@ public class Environment implements URIResolver {
                     // content is inline in the catalog
                     baseUri = res.uri;
                     if (res.uri == null) {
-                        baseUri = ((XdmNode) env).getBaseURI().toString();
+                        baseUri = env.getBaseURI().toString();
                     }
                     String content = xpc.evaluate("string(content)", source).toString();
                     stringReader = new StringReader(content);

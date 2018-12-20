@@ -57,7 +57,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
     protected static void usage() {
         System.err.println("java com.saxonica.testdriver.Xslt30TestSuiteDriver[HE] testsuiteDir catalog [-o:resultsdir] [-s:testSetName]" +
                 " [-t:testNamePattern] [-bytecode:on|off|debug] [-export] [-tree] [-lang] [-save] [-streaming:off|std|ext]" +
-                " [-xt30:on] [-T] [-js]");
+                " [-xt30:on] [-T] [-js] [-XX:compiler-location]");
     }
 
     @Override
@@ -922,8 +922,19 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
     protected XsltExecutable exportStylesheet(String testName, String testSetName, XsltCompiler compiler, XsltExecutable sheet, Source styleSource) throws SaxonApiException {
         try {
             File exportFile = new File(resultsDir + "/export/" + testSetName + "/" + testName + ".sef");
-            XsltPackage compiledPack = compiler.compilePackage(styleSource);
-            compiledPack.save(exportFile);
+            if (xxCompilerLocation != null) {
+                if (xxCompiler == null) {
+                    XsltCompiler c = driverProc.newXsltCompiler();
+                    xxCompiler = c.compile(new StreamSource(new File(xxCompilerLocation)));
+                }
+                Xslt30Transformer transformer = xxCompiler.load30();
+                transformer.setInitialMode(new QName("compile-complete"));
+                Serializer serializer = driverProc.newSerializer(exportFile);
+                transformer.applyTemplates(styleSource, serializer);
+            } else {
+                XsltPackage compiledPack = compiler.compilePackage(styleSource);
+                compiledPack.save(exportFile);
+            }
             sheet = reloadExportedStylesheet(compiler, exportFile);
         } catch (SaxonApiException e) {
             try {
