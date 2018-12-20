@@ -1129,11 +1129,19 @@ public abstract class Expression implements IdentityComparable, ExportAgent {
      */
 
     public final Location getLocation() {
-        if ((location == null || location == ExplicitLocation.UNKNOWN_LOCATION) && getParentExpression() != null) {
-            return getParentExpression().location;  // Only go up one level to avoid infinite recursion: bug 3703#1
-        } else {
-            return location;
+        int limit = 0;
+        Expression exp = this;
+        while (limit < 10) {
+            if ((exp.location == null || exp.location == ExplicitLocation.UNKNOWN_LOCATION)
+                    && exp.getParentExpression() != null) {
+                // avoid infinite recursion: bug 3703#1
+                exp = exp.getParentExpression();
+                limit++;
+            } else {
+                return exp.location;
+            }
         }
+        return exp.location;
     }
 
     /**
