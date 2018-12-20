@@ -60,16 +60,18 @@ public class TinyElementImpl extends TinyParentNodeImpl {
      */
 
     public String getBaseURI() {
-        if (tree.knownBaseUris == null) {
-            tree.knownBaseUris = new IntHashMap<>();
+        synchronized (tree) {
+            if (tree.knownBaseUris == null) {
+                tree.knownBaseUris = new IntHashMap<>();
+            }
+            String uri = tree.knownBaseUris.get(nodeNr);
+            if (uri == null) {
+                uri = Navigator.getBaseURI(this,
+                                           n -> tree.isTopWithinEntity(((TinyElementImpl) n).getNodeNumber()));
+                tree.knownBaseUris.put(nodeNr, uri);
+            }
+            return uri;
         }
-        String uri = tree.knownBaseUris.get(nodeNr);
-        if (uri == null) {
-            uri = Navigator.getBaseURI(this,
-                                       n -> tree.isTopWithinEntity(((TinyElementImpl) n).getNodeNumber()));
-            tree.knownBaseUris.put(nodeNr, uri);
-        }
-        return uri;
     }
 
     /**
