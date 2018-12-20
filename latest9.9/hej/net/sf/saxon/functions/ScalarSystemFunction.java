@@ -73,7 +73,7 @@ public abstract class ScalarSystemFunction extends SystemFunction {
 
     @Override
     public Expression makeFunctionCall(Expression[] arguments) {
-        return new SystemFunctionCall(this, arguments) {
+        SystemFunctionCall call = new SystemFunctionCall(this, arguments) {
             @Override
             public AtomicValue evaluateItem(XPathContext context) throws XPathException {
                 // cut out some of the call overhead
@@ -85,6 +85,8 @@ public abstract class ScalarSystemFunction extends SystemFunction {
                 }
             }
         };
+        call.setRetainedStaticContext(getRetainedStaticContext());
+        return call;
     }
 }
 

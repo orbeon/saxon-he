@@ -105,6 +105,7 @@ public class ExpressionTool {
             terminator = Token.EOF;
         }
         Expression exp = parser.parse(expression, start, terminator, env);
+        // TODO: parser.parse() already sets the retained static context
         setDeepRetainedStaticContext(exp, env.makeRetainedStaticContext());
         exp = exp.simplify();
         return exp;

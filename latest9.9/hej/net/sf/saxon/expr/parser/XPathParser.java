@@ -87,6 +87,7 @@ public class XPathParser {
 
     /*@Nullable*/
     protected CodeInjector codeInjector = null;
+    private Accelerator accelerator = null;
 
     protected int language = XPATH;     // know which language we are parsing, for diagnostics
     public static final int XPATH = 0;
@@ -97,6 +98,23 @@ public class XPathParser {
 
     protected int languageVersion = 20;
     protected int catchDepth = 0;
+
+    public interface Accelerator {
+
+        /**
+         * Attempt fast parsing of an expression, provided it is sufficiently simple.
+         *
+         * @param t          the tokenizer
+         * @param env        the static context
+         * @param expression the string containing expression to be parsed
+         * @param start      start position within the input string
+         * @param terminator either EOF or RCURLY, indicating how parsing should end
+         * @return either the parsed expression, or null if it is erroneous or too
+         * complex to parse.
+         */
+
+        Expression parse(Tokenizer t, StaticContext env, String expression, int start, int terminator);
+    }
 
     /**
      * Create an expression parser
@@ -128,6 +146,15 @@ public class XPathParser {
     /*@Nullable*/
     public CodeInjector getCodeInjector() {
         return codeInjector;
+    }
+
+    /**
+     * Set an accelerator which can be used for fast parsing of special cases
+     * @param accelerator a parsing accelerator
+     */
+
+    public void setAccelerator(Accelerator accelerator) {
+        this.accelerator = accelerator;
     }
 
     /**
@@ -169,6 +196,12 @@ public class XPathParser {
 //    public Container getDefaultContainer() {
 //        return defaultContainer;
 //    }
+
+    /**
+     * Set a parser extension which can handle extensions to the XPath syntax, e.g. for
+     * XQuery update extensions
+     * @param extension a parser extension
+     */
 
     public void setParserExtension(ParserExtension extension) {
         this.parserExtension = extension;
@@ -443,45 +476,60 @@ public class XPathParser {
         }
         setLanguage(language, languageVersion);
 
-        qNameParser = new QNameParser(env.getNamespaceResolver());
-        qNameParser.setAcceptEQName(allowXPath30Syntax);
-        qNameParser.setDefaultNamespace("");
-        qNameParser.setErrorOnBadSyntax(language == XSLT_PATTERN ? "XTSE0340" : "XPST0003");
-        qNameParser.setErrorOnUnresolvedPrefix("XPST0081");
+        Expression exp = null;
+        int offset = start;
+        if (accelerator != null) {
+            if (expression.length() - start < 30 || terminator == Token.RCURLY) {
+                // We need the tokenizer to be visible so that the caller can ask
+                // about where the expression ended within the input string
+                t = new Tokenizer();
+                t.languageLevel = env.getXPathVersion();
+                exp = accelerator.parse(t, env, expression, start, terminator);
+            }
+        }
 
-        charChecker = env.getConfiguration().getValidCharacterChecker();
-        t = new Tokenizer();
-        t.languageLevel = env.getXPathVersion();
-        allowSaxonExtensions =
-                t.allowSaxonExtensions =
-                        env.getConfiguration().getBooleanProperty(Feature.ALLOW_SYNTAX_EXTENSIONS);
-        int offset = t.currentTokenStartOffset;
-        customizeTokenizer(t);
-        try {
-            t.tokenize(expression, start, -1);
-        } catch (XPathException err) {
-            grumble(err.getMessage());
-        }
-        if (t.currentToken == terminator) {
-            if (allowAbsentExpression) {
-                Expression result = Literal.makeEmptySequence();
-                result.setRetainedStaticContext(env.makeRetainedStaticContext());
-                setLocation(result);
-                return result;
-            } else {
-                grumble("The expression is empty");
+        if (exp == null) {
+
+            qNameParser = new QNameParser(env.getNamespaceResolver());
+            qNameParser.setAcceptEQName(allowXPath30Syntax);
+            qNameParser.setDefaultNamespace("");
+            qNameParser.setErrorOnBadSyntax(language == XSLT_PATTERN ? "XTSE0340" : "XPST0003");
+            qNameParser.setErrorOnUnresolvedPrefix("XPST0081");
+
+            charChecker = env.getConfiguration().getValidCharacterChecker();
+            t = new Tokenizer();
+            t.languageLevel = env.getXPathVersion();
+            allowSaxonExtensions =
+                    t.allowSaxonExtensions =
+                            env.getConfiguration().getBooleanProperty(Feature.ALLOW_SYNTAX_EXTENSIONS);
+            offset = t.currentTokenStartOffset;
+            customizeTokenizer(t);
+            try {
+                t.tokenize(expression, start, -1);
+            } catch (XPathException err) {
+                grumble(err.getMessage());
             }
-        }
-        Expression exp = parseExpression();
-        if (t.currentToken != terminator) {
-            if (t.currentToken == Token.EOF && terminator == Token.RCURLY) {
-                grumble("Missing curly brace after expression in value template", "XTSE0350");
-            } else {
-                grumble("Unexpected token " + currentTokenDisplay() + " beyond end of expression");
+            if (t.currentToken == terminator) {
+                if (allowAbsentExpression) {
+                    Expression result = Literal.makeEmptySequence();
+                    result.setRetainedStaticContext(env.makeRetainedStaticContext());
+                    setLocation(result);
+                    return result;
+                } else {
+                    grumble("The expression is empty");
+                }
             }
+            exp = parseExpression();
+            if (t.currentToken != terminator) {
+                if (t.currentToken == Token.EOF && terminator == Token.RCURLY) {
+                    grumble("Missing curly brace after expression in value template", "XTSE0350");
+                } else {
+                    grumble("Unexpected token " + currentTokenDisplay() + " beyond end of expression");
+                }
+            }
+            setLocation(exp, offset);
         }
         exp.setRetainedStaticContextThoroughly(env.makeRetainedStaticContext());
-        setLocation(exp, offset);
         //exp.verifyParentPointers();
         return exp;
     }

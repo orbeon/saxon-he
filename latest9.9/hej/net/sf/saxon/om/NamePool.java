@@ -198,7 +198,11 @@ public final class NamePool {
 
     /*@NotNull*/
     public String getURI(int nameCode) {
-        return getUnprefixedQName(nameCode).getURI();
+        int fp = nameCode & FP_MASK;
+        if ((fp & USER_DEFINED_MASK) == 0) {
+            return StandardNames.getURI(fp);
+        }
+        return getUnprefixedQName(fp).getURI();
     }
 
     /**
