@@ -274,7 +274,6 @@ public class TypeChecker {
                     // Rule 3b: promotion from anyURI -> string
 
                     if (rt == StandardNames.XS_STRING && th.isSubType(suppliedItemType, BuiltInAtomicType.ANY_URI)) {
-                        suppliedItemType = BuiltInAtomicType.STRING;
                         itemTypeOK = true;
                         Expression cexp = makePromoterToString(exp);
                         if (cexp instanceof AtomicSequenceConverter) {
