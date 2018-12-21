@@ -242,19 +242,19 @@ public class ItemTypeFactory {
     public ItemType getNodeKindTest(XdmNodeKind kind) {
         switch (kind) {
             case DOCUMENT:
-                return new ConstructedItemType(NodeKindTest.DOCUMENT, processor);
+                return ItemType.DOCUMENT_NODE;
             case ELEMENT:
-                return new ConstructedItemType(NodeKindTest.ELEMENT, processor);
+                return ItemType.ELEMENT_NODE;
             case ATTRIBUTE:
-                return new ConstructedItemType(NodeKindTest.ATTRIBUTE, processor);
+                return ItemType.ATTRIBUTE_NODE;
             case TEXT:
-                return new ConstructedItemType(NodeKindTest.TEXT, processor);
+                return ItemType.TEXT_NODE;
             case COMMENT:
-                return new ConstructedItemType(NodeKindTest.COMMENT, processor);
+                return ItemType.COMMENT_NODE;
             case PROCESSING_INSTRUCTION:
-                return new ConstructedItemType(NodeKindTest.PROCESSING_INSTRUCTION, processor);
+                return ItemType.PROCESSING_INSTRUCTION_NODE;
             case NAMESPACE:
-                return new ConstructedItemType(NodeKindTest.NAMESPACE, processor);
+                return ItemType.NAMESPACE_NODE;
             default:
                 throw new IllegalArgumentException("XdmNodeKind");
         }
@@ -397,7 +397,7 @@ public class ItemTypeFactory {
     }
 
     /**
-     * Get an ItemType that tests an element name and/or schema type. This is the
+     * Get an ItemType that tests an attribute name and/or schema type. This is the
      * equivalent of the XPath syntax <code>element(element-name, type)</code>
      * <p>It is undefined whether two calls supplying the same argument values will
      * return the same ItemType object.</p>
