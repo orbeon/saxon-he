@@ -2809,21 +2809,21 @@ public class XPathParser {
                 if (empty) {
                     return AnyNodeTest.getInstance();
                 } else {
-                    grumble("No arguments are allowed in node()");
+                    grumble("Expected ')': no arguments are allowed in node()");
                     return null;
                 }
             case Type.TEXT:
                 if (empty) {
                     return NodeKindTest.TEXT;
                 } else {
-                    grumble("No arguments are allowed in text()");
+                    grumble("Expected ')': no arguments are allowed in text()");
                     return null;
                 }
             case Type.COMMENT:
                 if (empty) {
                     return NodeKindTest.COMMENT;
                 } else {
-                    grumble("No arguments are allowed in comment()");
+                    grumble("Expected ')': no arguments are allowed in comment()");
                     return null;
                 }
             case Type.NAMESPACE:
