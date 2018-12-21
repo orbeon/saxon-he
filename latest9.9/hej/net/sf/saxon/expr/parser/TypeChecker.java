@@ -276,9 +276,22 @@ public class TypeChecker {
                     if (rt == StandardNames.XS_STRING && th.isSubType(suppliedItemType, BuiltInAtomicType.ANY_URI)) {
                         suppliedItemType = BuiltInAtomicType.STRING;
                         itemTypeOK = true;
-                        // we don't generate code to do a run-time type conversion; rather, we rely on
-                        // operators and functions that accept a string to also accept an xs:anyURI. This
-                        // is straightforward, because anyURIValue is a subclass of StringValue
+                        Expression cexp = makePromoterToString(exp);
+                        if (cexp instanceof AtomicSequenceConverter) {
+                            ((AtomicSequenceConverter) cexp).setRoleDiagnostic(role);
+                        }
+                        ExpressionTool.copyLocationInfo(exp, cexp);
+                        exp = cexp;
+                        try {
+                            exp = exp.simplify().typeCheck(visitor, defaultContextInfo);
+                        } catch (XPathException err) {
+                            err.maybeSetLocation(exp.getLocation());
+                            err.setFailingExpression(supplied);
+                            err.setIsStaticError(true);
+                            throw err;
+                        }
+                        suppliedItemType = BuiltInAtomicType.STRING;
+                        suppliedCard = -1;
                     }
                 }
 
@@ -662,6 +675,10 @@ public class TypeChecker {
 
     private static Expression makePromoterToFloat(Expression exp) {
         return makePromoter(exp, new Converter.PromoterToFloat(), BuiltInAtomicType.FLOAT);
+    }
+
+    private static Expression makePromoterToString(Expression exp) {
+        return makePromoter(exp, new Converter.ToStringConverter(), BuiltInAtomicType.STRING);
     }
 
     private static Expression makePromoter(Expression exp, Converter converter, BuiltInAtomicType type) {
