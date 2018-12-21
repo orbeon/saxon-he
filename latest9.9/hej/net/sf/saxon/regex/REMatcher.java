@@ -602,7 +602,7 @@ public class REMatcher {
 
             if (!program.flags.isLiteral()) {
                 // Process references to captured substrings
-                int maxCapture = getParenCount() - 1;
+                int maxCapture = program.maxParens - 1;
 
                 for (int i = 0; i < replacement.uLength(); i++) {
                     int ch = replacement.uCharAt(i);
