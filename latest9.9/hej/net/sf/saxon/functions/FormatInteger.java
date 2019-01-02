@@ -341,7 +341,7 @@ public class FormatInteger extends SystemFunction implements StatefulSystemFunct
 
     @Override
     public SystemFunction copy() {
-        FormatInteger fi2 = new FormatInteger();
+        FormatInteger fi2 = (FormatInteger) SystemFunction.makeFunction(getFunctionName().getLocalPart(), getRetainedStaticContext(), getArity());
         fi2.formatter = formatter;
         return fi2;
     }
