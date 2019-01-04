@@ -214,9 +214,8 @@ public abstract class DotNetObjectModel implements ExternalObjectModel {
     public Object convertXPathValueToObject(Sequence<?> value, cli.System.Type targetClass) throws XPathException {
         //System.err.println("CONVERT TO: " + targetClass.toString());
         if (isXmlNodeType(targetClass) &&
-                value instanceof ZeroOrOne &&
-                ((ZeroOrOne) value).head() instanceof DotNetNodeWrapper) {
-            return ((DotNetNodeWrapper) ((ZeroOrOne) value).head()).getRealNode();
+                value instanceof DotNetNodeWrapper) {
+            return ((DotNetNodeWrapper) value).getRealNode();
         } else if (isXdmAtomicValueType(targetClass)) {
             SequenceIterator<? extends AtomicValue> atomIterator = Atomizer.getAtomizingIterator(value.iterate(), false);
             GroundedValue<? extends AtomicValue> extent = atomIterator.materialize();
