@@ -17,14 +17,16 @@ import java.net.URI;
  */
 public class DotNetNullDestination implements Destination {
 
+    URI baseUri = null;
+
     @Override
     public void setDestinationBaseURI(URI baseURI) {
-
+         baseUri = baseURI;
     }
 
     @Override
     public URI getDestinationBaseURI() {
-        return null;
+        return baseUri;
     }
 
     @Override
