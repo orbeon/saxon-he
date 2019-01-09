@@ -567,9 +567,8 @@ public final class SequenceType {
 //#if EE==true
         MapItem map = ExperimentalXPathCompiler.makeMap(this);
         result= ExperimentalSequenceTypeMarshaller.unmarshal(map).getStringValue();
-//#else
-        return result;
 //#endif
+        return result;
     }
 
     /**
