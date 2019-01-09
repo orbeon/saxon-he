@@ -8,25 +8,18 @@
 package net.sf.saxon.tree.iter;
 
 import net.sf.saxon.expr.LastPositionFinder;
-import net.sf.saxon.ma.arrays.ArrayItem;
 import net.sf.saxon.om.Item;
-import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.AtomicValue;
-import net.sf.saxon.value.ObjectValue;
 
 /**
  * AtomizingIterator returns the atomization of an underlying sequence supplied
  * as an iterator.  We use a specialist class rather than a general-purpose
  * MappingIterator for performance, especially as the relationship of items
  * in the result sequence to those in the base sequence is often one-to-one.
- * <p>This UntypedAtomizingIterator is used only when it is known that all nodes
- * will be untyped, and that atomizing a node therefore always returns a singleton.
- * However, it is not necessarily the case that the input sequence contains only
- * nodes, and therefore the result sequence may contains atomic values that are
- * not untyped.</p>
- * <p>The parameter type B denotes the type of the items being atomized.</p>
+ * <p>This UntypedAtomizingIterator is used only when it is known that the input
+ * sequence consists entirely of nodes, and that all nodes will be untyped.</p>
  */
 
 public class UntypedAtomizingIterator implements SequenceIterator<AtomicValue>,
@@ -47,20 +40,10 @@ public class UntypedAtomizingIterator implements SequenceIterator<AtomicValue>,
     /*@Nullable*/
     public AtomicValue next() throws XPathException {
         Item nextSource = base.next();
-        /*@Nullable*/
         if (nextSource == null) {
             return null;
         } else {
-            if (nextSource instanceof NodeInfo) {
-                return (AtomicValue) nextSource.atomize();
-            } else if (nextSource instanceof AtomicValue) {
-                return (AtomicValue) nextSource;
-            } else if (nextSource instanceof ObjectValue) {
-                return ((ObjectValue)nextSource).atomize();
-            } else {
-                assert !(nextSource instanceof ArrayItem);
-                throw new XPathException("The typed value of a function item is not defined", "FOTY0013");
-            }
+            return (AtomicValue) nextSource.atomize();
         }
     }
 

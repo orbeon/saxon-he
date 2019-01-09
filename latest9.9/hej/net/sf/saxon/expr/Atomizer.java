@@ -37,16 +37,19 @@ public final class Atomizer extends UnaryExpression {
 
     private boolean untyped = false;       //set to true if it is known that the nodes being atomized will be untyped
     private boolean singleValued = false; // set to true if all atomized nodes will atomize to a single atomic value
-    /*@Nullable*/ private ItemType operandItemType = null;
+    private ItemType operandItemType = null;
+    private RoleDiagnostic roleDiagnostic = null;
 
     /**
      * Constructor
      *
      * @param sequence the sequence to be atomized
+     * @param role (may be null) additional information for use in diagnostics
      */
 
-    public Atomizer(Expression sequence) {
+    public Atomizer(Expression sequence, RoleDiagnostic role) {
         super(sequence);
+        this.roleDiagnostic = role;
         sequence.setFlattened(true);
     }
 
@@ -54,14 +57,15 @@ public final class Atomizer extends UnaryExpression {
      * Make an atomizer with a given operand
      *
      * @param sequence the operand
+     * @param role (may be null) additional information for diagnostics
      * @return an Atomizer that atomizes the given operand, or another expression that returns the same result
      */
 
-    public static Expression makeAtomizer(Expression sequence) {
+    public static Expression makeAtomizer(Expression sequence, RoleDiagnostic role) {
         if (sequence instanceof Literal && ((Literal) sequence).getValue() instanceof AtomicSequence) {
             return sequence;
         } else {
-            return new Atomizer(sequence);
+            return new Atomizer(sequence, role);
         }
     }
 
@@ -116,12 +120,14 @@ public final class Atomizer extends UnaryExpression {
                     if (((Function)i).isArray()) {
                         return this;
                     } else if (((Function)i).isMap()) {
-                        XPathException err = new XPathException("Cannot atomize a map (" + i.toShortString() + ")", "FOTY0013");
+                        XPathException err = new XPathException(
+                                expandMessage("Cannot atomize a map (" + i.toShortString() + ")"), "FOTY0013");
                         err.setIsTypeError(true);
                         err.setLocation(getLocation());
                         throw err;
                     } else {
-                        XPathException err = new XPathException("Cannot atomize a function item", "FOTY0013");
+                        XPathException err = new XPathException(
+                                expandMessage("Cannot atomize a function item"), "FOTY0013");
                         err.setIsTypeError(true);
                         err.setLocation(getLocation());
                         throw err;
@@ -161,10 +167,10 @@ public final class Atomizer extends UnaryExpression {
             if (operandType instanceof FunctionItemType) {
                 String thing = operandType instanceof MapType ? "map" : "function item";
                 err = new XPathException(
-                        "Cannot atomize a " + thing, "FOTY0013");
+                        expandMessage("Cannot atomize a " + thing), "FOTY0013");
             } else {
                 err = new XPathException(
-                        "Cannot atomize an element that is defined in the schema to have element-only content", "FOTY0012");
+                        expandMessage("Cannot atomize an element that is defined in the schema to have element-only content"), "FOTY0012");
             }
             err.setIsTypeError(true);
             err.setLocation(getLocation());
@@ -192,6 +198,19 @@ public final class Atomizer extends UnaryExpression {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Expand an error message with information about the context in which atomization is taking place
+     * @param message the message to be expanded
+     */
+
+    private String expandMessage(String message) {
+        if (roleDiagnostic == null) {
+            return message;
+        } else {
+            return message + ". Found while atomizing the " + roleDiagnostic.getMessage();
         }
     }
 
@@ -229,7 +248,7 @@ public final class Atomizer extends UnaryExpression {
             if (operand instanceof LetExpression || operand instanceof ForExpression) {
                 // replace data(let $x := y return z) by (let $x := y return data(z))
                 Expression action = ((Assignation) operand).getAction();
-                ((Assignation) operand).setAction(new Atomizer(action));
+                ((Assignation) operand).setAction(new Atomizer(action, roleDiagnostic));
                 return operand.optimize(visitor, contextInfo);
             }
             if (operand instanceof Choose) {
@@ -243,7 +262,7 @@ public final class Atomizer extends UnaryExpression {
                 Operand[] children = ((Block) operand).getOperanda();
                 Expression[] atomizedChildren = new Expression[children.length];
                 for (int i = 0; i < children.length; i++) {
-                    atomizedChildren[i] = new Atomizer(children[i].getChildExpression());
+                    atomizedChildren[i] = new Atomizer(children[i].getChildExpression(), roleDiagnostic);
                 }
                 Block newBlock = new Block(atomizedChildren);
                 return newBlock.typeCheck(visitor, contextInfo).optimize(visitor, contextInfo);
@@ -308,7 +327,7 @@ public final class Atomizer extends UnaryExpression {
 
     /*@NotNull*/
     public Expression copy(RebindingMap rebindings) {
-        Atomizer copy = new Atomizer(getBaseExpression().copy(rebindings));
+        Atomizer copy = new Atomizer(getBaseExpression().copy(rebindings), roleDiagnostic);
         copy.untyped = untyped;
         copy.singleValued = singleValued;
         ExpressionTool.copyLocationInfo(this, copy);
@@ -326,8 +345,20 @@ public final class Atomizer extends UnaryExpression {
 
     /*@NotNull*/
     public SequenceIterator<?> iterate(XPathContext context) throws XPathException {
-        SequenceIterator base = getBaseExpression().iterate(context);
-        return getAtomizingIterator(base, untyped && operandItemType instanceof NodeTest);
+        try {
+            SequenceIterator base = getBaseExpression().iterate(context);
+            return getAtomizingIterator(base, untyped && operandItemType instanceof NodeTest);
+        } catch (XPathException e) {
+            if (roleDiagnostic == null) {
+                throw e;
+            } else {
+                String message = e.getMessage() + ". Failed while atomizing the " + roleDiagnostic.getMessage();
+                XPathException e2 = new XPathException(message, e.getErrorCodeLocalPart(), e.getLocator());
+                e2.setXPathContext(context);
+                e2.maybeSetLocation(getLocation());
+                throw e2;
+            }
+        }
     }
 
     /**

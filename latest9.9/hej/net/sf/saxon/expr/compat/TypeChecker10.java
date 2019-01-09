@@ -107,7 +107,7 @@ public class TypeChecker10 extends TypeChecker {
     public Expression processValueOf(Expression select, Configuration config) {
         TypeHierarchy th = config.getTypeHierarchy();
         if (!select.getItemType().isPlainType()) {
-            select = Atomizer.makeAtomizer(select);
+            select = Atomizer.makeAtomizer(select, null);
         }
         if (Cardinality.allowsMany(select.getCardinality())) {
             select = FirstItemExpression.makeFirstItemExpression(select);

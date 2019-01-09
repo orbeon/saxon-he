@@ -149,7 +149,7 @@ public class TypeChecker {
                     if (exp.getRetainedStaticContext() == null) {
                         exp.setRetainedStaticContextLocally(env.makeRetainedStaticContext());
                     }
-                    Expression cexp = Atomizer.makeAtomizer(exp);
+                    Expression cexp = Atomizer.makeAtomizer(exp, role);
                     ExpressionTool.copyLocationInfo(exp, cexp);
                     exp = cexp;
                     cexp = exp.simplify();

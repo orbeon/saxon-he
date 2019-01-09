@@ -7,6 +7,7 @@
 
 package net.sf.saxon.tree.iter;
 
+import net.sf.saxon.expr.parser.RoleDiagnostic;
 import net.sf.saxon.om.AtomicSequence;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
@@ -22,13 +23,14 @@ import net.sf.saxon.value.AtomicValue;
  * is a sequence of more than one item. When it is known that all input will be untyped,
  * an {@link UntypedAtomizingIterator} is used in preference.</p>
  */
-
+                                    
 public class AtomizingIterator implements SequenceIterator<AtomicValue> {
 
     private SequenceIterator base;
     /*@Nullable*/ private AtomicSequence currentValue = null;
     private int currentValuePosition = 1;
     private int currentValueSize = 1;
+    private RoleDiagnostic roleDiagnostic;
 
     /**
      * Construct an AtomizingIterator that will atomize the values returned by the base iterator.
@@ -38,6 +40,10 @@ public class AtomizingIterator implements SequenceIterator<AtomicValue> {
 
     public AtomizingIterator(SequenceIterator base) {
         this.base = base;
+    }
+
+    public void setRoleDiagnostic(RoleDiagnostic role) {
+        this.roleDiagnostic = role;
     }
 
     /*@Nullable*/
@@ -52,14 +58,23 @@ public class AtomizingIterator implements SequenceIterator<AtomicValue> {
             }
             Item nextSource = base.next();
             if (nextSource != null) {
-                AtomicSequence v = nextSource.atomize();
-                if (v instanceof AtomicValue) {
-                    return (AtomicValue) v;
-                } else {
-                    currentValue = v;
-                    currentValuePosition = 0;
-                    currentValueSize = currentValue.getLength();
-                    // now go round the loop to get the first item from the atomized value
+                try {
+                    AtomicSequence v = nextSource.atomize();
+                    if (v instanceof AtomicValue) {
+                        return (AtomicValue) v;
+                    } else {
+                        currentValue = v;
+                        currentValuePosition = 0;
+                        currentValueSize = currentValue.getLength();
+                        // now go round the loop to get the first item from the atomized value
+                    }
+                } catch (XPathException e) {
+                    if (roleDiagnostic == null) {
+                        throw e;
+                    } else {
+                        String message = e.getMessage() + ". Failed while atomizing the " + roleDiagnostic.getMessage();
+                        throw new XPathException(message, e.getErrorCodeLocalPart(), e.getLocator());
+                    }
                 }
             } else {
                 currentValue = null;

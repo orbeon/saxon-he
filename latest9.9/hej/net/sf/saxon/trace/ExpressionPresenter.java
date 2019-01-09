@@ -277,6 +277,7 @@ public class ExpressionPresenter {
         props.setProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
         props.setProperty(OutputKeys.ENCODING, "utf-8");
         props.setProperty(OutputKeys.VERSION, "1.0");
+        props.setProperty(SaxonOutputKeys.SINGLE_QUOTES, "yes");
         return props;
     }
 

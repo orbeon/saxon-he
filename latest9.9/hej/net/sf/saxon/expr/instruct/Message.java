@@ -252,7 +252,9 @@ public class Message extends Instruction {
             }
         } catch (XPathException e) {
             rec.append(new StringValue("Error " + e.getErrorCodeLocalPart() +
-                                               " while evaluating xsl:message content: " + e.getMessage()));
+                                               " while evaluating xsl:message at line "
+                                               + getLocation().getLineNumber() + " of " + getLocation().getSystemId() +
+                                               ": " + e.getMessage()));
         }
 
         rec.endDocument();

@@ -221,7 +221,7 @@ public abstract class XSLSortOrMergeKey extends StyleElement {
                 b.setRetainedStaticContext(makeRetainedStaticContext());
             }
             try {
-                Expression atomizedSortKey = Atomizer.makeAtomizer(b);
+                Expression atomizedSortKey = Atomizer.makeAtomizer(b, null);
                 atomizedSortKey = atomizedSortKey.simplify();
                 ExpressionTool.copyLocationInfo(b, atomizedSortKey);
                 sortKeyDefinition.setSortKey(atomizedSortKey, true);

@@ -35,7 +35,7 @@ public class XSLStylesheet extends XSLModuleRoot {
      */
 
     public void prepareAttributes() throws XPathException {
-        // NOT USED: we convert to an XSLPackage before examining the attributes.
+
         processDefaultCollationAttribute();
         processDefaultMode();
         String inputTypeAnnotationsAtt = null;

@@ -221,7 +221,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
 
     public void atomizeActions() {
         for (int i=0; i<size(); i++) {
-            setAction(i, Atomizer.makeAtomizer(getAction(i)));
+            setAction(i, Atomizer.makeAtomizer(getAction(i), null));
         }
     }
 

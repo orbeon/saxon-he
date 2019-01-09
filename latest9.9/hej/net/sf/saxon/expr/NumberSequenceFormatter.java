@@ -121,7 +121,7 @@ public class NumberSequenceFormatter extends Expression {
     @Override
     public Expression simplify() throws XPathException {
         if (valueOp != null && !valueOp.getChildExpression().getItemType().isPlainType()) {
-            valueOp.setChildExpression(Atomizer.makeAtomizer(valueOp.getChildExpression()));
+            valueOp.setChildExpression(Atomizer.makeAtomizer(valueOp.getChildExpression(), null));
         }
         preallocateNumberer(getConfiguration());
         return super.simplify();

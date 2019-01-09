@@ -152,11 +152,11 @@ public class GeneralComparison10 extends BinaryExpression implements Callable {
             // First atomize the operands where necessary. We didn't do this earlier because of the
             // special 1.0 (node-set=boolean) semantics, but if we don't have a boolean we can do it now.
             if (!(type0 instanceof AtomicType)) {
-                setLhsExpression(Atomizer.makeAtomizer(getLhsExpression()).simplify());
+                setLhsExpression(Atomizer.makeAtomizer(getLhsExpression(), null).simplify());
                 type0 = getLhsExpression().getItemType();
             }
             if (!(type1 instanceof AtomicType)) {
-                setRhsExpression(Atomizer.makeAtomizer(getRhsExpression()).simplify());
+                setRhsExpression(Atomizer.makeAtomizer(getRhsExpression(), null).simplify());
                 type1 = getRhsExpression().getItemType();
             }
             // Now consider numeric operands

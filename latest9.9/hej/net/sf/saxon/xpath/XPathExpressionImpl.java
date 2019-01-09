@@ -209,7 +209,7 @@ public class XPathExpressionImpl implements XPathExpression {
 
             } else if (qName.equals(XPathConstants.NUMBER)) {
                 if (atomizer == null) {
-                    atomizer = Atomizer.makeAtomizer(expression);
+                    atomizer = Atomizer.makeAtomizer(expression, null);
                 }
                 SequenceIterator iter = atomizer.iterate(context);
 

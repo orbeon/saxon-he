@@ -156,7 +156,7 @@ public abstract class XSLLeafNodeConstructor extends StyleElement {
         // Merge adjacent text nodes
         select = AdjacentTextNodeMerger.makeAdjacentTextNodeMerger(select);
         // Atomize the result
-        select = Atomizer.makeAtomizer(select);
+        select = Atomizer.makeAtomizer(select, null);
         // Convert each atomic value to a string
         select = new AtomicSequenceConverter(select, BuiltInAtomicType.STRING);
         select.setRetainedStaticContext(rsc);

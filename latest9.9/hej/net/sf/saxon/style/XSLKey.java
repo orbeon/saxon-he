@@ -266,7 +266,7 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
             Expression body = compileSequenceConstructor(compilation, decl, true);
 
             try {
-                use = Atomizer.makeAtomizer(body);
+                use = Atomizer.makeAtomizer(body, null);
                 use = use.simplify();
             } catch (XPathException e) {
                 compileError(e);

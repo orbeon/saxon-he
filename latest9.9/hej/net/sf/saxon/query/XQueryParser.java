@@ -2858,7 +2858,7 @@ public class XQueryParser extends XPathParser {
     /*@Nullable*/
     public static Expression makeStringJoin(Expression exp, /*@NotNull*/ StaticContext env) {
 
-        exp = Atomizer.makeAtomizer(exp);
+        exp = Atomizer.makeAtomizer(exp, null);
         ItemType t = exp.getItemType();
         if (!t.equals(BuiltInAtomicType.STRING) && !t.equals(BuiltInAtomicType.UNTYPED_ATOMIC)) {
             exp = new AtomicSequenceConverter(exp, BuiltInAtomicType.STRING);
@@ -3155,7 +3155,7 @@ public class XQueryParser extends XPathParser {
         LetExpression outerLet = makeLetExpression();
         outerLet.setRequiredType(SequenceType.OPTIONAL_ATOMIC);
         outerLet.setVariableQName(new StructuredQName("zz", NamespaceConstant.SAXON, "zz_switchVar"));
-        outerLet.setSequence(Atomizer.makeAtomizer(operand));
+        outerLet.setSequence(Atomizer.makeAtomizer(operand, null));
 
         do {
             List<Expression> caseExpressions = new ArrayList<>(4);
@@ -4868,7 +4868,7 @@ public class XQueryParser extends XPathParser {
             exp.setRetainedStaticContext(env.makeRetainedStaticContext());
         }
         // Atomize the result
-        exp = Atomizer.makeAtomizer(exp);
+        exp = Atomizer.makeAtomizer(exp, null);
         // Convert each atomic value to a string
         exp = new AtomicSequenceConverter(exp, BuiltInAtomicType.STRING);
         //((AtomicSequenceConverter) exp).allocateConverter(config, false);

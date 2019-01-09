@@ -194,7 +194,7 @@ public abstract class AttributeValueTemplate {
         }
         final TypeHierarchy th = env.getConfiguration().getTypeHierarchy();
         if (!exp.getItemType().isPlainType()) {
-            exp = Atomizer.makeAtomizer(exp);
+            exp = Atomizer.makeAtomizer(exp, null);
         }
         if (Cardinality.allowsMany(exp.getCardinality())) {
             exp = FirstItemExpression.makeFirstItemExpression(exp);

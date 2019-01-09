@@ -34,7 +34,7 @@ public class Data_1 extends SystemFunction  {
      */
     @Override
     public Expression makeFunctionCall(Expression... arguments) {
-        return Atomizer.makeAtomizer(arguments[0]);
+        return Atomizer.makeAtomizer(arguments[0], null);
     }
 
     /**
