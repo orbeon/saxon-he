@@ -83,6 +83,18 @@ public class ArrayItemType extends AnyFunctionType {
     }
 
     /**
+     * Get an alphabetic code representing the type, or at any rate, the nearest built-in type
+     * from which this type is derived. The codes are designed so that for any two built-in types
+     * A and B, alphaCode(A) is a prefix of alphaCode(B) if and only if A is a supertype of B.
+     *
+     * @return the alphacode for the nearest containing built-in type
+     */
+    @Override
+    public String getAlphaCode() {
+        return "FA";
+    }
+
+    /**
      * Ask whether values of this type are atomizable
      *
      * @return true unless it is known that these items will be elements with element-only

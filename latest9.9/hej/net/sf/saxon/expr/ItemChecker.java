@@ -21,6 +21,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.IntegerValue;
+import net.sf.saxon.value.SequenceType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -378,9 +379,14 @@ public final class ItemChecker extends UnaryExpression {
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("treat", this);
         out.emitAttribute("as", requiredItemType.toExportString());
-        if ("JS".equals(((ExpressionPresenter.ExportOptions) out.getOptions()).target)) {
-            int targetVersion = ((ExpressionPresenter.ExportOptions) out.getOptions()).targetVersion;
+        ExpressionPresenter.ExportOptions options = (ExpressionPresenter.ExportOptions) out.getOptions();
+        if ("JS".equals(options.target)) {
+            int targetVersion = options.targetVersion;
             out.emitAttribute("jsTest", requiredItemType.generateJavaScriptItemTypeTest(getBaseExpression().getItemType(), targetVersion));
+            if (targetVersion == 2) {
+                SequenceType st = SequenceType.makeSequenceType(requiredItemType, StaticProperty.EXACTLY_ONE);
+                out.emitAttribute("asJ", st.toExportString2());
+            }
         }
         out.emitAttribute("diag", role.save());
         getBaseExpression().export(out);

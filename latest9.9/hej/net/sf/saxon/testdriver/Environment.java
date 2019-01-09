@@ -285,7 +285,7 @@ public class Environment implements URIResolver {
                     if (driver.runWithJS) {
                         String sourceFile = env.getBaseURI().resolve(fileName).toString();
                         environment.exportedStylesheet = driver.exportStylesheet(environment.xsltCompiler, sourceFile);
-                    } else if (driver.xxCompilerLocation != null) {
+                    } else if (driver.xxCompilerLocation != null && !environment.xsltCompiler.isSchemaAware()) {
                         if (driver.xxCompiler == null) {
                             XsltCompiler c = driver.driverProc.newXsltCompiler();
                             driver.xxCompiler = c.compile(new StreamSource(new File(driver.xxCompilerLocation)));

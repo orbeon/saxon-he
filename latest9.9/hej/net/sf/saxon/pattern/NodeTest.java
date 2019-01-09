@@ -114,6 +114,36 @@ public abstract class NodeTest implements ItemType.WithSequenceTypeCache {
         return null;
     }
 
+    /**
+     * Get an alphabetic code representing the type, or at any rate, the nearest built-in type
+     * from which this type is derived. The codes are designed so that for any two built-in types
+     * A and B, alphaCode(A) is a prefix of alphaCode(B) if and only if A is a supertype of B.
+     *
+     * @return the alphacode for the nearest containing built-in type
+     */
+    @Override
+    public String getAlphaCode() {
+        switch (getPrimitiveType()) {
+            case Type.NODE:
+                return "N";
+            case Type.ELEMENT:
+                return "NE";
+            case Type.ATTRIBUTE:
+                return "NA";
+            case Type.TEXT:
+                return "NT";
+            case Type.COMMENT:
+                return "NC";
+            case Type.PROCESSING_INSTRUCTION:
+                return "NP";
+            case Type.DOCUMENT:
+                return "ND";
+            case Type.NAMESPACE:
+                return "NN";
+            default:
+                return "*";
+        }
+    }
 
     /**
      * Determine whether this item type is an atomic type

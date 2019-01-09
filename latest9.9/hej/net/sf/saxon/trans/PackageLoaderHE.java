@@ -35,6 +35,7 @@ import net.sf.saxon.trans.rules.BuiltInRuleSet;
 import net.sf.saxon.trans.rules.Rule;
 import net.sf.saxon.trans.rules.RuleManager;
 import net.sf.saxon.tree.iter.AxisIterator;
+import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.tree.wrapper.VirtualCopy;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
@@ -883,7 +884,7 @@ public class PackageLoaderHE implements IPackageLoader {
         }
     }
 
-    private void readCharacterMaps(NodeInfo packageElement) {
+    private void readCharacterMaps(NodeInfo packageElement) throws XPathException {
         StylesheetPackage pack = packStack.peek();
         NodeInfo charMapElement;
         AxisIterator iterator = packageElement.iterateAxis(AxisInfo.CHILD,
@@ -1078,6 +1079,11 @@ public class PackageLoaderHE implements IPackageLoader {
                 rsc.setStaticBaseUriString(baseURIAtt);
             } else if (relocatableBase != null) {
                 rsc.setStaticBaseUriString(relocatableBase);
+            } else {
+                String base = Navigator.getInheritedAttributeValue(element, "", "baseUri");
+                if (base != null) {
+                    rsc.setStaticBaseUriString(base);
+                }
             }
             if (nsAtt != null && !nsAtt.isEmpty()) {
                 String[] namespaces = nsAtt.split(" ");
@@ -1214,15 +1220,21 @@ public class PackageLoaderHE implements IPackageLoader {
      * @param element   the element on which the attribute appears
      * @param localName the name of the attribute
      * @return the integer value of the attribute if present and correct; or Integer.MIN_VALUE if absent
-     * @throws NumberFormatException if the attribute is present but not integer-valued.
+     * @throws XPathException if the attribute is present but not integer-valued.
      */
 
-    public int getIntegerAttribute(NodeInfo element, String localName) {
+    public int getIntegerAttribute(NodeInfo element, String localName) throws XPathException {
         String val = element.getAttributeValue("", localName);
         if (val == null) {
             return Integer.MIN_VALUE;
         }
-        return Integer.parseInt(val);
+        try {
+            return Integer.parseInt(val);
+        } catch (NumberFormatException e) {
+            throw new XPathException("Expected integer value for " +
+                                             element.getDisplayName() + "/" + localName +
+                    ", found '" + val + "'", SaxonErrorCode.SXPK0002);
+        }
     }
 
     public String getInheritedAttribute(NodeInfo element, String localName) {
@@ -1871,7 +1883,7 @@ public class PackageLoaderHE implements IPackageLoader {
 
         eMap.put("data", (loader, element) -> {
             Expression body = loader.getFirstChildExpression(element);
-            return new Atomizer(body);
+            return new Atomizer(body, null);
         });
 
         eMap.put("dbl", (loader, element) -> {
@@ -1950,6 +1962,9 @@ public class PackageLoaderHE implements IPackageLoader {
                             prefix = "";
                         }
                         String uri = pair.substring(eq + 1);
+                        if (uri.equals("~")) {
+                            uri = NamespaceConstant.getUriForConventionalPrefix(prefix);
+                        }
                         bindings[i++] = new NamespaceBinding(prefix, uri);
                     } else {
                         RetainedStaticContext rsc = loader.contextStack.peek();

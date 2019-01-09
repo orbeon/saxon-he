@@ -12,7 +12,6 @@ import net.sf.saxon.expr.Operand;
 import net.sf.saxon.expr.OperandRole;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.*;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.om.StructuredQName;
@@ -273,8 +272,12 @@ public class WithParam  {
                 if (!flags.isEmpty()) {
                     out.emitAttribute("flags", flags);
                 }
+                ExpressionPresenter.ExportOptions options = (ExpressionPresenter.ExportOptions) out.getOptions();
                 if (param.getRequiredType() != SequenceType.ANY_SEQUENCE) {
                     out.emitAttribute("as", param.getRequiredType().toExportString());
+                    if (options.target.equals("JS") && options.targetVersion == 2) {
+                        out.emitAttribute("asJ", param.getRequiredType().toExportString2());
+                    }
                 }
                 if (param.getSlotNumber() != -1) {
                     out.emitAttribute("slot", param.getSlotNumber() + "");

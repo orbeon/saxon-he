@@ -9,7 +9,6 @@ package net.sf.saxon.expr.instruct;
 
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.om.StructuredQName;
@@ -633,11 +632,12 @@ public final class LocalParam extends Instruction implements LocalBinding {
         if (!flags.isEmpty()) {
             out.emitAttribute("flags", flags);
         }
-//        if (binding.isTunnelParam()) {
-//            out.emitAttribute("tunnel", "1");
-//        }
+        ExpressionPresenter.ExportOptions options = (ExpressionPresenter.ExportOptions) out.getOptions();
         if (getRequiredType() != SequenceType.ANY_SEQUENCE) {
             out.emitAttribute("as", getRequiredType().toExportString());
+            if (options.target.equals("JS") && options.targetVersion == 2) {
+                out.emitAttribute("asJ", getRequiredType().toExportString2());
+            }
         }
         if (getSelectExpression() != null) {
             out.setChildRole("select");

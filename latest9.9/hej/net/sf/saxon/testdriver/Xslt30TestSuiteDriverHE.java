@@ -922,13 +922,19 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
     protected XsltExecutable exportStylesheet(String testName, String testSetName, XsltCompiler compiler, XsltExecutable sheet, Source styleSource) throws SaxonApiException {
         try {
             File exportFile = new File(resultsDir + "/export/" + testSetName + "/" + testName + ".sef");
-            if (xxCompilerLocation != null) {
+            if (xxCompilerLocation != null && !compiler.isSchemaAware()) {
                 if (xxCompiler == null) {
                     XsltCompiler c = driverProc.newXsltCompiler();
+                    c.setAssertionsEnabled(true);
+                    c.setParameter(new QName("FAST_JAVA_XPATH"), new XdmAtomicValue(true));
                     xxCompiler = c.compile(new StreamSource(new File(xxCompilerLocation)));
                 }
                 Xslt30Transformer transformer = xxCompiler.load30();
+                transformer.setAssertionsEnabled(true);
                 transformer.setInitialMode(new QName("compile-complete"));
+                ParseOptions options = new ParseOptions();
+                options.setLineNumbering(true);
+                styleSource = new AugmentedSource(styleSource, options);
                 Serializer serializer = driverProc.newSerializer(exportFile);
                 transformer.applyTemplates(styleSource, serializer);
             } else {

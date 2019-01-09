@@ -141,6 +141,15 @@ public interface ItemType {
     boolean isAtomizable(TypeHierarchy th);
 
     /**
+     * Get an alphabetic code representing the type, or at any rate, the nearest built-in type
+     * from which this type is derived. The codes are designed so that for any two built-in types
+     * A and B, alphaCode(A) is a prefix of alphaCode(B) if and only if A is a supertype of B.
+     * @return the alphacode for the nearest containing built-in type
+     */
+
+    String getAlphaCode();
+
+    /**
      * Return a string representation of this ItemType suitable for use in stylesheet
      * export files. This differs from the result of toString() in that it will not contain
      * any references to anonymous types. Note that it may also use the Saxon extended syntax

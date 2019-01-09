@@ -8,6 +8,7 @@
 package net.sf.saxon.pattern;
 
 import net.sf.saxon.expr.parser.Token;
+import net.sf.saxon.ma.map.DictionaryMap;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.NodeName;
@@ -16,6 +17,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.tiny.NodeVectorTree;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.*;
+import net.sf.saxon.value.StringValue;
 import net.sf.saxon.z.IntExceptPredicate;
 import net.sf.saxon.z.IntSet;
 
@@ -167,12 +169,7 @@ public class CombinedNodeTest extends NodeTest {
                     content += "?";
                 }
             }
-            String name;
-            if (nodetest1 instanceof NameTest) {
-                name = nodetest1.getMatchingNodeName().getEQName();
-            } else {
-                name = nodetest1.toString();
-            }
+            String name = nodetest1.getMatchingNodeName().getEQName();
             return skind + name + content + ')';
         } else {
             String nt1 = nodetest1 == null ? "item()" : nodetest1.toString();
@@ -193,6 +190,25 @@ public class CombinedNodeTest extends NodeTest {
     @Override
     public String toExportString() {
         return makeString(true);
+    }
+
+    /**
+     * Add the "parameters" of the type to a Dictionary containing the type information
+     * in structured form
+     */
+
+    public void addTypeDetails(DictionaryMap map) {
+        if (nodetest1 instanceof NameTest && operator == Token.INTERSECT) {
+            map.initialPut("n", new StringValue(nodetest1.getMatchingNodeName().getEQName()));
+            if (nodetest2 instanceof ContentTypeTest) {
+                SchemaType schemaType = ((ContentTypeTest) nodetest2).getSchemaType();
+                if (schemaType != Untyped.getInstance() && schemaType != BuiltInAtomicType.UNTYPED_ATOMIC) {
+                    map.initialPut("c", new StringValue(schemaType.getEQName() +
+                            (nodetest2.isNillable() ? "?" : "")));
+
+                }
+            }
+        }
     }
 
 

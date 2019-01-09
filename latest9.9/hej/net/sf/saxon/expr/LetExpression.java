@@ -782,6 +782,10 @@ public class LetExpression extends Assignation implements TailCallReturner {
         out.startElement("let", this);
         out.emitAttribute("var", variableName);
         out.emitAttribute("as", getSequence().getStaticType().toExportString());
+        ExpressionPresenter.ExportOptions options = (ExpressionPresenter.ExportOptions) out.getOptions();
+        if (options.target.equals("JS") && options.targetVersion == 2) {
+            out.emitAttribute("asJ", getSequence().getStaticType().toExportString2());
+        }
         if (isIndexedVariable()) {
             out.emitAttribute("indexable", "true");
         }

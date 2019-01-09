@@ -7,10 +7,13 @@
 
 package net.sf.saxon.value;
 
+import com.saxonica.ee.extfn.ExperimentalSequenceTypeMarshaller;
+import com.saxonica.ee.extfn.ExperimentalXPathCompiler;
 import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
-import net.sf.saxon.om.Item;
+import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.om.GroundedValue;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.pattern.AnyNodeTest;
@@ -557,6 +560,11 @@ public final class SequenceType {
         } else {
             return primaryType.toExportString() + Cardinality.getOccurrenceIndicator(cardinality);
         }
+    }
+
+    public String toExportString2() {
+        MapItem map = ExperimentalXPathCompiler.makeMap(this);
+        return ExperimentalSequenceTypeMarshaller.unmarshal(map).getStringValue();
     }
 
     /**

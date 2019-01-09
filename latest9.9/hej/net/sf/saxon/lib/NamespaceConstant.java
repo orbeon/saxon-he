@@ -314,6 +314,12 @@ public class NamespaceConstant {
                 return "xsl";
             case FN:
                 return "fn";
+            case MATH:
+                return "math";
+            case MAP_FUNCTIONS:
+                return "map";
+            case ARRAY_FUNCTIONS:
+                return "array";
             case XML:
                 return "xml";
             case SCHEMA:
@@ -361,6 +367,8 @@ public class NamespaceConstant {
                 return SAXON;
             case "vv":
                 return SAXON_GENERATED_VARIABLE;
+            case "math":
+                return MATH;
             case "map":
                 return MAP_FUNCTIONS;
             case "array":
