@@ -563,8 +563,13 @@ public final class SequenceType {
     }
 
     public String toExportString2() {
+        String result = null;
+//#if EE==true
         MapItem map = ExperimentalXPathCompiler.makeMap(this);
-        return ExperimentalSequenceTypeMarshaller.unmarshal(map).getStringValue();
+        result= ExperimentalSequenceTypeMarshaller.unmarshal(map).getStringValue();
+//#else
+        return result;
+//#endif
     }
 
     /**
