@@ -1700,7 +1700,7 @@ public class PackageLoaderHE implements IPackageLoader {
                     c = StaticProperty.EXACTLY_ONE;
                     break;
                 default:
-                    throw new IllegalStateException();
+                    throw new IllegalStateException("Occurrence indicator: '" + cardAtt + "'");
             }
             RoleDiagnostic role = RoleDiagnostic.reconstruct(element.getAttributeValue("", "diag"));
             return CardinalityChecker.makeCardinalityChecker(body, c, role);

@@ -559,6 +559,9 @@ public class XPathParser {
         this.env = env;
         if (qNameParser == null) {
             qNameParser = new QNameParser(env.getNamespaceResolver());
+            if (languageVersion >= 30) {
+                qNameParser.setAcceptEQName(true);
+            }
         }
         language = SEQUENCE_TYPE;
         t = new Tokenizer();

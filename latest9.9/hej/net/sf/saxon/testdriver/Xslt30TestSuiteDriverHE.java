@@ -462,19 +462,24 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                 baseOutputURI = baseOut.resolve(outputUri.get()).toString();
             }
             boolean failure;
-            if (useXslt30Transformer) {
-                failure = runWithXslt30Transformer(testCase, xpath, outcome, testName,
-                                                   testSetName, env, testInput, sheet, collector,
-                                                   xsltLanguageVersion, contextItem, initialMode.orElse(null),
-                                                   initialFunction.orElse(null), initialTemplate.orElse(null), initialModeName,
-                                                   initialMatchSelection, initialTemplateName, baseOutputURI);
-            } else {
-                failure = runWithXsltTransformer(xpath, outcome, testName, testSetName, env, testInput,
-                                                 sheet, collector, contextItem, initialMode.orElse(null), initialModeName,
-                                                 initialTemplateName, baseOutputURI);
-            }
-            if (failure) {
-                return;
+            try {
+                if (useXslt30Transformer) {
+                    failure = runWithXslt30Transformer(testCase, xpath, outcome, testName,
+                                                       testSetName, env, testInput, sheet, collector,
+                                                       xsltLanguageVersion, contextItem, initialMode.orElse(null),
+                                                       initialFunction.orElse(null), initialTemplate.orElse(null), initialModeName,
+                                                       initialMatchSelection, initialTemplateName, baseOutputURI);
+                } else {
+                    failure = runWithXsltTransformer(xpath, outcome, testName, testSetName, env, testInput,
+                                                     sheet, collector, contextItem, initialMode.orElse(null), initialModeName,
+                                                     initialTemplateName, baseOutputURI);
+                }
+                if (failure) {
+                    return;
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+                // and continue
             }
         }
 
