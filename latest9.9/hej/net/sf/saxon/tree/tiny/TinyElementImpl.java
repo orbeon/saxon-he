@@ -551,6 +551,11 @@ public class TinyElementImpl extends TinyParentNodeImpl {
             if (tree.isTyped()) {
                 return false;
             }
+            if (nodeNr == tree.numberOfNodes - 1) {
+                // Bug 4089
+                // Not sure why this case fails, but it crashes out, and this is the simplest workaround
+                return false;
+            }
             if (out instanceof SequenceWriter && ((SequenceWriter) out).isReadyForBulkCopy()) {
                 ((SequenceWriter) out).bulkCopyElementNode(this, copyOptions);
                 return true;

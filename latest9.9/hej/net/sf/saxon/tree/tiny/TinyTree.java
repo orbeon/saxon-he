@@ -1695,10 +1695,10 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
             end = source.next[end];
         }
         if (end == -1) {
-            end = source.numberOfNodes - 1;
+            end = source.numberOfNodes - 1; // don't copy the stopper node
         }
         int length = end - nodeNr;
-        assert length > 0;
+        assert length > 0;         // Bug 4089 bites here
         ensureNodeCapacity(Type.ELEMENT, length);
         System.arraycopy(source.nodeKind, nodeNr, nodeKind, numberOfNodes, length);
         int depthDiff = currentDepth - source.depth[nodeNr];
