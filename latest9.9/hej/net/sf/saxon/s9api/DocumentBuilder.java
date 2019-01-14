@@ -91,21 +91,22 @@ public class DocumentBuilder {
     }
 
     /**
-     * Say whether line numbering is to be enabled for documents constructed using this DocumentBuilder.
-     * This has the effect that the line number in the original source document is maintained in the constructed
-     * tree, for each element node (and only for elements). The line number in question is generally the line number
-     * on which the closing "&gt;" of the element start tag appears.
-     * <p>By default, line numbers are not maintained.</p>
+     * Say whether line and column numbering and is to be enabled for documents constructed using this DocumentBuilder.
+     * This has the effect that the line and column number in the original source document is maintained in the constructed
+     * tree, for each element node (and only for elements). The line and column number in question are generally the position
+     * at which the closing "&gt;" of the element start tag appears.
+     * <p>By default, line and column numbers are not maintained.</p>
      * <p>Errors relating to document parsing and validation will generally contain line numbers whether or not
      * this option is set, because such errors are detected during document construction.</p>
      * <p>Line numbering is not available for all kinds of source: for example,
      * it is not available when loading from an existing DOM Document.</p>
-     * <p>The resulting line numbers are accessible to applications using the
-     * XPath extension function saxon:line-number() applied to a node, or using the
-     * Java method {@link net.sf.saxon.om.NodeInfo#getLineNumber()} </p>
-     * <p>Line numbers are maintained only for element nodes; the line number
+     * <p>The resulting line and column numbers are accessible to applications using the
+     * XPath extension functions saxon:line-number() and saxon:column-number() applied to a node, or using the
+     * Java methods {@link net.sf.saxon.om.NodeInfo#getLineNumber()} and
+     * {@link net.sf.saxon.om.NodeInfo#getColumnNumber()}</p>
+     * <p>Line and column numbers are maintained only for element nodes; the line number
      * returned for any other node will be that of the most recent element. For an element node, the
-     * line number is generally that of the closing angle bracket at the end of the start tag
+     * line and column number are generally that of the closing angle bracket at the end of the start tag
      * (this is what a SAX parser notifies)</p>
      *
      * @param option true if line numbers are to be maintained, false otherwise.
@@ -116,15 +117,16 @@ public class DocumentBuilder {
     }
 
     /**
-     * Ask whether line numbering is enabled for documents loaded using this
+     * Ask whether line and column numbering is enabled for documents loaded using this
      * <code>DocumentBuilder</code>.
-     * <p>By default, line numbering is disabled.</p>
+     * <p>By default, line and column numbering is disabled.</p>
      * <p>Line numbering is not available for all kinds of source: in particular,
      * it is not available when loading from an existing DOM Document.</p>
-     * <p>The resulting line numbers are accessible to applications using the
-     * extension function saxon:line-number() applied to a node, or using the
-     * Java method {@link net.sf.saxon.om.NodeInfo#getLineNumber()}</p>
-     * <p>Line numbers are maintained only for element nodes; the line number
+     * <p>The resulting line and column numbers are accessible to applications using the
+     * extension functions saxon:line-number() and saxon:column-number applied to a node, or using the
+     * Java methods {@link net.sf.saxon.om.NodeInfo#getLineNumber()} and
+     * {@link net.sf.saxon.om.NodeInfo#getColumnNumber()}</p>
+     * <p>Line and column numbers are maintained only for element nodes; the line number
      * returned for any other node will be that of the most recent element. For an element node, the
      * line number is generally that of the closing angle bracket at the end of the start tag
      * (this is what a SAX parser notifies)</p>
