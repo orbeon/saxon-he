@@ -474,7 +474,7 @@ public class XdmNode extends XdmItem {
         }
 
         try {
-            return QueryResult.serialize(node);
+            return QueryResult.serialize(node).trim();
         } catch (XPathException err) {
             throw new IllegalStateException(err);
         }
