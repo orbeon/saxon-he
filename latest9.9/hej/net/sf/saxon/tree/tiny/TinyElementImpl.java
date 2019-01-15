@@ -173,19 +173,21 @@ public class TinyElementImpl extends TinyParentNodeImpl {
      */
 
     public boolean hasUniformNamespaces() {
-        int ns = tree.beta[nodeNr];
+        int nr = nodeNr;
+        int ns = tree.beta[nr];
         TinyElementImpl anc = this;
         while (ns == -1) {
             TinyNodeImpl parent = anc.getParent();
             if (parent instanceof TinyDocumentImpl) {
                 return !tree.usesNamespaces;
             } else {
-                ns = tree.beta[parent.nodeNr];
+                nr = parent.nodeNr;
+                ns = tree.beta[nr];
                 anc = (TinyElementImpl)parent;
             }
         }
         // Find the first namespace binding with a different parent
-        while (ns < tree.numberOfNamespaces && tree.namespaceParent[ns] == nodeNr) {
+        while (ns < tree.numberOfNamespaces && tree.namespaceParent[ns] == nr) {
             ns++;
         }
         // Return true if none is found, or if the element owning this namespace binding
