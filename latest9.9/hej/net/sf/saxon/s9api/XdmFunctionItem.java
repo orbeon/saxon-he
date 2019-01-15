@@ -166,7 +166,7 @@ public class XdmFunctionItem extends XdmItem {
             Configuration config = processor.getUnderlyingConfiguration();
             Controller controller = new Controller(config);
             XPathContext context = controller.newXPathContext();
-            context = fi.makeNewContext(context);
+            context = fi.makeNewContext(context, controller);
 
             Sequence<?> result = fi.call(context, argVals);
             if (!fi.isTrustedResultType()) {

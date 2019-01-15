@@ -7,6 +7,7 @@
 
 package net.sf.saxon.ma.map;
 
+import net.sf.saxon.expr.ContextOriginator;
 import net.sf.saxon.expr.Literal;
 import net.sf.saxon.expr.OperandRole;
 import net.sf.saxon.expr.XPathContext;
@@ -324,10 +325,11 @@ public interface MapItem extends Function {
      * Prepare an XPathContext object for evaluating the function
      *
      * @param callingContext the XPathContext of the function calling expression
+     * @param originator
      * @return a suitable context for evaluating the function (which may or may
      * not be the same as the caller's context)
      */
-    default XPathContext makeNewContext(XPathContext callingContext) {
+    default XPathContext makeNewContext(XPathContext callingContext, ContextOriginator originator) {
         return callingContext;
     }
 

@@ -103,6 +103,18 @@ public class TextOnlyCopyRuleSet implements BuiltInRuleSet {
         }
     }
 
+
+    /**
+     * Identify this built-in rule set
+     *
+     * @return "text-only"
+     */
+
+    @Override
+    public String getName() {
+        return "text-only";
+    }
+
     /**
      * Get the default action for unmatched nodes
      *

@@ -27,10 +27,11 @@ public class OptimizerOptions {
     public static final int RULE_SET = 2048;
     public static final int REGEX_CACHE = 4096;
     public static final int VOID_EXPRESSIONS = 8192;
+    public static final int TAIL_CALLS = 16384;
 
     private int options;
 
-    public final static OptimizerOptions FULL_HE_OPTIMIZATION = new OptimizerOptions("lvm");
+    public final static OptimizerOptions FULL_HE_OPTIMIZATION = new OptimizerOptions("lvmt");
     public final static OptimizerOptions FULL_EE_OPTIMIZATION = new OptimizerOptions(-1);
 
     public OptimizerOptions(int options) {
@@ -78,6 +79,8 @@ public class OptimizerOptions {
                 return RULE_SET;
             case 's':
                 return COMMON_SUBEXPRESSIONS;
+            case 't':
+                return TAIL_CALLS;
             case 'v':
                 return INLINE_VARIABLES;
             case 'w':
@@ -135,6 +138,9 @@ public class OptimizerOptions {
         }
         if (isSet(COMMON_SUBEXPRESSIONS)) {
             result += "s";
+        }
+        if (isSet(TAIL_CALLS)) {
+            result += "t";
         }
         if (isSet(INLINE_VARIABLES)) {
             result += "v";

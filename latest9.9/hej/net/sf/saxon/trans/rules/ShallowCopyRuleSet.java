@@ -127,6 +127,18 @@ public class ShallowCopyRuleSet implements BuiltInRuleSet {
 
     }
 
+
+    /**
+     * Identify this built-in rule set
+     *
+     * @return "shallow-copy"
+     */
+
+    @Override
+    public String getName() {
+        return "shallow-copy";
+    }
+
     /**
      * Get the default action for unmatched nodes
      *

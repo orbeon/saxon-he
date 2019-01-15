@@ -8,6 +8,7 @@
 package net.sf.saxon.om;
 
 import net.sf.saxon.expr.Callable;
+import net.sf.saxon.expr.ContextOriginator;
 import net.sf.saxon.expr.OperandRole;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.sort.AtomicComparer;
@@ -80,11 +81,12 @@ public interface Function extends Item<Function>, Callable, GroundedValue<Functi
      * Prepare an XPathContext object for evaluating the function
      *
      * @param callingContext the XPathContext of the function calling expression
+     * @param originator identifies the location of the caller for diagnostics
      * @return a suitable context for evaluating the function (which may or may
      * not be the same as the caller's context)
      */
 
-    XPathContext makeNewContext(XPathContext callingContext);
+    XPathContext makeNewContext(XPathContext callingContext, ContextOriginator originator);
 
     /**
      * Invoke the function

@@ -63,6 +63,18 @@ public class DeepSkipRuleSet implements BuiltInRuleSet {
         // otherwise, do nothing
     }
 
+
+    /**
+     * Identify this built-in rule set
+     *
+     * @return "deep-skip"
+     */
+
+    @Override
+    public String getName() {
+        return "deep-skip";
+    }
+
     /**
      * Get the default action for unmatched nodes
      *

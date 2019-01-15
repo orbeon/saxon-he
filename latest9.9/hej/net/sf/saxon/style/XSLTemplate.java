@@ -630,7 +630,9 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
             //System.err.println("Deferred - " + ++lazy);
             return;
         }
-        isTailRecursive = markTailCalls();
+        if (compilation.getCompilerInfo().getOptimizerOptions().isSet(OptimizerOptions.TAIL_CALLS)) {
+            isTailRecursive = markTailCalls();
+        }
         Expression body = compileSequenceConstructor(compilation, decl, true);
         body.restoreParentPointers();
         RetainedStaticContext rsc = makeRetainedStaticContext();

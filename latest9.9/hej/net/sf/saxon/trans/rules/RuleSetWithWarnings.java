@@ -53,6 +53,18 @@ public class RuleSetWithWarnings implements BuiltInRuleSet {
 
     }
 
+
+    /**
+     * Identify this built-in rule set
+     *
+     * @return the base name plus "with warnings"
+     */
+
+    @Override
+    public String getName() {
+        return baseRuleSet + " with warnings";
+    }
+
     public void outputWarning(Item item, XPathContext context) {
         String id = item instanceof NodeInfo ?
                 "the node " + Navigator.getPath((NodeInfo) item) :

@@ -483,7 +483,7 @@ public class XQueryFunction implements InstructionInfo, Declaration {
         }
         
         // mark tail calls within the function body
-        if (opt.getOptimizerOptions().isSet(OptimizerOptions.MISCELLANEOUS) && !isUpdating) {
+        if (opt.getOptimizerOptions().isSet(OptimizerOptions.TAIL_CALLS) && !isUpdating) {
             int tailCalls = ExpressionTool.markTailFunctionCalls(body, functionName, arity);
             if (tailCalls != 0) {
                 compiledFunction.setBody(body);

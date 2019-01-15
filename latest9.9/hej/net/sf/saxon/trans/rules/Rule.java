@@ -232,13 +232,7 @@ public class Rule {
 
     public int compareComputedRank(Rule other) {
         if (precedence == other.precedence) {
-            if (priority == other.priority) {
-                return 0;
-            } else if (priority < other.priority) {
-                return -1;
-            } else {
-                return +1;
-            }
+            return Double.compare(priority, other.priority);
         } else if (precedence < other.precedence) {
             return -1;
         } else {

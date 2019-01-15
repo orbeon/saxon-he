@@ -175,6 +175,7 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
 
         Configuration config = getConfiguration();
         stackFrameMap = config.makeSlotManager();
+
         checkTopLevel("XTSE0010", false);
         if (use != null) {
             // the value can be supplied as a content constructor in place of a use expression

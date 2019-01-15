@@ -57,6 +57,18 @@ public class FailRuleSet implements BuiltInRuleSet {
         throw err;
     }
 
+
+    /**
+     * Identify this built-in rule set
+     *
+     * @return "fail"
+     */
+
+    @Override
+    public String getName() {
+        return "fail";
+    }
+
     /**
      * Get the default action for unmatched nodes
      *

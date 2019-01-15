@@ -436,8 +436,9 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
         compiledFunction.setBody(exp2);
 
         // Assess the streamability of the function body
+        Optimizer optimizer = visitor.getConfiguration().obtainOptimizer();
         if (streamability.isStreaming()) {
-            visitor.getConfiguration().obtainOptimizer().assessFunctionStreamability(this, compiledFunction);
+            optimizer.assessFunctionStreamability(this, compiledFunction);
         }
 
         allocateLocalSlots(exp2);
@@ -445,13 +446,13 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
             compiledFunction.setBody(exp2);
         }
 
-        if (!streamability.isStreaming()) {
+        OptimizerOptions options = getCompilation().getCompilerInfo().getOptimizerOptions();
+        if (options.isSet(OptimizerOptions.TAIL_CALLS) && !streamability.isStreaming()) {
             int tailCalls = ExpressionTool.markTailFunctionCalls(exp2, getObjectName(), getNumberOfArguments());
             if (tailCalls != 0) {
                 compiledFunction.setTailRecursive(tailCalls > 0, tailCalls > 1);
                 exp2 = compiledFunction.getBody();
                 compiledFunction.setBody(new TailCallLoop(compiledFunction, exp2));
-                //compiledFunction.getBody().setPostureAndSweep(exp2.getPostureAndSweepIfKnown());
             }
         }
 

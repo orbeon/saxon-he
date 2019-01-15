@@ -478,12 +478,7 @@ public abstract class Mode extends Actor {
             }
 
             if (rule == null) {             // Use the default action for the node
-                // No need to open a new stack frame!
-//                if (modeTracing) {
-//                    controller.getConfiguration().getLogger().info(
-//                            getModeTitle() + " processing " + Err.depict(item) + " using built-in template rules"
-//                    );
-//                }
+                // No need to open a new stack frame
                 getBuiltInRuleSet().process(item, parameters, tunnelParameters, context, locationId);
 
             } else {

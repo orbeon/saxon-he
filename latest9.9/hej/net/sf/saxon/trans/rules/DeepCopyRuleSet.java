@@ -88,4 +88,14 @@ public class DeepCopyRuleSet implements BuiltInRuleSet {
     public int[] getActionForParentNodes(int nodeKind) {
         return new int[]{DEEP_COPY};
     }
+
+    /**
+     * Identify this built-in rule set
+     * @return "deep-copy"
+     */
+
+    @Override
+    public String getName() {
+        return "deep-copy";
+    }
 }

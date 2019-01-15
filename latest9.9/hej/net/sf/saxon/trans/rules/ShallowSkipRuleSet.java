@@ -101,6 +101,18 @@ public class ShallowSkipRuleSet implements BuiltInRuleSet {
         }
     }
 
+
+    /**
+     * Identify this built-in rule set
+     *
+     * @return "shallow-skip"
+     */
+
+    @Override
+    public String getName() {
+        return "shallow-skip";
+    }
+
     /**
      * Get the default action for unmatched nodes
      *

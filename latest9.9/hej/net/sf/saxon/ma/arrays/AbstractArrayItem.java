@@ -7,10 +7,7 @@
 
 package net.sf.saxon.ma.arrays;
 
-import net.sf.saxon.expr.Literal;
-import net.sf.saxon.expr.OperandRole;
-import net.sf.saxon.expr.StaticProperty;
-import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.sort.AtomicComparer;
 import net.sf.saxon.functions.DeepEqual;
 import net.sf.saxon.om.*;
@@ -139,10 +136,11 @@ public abstract class AbstractArrayItem implements ArrayItem {
      * Prepare an XPathContext object for evaluating the function
      *
      * @param callingContext the XPathContext of the function calling expression
+     * @param originator
      * @return a suitable context for evaluating the function (which may or may
      * not be the same as the caller's context)
      */
-    public XPathContext makeNewContext(XPathContext callingContext) {
+    public XPathContext makeNewContext(XPathContext callingContext, ContextOriginator originator) {
         return callingContext;
     }
 
