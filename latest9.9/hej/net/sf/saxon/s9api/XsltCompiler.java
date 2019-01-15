@@ -48,8 +48,16 @@ import java.util.Objects;
  *  rules might be detected not during execution of the <code>compile()</code> method, but rather
  *  when the relevant code is first executed. In this situation the <code>compile()</code> method will
  *  not throw an exception, but the errors will still (eventually) be notified to the <code>ErrorListener</code>
- *  associated with the compiler. This is problematic if the compiler is used to perform multiple compilations,
- *  because </p>
+ *  associated with the compiler.</p>
+ *  <p>To avoid problems with error reporting, it is recommended that:
+ *  <ul>
+ *      <li>When code is under development and static errors are therefore likely, a new
+ *      {@code XsltCompiler} should be created for each compilation (and JIT should preferably
+ *      be disabled, so that all static errors are detected.)</li>
+ *      <li>When production code is being loaded, and errors are therefore unlikely,
+ *      it is safe to use the same {@code XsltCompiler} for all compilations, and to
+ *      enable JIT for maximum performance.</li>
+ *  </ul>
  *
  * @since 9.0
  */
