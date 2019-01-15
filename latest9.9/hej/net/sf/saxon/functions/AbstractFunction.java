@@ -7,6 +7,7 @@
 
 package net.sf.saxon.functions;
 
+import net.sf.saxon.expr.ContextOriginator;
 import net.sf.saxon.expr.OperandRole;
 import net.sf.saxon.expr.OperandUsage;
 import net.sf.saxon.expr.XPathContext;
@@ -123,11 +124,12 @@ public abstract class AbstractFunction implements Function {
      * Prepare an XPathContext object for evaluating the function
      *
      * @param callingContext the XPathContext of the function calling expression
+     * @param originator
      * @return a suitable context for evaluating the function (which may or may
      * not be the same as the caller's context)
      */
 
-    public XPathContext makeNewContext(XPathContext callingContext) {
+    public XPathContext makeNewContext(XPathContext callingContext, ContextOriginator originator) {
         return callingContext;
     }
 

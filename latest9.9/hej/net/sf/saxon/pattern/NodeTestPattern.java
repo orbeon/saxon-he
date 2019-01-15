@@ -90,6 +90,10 @@ public class NodeTestPattern extends Pattern {
         return nodeTest.toString();
     }
 
+    public String toShortString() {
+        return nodeTest.toShortString();
+    }
+
     /**
      * Determine whether this pattern is the same as another pattern
      *

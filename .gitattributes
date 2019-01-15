@@ -5415,6 +5415,7 @@ latest9.9/hej/net/sf/saxon/expr/ListConstructorFunction.java svn_eol_002dstyle=n
 latest9.9/hej/net/sf/saxon/expr/Literal.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/expr/LocalBinding.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/expr/LocalVariableReference.java svn_eol_002dstyle=native
+latest9.9/hej/net/sf/saxon/expr/Locatable.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/expr/LookupAllExpression.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/expr/LookupExpression.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/expr/MappingFunction.java svn_eol_002dstyle=native

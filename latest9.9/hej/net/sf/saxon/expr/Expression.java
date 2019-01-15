@@ -59,7 +59,7 @@ import java.util.*;
  * no subexpressions.</p>
  */
 
-public abstract class Expression implements IdentityComparable, ExportAgent {
+public abstract class Expression implements IdentityComparable, ExportAgent, Locatable {
 
     public static final int EVALUATE_METHOD = 1;
     public static final int ITERATE_METHOD = 2;

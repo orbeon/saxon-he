@@ -375,5 +375,16 @@ public class NameTest extends NodeTest implements QNameTest {
         return Optional.of("The node has the wrong name");
     }
 
+    public String toShortString() {
+        switch (nodeKind) {
+            case Type.ELEMENT:
+                return getNamespaceURI().isEmpty() ? namePool.getLocalName(getFingerprint()) : toString();
+            case Type.ATTRIBUTE:
+                return "@" + (getNamespaceURI().isEmpty() ? namePool.getLocalName(getFingerprint()) : toString());
+            default:
+                return toString();
+        }
+    }
+
 }
 

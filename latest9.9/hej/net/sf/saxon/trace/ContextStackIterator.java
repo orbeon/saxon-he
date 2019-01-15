@@ -12,10 +12,7 @@ import net.sf.saxon.expr.ContextOriginator;
 import net.sf.saxon.expr.UserFunctionCall;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.XPathContextMajor;
-import net.sf.saxon.expr.instruct.ApplyTemplates;
-import net.sf.saxon.expr.instruct.CallTemplate;
-import net.sf.saxon.expr.instruct.GlobalVariable;
-import net.sf.saxon.expr.instruct.UserFunction;
+import net.sf.saxon.expr.instruct.*;
 import net.sf.saxon.trans.rules.BuiltInRuleSet;
 
 import java.util.Iterator;
@@ -25,6 +22,10 @@ import java.util.Iterator;
  * of XPathContext objects.
  */
 public class ContextStackIterator implements Iterator<ContextStackFrame> {
+
+    // TODO: this class is no longer used by StandardErrorListener.printStackTrace(). It's potentially
+    // still useful to have a programmatic way of obtaining the stack trace, but this class is rather
+    // clumsy and probably isn't used.
 
     private XPathContextMajor next;
 

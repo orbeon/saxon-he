@@ -51,6 +51,7 @@ public class FormatNumber extends SystemFunction implements Callable {
 
         if (arguments[1] instanceof Literal && (arguments.length == 2 || arguments[2] instanceof Literal)) {
             DecimalFormatManager dfm = getRetainedStaticContext().getDecimalFormatManager();
+            assert dfm != null;
             picture = ((Literal) arguments[1]).getValue().getStringValue();
             if (arguments.length == 3 && !Literal.isEmptySequence(arguments[2])) {
                 try {

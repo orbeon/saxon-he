@@ -530,12 +530,12 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
                                                  ") with no implementation", "XTDE3052");
             }
             targetFunction = (UserFunction) target.getActor();
-            c2 = targetFunction.makeNewContext(context);
+            c2 = targetFunction.makeNewContext(context, this);
             c2.setCurrentComponent(target);
             c2.setOrigin(this);
         } else {
             targetFunction = function;
-            c2 = targetFunction.makeNewContext(context);
+            c2 = targetFunction.makeNewContext(context, this);
             c2.setOrigin(this);
         }
 
@@ -590,12 +590,12 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
             if (target.getVisibility() == Visibility.ABSTRACT) {
                 throw new XPathException("Cannot call a function defined with visibility=abstract", "XTDE3052");
             }
-            XPathContextMajor c2 = targetFunction.makeNewContext(context);
+            XPathContextMajor c2 = targetFunction.makeNewContext(context, this);
             c2.setCurrentComponent(target);
             c2.setOrigin(this);
             targetFunction.process(actualArgs, c2);
         } else {
-            XPathContextMajor c2 = function.makeNewContext(context);
+            XPathContextMajor c2 = function.makeNewContext(context, this);
             c2.setOrigin(this);
             function.process(actualArgs, c2);
         }

@@ -8,8 +8,8 @@
 package net.sf.saxon.lib;
 
 import net.sf.saxon.Configuration;
-import net.sf.saxon.expr.Expression;
-import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.Controller;
+import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.*;
 import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.expr.parser.Location;
@@ -23,13 +23,14 @@ import net.sf.saxon.regex.GeneralUnicodeString;
 import net.sf.saxon.regex.LatinString;
 import net.sf.saxon.regex.UnicodeString;
 import net.sf.saxon.serialize.charcode.UTF16CharacterSet;
-import net.sf.saxon.trace.ContextStackFrame;
-import net.sf.saxon.trace.ContextStackIterator;
 import net.sf.saxon.trace.InstructionInfo;
 import net.sf.saxon.trace.LocationKind;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.KeyDefinition;
+import net.sf.saxon.trans.Mode;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.trans.rules.BuiltInRuleSet;
+import net.sf.saxon.trans.rules.Rule;
 import net.sf.saxon.tree.AttributeLocation;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.tree.util.Navigator;
@@ -41,7 +42,6 @@ import org.xml.sax.SAXException;
 import javax.xml.transform.SourceLocator;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMLocator;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -843,15 +843,75 @@ public class StandardErrorListener implements UnfailingErrorListener {
 
     public static void printStackTrace(XPathContext context, Logger out, int level) {
         if (level > 0) {
-            Iterator<ContextStackFrame> iterator = new ContextStackIterator(context);
-            while (iterator.hasNext()) {
-                ContextStackFrame frame = iterator.next();
-                frame.print(out);
-                if (level > 1) {
-                    context.getStackFrame().getStackFrameMap().showStackFrame(frame.getContext(), out);
+            int depth = 20;
+            while (depth-- > 0) {
+                if (level > 0) {
+                    Component component = context.getCurrentComponent();
+                    if (component != null) {
+                        if (component.getActor() instanceof Mode) {
+                            Rule rule = context.getCurrentTemplateRule();
+                            if (rule != null) {
+                                StringBuilder sb = new StringBuilder();
+                                Location loc = rule.getPattern().getLocation();
+                                sb.append("  In template rule with match=\"")
+                                        .append(rule.getPattern().toShortString())
+                                        .append("\" ");
+                                if (loc != null && loc.getLineNumber() != -1) {
+                                    sb.append("on line ").append(loc.getLineNumber()).append(" ");
+                                }
+                                if (loc != null && loc.getSystemId() != null) {
+                                    sb.append("of ").append(abbreviatePath(loc.getSystemId()));
+                                }
+                                out.error(sb.toString());
+                            }
+                        } else {
+                            out.error(getLocationMessageText(component.getActor()).replace("$at ","In "));
+                        }
+                    }
+                    context.getStackFrame().getStackFrameMap().showStackFrame(context, out);
                 }
+                if (!(context instanceof XPathContextMajor)) {
+                    context = context.getCaller();
+                }
+
+                ContextOriginator originator = ((XPathContextMajor) context).getOrigin();
+                if (originator == null || originator instanceof Controller) {
+                    return;
+                } else {
+                    out.error("     invoked by " + showOriginator(originator));
+                }
+                context = context.getCaller();
             }
         }
+    }
+
+    private static String showOriginator(ContextOriginator originator) {
+        StringBuilder sb = new StringBuilder();
+        if (originator instanceof ApplyTemplates) {
+            sb.append("xsl:apply-templates");
+        } else if (originator instanceof NextMatch) {
+            sb.append("xsl:next-match");
+        } else if (originator instanceof ApplyImports) {
+            sb.append("xsl:apply-imports");
+        } else if (originator instanceof UserFunctionCall) {
+            sb.append("function call");
+        } else if (originator instanceof CallTemplate) {
+            sb.append("xsl:call-template");
+        } else if (originator instanceof Controller) {
+            sb.append("external application");
+        } else if (originator instanceof BuiltInRuleSet) {
+            sb.append("built-in template rule (" + ((BuiltInRuleSet)originator).getName() + ")");
+        } else {
+            sb.append("unknown caller (" + originator.getClass() + ")");
+        }
+        if (originator instanceof Locatable) {
+            Location loc = ((Locatable)originator).getLocation();
+            if (loc.getLineNumber() != -1) {
+                sb.append(" at ").append(loc.getSystemId() == null ? "line " : (loc.getSystemId() + "#"));
+                sb.append(loc.getLineNumber());
+            }
+        }
+        return sb.toString();
     }
 
     /**

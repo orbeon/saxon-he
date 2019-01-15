@@ -341,6 +341,18 @@ public class NodeKindTest extends NodeTest {
         }
     }
 
+    public String toShortString() {
+        switch (getNodeKind()) {
+            case Type.ELEMENT:
+                return "*";
+            case Type.ATTRIBUTE:
+                return "@*";
+            case Type.DOCUMENT:
+                return "/";
+            default:
+                return toString();
+        }
+    }
 
 }
 

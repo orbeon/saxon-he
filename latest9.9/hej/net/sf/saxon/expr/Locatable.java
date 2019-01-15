@@ -7,11 +7,14 @@
 
 package net.sf.saxon.expr;
 
+import net.sf.saxon.expr.parser.Location;
+
 /**
- * Represents a construct that is responsible for originating a new context; used in analysing the
- * stack of context objects for diagnostics
+ * Represents a construct that has a meaningful location for use in diagnostics
  */
-public interface ContextOriginator {
+public interface Locatable {
+
+    Location getLocation();
 
 }
 

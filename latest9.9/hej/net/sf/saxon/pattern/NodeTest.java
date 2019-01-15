@@ -398,6 +398,10 @@ public abstract class NodeTest implements ItemType.WithSequenceTypeCache {
         }
     }
 
+    public String toShortString() {
+        return toString();
+    }
+
 
 }
 

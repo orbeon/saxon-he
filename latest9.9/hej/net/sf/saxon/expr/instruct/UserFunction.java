@@ -548,16 +548,17 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
      * Create a context for evaluating this function
      *
      * @param oldContext the existing context of the caller
+     * @param originator
      * @return a new context which should be supplied to the call() method.
      */
 
-    public XPathContextMajor makeNewContext(XPathContext oldContext) {
+    public XPathContextMajor makeNewContext(XPathContext oldContext, ContextOriginator originator) {
         XPathContextMajor c2 = oldContext.newCleanContext();
-        c2.setOrigin(this);
         c2.setReceiver(oldContext.getReceiver());
         c2.setTemporaryOutputState(StandardNames.XSL_FUNCTION);
         c2.setCurrentOutputUri(null);
         c2.setCurrentComponent(getDeclaringComponent());  // default value for the caller to override if necessary
+        c2.setOrigin(originator);
         return c2;
     }
 
@@ -566,7 +567,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
      * Call this function to return a value.
      *
      * @param context    This provides the run-time context for evaluating the function. This should be created
-     *                   using {@link #makeNewContext(XPathContext)}. It must be an instance of XPathContextMajor.
+     *                   using {@link Function#makeNewContext(XPathContext, ContextOriginator)}. It must be an instance of XPathContextMajor.
      * @param actualArgs the arguments supplied to the function. These must have the correct
      *                   types required by the function signature (it is the caller's responsibility to check this).
      *                   It is acceptable to supply a {@link net.sf.saxon.value.Closure} to represent a value whose
