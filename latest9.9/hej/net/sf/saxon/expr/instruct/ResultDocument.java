@@ -586,26 +586,31 @@ public class ResultDocument extends Instruction
 
         if (getFormatExpression() != null) {
             // format was an AVT and now needs to be computed
-            CharSequence format = getFormatExpression().evaluateAsString(context);
-            String[] parts;
-            try {
-                parts = NameChecker.getQNameParts(format);
-            } catch (QNameException e) {
-                XPathException err = new XPathException("The requested output format " + Err.wrap(format) + " is not a valid QName");
-                err.maybeSetLocation(getFormatExpression().getLocation());
-                err.setErrorCode("XTDE1460");
-                err.setXPathContext(context);
-                throw err;
+            StructuredQName qName;
+            String format = getFormatExpression().evaluateAsString(context).toString();
+            if (format.startsWith("Q{")) {
+                qName = StructuredQName.fromEQName(format);
+            } else {
+                String[] parts;
+                try {
+                    parts = NameChecker.getQNameParts(format);
+                } catch (QNameException e) {
+                    XPathException err = new XPathException("The requested output format " + Err.wrap(format) + " is not a valid QName");
+                    err.maybeSetLocation(getFormatExpression().getLocation());
+                    err.setErrorCode("XTDE1460");
+                    err.setXPathContext(context);
+                    throw err;
+                }
+                String uri = nsResolver.getURIForPrefix(parts[0], false);
+                if (uri == null) {
+                    XPathException err = new XPathException("The namespace prefix in the format name " + format + " is undeclared");
+                    err.maybeSetLocation(getFormatExpression().getLocation());
+                    err.setErrorCode("XTDE1460");
+                    err.setXPathContext(context);
+                    throw err;
+                }
+                qName = new StructuredQName(parts[0], uri, parts[1]);
             }
-            String uri = nsResolver.getURIForPrefix(parts[0], false);
-            if (uri == null) {
-                XPathException err = new XPathException("The namespace prefix in the format name " + format + " is undeclared");
-                err.maybeSetLocation(getFormatExpression().getLocation());
-                err.setErrorCode("XTDE1460");
-                err.setXPathContext(context);
-                throw err;
-            }
-            StructuredQName qName = new StructuredQName(parts[0], uri, parts[1]);
             computedGlobalProps = ((StylesheetPackage) getRetainedStaticContext().getPackageData()).getNamedOutputProperties(qName);
             if (computedGlobalProps == null) {
                 XPathException err = new XPathException("There is no xsl:output format named " + format);
