@@ -870,7 +870,7 @@ public class StandardErrorListener implements UnfailingErrorListener {
                     }
                     context.getStackFrame().getStackFrameMap().showStackFrame(context, out);
                 }
-                if (!(context instanceof XPathContextMajor)) {
+                while (!(context instanceof XPathContextMajor)) {
                     context = context.getCaller();
                 }
 
