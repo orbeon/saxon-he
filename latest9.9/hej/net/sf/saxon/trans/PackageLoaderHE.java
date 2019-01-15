@@ -1067,7 +1067,10 @@ public class PackageLoaderHE implements IPackageLoader {
         String defaultElementNS = element.getAttributeValue("", "defaultElementNS");
         String nsAtt = element.getAttributeValue("", "ns");
         String versionAtt = element.getAttributeValue("", "vn");
-        if (baseURIAtt != null || defaultCollAtt != null || nsAtt != null || versionAtt != null || defaultElementNS != null) {
+        if (baseURIAtt != null || defaultCollAtt != null || nsAtt != null ||
+                versionAtt != null || defaultElementNS != null ||
+                contextStack.peek().getDecimalFormatManager() == null // implies not fully initialized
+        ) {
             RetainedStaticContext rsc = new RetainedStaticContext(config);
             rsc.setPackageData(pack);
             if (defaultCollAtt != null) {
@@ -1085,6 +1088,9 @@ public class PackageLoaderHE implements IPackageLoader {
                     rsc.setStaticBaseUriString(base);
                 }
             }
+            if (nsAtt == null) {
+                nsAtt = Navigator.getInheritedAttributeValue(element, "","ns");
+            }
             if (nsAtt != null && !nsAtt.isEmpty()) {
                 String[] namespaces = nsAtt.split(" ");
                 for (String ns : namespaces) {
@@ -1099,6 +1105,9 @@ public class PackageLoaderHE implements IPackageLoader {
                     }
                     rsc.declareNamespace(prefix, uri);
                 }
+            }
+            if (defaultElementNS == null) {
+                defaultElementNS = Navigator.getInheritedAttributeValue(element, "", "defaultElementNS");
             }
             if (defaultElementNS != null) {
                 rsc.setDefaultElementNamespace(defaultElementNS);
@@ -1950,7 +1959,7 @@ public class PackageLoaderHE implements IPackageLoader {
             NodeName elemName = new FingerprintedQName(name, loader.config.getNamePool());
             String ns = element.getAttributeValue("", "namespaces");
             NamespaceBinding[] bindings = NamespaceBinding.EMPTY_ARRAY;
-            if (ns != null) {
+            if (ns != null && !ns.isEmpty()) {
                 String[] pairs = ns.split(" ");
                 bindings = new NamespaceBinding[pairs.length];
                 int i = 0;
@@ -2682,8 +2691,8 @@ public class PackageLoaderHE implements IPackageLoader {
             Expression content = null;
             String globalProps = element.getAttributeValue("", "global");
             String localProps = element.getAttributeValue("", "local");
-            Properties globals = loader.importProperties(globalProps);
-            Properties locals = loader.importProperties(localProps);
+            Properties globals = globalProps == null ? new Properties() : loader.importProperties(globalProps);
+            Properties locals = localProps == null ? new Properties() : loader.importProperties(localProps);
             Map<StructuredQName, Expression> dynamicProperties = new HashMap<>();
             NodeInfo child;
             AxisIterator iter = element.iterateAxis(AxisInfo.CHILD, NodeKindTest.ELEMENT);
