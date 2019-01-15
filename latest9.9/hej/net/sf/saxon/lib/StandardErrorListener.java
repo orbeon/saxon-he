@@ -379,7 +379,8 @@ public class StandardErrorListener implements UnfailingErrorListener {
 
         if (exception instanceof XPathException) {
             XPathContext context = ((XPathException) exception).getXPathContext();
-            if (context != null && getRequestedRecoveryPolicy() != Configuration.RECOVER_SILENTLY) {
+            if (context != null && getRequestedRecoveryPolicy() != Configuration.RECOVER_SILENTLY
+                    && !(context instanceof EarlyEvaluationContext)) {
                 outputStackTrace(logger, context);
             }
         }
