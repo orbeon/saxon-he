@@ -45,6 +45,7 @@ import java.util.Objects;
 public class UserFunction extends Actor implements Function, ContextOriginator {
 
     public enum Determinism {DETERMINISTIC, PROACTIVE, ELIDABLE}
+    private final static int MAX_INLININGS = 100;
 
     private StructuredQName functionName;  // null for an anonymous function
     private boolean tailCalls = false;
@@ -57,6 +58,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
     protected Evaluator evaluator = null;
     private boolean isUpdating = false;
     private int inlineable = -1; // 0:no 1:yes -1:don't know
+    private int inliningCount = 0;
     private boolean overrideExtensionFunction = true;
     private AnnotationList annotations = AnnotationList.EMPTY;
     private FunctionStreamability declaredStreamability = FunctionStreamability.UNCLASSIFIED;
@@ -268,7 +270,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
     /*@Nullable*/
     public Boolean isInlineable() {
         if (inlineable != -1) {
-            return inlineable == 1;
+            return inlineable > 0 && inliningCount < MAX_INLININGS;
         }
         if (body == null) {
             // bug 2226
@@ -285,7 +287,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
                 if (inlineable < 0) {
                     return null;
                 } else {
-                    return inlineable == 1;
+                    return inlineable > 0;
                 }
             } else {
                 return false;
@@ -304,6 +306,15 @@ public class UserFunction extends Actor implements Function, ContextOriginator {
 
     public void setInlineable(boolean inlineable) {
         this.inlineable = inlineable ? 1 : 0;
+    }
+
+    /**
+     * Indicate that the function is being inlined, incrementing a count of how
+     * many times it has been inlined
+     */
+
+    public void markAsInlined() {
+        inliningCount++;
     }
 
     /**
