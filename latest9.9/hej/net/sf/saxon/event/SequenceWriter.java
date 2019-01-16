@@ -149,6 +149,7 @@ public abstract class SequenceWriter extends SequenceReceiver {
             NodeInfo doc = builder.getCurrentRoot();
             // add the constructed document to the result sequence
             append(doc, ExplicitLocation.UNKNOWN_LOCATION, ReceiverOptions.ALL_NAMESPACES);
+            systemId = null;
         }
         previousAtomic = false;
     }
@@ -182,6 +183,7 @@ public abstract class SequenceWriter extends SequenceReceiver {
             outputter = null;
             NodeInfo element = builder.getCurrentRoot();
             append(element, ExplicitLocation.UNKNOWN_LOCATION, ReceiverOptions.ALL_NAMESPACES);
+            systemId = null;
         }
         previousAtomic = false;
     }

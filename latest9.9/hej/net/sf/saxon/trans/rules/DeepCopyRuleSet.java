@@ -7,6 +7,7 @@
 
 package net.sf.saxon.trans.rules;
 
+import net.sf.saxon.event.Receiver;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.instruct.ParameterSet;
 import net.sf.saxon.expr.parser.Location;
@@ -51,24 +52,31 @@ public class DeepCopyRuleSet implements BuiltInRuleSet {
                         Location locationId) throws XPathException {
         if (item instanceof NodeInfo) {
             NodeInfo node = (NodeInfo) item;
+            Receiver out = context.getReceiver();
             switch (node.getNodeKind()) {
                 case Type.DOCUMENT: {
-                    node.copy(context.getReceiver(), CopyOptions.ALL_NAMESPACES, locationId);
+                    if (out.getSystemId() == null) {
+                        out.setSystemId(node.getBaseURI());
+                    }
+                    node.copy(out, CopyOptions.ALL_NAMESPACES, locationId);
                     return;
                 }
                 case Type.ELEMENT: {
-                    node.copy(context.getReceiver(), CopyOptions.ALL_NAMESPACES, locationId);
+                    if (out.getSystemId() == null) {
+                        out.setSystemId(node.getBaseURI());
+                    }
+                    node.copy(out, CopyOptions.ALL_NAMESPACES, locationId);
                     return;
                 }
                 case Type.TEXT:
-                    context.getReceiver().characters(item.getStringValueCS(), locationId, 0);
+                    out.characters(item.getStringValueCS(), locationId, 0);
                     return;
 
                 case Type.ATTRIBUTE:
                 case Type.COMMENT:
                 case Type.PROCESSING_INSTRUCTION:
                 case Type.NAMESPACE:
-                    node.copy(context.getReceiver(), 0, locationId);
+                    node.copy(out, 0, locationId);
                     return;
 
                 default:

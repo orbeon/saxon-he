@@ -60,6 +60,9 @@ public class ShallowCopyRuleSet implements BuiltInRuleSet {
                 case Type.DOCUMENT: {
                     Receiver out = context.getReceiver();
                     PipelineConfiguration pipe = out.getPipelineConfiguration();
+                    if (out.getSystemId() == null) {
+                        out.setSystemId(node.getBaseURI());
+                    }
                     out.startDocument(0);
                     XPathContextMajor c2 = context.newContext();
                     c2.setOrigin(this);
@@ -77,6 +80,9 @@ public class ShallowCopyRuleSet implements BuiltInRuleSet {
                 case Type.ELEMENT: {
                     Receiver out = context.getReceiver();
                     PipelineConfiguration pipe = out.getPipelineConfiguration();
+                    if (out.getSystemId() == null) {
+                        out.setSystemId(node.getBaseURI());
+                    }
                     NodeName fqn = NameOfNode.makeName(node);
                     out.startElement(fqn, node.getSchemaType(), locationId, 0);
                     NamespaceIterator.sendNamespaces(node, out);
