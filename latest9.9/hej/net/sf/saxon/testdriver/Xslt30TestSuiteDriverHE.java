@@ -932,6 +932,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                     XsltCompiler c = driverProc.newXsltCompiler();
                     c.setAssertionsEnabled(true);
                     c.setParameter(new QName("FAST_JAVA_XPATH"), new XdmAtomicValue(true));
+                    c.setFastCompilation(true); // TODO: temporary
                     xxCompiler = c.compile(new StreamSource(new File(xxCompilerLocation)));
                 }
                 Xslt30Transformer transformer = xxCompiler.load30();
