@@ -925,7 +925,14 @@ public class PackageLoaderHE implements IPackageLoader {
                     SelectedElementsSpaceStrippingRule rules = new SelectedElementsSpaceStrippingRule(false);
                     while ((element2 = iterator2.next()) != null) {
                         Stripper.StripRuleTarget which = element2.getLocalPart().equals("s") ? Stripper.STRIP : Stripper.PRESERVE;
-                        NodeTest t = (NodeTest) parseItemTypeAttribute(element2, "test");
+                        String value = element2.getAttributeValue("", "test");
+                        NodeTest t;
+                        if (value.equals("*")) {
+                            t = NodeKindTest.ELEMENT;
+                        } else {
+                            // TODO: bug 4096
+                            t = (NodeTest) parseItemTypeAttribute(element2, "test");
+                        }
                         int prec = getIntegerAttribute(element2, "prec");
                         NodeTestPattern pat = new NodeTestPattern(t);
                         rules.addRule(pat, which, prec, prec);
