@@ -369,7 +369,7 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
      *                    (the parameters set in the serializer take precedence).
      * @throws SaxonApiException if the transformation fails, or if the initial mode in the stylesheet is
      * declared to be streamable.
-     * @since 9.9.0.2
+     * @since 9.9.1.1
      */
 
     public void transform(Source source, Destination destination) throws SaxonApiException {

@@ -252,7 +252,7 @@ public class XdmMap extends XdmFunctionItem {
      *
      * @param key key whose presence in this map is to be tested
      * @return <tt>true</tt> if this map contains a mapping for the specified key
-     * @since 9.8. Changed the method signature in 9.9.0.2 to match the implementation: see bug 3969.
+     * @since 9.8. Changed the method signature in 9.9.1.1 to match the implementation: see bug 3969.
      */
     public boolean containsKey(XdmAtomicValue key) {
         return getUnderlyingValue().get(key.getUnderlyingValue()) != null;

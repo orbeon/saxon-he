@@ -1145,7 +1145,7 @@ public class Controller implements ContextOriginator {
      * users (it is done automatically when transform() is invoked). However, it is available as a low-level API
      * especially for use with XQuery.
      *
-     * @param params the values of stylesheet parameters. Changed in 9.9.0.2 so this no longer includes
+     * @param params the values of stylesheet parameters. Changed in 9.9.1.1 so this no longer includes
      *               static parameters (which are already available in the {@link PreparedStylesheet}).
      * @throws XPathException if an error occurs, for example if a required parameter is not supplied.
      */
