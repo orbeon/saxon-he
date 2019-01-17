@@ -491,7 +491,7 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
             out.emitAttribute("name", getFunctionName());
             out.emitAttribute("type", getTargetFunction().getFunctionItemType().getResultType().toExportString());
             ExpressionPresenter.ExportOptions options = (ExpressionPresenter.ExportOptions) out.getOptions();
-            if (options.target.equals("JS") && options.targetVersion == 2) {
+            if (options.target != null && options.target.equals("JS") && options.targetVersion == 2) {
                 out.emitAttribute("typeJ", getTargetFunction().getFunctionItemType().getResultType().toExportString2());
             }
             getTargetFunction().exportAttributes(out);

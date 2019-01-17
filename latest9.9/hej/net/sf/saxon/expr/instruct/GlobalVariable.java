@@ -879,7 +879,7 @@ public class GlobalVariable extends Actor
         presenter.emitAttribute("name", getVariableQName());
         presenter.emitAttribute("type", getRequiredType().toExportString());
         ExpressionPresenter.ExportOptions options = (ExpressionPresenter.ExportOptions) presenter.getOptions();
-        if (options.target.equals("JS") && options.targetVersion == 2) {
+        if (options.target != null && options.target.equals("JS") && options.targetVersion == 2) {
             presenter.emitAttribute("typeJ", getRequiredType().toExportString2());
         }
         presenter.emitAttribute("line", getLineNumber() + "");
