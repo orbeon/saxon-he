@@ -194,7 +194,7 @@ public class DynamicQueryContext {
      *
      * @param expandedName the name of the required parameter
      * @return the value of the parameter, if it exists, or null otherwise
-     * @since 8.4. Changed in 9.6 to take a StructuredQName for the name. Changed in 9.9.0.2
+     * @since 8.4. Changed in 9.6 to take a StructuredQName for the name. Changed in 9.9.1.1
      * to return a generified GroundedValue.
      */
 
