@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scm:schema xmlns:scm="http://ns.saxonica.com/schema-component-model"
-            generatedAt="2018-09-21T14:03:43.752+01:00"
+            generatedAt="2019-01-17T15:41:29.343Z"
             xsdVersion="1.1"
-            dmk="TGljZW5zb3I9U2F4b25pY2EKTGljZW5zZWU9TydOZWlsIERlbHByYXR0CkNvbXBhbnk9U2F4b25pY2EKRW1haWw9b25laWxAc2F4b25pY2EuY29tCkVkaXRpb249REUKU0FUPXllcwpTQVE9eWVzClNBVj15ZXMKSXNzdWVkPTIwMTctMTEtMjIKU2VyaWVzPUQKU2VyaWFsPUQwMDY0MDgKVXNlcj1QMDAwMQpFdmFsdWF0aW9uPW5vCkV4cGlyYXRpb249bmV2ZXIKVXBncmFkZURheXM9MzY2Ck1haW50ZW5hbmNlRGF5cz0zNjYKU2lnbmF0dXJlPTMwMkMwMjE0NjU1REM4QzZFRDM3NDBDOTg4MkFERkYzRUFBQzVGNDlDRTcwOTFGRDAyMTQzRjQ0N0Y4OEY1MTIxQTQxMUM3MTQwRThEMzMyQzQ3Q0E4RUZDQjE1Cg==">
+            dmk="TGljZW5zb3I9U2F4b25pY2EKTGljZW5zZWU9TydOZWlsIERlbHByYXR0CkNvbXBhbnk9U2F4b25pY2EKRW1haWw9b25laWxAc2F4b25pY2EuY29tCkVkaXRpb249REUKU0FUPXllcwpTQVE9eWVzClNBVj15ZXMKSXNzdWVkPTIwMTgtMDctMDQKU2VyaWVzPU8KU2VyaWFsPU8wMDcwNjIKVXNlcj1QMDAwMQpFdmFsdWF0aW9uPW5vCkV4cGlyYXRpb249bmV2ZXIKVXBncmFkZURheXM9MzY2Ck1haW50ZW5hbmNlRGF5cz0zNjYKClNpZ25hdHVyZT0zMDJDMDIxNDA1RDJEREQ0NjBGQzhFODI0OTEyMkEzQzVBNzZENzRDRDdFMjk2OTcwMjE0NUM5MTQxNjAyNzYzRTlBNjU0Qjc3MkM3NTk3RDg5RTNCQkE5MTAzQg==">
    <scm:simpleType id="C0"
                    name="finiteNumberType"
                    targetNamespace="http://www.w3.org/2005/xpath-functions"
@@ -20,7 +20,11 @@
                     abstract="false"
                     variety="empty">
       <scm:attributeUse required="false" inheritable="false" ref="C2"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C3" default="false"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C3" default="false">
+         <scm:default lexicalForm="false">
+            <scm:item type="#boolean" value="false"/>
+         </scm:default>
+      </scm:attributeUse>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true"/>
       </scm:finiteStateMachine>
@@ -46,8 +50,16 @@
                     variety="simple"
                     simpleType="#string">
       <scm:attributeUse required="false" inheritable="false" ref="C2"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C3" default="false"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C8" default="false"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C3" default="false">
+         <scm:default lexicalForm="false">
+            <scm:item type="#boolean" value="false"/>
+         </scm:default>
+      </scm:attributeUse>
+      <scm:attributeUse required="false" inheritable="false" ref="C8" default="false">
+         <scm:default lexicalForm="false">
+            <scm:item type="#boolean" value="false"/>
+         </scm:default>
+      </scm:attributeUse>
       <scm:attributeWildcard ref="C9"/>
    </scm:complexType>
    <scm:complexType id="C10"
@@ -80,20 +92,20 @@
       </scm:modelGroupParticle>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
-            <scm:edge term="C14" to="1"/>
-            <scm:edge term="C17" to="1"/>
-            <scm:edge term="C15" to="1"/>
             <scm:edge term="C18" to="1"/>
             <scm:edge term="C19" to="1"/>
+            <scm:edge term="C17" to="1"/>
             <scm:edge term="C16" to="1"/>
+            <scm:edge term="C14" to="1"/>
+            <scm:edge term="C15" to="1"/>
          </scm:state>
          <scm:state nr="1" final="true">
-            <scm:edge term="C14" to="1"/>
-            <scm:edge term="C17" to="1"/>
-            <scm:edge term="C15" to="1"/>
             <scm:edge term="C18" to="1"/>
             <scm:edge term="C19" to="1"/>
+            <scm:edge term="C17" to="1"/>
             <scm:edge term="C16" to="1"/>
+            <scm:edge term="C14" to="1"/>
+            <scm:edge term="C15" to="1"/>
          </scm:state>
       </scm:finiteStateMachine>
    </scm:complexType>
@@ -106,7 +118,11 @@
                     variety="simple"
                     simpleType="#boolean">
       <scm:attributeUse required="false" inheritable="false" ref="C2"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C3" default="false"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C3" default="false">
+         <scm:default lexicalForm="false">
+            <scm:item type="#boolean" value="false"/>
+         </scm:default>
+      </scm:attributeUse>
       <scm:attributeWildcard ref="C22"/>
    </scm:complexType>
    <scm:complexType id="C23"
@@ -117,7 +133,11 @@
                     abstract="false"
                     variety="element-only">
       <scm:attributeUse required="false" inheritable="false" ref="C2"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C3" default="false"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C3" default="false">
+         <scm:default lexicalForm="false">
+            <scm:item type="#boolean" value="false"/>
+         </scm:default>
+      </scm:attributeUse>
       <scm:attributeWildcard ref="C13"/>
       <scm:modelGroupParticle minOccurs="0" maxOccurs="unbounded">
          <scm:choice>
@@ -131,20 +151,20 @@
       </scm:modelGroupParticle>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
-            <scm:edge term="C14" to="1"/>
-            <scm:edge term="C17" to="1"/>
-            <scm:edge term="C15" to="1"/>
             <scm:edge term="C18" to="1"/>
             <scm:edge term="C19" to="1"/>
+            <scm:edge term="C17" to="1"/>
             <scm:edge term="C16" to="1"/>
+            <scm:edge term="C14" to="1"/>
+            <scm:edge term="C15" to="1"/>
          </scm:state>
          <scm:state nr="1" final="true">
-            <scm:edge term="C14" to="1"/>
-            <scm:edge term="C17" to="1"/>
-            <scm:edge term="C15" to="1"/>
             <scm:edge term="C18" to="1"/>
             <scm:edge term="C19" to="1"/>
+            <scm:edge term="C17" to="1"/>
             <scm:edge term="C16" to="1"/>
+            <scm:edge term="C14" to="1"/>
+            <scm:edge term="C15" to="1"/>
          </scm:state>
       </scm:finiteStateMachine>
    </scm:complexType>
@@ -178,20 +198,20 @@
       </scm:modelGroupParticle>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
-            <scm:edge term="C27" to="1"/>
             <scm:edge term="C26" to="1"/>
-            <scm:edge term="C31" to="1"/>
-            <scm:edge term="C29" to="1"/>
+            <scm:edge term="C27" to="1"/>
             <scm:edge term="C30" to="1"/>
             <scm:edge term="C28" to="1"/>
+            <scm:edge term="C29" to="1"/>
+            <scm:edge term="C31" to="1"/>
          </scm:state>
          <scm:state nr="1" final="true">
-            <scm:edge term="C27" to="1"/>
             <scm:edge term="C26" to="1"/>
-            <scm:edge term="C31" to="1"/>
-            <scm:edge term="C29" to="1"/>
+            <scm:edge term="C27" to="1"/>
             <scm:edge term="C30" to="1"/>
             <scm:edge term="C28" to="1"/>
+            <scm:edge term="C29" to="1"/>
+            <scm:edge term="C31" to="1"/>
          </scm:state>
       </scm:finiteStateMachine>
    </scm:complexType>
@@ -203,7 +223,11 @@
                     abstract="false"
                     variety="element-only">
       <scm:attributeUse required="false" inheritable="false" ref="C2"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C3" default="false"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C3" default="false">
+         <scm:default lexicalForm="false">
+            <scm:item type="#boolean" value="false"/>
+         </scm:default>
+      </scm:attributeUse>
       <scm:attributeWildcard ref="C25"/>
       <scm:modelGroupParticle minOccurs="0" maxOccurs="unbounded">
          <scm:choice>
@@ -217,20 +241,20 @@
       </scm:modelGroupParticle>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
-            <scm:edge term="C27" to="1"/>
             <scm:edge term="C26" to="1"/>
-            <scm:edge term="C31" to="1"/>
-            <scm:edge term="C29" to="1"/>
+            <scm:edge term="C27" to="1"/>
             <scm:edge term="C30" to="1"/>
             <scm:edge term="C28" to="1"/>
+            <scm:edge term="C29" to="1"/>
+            <scm:edge term="C31" to="1"/>
          </scm:state>
          <scm:state nr="1" final="true">
-            <scm:edge term="C27" to="1"/>
             <scm:edge term="C26" to="1"/>
-            <scm:edge term="C31" to="1"/>
-            <scm:edge term="C29" to="1"/>
+            <scm:edge term="C27" to="1"/>
             <scm:edge term="C30" to="1"/>
             <scm:edge term="C28" to="1"/>
+            <scm:edge term="C29" to="1"/>
+            <scm:edge term="C31" to="1"/>
          </scm:state>
       </scm:finiteStateMachine>
    </scm:complexType>
@@ -243,7 +267,11 @@
                     variety="simple"
                     simpleType="C0">
       <scm:attributeUse required="false" inheritable="false" ref="C2"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C3" default="false"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C3" default="false">
+         <scm:default lexicalForm="false">
+            <scm:item type="#boolean" value="false"/>
+         </scm:default>
+      </scm:attributeUse>
       <scm:attributeWildcard ref="C11"/>
    </scm:complexType>
    <scm:complexType id="C34"
@@ -261,12 +289,12 @@
       </scm:modelGroupParticle>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
-            <scm:edge term="C35" to="1"/>
             <scm:edge term="C36" to="1"/>
+            <scm:edge term="C35" to="1"/>
          </scm:state>
          <scm:state nr="1" final="true">
-            <scm:edge term="C35" to="1"/>
             <scm:edge term="C36" to="1"/>
+            <scm:edge term="C35" to="1"/>
          </scm:state>
       </scm:finiteStateMachine>
    </scm:complexType>
@@ -313,7 +341,11 @@
                     abstract="false"
                     variety="simple"
                     simpleType="#string">
-      <scm:attributeUse required="false" inheritable="false" ref="C8" default="false"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C8" default="false">
+         <scm:default lexicalForm="false">
+            <scm:item type="#boolean" value="false"/>
+         </scm:default>
+      </scm:attributeUse>
       <scm:attributeWildcard ref="C9"/>
    </scm:complexType>
    <scm:element id="C30"
@@ -392,35 +424,41 @@
                        name="key-group"
                        targetNamespace="http://www.w3.org/2005/xpath-functions">
       <scm:attributeUse required="false" inheritable="false" ref="C2"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C3" default="false"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C3" default="false">
+         <scm:default lexicalForm="false">
+            <scm:item type="#boolean" value="false"/>
+         </scm:default>
+      </scm:attributeUse>
    </scm:attributeGroup>
-   <scm:element id="C18"
-                name="boolean"
-                targetNamespace="http://www.w3.org/2005/xpath-functions"
-                type="C20"
-                global="false"
-                containingComplexType="C12"
-                nillable="false"
-                abstract="false"/>
-   <scm:element id="C19"
-                name="null"
-                targetNamespace="http://www.w3.org/2005/xpath-functions"
-                type="C1"
-                global="false"
-                containingComplexType="C12"
-                nillable="false"
-                abstract="false"/>
-   <scm:attribute id="C40"
-                  name="nr"
-                  type="#positiveInteger"
+   <scm:attribute id="C2"
+                  name="key"
+                  type="#string"
                   global="false"
-                  inheritable="false"
-                  containingComplexType="C39"/>
+                  inheritable="false"/>
+   <scm:attribute id="C3"
+                  name="escaped-key"
+                  type="#boolean"
+                  global="false"
+                  inheritable="false"/>
    <scm:wildcard id="C5"
                  processContents="skip"
                  constraint="not"
                  namespaces="##local http://www.w3.org/2005/xpath-functions"/>
-   <scm:wildcard id="C22"
+   <scm:attribute id="C8"
+                  name="escaped"
+                  type="#boolean"
+                  global="false"
+                  inheritable="false"
+                  containingComplexType="C7"/>
+   <scm:wildcard id="C9"
+                 processContents="skip"
+                 constraint="not"
+                 namespaces="##local http://www.w3.org/2005/xpath-functions"/>
+   <scm:wildcard id="C11"
+                 processContents="skip"
+                 constraint="not"
+                 namespaces="##local http://www.w3.org/2005/xpath-functions"/>
+   <scm:wildcard id="C13"
                  processContents="skip"
                  constraint="not"
                  namespaces="##local http://www.w3.org/2005/xpath-functions"/>
@@ -434,20 +472,6 @@
                 abstract="false">
       <scm:identityConstraint ref="C44"/>
    </scm:element>
-   <scm:unique id="C44"
-               name="unique-key-2"
-               targetNamespace="http://www.w3.org/2005/xpath-functions">
-      <scm:selector xmlns:fn="http://www.w3.org/2005/xpath-functions"
-                    xmlns:j="http://www.w3.org/2005/xpath-functions"
-                    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                    xpath="*"
-                    defaultNamespace=""/>
-      <scm:field xmlns:fn="http://www.w3.org/2005/xpath-functions"
-                 xmlns:j="http://www.w3.org/2005/xpath-functions"
-                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                 xpath="@key"
-                 defaultNamespace=""/>
-   </scm:unique>
    <scm:element id="C15"
                 name="array"
                 targetNamespace="http://www.w3.org/2005/xpath-functions"
@@ -464,6 +488,44 @@
                 containingComplexType="C12"
                 nillable="false"
                 abstract="false"/>
+   <scm:element id="C17"
+                name="number"
+                targetNamespace="http://www.w3.org/2005/xpath-functions"
+                type="C33"
+                global="false"
+                containingComplexType="C12"
+                nillable="false"
+                abstract="false"/>
+   <scm:element id="C18"
+                name="boolean"
+                targetNamespace="http://www.w3.org/2005/xpath-functions"
+                type="C20"
+                global="false"
+                containingComplexType="C12"
+                nillable="false"
+                abstract="false"/>
+   <scm:element id="C19"
+                name="null"
+                targetNamespace="http://www.w3.org/2005/xpath-functions"
+                type="C1"
+                global="false"
+                containingComplexType="C12"
+                nillable="false"
+                abstract="false"/>
+   <scm:wildcard id="C22"
+                 processContents="skip"
+                 constraint="not"
+                 namespaces="##local http://www.w3.org/2005/xpath-functions"/>
+   <scm:wildcard id="C25"
+                 processContents="skip"
+                 constraint="not"
+                 namespaces="##local http://www.w3.org/2005/xpath-functions"/>
+   <scm:attribute id="C40"
+                  name="nr"
+                  type="#positiveInteger"
+                  global="false"
+                  inheritable="false"
+                  containingComplexType="C39"/>
    <scm:unique id="C42"
                name="unique-key"
                targetNamespace="http://www.w3.org/2005/xpath-functions">
@@ -478,45 +540,19 @@
                  xpath="@key"
                  defaultNamespace=""/>
    </scm:unique>
-   <scm:element id="C17"
-                name="number"
-                targetNamespace="http://www.w3.org/2005/xpath-functions"
-                type="C33"
-                global="false"
-                containingComplexType="C12"
-                nillable="false"
-                abstract="false"/>
-   <scm:attribute id="C8"
-                  name="escaped"
-                  type="#boolean"
-                  global="false"
-                  inheritable="false"
-                  containingComplexType="C7"/>
-   <scm:attribute id="C2"
-                  name="key"
-                  type="#string"
-                  global="false"
-                  inheritable="false"/>
-   <scm:wildcard id="C9"
-                 processContents="skip"
-                 constraint="not"
-                 namespaces="##local http://www.w3.org/2005/xpath-functions"/>
-   <scm:wildcard id="C25"
-                 processContents="skip"
-                 constraint="not"
-                 namespaces="##local http://www.w3.org/2005/xpath-functions"/>
-   <scm:attribute id="C3"
-                  name="escaped-key"
-                  type="#boolean"
-                  global="false"
-                  inheritable="false"/>
-   <scm:wildcard id="C13"
-                 processContents="skip"
-                 constraint="not"
-                 namespaces="##local http://www.w3.org/2005/xpath-functions"/>
-   <scm:wildcard id="C11"
-                 processContents="skip"
-                 constraint="not"
-                 namespaces="##local http://www.w3.org/2005/xpath-functions"/>
+   <scm:unique id="C44"
+               name="unique-key-2"
+               targetNamespace="http://www.w3.org/2005/xpath-functions">
+      <scm:selector xmlns:fn="http://www.w3.org/2005/xpath-functions"
+                    xmlns:j="http://www.w3.org/2005/xpath-functions"
+                    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                    xpath="*"
+                    defaultNamespace=""/>
+      <scm:field xmlns:fn="http://www.w3.org/2005/xpath-functions"
+                 xmlns:j="http://www.w3.org/2005/xpath-functions"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 xpath="@key"
+                 defaultNamespace=""/>
+   </scm:unique>
 </scm:schema>
-<?Σ 8dedbd04?>
+<?Σ 706ac2ac?>
