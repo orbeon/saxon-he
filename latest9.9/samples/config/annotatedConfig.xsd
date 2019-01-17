@@ -454,6 +454,13 @@
                </xs:documentation>
             </xs:annotation>
          </xs:attribute>
+         <xs:attribute name="thresholdForHotspotByteCode" use="optional" type="xs:integer">
+            <xs:annotation>
+               <xs:documentation>
+                  <p>Defines how many times a code fragment must be executed before bytecode generation kicks in.</p>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
          <xs:attribute name="timing" use="optional" type="xs:boolean">
             <xs:annotation>
                <xs:documentation>
