@@ -3,6 +3,7 @@ using System.Collections;
 using System.Text;
 using Saxon.Api;
 using System.Xml;
+using System.Collections.Generic;
 
 namespace SampleExtensions
 {
@@ -93,7 +94,7 @@ namespace SampleExtensions
 
         public static XdmValue combine(XdmNode node, XdmAtomicValue value)
         {
-            ArrayList list = new ArrayList();
+            IList<XdmItem> list = new List<XdmItem>();
             list.Add(new XdmAtomicValue(node.StringValue));
             list.Add(value);
             return new XdmValue(list);
