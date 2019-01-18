@@ -305,7 +305,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
             AtomicValue key = (AtomicValue) arguments[0].head();
             assert key != null;
             GroundedValue<?> value = ((Sequence<?>)arguments[1]).iterate().materialize();
-            return new KeyValuePair(key, value);
+            return new SingleEntryMap(key, value);
         }
 
         /**
@@ -589,10 +589,8 @@ public class MapFunctionSet extends BuiltInFunctionSet {
             }
 
             AtomicValue key = (AtomicValue) arguments[1].head();
-            GroundedValue<?> value =
-                    ((Sequence<?>)arguments[2]).materialize();
-            KeyValuePair pair = new KeyValuePair(key, value);
-            return baseMap.addEntry(pair.key, pair.value);
+            GroundedValue<?> value = ((Sequence<?>)arguments[2]).materialize();
+            return baseMap.addEntry(key, value);
         }
     }
 

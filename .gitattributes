@@ -5972,6 +5972,7 @@ latest9.9/hej/net/sf/saxon/ma/map/MapItem.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/ma/map/MapType.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/ma/map/MapUntypedContains.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/ma/map/RangeKey.java svn_eol_002dstyle=native
+latest9.9/hej/net/sf/saxon/ma/map/SingleEntryMap.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/ma/map/TupleItemType.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/ma/map/TupleType.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/ma/map/package.html svn_eol_002dstyle=native

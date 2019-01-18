@@ -3183,7 +3183,7 @@ public class XPathParser {
                 if (key instanceof Literal && ((Literal)key).getValue() instanceof AtomicValue
                         && value instanceof Literal) {
                     entry = Literal.makeLiteral(
-                            new KeyValuePair((AtomicValue) ((Literal)key).getValue(),
+                            new SingleEntryMap((AtomicValue) ((Literal)key).getValue(),
                                              ((Literal)value).getValue()));
                 } else {
                     entry = MapFunctionSet.getInstance().makeFunction("entry", 2).makeFunctionCall(key, value);
