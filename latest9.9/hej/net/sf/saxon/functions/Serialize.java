@@ -89,7 +89,7 @@ public class Serialize extends SystemFunction implements Callable {
         op.addAllowedOption(sx("indent-spaces"), SequenceType.SINGLE_INTEGER); //integer
         op.addAllowedOption(sx("line-length"), SequenceType.SINGLE_INTEGER); //integer
         //requiredTypes.put("next-in-chain", SequenceType.SINGLE_STRING); //uri
-        op.addAllowedOption(sx("property-order"), listOfQNames); 
+        op.addAllowedOption(sx("property-order"), SequenceType.STRING_SEQUENCE);
         op.addAllowedOption(sx("recognize-binary"), SequenceType.SINGLE_BOOLEAN); //boolean
         op.addAllowedOption(sx("require-well-formed"), SequenceType.SINGLE_BOOLEAN); //boolean
         op.addAllowedOption(sx("single-quotes"), SequenceType.SINGLE_BOOLEAN); //boolean
@@ -270,6 +270,18 @@ public class Serialize extends SystemFunction implements Callable {
         return stringVal.toString();
     }
 
+    // Convert a sequence of strings to a single space-separated string.
+
+    private String toSpaceSeparatedString(Sequence<?> seqVal) throws XPathException {
+        SequenceIterator<?> iterator = seqVal.iterate();
+        Item item;
+        StringBuilder stringVal = new StringBuilder();
+        while ((item = iterator.next()) != null) {
+            stringVal.append(" ").append(item.getStringValue());
+        }
+        return stringVal.toString();
+    }
+
     // Convert a QName or string value to a method-type (or json-node-output-method-type) string.
 
     private String toMethodTypeString(Sequence<?> seqVal) throws XPathException {
@@ -428,7 +440,7 @@ public class Serialize extends SystemFunction implements Callable {
             props.setProperty(SaxonOutputKeys.LINE_LENGTH, seqVal.head().getStringValue());
         }
         if ((seqVal = map.get(sx("property-order"))) != null) {
-            props.setProperty(SaxonOutputKeys.PROPERTY_ORDER, toQNamesTypeString(seqVal));
+            props.setProperty(SaxonOutputKeys.PROPERTY_ORDER, toSpaceSeparatedString(seqVal));
         }
         if ((seqVal = map.get(sx("recognize-binary"))) != null) {
             props.setProperty(SaxonOutputKeys.RECOGNIZE_BINARY, toYesNoTypeString(seqVal));
