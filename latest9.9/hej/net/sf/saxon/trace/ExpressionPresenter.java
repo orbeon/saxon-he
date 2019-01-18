@@ -673,13 +673,14 @@ public class ExpressionPresenter {
     public interface Options {};
 
     public static class ExportOptions implements Options {
-        public String target;
-        public int targetVersion;
+        public String target = "";
+        public int targetVersion = 0;
         public StylesheetPackage rootPackage;
         public Map<Component, Integer> componentMap;
         public Map<StylesheetPackage, Integer> packageMap;
         public boolean explaining;
         public boolean suppressStaticContext;
+        public boolean addStaticType;
     }
 }
 
