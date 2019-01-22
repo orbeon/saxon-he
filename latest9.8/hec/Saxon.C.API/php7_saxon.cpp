@@ -3815,7 +3815,7 @@ PHP_MINFO_FUNCTION(saxon)
 
 PHP_MSHUTDOWN_FUNCTION(saxon) {
     UNREGISTER_INI_ENTRIES();
-    //SaxonProcessor::release();
+    SaxonProcessor::release();
 
     return SUCCESS;
 }
