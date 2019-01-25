@@ -12,7 +12,6 @@ import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.RebindingMap;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
@@ -27,6 +26,17 @@ public class ConditionalSorter extends Expression {
 
     private Operand conditionOp;
     private Operand sorterOp;
+
+    /**
+     * Generalized abstraction of the simplify(), typeCheck(), and optimize() methods, which
+     * in this case are all structurally the same.
+     */
+
+    @FunctionalInterface
+    private interface RewriteAction {
+        // TODO: extend this mechanism to be used by other expression classes.
+        Expression rewrite(Expression e) throws XPathException;
+    }
 
     private final static OperandRole DOC_SORTER_ROLE =
             new OperandRole(OperandRole.CONSTRAINED_CLASS, OperandUsage.TRANSMISSION, SequenceType.ANY_SEQUENCE);
@@ -81,6 +91,11 @@ public class ConditionalSorter extends Expression {
         return (DocumentSorter)sorterOp.getChildExpression();
     }
 
+    @Override
+    public Expression simplify() throws XPathException {
+        return rewrite(Expression::simplify);
+    }
+
     /**
      * Perform type checking of an expression and its subexpressions. This is the second phase of
      * static optimization.
@@ -88,11 +103,7 @@ public class ConditionalSorter extends Expression {
 
     /*@NotNull*/
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
-        typeCheckChildren(visitor, contextInfo);
-        if (!(sorterOp.getChildExpression() instanceof DocumentSorter)) {
-            return sorterOp.getChildExpression();
-        }
-        return this;
+        return rewrite(exp -> exp.typeCheck(visitor, contextInfo));
     }
 
     /**
@@ -142,15 +153,31 @@ public class ConditionalSorter extends Expression {
 
     @Override
     /*@NotNull*/
-    public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
-        conditionOp.optimize(visitor, contextItemType);
-        if (Literal.hasEffectiveBooleanValue(getCondition(), true)) {
-            return getDocumentSorter();
-        } else if (Literal.hasEffectiveBooleanValue(getCondition(), false)) {
-            return getDocumentSorter().getBaseExpression();
-        }
-        return this;
+    public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
+        return rewrite(exp -> exp.optimize(visitor, contextInfo));
     }
+
+    private Expression rewrite(RewriteAction rewriter) throws XPathException {
+        Expression base = rewriter.rewrite(getDocumentSorter());
+        if (base instanceof DocumentSorter) {
+            sorterOp.setChildExpression(base);
+        } else {
+            return base;
+        }
+        Expression cond = rewriter.rewrite(getCondition());
+        if (cond instanceof Literal) {
+            boolean b = ((Literal) cond).getValue().effectiveBooleanValue();
+            if (b) {
+                return base;
+            } else {
+                return ((DocumentSorter) base).getBaseExpression();
+            }
+        } else {
+            conditionOp.setChildExpression(cond);
+            return this;
+        }
+    }
+
 
     /**
      * Compute the static cardinality of this expression

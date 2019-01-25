@@ -11,7 +11,6 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.AxisInfo;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.pattern.AnyNodeTest;
 import net.sf.saxon.pattern.Pattern;
@@ -152,7 +151,7 @@ public class DocumentSorter extends UnaryExpression {
                 break;
             }
         }
-        if (sortable instanceof SlashExpression && !visitor.isOptimizeForStreaming()) {
+        if (sortable instanceof SlashExpression && !visitor.isOptimizeForStreaming() && !(getParentExpression() instanceof ConditionalSorter)) {
             return visitor.obtainOptimizer().makeConditionalDocumentSorter(
                     this, (SlashExpression) sortable);
         }
