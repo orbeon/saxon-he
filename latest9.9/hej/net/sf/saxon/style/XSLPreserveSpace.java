@@ -93,6 +93,23 @@ public class XSLPreserveSpace extends StyleElement {
                     nt = NodeKindTest.ELEMENT;
                     rules.addRule(nt, preserve, decl.getModule(), decl.getSourceElement().getLineNumber());
 
+                } else if (s.startsWith("Q{")) {
+                    int brace = s.indexOf('}');
+                    if (brace < 0) {
+                        compileError("No closing '}' in EQName");
+                    } else if (brace == s.length() - 1) {
+                        compileError("Missing local part in EQName");
+                    } else {
+                        String uri = s.substring(2, brace);
+                        String local = s.substring(brace + 1);
+                        if (local.equals("*")) {
+                            nt = new NamespaceTest(getNamePool(), Type.ELEMENT, uri);
+                        } else {
+                            nt = new NameTest(Type.ELEMENT, uri, local, getNamePool());
+                        }
+                        rules.addRule(nt, preserve, decl.getModule(), decl.getSourceElement().getLineNumber());
+                    }
+
                 } else if (s.endsWith(":*")) {
                     if (s.length() == 2) {
                         compileError("No prefix before ':*'");
