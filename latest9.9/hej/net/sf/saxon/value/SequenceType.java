@@ -408,7 +408,7 @@ public final class SequenceType {
      */
     public SequenceType(ItemType primaryType, int cardinality) {
         this.primaryType = primaryType;
-        if (primaryType instanceof ErrorType) {
+        if (primaryType instanceof ErrorType && Cardinality.allowsZero(cardinality)) {
             this.cardinality = StaticProperty.EMPTY;
         } else {
             this.cardinality = cardinality;
