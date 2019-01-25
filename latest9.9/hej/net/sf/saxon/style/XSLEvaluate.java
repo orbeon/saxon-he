@@ -179,7 +179,10 @@ public class XSLEvaluate extends StyleElement {
 
     public void validate(ComponentDeclaration decl) throws XPathException {
         getContainingPackage().setRetainUnusedFunctions();
-        xpath = typeCheck("select", xpath);
+        if (xpath == null) {
+            xpath = new StringLiteral("''");
+        }
+        xpath = typeCheck("xpath", xpath);
         baseUri = typeCheck("base-uri", baseUri);
         contextItem = typeCheck("context-item", contextItem);
         namespaceContext = typeCheck("namespace-context", namespaceContext);
