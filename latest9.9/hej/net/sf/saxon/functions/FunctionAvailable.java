@@ -11,6 +11,7 @@ import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.lib.NamespaceConstant;
+import net.sf.saxon.om.NameChecker;
 import net.sf.saxon.om.QNameParser;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
@@ -97,7 +98,7 @@ public class FunctionAvailable extends SystemFunction {
         }
         StructuredQName qName;
         try {
-            if (lexicalName.indexOf(':') < 0 && !lexicalName.startsWith("Q{")) {
+            if (NameChecker.isValidNCName(lexicalName)) {
                 // we're in XSLT, where the default namespace for functions can't be changed
                 String uri = NamespaceConstant.FN;
                 qName = new StructuredQName("", uri, lexicalName);
