@@ -150,7 +150,7 @@ public class Whitespace {
         }
         if (start == 0) {
             return value;
-        } else if (start < 0 || start == len - 1) {
+        } else if (start < 0 || start == len) {
             return "";
         } else {
             return value.subSequence(start, len);
