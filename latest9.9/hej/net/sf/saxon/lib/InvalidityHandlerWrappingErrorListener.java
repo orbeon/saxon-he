@@ -36,11 +36,11 @@ public class InvalidityHandlerWrappingErrorListener implements InvalidityHandler
         // no action
     }
 
-    public void reportInvalidity(Invalidity failure) {
+    public void reportInvalidity(Invalidity failure) throws XPathException {
         try {
             errorListener.error(((ValidationFailure) failure).makeException());
         } catch (TransformerException e) {
-            // no action
+            throw XPathException.makeXPathException(e);
         }
     }
 
