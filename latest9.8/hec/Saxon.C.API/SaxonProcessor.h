@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2016 Saxonica Limited.
+// Copyright (c) 2019 Saxonica Limited.
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 // If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 // This Source Code Form is "Incompatible With Secondary Licenses", as defined by the Mozilla Public License, v. 2.0.
@@ -549,7 +549,7 @@ bool registerCPPFunction(char * libName, JNINativeMethod * gMethods=NULL){
 			//copy vector to gMethods
 			gMethods = new JNINativeMethod[nativeMethodVect.size()];
 		} 
-		registerNativeMethods(sxnc_environment->env, "com/saxonica/functions/extfn/CppCall$PhpFunctionCall",
+		registerNativeMethods(sxn_environ->env, "com/saxonica/functions/extfn/CppCall$PhpFunctionCall",
     gMethods, sizeof(gMethods) / sizeof(gMethods[0]));
 	
 
@@ -592,9 +592,9 @@ static bool registerNativeMethods(JNIEnv* env, const char* className,
 			if(exception != NULL) {
 				delete exception;
 			}
-		exception = checkForExceptionCPP(SaxonProcessor::sxnc_environment->env, cppClass, NULL);
+		exception = checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
 #ifdef DEBUG
-		SaxonProcessor::sxnc_environment->env->ExceptionDescribe();
+		SaxonProcessor::sxn_environ->env->ExceptionDescribe();
 #endif
 		proc->exceptionClear();
 		}
@@ -608,7 +608,7 @@ static bool registerNativeMethods(JNIEnv* env, const char* className,
 
    // static JNIEnv *env;
     static int jvmCreatedCPP;
-    static sxnc_environment * sxnc_environment;
+    static sxnc_environment * sxn_environ;
     static int refCount;
     std::string cwd; /*!< current working directory */
     jobject proc; /*!< Java Processor object */
