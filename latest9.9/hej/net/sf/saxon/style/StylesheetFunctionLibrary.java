@@ -87,6 +87,9 @@ public class StylesheetFunctionLibrary implements FunctionLibrary {
         if (fn == null) {
             return null;
         }
+        if (fn.isOverrideExtensionFunction() != this.overrideExtensionFunction) {
+            return null;
+        }
 
         final UserFunctionCall fc = new UserFunctionCall();
         fc.setFunctionName(functionName.getComponentName());

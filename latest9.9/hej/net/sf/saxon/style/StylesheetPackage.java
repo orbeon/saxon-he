@@ -842,7 +842,7 @@ public class StylesheetPackage extends PackageData {
         functionLibrary.addFunctionLibrary(queryFunctions);
         functionLibrary.addFunctionLibrary(config.getIntegratedFunctionLibrary());
         config.addExtensionBinders(functionLibrary);
-
+        functionLibrary.addFunctionLibrary(new StylesheetFunctionLibrary(this, false));
         this.functionLibrary = functionLibrary;
     }
 

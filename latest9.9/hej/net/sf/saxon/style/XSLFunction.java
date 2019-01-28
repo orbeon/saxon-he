@@ -647,6 +647,7 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
                     annotations.add(new Annotation(new StructuredQName("saxon", NamespaceConstant.SAXON, "memo-function")));
                 }
                 fn.setAnnotations(new AnnotationList(annotations));
+                fn.setOverrideExtensionFunction(overrideExtensionFunction);
                 compiledFunction = fn;
             } catch (XPathException err) {
                 return null;
