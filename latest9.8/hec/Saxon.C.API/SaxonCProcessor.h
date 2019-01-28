@@ -20,7 +20,7 @@ EXTERN_SAXONC
 /*
  * Get the Saxon version 
  */
-const char * version(sxnc_environment environi) ;
+const char * version(sxnc_environment environi);
 
 const char * getProductVariantAndVersion(sxnc_environment environi);
 

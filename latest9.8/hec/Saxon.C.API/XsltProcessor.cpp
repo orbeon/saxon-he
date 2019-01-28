@@ -171,7 +171,7 @@ const char* XsltProcessor::checkException() {
 	 proc->exception = proc->checkForException(environi, cppClass, cpp);
 	 }
 	 return proc->exception;*/
-	return checkForException(*(SaxonProcessor::sxn_environ), cppClass, cppXT);
+	return proc->checkException(cppClass, cppXT);
 }
 
 int XsltProcessor::exceptionCount(){

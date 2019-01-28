@@ -378,7 +378,7 @@ const char * checkForException(sxnc_environment environ, jclass callingClass,  j
         jstring name = (jstring)((*(environ.env))->CallObjectMethod(environ.env, exccls, getName));
         char const* utfName = (*(environ.env))->GetStringUTFChars(environ.env, name, NULL);
         
-        if(callingObject != NULL && strcmp(utfName, "net.sf.saxon.s9api.SaxonApiException") == 0){
+        //if(callingObject != NULL && strcmp(utfName, "net.sf.saxon.s9api.SaxonApiException") == 0){
   		
 		jclass saxonExcClass = (*(environ.env))->FindClass(environ.env, "java/lang/Throwable");
 		
@@ -402,11 +402,11 @@ const char * checkForException(sxnc_environment environ, jclass callingClass,  j
 	    (*(environ.env))->ExceptionClear(environ.env);
 	    return utfMessage;
 	}
-    }
+   // }
      (*(environ.env))->ReleaseStringUTFChars(environ.env, name, utfName);      
     }
-(*(environ.env))->ExceptionClear(environ.env);
-    return NULL;
+    //(*(environ.env))->ExceptionClear(environ.env);
+    // return NULL;
 }
 
 

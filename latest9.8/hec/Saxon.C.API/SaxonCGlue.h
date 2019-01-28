@@ -25,11 +25,11 @@
 #endif
 
 #ifdef __cplusplus
-#define EXTERN_C extern "C" {
-#define EXTERN_C_END }
+#define EXTERN_SAXONC extern "C" {
+#define EXTERN_SAXONC_END }
 #else
-#define EXTERN_C
-#define EXTERN_C_END
+#define EXTERN_SAXONC
+#define EXTERN_SAXONC_END
 #endif
 
 #ifndef __cplusplus
@@ -55,7 +55,7 @@ static const bool true = 1;
 //#define DEBUG
 
 
-EXTERN_C
+EXTERN_SAXONC
 
 
 
@@ -275,7 +275,7 @@ void clearSettings(sxnc_parameter **parameters, int *parLen, sxnc_property ** pr
 
 const char * stringValue(sxnc_environment environ, jobject value);
 
-EXTERN_C_END
+EXTERN_SAXONC_END
 
 
 #endif //SAXONCGLUE_H

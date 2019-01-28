@@ -549,7 +549,7 @@ bool registerCPPFunction(char * libName, JNINativeMethod * gMethods=NULL){
 			//copy vector to gMethods
 			gMethods = new JNINativeMethod[nativeMethodVect.size()];
 		} 
-		registerNativeMethods(sxn_environ->env, "com/saxonica/functions/extfn/CppCall$PhpFunctionCall",
+		registerNativeMethods(sxnc_environment->env, "com/saxonica/functions/extfn/CppCall$PhpFunctionCall",
     gMethods, sizeof(gMethods) / sizeof(gMethods[0]));
 	
 
@@ -577,7 +577,28 @@ static bool registerNativeMethods(JNIEnv* env, const char* className,
     return true;
 }
 
+	/* TODO: Remove use of this method.*/
+	const char* checkException(jclass cppClass, jobject cpp) {
+	if(exception == NULL) {
+	 exception = checkForException(environi, cppClass, cpp);
 
+	
+	 }
+
+	/* Internal use*/
+	void checkAndCreateException(jclass cppClass){
+		exception = NULL;
+		if(exceptionOccurred()) {
+			if(exception != NULL) {
+				delete exception;
+			}
+		exception = checkForExceptionCPP(SaxonProcessor::sxnc_environment->env, cppClass, NULL);
+#ifdef DEBUG
+		SaxonProcessor::sxnc_environment->env->ExceptionDescribe();
+#endif
+		proc->exceptionClear();
+		}
+	}
 
 
 
@@ -587,7 +608,7 @@ static bool registerNativeMethods(JNIEnv* env, const char* className,
 
    // static JNIEnv *env;
     static int jvmCreatedCPP;
-    static sxnc_environment * sxn_environ;
+    static sxnc_environment * sxnc_environment;
     static int refCount;
     std::string cwd; /*!< current working directory */
     jobject proc; /*!< Java Processor object */

@@ -29,25 +29,13 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 	SaxonProcessor::sxn_environ->env->CallStaticVoidMethod(cppClass, debugMID, (jboolean)true);
 #endif    
 
-	proc->exception = NULL;
+	
 	if(!(proc->cwd.empty()) && curr.empty()){
 		cwdV = proc->cwd;
 	} else {
 		cwdV = curr;
 	}
-	if(exceptionOccurred()) {
-				if(proc->exception != NULL) {
-					delete proc->exception;
-				}
-				proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
-				
-     			
-			
-#ifdef DEBUG
-		SaxonProcessor::sxn_environ->env->ExceptionDescribe();
-#endif
-		proc->exceptionClear();
-	}
+	proc->checkAndCreateException(cppClass);
 
 }
 
@@ -76,6 +64,7 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 			node->setProcessor(proc);
 			return node;
 		}
+		proc->checkAndCreateException(cppClass);
 	}
 	return NULL;
 }
@@ -150,19 +139,9 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 	}
 
 }
-		if(exceptionOccurred()) {
-				if(proc->exception != NULL) {
-					delete proc->exception;
-				}
-				proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
-				
-     			
-			
-#ifdef DEBUG
-		SaxonProcessor::sxn_environ->env->ExceptionDescribe();
-#endif
-		proc->exceptionClear();
-	}
+	proc->checkAndCreateException(cppClass);				
+     		
+	
  }
 
   void SchemaValidator::registerSchemaFromString(const char * sourceStr){
@@ -239,22 +218,8 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 	}
 
 }
-
-		if(exceptionOccurred()) {
-
-				if(proc->exception != NULL) {
-					delete proc->exception;
-				}
-				proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
-				
-     			
-#ifdef DEBUG
-			SaxonProcessor::sxn_environ->env->ExceptionDescribe();
-#endif
-			proc->exceptionClear();
-		}
-
-	
+	proc->checkAndCreateException(cppClass);				
+    
 }
 
   void SchemaValidator::validate(const char * sourceFile){
@@ -328,21 +293,9 @@ if (!mID) {
 		SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
 		SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
 	}
-		if(exceptionOccurred()) {
-			if(proc->exception != NULL) {
-				delete proc->exception;
-			}
-				proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
+	proc->checkAndCreateException(cppClass);
 				
-     			
-
-
-#ifdef DEBUG
-	SaxonProcessor::sxn_environ->env->ExceptionDescribe();
-#endif
-			proc->exceptionClear();
-		}
-		}	
+	}	
 }
    
 XdmNode * SchemaValidator::validateToNode(const char * sourceFile){
@@ -419,11 +372,9 @@ if (!mID) {
 		return node;
 	}
 
+	proc->checkAndCreateException(cppClass);
+
 }
-#ifdef DEBUG
-	SaxonProcessor::sxn_environ->env->ExceptionDescribe();
-#endif
-SaxonProcessor::sxn_environ->env->ExceptionClear();
 
 }
 
@@ -450,11 +401,7 @@ bool SchemaValidator::exceptionOccurred() {
 }
 
 const char* SchemaValidator::checkException() {
-	/*if(proc->exception == NULL) {
-	 proc->exception = proc->checkForException(environi, cppClass, cpp);
-	 }
-	 return proc->exception;*/
-	return checkForException(*(SaxonProcessor::sxn_environ), cppClass, cppV);
+	return proc->checkException(cppClass, cppV);
 }
 
 int SchemaValidator::exceptionCount(){
