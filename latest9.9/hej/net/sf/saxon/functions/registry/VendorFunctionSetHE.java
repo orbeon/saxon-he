@@ -213,10 +213,9 @@ public class VendorFunctionSetHE extends BuiltInFunctionSet {
                 case "code":
                     StructuredQName errorCodeQName = error.getErrorCodeQName();
                     if (errorCodeQName == null) {
-                        return EmptySequence.getInstance();
-                    } else {
-                        return new QNameValue(errorCodeQName, BuiltInAtomicType.QNAME);
+                        errorCodeQName = new StructuredQName("saxon", NamespaceConstant.SAXON, "SXWN9000");
                     }
+                    return new QNameValue(errorCodeQName, BuiltInAtomicType.QNAME);
                 case "description":
                     String s = error.getMessage();
                     if (error.getCause() != null) {

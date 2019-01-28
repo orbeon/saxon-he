@@ -240,8 +240,8 @@ public class TryCatch extends Expression {
                 err.setIsGlobalError(false);
             } else {
                 StructuredQName code = err.getErrorCodeQName();
-                if(code == null) {
-                    code = new StructuredQName("err", NamespaceConstant.SAXON,"SXWN9000");
+                if (code == null) {
+                    code = new StructuredQName("saxon", NamespaceConstant.SAXON, "SXWN9000");
                 }
                 for (CatchClause clause : catchClauses) {
                     if (clause.nameTest.matches(code)) {
@@ -282,6 +282,9 @@ public class TryCatch extends Expression {
             } else {
                 StructuredQName code = err.getErrorCodeQName();
                 for (CatchClause clause : catchClauses) {
+                    if (code == null) {
+                        code = new StructuredQName("saxon", NamespaceConstant.SAXON, "SXWN9000");
+                    }
                     if (clause.nameTest.matches(code)) {
                         Expression caught = clause.catchOp.getChildExpression();
                         XPathContextMajor c2 = c.newContext();
@@ -331,6 +334,9 @@ public class TryCatch extends Expression {
                 err.setIsGlobalError(false);
             } else {
                 StructuredQName code = err.getErrorCodeQName();
+                if (code == null) {
+                    code = new StructuredQName("saxon", NamespaceConstant.SAXON, "SXWN9000");
+                }
                 for (CatchClause clause : catchClauses) {
                     if (clause.nameTest.matches(code)) {
                         if (monitor != null && monitor.hasBeenWrittenTo()) {
