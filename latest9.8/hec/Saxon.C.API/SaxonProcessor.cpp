@@ -33,11 +33,19 @@ int SaxonProcessor::refCount = 0;
 int SaxonProcessor::jvmCreatedCPP=0;
 
 bool SaxonProcessor::exceptionOccurred(){
-	return SaxonProcessor::sxn_environ->env->ExceptionCheck();
+	bool found = SaxonProcessor::sxn_environ->env->ExceptionCheck();
+	if(!found){
+		return exception != NULL && exception.count() > 1;
+	} else {
+		return found;
+	}
 }
 
 void SaxonProcessor::exceptionClear(){
 	SaxonProcessor::sxn_environ->env->ExceptionClear();
+	if(exception != NULL) {
+		delete exception;
+	}
 }
 
 SaxonApiException * SaxonProcessor::getException(){

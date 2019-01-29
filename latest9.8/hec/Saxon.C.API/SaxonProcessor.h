@@ -243,6 +243,15 @@ public:
 		return NULL;
 	}
 
+	const char * getErrorMessages(){
+		std::string result;
+		for(auto const& s: exceptions) {
+			result +=s;
+		}
+		if(result.empty()) { return NULL;}
+		return result.c_str();
+	}
+
     /**
      * Returns the ith Exception added, if there is one
      * @param i - ith exception in the vector
@@ -254,6 +263,8 @@ public:
 		}
 		throw 0;
 	}
+
+	
 
 private:
 	std::vector<MyException> exceptions; /*!< Capture exceptions in a std:vector */
@@ -582,7 +593,9 @@ static bool registerNativeMethods(JNIEnv* env, const char* className,
 		const char * message = NULL;		
 		if(exception == NULL) {
 		  message = checkForException(*sxn_environ, cppClass, cpp);
-	 	}
+	 	} else {
+			message = exception->getErrorMessages();	
+		}
 		return message;
 	}
 
