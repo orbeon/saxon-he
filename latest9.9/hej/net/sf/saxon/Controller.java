@@ -368,6 +368,12 @@ public class Controller implements ContextOriginator {
         return new SequenceOutputter(pipe, size);
     }
 
+    /*@NotNull*/
+    public synchronized SequenceOutputter allocateSequenceOutputter() {
+        PipelineConfiguration pipe = makePipelineConfiguration();
+        return new SequenceOutputter(pipe, 20);
+    }
+
     ///////////////////////////////////////////////////////////////////////////////
 
     /**
