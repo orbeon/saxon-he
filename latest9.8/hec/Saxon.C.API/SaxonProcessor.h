@@ -579,11 +579,12 @@ static bool registerNativeMethods(JNIEnv* env, const char* className,
 
 	/* TODO: Remove use of this method.*/
 	const char* checkException(jclass cppClass, jobject cpp) {
-	if(exception == NULL) {
-	 exception = checkForException(environi, cppClass, cpp);
-
-	
-	 }
+		const char * message = NULL;		
+		if(exception == NULL) {
+		  message = checkForException(*sxn_environ, cppClass, cpp);
+	 	}
+		return message;
+	}
 
 	/* Internal use*/
 	void checkAndCreateException(jclass cppClass){
@@ -596,7 +597,7 @@ static bool registerNativeMethods(JNIEnv* env, const char* className,
 #ifdef DEBUG
 		SaxonProcessor::sxn_environ->env->ExceptionDescribe();
 #endif
-		proc->exceptionClear();
+		exceptionClear();
 		}
 	}
 

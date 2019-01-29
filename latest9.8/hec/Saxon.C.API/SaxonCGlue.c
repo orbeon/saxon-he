@@ -297,7 +297,7 @@ jmethodID findConstructor (JNIEnv* penv, jclass myClassInDll, char* arguments)
 /*
  * Create the Java SaxonProcessor
  */
-jobject createXsltProcessor (JNIEnv* penv, jclass myClassInDll, const char * arguments, jobject argument1, jboolean license)
+jobject createSaxonProcessor (JNIEnv* penv, jclass myClassInDll, const char * arguments, jobject argument1, jboolean license)
 {
     jmethodID MID_initi;
 
