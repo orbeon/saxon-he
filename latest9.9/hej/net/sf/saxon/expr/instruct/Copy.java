@@ -221,6 +221,9 @@ public class Copy extends ElementCreator {
         if (!getPackageData().isSchemaAware()) {
             return selectItemType;
         }
+        if (selectItemType.getUType().overlaps(UType.ANY_ATOMIC.union(UType.FUNCTION))) {
+            return selectItemType;
+        }
         // The rest of the code handles the complications of schema-awareness
         Configuration config = th.getConfiguration();
         if (getSchemaType() != null) {
