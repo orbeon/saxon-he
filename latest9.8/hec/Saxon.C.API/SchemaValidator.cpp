@@ -375,7 +375,7 @@ if (!mID) {
 	proc->checkAndCreateException(cppClass);
 
 }
-
+	return NULL;
 }
 
 void SchemaValidator::exceptionClear(){

@@ -183,7 +183,7 @@ public:
      * @return the associated error code, or null if no error code is available
      */
 	const char * getErrorCode(int i){
-		if(i <= exceptions.size()){
+		if((size_t)i <= exceptions.size()){
 			return exceptions[i].errorCode.c_str();
 		}
 		return NULL;
@@ -191,35 +191,35 @@ public:
 
 
 	int getLineNumber(int i){
-		if(i <= exceptions.size()){
+		if((size_t)i <= exceptions.size()){
 			return exceptions[i].linenumber;	
 		}
 		return 0;
 	}
 
 	bool isGlobalError(int i){
-		if(i <= exceptions.size()){
+		if((size_t)i <= exceptions.size()){
 			return exceptions[i].isGlobal;
 		}
 		return false;
 	}
 
 	bool isStaticError(int i){
-		if(i <= exceptions.size()){
+		if((size_t)i <= exceptions.size()){
 			return exceptions[i].isStatic;
 		}
 		return false;
 	}
 
 	bool isTypeError(int i){
-		if(i <= exceptions.size()){
+		if((size_t) i <= exceptions.size()){
 			return exceptions[i].isType;
 		}
 		return NULL;
 	}
 
 	void clear(){
-	  for(int i =0; i< exceptions.size();i++) {
+	  for(size_t i =0; i< exceptions.size();i++) {
 		exceptions[i].errorCode.clear();
 		exceptions[i].errorMessage.clear();	
 	  }
@@ -227,7 +227,7 @@ public:
 	}
 
 	int count(){
-		return exceptions.size();	
+		return (int)exceptions.size();	
 	}
 
     /**
@@ -237,7 +237,7 @@ public:
      *         (which may be <tt>null</tt>).
      */
 	const char * getErrorMessage(int i){
-		if(i <= exceptions.size()){
+		if((size_t)i <= exceptions.size()){
 			return exceptions[i].errorMessage.c_str();
 		}
 		return NULL;
@@ -245,8 +245,8 @@ public:
 
 	const char * getErrorMessages(){
 		std::string result;
-		for(auto const& s: exceptions) {
-			result +=s;
+		for(size_t i = 0;i<exceptions.size();i++) {
+			result += getErrorMessage(i);
 		}
 		if(result.empty()) { return NULL;}
 		return result.c_str();
@@ -258,7 +258,7 @@ public:
      * @return MyException
      */
 	MyException getException(int i){
-		if(i <= exceptions.size()){
+		if((size_t)i <= exceptions.size()){
 			return exceptions[i];	
 		}
 		throw 0;
@@ -557,18 +557,18 @@ bool registerCPPFunction(char * libName, JNINativeMethod * gMethods=NULL){
 	}
 
 	if(gMethods == NULL && nativeMethodVect.size()==0) {
-		//error
+	return false;
 	} else {
 		if(gMethods == NULL) {
 			//copy vector to gMethods
 			gMethods = new JNINativeMethod[nativeMethodVect.size()];
 		} 
-		registerNativeMethods(sxn_environ->env, "com/saxonica/functions/extfn/CppCall$PhpFunctionCall",
+		return registerNativeMethods(sxn_environ->env, "com/saxonica/functions/extfn/CppCall$PhpFunctionCall",
     gMethods, sizeof(gMethods) / sizeof(gMethods[0]));
 	
 
 	}
-	
+	return false;
 }
 
 /*

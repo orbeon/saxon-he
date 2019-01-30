@@ -25,7 +25,7 @@
 
 	XdmValue::~XdmValue() {
 		//proc->env->ReleaseObject
-		for(int i =0; i< values.size(); i++){
+		for(size_t i =0; i< values.size(); i++){
 			if(values[i]->getRefCount()<1){
 	        		delete values[i];
 			}
@@ -68,7 +68,6 @@
 	}
 
 	jobject XdmValue::getUnderlyingValue(SaxonProcessor * proci){
-std::cerr<<"xdmValue gwtunderlyingValue cp0"<<std::endl;
 		if(jValues == NULL) {	
 			proc = proci;	
 			jValues;

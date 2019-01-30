@@ -188,7 +188,7 @@ int XsltProcessor::exceptionCount(){
 			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
 					"compileFromStringAndSave",
 					"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
-	if (!cStringmID) {
+	if (!cAndSStringmID) {
 		cerr << "Error: "<<getDllname() << ".compileFromStringAndSave"
 				<< " not found\n" << endl;
 
@@ -202,6 +202,7 @@ int XsltProcessor::exceptionCount(){
 		proc->checkAndCreateException(cppClass);		
 
     }
+}
 
 
 
@@ -210,7 +211,7 @@ int XsltProcessor::exceptionCount(){
 			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
 					"compileFromFileAndSave",
 					"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
-	if (!cStringmID) {
+	if (!cAndFStringmID) {
 		cerr << "Error: "<<getDllname() << ".compileFromFileAndSave"
 				<< " not found\n" << endl;
 
@@ -219,12 +220,13 @@ int XsltProcessor::exceptionCount(){
 		
 		SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, cAndFStringmID,
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
-						SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheetStr), 							SaxonProcessor::sxn_environ->env->NewStringUTF(filename));
+						SaxonProcessor::sxn_environ->env->NewStringUTF(xslFilename), 							SaxonProcessor::sxn_environ->env->NewStringUTF(filename));
 		
 		proc->checkAndCreateException(cppClass);
 
 
      }
+}
 
 void XsltProcessor::compileFromString(const char* stylesheetStr) {
 	static jmethodID cStringmID =

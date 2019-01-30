@@ -35,7 +35,7 @@ int SaxonProcessor::jvmCreatedCPP=0;
 bool SaxonProcessor::exceptionOccurred(){
 	bool found = SaxonProcessor::sxn_environ->env->ExceptionCheck();
 	if(!found){
-		return exception != NULL && exception.count() > 1;
+		return exception != NULL && exception->count() > 1;
 	} else {
 		return found;
 	}
@@ -227,7 +227,7 @@ SaxonProcessor::SaxonProcessor(const char * configFile){
 	proc = SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(saxonCAPIClass, mIDcreateProc,SaxonProcessor::sxn_environ->env->NewStringUTF(configFile));
 		
 	if(!proc) {
-		checkAndCreateException(cppClass);
+		checkAndCreateException(saxonCAPIClass);
 		std::cerr << "Error: "<<getDllname() << ". processor is NULL in constructor(configFile)"<< std::endl;
 		return ;	
 	}
@@ -348,7 +348,7 @@ void SaxonProcessor::setcwd(const char* dir){
 }
 
 void SaxonProcessor::setResourcesDirectory(const char* dir){
-	memset(&resources_dir[0], 0, sizeof(resources_dir));
+	//memset(&resources_dir[0], 0, sizeof(resources_dir));
 	strncat(resources_dir, dir, strlen(dir));
 }
 

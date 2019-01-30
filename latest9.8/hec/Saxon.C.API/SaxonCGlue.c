@@ -1,6 +1,25 @@
 #include "SaxonCGlue.h"
 
 jobject cpp;
+
+static char tempDllname[] =
+#if defined (__linux__)
+        "/libsaxonhec.so";  
+    #elif  defined (__APPLE__) && defined(__MACH__)
+        "/libsaxonhec.dylib";
+    #else
+         "\\libsaxonhec.dll";
+    #endif
+
+static char tempResources_dir[] = 
+     #ifdef __linux__
+        "/saxon-data";
+    #elif  defined (__APPLE__) && defined(__MACH__)
+        "/saxon-data";
+    #else
+         "\\saxon-data";
+    #endif
+
 /*
 * Set Dll name. Also set the saxon resources directory. 
 * If the SAXONC_HOME sxnc_environmental variable is set then use that as base.
