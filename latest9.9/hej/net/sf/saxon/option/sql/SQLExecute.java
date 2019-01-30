@@ -107,6 +107,7 @@ public class SQLExecute extends ExtensionInstruction {
                     default:
                         Statement s = connection.createStatement();
                         s.execute(statementText);
+                        s.close();
                         break;
                 }
 
