@@ -94,9 +94,6 @@ void testTransformToString2(SaxonProcessor * processor, XsltProcessor * trans){
     }
       fflush(stdout);
     delete output;
-	
-	
-
 }
 
 /*
@@ -513,6 +510,61 @@ void exampleParam(SaxonProcessor * saxonProc, XsltProcessor  *proc){
 		proc->clearProperties(); 
                         
             }
+
+
+/*
+* Test saving nd loading a Xslt package
+*/
+void testPackage1(SaxonProcessor * processor, XsltProcessor * trans){
+
+  cout<<endl<<"Test: Saving and loading Packages:"<<endl;
+  trans->clearParameters(true);
+  trans->clearProperties();
+
+    trans->compileFromFileAndSave("test.xsl", "test1.sef");
+     const char * output = trans->transformFileToValue("cat.xml","test1.sef");	
+   if(output == NULL) {
+      printf("result is null \n");
+	const char * message = trans->checkException();
+        if(message != NULL) {
+		cout<<"Error message =" << message<< endl;
+	}
+
+    }else {
+      printf("%s", output);
+      printf("result is OK \n");
+    }
+      fflush(stdout);
+    delete output;
+}
+
+
+/*
+* Test saving and loading a Xslt package
+*/
+void testPackage2(SaxonProcessor * processor, XsltProcessor * trans){
+
+  cout<<endl<<"Test: Saving and loading Packages2:"<<endl;
+  trans->clearParameters(true);
+  trans->clearProperties();
+
+	const char * stylesheet = "<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>       <xsl:param name='values' select='(2,3,4)' /><xsl:output method='xml' indent='yes' /><xsl:template match='*'><output><xsl:for-each select='$values' ><out><xsl:value-of select='. * 3'/></out><xsl:for-each></output></xsl:template><xsl:stylesheet>";
+
+    trans->compileFromStringAndSave(stylesheet, "test2.sef");
+     const char * output = trans->transformFileToValue("cat.xml","test2.sef");	
+   if(output == NULL) {
+      printf("result is null \n");
+	const char * message = trans->checkException();
+        if(message != NULL) {
+		cout<<"Error message =" << message<< endl;
+	}
+    }else {
+      printf("%s", output);
+      printf("result is OK \n");
+    }
+      fflush(stdout);
+    delete output;
+}
 
 
 
