@@ -12,6 +12,7 @@ export JET_HOME=/usr/lib/rt
 export PATH=$JET_HOME/bin:$PATH
 export LD_LIBRARY_PATH=$JET_HOME/lib/x86/shared:$LD_LIBRARY_PATH
 
+
 mkdir -p bin
 
 gcc -m64  -c ../../Saxon.C.API/SaxonCGlue.c -o bin/SaxonCGlue.o -ldl -lc  $1 $2
