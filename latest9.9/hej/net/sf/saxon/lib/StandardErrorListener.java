@@ -876,19 +876,24 @@ public class StandardErrorListener implements UnfailingErrorListener {
                 }
 
                 ContextOriginator originator = ((XPathContextMajor) context).getOrigin();
-                if (originator == null || originator instanceof Controller) {
+                if (originator instanceof Controller) {
                     return;
                 } else {
                     out.error("     invoked by " + showOriginator(originator));
                 }
                 context = context.getCaller();
+                if (context == null) {
+                    return;
+                }
             }
         }
     }
 
     private static String showOriginator(ContextOriginator originator) {
         StringBuilder sb = new StringBuilder();
-        if (originator instanceof ApplyTemplates) {
+        if (originator == null) {
+            sb.append("unknown caller (null)");
+        } else if (originator instanceof ApplyTemplates) {
             sb.append("xsl:apply-templates");
         } else if (originator instanceof NextMatch) {
             sb.append("xsl:next-match");
@@ -901,7 +906,17 @@ public class StandardErrorListener implements UnfailingErrorListener {
         } else if (originator instanceof Controller) {
             sb.append("external application");
         } else if (originator instanceof BuiltInRuleSet) {
-            sb.append("built-in template rule (" + ((BuiltInRuleSet)originator).getName() + ")");
+            sb.append("built-in template rule (" + ((BuiltInRuleSet) originator).getName() + ")");
+        } else if (originator instanceof IterateInstr) {
+            sb.append("xsl:iterate");
+        } else if (originator instanceof ForEachGroup) {
+            sb.append("xsl:for-each-group");
+        } else if (originator instanceof KeyDefinition) {
+            sb.append("xsl:key definition");
+        } else if (originator instanceof GlobalParam) {
+            sb.append("global xsl:param");
+        } else if (originator instanceof GlobalVariable) {
+            sb.append("global xsl:variable");
         } else {
             sb.append("unknown caller (" + originator.getClass() + ")");
         }
