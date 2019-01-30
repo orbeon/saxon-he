@@ -47,7 +47,7 @@
     }
 
 
-     XdmValue * XdmValue::addUnderlyingValue(jobject val){
+     void XdmValue::addUnderlyingValue(jobject val){
 	XdmItem * valuei = new XdmItem(val);
 	valuei->setProcessor(proc);
 	values.push_back(valuei);

@@ -114,7 +114,7 @@ public:
      * See methods the functions in SaxonCXPath of the C library
      * @param val - Java object
      */
-     XdmValue * addUnderlyingValue(jobject val);
+     void addUnderlyingValue(jobject val);
 
   
 
