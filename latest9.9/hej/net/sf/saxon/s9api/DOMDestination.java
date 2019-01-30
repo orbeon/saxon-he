@@ -47,7 +47,7 @@ public class DOMDestination extends AbstractDestination {
 
     public Receiver getReceiver(/*@NotNull*/ PipelineConfiguration pipe, SerializationProperties params) {
         domWriter.setPipelineConfiguration(pipe);
-        return domWriter;
+        return params.makeSequenceNormalizer(domWriter);
     }
 
     /**
