@@ -218,14 +218,7 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 	  SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
 	  SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
 
-	if(exceptionOccurred()) {
-			if(proc->exception != NULL) {
-				delete proc->exception;
-			}		
-		proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);	
-		proc->exceptionClear();
-	   		
-     	}
+	proc->checkAndCreateException(cppClass);
 	 
   }
 
@@ -299,14 +292,10 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 	
 	xdmValue->setProcessor(proc);
 	return xdmValue;
-     } else if(exceptionOccurred()) {
-			if(proc->exception != NULL) {
-				delete proc->exception;
-			}
-			proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
-			proc->exceptionClear();
-	   		
-     		} 
+     } else {
+	   
+	proc->checkAndCreateException(cppClass);		
+     	} 
   }
   return NULL;
 
@@ -363,12 +352,8 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
              const char * str = SaxonProcessor::sxn_environ->env->GetStringUTFChars(result, NULL);
             //return "result should be ok";            
 	    return str;
-	   } else if(exceptionOccurred()) {
-			if(proc->exception != NULL) {
-				delete proc->exception;
-			}
-			proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
-			proc->exceptionClear();
+	   } else {
+		proc->checkAndCreateException(cppClass);
 	   		
      		}
   }

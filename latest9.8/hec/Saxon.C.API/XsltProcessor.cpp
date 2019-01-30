@@ -181,6 +181,51 @@ int XsltProcessor::exceptionCount(){
  return 0;
  }
 
+
+
+    void XsltProcessor::compileFromStringAndSave(const char* stylesheetStr, const char* filename){
+	static jmethodID cAndSStringmID =
+			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+					"compileFromStringAndSave",
+					"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
+	if (!cStringmID) {
+		cerr << "Error: "<<getDllname() << ".compileFromStringAndSave"
+				<< " not found\n" << endl;
+
+	} else {
+
+		
+		SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, cAndSStringmID,
+						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
+						SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheetStr), 							SaxonProcessor::sxn_environ->env->NewStringUTF(filename));
+		
+		proc->checkAndCreateException(cppClass);		
+
+    }
+
+
+
+    void XsltProcessor::compileFromFileAndSave(const char* xslFilename, const char* filename){
+	static jmethodID cAndFStringmID =
+			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+					"compileFromFileAndSave",
+					"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
+	if (!cStringmID) {
+		cerr << "Error: "<<getDllname() << ".compileFromFileAndSave"
+				<< " not found\n" << endl;
+
+	} else {
+
+		
+		SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, cAndFStringmID,
+						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
+						SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheetStr), 							SaxonProcessor::sxn_environ->env->NewStringUTF(filename));
+		
+		proc->checkAndCreateException(cppClass);
+
+
+     }
+
 void XsltProcessor::compileFromString(const char* stylesheetStr) {
 	static jmethodID cStringmID =
 			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
@@ -226,13 +271,7 @@ void XsltProcessor::compileFromXdmNode(XdmNode * node) {
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
 						node->getUnderlyingValue(proc)));
 		if (!stylesheetObject) {
-			if(exceptionOccurred()) {
-				if(proc->exception != NULL) {
-					delete proc->exception;
-				}
-				proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
-				proc->exceptionClear();
-     			}
+			proc->checkAndCreateException(cppClass);
 			//cout << "Error in compileFromXdmNode" << endl;
 		}
 	}
@@ -256,14 +295,7 @@ void XsltProcessor::compileFromFile(const char* stylesheet) {
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
 						SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheet)));
 		if (!stylesheetObject) {
-			if(exceptionOccurred()) {
-				
-				if(proc->exception != NULL) {
-					delete proc->exception;
-				}
-				proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
-				proc->exceptionClear();
-	   		}
+			proc->checkAndCreateException(cppClass);
      		
 		}
 		//SaxonProcessor::sxn_environ->env->NewGlobalRef(stylesheetObject);
@@ -347,13 +379,9 @@ XdmValue * XsltProcessor::transformFileToValue(const char* sourcefile,
 			XdmNode * node = new XdmNode(result);
 			node->setProcessor(proc);
 			return node;
-		}else if(exceptionOccurred()) {
+		}else {
 	
-			if(proc->exception != NULL) {
-				delete proc->exception;
-			}
-			proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
-			proc->exceptionClear();
+			proc->checkAndCreateException(cppClass);
 	   		
      		}
 	}
@@ -458,16 +486,7 @@ void XsltProcessor::transformFileToFile(const char* source,
 		
 	}
 
-	if(exceptionOccurred()) {
-			if(proc->exception != NULL) {
-				delete proc->exception;
-			}
-			proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
-			proc->exceptionClear();
-	   		
-     		}
-
-
+	proc->checkAndCreateException(cppClass);
 }
 
 
@@ -497,6 +516,7 @@ jobjectArray results = (jobjectArray)(
 		SaxonProcessor::sxn_environ->env->DeleteLocalRef(results);
 		return value;
 	}
+	proc->checkAndCreateException(cppClass);
     }
     return NULL;
 
@@ -611,13 +631,9 @@ const char * XsltProcessor::transformFileToString(const char* source,
 					NULL);
 			//return "result should be ok";
 			return str;
-		} else if(exceptionOccurred()) {
+		} else  {
 
-			if(proc->exception != NULL) {
-				delete proc->exception;
-			}
-			proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
-			proc->exceptionClear();
+			proc->checkAndCreateException(cppClass);  
 	   		
      		}
 	}

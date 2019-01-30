@@ -186,6 +186,27 @@ public:
      */
     void compileFromString(const char* stylesheet);
 
+
+     //!compile a stylesheet received as a string and save to SEF file.
+    /**
+     * 
+     * The compiled stylesheet is saved as SEF to file store
+     * @param stylesheet as a lexical string representation
+     * @param filename - the file to which the compiled package should be saved
+     */
+    void compileFromStringAndSave(const char* stylesheet, const char* filename);
+
+
+     //!compile a stylesheet received as a fileand save to SEF file.
+    /**
+     * 
+     * The compiled stylesheet is saved as SEF to file store
+     * @param xslFilename - file name of the stylesheet
+     * @param filename - the file to which the compiled package should be saved
+     */
+    void compileFromFileAndSave(const char* xslFilename, const char* filename);
+
+
      //!compile a stylesheet received as an XdmNode.
     /**
      * The compiled stylesheet is cached and available for execution later.

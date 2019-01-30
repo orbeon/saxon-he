@@ -1084,6 +1084,40 @@ PHP_METHOD(XsltProcessor, compileFromString)
     }
 }
 
+PHP_METHOD(XsltProcessor, compileFromStringAndSave)
+{
+    XsltProcessor *xsltProcessor;
+    char * stylesheetStr;
+    char * filename;
+    size_t len1, len2, myint;
+    if (zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &stylesheetStr, filename, &len1, &len2) == FAILURE) {
+        RETURN_NULL();
+    }
+    zend_object* pobj = Z_OBJ_P(getThis()); 
+    xsltProcessor_object *obj = (xsltProcessor_object *)((char *)pobj - XtOffsetOf(xsltProcessor_object, std));
+    xsltProcessor = obj->xsltProcessor;
+    if (xsltProcessor != NULL) {
+        xsltProcessor->compileFromStringAndSave(stylesheetStr, filename);
+    }
+}
+
+PHP_METHOD(XsltProcessor, compileFromFileAndSave)
+{
+    XsltProcessor *xsltProcessor;
+    char * stylesheetFilename;
+    char * filename;
+    size_t len1, len2, myint;
+    if (zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &stylesheetFilename, filename, &len1, &len2) == FAILURE) {
+        RETURN_NULL();
+    }
+    zend_object* pobj = Z_OBJ_P(getThis()); 
+    xsltProcessor_object *obj = (xsltProcessor_object *)((char *)pobj - XtOffsetOf(xsltProcessor_object, std));
+    xsltProcessor = obj->xsltProcessor;
+    if (xsltProcessor != NULL) {
+        xsltProcessor->compileFromStringAndSave(stylesheetFilename, filename);
+    }
+}
+
 PHP_METHOD(XsltProcessor, compileFromValue)
 {
     XsltProcessor *xsltProcessor;

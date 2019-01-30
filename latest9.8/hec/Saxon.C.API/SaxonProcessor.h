@@ -469,7 +469,7 @@ public:
 
      * Clears any exception that is currently being thrown. If no exception is currently being thrown, this routine has no effect.
     */
-    void exceptionClear();
+    void exceptionClear(bool clearCPPException=true);
 
     /**
      * Checks for pending exceptions and creates a SaxonApiException object, which handles one or more local exceptions objects
@@ -513,6 +513,9 @@ public:
      */
     void setConfigurationProperty(const char * name, const char * value);
 
+    /**
+     * Clear configuration properties specific to the processor in use. 
+     */
      void clearConfigurationProperties();
 
 
@@ -610,7 +613,7 @@ static bool registerNativeMethods(JNIEnv* env, const char* className,
 #ifdef DEBUG
 		SaxonProcessor::sxn_environ->env->ExceptionDescribe();
 #endif
-		exceptionClear();
+		exceptionClear(false);
 		}
 	}
 

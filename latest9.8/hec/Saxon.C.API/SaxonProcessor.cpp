@@ -41,9 +41,9 @@ bool SaxonProcessor::exceptionOccurred(){
 	}
 }
 
-void SaxonProcessor::exceptionClear(){
+void SaxonProcessor::exceptionClear(bool clearCPPException){
 	SaxonProcessor::sxn_environ->env->ExceptionClear();
-	if(exception != NULL) {
+	if(exception != NULL && clearCPPException) {
 		delete exception;
 	}
 }
@@ -227,7 +227,8 @@ SaxonProcessor::SaxonProcessor(const char * configFile){
 	proc = SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(saxonCAPIClass, mIDcreateProc,SaxonProcessor::sxn_environ->env->NewStringUTF(configFile));
 		
 	if(!proc) {
-		std::cerr << "Error: SaxonDll." << "processor is NULL in constructor(configFile)"<< std::endl;
+		checkAndCreateException(cppClass);
+		std::cerr << "Error: "<<getDllname() << ". processor is NULL in constructor(configFile)"<< std::endl;
 		return ;	
 	}
 	

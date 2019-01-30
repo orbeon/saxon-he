@@ -50,7 +50,7 @@ jmethodID mID =
 		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "evaluate",
 				"(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)[Lnet/sf/saxon/s9api/XdmValue;");
 if (!mID) {
-	cerr << "Error: MyClassInDll." << "evaluate" << " not found\n"
+	cerr << "Error: "<<getDllname() << ".evaluate" << " not found\n"
 			<< endl;
 
 } else {
@@ -86,15 +86,7 @@ if (!mID) {
 					SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXP.c_str()),
 					SaxonProcessor::sxn_environ->env->NewStringUTF(xpathStr), stringArray, objectArray));
 	if(!results) {
-		if(exceptionOccurred()) {
-			if(proc->exception != NULL) {
-				delete proc->exception;
-			}
-			proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
-			proc->exceptionClear();
-			return NULL;
-	   		
-     		}
+		proc->checkAndCreateException(cppClass);
 	}
 	
 	int sizex = SaxonProcessor::sxn_environ->env->GetArrayLength(results);
@@ -222,12 +214,8 @@ if (!mID) {
 		}
 		xdmItem->setProcessor(proc);
 		return xdmItem;
-	} else if(exceptionOccurred()) {
-			if(proc->exception != NULL) {
-				delete proc->exception;
-			}
-			proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
-			proc->exceptionClear();
+	} else  {
+		proc->checkAndCreateException(cppClass);
 	   		
      		}
 }
@@ -259,13 +247,14 @@ void XPathProcessor::declareNamespace(const char *prefix, const char * uri){
 		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "declareNamespace",
 				"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
 	if (!mID) {
-	cerr << "Error: MyClassInDll." << "declareNameSpace" << " not found\n"
+	cerr << "Error: "<<getDllname() << ".declareNameSpace" << " not found\n"
 			<< endl;
 
 	} else {
-			SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXP, mID,
-					SaxonProcessor::sxn_environ->env->NewStringUTF(prefix),
-					SaxonProcessor::sxn_environ->env->NewStringUTF(uri));
+		SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXP, mID,
+				SaxonProcessor::sxn_environ->env->NewStringUTF(prefix),
+				SaxonProcessor::sxn_environ->env->NewStringUTF(uri));
+		//proc->checkAndCreateException(cppClass);
 	}
 
 }
@@ -340,14 +329,7 @@ if (!mID) {
 		SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
 		SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
 	}
-	if(exceptionOccurred()) {
-			if(proc->exception != NULL) {
-				delete proc->exception;
-			}
-			proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
-			proc->exceptionClear();
-	   		
-     	}
+	proc->checkAndCreateException(cppClass);
 	return result;
 }
 return NULL;
