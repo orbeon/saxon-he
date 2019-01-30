@@ -1207,7 +1207,7 @@ public class SerializerFactory {
             if (isValidClarkName(value)) {
                 checkExtensions(value);
             } else {
-                throw new XPathException("Invalid value for serialization method: " +
+                throw new XPathException("Invalid value (" + value + ") for serialization method: " +
                                                  "must be xml|html|xhtml|text|json|adaptive, or a QName in '{uri}local' form", "SEPM0016");
             }
         }
