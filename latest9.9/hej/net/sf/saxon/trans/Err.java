@@ -119,7 +119,7 @@ public class Err {
                 case Type.ELEMENT:
                     return '<' + node.getDisplayName() + '>';
                 case Type.ATTRIBUTE:
-                    return '@' + node.getDisplayName();
+                    return '@' + node.getDisplayName() + "=\"" + node.getStringValueCS() + '"';
                 case Type.TEXT:
                     return "text{" + truncate30(node.getStringValueCS()) + "}";
                 case Type.COMMENT:
