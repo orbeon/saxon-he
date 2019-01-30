@@ -209,7 +209,7 @@ public final class Cardinality {
     }
 
     /**
-     * Get the occurence indicator representing the cardinality
+     * Get the occurrence indicator representing the cardinality
      *
      * @param cardinality the cardinality value
      * @return the occurrence indicator, for example "*", "+", "?", "".
@@ -235,6 +235,28 @@ public final class Cardinality {
                 // Covers no bits set (which shouldn't arise) and zero_or_many (which can arise, but is too specific for our purposes)
         }
     }
+
+    /**
+     * Get the cardinality code from an occurrence indicator
+     *
+     * @param cardinality the cardinality value
+     * @return the occurrence indicator, for example "*", "+", "?", "".
+     */
+
+    /*@NotNull*/
+    public static int fromOccurrenceIndicator(char cardinality) {
+        switch (cardinality) {
+            case '?':
+            return StaticProperty.ALLOWS_ZERO_OR_ONE;
+            case '1': return StaticProperty.EXACTLY_ONE;
+            case '*': return StaticProperty.ALLOWS_ZERO_OR_MORE;
+            case '+': return StaticProperty.ALLOWS_ONE_OR_MORE;
+            case '\u00B0': return StaticProperty.ALLOWS_ZERO;
+            default:
+                throw new AssertionError();
+        }
+    }
+
 
     /**
      * Generate Javascript code to check whether a number satisfies the cardinality property.

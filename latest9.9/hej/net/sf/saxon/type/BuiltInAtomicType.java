@@ -19,6 +19,8 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.*;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import static net.sf.saxon.type.SchemaComponent.ValidationStatus.VALIDATED;
@@ -41,6 +43,12 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
     private SequenceType _oneOrMore;
     private SequenceType _zeroOrOne;
     private SequenceType _zeroOrMore;
+
+    /**
+     * Table of all built in atomic types, indexed by the alphacode, eg. ADI = integer
+     */
+
+    private static Map<String, BuiltInAtomicType> lookupByAlphaCode = new HashMap<>(100);
 
     public final static BuiltInAtomicType ANY_ATOMIC =
             makeAtomicType(StandardNames.XS_ANY_ATOMIC_TYPE, AnySimpleType.getInstance(), "A", true);
@@ -1177,7 +1185,12 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
         t.ordered = ordered;
         t.alphaCode = code;
         BuiltInType.register(fingerprint, t);
+        lookupByAlphaCode.put(code, t);
         return t;
+    }
+
+    public static BuiltInAtomicType getTypeWithAlphaCode(String alphaCode) {
+        return lookupByAlphaCode.get(alphaCode);
     }
 
     /**
