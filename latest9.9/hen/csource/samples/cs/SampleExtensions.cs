@@ -47,7 +47,7 @@ namespace SampleExtensions
 
         public static string hostLanguage(net.sf.saxon.expr.XPathContext context)
         {
-            int lang = 0;// context.getController().getExecutable().getHostLanguage();
+            int lang = context.getController().getExecutable().getHostLanguage();
             if (lang == net.sf.saxon.Configuration.XQUERY)
             {
                 return "XQuery";
