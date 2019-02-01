@@ -161,7 +161,7 @@ public class StartTagBuffer extends ProxyReceiver implements NamespaceResolver {
 
             // avoid duplicates
             for (int n = 0; n < countStack[depth - 1]; n++) {
-                if (namespaces[namespacesSize - 1 - n].equals(namespaceBindings)) {
+                if (namespaces[namespacesSize - 1 - n].equals(ns)) {
                     return;
                 }
             }

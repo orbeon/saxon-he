@@ -192,12 +192,12 @@ public class MetaTagAdjuster extends ProxyReceiver {
      */
     @Override
     public void namespace(NamespaceBindingSet namespaceBindings, int properties) throws XPathException {
-        for (NamespaceBinding ns : namespaceBindings) {
-            if (inMetaTag) {
+        if (inMetaTag) {
+            for (NamespaceBinding ns : namespaceBindings) {
                 namespaces.add(ns);
-            } else {
-                nextReceiver.namespace(namespaceBindings, properties);
             }
+        } else {
+            nextReceiver.namespace(namespaceBindings, properties);
         }
     }
 
