@@ -125,7 +125,7 @@ void xsltSaveResultToFile(sxnc_environment environi, sxnc_processor ** proc, cha
 	  (*(environi.env))->DeleteLocalRef(environi.env, stringArray);
 	}
 #ifdef DEBUG
-	checkForException( environi, cppClass, cpp);
+	checkForException( environi, cpp);
 #endif
   
 }
@@ -188,7 +188,7 @@ const char * xsltApplyStylesheet(sxnc_environment environi, sxnc_processor ** pr
 	return str;
      }
 
-    checkForException( environi, cppClass, cpp);
+    checkForException( environi, cpp);
     return 0;
 }
 
@@ -302,11 +302,11 @@ const char * executeQueryToString(sxnc_environment environi, sxnc_processor ** p
 
        const char * str = (*(environi.env))->GetStringUTFChars(environi.env, result, NULL);
        //return "result should be ok";       
-	//checkForException( environi, cppClass, cpp);     
+	//checkForException( environi, cpp);     
 	return str;
      }
 
-    checkForException( environi, cppClass, cpp);
+    checkForException( environi, cpp);
     return 0;
 
 }

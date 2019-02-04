@@ -6,7 +6,7 @@ XdmItem::XdmItem(): XdmValue(){
 	value = NULL;
 }
 
-    XdmItem::XdmItem(const XdmItem &other){
+    XdmItem::XdmItem(const XdmItem &other): XdmValue(other){
 	value = (sxnc_value *)malloc(sizeof(sxnc_value));
         value->xdmvalue = other.value->xdmvalue;
 	xdmSize =1;
@@ -43,7 +43,7 @@ bool XdmItem::isAtomic(){
 	return 1;	
    }
 
-jobject XdmItem::getUnderlyingValue(SaxonProcessor * proc){
+jobject XdmItem::getUnderlyingValue(){
 #ifdef DEBUG
 	std::cerr<<std::endl<<"XdmItem-getUnderlyingValue:"<<std::endl; 
 #endif 

@@ -2911,7 +2911,7 @@ PHP_METHOD(XdmValue,  itemAt){
     xdmValue_object* obj = (xdmValue_object *)((char *)oobj - XtOffsetOf(xdmValue_object, std));
     xdmValue = obj->xdmValue;
     if (xdmValue != NULL) {
-	XdmItem * item = xdmValue->itemAt((int)index);
+	XdmItem * item = xdmValue->itemAt((unsigned int)index);
 	if(item != NULL) {
             if (object_init_ex(return_value, xdmItem_ce) != SUCCESS) {
                 RETURN_NULL();

@@ -592,30 +592,10 @@ static bool registerNativeMethods(JNIEnv* env, const char* className,
 }
 
 	/* TODO: Remove use of this method.*/
-	const char* checkException(jclass cppClass, jobject cpp) {
-		const char * message = NULL;		
-		if(exception == NULL) {
-		  message = checkForException(*sxn_environ, cppClass, cpp);
-	 	} else {
-			message = exception->getErrorMessages();	
-		}
-		return message;
-	}
+	const char* checkException(jobject cpp);
 
 	/* Internal use*/
-	void checkAndCreateException(jclass cppClass){
-		exception = NULL;
-		if(exceptionOccurred()) {
-			if(exception != NULL) {
-				delete exception;
-			}
-		exception = checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
-#ifdef DEBUG
-		SaxonProcessor::sxn_environ->env->ExceptionDescribe();
-#endif
-		exceptionClear(false);
-		}
-	}
+	void checkAndCreateException(jclass cppClass);
 
 
 

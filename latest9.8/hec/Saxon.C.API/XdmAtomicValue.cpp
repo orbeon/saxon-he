@@ -90,7 +90,7 @@
 			if(result) {
 				return (double)result;
 			}
-checkForException(*(SaxonProcessor::sxn_environ), xdmNodeClass, NULL);
+checkForException(*(SaxonProcessor::sxn_environ), NULL);
 		}
 	} else {
 		std::cerr<<"Error: Processor not set in XdmAtomicValue"<<std::endl;

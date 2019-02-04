@@ -71,9 +71,9 @@ public:
 
     XdmNode** getAttributeNodes();
 
-    jobject getUnderlyingValue(SaxonProcessor * proc){
+    jobject getUnderlyingValue(){
 
-	return XdmItem::getUnderlyingValue(proc);
+	return XdmItem::getUnderlyingValue();
 
 	}
 

@@ -41,7 +41,7 @@ public:
      * Get Java XdmValue object.
      * @return jobject - The Java object of the XdmValue in its JNI representation
      */
-     virtual  jobject getUnderlyingValue(SaxonProcessor * proc);
+     virtual  jobject getUnderlyingValue();
 
      sxnc_value * getUnderlyingCValue(){
 	return value;

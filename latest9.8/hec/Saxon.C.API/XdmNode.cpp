@@ -2,15 +2,22 @@
 #include "XdmNode.h"
 
 
-XdmNode::XdmNode(jobject obj): XdmItem(obj), nodeKind(UNKNOWN), baseURI(NULL), nodeName(NULL), children(NULL), parent(NULL), attrValues(NULL){
-	childCount = -1;
-	attrCount = -1;
+/*
+const char * baseURI;
+	const char * nodeName;
+	XdmNode ** children; //caches child nodes when getChildren method is first called;
+	int childCount;
+	XdmNode * parent;
+	XdmNode ** attrValues;//caches attribute nodes when getAttributeNodes method is first called;
+	int attrCount;
+	XDM_NODE_KIND nodeKind;
+*/
+
+XdmNode::XdmNode(jobject obj): XdmItem(obj), baseURI(NULL), nodeName(NULL), children(NULL), childCount(-1), parent(NULL), attrValues(NULL), attrCount(-1), nodeKind(UNKNOWN){
+
 }
 
-XdmNode::XdmNode(XdmNode * p, jobject obj, XDM_NODE_KIND kind): XdmItem(obj), nodeKind(kind), baseURI(NULL), nodeName(NULL), children(NULL), parent(p), attrValues(NULL){
-	childCount = -1;
-	attrCount = -1;
-}
+XdmNode::XdmNode(XdmNode * p, jobject obj, XDM_NODE_KIND kind): XdmItem(obj), baseURI(NULL), nodeName(NULL), children(NULL),  childCount(-1), parent(p), attrValues(NULL),  attrCount(-1), nodeKind(kind){}
 
 bool XdmNode::isAtomic() {
 	return false;
@@ -147,7 +154,7 @@ bool XdmNode::isAtomic() {
 
 	jstring result = (jstring)(SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID,value->xdmvalue, eqname));
 	SaxonProcessor::sxn_environ->env->DeleteLocalRef(eqname);
-	checkForException(*(SaxonProcessor::sxn_environ), xdmUtilsClass, (jobject)result);//Remove code
+	failure = checkForException(*(SaxonProcessor::sxn_environ),  (jobject)result);//Remove code
 	if(result) {
 		const char * stri = SaxonProcessor::sxn_environ->env->GetStringUTFChars(result,
 					NULL);

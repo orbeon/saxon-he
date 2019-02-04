@@ -67,7 +67,7 @@ public:
      * A copy constructor.
      * @param val - Xdmvalue
      */
-	//XdmValue(const XdmValue &other);
+	XdmValue(const XdmValue &other);
 
      /**
      * Constructor. Create a value from a collection of items
@@ -75,19 +75,7 @@ public:
      */
 	//XdmValue(XdmValue * items, int length);
 
-     /**
-     * Constructor. Create a value from a collection of items
-     * @param container - entire container is expected
-     */
-     template <class ContainerType>
-     XdmValue(const ContainerType& container);
 
-     /**
-     * Constructor. Create a value from a collection of items
-     * @param container - entire container is expected
-     */
-     template <class ForwardIteratorType> 
-     XdmValue(ForwardIteratorType begin, ForwardIteratorType end);
  
      /**
      * Constructor. Create a value from a collection of items
@@ -184,7 +172,7 @@ public:
      * Get Java XdmValue object.
      * @return jobject - The Java object of the XdmValue in its JNI representation
      */
-	virtual  jobject getUnderlyingValue(SaxonProcessor * proc);
+	virtual  jobject getUnderlyingValue();
 
 	/**
 	* Get the type of the object

@@ -104,18 +104,18 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
 					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-					(iter->second)->getUnderlyingValue(proc));
+					(iter->second)->getUnderlyingValue());
 #ifdef DEBUG
 				std::string s1 = typeid(iter->second).name();
 				std::cerr<<"Type of itr:"<<s1<<std::endl;
-				jobject xx = (iter->second)->getUnderlyingValue(proc);
+				jobject xx = (iter->second)->getUnderlyingValue();
 				if(xx == NULL) {
 					std::cerr<<"value failed"<<std::endl;
 				} else {
 
 					std::cerr<<"Type of value:"<<(typeid(xx).name())<<std::endl;
 				}
-				if((iter->second)->getUnderlyingValue(proc) == NULL) {
+				if((iter->second)->getUnderlyingValue() == NULL) {
 					std::cerr<<"(iter->second)->getUnderlyingValue() is NULL"<<std::endl;
 				}
 #endif
@@ -182,18 +182,18 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
 					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-					(iter->second)->getUnderlyingValue(proc));
+					(iter->second)->getUnderlyingValue());
 #ifdef DEBUG
 				std::string s1 = typeid(iter->second).name();
 				std::cerr<<"Type of itr:"<<s1<<std::endl;
-				jobject xx = (iter->second)->getUnderlyingValue(proc);
+				jobject xx = (iter->second)->getUnderlyingValue();
 				if(xx == NULL) {
 					std::cerr<<"value failed"<<std::endl;
 				} else {
 
 					std::cerr<<"Type of value:"<<(typeid(xx).name())<<std::endl;
 				}
-				if((iter->second)->getUnderlyingValue(proc) == NULL) {
+				if((iter->second)->getUnderlyingValue() == NULL) {
 					std::cerr<<"(iter->second)->getUnderlyingValue() is NULL"<<std::endl;
 				}
 #endif
@@ -258,19 +258,19 @@ if (!mID) {
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
 					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-					(iter->second)->getUnderlyingValue(proc));
+					(iter->second)->getUnderlyingValue());
 
 #ifdef DEBUG
 				std::string s1 = typeid(iter->second).name();
 				std::cerr<<"param-name:"<<(iter->first)<<",  "<<"Type of itr:"<<s1<<std::endl;
-				jobject xx = (iter->second)->getUnderlyingValue(proc);
+				jobject xx = (iter->second)->getUnderlyingValue();
 				if(xx == NULL) {
 					std::cerr<<"value failed"<<std::endl;
 				} else {
 
 					std::cerr<<"Type of value:"<<(typeid(xx).name())<<std::endl;
 				}
-				if((iter->second)->getUnderlyingValue(proc) == NULL) {
+				if((iter->second)->getUnderlyingValue() == NULL) {
 					std::cerr<<"(iter->second)->getUnderlyingValue() is NULL"<<std::endl;
 				}
 #endif
@@ -334,18 +334,18 @@ if (!mID) {
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
 					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-					(iter->second)->getUnderlyingValue(proc));
+					(iter->second)->getUnderlyingValue());
 #ifdef DEBUG
 				std::string s1 = typeid(iter->second).name();
 				std::cerr<<"Type of itr:"<<s1<<std::endl;
-				jobject xx = (iter->second)->getUnderlyingValue(proc);
+				jobject xx = (iter->second)->getUnderlyingValue();
 				if(xx == NULL) {
 					std::cerr<<"value failed"<<std::endl;
 				} else {
 
 					std::cerr<<"Type of value:"<<(typeid(xx).name())<<std::endl;
 				}
-				if((iter->second)->getUnderlyingValue(proc) == NULL) {
+				if((iter->second)->getUnderlyingValue() == NULL) {
 					std::cerr<<"(iter->second)->getUnderlyingValue() is NULL"<<std::endl;
 				}
 #endif
@@ -401,7 +401,7 @@ bool SchemaValidator::exceptionOccurred() {
 }
 
 const char* SchemaValidator::checkException() {
-	return proc->checkException(cppClass, cppV);
+	return proc->checkException(cppV);
 }
 
 int SchemaValidator::exceptionCount(){

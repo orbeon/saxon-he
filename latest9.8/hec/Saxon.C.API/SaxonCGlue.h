@@ -66,7 +66,10 @@ EXTERN_SAXONC
 
 extern char * dllname;
 
-extern char *resources_dir;
+extern char * resources_dir;
+
+// Static variable used to track when jvm has been created. Used to prevent creation more than once.
+extern int jvmCreated;
 
 
 //===============================================================================================//
@@ -88,6 +91,7 @@ typedef struct {
 typedef struct {
 		char* name;
 		jobject value;
+		char * namespacei; //not used yet
 	} sxnc_parameter;
 
 //===============================================================================================//
@@ -117,10 +121,16 @@ char * getDllname();
 
 
 /*
-* Get Dll name.
+* Get resources directory.
 */
 
 char * getResourceDirectory();
+
+/*
+* Get resources directory. This is to replace getResourceDirectory().
+*/
+
+char * _getResourceDirectory();
 
 /*
 * Set Dll name. Also set the saxon resources directory. 
@@ -200,7 +210,7 @@ jobject createSaxonProcessor2 (JNIEnv* penv, jclass myClassInDll, const char * a
 /*
  * Callback to check for exceptions. When called it returns the exception as a string 
  */
-const char * checkForException(sxnc_environment environ, jclass callingClass,  jobject callingObject);
+const char * checkForException(sxnc_environment environ, jobject callingObject);
 
 /*
  * Clean up and destroy Java VM to release memory used. 

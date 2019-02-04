@@ -41,6 +41,30 @@ bool SaxonProcessor::exceptionOccurred(){
 	}
 }
 
+const char* SaxonProcessor::checkException(jobject cpp) {
+		const char * message = NULL;		
+		if(exception == NULL) {
+		  message = checkForException(*sxn_environ, cpp);
+	 	} else {
+			message = exception->getErrorMessages();	
+		}
+		return message;
+	}
+
+void SaxonProcessor::checkAndCreateException(jclass cppClass){
+		exception = NULL;
+		if(exceptionOccurred()) {
+			if(exception != NULL) {
+				delete exception;
+			}
+		exception = checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
+#ifdef DEBUG
+		SaxonProcessor::sxn_environ->env->ExceptionDescribe();
+#endif
+		exceptionClear(false);
+		}
+	}
+
 void SaxonProcessor::exceptionClear(bool clearCPPException){
 	SaxonProcessor::sxn_environ->env->ExceptionClear();
 	if(exception != NULL && clearCPPException) {
@@ -349,11 +373,11 @@ void SaxonProcessor::setcwd(const char* dir){
 
 void SaxonProcessor::setResourcesDirectory(const char* dir){
 	//memset(&resources_dir[0], 0, sizeof(resources_dir));
-	strncat(resources_dir, dir, strlen(dir));
+	strncat(_getResourceDirectory(), dir, strlen(dir));
 }
 
 const char * SaxonProcessor::getResourcesDirectory(){
-	return getResourceDirectory();
+	return _getResourceDirectory();
 }
 
 
@@ -573,7 +597,7 @@ void SaxonProcessor::release(){
     }
 
     const char * SaxonProcessor::getStringValue(XdmItem * item){
-	const char *result = stringValue(*SaxonProcessor::sxn_environ, item->getUnderlyingValue(this));
+	const char *result = stringValue(*SaxonProcessor::sxn_environ, item->getUnderlyingValue());
 #ifdef DEBUG
 	if(result == NULL) {
 		std::cout<<"getStringValue of XdmItem is NULL"<<std::endl;

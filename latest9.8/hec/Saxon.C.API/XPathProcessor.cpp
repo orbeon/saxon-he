@@ -71,7 +71,7 @@ if (!mID) {
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
 					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-					(iter->second)->getUnderlyingValue(proc));
+					(iter->second)->getUnderlyingValue());
 		}
 		for (map<std::string, std::string>::iterator iter = properties.begin();
 				iter != properties.end(); ++iter, i++) {
@@ -165,18 +165,18 @@ if (!mID) {
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
 					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-					(iter->second)->getUnderlyingValue(proc));
+					(iter->second)->getUnderlyingValue());
 #ifdef DEBUG
 				string s1 = typeid(iter->second).name();
 				cerr<<"Type of itr:"<<s1<<endl;
-				jobject xx = (iter->second)->getUnderlyingValue(proc);
+				jobject xx = (iter->second)->getUnderlyingValue();
 				if(xx == NULL) {
 					cerr<<"value failed"<<endl;
 				} else {
 
 					cerr<<"Type of value:"<<(typeid(xx).name())<<endl;
 				}
-				if((iter->second)->getUnderlyingValue(proc) == NULL) {
+				if((iter->second)->getUnderlyingValue() == NULL) {
 					cerr<<"(iter->second)->getUnderlyingValue() is NULL"<<endl;
 				}
 #endif
@@ -311,7 +311,7 @@ if (!mID) {
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
 					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-					(iter->second)->getUnderlyingValue(proc));
+					(iter->second)->getUnderlyingValue());
 		}
 		for (map<std::string, std::string>::iterator iter = properties.begin();
 				iter != properties.end(); ++iter, i++) {
@@ -424,6 +424,6 @@ const char * XPathProcessor::getErrorMessage(int i ){
 
 
     const char* XPathProcessor::checkException(){
-	return checkForException(*(SaxonProcessor::sxn_environ), cppClass, cppXP);
+	return proc->checkException(cppXP);
     }
 

@@ -168,10 +168,10 @@ void XsltProcessor::exceptionClear(){
 
 const char* XsltProcessor::checkException() {
 	/*if(proc->exception == NULL) {
-	 proc->exception = proc->checkForException(environi, cppClass, cpp);
+	 proc->exception = proc->checkForException(environi, cpp);
 	 }
 	 return proc->exception;*/
-	return proc->checkException(cppClass, cppXT);
+	return proc->checkException(cppXT);
 }
 
 int XsltProcessor::exceptionCount(){
@@ -271,7 +271,7 @@ void XsltProcessor::compileFromXdmNode(XdmNode * node) {
 		stylesheetObject = (jobject)(
 				SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, cNodemID,
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
-						node->getUnderlyingValue(proc)));
+						node->getUnderlyingValue()));
 		if (!stylesheetObject) {
 			proc->checkAndCreateException(cppClass);
 			//cout << "Error in compileFromXdmNode" << endl;
@@ -351,7 +351,7 @@ XdmValue * XsltProcessor::transformFileToValue(const char* sourcefile,
 						SaxonProcessor::sxn_environ->env->NewStringUTF(
 								(iter->first).c_str()));
 				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-						(iter->second)->getUnderlyingValue(proc));
+						(iter->second)->getUnderlyingValue());
 			}
 			for (map<std::string, std::string>::iterator iter =
 					properties.begin(); iter != properties.end(); ++iter, i++) {
@@ -447,7 +447,7 @@ void XsltProcessor::transformFileToFile(const char* source,
 #ifdef DEBUG
 				string s1 = typeid(iter->second).name();
 				cerr<<"Type of itr:"<<s1<<endl;
-				jobject xx = (iter->second)->getUnderlyingValue(proc);
+				jobject xx = (iter->second)->getUnderlyingValue();
 				if(xx == NULL) {
 					cerr<<"value failed"<<endl;
 				} else {
@@ -459,7 +459,7 @@ void XsltProcessor::transformFileToFile(const char* source,
 				}
 #endif
 				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-						(iter->second)->getUnderlyingValue(proc));
+						(iter->second)->getUnderlyingValue());
 
 			}
 
@@ -581,7 +581,7 @@ const char * XsltProcessor::transformFileToString(const char* source,
 				cerr<<"Type of itr:"<<s1<<endl;
 
 
-				jobject xx = (iter->second)->getUnderlyingValue(proc);
+				jobject xx = (iter->second)->getUnderlyingValue();
 
 				if(xx == NULL) {
 					cerr<<"value failed"<<endl;
@@ -595,7 +595,7 @@ const char * XsltProcessor::transformFileToString(const char* source,
 #endif
 
 				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-						(iter->second)->getUnderlyingValue(proc));
+						(iter->second)->getUnderlyingValue());
 
 			}
 
