@@ -11,12 +11,14 @@
 
 
 using namespace std;
+char fname[] = "_nativeCall";
+char funcParameters[] = "(Ljava/lang/String;[Ljava/lang/Object;[Ljava/lang/String;)Ljava/lang/Object;";
 
 JNINativeMethod cppMethods[] =
 {
     {
-         "_nativeCall",
-         "(Ljava/lang/String;[Ljava/lang/Object;[Ljava/lang/String;)Ljava/lang/Object;",
+         fname,
+         funcParameters,
          (void *)&cppNativeCall
     }
 };
@@ -25,7 +27,7 @@ JNINativeMethod cppMethods[] =
 /*
 * Test transform to String. Source and stylesheet supplied as arguments
 */
-void testTransformToString1(SaxonProcessor * processor, XsltProcessor * trans){
+void testTransformToString1(XsltProcessor * trans){
 	
   cout<<endl<<"Test: TransformToString1:"<<endl;
 
@@ -423,7 +425,8 @@ void exampleSimple1Err(XsltProcessor  *proc){
 int exists(const char *fname)
 {
     FILE *file;
-    if (file = fopen(fname, "r"))
+    file = fopen(fname, "r");
+    if (file)
     {
         fclose(file);
         return 1;
@@ -515,14 +518,14 @@ void exampleParam(SaxonProcessor * saxonProc, XsltProcessor  *proc){
 /*
 * Test saving nd loading a Xslt package
 */
-void testPackage1(SaxonProcessor * processor, XsltProcessor * trans){
+void testPackage1(XsltProcessor * trans){
 
   cout<<endl<<"Test: Saving and loading Packages:"<<endl;
   trans->clearParameters(true);
   trans->clearProperties();
 
     trans->compileFromFileAndSave("test.xsl", "test1.sef");
-     const char * output = trans->transformFileToValue("cat.xml","test1.sef");	
+     const char * output = trans->transformFileToString("cat.xml","test1.sef");	
    if(output == NULL) {
       printf("result is null \n");
 	const char * message = trans->checkException();
@@ -542,7 +545,7 @@ void testPackage1(SaxonProcessor * processor, XsltProcessor * trans){
 /*
 * Test saving and loading a Xslt package
 */
-void testPackage2(SaxonProcessor * processor, XsltProcessor * trans){
+void testPackage2(XsltProcessor * trans){
 
   cout<<endl<<"Test: Saving and loading Packages2:"<<endl;
   trans->clearParameters(true);
@@ -551,7 +554,7 @@ void testPackage2(SaxonProcessor * processor, XsltProcessor * trans){
 	const char * stylesheet = "<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>       <xsl:param name='values' select='(2,3,4)' /><xsl:output method='xml' indent='yes' /><xsl:template match='*'><output><xsl:for-each select='$values' ><out><xsl:value-of select='. * 3'/></out><xsl:for-each></output></xsl:template><xsl:stylesheet>";
 
     trans->compileFromStringAndSave(stylesheet, "test2.sef");
-     const char * output = trans->transformFileToValue("cat.xml","test2.sef");	
+     const char * output = trans->transformFileToString("cat.xml","test2.sef");	
    if(output == NULL) {
       printf("result is null \n");
 	const char * message = trans->checkException();
@@ -582,7 +585,7 @@ int main()
     exampleSimple2(trans);
     exampleSimple3(processor, trans);
 
-    testTransformToString1(processor, trans);
+    testTransformToString1(trans);
 
     testTransformToString2(processor, trans);
 
@@ -602,6 +605,10 @@ int main()
 
     testTrackingOfValueReferenceError(processor, trans);
 
+    testPackage1(trans);
+
+   testPackage2(trans);
+
     testXdmNodeOutput(trans);
 
     exampleParam(processor, trans);
@@ -619,7 +626,7 @@ delete processor;
     
 
     XsltProcessor * trans2 = processor2->newXsltProcessor();
-testTransformToString1(processor2, trans2);
+testTransformToString1(trans2);
   delete trans2;
      processor2->release();
 

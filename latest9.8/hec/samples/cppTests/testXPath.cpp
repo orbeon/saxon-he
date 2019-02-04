@@ -141,7 +141,7 @@ void testXPathOnFile(SaxonProcessor * processor, XPathProcessor * xpath){
 }
 
 // Test case on the evaluate method in XPathProcessor. Here we test that we have morethan one XdmItem.
-void testXPathOnFile2(SaxonProcessor * processor, XPathProcessor * xpath){
+void testXPathOnFile2(XPathProcessor * xpath){
     	 cout<<endl<<"Test testXPath with file source:"<<endl;
   	xpath->clearParameters(true);
   	xpath->clearProperties(); 
@@ -186,7 +186,7 @@ int main()
     testXPathValues(processor, xpathProc);
     testXPathAttrValues(processor, xpathProc);
     testXPathOnFile(processor, xpathProc);
-    testXPathOnFile2(processor, xpathProc);
+    testXPathOnFile2(xpathProc);
 
 
      processor->release();

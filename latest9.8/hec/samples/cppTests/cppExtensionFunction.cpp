@@ -17,11 +17,11 @@ using namespace std;
 * Test transform to String. Source and stylesheet supplied as arguments
 */
 jobject JNICALL cppNativeCall
-  (JNIEnv *env, jobject object, jstring funcName, jobjectArray arguments, jobjectArray argTypes){
+  (jstring funcName, jobjectArray arguments, jobjectArray argTypes){
 
 
 	JNIEnv *senv = SaxonProcessor::sxn_environ->env;
-	
+	if(funcName) {}
   	std::cerr<<"Testing CPP extension function"<<std::endl;
 	int argLength = 0;
 	//XdmItem ** params[] = NULL;
@@ -50,15 +50,15 @@ jobject JNICALL cppNativeCall
 		jobject argObj = senv->GetObjectArrayElement(arguments, i);
 
 		const char * str = senv->GetStringUTFChars(argType,NULL);
-		const char *stri = NULL;
-		double dnumber = 0;
-		long lnumber = 0;
-		bool bvalue = false;
-		float fnumber = 0;
 		
 		std::cerr<<str<<std::endl;
          
-		XdmNode * node = NULL;
+		const char * stri = NULL;
+		long lnumber = 0;
+		float fnumber = 0;
+		bool bvalue = false;
+		double dnumber = 0;
+
 		std::map<std::string, saxonTypeEnum>::iterator it = typeMap.find(str);
 		if (it != typeMap.end()){
 			switch (it->second)
@@ -74,29 +74,29 @@ jobject JNICALL cppNativeCall
 					break;
 				case enumString:
 					stri = senv->GetStringUTFChars((jstring)argObj, NULL);
-					
+					if(stri !=NULL){}
 					break;
 				case enumInteger:
 					params[i] = new XdmAtomicValue(argObj, "");
 					sresult->xdmvalue = argObj; 
 					lnumber = getLongValue(*SaxonProcessor::sxn_environ, *sresult, 0);
-
+					if(lnumber == 0){}
 										
 					break;
 				case enumDouble:
 					sresult->xdmvalue = argObj; 
 					dnumber = getDoubleValue(*SaxonProcessor::sxn_environ, *sresult, 0);
-					
+					if(dnumber == 0){}
 					break;
 				case enumFloat:
 					sresult->xdmvalue = argObj; 
 					fnumber = getFloatValue(*SaxonProcessor::sxn_environ, *sresult, 0);
-									
+					if(fnumber == 0){}				
 					break;
 				case enumBool:
 					sresult->xdmvalue = argObj; 
 					bvalue = getBooleanValue(*SaxonProcessor::sxn_environ, *sresult);
-											
+					if(bvalue){}						
 					break;
 				case enumArrXdmValue:
 					//TODO - not currently supported
@@ -113,6 +113,12 @@ jobject JNICALL cppNativeCall
 
 string nativeExtensionMethod(char * param1, int number){
 
+	if(param1!=NULL) {
+		//do nothing
+	}
+	if(number == 0) {
+		//do nothing
+	}
 	string result = "native-extension " ;//+ param1;
 	return result;
 }

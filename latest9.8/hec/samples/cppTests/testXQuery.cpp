@@ -10,7 +10,8 @@ using namespace std;
 int exists(const char *fname)
 {
     FILE *file;
-    if (file = fopen(fname, "r"))
+   file = fopen(fname, "r");
+    if (file)
     {
         fclose(file);
         return 1;
@@ -51,7 +52,7 @@ return;
 		}
 }
 
-void testxQueryError(SaxonProcessor * processor, XQueryProcessor * queryProc){
+void testxQueryError(XQueryProcessor * queryProc){
  cout<<endl<<"Test testXQueryError-Test:"<<endl;
 	queryProc->clearProperties();
 	queryProc->clearParameters(true);
@@ -168,7 +169,7 @@ cout<<"XdmValue size="<<val2->size()<<", "<<(val2->itemAt(0))->getStringValue(pr
 
 
 //Test requirement of license file - Test should fail
-void testXQueryLineNumberError(SaxonProcessor * processor, XQueryProcessor * queryProc){
+void testXQueryLineNumberError(XQueryProcessor * queryProc){
  cout<<endl<<"Test testXQueryLineNumberError:"<<endl;
 	queryProc->clearProperties();
 	queryProc->clearParameters(true);
@@ -238,11 +239,11 @@ int main()
     
 
     testxQuery1(processor, query);
-    testxQueryError(processor, query);
+    testxQueryError(query);
     testxQueryError2(processor, query);
     testDefaultNamespace(processor, query);
     testReusability(processor, query);
-    testXQueryLineNumberError(processor, query);
+    testXQueryLineNumberError(query);
     testXQueryLineNumber();
 
     delete query;

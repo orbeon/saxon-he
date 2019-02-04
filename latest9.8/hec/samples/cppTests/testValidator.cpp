@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void testValidator1(SaxonProcessor * processor, SchemaValidator * val){
+void testValidator1(SchemaValidator * val){
 	cout<<endl<<"Test Validate Schema from string"<<endl;	
  string invalid_xml = "<?xml version='1.0'?><request><a/><!--comment--></request>";
  const char* sch1 = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' elementFormDefault='qualified' attributeFormDefault='unqualified'><xs:element name='request'><xs:complexType><xs:sequence><xs:element name='a' type='xs:string'/><xs:element name='b' type='xs:string'/></xs:sequence><xs:assert test='count(child::node()) = 3'/></xs:complexType></xs:element></xs:schema>";
@@ -146,7 +146,7 @@ int main()
 	//processor->setConfigurationProperty("xsdversion", "1.1");
 	
 	 SchemaValidator * validator = processor->newSchemaValidator();
-	testValidator1(processor, validator);
+	testValidator1(validator);
 	testValidator2();
 
 	testValidator3(processor, validator);
