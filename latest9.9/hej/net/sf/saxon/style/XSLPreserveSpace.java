@@ -115,7 +115,7 @@ public class XSLPreserveSpace extends StyleElement {
                         compileError("No prefix before ':*'");
                     }
                     String prefix = s.substring(0, s.length() - 2);
-                    String uri = makeQName(prefix + ":z").getURI();
+                    String uri = getURIForPrefix(prefix, false);
                     if (uri == null) {
                         undeclaredNamespaceError(prefix, "XTSE0280", "elements");
                     }
