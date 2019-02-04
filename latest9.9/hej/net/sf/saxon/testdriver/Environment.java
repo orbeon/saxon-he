@@ -287,7 +287,17 @@ public class Environment implements URIResolver {
                         environment.exportedStylesheet = driver.exportStylesheet(environment.xsltCompiler, sourceFile);
                     } else if (driver.xxCompilerLocation != null && !environment.xsltCompiler.isSchemaAware()) {
                         if (driver.xxCompiler == null) {
+
+                            XdmMap options = new XdmMap();
+                            boolean assertionsEnabled = environment.xsltCompiler.isAssertionsEnabled();
+                            options = options.put(new XdmAtomicValue("enable-assertions"), new XdmAtomicValue(assertionsEnabled));
+
                             XsltCompiler c = driver.driverProc.newXsltCompiler();
+                            c.setAssertionsEnabled(true);
+                            c.setParameter(new QName("FAST_JAVA_XPATH"), new XdmAtomicValue(true));
+                            c.setParameter(new QName("options"), options);
+                            c.setFastCompilation(true); // TODO: temporary
+
                             driver.xxCompiler = c.compile(new StreamSource(new File(driver.xxCompilerLocation)));
                         }
                         File exportFile = new File(driver.resultsDir + "/export/" + name + ".sef");

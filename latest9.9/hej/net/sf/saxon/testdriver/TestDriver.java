@@ -226,6 +226,7 @@ public abstract class TestDriver {
             // gives the location of the compiler stylesheet
             if (args[i].startsWith("-XX:")) {
                 xxCompilerLocation = argValue;
+                System.err.println("Using XX compiler at " + xxCompilerLocation);
             }
         }
         if (resultsDoc == null) {

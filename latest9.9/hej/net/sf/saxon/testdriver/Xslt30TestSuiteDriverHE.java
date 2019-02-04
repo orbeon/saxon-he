@@ -10,8 +10,10 @@ package net.sf.saxon.testdriver;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Query;
+import net.sf.saxon.expr.instruct.GlobalParameterSet;
 import net.sf.saxon.functions.ResolveQName;
 import net.sf.saxon.lib.*;
+import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.s9api.*;
 import net.sf.saxon.s9api.streams.Step;
@@ -23,6 +25,7 @@ import net.sf.saxon.value.QNameValue;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.SourceLocator;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -926,23 +929,51 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
 
     protected XsltExecutable exportStylesheet(String testName, String testSetName, XsltCompiler compiler, XsltExecutable sheet, Source styleSource) throws SaxonApiException {
         try {
+            driverProc.setConfigurationProperty(Feature.LINE_NUMBERING, true);
             File exportFile = new File(resultsDir + "/export/" + testSetName + "/" + testName + ".sef");
             if (xxCompilerLocation != null && !compiler.isSchemaAware()) {
                 if (xxCompiler == null) {
+                    XdmMap options = new XdmMap();
+                    boolean assertionsEnabled = compiler.isAssertionsEnabled();
+                    options = options.put(new XdmAtomicValue("enable-assertions"), new XdmAtomicValue(assertionsEnabled));
+
+
                     XsltCompiler c = driverProc.newXsltCompiler();
                     c.setAssertionsEnabled(true);
                     c.setParameter(new QName("FAST_JAVA_XPATH"), new XdmAtomicValue(true));
+                    c.setParameter(new QName("options"), options);
                     c.setFastCompilation(true); // TODO: temporary
                     xxCompiler = c.compile(new StreamSource(new File(xxCompilerLocation)));
                 }
                 Xslt30Transformer transformer = xxCompiler.load30();
+                // Copy over any static parameters that have been set
+                GlobalParameterSet staticParams = compiler.getUnderlyingCompilerInfo().getParameters();
+                XdmMap staticParamMap = new XdmMap();
+                for (StructuredQName name : staticParams.getKeys()) {
+                    GroundedValue<?> value = staticParams.get(name);
+                    staticParamMap = staticParamMap.put(new XdmAtomicValue(new QName(name)), XdmValue.wrap(value));
+                }
+                Map<QName, XdmValue> transformParams = new HashMap<>();
+                transformParams.put(new QName("staticParameters"), staticParamMap);
+                transformer.setStylesheetParameters(transformParams);
                 transformer.setAssertionsEnabled(true);
                 transformer.setInitialMode(new QName("compile-complete"));
-                ParseOptions options = new ParseOptions();
-                options.setLineNumbering(true);
-                styleSource = new AugmentedSource(styleSource, options);
+                List<QName> reportedErrors = new ArrayList<>();
+                transformer.setMessageListener(new MessageListener2() {
+                    @Override
+                    public void message(XdmNode content, QName errorCode, boolean terminate, SourceLocator locator) {
+                        System.err.println(content);
+                        if (!errorCode.getLocalName().equals("XTMM9000")) {
+                            reportedErrors.add(errorCode);
+                        }
+                    }
+                });
                 Serializer serializer = driverProc.newSerializer(exportFile);
                 transformer.applyTemplates(styleSource, serializer);
+                if (!reportedErrors.isEmpty()) {
+                    throw new SaxonApiException(new XPathException(
+                            "Stylesheet compilation failed", reportedErrors.get(0).getLocalName()));
+                }
             } else {
                 XsltPackage compiledPack = compiler.compilePackage(styleSource);
                 compiledPack.save(exportFile);
@@ -1190,6 +1221,20 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         boolean inverse = "false".equals(dependency.attribute("satisfied"));
         boolean needed = !"false".equals(dependency.attribute("satisfied"));
 
+        if (xxCompilerLocation != null) {
+            if (type.equals("year_component_values") &&
+                    (value.equals("support year above 9999") ||
+                             value.equals("support negative year") ||
+                             value.equals("support year zero")
+                    )) {
+                return false; // whether needed or not
+            }
+            if (unavailableInXX(type, value)) {
+                return !needed;
+            }
+        }
+
+
         if (alwaysOn.contains(type) || alwaysOn.contains(tv)) {
             return needed;
         }
@@ -1365,6 +1410,23 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                 println("**** dependency not recognized for HE: " + type);
                 return false;
         }
+    }
+
+    public boolean unavailableInXX(String type, String value) {
+        if (type.equals("feature") && value.equals("higher_order_functions")) {
+            return true;
+        }
+        if (type.equals("feature") && value.equals("streaming")) {
+            return true;
+        }
+        if (type.equals("year_component_values") &&
+                (value.equals("support year above 9999") ||
+                         value.equals("support negative year") ||
+                         value.equals("support year zero")
+                        )) {
+            return true;
+        }
+        return false;
     }
 
     /**
