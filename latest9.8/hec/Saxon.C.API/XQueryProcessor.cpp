@@ -64,7 +64,7 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "declareNamespace",
 				"(Ljava/lang/String;Ljava/lang/String;)V");
 	if (!mID) {
-	cerr << "Error: MyClassInDll." << "declareNameSpace" << " not found\n"
+	cerr << "Error: Saxonc library." << "declareNameSpace" << " not found\n"
 			<< endl;
 
 	} else {

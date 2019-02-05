@@ -79,7 +79,9 @@ public:
     /**
      * A default Constructor. Create a SaxonApiException
      */
-     SaxonApiException(){}
+     SaxonApiException(){
+	exceptions = std::vector<MyException>(0);
+    }
 
     /**
      * A Copy constructor. Create a SaxonApiException
@@ -95,6 +97,7 @@ public:
      * @param exM - The error message of the underlying exception thrown, if known
      */
 	SaxonApiException(const char * ec, const char * exM){
+		exceptions = std::vector<MyException>(0);
 		MyException newEx;	
 		if(ec != NULL){
 			newEx.errorCode =   std::string(ec);
@@ -123,6 +126,7 @@ public:
      * @param l - Line number information of where the error occurred
      */
 	SaxonApiException(const char * ec, const char * exM, bool typeErr, bool stat, bool glob, int l){
+		exceptions = std::vector<MyException>(20);
 		MyException newEx;
 		if(ec != NULL){
 			newEx.errorCode =   std::string(ec);
@@ -174,7 +178,7 @@ public:
      * A destructor.
      */
 	~SaxonApiException(){ 
-	  exceptions.clear();
+	  clear();
 	}
 
     /**
@@ -269,8 +273,6 @@ public:
 private:
 	std::vector<MyException> exceptions; /*!< Capture exceptions in a std:vector */
 };
-
-
 
 
 

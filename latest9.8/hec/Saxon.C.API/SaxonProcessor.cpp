@@ -35,7 +35,10 @@ int SaxonProcessor::jvmCreatedCPP=0;
 bool SaxonProcessor::exceptionOccurred(){
 	bool found = SaxonProcessor::sxn_environ->env->ExceptionCheck();
 	if(!found){
-		return exception != NULL && exception->count() > 1;
+		if( exception != NULL){
+		bool result =  exception->count() > 1;
+		return result;
+		} else {return false;}
 	} else {
 		return found;
 	}
@@ -85,6 +88,9 @@ SaxonProcessor::SaxonProcessor() {
 
 SaxonApiException * SaxonProcessor::checkForExceptionCPP(JNIEnv* env, jclass callingClass,  jobject callingObject){
 
+    if(exception != NULL) {
+	delete exception;	
+	}
     if (env->ExceptionCheck()) {
 	string result1 = "";
 	string errorCode = "";
@@ -169,7 +175,7 @@ SaxonProcessor::SaxonProcessor(bool l){
     licensei = l;
     versionStr = NULL;
     SaxonProcessor::refCount++;
-
+    exception = NULL;
 
      if(SaxonProcessor::jvmCreatedCPP == 0){
 	SaxonProcessor::jvmCreatedCPP=1;
@@ -216,6 +222,7 @@ SaxonProcessor::SaxonProcessor(const char * configFile){
     cwd="";
     versionStr = NULL;
     SaxonProcessor::refCount++;
+    exception = NULL;
 
     if(SaxonProcessor::jvmCreatedCPP == 0){
 	SaxonProcessor::jvmCreatedCPP=1;
@@ -297,8 +304,8 @@ void SaxonProcessor::applyConfigurationProperties(){
 	   }
 		SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(saxonCAPIClass, mIDappConfig,proc, stringArray1,stringArray2);
 		if (exceptionOccurred()) {
-	   		exception= checkForExceptionCPP(SaxonProcessor::sxn_environ->env, saxonCAPIClass, NULL);
-			exceptionClear();
+	   		checkAndCreateException(saxonCAPIClass);
+			exceptionClear(false);
       		 }
  	  SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray1);
 	  SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray2);
@@ -396,8 +403,8 @@ XdmNode * SaxonProcessor::parseXmlFromString(const char* source){
 		value->setProcessor(this);
 		return value;
 	}   else if (exceptionOccurred()) {
-	   exception= checkForExceptionCPP(SaxonProcessor::sxn_environ->env, saxonCAPIClass, NULL);
-		exceptionClear();
+	   	checkAndCreateException(saxonCAPIClass);
+		exceptionClear(false);
        }
    
 #ifdef DEBUG
@@ -447,8 +454,8 @@ XdmNode * SaxonProcessor::parseXmlFromFile(const char* source){
 //TODO SchemaValidator
    jobject xdmNodei = SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(saxonCAPIClass, mID, proc, SaxonProcessor::sxn_environ->env->NewStringUTF(cwd.c_str()),  NULL, SaxonProcessor::sxn_environ->env->NewStringUTF(source));
      if(exceptionOccurred()) {
-	   exception= checkForExceptionCPP(SaxonProcessor::sxn_environ->env, saxonCAPIClass, NULL);
-	   exceptionClear();
+	 	checkAndCreateException(saxonCAPIClass);
+	   exceptionClear(false);
 	   		
      } else {
 
@@ -468,7 +475,7 @@ XdmNode * SaxonProcessor::parseXmlFromUri(const char* source){
     }
    jobject xdmNodei = SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(saxonCAPIClass, mID, proc, SaxonProcessor::sxn_environ->env->NewStringUTF(""), SaxonProcessor::sxn_environ->env->NewStringUTF(source));
      if(exceptionOccurred()) {
-	   exception= checkForExceptionCPP(SaxonProcessor::sxn_environ->env, saxonCAPIClass, NULL);
+	   checkAndCreateException(saxonCAPIClass);
      } else {
 	XdmNode * value = new XdmNode(xdmNodei);
 	value->setProcessor(this);
