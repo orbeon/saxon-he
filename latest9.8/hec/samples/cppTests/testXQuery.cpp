@@ -165,6 +165,18 @@ cout<<"XdmValue size="<<val2->size()<<", "<<(val2->itemAt(0))->getStringValue(pr
 		cout<<"Test4: Result value="<<result2<<endl;
 		cout<<"Test5: PrimitiveTypeName of  atomic2="<<atomic2->getPrimitiveTypeName()<<endl;
 	}
+
+if (queryProc->exceptionOccurred()) {
+		    cout<<"Exception found. Count="<<queryProc->exceptionCount()<<endl;
+			for(int i=0;i<queryProc->exceptionCount();i++){
+				const char * message = queryProc->getErrorMessage(i);
+				if(message != NULL) {
+					cout<<"Error Message = "<<message<<endl;		
+				}		
+			}
+		
+		}
+	
 }
 
 
@@ -205,9 +217,9 @@ void testXQueryLineNumber(){
  cout<<endl<<"testXQueryLineNumber:"<<endl;
 	
    queryProc->setProperty("s", "cat.xml");
+   queryProc->declareNamespace("saxon","http://saxon.sf.net/");
 
-
-    queryProc->setProperty("qs", "saxon:line-number((//person)[1])");
+    queryProc->setProperty("qs", "saxon:line-number(doc('cat.xml')/out/person[1])"); ///out/person[1]
 
     const char * result = queryProc->runQueryToString();
     if(result != NULL){
@@ -234,7 +246,7 @@ int main()
 {
 
     SaxonProcessor * processor = new SaxonProcessor(false);
-    //cout<<"Test: XQueryProcessor with Saxon version="<<processor->version()<<endl<<endl;
+    cout<<"Test: XQueryProcessor with Saxon version="<<processor->version()<<endl<<endl;
     XQueryProcessor * query = processor->newXQueryProcessor();
     
 
