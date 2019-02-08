@@ -51,10 +51,10 @@ void testTransformToStringExtensionFunc(SaxonProcessor * processor, XsltProcesso
 	
   cout<<endl<<"Test: TransformToStringExtensionFunc:"<<endl;
 trans->setProperty("extc", "/home/ond1/work/new-svn/latest9.8-hec/hec/samples/cppTests/cppExtensionFunction");
-cout<<endl<<"Test: checkpoint 1:"<<endl;
+
 processor->registerNativeMethods(SaxonProcessor::sxn_environ->env, "com/saxonica/functions/extfn/cpp/NativeCall",
     cppMethods, sizeof(cppMethods) / sizeof(cppMethods[0]));
-cout<<endl<<"Test: checkpoint 2:"<<endl;
+
     const char * output = trans->transformFileToString("cat.xml", "testExtension.xsl");
    if(output == NULL) {
       printf("result is null \n");
@@ -237,7 +237,7 @@ void testTransformToString4(SaxonProcessor * processor, XsltProcessor * trans){
 
 }
 
-void testTransfromFromstring(SaxonProcessor * processor, XsltProcessor * trans){
+void testTransformFromstring(SaxonProcessor * processor, XsltProcessor * trans){
 cout<<endl<<"Test: testTransfromFromstring:"<<endl;
   trans->clearParameters(true);
   trans->clearProperties();
@@ -252,6 +252,7 @@ trans->setSourceFromXdmValue((XdmItem*)input);
     }else {
       printf("%s", output);
       printf("result is OK \n");
+
     }
       fflush(stdout);
     delete output;
@@ -260,7 +261,7 @@ trans->setSourceFromXdmValue((XdmItem*)input);
 }
 
 //Test case has error in the stylesheet
-void testTransfromFromstring2Err(SaxonProcessor * processor, XsltProcessor * trans){
+void testTransformFromstring2Err(SaxonProcessor * processor, XsltProcessor * trans){
 cout<<endl<<"Test: testTransfromFromstring2-Error:"<<endl;
   trans->clearParameters(true);
   trans->clearProperties();
@@ -269,16 +270,16 @@ cout<<endl<<"Test: testTransfromFromstring2-Error:"<<endl;
    trans->compileFromString("<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>       <xsl:param name='values' select='(2,3,4)' /><xsl:output method='xml' indent='yes' /><xsl:template match='*'><output><xsl:for-each select='$values' ><out><xsl:value-of select='. * 3'/></out><xsl:for-each></output></xsl:template><xsl:stylesheet>");
 trans->setSourceFromXdmValue((XdmItem*)input);
  const char * output = trans->transformToString();
-   if(output == NULL) {
+  if(output == NULL) {
       printf("result is null \nCheck For errors:\n");
       if(trans->exceptionCount()>0) {
 	cout<<"Error count="<<trans->exceptionCount()<<", "<<trans->getErrorMessage(0)<<endl;
-      }	
+     }	
     }else {
       printf("%s", output);
       printf("result is OK \n");
     }
-      fflush(stdout);
+    fflush(stdout);
     delete output;
 
    trans->exceptionClear();
@@ -597,9 +598,9 @@ int main()
 	
     testTransformToString4(processor, trans);
 
-    testTransfromFromstring(processor, trans);
+    testTransformFromstring(processor, trans);
 
-    testTransfromFromstring2Err(processor, trans);
+    testTransformFromstring2Err(processor, trans);
 
     testTrackingOfValueReference(processor, trans);
 
