@@ -1,6 +1,27 @@
 #include "SaxonCGlue.h"
 
 jobject cpp;
+char * dllname;
+char * resources_dir;
+int jvmCreated = 0;
+static char tempDllname[] =
+#if defined (__linux__)
+        "/libsaxonpec.so";  
+    #elif  defined (__APPLE__) && defined(__MACH__)
+        "/libsaxonpec.dylib";
+    #else
+         "\\libsaxonpec.dll";
+    #endif
+
+static char tempResources_dir[] = 
+     #ifdef __linux__
+        "/saxon-data";
+    #elif  defined (__APPLE__) && defined(__MACH__)
+        "/saxon-data";
+    #else
+         "\\saxon-data";
+    #endif
+
 /*
 * Set Dll name. Also set the saxon resources directory. 
 * If the SAXONC_HOME sxnc_environmental variable is set then use that as base.
@@ -43,8 +64,8 @@ void setDllname(){
 		  printf("Error in allocation of Dllname\n");
 		}
 #endif
-		memset(&dllname[0], 0, sizeof(dllname));
-		memset(&resources_dir[0], 0, sizeof(resources_dir));
+		//memset(&dllname[0], 0, sizeof(dllname));
+		//memset(&resources_dir[0], 0, sizeof(resources_dir));
 #ifdef __linux__
 		
        		snprintf(dllname, 8+name_len+1, "%s%s", "/usr/lib", tempDllname);
@@ -82,6 +103,10 @@ char * getDllname(){
 }
 
 char * getResourceDirectory(){
+	return resources_dir;
+}
+
+char * _getResourceDirectory(){
 	return resources_dir;
 }
 
@@ -282,7 +307,6 @@ void invokeStaticMethod(JNIEnv* penv, jclass myClassInDll, char* name, char* arg
 jmethodID findConstructor (JNIEnv* penv, jclass myClassInDll, char* arguments)
 {
     jmethodID MID_initj;
-    jobject obj;
 
     MID_initj = (jmethodID)(*penv)->GetMethodID (penv, myClassInDll, "<init>", arguments);
     if (!MID_initj) {
@@ -359,8 +383,9 @@ jobject createSaxonProcessor2 (JNIEnv* penv, jclass myClassInDll, const char * a
 /*
  * Callback to check for exceptions. When called it returns the exception as a string 
  */
-const char * checkForException(sxnc_environment environ, jclass callingClass,  jobject callingObject){
+const char * checkForException(sxnc_environment environ,  jobject callingObject){
 
+	if(callingObject){} // TODO: Remove the callingObject variable
     if ((*(environ.env))->ExceptionCheck(environ.env)) {
 
         jthrowable exc = (*(environ.env))->ExceptionOccurred(environ.env);
@@ -378,9 +403,7 @@ const char * checkForException(sxnc_environment environ, jclass callingClass,  j
         jstring name = (jstring)((*(environ.env))->CallObjectMethod(environ.env, exccls, getName));
         char const* utfName = (*(environ.env))->GetStringUTFChars(environ.env, name, NULL);
         
-        if(callingObject != NULL && strcmp(utfName, "net.sf.saxon.s9api.SaxonApiException") == 0){
-  		
-		jclass saxonExcClass = (*(environ.env))->FindClass(environ.env, "java/lang/Throwable");
+        //if(callingObject != NULL && strcmp(utfName, "net.sf.saxon.s9api.SaxonApiException") == 0){
 		
 		jmethodID  getMessage =  (jmethodID)(*(environ.env))->GetMethodID(environ.env, exccls, "getMessage", "()Ljava/lang/String;");
 		
@@ -402,11 +425,11 @@ const char * checkForException(sxnc_environment environ, jclass callingClass,  j
 	    (*(environ.env))->ExceptionClear(environ.env);
 	    return utfMessage;
 	}
-    }
+   // }
      (*(environ.env))->ReleaseStringUTFChars(environ.env, name, utfName);      
     }
-(*(environ.env))->ExceptionClear(environ.env);
-    return NULL;
+    //(*(environ.env))->ExceptionClear(environ.env);
+     return 0;
 }
 
 
@@ -428,6 +451,8 @@ void finalizeJavaRT (JavaVM* jvm)
  */
 jobject getParameter(sxnc_parameter *parameters,  int parLen, const char* namespacei, const char * name){
 	int i =0;
+	namespacei = NULL; // variable not used yet
+	if(namespacei == NULL) {} // avoiding warning. In next release fix this
 	for(i =0; i< parLen;i++) {
 		if(strcmp(parameters[i].name, name) == 0)
 			return (jobject)parameters[i].value;			
@@ -441,6 +466,8 @@ jobject getParameter(sxnc_parameter *parameters,  int parLen, const char* namesp
  */
 char* getProperty(sxnc_property * properties, int propLen, const char* namespacei, const char * name){
 	int i =0;
+	namespacei = NULL; // variable not used yet
+	if(namespacei == NULL) {} // avoiding warning. In next release fix this
 	for(i =0; i< propLen;i++) {
 		if(strcmp(properties[i].name, name) == 0)
 			return properties[i].value;			
@@ -454,6 +481,7 @@ char* getProperty(sxnc_property * properties, int propLen, const char* namespace
  */
 void setParameter(sxnc_parameter **parameters, int * parLen, int * parCap, const char * namespacei, const char * name, jobject value){
 
+	namespacei = NULL;
 	if(getParameter(*parameters, (*parLen), "", name) != 0){
 		return;			
 	}
@@ -470,8 +498,12 @@ void setParameter(sxnc_parameter **parameters, int * parLen, int * parCap, const
 	}
 	int nameLen = strlen(name)+7;	
 	char *newName = malloc(sizeof(char)*nameLen);
+	int namespaceLen = strlen(namespacei);	
+	char *newNamespace = malloc(sizeof(char)*namespaceLen);
   	snprintf(newName, nameLen, "%s%s", "param:", name );
-	(*parameters)[(*parLen)-1].name = (char*)newName;	
+  	snprintf(newNamespace, namespaceLen, "%s", name );
+	(*parameters)[(*parLen)-1].name = (char*)newName;
+	(*parameters)[(*parLen)-1].namespacei = (char*)newNamespace;	
 	(*parameters)[(*parLen)-1].value = (jobject)value;
 }
 
@@ -509,17 +541,9 @@ void setProperty(sxnc_property ** properties, int *propLen, int *propCap, const 
  * clear parameter 
  */
 void clearSettings(sxnc_parameter **parameters, int *parLen, sxnc_property ** properties, int *propLen){
-	int i =0;
 	free(*parameters);
 	free(*parameters);
-	/*for(i =0; i< parLen; i++){
-		free((*parameters[i].name);
-		free(parameters[i].value);
-	}
-	for(i =0; i< propLen; i++){
-		free(properties[i].name);
-		free(properties[i].value);
-	}*/
+	
 
     	*parameters = (sxnc_parameter *)calloc(10, sizeof(sxnc_parameter));
     	*properties = (sxnc_property *)calloc(10, sizeof(sxnc_property));
@@ -545,7 +569,7 @@ const char * stringValue(sxnc_environment environ, jobject value){
 		return str;
         }
 
-    //checkForException(environ, cppClass, cpp);
+    //checkForException(environ, cpp);
     return 0;
 	
 }

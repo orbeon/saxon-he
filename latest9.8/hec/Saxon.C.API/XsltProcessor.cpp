@@ -244,14 +244,7 @@ void XsltProcessor::compileFromString(const char* stylesheetStr) {
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
 						SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheetStr)));
 		if (!stylesheetObject) {
-			if(exceptionOccurred()) {
-				
-				if(proc->exception != NULL) {
-					delete proc->exception;
-				}
-				proc->exception = proc->checkForExceptionCPP(SaxonProcessor::sxn_environ->env, cppClass, NULL);
-				proc->exceptionClear();
-     			}
+			proc->checkAndCreateException(cppClass);
 		}
 	}
 
@@ -315,6 +308,12 @@ void XsltProcessor::releaseStylesheet() {
 
 XdmValue * XsltProcessor::transformFileToValue(const char* sourcefile,
 		const char* stylesheetfile) {
+
+	if(exceptionOccurred()) {
+		//Possible error detected in the compile phase. Processor not in a clean state.
+		//Require clearing exception.
+		return NULL;	
+	}
 
 	if(sourcefile == NULL && stylesheetfile == NULL && !stylesheetObject){
 	
@@ -395,6 +394,11 @@ XdmValue * XsltProcessor::transformFileToValue(const char* sourcefile,
 void XsltProcessor::transformFileToFile(const char* source,
 		const char* stylesheet, const char* outputfile) {
 
+	if(exceptionOccurred()) {
+		//Possible error detected in the compile phase. Processor not in a clean state.
+		//Require clearing exception.
+		return;	
+	}
 	if(source == NULL && outputfile == NULL && !stylesheetObject){
 		
 		return;
@@ -528,6 +532,11 @@ jobjectArray results = (jobjectArray)(
 const char * XsltProcessor::transformFileToString(const char* source,
 		const char* stylesheet) {
 
+	if(exceptionOccurred()) {
+		//Possible error detected in the compile phase. Processor not in a clean state.
+		//Require clearing exception.
+		return NULL;	
+	}
 	if(source == NULL && stylesheet == NULL && !stylesheetObject){
 		cerr<< "Error: The most recent StylesheetObject failed. Please check exceptions"<<endl;
 		return NULL;
@@ -634,7 +643,6 @@ const char * XsltProcessor::transformFileToString(const char* source,
 			//return "result should be ok";
 			return str;
 		} else  {
-
 			proc->checkAndCreateException(cppClass);  
 	   		
      		}

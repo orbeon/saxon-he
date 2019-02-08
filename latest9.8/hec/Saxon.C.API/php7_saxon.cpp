@@ -911,7 +911,7 @@ bool bVal;
 			ooth = (xdmNode_object *)((char *)zend_vobj2 - XtOffsetOf(xdmNode_object, std));
 
         		if(ooth != NULL) {
-            			obj = ooth->xdmNode->getUnderlyingValue(NULL);
+            			obj = ooth->xdmNode->getUnderlyingValue();
         		}
       		}
 		break;
