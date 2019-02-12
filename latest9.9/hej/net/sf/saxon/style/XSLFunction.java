@@ -97,16 +97,15 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
                     case "name":
                         nameAtt = Whitespace.trim(atts.getValue(a));
                         assert nameAtt != null;
-                        if (nameAtt.indexOf(':') < 0) {
-                            nameAtt = "Q{" + NamespaceConstant.SAXON + "}error-function-name";
-                            compileError("Function name must have a namespace prefix", "XTSE0740");
-                        }
                         try {
-                            setObjectName(makeQName(nameAtt));
+                            StructuredQName functionName = makeQName(nameAtt);
+                            if (functionName.hasURI("")) {
+                                functionName = new StructuredQName("saxon", NamespaceConstant.SAXON, functionName.getLocalPart());
+                            }
+                            setObjectName(functionName);
                         } catch (XPathException err) {
                             compileError(err);
                         }
-                        break;
                     case "as":
                         asAtt = atts.getValue(a);
                         break;
