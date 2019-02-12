@@ -710,6 +710,17 @@ public abstract class StandardNames {
     }
 
     /**
+     * Get a unprefixed StructuredQName representing a system-defined name
+     *
+     * @param fingerprint the fingerprint of the name
+     * @return a StructuredQName representing the system-defined name, with a URI and local name but no prefix
+     */
+
+    public static StructuredQName getUnprefixedQName(int fingerprint) {
+        return new StructuredQName("", getURI(fingerprint), getLocalName(fingerprint));
+    }
+
+    /**
      * A commonly-used name held in static:
      */
 

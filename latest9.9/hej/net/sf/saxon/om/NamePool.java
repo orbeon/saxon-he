@@ -108,7 +108,7 @@ public final class NamePool {
     public StructuredQName getUnprefixedQName(int nameCode) {
         int fp = nameCode & FP_MASK;
         if ((fp & USER_DEFINED_MASK) == 0) {
-            return StandardNames.getStructuredQName(fp);
+            return StandardNames.getUnprefixedQName(fp);
         }
         return integerToQName.get(fp);
     }

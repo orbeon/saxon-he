@@ -101,11 +101,13 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
                             StructuredQName functionName = makeQName(nameAtt);
                             if (functionName.hasURI("")) {
                                 functionName = new StructuredQName("saxon", NamespaceConstant.SAXON, functionName.getLocalPart());
+                                compileError("Function name must be in a namespace", "XTSE0740");
                             }
                             setObjectName(functionName);
                         } catch (XPathException err) {
                             compileError(err);
                         }
+                        break;
                     case "as":
                         asAtt = atts.getValue(a);
                         break;
