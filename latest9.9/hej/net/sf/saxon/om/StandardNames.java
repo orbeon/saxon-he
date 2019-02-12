@@ -304,14 +304,15 @@ public abstract class StandardNames {
 
 
     private static String[] localNames = new String[1023];
-    private static HashMap<String, Integer> lookup = new HashMap<String, Integer>(1023);
+    private static HashMap<String, Integer> lookup = new HashMap<>(1023);
     public static StructuredQName[] errorVariables = {
             new StructuredQName("err", NamespaceConstant.ERR, "code"),
             new StructuredQName("err", NamespaceConstant.ERR, "description"),
             new StructuredQName("err", NamespaceConstant.ERR, "value"),
             new StructuredQName("err", NamespaceConstant.ERR, "module"),
             new StructuredQName("err", NamespaceConstant.ERR, "line-number"),
-            new StructuredQName("err", NamespaceConstant.ERR, "column-number")
+            new StructuredQName("err", NamespaceConstant.ERR, "column-number"),
+            new StructuredQName("err", NamespaceConstant.ERR, "additional")
     };
     // key is an expanded QName in Clark notation
     // value is a fingerprint, as a java.lang.Integer
