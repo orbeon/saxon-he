@@ -8,12 +8,12 @@
 package net.sf.saxon.expr;
 
 import net.sf.saxon.expr.parser.ExpressionTool;
-import net.sf.saxon.om.*;
+import net.sf.saxon.om.FocusIterator;
+import net.sf.saxon.om.Item;
+import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.value.BooleanValue;
-import net.sf.saxon.value.Int64Value;
-import net.sf.saxon.value.NumericValue;
-import net.sf.saxon.value.StringValue;
+import net.sf.saxon.value.*;
 
 /**
  * A FilterIterator filters an input sequence using a filter expression. Note that a FilterIterator
@@ -109,27 +109,33 @@ public class FilterIterator<T extends Item<?>> implements SequenceIterator<T> {
         } else {
             if (first instanceof BooleanValue) {
                 if (iterator.next() != null) {
-                    ExpressionTool.ebvError("sequence of two or more items starting with a boolean", filter);
+                    ExpressionTool.ebvError("a sequence of two or more items starting with a boolean", filter);
                 }
                 return ((BooleanValue) first).getBooleanValue();
             } else if (first instanceof StringValue) {
                 if (iterator.next() != null) {
-                    ExpressionTool.ebvError("sequence of two or more items starting with a string", filter);
+                    ExpressionTool.ebvError("a sequence of two or more items starting with a string", filter);
                 }
                 return first.getStringValueCS().length() != 0;
             } else if (first instanceof Int64Value) {
                 if (iterator.next() != null) {
-                    ExpressionTool.ebvError("sequence of two or more items starting with a numeric value", filter);
+                    ExpressionTool.ebvError("a sequence of two or more items starting with a numeric value", filter);
                 }
                 return ((Int64Value) first).longValue() == position;
 
             } else if (first instanceof NumericValue) {
                 if (iterator.next() != null) {
-                    ExpressionTool.ebvError("sequence of two or more items starting with a numeric value", filter);
+                    ExpressionTool.ebvError("a sequence of two or more items starting with a numeric value", filter);
                 }
                 return ((NumericValue) first).compareTo(position) == 0;
+            } else if (first instanceof AtomicValue) {
+                ExpressionTool.ebvError("a sequence starting with an atomic value of type "
+                                                + ((AtomicValue) first).getPrimitiveType().getDisplayName()
+                                                + " (" + first.toShortString() + ")",
+                                        filter);
+                return false;
             } else {
-                ExpressionTool.ebvError("sequence starting with an atomic value other than a boolean, number, or string", filter);
+                ExpressionTool.ebvError("a sequence starting with " + first.getGenre().getDescription() + " (" + first.toShortString() + ")", filter);
                 return false;
             }
         }
