@@ -310,7 +310,8 @@ bool effectiveBooleanValue(sxnc_environment environi, sxnc_processor ** proc, ch
 	   if((!objectArray) || (!stringArray)) { 
 		printf("Error: parameter and property arrays have some inconsistencies \n");
 		fflush (stdout);		
-		return false;}
+		return 0; //false
+	   }
 	   int i=0;
 	   for(i =0; i< parLen; i++) {
 		
@@ -339,7 +340,7 @@ bool effectiveBooleanValue(sxnc_environment environi, sxnc_processor ** proc, ch
      }
 
     checkForException(environi, cpp);
-    return false;
+    return 0; //false
 }
 
 const char * getStringValue(sxnc_environment environi, sxnc_value value){
@@ -448,7 +449,7 @@ bool getBooleanValue(sxnc_environment environi, sxnc_value value){
 		if(!strMID) {
 	 		 printf("\nError: Boolean %s() not found\n","booleanValue");
   	 		 fflush (stdout);
-         		 return false;
+         		 return 0;//false
 		}
         }
 	jboolean result = (jboolean)((*(environi.env))->CallBooleanMethod(environi.env, value.xdmvalue, strMID));

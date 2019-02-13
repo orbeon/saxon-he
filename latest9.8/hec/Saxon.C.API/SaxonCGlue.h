@@ -32,22 +32,22 @@
 #define EXTERN_SAXONC_END
 #endif
 
+
 #ifndef __cplusplus
 #ifndef _BOOL
 typedef unsigned char bool;
 static const bool false = 0;
 static const bool true = 1;
-#else
-static const bool false = 0;
-static const bool true = 1;
+
 #endif
-#endif
+#endif 
+
 
 #ifndef __cplusplus 
 	#if defined(LICENSE)
-		#define license true;
+		#define license 1
 	#else
-		#define license false
+		#define license 0
 	#endif
 #endif
 
