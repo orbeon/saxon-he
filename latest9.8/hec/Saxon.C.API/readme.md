@@ -569,7 +569,7 @@ In the example below we show how to debug if something unexpected is happening. 
 <div id='tech'/>
 ## Technical Information: ##
 
-Saxon/C is built by cross compiling the Java code of Saxon 9.6 using the [Excelsior Jet tool](http://www.excelsior-usa.com/).
+Saxon/C is built by cross compiling the Java code of Saxon 9.8 using the [Excelsior Jet tool](http://www.excelsior-usa.com/).
 This generates platform specific machine code, which we interface with C/C++ using the Java Native Interace (JNI).
 
 The PHP interface is in the form of a C/C++ PHP extension to Saxon/C created using the Zend module API.
