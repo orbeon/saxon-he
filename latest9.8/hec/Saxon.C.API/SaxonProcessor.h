@@ -7,8 +7,6 @@
 
 #ifndef SAXON_PROCESSOR_H
 #define SAXON_PROCESSOR_H
-#include <jni.h>
-
 	
 #if defined __linux__ || defined __APPLE__
         #include <stdlib.h>

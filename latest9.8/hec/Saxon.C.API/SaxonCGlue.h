@@ -32,12 +32,6 @@
 #define EXTERN_SAXONC_END
 #endif
 
-#ifdef __GNUC__
-# define UNUSED(x) UNUSED_ ## __attribute__((__unused__))
-#else
-# define UNUSED(x) UNUSED_ ## x
-#endif
-
 #ifndef __cplusplus
 #ifndef _BOOL
 typedef unsigned char bool;
