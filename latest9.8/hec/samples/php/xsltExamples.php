@@ -48,8 +48,8 @@ echo("userspace function called cp2\n");
 		echo '<b>userFunctionExample:</b><br/>';
 		global $resultg;
 
-		$proc->setProperty("extc","/usr/lib/php/20160303/saxon" ); //"/home/ond1/work/new-svn/latest9.8-hec/hec/samples/cppTests/cppExtensionFunction"
-		$saxon->registerPHPFunction("/usr/lib/php/20160303/saxon");
+		$proc->setProperty("extc","/home/ond1/work/svn/latest9.8-saxonc/hec/Saxon.C.API/php7-src/PHP-Build/lib/php/extensions/debug-non-zts-20160303/saxon" ); //"/home/ond1/work/new-svn/latest9.8-hec/hec/samples/cppTests/cppExtensionFunction"
+		$saxon->registerPHPFunction("/home/ond1/work/svn/latest9.8-saxonc/hec/Saxon.C.API/php7-src/PHP-Build/lib/php/extensions/debug-non-zts-20160303/saxon");
  		$proc->setSourceFromFile($xmlfile);
                 $proc->compileFromFile($xslFile);
 		
@@ -75,12 +75,13 @@ echo("userspace function called cp2\n");
             
             /* simple example to show transforming to string */
             function exampleSimple1($proc, $xmlfile, $xslFile){
+		echo '<b>exampleSimple1:</b><br/>';
                 $proc->setSourceFromFile($xmlfile);
                 $proc->compileFromFile($xslFile);
   	              
                 $result = $proc->transformToString();               
 		if($result != null) {               
-		echo '<b>exampleSimple1:</b><br/>';		
+				
 		echo 'Output:'.$result;
 		} else {
 			echo "Result is null";
@@ -146,7 +147,7 @@ $params = array(
 echo '<b>exampleLoopVar:</b><br/>';
 $proc->setSourceFromFile($xml);
 $proc->compileFromFile($xslt);
-$values = array();
+
 foreach($params as $name => $value) {
 echo "loop itr";
   $xdmValue = $saxonProc->createAtomicValue(strval($value));
@@ -265,9 +266,9 @@ $proc->clearProperties();
             function exampleXMLFilterChain2($saxonProc, $proc, $xmlFile, $xsl1File, $xsl2File, $xsl3File){
                 echo '<b>XML Filter Chain using Parameters1</b><br/>';                
                 $xdmNode = $saxonProc->parseXmlFromFile($xmlFile);
- echo '<b>XML Filter Chain using using Parameters1 cp0</b><br/>'; 
+ echo '<b>exampleXMLFilterChain2: XML Filter Chain using Parameters1 cp0</b><br/>'; 
 		if($xdmNode == NULL) {
-			echo 'source node is NULL';
+			echo 'source node is NULLXXXXXXX';
 		}
                 $proc->setParameter('node', $xdmNode);
  echo '<b>XML Filter Chain using using Parameters1 cp1</b><br/>';
@@ -275,7 +276,7 @@ $proc->clearProperties();
   echo '<b>XML Filter Chain using using Parameters1 cp2</b><br/>';
                 $xdmValue1 = $proc->transformToValue();
 		if($xdmValue1== null) { 
-			echo '<b>XML Filter Chain using using Parameters1 cp3-0 null</b><br/>';
+			echo '<b>XML Filter Chain using using Parameters1 cp3-0 nullYYYYYYY</b><br/>';
 		}
  echo '<b>XML Filter Chain using using Parameters1 cp3</b><br/>';
  		$errCount = $proc->getExceptionCount();
@@ -419,9 +420,9 @@ $proc->clearProperties();
             echo '<br/>';
             exampleXMLFilterChain($proc, $foo_xml, $foo_xsl, $foo2_xsl, $foo3_xsl);
             echo '<br/>';                    
-           exampleXMLFilterChain2($saxonProc, $proc, $foo_xml, $foo_xsl, $foo2_xsl, $foo3_xsl);       
+           exampleXMLFilterChain2($saxonProc, $proc, $foo_xml, $foo_xsl, $foo2_xsl, $foo3_xsl);     
             echo '<br/>';  
-	    //userFunctionExample($saxonProc, $proc,  $foo_xml, 'xsl/testExFunc.xsl'); //corruption in memory
+	   // userFunctionExample($saxonProc, $proc,  $foo_xml, 'xsl/testExFunc.xsl'); //corruption in memory
             echo '<br/>';
             unset($proc);
 	    unset($saxonproc);

@@ -8,12 +8,16 @@
             
             /* simple example to show transforming to string */
             function exampleSimple1($proc, $xmlfile, $queryFile){
+		echo '<b>exampleSimple1:</b><br/>';
                 $proc->setContextItemFromFile($xmlfile);
+echo '<b>exampleSimple cp1:</b><br/>';
                 $proc->setQueryFile($queryFile);
+echo '<b>exampleSimple cp2:</b><br/>';
   	        //$proc->setProperty('base', '/');      
-                $result = $proc->runQueryToString();               
+                $result = $proc->runQueryToString();  
+echo '<b>exampleSimple cp3:</b><br/>';             
 		if($result != null) {               
-		echo '<b>exampleSimple1:</b><br/>';		
+				
 		echo 'Output:'.$result;
 		} else {
 			echo "Result is null";
@@ -27,7 +31,7 @@
 		$sourceNode = $proc->parseXmlFromString("<foo xmlns='http://one.uri/'><bar><b>text node in example</b></bar></foo>");
 		if($sourceNode !=null){
 			/*echo "Name of Class " , get_class($sourceNode) , "\n"; 			
-			$str = $xdmvalue->getStringValue();
+			$str = $sourceNode->getStringValue();
 			if($str!=null) {
 				echo "XdmValue:".$str;
 			} */
