@@ -8,7 +8,7 @@
 
 #ifndef SAXONCGLUE_H 
 #define SAXONCGLUE_H
-#include "jni/jni.h"
+#include <jni.h>
 
 
 #if defined __linux__ || defined __APPLE__
@@ -16,6 +16,7 @@
 #include <string.h>
 #include <dlfcn.h>
 #include <stdio.h>
+
 
 #define HANDLE void*
 #define LoadLibrary(x) dlopen(x, RTLD_LAZY)
@@ -35,19 +36,25 @@
 
 #ifndef __cplusplus
 #ifndef _BOOL
-typedef unsigned char bool;
+#include <stdbool.h>
+/*typedef unsigned char sxn_bool; 
+static const sxn_bool sxn_false = 0;
+static const sxn_bool sxn_true = 1;*/
+
+#else
+//typedef bool sxn_bool;
 static const bool false = 0;
 static const bool true = 1;
-
 #endif
 #endif 
 
 
+
 #ifndef __cplusplus 
 	#if defined(LICENSE)
-		#define license 1
+		#define sxn_license 1
 	#else
-		#define license 0
+		#define sxn_license 0
 	#endif
 #endif
 

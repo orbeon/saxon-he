@@ -222,7 +222,7 @@ static jmethodID emID = NULL; //cache the methodID
 	jclass cppClass = lookForClass(environi.env, "net/sf/saxon/option/cpp/XPathProcessor");
 
 	if(!cpp) {
-		cpp = (jobject) createSaxonProcessor (environi.env, cppClass, "(Z)V", NULL, (jboolean)license);
+		cpp = (jobject) createSaxonProcessor (environi.env, cppClass, "(Z)V", NULL, (jboolean)sxn_license);
 	}
 
 	if(emID == NULL) {
@@ -286,7 +286,7 @@ bool effectiveBooleanValue(sxnc_environment environi, sxnc_processor ** proc, ch
 	jclass cppClass = lookForClass(environi.env, "net/sf/saxon/option/cpp/XPathProcessor");
 
 	if(!cpp) {
-		cpp = (jobject) createSaxonProcessor (environi.env, cppClass, "(Z)V", NULL, (jboolean)license);
+		cpp = (jobject) createSaxonProcessor (environi.env, cppClass, "(Z)V", NULL, (jboolean)sxn_license);
 	}
 
 	if(bmID == NULL) {
