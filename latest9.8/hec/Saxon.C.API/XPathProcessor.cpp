@@ -283,15 +283,14 @@ if (!mID) {
 bool XPathProcessor::effectiveBooleanValue(const char * xpathStr) {
 	if (xpathStr == NULL) {
 		cerr << "Error:: XPath string cannot be empty or NULL" << std::endl;
-	     return NULL;
+	     return false;
         }
 setProperty("resources", proc->getResourcesDirectory());
 jmethodID mID =
 		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "effectiveBooleanValue",
 				"(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Z");
 if (!mID) {
-	cerr << "Error: MyClassInDll." << "effectiveBooleanValue" << " not found\n"
-			<< endl;
+	cerr << "Error: MyClassInDll." << "effectiveBooleanValue" << " not found\n"<< endl;
 
 } else {
 	jobjectArray stringArray = NULL;
@@ -332,7 +331,7 @@ if (!mID) {
 	proc->checkAndCreateException(cppClass);
 	return result;
 }
-return NULL;
+return false;
 }
 
 void XPathProcessor::setParameter(const char * name, XdmValue* value) {

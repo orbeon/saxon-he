@@ -54,7 +54,7 @@ public:
      /**
 	* @param value - The source to the stylesheet as a pointer to the XdmItem object.
 	*/	
-    void setSourceFromXdmValue(XdmItem * value); 
+    void setSourceFromXdmValue(XdmItem * value);
 
     /**
      * Set the source from file for the transformation.

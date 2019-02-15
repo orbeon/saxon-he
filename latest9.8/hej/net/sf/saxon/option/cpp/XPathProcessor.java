@@ -4,6 +4,7 @@ import com.saxonica.functions.extfn.cpp.CPPFunctionSet;
 import com.saxonica.functions.extfn.cpp.PHPFunctionSet;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.SequenceTool;
+import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.s9api.*;
 
 import javax.xml.transform.Source;
@@ -345,6 +346,10 @@ public class XPathProcessor extends SaxonCAPI {
         String[] params1 = {"s"};
         Object[] values1 = {sourcefile1};
         Processor p = xpath.getProcessor();
+
+        XdmValue valuexx = xpath.createXdmAtomicItem("date","2018-08-08");
+
+        System.out.println("Date: "+valuexx.toString());
         /*DocumentBuilder b = p.newDocumentBuilder();
         XdmNode foo = b.build(new StreamSource(new StringReader("<foo><bar/></foo>")));
         xpath.setContextItem(foo);  */

@@ -431,7 +431,11 @@ public class SaxonCAPI {
 
         BuiltInAtomicType type = (BuiltInAtomicType) BuiltInType.getSchemaType(fp);
         if (type == null) {
-            throw new SaxonApiException("Unknown built in type: " + typeStr + " not found");
+            if(typeStr.contains(":")) {
+                throw new SaxonApiException("Unknown built in type: " + typeStr + " not found. The built in type must be in the SCHEMA namespace and must not contain a colon.");
+            } else {
+                throw new SaxonApiException("Unknown built in type: " + typeStr + " not found.");
+            }
         }
 
         if (type.isNamespaceSensitive()) {

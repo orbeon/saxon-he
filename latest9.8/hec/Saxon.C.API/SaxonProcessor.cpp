@@ -81,7 +81,6 @@ SaxonApiException * SaxonProcessor::getException(){
 
 SaxonProcessor::SaxonProcessor() {
     licensei = false;
-    SaxonProcessor(licensei);
 }
 
 

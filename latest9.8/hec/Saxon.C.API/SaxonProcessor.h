@@ -217,7 +217,7 @@ public:
 		if((size_t) i <= exceptions.size()){
 			return exceptions[i].isType;
 		}
-		return NULL;
+		return false;
 	}
 
 	void clear(){
