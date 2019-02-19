@@ -78,6 +78,13 @@ public abstract class CollatingFunctionFixed extends SystemFunction implements S
     public void setCollationName(String collationName) throws XPathException {
         this.collationName = collationName;
         allocateCollator();
+    }
+
+    private void allocateCollator() throws XPathException {
+        stringCollator = getRetainedStaticContext().getConfiguration().getCollation(collationName);
+        if (stringCollator == null) {
+            throw new XPathException("Unknown collation " + collationName, "FOCH0002");
+        }
         if (isSubstringMatchingFunction()) {
             if (stringCollator instanceof SimpleCollation) {
                 stringCollator = ((SimpleCollation) stringCollator).getSubstringMatcher();
@@ -88,14 +95,7 @@ public abstract class CollatingFunctionFixed extends SystemFunction implements S
             }
         }
     }
-
-    private void allocateCollator() throws XPathException {
-        stringCollator = getRetainedStaticContext().getConfiguration().getCollation(collationName);
-        if (stringCollator == null) {
-            throw new XPathException("Unknown collation " + collationName, "FOCH0002");
-        }
-    }
-
+    
     /**
      * During static analysis, if types are known and the collation is known, pre-allocate a comparer
      * for comparing atomic values. Called by some collating functions during type-checking. The comparer
