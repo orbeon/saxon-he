@@ -112,26 +112,29 @@ void testValidator5(SaxonProcessor * processor, SchemaValidator * val){
   const char* sch1 = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' elementFormDefault='qualified' attributeFormDefault='unqualified'><xs:element name='request'><xs:complexType><xs:sequence><xs:element name='a' type='xs:string'/><xs:element name='b' type='xs:string'/></xs:sequence><xs:assert test='count(child::node()) = 3'/></xs:complexType></xs:element></xs:schema>";
 
 
-        string doc1 = "<request xmlns='http://myexample/family'><Parent>John</Parent><Child>Alice</Child></request>";
+        string doc1 = "<request xmlns='http://myexample/family'><Parent>John</Parent><Child1>Alice</Child1></request>";
 
 	 XdmNode * input = processor->parseXmlFromString(doc1.c_str());
-
+	cout<<"checkpoint 1"<<endl;
 	//val->setSourceNode(input);
 
 	//val->setProperty("string", doc1.c_str());
 	val->setProperty("xsdversion", "1.1");
+cout<<"checkpoint 2"<<endl;
 val->setParameter("node", (XdmValue *)input);
+cout<<"checkpoint 3"<<endl;
 	val->registerSchemaFromString(sch1);
+cout<<"checkpoint 4"<<endl;
 	val->setProperty("report-node", "true");
 	//val->setProperty("report-file", "validation-report2.xml");	
 	val->setProperty("verbose", "true");
 	val->validate();
 	XdmNode * node = val->getValidationReport(); 
-	//if(node != NULL) {
+	if(node != NULL) {
 		cout<<endl<<node->size()<<"Validation Report"<<node->getStringValue()<<endl;
-	//} else {
-	//	cout<<endl<<"Error: Validation Report is NULL"<<endl;
-	//}
+	} else {
+		cout<<endl<<"Error: Validation Report is NULL"<<endl;
+	}
 
 	
 
