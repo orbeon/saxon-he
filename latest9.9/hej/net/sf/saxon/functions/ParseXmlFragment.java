@@ -7,9 +7,13 @@
 
 package net.sf.saxon.functions;
 
+import com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
-import net.sf.saxon.event.*;
+import net.sf.saxon.event.Builder;
+import net.sf.saxon.event.ProxyReceiver;
+import net.sf.saxon.event.Receiver;
+import net.sf.saxon.event.Sender;
 import net.sf.saxon.expr.Callable;
 import net.sf.saxon.expr.PackageData;
 import net.sf.saxon.expr.XPathContext;
@@ -22,11 +26,14 @@ import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.value.StringValue;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import javax.xml.transform.Source;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.sax.SAXSource;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ParseXmlFragment extends SystemFunction implements Callable {
 
@@ -45,76 +52,104 @@ public class ParseXmlFragment extends SystemFunction implements Callable {
     }
 
     private NodeInfo evalParseXml(StringValue inputArg, XPathContext context) throws XPathException {
-        NodeInfo node;
+        NodeInfo node = null;
         final String baseURI = getStaticBaseUriString();
         ParseXml.RetentiveErrorHandler errorHandler = new ParseXml.RetentiveErrorHandler();
 
-        try {
-            Controller controller = context.getController();
-            if (controller == null) {
-                throw new XPathException("parse-xml-fragment() function is not available in this environment");
-            }
-            Configuration configuration = controller.getConfiguration();
-            final StringReader fragmentReader = new StringReader(inputArg.getStringValue());
+        int attempt = 0;
+        while (attempt++ < 3) {
+            try {
+                Controller controller = context.getController();
+                if (controller == null) {
+                    throw new XPathException("parse-xml-fragment() function is not available in this environment");
+                }
+                Configuration configuration = controller.getConfiguration();
+                final StringReader fragmentReader = new StringReader(inputArg.getStringValue());
 
-            String skeleton = "<!DOCTYPE z [<!ENTITY e SYSTEM \"http://www.saxonica.com/parse-xml-fragment/actual.xml\">]>\n<z>&e;</z>";
-            StringReader skeletonReader = new StringReader(skeleton);
+                String skeleton = "<!DOCTYPE z [<!ENTITY e SYSTEM \"http://www.saxonica.com/parse-xml-fragment/actual.xml\">]>\n<z>&e;</z>";
+                StringReader skeletonReader = new StringReader(skeleton);
 
-            InputSource is = new InputSource(skeletonReader);
-            is.setSystemId(baseURI);
-            Source source = new SAXSource(is);
-            XMLReader reader = configuration.getSourceParser();
-            if(reader.getEntityResolver() != null) {
-                            //try {
-                            //XMLReaderFactory.createXMLReader();
-                            /*} catch (SAXException e) {
-                                throw new XPathException(e);
-                            }  */
-                reader = configuration.createXMLParser();
-            }
-            ((SAXSource)source).setXMLReader(reader);
-            source.setSystemId(baseURI);
-
-            Builder b = controller.makeBuilder();
-            if (b instanceof TinyBuilder) {
-                ((TinyBuilder) b).setStatistics(controller.getConfiguration().getTreeStatistics().FN_PARSE_STATISTICS);
-            }
-            Receiver s = b;
-            ParseOptions options = new ParseOptions();
-            reader.setEntityResolver((publicId, systemId) -> {
-                if ("http://www.saxonica.com/parse-xml-fragment/actual.xml".equals(systemId)) {
-                    InputSource is1 = new InputSource(fragmentReader);
-                    is1.setSystemId(baseURI);
-                    return is1;
+                InputSource is = new InputSource(skeletonReader);
+                is.setSystemId(baseURI);
+                SAXSource source = new SAXSource(is);
+                XMLReader reader;
+                if (attempt == 1) {
+                    reader = configuration.getSourceParser();
+                    if (reader.getEntityResolver() != null) {
+                        continue;
+                        // we don't want to overwrite the existing EntityResolver; try again
+                        // with a clean parser
+                    }
                 } else {
-                    return null;
+                    try {
+                        reader = SAXParserFactoryImpl.newInstance().newSAXParser().getXMLReader();
+                    } catch (ParserConfigurationException | SAXException e) {
+                        throw XPathException.makeXPathException(e);
+                    }
                 }
-            });
-            PackageData pd = getRetainedStaticContext().getPackageData();
-            if (pd instanceof StylesheetPackage) {
-                options.setSpaceStrippingRule(((StylesheetPackage) pd).getSpaceStrippingRule());
-                if (((StylesheetPackage) pd).isStripsTypeAnnotations()) {
-                    s = configuration.getAnnotationStripper(s);
+
+                source.setXMLReader(reader);
+                source.setSystemId(baseURI);
+
+                Builder b = controller.makeBuilder();
+                if (b instanceof TinyBuilder) {
+                    ((TinyBuilder) b).setStatistics(controller.getConfiguration().getTreeStatistics().FN_PARSE_STATISTICS);
                 }
-            } else {
-                options.setSpaceStrippingRule(IgnorableSpaceStrippingRule.getInstance());
+                Receiver s = b;
+                ParseOptions options = new ParseOptions();
+                List<Boolean> safetyCheck = new ArrayList<>();
+                reader.setEntityResolver((publicId, systemId) -> {
+                    if ("http://www.saxonica.com/parse-xml-fragment/actual.xml".equals(systemId)) {
+                        safetyCheck.add(true);
+                        InputSource is1 = new InputSource(fragmentReader);
+                        is1.setSystemId(baseURI);
+                        return is1;
+                    } else {
+                        return null;
+                    }
+                });
+                PackageData pd = getRetainedStaticContext().getPackageData();
+                if (pd instanceof StylesheetPackage) {
+                    options.setSpaceStrippingRule(((StylesheetPackage) pd).getSpaceStrippingRule());
+                    if (((StylesheetPackage) pd).isStripsTypeAnnotations()) {
+                        s = configuration.getAnnotationStripper(s);
+                    }
+                } else {
+                    options.setSpaceStrippingRule(IgnorableSpaceStrippingRule.getInstance());
+                }
+                options.setErrorHandler(errorHandler);
+
+                s.setPipelineConfiguration(b.getPipelineConfiguration());
+
+                options.addFilter(OuterElementStripper::new);
+
+                try {
+                    Sender.send(source, s, options);
+                } catch (XPathException e) {
+                    // this might be because the EntityResolver wasn't called - see bug 4127
+                    if (safetyCheck.isEmpty()) {
+                        // This means our entity resolver wasn't called. Make one more try, using the
+                        // built-in platform default parser; then give up.
+                        if (attempt == 2) {
+                            XPathException xe = new XPathException("The configured XML parser cannot be used by fn:parse-xml-fragment(), because it ignores the supplied EntityResolver", "FODC0006");
+                            errorHandler.captureRetainedErrors(xe);
+                            xe.maybeSetContext(context);
+                            throw xe;
+                        } else {
+                            continue;
+                        }
+                    }
+                }
+
+                node = b.getCurrentRoot();
+                b.reset();
+            } catch (XPathException err) {
+                XPathException xe = new XPathException("First argument to parse-xml-fragment() is not a well-formed and namespace-well-formed XML fragment. XML parser reported: " +
+                                                               err.getMessage(), "FODC0006");
+                errorHandler.captureRetainedErrors(xe);
+                xe.maybeSetContext(context);
+                throw xe;
             }
-            options.setErrorHandler(errorHandler);
-
-            s.setPipelineConfiguration(b.getPipelineConfiguration());
-
-            options.addFilter(OuterElementStripper::new);
-
-            Sender.send(source, s, options);
-
-            node = b.getCurrentRoot();
-            b.reset();
-        } catch (XPathException err) {
-            XPathException xe = new XPathException("First argument to parse-xml-fragment() is not a well-formed and namespace-well-formed XML fragment. XML parser reported: " +
-                    err.getMessage(), "FODC0006");
-            errorHandler.captureRetainedErrors(xe);
-            xe.maybeSetContext(context);
-            throw xe;
         }
         return node;
     }
