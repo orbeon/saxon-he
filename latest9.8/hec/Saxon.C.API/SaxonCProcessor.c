@@ -71,7 +71,7 @@ void xsltSaveResultToFile(sxnc_environment environi, sxnc_processor ** proc, cha
 	static jmethodID xsltFileID = NULL; //cache the methodID
  	
 	if(!cpp) {
-		cpp = (jobject) createSaxonProcessor (environi.env, cppClass, "(Z)V", NULL, (jboolean)license);
+		cpp = (jobject) createSaxonProcessor (environi.env, cppClass, "(Z)V", NULL, (jboolean)sxn_license);
 	}
  	
 	if(!xsltFileID) {
@@ -136,7 +136,7 @@ const char * xsltApplyStylesheet(sxnc_environment environi, sxnc_processor ** pr
 	jclass cppClass = lookForClass(environi.env, "net/sf/saxon/option/cpp/XsltProcessor");
 
 	if(!cpp) {
-		cpp = (jobject) createSaxonProcessor (environi.env, cppClass, "(Z)V", NULL, (jboolean)license);
+		cpp = (jobject) createSaxonProcessor (environi.env, cppClass, "(Z)V", NULL, (jboolean)sxn_license);
 	}
 #ifdef DEBUG
         jmethodID debugMID = (*(environi.env))->GetStaticMethodID(environi.env, cppClass, "setDebugMode", "(Z)V");
@@ -198,7 +198,7 @@ void executeQueryToFile(sxnc_environment environi, sxnc_processor ** proc, char 
 	jclass cppClass = lookForClass(environi.env, "net/sf/saxon/option/cpp/XQueryEngine");
  	
 	if(!cpp) {
-		cpp = (jobject) createSaxonProcessor (environi.env, cppClass, "(Z)V", NULL, (jboolean)license);
+		cpp = (jobject) createSaxonProcessor (environi.env, cppClass, "(Z)V", NULL, (jboolean)sxn_license);
 	}
  	
 	if(queryFileID == NULL) {	
@@ -253,7 +253,7 @@ const char * executeQueryToString(sxnc_environment environi, sxnc_processor ** p
 	jclass cppClass = lookForClass(environi.env, "net/sf/saxon/option/cpp/XQueryEngine");
 
 	if(!cpp) {
-		cpp = (jobject) createSaxonProcessor (environi.env, cppClass, "(Z)V", NULL, (jboolean)license);
+		cpp = (jobject) createSaxonProcessor (environi.env, cppClass, "(Z)V", NULL, (jboolean)sxn_license);
 	}
 
 	if(queryStrID == NULL) {
