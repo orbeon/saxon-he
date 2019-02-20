@@ -911,6 +911,10 @@ public class StandardErrorListener implements UnfailingErrorListener {
             sb.append("xsl:iterate");
         } else if (originator instanceof ForEachGroup) {
             sb.append("xsl:for-each-group");
+        } else if (originator instanceof AnalyzeString) {
+            sb.append("xsl:analyze-string");
+        } else if (originator instanceof ResultDocument) {
+            sb.append("xsl:result-document");
         } else if (originator instanceof KeyDefinition) {
             sb.append("xsl:key definition");
         } else if (originator instanceof GlobalParam) {
