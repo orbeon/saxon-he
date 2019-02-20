@@ -115,16 +115,14 @@ void testValidator5(SaxonProcessor * processor, SchemaValidator * val){
         string doc1 = "<request xmlns='http://myexample/family'><Parent>John</Parent><Child1>Alice</Child1></request>";
 
 	 XdmNode * input = processor->parseXmlFromString(doc1.c_str());
-	cout<<"checkpoint 1"<<endl;
 	//val->setSourceNode(input);
 
 	//val->setProperty("string", doc1.c_str());
 	val->setProperty("xsdversion", "1.1");
-cout<<"checkpoint 2"<<endl;
-val->setParameter("node", (XdmValue *)input);
-cout<<"checkpoint 3"<<endl;
+	val->setParameter("node", (XdmValue *)input);
+
 	val->registerSchemaFromString(sch1);
-cout<<"checkpoint 4"<<endl;
+
 	val->setProperty("report-node", "true");
 	//val->setProperty("report-file", "validation-report2.xml");	
 	val->setProperty("verbose", "true");
@@ -133,7 +131,7 @@ cout<<"checkpoint 4"<<endl;
 	if(node != NULL) {
 		cout<<endl<<node->size()<<"Validation Report"<<node->getStringValue()<<endl;
 	} else {
-		cout<<endl<<"Error: Validation Report is NULL"<<endl;
+		cout<<endl<<"Error: Validation Report is NULL - This should not be NULL. Probably no valid license file found."<<endl;
 	}
 
 	
