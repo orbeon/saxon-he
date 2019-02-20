@@ -24,8 +24,13 @@ import net.sf.saxon.tree.util.NamespaceIterator;
 import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.type.Untyped;
+import net.sf.saxon.z.IntHashSet;
+import net.sf.saxon.z.IntSet;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -238,7 +243,7 @@ public class LiteralResultElement extends StyleElement {
             // also type-check the AVT expressions
 
             if (numberOfAttributes > 0) {
-
+                boolean changed = false;
                 for (int i = 0; i < numberOfAttributes; i++) {
 
                     NodeName anameCode = attributeNames[i];
@@ -252,11 +257,24 @@ public class LiteralResultElement extends StyleElement {
                                     newBinding.getPrefix(),
                                     newBinding.getURI(),
                                     getAttributeList().getLocalName(i));
+                            changed = true;
                         }
                     }
 
                     attributeNames[i] = alias;
                     attributeValues[i] = typeCheck(alias.getDisplayName(), attributeValues[i]);
+                }
+
+                if (changed && numberOfAttributes > 1) {
+                    // spec bug 30400. Check that the attribute names are still distinct
+                    IntSet names = new IntHashSet(numberOfAttributes);
+                    for (int i=0; i<numberOfAttributes; i++) {
+                        int fp = attributeNames[i].obtainFingerprint(getNamePool());
+                        boolean absent = names.add(fp);
+                        if (!absent) {
+                            compileError("As a result of namespace aliasing, two attributes have the same expanded name", "XTSE0813");
+                        }
+                    }
                 }
             }
 
