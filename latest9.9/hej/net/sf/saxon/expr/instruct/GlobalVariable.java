@@ -875,7 +875,8 @@ public class GlobalVariable extends Actor
      */
     @Override
     public void export(ExpressionPresenter presenter) throws XPathException {
-        presenter.startElement(this instanceof GlobalParam ? "globalParam" : "globalVariable");
+        boolean asParam = this instanceof GlobalParam && !isStatic(); // bug 4035: export static params as variables
+        presenter.startElement(asParam ? "globalParam" : "globalVariable");
         presenter.emitAttribute("name", getVariableQName());
         presenter.emitAttribute("type", getRequiredType().toExportString());
         ExpressionPresenter.ExportOptions options = (ExpressionPresenter.ExportOptions) presenter.getOptions();
