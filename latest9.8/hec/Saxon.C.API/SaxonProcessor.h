@@ -21,7 +21,7 @@
 #endif
 
 //#define DEBUG //remove
-#define CVERSION "1.1.0"
+#define CVERSION "1.1.2"
 #include <string>
 #include <iostream>
 #include <sstream>  

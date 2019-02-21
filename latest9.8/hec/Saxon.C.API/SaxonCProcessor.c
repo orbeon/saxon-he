@@ -39,7 +39,7 @@ const char * getProductVariantAndVersion(sxnc_environment environi) {
     char args[] = "()Ljava/lang/String;";
     MID_version = (jmethodID)(*(environi.env))->GetStaticMethodID(environi.env, versionClass, methodName, args);
     if (!MID_version) {
-	printf("\nError: MyClassInDll %s() not found\n",methodName);
+	printf("\nError: SaxonCDll %s() not found\n",methodName);
 	fflush (stdout);
         return NULL;
     }
