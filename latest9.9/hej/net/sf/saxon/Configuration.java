@@ -5275,7 +5275,7 @@ public class Configuration implements SourceResolver, NotationSet {
                 SpaceStrippingRule rule = getParseOptions().getSpaceStrippingRule();
                 if (rule == AllElementsSpaceStrippingRule.getInstance()) {
                     return (T) "all";
-                } else if (rule == IgnorableSpaceStrippingRule.getInstance()) {
+                } else if (rule == null || rule == IgnorableSpaceStrippingRule.getInstance()) {
                     return (T) "ignorable";
                 } else {
                     return (T) "none";
