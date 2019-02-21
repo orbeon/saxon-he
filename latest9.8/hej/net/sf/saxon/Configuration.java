@@ -4919,7 +4919,7 @@ public class Configuration implements SourceResolver, NotationSet {
             SpaceStrippingRule rule = getParseOptions().getSpaceStrippingRule();
             if (rule == AllElementsSpaceStrippingRule.getInstance()) {
                 return "all";
-            } else if (rule == IgnorableSpaceStrippingRule.getInstance()) {
+            } else if (rule == null || rule == IgnorableSpaceStrippingRule.getInstance()) {
                 return "ignorable";
             } else {
                 return "none";
