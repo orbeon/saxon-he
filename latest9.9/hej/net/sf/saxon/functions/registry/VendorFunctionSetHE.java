@@ -12,6 +12,7 @@ import net.sf.saxon.expr.Literal;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
+import net.sf.saxon.expr.parser.XPathParser;
 import net.sf.saxon.functions.ApplyFn;
 import net.sf.saxon.functions.Doc_2;
 import net.sf.saxon.functions.SystemFunction;
@@ -244,7 +245,15 @@ public class VendorFunctionSetHE extends BuiltInFunctionSet {
                         return new Int64Value(line);
                     }
                 case "column-number":
-                    int column = locator == null ? -1 : locator.getColumnNumber();
+                    // Bug 4144
+                    int column = -1;
+                    if (locator == null) {
+                        return EmptySequence.getInstance();
+                    } else if (locator instanceof XPathParser.NestedLocation) {
+                        column = ((XPathParser.NestedLocation)locator).getContainingLocation().getColumnNumber();
+                    } else {
+                        column = locator.getColumnNumber();
+                    }
                     if (column == -1) {
                         return EmptySequence.getInstance();
                     } else {
