@@ -159,7 +159,7 @@ int main()
 	SchemaValidator * validator3 = processor->newSchemaValidator();
 	testValidator5(processor, validator3);
 	delete validator;
-	//delete validator2;
+	delete validator2;
 	delete validator3;
         processor->release();
 	return 0;
