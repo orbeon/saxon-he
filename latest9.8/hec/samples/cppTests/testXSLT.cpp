@@ -614,7 +614,8 @@ int main()
 
     exampleParam(processor, trans);
 
-testTransformToStringExtensionFunc(processor, trans);
+   //Available in PE and EE
+   testTransformToStringExtensionFunc(processor, trans);
 
     delete trans;
 delete processor;
