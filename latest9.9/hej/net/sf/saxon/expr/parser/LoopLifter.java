@@ -112,7 +112,8 @@ public class LoopLifter {
             markDependencies(exp, scope);
         }
         boolean threaded = multiThreaded || exp.isMultiThreaded(config);
-        // Don't loop-lift out of a conditional, because it can lead to type errors
+        // Don't loop-lift out of a conditional, because it can lead to type errors,
+        // or outside a try/catch, because it could lead to errors not being caught
         Expression choose = getContainingConditional(exp);
         if (choose != null) {
             markDependencies(exp, choose);
@@ -133,6 +134,8 @@ public class LoopLifter {
                 if (o.getOperandRole().isInChoiceGroup()) {
                     return parent;
                 }
+            } else if (parent instanceof TryCatch) {
+                return parent;
             }
             exp = parent;
             parent = parent.getParentExpression();
