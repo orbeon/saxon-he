@@ -632,6 +632,8 @@ public class Transform {
                 CommandLineOptions.loadAdditionalSchemas(config, additionalSchemas);
             }
 
+            options.applyStaticParams(compiler);
+
             List<Source> sources = new ArrayList<>();
             if (sourceFileName != null) {
                 boolean useSAXSource = sourceParserName != null || dtdValidation;
@@ -725,7 +727,6 @@ public class Transform {
                     for (int j = 0; j < repeatComp; j++) {
                         // Repeat loop is to get reliable performance data
 
-                        options.applyStaticParams(compiler);
                         ///////////////////////////////////////
                         sheet = compiler.compile(styleSource);
                         ///////////////////////////////////////
