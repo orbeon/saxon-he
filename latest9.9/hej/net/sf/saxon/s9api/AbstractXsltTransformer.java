@@ -493,15 +493,16 @@ abstract class AbstractXsltTransformer {
 
     protected Receiver getReceivingTransformer(XsltController controller, GlobalParameterSet parameters, Destination finalDestination) throws SaxonApiException {
         Configuration config = controller.getConfiguration();
-        try {
-            controller.initializeController(parameters);
-        } catch (XPathException e) {
-            throw new SaxonApiException(e);
-        }
+//        try {
+//            controller.initializeController(parameters);
+//        } catch (XPathException e) {
+//            throw new SaxonApiException(e);
+//        }
         if (controller.getInitialMode().isDeclaredStreamable()) {
             Receiver sOut = getDestinationReceiver(controller, finalDestination);
             try {
                 //sOut.open();
+                controller.initializeController(parameters);
                 return controller.getStreamingReceiver(controller.getInitialMode(), sOut);
             } catch (TransformerException e) {
                 throw new SaxonApiException(e);
@@ -526,6 +527,7 @@ abstract class AbstractXsltTransformer {
                                 Receiver result = getDestinationReceiver(controller, finalDestination);
                                 try {
                                     controller.setGlobalContextItem(doc);
+                                    controller.initializeController(parameters);
                                     controller.applyTemplates(doc, result);
                                 } catch (TransformerException e) {
                                     throw new SaxonApiException(e);
