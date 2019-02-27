@@ -300,11 +300,15 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
      * of parameters, the initial template, and initial mode) are left unchanged after the
      * transformation completes.</p>
      *
-     * <p>If no source has been supplied (using {@link #setSource(Source)}), then the method
-     * looks to see whether an initial named template has been supplied (using {@link #setInitialTemplate(QName)},
-     * and if so, the transformation starts with that named template. In the absence of an initial named template,
-     * it looks to see if the stylesheet includes a template named {@code xsl:initial-template}, and if so,
-     * uses that as the entry point. If there is no source and no initial template, the method fails.</p>
+     * <p>If a named template has been supplied as the entry point (using {@link #setInitialTemplate(QName)},
+     * then that is used; if a source has also been supplied (using {@link #setSource(Source)}) then that
+     * is used to provide the global context item.</p>
+     *
+     * <p>If no named template has been supplied, then (a) if a source has been supplied
+     * (using {@link #setSource(Source)}), then that is used as both the global context item and the initial
+     * match selection; (b) if no source has been supplied, the code looks to see if the stylesheet includes
+     * a template named {@code xsl:initial-template}, and if so, uses that as the entry point. If there is
+     * no source and no initial template, the method fails.</p>
      *
      * @throws SaxonApiException     if any dynamic error occurs during the transformation
      * @throws IllegalStateException if no destination has been supplied
@@ -339,13 +343,12 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
             }
             controller.initializeController(parameters);
 
-            if (initialSelection != null) {
+            if (initialTemplateName != null) {
+                controller.callTemplate(initialTemplateName.getStructuredQName(), out);
+            } else if (initialSelection != null) {
                 applyTemplatesToSource(initialSelection, out);
             } else {
-                QName entryPoint = initialTemplateName;
-                if (entryPoint == null) {
-                    entryPoint = new QName("xsl", NamespaceConstant.XSLT, "initial-template");
-                }
+                QName entryPoint = new QName("xsl", NamespaceConstant.XSLT, "initial-template");
                 controller.callTemplate(entryPoint.getStructuredQName(), out);
             }
             destination.closeAndNotify();
