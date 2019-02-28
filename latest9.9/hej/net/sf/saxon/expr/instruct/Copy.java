@@ -479,6 +479,9 @@ public class Copy extends ElementCreator {
                         out = sr;
                     }
                 }
+                if (out.getSystemId() == null) {
+                    out.setSystemId(source.getBaseURI());
+                }
                 out.startDocument(0);
                 copyUnparsedEntities(source, out);
                 getContentExpression().process(context);
