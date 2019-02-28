@@ -39,7 +39,7 @@ public final class RuleManager {
     private int recoveryPolicy;
     private boolean unnamedModeExplicit;
     private CompilerInfo compilerInfo; // We may need access to information on the compilation as distinct from the configuration
-
+    private int nextSequenceNumber = 0;
 
     /**
      * create a RuleManager and initialise variables.
@@ -184,6 +184,10 @@ public final class RuleManager {
         return omniMode != null;
     }
 
+    public int allocateSequenceNumber() {
+        return nextSequenceNumber++;
+    }
+
     /**
      * Register a template for a particular pattern.
      *
@@ -192,24 +196,31 @@ public final class RuleManager {
      * @param mode     The processing mode to which this template applies
      * @param module   The stylesheet module containing the template rule
      * @param priority The priority of the rule: if an element matches several patterns, the
-     *                 one with highest priority is used
+     *                 one with highest priority is used. The value is NaN if no explicit
+     *                 priority was specified
+     * @param position The relative position of the rule in declaration order
+     * @param part     Zero for a "real" rule; an incremented integer for rules generated
+     *                 by splitting a real rule on a union pattern, in cases where no user-specified
+     *                 priority is supplied.
+     * @return the number of (sub-)rules registered
      * @see Pattern
      */
 
-    public void setTemplateRule(Pattern pattern, TemplateRule eh,
-                                Mode mode, StylesheetModule module, double priority) {
+    public int registerRule(Pattern pattern, TemplateRule eh,
+                            Mode mode, StylesheetModule module, double priority, int position, int part) {
 
         // for a union pattern, register the parts separately
-        // Note: technically this is only necessary if using default priorities and if the priorities
+        // Technically this is only necessary if using default priorities and if the priorities
         // of the two halves are different. However, splitting increases the chance that the pattern
-        // can be matched by hashing on the element name, so we do it always
+        // can be matched by hashing on the element name, so we do it always. But we need to do it
+        // in such a way that next-match only processes the template once (test case next-match-024)
         if (pattern instanceof UnionPattern) {
             UnionPattern up = (UnionPattern) pattern;
             Pattern p1 = up.getLHS();
             Pattern p2 = up.getRHS();
-            setTemplateRule(p1, eh, mode, module, priority);
-            setTemplateRule(p2, eh, mode, module, priority);
-            return;
+            int lhsParts = registerRule(p1, eh, mode, module, priority, position, part);
+            int rhsParts = registerRule(p2, eh, mode, module, priority, position, lhsParts);
+            return lhsParts + rhsParts;
         }
         // some union patterns end up as a CombinedNodeTest. Need to split these.
         // (Same reasoning as above)
@@ -220,22 +231,27 @@ public final class RuleManager {
             NodeTest[] nt = cnt.getComponentNodeTests();
             final NodeTestPattern nt0 = new NodeTestPattern(nt[0]);
             ExpressionTool.copyLocationInfo(pattern, nt0);
-            setTemplateRule(nt0, eh, mode, module, priority);
+            int lhsParts = registerRule(nt0, eh, mode, module, priority, position, part);
             final NodeTestPattern nt1 = new NodeTestPattern(nt[1]);
             ExpressionTool.copyLocationInfo(pattern, nt1);
-            setTemplateRule(nt1, eh, mode, module, priority);
-            return;
+            int rhsParts = registerRule(nt1, eh, mode, module, priority, position, lhsParts);
+            return lhsParts + rhsParts;
         }
         if (Double.isNaN(priority)) {
             priority = pattern.getDefaultPriority();
+        } else {
+            // Priorities were user-allocated, so the rule-splitting is purely an optimization, so
+            // we give all sub-rules the same part number, meaning that next-match will only
+            // evaluate one of them
+            part = 0;
         }
 
         if (mode instanceof SimpleMode) {
-            ((SimpleMode) mode).addRule(pattern, eh, module, module.getPrecedence(), priority, true);
+            ((SimpleMode) mode).addRule(pattern, eh, module, module.getPrecedence(), priority, position, part);
         } else {
-            mode.getActivePart().addRule(pattern, eh, module, mode.getMaxPrecedence(), priority, true);
+            mode.getActivePart().addRule(pattern, eh, module, mode.getMaxPrecedence(), priority, position, part);
         }
-
+        return 1;
     }
 
     /**

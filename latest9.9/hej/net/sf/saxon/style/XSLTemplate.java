@@ -902,7 +902,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                 }
 
                 double prio = prioritySpecified ? priority : Double.NaN;
-                mgr.setTemplateRule(match1, rule, mode, module, prio);
+                mgr.registerRule(match1, rule, mode, module, prio, mgr.allocateSequenceNumber(), 0);
 
                 if (mode.isDeclaredStreamable()) {
                     rule.setDeclaredStreamable(true);
@@ -927,7 +927,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
 
                 if (mode.getModeName().equals(Mode.OMNI_MODE)) {
                     compiledTemplateRules.put(Mode.UNNAMED_MODE_NAME, rule);
-                    mgr.setTemplateRule(match1, rule, mgr.getUnnamedMode(), module, prio);
+                    mgr.registerRule(match1, rule, mgr.getUnnamedMode(), module, prio, mgr.allocateSequenceNumber(), 0);
                     for (Mode m : mgr.getAllNamedModes()) {
                         if (m instanceof SimpleMode) {
                             TemplateRule ruleCopy = rule.copy();
@@ -935,7 +935,8 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                                 ruleCopy.setDeclaredStreamable(true);
                             }
                             compiledTemplateRules.put(m.getModeName(), ruleCopy);
-                            mgr.setTemplateRule(match1.copy(new RebindingMap()), ruleCopy, m, module, prio);
+                            mgr.registerRule(match1.copy(new RebindingMap()),
+                                             ruleCopy, m, module, prio, mgr.allocateSequenceNumber(), 0);
                         }
                     }
                 }

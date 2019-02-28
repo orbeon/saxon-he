@@ -102,7 +102,7 @@ public class SelectedElementsSpaceStrippingRule implements SpaceStrippingRule {
             throws XPathException {
         NodeTest test = pattern.getNodeTest();
         double priority = test.getDefaultPriority();
-        Rule newRule = new Rule(pattern, action, precedence, minImportPrecedence, priority, sequence++);
+        Rule newRule = new Rule(pattern, action, precedence, minImportPrecedence, priority, sequence++, 0);
         int prio = priority == 0 ? 2 : priority == -0.25 ? 1 : 0;
         newRule.setRank((precedence << 18) + (prio << 16) + sequence);
         if (test instanceof NodeKindTest) {

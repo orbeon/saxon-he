@@ -143,14 +143,6 @@ public class UnionPattern extends VennPattern {
     }
 
     /**
-     * Get the original pattern text
-     */
-    @Override
-    public String toString() {
-        return super.toString();    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
-    /**
      * Copy a pattern. This makes a deep copy.
      *
      * @return the copy of the original pattern

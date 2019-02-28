@@ -28,6 +28,8 @@ public class Rule {
 
     protected Rule next;              // The next rule after this one in the chain of rules
     protected int sequence;           // The relative position of this rule, its position in declaration order
+    protected int part;               // The relative position of this rule relative to others formed by splitting
+                                      // on a union pattern
     private boolean alwaysMatches;  // True if the pattern does not need to be tested, because the rule
     // is on a rule-chain such that the pattern is necessarily satisfied
     private int rank;               // Indicates the relative precedence/priority of a rule within a mode;
@@ -46,7 +48,7 @@ public class Rule {
      * @param seq  a sequence number for ordering of rules
      */
 
-    public Rule(/*@NotNull*/ Pattern p, /*@NotNull*/ RuleTarget o, int prec, int min, double prio, int seq) {
+    public Rule(/*@NotNull*/ Pattern p, /*@NotNull*/ RuleTarget o, int prec, int min, double prio, int seq, int part) {
         pattern = p;
         action = o;
         precedence = prec;
@@ -54,6 +56,7 @@ public class Rule {
         priority = prio;
         next = null;
         sequence = seq;
+        this.part = part;
         o.registerRule(this);
     }
 
@@ -71,6 +74,7 @@ public class Rule {
         minImportPrecedence = r.minImportPrecedence;
         priority = r.priority;
         sequence = r.sequence;
+        part = r.part;
         if (r.next == null || !copyChain) {
             next = null;
         } else {
@@ -87,6 +91,10 @@ public class Rule {
 
     public int getSequence() {
         return sequence;
+    }
+
+    public int getPartNumber() {
+        return part;
     }
 
     public void setAction(/*@NotNull*/ RuleTarget action) {
@@ -159,6 +167,9 @@ public class Rule {
             out.emitAttribute("prec", getPrecedence() + "");
             out.emitAttribute("prio", getPriority() + "");
             out.emitAttribute("seq", getSequence() + "");
+            if (part != 0) {
+                out.emitAttribute("part", "" + part);
+            }
             out.emitAttribute("rank", "" + getRank());
             out.emitAttribute("minImp", getMinImportPrecedence() + "");
             out.emitAttribute("slots", template.getStackFrameMap().getNumberOfVariables() + "");

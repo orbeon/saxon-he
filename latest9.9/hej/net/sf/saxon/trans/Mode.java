@@ -351,7 +351,20 @@ public abstract class Mode extends Actor {
     public Rule getNextMatchRule(Item item, final Rule currentRule, XPathContext context) throws XPathException {
         SimpleMode.RuleFilter filter = r -> {
             int comp = r.compareRank(currentRule);
-            return comp < 0 || (comp == 0 && r.getSequence() < currentRule.getSequence());
+            if (comp < 0) {
+                // the rule has lower precedence or priority than the current rule
+                return true;
+            } else if (comp == 0) {
+                int seqComp = Integer.compare(r.getSequence(), currentRule.getSequence());
+                if (seqComp < 0) {
+                    // the rule is before the current rule in declaration order
+                    return true;
+                } else if (seqComp == 0) {
+                    // we have two branches of the same union pattern; examine the parent pattern to see which is first
+                    return r.getPartNumber() < currentRule.getPartNumber();
+                }
+            }
+            return false;
         };
         return getRule(item, context, filter);
     }

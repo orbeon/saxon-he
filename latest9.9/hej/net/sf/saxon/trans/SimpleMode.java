@@ -284,21 +284,25 @@ public class SimpleMode extends Mode {
 
     /**
      * Add a rule to the Mode.
-     *
      * @param pattern      a Pattern
      * @param action       the Object to return from getRule() when the supplied node matches this Pattern
      * @param module       the stylesheet module containing the rule
      * @param precedence   the import precedence of the rule
      * @param priority     the priority of the rule
-     * @param explicitMode true if adding a template rule for a specific (default or named) mode;
+     * @param position     the relative position of the rule in declaration order. If two rules have the same
+     *                     position in declaration order, this indicates that they were formed by splitting
+     *                     a single rule whose pattern is a union pattern
+     * @param part         the relative position of a rule within a family of rules created by splitting a
+     *                     single rule governed by a union pattern. This is used where the splitting of the
+     *                     rule was mandated by the XSLT specification, that is, where there is no explicit
+     *                     priority specified. In cases where Saxon splits a rule for optimization reasons,
+     *                     the subrules will all have the same subsequence number.
      */
 
     public void addRule(Pattern pattern, RuleTarget action,
-                        StylesheetModule module, int precedence, double priority, boolean explicitMode) {
+                        StylesheetModule module, int precedence, double priority, int position, int part) {
 
-        if (explicitMode) {
-            hasRules = true;
-        }
+        hasRules = true;
 
         // Ignore a pattern that will never match, e.g. "@comment"
 
@@ -312,19 +316,21 @@ public class SimpleMode extends Mode {
         // Each list is sorted in precedence/priority order so we find the highest-priority rule first
 
         // This logic is designed to ensure that when a UnionPattern contains multiple branches
-        // with the same priority, next-match doesn't select the same template twice (override20_047)
+        // with the same priority, next-match doesn't select the same template twice (next-match-024)
         int moduleHash = module.hashCode();
-        int sequence;
-        if (mostRecentRule == null) {
-            sequence = 0;
-        } else if (action == mostRecentRule.getAction() && moduleHash == mostRecentModuleHash) {
-            sequence = mostRecentRule.getSequence();
-        } else {
-            sequence = mostRecentRule.getSequence() + 1;
-        }
+//        int sequence;
+//        if (mostRecentRule == null) {
+//            sequence = 0;
+//        } else if (action == mostRecentRule.getAction() && moduleHash == mostRecentModuleHash) {
+//            sequence = mostRecentRule.getSequence();
+//        } else {
+//            sequence = mostRecentRule.getSequence() + 1;
+//        }
         //int precedence = module.getPrecedence();
         int minImportPrecedence = module.getMinImportPrecedence();
-        Rule newRule = makeRule(pattern, action, precedence, minImportPrecedence, priority, sequence);
+
+        Rule newRule = makeRule(pattern, action, precedence, minImportPrecedence, priority, position, part);
+
         if (pattern instanceof NodeTestPattern) {
             ItemType test = pattern.getItemType();
             if (test instanceof AnyNodeTest) {
@@ -351,14 +357,15 @@ public class SimpleMode extends Mode {
      * @param pattern             the pattern that this rule matches
      * @param action              the object invoked by this rule (usually a Template)
      * @param precedence          the precedence of the rule
-     * @param minImportPrecedence the minumum import precedence for xsl:apply-imports
+     * @param minImportPrecedence the minimum import precedence for xsl:apply-imports
      * @param priority            the priority of the rule
      * @param sequence            a sequence number for ordering of rules
+     * @param part                distinguishes rules formed by splitting a rule on a union pattern
      * @return the newly created rule
      */
     public Rule makeRule(/*@NotNull*/ Pattern pattern, /*@NotNull*/ RuleTarget action,
-                         int precedence, int minImportPrecedence, double priority, int sequence) {
-        return new Rule(pattern, action, precedence, minImportPrecedence, priority, sequence);
+                         int precedence, int minImportPrecedence, double priority, int sequence, int part) {
+        return new Rule(pattern, action, precedence, minImportPrecedence, priority, sequence, part);
     }
 
     public void addRule(Pattern pattern, Rule newRule) {
@@ -628,9 +635,19 @@ public class SimpleMode extends Mode {
                 } else if (rank == 0) {
                     // this rule has the same precedence and priority as the matching rule already found
                     if (ruleMatches(head, item, (XPathContextMajor) context, ruleSearchState)) {
-                        reportAmbiguity(item, bestRule, head, context);
+                        if (head.getSequence() != bestRule.getSequence()) {
+                            reportAmbiguity(item, bestRule, head, context);
+                        }
                         // choose whichever one comes last (assuming the error wasn't fatal)
-                        bestRule = bestRule.getSequence() > head.getSequence() ? bestRule : head;
+                        int seqComp = Integer.compare(bestRule.getSequence(), head.getSequence());
+                        if (seqComp > 0) {
+                            return bestRule;
+                        } else if (seqComp < 0) {
+                            return head;
+                        } else {
+                            // we're dealing with two rules formed by partitioning a union pattern
+                            bestRule = bestRule.getPartNumber() > head.getPartNumber() ? bestRule : head;
+                        }
                         break;
                     } else {
                         // keep searching other rules of the same precedence and priority
