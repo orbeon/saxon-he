@@ -1353,6 +1353,46 @@ PHP_METHOD(XsltProcessor, clearProperties)
     }
 }
 
+
+
+PHP_METHOD(XsltProcessor, getXslMessages)
+{
+    XsltProcessor *xsltProcessor;
+
+    if (ZEND_NUM_ARGS()>0) {
+        WRONG_PARAM_COUNT;
+    }
+
+    zend_object* pobj = Z_OBJ_P(getThis());
+    xsltProcessor_object *obj = (xsltProcessor_object *)((char *)pobj - XtOffsetOf(xsltProcessor_object, std));
+    xsltProcessor = obj->xsltProcessor;
+
+    if (xsltProcessor != NULL) {
+
+	XdmValue * values = xsltProcessor->getXslMessages();
+        if(values != NULL) {
+            if (object_init_ex(return_value, xdmValue_ce) != SUCCESS) {
+                RETURN_NULL();
+            } else {
+                //struct xdmValue_object* vobj = (struct xdmValue_object *)Z_OBJ_P(return_value);
+		zend_object *vvobj =  Z_OBJ_P(return_value);
+		xdmValue_object* vobj  = (xdmValue_object *)((char *)vvobj - XtOffsetOf(xdmValue_object, std));
+
+
+                assert (vobj != NULL);
+                vobj->xdmValue = values;
+            }
+        } else if(xsltProcessor->exceptionOccurred()){
+            xsltProcessor->checkException();
+	    RETURN_NULL();
+        }
+    } else {
+        RETURN_NULL();
+    }
+}
+
+
+
 PHP_METHOD(XsltProcessor, exceptionOccurred)
 {
     XsltProcessor *xsltProcessor;

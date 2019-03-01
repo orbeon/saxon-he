@@ -1212,6 +1212,38 @@ PHP_METHOD(XsltProcessor, clearProperties)
     }
 }
 
+
+PHP_METHOD(XsltProcessor, getXslMessages)
+{
+    XsltProcessor *xsltProcessor;
+
+    if (ZEND_NUM_ARGS()>0) {
+        WRONG_PARAM_COUNT;
+    }
+
+    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+    xsltProcessor = obj->xsltProcessor;
+
+    if (xsltProcessor != NULL) {
+
+	XdmValue * node = xsltProcessor->getXslMessages();
+        if(node != NULL) {
+            if (object_init_ex(return_value, xdmValue_ce) != SUCCESS) {
+                RETURN_NULL();
+            } else {
+                struct xdmValue_object* vobj = (struct xdmValue_object *)zend_object_store_get_object(return_value TSRMLS_CC);
+                assert (vobj != NULL);
+                vobj->xdmValue = node;
+            }
+        } else if(xsltProcessor->exceptionOccurred()){
+            xsltProcessor->checkException();
+        }
+    } else {
+        RETURN_NULL();
+    }
+}
+
+
 PHP_METHOD(XsltProcessor, exceptionOccurred)
 {
     XsltProcessor *xsltProcessor;

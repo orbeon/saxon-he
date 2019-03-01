@@ -200,6 +200,7 @@ jobject JNICALL phpNativeCall
     PHP_METHOD(XsltProcessor,  getErrorCode);
     PHP_METHOD(XsltProcessor,  getErrorMessage);
     PHP_METHOD(XsltProcessor,  getExceptionCount);
+    PHP_METHOD(XsltProcessor,  getXslMessages);
 
    // PHP_METHOD(XQueryProcesor,  __construct);
     PHP_METHOD(XQueryProcesor,  __destruct);
