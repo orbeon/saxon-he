@@ -166,8 +166,6 @@ public class DictionaryMap implements MapItem {
         ItemType valueType = null;
         int valueCard = 0;
         // we need to test the entries individually
-        AtomicIterator keyIter = keys();
-        AtomicValue key;
         for (Map.Entry<String, GroundedValue<?>> entry : hashMap.entrySet()) {
             GroundedValue<?> val = entry.getValue();
             if (valueType == null) {

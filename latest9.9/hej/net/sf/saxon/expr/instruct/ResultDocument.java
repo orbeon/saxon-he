@@ -57,7 +57,7 @@ import java.util.Properties;
  */
 
 public class ResultDocument extends Instruction
-        implements ValidatingInstruction, InstructionWithComplexContent {
+        implements ValidatingInstruction, InstructionWithComplexContent, ContextOriginator {
 
     private Operand hrefOp;
     private Operand formatOp;    // null if format was known at compile time
@@ -394,7 +394,7 @@ public class ResultDocument extends Instruction
         try {
             content.process(context);
         } catch (XPathException err) {
-            err.setXPathContext(context);
+            err.maybeSetContext(context);
             err.maybeSetLocation(getLocation());
             throw err;
         } finally {
