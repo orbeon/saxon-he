@@ -14,6 +14,7 @@ import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
+import net.sf.saxon.value.SequenceType;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -237,8 +238,13 @@ public abstract class VennPattern extends Pattern {
     }
 
     public void export(ExpressionPresenter presenter) throws XPathException{
+        ExpressionPresenter.ExportOptions options = (ExpressionPresenter.ExportOptions) presenter.getOptions();
         presenter.startElement("p.venn");
         presenter.emitAttribute("op", getOperatorName());
+        if (options.addStaticType) {
+            SequenceType type = SequenceType.makeSequenceType(getItemType(), StaticProperty.ALLOWS_ONE);
+            presenter.emitAttribute("sType", type.toExportString2());
+        }
         p1.export(presenter);
         p2.export(presenter);
         presenter.endElement();

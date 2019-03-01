@@ -85,6 +85,7 @@ public class Closure implements Sequence<Item<?>>, ContextOriginator {
                 final Sequence[] savedStackFrame =
                         new Sequence[stackFrameMap.getNumberOfVariables()];
                 for (int i : slotsUsed) {
+                    assert i < local.length;
                     if (local[i] instanceof Closure) {
                         int cdepth = ((Closure) local[i]).depth;
                         if (cdepth >= 10) {

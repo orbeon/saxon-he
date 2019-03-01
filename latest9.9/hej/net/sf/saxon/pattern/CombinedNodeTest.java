@@ -202,11 +202,11 @@ public class CombinedNodeTest extends NodeTest {
             map.initialPut("n", new StringValue(nodetest1.getMatchingNodeName().getEQName()));
             if (nodetest2 instanceof ContentTypeTest) {
                 SchemaType schemaType = ((ContentTypeTest) nodetest2).getSchemaType();
-                if (schemaType != Untyped.getInstance() && schemaType != BuiltInAtomicType.UNTYPED_ATOMIC) {
+                //if (schemaType != Untyped.getInstance() && schemaType != BuiltInAtomicType.UNTYPED_ATOMIC) {
                     map.initialPut("c", new StringValue(schemaType.getEQName() +
                             (nodetest2.isNillable() ? "?" : "")));
 
-                }
+                //}
             }
         }
     }

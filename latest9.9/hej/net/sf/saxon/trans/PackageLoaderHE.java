@@ -444,15 +444,16 @@ public class PackageLoaderHE implements IPackageLoader {
                 cc.setDeclaredVisibility(vis);
                 Optimizer optimizer = config.obtainOptimizer();
                 StructuredQName name = cc.getObjectName();
+                int evaluationModes = Expression.ITERATE_METHOD | Expression.PROCESS_METHOD;
                 if (codeGen) {
                     String objectName = name == null ? ("h" + component.hashCode()) : name.getLocalPart();
-                    cc.setBody(optimizer.makeByteCodeCandidate(cc, cc.getBody(), objectName, 0));
+                    cc.setBody(optimizer.makeByteCodeCandidate(cc, cc.getBody(), objectName, evaluationModes));
                     optimizer.injectByteCodeCandidates(cc.getBody());
                 } else if (cc instanceof Mode) {
                     ((Mode)cc).processRules(rule -> {
                         TemplateRule tr = (TemplateRule)rule.getAction();
                         String objectName = "match=\"" + tr.getMatchPattern() + '"';
-                        tr.setBody(optimizer.makeByteCodeCandidate(tr, tr.getBody(), objectName, 0));
+                        tr.setBody(optimizer.makeByteCodeCandidate(tr, tr.getBody(), objectName, evaluationModes));
                         optimizer.injectByteCodeCandidates(tr.getBody());
                     });
                 }
@@ -762,6 +763,10 @@ public class PackageLoaderHE implements IPackageLoader {
             String priorityAtt = templateRuleElement.getAttributeValue("", "prio");
             double priority = Double.parseDouble(priorityAtt);
             int sequence = getIntegerAttribute(templateRuleElement, "seq");
+            int part = getIntegerAttribute(templateRuleElement, "part");
+            if (part == Integer.MIN_VALUE) {
+                part = 0;
+            }
             int minImportPrecedence = getIntegerAttribute(templateRuleElement, "minImp");
             int slots = getIntegerAttribute(templateRuleElement, "slots");
             boolean streamable = "1".equals(templateRuleElement.getAttributeValue("", "streamable"));
@@ -789,7 +794,7 @@ public class PackageLoaderHE implements IPackageLoader {
                 RetainedStaticContext rsc = body.getRetainedStaticContext();
                 body.setRetainedStaticContext(rsc); // to propagate it to the subtree
             }
-            Rule rule = mode.makeRule(match, template, precedence, minImportPrecedence, priority, sequence);
+            Rule rule = mode.makeRule(match, template, precedence, minImportPrecedence, priority, sequence, part);
             rule.setRank(rank);
             mode.addRule(match, rule);
             mode.setHasRules(true);
@@ -852,7 +857,7 @@ public class PackageLoaderHE implements IPackageLoader {
             if (flags != null && flags.contains("c")) {
                 rule.setCapturing(true);
             }
-            mode.addRule(pattern, mode.makeRule(pattern, rule, rank, 0, rank, 0));
+            mode.addRule(pattern, mode.makeRule(pattern, rule, rank, 0, rank, 0, 0));
         }
         mode.computeRankings(1);
     }

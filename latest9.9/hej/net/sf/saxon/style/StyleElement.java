@@ -936,13 +936,13 @@ public abstract class StyleElement extends ElementImpl {
                 }
                 String uri = getURIForPrefix(s, false);
                 if (uri == null) {
-                    extensionNamespaces = null;
                     compileError("Namespace prefix " + s + " is undeclared", "XTSE1430");
+                    extensionNamespaces[count++] = NamespaceConstant.SAXON;  // for recovery
                 } else if (NamespaceConstant.isReserved(uri)) {
-                    compileWarning("Namespace " + uri + " is reserved: it cannot be used for extension instructions " +
+                    compileError("Namespace " + uri + " is reserved: it cannot be used for extension instructions " +
                                            "(perhaps exclude-result-prefixes was intended).",
-                                   SaxonErrorCode.SXWN9007);
-                    extensionNamespaces[count++] = uri;
+                                   "XTSE0085");
+                    extensionNamespaces[count++] = NamespaceConstant.SAXON;  // for recovery
                 } else {
                     extensionNamespaces[count++] = uri;
                 }

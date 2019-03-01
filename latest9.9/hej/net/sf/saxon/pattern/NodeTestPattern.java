@@ -7,6 +7,7 @@
 
 package net.sf.saxon.pattern;
 
+import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.RebindingMap;
@@ -17,6 +18,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.SchemaDeclaration;
 import net.sf.saxon.type.UType;
+import net.sf.saxon.value.SequenceType;
 
 /**
  * A NodeTestPattern is a pattern that consists simply of a NodeTest
@@ -145,14 +147,19 @@ public class NodeTestPattern extends Pattern {
     public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.nodeTest");
         presenter.emitAttribute("test", nodeTest.toString());
-        if ("JS".equals(((ExpressionPresenter.ExportOptions) presenter.getOptions()).target)) {
-            int targetVersion = ((ExpressionPresenter.ExportOptions) presenter.getOptions()).targetVersion;
+        ExpressionPresenter.ExportOptions options = (ExpressionPresenter.ExportOptions) presenter.getOptions();
+        if ("JS".equals(options.target)) {
+            int targetVersion = options.targetVersion;
             try {
                 presenter.emitAttribute("jsTest", nodeTest.generateJavaScriptItemTypeTest(AnyItemType.getInstance(), targetVersion));
             } catch (XPathException e) {
                 e.maybeSetLocation(getLocation());
                 throw e;
             }
+        }
+        if (options.addStaticType) {
+            SequenceType type = SequenceType.makeSequenceType(nodeTest, StaticProperty.ALLOWS_ONE);
+            presenter.emitAttribute("sType", type.toExportString2());
         }
         presenter.endElement();
     }
