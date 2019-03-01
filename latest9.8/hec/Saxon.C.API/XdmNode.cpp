@@ -154,7 +154,7 @@ bool XdmNode::isAtomic() {
 
 	jstring result = (jstring)(SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(xdmUtilsClass, xmID,value->xdmvalue, eqname));
 	SaxonProcessor::sxn_environ->env->DeleteLocalRef(eqname);
-	failure = checkForException(*(SaxonProcessor::sxn_environ),  (jobject)result);//Remove code
+	//failure = checkForException(sxn_environ,  (jobject)result);//Remove code
 	if(result) {
 		const char * stri = SaxonProcessor::sxn_environ->env->GetStringUTFChars(result,
 					NULL);

@@ -55,7 +55,7 @@ void setDllname(){
 #else
            env_len = 8; //not used under windows
 #endif
-		dllname =malloc(sizeof(char)*name_len+env_len+1);
+		dllname =malloc(sizeof(char)*name_len+42+1);
 		resources_dir =malloc(sizeof(char)*rDir_len+env_len+1);
 #ifdef DEBUG
 		if(dllname == NULL || resources_dir == NULL)
@@ -75,8 +75,9 @@ void setDllname(){
 		snprintf(resources_dir, 14+rDir_len+1, "%s%s", "/usr/local/lib", tempResources_dir);
 #else
 		//TODO When windows version of Saxon/C is done we will have to fixup this
-		strncpy(dllname, "C:\\Program Files\\Saxonica\\SaxonHEC1.1.0", 42);
-		strncpy(resources_dir, "C:\\Program Files\\Saxonica\\SaxonHEC1.1.0", 42);
+		//strncpy_s(dllname, name_len +42 + 1, "C:\\Program Files\\Saxonica\\SaxonEEC1.1.0", 42);
+		snprintf(resources_dir, rDir_len + 42 + 1,  "C:\\Program Files\\Saxonica\\SaxonEEC1.1.0", tempResources_dir);
+		snprintf(dllname, name_len+42+1, "%s%s", "C:\\Program Files\\Saxonica\\SaxonEEC1.1.2", tempDllname);
 #endif
 
 	
@@ -131,14 +132,13 @@ HANDLE loadDll(char* name)
 	}
 
 #if !(defined (__linux__) || (defined (__APPLE__) && defined(__MACH__)))
-    HANDLE hDll = LoadLibrary (_T(name)); // Used for windows only
+    HANDLE hDll = LoadLibrary (name); // Used for windows only
 #else
     HANDLE hDll = LoadLibrary(name);
 #endif
-
     if (!hDll) {
         fprintf (stderr, "Unable to load %s\n", name);
-	perror("Error: ");
+		perror("Error: ");
         exit(1);
     }
 #ifdef DEBUG
@@ -155,9 +155,9 @@ jint (JNICALL * JNI_CreateJavaVM_func) (JavaVM **pvm, void **penv, void *args);
 
 
 
-void initDefaultJavaRT(sxnc_environment ** env){
-	sxnc_environment *environii = *env;
-	initJavaRT((environii->myDllHandle), &(environii->jvm), &(environii->env));
+void initDefaultJavaRT(sxnc_environment *env){
+	sxnc_environment *environi = env;
+	initJavaRT((environi->myDllHandle), &(environi->jvm), &(environi->env));
 }
 
 /*
@@ -383,52 +383,51 @@ jobject createSaxonProcessor2 (JNIEnv* penv, jclass myClassInDll, const char * a
 /*
  * Callback to check for exceptions. When called it returns the exception as a string 
  */
-const char * checkForException(sxnc_environment environ,  jobject callingObject){
-
+const char * checkForException(sxnc_environment *environii,  jobject callingObject){
 	if(callingObject){} // TODO: Remove the callingObject variable
-    if ((*(environ.env))->ExceptionCheck(environ.env)) {
+    if ((*(environii->env))->ExceptionCheck(environii->env)) {
 
-        jthrowable exc = (*(environ.env))->ExceptionOccurred(environ.env);
+        jthrowable exc = (*(environii->env))->ExceptionOccurred(environii->env);
 #ifdef DEBUG
-        (*(environ.env))->ExceptionDescribe(environ.env);
+        (*(environii->env))->ExceptionDescribe(environii->env);
 #endif
  	if(exc) {
 		printf("Exception Occurred!");
 	}
-        jclass exccls = (jclass) (*(environ.env))->GetObjectClass(environ.env, exc);
+        jclass exccls = (jclass) (*(environii->env))->GetObjectClass(environii->env, exc);
 
-        jclass clscls = (jclass) (*(environ.env))->FindClass(environ.env, "java/lang/Class");
+        jclass clscls = (jclass) (*(environii->env))->FindClass(environii->env, "java/lang/Class");
         
-        jmethodID getName = (jmethodID)(*(environ.env))->GetMethodID(environ.env, clscls, "getName", "()Ljava/lang/String;");
-        jstring name = (jstring)((*(environ.env))->CallObjectMethod(environ.env, exccls, getName));
-        char const* utfName = (*(environ.env))->GetStringUTFChars(environ.env, name, NULL);
+        jmethodID getName = (jmethodID)(*(environii->env))->GetMethodID(environii->env, clscls, "getName", "()Ljava/lang/String;");
+        jstring name = (jstring)((*(environii->env))->CallObjectMethod(environii->env, exccls, getName));
+        char const* utfName = (*(environii->env))->GetStringUTFChars(environii->env, name, NULL);
         
         //if(callingObject != NULL && strcmp(utfName, "net.sf.saxon.s9api.SaxonApiException") == 0){
 		
-		jmethodID  getMessage =  (jmethodID)(*(environ.env))->GetMethodID(environ.env, exccls, "getMessage", "()Ljava/lang/String;");
+		jmethodID  getMessage =  (jmethodID)(*(environii->env))->GetMethodID(environii->env, exccls, "getMessage", "()Ljava/lang/String;");
 		
         if(getMessage) {
             
-            jstring message = (jstring)((*(environ.env))->CallObjectMethod(environ.env, exc, getMessage));
+            jstring message = (jstring)((*(environii->env))->CallObjectMethod(environii->env, exc, getMessage));
        
 	if(!message){
 	
-	(*(environ.env))->ExceptionClear(environ.env);
+	(*(environii->env))->ExceptionClear(environii->env);
 	return 0;
 	}
-            char const* utfMessage= (*(environ.env))->GetStringUTFChars(environ.env, message, NULL);
+            char const* utfMessage= (*(environii->env))->GetStringUTFChars(environii->env, message, NULL);
       
             if(utfMessage != NULL) {
-		(*(environ.env))->ReleaseStringUTFChars(environ.env, name, utfName);
+		(*(environii->env))->ReleaseStringUTFChars(environii->env, name, utfName);
             }
        
-	    (*(environ.env))->ExceptionClear(environ.env);
+	    (*(environii->env))->ExceptionClear(environii->env);
 	    return utfMessage;
 	}
    // }
-     (*(environ.env))->ReleaseStringUTFChars(environ.env, name, utfName);      
+     (*(environii->env))->ReleaseStringUTFChars(environii->env, name, utfName);      
     }
-    //(*(environ.env))->ExceptionClear(environ.env);
+    //(*(environii->env))->ExceptionClear(environii->env);
      return 0;
 }
 
@@ -552,20 +551,20 @@ void clearSettings(sxnc_parameter **parameters, int *parLen, sxnc_property ** pr
 }
 
 
-const char * stringValue(sxnc_environment environ, jobject value){
-	jclass  objClass = lookForClass(environ.env, "java/lang/Object");
+const char * stringValue(sxnc_environment *environi, jobject value){
+	jclass  objClass = lookForClass(environi->env, "java/lang/Object");
 	static jmethodID strMID = NULL;
 	if(!strMID) {
-		strMID = (jmethodID)(*(environ.env))->GetMethodID(environ.env, objClass, "toString", "()Ljava/lang/String;");
+		strMID = (jmethodID)(*(environi->env))->GetMethodID(environi->env, objClass, "toString", "()Ljava/lang/String;");
 		if(!strMID) {
 	 		 printf("\nError: Object %s() not found\n","toString");
   	 		 fflush (stdout);
          		 return NULL;
 		}
         }
-	jstring result = (jstring)((*(environ.env))->CallObjectMethod(environ.env, value, strMID));
+	jstring result = (jstring)((*(environi->env))->CallObjectMethod(environi->env, value, strMID));
  	if(result) {
-	       	const char * str = (*(environ.env))->GetStringUTFChars(environ.env, result, NULL);    
+	       	const char * str = (*(environi->env))->GetStringUTFChars(environi->env, result, NULL);    
 		return str;
         }
 

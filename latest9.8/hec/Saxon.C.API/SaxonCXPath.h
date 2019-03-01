@@ -19,7 +19,7 @@ EXTERN_SAXONC
      * @param val - boolean value
      */
 
-jobject booleanValue(sxnc_environment environi, bool);
+jobject booleanValue(sxnc_environment* environi, bool);
 
 
     /**
@@ -27,7 +27,7 @@ jobject booleanValue(sxnc_environment environi, bool);
      * @param val - int value
      */
 
-jobject integerValue(sxnc_environment environi, int i);
+jobject integerValue(sxnc_environment* environi, int i);
 
 
     /**
@@ -35,7 +35,7 @@ jobject integerValue(sxnc_environment environi, int i);
      * @param val - double value
      */
 
-jobject doubleValue(sxnc_environment environi, double d);
+jobject doubleValue(sxnc_environment* environi, double d);
 
 
     /**
@@ -43,7 +43,7 @@ jobject doubleValue(sxnc_environment environi, double d);
      * @param val - float value
      */
 
-jobject floatValue(sxnc_environment environi, float f);
+jobject floatValue(sxnc_environment *environi, float f);
 
 
     /**
@@ -51,7 +51,7 @@ jobject floatValue(sxnc_environment environi, float f);
      * @param val - Long value
      */
 
-jobject longValue(sxnc_environment environi, long l);
+jobject longValue(sxnc_environment *environi, long l);
 
 
     /**
@@ -59,7 +59,7 @@ jobject longValue(sxnc_environment environi, long l);
      * @param val - as char array value
      */
 
-jobject getJavaStringValue(sxnc_environment environi, const char *str);
+jobject getJavaStringValue(sxnc_environment *environi, const char *str);
 
     /**
      * A Constructor. Create a XdmValue based on the target type. Conversion is applied if possible
@@ -67,7 +67,7 @@ jobject getJavaStringValue(sxnc_environment environi, const char *str);
      * @param val - Value to convert
      */
 
-jobject xdmValueAsObj(sxnc_environment environi, const char* type, const char* str);
+jobject xdmValueAsObj(sxnc_environment *environi, const char* type, const char* str);
 
     /**
      * A Constructor. Create a XdmValue based on the target type. Conversion is applied if possible
@@ -75,7 +75,7 @@ jobject xdmValueAsObj(sxnc_environment environi, const char* type, const char* s
      * @param val - Value to convert
      */
 
-sxnc_value * xdmValue(sxnc_environment environi, const char* type, const char* str);
+sxnc_value * xdmValue(sxnc_environment *environi, const char* type, const char* str);
 
 
     /**
@@ -87,7 +87,7 @@ sxnc_value * xdmValue(sxnc_environment environi, const char* type, const char* s
      * @param values -  The values for the parameters and properties required by the XPath expression
     **/
 
-sxnc_value * evaluate(sxnc_environment environi, sxnc_processor ** proc, char * cwd, char * xpathStr, sxnc_parameter *parameters, sxnc_property * properties, int parLen, int propLen);
+sxnc_value * evaluate(sxnc_environment *environi, sxnc_processor ** proc, char * cwd, char * xpathStr, sxnc_parameter *parameters, sxnc_property * properties, int parLen, int propLen);
 
 
     /**
@@ -101,7 +101,7 @@ sxnc_value * evaluate(sxnc_environment environi, sxnc_processor ** proc, char * 
      *
      **/
 
-bool effectiveBooleanValue(sxnc_environment environi, sxnc_processor ** proc, char * cwd, char * xpathStr, sxnc_parameter *parameters, sxnc_property * properties, int parLen, int propLen);
+bool effectiveBooleanValue(sxnc_environment* environi, sxnc_processor ** proc, char * cwd, char * xpathStr, sxnc_parameter *parameters, sxnc_property * properties, int parLen, int propLen);
 
 
     /**
@@ -110,7 +110,7 @@ bool effectiveBooleanValue(sxnc_environment environi, sxnc_processor ** proc, ch
      * @return true if the item is an atomic value, false if it is a node
      */
 
-bool isAtomicValue(sxnc_environment environi, sxnc_value value);
+bool isAtomicValue(sxnc_environment *environi, sxnc_value value);
 
 
     /**
@@ -120,7 +120,7 @@ bool isAtomicValue(sxnc_environment environi, sxnc_value value);
      */
 
 
-int size(sxnc_environment environi, sxnc_value val);
+int size(sxnc_environment *environi, sxnc_value val);
 
 
     /**
@@ -130,11 +130,11 @@ int size(sxnc_environment environi, sxnc_value val);
      * @return the n'th item in the sequence making up the value, counting from zero
      */
 
-sxnc_value * itemAt(sxnc_environment environi, sxnc_value, int i);
+sxnc_value * itemAt(sxnc_environment *environi, sxnc_value, int i);
 
 
 
-jobject getvalue(sxnc_environment environi, sxnc_value);
+jobject getvalue(sxnc_environment *environi, sxnc_value);
 
 
    /**
@@ -144,7 +144,7 @@ jobject getvalue(sxnc_environment environi, sxnc_value);
      * function.
     **/
 
-const char * getStringValue(sxnc_environment environi, sxnc_value value);
+const char * getStringValue(sxnc_environment *environi, sxnc_value value);
 
 
     /** 
@@ -154,23 +154,23 @@ const char * getStringValue(sxnc_environment environi, sxnc_value value);
      *
     **/
 
-int getIntegerValue(sxnc_environment environi, sxnc_value value, int failure_value);
+int getIntegerValue(sxnc_environment *environi, sxnc_value value, int failure_value);
 
 
 
-bool getBooleanValue(sxnc_environment environi, sxnc_value value);
+bool getBooleanValue(sxnc_environment *environi, sxnc_value value);
 
 
 
-long getLongValue(sxnc_environment environi, sxnc_value value,  long failureVal);
+long getLongValue(sxnc_environment *environi, sxnc_value value,  long failureVal);
 
 
 
-float getFloatValue(sxnc_environment environi, sxnc_value value, float failureVal);
+float getFloatValue(sxnc_environment *environi, sxnc_value value, float failureVal);
 
 
 
-double getDoubleValue(sxnc_environment environi, sxnc_value value, double failureVal);
+double getDoubleValue(sxnc_environment *environi, sxnc_value value, double failureVal);
 
 
 EXTERN_SAXONC_END

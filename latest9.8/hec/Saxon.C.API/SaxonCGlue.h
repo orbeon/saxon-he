@@ -162,7 +162,7 @@ extern jint (JNICALL * JNI_CreateJavaVM_func) (JavaVM **pvm, void **penv, void *
  * with the arguments expanded from environ
  * @param environ - the Evironment is passed
  */
-void initDefaultJavaRT(sxnc_environment ** environ);
+void initDefaultJavaRT(sxnc_environment * env);
 
 
 /*
@@ -211,7 +211,7 @@ jobject createSaxonProcessor2 (JNIEnv* penv, jclass myClassInDll, const char * a
 /*
  * Callback to check for exceptions. When called it returns the exception as a string 
  */
-const char * checkForException(sxnc_environment environ, jobject callingObject);
+const char * checkForException(sxnc_environment *environi, jobject callingObject);
 
 /*
  * Clean up and destroy Java VM to release memory used. 
@@ -248,7 +248,7 @@ void clearSettings(sxnc_parameter **parameters, int *parLen, sxnc_property ** pr
 
 
 
-const char * stringValue(sxnc_environment environ, jobject value);
+const char * stringValue(sxnc_environment  *environi, jobject value);
 
 EXTERN_SAXONC_END
 

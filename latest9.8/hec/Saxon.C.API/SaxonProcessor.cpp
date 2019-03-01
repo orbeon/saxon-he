@@ -46,11 +46,11 @@ bool SaxonProcessor::exceptionOccurred(){
 
 const char* SaxonProcessor::checkException(jobject cpp) {
 		const char * message = NULL;		
-		if(exception == NULL) {
-		  message = checkForException(*sxn_environ, cpp);
+		/*if(exception == NULL) {
+		  message = checkForException(sxn_environ, cpp);
 	 	} else {
 			message = exception->getErrorMessages();	
-		}
+		}*/
 		return message;
 	}
 
@@ -179,7 +179,7 @@ SaxonProcessor::SaxonProcessor(bool l){
      if(SaxonProcessor::jvmCreatedCPP == 0){
 	SaxonProcessor::jvmCreatedCPP=1;
     SaxonProcessor::sxn_environ= new sxnc_environment;//(sxnc_environment *)malloc(sizeof(sxnc_environment));
-
+	cout << endl << "Test: SaxonProcessor  cp1" << endl;
 
     /*
      * First of all, load required component.
@@ -187,12 +187,12 @@ SaxonProcessor::SaxonProcessor(bool l){
      */
 
     SaxonProcessor::sxn_environ->myDllHandle = loadDefaultDll ();
-
+	cout << endl << "Test: SaxonProcessor  cp2" << endl;
     /*
      * Initialize JET run-time.
      * The handle of loaded component is used to retrieve Invocation API.
      */
-    initDefaultJavaRT (&SaxonProcessor::sxn_environ); 
+    initDefaultJavaRT (SaxonProcessor::sxn_environ); 
     } else {
 #ifdef DEBUG
      std::cerr<<"SaxonProc constructor: jvm exists!"<<std::endl;
@@ -239,7 +239,7 @@ SaxonProcessor::SaxonProcessor(const char * configFile){
      * Initialize JET run-time.
      * The handle of loaded component is used to retrieve Invocation API.
      */
-    initDefaultJavaRT (&SaxonProcessor::sxn_environ); 
+    initDefaultJavaRT (SaxonProcessor::sxn_environ); 
     }
  
     versionClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/Version");
@@ -379,7 +379,8 @@ void SaxonProcessor::setcwd(const char* dir){
 
 void SaxonProcessor::setResourcesDirectory(const char* dir){
 	//memset(&resources_dir[0], 0, sizeof(resources_dir));
-	strncat(_getResourceDirectory(), dir, strlen(dir));
+	int destSize = strlen(dir) + strlen(dir);
+	strncat_s(_getResourceDirectory(), destSize,dir, strlen(dir));
 }
 
 const char * SaxonProcessor::getResourcesDirectory(){
@@ -442,6 +443,8 @@ int SaxonProcessor::getNodeKind(jobject obj){
 	int nodeKind = (long)(SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(xdmUtilsClass, mID2, nodeKindObj));
 	return nodeKind;
 }
+
+
 
 XdmNode * SaxonProcessor::parseXmlFromFile(const char* source){
 
@@ -524,7 +527,7 @@ void SaxonProcessor::release(){
 /* ========= Factory method for Xdm ======== */
 
     XdmAtomicValue * SaxonProcessor::makeStringValue(std::string str){
-	jobject obj = getJavaStringValue(*SaxonProcessor::sxn_environ, str.c_str());
+	jobject obj = getJavaStringValue(SaxonProcessor::sxn_environ, str.c_str());
 	jmethodID mID_atomic = (jmethodID)(SaxonProcessor::sxn_environ->env->GetMethodID (xdmAtomicClass, "<init>", "(Ljava/lang/String;)V"));
 	jobject obj2 = (jobject)(SaxonProcessor::sxn_environ->env->NewObject(xdmAtomicClass, mID_atomic, obj));
 	XdmAtomicValue * value = new XdmAtomicValue(obj2, "xs:string");
@@ -533,7 +536,7 @@ void SaxonProcessor::release(){
     }
 
     XdmAtomicValue * SaxonProcessor::makeStringValue(const char * str){
-	jobject obj = getJavaStringValue(*SaxonProcessor::sxn_environ, str);
+	jobject obj = getJavaStringValue(SaxonProcessor::sxn_environ, str);
 	jmethodID mID_atomic = (jmethodID)(SaxonProcessor::sxn_environ->env->GetMethodID (xdmAtomicClass, "<init>", "(Ljava/lang/String;)V"));
 	jobject obj2 = (jobject)(SaxonProcessor::sxn_environ->env->NewObject(xdmAtomicClass, mID_atomic, obj));
 	XdmAtomicValue * value = new XdmAtomicValue(obj2, "xs:string");
@@ -589,21 +592,21 @@ void SaxonProcessor::release(){
     }
 
     XdmAtomicValue * SaxonProcessor::makeQNameValue(std::string str){
-	jobject val = xdmValueAsObj(*SaxonProcessor::sxn_environ, "QName", str.c_str());
+	jobject val = xdmValueAsObj(SaxonProcessor::sxn_environ, "QName", str.c_str());
 	XdmAtomicValue * value = new XdmAtomicValue(val, "QName");
 	value->setProcessor(this);
 	return value;
     }
 
     XdmAtomicValue * SaxonProcessor::makeAtomicValue(std::string typei, std::string strValue){
-	jobject obj = xdmValueAsObj(*SaxonProcessor::sxn_environ, typei.c_str(), strValue.c_str());
+	jobject obj = xdmValueAsObj(SaxonProcessor::sxn_environ, typei.c_str(), strValue.c_str());
 	XdmAtomicValue * value = new XdmAtomicValue(obj, typei);
 	value->setProcessor(this);
 	return value;
     }
 
     const char * SaxonProcessor::getStringValue(XdmItem * item){
-	const char *result = stringValue(*SaxonProcessor::sxn_environ, item->getUnderlyingValue());
+	const char *result = stringValue(SaxonProcessor::sxn_environ, item->getUnderlyingValue());
 #ifdef DEBUG
 	if(result == NULL) {
 		std::cout<<"getStringValue of XdmItem is NULL"<<std::endl;
