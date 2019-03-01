@@ -46,11 +46,11 @@ bool SaxonProcessor::exceptionOccurred(){
 
 const char* SaxonProcessor::checkException(jobject cpp) {
 		const char * message = NULL;		
-		/*if(exception == NULL) {
+		if(exception == NULL) {
 		  message = checkForException(sxn_environ, cpp);
 	 	} else {
 			message = exception->getErrorMessages();	
-		}*/
+		}
 		return message;
 	}
 
@@ -179,7 +179,7 @@ SaxonProcessor::SaxonProcessor(bool l){
      if(SaxonProcessor::jvmCreatedCPP == 0){
 	SaxonProcessor::jvmCreatedCPP=1;
     SaxonProcessor::sxn_environ= new sxnc_environment;//(sxnc_environment *)malloc(sizeof(sxnc_environment));
-	cout << endl << "Test: SaxonProcessor  cp1" << endl;
+
 
     /*
      * First of all, load required component.
@@ -187,7 +187,7 @@ SaxonProcessor::SaxonProcessor(bool l){
      */
 
     SaxonProcessor::sxn_environ->myDllHandle = loadDefaultDll ();
-	cout << endl << "Test: SaxonProcessor  cp2" << endl;
+	
     /*
      * Initialize JET run-time.
      * The handle of loaded component is used to retrieve Invocation API.
@@ -379,8 +379,13 @@ void SaxonProcessor::setcwd(const char* dir){
 
 void SaxonProcessor::setResourcesDirectory(const char* dir){
 	//memset(&resources_dir[0], 0, sizeof(resources_dir));
+ #if defined(__linux__) || defined (__APPLE__)
+	strncat(_getResourceDirectory(), dir, strlen(dir));
+ #else
 	int destSize = strlen(dir) + strlen(dir);
 	strncat_s(_getResourceDirectory(), destSize,dir, strlen(dir));
+
+ #endif
 }
 
 const char * SaxonProcessor::getResourcesDirectory(){

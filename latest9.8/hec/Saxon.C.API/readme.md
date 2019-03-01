@@ -579,7 +579,7 @@ The XML parser used is the one supplied by the Excelsior JET runtime. There are 
 <div id='limitations'/>
 ## Limitations: ##
 
-The following limitations apply to the the 1.1.0 release:
+The following limitations apply to the 1.1.2 release:
 
 * No support for the XdmFunction type in the Xdm data model
 
