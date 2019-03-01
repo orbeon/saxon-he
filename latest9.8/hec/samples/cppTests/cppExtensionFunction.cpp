@@ -79,23 +79,23 @@ jobject JNICALL cppNativeCall
 				case enumInteger:
 					params[i] = new XdmAtomicValue(argObj, "");
 					sresult->xdmvalue = argObj; 
-					lnumber = getLongValue(*SaxonProcessor::sxn_environ, *sresult, 0);
+					lnumber = getLongValue(SaxonProcessor::sxn_environ, *sresult, 0);
 					if(lnumber == 0){}
 										
 					break;
 				case enumDouble:
 					sresult->xdmvalue = argObj; 
-					dnumber = getDoubleValue(*SaxonProcessor::sxn_environ, *sresult, 0);
+					dnumber = getDoubleValue(SaxonProcessor::sxn_environ, *sresult, 0);
 					if(dnumber == 0){}
 					break;
 				case enumFloat:
 					sresult->xdmvalue = argObj; 
-					fnumber = getFloatValue(*SaxonProcessor::sxn_environ, *sresult, 0);
+					fnumber = getFloatValue(SaxonProcessor::sxn_environ, *sresult, 0);
 					if(fnumber == 0){}				
 					break;
 				case enumBool:
 					sresult->xdmvalue = argObj; 
-					bvalue = getBooleanValue(*SaxonProcessor::sxn_environ, *sresult);
+					bvalue = getBooleanValue(SaxonProcessor::sxn_environ, *sresult);
 					if(bvalue){}						
 					break;
 				case enumArrXdmValue:
