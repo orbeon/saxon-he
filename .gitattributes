@@ -2670,6 +2670,7 @@ latest9.8/hec/samples/cTests/testXQuery svn_mime_002dtype=application%2Foctet-st
 latest9.8/hec/samples/cTests/testXQuery.c svn_eol_002dstyle=native
 latest9.8/hec/samples/cTests/testXSLT svn_mime_002dtype=application%2Foctet-stream
 latest9.8/hec/samples/cTests/testXSLT.c svn_eol_002dstyle=native
+latest9.8/hec/samples/cppTests/HEC/testXSLT.cpp svn_eol_002dstyle=native
 latest9.8/hec/samples/cppTests/build32-linux.sh svn_eol_002dstyle=native
 latest9.8/hec/samples/cppTests/build64-linux.sh svn_eol_002dstyle=native
 latest9.8/hec/samples/cppTests/build64-mac.sh svn_eol_002dstyle=native
