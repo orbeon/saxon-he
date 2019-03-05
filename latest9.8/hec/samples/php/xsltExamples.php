@@ -354,7 +354,47 @@ $proc->clearProperties();
             	$proc->clearParameters();
 		$proc->clearProperties();
             
-            }   
+            }
+
+
+             /*
+             * Test saving nd loading a Xslt package
+             */
+             function testPackage1($proc){
+                 echo '<b>Test: Saving and loading Packages:</b><br/>';
+
+                 $proc->compileFromFileAndSave('test.xsl', 'test1.sef');
+
+                 $errCount = $proc->getExceptionCount();
+                 				    if($errCount > 0 ){
+                 				        for($i = 0; $i < $errCount; $i++) {
+                 					       $errCode = $proc->getErrorCode(intval($i));
+                 					       $errMessage = $proc->getErrorMessage(intval($i));
+                 					       echo 'Expected error: Code='.$errCode.' Message='.$errMessage;
+                 					   }
+                 						$proc->exceptionClear();
+                 					}
+
+
+                 $output = $proc->transformFileToString("cat.xml","test1.sef");
+                if($output == NULL) {
+                   $errCount = $proc->getExceptionCount();
+                   				    if($errCount > 0 ){
+                   				        for($i = 0; $i < $errCount; $i++) {
+                   					       $errCode = $proc->getErrorCode(intval($i));
+                   					       $errMessage = $proc->getErrorMessage(intval($i));
+                   					       echo 'Expected error: Code='.$errCode.' Message='.$errMessage;
+                   					   }
+                   						$proc->exceptionClear();
+                   					}
+
+
+                 }else {
+                   echo $output;
+                 }
+               	$proc->clearParameters();
+                $proc->clearProperties();
+             }
 
 
             /* simple example to test transforming without an stylesheet */

@@ -11,6 +11,7 @@ import com.saxonica.functions.extfn.cpp.CPPFunctionSet;
 import com.saxonica.functions.extfn.cpp.PHPFunctionSet;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.SequenceTool;
+import net.sf.saxon.om.TreeModel;
 import net.sf.saxon.query.QueryResult;
 import net.sf.saxon.s9api.*;
 import net.sf.saxon.trans.XPathException;
@@ -24,6 +25,9 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -36,6 +40,7 @@ public class XQueryEngine extends SaxonCAPI {
     private XQueryCompiler compiler = null;
 
     private boolean serializerSet = false;
+    private Iterator<XdmNode> updatedDocuments;
 
     /**
      * Default Constructor to initialise XQueryEngine. s9api Processor is created with license flag as false
@@ -114,6 +119,41 @@ public class XQueryEngine extends SaxonCAPI {
      */
     public void declareNamespace(String prefix, String uri) {
         compiler.declareNamespace(prefix, uri);
+    }
+
+
+
+    /**
+        * Say whether the query is allowed to be updating. XQuery update syntax will be rejected
+        * during query compilation unless this flag is set. XQuery Update is supported only under Saxon-EE.
+        *
+        * @param updating true if the query is allowed to use the XQuery Update facility
+        *                 (requires Saxon-EE). If set to false, the query must not be an updating query. If set
+        *                 to true, it may be either an updating or a non-updating query.
+        * @throws UnsupportedOperationException if updating is requested and the Saxon Configuration does
+        *                                       not support updating, either because it is not an EnterpriseConfiguration, or because no license
+        *                                       key is available.
+        */
+    public void setUpdating(boolean updating) throws SaxonApiException{
+        try {
+            compiler.setUpdatingEnabled(updating);
+        }catch (UnsupportedOperationException ex){
+            throw new SaxonApiException(ex);
+        }
+
+    }
+
+    public XdmNode [] getUpdatedDocuments(){
+        List<XdmNode> node  = new ArrayList<XdmNode>();
+        for (Iterator<XdmNode> iter = updatedDocuments; iter.hasNext();) {
+            node.add(iter.next());
+
+        }
+        if(node.size()>0) {
+            return node.toArray(new XdmNode[node.size()]);
+        } else {
+            return null;
+        }
     }
 
 
@@ -231,6 +271,10 @@ public class XQueryEngine extends SaxonCAPI {
                 return;
             }
             eval.run();
+            if(compiler.isUpdatingEnabled()) {
+                updatedDocuments = eval.getUpdatedDocuments();
+
+            }
         } catch (SaxonApiException ex) {
             SaxonCException saxonException = new SaxonCException(ex);
             saxonExceptions.add(saxonException);
@@ -252,6 +296,9 @@ public class XQueryEngine extends SaxonCAPI {
         File sourceFile = null;
         Source source = null;
         DocumentBuilder builder = processor.newDocumentBuilder();
+        if(((XQueryEngine)api).compiler.isUpdatingEnabled()) {
+            builder.setTreeModel(TreeModel.LINKED_TREE);
+        }
         //Serializer serializer = processor.newSerializer();
         if (params != null && params.length != 0) {
             for (int i = 0; i < params.length; i++) {

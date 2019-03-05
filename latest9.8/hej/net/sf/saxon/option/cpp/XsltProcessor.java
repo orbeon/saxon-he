@@ -136,16 +136,13 @@ public class XsltProcessor extends SaxonCAPI {
      * @param xsl - File name of the stylesheet
      * @param outFilename - the file to which the compiled package should be saved
      */
-    public void compileFromFileAndSave(String cwd, String xsl, String outFilename){
+    public void compileFromFileAndSave(String cwd, String xsl, String outFilename) throws SaxonApiException {
         XsltCompiler compiler = processor.newXsltCompiler();
-        try {
-            Source source = resolveFileToSource(cwd, xsl);
-            XsltPackage pack = compiler.compilePackage(source);
-            File file = absoluteFile(cwd, outFilename);
-            pack.save(file);
-        } catch (SaxonApiException e) {
-            e.printStackTrace();
-        }
+        Source source = resolveFileToSource(cwd, xsl);
+        XsltPackage pack = compiler.compilePackage(source);
+        File file = absoluteFile(cwd, outFilename);
+        pack.save(file);
+
     }
 
 
@@ -156,16 +153,12 @@ public class XsltProcessor extends SaxonCAPI {
      * @param str - File name of the stylsheet
      * @param filename - the file to which the compiled package should be saved
      */
-    public void compileFromStringAndSave(String cwd, String str, String filename){
+    public void compileFromStringAndSave(String cwd, String str, String filename) throws SaxonApiException {
 
         XsltCompiler compiler = processor.newXsltCompiler();
-        try {
-            XsltPackage pack = compiler.compilePackage(new StreamSource(new StringReader(str)));
-            File file = absoluteFile(cwd, filename);
-            pack.save(file);
-        } catch (SaxonApiException e) {
-            e.printStackTrace();
-        }
+        XsltPackage pack = compiler.compilePackage(new StreamSource(new StringReader(str)));
+        File file = absoluteFile(cwd, filename);
+        pack.save(file);
     }
 
     /**

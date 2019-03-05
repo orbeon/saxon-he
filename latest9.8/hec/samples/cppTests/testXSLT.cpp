@@ -526,7 +526,7 @@ void testPackage1(XsltProcessor * trans){
   trans->clearProperties();
 
     trans->compileFromFileAndSave("test.xsl", "test1.sef");
-     const char * output = trans->transformFileToString("cat.xml","test1.sef");	
+     const char * output = trans->transformFileToString("cat.xml","test1.sef");
    if(output == NULL) {
       printf("result is null \n");
 	const char * message = trans->checkException();
