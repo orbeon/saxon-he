@@ -373,6 +373,8 @@ The methods on these class are given below. For a more comprehensive description
 | XdmValue | transformToValue() <br> *Perform the transformation based upon cached stylesheet and any source document. Result returned as an XdmValue object. If there are failures then a null is returned* |
 | void | compileFromFile(string $fileName) <br> *Compile a stylesheet suplied as by file name* |
 | void | compileFromString(string $str) <br> *Compile a stylesheet received as a string.*  |
+| void | compileFromFileAndSave(string $xslFileName, string $sefFileName) <br> *compile a stylesheet received as a file and save to  an exported file (SEF). (Saxon-EE/C required).* |
+| void | compileFromStringAndSave(string $str, string $sefFileName) <br> *compile a stylesheet received as a string and save to an exported file (SEF). (Saxon-EE/C required).*  |
 | void | compileFromValue(XdmNode $node)<br> *Compile a stylesheet received as an XdmNode.* |
 | void | setOutputFile(string $fileName) <br> *Set the output file name of where the transformation result is sent* |
 | void | setSourceFromXdmValue(XdmValue $value) <br> *The source used for a query or stylesheet. Requires an XdmValue object* |

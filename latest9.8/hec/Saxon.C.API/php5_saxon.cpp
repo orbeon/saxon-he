@@ -739,26 +739,26 @@ jobject JNICALL phpNativeCall
 					break;
 				case enumInteger:
 					sresult->xdmvalue = argObj; 
-					lnumber = getLongValue(*SaxonProcessor::sxn_environ, *sresult, 0);
+					lnumber = getLongValue(SaxonProcessor::sxn_environ, *sresult, 0);
 
 					MAKE_STD_ZVAL(php_argv[i]._val);
 					ZVAL_LONG(php_argv[i]._val, lnumber);					
 					break;
 				case enumDouble:
 					sresult->xdmvalue = argObj; 
-					dnumber = getDoubleValue(*SaxonProcessor::sxn_environ, *sresult, 0);
+					dnumber = getDoubleValue(SaxonProcessor::sxn_environ, *sresult, 0);
 					MAKE_STD_ZVAL(php_argv[i]._val);
 					ZVAL_DOUBLE(php_argv[i]._val, dnumber);
 					break;
 				case enumFloat:
 					sresult->xdmvalue = argObj; 
-					fnumber = getFloatValue(*SaxonProcessor::sxn_environ, *sresult, 0);
+					fnumber = getFloatValue(SaxonProcessor::sxn_environ, *sresult, 0);
 					MAKE_STD_ZVAL(php_argv[i]._val);
 					ZVAL_DOUBLE(php_argv[i]._val, fnumber);					
 					break;
 				case enumBool:
 					sresult->xdmvalue = argObj; 
-					bvalue = getBooleanValue(*SaxonProcessor::sxn_environ, *sresult);
+					bvalue = getBooleanValue(SaxonProcessor::sxn_environ, *sresult);
 					MAKE_STD_ZVAL(php_argv[i]._val);
 					ZVAL_BOOL(php_argv[i]._val, bvalue);						
 					break;
@@ -805,23 +805,23 @@ const char * objName = NULL;
 xdmNode_object* ooth = NULL;
 	switch (Z_TYPE_P(retval)) {
             case IS_BOOL:
-                obj= booleanValue(*SaxonProcessor::sxn_environ, Z_BVAL_P(retval));
+                obj= booleanValue(SaxonProcessor::sxn_environ, Z_BVAL_P(retval));
                 break;
             
             case IS_LONG:
-                obj= longValue(*SaxonProcessor::sxn_environ, Z_LVAL_P(retval));
+                obj= longValue(SaxonProcessor::sxn_environ, Z_LVAL_P(retval));
                 break;
             case IS_STRING:
                 sVal = Z_STRVAL_P(retval);
                 len = Z_STRLEN_P(retval);
-		obj = getJavaStringValue(*SaxonProcessor::sxn_environ,estrndup(sVal, len)); 
+		obj = getJavaStringValue(SaxonProcessor::sxn_environ,estrndup(sVal, len));
                 break;
             break;
             case IS_NULL:
                 
             	break;
             case IS_DOUBLE:
-		obj = doubleValue(*SaxonProcessor::sxn_environ, (double)Z_DVAL_P(retval));		
+		obj = doubleValue(SaxonProcessor::sxn_environ, (double)Z_DVAL_P(retval));
 		 break;
             
             case IS_ARRAY:
@@ -1018,6 +1018,43 @@ PHP_METHOD(XsltProcessor, compileFromValue)
         	xsltProcessor->compileFromXdmNode((XdmNode*)(value->getHead()));
 	    }
 	}
+    }
+}
+
+
+
+PHP_METHOD(XsltProcessor, compileFromStringAndSave)
+{
+    XsltProcessor *xsltProcessor;
+    char * stylesheetStr;
+    char * filename;
+    size_t len1, len2, myint;
+    if (zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &stylesheetStr, filename, &len1, &len2) == FAILURE) {
+        RETURN_NULL();
+    }
+
+    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+        xsltProcessor = obj->xsltProcessor;
+        if (xsltProcessor != NULL) {
+            xsltProcessor->compileFromStringAndSave(stylesheetStr, filename);
+        }
+
+   
+}
+
+PHP_METHOD(XsltProcessor, compileFromFileAndSave)
+{
+    XsltProcessor *xsltProcessor;
+    char * stylesheetFilename;
+    char * filename;
+    size_t len1, len2, myint;
+    if (zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &stylesheetFilename, filename, &len1, &len2) == FAILURE) {
+        RETURN_NULL();
+    }
+     xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+    xsltProcessor = obj->xsltProcessor;
+    if (xsltProcessor != NULL) {
+        xsltProcessor->compileFromStringAndSave(stylesheetFilename, filename);
     }
 }
 
@@ -3411,6 +3448,8 @@ zend_function_entry XsltProcessor_methods[] = {
     PHP_ME(XsltProcessor, compileFromFile, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XsltProcessor, compileFromValue, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XsltProcessor, compileFromString, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(XsltProcessor, compileFromStringAndSave, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(XsltProcessor, compileFromFileAndSave, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XsltProcessor,  setOutputFile, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XsltProcessor,  setSourceFromFile, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XsltProcessor,  setSourceFromXdmValue, NULL, ZEND_ACC_PUBLIC)

@@ -220,7 +220,7 @@ int XsltProcessor::exceptionCount(){
 		
 		SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, cAndFStringmID,
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
-						SaxonProcessor::sxn_environ->env->NewStringUTF(xslFilename), 							SaxonProcessor::sxn_environ->env->NewStringUTF(filename));
+						SaxonProcessor::sxn_environ->env->NewStringUTF(xslFilename),SaxonProcessor::sxn_environ->env->NewStringUTF(filename));
 		
 		proc->checkAndCreateException(cppClass);
 

@@ -187,7 +187,7 @@ public:
     void compileFromString(const char* stylesheet);
 
 
-     //!compile a stylesheet received as a string and save to SEF file.
+     //!compile a stylesheet received as a string and save to an exported file (SEF).
     /**
      * 
      * The compiled stylesheet is saved as SEF to file store
@@ -197,7 +197,7 @@ public:
     void compileFromStringAndSave(const char* stylesheet, const char* filename);
 
 
-     //!compile a stylesheet received as a fileand save to SEF file.
+     //!compile a stylesheet received as a file and save to an exported file (SEF).
     /**
      * 
      * The compiled stylesheet is saved as SEF to file store

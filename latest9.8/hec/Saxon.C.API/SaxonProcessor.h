@@ -288,8 +288,8 @@ private:
  * <p/>
  */
 class SaxonProcessor {
-friend  class XsltProcessor;
-friend  class XQueryProcessor;
+friend class XsltProcessor;
+friend class XQueryProcessor;
 friend class SchemaValidator;
 friend class XPathProcessor;
 friend class XdmValue;

@@ -99,6 +99,16 @@ public:
     void clearProperties();
 
 
+    /**
+     * Say whether the query is allowed to be updating. XQuery update syntax will be rejected
+     * during query compilation unless this flag is set. XQuery Update is supported only under Saxon-EE.
+     * @param updating - true if the query is allowed to use the XQuery Update facility
+     *                 (requires Saxon-EE). If set to false, the query must not be an updating query. If set
+     *                 to true, it may be either an updating or a non-updating query.
+     */
+    void setUpdating(bool updating);
+
+
     //!Perform the Query to file.
     /**
      * The result is is saved to file

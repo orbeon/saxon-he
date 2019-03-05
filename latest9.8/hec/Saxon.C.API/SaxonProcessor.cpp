@@ -13,12 +13,6 @@
 #include "XdmNode.h"
 #include "XdmAtomicValue.h"
 
-#ifndef CPP_ONLY
-/*#include "XsltProcessor.cpp"
-#include "XQueryProcessor.cpp"
-#include "XdmValue.cpp"*/
-//#include "php_saxon.cpp"
-#endif
 //#define DEBUG
 #ifdef DEBUG
 #include <signal.h>

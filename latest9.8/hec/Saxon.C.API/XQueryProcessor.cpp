@@ -170,6 +170,24 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 	setProperty("base", baseURI);
     }
 
+
+    void XQueryProcessor::setUpdating(bool updating){
+     
+    	jmethodID mID =
+    		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "setUpdating",
+    				"(Z)V");
+    	if (!mID) {
+    	cerr << "Error: Saxonc library." << "setUpdating" << " not found\n"
+    			<< endl;
+
+    	} else {
+
+    			SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXQ, mID,
+    					(jboolean)updating);
+    	}
+
+    }
+
     void XQueryProcessor::executeQueryToFile(const char * infilename, const char * ofilename, const char * query){
 	setProperty("resources", proc->getResourcesDirectory());  
 

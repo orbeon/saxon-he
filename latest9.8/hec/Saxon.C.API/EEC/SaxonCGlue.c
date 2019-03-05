@@ -156,8 +156,8 @@ jint (JNICALL * JNI_CreateJavaVM_func) (JavaVM **pvm, void **penv, void *args);
 
 
 void initDefaultJavaRT(sxnc_environment ** env){
-	sxnc_environment *environ = *env;
-	initJavaRT((environ->myDllHandle), &(environ->jvm), &(environ->env));
+	sxnc_environment *environii = *env;
+	initJavaRT((environii->myDllHandle), &(environii->jvm), &(environii->env));
 }
 
 /*
