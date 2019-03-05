@@ -87,7 +87,13 @@ final class FollowingIterator implements AxisIterator {
             }
         } else {
             assert current != null;
-            nodeNr = ((TinyNodeImpl) current).nodeNr + 1;
+            TinyNodeImpl here;
+            if (current instanceof TinyTextualElement.TinyTextualElementText) {
+                here = (TinyNodeImpl)current.getParent();
+            } else {
+                here = (TinyNodeImpl)current;
+            }
+            nodeNr = here.nodeNr + 1;
         }
 
         while (true) {
