@@ -25,4 +25,8 @@ public enum Visibility {
         visibilityStr = v;
     }
 
+    public String toString() {
+        return visibilityStr;
+    }
+
 }

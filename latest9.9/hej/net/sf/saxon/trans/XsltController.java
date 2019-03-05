@@ -920,7 +920,10 @@ public class XsltController extends Controller {
             StylesheetPackage pack = (StylesheetPackage) executable.getTopLevelPackage();
             Component initialComponent = pack.getComponent(new SymbolicName(StandardNames.XSL_TEMPLATE, initialTemplateName));
             if (initialComponent == null) {
-                throw new XPathException("Template " + initialTemplateName.getDisplayName() + " does not exist (or is not public)", "XTDE0040");
+                throw new XPathException("Template " + initialTemplateName.getDisplayName() + " does not exist", "XTDE0040");
+            }
+            if (!(initialComponent.getVisibility() == Visibility.PUBLIC || initialComponent.getVisibility() == Visibility.FINAL)) {
+                throw new XPathException("Template " + initialTemplateName.getDisplayName() + " is " + initialComponent.getVisibility(), "XTDE0040");
             }
             NamedTemplate t = (NamedTemplate) initialComponent.getActor();
 
