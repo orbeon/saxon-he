@@ -138,6 +138,8 @@ public class ParseXmlFragment extends SystemFunction implements Callable {
                         } else {
                             continue;
                         }
+                    } else {
+                        throw e;
                     }
                 }
 
