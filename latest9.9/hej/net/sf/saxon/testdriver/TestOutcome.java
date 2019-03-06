@@ -30,10 +30,10 @@ import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.Whitespace;
 
 import javax.xml.transform.stream.StreamSource;
-import java.io.File;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 public class TestOutcome {
@@ -66,6 +66,7 @@ public class TestOutcome {
     private Map<URI, SingleResultDoc> xslResultDocuments = new HashMap<>(4);
     private String wrongError;
     private String resultVar;
+    private String baseOutputUri;
 
     public TestOutcome(TestDriver driver) {
         this.driver = driver;
@@ -81,6 +82,14 @@ public class TestOutcome {
 
     public void setResultVar(String variableName) {
         resultVar = variableName;
+    }
+
+    public void setBaseOutputUri(String uri) {
+        baseOutputUri = uri;
+    }
+
+    public String getBaseOutputUri() {
+        return baseOutputUri;
     }
 
     public SaxonApiException getException() {
@@ -290,10 +299,10 @@ public class TestOutcome {
         return sw.toString().trim();
     }
 
-    public boolean testAssertion(XdmNode assertion, SingleResultDoc result, XPathCompiler assertXpc, XPathCompiler catalogXpc, boolean debug) {
+    public boolean testAssertion(XdmNode assertion, TestOutcome outcome, SingleResultDoc result, XPathCompiler assertXpc, XPathCompiler catalogXpc, boolean debug) {
         try {
             String tag = assertion.getNodeName().getLocalName();
-            boolean success = testAssertion2(assertion, result, assertXpc, catalogXpc, debug);
+            boolean success = testAssertion2(assertion, outcome, result, assertXpc, catalogXpc, debug);
             if (debug && !"all-of".equals(tag) && !"any-of".equals(tag) && !"not".equals(tag)) {
                 String parentTag = assertion.getParent().getNodeName().getLocalName();
                 String label = "Assertion " + tag;
@@ -337,7 +346,7 @@ public class TestOutcome {
         }
     }
 
-    private boolean testAssertion2(XdmNode assertion, SingleResultDoc result, XPathCompiler assertXpc, XPathCompiler catalogXpc, boolean debug) throws SaxonApiException {
+    private boolean testAssertion2(XdmNode assertion, TestOutcome outcome, SingleResultDoc result, XPathCompiler assertXpc, XPathCompiler catalogXpc, boolean debug) throws SaxonApiException {
         String tag = assertion.getNodeName().getLocalName();
 
         switch (tag) {
@@ -392,7 +401,7 @@ public class TestOutcome {
                         // In the JS tests, assume message assertions are OK
                         return true;
                     }
-                    if (testAssertion2(subAssertion, new SingleResultDoc(message, ""), assertXpc, catalogXpc, debug)) {
+                    if (testAssertion2(subAssertion, outcome, new SingleResultDoc(message, ""), assertXpc, catalogXpc, debug)) {
                         return true;
                     }
                 }
@@ -401,13 +410,20 @@ public class TestOutcome {
             }
             case "assert-result-document": {
                 XdmNode subAssertion = (XdmNode) catalogXpc.evaluateSingle("*", assertion);
-                URI uri = new File(driver.resultsDir + "/results/output.xml").toURI().resolve(assertion.attribute("uri"));
+                //URI uri = new File(driver.resultsDir + "/results/output.xml").toURI().resolve(assertion.attribute("uri"));
+                URI uri;
+                try {
+                    uri = new URI(outcome.getBaseOutputUri()).resolve(assertion.attribute("uri"));
+                } catch (URISyntaxException e) {
+                    System.err.println("**** Invalid output uri " + outcome.getBaseOutputUri());
+                    return false;
+                }
                 SingleResultDoc doc = getSecondaryResult(uri);
                 if (doc == null) {
                     System.err.println("**** No output document found for " + uri);
                     return false;
                 }
-                boolean ok = testAssertion2(subAssertion, doc, assertXpc, catalogXpc, debug);
+                boolean ok = testAssertion2(subAssertion, outcome, doc, assertXpc, catalogXpc, debug);
                 if (!ok) {
                     System.err.println("**** Assertion failed for result-document " + uri);
                 }
@@ -419,7 +435,7 @@ public class TestOutcome {
 
             case "all-of":
                 for (XdmNode child : assertion.children("*")) {
-                    if (!testAssertion((XdmNode) child, result, assertXpc, catalogXpc, debug)) {
+                    if (!testAssertion((XdmNode) child, outcome, result, assertXpc, catalogXpc, debug)) {
                         return false;
                     }
                 }
@@ -428,7 +444,7 @@ public class TestOutcome {
             case "any-of":
                 boolean partialSuccess = false;
                 for (XdmItem child : catalogXpc.evaluate("*", assertion)) {
-                    if (testAssertion((XdmNode) child, result, assertXpc, catalogXpc, debug)) {
+                    if (testAssertion((XdmNode) child, outcome, result, assertXpc, catalogXpc, debug)) {
                         if (wrongError != null) {
                             partialSuccess = true;
                             continue;
@@ -440,7 +456,7 @@ public class TestOutcome {
 
             case "not": {
                 XdmNode subAssertion = (XdmNode) catalogXpc.evaluateSingle("*", assertion);
-                return !testAssertion(subAssertion, result, assertXpc, catalogXpc, debug);
+                return !testAssertion(subAssertion, outcome, result, assertXpc, catalogXpc, debug);
             }
         }
         throw new IllegalStateException("Unknown assertion element " + tag);

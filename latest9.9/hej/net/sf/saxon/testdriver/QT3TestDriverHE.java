@@ -676,7 +676,7 @@ public class QT3TestDriverHE extends TestDriver {
 
             copySchemaNamespaces(env, assertXpc);  // ensure environment has schema namespaces
 
-            boolean success = outcome.testAssertion(assertion, outcome.getPrincipalResultDoc(), assertXpc, xpath, debug);
+            boolean success = outcome.testAssertion(assertion, outcome, outcome.getPrincipalResultDoc(), assertXpc, xpath, debug);
             if (success) {
                 successes++;
                 writeTestcaseElement(testCaseName, "pass", null);

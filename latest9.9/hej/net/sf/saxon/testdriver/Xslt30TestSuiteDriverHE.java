@@ -464,6 +464,8 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             if (outputUri.isPresent() && !outputUri.get().equals("")) {
                 baseOutputURI = baseOut.resolve(outputUri.get()).toString();
             }
+            outcome.setBaseOutputUri(baseOutputURI);
+
             boolean failure;
             try {
                 if (useXslt30Transformer) {
@@ -509,7 +511,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         assertionXPath.setSchemaAware(env.processor.isSchemaAware());
         assertionXPath.setBaseURI(assertion.get().getBaseURI());
         copySchemaNamespaces(env, assertionXPath);  // ensure environment has schema namespaces
-        boolean success = outcome.testAssertion(assertion.get(), outcome.getPrincipalResultDoc(), assertionXPath, xpath, debug);
+        boolean success = outcome.testAssertion(assertion.get(), outcome, outcome.getPrincipalResultDoc(), assertionXPath, xpath, debug);
         if (success) {
             successes++;
             resultsDoc.writeTestcaseElement(testName, "pass", outcome.getComment());
