@@ -72,6 +72,7 @@ public class SortedIterator implements SequenceIterator<Item<?>>, LastPositionFi
             this.context = context.newMinorContext();
             this.base = this.context.trackFocus(base);
             this.context.setTemporaryOutputState(StandardNames.XSL_SORT);
+            this.context.setCurrentOutputUri(null);
         } else {
             this.base = base;
             this.context = context;
