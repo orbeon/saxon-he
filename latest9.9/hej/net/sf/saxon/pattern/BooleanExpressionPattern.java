@@ -139,6 +139,7 @@ public class BooleanExpressionPattern extends Pattern implements PatternWithPred
         XPathContext c2 = context.newMinorContext();
         ManualIterator<Item<?>> iter = new ManualIterator<>(item);
         c2.setCurrentIterator(iter);
+        c2.setCurrentOutputUri(null);
         try {
             return getPredicate().effectiveBooleanValue(c2);
         } catch (XPathException e) {

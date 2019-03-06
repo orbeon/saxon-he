@@ -121,6 +121,7 @@ public class BasePatternWithPredicate extends Pattern implements PatternWithPred
         XPathContext c2 = context.newMinorContext();
         ManualIterator<Item<?>> si = new ManualIterator<>(item);
         c2.setCurrentIterator(si);
+        c2.setCurrentOutputUri(null);
         try {
             return getPredicate().effectiveBooleanValue(c2);
         } catch (XPathException.Circularity e) {
