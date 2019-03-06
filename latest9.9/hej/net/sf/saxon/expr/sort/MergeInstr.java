@@ -862,7 +862,7 @@ public class MergeInstr extends Instruction {
             this.ms = ms;
             keyContext = baseContext.newMinorContext();
             keyContext.setTemporaryOutputState(StandardNames.XSL_MERGE_KEY);
-            keyContext.setCurrentOutputUri(null);
+            //keyContext.setCurrentOutputUri(null); // see bug 4160
             manualIterator = new ManualIterator<>();
             manualIterator.setPosition(1);
             keyContext.setCurrentIterator(manualIterator);
