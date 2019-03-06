@@ -641,6 +641,7 @@ public class Xslt30Transformer extends AbstractXsltTransformer {
             XPathContextMajor context = controller.newXPathContext();
             context.setCurrentComponent(f);
             context.setTemporaryOutputState(StandardNames.XSL_FUNCTION);
+            context.setCurrentOutputUri(null);
 
             SerializationProperties params = controller.getExecutable().getPrimarySerializationProperties();
             Receiver receiver = destination.getReceiver(controller.makePipelineConfiguration(), params);
