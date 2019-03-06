@@ -222,9 +222,9 @@ public class XSLMode extends StyleElement {
                     if (visibility == Visibility.ABSTRACT) {
                         invalidAttribute(f, "public|private|final");
                     }
-                    if (visibility != Visibility.PRIVATE) {
+                    //if (visibility != Visibility.PRIVATE) {
                         mode.setDeclaredVisibility(visibility);
-                    }
+                    //}
 
                     break;
                 default:

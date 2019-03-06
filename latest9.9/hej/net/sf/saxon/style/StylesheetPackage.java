@@ -64,6 +64,7 @@ public class StylesheetPackage extends PackageData {
     private StructuredQName defaultMode;
     private boolean declaredModes;
     protected Map<StructuredQName, Properties> namedOutputProperties = new HashMap<>(4);
+    private boolean implicitPackage;
 
     // table of imported schemas. The members of this set are strings holding the target namespace.
     protected Set<String> schemaIndex = new HashSet<>(10);
@@ -206,6 +207,24 @@ public class StylesheetPackage extends PackageData {
     public boolean isRootPackage() {
         return isRootPackage;
     }
+
+    /**
+     * Ask if this is an implicit package (one rooted at xsl:stylesheet or xsl:transform rather than xsl:package
+     * @return true if this package was rooted at an xsl:stylesheet or xsl:transform element
+     */
+    public boolean isImplicitPackage() {
+        return implicitPackage;
+    }
+
+    /**
+     * Say whether this is an implicit package (one rooted at xsl:stylesheet or xsl:transform rather than xsl:package
+     * @param implicitPackage true if this package was rooted at an xsl:stylesheet or xsl:transform element
+     */
+
+    public void setImplicitPackage(boolean implicitPackage) {
+        this.implicitPackage = implicitPackage;
+    }
+
 
     /**
      * Ask whether the package was compiled with just-in-time compilation of template rules enabled

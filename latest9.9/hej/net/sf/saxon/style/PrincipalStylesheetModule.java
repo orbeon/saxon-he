@@ -118,6 +118,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
         stylesheetPackage.setTargetEdition(compilerInfo.getTargetEdition());
         stylesheetPackage.setRelocatable(compilerInfo.isRelocatable());
         stylesheetPackage.setJustInTimeCompilation(compilerInfo.isJustInTimeCompilation());
+        stylesheetPackage.setImplicitPackage(!sourceElement.getLocalPart().equals("package"));
 
         keyManager = stylesheetPackage.getKeyManager();
         decimalFormatManager = stylesheetPackage.getDecimalFormatManager();

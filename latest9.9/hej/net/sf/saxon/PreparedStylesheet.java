@@ -20,10 +20,7 @@ import net.sf.saxon.serialize.SerializationProperties;
 import net.sf.saxon.style.Compilation;
 import net.sf.saxon.style.StylesheetPackage;
 import net.sf.saxon.trace.ExpressionPresenter;
-import net.sf.saxon.trans.CompilerInfo;
-import net.sf.saxon.trans.SymbolicName;
-import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.trans.XsltController;
+import net.sf.saxon.trans.*;
 import net.sf.saxon.trans.rules.RuleManager;
 
 import java.net.URI;
@@ -252,6 +249,60 @@ public class PreparedStylesheet extends Executable {
     public Component getComponent(SymbolicName name) {
         return componentIndex.get(name);
     }
+
+    /**
+     * Ask whether a component is invokable from outside the stylesheet
+     *
+     * @param component the component
+     * @return true if the component can be referenced from the calling application
+     */
+
+    public boolean isEligibleInitialComponent(Component component) {
+        if (component == null) {
+            return false;
+        }
+        if (component.getVisibility() == Visibility.PUBLIC || component.getVisibility() == Visibility.FINAL) {
+            return true;
+        }
+        StylesheetPackage top = getTopLevelPackage();
+        if (top.isImplicitPackage() && component.getActor().getDeclaredVisibility() == null) {
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * Ask whether a mode is eligible for invoking from outside the stylesheet
+     *
+     * @param component the component
+     * @return true if the component can be referenced from the calling application
+     */
+
+    public boolean isEligibleInitialMode(Component.M component) {
+        if (component == null) {
+            return false;
+        }
+        // Rules 1 and 4
+        if (component.getVisibility() == Visibility.PUBLIC || component.getVisibility() == Visibility.FINAL) {
+            return true;
+        }
+        // Rule 2
+        if (component.getActor().isUnnamedMode()) {
+            return true;
+        }
+        // Rule 3
+        StylesheetPackage top = getTopLevelPackage();
+        if (component.getActor().getModeName().equals(top.getDefaultMode())) {
+            return true;
+        }
+        // Rule 5 (but see also bug 30405)
+        if (!top.isDeclaredModes() && !component.getActor().isEmpty() && !(component.getVisibility() == Visibility.PRIVATE && component.isVisibilityExplicit())) {
+            return true;
+        }
+        return false;
+    }
+
 
     /**
      * Iterate over all the named templates defined in this Executable

@@ -170,14 +170,15 @@ public class XsltController extends Controller {
                 //initialMode = ((PreparedStylesheet) executable).getRuleManager().obtainMode(expandedModeName, false);
                 boolean declaredModes = topLevelPackage.isDeclaredModes();
                 SymbolicName sn = new SymbolicName(StandardNames.XSL_MODE, expandedModeName);
-                Component c = topLevelPackage.getComponent(sn);
+                Component.M c = (Component.M)topLevelPackage.getComponent(sn);
                 if (c == null) {
                     throw new XPathException("Requested initial mode " + expandedModeName + " is not defined in the stylesheet", "XTDE0045");
                 }
-                if (declaredModes && c.getVisibility() == Visibility.PRIVATE) {
+                if (!((PreparedStylesheet)executable).isEligibleInitialMode(c)) {
+                //if (declaredModes && c.getVisibility() == Visibility.PRIVATE) {
                     throw new XPathException("Requested initial mode " + expandedModeName + " is private in the top-level package", "XTDE0045");
                 }
-                initialMode = (Component.M) c;
+                initialMode = c;
                 if (!declaredModes && initialMode.getActor().isEmpty() && !expandedModeName.equals(topLevelPackage.getDefaultMode())) {
                     throw new XPathException("Requested initial mode " + expandedModeName + " contains no template rules", "XTDE0045");
                 }
@@ -701,6 +702,19 @@ public class XsltController extends Controller {
                                                  (initialMode == null ? "#unnamed" : initialMode.getActor().getModeName().getDisplayName()) +
                                                  " does not exist", "XTDE0045");
             }
+            //if (!mode.isUnnamedMode()) {
+//                Visibility vis = mode.getDeclaredVisibility();
+//                if (vis != null && !(vis == Visibility.PUBLIC || vis == Visibility.FINAL)) {
+//                    throw new XPathException("Requested initial mode " +
+//                                                     (mode.getModeName().getDisplayName()) +
+//                                                     " is not public or final", "XTDE0045");
+//                }
+                if (!((PreparedStylesheet)executable).isEligibleInitialMode(initialMode)) {
+                    throw new XPathException("Requested initial mode " +
+                                                     (mode.getModeName().getDisplayName()) +
+                                                     " is not public or final", "XTDE0045");
+                }
+            //}
 
             warningIfStreamable(mode);
 
@@ -922,7 +936,7 @@ public class XsltController extends Controller {
             if (initialComponent == null) {
                 throw new XPathException("Template " + initialTemplateName.getDisplayName() + " does not exist", "XTDE0040");
             }
-            if (!(initialComponent.getVisibility() == Visibility.PUBLIC || initialComponent.getVisibility() == Visibility.FINAL)) {
+            if (!pack.isImplicitPackage() && !(initialComponent.getVisibility() == Visibility.PUBLIC || initialComponent.getVisibility() == Visibility.FINAL)) {
                 throw new XPathException("Template " + initialTemplateName.getDisplayName() + " is " + initialComponent.getVisibility(), "XTDE0040");
             }
             NamedTemplate t = (NamedTemplate) initialComponent.getActor();
