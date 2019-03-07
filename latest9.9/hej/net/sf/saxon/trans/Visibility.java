@@ -25,7 +25,7 @@ public enum Visibility {
         visibilityStr = v;
     }
 
-    public String toString() {
+    public String show() {
         return visibilityStr;
     }
 

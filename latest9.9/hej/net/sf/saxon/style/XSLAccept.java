@@ -110,7 +110,7 @@ public class XSLAccept extends XSLAcceptExpose {
     protected void checkCompatibility(SymbolicName name, Visibility declared, Visibility exposed) throws XPathException {
         if (!isCompatible(declared, exposed)) {
             String code = "XTSE3040";
-            compileError("The " + name + " is declared as " + declared + " and cannot be accepted as " + exposed, code);
+            compileError("The " + name + " is declared as " + declared.show() + " and cannot be accepted as " + exposed.show(), code);
         }
     }
 

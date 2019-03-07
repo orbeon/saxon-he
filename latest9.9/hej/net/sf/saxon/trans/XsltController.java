@@ -937,7 +937,7 @@ public class XsltController extends Controller {
                 throw new XPathException("Template " + initialTemplateName.getDisplayName() + " does not exist", "XTDE0040");
             }
             if (!pack.isImplicitPackage() && !(initialComponent.getVisibility() == Visibility.PUBLIC || initialComponent.getVisibility() == Visibility.FINAL)) {
-                throw new XPathException("Template " + initialTemplateName.getDisplayName() + " is " + initialComponent.getVisibility(), "XTDE0040");
+                throw new XPathException("Template " + initialTemplateName.getDisplayName() + " is " + initialComponent.getVisibility().show(), "XTDE0040");
             }
             NamedTemplate t = (NamedTemplate) initialComponent.getActor();
 

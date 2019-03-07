@@ -193,7 +193,7 @@ public class Component {
         out.startElement("co");
         int id = obtainComponentId(this, componentIdMap);
         out.emitAttribute("id", ""+id);
-        if (getVisibility() != null && getVisibility() != Visibility.PRIVATE) {
+        if (getVisibility() != null && (hasExplicitVisibility || getVisibility() != Visibility.PRIVATE)) {
             out.emitAttribute("vis", getVisibility().toString());
         }
         String refs = listComponentReferences(componentIdMap);

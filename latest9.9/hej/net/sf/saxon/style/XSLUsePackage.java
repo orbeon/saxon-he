@@ -313,7 +313,7 @@ public class XSLUsePackage extends StyleElement {
 
                             Component.M usedComponent = (Component.M)derivedComponent.getBaseComponent();
 
-                            if (derivedComponent.getVisibility() == Visibility.FINAL || usedComponent.getVisibility() == Visibility.FINAL) {
+                            if (usedComponent.getVisibility() == Visibility.FINAL) {
                                 ((StyleElement) overridingDeclaration).compileError(
                                         "Cannot define overriding template rules in mode " + modeName.getDisplayName() +
                                                 " because it has visibility=final", "XTSE3060");

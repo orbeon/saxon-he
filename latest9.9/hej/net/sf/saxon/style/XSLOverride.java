@@ -104,7 +104,7 @@ public class XSLOverride extends StyleElement {
                             ((StyleElement) curr).compileError(
                                     "The " + StandardNames.getLocalName(name.getComponentKind()) +
                                         " named " + name.getShortName() +
-                                            " in the used package cannot be overridden because its visibility is " + overriddenVis,
+                                            " in the used package cannot be overridden because its visibility is " + overriddenVis.show(),
                                                                "XTSE3060");
                             return;
                         }

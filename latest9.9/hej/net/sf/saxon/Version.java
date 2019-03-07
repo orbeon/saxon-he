@@ -13,11 +13,10 @@ package net.sf.saxon;
 
 public final class Version {
 
-    private static final int[] STRUCTURED_VERSION = {9, 9, 1, 1};
-    private static final String VERSION = "9.9.1.1";
-    //private static final String VERSION = "9.9.0.2-20181108";
-    private static final String BUILD = "012115"; //mmddhh
-    private static final String RELEASE_DATE = "2019-01-21";
+    private static final int[] STRUCTURED_VERSION = {9, 9, 1, 2};
+    private static final String VERSION = "9.9.1.2";
+    private static final String BUILD = "030715"; //mmddhh
+    private static final String RELEASE_DATE = "2019-03-07";
     private static final String MAJOR_RELEASE_DATE = "2018-09-27";
 
     private Version() {
@@ -46,10 +45,10 @@ public final class Version {
     }
 
     /**
-     * Get the version number of the schema-aware version of the product
+     * Get the specific variant and version number of the product
      *
-     * @param edition the Saxon edition code, e.g. "EE" or "JS"
-     * @return the version number of this version of Saxon, as a string
+     * @param edition the Saxon edition code, e.g. "EE", "HE", or "JS"
+     * @return the version number of this version of Saxon, as a string, for example "EE 9.9.0.1"
      */
 
     public static String getProductVariantAndVersion(String edition) {
@@ -59,7 +58,7 @@ public final class Version {
     /**
      * Get the user-visible version number of this version of the product
      *
-     * @return the version number of this version of Saxon, as a string: for example "9.0.1"
+     * @return the version number of this version of Saxon, as a string: for example "9.9.0.1"
      */
 
     public static String getProductVersion() {

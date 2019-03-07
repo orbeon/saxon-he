@@ -54,6 +54,8 @@ import java.util.*;
 
 public class PackageLoaderHE implements IPackageLoader {
 
+    private final static NestedIntegerValue SAXON9911 = new NestedIntegerValue(new int[]{9,9,1,1});
+
     private Configuration config;
     protected final Stack<StylesheetPackage> packStack = new Stack<>();
     private XPathParser parser;
@@ -70,6 +72,7 @@ public class PackageLoaderHE implements IPackageLoader {
     private final Map<Integer, Component> componentIdMap = new HashMap<>();
     private final Map<Component, String> externalReferences = new HashMap<>();
     private String relocatableBase = null;
+    private NestedIntegerValue originalVersion = null;
 
     public PackageLoaderHE(Configuration config) {
         this.config = config;
@@ -173,6 +176,7 @@ public class PackageLoaderHE implements IPackageLoader {
         if (!packageElement.getLocalPart().equals("package")) {
             throw new XPathException("Outermost element of XSLT export file must be 'package'", SaxonErrorCode.SXPK0002);
         }
+        originalVersion = NestedIntegerValue.parse(packageElement.getAttributeValue("", "saxonVersion"));
         String dmk = packageElement.getAttributeValue("", "dmk");
         if (dmk != null) {
             int licenseId = config.registerLocalLicense(dmk);
@@ -219,6 +223,15 @@ public class PackageLoaderHE implements IPackageLoader {
         if (packageName != null) {
             pack.setPackageName(packageName);
             allPackages.put(packageKey, pack);
+        }
+        String implicitAtt = packageElement.getAttributeValue("", "implicit");
+        if (implicitAtt != null) {
+            pack.setImplicitPackage(implicitAtt.equals("true"));
+        } else {
+            // For export files created prior to Saxon 9.9.1.2, we'll treat the package as implicit,
+            // for compatibility: otherwise, setInitialTemplate("main") will fail when the main template
+            // has no "visibility" attribute
+            pack.setImplicitPackage(originalVersion.compareTo(SAXON9911) <= 0);
         }
         pack.setPackageVersion(
                 new PackageVersion(packageElement.getAttributeValue("", "packageVersion")));
@@ -442,6 +455,7 @@ public class PackageLoaderHE implements IPackageLoader {
                 component = Component.makeComponent(cc, vis, pack, declaringPackage);
                 cc.setDeclaringComponent(component);
                 cc.setDeclaredVisibility(vis);
+                component.setVisibility(vis, visAtt != null);
                 Optimizer optimizer = config.obtainOptimizer();
                 StructuredQName name = cc.getObjectName();
                 int evaluationModes = Expression.ITERATE_METHOD | Expression.PROCESS_METHOD;

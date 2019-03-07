@@ -661,8 +661,8 @@ public class StylesheetPackage extends PackageData {
                 Visibility acceptedVisibility = explicitAcceptedVisibility(name, acceptors);
                 if (acceptedVisibility != null) {
                     if (!XSLAccept.isCompatible(oldV, acceptedVisibility)) {
-                        throw new XPathException("Cannot accept a " + oldV +
-                            " component with visibility " + acceptedVisibility +
+                        throw new XPathException("Cannot accept a " + oldV.show() +
+                            " component with visibility " + acceptedVisibility.show() +
                         " (" + name + ")", "XTSE3040");
                     }
                     newV = acceptedVisibility;
@@ -684,7 +684,7 @@ public class StylesheetPackage extends PackageData {
                 }
             }
 
-            trace(oldC.getActor().getSymbolicName() + " (" + oldV + ") becomes " + newV);
+            trace(oldC.getActor().getSymbolicName() + " (" + oldV.show() + ") becomes " + newV.show());
 
             final Component newC = Component.makeComponent(oldC.getActor(), newV, this, oldC.getDeclaringPackage());
             correspondence.put(oldC, newC);
