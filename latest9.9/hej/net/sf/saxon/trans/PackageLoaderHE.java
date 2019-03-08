@@ -176,7 +176,11 @@ public class PackageLoaderHE implements IPackageLoader {
         if (!packageElement.getLocalPart().equals("package")) {
             throw new XPathException("Outermost element of XSLT export file must be 'package'", SaxonErrorCode.SXPK0002);
         }
-        originalVersion = NestedIntegerValue.parse(packageElement.getAttributeValue("", "saxonVersion"));
+        String saxonVersionAtt = packageElement.getAttributeValue("", "saxonVersion");
+        if (saxonVersionAtt == null) {
+            saxonVersionAtt = "9.8.0.1"; //Arbitrarily; older SEF files do not have this attribute
+        }
+        originalVersion = NestedIntegerValue.parse(saxonVersionAtt);
         String dmk = packageElement.getAttributeValue("", "dmk");
         if (dmk != null) {
             int licenseId = config.registerLocalLicense(dmk);
