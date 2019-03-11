@@ -443,6 +443,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             }
             URI baseOut = new File(resultsDir + "/results/output.xml").toURI();
             try {
+                outcome.setBaseOutputUri(baseOut.toASCIIString());
                 runJSTransform(env, outcome, initialTemplateName, initialModeName, initialFunctionName, baseOut);
             } catch (StackOverflowError e) {
                 notrun++;
