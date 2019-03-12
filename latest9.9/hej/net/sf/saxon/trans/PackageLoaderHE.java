@@ -253,7 +253,6 @@ public class PackageLoaderHE implements IPackageLoader {
             StylesheetPackage subPack = config.makeStylesheetPackage();
             subPack.setRuleManager(new RuleManager(pack));
             subPack.setCharacterMapIndex(new CharacterMapIndex());
-            subPack.setRootPackage(false);
             subPack.setJustInTimeCompilation(false);
             packStack.push(subPack);
             loadPackageElement(usePack, subPack);

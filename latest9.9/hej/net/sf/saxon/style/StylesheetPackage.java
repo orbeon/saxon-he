@@ -54,7 +54,6 @@ public class StylesheetPackage extends PackageData {
     private boolean createsSecondaryResultDocuments;
 
     private List<Action> completionActions = new ArrayList<>();
-    private boolean isRootPackage = true;
     protected GlobalContextRequirement globalContextRequirement = null;
     private boolean containsGlobalContextItemDeclaration = false;
     protected SpaceStrippingRule stripperRules;
@@ -198,14 +197,6 @@ public class StylesheetPackage extends PackageData {
      */
     public String getPackageName() {
         return packageName;
-    }
-
-    public void setRootPackage(boolean isRoot) {
-        isRootPackage = isRoot;
-    }
-
-    public boolean isRootPackage() {
-        return isRootPackage;
     }
 
     /**

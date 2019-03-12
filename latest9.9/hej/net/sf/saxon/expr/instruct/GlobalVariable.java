@@ -9,6 +9,7 @@ package net.sf.saxon.expr.instruct;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
+import net.sf.saxon.PreparedStylesheet;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.NamespaceConstant;
@@ -640,9 +641,15 @@ public class GlobalVariable extends Actor
             return ((Literal)select).getValue();
         } else {
             try {
+                Controller controller = context.getController();
+                Executable exec = controller.getExecutable();
+                boolean hasAccessToGlobalContext = true;
+                if (exec instanceof PreparedStylesheet) {
+                    hasAccessToGlobalContext = target == null || target.getDeclaringPackage() == ((PreparedStylesheet) exec).getTopLevelPackage();
+                }
                 XPathContextMajor c2 = context.newCleanContext();
                 c2.setOrigin(this);
-                if (target == null || target.getDeclaringPackage().isRootPackage()) {
+                if (hasAccessToGlobalContext) {
                     ManualIterator<?> mi =
                             new ManualIterator<>(context.getController().getGlobalContextItem());
                     c2.setCurrentIterator(mi);

@@ -53,7 +53,6 @@ public class XSLUsePackage extends StyleElement {
                 compileError("Package " + getAttributeValue("name") +
                                      " requires a global context item, so it cannot be used as a library package", "XTTE0590");
             }
-            usedPackage.setRootPackage(false);
         }
     }
 
