@@ -851,7 +851,7 @@ namespace Saxon.Api
             JDotNetReceiver dnr = new JDotNetReceiver(writer);
 			dnr.setPipelineConfiguration (pipe);
             dnr.setCloseAfterUse(closeAfterUse);
-            return dnr;
+            return params1.makeSequenceNormalizer(dnr);
         }
 
         /// <summary>
