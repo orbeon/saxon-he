@@ -3032,12 +3032,12 @@ namespace Saxon.Api
     {
 
         /// <summary>
-        /// Create instance of the enumerator with the XdmItem as the generic type
+		/// Create an instance of the enumerator with the <c>XdmItem</c> as the generic type
         /// </summary>
         public static EmptyEnumerator<XdmItem> INSTANCE = new EmptyEnumerator<XdmItem>();
 
         /// <summary>
-        /// Create instance of the enumerator with the XdmNode as the generic type
+		/// Create an instance of the enumerator with the <c>XdmNode</c> as the generic type
         /// </summary>
         public static EmptyEnumerator<XdmNode> NODE_INSTANCE = new EmptyEnumerator<XdmNode>();
 
@@ -3060,7 +3060,7 @@ namespace Saxon.Api
         }
 
         /// <summary>
-        /// The current item i nthe enumerator
+        /// The current item in the enumerator
         /// </summary>
         T IEnumerator<T>.Current
         {
@@ -3079,7 +3079,9 @@ namespace Saxon.Api
             return false;
         }
 
-
+		/// <summary>
+		/// The Dispose method is not implemented on this Enumerator
+		/// </summary>
         public void Dispose()
         {
             throw new NotImplementedException();

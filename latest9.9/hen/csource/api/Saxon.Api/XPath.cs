@@ -361,14 +361,17 @@ namespace Saxon.Api
         }
 
 
-        /// <summary>
-        /// Request fast compilation. Fast compilation will generally be achieved at the expense of run-time performance
-        /// and quality of diagnostics.Fast compilation is a good trade-off if (a) the expression is known to be correct,
-        /// and (b) once compiled, it is only executed once against a document of modest size.
-        /// The property when set to true to request fast compilation; set to false to revert to the optimization options
-        ///             defined in the Configuration.
-        /// </summary>
-        public bool FastCompliation
+		/// <summary>
+		/// Request fast compilation. Fast compilation will generally be achieved at the expense of run-time performance
+		/// and quality of diagnostics. Fast compilation is a good trade-off if (a) the expression is known to be correct,
+		/// and (b) once compiled, it is only executed once against a document of modest size.
+		/// </summary>
+		/// <remarks>
+		/// Set to true to request fast compilation; set to false to revert to the optimization options
+		/// defined in the Configuration.
+		/// </remarks>
+        
+		public bool FastCompliation
         {
 
             set { compiler.setFastCompilation(value); }

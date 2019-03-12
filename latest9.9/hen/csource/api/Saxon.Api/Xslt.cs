@@ -629,17 +629,20 @@ namespace Saxon.Api
         }
 
         /// <summary>
-        /// Property to check  and set fast compilation. Request fast compilation. Fast compilation will generally be achieved at the expense of run-time performance
-        // and quality of diagnostics.Fast compilation is a good trade-off if (a) the stylesheet is known to be correct,
+        /// Property to check and set fast compilation. Fast compilation will generally be achieved at the expense of run-time performance
+        /// and quality of diagnostics. Fast compilation is a good trade-off if (a) the stylesheet is known to be correct,
         /// and (b) once compiled, it is only executed once against a document of modest size.
-        /// <p>Fast compilation may result in static errors going unreported, especially if they occur in code
-        /// that is never executed.</p>
-        /// <p><i>The current implementation is equivalent to switching off all optimizations other than just-in-time
-        /// compilation of template rules.Setting this option, however, indicates an intent rather than a mechanism,
-        /// and the implementation details may change in future to reflect the intent.</i></p>
-        /// </summary>
-        /// <remarks>fast set to true to request fast compilation; set to false to revert to the optimization options
-        ///          defined in the Configuration.</remarks>
+		/// </summary>
+		/// <remarks>
+        /// <para>Fast compilation may result in static errors going unreported, especially if they occur in code
+        /// that is never executed.</para>
+        /// <para><i>The current implementation is equivalent to switching off all optimizations other than just-in-time
+        /// compilation of template rules. Setting this option, however, indicates an intent rather than a mechanism,
+        /// and the implementation details may change in future to reflect the intent.</i></para>
+        /// <para>Set to true to request fast compilation; set to false to revert to the optimization options
+		/// defined in the Configuration.</para>
+		/// </remarks>
+
         public bool FastCompliation {
 
             set { xsltCompiler.setFastCompilation(value); }

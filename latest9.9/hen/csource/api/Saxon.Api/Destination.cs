@@ -971,12 +971,11 @@ namespace Saxon.Api
 
 
         /// <summary>
-        /// Get the underlying Saxon <c>Destination</c> object from the XdmDestination.
+		/// Get the underlying Saxon <c>Destination</c> object from the <c>XdmDestination</c>.
         /// This method is for internal use but is provided for the benefit of applications that need to mix
         /// use of the Saxon .NET API with direct use of the underlying objects
         /// and methods offered by the Java implementation.
         /// </summary>
-        /// <returns></returns>
         public JDestination GetUnderlyingDestination()
         {
             return destination;
@@ -1012,7 +1011,7 @@ namespace Saxon.Api
         }
 
         /// <summary>
-        /// Close the destination, allowing resoures to be release. Saxon calls this
+        /// Close the destination, allowing resources to be released. Saxon calls this
         /// method when it has finished writing to the destination.
         /// </summary>
         public void close()
@@ -1122,7 +1121,7 @@ namespace Saxon.Api
             /// <param name="target">The PI name. This must be a legal name (it will not be checked)</param>
             /// <param name="data">The data portion of the processing instruction</param>
             /// <param name="location">provides information about the PI</param>
-            /// <param name="properties">Additional information about the PI.</param>
+            /// <param name="properties">Additional information about the PI</param>
 			public override void processingInstruction(String target, JCharSequence data, JLocation location, int properties)
             {
                 if (level == 0)

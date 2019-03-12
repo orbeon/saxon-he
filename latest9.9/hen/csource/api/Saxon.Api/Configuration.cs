@@ -1426,7 +1426,7 @@ namespace Saxon.Api
         /// </summary>
         /// <param name="elementTest">a predicate applied to element names, which should return true if whitespace-only
         /// text node children of the element are to be stripped, false if they are to be retained.</param>
-        /// <returns>A WhitespacePolicy object</returns>
+		/// <returns>A <c>WhitespacePolicy</c> object</returns>
         public static WhitespacePolicy makeCustomPolicy(Predicate<QName> elementTest) {
             JSpaceStrippingRule rule = new SpaceStrippingRule(elementTest);
 
@@ -1447,7 +1447,7 @@ namespace Saxon.Api
 
 
     /// <summary>
-    /// Interface defining the predicate function, to be implementated by the  caller
+    /// Interface defining the predicate function, to be implementated by the caller
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public interface Predicate<T> {
@@ -1456,8 +1456,8 @@ namespace Saxon.Api
         /// Test whether a given item, at a given position in the sequence, matches the filter
         /// </summary>
         /// <param name="value">the value to be matched</param>
-        /// <returns>true is a match is found, false otherwise.</returns>
-        bool matches(T value);
+        /// <returns>true if a match is found, false otherwise.</returns>
+		/**public**/ bool matches(T value);
     }
 
     internal class SpaceStrippingRule : JSpaceStrippingRule

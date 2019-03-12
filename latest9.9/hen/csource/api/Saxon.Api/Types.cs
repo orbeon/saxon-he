@@ -304,7 +304,7 @@ namespace Saxon.Api
 	{
 
         /// <summary>
-        /// Instance object of the XdmAtomicType
+		/// Instance object of the <c>XdmAtomicType</c> class
         /// </summary>
         public static XdmAtomicType Instance = new XdmAtomicType(JXdmItemType.ANY_ATOMIC_VALUE);
 
@@ -789,13 +789,13 @@ namespace Saxon.Api
 
 
         /// <summary>
-        /// Detemer whether this ItemType subsumes another ItemType. Specifically
-        /// <code>A.Sumsumes(B)</code> is true if every value that matches them ItemType B also
-        /// matches the ItemType.
+        /// Determine whether this ItemType subsumes another ItemType. Specifically
+        /// <code>A.Sumsumes(B)</code> is true if every value that matches the ItemType B also
+        /// matches the ItemType A.
         /// </summary>
         /// <param name="other">the other ItemType</param>
         /// <returns>true if this ItemType subsumes the other ItemType. This includes the case where A and B
-        /// represent  the same ItemType.</returns>
+        /// represent the same ItemType.</returns>
         public override bool Subsumes(XdmItemType other)
         {
             return type.subsumes(other.Unwrap());
