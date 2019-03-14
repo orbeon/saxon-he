@@ -839,12 +839,14 @@ public class StylesheetPackage extends PackageData {
 
     public void createFunctionLibrary() {
 
+        String target = getTargetEdition();
         FunctionLibraryList functionLibrary = new FunctionLibraryList();
-        functionLibrary.addFunctionLibrary(config.getXSLT30FunctionSet());
+        boolean includeHOF = !("HE".equals(target) || "JS".equals(target));
+        functionLibrary.addFunctionLibrary(includeHOF ? config.getXSLT30FunctionSet() : new Configuration().getXSLT30FunctionSet());
         functionLibrary.addFunctionLibrary(new StylesheetFunctionLibrary(this, true));
         functionLibrary.addFunctionLibrary(config.getBuiltInExtensionLibraryList());
         functionLibrary.addFunctionLibrary(new ConstructorFunctionLibrary(config));
-        if ("JS".equals(getTargetEdition()) || "JS2".equals(getTargetEdition())) {
+        if ("JS".equals(target) || "JS2".equals(target)) {
             addIxslFunctionLibrary(functionLibrary);
         }
 

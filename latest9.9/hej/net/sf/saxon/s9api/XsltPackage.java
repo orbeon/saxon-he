@@ -147,6 +147,7 @@ public class XsltPackage {
      *                           location, or if the package was compiled with just-in-time
      *                           compilation enabled.
      * @since 9.7.0.5
+     * @deprecated since 9.9.1.3. Use XsltCompiler.setTargetEdition() to define the target environment.
      */
 
     public void save(File file, String target) throws SaxonApiException {
