@@ -7,6 +7,8 @@
 
 package net.sf.saxon.expr;
 
+import com.saxonica.functions.extfn.ObjectMap;
+import com.saxonica.functions.hof.CurriedFunction;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.ma.arrays.ArrayItem;
@@ -41,6 +43,7 @@ public class LookupExpression extends BinaryExpression {
     boolean isObjectLookup = false;
     boolean isSingleContainer = false;
     boolean isSingleEntry = false;
+    Function reflexiveFunction = null;
 
     /**
      * Constructor
@@ -100,6 +103,8 @@ public class LookupExpression extends BinaryExpression {
                         Function f = methodMap.get(fieldName);
                         if (f != null) {
                             return f.getFunctionItemType();
+                        } else {
+                            return ErrorType.getInstance();
                         }
 
                     }
@@ -179,6 +184,22 @@ public class LookupExpression extends BinaryExpression {
                 err.setLocation(getLocation());
                 throw err;
             }
+        }
+        if (isObjectLookup && getRhsExpression() instanceof StringLiteral && containerType instanceof JavaExternalObjectType) {
+            JavaExternalObjectType target = (JavaExternalObjectType)containerType;
+            Class<?> theClass = target.getJavaClass();
+            String methodName = ((StringLiteral)getRhsExpression()).getStringValue();
+            Map<String, Function> methodMap = ObjectMap.makeMethodMap(config, theClass, methodName);
+            Function f = methodMap.get(methodName);
+            if (f == null) {
+                XPathException err = new XPathException("No unique method " + methodName + " found in class " + theClass, "XPTY0004");
+                err.setIsTypeError(true);
+                err.setLocation(getLocation());
+                throw err;
+            } else {
+                reflexiveFunction = f;
+            }
+
         }
         isClassified = true;
         return this;
@@ -343,10 +364,17 @@ public class LookupExpression extends BinaryExpression {
             }
         } else if (isObjectLookup) {
             SequenceIterator<?> baseIterator = getLhsExpression().iterate(context);
-            GroundedValue<?> rhs = getRhsExpression().iterate(context).materialize();
-            String key = rhs.getStringValue();
-            return new ItemMappingIterator<>(baseIterator,
-                                           item -> (Item<?>)config.externalObjectAsMap((ObjectValue)item, key).get((StringValue)rhs));
+            if (reflexiveFunction != null) {
+                return new ItemMappingIterator<>(baseIterator, item->{
+                    Sequence[] boundArgs = new Sequence[reflexiveFunction.getArity()];
+                    boundArgs[0] = item;
+                    return new CurriedFunction(reflexiveFunction, boundArgs);});
+            } else {
+                GroundedValue<?> rhs = getRhsExpression().iterate(context).materialize();
+                String key = rhs.getStringValue();
+                return new ItemMappingIterator<>(baseIterator,
+                                                 item -> (Item<?>) config.externalObjectAsMap((ObjectValue) item, key).get((StringValue) rhs));
+            }
         } else {
             SequenceIterator<?> baseIterator = getLhsExpression().iterate(context);
             GroundedValue<?> rhs = getRhsExpression().iterate(context).materialize();
