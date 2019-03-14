@@ -41,7 +41,7 @@ public class FormatDate extends SystemFunction implements Callable {
         StructuredQName cal;
         try {
             String c = calendarVal.getStringValue();
-            cal = StructuredQName.fromLexicalQName(c, true, true, getRetainedStaticContext());
+            cal = StructuredQName.fromLexicalQName(c, false, true, getRetainedStaticContext());
         } catch (XPathException e) {
             XPathException err = new XPathException("Invalid calendar name. " + e.getMessage());
             err.setErrorCode("FOFD1340");
