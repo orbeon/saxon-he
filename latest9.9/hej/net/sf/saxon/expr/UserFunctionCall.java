@@ -405,9 +405,9 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
         if (e == this && function != null) {
             Expression e2 = visitor.obtainOptimizer().tryInlineFunctionCall(
                     this, visitor, contextItemType);
-            if (e2 != this) {
-                return e2.optimize(visitor, contextItemType);
-            }
+//            if (e2 != this) {
+//                return e2.optimize(visitor, contextItemType);
+//            }
             return e2;
         }
         return e;
