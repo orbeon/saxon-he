@@ -544,7 +544,6 @@ public class TinyBuilder extends Builder {
         tree.next[newNodeNr] = prevAtDepth[currentDepth - 1];
         prevAtDepth[currentDepth] = newNodeNr;
         siblingsAtDepth[currentDepth]++;
-        //tree.diagnosticDump();
     }
 
     /**
