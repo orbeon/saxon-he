@@ -345,6 +345,11 @@ public class Environment implements URIResolver {
             if (generate >= 0 && driver.isDebugByteCode()) {
                 environment.processor.setConfigurationProperty(Feature.DEBUG_BYTE_CODE, true);
                 environment.processor.setConfigurationProperty(Feature.DEBUG_BYTE_CODE_DIR, "debugByteCode");
+                environment.processor.setConfigurationProperty(Feature.MONITOR_HOT_SPOT_BYTE_CODE, true);
+                driver.driverProc.setConfigurationProperty(Feature.DEBUG_BYTE_CODE, true);
+                driver.driverProc.setConfigurationProperty(Feature.DEBUG_BYTE_CODE_DIR, "debugByteCode");
+                driver.driverProc.setConfigurationProperty(Feature.MONITOR_HOT_SPOT_BYTE_CODE, true);
+                driver.driverProc.setConfigurationProperty(Feature.OPTIMIZATION_LEVEL, "-f");
             }
         }
     }
