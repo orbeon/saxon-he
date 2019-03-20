@@ -447,7 +447,10 @@ public class XdmNode extends XdmItem {
      * <p>In the case of a namespace node, the output is a string in the form of a namespace
      * declaration, that is <code>xmlns="uri"</code> or <code>xmlns:pre="uri"</code>.</p>
      * <p>Other nodes, such as text nodes, comments, and processing instructions, are
-     * represented as they would appear in lexical XML.</p>
+     * represented as they would appear in lexical XML. Note: this means that in the case
+     * of text nodes, special characters such as <code>&amp;</code> and <code>&lt;</code>
+     * are output in escaped form. To get the unescaped string value of a text node, use
+     * {@link #getStringValue()} instead.</p>
      * <p><i>For more control over serialization, use the {@link Serializer} class.</i></p>
      *
      * @return a simple XML serialization of the node. Under error conditions the method
@@ -459,18 +462,23 @@ public class XdmNode extends XdmItem {
 
         if (node.getNodeKind() == Type.ATTRIBUTE) {
             String val = node.getStringValue()
+                    .replace("&", "&amp;")
                     .replace("\"", "&quot;")
-                    .replace("<", "&lt;")
-                    .replace("&", "&amp;");
+                    .replace("<", "&lt;");
             return node.getDisplayName() + "=\"" + val + '"';
         } else if (node.getNodeKind() == Type.NAMESPACE) {
             String val = node.getStringValue()
+                    .replace("&", "&amp;")
                     .replace("\"", "&quot;")
-                    .replace("<", "&lt;")
-                    .replace("&", "&amp;");
+                    .replace("<", "&lt;");
             String name = node.getDisplayName();
             name = name.equals("") ? "xmlns" : "xmlns:" + name;
             return name + "=\"" + val + '"';
+        } else if (node.getNodeKind() == Type.TEXT) {
+            return node.getStringValue()
+                    .replace("&", "&amp;")
+                    .replace("<", "&lt;")
+                    .replace("]]>", "]]&gt;");
         }
 
         try {
