@@ -87,7 +87,7 @@ public class XSLGlobalParam extends XSLGlobalVariable {
 
             GlobalParam binding = (GlobalParam)compiledVariable;
             binding.setPackageData(getCompilation().getPackageData());
-            binding.makeDeclaringComponent(Visibility.PUBLIC, getContainingPackage());
+            binding.obtainDeclaringComponent(this);
             Expression select = sourceBinding.getSelectExpression();
             binding.setSelectExpression(select);
             binding.setVariableQName(sourceBinding.getVariableQName());

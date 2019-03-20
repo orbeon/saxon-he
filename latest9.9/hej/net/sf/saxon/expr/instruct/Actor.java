@@ -12,11 +12,14 @@ import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.expr.parser.RetainedStaticContext;
 import net.sf.saxon.lib.NamespaceConstant;
+import net.sf.saxon.style.StyleElement;
 import net.sf.saxon.style.StylesheetPackage;
+import net.sf.saxon.style.XSLGlobalParam;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trace.InstructionInfo;
 import net.sf.saxon.trans.SymbolicName;
 import net.sf.saxon.trans.Visibility;
+import net.sf.saxon.trans.VisibilityProvenance;
 import net.sf.saxon.trans.XPathException;
 
 import java.util.Collections;
@@ -76,7 +79,25 @@ public abstract class Actor implements InstructionInfo, ExpressionOwner {
 
     public Component makeDeclaringComponent(Visibility visibility, StylesheetPackage declaringPackage) {
         if (declaringComponent == null) {
-            declaringComponent = Component.makeComponent(this, visibility, declaringPackage, declaringPackage);
+            declaringComponent = Component.makeComponent(this, visibility, VisibilityProvenance.DEFAULTED, declaringPackage, declaringPackage);
+        }
+        return declaringComponent;
+    }
+
+    /**
+     * Return the declaring component, creating it if it does not already exist.
+     * @param declaration The source element in the stylesheet corresponding to the component
+     * @return the component corresponding to this declaration.
+     */
+
+    public Component obtainDeclaringComponent(StyleElement declaration) {
+        if (declaringComponent == null) {
+            StylesheetPackage declaringPackage = declaration.getContainingPackage();
+            Visibility defaultVisibility = declaration instanceof XSLGlobalParam ? Visibility.PUBLIC : Visibility.PRIVATE;
+            Visibility declaredVisibility = declaration.getDeclaredVisibility();
+            Visibility actualVisibility = declaredVisibility == null ? defaultVisibility : declaredVisibility;
+            VisibilityProvenance provenance = declaredVisibility == null ? VisibilityProvenance.DEFAULTED : VisibilityProvenance.EXPLICIT;
+            declaringComponent = Component.makeComponent(this, actualVisibility, provenance, declaringPackage, declaringPackage);
         }
         return declaringComponent;
     }

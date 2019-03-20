@@ -639,7 +639,7 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
                 fn.setResultType(getResultType());
                 fn.setLineNumber(getLineNumber());
                 fn.setSystemId(getSystemId());
-                fn.makeDeclaringComponent(visibility, getContainingPackage());
+                fn.obtainDeclaringComponent(this);
                 fn.setDeclaredVisibility(getDeclaredVisibility());
                 fn.setDeclaredStreamability(streamability);
                 fn.setDeterminism(determinism);

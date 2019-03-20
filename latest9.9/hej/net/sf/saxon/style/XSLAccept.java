@@ -12,10 +12,7 @@ import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.pattern.NameTest;
 import net.sf.saxon.pattern.QNameTest;
-import net.sf.saxon.trans.ComponentTest;
-import net.sf.saxon.trans.SymbolicName;
-import net.sf.saxon.trans.Visibility;
-import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.trans.*;
 
 /**
  * Represents an xsl:accept element in an XSLT 3.0 package manifest.
@@ -92,7 +89,7 @@ public class XSLAccept extends XSLAcceptExpose {
         for (ComponentTest test : getExplicitComponentTests()) {
             if (test.matches(component.getActor())) {
                 // we have already checked that the visibility is compatible
-                component.setVisibility(getVisibility(), false);
+                component.setVisibility(getVisibility(), VisibilityProvenance.ACCEPTED);
                 return;
             }
         }
@@ -100,7 +97,7 @@ public class XSLAccept extends XSLAcceptExpose {
             if (test.matches(component.getActor())) {
                 if (isCompatible(component.getVisibility(), getVisibility())) {
                     // set the visibility if it is compatible
-                    component.setVisibility(getVisibility(), false);
+                    component.setVisibility(getVisibility(), VisibilityProvenance.ACCEPTED);
                     return;
                 }
             }

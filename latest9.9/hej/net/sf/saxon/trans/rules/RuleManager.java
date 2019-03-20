@@ -55,7 +55,7 @@ public final class RuleManager {
         this.compilerInfo = compilerInfo;
         this.unnamedMode = config.makeMode(Mode.UNNAMED_MODE_NAME, this.compilerInfo);
         Component c = unnamedMode.makeDeclaringComponent(Visibility.PRIVATE, stylesheetPackage);
-        c.setVisibility(Visibility.PRIVATE, false);
+        c.setVisibility(Visibility.PRIVATE, VisibilityProvenance.DEFAULTED);
         this.stylesheetPackage.addComponent(c);
         this.unnamedMode.setRecoveryPolicy(recoveryPolicy);
         this.modes = new HashMap<>(5);
@@ -172,7 +172,7 @@ public final class RuleManager {
             m.setRecoveryPolicy(recoveryPolicy);
             modes.put(modeName, m);
             Component c = m.makeDeclaringComponent(Visibility.PRIVATE, stylesheetPackage);
-            c.setVisibility(Visibility.PRIVATE, false);
+            c.setVisibility(Visibility.PRIVATE, VisibilityProvenance.DEFAULTED);
             stylesheetPackage.addComponent(c);
         }
         return m;

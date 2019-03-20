@@ -597,10 +597,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
         HashMap<SymbolicName, Component> componentIndex = stylesheetPackage.getComponentIndex();
         XSLFunction sourceFunction = (XSLFunction) decl.getSourceElement();
         UserFunction compiledFunction = sourceFunction.getCompiledFunction();
-        Component declaringComponent = compiledFunction.getDeclaringComponent();
-        if (declaringComponent == null) {
-            declaringComponent = compiledFunction.makeDeclaringComponent(sourceFunction.getVisibility(), getStylesheetPackage());
-        }
+        Component declaringComponent = compiledFunction.obtainDeclaringComponent(sourceFunction);
         SymbolicName.F sName = sourceFunction.getSymbolicName();
         //StructuredQName qName = template.getTemplateName();
         if (sName != null) {
@@ -652,10 +649,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
         XSLGlobalVariable varDecl = (XSLGlobalVariable) decl.getSourceElement();
         StructuredQName qName = varDecl.getSourceBinding().getVariableQName();
         GlobalVariable compiledVariable = (GlobalVariable) varDecl.getActor();
-        Component declaringComponent = compiledVariable.getDeclaringComponent();
-        if (declaringComponent == null) {
-            declaringComponent = compiledVariable.makeDeclaringComponent(varDecl.getVisibility(), getStylesheetPackage());
-        }
+        Component declaringComponent = compiledVariable.obtainDeclaringComponent(varDecl);
         HashMap<SymbolicName, Component> componentIndex = stylesheetPackage.getComponentIndex();
         if (qName != null) {
             // see if there is already a global variable with this precedence
@@ -737,7 +731,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
                 // this is the first
                 //NamedTemplate compiledTemplate = new NamedTemplate();
                 NamedTemplate compiledTemplate = ((XSLTemplate) decl.getSourceElement()).getCompiledNamedTemplate();
-                Component declaringComponent = compiledTemplate.makeDeclaringComponent(sourceTemplate.getVisibility(), getStylesheetPackage());
+                Component declaringComponent = compiledTemplate.obtainDeclaringComponent(sourceTemplate);
                 componentIndex.put(sName, declaringComponent);
                 setLocalParamDetails(sourceTemplate, compiledTemplate);
                 templateIndex.put(sName.getComponentName(), decl);
@@ -757,7 +751,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
                         // can't happen, but we'll play safe
                         //other.setRedundantNamedTemplate();
                         NamedTemplate compiledTemplate = new NamedTemplate(sName.getComponentName());
-                        Component declaringComponent = compiledTemplate.makeDeclaringComponent(sourceTemplate.getVisibility(), getStylesheetPackage());
+                        Component declaringComponent = compiledTemplate.obtainDeclaringComponent(sourceTemplate);
                         componentIndex.put(sName, declaringComponent);
                         templateIndex.put(sName.getComponentName(), decl);
                         setLocalParamDetails(sourceTemplate, compiledTemplate);
@@ -765,7 +759,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
                 } else if (sourceTemplate.findAncestorElement(StandardNames.XSL_OVERRIDE) != null) {
                     // the new one wins
                     NamedTemplate compiledTemplate = sourceTemplate.getCompiledNamedTemplate();//new NamedTemplate();
-                    Component declaringComponent = compiledTemplate.makeDeclaringComponent(sourceTemplate.getVisibility(), getStylesheetPackage());
+                    Component declaringComponent = compiledTemplate.obtainDeclaringComponent(sourceTemplate);
                     componentIndex.put(sName, declaringComponent);
                     templateIndex.put(sName.getComponentName(), decl);
                 } else {
@@ -910,7 +904,8 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
             SlotManager frame = getConfiguration().makeSlotManager();
             ExpressionTool.allocateSlots(block, 0, frame);
             aSet.setStackFrameMap(frame);
-            aSet.getDeclaringComponent().setVisibility(vis, explicitVisibility);
+            VisibilityProvenance provenance = explicitVisibility ? VisibilityProvenance.EXPLICIT : VisibilityProvenance.DEFAULTED;
+            aSet.getDeclaringComponent().setVisibility(vis, provenance);
 
             if (streamable) {
                 checkStreamability(aSet);
@@ -1225,6 +1220,10 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
                 timer.report("register templates");
             }
 
+            // Adjust the visibility of components based on xsl:expose declarations
+            
+            adjustExposedVisibility();
+
             // Call compile method for each top-level object in the stylesheet
             // Note, some declarations (templates) need to be compiled repeatedly if the module
             // is imported repeatedly; others (variables, functions) do not
@@ -1510,47 +1509,51 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
         }
 
         NamePool pool = getConfiguration().getNamePool();
-        for (ComponentDeclaration decl : topLevel) {
-            StyleElement e = decl.getSourceElement();
-            int fp = e.getFingerprint();
-            if (fp == StandardNames.XSL_VARIABLE ||
-                    fp == StandardNames.XSL_ATTRIBUTE_SET ||
-                    fp == StandardNames.XSL_FUNCTION ||
-                    fp == StandardNames.XSL_MODE ||
-                    (fp == StandardNames.XSL_TEMPLATE && ((XSLTemplate) e).getTemplateName() != null)) {
-                Component component;
-                if (fp == StandardNames.XSL_MODE) {
-                    component = getRuleManager().obtainMode(e.getObjectName(), false).getDeclaringComponent();
-                } else {
-                    component = ((StylesheetComponent) e).getActor().getDeclaringComponent();
-                }
+        Map<SymbolicName, Component> componentIndex = stylesheetPackage.getComponentIndex();
+        for (Component component : componentIndex.values()) {
+//        for (ComponentDeclaration decl : topLevel) {
+//            StyleElement e = decl.getSourceElement();
+//            int fp = e.getFingerprint();
+//            if (fp == StandardNames.XSL_VARIABLE ||
+//                    fp == StandardNames.XSL_ATTRIBUTE_SET ||
+//                    fp == StandardNames.XSL_FUNCTION ||
+//                    fp == StandardNames.XSL_MODE ||
+//                    (fp == StandardNames.XSL_TEMPLATE && ((XSLTemplate) e).getTemplateName() != null)) {
+//                Component component;
+//                if (fp == StandardNames.XSL_MODE) {
+//                    component = getRuleManager().obtainMode(e.getObjectName(), false).getDeclaringComponent();
+//                } else {
+//                    component = ((StylesheetComponent) e).getActor().getDeclaringComponent();
+//                }
+            int fp = component.getComponentKind();
                 ComponentTest exactNameTest =
-                        new ComponentTest(e.getFingerprint(),
-                                          new NameTest(Type.ELEMENT, new FingerprintedQName(e.getObjectName(), pool), pool), -1);
+                        new ComponentTest(fp,
+                                          new NameTest(Type.ELEMENT, new FingerprintedQName(component.getActor().getObjectName(), pool), pool), -1);
                 ComponentTest exactFunctionTest = null;
                 if (fp == StandardNames.XSL_FUNCTION) {
+                    Function fn = (Function)component.getActor();
                     exactFunctionTest =
                             new ComponentTest(fp,
                                               new NameTest(Type.ELEMENT,
-                                                           new FingerprintedQName(e.getObjectName(), pool), pool), ((XSLFunction) e).getNumberOfArguments());
+                                                           new FingerprintedQName(fn.getFunctionName(), pool), pool), fn.getArity());
                 }
                 boolean matched = false;
                 for (XSLExpose exposure : exposeDeclarations) {
                     Set<ComponentTest> explicitComponentTests = exposure.getExplicitComponentTests();
                     if (explicitComponentTests.contains(exactNameTest) ||
                             (exactFunctionTest != null && explicitComponentTests.contains(exactFunctionTest))) {
-                        component.setVisibility(exposure.getVisibility(), false);
+                        component.setVisibility(exposure.getVisibility(), VisibilityProvenance.EXPOSED);
                         matched = true;
                         break;
                     }
                 }
-                if (!matched && e.getAttributeValue("", "visibility") == null) {
+                if (!matched && component.getVisibilityProvenance() == VisibilityProvenance.DEFAULTED) { 
                     // Look for a matching wildcard
                     partialWildcardSearch:
                     for (XSLExpose exposure : exposeDeclarations) {
                         for (ComponentTest test : exposure.getWildcardComponentTests()) {
                             if (test.isPartialWildcard() && test.matches(component.getActor())) {
-                                component.setVisibility(exposure.getVisibility(), false);
+                                component.setVisibility(exposure.getVisibility(), VisibilityProvenance.EXPOSED);
                                 matched = true;
                                 break partialWildcardSearch;
                             }
@@ -1561,8 +1564,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
                         for (XSLExpose exposure : exposeDeclarations) {
                             for (ComponentTest test : exposure.getWildcardComponentTests()) {
                                 if (test.matches(component.getActor())) {
-                                    component.setVisibility(exposure.getVisibility(), false);
-                                    matched = true;
+                                    component.setVisibility(exposure.getVisibility(), VisibilityProvenance.EXPOSED);
                                     break anyWildcardSearch;
                                 }
                             }
@@ -1570,7 +1572,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
                     }
 
                 }
-            }
+            
         }
     }
 

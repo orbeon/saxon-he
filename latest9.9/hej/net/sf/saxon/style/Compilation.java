@@ -312,13 +312,13 @@ public class Compilation {
 
 
         // Adjust visibility of components based on xsl:expose
-        if (getErrorCount() == 0) {
-            try {
-                psm.adjustExposedVisibility();
-            } catch (XPathException e) {
-                reportError(e);
-            }
-        }
+//        if (getErrorCount() == 0) {
+//            try {
+//                psm.adjustExposedVisibility();
+//            } catch (XPathException e) {
+//                reportError(e);
+//            }
+//        }
 
         // Compile the stylesheet package
         if (getErrorCount() == 0) {

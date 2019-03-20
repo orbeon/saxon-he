@@ -297,7 +297,8 @@ public class PreparedStylesheet extends Executable {
             return true;
         }
         // Rule 5 (but see also bug 30405)
-        if (!top.isDeclaredModes() && !component.getActor().isEmpty() && !(component.getVisibility() == Visibility.PRIVATE && component.isVisibilityExplicit())) {
+        if (!top.isDeclaredModes() && !component.getActor().isEmpty() &&
+                (component.getVisibilityProvenance() == VisibilityProvenance.DEFAULTED || component.getVisibility() != Visibility.PRIVATE)) {
             return true;
         }
         return false;

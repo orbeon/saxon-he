@@ -120,6 +120,10 @@ public class XSLMode extends StyleElement {
             compileError("Mode name conflicts with a mode in a used package", "XTSE3050");
         } else {
             top.indexMode(decl);
+            Visibility declaredVisibility = getDeclaredVisibility();
+            Visibility actualVisibility = declaredVisibility == null ? Visibility.PRIVATE : declaredVisibility;
+            VisibilityProvenance provenance = declaredVisibility == null ? VisibilityProvenance.DEFAULTED : VisibilityProvenance.EXPLICIT;
+            mode.getDeclaringComponent().setVisibility(actualVisibility, provenance);
         }
     }
 
@@ -274,16 +278,8 @@ public class XSLMode extends StyleElement {
             recoveryPolicy = Configuration.RECOVER_SILENTLY;
         }
         mode.setRecoveryPolicy(recoveryPolicy);
-
-        if (mode.getDeclaringComponent() == null) {
-            mode.makeDeclaringComponent(visibility, getContainingPackage());
-        }
-
+        mode.obtainDeclaringComponent(this);
         mode.setModeTracing(traceMatching);
-
-        getContainingPackage().getComponent(mode.getSymbolicName()).setVisibility(visibility, visibilityAtt != null);
-
-
     }
 
     public void validate(ComponentDeclaration decl) throws XPathException {

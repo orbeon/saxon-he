@@ -419,7 +419,7 @@ public class PackageLoaderHE implements IPackageLoader {
                 if (baseComponent == null) {
                     throw new AssertionError(base+"");
                 }
-                component = Component.makeComponent(baseComponent.getActor(), vis, pack, declaringPackage);
+                component = Component.makeComponent(baseComponent.getActor(), vis, VisibilityProvenance.EXPLICIT, pack, declaringPackage);
                 component.setBaseComponent(baseComponent);
                 if (component instanceof Component.M) {
                     // Create the mode even if there are no mode children: test case override-v-015
@@ -455,10 +455,10 @@ public class PackageLoaderHE implements IPackageLoader {
                     default:
                         throw new XPathException("unknown component kind " + kind);
                 }
-                component = Component.makeComponent(cc, vis, pack, declaringPackage);
+                VisibilityProvenance provenance = visAtt == null ? VisibilityProvenance.DEFAULTED : VisibilityProvenance.EXPLICIT;
+                component = Component.makeComponent(cc, vis, provenance, pack, declaringPackage);
                 cc.setDeclaringComponent(component);
                 cc.setDeclaredVisibility(vis);
-                component.setVisibility(vis, visAtt != null);
                 Optimizer optimizer = config.obtainOptimizer();
                 StructuredQName name = cc.getObjectName();
                 int evaluationModes = Expression.ITERATE_METHOD | Expression.PROCESS_METHOD;
@@ -832,7 +832,7 @@ public class PackageLoaderHE implements IPackageLoader {
         while ((accElement = iterator.next()) != null) {
             StructuredQName accName = getQNameAttribute(accElement, "name");
             Accumulator acc = new Accumulator();
-            Component component = Component.makeComponent(acc, Visibility.PRIVATE, pack, pack);
+            Component component = Component.makeComponent(acc, Visibility.PRIVATE, VisibilityProvenance.DEFAULTED, pack, pack);
             acc.setDeclaringComponent(component);
             int iniSlots = getIntegerAttribute(accElement, "slots");
             acc.setSlotManagerForInitialValueExpression(new SlotManager(iniSlots));

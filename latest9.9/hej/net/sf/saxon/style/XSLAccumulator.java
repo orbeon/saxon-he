@@ -174,7 +174,7 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
 
         {
             accumulator.setPackageData(compilation.getPackageData());
-            accumulator.makeDeclaringComponent(Visibility.PRIVATE, getContainingPackage());
+            accumulator.obtainDeclaringComponent(decl.getSourceElement());
             Expression init = accumulator.getInitialValueExpression();
             ExpressionVisitor visitor = ExpressionVisitor.make(getStaticContext());
             init = init.typeCheck(visitor, config.getDefaultContextItemStaticInfo());

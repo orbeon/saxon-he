@@ -8,10 +8,16 @@
 package net.sf.saxon.expr;
 
 import net.sf.saxon.expr.instruct.Actor;
+import net.sf.saxon.expr.instruct.AttributeSet;
+import net.sf.saxon.expr.instruct.GlobalVariable;
+import net.sf.saxon.expr.instruct.NamedTemplate;
+import net.sf.saxon.om.Function;
+import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.style.StylesheetPackage;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.Mode;
 import net.sf.saxon.trans.Visibility;
+import net.sf.saxon.trans.VisibilityProvenance;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
 
@@ -31,7 +37,7 @@ public class Component {
     private List<ComponentBinding> bindings = new ArrayList<ComponentBinding>();
     private StylesheetPackage containingPackage;
     private StylesheetPackage declaringPackage;
-    private boolean hasExplicitVisibility;
+    private VisibilityProvenance provenance;
     private Component baseComponent;
 
 
@@ -39,15 +45,15 @@ public class Component {
 
     /**
      * Create a component
-     *
-     * @param actor              the compiled code that implements the component, for example a Template or Function
+     * @param actor             the compiled code that implements the component, for example a Template or Function
      * @param visibility        the visibility of the component
+     * @param provenance        indicates where the visibility property came from
      * @param containingPackage the package to which this component belongs
      * @param declaringPackage  the package in which the original declaration of the component appears
      */
 
     public static Component makeComponent(
-            Actor actor, Visibility visibility, StylesheetPackage containingPackage, StylesheetPackage declaringPackage) {
+            Actor actor, Visibility visibility, VisibilityProvenance provenance, StylesheetPackage containingPackage, StylesheetPackage declaringPackage) {
         Component c;
         if (actor instanceof Mode) {
             c = new M();
@@ -56,7 +62,7 @@ public class Component {
         }
         c.actor = actor;
         c.visibility = visibility;
-        c.hasExplicitVisibility = visibility != null;
+        c.provenance = provenance;
         c.containingPackage = containingPackage;
         c.declaringPackage = declaringPackage;
         return c;
@@ -89,12 +95,12 @@ public class Component {
     /**
      * Set the visibility of the component, and say whether it is explicit or defaulted
      * @param visibility the visibility of the component
-     * @param explicit set to true if the visibility is an explicit attribute on the component declaration
+     * @param provenance indicates where the visibility property came from
      */
 
-    public void setVisibility(Visibility visibility, boolean explicit) {
+    public void setVisibility(Visibility visibility, VisibilityProvenance provenance) {
         this.visibility = visibility;
-        this.hasExplicitVisibility = explicit;
+        this.provenance = provenance;
     }
 
     /**
@@ -110,13 +116,14 @@ public class Component {
     }
 
     /**
-     * Ask whether the visibility of the component is due to an explicit visibility attribute on the component
+     * Determine whether the visibility of the component is due to an explicit visibility attribute
+     * on the component declaration, or whether it was inferred, or came from an xsl:expose or xsl:accept
      * declaration
-     * @return true if the visibility was explicitly declared
+     * @return the provenance of the visibility property
      */
 
-    public boolean isVisibilityExplicit() {
-        return hasExplicitVisibility;
+    public VisibilityProvenance getVisibilityProvenance() {
+        return provenance;
     }
 
     /**
@@ -139,6 +146,22 @@ public class Component {
 
     public Actor getActor() {
         return actor;
+    }
+
+    public int getComponentKind() {
+        if (actor instanceof NamedTemplate) {
+            return StandardNames.XSL_TEMPLATE;
+        } else if (actor instanceof GlobalVariable) {
+            return StandardNames.XSL_VARIABLE;
+        } else if (actor instanceof Function) {
+            return StandardNames.XSL_FUNCTION;
+        } else if (actor instanceof AttributeSet) {
+            return StandardNames.XSL_ATTRIBUTE_SET;
+        } else if (actor instanceof Mode) {
+            return StandardNames.XSL_MODE;
+        } else {
+            return -1;
+        }
     }
 
     /**
@@ -193,7 +216,7 @@ public class Component {
         out.startElement("co");
         int id = obtainComponentId(this, componentIdMap);
         out.emitAttribute("id", ""+id);
-        if (getVisibility() != null && (hasExplicitVisibility || getVisibility() != Visibility.PRIVATE)) {
+        if (getVisibilityProvenance() != VisibilityProvenance.DEFAULTED) {
             out.emitAttribute("vis", getVisibility().toString());
         }
         String refs = listComponentReferences(componentIdMap);

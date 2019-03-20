@@ -677,7 +677,7 @@ public class StylesheetPackage extends PackageData {
 
             trace(oldC.getActor().getSymbolicName() + " (" + oldV.show() + ") becomes " + newV.show());
 
-            final Component newC = Component.makeComponent(oldC.getActor(), newV, this, oldC.getDeclaringPackage());
+            final Component newC = Component.makeComponent(oldC.getActor(), newV, VisibilityProvenance.DERIVED, this, oldC.getDeclaringPackage());
             correspondence.put(oldC, newC);
             newC.setBaseComponent(oldC);
 
@@ -750,7 +750,7 @@ public class StylesheetPackage extends PackageData {
 
             trace(oldC.getActor().getSymbolicName() + " (HIDDEN, declared in " + oldC.getDeclaringPackage().getPackageName() + ") becomes HIDDEN");
 
-            final Component newC = Component.makeComponent(oldC.getActor(), Visibility.HIDDEN, this, oldC.getDeclaringPackage());
+            final Component newC = Component.makeComponent(oldC.getActor(), Visibility.HIDDEN, VisibilityProvenance.DERIVED, this, oldC.getDeclaringPackage());
             correspondence.put(oldC, newC);
             newC.setBaseComponent(oldC);
 

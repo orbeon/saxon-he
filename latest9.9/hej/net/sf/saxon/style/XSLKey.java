@@ -333,7 +333,7 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
         keydef.setLocation(getSystemId(), getLineNumber());
         keydef.setBackwardsCompatible(xPath10ModeIsEnabled());
         keydef.setComposite(composite);
-        keydef.makeDeclaringComponent(Visibility.PRIVATE, getContainingPackage());
+        keydef.obtainDeclaringComponent(this);
         try {
             km.addKeyDefinition(keyName, keydef, !sensitive, compilation.getConfiguration());
         } catch (XPathException err) {
