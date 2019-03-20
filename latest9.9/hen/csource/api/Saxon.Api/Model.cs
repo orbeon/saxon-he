@@ -2957,21 +2957,31 @@ namespace Saxon.Api
 
         public void forEachOrFail(JItemConsumer consumer)
         {
-            throw new NotImplementedException();
+            JItem item = null;
+
+            while ((item = next()) != null)
+            {
+                consumer.accept(item);
+            }
         }
 
-        public void forEachOrFail(JSequenceIterator value1, JItemConsumer value2)
+        public void forEachOrFail(JSequenceIterator value1, JItemConsumer consumer)
         {
-            throw new NotImplementedException();
+            JItem item = null;
+
+            while ((item = value1.next()) != null)
+            {
+                consumer.accept(item);
+            }
         }
 
         public JGroundedValue materialize() {
-            return null;
+            return JSequenceExtent.fromIterator(this);
         }
 
         public JGroundedValue materialize(JSequenceIterator value)
         {
-            throw new NotImplementedException();
+            return JSequenceExtent.fromIterator(value);
         }
 
        
@@ -2983,7 +2993,7 @@ namespace Saxon.Api
 
         JGroundedValue JSequenceIterator.materialize()
         {
-            throw new NotImplementedException();
+            return JSequenceExtent.fromIterator(this);
         }
 
 
