@@ -516,6 +516,68 @@ void exampleParam(SaxonProcessor * saxonProc, XsltProcessor  *proc){
             }
 
 
+/* XMarkbench mark test q12.xsl with just-in-time=true*/
+void xmarkTest1(XsltProcessor  *proc){
+		cout<<"XMarkbench mark test q12.xsl (JIT=true):"<<endl;
+
+        proc->setJustInTimeCompilation(true);
+
+        XdmNode *result = proc->transformFileToValue("xmark100k.xml", "q12.xsl");
+		if(result != NULL) {
+			cout<<"XdmNode returned"<<endl;
+		} else {
+			 printf("result is null \nCheck For errors:");
+             if(proc->exceptionCount()>0) {
+            	cout<<proc->getErrorMessage(0)<<endl;
+             }
+		}
+		proc->clearParameters(true);
+		proc->clearProperties();
+
+ }
+
+
+
+ /* XMarkbench mark test q12.xsl with just-in-time=true*/
+ void xmarkTest2(XsltProcessor  *proc){
+ 		cout<<"XMarkbench mark test q12.xsl (JIT=true):"<<endl;
+
+
+         XdmNode *result = proc->transformFileToValue("xmark100k.xml", "q12.xsl");
+ 		if(result != NULL) {
+ 			cout<<"XdmNode returned"<<endl;
+ 		} else {
+ 			 printf("result is null \nCheck For errors:");
+              if(proc->exceptionCount()>0) {
+             	cout<<proc->getErrorMessage(0)<<endl;
+              }
+ 		}
+ 		proc->clearParameters(true);
+ 		proc->clearProperties();
+
+  }
+
+/* XMarkbench mark test q12.xsl with just-in-time=true*/
+void exampleSimple1(XsltProcessor  *proc){
+		cout<<"XMarkbench mark test q12.xsl:"<<endl;
+
+        proc->setJustInTimeCompilation(true);
+
+        XdmNode *result = proc->transformFileToValue("xmark100k.xml", "q12.xsl");
+		if(result != NULL) {
+			cout<<"XdmNode returned"<<endl;
+		} else {
+			 printf("result is null \nCheck For errors:");
+             if(proc->exceptionCount()>0) {
+            	cout<<proc->getErrorMessage(0)<<endl;
+             }
+		}
+		proc->clearParameters(true);
+		proc->clearProperties();
+
+ }
+
+
 /*
 * Test saving nd loading a Xslt package
 */
@@ -613,6 +675,10 @@ int main()
     testXdmNodeOutput(trans);
 
     exampleParam(processor, trans);
+
+    xmarkTest1(trans);
+
+    xmarkTest2(trans)
 
    //Available in PE and EE
    testTransformToStringExtensionFunc(processor, trans);

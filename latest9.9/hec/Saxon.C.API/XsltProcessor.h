@@ -66,6 +66,24 @@ public:
     */
     void setOutputFile(const char* outfile);
 
+
+    /**
+    * Say whether just-in-time compilation of template rules should be used.
+    * @param jit true if just-in-time compilation is to be enabled. With this option enabled,
+    *            static analysis of a template rule is deferred until the first time that the
+    *            template is matched. This can improve performance when many template
+    *            rules are rarely used during the course of a particular transformation; however,
+    *            it means that static errors in the stylesheet will not necessarily cause the
+    *            {@link #compile(Source)} method to throw an exception (errors in code that is
+    *            actually executed will still be notified to the registered <code>ErrorListener</code>
+    *            or <code>ErrorList</code>, but this may happen after the {@link #compile(Source)}
+    *            method returns). This option is enabled by default in Saxon-EE, and is not available
+    *            in Saxon-HE or Saxon-PE.
+    *            <p><b>Recommendation:</b> disable this option unless you are confident that the
+    *            stylesheet you are compiling is error-free.</p>
+    */
+    void setJustInTimeCompilation(bool jit);
+
     /**
      * Set the value of a stylesheet parameter
      *

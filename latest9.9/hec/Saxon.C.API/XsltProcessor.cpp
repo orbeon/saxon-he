@@ -97,6 +97,21 @@ bool XsltProcessor::removeParameter(const char* name) {
 	return (bool)(parameters.erase("param:"+string(name)));
 }
 
+void XsltProcessor::setJustInTimeCompilation(bool jit){
+	static jmethodID jitmID =
+			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+					"setJustInTimeCompilation",
+					"(Z)V");
+	if (!cAndSStringmID) {
+		cerr << "Error: "<<getDllname() << ".setJustInTimeCompilation"
+				<< " not found\n" << endl;
+
+	} else {
+		SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, jitmID, jit);
+
+		proc->checkAndCreateException(cppClass);
+}
+
 void XsltProcessor::setProperty(const char* name, const char* value) {	
 	if(name != NULL) {
 		properties.insert(std::pair<std::string, std::string>(std::string(name), std::string((value == NULL ? "" : value))));

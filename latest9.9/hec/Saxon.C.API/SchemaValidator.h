@@ -129,6 +129,14 @@ public:
      */
     void clearProperties();
 
+    /**
+      * Get a parameter value by name
+      * @param name - Specified paramater name to get
+      * @return XdmValue
+    */
+    XdmValue* getParameter(const char* name);
+
+
 
      /**
       * Get all parameters as a std::map
@@ -176,8 +184,21 @@ public:
     */
     const char * getErrorCode(int i);
 
+     //! The validation mode may be either strict or lax.
+    /**
+     * The default is strict; this method may be called
+     * to indicate that lax validation is required. With strict validation, validation fails if no element
+     * declaration can be located for the outermost element. With lax validation, the absence of an
+     * element declaration results in the content being considered valid.
+     * @param lax true if validation is to be lax, false if it is to be strict
+    */
+    void setLax(bool l)
+      lax = l;
+    }
+
 
 private:
+    bool lax;
 	SaxonProcessor * proc;
 	XdmItem * sourceNode;
 	jclass  cppClass;

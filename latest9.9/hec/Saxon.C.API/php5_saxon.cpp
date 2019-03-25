@@ -1107,6 +1107,25 @@ PHP_METHOD(XsltProcessor, setSourceFromXdmValue)
   }
 }
 
+PHP_METHOD(XsltProcessor, setJustInTimeCompilation)
+{
+    XsltProcessor *xsltProcessor;
+    bool jit = false;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "b", &jit) == FAILURE) {
+        RETURN_NULL();
+    }
+
+    xsltProcessor_object *obj = (xsltProcessor_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
+    xsltProcessor = obj->xsltProcessor;
+    if (xsltProcessor != NULL) {
+
+	 xsltProcessor->setJustInTimeCompilation(jit);
+
+
+    }
+}
+
 PHP_METHOD(XsltProcessor, setOutputFile)
 {
     XsltProcessor *xsltProcessor;
@@ -3453,6 +3472,7 @@ zend_function_entry XsltProcessor_methods[] = {
     PHP_ME(XsltProcessor,  setOutputFile, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XsltProcessor,  setSourceFromFile, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XsltProcessor,  setSourceFromXdmValue, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(XsltProcessor,  setJustInTimeCompilation, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XsltProcessor,  setParameter, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XsltProcessor,  setProperty, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XsltProcessor,  clearParameters, NULL, ZEND_ACC_PUBLIC)
@@ -3643,9 +3663,9 @@ PHP_MINFO_FUNCTION(saxon)
 {
     php_info_print_table_start();
     php_info_print_table_header(2, "Saxon/C", "enabled");
-    php_info_print_table_row(2, "Saxon/C EXT version", "1.1.0");
-    php_info_print_table_row(2, "Saxon", "9.8.0.4");
-    php_info_print_table_row(2, "Excelsior JET", "11.3 MP1");
+    php_info_print_table_row(2, "Saxon/C EXT version", "1.2.0");
+    php_info_print_table_row(2, "Saxon", "9.9.1.2");
+    php_info_print_table_row(2, "Excelsior JET", "15.3 MP1");
     php_info_print_table_end();
     DISPLAY_INI_ENTRIES();
 }

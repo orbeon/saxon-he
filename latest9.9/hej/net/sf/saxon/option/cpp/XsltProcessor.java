@@ -39,6 +39,7 @@ public class XsltProcessor extends SaxonCAPI {
     private XsltExecutable executable = null;
     private List<XdmNode> xslMessages = new ArrayList<XdmNode>();
     private Set<File> packagesToLoad = new HashSet<File>();
+    private boolean jitCompilation = false;
 
     /**
      * Constructor to initialise XsltProcessor with processor and license flag
@@ -147,6 +148,10 @@ public class XsltProcessor extends SaxonCAPI {
         }
     }
 
+    public void setJustInTimeCompilation(boolean jit){
+        jitCompilation = jit;
+    }
+
 
     /**
      * Compile package from string and save resulting sef to file store.
@@ -158,6 +163,7 @@ public class XsltProcessor extends SaxonCAPI {
     public void compileFromStringAndSave(String cwd, String str, String filename){
 
         XsltCompiler compiler = processor.newXsltCompiler();
+
         try {
             XsltPackage pack = compiler.compilePackage(new StreamSource(new StringReader(str)));
             File file = absoluteFile(cwd, filename);
@@ -177,7 +183,6 @@ public class XsltProcessor extends SaxonCAPI {
     public void compileFromXdmNodeAndSave(String cwd, Object obj, String filename) throws SaxonApiException {
 
         XsltCompiler compiler = processor.newXsltCompiler();
-
         XdmNode node;
         if (obj instanceof XdmNode) {
             node = (XdmNode) obj;
@@ -208,6 +213,9 @@ public class XsltProcessor extends SaxonCAPI {
         try {
             clearExceptions();
             XsltCompiler compiler = processor.newXsltCompiler();
+            if(jitCompilation) {
+                compiler.setJustInTimeCompilation(jitCompilation);
+            }
             executable = null;
             if(packagesToLoad.size()>0) {
                 compilePackages(compiler);
@@ -235,6 +243,9 @@ public class XsltProcessor extends SaxonCAPI {
     public XsltExecutable createStylesheetFromString(String cwd, String str) throws SaxonApiException {
         clearExceptions();
         XsltCompiler compiler = processor.newXsltCompiler();
+        if(jitCompilation) {
+            compiler.setJustInTimeCompilation(jitCompilation);
+        }
         Source source;
         executable = null;
 
@@ -275,7 +286,9 @@ public class XsltProcessor extends SaxonCAPI {
         clearExceptions();
         executable = null;
         XsltCompiler compiler = processor.newXsltCompiler();
-
+        if(jitCompilation) {
+            compiler.setJustInTimeCompilation(jitCompilation);
+        }
 
         XdmNode node;
         if (obj instanceof XdmNode) {
@@ -334,6 +347,9 @@ public class XsltProcessor extends SaxonCAPI {
                 transformer = executable.load();
             } else {
                 XsltCompiler compiler = processor.newXsltCompiler();
+                if(jitCompilation) {
+                    compiler.setJustInTimeCompilation(jitCompilation);
+                }
                 source = resolveFileToSource(cwd, stylesheet);
                 compiler.setErrorListener(errorListener);
 
@@ -618,6 +634,9 @@ public class XsltProcessor extends SaxonCAPI {
                 transformer = executable.load();
             } else {
                 XsltCompiler compiler = processor.newXsltCompiler();
+                if(jitCompilation) {
+                    compiler.setJustInTimeCompilation(jitCompilation);
+                }
                 source = resolveFileToSource(cwd, stylesheet);
                 compiler.setErrorListener(errorListener);
                 if(packagesToLoad.size()>0) {
@@ -683,6 +702,9 @@ public class XsltProcessor extends SaxonCAPI {
                 throw ex;
             } else {
                 XsltCompiler compiler = processor.newXsltCompiler();
+                if(jitCompilation) {
+                    compiler.setJustInTimeCompilation(jitCompilation);
+                }
                 source = resolveFileToSource(cwd, stylesheet);
                 compiler.setErrorListener(errorListener);
                 if(packagesToLoad.size()>0) {
