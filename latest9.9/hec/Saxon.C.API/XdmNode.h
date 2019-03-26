@@ -56,6 +56,14 @@ public:
      *         return null.
      */
     const char * getNodeName();
+
+    /**
+     * Get the typed value of this node, as defined in XDM
+     *
+     * @return the typed value. If the typed value is a single atomic value, this will be returned
+     * as an instance of {@link XdmAtomicValue}
+     */
+    XdmValue * getTypedValue();
     
     const char* getBaseUri();
     
@@ -99,6 +107,7 @@ private:
 	XdmNode ** children; //caches child nodes when getChildren method is first called;
 	int childCount;
 	XdmNode * parent;
+    XdmValue * typedValue;
 	XdmNode ** attrValues;//caches attribute nodes when getAttributeNodes method is first called;
 	int attrCount;
 	XDM_NODE_KIND nodeKind;

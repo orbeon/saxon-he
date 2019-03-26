@@ -13,11 +13,11 @@ const char * baseURI;
 	XDM_NODE_KIND nodeKind;
 */
 
-XdmNode::XdmNode(jobject obj): XdmItem(obj), baseURI(NULL), nodeName(NULL), children(NULL), childCount(-1), parent(NULL), attrValues(NULL), attrCount(-1), nodeKind(UNKNOWN){
+XdmNode::XdmNode(jobject obj): XdmItem(obj), baseURI(NULL), nodeName(NULL), children(NULL), childCount(-1), parent(NULL), typedValue(NULL), attrValues(NULL), attrCount(-1), nodeKind(UNKNOWN){
 
 }
 
-XdmNode::XdmNode(XdmNode * p, jobject obj, XDM_NODE_KIND kind): XdmItem(obj), baseURI(NULL), nodeName(NULL), children(NULL),  childCount(-1), parent(p), attrValues(NULL),  attrCount(-1), nodeKind(kind){}
+XdmNode::XdmNode(XdmNode * p, jobject obj, XDM_NODE_KIND kind): XdmItem(obj), baseURI(NULL), nodeName(NULL), children(NULL),  childCount(-1), parent(p), typedValue(NULL), attrValues(NULL),  attrCount(-1), nodeKind(kind){}
 
 bool XdmNode::isAtomic() {
 	return false;
@@ -66,6 +66,32 @@ bool XdmNode::isAtomic() {
                 return NULL;
         }
 	
+
+    }
+
+    XdmValue * XdmNode::getTypedValue(){
+    	if(typedValue == NULL) {
+    		jclass xdmNodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
+    		jmethodID tbmID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(xdmNodeClass,
+    					"getTypedValue",
+    					"()Lnet/sf/saxon/s9api/XdmValue;");
+    		if (!bmID) {
+    			std::cerr << "Error: Saxonc." << "getTypedValue"
+    				<< " not found\n" << std::endl;
+    			return NULL;
+    		} else {
+    			jobject valueObj = (SaxonProcessor::sxn_environ->env->CallObjectMethod(value->xdmvalue, bmID));
+    			if(valueObj) {
+    				typedValue = new XdmValue((proc == NULL ? NULL : proc));
+    				typedValue->addUnderlyingValue(valueObj);
+    				return typedValue;
+    			}
+    			return NULL;
+    		}
+    	} else {
+    		return typedValue;
+    	}
+
 
     }
     

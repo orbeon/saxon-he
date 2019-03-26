@@ -53,6 +53,7 @@ public:
 		refCount = 1;
 		jValues = NULL;
 		valueType = NULL;
+		proc = null;
 	}
 
 	XdmValue(SaxonProcessor * p){
