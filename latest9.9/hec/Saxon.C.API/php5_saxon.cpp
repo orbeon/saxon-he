@@ -3239,6 +3239,33 @@ PHP_METHOD(XdmNode,  getParent){
     RETURN_NULL();
 }
 
+
+PHP_METHOD(XdmNode,  getTypedValue){
+    XdmNode *xdmNode;
+    xdmNode_object *obj = (xdmNode_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
+    xdmNode = obj->xdmNode;
+
+    if (xdmNode != NULL) {
+	XdmNode * typedValue = xdmNode->getTypedValue();
+	if(typedValue == NULL) {
+			RETURN_NULL();
+			return;
+	}
+          if (object_init_ex(return_value, xdmNode_ce) != SUCCESS) {
+                RETURN_NULL();
+                return;
+            } else {
+		typedValue->incrementRefCount();
+               	struct xdmValue_object* vobj = (struct xdmValue_object *)zend_object_store_get_object(return_value TSRMLS_CC);
+               	assert (vobj != NULL);
+               	vobj->xdmValue = typedValue;
+               	return;
+            }
+    }
+    RETURN_NULL();
+}
+
+
 PHP_METHOD(XdmNode,  getAttributeNode){
     int indexi;	
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l",&indexi) == FAILURE) {
@@ -3585,6 +3612,7 @@ zend_function_entry xdmNode_methods[] = {
     PHP_ME(XdmNode,  getParent,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XdmNode,  getAttributeNode,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XdmNode,  getAttributeValue,      NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(XdmNode,  getTypedValue,      NULL, ZEND_ACC_PUBLIC)
     {NULL, NULL, NULL}
 };
 

@@ -262,6 +262,7 @@ jobject JNICALL phpNativeCall
     PHP_METHOD(XdmNode,  getParent);
     PHP_METHOD(XdmNode,  getAttributeNode);
     PHP_METHOD(XdmNode,  getAttributeValue);
+    PHP_METHOD(XdmNode,  getTypedValue);
     
 
 /*     ============== PHP Interface of   XdmAtomicValue =============== */

@@ -3303,6 +3303,38 @@ PHP_METHOD(XdmNode, getStringValue)
     
 }
 
+PHP_METHOD(XdmNode, getTypedValue)
+{
+    XdmNode *xdmNode;
+    zval *object = getThis();
+    zend_object * zobj = Z_OBJ_P(object);
+
+    xdmNode_object * obj = (xdmNode_object *)((char *)zobj - XtOffsetOf(xdmNode_object, std));
+    xdmNode = obj->xdmNode;
+
+
+    if (xdmNode != NULL) {
+        XdmValue * typedValue = xdmNode->getTypedValue();
+        if(typedValue == NULL) {
+        			RETURN_NULL();
+        			return;
+        	}
+                  if (object_init_ex(return_value, xdmNode_ce) != SUCCESS) {
+                        RETURN_NULL();
+                        return;
+                    } else {
+        		typedValue->incrementRefCount();
+
+        		zend_object * zobj = Z_OBJ_P(return_value);
+            		xdmValue_object * vobj = (xdmValue_object *)((char *)zobj - XtOffsetOf(xdmValue_object, std));
+                       	assert (vobj != NULL);
+                       	vobj->xdmValue = typedValue;
+                       	return;
+                    }
+            }
+            RETURN_NULL();
+}
+
 PHP_METHOD(XdmNode, getNodeName)
 {
     XdmNode *xdmNode;
@@ -3797,6 +3829,7 @@ zend_function_entry xdmNode_methods[] = {
     PHP_ME(XdmNode,  getParent,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XdmNode,  getAttributeNode,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XdmNode,  getAttributeValue,      NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(XdmNode,  getTypedValue,      NULL, ZEND_ACC_PUBLIC)
     {NULL, NULL, NULL}
 };
 
