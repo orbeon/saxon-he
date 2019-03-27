@@ -47,9 +47,9 @@ The Saxon-EDITION API assumes the library is installed as follows: '/usr/lib/lib
  The first step is to copy the library libsaxonEDITION.dylib and the rt directories to a your install location. The C/C++ interface by default assumes the library files and directories are installed in the directory '/usr/local/lib'. The location of the Saxon/C library can be set using the SAXONC_HOME environment variable.
  
  The DYLD_LIBRARY_PATH environment variable must be set as follows:
- 
- export JET_HOME=/usr/local/lib/rt
- export DYLD_LIBRARY_PATH=$JET_HOME/lib/lib/jetvm:$DYLD_LIBRARY_PATH
+
+export JET_HOME=/usr/local/lib/rt
+export DYLD_LIBRARY_PATH=$JET_HOME/lib/lib/jetvm:$DYLD_LIBRARY_PATH
 
 #### PHP extension: ####
  
