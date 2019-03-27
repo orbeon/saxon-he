@@ -98,6 +98,8 @@ public class XQueryTraceListener extends AbstractTraceListener {
                 return "default";
             case LocationKind.TRACE_CALL:
                 return "user-trace";
+            case LocationKind.XQUERY_BODY:
+                return "query";
             case LocationKind.CLAUSE_BASE + Clause.COUNT:
                 return "count";
             case LocationKind.CLAUSE_BASE + Clause.FOR:

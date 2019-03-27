@@ -400,6 +400,7 @@ public class XQueryParser extends XPathParser {
         processPreamble();
 
         Expression exp = parseExpression();
+        exp = makeTracer(0, exp, LocationKind.XQUERY_BODY, null);
 
         // Diagnostic code - show the expression before any optimizations
 //        ExpressionPresenter ep = ExpressionPresenter.make(env.getConfiguration());

@@ -199,6 +199,12 @@ public class LocationKind {
     public static final int FUNCTION = 2065;
 
     /**
+     * The main XQuery body
+     */
+
+    public static final int XQUERY_BODY = 2070;
+
+    /**
      * XPath expression, otherwise unclassified. The "expression" property references the actual expression,
      * of class ComputedExpression. Used in fallback cases only.
      */
