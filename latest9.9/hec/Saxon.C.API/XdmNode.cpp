@@ -80,7 +80,7 @@ bool XdmNode::isAtomic() {
     				<< " not found\n" << std::endl;
     			return NULL;
     		} else {
-    			jobject valueObj = (SaxonProcessor::sxn_environ->env->CallObjectMethod(value->xdmvalue, bmID));
+    			jobject valueObj = (SaxonProcessor::sxn_environ->env->CallObjectMethod(value->xdmvalue, tbmID));
     			if(valueObj) {
     				typedValue = new XdmValue((proc == NULL ? NULL : proc));
     				typedValue->addUnderlyingValue(valueObj);
@@ -94,6 +94,35 @@ bool XdmNode::isAtomic() {
 
 
     }
+
+    const char * XdmNode::getStringValue(){
+   		return XdmItem::getStringValue();
+    }
+
+    const char * XdmNode::toString(){
+       	if(stringValue == NULL) {
+        		jclass xdmNodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
+        		jmethodID strMID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(xdmNodeClass,
+        					"toString",
+        					"()Ljava/lang/String;");
+        		if (!bmID) {
+        			std::cerr << "Error: Saxonc." << "toString"
+        				<< " not found\n" << std::endl;
+        			return NULL;
+        		} else {
+        			jstring result = (jstring) (SaxonProcessor::sxn_environ->env->CallObjectMethod(value->xdmvalue, strMID));
+        			if(result) {
+                       const char * str = (*(environi->env))->GetStringUTFChars(SaxonProcessor::sxn_environ->env, result, NULL);
+                       stringValue = str;
+                  		return str;
+                }
+                   return NULL;
+        		}
+        	} else {
+        		return stringValue;
+        	}
+    }
+
     
     const char* XdmNode::getBaseUri(){
 

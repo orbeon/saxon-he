@@ -2931,8 +2931,27 @@ PHP_METHOD(XdmValue, __destruct)
     		delete xdmValue;
    	 } 
     }
-    
-}
+
+    /* {{{ __toString()
+       Returns the string content */
+PHP_METHOD(XdmValue, __toString)
+    {
+    	 XdmValue *xdmValue;
+         zend_object *oobj = Z_OBJ_P(getThis());
+         xdmValue_object* obj = (xdmValue_object *)((char *)oobj - XtOffsetOf(xdmValue_object, std));
+         xdmValue = obj->xdmValue;
+         if (xdmValue != NULL) {
+        	const char * value = xdmValue->toString();
+          	if(value != NULL) {
+          	    _RETURN_STRING(value);
+          	 } else {
+          	 _RETURN_STRING("");
+
+          	 }
+         	}else {
+      		_RETURN_STRING("");
+      	}
+    }
 
 PHP_METHOD(XdmValue,  getHead){
     XdmValue *xdmValue;
@@ -3136,13 +3155,34 @@ PHP_METHOD(XdmItem, getStringValue)
 
 
     if (xdmItem != NULL) {
-        const char * valueStr = xdmItem->getStringValue(NULL);
+        const char * valueStr = xdmItem->getStringValue();
         if(valueStr != NULL) {
             _RETURN_STRING(valueStr);
         }
     }
     RETURN_NULL();
 }
+
+    /* {{{ __toString()
+       Returns the string content */
+PHP_METHOD(XdmItem, __toString)
+    {
+    	 XdmItem *xdmItem;
+         zend_object *oobj = Z_OBJ_P(getThis());
+         xdmItem_object* obj = (xdmItem_object *)((char *)oobj - XtOffsetOf(xdmItem_object, std));
+         xdmItem = obj->xdmItem;
+         if (xdmItem != NULL) {
+        	const char * value = xdmItem->getStringValue();
+          	if(value != NULL) {
+          	    _RETURN_STRING(value);
+          	 } else {
+          	 _RETURN_STRING("");
+
+          	 }
+         	}else {
+      		_RETURN_STRING("");
+      	}
+    }
 
 PHP_METHOD(XdmItem, isAtomic)
 {
@@ -3293,7 +3333,7 @@ PHP_METHOD(XdmNode, getStringValue)
 
    
     if (xdmNode != NULL) {
-        const char * valueStr = xdmNode->getStringValue(NULL);
+        const char * valueStr = xdmNode->getStringValue();
         if(valueStr != NULL) {
             _RETURN_STRING(valueStr);
 	    return;
@@ -3302,6 +3342,27 @@ PHP_METHOD(XdmNode, getStringValue)
     RETURN_NULL(); 
     
 }
+
+    /* {{{ __toString()
+       Returns the string content */
+PHP_METHOD(XdmNode, __toString)
+    {
+    	 XdmNode *xdmNode;
+         zend_object *oobj = Z_OBJ_P(getThis());
+         xdmNode_object* obj = (xdmNode_object *)((char *)oobj - XtOffsetOf(xdmNode_object, std));
+         xdmNode = obj->xdmNode;
+         if (xdmNode != NULL) {
+        	const char * value = xdmNode->getStringValue();
+          	if(value != NULL) {
+          	    _RETURN_STRING(value);
+          	 } else {
+          	 _RETURN_STRING("");
+
+          	 }
+         	}else {
+      		_RETURN_STRING("");
+      	}
+    }
 
 PHP_METHOD(XdmNode, getTypedValue)
 {
@@ -3672,6 +3733,28 @@ PHP_METHOD(XdmAtomicValue, getStringValue)
     RETURN_NULL();
 }
 
+    /* {{{ __toString()
+       Returns the string content */
+PHP_METHOD(XdmAtomicValue, __toString)
+    {
+    	 XdmAtomicValue *xdmAtomicValue;
+         zend_object *oobj = Z_OBJ_P(getThis());
+         xdmAtomicValue_object* obj = (xdmAtomicValue_object *)((char *)oobj - XtOffsetOf(xdmAtomicValue_object, std));
+         xdmAtomicValue = obj->xdmAtomicValue;
+         if (xdmAtomicValue != NULL) {
+        	const char * value = xdmAtomicValue->getStringValue();
+        	if(value != NULL) {
+        	    _RETURN_STRING(value);
+        	 } else {
+        	 _RETURN_STRING("");
+
+        	 }
+       	}else {
+    		_RETURN_STRING("");
+    	}
+    }
+
+
 PHP_METHOD(XdmAtomicValue, isAtomic)
 {
 
@@ -3798,6 +3881,7 @@ zend_function_entry SchemaValidator_methods[] = {
 zend_function_entry xdmValue_methods[] = {
     PHP_ME(XdmValue,  __construct,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
     PHP_ME(XdmValue,  __destruct,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
+    PHP_ME(XdmValue,  __toString,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XdmValue,  getHead,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XdmValue,  itemAt,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XdmValue,  size,      NULL, ZEND_ACC_PUBLIC)
@@ -3808,6 +3892,7 @@ zend_function_entry xdmValue_methods[] = {
 zend_function_entry xdmItem_methods[] = {
     PHP_ME(XdmItem,  __construct,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
     PHP_ME(XdmItem,  __destruct,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
+    PHP_ME(XdmValue,  __toString,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XdmItem,  getStringValue,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XdmItem,  isAtomic,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XdmItem,  isNode,      NULL, ZEND_ACC_PUBLIC)
@@ -3819,6 +3904,7 @@ zend_function_entry xdmItem_methods[] = {
 zend_function_entry xdmNode_methods[] = {
     PHP_ME(XdmNode,  __construct,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
     PHP_ME(XdmNode,  __destruct,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
+    PHP_ME(XdmValue,  __toString,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XdmNode,  getStringValue,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XdmNode,  getNodeKind,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XdmNode,  getNodeName,      NULL, ZEND_ACC_PUBLIC)
@@ -3836,6 +3922,7 @@ zend_function_entry xdmNode_methods[] = {
 zend_function_entry xdmAtomicValue_methods[] = {
     PHP_ME(XdmAtomicValue,  __construct,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
     PHP_ME(XdmAtomicValue,  __destruct,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
+    PHP_ME(XdmValue,  __toString,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XdmAtomicValue,  getStringValue,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XdmAtomicValue,  isAtomic,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XdmAtomicValue,  getBooleanValue,      NULL, ZEND_ACC_PUBLIC)

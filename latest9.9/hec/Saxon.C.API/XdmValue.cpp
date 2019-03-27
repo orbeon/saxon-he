@@ -15,6 +15,32 @@
 	}
      }
 
+
+    const char * XdmValue::toString(){
+               	if(toStringValue == NULL) {
+                		jclass xdmValueClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmValue");
+                		jmethodID strMID2 = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(xdmValueClass,
+                					"toString",
+                					"()Ljava/lang/String;");
+                		if (!bmID) {
+                			std::cerr << "Error: Saxonc.XdmValue." << "toString"
+                				<< " not found\n" << std::endl;
+                			return NULL;
+                		} else {
+                			jstring result = (jstring) (SaxonProcessor::sxn_environ->env->CallObjectMethod(value->xdmvalue, strMID2));
+                			if(result) {
+                               const char * str = (*(environi->env))->GetStringUTFChars(SaxonProcessor::sxn_environ->env, result, NULL);
+                          		toStringValue = str;
+                          		return str;
+                        }
+                           return NULL;
+                		}
+                	} else {
+                		return toStringValue;
+                	}
+
+    }
+
      int XdmValue::size(){
 	     return xdmSize;	
         }

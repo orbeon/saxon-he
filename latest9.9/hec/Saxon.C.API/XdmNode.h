@@ -66,9 +66,25 @@ public:
     XdmValue * getTypedValue();
     
     const char* getBaseUri();
+
+        /**
+         * Get the string value of the item. For a node, this gets the string value
+         * of the node. For an atomic value, it has the same effect as casting the value
+         * to a string. In all cases the result is the same as applying the XPath string()
+         * function.
+         * <p>For atomic values, the result is the same as the result of calling
+         * <code>toString</code>. This is not the case for nodes, where <code>toString</code>
+         * returns an XML serialization of the node.</p>
+         *
+         * @return the result of converting the item to a string.
+         * @deprecated the SaxonProcessor argument. It has been removed from release version 1.2.1
+         */
+    const char * getStringValue();
     
     
     XdmValue * getTypedValue();
+
+    const char * toString();
     
     XdmNode* getParent();
 

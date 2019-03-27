@@ -101,10 +101,7 @@
 
 
     const char * XdmAtomicValue::getStringValue(){
-	if(proc != NULL) {
-		return XdmItem::getStringValue(proc);
-	}
-	return NULL;
+		return XdmItem::getStringValue();
     }
 
     long XdmAtomicValue::getLongValue(){

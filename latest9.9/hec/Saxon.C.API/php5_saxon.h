@@ -232,6 +232,7 @@ jobject JNICALL phpNativeCall
 
     PHP_METHOD(XdmValue,  __construct);
     PHP_METHOD(XdmValue,  __destruct);
+    PHP_METHOD(XdmValue,  __toString);
     PHP_METHOD(XdmValue,  getHead);
     PHP_METHOD(XdmValue,  itemAt);
     PHP_METHOD(XdmValue,  size);
@@ -242,6 +243,7 @@ jobject JNICALL phpNativeCall
 
     PHP_METHOD(XdmItem,  __construct);
     PHP_METHOD(XdmItem,  __destruct);
+    PHP_METHOD(XdmItem,  __toString);
     PHP_METHOD(XdmItem,  getStringValue);
     PHP_METHOD(XdmItem,  isAtomic);
     PHP_METHOD(XdmItem,  isNode);
@@ -252,6 +254,7 @@ jobject JNICALL phpNativeCall
 
     PHP_METHOD(XdmNode,  __construct);
     PHP_METHOD(XdmNode,  __destruct);
+    PHP_METHOD(XdmNode,  __toString);
     PHP_METHOD(XdmNode,  getStringValue);
     PHP_METHOD(XdmNode, getNodeKind);
     PHP_METHOD(XdmNode, getNodeName);
@@ -269,6 +272,7 @@ jobject JNICALL phpNativeCall
 
     PHP_METHOD(XdmAtomicValue,  __construct);
     PHP_METHOD(XdmAtomicValue,  __destruct);
+    PHP_METHOD(XdmAtomicValue,  __toString);
     PHP_METHOD(XdmAtomicValue,  getStringValue);
     PHP_METHOD(XdmAtomicValue,  getBooleanValue);
     PHP_METHOD(XdmAtomicValue,  getDoubleValue);
