@@ -5859,7 +5859,6 @@ latest9.9/hej/net/sf/saxon/expr/instruct/DocumentInstr.java svn_eol_002dstyle=na
 latest9.9/hej/net/sf/saxon/expr/instruct/DummyNamespaceResolver.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/expr/instruct/ElementCreator.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/expr/instruct/Executable.java svn_eol_002dstyle=native
-latest9.9/hej/net/sf/saxon/expr/instruct/ExpressionInfo.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/expr/instruct/FixedAttribute.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/expr/instruct/FixedElement.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/expr/instruct/ForEach.java svn_eol_002dstyle=native
