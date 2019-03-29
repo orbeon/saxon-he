@@ -7,12 +7,14 @@
 
 package net.sf.saxon.functions;
 
+import com.saxonica.expr.JavaExtensionFunctionCall;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
 import net.sf.saxon.om.*;
+import net.sf.saxon.pattern.AnyNodeTest;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.AnyItemType;
@@ -299,6 +301,11 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
                                                        }
                                                        return item;
                                                    }, true);
+            }
+            if (th.relationship(type, AnyNodeTest.getInstance()) != TypeHierarchy.DISJOINT) {
+                result = new ItemMappingIterator<>(
+                        result,
+                        new JavaExtensionFunctionCall.ConfigurationCheckingFunction(context.getConfiguration()), true);
             }
         }
         return result;
