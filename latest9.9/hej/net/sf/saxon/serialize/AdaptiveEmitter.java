@@ -18,6 +18,7 @@ import net.sf.saxon.ma.map.KeyValuePair;
 import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.om.*;
 import net.sf.saxon.query.QueryResult;
+import net.sf.saxon.serialize.codenorm.Normalizer;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.AtomicValue;
@@ -37,6 +38,8 @@ import java.util.Properties;
 public class AdaptiveEmitter extends SequenceWriter implements ReceiverWithOutputProperties {
 
     private Writer writer;
+    private Normalizer normalizer;
+    private CharacterMap characterMap;
     private Properties outputProperties;
     private String itemSeparator = "\n";
     private boolean started = false;
@@ -58,6 +61,27 @@ public class AdaptiveEmitter extends SequenceWriter implements ReceiverWithOutpu
         return outputProperties;
     }
 
+    /**
+     * Set the Unicode normalizer to be used for normalizing strings.
+     *
+     * @param normalizer the normalizer to be used
+     */
+
+    public void setNormalizer(Normalizer normalizer) {
+        this.normalizer = normalizer;
+    }
+
+    /**
+     * Set the CharacterMap to be used, if any
+     *
+     * @param map the character map
+     */
+
+    public void setCharacterMap(CharacterMap map) {
+        this.characterMap = map;
+    }
+
+
     private void emit(CharSequence s) throws XPathException {
         try {
             writer.append(s);
@@ -78,7 +102,7 @@ public class AdaptiveEmitter extends SequenceWriter implements ReceiverWithOutpu
             emit(itemSeparator);
         } else {
             if (writer == null) {
-
+                // TODO: ????
             }
             started = true;
         }
@@ -107,6 +131,9 @@ public class AdaptiveEmitter extends SequenceWriter implements ReceiverWithOutpu
                 String s = value.getStringValue();
                 if (s.contains("\"")) {
                     s = s.replace("\"", "\"\"");
+                }
+                if (characterMap != null) {
+                    s = characterMap.map(s,false).toString();
                 }
                 return "\"" + s + "\"";
             }
@@ -191,7 +218,13 @@ public class AdaptiveEmitter extends SequenceWriter implements ReceiverWithOutpu
                 props.setProperty("indent", "no");
                 props.setProperty("omit-xml-declaration", "yes");
                 props.setProperty(SaxonOutputKeys.UNFAILING, "yes");
-                QueryResult.serialize(node, new StreamResult(sw), props);
+                CharacterMapIndex cmi = null;
+                if (characterMap != null) {
+                    cmi = new CharacterMapIndex();
+                    cmi.putCharacterMap(characterMap.getName(), characterMap);
+                }
+                SerializationProperties sProps = new SerializationProperties(props, cmi);
+                QueryResult.serialize(node, new StreamResult(sw), sProps);
                 emit(sw.toString().trim());
         }
     }

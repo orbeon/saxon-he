@@ -561,6 +561,12 @@ public class SerializerFactory {
     protected SequenceReceiver customizeAdaptiveSerializer(
             AdaptiveEmitter emitter, Properties props,
             CharacterMapExpander characterMapExpander, ProxyReceiver normalizer) {
+        if (normalizer instanceof UnicodeNormalizer) {
+            emitter.setNormalizer(((UnicodeNormalizer) normalizer).getNormalizer());
+        }
+        if (characterMapExpander != null) {
+            emitter.setCharacterMap(characterMapExpander.getCharacterMap());
+        }
         return emitter;
     }
 

@@ -119,6 +119,23 @@ public class QueryResult {
     }
 
     /**
+     * Serialize a document or element node.
+     *
+     * @param node             The document or element to be serialized
+     * @param destination      The Result object to contain the serialized form
+     * @param properties       Serialization options as defined in JAXP. The requested properties are
+     *                         not validated.
+     * @throws XPathException If serialization fails
+     * @since 9.9.1.3
+     */
+
+    public static void serialize(NodeInfo node, Result destination, SerializationProperties properties)
+            throws XPathException {
+        Configuration config = node.getConfiguration();
+        serializeSequence(SingletonIterator.makeIterator(node), config, destination, properties);
+    }
+
+    /**
      * Serialize an arbitrary sequence, without any special wrapping.
      *
      * @param iterator    the sequence to be serialized
@@ -184,6 +201,25 @@ public class QueryResult {
         SequenceCopier.copySequence(iterator, tr);
     }
 
+    /**
+     * Serialize a sequence to a given result. This version of the method allows character maps to be supplied
+     *
+     * @param iterator         the sequence to be serialized
+     * @param config           the Saxon Configuration
+     * @param result           the destination to receive the output
+     * @param properties       the serialization properties to be used. The requested properties are
+     *                         not validated.
+     * @throws XPathException if any failure occurs
+     * @since 9.9.1.3
+     */
+
+    public static void serializeSequence(
+            SequenceIterator<?> iterator, Configuration config, Result result, SerializationProperties properties)
+            throws XPathException {
+        SerializerFactory sf = config.getSerializerFactory();
+        Receiver tr = sf.getReceiver(result, properties);
+        SequenceCopier.copySequence(iterator, tr);
+    }
 
     /**
      * Write an updated document back to disk, using the original URI from which it was read

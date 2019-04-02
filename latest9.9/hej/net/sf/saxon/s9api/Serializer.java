@@ -591,8 +591,10 @@ public class Serializer extends AbstractDestination {
             serializeNode((XdmNode) value);
         } else {
             try {
+                SerializationProperties properties =
+                        new SerializationProperties(getLocallyDefinedProperties(), characterMap);
                 QueryResult.serializeSequence(value.getUnderlyingValue().iterate(),
-                                              processor.getUnderlyingConfiguration(), result, getLocallyDefinedProperties());
+                                              processor.getUnderlyingConfiguration(), result, properties);
             } catch (XPathException e) {
                 throw new SaxonApiException(e);
             }
