@@ -75,8 +75,8 @@ void setDllname(){
 		snprintf(resources_dir, 14+rDir_len+1, "%s%s", "/usr/local/lib", tempResources_dir);
 #else
 		//TODO When windows version of Saxon/C is done we will have to fixup this
-		strncpy(dllname, "C:\\Program Files\\Saxonica\\SaxonPEC1.1.0", 42);
-		strncpy(resources_dir, "C:\\Program Files\\Saxonica\\SaxonPEC1.1.0", 42);
+		strncpy(dllname, "C:\\Program Files\\Saxonica\\SaxonPEC1.1.2", 42);
+		strncpy(resources_dir, "C:\\Program Files\\Saxonica\\SaxonPEC1.1.2", 42);
 #endif
 
 	
@@ -131,7 +131,7 @@ HANDLE loadDll(char* name)
 	}
 
 #if !(defined (__linux__) || (defined (__APPLE__) && defined(__MACH__)))
-    HANDLE hDll = LoadLibrary (_T(name)); // Used for windows only
+	HANDLE hDll = LoadLibrary(name); // Used for windows only
 #else
     HANDLE hDll = LoadLibrary(name);
 #endif
