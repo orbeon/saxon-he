@@ -242,6 +242,9 @@ if (!mID) {
 	jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/String");
 
 	int size = parameters.size() + properties.size();
+	if(lax) {
+      size++;
+     }
 #ifdef DEBUG
 		std::cerr<<"Properties size: "<<properties.size()<<std::endl;
 		std::cerr<<"Parameter size: "<<parameters.size()<<std::endl;
@@ -253,6 +256,13 @@ if (!mID) {
 		stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				stringClass, 0);
 		int i = 0;
+        if(lax){
+            SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
+                        SaxonProcessor::sxn_environ->env->NewStringUTF("lax"));
+                        SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
+                        booleanValue(*(SaxonProcessor::sxn_environ), lax));
+            i++;
+        }
 		for (std::map<std::string, XdmValue*>::iterator iter = parameters.begin();
 				iter != parameters.end(); ++iter, i++) {
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,

@@ -849,7 +849,9 @@ public class XsltProcessor extends SaxonCAPI {
         String outfile = "outfile.html";
         Processor processor = new Processor(true);
 
+
         XsltProcessor cpp = new XsltProcessor(processor);
+
         //cpp.createStylesheetFromFile(cwd2, "xsl/foo.xsl");
         //cpp.compileFromFileAndSave(cwd2, "xsl/foo.xsl", "xsl/foo.xslp");
         //String resultStr = cpp.transformToString(cwd2, "xml/foo.xml", "xsl/foo.xslp", null, null);
@@ -863,6 +865,17 @@ public class XsltProcessor extends SaxonCAPI {
         String resultStr3 = cpp.transformToString(cwd2, null, "xsl/foo4.xsl",params0, values0);
                 System.out.println("Using initial-template: " + resultStr3);
 
+
+                XsltCompiler compiler = processor.newXsltCompiler();   compiler.setJustInTimeCompilation(false);
+                compiler.compilePackage(new StreamSource(new File(cwd2+"/xsl/foo4.xsl"))).save(new File(cwd2 + "/xsl/foo4.sef"));
+                XsltExecutable executable = compiler.compile(new StreamSource(new File(cwd2+"/xsl/foo4.sef")));
+
+                XsltTransformer transformer = executable.load();
+        StringWriter sw = new StringWriter();
+                    Serializer ser = processor.newSerializer(sw);
+                transformer.setDestination(ser);
+                transformer.transform();
+                System.out.println("Package result = "+sw.toString());
         XdmNode node2 = cpp.parseXmlFile("/Users/ond1/work/development/campos", "ORP0301177AA__EE__30954_sinsello.xml");
         String[] paramsx = {"node"};
         Object[] valuesx = {node2};
