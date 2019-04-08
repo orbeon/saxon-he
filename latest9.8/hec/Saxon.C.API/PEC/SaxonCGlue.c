@@ -76,7 +76,7 @@ void setDllname(){
 #else
 		//TODO When windows version of Saxon/C is done we will have to fixup this
 		//strncpy_s(dllname, name_len +42 + 1, "C:\\Program Files\\Saxonica\\SaxonEEC1.1.0", 42);
-		snprintf(resources_dir, rDir_len + 42 + 1,  "C:\\Program Files\\Saxonica\\SaxonPEC1.1.0", tempResources_dir);
+		snprintf(resources_dir, rDir_len + 42 + 1,  "C:\\Program Files\\Saxonica\\SaxonPEC1.1.2", tempResources_dir);
 		snprintf(dllname, name_len+42+1, "%s%s", "C:\\Program Files\\Saxonica\\SaxonPEC1.1.2", tempDllname);
 #endif
 
