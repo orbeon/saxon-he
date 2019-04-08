@@ -6,14 +6,14 @@ char * resources_dir;
 int jvmCreated = 0;
 static char tempDllname[] =
 #if defined (__linux__)
-        "/libsaxonpec.so";  
+        "/libsaxonpec.so";
     #elif  defined (__APPLE__) && defined(__MACH__)
         "/libsaxonpec.dylib";
     #else
          "\\libsaxonpec.dll";
     #endif
 
-static char tempResources_dir[] = 
+static char tempResources_dir[] =
      #ifdef __linux__
         "/saxon-data";
     #elif  defined (__APPLE__) && defined(__MACH__)
@@ -23,7 +23,7 @@ static char tempResources_dir[] =
     #endif
 
 /*
-* Set Dll name. Also set the saxon resources directory. 
+* Set Dll name. Also set the saxon resources directory.
 * If the SAXONC_HOME sxnc_environmental variable is set then use that as base.
 */
 void setDllname(){
@@ -33,18 +33,18 @@ void setDllname(){
 	size_t env_len;
 	if(env!= NULL) {
 
-		
+
 		env_len = strlen(env);
 		dllname =malloc(sizeof(char)*name_len+env_len+1);
 		resources_dir =malloc(sizeof(char)*rDir_len+env_len+1);
 		snprintf(dllname, env_len+name_len+1, "%s%s", env, tempDllname);
 		snprintf(resources_dir, env_len+rDir_len+1, "%s%s", env, tempResources_dir);
-		
-#ifdef DEBUG	
-		
+
+#ifdef DEBUG
+
 		printf("envDir: %s\n", env);
-		
-		
+
+
 #endif
 
        } else {
@@ -55,7 +55,7 @@ void setDllname(){
 #else
            env_len = 8; //not used under windows
 #endif
-		dllname =malloc(sizeof(char)*name_len+env_len+1);
+		dllname =malloc(sizeof(char)*name_len+42+1);
 		resources_dir =malloc(sizeof(char)*rDir_len+env_len+1);
 #ifdef DEBUG
 		if(dllname == NULL || resources_dir == NULL)
@@ -67,7 +67,7 @@ void setDllname(){
 		//memset(&dllname[0], 0, sizeof(dllname));
 		//memset(&resources_dir[0], 0, sizeof(resources_dir));
 #ifdef __linux__
-		
+
        		snprintf(dllname, 8+name_len+1, "%s%s", "/usr/lib", tempDllname);
 		snprintf(resources_dir, 8+rDir_len+1, "%s%s", "/usr/lib", tempResources_dir);
 #elif  defined (__APPLE__) && defined(__MACH__)
@@ -75,26 +75,27 @@ void setDllname(){
 		snprintf(resources_dir, 14+rDir_len+1, "%s%s", "/usr/local/lib", tempResources_dir);
 #else
 		//TODO When windows version of Saxon/C is done we will have to fixup this
-		strncpy(dllname, "C:\\Program Files\\Saxonica\\SaxonPEC1.2.0", 42);
-		strncpy(resources_dir, "C:\\Program Files\\Saxonica\\SaxonPEC1.2.0", 42);
+		//strncpy_s(dllname, name_len +42 + 1, "C:\\Program Files\\Saxonica\\SaxonPEC1.1.0", 42);
+		snprintf(resources_dir, rDir_len + 42 + 1,  "C:\\Program Files\\Saxonica\\SaxonPEC1.2.0", tempResources_dir);
+		snprintf(dllname, name_len+42+1, "%s%s", "C:\\Program Files\\Saxonica\\SaxonPEC1.2.0", tempDllname);
 #endif
 
-	
+
 
 	}
-		
+
 
 #ifdef DEBUG
 
 		printf("Library length: %i\n", name_len);
 		printf("Env length: %i\n", env_len);
 		printf("dllname length alloc: %i\n", (env_len+name_len+1));
-		printf("resources length alloc: %i\n", (env_len+rDir_len+1));		
+		printf("resources length alloc: %i\n", (env_len+rDir_len+1));
 		printf("size of dllname %i\n", strlen(dllname));
 		printf("dllName: %s\n", dllname);
 		printf("resources_dir: %s\n", resources_dir);
 		printf("size of resources dir %i\n", strlen(resources_dir));
-#endif 	
+#endif
 
 }
 
@@ -131,14 +132,13 @@ HANDLE loadDll(char* name)
 	}
 
 #if !(defined (__linux__) || (defined (__APPLE__) && defined(__MACH__)))
-    HANDLE hDll = LoadLibrary (_T(name)); // Used for windows only
+    HANDLE hDll = LoadLibrary (name); // Used for windows only
 #else
     HANDLE hDll = LoadLibrary(name);
 #endif
-
     if (!hDll) {
         fprintf (stderr, "Unable to load %s\n", name);
-	perror("Error: ");
+		perror("Error: ");
         exit(1);
     }
 #ifdef DEBUG
@@ -155,9 +155,9 @@ jint (JNICALL * JNI_CreateJavaVM_func) (JavaVM **pvm, void **penv, void *args);
 
 
 
-void initDefaultJavaRT(sxnc_environment ** env){
-	sxnc_environment *environ = *env;
-	initJavaRT((environ->myDllHandle), &(environ->jvm), &(environ->env));
+void initDefaultJavaRT(sxnc_environment *env){
+	sxnc_environment *environi = env;
+	initJavaRT((environi->myDllHandle), &(environi->jvm), &(environi->env));
 }
 
 /*
@@ -179,38 +179,38 @@ if(jvmCreated==0) {
 #else
     GetProcAddress (myDllHandle, "JNI_GetDefaultJavaVMInitArgs");
 #endif
- 
-    
+
+
     JNI_CreateJavaVM_func =
     (jint (JNICALL *) (JavaVM **pvm, void **penv, void *args))
-    
+
 #if !(defined (__linux__) || (defined (__APPLE__) && defined(__MACH__)))
     GetProcAddress ((HMODULE)myDllHandle, "JNI_CreateJavaVM");
 #else
     GetProcAddress (myDllHandle, "JNI_CreateJavaVM");
-    
+
 #endif
 
-    
+
     if(!JNI_GetDefaultJavaVMInitArgs_func) {
         fprintf (stderr,"%s doesn't contain public JNI_GetDefaultJavaVMInitArgs\n", getDllname());
         exit (1);
     }
-    
+
     if(!JNI_CreateJavaVM_func) {
         fprintf (stderr,"%s doesn't contain public JNI_CreateJavaVM\n", getDllname());
         exit (1);
     }
-    
+
     memset (&args, 0, sizeof(args));
-    
+
     args.version = JNI_VERSION_1_2;
     result = JNI_GetDefaultJavaVMInitArgs_func(&args);
     if (result != JNI_OK) {
         fprintf(stderr,"JNI_GetDefaultJavaVMInitArgs() failed with result\n");
         exit(1);
     }
-  
+
     /*
      * NOTE: no JVM is actually created
      * this call to JNI_CreateJavaVM is intended for JET RT initialization
@@ -277,7 +277,7 @@ void invokeInstanceMethod (JNIEnv* penv, jclass myClassInDll, char * name, char 
         printf("Error: %s not found\n", name);
         return;
     }
-    
+
     (*(penv))->CallVoidMethod (penv, obj, MID_name);
 }
 
@@ -296,7 +296,7 @@ void invokeStaticMethod(JNIEnv* penv, jclass myClassInDll, char* name, char* arg
         printf("\nError: method %s not found\n", name);
         return;
     }
-    
+
     (*penv)->CallStaticVoidMethod(penv, myClassInDll, MID_name);
 }
 
@@ -332,12 +332,12 @@ jobject createSaxonProcessor (JNIEnv* penv, jclass myClassInDll, const char * ar
         	printf("Error: MyClassInDll.<init>() not found\n");
        	 return NULL;
         }
-     
+
     if(argument1) {
 
 	     obj = (jobject)(*(penv))->NewObject(penv, myClassInDll, MID_initi, argument1, license);
     } else {
-	
+
       obj = (jobject)(*(penv))->NewObject(penv, myClassInDll, MID_initi, license);
      }
       if (!obj) {
@@ -362,12 +362,12 @@ jobject createSaxonProcessor2 (JNIEnv* penv, jclass myClassInDll, const char * a
         	printf("Error: MyClassInDll.<init>() not found\n");
        	 return NULL;
         }
-     
+
     if(argument1) {
 
 	     obj = (jobject)(*(penv))->NewObject(penv, myClassInDll, MID_initi, argument1);
     } else {
-	
+
       obj = (jobject)(*(penv))->NewObject(penv, myClassInDll, MID_initi);
      }
       if (!obj) {
@@ -381,73 +381,72 @@ jobject createSaxonProcessor2 (JNIEnv* penv, jclass myClassInDll, const char * a
 
 
 /*
- * Callback to check for exceptions. When called it returns the exception as a string 
+ * Callback to check for exceptions. When called it returns the exception as a string
  */
-const char * checkForException(sxnc_environment environ,  jobject callingObject){
-
+const char * checkForException(sxnc_environment *environii,  jobject callingObject){
 	if(callingObject){} // TODO: Remove the callingObject variable
-    if ((*(environ.env))->ExceptionCheck(environ.env)) {
+    if ((*(environii->env))->ExceptionCheck(environii->env)) {
 
-        jthrowable exc = (*(environ.env))->ExceptionOccurred(environ.env);
+        jthrowable exc = (*(environii->env))->ExceptionOccurred(environii->env);
 #ifdef DEBUG
-        (*(environ.env))->ExceptionDescribe(environ.env);
+        (*(environii->env))->ExceptionDescribe(environii->env);
 #endif
  	if(exc) {
 		printf("Exception Occurred!");
 	}
-        jclass exccls = (jclass) (*(environ.env))->GetObjectClass(environ.env, exc);
+        jclass exccls = (jclass) (*(environii->env))->GetObjectClass(environii->env, exc);
 
-        jclass clscls = (jclass) (*(environ.env))->FindClass(environ.env, "java/lang/Class");
-        
-        jmethodID getName = (jmethodID)(*(environ.env))->GetMethodID(environ.env, clscls, "getName", "()Ljava/lang/String;");
-        jstring name = (jstring)((*(environ.env))->CallObjectMethod(environ.env, exccls, getName));
-        char const* utfName = (*(environ.env))->GetStringUTFChars(environ.env, name, NULL);
-        
+        jclass clscls = (jclass) (*(environii->env))->FindClass(environii->env, "java/lang/Class");
+
+        jmethodID getName = (jmethodID)(*(environii->env))->GetMethodID(environii->env, clscls, "getName", "()Ljava/lang/String;");
+        jstring name = (jstring)((*(environii->env))->CallObjectMethod(environii->env, exccls, getName));
+        char const* utfName = (*(environii->env))->GetStringUTFChars(environii->env, name, NULL);
+
         //if(callingObject != NULL && strcmp(utfName, "net.sf.saxon.s9api.SaxonApiException") == 0){
-		
-		jmethodID  getMessage =  (jmethodID)(*(environ.env))->GetMethodID(environ.env, exccls, "getMessage", "()Ljava/lang/String;");
-		
+
+		jmethodID  getMessage =  (jmethodID)(*(environii->env))->GetMethodID(environii->env, exccls, "getMessage", "()Ljava/lang/String;");
+
         if(getMessage) {
-            
-            jstring message = (jstring)((*(environ.env))->CallObjectMethod(environ.env, exc, getMessage));
-       
+
+            jstring message = (jstring)((*(environii->env))->CallObjectMethod(environii->env, exc, getMessage));
+
 	if(!message){
-	
-	(*(environ.env))->ExceptionClear(environ.env);
+
+	(*(environii->env))->ExceptionClear(environii->env);
 	return 0;
 	}
-            char const* utfMessage= (*(environ.env))->GetStringUTFChars(environ.env, message, NULL);
-      
+            char const* utfMessage= (*(environii->env))->GetStringUTFChars(environii->env, message, NULL);
+
             if(utfMessage != NULL) {
-		(*(environ.env))->ReleaseStringUTFChars(environ.env, name, utfName);
+		(*(environii->env))->ReleaseStringUTFChars(environii->env, name, utfName);
             }
-       
-	    (*(environ.env))->ExceptionClear(environ.env);
+
+	    (*(environii->env))->ExceptionClear(environii->env);
 	    return utfMessage;
 	}
    // }
-     (*(environ.env))->ReleaseStringUTFChars(environ.env, name, utfName);      
+     (*(environii->env))->ReleaseStringUTFChars(environii->env, name, utfName);
     }
-    //(*(environ.env))->ExceptionClear(environ.env);
+    //(*(environii->env))->ExceptionClear(environii->env);
      return 0;
 }
 
 
 /*
- * Clean up and destroy Java VM to release memory used. 
+ * Clean up and destroy Java VM to release memory used.
  */
 void finalizeJavaRT (JavaVM* jvm)
 {
 
   if(jvmCreated!= 0){
     (*jvm)->DestroyJavaVM (jvm);
-    jvmCreated=0;	
+    jvmCreated=0;
   }
 }
 
 
 /*
- * Get a parameter from list 
+ * Get a parameter from list
  */
 jobject getParameter(sxnc_parameter *parameters,  int parLen, const char* namespacei, const char * name){
 	int i =0;
@@ -455,14 +454,14 @@ jobject getParameter(sxnc_parameter *parameters,  int parLen, const char* namesp
 	if(namespacei == NULL) {} // avoiding warning. In next release fix this
 	for(i =0; i< parLen;i++) {
 		if(strcmp(parameters[i].name, name) == 0)
-			return (jobject)parameters[i].value;			
+			return (jobject)parameters[i].value;
 	}
 	return NULL;
 }
 
 
 /*
- * Get a property from list 
+ * Get a property from list
  */
 char* getProperty(sxnc_property * properties, int propLen, const char* namespacei, const char * name){
 	int i =0;
@@ -470,80 +469,80 @@ char* getProperty(sxnc_property * properties, int propLen, const char* namespace
 	if(namespacei == NULL) {} // avoiding warning. In next release fix this
 	for(i =0; i< propLen;i++) {
 		if(strcmp(properties[i].name, name) == 0)
-			return properties[i].value;			
+			return properties[i].value;
 	}
 	return 0;
 }
 
 
 /*
- * set a parameter 
+ * set a parameter
  */
 void setParameter(sxnc_parameter **parameters, int * parLen, int * parCap, const char * namespacei, const char * name, jobject value){
 
 	namespacei = NULL;
 	if(getParameter(*parameters, (*parLen), "", name) != 0){
-		return;			
+		return;
 	}
-	(*parLen)++;	
+	(*parLen)++;
 	if((*parLen) >= (*parCap)) {
-		(*parCap) *=2; 
-		sxnc_parameter* temp = (sxnc_parameter*)malloc(sizeof(sxnc_parameter)*(*parCap));	
+		(*parCap) *=2;
+		sxnc_parameter* temp = (sxnc_parameter*)malloc(sizeof(sxnc_parameter)*(*parCap));
 		int i =0;
 		for(i =0; i< (*parLen)-1;i++) {
-			temp[i] = (*parameters)[i];			
+			temp[i] = (*parameters)[i];
 		}
 		free(parameters);
 		parameters = &temp;
 	}
-	int nameLen = strlen(name)+7;	
+	int nameLen = strlen(name)+7;
 	char *newName = malloc(sizeof(char)*nameLen);
-	int namespaceLen = strlen(namespacei);	
+	int namespaceLen = strlen(namespacei);
 	char *newNamespace = malloc(sizeof(char)*namespaceLen);
   	snprintf(newName, nameLen, "%s%s", "param:", name );
   	snprintf(newNamespace, namespaceLen, "%s", name );
 	(*parameters)[(*parLen)-1].name = (char*)newName;
-	(*parameters)[(*parLen)-1].namespacei = (char*)newNamespace;	
+	(*parameters)[(*parLen)-1].namespacei = (char*)newNamespace;
 	(*parameters)[(*parLen)-1].value = (jobject)value;
 }
 
 
 /*
- * set a property 
+ * set a property
  */
-void setProperty(sxnc_property ** properties, int *propLen, int *propCap, const char* name, const char* value){	
+void setProperty(sxnc_property ** properties, int *propLen, int *propCap, const char* name, const char* value){
 	if(getProperty(*properties, (*propLen), "", name) != 0){
-		return;			
+		return;
 	}
-		
+
 	if(((*propLen)+1) >= (*propCap)) {
-		(*propCap) *=2; 
+		(*propCap) *=2;
 		sxnc_property* temp = (sxnc_property*)malloc(sizeof(sxnc_property)*  (*propCap));
-		int i =0;	
+		int i =0;
 		for(i =0; i< (*propLen)-1;i++) {
-			temp[i] = (*properties)[i];			
+			temp[i] = (*properties)[i];
 		}
 		free(properties);
 		properties = &temp;
 
 	}
-	int nameLen = strlen(name)+1;	
+	int nameLen = strlen(name)+1;
 	char *newName = (char*)malloc(sizeof(char)*nameLen);
   	snprintf(newName, nameLen, "%s", name );
 	char *newValue = (char*)malloc(sizeof(char)*strlen(value)+1);
   	snprintf(newValue, strlen(value)+1, "%s", value );
-	(*properties)[(*propLen)].name = (char*)newName;	
+	(*properties)[(*propLen)].name = (char*)newName;
 	(*properties)[(*propLen)].value = (char*)newValue;
         (*propLen)++;
 }
 
 /*
- * clear parameter 
+ * clear parameter
  */
 void clearSettings(sxnc_parameter **parameters, int *parLen, sxnc_property ** properties, int *propLen){
 	free(*parameters);
 	free(*parameters);
-	
+
 
     	*parameters = (sxnc_parameter *)calloc(10, sizeof(sxnc_parameter));
     	*properties = (sxnc_property *)calloc(10, sizeof(sxnc_property));
@@ -552,20 +551,20 @@ void clearSettings(sxnc_parameter **parameters, int *parLen, sxnc_property ** pr
 }
 
 
-const char * stringValue(sxnc_environment environ, jobject value){
-	jclass  objClass = lookForClass(environ.env, "java/lang/Object");
+const char * stringValue(sxnc_environment *environi, jobject value){
+	jclass  objClass = lookForClass(environi->env, "java/lang/Object");
 	static jmethodID strMID = NULL;
 	if(!strMID) {
-		strMID = (jmethodID)(*(environ.env))->GetMethodID(environ.env, objClass, "toString", "()Ljava/lang/String;");
+		strMID = (jmethodID)(*(environi->env))->GetMethodID(environi->env, objClass, "toString", "()Ljava/lang/String;");
 		if(!strMID) {
 	 		 printf("\nError: Object %s() not found\n","toString");
   	 		 fflush (stdout);
          		 return NULL;
 		}
         }
-	jstring result = (jstring)((*(environ.env))->CallObjectMethod(environ.env, value, strMID));
+	jstring result = (jstring)((*(environi->env))->CallObjectMethod(environi->env, value, strMID));
  	if(result) {
-	       	const char * str = (*(environ.env))->GetStringUTFChars(environ.env, result, NULL);    
+	       	const char * str = (*(environi->env))->GetStringUTFChars(environi->env, result, NULL);
 		return str;
         }
 
