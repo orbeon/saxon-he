@@ -138,7 +138,7 @@ public class AlphanumericCollator implements StringCollator, java.io.Serializabl
 
             // handle an alphabetic part (even if zero-length)
 
-            sb.append(s.substring(pos1, m1start));
+            sb.append(baseCollator.getCollationKey(s.substring(pos1, m1start)).toString());
 
             // reached end?
 

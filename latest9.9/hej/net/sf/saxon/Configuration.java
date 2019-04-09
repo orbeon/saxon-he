@@ -1600,7 +1600,7 @@ public class Configuration implements SourceResolver, NotationSet {
         }
         if (collationName.startsWith(AlphanumericCollator.PREFIX)) {
             return new AlphanumericCollator(getCollation(
-                    collationName.substring(0, AlphanumericCollator.PREFIX.length())));
+                    collationName.substring(AlphanumericCollator.PREFIX.length())));
         }
         StringCollator collator = collationMap.get(collationName);
         if (collator == null) {
