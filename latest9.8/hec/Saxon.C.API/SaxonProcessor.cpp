@@ -439,7 +439,7 @@ int SaxonProcessor::getNodeKind(jobject obj){
 	if(!nodeKindObj){
 		return 0;	
 	}
-	int nodeKind = (long)(SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(xdmUtilsClass, mID2, nodeKindObj));
+	int nodeKind = (int)(SaxonProcessor::sxn_environ->env->CallStaticIntMethod(xdmUtilsClass, mID2, nodeKindObj));
 	return nodeKind;
 }
 
