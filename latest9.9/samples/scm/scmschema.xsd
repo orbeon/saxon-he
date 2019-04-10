@@ -49,7 +49,10 @@
     </xs:annotation>  
     <xs:complexType>
 	  <xs:sequence>
-	  	<xs:element ref="scm:fixed" minOccurs="0" maxOccurs="1"/>
+	    <xs:choice>
+	      <xs:element ref="scm:fixed" minOccurs="0" maxOccurs="1"/>
+	      <xs:element ref="scm:default" minOccurs="0" maxOccurs="1"/>
+	    </xs:choice>
 	  </xs:sequence>
       <xs:attribute name="containingComplexType" type="xs:IDREF"/>
       <xs:attribute name="default" type="xs:string"/>
@@ -95,7 +98,10 @@
 	  	<xs:element ref="scm:substitutionGroupAffiliation" minOccurs="0" maxOccurs="unbounded"/>
 	  	<xs:element ref="scm:alternativeType" minOccurs="0" maxOccurs="unbounded"/>
 	  	<xs:element ref="scm:identityConstraint" minOccurs="0" maxOccurs="unbounded"/>
-		<xs:element ref="scm:fixed" minOccurs="0" maxOccurs="1"/>
+	    <xs:choice>
+		    <xs:element ref="scm:fixed" minOccurs="0" maxOccurs="1"/>
+	      <xs:element ref="scm:default" minOccurs="0" maxOccurs="1"/>
+	    </xs:choice>
 	  </xs:sequence>
       <xs:attribute name="abstract" use="required" type="xs:boolean"/>
 	  <xs:attribute name="block" use="optional" type="scm:blockType"/>
@@ -243,8 +249,11 @@
     </xs:annotation>  
     <xs:complexType>
       <xs:sequence>
-	  	<xs:element ref="scm:fixed" minOccurs="0" maxOccurs="1"/>
-	  </xs:sequence>
+        <xs:choice>
+          <xs:element ref="scm:fixed" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="scm:default" minOccurs="0" maxOccurs="1"/>
+        </xs:choice>
+	    </xs:sequence>
       <xs:attribute name="default" type="xs:string"/>
       <xs:attribute name="ref" use="required" type="xs:IDREF"/>
       <xs:attribute name="required" use="required" type="xs:boolean"/>
@@ -263,7 +272,8 @@
     </xs:complexType>
   </xs:element>
   
-  <xs:element name="fixed" type="scm:typedValueType"/>  
+  <xs:element name="fixed" type="scm:typedValueType"/> 
+  <xs:element name="default" type="scm:typedValueType"/> 
 
   <xs:element name="abstractParticle" abstract="true" type="scm:abstractParticleType">
     <xs:annotation>
