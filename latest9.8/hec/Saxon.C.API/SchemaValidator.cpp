@@ -260,7 +260,7 @@ if (!mID) {
             SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
                         SaxonProcessor::sxn_environ->env->NewStringUTF("lax"));
                         SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-                        booleanValue(*(SaxonProcessor::sxn_environ), lax));
+                        booleanValue(SaxonProcessor::sxn_environ, lax));
             i++;
         }
 		for (std::map<std::string, XdmValue*>::iterator iter = parameters.begin();
