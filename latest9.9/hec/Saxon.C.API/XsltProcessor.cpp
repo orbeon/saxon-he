@@ -473,7 +473,7 @@ void XsltProcessor::transformFileToFile(const char* source,
 
 					cerr<<"Type of value:"<<(typeid(xx).name())<<endl;
 				}
-				if((iter->second)->getUnderlyingValue(proc) == NULL) {
+				if((iter->second)->getUnderlyingValue() == NULL) {
 					cerr<<"(iter->second)->getUnderlyingValue() is NULL"<<endl;
 				}
 #endif
@@ -613,7 +613,7 @@ const char * XsltProcessor::transformFileToString(const char* source,
 
 					cerr<<"Type of value:"<<(typeid(xx).name())<<endl;
 				}
-				if((iter->second)->getUnderlyingValue(proc) == NULL) {
+				if((iter->second)->getUnderlyingValue() == NULL) {
 					cerr<<"(iter->second)->getUnderlyingValue() is NULL"<<endl;
 				}
 #endif
