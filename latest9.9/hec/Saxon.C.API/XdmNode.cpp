@@ -105,7 +105,7 @@ bool XdmNode::isAtomic() {
         		jmethodID strMID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(xdmNodeClass,
         					"toString",
         					"()Ljava/lang/String;");
-        		if (!bmID) {
+        		if (!strbmID) {
         			std::cerr << "Error: Saxonc." << "toString"
         				<< " not found\n" << std::endl;
         			return NULL;

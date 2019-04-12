@@ -62,14 +62,14 @@ jobject XdmItem::getUnderlyingValue(){
     		jmethodID sbmID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(xdmItemClass,
     					"getStringValue",
     					"()Ljava/lang/String;");
-    		if (!bmID) {
+    		if (!sbmID) {
     			std::cerr << "Error: Saxonc." << "getStringValue"
     				<< " not found\n" << std::endl;
     			return NULL;
     		} else {
     			jstring result = (jstring)(SaxonProcessor::sxn_environ->env->CallObjectMethod(value->xdmvalue, sbmID));
     			if(result) {
-    					const char * str = (*(environi->env))->GetStringUTFChars(SaxonProcessor::sxn_environ->env, result, NULL);
+    					const char * str = SaxonProcessor::sxn_environ->env->GetStringUTFChars(result, NULL);
     					stringValue = str;
                         return str;
     			}
