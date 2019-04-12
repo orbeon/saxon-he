@@ -53,7 +53,6 @@ public:
 		refCount = 1;
 		jValues = NULL;
 		valueType = NULL;
-		proc = null;
 	}
 
 	XdmValue(SaxonProcessor * p){
@@ -145,14 +144,6 @@ public:
      */
       virtual int size();
 
-
-         /**
-          * Create a string representation of the value. The is the result of serializing
-          * the value using the adaptive serialization method.
-          * @return a string representation of the value
-          */
-     const char * toString();
-
       int getRefCount(){
 	return refCount;
       }
@@ -191,13 +182,13 @@ public:
 protected:
 	SaxonProcessor *proc;
 	char* valueType;  /*!< Cached. The type of the XdmValue */
-
+	//string valueStr;  /*!< Cached. String representation of the XdmValue, if available */
 
 	std::vector<XdmItem*> values;
 	int xdmSize; 	/*!< Cached. The count of items in the XdmValue */
 	int refCount;
 private:
-    const char * toStringValue;  /*!< Cached. String representation of the XdmValue, if available */
+	
 	jobjectArray jValues;
 };
 
