@@ -24,6 +24,7 @@ import net.sf.saxon.tree.wrapper.AbstractNodeWrapper;
 import net.sf.saxon.tree.wrapper.SiblingCountingNode;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.type.UType;
+import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.*;
 
 import java.util.ArrayList;
@@ -757,15 +758,38 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
 
     public DOMNodeWrapper getNextSibling() {
         synchronized (docWrapper.docNode) {
-            Node currNode = node.getNextSibling();
+            Node currNode = node;
+            for (int i=0; i<span; i++) {
+                currNode = currNode.getNextSibling();
+            }
             if (currNode != null) {
-                if (currNode.getNodeType() == Node.DOCUMENT_TYPE_NODE) {
+                short type = currNode.getNodeType();
+                if (type == Node.DOCUMENT_TYPE_NODE) {
                     currNode = currNode.getNextSibling();
+                } else if (type == Node.TEXT_NODE || type == Node.CDATA_SECTION_NODE) {
+                    return spannedWrapper(currNode);
                 }
                 return makeWrapper(currNode, docWrapper);
             }
             return null;
         }
+    }
+
+    @NotNull
+    private DOMNodeWrapper spannedWrapper(Node currNode) {
+        Node currText = currNode;
+        int thisSpan = 1;
+        while (true) {
+            currText = currText.getNextSibling();
+            if (currText != null && (currText.getNodeType() == Node.TEXT_NODE || currText.getNodeType() == Node.CDATA_SECTION_NODE)) {
+                thisSpan++;
+            } else {
+                break;
+            }
+        }
+        DOMNodeWrapper spannedText = makeWrapper(currNode, docWrapper);
+        spannedText.span = thisSpan;
+        return spannedText;
     }
 
 
@@ -775,6 +799,9 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
             if (currNode != null) {
                 if (currNode.getNodeType() == Node.DOCUMENT_TYPE_NODE) {
                     currNode = currNode.getNextSibling();
+                }
+                if (currNode.getNodeType() == Node.TEXT_NODE || currNode.getNodeType() == Node.CDATA_SECTION_NODE) {
+                    return spannedWrapper(currNode);
                 }
                 return makeWrapper(currNode, docWrapper);
             }
@@ -786,8 +813,23 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
         synchronized (docWrapper.docNode) {
             Node currNode = node.getPreviousSibling();
             if (currNode != null) {
-                if (currNode.getNodeType() == Node.DOCUMENT_TYPE_NODE) {
+                short type = currNode.getNodeType();
+                if (type == Node.DOCUMENT_TYPE_NODE) {
                     return null;
+                } else if (type == Node.TEXT_NODE || type == Node.CDATA_SECTION_NODE) {
+                    int span = 1;
+                    while (true) {
+                        Node prev = currNode.getPreviousSibling();
+                        if (prev != null && (prev.getNodeType() == Node.TEXT_NODE || prev.getNodeType() == Node.CDATA_SECTION_NODE)) {
+                            span++;
+                            currNode = prev;
+                        } else {
+                            break;
+                        }
+                    }
+                    DOMNodeWrapper wrapper = makeWrapper(currNode, docWrapper);
+                    wrapper.span = span;
+                    return wrapper;
                 }
                 return makeWrapper(currNode, docWrapper);
             }
