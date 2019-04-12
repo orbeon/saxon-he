@@ -260,7 +260,7 @@ if (!mID) {
             SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
                         SaxonProcessor::sxn_environ->env->NewStringUTF("lax"));
                         SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-                        booleanValue(*(SaxonProcessor::sxn_environ), lax));
+                        booleanValue(SaxonProcessor::sxn_environ, lax));
             i++;
         }
 		for (std::map<std::string, XdmValue*>::iterator iter = parameters.begin();
@@ -468,14 +468,6 @@ void SchemaValidator::clearParameters(bool delVal) {
 
 void SchemaValidator::clearProperties() {
 	properties.clear();
-}
-
-XdmValue* XsltProcessor::getParameter(const char* name) {
-        std::map<std::string, XdmValue*>::iterator it;
-        it = parameters.find("param:"+std::string(name));
-        if (it != parameters.end())
-          return it->second;
-        return NULL;
 }
 
 std::map<std::string,XdmValue*>& SchemaValidator::getParameters(){

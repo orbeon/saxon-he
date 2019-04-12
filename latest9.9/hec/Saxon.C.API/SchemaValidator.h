@@ -129,14 +129,6 @@ public:
      */
     void clearProperties();
 
-    /**
-      * Get a parameter value by name
-      * @param name - Specified paramater name to get
-      * @return XdmValue
-    */
-    XdmValue* getParameter(const char* name);
-
-
 
      /**
       * Get all parameters as a std::map
@@ -192,7 +184,7 @@ public:
      * element declaration results in the content being considered valid.
      * @param lax true if validation is to be lax, false if it is to be strict
     */
-    void setLax(bool l)
+    void setLax(bool l){
       lax = l;
     }
 
