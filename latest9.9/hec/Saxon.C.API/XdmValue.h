@@ -28,7 +28,7 @@ class SaxonProcessor;
 class XdmItem;
 
 
-typedef enum eXdmType { XDM_VALUE=1, XDM_ITEM=2, XDM_NODE=3, XDM_ATOMIC_VALUE=4, XDM_FUNCTION_ITEM=5 } XDM_TYPE;
+typedef enum eXdmType { XDM_VALUE = 1, XDM_ITEM = 2, XDM_NODE = 3, XDM_ATOMIC_VALUE = 4, XDM_FUNCTION_ITEM = 5 } XDM_TYPE;
 
 typedef enum saxonTypeEnum
 {
@@ -45,17 +45,18 @@ class XdmValue {
 
 
 public:
-/**
-     * A default Constructor. Create a empty value
-     */
-	XdmValue(){
+	/**
+		 * A default Constructor. Create a empty value
+		 */
+	XdmValue() {
 		xdmSize = 0;
 		refCount = 1;
 		jValues = NULL;
 		valueType = NULL;
+		proc = null;
 	}
 
-	XdmValue(SaxonProcessor * p){
+	XdmValue(SaxonProcessor * p) {
 		proc = p;
 		jValues = NULL;
 		refCount = 1;
@@ -63,55 +64,55 @@ public:
 	}
 
 
-    /**
-     * A copy constructor.
-     * @param val - Xdmvalue
-     */
+	/**
+	 * A copy constructor.
+	 * @param val - Xdmvalue
+	 */
 	XdmValue(const XdmValue &other);
 
-     /**
-     * Constructor. Create a value from a collection of items
-     * @param val - Xdmvalue
-     */
+	/**
+	* Constructor. Create a value from a collection of items
+	* @param val - Xdmvalue
+	*/
 	//XdmValue(XdmValue * items, int length);
 
 
- 
-     /**
-     * Constructor. Create a value from a collection of items
-     * @param val - Xdmvalue
-     */
-	//XdmValue(XdmItem *items, int length);
 
-    /**
-     * Add an XdmItem  to the sequence. This method is designed for the primitive types.
-     * @param type - specify target type of the value  
-     * @param val - Value to convert
-     */
+	 /**
+	 * Constructor. Create a value from a collection of items
+	 * @param val - Xdmvalue
+	 */
+	 //XdmValue(XdmItem *items, int length);
+
+	 /**
+	  * Add an XdmItem  to the sequence. This method is designed for the primitive types.
+	  * @param type - specify target type of the value
+	  * @param val - Value to convert
+	  */
 	XdmValue * addXdmValueWithType(const char * tStr, const char * val);//TODO check and document
 
-    /**
-     * Add an XdmItem to the sequence. 
-     * See methods the functions in SaxonCXPath of the C library
-     * @param val - XdmItem object
-     */
-     void addXdmItem(XdmItem *val);
+	/**
+	 * Add an XdmItem to the sequence.
+	 * See methods the functions in SaxonCXPath of the C library
+	 * @param val - XdmItem object
+	 */
+	void addXdmItem(XdmItem *val);
 
-    /**
-     * Add an Java XdmValue object to the sequence. 
-     * See methods the functions in SaxonCXPath of the C library
-     * @param val - Java object
-     */
-     void addUnderlyingValue(jobject val);
+	/**
+	 * Add an Java XdmValue object to the sequence.
+	 * See methods the functions in SaxonCXPath of the C library
+	 * @param val - Java object
+	 */
+	void addUnderlyingValue(jobject val);
 
-  
+
 
 	//TODO XdmValue with constructor of sequence of values
 
-    /**
-     * A Constructor. Wrap an Java XdmValue object.
-     * @param val - Java XdmValue object
-     */
+	/**
+	 * A Constructor. Wrap an Java XdmValue object.
+	 * @param val - Java XdmValue object
+	 */
 	XdmValue(jobject val);
 
 
@@ -120,58 +121,66 @@ public:
 	void releaseXdmValue();
 
 
-    /**
-     * Get the first item in the sequence
-     * @return XdmItem or null if sequence is empty
-     */
+	/**
+	 * Get the first item in the sequence
+	 * @return XdmItem or null if sequence is empty
+	 */
 	virtual XdmItem * getHead();
 
-  /**
-     * Get the n'th item in the value, counting from zero.
-     *
-     * @param n the item that is required, counting the first item in the sequence as item zero
-     * @return the n'th item in the sequence making up the value, counting from zero
-     * return NULL  if n is less than zero or greater than or equal to the number
-     *                                    of items in the value
-     * return NULL if the value is lazily evaluated and the delayed
-     *                                    evaluation fails with a dynamic error.
-     */
+	/**
+	   * Get the n'th item in the value, counting from zero.
+	   *
+	   * @param n the item that is required, counting the first item in the sequence as item zero
+	   * @return the n'th item in the sequence making up the value, counting from zero
+	   * return NULL  if n is less than zero or greater than or equal to the number
+	   *                                    of items in the value
+	   * return NULL if the value is lazily evaluated and the delayed
+	   *                                    evaluation fails with a dynamic error.
+	   */
 	virtual XdmItem * itemAt(int n);
 
-    /**
-     * Get the number of items in the sequence
-     *
-     */
-      virtual int size();
-
-      int getRefCount(){
-	return refCount;
-      }
+	/**
+	 * Get the number of items in the sequence
+	 *
+	 */
+	virtual int size();
 
 
-	
-      void incrementRefCount(){
-	refCount++;
-	//std::cerr<<"refCount-inc-xdmVal="<<refCount<<" ob ref="<<(this)<<std::endl;
-      }
+	/**
+	 * Create a string representation of the value. The is the result of serializing
+	 * the value using the adaptive serialization method.
+	 * @return a string representation of the value
+	 */
+	const char * toString();
 
-      void decrementRefCount(){
-	if(refCount >0)
-		refCount--;
-	//std::cerr<<"refCount-dec-xdmVal="<<refCount<<" ob ref="<<(this)<<std::endl;
-      }
+	int getRefCount() {
+		return refCount;
+	}
 
-	void setProcessor(SaxonProcessor *p){proc = p;}
 
-        /*const char * getErrorMessage(int i);
-        const char * getErrorCode(int i);
-	int exceptionCount();*/
-	const char * checkFailures(){return failure;}
 
-   /**
-     * Get Java XdmValue object.
-     * @return jobject - The Java object of the XdmValue in its JNI representation
-     */
+	void incrementRefCount() {
+		refCount++;
+		//std::cerr<<"refCount-inc-xdmVal="<<refCount<<" ob ref="<<(this)<<std::endl;
+	}
+
+	void decrementRefCount() {
+		if (refCount > 0)
+			refCount--;
+		//std::cerr<<"refCount-dec-xdmVal="<<refCount<<" ob ref="<<(this)<<std::endl;
+	}
+
+	void setProcessor(SaxonProcessor *p) { proc = p; }
+
+	/*const char * getErrorMessage(int i);
+	const char * getErrorCode(int i);
+int exceptionCount();*/
+	const char * checkFailures() { return failure; }
+
+	/**
+	  * Get Java XdmValue object.
+	  * @return jobject - The Java object of the XdmValue in its JNI representation
+	  */
 	virtual  jobject getUnderlyingValue();
 
 	/**
@@ -182,13 +191,13 @@ public:
 protected:
 	SaxonProcessor *proc;
 	char* valueType;  /*!< Cached. The type of the XdmValue */
-	//string valueStr;  /*!< Cached. String representation of the XdmValue, if available */
+
 
 	std::vector<XdmItem*> values;
 	int xdmSize; 	/*!< Cached. The count of items in the XdmValue */
 	int refCount;
 private:
-	
+	const char * toStringValue;  /*!< Cached. String representation of the XdmValue, if available */
 	jobjectArray jValues;
 };
 
