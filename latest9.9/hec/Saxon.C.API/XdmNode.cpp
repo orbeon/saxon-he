@@ -75,7 +75,7 @@ bool XdmNode::isAtomic() {
     		jmethodID tbmID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(xdmNodeClass,
     					"getTypedValue",
     					"()Lnet/sf/saxon/s9api/XdmValue;");
-    		if (!bmID) {
+    		if (!tbmID) {
     			std::cerr << "Error: Saxonc." << "getTypedValue"
     				<< " not found\n" << std::endl;
     			return NULL;

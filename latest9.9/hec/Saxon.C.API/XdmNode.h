@@ -81,9 +81,7 @@ public:
 	 */
 	const char * getStringValue();
 
-
-	XdmValue * getTypedValue();
-
+	
 	const char * toString();
 
 	XdmNode* getParent();
