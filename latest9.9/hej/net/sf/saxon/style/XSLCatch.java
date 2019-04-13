@@ -143,7 +143,7 @@ public class XSLCatch extends StyleElement {
                     String[] parts = NameChecker.getQNameParts(s);
                     prefix = parts[0];
                     if (parts[0].equals("")) {
-                        uri = getDefaultXPathNamespace();
+                        uri = "";
                     } else {
                         uri = getURIForPrefix(prefix, false);
                         if (uri == null) {
