@@ -102,7 +102,7 @@ void XsltProcessor::setJustInTimeCompilation(bool jit){
 			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
 					"setJustInTimeCompilation",
 					"(Z)V");
-	if (!cAndSStringmID) {
+	if (!jitmID) {
 		cerr << "Error: "<<getDllname() << ".setJustInTimeCompilation"
 				<< " not found\n" << endl;
 
@@ -110,6 +110,7 @@ void XsltProcessor::setJustInTimeCompilation(bool jit){
 		SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, jitmID, jit);
 
 		proc->checkAndCreateException(cppClass);
+	}
 }
 
 void XsltProcessor::setProperty(const char* name, const char* value) {	

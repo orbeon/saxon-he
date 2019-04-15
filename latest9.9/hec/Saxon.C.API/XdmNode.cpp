@@ -102,17 +102,17 @@ bool XdmNode::isAtomic() {
     const char * XdmNode::toString(){
        	if(stringValue == NULL) {
         		jclass xdmNodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
-        		jmethodID strMID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(xdmNodeClass,
+        		jmethodID strbMID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(xdmNodeClass,
         					"toString",
         					"()Ljava/lang/String;");
-        		if (!strbmID) {
+        		if (!strbMID) {
         			std::cerr << "Error: Saxonc." << "toString"
         				<< " not found\n" << std::endl;
         			return NULL;
         		} else {
-        			jstring result = (jstring) (SaxonProcessor::sxn_environ->env->CallObjectMethod(value->xdmvalue, strMID));
+        			jstring result = (jstring) (SaxonProcessor::sxn_environ->env->CallObjectMethod(value->xdmvalue, strbMID));
         			if(result) {
-                       const char * str = (*(environi->env))->GetStringUTFChars(SaxonProcessor::sxn_environ->env, result, NULL);
+                       const char * str = SaxonProcessor::sxn_environ->env->GetStringUTFChars(result, NULL);
                        stringValue = str;
                   		return str;
                 }
