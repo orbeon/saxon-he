@@ -31,6 +31,49 @@ cdef extern from "../SaxonProcessor.h":
 
         XsltProcessor * newXsltProcessor()
 
+        XQueryProcessor * newXQueryProcessor()
+
+        XPathProcessor * newXPathProcessor()
+
+        SchemaValidator * newSchemaValidator()
+
+        XdmAtomicValue * makeStringValue(const char* str)
+
+        XdmAtomicValue * makeStringValue(const char * str)
+
+        XdmAtomicValue * makeIntegerValue(int i)
+
+        XdmAtomicValue * makeDoubleValue(double d)
+
+        XdmAtomicValue * makeFloatValue(float)
+
+        XdmAtomicValue * makeLongValue(long l)
+
+        XdmAtomicValue * makeBooleanValue(bool b)
+
+        XdmAtomicValue * makeQNameValue(const char* str)
+
+        XdmAtomicValue * makeAtomicValue(const char* type, const char* value)
+
+        const char * getStringValue(XdmItem * item)
+
+        XdmNode * parseXmlFromString(const char* source)
+
+        XdmNode * parseXmlFromFile(const char* source)
+
+        XdmNode * parseXmlFromUri(const char* source)
+
+        int getNodeKind(jobject)
+
+        bool isSchemaAware()
+
+        bool exceptionOccurred()
+
+        void exceptionClear()
+  
+        SaxonApiException * getException()
+
+
     cdef cppclass XsltProcessor:
         XsltProcessor() except +
         # set the current working directory
@@ -45,4 +88,84 @@ cdef extern from "../SaxonProcessor.h":
 
         #Set the output file of where the transformation result is sent
         void setOutputFile(const char* outfile)
+
+        void setJustInTimeCompilation(bool jit)
+
+        void setParameter(const char* name, XdmValue*value)
+
+        XdmValue* getParameter(const char* name)
+
+        removeParameter(const char* name)
+
+        void setProperty(const char* name, const char* value)
+
+        void clearParameters(bool deleteValues=false)
+
+        void clearProperties()
+
+        XdmValue * getXslMessages()
+
+        void transformFileToFile(const char* sourcefile, const char* stylesheetfile, const char* outputfile)
+	
+        const char * transformFileToString(const char* sourcefile, const char* stylesheetfile)
+
+        XdmValue * transformFileToValue(const char* sourcefile, const char* stylesheetfile)
+
+        void compileFromFile(const char* stylesheet)
+
+        void compileFromString(const char* stylesheet)
+
+        void compileFromStringAndSave(const char* stylesheet, const char* filename)
+
+        void compileFromFileAndSave(const char* xslFilename, const char* filename)
+
+        void compileFromXdmNode(XdmNode * node)
+
+        void releaseStylesheet()
+
+        const char * transformToString()
+
+        XdmValue * transformToValue()
+
+        void transformToFile()
+
+        bool exceptionOccurred()
+
+        const char* checkException()
+
+        void exceptionClear()
+    
+        int exceptionCount()
+
+        const char * getErrorMessage(int)
+
+        const char * getErrorCode(int)
+
+
+    cdef cppclass XdmValue:
+        XdmValue() except +
+	XdmValue * addXdmValueWithType(const char * tStr, const char * val)
+	void addXdmItem(XdmItem *val)
+	#void releaseXdmValue()
+
+	XdmItem * getHead()
+
+	XdmItem * itemAt(int)
+
+	int size()
+
+	const char * toString()
+
+    cdef cppclass XdmItem(XdmValue):
+        XdmItem() except +
+        SetObject(XdmValue *)
+
+    cdef cppclass XdmNode(XdmItem):
+        Xdmnode() except +
+        SetObject(XdmItem *)
+
+
+    cdef cppclass XdmAtomicValue(XdmAtomicValue):
+        XdmAtomicValue() except +
+        SetObject(XdmItem *)
 
