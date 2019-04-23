@@ -37,9 +37,7 @@ cdef extern from "../SaxonProcessor.h":
 
         SchemaValidator * newSchemaValidator()
 
-        XdmAtomicValue * makeStringValue(const char* str)
-
-        XdmAtomicValue * makeStringValue(const char * str)
+        XdmAtomicValue * makeStringValue(const char* str1)
 
         XdmAtomicValue * makeIntegerValue(int i)
 
@@ -62,8 +60,6 @@ cdef extern from "../SaxonProcessor.h":
         XdmNode * parseXmlFromFile(const char* source)
 
         XdmNode * parseXmlFromUri(const char* source)
-
-        int getNodeKind(jobject)
 
         bool isSchemaAware()
 
@@ -162,10 +158,8 @@ cdef extern from "../SaxonProcessor.h":
 
     cdef cppclass XdmNode(XdmItem):
         Xdmnode() except +
-        SetObject(XdmItem *)
 
 
-    cdef cppclass XdmAtomicValue(XdmAtomicValue):
+    cdef cppclass XdmAtomicValue(XdmItem):
         XdmAtomicValue() except +
-        SetObject(XdmItem *)
 
