@@ -12,11 +12,11 @@ cdef extern from "../SaxonProcessor.h":
         void setcwd(char* cwd)
         const char* getcwd()
 
-	#SaxonProcessor * getProcessor();
+        #SaxonProcessor * getProcessor();
 
         #set saxon resources directory
         void setResourcesDirectory(const char* dir)
-	
+        
         #get saxon resources directory
         const char * getResourcesDirectory()
 
@@ -66,8 +66,6 @@ cdef extern from "../SaxonProcessor.h":
         bool exceptionOccurred()
 
         void exceptionClear()
-  
-        SaxonApiException * getException()
 
 
     cdef cppclass XsltProcessor:
@@ -102,7 +100,7 @@ cdef extern from "../SaxonProcessor.h":
         XdmValue * getXslMessages()
 
         void transformFileToFile(const char* sourcefile, const char* stylesheetfile, const char* outputfile)
-	
+        
         const char * transformFileToString(const char* sourcefile, const char* stylesheetfile)
 
         XdmValue * transformFileToValue(const char* sourcefile, const char* stylesheetfile)
@@ -137,29 +135,41 @@ cdef extern from "../SaxonProcessor.h":
 
         const char * getErrorCode(int)
 
+    cdef cppclass SchemaValidator:
+        SchemaValidator() except +
 
+    cdef cppclass XPathProcessor:
+        XPathProcessor() except +
+
+    cdef cppclass XQueryProcessor:
+        XQueryProcessor() except +
+
+
+cdef extern from "../XdmValue.h":
     cdef cppclass XdmValue:
         XdmValue() except +
-	XdmValue * addXdmValueWithType(const char * tStr, const char * val)
-	void addXdmItem(XdmItem *val)
-	#void releaseXdmValue()
+        XdmValue * addXdmValueWithType(const char * tStr, const char * val)
+        void addXdmItem(XdmItem *val)
+        #void releaseXdmValue()
 
-	XdmItem * getHead()
+        XdmItem * getHead()
 
-	XdmItem * itemAt(int)
+        XdmItem * itemAt(int)
 
-	int size()
+        int size()
 
-	const char * toString()
+        const char * toString()
 
+cdef extern from "../XdmItem.h":
     cdef cppclass XdmItem(XdmValue):
         XdmItem() except +
         SetObject(XdmValue *)
 
+cdef extern from "../XdmNode.h":
     cdef cppclass XdmNode(XdmItem):
         Xdmnode() except +
 
-
+cdef extern from "../XdmAtomicValue.h":
     cdef cppclass XdmAtomicValue(XdmItem):
         XdmAtomicValue() except +
 
