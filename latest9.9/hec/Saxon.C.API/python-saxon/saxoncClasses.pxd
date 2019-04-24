@@ -12,7 +12,7 @@ cdef extern from "../SaxonProcessor.h":
         void setcwd(char* cwd)
         const char* getcwd()
 
-        #SaxonProcessor * getProcessor();
+        #SaxonProcessor * getProcessor()
 
         #set saxon resources directory
         void setResourcesDirectory(const char* dir)
@@ -93,7 +93,7 @@ cdef extern from "../SaxonProcessor.h":
 
         void setProperty(const char* name, const char* value)
 
-        void clearParameters(bool deleteValues=false)
+        void clearParameters(bool deleteValues)
 
         void clearProperties()
 
@@ -141,8 +141,98 @@ cdef extern from "../SaxonProcessor.h":
     cdef cppclass XPathProcessor:
         XPathProcessor() except +
 
+        void setBaseURI(const char * uriStr)
+
+        XdmValue * evaluate(const char * xpathStr)
+   
+        XdmItem * evaluateSingle(const char * xpathStr)
+
+        void setContextItem(XdmItem * item)
+        
+        void setcwd(const char* cwd)
+
+        void setContextFile(const char * filename) 
+
+        bool effectiveBooleanValue(const char * xpathStr)
+
+        void setParameter(const char * name, XdmValue*value)
+
+        bool removeParameter(const char * name)
+
+        void setProperty(const char * name, const char * value)
+
+        void declareNamespace(const char *prefix, const char * uri)
+
+        void clearParameters(bool)
+
+        void clearProperties()
+
+        bool exceptionOccurred()
+
+        void exceptionClear()
+
+        int exceptionCount()
+
+        const char * getErrorMessage(int i)
+
+        const char * getErrorCode(int i)
+
+        const char* checkException()
+
     cdef cppclass XQueryProcessor:
         XQueryProcessor() except +
+
+        void setContextItem(XdmItem * value)
+
+        void setOutputFile(const char* outfile)
+
+        void setContextItemFromFile(const char * filename) 
+
+        void setParameter(const char * name, XdmValue*value)
+
+        bool removeParameter(const char * name)
+
+        void setProperty(const char * name, const char * value)
+
+        void clearParameters(bool)
+
+        void clearProperties()
+
+        void setUpdating(bool updating)
+
+
+        void executeQueryToFile(const char * infilename, const char * ofilename, const char * query)
+
+        XdmValue * executeQueryToValue(const char * infilename, const char * query)
+
+        const char * executeQueryToString(const char * infilename, const char * query)
+
+        XdmValue * runQueryToValue()
+        const char * runQueryToString()
+
+        void runQueryToFile()
+
+        void declareNamespace(const char *prefix, const char * uri)
+
+        void setQueryFile(const char* filename)
+
+        void setQueryContent(const char* content)
+
+        void setQueryBaseURI(const char * baseURI)
+
+        void setcwd(const char* cwd)
+
+        const char* checkException()
+
+        bool exceptionOccurred()
+
+        void exceptionClear()
+
+        int exceptionCount()
+
+        const char * getErrorMessage(int i)
+
+        const char * getErrorCode(int i)
 
 
 cdef extern from "../XdmValue.h":

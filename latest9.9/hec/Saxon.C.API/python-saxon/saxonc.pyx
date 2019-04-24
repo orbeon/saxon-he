@@ -138,7 +138,7 @@ cdef class PyXsltProcessor:
      def setProperty(self, name, value):
         self.thisxprt.setProperty(name, value.thisvptr)
      def clearParameters(self):
-        self.thisxprt.clearParameters()
+        self.thisxprt.clearParameters(True)
      def clearProperties(self):
         self.thisxprt.clearProperties()
      def getXslMessages(self):
@@ -192,6 +192,65 @@ cdef class PyXQueryProcessor:
      def __dealloc__(self):
         if self.thisxqptr != NULL:
            del self.thisxqptr
+     def setContextItem(self, PyXdmItem value):
+        self.thisxqptr.setContextItem(value.derivedptr)
+     def setOutputFile(self, outfile):
+        self.thisxqptr.setOutputFile(outfile)
+     def setContextItemFromFile(self, filename): 
+        self.thisxqptr.setContextItemFromFile(filename)
+     def setParameter(self, name, PyXdmValue value):
+        self.thisxqptr.setParameter(name, value.thisvptr)
+     def removeParameter(self, name):
+        self.thisxqptr.removeParameter(name)
+     def setProperty(self, name, value):
+        self.thisxqptr.setProperty(name, value)
+     def clearParameters(self):
+        self.thisxqptr.clearParameters(True)
+     def clearProperties(self):
+        self.thisxqptr.clearProperties()
+     def setUpdating(self, updating):
+        self.thisxqptr.setUpdating(updating)
+
+     def executeQueryToFile(self, infilename, ofilename, query):
+        self.thisxqptr.executeQueryToFile(infilename, ofilename, query)
+     def executeQueryToValue(self, infilename, query):
+        cdef PyXdmValue val = PyXdmValue()
+        val.thisvptr = self.thisxqptr.executeQueryToValue(infilename, query)
+        return val
+     def executeQueryToString(self, infilename, query):
+        self.thsxqptr.executeQueryToString(infilename, query)
+     def runQueryToValue(self):
+        cdef PyXdmValue val = PyXdmValue()
+        val.thisvptr = self.thisxqptr.runQueryToValue()
+        return val
+     def runQueryToString(self):
+        return self.thisxqptr.runQueryToString()
+
+     def runQueryToFile(self):
+        self.thisxqptr.runQueryToFile()
+
+     def declareNamespace(self, prefix, uri):
+        self.thisxqptr.declareNamespace(prefix, uri)
+     def setQueryFile(self, filename):
+        self.thisxqptr.setQueryFile(filename)
+     def setQueryContent(self, content):
+        self.thisxqptr.setQueryContent(content)
+     def setQueryBaseURI(self, baseURI):
+        self.thisxqptr.setQueryBaseURI(baseURI)
+     def setcwd(self, cwd):
+        self.thisxqptr.setcwd(cwd)
+     def checkException(self):
+        return self.thisxqptr.checkException()
+     def exceptionOccurred(self):
+        return self.thisxqptr.exceptionOccurred()
+     def exceptionClear(self):
+        self.thisxqptr.exceptionClear()
+     def exceptionCount(self):
+        return self.thisxqptr.exceptionCount()
+     def getErrorMessage(self, i):
+        return self.thisxqptr.getErrorMessage(i)
+     def getErrorCode(self, i):
+        return self.thisxqptr.getErrorCode(i)
 
 cdef class PyXPathProcessor:
      cdef saxoncClasses.XPathProcessor *thisxpptr      # hold a C++ instance which we're wrapping
@@ -201,6 +260,49 @@ cdef class PyXPathProcessor:
      def __dealloc__(self):
         if self.thisxpptr != NULL:
            del self.thisxpptr
+     def setBaseURI(self, uriStr):
+        self.thisxpptr.setBaseURI(uriStr)
+     def evaluate(self, xpathStr):
+        cdef PyXdmValue val = PyXdmValue()
+        val.thisvptr = self.thisxpptr.evaluate(xpathStr)
+        return val
+     def evaluateSingle(self, xpathStr):
+        cdef PyXdmItem val = PyXdmItem()
+        val.derivedptr = val.thisvptr = self.thisxpptr.evaluateSingle(xpathStr)
+        return val
+     def setContextItem(self, PyXdmItem item):
+        self.thisxpptr.setContextItem(item.derivedptr)
+     def setcwd(self, cwd):
+        self.thisxpptr.setcwd(cwd)
+     def setContextFile(self, filename): 
+        self.thisxpptr.setContextFile(filename)
+     def effectiveBooleanValue(self, xpathStr):
+        return self.thisxpptr.effectiveBooleanValue(xpathStr)
+     def setParameter(self, name, PyXdmValue value):
+        self.thisxpptr.setParameter(name, value.thisvptr)
+     def removeParameter(self, name):
+        self.thisxpptr.removeParameter(name)
+     def setProperty(self, name, const char * value):
+        self.thisxpptr.setProperty(name, value)
+     def declareNamespace(self, prefix, uri):
+        self.thisxpptr.declareNamespace(prefix, uri)
+     def clearParameters(self, cl):
+        self.thisxpptr.clearParameters(True)
+     def clearProperties(self):
+        self.thisxpptr.clearProperties()
+     def checkException(self):
+        return self.thisxpptr.checkException()
+     def exceptionOccurred(self):
+        return self.thisxpptr.exceptionOccurred()
+     def exceptionClear(self):
+        self.thisxpptr.exceptionClear()
+     def exceptionCount(self):
+        return self.thisxpptr.exceptionCount()
+     def getErrorMessage(self, i):
+        self.thisxpptr.getErrorMessage(i)
+     def getErrorCode(self, i):
+        return self.thisxpptr.getErrorCode(i)
+
 
 cdef class PySchemaValidator:
      cdef saxoncClasses.SchemaValidator *thissvptr      # hold a C++ instance which we're wrapping
@@ -235,9 +337,8 @@ cdef class PyXdmItem(PyXdmValue):
 cdef class PyXdmNode(PyXdmItem):
      cdef saxoncClasses.XdmNode *derivednptr      # hold a C++ instance which we're wrapping
 
-     # def __cinit__(self):
-      #   if type(self) is PyXdmNode:
-      #       self.derivednptr = self.derivedptr = self.thisvptr = new saxoncClasses.XdmNode()
+     def __cinit__(self):
+        self.derivednptr = self.derivedptr = self.thisvptr = NULL
      def __dealloc__(self):
         del self.derivednptr
 
