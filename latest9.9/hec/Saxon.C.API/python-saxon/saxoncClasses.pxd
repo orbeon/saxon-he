@@ -163,11 +163,10 @@ cdef extern from "../XdmValue.h":
 cdef extern from "../XdmItem.h":
     cdef cppclass XdmItem(XdmValue):
         XdmItem() except +
-        SetObject(XdmValue *)
 
 cdef extern from "../XdmNode.h":
     cdef cppclass XdmNode(XdmItem):
-        Xdmnode() except +
+        getNodeName()
 
 cdef extern from "../XdmAtomicValue.h":
     cdef cppclass XdmAtomicValue(XdmItem):

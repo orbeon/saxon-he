@@ -36,12 +36,18 @@ public:
       @param proc - Supplied pointer to the SaxonProcessor object
       cwd - The current working directory
     */
-    XsltProcessor(SaxonProcessor* proc, std::string cwd="");
+    XsltProcessor(SaxonProcessor* proc, const char* cwd="");
 
      ~XsltProcessor(){
 	clearProperties();
 	clearParameters();
      }
+
+	//! Get the SaxonProcessor object
+	/**
+	* @return SaxonProcessor - Pointer to the object
+	*/
+    SaxonProcessor * getSaxonProcessor(){return proc;}
 
     //!set the current working directory
     /**
@@ -305,14 +311,6 @@ public:
     */
     const char * getErrorCode(int i);
 
-
-
-
-	//! Get the SaxonProcessor object
-	/**
-	* @return SaxonProcessor - Pointer to the object
-	*/
-    SaxonProcessor * getSaxonProcessor(){return proc;}
 
 
 private:

@@ -325,6 +325,12 @@ public:
       * Destructor
     */
     ~SaxonProcessor();
+
+
+   //! Get the Processor object. Method used in Python
+   /* SaxonProcessor * getProcessor(){
+	return this;
+    }*/
 	
    /*!
 
@@ -422,7 +428,7 @@ public:
      * @param valueStr - The value given in a string form in clark notation. {uri}local
      * @return XdmAtomicValue - value
     */
-    XdmAtomicValue * makeQNameValue(std::string str);
+    XdmAtomicValue * makeQNameValue(const char * str);
 
     /*!
      * Create an Xdm Atomic value from string representation
@@ -431,7 +437,7 @@ public:
      * In the case of a QName the value supplied must be in clark notation. {uri}local
      * @return XdmValue - value
     */
-    XdmAtomicValue * makeAtomicValue(std::string type, std::string value);
+    XdmAtomicValue * makeAtomicValue(const char * type, const char * value);
 
      /**
      * Get the string representation of the XdmValue.
@@ -493,6 +499,11 @@ public:
      * set the current working directory
     */
    void setcwd(const char* cwd);
+
+    /**
+     * get the current working directory
+    */
+   const char* getcwd();
 
 
     /**

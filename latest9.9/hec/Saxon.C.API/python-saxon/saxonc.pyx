@@ -47,42 +47,42 @@ cdef class PySaxonProcessor:
 
     def makeStringValue(self, str1):
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
-        val.derivedaptr = self.thisptr.makeStringValue(str1)
+        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeStringValue(str1)
         return val
 
     def makeIntegerValue(self, i):
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
-        val.derivedaptr = self.thisptr.makeIntegerValue(i)
+        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeIntegerValue(i)
         return val
 
     def makeDoubleValue(self, d):
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
-        val.derivedaptr = self.thisptr.makeDoubleValue(d)
+        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeDoubleValue(d)
         return val
 
     def makeFloatValue(self, fl):
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
-        val.derivedaptr = self.thisptr.makeFloatValue(fl)
+        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeFloatValue(fl)
         return val
 
     def makeLongValue(self, lg):
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
-        val.derivedaptr = self.thisptr.makeLongValue(lg)
+        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeLongValue(lg)
         return val
 
     def makeBooleanValue(self, b):
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
-        val.derivedaptr = self.thisptr.makeBooleanValue(b)
+        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeBooleanValue(b)
         return val
 
     def makeQNameValue(self, str1):
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
-        val.derivedaptr = self.thisptr.makeQNameValue(str1)
+        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeQNameValue(str1)
         return val
 
     def makeAtomicValue(self, typei, value):
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
-        val.derivedaptr = self.thisptr.makeAtomicValue(typei, value)
+        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeAtomicValue(typei, value)
         return val
 
     def getStringValue(self, PyXdmItem item):
@@ -90,17 +90,17 @@ cdef class PySaxonProcessor:
 
     def parseXmlFromString(self, source):
         cdef PyXdmNode val = PyXdmNode()
-        val.derivednptr = self.thisptr.parseXmlFromString(source)
+        val.derivednptr = val.derivedptr = val.thisvptr = self.thisptr.parseXmlFromString(source)
         return val
 
     def parseXmlFromFile(self, source):
         cdef PyXdmNode val = PyXdmNode()
-        val.derivednptr = self.thisptr.parseXmlFromFile(source)
+        val.derivednptr = val.derivedptr = val.thisvptr = self.thisptr.parseXmlFromFile(source)
         return val
 
     def parseXmlFromUri(self,  source):
         cdef PyXdmNode val = PyXdmNode()
-        val.derivednptr = self.thisptr.parseXmlFromUri(source)
+        val.derivednptr = val.derivedptr = val.thisvptr = self.thisptr.parseXmlFromUri(source)
         return val
 
     def exceptionOccurred(self):
@@ -221,7 +221,7 @@ cdef class PyXdmValue:
         if self.thisvptr != NULL:
            del self.thisvptr
 
-cdef class PyXdmItem:
+cdef class PyXdmItem(PyXdmValue):
      cdef saxoncClasses.XdmItem *derivedptr      # hold a C++ instance which we're wrapping
 
      def __cinit__(self):
@@ -230,20 +230,18 @@ cdef class PyXdmItem:
      def __dealloc__(self):
         if type(self) is PyXdmValue:
             del self.derivedptr
-     def SetObject(self, PyXdmValue inputObject):
-        self.derivedptr.SetObject(<saxoncClasses.XdmValue *>inputObject.thisvptr)
 
 
-cdef class PyXdmNode:
+cdef class PyXdmNode(PyXdmItem):
      cdef saxoncClasses.XdmNode *derivednptr      # hold a C++ instance which we're wrapping
 
-     def __cinit__(self):
-        if type(self) is PyXdmNode:
-            self.derivednptr = self.derivedptr = self.thisvptr = new saxoncClasses.XdmNode()
+     # def __cinit__(self):
+      #   if type(self) is PyXdmNode:
+      #       self.derivednptr = self.derivedptr = self.thisvptr = new saxoncClasses.XdmNode()
      def __dealloc__(self):
         del self.derivednptr
 
-cdef class PyXdmAtomicValue:
+cdef class PyXdmAtomicValue(PyXdmItem):
      cdef saxoncClasses.XdmAtomicValue *derivedaptr      # hold a C++ instance which we're wrapping
 
      def __cinit__(self):

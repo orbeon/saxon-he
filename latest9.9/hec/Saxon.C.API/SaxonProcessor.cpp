@@ -323,7 +323,7 @@ SaxonProcessor& SaxonProcessor::operator=( const SaxonProcessor& other ){
 
 XsltProcessor * SaxonProcessor::newXsltProcessor(){
     applyConfigurationProperties();
-    return (new XsltProcessor(this, cwd));
+    return (new XsltProcessor(this, cwd.c_str()));
 }
 
 XQueryProcessor * SaxonProcessor::newXQueryProcessor(){
@@ -369,6 +369,10 @@ const char * SaxonProcessor::version() {
 
 void SaxonProcessor::setcwd(const char* dir){
     cwd = std::string(dir);
+}
+
+const char* SaxonProcessor::getcwd(){
+	return cwd.c_str();
 }
 
 void SaxonProcessor::setResourcesDirectory(const char* dir){
@@ -525,8 +529,8 @@ void SaxonProcessor::release(){
 
 /* ========= Factory method for Xdm ======== */
 
-    XdmAtomicValue * SaxonProcessor::makeStringValue(std::string str){
-	jobject obj = getJavaStringValue(SaxonProcessor::sxn_environ, str.c_str());
+    XdmAtomicValue * SaxonProcessor::makeStringValue(const char * str){
+	jobject obj = getJavaStringValue(SaxonProcessor::sxn_environ, str);
 	jmethodID mID_atomic = (jmethodID)(SaxonProcessor::sxn_environ->env->GetMethodID (xdmAtomicClass, "<init>", "(Ljava/lang/String;)V"));
 	jobject obj2 = (jobject)(SaxonProcessor::sxn_environ->env->NewObject(xdmAtomicClass, mID_atomic, obj));
 	XdmAtomicValue * value = new XdmAtomicValue(obj2, "xs:string");
@@ -534,8 +538,8 @@ void SaxonProcessor::release(){
 	return value;
     }
 
-    XdmAtomicValue * SaxonProcessor::makeStringValue(const char * str){
-	jobject obj = getJavaStringValue(SaxonProcessor::sxn_environ, str);
+    XdmAtomicValue * SaxonProcessor::makeStringValue(std::string str){
+	jobject obj = getJavaStringValue(SaxonProcessor::sxn_environ, str.c_str());
 	jmethodID mID_atomic = (jmethodID)(SaxonProcessor::sxn_environ->env->GetMethodID (xdmAtomicClass, "<init>", "(Ljava/lang/String;)V"));
 	jobject obj2 = (jobject)(SaxonProcessor::sxn_environ->env->NewObject(xdmAtomicClass, mID_atomic, obj));
 	XdmAtomicValue * value = new XdmAtomicValue(obj2, "xs:string");
@@ -590,15 +594,15 @@ void SaxonProcessor::release(){
 	return value;
     }
 
-    XdmAtomicValue * SaxonProcessor::makeQNameValue(std::string str){
-	jobject val = xdmValueAsObj(SaxonProcessor::sxn_environ, "QName", str.c_str());
+    XdmAtomicValue * SaxonProcessor::makeQNameValue(const char* str){
+	jobject val = xdmValueAsObj(SaxonProcessor::sxn_environ, "QName", str);
 	XdmAtomicValue * value = new XdmAtomicValue(val, "QName");
 	value->setProcessor(this);
 	return value;
     }
 
-    XdmAtomicValue * SaxonProcessor::makeAtomicValue(std::string typei, std::string strValue){
-	jobject obj = xdmValueAsObj(SaxonProcessor::sxn_environ, typei.c_str(), strValue.c_str());
+    XdmAtomicValue * SaxonProcessor::makeAtomicValue(const char * typei, const char * strValue){
+	jobject obj = xdmValueAsObj(SaxonProcessor::sxn_environ, typei, strValue);
 	XdmAtomicValue * value = new XdmAtomicValue(obj, typei);
 	value->setProcessor(this);
 	return value;
@@ -613,9 +617,8 @@ void SaxonProcessor::release(){
 		std::cout<<"getStringValue of XdmItem is OK"<<std::endl;
 	}
 #endif
+    
 	return result;
-    }
 
-
-
+   }
 
