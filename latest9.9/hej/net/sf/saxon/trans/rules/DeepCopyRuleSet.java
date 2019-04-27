@@ -37,6 +37,7 @@ public class DeepCopyRuleSet implements BuiltInRuleSet {
     private DeepCopyRuleSet() {
     }
 
+    private static int COPY_OPTIONS = CopyOptions.TYPE_ANNOTATIONS | CopyOptions.ALL_NAMESPACES;
     /**
      * Perform the built-in template action for a given node.
      *  @param item
@@ -54,18 +55,12 @@ public class DeepCopyRuleSet implements BuiltInRuleSet {
             NodeInfo node = (NodeInfo) item;
             Receiver out = context.getReceiver();
             switch (node.getNodeKind()) {
-                case Type.DOCUMENT: {
-                    if (out.getSystemId() == null) {
-                        out.setSystemId(node.getBaseURI());
-                    }
-                    node.copy(out, CopyOptions.ALL_NAMESPACES, locationId);
-                    return;
-                }
+                case Type.DOCUMENT: 
                 case Type.ELEMENT: {
                     if (out.getSystemId() == null) {
                         out.setSystemId(node.getBaseURI());
                     }
-                    node.copy(out, CopyOptions.ALL_NAMESPACES, locationId);
+                    node.copy(out, COPY_OPTIONS, locationId);
                     return;
                 }
                 case Type.TEXT:
@@ -76,7 +71,7 @@ public class DeepCopyRuleSet implements BuiltInRuleSet {
                 case Type.COMMENT:
                 case Type.PROCESSING_INSTRUCTION:
                 case Type.NAMESPACE:
-                    node.copy(out, 0, locationId);
+                    node.copy(out, COPY_OPTIONS, locationId);
                     return;
 
                 default:
