@@ -77,13 +77,19 @@ public class Err {
             }
         }
         String s;
-        if ((valueType == ELEMENT || valueType == ATTRIBUTE) && !sb.isEmpty() && sb.charAt(0) == '{') {
-            try {
-                StructuredQName qn = StructuredQName.fromClarkName(sb.toString());
-                String uri = abbreviateURI(qn.getURI());
-                s = "Q{" + uri + "}" + qn.getLocalPart();
-            } catch (Exception e) {
-                s = sb.toString();
+        if (valueType == ELEMENT || valueType == ATTRIBUTE) {
+            s = sb.toString();
+            if (s.startsWith("{")) {
+                s = "Q" + s;
+            }
+            if (s.startsWith("Q{")) {
+                try {
+                    StructuredQName qn = StructuredQName.fromEQName(sb.toString());
+                    String uri = abbreviateURI(qn.getURI());
+                    s = "Q{" + uri + "}" + qn.getLocalPart();
+                } catch (Exception e) {
+                    s = sb.toString();
+                }
             }
         } else if (valueType == URI) {
             s = abbreviateURI(sb.toString());
