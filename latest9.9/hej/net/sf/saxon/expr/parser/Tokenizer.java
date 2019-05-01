@@ -483,36 +483,36 @@ public final class Tokenizer {
                     nextToken = Token.LCURLY;
                     return;
                 case '}':
-                    if (inputOffset < inputLength && input.charAt(inputOffset) == '`') {
-                        inputOffset++;
-                        int j = inputOffset;
-                        int newlines = 0;
-                        while (true) {
-                            if (j >= inputLength) {
-                                throw new XPathException("Unclosed string template in expression");
-                            }
-                            if (input.charAt(j) == '\n') {
-                                newlines++;
-                            } else if (input.charAt(j) == '`' && j + 1 < inputLength && input.charAt(j + 1) == '{') {
-                                nextToken = Token.STRING_TEMPLATE_INTERMEDIATE;
-                                nextTokenValue = input.substring(inputOffset, j);
-                                inputOffset = j + 2;
-                                incrementLineNumber(newlines);
-                                return;
-                            } else if (input.charAt(j) == ']' && j + 2 < inputLength
-                                    && input.charAt(j + 1) == '`' && input.charAt(j + 2) == '`') {
-                                nextToken = Token.STRING_TEMPLATE_FINAL;
-                                nextTokenValue = input.substring(inputOffset, j);
-                                inputOffset = j + 3;
-                                incrementLineNumber(newlines);
-                                return;
-                            }
-                            j++;
-                        }
-                    } else {
+//                    if (inputOffset < inputLength && input.charAt(inputOffset) == '`') {
+//                        inputOffset++;
+//                        int j = inputOffset;
+//                        int newlines = 0;
+//                        while (true) {
+//                            if (j >= inputLength) {
+//                                throw new XPathException("Unclosed string template in expression");
+//                            }
+//                            if (input.charAt(j) == '\n') {
+//                                newlines++;
+//                            } else if (input.charAt(j) == '`' && j + 1 < inputLength && input.charAt(j + 1) == '{') {
+//                                nextToken = Token.STRING_TEMPLATE_INTERMEDIATE;
+//                                nextTokenValue = input.substring(inputOffset, j);
+//                                inputOffset = j + 2;
+//                                incrementLineNumber(newlines);
+//                                return;
+//                            } else if (input.charAt(j) == ']' && j + 2 < inputLength
+//                                    && input.charAt(j + 1) == '`' && input.charAt(j + 2) == '`') {
+//                                nextToken = Token.STRING_TEMPLATE_FINAL;
+//                                nextTokenValue = input.substring(inputOffset, j);
+//                                inputOffset = j + 3;
+//                                incrementLineNumber(newlines);
+//                                return;
+//                            }
+//                            j++;
+//                        }
+//                    } else {
                         nextToken = Token.RCURLY;
                         return;
-                    }
+//                    }
                 case ';':
                     nextToken = Token.SEMICOLON;
                     state = DEFAULT_STATE;
@@ -815,6 +815,8 @@ public final class Tokenizer {
                             }
                             j++;
                         }
+                    } else {
+                        throw new XPathException("Invalid character '`' (backtick) in expression");
                     }
                 case '\n':
                     incrementLineNumber();

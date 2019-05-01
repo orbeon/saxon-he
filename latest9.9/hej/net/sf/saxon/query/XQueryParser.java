@@ -29,7 +29,10 @@ import net.sf.saxon.serialize.SerializationParamsHandler;
 import net.sf.saxon.serialize.charcode.UTF16CharacterSet;
 import net.sf.saxon.style.AttributeValueTemplate;
 import net.sf.saxon.trace.LocationKind;
-import net.sf.saxon.trans.*;
+import net.sf.saxon.trans.DecimalFormatManager;
+import net.sf.saxon.trans.DecimalSymbols;
+import net.sf.saxon.trans.Err;
+import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.tree.util.NamespaceResolverWithDefault;
 import net.sf.saxon.type.*;
@@ -4056,7 +4059,7 @@ public class XQueryParser extends XPathParser {
     /**
      * Parse pseudo-XML syntax in direct element constructors, comments, CDATA, etc.
      * This is handled by reading single characters from the Tokenizer until the
-     * end of the tag (or an enclosed expression) is enountered.
+     * end of the tag (or an enclosed expression) is encountered.
      * This method is also used to read an end tag. Because an end tag is not an
      * expression, the method in this case returns a StringValue containing the
      * contents of the end tag.
@@ -5051,11 +5054,19 @@ public class XQueryParser extends XPathParser {
     }
 
     /**
-     * Parse a string template: introduced in XQuery 3.1
+     * Parse a string constructor: introduced in XQuery 3.1
      */
 
     @Override
     public Expression parseStringTemplate(boolean complete) throws XPathException {
+        // For legacy reasons (see bug 4208) parsing of string constructors is split
+        // rather arbitrarily between the parser and tokenizer.
+        // If the tokenizer sees ``[ then it scans until it finds either `{ or ]``, and
+        // reports either STRING_TEMPLATE_INITIAL or STRING_TEMPLATE_COMPLETE (which cause
+        // entry to this method). In the case of `{, we then call parseExpression(), which
+        // should leave the tokenizer positioned on the closing "}". Because of bug 4208, the
+        // tokenizer doesn't attempt to process this as }` - instead the parser then reads
+        // character-by-character until it encounters the next `{ or ]``.
         int offset = t.currentTokenStartOffset;
         if (!allowXPath31Syntax) {
             throw new XPathException("String constructor expressions require XQuery 3.1");
@@ -5069,20 +5080,63 @@ public class XQueryParser extends XPathParser {
             List<Expression> components = new ArrayList<>();
             components.add(new StringLiteral(t.currentTokenValue));
             t.next();
+            outer:
             while (true) {
+                boolean emptyExpression = t.currentToken == Token.RCURLY;
                 if (t.currentToken != Token.STRING_TEMPLATE_FINAL && t.currentToken != Token.STRING_TEMPLATE_INTERMEDIATE) {
-                    Expression enclosed = parseExpression();
-                    Expression stringJoin = SystemFunction.makeCall(
-                        "string-join", env.makeRetainedStaticContext(), enclosed, new StringLiteral(" "));
-                    components.add(stringJoin);
+                    if (emptyExpression) {
+                        components.add(new StringLiteral(StringValue.EMPTY_STRING));
+                    } else {
+                        Expression enclosed = parseExpression();
+                        Expression stringJoin = SystemFunction.makeCall(
+                                "string-join", env.makeRetainedStaticContext(), enclosed, new StringLiteral(" "));
+                        components.add(stringJoin);
+                    }
+                    if (t.currentToken != Token.RCURLY) {
+                        grumble("Expected '}' after enclosed expression in string constructor");
+                    }
+                    FastStringBuffer sb = new FastStringBuffer(256);
+                    char c = t.nextChar();
+                    if (c != '`') {
+                        grumble("Expected '}`' after enclosed expression in string constructor");
+                    }
+                    char latest = (char)0;
+                    char penult = (char)0;
+                    try {
+                        while (true) {
+                            c = t.nextChar();
+                            if (latest == '`' && c == '{') {
+                                sb.setLength(sb.length() - 1);
+                                components.add(new StringLiteral(sb));
+                                t.lookAhead();
+                                t.next();
+                                if (t.currentToken == Token.RCURLY) {
+                                    components.add(Literal.makeEmptySequence());
+                                    sb.setLength(0);
+                                    continue;
+                                } else {
+                                    continue outer;
+                                }
+                            } else if (penult == ']' && latest == '`' && c == '`') {
+                                sb.setLength(sb.length() - 2);
+                                components.add(new StringLiteral(sb));
+                                t.lookAhead();
+                                t.next();
+                                break outer;
+                            }
+                            sb.append(c);
+                            penult = latest;
+                            latest = c;
+                        }
+                    } catch (StringIndexOutOfBoundsException e) {
+                        grumble("String constructor is missing ]`` terminator ");
+                    }
                 }
+                // TODO: following code no longer used?
                 if (t.currentToken == Token.STRING_TEMPLATE_FINAL) {
                     components.add(new StringLiteral(t.currentTokenValue));
                     t.next();
-                    Expression[] args = components.toArray(new Expression[0]);
-                    Expression result = SystemFunction.makeCall("concat", env.makeRetainedStaticContext(), args);
-                    setLocation(result, offset);
-                    return result;
+                    break;
                 } else if (t.currentToken == Token.STRING_TEMPLATE_INTERMEDIATE) {
                     components.add(new StringLiteral(t.currentTokenValue));
                     t.next();
@@ -5090,7 +5144,12 @@ public class XQueryParser extends XPathParser {
                     grumble("Expected '}`' after enclosed expression in string template");
                 }
             }
+            Expression[] args = components.toArray(new Expression[0]);
+            Expression result = SystemFunction.makeCall("concat", env.makeRetainedStaticContext(), args);
+            setLocation(result, offset);
+            return result;
         }
+
     }
 
     /**
