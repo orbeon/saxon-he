@@ -202,8 +202,7 @@ public class SpecificFunctionType extends AnyFunctionType {
             int rrel = other.relationship(this, th);
             switch (rrel) {
                 case TypeHierarchy.SUBSUMES:
-                    // A function can never substitute for an array or map type
-                    return TypeHierarchy.DISJOINT;
+                    return TypeHierarchy.SUBSUMED_BY;
                 case TypeHierarchy.SUBSUMED_BY:
                     return TypeHierarchy.SUBSUMES;
                 default:
