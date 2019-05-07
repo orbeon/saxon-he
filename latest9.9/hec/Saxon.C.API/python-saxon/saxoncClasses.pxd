@@ -72,7 +72,6 @@ cdef extern from "../SaxonProcessor.h":
         XsltProcessor() except +
         # set the current working directory
         void setcwd(const char* cwd)
-        const char* getcwd()
 
         #Set the source document from a XdmValue for the transformation.
         #void setSourceFromXdmValue(XdmItem * value)
@@ -89,11 +88,11 @@ cdef extern from "../SaxonProcessor.h":
 
         XdmValue* getParameter(const char* name)
 
-        removeParameter(const char* name)
+        bool removeParameter(const char* name)
 
         void setProperty(const char* name, const char* value)
 
-        void clearParameters(bool deleteValues)
+        void clearParameters()
 
         void clearProperties()
 
@@ -138,6 +137,47 @@ cdef extern from "../SaxonProcessor.h":
     cdef cppclass SchemaValidator:
         SchemaValidator() except +
 
+        void setcwd(const char* cwd)
+
+        void registerSchemaFromFile(const char * xsd)
+
+        void registerSchemaFromString(const char * schemaStr)
+
+        void setOutputFile(const char * outputFile)
+
+        void validate(const char * sourceFile)
+   
+        XdmNode * validateToNode(const char * sourceFile)
+
+        void setSourceNode(XdmNode * source)
+
+        XdmNode* getValidationReport()
+
+        void setParameter(const char * name, XdmValue*value)
+
+        bool removeParameter(const char * name)
+
+        void setProperty(const char * name, const char * value)
+
+        void clearParameters()
+
+        void clearProperties()
+
+        bool exceptionOccurred()
+
+        const char* checkException()
+
+        void exceptionClear()
+
+        int exceptionCount()
+
+    
+        const char * getErrorMessage(int i)
+     
+        const char * getErrorCode(int i)
+
+        void setLax(bool l)
+
     cdef cppclass XPathProcessor:
         XPathProcessor() except +
 
@@ -163,7 +203,7 @@ cdef extern from "../SaxonProcessor.h":
 
         void declareNamespace(const char *prefix, const char * uri)
 
-        void clearParameters(bool)
+        void clearParameters()
 
         void clearProperties()
 
@@ -194,7 +234,7 @@ cdef extern from "../SaxonProcessor.h":
 
         void setProperty(const char * name, const char * value)
 
-        void clearParameters(bool)
+        void clearParameters()
 
         void clearProperties()
 
@@ -238,7 +278,7 @@ cdef extern from "../SaxonProcessor.h":
 cdef extern from "../XdmValue.h":
     cdef cppclass XdmValue:
         XdmValue() except +
-        XdmValue * addXdmValueWithType(const char * tStr, const char * val)
+
         void addXdmItem(XdmItem *val)
         #void releaseXdmValue()
 
@@ -253,10 +293,38 @@ cdef extern from "../XdmValue.h":
 cdef extern from "../XdmItem.h":
     cdef cppclass XdmItem(XdmValue):
         XdmItem() except +
+        const char * getStringValue()
+        bool isAtomic()
 
 cdef extern from "../XdmNode.h":
     cdef cppclass XdmNode(XdmItem):
         getNodeName()
+        bool isAtomic()
+
+        int getNodeKind()
+
+        const char * getNodeName()
+
+        XdmValue * getTypedValue()
+
+        const char* getBaseUri()
+
+        const char * getStringValue()
+
+        const char * toString()
+
+        XdmNode* getParent()
+
+        const char* getAttributeValue(const char *str)
+
+        int getAttributeCount()
+
+        XdmNode** getAttributeNodes()
+
+        XdmNode** getChildren()
+
+        int getChildCount()
+
 
 cdef extern from "../XdmAtomicValue.h":
     cdef cppclass XdmAtomicValue(XdmItem):
