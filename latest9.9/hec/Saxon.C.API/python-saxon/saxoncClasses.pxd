@@ -1,4 +1,5 @@
 from libcpp cimport bool
+from libcpp cimport string
 
 
 cdef extern from "../SaxonProcessor.h":
@@ -73,8 +74,8 @@ cdef extern from "../SaxonProcessor.h":
         # set the current working directory
         void setcwd(const char* cwd)
 
-        #Set the source document from a XdmValue for the transformation.
-        #void setSourceFromXdmValue(XdmItem * value)
+        #Set the source document from an XdmNode for the transformation.
+        void setSourceFromXdmNode(XdmNode * value)
 
         #Set the source from file for the transformation.
         void setSourceFromFile(const char * filename)
@@ -98,9 +99,10 @@ cdef extern from "../SaxonProcessor.h":
 
         XdmValue * getXslMessages()
 
+
         void transformFileToFile(const char* sourcefile, const char* stylesheetfile, const char* outputfile)
         
-        const char * transformFileToString(const char* sourcefile, const char* stylesheetfile)
+        char * transformFileToString(const char* sourcefile, const char* stylesheetfile)
 
         XdmValue * transformFileToValue(const char* sourcefile, const char* stylesheetfile)
 
@@ -116,7 +118,7 @@ cdef extern from "../SaxonProcessor.h":
 
         void releaseStylesheet()
 
-        const char * transformToString()
+        char * transformToString()
 
         XdmValue * transformToValue()
 

@@ -3,12 +3,15 @@ from libcpp cimport bool
    
 cdef class PySaxonProcessor:
     cdef saxoncClasses.SaxonProcessor *thisptr      # hold a C++ instance which we're wrapping
-    def __cinit__(self, bool license):
+    def __cinit__(self, license):
         self.thisptr = new saxoncClasses.SaxonProcessor(license)
     def __dealloc__(self):
         del self.thisptr
     def version(self):
-        return self.thisptr.version()
+        cdef const char* c_string = self.thisptr.version()
+        ustring = c_string.decode('UTF-8')
+        return ustring
+
     def release(self):
         self.thisptr.release()
     def setcwd(self, cwd):
@@ -123,7 +126,9 @@ cdef class PyXsltProcessor:
         self.thisxptr.setcwd(cwd)
 
      def setSourceFromFile(self, filename):
-        self.thisxptr.setSourceFromFile(filename)
+        py_filename_string = filename.encode('UTF-8') if filename is not None else None
+        cdef char * c_sourcefile = py_filename_string if filename is not None else "" 
+        self.thisxptr.setSourceFromFile(c_sourcefile)
      def setOutputFile(self, outfile):
         self.thisxptr.setOutputFile(outfile)
      def setJustInTimeCompilation(self, jit):
@@ -146,17 +151,59 @@ cdef class PyXsltProcessor:
         cdef PyXdmValue val = PyXdmValue()
         val.thisvptr = self.thisxptr.getXslMessages()
         return val
+     def setSourceFromXdmNode(self, PyXdmNode value):
+        self.thisxptr.setSourceFromXdmNode(value.derivednptr)
 
      def transformFileToFile(self, sourcefile, stylesheetfile, outputfile):
-        self.thisxptr.transformFileToFile(sourcefile, stylesheetfile, outputfile)	
+        self.thisxptr.transformFileToFile(sourcefile, stylesheetfile, outputfile)
+     def transformToString(self, **kwds):
+        cdef char * c_sourcefile
+        cdef char * c_stylesheetfile
+        py_source_string = None
+        py_stylesheet_string = None
+        for key, value in kwds.items():
+          if isinstance(value, str):
+            if key == "sourcefile":
+              py_source_string = value.encode('UTF-8') if value is not None else None
+              c_sourcefile = py_source_string if value is not None else "" 
+            if key == "stylesheetfile":
+              py_stylesheet_string = value.encode('UTF-8') if value is not None else None
+              c_stylesheetfile = py_stylesheet_string if value is not None else ""
+          elif key == "xdmvalue":
+            if isinstance(value, PyXdmNode):
+              self.setSourceFromXdmNode(value)
+
+        cdef const char* c_string            
+        if len(kwds) == 0:
+          c_string = self.thisxptr.transformToString()
+        else:     
+          c_string = self.thisxptr.transformFileToString(c_sourcefile if py_source_string is not None else NULL, c_stylesheetfile if py_stylesheet_string is not None else NULL)
+
+        ustring = c_string.decode('UTF-8') if c_string is not NULL else None
+        return ustring
+
+	
      def transformFileToString(self, sourcefile, stylesheetfile):
-        return self.thisxptr.transformFileToString(sourcefile, stylesheetfile)
+
+        py_source_string = sourcefile.encode('UTF-8') if sourcefile is not None else None
+        cdef char* c_source_string = py_source_string if sourcefile is not None else "" 
+
+        py_stylesheet_string = stylesheetfile.encode('UTF-8') if stylesheetfile is not None else None
+        cdef char* c_stylesheet_string = py_stylesheet_string if stylesheetfile is not None else "" 
+
+        cdef const char* c_string = self.thisxptr.transformFileToString(c_source_string if sourcefile is not None else NULL, c_stylesheet_string if stylesheetfile is not None else NULL)
+
+        ustring = c_string.decode('UTF-8') if c_string is not NULL else None
+        return ustring
+
      def transformFileToValue(self, sourcefile, stylesheetfile):
         cdef PyXdmValue val = PyXdmValue()
         val.thisvptr = self.thisxptr.transformFileToValue(sourcefile, stylesheetfile)
         return val
      def compileFromFile(self, stylesheet):
-        self.thisxptr.compileFromFile(stylesheet)
+        py_filename_string = stylesheet.encode('UTF-8') if stylesheet is not None else None
+        cdef char * c_sourcefile = py_filename_string if stylesheet is not None else "" 
+        self.thisxptr.compileFromFile(c_sourcefile)
      def compileFromString(self, stylesheet):
         self.thisxptr.compileFromString(stylesheet)
      def compileFromStringAndSave(self, stylesheet, filename):
@@ -167,8 +214,7 @@ cdef class PyXsltProcessor:
         self.thisxptr.compileFromXdmNode(node.derivednptr)
      def releaseStylesheet(self):
         self.thisxptr.releaseStylesheet()
-     def transformToString(self):
-        return self.thisxptr.transformToString()
+
      def transformToValue(self):
         cdef PyXdmValue val = PyXdmValue()
         val.thisvptr = self.thisxptr.transformToValue()
@@ -178,15 +224,23 @@ cdef class PyXsltProcessor:
      def exceptionOccurred(self):
         return self.thisxptr.exceptionOccurred()
      def checkException(self):
-        return self.thisxptr.checkException()
+        cdef const char* c_string = self.thisxptr.checkException()
+        ustring = c_string.decode('UTF-8') if c_string is not NULL else None
+        return ustring
+
      def exceptionClear(self):
         self.thisxptr.exceptionClear()
      def exceptionCount(self):
         return self.thisxptr.exceptionCount()
      def getErrorMessage(self, i):
-        return self.thisxptr.getErrorMessage(i)
+        cdef const char* c_string = self.thisxptr.getErrorMessage(i)
+        ustring = c_string.decode('UTF-8') if c_string is not NULL else None
+        return ustring
+
      def getErrorCode(self, i):
-        return self.thisxptr.getErrorCode(i)
+        cdef const char* c_string = self.thisxptr.getErrorCode(i)
+        ustring = c_string.decode('UTF-8') if c_string is not NULL else None
+        return ustring
 
 cdef class PyXQueryProcessor:
      cdef saxoncClasses.XQueryProcessor *thisxqptr      # hold a C++ instance which we're wrapping
@@ -373,6 +427,7 @@ cdef class PyXdmValue:
      def __dealloc__(self):
         if self.thisvptr != NULL:
            del self.thisvptr
+
 
      def addXdmItem(self, PyXdmItem value):
         self.thisvptr.addXdmItem(value.derivedptr)
