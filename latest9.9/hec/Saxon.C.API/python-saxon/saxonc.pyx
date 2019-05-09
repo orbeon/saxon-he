@@ -154,8 +154,6 @@ cdef class PyXsltProcessor:
      def setSourceFromXdmNode(self, PyXdmNode value):
         self.thisxptr.setSourceFromXdmNode(value.derivednptr)
 
-     def transformFileToFile(self, sourcefile, stylesheetfile, outputfile):
-        self.thisxptr.transformFileToFile(sourcefile, stylesheetfile, outputfile)
      def transformToString(self, **kwds):
         cdef char * c_sourcefile
         cdef char * c_stylesheetfile
@@ -182,45 +180,119 @@ cdef class PyXsltProcessor:
         ustring = c_string.decode('UTF-8') if c_string is not NULL else None
         return ustring
 
-	
-     def transformFileToString(self, sourcefile, stylesheetfile):
+     def transformToFile(self, **kwds):
+        cdef char * c_sourcefile
+        cdef char * c_outputfile
+        cdef char * c_stylesheetfile
+        py_source_string = None
+        py_stylesheet_string = None
+        py_output_string = None
+        for key, value in kwds.items():
+          if isinstance(value, str):
+            if key == "sourcefile":
+              py_source_string = value.encode('UTF-8') if value is not None else None
+              c_sourcefile = py_source_string if value is not None else ""
+            if key == "outputfile":
+              py_output_string = value.encode('UTF-8') if value is not None else None
+              c_outputfile = py_output_string if value is not None else ""  
+            if key == "stylesheetfile":
+              py_stylesheet_string = value.encode('UTF-8') if value is not None else None
+              c_stylesheetfile = py_stylesheet_string if value is not None else ""
+          elif key == "xdmvalue":
+            if isinstance(value, PyXdmNode):
+              self.setSourceFromXdmNode(value)
+            
+        if len(kwds) == 0:
+          self.thisxptr.transformToFile()
+        else:     
+          self.thisxptr.transformFileToFile(c_sourcefile if py_source_string is not None else NULL, c_stylesheetfile if py_stylesheet_string is not None else NULL, c_outputfile if py_output_string is not None else NULL)
 
-        py_source_string = sourcefile.encode('UTF-8') if sourcefile is not None else None
-        cdef char* c_source_string = py_source_string if sourcefile is not None else "" 
 
-        py_stylesheet_string = stylesheetfile.encode('UTF-8') if stylesheetfile is not None else None
-        cdef char* c_stylesheet_string = py_stylesheet_string if stylesheetfile is not None else "" 
+     def transformToValue(self, **kwds):
+        cdef char * c_sourcefile
+        cdef char * c_stylesheetfile
+        py_source_string = None
+        py_stylesheet_string = None
+        for key, value in kwds.items():
+          if isinstance(value, str):
+            if key == "sourcefile":
+              py_source_string = value.encode('UTF-8') if value is not None else None
+              c_sourcefile = py_source_string if value is not None else ""  
+            if key == "stylesheetfile":
+              py_stylesheet_string = value.encode('UTF-8') if value is not None else None
+              c_stylesheetfile = py_stylesheet_string if value is not None else ""
+          elif key == "xdmvalue":
+            if isinstance(value, PyXdmNode):
+              self.setSourceFromXdmNode(value)
+        cdef PyXdmValue py_xdm_value = PyXdmValue()
+            
+        if len(kwds) == 0:
+          py_xdm_value.thisvptr = self.thisxptr.transformToValue()
+        else:     
+          py_xdm_value.thisvptr = self.thisxptr.transformFileToValue(c_sourcefile if py_source_string is not None else NULL, c_stylesheetfile if py_stylesheet_string is not None else NULL)
+        return py_xdm_value
+     
+     def compileStylesheet(self, **kwds):
+        py_error_message = "CompileStylesheet should only be one of the keyword option: (stylesheetText|stylesheetUri|stylesheetNode), also in allowed in addition the optional keyword 'save' boolean with the keyword 'outputfile' keyword"
+        if len(kwds) >3:
+          raise Exception(py_error_message)
+        cdef char * c_outputfile
+        cdef char * c_stylesheet
+        py_output_string = None
+        py_stylesheet_string = None
+        py_save = False
+        cdef int option = 0
+        cdef PyXdmNode py_xdmNode = None
+        if kwds.keys() >= {"stylesheetText", "stylesheetUri"}:
+          raise Exception(py_error_message)
+        if kwds.keys() >= {"stylesheetText", "stylesheetNode"}:
+          raise Exception(py_error_message)
+        if kwds.keys() >= {"stylesheetNode", "stylesheetUri"}:
+          raise Exception(py_error_message)
 
-        cdef const char* c_string = self.thisxptr.transformFileToString(c_source_string if sourcefile is not None else NULL, c_stylesheet_string if stylesheetfile is not None else NULL)
+        if ("save" in kwds) and kwds["save"]==True:
+          del kwds["save"]
+          if "outputFile" not in kwds:
+            raise Exception("Output file option not in keyword arugment for compileStylesheet")
+          py_output_string = kwds["outputFile"].encode('UTF-8')
+          c_outputfile = py_output_string
+          if "stylesheetText" in kwds:
+            py_stylesheet_string = kwds["stylesheetText"].encode('UTF-8')
+            c_stylesheet = py_stylesheet_string
+            self.thisxptr.compileFromStringAndSave(c_stylesheet, c_outputfile)
+          elif "stylesheetUri" in kwds:
+            py_stylesheet_string = kwds["stylesheetUri"].encode('UTF-8')
+            c_stylesheet = py_stylesheet_string
+            self.thisxptr.compileFromFileAndSave(c_stylesheet, c_outputfile)
+          elif "stylesheetNode" in kwds:
+            py_value = kwds["stylesheetNode"]
+            if not isinstance(py_value, PyXdmNode):
+              raise Exception("StylesheetNode keyword arugment is not of type XdmNode")
+            value = PyXdmNode(py_value)
+            self.thisxptr.compileFromXdmNodeAndSave(value.derivednptr, c_outputfile)
+          else:
+            raise Exception(py_error_message)
+        else:
+          if "stylesheetText" in kwds:
+            py_stylesheet_string = kwds["stylesheetText"].encode('UTF-8')
+            c_stylesheet = py_stylesheet_string
+            self.thisxptr.compileFromString(c_stylesheet)
+          elif "stylesheetUri" in kwds:
+            py_stylesheet_string = kwds["stylesheetUri"].encode('UTF-8')
+            c_stylesheet = py_stylesheet_string
+            self.thisxptr.compileFromFile(c_stylesheet)
+          elif "stylesheetNode" in kwds:
+            py_value = kwds["stylesheetNode"]
+            if not isinstance(py_value, PyXdmNode):
+              raise Exception("StylesheetNode keyword arugment is not of type XdmNode")
+            value = PyXdmNode(py_value)
+            self.thisxptr.compileFromXdmNode(value.derivednptr)
+          else:
+            raise Exception(py_error_message)
 
-        ustring = c_string.decode('UTF-8') if c_string is not NULL else None
-        return ustring
-
-     def transformFileToValue(self, sourcefile, stylesheetfile):
-        cdef PyXdmValue val = PyXdmValue()
-        val.thisvptr = self.thisxptr.transformFileToValue(sourcefile, stylesheetfile)
-        return val
-     def compileFromFile(self, stylesheet):
-        py_filename_string = stylesheet.encode('UTF-8') if stylesheet is not None else None
-        cdef char * c_sourcefile = py_filename_string if stylesheet is not None else "" 
-        self.thisxptr.compileFromFile(c_sourcefile)
-     def compileFromString(self, stylesheet):
-        self.thisxptr.compileFromString(stylesheet)
-     def compileFromStringAndSave(self, stylesheet, filename):
-        self.thisxptr.compileFromStringAndSave(stylesheet, filename)
-     def compileFromFileAndSave(self, xslFilename, filename):
-        self.thisxptr.compileFromFileAndSave(xslFilename, filename)
-     def compileFromXdmNode(self, PyXdmNode node):
-        self.thisxptr.compileFromXdmNode(node.derivednptr)
      def releaseStylesheet(self):
         self.thisxptr.releaseStylesheet()
 
-     def transformToValue(self):
-        cdef PyXdmValue val = PyXdmValue()
-        val.thisvptr = self.thisxptr.transformToValue()
-        return val
-     def transformToFile(self):
-        self.thisxptr.transformToFile()
      def exceptionOccurred(self):
         return self.thisxptr.exceptionOccurred()
      def checkException(self):

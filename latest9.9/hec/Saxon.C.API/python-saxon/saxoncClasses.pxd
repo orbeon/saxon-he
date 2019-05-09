@@ -114,6 +114,8 @@ cdef extern from "../SaxonProcessor.h":
 
         void compileFromFileAndSave(const char* xslFilename, const char* filename)
 
+        void compileFromXdmNodeAndSave(XdmNode * node, const char* outputfile)
+
         void compileFromXdmNode(XdmNode * node)
 
         void releaseStylesheet()
