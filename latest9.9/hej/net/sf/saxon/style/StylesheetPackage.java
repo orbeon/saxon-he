@@ -990,8 +990,6 @@ public class StylesheetPackage extends PackageData {
         }
         pss.setFunctionLibrary(libraryList);
 
-        pss.setKeyManager(keyManager);
-
         if (!pss.createsSecondaryResult()) {
             pss.setCreatesSecondaryResult(mayCreateSecondaryResultDocuments());
         }

@@ -53,7 +53,7 @@ public abstract class AbstractStaticContext implements StaticContext {
     private boolean backwardsCompatible = false;
     private int xpathLanguageLevel = 31;
     protected boolean usingDefaultFunctionLibrary;
-    private Map<StructuredQName, ItemType> typeAliases = new HashMap<StructuredQName, ItemType>();
+    private Map<StructuredQName, ItemType> typeAliases = new HashMap<>();
 
     /**
      * Set the Configuration. This is protected so it can be used only by subclasses;

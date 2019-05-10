@@ -18,7 +18,6 @@ import net.sf.saxon.query.QueryModule;
 import net.sf.saxon.serialize.CharacterMapIndex;
 import net.sf.saxon.serialize.SerializationProperties;
 import net.sf.saxon.trace.ExpressionPresenter;
-import net.sf.saxon.trans.KeyManager;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.TypeHierarchy;
@@ -46,9 +45,6 @@ public class Executable {
 
     // the set of packages making up this Executable
     private List<PackageData> packages = new ArrayList<>();
-
-    // definitions of keys, including keys created by the optimizer
-    private KeyManager keyManager;
 
     // List of global variables and parameters
     private List<GlobalVariable> compiledGlobalVariables;
@@ -215,30 +211,7 @@ public class Executable {
         }
         return characterMapIndex;
     }
-
-    /**
-     * Set the KeyManager which handles key definitions
-     *
-     * @param km the KeyManager containing the xsl:key definitions
-     */
-
-    public void setKeyManager(KeyManager km) {
-        keyManager = km;
-    }
-
-    /**
-     * Get the KeyManager which handles key definitions
-     *
-     * @return the KeyManager containing the xsl:key definitions
-     */
-
-    public KeyManager getKeyManager() {
-        if (keyManager == null) {
-            keyManager = new KeyManager(getConfiguration(), topLevelPackage);
-        }
-        return keyManager;
-    }
-
+    
     /**
      * Set the default output properties (the properties for the unnamed output format)
      *

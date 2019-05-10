@@ -54,7 +54,7 @@ public class Idref extends SystemFunction {
         IdrefMappingFunction map = new IdrefMappingFunction();
         map.document = doc;
         map.keyContext = context;
-        map.keyManager = context.getController().getKeyManager();
+        map.keyManager = context.getController().getExecutable().getTopLevelPackage().getKeyManager();
         map.keySet = map.keyManager.getKeyDefinitionSet(StandardNames.getStructuredQName(StandardNames.XS_IDREFS));
         SequenceIterator<? extends NodeInfo> allValues = new MappingIterator<>(keys, map);
         return new DocumentOrderIterator(allValues, LocalOrderComparer.getInstance());

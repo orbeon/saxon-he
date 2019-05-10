@@ -496,17 +496,6 @@ public class Controller implements ContextOriginator {
     public Executable getExecutable() {
         return executable;
     }
-    
-    /**
-     * Get the KeyManager.
-     * <p>This method is intended for internal use only.</p>
-     *
-     * @return the KeyManager, which holds details of all key declarations
-     */
-
-    public KeyManager getKeyManager() {
-        return executable.getKeyManager();
-    }
 
     /**
      * Get the document pool. This is used only for source documents, not for stylesheet modules.

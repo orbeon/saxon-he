@@ -43,8 +43,6 @@ import javax.xml.xpath.*;
  * applications, however, it is desirable to share a configuration. The default configuration
  * is not schema aware. All source documents used by XPath expressions under this evaluator
  * must themselves be built using the <code>Configuration</code> used by this evaluator.</p>
- *
- * @author Michael H. Kay
  */
 
 public class XPathEvaluator implements XPath {

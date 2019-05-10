@@ -421,7 +421,6 @@ public class PreparedStylesheet extends Executable {
         presenter.startElement("stylesheet");
         presenter.namespace("fn", NamespaceConstant.FN);
         presenter.namespace("xs", NamespaceConstant.SCHEMA);
-        getKeyManager().exportKeys(presenter, null);
         explainGlobalVariables(presenter);
         ruleManager.explainTemplateRules(presenter);
         explainNamedTemplates(presenter);

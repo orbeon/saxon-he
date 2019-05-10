@@ -16,10 +16,10 @@ import net.sf.saxon.functions.IsIdRef;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.lib.ConversionRules;
 import net.sf.saxon.om.*;
+import net.sf.saxon.pattern.BasePatternWithPredicate;
 import net.sf.saxon.pattern.MultipleNodeKindTest;
 import net.sf.saxon.pattern.NodeTestPattern;
 import net.sf.saxon.pattern.Pattern;
-import net.sf.saxon.pattern.BasePatternWithPredicate;
 import net.sf.saxon.sxpath.IndependentContext;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.tree.iter.EmptyIterator;
@@ -35,9 +35,7 @@ import net.sf.saxon.z.IntHashMap;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
-import static net.sf.saxon.trans.KeyIndex.Status.BUILT;
-import static net.sf.saxon.trans.KeyIndex.Status.FAILED;
-import static net.sf.saxon.trans.KeyIndex.Status.UNDER_CONSTRUCTION;
+import static net.sf.saxon.trans.KeyIndex.Status.*;
 
 
 /**
@@ -119,26 +117,28 @@ public class KeyManager {
      *               generated need access to schema information.
      */
 
-    private void registerIdrefKey(Configuration config) {
-        BasePatternWithPredicate pp = new BasePatternWithPredicate(
-                new NodeTestPattern(new MultipleNodeKindTest(UType.ELEMENT_OR_ATTRIBUTE)),
-                IntegratedFunctionLibrary.makeFunctionCall(new IsIdRef(), new Expression[]{})
-        );
-        try {
-            IndependentContext sc = new IndependentContext(config);
-            sc.setPackageData(packageData);
-            sc.setXPathLanguageLevel(31);
-            RetainedStaticContext rsc = new RetainedStaticContext(sc);
-            Expression sf = SystemFunction.makeCall("string", rsc, new ContextItemExpression());
-            Expression use = SystemFunction.makeCall("tokenize", rsc, sf);    // Use the new tokenize#1
-            final StructuredQName qName = StandardNames.getStructuredQName(StandardNames.XS_IDREFS);
-            SymbolicName symbolicName = new SymbolicName(StandardNames.XSL_KEY, qName);
-            KeyDefinition key = new KeyDefinition(symbolicName, pp, use, null, null);
-            key.setPackageData(packageData);
-            key.setIndexedItemType(BuiltInAtomicType.STRING);
-            addKeyDefinition(qName, key, true, config);
-        } catch (XPathException err) {
-            throw new AssertionError(err); // shouldn't happen
+    private synchronized void registerIdrefKey(Configuration config) {
+        final StructuredQName qName = StandardNames.getStructuredQName(StandardNames.XS_IDREFS);
+        SymbolicName symbolicName = new SymbolicName(StandardNames.XSL_KEY, qName);
+        if (getKeyDefinitionSet(qName) == null) {
+            BasePatternWithPredicate pp = new BasePatternWithPredicate(
+                    new NodeTestPattern(new MultipleNodeKindTest(UType.ELEMENT_OR_ATTRIBUTE)),
+                    IntegratedFunctionLibrary.makeFunctionCall(new IsIdRef(), new Expression[]{})
+            );
+            try {
+                IndependentContext sc = new IndependentContext(config);
+                sc.setPackageData(packageData);
+                sc.setXPathLanguageLevel(31);
+                RetainedStaticContext rsc = new RetainedStaticContext(sc);
+                Expression sf = SystemFunction.makeCall("string", rsc, new ContextItemExpression());
+                Expression use = SystemFunction.makeCall("tokenize", rsc, sf);    // Use the new tokenize#1
+                KeyDefinition key = new KeyDefinition(symbolicName, pp, use, null, null);
+                key.setPackageData(packageData);
+                key.setIndexedItemType(BuiltInAtomicType.STRING);
+                addKeyDefinition(qName, key, true, config);
+            } catch (XPathException err) {
+                throw new AssertionError(err); // shouldn't happen
+            }
         }
     }
 
@@ -149,7 +149,7 @@ public class KeyManager {
      * @param keyName the name of the key to be pre-registered
      */
 
-    public void preRegisterKeyDefinition(StructuredQName keyName) {
+    public synchronized void preRegisterKeyDefinition(StructuredQName keyName) {
         KeyDefinitionSet keySet = keyDefinitions.get(keyName);
         if (keySet == null) {
             keySet = new KeyDefinitionSet(keyName, keyDefinitions.size());
@@ -170,7 +170,7 @@ public class KeyManager {
      * @throws XPathException if this key definition is inconsistent with existing key definitions having the same name
      */
 
-    public void addKeyDefinition(StructuredQName keyName, KeyDefinition keydef, boolean reusable, Configuration config) throws XPathException {
+    public synchronized void addKeyDefinition(StructuredQName keyName, KeyDefinition keydef, boolean reusable, Configuration config) throws XPathException {
         KeyDefinitionSet keySet = keyDefinitions.get(keyName);
         if (keySet == null) {
             keySet = new KeyDefinitionSet(keyName, keyDefinitions.size());
@@ -289,7 +289,6 @@ public class KeyManager {
             TreeInfo doc,
             AtomicValue soughtValue,
             XPathContext context) throws XPathException {
-
         if (soughtValue == null) {
             return EmptyIterator.OfNodes.THE_INSTANCE;
         }

@@ -612,7 +612,7 @@ public class XQueryExpression implements Location, ExpressionOwner {
 
     public void explain(/*@NotNull*/ ExpressionPresenter out) throws XPathException {
         out.startElement("query");
-        getExecutable().getKeyManager().exportKeys(out, null);
+        mainModule.getKeyManager().exportKeys(out, null);
         getExecutable().explainGlobalVariables(out);
         mainModule.explainGlobalFunctions(out);
         out.startElement("body");

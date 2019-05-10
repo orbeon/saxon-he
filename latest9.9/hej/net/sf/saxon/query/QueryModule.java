@@ -1793,9 +1793,7 @@ public class QueryModule implements StaticContext {
      *         also appear in XQuery and XPath
      */
     public KeyManager getKeyManager() {
-        KeyManager mgr = executable.getKeyManager();
-        packageData.setKeyManager(mgr);
-        return mgr;
+        return packageData.getKeyManager();
     }
 
     /**
