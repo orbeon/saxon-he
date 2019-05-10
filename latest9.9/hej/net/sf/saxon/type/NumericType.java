@@ -32,7 +32,7 @@ public class NumericType implements UnionType, PlainType {
         return THE_INSTANCE;
     }
 
-    private static List<PlainType> members;
+    private List<PlainType> members;
 
     private NumericType() {}
 
@@ -77,14 +77,12 @@ public class NumericType implements UnionType, PlainType {
      *
      * @return the atomic types and plain union types in the transitive membership of the union type.
      */
-    public Iterable<PlainType> getPlainMemberTypes() {
+    public synchronized Iterable<PlainType> getPlainMemberTypes() {
         if (members == null) {
-            synchronized(NumericType.class) {
-                members = new ArrayList<>();
-                members.add(BuiltInAtomicType.DOUBLE);
-                members.add(BuiltInAtomicType.FLOAT);
-                members.add(BuiltInAtomicType.DECIMAL);
-            }
+            members = new ArrayList<>();
+            members.add(BuiltInAtomicType.DOUBLE);
+            members.add(BuiltInAtomicType.FLOAT);
+            members.add(BuiltInAtomicType.DECIMAL);
         }
         return members;
     }
