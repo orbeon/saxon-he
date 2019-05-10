@@ -7,7 +7,6 @@
 
 package net.sf.saxon.expr;
 
-import com.saxonica.expr.ObjectLookupExpression;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.ma.arrays.ArrayItem;
@@ -128,7 +127,7 @@ public class LookupExpression extends BinaryExpression {
         isMapLookup = containerType instanceof MapType || isTupleLookup;
         if (containerType instanceof AnyExternalObjectType) {
             config.checkLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION, "use of lookup expressions on external objects", -1);
-            return new ObjectLookupExpression(getLhsExpression(), getRhsExpression())
+            return config.makeObjectLookupExpression(getLhsExpression(), getRhsExpression())
                     .typeCheck(visitor, contextInfo);
         }
         isSingleContainer = getLhsExpression().getCardinality() == StaticProperty.EXACTLY_ONE;

@@ -3953,6 +3953,10 @@ public class Configuration implements SourceResolver, NotationSet {
         throw new UnsupportedOperationException();
     }
 
+    public Expression makeObjectLookupExpression(Expression lhs, Expression rhs) {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Get a NodeInfo corresponding to a DOM or other external Node,
      * either by wrapping or unwrapping the external Node.
