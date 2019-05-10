@@ -7,7 +7,8 @@
 
 package net.sf.saxon.functions;
 
-import com.saxonica.expr.JavaExtensionFunctionCall;
+//import com.saxonica.expr.JavaExtensionFunctionCall;
+
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
@@ -16,6 +17,7 @@ import net.sf.saxon.lib.ExtensionFunctionDefinition;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.AnyNodeTest;
 import net.sf.saxon.trace.ExpressionPresenter;
+import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.AnyItemType;
 import net.sf.saxon.type.ItemType;
@@ -305,7 +307,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
             if (th.relationship(type, AnyNodeTest.getInstance()) != TypeHierarchy.DISJOINT) {
                 result = new ItemMappingIterator<>(
                         result,
-                        new JavaExtensionFunctionCall.ConfigurationCheckingFunction(context.getConfiguration()), true);
+                        new ConfigurationCheckingFunction(context.getConfiguration()), true);
             }
         }
         return result;
@@ -341,5 +343,33 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
     }
 
 
+    /**
+     * This class checks that NodeInfo objects returned by an extension function were created
+     * under the right Configuration
+     */
+
+    public static class ConfigurationCheckingFunction implements ItemMappingFunction<Item<?>, Item<?>> {
+
+        private Configuration config;
+
+        public ConfigurationCheckingFunction(Configuration config) {
+            this.config = config;
+        }
+
+        /**
+         * Map one item to another item.
+         *
+         * @param item The input item to be mapped.
+         * @return either the output item, or null.
+         */
+
+        public Item mapItem(Item item) throws XPathException {
+            if (item instanceof NodeInfo && !config.isCompatible(((NodeInfo) item).getConfiguration())) {
+                throw new XPathException(
+                        "Node returned by extension function was created with an incompatible Configuration", SaxonErrorCode.SXXP0004);
+            }
+            return item;
+        }
+    }
 }
 

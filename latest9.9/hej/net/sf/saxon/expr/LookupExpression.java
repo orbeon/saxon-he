@@ -7,8 +7,7 @@
 
 package net.sf.saxon.expr;
 
-import com.saxonica.functions.extfn.ObjectMap;
-import com.saxonica.functions.hof.CurriedFunction;
+import com.saxonica.expr.ObjectLookupExpression;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.ma.arrays.ArrayItem;
@@ -17,15 +16,16 @@ import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.ma.map.MapType;
 import net.sf.saxon.ma.map.TupleItemType;
 import net.sf.saxon.ma.map.TupleType;
-import net.sf.saxon.om.*;
+import net.sf.saxon.om.GroundedValue;
+import net.sf.saxon.om.Item;
+import net.sf.saxon.om.NameChecker;
+import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.EmptyIterator;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
-
-import java.util.Map;
 
 
 /**
@@ -37,13 +37,12 @@ import java.util.Map;
 
 public class LookupExpression extends BinaryExpression {
 
-    boolean isClassified = false;
-    boolean isArrayLookup = false;
-    boolean isMapLookup = false;
-    boolean isObjectLookup = false;
-    boolean isSingleContainer = false;
-    boolean isSingleEntry = false;
-    Function reflexiveFunction = null;
+    private boolean isClassified = false;
+    protected boolean isArrayLookup = false;
+    protected boolean isMapLookup = false;
+    protected boolean isSingleContainer = false;
+    protected boolean isSingleEntry = false;
+
 
     /**
      * Constructor
@@ -76,38 +75,21 @@ public class LookupExpression extends BinaryExpression {
      */
 
     /*@NotNull*/
-    public final ItemType getItemType() {
+    public ItemType getItemType() {
         if (isClassified) {
             if (isArrayLookup) {
                 ItemType arrayType = getLhsExpression().getItemType();
                 if (arrayType instanceof ArrayItemType) {
                     return ((ArrayItemType) arrayType).getMemberType().getPrimaryType();
                 }
-            } else {
-                if (isMapLookup) {
-                    ItemType mapType = getLhsExpression().getItemType();
-                    if (mapType instanceof TupleItemType && getRhsExpression() instanceof StringLiteral) {
-                        String fieldName = ((StringLiteral) getRhsExpression()).getStringValue();
-                        SequenceType fieldType = ((TupleItemType) mapType).getFieldType(fieldName);
-                        return fieldType == null ? ErrorType.getInstance() : fieldType.getPrimaryType();
-                    } else if (mapType instanceof MapType) {
-                        return ((MapType) mapType).getValueType().getPrimaryType();
-                    }
-                } else if (isObjectLookup) {
-                    // Can only happen in PE or higher
-                    ItemType objectType = getLhsExpression().getItemType();
-                    if (objectType instanceof JavaExternalObjectType && getRhsExpression() instanceof StringLiteral) {
-                        String fieldName = ((StringLiteral) getRhsExpression()).getStringValue();
-                        Map<String, Function> methodMap =
-                                getConfiguration().makeMethodMap(((JavaExternalObjectType)objectType).getJavaClass(), fieldName);
-                        Function f = methodMap.get(fieldName);
-                        if (f != null) {
-                            return f.getFunctionItemType();
-                        } else {
-                            return ErrorType.getInstance();
-                        }
-
-                    }
+            } else if (isMapLookup) {
+                ItemType mapType = getLhsExpression().getItemType();
+                if (mapType instanceof TupleItemType && getRhsExpression() instanceof StringLiteral) {
+                    String fieldName = ((StringLiteral) getRhsExpression()).getStringValue();
+                    SequenceType fieldType = ((TupleItemType) mapType).getFieldType(fieldName);
+                    return fieldType == null ? ErrorType.getInstance() : fieldType.getPrimaryType();
+                } else if (mapType instanceof MapType) {
+                    return ((MapType) mapType).getValueType().getPrimaryType();
                 }
             }
         }
@@ -146,11 +128,12 @@ public class LookupExpression extends BinaryExpression {
         isMapLookup = containerType instanceof MapType || isTupleLookup;
         if (containerType instanceof AnyExternalObjectType) {
             config.checkLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION, "use of lookup expressions on external objects", -1);
-            isObjectLookup = true;
+            return new ObjectLookupExpression(getLhsExpression(), getRhsExpression())
+                    .typeCheck(visitor, contextInfo);
         }
         isSingleContainer = getLhsExpression().getCardinality() == StaticProperty.EXACTLY_ONE;
 
-        if (!isArrayLookup && !isMapLookup && !isObjectLookup) {
+        if (!isArrayLookup && !isMapLookup) {
             if (th.relationship(containerType, MapType.ANY_MAP_TYPE) == TypeHierarchy.DISJOINT &&
                     th.relationship(containerType, ArrayItemType.getInstance()) == TypeHierarchy.DISJOINT &&
                     th.relationship(containerType, AnyExternalObjectType.THE_INSTANCE) == TypeHierarchy.DISJOINT) {
@@ -170,8 +153,6 @@ public class LookupExpression extends BinaryExpression {
         SequenceType req = BuiltInAtomicType.ANY_ATOMIC.zeroOrMore();
         if (isArrayLookup) {
             req = BuiltInAtomicType.INTEGER.zeroOrMore();
-        } else if (isObjectLookup) {
-            req = BuiltInAtomicType.STRING.oneOrMore();
         }
         setRhsExpression(tc.staticTypeCheck(getRhsExpression(), req, role, visitor));
         isSingleEntry = getRhsExpression().getCardinality() == StaticProperty.EXACTLY_ONE;
@@ -185,22 +166,7 @@ public class LookupExpression extends BinaryExpression {
                 throw err;
             }
         }
-        if (isObjectLookup && getRhsExpression() instanceof StringLiteral && containerType instanceof JavaExternalObjectType) {
-            JavaExternalObjectType target = (JavaExternalObjectType)containerType;
-            Class<?> theClass = target.getJavaClass();
-            String methodName = ((StringLiteral)getRhsExpression()).getStringValue();
-            Map<String, Function> methodMap = ObjectMap.makeMethodMap(config, theClass, methodName);
-            Function f = methodMap.get(methodName);
-            if (f == null) {
-                XPathException err = new XPathException("No unique method " + methodName + " found in class " + theClass, "XPTY0004");
-                err.setIsTypeError(true);
-                err.setLocation(getLocation());
-                throw err;
-            } else {
-                reflexiveFunction = f;
-            }
 
-        }
         isClassified = true;
         return this;
     }
@@ -243,8 +209,8 @@ public class LookupExpression extends BinaryExpression {
      * Copy an expression. This makes a deep copy.
      *
      * @param rebindings a mutable list of (old binding, new binding) pairs
-     *                   *                   that is used to update the bindings held in any
-     *                   *                   local variable references that are copied.
+     *    that is used to update the bindings held in any
+     *    local variable references that are copied.
      * @return the copy of the original expression
      */
 
@@ -252,7 +218,6 @@ public class LookupExpression extends BinaryExpression {
     public LookupExpression copy(RebindingMap rebindings) {
         LookupExpression exp = new LookupExpression(getLhsExpression().copy(rebindings), getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
-        exp.isObjectLookup = isObjectLookup;
         exp.isArrayLookup = isArrayLookup;
         exp.isMapLookup = isMapLookup;
         exp.isSingleEntry = isSingleEntry;
@@ -286,8 +251,6 @@ public class LookupExpression extends BinaryExpression {
                 } else if (mapType instanceof MapType) {
                     return ((MapType) mapType).getValueType().getCardinality();
                 }
-            } else if (isObjectLookup) {
-                return StaticProperty.ALLOWS_ZERO_OR_ONE;
             }
         }
         return StaticProperty.ALLOWS_ZERO_OR_MORE;
@@ -362,19 +325,7 @@ public class LookupExpression extends BinaryExpression {
                             return value == null ? EmptyIterator.emptyIterator() : value.iterate();
                         }));
             }
-        } else if (isObjectLookup) {
-            SequenceIterator<?> baseIterator = getLhsExpression().iterate(context);
-            if (reflexiveFunction != null) {
-                return new ItemMappingIterator<>(baseIterator, item->{
-                    Sequence[] boundArgs = new Sequence[reflexiveFunction.getArity()];
-                    boundArgs[0] = item;
-                    return new CurriedFunction(reflexiveFunction, boundArgs);});
-            } else {
-                GroundedValue<?> rhs = getRhsExpression().iterate(context).materialize();
-                String key = rhs.getStringValue();
-                return new ItemMappingIterator<>(baseIterator,
-                                                 item -> (Item<?>) config.externalObjectAsMap((ObjectValue) item, key).get((StringValue) rhs));
-            }
+
         } else {
             SequenceIterator<?> baseIterator = getLhsExpression().iterate(context);
             GroundedValue<?> rhs = getRhsExpression().iterate(context).materialize();
