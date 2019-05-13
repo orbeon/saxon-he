@@ -74,8 +74,9 @@ cdef class PySaxonProcessor:
         return val
 
     def makeBooleanValue(self, b):
+        cdef bool c_b = b
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
-        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeBooleanValue(b)
+        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeBooleanValue(c_b)
         return val
 
     def makeQNameValue(self, str1):
@@ -83,28 +84,46 @@ cdef class PySaxonProcessor:
         val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeQNameValue(str1)
         return val
 
-    def makeAtomicValue(self, typei, value):
+    def makeAtomicValue(self, valueType, value):
+        py_valueType_string = valueType.encode('UTF-8') if valueType is not None else None
+        cdef char * c_valueType_string = py_valueType_string if valueType is not None else ""
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
-        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeAtomicValue(typei, value)
+        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeAtomicValue(c_valueType_string, value)
         return val
 
     def getStringValue(self, PyXdmItem item):
         return self.thisptr.getStringValue(item.derivedptr)
 
-    def parseXmlFromString(self, source):
-        cdef PyXdmNode val = PyXdmNode()
-        val.derivednptr = val.derivedptr = val.thisvptr = self.thisptr.parseXmlFromString(source)
-        return val
-
-    def parseXmlFromFile(self, source):
-        cdef PyXdmNode val = PyXdmNode()
-        val.derivednptr = val.derivedptr = val.thisvptr = self.thisptr.parseXmlFromFile(source)
-        return val
-
-    def parseXmlFromUri(self,  source):
-        cdef PyXdmNode val = PyXdmNode()
-        val.derivednptr = val.derivedptr = val.thisvptr = self.thisptr.parseXmlFromUri(source)
-        return val
+    def parseXml(self, **kwds):
+        py_error_message = "Error: parseXml should only contain one of the following keyword arguments: (xmlFileName|xmlText|xmlUri)"
+        if len(kwds) != 1:
+          raise Exception(py_error_message)
+        cdef PyXdmNode val = None
+        cdef py_value = None
+        cdef char * c_xml_string = NULL
+        if "xmlText" in kwds:
+          py_value = kwds["xmlText"]
+          py_xml_text_string = py_value.encode('UTF-8') if py_value is not None else None
+          c_xml_string = py_xml_text_string if py_value is not None else "" 
+          val = PyXdmNode()
+          val.derivednptr = val.derivedptr = val.thisvptr = self.thisptr.parseXmlFromString(c_xml_string)
+          return val
+        elif "xmlFileName" in kwds:
+          py_value = kwds["xmlFileName"]
+          py_filename_string = py_value.encode('UTF-8') if py_value is not None else None
+          c_xml_string = py_filename_string if py_value is not None else ""
+          val = PyXdmNode()
+          val.derivednptr = val.derivedptr = val.thisvptr = self.thisptr.parseXmlFromFile(c_xml_string)
+          return val 
+        elif "xmlUri" in kwds:
+          py_value = kwds["xmlUri"]
+          py_uri_string = py_value.encode('UTF-8') if py_value is not None else None
+          c_xml_string = py_uri_string if py_value is not None else ""
+          val = PyXdmNode()
+          val.derivednptr = val.derivedptr = val.thisvptr = self.thisptr.parseXmlFromUri(c_xml_string)
+          return val
+        else:
+           raise Exception(py_error_message)
 
     def exceptionOccurred(self):
         return self.thisptr.exceptionOccurred()
@@ -123,26 +142,55 @@ cdef class PyXsltProcessor:
         if self.thisxptr != NULL:
            del self.thisxptr
      def setcwd(self, cwd):
-        self.thisxptr.setcwd(cwd)
+        py_cwd_string = cwd.encode('UTF-8') if cwd is not None else None
+        cdef char * c_cwd = py_cwd_string if cwd is not None else "" 
+        self.thisxptr.setcwd(c_cwd)
 
-     def setSourceFromFile(self, filename):
-        py_filename_string = filename.encode('UTF-8') if filename is not None else None
-        cdef char * c_sourcefile = py_filename_string if filename is not None else "" 
-        self.thisxptr.setSourceFromFile(c_sourcefile)
-     def setOutputFile(self, outfile):
-        self.thisxptr.setOutputFile(outfile)
-     def setJustInTimeCompilation(self, jit):
-        self.thisxptr.setJustInTimeCompilation(jit)
+     def setSource(self, **kwds):
+        py_error_message = "Error: setSource should only contain one of the following keyword arguments: (fileName|node)"
+        if len(kwds) != 1:
+          raise Exception(py_error_message)
+        cdef py_value = None
+        cdef py_value_string = None
+        cdef char * c_source
+        cdef PyXdmNode xdm_node = None
+        if "fileName" in kwds:
+            py_value = kwds["fileName"]
+            py_value_string = py_value.encode('UTF-8') if py_value is not None else None
+            c_source = py_value_string if py_value is not None else "" 
+            self.thisxptr.setSourceFromFile(c_source)
+        elif "node" in kwds:
+            xdm_node = kwds["node"]
+            self.thisxptr.setSourceFromXdmNode(xdm_node.derivednptr)
+        else:
+          raise Exception(py_error_message)
+
+     def setOutputFile(self, outputfile):
+        py_filename_string = outputfile.encode('UTF-8') if outputfile is not None else None
+        cdef char * c_outputfile = py_filename_string if outputfile is not None else ""
+        self.thisxptr.setOutputFile(c_outputfile)
+     def setJustInTimeCompilation(self, bool jit):
+        cdef bool c_jit
+        c_jit = jit
+        self.thisxptr.setJustInTimeCompilation(c_jit)
+        #else:
+        #raise Warning("setJustInTimeCompilation: argument must be a boolean type. JIT not set")
      def setParameter(self, name, PyXdmValue value):
         self.thisxptr.setParameter(name, value.thisvptr)
      def getParameter(self, name):
+        py_name_string = name.encode('UTF-8') if name is not None else None
+        cdef char * c_name = py_name_string if name is not None else ""
         cdef PyXdmValue val = PyXdmValue()
-        val.thisvptr = self.thisxptr.getParameter(name)
+        val.thisvptr = self.thisxptr.getParameter(c_name)
         return val
      def removeParameter(self, name):
-        return self.thisxptr.removeParameter(name)
+        py_name_string = name.encode('UTF-8') if name is not None else None
+        cdef char * c_name = py_name_string if name is not None else ""
+        return self.thisxptr.removeParameter(c_name)
      def setProperty(self, name, value):
-        self.thisxptr.setProperty(name, value)
+        py_name_string = name.encode('UTF-8') if name is not None else None
+        cdef char * c_name = py_name_string if name is not None else ""
+        self.thisxptr.setProperty(c_name, value)
      def clearParameters(self):
         self.thisxptr.clearParameters()
      def clearProperties(self):
@@ -151,8 +199,6 @@ cdef class PyXsltProcessor:
         cdef PyXdmValue val = PyXdmValue()
         val.thisvptr = self.thisxptr.getXslMessages()
         return val
-     def setSourceFromXdmNode(self, PyXdmNode value):
-        self.thisxptr.setSourceFromXdmNode(value.derivednptr)
 
      def transformToString(self, **kwds):
         cdef char * c_sourcefile
@@ -265,11 +311,11 @@ cdef class PyXsltProcessor:
             c_stylesheet = py_stylesheet_string
             self.thisxptr.compileFromFileAndSave(c_stylesheet, c_outputfile)
           elif "stylesheetNode" in kwds:
-            py_value = kwds["stylesheetNode"]
-            if not isinstance(py_value, PyXdmNode):
-              raise Exception("StylesheetNode keyword arugment is not of type XdmNode")
-            value = PyXdmNode(py_value)
-            self.thisxptr.compileFromXdmNodeAndSave(value.derivednptr, c_outputfile)
+            py_xdmNode = kwds["stylesheetNode"]
+            #if not isinstance(py_value, PyXdmNode):
+              #raise Exception("StylesheetNode keyword arugment is not of type XdmNode")
+            #value = PyXdmNode(py_value)
+            self.thisxptr.compileFromXdmNodeAndSave(py_xdmNode.derivednptr, c_outputfile)
           else:
             raise Exception(py_error_message)
         else:
@@ -282,11 +328,11 @@ cdef class PyXsltProcessor:
             c_stylesheet = py_stylesheet_string
             self.thisxptr.compileFromFile(c_stylesheet)
           elif "stylesheetNode" in kwds:
-            py_value = kwds["stylesheetNode"]
-            if not isinstance(py_value, PyXdmNode):
-              raise Exception("StylesheetNode keyword arugment is not of type XdmNode")
-            value = PyXdmNode(py_value)
-            self.thisxptr.compileFromXdmNode(value.derivednptr)
+            py_xdmNode = kwds["stylesheetNode"]
+            #if not isinstance(py_value, PyXdmNode):
+              #raise Exception("StylesheetNode keyword arugment is not of type XdmNode")
+            #value = PyXdmNode(py_value)
+            self.thisxptr.compileFromXdmNode(py_xdmNode.derivednptr)
           else:
             raise Exception(py_error_message)
 
@@ -322,12 +368,28 @@ cdef class PyXQueryProcessor:
      def __dealloc__(self):
         if self.thisxqptr != NULL:
            del self.thisxqptr
-     def setContextItem(self, PyXdmItem value):
-        self.thisxqptr.setContextItem(value.derivedptr)
+
+     def setContext(self, ** kwds):
+        py_error_message = "Error: setContext should only contain one of the following keyword arguments: (fileName|xdmItem)"
+        if len(kwds) != 1:
+          raise Exception(py_error_message)
+        cdef py_value = None
+        cdef py_value_string = None
+        cdef char * c_source
+        cdef PyXdmItem xdm_item = None
+        if "fileName" in kwds:
+            py_value = kwds["fileName"]
+            py_value_string = py_value.encode('UTF-8') if py_value is not None else None
+            c_source = py_value_string if py_value is not None else "" 
+            self.thisxptr.setContextFromFile(c_source)
+        elif "xdmItem" in kwds:
+            xdm_item = kwds["xdmItem"]
+            self.thisxptr.setContext(xdm_item.derivednptr)
+        else:
+          raise Exception(py_error_message)
+
      def setOutputFile(self, outfile):
         self.thisxqptr.setOutputFile(outfile)
-     def setContextItemFromFile(self, filename): 
-        self.thisxqptr.setContextItemFromFile(filename)
      def setParameter(self, name, PyXdmValue value):
         self.thisxqptr.setParameter(name, value.thisvptr)
      def removeParameter(self, name):
@@ -497,7 +559,7 @@ cdef class PyXdmValue:
         if type(self) is PyXdmValue:
             self.thisvptr = new saxoncClasses.XdmValue() 
      def __dealloc__(self):
-        if self.thisvptr != NULL:
+        if type(self) is PyXdmValue:
            del self.thisvptr
 
 

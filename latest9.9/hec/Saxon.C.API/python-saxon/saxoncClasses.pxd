@@ -2,6 +2,7 @@ from libcpp cimport bool
 from libcpp cimport string
 
 
+
 cdef extern from "../SaxonProcessor.h":
     cdef cppclass SaxonProcessor:
         SaxonProcessor(bool) except +
