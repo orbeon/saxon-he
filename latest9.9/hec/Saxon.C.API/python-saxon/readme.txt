@@ -1,1 +1,1 @@
-python saxon-setup.py build_ext --inplace
+python3 saxon-setup.py build_ext -if
