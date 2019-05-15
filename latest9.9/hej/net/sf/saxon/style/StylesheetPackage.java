@@ -653,8 +653,8 @@ public class StylesheetPackage extends PackageData {
                 if (acceptedVisibility != null) {
                     if (!XSLAccept.isCompatible(oldV, acceptedVisibility)) {
                         throw new XPathException("Cannot accept a " + oldV.show() +
-                            " component with visibility " + acceptedVisibility.show() +
-                        " (" + name + ")", "XTSE3040");
+                            " component (" + name + ") from package " + usedPackage.getPackageName()
+                                + " with visibility " + acceptedVisibility.show(), "XTSE3040");
                     }
                     newV = acceptedVisibility;
                 } else {
