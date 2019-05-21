@@ -49,6 +49,8 @@ cdef extern from "../SaxonProcessor.h":
 
         XdmAtomicValue * makeLongValue(long l)
 
+        XdmAtomicValue * make_boolean_value(bool b)
+
         XdmAtomicValue * makeBooleanValue(bool b)
 
         XdmAtomicValue * makeQNameValue(const char* str)
@@ -244,13 +246,6 @@ cdef extern from "../SaxonProcessor.h":
         void clearProperties()
 
         void setUpdating(bool updating)
-
-
-        void executeQueryToFile(const char * infilename, const char * ofilename, const char * query)
-
-        XdmValue * executeQueryToValue(const char * infilename, const char * query)
-
-        const char * executeQueryToString(const char * infilename, const char * query)
 
         XdmValue * runQueryToValue()
         const char * runQueryToString()
