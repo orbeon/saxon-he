@@ -1,33 +1,79 @@
+"""@package saxonc
+This documentation details the Python API for Saxon/C, which has been written in cython. 
+
+Saxon/C is a cross-compiled variant of Saxon from the Java platform to the C/C++ platform. Saxon/C provides processing in XSLT, XQuery and XPath, and Schema validation."""
+
+
 # distutils: language = c++
 
 cimport saxoncClasses
 from libcpp cimport bool
+import contextlib
    
 cdef class PySaxonProcessor:
+    """An SaxonProcessor acts as a factory for generating XQuery, XPath, Schema and XSLT compilers.
+    """
     cdef saxoncClasses.SaxonProcessor *thisptr      # hold a C++ instance which we're wrapping
-    def __cinit__(self, license):
+
+    ##
+    # The Constructor
+    # @param license Flag that a license is to be used
+    def __cinit__(self, license=False):
+        """The constructor.
+
+        :param bool license: Flag that a license is to be used. The Default is false.
+        :type license: bool
+        """
         self.thisptr = new saxoncClasses.SaxonProcessor(license)
     def __dealloc__(self):
+        """The destructor."""
         del self.thisptr
     def version(self):
+        """Get the Saxon Version.
+
+        :return: the Saxon version
+        """
         cdef const char* c_string = self.thisptr.version()
         ustring = c_string.decode('UTF-8')
         return ustring
 
-    def versionn(self):
-        cdef const char* c_string = self.thisptr.version()
-        ustring = c_string.decode('UTF-8')
-        return ustring
+    @contextlib.contextmanager
     def release(self):
-        self.thisptr.release()
+        """Clean up and destroy Java VM to release memory used."""
+
+        try:
+          yield
+        finally:
+          self.thisptr.release()
+
     def set_cwd(self, cwd):
+        """Set the current working directory.
+
+        :param str cwd: current working directory
+        """
+        py_value_string = cwd.encode('UTF-8') if cwd is not None else None
+        cdef char * c_str_ = py_value_string if cwd is not None else ""
         self.thisptr.setcwd(cwd)
     def get_cwd(self):
-        self.thisptr.getcwd()
+        """Get the current working directory."""
+        cdef const char* c_string = self.thisptr.getcwd()
+        ustring = c_string.decode('UTF-8') if c_string is not NULL else None
+        return ustring
+
+
+    ##
+    # set saxon resources directory
+    # @param dir_ The resources directory which Saxon will use
     def set_resources_directory(self, dir_):
-        self.thisptr.setResourcesDirectory(dir_)
+        """set saxon resources directory """
+        py_value_string = dir_.encode('UTF-8') if dir_ is not None else None
+        cdef char * c_str_ = py_value_string if dir_ is not None else ""
+        self.thisptr.setResourcesDirectory(c_str_)
     def get_resources_directory(self):
-        return self.thisptr.getResourcesDirectory()
+        """Get the resources directory"""
+        cdef const char* c_string = self.thisptr.getResourcesDirectory()
+        ustring = c_string.decode('UTF-8') if c_string is not NULL else None
+        return ustring
     def set_configuration_property(self, name, value):
         self.thisptr.setConfigurationProperty(name, value)
     def clear_configuration_properties(self):
