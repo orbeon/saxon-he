@@ -1,14 +1,14 @@
 """@package saxonc
 This documentation details the Python API for Saxon/C, which has been written in cython. 
 
-Saxon/C is a cross-compiled variant of Saxon from the Java platform to the C/C++ platform. Saxon/C provides processing in XSLT, XQuery and XPath, and Schema validation."""
+Saxon/C is a cross-compiled variant of Saxon from the Java platform to the C/C++ platform. Saxon/C provides processing in XSLT, XQuery and XPath, and Schema validation. Main classes: PySaxonProcessor, PyXsltProcessor, PyXQueryProcessor, PyXdmValue, PyXdmItem, PyXdmNode and PyXdmAtomicValue."""
 
 
 # distutils: language = c++
 
 cimport saxoncClasses
 from libcpp cimport bool
-import contextlib
+#import contextlib
    
 cdef class PySaxonProcessor:
     """An SaxonProcessor acts as a factory for generating XQuery, XPath, Schema and XSLT compilers.
@@ -18,120 +18,290 @@ cdef class PySaxonProcessor:
     ##
     # The Constructor
     # @param license Flag that a license is to be used
+    # @contextlib.contextmanager
     def __cinit__(self, license=False):
-        """The constructor.
+        """
+        __cinit__(self, license=False)
+        The constructor.
 
         :param bool license: Flag that a license is to be used. The Default is false.
         :type license: bool
         """
         self.thisptr = new saxoncClasses.SaxonProcessor(license)
+            
     def __dealloc__(self):
         """The destructor."""
         del self.thisptr
-    def version(self):
-        """Get the Saxon Version.
 
-        :return: the Saxon version
+    def __enter__(self):
+      """enter method for use with the keyword 'with' context"""
+      return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        """The exit method for the context PySaxonProcessor. Here we release the Jet VM resources.
+        If we have more than one live PySaxonProcessor object the release() method has no effect.
+        """
+        self.thisptr.release()
+
+    def version(self):
+        """
+        version(self)
+        Get the Saxon Version.
+
+        Return:
+            str: The Saxon version
         """
         cdef const char* c_string = self.thisptr.version()
         ustring = c_string.decode('UTF-8')
         return ustring
 
-    @contextlib.contextmanager
-    def release(self):
-        """Clean up and destroy Java VM to release memory used."""
 
-        try:
-          yield
-        finally:
-          self.thisptr.release()
+    def release(self):
+        """
+        release(self) 
+        Clean up and destroy Java VM to release memory used."""
+
+        self.thisptr.release()
 
     def set_cwd(self, cwd):
-        """Set the current working directory.
+        """
+        set_cwd(self, cwd)
+        Set the current working directory.
 
-        :param str cwd: current working directory
+        Args:
+            cwd (str): current working directory
         """
         py_value_string = cwd.encode('UTF-8') if cwd is not None else None
         cdef char * c_str_ = py_value_string if cwd is not None else ""
         self.thisptr.setcwd(cwd)
     def get_cwd(self):
-        """Get the current working directory."""
+        """
+        get_cwd(self)
+        Get the current working directory.
+
+        Returns:
+            str: The current working directory
+
+        """
         cdef const char* c_string = self.thisptr.getcwd()
         ustring = c_string.decode('UTF-8') if c_string is not NULL else None
         return ustring
 
 
-    ##
-    # set saxon resources directory
-    # @param dir_ The resources directory which Saxon will use
     def set_resources_directory(self, dir_):
-        """set saxon resources directory """
+        """
+        set_resources_directory(self, dir_) 
+        Set saxon resources directory 
+
+        Args:
+            dir_ (str): A string of the resources directory which Saxon will use
+
+
+        """
         py_value_string = dir_.encode('UTF-8') if dir_ is not None else None
         cdef char * c_str_ = py_value_string if dir_ is not None else ""
         self.thisptr.setResourcesDirectory(c_str_)
     def get_resources_directory(self):
-        """Get the resources directory"""
+        """
+        get_resources_directory(self)
+        Get the resources directory
+
+        Returns:
+            str: The resources directory
+
+        """
         cdef const char* c_string = self.thisptr.getResourcesDirectory()
         ustring = c_string.decode('UTF-8') if c_string is not NULL else None
         return ustring
     def set_configuration_property(self, name, value):
-        self.thisptr.setConfigurationProperty(name, value)
+        """
+        set_configuration_property(self, name, value)
+        Set configuration property specific to the processor in use.
+        Properties set here are common across all processors. 
+
+        Args:
+            name (str): The name of the property
+            value (str): The value of the property
+
+        Example:
+          'l': 'on' or 'off' - to enable the line number
+
+        """
+        py_value_string = name.encode('UTF-8') if name is not None else None
+        cdef char * c_str_ = py_value_string if name is not None else ""
+        self.thisptr.setConfigurationProperty(c_str_, value)
     def clear_configuration_properties(self):
+        """
+        clear_configuration_properties(self)
+        Clear the configurations properties in use by the processor 
+
+        """
         self.thisptr.clearConfigurationProperties()
     def is_schema_aware(self):
+        """
+        is_schema_aware(self)
+        Check is the processor is Schema aware. A licensed Saxon-EE/C product is schema aware 
+
+        Returns:
+            bool: IS the processor is schema aware
+        """
         return self.thisprt.isSchemaAware()
+
     def new_xslt_processor(self):
+        """
+        new_xslt_processor(self)
+        Create an PyXsltProcessor. A PyXsltProcessor is used to compile and execute XSLT stylesheets. 
+
+        Returns: 
+            PyXsltProcessor: a newly created PyXsltProcessor
+
+        """
         cdef PyXsltProcessor val = PyXsltProcessor()
         val.thisxptr = self.thisptr.newXsltProcessor()
         return val
 
     def new_xquery_processor(self):
+        """
+        new_xquery_processor(self)
+        Create an PyXqueryProcessor. A PyXQueryProcessor is used to compile and execute XQuery queries. 
+
+        Returns: 
+            PyXQueryProcessor: a newly created PyXQueryProcessor
+
+        """
         cdef PyXQueryProcessor val = PyXQueryProcessor()
         val.thisxqptr = self.thisptr.newXQueryProcessor()
         return val
 
     def new_xpath_processor(self):
+        """
+        new_xpath_processor(self)
+        Create an PyXPathProcessor. A PyXPathProcessor is used to compile and execute XPath expressions. 
+
+        Returns: 
+            PyXsltProcessor: a newly created XsltProcessor
+
+        """
         cdef PyXPathProcessor val = PyXPathProcessor()
         val.thisxpptr = self.thisptr.newXPathProcessor()
         return val
 
     def new_schema_validator(self):
+        """
+        new_schema_validator(self)
+        Create a PySchemaValidator which can be used to validate instance documents against the schema held by this 
+
+        Returns: 
+            PySchemaValidator: a newly created PySchemaValidator
+
+        """
         cdef PySchemaValidator val = PySchemaValidator()
         val.thissvptr = self.thisptr.newSchemaValidator()
         return val
 
     def make_string_value(self, str_):
+        """
+        make_string_value(self, str_)
+        Factory method. Unlike the constructor, this avoids creating a new StringValue in the case
+        of a zero-length string (and potentially other strings, in future)
+        
+        Args:
+            str_ (str): the String value. Null is taken as equivalent to "".
+
+        Returns:
+            PyXdmAtomicValue: The corresponding Xdm StringValue
+
+        """
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
         val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeStringValue(str_)
         return val
 
-    def make_integer_value(self, i):
+    def make_integer_value(self, value):
+        """
+        make_integer_value(self, value)
+        Factory method: makes either an Int64Value or a BigIntegerValue depending on the value supplied
+        
+        Args:
+            value (int): The supplied primitive integer value
+
+        Returns:
+            PyXdmAtomicValue: The corresponding Xdm value which is a BigIntegerValue or Int64Value as appropriate
+
+        """
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
-        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeIntegerValue(i)
+        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeIntegerValue(value)
         return val
 
-    def make_double_value(self, d):
+    def make_double_value(self, value):
+        """
+        make_double_value(self, value)
+        Factory method: makes a double value
+
+        Args:
+            value (double): The supplied primitive double value 
+
+        Returns:
+            PyXdmAtomicValue: The corresponding Xdm Value
+        """
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
-        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeDoubleValue(d)
+        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeDoubleValue(value)
         return val
 
-    def make_float_value(self, fl):
+    def make_float_value(self, value):
+        """
+        Factory method: makes a float value
+
+        Args:
+            value (float): The supplied primitive float value 
+
+        Returns:
+            PyXdmAtomicValue: The corresponding Xdm Value
+        """
+
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
-        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeFloatValue(fl)
+        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeFloatValue(value)
         return val
 
-    def make_long_value(self, lg):
+    def make_long_value(self, value):
+        """
+        Factory method: makes either an Int64Value or a BigIntegerValue depending on the value supplied
+
+        Args:
+            value (long): The supplied primitive long value 
+
+        Returns:
+            PyXdmAtomicValue: The corresponding Xdm Value
+        """
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
-        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeLongValue(lg)
+        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeLongValue(value)
         return val
 
-    def make_boolean_value(self, b):
-        cdef bool c_b = b
+    def make_boolean_value(self, value):
+        """
+        Factory method: makes a XdmAtomicValue representing a boolean Value
+
+        Args:
+            value (boolean): True or False, to determine which boolean value is required
+
+        Returns:
+            PyAtomicValue: The corresonding XdmValue
+        """
+        cdef bool c_b = value
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
         val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeBooleanValue(c_b)
         return val
 
     def make_qname_value(self, str_):
+        """
+        Create an QName Xdm value from string representation in clark notation
+
+        Args:
+            str_ (str): The value given in a string form in clark notation. {uri}local
+
+        Returns:
+            PyAtomicValue: The corresonding value
+
+        """
         py_value_string = str_.encode('UTF-8') if str_ is not None else None
         cdef char * c_str_ = py_value_string if str_ is not None else ""
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
@@ -139,6 +309,17 @@ cdef class PySaxonProcessor:
         return val
 
     def make_atomic_value(self, value_type, value):
+        """
+        Create an QName Xdm value from string representation in clark notation
+
+        Args:
+            str_ (str): The value given in a string form in clark notation. {uri}local
+
+        Returns:
+            PyAtomicValue: The corresonding value
+
+        """
+
         py_valueType_string = value_type.encode('UTF-8') if value_type is not None else None
         cdef char * c_valueType_string = py_valueType_string if value_type is not None else ""
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
@@ -146,9 +327,31 @@ cdef class PySaxonProcessor:
         return val
 
     def get_string_value(self, PyXdmItem item):
+        """
+        Create an QName Xdm value from string representation in clark notation
+
+        Args:
+            str_ (str): The value given in a string form in clark notation. {uri}local
+
+        Returns:
+            PyAtomicValue: The corresonding value
+
+        """
         return self.thisptr.getStringValue(item.derivedptr)
 
     def parse_xml(self, **kwds):
+        """
+        Parse a lexical representation, source file or uri of the source document and return it as an Xdm Node
+
+        Args:
+            **kwds : The possible keyword arguments must be one of the follow (xml_file_name|xml_text|xml_uri)
+
+        Returns:
+            PyXdmNode: The Xdm Node representation of the XML document
+
+        Raises:
+            Exception: Error if the keyword argument is not one of xml_file_name|xml_text|xml_uri.
+        """
         py_error_message = "Error: parseXml should only contain one of the following keyword arguments: (xml_file_name|xml_text|xml_uri)"
         if len(kwds) != 1:
           raise Exception(py_error_message)
@@ -180,27 +383,55 @@ cdef class PySaxonProcessor:
            raise Exception(py_error_message)
 
     def exception_occurred(self):
+        """
+        Check if an exception has occurred internally within Saxon/C
+
+        Returns:
+            boolean: True or False if an exception has been reported internally in Saxon/C
+        """
         return self.thisptr.exceptionOccurred()
 
     def exception_clear(self):
+        """
+        Clear any exception thrown internally in Saxon/C.
+
+
+        """
         self.thisptr.exceptionClear()
 
 
 
 cdef class PyXsltProcessor:
+     """An PyXsltProcessor represents factory to compile, load and execute a stylesheet.
+     It is possible to cache the context and the stylesheet in the PyXsltProcessor """
+
      cdef saxoncClasses.XsltProcessor *thisxptr      # hold a C++ instance which we're wrapping
 
      def __cinit__(self):
+        """Default constructor """
         self.thisxptr = NULL
      def __dealloc__(self):
         if self.thisxptr != NULL:
            del self.thisxptr
      def set_cwd(self, cwd):
+        """Set the current working directory.
+
+        Args:
+            cwd (str): current working directory
+        """
         py_cwd_string = cwd.encode('UTF-8') if cwd is not None else None
         cdef char * c_cwd = py_cwd_string if cwd is not None else "" 
         self.thisxptr.setcwd(c_cwd)
 
      def set_source(self, **kwds):
+        """Set the source document for the transformation.
+
+        Args:
+            **kwds: Keyword argument can only be one of the following: file_name|node
+        Raises:
+            Exception: Exception is raised if eyword argument is not one of file_name or node.
+        """
+
         py_error_message = "Error: setSource should only contain one of the following keyword arguments: (file_name|node)"
         if len(kwds) != 1:
           raise Exception(py_error_message)

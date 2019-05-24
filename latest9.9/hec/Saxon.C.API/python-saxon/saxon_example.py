@@ -1,7 +1,6 @@
 import saxonc
 
-proc = saxonc.PySaxonProcessor(license=False)
-with proc.release() as resource:
+with saxonc.PySaxonProcessor(license=False) as proc:
    
    print("Test Python")
    print(proc.version())
@@ -9,7 +8,7 @@ with proc.release() as resource:
    xdmAtomicval = proc.make_boolean_value(False)
 
    xsltproc = proc.new_xslt_processor()
-   outputi = xsltproc.transform_to_string(source_file="cat.xml", stylesheet_file="test.xsl")
+   outputi = xsltproc.transform_to_string(source_file="cat.xml", stylesheet_file="test1.xsl")
    print("Test1 =",outputi)
    document = proc.parse_xml(xml_text="<out><person>text1</person><person>text2</person><person>text3</person></out>")
    xsltproc.set_source(node=document)
