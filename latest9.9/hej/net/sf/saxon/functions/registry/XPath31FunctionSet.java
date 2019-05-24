@@ -167,13 +167,13 @@ public class XPath31FunctionSet extends BuiltInFunctionSet {
                 .arg(0, MapType.ANY_MAP_TYPE, ONE, EMPTY)
                 .optionDetails(TransformFn.makeOptionsParameter());
 
-        register("xml-to-json", 1, XMLToJsonFn.class, AnyItemType.getInstance(),
+        register("xml-to-json", 1, XMLToJsonFn.class, BuiltInAtomicType.STRING,
                  OPT, XPATH30, LATE)
-                .arg(0, AnyNodeTest.getInstance(), OPT | ABS, null);
+                .arg(0, AnyNodeTest.getInstance(), OPT | ABS, EMPTY);
 
-        register("xml-to-json", 2, XMLToJsonFn.class, AnyItemType.getInstance(),
+        register("xml-to-json", 2, XMLToJsonFn.class, BuiltInAtomicType.STRING,
                  OPT, XPATH30, LATE)
-                .arg(0, AnyNodeTest.getInstance(), OPT | ABS, null)
+                .arg(0, AnyNodeTest.getInstance(), OPT | ABS, EMPTY)
                 .arg(1, MapType.ANY_MAP_TYPE, ONE | ABS, null)
                 .optionDetails(XMLToJsonFn.makeOptionsParameter());
 
