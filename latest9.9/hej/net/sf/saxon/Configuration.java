@@ -4653,7 +4653,7 @@ public class Configuration implements SourceResolver, NotationSet {
 
                 case FeatureCode.SERIALIZER_FACTORY_CLASS:
                     setSerializerFactory(
-                            (SerializerFactory) instantiateClassName(name, value, OutputURIResolver.class));
+                            (SerializerFactory) instantiateClassName(name, value, SerializerFactory.class));
                     break;
 
                 case FeatureCode.SCHEMA_VALIDATION: {
