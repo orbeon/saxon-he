@@ -876,7 +876,7 @@ cdef class PyXsltProcessor:
         Return:
             str: The message of the i'th exception. Return None if the i'th exception does not exist.
         """
-        cdef const char* c_string = self.thisxptr.getErrorMessage(i)
+        cdef const char* c_string = self.thisxptr.getErrorMessage(index)
         ustring = c_string.decode('UTF-8') if c_string is not NULL else None
         return ustring
 
@@ -892,7 +892,7 @@ cdef class PyXsltProcessor:
             str: The error code associated with the i'th exception. Return None if the i'th exception does not exist.
 
         """
-        cdef const char* c_string = self.thisxptr.getErrorCode(i)
+        cdef const char* c_string = self.thisxptr.getErrorCode(index)
         ustring = c_string.decode('UTF-8') if c_string is not NULL else None
         return ustring
 
@@ -1157,8 +1157,8 @@ cdef class PyXQueryProcessor:
             base_uri (str): The static base URI; or None to indicate that no base URI is available
         """
         py_content_string = base_uri.encode('UTF-8') if base_uri is not None else None
-        c_content = py_content_string if content is not None else ""
-        self.thisxqptr.setQueryBaseURI(baseURI)
+        c_content = py_content_string if base_uri is not None else ""
+        self.thisxqptr.setQueryBaseURI(base_uri)
 
      def set_cwd(self, cwd):
         """
@@ -1223,9 +1223,9 @@ cdef class PyXQueryProcessor:
         Return:
             str: The message of the i'th exception. Return None if the i'th exception does not exist.
         """
-        return self.thisxqptr.getErrorMessage(i)
+        return self.thisxqptr.getErrorMessage(index)
 
-     def get_error_code(self, i):
+     def get_error_code(self, index):
         """
         get_error_code(self, index)
         A transformation may have a number of errors reported against it. Get the i'th error code if there are any errors
@@ -1237,7 +1237,7 @@ cdef class PyXQueryProcessor:
             str: The error code associated with the i'th exception. Return None if the i'th exception does not exist.
 
         """
-        return self.thisxqptr.getErrorCode(i)
+        return self.thisxqptr.getErrorCode(index)
 
 cdef class PyXPathProcessor:
      cdef saxoncClasses.XPathProcessor *thisxpptr      # hold a C++ instance which we're wrapping
@@ -1403,8 +1403,8 @@ cdef class PyXPathProcessor:
         Return:
             str: The message of the i'th exception. Return None if the i'th exception does not exist.
         """
-        self.thisxpptr.getErrorMessage(i)
-     def get_error_code(self, i):
+        self.thisxpptr.getErrorMessage(index)
+     def get_error_code(self, index):
         """
         get_error_code(self, index)
         A transformation may have a number of errors reported against it. Get the i'th error code if there are any errors
@@ -1416,7 +1416,7 @@ cdef class PyXPathProcessor:
             str: The error code associated with the i'th exception. Return None if the i'th exception does not exist.
 
         """
-        return self.thisxpptr.getErrorCode(i)
+        return self.thisxpptr.getErrorCode(index)
 
 
 cdef class PySchemaValidator:
