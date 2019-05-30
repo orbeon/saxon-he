@@ -43,17 +43,17 @@ cdef class PySaxonProcessor:
         """
         self.thisptr.release()
 
-    def version(self):
+    property version:
         """
-        version(self)
         Get the Saxon Version.
 
-        Return:
+        Getter:
             str: The Saxon version
         """
-        cdef const char* c_string = self.thisptr.version()
-        ustring = c_string.decode('UTF-8')
-        return ustring
+        def __get__(self):        
+            cdef const char* c_string = self.thisptr.version()
+            ustring = c_string.decode('UTF-8')
+            return ustring
 
 
     def release(self):
@@ -63,53 +63,39 @@ cdef class PySaxonProcessor:
 
         self.thisptr.release()
 
-    def set_cwd(self, cwd):
-        """
-        set_cwd(self, cwd)
-        Set the current working directory.
 
-        Args:
-            cwd (str): current working directory
+    @property
+    def cwd(self):
         """
-        py_value_string = cwd.encode('UTF-8') if cwd is not None else None
-        cdef char * c_str_ = py_value_string if cwd is not None else ""
-        self.thisptr.setcwd(cwd)
-    def get_cwd(self):
-        """
-        get_cwd(self)
-        Get the current working directory.
+        cwd Property represents the current working directorty
 
-        Returns:
-            str: The current working directory
-
-        """
+        :str: Get or set the current working directory"""
         cdef const char* c_string = self.thisptr.getcwd()
         ustring = c_string.decode('UTF-8') if c_string is not NULL else None
         return ustring
 
 
-    def set_resources_directory(self, dir_):
+    @cwd.setter
+    def cwd(self, cwd):
+         py_value_string = cwd.encode('UTF-8') if cwd is not None else None
+         cdef char * c_str_ = py_value_string if cwd is not None else ""
+         self.thisptr.setcwd(cwd)
+    
+
+    @property
+    def resources_directory(self, dir_):
         """
-        set_resources_directory(self, dir_) 
-        Set saxon resources directory 
-
-        Args:
-            dir_ (str): A string of the resources directory which Saxon will use
-
+        Property to set or get resources directory 
+        
+        :str: A string of the resources directory which Saxon will use
 
         """
         py_value_string = dir_.encode('UTF-8') if dir_ is not None else None
         cdef char * c_str_ = py_value_string if dir_ is not None else ""
         self.thisptr.setResourcesDirectory(c_str_)
-    def get_resources_directory(self):
-        """
-        get_resources_directory(self)
-        Get the resources directory
 
-        Returns:
-            str: The resources directory
-
-        """
+    @resources_directory.setter   
+    def resources_directory(self):
         cdef const char* c_string = self.thisptr.getResourcesDirectory()
         ustring = c_string.decode('UTF-8') if c_string is not NULL else None
         return ustring
@@ -137,13 +123,13 @@ cdef class PySaxonProcessor:
 
         """
         self.thisptr.clearConfigurationProperties()
+
+    @property
     def is_schema_aware(self):
         """
-        is_schema_aware(self)
         Check is the processor is Schema aware. A licensed Saxon-EE/C product is schema aware 
 
-        Returns:
-            bool: IS the processor is schema aware
+        ":bool: Indicate if the processor is schema aware, True or False otherwise
         """
         return self.thisprt.isSchemaAware()
 
@@ -708,7 +694,7 @@ cdef class PyXsltProcessor:
 
 
 
-        Return:
+        Returns:
             PyXdmNode: Result of the transformation as an PyXdmNode object
 
 
@@ -828,7 +814,7 @@ cdef class PyXsltProcessor:
         """
         exception_occurred(self)
         Checks for pending exceptions without creating a local reference to the exception object
-        Return:
+        Returns:
             boolean: True when there is a pending exception; otherwise return False        
 
         """
@@ -839,7 +825,7 @@ cdef class PyXsltProcessor:
         check_exception(self)
         Check for exception thrown and get message of the exception.
   
-        Return:
+        Returns:
             str: Returns the exception message if thrown otherwise return None
 
         """
@@ -860,7 +846,7 @@ cdef class PyXsltProcessor:
         excepton_count(self)
         Get number of errors reported during execution.
 
-        Return:
+        Returns:
             int: Count of the exceptions thrown during execution
         """
         return self.thisxptr.exceptionCount()
@@ -873,7 +859,7 @@ cdef class PyXsltProcessor:
         Args:
             index (int): The i'th exception
         
-        Return:
+        Returns:
             str: The message of the i'th exception. Return None if the i'th exception does not exist.
         """
         cdef const char* c_string = self.thisxptr.getErrorMessage(index)
@@ -888,7 +874,7 @@ cdef class PyXsltProcessor:
         Args:
             index (int): The i'th exception
         
-        Return:
+        Returns:
             str: The error code associated with the i'th exception. Return None if the i'th exception does not exist.
 
         """
@@ -1025,7 +1011,12 @@ cdef class PyXQueryProcessor:
 
      def set_updating(self, updating):
         """
-        (self)
+        set_updating(self, updating)
+        Say whether the query is allowed to be updating. XQuery update syntax will be rejected during query compilation unless this flag is set. XQuery Update is supported only under Saxon-EE/C.
+
+
+        Args:
+            updating (bool): true if the query is allowed to use the XQuery Update facility (requires Saxon-EE/C). If set to false, the query must not be an updating query. If set to true, it may be either an updating or a non-updating query.
 
 
         """
@@ -1034,8 +1025,13 @@ cdef class PyXQueryProcessor:
      def run_query_to_value(self, ** kwds):
         """
         run_query_to_value(self, **kwds)
+        Execute query and output result as an PyXdmValue object 
 
+        Args:
+            **kwds: Keyword arguments with the possible options input_file_name (str) or input_xdm_item (PyXdmItem). Possible to supply query with the arguments 'query_file' or 'query_text', which are of type str.
 
+        Returns:
+            PyXdmValue: Output result as an PyXdmValue
         """
         cdef PyXdmValue val
         if len(kwds) == 0:
@@ -1063,7 +1059,7 @@ cdef class PyXQueryProcessor:
         Args:
             **kwds: Keyword arguments with the possible options input_file_name (str) or input_xdm_item (PyXdmItem). Possible to supply query with the arguments 'query_file' or 'query_text', which are of type str.
 
-        Return:
+        Returns:
             str: Output result as a string
         """
         if len(kwds) == 0:
@@ -1177,7 +1173,7 @@ cdef class PyXQueryProcessor:
         check_exception(self)
         Check for exception thrown and get message of the exception.
   
-        Return:
+        Returns:
             str: Returns the exception message if thrown otherwise return None
 
         """
@@ -1188,7 +1184,7 @@ cdef class PyXQueryProcessor:
         exceptionOccurred(self)
         Checks for pending exceptions without creating a local reference to the exception object
 
-        Return:
+        Returns:
             boolean: True when there is a pending exception; otherwise return False
 
         """
@@ -1207,7 +1203,7 @@ cdef class PyXQueryProcessor:
         excepton_count(self)
         Get number of errors reported during execution.
 
-        Return:
+        Returns:
             int: Count of the exceptions thrown during execution
         """
         return self.thisxqptr.exceptionCount()
@@ -1220,7 +1216,7 @@ cdef class PyXQueryProcessor:
         Args:
             index (int): The i'th exception
         
-        Return:
+        Returns:
             str: The message of the i'th exception. Return None if the i'th exception does not exist.
         """
         return self.thisxqptr.getErrorMessage(index)
@@ -1233,13 +1229,14 @@ cdef class PyXQueryProcessor:
         Args:
             index (int): The i'th exception
         
-        Return:
+        Returns:
             str: The error code associated with the i'th exception. Return None if the i'th exception does not exist.
 
         """
         return self.thisxqptr.getErrorCode(index)
 
 cdef class PyXPathProcessor:
+     """An XPathProcessor represents factory to compile, load and execute the XPath query. """
      cdef saxoncClasses.XPathProcessor *thisxpptr      # hold a C++ instance which we're wrapping
 
      def __cinit__(self):
@@ -1251,7 +1248,7 @@ cdef class PyXPathProcessor:
         self.thisxpptr = NULL
      def __dealloc__(self):
         """
-        (self)
+        dealloc(self)
 
 
         """
@@ -1270,24 +1267,36 @@ cdef class PyXPathProcessor:
         """
         self.thisxpptr.setBaseURI(uri)
 
-     def evaluate(self, xpathStr):
+     def evaluate(self, xpath_str):
         """
-        (self)
+        evaluate(self, xpath_str)
 
+        Args:
+            xpath_str (str): The XPath query suplied as a string
+
+        Returns:
+            PyXdmValue: 
 
         """
+        py_string = xpath_str.encode('UTF-8') if xpath_str is not None else None
+        c_xpath = py_string if xpath_str is not None else ""
         cdef PyXdmValue val = PyXdmValue()
-        val.thisvptr = self.thisxpptr.evaluate(xpathStr)
+        val.thisvptr = self.thisxpptr.evaluate(c_xpath)
         return val
 
-     def evaluate_single(self, xpathStr):
+     def evaluate_single(self, xpath_str):
         """
-        (self)
+        evaluate_single(self, xpath_str)
 
+        Args:
+            xpath_str (str): The XPath query suplied as a string
+
+        Returns:
+            PyXdmItem: A single Xdm Item is returned 
 
         """
         cdef PyXdmItem val = PyXdmItem()
-        val.derivedptr = val.thisvptr = self.thisxpptr.evaluateSingle(xpathStr)
+        val.derivedptr = val.thisvptr = self.thisxpptr.evaluateSingle(xpath_str)
         return val
      def setContextItem(self, PyXdmItem item):
         self.thisxpptr.setContextItem(item.derivedptr)
@@ -1360,7 +1369,7 @@ cdef class PyXPathProcessor:
         check_exception(self)
         Check for exception thrown and get message of the exception.
   
-        Return:
+        Returns:
             str: Returns the exception message if thrown otherwise return None
 
         """
@@ -1388,7 +1397,7 @@ cdef class PyXPathProcessor:
         excepton_count(self)
         Get number of errors reported during execution.
 
-        Return:
+        Returns:
             int: Count of the exceptions thrown during execution
         """
         return self.thisxpptr.exceptionCount()
@@ -1400,7 +1409,7 @@ cdef class PyXPathProcessor:
         Args:
             index (int): The i'th exception
         
-        Return:
+        Returns:
             str: The message of the i'th exception. Return None if the i'th exception does not exist.
         """
         self.thisxpptr.getErrorMessage(index)
@@ -1412,7 +1421,7 @@ cdef class PyXPathProcessor:
         Args:
             index (int): The i'th exception
         
-        Return:
+        Returns:
             str: The error code associated with the i'th exception. Return None if the i'th exception does not exist.
 
         """
@@ -1420,6 +1429,7 @@ cdef class PyXPathProcessor:
 
 
 cdef class PySchemaValidator:
+     """An SchemaValidator represents factory for validating instance documents against a schema."""
      cdef saxoncClasses.SchemaValidator *thissvptr      # hold a C++ instance which we're wrapping
 
      def __cinit__(self):
@@ -1509,7 +1519,7 @@ cdef class PySchemaValidator:
         check_exception(self)
         Check for exception thrown and get message of the exception.
   
-        Return:
+        Returns:
             str: Returns the exception message if thrown otherwise return None
 
 
@@ -1527,7 +1537,7 @@ cdef class PySchemaValidator:
         excepton_count(self)
         Get number of errors reported during execution of the schema.
 
-        Return:
+        Returns:
             int: Count of the exceptions thrown during execution
         """
         return self.thissvprt.exceptionCount()
@@ -1539,7 +1549,7 @@ cdef class PySchemaValidator:
         Args:
             index (int): The i'th exception
         
-        Return:
+        Returns:
             str: The message of the i'th exception. Return None if the i'th exception does not exist.
         """
         return self.thissvprt.getErrorMessage(index)
@@ -1551,7 +1561,7 @@ cdef class PySchemaValidator:
         Args:
             index (int): The i'th exception
         
-        Return:
+        Returns:
             str: The error code associated with the i'th exception. Return None if the i'th exception does not exist.
 
         """
@@ -1569,6 +1579,7 @@ cdef class PySchemaValidator:
         self.thissvprt.setLax(lax)
 
 cdef class PyXdmValue:
+     """Value in the XDM data model. A value is a sequence of zero or more items, each item being either an atomic value or a node. """    
      cdef saxoncClasses.XdmValue *thisvptr      # hold a C++ instance which we're wrapping
 
      def __cinit__(self):
@@ -1595,14 +1606,14 @@ cdef class PyXdmValue:
         self.thisvptr.addXdmItem(value.derivedptr)
 
      def get_head(self):
-         """
-         get_head(self)
-         Get the first item in the sequence
+        """
+        get_head(self)
+        Get the first item in the sequence
 
-         Return:
-             PyXdmItem: The PyXdmItem or None if the sequence is empty
+        Returns:
+            PyXdmItem: The PyXdmItem or None if the sequence is empty
 
-         """
+        """
         cdef PyXdmItem val = PyXdmItem()
         val.derivedptr = val.thisvptr = self.thisvptr.getHead()
         if val.derivedptr == NULL :
@@ -1610,16 +1621,46 @@ cdef class PyXdmValue:
         else:
             return val
 
-     def item_at(self, i):
+     def item_at(self, index):
+        """
+        item_at(self, index)
+        Get the n'th item in the value, counting from zero.
+        
+        Args:
+            index (int): the index of the item required. Counting from zero
+        Returns:
+            PyXdmItem: Get the item indicated at the index. If the item does not exist return None.
+        
+
+        """
         cdef PyXdmItem val = PyXdmItem()
-        val.derivedptr = val.thisvptr = self.thisvptr.itemAt(i)
-        return val
+        val.derivedptr = val.thisvptr = self.thisvptr.itemAt(index)
+        if val.derivedptr == NULL:
+            return None
+        else:
+            return val
 
      def size(self):
+        """
+        size(self)
+        Get the number of items in the sequence
+        
+        Returns:
+            int: The coutn of items in the sequence
+        """
         return self.thisvptr.size()
 
      def to_string(self):
-        return self.thisvptr.toString()
+        """
+        to_string(self)
+
+        """
+        cdef const char* c_string = self.thisvptr.toString()
+        if c_string == NULL:
+            return None
+        else:
+            ustring = c_string.decode('UTF-8')
+            return ustring 
 
 cdef class PyXdmItem(PyXdmValue):
      cdef saxoncClasses.XdmItem *derivedptr      # hold a C++ instance which we're wrapping
