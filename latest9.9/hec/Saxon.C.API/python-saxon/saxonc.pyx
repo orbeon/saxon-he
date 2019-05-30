@@ -1572,6 +1572,11 @@ cdef class PyXdmValue:
      cdef saxoncClasses.XdmValue *thisvptr      # hold a C++ instance which we're wrapping
 
      def __cinit__(self):
+        """
+        cinit(self)
+        Constructor for PyXdmValue
+
+        """
         if type(self) is PyXdmValue:
             self.thisvptr = new saxoncClasses.XdmValue() 
      def __dealloc__(self):
@@ -1580,12 +1585,30 @@ cdef class PyXdmValue:
 
 
      def add_xdm_item(self, PyXdmItem value):
+        """
+        add_xdm_tem(self, PyXdmItem value)
+        Add PyXdmItem to the Xdm sequence
+
+        Args:
+            value (PyXdmItem): The PyXdmItem object
+        """
         self.thisvptr.addXdmItem(value.derivedptr)
 
      def get_head(self):
+         """
+         get_head(self)
+         Get the first item in the sequence
+
+         Return:
+             PyXdmItem: The PyXdmItem or None if the sequence is empty
+
+         """
         cdef PyXdmItem val = PyXdmItem()
         val.derivedptr = val.thisvptr = self.thisvptr.getHead()
-        return val
+        if val.derivedptr == NULL :
+            return None
+        else:
+            return val
 
      def item_at(self, i):
         cdef PyXdmItem val = PyXdmItem()
