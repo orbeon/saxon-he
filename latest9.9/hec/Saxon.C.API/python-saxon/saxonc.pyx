@@ -249,6 +249,7 @@ cdef class PySaxonProcessor:
 
     def make_float_value(self, value):
         """
+        make_float_value(self, value)
         Factory method: makes a float value
 
         Args:
@@ -264,6 +265,7 @@ cdef class PySaxonProcessor:
 
     def make_long_value(self, value):
         """
+        make_long_value(self, value)
         Factory method: makes either an Int64Value or a BigIntegerValue depending on the value supplied
 
         Args:
@@ -278,6 +280,7 @@ cdef class PySaxonProcessor:
 
     def make_boolean_value(self, value):
         """
+        make_boolean_value(self, value)
         Factory method: makes a XdmAtomicValue representing a boolean Value
 
         Args:
@@ -293,6 +296,7 @@ cdef class PySaxonProcessor:
 
     def make_qname_value(self, str_):
         """
+        make_qname_value(self, str_)
         Create an QName Xdm value from string representation in clark notation
 
         Args:
@@ -310,6 +314,7 @@ cdef class PySaxonProcessor:
 
     def make_atomic_value(self, value_type, value):
         """
+        make_atomic_value(self, value_type, value)
         Create an QName Xdm value from string representation in clark notation
 
         Args:
@@ -328,6 +333,7 @@ cdef class PySaxonProcessor:
 
     def get_string_value(self, PyXdmItem item):
         """
+        get_string_value(self, PyXdmItem item)
         Create an QName Xdm value from string representation in clark notation
 
         Args:
@@ -341,6 +347,7 @@ cdef class PySaxonProcessor:
 
     def parse_xml(self, **kwds):
         """
+        parse_xml(self, **kwds)
         Parse a lexical representation, source file or uri of the source document and return it as an Xdm Node
 
         Args:
@@ -384,6 +391,7 @@ cdef class PySaxonProcessor:
 
     def exception_occurred(self):
         """
+        exception_occurred(self)
         Check if an exception has occurred internally within Saxon/C
 
         Returns:
@@ -393,6 +401,7 @@ cdef class PySaxonProcessor:
 
     def exception_clear(self):
         """
+        exceltion_clear(self)
         Clear any exception thrown internally in Saxon/C.
 
 
@@ -414,7 +423,9 @@ cdef class PyXsltProcessor:
         if self.thisxptr != NULL:
            del self.thisxptr
      def set_cwd(self, cwd):
-        """Set the current working directory.
+        """
+        set_cwd(self, cwd)
+        Set the current working directory.
 
         Args:
             cwd (str): current working directory
@@ -450,21 +461,70 @@ cdef class PyXsltProcessor:
         else:
           raise Exception(py_error_message)
 
-     def set_output_file(self, outputfile):
-        py_filename_string = outputfile.encode('UTF-8') if outputfile is not None else None
-        cdef char * c_outputfile = py_filename_string if outputfile is not None else ""
+     def set_output_file(self, output_file):
+        """
+        set_output_file(self, output_file)
+        Set the output file where the output of the transformation will be sent
+
+        Args:
+            output_file (str): The output file supplied as a str
+
+        """
+        py_filename_string = output_file.encode('UTF-8') if output_file is not None else None
+        cdef char * c_outputfile = py_filename_string if output_file is not None else ""
         self.thisxptr.setOutputFile(c_outputfile)
 
      def set_jit_compilation(self, bool jit):
+        """
+        set_jit_compilation(self, jit)
+        Say whether just-in-time compilation of template rules should be used.
+
+        Args:
+            jit (bool): True if just-in-time compilation is to be enabled. With this option enabled,
+                static analysis of a template rule is deferred until the first time that the
+                template is matched. This can improve performance when many template
+                rules are rarely used during the course of a particular transformation; however,
+                it means that static errors in the stylesheet will not necessarily cause the
+                compile(Source) method to throw an exception (errors in code that is
+                actually executed will still be notified but this may happen after the compile(Source)
+                method returns). This option is enabled by default in Saxon-EE, and is not available
+                in Saxon-HE or Saxon-PE.
+                Recommendation: disable this option unless you are confident that the
+                stylesheet you are compiling is error-free. 
+
+        """
         cdef bool c_jit
         c_jit = jit
         self.thisxptr.setJustInTimeCompilation(c_jit)
         #else:
         #raise Warning("setJustInTimeCompilation: argument must be a boolean type. JIT not set")
      def set_parameter(self, name, PyXdmValue value):
-        self.thisxptr.setParameter(name, value.thisvptr)
+        """
+        set_parameter(self, PyXdmValue value)
+        Set the value of a stylesheet parameter
+
+        Args:
+            name (str): the name of the stylesheet parameter, as a string. For namespaced parameter use the JAXP solution i.e. "{uri}name
+            value (PyXdmValue): the value of the stylesheet parameter, or null to clear a previously set value
+
+        """
+        py_name_string = name.encode('UTF-8') if name is not None else None
+        cdef char * c_name = py_name_string if name is not None else ""
+        self.thisxptr.setParameter(c_name, value.thisvptr)
 
      def get_parameter(self, name):
+        """
+        get_parameter(self, name)
+        Get a parameter value by a given name
+
+        Args:
+            name (str): The name of the stylesheet parameter
+
+        Returns:
+            PyXdmValue: The Xdm value of the parameter  
+
+
+        """
         py_name_string = name.encode('UTF-8') if name is not None else None
         cdef char * c_name = py_name_string if name is not None else ""
         cdef PyXdmValue val = PyXdmValue()
@@ -472,23 +532,98 @@ cdef class PyXsltProcessor:
         return val
 
      def remove_parameter(self, name):
+        """
+        remove_parameter(self, name)
+        Remove the parameter given by name from the PyXsltProcessor. The parameter will not have any affect on the stylesheet if it has not yet been executed
+
+        Args:
+            name (str): The name of the stylesheet parameter
+
+        Returns:
+            bool: True if the removal of the parameter has been successful, False otherwise.
+
+        """
+
         py_name_string = name.encode('UTF-8') if name is not None else None
         cdef char * c_name = py_name_string if name is not None else ""
         return self.thisxptr.removeParameter(c_name)
+
      def set_property(self, name, value):
+        """
+        set_property(self, name, value)
+        Set a property specific to the processor in use.
+ 
+        Args:
+            name (str): The name of the property
+            value (str): The value of the property
+
+        Example:
+            XsltProcessor: set serialization properties (names start with '!' i.e. name "!method" -> "xml")\r
+            'o':outfile name,\r
+            'it': initial template,\r 
+            'im': initial mode,\r
+            's': source as file name\r
+            'm': switch on message listener for xsl:message instructions,\r
+            'item'| 'node' : source supplied as an XdmNode object,\r
+            'extc':Set the native library to use with Saxon for extension functions written in C/C++/PHP\r
+
+        """
+
         py_name_string = name.encode('UTF-8') if name is not None else None
         cdef char * c_name = py_name_string if name is not None else ""
-        self.thisxptr.setProperty(c_name, value)
+        py_value_string = value.encode('UTF-8') if value is not None else None
+        cdef char * c_value = py_value_string if value is not None else ""
+        self.thisxptr.setProperty(c_name, c_value)
+
      def clear_parameters(self):
+        """
+        clear_parameter(self)
+        Clear all parameters set on the processor for execution of the stylesheet
+        """
+
         self.thisxptr.clearParameters()
      def clear_properties(self):
+        """
+        clear_properties(self)
+        Clear all properties set on the processor
+        """
+
         self.thisxptr.clearProperties()
      def get_xsl_messages(self):
+        """
+        Get the messages written using the <code>xsl:message</code> instruction
+        get_xsl_message(self)
+        
+        Returns:
+            PyXdmValue: Messages returned as an XdmValue. 
+
+        """
+
         cdef PyXdmValue val = PyXdmValue()
         val.thisvptr = self.thisxptr.getXslMessages()
         return val
 
      def transform_to_string(self, **kwds):
+        """
+        transform_to_string(self, **kwds)
+        Execute transformation to string.
+
+        Args:
+            **kwds: Possible arguments: source_file (str) or xdm_node (PyXdmNode). Other allowed argument: stylesheet_file (str)
+
+
+        Example:
+
+            1) result = xsltproc.transform_to_string(source_file="cat.xml", stylesheet_file="test1.xsl")
+
+            2) xsltproc.set_source("cat.xml")\r
+               result = xsltproc.transform_to_string(stylesheet_file="test1.xsl")
+
+
+            3) node = saxon_proc.parse_xml(xml_text="<in/>")\r
+               result = xsltproc.transform_to_string(stylesheet_file="test1.xsl", xdm_node= node)
+        """
+
         cdef char * c_sourcefile
         cdef char * c_stylesheetfile
         py_source_string = None
@@ -501,11 +636,11 @@ cdef class PyXsltProcessor:
             if key == "stylesheet_file":
               py_stylesheet_string = value.encode('UTF-8') if value is not None else None
               c_stylesheetfile = py_stylesheet_string if value is not None else ""
-          elif key == "xdm_value":
+          elif key == "xdm_node":
             if isinstance(value, PyXdmNode):
               self.setSourceFromXdmNode(value)
           elif len(kwds) > 0:
-            raise Warning("Warning: transform_to_string should only the following keyword arguments: (source_file, stylesheet_file, xdm_value)")
+            raise Warning("Warning: transform_to_string should only the following keyword arguments: (source_file, stylesheet_file, xdm_node)")
 
         cdef const char* c_string            
         if len(kwds) == 0:
@@ -517,6 +652,25 @@ cdef class PyXsltProcessor:
         return ustring
 
      def transform_to_file(self, **kwds):
+        """
+        transform_to_file(self, **kwds)
+        Execute transformation to a file. It is possible to specify the as an argument or using the set_output_file method.       
+        Args:
+            **kwds: Possible optional arguments: source_file (str) or xdm_node (PyXdmNode). Other allowed argument: stylesheet_file (str), output_file (str)
+
+
+        Example:
+
+            1) xsltproc.transform_to_file(source_file="cat.xml", stylesheet_file="test1.xsl", output_file="result.xml")
+
+            2) xsltproc.set_source("cat.xml")\r
+               xsltproc.setoutput_file("result.xml")\r
+               xsltproc.transform_to_file(stylesheet_file="test1.xsl")
+
+
+            3) node = saxon_proc.parse_xml(xml_text="<in/>")\r
+               xsltproc.transform_to_file(output_file="result.xml", stylesheet_file="test1.xsl", xdm_node= node)        
+        """
         cdef char * c_sourcefile
         cdef char * c_outputfile
         cdef char * c_stylesheetfile
@@ -534,7 +688,7 @@ cdef class PyXsltProcessor:
             if key == "stylesheet_file":
               py_stylesheet_string = value.encode('UTF-8') if value is not None else None
               c_stylesheetfile = py_stylesheet_string if value is not None else ""
-          elif key == "xdm_value":
+          elif key == "xdm_node":
             if isinstance(value, PyXdmNode):
               self.setSourceFromXdmNode(value)
             
@@ -545,6 +699,30 @@ cdef class PyXsltProcessor:
 
 
      def transform_to_value(self, **kwds):
+        """
+        transform_to_value(self, **kwds)
+        Execute transformation to an Xdm Node
+
+        Args:
+            **kwds: Possible optional arguments: source_file (str) or xdm_node (PyXdmNode). Other allowed argument: stylesheet_file (str)
+
+
+
+        Return:
+            PyXdmNode: Result of the transformation as an PyXdmNode object
+
+
+        Example:
+
+            1) node = xsltproc.transform_to_value(source_file="cat.xml", stylesheet_file="test1.xsl")
+
+            2) xsltproc.set_source("cat.xml")\r
+               node = xsltproc.transform_to_value(stylesheet_file="test1.xsl")
+
+
+            3) node = saxon_proc.parse_xml(xml_text="<in/>")\r
+               node = xsltproc.transform_tovalue(stylesheet_file="test1.xsl", xdm_node= node)        
+        """
         cdef char * c_sourcefile
         cdef char * c_stylesheetfile
         py_source_string = None
@@ -557,7 +735,7 @@ cdef class PyXsltProcessor:
             if key == "stylesheet_file":
               py_stylesheet_string = value.encode('UTF-8') if value is not None else None
               c_stylesheetfile = py_stylesheet_string if value is not None else ""
-          elif key == "xdm_value":
+          elif key == "xdm_node":
             if isinstance(value, PyXdmNode):
               self.setSourceFromXdmNode(value)
         cdef PyXdmValue py_xdm_value = PyXdmValue()
@@ -569,6 +747,18 @@ cdef class PyXsltProcessor:
         return py_xdm_value
      
      def compile_stylesheet(self, **kwds):
+        """
+        compile_stylesheet(self, **kwds)
+        Compile a stylesheet  received as text, uri or as a node object. The compiled stylesheet is cached and available for execution later. It is also possible to save the compiled stylesheet (SEF file) given the option 'save' and 'output_file'
+   
+        Args:
+            **kwds: Possible keyword arguments stylesheet_text (str), stylesheet_uri (str) or stylsheetnode (PyXdmNode). Also possible to add the options save (boolean) and output_file, which creates an exported stylesheet to file (SEF). 
+
+        Example:
+            1. xsltproc.compile_stylesheet(stylesheet_text="<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>       <xsl:param name='values' select='(2,3,4)' /><xsl:output method='xml' indent='yes' /><xsl:template match='*'><output><xsl:value-of select='//person[1]'/><xsl:for-each select='$values' ><out><xsl:value-of select='. * 3'/></out></xsl:for-each></output></xsl:template></xsl:stylesheet>")
+
+            2. xsltproc.compile_stylesheet(stylesheet_file="test1.xsl", save=True, output_file="test1.sef")
+        """
         py_error_message = "CompileStylesheet should only be one of the keyword option: (stylesheet_text|stylesheet_uri|stylesheet_node), also in allowed in addition the optional keyword 'save' boolean with the keyword 'outputfile' keyword"
         if len(kwds) >3:
           raise Exception(py_error_message)
@@ -627,40 +817,117 @@ cdef class PyXsltProcessor:
             raise Exception(py_error_message)
 
      def release_stylesheet(self):
+        """
+        release_stylesheet(self)
+        Release cached stylesheet
+
+        """
         self.thisxptr.releaseStylesheet()
 
      def exception_occurred(self):
+        """
+        exception_occurred(self)
+        Checks for pending exceptions without creating a local reference to the exception object
+        Return:
+            boolean: True when there is a pending exception; otherwise return False        
+
+        """
         return self.thisxptr.exceptionOccurred()
+
      def check_exception(self):
+        """
+        check_exception(self)
+        Check for exception thrown and get message of the exception.
+  
+        Return:
+            str: Returns the exception message if thrown otherwise return None
+
+        """
         cdef const char* c_string = self.thisxptr.checkException()
         ustring = c_string.decode('UTF-8') if c_string is not NULL else None
         return ustring
 
      def exception_clear(self):
+        """
+        exception_clear(self)
+        Clear any exception thrown
+
+        """
         self.thisxptr.exceptionClear()
+
      def exception_count(self):
+        """
+        excepton_count(self)
+        Get number of errors reported during execution.
+
+        Return:
+            int: Count of the exceptions thrown during execution
+        """
         return self.thisxptr.exceptionCount()
-     def getError_message(self, i):
+
+     def get_error_message(self, index):
+        """
+        get_error_message(self, index)
+        A transformation may have a number of errors reported against it. Get the ith error message if there are any errors
+
+        Args:
+            index (int): The i'th exception
+        
+        Return:
+            str: The message of the i'th exception. Return None if the i'th exception does not exist.
+        """
         cdef const char* c_string = self.thisxptr.getErrorMessage(i)
         ustring = c_string.decode('UTF-8') if c_string is not NULL else None
         return ustring
 
-     def getError_code(self, i):
+     def get_error_code(self, index):
+        """
+        get_error_code(self, index)
+        A transformation may have a number of errors reported against it. Get the i'th error code if there are any errors
+
+        Args:
+            index (int): The i'th exception
+        
+        Return:
+            str: The error code associated with the i'th exception. Return None if the i'th exception does not exist.
+
+        """
         cdef const char* c_string = self.thisxptr.getErrorCode(i)
         ustring = c_string.decode('UTF-8') if c_string is not NULL else None
         return ustring
 
 cdef class PyXQueryProcessor:
+     """An PyXQueryProcessor object represents factory to compile, load and execute queries. """
+
      cdef saxoncClasses.XQueryProcessor *thisxqptr      # hold a C++ instance which we're wrapping
 
      def __cinit__(self):
+        """
+        __cinit__(self)
+        Constructor for PyXQueryProcessor
+
+        """
         self.thisxqptr = NULL
+
      def __dealloc__(self):
+        """
+        dealloc(self)
+
+
+        """
         if self.thisxqptr != NULL:
            del self.thisxqptr
 
      def set_context(self, ** kwds):
-        py_error_message = "Error: setContext should only contain one of the following keyword arguments: (fileName|xdmItem)"
+        """
+        set_context(self, **kwds)
+        Set the initial context for the query
+   
+        Args:
+            **kwds : Possible keyword argument file_name (str) or xdm_item (PyXdmItem)
+
+        """
+        py_error_message = "Error: set_context should only contain one of the following keyword arguments: (file_name|xdm_item)"
         if len(kwds) != 1:
           raise Exception(py_error_message)
         cdef py_value = None
@@ -679,30 +946,97 @@ cdef class PyXQueryProcessor:
           raise Exception(py_error_message)
 
      def set_output_file(self, output_file):
+        """
+        set_output_file(self, output_file)
+        Set the output file where the result is sent
+
+        Args:
+            output_file (str): Name of the output file
+        """
         py_value_string = output_file.encode('UTF-8') if output_file is not None else None
         c_outfile = py_value_string if output_file is not None else ""
         self.thisxqptr.setOutputFile(c_outfile)
+
      def set_parameter(self, name, PyXdmValue value):
+        """
+        set_parameter(self, name, PyXdmValue value)
+        Set the value of a query parameter
+
+        Args:
+            name (str): the name of the stylesheet parameter, as a string. For namespaced parameter use the JAXP solution i.e. "{uri}name
+            value (PyXdmValue): the value of the query parameter, or None to clear a previously set value
+
+        """
         self.thisxqptr.setParameter(name, value.thisvptr)
+
      def remove_parameter(self, name):
+        """
+        remove_parameter(self, name)
+        Remove the parameter given by name from the PyXQueryProcessor. The parameter will not have any affect on the query if it has not yet been executed
+
+        Args:
+            name (str): The name of the query parameter
+
+        Returns:
+            bool: True if the removal of the parameter has been successful, False otherwise.
+
+        """
         py_value_string = name.encode('UTF-8') if name is not None else None
         c_name = py_value_string if name is not None else ""
         self.thisxqptr.removeParameter(c_name)
+
      def set_property(self, name, str value):
+        """
+        set_property(self, name, value)
+        Set a property specific to the processor in use.
+ 
+        Args:
+            name (str): The name of the property
+            value (str): The value of the property
+
+        Example:
+            PyXQueryProcessor: set serialization properties (names start with '!' i.e. name "!method" -> "xml")\r
+            'o':outfile name,\r
+            'dtd': Possible values 'on' or 'off' to set DTD validation,\r 
+            'resources': directory to find Saxon data files,\r 
+            's': source as file name,\r
+        """
+
         py_name_string = name.encode('UTF-8') if name is not None else None
         c_name = py_name_string if name is not None else ""
 
         py_value_string = value.encode('UTF-8') if value is not None else None
         c_value = py_value_string if value is not None else ""
         self.thisxqptr.setProperty(c_name, c_value)
+
      def clear_parameters(self):
+        """
+        clear_parameter(self)
+        Clear all parameters set on the processor
+        """
         self.thisxqptr.clearParameters()
+
      def clear_properties(self):
+        """
+        clear_parameter(self)
+        Clear all properties set on the processor
+        """
         self.thisxqptr.clearProperties()
+
      def set_updating(self, updating):
+        """
+        (self)
+
+
+        """
         self.thisxqptr.setUpdating(updating)
 
      def run_query_to_value(self, ** kwds):
+        """
+        run_query_to_value(self, **kwds)
+
+
+        """
         cdef PyXdmValue val
         if len(kwds) == 0:
           val = PyXdmValue()
@@ -721,7 +1055,17 @@ cdef class PyXQueryProcessor:
         val.thisvptr = self.thisxqptr.runQueryToValue()
         return val
 
-     def runQueryToString(self, ** kwds):
+     def run_query_to_string(self, ** kwds):
+        """
+        run_query_to_string(self, **kwds)
+        Execute query and output result as a string 
+
+        Args:
+            **kwds: Keyword arguments with the possible options input_file_name (str) or input_xdm_item (PyXdmItem). Possible to supply query with the arguments 'query_file' or 'query_text', which are of type str.
+
+        Return:
+            str: Output result as a string
+        """
         if len(kwds) == 0:
           return self.thisxqptr.runQueryToString()
         if "input_file_name" in kwds:
@@ -734,7 +1078,16 @@ cdef class PyXQueryProcessor:
           self.set_query_content(kwds["query_text"])
         return self.thisxqptr.runQueryToString()
 
-     def runQueryToFile(self, ** kwds):
+     def run_query_to_file(self, ** kwds):
+        """
+        run_query_to_file(self, **kwds)
+        Execute query with the result saved to file
+
+        Args:
+            **kwds: Keyword arguments with the possible options input_file_name (str) or input_xdm_item (PyXdmItem). The Query can be supplied with the arguments 'query_file' or 'query_text', which are of type str. The name of the output file is specified as the argument output_file_name.
+
+
+        """
         if len(kwds) == 0:
           self.thisxqptr.runQueryToFile()
         if "input_file_name" in kwds:
@@ -753,6 +1106,15 @@ cdef class PyXQueryProcessor:
         self.thisxqptr.runQueryToFile()
 
      def declare_namespace(self, prefix, uri):
+        """
+        declare_namespace(self, prefix, uri)
+        Declare a namespace binding part of the static context for queries compiled using this. This binding may be overridden by a binding that appears in the query prolog. The namespace binding will form part of the static context of the query, but it will not be copied into result trees unless the prefix is actually used in an element or attribute name.
+
+        Args:
+            prefix (str): The namespace prefix. If the value is a zero-length string, this method sets the default namespace for elements and types.
+            uri (uri) : The namespace URI. It is possible to specify a zero-length string to "undeclare" a namespace; in this case the prefix will not be available for use, except in the case where the prefix is also a zero length string, in which case the absence of a prefix implies that the name is in no namespace.
+
+        """
         py_prefix_string = prefix.encode('UTF-8') if prefix is not None else None
         c_prefix = py_prefix_string if prefix is not None else ""
         py_uri_string = uri.encode('UTF-8') if uri is not None else None
@@ -760,80 +1122,300 @@ cdef class PyXQueryProcessor:
         self.thisxqptr.declareNamespace(c_prefix, c_uri)
 
      def set_query_file(self, file_name):
+        """
+        set_query_file(self, file_name)
+        Set the query to be executed as a file
+
+        Args:
+            file_name (str): The file name for the query
+
+
+        """
         py_filename_string = file_name.encode('UTF-8') if file_name is not None else None
         c_filename = py_filename_string if file_name is not None else ""
         self.thisxqptr.setQueryFile(c_filename)
 
      def set_query_content(self, content):
+        """
+        set_query_content(self)
+        Set the query to be executed as a string
+
+        Args:
+            content (str): The query content suplied as a string
+
+        """
         py_content_string = content.encode('UTF-8') if content is not None else None
         c_content = py_content_string if content is not None else ""
         self.thisxqptr.setQueryContent(c_content)
-     def set_query_base_uri(self, baseURI):
+
+     def set_query_base_uri(self, base_uri):
+        """
+        set_query_base_uri(self, base_uri)
+        Set the static base query for the query     
+
+        Args:
+            base_uri (str): The static base URI; or None to indicate that no base URI is available
+        """
+        py_content_string = base_uri.encode('UTF-8') if base_uri is not None else None
+        c_content = py_content_string if content is not None else ""
         self.thisxqptr.setQueryBaseURI(baseURI)
-     def setcwd(self, cwd):
+
+     def set_cwd(self, cwd):
+        """
+        set_cwd(self, cwd)
+        Set the current working directory.
+
+        Args:
+            cwd (str): current working directory
+        """
+        py_cwd_string = cwd.encode('UTF-8') if cwd is not None else None
+        c_cwd = py_cwd_string if cwd is not None else ""
         self.thisxqptr.setcwd(cwd)
+
      def check_exception(self):
+        """
+        check_exception(self)
+        Check for exception thrown and get message of the exception.
+  
+        Return:
+            str: Returns the exception message if thrown otherwise return None
+
+        """
         return self.thisxqptr.checkException()
+
      def exceptionOccurred(self):
+        """
+        exceptionOccurred(self)
+        Checks for pending exceptions without creating a local reference to the exception object
+
+        Return:
+            boolean: True when there is a pending exception; otherwise return False
+
+        """
         return self.thisxqptr.exceptionOccurred()
+
      def exception_clear(self):
+        """
+        exception_clear(self)
+        Clear any exception thrown
+
+        """
         self.thisxqptr.exceptionClear()
+
      def exception_count(self):
+        """
+        excepton_count(self)
+        Get number of errors reported during execution.
+
+        Return:
+            int: Count of the exceptions thrown during execution
+        """
         return self.thisxqptr.exceptionCount()
-     def getErrorMessage(self, i):
+
+     def get_error_message(self, index):
+        """
+        get_error_message(self, index)
+        A transformation may have a number of errors reported against it. Get the ith error message if there are any errors
+
+        Args:
+            index (int): The i'th exception
+        
+        Return:
+            str: The message of the i'th exception. Return None if the i'th exception does not exist.
+        """
         return self.thisxqptr.getErrorMessage(i)
+
      def get_error_code(self, i):
+        """
+        get_error_code(self, index)
+        A transformation may have a number of errors reported against it. Get the i'th error code if there are any errors
+
+        Args:
+            index (int): The i'th exception
+        
+        Return:
+            str: The error code associated with the i'th exception. Return None if the i'th exception does not exist.
+
+        """
         return self.thisxqptr.getErrorCode(i)
 
 cdef class PyXPathProcessor:
      cdef saxoncClasses.XPathProcessor *thisxpptr      # hold a C++ instance which we're wrapping
 
      def __cinit__(self):
+        """
+        cinit(self)
+        Constructor for PyXPathProcessor 
+
+        """
         self.thisxpptr = NULL
      def __dealloc__(self):
+        """
+        (self)
+
+
+        """
         if self.thisxpptr != NULL:
            del self.thisxpptr
-     def set_base_uri(self, uriStr):
-        self.thisxpptr.setBaseURI(uriStr)
+
+     def set_base_uri(self, uri):
+        """
+        set_base_uri(self, uri)
+        Set the static base URI for XPath expressions compiled using this PyXPathCompiler. The base URI is part of the static context, and is used to resolve any relative URIs appearing within an XPath expression, for example a relative URI passed as an argument to the doc() function. If no static base URI is supplied, then the current working directory is used.
+
+
+        Args:
+            uri (str): This string will be used as the static base URI
+
+        """
+        self.thisxpptr.setBaseURI(uri)
+
      def evaluate(self, xpathStr):
+        """
+        (self)
+
+
+        """
         cdef PyXdmValue val = PyXdmValue()
         val.thisvptr = self.thisxpptr.evaluate(xpathStr)
         return val
+
      def evaluate_single(self, xpathStr):
+        """
+        (self)
+
+
+        """
         cdef PyXdmItem val = PyXdmItem()
         val.derivedptr = val.thisvptr = self.thisxpptr.evaluateSingle(xpathStr)
         return val
      def setContextItem(self, PyXdmItem item):
         self.thisxpptr.setContextItem(item.derivedptr)
-     def setcwd(self, cwd):
+     def set_cwd(self, cwd):
+        """
+        set_cwd(self, cwd)
+        Set the current working directory.
+
+        Args:
+            cwd (str): current working directory
+        """
         self.thisxpptr.setcwd(cwd)
-     def set_context_File(self, file_name): 
+
+     def set_context_file(self, file_name):
+        """
+        set_context_file(self, file_name)
+        Set the query context source as a file location
+  
+        Args:
+   
+
+
+        """
         self.thisxpptr.setContextFile(file_name)
      def effective_boolean_value(self, xpathStr):
         return self.thisxpptr.effectiveBooleanValue(xpathStr)
      def set_parameter(self, name, PyXdmValue value):
+        """
+        set_parameter(self, name, PyXdmValue value)
+        Set the value of a XPath parameter
+
+        Args:
+            name (str): the name of the XPath parameter, as a string. For namespaced parameter use the JAXP solution i.e. "{uri}name
+            value (PyXdmValue): the value of the query parameter, or None to clear a previously set value
+
+        """
         self.thisxpptr.setParameter(name, value.thisvptr)
+
      def remove_parameter(self, name):
+        """
+        remove_parameter(self, name)
+        Remove the parameter given by name from the PyXPathProcessor. The parameter will not have any affect on the XPath if it has not yet been executed
+
+        Args:
+            name (str): The name of the XPath parameter
+
+        Returns:
+            bool: True if the removal of the parameter has been successful, False otherwise.
+
+        """
         self.thisxpptr.removeParameter(name)
      def setProperty(self, name, value):
         self.thisxpptr.setProperty(name, value)
      def declareNamespace(self, prefix, uri):
         self.thisxpptr.declareNamespace(prefix, uri)
      def clear_parameters(self):
+        """
+        clear_parameter(self)
+        Clear all parameters set on the processor
+        """
         self.thisxpptr.clearParameters()
      def clear_properties(self):
+        """
+        clear_parameter(self)
+        Clear all properties set on the processor
+        """
         self.thisxpptr.clearProperties()
      def check_exception(self):
+        """
+        check_exception(self)
+        Check for exception thrown and get message of the exception.
+  
+        Return:
+            str: Returns the exception message if thrown otherwise return None
+
+        """
         return self.thisxpptr.checkException()
      def exception_occurred(self):
+        """
+        exception_occurred(self)
+        Check if an exception has occurred internally within Saxon/C
+
+        Returns:
+            boolean: True or False if an exception has been reported internally in Saxon/C
+        """
+
         return self.thisxpptr.exceptionOccurred()
+
      def exception_clear(self):
+        """
+        exception_clear(self)
+        Clear any exception thrown
+
+        """
         self.thisxpptr.exceptionClear()
      def exception_count(self):
+        """
+        excepton_count(self)
+        Get number of errors reported during execution.
+
+        Return:
+            int: Count of the exceptions thrown during execution
+        """
         return self.thisxpptr.exceptionCount()
-     def get_error_message(self, i):
+     def get_error_message(self, index):
+        """
+        get_error_message(self, index)
+        A transformation may have a number of errors reported against it. Get the ith error message if there are any errors
+
+        Args:
+            index (int): The i'th exception
+        
+        Return:
+            str: The message of the i'th exception. Return None if the i'th exception does not exist.
+        """
         self.thisxpptr.getErrorMessage(i)
      def get_error_code(self, i):
+        """
+        get_error_code(self, index)
+        A transformation may have a number of errors reported against it. Get the i'th error code if there are any errors
+
+        Args:
+            index (int): The i'th exception
+        
+        Return:
+            str: The error code associated with the i'th exception. Return None if the i'th exception does not exist.
+
+        """
         return self.thisxpptr.getErrorCode(i)
 
 
@@ -846,7 +1428,14 @@ cdef class PySchemaValidator:
         if self.thissvptr != NULL:
            del self.thissvptr
 
-     def setcwd(self, cwd):
+     def set_cwd(self, cwd):
+        """
+        set_cwd(self, cwd)
+        Set the current working directory.
+
+        Args:
+            cwd (str): current working directory
+        """
         self.thissvptr.setcwd(cwd)
 
      def register_schema_from_file(self, xsd):
@@ -869,29 +1458,115 @@ cdef class PySchemaValidator:
         val.derivednptr = val.derivedptr = val.thisvptr = self.thissvptr.getValidationReport()
         return val
      def set_parameter(self, name, value):
+        """
+        set_parameter(self, name, PyXdmValue value)
+        Set the value of the parameter for the Schema validator
+
+        Args:
+            name (str): the name of the schema parameter, as a string. For namespaced parameter use the JAXP solution i.e. "{uri}name
+            value (PyXdmValue): the value of the parameter, or None to clear a previously set value
+
+        """
         self.thissvprt.setParameter(value.thisvptr)
      def remove_parameter(self, name):
+        """
+        remove_parameter(self, name)
+        Remove the parameter given by name from the PySchemaValidator. The parameter will not have any affect on the SchemaValidator if it has not yet been executed
+
+        Args:
+            name (str): The name of the schema parameter
+
+        Returns:
+            bool: True if the removal of the parameter has been successful, False otherwise.
+
+        """
         self.thissvprt.removeParameter(name)
      def setProperty(self, name, value):
         self.thissvprt.setProperty(name, value.thisvptr)
      def clear_parameters(self):
+        """
+        clear_parameter(self)
+        Clear all parameters set on the processor
+        """
         self.thissvprt.clearParameters()
-     def clearProperties(self):
+     def clear_properties(self):
+        """
+        clear_parameter(self)
+        Clear all properties set on the processor
+        """
         self.thissvprt.clearProperties()
-     def exceptionOccurred(self):
+     def exception_occurred(self):
+        """
+        exception_occurred(self)
+        Check if an exception has occurred internally within Saxon/C
+
+        Returns:
+            boolean: True or False if an exception has been reported internally in Saxon/C
+        """
         return self.thissvprt.exceptionOccurred()
      def check_exception(self):
+        """
+        check_exception(self)
+        Check for exception thrown and get message of the exception.
+  
+        Return:
+            str: Returns the exception message if thrown otherwise return None
+
+
+        """
         return self.thissvprt.checkException()
      def exception_clear(self):
+        """
+        exception_clear(self)
+        Clear any exception thrown
+
+        """
         self.thissvprt.exceptionClear()
      def exception_count(self):
+        """
+        excepton_count(self)
+        Get number of errors reported during execution of the schema.
+
+        Return:
+            int: Count of the exceptions thrown during execution
+        """
         return self.thissvprt.exceptionCount()
-     def get_error_message(self, i):
-        return self.thissvprt.getErrorMessage(i)
-     def get_error_code(self, i):
-        return self.thissvprt.getErrorCode(i)
-     def setLax(self, l):
-        self.thissvprt.setLax(l)
+     def get_error_message(self, index):
+        """
+        get_error_message(self, index)
+        A transformation may have a number of errors reported against it. Get the ith error message if there are any errors
+
+        Args:
+            index (int): The i'th exception
+        
+        Return:
+            str: The message of the i'th exception. Return None if the i'th exception does not exist.
+        """
+        return self.thissvprt.getErrorMessage(index)
+     def get_error_code(self, index):
+        """
+        get_error_code(self, index)
+        A transformation may have a number of errors reported against it. Get the i'th error code if there are any errors.
+
+        Args:
+            index (int): The i'th exception
+        
+        Return:
+            str: The error code associated with the i'th exception. Return None if the i'th exception does not exist.
+
+        """
+        return self.thissvprt.getErrorCode(index)
+     def set_lax(self, lax):
+        """
+        set_lax(self, lax)
+        The validation mode may be either strict or lax. \r
+        The default is strict; this method may be called to indicate that lax validation is required. With strict validation, validation fails if no element declaration can be located for the outermost element. With lax validation, the absence of an element declaration results in the content being considered valid.
+        
+        Args:
+            lax (boolean): lax True if validation is to be lax, False if it is to be strict
+
+        """
+        self.thissvprt.setLax(lax)
 
 cdef class PyXdmValue:
      cdef saxoncClasses.XdmValue *thisvptr      # hold a C++ instance which we're wrapping
