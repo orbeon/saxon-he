@@ -38,6 +38,13 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
         // no action: an attribute has the same base URI as its parent
     }
 
+    @Override
+    public String getSystemId() {
+        NodeInfo parent = getParent();
+        return parent == null ? null : getParent().getSystemId();
+    }
+
+
     /**
      * Get the parent node
      */
