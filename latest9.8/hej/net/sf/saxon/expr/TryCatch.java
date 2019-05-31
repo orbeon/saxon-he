@@ -272,6 +272,9 @@ public class TryCatch extends Expression {
                 err.setIsGlobalError(false);
             } else {
                 StructuredQName code = err.getErrorCodeQName();
+                if (code == null) {
+                    code = new StructuredQName("err", NamespaceConstant.SAXON, "SXWN9000");
+                }
                 for (CatchClause clause : catchClauses) {
                     if (clause.nameTest.matches(code)) {
                         Expression caught = clause.catchOp.getChildExpression();
