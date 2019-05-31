@@ -11,6 +11,7 @@ import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.serialize.SerializationProperties;
+import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 
 import javax.xml.transform.Result;
@@ -133,7 +134,14 @@ public class StandardResultDocumentResolver implements ResultDocumentResolver {
 
     public static synchronized StreamResult makeOutputFile(URI absoluteURI) throws XPathException {
         try {
-            return new StreamResult(new File(absoluteURI));
+            File outputFile = new File(absoluteURI);
+            if (outputFile.isDirectory()) {
+                throw new XPathException("Cannot write to a directory: " + absoluteURI, SaxonErrorCode.SXRD0004);
+            }
+            if (!outputFile.canWrite()) {
+                throw new XPathException("Cannot write to URI " + absoluteURI, SaxonErrorCode.SXRD0004);
+            }
+            return new StreamResult(outputFile);
         } catch (IllegalArgumentException err) {
             throw new XPathException("Cannot write to URI " + absoluteURI + " (" + err.getMessage() + ")");
         }

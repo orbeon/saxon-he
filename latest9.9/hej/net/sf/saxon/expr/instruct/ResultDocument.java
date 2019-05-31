@@ -398,7 +398,11 @@ public class ResultDocument extends Instruction
             err.maybeSetLocation(getLocation());
             throw err;
         } finally {
-            out.close();
+            try {
+                out.close();
+            } catch (XPathException e) {
+                // No further action; report the original error in preference. Bug 4227
+            }
         }
         context.setReceiver(saved);
         context.setCurrentOutputUri(savedOutputUri);

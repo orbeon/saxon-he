@@ -12,7 +12,6 @@ import net.sf.saxon.trans.XPathException;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
@@ -119,7 +118,7 @@ public class StandardOutputResolver implements OutputURIResolver {
 
     protected Result createResult(URI absoluteURI) throws XPathException, IOException {
         if ("file".equals(absoluteURI.getScheme())) {
-            return makeOutputFile(absoluteURI);
+            return StandardResultDocumentResolver.makeOutputFile(absoluteURI);
 
         } else {
 
@@ -135,23 +134,6 @@ public class StandardOutputResolver implements OutputURIResolver {
             StreamResult result = new StreamResult(stream);
             result.setSystemId(absoluteURI.toASCIIString());
             return result;
-        }
-    }
-
-    /**
-     * Create an output file (unless it already exists) and return a reference to it as a Result object
-     *
-     * @param absoluteURI the URI of the output file (which should use the "file" scheme
-     * @return a Result object referencing this output file
-     * @throws XPathException if the URI cannot be written to
-     */
-
-    public static synchronized Result makeOutputFile(URI absoluteURI) throws XPathException {
-        try {
-            return new StreamResult(new File(absoluteURI));
-        } catch (IllegalArgumentException err) {
-            throw new XPathException(
-                    "Cannot write to URI " + absoluteURI + " (" + err.getMessage() + ")", SaxonErrorCode.SXRD0001);
         }
     }
 

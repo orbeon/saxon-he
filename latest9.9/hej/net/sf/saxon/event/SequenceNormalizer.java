@@ -90,6 +90,7 @@ public abstract class SequenceNormalizer extends ProxyReceiver {
             previousAtomic = false;
         } catch (XPathException e) {
             failed = true;
+            e.maybeSetLocation(location);
             throw e;
         }
     }

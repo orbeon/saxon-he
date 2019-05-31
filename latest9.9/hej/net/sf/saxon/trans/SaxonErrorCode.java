@@ -222,6 +222,12 @@ public class SaxonErrorCode {
     public static final String SXRD0003 = "SXRD0003";
 
     /**
+     * SXRD0004: Failure to create an output stream for an output destination
+     */
+
+    public static final String SXRD0004 = "SXRD0004";
+
+    /**
      * SXST0060: Template in a streaming mode is not streamable
      */
 

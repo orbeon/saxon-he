@@ -16,6 +16,7 @@ import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.serialize.charcode.CharacterSet;
 import net.sf.saxon.serialize.charcode.UTF16CharacterSet;
 import net.sf.saxon.serialize.charcode.UTF8CharacterSet;
+import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 
 import javax.xml.transform.OutputKeys;
@@ -154,14 +155,13 @@ public abstract class Emitter extends SequenceReceiver implements ReceiverWithOu
             // call on OutputURIResolver.close() can close it
             streamResult.setOutputStream(outputStream);
             mustClose = true;
-        } catch (FileNotFoundException fnf) {
-            throw new XPathException(fnf);
-        } catch (URISyntaxException use) {
-            throw new XPathException(use);
-        } catch (IllegalArgumentException iae) {
-            // for example, the system ID doesn't use the file: scheme
-            throw new XPathException(iae);
-        }
+        } catch (FileNotFoundException | URISyntaxException | IllegalArgumentException fnf) {
+            XPathException err = new XPathException("Unable to write to output destination", fnf);
+            err.setErrorCode(SaxonErrorCode.SXRD0004);
+            throw err;
+
+        } // for example, the system ID doesn't use the file: scheme
+
         return outputStream;
     }
 

@@ -353,60 +353,65 @@ public class XMLEmitter extends Emitter {
      */
 
     public void startElement(NodeName elemName, SchemaType typeCode, Location location, int properties) throws XPathException {
-        previousAtomic = false;
-        if (!started) {
-            openDocument();
-        } else if (requireWellFormed && elementStack.isEmpty() && startedElement && !unfailing) {
-            XPathException err = new XPathException("When 'standalone' or 'doctype-system' is specified, " +
-                                                            "the document must be well-formed; but this document contains more than one top-level element");
-            err.setErrorCode("SEPM0004");
-            throw err;
-        }
-        startedElement = true;
-
-        String displayName = elemName.getDisplayName();
-        if (!allCharactersEncodable) {
-            int badchar = testCharacters(displayName);
-            if (badchar != 0) {
-                XPathException err = new XPathException("Element name contains a character (decimal + " +
-                                                                badchar + ") not available in the selected encoding");
-                err.setErrorCode("SERE0008");
+        try {
+            previousAtomic = false;
+            if (!started) {
+                openDocument();
+            } else if (requireWellFormed && elementStack.isEmpty() && startedElement && !unfailing) {
+                XPathException err = new XPathException("When 'standalone' or 'doctype-system' is specified, " +
+                                                                "the document must be well-formed; but this document contains more than one top-level element");
+                err.setErrorCode("SEPM0004");
                 throw err;
             }
-        }
+            startedElement = true;
 
-        elementStack.push(displayName);
-        elementCode = elemName;
-
-        try {
-            if (!started) {
-                String systemId = outputProperties.getProperty(OutputKeys.DOCTYPE_SYSTEM);
-                String publicId = outputProperties.getProperty(OutputKeys.DOCTYPE_PUBLIC);
-                // Treat "" as equivalent to absent. This goes beyond what the spec strictly allows.
-                if ("".equals(systemId)) {
-                    systemId = null;
+            String displayName = elemName.getDisplayName();
+            if (!allCharactersEncodable) {
+                int badchar = testCharacters(displayName);
+                if (badchar != 0) {
+                    XPathException err = new XPathException("Element name contains a character (decimal + " +
+                                                                    badchar + ") not available in the selected encoding");
+                    err.setErrorCode("SERE0008");
+                    throw err;
                 }
-                if ("".equals(publicId)) {
-                    publicId = null;
-                }
-                if (systemId != null) {
-                    requireWellFormed = true;
-                    writeDocType(elemName, displayName, systemId, publicId);
-                } else if (writeDocTypeWithNullSystemId()) {
-                    writeDocType(elemName, displayName, null, publicId);
-                }
-                started = true;
             }
-            if (openStartTag) {
-                closeStartTag();
-            }
-            writer.write('<');
-            writer.write(displayName);
-            openStartTag = true;
-            indentForNextAttribute = -1;
 
-        } catch (java.io.IOException err) {
-            throw new XPathException("Failure writing to " + getSystemId(), err);
+            elementStack.push(displayName);
+            elementCode = elemName;
+
+            try {
+                if (!started) {
+                    String systemId = outputProperties.getProperty(OutputKeys.DOCTYPE_SYSTEM);
+                    String publicId = outputProperties.getProperty(OutputKeys.DOCTYPE_PUBLIC);
+                    // Treat "" as equivalent to absent. This goes beyond what the spec strictly allows.
+                    if ("".equals(systemId)) {
+                        systemId = null;
+                    }
+                    if ("".equals(publicId)) {
+                        publicId = null;
+                    }
+                    if (systemId != null) {
+                        requireWellFormed = true;
+                        writeDocType(elemName, displayName, systemId, publicId);
+                    } else if (writeDocTypeWithNullSystemId()) {
+                        writeDocType(elemName, displayName, null, publicId);
+                    }
+                    started = true;
+                }
+                if (openStartTag) {
+                    closeStartTag();
+                }
+                writer.write('<');
+                writer.write(displayName);
+                openStartTag = true;
+                indentForNextAttribute = -1;
+
+            } catch (java.io.IOException err) {
+                throw new XPathException("Failure writing to " + getSystemId(), err);
+            }
+        } catch (XPathException e) {
+            e.maybeSetLocation(location);
+            throw e;
         }
     }
 
