@@ -129,7 +129,7 @@ cdef class PySaxonProcessor:
         """
         Check is the processor is Schema aware. A licensed Saxon-EE/C product is schema aware 
 
-        ":bool: Indicate if the processor is schema aware, True or False otherwise
+        :bool: Indicate if the processor is schema aware, True or False otherwise
         """
         return self.thisprt.isSchemaAware()
 
@@ -1298,8 +1298,34 @@ cdef class PyXPathProcessor:
         cdef PyXdmItem val = PyXdmItem()
         val.derivedptr = val.thisvptr = self.thisxpptr.evaluateSingle(xpath_str)
         return val
-     def setContextItem(self, PyXdmItem item):
-        self.thisxpptr.setContextItem(item.derivedptr)
+
+     def set_context(self, **kwds):
+        """
+        set_context(self, **kwds)
+        Set the context for the XPath query
+   
+        Args:
+            **kwds : Possible keyword argument file_name (str) or xdm_item (PyXdmItem)
+
+        """
+        py_error_message = "Error: set_context should only contain one of the following keyword arguments: (file_name|xdm_item)"
+        if len(kwds) != 1:
+          raise Exception(py_error_message)
+        cdef py_value = None
+        cdef py_value_string = None
+        cdef char * c_source
+        cdef PyXdmItem xdm_item = None
+        if "file_name" in kwds:
+            py_value = kwds["file_name"]
+            py_value_string = py_value.encode('UTF-8') if py_value is not None else None
+            c_source = py_value_string if py_value is not None else "" 
+            self.thisxpptr.setContextFile(c_source)
+        elif "xdm_item" in kwds:
+            xdm_item = kwds["xdm_item"]
+            self.thisxpptr.setContextItem(xdm_item.derivedptr)
+        else:
+          raise Exception(py_error_message)
+
      def set_cwd(self, cwd):
         """
         set_cwd(self, cwd)
@@ -1310,19 +1336,22 @@ cdef class PyXPathProcessor:
         """
         self.thisxpptr.setcwd(cwd)
 
-     def set_context_file(self, file_name):
+     def effective_boolean_value(self, xpath_str):
         """
-        set_context_file(self, file_name)
-        Set the query context source as a file location
-  
+        effective_boolean_value(self, xpath_str)
+        Evaluate the XPath expression, returning the effective boolean value of the result.
+    
         Args:
-   
+            xpath_str (str): Supplied as a string
 
-
+        Returns:
+            boolean: The result is a boolean value.
         """
-        self.thisxpptr.setContextFile(file_name)
-     def effective_boolean_value(self, xpathStr):
-        return self.thisxpptr.effectiveBooleanValue(xpathStr)
+
+        py_value_string = xpath_str.encode('UTF-8') if xpath_str is not None else None
+        c_xpath = py_value_string if xpath_str is not None else "" 
+
+        return self.thisxpptr.effectiveBooleanValue(c_xpath)
      def set_parameter(self, name, PyXdmValue value):
         """
         set_parameter(self, name, PyXdmValue value)
@@ -1348,10 +1377,42 @@ cdef class PyXPathProcessor:
 
         """
         self.thisxpptr.removeParameter(name)
-     def setProperty(self, name, value):
-        self.thisxpptr.setProperty(name, value)
-     def declareNamespace(self, prefix, uri):
-        self.thisxpptr.declareNamespace(prefix, uri)
+     def set_property(self, name, value):
+        """
+        set_property(self, name, value)
+        Set a property specific to the processor in use.
+ 
+        Args:
+            name (str): The name of the property
+            value (str): The value of the property
+
+        Example:
+            PyXPathProcessor: set serialization properties (names start with '!' i.e. name "!method" -> "xml")\r
+            'resources': directory to find Saxon data files,\r 
+            's': source as file name,\r
+            'extc': REgister native library to be used with extension functions
+        """
+
+        py_name_string = name.encode('UTF-8') if name is not None else None
+        c_name = py_name_string if name is not None else ""
+
+        py_value_string = value.encode('UTF-8') if value is not None else None
+        c_value = py_value_string if value is not None else ""
+        self.thisxpptr.setProperty(c_name, c_value)
+     def declare_namespace(self, prefix, uri):
+        """
+        declare_namespace(self, prefix, uri)
+        Declare a namespace binding as part of the static context for XPath expressions compiled using this compiler
+        Args:
+            prefix (str): The namespace prefix. If the value is a zero-length string, this method sets the default namespace for elements and types.
+            uri (uri) : The namespace URI. It is possible to specify a zero-length string to "undeclare" a namespace; in this case the prefix will not be available for use, except in the case where the prefix is also a zero length string, in which case the absence of a prefix implies that the name is in no namespace.
+
+        """
+        py_prefix_string = prefix.encode('UTF-8') if prefix is not None else None
+        c_prefix = py_prefix_string if prefix is not None else ""
+        py_uri_string = uri.encode('UTF-8') if uri is not None else None
+        c_uri = py_uri_string if uri is not None else ""
+        self.thisxpptr.declareNamespace(c_prefix, c_uri)
      def clear_parameters(self):
         """
         clear_parameter(self)
@@ -1448,25 +1509,102 @@ cdef class PySchemaValidator:
         """
         self.thissvptr.setcwd(cwd)
 
-     def register_schema_from_file(self, xsd):
-        self.thissvptr.registerSchemaFromFile(xsd)
-     def register_schema_from_string(self, schemaStr):
-        self.thissvptr.registerSchemaFromString(schemaStr)
-     def setOutputFile(self, outputFile):
-        self.thissvptr.setOutputFile(outputFile)
-     def validate(self, sourceFile):
-        self.thissvptr.validate(sourceFile)
-     def validate_to_node(self, sourceFile):
+     def register_schema(self, **kwds):
+        """
+        Register schema given as file name or schema text. (xsd_text|xsd_file)
+
+        Args:
+            **kwds: Keyword argument options only one of 'xsd_text' or 'xsd_file'
+
+        """
+        py_error_message = "Error: register_schema should only contain one of the following keyword arguments: (xsd_text|xsd_file)"
+        if len(kwds) != 1:
+          raise Exception(py_error_message)
+        cdef py_value = None
+        cdef py_value_string = None
+        cdef char * c_source
+        
+        if "xsd_text" in kwds:
+            py_value = kwds["xsd_text"]
+            py_value_string = py_value.encode('UTF-8') if py_value is not None else None
+            c_source = py_value_string if py_value is not None else "" 
+            self.thisxpptr.registerSchemaFromString(c_source)
+        elif "xsd_file" in kwds:
+            py_value = kwds["xsd_file"]
+            py_value_string = py_value.encode('UTF-8') if py_value is not None else None
+            c_source = py_value_string if py_value is not None else "" 
+            self.thisxpptr.registerSchemaFromfile(c_source)
+        else:
+          raise Exception(py_error_message)
+        
+     def set_output_file(self, output_file):
+        """
+        set_output_file(self, output_file)        
+        Set the name of the output file that will be used by the validator.
+
+        Args:
+            output_file (str):The output file name for use by the validator
+    
+        """
+        py_value_string = output_file.encode('UTF-8') if output_file is not None else None
+        c_source = py_value_string 
+        if output_file is not None:
+            self.thissvptr.setOutputFile(c_source)
+        else:
+            raise Warning("Unable to set output_file. output_file has the value None")
+     def validate(self, source_file):
+        """
+        validate(self, source_file)
+        Validate an instance document by a registered schema.
+        
+        Args:
+            source_file (str): Name of the source file to be validated. Allow None when source document is supplied using the set_source method
+        """
+        py_value_string = source_file.encode('UTF-8') if source_file is not None else None
+        c_source = py_value_string
+        if source_file is not None:        
+            self.thissvptr.validate(c_source)
+        else:
+            self.thisvptr.validate()
+
+     def validate_to_node(self, source_file):
+        """
+        validate_to_node(self, source_file)
+        Validate an instance document by a registered schema.
+        
+        Args:
+            source_file (str): Name of the source file to be validated. Allow None when source document is supplied using the set_source method
+
+        Returns:
+            PyXdmNode: Result of the valdiation returned as an PuXdmNode    
+        """
         cdef PyXdmNode val = PyXdmNode()
-        val.derivednptr = val.derivedptr = val.thisvptr = self.thissvptr.validateToNode(sourceFile)
+        val.derivednptr = val.derivedptr = val.thisvptr = self.thissvptr.validateToNode(source_file)
         return val
+
      def set_source_node(self, PyXdmNode source):
+        """
+        set_source_node(self, source)
+        Set the source as an PyXdmNode object that will be validated
+
+        Args:
+            source (PyXdmNode) :
+        """
         self.thissvptr.setSourceNode(source.derivednptr)
 
-     def get_validation_report(self):
+     @property
+     def validation_report(self):
+        """
+        validation_report
+        The validation report Property
+
+        :PyXdmNode: The Validation report result from the Schema validator
+
+        """
         cdef PyXdmNode val = PyXdmNode()
         val.derivednptr = val.derivedptr = val.thisvptr = self.thissvptr.getValidationReport()
         return val
+
      def set_parameter(self, name, value):
         """
         set_parameter(self, name, PyXdmValue value)
@@ -1491,8 +1629,35 @@ cdef class PySchemaValidator:
 
         """
         self.thissvprt.removeParameter(name)
-     def setProperty(self, name, value):
-        self.thissvprt.setProperty(name, value.thisvptr)
+     def set_property(self, name, value):
+        """
+        set_property(self, name, value)
+        Set a property specific to the processor in use.
+ 
+        Args:
+            name (str): The name of the property
+            value (str): The value of the property
+
+        Example:
+            PySchemaValidator: set serialization properties (names start with '!' i.e. name "!method" -> "xml")\r
+            'o':outfile name,\r
+            'dtd': Possible values 'on' or 'off' to set DTD validation,\r 
+            'resources': directory to find Saxon data files,\r 
+            's': source as file name,\r
+            'string': Set the source as xml string for validation. Parsing will take place in the validate method\r
+            'report-node': Boolean flag for validation reporting feature. Error validation failures are represented in an XML document and returned as an PyXdmNode object\r
+            'report-file': Specifcy value as a file name string. This will switch on the validation reporting feature, which will be saved to the file in an XML format\r
+            'verbose': boolean value which sets the verbose mode to the output in the terminal. Default is 'on'
+            'element-type': Set the name of the required type of the top-lelvel element of the doucment to be validated. The string should be in the Clark notation {uri}local\r
+            'lax': Boolean to set the validation mode to strict (False) or lax ('True')
+        """
+
+        py_name_string = name.encode('UTF-8') if name is not None else None
+        c_name = py_name_string if name is not None else ""
+
+        py_value_string = value.encode('UTF-8') if value is not None else None
+        c_value = py_value_string if value is not None else ""
+        self.thissvprt.setProperty(c_name, c_value)
      def clear_parameters(self):
         """
         clear_parameter(self)
@@ -1650,14 +1815,29 @@ cdef class PyXdmValue:
         """
         return self.thisvptr.size()
 
-     def to_string(self):
+     def __repr__(self):
         """
-        to_string(self)
+        __repr__(self)
+        The string representation of PyXdmItem
 
         """
         cdef const char* c_string = self.thisvptr.toString()
         if c_string == NULL:
-            return None
+            raise Warning('Empty string returned')
+            return ""
+        else:
+            ustring = c_string.decode('UTF-8')
+            return ustring
+
+     def __str__(self):
+        """
+        __str__(self)
+        The string representation of PyXdmItem
+
+        """
+        cdef const char* c_string = self.thisvptr.toString()
+        if c_string == NULL:
+            return ""
         else:
             ustring = c_string.decode('UTF-8')
             return ustring 
@@ -1671,7 +1851,14 @@ cdef class PyXdmItem(PyXdmValue):
      def __dealloc__(self):
         if type(self) is PyXdmValue:
             del self.derivedptr
+
      def get_string_value(self):
+        return self.derivedptr.getStringValue()
+
+     def __repr__(self):
+        return self.derivedptr.getStringValue()
+
+     def __str__(self):
         return self.derivedptr.getStringValue()
      def is_atomic(self):
         return self.derivedptr.isAtomic()
@@ -1684,35 +1871,149 @@ cdef class PyXdmNode(PyXdmItem):
      def __dealloc__(self):
         del self.derivednptr
 
-     def get_node_kind(self):
+     @property
+     def node_kind(self):
+        """
+        node_kind(self)
+        Node Kind property. This will be a value such as {@link net.sf.saxon.type.Type#ELEMENT} or {@link net.sf.saxon.type.Type#ATTRIBUTE}. There are seven kinds of node: documents, elements, attributes, text, comments, processing-instructions, and namespaces.        
+
+        Returns:
+            int: an integer identifying the kind of node. These integer values are the same as those used in the DOM 
+        """
+        cdef int kind
         return self.derivednptr.getNodeKind()
 
-      # def getNodeName(self):
-         # return self.derivednptr.getNodeName()
+     @property
+     def node_kind_str(self):
+        """
+        node_kind(self)
+        Node Kind property string. This will be a value such as {@link net.sf.saxon.type.Type#ELEMENT} or {@link net.sf.saxon.type.Type#ATTRIBUTE}. There are seven kinds of node: documents, elements, attributes, text, comments, processing-instructions, and namespaces.        
 
-     def get_typed_value(self):
+        Returns:
+            int: an integer identifying the kind of node. These integer values are the same as those used in the DOM 
+        """
+        cdef str kind
+        cdef int nk = self.derivednptr.getNodeKind()
+        if nk == 9:
+            kind = 'document'
+        elif nk == 1:
+            kind = 'element'
+        elif nk == 2:
+            kind = 'attribute'
+        elif nk == 3:
+            kind = 'text'
+        elif nk == 8:
+            kind = 'comment'
+        elif nk == 7:
+            kind = 'processing-instruction'
+        elif nk == 13:
+            kind = 'namespace'
+        elif nk == 0:
+            kind = 'unknown'
+        else:
+            raise ValueError('Unknown node kind: %d' % nk)
+        return kind
+
+     @property
+     def name(self):
+        """
+        name(self)
+        Get the name of the node, as a string in the form of a EQName
+        Returns:
+            str: the name of the node. In the case of unnamed nodes (for example, text and comment nodes) return None       
+        """
+        cdef const char* c_string = self.derivednptr.getNodeName()
+        if c_string == NULL:
+            return None
+        else:
+            ustring = c_string.decode('UTF-8')
+            return ustring 
+
+     @property
+     def typed_value(self):
+        """ 
+        typed_value(self)
+        Property - get the typed value of this node, as defined in XDM
+        Returns:
+            PyXdmValue:the typed value. If the typed value is a single atomic value, this will be returne as an instance of {@link XdmAtomicValue}                
+        """
         cdef PyXdmValue val = PyXdmValue()
         val.thisvptr = self.derivednptr.getTypedValue()
-        return val
+        if val.thisvptr == NULL:
+            return None
+        else:
+            return val
 
-     def get_base_uri(self):
+     @property
+     def base_uri(self):
+        """ 
+        base_uri(self)
+        Base uri Property. Get the Base URI for the node, that is, the URI used for resolving a relative URI contained in the node. This will be the same as the System ID unless xml:base has been used. Where the node does not have a base URI of its own, the base URI of its parent node is returned.
+        Returns:
+            str: String value of the base uri for this node. This may be null if the base URI is unknown, including the case where the node has no parent. 
+        """
         return self.derivednptr.getBaseUri()
 
      def get_string_value(self):
+        """
+        get_String_value(self)
+        Return the string value of the node as defined in the XPath data model.
+
+        Returns:
+            str: The string value of this node
+
+        """
         return self.derivedptr.getStringValue()
 
-     def to_string(self):
+     def __str__(self):
+        """
+        __str__(self)
+        The string value of the node as defined in the XPath data model
+        Returns:
+            str: String value of this node
+        """
         return self.derivedptr.toString()
 
+     def __repr__(self):
+        """
+        ___repr__ 
+        """
+        return self.derivedptr.toString()
+
+
      def get_parent(self):
+        """
+        get_parent(self)
+        Get the current node's parent
+
+        Returns:
+            PyXdmNode: The parent node as PyXdmNode object
+        """
+
         cdef PyXdmNode val = PyXdmNode()
         val.derivednptr = val.derivedptr = val.thisvptr = self.derivednptr.getParent()
         return val
 
-     def get_attribute_value(self, stri):
-        return self.derivednptr.getAttributeValue(stri)
+     def get_attribute_value(self, name):
+        """
+        getAttribute_value(self, name)
+        The name of the required attribute
+        
+        Args:
+            name(str): the eqname of the required attribute
+
+        """
+        return self.derivednptr.getAttributeValue(name)
 
      def get_attribute_count(self):
+        """
+        get_attribute_count(self)
+        Get the count of attribute nodes on this XdmNode object. If this current node is not an element node then return 0
+
+        Returns:
+            int: Count of attribute nodes
+
+        """
         return self.derivednptr.getAttributeCount()
 
      #  def getAttributeNodes(self):
@@ -1727,8 +2028,80 @@ cdef class PyXdmAtomicValue(PyXdmItem):
      cdef saxoncClasses.XdmAtomicValue *derivedaptr      # hold a C++ instance which we're wrapping
 
      def __cinit__(self):
-        if type(self) is PyXdmNode:
+        if type(self) is PyXdmAtomicValue:
             self.derivedaptr = self.derivedptr = self.thisvptr = new saxoncClasses.XdmAtomicValue()
      def __dealloc__(self):
         del self.derivedaptr
+
+
+
+
+     def get_primitive_type_name(self):
+        """
+        get_primitive_type_name()
+        Get the primitive type name of the PyXdmAtomicValue
+        Returns:
+            str: String of the primitive type name
+
+        """      
+        cdef const char* c_string = self.derivedaptr.getPrimitiveTypeName()
+        ustring = c_string.decode('UTF-8')
+        return ustring
+
+
+     @property
+     def boolean_value(self):
+        """
+        Property which returns the boolean value of the PyXdmAtomicValue
+
+        Returns:
+            bool: boolean value.
+
+
+        """
+        return self.derivedaptr.getBooleanValue()
+
+     @property
+     def double_value(self):
+        """
+        Property which is returns the double value of the PyXdmAtomicValue if it can be converted.
+
+        Returns:
+            double: Double value of the Xdm object
+
+        """
+        
+        return self.derivedaptr.getDoubleValue()
+    
+
+     @property
+     def string_value(self):
+        """
+        Property which returns the string value of the PyXdmAtomicValue
+        Returns:
+            str: String value of the Xdm object
+        """
+        cdef const char* c_string = self.derivedaptr.getStringValue()
+        ustring = c_string.decode('UTF-8')
+        return ustring
+
+
+     def __str__(self):
+        """
+        __str__(self)
+        The string value of the node as defined in the XPath data model
+        Returns:
+            str: String value of this node
+        """
+        cdef const char* c_string = self.derivedaptr.toString()
+        ustring = c_string.decode('UTF-8')
+        return ustring
+
+     def __repr__(self):
+        """
+        ___repr__ 
+        """
+        cdef const char* c_string = self.derivedaptr.toString()
+        ustring = c_string.decode('UTF-8')
+        return ustring
 

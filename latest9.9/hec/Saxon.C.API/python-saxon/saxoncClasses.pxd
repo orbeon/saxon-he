@@ -298,7 +298,6 @@ cdef extern from "../XdmItem.h":
 
 cdef extern from "../XdmNode.h":
     cdef cppclass XdmNode(XdmItem):
-        getNodeName()
         bool isAtomic()
 
         int getNodeKind()
@@ -329,4 +328,12 @@ cdef extern from "../XdmNode.h":
 cdef extern from "../XdmAtomicValue.h":
     cdef cppclass XdmAtomicValue(XdmItem):
         XdmAtomicValue() except +
+
+        const char * getPrimitiveTypeName()
+
+        bool getBooleanValue()
+
+        double getDoubleValue()
+
+        long getLongValue()
 
