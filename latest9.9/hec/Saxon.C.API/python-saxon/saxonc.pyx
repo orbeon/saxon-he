@@ -19,15 +19,22 @@ cdef class PySaxonProcessor:
     # The Constructor
     # @param license Flag that a license is to be used
     # @contextlib.contextmanager
-    def __cinit__(self, license=False):
+    def __cinit__(self, config_file= None, license=False):
         """
         __cinit__(self, license=False)
         The constructor.
 
-        :param bool license: Flag that a license is to be used. The Default is false.
-        :type license: bool
+        Args:
+            config_file (str): Construct a Saxon processor based upon an configuration file
+            license(bool): Flag that a license is to be used. The Default is false.
+            
         """
-        self.thisptr = new saxoncClasses.SaxonProcessor(license)
+        if(config_file is not None and isinstance(config_file, str)):
+             py_value_string = config_file.encode('UTF-8') if config_file is not None else None
+             cdef char * c_str_ = py_value_string if cwd is not None else ""
+            self.thisptr = new saxoncClasses.SaxonProcessor(c_str_)
+        else:
+            self.thisptr = new saxoncClasses.SaxonProcessor(license)
             
     def __dealloc__(self):
         """The destructor."""

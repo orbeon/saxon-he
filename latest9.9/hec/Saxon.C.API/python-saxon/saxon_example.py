@@ -3,7 +3,7 @@ import saxonc
 with saxonc.PySaxonProcessor(license=False) as proc:
    
    print("Test Python")
-   print(proc.version())
+   print(proc.version)
    #print(dir(proc))
    xdmAtomicval = proc.make_boolean_value(False)
 
