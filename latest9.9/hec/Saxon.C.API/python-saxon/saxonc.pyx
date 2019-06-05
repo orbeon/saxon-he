@@ -29,12 +29,7 @@ cdef class PySaxonProcessor:
             license(bool): Flag that a license is to be used. The Default is false.
             
         """
-        if(config_file is not None and isinstance(config_file, str)):
-             py_value_string = config_file.encode('UTF-8') if config_file is not None else None
-             cdef char * c_str_ = py_value_string if cwd is not None else ""
-            self.thisptr = new saxoncClasses.SaxonProcessor(c_str_)
-        else:
-            self.thisptr = new saxoncClasses.SaxonProcessor(license)
+        self.thisptr = new saxoncClasses.SaxonProcessor(license)
             
     def __dealloc__(self):
         """The destructor."""
@@ -86,7 +81,7 @@ cdef class PySaxonProcessor:
     def cwd(self, cwd):
          py_value_string = cwd.encode('UTF-8') if cwd is not None else None
          cdef char * c_str_ = py_value_string if cwd is not None else ""
-         self.thisptr.setcwd(cwd)
+         self.thisptr.setcwd(c_str_)
     
 
     @property
@@ -670,6 +665,7 @@ cdef class PyXsltProcessor:
         py_source_string = None
         py_stylesheet_string = None
         py_output_string = None
+        cdef PyXdmNode node_
         for key, value in kwds.items():
           if isinstance(value, str):
             if key == "source_file":
@@ -683,7 +679,8 @@ cdef class PyXsltProcessor:
               c_stylesheetfile = py_stylesheet_string if value is not None else ""
           elif key == "xdm_node":
             if isinstance(value, PyXdmNode):
-              self.setSourceFromXdmNode(value)
+              node_ = value
+              self.thisxptr.setSourceFromXdmNode(node_.derivednptr)
             
         if len(kwds) == 0:
           self.thisxptr.transformToFile()
@@ -931,10 +928,10 @@ cdef class PyXQueryProcessor:
             py_value = kwds["file_name"]
             py_value_string = py_value.encode('UTF-8') if py_value is not None else None
             c_source = py_value_string if py_value is not None else "" 
-            self.thisxptr.setContextFromFile(c_source)
+            self.thisxqptr.setContextItemFromFile(c_source)
         elif "xdm_item" in kwds:
             xdm_item = kwds["xdm_item"]
-            self.thisxptr.setContext(xdm_item.derivednptr)
+            self.thisxqptr.setContextItem(xdm_item.derivedptr)
         else:
           raise Exception(py_error_message)
 
@@ -1040,23 +1037,35 @@ cdef class PyXQueryProcessor:
         Returns:
             PyXdmValue: Output result as an PyXdmValue
         """
-        cdef PyXdmValue val
-        if len(kwds) == 0:
-          val = PyXdmValue()
-          val.thisvptr = self.thisxqptr.runQueryToValue()
-          return val
-        elif "input_file_name" in kwds:
-          self.set_context(kwds["input_file_name"])
-        elif "input_xdm_item" in kwds:
-          self.set_context(xdm_item=(kwds["xdm_item"]))
+        cdef PyXdmNode nval = None
+        cdef PyXdmAtomicValue aval = None
+        cdef PyXdmValue val = None
+        if not len(kwds) == 0:
+          
+            if "input_file_name" in kwds:
+                self.set_context(kwds["input_file_name"])
+            elif "input_xdm_item" in kwds:
+                self.set_context(xdm_item=(kwds["xdm_item"]))
 
-        if "query_file" in kwds:
-          self.set_query_file(kwds["output_file_name"])
-        elif "query_text" in kwds:
-          self.set_query_content(kwds["query_text"])
-        val = PyXdmValue()
-        val.thisvptr = self.thisxqptr.runQueryToValue()
-        return val
+            if "query_file" in kwds:
+                self.set_query_file(kwds["output_file_name"])
+            elif "query_text" in kwds:
+                self.set_query_content(kwds["query_text"])
+        
+        cdef saxoncClasses.XdmValue * xdmValue = self.thisxqptr.runQueryToValue()
+        cdef type_ = xdmValue.getType()
+        if type_== 4:
+            aval = PyXdmAtomicValue()
+            aval.derivedaptr = aval.derivedptr = aval.thisvptr = <saxoncClasses.XdmAtomicValue *>xdmValue
+            return aval        
+        elif type_ == 3:
+            nval = PyXdmNode()        
+            nval.derivednptr = nval.derivedptr = nval.thisvptr = <saxoncClasses.XdmNode*>xdmValue
+            return nval
+        else:
+            val = PyXdmValue()
+            val.thisvptr = xdmValue
+            return val
 
      def run_query_to_string(self, ** kwds):
         """
@@ -1173,7 +1182,7 @@ cdef class PyXQueryProcessor:
         """
         py_cwd_string = cwd.encode('UTF-8') if cwd is not None else None
         c_cwd = py_cwd_string if cwd is not None else ""
-        self.thisxqptr.setcwd(cwd)
+        self.thisxqptr.setcwd(c_cwd)
 
      def check_exception(self):
         """
@@ -1302,9 +1311,24 @@ cdef class PyXPathProcessor:
             PyXdmItem: A single Xdm Item is returned 
 
         """
-        cdef PyXdmItem val = PyXdmItem()
-        val.derivedptr = val.thisvptr = self.thisxpptr.evaluateSingle(xpath_str)
-        return val
+        cdef PyXdmNode val = None
+        cdef PyXdmAtomicValue aval = None
+        py_string = xpath_str.encode('UTF-8') if xpath_str is not None else None
+        c_xpath = py_string if xpath_str is not None else ""
+
+        cdef saxoncClasses.XdmItem * xdmItem = self.thisxpptr.evaluateSingle(c_xpath)
+        cdef type_ = xdmItem.getType()        
+        if type_ == 4:
+            aval = PyXdmAtomicValue()
+            aval.derivedaptr = aval.derivedptr = aval.thisvptr = <saxoncClasses.XdmAtomicValue *>xdmItem
+            return aval        
+        elif type_ == 3:
+            val = PyXdmNode()
+            val.derivednptr = val.derivedptr = val.thisvptr = <saxoncClasses.XdmNode*>xdmItem
+            return val
+        else:
+            return None
+        
 
      def set_context(self, **kwds):
         """
@@ -1341,7 +1365,9 @@ cdef class PyXPathProcessor:
         Args:
             cwd (str): current working directory
         """
-        self.thisxpptr.setcwd(cwd)
+        py_cwd_string = cwd.encode('UTF-8') if cwd is not None else None
+        cdef char * c_cwd = py_cwd_string if cwd is not None else "" 
+        self.thisxpptr.setcwd(c_cwd)
 
      def effective_boolean_value(self, xpath_str):
         """
@@ -1359,6 +1385,7 @@ cdef class PyXPathProcessor:
         c_xpath = py_value_string if xpath_str is not None else "" 
 
         return self.thisxpptr.effectiveBooleanValue(c_xpath)
+
      def set_parameter(self, name, PyXdmValue value):
         """
         set_parameter(self, name, PyXdmValue value)
@@ -1514,7 +1541,9 @@ cdef class PySchemaValidator:
         Args:
             cwd (str): current working directory
         """
-        self.thissvptr.setcwd(cwd)
+        py_cwd_string = cwd.encode('UTF-8') if cwd is not None else None
+        cdef char * c_cwd = py_cwd_string if cwd is not None else "" 
+        self.thissvptr.setcwd(c_cwd)
 
      def register_schema(self, **kwds):
         """
@@ -1583,7 +1612,7 @@ cdef class PySchemaValidator:
             source_file (str): Name of the source file to be validated. Allow None when source document is supplied using the set_source method
 
         Returns:
-            PyXdmNode: Result of the valdiation returned as an PuXdmNode    
+            PyXdmNode: Result of the valdiation returned as an PyXdmNode    
         """
         cdef PyXdmNode val = PyXdmNode()
         val.derivednptr = val.derivedptr = val.thisvptr = self.thissvptr.validateToNode(source_file)
@@ -1777,10 +1806,11 @@ cdef class PyXdmValue:
         """
         self.thisvptr.addXdmItem(value.derivedptr)
 
-     def get_head(self):
+     @property
+     def head(self):
         """
-        get_head(self)
-        Get the first item in the sequence
+        head(self)
+        Property to get the first item in the sequence
 
         Returns:
             PyXdmItem: The PyXdmItem or None if the sequence is empty
@@ -1812,13 +1842,14 @@ cdef class PyXdmValue:
         else:
             return val
 
+     @property
      def size(self):
         """
         size(self)
-        Get the number of items in the sequence
+        Property - Get the number of items in the sequence
         
         Returns:
-            int: The coutn of items in the sequence
+            int: The count of items in the sequence
         """
         return self.thisvptr.size()
 
@@ -1831,7 +1862,6 @@ cdef class PyXdmValue:
         cdef const char* c_string = self.thisvptr.toString()
         if c_string == NULL:
             raise Warning('Empty string returned')
-            return ""
         else:
             ustring = c_string.decode('UTF-8')
             return ustring
@@ -1843,11 +1873,8 @@ cdef class PyXdmValue:
 
         """
         cdef const char* c_string = self.thisvptr.toString()
-        if c_string == NULL:
-            return ""
-        else:
-            ustring = c_string.decode('UTF-8')
-            return ustring 
+        ustring = c_string.decode('UTF-8') if c_string is not NULL else None
+        return ustring 
 
 cdef class PyXdmItem(PyXdmValue):
      cdef saxoncClasses.XdmItem *derivedptr      # hold a C++ instance which we're wrapping
@@ -1859,24 +1886,69 @@ cdef class PyXdmItem(PyXdmValue):
         if type(self) is PyXdmValue:
             del self.derivedptr
 
-     def get_string_value(self):
-        return self.derivedptr.getStringValue()
+     @property
+     def string_value(self):
+        """
+        string_value(self)
+        Property to get the the strign value of the XdmItem 
+        """
+        cdef const char* c_string = self.derivedptr.getStringValue()
+        ustring = c_string.decode('UTF-8') if c_string is not NULL else None
+        return ustring
+
 
      def __repr__(self):
         return self.derivedptr.getStringValue()
 
      def __str__(self):
         return self.derivedptr.getStringValue()
+
+     @property
      def is_atomic(self):
+        """
+        is_atomic(self)
+        Property to check if the current PyXdmItem is an atomic value
+    
+        Returns:
+            bool: Check of is atomic value 
+        """
         return self.derivedptr.isAtomic()
+
+
+cdef class PyXdmNodeKind:
+     """
+     Enumeration type for presenting node kind used in the PyXdmNode objects
+     Examples:
+         DOCUMENT = 9\r
+         ELEMENT = 1\r
+         ATTRIBUTE = 2\r
+         TEXT = 3\r
+         COMMENT = 8\r
+         PROCESSING_INSTRUCTION = 7\r
+         NAMESPACE = 13\r
+         UNKNOWN = 0\r
+
+     """
+     DOCUMENT = 9
+     ELEMENT = 1
+     ATTRIBUTE = 2
+     TEXT = 3
+     COMMENT = 8
+     PROCESSING_INSTRUCTION = 7
+     NAMESPACE = 13
+     UNKNOWN = 0 
 
 cdef class PyXdmNode(PyXdmItem):
      cdef saxoncClasses.XdmNode *derivednptr      # hold a C++ instance which we're wrapping
 
      def __cinit__(self):
         self.derivednptr = self.derivedptr = self.thisvptr = NULL
+    
      def __dealloc__(self):
-        del self.derivednptr
+        if self.derivednptr.getRefCount() <= 1:
+            del self.derivednptr
+        else:
+            self.derivednptr.decrementRefCount()
 
      @property
      def node_kind(self):
@@ -1961,16 +2033,20 @@ cdef class PyXdmNode(PyXdmItem):
         """
         return self.derivednptr.getBaseUri()
 
-     def get_string_value(self):
+     @property
+     def string_value(self):
         """
         get_String_value(self)
-        Return the string value of the node as defined in the XPath data model.
+        Property to get the string value of the node as defined in the XPath data model.
 
         Returns:
             str: The string value of this node
 
         """
-        return self.derivedptr.getStringValue()
+        cdef const char* c_string = self.derivednptr.toString()
+        ustring = c_string.decode('UTF-8') if c_string is not NULL else None
+        return ustring
+
 
      def __str__(self):
         """
@@ -1979,13 +2055,18 @@ cdef class PyXdmNode(PyXdmItem):
         Returns:
             str: String value of this node
         """
-        return self.derivedptr.toString()
+        cdef const char* c_string = self.derivednptr.toString()
+        ustring = c_string.decode('UTF-8') if c_string is not NULL else None
+        return ustring
 
      def __repr__(self):
         """
         ___repr__ 
         """
-        return self.derivedptr.toString()
+        cdef const char* c_string = self.derivednptr.toString()
+        ustring = c_string.decode('UTF-8') if c_string is not NULL else None
+        return ustring
+
 
 
      def get_parent(self):
@@ -2010,12 +2091,19 @@ cdef class PyXdmNode(PyXdmItem):
             name(str): the eqname of the required attribute
 
         """
-        return self.derivednptr.getAttributeValue(name)
+        py_value_string = name.encode('UTF-8') if name is not None else None
+        cdef char * c_name = py_value_string if name is not None else ""
+         
+        cdef const char* c_string = self.derivednptr.getAttributeValue(c_name)
+        ustring = c_string.decode('UTF-8') if c_string is not NULL else None
+                
+        return ustring
 
-     def get_attribute_count(self):
+     @property
+     def attribute_count(self):
         """
-        get_attribute_count(self)
-        Get the count of attribute nodes on this XdmNode object. If this current node is not an element node then return 0
+        attribute_count(self)
+        Property to get the count of attribute nodes on this XdmNode object. If this current node is not an element node then return 0
 
         Returns:
             int: Count of attribute nodes
@@ -2023,15 +2111,61 @@ cdef class PyXdmNode(PyXdmItem):
         """
         return self.derivednptr.getAttributeCount()
 
-     #  def getAttributeNodes(self):
+     @property
+     def attributes(self):
+        """
+        attribute_nodes(self)
+        Property to get the attribute nodes as a list of PyXdmNode objects
+
+        Returns:
+            list[PyXdmNode]: List of PyXdmNode objects
+        """
+        cdef list nodes = []
+        cdef saxoncClasses.XdmNode **n
+        cdef int count, i
+        cdef PyXdmNode val = None
+        count = self.derivednptr.getAttributeCount()
+        if count > 0:
+            n = self.derivednptr.getAttributeNodes()
+            for i in range(count):
+                val = PyXdmNode()
+                val.derivednptr = val.derivedptr = val.thisvptr = n[i]
+                val.derivednptr.incrementRefCount()
+                nodes.append(val)
+
+        return nodes
 
 
-      # def getChildren(self):
+     @property
+     def children(self):
+        """
+        children(self)
+        Property to get children of this current node. List of child nodes
+
+        Returns:
+            list[PyXdmNode]: List of PyXdmNode objects
+        """
+        cdef list nodes = []
+        cdef saxoncClasses.XdmNode **n
+        cdef int count, i
+        cdef PyXdmNode val = None
+        count = self.derivednptr.getChildCount()
+        if count > 0:
+            n = self.derivednptr.getChildren()
+            for i in range(count):
+                val = PyXdmNode()
+                val.derivednptr = val.derivedptr = val.thisvptr = n[i]
+                val.derivednptr.incrementRefCount()
+                nodes.append(val)
+
+        return nodes
 
       # def getChildCount(self):
 
 
 cdef class PyXdmAtomicValue(PyXdmItem):
+     """
+     The class PyXdmAtomicValue represents an item in an Xath sequence that is an atomic value. The value may belong to any of the 19 primitive types defined in XML Schema, or to a type derived from these primitive types, or the XPath type xs:untypedAtomic. """
      cdef saxoncClasses.XdmAtomicValue *derivedaptr      # hold a C++ instance which we're wrapping
 
      def __cinit__(self):
@@ -2042,11 +2176,11 @@ cdef class PyXdmAtomicValue(PyXdmItem):
 
 
 
-
-     def get_primitive_type_name(self):
+     @property
+     def primitive_type_name(self):
         """
         get_primitive_type_name()
-        Get the primitive type name of the PyXdmAtomicValue
+        Property - Get the primitive type name of the PyXdmAtomicValue
         Returns:
             str: String of the primitive type name
 
@@ -2080,6 +2214,19 @@ cdef class PyXdmAtomicValue(PyXdmItem):
         
         return self.derivedaptr.getDoubleValue()
     
+
+     @property
+     def int_value(self):
+        """
+        Property which is returns the int value of the PyXdmAtomicValue if it can be converted.
+
+        Returns:
+            int: Int value of the Xdm object
+
+        """
+        
+        return self.derivedaptr.getLongValue()
+
 
      @property
      def string_value(self):

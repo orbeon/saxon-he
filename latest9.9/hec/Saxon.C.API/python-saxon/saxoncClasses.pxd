@@ -6,6 +6,7 @@ from libcpp cimport string
 cdef extern from "../SaxonProcessor.h":
     cdef cppclass SaxonProcessor:
         SaxonProcessor(bool) except +
+        #SaxonProcessor(const char * configFile) except +
         bool license
         char * version()
         void release()
@@ -290,6 +291,14 @@ cdef extern from "../XdmValue.h":
 
         const char * toString()
 
+        void incrementRefCount()
+
+        void decrementRefCount()
+
+        int getRefCount()
+
+        int getType()
+
 cdef extern from "../XdmItem.h":
     cdef cppclass XdmItem(XdmValue):
         XdmItem() except +
@@ -308,9 +317,6 @@ cdef extern from "../XdmNode.h":
 
         const char* getBaseUri()
 
-        const char * getStringValue()
-
-        const char * toString()
 
         XdmNode* getParent()
 
