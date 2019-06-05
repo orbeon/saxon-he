@@ -178,6 +178,15 @@ public class ConditionalSorter extends Expression {
         }
     }
 
+    @Override
+    public Expression unordered(boolean retainAllNodes, boolean forStreaming) throws XPathException {
+        Expression base = getDocumentSorter().unordered(retainAllNodes, forStreaming);
+        if (base instanceof DocumentSorter) {
+            return this;
+        } else {
+            return base;
+        }
+    }
 
     /**
      * Compute the static cardinality of this expression
