@@ -463,6 +463,7 @@ public class Transform {
 
             value = options.getOptionValue("T");
             if (value != null) {
+
                 if ("".equals(value)) {
                     traceListener = new net.sf.saxon.trace.XSLTTraceListener();
                 } else {
@@ -470,6 +471,11 @@ public class Transform {
                 }
                 processor.setConfigurationProperty(Feature.TRACE_LISTENER, traceListener);
                 processor.setConfigurationProperty(Feature.LINE_NUMBERING, true);
+
+                String dest = options.getOptionValue("Tout");
+                if (dest != null) {
+                    traceListener.setOutputDestination(new StandardLogger(new File(dest)));
+                }
 
                 value = options.getOptionValue("Tlevel");
                 if (value != null && traceListener instanceof AbstractTraceListener) {
@@ -488,6 +494,7 @@ public class Transform {
                             break;
                     }
                 }
+
             }
 
             value = options.getOptionValue("TB");
@@ -619,9 +626,9 @@ public class Transform {
 //                config.checkLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XSLT, "schema-aware XSLT", -1);
 //            }
 
-            if (traceListener instanceof AbstractTraceListener && traceDestination != null) {
-                traceListener.setOutputDestination(traceDestination);
-            }
+//            if (traceListener instanceof AbstractTraceListener && traceDestination != null) {
+//                traceListener.setOutputDestination(traceDestination);
+//            }
 
             value = options.getOptionValue("scmin");
             if (value != null) {
@@ -685,13 +692,16 @@ public class Transform {
                     }
                 } else if (styleFileName.equals("-")) {
                     // take input from stdin
+                    String sysID = new File(System.getProperty("user.dir")).toURI().toASCIIString();
                     if (styleParserName == null) {
-                        styleSource = new StreamSource(System.in);
+                        styleSource = new StreamSource(System.in, sysID);
                     } else if (Version.platform.isJava()) {
                         styleParser = config.getStyleParser();
-                        styleSource = new SAXSource(styleParser, new InputSource(System.in));
+                        final InputSource inputSource = new InputSource(System.in);
+                        inputSource.setSystemId(sysID);
+                        styleSource = new SAXSource(styleParser, inputSource);
                     } else {
-                        styleSource = new StreamSource(System.in);
+                        styleSource = new StreamSource(System.in, sysID);
                     }
                 } else {
                     PackageLibrary library = config.getDefaultXsltCompilerInfo().getPackageLibrary();

@@ -712,7 +712,8 @@ public class Query {
             }
         } else if (sourceFileName.equals("-")) {
             // take input from stdin
-            sourceInput = new StreamSource(System.in);
+            String sysID = new File(System.getProperty("user.dir")).toURI().toASCIIString();
+            sourceInput = new StreamSource(System.in, sysID);
         } else {
             File sourceFile = new File(sourceFileName);
             if (!sourceFile.exists()) {
@@ -721,6 +722,8 @@ public class Query {
 
             if (Version.platform.isJava()) {
                 InputSource eis = new InputSource(sourceFile.toURI().toString());
+                String sysID = new File(System.getProperty("user.dir")).toURI().toASCIIString();
+                eis.setSystemId(sysID);
                 sourceInput = new SAXSource(eis);
             } else {
                 sourceInput = new StreamSource(sourceFile.toURI().toString());
@@ -746,6 +749,7 @@ public class Query {
         XQueryExecutable exp;
         if (queryFileName.equals("-")) {
             Reader queryReader = new InputStreamReader(System.in);
+            compiler.setBaseURI(new File(System.getProperty("user.dir")).toURI());
             exp = compiler.compile(queryReader);
         } else if (queryFileName.startsWith("{") && queryFileName.endsWith("}")) {
             // query is inline on the command line

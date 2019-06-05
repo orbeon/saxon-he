@@ -194,7 +194,7 @@ public abstract class AbstractTraceListener implements TraceListener2 {
      */
 
     public void startCurrentItem(Item item) {
-        if (item instanceof NodeInfo) {
+        if (item instanceof NodeInfo && detail > 0) {
             NodeInfo curr = (NodeInfo) item;
             out.info(AbstractTraceListener.spaces(indent) + "<source node=\"" + Navigator.getPath(curr)
                     + "\" line=\"" + curr.getLineNumber()
@@ -210,7 +210,7 @@ public abstract class AbstractTraceListener implements TraceListener2 {
 
     public void endCurrentItem(Item item) {
         indent--;
-        if (item instanceof NodeInfo) {
+        if (item instanceof NodeInfo && detail > 0) {
             NodeInfo curr = (NodeInfo) item;
             out.info(AbstractTraceListener.spaces(indent) + "</source><!-- " +
                     Navigator.getPath(curr) + " -->");

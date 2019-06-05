@@ -38,18 +38,12 @@ public class XSLGlobalParam extends XSLGlobalVariable {
     }
 
     /**
-     * Default visibility for xsl:param is public
-     * @return the declared visibility, or "public" if not declared
+     * Visibility for xsl:param is always PUBLIC
+     * @return {@link Visibility#PUBLIC}, always
      */
 
     public Visibility getVisibility()  {
-        String statik = getAttributeValue("static");
-        if (statik == null) {
-            return Visibility.PUBLIC;
-        } else {
-            boolean isStatic = processBooleanAttribute("static", statik);
-            return isStatic ? Visibility.PRIVATE : Visibility.PUBLIC;
-        }
+        return Visibility.PUBLIC;
     }
 
     public void validate(ComponentDeclaration decl) throws XPathException {
@@ -61,11 +55,6 @@ public class XSLGlobalParam extends XSLGlobalVariable {
             }
             if (hasChildNodes()) {
                 compileError("A parameter specifying required='yes' must have empty content", "XTSE0010");
-            }
-            Visibility vis = getVisibility();
-            if (!sourceBinding.isStatic() &&
-                    !(vis == Visibility.PUBLIC || vis == Visibility.FINAL || vis == Visibility.ABSTRACT)) {
-                compileError("The visibility of a required non-static parameter must be public, final, or abstract", "XTSE3370");
             }
         }
 
