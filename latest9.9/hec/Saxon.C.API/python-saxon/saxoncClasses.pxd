@@ -230,7 +230,7 @@ cdef extern from "../SaxonProcessor.h":
     cdef cppclass XQueryProcessor:
         XQueryProcessor() except +
 
-        void setContextItem(XdmItem * value)
+        void setContextItem(XdmItem * value) except +
 
         void setOutputFile(const char* outfile)
 
@@ -248,12 +248,12 @@ cdef extern from "../SaxonProcessor.h":
 
         void setUpdating(bool updating)
 
-        XdmValue * runQueryToValue()
-        const char * runQueryToString()
+        XdmValue * runQueryToValue() except +
+        const char * runQueryToString() except +
 
-        void runQueryToFile()
+        void runQueryToFile() except +
 
-        void declareNamespace(const char *prefix, const char * uri)
+        void declareNamespace(const char *prefix, const char * uri) except +
 
         void setQueryFile(const char* filename)
 

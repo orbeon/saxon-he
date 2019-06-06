@@ -62,3 +62,6 @@ with saxonc.PySaxonProcessor(license=False) as proc:
                attr = n.attributes
                print('Attr '+attr[1].name+' Value='+attr[1].string_value)
     '''
+
+
+
