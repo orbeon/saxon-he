@@ -810,6 +810,7 @@ public class XsltCompiler {
      * @param errorList a List (typically empty) to which information will be appended about
      *                  static errors found during the compilation. Each such error is represented by a
      *                  {@link StaticError} object.
+     * @since 9.9
      */
 
     public void setErrorList(List<StaticError> errorList) {
