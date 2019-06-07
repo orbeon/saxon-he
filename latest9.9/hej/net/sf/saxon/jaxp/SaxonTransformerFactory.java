@@ -141,7 +141,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      *          is constructing the Templates object and fails.
      */
 
-    public Templates newTemplates(Source source)
+    public synchronized Templates newTemplates(Source source)
             throws TransformerConfigurationException {
 
         try {
@@ -170,7 +170,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      *          is constructing the Templates object and fails.
      */
 
-    public Templates newTemplates(Source source, CompilerInfo info)
+    public synchronized Templates newTemplates(Source source, CompilerInfo info)
             throws TransformerConfigurationException {
 
         try {
