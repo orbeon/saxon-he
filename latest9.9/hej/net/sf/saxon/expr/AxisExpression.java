@@ -485,18 +485,20 @@ public final class AxisExpression extends Expression {
                                     " does not allow a child element named " + getDiagnosticName(childElement, env);
                             IntHashSet permitted = new IntHashSet();
                             ((ComplexType) contentType).gatherAllPermittedChildren(permitted, false);
-                            IntIterator kids = permitted.iterator();
-                            while (kids.hasNext()) {
-                                int kid = kids.next();
-                                StructuredQName sq = getConfiguration().getNamePool().getStructuredQName(kid);
-                                if (sq.getLocalPart().equals(childElement.getLocalPart()) && kid != childfp) {
-                                    message += ". Perhaps the namespace is " +
-                                            (childElement.hasURI("") ? "missing" : "wrong") +
-                                            ", and " + sq.getEQName() + " was intended?";
-                                    break;
+                            if (!permitted.contains(-1)) {
+                                IntIterator kids = permitted.iterator();
+                                while (kids.hasNext()) {
+                                    int kid = kids.next();
+                                    StructuredQName sq = getConfiguration().getNamePool().getStructuredQName(kid);
+                                    if (sq.getLocalPart().equals(childElement.getLocalPart()) && kid != childfp) {
+                                        message += ". Perhaps the namespace is " +
+                                                (childElement.hasURI("") ? "missing" : "wrong") +
+                                                ", and " + sq.getEQName() + " was intended?";
+                                        break;
+                                    }
                                 }
+                                visitor.issueWarning(message, getLocation());
                             }
-                            visitor.issueWarning(message, getLocation());
                         }
                         return Literal.makeEmptySequence();
                     } else {
