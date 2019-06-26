@@ -722,8 +722,8 @@ public class Query {
 
             if (Version.platform.isJava()) {
                 InputSource eis = new InputSource(sourceFile.toURI().toString());
-                String sysID = new File(System.getProperty("user.dir")).toURI().toASCIIString();
-                eis.setSystemId(sysID);
+//                String sysID = new File(System.getProperty("user.dir")).toURI().toASCIIString();
+//                eis.setSystemId(sysID);
                 sourceInput = new SAXSource(eis);
             } else {
                 sourceInput = new StreamSource(sourceFile.toURI().toString());
