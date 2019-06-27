@@ -7,6 +7,9 @@
 
 package net.sf.saxon.lib;
 
+import net.sf.saxon.trans.UncheckedXPathException;
+import net.sf.saxon.trans.XPathException;
+
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.TransformerException;
 
@@ -37,7 +40,7 @@ public class DelegatingErrorListener implements UnfailingErrorListener {
         try {
             base.error(exception);
         } catch (TransformerException e) {
-            // no action
+            throw new UncheckedXPathException(XPathException.makeXPathException(e));
         }
     }
 
@@ -45,7 +48,7 @@ public class DelegatingErrorListener implements UnfailingErrorListener {
         try {
             base.fatalError(exception);
         } catch (TransformerException e) {
-            // no action
+            throw new UncheckedXPathException(XPathException.makeXPathException(e));
         }
     }
 
