@@ -369,7 +369,7 @@ public class XsltProcessor extends SaxonCAPI {
             if (outFilename != null) {
                 serializer = resolveOutputFile(processor, cwd, outFilename);
             }
-            applyXsltTransformerProperties(this, cwd, processor, transformer, params, values, props);
+            applyXsltTransformerProperties(this, cwd, processor, transformer, params, values);
             if (sourceFilename == null && doc != null) {
                 transformer.setInitialContextNode(doc);
             } else if (sourceFilename != null) {
@@ -412,7 +412,7 @@ public class XsltProcessor extends SaxonCAPI {
      * @param params      - parameters and property names given as an array of stings
      * @param values      - the values of the parameters and properties. given as a array of Java objects
      */
-    public static void applyXsltTransformerProperties(SaxonCAPI api, String cwd, Processor processor, XsltTransformer transformer, String[] params, Object[] values, Properties props) throws SaxonApiException {
+    public static void applyXsltTransformerProperties(SaxonCAPI api, String cwd, Processor processor, XsltTransformer transformer, String[] params, Object[] values) throws SaxonApiException {
         if (params != null) {
             String initialTemplate;
             String initialMode;
@@ -649,7 +649,7 @@ public class XsltProcessor extends SaxonCAPI {
 
 
             transformer.setDestination(destination);
-            this.applyXsltTransformerProperties(this, cwd, processor, transformer, params, values, props);
+            this.applyXsltTransformerProperties(this, cwd, processor, transformer, params, values);
 
             if (sourceFile == null && doc != null) {
                 transformer.setInitialContextNode(doc);
@@ -719,7 +719,7 @@ public class XsltProcessor extends SaxonCAPI {
             serializer = processor.newSerializer(sw);
             transformer.setDestination(serializer);
 
-            applyXsltTransformerProperties(this, cwd, processor, transformer, params, values, props);
+            applyXsltTransformerProperties(this, cwd, processor, transformer, params, values);
 
             if (sourceFile == null && doc != null) {
                 transformer.setInitialContextNode(doc);
@@ -830,7 +830,7 @@ public class XsltProcessor extends SaxonCAPI {
                 transformer.setDestination(serializer);
             }
 
-            this.applyXsltTransformerProperties(this, null, processor, transformer, params, values, props);
+            this.applyXsltTransformerProperties(this, null, processor, transformer, params, values);
             if (sourceFile != null) {
                 source = resolveFileToSource(cwd, sourceFile);
                 DocumentBuilder builder = processor.newDocumentBuilder();

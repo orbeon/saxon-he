@@ -11,10 +11,12 @@ package net.sf.saxon.option.cpp;
 import com.saxonica.functions.extfn.cpp.NativeCall;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.*;
+import net.sf.saxon.om.AtomicArray;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.s9api.*;
+import net.sf.saxon.serialize.SerializationProperties;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.type.BuiltInType;
@@ -36,9 +38,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 
 /**
@@ -46,7 +46,9 @@ import java.util.Properties;
  */
 
 public class SaxonCAPI {
-    protected Properties props = null;
+
+    SerializationProperties serializationProperties = new SerializationProperties();
+    Properties props = new Properties();
     protected Processor processor = null;
     protected XdmNode doc = null;
     protected List<SaxonCException> saxonExceptions = new ArrayList<SaxonCException>();
@@ -56,8 +58,10 @@ public class SaxonCAPI {
     protected InputStream in = null;
     protected boolean schemaAware = false;
     protected Source source = null;
-
+    protected Map<QName, XdmValue> globals = new HashMap<>();
+    protected Map<QName, XdmValue> staticParameters = new HashMap<>();
     public static String RESOURCES_DIR = null;
+    protected Map<QName, XdmValue> initialTemplateParameters = new HashMap<>();
 
 
     /**
@@ -88,7 +92,7 @@ public class SaxonCAPI {
     /**
      * Constructor
      *
-     * @param proc    - specify processor object
+     * @param proc - specify processor object
      */
     public SaxonCAPI(Processor proc) {
         if (proc != null) {
@@ -100,7 +104,7 @@ public class SaxonCAPI {
         }
     }
 
-    public static void setLibrary(String cwd, String libName){
+    public static void setLibrary(String cwd, String libName) {
 //#if EE==true || PE==true
         NativeCall.loadLibrary(cwd, libName);
 //#endif
@@ -109,7 +113,8 @@ public class SaxonCAPI {
 
     /**
      * Static method to create Processor object given a configuration file
-     * @param  configFile
+     *
+     * @param configFile
      */
     public static Processor createSaxonProcessor(String configFile) throws SaxonApiException {
         Configuration config = null;
@@ -163,8 +168,8 @@ public class SaxonCAPI {
         @Override
         public void fatalError(TransformerException exception) {
             if (exception instanceof XPathException && ((XPathException) exception).hasBeenReported()) {
-                       // don't report the same error twice
-                       return;
+                // don't report the same error twice
+                return;
             }
             saxonExceptions.add(new SaxonCException(exception));
             try {
@@ -174,7 +179,7 @@ public class SaxonCAPI {
         }
     };
 
-    public static String getProductVersion(Processor processor){
+    public static String getProductVersion(Processor processor) {
         return processor.getUnderlyingConfiguration().getProductTitle();
     }
 
@@ -195,7 +200,6 @@ public class SaxonCAPI {
     public Processor getProcessor() {
         return processor;
     }
-
 
 
     public static void applyToConfiguration(Processor processor, String[] names, String[] values) throws SaxonApiException {
@@ -266,7 +270,6 @@ public class SaxonCAPI {
                 }
             }
         }
-
 
 
     }
@@ -346,6 +349,136 @@ public class SaxonCAPI {
         } else {
             return null;
         }
+    }
+
+
+    /**
+     * Method to convert arrays received from C++ to Java map object
+     * this method also extracts serialization properties and parameters
+     *
+     * @param params
+     * @param values
+     * @return Map of String, Object pairs
+     * @throws SaxonApiException
+     */
+    Map<String, Object> convertArraysToMap(String[] params, Object[] values) throws SaxonApiException {
+        Map<String, Object> map = new HashMap();
+        globals = new HashMap<>();
+        if (params == null || values == null) {
+            return map;
+        }
+        if (params.length != values.length) {
+            throw new SaxonApiException("Saxon/C internal Error: params array length does not match values length");
+        }
+        for (int i = 0; i < params.length; i++) {
+            if (params[i].startsWith("!")) {
+                String name = params[i].substring(1);
+                Serializer.Property prop = Serializer.Property.get(name);
+                if (prop == null) {
+                    throw new SaxonApiException("Property name " + name + " not found");
+                }
+                props.put(prop.getQName().getClarkName(), (String) values[i]);
+            } else if (params[i].startsWith("--") && values[i] != null) {
+                try {
+                    processor.setConfigurationProperty("http://saxon.sf.net/feature/" + params[i].substring(2), (String) values[i]);
+                } catch (IllegalArgumentException err) {
+                    throw new SaxonCException(err.getMessage());
+                }
+
+
+            } else if (params[i].startsWith("itparam:")) {
+                //initial template parameters
+                String paramName = params[i].substring(7);
+                Object value = values[i];
+                XdmValue valueForCpp = null;
+                QName qname = QName.fromClarkName(paramName);
+                valueForCpp = convertObjectToXdmValue(values[i]);
+                initialTemplateParameters.put(qname, valueForCpp);
+
+
+            } else if (params[i].startsWith("sparam:")) {
+                //static parameters
+                String paramName = params[i].substring(7);
+                Object value = values[i];
+                XdmValue valueForCpp = null;
+                QName qname = QName.fromClarkName(paramName);
+                valueForCpp = convertObjectToXdmValue(values[i]);
+                staticParameters.put(qname, valueForCpp);
+
+
+            } else if (params[i].startsWith("param:")) {
+                String paramName = params[i].substring(6);
+                Object value = values[i];
+                XdmValue valueForCpp = null;
+                QName qname = QName.fromClarkName(paramName);
+                valueForCpp = convertObjectToXdmValue(values[i]);
+                if (debug) {
+                    System.err.println("DEBUG: XSLTTransformerForCpp param: " + paramName);
+                }
+
+                if (qname != null && valueForCpp != null) {
+                    globals.put(qname, valueForCpp);
+                }
+            } else {
+                map.put(params[i], values[i]);
+            }
+        }
+        return map;
+
+    }
+
+    public XdmValue convertObjectToXdmValue(Object value) {
+
+        XdmValue valueForCpp;
+        if (value instanceof XdmValue) {
+            valueForCpp = (XdmValue) value;
+            if (debug) {
+
+                System.err.println("DEBUG: XSLTTransformerForCpp: " + valueForCpp.getUnderlyingValue().toString());
+                net.sf.saxon.type.ItemType suppliedItemType = SequenceTool.getItemType(valueForCpp.getUnderlyingValue(), processor.getUnderlyingConfiguration().getTypeHierarchy());
+                System.err.println("DEBUG: XSLTTransformerForCpp: " + valueForCpp.getUnderlyingValue());
+                System.err.println("DEBUG: XSLTTransformerForCpp Type: " + suppliedItemType.toString());
+            }
+
+        } else if (value instanceof Object[]) {
+            Object[] arr = (Object[]) value;
+            if (debug) {
+                System.err.println("DEBUG: Array of parameters found. arr len=" + arr.length);
+
+            }
+            List<AtomicValue> valueList = new ArrayList<AtomicValue>();
+            for (int j = 0; j < arr.length; j++) {
+                Object itemi = arr[j];
+                if (itemi == null) {
+                    System.err.println("Error: Null item at " + j + "th position in array of XdmValues");
+                    break;
+                }
+                if (debug) {
+                    System.err.println("Java object:" + itemi);
+                }
+                if (itemi instanceof XdmValue) {
+                    valueList.add((AtomicValue) (((XdmValue) itemi).getUnderlyingValue()));
+                } else {
+                    XdmValue valuex = getXdmValue(itemi);
+                    if (valuex == null) {
+                        System.err.println("Error: Null item at " + j + "th position in array of XdmValues when converting");
+                        break;
+                    }
+                    valueList.add((AtomicValue) (getXdmValue(itemi)).getUnderlyingValue());
+                }
+            }
+            AtomicArray sequence = new AtomicArray(valueList);
+            valueForCpp = XdmValue.wrap(sequence);
+        } else {
+            //fast track for primitive values
+            valueForCpp = getXdmValue(value);
+            if (debug) {
+                System.err.println("DEBUG: primitive value found");
+                net.sf.saxon.type.ItemType suppliedItemType = SequenceTool.getItemType(valueForCpp.getUnderlyingValue(), processor.getUnderlyingConfiguration().getTypeHierarchy());
+                System.err.println("XSLT30TransformerForCpp Type: " + suppliedItemType.toString());
+            }
+        }
+        return valueForCpp;
     }
 
 
@@ -652,6 +785,9 @@ public class SaxonCAPI {
 
             return source;
         } else {
+            if (filename == null) {
+                throw new SaxonApiException("The file " + filename + " is null");
+            }
             file = new File(filename);
             StreamSource stream = new StreamSource(file);
             stream.setSystemId(filename);
@@ -677,4 +813,7 @@ public class SaxonCAPI {
         return serializer;
     }
 
+    public Map<QName, XdmValue> getGlobals() {
+        return globals;
+    }
 }

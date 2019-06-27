@@ -6368,6 +6368,7 @@ latest9.9/hej/net/sf/saxon/option/cpp/XPathProcessor.java svn_eol_002dstyle=nati
 latest9.9/hej/net/sf/saxon/option/cpp/XQueryEngine.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/option/cpp/XdmUtils.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/option/cpp/XdmValueForCpp.java svn_eol_002dstyle=native
+latest9.9/hej/net/sf/saxon/option/cpp/Xslt30Processor.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/option/cpp/XsltProcessor.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/option/cpp/package.html svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/option/dom4j/DOM4JDocumentWrapper.java svn_eol_002dstyle=native

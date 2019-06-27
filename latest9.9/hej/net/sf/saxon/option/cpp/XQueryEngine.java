@@ -15,15 +15,15 @@ import net.sf.saxon.query.QueryResult;
 import net.sf.saxon.s9api.*;
 import net.sf.saxon.trans.XPathException;
 
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -189,7 +189,7 @@ public class XQueryEngine extends SaxonCAPI {
 
         XQueryEvaluator eval = executable.load();
         try {
-            applyXQueryProperties(this, cwd, serializer, processor, eval, params, values, props);
+            applyXQueryProperties(this, cwd, serializer, processor, eval, params, values);
         } catch (SaxonApiException ex) {
             saxonExceptions.add(new SaxonCException(ex));
             throw ex;
@@ -200,21 +200,20 @@ public class XQueryEngine extends SaxonCAPI {
 
     public String executeQueryToString(String cwd, String[] params, Object[] values) throws SaxonApiException {
         XQueryEvaluator eval = xqueryEvaluator(cwd, params, values);
-        StringWriter sw = new StringWriter();
-        if (props == null) {
-            props = new Properties();
-            props.setProperty("method", "xml");
-            props.setProperty("indent", "yes");
-            props.setProperty("omit-xml-declaration", "yes");
-        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Properties props = new Properties();
+        props.put("method", "xml");
+        props.put("indent","yes");
+        props.put("omit-xml-declaration","yes");
         try {
-            QueryResult.serializeSequence(eval.evaluate().getUnderlyingValue().iterate(), processor.getUnderlyingConfiguration(), sw, props);
+            QueryResult.serializeSequence(eval.evaluate().getUnderlyingValue().iterate(), processor.getUnderlyingConfiguration(), baos, props);
         } catch (XPathException e) {
             SaxonCException saxonException = new SaxonCException(e);
             saxonExceptions.add(saxonException);
             throw saxonException;
         }
-        return sw.toString();
+        return baos.toString();
     }
 
     public XdmValue executeQueryToValue(String cwd, String[] params, Object[] values) throws SaxonApiException {
@@ -239,7 +238,7 @@ public class XQueryEngine extends SaxonCAPI {
         }
     }
 
-    public static void applyXQueryProperties(SaxonCAPI api, String cwd, Serializer serializer, Processor processor, XQueryEvaluator eval, String[] params, Object[] values, Properties props) throws SaxonApiException {
+    public static void applyXQueryProperties(SaxonCAPI api, String cwd, Serializer serializer, Processor processor, XQueryEvaluator eval, String[] params, Object[] values) throws SaxonApiException {
 
         if (debug) {
             for (int i = 0; i < params.length; i++) {
