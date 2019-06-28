@@ -12,6 +12,7 @@ import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.serialize.charcode.CharacterSet;
 import net.sf.saxon.serialize.charcode.UTF16CharacterSet;
 import net.sf.saxon.serialize.charcode.UTF8CharacterSet;
+import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 
 import javax.xml.transform.OutputKeys;
@@ -97,40 +98,48 @@ public class ExpandedStreamResult {
         }
 
         try {
-            URI uri = new URI(uriString);
-            if (!uri.isAbsolute()) {
-                try {
-                    uri = new File(uriString).getAbsoluteFile().toURI();
-                } catch (Exception e) {
-                    // if we fail, we'll get another exception
-                }
-            }
-            File file = new File(uri);
-            try {
-                if ("file".equals(uri.getScheme()) && !file.exists()) {
-                    File directory = file.getParentFile();
-                    if (directory != null && !directory.exists()) {
-                        directory.mkdirs();
-                    }
-                    file.createNewFile();
-                }
-            } catch (IOException err) {
-                throw new XPathException("Failed to create output file " + uri, err);
-            }
+            File file = makeWritableOutputFile(uriString);
             outputStream = new FileOutputStream(file);
             // Set the outputstream in the StreamResult object so that the
             // call on OutputURIResolver.close() can close it
             //streamResult.setOutputStream(outputStream);
             mustClose = true;
-        } catch (FileNotFoundException fnf) {
-            throw new XPathException(fnf);
-        } catch (URISyntaxException use) {
-            throw new XPathException(use);
-        } catch (IllegalArgumentException iae) {
+        } catch (FileNotFoundException | URISyntaxException | IllegalArgumentException fnf) {
             // for example, the system ID doesn't use the file: scheme
-            throw new XPathException(iae);
+            throw new XPathException(fnf);
         }
+
         return outputStream;
+    }
+
+    public static File makeWritableOutputFile(String uriString) throws URISyntaxException, XPathException {
+        URI uri = new URI(uriString);
+        if (!uri.isAbsolute()) {
+            try {
+                uri = new File(uriString).getAbsoluteFile().toURI();
+            } catch (Exception e) {
+                // if we fail, we'll get another exception
+            }
+        }
+        File file = new File(uri);
+        try {
+            if ("file".equals(uri.getScheme()) && !file.exists()) {
+                File directory = file.getParentFile();
+                if (directory != null && !directory.exists()) {
+                    directory.mkdirs();
+                }
+                file.createNewFile();
+            }
+            if (file.isDirectory()) {
+                throw new XPathException("Cannot write to a directory: " + uriString, SaxonErrorCode.SXRD0004);
+            }
+            if (!file.canWrite()) {
+                throw new XPathException("Cannot write to URI " + uriString, SaxonErrorCode.SXRD0004);
+            }
+        } catch (IOException err) {
+            throw new XPathException("Failed to create output file " + uri, err);
+        }
+        return file;
     }
 
     /**

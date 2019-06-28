@@ -22,7 +22,6 @@ import net.sf.saxon.trans.XPathException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Properties;
 
@@ -130,26 +129,7 @@ public abstract class Emitter extends SequenceReceiver implements ReceiverWithOu
         }
 
         try {
-            URI uri = new URI(uriString);
-            if (!uri.isAbsolute()) {
-                try {
-                    uri = new File(uriString).getAbsoluteFile().toURI();
-                } catch (Exception e) {
-                    // if we fail, we'll get another exception
-                }
-            }
-            File file = new File(uri);
-            try {
-                if ("file".equals(uri.getScheme()) && !file.exists()) {
-                    File directory = file.getParentFile();
-                    if (directory != null && !directory.exists()) {
-                        directory.mkdirs();
-                    }
-                    file.createNewFile();
-                }
-            } catch (IOException err) {
-                throw new XPathException("Failed to create output file " + uri, err);
-            }
+            File file = ExpandedStreamResult.makeWritableOutputFile(uriString);
             setOutputStream(new FileOutputStream(file));
             // Set the outputstream in the StreamResult object so that the
             // call on OutputURIResolver.close() can close it
