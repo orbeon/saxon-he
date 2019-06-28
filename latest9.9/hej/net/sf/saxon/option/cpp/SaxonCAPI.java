@@ -62,6 +62,7 @@ public class SaxonCAPI {
     protected Map<QName, XdmValue> staticParameters = new HashMap<>();
     public static String RESOURCES_DIR = null;
     protected Map<QName, XdmValue> initialTemplateParameters = new HashMap<>();
+    protected boolean returnXdmValue = false;
 
 
     /**
@@ -377,7 +378,7 @@ public class SaxonCAPI {
                 if (prop == null) {
                     throw new SaxonApiException("Property name " + name + " not found");
                 }
-                props.put(prop.getQName().getClarkName(), (String) values[i]);
+                props.put(prop.getQName().getClarkName(),  values[i]);
             } else if (params[i].startsWith("--") && values[i] != null) {
                 try {
                     processor.setConfigurationProperty("http://saxon.sf.net/feature/" + params[i].substring(2), (String) values[i]);
@@ -388,7 +389,7 @@ public class SaxonCAPI {
 
             } else if (params[i].startsWith("itparam:")) {
                 //initial template parameters
-                String paramName = params[i].substring(7);
+                String paramName = params[i].substring(8);
                 Object value = values[i];
                 XdmValue valueForCpp = null;
                 QName qname = QName.fromClarkName(paramName);
