@@ -391,9 +391,11 @@ public class ResultDocument extends Instruction
         PipelineConfiguration pipe = saved.getPipelineConfiguration();
         String savedOutputUri = context.getCurrentOutputUri();
         Receiver out = processLeft(context);
+        boolean failed = false;
         try {
             content.process(context);
         } catch (XPathException err) {
+            failed = true;
             err.maybeSetContext(context);
             err.maybeSetLocation(getLocation());
             throw err;
@@ -401,7 +403,11 @@ public class ResultDocument extends Instruction
             try {
                 out.close();
             } catch (XPathException e) {
-                // No further action; report the original error in preference. Bug 4227
+                if (!failed) {
+                    //noinspection ThrowFromFinallyBlock
+                    throw e;
+                }
+                // Otherwise no further action; report the original error in preference. Bug 4227
             }
         }
         context.setReceiver(saved);
