@@ -854,6 +854,8 @@ public class Xslt30Processor extends SaxonCAPI {
                 valuei = map.get("outvalue");
                 if(valuei instanceof Boolean){
                     api.returnXdmValue = (boolean) valuei;
+                } else if(valuei instanceof String && valuei.equals("yes")) {
+                    api.returnXdmValue = true;
                 }
 
             }
