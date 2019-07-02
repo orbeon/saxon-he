@@ -425,7 +425,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
                     MapItem options = (MapItem) ((Literal) args[1]).getValue().head();
                     GroundedValue dupes = options.get(new StringValue("duplicates"));
                     try {
-                        if (!"combine".equals(dupes.getStringValue())) {
+                        if (dupes == null || !"combine".equals(dupes.getStringValue())) {
                             maybeCombined = false;
                         }
                     } catch (XPathException e) {
