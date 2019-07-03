@@ -161,7 +161,7 @@ def test_xslt_processor():
     sp = PySaxonProcessor()
     xsltproc = sp.new_xslt_processor()
     node_ = sp.parse_xml(xml_file_name="cat.xml")
-    xsltproc.set_source(node=node_)
+    xsltproc.set_source(xdm_node=node_)
     xsltproc.compile_stylesheet(stylesheet_text="<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>       <xsl:param name='values' select='(2,3,4)' /><xsl:output method='xml' indent='yes' /><xsl:template match='*'><output><xsl:value-of select='//person[1]'/><xsl:for-each select='$values' ><out><xsl:value-of select='. * 3'/></out></xsl:for-each></output></xsl:template></xsl:stylesheet>")
     output2 = xsltproc.transform_to_string()
     assert 'text1' in output2
@@ -187,9 +187,9 @@ def test_xslt_parameter(saxonproc):
     trans.set_parameter("numParam",value1)
     assert value1 is not None
 
-    trans->set_source(xdm_node=inputi)
+    trans.set_source(xdm_node=input_)
     output_ = trans.transform_to_string(stylesheet_file="test.xsl")
-    print(output_)
+    assert 'text2' in output_
 
     
     
@@ -202,7 +202,7 @@ def test_return_document_node(saxonproc):
     xqc.set_context(xdm_item=node)
     result = xqc.run_query_to_value()
     if isinstance(result, PyXdmNode):
-        assert result.node_kind == PyXdmNodeKind.DOCUMENT
+        assert result.node_kind == DOCUMENT
 
 def testxQuery1(saxonproc):
     query_proc = saxonproc.new_xquery_processor()
@@ -267,8 +267,7 @@ def testReusability(saxonproc):
     value1 = saxonproc.make_boolean_value(True)
     queryproc.set_parameter("p",value1)
     result = queryproc.run_query_to_value()
-    if result is not None:
-        print('result type='+ str(result))    
+       
     assert result is not None
     assert result.is_atomic
     assert result.boolean_value
@@ -308,7 +307,7 @@ def test_atomic_values():
     assert boolVal == True
     assert value.string_value == '3.5'
     assert value.double_value == 3.5
-    assert value.int_value == 3
+    assert value.integer_value == 3
     primValue = value.primitive_type_name
     assert primValue == 'Q{http://www.w3.org/2001/XMLSchema}double'
 
@@ -355,7 +354,7 @@ def test_node():
     assert node.size == 1
     outNode = node.children[0]
     assert outNode.name == 'out'
-    assert outNode.node_kind == PyXdmNodeKind.ELEMENT
+    assert outNode.node_kind == ELEMENT
     children = outNode.children    
     attrs = children[1].attributes
     assert len(attrs) == 2
@@ -408,7 +407,7 @@ def test_release():
     with PySaxonProcessor(license=False) as proc:
         xsltproc = proc.new_xslt_processor()
         document = proc.parse_xml(xml_text="<out><person>text1</person><person>text2</person><person>text3</person></out>")
-        xsltproc.set_source(node=document)
+        xsltproc.set_source(xdm_node=document)
         xsltproc.compile_stylesheet(stylesheet_text="<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>       <xsl:param name='values' select='(2,3,4)' /><xsl:output method='xml' indent='yes' /><xsl:template match='*'><output><xsl:value-of select='//person[1]'/><xsl:for-each select='$values' ><out><xsl:value-of select='. * 3'/></out></xsl:for-each></output></xsl:template></xsl:stylesheet>")
         output2 = xsltproc.transform_to_string()
         assert output2.startswith('<?xml version="1.0" encoding="UTF-8"?>\n<output>text1<out>6</out')

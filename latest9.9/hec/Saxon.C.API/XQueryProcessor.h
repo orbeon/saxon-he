@@ -193,7 +193,7 @@ public:
      */
      std::map<std::string,std::string>& getProperties();
 
-     //!Compile a query supplied as by file name.
+     //!Compile a query supplied as a file name.
     /**
      * The supplied query is cached for later execution.
      */

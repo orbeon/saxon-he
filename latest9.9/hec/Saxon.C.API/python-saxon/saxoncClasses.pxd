@@ -153,9 +153,9 @@ cdef extern from "../SaxonProcessor.h":
 
         void setOutputFile(const char * outputFile)
 
-        void validate(const char * sourceFile)
+        void validate(const char * sourceFile) except +
    
-        XdmNode * validateToNode(const char * sourceFile)
+        XdmNode * validateToNode(const char * sourceFile) except +
 
         void setSourceNode(XdmNode * source)
 

@@ -93,7 +93,7 @@ public:
 
 	/**
 	 * Add an XdmItem to the sequence.
-	 * See methods the functions in SaxonCXPath of the C library
+	 * See functions in SaxonCXPath of the C library
 	 * @param val - XdmItem object
 	 */
 	void addXdmItem(XdmItem *val);
@@ -134,8 +134,6 @@ public:
 	   * @return the n'th item in the sequence making up the value, counting from zero
 	   * return NULL  if n is less than zero or greater than or equal to the number
 	   *                                    of items in the value
-	   * return NULL if the value is lazily evaluated and the delayed
-	   *                                    evaluation fails with a dynamic error.
 	   */
 	virtual XdmItem * itemAt(int n);
 

@@ -18,7 +18,7 @@ XPathProcessor::XPathProcessor(SaxonProcessor* p, std::string curr) {
 	cppClass = lookForClass(SaxonProcessor::sxn_environ->env,
 			"net/sf/saxon/option/cpp/XPathProcessor");
 	if ((proc->proc) == NULL) {
-		cerr << "Processor is NULL" << endl;
+		std::cerr << "Processor is NULL" << std::endl;
 	}
 
 	cppXP = createSaxonProcessor2(SaxonProcessor::sxn_environ->env, cppClass,
@@ -42,7 +42,7 @@ XPathProcessor::XPathProcessor(SaxonProcessor* p, std::string curr) {
 
 XdmValue * XPathProcessor::evaluate(const char * xpathStr) {
 	if (xpathStr == NULL) {
-		cerr << "Error:: XPath string cannot be empty or NULL" << std::endl;
+		std::cerr << "Error:: XPath string cannot be empty or NULL" << std::endl;
 	return NULL;
 }
 setProperty("resources", proc->getResourcesDirectory());
@@ -50,8 +50,8 @@ jmethodID mID =
 		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "evaluate",
 				"(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)[Lnet/sf/saxon/s9api/XdmValue;");
 if (!mID) {
-	cerr << "Error: "<<getDllname() << ".evaluate" << " not found\n"
-			<< endl;
+	std::cerr << "Error: "<<getDllname() << ".evaluate" << " not found\n"
+			<< std::endl;
 
 } else {
 	jobjectArray stringArray = NULL;
@@ -66,14 +66,14 @@ if (!mID) {
 		stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				stringClass, 0);
 		int i = 0;
-		for (map<std::string, XdmValue*>::iterator iter = parameters.begin();
+		for (std::map<std::string, XdmValue*>::iterator iter = parameters.begin();
 				iter != parameters.end(); ++iter, i++) {
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
 					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
 					(iter->second)->getUnderlyingValue());
 		}
-		for (map<std::string, std::string>::iterator iter = properties.begin();
+		for (std::map<std::string, std::string>::iterator iter = properties.begin();
 				iter != properties.end(); ++iter, i++) {
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
 					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
@@ -131,7 +131,7 @@ return NULL;
 
 XdmItem * XPathProcessor::evaluateSingle(const char * xpathStr) {
 	if (xpathStr == NULL) {
-		cerr << "Error:: XPath string cannot be empty or NULL" << std::endl;
+		std::cerr << "Error:: XPath string cannot be empty or NULL" << std::endl;
 	     return NULL;
         }
 setProperty("resources", proc->getResourcesDirectory());
@@ -139,8 +139,8 @@ jmethodID mID =
 		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "evaluateSingle",
 				"(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmItem;");
 if (!mID) {
-	cerr << "Error: MyClassInDll." << "evaluateSingle" << " not found\n"
-			<< endl;
+	std::cerr << "Error: MyClassInDll." << "evaluateSingle" << " not found\n"
+			<< std::endl;
 
 } else {
 	jobjectArray stringArray = NULL;
@@ -150,9 +150,9 @@ if (!mID) {
 
 	int size = parameters.size() + properties.size();
 #ifdef DEBUG
-		cerr<<"Properties size: "<<properties.size()<<endl;
-		cerr<<"Parameter size: "<<parameters.size()<<endl;
-		cerr<<"size:"<<size<<endl;
+		std::cerr<<"Properties size: "<<properties.size()<<std::endl;
+		std::cerr<<"Parameter size: "<<parameters.size()<<std::endl;
+		std::cerr<<"size:"<<size<<std::endl;
 #endif
 	if (size > 0) {
 		objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
@@ -160,28 +160,28 @@ if (!mID) {
 		stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				stringClass, 0);
 		int i = 0;
-		for (map<std::string, XdmValue*>::iterator iter = parameters.begin();
+		for (std::map<std::string, XdmValue*>::iterator iter = parameters.begin();
 				iter != parameters.end(); ++iter, i++) {
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
 					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
 					(iter->second)->getUnderlyingValue());
 #ifdef DEBUG
-				string s1 = typeid(iter->second).name();
-				cerr<<"Type of itr:"<<s1<<endl;
+				std::string s1 = typeid(iter->second).name();
+				std::cerr<<"Type of itr:"<<s1<<std::endl;
 				jobject xx = (iter->second)->getUnderlyingValue();
 				if(xx == NULL) {
-					cerr<<"value failed"<<endl;
+					std::cerr<<"value failed"<<std::endl;
 				} else {
 
-					cerr<<"Type of value:"<<(typeid(xx).name())<<endl;
+					std::cerr<<"Type of value:"<<(typeid(xx).name())<<std::endl;
 				}
 				if((iter->second)->getUnderlyingValue() == NULL) {
-					cerr<<"(iter->second)->getUnderlyingValue() is NULL"<<endl;
+					std::cerr<<"(iter->second)->getUnderlyingValue() is NULL"<<std::endl;
 				}
 #endif
 		}
-		for (map<std::string, std::string>::iterator iter = properties.begin();
+		for (std::map<std::string, std::string>::iterator iter = properties.begin();
 				iter != properties.end(); ++iter, i++) {
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
 					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
@@ -247,8 +247,8 @@ void XPathProcessor::declareNamespace(const char *prefix, const char * uri){
 		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "declareNamespace",
 				"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
 	if (!mID) {
-	cerr << "Error: "<<getDllname() << ".declareNameSpace" << " not found\n"
-			<< endl;
+	std::cerr << "Error: "<<getDllname() << ".declareNameSpace" << " not found\n"
+			<< std::endl;
 
 	} else {
 		SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXP, mID,
@@ -261,7 +261,7 @@ void XPathProcessor::declareNamespace(const char *prefix, const char * uri){
 
 void XPathProcessor::setBaseURI(const char * uriStr) {
 	if (uriStr == NULL) {
-		cerr << "Error:: XPath string cannot be empty or NULL" << std::endl;
+		std::cerr << "Error:: XPath string cannot be empty or NULL" << std::endl;
 	     return;
         }
 setProperty("resources", proc->getResourcesDirectory());
@@ -269,8 +269,8 @@ jmethodID mID =
 		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "setBaseURI",
 				"(Ljava/lang/String;)Z");
 if (!mID) {
-	cerr << "Error: MyClassInDll." << "setBaseURI" << " not found\n"
-			<< endl;
+	std::cerr << "Error: MyClassInDll." << "setBaseURI" << " not found\n"
+			<< std::endl;
 
 } else {
 
@@ -282,7 +282,7 @@ if (!mID) {
 
 bool XPathProcessor::effectiveBooleanValue(const char * xpathStr) {
 	if (xpathStr == NULL) {
-		cerr << "Error:: XPath string cannot be empty or NULL" << std::endl;
+		std::cerr << "Error:: XPath string cannot be empty or NULL" << std::endl;
 	     return false;
         }
 setProperty("resources", proc->getResourcesDirectory());
@@ -290,7 +290,7 @@ jmethodID mID =
 		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "effectiveBooleanValue",
 				"(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Z");
 if (!mID) {
-	cerr << "Error: MyClassInDll." << "effectiveBooleanValue" << " not found\n"<< endl;
+	std::cerr << "Error: MyClassInDll." << "effectiveBooleanValue" << " not found\n"<< std::endl;
 
 } else {
 	jobjectArray stringArray = NULL;
@@ -305,14 +305,14 @@ if (!mID) {
 		stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				stringClass, 0);
 		int i = 0;
-		for (map<std::string, XdmValue*>::iterator iter = parameters.begin();
+		for (std::map<std::string, XdmValue*>::iterator iter = parameters.begin();
 				iter != parameters.end(); ++iter, i++) {
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
 					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
 					(iter->second)->getUnderlyingValue());
 		}
-		for (map<std::string, std::string>::iterator iter = properties.begin();
+		for (std::map<std::string, std::string>::iterator iter = properties.begin();
 				iter != properties.end(); ++iter, i++) {
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
 					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
@@ -360,7 +360,7 @@ void XPathProcessor::clearParameters(bool delVal) {
 			XdmValue * value = itr->second;
 			value->decrementRefCount();
 #ifdef DEBUG
-			cout<<"XPathProc.clearParameter() - XdmValue refCount="<<value->getRefCount()<<endl;
+			std::cerr<<"XPathProc.clearParameter() - XdmValue refCount="<<value->getRefCount()<<std::endl;
 #endif
 			if(value != NULL && value->getRefCount() < 1){		
 	        		delete value;

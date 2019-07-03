@@ -8,7 +8,7 @@ Saxon/C is a cross-compiled variant of Saxon from the Java platform to the C/C++
 
 cimport saxoncClasses
 from libcpp cimport bool
-#import contextlib
+from nodekind import *
 
 cdef const char * make_c_str(str str_value):
     if str_value is None:
@@ -88,8 +88,7 @@ cdef class PySaxonProcessor:
         return ustring
 
 
-    @cwd.setter
-    def cwd(self, cwd):
+    def set_cwd(self, cwd):
          py_value_string = cwd.encode('UTF-8') if cwd is not None else None
          cdef char * c_str_ = py_value_string if cwd is not None else ""
          self.thisptr.setcwd(c_str_)
@@ -199,6 +198,8 @@ cdef class PySaxonProcessor:
         """
         cdef PySchemaValidator val = PySchemaValidator()
         val.thissvptr = self.thisptr.newSchemaValidator()
+        if val.thissvptr is NULL:
+            raise Exception("Error: Saxon Processor is not licensed for schema processing!")
         return val
 
     def make_string_value(self, str_):
@@ -444,7 +445,7 @@ cdef class PyXsltProcessor:
             Exception: Exception is raised if eyword argument is not one of file_name or node.
         """
 
-        py_error_message = "Error: setSource should only contain one of the following keyword arguments: (file_name|node)"
+        py_error_message = "Error: setSource should only contain one of the following keyword arguments: (file_name|xdm_node)"
         if len(kwds) != 1:
           raise Exception(py_error_message)
         cdef py_value = None
@@ -1602,12 +1603,12 @@ cdef class PySchemaValidator:
             py_value = kwds["xsd_text"]
             py_value_string = py_value.encode('UTF-8') if py_value is not None else None
             c_source = py_value_string if py_value is not None else "" 
-            self.thisxpptr.registerSchemaFromString(c_source)
+            self.thissvptr.registerSchemaFromString(c_source)
         elif "xsd_file" in kwds:
             py_value = kwds["xsd_file"]
             py_value_string = py_value.encode('UTF-8') if py_value is not None else None
             c_source = py_value_string if py_value is not None else "" 
-            self.thisxpptr.registerSchemaFromfile(c_source)
+            self.thissvptr.registerSchemaFromFile(c_source)
         else:
           raise Exception(py_error_message)
         
@@ -1626,7 +1627,7 @@ cdef class PySchemaValidator:
             self.thissvptr.setOutputFile(c_source)
         else:
             raise Warning("Unable to set output_file. output_file has the value None")
-     def validate(self, source_file):
+     def validate(self, source_file=None):
         """
         validate(self, source_file)
         Validate an instance document by a registered schema.
@@ -1639,9 +1640,9 @@ cdef class PySchemaValidator:
         if source_file is not None:        
             self.thissvptr.validate(c_source)
         else:
-            self.thisvptr.validate()
+            self.thissvptr.validate(NULL)
 
-     def validate_to_node(self, source_file):
+     def validate_to_node(self, source_file=None):
         """
         validate_to_node(self, source_file)
         Validate an instance document by a registered schema.
@@ -1650,11 +1651,21 @@ cdef class PySchemaValidator:
             source_file (str): Name of the source file to be validated. Allow None when source document is supplied using the set_source method
 
         Returns:
-            PyXdmNode: Result of the valdiation returned as an PyXdmNode    
+            PyXdmNode: The validated document returned to the calling program as an PyXdmNode    
         """
-        cdef PyXdmNode val = PyXdmNode()
-        val.derivednptr = val.derivedptr = val.thisvptr = self.thissvptr.validateToNode(source_file)
-        return val
+        py_value_string = source_file.encode('UTF-8') if source_file is not None else None
+        cdef const char* c_source = NULL
+        if source_file is not None:
+            c_source = py_value_string
+        cdef PyXdmNode val = None
+        cdef saxoncClasses.XdmNode * xdmNode = NULL     
+        xdmNode = self.thissvptr.validateToNode(c_source)
+        if xdmNode == NULL:
+            return None
+        else:
+            val = PyXdmNode()   
+            val.derivednptr = val.derivedptr = val.thisvptr =  xdmNode 
+            return val
 
      def set_source_node(self, PyXdmNode source):
         """
@@ -1675,11 +1686,17 @@ cdef class PySchemaValidator:
         :PyXdmNode: The Validation report result from the Schema validator
 
         """
-        cdef PyXdmNode val = PyXdmNode()
-        val.derivednptr = val.derivedptr = val.thisvptr = self.thissvptr.getValidationReport()
-        return val
+        cdef PyXdmNode val = None
+        cdef saxoncClasses.XdmNode * xdmNode = NULL             
+        xdmNode = self.thissvptr.getValidationReport()
+        if xdmNode == NULL:
+            return None
+        else:
+            val = PyXdmNode()
+            val.derivednptr = val.derivedptr = val.thisvptr = xdmNode
+            return val
 
-     def set_parameter(self, name, value):
+     def set_parameter(self, name, PyXdmValue value):
         """
         set_parameter(self, name, PyXdmValue value)
         Set the value of the parameter for the Schema validator
@@ -1691,7 +1708,7 @@ cdef class PySchemaValidator:
         """
         cdef const char * c_str = make_c_str(name)
         if c_str is not NULL:
-            self.thissvprt.setParameter(c_str, value.thisvptr)
+            self.thissvptr.setParameter(c_str, value.thisvptr)
 
      def remove_parameter(self, name):
         """
@@ -1707,7 +1724,7 @@ cdef class PySchemaValidator:
         """
         cdef const char * c_str = make_c_str(name)
         if c_str is not NULL:
-            self.thissvprt.removeParameter(c_str)
+            self.thissvptr.removeParameter(c_str)
      def set_property(self, name, value):
         """
         set_property(self, name, value)
@@ -1735,20 +1752,20 @@ cdef class PySchemaValidator:
         cdef const char * c_value = make_c_str(value)
         if c_name is not NULL:
             if c_value is not NULL:
-                self.thissvprt.setProperty(c_name, c_value)
+                self.thissvptr.setProperty(c_name, c_value)
 
      def clear_parameters(self):
         """
         clear_parameter(self)
         Clear all parameters set on the processor
         """
-        self.thissvprt.clearParameters()
+        self.thissvptr.clearParameters()
      def clear_properties(self):
         """
         clear_parameter(self)
         Clear all properties set on the processor
         """
-        self.thissvprt.clearProperties()
+        self.thissvptr.clearProperties()
      def exception_occurred(self):
         """
         exception_occurred(self)
@@ -1757,7 +1774,7 @@ cdef class PySchemaValidator:
         Returns:
             boolean: True or False if an exception has been reported internally in Saxon/C
         """
-        return self.thissvprt.exceptionCount() >0
+        return self.thissvptr.exceptionCount()>0
 
      def exception_clear(self):
         """
@@ -1765,7 +1782,7 @@ cdef class PySchemaValidator:
         Clear any exception thrown
 
         """
-        self.thissvprt.exceptionClear()
+        self.thissvptr.exceptionClear()
      def exception_count(self):
         """
         excepton_count(self)
@@ -1774,7 +1791,7 @@ cdef class PySchemaValidator:
         Returns:
             int: Count of the exceptions thrown during execution
         """
-        return self.thissvprt.exceptionCount()
+        return self.thissvptr.exceptionCount()
      def get_error_message(self, index):
         """
         get_error_message(self, index)
@@ -1786,7 +1803,7 @@ cdef class PySchemaValidator:
         Returns:
             str: The message of the i'th exception. Return None if the i'th exception does not exist.
         """
-        return make_py_str(self.thissvprt.getErrorMessage(index))
+        return make_py_str(self.thissvptr.getErrorMessage(index))
 
      def get_error_code(self, index):
         """
@@ -1800,7 +1817,7 @@ cdef class PySchemaValidator:
             str: The error code associated with the i'th exception. Return None if the i'th exception does not exist.
 
         """
-        return make_py_str(self.thissvprt.getErrorCode(index))
+        return make_py_str(self.thissvptr.getErrorCode(index))
 
      def set_lax(self, lax):
         """
@@ -1812,7 +1829,7 @@ cdef class PySchemaValidator:
             lax (boolean): lax True if validation is to be lax, False if it is to be strict
 
         """
-        self.thissvprt.setLax(lax)
+        self.thissvptr.setLax(lax)
 
 cdef class PyXdmValue:
      """Value in the XDM data model. A value is a sequence of zero or more items, each item being either an atomic value or a node. """    
@@ -1950,28 +1967,6 @@ cdef class PyXdmItem(PyXdmValue):
         return self.derivedptr.isAtomic()
 
 
-cdef class PyXdmNodeKind:
-     """
-     Enumeration type for presenting node kind used in the PyXdmNode objects
-     Examples:
-         DOCUMENT = 9\r
-         ELEMENT = 1\r
-         ATTRIBUTE = 2\r
-         TEXT = 3\r
-         COMMENT = 8\r
-         PROCESSING_INSTRUCTION = 7\r
-         NAMESPACE = 13\r
-         UNKNOWN = 0\r
-
-     """
-     DOCUMENT = 9
-     ELEMENT = 1
-     ATTRIBUTE = 2
-     TEXT = 3
-     COMMENT = 8
-     PROCESSING_INSTRUCTION = 7
-     NAMESPACE = 13
-     UNKNOWN = 0 
 
 cdef class PyXdmNode(PyXdmItem):
      cdef saxoncClasses.XdmNode *derivednptr      # hold a C++ instance which we're wrapping
@@ -2008,21 +2003,21 @@ cdef class PyXdmNode(PyXdmItem):
         """
         cdef str kind
         cdef int nk = self.derivednptr.getNodeKind()
-        if nk == 9:
+        if nk == DOCUMENT:
             kind = 'document'
-        elif nk == 1:
+        elif nk == ELEMENT:
             kind = 'element'
-        elif nk == 2:
+        elif nk == ATTRIBUTE:
             kind = 'attribute'
-        elif nk == 3:
+        elif nk == TEXT:
             kind = 'text'
-        elif nk == 8:
+        elif nk == COMMENT:
             kind = 'comment'
-        elif nk == 7:
+        elif nk == PROCESSING_INSTRUCTION:
             kind = 'processing-instruction'
-        elif nk == 13:
+        elif nk == NAMESPACE:
             kind = 'namespace'
-        elif nk == 0:
+        elif nk == UNKNOWN:
             kind = 'unknown'
         else:
             raise ValueError('Unknown node kind: %d' % nk)

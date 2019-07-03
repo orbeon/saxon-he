@@ -57,7 +57,7 @@ public:
   void registerSchemaFromString(const char * schemaStr);
 
   /*!
-   Set the name of the file where output from the validator will be sent.
+   Set the name of the output file that will be used by the validator.
   * @param outputFile the output file name for later use
  */
   void setOutputFile(const char * outputFile);
@@ -72,7 +72,7 @@ public:
    
   //!Validate an instance document supplied as a Source object
    /**
-  * @param sourceFile The name of the fiel to be validated. Default is NULL
+  * @param sourceFile The name of the file to be validated. Default is NULL
   * @return XdmNode - the validated document returned to the calling program
   */
   XdmNode * validateToNode(const char * sourceFile = NULL);
@@ -80,7 +80,8 @@ public:
 
      //!Set the source node for validation
     /**
-     * @param source pointer to the XdmNode object
+     * @param The name of the file to be validated. Default is NULL
+       @return Result of the validation stored and returned as an XdmNode object
     */
     void setSourceNode(XdmNode * source);
 

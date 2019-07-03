@@ -718,7 +718,7 @@ jobject JNICALL phpNativeCall
 	JNIEnv *senv = SaxonProcessor::sxn_environ->env;
 //	std::cerr<<"phpNative called"<<std::endl;
 	char *nativeString = (char *)senv->GetStringUTFChars(funcName, NULL);
-	string nativeString2 = string(nativeString);
+	string nativeString2 = std::string(nativeString);
 	if(nativeString == NULL) {
 		return NULL;	
 	}
@@ -1180,7 +1180,7 @@ PHP_METHOD(XsltProcessor, setSourceFromXdmValue)
             XdmNode * value = ooth->xdmNode;
             if(value != NULL) {	
 		XdmItem  *valueX = (XdmItem*)value;
-	        xsltProcessor->setSourceFromXdmValue(valueX);
+	        xsltProcessor->setSourceFromXdmNode(valueX);
 
             }
         }

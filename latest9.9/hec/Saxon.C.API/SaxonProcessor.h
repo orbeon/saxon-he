@@ -284,8 +284,6 @@ private:
 
 
 /*! An <code>SaxonProcessor</code> acts as a factory for generating XQuery, XPath, Schema and XSLT compilers
- * In this alpha release only the XSLT compiler is available
- * <p/>
  */
 class SaxonProcessor {
 friend class XsltProcessor;
@@ -425,7 +423,7 @@ public:
 
     /**
      * Create an QName Xdm value from string representation in clark notation
-     * @param valueStr - The value given in a string form in clark notation. {uri}local
+     * @param str - The value given in a string form in clark notation. {uri}local
      * @return XdmAtomicValue - value
     */
     XdmAtomicValue * makeQNameValue(const char * str);
@@ -594,9 +592,10 @@ static bool registerNativeMethods(JNIEnv* env, const char* className,
     jclass clazz;
     clazz = env->FindClass(className);
     if (clazz == NULL) {
-       // std::cerr<<"Native registration unable to find class "<< className<<std::endl;
+        std::cerr<<"Native registration unable to find class "<< className<<std::endl;
         return false;
     }
+	
     if (env->RegisterNatives(clazz, gMethods, numMethods) < 0) {
        // std::cerr<<"RegisterNatives failed for "<< className<<std::endl;
         return false;

@@ -5,8 +5,8 @@
 // This Source Code Form is "Incompatible With Secondary Licenses", as defined by the Mozilla Public License, v. 2.0.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SAXON_XSLT_H
-#define SAXON_XSLT_H
+#ifndef SAXON_XSLT30_H
+#define SAXON_XSLT30_H
 
 
 #include "SaxonProcessor.h"
@@ -18,10 +18,10 @@ class XdmValue;
 class XdmItem;
 class XdmNode;
 
-/*! An <code>XsltProcessor</code> represents factory to compile, load and execute a stylesheet.
- * It is possible to cache the context and the stylesheet in the <code>XsltProcessor</code>.
+/*! An <code>Xslt30Processor</code> represents factory to compile, load and execute a stylesheet.
+ * It is possible to cache the context and the stylesheet in the <code>Xslt30Processor</code>.
  */
-class XsltProcessor {
+class Xslt30Processor {
 
 public:
 
@@ -29,16 +29,16 @@ public:
     /*!
       Creates a Saxon-HE product
     */
-    XsltProcessor();
+    Xslt30Processor();
 
     //! Constructor with the SaxonProcessor supplied.
     /*!
       @param proc - Supplied pointer to the SaxonProcessor object
       cwd - The current working directory
     */
-    XsltProcessor(SaxonProcessor* proc, const char* cwd="");
+    Xslt30Processor(SaxonProcessor* proc, const char* cwd="");
 
-     ~XsltProcessor(){
+     ~Xslt30Processor(){
 	clearProperties();
 	clearParameters();
      }
@@ -61,7 +61,7 @@ public:
      /**
 	* @param value - The source to the stylesheet as a pointer to the XdmNode object.
 	*/	
-    void setSourceFromXdmNode(XdmNode * value);
+    void setSourceFromXdmItem(XdmItem * value);
 
     /**
      * Set the source from file for the transformation.
@@ -96,8 +96,13 @@ public:
      *
      * @param name  the name of the stylesheet parameter, as a string. For namespaced parameter use the JAXP solution i.e. "{uri}name"
      * @param value the value of the stylesheet parameter, or null to clear a previously set value
+     * @param _static For static (compile-time) parameters we set this flag to true, which means the parameter is
+     * must be set on the XsltCompiler object, prior to stylesheet compilation. The default is false. Non-static parameters
+     * may also be provided.
      */
-    void setParameter(const char* name, XdmValue*value);
+    void setParameter(const char* name, XdmValue*value, bool _static=false);
+
+
 
     /**
      * Get a parameter value by name
@@ -124,6 +129,36 @@ public:
      * @param value of the property
      */
     void setProperty(const char* name, const char* value);
+
+
+    /**
+     * Set parameters to be passed to the initial template. These are used
+     * whether the transformation is invoked by applying templates to an initial source item,
+     * or by invoking a named template. The parameters in question are the xsl:param elements
+     * appearing as children of the xsl:template element.
+     * <p>The parameters are supplied in the form of a map; the key is a QName given as a string which must
+     * match the name of the parameter; the associated value is an XdmValue containing the
+     * value to be used for the parameter. If the initial template defines any required
+     * parameters, the map must include a corresponding value. If the initial template defines
+     * any parameters that are not present in the map, the default value is used. If the map
+     * contains any parameters that are not defined in the initial template, these values
+     * are silently ignored.</p>
+     * <p>The supplied values are converted to the required type using the function conversion
+     * rules. If conversion is not possible, a run-time error occurs (not now, but later, when
+     * the transformation is actually run).</p>
+     * <p>The <code>XsltTransformer</code> retains a reference to the supplied map, so parameters can be added or
+     * changed until the point where the transformation is run.</p>
+     * <p>The XSLT 3.0 specification makes provision for supplying parameters to the initial
+     * template, as well as global stylesheet parameters. Although there is no similar provision
+     * in the XSLT 1.0 or 2.0 specifications, this method works for all stylesheets, regardless whether
+     * XSLT 3.0 is enabled or not.</p>
+     *
+     * @param parameters the parameters to be used for the initial template
+     * @param tunnel     true if these values are to be used for setting tunnel parameters;
+     *                   false if they are to be used for non-tunnel parameters
+     */
+
+    void setInitialTemplateParameters(std::map<std::string,XdmValue*> parameters, bool tunnel);
 
     /**
      * Get a property value by name
@@ -212,6 +247,22 @@ public:
     void compileFromString(const char* stylesheet);
 
 
+
+     //! Get the stylesheet associated
+     /* via the xml-stylesheet processing instruction (see
+     * http://www.w3.org/TR/xml-stylesheet/) with the document
+     * document specified in the source parameter, and that match
+     * the given criteria.  If there are several suitable xml-stylesheet
+     * processing instructions, then the returned Source will identify
+     * a synthesized stylesheet module that imports all the referenced
+     * stylesheet module.*/
+    /**
+     * The compiled stylesheet is cached and available for execution later.
+     * @param sourceFile  - The file name of the XML document.
+     */
+    void compileFromAssociatedFile(const char* sourceFile);
+
+
      //!compile a stylesheet received as a string and save to an exported file (SEF).
     /**
      * 
@@ -247,6 +298,17 @@ public:
      */
     void compileFromXdmNode(XdmNode * node);
 
+    void applyTemplateToFile(const char * input_filename, const char* outfile);
+
+    const char* applyTemplateToString(const char * input_filename);
+
+    XdmValue * applyTemplateToValue(const char * input_filename);
+
+    void applyTemplateToFile(XdmValue* _input, const char* outfile);
+
+    const char* applyTemplateToString(XdmValue* _input);
+
+    XdmValue * applyTemplateToValue(XdmValue* _input);
 
     //! Internal method to release cached stylesheet
     /**
@@ -330,7 +392,9 @@ private:
 	std::string outputfile1; /*!< output file where result will be saved */
 	std::string failure; //for testing
 	bool nodeCreated;
+	bool tunnel;
 	std::map<std::string,XdmValue*> parameters; /*!< map of parameters used for the transformation as (string, value) pairs */
+	
 	std::map<std::string,std::string> properties; /*!< map of properties used for the transformation as (string, string) pairs */
 
 };

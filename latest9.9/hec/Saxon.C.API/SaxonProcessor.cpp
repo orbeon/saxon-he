@@ -85,8 +85,8 @@ SaxonApiException * SaxonProcessor::checkForExceptionCPP(JNIEnv* env, jclass cal
 	delete exception;	
 	}
     if (env->ExceptionCheck()) {
-	string result1 = "";
-	string errorCode = "";
+	std::string result1 = "";
+	std::string errorCode = "";
 	jthrowable exc = env->ExceptionOccurred();
 
 #ifdef DEBUG	
@@ -98,7 +98,7 @@ SaxonApiException * SaxonProcessor::checkForExceptionCPP(JNIEnv* env, jclass cal
         jmethodID getName(env->GetMethodID(clscls, "getName", "()Ljava/lang/String;"));
         jstring name(static_cast<jstring>(env->CallObjectMethod(exccls, getName)));
         char const* utfName(env->GetStringUTFChars(name, 0));
-	result1 = (string(utfName));
+	result1 = (std::string(utfName));
 	//env->ReleaseStringUTFChars(name, utfName);
 
 	 jmethodID  getMessage(env->GetMethodID(exccls, "getMessage", "()Ljava/lang/String;"));
@@ -291,7 +291,8 @@ void SaxonProcessor::applyConfigurationProperties(){
 			}
 		}
 		int i=0;
-		for(map<std::string, std::string >::iterator iter=configProperties.begin(); iter!=configProperties.end(); ++iter, i++) {
+		std::map<std::string, std::string >::iterator iter =configProperties.begin();
+		for(iter=configProperties.begin(); iter!=configProperties.end(); ++iter, i++) {
 	     		SaxonProcessor::sxn_environ->env->SetObjectArrayElement( stringArray1, i, SaxonProcessor::sxn_environ->env->NewStringUTF( (iter->first).c_str()  ));
 	     		SaxonProcessor::sxn_environ->env->SetObjectArrayElement( stringArray2, i, SaxonProcessor::sxn_environ->env->NewStringUTF((iter->second).c_str()) );
 	   }
@@ -395,7 +396,7 @@ XdmNode * SaxonProcessor::parseXmlFromString(const char* source){
 	
     jmethodID mID = (jmethodID)SaxonProcessor::sxn_environ->env->GetStaticMethodID(saxonCAPIClass, "parseXmlString", "(Lnet/sf/saxon/s9api/Processor;Lnet/sf/saxon/s9api/SchemaValidator;Ljava/lang/String;)Lnet/sf/saxon/s9api/XdmNode;");
     if (!mID) {
-	cerr<<"\nError: MyClassInDll "<<"parseXmlString()"<<" not found"<<endl;
+	std::cerr<<"\nError: MyClassInDll "<<"parseXmlString()"<<" not found"<<std::endl;
         return NULL;
     }
 //TODO SchemaValidator
@@ -421,8 +422,8 @@ int SaxonProcessor::getNodeKind(jobject obj){
 	jclass xdmNodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "Lnet/sf/saxon/s9api/XdmNode;");
 	static jmethodID nodeKindMID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(xdmNodeClass,"getNodeKind", "()Lnet/sf/saxon/s9api/XdmNodeKind;");
 	if (!nodeKindMID) {
-		cerr << "Error: MyClassInDll." << "getNodeKind" << " not found\n"
-				<< endl;
+		std::cerr << "Error: MyClassInDll." << "getNodeKind" << " not found\n"
+				<< std::endl;
 		return 0;
 	} 
 
@@ -436,8 +437,8 @@ int SaxonProcessor::getNodeKind(jobject obj){
 	jmethodID mID2 = (jmethodID) SaxonProcessor::sxn_environ->env->GetStaticMethodID(xdmUtilsClass,"convertNodeKindType", "(Lnet/sf/saxon/s9api/XdmNodeKind;)I");
 
 	if (!mID2) {
-		cerr << "Error: MyClassInDll." << "convertNodeKindType" << " not found\n"
-				<< endl;
+		std::cerr << "Error: MyClassInDll." << "convertNodeKindType" << " not found\n"
+				<< std::endl;
 		return 0;
 	} 
 	if(!nodeKindObj){
@@ -453,7 +454,7 @@ XdmNode * SaxonProcessor::parseXmlFromFile(const char* source){
 
     jmethodID mID = (jmethodID)SaxonProcessor::sxn_environ->env->GetStaticMethodID(saxonCAPIClass, "parseXmlFile", "(Lnet/sf/saxon/s9api/Processor;Ljava/lang/String;Lnet/sf/saxon/s9api/SchemaValidator;Ljava/lang/String;)Lnet/sf/saxon/s9api/XdmNode;");
     if (!mID) {
-	cerr<<"\nError: MyClassInDll "<<"parseXmlFile()"<<" not found"<<endl;
+	std::cerr<<"\nError: Saxonc.Dll "<<"parseXmlFile()"<<" not found"<<std::endl;
         return NULL;
     }
 //TODO SchemaValidator
@@ -475,7 +476,7 @@ XdmNode * SaxonProcessor::parseXmlFromUri(const char* source){
 
     jmethodID mID = (jmethodID)SaxonProcessor::sxn_environ->env->GetStaticMethodID(saxonCAPIClass, "parseXmlFile", "(Lnet/sf/saxon/s9api/Processor;Ljava/lang/String;Ljava/lang/String;)Lnet/sf/saxon/s9api/XdmNode;");
     if (!mID) {
-	cerr<<"\nError: MyClassInDll "<<"parseXmlFromUri()"<<" not found"<<endl;
+	std::cerr<<"\nError: Saxonc.Dll "<<"parseXmlFromUri()"<<" not found"<<std::endl;
         return NULL;
     }
    jobject xdmNodei = SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(saxonCAPIClass, mID, proc, SaxonProcessor::sxn_environ->env->NewStringUTF(""), SaxonProcessor::sxn_environ->env->NewStringUTF(source));

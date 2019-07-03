@@ -1,9 +1,7 @@
-// XsltProcessor.cpp : Defines the exported functions for the DLL application.
+// Xslt30Processor.cpp : Defines the exported functions for the DLL application.
 //
 
-//#include "xsltProcessor.cc"
-
-#include "XsltProcessor.h"
+#include "Xslt30Processor.h"
 #include "XdmValue.h"
 #include "XdmItem.h"
 #include "XdmNode.h"
@@ -12,14 +10,14 @@
 #include <typeinfo> //used for testing only
 #endif
 
-XsltProcessor::XsltProcessor() {
+Xslt30Processor::Xslt30Processor() {
 
 	SaxonProcessor *p = new SaxonProcessor(false);
-	XsltProcessor(p, "");
+	Xslt30Processor(p, "");
 
 }
 
-XsltProcessor::XsltProcessor(SaxonProcessor * p, const char* curr) {
+Xslt30Processor::Xslt30Processor(SaxonProcessor * p, const char* curr) {
 
 	proc = p;
 
@@ -27,7 +25,7 @@ XsltProcessor::XsltProcessor(SaxonProcessor * p, const char* curr) {
 	 * Look for class.
 	 */
 	cppClass = lookForClass(SaxonProcessor::sxn_environ->env,
-			"net/sf/saxon/option/cpp/XsltProcessor");
+			"net/sf/saxon/option/cpp/Xslt30Processor");
 
 	cppXT = createSaxonProcessor2(SaxonProcessor::sxn_environ->env, cppClass,
 			"(Lnet/sf/saxon/s9api/Processor;)V", proc->proc);
@@ -38,6 +36,7 @@ XsltProcessor::XsltProcessor(SaxonProcessor * p, const char* curr) {
     
 #endif
 	nodeCreated = false;
+	tunnel = false;
 	proc->exception = NULL;
 	outputfile1 = "";
 	if(!(proc->cwd.empty()) && (curr == NULL && strlen(curr)==0)){
@@ -48,53 +47,69 @@ XsltProcessor::XsltProcessor(SaxonProcessor * p, const char* curr) {
 
 }
 
-bool XsltProcessor::exceptionOccurred() {
+bool Xslt30Processor::exceptionOccurred() {
 	return proc->exceptionOccurred();
 }
 
-const char * XsltProcessor::getErrorCode(int i) {
+const char * Xslt30Processor::getErrorCode(int i) {
  if(proc->exception == NULL) {return NULL;}
  return proc->exception->getErrorCode(i);
  }
 
-void XsltProcessor::setSourceFromXdmNode(XdmNode * value) {
+void Xslt30Processor::setSourceFromXdmItem(XdmItem * value) {
     if(value != NULL){
       value->incrementRefCount();
       parameters["node"] = value;
     }
 }
 
-void XsltProcessor::setSourceFromFile(const char * ifile) {
+void Xslt30Processor::setSourceFromFile(const char * ifile) {
 	if(ifile != NULL) {
 		setProperty("s", ifile);
 	}
 }
 
-void XsltProcessor::setOutputFile(const char * ofile) {
+void Xslt30Processor::setOutputFile(const char * ofile) {
 	outputfile1 = std::string(ofile);
 	setProperty("o", ofile);
 }
 
-void XsltProcessor::setParameter(const char* name, XdmValue * value) {
+void Xslt30Processor::setParameter(const char* name, XdmValue * value, bool _static) {
 	if(value != NULL && name != NULL){
 		value->incrementRefCount();
-		parameters["param:"+std::string(name)] = value;
-	} 
+		if (_static) {
+			parameters["sparam:"+std::string(name)] = value;
+		
+		} else {
+			parameters["param:"+std::string(name)] = value;
+		}
+	 }
 }
 
-XdmValue* XsltProcessor::getParameter(const char* name) {
+    void Xslt30Processor::setInitialTemplateParameters(std::map<std::string,XdmValue*> _itparameters, bool _tunnel){
+	for(std::map<std::string, XdmValue*>::iterator itr = _itparameters.begin(); itr != _itparameters.end(); itr++){
+		parameters["itparam:"+std::string(itr->first)] = itr->second;	
+	}
+	tunnel = _tunnel;
+    }
+
+XdmValue* Xslt30Processor::getParameter(const char* name) {
         std::map<std::string, XdmValue*>::iterator it;
         it = parameters.find("param:"+std::string(name));
         if (it != parameters.end())
           return it->second;
-        return NULL;
+        else {
+          it = parameters.find("sparam:"+std::string(name));
+        if (it != parameters.end())
+	  return it->second;
+	return NULL;
 }
 
-bool XsltProcessor::removeParameter(const char* name) {
+bool Xslt30Processor::removeParameter(const char* name) {
 	return (bool)(parameters.erase("param:"+std::string(name)));
 }
 
-void XsltProcessor::setJustInTimeCompilation(bool jit){
+void Xslt30Processor::setJustInTimeCompilation(bool jit){
 	static jmethodID jitmID =
 			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
 					"setJustInTimeCompilation",
@@ -110,13 +125,13 @@ void XsltProcessor::setJustInTimeCompilation(bool jit){
 	}
 }
 
-void XsltProcessor::setProperty(const char* name, const char* value) {	
+void Xslt30Processor::setProperty(const char* name, const char* value) {	
 	if(name != NULL) {
 		properties.insert(std::pair<std::string, std::string>(std::string(name), std::string((value == NULL ? "" : value))));
 	}
 }
 
-const char* XsltProcessor::getProperty(const char* name) {
+const char* Xslt30Processor::getProperty(const char* name) {
         std::map<std::string, std::string>::iterator it;
         it = properties.find(std::string(name));
         if (it != properties.end())
@@ -124,7 +139,7 @@ const char* XsltProcessor::getProperty(const char* name) {
 	return NULL;
 }
 
-void XsltProcessor::clearParameters(bool delValues) {
+void Xslt30Processor::clearParameters(bool delValues) {
 	if(delValues){
        		for(std::map<std::string, XdmValue*>::iterator itr = parameters.begin(); itr != parameters.end(); itr++){
 			
@@ -150,23 +165,23 @@ for(std::map<std::string, XdmValue*>::iterator itr = parameters.begin(); itr != 
 	parameters.clear();
 }
 
-void XsltProcessor::clearProperties() {
+void Xslt30Processor::clearProperties() {
 	properties.clear();
 }
 
 
 
-std::map<std::string,XdmValue*>& XsltProcessor::getParameters(){
+std::map<std::string,XdmValue*>& Xslt30Processor::getParameters(){
 	std::map<std::string,XdmValue*>& ptr = parameters;
 	return ptr;
 }
 
-std::map<std::string,std::string>& XsltProcessor::getProperties(){
+std::map<std::string,std::string>& Xslt30Processor::getProperties(){
 	std::map<std::string,std::string> &ptr = properties;
 	return ptr;
 }
 
-void XsltProcessor::exceptionClear(){
+void Xslt30Processor::exceptionClear(){
  if(proc->exception != NULL) {
  	delete proc->exception;
  	proc->exception = NULL;
@@ -175,11 +190,11 @@ void XsltProcessor::exceptionClear(){
   
  }
 
-   void XsltProcessor::setcwd(const char* dir){
+   void Xslt30Processor::setcwd(const char* dir){
     cwdXT = std::string(dir);
    }
 
-const char* XsltProcessor::checkException() {
+const char* Xslt30Processor::checkException() {
 	/*if(proc->exception == NULL) {
 	 proc->exception = proc->checkForException(environi, cpp);
 	 }
@@ -187,7 +202,7 @@ const char* XsltProcessor::checkException() {
 	return proc->checkException(cppXT);
 }
 
-int XsltProcessor::exceptionCount(){
+int Xslt30Processor::exceptionCount(){
  if(proc->exception != NULL){
  return proc->exception->count();
  }
@@ -195,7 +210,7 @@ int XsltProcessor::exceptionCount(){
  }
 
 
-    void XsltProcessor::compileFromXdmNodeAndSave(XdmNode * node, const char* filename) {
+    void Xslt30Processor::compileFromXdmNodeAndSave(XdmNode * node, const char* filename) {
 	static jmethodID cAndSNodemID =
 			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
 					"compileFromXdmNodeAndSave",
@@ -219,7 +234,7 @@ int XsltProcessor::exceptionCount(){
 
 }
 
-    void XsltProcessor::compileFromStringAndSave(const char* stylesheetStr, const char* filename){
+    void Xslt30Processor::compileFromStringAndSave(const char* stylesheetStr, const char* filename){
 	static jmethodID cAndSStringmID =
 			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
 					"compileFromStringAndSave",
@@ -242,7 +257,7 @@ int XsltProcessor::exceptionCount(){
 
 
 
-    void XsltProcessor::compileFromFileAndSave(const char* xslFilename, const char* filename){
+    void Xslt30Processor::compileFromFileAndSave(const char* xslFilename, const char* filename){
 	static jmethodID cAndFStringmID =
 			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
 					"compileFromFileAndSave",
@@ -264,7 +279,7 @@ int XsltProcessor::exceptionCount(){
      }
 }
 
-void XsltProcessor::compileFromString(const char* stylesheetStr) {
+void Xslt30Processor::compileFromString(const char* stylesheetStr) {
 	static jmethodID cStringmID =
 			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
 					"createStylesheetFromString",
@@ -286,7 +301,7 @@ void XsltProcessor::compileFromString(const char* stylesheetStr) {
 
 }
 
-void XsltProcessor::compileFromXdmNode(XdmNode * node) {
+void Xslt30Processor::compileFromXdmNode(XdmNode * node) {
 	static jmethodID cNodemID =
 			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
 					"createStylesheetFromFile",
@@ -309,7 +324,7 @@ void XsltProcessor::compileFromXdmNode(XdmNode * node) {
 
 }
 
-void XsltProcessor::compileFromFile(const char* stylesheet) {
+void Xslt30Processor::compileFromFile(const char* stylesheet) {
 	static jmethodID cFilemID =
 			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
 					"createStylesheetFromFile",
@@ -334,15 +349,106 @@ void XsltProcessor::compileFromFile(const char* stylesheet) {
 
 }
 
-void XsltProcessor::releaseStylesheet() {
+void Xslt30Processor::releaseStylesheet() {
 
 	stylesheetObject = NULL;
 	
 }
 
+    void applyTemplateToFile(const char * input_filename, const char* outfile){
+	if(exceptionOccurred()) {
+		//Possible error detected in the compile phase. Processor not in a clean state.
+		//Require clearing exception.
+		return NULL;	
+	}
+
+	if(outfile == NULL && stylesheetfile == NULL && !stylesheetObject){
+	
+		return NULL;
+	}
+
+	setProperty("resources", proc->getResourcesDirectory());
+	static jmethodID atmID =
+			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+					"applyTemplateToFile",
+					"(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmNode;");
+	if (!mID) {
+		std::cerr << "Error: "<< getDllname() << "applyTemplateToFile" << " not found\n"
+				<< std::endl;
+
+	} else {
+		jobjectArray stringArray = NULL;
+		jobjectArray objectArray = NULL;
+		jclass objectClass = lookForClass(SaxonProcessor::sxn_environ->env,
+				"java/lang/Object");
+		jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env,
+				"java/lang/String");
+
+		int size = parameters.size() + properties.size();
+		if (size > 0) {
+			objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
+					objectClass, 0);
+			stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
+					stringClass, 0);
+			int i = 0;
+			for (std::map<std::string, XdmValue*>::iterator iter =
+					parameters.begin(); iter != parameters.end(); ++iter, i++) {
+				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
+						SaxonProcessor::sxn_environ->env->NewStringUTF(
+								(iter->first).c_str()));
+				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
+						(iter->second)->getUnderlyingValue());
+			}
+			for (std::map<std::string, std::string>::iterator iter =
+					properties.begin(); iter != properties.end(); ++iter, i++) {
+				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
+						SaxonProcessor::sxn_environ->env->NewStringUTF(
+								(iter->first).c_str()));
+				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
+						SaxonProcessor::sxn_environ->env->NewStringUTF(
+								(iter->second).c_str()));
+			}
+		}
+		jobject result = (jobject)(
+				SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, atmID,
+						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
+						(sourcefile != NULL ?
+								SaxonProcessor::sxn_environ->env->NewStringUTF(sourcefile) :
+								NULL),
+						(stylesheetfile != NULL ?
+								SaxonProcessor::sxn_environ->env->NewStringUTF(
+										stylesheetfile) :
+								NULL), stringArray, objectArray));
+		if (size > 0) {
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
+		}
+		if (result) {
+			XdmNode * node = new XdmNode(result);
+			node->setProcessor(proc);
+			return node;
+		}else {
+	
+			proc->checkAndCreateException(cppClass);
+	   		
+     		}
+	}
+	return NULL;
+
+}
+
+    const char* applyTemplateToString(const char * input_filename){}
+
+    XdmValue * applyTemplateToValue(const char * input_filename){}
+
+    void applyTemplateToFile(XdmValue* _input, const char* outfile){}
+
+    const char* applyTemplateToString(XdmValue* _input){}
+
+    XdmValue * applyTemplateToValue(XdmValue* _input){}
 
 
-XdmValue * XsltProcessor::transformFileToValue(const char* sourcefile,
+XdmValue * Xslt30Processor::transformFileToValue(const char* sourcefile,
 		const char* stylesheetfile) {
 
 	if(exceptionOccurred()) {
@@ -427,7 +533,7 @@ XdmValue * XsltProcessor::transformFileToValue(const char* sourcefile,
 }
 
 
-void XsltProcessor::transformFileToFile(const char* source,
+void Xslt30Processor::transformFileToFile(const char* source,
 		const char* stylesheet, const char* outputfile) {
 
 	if(exceptionOccurred()) {
@@ -528,7 +634,7 @@ void XsltProcessor::transformFileToFile(const char* source,
 
 
 
-XdmValue * XsltProcessor::getXslMessages(){
+XdmValue * Xslt30Processor::getXslMessages(){
 
 jmethodID mID =   (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
 					"getXslMessages",
@@ -560,7 +666,7 @@ jobjectArray results = (jobjectArray)(
 
 }
 
-const char * XsltProcessor::transformFileToString(const char* source,
+const char * Xslt30Processor::transformFileToString(const char* source,
 		const char* stylesheet) {
 
 	if(exceptionOccurred()) {
@@ -676,7 +782,7 @@ const char * XsltProcessor::transformFileToString(const char* source,
 }
 
 
-   const char * XsltProcessor::transformToString(){
+   const char * Xslt30Processor::transformToString(){
 	if(!stylesheetObject){
 		std::cerr<< "Error: The most recent Stylesheet Object failed or has not been set."<<std::endl;
 		return NULL;
@@ -685,7 +791,7 @@ const char * XsltProcessor::transformFileToString(const char* source,
    }
 
 
-    XdmValue * XsltProcessor::transformToValue(){
+    XdmValue * Xslt30Processor::transformToValue(){
 	if(!stylesheetObject){
 		std::cerr<< "Error: The most recent Stylesheet Object failed or has not been set."<<std::endl;
 		return NULL;
@@ -693,7 +799,7 @@ const char * XsltProcessor::transformFileToString(const char* source,
 	return transformFileToValue(NULL, NULL);
    }
 
-    void XsltProcessor::transformToFile(){
+    void Xslt30Processor::transformToFile(){
 	if(!stylesheetObject){
 		std::cerr<< "Error: The most recent Stylesheet Object failed or has not been set."<<std::endl;
 		return;
@@ -701,7 +807,7 @@ const char * XsltProcessor::transformFileToString(const char* source,
 	transformFileToFile(NULL, NULL, NULL);
    }
 
-const char * XsltProcessor::getErrorMessage(int i ){
+const char * Xslt30Processor::getErrorMessage(int i ){
  	if(proc->exception == NULL) {return NULL;}
  		return proc->exception->getErrorMessage(i);
  }

@@ -309,10 +309,10 @@ if (!mID) {
 }
    
 XdmNode * SchemaValidator::validateToNode(const char * sourceFile){
-	if (sourceFile == NULL) {
+	/*if (sourceFile == NULL) {
 		std::cerr << "Error:: source file string cannot be empty or NULL" << std::endl;
 	     return NULL;
-        }
+        }*/
 setProperty("resources", proc->getResourcesDirectory());
 jmethodID mID =
 		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "validateToNode",
@@ -371,7 +371,7 @@ if (!mID) {
 	jobject result = (jobject)(
 			SaxonProcessor::sxn_environ->env->CallObjectMethod(cppV, mID,
 					SaxonProcessor::sxn_environ->env->NewStringUTF(cwdV.c_str()),
-					SaxonProcessor::sxn_environ->env->NewStringUTF(sourceFile), stringArray, objectArray));
+					(sourceFile != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(sourceFile) : NULL), stringArray, objectArray));
 	if (size > 0) {
 		SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
 		SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);

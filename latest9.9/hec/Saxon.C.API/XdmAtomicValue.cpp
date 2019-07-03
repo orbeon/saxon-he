@@ -16,17 +16,17 @@
     XdmAtomicValue::XdmAtomicValue(jobject obj):XdmItem(obj){
     }
 
-    XdmAtomicValue::XdmAtomicValue(jobject obj, string ty):XdmItem(obj){
-	valType = ty;
+    XdmAtomicValue::XdmAtomicValue(jobject obj, const char* ty):XdmItem(obj){
+	valType = std::string(ty);
     }
 
-    void XdmAtomicValue::setType(string ty){
-	valType = ty;
+    void XdmAtomicValue::setType(const char * ty){
+	valType = std::string(ty);
     }
 
-    string XdmAtomicValue::getPrimitiveTypeName(){
+    const char* XdmAtomicValue::getPrimitiveTypeName(){
 	if(!valType.empty()) {
-		return valType;	
+		return valType.c_str();	
 	}
 	
 	if(proc != NULL) {
@@ -44,7 +44,7 @@
 					NULL);
 		
 		//SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
-			valType = stri;
+			valType = std::string(stri);
 			return stri;
 		}
 

@@ -16,7 +16,6 @@
 #include <string.h>
 //#include <dlfcn.h>
 
-using namespace std;
 
 class XdmAtomicValue : public XdmItem {
     
@@ -35,9 +34,9 @@ public:
 
     XdmAtomicValue(jobject);
 
-    XdmAtomicValue(jobject, string ty);
+    XdmAtomicValue(jobject, const char* ty);
 
-    string getPrimitiveTypeName();
+    const char* getPrimitiveTypeName();
 
     bool getBooleanValue();
 
@@ -47,7 +46,7 @@ public:
 
     long getLongValue();
 
-    void setType(string ty);
+    void setType(const char* ty);
 
     
     bool isAtomic(){
