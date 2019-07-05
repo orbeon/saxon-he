@@ -61,12 +61,27 @@ public:
      /**
 	* @param value - The source to the stylesheet as a pointer to the XdmNode object.
 	*/	
-    void setSourceFromXdmItem(XdmItem * value);
+
+    void setGlobalContextItem(XdmItem * value);
 
     /**
      * Set the source from file for the transformation.
     */
-    void setSourceFromFile(const char * filename);
+    void setGlobalContextFromFile(const char * filename);
+
+
+    //!The initial value to which templates are to be applied (equivalent to the <code>select</code> attribute of <code>xsl:apply-templates</code>)
+    /**
+    *  @param selection - The value to which the templates are to be applied
+    */
+    void setInitialMatchSelection(XdmValue * selection);
+
+        //!The initial filename to which templates are to be applied (equivalent to the <code>select</code> attribute of <code>xsl:apply-templates</code>).
+        /**
+        * The file is parsed internall
+        *  @param filename - The file name to which the templates are to be applied
+        */
+    void setInitialMatchSelectionFile(const char * filename);
 
     /**
      * Set the output file of where the transformation result is sent
@@ -298,17 +313,52 @@ public:
      */
     void compileFromXdmNode(XdmNode * node);
 
-    void applyTemplateToFile(const char * input_filename, const char* outfile);
+     //!nvoke the stylesheet by applying templates to a supplied input sequence, Saving the results to file.
+    /**
+     * The initial match selection must be set using one of the two methods setInitialMatchSelection or setInitialMatchSelectionFile.
+     * The result is stored in the supplied output file.
+     *
+     * @param stylesheetFile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
+     * @param outputfile - The file name where results will be stored
+     */
+    void applyTemplatesReturningFile(const char * stylesheetFilename, const char* outfile);
 
-    const char* applyTemplateToString(const char * input_filename);
+     //!nvoke the stylesheet by applying templates to a supplied input sequence, Saving the results as serialized string.
+    /**
+     * The initial match selection must be set using one of the two methods setInitialMatchSelection or setInitialMatchSelectionFile.
+     *
+     * @param stylesheetFile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
+     */
+    const char* applyTemplatesReturningString(const char * stylesheetFilename);
 
-    XdmValue * applyTemplateToValue(const char * input_filename);
+     //!nvoke the stylesheet by applying templates to a supplied input sequence, Saving the results as an XdmValue.
+    /**
+     * The initial match selection must be set using one of the two methods setInitialMatchSelection or setInitialMatchSelectionFile.
+     *
+     * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
+     */
+    XdmValue * applyTemplatesReturningValue(const char * stylesheetFilename);
 
-    void applyTemplateToFile(XdmValue* _input, const char* outfile);
 
-    const char* applyTemplateToString(XdmValue* _input);
+    void callTemplateReturningFile(const char * stylesheetFilename, const char* templateName, const char* outfile);
 
-    XdmValue * applyTemplateToValue(XdmValue* _input);
+    const char* callTemplateReturningString(const char * stylesheetFilename, const char* templateName);
+
+    XdmValue* callTemplateReturningValue(const char * stylesheetFilename, const char* templateName);
+
+
+    void callFunctionReturningFile(const char * stylesheetFilename, const char* functionName, const char* outfile);
+
+    const char * callFunctionReturningString(const char * stylesheetFilename, const char* functionName);
+
+    XdmValue * callFunctionReturningValue(const char * stylesheetFilename, const char* functionName);
+
+
+    void addPackages(const char ** fileNames, int length);
+
+    void clearPackages();
+
+
 
     //! Internal method to release cached stylesheet
     /**
@@ -387,7 +437,7 @@ public:
 private:
 	SaxonProcessor* proc;/*! */
 	jclass  cppClass;
-	jobject cppXT, stylesheetObject, xdmValuei;
+	jobject cppXT, stylesheetObject, xdmValuei, selection;
         std::string cwdXT; /*!< current working directory */
 	std::string outputfile1; /*!< output file where result will be saved */
 	std::string failure; //for testing

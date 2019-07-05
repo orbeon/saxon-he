@@ -11,15 +11,15 @@
   </xsl:param>
   <xsl:output method="xml" indent="yes" />
   
-  <xsl:function name="f:is-licensed-EE" as="xs:boolean">
-    ﻿  <xsl:variable name="v" select="system-property('xsl:product-version')"/>
-    <xsl:sequence select="starts-with($v, 'EE') and not(contains($v, '(unlicensed)'))"/>
+  <xsl:function name="f:is-licensed-EE" as="xs:boolean" visibility="public">
+    <xsl:variable name="v" select="system-property('xsl:product-version')"/>
+    <xsl:sequence select="starts-with($v, 'EE') and not(contains($v, '(unlicensed)'))"/>    
   </xsl:function>
   
   
   <xsl:template match="*">
     <output>
-      
+      <xsl:if test="f:is-licensed-EE()">
       <xsl:variable name="args" select="['param1-data', .]"/>
       <xsl:variable name="phpCall" select="php:function('userFunction', $args)" />
       <extension-function-test>Call to saxon:php-call:
@@ -32,6 +32,7 @@
           ﻿<xsl:value-of select="$phpCall" /> 
         </xsl:if>
       </extension-function-test>  
+      </xsl:if>
       <!--<xsl:value-of select="normalize-unicode('Eisbär', 'NFKD')" />-->
       <xsl:for-each select="person" >
         <out><xsl:value-of select="."/></out>

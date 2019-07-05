@@ -15,5 +15,9 @@
 	<xsl:message>Testing message1</xsl:message>
 	<xsl:message>Testing message2</xsl:message>
   </xsl:template>
+  
+  <xsl:template name="custom">
+    <out>text1</out>
+  </xsl:template>
 
 </xsl:stylesheet>

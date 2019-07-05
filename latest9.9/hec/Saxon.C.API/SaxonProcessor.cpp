@@ -308,6 +308,82 @@ void SaxonProcessor::applyConfigurationProperties(){
 }
 
 
+    static JParameters SaxonProcessor::createParameterJArray(std::map<std::string,XdmValue*> parameters, std::map<std::string,std::string> properties){
+
+		jobjectArray stringArray = NULL;
+		jobjectArray objectArray = NULL;
+		jclass objectClass = lookForClass(SaxonProcessor::sxn_environ->env,
+				"java/lang/Object");
+		jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env,
+				"java/lang/String");
+
+		int size = parameters.size() + properties.size();
+#ifdef DEBUG
+		std::cerr<<"Properties size: "<<properties.size()<<std::endl;
+		std::cerr<<"Parameter size: "<<parameters.size()<<std::endl;
+#endif
+		if (size > 0) {
+		    JParameters comboArrays;
+			comboArrays.objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
+					objectClass, 0);
+			comboArrays.stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
+					stringClass, 0);
+			int i = 0;
+			for (std::map<std::string, XdmValue*>::iterator iter =
+					parameters.begin(); iter != parameters.end(); ++iter, i++) {
+
+#ifdef DEBUG
+				std::cerr<<"map 1"<<std::endl;
+				std::cerr<<"iter->first"<<(iter->first).c_str()<<std::endl;
+#endif
+				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(comboArrays.stringArray, i,
+						SaxonProcessor::sxn_environ->env->NewStringUTF(
+								(iter->first).c_str()));
+#ifdef DEBUG
+				std::string s1 = typeid(iter->second).name();
+				std::cerr<<"Type of itr:"<<s1<<std::endl;
+
+
+				jobject xx = (iter->second)->getUnderlyingValue();
+
+				if(xx == NULL) {
+					std::cerr<<"value failed"<<std::endl;
+				} else {
+
+					std::cerr<<"Type of value:"<<(typeid(xx).name())<<std::endl;
+				}
+				if((iter->second)->getUnderlyingValue() == NULL) {
+					std::cerr<<"(iter->second)->getUnderlyingValue() is NULL"<<std::endl;
+				}
+#endif
+
+				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(comboArrays.objectArray, i,
+						(iter->second)->getUnderlyingValue());
+
+			}
+
+			for (std::map<std::string, std::string>::iterator iter =
+					properties.begin(); iter != properties.end(); ++iter, i++) {
+				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(comboArrays.stringArray, i,
+						SaxonProcessor::sxn_environ->env->NewStringUTF(
+								(iter->first).c_str()));
+				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(comboArrays.objectArray, i,
+						SaxonProcessor::sxn_environ->env->NewStringUTF(
+								(iter->second).c_str()));
+			}
+
+			 return comboArrays;
+
+		} else {
+		    return NULL;
+		}
+    }
+
+
+
+    static jobjectArray SaxonProcessor::createPropertyJArray(std::map<std::string,std::string> properties){}
+
+
 SaxonProcessor& SaxonProcessor::operator=( const SaxonProcessor& other ){
 	versionClass = other.versionClass;
 	procClass = other.procClass;

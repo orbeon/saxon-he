@@ -176,7 +176,9 @@ void XsltProcessor::exceptionClear(){
  }
 
    void XsltProcessor::setcwd(const char* dir){
-    cwdXT = std::string(dir);
+    if(dir != NULL) {
+        cwdXT = std::string(dir);
+    }
    }
 
 const char* XsltProcessor::checkException() {

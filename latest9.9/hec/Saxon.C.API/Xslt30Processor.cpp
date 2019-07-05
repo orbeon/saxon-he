@@ -56,17 +56,28 @@ const char * Xslt30Processor::getErrorCode(int i) {
  return proc->exception->getErrorCode(i);
  }
 
-void Xslt30Processor::setSourceFromXdmItem(XdmItem * value) {
+
+
+void Xslt30Processor::setGlobalContextItem(XdmItem * value){
     if(value != NULL){
       value->incrementRefCount();
       parameters["node"] = value;
     }
 }
 
-void Xslt30Processor::setSourceFromFile(const char * ifile) {
+void Xslt30Processor::setGlobalContextFromFile(const char * ifile) {
 	if(ifile != NULL) {
 		setProperty("s", ifile);
 	}
+}
+
+void Xslt30Processor::setInitialMatchSelection(XdmValue * _selection){
+    selection = _selection->getUnderlyingValue();
+}
+
+
+void Xslt30Processor::setInitialMatchSelectionFile(const char * filename){
+    selection = SaxonProcessor::sxn_environ->env->NewStringUTF(filename);
 }
 
 void Xslt30Processor::setOutputFile(const char * ofile) {
@@ -191,7 +202,9 @@ void Xslt30Processor::exceptionClear(){
  }
 
    void Xslt30Processor::setcwd(const char* dir){
-    cwdXT = std::string(dir);
+    if (dir!= NULL) {}
+        cwdXT = std::string(dir);
+    }
    }
 
 const char* Xslt30Processor::checkException() {
@@ -355,11 +368,16 @@ void Xslt30Processor::releaseStylesheet() {
 	
 }
 
-    void Xslt30Processor::applyTemplateToFile(const char * input_filename, const char* outfile){
+    void Xslt30Processor::applyTemplatesAsFile(const char * stylesheetfile, const char* outfile){
 	if(exceptionOccurred()) {
 		//Possible error detected in the compile phase. Processor not in a clean state.
 		//Require clearing exception.
 		return NULL;	
+	}
+
+	if(selection == NULL) {
+	   std::cerr<< "Error: The initial match selection has not been set. Please set it using setInitialMatchSelection or setInitialMatchSelectionFile."<<std::endl;
+       		return NULL;
 	}
 
 	if(stylesheetfile == NULL && !stylesheetObject && ){
@@ -370,45 +388,15 @@ void Xslt30Processor::releaseStylesheet() {
 	setProperty("resources", proc->getResourcesDirectory());
 	static jmethodID atmID =
 			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
-					"applyTemplateToFile",
-					"(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmNode;");
+					"applyTemplatesAsFile",
+					"(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)V");
 	if (!atmID) {
-		std::cerr << "Error: "<< getDllname() << "applyTemplateToFile" << " not found\n"
+		std::cerr << "Error: "<< getDllname() << "applyTemplatesAsFile" << " not found\n"
 				<< std::endl;
 
 	} else {
-		jobjectArray stringArray = NULL;
-		jobjectArray objectArray = NULL;
-		jclass objectClass = lookForClass(SaxonProcessor::sxn_environ->env,
-				"java/lang/Object");
-		jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env,
-				"java/lang/String");
-
-		int size = parameters.size() + properties.size();
-		if (size > 0) {
-			objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
-					objectClass, 0);
-			stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
-					stringClass, 0);
-			int i = 0;
-			for (std::map<std::string, XdmValue*>::iterator iter =
-					parameters.begin(); iter != parameters.end(); ++iter, i++) {
-				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
-						SaxonProcessor::sxn_environ->env->NewStringUTF(
-								(iter->first).c_str()));
-				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-						(iter->second)->getUnderlyingValue());
-			}
-			for (std::map<std::string, std::string>::iterator iter =
-					properties.begin(); iter != properties.end(); ++iter, i++) {
-				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
-						SaxonProcessor::sxn_environ->env->NewStringUTF(
-								(iter->first).c_str()));
-				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-						SaxonProcessor::sxn_environ->env->NewStringUTF(
-								(iter->second).c_str()));
-			}
-		}
+        JParameters comboArrays;
+		comboArrays = createParameterJArray(parameters, properties);
 		SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, atmID,
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
 						(input_filename != NULL ?
@@ -417,8 +405,10 @@ void Xslt30Processor::releaseStylesheet() {
 						(stylesheetfile != NULL ?
 								SaxonProcessor::sxn_environ->env->NewStringUTF(
 										stylesheetfile) :
-								NULL), stringArray, objectArray));
-		if (size > 0) {
+								NULL), (outfile != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(
+                                       						outfile) : NULL),
+                                comboArrays.stringArray, comboArrays.objectArray));
+		if (comboArrays.stringArray != NULL) {
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
 		}
@@ -429,15 +419,15 @@ void Xslt30Processor::releaseStylesheet() {
 
 }
 
-const char* Xslt30Processor::applyTemplateToString(const char * source){
+const char* Xslt30Processor::applyTemplatesAsString(const char * stylesheetfile, const char * source){
 	if(exceptionOccurred()) {
 		//Possible error detected in the compile phase. Processor not in a clean state.
 		//Require clearing exception.
 		return NULL;	
 	}
-	if(source == NULL ){
-		std::cerr<< "Error: The most recent StylesheetObject failed. Please check exceptions"<<std::endl;
-		return NULL;
+	if(selection == NULL) {
+	   std::cerr<< "Error: The initial match selection has not been set. Please set it using setInitialMatchSelection or setInitialMatchSelectionFile."<<std::endl;
+       		return NULL;
 	}
 	if(stylesheet == NULL && !stylesheetObject){
 		std::cerr<< "Error: The most recent StylesheetObject failed. Please check exceptions"<<std::endl;
@@ -446,92 +436,31 @@ const char* Xslt30Processor::applyTemplateToString(const char * source){
 	setProperty("resources", proc->getResourcesDirectory());
 	jmethodID atsmID =
 			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
-					"applyTemplateToString",
-					"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;");
+					"applyTemplatesAsString",
+					"(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;");
 	if (!atsmID) {
-		std::cerr << "Error: "<<getDllname() << "applyTemplateToString" << " not found\n"
+		std::cerr << "Error: "<<getDllname() << "applyTemplatesAsString" << " not found\n"
 				<< std::endl;
 
 	} else {
-		jobjectArray stringArray = NULL;
-		jobjectArray objectArray = NULL;
-		jclass objectClass = lookForClass(SaxonProcessor::sxn_environ->env,
-				"java/lang/Object");
-		jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env,
-				"java/lang/String");
+	    JParameters comboArrays;
+		comboArrays = createParameterJArray(parameters, properties);
 
-		int size = parameters.size() + properties.size();
-#ifdef DEBUG
-		std::cerr<<"Properties size: "<<properties.size()<<std::endl;
-		std::cerr<<"Parameter size: "<<parameters.size()<<std::endl;
-#endif
-		if (size > 0) {
-			objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
-					objectClass, 0);
-			stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
-					stringClass, 0);
-			int i = 0;
-			for (std::map<std::string, XdmValue*>::iterator iter =
-					parameters.begin(); iter != parameters.end(); ++iter, i++) {
-
-#ifdef DEBUG
-				std::cerr<<"map 1"<<std::endl;
-				std::cerr<<"iter->first"<<(iter->first).c_str()<<std::endl;
-#endif
-				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
-						SaxonProcessor::sxn_environ->env->NewStringUTF(
-								(iter->first).c_str()));
-#ifdef DEBUG
-				std::string s1 = typeid(iter->second).name();
-				std::cerr<<"Type of itr:"<<s1<<std::endl;
-
-
-				jobject xx = (iter->second)->getUnderlyingValue();
-
-				if(xx == NULL) {
-					std::cerr<<"value failed"<<std::endl;
-				} else {
-
-					std::cerr<<"Type of value:"<<(typeid(xx).name())<<std::endl;
-				}
-				if((iter->second)->getUnderlyingValue() == NULL) {
-					std::cerr<<"(iter->second)->getUnderlyingValue() is NULL"<<std::endl;
-				}
-#endif
-
-				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-						(iter->second)->getUnderlyingValue());
-
-			}
-
-			for (std::map<std::string, std::string>::iterator iter =
-					properties.begin(); iter != properties.end(); ++iter, i++) {
-				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
-						SaxonProcessor::sxn_environ->env->NewStringUTF(
-								(iter->first).c_str()));
-				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-						SaxonProcessor::sxn_environ->env->NewStringUTF(
-								(iter->second).c_str()));
-			}
-		}
 
 	jstring result = NULL;
 	jobject obj =
 				(
 						SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, atsmID,
 								SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
-								(source != NULL ?
-										SaxonProcessor::sxn_environ->env->NewStringUTF(
-												source) :
-										NULL),
+								(selection != NULL ? selection : NULL),
 								SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheet),
-								stringArray, objectArray));
+								comboArrays.stringArray, comboArrays.objectArray));
 		if(obj) {
 			result = (jstring)obj;
 		}		
-		if (size > 0) {
-			SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
-			SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
+		if (comboArrays.stringArray != NULL) {
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.stringArray);
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.objectArray);
 		}
 		if (result) {
 			const char * str = SaxonProcessor::sxn_environ->env->GetStringUTFChars(result,
@@ -548,15 +477,529 @@ const char* Xslt30Processor::applyTemplateToString(const char * source){
 
 }
 
-XdmValue * Xslt30Processor::applyTemplateToValue(const char * input_filename){
+XdmValue * Xslt30Processor::applyTemplatesAsValue(const char * stylesheetfile, const char * input_filename){
+	if(exceptionOccurred()) {
+		//Possible error detected in the compile phase. Processor not in a clean state.
+		//Require clearing exception.
+		return NULL;
+	}
+	if(selection == NULL) {
+	   std::cerr<< "Error: The initial match selection has not been set. Please set it using setInitialMatchSelection or setInitialMatchSelectionFile."<<std::endl;
+       		return NULL;
+	}
+	if(stylesheet == NULL && !stylesheetObject){
+		std::cerr<< "Error: The most recent StylesheetObject failed. Please check exceptions"<<std::endl;
+		return NULL;
+	}
+	setProperty("resources", proc->getResourcesDirectory());
+	jmethodID atsmID =
+			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+					"applyTemplatesAsValue",
+					"(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmValue;");
+	if (!atsmID) {
+		std::cerr << "Error: "<<getDllname() << "applyTemplatesAsValue" << " not found\n"
+				<< std::endl;
+
+	} else {
+	    JParameters comboArrays;
+		comboArrays = createParameterJArray(parameters, properties);
+
+
+	    jstring result = NULL;
+	    jobject obj = (jobject)(SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, atsmID,
+								SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
+								(selection != NULL ? selection : NULL),
+								( stylesheet != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheet) : NULL),
+								comboArrays.stringArray, comboArrays.objectArray));
+		if(obj) {
+			result = (jstring)obj;
+		}
+		if (comboArrays.stringArray != NULL) {
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.stringArray);
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.objectArray);
+		}
+        if (result) {
+		jclass atomicValueClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
+		jclass nodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
+		jclass functionItemClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmFunctionItem");
+        XdmValue * value = new XdmValue();
+		value->setProcessor(proc);
+		XdmItem * xdmItem = NULL;
+
+
+			if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, atomicValueClass)           == JNI_TRUE) {
+				xdmItem = new XdmAtomicValue(resulti);
+
+
+			} else if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, nodeClass)           == JNI_TRUE) {
+				xdmItem = new XdmNode(resulti);
+
+
+			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
+				std::cerr<<"Error: applyTemplateToValue: FunctionItem found. Currently not be handled"<<std::endl;
+				return NULL;
+			}
+			xdmItem->setProcessor(proc);
+			value->addXdmItem(xdmItem);
+
+		SaxonProcessor::sxn_environ->env->DeleteLocalRef(results);
+		return value;
+		} else  {
+			proc->checkAndCreateException(cppClass);
+
+     		}
+	}
+	return NULL;
 
 }
 
-void Xslt30Processor::applyTemplateToFile(XdmValue* _input, const char* outfile){}
 
-const char* Xslt30Processor::applyTemplateToString(XdmValue* _input){}
+    void callFunctionReturningFile(const char * stylesheetFilename, const char* functionName, const char* outfile){
+        if(exceptionOccurred()) {
+        		//Possible error detected in the compile phase. Processor not in a clean state.
+        		//Require clearing exception.
+        		return NULL;
+        	}
 
-XdmValue * Xslt30Processor::applyTemplateToValue(XdmValue* _input){}
+
+        	if(stylesheetfile == NULL && !stylesheetObject && ){
+
+        		return NULL;
+        	}
+
+        	setProperty("resources", proc->getResourcesDirectory());
+        	static jmethodID afmID =
+        			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+        					"callFunctionReturningFile",
+        					"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)V");
+        	if (!afmID) {
+        		std::cerr << "Error: "<< getDllname() << "callFunctionReturningFile" << " not found\n"
+        				<< std::endl;
+
+        	} else {
+                JParameters comboArrays;
+        		comboArrays = createParameterJArray(parameters, properties);
+        		SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, afmID,
+        						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
+        						(stylesheetfile != NULL ?
+        								SaxonProcessor::sxn_environ->env->NewStringUTF(
+        										stylesheetfile) :
+        								NULL),
+        						(functionName != NULL ?
+        								SaxonProcessor::sxn_environ->env->NewStringUTF(functionName) :
+        								NULL),
+        								(outfile != NULL ?
+                                        			SaxonProcessor::sxn_environ->env->NewStringUTF(outfile) :
+                             					NULL)
+        								comboArrays.stringArray, comboArrays.objectArray));
+        		if (comboArrays.stringArray != NULL) {
+        			SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
+        			SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
+        		}
+        		proc->checkAndCreateException(cppClass);
+
+        	}
+        	return NULL;
+
+
+
+
+    }
+
+    const char * callFunctionReturningString(const char * stylesheetFilename, const char* functionName){
+    	if(exceptionOccurred()) {
+    		//Possible error detected in the compile phase. Processor not in a clean state.
+    		//Require clearing exception.
+    		return NULL;
+    	}
+
+    	if(stylesheet == NULL && !stylesheetObject){
+    		std::cerr<< "Error: The most recent StylesheetObject failed. Please check exceptions"<<std::endl;
+    		return NULL;
+    	}
+    	setProperty("resources", proc->getResourcesDirectory());
+    	jmethodID afsmID =
+    			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+    					"callFunctionReturningString",
+    					"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;");
+    	if (!afsmID) {
+    		std::cerr << "Error: "<<getDllname() << "callFunctionReturningString" << " not found\n"
+    				<< std::endl;
+
+    	} else {
+    	    JParameters comboArrays;
+    		comboArrays = createParameterJArray(parameters, properties);
+
+
+    	jstring result = NULL;
+    	jobject obj =
+    				(
+    						SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, afsmID,
+    								SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
+    								(stylesheet != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheet) : NULL ),
+    								(functionName != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(functionName) : NULL),
+    								comboArrays.stringArray, comboArrays.objectArray));
+    		if(obj) {
+    			result = (jstring)obj;
+    		}
+    		if (comboArrays.stringArray != NULL) {
+    			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.stringArray);
+    			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.objectArray);
+    		}
+    		if (result) {
+    			const char * str = SaxonProcessor::sxn_environ->env->GetStringUTFChars(result,
+    					NULL);
+    			SaxonProcessor::sxn_environ->env->DeleteLocalRef(obj);
+    			return str;
+    		} else  {
+    			proc->checkAndCreateException(cppClass);
+
+         		}
+    	}
+    	return NULL;
+    }
+
+    XdmValue * callFunctionReturningValue(const char * stylesheetFilename, const char* functionName){
+         	if(exceptionOccurred()) {
+          		//Possible error detected in the compile phase. Processor not in a clean state.
+          		//Require clearing exception.
+          		return NULL;
+          	}
+          	if(selection == NULL) {
+          	   std::cerr<< "Error: The initial match selection has not been set. Please set it using setInitialMatchSelection or setInitialMatchSelectionFile."<<std::endl;
+                 		return NULL;
+          	}
+          	if(stylesheet == NULL && !stylesheetObject){
+          		std::cerr<< "Error: The most recent StylesheetObject failed. Please check exceptions"<<std::endl;
+          		return NULL;
+          	}
+          	setProperty("resources", proc->getResourcesDirectory());
+          	jmethodID cfvmID =
+          			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+          					"callFunctionReturningValue",
+          					"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmValue;");
+          	if (!cfvmID) {
+          		std::cerr << "Error: "<<getDllname() << "callFunctionReturningValue" << " not found\n"
+          				<< std::endl;
+
+          	} else {
+          	    JParameters comboArrays;
+          		comboArrays = createParameterJArray(parameters, properties);
+
+
+          	    jstring result = NULL;
+          	    jobject obj = (jobject)(SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, cfvmID,
+          								SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
+          								(stylesheet != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheet) : NULL ),
+                                        (functionName != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(functionName) : NULL),
+          								comboArrays.stringArray, comboArrays.objectArray));
+          		if(obj) {
+          			result = (jstring)obj;
+          		}
+          		if (comboArrays.stringArray != NULL) {
+          			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.stringArray);
+          			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.objectArray);
+          		}
+                  if (result) {
+          		jclass atomicValueClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
+          		jclass nodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
+          		jclass functionItemClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmFunctionItem");
+                  XdmValue * value = new XdmValue();
+          		value->setProcessor(proc);
+          		XdmItem * xdmItem = NULL;
+
+
+          			if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, atomicValueClass)           == JNI_TRUE) {
+          				xdmItem = new XdmAtomicValue(resulti);
+
+
+          			} else if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, nodeClass)           == JNI_TRUE) {
+          				xdmItem = new XdmNode(resulti);
+
+
+          			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
+          				std::cerr<<"Error: applyTemplateToValue: FunctionItem found. Currently not be handled"<<std::endl;
+          				return NULL;
+          			}
+          			xdmItem->setProcessor(proc);
+          			value->addXdmItem(xdmItem);
+
+          		SaxonProcessor::sxn_environ->env->DeleteLocalRef(results);
+          		return value;
+          		} else  {
+          			proc->checkAndCreateException(cppClass);
+
+               		}
+          	}
+          	return NULL;
+
+
+
+    }
+
+     void Xslt30Processor::addPackages(const char ** fileNames, int length){
+              	if(exceptionOccurred()) {
+              		//Possible error detected in the compile phase. Processor not in a clean state.
+              		//Require clearing exception.
+              		return;
+              	}
+
+              	if(length<1){
+
+              		return;
+              	}
+
+              	jmethodID apmID =
+              			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+              					"addPackages",
+              					"([Ljava/lang/String;)V");
+              	if (!apmID) {
+              		std::cerr << "Error: "<<getDllname() << "addPackage" << " not found\n"
+              				<< std::endl;
+
+              	} else {
+
+              	 jobjectArray stringArray = NULL;
+
+                 jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env,
+                 				"java/lang/String");
+
+
+                 stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) length,
+                 					stringClass, 0);
+
+                 for (int i=0; i<length; i++) {
+
+                 SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
+                 						SaxonProcessor::sxn_environ->env->NewStringUTF(fileNames[i]));
+                 }
+
+              	SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, apmID,
+              								SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()), stringArray);
+
+                proc->checkAndCreateException(cppClass);
+              }
+              	return NULL;
+
+        }
+
+
+
+            void Xslt30Processor::clearPackages(){
+                      	if(exceptionOccurred()) {
+                      		//Possible error detected in the compile phase. Processor not in a clean state.
+                      		//Require clearing exception.
+                      		return;
+                      	}
+
+
+
+                      	jmethodID cpmID =
+                      			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+                      					"clearPackages",
+                      					"()V");
+                      	if (!cpmID) {
+                      		std::cerr << "Error: "<<getDllname() << "clearPackage" << " not found\n"
+                      				<< std::endl;
+
+                      	} else {
+
+
+                      	SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, apmID);
+
+                        proc->checkAndCreateException(cppClass);
+                      }
+                      	return NULL;
+
+
+
+
+                }
+
+    void Xslt30Processor::callTemplateReturningFile(const char * stylesheetfile, const char* templateName, const char* outfile){
+	if(exceptionOccurred()) {
+		//Possible error detected in the compile phase. Processor not in a clean state.
+		//Require clearing exception.
+		return;
+	}
+
+
+	if(stylesheetfile == NULL && !stylesheetObject && ){
+
+		return;
+	}
+
+	setProperty("resources", proc->getResourcesDirectory());
+	static jmethodID ctmID =
+			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+					"callTemplateReturningFile",
+					"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)V");
+	if (!ctmID) {
+		std::cerr << "Error: "<< getDllname() << "callTemplateReturningFile" << " not found\n"
+				<< std::endl;
+
+	} else {
+        JParameters comboArrays;
+		comboArrays = createParameterJArray(parameters, properties);
+		SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, ctmID,
+						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
+						(stylesheetfile != NULL ?
+								SaxonProcessor::sxn_environ->env->NewStringUTF(
+										stylesheetfile) :
+								NULL),
+						(templateName != NULL ?
+								SaxonProcessor::sxn_environ->env->NewStringUTF(templateName) :
+								NULL),
+								(outfile != NULL ?
+                                			SaxonProcessor::sxn_environ->env->NewStringUTF(outfile) :
+                     					NULL)
+								comboArrays.stringArray, comboArrays.objectArray));
+		if (comboArrays.stringArray != NULL) {
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
+		}
+		proc->checkAndCreateException(cppClass);
+
+	}
+	return NULL;
+
+
+    }
+
+
+
+
+    const char* Xslt30Processor::callTemplateReturningString(const char * stylesheet, const char* templateName){
+	if(exceptionOccurred()) {
+		//Possible error detected in the compile phase. Processor not in a clean state.
+		//Require clearing exception.
+		return NULL;
+	}
+
+	if(stylesheet == NULL && !stylesheetObject){
+		std::cerr<< "Error: The most recent StylesheetObject failed. Please check exceptions"<<std::endl;
+		return NULL;
+	}
+	setProperty("resources", proc->getResourcesDirectory());
+	jmethodID ctsmID =
+			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+					"callTemplateReturningString",
+					"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;");
+	if (!ctsmID) {
+		std::cerr << "Error: "<<getDllname() << "callTemplateReturningString" << " not found\n"
+				<< std::endl;
+
+	} else {
+	    JParameters comboArrays;
+		comboArrays = createParameterJArray(parameters, properties);
+
+
+	jstring result = NULL;
+	jobject obj =
+				(
+						SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, ctsmID,
+								SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
+								(stylesheet != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheet) : NULL ),
+								(templateName != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(templateName) : NULL),
+								comboArrays.stringArray, comboArrays.objectArray));
+		if(obj) {
+			result = (jstring)obj;
+		}
+		if (comboArrays.stringArray != NULL) {
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.stringArray);
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.objectArray);
+		}
+		if (result) {
+			const char * str = SaxonProcessor::sxn_environ->env->GetStringUTFChars(result,
+					NULL);
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(obj);
+			return str;
+		} else  {
+			proc->checkAndCreateException(cppClass);
+
+     		}
+	}
+	return NULL;
+
+
+    }
+
+    XdmValue* Xslt30Processor::callTemplateReturningValue(const char * stylesheetFilename, const char* templateName){
+          	if(exceptionOccurred()) {
+          		//Possible error detected in the compile phase. Processor not in a clean state.
+          		//Require clearing exception.
+          		return NULL;
+          	}
+          	if(selection == NULL) {
+          	   std::cerr<< "Error: The initial match selection has not been set. Please set it using setInitialMatchSelection or setInitialMatchSelectionFile."<<std::endl;
+                 		return NULL;
+          	}
+          	if(stylesheet == NULL && !stylesheetObject){
+          		std::cerr<< "Error: The most recent StylesheetObject failed. Please check exceptions"<<std::endl;
+          		return NULL;
+          	}
+          	setProperty("resources", proc->getResourcesDirectory());
+          	jmethodID ctsmID =
+          			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+          					"callTemplateReturningValue",
+          					"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmValue;");
+          	if (!ctsmID) {
+          		std::cerr << "Error: "<<getDllname() << "callTemplateReturningValue" << " not found\n"
+          				<< std::endl;
+
+          	} else {
+          	    JParameters comboArrays;
+          		comboArrays = createParameterJArray(parameters, properties);
+
+
+          	    jstring result = NULL;
+          	    jobject obj = (jobject)(SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, ctsmID,
+          								SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
+          								(stylesheet != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheet) : NULL ),
+                                        (templateName != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(templateName) : NULL),
+          								comboArrays.stringArray, comboArrays.objectArray));
+          		if(obj) {
+          			result = (jstring)obj;
+          		}
+          		if (comboArrays.stringArray != NULL) {
+          			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.stringArray);
+          			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.objectArray);
+          		}
+                  if (result) {
+          		jclass atomicValueClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
+          		jclass nodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
+          		jclass functionItemClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmFunctionItem");
+                  XdmValue * value = new XdmValue();
+          		value->setProcessor(proc);
+          		XdmItem * xdmItem = NULL;
+
+
+          			if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, atomicValueClass)           == JNI_TRUE) {
+          				xdmItem = new XdmAtomicValue(resulti);
+
+
+          			} else if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, nodeClass)           == JNI_TRUE) {
+          				xdmItem = new XdmNode(resulti);
+
+
+          			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
+          				std::cerr<<"Error: applyTemplateToValue: FunctionItem found. Currently not be handled"<<std::endl;
+          				return NULL;
+          			}
+          			xdmItem->setProcessor(proc);
+          			value->addXdmItem(xdmItem);
+
+          		SaxonProcessor::sxn_environ->env->DeleteLocalRef(results);
+          		return value;
+          		} else  {
+          			proc->checkAndCreateException(cppClass);
+
+               		}
+          	}
+          	return NULL;
+    }
+
+
 
 
 XdmValue * Xslt30Processor::transformFileToValue(const char* sourcefile,
@@ -583,38 +1026,9 @@ XdmValue * Xslt30Processor::transformFileToValue(const char* sourcefile,
 				<< std::endl;
 
 	} else {
-		jobjectArray stringArray = NULL;
-		jobjectArray objectArray = NULL;
-		jclass objectClass = lookForClass(SaxonProcessor::sxn_environ->env,
-				"java/lang/Object");
-		jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env,
-				"java/lang/String");
+	    JParameters comboArrays;
+		comboArrays = createParameterJArray(parameters, properties);
 
-		int size = parameters.size() + properties.size();
-		if (size > 0) {
-			objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
-					objectClass, 0);
-			stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
-					stringClass, 0);
-			int i = 0;
-			for (std::map<std::string, XdmValue*>::iterator iter =
-					parameters.begin(); iter != parameters.end(); ++iter, i++) {
-				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
-						SaxonProcessor::sxn_environ->env->NewStringUTF(
-								(iter->first).c_str()));
-				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-						(iter->second)->getUnderlyingValue());
-			}
-			for (std::map<std::string, std::string>::iterator iter =
-					properties.begin(); iter != properties.end(); ++iter, i++) {
-				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
-						SaxonProcessor::sxn_environ->env->NewStringUTF(
-								(iter->first).c_str()));
-				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-						SaxonProcessor::sxn_environ->env->NewStringUTF(
-								(iter->second).c_str()));
-			}
-		}
 		jobject result = (jobject)(
 				SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, mID,
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
@@ -624,10 +1038,10 @@ XdmValue * Xslt30Processor::transformFileToValue(const char* sourcefile,
 						(stylesheetfile != NULL ?
 								SaxonProcessor::sxn_environ->env->NewStringUTF(
 										stylesheetfile) :
-								NULL), stringArray, objectArray));
-		if (size > 0) {
-			SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
-			SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
+								NULL), comboArrays.stringArray, comboArrays.objectArray));
+		if (comboArrays.stringArray != NULL) {
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.stringArray);
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.objectArray);
 		}
 		if (result) {
 			XdmNode * node = new XdmNode(result);
@@ -666,65 +1080,9 @@ void Xslt30Processor::transformFileToFile(const char* source,
 				<< std::endl;
 
 	} else {
-		jobjectArray stringArray = NULL;
-		jobjectArray objectArray = NULL;
-		jclass objectClass = lookForClass(SaxonProcessor::sxn_environ->env,
-				"java/lang/Object");
-		jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env,
-				"java/lang/String");
+	    JParameters comboArrays;
+        comboArrays = createParameterJArray(parameters, properties);
 
-		int size = parameters.size() + properties.size();
-#ifdef DEBUG
-		std::cerr<<"Properties size: "<<properties.size()<<std::endl;
-		std::cerr<<"Parameter size: "<<parameters.size()<<std::endl;
-		std::cerr<<"size:"<<size<<std::endl;
-#endif
-		if (size > 0) {
-			objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
-					objectClass, 0);
-			stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
-					stringClass, 0);
-		
-			int i = 0;
-			for (std::map<std::string, XdmValue*>::iterator iter =
-					parameters.begin(); iter != parameters.end(); ++iter, i++) {
-
-#ifdef DEBUG
-				std::cerr<<"map 1"<<std::endl;
-				std::cerr<<"iter->first"<<(iter->first).c_str()<<std::endl;
-#endif
-				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
-						SaxonProcessor::sxn_environ->env->NewStringUTF(
-								(iter->first).c_str()));
-#ifdef DEBUG
-				std::string s1 = typeid(iter->second).name();
-				std::cerr<<"Type of itr:"<<s1<<std::endl;
-				jobject xx = (iter->second)->getUnderlyingValue();
-				if(xx == NULL) {
-					std::cerr<<"value failed"<<std::endl;
-				} else {
-
-					std::cerr<<"Type of value:"<<(typeid(xx).name())<<std::endl;
-				}
-				if((iter->second)->getUnderlyingValue() == NULL) {
-					std::cerr<<"(iter->second)->getUnderlyingValue() is NULL"<<std::endl;
-				}
-#endif
-				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-						(iter->second)->getUnderlyingValue());
-
-			}
-
-			for (std::map<std::string, std::string>::iterator iter =
-					properties.begin(); iter != properties.end(); ++iter, i++) {
-				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
-						SaxonProcessor::sxn_environ->env->NewStringUTF(
-								(iter->first).c_str()));
-				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
-						SaxonProcessor::sxn_environ->env->NewStringUTF(
-								(iter->second).c_str()));
-			}
-		}
 		SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, mID,
 								SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
 								(source != NULL ?
@@ -732,12 +1090,12 @@ void Xslt30Processor::transformFileToFile(const char* source,
 												source) :
 										NULL),
 								SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheet),NULL,
-								stringArray, objectArray);
-		if (size > 0) {
-			SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
-			SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
+								comboArrays.stringArray, comboArrays.objectArray);
+		if (comboArrays.stringArray!= NULL) {
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.stringArray);
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.objectArray);
 		}
-		
+		}
 	}
 
 	proc->checkAndCreateException(cppClass);

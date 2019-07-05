@@ -64,7 +64,12 @@ typedef struct {
 	    	bool isGlobal;
 	}MyException;
 
+typedef struct
+{
+    jobjectArray stringArray;
+    jobjectArray objectArray;
 
+}JParameters;
 
 
 /*! <code>SaxonApiException</code>. An exception thrown by the Saxon s9api API (Java). This is always a C++ wrapper for some other underlying exception in Java
@@ -603,6 +608,7 @@ static bool registerNativeMethods(JNIEnv* env, const char* className,
     return true;
 }
 
+
 	/* TODO: Remove use of this method.*/
 	const char* checkException(jobject cpp);
 
@@ -625,6 +631,9 @@ static bool registerNativeMethods(JNIEnv* env, const char* className,
     /*static JavaVM *jvm;*/
     
 protected:
+
+
+
 	jclass xdmAtomicClass;
 	jclass  versionClass;
 	jclass  procClass;
@@ -641,9 +650,16 @@ protected:
 	JNINativeMethod * nativeMethods;
 	std::vector<JNINativeMethod> nativeMethodVect; /*!< Vector of native methods defined by user */
 
+
+
 private:
 
+    
+
 	void applyConfigurationProperties();
+	// Saxon/C method for internal use
+    static JParameters createParameterJArray(std::map<std::string,XdmValue*> parameters, std::map<std::string,std::string> properties);
+
 };
 
 //===============================================================================================
