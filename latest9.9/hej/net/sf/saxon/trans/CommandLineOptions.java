@@ -258,11 +258,11 @@ public class CommandLineOptions {
             String name = (String) e.nextElement();
             String value = configOptions.getProperty(name);
             String fullName = "http://saxon.sf.net/feature/" + name;
-            Feature<?> f = Feature.byName(fullName);
-            if (f == null) {
-                throw new XPathException("Unknown configuration feature " + name);
-            }
-            try {
+            if (!name.startsWith("parserFeature?") && !name.startsWith("parserProperty?")) {
+                Feature<?> f = Feature.byName(fullName);
+                if (f == null) {
+                    throw new XPathException("Unknown configuration feature " + name);
+                }
                 Object typedValue;
                 if (f.type == Boolean.class) {
                     typedValue = Configuration.requireBoolean(name, value);
@@ -273,6 +273,8 @@ public class CommandLineOptions {
                 } else {
                     throw new XPathException("Property --" + name + " cannot be supplied as a string");
                 }
+            }
+            try {
                 processor.getUnderlyingConfiguration().setConfigurationProperty(fullName, value);
             } catch (IllegalArgumentException err) {
                 throw new XPathException("Incorrect value for --" + name + ": " + err.getMessage());
