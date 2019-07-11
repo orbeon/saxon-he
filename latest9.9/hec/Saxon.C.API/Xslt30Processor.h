@@ -81,7 +81,7 @@ public:
         * The file is parsed internall
         *  @param filename - The file name to which the templates are to be applied
         */
-    void setInitialMatchSelectionFile(const char * filename);
+    void setInitialMatchSelectionAsFile(const char * filename);
 
     /**
      * Set the output file of where the transformation result is sent
@@ -339,19 +339,77 @@ public:
      */
     XdmValue * applyTemplatesReturningValue(const char * stylesheetFilename);
 
-
+    //! Invoke a transformation by calling a named template and save result to file.
+    /** The results of calling the template are wrapped in a document node, which is then sent to the specified
+    * file destination. If setInitialTemplateParameters(std::Map, boolean) has been
+    * called, then the parameters supplied are made available to the called template (no error
+    * occurs if parameters are supplied that are not used).
+    * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
+    * @param templateName - The name of the initial template. This must match the name of a public named template in the stylesheet. If the value is null, the clark name for xsl:initial-template is used.
+    * @param outputfile - The file name where results will be stored,
+    */
     void callTemplateReturningFile(const char * stylesheetFilename, const char* templateName, const char* outfile);
 
+    //! Invoke a transformation by calling a named template and return result as a string.
+    /** The results of calling the template are wrapped in a document node, which is then serialized as a string.
+    * If setInitialTemplateParameters(std::Map, boolean) has been
+    * called, then the parameters supplied are made available to the called template (no error
+    * occurs if parameters are supplied that are not used).
+    * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
+    * @param templateName - the name of the initial template. This must match the name of a public named template in the stylesheet. If the value is null, the clark name for xsl:initial-template is used.
+    * @param outputfile - The file name where results will be stored,
+    */
     const char* callTemplateReturningString(const char * stylesheetFilename, const char* templateName);
 
+    //! Invoke a transformation by calling a named template and return result as a string.
+    /** The results of calling the template are wrapped in a document node, which is then returned as an XdmValue.
+    * If setInitialTemplateParameters(std::Map, boolean) has been
+    * called, then the parameters supplied are made available to the called template (no error
+    * occurs if parameters are supplied that are not used).
+    * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
+    * @param templateName - the name of the initial template. This must match the name of a public named template in the stylesheet. If the value is null, the clark name for xsl:initial-template is used.
+    * @param outputfile - The file name where results will be stored,
+    */
     XdmValue* callTemplateReturningValue(const char * stylesheetFilename, const char* templateName);
 
 
-    void callFunctionReturningFile(const char * stylesheetFilename, const char* functionName, const char* outfile);
 
-    const char * callFunctionReturningString(const char * stylesheetFilename, const char* functionName);
+    //! Call a public user-defined function in the stylesheet
+    /** Here we wrap the result in an XML document, and sending this document to a specified file
+    * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
+    * @param functionName - The name of the function to be called
+    * @param arguments - Pinter array of XdmValue object - he values of the arguments to be supplied to the function. These
+    *                    will be converted if necessary to the type as defined in the function signature, using
+    *                    the function conversion rules.
+    * @param argument_length - the Coutn of arguments objects in the array
+    * @param outputfile - The file name where results will be stored,
+    */
+    void callFunctionReturningFile(const char * stylesheetFilename, const char* functionName, XdmValue * arguments, int argument_length, const char* outfile);
 
-    XdmValue * callFunctionReturningValue(const char * stylesheetFilename, const char* functionName);
+
+    //! Call a public user-defined function in the stylesheet
+    /** Here we wrap the result in an XML document, and serialized this document to string value
+    * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
+    * @param functionName - The name of the function to be called
+    * @param arguments - Pinter array of XdmValue object - he values of the arguments to be supplied to the function. These
+    *                    will be converted if necessary to the type as defined in the function signature, using
+    *                    the function conversion rules.
+    * @param argument_length - the Coutn of arguments objects in the array
+    * @param outputfile - The file name where results will be stored,
+    */
+    const char * callFunctionReturningString(const char * stylesheetFilename, const char* functionName, XdmValue * arguments, int argument_length);
+
+    //! Call a public user-defined function in the stylesheet
+    /** Here we wrap the result in an XML document, and return the document as an XdmVale
+    * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
+    * @param functionName - The name of the function to be called
+    * @param arguments - Pinter array of XdmValue object - he values of the arguments to be supplied to the function. These
+    *                    will be converted if necessary to the type as defined in the function signature, using
+    *                    the function conversion rules.
+    * @param argument_length - the Coutn of arguments objects in the array
+    * @param outputfile - The file name where results will be stored,
+    */
+    XdmValue * callFunctionReturningValue(const char * stylesheetFilename, const char* functionName, XdmValue * arguments, int argument_length);
 
 
     void addPackages(const char ** fileNames, int length);

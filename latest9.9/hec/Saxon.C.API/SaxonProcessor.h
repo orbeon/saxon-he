@@ -662,7 +662,7 @@ private:
 	void applyConfigurationProperties();
 	// Saxon/C method for internal use
     static JParameters createParameterJArray(std::map<std::string,XdmValue*> parameters, std::map<std::string,std::string> properties);
-
+    static JobjectArray createJArray(XdmValue * values);
 };
 
 //===============================================================================================

@@ -308,8 +308,30 @@ void SaxonProcessor::applyConfigurationProperties(){
 }
 
 
-JParameters SaxonProcessor::createParameterJArray(std::map<std::string,XdmValue*> parameters, std::map<std::string,std::string> properties){
+  static jobjectArray createJArray(XdmValue * values, int length){
+    jobjectArray valueArray = NULL;
 
+    jclass xdmValueClass = lookForClass(SaxonProcessor::sxn_environ->env,
+                   				"java/lang/Object");
+
+
+    valueArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) length,
+                   					xdmValueClass, 0);
+
+    for (int i=0; i<length; i++) {
+
+        SaxonProcessor::sxn_environ->env->SetObjectArrayElement(valueArray, i,values[i]->getUnderlyingValue());
+    }
+
+    return valueArray;
+
+  }
+
+
+    static JParameters SaxonProcessor::createParameterJArray(std::map<std::string,XdmValue*> parameters, std::map<std::string,std::string> properties){
+
+		jobjectArray stringArray = NULL;
+		jobjectArray objectArray = NULL;
 		jclass objectClass = lookForClass(SaxonProcessor::sxn_environ->env,
 				"java/lang/Object");
 		jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env,
@@ -320,11 +342,8 @@ JParameters SaxonProcessor::createParameterJArray(std::map<std::string,XdmValue*
 		std::cerr<<"Properties size: "<<properties.size()<<std::endl;
 		std::cerr<<"Parameter size: "<<parameters.size()<<std::endl;
 #endif
-		JParameters comboArrays;
-		comboArrays.objectArray = NULL;
-		comboArrays.stringArray = NULL;
 		if (size > 0) {
-		    
+		    JParameters comboArrays;
 			comboArrays.objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 					objectClass, 0);
 			comboArrays.stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
@@ -376,10 +395,13 @@ JParameters SaxonProcessor::createParameterJArray(std::map<std::string,XdmValue*
 			 return comboArrays;
 
 		} else {
-		    return comboArrays;
+		    return NULL;
 		}
     }
 
+
+
+    static jobjectArray SaxonProcessor::createPropertyJArray(std::map<std::string,std::string> properties){}
 
 
 SaxonProcessor& SaxonProcessor::operator=( const SaxonProcessor& other ){
