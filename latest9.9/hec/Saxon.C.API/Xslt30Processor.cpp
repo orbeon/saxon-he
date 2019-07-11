@@ -113,6 +113,7 @@ XdmValue* Xslt30Processor::getParameter(const char* name) {
           it = parameters.find("sparam:"+std::string(name));
         if (it != parameters.end())
 	  return it->second;
+	  }
 	return NULL;
 }
 
@@ -551,7 +552,7 @@ XdmValue * Xslt30Processor::applyTemplatesAsValue(const char * stylesheetfile, c
 	}
 	return NULL;
 
-}
+}     
 
 
     void callFunctionReturningFile((const char * stylesheetFilename, const char* functionName, XdmValue * arguments, int argument_length, const char* outfile){
