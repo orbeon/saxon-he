@@ -65,6 +65,11 @@ struct xsltProcessor_object {
     XsltProcessor *xsltProcessor;
 };
 
+struct xslt30Processor_object {
+    zend_object std;
+    Xslt30Processor *xslt30Processor;
+};
+
 struct xqueryProcessor_object {
     zend_object std;
     XQueryProcessor *xqueryProcessor;
@@ -130,6 +135,7 @@ jobject JNICALL phpNativeCall
  //   PHP_METHOD(SaxonProcessor,  getXslMessages);
     PHP_METHOD(SaxonProcessor, setConfigurationProperty);
     PHP_METHOD(SaxonProcessor, newXsltProcessor);
+    PHP_METHOD(SaxonProcessor, newXslt30Processor);
     PHP_METHOD(SaxonProcessor, newXQueryProcessor);
     PHP_METHOD(SaxonProcessor, newXPathProcessor);
     PHP_METHOD(SaxonProcessor, newSchemaValidator);
@@ -165,6 +171,52 @@ jobject JNICALL phpNativeCall
     PHP_METHOD(XsltProcessor,  getErrorMessage);
     PHP_METHOD(XsltProcessor,  getExceptionCount);
     PHP_METHOD(XsltProcessor,  getXslMessages);
+
+    //PHP_METHOD(Xslt30Processor,  __construct);
+    PHP_METHOD(Xslt30Processor, callFunctionReturningValue);
+    PHP_METHOD(Xslt30Processor, callFunctionReturningString);
+    PHP_METHOD(Xslt30Processor, callFunctionReturningFile);
+    PHP_METHOD(Xslt30Processor, callTemplateReturningValue);
+    PHP_METHOD(Xslt30Processor, callTemplateReturningString);
+    PHP_METHOD(Xslt30Processor, callTemplateReturningFile);
+    PHP_METHOD(Xslt30Processor, applyTemplateReturningValue);
+    PHP_METHOD(Xslt30Processor, applyTemplateReturningString);
+    PHP_METHOD(Xslt30Processor, applyTemplateReturningFile);
+    PHP_METHOD(Xslt30Processor, addPackages);
+    PHP_METHOD(Xslt30Processor,setInitialTemplateParameters);
+    PHP_METHOD(Xslt30Processor, setInitialMatchSelection);
+    PHP_METHOD(Xslt30Processor, setInitialMatchSelectionAsFile);
+    PHP_METHOD(Xslt30Processor, setGlobalContextItem);
+    PHP_METHOD(Xslt30Processor, setGlobalContextFromFile);
+    PHP_METHOD(Xslt30Processor,  __destruct);
+    PHP_METHOD(Xslt30Processor,  transformFileToFile);
+    PHP_METHOD(Xslt30Processor,  transformFileToString);
+    PHP_METHOD(Xslt30Processor,  transformFileToValue);
+    PHP_METHOD(Xslt30Processor,  transformToString);
+    PHP_METHOD(Xslt30Processor,  transformToValue);
+    PHP_METHOD(Xslt30Processor,  transformToFile);
+    PHP_METHOD(Xslt30Processor, compileFromFile);
+    PHP_METHOD(Xslt30Processor, compileFromValue);
+    PHP_METHOD(Xslt30Processor, compileFromString);
+    PHP_METHOD(Xslt30Processor, compileFromFileAndSave);
+    PHP_METHOD(Xslt30Processor, compileFromStringAndSave)
+    PHP_METHOD(Xslt30Processor,  setOutputFile);
+    PHP_METHOD(Xslt30Processor,  setSourceFromFile);
+    PHP_METHOD(Xslt30Processor,  setSourceFromXdmValue);
+    PHP_METHOD(Xslt30Processor,  setJustInTimeCompilation);
+    PHP_METHOD(Xslt30Processor,  setParameter);
+    PHP_METHOD(Xslt30Processor,  setProperty);
+    PHP_METHOD(Xslt30Processor,  clearParameters);
+    PHP_METHOD(Xslt30Processor,  clearProperties);
+    PHP_METHOD(Xslt30Processor,  exceptionClear);
+    PHP_METHOD(Xslt30Processor,  exceptionOccurred);
+    PHP_METHOD(Xslt30Processor,  getErrorCode);
+    PHP_METHOD(Xslt30Processor,  getErrorMessage);
+    PHP_METHOD(Xslt30Processor,  getExceptionCount);
+    PHP_METHOD(Xslt30Processor,  getXslMessages);
+
+
+
 
    // PHP_METHOD(XQueryProcesor,  __construct);
     PHP_METHOD(XQueryProcesor,  __destruct);
