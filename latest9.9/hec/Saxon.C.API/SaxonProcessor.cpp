@@ -308,7 +308,7 @@ void SaxonProcessor::applyConfigurationProperties(){
 }
 
 
-  jobjectArray SaxonProcessor::createJArray(XdmValue * values, int length){
+  jobjectArray SaxonProcessor::createJArray(XdmValue ** values, int length){
     jobjectArray valueArray = NULL;
 
     jclass xdmValueClass = lookForClass(SaxonProcessor::sxn_environ->env,
@@ -328,10 +328,10 @@ void SaxonProcessor::applyConfigurationProperties(){
   }
 
 
-    static JParameters SaxonProcessor::createParameterJArray(std::map<std::string,XdmValue*> parameters, std::map<std::string,std::string> properties){
-
-		jobjectArray stringArray = NULL;
-		jobjectArray objectArray = NULL;
+JParameters SaxonProcessor::createParameterJArray(std::map<std::string,XdmValue*> parameters, std::map<std::string,std::string> properties){
+		JParameters comboArrays;
+		comboArrays.stringArray = NULL;
+		comboArrays.objectArray = NULL;
 		jclass objectClass = lookForClass(SaxonProcessor::sxn_environ->env,
 				"java/lang/Object");
 		jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env,
@@ -343,7 +343,7 @@ void SaxonProcessor::applyConfigurationProperties(){
 		std::cerr<<"Parameter size: "<<parameters.size()<<std::endl;
 #endif
 		if (size > 0) {
-		    JParameters comboArrays;
+		    
 			comboArrays.objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 					objectClass, 0);
 			comboArrays.stringArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
@@ -395,13 +395,9 @@ void SaxonProcessor::applyConfigurationProperties(){
 			 return comboArrays;
 
 		} else {
-		    return NULL;
+		    return comboArrays;
 		}
     }
-
-
-
-    static jobjectArray SaxonProcessor::createPropertyJArray(std::map<std::string,std::string> properties){}
 
 
 SaxonProcessor& SaxonProcessor::operator=( const SaxonProcessor& other ){
