@@ -22,6 +22,7 @@ import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.tree.util.NamespaceIterator;
 import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.type.*;
+import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.Whitespace;
 
 import java.util.Arrays;
@@ -784,5 +785,34 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
             return false;
         }
     }
+
+    public boolean isIdref() {
+        return isIdRefNode(this);
+    }
+
+    static boolean isIdRefNode(NodeImpl node) {
+        SchemaType type = node.getSchemaType();
+        try {
+            if (type.isIdRefType()) {
+                if (type == BuiltInAtomicType.IDREF || type == BuiltInListType.IDREFS) {
+                    return true;
+                }
+                try {
+                    for (AtomicValue av : node.atomize()) {
+                        if (av.getItemType().isIdRefType()) {
+                            return true;
+                        }
+                    }
+                } catch (XPathException err) {
+                    // no action
+                }
+            }
+        } catch (MissingComponentException e) {
+            return false;
+        }
+        return false;
+    }
+
+
 }
 

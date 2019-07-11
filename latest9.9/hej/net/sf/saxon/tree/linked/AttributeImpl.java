@@ -106,11 +106,7 @@ public class AttributeImpl extends NodeImpl {
         if ((alist.getProperties(getSiblingPosition()) & ReceiverOptions.IS_IDREF) != 0) {
             return true;
         }
-        try {
-            return getSchemaType().isIdRefType();
-        } catch (MissingComponentException e) {
-            return false;
-        }
+        return ElementImpl.isIdRefNode(this);
     }
 
     /**
