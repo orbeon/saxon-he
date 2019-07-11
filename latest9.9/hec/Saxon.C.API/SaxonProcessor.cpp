@@ -308,7 +308,7 @@ void SaxonProcessor::applyConfigurationProperties(){
 }
 
 
-  static jobjectArray createJArray(XdmValue * values, int length){
+  jobjectArray SaxonProcessor::createJArray(XdmValue * values, int length){
     jobjectArray valueArray = NULL;
 
     jclass xdmValueClass = lookForClass(SaxonProcessor::sxn_environ->env,
