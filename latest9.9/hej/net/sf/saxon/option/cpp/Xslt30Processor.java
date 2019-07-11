@@ -16,7 +16,6 @@ import net.sf.saxon.lib.Validation;
 import net.sf.saxon.s9api.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.trans.packages.PackageLibrary;
-import sun.security.krb5.internal.crypto.Des;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.SourceLocator;
@@ -240,6 +239,7 @@ public class Xslt30Processor extends SaxonCAPI {
         try {
             clearExceptions();
             XsltCompiler compiler = processor.newXsltCompiler();
+            setStaticParametersFromArray(compiler, sparams, values);
             if (jitCompilation) {
                 compiler.setJustInTimeCompilation(jitCompilation);
             }
@@ -270,6 +270,7 @@ public class Xslt30Processor extends SaxonCAPI {
     public XsltExecutable createStylesheetFromString(String cwd, String str, String[] sparams, Object[] values) throws SaxonApiException {
         clearExceptions();
         XsltCompiler compiler = processor.newXsltCompiler();
+        setStaticParametersFromArray(compiler, sparams, values);
         if (jitCompilation) {
             compiler.setJustInTimeCompilation(jitCompilation);
         }
@@ -371,7 +372,6 @@ public class Xslt30Processor extends SaxonCAPI {
     }
 
 
-
     private Xslt30Transformer getXslt30Transformer(String cwd, String stylesheet) throws SaxonApiException {
         Xslt30Transformer transformer = null;
         if (stylesheet == null && executable != null) {
@@ -409,16 +409,16 @@ public class Xslt30Processor extends SaxonCAPI {
     }
 
 
-    public XdmValue applyTemplateToValue(String cwd, Object sourceObj, String stylesheet, String[] params, Object[] values) throws SaxonApiException {
+    public XdmValue applyTemplatesReturningValue(String cwd, Object sourceObj, String stylesheet, String[] params, Object[] values) throws SaxonApiException {
 
         Map<String, Object> paramsMap = convertArraysToMap(params, values);
         Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
 
         applyXsltTransformerProperties(this, cwd, processor, transformer, paramsMap);
         Destination xdmResult;
-        if(returnXdmValue) {
+        if (returnXdmValue) {
             xdmResult = new RawDestination();
-        }else {
+        } else {
             xdmResult = new XdmDestination();
         }
         if (sourceObj instanceof String) {
@@ -444,19 +444,26 @@ public class Xslt30Processor extends SaxonCAPI {
     }
 
     private XdmValue getXdmValue(Destination xdmResult) {
-        if(returnXdmValue) {
-            return ((RawDestination)xdmResult).getXdmValue();
+        if (returnXdmValue) {
+            return ((RawDestination) xdmResult).getXdmValue();
         } else {
-            return ((XdmDestination)xdmResult).getXdmNode();
+            return ((XdmDestination) xdmResult).getXdmNode();
         }
     }
 
-    public void applyTemplateToFile(String cwd, Object sourceObj, String stylesheet, String outFilename, String[] params, Object[] values) throws SaxonApiException {
+    public void applyTemplatesReturningFile(String cwd, Object sourceObj, String stylesheet, String outFilename, String[] params, Object[] values) throws SaxonApiException {
+
+        Map<String, Object> paramsMap = convertArraysToMap(params, values);
 
         if (outFilename != null) {
             serializer = resolveOutputFile(processor, cwd, outFilename);
+        } else if (paramsMap.containsKey("o")) {
+            String outfile = (String) paramsMap.get("o");
+            serializer = resolveOutputFile(processor, cwd, outfile);
+        } else if (serializer == null) {
+            throw new SaxonApiException("Output file not set for this transformation");
         }
-        Map<String, Object> paramsMap = convertArraysToMap(params, values);
+
         Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
 
         applyXsltTransformerProperties(this, cwd, processor, transformer, paramsMap);
@@ -481,7 +488,7 @@ public class Xslt30Processor extends SaxonCAPI {
 
     }
 
-    public String applyTemplateToString(String cwd, Object sourceObj, String stylesheet, String[] params, Object[] values) throws SaxonApiException {
+    public String applyTemplatesReturningString(String cwd, Object sourceObj, String stylesheet, String[] params, Object[] values) throws SaxonApiException {
 
         Map<String, Object> paramsMap = convertArraysToMap(params, values);
         Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
@@ -528,24 +535,27 @@ public class Xslt30Processor extends SaxonCAPI {
     }
 
 
-    public void callFunctionToFile(String cwd, String stylesheet, String cFuncName, String outFilename, Objects[] arguments, String[] params, Object[] values) throws SaxonApiException {
+    public void callFunctionReturningFile(String cwd, String stylesheet, String cFuncName, String outFilename, Objects[] arguments, String[] params, Object[] values) throws SaxonApiException {
         QName qname = QName.fromClarkName(cFuncName);
         Map<String, Object> paramsMap = convertArraysToMap(params, values);
         Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
-        Serializer serializer1;
+
         if (outFilename != null) {
-            serializer1 = resolveOutputFile(processor, cwd, outFilename);
+            serializer = resolveOutputFile(processor, cwd, outFilename);
+        } else if (paramsMap.containsKey("o")) {
+            String outfile = (String) paramsMap.get("o");
+            serializer = resolveOutputFile(processor, cwd, outfile);
         } else {
             throw new SaxonApiException("File name for CallFunction has not been set");
         }
 
         applyXsltTransformerProperties(this, cwd, processor, transformer, paramsMap);
 
-        transformer.callFunction(qname, getArguments(arguments), serializer1);
+        transformer.callFunction(qname, getArguments(arguments), serializer);
 
     }
 
-    public XdmValue callFunctionToValue(String cwd, String stylesheet, String cFuncName, Object[] arguments, String[] params, Object[] values) throws SaxonApiException {
+    public XdmValue callFunctionReturningValue(String cwd, String stylesheet, String cFuncName, Object[] arguments, String[] params, Object[] values) throws SaxonApiException {
         QName qname = QName.fromClarkName(cFuncName);
         Map<String, Object> paramsMap = convertArraysToMap(params, values);
         Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
@@ -556,7 +566,7 @@ public class Xslt30Processor extends SaxonCAPI {
         return result;
     }
 
-    public String callFunctionToString(String cwd, String stylesheet, String cFuncName, Object[] arguments, String[] params, Object[] values) throws SaxonApiException {
+    public String callFunctionReturningString(String cwd, String stylesheet, String cFuncName, Object[] arguments, String[] params, Object[] values) throws SaxonApiException {
         QName qname = QName.fromClarkName(cFuncName);
         Map<String, Object> paramsMap = convertArraysToMap(params, values);
         Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
@@ -571,9 +581,9 @@ public class Xslt30Processor extends SaxonCAPI {
     }
 
 
-    public void callTemplateToFile(String cwd, String stylesheet, String templateName, String outFilename, String[] params, Object[] values) throws SaxonApiException {
+    public void callTemplateReturningFile(String cwd, String stylesheet, String templateName, String outFilename, String[] params, Object[] values) throws SaxonApiException {
         QName qname = null;
-        if(templateName != null) {
+        if (templateName != null) {
             qname = QName.fromClarkName(templateName);
         }
         Map<String, Object> paramsMap = convertArraysToMap(params, values);
@@ -581,6 +591,9 @@ public class Xslt30Processor extends SaxonCAPI {
 
         if (outFilename != null) {
             serializer = resolveOutputFile(processor, cwd, outFilename);
+        } else if (paramsMap.containsKey("o")) {
+            String outfile = (String) paramsMap.get("o");
+            serializer = resolveOutputFile(processor, cwd, outfile);
         } else {
             throw new SaxonApiException("File name for CallFunction has not been set");
         }
@@ -590,20 +603,20 @@ public class Xslt30Processor extends SaxonCAPI {
         transformer.callTemplate(qname, serializer);
     }
 
-    public XdmValue callTemplateToValue(String cwd, Object sourceObj, String stylesheet, String clarkName, String[] params, Object[] values) throws SaxonApiException {
+    public XdmValue callTemplateReturningValue(String cwd, String stylesheet, String clarkName, String[] params, Object[] values) throws SaxonApiException {
         QName qname = null;
-        if(clarkName != null) {
+        if (clarkName != null) {
             qname = QName.fromClarkName(clarkName);
         }
         Map<String, Object> paramsMap = convertArraysToMap(params, values);
         Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
 
-        setsource(cwd, transformer, sourceObj, paramsMap);
+        //setsource(cwd, transformer, sourceObj, paramsMap);
         applyXsltTransformerProperties(this, cwd, processor, transformer, paramsMap);
         Destination xdmResult;
-        if(returnXdmValue) {
+        if (returnXdmValue) {
             xdmResult = new RawDestination();
-        }else {
+        } else {
             xdmResult = new XdmDestination();
         }
 
@@ -637,9 +650,9 @@ public class Xslt30Processor extends SaxonCAPI {
 
     }
 
-    public String callTemplateToString(String cwd, Object sourceObj, String stylesheet, String clarkName, String[] params, Object[] values) throws SaxonApiException {
+    public String callTemplateReturningString(String cwd, String stylesheet, String clarkName, String[] params, Object[] values) throws SaxonApiException {
         QName qname = null;
-        if(clarkName != null) {
+        if (clarkName != null) {
             qname = QName.fromClarkName(clarkName);
         }
         Map<String, Object> paramsMap = convertArraysToMap(params, values);
@@ -647,7 +660,7 @@ public class Xslt30Processor extends SaxonCAPI {
         StringWriter sw = new StringWriter();
         serializer = processor.newSerializer(sw);
 
-        setsource(cwd, transformer, sourceObj, paramsMap);
+        //setsource(cwd, transformer, sourceObj, paramsMap);
 
         applyXsltTransformerProperties(this, cwd, processor, transformer, paramsMap);
 
@@ -685,13 +698,13 @@ public class Xslt30Processor extends SaxonCAPI {
             } else if (paramsMap.containsKey("o")) {
                 String outfile = (String) paramsMap.get("o");
                 serializer = resolveOutputFile(processor, cwd, outfile);
+            } else if (serializer == null) {
+                throw new SaxonApiException("Output file not set for this transformation");
             }
 
             applyXsltTransformerProperties(this, cwd, processor, transformer, paramsMap);
 
-            if (serializer == null) {
-                SaxonCException ex = new SaxonCException("Output file not set for this transformation");
-            }
+
             if (sourceFilename == null && doc != null) {
                 transformer.setGlobalContextItem(doc);
             } else if (sourceFilename != null) {
@@ -841,20 +854,20 @@ public class Xslt30Processor extends SaxonCAPI {
 
             }
 
-            if(map.containsKey("tunnel")) {
+            if (map.containsKey("tunnel")) {
                 valuei = map.get("tunnel");
-                if(valuei instanceof Boolean){
-                    tunnel = (Boolean)valuei;
+                if (valuei instanceof Boolean) {
+                    tunnel = (Boolean) valuei;
                 }
             }
 
-            if(map.containsKey("outvalue")){
+            if (map.containsKey("outvalue")) {
                 //Set if the return type of callTemplate, applyTemplate and transform methods is to return XdmValue,
                 //otherwise return XdmNode object with root Document node
                 valuei = map.get("outvalue");
-                if(valuei instanceof Boolean){
+                if (valuei instanceof Boolean) {
                     api.returnXdmValue = (boolean) valuei;
-                } else if(valuei instanceof String && valuei.equals("yes")) {
+                } else if (valuei instanceof String && valuei.equals("yes")) {
                     api.returnXdmValue = true;
                 }
 
@@ -866,7 +879,7 @@ public class Xslt30Processor extends SaxonCAPI {
             api.serializer.setOutputProperties(api.props);
         }
 
-        if(!api.initialTemplateParameters.isEmpty()) {
+        if (!api.initialTemplateParameters.isEmpty()) {
             transformer.setInitialTemplateParameters(api.initialTemplateParameters, tunnel);
         }
 
@@ -903,9 +916,9 @@ public class Xslt30Processor extends SaxonCAPI {
 
             this.applyXsltTransformerProperties(this, cwd, processor, transformer, paramsMap);
             Destination destination;
-            if(returnXdmValue) {
+            if (returnXdmValue) {
                 destination = new RawDestination();
-            }else {
+            } else {
                 destination = new XdmDestination();
             }
 
@@ -1059,8 +1072,8 @@ public class Xslt30Processor extends SaxonCAPI {
         }
 
 
-        XdmValue resultV = cpp.callFunctionToValue(cwd2, "xsl/fooExFunc.xsl", "{http://www.saxonica.com/myfunction}is-licensed-EE", null, null, null);
-        String resultCF = cpp.callFunctionToString(cwd2, "xsl/fooExFunc.xsl", "{http://www.saxonica.com/myfunction}is-licensed-EE", null, new String[]{"!omit-xml-declaration"}, new Object[]{"yes"});
+        XdmValue resultV = cpp.callFunctionReturningValue(cwd2, "xsl/fooExFunc.xsl", "{http://www.saxonica.com/myfunction}is-licensed-EE", null, null, null);
+        String resultCF = cpp.callFunctionReturningString(cwd2, "xsl/fooExFunc.xsl", "{http://www.saxonica.com/myfunction}is-licensed-EE", null, new String[]{"!omit-xml-declaration"}, new Object[]{"yes"});
 
         System.out.println("Running callFunction is-licensed-EE= " + resultV.toString());
         System.out.println("Running callFunction is-licensed-EE= " + resultCF);
