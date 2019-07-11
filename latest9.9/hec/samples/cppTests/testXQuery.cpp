@@ -83,7 +83,7 @@ void testxQueryError2(SaxonProcessor * processor, XQueryProcessor * queryProc){
     queryProc->setProperty("qs", "<out>{count(/out/person)}<out>");
 
     const char * result = queryProc->runQueryToString();
-    if(result != NULL){
+   if(result != NULL){
     	cout<<"Result :"<<result<<endl;
     } else {
 	const char * message = queryProc->getErrorMessage(0);
@@ -156,7 +156,7 @@ cout<<"Test5: PrimitiveTypeName of  value2="<<value2->getPrimitiveTypeName()<<en
 
 
 
-cout<<"XdmValue size="<<val2->size()<<", "<<(val2->itemAt(0))->getStringValue(processor)<<endl;
+cout<<"XdmValue size="<<val2->size()<<", "<<(val2->itemAt(0))->getStringValue()<<endl;
 
 	if(val2 != NULL && ((XdmItem*)val2->itemAt(0))->isAtomic()){
 		cout<<"Test3: Result is atomic"<<endl;

@@ -21,7 +21,7 @@ void testXPathSingle(SaxonProcessor * processor, XPathProcessor * xpath){
 		 printf("result is null \n");
 	} else {
 		cout<<"Number of items="<<result->size()<<endl;
-		cout<<"String Value of result="<<result->getStringValue(processor)<<endl;
+		cout<<"String Value of result="<<result->getStringValue()<<endl;
 	}
 	delete result;
 
@@ -59,7 +59,7 @@ void testXPathValues(SaxonProcessor * processor, XPathProcessor * xpath){
 				cout<<"Item at position "<<i<<" should not be null"<<endl;
 				break;
 			}
-			cout<<"Item at "<<i<<" ="<<itemi->getStringValue(processor)<<endl;		
+			cout<<"Item at "<<i<<" ="<<itemi->getStringValue()<<endl;		
 		}
 	}
 	delete resultValues;
@@ -132,7 +132,7 @@ void testXPathOnFile(SaxonProcessor * processor, XPathProcessor * xpath){
 				cout<<"Item at position "<<i<<" should not be null"<<endl;
 				break;
 			}
-			cout<<"Item at "<<i<<" ="<<itemi->getStringValue(processor)<<endl;		
+			cout<<"Item at "<<i<<" ="<<itemi->getStringValue()<<endl;		
 		}
 	}
 	delete resultValues;

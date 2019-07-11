@@ -85,7 +85,7 @@ void testValidator4a(SaxonProcessor * processor, SchemaValidator * val){
   processor->exceptionClear();
   val->clearParameters(true);
   val->clearProperties();
-  cout<<endl<<"Test 4: Validate source file with schema file. i.e. family.xml and family.xsd"<<endl;	
+  cout<<endl<<"Test 4: Validate source file with schema file. i.e. family.xml and family.xsd to XdmNode"<<endl;	
 
 	val->registerSchemaFromFile("family-ext.xsd");
        //val->registerSchema("family.xsd");
@@ -93,7 +93,7 @@ void testValidator4a(SaxonProcessor * processor, SchemaValidator * val){
 	XdmNode * node = val->validateToNode("family.xml");
 	if(node != NULL) {
 		if(!val->exceptionOccurred()) {
-			cout<<endl<<"Doc1 is OK"<<endl;
+			cout<<endl<<"Doc1 is OK:"<<node->toString()<<endl;
 	 	} else {
 			cout<<endl<<"Error: Doc reported as valid!"<<endl;
 		}

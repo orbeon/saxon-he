@@ -21,13 +21,24 @@ jobject JNICALL cppNativeCall
 
 
 	JNIEnv *senv = SaxonProcessor::sxn_environ->env;
-	if(funcName) {}
+	
+	if(funcName) {
+		
+        }
   	std::cerr<<"Testing CPP extension function"<<std::endl;
-	int argLength = 0;
+	jint argLength = 0;
 	//XdmItem ** params[] = NULL;
+	if(senv == NULL) {
+		std::cerr<<"senv is null"<<std::endl;
+	}
 	if(arguments != NULL && argTypes) {
-		argLength = (int)senv->GetArrayLength(arguments);
-		//params = new XdmItem[argLength];
+		argLength  = senv->GetArrayLength(arguments);
+			
+	//params = new XdmItem[argLength];
+	}
+	std::cerr<<"argLength"<<argLength<<std::endl;
+	if(argLength>2){
+		return NULL;
 	}
 	XdmItem ** params = new XdmItem*[argLength];
 
@@ -104,9 +115,11 @@ jobject JNICALL cppNativeCall
 					break;
 			}
 			senv->ReleaseStringUTFChars(argType, str);
+
 		}
 
-
+		senv->DeleteLocalRef(argType);
+		senv->DeleteLocalRef(argObj);
 }
 	return SaxonProcessor::sxn_environ->env->NewStringUTF("result from extension!!");
 }

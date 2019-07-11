@@ -50,22 +50,26 @@ void testTransformToString1(XsltProcessor * trans){
 void testTransformToStringExtensionFunc(SaxonProcessor * processor, XsltProcessor * trans){
 	
   cout<<endl<<"Test: TransformToStringExtensionFunc:"<<endl;
-trans->setProperty("extc", "/home/ond1/work/new-svn/latest9.8-hec/hec/samples/cppTests/cppExtensionFunction");
+trans->setProperty("extc", "home/ond1/work/svn/latest9.9-saxonc/samples/cppTests/cppExtensionFunction");
 
-processor->registerNativeMethods(SaxonProcessor::sxn_environ->env, "com/saxonica/functions/extfn/cpp/NativeCall",
+bool nativeFound = processor->registerNativeMethods(SaxonProcessor::sxn_environ->env, "com/saxonica/functions/extfn/cpp/NativeCall",
     cppMethods, sizeof(cppMethods) / sizeof(cppMethods[0]));
-
+if(nativeFound) {
     const char * output = trans->transformFileToString("cat.xml", "testExtension.xsl");
+//XdmValue* output = trans->transformFileToValue("cat.xml", "testExtension.xsl");
    if(output == NULL) {
+	SaxonProcessor::sxn_environ->env->ExceptionDescribe();
       printf("result is null \n");
 
     }else {
-      printf("%s", output);
+      //printf("%s", output);
       printf("result is OK \n");
     }
       fflush(stdout);
 	delete output;
-
+} else{
+    printf("native Class not foun");
+}
 }
 
 
@@ -85,7 +89,7 @@ void testTransformToString2(SaxonProcessor * processor, XsltProcessor * trans){
 
     }
 
-     trans->setSourceFromXdmValue((XdmItem*)input);
+     trans->setSourceFromXdmNode((XdmNode*)input);
     const char * output = trans->transformFileToString(NULL, "test.xsl");
    if(output == NULL) {
       printf("result is null \n");
@@ -114,7 +118,7 @@ void testTransformToString2a(SaxonProcessor * processor, XsltProcessor * trans){
 
     }
 
-     trans->setSourceFromXdmValue((XdmItem*)input);
+     trans->setSourceFromXdmNode((XdmNode*)input);
     const char * output = trans->transformFileToString(NULL, "test-error.xsl");
    if(output == NULL) {
       printf("result is null \n");
@@ -146,7 +150,7 @@ void testTransformToString2b(SaxonProcessor * processor, XsltProcessor * trans){
 
     }
 
-     trans->setSourceFromXdmValue((XdmItem*)input);
+     trans->setSourceFromXdmNode((XdmNode*)input);
     const char * output = trans->transformFileToString(NULL, "test-error.xsl");
    if(output == NULL) {
       printf("result is null \nCheck For errors:");
@@ -185,7 +189,7 @@ void testTransformToString3(SaxonProcessor * processor, XsltProcessor * trans){
 
     }
 
-    trans->setSourceFromXdmValue((XdmItem*)inputi);
+    trans->setSourceFromXdmNode((XdmNode*)inputi);
     const char * output = trans->transformFileToString(NULL, "test.xsl");
    if(output == NULL) {
       printf("result is null \n");
@@ -223,7 +227,7 @@ void testTransformToString4(SaxonProcessor * processor, XsltProcessor * trans){
 
     }
 
-    trans->setSourceFromXdmValue((XdmItem*)input);
+    trans->setSourceFromXdmNode((XdmNode*)input);
     const char * output = trans->transformFileToString(NULL, "test2.xsl");
    if(output == NULL) {
       printf("result is null \n");
@@ -244,7 +248,7 @@ cout<<endl<<"Test: testTransfromFromstring:"<<endl;
     XdmNode * input = processor->parseXmlFromString("<out><person>text1</person><person>text2</person><person>text3</person></out>");
 
    trans->compileFromString("<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>       <xsl:param name='values' select='(2,3,4)' /><xsl:output method='xml' indent='yes' /><xsl:template match='*'><output><xsl:for-each select='$values' ><out><xsl:value-of select='. * 3'/></out></xsl:for-each></output></xsl:template></xsl:stylesheet>");
-trans->setSourceFromXdmValue((XdmItem*)input);
+trans->setSourceFromXdmNode((XdmNode*)input);
  const char * output = trans->transformToString();
    if(output == NULL) {
       printf("result is null \n");
@@ -268,7 +272,7 @@ cout<<endl<<"Test: testTransfromFromstring2-Error:"<<endl;
     XdmNode * input = processor->parseXmlFromString("<out><person>text1</person><person>text2</person><person>text3</person></out>");
 
    trans->compileFromString("<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>       <xsl:param name='values' select='(2,3,4)' /><xsl:output method='xml' indent='yes' /><xsl:template match='*'><output><xsl:for-each select='$values' ><out><xsl:value-of select='. * 3'/></out><xsl:for-each></output></xsl:template><xsl:stylesheet>");
-trans->setSourceFromXdmValue((XdmItem*)input);
+trans->setSourceFromXdmNode((XdmNode*)input);
  const char * output = trans->transformToString();
   if(output == NULL) {
       printf("result is null \nCheck For errors:\n");
@@ -300,7 +304,7 @@ ostringstream name;
 		name<<"value"<<i;
 		
 		XdmValue * values = (XdmValue*)processor->parseXmlFromString(valStr.str().c_str());
-		//cout<<"Name:"<<name.str()<<", Value:"<<values->getHead()->getStringValue(processor)<<endl;
+		//cout<<"Name:"<<name.str()<<", Value:"<<values->getHead()->getStringValue()<<endl;
 		trans->setParameter(name.str().c_str(), values);
 		test.str("");
 		valStr.str("");
@@ -310,7 +314,7 @@ ostringstream name;
 	std::map<std::string,XdmValue*> parMap = trans->getParameters();
 	if(parMap.size()>0) {
 cout<<"Parameter size: "<<parMap.size()<<endl;
-	cout<<"Parameter size: "<<parMap.size()<<endl;//", Value:"<<trans->getParameters()["value0"]->getHead()->getStringValue(processor)<<endl;
+	cout<<"Parameter size: "<<parMap.size()<<endl;//", Value:"<<trans->getParameters()["value0"]->getHead()->getStringValue()<<endl;
 ostringstream name1;
 	for(int i =0; i < 10;i++){
 		name1<<"param:value"<<i;
@@ -319,7 +323,7 @@ ostringstream name1;
 		if(valuei != NULL ){
 			cout<<name1.str();
 			if(valuei->itemAt(0) != NULL)
-				cout<<"= "<<valuei->itemAt(0)->getStringValue(processor);
+				cout<<"= "<<valuei->itemAt(0)->getStringValue();
 			cout<<endl;
 		}
 		name1.str("");
@@ -359,7 +363,7 @@ ostringstream name1;
 		if(valuei != NULL ){
 			cout<<name1.str();
 			if(valuei->itemAt(0) != NULL)
-				cout<<"= "<<valuei->itemAt(0)->getStringValue(processor);
+				cout<<"= "<<valuei->itemAt(0)->getStringValue();
 			cout<<endl;
 		}
 		} catch(const std::out_of_range& oor) {
@@ -462,7 +466,7 @@ void exampleSimple3(SaxonProcessor * saxonProc, XsltProcessor  *proc){
 			cout<<"xdmNode is null'"<<endl;
 			return;	
 		}            
-		proc->setSourceFromXdmValue((XdmItem*)xdmNode);
+		proc->setSourceFromXdmNode((XdmNode*)xdmNode);
 		cout<<"end of exampleSimple3"<<endl;
 		proc->clearParameters(true);
 		proc->clearProperties();
@@ -522,7 +526,7 @@ void xmarkTest1(XsltProcessor  *proc){
 
         proc->setJustInTimeCompilation(true);
 
-        XdmNode *result = proc->transformFileToValue("xmark100k.xml", "q12.xsl");
+        XdmValue *result = proc->transformFileToValue("xmark100k.xml", "q12.xsl");
 		if(result != NULL) {
 			cout<<"XdmNode returned"<<endl;
 		} else {
@@ -543,7 +547,7 @@ void xmarkTest1(XsltProcessor  *proc){
  		cout<<"XMarkbench mark test q12.xsl (JIT=true):"<<endl;
 
 
-         XdmNode *result = proc->transformFileToValue("xmark100k.xml", "q12.xsl");
+         XdmValue *result = proc->transformFileToValue("xmark100k.xml", "q12.xsl");
  		if(result != NULL) {
  			cout<<"XdmNode returned"<<endl;
  		} else {
@@ -558,12 +562,12 @@ void xmarkTest1(XsltProcessor  *proc){
   }
 
 /* XMarkbench mark test q12.xsl with just-in-time=true*/
-void exampleSimple1(XsltProcessor  *proc){
+void exampleSimple_xmark(XsltProcessor  *proc){
 		cout<<"XMarkbench mark test q12.xsl:"<<endl;
 
         proc->setJustInTimeCompilation(true);
 
-        XdmNode *result = proc->transformFileToValue("xmark100k.xml", "q12.xsl");
+        XdmValue *result = proc->transformFileToValue("xmark100k.xml", "q12.xsl");
 		if(result != NULL) {
 			cout<<"XdmNode returned"<<endl;
 		} else {
@@ -643,8 +647,9 @@ int main()
    processor->setConfigurationProperty("http://saxon.sf.net/feature/generateByteCode","false");
 
     XsltProcessor * trans = processor->newXsltProcessor();
-   exampleSimple1Err(trans);
-   exampleSimple1(trans);
+   /*exampleSimple1Err(trans);
+    exampleSimple1(trans);
+    exampleSimple_xmark(trans);
     exampleSimple2(trans);
     exampleSimple3(processor, trans);
 
@@ -678,7 +683,7 @@ int main()
 
     xmarkTest1(trans);
 
-    xmarkTest2(trans)
+    xmarkTest2(trans);*/
 
    //Available in PE and EE
    testTransformToStringExtensionFunc(processor, trans);
