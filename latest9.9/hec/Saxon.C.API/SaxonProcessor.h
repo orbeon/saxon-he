@@ -32,6 +32,7 @@
 #include "SaxonCGlue.h"
 #include "SaxonCXPath.h"
 #include "XsltProcessor.h"
+#include "Xslt30Processor.h"
 #include "XQueryProcessor.h"
 #include "XPathProcessor.h"
 #include "SchemaValidator.h"
@@ -39,6 +40,7 @@
 //#include "com_saxonica_functions_extfn_PhpCall_PhpFunctionCall.h"
 
 class XsltProcessor;
+class Xslt30Processor;
 class XQueryProcessor;
 class XPathProcessor;
 class SchemaValidator;
@@ -292,6 +294,7 @@ private:
  */
 class SaxonProcessor {
 friend class XsltProcessor;
+friend class Xslt30Processor;
 friend class XQueryProcessor;
 friend class SchemaValidator;
 friend class XPathProcessor;
