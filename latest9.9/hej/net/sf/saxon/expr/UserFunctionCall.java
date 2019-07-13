@@ -504,8 +504,6 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
         function.callUpdating(actualArgs, c2, pul);
     }
 
-    private static int depth = 0;
-
     /**
      * This is the method that actually does the function call (in pull mode)
      *
@@ -552,12 +550,17 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
         }
     }
 
-    private void requestTailCall(XPathContext context, Sequence<?>[] actualArgs) {
+    private void requestTailCall(XPathContext context, Sequence<?>[] actualArgs) throws XPathException {
         if (bindingSlot >= 0) {
             TailCallLoop.TailCallComponent info = new TailCallLoop.TailCallComponent();
             Component target = getTargetComponent(context);
             info.component = target;
             info.function = (UserFunction) target.getActor();
+            if (target.isHiddenAbstractComponent()) {
+                throw new XPathException("Cannot call an abstract function (" +
+                                                 name.getDisplayName() +
+                                                 ") with no implementation", "XTDE3052");
+            }
             ((XPathContextMajor) context).requestTailCall(info, actualArgs);
 
         } else {
