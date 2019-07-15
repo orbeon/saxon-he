@@ -384,7 +384,7 @@ public:
     * @param argument_length - the Coutn of arguments objects in the array
     * @param outputfile - The file name where results will be stored,
     */
-    void callFunctionReturningFile(const char * stylesheetFilename, const char* functionName, XdmValue * arguments, int argument_length, const char* outfile);
+    void callFunctionReturningFile(const char * stylesheetFilename, const char* functionName, XdmValue ** arguments, int argument_length, const char* outfile);
 
 
     //! Call a public user-defined function in the stylesheet
@@ -397,7 +397,7 @@ public:
     * @param argument_length - the Coutn of arguments objects in the array
     * @param outputfile - The file name where results will be stored,
     */
-    const char * callFunctionReturningString(const char * stylesheetFilename, const char* functionName, XdmValue * arguments, int argument_length);
+    const char * callFunctionReturningString(const char * stylesheetFilename, const char* functionName, XdmValue ** arguments, int argument_length);
 
     //! Call a public user-defined function in the stylesheet
     /** Here we wrap the result in an XML document, and return the document as an XdmVale
@@ -409,7 +409,7 @@ public:
     * @param argument_length - the Coutn of arguments objects in the array
     * @param outputfile - The file name where results will be stored,
     */
-    XdmValue * callFunctionReturningValue(const char * stylesheetFilename, const char* functionName, XdmValue * arguments, int argument_length);
+    XdmValue * callFunctionReturningValue(const char * stylesheetFilename, const char* functionName, XdmValue ** arguments, int argument_length);
 
 
     void addPackages(const char ** fileNames, int length);
@@ -508,4 +508,4 @@ private:
 };
 
 
-#endif /* SAXON_XSLT_H */
+#endif /* SAXON_XSLT30_H */
