@@ -10,6 +10,7 @@ package net.sf.saxon.functions;
 import com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
+import net.sf.saxon.Version;
 import net.sf.saxon.event.Builder;
 import net.sf.saxon.event.ProxyReceiver;
 import net.sf.saxon.event.Receiver;
@@ -28,6 +29,7 @@ import net.sf.saxon.value.StringValue;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+import sun.security.krb5.Config;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.sax.SAXSource;
@@ -81,11 +83,12 @@ public class ParseXmlFragment extends SystemFunction implements Callable {
                         // with a clean parser
                     }
                 } else {
-                    try {
-                        reader = SAXParserFactoryImpl.newInstance().newSAXParser().getXMLReader();
-                    } catch (ParserConfigurationException | SAXException e) {
+                    //try {
+                        reader = Version.platform.loadParser2();// SAXParserFactoryImpl.newInstance().newSAXParser().getXMLReader();
+                    /*} catch (ParserConfigurationException | SAXException e) {
                         throw XPathException.makeXPathException(e);
-                    }
+                    } */
+
                 }
 
                 source.setXMLReader(reader);

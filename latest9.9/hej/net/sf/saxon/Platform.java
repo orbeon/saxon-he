@@ -78,6 +78,15 @@ public interface Platform {
 
     XMLReader loadParser();
 
+
+    /**
+     * Get a parser by instantiating the SAXParserFactory
+     *
+     * @return the parser (XMLReader)
+     */
+
+    XMLReader loadParser2();
+
     /**
      * Convert a StreamSource to either a SAXSource or a PullSource, depending on the native
      * parser of the selected platform

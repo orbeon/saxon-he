@@ -8,6 +8,7 @@
 package net.sf.saxon.java;
 
 import com.saxonica.ee.bytecode.util.GeneratedClassLoader;
+import com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Platform;
 import net.sf.saxon.dom.DOMEnvelope;
@@ -193,6 +194,21 @@ public class JavaPlatform implements Platform {
             throw new TransformerFactoryConfigurationError(err);
         } catch (SAXException err) {
             throw new TransformerFactoryConfigurationError(err);
+        }
+        return parser;
+    }
+
+    /**
+     * Get a parser by instantiating the SAXParserFactoryImpl
+     *
+     * @return the parser (XMLReader)
+     */
+    public XMLReader loadParser2(){
+        XMLReader parser;
+        try{
+            parser = SAXParserFactoryImpl.newInstance().newSAXParser().getXMLReader();
+        } catch (ParserConfigurationException | SAXException e) {
+            return loadParser();
         }
         return parser;
     }

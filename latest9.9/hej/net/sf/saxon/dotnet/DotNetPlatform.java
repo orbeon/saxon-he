@@ -134,6 +134,16 @@ public class DotNetPlatform implements Platform {
         return parser;
     }
 
+
+    /**
+     * Get a parser by instantiating the SAXParserFactory
+     *
+     * @return the parser (XMLReader)
+     */
+    public XMLReader loadParser2(){
+        return loadParser();
+    }
+
     /**
      * Convert a StreamSource to either a SAXSource or a PullSource, depending on the native
      * parser of the selected platform
