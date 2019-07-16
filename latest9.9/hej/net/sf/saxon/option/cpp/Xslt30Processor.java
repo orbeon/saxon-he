@@ -465,7 +465,7 @@ public class Xslt30Processor extends SaxonCAPI {
         }
 
         Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
-
+                       
         applyXsltTransformerProperties(this, cwd, processor, transformer, paramsMap);
 
         if (sourceObj instanceof String) {

@@ -683,7 +683,7 @@ public class SaxonCAPI {
             cwd.replace(separatorChar, File.separatorChar);
             separatorChar = '\\';
         }
-        if (!cwd.endsWith(String.valueOf(separatorChar))) {
+        if (cwd!= null && !cwd.endsWith(String.valueOf(separatorChar))) {
             cwd = cwd.concat(String.valueOf(separatorChar));
         }
         File absFile = new File(filename);
