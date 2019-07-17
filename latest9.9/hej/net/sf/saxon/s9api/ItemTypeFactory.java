@@ -10,14 +10,18 @@ package net.sf.saxon.s9api;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.parser.Token;
 import net.sf.saxon.lib.NamespaceConstant;
+import net.sf.saxon.ma.arrays.ArrayItem;
 import net.sf.saxon.ma.arrays.ArrayItemType;
+import net.sf.saxon.ma.map.MapItem;
 import net.sf.saxon.ma.map.MapType;
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.pattern.*;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.AtomicValue;
+import net.sf.saxon.value.ExternalObject;
 import net.sf.saxon.value.ObjectValue;
 
 import java.util.Map;
@@ -541,10 +545,21 @@ public class ItemTypeFactory {
     }
 
     /**
-     * Get an ItemType representing the type of a supplied XdmItem. If the supplied item is
+     * Get an ItemType representing the type of a supplied XdmItem.
+     *
+     * <p>If the supplied item is
      * an atomic value, the returned ItemType will reflect the most specific atomic type of the
-     * item. If the supplied item is a node, the returned item type will reflect the node kind,
-     * and if the node has a name, then its name. It will not reflect the type annotation.
+     * item.</p>
+     *
+     * <p>If the supplied item is a node, the returned item type will reflect the node kind,
+     * and if the node has a name, then its name. It will not reflect the type annotation.</p>
+     *
+     * <p>For a map, the result is {@link ItemType#ANY_MAP}. For an array, the result is
+     * {@link ItemType#ANY_ARRAY}. For any other function, it is {@link ItemType#ANY_FUNCTION}.</p>
+     *
+     * <p>If the item is an external object, a suitable item type object is constructed.</p>
+     *
+     * <p>Future versions of Saxon may return a more precise type.</p>
      *
      * @param item the supplied item whose type is required
      * @return the type of the supplied item
@@ -553,16 +568,26 @@ public class ItemTypeFactory {
     public ItemType getItemType(XdmItem item) {
         if (item.isAtomicValue()) {
             AtomicValue value = (AtomicValue) item.getUnderlyingValue();
-
             AtomicType type = value.getItemType();
             return new ConstructedItemType(type, processor);
-        } else {
+        } else if (item.getUnderlyingValue() instanceof NodeInfo) {
             NodeInfo node = (NodeInfo) item.getUnderlyingValue();
             int kind = node.getNodeKind();
             if (node.getLocalPart().isEmpty()) {
                 return new ConstructedItemType(NodeKindTest.makeNodeKindTest(kind), processor);
             } else {
                 return new ConstructedItemType(new SameNameTest(node), processor);
+            }
+        } else {
+            Item it = item.getUnderlyingValue();
+            if (it instanceof MapItem) {
+                return ItemType.ANY_MAP;
+            } else if (it instanceof ArrayItem) {
+                return ItemType.ANY_ARRAY;
+            } else if (it instanceof ExternalObject) {
+                return new ConstructedItemType(ExternalObjectType.THE_INSTANCE, processor);
+            } else {
+                return ItemType.ANY_FUNCTION;
             }
         }
     }
