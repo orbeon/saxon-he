@@ -453,7 +453,7 @@ public class ParseIetfDate extends SystemFunction implements Callable {
         if (!isValidTime(hour, minute, second, microsecond, tz)) {
             badDate("Time/timezone is not valid", input);
         }
-        TimeValue timeValue = new TimeValue(hour, minute, second, microsecond, tz);
+        TimeValue timeValue = new TimeValue(hour, minute, second, microsecond*1000, tz, "");
         result.add(timeValue);
         return n;
     }

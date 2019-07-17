@@ -59,13 +59,13 @@ public final class TimeValue extends CalendarValue implements Comparable {
     }
 
     /**
-     * Private constructor to construct a time value given the hour, minute, second, and nanosecond components.
+     * Constructor to construct a time value given the hour, minute, second, and nanosecond components.
      * This constructor performs no validation.
      *
      * @param hour        the hour value, 0-23
      * @param minute      the minutes value, 0-59
      * @param second      the seconds value, 0-59
-     * @param nanosecond  the number of microseconds, 0-999999
+     * @param nanosecond  the number of nanoseconds, 0-999999999
      * @param tz          the timezone displacement in minutes from UTC. Supply the value
      *                    {@link CalendarValue#NO_TIMEZONE} if there is no timezone component.
      * @param flag        used to disambiguate this constructor. Must be set to "".
@@ -95,7 +95,7 @@ public final class TimeValue extends CalendarValue implements Comparable {
      *                    {@link CalendarValue#NO_TIMEZONE} if there is no timezone component.
      */
 
-    public TimeValue makeTimeValue(byte hour, byte minute, byte second, int nanosecond, int tz) {
+    public static TimeValue makeTimeValue(byte hour, byte minute, byte second, int nanosecond, int tz) {
         return new TimeValue(hour, minute, second, nanosecond, tz, "");
     }
 
@@ -467,7 +467,7 @@ public final class TimeValue extends CalendarValue implements Comparable {
 
     /*@NotNull*/
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
-        TimeValue v = new TimeValue(hour, minute, second, nanosecond, getTimezoneInMinutes());
+        TimeValue v = new TimeValue(hour, minute, second, nanosecond, getTimezoneInMinutes(), "");
         v.typeLabel = typeLabel;
         return v;
     }
@@ -485,7 +485,7 @@ public final class TimeValue extends CalendarValue implements Comparable {
     public TimeValue adjustTimezone(int timezone) {
         DateTimeValue dt = toDateTime().adjustTimezone(timezone);
         return new TimeValue(dt.getHour(), dt.getMinute(), dt.getSecond(),
-                dt.getMicrosecond(), dt.getTimezoneInMinutes());
+                dt.getNanosecond(), dt.getTimezoneInMinutes(), "");
     }
 
     /**
@@ -637,9 +637,9 @@ public final class TimeValue extends CalendarValue implements Comparable {
     /*@NotNull*/
     public TimeValue add(/*@NotNull*/ DurationValue duration) throws XPathException {
         if (duration instanceof DayTimeDurationValue) {
-            DateTimeValue dt = (DateTimeValue) toDateTime().add(duration);
+            DateTimeValue dt = toDateTime().add(duration);
             return new TimeValue(dt.getHour(), dt.getMinute(), dt.getSecond(),
-                    dt.getMicrosecond(), getTimezoneInMinutes());
+                    dt.getNanosecond(), getTimezoneInMinutes(), "");
         } else {
             XPathException err = new XPathException("Time+Duration arithmetic is supported only for xs:dayTimeDuration");
             err.setErrorCode("XPTY0004");

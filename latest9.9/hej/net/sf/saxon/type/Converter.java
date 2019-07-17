@@ -603,7 +603,7 @@ public abstract class Converter {
         public final static DateTimeToTime INSTANCE = new DateTimeToTime();
         public TimeValue convert(AtomicValue input) {
             DateTimeValue dt = (DateTimeValue) input;
-            return new TimeValue(dt.getHour(), dt.getMinute(), dt.getSecond(), dt.getMicrosecond(), dt.getTimezoneInMinutes());
+            return new TimeValue(dt.getHour(), dt.getMinute(), dt.getSecond(), dt.getNanosecond(), dt.getTimezoneInMinutes(), "");
         }
     }
 

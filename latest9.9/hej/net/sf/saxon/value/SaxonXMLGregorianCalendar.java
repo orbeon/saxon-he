@@ -719,7 +719,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
             }
             return new DateValue(year.intValue(), (byte) month, (byte) day, tzOffset, true);
         } else if (year == null) {
-            return new TimeValue((byte) hour, (byte) minute, (byte) second, getMicrosecond(), tzOffset);
+            return new TimeValue((byte) hour, (byte) minute, (byte) second, getMicrosecond()*1000, tzOffset, "");
         } else {
             return new DateTimeValue(year.intValue(), (byte) month, (byte) day,
                     (byte) hour, (byte) minute, (byte) second, getMicrosecond(), tzOffset, true);

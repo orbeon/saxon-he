@@ -685,13 +685,6 @@ public final class DateTimeValue extends CalendarValue
     }
 
     /**
-     * Create a DateTime value equivalent to this value, except for a possible change to
-     * the {@code hasNoYearZero} property. The internal representation is unchanged (year 0 is the
-     * year before year 1), but if the property {@code hasNoYearZero} is set, then a value
-     * with
-     */
-
-    /**
      * Determine the primitive type of the value. This delivers the same answer as
      * getItemType().getPrimitiveItemType(). The primitive types are
      * the 19 primitive types of XML Schema, plus xs:integer, xs:dayTimeDuration and xs:yearMonthDuration,
@@ -1033,7 +1026,7 @@ public final class DateTimeValue extends CalendarValue
 
     /*@NotNull*/
     public TimeValue toTimeValue() {
-        return new TimeValue(hour, minute, second, nanosecond/1000, getTimezoneInMinutes());
+        return new TimeValue(hour, minute, second, nanosecond, getTimezoneInMinutes(), "");
     }
 
 
