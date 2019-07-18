@@ -540,7 +540,7 @@ public class StylesheetModule {
     /**
      * Get the value of the input-type-annotations attribute, for this module combined with that
      * of all included/imported modules. The value is an or-ed combination of the two bits
-     * {@link XSLStylesheet#ANNOTATION_STRIP} and {@link XSLStylesheet#ANNOTATION_PRESERVE}
+     * {@link XSLModuleRoot#ANNOTATION_STRIP} and {@link XSLModuleRoot#ANNOTATION_PRESERVE}
      *
      * @return the value of the input-type-annotations attribute, for this module combined with that
      *         of all included/imported modules

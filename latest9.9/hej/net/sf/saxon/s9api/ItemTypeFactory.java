@@ -554,8 +554,8 @@ public class ItemTypeFactory {
      * <p>If the supplied item is a node, the returned item type will reflect the node kind,
      * and if the node has a name, then its name. It will not reflect the type annotation.</p>
      *
-     * <p>For a map, the result is {@link ItemType#ANY_MAP}. For an array, the result is
-     * {@link ItemType#ANY_ARRAY}. For any other function, it is {@link ItemType#ANY_FUNCTION}.</p>
+     * <p>For a map, the result is {@link net.sf.saxon.s9api.ItemType#ANY_MAP}. For an array, the result is
+     * {@link net.sf.saxon.s9api.ItemType#ANY_ARRAY}. For any other function, it is {@link net.sf.saxon.s9api.ItemType#ANY_FUNCTION}.</p>
      *
      * <p>If the item is an external object, a suitable item type object is constructed.</p>
      *

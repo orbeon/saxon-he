@@ -332,9 +332,9 @@ public class StaticQueryContext {
      * @param source Any javax.xml.transform.Source object representing the document against
      *               which queries will be executed. Note that a Saxon {@link net.sf.saxon.om.NodeInfo}
      *               can be used as a Source. To use a third-party DOM Document as a source, create an instance of
-     *               {@link javax.xml.transform.dom.DOMSource DOMSource} to wrap it.
+     *               {@link javax.xml.transform.dom.DOMSource} to wrap it.
      *               <p>For additional control over the way in which the source document is processed,
-     *               supply an {@link net.sf.saxon.lib.AugmentedSource AugmentedSource} object and set appropriate
+     *               supply an {@link net.sf.saxon.lib.AugmentedSource} object and set appropriate
      *               options on the object.</p>
      * @return the DocumentInfo representing the root node of the resulting document object.
      * @throws XPathException if building the document fails

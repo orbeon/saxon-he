@@ -39,7 +39,7 @@ import java.util.Properties;
  * This has nothing to do with the serialization of Java objects, or the {@link java.io.Serializable}
  * interface.</i></p>
  * <p>The serialization may be influenced by a number of serialization parameters. A parameter has a name,
- * which is an instance of {@link Serializer.Property}, and a value, which is expressed as a string.
+ * which is an instance of {@link net.sf.saxon.s9api.Serializer.Property}, and a value, which is expressed as a string.
  * The effect of most of the properties is as described in the W3C specification
  * <a href="http://www.w3.org/TR/xslt-xquery-serialization/">XSLT 3.0 and XQuery 3.1 Serialization</a>.
  * Saxon supports all the serialization parameters defined in that specification, together with some
@@ -369,7 +369,7 @@ public class Serializer extends AbstractDestination {
      *
      * @param characterMap a set of named character maps. A character map in this set will only
      *                     be used if the name of the character map is added to the value
-     *                     of the {@link Serializer.Property#USE_CHARACTER_MAPS} serialization
+     *                     of the {@link net.sf.saxon.s9api.Serializer.Property#USE_CHARACTER_MAPS} serialization
      *                     property. The character maps in this index are added to the existing
      *                     set of character maps known to the serializer, unless they have the
      *                     same names as existing character maps, in which case the new one

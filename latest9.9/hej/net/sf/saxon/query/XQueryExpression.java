@@ -242,7 +242,7 @@ public class XQueryExpression implements Location, ExpressionOwner {
      *         of items returned by the expression. Each item in the list will either be an
      *         object representing a node, or an object representing an atomic value.
      *         For the types of Java object that may be returned, see the description of the
-     *         {@link net.sf.saxon.xpath.XPathEvaluator#evaluate evaluate} method
+     *         {@link net.sf.saxon.xpath.XPathEvaluator#evaluate} method
      *         of class XPathProcessor
      * @throws XPathException if a dynamic error occurs during query evaluation
      */
@@ -266,7 +266,7 @@ public class XQueryExpression implements Location, ExpressionOwner {
      * @return The first item in the sequence returned by the expression. If the expression
      *         returns an empty sequence, this method returns null. Otherwise, it returns the first
      *         item in the result sequence, represented as a Java object using the same mapping as for
-     *         the {@link XQueryExpression#evaluate evaluate} method
+     *         the {@link XQueryExpression#evaluate} method
      * @throws XPathException if evaluation fails with a dynamic error
      */
 
