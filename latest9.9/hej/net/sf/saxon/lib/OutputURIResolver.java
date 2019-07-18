@@ -22,8 +22,8 @@ import java.util.function.Function;
  * of XSLT 3.0, for example it cannot handle raw output, JSON serialization, or the item-separator
  * serialization property. A new mechanism has therefore been introduced. This has a low-level
  * interface {@link XsltController#setResultDocumentResolver(ResultDocumentResolver)}, and a high-level
- * counterpart at the s9api level, {@link net.sf.saxon.s9api.Xslt30Transformer#setResultDocumentHandler(Function)}
- * and {@link net.sf.saxon.s9api.XsltTransformer#setResultDocumentHandler(Function)}.</p>
+ * counterpart at the s9api level, using the setResultDocumentHandler() method on {@link net.sf.saxon.s9api.Xslt30Transformer}
+ * and {@link net.sf.saxon.s9api.XsltTransformer}.</p>
  */
 
 public interface OutputURIResolver {
