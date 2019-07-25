@@ -239,8 +239,6 @@ jobject JNICALL phpNativeCall
     PHP_METHOD(Xslt30Processor, compileFromStringAndSave);
     PHP_METHOD(Xslt30Processor, compileFromFileAndSave);
     PHP_METHOD(Xslt30Processor,  setOutputFile);
-    PHP_METHOD(Xslt30Processor,  setSourceFromFile);
-    PHP_METHOD(Xslt30Processor,  setSourceFromXdmValue);
     PHP_METHOD(Xslt30Processor,  setJustInTimeCompilation);
     PHP_METHOD(Xslt30Processor,  setParameter);
     PHP_METHOD(Xslt30Processor,  setProperty);

@@ -345,6 +345,14 @@ public:
     */	
     XsltProcessor * newXsltProcessor();
 
+   /*!
+
+      * Create an Xslt30Processor. An Xslt30Processor is used to compile XSLT30 stylesheets.
+      * @return a newly created Xslt30Processor	
+    */	
+    Xslt30Processor * newXslt30Processor();
+
+
     /*!
      * Create an XQueryProcessor. An XQueryProcessor is used to compile XQuery queries.
      *

@@ -36,7 +36,7 @@ public:
       @param proc - Supplied pointer to the SaxonProcessor object
       cwd - The current working directory
     */
-    Xslt30Processor(SaxonProcessor* proc, const char* cwd="");
+    Xslt30Processor(SaxonProcessor* proc, std::string cwd="");
 
      ~Xslt30Processor(){
 	clearProperties();
@@ -329,7 +329,7 @@ public:
      *
      * @param stylesheetFile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
      */
-    const char* applyTemplatesReturningString(const char * stylesheetFilename);
+    const char* applyTemplatesReturningString(const char * stylesheetFilename=NULL);
 
      //!nvoke the stylesheet by applying templates to a supplied input sequence, Saving the results as an XdmValue.
     /**
@@ -337,7 +337,7 @@ public:
      *
      * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
      */
-    XdmValue * applyTemplatesReturningValue(const char * stylesheetFilename);
+    XdmValue * applyTemplatesReturningValue(const char * stylesheetFilename=NULL);
 
     //! Invoke a transformation by calling a named template and save result to file.
     /** The results of calling the template are wrapped in a document node, which is then sent to the specified

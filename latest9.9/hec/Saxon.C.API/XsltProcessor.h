@@ -36,7 +36,7 @@ public:
       @param proc - Supplied pointer to the SaxonProcessor object
       cwd - The current working directory
     */
-    XsltProcessor(SaxonProcessor* proc, const char* cwd="");
+    XsltProcessor(SaxonProcessor* proc, std::string cwd="");
 
      ~XsltProcessor(){
 	clearProperties();

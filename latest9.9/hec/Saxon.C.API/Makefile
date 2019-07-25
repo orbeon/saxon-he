@@ -4,8 +4,8 @@ top_srcdir = /home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API
 top_builddir = /home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API
 EGREP = /bin/grep -E
 SED = /bin/sed
-CONFIGURE_COMMAND = './configure' '--with-php-config=/usr/bin/php-config' '--enable-saxon'
-CONFIGURE_OPTIONS = '--with-php-config=/usr/bin/php-config' '--enable-saxon'
+CONFIGURE_COMMAND = './configure' '--enable-saxon'
+CONFIGURE_OPTIONS = '--enable-saxon'
 SHLIB_SUFFIX_NAME = so
 SHLIB_DL_SUFFIX_NAME = so
 ZEND_EXT_TYPE = zend_extension
@@ -50,7 +50,7 @@ INSTALL_DATA = $(INSTALL) -m 644
 DEFS = -DPHP_ATOM_INC -I$(top_builddir)/include -I$(top_builddir)/main -I$(top_srcdir)
 COMMON_FLAGS = $(DEFS) $(INCLUDES) $(EXTRA_INCLUDES) $(CPPFLAGS) $(PHP_FRAMEWORKPATH)
 
-all: $(all_targets) 
+all: $(all_targets)
 	@echo
 	@echo "Build complete."
 	@echo "Don't forget to run 'make test'."
@@ -157,16 +157,16 @@ test: all
 clean:
 	find . -name \*.gcno -o -name \*.gcda | xargs rm -f
 	find . -name \*.lo -o -name \*.o | xargs rm -f
-	find . -name \*.la -o -name \*.a | xargs rm -f 
+	find . -name \*.la -o -name \*.a | xargs rm -f
 	find . -name \*.so | xargs rm -f
 	find . -name .libs -a -type d|xargs rm -rf
 	rm -f libphp$(PHP_MAJOR_VERSION).la $(SAPI_CLI_PATH) $(SAPI_CGI_PATH) $(SAPI_MILTER_PATH) $(SAPI_LITESPEED_PATH) $(SAPI_FPM_PATH) $(OVERALL_TARGET) modules/* libs/*
 
 distclean: clean
-	rm -f Makefile config.cache config.log config.status Makefile.objects Makefile.fragments libtool main/php_config.h main/internal_functions_cli.c main/internal_functions.c stamp-h sapi/apache/libphp$(PHP_MAJOR_VERSION).module sapi/apache_hooks/libphp$(PHP_MAJOR_VERSION).module buildmk.stamp Zend/zend_dtrace_gen.h Zend/zend_dtrace_gen.h.bak Zend/zend_config.h TSRM/tsrm_config.h
+	rm -f Makefile config.cache config.log config.status Makefile.objects Makefile.fragments libtool main/php_config.h main/internal_functions_cli.c main/internal_functions.c stamp-h buildmk.stamp Zend/zend_dtrace_gen.h Zend/zend_dtrace_gen.h.bak Zend/zend_config.h TSRM/tsrm_config.h
 	rm -f php7.spec main/build-defs.h scripts/phpize
 	rm -f ext/date/lib/timelib_config.h ext/mbstring/oniguruma/config.h ext/mbstring/libmbfl/config.h ext/oci8/oci8_dtrace_gen.h ext/oci8/oci8_dtrace_gen.h.bak
-	rm -f scripts/man1/phpize.1 scripts/php-config scripts/man1/php-config.1 sapi/cli/php.1 sapi/cgi/php-cgi.1 ext/phar/phar.1 ext/phar/phar.phar.1
+	rm -f scripts/man1/phpize.1 scripts/php-config scripts/man1/php-config.1 sapi/cli/php.1 sapi/cgi/php-cgi.1 sapi/phpdbg/phpdbg.1 ext/phar/phar.1 ext/phar/phar.phar.1
 	rm -f sapi/fpm/php-fpm.conf sapi/fpm/init.d.php-fpm sapi/fpm/php-fpm.service sapi/fpm/php-fpm.8 sapi/fpm/status.html
 	rm -f ext/iconv/php_have_bsd_iconv.h ext/iconv/php_have_glibc_iconv.h ext/iconv/php_have_ibm_iconv.h ext/iconv/php_have_iconv.h ext/iconv/php_have_libiconv.h ext/iconv/php_iconv_aliased_libiconv.h ext/iconv/php_iconv_supports_errno.h ext/iconv/php_php_iconv_h_path.h ext/iconv/php_php_iconv_impl.h
 	rm -f ext/phar/phar.phar ext/phar/phar.php
@@ -180,7 +180,7 @@ prof-gen:
 
 prof-clean:
 	find . -name \*.lo -o -name \*.o | xargs rm -f
-	find . -name \*.la -o -name \*.a | xargs rm -f 
+	find . -name \*.la -o -name \*.a | xargs rm -f
 	find . -name \*.so | xargs rm -f
 	rm -f libphp$(PHP_MAJOR_VERSION).la $(SAPI_CLI_PATH) $(SAPI_CGI_PATH) $(SAPI_MILTER_PATH) $(SAPI_LITESPEED_PATH) $(SAPI_FPM_PATH) $(OVERALL_TARGET) modules/* libs/*
 
@@ -220,5 +220,5 @@ $(phplibdir)/saxon.la: ./saxon.la
 	$(LIBTOOL) --mode=install cp ./saxon.la $(phplibdir)
 
 ./saxon.la: $(shared_objects_saxon) $(SAXON_SHARED_DEPENDENCIES)
-	$(LIBTOOL) --mode=link $(CC) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS) $(LDFLAGS) -o $@ -export-dynamic -avoid-version -prefer-pic -module -rpath $(phplibdir) $(EXTRA_LDFLAGS) $(shared_objects_saxon) $(SAXON_SHARED_LIBADD)
+	$(LIBTOOL) --mode=link $(CC) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS) $(LDFLAGS)  -o $@ -export-dynamic -avoid-version -prefer-pic -module -rpath $(phplibdir) $(EXTRA_LDFLAGS) $(shared_objects_saxon) $(SAXON_SHARED_LIBADD)
 

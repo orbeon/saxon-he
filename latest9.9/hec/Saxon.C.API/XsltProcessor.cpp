@@ -19,7 +19,7 @@ XsltProcessor::XsltProcessor() {
 
 }
 
-XsltProcessor::XsltProcessor(SaxonProcessor * p, const char* curr) {
+XsltProcessor::XsltProcessor(SaxonProcessor * p, std::string curr) {
 
 	proc = p;
 
@@ -40,7 +40,7 @@ XsltProcessor::XsltProcessor(SaxonProcessor * p, const char* curr) {
 	nodeCreated = false;
 	proc->exception = NULL;
 	outputfile1 = "";
-	if(!(proc->cwd.empty()) && (curr == NULL && strlen(curr)==0)){
+	if(!(proc->cwd.empty()) && curr.empty()){
 		cwdXT = proc->cwd;
 	} else {
 		cwdXT = curr;

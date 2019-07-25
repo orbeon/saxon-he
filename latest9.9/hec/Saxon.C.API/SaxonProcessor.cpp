@@ -312,17 +312,32 @@ void SaxonProcessor::applyConfigurationProperties(){
     jobjectArray valueArray = NULL;
 
     jclass xdmValueClass = lookForClass(SaxonProcessor::sxn_environ->env,
-                   				"java/lang/Object");
+                   				"net/sf/saxon/s9api/XdmValue");
 
 
     valueArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) length,
                    					xdmValueClass, 0);
 
     for (int i=0; i<length; i++) {
+#ifdef DEBUG
+				std::string s1 = typeid(values[i]).name();
+				std::cerr<<"In createJArray\nType of itr:"<<s1<<std::endl;
 
+
+				jobject xx = values[i]->getUnderlyingValue();
+
+				if(xx == NULL) {
+					std::cerr<<"value failed"<<std::endl;
+				} else {
+
+					std::cerr<<"Type of value:"<<(typeid(xx).name())<<std::endl;
+				}
+				if(values[i]->getUnderlyingValue() == NULL) {
+					std::cerr<<"value["<<i<<"]->getUnderlyingValue() is NULL"<<std::endl;
+				}
+#endif
         SaxonProcessor::sxn_environ->env->SetObjectArrayElement(valueArray, i,values[i]->getUnderlyingValue());
     }
-
     return valueArray;
 
   }
@@ -416,7 +431,12 @@ SaxonProcessor& SaxonProcessor::operator=( const SaxonProcessor& other ){
 
 XsltProcessor * SaxonProcessor::newXsltProcessor(){
     applyConfigurationProperties();
-    return (new XsltProcessor(this, cwd.c_str()));
+    return (new XsltProcessor(this, cwd));
+}
+
+Xslt30Processor * SaxonProcessor::newXslt30Processor(){
+    applyConfigurationProperties();
+    return (new Xslt30Processor(this, cwd));
 }
 
 XQueryProcessor * SaxonProcessor::newXQueryProcessor(){
