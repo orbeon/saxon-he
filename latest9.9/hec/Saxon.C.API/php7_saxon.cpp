@@ -430,7 +430,7 @@ PHP_METHOD(SaxonProcessor, newXsltProcessor)
 PHP_METHOD(SaxonProcessor, newXslt30Processor)
 {
 //std::cerr<<"SaxonProcessor newXslt30proc point 1"<<std::endl;
-    //php_error(E_WARNING,"new xsltProc 1");
+   // php_error(E_WARNING,"new xslt30Proc 1");
     if (ZEND_NUM_ARGS()>0) {
         WRONG_PARAM_COUNT;
     }
@@ -449,7 +449,7 @@ PHP_METHOD(SaxonProcessor, newXslt30Processor)
     if (object_init_ex(return_value, xslt30Processor_ce) != SUCCESS) {
             RETURN_NULL();
         } else {
-	xslt30Processor = proc->newXslt30Processor();
+	xslt30Processor = proc->newXslt30Processor();	
 	   zend_object* vobj = Z_OBJ_P(return_value);
 	   xslt30Processor_object * xproc_object = (xslt30Processor_object *)((char *)vobj - XtOffsetOf(xslt30Processor_object, std));
             assert (vobj != NULL);
@@ -1570,14 +1570,17 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
     HashTable *arr_hash;
     char* functionName;
     zval * arguments_zval;
-    XdmValue * arguments;
-    int argument_length;
+    zval * val;
+    long num_key;
+    XdmValue ** arguments;
+    int argument_length=0;
+    zend_string *key;
 
     char * infilename;
     char * styleFileName;
     size_t len1, len2;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() , "ssal", &styleFileName, &len1, & functionName, &len2, arguments_zval, argument_length) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() , "ssa", &styleFileName, &len1, &functionName, &len2, &arguments_zval) == FAILURE) {
         RETURN_NULL();
     }
 
@@ -1585,9 +1588,36 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
     xslt30Processor_object *obj = (xslt30Processor_object *)((char *)pobj - XtOffsetOf(xslt30Processor_object, std));
     xslt30Processor = obj->xslt30Processor;
     arr_hash = Z_ARRVAL_P(arguments_zval);
+    
+	arguments = new XdmValue*[argument_length];
+      
     if (xslt30Processor != NULL) {
+      ZEND_HASH_FOREACH_KEY_VAL(arr_hash, num_key, key, val) {
+        if(Z_TYPE_P(val) != NULL) {
+	const char * objName =ZSTR_VAL(Z_OBJCE_P(val)->name);
+      std::cerr<<"test type:"<<(Z_OBJCE_P(val)->name)<<std::endl;
+	php_printf("num_key %d =>", num_key);
+	php_printf("key %d =>", key);
+	
+	if(strcmp(objName, "Saxon\\XdmNode")==0) {
+		zend_object* ooth = Z_OBJ_P(val);
+		xdmNode_object * nobj = (xdmNode_object *)((char *)ooth - XtOffsetOf(xdmNode_object, std));
+        	if(nobj != NULL) {
+            		XdmValue * value = (XdmValue *) nobj->xdmNode;
+            		arguments[num_key] = value;
+        	}
+	}
+	else if(strcmp(objName, "Saxon\\XdmAtomicValue")==0) {}
+	else if(strcmp(objName, "Saxon\\XdmValue")==0) {}
+	else {//TODO error warning}
+         }}else {
+		//TODO error warning
+        }
+      } ZEND_HASH_FOREACH_END();
 
-        XdmValue * result = xslt30Processor->callFunctionReturningValue(styleFileName, functionName, NULL, 0); //TODO: sort out arguments 
+
+	php_printf(" argument_length= %d",argument_length);
+        XdmValue * result = xslt30Processor->callFunctionReturningValue(styleFileName, functionName, arguments, argument_length); //TODO: sort out arguments 
 	if(result != NULL) {
             if (object_init_ex(return_value, xdmValue_ce) != SUCCESS) {
                 RETURN_NULL();
@@ -1688,17 +1718,18 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
 
 }
 
+    PHP_METHOD(Xslt30Processor, callTemplateReturningValue){}
+    PHP_METHOD(Xslt30Processor, callTemplateReturningString){}
+    PHP_METHOD(Xslt30Processor, callTemplateReturningFile){}
 
-   /* PHP_METHOD(Xslt30Processor, callTemplateReturningValue);
-    PHP_METHOD(Xslt30Processor, callTemplateReturningString);
-    PHP_METHOD(Xslt30Processor, callTemplateReturningFile);
-    PHP_METHOD(Xslt30Processor, applyTemplateReturningValue);
-    PHP_METHOD(Xslt30Processor, applyTemplateReturningString);
-    PHP_METHOD(Xslt30Processor, applyTemplateReturningFile);
-    PHP_METHOD(Xslt30Processor, addPackages);
-    PHP_METHOD(Xslt30Processor,setInitialTemplateParameters);
-    PHP_METHOD(Xslt30Processor, setInitialMatchSelection);
-    PHP_METHOD(Xslt30Processor, setGlobalContextItem);*/
+
+    PHP_METHOD(Xslt30Processor, applyTemplateReturningValue){}
+    PHP_METHOD(Xslt30Processor, applyTemplateReturningString){}
+    PHP_METHOD(Xslt30Processor, applyTemplateReturningFile){}
+    PHP_METHOD(Xslt30Processor, addPackages){}
+    PHP_METHOD(Xslt30Processor,setInitialTemplateParameters){}
+    PHP_METHOD(Xslt30Processor, setInitialMatchSelection){}
+    
 
 PHP_METHOD(Xslt30Processor, setGlobalContextItem)
 {
@@ -4629,7 +4660,7 @@ zend_function_entry SaxonProcessor_methods[] = {
     PHP_ME(SaxonProcessor,  parseXmlFromFile,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  setcwd,     NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  newXPathProcessor,     NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(SaxonProcessor,  newXslt30Processor,     NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(SaxonProcessor,  newXsltProcessor,     NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  newXslt30Processor,     NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  newXQueryProcessor,     NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  newSchemaValidator,     NULL, ZEND_ACC_PUBLIC)
@@ -4683,7 +4714,7 @@ zend_function_entry Xslt30Processor_methods[] = {
     PHP_ME(Xslt30Processor, applyTemplateReturningString, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(Xslt30Processor, applyTemplateReturningFile, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(Xslt30Processor, addPackages, NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(Xslt30Processor,setInitialTemplateParameters, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(Xslt30Processor, setInitialTemplateParameters, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(Xslt30Processor, setInitialMatchSelection, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(Xslt30Processor, setInitialMatchSelectionAsFile, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(Xslt30Processor, setGlobalContextItem, NULL, ZEND_ACC_PUBLIC)

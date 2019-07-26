@@ -12,7 +12,7 @@ ZEND_EXT_TYPE = zend_extension
 RE2C = re2c
 AWK = nawk
 SAXON_SHARED_LIBADD = -lstdc++ -ldl
-shared_objects_saxon = php7_saxon.lo SaxonProcessor.lo XQueryProcessor.lo XsltProcessor.lo XPathProcessor.lo SchemaValidator.lo XdmValue.lo XdmItem.lo XdmNode.lo XdmAtomicValue.lo SaxonCGlue.lo SaxonCProcessor.lo SaxonCXPath.lo
+shared_objects_saxon = php7_saxon.lo SaxonProcessor.lo XQueryProcessor.lo XsltProcessor.lo Xslt30Processor.lo XPathProcessor.lo SchemaValidator.lo XdmValue.lo XdmItem.lo XdmNode.lo XdmAtomicValue.lo SaxonCGlue.lo SaxonCProcessor.lo SaxonCXPath.lo
 PHP_PECL_EXTENSION = saxon
 PHP_MODULES = $(phplibdir)/saxon.la
 PHP_ZEND_EX =
@@ -198,6 +198,8 @@ XQueryProcessor.lo: /home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API/XQueryProce
 	$(LIBTOOL) --mode=compile $(CXX)  -I. -I/home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API $(COMMON_FLAGS) $(CXXFLAGS_CLEAN) $(EXTRA_CXXFLAGS)  -c /home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API/XQueryProcessor.cpp -o XQueryProcessor.lo 
 XsltProcessor.lo: /home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API/XsltProcessor.cpp
 	$(LIBTOOL) --mode=compile $(CXX)  -I. -I/home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API $(COMMON_FLAGS) $(CXXFLAGS_CLEAN) $(EXTRA_CXXFLAGS)  -c /home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API/XsltProcessor.cpp -o XsltProcessor.lo 
+Xslt30Processor.lo: /home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API/Xslt30Processor.cpp
+	$(LIBTOOL) --mode=compile $(CXX)  -I. -I/home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API $(COMMON_FLAGS) $(CXXFLAGS_CLEAN) $(EXTRA_CXXFLAGS)  -c /home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API/Xslt30Processor.cpp -o Xslt30Processor.lo 
 XPathProcessor.lo: /home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API/XPathProcessor.cpp
 	$(LIBTOOL) --mode=compile $(CXX)  -I. -I/home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API $(COMMON_FLAGS) $(CXXFLAGS_CLEAN) $(EXTRA_CXXFLAGS)  -c /home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API/XPathProcessor.cpp -o XPathProcessor.lo 
 SchemaValidator.lo: /home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API/SchemaValidator.cpp
