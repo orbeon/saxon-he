@@ -601,7 +601,7 @@ public class ItemTypeFactory {
      * @since 10.0
      */
 
-    public ItemType exposeUnderlyingItemType(net.sf.saxon.type.ItemType it) {
+    public ItemType exposeItemType(net.sf.saxon.type.ItemType it) {
         return new ConstructedItemType(it, processor);
     }
 

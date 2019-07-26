@@ -105,7 +105,7 @@ public class SequenceType {
     public static SequenceType fromUnderlyingSequenceType(
             Processor processor, net.sf.saxon.value.SequenceType st) {
         ItemTypeFactory factory = new ItemTypeFactory(processor);
-        ItemType it = factory.exposeUnderlyingItemType(st.getPrimaryType());
+        ItemType it = factory.exposeItemType(st.getPrimaryType());
         OccurrenceIndicator oc = OccurrenceIndicator.getOccurrenceIndicator(st.getCardinality());
         return makeSequenceType(it, oc);
     }
