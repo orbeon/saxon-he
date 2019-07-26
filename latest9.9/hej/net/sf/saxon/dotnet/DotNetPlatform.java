@@ -140,7 +140,7 @@ public class DotNetPlatform implements Platform {
      *
      * @return the parser (XMLReader)
      */
-    public XMLReader loadParser2(){
+    public XMLReader loadParserForXmlFragments(){
         return loadParser();
     }
 

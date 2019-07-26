@@ -85,7 +85,7 @@ public interface Platform {
      * @return the parser (XMLReader)
      */
 
-    XMLReader loadParser2();
+    XMLReader loadParserForXmlFragments();
 
     /**
      * Convert a StreamSource to either a SAXSource or a PullSource, depending on the native

@@ -95,4 +95,20 @@ public class SequenceType {
                 itemType.getUnderlyingItemType(), occurrenceIndicator.getCardinality());
     }
 
+    /**
+     * Factory method to construct a s9api {@code SequenceType} from an underlying
+     * instance of {@link net.sf.saxon.value.SequenceType}
+     *
+     * @since 10.0
+     */
+
+    public static SequenceType fromUnderlyingSequenceType(
+            Processor processor, net.sf.saxon.value.SequenceType st) {
+        ItemTypeFactory factory = new ItemTypeFactory(processor);
+        ItemType it = factory.exposeUnderlyingItemType(st.getPrimaryType());
+        OccurrenceIndicator oc = OccurrenceIndicator.getOccurrenceIndicator(st.getCardinality());
+        return makeSequenceType(it, oc);
+    }
+
+
 }

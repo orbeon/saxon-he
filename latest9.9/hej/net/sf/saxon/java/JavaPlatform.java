@@ -8,7 +8,6 @@
 package net.sf.saxon.java;
 
 import com.saxonica.ee.bytecode.util.GeneratedClassLoader;
-import com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Platform;
 import net.sf.saxon.dom.DOMEnvelope;
@@ -199,18 +198,29 @@ public class JavaPlatform implements Platform {
     }
 
     /**
-     * Get a parser by instantiating the SAXParserFactoryImpl
+     * Get a parser suitable for parsing XML fragments
+     *
+     * <p>For background, see bugs 4127 and 4253. The problem is that to implement parse-xml-fragment(),
+     * we need to set an EntityResolver on the returned parser. But if an Apache catalog resolver is
+     * in use, the JAXP system properties may be set so that JAXP returns a custom XMLReader supplied
+     * by the catalog resolver, and that XMLReader ignores any attempt to set an EntityResolver. So
+     * we bypass JAXP and try to load the built-in parser within the JDK, which we know we can trust;
+     * only if this fails (presumably because this is not the Oracle JDK) do we fall back to using a
+     * JAXP-supplied parser. And if this turns out to ignore {@code setEntityResolver()} calls, we're
+     * hosed.
+     * </p>
      *
      * @return the parser (XMLReader)
      */
-    public XMLReader loadParser2(){
-        XMLReader parser;
-        try{
-            parser = SAXParserFactoryImpl.newInstance().newSAXParser().getXMLReader();
-        } catch (ParserConfigurationException | SAXException e) {
-            return loadParser();
+    public XMLReader loadParserForXmlFragments() {
+        try {
+            Class<?> factoryClass = Class.forName("com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl");
+            SAXParserFactory factory = (SAXParserFactory) factoryClass.newInstance();
+            return factory.newSAXParser().getXMLReader();
+        } catch (Exception e) {
+            // no action; try the JAXP loading mechanism
         }
-        return parser;
+        return loadParser();
     }
 
     /**

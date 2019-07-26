@@ -7,7 +7,6 @@
 
 package net.sf.saxon.functions;
 
-import com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
 import net.sf.saxon.Version;
@@ -27,11 +26,8 @@ import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.value.StringValue;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import sun.security.krb5.Config;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.sax.SAXSource;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -75,7 +71,7 @@ public class ParseXmlFragment extends SystemFunction implements Callable {
                 is.setSystemId(baseURI);
                 SAXSource source = new SAXSource(is);
                 XMLReader reader;
-                if (attempt == 1) {
+                if (attempt == 1234) {
                     reader = configuration.getSourceParser();
                     if (reader.getEntityResolver() != null) {
                         continue;
@@ -84,7 +80,7 @@ public class ParseXmlFragment extends SystemFunction implements Callable {
                     }
                 } else {
                     //try {
-                        reader = Version.platform.loadParser2();// SAXParserFactoryImpl.newInstance().newSAXParser().getXMLReader();
+                        reader = Version.platform.loadParserForXmlFragments();// SAXParserFactoryImpl.newInstance().newSAXParser().getXMLReader();
                     /*} catch (ParserConfigurationException | SAXException e) {
                         throw XPathException.makeXPathException(e);
                     } */

@@ -592,5 +592,18 @@ public class ItemTypeFactory {
         }
     }
 
+    /**
+     * Obtain a s9api {@code ItemType} corresponding to an underlying instance of
+     * {@link net.sf.saxon.type.ItemType}
+     *
+     * @param it the supplied instance of {@link net.sf.saxon.type.ItemType}
+     * @return a corresponding instance of {@link ItemType}
+     * @since 10.0
+     */
+
+    public ItemType exposeUnderlyingItemType(net.sf.saxon.type.ItemType it) {
+        return new ConstructedItemType(it, processor);
+    }
+
 }
 
