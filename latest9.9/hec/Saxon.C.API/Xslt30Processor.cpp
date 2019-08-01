@@ -727,7 +727,7 @@ XdmValue * Xslt30Processor::applyTemplatesReturningValue(const char * stylesheet
           		jclass atomicValueClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
           		jclass nodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
           		jclass functionItemClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmFunctionItem");
-                  XdmValue * value = new XdmValue();
+                 	XdmValue * value = new XdmValue();
           		value->setProcessor(proc);
           		XdmItem * xdmItem = NULL;
 
@@ -741,13 +741,11 @@ XdmValue * Xslt30Processor::applyTemplatesReturningValue(const char * stylesheet
 
 
           			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
-          				std::cerr<<"Error: applyTemplateToValue: FunctionItem found. Currently not be handled"<<std::endl;
           				return NULL;
           			}
           			xdmItem->setProcessor(proc);
           			value->addXdmItem(xdmItem);
-
-          		SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
+	          		SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
 			return value;
           		} else  {
           			proc->checkAndCreateException(cppClass);
