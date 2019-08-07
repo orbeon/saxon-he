@@ -833,7 +833,7 @@ xdmNode_object* ooth = NULL;
       		if(strcmp(objName, "Saxon\\XdmNode")==0) {
 			ooth = (xdmNode_object*)zend_object_store_get_object(retval TSRMLS_CC);
         		if(ooth != NULL) {
-            			obj = ooth->xdmNode->getUnderlyingValue(NULL);
+            			obj = ooth->xdmNode->getUnderlyingValue();
             	
         		}
       		}
