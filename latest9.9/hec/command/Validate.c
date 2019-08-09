@@ -1,4 +1,4 @@
-#include <jni.h>
+#include "jni/jni.h"
 
 #ifdef __linux__
     #include <stdlib.h>
