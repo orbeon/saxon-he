@@ -471,13 +471,13 @@ const char* Xslt30Processor::applyTemplatesReturningString(const char * styleshe
 	    JParameters comboArrays;
 		comboArrays = SaxonProcessor::createParameterJArray(parameters, properties);
 
-
 	jstring result = NULL;
 	jobject obj = (SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, atsmID,
 								SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
 								selection,
 								(stylesheetfile!= NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheetfile) : NULL ),
 								comboArrays.stringArray, comboArrays.objectArray));
+
 		if(obj) {
 			result = (jstring)obj;
 		}		

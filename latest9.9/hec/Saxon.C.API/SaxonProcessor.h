@@ -525,6 +525,10 @@ public:
     */
    void setResourcesDirectory(const char* dir);
 	
+    /**
+     * set saxon resources directory
+    */
+   void setCatalog(const char* catalogFile, bool isTracing);
 
     /**
      * get saxon resources directory

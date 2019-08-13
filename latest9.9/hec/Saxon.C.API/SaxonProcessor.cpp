@@ -499,6 +499,44 @@ void SaxonProcessor::setResourcesDirectory(const char* dir){
  #endif
 }
 
+
+void SaxonProcessor::setCatalog(const char* catalogFile, bool isTracing){
+	jclass xmlResolverClass = lookForClass(SaxonProcessor::sxn_environ->env, "Lnet/sf/saxon/trans/XmlCatalogResolver;");
+	static jmethodID catalogMID = SaxonProcessor::sxn_environ->env->GetStaticMethodID(xmlResolverClass, "setCatalog", "(Ljava/lang/String;Lnet/sf/saxon/Configuration;Z)V");
+	
+	if (!catalogMID) {
+		std::cerr<<"\nError: Saxonc."<<"setCatalog()"<<" not found"<<std::endl;
+        return;
+        }
+	if(catalogFile == NULL) {
+		
+		return;
+	}
+	static jmethodID configMID = SaxonProcessor::sxn_environ->env->GetMethodID(procClass, "getUnderlyingConfiguration", "()Lnet/sf/saxon/Configuration;");
+	
+	if (!configMID) {
+		std::cerr<<"\nError: Saxonc."<<"getUnderlyingConfiguration()"<<" not found"<<std::endl;
+        return;
+        }
+
+
+	if(!proc) {
+		std::cout<<"proc is NULL in SaxonProcessorsetCatalog"<<std::endl;
+		return;
+	}
+
+ 	jobject configObj = SaxonProcessor::sxn_environ->env->CallObjectMethod(proc, configMID);
+  	
+	if(!configObj) {
+		std::cout<<"proc is NULL in SaxonProcessor setcatalog - config obj"<<std::endl;
+		return;
+	}
+	SaxonProcessor::sxn_environ->env->CallStaticVoidMethod(xmlResolverClass, catalogMID, SaxonProcessor::sxn_environ->env->NewStringUTF(catalogFile), configObj ,(jboolean)isTracing);
+#ifdef DEBUG
+	SaxonProcessor::sxn_environ->env->ExceptionDescribe();
+#endif
+}
+
 const char * SaxonProcessor::getResourcesDirectory(){
 	return _getResourceDirectory();
 }
@@ -508,7 +546,7 @@ XdmNode * SaxonProcessor::parseXmlFromString(const char* source){
 	
     jmethodID mID = (jmethodID)SaxonProcessor::sxn_environ->env->GetStaticMethodID(saxonCAPIClass, "parseXmlString", "(Lnet/sf/saxon/s9api/Processor;Lnet/sf/saxon/s9api/SchemaValidator;Ljava/lang/String;)Lnet/sf/saxon/s9api/XdmNode;");
     if (!mID) {
-	std::cerr<<"\nError: MyClassInDll "<<"parseXmlString()"<<" not found"<<std::endl;
+	std::cerr<<"\nError: Saxonc."<<"parseXmlString()"<<" not found"<<std::endl;
         return NULL;
     }
 //TODO SchemaValidator
