@@ -544,6 +544,14 @@ public class StandardEntityResolver implements EntityResolver {
                 "http://www.rddl.org/rddl-resource-1.mod",
                 "w3c/rddl/rddl-resource-1.mod");
 
+        register("-//XML-DEV//ELEMENTS RDDL Resource 1.0//EN",
+                 "http://www.rddl.org/rddl-resource-1.mod",
+                 "w3c/rddl/rddl-resource-1.mod");
+
+        register("-//XML-DEV//ENTITIES XLink Module 1.0//EN",
+                 "http://www.rddl.org/rddl-resource-1.mod",
+                 "w3c/rddl/xlink-module-1.mod");
+
         register("-//W3C//DTD Specification V2.10//EN",
                 "http://www.w3.org/2002/xmlspec/dtd/2.10/xmlspec.dtd",
                 "w3c/xmlspec/xmlspec.dtd");
@@ -635,6 +643,7 @@ public class StandardEntityResolver implements EntityResolver {
      */
     public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
         // See if it's a known public ID
+        System.err.println("Requesting PUBLIC '" + publicId + "' at '" + systemId + "'");
         String fileName = publicIds.get(publicId);
         if (fileName != null) {
             return fetch(fileName, config);
