@@ -1263,11 +1263,7 @@ public class Transform {
                 }
             }
 
-            //if (r != repeat - 1) {
-            /*if (r < halfway) {
-                transformer.setTraceListener(null);
-                transformer.setTraceFunctionDestination(null);
-            }*/
+            options.applyFileParams(processor, transformer);
 
             if (initialTemplate != null) {
                 QName initialTemplateName;

@@ -588,13 +588,25 @@ public class CommandLineOptions {
 
     public void setParams(Processor processor, ParamSetter paramSetter)
             throws SaxonApiException {
-        boolean useURLs = "on".equals(getOptionValue("u"));
-
         for (Enumeration e = paramValues.propertyNames(); e.hasMoreElements(); ) {
             String name = (String) e.nextElement();
             String value = paramValues.getProperty(name);
             paramSetter.setParam(QName.fromClarkName(name), new XdmAtomicValue(value, ItemType.UNTYPED_ATOMIC));
         }
+        applyFileParameters(processor, paramSetter);
+        for (Enumeration e = paramExpressions.propertyNames(); e.hasMoreElements(); ) {
+            String name = (String) e.nextElement();
+            String value = paramExpressions.getProperty(name);
+            // parameters starting with "?" are taken as XPath expressions
+            XPathCompiler xpc = processor.newXPathCompiler();
+            XPathExecutable xpe = xpc.compile(value);
+            XdmValue val = xpe.load().evaluate();
+            paramSetter.setParam(QName.fromClarkName(name), val);
+        }
+    }
+
+    private void applyFileParameters(Processor processor, ParamSetter paramSetter) throws SaxonApiException {
+        boolean useURLs = "on".equals(getOptionValue("u"));
         for (Enumeration e = paramFiles.propertyNames(); e.hasMoreElements(); ) {
             String name = (String) e.nextElement();
             String value = paramFiles.getProperty(name);
@@ -611,15 +623,6 @@ public class CommandLineOptions {
             } else {
                 paramSetter.setParam(QName.fromClarkName(name), XdmEmptySequence.getInstance());
             }
-        }
-        for (Enumeration e = paramExpressions.propertyNames(); e.hasMoreElements(); ) {
-            String name = (String) e.nextElement();
-            String value = paramExpressions.getProperty(name);
-            // parameters starting with "?" are taken as XPath expressions
-            XPathCompiler xpc = processor.newXPathCompiler();
-            XPathExecutable xpe = xpc.compile(value);
-            XdmValue val = xpe.load().evaluate();
-            paramSetter.setParam(QName.fromClarkName(name), val);
         }
     }
 
@@ -649,8 +652,10 @@ public class CommandLineOptions {
 
 
     /**
-     * Apply XSLT 3.0 static parameters to a compilerInfo. Actually this sets all parameter values, whether static or dynamic.
-     * This is possible because the stylesheet is compiled for once-only use.
+     * Apply XSLT 3.0 static parameters to a compilerInfo. Actually this sets all parameter values,
+     * whether static or dynamic. This is possible because the stylesheet is compiled for once-only use.
+     * However, file-valued params (+name=value) are always handled as dynamic parameters because
+     * of potential problems with exported SEF files.
      *
      * @param compiler The XsltCompiler object into which the parameters are copied
      * @throws SaxonApiException if invalid options are found
@@ -674,6 +679,24 @@ public class CommandLineOptions {
             compiler.setParameter(QName.fromClarkName(name), val);
         }
 
+    }
+
+    /**
+     * Apply XSLT 3.0 file-valued parameters to an XSLT transformer. Most parameters are applied
+     * before compilation, so that the compiler can take advantage of knowing their values; but
+     * file-valued parameters (provided as +name=value) are deferred until run-time because of
+     * complications storing their values in a SEF file.
+     *
+     * @param transformer The Xslt30Transformer object into which the parameters are copied
+     * @throws SaxonApiException if invalid options are found
+     */
+
+    public void applyFileParams(Processor processor, Xslt30Transformer transformer) throws SaxonApiException {
+        if (!paramFiles.isEmpty()) {
+            Map<QName, XdmValue> params = new HashMap<>();
+            applyFileParameters(processor, params::put);
+            transformer.setStylesheetParameters(params);
+        }
     }
 
 
