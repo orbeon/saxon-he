@@ -526,7 +526,7 @@ public:
    void setResourcesDirectory(const char* dir);
 	
     /**
-     * set saxon resources directory
+     * set catalog to be used in Saxon
     */
    void setCatalog(const char* catalogFile, bool isTracing);
 

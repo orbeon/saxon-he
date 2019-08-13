@@ -167,7 +167,26 @@ PHP_METHOD(SaxonProcessor, setResourcesDirectory)
     }
 }
 
-
+PHP_METHOD(SaxonProcessor, setCatalog)
+{
+    SaxonProcessor *saxonProcessor;
+    char * catalogFile;
+    size_t len;
+    bool trace = false;
+    
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC , "sb", &catalogFile, &len, &trace) == FAILURE) {
+        RETURN_NULL();
+    }
+    
+    saxonProcessor_object *obj = (saxonProcessor_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
+    saxonProcessor = obj->saxonProcessor;
+    if (saxonProcessor != NULL) {
+       
+        if(catalogFile != NULL) {
+            saxonProcessor->setCatalog(catalogFile, trace);
+        }
+    }
+}
 
 
 PHP_METHOD(SaxonProcessor, setcwd)
@@ -3555,6 +3574,7 @@ zend_function_entry SaxonProcessor_methods[] = {
     PHP_ME(SaxonProcessor,  newSchemaValidator,     NULL, ZEND_ACC_PUBLIC)
 //    PHP_ME(SaxonProcessor,  importDocument,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  setResourcesDirectory,      NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(SaxonProcessor,  setCatalog,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor, setConfigurationProperty,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  registerPHPFunction,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  version,      NULL, ZEND_ACC_PUBLIC)
