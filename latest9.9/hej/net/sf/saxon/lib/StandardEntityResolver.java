@@ -643,7 +643,7 @@ public class StandardEntityResolver implements EntityResolver {
      */
     public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
         // See if it's a known public ID
-        System.err.println("Requesting PUBLIC '" + publicId + "' at '" + systemId + "'");
+        // System.err.println("Requesting PUBLIC '" + publicId + "' at '" + systemId + "'");
         String fileName = publicIds.get(publicId);
         if (fileName != null) {
             return fetch(fileName, config);
