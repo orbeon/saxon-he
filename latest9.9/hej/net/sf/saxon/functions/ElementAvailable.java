@@ -19,7 +19,6 @@ import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.BooleanValue;
-import net.sf.saxon.value.Whitespace;
 
 /**
  * This class supports the XSLT element-available function.  Note that when running in a 2.0 processor,
@@ -291,25 +290,21 @@ public class ElementAvailable extends SystemFunction {
     }
 
     private StructuredQName getElementName(String lexicalName) throws XPathException {
-        StructuredQName qName;
         try {
-            if (lexicalName.indexOf(':') < 0) {
-                CharSequence local = Whitespace.trimWhitespace(lexicalName);
-                if (!NameChecker.isValidNCName(local)) {
-                    throw new XPathException("Invalid EQName passed to element-available(): local part is not a valid NCName");
-                }
+            if (lexicalName.indexOf(':') < 0 && NameChecker.isValidNCName(lexicalName)) {
                 String uri = getRetainedStaticContext().getURIForPrefix("", true);
-                qName = new StructuredQName("", uri, lexicalName);
+                return new StructuredQName("", uri, lexicalName);
             } else {
-                qName = StructuredQName.fromLexicalQName(lexicalName, false, true, getRetainedStaticContext());
+                return StructuredQName.fromLexicalQName(lexicalName, false,
+                                                        true, getRetainedStaticContext());
             }
         } catch (XPathException e) {
-            e.setErrorCode("XTDE1440");
-            throw e;
+            XPathException err = new XPathException("Invalid element name passed to element-available(): " + e.getMessage());
+            err.setErrorCode("XTDE1440");
+            throw err;
         }
-        return qName;
     }
-
+    
     /**
      * Evaluate the expression
      *
