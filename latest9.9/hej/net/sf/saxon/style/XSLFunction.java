@@ -410,8 +410,11 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
         fn.setRetainedStaticContext(makeRetainedStaticContext());
         fn.setOverrideExtensionFunction(overrideExtensionFunction);
 
-        if (memoFunction && !fn.isMemoFunction()) {
-            compileWarning("Memo functions are not available in Saxon-HE: saxon:memo-function attribute ignored",
+        if (determinism == UserFunction.Determinism.DETERMINISTIC && !fn.isMemoFunction()) {
+            compileWarning("Deterministic user functions are not available in Saxon-HE: new-each-time attribute ignored",
+                           SaxonErrorCode.SXWN9011);
+        } else if (memoFunction && !fn.isMemoFunction()) {
+            compileWarning("Memo functions are not available in Saxon-HE: @cache (or @saxon:memo-function) attribute ignored",
                     SaxonErrorCode.SXWN9011);
         }
 
