@@ -1684,11 +1684,13 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
     /**
      * Bulk copy an element node from another TinyTree. Type annotations will always be
      * stripped.
-     * @param source        the source tree
-     * @param nodeNr        the element node to be deep-copied
+     *
+     * @param source the source tree
+     * @param nodeNr the element node to be deep-copied
      */
 
-    public void bulkCopy(TinyTree source, int nodeNr, int currentDepth) {
+
+    public void bulkCopy(TinyTree source, int nodeNr, int[] prevAtDepth, int currentDepth) {
         //System.err.println(" **** doing bulk copy **** ");
         int end = source.next[nodeNr];
         while (end < nodeNr && end >= 0) {
@@ -1696,7 +1698,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
         }
         if (end == -1) {
             end = source.numberOfNodes;
-            if (end-1 < source.nodeKind.length && source.nodeKind[end-1] == Type.STOPPER) {
+            if (end - 1 < source.nodeKind.length && source.nodeKind[end - 1] == Type.STOPPER) {
                 end--;
             }
         }
@@ -1754,49 +1756,36 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
                     // source node are declared in the new tree. We may also need to undeclare
                     // a default namespace that is present in the target tree, but unwanted in the
                     // new element node.
-                    if (i==0) {
-                        List<NamespaceBinding> inScopeNamespaces = new ArrayList<>();
-                        int anc = from;
+                    if (i == 0) {
                         boolean foundDefaultNamespace = false;
-                        while (anc >= 0 && source.nodeKind[anc] == Type.ELEMENT) {
-                            int ns = source.beta[anc];
-                            if (ns >= 0) {
-                                while (ns < source.numberOfNamespaces && source.namespaceParent[ns] == anc) {
-                                    NamespaceBinding sourceNs = source.namespaceBinding[ns];
-                                    String prefix = sourceNs.getPrefix();
-                                    if (prefix.isEmpty()) {
-                                        foundDefaultNamespace = true;
-                                    }
-                                    if (inScopeNamespaces.stream().noneMatch(
-                                            binding -> binding.getPrefix().equals(prefix))) {
-                                        inScopeNamespaces.add(sourceNs);
-                                    }
-                                    ns++;
+                        Map<String, String> targetNamespaces = inScopeNamespaces(this, to, prevAtDepth, currentDepth);
+                        List<NamespaceBinding> newNamespaces = new ArrayList<>();
+                        NamespaceBinding[] sourceBindings = source.namespaceBinding;
+                        int anc = from;
+                        while (anc != -1 && source.nodeKind[anc] == Type.ELEMENT) {
+                            int sourceNS = source.beta[anc];
+                            while (sourceNS > 0 && sourceNS < source.numberOfNamespaces && source.namespaceParent[sourceNS] == anc) {
+                                NamespaceBinding nb = sourceBindings[sourceNS];
+                                String prefix = nb.getPrefix();
+                                if (prefix.isEmpty()) {
+                                    foundDefaultNamespace = true;
                                 }
+                                String existing = targetNamespaces.get(prefix);
+                                if (existing == null || !existing.equals(prefix)) {
+                                    newNamespaces.add(nb);
+                                }
+                                sourceNS++;
                             }
                             anc = TinyNodeImpl.getParentNodeNr(source, anc);
                         }
-                        if (!foundDefaultNamespace) {
-                            // if there is no default namespace in force for the copied subtree,
-                            // but there is a default namespace for the target tree, then we need
-                            // to insert an xmlns="" undeclaration to ensure that the default namespace
-                            // does not leak into the subtree. (Arguably we should do this only if
-                            // the subtree contains elements that use the default namespace??)
-                            // TODO: search only ancestors of the insertion position
-                            boolean targetDeclaresDefaultNamespace = false;
-                            for (int n = 0; n < numberOfNamespaces; n++) {
-                                if (namespaceBinding[n].getPrefix().isEmpty()) {
-                                    targetDeclaresDefaultNamespace = true;
-                                }
-                            }
-                            if (targetDeclaresDefaultNamespace) {
-                                inScopeNamespaces.add(NamespaceBinding.DEFAULT_UNDECLARATION);
-                            }
+                        if (!foundDefaultNamespace && targetNamespaces.get("") != null) {
+                            newNamespaces.add(NamespaceBinding.DEFAULT_UNDECLARATION);
                         }
+
                         int nTo = numberOfNamespaces;
-                        ensureNamespaceCapacity(inScopeNamespaces.size());
+                        ensureNamespaceCapacity(newNamespaces.size());
                         beta[to] = nTo;
-                        for (NamespaceBinding nb : inScopeNamespaces) {
+                        for (NamespaceBinding nb : newNamespaces) {
                             namespaceBinding[nTo++] = nb;
                         }
                         Arrays.fill(namespaceParent, numberOfNamespaces, nTo, to);
@@ -1851,7 +1840,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
                     int start = source.alpha[from];
                     int len = source.beta[from];
                     nameCode[to] = -1;
-                    CharSequence text = source.commentBuffer.subSequence(start, start+len);
+                    CharSequence text = source.commentBuffer.subSequence(start, start + len);
                     if (commentBuffer == null) {
                         commentBuffer = new FastStringBuffer(FastStringBuffer.C256);
                     }
@@ -1885,6 +1874,37 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
         numberOfNodes += length;
     }
 
+    /**
+     * Get the in-scope namespaces for a given node on a supplied tree. This is designed to work on
+     * a tree that is under construction, so normal navigation using the parent axis is not possible.
+     * See bug 4273.
+     *
+     * @param tree   the tree
+     * @param nodeNr the starting element node
+     * @return a map containing the in-scope namespaces
+     */
+
+    private static Map<String, String> inScopeNamespaces(TinyTree tree, int nodeNr, int[] prevAtDepth, int currentDepth) {
+        assert tree.nodeKind[nodeNr] == Type.ELEMENT;
+        Map<String, String> result = new HashMap<>();
+        int depth = currentDepth - 1;
+        while (depth >= 0) {
+            int parent = prevAtDepth[depth];
+            if (parent >= 0 && tree.nodeKind[parent] == Type.ELEMENT) {
+                int ns = tree.beta[parent];
+                if (ns >= 0) {
+                    while (ns < tree.numberOfNamespaces && tree.namespaceParent[ns] == parent) {
+                        NamespaceBinding sourceNs = tree.namespaceBinding[ns];
+                        String prefix = sourceNs.getPrefix();
+                        result.computeIfAbsent(prefix, k -> sourceNs.getURI());
+                        ns++;
+                    }
+                }
+            }
+            depth--;
+        }
+        return result;
+    }
     /**
      * Graft an element node from an external tree
      */

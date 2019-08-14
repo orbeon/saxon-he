@@ -545,10 +545,7 @@ public class TinyElementImpl extends TinyParentNodeImpl {
                     // don't allow a subtree that already contains external nodes to be grafted to another tree
                     tree.externalNodes == null) {
             if (isSkipValidator(out)) {
-                return false;
-                // Can't currently use grafting copy with validation="strip" because of the
-                // complications of ID and IDREF attributes (test case copy-5034)
-                //r1 = ((ProxyReceiver) r1).getNextReceiver();
+                out = ((ProxyReceiver)out).getNextReceiver();
             }
             if (tree.isTyped()) {
                 return false;
