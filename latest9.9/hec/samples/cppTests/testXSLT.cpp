@@ -636,6 +636,24 @@ void testPackage2(XsltProcessor * trans){
     delete output;
 }
 
+void testCatalog(SaxonProcessor * proc) {
+
+Xslt30Processor * trans = proc->newXslt30Processor();
+  bool trace = false;
+    
+ proc->setCatalog("/home/ond1/work/svn/latest9.9-saxonc/samples/php/catalog-test/catalog.xml", trace); 
+
+
+ //trans->setSourceFromFile("/home/ond1/work/svn/latest9.9-saxonc/samples/php/catalog-test/example.xml");
+trans->setInitialMatchSelectionAsFile("/home/ond1/work/svn/latest9.9-saxonc/samples/php/catalog-test/example.xml"); 
+//trans->compileFromFile("/home/ond1/work/svn/latest9.9-saxonc/samples/php/catalog-test/test1.xsl");
+ const char *result = trans->applyTemplatesReturningString("/home/ond1/work/svn/latest9.9-saxonc/samples/php/catalog-test/test1.xsl");//transformToString();
+
+if(result != NULL)
+std::cerr<<"testCatalog result= "<<result<<std::endl;
+
+}
+
 
 
 int main()
@@ -645,7 +663,8 @@ int main()
     cout<<"Test: XsltProcessor with Saxon version="<<processor->version()<<endl<<endl; 
     //processor->setcwd("/home");
    processor->setConfigurationProperty("http://saxon.sf.net/feature/generateByteCode","false");
-
+testCatalog(processor);
+  
     XsltProcessor * trans = processor->newXsltProcessor();
    /*exampleSimple1Err(trans);
     exampleSimple1(trans);
@@ -686,7 +705,7 @@ int main()
     xmarkTest2(trans);*/
 
    //Available in PE and EE
-   testTransformToStringExtensionFunc(processor, trans);
+   //testTransformToStringExtensionFunc(processor, trans);
 
     delete trans;
 delete processor;

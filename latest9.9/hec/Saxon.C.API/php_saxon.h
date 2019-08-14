@@ -145,7 +145,7 @@ struct xdmAtomicValue_object {
 
 
 #define PHP_SAXON_EXTNAME  "Saxon/C"
-#define PHP_SAXON_EXTVER   "1.1.0"
+#define PHP_SAXON_EXTVER   "1.2.0"
 
 /*
  * Class:     com_saxonica_functions_extfn_PhpCall_PhpFunctionCall
@@ -219,9 +219,9 @@ jobject JNICALL phpNativeCall
     PHP_METHOD(Xslt30Processor, callTemplateReturningValue);
     PHP_METHOD(Xslt30Processor, callTemplateReturningString);
     PHP_METHOD(Xslt30Processor, callTemplateReturningFile);
-    PHP_METHOD(Xslt30Processor, applyTemplateReturningValue);
-    PHP_METHOD(Xslt30Processor, applyTemplateReturningString);
-    PHP_METHOD(Xslt30Processor, applyTemplateReturningFile);
+    PHP_METHOD(Xslt30Processor, applyTemplatesReturningValue);
+    PHP_METHOD(Xslt30Processor, applyTemplatesReturningString);
+    PHP_METHOD(Xslt30Processor, applyTemplatesReturningFile);
     PHP_METHOD(Xslt30Processor, addPackages);
     PHP_METHOD(Xslt30Processor, setInitialTemplateParameters);
     PHP_METHOD(Xslt30Processor, setInitialMatchSelection);

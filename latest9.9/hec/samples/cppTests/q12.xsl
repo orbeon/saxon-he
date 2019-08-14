@@ -5,11 +5,11 @@
   
   
 
-  <xsl:for-each select="doc('xmark10.xml')/site/people/person">
+  <xsl:for-each select="doc('xmark100k.xml')/site/people/person">
 
     <xsl:variable name="p" select="." as="element(person)"/>
 
-    <xsl:variable name="l" as="element(initial)*" select="doc('xmark10.xml')/site/open_auctions/open_auction/initial[$p/profile/@income > (5000 * .)]" />  
+    <xsl:variable name="l" as="element(initial)*" select="doc('xmark100k.xml')/site/open_auctions/open_auction/initial[$p/profile/@income > (5000 * .)]" />  
 
     <xsl:if test="$p/profile/@income > 50000">
         <item person="{name}">
