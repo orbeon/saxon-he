@@ -36,6 +36,7 @@ import net.sf.saxon.trans.rules.Rule;
 import net.sf.saxon.trans.rules.RuleManager;
 import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.tree.util.Navigator;
+import net.sf.saxon.tree.util.Orphan;
 import net.sf.saxon.tree.wrapper.VirtualCopy;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
@@ -2562,16 +2563,43 @@ public class PackageLoaderHE implements IPackageLoader {
 
         eMap.put("node", (loader, element) -> {
             int kind = loader.getIntegerAttribute(element, "kind");
-            if (kind != Type.DOCUMENT && kind != Type.ELEMENT) {
-                throw new AssertionError("cannot reload nodes other than documents and elements yet");
-            }
             String content = element.getAttributeValue("", "content");
             String baseURI = element.getAttributeValue("", "baseURI");
-            StreamSource source = new StreamSource(new StringReader(content), baseURI);
-            NodeInfo node = loader.config.buildDocumentTree(source).getRootNode();
-            if (kind == Type.ELEMENT) {
-                node = VirtualCopy.makeVirtualCopy(node.iterateAxis(AxisInfo.CHILD, NodeKindTest.ELEMENT).next());
+            NodeInfo node = null;
+            switch (kind) {
+                case Type.DOCUMENT:
+                case Type.ELEMENT: {
+                    StreamSource source = new StreamSource(new StringReader(content), baseURI);
+                    node = loader.config.buildDocumentTree(source).getRootNode();
+                    if (kind == Type.ELEMENT) {
+                        node = VirtualCopy.makeVirtualCopy(node.iterateAxis(AxisInfo.CHILD, NodeKindTest.ELEMENT).next());
+                    }
+                    break;
+                }
+                case Type.TEXT:
+                case Type.COMMENT: {
+                    Orphan o = new Orphan(loader.getConfiguration());
+                    o.setNodeKind((short) kind);
+                    o.setStringValue(content);
+                    node = o;
+                    break;
+                }
+                default: {
+                    Orphan o = new Orphan(loader.getConfiguration());
+                    o.setNodeKind((short) kind);
+                    o.setStringValue(content);
+                    String prefix = element.getAttributeValue("", "prefix");
+                    String ns = element.getAttributeValue("", "ns");
+                    String local = element.getAttributeValue("", "localName");
+                    if (local != null) {
+                        FingerprintedQName name = new FingerprintedQName(prefix == null ? "" : prefix, ns == null ? "" : ns, local);
+                        o.setNodeName(name);
+                    }
+                    node = o;
+                    break;
+                }
             }
+
             return Literal.makeLiteral(new One<>(node));
         });
 

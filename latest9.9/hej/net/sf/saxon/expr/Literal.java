@@ -25,8 +25,11 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
 
+import javax.xml.transform.stream.StreamResult;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 
 /**
@@ -528,15 +531,48 @@ public class Literal extends Expression {
             out.endElement();
         } else if (value instanceof NodeInfo) {
             out.startElement("node");
-            out.emitAttribute("kind", ((NodeInfo) value).getNodeKind() + "");
-            out.emitAttribute("baseUri", ((NodeInfo) value).getBaseURI());
-            if (!((ExpressionPresenter.ExportOptions) out.getOptions()).explaining) {
-                String ser = QueryResult.serialize((NodeInfo) value);
-                out.emitAttribute("content", ser);
-            } else {
+            final int nodeKind = ((NodeInfo) value).getNodeKind();
+            out.emitAttribute("kind", nodeKind + "");
+            if (((ExpressionPresenter.ExportOptions) out.getOptions()).explaining) {
                 String name = ((NodeInfo)value).getDisplayName();
                 if (!name.isEmpty()) {
                     out.emitAttribute("name", name);
+                }
+            } else {
+                switch (nodeKind) {
+                    case Type.DOCUMENT:
+                    case Type.ELEMENT:
+                        StringWriter sw = new StringWriter();
+                        Properties props = new Properties();
+                        props.setProperty("method", "xml");
+                        props.setProperty("indent", "no");
+                        props.setProperty("omit-xml-declaration", "yes");
+                        QueryResult.serialize(((NodeInfo)value), new StreamResult(sw), props);
+                        out.emitAttribute("content", sw.toString());
+                        out.emitAttribute("baseUri", ((NodeInfo) value).getBaseURI());
+                        break;
+                    case Type.TEXT:
+                    case Type.COMMENT:
+                        out.emitAttribute("content", ((NodeInfo)value).getStringValue());
+                        break;
+                    case Type.ATTRIBUTE:
+                    case Type.NAMESPACE:
+                    case Type.PROCESSING_INSTRUCTION:
+                        final StructuredQName name = NameOfNode.makeName(((NodeInfo) value)).getStructuredQName();
+                        if (!name.getLocalPart().isEmpty()) {
+                            out.emitAttribute("localName", name.getLocalPart());
+                        }
+                        if (!name.getPrefix().isEmpty()) {
+                            out.emitAttribute("prefix", name.getPrefix());
+                        }
+                        if (!name.getURI().isEmpty()) {
+                            out.emitAttribute("ns", name.getURI());
+                        }
+                        out.emitAttribute("content", ((NodeInfo) value).getStringValue());
+                        break;
+                    default:
+                        assert false;
+
                 }
             }
             out.endElement();
