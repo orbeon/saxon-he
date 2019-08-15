@@ -1455,17 +1455,24 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
     HashTable *arr_hash;
     char* functionName;
     zval * arguments_zval;
-    zval * val;
+    zval * ar;
     long num_key;
     XdmValue ** arguments;
     int argument_length=0;
     zend_string *key;
 
+    zval **val;
+       HashPosition pointer;
+       int array_count;
+       char * string_key;
+       int str_key_len;
+       long num_key=0;
+
     char * infilename;
     char * styleFileName;
     size_t len1, len2;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssa", &styleFileName, &len1, &functionName, &len2, &arguments_zval) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssz", &styleFileName, &len1, &functionName, &len2, &arguments_zval) == FAILURE) {
         RETURN_NULL();
     }
 
@@ -1478,44 +1485,58 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
     argument_length = zend_hash_num_elements(arr_hash);
    
     arguments = new XdmValue*[argument_length];
-      
+
     if (xslt30Processor != NULL) {
-      ZEND_HASH_FOREACH_KEY_VAL(arr_hash, num_key, key, val) {
+      for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &data, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
         if(Z_TYPE_P(val) != NULL) {
-	const char * objName =ZSTR_VAL(Z_OBJCE_P(val)->name);
+        zend_object* ooth = Z_OBJ_P(val);
+	const char * objName =ZSTR_VAL(ooth->name);
+
+
+	    char *key = NULL;
+         uint  klen;
+         ulong index;
+
+         if (zend_hash_get_current_key_ex(arr_hash, &key, &klen, &index, 0, &pointer) == HASH_KEY_IS_STRING) {
+             /* the key is a string, do nothing */
+         } else {
+             /* we assume the key to be long, index will be set */
+
+
+
       /*std::cerr<<"test type:"<<(Z_OBJCE_P(val)->name)<<std::endl;
 	php_printf("num_key %d =>", num_key);
 	php_printf("key %d =>", key);
 	*/
 	if(strcmp(objName, "Saxon\\XdmNode")==0) {
-		zend_object* ooth = Z_OBJ_P(val);
+
 		xdmNode_object * nobj = (xdmNode_object *)((char *)ooth - XtOffsetOf(xdmNode_object, std));
         	if(nobj != NULL) {
             		XdmValue * value = (XdmValue *) nobj->xdmNode;
-            		arguments[num_key] = value;
+            		arguments[index] = value;
         	}
 	}
 	else if(strcmp(objName, "Saxon\\XdmAtomicValue")==0) {
-		zend_object* ooth = Z_OBJ_P(val);
+
 		xdmAtomicValue_object * nobj = (xdmAtomicValue_object *)((char *)ooth - XtOffsetOf(xdmAtomicValue_object, std));
         	if(nobj != NULL) {
             		XdmValue * value = (XdmValue *) nobj->xdmAtomicValue;
-            		arguments[num_key] = value;
+            		arguments[index] = value;
         	}
 	}
 	else if(strcmp(objName, "Saxon\\XdmValue")==0) {
-		zend_object* ooth = Z_OBJ_P(val);
+		
 		xdmValue_object * nobj = (xdmValue_object *)((char *)ooth - XtOffsetOf(xdmValue_object, std));
         	if(nobj != NULL) {
             		XdmValue * value = nobj->xdmValue;
-            		arguments[num_key] = value;
+            		arguments[index] = value;
         	}
 	}
 	else {//TODO error warning}
          }}else {
 		//TODO error warning
         }
-      } ZEND_HASH_FOREACH_END();
+      } 
 
 
 	//php_printf(" argument_length= %d",argument_length);
@@ -1534,7 +1555,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
             if(obj->xslt30Processor->exceptionOccurred()){
   		//TODO
 	    }
-        }
+        } }
     }
 
 
@@ -1551,11 +1572,19 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
     int argument_length=0;
     zend_string *key;
 
+
+    zval **val;
+    HashPosition pointer;
+    int array_count;
+    char * string_key;
+    int str_key_len;
+    long num_key=0;
+
     char * infilename;
     char * styleFileName;
     size_t len1, len2;
 
-       if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssa", &styleFileName, &len1, &functionName, &len2, &arguments_zval) == FAILURE) {
+       if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssz", &styleFileName, &len1, &functionName, &len2, &arguments_zval) == FAILURE) {
         RETURN_NULL();
     }
 
@@ -1567,44 +1596,57 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
     argument_length = zend_hash_num_elements(arr_hash);
    
     arguments = new XdmValue*[argument_length];
-      
+
     if (xslt30Processor != NULL) {
-      ZEND_HASH_FOREACH_KEY_VAL(arr_hash, num_key, key, val) {
-        if(Z_TYPE_P(val) != NULL) {
-	const char * objName =ZSTR_VAL(Z_OBJCE_P(val)->name);
+      for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &data, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
+              if(Z_TYPE_P(val) != NULL) {
+              zend_object* ooth = Z_OBJ_P(val);
+      	const char * objName =ZSTR_VAL(ooth->name);
+
+      	char *key = NULL;
+         uint  klen;
+         ulong index;
+
+          if (zend_hash_get_current_key_ex(arr_hash, &key, &klen, &index, 0, &pointer) == HASH_KEY_IS_STRING) {
+                      /* the key is a string, do nothing */
+           } else {
+                      /* we assume the key to be long, index will be set */
+
       /*std::cerr<<"test type:"<<(Z_OBJCE_P(val)->name)<<std::endl;
 	php_printf("num_key %d =>", num_key);
 	php_printf("key %d =>", key);
 	*/
+
+
 	if(strcmp(objName, "Saxon\\XdmNode")==0) {
-		zend_object* ooth = Z_OBJ_P(val);
+
 		xdmNode_object * nobj = (xdmNode_object *)((char *)ooth - XtOffsetOf(xdmNode_object, std));
         	if(nobj != NULL) {
             		XdmValue * value = (XdmValue *) nobj->xdmNode;
-            		arguments[num_key] = value;
+            		arguments[index] = value;
         	}
 	}
 	else if(strcmp(objName, "Saxon\\XdmAtomicValue")==0) {
-		zend_object* ooth = Z_OBJ_P(val);
 		xdmAtomicValue_object * nobj = (xdmAtomicValue_object *)((char *)ooth - XtOffsetOf(xdmAtomicValue_object, std));
         	if(nobj != NULL) {
             		XdmValue * value = (XdmValue *) nobj->xdmAtomicValue;
-            		arguments[num_key] = value;
+            		arguments[index] = value;
         	}
 	}
 	else if(strcmp(objName, "Saxon\\XdmValue")==0) {
-		zend_object* ooth = Z_OBJ_P(val);
 		xdmValue_object * nobj = (xdmValue_object *)((char *)ooth - XtOffsetOf(xdmValue_object, std));
         	if(nobj != NULL) {
             		XdmValue * value = nobj->xdmValue;
-            		arguments[num_key] = value;
+            		arguments[index] = value;
         	}
 	}
 	else {//TODO error warning}
          }}else {
 		//TODO error warning
         }
-      } ZEND_HASH_FOREACH_END();
+      }
+
+      }
 
         const char * result = xslt30Processor->callFunctionReturningString(styleFileName, functionName, arguments, argument_length);
 	if(result != NULL) {
@@ -1638,11 +1680,18 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
     int argument_length=0;
     zend_string *key;
 
+    zval **val;
+    HashPosition pointer;
+    int array_count;
+    char * string_key;
+    int str_key_len;
+    long num_key=0;
+
     char * outfilename;
     char * styleFileName;
     size_t len1, len2, len3;
 
-        if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssas", &styleFileName, &len1, &functionName, &len2, &arguments_zval, &outfilename, &len3) == FAILURE) {
+        if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sszs", &styleFileName, &len1, &functionName, &len2, &arguments_zval, &outfilename, &len3) == FAILURE) {
         RETURN_NULL();
     }
 
@@ -1653,11 +1702,21 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
     argument_length = zend_hash_num_elements(arr_hash);
    
     arguments = new XdmValue*[argument_length];
-      
+
     if (xslt30Processor != NULL) {
-      ZEND_HASH_FOREACH_KEY_VAL(arr_hash, num_key, key, val) {
-        if(Z_TYPE_P(val) != NULL) {
-	const char * objName =ZSTR_VAL(Z_OBJCE_P(val)->name);
+    for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &val, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
+            if(Z_TYPE_P(val) != NULL) {
+            zend_object* ooth = Z_OBJ_P(val);
+          	const char * objName =ZSTR_VAL(ooth->name);
+            char *key = NULL;
+            uint  klen;
+            ulong index;
+
+ if (zend_hash_get_current_key_ex(arr_hash, &key, &klen, &index, 0, &pointer) == HASH_KEY_IS_STRING) {
+             /* the key is a string, do nothing */
+         } else {
+             /* we assume the key to be long, index will be set */
+
       /*std::cerr<<"test type:"<<(Z_OBJCE_P(val)->name)<<std::endl;
 	php_printf("num_key %d =>", num_key);
 	php_printf("key %d =>", key);
@@ -1667,7 +1726,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
 		xdmNode_object * nobj = (xdmNode_object *)((char *)ooth - XtOffsetOf(xdmNode_object, std));
         	if(nobj != NULL) {
             		XdmValue * value = (XdmValue *) nobj->xdmNode;
-            		arguments[num_key] = value;
+            		arguments[index] = value;
         	}
 	}
 	else if(strcmp(objName, "Saxon\\XdmAtomicValue")==0) {
@@ -1690,7 +1749,8 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
          }}else {
 		//TODO error warning
         }
-      } ZEND_HASH_FOREACH_END();
+        }
+      }
 
 
         xslt30Processor->callFunctionReturningFile(styleFileName, functionName, arguments, argument_length, outfilename);
@@ -1927,12 +1987,19 @@ PHP_METHOD(Xslt30Processor, addPackages){
     const char ** arguments;
     int argument_length=0;
     zend_string *key;
+    HashTable *arr_hash;
+       zval **data;
+       HashPosition pointer;
+       int array_count;
+       char * string_key;
+       int str_key_len;
+       long num_key;
 
     char * infilename;
     char * styleFileName;
     size_t len1, len2;
 
-        if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &arguments_zval) == FAILURE) {
+        if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &arguments_zval) == FAILURE) {
         RETURN_NULL();
     }
 
@@ -1946,16 +2013,23 @@ PHP_METHOD(Xslt30Processor, addPackages){
     arguments = new const char*[argument_length];
 
   if (xslt30Processor != NULL) {
-      ZEND_HASH_FOREACH_KEY_VAL(arr_hash, num_key, key, val) {
-        if(Z_TYPE_P(val) != NULL && Z_TYPE_P(val)== IS_STRING) {
-      /*std::cerr<<"test type:"<<(Z_OBJCE_P(val)->name)<<std::endl;
-	php_printf("num_key %d =>", num_key);
-	php_printf("key %d =>", key);
-	*/
-		arguments[num_key] = (const char*)Z_STRVAL_P(val);
-     		
+
+	for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &val, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
+                if(Z_TYPE_P(val) != NULL) {
+                zend_object* ooth = Z_OBJ_P(val);
+              	const char * objName =ZSTR_VAL(ooth->name);
+                char *key = NULL;
+                uint  klen;
+                ulong index;
+
+     if (zend_hash_get_current_key_ex(arr_hash, &key, &klen, &index, 0, &pointer) == HASH_KEY_IS_STRING) {
+                 /* the key is a string, do nothing */
+             } else {
+                 /* we assume the key to be long, index will be set */
+		        arguments[index] = (const char*)Z_STRVAL_P(val);
+     	}
         } 
-    }  ZEND_HASH_FOREACH_END();
+    }
 
         xslt30Processor->addPackages(arguments, argument_length);
 	if(xslt30Processor->exceptionOccurred()){
@@ -1980,9 +2054,17 @@ PHP_METHOD(Xslt30Processor, addPackages){
     int argument_length=0;
     zend_string *key;
 
+    HashTable *arr_hash;
+       zval **data;
+       HashPosition pointer;
+       int array_count;
+       char * string_key;
+       int str_key_len;
+       long num_key;
+
     bool tunnel = false;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &arguments_zval) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &arguments_zval) == FAILURE) {
         RETURN_NULL();
     }
 
@@ -1996,9 +2078,19 @@ PHP_METHOD(Xslt30Processor, addPackages){
     arguments = new XdmValue*[argument_length];
     std::map<std::string,XdmValue*> parameters;
     if (xslt30Processor != NULL) {
-      ZEND_HASH_FOREACH_KEY_VAL(arr_hash, num_key, key, val) {
-        if(Z_TYPE_P(val) != NULL) {
-	const char * objName =ZSTR_VAL(Z_OBJCE_P(val)->name);
+      for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &val, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
+                      if(Z_TYPE_P(val) != NULL) {
+                      zend_object* ooth = Z_OBJ_P(val);
+                    	const char * objName =ZSTR_VAL(ooth->name);
+                      char *key = NULL;
+                      uint  klen;
+                      ulong index;
+
+           if (zend_hash_get_current_key_ex(arr_hash, &key, &klen, &index, 0, &pointer) == HASH_KEY_IS_STRING) {
+                       /* the key is a string, do nothing */
+
+                       /* we assume the key to be long, index will be set */
+      	
       /*std::cerr<<"test type:"<<(Z_OBJCE_P(val)->name)<<std::endl;
 	php_printf("num_key %d =>", num_key);
 	php_printf("key %d =>", key);
@@ -2028,10 +2120,12 @@ PHP_METHOD(Xslt30Processor, addPackages){
         	}
 	}
 	else {//TODO error warning}
-         }}else {
+         }
+    }else {
 		//TODO error warning
         }
-      } ZEND_HASH_FOREACH_END();
+      }
+      }
 
 
 	//php_printf(" argument_length= %d",argument_length);

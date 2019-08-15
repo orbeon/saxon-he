@@ -456,10 +456,16 @@ public class Xslt30Processor extends SaxonCAPI {
         Map<String, Object> paramsMap = convertArraysToMap(params, values);
 
         if (outFilename != null) {
+            if(debug) {
+                System.err.println("DEBUG: XSLT30TransformerForCpp param: " + outFilename);
+            }
             serializer = resolveOutputFile(processor, cwd, outFilename);
         } else if (paramsMap.containsKey("o")) {
             String outfile = (String) paramsMap.get("o");
             serializer = resolveOutputFile(processor, cwd, outfile);
+            if(debug) {
+                System.err.println("DEBUG: XSLT30TransformerForCpp param: " + outfile);
+            }
         } else if (serializer == null) {
             throw new SaxonApiException("Output file not set for this transformation");
         }
@@ -520,10 +526,12 @@ public class Xslt30Processor extends SaxonCAPI {
     XdmValue[] getArguments(Object[] arguments) throws SaxonApiException {
         if (arguments != null && arguments.length > 0) {
             XdmValue[] values = new XdmValue[arguments.length];
+            if(debug && arguments != null) {
+                System.err.println("Xslt30Processor getArguments.length="+arguments.length);
+            }
             for (int i = 0; i < arguments.length; i++) {
-                if (arguments[i] instanceof XdmValue) {
-                    values[i] = (XdmValue) arguments[i];
-                } else {
+                values[i] = convertObjectToXdmValue(arguments[i]);
+                if(values[i] == null) {
                     throw new SaxonApiException("Argument is not of type xdmValue");
                 }
 

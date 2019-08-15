@@ -414,13 +414,16 @@ public class SaxonCAPI {
                 QName qname = QName.fromClarkName(paramName);
                 valueForCpp = convertObjectToXdmValue(values[i]);
                 if (debug) {
-                    System.err.println("DEBUG: XSLTTransformerForCpp param: " + paramName);
+                    System.err.println("DEBUG: XSLT30TransformerForCpp param: " + paramName);
                 }
 
                 if (qname != null && valueForCpp != null) {
                     globals.put(qname, valueForCpp);
                 }
             } else {
+                if (debug) {
+                    System.err.println("DEBUG: XSLT30TransformerForCpp: param-name: " +params[i] + ", type of Value= "+values[i].getClass().getName());
+                }
                 map.put(params[i], values[i]);
             }
         }
@@ -430,7 +433,7 @@ public class SaxonCAPI {
 
     public XdmValue convertObjectToXdmValue(Object value) {
 
-        XdmValue valueForCpp;
+        XdmValue valueForCpp = null;
         if (value instanceof XdmValue) {
             valueForCpp = (XdmValue) value;
             if (debug) {
