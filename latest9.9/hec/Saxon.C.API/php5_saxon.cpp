@@ -854,7 +854,7 @@ xdmNode_object* ooth = NULL;
       		if(strcmp(objName, "Saxon\\XdmNode")==0) {
 			ooth = (xdmNode_object*)zend_object_store_get_object(retval TSRMLS_CC);
         		if(ooth != NULL) {
-            			obj = ooth->xdmNode->getUnderlyingValue(NULL);
+            			obj = ooth->xdmNode->getUnderlyingValue();
             	
         		}
       		}
@@ -1109,11 +1109,11 @@ PHP_METHOD(XsltProcessor, setSourceFromXdmValue)
             XdmNode * value = ooth->xdmNode;
             if(value != NULL) {	
 		XdmItem  *valueX = (XdmItem*)value;
-	        xsltProcessor->setSourceFromXdmValue(valueX);
+	        xsltProcessor->setSourceFromXdmNode(valueX);
 
             }
         }
-      } else if(strcmp(objName, "Saxon\\XdmValue")==0) {
+      } /*else if(strcmp(objName, "Saxon\\XdmValue")==0) {
 	xdmValue_object* ooth = (xdmValue_object*)zend_object_store_get_object(oth TSRMLS_CC);
         if(ooth != NULL) {
             XdmValue * value = ooth->xdmValue;
@@ -1121,7 +1121,7 @@ PHP_METHOD(XsltProcessor, setSourceFromXdmValue)
 	        xsltProcessor->setSourceFromXdmValue((XdmItem*)value);
             }
         }
-      }  
+      }  */
 
         
     }
@@ -1413,7 +1413,7 @@ void Xslt30Processor_free_storage(zend_object *object TSRMLS_DC)
     efree(obj);
 }
 
-zend_object_value xsltProcessor_create_handler(zend_class_entry *type TSRMLS_DC)
+zend_object_value xslt30Processor_create_handler(zend_class_entry *type TSRMLS_DC)
 {
     zval *tmp;
     zend_object_value retval;
@@ -1456,7 +1456,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
     char* functionName;
     zval * arguments_zval;
     zval * ar;
-    long num_key;
+
     XdmValue ** arguments;
     int argument_length=0;
     zend_string *key;
@@ -1566,7 +1566,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
     char* functionName;
     zval * arguments_zval;
     zval * val;
-    long num_key;
+
     XdmValue ** arguments;
     int argument_length=0;
     zend_string *key;
@@ -1673,7 +1673,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
     char* functionName;
     zval * arguments_zval;
     zval * val;
-    long num_key;
+
     XdmValue ** arguments;
     int argument_length=0;
     zend_string *key;
@@ -1731,7 +1731,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
 		xdmAtomicValue_object * nobj = (xdmAtomicValue_object *)((char *)ooth - XtOffsetOf(xdmAtomicValue_object, std));
         	if(nobj != NULL) {
             		XdmValue * value = (XdmValue *) nobj->xdmAtomicValue;
-            		arguments[num_key] = value;
+            		arguments[index] = value;
         	}
 	}
 	else if(strcmp(objName, "Saxon\\XdmValue")==0) {
@@ -1739,7 +1739,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
 		xdmValue_object * nobj = (xdmValue_object *)((char *)ooth - XtOffsetOf(xdmValue_object, std));
         	if(nobj != NULL) {
             		XdmValue * value = nobj->xdmValue;
-            		arguments[num_key] = value;
+            		arguments[index] = value;
         	}
 	}
 	else {//TODO error warning}
@@ -1974,7 +1974,7 @@ PHP_METHOD(Xslt30Processor, addPackages){
     char* functionName;
     zval * arguments_zval;
     zval * val;
-    long num_key;
+
     const char ** arguments;
     int argument_length=0;
     zend_string *key;
@@ -2039,7 +2039,7 @@ PHP_METHOD(Xslt30Processor, addPackages){
     HashTable *arr_hash;
     zval * arguments_zval;
     zval * val;
-    long num_key;
+
     XdmValue ** arguments;
     int argument_length=0;
     zend_string *key;
