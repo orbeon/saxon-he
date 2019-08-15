@@ -2145,8 +2145,8 @@ PHP_METHOD(Xslt30Processor, setInitialMatchSelection){
     }
 
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL) {
 
@@ -2219,8 +2219,7 @@ PHP_METHOD(Xslt30Processor, setGlobalContextItem)
     }
 
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL) {
 
@@ -2277,8 +2276,7 @@ PHP_METHOD(Xslt30Processor, setGlobalContextFromFile)
     }
 
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL && inFilename != NULL) {
 	 xslt30Processor->setGlobalContextFromFile(inFilename);
@@ -2298,8 +2296,7 @@ PHP_METHOD(Xslt30Processor, setInitialMatchSelectionAsFile)
     }
 
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL && inFilename != NULL) {
 	 xslt30Processor->setInitialMatchSelectionAsFile(inFilename);
@@ -2322,8 +2319,7 @@ PHP_METHOD(Xslt30Processor, transformFileToFile)
     }
 
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
 
     if (xslt30Processor != NULL) {
@@ -2347,8 +2343,7 @@ PHP_METHOD(Xslt30Processor, transformFileToValue)
     }
 
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
 
     if (xslt30Processor != NULL) {
@@ -2387,8 +2382,7 @@ PHP_METHOD(Xslt30Processor, transformFileToString)
     }
 
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
 
     if (xslt30Processor != NULL) {
@@ -2422,8 +2416,7 @@ PHP_METHOD(Xslt30Processor, transformToString)
 
 
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL) {
 
@@ -2453,8 +2446,7 @@ PHP_METHOD(Xslt30Processor, transformToValue)
     }
 
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xsltProcessor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
 
     if (xslt30Processor != NULL) {
@@ -2490,8 +2482,7 @@ PHP_METHOD(Xslt30Processor, transformToFile)
     }
 
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
 
     if (xslt30Processor != NULL) {
@@ -2515,8 +2506,7 @@ PHP_METHOD(Xslt30Processor, compileFromFile)
         RETURN_NULL();
     }
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL) {
         xslt30Processor->compileFromFile(name);
@@ -2532,8 +2522,7 @@ PHP_METHOD(Xslt30Processor, compileFromString)
         RETURN_NULL();
     }
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL) {
         xslt30Processor->compileFromString(stylesheetStr);
@@ -2568,8 +2557,7 @@ PHP_METHOD(Xslt30Processor, compileFromFileAndSave)
         RETURN_NULL();
     }
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL) {
         xslt30Processor->compileFromStringAndSave(stylesheetFilename, filename);
@@ -2587,8 +2575,7 @@ PHP_METHOD(Xslt30Processor, compileFromValue)
         RETURN_NULL();
     }
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL) {
 	zend_object* vvobj = Z_OBJ_P(oth);
@@ -2619,8 +2606,7 @@ PHP_METHOD(Xslt30Processor, setJustInTimeCompilation)
     }
 
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL) {
 	 xslt30Processor->setJustInTimeCompilation(jit);
@@ -2638,8 +2624,7 @@ PHP_METHOD(Xslt30Processor, setOutputFile)
     }
 
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL && outputFilename != NULL) {
 
@@ -2663,8 +2648,7 @@ PHP_METHOD(Xslt30Processor, setProperty)
         RETURN_NULL();
     }
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL) {
         xslt30Processor->setProperty(name, value);
@@ -2682,8 +2666,7 @@ PHP_METHOD(Xslt30Processor, setParameter)
         RETURN_NULL();
     }
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL) {
 	if(Z_TYPE_P(oth) ==IS_NULL){
@@ -2742,8 +2725,7 @@ PHP_METHOD(Xslt30Processor, clearParameters)
     }
 
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL) {
         xslt30Processor->clearParameters(true);
@@ -2758,8 +2740,7 @@ PHP_METHOD(Xslt30Processor, clearProperties)
     }
 
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL) {
         xslt30Processor->clearProperties();
@@ -2777,8 +2758,7 @@ PHP_METHOD(Xslt30Processor, getXslMessages)
     }
 
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
 
     if (xslt30Processor != NULL) {
@@ -2811,8 +2791,7 @@ PHP_METHOD(Xslt30Processor, exceptionOccurred)
 {
     Xslt30Processor *xslt30Processor;
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt20Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     if (ZEND_NUM_ARGS()>0) {
         WRONG_PARAM_COUNT;
     }
@@ -2829,8 +2808,7 @@ PHP_METHOD(Xslt30Processor, getExceptionCount)
 {
     Xslt30Processor *xslt30Processor;
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     if (ZEND_NUM_ARGS()>0) {
         WRONG_PARAM_COUNT;
     }
@@ -2851,8 +2829,7 @@ PHP_METHOD(Xslt30Processor, getErrorCode)
         RETURN_NULL();
     }
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL) {
         const char * errCode = xslt30Processor->getErrorCode((int)index);
@@ -2872,8 +2849,7 @@ PHP_METHOD(Xslt30Processor, getErrorMessage)
         RETURN_NULL();
     }
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL) {
         const char * errStr = xslt30Processor->getErrorMessage((int)index);
@@ -2888,8 +2864,7 @@ PHP_METHOD(Xslt30Processor, exceptionClear)
 {
     Xslt30Processor *xslt30Processor;
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL) {
         xslt30Processor->exceptionClear();
