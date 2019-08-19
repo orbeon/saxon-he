@@ -1459,7 +1459,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
     XdmValue ** arguments;
     int argument_length=0;
 
-    zval *val;
+    zval **val;
        HashPosition pointer;
        int array_count;
        char * string_key;
@@ -1565,7 +1565,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
     HashTable *arr_hash;
     char* functionName;
     zval * arguments_zval;
-    zval * val;
+    zval ** val;
 
     XdmValue ** arguments;
     int argument_length=0;
@@ -1669,7 +1669,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
     Xslt30Processor *xslt30Processor;
     char* functionName;
     zval * arguments_zval;
-    zval * val;
+    zval ** val;
 
     XdmValue ** arguments;
     int argument_length=0;
@@ -1969,7 +1969,7 @@ PHP_METHOD(Xslt30Processor, addPackages){
     Xslt30Processor *xslt30Processor;
     char* functionName;
     zval * arguments_zval;
-    zval * val;
+    zval ** val;
 
     const char ** arguments;
     int argument_length=0;
@@ -2034,7 +2034,7 @@ PHP_METHOD(Xslt30Processor, addPackages){
   Xslt30Processor *xslt30Processor;
     HashTable *arr_hash;
     zval * arguments_zval;
-    zval * val;
+    zval ** val;
 
     XdmValue ** arguments;
     int argument_length=0;
