@@ -1402,7 +1402,7 @@ PHP_METHOD(XsltProcessor, exceptionClear)
 
 /*     ============== XSLT30: PHP Interface of  Xslt30Processor class =============== */
 
-void Xslt30Processor_free_storage(zend_object *object TSRMLS_DC)
+void Xslt30Processor_free_storage(void *object TSRMLS_DC)
 {
 
     xslt30Processor_object *obj = (xslt30Processor_object *)object;
