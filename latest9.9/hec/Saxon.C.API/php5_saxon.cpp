@@ -1485,9 +1485,8 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
 
     if (xslt30Processor != NULL) {
       for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &val, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
-        if(Z_TYPE_P(val) != NULL) {
-        zend_object* ooth = Z_OBJCE_P(val);
-	    const char * objName = ooth->name;
+        //if(Z_TYPE_P(val) != NULL) {
+
 
 
 	    char *key = NULL;
@@ -1500,7 +1499,8 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
              /* we assume the key to be long, index will be set */
 
 
-
+          zend_object* ooth = Z_OBJCE_P(val[index]);
+         const char * objName = ooth->name;
       /*std::cerr<<"test type:"<<(Z_OBJCE_P(val)->name)<<std::endl;
 	php_printf("num_key %d =>", num_key);
 	php_printf("key %d =>", key);
@@ -1533,7 +1533,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
          }}else {
 		//TODO error warning
         }
-      } 
+
 
 
 	//php_printf(" argument_length= %d",argument_length);
