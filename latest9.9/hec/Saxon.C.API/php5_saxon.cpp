@@ -1487,11 +1487,12 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
       for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &val, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
         //if(Z_TYPE_P(val) != NULL) {
 
-
-
-	    char *key = NULL;
-         uint  klen;
-         ulong index;
+        if(Z_TYPE_P(val) != NULL) {
+                      zend_object* ooth = Z_OBJCE_P(val);
+                    	const char * objName = ooth->name;
+                      char *key = NULL;
+                      uint  klen;
+                      ulong index;
 
          if (zend_hash_get_current_key_ex(arr_hash, &key, &klen, &index, 0, &pointer) == HASH_KEY_IS_STRING) {
              /* the key is a string, do nothing */
@@ -1532,6 +1533,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
 	else {//TODO error warning}
          }}else {
 		//TODO error warning
+        }
         }
 
 
@@ -2070,7 +2072,7 @@ PHP_METHOD(Xslt30Processor, addPackages){
 
            if (zend_hash_get_current_key_ex(arr_hash, &key, &klen, &index, 0, &pointer) == HASH_KEY_IS_STRING) {
                        /* the key is a string, do nothing */
-
+              }else {
                        /* we assume the key to be long, index will be set */
       	
       /*std::cerr<<"test type:"<<(Z_OBJCE_P(val)->name)<<std::endl;
@@ -2103,7 +2105,7 @@ PHP_METHOD(Xslt30Processor, addPackages){
 	}
 	else {//TODO error warning}
          }
-    }else {
+    }}else {
 		//TODO error warning
         }
       }
