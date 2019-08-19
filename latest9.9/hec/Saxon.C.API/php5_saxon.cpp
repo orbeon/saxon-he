@@ -1487,7 +1487,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
       for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &val, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
         if(Z_TYPE_P(val) != NULL) {
         zend_object* ooth = Z_OBJCE_P(val);
-	const char * objName =ZSTR_VAL(ooth->name);
+	    const char * objName = ooth->name;
 
 
 	    char *key = NULL;
@@ -1595,7 +1595,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
       for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &val, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
               if(Z_TYPE_P(val) != NULL) {
               zend_object* ooth = Z_OBJCE_P(val);
-      	const char * objName =ZSTR_VAL(ooth->name);
+      	      const char * objName = ooth->name;
 
       	char *key = NULL;
          uint  klen;
@@ -1699,7 +1699,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
     for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &val, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
             if(Z_TYPE_P(val) != NULL) {
             zend_object* ooth = Z_OBJCE_P(val);
-          	const char * objName =ZSTR_VAL(ooth->name);
+          	const char * objName = ooth->name;
             char *key = NULL;
             uint  klen;
             ulong index;
@@ -2002,7 +2002,7 @@ PHP_METHOD(Xslt30Processor, addPackages){
 	for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &val, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
                 if(Z_TYPE_P(val) != NULL) {
                 zend_object* ooth = Z_OBJCE_P(val);
-              	const char * objName =ZSTR_VAL(ooth->name);
+              	const char * objName = ooth->name;
                 char *key = NULL;
                 uint  klen;
                 ulong index;
@@ -2064,7 +2064,7 @@ PHP_METHOD(Xslt30Processor, addPackages){
       for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &val, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
                       if(Z_TYPE_P(val) != NULL) {
                       zend_object* ooth = Z_OBJCE_P(val);
-                    	const char * objName =ZSTR_VAL(ooth->name);
+                    	const char * objName = ooth->name;
                       char *key = NULL;
                       uint  klen;
                       ulong index;
@@ -2142,7 +2142,7 @@ PHP_METHOD(Xslt30Processor, setInitialMatchSelection){
 		return;
 	}
 
-      const char * objName =ZSTR_VAL(Z_OBJCE_P(oth)->name);
+      const char * objName =Z_OBJCE_P(oth)->name;
       //std::cout<<"test type:"<<(Z_OBJCE_P(oth)->name)<<std::endl;
 
       
@@ -2215,7 +2215,7 @@ PHP_METHOD(Xslt30Processor, setGlobalContextItem)
 		return;
 	}
 
-      const char * objName =ZSTR_VAL(Z_OBJCE_P(oth)->name);
+      const char * objName =Z_OBJCE_P(oth)->name;
       //std::cout<<"test type:"<<(Z_OBJCE_P(oth)->name)<<std::endl;
 
       if(strcmp(objName, "Saxon\\XdmNode")==0) {
@@ -2657,7 +2657,7 @@ PHP_METHOD(Xslt30Processor, setParameter)
 		return;
 	}
 
-      const char * objName =ZSTR_VAL(Z_OBJCE_P(oth)->name);
+      const char * objName =Z_OBJCE_P(oth)->name;
       //std::cout<<"test type:"<<(Z_OBJCE_P(oth)->name)<<std::endl;
 
       if(strcmp(objName, "Saxon\\XdmNode")==0) {
