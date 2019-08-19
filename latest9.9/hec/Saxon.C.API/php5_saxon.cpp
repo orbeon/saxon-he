@@ -1459,7 +1459,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
     XdmValue ** arguments;
     int argument_length=0;
 
-    zval **val;
+    zval *val;
        HashPosition pointer;
        int array_count;
        char * string_key;
@@ -1499,7 +1499,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
              /* we assume the key to be long, index will be set */
 
 
-          zend_object* ooth = Z_OBJCE_P(val[index]);
+          zend_object* ooth = Z_OBJCE_P(val);
          const char * objName = ooth->name;
       /*std::cerr<<"test type:"<<(Z_OBJCE_P(val)->name)<<std::endl;
 	php_printf("num_key %d =>", num_key);
@@ -1568,7 +1568,6 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
     XdmValue ** arguments;
     int argument_length=0;
 
-    zval **val;
     HashPosition pointer;
     int array_count;
     char * string_key;
