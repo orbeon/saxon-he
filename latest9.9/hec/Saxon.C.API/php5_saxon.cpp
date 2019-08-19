@@ -1107,9 +1107,8 @@ PHP_METHOD(XsltProcessor, setSourceFromXdmValue)
 	xdmNode_object* ooth = (xdmNode_object*)zend_object_store_get_object(oth TSRMLS_CC);
         if(ooth != NULL) {
             XdmNode * value = ooth->xdmNode;
-            if(value != NULL) {	
-		XdmItem  *valueX = (XdmItem*)value;
-	        xsltProcessor->setSourceFromXdmNode(valueX);
+            if(value != NULL) {
+	        xsltProcessor->setSourceFromXdmNode(value);
 
             }
         }
@@ -1459,7 +1458,6 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
 
     XdmValue ** arguments;
     int argument_length=0;
-    zend_string *key;
 
     zval **val;
        HashPosition pointer;
@@ -1486,7 +1484,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
     arguments = new XdmValue*[argument_length];
 
     if (xslt30Processor != NULL) {
-      for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &data, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
+      for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &val, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
         if(Z_TYPE_P(val) != NULL) {
         zend_object* ooth = Z_OBJ_P(val);
 	const char * objName =ZSTR_VAL(ooth->name);
@@ -1569,8 +1567,6 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
 
     XdmValue ** arguments;
     int argument_length=0;
-    zend_string *key;
-
 
     zval **val;
     HashPosition pointer;
@@ -1596,7 +1592,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
     arguments = new XdmValue*[argument_length];
 
     if (xslt30Processor != NULL) {
-      for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &data, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
+      for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &val, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
               if(Z_TYPE_P(val) != NULL) {
               zend_object* ooth = Z_OBJ_P(val);
       	const char * objName =ZSTR_VAL(ooth->name);
@@ -1676,7 +1672,6 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
 
     XdmValue ** arguments;
     int argument_length=0;
-    zend_string *key;
 
     zval **val;
     HashPosition pointer;
@@ -1977,9 +1972,9 @@ PHP_METHOD(Xslt30Processor, addPackages){
 
     const char ** arguments;
     int argument_length=0;
-    zend_string *key;
+
     HashTable *arr_hash;
-       zval **data;
+
        HashPosition pointer;
        int array_count;
        char * string_key;
@@ -2042,10 +2037,9 @@ PHP_METHOD(Xslt30Processor, addPackages){
 
     XdmValue ** arguments;
     int argument_length=0;
-    zend_string *key;
 
     HashTable *arr_hash;
-       zval **data;
+
        HashPosition pointer;
        int array_count;
        char * string_key;
