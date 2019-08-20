@@ -1634,9 +1634,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
         	}
 	}
 	else {//TODO error warning}
-         }}else {
-		//TODO error warning
-        }
+         }}
       }
 
       }
@@ -1644,7 +1642,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
         const char * result = xslt30Processor->callFunctionReturningString(styleFileName, functionName, arguments, argument_length);
 	if(result != NULL) {
             //char *str = estrdup(result);
-            _RETURN_STRING(result);
+            RETURN_STRING(result);
         } else if(xslt30Processor->exceptionOccurred()){
             //TODO: xslt30Processor->checkException();
             const char * errStr = xslt30Processor->getErrorMessage(0);
@@ -1820,7 +1818,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
 	//php_printf(" argument_length= %d",argument_length);
         const char * result = xslt30Processor->callTemplateReturningString(styleFileName, templateName);
 	if(result != NULL) {
-            _RETURN_STRING(result); 
+            RETURN_STRING(result);
         } else {
             if(xslt30Processor->exceptionOccurred()){
             xslt30Processor->checkException();
@@ -1918,7 +1916,7 @@ PHP_METHOD(Xslt30Processor, applyTemplatesReturningString){
 	//php_printf(" argument_length= %d",argument_length);
         const char * result = xslt30Processor->applyTemplatesReturningString(styleFileName);
 	if(result != NULL) {
-            _RETURN_STRING(result); 
+            RETURN_STRING(result);
         } else {
             if(xslt30Processor->exceptionOccurred()){
             xslt30Processor->checkException();
@@ -2377,7 +2375,7 @@ PHP_METHOD(Xslt30Processor, transformFileToString)
         const char * result = xslt30Processor->transformFileToString(infilename, styleFileName);
 	if(result != NULL) {
             //char *str = estrdup(result);
-            _RETURN_STRING(result);
+            RETURN_STRING(result);
         } else if(xslt30Processor->exceptionOccurred()){
             //TODO: xslt30Processor->checkException();
             const char * errStr = xslt30Processor->getErrorMessage(0);
@@ -2409,7 +2407,7 @@ PHP_METHOD(Xslt30Processor, transformToString)
 
         const char * result = xslt30Processor->transformToString();
         if(result != NULL) {
-            _RETURN_STRING(result);
+            RETURN_STRING(result);
         } else if(xslt30Processor->exceptionOccurred()){
             xslt30Processor->checkException();
             const char * errStr = xslt30Processor->getErrorMessage(0);
@@ -2822,7 +2820,7 @@ PHP_METHOD(Xslt30Processor, getErrorCode)
         const char * errCode = xslt30Processor->getErrorCode((int)index);
         if(errCode != NULL) {
             //char *str = estrdup(errCode);
-            _RETURN_STRING(errCode);
+            RETURN_STRING(errCode);
         }
     }
     RETURN_NULL();
@@ -2842,7 +2840,7 @@ PHP_METHOD(Xslt30Processor, getErrorMessage)
         const char * errStr = xslt30Processor->getErrorMessage((int)index);
         if(errStr != NULL) {
             //char *str = estrdup(errStr);
-            _RETURN_STRING(errStr);
+            RETURN_STRING(errStr);
         }
     }
     RETURN_NULL();
