@@ -2142,12 +2142,12 @@ PHP_METHOD(Xslt30Processor, setInitialMatchSelection){
         if(ooth != NULL) {
             XdmValue * value = ooth->xdmValue;
             if(value != NULL) {
-		xslt30Processor->setInitialMatchSelection(value);
+		        xslt30Processor->setInitialMatchSelection(value);
 
             }
         }
       } else if(strcmp(objName, "Saxon\\XdmNode")==0) {
-        xdmValue_object* ooth = (xdmValue_object*) zend_object_store_get_object(oth TSRMLS_CC);
+        xdmNode_object* ooth = (xdmNode_object*) zend_object_store_get_object(oth TSRMLS_CC);
 	//xdmNode_object* ooth = (xdmNode_object *)((char *)nobj - XtOffsetOf(xdmNode_object, std));//(xdmNode_object*)Z_OBJ_P(oth);
         if(ooth != NULL) {
             XdmNode * value = ooth->xdmNode;
