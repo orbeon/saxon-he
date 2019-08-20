@@ -407,6 +407,38 @@ if((saxonProcessor_object *)zend_object_store_get_object(getThis() TSRMLS_CC) ==
     }
 }
 
+PHP_METHOD(SaxonProcessor, newXslt30Processor)
+{
+    //php_error(E_WARNING,"new xsltProc 1");
+    if (ZEND_NUM_ARGS()>0) {
+        WRONG_PARAM_COUNT;
+    }
+    SaxonProcessor * proc;
+    Xslt30Processor * xslt30Processor = NULL;
+if((saxonProcessor_object *)zend_object_store_get_object(getThis() TSRMLS_CC) == NULL) {
+
+}
+
+    saxonProcessor_object *obj = (saxonProcessor_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
+    assert (obj != NULL);
+    proc = obj->saxonProcessor;
+    assert (proc != NULL);
+    if (proc != NULL) {
+    if (object_init_ex(return_value, xslt30Processor_ce) != SUCCESS) {
+            RETURN_NULL();
+        } else {
+	   struct xslt30Processor_object* vobj = (struct xslt30Processor_object *)zend_object_store_get_object(return_value TSRMLS_CC);
+
+            assert (vobj != NULL);
+	    xslt30Processor = proc->newXslt30Processor();
+            vobj->xslt30Processor = xslt30Processor;
+    }
+    } else {
+
+        RETURN_NULL();
+    }
+}
+
 PHP_METHOD(SaxonProcessor, newXQueryProcessor)
 {
    
@@ -5012,13 +5044,14 @@ zend_function_entry SaxonProcessor_methods[] = {
     PHP_ME(SaxonProcessor,  setcwd,     NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  newXPathProcessor,     NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  newXsltProcessor,     NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(SaxonProcessor,  newXslt30Processor,     NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  newXQueryProcessor,     NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  newSchemaValidator,     NULL, ZEND_ACC_PUBLIC)
 //    PHP_ME(SaxonProcessor,  importDocument,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  setResourcesDirectory,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  setCatalog,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor, setConfigurationProperty,      NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(SaxonProcessor,  registerPHPFunction,      NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(SaxonProcessor,  registerPHPFunctions,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  version,      NULL, ZEND_ACC_PUBLIC)
     {NULL, NULL, NULL}
 };
