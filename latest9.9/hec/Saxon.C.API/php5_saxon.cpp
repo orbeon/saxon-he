@@ -1531,12 +1531,10 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
         	}
 	}
 	else {//TODO error warning}
-         }}else {
-		//TODO error warning
-        }
+         }}
         }
 
-
+       }
 
 	//php_printf(" argument_length= %d",argument_length);
         XdmValue * result = xslt30Processor->callFunctionReturningValue(styleFileName, functionName, arguments, argument_length);
@@ -1555,8 +1553,6 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
   		//TODO
 	    }
         } }
-    }
-
 
 }
 
