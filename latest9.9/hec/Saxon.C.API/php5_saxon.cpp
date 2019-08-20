@@ -1670,7 +1670,6 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
     XdmValue ** arguments;
     int argument_length=0;
 
-    zval **val;
     HashPosition pointer;
     int array_count;
     char * string_key;
@@ -1737,11 +1736,10 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
         	}
 	}
 	else {//TODO error warning}
-         }}else {
-		//TODO error warning
-        }
+         }}
         }
       }
+
 
 
         xslt30Processor->callFunctionReturningFile(styleFileName, functionName, arguments, argument_length, outfilename);
