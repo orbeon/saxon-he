@@ -165,7 +165,7 @@ PHP_METHOD(SaxonProcessor, registerPHPFunctions)
         RETURN_NULL();
     }
 //std::cerr<<"checkpoint in registerPHPFunction cp2"<<std::endl;
-    zend_object* pobj = Z_OBJ_P(getThis());
+
     saxonProcessor_object *obj = (saxonProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
 
     saxonProcessor = obj->saxonProcessor;
