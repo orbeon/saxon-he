@@ -149,6 +149,34 @@ PHP_METHOD(SaxonProcessor, __destruct)
     delete saxonProc;
 }
 
+
+
+PHP_METHOD(SaxonProcessor, registerPHPFunctions)
+{
+    SaxonProcessor *saxonProcessor;
+    char * libName;
+    size_t len1;
+ //std::cerr<<"checkpoint in registerPHPFunction start"<<std::endl;
+    if (ZEND_NUM_ARGS()!= 1) {
+        WRONG_PARAM_COUNT;
+    }
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() , "s", &libName, &len1) == FAILURE) {
+        RETURN_NULL();
+    }
+//std::cerr<<"checkpoint in registerPHPFunction cp2"<<std::endl;
+    zend_object* pobj = Z_OBJ_P(getThis());
+    saxonProcessor_object *obj = (saxonProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+
+    saxonProcessor = obj->saxonProcessor;
+    if (saxonProcessor != NULL && libName != NULL) {
+        saxonProcessor->setConfigurationProperty("extc", libName);
+    }
+    saxonProcessor->registerNativeMethods(SaxonProcessor::sxn_environ->env, "com/saxonica/functions/extfn/cpp/PHPFunctionSet$PHPFunction",
+    phpMethods, sizeof(phpMethods) / sizeof(phpMethods[0]));
+   // std::cerr<<"checkpoint in registerPHPFunction end"<<std::endl;
+}
+
 PHP_METHOD(SaxonProcessor, setResourcesDirectory)
 {
     SaxonProcessor *saxonProcessor;
