@@ -2218,7 +2218,7 @@ PHP_METHOD(Xslt30Processor, setGlobalContextItem)
             }
         }
       } else if(strcmp(objName, "Saxon\\XdmAtomicValue")==0) {
-	xdmAtomcValue_object* ooth = (xdmAtomicValue_object*) zend_object_store_get_object(oth TSRMLS_CC);
+	xdmAtomicValue_object* ooth = (xdmAtomicValue_object*) zend_object_store_get_object(oth TSRMLS_CC);
 	//xdmAtomicValue_object* ooth = (xdmAtomicValue_object *)((char *)vvobj - XtOffsetOf(xdmAtomicValue_object, std));
         if(ooth != NULL) {
             XdmAtomicValue * value = ooth->xdmAtomicValue;
@@ -2417,7 +2417,7 @@ PHP_METHOD(Xslt30Processor, transformToValue)
     }
 
     
-    xsltProcessor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
 
     if (xslt30Processor != NULL) {
