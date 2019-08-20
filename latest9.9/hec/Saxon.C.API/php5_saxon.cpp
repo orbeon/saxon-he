@@ -1970,8 +1970,6 @@ PHP_METHOD(Xslt30Processor, addPackages){
     const char ** arguments;
     int argument_length=0;
 
-    HashTable *arr_hash;
-
        HashPosition pointer;
        int array_count;
        char * string_key;
@@ -2035,8 +2033,6 @@ PHP_METHOD(Xslt30Processor, addPackages){
     XdmValue ** arguments;
     int argument_length=0;
 
-    HashTable *arr_hash;
-
        HashPosition pointer;
        int array_count;
        char * string_key;
@@ -2081,16 +2077,16 @@ PHP_METHOD(Xslt30Processor, addPackages){
 		//xdmNode_object * nobj = (xdmNode_object *)((char *)ooth - XtOffsetOf(xdmNode_object, std));
         	if(nobj != NULL) {
             		XdmValue * value = (XdmValue *) nobj->xdmNode;
-            		parameters[ZSTR_VAL(key)] = value;
+            		parameters[key] = value;
         	}
 	}
 	else if(strcmp(objName, "Saxon\\XdmAtomicValue")==0) {
 		//zend_object* ooth = Z_OBJCE_P(val);
-		xdmAtomicValue_object* nobj = (xdmAtomicValue*)zend_object_store_get_object((*val) TSRMLS_CC);
+		xdmAtomicValue_object* nobj = (xdmAtomicValue_object*)zend_object_store_get_object((*val) TSRMLS_CC);
 		//xdmAtomicValue_object * nobj = (xdmAtomicValue_object *)((char *)ooth - XtOffsetOf(xdmAtomicValue_object, std));
         	if(nobj != NULL) {
             		XdmValue * value = (XdmValue *) nobj->xdmAtomicValue;
-            		parameters[ZSTR_VAL(key)] = value;
+            		parameters[key] = value;
         	}
 	}
 	else if(strcmp(objName, "Saxon\\XdmValue")==0) {
@@ -2099,7 +2095,7 @@ PHP_METHOD(Xslt30Processor, addPackages){
 		//xdmValue_object * nobj = (xdmValue_object *)((char *)ooth - XtOffsetOf(xdmValue_object, std));
         	if(nobj != NULL) {
             		XdmValue * value = nobj->xdmValue;
-            		parameters[ZSTR_VAL(key)] = value;
+            		parameters[key] = value;
         	}
 	}
 	else {//TODO error warning}
@@ -2116,7 +2112,7 @@ PHP_METHOD(Xslt30Processor, addPackages){
 	
     }
 
-    }
+
 
 
 PHP_METHOD(Xslt30Processor, setInitialMatchSelection){
