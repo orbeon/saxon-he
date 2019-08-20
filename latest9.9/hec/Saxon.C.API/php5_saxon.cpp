@@ -1487,7 +1487,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
       for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &val, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
         //if(Z_TYPE_P(val) != NULL) {
 
-        if(Z_TYPE_PP(val) != NULL) {
+        if(Z_TYPE_PP(val) != IS_NULL) {
                      // zend_object* ooth = Z_OBJCE_PP(val);
                     const char * objName = Z_OBJCE_PP(val)->name;
                     char *key = NULL;
@@ -1588,7 +1588,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
 
     if (xslt30Processor != NULL) {
       for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &val, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
-              if(Z_TYPE_PP(val) != NULL) {
+              if(Z_TYPE_PP(val) != IS_NULL) {
               const char* objName = Z_OBJCE_PP(val)->name;
       	      //const char * objName = ooth->name;
 
@@ -1691,7 +1691,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
 
     if (xslt30Processor != NULL) {
     for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &val, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
-            if(Z_TYPE_PP(val) != NULL) {
+            if(Z_TYPE_PP(val) != IS_NULL) {
             const char * objName = Z_OBJCE_PP(val)->name;
           	//const char * objName = ooth->name;
             char *key = NULL;
@@ -1989,7 +1989,7 @@ PHP_METHOD(Xslt30Processor, addPackages){
   if (xslt30Processor != NULL) {
 
 	for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &val, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
-                if(Z_TYPE_PP(val) != NULL) {
+                if(Z_TYPE_PP(val) != IS_NULL) {
                 //zend_object* ooth = Z_OBJCE_PP(val);
               	const char * objName = Z_OBJCE_PP(val)->name;
                 char *key = NULL;
@@ -2049,7 +2049,7 @@ PHP_METHOD(Xslt30Processor, addPackages){
     std::map<std::string,XdmValue*> parameters;
     if (xslt30Processor != NULL) {
       for(zend_hash_internal_pointer_reset_ex(arr_hash, &pointer); zend_hash_get_current_data_ex(arr_hash, (void**) &val, &pointer) == SUCCESS; zend_hash_move_forward_ex(arr_hash, &pointer)) {
-                      if(Z_TYPE_PP(val) != NULL) {
+                      if(Z_TYPE_PP(val) != IS_NULL) {
                       //zend_object* ooth = Z_OBJCE_PP(val);
                     	const char * objName = Z_OBJCE_PP(val)->name;
                       char *key = NULL;
@@ -2651,7 +2651,7 @@ PHP_METHOD(Xslt30Processor, setParameter)
 
       if(strcmp(objName, "Saxon\\XdmNode")==0) {
 	//zend_object* ooth = Z_OBJCE_P(oth);
-	xdmNode_object* nobj = (xdmNode_object*)zend_object_store_get_object(oth TSRMLS_CC);
+	    xdmNode_object* nobj = (xdmNode_object*)zend_object_store_get_object(oth TSRMLS_CC);
         if(nobj != NULL) {
             XdmNode * value = nobj->xdmNode;
             if(value != NULL) {
@@ -2673,7 +2673,7 @@ PHP_METHOD(Xslt30Processor, setParameter)
 
 
       } else if(strcmp(objName, "Saxon\\XdmAtomicValue")==0){
-	zend_object* ooth = Z_OBJCE_P(oth);
+	//zend_object* ooth = Z_OBJCE_P(oth);
 	xdmAtomicValue_object* aobj = (xdmAtomicValue_object*)zend_object_store_get_object(oth TSRMLS_CC);
         if(aobj != NULL) {
             XdmAtomicValue * value = aobj->xdmAtomicValue;
