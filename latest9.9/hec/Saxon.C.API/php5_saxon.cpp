@@ -1508,7 +1508,6 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
 	*/
 	if(strcmp(objName, "Saxon\\XdmNode")==0) {
         xdmNode_object* nobj = (xdmNode_object*)zend_object_store_get_object((*val) TSRMLS_CC);
-		//xdmNode_object * nobj = (xdmNode_object *)((char *)ooth - XtOffsetOf(xdmNode_object, std));
         	if(nobj != NULL) {
             		XdmValue * value = (XdmValue *) nobj->xdmNode;
             		arguments[index] = value;
@@ -1542,9 +1541,8 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
             if (object_init_ex(return_value, xdmValue_ce) != SUCCESS) {
                 RETURN_NULL();
             } else {
-		zend_object *ooth =  Z_OBJCE_P(return_value);
-                //struct xdmValue_object* vobj = (struct xdmValue_object *)Z_OBJ_P(return_value TSRMLS_CC);
-		xdmValue_object* vobj  = (xdmValue_object *)((char *)ooth - XtOffsetOf(xdmValue_object, std));
+                struct xdmValue_object* vobj = (struct xdmValue_object *)Z_OBJ_P(return_value TSRMLS_CC);
+		        //xdmValue_object* vobj  = (xdmValue_object *)((char *)ooth - XtOffsetOf(xdmValue_object, std));
                 assert (vobj != NULL);
                 vobj->xdmValue = result;
             }
@@ -1780,8 +1778,8 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
                 RETURN_NULL();
             } else {
 		zend_object *ooth =  Z_OBJCE_P(return_value);
-                //struct xdmValue_object* vobj = (struct xdmValue_object *)Z_OBJ_P(return_value TSRMLS_CC);
-		xdmValue_object* vobj  = (xdmValue_object *)((char *)ooth - XtOffsetOf(xdmValue_object, std));
+                struct xdmValue_object* vobj = (struct xdmValue_object *)Z_OBJ_P(return_value TSRMLS_CC);
+		        //xdmValue_object* vobj  = (xdmValue_object *)((char *)ooth - XtOffsetOf(xdmValue_object, std));
                 assert (vobj != NULL);
                 vobj->xdmValue = result;
             }
@@ -1876,8 +1874,7 @@ PHP_METHOD(Xslt30Processor, applyTemplatesReturningValue){
             if (object_init_ex(return_value, xdmValue_ce) != SUCCESS) {
                 RETURN_NULL();
             } else {
-		zend_object *ooth =  Z_OBJCE_P(return_value);
-        	xdmValue_object* vobj  = (xdmValue_object *)((char *)ooth - XtOffsetOf(xdmValue_object, std));
+        	xdmValue_object* vobj  = (xdmValue_object*) zend_object_store_get_object(return_value TSRMLS_CC);
                 assert (vobj != NULL);
                 vobj->xdmValue = result;
             }
@@ -2143,9 +2140,8 @@ PHP_METHOD(Xslt30Processor, setInitialMatchSelection){
 
       
       if(strcmp(objName, "Saxon\\XdmValue")==0) {
-	zend_object * nobj = Z_OBJCE_P(oth);
-
-	xdmValue_object* ooth = (xdmValue_object *)((char *)nobj - XtOffsetOf(xdmValue_object, std));//(xdmNode_object*)Z_OBJ_P(oth);
+     xdmValue_object* ooth = (xdmValue_object*) zend_object_store_get_object(oth TSRMLS_CC);
+	//(xdmNode_object*)Z_OBJ_P(oth);
         if(ooth != NULL) {
             XdmValue * value = ooth->xdmValue;
             if(value != NULL) {
@@ -2154,9 +2150,8 @@ PHP_METHOD(Xslt30Processor, setInitialMatchSelection){
             }
         }
       } else if(strcmp(objName, "Saxon\\XdmNode")==0) {
-	zend_object * nobj = Z_OBJCE_P(oth);
-
-	xdmNode_object* ooth = (xdmNode_object *)((char *)nobj - XtOffsetOf(xdmNode_object, std));//(xdmNode_object*)Z_OBJ_P(oth);
+        xdmValue_object* ooth = (xdmValue_object*) zend_object_store_get_object(oth TSRMLS_CC);
+	//xdmNode_object* ooth = (xdmNode_object *)((char *)nobj - XtOffsetOf(xdmNode_object, std));//(xdmNode_object*)Z_OBJ_P(oth);
         if(ooth != NULL) {
             XdmNode * value = ooth->xdmNode;
             if(value != NULL) {
@@ -2166,8 +2161,7 @@ PHP_METHOD(Xslt30Processor, setInitialMatchSelection){
             }
         }
       } else if(strcmp(objName, "Saxon\\XdmAtomicValue")==0) {
-	zend_object* vvobj = Z_OBJCE_P(oth);
-	xdmAtomicValue_object* ooth = (xdmAtomicValue_object *)((char *)vvobj - XtOffsetOf(xdmAtomicValue_object, std));
+	xdmAtomicValue_object* ooth = (xdmAtomicValue_object*) zend_object_store_get_object(oth TSRMLS_CC);
         if(ooth != NULL) {
             XdmAtomicValue * value = ooth->xdmAtomicValue;
             if(value != NULL) {
@@ -2215,9 +2209,9 @@ PHP_METHOD(Xslt30Processor, setGlobalContextItem)
       //std::cout<<"test type:"<<(Z_OBJCE_P(oth)->name)<<std::endl;
 
       if(strcmp(objName, "Saxon\\XdmNode")==0) {
-	zend_object * nobj = Z_OBJCE_P(oth);
 
-	xdmNode_object* ooth = (xdmNode_object *)((char *)nobj - XtOffsetOf(xdmNode_object, std));//(xdmNode_object*)Z_OBJ_P(oth);
+    xdmNode_object* ooth = (xdmNode_object*) zend_object_store_get_object(oth TSRMLS_CC);
+	//xdmNode_object* ooth = (xdmNode_object *)((char *)nobj - XtOffsetOf(xdmNode_object, std));//(xdmNode_object*)Z_OBJ_P(oth);
         if(ooth != NULL) {
             XdmNode * value = ooth->xdmNode;
             if(value != NULL) {
@@ -2227,8 +2221,8 @@ PHP_METHOD(Xslt30Processor, setGlobalContextItem)
             }
         }
       } else if(strcmp(objName, "Saxon\\XdmAtomicValue")==0) {
-	zend_object* vvobj = Z_OBJCE_P(oth);
-	xdmAtomicValue_object* ooth = (xdmAtomicValue_object *)((char *)vvobj - XtOffsetOf(xdmAtomicValue_object, std));
+	xdmAtomcValue_object* ooth = (xdmAtomicValue_object*) zend_object_store_get_object(oth TSRMLS_CC);
+	//xdmAtomicValue_object* ooth = (xdmAtomicValue_object *)((char *)vvobj - XtOffsetOf(xdmAtomicValue_object, std));
         if(ooth != NULL) {
             XdmAtomicValue * value = ooth->xdmAtomicValue;
             if(value != NULL) {
@@ -2333,8 +2327,9 @@ PHP_METHOD(Xslt30Processor, transformFileToValue)
                 RETURN_NULL();
             } else {
                 //struct xdmValue_object* vobj = (struct xdmValue_object *)Z_OBJ_P(return_value TSRMLS_CC);
-		zend_object *ooth =  Z_OBJCE_P(return_value);
-		xdmValue_object* vobj  = (xdmValue_object *)((char *)ooth - XtOffsetOf(xdmValue_object, std));
+		//zend_object *ooth =  Z_OBJCE_P(return_value);
+		//xdmValue_object* vobj  = (xdmValue_object *)((char *)ooth - XtOffsetOf(xdmValue_object, std));
+		xdmValue_object* ooth = (xdmValue_object*) zend_object_store_get_object(return_value TSRMLS_CC);
                 assert (vobj != NULL);
                 vobj->xdmValue = node;
             }
@@ -2436,9 +2431,9 @@ PHP_METHOD(Xslt30Processor, transformToValue)
                 RETURN_NULL();
             } else {
                 //struct xdmValue_object* vobj = (struct xdmValue_object *)Z_OBJ_P(return_value);
-		zend_object *vvobj =  Z_OBJCE_P(return_value);
-		xdmValue_object* vobj  = (xdmValue_object *)((char *)vvobj - XtOffsetOf(xdmValue_object, std));
 
+		//xdmValue_object* vobj  = (xdmValue_object *)((char *)vvobj - XtOffsetOf(xdmValue_object, std));
+        xdmValue_object* ooth = (xdmValue_object*) zend_object_store_get_object(return_value TSRMLS_CC);
 
                 assert (vobj != NULL);
                 vobj->xdmValue = node;
@@ -2518,8 +2513,8 @@ PHP_METHOD(Xslt30Processor, compileFromStringAndSave)
         RETURN_NULL();
     }
     
-    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
-    xsltProcessor = obj->xsltProcessor;
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+    xslt30Processor = obj->xslt30Processor;
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL) {
         xslt30Processor->compileFromStringAndSave(stylesheetStr, filename);
@@ -2557,8 +2552,9 @@ PHP_METHOD(Xslt30Processor, compileFromValue)
     xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
     if (xslt30Processor != NULL) {
-	zend_object* vvobj = Z_OBJCE_P(oth);
-	xdmValue_object* ooth = (xdmValue_object *)((char *)vvobj - XtOffsetOf(xdmValue_object, std));
+	//zend_object* vvobj = Z_OBJCE_P(oth);
+	//xdmValue_object* ooth = (xdmValue_object *)((char *)vvobj - XtOffsetOf(xdmValue_object, std));
+	xdmNode_object* ooth = (xdmNode_object*) zend_object_store_get_object(oth TSRMLS_CC);
         if(ooth != NULL) {
             XdmValue * value = ooth->xdmValue;
             if(value != NULL && value->size() == 1 && (value->getHead())->getType() == 3) {
@@ -2658,7 +2654,7 @@ PHP_METHOD(Xslt30Processor, setParameter)
 
       if(strcmp(objName, "Saxon\\XdmNode")==0) {
 	zend_object* ooth = Z_OBJCE_P(oth);
-	xdmNode_object * nobj = (xdmNode_object *)((char *)ooth - XtOffsetOf(xdmNode_object, std));
+	xdmNode_object* nobj = (xdmNode_object*)zend_object_store_get_object(oth TSRMLS_CC);
         if(nobj != NULL) {
             XdmNode * value = nobj->xdmNode;
             if(value != NULL) {
@@ -2668,7 +2664,7 @@ PHP_METHOD(Xslt30Processor, setParameter)
         }
       } else if(strcmp(objName, "Saxon\\XdmValue")==0){
 	zend_object* ooth = Z_OBJCE_P(oth);
-	xdmValue_object * vobj = (xdmValue_object *)((char *)ooth - XtOffsetOf(xdmValue_object, std));
+	xdmValue_object* vobj = (xdmValue_object*)zend_object_store_get_object(oth TSRMLS_CC);
         if(vobj != NULL) {
             XdmValue * value = vobj->xdmValue;
             if(value != NULL) {
@@ -2681,7 +2677,7 @@ PHP_METHOD(Xslt30Processor, setParameter)
 
       } else if(strcmp(objName, "Saxon\\XdmAtomicValue")==0){
 	zend_object* ooth = Z_OBJCE_P(oth);
-	xdmAtomicValue_object * aobj = (xdmAtomicValue_object *)((char *)ooth - XtOffsetOf(xdmAtomicValue_object, std));
+	xdmNode_object* aobj = (xdmNode_object*)zend_object_store_get_object(oth TSRMLS_CC);
         if(aobj != NULL) {
             XdmAtomicValue * value = aobj->xdmAtomicValue;
             if(value != NULL) {
@@ -2747,10 +2743,7 @@ PHP_METHOD(Xslt30Processor, getXslMessages)
             if (object_init_ex(return_value, xdmValue_ce) != SUCCESS) {
                 RETURN_NULL();
             } else {
-                //struct xdmValue_object* vobj = (struct xdmValue_object *)Z_OBJ_P(return_value);
-		zend_object *vvobj =  Z_OBJCE_P(return_value);
-		xdmValue_object* vobj  = (xdmValue_object *)((char *)vvobj - XtOffsetOf(xdmValue_object, std));
-
+                xdmValue_object* vobj = (xdmValue_object*)zend_object_store_get_object(return_value TSRMLS_CC);
 
                 assert (vobj != NULL);
                 vobj->xdmValue = values;
