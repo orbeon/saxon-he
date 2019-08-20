@@ -2770,7 +2770,7 @@ PHP_METHOD(Xslt30Processor, exceptionOccurred)
 {
     Xslt30Processor *xslt30Processor;
     
-    xslt30Processor_object *obj = (xslt20Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     if (ZEND_NUM_ARGS()>0) {
         WRONG_PARAM_COUNT;
     }
@@ -4773,7 +4773,7 @@ PHP_METHOD(XdmNode,  getTypedValue){
     xdmNode = obj->xdmNode;
 
     if (xdmNode != NULL) {
-	XdmNode * typedValue = xdmNode->getTypedValue();
+	XdmValue * typedValue = xdmNode->getTypedValue();
 	if(typedValue == NULL) {
 			RETURN_NULL();
 			return;
@@ -4987,7 +4987,7 @@ PHP_METHOD(XdmAtomicValue, getStringValue)
        Returns the string content */
 PHP_METHOD(XdmAtomicValue, __toString)
     {
-    	 XdmAtomicValue *xdmNode;
+    	 XdmAtomicValue *xdmAtomicValue;
          xdmAtomicValue_object *obj = (xdmAtomicValue_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
          xdmAtomicValue = obj->xdmAtomicValue;
          if (xdmAtomicValue != NULL) {
