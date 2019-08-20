@@ -1278,7 +1278,10 @@ PHP_METHOD(XsltProcessor, setParameter)
     xsltProcessor = obj->xsltProcessor;
     if (xsltProcessor != NULL) {
 
-
+      if(Z_TYPE_P(oth) ==IS_NULL){
+      		php_error(E_WARNING, "Error setting source value - value is null");
+      		return;
+      	}
       const char * objName =Z_OBJCE_P(oth)->name;
       //std::cout<<"test type:"<<(Z_OBJCE_P(oth)->name)<<std::endl;
 
@@ -3211,6 +3214,10 @@ PHP_METHOD(XQueryProcessor, setParameter)
     xqueryProcessor_object *obj = (xqueryProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xqueryProcessor = obj->xqueryProcessor;
     if (xqueryProcessor != NULL) {
+            if(Z_TYPE_P(oth) ==IS_NULL){
+        		php_error(E_WARNING, "Error setting source value - value is null");
+        		return;
+        	}
              const char * objName =Z_OBJCE_P(oth)->name;
       //std::cout<<"test type:"<<(Z_OBJCE_P(oth)->name)<<std::endl;
 
@@ -3434,6 +3441,10 @@ PHP_METHOD(XPathProcessor, setParameter)
     xpathProcessor_object *obj = (xpathProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xpathProcessor = obj->xpathProcessor;
     if (xpathProcessor != NULL) {
+        if(Z_TYPE_P(oth) ==IS_NULL){
+    		php_error(E_WARNING, "Error setting source value - value is null");
+    		return;
+    	}
             const char * objName =Z_OBJCE_P(oth)->name;
       //std::cout<<"test type:"<<(Z_OBJCE_P(oth)->name)<<std::endl;
 
@@ -4021,6 +4032,10 @@ PHP_METHOD(SchemaValidator, setParameter)
     schemaValidator_object *obj = (schemaValidator_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     schemaValidator = obj->schemaValidator;
     if (schemaValidator != NULL) {
+        if(Z_TYPE_P(oth) ==IS_NULL){
+    		php_error(E_WARNING, "Error setting source value - value is null");
+    		return;
+    	}
       const char * objName =Z_OBJCE_P(oth)->name;
       //std::cout<<"test type:"<<(Z_OBJCE_P(oth)->name)<<std::endl;
 
