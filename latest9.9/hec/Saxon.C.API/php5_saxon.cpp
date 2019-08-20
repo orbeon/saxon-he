@@ -1488,11 +1488,11 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
         //if(Z_TYPE_P(val) != NULL) {
 
         if(Z_TYPE_PP(val) != NULL) {
-                      zend_object* ooth = Z_OBJCE_PP(val);
-                    	const char * objName = ooth->name;
-                      char *key = NULL;
-                      uint  klen;
-                      ulong index;
+                     // zend_object* ooth = Z_OBJCE_PP(val);
+                    const char * objName = Z_OBJCE_PP(val)->name;
+                    char *key = NULL;
+                    uint  klen;
+                    ulong index;
 
          if (zend_hash_get_current_key_ex(arr_hash, &key, &klen, &index, 0, &pointer) == HASH_KEY_IS_STRING) {
              /* the key is a string, do nothing */
@@ -1500,8 +1500,8 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
              /* we assume the key to be long, index will be set */
 
 
-          zend_object* ooth = Z_OBJCE_P(val);
-         const char * objName = ooth->name;
+         // zend_object* ooth = Z_OBJCE_P(val);
+         //const char * objName = ooth->name;
       /*std::cerr<<"test type:"<<(Z_OBJCE_P(val)->name)<<std::endl;
 	php_printf("num_key %d =>", num_key);
 	php_printf("key %d =>", key);
