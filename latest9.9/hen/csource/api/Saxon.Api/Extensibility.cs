@@ -410,7 +410,7 @@ namespace Saxon.Api
         /// <summary>
         /// Return the name of the external function
         /// </summary>
-        /// <returns>the name of the function, as a QName</returns>
+        /// <returns>the name of the function, as a <c>QName</c></returns>
 
 		/**public**/ 
 		QName GetName();
@@ -427,7 +427,7 @@ namespace Saxon.Api
         /// <summary>
         /// Declare the type of the arguments
         /// </summary>
-        /// <returns>an array of XdmSequenceType objects, one for each argument to the function,
+        /// <returns>an array of <c>XdmSequenceType</c> objects, one for each argument to the function,
         /// representing the expected types of the arguments</returns>
 
 		/**public**/ 
@@ -438,11 +438,9 @@ namespace Saxon.Api
         /// Method called at run time to evaluate the function.
         /// </summary>
         /// <param name="arguments">The values of the arguments supplied in the XPath function call.</param>
-        /// <returns>An iterator over a sequence, representing the result of the extension function.
-        /// Note that Saxon does not guarantee to read this sequence to completion, so calls on the iterator
-        /// must have no side-effects. In rare circumstances (for example, when <code>last()</code> is
-        /// used) Saxon may clone the returned iterator by calling its <c>GetAnother()</c> method, 
-        /// allowing the function results to be read more than once.</returns>
+        /// <returns>An <c>XdmValue</c>, representing the result of the extension function. 
+        /// (Note: in many cases it will be convenient to return an <c>XdmAtomicValue</c> or <c>XdmNode</c>, 
+        /// both of which are instances of <c>XdmValue</c>).</returns>
 
 		/**public**/ 
 		XdmValue Call(XdmValue[] arguments);
