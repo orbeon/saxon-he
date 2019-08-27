@@ -11,6 +11,7 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.sort.AtomicComparer;
 import net.sf.saxon.expr.sort.GenericAtomicComparer;
+import net.sf.saxon.lib.UnfailingErrorListener;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.SameNameTest;
 import net.sf.saxon.trans.XPathException;
@@ -120,7 +121,7 @@ public class DeepEqual extends CollatingFunctionFixed {
             throws XPathException {
         boolean result = true;
         String reason = null;
-
+        UnfailingErrorListener listener = context.getErrorListener();
         try {
 
             if ((flags & JOIN_ADJACENT_TEXT_NODES) != 0) {
@@ -177,7 +178,7 @@ public class DeepEqual extends CollatingFunctionFixed {
 
                 if (item1 instanceof NodeInfo) {
                     if (item2 instanceof NodeInfo) {
-                        if (!deepEquals((NodeInfo) item1, (NodeInfo) item2, comparer, context.getConfiguration(), flags)) {
+                        if (!deepEquals((NodeInfo) item1, (NodeInfo) item2, comparer, context.getConfiguration(), listener, flags)) {
                             result = false;
                             reason = "nodes at position " + pos1 + " differ";
                             break;
@@ -215,7 +216,7 @@ public class DeepEqual extends CollatingFunctionFixed {
         }
 
         if (!result) {
-            explain(context.getConfiguration(), reason, flags, null, null);
+            explain(listener, reason, flags, null, null);
             //                config.getErrorListener().warning(
             //                        new XPathException("deep-equal(): " + reason)
             //                );
@@ -229,7 +230,7 @@ public class DeepEqual extends CollatingFunctionFixed {
       */
 
     public static boolean deepEquals(NodeInfo n1, NodeInfo n2,
-                                      AtomicComparer comparer, Configuration config, int flags)
+                                      AtomicComparer comparer, Configuration config, UnfailingErrorListener listener, int flags)
             throws XPathException {
         // shortcut: a node is always deep-equal to itself
         if (n1.equals(n2)) {
@@ -237,26 +238,26 @@ public class DeepEqual extends CollatingFunctionFixed {
         }
 
         if (n1.getNodeKind() != n2.getNodeKind()) {
-            explain(config, "node kinds differ: comparing " + showKind(n1) + " to " + showKind(n2), flags, n1, n2);
+            explain(listener, "node kinds differ: comparing " + showKind(n1) + " to " + showKind(n2), flags, n1, n2);
             return false;
         }
 
         switch (n1.getNodeKind()) {
             case Type.ELEMENT:
                 if (!Navigator.haveSameName(n1, n2)) {
-                    explain(config, "element names differ: " + NameOfNode.makeName(n1).getStructuredQName().getEQName() +
+                    explain(listener, "element names differ: " + NameOfNode.makeName(n1).getStructuredQName().getEQName() +
                             " != " + NameOfNode.makeName(n2).getStructuredQName().getEQName(), flags, n1, n2);
                     return false;
                 }
                 if (((flags & INCLUDE_PREFIXES) != 0) && !n1.getPrefix().equals(n2.getPrefix())) {
-                    explain(config, "element prefixes differ: " + n1.getPrefix() +
+                    explain(listener, "element prefixes differ: " + n1.getPrefix() +
                             " != " + n2.getPrefix(), flags, n1, n2);
                     return false;
                 }
                 AxisIterator a1 = n1.iterateAxis(AxisInfo.ATTRIBUTE);
                 AxisIterator a2 = n2.iterateAxis(AxisInfo.ATTRIBUTE);
                 if (!SequenceTool.sameLength(a1, a2)) {
-                    explain(config, "elements have different number of attributes", flags, n1, n2);
+                    explain(listener, "elements have different number of attributes", flags, n1, n2);
                     return false;
                 }
                 NodeInfo att1;
@@ -267,14 +268,14 @@ public class DeepEqual extends CollatingFunctionFixed {
                     NodeInfo att2 = a2iter.next();
 
                     if (att2 == null) {
-                        explain(config, "one element has an attribute " +
+                        explain(listener, "one element has an attribute " +
                             NameOfNode.makeName(att1).getStructuredQName().getEQName() +
                                 ", the other does not", flags, n1, n2);
                         return false;
                     }
-                    if (!deepEquals(att1, att2, comparer, config, flags)) {
-                        deepEquals(att1, att2, comparer, config, flags);
-                        explain(config, "elements have different values for the attribute " +
+                    if (!deepEquals(att1, att2, comparer, config, listener, flags)) {
+                        deepEquals(att1, att2, comparer, config, listener, flags);
+                        explain(listener, "elements have different values for the attribute " +
                             NameOfNode.makeName(att1).getStructuredQName().getEQName(), flags, n1, n2);
                         return false;
                     }
@@ -295,7 +296,7 @@ public class DeepEqual extends CollatingFunctionFixed {
                         ns2.add(nscode2);
                     }
                     if (!ns1.equals(ns2)) {
-                        explain(config, "elements have different in-scope namespaces: " +
+                        explain(listener, "elements have different in-scope namespaces: " +
                             showNamespaces(ns1) + " versus " + showNamespaces(ns2), flags, n1, n2);
                         return false;
                     }
@@ -303,14 +304,14 @@ public class DeepEqual extends CollatingFunctionFixed {
 
                 if ((flags & COMPARE_ANNOTATIONS) != 0) {
                     if (!n1.getSchemaType().equals(n2.getSchemaType())) {
-                        explain(config, "elements have different type annotation", flags, n1, n2);
+                        explain(listener, "elements have different type annotation", flags, n1, n2);
                         return false;
                     }
                 }
 
                 if ((flags & EXCLUDE_VARIETY) == 0) {
                     if (n1.getSchemaType().isComplexType() != n2.getSchemaType().isComplexType()) {
-                        explain(config, "one element has complex type, the other simple", flags, n1, n2);
+                        explain(listener, "one element has complex type, the other simple", flags, n1, n2);
                         return false;
                     }
 
@@ -318,7 +319,7 @@ public class DeepEqual extends CollatingFunctionFixed {
                         int variety1 = ((ComplexType) n1.getSchemaType()).getVariety();
                         int variety2 = ((ComplexType) n2.getSchemaType()).getVariety();
                         if (variety1 != variety2) {
-                            explain(config, "both elements have complex type, but a different variety", flags, n1, n2);
+                            explain(listener, "both elements have complex type, but a different variety", flags, n1, n2);
                             return false;
                         }
                     }
@@ -330,7 +331,7 @@ public class DeepEqual extends CollatingFunctionFixed {
                     final boolean isSimple1 = type1.isSimpleType() || ((ComplexType) type1).isSimpleContent();
                     final boolean isSimple2 = type2.isSimpleType() || ((ComplexType) type2).isSimpleContent();
                     if (isSimple1 != isSimple2) {
-                        explain(config, "one element has a simple type, the other does not", flags, n1, n2);
+                        explain(listener, "one element has a simple type, the other does not", flags, n1, n2);
                         return false;
                     }
                     if (isSimple1) {
@@ -343,11 +344,11 @@ public class DeepEqual extends CollatingFunctionFixed {
 
                 if ((flags & COMPARE_ID_FLAGS) != 0) {
                     if (n1.isId() != n2.isId()) {
-                        explain(config, "one element is an ID, the other is not", flags, n1, n2);
+                        explain(listener, "one element is an ID, the other is not", flags, n1, n2);
                         return false;
                     }
                     if (n1.isIdref() != n2.isIdref()) {
-                        explain(config, "one element is an IDREF, the other is not", flags, n1, n2);
+                        explain(listener, "one element is an IDREF, the other is not", flags, n1, n2);
                         return false;
                     }
                 }
@@ -373,30 +374,30 @@ public class DeepEqual extends CollatingFunctionFixed {
                             if (d1 instanceof WhitespaceTextImpl || d2 instanceof WhitespaceTextImpl) {
                                 message += " (the first extra child is whitespace text)";
                             }
-                            explain(config, message, flags, n1, n2);
+                            explain(listener, message, flags, n1, n2);
                         }
                         return r;
                     }
-                    if (!deepEquals(d1, d2, comparer, config, flags)) {
+                    if (!deepEquals(d1, d2, comparer, config, listener, flags)) {
                         return false;
                     }
                 }
 
             case Type.ATTRIBUTE:
                 if (!Navigator.haveSameName(n1, n2)) {
-                    explain(config, "attribute names differ: " +
+                    explain(listener, "attribute names differ: " +
                         NameOfNode.makeName(n1).getStructuredQName().getEQName() +
                             " != " + NameOfNode.makeName(n1).getStructuredQName().getEQName(), flags, n1, n2);
                     return false;
                 }
                 if (((flags & INCLUDE_PREFIXES) != 0) && !n1.getPrefix().equals(n2.getPrefix())) {
-                    explain(config, "attribute prefixes differ: " + n1.getPrefix() +
+                    explain(listener, "attribute prefixes differ: " + n1.getPrefix() +
                             " != " + n2.getPrefix(), flags, n1, n2);
                     return false;
                 }
                 if ((flags & COMPARE_ANNOTATIONS) != 0) {
                     if (!n1.getSchemaType().equals(n2.getSchemaType())) {
-                        explain(config, "attributes have different type annotations", flags, n1, n2);
+                        explain(listener, "attributes have different type annotations", flags, n1, n2);
                         return false;
                     }
                 }
@@ -409,16 +410,16 @@ public class DeepEqual extends CollatingFunctionFixed {
                             new StringValue(n2.getStringValueCS()));
                 }
                 if (!ar) {
-                    explain(config, "attribute values differ", flags, n1, n2);
+                    explain(listener, "attribute values differ", flags, n1, n2);
                     return false;
                 }
                 if ((flags & COMPARE_ID_FLAGS) != 0) {
                     if (n1.isId() != n2.isId()) {
-                        explain(config, "one attribute is an ID, the other is not", flags, n1, n2);
+                        explain(listener, "one attribute is an ID, the other is not", flags, n1, n2);
                         return false;
                     }
                     if (n1.isIdref() != n2.isIdref()) {
-                        explain(config, "one attribute is an IDREF, the other is not", flags, n1, n2);
+                        explain(listener, "one attribute is an IDREF, the other is not", flags, n1, n2);
                         return false;
                     }
                 }
@@ -428,7 +429,7 @@ public class DeepEqual extends CollatingFunctionFixed {
             case Type.PROCESSING_INSTRUCTION:
             case Type.NAMESPACE:
                 if (!n1.getLocalPart().equals(n2.getLocalPart())) {
-                    explain(config, Type.displayTypeName(n1) + " names differ", flags, n1, n2);
+                    explain(listener, Type.displayTypeName(n1) + " names differ", flags, n1, n2);
                     return false;
                 }
                 // drop through
@@ -465,7 +466,7 @@ public class DeepEqual extends CollatingFunctionFixed {
                             }
                         }
                     }
-                    explain(config, Type.displayTypeName(n1) + " values differ (" +
+                    explain(listener, Type.displayTypeName(n1) + " values differ (" +
                             Navigator.getPath(n1) + ", " + Navigator.getPath(n2) + "): " +
                             message, flags, n1, n2);
                 }
@@ -489,9 +490,9 @@ public class DeepEqual extends CollatingFunctionFixed {
         return false;
     }
 
-    private static void explain(Configuration config, String message, int flags, NodeInfo n1, NodeInfo n2) {
+    private static void explain(UnfailingErrorListener listener, String message, int flags, NodeInfo n1, NodeInfo n2) {
         if ((flags & WARNING_IF_FALSE) != 0) {
-            config.getErrorListener().warning(new XPathException("deep-equal() " +
+            listener.warning(new XPathException("deep-equal() " +
                     (n1 != null && n2 != null ?
                             "comparing " + Navigator.getPath(n1) + " to " + Navigator.getPath(n2) + ": " :
                             ": ") +
