@@ -12,7 +12,6 @@ import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.expr.sort.DocumentSorter;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.pattern.AnyNodeTest;
 import net.sf.saxon.trans.XPathException;
@@ -55,15 +54,15 @@ public class HomogeneityChecker extends UnaryExpression {
         int rel = th.relationship(type, AnyNodeTest.getInstance());
         if (rel == TypeHierarchy.DISJOINT) {
             // expression cannot return nodes, so this checker is redundant
-            if (getBaseExpression() instanceof SlashExpression && ((SlashExpression) getBaseExpression()).getLeadingSteps() instanceof SlashExpression &&
-                    (((SlashExpression) getBaseExpression()).getLeadingSteps().getSpecialProperties() & StaticProperty.ORDERED_NODESET) == 0) {
-                DocumentSorter ds = new DocumentSorter(((SlashExpression) getBaseExpression()).getLeadingSteps());
-                SlashExpression se = new SlashExpression(ds, ((SlashExpression) getBaseExpression()).getLastStep());
-                ExpressionTool.copyLocationInfo(this, se);
-                return se;
-            } else {
+//            if (getBaseExpression() instanceof SlashExpression && ((SlashExpression) getBaseExpression()).getLeadingSteps() instanceof SlashExpression &&
+//                    (((SlashExpression) getBaseExpression()).getLeadingSteps().getSpecialProperties() & StaticProperty.ORDERED_NODESET) == 0) {
+//                DocumentSorter ds = new DocumentSorter(((SlashExpression) getBaseExpression()).getLeadingSteps());
+//                SlashExpression se = new SlashExpression(ds, ((SlashExpression) getBaseExpression()).getLastStep());
+//                ExpressionTool.copyLocationInfo(this, se);
+//                return se;
+//            } else {
                 return getBaseExpression();
-            }
+//            }
         } else if (rel == TypeHierarchy.SAME_TYPE || rel == TypeHierarchy.SUBSUMED_BY) {
             // expression always returns nodes, so replace this expression with a DocumentSorter
             Expression savedBase = getBaseExpression();
