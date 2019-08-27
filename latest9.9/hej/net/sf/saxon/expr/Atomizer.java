@@ -12,6 +12,7 @@ import net.sf.saxon.expr.instruct.Block;
 import net.sf.saxon.expr.instruct.Choose;
 import net.sf.saxon.expr.instruct.ValueOf;
 import net.sf.saxon.expr.parser.*;
+import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.ma.arrays.ArrayItemType;
 import net.sf.saxon.ma.map.MapType;
 import net.sf.saxon.om.*;
@@ -349,10 +350,10 @@ public final class Atomizer extends UnaryExpression {
             SequenceIterator base = getBaseExpression().iterate(context);
             return getAtomizingIterator(base, untyped && operandItemType instanceof NodeTest);
         } catch (XPathException e) {
-            if (roleDiagnostic == null) {
+            if (roleDiagnostic == null || !e.getErrorCodeQName().hasURI(NamespaceConstant.ERR)) {
                 throw e;
             } else {
-                String message = e.getMessage() + ". Failed while atomizing the " + roleDiagnostic.getMessage();
+                String message = expandMessage(e.getMessage());
                 XPathException e2 = new XPathException(message, e.getErrorCodeLocalPart(), e.getLocator());
                 e2.setXPathContext(context);
                 e2.maybeSetLocation(getLocation());
