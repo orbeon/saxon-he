@@ -437,7 +437,9 @@ namespace SaxonPE
 
             // Create a transformer for the stylesheet.
             Xslt30Transformer transformer = processor.NewXsltCompiler().Compile(new Uri(samplesDir, "styles/books.xsl")).Load30();
-            
+
+            // Set the root node of the source document to be the global context item
+            transformer.GlobalContextItem = input;
 
             // Create a serializer, with output to the standard output stream
             Serializer serializer = processor.NewSerializer();
@@ -518,6 +520,9 @@ namespace SaxonPE
             XsltCompiler compiler = processor.NewXsltCompiler();
             compiler.BaseUri = new Uri(samplesDir, "styles/books.xsl");
             Xslt30Transformer transformer = compiler.Compile(File.OpenRead(styleFile)).Load30();
+
+            // Set the root node of the source document to be the global context item
+            transformer.GlobalContextItem = input;
 
             // Create a serializer, with output to the standard output stream
             Serializer serializer =processor.NewSerializer();
@@ -646,26 +651,23 @@ namespace SaxonPE
             // Compile the stylesheet
             XsltExecutable exec = processor.NewXsltCompiler().Compile(new Uri(samplesDir, "styles/summarize.xsl"));
 
-            // Create a transformer 
+            // Create a transformer
             Xslt30Transformer transformer = exec.Load30();
 
-            Dictionary<QName, XdmValue> parameters = new Dictionary<QName, XdmValue>();
-            parameters.Add(new QName("", "", "include-attributes"), new XdmAtomicValue(false));
-            // Run it once        
-            transformer.SetStylesheetParameters(parameters);
+            // Run it once
+            Dictionary<QName, XdmValue> params1 = new Dictionary<QName, XdmValue>();
+            params1.Add(new QName("", "", "include-attributes"), new XdmAtomicValue(false));
+            transformer.SetStylesheetParameters(params1);
             XdmDestination results = new XdmDestination();
             transformer.ApplyTemplates(input, results);
             Console.WriteLine("1: " + results.XdmNode.OuterXml);
 
-            Dictionary<QName, XdmValue> parameters2 = new Dictionary<QName, XdmValue>();
-            parameters2.Add(new QName("", "", "include-attributes"), new XdmAtomicValue(true));
-            // Run it again        
-            // Create a transformer 
-            Xslt30Transformer transformer2 = exec.Load30();
-
-            transformer2.SetStylesheetParameters(parameters2);
+            // Run it again
+            Dictionary<QName, XdmValue> params2 = new Dictionary<QName, XdmValue>();
+            params2.Add(new QName("", "", "include-attributes"), new XdmAtomicValue(true));
+            transformer.SetStylesheetParameters(params2);
             results.Reset();
-            transformer2.ApplyTemplates(input, results);
+            transformer.ApplyTemplates(input, results);
             Console.WriteLine("2: " + results.XdmNode.OuterXml);
         }
     }
@@ -705,6 +707,7 @@ namespace SaxonPE
             //Console.WriteLine(results1.XdmNode.OuterXml);
 
             XdmDestination results2 = new XdmDestination();
+            transformer.GlobalContextItem = results1.XdmNode;
             transformer2.ApplyTemplates(results1.XdmNode, results2);
             //Console.WriteLine("After phase 2:");
             //Console.WriteLine(results2.XdmNode.OuterXml);
@@ -908,6 +911,9 @@ namespace SaxonPE
 
             // Create a transformer 
             Xslt30Transformer transformer = exec.Load30();
+
+            // Set the root node of the source document to be the global context item
+            transformer.GlobalContextItem = input;
 
             // Run it       
             XdmDestination results = new XdmDestination();

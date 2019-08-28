@@ -444,6 +444,9 @@ namespace SaxonEE
             // Create a transformer for the stylesheet.
             Xslt30Transformer transformer = processor.NewXsltCompiler().Compile(new Uri(samplesDir, "styles/books.xsl")).Load30();
 
+            // Set the root node of the source document to be the global context item
+            transformer.GlobalContextItem = input;
+
             // Create a serializer, with output to the standard output stream
             Serializer serializer = processor.NewSerializer();
             serializer.SetOutputWriter(Console.Out);
@@ -522,7 +525,10 @@ namespace SaxonEE
             // Create a transformer for the stylesheet.
             XsltCompiler compiler = processor.NewXsltCompiler();
             compiler.BaseUri = new Uri(samplesDir, "styles/books.xsl");
-			Xslt30Transformer transformer = compiler.Compile(File.OpenRead(styleFile)).Load30();
+			   Xslt30Transformer transformer = compiler.Compile(File.OpenRead(styleFile)).Load30();
+
+            // Set the root node of the source document to be the global context item
+            transformer.GlobalContextItem = input;
 
             // Create a serializer, with output to the standard output stream
             Serializer serializer = processor.NewSerializer();
@@ -632,7 +638,7 @@ namespace SaxonEE
     }
 
     /// <summary>
-	/// Show that the Xslt30Transformer is serially reusable; run a transformation twice using the same stylesheet
+	 /// Show that the Xslt30Transformer is serially reusable; run a transformation twice using the same stylesheet
     /// and the same input document but with different parameters.
     /// </summary>
 
@@ -655,23 +661,23 @@ namespace SaxonEE
             // Compile the stylesheet
             XsltExecutable exec = processor.NewXsltCompiler().Compile(new Uri(samplesDir, "styles/summarize.xsl"));
 
-            // Create a transformer 
-			Xslt30Transformer transformer = exec.Load30();
+            // Create a transformer
+			   Xslt30Transformer transformer = exec.Load30();
 
-			// Run it once   
-			Dictionary<QName, XdmValue> params1 = new Dictionary<QName, XdmValue>();
-			params1.Add(new QName("", "", "include-attributes"), new XdmAtomicValue(false));
-			transformer.SetStylesheetParameters(params1);
+			   // Run it once
+			   Dictionary<QName, XdmValue> params1 = new Dictionary<QName, XdmValue>();
+			   params1.Add(new QName("", "", "include-attributes"), new XdmAtomicValue(false));
+			   transformer.SetStylesheetParameters(params1);
             XdmDestination results = new XdmDestination();
-			transformer.ApplyTemplates(input, results);
+			   transformer.ApplyTemplates(input, results);
             Console.WriteLine("1: " + results.XdmNode.OuterXml);
 
-            // Run it again        
-			Dictionary<QName, XdmValue> params2 = new Dictionary<QName, XdmValue>();
-			params2.Add(new QName("", "", "include-attributes"), new XdmAtomicValue(true));
-			transformer.SetStylesheetParameters(params2);
+            // Run it again
+			   Dictionary<QName, XdmValue> params2 = new Dictionary<QName, XdmValue>();
+			   params2.Add(new QName("", "", "include-attributes"), new XdmAtomicValue(true));
+			   transformer.SetStylesheetParameters(params2);
             results.Reset();
-			transformer.ApplyTemplates(input, results);
+			   transformer.ApplyTemplates(input, results);
             Console.WriteLine("2: " + results.XdmNode.OuterXml);
         }
     }
@@ -700,22 +706,26 @@ namespace SaxonEE
             XsltCompiler compiler = processor.NewXsltCompiler();
 
             // Compile all three stylesheets
-			Xslt30Transformer transformer1 = compiler.Compile(new Uri(samplesDir, "styles/identity.xsl")).Load30();
-			Xslt30Transformer transformer2 = compiler.Compile(new Uri(samplesDir, "styles/books.xsl")).Load30();
-			Xslt30Transformer transformer3 = compiler.Compile(new Uri(samplesDir, "styles/summarize.xsl")).Load30();
+            Xslt30Transformer transformer1 = compiler.Compile(new Uri(samplesDir, "styles/identity.xsl")).Load30();
+            Xslt30Transformer transformer2 = compiler.Compile(new Uri(samplesDir, "styles/books.xsl")).Load30();
+            Xslt30Transformer transformer3 = compiler.Compile(new Uri(samplesDir, "styles/summarize.xsl")).Load30();
 
-			XdmDestination results = new XdmDestination();
+            // Now run them in series
+            XdmDestination results1 = new XdmDestination();
+            transformer1.ApplyTemplates(input, results1);
+            //Console.WriteLine("After phase 1:");
+            //Console.WriteLine(results1.XdmNode.OuterXml);
 
-			// Create a destination which performs transformation 3, and set the final destination for transformer3.
-			XmlDestination destinationT3 = transformer1.AsDocumentDestination(results);
+            XdmDestination results2 = new XdmDestination();
+            transformer.GlobalContextItem = results1.XdmNode;
+            transformer2.ApplyTemplates(results1.XdmNode, results2);
+            //Console.WriteLine("After phase 2:");
+            //Console.WriteLine(results2.XdmNode.OuterXml);
 
-			// Create a destination which performs transformation 2, and set the destination for transformer2 to be destinationT3.
-			XmlDestination destinationT2 = transformer2.AsDocumentDestination(destinationT3);
-
-			// Run the transforms in series, by setting the destination for transformer1 to be destinationT2.
-			transformer1.ApplyTemplates(input, destinationT2);
-            Console.WriteLine("Transformation pipeline results:");
-            Console.WriteLine(results.XdmNode.OuterXml);
+            XdmDestination results3 = new XdmDestination();
+            transformer3.ApplyTemplates(results2.XdmNode, results3);
+            Console.WriteLine("After phase 3:");
+            Console.WriteLine(results3.XdmNode.OuterXml);
         }
     }
 
@@ -910,11 +920,14 @@ namespace SaxonEE
             }
 
             // Create a transformer 
-			Xslt30Transformer transformer = exec.Load30();
+			   Xslt30Transformer transformer = exec.Load30();
+
+            // Set the root node of the source document to be the global context item
+            transformer.GlobalContextItem = input;
 
             // Run it       
             XdmDestination results = new XdmDestination();
-			transformer.ApplyTemplates(input, results);
+			   transformer.ApplyTemplates(input, results);
             Console.WriteLine(results.XdmNode.OuterXml);
 
         }
