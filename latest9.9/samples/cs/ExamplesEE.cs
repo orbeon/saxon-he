@@ -1410,14 +1410,16 @@ namespace SaxonEE
             XsltExecutable exec = compiler.Compile(new StringReader(stylesheet));
 
             // Create a transformer for the stylesheet.
-			Xslt30Transformer transformer = exec.Load30();
+            Xslt30Transformer transformer = exec.Load30();
 
             // Establish the result document handler
             Hashtable results = new Hashtable();
             transformer.ResultDocumentHandler = new UserResultDocumentHandler(results);
 
             // Transform the source XML to a NullDestination (because we only want the secondary result files).
-			transformer.ApplyTemplates(input, new NullDestination());
+            NullDestination destination = new NullDestination();
+            destination.BaseUri = samplesDir;
+            transformer.ApplyTemplates(input, destination);
 
             // Process the captured DOM results
             foreach (DictionaryEntry entry in results)
