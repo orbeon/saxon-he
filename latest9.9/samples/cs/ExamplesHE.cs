@@ -716,7 +716,7 @@ namespace SaxonHE
             //Console.WriteLine(results1.XdmNode.OuterXml);
             
             XdmDestination results2 = new XdmDestination();
-            transformer.GlobalContextItem = results1.XdmNode;
+            transformer2.GlobalContextItem = results1.XdmNode;
             transformer2.ApplyTemplates(results1.XdmNode, results2);
             //Console.WriteLine("After phase 2:");
             //Console.WriteLine(results2.XdmNode.OuterXml);
