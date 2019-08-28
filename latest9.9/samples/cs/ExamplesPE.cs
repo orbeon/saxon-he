@@ -1913,8 +1913,7 @@ namespace SaxonPE
 			XQueryExecutable exp = compiler.Compile("for $i in 1 to 10 return $i * $i");
 			XQueryEvaluator eval = exp.Load();
 			XdmValue value = eval.Evaluate();
-
-            IXdmEnumerator<XdmItem> e = (IXdmEnumerator<XdmItem>)((IXdmEnumerable<XdmItem>)value).GetEnumerator();
+			IXdmEnumerator<XdmItem> e = (IXdmEnumerator<XdmItem>)((IXdmEnumerable<XdmItem>)value).GetEnumerator();
 			while (e.MoveNext())
 			{
 				XdmItem item = (XdmItem)e.Current;
