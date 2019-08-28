@@ -639,7 +639,7 @@ namespace SaxonEE
 
     /// <summary>
 	 /// Show that the Xslt30Transformer is serially reusable; run a transformation twice using the same stylesheet
-    /// and the same input document but with different parameters.
+    /// and the same stylesheet parameters, but with a different input document.
     /// </summary>
 
     public class XsltReuseTransformer : Example
@@ -655,29 +655,31 @@ namespace SaxonEE
             // Create a Processor instance.
             Processor processor = new Processor();
 
-            // Load the source document, building a tree
-            XdmNode input = processor.NewDocumentBuilder().Build(new Uri(samplesDir, "data/books.xml"));
-
             // Compile the stylesheet
             XsltExecutable exec = processor.NewXsltCompiler().Compile(new Uri(samplesDir, "styles/summarize.xsl"));
 
-            // Create a transformer
-			   Xslt30Transformer transformer = exec.Load30();
+            // Create a transformer 
+            Xslt30Transformer transformer = exec.Load30();
+            
+            // Set the stylesheet parameters
+            Dictionary<QName, XdmValue> params1 = new Dictionary<QName, XdmValue>();
+            params1.Add(new QName("", "", "include-attributes"), new XdmAtomicValue(false));
+            transformer.SetStylesheetParameters(params1);
 
-			   // Run it once
-			   Dictionary<QName, XdmValue> params1 = new Dictionary<QName, XdmValue>();
-			   params1.Add(new QName("", "", "include-attributes"), new XdmAtomicValue(false));
-			   transformer.SetStylesheetParameters(params1);
+            // Load the 1st source document, building a tree
+            XdmNode input1 = processor.NewDocumentBuilder().Build(new Uri(samplesDir, "data/books.xml"));
+
+            // Run the transformer once
             XdmDestination results = new XdmDestination();
-			   transformer.ApplyTemplates(input, results);
+            transformer.ApplyTemplates(input1, results);
             Console.WriteLine("1: " + results.XdmNode.OuterXml);
 
-            // Run it again
-			   Dictionary<QName, XdmValue> params2 = new Dictionary<QName, XdmValue>();
-			   params2.Add(new QName("", "", "include-attributes"), new XdmAtomicValue(true));
-			   transformer.SetStylesheetParameters(params2);
+            // Load the 2nd source document, building a tree
+            XdmNode input2 = processor.NewDocumentBuilder().Build(new Uri(samplesDir, "data/more-books.xml"));
+
+            // Run the transformer again
             results.Reset();
-			   transformer.ApplyTemplates(input, results);
+            transformer.ApplyTemplates(input2, results);
             Console.WriteLine("2: " + results.XdmNode.OuterXml);
         }
     }
