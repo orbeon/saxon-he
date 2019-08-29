@@ -11,7 +11,7 @@ namespace SaxonHE
     class ExamplesHE
     {
         /// <summary>
-        /// Run Saxon XSLT and XQuery sample applications
+        /// Run Saxon XSLT and XQuery sample applications in Saxon Home Edition on .NET
         /// </summary>
         /// <param name="argv">
         /// <para>Options:</para>
@@ -27,8 +27,8 @@ namespace SaxonHE
         {
 
             Example[] examples = {
-				new XPathSimple(),
-				new XPathSimple2(),
+                new XPathSimple(),
+                new XPathSimple2(),
                 new XPathVariables(),
                 new XPathUndeclaredVariables(),
                 new XPathWithStaticError(),
@@ -63,8 +63,8 @@ namespace SaxonHE
                 new XQueryCallFunction(),
                 new XQueryFromXmlReader(),
                 new XQueryToSerializedSequence(),
-				new XQueryUsingParameter(),
-				new XQueryMultiModule()
+                new XQueryUsingParameter(),
+                new XQueryMultiModule()
             };
 
             Boolean ask = true;
@@ -150,15 +150,15 @@ namespace SaxonHE
             {
                 Console.WriteLine("Invalid URI for samples directory: " + samplesPath);
                 return;
-			}
+            }
 
-			Boolean found = false;
+            Boolean found = false;
             foreach (Example ex in examples)
             {
                 if (test == "all" || test == ex.testName)
                 {
-					Console.WriteLine("\n\n===== " + ex.testName + " =======\n");
-					found = true;
+                    Console.WriteLine("\n\n===== " + ex.testName + " =======\n");
+                    found = true;
                     try
                     {
                         ex.run(samplesDir);
@@ -190,10 +190,10 @@ namespace SaxonHE
                         }
                     }
                 }
-			}
-			if (!found) {
-				Console.WriteLine("Please supply a valid test name, or 'all' ('" + test + "' is invalid)");
-			}
+            }
+            if (!found) {
+                Console.WriteLine("Please supply a valid test name, or 'all' ('" + test + "' is invalid)");
+            }
             Console.WriteLine("\n==== done! ====");
         }
     }
@@ -216,7 +216,7 @@ namespace SaxonHE
     }
 
     /// <summary>
-	/// Evaluate an XPath expression selecting from a source document supplied as a URI
+    /// Evaluate an XPath expression selecting from a source document supplied as a URI
     /// </summary>
 
     public class XPathSimple : Example
@@ -248,11 +248,11 @@ namespace SaxonHE
                 Console.WriteLine("PRICE: " + xpath.EvaluateSingle("string(PRICE)", item));
             }
         }
-	}
+    }
 
-	/// <summary>
-	/// Evaluate an XPath expression against a source document, returning its effective boolean value
-	/// </summary>
+    /// <summary>
+    /// Evaluate an XPath expression against a source document, returning its effective boolean value
+    /// </summary>
 
     public class XPathSimple2 : Example
     {
@@ -277,15 +277,15 @@ namespace SaxonHE
             xpath.Caching = true;
             
             // Compile and evaluate an XPath expression
-			XPathSelector selector = xpath.Compile("//ITEM").Load();
+            XPathSelector selector = xpath.Compile("//ITEM").Load();
             selector.ContextItem = input;
-			Console.WriteLine(selector.EffectiveBooleanValue());
+            Console.WriteLine(selector.EffectiveBooleanValue());
 
         }
     }
 
     /// <summary>
-	/// Evaluate an XPath expression using variables (and no source document)
+    /// Evaluate an XPath expression using variables (and no source document)
     /// </summary>
 
     public class XPathVariables : Example
@@ -317,7 +317,7 @@ namespace SaxonHE
     }
 
     /// <summary>
-	/// Evaluate an XPath expression using variables without explicit declaration
+    /// Evaluate an XPath expression using variables without explicit declaration
     /// </summary>
 
     public class XPathUndeclaredVariables : Example
@@ -343,21 +343,16 @@ namespace SaxonHE
             IEnumerator<QName> vars = expression.EnumerateExternalVariables2();
             while (vars.MoveNext())
             {
-                selector.SetVariable(vars.Current, new XdmAtomicValue(10));
+                selector.SetVariable((QName)vars.Current, new XdmAtomicValue(10));
             }
 
             // Evaluate the XPath expression
-            XdmItem item = selector.EvaluateSingle();
-            if (item == null) {
-                Console.WriteLine("evaluate single returns null!!!");
-            } else {
-                Console.WriteLine(item.ToString());
-            }
+            Console.WriteLine(selector.EvaluateSingle().ToString());
         }
     }
 
     /// <summary>
-	/// Evaluate an XPath expression throwing a static error
+    /// Evaluate an XPath expression throwing a static error
     /// </summary>
 
     public class XPathWithStaticError : Example
@@ -385,7 +380,7 @@ namespace SaxonHE
     }
 
     /// <summary>
-	/// Evaluate an XPath expression throwing a dynamic error
+    /// Evaluate an XPath expression throwing a dynamic error
     /// </summary>
 
     public class XPathWithDynamicError : Example
@@ -412,16 +407,7 @@ namespace SaxonHE
             selector.SetVariable(new QName("", "b"), new XdmAtomicValue("Paris"));
 
             // Evaluate the XPath expression
-            XdmItem item = selector.EvaluateSingle();
-            if (item == null)
-            {
-
-                Console.WriteLine("Evaluate single item is null!!");
-            }
-            else
-            {
-                Console.WriteLine(item.ToString());
-            }
+            Console.WriteLine(selector.EvaluateSingle().ToString());
         }
     }
 
@@ -450,7 +436,7 @@ namespace SaxonHE
 
             // Set the root node of the source document to be the global context item
             transformer.GlobalContextItem = input;
-            
+
             // Create a serializer, with output to the standard output stream
             Serializer serializer = processor.NewSerializer();
             serializer.SetOutputWriter(Console.Out);
@@ -488,7 +474,7 @@ namespace SaxonHE
             Serializer serializer = processor.NewSerializer();
             serializer.SetOutputStream(new FileStream(outfile, FileMode.Create, FileAccess.Write));
 
-			// Transform the source XML and serialize the result to the output file.
+            // Transform the source XML and serialize the result to the output file.
             transformer.ApplyTemplates(input, serializer);
 
             Console.WriteLine("\nOutput written to " + outfile + "\n");
@@ -584,12 +570,12 @@ namespace SaxonHE
             XsltCompiler compiler = processor.NewXsltCompiler();
             compiler.BaseUri = samplesDir;
             Xslt30Transformer transformer = compiler.Compile(new XmlTextReader(new StringReader(stylesheet))).Load30();
-            
-			// Create a serializer, with output to the standard output stream
+
+            // Create a serializer, with output to the standard output stream
             Serializer serializer = processor.NewSerializer();
             serializer.SetOutputWriter(Console.Out);
 
-			// Transform the source XML and serialize the result document
+            // Transform the source XML and serialize the result document
             transformer.ApplyTemplates(input, serializer);
         }
     }
@@ -625,14 +611,14 @@ namespace SaxonHE
             // Do the first transformation
             Console.WriteLine("\n\n----- transform of " + sourceFile1 + " -----");
             Xslt30Transformer transformer1 = templates.Load30();
-            XdmNode inputNode = processor.NewDocumentBuilder().Build(new Uri(samplesDir, sourceFile1));
-            transformer1.ApplyTemplates(inputNode, processor.NewSerializer(Console.Out));     // default destination is Console.Out
+            XdmNode input1 = processor.NewDocumentBuilder().Build(new Uri(samplesDir, sourceFile1));
+            transformer1.ApplyTemplates(input1, processor.NewSerializer(Console.Out));     // default destination is Console.Out
 
             // Do the second transformation
             Console.WriteLine("\n\n----- transform of " + sourceFile2 + " -----");
             Xslt30Transformer transformer2 = templates.Load30();
-            XdmNode inputNode2 = processor.NewDocumentBuilder().Build(new Uri(samplesDir, sourceFile2));
-            transformer2.ApplyTemplates(inputNode2, processor.NewSerializer(Console.Out));     // default destination is Console.Out    
+            XdmNode input2 = processor.NewDocumentBuilder().Build(new Uri(samplesDir, sourceFile2));
+            transformer2.ApplyTemplates(input2, processor.NewSerializer(Console.Out));     // default destination is Console.Out
         }
     }
 
@@ -716,7 +702,7 @@ namespace SaxonHE
             transformer1.ApplyTemplates(input, results1);
             //Console.WriteLine("After phase 1:");
             //Console.WriteLine(results1.XdmNode.OuterXml);
-            
+
             XdmDestination results2 = new XdmDestination();
             transformer2.GlobalContextItem = results1.XdmNode;
             transformer2.ApplyTemplates(results1.XdmNode, results2);
@@ -773,7 +759,7 @@ namespace SaxonHE
     }
 
     /// <summary>
-    /// Run an XSLT transformation from an Xdm tree, starting at a node that is not the document node
+    /// Run an XSLT transformation from an XDM tree, starting at a node that is not the document node
     /// </summary>
 
     public class XsltXdmElementToXdm : Example
@@ -1028,7 +1014,7 @@ namespace SaxonHE
             Serializer serializer = processor.NewSerializer();
             serializer.SetOutputWriter(Console.Out);
 
-			// Transform the source XML and serialize the result document
+            // Transform the source XML and serialize the result document
             transformer.ApplyTemplates(input, serializer);
 
         }
@@ -1174,15 +1160,14 @@ namespace SaxonHE
             // Create a transformer for the stylesheet.
             Xslt30Transformer transformer = exec.Load30();
 
-
             // Create a Listener to which messages will be written
             transformer.MessageListener = new UserMessageListener();
 
-			// Create a serializer, with output to the standard output stream
+            // Create a serializer, with output to the standard output stream
             Serializer serializer = processor.NewSerializer();
             serializer.SetOutputWriter(Console.Out);
 
-			// Transform the source XML and serialize the result document
+            // Transform the source XML, calling a named initial template, and serialize the result document
             transformer.CallTemplate(new QName("", "main"), serializer);
         }
 
@@ -1234,11 +1219,11 @@ namespace SaxonHE
             parameters.Add(new QName("", "", "dir"), new XdmAtomicValue(samplesDir.ToString() + "play"));
             transformer.SetStylesheetParameters(parameters);
 
-			// Create a serializer, with output to the standard output stream
+            // Create a serializer, with output to the standard output stream
             Serializer serializer = processor.NewSerializer();
             serializer.SetOutputWriter(Console.Out);
 
-			// Transform the source XML and serialize the result document
+            // Transform the source XML and serialize the result document
             transformer.ApplyTemplates(input, serializer);
 
         }
@@ -1393,7 +1378,7 @@ namespace SaxonHE
             // Create a Processor instance.
             Processor processor = new Processor();
 
-			// Define a stylesheet that uses the collection() function
+            // Define a stylesheet that uses the collection() function
             String stylesheet =
                 "<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>\n" +
                 "<xsl:template name='main'>\n" +
@@ -1408,7 +1393,7 @@ namespace SaxonHE
                 "</xsl:template>\n" +
                 "</xsl:stylesheet>";
 
-			// Register a named collection
+            // Register a named collection
             Uri[] documentList = new Uri[2];
             documentList[0] = new Uri(samplesDir, "data/othello.xml");
             documentList[1] = new Uri(samplesDir, "data/books.xml");
@@ -1424,7 +1409,7 @@ namespace SaxonHE
             // Set the destination
             XdmDestination results = new XdmDestination();
 
-            // Transform the XML
+            // Transform the XML, calling a named initial template
             transformer.CallTemplate(new QName("", "main"), results);
 
             // Show the result
@@ -1434,7 +1419,7 @@ namespace SaxonHE
     }
 
     /// <summary>
-	/// Show a transformation using a collection that maps to a directory
+    /// Show a transformation using a collection that maps to a directory
     /// </summary>
 
     public class XsltUsingDirectoryCollection : Example
@@ -1450,7 +1435,7 @@ namespace SaxonHE
             // Create a Processor instance.
             Processor processor = new Processor();
 
-			// Define a stylesheet that uses the collection() function
+            // Define a stylesheet that uses the collection() function
             String stylesheet =
                 "<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>\n" +
                 "<xsl:template name='main'>\n" +
@@ -1469,11 +1454,11 @@ namespace SaxonHE
 
             // Create a transformer for the stylesheet.
             Xslt30Transformer transformer = exec.Load30();
-            
+
             // Set the destination
             XdmDestination results = new XdmDestination();
 
-            // Transform the XML
+            // Transform the XML, calling a named initial template
             transformer.CallTemplate(new QName("", "main"), results);
 
             // Show the result
@@ -1523,12 +1508,12 @@ namespace SaxonHE
             // Create a transformer for the stylesheet.
             Xslt30Transformer transformer = processor.NewXsltCompiler().Compile(new StringReader(s)).Load30();
 
-			// Create a serializer, with output to the standard output stream
+            // Create a serializer, with output to the standard output stream
             Serializer serializer = processor.NewSerializer();
             serializer.SetOutputWriter(Console.Out);
             serializer.SetOutputProperty(Serializer.INDENT, "yes");
 
-			// Transform the source XML and serialize the result document
+            // Transform the source XML, calling a named initial template, and serialize the result document
             transformer.CallTemplate(new QName("go"), serializer);
         }
 
@@ -1596,7 +1581,6 @@ namespace SaxonHE
 
     internal class SqrtCall : ExtensionFunctionCall
     {
-
         public override IXdmEnumerator<XdmItem> Call(IXdmEnumerator<XdmItem>[] arguments, DynamicContext context)
         {
             Boolean exists = arguments[0].MoveNext();
@@ -1676,7 +1660,6 @@ namespace SaxonHE
             }
         }
 
-
         public override ExtensionFunctionCall MakeFunctionCall()
         {
             return new DefaultNamespaceCall();
@@ -1692,12 +1675,11 @@ namespace SaxonHE
             defaultNamespace = context.GetNamespaceForPrefix("");
         }
 
-
         public override IXdmEnumerator<XdmItem> Call(IXdmEnumerator<XdmItem>[] arguments, DynamicContext context)
         {
             if (defaultNamespace != null)
             {
-                return (IXdmEnumerator<XdmItem>)new XdmAtomicValue(defaultNamespace);
+                return (IXdmEnumerator<XdmItem>)((IXdmEnumerable<XdmItem>)(new XdmAtomicValue(defaultNamespace))).GetEnumerator();
             }
             else
             {
@@ -1875,8 +1857,9 @@ namespace SaxonHE
             Processor processor = new Processor();
 
             XQueryCompiler qc = processor.NewXQueryCompiler();
+            Uri uri = new Uri(samplesDir, "data/books.xml");
             XQueryExecutable exp1 = qc.Compile("declare namespace f='f.ns';" +
-                   "declare variable $z := 1 + xs:integer(doc-available('" + new Uri(samplesDir, "data/books.xml").ToString() + "'));" +
+                   "declare variable $z := 1 + xs:integer(doc-available('" + uri.ToString() + "'));" +
                    "declare variable $p as xs:integer external;" +
                    "declare function f:t1($v1 as xs:integer) { " +
                    "   $v1 div $z + $p" +
@@ -1893,7 +1876,6 @@ namespace SaxonHE
         }
 
     }
-
 
     /// <summary>
     /// Show a query reading an input document using an XmlReader (the .NET XML parser)
@@ -1930,8 +1912,8 @@ namespace SaxonHE
             Serializer qout = processor.NewSerializer();
             qout.SetOutputProperty(Serializer.METHOD, "xml");
             qout.SetOutputProperty(Serializer.INDENT, "yes");
-			qout.SetOutputStream(new FileStream("testoutput2.xml", FileMode.Create, FileAccess.Write));
-			Console.WriteLine("Output written to testoutput2.xml");
+            qout.SetOutputStream(new FileStream("testoutput2.xml", FileMode.Create, FileAccess.Write));
+            Console.WriteLine("Output written to testoutput2.xml");
             eval.Run(qout);
         }
 
