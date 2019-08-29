@@ -683,7 +683,6 @@ public class StandardEntityResolver implements EntityResolver {
             tracing = config.isTiming();
             traceDestination = config.getLogger();
         }
-        tracing=true;
         if (tracing) {
             if (traceDestination == null) {
                 traceDestination = new StandardLogger();
