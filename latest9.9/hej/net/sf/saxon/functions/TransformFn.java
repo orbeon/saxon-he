@@ -560,7 +560,6 @@ public class TransformFn extends SystemFunction implements Callable {
             if (optionValue != null) {
                 NodeInfo configFile = (NodeInfo) optionValue.head();
                 targetConfig = Configuration.readConfiguration(configFile, targetConfig);
-                targetConfig.importLicenseDetails(context.getConfiguration());
                 allowTypedNodes = false;
                 if (!context.getConfiguration().getBooleanProperty(Feature.ALLOW_EXTERNAL_FUNCTIONS)) {
                     targetConfig.setBooleanProperty(Feature.ALLOW_EXTERNAL_FUNCTIONS, false);

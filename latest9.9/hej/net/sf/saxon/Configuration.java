@@ -418,8 +418,8 @@ public class Configuration implements SourceResolver, NotationSet {
     /**
      * Factory method to construct a Configuration object by reading a configuration file.
      * This version of the method creates a configuration that is "compatible" with the
-     * supplied configuration, in that it shares the same NamePool and DocumentNumberAllocator.
-     * (This is used by fn:transform)
+     * supplied configuration, in that it shares the same NamePool and DocumentNumberAllocator,
+     * and also the same licensing details. (This is used by fn:transform)
      *
      * @param source Source object containing the configuration file
      * @param baseConfiguration an existing configuration whose NamePool and DocumentNumberAllocator

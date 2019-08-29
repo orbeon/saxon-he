@@ -121,6 +121,9 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
             ((NodeInfo) source).copy(proxy, CopyOptions.ALL_NAMESPACES, ExplicitLocation.UNKNOWN_LOCATION);
             proxy.endDocument();
             proxy.close();
+            if (baseConfiguration != null) {
+                config.importLicenseDetails(baseConfiguration);
+            }
             return config;
         } else if (source instanceof SAXSource) {
             parser = ((SAXSource) source).getXMLReader();
@@ -166,6 +169,9 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
                 //
             }
             throw errors.get(0);
+        }
+        if (baseConfiguration != null) {
+            config.importLicenseDetails(baseConfiguration);
         }
         return config;
     }
