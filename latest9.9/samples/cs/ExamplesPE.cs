@@ -2036,12 +2036,13 @@ namespace SaxonPE
             String inputFileName = new Uri(samplesDir, "data/books.xml").ToString();
             XmlTextReader reader = new XmlTextReader(inputFileName,
                 UriConnection.getReadableUriStream(new Uri(samplesDir, "data/books.xml")));
-            //new FileStream(inputFileName, FileMode.Open, FileAccess.Read));
             reader.Normalization = true;
 
-            // add a validating reader - not to perform validation, but to expand entity references
-            XmlValidatingReader validator = new XmlValidatingReader(reader);
-            validator.ValidationType = ValidationType.None;
+            // Add a validating reader - needed in case there are entity references
+            XmlReaderSettings settings = new XmlReaderSettings();
+            settings.ValidationType = ValidationType.DTD;
+            settings.DtdProcessing = DtdProcessing.Parse;
+            XmlReader validator = XmlReader.Create(reader, settings);
 
             XdmNode doc = processor.NewDocumentBuilder().Build(validator);
 
@@ -2077,15 +2078,15 @@ namespace SaxonPE
         {
             Processor processor = new Processor();
             String inputFileName = new Uri(samplesDir, "data/books.xml").ToString();
-            //XmlTextReader reader = new XmlTextReader(inputFileName,
-            //    new FileStream(inputFileName, FileMode.Open, FileAccess.Read));
             XmlTextReader reader = new XmlTextReader(inputFileName,
                 UriConnection.getReadableUriStream(new Uri(samplesDir, "data/books.xml")));
             reader.Normalization = true;
 
-            // add a validating reader - not to perform validation, but to expand entity references
-            XmlValidatingReader validator = new XmlValidatingReader(reader);
-            validator.ValidationType = ValidationType.None;
+            // Add a validating reader - needed in case there are entity references
+            XmlReaderSettings settings = new XmlReaderSettings();
+            settings.ValidationType = ValidationType.DTD;
+            settings.DtdProcessing = DtdProcessing.Parse;
+            XmlReader validator = XmlReader.Create(reader, settings);
 
             XdmNode doc = processor.NewDocumentBuilder().Build(reader);
 
