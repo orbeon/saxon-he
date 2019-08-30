@@ -9,8 +9,10 @@ package net.sf.saxon.trans;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.Builder;
+import net.sf.saxon.expr.number.RegularGroupFormatter;
 import net.sf.saxon.functions.AccessorFn;
 import net.sf.saxon.lib.*;
+import net.sf.saxon.regex.EmptyString;
 import net.sf.saxon.s9api.*;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.SchemaException;
@@ -834,5 +836,20 @@ public class CommandLineOptions {
 
         }
     }
+
+    public static String showMemoryUsed() {
+        long value = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        return new RegularGroupFormatter(3, ",", EmptyString.THE_INSTANCE).format(new FastStringBuffer(value + ""));
+    }
+
+
+    public static String getCommandName(Object command) {
+        String s = command.getClass().getName();
+        if (s.startsWith("cli.Saxon.Cmd.DotNet")) {
+            s = s.substring("cli.Saxon.Cmd.DotNet".length());
+        }
+        return s;
+    }
+
 }
 

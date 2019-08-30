@@ -1291,7 +1291,7 @@ public class Transform {
             totalTime += endTime - startTime;
             if (showTime) {
                 System.err.println("Execution time: " + CommandLineOptions.showExecutionTimeNano(endTime - startTime));
-                System.err.println("Memory used: " + String.format("%,d", Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+                System.err.println("Memory used: " + CommandLineOptions.showMemoryUsed());
                 if (repeat > 1) {
                     System.err.println("-------------------------------");
                     Runtime.getRuntime().gc();
@@ -1325,7 +1325,7 @@ public class Transform {
             System.err.println(getConfiguration().getProductTitle());
         }
         System.err.println("Usage: see http://www.saxonica.com/documentation/index.html#!using-xsl/commandline");
-        System.err.println("Format: " + getClass().getName() + " options params");
+        System.err.println("Format: " + CommandLineOptions.getCommandName(this) + " options params");
         CommandLineOptions options = new CommandLineOptions();
         setPermittedOptions(options);
         System.err.println("Options available:" + options.displayPermittedOptions());

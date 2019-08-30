@@ -442,7 +442,7 @@ public class Query {
                     }
                     if (repeat < 100) {
                         System.err.println("Execution time: " + CommandLineOptions.showExecutionTimeNano(endTime - startTime));
-                        System.err.println("Memory used: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+                        System.err.println("Memory used: " + CommandLineOptions.showMemoryUsed());
                     } else if (totalTime > 1000000000000L) {
                         // quit after 1000 seconds
                         break;
@@ -1065,7 +1065,7 @@ public class Query {
             System.err.println(config.getProductTitle());
         }
         System.err.println("Usage: see http://www.saxonica.com/documentation/index.html#!using-xquery/commandline");
-        System.err.println("Format: " + getClass().getName() + " options params");
+        System.err.println("Format: " + CommandLineOptions.getCommandName(this) + " options params");
         CommandLineOptions options = new CommandLineOptions();
         setPermittedOptions(options);
         System.err.println("Options available:" + options.displayPermittedOptions());
