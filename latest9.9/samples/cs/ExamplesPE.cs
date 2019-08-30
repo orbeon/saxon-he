@@ -1535,6 +1535,8 @@ namespace SaxonPE
 	/// </summary>
 	/// <remarks>Note: If SamplesExtensions is compiled to a different assembly than ExamplesPE, use 
 	/// the namespace URI clitype:SampleExtensions.SampleExtensions?asm=ASSEMBLY_NAME_HERE
+	/// Alternatively, the location of an assembly can be provided as a URI using the 'from' keyword
+	/// e.g. clitype:SampleExtensions.SampleExtensions?from=file:///c:/lib/SampleExtensions.dll
 	/// </remarks>
 
     public class XsltExtensibility : Example
@@ -1557,9 +1559,8 @@ namespace SaxonPE
             //processor.SetProperty("http://saxon.sf.net/feature/trace-external-functions", "true");
 
             // Create the stylesheet
-            //asm=ExamplesPE
             String s = @"<xsl:transform version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'" +
-                @" xmlns:ext='clitype:SampleExtensions.SampleExtensions?from=file:///c:/work/repositories/svn/saxon-dev/Saxon.Net/SampleExtensions/bin/Debug/SampleExtensions.dll' " +
+                @" xmlns:ext='clitype:SampleExtensions.SampleExtensions?asm=ExamplesPE' " +
                 @" xmlns:tz='clitype:System.TimeZone' " +
                 @" xmlns:math='http://example.math.co.uk/demo' " +
                 @" xmlns:env='http://example.env.co.uk/demo' " +
@@ -2228,6 +2229,8 @@ namespace SaxonPE
     /// </summary>
     /// <remarks>Note: If SamplesExtensions is compiled to a different assembly than ExamplesPE, use 
     /// the namespace URI clitype:SampleExtensions.SampleExtensions?asm=ASSEMBLY_NAME_HERE
+    /// Alternatively, the location of an assembly can be provided as a URI using the 'from' keyword
+    /// e.g. clitype:SampleExtensions.SampleExtensions?from=file:///c:/lib/SampleExtensions.dll
     /// </remarks>
 
     public class XQueryExtensibility : Example
@@ -2241,7 +2244,7 @@ namespace SaxonPE
         public override void run(Uri samplesDir)
         {
             String query =
-                "declare namespace ext = \"clitype:SampleExtensions.SampleExtensions?from=file:///c:/work/repositories/svn/saxon-dev/Saxon.Net/SampleExtensions/bin/Debug/SampleExtensions.dll\";" +
+                "declare namespace ext = \"clitype:SampleExtensions.SampleExtensions?asm=ExamplesPE\";" +
                 "<out>" +
                 "  <addition>{ext:add(2,2)}</addition>" +
                 "  <average>{ext:average((1,2,3,4,5,6))}</average>" +

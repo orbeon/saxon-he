@@ -11,8 +11,8 @@ namespace SampleExtensions
     /// <summary>
     /// This class contains some example methods that can be invoked from XSLT as
     /// extension functions or from XQuery as external functions. For examples of calls
-	/// on these functions, from both XSLT and XQuery, see the ExamplesPE.cs and 
-	/// ExamplesEE.cs programs.
+    /// on these functions, from both XSLT and XQuery, see the ExamplesPE.cs and 
+    /// ExamplesEE.cs programs.
     /// </summary>
 
     public class SampleExtensions
