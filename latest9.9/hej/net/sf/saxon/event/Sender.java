@@ -196,6 +196,7 @@ public abstract class Sender {
                     newSource instanceof AugmentedSource ||
                     newSource instanceof EventSource) {
                 send(newSource, next, options);
+                return;
             }
 
             // See if there is a registered external object model that knows about this kind of source

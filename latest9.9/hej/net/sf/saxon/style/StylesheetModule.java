@@ -9,12 +9,11 @@ package net.sf.saxon.style;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.PreparedStylesheet;
-import net.sf.saxon.Version;
 import net.sf.saxon.event.*;
 import net.sf.saxon.lib.*;
 import net.sf.saxon.om.*;
-import net.sf.saxon.trans.packages.IPackageLoader;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.trans.packages.IPackageLoader;
 import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.tree.linked.DocumentImpl;
 import net.sf.saxon.tree.linked.LinkedTreeBuilder;
@@ -22,6 +21,7 @@ import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.NestedIntegerValue;
 import net.sf.saxon.value.Whitespace;
+import org.jetbrains.annotations.NotNull;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -78,7 +78,6 @@ public class StylesheetModule {
      */
     public static DocumentImpl loadStylesheetModule(
             Source styleSource, boolean topLevelModule, Compilation compilation, NestedIntegerValue precedence) throws XPathException {
-
         String systemId = styleSource.getSystemId();
         DocumentURI docURI = systemId == null ? null : new DocumentURI(systemId);
         if (systemId != null && compilation.getImportStack().contains(docURI)) {
@@ -109,29 +108,9 @@ public class StylesheetModule {
 
         DocumentImpl doc;
 
-        ParseOptions options;
-        if (styleSource instanceof AugmentedSource) {
-            options = ((AugmentedSource) styleSource).getParseOptions();
-            //styleSource = ((AugmentedSource) styleSource).getContainedSource();
-        } else {
-            options = new ParseOptions();
-        }
-        options.setSchemaValidationMode(Validation.STRIP);
-        options.setDTDValidationMode(Validation.STRIP);
-        options.setLineNumbering(true);
-        options.setSpaceStrippingRule(NoElementsSpaceStrippingRule.getInstance());
-        options.setErrorListener(pipe.getErrorListener());
+        ParseOptions options = makeStylesheetParseOptions(styleSource, pipe);
         try {
-            if (options.getXMLReader() == null && options.getXMLReaderMaker() == null && Version.platform.isJava()
-                    && !(styleSource instanceof SAXSource && ((SAXSource) styleSource).getXMLReader() != null)) {
-                XMLReader styleParser = config.getStyleParser();
-                options.setXMLReader(styleParser);
-                Sender.send(styleSource, commentStripper, options);
-                config.reuseStyleParser(styleParser);
-            } else {
-                Sender.send(styleSource, commentStripper, options);
-            }
-
+            sendStylesheetSource(styleSource, config, commentStripper, options);
             doc = (DocumentImpl)styleBuilder.getCurrentRoot();
             styleBuilder.reset();
             compilation.getImportStack().pop();
@@ -215,25 +194,9 @@ public class StylesheetModule {
         // build the stylesheet document
 
         ParseOptions options;
-        if (styleSource instanceof AugmentedSource) {
-            options = ((AugmentedSource) styleSource).getParseOptions();
-        } else {
-            options = new ParseOptions();
-        }
-        options.setSchemaValidationMode(Validation.PRESERVE);
-        options.setDTDValidationMode(Validation.STRIP);
-        options.setLineNumbering(true);
-        options.setSpaceStrippingRule(NoElementsSpaceStrippingRule.getInstance());
-        options.setErrorListener(pipe.getErrorListener());
+        options = makeStylesheetParseOptions(styleSource, pipe);
         try {
-            if (options.getXMLReader() == null && options.getXMLReaderMaker() == null && Version.platform.isJava()) {
-                XMLReader styleParser = config.getStyleParser();
-                options.setXMLReader(styleParser);
-                Sender.send(styleSource, sourcePipeline, options);
-                config.reuseStyleParser(styleParser);
-            } else {
-                Sender.send(styleSource, sourcePipeline, options);
-            }
+            sendStylesheetSource(styleSource, config, sourcePipeline, options);
 
             NodeInfo doc;
             if (valve.wasDiverted()) {
@@ -280,6 +243,38 @@ public class StylesheetModule {
         }
     }
 
+    @NotNull
+    private static ParseOptions makeStylesheetParseOptions(Source styleSource, PipelineConfiguration pipe) {
+        ParseOptions options;
+        if (styleSource instanceof AugmentedSource) {
+            options = ((AugmentedSource) styleSource).getParseOptions();
+        } else {
+            options = new ParseOptions();
+        }
+        options.setSchemaValidationMode(Validation.STRIP);
+        options.setDTDValidationMode(Validation.STRIP);
+        options.setLineNumbering(true);
+        options.setSpaceStrippingRule(NoElementsSpaceStrippingRule.getInstance());
+        options.setErrorListener(pipe.getErrorListener());
+        return options;
+    }
+
+
+    private static void sendStylesheetSource(Source styleSource, Configuration config, Receiver sourcePipeline, ParseOptions options) throws XPathException {
+        boolean knownParser =
+                options.getXMLReader() != null ||
+                        options.getXMLReaderMaker() != null ||
+                        (styleSource instanceof SAXSource && ((SAXSource) styleSource).getXMLReader() != null);
+
+        if (knownParser) {
+            Sender.send(styleSource, sourcePipeline, options);
+        } else {
+            XMLReader styleParser = config.getStyleParser();
+            options.setXMLReader(styleParser);
+            Sender.send(styleSource, sourcePipeline, options);
+            config.reuseStyleParser(styleParser);
+        }
+    }
 
     /**
      * Get the stylesheet specification(s) associated
@@ -377,7 +372,7 @@ public class StylesheetModule {
         InputSource composite = new InputSource();
         composite.setSystemId(baseURI);
         composite.setCharacterStream(new StringReader(sb.toString()));
-        return new SAXSource(config.getSourceParser(), composite);
+        return new SAXSource(config.getStyleParser(), composite);
     }
 
     public void setImporter(StylesheetModule importer) {
