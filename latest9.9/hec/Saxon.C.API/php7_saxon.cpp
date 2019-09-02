@@ -1849,9 +1849,15 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
     char * styleFileName;
     size_t len1, len2;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &styleFileName, &len1, &templateName, &len2) == FAILURE) {
+
+    if (ZEND_NUM_ARGS()==1 && zend_parse_parameters(ZEND_NUM_ARGS() , "s", &templateName, &len2) == FAILURE) {
         RETURN_NULL();
     }
+
+    if (ZEND_NUM_ARGS()>1 && zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &styleFileName, &len1, &templateName, &len2) == FAILURE) {
+        RETURN_NULL();
+    }
+
 
     zend_object* pobj = Z_OBJ_P(getThis());
     xslt30Processor_object *obj = (xslt30Processor_object *)((char *)pobj - XtOffsetOf(xslt30Processor_object, std));
@@ -1889,7 +1895,11 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
     char * styleFileName;
     size_t len1, len2;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &styleFileName, &len1, &templateName, &len2) == FAILURE) {
+    if (ZEND_NUM_ARGS()==1 && zend_parse_parameters(ZEND_NUM_ARGS() , "s", &templateName, &len2) == FAILURE) {
+        RETURN_NULL();
+    }
+
+    if (ZEND_NUM_ARGS()>1 && zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &styleFileName, &len1, &templateName, &len2) == FAILURE) {
         RETURN_NULL();
     }
 
@@ -1928,7 +1938,11 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
     char * styleFileName;
     size_t len1, len2, len3;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &styleFileName, &len1, &templateName, &len2, &filename, &len3) == FAILURE) {
+    if (ZEND_NUM_ARGS()==1 && zend_parse_parameters(ZEND_NUM_ARGS() , "s", &templateName, &len2) == FAILURE) {
+        RETURN_NULL();
+    }
+
+    if (ZEND_NUM_ARGS()>1 && zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &styleFileName, &len1, &templateName, &len2) == FAILURE) {
         RETURN_NULL();
     }
 
@@ -1985,11 +1999,15 @@ PHP_METHOD(Xslt30Processor, applyTemplatesReturningValue){
 PHP_METHOD(Xslt30Processor, applyTemplatesReturningString){
  Xslt30Processor *xslt30Processor;
 
-    char * styleFileName;
+    char * styleFileName = NULL;
     size_t len1;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() , "s", &styleFileName, &len1) == FAILURE) {
-        RETURN_NULL();
+
+    if (ZEND_NUM_ARGS()>0) {
+    
+    	if (zend_parse_parameters(ZEND_NUM_ARGS() , "s", &styleFileName, &len1) == FAILURE) {
+    	    RETURN_NULL();
+    	}
     }
 
     zend_object* pobj = Z_OBJ_P(getThis());
@@ -2188,7 +2206,7 @@ PHP_METHOD(Xslt30Processor, setInitialMatchSelection){
 	return;
     } else {
 	if(Z_TYPE_P(oth) ==IS_NULL){
-		php_error(E_WARNING, "Error setting source value");
+		php_error(E_WARNING, "Error setting source value - NULL found");
 		return;
 	}
 
@@ -4848,6 +4866,7 @@ PHP_METHOD(XdmNode,  getChildCount){
         nodeChildCount = xdmNode->getChildCount();
         
     }
+  php_error(E_WARNING,"cp4- getChildCount: %i ", nodeChildCount);
      RETURN_LONG(nodeChildCount);
 }   
 
@@ -4869,7 +4888,8 @@ PHP_METHOD(XdmNode,  getAttributeCount){
 PHP_METHOD(XdmNode,  getChildNode){
     long indexi;	
     if (zend_parse_parameters(ZEND_NUM_ARGS() , "l",&indexi) == FAILURE) {
-        RETURN_NULL();
+       php_error(E_WARNING,"cp0-1 returning null");	
+       RETURN_NULL();
     }
 
     XdmNode *xdmNode;
@@ -4879,22 +4899,27 @@ PHP_METHOD(XdmNode,  getChildNode){
 
     if (xdmNode != NULL) {
 	 int count = xdmNode->getChildCount();
+php_error(E_WARNING,"cp0-0 start of getChildNode ");
 	 if(count==0) {
+		php_error(E_WARNING,"cp0 returning null");	
 		RETURN_NULL();
 		return;
 	  }	
           if (object_init_ex(return_value, xdmNode_ce) != SUCCESS) {
-                RETURN_NULL();
+php_error(E_WARNING,"cp1 returning null"); 
+               RETURN_NULL();
                 return;
             } else {
 		
 		if(indexi>=0 && indexi < count) {
 			XdmNode ** childNodes = xdmNode->getChildren();
 			if(childNodes == NULL) {
+php_error(E_WARNING,"cp2 returning null");			
 				RETURN_NULL();
 				return;
 			}
 			XdmNode * childNode = childNodes[indexi];
+	php_error(E_WARNING,childNode->getStringValue());
 			if(childNode != NULL) {
 				childNode->incrementRefCount();
                 		//struct xdmNode_object* vobj = (struct xdmNode_object *)Z_OBJ_P(return_value TSRMLS_CC);
@@ -4907,6 +4932,7 @@ PHP_METHOD(XdmNode,  getChildNode){
 		}
             }
     }
+php_error(E_WARNING,"cp3 returning null");			
     RETURN_NULL();
 }
 
