@@ -13,6 +13,7 @@ using JSequenceType = net.sf.saxon.value.SequenceType;
 using JSequence = net.sf.saxon.om.Sequence;
 using JExpression = net.sf.saxon.expr.Expression;
 using JXdmSequenceType = net.sf.saxon.s9api.SequenceType;
+using System.Collections.Generic;
 
 namespace Saxon.Api
 {
@@ -389,7 +390,7 @@ namespace Saxon.Api
         /// used) Saxon may clone the returned iterator by calling its <c>GetAnother()</c> method, 
         /// allowing the function results to be read more than once.</returns>
 
-        public abstract IXdmEnumerator<XdmItem> Call(IXdmEnumerator<XdmItem>[] arguments, DynamicContext context);
+        public abstract IEnumerator<XdmItem> Call(IEnumerator<XdmItem>[] arguments, DynamicContext context);
     }
 
     /// <summary>
@@ -591,7 +592,7 @@ namespace Saxon.Api
                 na[i] = new SequenceEnumerator<XdmItem>((JXdmSequenceIterator)XdmValue.FromGroundedValueToJXdmValue(argument[i].materialize()).iterator());
             }
             DynamicContext dc = new DynamicContext(context);
-            IXdmEnumerator<XdmItem> result = functionCall.Call(na, dc);
+            IEnumerator<XdmItem> result = functionCall.Call(na, dc);
             return new net.sf.saxon.om.LazySequence(new DotNetSequenceIterator(result));
         }
     }

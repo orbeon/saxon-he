@@ -86,7 +86,7 @@ namespace Saxon.Api
     /// </remarks>
 
     [Serializable]
-    public class XdmValue : IXdmEnumerable<XdmItem>, IEnumerable
+    public class XdmValue : IEnumerable<XdmItem>
     {
 
         internal JGroundedValue value;
@@ -389,18 +389,43 @@ namespace Saxon.Api
         {
             if (value == null)
             {
-                return (IEnumerator<XdmItem>)EmptyEnumerator<XdmItem>.INSTANCE;
+                return EmptyEnumerator<XdmItem>.INSTANCE;
             }
             else if (value is JItem)
             {
-                return (IEnumerator<XdmItem>)new SequenceEnumerator<XdmItem>(new JSequenceXdmIterator(JSingletonIterator.makeIterator((JItem)value)));
+                return new SequenceEnumerator<XdmItem>(new JSequenceXdmIterator(JSingletonIterator.makeIterator((JItem)value)));
             }
             else
             {
-                return (IEnumerator<XdmItem>)new SequenceEnumerator<XdmItem>(new JSequenceXdmIterator(value.iterate()));
+                return new SequenceEnumerator<XdmItem>(new JSequenceXdmIterator(value.iterate()));
             }
         }
-        
+
+
+        /// <summary>
+        /// Get the sequence of items in the form of an <c>IXdmEnumerator</c>
+        /// </summary>
+        /// <returns>
+        /// An enumeration over the list of items making up this XDM value. Each item in the list
+        /// will be an object of type <c>XdmItem</c>
+        /// </returns>    
+
+        public IEnumerator<XdmItem> GetEnumerator()
+        {
+            if (value == null)
+            {
+                return EmptyEnumerator<XdmItem>.INSTANCE;
+            }
+            else if (value is JItem)
+            {
+                return new SequenceEnumerator<XdmItem>(new JSequenceXdmIterator(JSingletonIterator.makeIterator((JItem)value)));
+            }
+            else
+            {
+                return new SequenceEnumerator<XdmItem>(new JSequenceXdmIterator(value.iterate()));
+            }
+        }
+
 
         /// <summary>
         /// Get the i'th item in the value, counting from zero.
@@ -2769,21 +2794,7 @@ namespace Saxon.Api
 
     }
 
-    /// <summary>
-    /// This class represents an enumeration of the values in an XPath
-    /// sequence. It implements the <c>IEnumerator</c> interface, and the objects
-    /// returned are always instances of <c>XdmItem</c>.
-    /// </summary>
-    /// <remarks>
-    /// Because the underlying value can be evaluated lazily, it is possible
-    /// for exceptions to occur as the sequence is being read.
-    /// </remarks>
 
-    public interface IXdmEnumerator<out XdmItem> : IEnumerator<XdmItem>
-    {
-
-
-    }
 
     /// <summary>
     /// This class represents an enumeration of the values in an XPath
@@ -2810,7 +2821,7 @@ namespace Saxon.Api
     /// </remarks>
 
     [Serializable]
-    internal class SequenceEnumerator<T> : IXdmEnumerator<T>
+    internal class SequenceEnumerator<T> : IEnumerator<T>
           where T : XdmItem
     {
 
@@ -2979,12 +2990,7 @@ namespace Saxon.Api
             return JSequenceExtent.fromIterator(this);
         }
 
-        public JGroundedValue materialize(JSequenceIterator value)
-        {
-            return JSequenceExtent.fromIterator(value);
-        }
 
-       
 
         public void Dispose()
         {
@@ -3037,7 +3043,7 @@ namespace Saxon.Api
     /// An implementation of <code>IXdmEnumerator</code> that iterates over an empty sequence.
     /// </summary>
 
-    public class EmptyEnumerator<T> : IXdmEnumerator<T>
+    public class EmptyEnumerator<T> : IEnumerator<T>
        where T : XdmItem
     {
 
