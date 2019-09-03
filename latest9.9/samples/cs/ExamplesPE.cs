@@ -195,7 +195,8 @@ namespace SaxonPE
                     }
                 }
             }
-            if (!found) {
+            if (!found)
+            {
                 Console.WriteLine("Please supply a valid test name, or 'all' ('" + test + "' is invalid)");
             }
             Console.WriteLine("\n==== done! ====");
@@ -279,7 +280,7 @@ namespace SaxonPE
 
             // Enable caching, so each expression is only compiled once
             xpath.Caching = true;
-            
+
             // Compile and evaluate an XPath expression
             XPathSelector selector = xpath.Compile("//ITEM").Load();
             selector.ContextItem = input;
@@ -585,10 +586,10 @@ namespace SaxonPE
     }
 
 
-	/// <summary>
-	/// Run a transformation, compiling the stylesheet once (into an XsltExecutable) and using it to transform two 
-	/// different source documents
-	/// </summary>
+    /// <summary>
+    /// Run a transformation, compiling the stylesheet once (into an XsltExecutable) and using it to transform two 
+    /// different source documents
+    /// </summary>
 
     public class XsltReuseExecutable : Example
     {
@@ -649,7 +650,7 @@ namespace SaxonPE
 
             // Create a transformer 
             Xslt30Transformer transformer = exec.Load30();
-            
+
             // Set the stylesheet parameters
             Dictionary<QName, XdmValue> params1 = new Dictionary<QName, XdmValue>();
             params1.Add(new QName("", "", "include-attributes"), new XdmAtomicValue(false));
@@ -1530,14 +1531,14 @@ namespace SaxonPE
 
     }
 
-	/// <summary>
-	/// Demonstrate XSLT extensibility using user-written extension functions
-	/// </summary>
-	/// <remarks>Note: If SamplesExtensions is compiled to a different assembly than ExamplesPE, use 
-	/// the namespace URI clitype:SampleExtensions.SampleExtensions?asm=ASSEMBLY_NAME_HERE
-	/// Alternatively, the location of an assembly can be provided as a URI using the 'from' keyword
-	/// e.g. clitype:SampleExtensions.SampleExtensions?from=file:///c:/lib/SampleExtensions.dll
-	/// </remarks>
+    /// <summary>
+    /// Demonstrate XSLT extensibility using user-written extension functions
+    /// </summary>
+    /// <remarks>Note: If SamplesExtensions is compiled to a different assembly than ExamplesPE, use 
+    /// the namespace URI clitype:SampleExtensions.SampleExtensions?asm=ASSEMBLY_NAME_HERE
+    /// Alternatively, the location of an assembly can be provided as a URI using the 'from' keyword
+    /// e.g. clitype:SampleExtensions.SampleExtensions?from=file:///c:/lib/SampleExtensions.dll
+    /// </remarks>
 
     public class XsltExtensibility : Example
     {
@@ -1720,7 +1721,7 @@ namespace SaxonPE
 
     internal class SqrtCall : ExtensionFunctionCall
     {
-        public override IXdmEnumerator<XdmItem> Call(IXdmEnumerator<XdmItem>[] arguments, DynamicContext context)
+        public override IEnumerator<XdmItem> Call(IEnumerator<XdmItem>[] arguments, DynamicContext context)
         {
             Boolean exists = arguments[0].MoveNext();
             if (exists)
@@ -1729,12 +1730,41 @@ namespace SaxonPE
                 double val = (double)arg.Value;
                 double sqrt = System.Math.Sqrt(val);
                 XdmAtomicValue result = new XdmAtomicValue(sqrt);
-                return (IXdmEnumerator<XdmItem>)((IXdmEnumerable<XdmItem>)result).GetEnumerator();
+                return result.GetEnumerator();
             }
             else
             {
                 return EmptyEnumerator<XdmItem>.INSTANCE;
             }
+        }
+    }
+
+
+    public class Sqrt2 : ExtensionFunction
+    {
+        public XdmValue Call(XdmValue[] arguments)
+        {
+            XdmAtomicValue arg = (XdmAtomicValue)arguments[0];
+            double val = (double)arg.Value;
+            double sqrt = System.Math.Sqrt(val);
+            return new XdmAtomicValue(sqrt);
+        }
+
+        public XdmSequenceType[] GetArgumentTypes()
+        {
+            return new XdmSequenceType[]{
+                    new XdmSequenceType(XdmAtomicType.BuiltInAtomicType(QName.XS_DOUBLE), ' ')
+                };
+        }
+
+        public QName GetName()
+        {
+            return new QName("http://example.math.co.uk/demo", "sqrt");
+        }
+
+        public XdmSequenceType GetResultType()
+        {
+            return new XdmSequenceType(XdmAtomicType.BuiltInAtomicType(QName.XS_DOUBLE), ' ');
         }
     }
 
@@ -1814,11 +1844,11 @@ namespace SaxonPE
             defaultNamespace = context.GetNamespaceForPrefix("");
         }
 
-        public override IXdmEnumerator<XdmItem> Call(IXdmEnumerator<XdmItem>[] arguments, DynamicContext context)
+        public override IEnumerator<XdmItem> Call(IEnumerator<XdmItem>[] arguments, DynamicContext context)
         {
             if (defaultNamespace != null)
             {
-                return (IXdmEnumerator<XdmItem>)((IXdmEnumerable<XdmItem>)(new XdmAtomicValue(defaultNamespace))).GetEnumerator();
+                return new XdmAtomicValue(defaultNamespace).GetEnumerator();
             }
             else
             {
@@ -1882,39 +1912,37 @@ namespace SaxonPE
             Console.WriteLine("Result value: " + (decimal)result.Value);
         }
 
-	}
+    }
 
-	/// <summary>
-	/// Show a query producing a sequence as its result and returning the sequence
-	/// to the C# application in the form of an iterator. For each item in the
-	/// result, its string value is output.
-	/// </summary>
+    /// <summary>
+    /// Show a query producing a sequence as its result and returning the sequence
+    /// to the C# application in the form of an iterator. For each item in the
+    /// result, its string value is output.
+    /// </summary>
 
-	public class XQueryToSequence : Example
-	{
+    public class XQueryToSequence : Example
+    {
 
-		public override string testName
-		{
-			get { return "XQueryToSequence"; }
-		}
+        public override string testName
+        {
+            get { return "XQueryToSequence"; }
+        }
 
-		public override void run(Uri samplesDir)
-		{
-			Processor processor = new Processor();
-			XQueryCompiler compiler = processor.NewXQueryCompiler();
-			XQueryExecutable exp = compiler.Compile("for $i in 1 to 10 return $i * $i");
-			XQueryEvaluator eval = exp.Load();
-			XdmValue value = eval.Evaluate();
-			IXdmEnumerator<XdmItem> e = (IXdmEnumerator<XdmItem>)((IXdmEnumerable<XdmItem>)value).GetEnumerator();
-			while (e.MoveNext())
-			{
-				XdmItem item = (XdmItem)e.Current;
-				Console.WriteLine(item.ToString());
-			}
+        public override void run(Uri samplesDir)
+        {
+            Processor processor = new Processor();
+            XQueryCompiler compiler = processor.NewXQueryCompiler();
+            XQueryExecutable exp = compiler.Compile("for $i in 1 to 10 return $i * $i");
+            XQueryEvaluator eval = exp.Load();
+            XdmValue value = eval.Evaluate();
+            foreach(XdmItem item in value)
+            {
+                Console.WriteLine(item.ToString());
+            }
 
-		}
+        }
 
-	}
+    }
 
     /// <summary>
     /// Show a query producing a DOM as its input and producing a DOM as its output
@@ -2367,7 +2395,4 @@ namespace SaxonPE
 //
 // Contributor(s): none.
 //
-
-
-
 

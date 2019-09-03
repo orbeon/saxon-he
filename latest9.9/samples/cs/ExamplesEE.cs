@@ -1647,7 +1647,7 @@ namespace SaxonEE
                 @" </xsl:template></xsl:transform>";
 
             // Register the integrated extension function math:sqrt
-            processor.RegisterExtensionFunction(new Sqrt());
+            processor.RegisterExtensionFunction(new Sqrt2());
 
             // Create a transformer for the stylesheet.
             Xslt30Transformer transformer = processor.NewXsltCompiler().Compile(new StringReader(s)).Load30();
@@ -1740,6 +1740,35 @@ namespace SaxonEE
             {
                 return EmptyEnumerator<XdmItem>.INSTANCE;
             }
+        }
+    }
+
+
+    public class Sqrt2 : ExtensionFunction
+    {
+        public XdmValue Call(XdmValue[] arguments)
+        {
+            XdmAtomicValue arg = (XdmAtomicValue)arguments[0];
+            double val = (double)arg.Value;
+            double sqrt = System.Math.Sqrt(val);
+            return new XdmAtomicValue(sqrt);
+        }
+
+        public XdmSequenceType[] GetArgumentTypes()
+        {
+            return new XdmSequenceType[]{
+                    new XdmSequenceType(XdmAtomicType.BuiltInAtomicType(QName.XS_DOUBLE), ' ')
+                };
+        }
+
+        public QName GetName()
+        {
+            return new QName("http://example.math.co.uk/demo", "sqrt");
+        }
+
+        public XdmSequenceType GetResultType()
+        {
+            return new XdmSequenceType(XdmAtomicType.BuiltInAtomicType(QName.XS_DOUBLE), ' ');
         }
     }
 
@@ -2646,7 +2675,5 @@ namespace SaxonEE
 //
 // Contributor(s): none.
 //
-
-
 
 

@@ -1581,7 +1581,7 @@ namespace SaxonHE
 
     internal class SqrtCall : ExtensionFunctionCall
     {
-        public override IXdmEnumerator<XdmItem> Call(IXdmEnumerator<XdmItem>[] arguments, DynamicContext context)
+        public override IEnumerator<XdmItem> Call(IEnumerator<XdmItem>[] arguments, DynamicContext context)
         {
             Boolean exists = arguments[0].MoveNext();
             if (exists)
@@ -1590,12 +1590,41 @@ namespace SaxonHE
                 double val = (double)arg.Value;
                 double sqrt = System.Math.Sqrt(val);
                 XdmAtomicValue result = new XdmAtomicValue(sqrt);
-                return (IXdmEnumerator<XdmItem>)((IXdmEnumerable<XdmItem>)result).GetEnumerator();
+                return result.GetEnumerator();
             }
             else
             {
                 return EmptyEnumerator<XdmItem>.INSTANCE;
             }
+        }
+    }
+
+
+    public class Sqrt2 : ExtensionFunction
+    {
+        public XdmValue Call(XdmValue[] arguments)
+        {
+            XdmAtomicValue arg = (XdmAtomicValue)arguments[0];
+            double val = (double)arg.Value;
+            double sqrt = System.Math.Sqrt(val);
+            return new XdmAtomicValue(sqrt);
+        }
+
+        public XdmSequenceType[] GetArgumentTypes()
+        {
+            return new XdmSequenceType[]{
+                    new XdmSequenceType(XdmAtomicType.BuiltInAtomicType(QName.XS_DOUBLE), ' ')
+                };
+        }
+
+        public QName GetName()
+        {
+            return new QName("http://example.math.co.uk/demo", "sqrt");
+        }
+
+        public XdmSequenceType GetResultType()
+        {
+            return new XdmSequenceType(XdmAtomicType.BuiltInAtomicType(QName.XS_DOUBLE), ' ');
         }
     }
 
@@ -2162,7 +2191,3 @@ namespace SaxonHE
 //
 // Contributor(s): none.
 //
-
-
-
-
