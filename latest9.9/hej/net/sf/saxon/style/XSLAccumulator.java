@@ -24,6 +24,7 @@ import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
 import net.sf.saxon.expr.parser.Optimizer;
 import net.sf.saxon.expr.parser.RoleDiagnostic;
+import net.sf.saxon.functions.AccumulatorFn;
 import net.sf.saxon.lib.Feature;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
@@ -374,7 +375,8 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
             }
             ContextItemStaticInfoEE csi = (ContextItemStaticInfoEE)getConfiguration().makeContextItemStaticInfo(pattern.getItemType(), false);
             csi.setContextPostureStriding();
-            List<String> reasons = new ArrayList<String>(4);
+            csi.setAccumulatorPhase(rule.isPostDescent() ? AccumulatorFn.Phase.AFTER : AccumulatorFn.Phase.BEFORE);
+            List<String> reasons = new ArrayList<>(4);
             PostureAndSweep ps = Streamability.getStreamability(newValueExp, csi, reasons);
             if (!ps.equals(PostureAndSweep.GROUNDED_AND_MOTIONLESS) && !rule.isCapture()) {
                 // saxon:capture="yes" captures a snapshot of the element for access in the phase="end" rule, which
