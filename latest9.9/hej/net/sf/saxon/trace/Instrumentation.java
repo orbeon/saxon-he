@@ -1,5 +1,7 @@
 package net.sf.saxon.trace;
 
+import net.sf.saxon.trans.CommandLineOptions;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +39,11 @@ public class Instrumentation {
                 System.err.println(c.getKey() + " = " + c.getValue());
             }
         }
+    }
+
+    public static void freeMemory(String label) {
+        System.err.println(label+" "+CommandLineOptions.showMemoryUsed());
+
     }
 
     public static void reset() {
