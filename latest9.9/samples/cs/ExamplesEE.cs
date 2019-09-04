@@ -1647,7 +1647,7 @@ namespace SaxonEE
                 @" </xsl:template></xsl:transform>";
 
             // Register the integrated extension function math:sqrt
-            processor.RegisterExtensionFunction(new Sqrt2());
+            processor.RegisterExtensionFunction(new SqrtSimple());
 
             // Create a transformer for the stylesheet.
             Xslt30Transformer transformer = processor.NewXsltCompiler().Compile(new StringReader(s)).Load30();
@@ -1743,20 +1743,27 @@ namespace SaxonEE
     }
 
 
-    public class Sqrt2 : ExtensionFunction
+    public class SqrtSimple : ExtensionFunction
     {
         public XdmValue Call(XdmValue[] arguments)
         {
-            XdmAtomicValue arg = (XdmAtomicValue)arguments[0];
-            double val = (double)arg.Value;
-            double sqrt = System.Math.Sqrt(val);
-            return new XdmAtomicValue(sqrt);
+            if (!(arguments[0] is XdmEmptySequence))
+            {
+
+                    XdmAtomicValue arg = (XdmAtomicValue)arguments[0].ItemAt(0);
+                    double val = (double)arg.Value;
+                    double sqrt = System.Math.Sqrt(val);
+                    return new XdmAtomicValue(sqrt);
+                } else {
+
+                    return XdmValue.MakeValue((double)0);
+                }
         }
 
         public XdmSequenceType[] GetArgumentTypes()
         {
             return new XdmSequenceType[]{
-                    new XdmSequenceType(XdmAtomicType.BuiltInAtomicType(QName.XS_DOUBLE), ' ')
+                    new XdmSequenceType(XdmAtomicType.BuiltInAtomicType(QName.XS_DOUBLE), '?')
                 };
         }
 

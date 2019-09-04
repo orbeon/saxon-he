@@ -1600,14 +1600,23 @@ namespace SaxonHE
     }
 
 
-    public class Sqrt2 : ExtensionFunction
+    public class SqrtSimple : ExtensionFunction
     {
         public XdmValue Call(XdmValue[] arguments)
         {
-            XdmAtomicValue arg = (XdmAtomicValue)arguments[0];
-            double val = (double)arg.Value;
-            double sqrt = System.Math.Sqrt(val);
-            return new XdmAtomicValue(sqrt);
+            if (!(arguments[0] is XdmEmptySequence))
+            {
+
+                XdmAtomicValue arg = (XdmAtomicValue)arguments[0].ItemAt(0);
+                double val = (double)arg.Value;
+                double sqrt = System.Math.Sqrt(val);
+                return new XdmAtomicValue(sqrt);
+            }
+            else
+            {
+
+                return XdmValue.MakeValue((double)0);
+            }
         }
 
         public XdmSequenceType[] GetArgumentTypes()
