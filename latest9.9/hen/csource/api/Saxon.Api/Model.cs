@@ -378,7 +378,7 @@ namespace Saxon.Api
         }
 
         /// <summary>
-        /// Get the sequence of items in the form of an <c>IXdmEnumerator</c>
+        /// Get the sequence of items in the form of an <c>IEnumerator</c>
         /// </summary>
         /// <returns>
         /// An enumeration over the list of items making up this XDM value. Each item in the list
@@ -403,7 +403,7 @@ namespace Saxon.Api
 
 
         /// <summary>
-        /// Get the sequence of items in the form of an <c>IXdmEnumerator</c>
+        /// Get the sequence of items in the form of an <c>IEnumerator</c>
         /// </summary>
         /// <returns>
         /// An enumeration over the list of items making up this XDM value. Each item in the list
@@ -2796,23 +2796,9 @@ namespace Saxon.Api
 
 
 
-    /// <summary>
-    /// This class represents an enumeration of the values in an XPath
-    /// sequence. It implements the <c>IEnumerable</c> interface, and the objects
-    /// returned are always instances of <c>XdmItem</c>.
-    /// </summary>
-    /// <remarks>
-    /// Because the underlying value can be evaluated lazily, it is possible
-    /// for exceptions to occur as the sequence is being read.
-    /// </remarks>
-    public interface IXdmEnumerable<out XdmItem> : IEnumerable<XdmItem>
-    {
-
-
-    }
 
     /// <summary>
-    /// This class is an implementation of <c>IXdmEnumerator</c> that wraps
+    /// This class is an implementation of <c>IEnumerator</c> that wraps
 	/// a (Java) <c>SequenceIterator</c>.
     /// </summary>
     /// <remarks>
@@ -2905,7 +2891,7 @@ namespace Saxon.Api
 
     /// <summary>
 	/// Implementation of the (Java) interface <c>SequenceIterator</c> that wraps
-	/// a (.NET) <c>IXdmEnumerator</c>
+	/// a (.NET) <c>IEnumerator</c>
     /// </summary>
 
     internal class DotNetSequenceIterator : JSequenceIterator
@@ -3040,7 +3026,7 @@ namespace Saxon.Api
     }
 
     /// <summary>
-    /// An implementation of <code>IXdmEnumerator</code> that iterates over an empty sequence.
+    /// An implementation of <code>IEnumerator</code> that iterates over an empty sequence.
     /// </summary>
 
     public class EmptyEnumerator<T> : IEnumerator<T>
