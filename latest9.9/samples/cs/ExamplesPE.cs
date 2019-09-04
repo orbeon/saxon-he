@@ -170,11 +170,11 @@ namespace SaxonPE
                     }
                     catch (Saxon.Api.StaticError se)
                     {
-                        Console.WriteLine("Test failed with static error " + se.ErrorCode.LocalName + ": " + se.Message);
+                        Console.WriteLine("Test failed with static error " + (se.ErrorCode != null ? se.ErrorCode.LocalName : "") + ": " + se.Message);
                     }
                     catch (Saxon.Api.DynamicError de)
                     {
-                        Console.WriteLine("Test failed with dynamic error " + de.ErrorCode.LocalName + ": " + de.Message);
+                        Console.WriteLine("Test failed with dynamic error " + (de.ErrorCode != null ? de.ErrorCode.LocalName : "") + ": " + de.Message);
                     }
                     catch (Exception exc)
                     {
@@ -1897,7 +1897,7 @@ namespace SaxonPE
         public XdmSequenceType[] GetArgumentTypes()
         {
             return new XdmSequenceType[]{
-                new XdmSequenceType(XdmAtomicType.BuiltInAtomicType(QName.XS_DOUBLE), ' ')
+                new XdmSequenceType(XdmAtomicType.BuiltInAtomicType(QName.XS_DOUBLE), '?')
             };
         }
 
