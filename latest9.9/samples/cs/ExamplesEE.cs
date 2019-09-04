@@ -1725,7 +1725,7 @@ namespace SaxonEE
 
     internal class SqrtCall : ExtensionFunctionCall
     {
-        public override IXdmEnumerator<XdmItem> Call(IXdmEnumerator<XdmItem>[] arguments, DynamicContext context)
+        public override IEnumerator<XdmItem> Call(IEnumerator<XdmItem>[] arguments, DynamicContext context)
         {
             Boolean exists = arguments[0].MoveNext();
             if (exists)
@@ -1733,8 +1733,7 @@ namespace SaxonEE
                 XdmAtomicValue arg = (XdmAtomicValue)arguments[0].Current;
                 double val = (double)arg.Value;
                 double sqrt = System.Math.Sqrt(val);
-                XdmAtomicValue result = new XdmAtomicValue(sqrt);
-                return (IXdmEnumerator<XdmItem>)((IXdmEnumerable<XdmItem>)result).GetEnumerator();
+                return new XdmAtomicValue(sqrt).GetEnumerator();
             }
             else
             {
@@ -1848,11 +1847,11 @@ namespace SaxonEE
             defaultNamespace = context.GetNamespaceForPrefix("");
         }
 
-        public override IXdmEnumerator<XdmItem> Call(IXdmEnumerator<XdmItem>[] arguments, DynamicContext context)
+        public override IEnumerator<XdmItem> Call(IEnumerator<XdmItem>[] arguments, DynamicContext context)
         {
             if (defaultNamespace != null)
             {
-                return (IXdmEnumerator<XdmItem>)((IXdmEnumerable<XdmItem>)(new XdmAtomicValue(defaultNamespace))).GetEnumerator();
+                return new XdmAtomicValue(defaultNamespace).GetEnumerator();
             }
             else
             {
@@ -1939,10 +1938,8 @@ namespace SaxonEE
 			XQueryExecutable exp = compiler.Compile("for $i in 1 to 10 return $i * $i");
 			XQueryEvaluator eval = exp.Load();
 			XdmValue value = eval.Evaluate();
-			IXdmEnumerator<XdmItem> e = (IXdmEnumerator<XdmItem>)((IXdmEnumerable<XdmItem>)value).GetEnumerator();
-			while (e.MoveNext())
+			foreach(XdmItem item in value)
 			{
-				XdmItem item = (XdmItem)e.Current;
 				Console.WriteLine(item.ToString());
 			}
 

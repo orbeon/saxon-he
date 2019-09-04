@@ -1704,11 +1704,11 @@ namespace SaxonHE
             defaultNamespace = context.GetNamespaceForPrefix("");
         }
 
-        public override IXdmEnumerator<XdmItem> Call(IXdmEnumerator<XdmItem>[] arguments, DynamicContext context)
+        public override IEnumerator<XdmItem> Call(IEnumerator<XdmItem>[] arguments, DynamicContext context)
         {
             if (defaultNamespace != null)
             {
-                return (IXdmEnumerator<XdmItem>)((IXdmEnumerable<XdmItem>)(new XdmAtomicValue(defaultNamespace))).GetEnumerator();
+                return new XdmAtomicValue(defaultNamespace).GetEnumerator();
             }
             else
             {
@@ -1794,10 +1794,8 @@ namespace SaxonHE
 			XQueryExecutable exp = compiler.Compile("for $i in 1 to 10 return $i * $i");
 			XQueryEvaluator eval = exp.Load();
 			XdmValue value = eval.Evaluate();
-			IXdmEnumerator<XdmItem> e = (IXdmEnumerator<XdmItem>)((IXdmEnumerable<XdmItem>)value).GetEnumerator();
-			while (e.MoveNext())
-			{
-				XdmItem item = (XdmItem)e.Current;
+            foreach (XdmItem item in value)
+            {
 				Console.WriteLine(item.ToString());
 			}
 
