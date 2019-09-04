@@ -57,6 +57,7 @@ namespace SaxonPE
                 new XsltUsingDirectoryCollection(),
                 new XsltExtensibility(),
                 new XsltIntegratedExtension(),
+                new XsltSimpleExtension(),
                 new XQueryToStream(),
                 new XQueryToAtomicValue(),
                 new XQueryToSequence(),
@@ -1532,7 +1533,7 @@ namespace SaxonPE
     }
 
     /// <summary>
-    /// Demonstrate XSLT extensibility using user-written extension functions
+    /// Demonstrate XSLT extensibility using user-written reflexive extension functions
     /// </summary>
     /// <remarks>Note: If SamplesExtensions is compiled to a different assembly than ExamplesPE, use 
     /// the namespace URI clitype:SampleExtensions.SampleExtensions?asm=ASSEMBLY_NAME_HERE
@@ -1563,28 +1564,18 @@ namespace SaxonPE
             String s = @"<xsl:transform version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'" +
                 @" xmlns:ext='clitype:SampleExtensions.SampleExtensions?asm=ExamplesPE' " +
                 @" xmlns:tz='clitype:System.TimeZone' " +
-                @" xmlns:math='http://example.math.co.uk/demo' " +
-                @" xmlns:env='http://example.env.co.uk/demo' " +
-                @" exclude-result-prefixes='ext math env tz'> " +
+                @" exclude-result-prefixes='ext tz'> " +
                 @" <xsl:param name='timezone' required='yes'/> " +
                 @" <xsl:template match='/'> " +
                 @" <out addition='{ext:add(2,2)}' " +
                 @" average='{ext:average((1,2,3,4,5,6))}' " +
                 @" firstchild='{ext:nameOfFirstChild(.)}' " +
                 @" timezone='{tz:StandardName($timezone)}' " +
-                @" sqrt2='{math:sqrt(2.0e0)}' " +
-                @" defaultNamespace='{env:defaultNamespace()}' " +
-                @" sqrtEmpty='{math:sqrt(())}'> " +
                 @" <xsl:copy-of select='ext:FirstChild((//ITEM)[1])'/> " +
-                @" <defaultNS value='{env:defaultNamespace()}' xsl:xpath-default-namespace='http://default.namespace.com/' /> " +
                 @" <combine1><xsl:sequence select='ext:combine(ext:FirstChild((//ITEM)[1]), count(*))'/></combine1> " +
                 @" <combine2><xsl:sequence select='ext:combine((//TITLE)[1], (//AUTHOR)[1])'/></combine2> " +
                 @" </out> " +
                 @" </xsl:template></xsl:transform>";
-
-            // Register the integrated extension functions math:sqrt and env:defaultNamespace
-            processor.RegisterExtensionFunction(new Sqrt());
-            processor.RegisterExtensionFunction(new DefaultNamespace());
 
             // Create a transformer for the stylesheet.
             Xslt30Transformer transformer = processor.NewXsltCompiler().Compile(new StringReader(s)).Load30();
@@ -1611,7 +1602,7 @@ namespace SaxonPE
     }
 
     /// <summary>
-    /// Show a transformation using calls to extension functions
+    /// Show a transformation using calls to integrated extension functions (full API)
     /// </summary>
 
     public class XsltIntegratedExtension : Example
@@ -1636,14 +1627,20 @@ namespace SaxonPE
 
             // Create the stylesheet
             String s = @"<xsl:transform version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'" +
-                @" xmlns:math='http://example.math.co.uk/demo'> " +
+                @" xmlns:math='http://example.math.co.uk/demo' " +
+                @" xmlns:env='http://example.env.co.uk/demo' " +
+                @" exclude-result-prefixes='math env'> " +
                 @" <xsl:template name='go'> " +
                 @" <out sqrt2='{math:sqrt(2.0e0)}' " +
-                @" sqrtEmpty='{math:sqrt(())}'/> " +
+                @" defaultNamespace='{env:defaultNamespace()}' " +
+                @" sqrtEmpty='{math:sqrt(())}'> " +
+                @" <defaultNS value='{env:defaultNamespace()}' xsl:xpath-default-namespace='http://default.namespace.com/' /> " +
+                @" </out> " +
                 @" </xsl:template></xsl:transform>";
 
-            // Register the integrated extension function math:sqrt
+            // Register the integrated extension functions math:sqrt and env:defaultNamespace
             processor.RegisterExtensionFunction(new Sqrt());
+            processor.RegisterExtensionFunction(new DefaultNamespace());
 
             // Create a transformer for the stylesheet.
             Xslt30Transformer transformer = processor.NewXsltCompiler().Compile(new StringReader(s)).Load30();
@@ -1660,7 +1657,7 @@ namespace SaxonPE
     }
 
     /// <summary>
-    /// Example extension function to compute a square root.
+    /// Example extension function to compute a square root, using the full API
     /// </summary>
 
     public class Sqrt : ExtensionFunctionDefinition
@@ -1729,51 +1726,12 @@ namespace SaxonPE
                 XdmAtomicValue arg = (XdmAtomicValue)arguments[0].Current;
                 double val = (double)arg.Value;
                 double sqrt = System.Math.Sqrt(val);
-                XdmAtomicValue result = new XdmAtomicValue(sqrt);
-                return result.GetEnumerator();
+                return new XdmAtomicValue(sqrt).GetEnumerator();
             }
             else
             {
                 return EmptyEnumerator<XdmItem>.INSTANCE;
             }
-        }
-    }
-
-
-    public class SqrtSimple : ExtensionFunction
-    {
-        public XdmValue Call(XdmValue[] arguments)
-        {
-            if (!(arguments[0] is XdmEmptySequence))
-            {
-
-                XdmAtomicValue arg = (XdmAtomicValue)arguments[0].ItemAt(0);
-                double val = (double)arg.Value;
-                double sqrt = System.Math.Sqrt(val);
-                return new XdmAtomicValue(sqrt);
-            }
-            else
-            {
-
-                return XdmValue.MakeValue((double)0);
-            }
-        }
-
-        public XdmSequenceType[] GetArgumentTypes()
-        {
-            return new XdmSequenceType[]{
-                    new XdmSequenceType(XdmAtomicType.BuiltInAtomicType(QName.XS_DOUBLE), ' ')
-                };
-        }
-
-        public QName GetName()
-        {
-            return new QName("http://example.math.co.uk/demo", "sqrt");
-        }
-
-        public XdmSequenceType GetResultType()
-        {
-            return new XdmSequenceType(XdmAtomicType.BuiltInAtomicType(QName.XS_DOUBLE), ' ');
         }
     }
 
@@ -1863,6 +1821,94 @@ namespace SaxonPE
             {
                 return EmptyEnumerator<XdmItem>.INSTANCE;
             }
+        }
+    }
+
+    /// <summary>
+    /// Show a transformation using calls to an integrated extension function (simple API)
+    /// </summary>
+
+    public class XsltSimpleExtension : Example
+    {
+
+        public override string testName
+        {
+            get { return "XsltSimpleExtension"; }
+        }
+
+        public override void run(Uri samplesDir)
+        {
+
+            // Create a Processor instance.
+            Processor processor = new Processor();
+
+            // Identify the Processor version
+            Console.WriteLine(processor.ProductVersion);
+
+            // Set diagnostics
+            //processor.SetProperty("http://saxon.sf.net/feature/trace-external-functions", "true");
+
+            // Create the stylesheet
+            String s = @"<xsl:transform version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'" +
+                @" xmlns:math='http://example.math.co.uk/demo'> " +
+                @" <xsl:template name='go'> " +
+                @" <out sqrt2='{math:sqrtSimple(2.0e0)}' " +
+                @" sqrtEmpty='{math:sqrtSimple(())}'/> " +
+                @" </xsl:template></xsl:transform>";
+
+            // Register the integrated extension function math:sqrtSimple
+            processor.RegisterExtensionFunction(new SqrtSimple());
+
+            // Create a transformer for the stylesheet.
+            Xslt30Transformer transformer = processor.NewXsltCompiler().Compile(new StringReader(s)).Load30();
+
+            // Create a serializer, with output to the standard output stream
+            Serializer serializer = processor.NewSerializer();
+            serializer.SetOutputWriter(Console.Out);
+            serializer.SetOutputProperty(Serializer.INDENT, "yes");
+
+            // Transform the source XML, calling a named initial template, and serialize the result document
+            transformer.CallTemplate(new QName("go"), serializer);
+        }
+
+    }
+
+    /// <summary>
+    /// Example extension function to compute a square root, using the simple API
+    /// </summary>
+
+    public class SqrtSimple : ExtensionFunction
+    {
+        public XdmValue Call(XdmValue[] arguments)
+        {
+            if (!(arguments[0] is XdmEmptySequence))
+            {
+                XdmAtomicValue arg = (XdmAtomicValue)arguments[0].ItemAt(0);
+                double val = (double)arg.Value;
+                double sqrt = System.Math.Sqrt(val);
+                return new XdmAtomicValue(sqrt);
+            }
+            else
+            {
+                return XdmValue.MakeValue((double)0);
+            }
+        }
+
+        public XdmSequenceType[] GetArgumentTypes()
+        {
+            return new XdmSequenceType[]{
+                new XdmSequenceType(XdmAtomicType.BuiltInAtomicType(QName.XS_DOUBLE), ' ')
+            };
+        }
+
+        public QName GetName()
+        {
+            return new QName("http://example.math.co.uk/demo", "sqrtSimple");
+        }
+
+        public XdmSequenceType GetResultType()
+        {
+            return new XdmSequenceType(XdmAtomicType.BuiltInAtomicType(QName.XS_DOUBLE), ' ');
         }
     }
 
@@ -2263,7 +2309,7 @@ namespace SaxonPE
     }
 
     /// <summary>
-    /// Demonstrate XQuery extensibility using user-written extension functions
+    /// Demonstrate XQuery extensibility using user-written reflexive extension functions
     /// </summary>
     /// <remarks>Note: If SamplesExtensions is compiled to a different assembly than ExamplesPE, use 
     /// the namespace URI clitype:SampleExtensions.SampleExtensions?asm=ASSEMBLY_NAME_HERE
