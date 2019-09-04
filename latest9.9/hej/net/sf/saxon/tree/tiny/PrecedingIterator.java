@@ -57,6 +57,9 @@ final class PrecedingIterator implements AxisIterator {
         if (current == null) {
             return null;
         }
+        if (current instanceof TinyTextualElement.TinyTextualElementText) {
+            current = current.getParent();
+        }
         int nextNodeNr = ((TinyNodeImpl) current).nodeNr;
         while (true) {
             if (!includeAncestors) {
