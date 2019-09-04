@@ -461,7 +461,7 @@ namespace Saxon.Api
             XdmValue[] values = new XdmValue[xvarr.Length];
             int len = xvarr.Length;
             for (int i = 0; i < len; i++) {
-                values[i] = XdmValue.FromGroundedValue(xvarr[i].getUnderlyingValue());
+                values[i] = XdmValue.Wrap(xvarr[i].getUnderlyingValue());
             }
             try {
                 XdmValue result = definition.Call(values);

@@ -448,6 +448,7 @@ namespace Saxon.Api
         }
 
 
+
         /// <summary>
         /// Create a string representation of the value. The is the result of serializing
         /// the value using the adaptive serialization method.
