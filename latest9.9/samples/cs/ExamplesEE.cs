@@ -1575,7 +1575,7 @@ namespace SaxonEE
                 @" <out addition='{ext:add(2,2)}' " +
                 @" average='{ext:average((1,2,3,4,5,6))}' " +
                 @" firstchild='{ext:nameOfFirstChild(.)}' " +
-                @" timezone='{tz:StandardName($timezone)}' " +
+                @" timezone='{tz:StandardName($timezone)}' >" +
                 @" <xsl:copy-of select='ext:FirstChild((//ITEM)[1])'/> " +
                 @" <combine1><xsl:sequence select='ext:combine(ext:FirstChild((//ITEM)[1]), count(*))'/></combine1> " +
                 @" <combine2><xsl:sequence select='ext:combine((//TITLE)[1], (//AUTHOR)[1])'/></combine2> " +
