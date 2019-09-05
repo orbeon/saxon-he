@@ -2420,21 +2420,18 @@ namespace Saxon.Api
 
 
         /// <summary>
-        /// Invoke the stylesheet by applying templates to a supplied Source document, sending the results
-        /// to a given Destination.The invocation uses the initial mode set using {@link #setInitialMode(QName)}
+        /// Invoke the stylesheet by applying templates to a supplied source document, sending the results
+        /// to a given <c>Destination</c>. The invocation uses the initial mode set using <see cref="InitialMode"/>
         /// (defaulting to the default mode defined in the stylesheet itself, which by default is the unnamed mode).
-        /// It also uses any template parameters set using {@link #setInitialTemplateParameters(java.util.Map, boolean)}.
+        /// It also uses any template parameters set using <see cref="SetInitialTemplateParameters"/>.
         /// </summary>
-        /// <param name="input">the input source document.
-        /// <p>Note: supplying a<code>DOMSource</code> is allowed, but is much less efficient than using a
-        /// <code>StreamSource</code> or<code>SAXSource</code> and leaving Saxon to build the tree in its own
-        /// internal format.To apply more than one transformation to the same source document, the source document
-        /// tree can be pre-built using a {@link DocumentBuilder}.</p></param>
-        /// <param name="destination">destination the destination of the principal result of the transformation.
-        /// If the destination is a {@link Serializer}, then the serialization
+        /// <param name="input">The source document. To apply more than one transformation to the same source 
+        /// document, the source document tree can be pre-built using a <see cref="DocumentBuilder"/>.</param>
+        /// <param name="destination">The destination of the principal result of the transformation.
+        /// If the destination is a <see cref="Serializer"/>, then the serialization
         /// parameters set in the serializer are combined with those defined in the stylesheet
         /// (the parameters set in the serializer take precedence).</param>
-        /// <remarks>Method added sine 9.9.1.3</remarks>
+        /// <remarks>since 9.9.1.5</remarks>
         public void Transform(Stream input, XmlDestination destination) {
             JStreamSource streamSource = new JStreamSource(new JDotNetInputStream(input));
 
@@ -2450,22 +2447,20 @@ namespace Saxon.Api
         }
 
         /// <summary>
-        /// Invoke the stylesheet by applying templates to a supplied Source document, sending the results
-        /// to a given Destination.The invocation uses the initial mode set using {@link #setInitialMode(QName)}
+        /// Invoke the stylesheet by applying templates to a supplied Source document,  
+        /// using the supplied base URI, sending the results
+        /// to a given <c>Destination</c>. The invocation uses the initial mode set using <see cref="InitialMode"/>
         /// (defaulting to the default mode defined in the stylesheet itself, which by default is the unnamed mode).
-        /// It also uses any template parameters set using {@link #setInitialTemplateParameters(java.util.Map, boolean)}.
+        /// It also uses any template parameters set using <see cref="SetInitialTemplateParameters"/>.
         /// </summary>
-        /// <param name="input">the input source document.
-        /// <p>Note: supplying a<code>DOMSource</code> is allowed, but is much less efficient than using a
-        /// <code>StreamSource</code> or<code>SAXSource</code> and leaving Saxon to build the tree in its own
-        /// internal format.To apply more than one transformation to the same source document, the source document
-        /// tree can be pre-built using a {@link DocumentBuilder}.</p></param>
+        /// <param name="input">The source document. To apply more than one transformation to the same source 
+        /// document, the source document tree can be pre-built using a <see cref="DocumentBuilder"/>.</param>
         /// <param name="baseUri">Base URI used for the input document</param>
-        /// <param name="destination">destination the destination of the principal result of the transformation.
-        /// If the destination is a {@link Serializer}, then the serialization
+        /// <param name="destination">The destination of the principal result of the transformation.
+        /// If the destination is a <see cref="Serializer"/>, then the serialization
         /// parameters set in the serializer are combined with those defined in the stylesheet
         /// (the parameters set in the serializer take precedence).</param>
-        /// <remarks>Method added sine 9.9.1.3</remarks>
+        /// <remarks>since 9.9.1.5</remarks>
         public void Transform(Stream input, Uri baseUri, XmlDestination destination)
         {
             JStreamSource streamSource = new JStreamSource(new JDotNetInputStream(input), Uri.EscapeUriString(baseUri.ToString()));
