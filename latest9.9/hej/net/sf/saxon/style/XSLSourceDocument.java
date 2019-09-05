@@ -88,6 +88,9 @@ public class XSLSourceDocument extends StyleElement {
                 streaming = processStreamableAtt(atts.getValue(a));
             } else if (NamespaceConstant.SAXON.equals(atts.getURI(a))) {
                 String local = atts.getLocalName(a);
+                getConfiguration().checkLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION,
+                                                        atts.getQName(a),
+                                                        getPackageData().getLocalLicenseId());
                 switch (local) {
                     case "dtd-validation":
                         parseOptions.setDTDValidationMode(processBooleanAttribute(f, atts.getValue(a)) ? Validation.STRICT : Validation.SKIP);
