@@ -75,6 +75,7 @@ SaxonApiException * SaxonProcessor::getException(){
 
 SaxonProcessor::SaxonProcessor() {
     licensei = false;
+     SaxonProcessor(licensei);
 }
 
 
@@ -186,10 +187,10 @@ SaxonProcessor::SaxonProcessor(bool l){
      * Initialize JET run-time.
      * The handle of loaded component is used to retrieve Invocation API.
      */
-    initDefaultJavaRT (SaxonProcessor::sxn_environ); 
+    initDefaultJavaRT (SaxonProcessor::sxn_environ);
     } else {
 #ifdef DEBUG
-     std::cerr<<"SaxonProc constructor: jvm exists!"<<std::endl;
+     std::cerr<<"SaxonProc constructor: jvm exists! jvmCreatedCPP="<<jvmCreatedCPP<<std::endl;
 #endif
 
 }
@@ -660,11 +661,11 @@ XdmNode * SaxonProcessor::parseXmlFromUri(const char* source){
 
 
 void SaxonProcessor::release(){
-	if(SaxonProcessor::jvmCreatedCPP!=0) {
-		SaxonProcessor::jvmCreatedCPP =0;
-
+ 	if(SaxonProcessor::jvmCreatedCPP!=0) {
+		SaxonProcessor::jvmCreatedCPP =0; 
+		//std::cerr<<"SaxonProc: JVM finalized calling !"<<std::endl;
  		finalizeJavaRT (SaxonProcessor::sxn_environ->jvm);
-
+ 		
 		//delete SaxonProcessor::sxn_environ;
 	/*clearParameters();
 	clearProperties();*/

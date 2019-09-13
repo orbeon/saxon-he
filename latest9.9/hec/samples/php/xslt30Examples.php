@@ -525,9 +525,30 @@ function testCallTemplate1($proc, $trans){
 		
     }
 
+
+function testPerformance(){
+
+// output current PID and number of threads
+	$pid =  getmypid();
+	$child_threads = trim(`ls /proc/{$pid}/task | wc -l`);
+
+	echo "<pre>";
+	echo "Process ID :$pid".PHP_EOL;
+	echo "Number of threads: $child_threads".PHP_EOL;
+	echo str_repeat("-", 20).PHP_EOL;
+
+	$sax = new Saxon\SaxonProcessor(false);
+	unset($sax);
+	// output number of threads again
+	$child_threads = trim(`ls /proc/{$pid}/task | wc -l`).PHP_EOL;
+	echo "Number of threads: $child_threads".PHP_EOL;
+
+
+}
+
             
             
-            $foo_xml = "xml/foo.xml";
+       /*     $foo_xml = "xml/foo.xml";
             $foo_xsl = "xsl/foo.xsl";
             $baz_xml = "xml/baz.xml";
             $baz_xsl = "xsl/baz.xsl";
@@ -546,10 +567,10 @@ function testCallTemplate1($proc, $trans){
             $version = $saxonProc->version();
             echo 'Saxon Processor version: '.$version;
             echo '<br/>';   
-	    $proc = $saxonProc->newXslt30Processor();   
+	    $proc = $saxonProc->newXslt30Processor();   */
 	    echo '<br/>';
 	    // testCallFunction($saxonProc, $proc); 
-	     testCallTemplate1($saxonProc, $proc);
+	  /*   testCallTemplate1($saxonProc, $proc);
            exampleSimple1($proc, $foo_xml, $foo_xsl);
             echo '<br/>';
              exampleSimple2($proc, "xml/foo.xml", $foo_xsl);
@@ -567,7 +588,8 @@ function testCallTemplate1($proc, $trans){
            exampleXMLFilterChain2($saxonProc, $proc, $foo_xml, $foo_xsl, $foo2_xsl, $foo3_xsl);     
             echo '<br/>';
             unset($proc);
-	    unset($saxonproc);
+	    unset($saxonproc);*/
+	testPerformance();
 	
         
         ?>

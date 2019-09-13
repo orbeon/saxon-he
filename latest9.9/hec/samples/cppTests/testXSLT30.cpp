@@ -246,9 +246,10 @@ void testTransformToString4(SaxonProcessor * processor, Xslt30Processor * trans,
 	cout<<"Source document is null. ====== FAIL ====== "<<endl;
 sresult->failureList.push_back("testTransformToString4");
     }
-
+XdmNode * sheet = processor->parseXmlFromFile("test2.xsl");
     trans->setInitialMatchSelection((XdmNode*)input);
-    const char * output = trans->applyTemplatesReturningString("test2.xsl");
+	trans->compileFromXdmNode(sheet);
+    const char * output = trans->applyTemplatesReturningString(NULL/*"test2.xsl"*/);
    if(output == NULL) {
       printf("result is null \n");
 	sresult->failureList.push_back("testTransformToString4");
@@ -268,8 +269,8 @@ cout<<endl<<"Test: testTransfromFromstring:"<<endl;
     XdmNode * input = processor->parseXmlFromString("<out><person>text1</person><person>text2</person><person>text3</person></out>");
 
    trans->compileFromString("<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>       <xsl:param name='values' select='(2,3,4)' /><xsl:output method='xml' indent='yes' /><xsl:template match='*'><output><xsl:for-each select='$values' ><out><xsl:value-of select='. * 3'/></out></xsl:for-each></output></xsl:template></xsl:stylesheet>");
-trans->setInitialMatchSelection((XdmNode*)input);
- const char * output = trans->transformToString();
+
+ const char * output = trans->transformToString((XdmNode*)input);
    if(output == NULL) {
       printf("result is null ====== FAIL ====== \n");
 sresult->failureList.push_back("testTransformFromString");
@@ -758,8 +759,116 @@ void testPackage2(Xslt30Processor * trans, sResultCount * sresult){
 		delete valueArray;
     }
 
+void testResolveUri(SaxonProcessor * proc, Xslt30Processor * trans, sResultCount * sresult) {
+ cout<<endl<<"Test: testResolveUri:"<<endl;
+ 
+trans->compileFromString("<xsl:stylesheet version='3.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:err='http://www.w3.org/2005/xqt-errors'><xsl:template name='go'><xsl:try><xsl:variable name='uri' as='xs:anyURI' select=\"resolve-uri('notice trailing space /out.xml')\"/> <xsl:message select='$uri'/><xsl:result-document href='{$uri}'><out/></xsl:result-document><xsl:catch><xsl:sequence select=\"'$err:code: ' || $err:code  || ', $err:description: ' || $err:description\"/></xsl:catch></xsl:try></xsl:template></xsl:stylesheet>");
 
 
+            XdmValue * value = trans->callTemplateReturningValue(NULL, "go");
+
+
+		if(value == NULL) {
+
+			sresult->failure++;
+			sresult->failureList.push_back("testResolveUri");
+		} else {
+		            	
+		const char * svalue = value->itemAt(0)->getStringValue();
+		cout<<"testResolveUri = "<<svalue<<endl;
+		sresult->success++;
+		}
+
+	
+
+}
+
+void testContextNotRoot(SaxonProcessor * proc, Xslt30Processor * trans, sResultCount * sresult) {
+        cout<<endl<<"Test: testContextNotRoot"<<endl;
+ 
+     XdmNode * node = proc->parseXmlFromString("<doc><e>text</e></doc>");
+
+     trans->compileFromString("<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'><xsl:variable name='x' select='.'/><xsl:template match='/'>errorA</xsl:template><xsl:template match='e'>[<xsl:value-of select='name($x)'/>]</xsl:template></xsl:stylesheet>");
+	trans->setGlobalContextItem(node);				
+    if(node->getChildCount()>0){
+      	    XdmNode * eNode = node->getChildren()[0]->getChildren()[0];
+		cout<<"Node content = "<<eNode->toString()<<endl;
+	    trans->setInitialMatchSelection(eNode);
+            const char* result = trans->applyTemplatesReturningString();
+		
+            if(result == NULL) {
+
+		cout<<"testCallFunction ======= FAIL ======"<<endl;
+		const char * message = trans->checkException();
+        	if(message != NULL) {
+		  cout<<"Error message =" << message<< endl;
+		}
+			sresult->failure++;
+			sresult->failureList.push_back("testContextNotRoot");
+		} else {
+		            	
+		cout<<"testContextNotRoot = "<<result<<endl;
+		sresult->success++;
+		}
+       }
+    }
+
+
+
+
+void testContextNotRootNamedTemplate(SaxonProcessor * proc, Xslt30Processor * trans, sResultCount * sresult) {
+        cout<<endl<<"Test: testContextNotRootNamedTemplate"<<endl;
+ 
+     XdmNode * node = proc->parseXmlFromString("<doc><e>text</e></doc>");
+
+     trans->compileFromString("<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'><xsl:variable name='x' select='.'/><xsl:template match='/'>errorA</xsl:template><xsl:template name='main'>[<xsl:value-of select='name($x)'/>]</xsl:template></xsl:stylesheet>");
+	trans->setGlobalContextItem(node);				
+            const char* result = trans->callTemplateReturningString(NULL, "main");
+		
+            if(result == NULL) {
+
+		cout<<"testCallFunction ======= FAIL ======"<<endl;
+		const char * message = trans->checkException();
+        	if(message != NULL) {
+		  cout<<"Error message =" << message<< endl;
+		}
+			sresult->failure++;
+			sresult->failureList.push_back("testContextNotRootNamedTemplate");
+		} else {
+		            	
+		cout<<"testContextNotRoot = "<<result<<endl;
+		sresult->success++;
+		}
+       
+    }
+
+
+
+void testContextNotRootNamedTemplateValue(SaxonProcessor * proc, Xslt30Processor * trans, sResultCount * sresult) {
+        cout<<endl<<"Test: testContextNotRootNamedTemplateValue"<<endl;
+ 
+     XdmNode * node = proc->parseXmlFromString("<doc><e>text</e></doc>");
+
+     trans->compileFromString("<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'><xsl:variable name='x' select='.'/><xsl:template match='/'>errorA</xsl:template><xsl:template name='main'>[<xsl:value-of select='name($x)'/>]</xsl:template></xsl:stylesheet>");
+	trans->setGlobalContextItem(node);				
+            XdmValue * result = trans->callTemplateReturningValue(NULL, "main");
+		
+            if(result == NULL) {
+
+		cout<<"testCallFunction ======= FAIL ======"<<endl;
+		const char * message = trans->checkException();
+        	if(message != NULL) {
+		  cout<<"Error message =" << message<< endl;
+		}
+			sresult->failure++;
+			sresult->failureList.push_back("testContextNotRootNamedTemplateValue");
+		} else {
+		            	
+		cout<<"testContextNotRoot = "<<result->getHead()->toStringValue()<<endl;
+		sresult->success++;
+		}
+       
+    }
 
 int main()
 {
@@ -771,7 +880,7 @@ int main()
    processor->setConfigurationProperty("http://saxon.sf.net/feature/generateByteCode","false");
    sResultCount *sresult = new sResultCount();
     Xslt30Processor * trans = processor->newXslt30Processor();
-   exampleSimple1Err(trans, sresult);
+    exampleSimple1Err(trans, sresult);
     exampleSimple1(trans, sresult);
     exampleSimple_xmark(trans, sresult);
     exampleSimple2(trans, sresult);
@@ -782,13 +891,15 @@ int main()
     testApplyTemplatesString2(processor, trans, sresult);
 
     testApplyTemplates2a(processor, trans, sresult);
+
+    testTransformToString4(processor, trans, sresult);
+
+
 /*
     testTransformToString2b(processor, trans);
 
     testTransformToString3(processor, trans);
 	
-    testTransformToString4(processor, trans);
-
     testTransformFromstring(processor, trans);
 
     testTransformFromstring2Err(processor, trans);
@@ -809,7 +920,10 @@ int main()
 
     xmarkTest2(trans, sresult);
    testCallFunction(processor, trans, sresult);
-
+   testResolveUri(processor, trans, sresult);
+    testContextNotRoot(processor, trans, sresult);
+testContextNotRootNamedTemplate(processor, trans, sresult);
+testContextNotRootNamedTemplateValue(processor, trans, sresult);
    //Available in PE and EE
    //testTransformToStringExtensionFunc(processor, trans);
 

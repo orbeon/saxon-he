@@ -91,12 +91,12 @@ void setDllname() {
 
 #ifdef DEBUG
 
-	printf("Library length: %i\n", name_len);
-	printf("Env length: %i\n", env_len);
-	printf("size of dllname %i\n", strlen(dllname));
+	printf("Library length: %zu\n", name_len);
+	printf("Env length: %zu\n", env_len);
+	printf("size of dllname %zu\n", strlen(dllname));
 	printf("dllName: %s\n", dllname);
 	printf("resources_dir: %s\n", resources_dir);
-	printf("size of resources dir %i\n", strlen(resources_dir));
+	printf("size of resources dir %zu\n", strlen(resources_dir));
 #endif
 
 }

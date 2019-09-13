@@ -329,9 +329,8 @@ void Xslt30Processor::compileFromString(const char* stylesheetStr) {
 
 void Xslt30Processor::compileFromXdmNode(XdmNode * node) {
 	static jmethodID cNodemID =
-			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
-					"createStylesheetFromFile",
-					"(Ljava/lang/String;Lnet/sf/saxon/s9api/XdmNode;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XsltExecutable;");
+			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,"createStylesheetFromXdmNode",
+			"(Ljava/lang/String;Ljava/lang/Object;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XsltExecutable;");
 	if (!cNodemID) {
 		std::cerr << "Error: "<< getDllname() << ".createStylesheetFromXdmNode"
 				<< " not found\n" << std::endl;
@@ -355,6 +354,41 @@ void Xslt30Processor::compileFromXdmNode(XdmNode * node) {
 	}
 
 }
+
+void Xslt30Processor::compileFromAssociatedFile(const char* source) {
+	static jmethodID cFilemID =
+			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+					"createStylesheetFromAssoicatedFile",
+					"(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XsltExecutable;");
+	if (!cFilemID) {
+		std::cerr << "Error: "<<getDllname() << ".createStylesheetFromFile"
+				<< " not found\n" << std::endl;
+
+	} else {
+		releaseStylesheet();
+		if(source == NULL) {
+			std::cerr << "Error in compileFromFile method - The Stylesheet file is NULL" <<std::endl;
+			return;
+		}
+		JParameters comboArrays;
+		comboArrays = SaxonProcessor::createParameterJArray(parameters, properties);
+		stylesheetObject = (jobject)(
+				SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, cFilemID,
+						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
+						SaxonProcessor::sxn_environ->env->NewStringUTF(source), comboArrays.stringArray, comboArrays.objectArray));
+		if (!stylesheetObject) {
+			proc->checkAndCreateException(cppClass);
+     		
+		}
+		if (comboArrays.stringArray != NULL) {
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.stringArray);
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.objectArray);
+		}
+		//SaxonProcessor::sxn_environ->env->NewGlobalRef(stylesheetObject);
+	}
+
+}
+
 
 void Xslt30Processor::compileFromFile(const char* stylesheet) {
 	static jmethodID cFilemID =
@@ -985,23 +1019,19 @@ XdmValue * Xslt30Processor::applyTemplatesReturningValue(const char * stylesheet
                   XdmValue * value = new XdmValue();
           		value->setProcessor(proc);
           		XdmItem * xdmItem = NULL;
-
-
           			if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, atomicValueClass)           == JNI_TRUE) {
           				xdmItem = new XdmAtomicValue(result);
-
 
           			} else if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, nodeClass)           == JNI_TRUE) {
           				xdmItem = new XdmNode(result);
 
-
           			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
-          				std::cerr<<"Error: applyTemplateToValue: FunctionItem found. Currently not be handled"<<std::endl;
+          				std::cerr<<"Error: callTemplateReturningValue: FunctionItem found. Currently not be handled"<<std::endl;
           				return NULL;
           			}
+
           			xdmItem->setProcessor(proc);
           			value->addXdmItem(xdmItem);
-
           		SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
           		return value;
           		} else  {
@@ -1074,7 +1104,7 @@ XdmValue * Xslt30Processor::transformFileToValue(const char* sourcefile,
 
 
           			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
-          				std::cerr<<"Error: applyTemplateToValue: FunctionItem found. Currently not be handled"<<std::endl;
+          				std::cerr<<"Error: TransformFileToValue: FunctionItem found. Currently not be handled"<<std::endl;
           				return NULL;
           			}
           			xdmItem->setProcessor(proc);
@@ -1284,28 +1314,40 @@ const char * Xslt30Processor::transformFileToString(const char* source,
 }
 
 
-   const char * Xslt30Processor::transformToString(){
+   const char * Xslt30Processor::transformToString(XdmNode * source){
 	if(!stylesheetObject){
 		std::cerr<< "Error: The most recent Stylesheet Object failed or has not been set."<<std::endl;
 		return NULL;
 	}
+	if(source != NULL){
+      		source->incrementRefCount();
+      		parameters["node"] = source;
+    	}
 	return transformFileToString(NULL, NULL);
    }
 
 
-    XdmValue * Xslt30Processor::transformToValue(){
+    XdmValue * Xslt30Processor::transformToValue(XdmNode * source){
 	if(!stylesheetObject){
 		std::cerr<< "Error: The most recent Stylesheet Object failed or has not been set."<<std::endl;
 		return NULL;
 	}
+	if(source != NULL){
+      		source->incrementRefCount();
+      		parameters["node"] = source;
+    	}
 	return transformFileToValue(NULL, NULL);
    }
 
-    void Xslt30Processor::transformToFile(){
+    void Xslt30Processor::transformToFile(XdmNode * source){
 	if(!stylesheetObject){
 		std::cerr<< "Error: The most recent Stylesheet Object failed or has not been set."<<std::endl;
 		return;
 	}
+	if(source != NULL){
+      		source->incrementRefCount();
+      		parameters["node"] = source;
+    	}
 	transformFileToFile(NULL, NULL, NULL);
    }
 

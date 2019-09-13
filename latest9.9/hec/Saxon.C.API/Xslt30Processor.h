@@ -429,28 +429,31 @@ public:
     //! Execute transformation to string. Properties supplied in advance.
     /**
      * Perform the transformation based upon what has been cached.
+     * @param source - source document suppplied as an XdmNode object
      * @return char*. Pointer to Array of chars. Result returned as a string.
      *
      */
-    const char * transformToString();
+    const char * transformToString(XdmNode * source);
 
     //! Execute transformation to Xdm Value. Properties supplied in advance.
     /**
      * Perform the transformation based upon cached stylesheet and any source document.
+     * @param source - source document suppplied as an XdmNode object
      * @return as an XdmValue.
      *
      */
-    XdmValue * transformToValue();
+    XdmValue * transformToValue(XdmNode * source);
 
     //! Execute transformation to file. Properties supplied in advance.
     /**
      * Perform the transformation based upon cached stylesheet and source document.
      * Assume the outputfile has been set in advance
+     * @param source - source document suppplied as an XdmNode object
      * @return as an XdmValue.
      *
 
      */
-    void transformToFile();
+    void transformToFile(XdmNode * source);
 
     /**
      * Checks for pending exceptions without creating a local reference to the exception object

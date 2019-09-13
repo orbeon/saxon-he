@@ -179,6 +179,7 @@ jobject JNICALL phpNativeCall
     PHP_METHOD(SaxonProcessor, newXPathProcessor);
     PHP_METHOD(SaxonProcessor, newSchemaValidator);
     PHP_METHOD(SaxonProcessor,  version);
+    PHP_METHOD(SaxonProcessor,  release);
 
 
 
@@ -239,6 +240,7 @@ jobject JNICALL phpNativeCall
     PHP_METHOD(Xslt30Processor, compileFromString);
     PHP_METHOD(Xslt30Processor, compileFromStringAndSave);
     PHP_METHOD(Xslt30Processor, compileFromFileAndSave);
+    PHP_METHOD(Xslt30Processor, compileFromAssociatedFile);
     PHP_METHOD(Xslt30Processor,  setOutputFile);
     PHP_METHOD(Xslt30Processor,  setJustInTimeCompilation);
     PHP_METHOD(Xslt30Processor,  setParameter);
