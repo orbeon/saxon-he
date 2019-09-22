@@ -96,6 +96,7 @@ public class ApplyImports extends ApplyNextMatchingTemplate implements ITemplate
             c2.openStackFrame(nh.getStackFrameMap());
             c2.setCurrentTemplateRule(rule);
             c2.setCurrentComponent(modeComponent);
+            c2.setCurrentMergeGroupIterator(null);
             nh.apply(c2);
         }
         return null;

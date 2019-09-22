@@ -345,6 +345,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
         c2.openStackFrame(t.getStackFrameMap());
         c2.setLocalParameters(assembleParams(context, actualParams));
         c2.setTunnelParameters(assembleTunnelParams(context, tunnelParams));
+        c2.setCurrentMergeGroupIterator(null);
         if (isWithinDeclaredStreamableConstruct) {
             c2.setCurrentGroupIterator(null);
         }
@@ -511,6 +512,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
             c2.setOrigin(instruction);
             c2.setLocalParameters(params);
             c2.setTunnelParameters(tunnelParams);
+            c2.setCurrentMergeGroupIterator(null);
             c2.openStackFrame(template.getStackFrameMap());
 
             // System.err.println("Tail call on template");

@@ -108,6 +108,7 @@ public class NextMatch extends ApplyNextMatchingTemplate {
             c2.setLocalParameters(params);
             c2.setTunnelParameters(tunnels);
             c2.setCurrentTemplateRule(rule);
+            c2.setCurrentMergeGroupIterator(null);
             c2.setCurrentComponent(modeComponent); // needed in the case where next-match is called from a named template
             nh.apply(c2);
         }
@@ -190,6 +191,7 @@ public class NextMatch extends ApplyNextMatchingTemplate {
             c2.setTunnelParameters(tunnelParams);
             c2.openStackFrame(nh.getStackFrameMap());
             c2.setCurrentTemplateRule(rule);
+            c2.setCurrentMergeGroupIterator(null);
             c2.setCurrentComponent(evaluationContext.getCurrentComponent());
 
             // System.err.println("Tail call on template");

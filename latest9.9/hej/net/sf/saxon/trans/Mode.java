@@ -510,6 +510,7 @@ public abstract class Mode extends Actor {
                     context.openStackFrame(template.getStackFrameMap());
                     context.setLocalParameters(parameters);
                     context.setTunnelParameters(tunnelParameters);
+                    context.setCurrentMergeGroupIterator(null);
                 }
                 context.setCurrentTemplateRule(rule);
                 if (tracing) {
