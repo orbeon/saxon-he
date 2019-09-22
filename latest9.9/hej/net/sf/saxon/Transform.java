@@ -1036,8 +1036,8 @@ public class Transform {
 
         Serializer serializer =
                 outputFile == null ?
-                        transformer.newSerializer(System.out) :
-                        transformer.newSerializer(outFile);
+                        processor.newSerializer(System.out) :
+                        processor.newSerializer(outFile);
         try {
             options.setSerializationProperties(serializer);
         } catch (IllegalArgumentException e) {
