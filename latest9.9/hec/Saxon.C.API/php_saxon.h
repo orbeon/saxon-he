@@ -243,6 +243,7 @@ jobject JNICALL phpNativeCall
     PHP_METHOD(Xslt30Processor, compileFromAssociatedFile);
     PHP_METHOD(Xslt30Processor,  setOutputFile);
     PHP_METHOD(Xslt30Processor,  setJustInTimeCompilation);
+    PHP_METHOD(Xslt30Processor,  setResultAsRawValue);
     PHP_METHOD(Xslt30Processor,  setParameter);
     PHP_METHOD(Xslt30Processor,  setProperty);
     PHP_METHOD(Xslt30Processor,  clearParameters);
@@ -367,6 +368,7 @@ jobject JNICALL phpNativeCall
     PHP_METHOD(XdmAtomicValue,  getBooleanValue);
     PHP_METHOD(XdmAtomicValue,  getDoubleValue);
     PHP_METHOD(XdmAtomicValue,  getLongValue);
+    PHP_METHOD(XdmAtomicValue,  getPrimitiveTypeName);
     PHP_METHOD(XdmAtomicValue,  isAtomic);
 
 

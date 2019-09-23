@@ -1618,15 +1618,17 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningValue)
     zval * arguments_zval;
     zval * val;
     long num_key;
-    XdmValue ** arguments;
+    XdmValue ** arguments = NULL;
     int argument_length=0;
     zend_string *key;
 
     char * infilename;
-    char * styleFileName;
+    char * styleFileName = NULL;
     size_t len1, len2;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() , "ssa", &styleFileName, &len1, &functionName, &len2, &arguments_zval) == FAILURE) {
+    if (ZEND_NUM_ARGS()==2 && zend_parse_parameters(ZEND_NUM_ARGS() , "sa", &functionName, &len2, &arguments_zval) == FAILURE) {
+        RETURN_NULL();
+    } else if (ZEND_NUM_ARGS()==3 && zend_parse_parameters(ZEND_NUM_ARGS() , "ssa", &styleFileName, &len1, &functionName, &len2, &arguments_zval) == FAILURE) {
         RETURN_NULL();
     }
 
@@ -1707,15 +1709,17 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
     zval * arguments_zval;
     zval * val;
     long num_key;
-    XdmValue ** arguments;
+    XdmValue ** arguments = NULL;
     int argument_length=0;
     zend_string *key;
 
     char * infilename;
-    char * styleFileName;
+    char * styleFileName = NULL;
     size_t len1, len2;
 
-       if (zend_parse_parameters(ZEND_NUM_ARGS() , "ssa", &styleFileName, &len1, &functionName, &len2, &arguments_zval) == FAILURE) {
+     if (ZEND_NUM_ARGS()==2 && zend_parse_parameters(ZEND_NUM_ARGS() , "sa", &functionName, &len2, &arguments_zval) == FAILURE) {
+        RETURN_NULL();
+      }else if (ZEND_NUM_ARGS()==3 && zend_parse_parameters(ZEND_NUM_ARGS() , "ssa", &styleFileName, &len1, &functionName, &len2, &arguments_zval) == FAILURE) {
         RETURN_NULL();
     }
 
@@ -1793,15 +1797,18 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
     zval * arguments_zval;
     zval * val;
     long num_key;
-    XdmValue ** arguments;
+    XdmValue ** arguments = NULL;
     int argument_length=0;
     zend_string *key;
 
     char * outfilename;
-    char * styleFileName;
+    char * styleFileName = NULL;
     size_t len1, len2, len3;
 
-        if (zend_parse_parameters(ZEND_NUM_ARGS() , "ssas", &styleFileName, &len1, &functionName, &len2, &arguments_zval, &outfilename, &len3) == FAILURE) {
+
+    if (ZEND_NUM_ARGS()==3 && zend_parse_parameters(ZEND_NUM_ARGS() , "sas", &functionName, &len2, &arguments_zval, &outfilename, &len3) == FAILURE) {
+        RETURN_NULL();
+    } else if (ZEND_NUM_ARGS()==4 && zend_parse_parameters(ZEND_NUM_ARGS() , "ssas", &styleFileName, &len1, &functionName, &len2, &arguments_zval, &outfilename, &len3) == FAILURE) {
         RETURN_NULL();
     }
 
@@ -1875,9 +1882,7 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
 
     if (ZEND_NUM_ARGS()==1 && zend_parse_parameters(ZEND_NUM_ARGS() , "s", &templateName, &len2) == FAILURE) {
         RETURN_NULL();
-    }
-
-    if (ZEND_NUM_ARGS()>1 && zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &styleFileName, &len1, &templateName, &len2) == FAILURE) {
+    } else if (ZEND_NUM_ARGS()>1 && zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &styleFileName, &len1, &templateName, &len2) == FAILURE) {
         RETURN_NULL();
     }
 
@@ -1984,11 +1989,14 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
 
 PHP_METHOD(Xslt30Processor, applyTemplatesReturningValue){
    Xslt30Processor *xslt30Processor;
-    char * styleFileName;
+    char * styleFileName = NULL;
     size_t len1;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() , "s", &styleFileName, &len1) == FAILURE) {
-        RETURN_NULL();
+    if (ZEND_NUM_ARGS()>0) {
+
+      if (zend_parse_parameters(ZEND_NUM_ARGS() , "s", &styleFileName, &len1) == FAILURE) {
+          RETURN_NULL();
+      }
     }
 
     zend_object* pobj = Z_OBJ_P(getThis());
@@ -2011,13 +2019,14 @@ PHP_METHOD(Xslt30Processor, applyTemplatesReturningValue){
             if(obj->xslt30Processor->exceptionOccurred()){
   		//TODO
 	    }
+	    RETURN_NULL();
         }
 
 
 
-    }
+    } else {
      RETURN_NULL();
-
+    }
 }
 
 
@@ -2068,13 +2077,18 @@ PHP_METHOD(Xslt30Processor, applyTemplatesReturningString){
 
 PHP_METHOD(Xslt30Processor, applyTemplatesReturningFile){
  Xslt30Processor *xslt30Processor;
-    char * filename;
-    char * styleFileName;
+    char * filename = NULL;
+    char * styleFileName = NULL;
     size_t len1, len2;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &styleFileName, &len1, &filename, &len2) == FAILURE) {
-        RETURN_NULL();
+    if (ZEND_NUM_ARGS()==2 && zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &styleFileName, &len1, &filename, &len2) == FAILURE) {
+          RETURN_NULL();
     }
+
+   if (ZEND_NUM_ARGS()==1 && zend_parse_parameters(ZEND_NUM_ARGS() , "s", &filename, &len2) == FAILURE) {
+          RETURN_NULL();
+    }
+    
 
     zend_object* pobj = Z_OBJ_P(getThis());
     xslt30Processor_object *obj = (xslt30Processor_object *)((char *)pobj - XtOffsetOf(xslt30Processor_object, std));
@@ -2152,10 +2166,14 @@ PHP_METHOD(Xslt30Processor, addPackages){
     zend_string *key;
 
     bool tunnel = false;
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS() , "a", &arguments_zval) == FAILURE) {
+    if (ZEND_NUM_ARGS()==1 && zend_parse_parameters(ZEND_NUM_ARGS() , "a", &arguments_zval) == FAILURE) {
         RETURN_NULL();
     }
+
+    if (ZEND_NUM_ARGS()==2 && zend_parse_parameters(ZEND_NUM_ARGS() , "ab", &arguments_zval, &tunnel) == FAILURE) {
+        RETURN_NULL();
+    }
+
 
     zend_object* pobj = Z_OBJ_P(getThis());
     xslt30Processor_object *obj = (xslt30Processor_object *)((char *)pobj - XtOffsetOf(xslt30Processor_object, std));
@@ -2259,10 +2277,14 @@ PHP_METHOD(Xslt30Processor, setInitialMatchSelection){
 		XdmValue  *valueX = (XdmValue*)value;
 	        xslt30Processor->setInitialMatchSelection(valueX);
 
-            }
+            } else {
+
+php_error(E_WARNING, "XdmNode - seInitialMatchSelection - cp1");
+}
         }
       } else if(strcmp(objName, "Saxon\\XdmAtomicValue")==0) {
 	zend_object* vvobj = Z_OBJ_P(oth);
+
 	xdmAtomicValue_object* ooth = (xdmAtomicValue_object *)((char *)vvobj - XtOffsetOf(xdmAtomicValue_object, std));
         if(ooth != NULL) {
             XdmAtomicValue * value = ooth->xdmAtomicValue;
@@ -2764,7 +2786,23 @@ PHP_METHOD(Xslt30Processor, compileFromValue)
 
 
 
+PHP_METHOD(Xslt30Processor, setResultAsRawValue)
+{
+    Xslt30Processor *xslt30Processor;
+    bool raw = false;
 
+    if (zend_parse_parameters(ZEND_NUM_ARGS() , "b", &raw) == FAILURE) {
+        RETURN_NULL();
+    }
+
+    zend_object* pobj = Z_OBJ_P(getThis());
+    xslt30Processor_object *obj = (xslt30Processor_object *)((char *)pobj - XtOffsetOf(xslt30Processor_object, std));
+    xslt30Processor = obj->xslt30Processor;
+    if (xslt30Processor != NULL) {
+	 xslt30Processor->setResultAsRawValue(raw);
+    }
+
+}
 
 
 
@@ -5278,6 +5316,28 @@ PHP_METHOD(XdmAtomicValue, getStringValue)
     RETURN_NULL();
 }
 
+PHP_METHOD(XdmAtomicValue, getPrimitiveTypeName)
+{
+    XdmAtomicValue *xdmAtomicValue;
+    zval *object = getThis();
+     zend_object * zobj = Z_OBJ_P(object);
+
+    xdmAtomicValue_object * obj = (xdmAtomicValue_object *)((char *)zobj - XtOffsetOf(xdmAtomicValue_object, std));
+    xdmAtomicValue = obj->xdmAtomicValue;
+
+    if (xdmAtomicValue != NULL) {
+        const char * valueStr = xdmAtomicValue->getPrimitiveTypeName();
+        if(valueStr != NULL) {
+            //char *str = estrdup(valueStr);
+            _RETURN_STRING(valueStr);
+        }
+    }
+    RETURN_NULL();
+}
+
+
+
+
     /* {{{ __toString()
        Returns the string content */
 PHP_METHOD(XdmAtomicValue, __toString)
@@ -5414,6 +5474,7 @@ zend_function_entry Xslt30Processor_methods[] = {
     PHP_ME(Xslt30Processor, compileFromAssociatedFile, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(Xslt30Processor,  setOutputFile, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(Xslt30Processor,  setJustInTimeCompilation, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(Xslt30Processor,  setResultAsRawValue, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(Xslt30Processor,  setParameter, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(Xslt30Processor,  setProperty, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(Xslt30Processor,  clearParameters, NULL, ZEND_ACC_PUBLIC)
@@ -5542,6 +5603,7 @@ zend_function_entry xdmAtomicValue_methods[] = {
     PHP_ME(XdmAtomicValue,  getBooleanValue,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XdmAtomicValue,  getDoubleValue,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XdmAtomicValue,  getLongValue,      NULL, ZEND_ACC_PUBLIC)
+        PHP_ME(XdmAtomicValue,  getPrimitiveTypeName,      NULL, ZEND_ACC_PUBLIC)
     {NULL, NULL, NULL}
 };
 

@@ -38,10 +38,7 @@ public:
     */
     Xslt30Processor(SaxonProcessor* proc, std::string cwd="");
 
-     ~Xslt30Processor(){
-	clearProperties();
-	clearParameters();
-     }
+     ~Xslt30Processor();
 
 	//! Get the SaxonProcessor object
 	/**
@@ -105,6 +102,17 @@ public:
     *            stylesheet you are compiling is error-free.</p>
     */
     void setJustInTimeCompilation(bool jit);
+
+
+
+
+    /**
+    *Set true if the return type of callTemplate, applyTemplates and transform methods is to return XdmValue,
+    *otherwise return XdmNode object with root Document node
+    * @param option true if return raw result, i.e. XdmValue, otherwise return XdmNode
+    *
+    */	
+    void setResultAsRawValue(bool option);
 
     /**
      * Set the value of a stylesheet parameter
@@ -499,6 +507,7 @@ private:
 	SaxonProcessor* proc;/*! */
 	jclass  cppClass;
 	jobject cppXT, stylesheetObject, xdmValuei, selection;
+	XdmValue * selectionV;
         std::string cwdXT; /*!< current working directory */
 	std::string outputfile1; /*!< output file where result will be saved */
 	std::string failure; //for testing

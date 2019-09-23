@@ -39,6 +39,7 @@ Xslt30Processor::Xslt30Processor(SaxonProcessor * p, std::string curr) {
 	tunnel = false;
 	proc->exception = NULL;
 	selection = NULL;
+	selectionV=NULL;
 	outputfile1 = "";
 	if(!(proc->cwd.empty()) && curr.empty()){
 		cwdXT = proc->cwd;
@@ -47,6 +48,18 @@ Xslt30Processor::Xslt30Processor(SaxonProcessor * p, std::string curr) {
 	} 
 
 }
+
+     Xslt30Processor::~Xslt30Processor(){
+	clearProperties();
+	clearParameters();
+	if(selectionV != NULL) {
+	  selectionV->decrementRefCount();
+	  if(selectionV->getRefCount() == 0) {
+		delete selectionV;
+	  }
+	}
+	
+     }
 
 bool Xslt30Processor::exceptionOccurred() {
 	return proc->exceptionOccurred();
@@ -73,12 +86,18 @@ void Xslt30Processor::setGlobalContextFromFile(const char * ifile) {
 }
 
 void Xslt30Processor::setInitialMatchSelection(XdmValue * _selection){
-    selection = _selection->getUnderlyingValue();
+     if(_selection != NULL) {
+      _selection->incrementRefCount();
+      selectionV = _selection;
+      selection = _selection->getUnderlyingValue();
+    }
 }
 
 
 void Xslt30Processor::setInitialMatchSelectionAsFile(const char * filename){
-    selection = SaxonProcessor::sxn_environ->env->NewStringUTF(filename);
+    if(filename != NULL) {
+      selection = SaxonProcessor::sxn_environ->env->NewStringUTF(filename);
+    }
 }
 
 void Xslt30Processor::setOutputFile(const char * ofile) {
@@ -103,7 +122,10 @@ void Xslt30Processor::setParameter(const char* name, XdmValue * value, bool _sta
 		parameters["itparam:"+std::string(itr->first)] = itr->second;	
 	}
 	tunnel = _tunnel;
-    }
+	if(tunnel) {
+		setProperty("tunnel", "true");
+    	}
+   }
 
 XdmValue* Xslt30Processor::getParameter(const char* name) {
         std::map<std::string, XdmValue*>::iterator it;
@@ -137,6 +159,12 @@ void Xslt30Processor::setJustInTimeCompilation(bool jit){
 		proc->checkAndCreateException(cppClass);
 	}
 }
+
+void Xslt30Processor::setResultAsRawValue(bool option) {
+	if(option) {
+		setProperty("outvalue", "yes");
+	}
+ }
 
 void Xslt30Processor::setProperty(const char* name, const char* value) {	
 	if(name != NULL) {
@@ -562,15 +590,15 @@ XdmValue * Xslt30Processor::applyTemplatesReturningValue(const char * stylesheet
 		comboArrays = SaxonProcessor::createParameterJArray(parameters, properties);
 
 
-	    jstring result = NULL;
-	    jobject obj = (jobject)(SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, atsmID,
+	   // jstring result = NULL;
+	    jobject result = (jobject)(SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, atsmID,
 								SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
 								selection,
 								( stylesheetfile != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheetfile) : NULL),
 								comboArrays.stringArray, comboArrays.objectArray));
-		if(obj) {
-			result = (jstring)obj;
-		}
+		/*if(obj) {
+			result = (jobject)obj;
+		}*/
 		if (comboArrays.stringArray != NULL) {
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.stringArray);
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.objectArray);
@@ -579,8 +607,7 @@ XdmValue * Xslt30Processor::applyTemplatesReturningValue(const char * stylesheet
 		jclass atomicValueClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
 		jclass nodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
 		jclass functionItemClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmFunctionItem");
-        XdmValue * value = new XdmValue();
-		value->setProcessor(proc);
+        	XdmValue * value = NULL;
 		XdmItem * xdmItem = NULL;
 
 
@@ -590,17 +617,25 @@ XdmValue * Xslt30Processor::applyTemplatesReturningValue(const char * stylesheet
 
 			} else if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, nodeClass)           == JNI_TRUE) {
 				xdmItem = new XdmNode(result);
-
+			
 
 			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
 				std::cerr<<"Error: applyTemplateToValue: FunctionItem found. Currently not be handled"<<std::endl;
 				return NULL;
+			} else {
+				value = new XdmValue(result, true);
+				value->setProcessor(proc);
+				for(int z=0;z<value->size();z++) {
+					value->itemAt(z)->setProcessor(proc);
+				}
+				return value;
 			}
+			value = new XdmValue();
+			value->setProcessor(proc);
 			xdmItem->setProcessor(proc);
 			value->addXdmItem(xdmItem);
-
-		SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
-		return value;
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
+			return value;
 		} else  {
 			proc->checkAndCreateException(cppClass);
 
@@ -609,6 +644,7 @@ XdmValue * Xslt30Processor::applyTemplatesReturningValue(const char * stylesheet
 	return NULL;
 
 }     
+
 
 
     void Xslt30Processor::callFunctionReturningFile(const char * stylesheetfile, const char* functionName, XdmValue ** arguments, int argument_length, const char* outfile){
@@ -761,8 +797,7 @@ XdmValue * Xslt30Processor::applyTemplatesReturningValue(const char * stylesheet
           		jclass atomicValueClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
           		jclass nodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
           		jclass functionItemClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmFunctionItem");
-                 	XdmValue * value = new XdmValue();
-          		value->setProcessor(proc);
+                 	XdmValue * value = NULL;
           		XdmItem * xdmItem = NULL;
 
 
@@ -776,17 +811,26 @@ XdmValue * Xslt30Processor::applyTemplatesReturningValue(const char * stylesheet
 
           			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
           				return NULL;
-          			}
-          			xdmItem->setProcessor(proc);
-          			value->addXdmItem(xdmItem);
-	          		SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
+          			} else {
+					value = new XdmValue(result, true);
+					value->setProcessor(proc);
+					for(int z=0;z<value->size();z++) {
+						value->itemAt(z)->setProcessor(proc);
+					}
+					return value;
+			}
+			value = new XdmValue();
+			value->setProcessor(proc);
+          		xdmItem->setProcessor(proc);
+          		value->addXdmItem(xdmItem);
+	        	SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
 			return value;
-          		} else  {
-          			proc->checkAndCreateException(cppClass);
+          	} else  {
+          		proc->checkAndCreateException(cppClass);
 
-               		}
-          	}
-          	return NULL;
+               	}
+          }
+          return NULL;
 
     }
 
@@ -1016,8 +1060,8 @@ XdmValue * Xslt30Processor::applyTemplatesReturningValue(const char * stylesheet
           		jclass atomicValueClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
           		jclass nodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
           		jclass functionItemClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmFunctionItem");
-                  XdmValue * value = new XdmValue();
-          		value->setProcessor(proc);
+                  	XdmValue * value = NULL;
+          		
           		XdmItem * xdmItem = NULL;
           			if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, atomicValueClass)           == JNI_TRUE) {
           				xdmItem = new XdmAtomicValue(result);
@@ -1028,18 +1072,25 @@ XdmValue * Xslt30Processor::applyTemplatesReturningValue(const char * stylesheet
           			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
           				std::cerr<<"Error: callTemplateReturningValue: FunctionItem found. Currently not be handled"<<std::endl;
           				return NULL;
-          			}
-
-          			xdmItem->setProcessor(proc);
-          			value->addXdmItem(xdmItem);
+          			} else {
+					value = new XdmValue(result, true);
+					value->setProcessor(proc);
+					for(int z=0;z<value->size();z++) {
+						value->itemAt(z)->setProcessor(proc);
+					}
+					return value;
+				}
+			value = new XdmValue();
+			value->setProcessor(proc);	
+          		xdmItem->setProcessor(proc);
+          		value->addXdmItem(xdmItem);
           		SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
           		return value;
-          		} else  {
-          			proc->checkAndCreateException(cppClass);
-
-               		}
-          	}
-          	return NULL;
+         	} else  {
+          		proc->checkAndCreateException(cppClass);
+               	}
+          }
+        return NULL;
     }
 
 
@@ -1090,8 +1141,7 @@ XdmValue * Xslt30Processor::transformFileToValue(const char* sourcefile,
 			jclass atomicValueClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
           		jclass nodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
           		jclass functionItemClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmFunctionItem");
-			XdmValue * value = new XdmValue();
-          		value->setProcessor(proc);
+			XdmValue * value = NULL;
           		XdmItem * xdmItem = NULL;
 
 
@@ -1106,7 +1156,16 @@ XdmValue * Xslt30Processor::transformFileToValue(const char* sourcefile,
           			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
           				std::cerr<<"Error: TransformFileToValue: FunctionItem found. Currently not be handled"<<std::endl;
           				return NULL;
-          			}
+          			} else {
+					value = new XdmValue(result, true);
+					value->setProcessor(proc);
+					for(int z=0;z<value->size();z++) {
+						value->itemAt(z)->setProcessor(proc);
+					}
+					return value;
+				}
+				value = new XdmValue();
+				value->setProcessor(proc);
           			xdmItem->setProcessor(proc);
           			value->addXdmItem(xdmItem);
 

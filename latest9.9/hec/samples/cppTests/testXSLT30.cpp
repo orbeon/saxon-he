@@ -864,11 +864,103 @@ void testContextNotRootNamedTemplateValue(SaxonProcessor * proc, Xslt30Processor
 			sresult->failureList.push_back("testContextNotRootNamedTemplateValue");
 		} else {
 		            	
-		cout<<"testContextNotRoot = "<<result->getHead()->toStringValue()<<endl;
+		cout<<"testContextNotRoot = "<<result->getHead()->getStringValue()<<endl;
 		sresult->success++;
 		}
        
     }
+
+
+void testPipeline(SaxonProcessor * proc, sResultCount * sresult){
+  cout<<endl<<"Test: testPipeline"<<endl;
+ 
+	 Xslt30Processor * stage1 = proc->newXslt30Processor();
+          stage1->compileFromString("<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'><xsl:template match='/'><a><xsl:copy-of select='.'/></a></xsl:template></xsl:stylesheet>");
+          XdmNode * inn = proc->parseXmlFromString("<z/>");
+
+          Xslt30Processor * stage2 = proc->newXslt30Processor();
+          stage2->compileFromString("<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'><xsl:template match='/'><a><xsl:copy-of select='.'/></a></xsl:template></xsl:stylesheet>");
+
+
+	if(stage2->exceptionCount()>0){
+		const char * message = stage2->getErrorMessage(0);
+		cout<<"exception-CP0="<< message<<endl;
+	    }
+/*
+	  Xslt30Processor * stage3 = proc->newXslt30Processor();
+          stage3->compileFromString("<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'><xsl:template match='/'><a><xsl:copy-of select='.'/></a></xsl:template></xsl:stylesheet>");
+
+	  Xslt30Processor * stage4 = proc->newXslt30Processor();
+	  stage4->compileFromString("<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'><xsl:template match='/'><a><xsl:copy-of select='.'/></a></xsl:template></xsl:stylesheet>");
+
+	  Xslt30Processor * stage5 = proc->newXslt30Processor();
+          stage5->compileFromString("<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'><xsl:template match='/'><a><xsl:copy-of select='.'/></a></xsl:template></xsl:stylesheet>");
+*/
+	  stage1->setProperty("!indent", "no");
+	  stage1->setInitialMatchSelection(inn);
+
+          XdmValue * d1 = stage1->applyTemplatesReturningValue();
+	   if(stage1->exceptionCount()>0){
+		cout<<"Exception message="<<(stage1->getErrorMessage(0))<<endl;
+		return;
+	    }
+		
+	  if(d1==NULL){
+		cout<<"ERROR1"<<endl;;
+		return;
+	    }
+	XdmItem * d11 = d1->getHead();
+	if(d11 == NULL)	{
+
+		cout<<"d11 is NULL\n"<<endl;
+	}
+	const char *data = d1->getHead()->toString();
+
+	if(data != NULL){
+	cout<<"d1 result="<<data<<endl;
+	}else {
+	cout<<"checkpoint\n"<<endl;
+
+	return;
+	}
+	  stage2->setProperty("!indent", "no");
+	  stage2->setInitialMatchSelection(d1->getHead());
+          XdmValue * d2 = stage2->applyTemplatesReturningValue();
+	  if(d2==NULL){
+		cout<<"ERROR-11\n"<<endl;
+	   if(stage2->exceptionCount()>0){
+		const char * message = stage2->getErrorMessage(0);
+		cout<<"exception="<< message<<endl;
+	    }
+		return;
+	    } else {
+		cout<<"d2 result = "<<d2->getHead()->toString()<<endl;
+		}
+	  /*$stage3->setProperty("!indent", "no");
+	  $stage3->setInitialMatchSelection($d2);
+          $d3 = $stage3->applyTemplatesReturningValue();
+	  if($d3==NULL){
+		echo "ERROR2";		
+		exit(1);
+	    }
+	  $stage4->setProperty("!indent", "no");
+	  $stage4->setInitialMatchSelection($d3);
+          $d4 = $stage4->applyTemplatesReturningValue();
+	 if($d3==NULL){
+		echo "ERROR3";
+		exit(1);
+	    }
+	  $stage5->setProperty("!indent", "no");
+	  $stage4->setInitialMatchSelection($d4);
+          $sw = $stage5->applyTemplatesReturningString();
+	  if($sw==NULL){
+		echo "ERROR4";
+		exit(1);
+	    }
+          cout<<sw<<endl;
+*/
+
+}
 
 int main()
 {
@@ -880,7 +972,7 @@ int main()
    processor->setConfigurationProperty("http://saxon.sf.net/feature/generateByteCode","false");
    sResultCount *sresult = new sResultCount();
     Xslt30Processor * trans = processor->newXslt30Processor();
-    exampleSimple1Err(trans, sresult);
+  /*  exampleSimple1Err(trans, sresult);
     exampleSimple1(trans, sresult);
     exampleSimple_xmark(trans, sresult);
     exampleSimple2(trans, sresult);
@@ -893,7 +985,7 @@ int main()
     testApplyTemplates2a(processor, trans, sresult);
 
     testTransformToString4(processor, trans, sresult);
-
+*/
 
 /*
     testTransformToString2b(processor, trans);
@@ -904,7 +996,7 @@ int main()
 
     testTransformFromstring2Err(processor, trans);
 */
-    testTrackingOfValueReference(processor, trans,sresult);
+  /*  testTrackingOfValueReference(processor, trans,sresult);
 
     testTrackingOfValueReferenceError(processor, trans, sresult);
 
@@ -923,8 +1015,10 @@ int main()
    testResolveUri(processor, trans, sresult);
     testContextNotRoot(processor, trans, sresult);
 testContextNotRootNamedTemplate(processor, trans, sresult);
-testContextNotRootNamedTemplateValue(processor, trans, sresult);
-   //Available in PE and EE
+testContextNotRootNamedTemplateValue(processor, trans, sresult);*/
+testPipeline(processor, sresult); 
+
+  //Available in PE and EE
    //testTransformToStringExtensionFunc(processor, trans);
 
     delete trans;

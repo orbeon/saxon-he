@@ -26,6 +26,8 @@
 
 class SaxonProcessor;
 class XdmItem;
+class XdmAtomicValue;
+class XdmNode;
 
 
 typedef enum eXdmType { XDM_VALUE = 1, XDM_ITEM = 2, XDM_NODE = 3, XDM_ATOMIC_VALUE = 4, XDM_FUNCTION_ITEM = 5 } XDM_TYPE;
@@ -54,6 +56,7 @@ public:
 		jValues = NULL;
 		valueType = NULL;
 		proc = NULL;
+		toStringValue = NULL;
 	}
 
 	XdmValue(SaxonProcessor * p) {
@@ -61,6 +64,7 @@ public:
 		jValues = NULL;
 		refCount = 1;
 		valueType = NULL;
+		toStringValue = NULL;
 	}
 
 
@@ -107,7 +111,13 @@ public:
 
 
 
-	//TODO XdmValue with constructor of sequence of values
+
+	/**
+	 * A Constructor. Handles a sequence of XdmValues given as a  wrapped an Java XdmValue object.
+	 * @param val - Java XdmValue object
+	 * @param arrFlag - Currently not used but allows for overloading of constructor methods
+	 */
+	XdmValue(jobject val, bool arrFlag);
 
 	/**
 	 * A Constructor. Wrap an Java XdmValue object.
@@ -149,7 +159,7 @@ public:
 	 * the value using the adaptive serialization method.
 	 * @return a string representation of the value
 	 */
-	const char * toString();
+	virtual const char * toString();
 
 	int getRefCount() {
 		return refCount;
@@ -168,7 +178,8 @@ public:
 		//std::cerr<<"refCount-dec-xdmVal="<<refCount<<" ob ref="<<(this)<<std::endl;
 	}
 
-	void setProcessor(SaxonProcessor *p) { proc = p; }
+	void setProcessor(SaxonProcessor *p);
+
 
 	/*const char * getErrorMessage(int i);
 	const char * getErrorCode(int i);
