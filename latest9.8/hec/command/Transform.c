@@ -12,19 +12,44 @@
     #include <windows.h>
 #endif
 
-typedef int bool;
-#define true 1
-#define false 0
+#ifndef __cplusplus
+    #ifndef _BOOL
+        #include <stdbool.h>
+        //typedef int bool;
+        #define true 1
+        #define false 0
+    #else
+        #define true 1
+        #define false 0
+    #endif
+#endif
 
 
 char dllname[] =
-   // #ifdef __linux__
-#ifdef EEC
-        "/usr/lib/libsaxoneec.so";
-#elif defined PEC
-	"/usr/lib/libsaxonpec.so";
+#ifdef __linux__
+    #ifdef EEC
+            "/usr/lib/libsaxoneec.so";
+    #elif defined PEC
+	    "/usr/lib/libsaxonpec.so";
+    #else
+	    "/usr/lib/libsaxonhec.so";
+    #endif
+#elif defined __APPLE__
+    #ifdef EEC
+            "/usr/local/lib/libsaxoneec.dylib";
+    #elif defined PEC
+	    "/usr/local/lib/libsaxonpec.dylib";
+    #else
+	    "/usr/local/lib/libsaxonhec.dylib";
+    #endif
 #else
-	"/usr/lib/libsaxonhec.so";
+    #ifdef EEC
+        "libsaxoneec.dll";
+    #elif defined PEC
+	    "libsaxonpec.dll";
+    #else
+	    "libsaxonhec.dll";
+    #endif
 #endif
 /*    #else
 #ifdef EEC
