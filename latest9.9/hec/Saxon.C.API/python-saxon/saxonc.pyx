@@ -161,6 +161,19 @@ cdef class PySaxonProcessor:
         val.thisxptr = self.thisptr.newXsltProcessor()
         return val
 
+    def new_xslt30_processor(self):
+        """
+        new_xslt30_processor(self)
+        Create an PyXslt30Processor. A PyXslt30Processor is used to compile and execute XSLT 3.0 stylesheets. 
+
+        Returns: 
+            PyXslt30Processor: a newly created PyXslt30Processor
+
+        """
+        cdef PyXslt30Processor val = PyXslt30Processor()
+        val.thisxptr = self.thisptr.newXslt30Processor()
+        return val
+
     def new_xquery_processor(self):
         """
         new_xquery_processor(self)

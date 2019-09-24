@@ -114,7 +114,9 @@ PHP_METHOD(SaxonProcessor, __construct)
     zend_object * zobj = Z_OBJ_P(object);
 
     saxonProcessor_object * obj = (saxonProcessor_object *)((char *)zobj - XtOffsetOf(saxonProcessor_object, std));
-
+if(license){
+std::cerr<<"SaxonProcessor license is true"<<std::endl;
+}
 	saxonProc = new SaxonProcessor(license); //TODO: add license flag to PHP function argument
 		
     
@@ -146,7 +148,6 @@ PHP_METHOD(SaxonProcessor, __construct)
 	     //php_error(E_WARNING,"cwd is nullXXXXXXXXXXXXXXXXXXXXXXX");
 	   }else {
            //  php_error(E_WARNING,cwd);
-//std::cerr<<"SaxonProcessorConstructor cp2YYYYYYY cwd:"<<cwd<<std::endl;
  
 	    saxonProc->setcwd(cwd);
 
@@ -1920,9 +1921,9 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
 
     PHP_METHOD(Xslt30Processor, callTemplateReturningString){
     Xslt30Processor *xslt30Processor;
-    char* templateName;
+    char* templateName = NULL;
    
-    char * styleFileName;
+    char * styleFileName = NULL;
     size_t len1, len2;
 
     if (ZEND_NUM_ARGS()==1 && zend_parse_parameters(ZEND_NUM_ARGS() , "s", &templateName, &len2) == FAILURE) {
@@ -1963,9 +1964,9 @@ PHP_METHOD(Xslt30Processor, callFunctionReturningString){
 
     PHP_METHOD(Xslt30Processor, callTemplateReturningFile){
    Xslt30Processor *xslt30Processor;
-    char* templateName;
-    char * filename;
-    char * styleFileName;
+    char* templateName = NULL;
+    char * filename = NULL;
+    char * styleFileName = NULL;
     size_t len1, len2, len3;
 
     if (ZEND_NUM_ARGS()==1 && zend_parse_parameters(ZEND_NUM_ARGS() , "s", &templateName, &len2) == FAILURE) {
@@ -2106,16 +2107,16 @@ PHP_METHOD(Xslt30Processor, applyTemplatesReturningFile){
 PHP_METHOD(Xslt30Processor, addPackages){
     HashTable *arr_hash;
     Xslt30Processor *xslt30Processor;
-    char* functionName;
+    char* functionName = NULL;
     zval * arguments_zval;
     zval * val;
     long num_key;
-    const char ** arguments;
+    const char ** arguments = NULL;
     int argument_length=0;
     zend_string *key;
 
-    char * infilename;
-    char * styleFileName;
+    char * infilename = NULL;
+    char * styleFileName = NULL;
     size_t len1, len2;
 
         if (zend_parse_parameters(ZEND_NUM_ARGS() , "a", &arguments_zval) == FAILURE) {
@@ -2366,7 +2367,7 @@ PHP_METHOD(Xslt30Processor, setGlobalContextItem)
 PHP_METHOD(Xslt30Processor, setGlobalContextFromFile)
 {
     Xslt30Processor *xslt30Processor;
-    char * inFilename;
+    char * inFilename = NULL;
     size_t len1;
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &inFilename, &len1) == FAILURE) {
         RETURN_NULL();
@@ -2386,7 +2387,7 @@ PHP_METHOD(Xslt30Processor, setGlobalContextFromFile)
 PHP_METHOD(Xslt30Processor, setInitialMatchSelectionAsFile)
 {
     Xslt30Processor *xslt30Processor;
-    char * inFilename;
+    char * inFilename = NULL;
     size_t len1;
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &inFilename, &len1) == FAILURE) {
         RETURN_NULL();
@@ -2406,9 +2407,9 @@ PHP_METHOD(Xslt30Processor, setInitialMatchSelectionAsFile)
 PHP_METHOD(Xslt30Processor, transformFileToFile)
 {
     Xslt30Processor *xslt30Processor;
-    char * outfileName;
-    char * infilename;
-    char * styleFileName;
+    char * outfileName = NULL;
+    char * infilename = NULL;
+    char * styleFileName = NULL;
     size_t len1, len2, len3;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() , "sss", &infilename, &len1, &styleFileName, &len2, &outfileName, &len3) == FAILURE) {
@@ -2431,8 +2432,8 @@ PHP_METHOD(Xslt30Processor, transformFileToFile)
 PHP_METHOD(Xslt30Processor, transformFileToValue)
 {
     Xslt30Processor *xslt30Processor;
-    char * infilename;
-    char * styleFileName;
+    char * infilename = NULL;
+    char * styleFileName = NULL;
    size_t len1, len2;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &infilename, &len1, &styleFileName, &len2) == FAILURE) {
@@ -2470,8 +2471,8 @@ PHP_METHOD(Xslt30Processor, transformFileToValue)
 PHP_METHOD(Xslt30Processor, transformFileToString)
 {
     Xslt30Processor *xslt30Processor;
-    char * infilename;
-    char * styleFileName;
+    char * infilename = NULL;
+    char * styleFileName = NULL;
     size_t len1, len2;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &infilename, &len1, &styleFileName, &len2) == FAILURE) {
@@ -2678,7 +2679,7 @@ PHP_METHOD(Xslt30Processor, transformToFile)
 PHP_METHOD(Xslt30Processor, compileFromFile)
 {
     Xslt30Processor *xslt30Processor;
-    char * name;
+    char * name = NULL;
     size_t len1;
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &name, &len1) == FAILURE) {
         RETURN_NULL();
@@ -2695,7 +2696,7 @@ PHP_METHOD(Xslt30Processor, compileFromFile)
 PHP_METHOD(Xslt30Processor, compileFromAssociatedFile)
 {
     Xslt30Processor *xslt30Processor;
-    char * name;
+    char * name = NULL;
     size_t len1;
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &name, &len1) == FAILURE) {
         RETURN_NULL();
@@ -2729,7 +2730,7 @@ PHP_METHOD(Xslt30Processor, compileFromStringAndSave)
 {
     Xslt30Processor *xslt30Processor;
     char * stylesheetStr;
-    char * filename;
+    char * filename = NULL;
     size_t len1, len2, myint;
     if (zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &stylesheetStr, filename, &len1, &len2) == FAILURE) {
         RETURN_NULL();
@@ -2745,8 +2746,8 @@ PHP_METHOD(Xslt30Processor, compileFromStringAndSave)
 PHP_METHOD(Xslt30Processor, compileFromFileAndSave)
 {
     Xslt30Processor *xslt30Processor;
-    char * stylesheetFilename;
-    char * filename;
+    char * stylesheetFilename = NULL;
+    char * filename = NULL;
     size_t len1, len2, myint;
     if (zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &stylesheetFilename, filename, &len1, &len2) == FAILURE) {
         RETURN_NULL();
@@ -2827,7 +2828,7 @@ PHP_METHOD(Xslt30Processor, setJustInTimeCompilation)
 PHP_METHOD(Xslt30Processor, setOutputFile)
 {
     Xslt30Processor *xslt30Processor;
-    char * outputFilename;
+    char * outputFilename = NULL;
     size_t len1;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() , "s", &outputFilename, &len1) == FAILURE) {
@@ -2851,7 +2852,7 @@ PHP_METHOD(Xslt30Processor, setOutputFile)
 PHP_METHOD(Xslt30Processor, setProperty)
 {
     Xslt30Processor *xslt30Processor;
-    char * name;
+    char * name = NULL;
     char * value;
     size_t len1, len2, myint;
 

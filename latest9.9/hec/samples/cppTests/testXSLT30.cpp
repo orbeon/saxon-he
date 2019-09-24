@@ -410,6 +410,28 @@ ostringstream name1;
 	
 }
 
+void testValidation(Xslt30Processor * trans, sResultCount * sresult){
+ trans->clearParameters(true);
+  trans->clearProperties();
+
+
+trans->compileFromString("<?xml version='1.0'?><xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform'                 xmlns:xs='http://www.w3.org/2001/XMLSchema' version='3.0' exclude-result-prefixes='#all'>     <xsl:import-schema><xs:schema><xs:element name='x' type='xs:int'/></xs:schema></xsl:import-schema> <xsl:template name='main'>          <xsl:result-document validation='strict'> <x>3</x>   </xsl:result-document>    </xsl:template>    </xsl:stylesheet>");
+
+	  const char * rootValue = trans->callTemplateReturningString(NULL, "main");
+
+
+	if(rootValue == NULL) {
+		std::cout<<"NULL found"<<std::endl;
+		sresult->failure++;
+		sresult->failureList.push_back("testValidation");
+		return;
+
+	} else {
+		std::cout<<"Result="<<rootValue<<endl;
+		sresult->success++;
+	}
+}
+
 
 void testXdmNodeOutput(Xslt30Processor * trans, sResultCount * sresult){
  trans->clearParameters(true);
@@ -972,6 +994,7 @@ int main()
    processor->setConfigurationProperty("http://saxon.sf.net/feature/generateByteCode","false");
    sResultCount *sresult = new sResultCount();
     Xslt30Processor * trans = processor->newXslt30Processor();
+	testValidation(trans,sresult);
   /*  exampleSimple1Err(trans, sresult);
     exampleSimple1(trans, sresult);
     exampleSimple_xmark(trans, sresult);
