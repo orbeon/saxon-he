@@ -417,8 +417,7 @@ public class NamespaceConstant {
                 uri.equals(SCHEMA) ||
                 uri.equals(SCHEMA_INSTANCE) ||
                 uri.equals(MATH) ||
-                uri.equals(XQUERY) ||
-                uri.equals(XQUERY_OPTIONS);
+                uri.equals(XQUERY);
     }
 
     /**
@@ -435,7 +434,6 @@ public class NamespaceConstant {
                 uri.equals(SCHEMA_INSTANCE) ||
                 uri.equals(MATH) ||
                 uri.equals(XQUERY) ||
-                uri.equals(XQUERY_OPTIONS) ||
                 uri.equals(MAP_FUNCTIONS) ||
                 uri.equals(ARRAY_FUNCTIONS);
     }
