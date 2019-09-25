@@ -14,7 +14,7 @@ export LD_LIBRARY_PATH=$JET_HOME/lib/x86/shared:$LD_LIBRARY_PATH
 
 
 
-gcc  Transform.c -o transform -ldl -lc -lsaxonpec -DPEC $1 $2
+gcc  Transform.c -o transform -ldl -lc -DPEC -I../Saxon.C.API/jni $1 $2
 
-gcc  Query.c -o query -ldl -lc -lsaxonpec -DPEC $1 $2
+gcc  Query.c -o query -ldl -lc -DPEC -I../Saxon.C.API/jni $1 $2
 

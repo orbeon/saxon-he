@@ -1,4 +1,4 @@
-#include "jni/jni.h"
+#include <jni.h>
 
 #if defined __linux__ || defined __APPLE__
     #include <stdlib.h>
