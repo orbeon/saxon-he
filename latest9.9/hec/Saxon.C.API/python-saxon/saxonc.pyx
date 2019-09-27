@@ -1156,17 +1156,17 @@ cdef class PyXslt30Processor:
         self.thisxptr.clearProperties()
 
 
-     def set_initial_template_parameters(self, **kwds, tunnel):
+     def set_initial_template_parameters(self, bool tunnel, **kwds):
          """
-         set_initial_template_parameters(self, **kwds, tunnel)
+         set_initial_template_parameters(self, bool tunnel, **kwds)
          Set parameters to be passed to the initial template. These are used
          whether the transformation is invoked by applying templates to an initial source item,
          or by invoking a named template. The parameters in question are the xsl:param elements
          appearing as children of the xsl:template element.
 
          Args:
+			 tunnel (bool): True if these values are to be used for setting tunnel parameters;
              **kwds: the parameters to be used for the initial template supplied as an key-value pair.
-             tunnel (bool): True if these values are to be used for setting tunnel parameters;
              False if they are to be used for non-tunnel parameters. The default is false.
 
          Example:
@@ -1176,9 +1176,11 @@ cdef class PyXslt30Processor:
         cdef map[str, PyXdmValue ] parameters
         cdef bool c_tunnel
         c_tunnel = tunnel
+		cdef PyXdmNode node_
         for key, value in kwds.items():
-               if isinstance(value, PyXdmValue):
-                 parameters[key] = value
+        	if isinstance(value, PyXdmValue):
+				node_ = value
+            	parameters[key] = node_.thisvptr
                else:
                  raise Warning("Warning: transform_to_string should only the following keyword arguments: (source_file, stylesheet_file, xdm_node)")
         if len(kwds) > 0:
@@ -1223,6 +1225,7 @@ cdef class PyXslt30Processor:
         cdef char * c_stylesheetfile
         py_source_string = None
         py_stylesheet_string = None
+        cdef PyXdmNode node_
         for key, value in kwds.items():
           if isinstance(value, str):
             if key == "source_file":
@@ -1233,7 +1236,7 @@ cdef class PyXslt30Processor:
               c_stylesheetfile = py_stylesheet_string if value is not None else ""
           elif key == "xdm_node":
             if isinstance(value, PyXdmNode):
-            
+              node_ = value            
               self.setSourceFromXdmNode(node_.derivednptr)
           elif len(kwds) > 0:
             raise Warning("Warning: transform_to_string should only contain the following keyword arguments: (source_file|xdm_node, stylesheet_file)")
@@ -1273,7 +1276,7 @@ cdef class PyXslt30Processor:
         py_source_string = None
         py_stylesheet_string = None
         py_output_string = None
-        cdef PyXdmNode node_
+        cdef PyXdmNode node_ = None
         for key, value in kwds.items():
           if isinstance(value, str):
             if key == "source_file":
@@ -1288,10 +1291,11 @@ cdef class PyXslt30Processor:
           elif key == "xdm_node":
             if isinstance(value, PyXdmNode):
               node_ = value
-              self.thisxptr.setSourceFromXdmNode(node_.derivednptr)
-
-        if len(kwds) == 0:
-          self.thisxptr.transformToFile()
+              
+        if node_ is not None:
+        	if py_output_string is not None:
+		  		self.thisxptr.setOutputFile(c_outputfile);
+          self.thisxptr.transformToFile(node_.derivednptr)
         else:
           self.thisxptr.transformFileToFile(c_sourcefile if py_source_string is not None else NULL, c_stylesheetfile if py_stylesheet_string is not None else NULL, c_outputfile if py_output_string is not None else NULL)
 
@@ -1323,6 +1327,7 @@ cdef class PyXslt30Processor:
         """
         cdef const char * c_sourcefile = NULL
         cdef const char * c_stylesheetfile = NULL
+		cdef PyXdmNode node_ = None
         py_source_string = None
         py_stylesheet_string = None
         for key, value in kwds.items():
@@ -1333,13 +1338,13 @@ cdef class PyXslt30Processor:
               c_stylesheetfile = make_c_str(value)
           elif key == "xdm_node":
             if isinstance(value, PyXdmNode):
-              self.setSourceFromXdmNode(value)
+              node_ = value
         cdef PyXdmValue val = None
         cdef PyXdmAtomicValue aval = None
         cdef PyXdmNode nval = None
         cdef saxoncClasses.XdmValue * xdmValue = NULL
-        if len(kwds) == 0:
-          xdmValue = self.thisxptr.transformToValue()
+        if len(kwds) == 1 and node_ is not None:
+          xdmValue = self.thisxptr.transformToValue(node_.derivednptr)
         else:
           xdmValue = self.thisxptr.transformFileToValue(c_sourcefile, c_stylesheetfile)
 
@@ -1359,7 +1364,577 @@ cdef class PyXslt30Processor:
             val.thisvptr = xdmValue
             return val
 
-     def compile_stylesheet(self, **kwds):
+     def apply_template_returning_value(self, **kwds):
+        """
+        apply_templates_returning_value(self, **kwds)
+        Invoke the stylesheet by applying templates to a supplied input sequence, Saving the results as an XdmValue.
+
+        Args:
+            **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). Other allowed argument: stylesheet_file (str)
+
+
+
+        Returns:
+            PyXdmValue: Result of the transformation as an PyXdmValue object
+
+
+        Example:
+
+            1) xsltproc.set_initial_match_selection(file_name="cat.xml")\r
+               node = xsltproc.apply_template_returning_value(stylesheet_file="test1.xsl")
+
+
+            2) xsltproc.compile_stylesheet(stylesheet_file="test1.xsl")
+			   xsltproc.set_initial_match_selection(file_name="cat.xml")\r
+               node = xsltproc.apply_template_returning_value()
+
+        """
+        cdef const char * c_sourcefile = NULL
+        cdef const char * c_stylesheetfile = NULL
+		cdef PyXdmValue value_ = None
+        py_source_string = None
+        py_stylesheet_string = None
+        for key, value in kwds.items():
+          if isinstance(value, str):
+            if key == "source_file":
+            	c_sourcefile = make_c_str(value)
+				self.thisxptr.setInitialMatchSelectionAsFile(c_sourcefile)
+            if key == "stylesheet_file":
+            	c_stylesheetfile = make_c_str(value)
+          elif key == "xdm_value":
+            if isinstance(value, PyXdmValue):
+				value_ = value;
+            	self.thisxptr.setInitialMatchSelection(value_.thisvptr)
+        cdef PyXdmValue val = None
+        cdef PyXdmAtomicValue aval = None
+        cdef PyXdmNode nval = None
+        cdef saxoncClasses.XdmValue * xdmValue = NULL
+        xdmValue = self.thisxptr.applyTemplatesReturningValue(c_stylesheetfile)
+
+        if xdmValue is NULL:
+            return None
+        cdef type_ = xdmValue.getType()
+        if type_== 4:
+            aval = PyXdmAtomicValue()
+            aval.derivedaptr = aval.derivedptr = aval.thisvptr = <saxoncClasses.XdmAtomicValue *>xdmValue
+            return aval
+        elif type_ == 3:
+            nval = PyXdmNode()
+            nval.derivednptr = nval.derivedptr = nval.thisvptr = <saxoncClasses.XdmNode*>xdmValue
+            return nval
+        else:
+            val = PyXdmValue()
+            val.thisvptr = xdmValue
+            return val
+
+
+     def apply_template_returning_str(self, **kwds):
+        """
+        apply_templates_returning_str(self, **kwds)
+        Invoke the stylesheet by applying templates to a supplied input sequence, Saving the results as a str.
+
+        Args:
+            **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). Other allowed argument: stylesheet_file (str)
+
+
+
+        Returns:
+            PyXdmValue: Result of the transformation as an PyXdmValue object
+
+
+        Example:
+
+            1) xsltproc.set_initial_match_selection(file_name="cat.xml")\r
+               content = xsltproc.apply_template_returning_str(stylesheet_file="test1.xsl")
+			   print(content)
+
+        """
+        cdef const char * c_sourcefile = NULL
+        cdef const char * c_stylesheetfile = NULL
+		cdef PyXdmvalue value_ = None
+        py_source_string = None
+        py_stylesheet_string = None
+        for key, value in kwds.items():
+          if isinstance(value, str):
+            if key == "source_file":
+            	c_sourcefile = make_c_str(value)
+				self.thisxptr.setInitialMatchSelectionAsFile(c_sourcefile)
+            if key == "stylesheet_file":
+            	c_stylesheetfile = make_c_str(value)
+          elif key == "xdm_value":
+            if isinstance(value, PyXdmValue):
+				value_ = value;
+            	self.thisxptr.setInitialMatchSelection(value_.thisvptr)
+        cdef const char* c_string  = self.thisxptr.applyTemplatesReturningString(c_stylesheetfile) 
+        ustring = c_string.decode('UTF-8') if c_string is not NULL else None
+        return ustring
+
+     def apply_template_returning_file(self, **kwds):
+        """
+        apply_templates_returning_file(self, **kwds)
+        Invoke the stylesheet by applying templates to a supplied input sequence, Saving the results to file.
+
+        Args:
+            **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). Other allowed argument: stylesheet_file (str) and the required argument output_file (str)
+
+
+        Returns:
+            PyXdmValue: Result of the transformation as an PyXdmValue object
+
+
+        Example:
+
+            1) xsltproc.set_initial_match_selection(file_name="cat.xml")\r
+               content = xsltproc.apply_template_returning_file(stylesheet_file="test1.xsl", output_file="result.xml")
+			   print(content)
+
+        """
+        cdef const char * c_sourcefile = NULL
+        cdef const char * c_stylesheetfile = NULL
+		cdef const char * c_outputfile = NULL
+		cdef PyXdmValue value_ = None
+        py_source_string = None
+        py_stylesheet_string = None
+		py_output_string = None
+        for key, value in kwds.items():
+          if isinstance(value, str):
+            if key == "source_file":
+            	c_sourcefile = make_c_str(value)
+				self.thisxptr.setInitialMatchSelectionAsFile(c_sourcefile)
+            if key == "output_file":
+              py_output_string = value.encode('UTF-8') if value is not None else None
+              c_outputfile = py_output_string if value is not None else ""
+            if key == "stylesheet_file":
+            	c_stylesheetfile = make_c_str(value)
+          elif key == "xdm_value":
+            if isinstance(value, PyXdmNode):
+				value_ = value;
+            	self.thisxptr.setInitialMatchSelection(value_.thisvptr)
+        self.thisxptr.applyTemplatesReturningFile(c_stylesheetfile, c_outputfile) 
+        
+
+     def call_template_returning_value(self, str template_name=None, **kwds):
+        """
+        call_templates_returning_value(self, str template_name, **kwds)
+        Invoke a transformation by calling a named template and return result as an PyXdmValue.
+
+        Args:
+			template_name(str): The name of the template to invoke. If None is supplied then call the initial-template
+            **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). Other allowed argument: stylesheet_file (str)
+
+
+
+        Returns:
+            PyXdmValue: Result of the transformation as an PyXdmValue object
+
+
+        Example:
+            1) node = xsltproc.call_template_returning_value("main", stylesheet_file="test1.xsl")
+
+
+            2) xsltproc.set_initial_match_selection(file_name="cat.xml")\r
+               node = xsltproc.call_template_returning_value("main", stylesheet_file="test1.xsl")
+
+
+            3) xsltproc.compile_stylesheet(stylesheet_file="test2.xsl")
+			   xsltproc.set_initial_match_selection(file_name="cat.xml")\r
+               node = xsltproc.call_template_returning_value("go")
+
+        """
+        cdef const char * c_templateName = NULL
+        cdef const char * c_sourcefile = NULL
+        cdef const char * c_stylesheetfile = NULL
+		cdef PyXdmValue value_ = None
+        py_source_string = None
+        py_template_name_str = None
+        py_stylesheet_string = None
+        for key, value in kwds.items():
+          if isinstance(value, str):
+            if key == "source_file":
+            	c_sourcefile = make_c_str(value)
+				self.thisxptr.setInitialMatchSelection(c_sourcefile)
+            if key == "stylesheet_file":
+            	c_stylesheetfile = make_c_str(value)
+          elif key == "xdm_node":
+            if isinstance(value, PyXdmValue):
+				value_ = value;
+            	self.thisxptr.setInitialMatchSelection(value_.thisvptr)
+
+		c_templateName = make_c_str(template_name)
+        cdef PyXdmValue val = None
+        cdef PyXdmAtomicValue aval = None
+        cdef PyXdmNode nval = None
+        cdef saxoncClasses.XdmValue * xdmValue = NULL
+        xdmValue = self.thisxptr.callTemplatesReturningValue(c_stylesheetfile, c_templateName)
+
+        if xdmValue is NULL:
+            return None
+        cdef type_ = xdmValue.getType()
+        if type_== 4:
+            aval = PyXdmAtomicValue()
+            aval.derivedaptr = aval.derivedptr = aval.thisvptr = <saxoncClasses.XdmAtomicValue *>xdmValue
+            return aval
+        elif type_ == 3:
+            nval = PyXdmNode()
+            nval.derivednptr = nval.derivedptr = nval.thisvptr = <saxoncClasses.XdmNode*>xdmValue
+            return nval
+        else:
+            val = PyXdmValue()
+            val.thisvptr = xdmValue
+            return val
+
+
+
+     def call_template_returning_str(self, str template_name=None, **kwds):
+        """
+        call_templates_returning_str(self, str template_name, **kwds)
+        Invoke a transformation by calling a named template and return result as a string.
+
+        Args:
+			template_name(str): The name of the template to invoke. If None is supplied then call the initial-template
+            **kwds: Possible optional arguments: source_file (str) or xdm_Value (PyXdmValue). Other allowed argument: stylesheet_file (str)
+
+
+
+        Returns:
+            PyXdmValue: Result of the transformation as an PyXdmValue object
+
+
+        Example:
+            1) result = xsltproc.call_template_returning_str("main", stylesheet_file="test1.xsl")
+
+
+            2) xsltproc.set_initial_match_selection(file_name="cat.xml")\r
+               result = xsltproc.call_template_returning_str("main", stylesheet_file="test1.xsl")
+
+
+            3) xsltproc.compile_stylesheet(stylesheet_file="test2.xsl")
+			   xsltproc.set_initial_match_selection(file_name="cat.xml")\r
+               result = xsltproc.call_template_returning_str("go")
+			   print(result)
+        """
+        cdef const char * c_templateName = NULL
+        cdef const char * c_sourcefile = NULL
+        cdef const char * c_stylesheetfile = NULL
+		cdef PyXdmNode value_ = None
+        py_source_string = None
+        py_template_name_str = None
+        py_stylesheet_string = None
+        for key, value in kwds.items():
+          if isinstance(value, str):
+            if key == "source_file":
+            	c_sourcefile = make_c_str(value)
+				self.thisxptr.setInitialMatchSelectionAsFile(c_sourcefile)
+            if key == "stylesheet_file":
+            	c_stylesheetfile = make_c_str(value)
+          elif key == "xdm_value":
+            if isinstance(value, PyXdmValue):
+				value_ = value;
+            	self.thisxptr.setInitialMatchSelection(value_.thisvptr)
+
+		c_templateName = make_c_str(template_name)
+		cdef const char* c_string  = self.thisxptr.callTemplatesReturningString(c_stylesheetfile, c_templateName) 
+        ustring = c_string.decode('UTF-8') if c_string is not NULL else None
+        return ustring
+
+
+     def call_template_returning_file(self, str template_name=None, **kwds):
+        """
+        call_templates_returning_str(self, str template_name, **kwds)
+        Invoke a transformation by calling a named template and save result in a specified file.
+
+        Args:
+			template_name(str): The name of the template to invoke. If None is supplied then call the initial-template
+            **kwds: Possible optional arguments: source_file (str) or xdm_node (PyXdmNode). Other allowed argument: stylesheet_file (str)
+
+
+
+        Returns:
+            PyXdmValue: Result of the transformation as an PyXdmValue object
+
+
+        Example:
+            1) xsltproc.call_template_returning_file("main", stylesheet_file="test1.xsl",  output_file="result.xml")
+
+
+            2) xsltproc.set_initial_match_selection(file_name="cat.xml")\r
+               xsltproc.call_template_returning_file("main", stylesheet_file="test1.xsl", output_file="result.xml")
+
+
+            3) xsltproc.compile_stylesheet(stylesheet_file="test2.xsl")
+			   xsltproc.set_initial_match_selection(file_name="cat.xml")\r
+               xsltproc.call_template_returning_file("go", output_file="result.xml")
+			   print(result)
+        """
+        cdef char * c_outputfile = NULL       
+		cdef const char * c_templateName = NULL
+        cdef const char * c_sourcefile = NULL
+        cdef const char * c_stylesheetfile = NULL
+		cdef PyXdmValue value_ = None
+        py_source_string = None
+        py_template_name_str = None
+        py_stylesheet_string = None
+		py_output_string = None
+        for key, value in kwds.items():
+          if isinstance(value, str):
+            if key == "source_file":
+            	c_sourcefile = make_c_str(value)
+				self.thisxptr.setInitialMatchSelectionAsFile(c_sourcefile)
+            if key == "output_file":
+              py_output_string = value.encode('UTF-8') if value is not None else None
+              c_outputfile = py_output_string if value is not None else ""
+            if key == "stylesheet_file":
+            	c_stylesheetfile = make_c_str(value)
+          elif key == "xdm_value":
+            if isinstance(value, PyXdmValue):
+				value_ = value;
+            	self.thisxptr.setInitialMatchSelection(value_.thisvptr)
+
+		c_templateName = make_c_str(template_name)
+		self.thisxptr.callTemplatesReturningFile(c_stylesheetfile, c_templateName, c_outputfile)
+
+
+
+    def call_function_returning_value(self, str function_name, *args, **kwds):
+        """
+        call_templates_returning_value(self, str function_name, *args, **kwds)
+        Invoke a transformation by calling a named template and return result as an PyXdmValue.
+
+        Args:
+			function_name(str): The name of the template to invoke. If None is supplied then call the initial-template
+			*args: Pointer array of XdmValue object - he values of the arguments to be supplied to the function.
+            **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). Other allowed argument: stylesheet_file (str)
+
+
+
+        Returns:
+            PyXdmValue: Result of the transformation as an PyXdmValue object
+
+
+        Example:
+            1) node = xsltproc.call_function_returning_value("{http://localhost/example}func", stylesheet_file="test1.xsl")
+
+
+            2) xsltproc.set_initial_match_selection(file_name="cat.xml")\r
+               value = xsltproc.call_function_returning_value("{http://localhost/test}add", stylesheet_file="test1.xsl")
+
+
+            3) xsltproc.compile_stylesheet(stylesheet_file="test2.xsl")
+			   xsltproc.set_initial_match_selection(file_name="cat.xml")\r
+               value = xsltproc.call_function_returning_value("{http://exmaple.com}func1")
+
+        """
+        cdef const char * c_functionName = NULL
+        cdef const char * c_sourcefile = NULL
+        cdef const char * c_stylesheetfile = NULL
+		cdef PyXdmValue value_ = None
+        py_source_string = None
+        py_template_name_str = None
+        py_stylesheet_string = None
+        for key, value in kwds.items():
+          if isinstance(value, str):
+            if key == "source_file":
+            	c_sourcefile = make_c_str(value)
+				self.thisxptr.setInitialMatchSelectionAsFile(c_sourcefile)
+            if key == "stylesheet_file":
+            	c_stylesheetfile = make_c_str(value)
+          elif key == "xdm_value":
+            if isinstance(value, PyXdmValue):
+				value_ = value;
+            	self.thisxptr.setInitialMatchSelection(value_.thisvptr)
+
+		cdef saxoncClasses.XdmValue ** argumentV = saxoncClasses.XdmValue[len(args)]
+
+		for x in range(len(args)):
+			if isinstance(args[x], PyXdmValue):
+				argumentV[x] = args[x].thisvptr
+			else:
+				raise Exception("Argument value at position ".x." is not an PyXdmValue")
+
+		c_functionName = make_c_str(function_name)
+        cdef PyXdmValue val = None
+        cdef PyXdmAtomicValue aval = None
+        cdef PyXdmNode nval = None
+        cdef saxoncClasses.XdmValue * xdmValue = NULL
+        xdmValue = self.thisxptr.callFunctionReturningValue(c_stylesheetfile, c_functionName, argumentV, len(args))
+
+        if xdmValue is NULL:
+            return None
+        cdef type_ = xdmValue.getType()
+        if type_== 4:
+            aval = PyXdmAtomicValue()
+            aval.derivedaptr = aval.derivedptr = aval.thisvptr = <saxoncClasses.XdmAtomicValue *>xdmValue
+            return aval
+        elif type_ == 3:
+            nval = PyXdmNode()
+            nval.derivednptr = nval.derivedptr = nval.thisvptr = <saxoncClasses.XdmNode*>xdmValue
+            return nval
+        else:
+            val = PyXdmValue()
+            val.thisvptr = xdmValue
+            return val
+
+
+
+    def call_function_returning_str(self, str function_name, *args, **kwds):
+        """
+        call_templates_returning_value(self, str function_name, *args, **kwds)
+        Invoke a transformation by calling a named template and return result as a serialized string.
+
+        Args:
+			function_name(str): The name of the template to invoke. If None is supplied then call the initial-template
+			*args: Pointer array of XdmValue object - he values of the arguments to be supplied to the function.
+            **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). Other allowed argument: stylesheet_file (str)
+
+
+
+        Returns:
+            str: Result of the transformation as an str value
+
+
+        Example:
+            1) result = xsltproc.call_function_returning_str("{http://localhost/example}func", stylesheet_file="test1.xsl")
+
+
+            2) xsltproc.set_initial_match_selection(file_name="cat.xml")\r
+               result = xsltproc.call_function_returning_str("{http://localhost/test}add", stylesheet_file="test1.xsl")
+
+
+            3) xsltproc.compile_stylesheet(stylesheet_file="test2.xsl")
+			   xsltproc.set_initial_match_selection(file_name="cat.xml")\r
+               result = xsltproc.call_function_returning_str("{http://exmaple.com}func1")
+
+        """
+        cdef const char * c_functionName = NULL
+        cdef const char * c_sourcefile = NULL
+        cdef const char * c_stylesheetfile = NULL
+		cdef PyXdmValue value_ = None
+        py_source_string = None
+        py_template_name_str = None
+        py_stylesheet_string = None
+        for key, value in kwds.items():
+          if isinstance(value, str):
+            if key == "source_file":
+            	c_sourcefile = make_c_str(value)
+				self.thisxptr.setInitialMatchSelectionAsFile(c_sourcefile)
+            if key == "stylesheet_file":
+            	c_stylesheetfile = make_c_str(value)
+          elif key == "xdm_value":
+            if isinstance(value, PyXdmValue):
+				value_ = value;
+            	self.thisxptr.setInitialMatchSelection(value_.thisvptr)
+
+		cdef saxoncClasses.XdmValue ** argumentV = saxoncClasses.XdmValue[len(args)]
+
+		for x in range(len(args)):
+			if isinstance(args[x], PyXdmValue):
+				argumentV[x] = args[x].thisvptr
+			else:
+				raise Exception("Argument value at position ".x." is not an PyXdmValue")
+
+		c_functionName = make_c_str(function_name)
+        cdef PyXdmValue val = None
+        cdef PyXdmAtomicValue aval = None
+        cdef PyXdmNode nval = None
+        cdef saxoncClasses.XdmValue * xdmValue = NULL
+        cdef const char* c_string = self.thisxptr.callFunctionReturningString(c_stylesheetfile, c_functionName, argumentV, len(args))
+        ustring = c_string.decode('UTF-8') if c_string is not NULL else None
+        return ustring
+
+
+    def call_function_returning_file(self, str function_name, *args, **kwds):
+        """
+        call_templates_returning_value(self, str function_name, *args, **kwds)
+        Invoke a transformation by calling a named template and return result as an PyXdmValue.
+
+        Args:
+			function_name(str): The name of the template to invoke. If None is supplied then call the initial-template
+			*args: Pointer array of XdmValue object - he values of the arguments to be supplied to the function.
+            **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). Other allowed argument: stylesheet_file (str)
+
+
+
+        Returns:
+            PyXdmValue: Result of the transformation as an PyXdmValue object
+
+
+        Example:
+            1)  xsltproc.set_output_file("result.xml")
+				xsltproc.call_function_returning_file("{http://localhost/example}func", stylesheet_file="test1.xsl")
+
+
+            2) xsltproc.set_initial_match_selection(file_name="cat.xml")\r
+               xsltproc.call_function_returning_file("{http://localhost/test}add", stylesheet_file="test1.xsl", output_file="result.xml")
+
+
+            3) xsltproc.compile_stylesheet(stylesheet_file="test2.xsl")
+			   xsltproc.set_initial_match_selection(file_name="cat.xml")\r
+               xsltproc.call_function_returning_file("{http://exmaple.com}func1", output_file="result.xml")
+
+        """
+        cdef const char * c_functionName = NULL
+        cdef const char * c_sourcefile = NULL
+        cdef const char * c_outputfile = NULL
+        cdef const char * c_stylesheetfile = NULL
+		cdef PyXdmValue value_ = None
+        py_source_string = None
+        py_template_name_str = None
+        py_stylesheet_string = None
+        for key, value in kwds.items():
+          if isinstance(value, str):
+            if key == "source_file":
+            	c_sourcefile = make_c_str(value)
+				self.thisxptr.setInitialMatchSelectionAsFile(c_sourcefile)
+            if key == "output_file":
+              py_output_string = value.encode('UTF-8') if value is not None else None
+              c_outputfile = py_output_string if value is not None else ""
+            if key == "stylesheet_file":
+            	c_stylesheetfile = make_c_str(value)
+          elif key == "xdm_value":
+            if isinstance(value, PyXdmValue):
+				value_ = value;
+            	self.thisxptr.setInitialMatchSelection(value_.thisvptr)
+
+		cdef saxoncClasses.XdmValue ** argumentV = saxoncClasses.XdmValue[len(args)]
+
+		for x in range(len(args)):
+			if isinstance(args[x], PyXdmValue):
+				argumentV[x] = args[x].thisvptr
+			else:
+				raise Exception("Argument value at position ".x." is not an PyXdmValue")
+
+		c_functionName = make_c_str(function_name)
+        cdef PyXdmValue val = None
+        cdef PyXdmAtomicValue aval = None
+        cdef PyXdmNode nval = None
+        cdef saxoncClasses.XdmValue * xdmValue = NULL
+        self.thisxptr.callFunctionReturningFile(c_stylesheetfile, c_functionName, argumentV, len(args), c_outputfile)
+
+
+	def add_package(self, str file_name):
+        """
+        add_package(self, file_name)
+        Add an XSLT 3.0 package to the library.
+
+        Args:
+            file_name (str): The file name of the XSLT package
+
+        """
+        cdef const char* c_string
+		c_String = make_c_str(file_name)
+		self.thisxptr.addPackage(c_string)
+
+	def clearPackages(self):
+        """
+        clear_packages(self)
+        Clear saved XSLT 3.0 package in the library.
+
+        """
+		self.thisxptr.clearPackage()
+	
+
+        
+    def compile_stylesheet(self, **kwds):
         """
         compile_stylesheet(self, **kwds)
         Compile a stylesheet  received as text, uri or as a node object. The compiled stylesheet is cached and available for execution later. It is also possible to save the compiled stylesheet (SEF file) given the option 'save' and 'output_file'
@@ -1428,6 +2003,37 @@ cdef class PyXslt30Processor:
             self.thisxptr.compileFromXdmNode(py_xdmNode.derivednptr)
           else:
             raise Exception(py_error_message)
+
+
+     def compile_associated_stylesheet(self, source_file):
+        """
+        compile_associated(self, **kwds)
+        Get the stylesheet associated via the xml-stylesheet processing instruction (see
+        http://www.w3.org/TR/xml-stylesheet/) with the document
+        document specified in the source parameter, and that match
+        the given criteria.  If there are several suitable xml-stylesheet
+        processing instructions, then the returned Source will identify
+        a synthesized stylesheet module that imports all the referenced
+        stylesheet module.
+        Args:
+            source_file (str): The file name of the XML document
+
+        Example:
+            xsltproc.compile_assocated_stylesheet("foo.xml")
+        """
+        py_error_message = "source file not supplied as argument"
+        cdef char * c_sourcefile
+        cdef char * c_stylesheet
+        py_output_string = None
+        py_stylesheet_string = None
+        py_save = False
+        cdef int option = 0
+        cdef PyXdmNode py_xdmNode = None
+        if source_file is None:
+          raise Exception(py_error_message)
+        else:
+        	c_sourefile = make_c_str(source_file)
+            self.thisxptr.compileFromAssocatedFile(c_sourcefile)
 
      def release_stylesheet(self):
         """
