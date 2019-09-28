@@ -12,6 +12,7 @@ import net.sf.saxon.expr.instruct.GlobalContextRequirement;
 import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.trans.*;
+import net.sf.saxon.trans.packages.PackageDetails;
 import net.sf.saxon.trans.rules.RuleManager;
 import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.type.Type;
@@ -41,9 +42,14 @@ public class XSLUsePackage extends StyleElement {
             if (nameAtt == null) {
                 nameAtt = Whitespace.trim(getAttributeValue("", "name"));
             }
-            usedPackage = info.getPackageLibrary().findPackage(nameAtt, getPackageVersionRanges()).loadedPackage;
+            if (nameAtt == null) {
+                reportAbsence("name");
+                nameAtt = "unnamed-package";
+            }
+            PackageDetails pack = info.getPackageLibrary().findPackage(nameAtt, getPackageVersionRanges());
+            usedPackage = pack==null ? null : pack.loadedPackage;
             if (usedPackage == null) {
-                compileError("Package " + getAttributeValue("name") + " could not be found", "XTSE3000");
+                compileErrorInAttribute("Package " + nameAtt + " could not be found", "XTSE3000", "name");
                 // For error recovery, create an empty package
                 usedPackage = getConfiguration().makeStylesheetPackage();
                 usedPackage.setJustInTimeCompilation(info.isJustInTimeCompilation());
