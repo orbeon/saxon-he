@@ -848,7 +848,7 @@ public class Query {
                 System.err.println("Processing " + sourceInput.getSystemId());
             }
             if (!exp.getUnderlyingCompiledQuery().usesContextItem()) {
-                System.err.println("Source document ignored - query does not access the context item");
+                System.err.println("Source document ignored - query can be evaluated without reference to the context item");
                 return;
             }
             if (projection) {
