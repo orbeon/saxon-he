@@ -160,19 +160,19 @@ public class XSLUsePackage extends StyleElement {
         }
         Set<SymbolicName> accepts = getExplicitAcceptedComponentNames();
         Set<SymbolicName> overrides = getNamedOverrides();
-        accepts.retainAll(overrides);
         if (!accepts.isEmpty()) {
-            StringBuilder duplicates = new StringBuilder();
-            boolean first = true;
-            for (SymbolicName name : accepts) {
-                if (first) {
-                    first = false;
-                } else {
-                    duplicates.append(", ");
+            for (SymbolicName o : overrides) {
+                if (accepts.contains(o)) {
+                    compileError("Cannot accept and override the same component (" + o + ")", "XTSE3051");
                 }
-                duplicates.append(name.toString());
+                if (o.getComponentKind() == StandardNames.XSL_FUNCTION) {
+                    // Bug 4326: where xsl:accept gives the function QName but not the arity, the entry will have an arity of -1
+                    SymbolicName n = new SymbolicName.F(o.getComponentName(), -1);
+                    if (accepts.contains(n)) {
+                        compileError("Cannot accept and override the same function (" + o + ")", "XTSE3051");
+                    }
+                }
             }
-            compileError("Cannot accept and override the same component (" + duplicates + ")", "XTSE3051");
         }
     }
 
