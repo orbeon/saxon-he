@@ -1,7 +1,6 @@
 from libcpp cimport bool
-from libcpp cimport string
-from libcpp cimport map
-
+from libcpp.string cimport string
+from libcpp.map cimport map
 
 
 cdef extern from "../SaxonProcessor.h":
@@ -145,7 +144,6 @@ cdef extern from "../SaxonProcessor.h":
         const char * getErrorCode(int)
 
 
-
     cdef cppclass Xslt30Processor:
         Xslt30Processor() except +
         # set the current working directory
@@ -182,16 +180,20 @@ cdef extern from "../SaxonProcessor.h":
         # Set a property specific to the processor in use.
         void setProperty(const char* name, const char* value)
 
-        void setInitialTemplateParameters(std::map<std::string,XdmValue*> parameters, bool tunnel)
+        void setInitialTemplateParameters(map[string,XdmValue*] parameters, bool tunnel)
+
+        XdmValue ** createXdmValueArray(int len)
+
+        void deleteXdmValueArray(XdmValue** arr, int len)
 
         # Get a property value by name
         const char* getProperty(const char* name)
 
         # Get all parameters as a std::map
-        std::map<std::string,XdmValue*>& getParameters()
+        map[string,XdmValue*]& getParameters()
 
         # Get all properties as a std::map
-        std::map<std::string,std::string>& getProperties()
+        map[string,string]& getProperties()
 
         # Clear parameter values set
         void clearParameters(bool deleteValues=false)
@@ -237,10 +239,10 @@ cdef extern from "../SaxonProcessor.h":
         void applyTemplatesReturningFile(const char * stylesheetFilename, const char* outfile)
 
         # Invoke the stylesheet by applying templates to a supplied input sequence, Saving the results as serialized string.
-        const char* applyTemplatesReturningString(const char * stylesheetFilename=NULL)
+        const char* applyTemplatesReturningString(const char * stylesheetFilename)
 
         # Invoke the stylesheet by applying templates to a supplied input sequence, Saving the results as an XdmValue.
-        XdmValue * applyTemplatesReturningValue(const char * stylesheetFilename=NULL)
+        XdmValue * applyTemplatesReturningValue(const char * stylesheetFilename)
 
         # Invoke a transformation by calling a named template and save result to file.
         void callTemplateReturningFile(const char * stylesheetFilename, const char* templateName, const char* outfile)

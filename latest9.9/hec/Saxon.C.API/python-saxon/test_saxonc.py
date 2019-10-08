@@ -141,8 +141,10 @@ def test_create_procs():
     sp = PySaxonProcessor()
     xp = sp.new_xpath_processor()
     xsl = sp.new_xslt_processor()
+    xsl30 = sp.new_xslt30_processor()
     assert isinstance(xp, PyXPathProcessor)
     assert isinstance(xsl, PyXsltProcessor)
+    assert isinstance(xsl30, PyXslt30Processor)
 
 
 def test_version():
@@ -190,6 +192,58 @@ def test_xslt_parameter(saxonproc):
     trans.set_source(xdm_node=input_)
     output_ = trans.transform_to_string(stylesheet_file="test.xsl")
     assert 'text2' in output_
+
+
+
+
+'''PyXslt30Processor test cases '''
+
+def testContextNotRoot(saxonproc):
+    node = saxonproc.parse_xml(xml_text="<doc><e>text</e></doc>")
+    trans = saxonproc.new_xslt30_processor()
+    trans.compile_stylesheet(stylesheet_text="<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'><xsl:variable name='x' select='.'/><xsl:template match='/'>errorA</xsl:template><xsl:template match='e'>[<xsl:value-of select='name($x)'/>]</xsl:template></xsl:stylesheet>")
+    assert node is not None
+    assert isinstance(node, PyXdmNode)
+    assert len(node.children)>0
+    eNode = node.children[0].children[0]
+    assert eNode is not None
+    trans.set_global_context_item(xdm_node=node)
+    trans.set_initial_match_selection(xdm_node=eNode)
+    result = trans.apply_templates_returning_string()	
+    print(trans.get_error_message(0))
+    assert trans.exception_count() == 0
+    assert result is not None
+    assert "[" in result
+
+
+def testResolveUri(saxonproc):
+    trans = saxonproc.new_xslt30_processor()
+    trans.compile_stylesheet(stylesheet_text="<xsl:stylesheet version='3.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:err='http://www.w3.org/2005/xqt-errors'><xsl:template name='go'><xsl:try><xsl:variable name='uri' as='xs:anyURI' select=\"resolve-uri('notice trailing space /out.xml')\"/> <xsl:message select='$uri'/><xsl:result-document href='{$uri}'><out/></xsl:result-document><xsl:catch><xsl:sequence select=\"'\$err:code: ' || $err:code  || ', $err:description: ' || $err:description\"/></xsl:catch></xsl:try></xsl:template></xsl:stylesheet>")
+
+    value = trans.call_template_returning_value("go")
+    assert value is not None
+    item = value.head
+    assert "code" in item.string_value
+
+
+def testEmbeddedStylesheet(saxonproc):
+    trans = saxonproc.new_xslt30_processor()
+    input_ = saxonproc.parse_xml(xml_file_name="../data/books.xml")
+    path = "/processing-instruction(xml-stylesheet)[matches(.,'type\\s*=\\s*[''\"\"]text/xsl[''\" \"]')]/replace(., '.*?href\\s*=\\s*[''\" \"](.*?)[''\" \"].*', '$1')"
+
+    xPathProcessor = saxonproc.new_xpath_processor()
+    xPathProcessor.set_context(xdm_item=input_)
+    hrefval = xPathProcessor.evaluate_single(path)
+    assert hrefval is not None
+    href = hrefval.string_value
+    assert href != ""
+    trans.compile_stylesheet(stylesheet_uri=href)
+
+    assert isinstance(input_, PyXdmNode)
+    node = trans.transform_to_value(xdm_node=input_)
+    assert node is not None
+
+
 
     
     

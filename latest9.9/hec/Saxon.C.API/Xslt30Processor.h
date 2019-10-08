@@ -217,6 +217,17 @@ public:
      //! Clear property values set
     void clearProperties();
 
+    XdmValue ** createXdmValueArray(int len){
+	return (new XdmValue*[len]);
+    }
+
+    void deleteXdmValueArray(XdmValue ** arr, int len){
+	for(int i =0; i< len; i++) {
+		//delete arr[i];	
+	}
+	delete [] arr;
+    }
+
     /**
      * Get the messages written using the <code>xsl:message</code> instruction
      * @return XdmValue - Messages returned as an XdmValue.
@@ -386,7 +397,7 @@ public:
     /** Here we wrap the result in an XML document, and sending this document to a specified file
     * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
     * @param functionName - The name of the function to be called
-    * @param arguments - Pinter array of XdmValue object - he values of the arguments to be supplied to the function. These
+    * @param arguments - Pointer array of XdmValue object - he values of the arguments to be supplied to the function. These
     *                    will be converted if necessary to the type as defined in the function signature, using
     *                    the function conversion rules.
     * @param argument_length - the Coutn of arguments objects in the array
@@ -399,7 +410,7 @@ public:
     /** Here we wrap the result in an XML document, and serialized this document to string value
     * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
     * @param functionName - The name of the function to be called
-    * @param arguments - Pinter array of XdmValue object - he values of the arguments to be supplied to the function. These
+    * @param arguments - Pointer array of XdmValue object - he values of the arguments to be supplied to the function. These
     *                    will be converted if necessary to the type as defined in the function signature, using
     *                    the function conversion rules.
     * @param argument_length - the Coutn of arguments objects in the array
@@ -411,7 +422,7 @@ public:
     /** Here we wrap the result in an XML document, and return the document as an XdmVale
     * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
     * @param functionName - The name of the function to be called
-    * @param arguments - Pinter array of XdmValue object - he values of the arguments to be supplied to the function. These
+    * @param arguments - Pointer array of XdmValue object - he values of the arguments to be supplied to the function. These
     *                    will be converted if necessary to the type as defined in the function signature, using
     *                    the function conversion rules.
     * @param argument_length - the Coutn of arguments objects in the array
