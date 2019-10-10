@@ -2,12 +2,17 @@ from tempfile import mkstemp
 import pytest
 from saxonc import *
 import os
+from os.path import isfile
 
 
 @pytest.fixture
 def saxonproc():
     return PySaxonProcessor()
 
+
+@pytest.fixture
+def files_dir():
+    return "../../samples/php"
 
 def test_create_bool():
     """Create SaxonProcessor object with a boolean argument"""
@@ -29,8 +34,8 @@ def test_create_config():
         collationUriResolver="net.sf.saxon.lib.StandardCollationURIResolver"
         collectionUriResolver="net.sf.saxon.lib.StandardCollectionURIResolver"
         compileWithTracing="false"
-        defaultCollation="http://www.w3.org/2005/xpath-functions/collation/codepoint"
-        defaultCollection="file:///e:/temp"
+       defaultCollation="http://www.w3.org/2005/xpath-functions/collation/codepoint"
+       defaultCollection="file:///e:/temp"
         dtdValidation="false"
         dtdValidationRecoverable="true"
         errorListener="net.sf.saxon.StandardErrorListener"
@@ -78,8 +83,8 @@ def test_create_config():
       <xquery
         allowUpdate="true"
         constructionMode="preserve"
-        defaultElementNamespace=""
-        defaultFunctionNamespace="http://www.w3.org/2005/xpath-functions"
+       defaultElementNamespace=""
+       defaultFunctionNamespace="http://www.w3.org/2005/xpath-functions"
         emptyLeast="true"
         inheritNamespaces="true"
         moduleUriResolver="net.sf.saxon.query.StandardModuleURIResolver"
@@ -101,7 +106,7 @@ def test_create_config():
         indent="yes"
         saxon:indent-spaces="8"
         xmlns:saxon="http://saxon.sf.net/"/>
-      <localizations defaultLanguage="en" defaultCountry="US">
+      <localizationsdefaultLanguage="en"defaultCountry="US">
         <localization lang="da" class="net.sf.saxon.option.local.Numberer_da"/>
         <localization lang="de" class="net.sf.saxon.option.local.Numberer_de"/>
       </localizations>
@@ -208,10 +213,8 @@ def testContextNotRoot(saxonproc):
     eNode = node.children[0].children[0]
     assert eNode is not None
     trans.set_global_context_item(xdm_node=node)
-    trans.set_initial_match_selection(xdm_node=eNode)
-    result = trans.apply_templates_returning_string()	
-    print(trans.get_error_message(0))
-    assert trans.exception_count() == 0
+    trans.set_initial_match_selection(xdm_value=eNode)
+    result = trans.apply_templates_returning_string()
     assert result is not None
     assert "[" in result
 
@@ -226,26 +229,375 @@ def testResolveUri(saxonproc):
     assert "code" in item.string_value
 
 
-def testEmbeddedStylesheet(saxonproc):
+def testEmbeddedStylesheet(saxonproc, files_dir):
     trans = saxonproc.new_xslt30_processor()
-    input_ = saxonproc.parse_xml(xml_file_name="../data/books.xml")
+    input_ = saxonproc.parse_xml(xml_file_name=files_dir+"/../data/books.xml")
     path = "/processing-instruction(xml-stylesheet)[matches(.,'type\\s*=\\s*[''\"\"]text/xsl[''\" \"]')]/replace(., '.*?href\\s*=\\s*[''\" \"](.*?)[''\" \"].*', '$1')"
+
+    print(files_dir+"../data/books.xml")
 
     xPathProcessor = saxonproc.new_xpath_processor()
     xPathProcessor.set_context(xdm_item=input_)
     hrefval = xPathProcessor.evaluate_single(path)
     assert hrefval is not None
     href = hrefval.string_value
+    print("href="+href)
     assert href != ""
-    trans.compile_stylesheet(stylesheet_uri=href)
+    trans.compile_stylesheet(stylesheet_file=href)
 
     assert isinstance(input_, PyXdmNode)
     node = trans.transform_to_value(xdm_node=input_)
     assert node is not None
 
+def testContextNotRootNamedTemplate(saxonproc, files_dir):
+
+    trans = saxonproc.new_xslt30_processor()
+    input_ = saxonproc.parse_xml(xml_text="<doc><e>text</e></doc>")
+    trans.compile_stylesheet(stylesheet_text="<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'><xsl:variable name='x' select='.'/><xsl:template match='/'>errorA</xsl:template><xsl:template name='main'>[<xsl:value-of select='name($x)'/>]</xsl:template></xsl:stylesheet>")      
+    trans.set_global_context_item(xdm_node=input_)
+    result = trans.call_template_returning_value("main")
+    assert result is not None
+    assert "[]" in result.head.string_value
+    result2 = trans.call_template_returning_string("main")
+    assert result2 is not None
+    assert "[]" in result2
 
 
+  
+def testUseAssociated(saxonproc, files_dir):
+
+    trans = saxonproc.new_xslt30_processor()
+    foo_xml = files_dir+"/trax/xml/foo.xml"
+    trans.compile_stylesheet(associated_file=foo_xml)
+    trans.set_initial_match_selection(file_name=foo_xml)
+    result = trans.apply_templates_returning_string()
+    assert result is not None
+
+
+def testNullStylesheet(saxonproc):
+
+    trans = saxonproc.new_xslt30_processor()
+    result = trans.apply_templates_returning_string()
+    assert result is None
+
+
+def testXdmDestination(saxonproc):
+    trans = saxonproc.new_xslt30_processor()
+    trans.compile_stylesheet(stylesheet_text="<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'><xsl:template name='go'><a/></xsl:template></xsl:stylesheet>")
+
+    root = trans.call_template_returning_value("go")
+    assert root is not None
+    assert root.head is not None
+    assert root.head.is_atomic == False
+    node  = root.head.get_node_value()
+    assert isinstance(node, PyXdmNode)
+    assert node.node_kind == 9
+
+def testXdmDestinationWithItemSeparator(saxonproc):
+    trans = saxonproc.new_xslt30_processor()
+    trans.compile_stylesheet(stylesheet_text="<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'><xsl:template name='go'><xsl:comment>A</xsl:comment><out/><xsl:comment>Z</xsl:comment></xsl:template><xsl:output method='xml' item-separator='§'/></xsl:stylesheet>")
+
+    root = trans.call_template_returning_value("go")
+    node  = root.head.get_node_value()
+    assert "<!--A-->§<out/>§<!--Z-->" in node.string_value
+    assert node.node_kind == 9
+
+
+
+def testPipeline(saxonproc):
+    stage1 = saxonproc.new_xslt30_processor()        
+    xsl = "<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'><xsl:template match='/'><a><xsl:copy-of select='.'/></a></xsl:template></xsl:stylesheet>"
+    xml = "<z/>"
+    stage1.compile_stylesheet(stylesheet_text=xsl)
+    in_ = saxonproc.parse_xml(xml_text=xml)
+
+    stage2 = saxonproc.new_xslt30_processor()
+    stage2.compile_stylesheet(stylesheet_text=xsl)
+    stage3 = saxonproc.new_xslt30_processor()
+    stage3.compile_stylesheet(stylesheet_text=xsl)
+    stage4 = saxonproc.new_xslt30_processor()
+    stage4.compile_stylesheet(stylesheet_text=xsl)
+
+    stage5 = saxonproc.new_xslt30_processor()
+    stage5.compile_stylesheet(stylesheet_text=xsl)
+    assert in_ is not None
+    stage1.set_property("!omit-xml-declaration", "yes")
+    stage1.set_property("!indent", "no")
+    stage1.set_initial_match_selection(xdm_value=in_)
+    d1 = stage1.apply_templates_returning_value()
+
+    assert d1 is not None    
+    stage2.set_property("!omit-xml-declaration", "yes")
+    stage2.set_property("!indent", "no")
+    stage2.set_initial_match_selection(xdm_value=d1)
+    d2 = stage2.apply_templates_returning_value()
+    assert d2 is not None
+    stage3.set_property("!omit-xml-declaration", "yes")
+    stage3.set_property("!indent", "no")
+    stage3.set_initial_match_selection(xdm_value=d2)
+    d3 = stage3.apply_templates_returning_value()
+
+    assert d3 is not None
+    stage4.set_property("!omit-xml-declaration", "yes")
+    stage4.set_property("!indent", "no")
+    stage4.set_initial_match_selection(xdm_value=d3)
+    d4 = stage4.apply_templates_returning_value()
+    assert d3 is not None
+    stage5.set_property("!indent", "no")
+    stage5.set_property("!omit-xml-declaration", "yes")
+    stage5.set_initial_match_selection(xdm_value=d4)
+    sw = stage5.apply_templates_returning_string()
+    assert sw is not None
+    assert "<a><a><a><a><a><z/></a></a></a></a></a>" in sw
+
+
+def testPipelineShort(saxonproc):
     
+    xsl = "<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'><xsl:template match='/'><a><xsl:copy-of select='.'/></a></xsl:template></xsl:stylesheet>"
+    xml = "<z/>"
+    stage1 = saxonproc.new_xslt30_processor()
+    stage2 = saxonproc.new_xslt30_processor()
+
+    stage1.compile_stylesheet(stylesheet_text=xsl)
+    stage2.compile_stylesheet(stylesheet_text=xsl)
+
+    stage1.set_property("!omit-xml-declaration", "yes")
+    stage2.set_property("!omit-xml-declaration", "yes")
+    in_ = saxonproc.parse_xml(xml_text=xml)
+    assert in_ is not None
+    stage1.set_initial_match_selection(xdm_value=in_)
+    out = stage1.apply_templates_returning_value()
+    assert out is not None
+    stage2.set_initial_match_selection(xdm_value=out)
+    sw = stage2.apply_templates_returning_string()
+    assert "<a><a><z/></a></a>" in sw
+
+def testCallFunction(saxonproc):
+  
+    source = "<?xml version='1.0'?><xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform'  xmlns:xs='http://www.w3.org/2001/XMLSchema'  xmlns:f='http://localhost/'  version='3.0'>  <xsl:function name='f:add' visibility='public'>    <xsl:param name='a'/><xsl:param name='b'/>   <xsl:sequence select='$a + $b'/></xsl:function>  </xsl:stylesheet>"
+    trans = saxonproc.new_xslt30_processor()
+
+    trans.compile_stylesheet(stylesheet_text=source)
+    paramArr = [saxonproc.make_integer_value(2), saxonproc.make_integer_value(3)]
+    v = trans.call_function_returning_value("{http://localhost/}add", paramArr)
+    assert isinstance(v.head, PyXdmItem)
+    assert v.head.is_atomic		
+    assert v.head.get_atomic_value().integer_value ==5
+        
+  
+def testCallFunctionArgConversion():
+    trans = saxonproc.new_xslt30_processor()
+
+    source = "<?xml version='1.0'?><xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform'  xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:f='http://localhost/'  version='3.0'>  <xsl:function name='f:add' visibility='public'> <xsl:param name='a' as='xs:double'/>  <xsl:param name='b' as='xs:double'/>  <xsl:sequence select='$a + $b'/> </xsl:function> </xsl:stylesheet>"
+
+    trans.compile_stylesheet(stylesheet_text=source)
+
+    v = trans.call_function_returning_value("{http://localhost/}add", [saxonproc.make_integer_value(2), saxonproc.make_integer_value(3)])
+    assert isinstance(v.head, PyXdmItem)
+    assert v.head.is_atomic		
+    assert v.head.get_atomic_value().double_value == 5.0e0
+    ''' assert ("double", $v.head.get_atomic_value()->getPrimitiveTypeName()
+    '''
+
+
+def testCallFunctionWrapResults(saxonproc):
+       
+    trans = saxonproc.new_xslt30_processor()
+
+    source = "<?xml version='1.0'?><xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:xs='http://www.w3.org/2001/XMLSchema'  xmlns:f='http://localhost/'  version='3.0'> <xsl:param name='x' as='xs:integer'/>  <xsl:param name='y' select='.+2'/>  <xsl:function name='f:add' visibility='public'>  <xsl:param name='a' as='xs:double'/> <xsl:param name='b' as='xs:double'/> <xsl:sequence select='$a + $b + $x + $y'/> </xsl:function> </xsl:stylesheet>"
+
+    trans.compile_stylesheet(stylesheet_text=source)
+
+    trans.set_property("!omit-xml-declaration", "yes")
+    trans.set_parameter("x", saxonproc.make_integer_value(30))
+    trans.set_global_context_item(saxonproc.make_integer_value(20))
+
+    sw = trans.call_function_returning_string("{http://localhost/}add", [saxonproc.make_integer_value(2), saxonproc.make_integer_value(3)])
+
+    assert "57" in sw
+    
+
+
+
+def testCallFunctionArgInvalid(saxonproc):
+    trans = saxonproc.new_xslt30_processor()
+
+    source = "<?xml version='1.0'?>  <xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:f='http://localhost/'  version='2.0'><xsl:function name='f:add'> <xsl:param name='a' as='xs:double'/>  <xsl:param name='b' as='xs:double'/>  <xsl:sequence select='\$a + \$b'/> </xsl:function> </xsl:stylesheet>"
+
+    trans.compile_stylesheet(stylesheet_text=source)
+    v = trans.call_function_returning_value("{http://localhost/}add", [saxonproc.make_integer_value(2), saxonproc.make_integer_value(3)])
+            
+    assert trans.exception_count()==1
+    assert "Cannot invoke function add#2 externally" in trans.get_error_message(0)
+    assert v is None
+
+
+
+def testCallNamedTemplateWithTunnelParams(saxonproc):
+    trans = saxonproc.new_xslt30_processor()
+
+    source = "<?xml version='1.0'?> <xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:xs='http://www.w3.org/2001/XMLSchema' version='3.0'>  <xsl:template name='t'> <xsl:call-template name='u'/>  </xsl:template>  <xsl:template name='u'> <xsl:param name='a' as='xs:double' tunnel='yes'/>  <xsl:param name='b' as='xs:float' tunnel='yes'/>   <xsl:sequence select='$a + $b'/> </xsl:template> </xsl:stylesheet>"
+
+    trans.compile_stylesheet(stylesheet_text=source)
+    trans.set_property("!omit-xml-declaration", "yes")
+    trans.set_property("tunnel", "true")
+    trans.set_initial_template_parameters({"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)})
+    sw = trans.call_template_returning_string("t")
+    assert sw is not None
+    assert "17" in sw
+        
+
+def testCallTemplateRuleWithParams(saxonproc):
+    trans = saxonproc.new_xslt30_processor()
+
+    source = "<?xml version='1.0'?> <xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:xs='http://www.w3.org/2001/XMLSchema'  version='3.0'> <xsl:template match='*'>  <xsl:param name='a' as='xs:double'/>  <xsl:param name='b' as='xs:float'/>  <xsl:sequence select='name(.), $a + $b'/> </xsl:template>  </xsl:stylesheet>"
+
+    trans.compile_stylesheet(stylesheet_text=source)
+    trans.set_property("!omit-xml-declaration", "yes")
+    trans.set_initial_template_parameters({"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)})
+    in_ = saxonproc.parse_xml(xml_text="<e/>")
+    trans.set_initial_match_selection(xdm_value=in_)
+    sw = trans.apply_templates_returning_string()
+    sw is not None
+    assert "e 17" in sw
+   
+
+def testApplyTemplatesToXdm(saxonproc):
+    source = "<?xml version='1.0'?>  <xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform'  xmlns:xs='http://www.w3.org/2001/XMLSchema'  version='3.0'>  <xsl:template match='*'>     <xsl:param name='a' as='xs:double'/>     <xsl:param name='b' as='xs:float'/>     <xsl:sequence select='., $a + $b'/>  </xsl:template>  </xsl:stylesheet>"
+    trans = saxonproc.new_xslt30_processor()
+    trans.compile_stylesheet(stylesheet_text=source)
+    trans.set_property("!omit-xml-declaration", "yes")
+    trans.set_initial_template_parameters({"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)})
+    trans.set_result_as_raw_value(True)
+    in_put = saxonproc.parse_xml(xml_text="<e/>")
+    trans.set_initial_match_selection(xdm_value=in_put)
+    result = trans.apply_templates_returning_value()
+    assert result is not None
+    assert result.size == 2
+    first = result.item_at(0)
+    assert first.is_atomic == False
+    assert "e" in first.get_node_value().name
+    second = result.item_at(1)
+    assert second.is_atomic            
+    assert 17e0 in second.get_atomic_value().double_value
+    
+
+
+def testResultDocument(saxonproc):
+    xsl = "<xsl:stylesheet version='3.0'  xmlns:xsl='http://www.w3.org/1999/XSL/Transform'> <xsl:template match='a'>   <c>d</c> </xsl:template> <xsl:template match='whatever'>   <xsl:result-document href='out.xml'>     <e>f</e>   </xsl:result-document> </xsl:template></xsl:stylesheet>"
+    trans = saxonproc.new_xslt30_processor()
+    trans.compile_stylesheet(stylesheet_text=xsl)
+    in_put = saxonproc.parse_xml(xml_text="<a>b</a>")
+    trans.set_initial_match_selection(xdm_value=in_put)
+    xdmValue = trans.apply_templates_returning_value()
+
+    assert xdmValue.size == 1
+    
+
+
+
+
+def testApplyTemplatesToFile(saxonproc):
+
+    xsl = "<xsl:stylesheet version='3.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>  <xsl:template match='a'> <c>d</c>  </xsl:template></xsl:stylesheet>"
+    trans = saxonproc.new_xslt30_processor()
+    trans.compile_stylesheet(stylesheet_text=xsl)
+    in_put = saxonproc.parse_xml(xml_text="<a>b</a>")
+    trans.set_output_file("output123.xml")
+    trans.set_initial_match_selection(xdm_value=in_put)
+    trans.apply_templates_returning_file(output_file="output123.xml")
+    assert isfile("output123.xml")
+
+
+
+def testCallTemplateWithResultValidation():
+    saxonproc2 =  PySaxonProcessor(True)
+    saxonproc2.set_cwd("/home/ond1/work/svn/latest9.9-saxonc/samples/php/")
+    trans = saxonproc2.new_xslt30_processor()
+
+    source = "<?xml version='1.0'?>  <xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform'  xmlns:xs='http://www.w3.org/2001/XMLSchema'  version='3.0' exclude-result-prefixes='#all'>  <xsl:import-schema><xs:schema><xs:element name='x' type='xs:int'/></xs:schema></xsl:import-schema>  <xsl:template name='main'>     <xsl:result-document validation='strict'>       <x>3</x>     </xsl:result-document>  </xsl:template>  </xsl:stylesheet>"
+
+    trans.compile_stylesheet(stylesheet_text=source)
+    trans.set_property("!omit-xml-declaration", "yes")
+    sw = trans.call_template_returning_string("main")
+    assert sw is not None 
+    assert "<x>3</x>" == sw
+     
+
+
+
+def testCallTemplateNoParamsRaw(saxonproc):
+    trans = saxonproc.new_xslt30_processor()
+    trans.compile_stylesheet(stylesheet_text="<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'><xsl:template name='xsl:initial-template'><xsl:sequence select='42'/></xsl:template></xsl:stylesheet>")
+
+    trans.set_result_as_raw_value(True)
+    result = trans.call_template_returning_value()
+    assert result is not None
+    assert result.head is not None
+    assert result.head.is_atomic == True
+    assert result.head.get_atomic_value().integer_value == 42
+        
+
+
+
+def testCallNamedTemplateWithParamsRaw(saxonproc):
+    trans = saxonproc.new_xslt30_processor()
+
+    source = "<?xml version='1.0'?>  <xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform'  xmlns:xs='http://www.w3.org/2001/XMLSchema'  version='3.0'>  <xsl:template name='t'>     <xsl:param name='a' as='xs:double'/>     <xsl:param name='b' as='xs:float'/>     <xsl:sequence select='$a+1, $b+1'/>  </xsl:template>  </xsl:stylesheet>"
+
+    trans.compile_stylesheet(stylesheet_text=source)
+    trans.set_result_as_raw_value(True)
+    trans.set_initial_template_parameters({"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)})
+    val = trans.call_template_returning_value("t")
+    assert val is not None
+    assert val.size == 2
+    assert val.item_at(0).is_atomic
+    assert val.item_at(0).get_atomic_value().integer_Value == 13
+    assert val.item_at(1).get_atomic_value().integer_Value == 6
+       
+
+def testApplyTemplatesRaw(saxonproc):
+    trans = saxonproc.new_xslt30_processor()
+
+    source = "<?xml version='1.0'?>  <xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform'  xmlns:xs='http://www.w3.org/2001/XMLSchema'  version='3.0'>  <xsl:template match='*'>     <xsl:param name='a' as='xs:double'/>     <xsl:param name='b' as='xs:float'/>     <xsl:sequence select='., $a + $b'/>  </xsl:template>  </xsl:stylesheet>"
+
+    trans.compile_stylesheet(stylesheet_text=source)
+    node = saxonproc.parse_xml(xml_text="<e/>")
+
+    trans.set_result_as_raw_value(True)
+    trans.set_initial_template_parameters({"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)})
+    trans.set_initial_match_selection(xdm_value=node)
+    result = trans.apply_templates_returning_value()
+    assert result is not None
+    assert result.size ==2
+    first = result.item_at(0)
+    assert first is not None
+    assert first.is_atomic == False
+    assert first.get_node_value().name == "e"
+    second = result.item_at(1)
+    assert second is not None
+    assert second.is_atomic
+    assert second.get_atomic_value().double_value == "17e0"
+        
+
+
+def testApplyTemplatesToSerializer(saxonproc):
+    trans = saxonproc.new_xslt30_processor()
+
+    source = "<?xml version='1.0'?>  <xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform'  xmlns:xs='http://www.w3.org/2001/XMLSchema'  version='3.0'>  <xsl:output method='text' item-separator='~~'/>  <xsl:template match='.'>     <xsl:param name='a' as='xs:double'/>     <xsl:param name='b' as='xs:float'/>     <xsl:sequence select='., $a + $b'/>  </xsl:template>  </xsl:stylesheet>"
+
+    trans.compile_stylesheet(stylesheet_text=source)
+    trans.set_property("!omit-xml-declaration", "yes")
+    trans.set_result_as_raw_value(True)
+    trans.set_initial_template_parameters({"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)})
+      
+    trans.set_initial_match_selection(xdm_value=saxonproc.make_integer_value(16))
+    sw = trans.apply_templates_returning_string()
+
+    assert "16~~17" == sw
+ 
+
+
     
 ''' PyXQueryProcessor '''
 
@@ -466,4 +818,6 @@ def test_release():
         output2 = xsltproc.transform_to_string()
         assert output2.startswith('<?xml version="1.0" encoding="UTF-8"?>\n<output>text1<out>6</out')
 
+def release(saxonproc):
+   saxonproc.release()
 

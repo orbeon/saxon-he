@@ -368,18 +368,20 @@ JParameters SaxonProcessor::createParameterJArray(std::map<std::string,XdmValue*
 			for (std::map<std::string, XdmValue*>::iterator iter =
 					parameters.begin(); iter != parameters.end(); ++iter, i++) {
 
-#ifdef DEBUG
+//#ifdef DEBUG
 				std::cerr<<"map 1"<<std::endl;
 				std::cerr<<"iter->first"<<(iter->first).c_str()<<std::endl;
-#endif
+//#endif
 				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(comboArrays.stringArray, i,
 						SaxonProcessor::sxn_environ->env->NewStringUTF(
 								(iter->first).c_str()));
-#ifdef DEBUG
+//#ifdef DEBUG
 				std::string s1 = typeid(iter->second).name();
 				std::cerr<<"Type of itr:"<<s1<<std::endl;
 
-
+				if((iter->second) == NULL) {std::cerr<<"iter->second is null"<<std::endl;
+				} else {
+					std::cerr<<"getting underlying value"<<std::endl;
 				jobject xx = (iter->second)->getUnderlyingValue();
 
 				if(xx == NULL) {
@@ -390,8 +392,8 @@ JParameters SaxonProcessor::createParameterJArray(std::map<std::string,XdmValue*
 				}
 				if((iter->second)->getUnderlyingValue() == NULL) {
 					std::cerr<<"(iter->second)->getUnderlyingValue() is NULL"<<std::endl;
-				}
-#endif
+				}}
+//#endif
 
 				SaxonProcessor::sxn_environ->env->SetObjectArrayElement(comboArrays.objectArray, i,
 						(iter->second)->getUnderlyingValue());

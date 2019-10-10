@@ -13,6 +13,7 @@ from libcpp.string cimport string
 from libcpp.map cimport map
 from libcpp.utility cimport pair
 from nodekind import *
+from os.path import isfile
 
 cdef const char * make_c_str(str str_value):
     if str_value is None:
@@ -396,6 +397,8 @@ cdef class PySaxonProcessor:
         elif "xml_file_name" in kwds:
           py_value = kwds["xml_file_name"]
           py_filename_string = py_value.encode('UTF-8') if py_value is not None else None
+          if py_filename_string  is None or isfile(py_filename_string) == False:
+            raise Exception("XML file does not exist")
           c_xml_string = py_filename_string if py_value is not None else ""
           val = PyXdmNode()
           val.derivednptr = val.derivedptr = val.thisvptr = self.thisptr.parseXmlFromFile(c_xml_string)
@@ -652,9 +655,13 @@ cdef class PyXsltProcessor:
           if isinstance(value, str):
             if key == "source_file":
               py_source_string = value.encode('UTF-8') if value is not None else None
+              if py_filename_string  is None or isfile(py_filename_string) == False:
+                raise Exception("source file name does not exist")
               c_sourcefile = py_source_string if value is not None else "" 
             if key == "stylesheet_file":
               py_stylesheet_string = value.encode('UTF-8') if value is not None else None
+              if py_stylesheet_string  is None or isfile(py_stylesheet_string) == False:
+                raise Exception("Stylesheet file does not exist")
               c_stylesheetfile = py_stylesheet_string if value is not None else ""
           elif key == "xdm_node":
             if isinstance(value, PyXdmNode):
@@ -789,14 +796,14 @@ cdef class PyXsltProcessor:
         Compile a stylesheet  received as text, uri or as a node object. The compiled stylesheet is cached and available for execution later. It is also possible to save the compiled stylesheet (SEF file) given the option 'save' and 'output_file'
    
         Args:
-            **kwds: Possible keyword arguments stylesheet_text (str), stylesheet_uri (str) or stylsheetnode (PyXdmNode). Also possible to add the options save (boolean) and output_file, which creates an exported stylesheet to file (SEF). 
+            **kwds: Possible keyword arguments stylesheet_text (str), stylesheet_file (str) or stylsheetnode (PyXdmNode). Also possible to add the options save (boolean) and output_file, which creates an exported stylesheet to file (SEF). 
 
         Example:
             1. xsltproc.compile_stylesheet(stylesheet_text="<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>       <xsl:param name='values' select='(2,3,4)' /><xsl:output method='xml' indent='yes' /><xsl:template match='*'><output><xsl:value-of select='//person[1]'/><xsl:for-each select='$values' ><out><xsl:value-of select='. * 3'/></out></xsl:for-each></output></xsl:template></xsl:stylesheet>")
 
             2. xsltproc.compile_stylesheet(stylesheet_file="test1.xsl", save=True, output_file="test1.sef")
         """
-        py_error_message = "CompileStylesheet should only be one of the keyword option: (stylesheet_text|stylesheet_uri|stylesheet_node), also in allowed in addition the optional keyword 'save' boolean with the keyword 'outputfile' keyword"
+        py_error_message = "CompileStylesheet should only be one of the keyword option: (stylesheet_text|stylesheet_file|stylesheet_node), also in allowed in addition the optional keyword 'save' boolean with the keyword 'outputfile' keyword"
         if len(kwds) >3:
           raise Exception(py_error_message)
         cdef char * c_outputfile
@@ -806,11 +813,11 @@ cdef class PyXsltProcessor:
         py_save = False
         cdef int option = 0
         cdef PyXdmNode py_xdmNode = None
-        if kwds.keys() >= {"stylesheet_text", "stylesheet_uri"}:
+        if kwds.keys() >= {"stylesheet_text", "stylesheet_file"}:
           raise Exception(py_error_message)
         if kwds.keys() >= {"stylesheet_text", "stylesheet_node"}:
           raise Exception(py_error_message)
-        if kwds.keys() >= {"stylesheet_node", "stylesheet_uri"}:
+        if kwds.keys() >= {"stylesheet_node", "stylesheet_file"}:
           raise Exception(py_error_message)
 
         if ("save" in kwds) and kwds["save"]==True:
@@ -823,11 +830,11 @@ cdef class PyXsltProcessor:
             py_stylesheet_string = kwds["stylesheet_text"].encode('UTF-8')
             c_stylesheet = py_stylesheet_string
             self.thisxptr.compileFromStringAndSave(c_stylesheet, c_outputfile)
-          elif "stylesheet_uri" in kwds:
-            py_stylesheet_string = kwds["stylesheet_uri"].encode('UTF-8')
+          elif "stylesheet_file" in kwds:
+            py_stylesheet_string = kwds["stylesheet_file"].encode('UTF-8')
             c_stylesheet = py_stylesheet_string
             self.thisxptr.compileFromFileAndSave(c_stylesheet, c_outputfile)
-          elif "stylesheetNode" in kwds:
+          elif "stylesheet_node" in kwds:
             py_xdmNode = kwds["stylesheet_node"]
             #if not isinstance(py_value, PyXdmNode):
               #raise Exception("StylesheetNode keyword arugment is not of type XdmNode")
@@ -840,8 +847,8 @@ cdef class PyXsltProcessor:
             py_stylesheet_string = kwds["stylesheet_text"].encode('UTF-8')
             c_stylesheet = py_stylesheet_string
             self.thisxptr.compileFromString(c_stylesheet)
-          elif "stylesheet_uri" in kwds:
-            py_stylesheet_string = kwds["stylesheetUri"].encode('UTF-8')
+          elif "stylesheet_file" in kwds:
+            py_stylesheet_string = kwds["stylesheet_file"].encode('UTF-8')
             c_stylesheet = py_stylesheet_string
             self.thisxptr.compileFromFile(c_stylesheet)
           elif "stylesheet_node" in kwds:
@@ -991,26 +998,26 @@ cdef class PyXslt30Processor:
         The initial filename to which templates are to be applied (equivalent to the <code>select</code> attribute of <code>xsl:apply-templates</code>).
 
         Args:
-            **kwds: Keyword argument can only be one of the following: file_name|xdm_node
+            **kwds: Keyword argument can only be one of the following: file_name|xdm_value
         Raises:
-            Exception: Exception is raised if keyword argument is not one of file_name or node.
+            Exception: Exception is raised if keyword argument is not one of file_name or XdmValue.
         """
 
-        py_error_message = "Error: set_initial_match_selection should only contain one of the following keyword arguments: (file_name|xdm_node)"
+        py_error_message = "Error: set_initial_match_selection should only contain one of the following keyword arguments: (file_name|xdm_value)"
         if len(kwds) != 1:
           raise Exception(py_error_message)
         cdef py_value = None
         cdef py_value_string = None
         cdef char * c_source
-        cdef PyXdmNode xdm_node = None
+        cdef PyXdmValue xdm_value = None
         if "file_name" in kwds:
             py_value = kwds["file_name"]
             py_value_string = py_value.encode('UTF-8') if py_value is not None else None
             c_source = py_value_string if py_value is not None else ""
             self.thisxptr.setInitialMatchSelectionAsFile(c_source)
-        elif "xdm_node" in kwds:
-            xdm_node = kwds["xdm_node"]
-            self.thisxptr.setInitialMatchSelection(xdm_node.derivednptr)
+        elif "xdm_value" in kwds:
+            xdm_value = kwds["xdm_value"]
+            self.thisxptr.setInitialMatchSelection(xdm_value.thisvptr)
         else:
           raise Exception(py_error_message)
 
@@ -1161,7 +1168,7 @@ cdef class PyXslt30Processor:
         self.thisxptr.clearProperties()
 
 
-     def set_initial_template_parameters(self, bool tunnel, **kwds):
+     def set_initial_template_parameters(self, bool tunnel, dict kwds):
         """
         set_initial_template_parameters(self, bool tunnel, **kwds)
         Set parameters to be passed to the initial template. These are used
@@ -1176,18 +1183,24 @@ cdef class PyXslt30Processor:
 
         Example:
 
-        	1) result = xsltproc.set_initial_template_parameter(source_file="cat.xml", stylesheet_file="test1.xsl")
+        	1) result = xsltproc.set_initial_template_parameters(source_file="cat.xml", stylesheet_file="test1.xsl")
         """
         cdef map[string, saxoncClasses.XdmValue * ] parameters
         cdef bool c_tunnel
+        cdef string key_str
         c_tunnel = tunnel
         cdef PyXdmValue value_
-        for key, value in kwds.items():
+        print("checkpoint0")
+        for (key, value) in kwds.items():
                 if isinstance(value, PyXdmValue):
+                        print("checkpoint1")
                         value_ = value
-                        parameters[key] = value_.thisvptr
+                        key_str = key.encode('UTF-8')
+                        parameters[key_str] = value_.thisvptr
                 else:
-                 raise Warning("Warning: transform_to_string should only the following keyword arguments: (source_file, stylesheet_file, xdm_node)")
+                        print("checkpoint2")
+                        raise Exception("Initial template parameters can only be of type PyXdmValue")
+        print("checkpoint3")
         if len(kwds) > 0:
             self.thisxptr.setInitialTemplateParameters(parameters, c_tunnel);
 
@@ -1478,10 +1491,12 @@ cdef class PyXslt30Processor:
      def apply_templates_returning_file(self, **kwds):
         """
         apply_templates_returning_file(self, **kwds)
-        Invoke the stylesheet by applying templates to a supplied input sequence, Saving the results to file.
+        Invoke the stylesheet by applying templates to a supplied input sequence, Saving the 
+        results to file.
 
         Args:
-            **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). Other allowed argument: stylesheet_file (str) and the required argument output_file (str)
+            **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). 
+            Other allowed argument: stylesheet_file (str) and the required argument output_file (str)
 
 
         Returns:
@@ -1591,9 +1606,9 @@ cdef class PyXslt30Processor:
 
 
 
-     def call_template_returning_str(self, str template_name=None, **kwds):
+     def call_template_returning_string(self, str template_name=None, **kwds):
         """
-        call_template_returning_str(self, str template_name, **kwds)
+        call_template_returning_string(self, str template_name, **kwds)
         Invoke a transformation by calling a named template and return result as a string.
 
         Args:
@@ -1607,17 +1622,17 @@ cdef class PyXslt30Processor:
 
 
         Example:
-            1) result = xsltproc.call_template_returning_str("main", stylesheet_file="test1.xsl")
+            1) result = xsltproc.call_template_returning_string("main", stylesheet_file="test1.xsl")
 
 
             2) xsltproc.set_initial_match_selection(file_name="cat.xml")\r
-               result = xsltproc.call_template_returning_str("main", stylesheet_file="test1.xsl")
+               result = xsltproc.call_template_returning_string("main", stylesheet_file="test1.xsl")
 
         cdef const char * c_templateName = NULL
 
             3) xsltproc.compile_stylesheet(stylesheet_file="test2.xsl")
 			   xsltproc.set_initial_match_selection(file_name="cat.xml")\r
-               result = xsltproc.call_template_returning_str("go")
+               result = xsltproc.call_template_returning_string("go")
 			   print(result)
         """
         cdef const char * c_sourcefile = NULL
@@ -1646,7 +1661,7 @@ cdef class PyXslt30Processor:
 
      def call_template_returning_file(self, str template_name=None, **kwds):
         """
-        call_template_returning_str(self, str template_name, **kwds)
+        call_template_returning_file(self, str template_name, **kwds)
         Invoke a transformation by calling a named template and save result in a specified file.
 
         Args:
@@ -1828,6 +1843,8 @@ cdef class PyXslt30Processor:
               self.thisxptr.setInitialMatchSelectionAsFile(c_sourcefile)
             if key == "stylesheet_file":
               c_stylesheetfile = make_c_str(value)
+              if isfile(value) == False:
+                raise Exception("Stylesheet file does not exist")
           elif key == "xdm_value":
             if isinstance(value, PyXdmValue):
               value_ = value;
@@ -1859,7 +1876,8 @@ cdef class PyXslt30Processor:
         Invoke a transformation by calling a named template and return result as an PyXdmValue.
 
         Args:
-			function_name(str): The name of the template to invoke. If None is supplied then call the initial-template
+			function_name(str): The name of the template to invoke. If None is supplied 
+                        then call the initial-template
 			*args: Pointer array of XdmValue object - he values of the arguments to be supplied to the function.
             **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). Other allowed argument: stylesheet_file (str)
 
@@ -1902,6 +1920,8 @@ cdef class PyXslt30Processor:
               c_outputfile = py_output_string if value is not None else ""
             if key == "stylesheet_file":
               c_stylesheetfile = make_c_str(value)
+              if isfile(value) == False:
+                raise Exception("Stylesheet file does not exist")
           elif key == "xdm_value":
             if isinstance(value, PyXdmValue):
               value_ = value;
@@ -1951,17 +1971,30 @@ cdef class PyXslt30Processor:
      def compile_stylesheet(self, **kwds):
         """
         compile_stylesheet(self, **kwds)
-        Compile a stylesheet  received as text, uri or as a node object. The compiled stylesheet is cached and available for execution later. It is also possible to save the compiled stylesheet (SEF file) given the option 'save' and 'output_file'
+        Compile a stylesheet  received as text, uri or as a node object. The compiled stylesheet 
+        is cached and available for execution later. It is also possible to save the compiled 
+        stylesheet (SEF file) given the option 'save' and 'output_file'.
+
+        Get the stylesheet associated via the xml-stylesheet processing instruction (see
+        http://www.w3.org/TR/xml-stylesheet/) with the document
+        document specified in the source parameter, and that match
+        the given criteria.  If there are several suitable xml-stylesheet
+        processing instructions, then the returned Source will identify
+        a synthesized stylesheet module that imports all the referenced
+        stylesheet module.
 
         Args:
-            **kwds: Possible keyword arguments stylesheet_text (str), stylesheet_uri (str) or stylsheetnode (PyXdmNode). Also possible to add the options save (boolean) and output_file, which creates an exported stylesheet to file (SEF).
+            **kwds: Possible keyword arguments stylesheet_text (str), stylesheet_file (str), 
+            associated_file (str) or stylsheet_node (PyXdmNode). Also possible to add the options 
+            save (boolean) and output_file, which creates an exported stylesheet to file (SEF).
 
         Example:
             1. xsltproc.compile_stylesheet(stylesheet_text="<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>       <xsl:param name='values' select='(2,3,4)' /><xsl:output method='xml' indent='yes' /><xsl:template match='*'><output><xsl:value-of select='//person[1]'/><xsl:for-each select='$values' ><out><xsl:value-of select='. * 3'/></out></xsl:for-each></output></xsl:template></xsl:stylesheet>")
 
             2. xsltproc.compile_stylesheet(stylesheet_file="test1.xsl", save=True, output_file="test1.sef")
+            3. xsltproc.compile(associated_file="foo.xml")  
         """
-        py_error_message = "CompileStylesheet should only be one of the keyword option: (stylesheet_text|stylesheet_uri|stylesheet_node), also in allowed in addition the optional keyword 'save' boolean with the keyword 'outputfile' keyword"
+        py_error_message = "CompileStylesheet should only be one of the keyword option: (associated_file|stylesheet_text|stylesheet_file|stylesheet_node), also in allowed in addition the optional keyword 'save' boolean with the keyword 'outputfile' keyword"
         if len(kwds) >3:
           raise Exception(py_error_message)
         cdef char * c_outputfile
@@ -1971,11 +2004,11 @@ cdef class PyXslt30Processor:
         py_save = False
         cdef int option = 0
         cdef PyXdmNode py_xdmNode = None
-        if kwds.keys() >= {"stylesheet_text", "stylesheet_uri"}:
+        if kwds.keys() >= {"stylesheet_text", "stylesheet_file"}:
           raise Exception(py_error_message)
         if kwds.keys() >= {"stylesheet_text", "stylesheet_node"}:
           raise Exception(py_error_message)
-        if kwds.keys() >= {"stylesheet_node", "stylesheet_uri"}:
+        if kwds.keys() >= {"stylesheet_node", "stylesheet_file"}:
           raise Exception(py_error_message)
 
         if ("save" in kwds) and kwds["save"]==True:
@@ -1988,8 +2021,10 @@ cdef class PyXslt30Processor:
             py_stylesheet_string = kwds["stylesheet_text"].encode('UTF-8')
             c_stylesheet = py_stylesheet_string
             self.thisxptr.compileFromStringAndSave(c_stylesheet, c_outputfile)
-          elif "stylesheet_uri" in kwds:
-            py_stylesheet_string = kwds["stylesheet_uri"].encode('UTF-8')
+          elif "stylesheet_file" in kwds:
+            py_stylesheet_string = kwds["stylesheet_file"].encode('UTF-8')
+            if py_stylesheet_string  is None or isfile(py_stylesheet_string) == False:
+              raise Exception("Stylesheet file does not exist")
             c_stylesheet = py_stylesheet_string
             self.thisxptr.compileFromFileAndSave(c_stylesheet, c_outputfile)
           elif "stylesheet_node" in kwds:
@@ -2005,10 +2040,18 @@ cdef class PyXslt30Processor:
             py_stylesheet_string = kwds["stylesheet_text"].encode('UTF-8')
             c_stylesheet = py_stylesheet_string
             self.thisxptr.compileFromString(c_stylesheet)
-          elif "stylesheet_uri" in kwds:
-            py_stylesheet_string = kwds["stylesheet_uri"].encode('UTF-8')
+          elif "stylesheet_file" in kwds:
+            py_stylesheet_string = kwds["stylesheet_file"].encode('UTF-8')
             c_stylesheet = py_stylesheet_string
+            if py_stylesheet_string  is None or isfile(py_stylesheet_string) == False:
+              raise Exception("Stylesheet file does not exist")
             self.thisxptr.compileFromFile(c_stylesheet)
+          elif "associated_file" in kwds:
+            py_stylesheet_string = kwds["associated_file"].encode('UTF-8')
+            if py_stylesheet_string  is None or isfile(py_stylesheet_string) == False:
+              raise Exception("Stylesheet file does not exist")
+            c_stylesheet = py_stylesheet_string
+            self.thisxptr.compileFromAssociatedFile(c_stylesheet)
           elif "stylesheet_node" in kwds:
             py_xdmNode = kwds["stylesheet_node"]
             #if not isinstance(py_value, PyXdmNode):
@@ -2019,36 +2062,7 @@ cdef class PyXslt30Processor:
             raise Exception(py_error_message)
 
 
-     def compile_associated_stylesheet(self, source_file):
-        """
-        compile_associated(self, **kwds)
-        Get the stylesheet associated via the xml-stylesheet processing instruction (see
-        http://www.w3.org/TR/xml-stylesheet/) with the document
-        document specified in the source parameter, and that match
-        the given criteria.  If there are several suitable xml-stylesheet
-        processing instructions, then the returned Source will identify
-        a synthesized stylesheet module that imports all the referenced
-        stylesheet module.
-        Args:
-            source_file (str): The file name of the XML document
-
-        Example:
-            xsltproc.compile_assocated_stylesheet("foo.xml")
-        """
-        py_error_message = "source file not supplied as argument"
-        cdef char * c_sourcefile
-        cdef char * c_stylesheet
-        py_output_string = None
-        py_stylesheet_string = None
-        py_save = False
-        cdef int option = 0
-        cdef PyXdmNode py_xdmNode = None
-        if source_file is None:
-          raise Exception(py_error_message)
-        else:
-          c_sourefile = make_c_str(source_file)
-          self.thisxptr.compileFromAssociatedFile(c_sourcefile)
-
+  
      def release_stylesheet(self):
         """
         release_stylesheet(self)
@@ -2873,6 +2887,8 @@ cdef class PySchemaValidator:
         py_value_string = source_file.encode('UTF-8') if source_file is not None else None
         cdef const char* c_source = NULL
         if source_file is not None:
+            if isfile(py_value_string) == False:
+              raise Exception("Source file with name "+py_value_string+" does not exist")
             c_source = py_value_string
         cdef PyXdmNode val = None
         cdef saxoncClasses.XdmNode * xdmNode = NULL     
@@ -3183,7 +3199,34 @@ cdef class PyXdmItem(PyXdmValue):
         """
         return self.derivedptr.isAtomic()
 
+     def get_node_value(self):
+        """
+        get_node_value(self)
+        Get the subclass PyXdmNode for this PyXdmItem object current object is an atomic value
+    
+        Returns:
+            PyXdmNode: Subclass this object to PyXdmNode or error 
+        """
+        cdef PyXdmNode val = None
+        if self.is_atomic:
+          raise Exception("The PyXdmItem is an PyXdmAtomicValue therefore cannot be sub-classed to an PyXdmNode")
+        val = PyXdmNode()
+        val.derivednptr = val.derivedptr = <saxoncClasses.XdmNode*> self.derivedptr
+        return val
 
+     def get_atomic_value(self):
+        """
+        get_atomic_value(self)
+        Get the subclass PyXdmAtomicValue for this PyXdmItem object current object is an atomic value
+    
+        Returns:
+            PyXdmAtomicValue: Subclass this object to PyXdmAtomicValue or error 
+        """
+        if self.is_atomic == False:
+          raise Exception("The PyXdmItem is not an PyXdmAtomicValue")
+        val = PyXdmAtomicValue()
+        val.derivedaptr = val.derivedptr = <saxoncClasses.XdmAtomicValue*>self.derivedptr
+        return val
 
 cdef class PyXdmNode(PyXdmItem):
      cdef saxoncClasses.XdmNode *derivednptr      # hold a C++ instance which we're wrapping
