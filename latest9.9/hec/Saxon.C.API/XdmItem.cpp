@@ -47,9 +47,9 @@ bool XdmItem::isAtomic(){
    }
 
 jobject XdmItem::getUnderlyingValue(){
-//#ifdef DEBUG
+#ifdef DEBUG
 	std::cerr<<std::endl<<"XdmItem-getUnderlyingValue:"<<std::endl; 
-//#endif 
+#endif 
 	if(value == NULL) {
 		return NULL;	
 	}

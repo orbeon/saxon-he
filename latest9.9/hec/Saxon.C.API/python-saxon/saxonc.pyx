@@ -940,12 +940,14 @@ cdef class PyXsltProcessor:
         ustring = c_string.decode('UTF-8') if c_string is not NULL else None
         return ustring
 
+parametersDict = None
 
 cdef class PyXslt30Processor:
      """An PyXslt30Processor represents factory to compile, load and execute a stylesheet.
      It is possible to cache the context and the stylesheet in the PyXslt30Processor """
 
      cdef saxoncClasses.Xslt30Processor *thisxptr      # hold a C++ instance which we're wrapping
+
 
      def __cinit__(self):
         """Default constructor """
@@ -1176,6 +1178,12 @@ cdef class PyXslt30Processor:
         or by invoking a named template. The parameters in question are the xsl:param elements
         appearing as children of the xsl:template element.
 
+        TODO: To fix issue where we pass XdmValue object created directly in the function argument. This causes seg error
+        e.g. set_initial_template_parameter(False, {a:saxonproc.make_integer_value(12)})
+        Do the following instead:
+        paramArr = {a:saxonproc.make_integer_value(12)}
+        set_initial_template_parameter(False, paramArr)
+
         Args:
         	tunnel (bool): True if these values are to be used for setting tunnel parameters;
         	**kwds: the parameters to be used for the initial template supplied as an key-value pair.
@@ -1183,24 +1191,25 @@ cdef class PyXslt30Processor:
 
         Example:
 
-        	1) result = xsltproc.set_initial_template_parameters(source_file="cat.xml", stylesheet_file="test1.xsl")
+        	1)paramArr = {'a':saxonproc.make_integer_value(12), 'b':saxonproc.make_integer_value(5)} 
+                  xsltproc.set_initial_template_parameters(False, paramArr)
         """
         cdef map[string, saxoncClasses.XdmValue * ] parameters
         cdef bool c_tunnel
         cdef string key_str
         c_tunnel = tunnel
-        cdef PyXdmValue value_
-        print("checkpoint0")
+        cdef PyXdmAtomicValue value_
+        global parametersDict
+        if kwds is not None:
+                parametersDict = kwds
         for (key, value) in kwds.items():
-                if isinstance(value, PyXdmValue):
-                        print("checkpoint1")
+                if isinstance(value, PyXdmAtomicValue):
                         value_ = value
                         key_str = key.encode('UTF-8')
-                        parameters[key_str] = value_.thisvptr
+                        value_.derivedptr.incrementRefCount()
+                        parameters[key_str] = <saxoncClasses.XdmValue *> value_.derivedaptr
                 else:
-                        print("checkpoint2")
                         raise Exception("Initial template parameters can only be of type PyXdmValue")
-        print("checkpoint3")
         if len(kwds) > 0:
             self.thisxptr.setInitialTemplateParameters(parameters, c_tunnel);
 
@@ -2191,6 +2200,7 @@ cdef class PyXQueryProcessor:
             self.thisxqptr.setContextItemFromFile(c_source)
         elif "xdm_item" in kwds:
             xdm_item = kwds["xdm_item"]
+            xdm_item.derivedptr.incrementRefCount()
             self.thisxqptr.setContextItem(xdm_item.derivedptr)
         else:
           raise Exception(py_error_message)
@@ -2621,6 +2631,7 @@ cdef class PyXPathProcessor:
             self.thisxpptr.setContextFile(c_source)
         elif "xdm_item" in kwds:
             xdm_item = kwds["xdm_item"]
+            xdm_item.derivedptr.incrementRefCount()
             self.thisxpptr.setContextItem(xdm_item.derivedptr)
         else:
           raise Exception(py_error_message)
@@ -3106,6 +3117,7 @@ cdef class PyXdmValue:
         if val.derivedptr == NULL :
             return None
         else:
+            val.derivedptr.incrementRefCount()
             return val
 
      def item_at(self, index):
@@ -3125,6 +3137,7 @@ cdef class PyXdmValue:
         if val.derivedptr == NULL:
             return None
         else:
+            val.derivedptr.incrementRefCount()
             return val
 
      @property
@@ -3212,6 +3225,7 @@ cdef class PyXdmItem(PyXdmValue):
           raise Exception("The PyXdmItem is an PyXdmAtomicValue therefore cannot be sub-classed to an PyXdmNode")
         val = PyXdmNode()
         val.derivednptr = val.derivedptr = <saxoncClasses.XdmNode*> self.derivedptr
+        val.derivednptr.incrementRefCount()
         return val
 
      def get_atomic_value(self):
@@ -3226,6 +3240,7 @@ cdef class PyXdmItem(PyXdmValue):
           raise Exception("The PyXdmItem is not an PyXdmAtomicValue")
         val = PyXdmAtomicValue()
         val.derivedaptr = val.derivedptr = <saxoncClasses.XdmAtomicValue*>self.derivedptr
+        val.derivedaptr.incrementRefCount()
         return val
 
 cdef class PyXdmNode(PyXdmItem):

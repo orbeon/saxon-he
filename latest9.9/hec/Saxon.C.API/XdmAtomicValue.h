@@ -27,6 +27,7 @@ public:
 
 
     virtual ~XdmAtomicValue(){
+	//std::cerr<<"destructor called fpr XdmAtomicValue"<<std::endl;
 	if(!valType.empty()) {
 		valType.clear();
 	}

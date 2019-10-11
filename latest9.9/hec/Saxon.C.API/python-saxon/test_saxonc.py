@@ -441,7 +441,8 @@ def testCallNamedTemplateWithTunnelParams(saxonproc):
     trans.compile_stylesheet(stylesheet_text=source)
     trans.set_property("!omit-xml-declaration", "yes")
     trans.set_property("tunnel", "true")
-    trans.set_initial_template_parameters({"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)})
+    paramArr = {"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)}
+    trans.set_initial_template_parameters(False, paramArr)
     sw = trans.call_template_returning_string("t")
     assert sw is not None
     assert "17" in sw
@@ -454,7 +455,8 @@ def testCallTemplateRuleWithParams(saxonproc):
 
     trans.compile_stylesheet(stylesheet_text=source)
     trans.set_property("!omit-xml-declaration", "yes")
-    trans.set_initial_template_parameters({"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)})
+    paramArr = {"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)}
+    trans.set_initial_template_parameters(False, paramArr)
     in_ = saxonproc.parse_xml(xml_text="<e/>")
     trans.set_initial_match_selection(xdm_value=in_)
     sw = trans.apply_templates_returning_string()
@@ -467,7 +469,8 @@ def testApplyTemplatesToXdm(saxonproc):
     trans = saxonproc.new_xslt30_processor()
     trans.compile_stylesheet(stylesheet_text=source)
     trans.set_property("!omit-xml-declaration", "yes")
-    trans.set_initial_template_parameters({"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)})
+    paramArr = {"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)}
+    trans.set_initial_template_parameters(False, paramArr)
     trans.set_result_as_raw_value(True)
     in_put = saxonproc.parse_xml(xml_text="<e/>")
     trans.set_initial_match_selection(xdm_value=in_put)
@@ -479,7 +482,7 @@ def testApplyTemplatesToXdm(saxonproc):
     assert "e" in first.get_node_value().name
     second = result.item_at(1)
     assert second.is_atomic            
-    assert 17e0 in second.get_atomic_value().double_value
+    assert 17.0 in second.get_atomic_value().double_value
     
 
 
@@ -505,11 +508,11 @@ def testApplyTemplatesToFile(saxonproc):
     in_put = saxonproc.parse_xml(xml_text="<a>b</a>")
     trans.set_output_file("output123.xml")
     trans.set_initial_match_selection(xdm_value=in_put)
-    trans.apply_templates_returning_file(output_file="output123.xml")
-    assert isfile("output123.xml")
+    trans.apply_templates_returning_file(output_file="/home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API/python-saxon/output123.xml")
+    assert isfile("output123.xml") == True
 
 
-
+@pytest.mark.skip('Test can only run with a license file present')
 def testCallTemplateWithResultValidation():
     saxonproc2 =  PySaxonProcessor(True)
     saxonproc2.set_cwd("/home/ond1/work/svn/latest9.9-saxonc/samples/php/")
@@ -547,13 +550,14 @@ def testCallNamedTemplateWithParamsRaw(saxonproc):
 
     trans.compile_stylesheet(stylesheet_text=source)
     trans.set_result_as_raw_value(True)
-    trans.set_initial_template_parameters({"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)})
+    paramArr = {"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)}
+    trans.set_initial_template_parameters(False, paramArr)
     val = trans.call_template_returning_value("t")
     assert val is not None
     assert val.size == 2
     assert val.item_at(0).is_atomic
-    assert val.item_at(0).get_atomic_value().integer_Value == 13
-    assert val.item_at(1).get_atomic_value().integer_Value == 6
+    assert val.item_at(0).get_atomic_value().integer_value == 13
+    assert val.item_at(1).get_atomic_value().integer_value == 6
        
 
 def testApplyTemplatesRaw(saxonproc):
@@ -565,7 +569,8 @@ def testApplyTemplatesRaw(saxonproc):
     node = saxonproc.parse_xml(xml_text="<e/>")
 
     trans.set_result_as_raw_value(True)
-    trans.set_initial_template_parameters({"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)})
+    paramArr = {"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)}
+    trans.set_initial_template_parameters(False, paramArr)
     trans.set_initial_match_selection(xdm_value=node)
     result = trans.apply_templates_returning_value()
     assert result is not None
@@ -577,7 +582,7 @@ def testApplyTemplatesRaw(saxonproc):
     second = result.item_at(1)
     assert second is not None
     assert second.is_atomic
-    assert second.get_atomic_value().double_value == "17e0"
+    assert second.get_atomic_value().double_value == 17.0
         
 
 
@@ -589,8 +594,9 @@ def testApplyTemplatesToSerializer(saxonproc):
     trans.compile_stylesheet(stylesheet_text=source)
     trans.set_property("!omit-xml-declaration", "yes")
     trans.set_result_as_raw_value(True)
-    trans.set_initial_template_parameters({"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)})
-      
+    paramArr = {"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)}
+    trans.set_initial_template_parameters(False, paramArr)
+  
     trans.set_initial_match_selection(xdm_value=saxonproc.make_integer_value(16))
     sw = trans.apply_templates_returning_string()
 

@@ -781,6 +781,30 @@ void testPackage2(Xslt30Processor * trans, sResultCount * sresult){
 		delete valueArray;
     }
 
+void testInitialTemplate(SaxonProcessor * proc, Xslt30Processor * trans, sResultCount * sresult) {
+
+
+    const char* source = "<?xml version='1.0'?>  <xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform'  xmlns:xs='http://www.w3.org/2001/XMLSchema'  version='3.0'>  <xsl:template match='*'>     <xsl:param name='a' as='xs:double'/>     <xsl:param name='b' as='xs:float'/>     <xsl:sequence select='., $a + $b'/>  </xsl:template>  </xsl:stylesheet>";
+cout<<endl<<"Test:testInitialTemplate"<<endl;
+    trans->compileFromString(source);
+    XdmNode * node = proc->parseXmlFromString("<e/>");
+
+    trans->setResultAsRawValue(false);
+std::map<std::string,XdmValue*> parameterValues;
+ parameterValues["a"] = proc->makeIntegerValue(12);
+parameterValues["b"] = proc->makeIntegerValue(5);
+    trans->setInitialTemplateParameters(parameterValues, false);
+    trans->setInitialMatchSelection(node);
+    XdmValue * result = trans->applyTemplatesReturningValue();
+ if(result != NULL){
+	sresult->success++;
+	cout<<"Result="<<result->getHead()->getStringValue()<<endl;
+} else {
+	sresult->failure++;
+}
+
+}
+
 void testResolveUri(SaxonProcessor * proc, Xslt30Processor * trans, sResultCount * sresult) {
  cout<<endl<<"Test: testResolveUri:"<<endl;
  
@@ -994,7 +1018,8 @@ int main()
    processor->setConfigurationProperty("http://saxon.sf.net/feature/generateByteCode","false");
    sResultCount *sresult = new sResultCount();
     Xslt30Processor * trans = processor->newXslt30Processor();
-	testValidation(trans,sresult);
+	//testValidation(trans,sresult);
+testInitialTemplate(processor, trans, sresult);
   /*  exampleSimple1Err(trans, sresult);
     exampleSimple1(trans, sresult);
     exampleSimple_xmark(trans, sresult);
