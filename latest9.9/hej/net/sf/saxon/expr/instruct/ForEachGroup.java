@@ -328,7 +328,7 @@ public class ForEachGroup extends Instruction
 
         } else {
             for (Operand o : exp.operands()) {
-                fixupGroupReferences(o.getChildExpression(), feg, selectedItemType, isInLoop || o.isEvaluatedRepeatedly());
+                fixupGroupReferences(o.getChildExpression(), feg, selectedItemType, isInLoop || o.isHigherOrder());
             }
         }
     }

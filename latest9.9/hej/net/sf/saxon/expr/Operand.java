@@ -142,6 +142,17 @@ public final class Operand implements Iterable<Operand>, ExpressionOwner {
     }
 
     /**
+     * Ask whether the operand is a higher-order operand, in the sense that the child expression
+     * is evaluated repeatedly during a single evaluation of the parent expression
+     *
+     * @return true if the operand is higher-order
+     */
+    public boolean isHigherOrder() {
+        return role.isHigherOrder();
+    }
+
+
+    /**
      * Get the usage of the operand
      *
      * @return the usage

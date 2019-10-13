@@ -104,6 +104,10 @@ public class OperandRole {
         return ((properties & HIGHER_ORDER) != 0) && ((properties & SINGLETON) == 0);
     }
 
+    public boolean isHigherOrder() {
+        return ((properties & HIGHER_ORDER) != 0);
+    }
+
     /**
      * Ask whether the operand is constrained to be of a particular class (preventing
      * substitution of a variable binding)

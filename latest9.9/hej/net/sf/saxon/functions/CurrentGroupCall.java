@@ -7,7 +7,10 @@
 
 package net.sf.saxon.functions;
 
-import net.sf.saxon.expr.*;
+import net.sf.saxon.expr.Callable;
+import net.sf.saxon.expr.Expression;
+import net.sf.saxon.expr.StaticProperty;
+import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.instruct.ForEachGroup;
 import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.expr.sort.GroupIterator;
@@ -100,6 +103,22 @@ public class CurrentGroupCall extends Expression implements Callable {
 
     public boolean isInLoop() {
         return isInLoop;
+//        if (isInLoop) {
+//            return true;
+//        }
+//        Expression child = this;
+//        Expression parent = getParentExpression();
+//        while (parent != getControllingInstruction()) {
+//            Operand o = ExpressionTool.findOperand(parent, child);
+//            if (o == null) {
+//                return true;  // safety net
+//            }
+//            if (o.isEvaluatedRepeatedly()) {
+//                return true;
+//            }
+//            parent = parent.getParentExpression();
+//        }
+//        return false;
     }
 
     /**
