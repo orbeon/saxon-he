@@ -195,7 +195,9 @@ public class WindowClause extends Clause {
         wc.includeUnclosedWindows = includeUnclosedWindows;
         wc.initSequence(flwor, getSequence().copy(rebindings));
         wc.initStartCondition(flwor, getStartCondition().copy(rebindings));
-        wc.initEndCondition(flwor, getEndCondition().copy(rebindings));
+        if (getEndCondition() != null) {
+            wc.initEndCondition(flwor, getEndCondition().copy(rebindings));
+        }
         wc.windowVars = windowVars;
         return wc;
     }
