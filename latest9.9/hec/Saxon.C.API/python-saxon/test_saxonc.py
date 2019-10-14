@@ -212,7 +212,7 @@ def testContextNotRoot(saxonproc):
     assert len(node.children)>0
     eNode = node.children[0].children[0]
     assert eNode is not None
-    trans.set_global_context_item(xdm_node=node)
+    trans.set_global_context_item(xdm_item=node)
     trans.set_initial_match_selection(xdm_value=eNode)
     result = trans.apply_templates_returning_string()
     assert result is not None
@@ -254,7 +254,7 @@ def testContextNotRootNamedTemplate(saxonproc, files_dir):
     trans = saxonproc.new_xslt30_processor()
     input_ = saxonproc.parse_xml(xml_text="<doc><e>text</e></doc>")
     trans.compile_stylesheet(stylesheet_text="<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'><xsl:variable name='x' select='.'/><xsl:template match='/'>errorA</xsl:template><xsl:template name='main'>[<xsl:value-of select='name($x)'/>]</xsl:template></xsl:stylesheet>")      
-    trans.set_global_context_item(xdm_node=input_)
+    trans.set_global_context_item(xdm_item=input_)
     result = trans.call_template_returning_value("main")
     assert result is not None
     assert "[]" in result.head.string_value
@@ -383,9 +383,10 @@ def testCallFunction(saxonproc):
     assert isinstance(v.head, PyXdmItem)
     assert v.head.is_atomic		
     assert v.head.get_atomic_value().integer_value ==5
+    trans.clear_parameters()
         
   
-def testCallFunctionArgConversion():
+def testCallFunctionArgConversion(saxonproc):
     trans = saxonproc.new_xslt30_processor()
 
     source = "<?xml version='1.0'?><xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform'  xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:f='http://localhost/'  version='3.0'>  <xsl:function name='f:add' visibility='public'> <xsl:param name='a' as='xs:double'/>  <xsl:param name='b' as='xs:double'/>  <xsl:sequence select='$a + $b'/> </xsl:function> </xsl:stylesheet>"
@@ -409,12 +410,13 @@ def testCallFunctionWrapResults(saxonproc):
     trans.compile_stylesheet(stylesheet_text=source)
 
     trans.set_property("!omit-xml-declaration", "yes")
-    trans.set_parameter("x", saxonproc.make_integer_value(30))
-    trans.set_global_context_item(saxonproc.make_integer_value(20))
+    trans.set_parameter("x",  saxonproc.make_integer_value(30))
+    trans.set_global_context_item(xdm_item=saxonproc.make_integer_value(20))
 
     sw = trans.call_function_returning_string("{http://localhost/}add", [saxonproc.make_integer_value(2), saxonproc.make_integer_value(3)])
-
+    assert sw is not None
     assert "57" in sw
+    trans.clear_parameters()
     
 
 
@@ -422,15 +424,17 @@ def testCallFunctionWrapResults(saxonproc):
 def testCallFunctionArgInvalid(saxonproc):
     trans = saxonproc.new_xslt30_processor()
 
-    source = "<?xml version='1.0'?>  <xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:f='http://localhost/'  version='2.0'><xsl:function name='f:add'> <xsl:param name='a' as='xs:double'/>  <xsl:param name='b' as='xs:double'/>  <xsl:sequence select='\$a + \$b'/> </xsl:function> </xsl:stylesheet>"
+    source = "<?xml version='1.0'?>  <xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:f='http://localhost/'  version='2.0'><xsl:function name='f:add'> <xsl:param name='a' as='xs:double'/>  <xsl:param name='b' as='xs:double'/>  <xsl:sequence select='$a + $b'/> </xsl:function> </xsl:stylesheet>"
 
     trans.compile_stylesheet(stylesheet_text=source)
-    v = trans.call_function_returning_value("{http://localhost/}add", [saxonproc.make_integer_value(2), saxonproc.make_integer_value(3)])
+    argArr = [saxonproc.make_integer_value(2), saxonproc.make_integer_value(3)]
+    v = trans.call_function_returning_value("{http://localhost/}add", argArr)
             
     assert trans.exception_count()==1
     assert "Cannot invoke function add#2 externally" in trans.get_error_message(0)
     assert v is None
-
+    trans.clear_parameters()
+    
 
 
 def testCallNamedTemplateWithTunnelParams(saxonproc):
@@ -441,8 +445,9 @@ def testCallNamedTemplateWithTunnelParams(saxonproc):
     trans.compile_stylesheet(stylesheet_text=source)
     trans.set_property("!omit-xml-declaration", "yes")
     trans.set_property("tunnel", "true")
-    paramArr = {"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)}
-    trans.set_initial_template_parameters(False, paramArr)
+    aVar = saxonproc.make_double_value(12)
+    paramArr = {"a":aVar, "b":saxonproc.make_integer_value(5)}
+    trans.set_initial_template_parameters(True, paramArr)
     sw = trans.call_template_returning_string("t")
     assert sw is not None
     assert "17" in sw
@@ -482,7 +487,7 @@ def testApplyTemplatesToXdm(saxonproc):
     assert "e" in first.get_node_value().name
     second = result.item_at(1)
     assert second.is_atomic            
-    assert 17.0 in second.get_atomic_value().double_value
+    assert second.get_atomic_value().double_value == 17.0
     
 
 

@@ -533,6 +533,7 @@ cdef class PyXsltProcessor:
         """
         cdef const char * c_str = make_c_str(name)
         if c_str is not NULL:
+            value.thisvptr.incrementRefCount()
             self.thisxptr.setParameter(c_str, value.thisvptr)
 
      def get_parameter(self, name):
@@ -968,29 +969,32 @@ cdef class PyXslt30Processor:
         self.thisxptr.setcwd(c_cwd)
 
      def set_global_context_item(self, **kwds):
-        """Set the source document for the transformation.
+        """Set the global context item for the transformation.
 
         Args:
-            **kwds: Keyword argument can only be one of the following: file_name|xdm_node
+            **kwds: Keyword argument can only be one of the following: file_name|xdm_item
         Raises:
-            Exception: Exception is raised if keyword argument is not one of file_name or node.
+            Exception: Exception is raised if keyword argument is not one of file_name or an Xdm item.
         """
 
-        py_error_message = "Error: set_global_context_item should only contain one of the following keyword arguments: (file_name|xdm_node)"
+        py_error_message = "Error: set_global_context_item should only contain one of the following keyword arguments: (file_name|xdm_item)"
         if len(kwds) != 1:
           raise Exception(py_error_message)
         cdef py_value = None
         cdef py_value_string = None
         cdef char * c_source
-        cdef PyXdmNode xdm_node = None
+        cdef PyXdmItem xdm_item = None
         if "file_name" in kwds:
             py_value = kwds["file_name"]
             py_value_string = py_value.encode('UTF-8') if py_value is not None else None
             c_source = py_value_string if py_value is not None else ""
             self.thisxptr.setGlobalContextFromFile(c_source)
-        elif "xdm_node" in kwds:
-            xdm_node = kwds["xdm_node"]
-            self.thisxptr.setGlobalContextItem(xdm_node.derivednptr)
+        elif "xdm_item" in kwds:
+            if isinstance(kwds["xdm_item"], PyXdmItem):
+                xdm_item = kwds["xdm_item"]
+                self.thisxptr.setGlobalContextItem(xdm_item.derivedptr)
+            else:
+                raise Exception("xdm_item value must be of type PyXdmItem")
         else:
           raise Exception(py_error_message)
 
@@ -1089,6 +1093,8 @@ cdef class PyXslt30Processor:
         """
         cdef const char * c_str = make_c_str(name)
         if c_str is not NULL:
+            '''value.thisvptr.incrementRefCount()
+            print("set_parameter called")'''
             self.thisxptr.setParameter(c_str, value.thisvptr, False)
 
      def get_parameter(self, name):
@@ -1725,14 +1731,14 @@ cdef class PyXslt30Processor:
 
 
 
-     def call_function_returning_value(self, str function_name, *args, **kwds):
+     def call_function_returning_value(self, str function_name, list args, **kwds):
         """
-        call_function_returning_value(self, str function_name, *args, **kwds)
+        call_function_returning_value(self, str function_name, list args, **kwds)
         Invoke a transformation by calling a named template and return result as an PyXdmValue.
 
         Args:
 			function_name(str): The name of the template to invoke. If None is supplied then call the initial-template
-			*args: Pointer array of XdmValue object - he values of the arguments to be supplied to the function.
+			list args: Pointer array of XdmValue object - he values of the arguments to be supplied to the function.
             **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). Other allowed argument: stylesheet_file (str)
 
 
@@ -1782,7 +1788,7 @@ cdef class PyXslt30Processor:
             value_ = args[x];
             argumentV[x] = value_.thisvptr
           else:
-            raise Exception("Argument value at position " , x , " is not an PyXdmValue")
+            raise Exception("Argument value at position " , x , " is not an PyXdmValue. The following object found: ", type(args[x]))
 
         c_functionName = make_c_str(function_name)
         cdef PyXdmValue val = None
@@ -1809,14 +1815,14 @@ cdef class PyXslt30Processor:
 
 
 
-     def call_function_returning_str(self, str function_name, *args, **kwds):
+     def call_function_returning_string(self, str function_name, list args, **kwds):
         """
-        call_function_returning_value(self, str function_name, *args, **kwds)
+        call_function_returning_string(self, str function_name, list args, **kwds)
         Invoke a transformation by calling a named template and return result as a serialized string.
 
         Args:
 			function_name(str): The name of the template to invoke. If None is supplied then call the initial-template
-			*args: Pointer array of XdmValue object - he values of the arguments to be supplied to the function.
+			list args: Pointer array of XdmValue object - he values of the arguments to be supplied to the function.
             **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). Other allowed argument: stylesheet_file (str)
 
 
@@ -1826,16 +1832,16 @@ cdef class PyXslt30Processor:
 
 
         Example:
-            1) result = xsltproc.call_function_returning_str("{http://localhost/example}func", stylesheet_file="test1.xsl")
+            1) result = xsltproc.call_function_returning_string("{http://localhost/example}func", stylesheet_file="test1.xsl")
 
 
             2) xsltproc.set_initial_match_selection(file_name="cat.xml")\r
-               result = xsltproc.call_function_returning_str("{http://localhost/test}add", stylesheet_file="test1.xsl")
+               result = xsltproc.call_function_returning_string("{http://localhost/test}add", stylesheet_file="test1.xsl")
 
 
             3) xsltproc.compile_stylesheet(stylesheet_file="test2.xsl")
 			   xsltproc.set_initial_match_selection(file_name="cat.xml")\r
-               result = xsltproc.call_function_returning_str("{http://exmaple.com}func1")
+               result = xsltproc.call_function_returning_string("{http://exmaple.com}func1")
 
         """
         cdef const char * c_functionName = NULL
@@ -1879,15 +1885,15 @@ cdef class PyXslt30Processor:
         return ustring
 
 
-     def call_function_returning_file(self, str function_name, *args, **kwds):
+     def call_function_returning_file(self, str function_name, list args, **kwds):
         """
-        call_function_returning_value(self, str function_name, *args, **kwds)
+        call_function_returning_value(self, str function_name, list args, **kwds)
         Invoke a transformation by calling a named template and return result as an PyXdmValue.
 
         Args:
 			function_name(str): The name of the template to invoke. If None is supplied 
                         then call the initial-template
-			*args: Pointer array of XdmValue object - he values of the arguments to be supplied to the function.
+			list args: Pointer array of XdmValue object - he values of the arguments to be supplied to the function.
             **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). Other allowed argument: stylesheet_file (str)
 
 
@@ -2229,6 +2235,7 @@ cdef class PyXQueryProcessor:
         """
         cdef const char * c_str = make_c_str(name)
         if c_str is not NULL:
+            value.thisvptr.incrementRefCount()
             self.thisxqptr.setParameter(c_str, value.thisvptr)
 
      def remove_parameter(self, name):
@@ -2952,6 +2959,7 @@ cdef class PySchemaValidator:
         """
         cdef const char * c_str = make_c_str(name)
         if c_str is not NULL:
+            value.thisvptr.incrementRefCount()
             self.thissvptr.setParameter(c_str, value.thisvptr)
 
      def remove_parameter(self, name):
@@ -3477,9 +3485,12 @@ cdef class PyXdmAtomicValue(PyXdmItem):
         if type(self) is PyXdmAtomicValue:
             self.derivedaptr = self.derivedptr = self.thisvptr = new saxoncClasses.XdmAtomicValue()
      def __dealloc__(self):
-        del self.derivedaptr
-
-
+        if self.derivedaptr != NULL:
+            if self.derivedaptr.getRefCount() <= 1:
+                del self.derivedaptr
+            else:
+                self.derivedaptr.decrementRefCount()
+            
 
      @property
      def primitive_type_name(self):
