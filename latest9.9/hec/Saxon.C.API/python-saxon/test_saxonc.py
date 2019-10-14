@@ -517,7 +517,7 @@ def testApplyTemplatesToFile(saxonproc):
     assert isfile("output123.xml") == True
 
 
-@pytest.mark.skip('Test can only run with a license file present')
+'''@pytest.mark.skip('Test can only run with a license file present')'''
 def testCallTemplateWithResultValidation():
     saxonproc2 =  PySaxonProcessor(True)
     saxonproc2.set_cwd("/home/ond1/work/svn/latest9.9-saxonc/samples/php/")
