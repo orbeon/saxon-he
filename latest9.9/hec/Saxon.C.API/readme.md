@@ -394,24 +394,39 @@ The methods on these class are given below. For a more comprehensive description
 
 |  |  |
 | ----: | :---- |
+| void | addPackages(array packageFileNames) <br> *File names to XsltPackages stored on filestore are added to a set of packages, which will imported later for use when compiling.*  |
+| void | applyTemplatesReturningFile(string $stylesheetFileName) <br> *Invoke the stylesheet by applying templates to a supplied input sequence, Saving the results to file. The stylesheet file name argument can be supplied here. If null then the most recently compiled stylsheet is used.*  |
+| string | applyTemplatesReturningString(string $stylesheetFileName) <br> *Invoke the stylesheet by applying templates to a supplied input sequence. The result is returned as a serialized string. The stylesheet file name argument can be supplied here. If null then the most recently compiled stylsheet is used.* |
+| PyXdmValue | applyTemplatesReturningValue(string $stylesheetFileName) <br> *Invoke the stylesheet by applying templates to a supplied input sequence. the result is returned as an XdmValue object. The stylesheet file name argument can be supplied here. If null then the most recently compiled stylsheet is used.* |
+| void | compileFromAssociatedFile(string xmlFileName)<br> *Get the stylesheet associated via the xml-stylesheet processing instruction (see http://www.w3.org/TR/xml-stylesheet/) with the document document specified in the source parameter, and that match the given criteria.  If there are several suitable xml-stylesheet processing instructions, then the returned Source will identify a synthesized stylesheet module that imports all the referenced stylesheet module.* |
 | void | compileFromFile(string $fileName) <br> *Compile a stylesheet suplied as by file name* |
 | void | compileFromString(string $str) <br> *Compile a stylesheet received as a string.*  |
 | void | compileFromValue(XdmNode $node)<br> *Compile a stylesheet received as an XdmNode.* |
-| void | callFunctionReturningFile(string $FunctionName, array arguments, string outputfileName) <br> *Call a public user-defined function in the stylesheet. Here we wrap the result in an XML document, and sending this document to a specified file*  |
-| string | callFunctionReturningString(string $FunctionName, array arguments) <br> *Call a public user-defined function in the stylesheet. Here we wrap the result in an XML document, and serialized this document to string value* |
-| PyXdmValue | callFunctionReturningValue(string $FunctionName, array arguments) <br> *Call a public user-defined function in the stylesheet. Here we wrap the result in an XML document, and return the document as an XdmVale* |
-| void | callTemplateReturningFile(string $sourceFileName, string $stylesheetFileName, string outputfileName) <br> *Perform a one shot transformation. The result is stored in the supplied outputfile name.*  |
-| string | callTemplateReturningString(string $sourceFileName, string $stylesheetFileName) <br> *Perform a one shot transformation. The result is returned as a string. If there are failures then a null is returned* |
-| PyXdmValue | callTemplateReturningValue(string $fileName) <br> *Perform a one shot transformation. The result is returned as an XdmValue* |
+| void | compileFromFileAndSave(string $fileName, string outputFileName) <br> *Compile a stylesheet suplied as by file name and save as an exported file (SEF)* |
+| void | compileFromStringAndSave(string $str, string outputFileName) <br> *Compile a stylesheet received as a string and save as an exported file (SEF).*  |
+| void | compileFromValueAndSave(XdmNode $node, string outputFileName)<br> *Compile a stylesheet received as an XdmNode and save as an exported file (SEF).* |
+| void | callFunctionReturningFile(string $FunctionName, array arguments, string outputfileName) <br> *Call a public user-defined function in the stylesheet. Here we wrap the result in an XML document, and sending this document to a specified file. Arguments: function name and array of XdmValue objects - he values of the arguments to be supplied to the function. These will be converted if necessary to the type as defined in the function signature, using the function conversion rules. *  |
+| string | callFunctionReturningString(string $FunctionName, array arguments) <br> *Call a public user-defined function in the stylesheet. Here we wrap the result in an XML document, and serialized this document to string value. Arguments: function name and array of XdmValue objects - he values of the arguments to be supplied to the function. These will be converted if necessary to the type as defined in the function signature, using the function conversion rules.* |
+| PyXdmValue | callFunctionReturningValue(string $FunctionName, array arguments) <br> *Call a public user-defined function in the stylesheet. Here we wrap the result in an XML document, and return the document as an XdmVale. Arguments: function name and array of XdmValue objects - he values of the arguments to be supplied to the function. These will be converted if necessary to the type as defined in the function signature, using the function conversion rules. * |
+| void | callTemplateReturningFile(string $stylesheetFileName, string $templateName, string outputfileName) <br> *Invoke a transformation by calling a named template. The result is stored in the supplied outputfile name. If the templateName argument is null then the xsl:iitial-template is used. Parameters supplied using setInitialTemplateParameters are made available to the called template.*  |
+| string | callTemplateReturningString(string $stylesheetFileName, string $templateName) <br> *Invoke a transformation by calling a named template and return result as a string. If the templateName argument is null then the xsl:iitial-template is used. Parameters supplied using setInitialTemplateParameters are made available to the called template.* |
+| PyXdmValue | callTemplateReturningValue(string $stylesheetFileName, string $templateName) <br> *Invoke a transformation by calling a named template and return result as an XdmValue. If the templateName argument is null then the xsl:iitial-template is used. Parameters supplied using setInitialTemplateParameters are made available to the called template.* |`
 | void | transformFileToFile(string $sourceFileName, string $stylesheetFileName, string outputfileName) <br> *Perform a one shot transformation. The result is stored in the supplied outputfile name.*  |
-| string | transformFileToString(string $sourceFileName, string $stylesheetFileName) <br> *Perform a one shot transformation. The result is returned as a string. If there are failures then a null is returned* |
 | XdmValue | transformFileToValue(string $fileName) <br> *Perform a one shot transformation. The result is returned as an XdmValue* |
-| void | transformToFile() <br> *Perform the transformation based upon cached stylesheet and source document.* |
-| string | transformToString() |
+| XdmValue | transformFileToString(string $fileName) <br> *Perform a one shot transformation. The result is returned as a stringe* |
+| void | transformToFile() <br> *Perform the transformation based upon cached stylesheet and source document. Result is saved to the supplied file name* |
+| string | transformToString() <br> *Perform the transformation based upon cached stylesheet and source document. Result is returned as a serialized string* |
 | PyXdmValue | transformToValue() <br> *Perform the transformation based upon cached stylesheet and any source document. Result returned as an XdmValue object. If there are failures then a null is returned* |
+| void | setInitialTemplateParameters(array parameters, bool tunnel) <br> * Set parameters to be passed to the initial template. These are used whether the transformation is invoked by applying templates to an initial source item, or by invoking a named template. The parameters in question are the xsl:param elements appearing as children of the xsl:template element. The tunnel argumnet if set to true these values are to be used for setting tunnel parameters*|
+| void | setInitialMatchSelection() <br> *The initial value to which templates are to be applied (equivalent to the 'select' attribute of xsl:apply-templates)*|
+| void | setInitialMatchSelectionAsFile <br> *The initial filename to which templates are to be applied (equivalent to the 'select' attribute of xsl:apply-templates) * |
+| void | setGlobalContextItem <br> *Set the source document from an XdmNode for the transformation.*|
+| void | setGlobalContextFromFile <br> *Set the source from file for the transformation.* |
 | void | setOutputFile(string $fileName) <br> *Set the output file name of where the transformation result is sent* |
 | void | setParameter(string $name, XdmValue $value) <br> *Set the parameters required for XSLT stylesheet* |
 | void | setProperty(string $name, string $value) <br> *Set properties for the stylesheet.* |
+| void | setJustInTimeCompilation(bool $value) <br> *ay whether just-in-time compilation of template rules should be used.* |
+| void | setResultAsRawValue(bool $value) <br> *Set true if the return type of callTemplate, applyTemplates and transform methods is to return XdmValue, otherwise return XdmNode object with root Document node.* |
 | void | clearParameters() <br> *Clear parameter values set* |
 | void | clearProperties() <br> *Clear property values set* |
 | void | exceptionClear() <br> *Clear any exception thrown* |
@@ -419,47 +434,6 @@ The methods on these class are given below. For a more comprehensive description
 | string | getErrorMessage(int $i) <br> *Get the ith error message if there are any error* |
 | int | getExceptionCount() <br> *Get number of error during execution or evaluate of stylesheet* |
 
-
-    PHP_METHOD(Xslt30Processor, callFunctionReturningValue);
-    PHP_METHOD(Xslt30Processor, callFunctionReturningString);
-    PHP_METHOD(Xslt30Processor, callFunctionReturningFile);
-    PHP_METHOD(Xslt30Processor, callTemplateReturningValue);
-    PHP_METHOD(Xslt30Processor, callTemplateReturningString);
-    PHP_METHOD(Xslt30Processor, callTemplateReturningFile);
-    PHP_METHOD(Xslt30Processor, applyTemplatesReturningValue);
-    PHP_METHOD(Xslt30Processor, applyTemplatesReturningString);
-    PHP_METHOD(Xslt30Processor, applyTemplatesReturningFile);
-    PHP_METHOD(Xslt30Processor, addPackages);
-    PHP_METHOD(Xslt30Processor, setInitialTemplateParameters);
-    PHP_METHOD(Xslt30Processor, setInitialMatchSelection);
-    PHP_METHOD(Xslt30Processor, setInitialMatchSelectionAsFile);
-    PHP_METHOD(Xslt30Processor, setGlobalContextItem);
-    PHP_METHOD(Xslt30Processor, setGlobalContextFromFile);
-    PHP_METHOD(Xslt30Processor,  transformFileToFile);
-    PHP_METHOD(Xslt30Processor,  transformFileToString);
-    PHP_METHOD(Xslt30Processor,  transformFileToValue);
-    PHP_METHOD(Xslt30Processor,  transformToString);
-    PHP_METHOD(Xslt30Processor,  transformToValue);
-    PHP_METHOD(Xslt30Processor,  transformToFile);
-    PHP_METHOD(Xslt30Processor, compileFromFile);
-    PHP_METHOD(Xslt30Processor, compileFromValue);
-    PHP_METHOD(Xslt30Processor, compileFromString);
-    PHP_METHOD(Xslt30Processor, compileFromStringAndSave);
-    PHP_METHOD(Xslt30Processor, compileFromFileAndSave);
-    PHP_METHOD(Xslt30Processor, compileFromAssociatedFile);
-    PHP_METHOD(Xslt30Processor,  setOutputFile);
-    PHP_METHOD(Xslt30Processor,  setJustInTimeCompilation);
-    PHP_METHOD(Xslt30Processor,  setResultAsRawValue);
-    PHP_METHOD(Xslt30Processor,  setParameter);
-    PHP_METHOD(Xslt30Processor,  setProperty);
-    PHP_METHOD(Xslt30Processor,  clearParameters);
-    PHP_METHOD(Xslt30Processor,  clearProperties);
-    PHP_METHOD(Xslt30Processor,  exceptionClear);
-    PHP_METHOD(Xslt30Processor,  exceptionOccurred);
-    PHP_METHOD(Xslt30Processor,  getErrorCode);
-    PHP_METHOD(Xslt30Processor,  getErrorMessage);
-    PHP_METHOD(Xslt30Processor,  getExceptionCount);
-    PHP_METHOD(Xslt30Processor,  getXslMessages);
 
 
 #### Saxon\\XQueryProcessor class ####

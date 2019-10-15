@@ -332,7 +332,7 @@ public:
      */
     void compileFromXdmNode(XdmNode * node);
 
-     //!nvoke the stylesheet by applying templates to a supplied input sequence, Saving the results to file.
+     //!Invoke the stylesheet by applying templates to a supplied input sequence, Saving the results to file.
     /**
      * The initial match selection must be set using one of the two methods setInitialMatchSelection or setInitialMatchSelectionFile.
      * The result is stored in the supplied output file.
@@ -342,7 +342,7 @@ public:
      */
     void applyTemplatesReturningFile(const char * stylesheetFilename, const char* outfile);
 
-     //!nvoke the stylesheet by applying templates to a supplied input sequence, Saving the results as serialized string.
+     //!Invoke the stylesheet by applying templates to a supplied input sequence, Saving the results as serialized string.
     /**
      * The initial match selection must be set using one of the two methods setInitialMatchSelection or setInitialMatchSelectionFile.
      *
@@ -350,7 +350,7 @@ public:
      */
     const char* applyTemplatesReturningString(const char * stylesheetFilename=NULL);
 
-     //!nvoke the stylesheet by applying templates to a supplied input sequence, Saving the results as an XdmValue.
+     //!Invoke the stylesheet by applying templates to a supplied input sequence, Saving the results as an XdmValue.
     /**
      * The initial match selection must be set using one of the two methods setInitialMatchSelection or setInitialMatchSelectionFile.
      *
@@ -419,7 +419,7 @@ public:
     const char * callFunctionReturningString(const char * stylesheetFilename, const char* functionName, XdmValue ** arguments, int argument_length);
 
     //! Call a public user-defined function in the stylesheet
-    /** Here we wrap the result in an XML document, and return the document as an XdmVale
+    /** Here we wrap the result in an XML document, and return the document as an XdmValue
     * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
     * @param functionName - The name of the function to be called
     * @param arguments - Pointer array of XdmValue object - he values of the arguments to be supplied to the function. These
@@ -430,6 +430,13 @@ public:
     */
     XdmValue * callFunctionReturningValue(const char * stylesheetFilename, const char* functionName, XdmValue ** arguments, int argument_length);
 
+
+    //! File names to XsltPackages stored on filestore are added to a set of packages.
+    /***
+     * The added XSLT packages will be imported later when compiling
+     * @param fileNames - packs array of file names of XSLT packages stored in filestore
+     * @param length - The number of package names in the array
+     */
 
     void addPackages(const char ** fileNames, int length);
 
