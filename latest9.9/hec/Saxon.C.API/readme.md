@@ -7,11 +7,11 @@
 4. [Technical](#tech)
 5. [Limitations](#limitations)
 
-Saxon/C 1.1.2 is the latest release of Saxon-HE/PE/EE on the C/C++ programming platform. The APIs support the specifications XSLT 3.0, XQuery 3.0, Schema Validation 1.0/1.1 and XPath 2.0/3.0 from C/C++ or PHP applications.
+Saxon/C 1.2.0 is the latest release of Saxon-HE/PE/EE on the C/C++ programming platform. The APIs support the specifications XSLT 3.0, XQuery 3.0, Schema Validation 1.0/1.1 and XPath 2.0/3.0 from the langauges C/C++, Python and PHP applications.
 
-Saxon/C is built from the Saxon 9.8.0.15 Java product using the Excelsior JET tool (version 15.3).
+Saxon/C is built from the Saxon 9.9.1.5 Java product using the Excelsior JET tool (version 15.3 MP1).
 
-Platforms supported: Linux 32/64-bit, Mac OS and Windows 64-bit. 
+Platforms supported: Linux 64-bit, Mac OS and Windows 64-bit. 
 
 Saxon/C is release in three separate editions which replicating the products on the Java platform: Enterprise (Saxon-EE/C), Professional Editon (Saxon-PE/C), and Home Edition (Saxon-HE/C)
 
@@ -27,7 +27,7 @@ Link the dynamic saxon library so it can be found. For example:
 
 	ln -s /usr/lib/Saxonica/Saxon-EDITIONC#.#.#/libsaxonEDITION.so /usr/lib/libsaxonEDITION.so
 
-You need to setup the environment for the jet jvm. The jvm is in the directory JET-home=Saxonica/Saxon-EDITION1.1.0/rt
+You need to setup the environment for the jet jvm. The jvm is in the directory JET-home=Saxonica/Saxon-EDITION1.2.0/rt
 The directory JET-home/lib/i386  or JET_home/lib/amd64 (for 64-bit machines) must be listed in the LD_LIBRARY_PATH environment variable. For instance, if you
 are using bash or Bourne shell, use the following commands:
 
@@ -353,6 +353,7 @@ The methods on these class are given below. For a more comprehensive description
 | void | setResourceDirectory(string $dir) <br> *Set the resources directory of where Saxon can locate data folder* |
 | void | setConfigurationProperty(string $name, string $value) <br> *Set a configuration property specific to the processor in use. Properties specified here are common across all the processors. See [Configuration Features](http://www.saxonica.com/documentation9.6/index.html#!configuration/config-features)* |
 | Saxon\\XsltProcessor | newXsltProcessor() <br> *Create an XsltProcessor in the PHP environment. An XsltProcessor is used to compile and execute XSLT sytlesheets* |
+| Saxon\\Xslt30Processor | newXslt30Processor() <br> *Create an Xslt30Processor in the PHP environment specifically designed for XSLT 3.0 processing. An Xslt30Processor is used to compile and execute XSLT 3.0 sytlesheets. Use this class object (Xslt30Processor) instead of the XsltProcessor for XSLT 3.0 processing.* |
 | Saxon\\XQueryProcessor | newXQueryProcessor() <br> *Create an XQueryProcessor in the PHP environment. An XQueryProcessor is used to compile and execute XQuery queries* |
 | Saxon\\XPathProcesssor | newXPathProcessor() <br> *Create an XPathProcessor in the PHP environment. An XPathProcessor is used to compile and execute XPath expressions* |
 | Saxon\\SchemaValidator | newSchemaValidator() <br> *Create a SchemaValidator in the PHP environment. A SchemaValidator provides capabilities to load and cache XML schema definitions. You can also valdiate source documents with egistered XML schema definitions* |
@@ -386,6 +387,79 @@ The methods on these class are given below. For a more comprehensive description
 | string | getErrorMessage(int $i) <br> *Get the ith error message if there are any error* |
 | int | getExceptionCount() <br> *Get number of error during execution or evaluate of stylesheet* |
 
+
+#### Saxon\\Xslt30Processor class ####
+<sup>PHP API</sup>
+
+
+|  |  |
+| ----: | :---- |
+| void | compileFromFile(string $fileName) <br> *Compile a stylesheet suplied as by file name* |
+| void | compileFromString(string $str) <br> *Compile a stylesheet received as a string.*  |
+| void | compileFromValue(XdmNode $node)<br> *Compile a stylesheet received as an XdmNode.* |
+| void | callFunctionReturningFile(string $FunctionName, array arguments, string outputfileName) <br> *Call a public user-defined function in the stylesheet. Here we wrap the result in an XML document, and sending this document to a specified file*  |
+| string | callFunctionReturningString(string $FunctionName, array arguments) <br> *Call a public user-defined function in the stylesheet. Here we wrap the result in an XML document, and serialized this document to string value* |
+| PyXdmValue | callFunctionReturningValue(string $FunctionName, array arguments) <br> *Call a public user-defined function in the stylesheet. Here we wrap the result in an XML document, and return the document as an XdmVale* |
+| void | callTemplateReturningFile(string $sourceFileName, string $stylesheetFileName, string outputfileName) <br> *Perform a one shot transformation. The result is stored in the supplied outputfile name.*  |
+| string | callTemplateReturningString(string $sourceFileName, string $stylesheetFileName) <br> *Perform a one shot transformation. The result is returned as a string. If there are failures then a null is returned* |
+| PyXdmValue | callTemplateReturningValue(string $fileName) <br> *Perform a one shot transformation. The result is returned as an XdmValue* |
+| void | transformFileToFile(string $sourceFileName, string $stylesheetFileName, string outputfileName) <br> *Perform a one shot transformation. The result is stored in the supplied outputfile name.*  |
+| string | transformFileToString(string $sourceFileName, string $stylesheetFileName) <br> *Perform a one shot transformation. The result is returned as a string. If there are failures then a null is returned* |
+| XdmValue | transformFileToValue(string $fileName) <br> *Perform a one shot transformation. The result is returned as an XdmValue* |
+| void | transformToFile() <br> *Perform the transformation based upon cached stylesheet and source document.* |
+| string | transformToString() |
+| PyXdmValue | transformToValue() <br> *Perform the transformation based upon cached stylesheet and any source document. Result returned as an XdmValue object. If there are failures then a null is returned* |
+| void | setOutputFile(string $fileName) <br> *Set the output file name of where the transformation result is sent* |
+| void | setParameter(string $name, XdmValue $value) <br> *Set the parameters required for XSLT stylesheet* |
+| void | setProperty(string $name, string $value) <br> *Set properties for the stylesheet.* |
+| void | clearParameters() <br> *Clear parameter values set* |
+| void | clearProperties() <br> *Clear property values set* |
+| void | exceptionClear() <br> *Clear any exception thrown* |
+| string | getErrorCode(int $i)  <br> *Get the ith error code if there are any errors* |
+| string | getErrorMessage(int $i) <br> *Get the ith error message if there are any error* |
+| int | getExceptionCount() <br> *Get number of error during execution or evaluate of stylesheet* |
+
+
+    PHP_METHOD(Xslt30Processor, callFunctionReturningValue);
+    PHP_METHOD(Xslt30Processor, callFunctionReturningString);
+    PHP_METHOD(Xslt30Processor, callFunctionReturningFile);
+    PHP_METHOD(Xslt30Processor, callTemplateReturningValue);
+    PHP_METHOD(Xslt30Processor, callTemplateReturningString);
+    PHP_METHOD(Xslt30Processor, callTemplateReturningFile);
+    PHP_METHOD(Xslt30Processor, applyTemplatesReturningValue);
+    PHP_METHOD(Xslt30Processor, applyTemplatesReturningString);
+    PHP_METHOD(Xslt30Processor, applyTemplatesReturningFile);
+    PHP_METHOD(Xslt30Processor, addPackages);
+    PHP_METHOD(Xslt30Processor, setInitialTemplateParameters);
+    PHP_METHOD(Xslt30Processor, setInitialMatchSelection);
+    PHP_METHOD(Xslt30Processor, setInitialMatchSelectionAsFile);
+    PHP_METHOD(Xslt30Processor, setGlobalContextItem);
+    PHP_METHOD(Xslt30Processor, setGlobalContextFromFile);
+    PHP_METHOD(Xslt30Processor,  transformFileToFile);
+    PHP_METHOD(Xslt30Processor,  transformFileToString);
+    PHP_METHOD(Xslt30Processor,  transformFileToValue);
+    PHP_METHOD(Xslt30Processor,  transformToString);
+    PHP_METHOD(Xslt30Processor,  transformToValue);
+    PHP_METHOD(Xslt30Processor,  transformToFile);
+    PHP_METHOD(Xslt30Processor, compileFromFile);
+    PHP_METHOD(Xslt30Processor, compileFromValue);
+    PHP_METHOD(Xslt30Processor, compileFromString);
+    PHP_METHOD(Xslt30Processor, compileFromStringAndSave);
+    PHP_METHOD(Xslt30Processor, compileFromFileAndSave);
+    PHP_METHOD(Xslt30Processor, compileFromAssociatedFile);
+    PHP_METHOD(Xslt30Processor,  setOutputFile);
+    PHP_METHOD(Xslt30Processor,  setJustInTimeCompilation);
+    PHP_METHOD(Xslt30Processor,  setResultAsRawValue);
+    PHP_METHOD(Xslt30Processor,  setParameter);
+    PHP_METHOD(Xslt30Processor,  setProperty);
+    PHP_METHOD(Xslt30Processor,  clearParameters);
+    PHP_METHOD(Xslt30Processor,  clearProperties);
+    PHP_METHOD(Xslt30Processor,  exceptionClear);
+    PHP_METHOD(Xslt30Processor,  exceptionOccurred);
+    PHP_METHOD(Xslt30Processor,  getErrorCode);
+    PHP_METHOD(Xslt30Processor,  getErrorMessage);
+    PHP_METHOD(Xslt30Processor,  getExceptionCount);
+    PHP_METHOD(Xslt30Processor,  getXslMessages);
 
 
 #### Saxon\\XQueryProcessor class ####
@@ -504,22 +578,59 @@ The methods on these class are given below. For a more comprehensive description
 | long | getLongValue <Br> *Get the value converted to an integer using the XPath casting rules* |
 | boolean | isAtomic <br> *Determine whether the item is an atomic value or a node. Return TRUE if the item is an atomic value* |
 
+
+
+
+
 #### PHP unit tests ####
 
-In the Saxon/C download please see the PHP unit tests for XSLT, XQuery, XPath and Schema Validator. The PHP test files are contained in the 'samples/php' folder along with associated files. Namely: xsltExamples.php, xqueryExamples.php, xpathExamples.php, validatorExamples.php. These files contain many useful examples which will get you started.
+In the Saxon/C download please see the PHP unit tests (i.e. xslt30_PHPUnit.php i nthe samples/php directory) for XSLT. There are also same files for XSLT, XQuery, XPath and Schema Validator. The PHP test files are contained in the 'samples/php' folder along with associated files. Namely: xsltExamples.php, xslt30Examples.php, xqueryExamples.php, xpathExamples.php, validatorExamples.php. These files contain many useful examples which will get you started.
 
-Example code XSLT processing:
+The unit tests run under [PHPUnit](https://phpunit.de/) for PHP 7.2 which can be downloaded and installed seperately in the same directory of the unit tests.
+
+Example command:
+
+` ./phpunit xslt30_PHPUnit.php`
+
+To run a single test:
+
+` ./phpunit --filter testPipeline xslt30_PHPUnit.php`
+
+
+Example code in the new XSLT3.0 API:
+
+<pre><code>
+    <?php
+        $saxonproc = new Saxon\\SaxonProcessor();
+        $transformer = $saxonProc->newXslt30Processor();
+        $transformer->compileFromString("<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>" .
+                  "<xsl:template name='go'><a/></xsl:template>" .
+                  "</xsl:stylesheet>");
+      
+        $root = $transformer->callTemplateReturningValue("go");
+        
+        $node = $root->getHead()->getNodeValue();
+    
+    
+    
+    ?>
+
+
+</code>
+</pre>
+
+Example of the old styled PHP API designed for XSLT 2.0:
 <pre><code>
 	<?php 
-	        $xmlfile = "xml/foo.xml";
-	        $xslFile = "xsl/foo.xsl";
+	    $xmlfile = "xml/foo.xml";
+	    $xslFile = "xsl/foo.xsl";
 		$proc = new Saxon\\SaxonProcessor();
-            	$version = $proc->version();
-            	echo 'Saxon Processor version: '.$version;
+        $version = $proc->version();
+        echo 'Saxon Processor version: '.$version;
 		$xsltProc = $saxonProc->newXsltProcessor();
-                $xsltProc->setSourceFromFile($xmlfile);
-                $xsltProc->compileFromFile($xslFile);      
-                $result = $xsltProc->transformToString();               
+        $xsltProc->setSourceFromFile($xmlfile);
+        $xsltProc->compileFromFile($xslFile);      
+        $result = $xsltProc->transformToString();               
 		if($result != null) {               
 		  echo '<b>exampleSimple1:</b><br/>';
 		  echo 'Output:'.$result;
@@ -565,21 +676,30 @@ In the example below we show how to debug if something unexpected is happening. 
 </code></pre>
 
 
+<div id='python'/>
+## Python ##
+The Saxon/C Python extension API has been developed using [Cython](https://cython.org/).
+
+### Python API ###
+
+
 
 <div id='tech'/>
 ## Technical Information: ##
 
-Saxon/C is built by cross compiling the Java code of Saxon 9.8 using the [Excelsior Jet tool](http://www.excelsior-usa.com/).
+Saxon/C is built by cross compiling the Java code of Saxon 9.9 using the Excelsior Jet tool.
 This generates platform specific machine code, which we interface with C/C++ using the Java Native Interace (JNI).
 
 The PHP interface is in the form of a C/C++ PHP extension to Saxon/C created using the Zend module API.
+
+The Python interface is in the form of a Cython module interfaced with the C/C++ Saxon/C API.
 
 The XML parser used is the one supplied by the Excelsior JET runtime. There are currently no links to libxml.
 
 <div id='limitations'/>
 ## Limitations: ##
 
-The following limitations apply to the 1.1.2 release:
+The following limitations apply to the 1.2.0 release:
 
 * No support for the XdmFunction type in the Xdm data model
 

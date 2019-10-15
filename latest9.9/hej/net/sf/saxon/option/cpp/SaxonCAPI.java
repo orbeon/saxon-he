@@ -395,7 +395,9 @@ public class SaxonCAPI {
                 QName qname = QName.fromClarkName(paramName);
                 valueForCpp = convertObjectToXdmValue(values[i]);
                 initialTemplateParameters.put(qname, valueForCpp);
-
+                if (debug) {
+                    System.err.println("DEBUG: XSLT30TransformerForCpp itparam: " + paramName);
+                }
 
             } else if (params[i].startsWith("sparam:")) {
                 //static parameters
@@ -405,7 +407,9 @@ public class SaxonCAPI {
                 QName qname = QName.fromClarkName(paramName);
                 valueForCpp = convertObjectToXdmValue(values[i]);
                 staticParameters.put(qname, valueForCpp);
-
+                if (debug) {
+                    System.err.println("DEBUG: XSLT30TransformerForCpp sparam: " + paramName);
+                }
 
             } else if (params[i].startsWith("param:")) {
                 String paramName = params[i].substring(6);

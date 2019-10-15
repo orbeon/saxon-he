@@ -3,6 +3,7 @@ from libcpp.string cimport string
 from libcpp.map cimport map
 
 
+
 cdef extern from "../SaxonProcessor.h":
     cdef cppclass SaxonProcessor:
         SaxonProcessor(bool) except +

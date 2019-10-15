@@ -656,7 +656,7 @@ cdef class PyXsltProcessor:
           if isinstance(value, str):
             if key == "source_file":
               py_source_string = value.encode('UTF-8') if value is not None else None
-              if py_filename_string  is None or isfile(py_filename_string) == False:
+              if py_source_string  is None or isfile(py_source_string) == False:
                 raise Exception("source file name does not exist")
               c_sourcefile = py_source_string if value is not None else "" 
             if key == "stylesheet_file":

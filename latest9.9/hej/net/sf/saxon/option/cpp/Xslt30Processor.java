@@ -437,6 +437,22 @@ public class Xslt30Processor extends SaxonCAPI {
             XdmValue selection = (XdmValue) sourceObj;
 
             transformer.applyTemplates(selection, xdmResult);
+        } else if (sourceObj instanceof XdmItem[]) {
+            XdmItem[] itemArr = (XdmItem[]) sourceObj;
+            XdmValue valueSeq;
+            if (itemArr.length == 0) {
+                throw new SaxonApiException("Source object is an empty array of XdmItems");
+
+            } else if (itemArr.length == 1) {
+                valueSeq = itemArr[0];
+            } else {
+                List<XdmItem> itemList = Arrays.asList((XdmItem[]) sourceObj);
+                valueSeq = new XdmValue(itemList);
+            }
+
+            transformer.applyTemplates(valueSeq, xdmResult);
+        } else {
+            throw new SaxonApiException("Source object is neither a String value of an XdmValue");
         }
 
 
@@ -456,14 +472,14 @@ public class Xslt30Processor extends SaxonCAPI {
         Map<String, Object> paramsMap = convertArraysToMap(params, values);
 
         if (outFilename != null) {
-            if(debug) {
+            if (debug) {
                 System.err.println("DEBUG: XSLT30TransformerForCpp param: " + outFilename);
             }
             serializer = resolveOutputFile(processor, cwd, outFilename);
         } else if (paramsMap.containsKey("o")) {
             String outfile = (String) paramsMap.get("o");
             serializer = resolveOutputFile(processor, cwd, outfile);
-            if(debug) {
+            if (debug) {
                 System.err.println("DEBUG: XSLT30TransformerForCpp param: " + outfile);
             }
         } else if (serializer == null) {
@@ -471,7 +487,7 @@ public class Xslt30Processor extends SaxonCAPI {
         }
 
         Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
-                       
+
         applyXsltTransformerProperties(this, cwd, processor, transformer, paramsMap);
 
         if (sourceObj instanceof String) {
@@ -489,6 +505,22 @@ public class Xslt30Processor extends SaxonCAPI {
         } else if (sourceObj instanceof XdmValue) {
             XdmValue selection = (XdmValue) sourceObj;
             transformer.applyTemplates(selection, serializer);
+        } else if (sourceObj instanceof XdmItem[]) {
+            XdmItem[] itemArr = (XdmItem[]) sourceObj;
+            XdmValue valueSeq;
+            if (itemArr.length == 0) {
+                throw new SaxonApiException("Source object is an empty array of XdmItem objects");
+
+            } else if (itemArr.length == 1) {
+                valueSeq = itemArr[0];
+            } else {
+                List<XdmItem> itemList = Arrays.asList((XdmItem[]) sourceObj);
+                valueSeq = new XdmValue(itemList);
+            }
+
+            transformer.applyTemplates(valueSeq, serializer);
+        } else {
+            throw new SaxonApiException("Source object is not of type (String, XdmValue or XdmValue[])");
         }
 
 
@@ -518,6 +550,22 @@ public class Xslt30Processor extends SaxonCAPI {
         } else if (sourceObj instanceof XdmValue) {
             XdmValue selection = (XdmValue) sourceObj;
             transformer.applyTemplates(selection, serializer);
+        } else if (sourceObj instanceof XdmItem[]) {
+            XdmItem[] itemArr = (XdmItem[]) sourceObj;
+            XdmValue valueSeq;
+            if (itemArr.length == 0) {
+                throw new SaxonApiException("Source object is an empty array of XdmItem objects");
+
+            } else if (itemArr.length == 1) {
+                valueSeq = itemArr[0];
+            } else {
+                List<XdmItem> itemList = Arrays.asList((XdmItem[]) sourceObj);
+                valueSeq = new XdmValue(itemList);
+            }
+
+            transformer.applyTemplates(valueSeq, serializer);
+        } else {
+            throw new SaxonApiException("Source object is not of type (String, XdmValue or XdmValue[])");
         }
         serializer = null;
         return sw.toString();
@@ -526,12 +574,12 @@ public class Xslt30Processor extends SaxonCAPI {
     XdmValue[] getArguments(Object[] arguments) throws SaxonApiException {
         if (arguments != null && arguments.length > 0) {
             XdmValue[] values = new XdmValue[arguments.length];
-            if(debug && arguments != null) {
-                System.err.println("Xslt30Processor getArguments.length="+arguments.length);
+            if (debug && arguments != null) {
+                System.err.println("Xslt30Processor getArguments.length=" + arguments.length);
             }
             for (int i = 0; i < arguments.length; i++) {
                 values[i] = convertObjectToXdmValue(arguments[i]);
-                if(values[i] == null) {
+                if (values[i] == null) {
                     throw new SaxonApiException("Argument is not of type xdmValue");
                 }
 
@@ -792,7 +840,9 @@ public class Xslt30Processor extends SaxonCAPI {
                 valuei = map.get("s");
                 if (valuei instanceof String) {
                     source = api.resolveFileToSource(cwd, (String) valuei);
-                    transformer.setGlobalContextItem(builder.build(source));
+                    XdmNode node = builder.build(source);
+                    transformer.setGlobalContextItem(node);
+                    api.doc = node;
                 } else if (debug) {
                     System.err.println("DEBUG: value error for property 's'");
                 }
@@ -822,7 +872,9 @@ public class Xslt30Processor extends SaxonCAPI {
                 }
                 item = (XdmItem) valuei;
                 transformer.setGlobalContextItem(item);
-
+                if (item instanceof XdmNode) {
+                    api.doc = (XdmNode) item;
+                }
             } else if (map.containsKey("param:node")) {
 
 
@@ -835,7 +887,9 @@ public class Xslt30Processor extends SaxonCAPI {
                 }
                 item = (XdmItem) valuei;
                 transformer.setGlobalContextItem(item);
-
+                if (item instanceof XdmNode) {
+                    api.doc = (XdmNode) item;
+                }
             }
 
             if (map.containsKey("m")) {
@@ -866,6 +920,8 @@ public class Xslt30Processor extends SaxonCAPI {
                 valuei = map.get("tunnel");
                 if (valuei instanceof Boolean) {
                     tunnel = (Boolean) valuei;
+                }  else if (valuei instanceof String) {
+                    tunnel  = ((String)valuei).equals("yes") || valuei.equals("true");
                 }
             }
 
