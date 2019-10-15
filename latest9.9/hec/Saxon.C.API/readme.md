@@ -4,14 +4,15 @@
 1. [Installation](#Installation)
 2. [Getting started with C/C++](#getting-started)
 3. [PHP API & Examples](#php-api)
-4. [Technical](#tech)
-5. [Limitations](#limitations)
+4. [Python API & Examples](#python-api)
+5. [Technical](#tech)
+6. [Limitations](#limitations)
 
-Saxon/C 1.2.0 is the latest release of Saxon-HE/PE/EE on the C/C++ programming platform. The APIs support the specifications XSLT 3.0, XQuery 3.0, Schema Validation 1.0/1.1 and XPath 2.0/3.0 from the langauges C/C++, Python and PHP applications.
+Saxon/C 1.2.0 is the latest release of Saxon-HE/PE/EE on the C/C++, PHP and Python programming platforms. The APIs support the specifications XSLT 3.0, XQuery 3.0, Schema Validation 1.0/1.1 and XPath 2.0/3.0.
 
-Saxon/C is built from the Saxon 9.9.1.5 Java product using the Excelsior JET tool (version 15.3 MP1).
+Saxon/C is built from the Saxon 9.9.1.5 Java product using the Excelsior JET Enterprise 15.3 edition (MP1).
 
-Platforms supported: Linux 64-bit, Mac OS and Windows 64-bit. 
+Platforms supported: Linux 64-bit, Mac OS. Windows 64-bit will follow soon. 
 
 Saxon/C is release in three separate editions which replicating the products on the Java platform: Enterprise (Saxon-EE/C), Professional Editon (Saxon-PE/C), and Home Edition (Saxon-HE/C)
 
@@ -28,10 +29,10 @@ Link the dynamic saxon library so it can be found. For example:
 	ln -s /usr/lib/Saxonica/Saxon-EDITIONC#.#.#/libsaxonEDITION.so /usr/lib/libsaxonEDITION.so
 
 You need to setup the environment for the jet jvm. The jvm is in the directory JET-home=Saxonica/Saxon-EDITION1.2.0/rt
-The directory JET-home/lib/i386  or JET_home/lib/amd64 (for 64-bit machines) must be listed in the LD_LIBRARY_PATH environment variable. For instance, if you
+The directory JET_home/lib/amd64 must be listed in the LD_LIBRARY_PATH environment variable. For instance, if you
 are using bash or Bourne shell, use the following commands:
 
-    export LD_LIBRARY_PATH=/usr/lib/rt/lib/i386:$LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH=/usr/lib/rt/lib/amd64:$LD_LIBRARY_PATH
 
 We assume that the 'rt' directory is in the location /usr/lib.
 
@@ -68,7 +69,7 @@ Run the commands:
 
 Create a module conf file:
 
-nano /etc/php5/mods-available/saxon.ini
+nano /etc/php7/mods-available/saxon.ini
 and add contents:
 
 	; configuration for php Saxon HE/PE/EE module
@@ -77,11 +78,11 @@ and add contents:
 
 Enable the module for PHP:
 
-	php5enmod saxon
+	php7enmod saxon
 	
-Similar for PHP7
+Similar for PHP5
 
-Alternatively, you can update the php.ini file (if using ubuntu it is usually in the location '/etc/php5/apache2/') to contain the php extension: insert the following in the Dynamic Extensions section: extension=saxon.so
+Alternatively, you can update the php.ini file (if using ubuntu it is usually in the location '/etc/php7/apache2/') to contain the php extension: insert the following in the Dynamic Extensions section: extension=saxon.so
 
 * sudo service apache2 restart
 
@@ -115,18 +116,18 @@ Saxon/C can be run from the commandline in a similar way to its Java counterpart
 ### C++: ###
 For C++ programming see sample code for XSLT, XQuery, Schema Validation and XPath in C++ code along with the build and run script in the directory 'cppTests'.
 
-The following files are required to build Saxon/C on C++:  SaxonCGlue.c, SaxonCXPath.c, XdmValue.cpp, XdmItem.cpp, XdmNode.cpp, XdmAtomicValue.cpp, SaxonProcessor.cpp, XsltProcessor.cpp and XQueryProcessor.cpp, XPathProcessor.cpp, SchemaValidator.cpp
+The following files are required to build Saxon/C on C++:  SaxonCGlue.c, SaxonCXPath.c, XdmValue.cpp, XdmItem.cpp, XdmNode.cpp, XdmAtomicValue.cpp, SaxonProcessor.cpp, XsltProcessor.cpp, Xslt30Processor.cpp and XQueryProcessor.cpp, XPathProcessor.cpp, SchemaValidator.cpp
 
 To compile the sample test code in C++ execute the 'build.sh' file the directory 'cppTests'. This file builds executables for the test cases testing XSLT, XPath, XQuery and schema Validator. The command is similar to the following: 
 
-> g++ -m32  ../bin/SaxonCGlue.o ../bin/SaxonCXPath.o ../bin/SaxonProcessor.o ../bin/XQueryProcessor.o ../bin/XsltProcessor.o ../bin/XPathProcessor.o ../bin/XdmValue.o ../bin/XdmItem.o ../bin/XdmNode.o ../bin/XdmAtomicValue.o ../bin/SchemaValidator.o testXSLT.cpp -o testXSLT -ldl -lc $1 $2
+> g++ -m32  ../bin/SaxonCGlue.o ../bin/SaxonCXPath.o ../bin/SaxonProcessor.o ../bin/XQueryProcessor.o ../bin/XsltProcessor.o, ../bin/Xslt30Processor.o ../bin/XPathProcessor.o ../bin/XdmValue.o ../bin/XdmItem.o ../bin/XdmNode.o ../bin/XdmAtomicValue.o ../bin/SchemaValidator.o testXSLT.cpp -o testXSLT -ldl -lc $1 $2
 
 
 
 
 ### Configuration of Processors - (setParameter & setProperty methods) ###
 
-There are many parameters and options that can be set to control the way in which Saxon behaves. At a global level when the SaxonProcessor is created, the configuration features can be set with the method 'setConfigurationProperty(const char * name, const char * value)'. For a comprehensive guide on the configuration see the [Saxon 9.6 documentation](http://saxonica.com/documentation9.6/index.html#!configuration/config-features). There are some feature that don't work or are under tested. For eample, 'bytecode generation' we know does not work.
+There are many parameters and options that can be set to control the way in which Saxon behaves. At a global level when the SaxonProcessor is created, the configuration features can be set with the method 'setConfigurationProperty(const char * name, const char * value)'. For a comprehensive guide on the configuration see the [Saxon documentation](http://saxonica.com/documentation/index.html#!configuration/config-features). There are some feature that don't work or are under tested. For eample, 'bytecode generation' we know does not work.
 
 The example below shows how we can set the configuration features on the processor before we create any of the processors (.e.g. XsltProcessor, XQueryProcess, etc):
 
@@ -150,7 +151,7 @@ We now give a quick guide for running Saxon/C in C++
 
 #### setProperty(string $name, string $propValue) Method ####
 
-The properties are a subset to those specified for running XSLT from the [command line](http://www.saxonica.com/documentation9.6/index.html#!using-xsl/commandline).
+The properties are a subset to those specified for running XSLT from the [command line](http://www.saxonica.com/documentation/index.html#!using-xsl/commandline).
 
 | Name | Example | Comment |
 | :---- | :---- | :---- |
@@ -161,6 +162,8 @@ The properties are a subset to those specified for running XSLT from the [comman
 | 'im'=name | setProperty("im", "mode-name")  | Set the initial mode for the transformation |
 | 's'=filename | setProperty("s", "filename") | Identifies the source file or directory. Mandatory unless the -it option is used. |
 | 'resources'=directory | setProperty("resources", "dir") | Specifies the directory where the resources file are found|
+| 'tunnel' | setProperty("tunnel", "true") | XSLT3.0 only. Accepts the values true, false, yes, no. True if the initial template parameter values are to be used for setting tunnel parameters; false if they are to be used for non-tunnel parameters |
+| 'outvalue' | setProperty("outvalue", "true") | XSLT30 only. Accepts the values true, false, yes, no. Set if the return type of callTemplate, applyTemplate and transform methods is to return XdmValue, otherwise return XdmNode object with root Document node |
 | 'extc'=dir/saxonc | setProperty("extc", "dir/saxonc") | Specifies the full path to the C/C++ Saxon/C API library which contains the extension function. See example in samples/cppTests|
 | 'm' | setProperty("m", "") | The presence of this property creates a message listener which is available in the C/C++ API of Saxon/C|
 
@@ -170,7 +173,7 @@ Example 1:
  
 <pre><code>
 	SaxonProcessor *processor = new SaxonProcessor(true);
-	XsltProcessor * xslt = processor->newTransformer();
+	XsltProcessor * xslt = processor->newXsltTransformer();
 	cout<<"Hello World"<<endl;
 	cout<<"Test output: "<<xslt->transformFileToString("cat.xml","test.xsl")<<endl;
 </code></pre>
@@ -179,7 +182,7 @@ Example 2:
 
 <pre><code>
 	SaxonProcessor * processor = new SaxonProcessor(false);
-	XsltProcessor * xslt = processor->newTransformer();
+	XsltProcessor * xslt = processor->newXsltTransformer();
 
         xslt->setSourceFile("xml/foo.xml");
 	XdmAtomicValue * xdmvaluex =processor->makeStringValue("Hello to you");
@@ -197,6 +200,40 @@ Example 2:
 	processor->clearProperties();
 </code></pre>
 
+Example 3:
+
+<pre><code>
+	SaxonProcessor * processor = new SaxonProcessor(false);
+	Xslt30Processor * xslt = processor->newXslt30Transformer();
+
+    xslt->setInitialMatchSelectionAsFile("cat.xml");
+    const char * output = xslt->applyTemplatesReturningString("test.xsl");
+	if(output !=NULL){
+		cerr<< output<<endl; 			
+	}
+	XdmValue * values = new XdmValue(processor);
+    values->addXdmItem((XdmItem*)processor->makeIntegerValue(10));
+    values->addXdmItem((XdmItem*)processor->makeIntegerValue(5));
+    values->addXdmItem((XdmItem*)processor->makeIntegerValue(6));
+    values->addXdmItem((XdmItem*)processor->makeIntegerValue(7));
+       
+    xslt->setParameter("values",(XdmValue *)values);
+        
+    xslt->setInitialMatchSelection((XdmValue*)input);
+	xslt->compileFromFile("test2.xsl");
+    
+    const char * rootValue = trans->callTemplateReturningString(NULL, "main");
+
+	
+	if(rootValue != NULL) {
+		cerr<<rootValue<<endl;
+	} else {
+		cerr<<"Result is NULL"<<endl;
+	}
+	xslt->clearParameters(true);
+	xslt->clearProperties();
+</code></pre>
+
 ### XQuery ###
 
 #### setParameter(string $name, XdmValue $value) Method ####
@@ -208,7 +245,7 @@ Example 2:
 
 #### setProperty(string $name, string $propValue) Method ####
 
-The properties are a subset to those specified for running XQuery from the [command line](http://www.saxonica.com/documentation9.6/index.html#!using-xquery/commandline).
+The properties are a subset to those specified for running XQuery from the [command line](http://www.saxonica.com/documentation/index.html#!using-xquery/commandline).
 | Name | Example | Comment |
 | :---- | :---- | :---- |
 | 'base'=base-URI | setProperty("base", "/home/username/example") | |
@@ -289,7 +326,7 @@ Example:
 
 #### setProperty(string $name, string $propValue) Method ####
 
-The properties are a subset to those specified for running the Schema Validator from the [command line](http://www.saxonica.com/documentation9.6/index.html#!schema-processing/commandline).
+The properties are a subset to those specified for running the Schema Validator from the [command line](http://www.saxonica.com/documentation/index.html#!schema-processing/commandline).
 | Name | Example | Comment |
 | :---- | :---- | :---- |
 |![serialization name]=value  | setProperty("!INDENT","yes") | Influence the serialization of the XML by the parameters specified with a exclamation mark with a name and the value. See [Documentation](http://saxonica.com/documentation/index.html#!javadoc/net.sf.saxon.s9api/Serializer/Property) |
@@ -351,7 +388,7 @@ The methods on these class are given below. For a more comprehensive description
 | void | setcwd(string $cwd) <br> *Set the current working directory used to resolve against files* |
 | Saxon\\XdmNode | parseXmlFromFile(string $fileName) <br> *Create an XdmNode object. Value is a string type and the file name to the XML document. File name can be relative or absolute. IF relative the cwd is used to resolve the file.* |
 | void | setResourceDirectory(string $dir) <br> *Set the resources directory of where Saxon can locate data folder* |
-| void | setConfigurationProperty(string $name, string $value) <br> *Set a configuration property specific to the processor in use. Properties specified here are common across all the processors. See [Configuration Features](http://www.saxonica.com/documentation9.6/index.html#!configuration/config-features)* |
+| void | setConfigurationProperty(string $name, string $value) <br> *Set a configuration property specific to the processor in use. Properties specified here are common across all the processors. See [Configuration Features](http://www.saxonica.com/documentation/index.html#!configuration/config-features)* |
 | Saxon\\XsltProcessor | newXsltProcessor() <br> *Create an XsltProcessor in the PHP environment. An XsltProcessor is used to compile and execute XSLT sytlesheets* |
 | Saxon\\Xslt30Processor | newXslt30Processor() <br> *Create an Xslt30Processor in the PHP environment specifically designed for XSLT 3.0 processing. An Xslt30Processor is used to compile and execute XSLT 3.0 sytlesheets. Use this class object (Xslt30Processor) instead of the XsltProcessor for XSLT 3.0 processing.* |
 | Saxon\\XQueryProcessor | newXQueryProcessor() <br> *Create an XQueryProcessor in the PHP environment. An XQueryProcessor is used to compile and execute XQuery queries* |
@@ -623,14 +660,14 @@ In the example below we show how to debug if something unexpected is happening. 
 	<?php 
 	        $xmlfile = "xml/foo.xml";
 	        $xslFile = "xsl/foo.xsl";
-		$proc = new Saxon\\SaxonProcessor();
-		$xsltProc = $saxonProc->newXsltProcessor();
-                $xsltProc->setSourceFromFile($xmlFile);
-                $xsltProc->compileFromFile($xslFile);
+		    $proc = new Saxon\\SaxonProcessor();
+		    $xsltProc = $saxonProc->newXsltProcessor();
+            $xsltProc->setSourceFromFile($xmlFile);
+            $xsltProc->compileFromFile($xslFile);
                 
-                $result = $xsltProc->transformToString();
+            $result = $xsltProc->transformToString();
                 
-                if($result == NULL) {
+            if($result == NULL) {
                     $errCount = $xsltProc->getExceptionCount();
 				    if($errCount > 0 ){ 
 				        for($i = 0; $i < $errCount; $i++) {
@@ -643,25 +680,36 @@ In the example below we show how to debug if something unexpected is happening. 
                 
                 
                 }                
-                echo $result;
-            	$xsltProc->clearParameters();
-		$xsltProc->clearProperties();
+            echo $result;
+            $xsltProc->clearParameters();
+		    $xsltProc->clearProperties();
 	?>
 </code></pre>
 
 
-<div id='python'/>
+<div id='python-api'/>
 ## Python ##
 The Saxon/C Python extension API has been developed using [Cython](https://cython.org/).
 
 ### Python API ###
 
+The Saxon/C Python extension is the directory Saxon.C.API/python-saxon
 
+The Python extension on the Linux and MacOS platforms can be built using the following command:
+
+`python3 saxon-setup.py build_ext -if`
+
+Please see the [Python API documentation](http://www.saxonica.com/????/saxonc.html)
+
+
+#### Python unit tests ####
+
+There are a collection of pyunit tests in the file test_saxonc.py and test_saxon_Schema.py. See also some python example scripts saxon_example.py, sxon_example2.py and saxon_example3.py  
 
 <div id='tech'/>
 ## Technical Information: ##
 
-Saxon/C is built by cross compiling the Java code of Saxon 9.9 using the Excelsior Jet tool.
+Saxon/C is built by cross compiling the Java code of Saxon 9.9.1.5 using the Excelsior Jet Enterprise edition (MP1).
 This generates platform specific machine code, which we interface with C/C++ using the Java Native Interace (JNI).
 
 The PHP interface is in the form of a C/C++ PHP extension to Saxon/C created using the Zend module API.

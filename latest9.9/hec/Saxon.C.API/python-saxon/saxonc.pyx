@@ -1,7 +1,9 @@
 """@package saxonc
 This documentation details the Python API for Saxon/C, which has been written in cython. 
 
-Saxon/C is a cross-compiled variant of Saxon from the Java platform to the C/C++ platform. Saxon/C provides processing in XSLT, XQuery and XPath, and Schema validation. Main classes: PySaxonProcessor, PyXsltProcessor, PyXslt30Processor, PyXQueryProcessor, PyXdmValue, PyXdmItem, PyXdmNode and PyXdmAtomicValue."""
+Saxon/C is a cross-compiled variant of Saxon from the Java platform to the C/C++ platform.
+Saxon/C provides processing in XSLT 3.0, XQuery 3.0/3.1 and XPath 2.0/3.0/3.1, and Schema validation 1.0/1.1.
+Main classes in Saxon/C Python API: PySaxonProcessor, PyXsltProcessor, PyXslt30Processor, PyXQueryProcessor, PyXdmValue, PyXdmItem, PyXdmNode and PyXdmAtomicValue."""
 
 
 # distutils: language = c++
@@ -11,7 +13,6 @@ cimport saxoncClasses
 from libcpp cimport bool
 from libcpp.string cimport string
 from libcpp.map cimport map
-from libcpp.utility cimport pair
 from nodekind import *
 from os.path import isfile
 
@@ -29,6 +30,14 @@ cdef str make_py_str(const char * c_value):
 
 cdef class PySaxonProcessor:
     """An SaxonProcessor acts as a factory for generating XQuery, XPath, Schema and XSLT compilers.
+    This class is itself the context that needs to be managed (i.e. allocation & release)
+
+    Example:
+          with saxonc.PySaxonProcessor(license=False) as proc:
+             print("Test Saxon/C on Python")
+             print(proc.version)
+             xdmAtomicval = proc.make_boolean_value(False)
+             xslt30proc = proc.new_xslt30_processor()
     """
     cdef saxoncClasses.SaxonProcessor *thisptr      # hold a C++ instance which we're wrapping
 
@@ -794,13 +803,21 @@ cdef class PyXsltProcessor:
      def compile_stylesheet(self, **kwds):
         """
         compile_stylesheet(self, **kwds)
-        Compile a stylesheet  received as text, uri or as a node object. The compiled stylesheet is cached and available for execution later. It is also possible to save the compiled stylesheet (SEF file) given the option 'save' and 'output_file'
+        Compile a stylesheet  received as text, uri or as a node object. The compiled stylesheet is cached and available for execution
+        later. It is also possible to save the compiled stylesheet (SEF file) given the option 'save' and 'output_file'
    
         Args:
-            **kwds: Possible keyword arguments stylesheet_text (str), stylesheet_file (str) or stylsheetnode (PyXdmNode). Also possible to add the options save (boolean) and output_file, which creates an exported stylesheet to file (SEF). 
+            **kwds: Possible keyword arguments stylesheet_text (str), stylesheet_file (str) or stylsheetnode (PyXdmNode). Also possible
+                    to add the options save (boolean) and output_file, which creates an exported stylesheet to file (SEF).
 
         Example:
-            1. xsltproc.compile_stylesheet(stylesheet_text="<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>       <xsl:param name='values' select='(2,3,4)' /><xsl:output method='xml' indent='yes' /><xsl:template match='*'><output><xsl:value-of select='//person[1]'/><xsl:for-each select='$values' ><out><xsl:value-of select='. * 3'/></out></xsl:for-each></output></xsl:template></xsl:stylesheet>")
+            1. xsltproc.compile_stylesheet(stylesheet_text="<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>
+            <xsl:param name='values' select='(2,3,4)' /><xsl:output method='xml' indent='yes' /><xsl:template match='*'><output>
+              <xsl:value-of select='//person[1]'/>
+              <xsl:for-each select='$values' >
+                <out><xsl:value-of select='. * 3'/></out>
+              </xsl:for-each></output></xsl:template>
+            </xsl:stylesheet>")
 
             2. xsltproc.compile_stylesheet(stylesheet_file="test1.xsl", save=True, output_file="test1.sef")
         """
@@ -1887,7 +1904,7 @@ cdef class PyXslt30Processor:
 
      def call_function_returning_file(self, str function_name, list args, **kwds):
         """
-        call_function_returning_value(self, str function_name, list args, **kwds)
+        call_function_returning_file(self, str function_name, list args, **kwds)
         Invoke a transformation by calling a named template and return result as an PyXdmValue.
 
         Args:
@@ -2004,7 +2021,12 @@ cdef class PyXslt30Processor:
             save (boolean) and output_file, which creates an exported stylesheet to file (SEF).
 
         Example:
-            1. xsltproc.compile_stylesheet(stylesheet_text="<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>       <xsl:param name='values' select='(2,3,4)' /><xsl:output method='xml' indent='yes' /><xsl:template match='*'><output><xsl:value-of select='//person[1]'/><xsl:for-each select='$values' ><out><xsl:value-of select='. * 3'/></out></xsl:for-each></output></xsl:template></xsl:stylesheet>")
+            1. xsltproc.compile_stylesheet(stylesheet_text="<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>
+                                             <xsl:param name='values' select='(2,3,4)' /><xsl:output method='xml' indent='yes' />
+                                             <xsl:template match='*'><output><xsl:value-of select='//person[1]'/>
+                                             <xsl:for-each select='$values' >
+                                               <out><xsl:value-of select='. * 3'/></out>
+                                             </xsl:for-each></output></xsl:template></xsl:stylesheet>")
 
             2. xsltproc.compile_stylesheet(stylesheet_file="test1.xsl", save=True, output_file="test1.sef")
             3. xsltproc.compile(associated_file="foo.xml")  
@@ -2295,11 +2317,13 @@ cdef class PyXQueryProcessor:
      def set_updating(self, updating):
         """
         set_updating(self, updating)
-        Say whether the query is allowed to be updating. XQuery update syntax will be rejected during query compilation unless this flag is set. XQuery Update is supported only under Saxon-EE/C.
+        Say whether the query is allowed to be updating. XQuery update syntax will be rejected during query compilation unless this
+        flag is set. XQuery Update is supported only under Saxon-EE/C.
 
 
         Args:
-            updating (bool): true if the query is allowed to use the XQuery Update facility (requires Saxon-EE/C). If set to false, the query must not be an updating query. If set to true, it may be either an updating or a non-updating query.
+            updating (bool): true if the query is allowed to use the XQuery Update facility (requires Saxon-EE/C). If set to false,
+                             the query must not be an updating query. If set to true, it may be either an updating or a non-updating query.
 
 
         """
@@ -2311,7 +2335,8 @@ cdef class PyXQueryProcessor:
         Execute query and output result as an PyXdmValue object 
 
         Args:
-            **kwds: Keyword arguments with the possible options input_file_name (str) or input_xdm_item (PyXdmItem). Possible to supply query with the arguments 'query_file' or 'query_text', which are of type str.
+            **kwds: Keyword arguments with the possible options input_file_name (str) or input_xdm_item (PyXdmItem). Possible to supply
+                    query with the arguments 'query_file' or 'query_text', which are of type str.
 
         Returns:
             PyXdmValue: Output result as an PyXdmValue
@@ -2354,7 +2379,8 @@ cdef class PyXQueryProcessor:
         Execute query and output result as a string 
 
         Args:
-            **kwds: Keyword arguments with the possible options input_file_name (str) or input_xdm_item (PyXdmItem). Possible to supply query with the arguments 'query_file' or 'query_text', which are of type str.
+            **kwds: Keyword arguments with the possible options input_file_name (str) or input_xdm_item (PyXdmItem). Possible to supply
+                    query with the arguments 'query_file' or 'query_text', which are of type str.
 
         Returns:
             str: Output result as a string
@@ -2383,7 +2409,9 @@ cdef class PyXQueryProcessor:
         Execute query with the result saved to file
 
         Args:
-            **kwds: Keyword arguments with the possible options input_file_name (str) or input_xdm_item (PyXdmItem). The Query can be supplied with the arguments 'query_file' or 'query_text', which are of type str. The name of the output file is specified as the argument output_file_name.
+            **kwds: Keyword arguments with the possible options input_file_name (str) or input_xdm_item (PyXdmItem). The Query can be
+                    supplied with the arguments 'query_file' or 'query_text', which are of type str. The name of the output file is
+                    specified as the argument output_file_name.
 
 
         """
@@ -2407,11 +2435,15 @@ cdef class PyXQueryProcessor:
      def declare_namespace(self, prefix, uri):
         """
         declare_namespace(self, prefix, uri)
-        Declare a namespace binding part of the static context for queries compiled using this. This binding may be overridden by a binding that appears in the query prolog. The namespace binding will form part of the static context of the query, but it will not be copied into result trees unless the prefix is actually used in an element or attribute name.
+        Declare a namespace binding part of the static context for queries compiled using this.
+        This binding may be overridden by a binding that appears in the query prolog.
+        The namespace binding will form part of the static context of the query, but it will
+        not be copied into result trees unless the prefix is actually used in an element or attribute name.
 
         Args:
             prefix (str): The namespace prefix. If the value is a zero-length string, this method sets the default namespace for elements and types.
-            uri (uri) : The namespace URI. It is possible to specify a zero-length string to "undeclare" a namespace; in this case the prefix will not be available for use, except in the case where the prefix is also a zero length string, in which case the absence of a prefix implies that the name is in no namespace.
+            uri (uri) : The namespace URI. It is possible to specify a zero-length string to "undeclare" a namespace; in this case the prefix will not be available for use,
+            except in the case where the prefix is also a zero length string, in which case the absence of a prefix implies that the name is in no namespace.
 
         """
         c_prefix = make_c_str(prefix)
@@ -2558,7 +2590,9 @@ cdef class PyXPathProcessor:
      def set_base_uri(self, uri):
         """
         set_base_uri(self, uri)
-        Set the static base URI for XPath expressions compiled using this PyXPathCompiler. The base URI is part of the static context, and is used to resolve any relative URIs appearing within an XPath expression, for example a relative URI passed as an argument to the doc() function. If no static base URI is supplied, then the current working directory is used.
+        Set the static base URI for XPath expressions compiled using this PyXPathCompiler. The base URI is part of the static context,
+        and is used to resolve any relative URIs appearing within an XPath expression, for example a relative URI passed as an argument
+        to the doc() function. If no static base URI is supplied, then the current working directory is used.
 
 
         Args:
@@ -2726,8 +2760,11 @@ cdef class PyXPathProcessor:
         declare_namespace(self, prefix, uri)
         Declare a namespace binding as part of the static context for XPath expressions compiled using this compiler
         Args:
-            prefix (str): The namespace prefix. If the value is a zero-length string, this method sets the default namespace for elements and types.
-            uri (uri) : The namespace URI. It is possible to specify a zero-length string to "undeclare" a namespace; in this case the prefix will not be available for use, except in the case where the prefix is also a zero length string, in which case the absence of a prefix implies that the name is in no namespace.
+            prefix (str): The namespace prefix. If the value is a zero-length string, this method sets the default namespace
+                          for elements and types.
+            uri (uri) : The namespace URI. It is possible to specify a zero-length string to "undeclare" a namespace;
+                        in this case the prefix will not be available for use, except in the case where the prefix is also a
+                        zero length string, in which case the absence of a prefix implies that the name is in no namespace.
 
         """
         py_prefix_string = prefix.encode('UTF-8') if prefix is not None else None
@@ -2993,10 +3030,13 @@ cdef class PySchemaValidator:
             'resources': directory to find Saxon data files,\r 
             's': source as file name,\r
             'string': Set the source as xml string for validation. Parsing will take place in the validate method\r
-            'report-node': Boolean flag for validation reporting feature. Error validation failures are represented in an XML document and returned as an PyXdmNode object\r
-            'report-file': Specifcy value as a file name string. This will switch on the validation reporting feature, which will be saved to the file in an XML format\r
+            'report-node': Boolean flag for validation reporting feature. Error validation failures are represented in an XML
+                           document and returned as an PyXdmNode object\r
+            'report-file': Specifcy value as a file name string. This will switch on the validation reporting feature, which will be
+                           saved to the file in an XML format\r
             'verbose': boolean value which sets the verbose mode to the output in the terminal. Default is 'on'
-            'element-type': Set the name of the required type of the top-lelvel element of the doucment to be validated. The string should be in the Clark notation {uri}local\r
+            'element-type': Set the name of the required type of the top-lelvel element of the doucment to be validated.
+                            The string should be in the Clark notation {uri}local\r
             'lax': Boolean to set the validation mode to strict (False) or lax ('True')
         """
 
@@ -3075,7 +3115,9 @@ cdef class PySchemaValidator:
         """
         set_lax(self, lax)
         The validation mode may be either strict or lax. \r
-        The default is strict; this method may be called to indicate that lax validation is required. With strict validation, validation fails if no element declaration can be located for the outermost element. With lax validation, the absence of an element declaration results in the content being considered valid.
+        The default is strict; this method may be called to indicate that lax validation is required. With strict validation,
+        validation fails if no element declaration can be located for the outermost element. With lax validation,
+        the absence of an element declaration results in the content being considered valid.
         
         Args:
             lax (boolean): lax True if validation is to be lax, False if it is to be strict
@@ -3267,7 +3309,8 @@ cdef class PyXdmNode(PyXdmItem):
      def node_kind(self):
         """
         node_kind(self)
-        Node Kind property. This will be a value such as {@link net.sf.saxon.type.Type#ELEMENT} or {@link net.sf.saxon.type.Type#ATTRIBUTE}. There are seven kinds of node: documents, elements, attributes, text, comments, processing-instructions, and namespaces.        
+        Node Kind property. This will be a value such as {@link net.sf.saxon.type.Type#ELEMENT} or {@link net.sf.saxon.type.Type#ATTRIBUTE}.
+        There are seven kinds of node: documents, elements, attributes, text, comments, processing-instructions, and namespaces.
 
         Returns:
             int: an integer identifying the kind of node. These integer values are the same as those used in the DOM 
@@ -3279,7 +3322,8 @@ cdef class PyXdmNode(PyXdmItem):
      def node_kind_str(self):
         """
         node_kind(self)
-        Node Kind property string. This will be a value such as {@link net.sf.saxon.type.Type#ELEMENT} or {@link net.sf.saxon.type.Type#ATTRIBUTE}. There are seven kinds of node: documents, elements, attributes, text, comments, processing-instructions, and namespaces.        
+        Node Kind property string. This will be a value such as {@link net.sf.saxon.type.Type#ELEMENT} or {@link net.sf.saxon.type.Type#ATTRIBUTE}.
+        There are seven kinds of node: documents, elements, attributes, text, comments, processing-instructions, and namespaces.
 
         Returns:
             int: an integer identifying the kind of node. These integer values are the same as those used in the DOM 
@@ -3340,9 +3384,12 @@ cdef class PyXdmNode(PyXdmItem):
      def base_uri(self):
         """ 
         base_uri(self)
-        Base uri Property. Get the Base URI for the node, that is, the URI used for resolving a relative URI contained in the node. This will be the same as the System ID unless xml:base has been used. Where the node does not have a base URI of its own, the base URI of its parent node is returned.
+        Base uri Property. Get the Base URI for the node, that is, the URI used for resolving a relative URI contained in the node.
+        This will be the same as the System ID unless xml:base has been used. Where the node does not have a base URI of its own,
+        the base URI of its parent node is returned.
         Returns:
-            str: String value of the base uri for this node. This may be null if the base URI is unknown, including the case where the node has no parent. 
+            str: String value of the base uri for this node. This may be null if the base URI is unknown, including the case
+                 where the node has no parent.
         """
         return make_py_str(self.derivednptr.getBaseUri())
 
@@ -3478,7 +3525,10 @@ cdef class PyXdmNode(PyXdmItem):
 
 cdef class PyXdmAtomicValue(PyXdmItem):
      """
-     The class PyXdmAtomicValue represents an item in an Xath sequence that is an atomic value. The value may belong to any of the 19 primitive types defined in XML Schema, or to a type derived from these primitive types, or the XPath type xs:untypedAtomic. """
+     The class PyXdmAtomicValue represents an item in an Xath sequence that is an atomic value. The value may belong to any of the
+     19 primitive types defined in XML Schema, or to a type derived from these primitive types, or the XPath type xs:untypedAtomic.
+     """
+
      cdef saxoncClasses.XdmAtomicValue *derivedaptr      # hold a C++ instance which we're wrapping
 
      def __cinit__(self):
