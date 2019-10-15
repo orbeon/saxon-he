@@ -513,7 +513,7 @@ def testApplyTemplatesToFile(saxonproc):
     in_put = saxonproc.parse_xml(xml_text="<a>b</a>")
     trans.set_output_file("output123.xml")
     trans.set_initial_match_selection(xdm_value=in_put)
-    trans.apply_templates_returning_file(output_file="/home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API/python-saxon/output123.xml")
+    trans.apply_templates_returning_file(output_file="output123.xml")
     assert isfile("output123.xml") == True
 
 
