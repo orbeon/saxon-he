@@ -48,8 +48,8 @@ echo("userspace function called cp2\n");
 		echo '<b>userFunctionExample:</b><br/>';
 		global $resultg;
 
-		$proc->setProperty("extc","/home/ond1/work/svn/latest9.8-saxonc/hec/Saxon.C.API/php7-src/PHP-Build/lib/php/extensions/debug-non-zts-20160303/saxon" ); //"/home/ond1/work/new-svn/latest9.8-hec/hec/samples/cppTests/cppExtensionFunction"
-		$saxon->registerPHPFunction("/home/ond1/work/svn/latest9.8-saxonc/hec/Saxon.C.API/php7-src/PHP-Build/lib/php/extensions/debug-non-zts-20160303/saxon");
+		$proc->setProperty("extc"," /usr/lib/php/20170718/saxon" ); //"/home/ond1/work/new-svn/latest9.8-hec/hec/samples/cppTests/cppExtensionFunction"
+		$saxon->registerPHPFunctions		(" /usr/lib/php/20170718/saxon");
  		$proc->setSourceFromFile($xmlfile);
                 $proc->compileFromFile($xslFile);
 		
@@ -421,8 +421,8 @@ $proc->clearProperties();
             exampleXMLFilterChain($proc, $foo_xml, $foo_xsl, $foo2_xsl, $foo3_xsl);
             echo '<br/>';                    
            exampleXMLFilterChain2($saxonProc, $proc, $foo_xml, $foo_xsl, $foo2_xsl, $foo3_xsl);     
-            echo '<br/>';  
-	   // userFunctionExample($saxonProc, $proc,  $foo_xml, 'xsl/testExFunc.xsl'); //corruption in memory
+            echo '<br/>';
+	    //userFunctionExample($saxonProc, $proc,  $foo_xml, 'xsl/testExFunc.xsl'); // The PHP extension function support in XSLT requires Saxon-Ee/C or Saxon-PE/C
             echo '<br/>';
             unset($proc);
 	    unset($saxonproc);

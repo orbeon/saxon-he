@@ -11,10 +11,10 @@
   </xsl:param>
   <xsl:output method="xml" indent="yes" />
   
-  <xsl:function name="f:is-licensed-EE" as="xs:boolean">
+ <!-- <xsl:function name="f:is-licensed-EE" as="xs:boolean">
     ﻿  <xsl:variable name="v" select="system-property('xsl:product-version')"/>
     <xsl:sequence select="starts-with($v, 'EE') and not(contains($v, '(unlicensed)'))"/>
-  </xsl:function>
+  </xsl:function> -->
   
   
   <xsl:template match="*">
