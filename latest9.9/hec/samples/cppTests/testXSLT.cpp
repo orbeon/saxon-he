@@ -303,7 +303,7 @@ ostringstream name;
 		valStr<<"<out><person>text1</person><person>text2</person><person>text3</person><value>"<<test.str()<<"</value></out>";
 		name<<"value"<<i;
 		
-		XdmValue * values = (XdmValue*)processor->parseXmlFromString(valStr.str().c_str());
+		XdmValue * values = (XdmValue*)processor->parseXmlFromString(valStr.str().c_str()); 
 		//cout<<"Name:"<<name.str()<<", Value:"<<values->getHead()->getStringValue()<<endl;
 		trans->setParameter(name.str().c_str(), values);
 		test.str("");

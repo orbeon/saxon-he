@@ -36,18 +36,22 @@ g++ -m64 -fPIC -I$jdkdir -I$jdkdir/unix  -c ../../Saxon.C.API/SaxonProcessor.cpp
 
 g++ -m64 -fPIC -I$jdkdir  -I$jdkdir/unix -c ../../Saxon.C.API/XsltProcessor.cpp -o bin/XsltProcessor.o $1 $2
 
+g++ -m64 -fPIC -I$jdkdir  -I$jdkdir/unix -c ../../Saxon.C.API/Xslt30Processor.cpp -o bin/Xslt30Processor.o $1 $2
+
 g++ -m64 -fPIC -I$jdkdir  -I$jdkdir/unix -c ../../Saxon.C.API/XQueryProcessor.cpp -o bin/XQueryProcessor.o $1 $2
 
 g++ -m64 -fPIC -I$jdkdir -I$jdkdir/unix  -c ../../Saxon.C.API/XPathProcessor.cpp -o bin/XPathProcessor.o $1 $2
 
 g++ -m64 -fPIC -I$jdkdir  -I$jdkdir/unix -c ../../Saxon.C.API/SchemaValidator.cpp -o bin/SchemaValidator.o $1 $2
 
-g++  -m64 -fPIC -I$jdkdir  -I$jdkdir/unix bin/SaxonCGlue.o bin/SaxonCXPath.o bin/SaxonProcessor.o bin/XQueryProcessor.o bin/XsltProcessor.o bin/XPathProcessor.o bin/XdmValue.o bin/XdmItem.o bin/XdmNode.o bin/XdmAtomicValue.o bin/SchemaValidator.o testXSLT.cpp -o testXSLT -ldl  -L.  $1 $2
+g++  -m64 -fPIC -I$jdkdir  -I$jdkdir/unix bin/SaxonCGlue.o bin/SaxonCXPath.o bin/SaxonProcessor.o bin/XQueryProcessor.o bin/XsltProcessor.o bin/Xslt30Processor.o bin/XPathProcessor.o bin/XdmValue.o bin/XdmItem.o bin/XdmNode.o bin/XdmAtomicValue.o bin/SchemaValidator.o testXSLT.cpp -o testXSLT -ldl  -L.  $1 $2
 
-g++   -m64 -fPIC -I$jdkdir -I$jdkdir/unix  bin/SaxonCGlue.o bin/SaxonCXPath.o bin/SaxonProcessor.o bin/XQueryProcessor.o bin/XsltProcessor.o bin/XPathProcessor.o bin/XdmValue.o bin/XdmItem.o bin/XdmNode.o bin/XdmAtomicValue.o bin/SchemaValidator.o testXQuery.cpp -o testXQuery -ldl  -L.  $1 $2
+g++  -m64 -fPIC -I$jdkdir  -I$jdkdir/unix bin/SaxonCGlue.o bin/SaxonCXPath.o bin/SaxonProcessor.o bin/XQueryProcessor.o bin/XsltProcessor.o bin/Xslt30Processor.o bin/XPathProcessor.o bin/XdmValue.o bin/XdmItem.o bin/XdmNode.o bin/XdmAtomicValue.o bin/SchemaValidator.o testXSLT30.cpp -o testXSLT30 -ldl  -L.  $1 $2
+
+g++   -m64 -fPIC -I$jdkdir -I$jdkdir/unix  bin/SaxonCGlue.o bin/SaxonCXPath.o bin/SaxonProcessor.o bin/XQueryProcessor.o bin/XsltProcessor.o bin/Xslt30Processor.o bin/XPathProcessor.o bin/XdmValue.o bin/XdmItem.o bin/XdmNode.o bin/XdmAtomicValue.o bin/SchemaValidator.o testXQuery.cpp -o testXQuery -ldl  -L.  $1 $2
 
 
-g++  -m64 -fPIC -I$jdkdir -I$jdkdir/unix bin/SaxonCGlue.o bin/SaxonCXPath.o bin/SaxonProcessor.o bin/XQueryProcessor.o bin/XsltProcessor.o bin/XPathProcessor.o bin/XdmValue.o bin/XdmItem.o bin/XdmNode.o bin/XdmAtomicValue.o bin/SchemaValidator.o testXPath.cpp -o testXPath -ldl  -L.  $1 $2
+g++  -m64 -fPIC -I$jdkdir -I$jdkdir/unix bin/SaxonCGlue.o bin/SaxonCXPath.o bin/SaxonProcessor.o bin/XQueryProcessor.o bin/XsltProcessor.o bin/Xslt30Processor.o bin/XPathProcessor.o bin/XdmValue.o bin/XdmItem.o bin/XdmNode.o bin/XdmAtomicValue.o bin/SchemaValidator.o testXPath.cpp -o testXPath -ldl  -L.  $1 $2
 
-g++  -m64 -fPIC -I$jdkdir -I$jdkdir/unix bin/SaxonCGlue.o bin/SaxonCXPath.o bin/SaxonProcessor.o bin/XQueryProcessor.o bin/XsltProcessor.o bin/XPathProcessor.o bin/XdmValue.o bin/XdmItem.o bin/XdmNode.o bin/XdmAtomicValue.o bin/SchemaValidator.o testValidator.cpp -o testValidator -ldl  -L.  $1 $2
+g++  -m64 -fPIC -I$jdkdir -I$jdkdir/unix bin/SaxonCGlue.o bin/SaxonCXPath.o bin/SaxonProcessor.o bin/XQueryProcessor.o bin/XsltProcessor.o bin/Xslt30Processor.o bin/XPathProcessor.o bin/XdmValue.o bin/XdmItem.o bin/XdmNode.o bin/XdmAtomicValue.o bin/SchemaValidator.o testValidator.cpp -o testValidator -ldl  -L.  $1 $2
 

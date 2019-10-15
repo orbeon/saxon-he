@@ -1020,7 +1020,7 @@ int main()
     Xslt30Processor * trans = processor->newXslt30Processor();
 	//testValidation(trans,sresult);
 testInitialTemplate(processor, trans, sresult);
-  /*  exampleSimple1Err(trans, sresult);
+   exampleSimple1Err(trans, sresult);
     exampleSimple1(trans, sresult);
     exampleSimple_xmark(trans, sresult);
     exampleSimple2(trans, sresult);
@@ -1033,18 +1033,18 @@ testInitialTemplate(processor, trans, sresult);
     testApplyTemplates2a(processor, trans, sresult);
 
     testTransformToString4(processor, trans, sresult);
-*/
 
-/*
-    testTransformToString2b(processor, trans);
 
-    testTransformToString3(processor, trans);
+
+    /*testTransformToString2b(processor, trans, sresult);
+
+    testTransformToString3(processor, trans, sresult);
 	
-    testTransformFromstring(processor, trans);
+    testTransformFromstring(processor, trans, sresult);
 
-    testTransformFromstring2Err(processor, trans);
-*/
-  /*  testTrackingOfValueReference(processor, trans,sresult);
+    testTransformFromstring2Err(processor, trans, sresult);      */
+
+    testTrackingOfValueReference(processor, trans,sresult);
 
     testTrackingOfValueReferenceError(processor, trans, sresult);
 
@@ -1063,7 +1063,7 @@ testInitialTemplate(processor, trans, sresult);
    testResolveUri(processor, trans, sresult);
     testContextNotRoot(processor, trans, sresult);
 testContextNotRootNamedTemplate(processor, trans, sresult);
-testContextNotRootNamedTemplateValue(processor, trans, sresult);*/
+testContextNotRootNamedTemplateValue(processor, trans, sresult);
 testPipeline(processor, sresult); 
 
   //Available in PE and EE

@@ -250,7 +250,7 @@ cdef extern from "../SaxonProcessor.h":
         # Invoke a transformation by calling a named template and return result as a string.
         const char* callTemplateReturningString(const char * stylesheetFilename, const char* templateName)
 
-        # Invoke a transformation by calling a named template and return result as a string.
+        # Invoke a transformation by calling a named template and return result as an XdmValue.
         XdmValue* callTemplateReturningValue(const char * stylesheetFilename, const char* templateName)
 
         # Call a public user-defined function in the stylesheet

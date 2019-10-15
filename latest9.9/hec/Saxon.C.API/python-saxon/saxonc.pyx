@@ -100,8 +100,7 @@ cdef class PySaxonProcessor:
          self.thisptr.setcwd(c_str_)
     
 
-    @property
-    def resources_directory(self, dir_):
+    def set_resources_directory(self, dir_):
         """
         Property to set or get resources directory 
         
@@ -112,11 +111,12 @@ cdef class PySaxonProcessor:
         cdef char * c_str_ = py_value_string if dir_ is not None else ""
         self.thisptr.setResourcesDirectory(c_str_)
 
-    @resources_directory.setter   
+    @property
     def resources_directory(self):
         cdef const char* c_string = self.thisptr.getResourcesDirectory()
         ustring = c_string.decode('UTF-8') if c_string is not NULL else None
         return ustring
+    
     def set_configuration_property(self, name, value):
         """
         set_configuration_property(self, name, value)
