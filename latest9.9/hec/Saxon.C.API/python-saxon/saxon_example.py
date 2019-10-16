@@ -11,7 +11,7 @@ with saxonc.PySaxonProcessor(license=False) as proc:
    document = proc.parse_xml(xml_text="<out><person>text1</person><person>text2</person><person>text3</person></out>")
    xsltproc.set_source(xdm_node=document)
    xsltproc.compile_stylesheet(stylesheet_text="<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>       <xsl:param name='values' select='(2,3,4)' /><xsl:output method='xml' indent='yes' /><xsl:template match='*'><output><xsl:value-of select='//person[1]'/><xsl:for-each select='$values' ><out><xsl:value-of select='. * 3'/></out></xsl:for-each></output></xsl:template></xsl:stylesheet>")
-   #xsltproc.setJustInTimeCompilation(True) #Available in Saxon 9.9 library
+   xsltproc.set_jit_compilation(True)
 
    output2 = xsltproc.transform_to_string()
    print(output2)
@@ -55,13 +55,7 @@ with saxonc.PySaxonProcessor(license=False) as proc:
    attrs = children[1].attributes
    if len(attrs) == 2:
        print(attrs[1].string_value)
-   '''for n in children:
-       if n.node_kind == saxonc.PyXdmNodeKind.ELEMENT:
-           print(n.name)
-           if n.attribute_count > 0:
-               attr = n.attributes
-               print('Attr '+attr[1].name+' Value='+attr[1].string_value)
-    '''
+
 
 
 

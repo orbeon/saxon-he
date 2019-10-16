@@ -2901,7 +2901,7 @@ cdef class PySchemaValidator:
      def set_output_file(self, output_file):
         """
         set_output_file(self, output_file)        
-        Set the name of the output file that will be used by the validator.
+        Set the name of the output file that will be used by the valida tor.
 
         Args:
             output_file (str):The output file name for use by the validator
@@ -2913,46 +2913,79 @@ cdef class PySchemaValidator:
             self.thissvptr.setOutputFile(c_source)
         else:
             raise Warning("Unable to set output_file. output_file has the value None")
-     def validate(self, source_file=None):
+     def validate(self, **kwds):
         """
-        validate(self, source_file)
+        validate(self, **kwds)
         Validate an instance document by a registered schema.
         
         Args:
-            source_file (str): Name of the source file to be validated. Allow None when source document is supplied using the set_source method
+            **kwds: The possible keyword arguments must be one of the follow (file_name|xml_text|xdm_node).
+                    The source file to be validated. Allow None when source document is supplied using the set_source method
         """
-        py_value_string = source_file.encode('UTF-8') if source_file is not None else None
-        c_source = py_value_string
-        if source_file is not None:        
+        py_error_message = "Error: validate should only contain one of the following keyword arguments: (file_name|xdm_node|xml_text)"
+        if len(kwds) > 1:
+          raise Exception(py_error_message)
+        cdef py_value = None
+        cdef py_value_string = None
+        cdef char * c_source
+        cdef PyXdmNode xdm_node = None
+        if "file_name" in kwds:
+            py_value = kwds["file_name"]
+            py_value_string = py_value.encode('UTF-8') if py_value is not None else None
+            c_source = py_value_string if py_value is not None else ""
             self.thissvptr.validate(c_source)
+        elif "xdm_node" in kwds:
+            xdm_node = kwds["xdm_node"]
+            if isinstance(xdm_node, PyXdmNode):
+               self.thissvptr.setSourceNode(xdm_node.derivednptr)
+               self.thissvptr.validate(NULL)
         else:
             self.thissvptr.validate(NULL)
 
-     def validate_to_node(self, source_file=None):
+
+     def validate_to_node(self, **kwds):
         """
-        validate_to_node(self, source_file)
+        validate_to_node(self, **kwds)
         Validate an instance document by a registered schema.
         
+
         Args:
-            source_file (str): Name of the source file to be validated. Allow None when source document is supplied using the set_source method
+            **kwds: The possible keyword arguments must be one of the follow (file_name|xml_text|xdm_node).
+                    The source file to be validated. Allow None when source document is supplied using the set_source method
 
         Returns:
             PyXdmNode: The validated document returned to the calling program as an PyXdmNode    
         """
-        py_value_string = source_file.encode('UTF-8') if source_file is not None else None
-        cdef const char* c_source = NULL
-        if source_file is not None:
-            if isfile(py_value_string) == False:
-              raise Exception("Source file with name "+py_value_string+" does not exist")
-            c_source = py_value_string
+        py_error_message = "Error: validate should only contain one of the following keyword arguments: (file_name|xdm_node|xml_text)"
+        if len(kwds) > 1:
+          raise Exception(py_error_message)
+        cdef py_value = None
+        cdef py_value_string = None
+        cdef char * c_source
+        cdef PyXdmNode xdm_node = None
         cdef PyXdmNode val = None
-        cdef saxoncClasses.XdmNode * xdmNode = NULL     
-        xdmNode = self.thissvptr.validateToNode(c_source)
+        cdef saxoncClasses.XdmNode * xdmNode = NULL
+
+        if "file_name" in kwds:
+            py_value = kwds["file_name"]
+            py_value_string = py_value.encode('UTF-8') if py_value is not None else None
+            c_source = py_value_string if py_value is not None else ""
+            if isfile(py_value_string) == False:
+                raise Exception("Source file with name "+py_value_string+" does not exist")
+            xdmNode = self.thissvptr.validateToNode(c_source)
+        elif "xdm_node" in kwds:
+            xdm_node = kwds["xdm_node"]
+            if isinstance(xdm_node, PyXdmNode):
+                self.thissvptr.setSourceNode(xdm_node.derivednptr)
+                xdmNode = self.thissvptr.validateToNode(NULL)
+        else:
+            xdmNode = self.thissvptr.validateToNode(NULL)
+            
         if xdmNode == NULL:
             return None
         else:
-            val = PyXdmNode()   
-            val.derivednptr = val.derivedptr = val.thisvptr =  xdmNode 
+            val = PyXdmNode()
+            val.derivednptr = val.derivedptr = val.thisvptr =  xdmNode
             return val
 
      def set_source_node(self, PyXdmNode source):

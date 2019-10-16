@@ -34,8 +34,11 @@ def testValdiator3(saxonproc2):
     val.register_schema(xsd_file="family-ext.xsd")
 
     val.register_schema(xsd_file="family.xsd")
-    val.validate(source_file="family.xml")
+    val.validate(file_name="family.xml")
     nodea = val.validation_report
 
     assert val.exception_occurred()
     assert nodea is None
+
+def release(saxonproc):
+   saxonproc.release()

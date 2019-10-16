@@ -704,7 +704,50 @@ Please see the [Python API documentation](http://www.saxonica.com/????/saxonc.ht
 
 #### Python unit tests ####
 
-There are a collection of pyunit tests in the file test_saxonc.py and test_saxon_Schema.py. See also some python example scripts saxon_example.py, sxon_example2.py and saxon_example3.py  
+There are a collection of Python unit test cases to be run with the [pytest](https://docs.pytest.org) framework. Test unit files: test_saxonc.py and test_saxon_Schema.py. 
+See also some python example scripts saxon_example.py, sxon_example2.py and saxon_example3.py to get started with Saxon/C and Python
+
+The pyunit tests can be run with the following command:
+
+`pytest test_saxonc.py`
+
+
+Example Python script with Saxon/C API:
+
+<pre>
+     <code>
+     with saxonc.PySaxonProcessor(license=False) as proc:        
+        print(proc.version)
+        #print(dir(proc))
+        xdmAtomicval = proc.make_boolean_value(False)
+     
+        xsltproc = proc.new_xslt_processor()
+        document = proc.parse_xml(xml_text="<out><person>text1</person><person>text2</person><person>text3</person></out>")
+        xsltproc.set_source(xdm_node=document)
+        xsltproc.compile_stylesheet(stylesheet_file="test2.xsl")
+        xsltproc.set_just_in_time_compilation(True)
+     
+        output2 = xsltproc.transform_to_string()
+        print(output2)
+        print('test 0 \n')
+        xml = """\
+         <out>
+             <person>text1</person>
+             <person>text2</person>
+             <person>text3</person>
+         </out>"""
+        xp = proc.new_xpath_processor()
+         
+        node = proc.parse_xml(xml_text=xml)
+        print('test 1\n node='+node.string_value)
+        xp.set_context(xdm_item=node)
+        item = xp.evaluate_single('//person[1]')
+        if isinstance(item,saxonc.PyXdmNode):
+            print(item.string_value)
+
+     </code>
+
+</pre  
 
 <div id='tech'/>
 ## Technical Information: ##
