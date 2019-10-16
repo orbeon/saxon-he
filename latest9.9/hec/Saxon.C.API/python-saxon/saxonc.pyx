@@ -1,5 +1,5 @@
 """@package saxonc
-This documentation details the Python API for Saxon/C, which has been written in cython. 
+This documentation details the Python API for Saxon/C, which has been written in cython for Python3.
 
 Saxon/C is a cross-compiled variant of Saxon from the Java platform to the C/C++ platform.
 Saxon/C provides processing in XSLT 3.0, XQuery 3.0/3.1 and XPath 2.0/3.0/3.1, and Schema validation 1.0/1.1.

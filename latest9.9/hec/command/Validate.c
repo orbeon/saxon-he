@@ -53,14 +53,14 @@ char dllname[] =
 #endif
 
 //===============================================================================================//
-/*! <code>Environment</code>. This struct captures the jni, JVM and handler to the cross compiled Saxon/C library.
+/*! <code>sxnc_environment</code>. This struct captures the jni, JVM and handler to the cross compiled Saxon/C library.
  * <p/>
  */
 typedef struct {
 		JNIEnv *env;
 		HANDLE myDllHandle;
 		JavaVM *jvm;
-	} Environment;
+	} sxnc_environment;
 
 
 //===============================================================================================//
@@ -215,27 +215,27 @@ jobject createObject (JNIEnv* penv, jclass myClassInDll, const char * arguments)
     return obj;
 }
 
-void checkForException(Environment environ, jclass callingClass,  jobject callingObject){
+void checkForException(sxnc_environment environi, jclass callingClass,  jobject callingObject){
 
-    if ((*(environ.env))->ExceptionCheck(environ.env)) {
+    if ((*(environi.env))->ExceptionCheck(environi.env)) {
 	char *  result1;
 	const char * errorCode = NULL;
-	jthrowable exc = (*(environ.env))->ExceptionOccurred(environ.env);
-	(*(environ.env))->ExceptionDescribe(environ.env); //comment code
-	 jclass exccls = (jclass)(*(environ.env))->GetObjectClass(environ.env, exc);
-        jclass clscls = (jclass)(*(environ.env))->FindClass(environ.env, "java/lang/Class");
+	jthrowable exc = (*(environi.env))->ExceptionOccurred(environi.env);
+	(*(environi.env))->ExceptionDescribe(environi.env); //comment code
+	 jclass exccls = (jclass)(*(environi.env))->GetObjectClass(environi.env, exc);
+        jclass clscls = (jclass)(*(environi.env))->FindClass(environi.env, "java/lang/Class");
 
-        jmethodID getName = (jmethodID)(*(environ.env))->GetMethodID(environ.env, clscls, "getName", "()Ljava/lang/String;");
-        jstring name =(jstring)((*(environ.env))->CallObjectMethod(environ.env, exccls, getName));
-        char const* utfName = (char const*)(*(environ.env))->GetStringUTFChars(environ.env, name, 0);
+        jmethodID getName = (jmethodID)(*(environi.env))->GetMethodID(environi.env, clscls, "getName", "()Ljava/lang/String;");
+        jstring name =(jstring)((*(environi.env))->CallObjectMethod(environi.env, exccls, getName));
+        char const* utfName = (char const*)(*(environi.env))->GetStringUTFChars(environi.env, name, 0);
 	printf(utfName);
 
-	 jmethodID  getMessage = (jmethodID)(*(environ.env))->GetMethodID(environ.env, exccls, "getMessage", "()Ljava/lang/String;");
+	 jmethodID  getMessage = (jmethodID)(*(environi.env))->GetMethodID(environi.env, exccls, "getMessage", "()Ljava/lang/String;");
 	if(getMessage) {
 
-		jstring message = (jstring)((*(environ.env))->CallObjectMethod(environ.env, exc, getMessage));
+		jstring message = (jstring)((*(environi.env))->CallObjectMethod(environi.env, exc, getMessage));
 		if(message) {        	
-			char const* utfMessage = (char const*)(*(environ.env))->GetStringUTFChars(environ.env, message, 0);
+			char const* utfMessage = (char const*)(*(environi.env))->GetStringUTFChars(environi.env, message, 0);
 		}
 	
 	}
@@ -255,15 +255,15 @@ void finalizeJavaRT (JavaVM* jvm)
 
 
 
-int validate(Environment environ, int argc, const char* argv[]) {
+int validate(sxnc_environment environi, int argc, const char* argv[]) {
 
 
     jmethodID MID_foo;
-    jclass transClass = lookForClass(environ.env, "com/saxonica/Validate");
+    jclass transClass = lookForClass(environi.env, "com/saxonica/Validate");
     char methodName[] = "main";
     char args[] = "([Ljava/lang/String;)V";
     jobjectArray stringArray = NULL;
-    MID_foo = (jmethodID)(*(environ.env))->GetStaticMethodID(environ.env, transClass, methodName, args);
+    MID_foo = (jmethodID)(*(environi.env))->GetStaticMethodID(environi.env, transClass, methodName, args);
     if (!MID_foo) {
 	printf("\nError: MyClassInDll %s() not found\n",methodName);
 	fflush (stdout);
@@ -273,17 +273,17 @@ int validate(Environment environ, int argc, const char* argv[]) {
 	printf("\nError: Not enough arguments in Validate");
 	return 0;
     }
-	   jclass stringClass = lookForClass(environ.env, "java/lang/String");
-	   stringArray = (*(environ.env))->NewObjectArray(environ.env, (jint)argc-1, stringClass, 0 );
+	   jclass stringClass = lookForClass(environi.env, "java/lang/String");
+	   stringArray = (*(environi.env))->NewObjectArray(environi.env, (jint)argc-1, stringClass, 0 );
 	   if(!stringArray) { return 0;}
   int i, j;
   for(i=1, j=0; i< argc; i++, j++) {
-	     (*(environ.env))->SetObjectArrayElement(environ.env, stringArray, j, (*(environ.env))->NewStringUTF(environ.env, argv[i]));
+	     (*(environi.env))->SetObjectArrayElement(environi.env, stringArray, j, (*(environi.env))->NewStringUTF(environi.env, argv[i]));
 	   }
 
-   (*(environ.env))->CallStaticVoidMethod(environ.env, transClass, MID_foo, stringArray);
+   (*(environi.env))->CallStaticVoidMethod(environi.env, transClass, MID_foo, stringArray);
    
-  (*(environ.env))->DeleteLocalRef(environ.env, stringArray);
+  (*(environi.env))->DeleteLocalRef(environi.env, stringArray);
 	return 0;
 }
 
@@ -293,31 +293,31 @@ int validate(Environment environ, int argc, const char* argv[]) {
 int main( int argc, const char* argv[] )
 {
     HANDLE myDllHandle;
-    //JNIEnv *(environ.env);
+    //JNIEnv *(environi.env);
     //JavaVM *jvm;
     jclass  myClassInDll;
 
-    Environment environ;
+    sxnc_environment environi;
     /*
      * First of all, load required component.
      * By the time of JET initialization, all components should be loaded.
      */
-    environ.myDllHandle = loadDll (dllname);
+    environi.myDllHandle = loadDll (dllname);
    
 
     /*
      * Initialize JET run-time.
      * The handle of loaded component is used to retrieve Invocation API.
      */
-    initJavaRT (environ.myDllHandle, &environ.jvm, &environ.env);
-    validate(environ, argc, argv);	
+    initJavaRT (environi.myDllHandle, &environi.jvm, &environi.env);
+    validate(environi, argc, argv);	
 
   
-fflush(stdout);
+    fflush(stdout);
     /*
      * Finalize JET run-time.
      */
-    finalizeJavaRT (environ.jvm);
+    finalizeJavaRT (environi.jvm);
 
     return 0;
 }

@@ -523,7 +523,7 @@ int exists(const char *fname)
 
   void exampleSimple2(Xslt30Processor  *proc, sResultCount *sresult){
 		cout<<"<b>exampleSimple2:</b><br/>"<<endl;
-		proc->setcwd("/home/ond1/work/svn/latest9.9-saxonc/samples/cppTests/");
+		//proc->setcwd("");
                 proc->setInitialMatchSelectionAsFile("../php/xml/foo.xml");
 		
                 proc->compileFromFile("../php/xsl/foo.xsl");
@@ -531,9 +531,9 @@ int exists(const char *fname)
 		proc->setOutputFile(filename);
                 proc->applyTemplatesReturningFile(NULL, "output1.xml");
 				
-		if (exists("/home/ond1/work/svn/latest9.9-saxonc/samples/cppTests/output1.xml")) {
+		if (exists("output1.xml")) {
 		    cout<<"The file $filename exists"<<endl;
-		   remove("/home/ond1/work/svn/latest9.9-saxonc/samples/cppTests/output1.xml");
+		   remove("output1.xml");
 		   sresult->success++;
 		} else {
 		    cout<<"The file "<<filename<<" does not exist"<<endl;

@@ -49,8 +49,8 @@ function userFunctionExample($saxon, $proc, $xmlfile, $xslFile)
     echo '<b>userFunctionExample:</b><br/>';
     global $resultg;
 
-    $proc->setProperty("extc", "/home/ond1/work/svn/latest9.8-saxonc/hec/Saxon.C.API/php7-src/PHP-Build/lib/php/extensions/debug-non-zts-20160303/saxon"); //"/home/ond1/work/new-svn/latest9.8-hec/hec/samples/cppTests/cppExtensionFunction"
-    $saxon->registerPHPFunction("/home/ond1/work/svn/latest9.8-saxonc/hec/Saxon.C.API/php7-src/PHP-Build/lib/php/extensions/debug-non-zts-20160303/saxon");
+    $proc->setProperty("extc", "/path-to-module/saxon");
+    $saxon->registerPHPFunction("/path-to-module/saxon");
     $proc->setInitialMatchSelectionAsFile($xmlfile);
     $proc->compileFromFile($xslFile);
 

@@ -690,10 +690,11 @@ In the example below we show how to debug if something unexpected is happening. 
 <div id='python-api'/>
 ## Python ##
 The Saxon/C Python extension API has been developed using [Cython](https://cython.org/).
+Saxon/C only supports Python3. Cython is required to build the extension library.
 
 ### Python API ###
 
-The Saxon/C Python extension is the directory Saxon.C.API/python-saxon
+The Saxon/C Python extension is in the directory Saxon.C.API/python-saxon
 
 The Python extension on the Linux and MacOS platforms can be built using the following command:
 

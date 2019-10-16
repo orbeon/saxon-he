@@ -6,7 +6,7 @@
     <body>
         <?php 
             
-            /* simple example to show transforming to string */
+            /* simple example to show transforming to string */   
             function exampleSimple1($proc, $xmlfile, $queryFile){
 		echo '<b>exampleSimple1:</b><br/>';
                 $proc->setContextItemFromFile($xmlfile);
@@ -15,7 +15,7 @@ echo '<b>exampleSimple cp1:</b><br/>';
 echo '<b>exampleSimple cp2:</b><br/>';
   	        //$proc->setProperty('base', '/');      
                 $result = $proc->runQueryToString();  
-echo '<b>exampleSimple cp3:</b><br/>';             
+echo '<b>exampleSimple cp3:</b><br/>';                       
 		if($result != null) {               
 				
 		echo 'Output:'.$result;

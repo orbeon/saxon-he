@@ -4,7 +4,7 @@
 int main()
 {
     HANDLE myDllHandle;
-    //JNIEnv *(environ.env);
+    //JNIEnv *(environi.env);
     //JavaVM *jvm;
     jclass  myClassInDll;
     int cap = 10;
@@ -16,36 +16,36 @@ int main()
     properties;
     int propLen=0, propCap;
     propCap = cap;
-    sxnc_environment * environ;
+    sxnc_environment * environi;
     sxnc_processor * processor;
 
-    initSaxonc(&environ, &processor, &parameters, &properties, parCap, propCap);
+    initSaxonc(&environi, &processor, &parameters, &properties, parCap, propCap);
 
     /*
      * First of all, load required component.
      * By the time of JET initialization, all components should be loaded.
      */
-    environ->myDllHandle = loadDefaultDll ();
+    environi->myDllHandle = loadDefaultDll ();
 	
     /*
      * Initialize JET run-time.
      * The handle of loaded component is used to retrieve Invocation API.
      */
-    initDefaultJavaRT (&environ);
-    //initJavaRT (environ->myDllHandle, &(environ->jvm), &(environ->env));
-    const char *verCh = version(*environ);
+    initDefaultJavaRT (&environi);
+    //initJavaRT (environi->myDllHandle, &(environi->jvm), &(environi->env));
+    const char *verCh = version(*environi);
     printf("XPath Tests\n\nSaxon version: %s \n", verCh);
     setProperty(&properties, &propLen, &propCap, "s", "cat.xml");
     
 
-    sxnc_value * result = evaluate(*environ,&processor, NULL, "/out/person", 0, properties, 0, propLen);
+    sxnc_value * result = evaluate(environi,&processor, NULL, "/out/person", 0, properties, 0, propLen);
 
- bool resultBool = effectiveBooleanValue(*environ,&processor, NULL, "count(/out/person)>0", 0, properties, 0, propLen);
+ bool resultBool = effectiveBooleanValue(environi,&processor, NULL, "count(/out/person)>0", 0, properties, 0, propLen);
  
     if(!result) {
       printf("result is null");
     }else {
-      printf("%s", getStringValue(*environ, *result));
+      printf("%s", getStringValue(environi, *result));
     }
 
    if(resultBool==1) {
@@ -55,8 +55,8 @@ int main()
     }
       fflush(stdout);   
 
-    finalizeJavaRT (environ->jvm);
-    freeSaxonc(&environ, &processor, &parameters, &properties);
+    finalizeJavaRT (environi->jvm);
+    freeSaxonc(&environi, &processor, &parameters, &properties);
     return 0;
 
 }

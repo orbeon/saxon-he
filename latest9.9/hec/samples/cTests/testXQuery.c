@@ -4,7 +4,7 @@
 int main()
 {
     HANDLE myDllHandle;
-    //JNIEnv *(environ.env);
+    //JNIEnv *(environi.env);
     //JavaVM *jvm;
     jclass  myClassInDll;
     int cap = 10;
@@ -18,31 +18,31 @@ int main()
     int propLen, propCap;
     propCap = cap;
     propLen =0;
-    sxnc_environment * environ;
+    sxnc_environment * environi;
     sxnc_processor * processor;
 
-    initSaxonc(&environ, &processor, &parameters, &properties, parCap, propCap);
+    initSaxonc(&environi, &processor, &parameters, &properties, parCap, propCap);
 
     /*
      * First of all, load required component.
      * By the time of JET initialization, all components should be loaded.
      */
-    environ->myDllHandle = loadDefaultDll ();
+    environi->myDllHandle = loadDefaultDll ();
 	
     /*
      * Initialize JET run-time.
      * The handle of loaded component is used to retrieve Invocation API.
      */
-    initDefaultJavaRT (&environ);
-    //initJavaRT (environ->myDllHandle, &(environ->jvm), &(environ->env));
-    const char *verCh = version(*environ);
+    initDefaultJavaRT (&environi);
+    //initJavaRT (environi->myDllHandle, &(environi->jvm), &(environi->env));
+    const char *verCh = version(*environi);
     printf("XQuery Tests\n\nSaxon version: %s \n", verCh);
 
     setProperty(&properties, &propLen, &propCap, "s", "cat.xml");
 
     setProperty(&properties, &propLen, &propCap, "qs", "<out>{count(/out/person)}</out>");
 
-    const char * result = executeQueryToString(*environ, &processor, NULL, 0,properties,0,propLen);
+    const char * result = executeQueryToString(environi, &processor, NULL, 0,properties,0,propLen);
 
     if(!result) {
       printf("result is null\n");
@@ -50,8 +50,8 @@ int main()
       printf("%s",result);
     }
     fflush(stdout);
-    finalizeJavaRT (environ->jvm);
-    freeSaxonc(&environ, &processor, &parameters, &properties);
+    finalizeJavaRT (environi->jvm);
+    freeSaxonc(&environi, &processor, &parameters, &properties);
 
     return 0;
 }

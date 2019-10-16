@@ -727,7 +727,7 @@ def test_xpath_proc(saxonproc, data_dir):
 
     sp = saxonproc
     xp = saxonproc.new_xpath_processor()
-    xmlFile = data_dir+'cat.xml'
+    xmlFile = data_dir+"cat.xml"
     assert isfile(xmlFile)
     xp.set_context(file_name=xmlFile)
     assert xp.effective_boolean_value('count(//person) = 3')

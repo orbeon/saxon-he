@@ -5,7 +5,7 @@
 int main()
 {
     HANDLE myDllHandle;
-    //JNIEnv *(environ.env);
+    //JNIEnv *(environi.env);
     //JavaVM *jvm;
     jclass  myClassInDll;
     int cap = 10;
@@ -17,30 +17,30 @@ int main()
     properties;
     int propLen=0;
     parCap = cap;
-    sxnc_environment * environ;
+    sxnc_environment * environi;
     sxnc_processor * processor;
 
-    initSaxonc(&environ, &processor, &parameters, &properties, parCap, parCap);
+    initSaxonc(&environi, &processor, &parameters, &properties, parCap, parCap);
 
     /*
      * First of all, load required component.
      * By the time of JET initialization, all components should be loaded.
      */
-    environ->myDllHandle = loadDefaultDll ();
+    environi->myDllHandle = loadDefaultDll ();
 	
     /*
      * Initialize JET run-time.
      * The handle of loaded component is used to retrieve Invocation API.
      */
-    initDefaultJavaRT (&environ);
+    initDefaultJavaRT (&environi);
 
-    const char *verCh = version(*environ);
+    const char *verCh = version(*environi);
     printf("XSLT Tests\n\nSaxon version: %s \n", verCh);	
-    jobject num = integerValue(*environ, 5);
+    jobject num = integerValue(*environi, 5);
     setParameter(&parameters, &parLen, &parCap,"", "numParam", num);
   
 
-    const char *result = xsltApplyStylesheet(*environ, &processor, NULL, "cat.xml","test.xsl", 0 ,0, 0, 0);
+    const char *result = xsltApplyStylesheet(environi, &processor, NULL, "cat.xml","test.xsl", 0 ,0, 0, 0);
   
 	
 
@@ -54,7 +54,7 @@ int main()
     /*
      * Finalize JET run-time.
      */
-    finalizeJavaRT (environ->jvm);
-    freeSaxonc(&environ, &processor, &parameters, &properties);
+    finalizeJavaRT (environi->jvm);
+    freeSaxonc(&environi, &processor, &parameters, &properties);
     return 0;
 }
