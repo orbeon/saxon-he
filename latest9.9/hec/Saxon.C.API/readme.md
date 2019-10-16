@@ -12,7 +12,7 @@ Saxon/C 1.2.0 is the latest release of Saxon-HE/PE/EE on the C/C++, PHP and Pyth
 
 Saxon/C is built from the Saxon 9.9.1.5 Java product using Excelsior JET Enterprise 15.3 edition (MP1).
 
-Platforms supported: Linux 64-bit, Mac OS. Windows 64-bit will follow soon. 
+Platforms supported: Linux 64-bit, Mac OS and Windows 64-bit. 
 
 Saxon/C is released in three separate editions, as on the Java platform: Enterprise Edition (Saxon-EE/C), Professional Edition (Saxon-PE/C), and Home Edition (Saxon-HE/C)
 
@@ -42,15 +42,37 @@ Link the jetvm library so it can be found. For example:
 
 The Saxon-EDITION API assumes the library is installed as follows: '/usr/lib/libsaxonhec.so', '/usr/lib/libsaxonpec.so' or '/usr/lib/libsaxoneec.so'
 
+
+Example of running the C++ test file:
+ 
+    cd samples/cppTests/
+ 
+    ./build64-linux.sh
+ 
+    ./testXPath
+
  #### Mac OS: Saxon-HE/C, Saxon-PE/C and Saxon-EE/C: ####
  To install any of the Saxon/C releases on the Mac OS system, unzip the self-contained file libsaxon-EDITION-mac-setup-v#.#.#.zip
  
  The first step is to copy the library libsaxonEDITION.dylib and the rt directories to a your install location. The C/C++ interface by default assumes the library files and directories are installed in the directory '/usr/local/lib'. The location of the Saxon/C library can be set using the SAXONC_HOME environment variable.
+
+    cd libsaxon-HEC-mac-setup-v1.2.0/    
+    sudo cp libsaxonhec.dylib /usr/local/lib/.    
+    sudo cp -r rt /usr/local/lib/.
  
  The DYLD_LIBRARY_PATH environment variable must be set as follows:
 
-export JET_HOME=/usr/local/lib/rt
-export DYLD_LIBRARY_PATH=$JET_HOME/lib/lib/jetvm:$DYLD_LIBRARY_PATH
+    export JET_HOME=/usr/local/lib/rt
+    export DYLD_LIBRARY_PATH=$JET_HOME/lib/lib/jetvm:$DYLD_LIBRARY_PATH
+    
+    
+ Example of running the C++ test file:
+ 
+    cd samples/cppTests/
+ 
+    ./build64-mac.sh
+ 
+    ./testXPath
 
 #### PHP extension: ####
  
@@ -91,7 +113,23 @@ Check that the extension has installed properly:
 * php -d"extension=saxon.so" -m
 * Also Create a php page and call the function 'phpinfo()'. Look for the Saxon/C entry.
 
+
+### Python ###
+The Saxon/C Python extension API has been developed using [Cython](https://cython.org/) for Python3.
+Cython is required to build the extension library.
+
+To install python and cython on MacOS I recommend using brew or MacPorts. 
+
+The Saxon/C Python extension is in the directory Saxon.C.API/python-saxon
+
+The Python extension on the Linux and MacOS platforms can be built using the following command:
+
+`python3 saxon-setup.py build_ext -if`
+
+Please see the [Python API documentation](http://www.saxonica.com/????/saxonc.html)
+
 <div id='getting-started'/>
+
 ## Getting started with C/C++: ##
 
 To get started please browse the Saxon/C API starting with the class [SaxonProcessor](classSaxonProcessor.html) class which acts as a factory class for generating the processors.
@@ -303,14 +341,14 @@ Example:
 	if(resultValues == NULL) {
 		 printf("result is null \n");
 	} else {
-		cout<<"Number of items="<<resultValues->size()<<endl;
+		cout<<"Number of items="<<resultValues->size();
 		for(int i =0; i< resultValues->size();i++){
 			XdmItem * itemi = resultValues->itemAt(i);
 			if(itemi == NULL) {
-				cout<<"Item at position "<<i<<" should not be null"<<endl;
+				cout<<"Item at position "<<i<<" should not be null";
 				break;
 			}
-			cout<<"Item at "<<i<<" ="<<itemi->getStringValue(processor)<<endl;		
+			cout<<"Item at "<<i<<" ="<<itemi->getStringValue(processor);		
 		}
 	}
 	xpath->clearParameters(true);
@@ -357,9 +395,9 @@ Example:
 	val->validate("family.xml");
 	XdmNode * node = val->getValidationReport(); 
 	if(node != NULL) {
-		cout<<endl<<"Validation Report"<<node->getStringValue()<<endl;
+		cout<<"Validation Report"<<node->getStringValue();
 	} else {
-		cout<<endl<<"Error: Validation Report is NULL"<<endl;
+		cout<<"Error: Validation Report is NULL";
 	}
 </code></pre>
 
@@ -693,12 +731,6 @@ The Saxon/C Python extension API has been developed using [Cython](https://cytho
 Saxon/C only supports Python3. Cython is required to build the extension library.
 
 ### Python API ###
-
-The Saxon/C Python extension is in the directory Saxon.C.API/python-saxon
-
-The Python extension on the Linux and MacOS platforms can be built using the following command:
-
-`python3 saxon-setup.py build_ext -if`
 
 Please see the [Python API documentation](http://www.saxonica.com/????/saxonc.html)
 
