@@ -732,7 +732,7 @@ Saxon/C only supports Python3. Cython is required to build the extension library
 
 ### Python API ###
 
-Please see the [Python API documentation](http://www.saxonica.com/????/saxonc.html)
+Please see the [Python API documentation](http://www.saxonica.com/doc/html/pysaxonc.html)
 
 
 #### Python unit tests ####
