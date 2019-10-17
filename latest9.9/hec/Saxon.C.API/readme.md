@@ -407,7 +407,7 @@ Example:
 ## PHP ##
 
 #### PHP API ####
-The PHP API is split up in the following class (links are to the C++ classes): SaxonProcessor, XsltProcessor, XPathProcessor, XQueryProcessor  and SchemaValidator. We also have class for a sub-set of the  XDM data model: XdmValue, XdmNode, XdmItem and XdmAtomicValue.
+The PHP API is split up in the following class (links are to the C++ classes): SaxonProcessor, XsltProcessor, Xslt30Processor, XPathProcessor, XQueryProcessor  and SchemaValidator. We also have class for a sub-set of the  XDM data model: XdmValue, XdmNode, XdmItem and XdmAtomicValue.
 
 The methods on these class are given below. For a more comprehensive description of the methods and their argument please see its counterpart in the C++ API.
 
@@ -482,17 +482,17 @@ The methods on these class are given below. For a more comprehensive description
 | void | compileFromValueAndSave(XdmNode $node, string outputFileName)<br> *Compile a stylesheet received as an XdmNode and save as an exported file (SEF).* |
 | void | callFunctionReturningFile(string $FunctionName, array arguments, string outputfileName) <br> *Call a public user-defined function in the stylesheet. Here we wrap the result in an XML document, and sending this document to a specified file. Arguments: function name and array of XdmValue objects - he values of the arguments to be supplied to the function. These will be converted if necessary to the type as defined in the function signature, using the function conversion rules. *  |
 | string | callFunctionReturningString(string $FunctionName, array arguments) <br> *Call a public user-defined function in the stylesheet. Here we wrap the result in an XML document, and serialized this document to string value. Arguments: function name and array of XdmValue objects - he values of the arguments to be supplied to the function. These will be converted if necessary to the type as defined in the function signature, using the function conversion rules.* |
-| PyXdmValue | callFunctionReturningValue(string $FunctionName, array arguments) <br> *Call a public user-defined function in the stylesheet. Here we wrap the result in an XML document, and return the document as an XdmVale. Arguments: function name and array of XdmValue objects - he values of the arguments to be supplied to the function. These will be converted if necessary to the type as defined in the function signature, using the function conversion rules. * |
+| PyXdmValue | callFunctionReturningValue(string $FunctionName, array arguments) <br> *Call a public user-defined function in the stylesheet. Here we wrap the result in an XML document, and return the document as an XdmVale. Arguments: function name and array of XdmValue objects - he values of the arguments to be supplied to the function. These will be converted if necessary to the type as defined in the function signature, using the function conversion rules.* |
 | void | callTemplateReturningFile(string $stylesheetFileName, string $templateName, string outputfileName) <br> *Invoke a transformation by calling a named template. The result is stored in the supplied outputfile name. If the templateName argument is null then the xsl:iitial-template is used. Parameters supplied using setInitialTemplateParameters are made available to the called template.*  |
 | string | callTemplateReturningString(string $stylesheetFileName, string $templateName) <br> *Invoke a transformation by calling a named template and return result as a string. If the templateName argument is null then the xsl:iitial-template is used. Parameters supplied using setInitialTemplateParameters are made available to the called template.* |
-| PyXdmValue | callTemplateReturningValue(string $stylesheetFileName, string $templateName) <br> *Invoke a transformation by calling a named template and return result as an XdmValue. If the templateName argument is null then the xsl:iitial-template is used. Parameters supplied using setInitialTemplateParameters are made available to the called template.* |`
+| PyXdmValue | callTemplateReturningValue(string $stylesheetFileName, string $templateName) <br> *Invoke a transformation by calling a named template and return result as an XdmValue. If the templateName argument is null then the xsl:iitial-template is used. Parameters supplied using setInitialTemplateParameters are made available to the called template.* |
 | void | transformFileToFile(string $sourceFileName, string $stylesheetFileName, string outputfileName) <br> *Perform a one shot transformation. The result is stored in the supplied outputfile name.*  |
 | XdmValue | transformFileToValue(string $fileName) <br> *Perform a one shot transformation. The result is returned as an XdmValue* |
 | XdmValue | transformFileToString(string $fileName) <br> *Perform a one shot transformation. The result is returned as a stringe* |
 | void | transformToFile() <br> *Perform the transformation based upon cached stylesheet and source document. Result is saved to the supplied file name* |
 | string | transformToString() <br> *Perform the transformation based upon cached stylesheet and source document. Result is returned as a serialized string* |
 | PyXdmValue | transformToValue() <br> *Perform the transformation based upon cached stylesheet and any source document. Result returned as an XdmValue object. If there are failures then a null is returned* |
-| void | setInitialTemplateParameters(array parameters, bool tunnel) <br> * Set parameters to be passed to the initial template. These are used whether the transformation is invoked by applying templates to an initial source item, or by invoking a named template. The parameters in question are the xsl:param elements appearing as children of the xsl:template element. The tunnel argumnet if set to true these values are to be used for setting tunnel parameters*|
+| void | setInitialTemplateParameters(array parameters, bool tunnel) <br> *Set parameters to be passed to the initial template. These are used whether the transformation is invoked by applying templates to an initial source item, or by invoking a named template. The parameters in question are the xsl:param elements appearing as children of the xsl:template element. The tunnel argument if set to true these values are to be used for setting tunnel parameters.* |
 | void | setInitialMatchSelection() <br> *The initial value to which templates are to be applied (equivalent to the 'select' attribute of xsl:apply-templates)*|
 | void | setInitialMatchSelectionAsFile <br> *The initial filename to which templates are to be applied (equivalent to the 'select' attribute of xsl:apply-templates) * |
 | void | setGlobalContextItem <br> *Set the source document from an XdmNode for the transformation.*|
@@ -732,7 +732,10 @@ Saxon/C only supports Python3. Cython is required to build the extension library
 
 ### Python API ###
 
-Please see the [Python API documentation](http://www.saxonica.com/doc/html/pysaxonc.html)
+The Python API is split up in the following class (links are to the equivalent [C++ classes](https://www.saxonica.com/saxon-c/doc/html/annotated.html)): [PySaxonProcessor](https://www.saxonica.com/saxon-c/doc/html/pysaxonc.html#PySaxonProcessor), [PyXsltProcessor](https://www.saxonica.com/saxon-c/doc/html/pysaxonc.html#PyXsltProcessor), [PyXPathProcessor](https://www.saxonica.com/saxon-c/doc/html/pysaxonc.html#PyXPathProcessor), [PyXQueryProcessor](https://www.saxonica.com/saxon-c/doc/html/pysaxonc.html#PyXQueryProcessor) and [PySchemaValidator](https://www.saxonica.com/saxon-c/doc/html/pysaxonc.html#PySchemaValidator). We also have class for a sub-set of the XDM data model: [PyXdmValue](https://www.saxonica.com/saxon-c/doc/html/pysaxonc.html#PyXdmValue), [PyXdmNode](https://www.saxonica.com/saxon-c/doc/html/pysaxonc.html#PyXdmNode), [PyXdmItem](https://www.saxonica.com/saxon-c/doc/html/pysaxonc.html#PyXdmItem) and [PyXdmAtomicValue](https://www.saxonica.com/saxon-c/doc/html/pysaxonc.html#PyXdmAtomicValue).
+The methods on these class are given below. For a more comprehensive description of the methods and their argument please see its counterpart in the C++ API.
+
+Please see the [Python API documentation](http://www.saxonica.com/saxon-c/doc/html/saxonc.html)
 
 
 #### Python unit tests ####

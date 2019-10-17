@@ -3,7 +3,7 @@ This documentation details the Python API for Saxon/C, which has been written in
 
 Saxon/C is a cross-compiled variant of Saxon from the Java platform to the C/C++ platform.
 Saxon/C provides processing in XSLT 3.0, XQuery 3.0/3.1 and XPath 2.0/3.0/3.1, and Schema validation 1.0/1.1.
-Main classes in Saxon/C Python API: PySaxonProcessor, PyXsltProcessor, PyXslt30Processor, PyXQueryProcessor, PyXdmValue, PyXdmItem, PyXdmNode and PyXdmAtomicValue."""
+Main classes in Saxon/C Python API: PySaxonProcessor, PyXsltProcessor, PyXslt30Processor, PyXQueryProcessor, PySchemaValidator, PyXdmValue, PyXdmItem, PyXdmNode and PyXdmAtomicValue."""
 
 
 # distutils: language = c++
@@ -2849,7 +2849,8 @@ cdef class PyXPathProcessor:
 
 
 cdef class PySchemaValidator:
-     """An SchemaValidator represents factory for validating instance documents against a schema."""
+     """An PySchemaValidator represents factory for validating instance documents against a schema."""
+     
      cdef saxoncClasses.SchemaValidator *thissvptr      # hold a C++ instance which we're wrapping
 
      def __cinit__(self):
