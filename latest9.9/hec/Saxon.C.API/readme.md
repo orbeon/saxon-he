@@ -43,13 +43,17 @@ Link the jetvm library so it can be found. For example:
 The Saxon-EDITION API assumes the library is installed as follows: '/usr/lib/libsaxonhec.so', '/usr/lib/libsaxonpec.so' or '/usr/lib/libsaxoneec.so'
 
 
-Example of running the C++ test file:
+Example of running the C++ test files (i.e. testXPath.cpp, testXQuery.cpp, testXSLT.cpp, testXSLT30.cpp and testValidator.cpp):
  
     cd samples/cppTests/
  
     ./build64-linux.sh
  
     ./testXPath
+    ./testXSLT
+    ./testXSLT30
+    ./testXQuery
+    ./testValidator (Saxon-EE/C only)
 
  #### Mac OS: Saxon-HE/C, Saxon-PE/C and Saxon-EE/C: ####
  To install any of the Saxon/C releases on the Mac OS system, unzip the self-contained file libsaxon-EDITION-mac-setup-v#.#.#.zip
@@ -82,12 +86,13 @@ A built php extension module is included in the Saxon/C distrubtion, see the dir
  
 To build the php extension follow the steps below:
 
-Run the commands:
+Run the commands (from the root directory of the Saxon/C installation):
 
-* phpize
-* ./configure --enable-saxon
-* make
-* sudo make install
+    cd Saxon.C.API
+    phpize
+    ./configure --enable-saxon
+    make
+    sudo make install
 
 Create a module conf file:
 
@@ -112,6 +117,8 @@ Check that the extension has installed properly:
 
 * php -d"extension=saxon.so" -m
 * Also Create a php page and call the function 'phpinfo()'. Look for the Saxon/C entry.
+
+See example PHP scripts in the 'samples/php' directory. Specifically the files (xpathExamples.php, xqueryExamples.php, xsltExamples.php, xslt30Examples.php and validatorExamples.php). 
 
 
 ### Python ###
@@ -638,12 +645,13 @@ In the Saxon/C download please see the PHP unit tests (i.e. xslt30_PHPUnit.php i
 The unit tests run under [PHPUnit](https://phpunit.de/) for PHP 7.2 which can be downloaded and installed seperately in the same directory of the unit tests.
 
 Example command:
-
-` ./phpunit xslt30_PHPUnit.php`
+    
+    cd samples/php
+    ./phpunit xslt30_PHPUnit.php
 
 To run a single test:
 
-` ./phpunit --filter testPipeline xslt30_PHPUnit.php`
+    ./phpunit --filter testPipeline xslt30_PHPUnit.php
 
 
 Example code in the new XSLT3.0 API:
@@ -668,7 +676,7 @@ Example code in the new XSLT3.0 API:
 </code>
 </pre>
 
-Example of the old styled PHP API designed for XSLT 2.0:
+Example of the old styled PHP API designed for older XSLT API:
 <pre><code>
 	<?php 
 	    $xmlfile = "xml/foo.xml";
