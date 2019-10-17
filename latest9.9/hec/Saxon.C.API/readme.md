@@ -732,7 +732,11 @@ Saxon/C only supports Python3. Cython is required to build the extension library
 
 ### Python API ###
 
-The Python API is split up in the following class (links are to the equivalent [C++ classes](https://www.saxonica.com/saxon-c/doc/html/annotated.html)): [PySaxonProcessor](https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PySaxonProcessor), [PyXsltProcessor](https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXsltProcessor), [PyXPathProcessor](https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXPathProcessor), [PyXQueryProcessor](https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXQueryProcessor) and [PySchemaValidator](https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PySchemaValidator). We also have class for a sub-set of the XDM data model: [PyXdmValue](https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXdmValue), [PyXdmNode](https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXdmNode), [PyXdmItem](https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXdmItem) and [PyXdmAtomicValue](https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXdmAtomicValue).
+The Python API is split up in the following class (links are to the equivalent [C++ classes](https://www.saxonica.com/saxon-c/doc/html/annotated.html)): [PySaxonProcessor](https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PySaxonProcessor), 
+[PyXsltProcessor](https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXsltProcessor), [PyXPathProcessor](https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXPathProcessor), [PyXQueryProcessor](https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXQueryProcessor) and 
+[PySchemaValidator](https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PySchemaValidator). 
+We also have class for a sub-set of the XDM data model: [PyXdmValue](https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXdmValue), [PyXdmNode](https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXdmNode), [PyXdmItem](https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXdmItem) and [PyXdmAtomicValue](https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXdmAtomicValue).
+
 The methods on these class are given below. For a more comprehensive description of the methods and their argument please see its counterpart in the C++ API.
 
 Please see the [Python API documentation](http://www.saxonica.com/saxon-c/doc/html/saxonc.html)
