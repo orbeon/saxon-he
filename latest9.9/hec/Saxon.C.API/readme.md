@@ -753,11 +753,12 @@ Please see the [Python API documentation](http://www.saxonica.com/saxon-c/doc/ht
 #### Python unit tests ####
 
 There are a collection of Python unit test cases to be run with the [pytest](https://docs.pytest.org) framework. Test unit files: test_saxonc.py and test_saxon_Schema.py. 
-See also some python example scripts saxon_example.py, sxon_example2.py and saxon_example3.py to get started with Saxon/C and Python
+See also some python example scripts saxon_example.py, saxon_example2.py and saxon_example3.py to get started with Saxon/C and Python
 
 The pyunit tests can be run with the following command:
 
-`pytest test_saxonc.py`
+    cd Saxon.C.API/python-saxon
+    pytest test_saxonc.py
 
 
 Example Python script with Saxon/C API:
