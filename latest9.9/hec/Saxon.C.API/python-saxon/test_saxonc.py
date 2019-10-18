@@ -718,6 +718,22 @@ def testReusability(saxonproc):
     result2 = queryproc.run_query_to_value()
     assert result2.integer_value == 18
 
+def test_make_string_value(saxonproc):
+
+    xdm_string_value = saxonproc.make_string_value('text1')
+    
+    print(xdm_string_value)
+
+    xquery_processor = saxonproc.new_xquery_processor()
+
+    xquery_processor.set_parameter('s1', xdm_string_value)
+
+    result = xquery_processor.run_query_to_value(query_text = 'declare variable $s1 external; $s1')
+
+    assert result is not None
+
+    assert result.get_atomic_value().string_value is "text1"
+
 
 
 '''PyXPathProcessor test cases'''

@@ -243,8 +243,10 @@ cdef class PySaxonProcessor:
             PyXdmAtomicValue: The corresponding Xdm StringValue
 
         """
+        py_value_string = str_.encode('UTF-8') if str_ is not None else None
+        cdef char * c_str_ = py_value_string if str_ is not None else ""
         cdef PyXdmAtomicValue val = PyXdmAtomicValue()
-        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeStringValue(str_)
+        val.derivedaptr = val.derivedptr = val.thisvptr = self.thisptr.makeStringValue(c_str_)
         return val
 
     def make_integer_value(self, value):
