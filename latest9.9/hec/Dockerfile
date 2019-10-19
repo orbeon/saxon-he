@@ -12,16 +12,16 @@ RUN a2enmod rewrite
 # remove after testing
 ADD web /var/www/html
 
-RUN wget http://www.saxonica.com/saxon-c/libsaxon-HEC-setup64-v1.1.2.zip && unzip libsaxon-HEC-setup64-v1.1.2.zip
-RUN yes "" | ./libsaxon-HEC-setup64-v1.1.2
-RUN ln -s /Saxonica/Saxon-HEC1.1.2/samples/php /var/www/html/
+RUN wget http://www.saxonica.com/saxon-c/libsaxon-HEC-setup64-v1.2.0.zip && unzip libsaxon-HEC-setup64-v1.2.0.zip
+RUN yes "" | ./libsaxon-HEC-setup64-v1.2.0
+RUN ln -s /Saxonica/Saxon-HEC1.2.0/samples/php /var/www/html/
 RUN ln -s /usr/lib/ /usr/lib64
-RUN ln -s /Saxonica/Saxon-HEC1.1.2/libsaxonhec64.so /usr/lib/libsaxonhec64.so
-RUN ln -s /Saxonica/Saxon-HEC1.1.2/rt/ /usr/lib/rt
+RUN ln -s /Saxonica/Saxon-HEC1.2.0/libsaxonhec.so /usr/lib/libsaxonhec.so
+RUN ln -s /Saxonica/Saxon-HEC1.2.0/rt/ /usr/lib/rt
 RUN export LD_LIBRARY_PATH=/usr/lib/rt/lib/amd64:$LD_LIBRARY_PATH
 RUN ldconfig
 
-WORKDIR /Saxonica/Saxon-HEC1.1.2/Saxon.C.API/
+WORKDIR /Saxonica/Saxon-HEC1.2.0/Saxon.C.API/
 
 RUN wget https://dev.saxonica.com/repos/archive/opensource/latest9.9/hec/Saxon.C.API/jni/jni.h
 RUN wget https://dev.saxonica.com/repos/archive/opensource/latest9.9/hec/Saxon.C.API/jni/unix/jni_md.h

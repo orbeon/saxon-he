@@ -2619,6 +2619,8 @@ cdef class PyXPathProcessor:
         c_xpath = py_string if xpath_str is not None else ""
         cdef PyXdmValue val = PyXdmValue()
         val.thisvptr = self.thisxpptr.evaluate(c_xpath)
+        if val.thisvptr == NULL:
+            return None
         return val
 
      def evaluate_single(self, xpath_str):
@@ -2638,6 +2640,8 @@ cdef class PyXPathProcessor:
         c_xpath = py_string if xpath_str is not None else ""
 
         cdef saxoncClasses.XdmItem * xdmItem = self.thisxpptr.evaluateSingle(c_xpath)
+        if xdmItem == NULL:
+            return None
         cdef type_ = xdmItem.getType()        
         if type_ == 4:
             aval = PyXdmAtomicValue()

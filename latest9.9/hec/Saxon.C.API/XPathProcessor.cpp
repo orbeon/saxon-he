@@ -87,6 +87,7 @@ if (!mID) {
 					SaxonProcessor::sxn_environ->env->NewStringUTF(xpathStr), stringArray, objectArray));
 	if(!results) {
 		proc->checkAndCreateException(cppClass);
+		return NULL;
 	}
 	
 	int sizex = SaxonProcessor::sxn_environ->env->GetArrayLength(results);
@@ -109,7 +110,6 @@ if (!mID) {
 
 			if(SaxonProcessor::sxn_environ->env->IsInstanceOf(resulti, atomicValueClass)           == JNI_TRUE) {
 				xdmItem = new XdmAtomicValue(resulti);
-				
 
 			} else if(SaxonProcessor::sxn_environ->env->IsInstanceOf(resulti, nodeClass)           == JNI_TRUE) {
 				xdmItem = new XdmNode(resulti);
