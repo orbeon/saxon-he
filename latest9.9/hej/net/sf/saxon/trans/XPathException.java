@@ -520,5 +520,21 @@ public class XPathException extends TransformerException {
         }
     }
 
+    /**
+     * Subclass of XPathException used to report that stack overflow was detected
+     */
+
+    public static class StackOverflow extends XPathException {
+
+        /**
+         * Create an exception indicating that a circularity was detected
+         *
+         * @param message the error message
+         */
+        public StackOverflow(String message, String errorCode, Location location) {
+            super(message, errorCode, location);
+        }
+    }
+
 }
 

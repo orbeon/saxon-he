@@ -8,6 +8,7 @@
 package net.sf.saxon.regex;
 
 import net.sf.saxon.expr.LastPositionFinder;
+import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
@@ -128,9 +129,9 @@ public class ARegexIterator implements RegexIterator, LastPositionFinder {
             }
             return currentStringValue();
         } catch (StackOverflowError e) {
-            XPathException xe = new XPathException("Stack overflow (excessive recursion) during regular expression evaluation");
-            xe.setErrorCode(SaxonErrorCode.SXRE0001);
-            throw xe;
+            throw new XPathException.StackOverflow(
+                    "Stack overflow (excessive recursion) during regular expression evaluation",
+                    SaxonErrorCode.SXRE0001, ExplicitLocation.UNKNOWN_LOCATION);
         }
     }
 

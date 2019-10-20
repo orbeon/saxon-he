@@ -545,7 +545,8 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
             throw xe;
         } catch (StackOverflowError err) {
             err.printStackTrace();
-            throw new XPathException("Too many nested function calls. May be due to infinite recursion",
+            throw new XPathException.StackOverflow (
+                    "Too many nested function calls. May be due to infinite recursion",
                                      SaxonErrorCode.SXLM0001, getLocation());
         }
     }

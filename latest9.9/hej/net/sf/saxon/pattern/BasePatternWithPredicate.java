@@ -124,7 +124,7 @@ public class BasePatternWithPredicate extends Pattern implements PatternWithPred
         c2.setCurrentOutputUri(null);
         try {
             return getPredicate().effectiveBooleanValue(c2);
-        } catch (XPathException.Circularity e) {
+        } catch (XPathException.Circularity | XPathException.StackOverflow e) {
             throw e;
         } catch (XPathException ex) {
             handleDynamicError(ex, c2);

@@ -33,10 +33,7 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * A trace listener that records timing information for templates and functions, outputting this
@@ -61,8 +58,7 @@ public class TimingTraceListener implements TraceListener {
     /*@NotNull*/ HashMap<InstructionInfo, InstructionDetails> instructMap = new HashMap<>();
     /*@Nullable*/ protected Configuration config = null;
 
-    private InstructionInfo instructStack[] = new InstructionInfo[1500];
-    private int stackDepth = 0;
+    private Map<InstructionInfo, Integer> recursionDepth = new HashMap<>();
     private int lang = Configuration.XSLT;
 
     /**
@@ -167,7 +163,12 @@ public class TimingTraceListener implements TraceListener {
             instructDetails.gross = start;
             instructs.add(instructDetails);
 
-            instructStack[stackDepth++] = instruction;
+            Integer depth = recursionDepth.get(instruction);
+            if (depth == null) {
+                recursionDepth.put(instruction, 0);
+            } else {
+                recursionDepth.put(instruction, depth + 1);
+            }
         }
     }
 
@@ -186,18 +187,11 @@ public class TimingTraceListener implements TraceListener {
             if (foundInstructDetails == null) {
                 instruct.count = 1;
                 instructMap.put(instruction, instruct);
-                stackDepth--;
             } else {
-                foundInstructDetails.count = foundInstructDetails.count + 1;
-                boolean inStack = false;
-                for (int i = 0; i < stackDepth - 1; i++) {
-                    if (instructStack[i] == instruction) {
-                        inStack = true;
-                        break;
-                    }
-                }
-                stackDepth--;
-                if (!inStack) {
+                foundInstructDetails.count++;
+                Integer depth = recursionDepth.get(instruction);
+                recursionDepth.put(instruction, --depth);
+                if (depth == 0) {
                     foundInstructDetails.gross = foundInstructDetails.gross + instruct.gross;
                 }
                 foundInstructDetails.net = foundInstructDetails.net + instruct.net;

@@ -302,9 +302,9 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
                 tc = tc.processLeavingTail();
             }
         } catch (StackOverflowError e) {
-            XPathException err = new XPathException("Too many nested apply-templates calls. The stylesheet may be looping.");
-            err.setErrorCode(SaxonErrorCode.SXLM0001);
-            err.setLocation(getLocation());
+            XPathException err = new XPathException.StackOverflow(
+                    "Too many nested apply-templates calls. The stylesheet may be looping.",
+                    SaxonErrorCode.SXLM0001, getLocation());
             err.setXPathContext(context);
             throw err;
         }

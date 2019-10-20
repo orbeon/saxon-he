@@ -257,7 +257,7 @@ public class GeneralPositionalPattern extends Pattern {
                 return ExpressionTool.effectiveBooleanValue(predicate);
             }
 
-        } catch (XPathException.Circularity e) {
+        } catch (XPathException.Circularity | XPathException.StackOverflow e) {
             throw e;
         } catch (XPathException e) {
             handleDynamicError(e, c2);

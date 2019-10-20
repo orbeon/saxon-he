@@ -232,7 +232,7 @@ public final class GeneralNodePattern extends Pattern {
                     return true;
                 }
             }
-        } catch (XPathException.Circularity e) {
+        } catch (XPathException.Circularity |XPathException.StackOverflow e) {
             throw e;
         } catch (XPathException e) {
             handleDynamicError(e, c2);

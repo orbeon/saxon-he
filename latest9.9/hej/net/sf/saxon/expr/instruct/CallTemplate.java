@@ -349,15 +349,15 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
         if (isWithinDeclaredStreamableConstruct) {
             c2.setCurrentGroupIterator(null);
         }
-
         try {
             TailCall tc = t.expand(c2);
             while (tc != null) {
                 tc = tc.processLeavingTail();
             }
         } catch (StackOverflowError e) {
-            XPathException err = new XPathException("Too many nested template or function calls. The stylesheet may be looping.");
-            err.setLocation(getLocation());
+            XPathException err = new XPathException(
+                    "Too many nested template or function calls. The stylesheet may be looping.",
+                    SaxonErrorCode.SXLM0001, getLocation());
             err.setXPathContext(context);
             throw err;
         }
@@ -516,7 +516,6 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
             c2.openStackFrame(template.getStackFrameMap());
 
             // System.err.println("Tail call on template");
-
             return template.expand(c2);
         }
     }
