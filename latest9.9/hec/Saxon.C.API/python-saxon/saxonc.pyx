@@ -2359,6 +2359,7 @@ cdef class PyXQueryProcessor:
                 self.set_query_content(kwds["query_text"])
         
         cdef saxoncClasses.XdmValue * xdmValue = self.thisxqptr.runQueryToValue()
+        print("value type=",xdmValue.getType())
         if xdmValue is NULL:
             return None        
         cdef type_ = xdmValue.getType()

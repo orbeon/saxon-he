@@ -60,6 +60,7 @@ if (!mID) {
 	jclass stringClass = lookForClass(SaxonProcessor::sxn_environ->env, "java/lang/String");
 
 	int size = parameters.size() + properties.size();
+
 	if (size > 0) {
 		objectArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) size,
 				objectClass, 0);
@@ -68,6 +69,7 @@ if (!mID) {
 		int i = 0;
 		for (std::map<std::string, XdmValue*>::iterator iter = parameters.begin();
 				iter != parameters.end(); ++iter, i++) {
+std::cerr<<"Size is in XPAthProcessor="<<(iter->first)<<std::endl;
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
 					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
@@ -80,7 +82,7 @@ if (!mID) {
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
 					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->second).c_str()));
 		}
-	}
+	} 
 	jobjectArray results = (jobjectArray)(
 			SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXP, mID,
 					SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXP.c_str()),

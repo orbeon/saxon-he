@@ -294,22 +294,31 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 		jclass atomicValueClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
 		jclass nodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
 		jclass functionItemClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmFunctionItem");
-		XdmValue * xdmValue = NULL;
+		XdmValue * value = NULL;
+		XdmItem * xdmItem = NULL;
+
 		if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, atomicValueClass)           == JNI_TRUE) {
-				xdmValue = new XdmAtomicValue(result);
+				xdmItem = new XdmAtomicValue(result);
 				
 
 			} else if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, nodeClass)           == JNI_TRUE) {
-				xdmValue = new XdmNode(result);
+				xdmItem = new XdmNode(result);
 
 			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
 				return NULL;
 			} else {
-				xdmValue = new XdmValue(result);
+				value = new XdmValue(result, true);
+				value->setProcessor(proc);
+				for(int z=0;z<value->size();z++) {
+					value->itemAt(z)->setProcessor(proc);
+				}
+				return value;
 			}
-	
-	xdmValue->setProcessor(proc);
-	return xdmValue;
+			value = new XdmValue();
+			value->setProcessor(proc);
+			xdmItem->setProcessor(proc);
+			value->addXdmItem(xdmItem);
+			return value;
      } else {
 	   
 	proc->checkAndCreateException(cppClass);		
