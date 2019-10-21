@@ -79,6 +79,11 @@ public final class AttributeGetter extends Expression {
     }
 
     @Override
+    protected int computeSpecialProperties() {
+        return StaticProperty.NO_NODES_NEWLY_CREATED;
+    }
+
+    @Override
     public AttributeGetter copy(RebindingMap rebindings) {
         AttributeGetter ag2 = new AttributeGetter(attributeName);
         ag2.setRequiredChecks(requiredChecks);
