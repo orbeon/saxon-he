@@ -417,7 +417,9 @@ XdmValue * XsltProcessor::transformFileToValue(const char* sourcefile,
 		if (result) {
 			XdmNode * node = new XdmNode(result);
 			node->setProcessor(proc);
-			return node;
+			XdmValue * value = new XdmValue();
+			value->addXdmItem(node);
+			return value;
 		}else {
 	
 			proc->checkAndCreateException(cppClass);
