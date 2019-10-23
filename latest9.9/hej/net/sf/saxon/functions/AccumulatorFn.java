@@ -7,6 +7,8 @@
 
 package net.sf.saxon.functions;
 
+import net.sf.saxon.expr.Expression;
+import net.sf.saxon.expr.StringLiteral;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.accum.Accumulator;
 import net.sf.saxon.expr.accum.AccumulatorManager;
@@ -15,7 +17,9 @@ import net.sf.saxon.expr.accum.IAccumulatorData;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.trans.XsltController;
+import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Non-streaming implementation of accumulator-before() and accumulator-after()
@@ -28,17 +32,8 @@ public abstract class AccumulatorFn extends SystemFunction {
 
 
     private Sequence<?> getAccumulatorValue(String name, Phase phase, XPathContext context) throws XPathException {
-        StructuredQName qName;
-            try {
-                qName = StructuredQName.fromLexicalQName(name, false, true, getRetainedStaticContext());
-            } catch (XPathException err) {
-                throw new XPathException("Invalid accumulator name: " + err.getMessage(), "XTDE3340", context);
-            }
         AccumulatorRegistry registry = getRetainedStaticContext().getPackageData().getAccumulatorRegistry();
-        Accumulator accumulator = registry == null ? null : registry.getAccumulator(qName);
-        if (accumulator == null) {
-            throw new XPathException("Accumulator " + name + " has not been declared", "XTDE3340");
-        }
+        Accumulator accumulator = getAccumulator(name, registry);
 
         Item node = context.getContextItem();
         if (node == null) {
@@ -65,6 +60,69 @@ public abstract class AccumulatorFn extends SystemFunction {
         AccumulatorManager manager = controller.getAccumulatorManager();
         IAccumulatorData data = manager.getAccumulatorData(root, accumulator, context);
         return data.getValue((NodeInfo) node, phase == Phase.AFTER);
+    }
+
+    /**
+     * Get the accumulator, given its name
+     * @param name the name (as written - a lexical EQName)
+     * @param registry the accumulator registry, or null if there are no accumulators registered
+     * @return the accumulator
+     * @throws XPathException the the accumulator is not recognised or if the name is invalid
+     */
+
+    @NotNull
+    private Accumulator getAccumulator(String name, AccumulatorRegistry registry) throws XPathException {
+        StructuredQName qName;
+        try {
+            qName = StructuredQName.fromLexicalQName(name, false, true, getRetainedStaticContext());
+        } catch (XPathException err) {
+            throw new XPathException("Invalid accumulator name: " + err.getMessage(), "XTDE3340");
+        }
+        Accumulator accumulator = registry == null ? null : registry.getAccumulator(qName);
+        if (accumulator == null) {
+            throw new XPathException("Accumulator " + name + " has not been declared", "XTDE3340");
+        }
+        return accumulator;
+    }
+
+    /**
+     * Get the return type, given knowledge of the actual arguments
+     *
+     * @param args the actual arguments supplied
+     * @return the best available item type that the function will return
+     */
+
+    public ItemType getResultItemType(Expression[] args) {
+        try {
+            if (args[0] instanceof StringLiteral) {
+                AccumulatorRegistry registry = getRetainedStaticContext().getPackageData().getAccumulatorRegistry();
+                Accumulator accumulator = getAccumulator(((StringLiteral) args[0]).getStringValue(), registry);
+                return accumulator.getType().getPrimaryType();
+            }
+        } catch (Exception e) {
+            //
+        }
+        return super.getResultItemType(args);
+    }
+
+    /**
+     * Get the cardinality, given knowledge of the actual arguments
+     *
+     * @param args the actual arguments supplied
+     * @return the most precise available cardinality that the function will return
+     */
+    @Override
+    public int getCardinality(Expression[] args) {
+        try {
+            if (args[0] instanceof StringLiteral) {
+                AccumulatorRegistry registry = getRetainedStaticContext().getPackageData().getAccumulatorRegistry();
+                Accumulator accumulator = getAccumulator(((StringLiteral) args[0]).getStringValue(), registry);
+                return accumulator.getType().getCardinality();
+            }
+        } catch (Exception e) {
+            //
+        }
+        return super.getCardinality(args);
     }
 
     /**

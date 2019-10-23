@@ -7,9 +7,6 @@
 
 package net.sf.saxon.pattern;
 
-import com.saxonica.ee.stream.Streamability;
-import com.saxonica.ee.stream.Sweep;
-import com.saxonica.ee.trans.ContextItemStaticInfoEE;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.instruct.SlotManager;
@@ -22,11 +19,7 @@ import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.ManualIterator;
 import net.sf.saxon.tree.util.Navigator;
-import net.sf.saxon.type.AnyItemType;
-import net.sf.saxon.type.ErrorType;
-import net.sf.saxon.type.ItemType;
-import net.sf.saxon.type.Type;
-import net.sf.saxon.type.UType;
+import net.sf.saxon.type.*;
 import net.sf.saxon.value.NumericValue;
 
 /**
@@ -338,10 +331,11 @@ public class GeneralPositionalPattern extends Pattern {
      */
 
     public boolean isMotionless() {
-        ContextItemStaticInfoEE csi = (ContextItemStaticInfoEE)getConfiguration().makeContextItemStaticInfo(getItemType(), false);
-        csi.setContextPostureStriding();
-        Streamability.getStreamability(positionExpr, csi, null);
-        return Streamability.getSweep(positionExpr) == Sweep.MOTIONLESS;
+        return false;
+//        ContextItemStaticInfoEE csi = (ContextItemStaticInfoEE)getConfiguration().makeContextItemStaticInfo(getItemType(), false);
+//        csi.setContextPostureStriding();
+//        Streamability.getStreamability(positionExpr, csi, null);
+//        return Streamability.getSweep(positionExpr) == Sweep.MOTIONLESS;
     }
 //#endif
 
