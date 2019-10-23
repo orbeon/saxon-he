@@ -3443,7 +3443,7 @@ cdef class PyXdmNode(PyXdmItem):
             str: The string value of this node
 
         """
-        cdef const char* c_string = self.derivednptr.toString()
+        cdef const char* c_string = self.derivednptr.getStringValue()
         ustring = c_string.decode('UTF-8') if c_string is not NULL else None
         return ustring
 
