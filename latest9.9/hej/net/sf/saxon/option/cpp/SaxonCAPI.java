@@ -59,7 +59,9 @@ public class SaxonCAPI {
     protected boolean schemaAware = false;
     protected Source source = null;
     protected Map<QName, XdmValue> globals = new HashMap<>();
+    protected Map<QName, XdmValue> parameters = new HashMap<>();
     protected Map<QName, XdmValue> staticParameters = new HashMap<>();
+    //protected List<QName> variables = new ArrayList<>();
     public static String RESOURCES_DIR = null;
     protected Map<QName, XdmValue> initialTemplateParameters = new HashMap<>();
     protected boolean returnXdmValue = false;
@@ -359,10 +361,11 @@ public class SaxonCAPI {
      *
      * @param params
      * @param values
+     * @param forXslt
      * @return Map of String, Object pairs
      * @throws SaxonApiException
      */
-    Map<String, Object> convertArraysToMap(String[] params, Object[] values) throws SaxonApiException {
+    Map<String, Object> convertArraysToMap(String[] params, Object[] values, boolean forXslt) throws SaxonApiException {
         Map<String, Object> map = new HashMap();
         globals = new HashMap<>();
         if (params == null || values == null) {
@@ -422,9 +425,17 @@ public class SaxonCAPI {
                 }
 
                 if (qname != null && valueForCpp != null) {
-                    globals.put(qname, valueForCpp);
+                    if(forXslt) {
+                        globals.put(qname, valueForCpp);
+                    } else {
+                       parameters.put(qname, valueForCpp);
+                    }
                 }
-            } else {
+            } /*else if (!forXslt && params[i].startsWith("dvar:")) {
+                QName varQName = QName.fromClarkName((String)values[i]);
+                variables.add(varQName);
+            } */
+            else {
                 if (debug) {
                     System.err.println("DEBUG: XSLT30TransformerForCpp: param-name: " +params[i] + ", type of Value= "+values[i].getClass().getName());
                 }

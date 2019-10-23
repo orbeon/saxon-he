@@ -353,18 +353,21 @@ public class XQueryEngine extends SaxonCAPI {
 
 
         String[] params2 = {"node", "qs"};
+        String[] params3 = {"qs"};
         Object[] values2 = {doc, "saxon:line-number(/bookstore/book/title)"};
+        Object[] values3 = {"declare variable $n external := 10; (1 to $n)!(. * .)"};
         String cwd = "/Users/ond1/work/development/files/xmark";
         //String cwd = "C:///www///html///query";
         //String cwd = "http://localhost/query";
-        xquery.executeQueryToFile(cwd, "output1a.xml", params1, values1);
-        String result = xquery.executeQueryToString(cwd, params2, values2);
-        String result2 = xquery.executeQueryToString(cwd, params1, values1);
+        //xquery.executeQueryToFile(cwd, "output1a.xml", params1, values1);
+        //String result = xquery.executeQueryToString(cwd, params2, values2);
+        //String result2 = xquery.executeQueryToString(cwd, params1, values1);
+        XdmValue result = xquery.executeQueryToValue(cwd, params3, values3);
 
 
         // xquery.executeQueryToFile("/home/ond1/test/saxon9-5-1-1source", outfile, params1, values1);
-        System.out.println("Result1=" + result);
-        System.out.println("Result2" + result2);
+        System.out.println("Result1=" + result.toString());
+        //System.out.println("Result2" + result2);
 
 
         QName qname = QName.XS_INTEGER;

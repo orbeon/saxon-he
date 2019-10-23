@@ -411,7 +411,7 @@ public class Xslt30Processor extends SaxonCAPI {
 
     public XdmValue applyTemplatesReturningValue(String cwd, Object sourceObj, String stylesheet, String[] params, Object[] values) throws SaxonApiException {
 
-        Map<String, Object> paramsMap = convertArraysToMap(params, values);
+        Map<String, Object> paramsMap = convertArraysToMap(params, values, true);
         Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
 
         applyXsltTransformerProperties(this, cwd, processor, transformer, paramsMap);
@@ -469,7 +469,7 @@ public class Xslt30Processor extends SaxonCAPI {
 
     public void applyTemplatesReturningFile(String cwd, Object sourceObj, String stylesheet, String outFilename, String[] params, Object[] values) throws SaxonApiException {
 
-        Map<String, Object> paramsMap = convertArraysToMap(params, values);
+        Map<String, Object> paramsMap = convertArraysToMap(params, values, true);
 
         if (outFilename != null) {
             if (debug) {
@@ -528,7 +528,7 @@ public class Xslt30Processor extends SaxonCAPI {
 
     public String applyTemplatesReturningString(String cwd, Object sourceObj, String stylesheet, String[] params, Object[] values) throws SaxonApiException {
 
-        Map<String, Object> paramsMap = convertArraysToMap(params, values);
+        Map<String, Object> paramsMap = convertArraysToMap(params, values, true);
         Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
         StringWriter sw = new StringWriter();
         serializer = processor.newSerializer(sw);
@@ -593,7 +593,7 @@ public class Xslt30Processor extends SaxonCAPI {
 
     public void callFunctionReturningFile(String cwd, String stylesheet, String cFuncName, String outFilename, Objects[] arguments, String[] params, Object[] values) throws SaxonApiException {
         QName qname = QName.fromClarkName(cFuncName);
-        Map<String, Object> paramsMap = convertArraysToMap(params, values);
+        Map<String, Object> paramsMap = convertArraysToMap(params, values, true);
         Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
 
         if (outFilename != null) {
@@ -613,7 +613,7 @@ public class Xslt30Processor extends SaxonCAPI {
 
     public XdmValue callFunctionReturningValue(String cwd, String stylesheet, String cFuncName, Object[] arguments, String[] params, Object[] values) throws SaxonApiException {
         QName qname = QName.fromClarkName(cFuncName);
-        Map<String, Object> paramsMap = convertArraysToMap(params, values);
+        Map<String, Object> paramsMap = convertArraysToMap(params, values, true);
         Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
 
         applyXsltTransformerProperties(this, cwd, processor, transformer, paramsMap);
@@ -624,7 +624,7 @@ public class Xslt30Processor extends SaxonCAPI {
 
     public String callFunctionReturningString(String cwd, String stylesheet, String cFuncName, Object[] arguments, String[] params, Object[] values) throws SaxonApiException {
         QName qname = QName.fromClarkName(cFuncName);
-        Map<String, Object> paramsMap = convertArraysToMap(params, values);
+        Map<String, Object> paramsMap = convertArraysToMap(params, values, true);
         Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
 
         StringWriter sw = new StringWriter();
@@ -642,7 +642,7 @@ public class Xslt30Processor extends SaxonCAPI {
         if (templateName != null) {
             qname = QName.fromClarkName(templateName);
         }
-        Map<String, Object> paramsMap = convertArraysToMap(params, values);
+        Map<String, Object> paramsMap = convertArraysToMap(params, values, true);
         Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
 
         if (outFilename != null) {
@@ -664,7 +664,7 @@ public class Xslt30Processor extends SaxonCAPI {
         if (clarkName != null) {
             qname = QName.fromClarkName(clarkName);
         }
-        Map<String, Object> paramsMap = convertArraysToMap(params, values);
+        Map<String, Object> paramsMap = convertArraysToMap(params, values, true);
         Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
 
         //setsource(cwd, transformer, sourceObj, paramsMap);
@@ -711,7 +711,7 @@ public class Xslt30Processor extends SaxonCAPI {
         if (clarkName != null) {
             qname = QName.fromClarkName(clarkName);
         }
-        Map<String, Object> paramsMap = convertArraysToMap(params, values);
+        Map<String, Object> paramsMap = convertArraysToMap(params, values, true);
         Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
         StringWriter sw = new StringWriter();
         serializer = processor.newSerializer(sw);
@@ -746,7 +746,7 @@ public class Xslt30Processor extends SaxonCAPI {
             clearExceptions();
             serializer = null;
             Source source;
-            Map<String, Object> paramsMap = convertArraysToMap(params, values);
+            Map<String, Object> paramsMap = convertArraysToMap(params, values, true);
             Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
 
             if (outFilename != null) {
@@ -974,7 +974,7 @@ public class Xslt30Processor extends SaxonCAPI {
 
 
         try {
-            Map<String, Object> paramsMap = convertArraysToMap(params, values);
+            Map<String, Object> paramsMap = convertArraysToMap(params, values, true);
             Xslt30Transformer transformer = getXslt30Transformer(cwd, stylesheet);
 
 
@@ -1030,7 +1030,7 @@ public class Xslt30Processor extends SaxonCAPI {
         if (debug) {
             System.err.println("xsltApplyStylesheet, Processor: " + System.identityHashCode(processor));
         }
-        Map<String, Object> paramsMap = convertArraysToMap(params, values);
+        Map<String, Object> paramsMap = convertArraysToMap(params, values, true);
         try {
             Source source = null;
             clearExceptions();
