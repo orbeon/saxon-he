@@ -198,6 +198,7 @@ public class QueryResult {
             throws XPathException {
         SerializerFactory sf = config.getSerializerFactory();
         Receiver tr = sf.getReceiver(result, new SerializationProperties(outputProperties));
+        tr = new NamespaceReducer(tr);
         SequenceCopier.copySequence(iterator, tr);
     }
 
