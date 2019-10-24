@@ -56,7 +56,6 @@ public:
 		jValues = NULL;
 		valueType = NULL;
 		proc = NULL;
-		toStringValue = NULL;
 	}
 
 	XdmValue(SaxonProcessor * p) {
@@ -64,7 +63,6 @@ public:
 		jValues = NULL;
 		refCount = 1;
 		valueType = NULL;
-		toStringValue = NULL;
 	}
 
 
@@ -206,7 +204,7 @@ protected:
 	int xdmSize; 	/*!< Cached. The count of items in the XdmValue */
 	int refCount;
 private:
-	const char * toStringValue;  /*!< Cached. String representation of the XdmValue, if available */
+	std::string toStringValue;  /*!< Cached. String representation of the XdmValue, if available */
 	jobjectArray jValues;
 };
 

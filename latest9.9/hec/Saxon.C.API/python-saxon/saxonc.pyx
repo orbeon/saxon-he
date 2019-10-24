@@ -3178,8 +3178,12 @@ cdef class PyXdmValue:
         if type(self) is PyXdmValue:
             self.thisvptr = new saxoncClasses.XdmValue() 
      def __dealloc__(self):
-        if type(self) is PyXdmValue:
-           del self.thisvptr
+        if self.thisvptr.getRefCount() <= 1:
+            if type(self) is PyXdmValue:
+                del self.thisvptr            
+        else:
+            self.thisvptr.decrementRefCount()
+            
 
 
      def add_xdm_item(self, PyXdmItem value):
