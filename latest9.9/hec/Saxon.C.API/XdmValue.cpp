@@ -123,14 +123,20 @@ XdmValue::XdmValue(jobject val, bool arr){
 
 
 XdmValue::~XdmValue() {
+	bool safeToClear = false;
     if(getRefCount()<1){
 	//proc->env->ReleaseObject
 	for (size_t i = 0; i < values.size(); i++) {
-		if (values[i]->getRefCount() < 1) {
+		if (values[i] != NULL && values[i]->getRefCount() < 1) {
 			delete values[i];
+			safeToClear = true;
+		} else {
+			safeToClear = false;
 		}
 	}
-	values.clear();
+	if(safeToClear) {
+		values.clear();
+	}
 	if (valueType != NULL) { delete valueType; }
 	if (jValues && proc != NULL) {
 		SaxonProcessor::sxn_environ->env->DeleteLocalRef(jValues);
@@ -140,6 +146,7 @@ XdmValue::~XdmValue() {
 		toStringValue.clear();
 	}
     }
+
 }
 
 void XdmValue::addXdmItem(XdmItem* val) {
@@ -159,6 +166,17 @@ void XdmValue::addUnderlyingValue(jobject val) {
 	jValues = NULL; //TODO clear jni array from memory if needed
 
 }
+
+void XdmValue::incrementRefCount() {
+		refCount++;
+		//std::cerr<<"refCount-inc-xdmVal="<<refCount<<" ob ref="<<(this)<<std::endl;
+	}
+
+void XdmValue::decrementRefCount() {
+		if (refCount > 0)
+			refCount--;
+		//std::cerr<<"refCount-dec-xdmVal="<<refCount<<" ob ref="<<(this)<<std::endl;
+	}
 
 
 

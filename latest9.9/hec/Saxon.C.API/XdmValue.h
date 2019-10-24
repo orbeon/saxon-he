@@ -165,16 +165,9 @@ public:
 
 
 
-	void incrementRefCount() {
-		refCount++;
-		//std::cerr<<"refCount-inc-xdmVal="<<refCount<<" ob ref="<<(this)<<std::endl;
-	}
+	virtual void incrementRefCount();
 
-	void decrementRefCount() {
-		if (refCount > 0)
-			refCount--;
-		//std::cerr<<"refCount-dec-xdmVal="<<refCount<<" ob ref="<<(this)<<std::endl;
-	}
+	virtual void decrementRefCount();
 
 	void setProcessor(SaxonProcessor *p);
 

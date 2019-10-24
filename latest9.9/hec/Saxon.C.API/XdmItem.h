@@ -31,11 +31,22 @@ public:
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(value->xdmvalue);
 	  }
 	  free(value);
-	  if(stringValue != NULL) {
-	    delete stringValue;
+	  if(stringValue.empty()) {
+	    stringValue.clear();
 	  }
         }
     }
+
+virtual void incrementRefCount() {
+		refCount++;
+		//std::cerr<<"refCount-inc-xdmItem="<<refCount<<" ob ref="<<(this)<<std::endl;
+	}
+
+virtual void decrementRefCount() {
+		if (refCount > 0)
+			refCount--;
+		//std::cerr<<"refCount-dec-xdmItem="<<refCount<<" ob ref="<<(this)<<std::endl;
+	}
     
     virtual bool isAtomic();
 
@@ -100,7 +111,7 @@ public:
 
  protected:  
 	sxnc_value* value;
-	const char * stringValue;  /*!< Cached. String representation of the XdmValue, if available */
+	std::string stringValue;  /*!< Cached. String representation of the XdmValue, if available */
 };
 
 

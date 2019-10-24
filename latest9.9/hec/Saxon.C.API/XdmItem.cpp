@@ -4,7 +4,6 @@
 
 XdmItem::XdmItem(): XdmValue(){
 	value = NULL;
-    stringValue = NULL;
 }
 
     XdmItem::XdmItem(const XdmItem &other): XdmValue(other){
@@ -12,7 +11,6 @@ XdmItem::XdmItem(): XdmValue(){
         value->xdmvalue = other.value->xdmvalue;
 	xdmSize =1;
 	refCount = other.refCount;
-	stringValue = NULL;
     }
 
 
@@ -21,7 +19,6 @@ XdmItem::XdmItem(jobject obj){
         value->xdmvalue = obj;
 	xdmSize =1;
 	refCount =1;
-    stringValue = NULL;
 }
 
 bool XdmItem::isAtomic(){
@@ -57,7 +54,7 @@ jobject XdmItem::getUnderlyingValue(){
 }
 
     const char * XdmItem::getStringValue(){
-        if(stringValue == NULL) {
+        if(stringValue.empty()) {
     		jclass xdmItemClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmItem");
     		jmethodID sbmID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(xdmItemClass,
     					"getStringValue",
@@ -70,13 +67,13 @@ jobject XdmItem::getUnderlyingValue(){
     			jstring result = (jstring)(SaxonProcessor::sxn_environ->env->CallObjectMethod(value->xdmvalue, sbmID));
     			if(result) {
     					const char * str = SaxonProcessor::sxn_environ->env->GetStringUTFChars(result, NULL);
-    					stringValue = str;
-                        return str;
+    					stringValue = std::string(str);
+                        return stringValue.c_str();
     			}
     			return NULL;
     		}
     	} else {
-    		return stringValue;
+    		return stringValue.c_str();
     	}
    }
 

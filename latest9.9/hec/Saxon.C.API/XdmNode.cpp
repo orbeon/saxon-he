@@ -100,7 +100,7 @@ bool XdmNode::isAtomic() {
     }
 
     const char * XdmNode::toString(){
-       	if(stringValue == NULL) {
+       	if(stringValue.empty()) {
         		jclass xdmNodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmNode");
         		jmethodID strbMID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(xdmNodeClass,
         					"toString",
@@ -119,7 +119,7 @@ bool XdmNode::isAtomic() {
                    return NULL;
         		}
         	} else {
-        		return stringValue;
+        		return stringValue.c_str();
         	}
     }
 

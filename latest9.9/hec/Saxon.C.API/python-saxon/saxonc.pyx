@@ -3194,12 +3194,11 @@ cdef class PyXdmValue:
         if type(self) is PyXdmValue:
             self.thisvptr = new saxoncClasses.XdmValue() 
      def __dealloc__(self):
-        if self.thisvptr.getRefCount() <= 1:
-            if type(self) is PyXdmValue:
+        if type(self) is PyXdmValue:    
+            if self.thisvptr.getRefCount() < 1:
                 del self.thisvptr            
-        else:
-            self.thisvptr.decrementRefCount()
-            
+            else:
+                self.thisvptr.decrementRefCount()
 
 
      def add_xdm_item(self, PyXdmItem value):
@@ -3291,8 +3290,14 @@ cdef class PyXdmItem(PyXdmValue):
         if type(self) is PyXdmItem:
             self.derivedptr = self.thisvptr = new saxoncClasses.XdmItem()
      def __dealloc__(self):
-        if type(self) is PyXdmValue:
-            del self.derivedptr
+        if type(self) is PyXdmItem:
+            if self.derivedptr.getRefCount() < 1:
+                del self.derivedptr            
+            else:
+                self.derivedptr.decrementRefCount()
+
+        '''if type(self) is PyXdmItem:
+            del self.derivedptr'''
 
      @property
      def string_value(self):
@@ -3335,7 +3340,7 @@ cdef class PyXdmItem(PyXdmValue):
           raise Exception("The PyXdmItem is an PyXdmAtomicValue therefore cannot be sub-classed to an PyXdmNode")
         val = PyXdmNode()
         val.derivednptr = val.derivedptr = <saxoncClasses.XdmNode*> self.derivedptr
-        val.derivednptr.incrementRefCount()
+        '''val.derivednptr.incrementRefCount()'''
         return val
 
      def get_atomic_value(self):
@@ -3360,10 +3365,12 @@ cdef class PyXdmNode(PyXdmItem):
         self.derivednptr = self.derivedptr = self.thisvptr = NULL
     
      def __dealloc__(self):
-        if self.derivednptr.getRefCount() <= 1:
-            del self.derivednptr
-        else:
-            self.derivednptr.decrementRefCount()
+        if type(self) is PyXdmNode:
+                 if self.derivednptr.getRefCount() < 1:
+                     del self.derivednptr
+                 else:
+                     self.derivednptr.decrementRefCount()
+                   
 
      @property
      def node_kind(self):
