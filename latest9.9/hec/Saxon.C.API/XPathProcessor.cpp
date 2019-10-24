@@ -240,7 +240,6 @@ void XPathProcessor::setContextFile(const char * filename) {
 }
 
 
-//TODO test the declareNameSpace method
 void XPathProcessor::declareNamespace(const char *prefix, const char * uri){
         if (prefix == NULL || uri == NULL) {
 		return;
@@ -260,6 +259,36 @@ void XPathProcessor::declareNamespace(const char *prefix, const char * uri){
 	}
 
 }
+
+#if CVERSION_API_NO >= 121
+
+
+void XPathProcessor::setBackwardsCompatible(bool option) {
+    if (option) {
+        		setProperty("backwardsCom:", "true");
+    } else {
+       properties.erase("backwardsCom:");
+    }
+}
+
+void XPathProcessor::setCaching(bool caching){
+    if (caching) {
+        	setProperty("caching:", "true");
+    } else {
+       properties.erase("caching:");
+    }
+
+}
+
+void XPathProcessor::importSchemaNamespace(const char* uri){
+      if (uri != NULL) {
+       		setProperty("importSN", uri);
+      }
+}
+
+
+#endif
+
 
 void XPathProcessor::setBaseURI(const char * uriStr) {
 	if (uriStr == NULL) {

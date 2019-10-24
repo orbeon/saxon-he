@@ -2778,6 +2778,22 @@ cdef class PyXPathProcessor:
         py_uri_string = uri.encode('UTF-8') if uri is not None else None
         c_uri = py_uri_string if uri is not None else ""
         self.thisxpptr.declareNamespace(c_prefix, c_uri)
+
+     def set_backwards_compatible(self, option):
+        cdef bool c_option
+        c_option = option
+        self.thisxpptr.setBackwardsCompatible(c_option)
+
+     def set_caching(self, is_caching):
+         cdef bool c_is_caching
+         c_is_caching = is_caching
+         self.thisxpptr.setCaching(c_is_caching)
+
+     def import_schema_namespace(self, uri):
+         py_uri_string = uri.encode('UTF-8') if uri is not None else None
+         c_name = py_uri_string if uri is not None else ""
+         self.thisxpptr.importSchemaNamespace(c_name)
+
      def clear_parameters(self):
         """
         clear_parameter(self)

@@ -56,21 +56,24 @@ Example of running the C++ test files (i.e. testXPath.cpp, testXQuery.cpp, testX
     ./testValidator (Saxon-EE/C only)
 
  #### Mac OS: Saxon-HE/C, Saxon-PE/C and Saxon-EE/C: ####
- To install any of the Saxon/C releases on the Mac OS system, unzip the self-contained file libsaxon-EDITION-mac-setup-v#.#.#.zip
+To install any of the Saxon/C releases on the Mac OS system, unzip the self-contained file libsaxon-EDITION-mac-setup-v#.#.#.zip
  
- The first step is to copy the library libsaxonEDITION.dylib and the rt directories to a your install location. The C/C++ interface by default assumes the library files and directories are installed in the directory '/usr/local/lib'. The location of the Saxon/C library can be set using the SAXONC_HOME environment variable.
+The first step is to copy the library libsaxonEDITION.dylib and the rt directories to a your install location. 
+The C/C++ interface by default assumes the library files and directories are installed in the directory '/usr/local/lib'. 
+The location of the Saxon/C library can be set using the SAXONC_HOME environment variable. 
+The privileges of the folders and files may need adjusting after copying everything if you encounter permission issues.
 
     cd libsaxon-HEC-mac-setup-v1.2.0/    
     sudo cp libsaxonhec.dylib /usr/local/lib/.    
     sudo cp -r rt /usr/local/lib/.
  
- The DYLD_LIBRARY_PATH environment variable must be set as follows:
+The DYLD_LIBRARY_PATH environment variable must be set as follows:
 
     export JET_HOME=/usr/local/lib/rt
-    export DYLD_LIBRARY_PATH=$JET_HOME/lib/lib/jetvm:$DYLD_LIBRARY_PATH
+    export DYLD_LIBRARY_PATH=$JET_HOME/lib/jetvm:$DYLD_LIBRARY_PATH
     
     
- Example of running the C++ test file:
+Example of running the C++ test file:
  
     cd samples/cppTests/
  

@@ -682,7 +682,7 @@ const char * XsltProcessor::transformFileToString(const char* source,
 
    const char * XsltProcessor::transformToString(){
 	if(!stylesheetObject){
-		std::cerr<< "Error: The most recent Stylesheet Object failed or has not been set."<<std::endl;
+		std::cerr<< "Error: No styleheet found. Please compile stylsheet before calling transformToString or check exceptions"<<std::endl;
 		return NULL;
 	}
 	return transformFileToString(NULL, NULL);
@@ -691,7 +691,7 @@ const char * XsltProcessor::transformFileToString(const char* source,
 
     XdmValue * XsltProcessor::transformToValue(){
 	if(!stylesheetObject){
-		std::cerr<< "Error: The most recent Stylesheet Object failed or has not been set."<<std::endl;
+		std::cerr<< "Error: No styleheet found. Please compile stylsheet before calling transformToValue or check exceptions"<<std::endl;
 		return NULL;
 	}
 	return transformFileToValue(NULL, NULL);
@@ -699,7 +699,7 @@ const char * XsltProcessor::transformFileToString(const char* source,
 
     void XsltProcessor::transformToFile(){
 	if(!stylesheetObject){
-		std::cerr<< "Error: The most recent Stylesheet Object failed or has not been set."<<std::endl;
+		std::cerr<< "Error: No styleheet found. Please compile stylsheet before calling transformToFile or check exceptions"<<std::endl;
 		return;
 	}
 	transformFileToFile(NULL, NULL, NULL);

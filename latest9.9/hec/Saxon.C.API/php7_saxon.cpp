@@ -3700,6 +3700,59 @@ PHP_METHOD(XPathProcessor, declareNamespace)
     	
 }
 
+
+
+PHP_METHOD(XPathProcessor, setBackwardsCompatible){
+
+    XPathProcessor *xpathProcessor;
+    bool allow = false;
+    size_t len1;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() , "b", &allow) == FAILURE) {
+        RETURN_NULL();
+    }
+
+    zend_object* pobj = Z_OBJ_P(getThis());
+    xpathProcessor_object *obj = (xpathProcessor_object *)((char *)pobj - XtOffsetOf(xpathProcessor_object, std));
+    xpathProcessor = obj->xpathProcessor;
+    if (xpathProcessor != NULL) {
+	    xpathProcessor->setBackwardsCompatible(allow);
+	 }
+}
+
+PHP_METHOD(XPathProcessor, setCaching){
+    XPathProcessor *xpathProcessor;
+    bool isCaching = false;
+    size_t len1;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() , "b", &isCaching) == FAILURE) {
+        RETURN_NULL();
+    }
+
+    zend_object* pobj = Z_OBJ_P(getThis());
+    xpathProcessor_object *obj = (xpathProcessor_object *)((char *)pobj - XtOffsetOf(xpathProcessor_object, std));
+    xpathProcessor = obj->xpathProcessor;
+    if (xpathProcessor != NULL) {
+	    xpathProcessor->setCaching(isCaching);
+	 }
+}
+
+PHP_METHOD(XPathProcessor, importSchemaNamespace){
+      char * name;
+      int len1;
+      XPathProcessor *xpathProcessor;
+
+       if (zend_parse_parameters(ZEND_NUM_ARGS() , "s", &name, &len1) == FAILURE) {
+           RETURN_NULL();
+       }
+       if(name != NULL) {
+       	zend_object* pobj = Z_OBJ_P(getThis());
+           xpathProcessor_object *obj = (xpathProcessor_object *)((char *)pobj - XtOffsetOf(xpathProcessor_object, std));
+       	xpathProcessor = obj->xpathProcessor;
+       	xpathProcessor->importSchemaNamespace(name);
+       }
+}
+
 PHP_METHOD(XPathProcessor, effectiveBooleanValue)
 {
 
@@ -5529,6 +5582,9 @@ zend_function_entry XPathProcessor_methods[] = {
     PHP_ME(XPathProcessor,  getErrorMessage, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XPathProcessor,  getExceptionCount, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XPathProcessor, declareNamespace,      NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(XPathProcessor, setBackwardsCompatible,      NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(XPathProcessor, setCaching,      NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(XPathProcessor, importSchemaNamespace,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XPathProcessor, setBaseURI, NULL, ZEND_ACC_PUBLIC)
 {NULL, NULL, NULL}
 };

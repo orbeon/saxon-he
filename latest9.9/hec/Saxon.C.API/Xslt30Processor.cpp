@@ -517,7 +517,7 @@ const char* Xslt30Processor::applyTemplatesReturningString(const char * styleshe
        		return NULL;
 	}
 	if(stylesheetfile == NULL && !stylesheetObject){
-		std::cerr<< "Error: The most recent StylesheetObject failed. Please check exceptions"<<std::endl;
+		std::cerr<< "Error: No stylesheet found. Please compile stylesheet before calling applyTemplatesReturningString or check exceptions"<<std::endl;
 		return NULL;
 	}
 	setProperty("resources", proc->getResourcesDirectory());
@@ -573,7 +573,7 @@ XdmValue * Xslt30Processor::applyTemplatesReturningValue(const char * stylesheet
        		return NULL;
 	}
 	if(stylesheetfile == NULL && !stylesheetObject){
-		std::cerr<< "Error: The most recent StylesheetObject failed. Please check exceptions"<<std::endl;
+		std::cerr<< "Error: No stylesheet found. Please compile stylesheet before calling applyTemplatesReturningValue or check exceptions"<<std::endl;
 		return NULL;
 	}
 	setProperty("resources", proc->getResourcesDirectory());
@@ -710,7 +710,7 @@ XdmValue * Xslt30Processor::applyTemplatesReturningValue(const char * stylesheet
     	}
 
     	if(stylesheet == NULL && !stylesheetObject){
-    		std::cerr<< "Error: The most recent StylesheetObject failed. Please check exceptions"<<std::endl;
+    		std::cerr<< "Error: No stylesheet found. Please compile stylesheet before calling callFunctionReturningString or check exceptions"<<std::endl;
     		return NULL;
     	}
     	setProperty("resources", proc->getResourcesDirectory());
@@ -763,7 +763,7 @@ XdmValue * Xslt30Processor::applyTemplatesReturningValue(const char * stylesheet
           	}
           	
           	if(stylesheet == NULL && !stylesheetObject){
-          		std::cerr<< "Error: The most recent StylesheetObject failed. Please check exceptions"<<std::endl;
+          		std::cerr<< "Error: No stylesheet found. Please compile stylesheet before calling callFunctionReturningValue or check exceptions"<<std::endl;
           		return NULL;
           	}
           	setProperty("resources", proc->getResourcesDirectory());
@@ -922,7 +922,7 @@ XdmValue * Xslt30Processor::applyTemplatesReturningValue(const char * stylesheet
 
 
 	if(stylesheetfile == NULL && !stylesheetObject){
-		std::cerr<< "Error: The most recent StylesheetObject failed. Please check exceptions"<<std::endl;
+		std::cerr<< "Error: No stylesheet found. Please compile stylesheet before calling callFunctionReturningFile or check exceptions"<<std::endl;
 		return;
 	}
 
@@ -974,7 +974,7 @@ XdmValue * Xslt30Processor::applyTemplatesReturningValue(const char * stylesheet
 	}
 
 	if(stylesheet == NULL && !stylesheetObject){
-		std::cerr<< "Error: The most recent StylesheetObject failed. Please check exceptions"<<std::endl;
+		std::cerr<< "Error: No stylesheet found. Please compile stylesheet before calling callTemplateReturningString or check exceptions"<<std::endl;
 		return NULL;
 	}
 	setProperty("resources", proc->getResourcesDirectory());
@@ -1026,7 +1026,7 @@ XdmValue * Xslt30Processor::applyTemplatesReturningValue(const char * stylesheet
           		return NULL;
           	}
           	if(stylesheet == NULL && !stylesheetObject){
-          		std::cerr<< "Error: The most recent StylesheetObject failed. Please check exceptions"<<std::endl;
+          		std::cerr<< "Error: No stylesheet found. Please compile stylesheet before calling callTemplateReturningValue or check exceptions"<<std::endl;
           		return NULL;
           	}
           	setProperty("resources", proc->getResourcesDirectory());
@@ -1268,7 +1268,7 @@ const char * Xslt30Processor::transformFileToString(const char* source,
 		return NULL;	
 	}
 	if(source == NULL && stylesheet == NULL && !stylesheetObject){
-		std::cerr<< "Error: The most recent StylesheetObject failed. Please check exceptions"<<std::endl;
+		std::cerr<< "Error: No stylesheet found. Please compile stylesheet before calling transformFileToString or check exceptions"<<std::endl;
 		return NULL;
 	}
 	setProperty("resources", proc->getResourcesDirectory());
@@ -1375,7 +1375,7 @@ const char * Xslt30Processor::transformFileToString(const char* source,
 
    const char * Xslt30Processor::transformToString(XdmNode * source){
 	if(!stylesheetObject){
-		std::cerr<< "Error: The most recent Stylesheet Object failed or has not been set."<<std::endl;
+		std::cerr<< "Error: No stylesheet found. Please compile stylesheet before calling transformToString or check exceptions"<<std::endl;
 		return NULL;
 	}
 	if(source != NULL){
@@ -1388,7 +1388,7 @@ const char * Xslt30Processor::transformFileToString(const char* source,
 
     XdmValue * Xslt30Processor::transformToValue(XdmNode * source){
 	if(!stylesheetObject){
-		std::cerr<< "Error: The most recent Stylesheet Object failed or has not been set."<<std::endl;
+		std::cerr<< "Error: No stylesheet found. Please compile stylesheet before calling transformToValue or check exceptions"<<std::endl;
 		return NULL;
 	}
 	if(source != NULL){
@@ -1400,7 +1400,7 @@ const char * Xslt30Processor::transformFileToString(const char* source,
 
     void Xslt30Processor::transformToFile(XdmNode * source){
 	if(!stylesheetObject){
-		std::cerr<< "Error: The most recent Stylesheet Object failed or has not been set."<<std::endl;
+		std::cerr<< "Error: No stylesheet found. Please compile stylesheet before calling transformToFile or check exceptions"<<std::endl;
 		return;
 	}
 	if(source != NULL){

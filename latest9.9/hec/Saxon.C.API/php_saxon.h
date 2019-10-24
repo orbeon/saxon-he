@@ -288,6 +288,9 @@ jobject JNICALL phpNativeCall
     PHP_METHOD(XPathProcessor,  evaluate);
     PHP_METHOD(XPathProcessor,  evaluateSingle);
     PHP_METHOD(XPathProcessor, declareNamespace);
+    PHP_METHOD(XPathProcessor, setBackwardsCompatible);
+    PHP_METHOD(XPathProcessor, setCaching);
+    PHP_METHOD(XPathProcessor, importSchemaNamespace);
     PHP_METHOD(XPathProcessor,  setParameter);
     PHP_METHOD(XPathProcessor,  setProperty);
     PHP_METHOD(XPathProcessor,  clearParameters);

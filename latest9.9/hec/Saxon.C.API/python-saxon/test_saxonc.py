@@ -851,6 +851,28 @@ def test_single():
     assert not item.is_atomic
     assert item.string_value == '<person>text1</person>'
 
+def test_declare_variable_value(saxonproc):
+    s1 = 'This is a test.'
+    xdm_string_value = saxonproc.make_string_value(s1)
+
+    xpath_processor = saxonproc.new_xpath_processor()
+    xpath_processor.set_parameter('s1', xdm_string_value)
+    result = xpath_processor.evaluate('$s1')
+
+    assert result is not None
+    assert'test.' in result.head.string_value
+
+
+def test_declare_variable_value2(saxonproc):
+    s1 = 'This is a test.'
+    xdm_string_value = saxonproc.make_string_value(s1)
+
+    xpath_processor = saxonproc.new_xpath_processor()
+    result = xpath_processor.evaluate('$s1')
+
+    assert result is None
+
+
 
 '''Test case should be run last to test release() '''
 def test_release():

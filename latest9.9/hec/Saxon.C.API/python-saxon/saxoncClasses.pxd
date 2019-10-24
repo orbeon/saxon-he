@@ -370,6 +370,12 @@ cdef extern from "../SaxonProcessor.h":
 
         void declareNamespace(const char *prefix, const char * uri)
 
+        void setBackwardsCompatible(bool option)
+
+        void setCaching(bool caching)
+
+        void importSchemaNamespace(const char * uri)
+
         void clearParameters()
 
         void clearProperties()

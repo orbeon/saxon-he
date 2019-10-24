@@ -102,9 +102,8 @@ public:
      */
     bool removeParameter(const char * name);
 
-
+    //!Set a property specific to the processor in use.
     /**
-     * Set a property specific to the processor in use. 
      * XPathProcessor: set serialization properties (names start with '!' i.e. name "!method" -> "xml")
      * 'o':outfile name, 's': context item supplied as file name
      * @param name of the property
@@ -112,9 +111,8 @@ public:
      */
     void setProperty(const char * name, const char * value);
 
+    //!Declare a namespace binding as part of the static context for XPath expressions compiled using this XPathCompiler
      /**
-     * Declare a namespace binding as part of the static context for XPath expressions compiled using this
-     * XPathCompiler
      *
      * @param prefix The namespace prefix. If the value is a zero-length string, this method sets the default
      *               namespace for elements and types.
@@ -126,6 +124,53 @@ public:
      */
     void declareNamespace(const char *prefix, const char * uri);
 
+#if CVERSION_API_NO >= 121
+
+
+
+    //! Say whether XPath 1.0 backwards compatibility mode is to be used
+    /**
+    * In backwards compatibility
+    * mode, more implicit type conversions are allowed in XPath expressions, for example it
+    * is possible to compare a number with a string. The default is false (backwards compatibility
+    * mode is off).
+    *
+    * @param option true if XPath 1.0 backwards compatibility is to be enabled, false if it is to be disabled.
+    */
+    void setBackwardsCompatible(bool option);
+
+
+    //! Say whether the compiler should maintain a cache of compiled expressions.
+    /**
+     * @param caching if set to true, caching of compiled expressions is enabled.
+     *                If set to false, any existing cache is cleared, and future compiled expressions
+     *                will not be cached until caching is re-enabled. The cache is also cleared
+     *                (but without disabling future caching)
+     *                if any method is called that changes the static context for compiling
+     *                expressions, for example {@link #declareVariable(QName)} or
+     *                {@link #declareNamespace(String, String)}.
+    */
+
+    void setCaching(bool caching);
+
+
+    //! Import a schema namespace
+    /**
+     * Here we add the element and attribute declarations and type definitions
+     * contained in a given namespace to the static context for the XPath expression.
+     * <p>This method will not cause the schema to be loaded. That must be done separately, using the
+     * {@link SchemaManager}. This method will not fail if the schema has not been loaded (but in that case
+     * the set of declarations and definitions made available to the XPath expression is empty). The schema
+     * document for the specified namespace may be loaded before or after this method is called.</p>
+     * <p>This method does not bind a prefix to the namespace. That must be done separately, using the
+     * {@link #declareNamespace(String, String)} method.</p>
+     *
+     * @param uri The schema namespace to be imported. To import declarations in a no-namespace schema,
+     *            supply a zero-length string.
+     */
+    void importSchemaNamespace(const char * uri);
+
+#endif
      /**
       * Get all parameters as a std::map
      */
