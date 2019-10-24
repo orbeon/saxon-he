@@ -157,7 +157,7 @@ public final class Version {
             platform = new net.sf.saxon.dotnet.DotNetPlatform();
         //#endif
 //#else
-      // #if PE!=true && EE!=true && DOTNET != true && SAXONC == true
+      //#if PE!=true && EE!=true && DOTNET != true && SAXONC == true
             platform = new net.sf.saxon.option.cpp.NativePlatform();
        //#else
             platform = new net.sf.saxon.java.JavaPlatform();
