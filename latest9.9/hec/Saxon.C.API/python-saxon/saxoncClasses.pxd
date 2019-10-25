@@ -69,7 +69,7 @@ cdef extern from "../SaxonProcessor.h":
 
         XdmNode * parseXmlFromUri(const char* source)
 
-        bool isSchemaAware()
+        bool isSchemaAwareProcessor()
 
         bool exceptionOccurred()
 

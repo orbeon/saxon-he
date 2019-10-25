@@ -1015,6 +1015,12 @@ int main()
     SaxonProcessor * processor = new SaxonProcessor(true);
     cout<<"Test: Xslt30Processor with Saxon version="<<processor->version()<<endl<<endl; 
     //processor->setcwd("/home");
+   if(processor->isSchemaAwareProcessor()) {
+
+    std::cerr<<"Processor is Schema Aware"<<std::endl;
+  } else {
+	std::cerr<<"Processor is not Schema Aware"<<std::endl;
+ }
    processor->setConfigurationProperty("http://saxon.sf.net/feature/generateByteCode","false");
    sResultCount *sresult = new sResultCount();
     Xslt30Processor * trans = processor->newXslt30Processor();

@@ -531,6 +531,21 @@ PHP_METHOD(SaxonProcessor, newSchemaValidator)
 }
 
 
+PHP_METHOD(SaxonProcessor, isSchemaAware)
+{
+    SaxonProcessor *saxonProcessor;
+    saxonProcessor_object *obj = (saxonProcessor_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
+    if (ZEND_NUM_ARGS()>0) {
+        WRONG_PARAM_COUNT;
+    }
+    saxonProcessor = obj->saxonProcessor;
+    if (saxonProcessor != NULL) {
+        return saxonProcessor->isSchemaAwareProcessor();
+        
+    }
+     return false;   
+}
+
 PHP_METHOD(SaxonProcessor, version)
 {
     SaxonProcessor *saxonProcessor;
@@ -5096,6 +5111,7 @@ zend_function_entry SaxonProcessor_methods[] = {
     PHP_ME(SaxonProcessor, setConfigurationProperty,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  registerPHPFunctions,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  version,      NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(SaxonProcessor,  isSchemaAware,      NULL, ZEND_ACC_PUBLIC)
     {NULL, NULL, NULL}
 };
 

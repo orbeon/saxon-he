@@ -164,6 +164,15 @@ def test_version():
     assert ver.startswith('Saxon/C ')
     assert ver.endswith('from Saxonica')
 
+def test_schema_aware(saxonproc):
+
+    assert saxonproc.is_schema_aware == False
+
+
+def test_schema_aware2():
+    ''' This unit test requires a valid license - Saxon-EE/C '''
+    sp = PySaxonProcessor(license=True)
+    assert sp.is_schema_aware == True
 
 
 '''PyXsltProcessor test cases '''

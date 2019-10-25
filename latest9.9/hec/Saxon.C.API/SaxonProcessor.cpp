@@ -274,6 +274,22 @@ SaxonProcessor::SaxonProcessor(const char * configFile){
    }
 
 
+bool SaxonProcessor::isSchemaAwareProcessor(){
+	if(!licensei) {
+		return false;
+	} else {
+		static jmethodID MID_schema = (jmethodID)SaxonProcessor::sxn_environ->env->GetMethodID(procClass, "isSchemaAware", "()Z");
+    		if (!MID_schema) {
+        		std::cerr<<"\nError: Saxonc "<<"SaxonProcessor.isSchemaAware()"<<" not found"<<std::endl;
+        		return false;
+    		}
+
+    		licensei = (jboolean)(SaxonProcessor::sxn_environ->env->CallBooleanMethod(proc, MID_schema));
+        	return licensei;
+
+	}
+
+}
 
 void SaxonProcessor::applyConfigurationProperties(){
 	if(configProperties.size()>0) {

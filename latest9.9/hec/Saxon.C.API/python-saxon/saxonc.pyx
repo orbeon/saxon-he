@@ -157,11 +157,13 @@ cdef class PySaxonProcessor:
     @property
     def is_schema_aware(self):
         """
-        Check is the processor is Schema aware. A licensed Saxon-EE/C product is schema aware 
+        is_schema_aware(self)
+        Property to check if the processor is Schema aware. A licensed Saxon-EE/C product is schema aware 
 
         :bool: Indicate if the processor is schema aware, True or False otherwise
         """
-        return self.thisprt.isSchemaAware()
+        return self.thisptr.isSchemaAwareProcessor()
+
 
     def new_xslt_processor(self):
         """

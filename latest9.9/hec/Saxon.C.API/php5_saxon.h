@@ -141,6 +141,7 @@ jobject JNICALL phpNativeCall
     PHP_METHOD(SaxonProcessor, newXPathProcessor);
     PHP_METHOD(SaxonProcessor, newSchemaValidator);
     PHP_METHOD(SaxonProcessor,  version);
+    PHP_METHOD(SaxonProcessor,  isSchemaAware);
 
 
 

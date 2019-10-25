@@ -37,12 +37,28 @@ final class XSLT30Test extends TestCase
     public function testVersion(): void
     {
         $this->assertStringContainsString(
-            'Saxon/C 1.2.0 running',
+            'Saxon/C 1.2.1 running',
             self::$saxonProc->version()
         );
         $this->assertStringContainsString('9.9.1.5C from Saxonica', self::$saxonProc->version());
     }
 
+
+    public function testSchemaAware(): void
+    {
+        $this->assertFalse(
+            self::$saxonProc->isSchemaAware()
+        );
+    }
+
+
+    public function testSchemaAware2(): void
+    {
+
+        $saxonProc2 = new Saxon\SaxonProcessor(True);
+
+        $this->assertFalse($saxonProc2->isSchemaAware());
+    }
 
     public function testContextNotRoot(): void
     {
@@ -106,11 +122,14 @@ final class XSLT30Test extends TestCase
         $xPathProcessor->setContextItem($input);
         $hrefval = $xPathProcessor->evaluateSingle($path);
         $this->assertNotNull($hrefval);
-        $href = $hrefval->getStringValue();
+	echo "test cp0";
+        $this->assertInstanceOf(Saxon\XdmItem::class, $hrefval);
+	$this->assertTrue($hrefval->isAtomic());
+        $href = $hrefval->getAtomicValue()->getStringValue();
         $this->assertNotEquals($href, "");
         // The stylesheet is embedded in the source document and identified by a URI of the form "#id"
 
-        $transformer->compileFromFile($href);
+        $transformer->compileFromFile("../styles/".$href);
 
 
         $this->assertInstanceOf(Saxon\XdmNode::class, $input);

@@ -477,7 +477,7 @@ public:
 
     int getNodeKind(jobject);
 
-    bool isSchemaAware();
+    bool isSchemaAwareProcessor();
 
  
 

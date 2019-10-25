@@ -132,7 +132,6 @@ if (!mID) {
 		return value;
 	}
 }
-std::cerr<<"evaluate error cp1"<<std::endl;
 return NULL;
 
 }
@@ -221,6 +220,7 @@ if (!mID) {
 			return NULL;
 		}
 		xdmItem->setProcessor(proc);
+		//SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
 		return xdmItem;
 	} else  {
 		proc->checkAndCreateException(cppClass);

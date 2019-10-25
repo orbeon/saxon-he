@@ -114,9 +114,7 @@ PHP_METHOD(SaxonProcessor, __construct)
     zend_object * zobj = Z_OBJ_P(object);
 
     saxonProcessor_object * obj = (saxonProcessor_object *)((char *)zobj - XtOffsetOf(saxonProcessor_object, std));
-if(license){
-std::cerr<<"SaxonProcessor license is true"<<std::endl;
-}
+
 	saxonProc = new SaxonProcessor(license); //TODO: add license flag to PHP function argument
 		
     
@@ -209,6 +207,26 @@ PHP_METHOD(SaxonProcessor, setResourcesDirectory)
     }
 }
 
+
+PHP_METHOD(SaxonProcessor, isSchemaAware)
+{
+    SaxonProcessor *saxonProcessor;
+    
+    if (ZEND_NUM_ARGS()>0) {
+        WRONG_PARAM_COUNT;
+    }
+    zend_object* pobj = Z_OBJ_P(getThis()); 
+    saxonProcessor_object * obj = (saxonProcessor_object *)((char *)pobj - XtOffsetOf(saxonProcessor_object, std));
+    saxonProcessor = obj->saxonProcessor;
+    if (saxonProcessor != NULL) {
+       
+         if(saxonProcessor->isSchemaAwareProcessor()){
+
+		RETURN_TRUE;
+ 	}
+    }
+    RETURN_FALSE;
+}
 
 PHP_METHOD(SaxonProcessor, setCatalog)
 {
@@ -3837,11 +3855,26 @@ PHP_METHOD(XPathProcessor, evaluateSingle)
                 return;
             } else {
                 //struct xdmItem_object* vobj = (struct xdmItem_object *)Z_OBJ_P(return_value TSRMLS_CC);
-        	zend_object* vvobj = Z_OBJ_P(return_value);
-        	xdmItem_object * vobj = (xdmItem_object *)((char *)vvobj - XtOffsetOf(xdmItem_object, std));
+		zend_object* vvobj = Z_OBJ_P(return_value);
+		if(node->getType() == XDM_NODE) {
+	        	xdmNode_object * vobj = (xdmNode_object *)((char *)vvobj - XtOffsetOf(xdmNode_object, std));
+	                assert (vobj != NULL);
+	                vobj->xdmNode = (XdmNode *)node;
+	                return;
+
+		} else if (node->getType() == XDM_ATOMIC_VALUE) {
+
+        	xdmAtomicValue_object * vobj = (xdmAtomicValue_object *)((char *)vvobj - XtOffsetOf(xdmAtomicValue_object, std));
                 assert (vobj != NULL);
-                vobj->xdmItem = node;
+                vobj->xdmAtomicValue = (XdmAtomicValue *)node;
                 return;
+
+		} else {
+        		xdmItem_object * vobj = (xdmItem_object *)((char *)vvobj - XtOffsetOf(xdmItem_object, std));
+                	assert (vobj != NULL);
+                	vobj->xdmItem = node;
+                	return;
+                }
             }
         } 
         xpathProcessor->checkException();//TODO
@@ -4807,7 +4840,7 @@ PHP_METHOD(XdmItem, __toString)
          xdmItem_object* obj = (xdmItem_object *)((char *)oobj - XtOffsetOf(xdmItem_object, std));
          xdmItem = obj->xdmItem;
          if (xdmItem != NULL) {
-        	const char * value = xdmItem->getStringValue();
+        	const char * value = xdmItem->toString();
           	if(value != NULL) {
           	    _RETURN_STRING(value);
           	 } else {
@@ -5361,7 +5394,7 @@ PHP_METHOD(XdmAtomicValue, getStringValue)
     saxonProc =  obj2->saxonProcessor;
 
     if (xdmAtomicValue != NULL) {
-        const char * valueStr = saxonProc->getStringValue(xdmAtomicValue);
+        const char * valueStr = xdmAtomicValue->getStringValue();
         if(valueStr != NULL) {
             //char *str = estrdup(valueStr);
             _RETURN_STRING(valueStr);
@@ -5463,6 +5496,7 @@ zend_function_entry SaxonProcessor_methods[] = {
     PHP_ME(SaxonProcessor, setConfigurationProperty,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  registerPHPFunctions,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  version,      NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(SaxonProcessor,  isSchemaAware,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  release,      NULL, ZEND_ACC_PUBLIC)
     {NULL, NULL, NULL}
 };
