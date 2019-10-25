@@ -3812,12 +3812,26 @@ PHP_METHOD(XPathProcessor, evaluate)
                 RETURN_NULL();
                 return;
             } else {
+		zend_object* vvobj = Z_OBJ_P(return_value);
+        		
+		if(node->getType() == XDM_NODE) {
+			xdmNode_object * vobj = (xdmNode_object *)((char *)vvobj - XtOffsetOf(xdmNode_object, std));
+             	   	assert (vobj != NULL);
+               	   	vobj->xdmNode = (XdmNode *)node;
+                	return;
 
-        	zend_object* vvobj = Z_OBJ_P(return_value);
-        	xdmValue_object * vobj = (xdmValue_object *)((char *)vvobj - XtOffsetOf(xdmValue_object, std));
+		} else if (node->getType() == XDM_ATOMIC_VALUE) {
+        	xdmAtomicValue_object * vobj = (xdmAtomicValue_object *)((char *)vvobj - XtOffsetOf(xdmAtomicValue_object, std));
                 assert (vobj != NULL);
-                vobj->xdmValue = node;
+                vobj->xdmAtomicValue = (XdmAtomicValue *)node;
                 return;
+
+		} else {
+        	  xdmValue_object * vobj = (xdmValue_object *)((char *)vvobj - XtOffsetOf(xdmValue_object, std));
+                  assert (vobj != NULL);
+                  vobj->xdmValue = node;
+                  return;
+		}
             }
         }
         xpathProcessor->checkException();//TODO
