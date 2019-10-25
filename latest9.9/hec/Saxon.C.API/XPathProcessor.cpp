@@ -69,7 +69,6 @@ if (!mID) {
 		int i = 0;
 		for (std::map<std::string, XdmValue*>::iterator iter = parameters.begin();
 				iter != parameters.end(); ++iter, i++) {
-std::cerr<<"Size is in XPAthProcessor="<<(iter->first)<<std::endl;
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(stringArray, i,
 					SaxonProcessor::sxn_environ->env->NewStringUTF((iter->first).c_str()));
 			SaxonProcessor::sxn_environ->env->SetObjectArrayElement(objectArray, i,
@@ -103,7 +102,6 @@ std::cerr<<"Size is in XPAthProcessor="<<(iter->first)<<std::endl;
 		jclass functionItemClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmFunctionItem");
 
 		XdmValue * value = new XdmValue();
-		value->setProcessor(proc);
 		XdmItem * xdmItem = NULL;
 		for (int p=0; p < sizex; ++p) 
 		{
@@ -116,17 +114,25 @@ std::cerr<<"Size is in XPAthProcessor="<<(iter->first)<<std::endl;
 			} else if(SaxonProcessor::sxn_environ->env->IsInstanceOf(resulti, nodeClass)           == JNI_TRUE) {
 				xdmItem = new XdmNode(resulti);
 
-
 			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(resulti, functionItemClass)           == JNI_TRUE) {
 				continue;
 			}
 			xdmItem->setProcessor(proc);
+			if(sizex == 1) {
+				value->decrementRefCount();
+				delete value;
+				SaxonProcessor::sxn_environ->env->DeleteLocalRef(results);
+				return xdmItem;		
+			}
+			
 			value->addXdmItem(xdmItem);
 		}
+		value->setProcessor(proc);
 		SaxonProcessor::sxn_environ->env->DeleteLocalRef(results);
 		return value;
 	}
 }
+std::cerr<<"evaluate error cp1"<<std::endl;
 return NULL;
 
 }

@@ -2617,11 +2617,27 @@ cdef class PyXPathProcessor:
         """
         py_string = xpath_str.encode('UTF-8') if xpath_str is not None else None
         c_xpath = py_string if xpath_str is not None else ""
-        cdef PyXdmValue val = PyXdmValue()
-        val.thisvptr = self.thisxpptr.evaluate(c_xpath)
-        if val.thisvptr == NULL:
+        cdef PyXdmNode nval = None
+        cdef PyXdmAtomicValue aval = None
+        cdef PyXdmValue val = None
+        cdef type_ = 0
+        cdef saxoncClasses.XdmValue * xdmValue = self.thisxpptr.evaluate(c_xpath)
+        if xdmValue == NULL:
             return None
-        return val
+        else:
+            type_ = xdmValue.getType()        
+            if type_ == 4:
+                aval = PyXdmAtomicValue()
+                aval.derivedaptr = aval.derivedptr = aval.thisvptr = <saxoncClasses.XdmAtomicValue *>xdmValue
+                return aval        
+            elif type_ == 3:
+                nval = PyXdmNode()
+                nval.derivednptr = nval.derivedptr = nval.thisvptr = <saxoncClasses.XdmNode*>xdmValue
+                return nval
+            else:
+                val = PyXdmValue()
+                val.thisvptr = xdmValue
+                return val
 
      def evaluate_single(self, xpath_str):
         """
@@ -3194,7 +3210,7 @@ cdef class PyXdmValue:
         if type(self) is PyXdmValue:
             self.thisvptr = new saxoncClasses.XdmValue() 
      def __dealloc__(self):
-        if type(self) is PyXdmValue:    
+        if type(self) is PyXdmValue and self.thisvptr != NULL:    
             if self.thisvptr.getRefCount() < 1:
                 del self.thisvptr            
             else:
@@ -3290,7 +3306,7 @@ cdef class PyXdmItem(PyXdmValue):
         if type(self) is PyXdmItem:
             self.derivedptr = self.thisvptr = new saxoncClasses.XdmItem()
      def __dealloc__(self):
-        if type(self) is PyXdmItem:
+        if type(self) is PyXdmItem and self.derivedptr != NULL:
             if self.derivedptr.getRefCount() < 1:
                 del self.derivedptr            
             else:
@@ -3343,6 +3359,18 @@ cdef class PyXdmItem(PyXdmValue):
         '''val.derivednptr.incrementRefCount()'''
         return val
 
+     @property
+     def head(self):
+        """
+        head(self)
+        Property to get the first item in the sequence. This would be the PyXdmItem itself as there is only one item in the sequence
+
+        Returns:
+            PyXdmItem: The PyXdmItem or None if the sequence is empty
+
+        """
+        return self
+
      def get_atomic_value(self):
         """
         get_atomic_value(self)
@@ -3365,11 +3393,23 @@ cdef class PyXdmNode(PyXdmItem):
         self.derivednptr = self.derivedptr = self.thisvptr = NULL
     
      def __dealloc__(self):
-        if type(self) is PyXdmNode:
+        if type(self) is PyXdmNode and self.derivednptr != NULL:
                  if self.derivednptr.getRefCount() < 1:
                      del self.derivednptr
                  else:
                      self.derivednptr.decrementRefCount()
+
+     @property
+     def head(self):
+        """
+        head(self)
+        Property to get the first item in the sequence. This would be the PyXdmNode itself as there is only one item in the sequence
+
+        Returns:
+            PyXdmItem: The PyXdmItem or None if the sequence is empty
+
+        """
+        return self
                    
 
      @property
@@ -3440,11 +3480,13 @@ cdef class PyXdmNode(PyXdmItem):
         Returns:
             PyXdmValue:the typed value. If the typed value is a single atomic value, this will be returne as an instance of {@link XdmAtomicValue}                
         """
-        cdef PyXdmValue val = PyXdmValue()
-        val.thisvptr = self.derivednptr.getTypedValue()
-        if val.thisvptr == NULL:
+        cdef PyXdmValue val = None
+        cdef saxoncClasses.XdmValue * xdmValue = self.derivednptr.getTypedValue()
+        if xdmValue == NULL:
             return None
         else:
+            val = PyXdmValue()
+            val.thisvptr = xdmValue
             return val
 
      @property
@@ -3602,8 +3644,8 @@ cdef class PyXdmAtomicValue(PyXdmItem):
         if type(self) is PyXdmAtomicValue:
             self.derivedaptr = self.derivedptr = self.thisvptr = new saxoncClasses.XdmAtomicValue()
      def __dealloc__(self):
-        if self.derivedaptr != NULL:
-            if self.derivedaptr.getRefCount() <= 1:
+        if self.derivedaptr != NULL and self.derivedaptr != NULL:
+            if self.derivedaptr.getRefCount() < 1:
                 del self.derivedaptr
             else:
                 self.derivedaptr.decrementRefCount()
@@ -3646,6 +3688,18 @@ cdef class PyXdmAtomicValue(PyXdmItem):
         """
         
         return self.derivedaptr.getDoubleValue()
+
+     @property
+     def head(self):
+        """
+        head(self)
+        Property to get the first item in the sequence. This would be the PyXdmAtomicValue itself as there is only one item in the sequence
+
+        Returns:
+            PyXdmAtomicValue: The PyXdmAtomic or None if the sequence is empty
+
+        """
+        return self
     
 
      @property

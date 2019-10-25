@@ -257,7 +257,8 @@ def testEmbeddedStylesheet(saxonproc, data_dir):
     href = hrefval.string_value
     print("href="+href)
     assert href != ""
-    trans.compile_stylesheet(stylesheet_file=data_dir+href)
+    styles_dir = "../../samples/styles/"
+    trans.compile_stylesheet(stylesheet_file=styles_dir+href)
 
     assert isinstance(input_, PyXdmNode)
     node = trans.transform_to_value(xdm_node=input_)
@@ -303,18 +304,19 @@ def testXdmDestination(saxonproc):
     assert root is not None
     assert root.head is not None
     assert root.head.is_atomic == False
-    node  = root.head.get_node_value()
+    node  = root.head
     assert node is not None
-    '''assert isinstance(node, PyXdmNode)
-    assert node.node_kind == 9'''
+    assert isinstance(node, PyXdmNode)
+    assert node.node_kind == 9
 
 def testXdmDestinationWithItemSeparator(saxonproc):
     trans = saxonproc.new_xslt30_processor()
     trans.compile_stylesheet(stylesheet_text="<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'><xsl:template name='go'><xsl:comment>A</xsl:comment><out/><xsl:comment>Z</xsl:comment></xsl:template><xsl:output method='xml' item-separator='§'/></xsl:stylesheet>")
 
     root = trans.call_template_returning_value("go")
-    node  = root.head.get_node_value()
-    assert "<!--A-->§<out/>§<!--Z-->" in node.string_value
+    node  = root
+    
+    assert "<!--A-->§<out/>§<!--Z-->" == node.__str__()
     assert node.node_kind == 9
 
 
@@ -732,8 +734,8 @@ def test_make_string_value(saxonproc):
     result = xquery_processor.run_query_to_value(query_text = 'declare variable $s1 external; $s1')
 
     assert result is not None
-
-    assert result.get_atomic_value().string_value is "text1"
+    assert isinstance(result, PyXdmAtomicValue)
+    assert result.string_value == "text1"
 
 
 
@@ -850,7 +852,7 @@ def test_single():
     assert isinstance(item, PyXdmItem)
     assert item.size == 1
     assert not item.is_atomic
-    assert item.string_value == '<person>text1</person>'
+    assert item.__str__() == '<person>text1</person>'
 
 def test_declare_variable_value(saxonproc):
     s1 = 'This is a test.'

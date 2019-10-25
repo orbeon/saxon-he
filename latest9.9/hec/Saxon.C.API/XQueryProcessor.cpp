@@ -299,11 +299,16 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 
 		if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, atomicValueClass)           == JNI_TRUE) {
 				xdmItem = new XdmAtomicValue(result);
-				
+				xdmItem->setProcessor(proc);
+				SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
+				return xdmItem;
 
 			} else if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, nodeClass)           == JNI_TRUE) {
 				xdmItem = new XdmNode(result);
-
+				xdmItem->setProcessor(proc);
+				SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
+				return xdmItem;
+			
 			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
 				return NULL;
 			} else {
