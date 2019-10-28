@@ -29,7 +29,7 @@ char * dllPath =
 #elif  defined (__APPLE__) && defined(__MACH__)
 "/usr/local/lib";
 #else
-"C:\\Program Files\\Saxonica\\SaxonHEC1.2.0";
+"C:\\Program Files\\Saxonica\\SaxonHEC1.2.1";
 #endif
 
 /*

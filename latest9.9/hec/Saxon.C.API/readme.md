@@ -8,7 +8,7 @@
 5. [Technical](#tech)
 6. [Limitations](#limitations)
 
-Saxon/C 1.2.0 is the latest release of Saxon-HE/PE/EE on the C/C++, PHP and Python programming platforms. The APIs support the specifications XSLT 3.0, XQuery 3.1, Schema Validation 1.0/1.1 and XPath 3.1.
+Saxon/C 1.2.1 is the latest release of Saxon-HE/PE/EE on the C/C++, PHP and Python programming platforms. The APIs support the specifications XSLT 3.0, XQuery 3.1, Schema Validation 1.0/1.1 and XPath 3.1.
 
 Saxon/C is built from the Saxon 9.9.1.5 Java product using Excelsior JET Enterprise 15.3 edition (MP1).
 
