@@ -28,7 +28,7 @@ Link the dynamic saxon library so it can be found. For example:
 
 	ln -s /usr/lib/Saxonica/Saxon-EDITIONC#.#.#/libsaxonEDITION.so /usr/lib/libsaxonEDITION.so
 
-You need to setup the environment for the jet jvm. The jvm is in the directory JET-home=Saxonica/Saxon-EDITION1.2.0/rt
+You need to setup the environment for the jet jvm. The jvm is in the directory JET-home=Saxonica/Saxon-EDITION1.2.1/rt
 The directory JET_home/lib/amd64 must be listed in the LD_LIBRARY_PATH environment variable. For instance, if you
 are using bash or Bourne shell, use the following commands:
 
@@ -63,7 +63,7 @@ The C/C++ interface by default assumes the library files and directories are ins
 The location of the Saxon/C library can be set using the SAXONC_HOME environment variable. 
 The privileges of the folders and files may need adjusting after copying everything if you encounter permission issues.
 
-    cd libsaxon-HEC-mac-setup-v1.2.0/    
+    cd libsaxon-HEC-mac-setup-v1.2.1/    
     sudo cp libsaxonhec.dylib /usr/local/lib/.    
     sudo cp -r rt /usr/local/lib/.
  
@@ -816,7 +816,7 @@ The XML parser used is the one supplied by the Excelsior JET runtime. There are 
 <div id='limitations'/>
 ## Limitations: ##
 
-The following limitations apply to the 1.2.0 release:
+The following limitations apply to the 1.2.1 release:
 
 * No support for the XdmFunction type in the Xdm data model
 

@@ -140,7 +140,7 @@ const char * xsltApplyStylesheet(sxnc_environment environi, sxnc_processor ** pr
 	}
 #ifdef DEBUG
         jmethodID debugMID = (*(environi.env))->GetStaticMethodID(environi.env, cppClass, "setDebugMode", "(Z)V");
-	(*(environi.env))->CallStaticVoidMethod(environi.env, cppClass, debugMID, (jboolean)__true);
+	(*(environi.env))->CallStaticVoidMethod(environi.env, cppClass, debugMID, (jboolean)true);
 #endif
 	if(mID == NULL) {
  		mID = (jmethodID)(*(environi.env))->GetMethodID (environi.env, cppClass,"transformToString", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;");
