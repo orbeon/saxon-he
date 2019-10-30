@@ -13,10 +13,12 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.query.QueryResult;
 import net.sf.saxon.s9api.*;
+import net.sf.saxon.serialize.SerializationProperties;
 import net.sf.saxon.trans.XPathException;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -58,7 +60,7 @@ public class XQueryEngine extends SaxonCAPI {
         Configuration config = processor.getUnderlyingConfiguration();
         schemaAware = config.isLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XSLT);
 //#if EE==true || PE==true
-        if(config.isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION)) {
+        if (config.isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION)) {
             config.getBuiltInExtensionLibraryList().addFunctionLibrary(PHPFunctionSet.getInstance());
             config.getBuiltInExtensionLibraryList().addFunctionLibrary(CPPFunctionSet.getInstance());
         }
@@ -77,7 +79,7 @@ public class XQueryEngine extends SaxonCAPI {
         Configuration config = processor.getUnderlyingConfiguration();
         schemaAware = config.isLicensedFeature(Configuration.LicenseFeature.ENTERPRISE_XSLT);
 //#if EE==true || PE==true
-        if(config.isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION)) {
+        if (config.isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION)) {
             config.getBuiltInExtensionLibraryList().addFunctionLibrary(PHPFunctionSet.getInstance());
             config.getBuiltInExtensionLibraryList().addFunctionLibrary(CPPFunctionSet.getInstance());
         }
@@ -188,6 +190,7 @@ public class XQueryEngine extends SaxonCAPI {
         }
 
         XQueryEvaluator eval = executable.load();
+
         try {
             applyXQueryProperties(this, cwd, serializer, processor, eval, params, values);
         } catch (SaxonApiException ex) {
@@ -199,21 +202,13 @@ public class XQueryEngine extends SaxonCAPI {
 
 
     public String executeQueryToString(String cwd, String[] params, Object[] values) throws SaxonApiException {
-        XQueryEvaluator eval = xqueryEvaluator(cwd, params, values);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Properties props = new Properties();
-        props.put("method", "xml");
-        props.put("indent","yes");
-        props.put("omit-xml-declaration","yes");
-        try {
-            QueryResult.serializeSequence(eval.evaluate().getUnderlyingValue().iterate(), processor.getUnderlyingConfiguration(), baos, props);
-        } catch (XPathException e) {
-            SaxonCException saxonException = new SaxonCException(e);
-            saxonExceptions.add(saxonException);
-            throw saxonException;
-        }
-        return baos.toString();
+        StringWriter writer = new StringWriter();
+        serializer = processor.newSerializer(writer);
+        XQueryEvaluator eval = xqueryEvaluator(cwd, params, values);
+        eval.run(serializer);
+        return writer.toString();
+
     }
 
     public XdmValue executeQueryToValue(String cwd, String[] params, Object[] values) throws SaxonApiException {
@@ -223,9 +218,10 @@ public class XQueryEngine extends SaxonCAPI {
 
     public void executeQueryToFile(String cwd, String outFilename, String[] params, Object[] values) throws SaxonApiException {
         try {
+            serializer = resolveOutputFile(processor, cwd, outFilename);
             XQueryEvaluator eval = xqueryEvaluator(cwd, params, values);
             if (outFilename != null) {
-                serializer = resolveOutputFile(processor, cwd, outFilename);
+
                 eval.run(serializer);
                 return;
             }
@@ -259,8 +255,22 @@ public class XQueryEngine extends SaxonCAPI {
 
                 } else if (params[i].startsWith("!")) {
                     String name = params[i].substring(1);
-                    Serializer.Property prop = null;//Serializer.Property.get(name);
-                    serializer.setOutputProperty(prop, (String) values[i]);
+
+                    if(!(values[i] instanceof String)) {
+                        throw new SaxonApiException("Property with name " + name + " has value which is not a string");
+                    }
+
+
+                    Serializer.Property prop = Serializer.Property.get(name);
+                    if (prop == null) {
+                        System.err.println("Property name " + name + " not found");
+                        continue;
+
+                    }
+                    api.props.put(prop.getQName().getClarkName(), values[i]);
+                    if(api.serializer != null) {
+                        api.serializer.setOutputProperty(prop, (String) values[i]);
+                    }
                 } else if (params[i].equals("o") && outfile == null) {
                     outfile = (String) values[i];
                     serializer = api.resolveOutputFile(processor, cwd, outfile);
@@ -354,19 +364,29 @@ public class XQueryEngine extends SaxonCAPI {
 
         String[] params2 = {"node", "qs"};
         String[] params3 = {"qs"};
+        String[] params4 = {"qs"};
         Object[] values2 = {doc, "saxon:line-number(/bookstore/book/title)"};
         Object[] values3 = {"declare variable $n external := 10; (1 to $n)!(. * .)"};
+        Object[] value4 = {"declare namespace output = \"http://www.w3.org/2010/xslt-xquery-serialization\";\n" +
+                "\n" +
+                "declare option output:method 'json';\n" +
+                "\n" +
+                "map { 'prop1' : 'value 1', 'prop2' : 'value 2' }"};
         String cwd = "/Users/ond1/work/development/files/xmark";
         //String cwd = "C:///www///html///query";
         //String cwd = "http://localhost/query";
         //xquery.executeQueryToFile(cwd, "output1a.xml", params1, values1);
         //String result = xquery.executeQueryToString(cwd, params2, values2);
         //String result2 = xquery.executeQueryToString(cwd, params1, values1);
-        XdmValue result = xquery.executeQueryToValue(cwd, params3, values3);
+        XdmValue result = xquery.executeQueryToValue(cwd, params4, value4);
+
+        String result2 = xquery.executeQueryToString(cwd, params4, value4);
 
 
         // xquery.executeQueryToFile("/home/ond1/test/saxon9-5-1-1source", outfile, params1, values1);
         System.out.println("Result1=" + result.toString());
+
+        System.out.println("Result2=" + result2);
         //System.out.println("Result2" + result2);
 
 
