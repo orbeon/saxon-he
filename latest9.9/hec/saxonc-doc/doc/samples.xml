@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article id="samples" title="Sample code">
+   <h1>Sample Code To Get Started</h1>
+
+   <p>This section of the documentation describes some example code in C/C++, PHP and Python to help users to get started.
+   Within the Saxon/C installation you will find lots of example code in the 'samples' directory. Also within the 'Saxon.C.API/python-saxon' directory you will find python examples plus unit test s for python.</p>
+
+
+   <nav>
+      <ul/>
+   </nav>
+
+    <section>
+   <h2>C/C++ Samples</h2>
+    </section>
+
+    <section id="samples_php" title="PHP Samples">
+        <h2>PHP Samples</h2>
+        <p>In the Saxon/C download please see the PHP unit tests (i.e. xslt30_PHPUnit.php i nthe samples/php directory) for XSLT. There are also same files for XSLT, XQuery, XPath and Schema Validator.
+            The PHP test files are contained in the 'samples/php' folder along with associated files. Namely: xsltExamples.php, xslt30Examples.php, xqueryExamples.php, xpathExamples.php, validatorExamples.php. These files contain many useful examples which will get you started.
+            The unit tests run under PHPUnit for PHP 7.2 which can be downloaded and installed seperately in the same directory of the unit tests.</p>
+        <p>Example command:</p>
+        <kbd>cd samples/php</kbd>
+        <kbd>./phpunit xslt30_PHPUnit.php</kbd>
+        <p>To run a single test:</p>
+
+        <kbd>./phpunit --filter testPipeline xslt30_PHPUnit.php</kbd>
+         <p>Example code in the new XSLT3.0 API:</p>
+        <samp><![CDATA[<?php
+                $saxonproc = new Saxon\SaxonProcessor();
+                $transformer = $saxonProc->newXslt30Processor();
+                $transformer->compileFromString("<xsl:stylesheet version='2.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>" .
+                          "<xsl:template name='go'><a/></xsl:template>" .
+                          "</xsl:stylesheet>");
+                $root = $transformer->callTemplateReturningValue("go");
+                $node = $root->getHead()->getNodeValue();
+            ?>]]></samp>
+
+        <p>Example of the old styled PHP API designed for older XSLT API:</p>
+
+        <samp><![CDATA[<?php
+                $xmlfile = "xml/foo.xml";
+                $xslFile = "xsl/foo.xsl";
+                $proc = new Saxon\SaxonProcessor();
+                $version = $proc->version();
+                echo 'Saxon Processor version: '.$version;
+                $xsltProc = $saxonProc->newXsltProcessor();
+                $xsltProc->setSourceFromFile($xmlfile);
+                $xsltProc->compileFromFile($xslFile);
+                $result = $xsltProc->transformToString();
+                if($result != null) {
+                  echo 'exampleSimple1:
+
+        ';
+                  echo 'Output:'.$result;
+                } else {
+                    echo "Result is null";
+                }
+                $xsltProc->clearParameters();
+                $xsltProc->clearProperties();
+            ?> ]]></samp>
+
+        <p>In the example below we show how to debug if something unexpected is happening. It is also very useful to examine the apache error.log file:</p>
+
+        <samp><![CDATA[<?php
+                    $xmlfile = "xml/foo.xml";
+                    $xslFile = "xsl/foo.xsl";
+                    $proc = new Saxon\SaxonProcessor();
+                    $xsltProc = $saxonProc->newXsltProcessor();
+                    $xsltProc->setSourceFromFile($xmlFile);
+                    $xsltProc->compileFromFile($xslFile);
+                    $result = $xsltProc->transformToString();
+                    if($result == NULL) {
+                            $errCount = $xsltProc->getExceptionCount();
+                            if($errCount > 0 ){
+                                for($i = 0; $i < $errCount; $i++) {
+                                   $errCode = $xsltProc->getErrorCode(intval($i));
+                                   $errMessage = $xsltProc->getErrorMessage(intval($i));
+                                   echo 'Expected error: Code='.$errCode.' Message='.$errMessage;
+                               }
+                                $xsltProc->exceptionClear();
+                            }
+                        }
+                    echo $result;
+                    $xsltProc->clearParameters();
+                    $xsltProc->clearProperties();
+            ?>]]></samp>
+    </section>
+
+    <section id="samples_python" title="Python Samples">
+         <p>There are a collection of Python unit test cases to be run with the pytest framework. Test unit files: test_saxonc.py and test_saxon_Schema.py. See also some python example scripts saxon_example.py, saxon_example2.py and saxon_example3.py to get started with Saxon/C and Python
+         The pyunit tests can be run with the following command:</p>
+        <kbd>cd Saxon.C.API/python-saxon</kbd>
+        <kbd>pytest test_saxonc.py</kbd>
+        <p>Example Python script with Saxon/C API:</p>
+
+        <samp><![CDATA[with saxonc.PySaxonProcessor(license=False) as proc:
+
+
+                print(proc.version)
+                #print(dir(proc))
+                xdmAtomicval = proc.make_boolean_value(False)
+                xsltproc = proc.new_xslt_processor()
+                document = proc.parse_xml(xml_text="<out><person>text1</person><person>text2</person><person>text3</person></out>")
+                xsltproc.set_source(xdm_node=document)
+                xsltproc.compile_stylesheet(stylesheet_file="test2.xsl")
+                xsltproc.set_just_in_time_compilation(True)
+                output2 = xsltproc.transform_to_string()
+                print(output2)
+                print('test 0
+
+        ')
+                xml = """\
+                 <out>
+                     <person>text1</person>
+                     <person>text2</person>
+                     <person>text3</person>
+                 </out>"""
+                xp = proc.new_xpath_processor()
+                node = proc.parse_xml(xml_text=xml)
+                print('test 1
+
+         node='+node.string_value)
+                xp.set_context(xdm_item=node)
+                item = xp.evaluate_single('//person[1]')
+                if isinstance(item,saxonc.PyXdmNode):
+                    print(item.string_value)]]></samp>
+    </section>
+</article>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article id="saxonc-extension" title="Saxon/C User Written Extension Fucntions in C++/PHP">
+   <h1>Saxon/C User defined extensions in C++ and PHP</h1>
+
+
+
+   <nav>
+      <ul/>
+   </nav>
+
+   <section id="extensions_cpp" title="Extension in C++">
+      <h1>Writing Extension functions in C++</h1>
+      
+
+   </section>
+
+   <section id="extensions_php" title="Extension in PHP">
+         <h1>Writing Extension functions in PHP</h1>
+
+
+      </section>
+
+
+</article>
