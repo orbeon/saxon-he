@@ -94,7 +94,13 @@
 
     <section id="saxon_c_cpp_api" title="Saxon/C C++ API">
     <h3>Saxon/C C++ API</h3>
-    See the <a href="https://www.saxonica.com/saxon-c/doc/html/annotated.html" class="bodylink code">C++ documentation</a>
+        <p>Saxon/C is built by cross compiling the Java code of Saxon 9.9.1.5 using the Excelsior Jet Enterprise 15.3 edition(MP1).
+        This generates platform specific machine code, which we interface with C/C++ using the Java Native Interace (JNI).
+        The following Saxon/C API classes are available in C++ to processor in XSLT, XQuery, XPath and Schema validation:
+            <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classSaxonProcessor.html">SaxonProcessor</a>, <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classXsltProcessor.html">XsltProcessor</a>,
+            <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classXslt30Processor.html">Xslt30Processor</a>, <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classXPathProcessor.html">XPathProcessor</a>,
+            <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classXQueryProcessor.html">XQueryProcessor</a> and <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classSchemaValidator.html">SchemaValidator</a>. We also have class for a sub-set of the XDM data model: <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classXdmValue.html">XdmValue</a>, <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classXdmNode.html">XdmNode</a>, <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classXdmItem.html">XdmItem</a> and <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classXdmAtomicValue.html">XdmAtomicValue</a>.</p>
+        <p>See the API class list: <a href="https://www.saxonica.com/saxon-c/doc/html/annotated.html" class="bodylink code">C++ documentation</a></p>
     </section>
 
 
