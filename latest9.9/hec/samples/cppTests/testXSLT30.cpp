@@ -916,6 +916,20 @@ void testContextNotRootNamedTemplateValue(SaxonProcessor * proc, Xslt30Processor
        
     }
 
+void testCallSystemFunction(SaxonProcessor * proc, sResultCount * sresult) {
+                XdmFunctionItem *fi = XdmFunctionItem.getSystemFunction(proc, "{http://www.w3.org/2005/xpath-functions}parse-json", 1);
+                if(fi == NULL) {
+                    sresult->failure++;
+                    sresult->failureList.push_back("testCallSystemFunction");
+
+                }
+                XdmValue * result = fi->call(proc, proc->makeStringValue("[1,2,3]"));
+
+                std::cerr<<"Result = "<<result->getStringValue()<<endl;
+                assertEquals(3, result.arrayLength());
+
+        }
+
 
 void testPipeline(SaxonProcessor * proc, sResultCount * sresult){
   cout<<endl<<"Test: testPipeline"<<endl;
