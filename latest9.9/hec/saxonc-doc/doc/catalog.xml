@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <catalog xmlns="http://www.saxonica.com/ns/doc/catalog">
    <section ref="about">About Saxon/C</section>
-   <section ref="starting">Getting started</section>
+   <section ref="starting">Getting Started</section>
    <section ref="changes">Change History</section>
-   <section ref="saxonc-extension">Saxon/C User Written Extension Functions in C++/PHP</section>
    <section ref="api">Saxon/C API</section>
-   <section ref="samples">Saxon/C Sample and Unit Tests</section>
-
+   <section ref="samples">Saxon/C Samples &amp; Unit Tests</section>
+   <section ref="extensibility">C++/PHP Extension Functions</section>
 </catalog>

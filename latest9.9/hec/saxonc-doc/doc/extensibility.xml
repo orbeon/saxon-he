@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article id="extensibility" title="C++/PHP Extension Functions">
+   <h1>C++/PHP Extension Functions</h1>
+
+
+
+   <nav>
+      <ul/>
+   </nav>
+
+   <section id="extensions_cpp" title="Writing Extension functions in C++">
+      <h1>Writing Extension functions in C++</h1>
+
+
+   </section>
+
+   <section id="extensions_php" title="Writing Extension functions in PHP">
+      <h1>Writing Extension functions in PHP</h1>
+
+
+   </section>
+
+
+</article>

@@ -1,4 +1,4 @@
-@import url('../../saxon-base.css');
+@import url('saxon-base.css');
 
 /* Text blue: #3D5B96
 Dark blue: #C1CEDE
@@ -261,7 +261,7 @@ ul#list{
   left:0;
   right:5px;*/
     color:white;
-    background-color:#C1CEDE;
+    background-color:#B1CCC7;
 }
 #nav{
     width:300px;

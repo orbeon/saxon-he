@@ -1,89 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <article id="changes" title="Change History">
-    <h1>Change History</h1>
+   <h1>Change History</h1>
 
-    <p>In this section we highlight headlines between the major releases. For details of bug fixes, see the <a class="bodylink"
-                                            href="https://saxonica.plan.io/projects/saxon-c">Saxon-C project
-    </a> at the Saxonica community site. Also see <a href="https://www.saxonica.com/saxon-c/release-notes.xml" class="bodylink">Relesae notes</a> for full details between release.</p>
-
-
-    <h3>Changes between releases 1.1 and 1.2</h3>
-
-
-    <ul>
-
-        <li>Updated the core XSLT processor to the Java Saxon 9.9.1.5
-            version. Please see <a href="../products/latest.xml#saxon-c"
-                                   class="bodylink">Latest Releases: Saxon/C
-            </a> for details
-        </li>
-        <li>Updated APIs: Support for XSLT 3.0, XQuery 3.1, XPath 3.1 and Schema Validation 1.0/1.1</li>
-        <li>Added a feature rich XSLT30 processor API to the languages: C++, PHP 7.2 and Python. Therefore we now have
-            two XSLT Processor classes for each language supported:
-            <ul>
-                <li>C++ APIs: <a href="https://www.saxonica.com/saxon-c/doc/html/classXsltProcessor.html"
-                                 target="_blank" class="bodylink">XsltProcessor.h</a>,
-                    <a href="https://www.saxonica.com/saxon-c/doc/html/classXslt30Processor.html" target="_blank"
-                       class="bodylink">Xslt30Processor.h
-                    </a>
-                </li>
-                <li>Python APIs: <a href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXsltProcessor"
-                                    target="_blank" class="bodylink">PyXsltProcessor
-                </a> and
-                    <a href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXslt30Processor" target="_blank"
-                       class="bodylink">PyXslt30Processor
-                    </a>
-                </li>
-                <li><a href="https://www.saxonica.com/saxon-c/doc/html/index.html#php-api" class="bodylink">PHP APIs</a>
-                    : Saxon/XsltProcessor and Saxon/Xslt30Processor
-                </li>
-            </ul>
-        </li>
-        <li>Added Python 3 API to the suite of programming languages supported by Saxon/C. The Python extension was implemented using Cython.</li>
-        <li>Updated to Excelsior JET Enterprise 15.3 (MP1) - cross compiler tool of Saxon</li>
-        <li>Additional methods in the APIs for XSLT, XQuery in C++ and PHP. Also supported in Python</li>
-        <li>XML Catalog file support in Saxon/C</li>
-        <li>Support of Saxon's XSLT export SEF file</li>
-        <li>Bug <a href="https://saxonica.plan.io/issues/2055" class="bodylink" target="_blank">#2055</a>: Apache
-            allocates a lot of memory without releasing it
-        </li>
-        <li>Bug <a href="https://saxonica.plan.io/issues/3837" class="bodylink" target="_blank">#3837</a>: Cannot locate
-            the built PHP extension in Saxon/HE for Mac OS X
-        </li>
-        <li>Bug <a href="https://saxonica.plan.io/issues/4274" class="bodylink" target="_blank">#4274</a>: Using a
-            catalog file with Saxon in PHP
-        </li>
-
-        <li>Bug <a href="https://saxonica.plan.io/issues/4302" class="bodylink" target="_blank">#4302</a>: High memory
-            usage with Saxon/C + PHP
-        </li>
+   <p>In this section we highlight headline changes between the major releases. For full details of
+      changes between maintenance releases, see the Saxon/C <a
+         href="https://www.saxonica.com/saxon-c/release-notes.xml">Release Notes</a>, and for
+      details of bug fixes see the <a href="https://saxonica.plan.io/projects/saxon-c">Saxon/C
+         project</a> at the Saxonica community site.</p>
 
 
-    </ul>
+   <h3>Changes between releases 1.1 and 1.2</h3>
+
+   <ul>
+      <li>Updated the core XSLT processor to the Java Saxon 9.9.1.5 version.</li>
+      <li>Updated APIs: Support for XSLT 3.0, XQuery 3.1, XPath 3.1 and Schema Validation
+         1.0/1.1.</li>
+      <li>Added a feature rich XSLT 3.0 processor API to the languages: C++, PHP 7.2 and Python.
+         Therefore two XSLT Processor classes are now available for each language supported: <ul>
+            <li>C++ APIs: <a
+                  href="https://www.saxonica.com/saxon-c/doc/html/classXsltProcessor.html"
+                  target="_blank">XsltProcessor</a> and <a
+                  href="https://www.saxonica.com/saxon-c/doc/html/classXslt30Processor.html"
+                  target="_blank">Xslt30Processor</a>
+            </li>
+            <li>Python APIs: <a
+                  href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXsltProcessor"
+                  target="_blank">PyXsltProcessor </a> and <a
+                  href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXslt30Processor"
+                  target="_blank">PyXslt30Processor </a>
+            </li>
+            <li>PHP APIs: <a href="/api/saxon_c_php_api/saxon_c_php_xsltprocessor"
+                  >Saxon\XsltProcessor</a> and <a
+                  href="/api/saxon_c_php_api/saxon_c_php_xslt30processor">Saxon\Xslt30Processor</a>
+            </li>
+         </ul>
+      </li>
+      <li>Added Python3 API to the suite of programming languages supported by Saxon/C. The Python
+         extension was implemented using Cython.</li>
+      <li>Updated to Excelsior JET Enterprise 15.3 (MP1) cross compiler tool.</li>
+      <li>Additional methods in the APIs for XSLT and XQuery in C++ and PHP. (Also supported in the
+         new Python API.)</li>
+      <li>XML Catalog file support in Saxon/C.</li>
+      <li>Support of Saxon's XSLT stylesheet export file (SEF).</li>
+      <li>Bug <a href="https://saxonica.plan.io/issues/2055" target="_blank">#2055</a>: Apache
+         allocates a lot of memory without releasing it </li>
+      <li>Bug <a href="https://saxonica.plan.io/issues/3837" target="_blank">#3837</a>: Cannot
+         locate the built PHP extension in Saxon/HE for Mac OS X </li>
+      <li>Bug <a href="https://saxonica.plan.io/issues/4274" target="_blank">#4274</a>: Using a
+         catalog file with Saxon in PHP </li>
+      <li>Bug <a href="https://saxonica.plan.io/issues/4302" target="_blank">#4302</a>: High memory
+         usage with Saxon/C + PHP </li>
+
+   </ul>
 
 
-    <h3>Changes between releases 1.0 and 1.1</h3>
+   <h3>Changes between releases 1.0 and 1.1</h3>
 
-    <ul>
-                                   <li>Updated the core XSLT processor to the Java Saxon 9.8.0.4
-                                       version. Please see <a href="../products/latest.xml#saxon-c"
-                                           class="bodylink">Latest Releases: Saxon/C</a> for details</li>
-                                   <li>Updated APIs: Support for XSLT 3.0, XQuery 3.1, XPath 2.0/3.0 and Schema Validation 1.0/1.1</li>
-                                   <li>Added XDM Data Model API in support of the specs XPath, XQuery, XSLT and Schema Validation</li>
-                                   <li>Support for user defined functions. Users can now write their functions in C++/PHP and invoke them in XSLT, XQuery and XPath.</li>
-                                   <li>Support for PHP7 distribution</li>
-                                   <li>Windows Saxon/C builds</li>
-                                   <li>Updated to Excelsior JET 11.3 (MP1) - cross compiler tool of Saxon</li>
-                                   <li>Revised API for Xslt, XQuery in C, C++ and PHP</li>
-
-
-                               </ul>
-    
-    <p>For details of bug fixes, see the <a class="bodylink"
-                                            href="https://saxonica.plan.io/projects/saxon-c">Saxon/C project
-    </a> at the Saxonica
-        community site.
-    </p>
+   <ul>
+      <li>Updated the core XSLT processor to the Java Saxon 9.8.0.4 version.</li>
+      <li>Updated APIs: Support for XSLT 3.0, XQuery 3.1, XPath 2.0/3.0 and Schema Validation
+         1.0/1.1.</li>
+      <li>Added XDM Data Model API in support of the specs XPath, XQuery, XSLT and Schema
+         Validation.</li>
+      <li>Support for user defined functions. Users can now write their functions in C++/PHP and
+         invoke them in XSLT, XQuery and XPath.</li>
+      <li>Support for PHP7 distribution</li>
+      <li>Windows Saxon/C builds</li>
+      <li>Updated to Excelsior JET 11.3 (MP1) cross compiler tool</li>
+      <li>Revised API for XSLT and XQuery in C, C++ and PHP</li>
+   </ul>
 
 
 </article>

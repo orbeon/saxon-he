@@ -1,746 +1,1540 @@
 <?xml version="1.0" encoding="utf-8"?>
 <article id="api" title="Saxon/C API">
-    <h1>Saxon/C API</h1>
+   <h1>Saxon/C API</h1>
 
-    <p>This section describes the Saxon/C API. The APIs support the specifications XSLT 3.0, XQuery 3.1, Schema Validation 1.0/1.1 and XPath 3.1.
-        Saxon/C can be used in the following langauges: C/C++, PHP and Python. Below we provide links to the APIs for those langauages.</p>
+   <p>This section describes the Saxon/C API. The APIs support the XSLT 3.0, XQuery 3.1, XPath 3.1
+      and Schema Validation 1.0/1.1 specifications. Saxon/C can be used in C/C++, PHP and Python,
+      and links to the APIs in each of these languages are provided below.</p>
 
+   <p>The Saxon/C API provides six main classes:</p>
 
+   <table>
+      <thead>
+         <tr>
+            <td>Class</td>
+            <td>Description</td>
+            <td>APIs in programming languages</td>
+         </tr>
+      </thead>
+      <tbody>
+         <tr>
+            <td>
+               <p>
+                  <code>SaxonProcessor</code>
+               </p>
+            </td>
+            <td>
+               <p>An SaxonProcessor acts as a factory for generating XQuery, XPath, Schema and XSLT
+                  compilers. This class is itself the context that needs to be managed (i.e.
+                  allocation and release resources).</p>
+            </td>
+            <td><a href="https://www.saxonica.com/saxon-c/doc/html/classSaxonProcessor.html">C++</a>
+               | <a href="/api/saxon_c_php_api/saxon_c_php_saxonprocessor">PHP</a> | <a
+                  href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PySaxonProcessor"
+                  >Python</a></td>
+         </tr>
+         <tr>
+            <td>
+               <p>
+                  <code>XsltProcessor</code>
+               </p>
+            </td>
+            <td>
+               <p>An XsltProcessor represents factory to compile, load and execute a stylesheet. It
+                  is possible to cache the context and the stylesheet in the XsltProcessor</p>
+            </td>
+            <td><a href="https://www.saxonica.com/saxon-c/doc/html/classXsltProcessor.html"
+                  class="bodylink code">C++</a> | <a
+                  href="/api/saxon_c_php_api/saxon_c_php_xsltprocessor">PHP</a> | <a
+                  href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXsltProcessor"
+                  >Python</a></td>
+         </tr>
+         <tr>
+            <td>
+               <p>
+                  <code>Xslt30Processor</code>
+               </p>
+            </td>
+            <td>
+               <p>An Xslt30Processor represents factory to compile, load and execute a stylesheet.
+                  It supports new options for invoking a stylesheet, corresponding to facilities
+                  defined in the XSLT 3.0 specification, but is not confined to XSLT 3.0, it can
+                  work well with XSLT 2.0 and XSLT 1.0 stylesheets.</p>
+            </td>
+            <td><a href="https://www.saxonica.com/saxon-c/doc/html/classXslt30Processor.html"
+                  >C++</a> | <a href="/api/saxon_c_php_api/saxon_c_php_xslt30processor">PHP</a> | <a
+                  href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXslt30Processor"
+                  >Python</a></td>
+         </tr>
+         <tr>
+            <td>
+               <p>
+                  <code>XQueryProcessor</code>
+               </p>
+            </td>
+            <td>
+               <p>An PyXQueryProcessor object represents factory to compile, load and execute
+                  queries.</p>
 
-    <p>The <code>Saxon/C</code> API provides four main classes across lanaguages C++, PHP and Python.</p>
-    <table>
-        <thead>
-            <tr>
-                <td>Class</td>
-                <td>Description</td>
-                <td>APIs in programming languages</td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    <p>
-                        <code>SaxonProcessor</code>
-                    </p>
-                </td>
-                <td>
-                    <p>An SaxonProcessor acts as a factory for generating XQuery, XPath, Schema and XSLT compilers.
-                    This class is itself the context that needs to be managed (i.e. allocation &amp; release resources)</p>
-                </td>
-                <td><a href="https://www.saxonica.com/saxon-c/doc/html/classSaxonProcessor.html" class="bodylink code">C++</a> | <a href="/api/saxon_c_php_api/saxon_c_php_saxonprocessor">PHP</a> | <a href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PySaxonProcessor" class="bodylink code">Python</a></td>
-            </tr>
-            <tr>
-                <td>
-                    <p>
-                        <code>XsltProcessor</code>
-                    </p>
-                </td>
-                <td>
-                    <p>An XsltProcessor represents factory to compile, load and execute a stylesheet.
-                    It is possible to cache the context and the stylesheet in the XsltProcessor</p>
-                </td>
-                <td><a href="https://www.saxonica.com/saxon-c/doc/html/classXsltProcessor.html" class="bodylink code">C++</a> | <a href="/api/saxon_c_php_api/saxon_c_php_xsltprocessor">PHP</a> | <a href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXsltProcessor" class="bodylink code">Python</a></td>
-            </tr>
-            <tr>
-                <td>
-                    <p>
-                        <code>Xslt30Processor</code>
-                    </p>
-                </td>
-                <td>
-                    <p>An Xslt30Processor represents factory to compile, load and execute a stylesheet. It supports new options
-                        for invoking a stylesheet, corresponding to facilities defined in the XSLT 3.0 specification,
-                        but is not confined to XSLT 3.0, it can work well with XSLT 2.0 and XSLT 1.0 stylesheets.</p>
-                </td>
-                <td><a href="https://www.saxonica.com/saxon-c/doc/html/classXslt30Processor.html" class="bodylink code">C++</a> | <a href="/api/saxon_c_php_api/saxon_c_php_xslt30processor">PHP</a> | <a href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXslt30Processor" class="bodylink code">Python</a></td>
-            </tr>
-            <tr>
-                <td>
-                    <p>
-                        <code>XQueryProcessor</code>
-                    </p>
-                </td>
-                <td>
-                    <p>An PyXQueryProcessor object represents factory to compile, load and execute queries.</p>
-
-                </td>
-                <td><a href="https://www.saxonica.com/saxon-c/doc/html/classXQueryProcessor.html" class="bodylink code">C++</a> | <a href="/api/saxon_c_php_api/saxon_c_php_xqueryprocessor">PHP</a> | <a href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXQueryProcessor" class="bodylink code">Python</a></td>
-            </tr>
-            <tr>
-                <td>
-                    <p>
-                        <code>XPathProcessor</code>
-                    </p>
-                </td>
-                <td>
-                    <p>An XPathProcessor represents factory to compile, load and execute the XPath query.</p>
-                </td>
-                <td><a href="https://www.saxonica.com/saxon-c/doc/html/classXPathProcessor.html" class="bodylink code">C++</a> | <a href="/api/saxon_c_php_api/saxon_c_php_xpathprocessor">PHP</a> | <a href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXPathProcessor" class="bodylink code">Python</a></td>
-            </tr>
-            <tr>
-                <td>
-                    <p>
-                        <code>SchemaValidator</code>
-                    </p>
-                </td>
-                <td>
-                    <p>	An SchemaValidator represents factory for validating instance documents against a schema.</p>
-                </td>
-                <td><a href="https://www.saxonica.com/saxon-c/doc/html/classschemavalidator.html" class="bodylink code">C++</a> | <a href="/api/saxon_c_php_api/saxon_c_php_schemavalidator">PHP</a> | <a href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PySchemaValidator" class="bodylink code">Python</a></td>
-            </tr>
-        </tbody>
-    </table>
-
-
-    <section id="saxon_c_cpp_api" title="Saxon/C C++ API">
-    <h3>Saxon/C C++ API</h3>
-        <p>Saxon/C is built by cross compiling the Java code of Saxon 9.9.1.5 using the Excelsior Jet Enterprise 15.3 edition(MP1).
-        This generates platform specific machine code, which we interface with C/C++ using the Java Native Interace (JNI).
-        The following Saxon/C API classes are available in C++ to processor in XSLT, XQuery, XPath and Schema validation:
-            <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classSaxonProcessor.html">SaxonProcessor</a>, <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classXsltProcessor.html">XsltProcessor</a>,
-            <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classXslt30Processor.html">Xslt30Processor</a>, <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classXPathProcessor.html">XPathProcessor</a>,
-            <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classXQueryProcessor.html">XQueryProcessor</a> and <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classSchemaValidator.html">SchemaValidator</a>. We also have class for a sub-set of the XDM data model: <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classXdmValue.html">XdmValue</a>, <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classXdmNode.html">XdmNode</a>, <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classXdmItem.html">XdmItem</a> and <a class="bodylink" href="https://www.saxonica.com/saxon-c/doc/html/classXdmAtomicValue.html">XdmAtomicValue</a>.</p>
-        <p>See the API class list: <a href="https://www.saxonica.com/saxon-c/doc/html/annotated.html" class="bodylink code">C++ documentation</a></p>
-    </section>
-
-
-    <section id="saxon_c_php_api" title="Saxon/C PHP API">
-
-        <section id="saxon_c_php_saxonprocessor" title="SaxonSaxonProcessor">
-        <h3>Saxon\SaxonProcessor Class</h3>
-        <table>
-                <thead>
-                    <tr>
-                        <td>Return</td>
-                        <td>Function name and Description</td>
-                    </tr>
-                </thead>
-            
-            
-            <tr >
-            <td ></td><td ><em><a class="bodylink code" href="classSaxonProcessor.html">SaxonProcessor()</a></em> <br/>
-             <em>Default Constructor. Create an unlicensed Saxon Processor</em>   </td></tr>
-            <tr >
-            <td ></td><td ><a class="bodylink code" href="classSaxonProcessor.html">SaxonProcessor</a>(boolean $license)<br/>
-             <em>Constructor. Indicates whether the Processor requires features of Saxon that need a license file. If false, the method will creates a Configuration appropriate for Saxon HE (Home edition). If true, the method will create a Configuration appropriate to the version of the software that is running Saxon-PE or Saxon-EE</em>   </td></tr>
-            <tr >
-            <td ></td><td ><a class="bodylink code" href="classSaxonProcessor.html">SaxonProcessor</a>(boolean $license, string $cwd) <br/>
-             <em>Constructor. Indicates whether the Processor requires features of Saxon that need a license file. The cwd arugment is used to manually set the current working directory used for executions of source files</em>   </td></tr>
-            <tr >
-            <td ><a class="bodylink code" href="classXdmValue.html">XdmValue</a>  </td><td >createAtomicValue($primitive_type val)<br/>
-             <em>Create an Xdm Atomic value from any of the main primitive types (i.e. bool, int, float, double, string)</em>   </td></tr>
-            <tr >
-            <td >Saxon\<a class="bodylink code" href="classXdmNode.html">XdmNode</a>  </td><td >parseXmlFromString(string $value) <br/>
-             <em>Create an <a class="bodylink code" href="classXdmNode.html">XdmNode</a> object. The $value is a lexical representation of the XML document</em>   </td></tr>
-            <tr >
-            <td >Saxon\<a class="bodylink code" href="classXdmNode.html">XdmNode</a>  </td><td >parseXmlFromFile(string $fileName) <br/>
-             <em>Create an <a class="bodylink code" href="classXdmNode.html">XdmNode</a> object. Value is a string type and the file name to the XML document. File name can be relative or absolute. IF relative the cwd is used to resolve the file.</em>   </td></tr>
-            <tr >
-            <td >void  </td><td >setcwd(string $cwd) <br/>
-             <em>Set the current working directory used to resolve against files</em>   </td></tr>
-            <tr >
-            <td >Saxon\<a class="bodylink code" href="classXdmNode.html">XdmNode</a>  </td><td >parseXmlFromFile(string $fileName) <br/>
-             <em>Create an <a class="bodylink code" href="classXdmNode.html">XdmNode</a> object. Value is a string type and the file name to the XML document. File name can be relative or absolute. IF relative the cwd is used to resolve the file.</em>   </td></tr>
-            <tr >
-            <td >void  </td><td >setResourceDirectory(string $dir) <br/>
-             <em>Set the resources directory of where Saxon can locate data folder</em>   </td></tr>
-            <tr >
-            <td >void  </td><td >setConfigurationProperty(string $name, string $value) <br/>
-             <em>Set a configuration property specific to the processor in use. Properties specified here are common across all the processors. See <a class="bodylink code" href="http://www.saxonica.com/documentation/index.html#!configuration/config-features">Configuration Features</a></em>   </td></tr>
-            <tr >
-            <td >Saxon\<a class="bodylink code" href="classXsltProcessor.html">XsltProcessor</a>  </td><td >newXsltProcessor() <br/>
-             <em>Create an <a class="bodylink code" href="classXsltProcessor.html">XsltProcessor</a> in the PHP environment. An <a class="bodylink code" href="classXsltProcessor.html">XsltProcessor</a> is used to compile and execute XSLT sytlesheets</em>   </td></tr>
-            <tr >
-            <td >Saxon\<a class="bodylink code" href="classXslt30Processor.html">Xslt30Processor</a>  </td><td >newXslt30Processor() <br/>
-             <em>Create an <a class="bodylink code" href="classXslt30Processor.html">Xslt30Processor</a> in the PHP environment specifically designed for XSLT 3.0 processing. An <a class="bodylink code" href="classXslt30Processor.html">Xslt30Processor</a> is used to compile and execute XSLT 3.0 sytlesheets. Use this class object (<a class="bodylink code" href="classXslt30Processor.html">Xslt30Processor</a>) instead of the <a class="bodylink code" href="classXsltProcessor.html">XsltProcessor</a> for XSLT 3.0 processing.</em>   </td></tr>
-            <tr >
-            <td >Saxon\<a class="bodylink code" href="classXQueryProcessor.html">XQueryProcessor</a>  </td><td >newXQueryProcessor() <br/>
-             <em>Create an <a class="bodylink code" href="classXQueryProcessor.html">XQueryProcessor</a> in the PHP environment. An <a class="bodylink code" href="classXQueryProcessor.html">XQueryProcessor</a> is used to compile and execute XQuery queries</em>   </td></tr>
-            <tr >
-            <td >Saxon\XPathProcesssor  </td><td >newXPathProcessor() <br/>
-             <em>Create an <a class="bodylink code" href="classXPathProcessor.html">XPathProcessor</a> in the PHP environment. An <a class="bodylink code" href="classXPathProcessor.html">XPathProcessor</a> is used to compile and execute XPath expressions</em>   </td></tr>
-            <tr >
-            <td >Saxon\<a class="bodylink code" href="classSchemaValidator.html">SchemaValidator</a>  </td><td >newSchemaValidator() <br/>
-             <em>Create a <a class="bodylink code" href="classSchemaValidator.html">SchemaValidator</a> in the PHP environment. A <a class="bodylink code" href="classSchemaValidator.html">SchemaValidator</a> provides capabilities to load and cache XML schema definitions. You can also valdiate source documents with egistered XML schema definitions</em>   </td></tr>
-            <tr >
-            <td >string  </td><td >version() <br/>
-             <em>Report the Java Saxon version</em>   </td></tr>
-            <tr >
-            <td >void  </td><td >registerPHPFunctions(string $library) <br/>
-             <em>Enables the ability to use PHP functions as XSLT functions. Accepts as parameter the full path of the Saxon/C PHP Extension library. This is needed to do the callbacks</em>   </td></tr>
-            </table>
-               
-        </section>
-
-    <section id="saxon_c_php_xsltprocessor" title="Saxon\XsltProcessor">
-            <h3>Saxon\XsltProcessor Class</h3>
+            </td>
+            <td><a href="https://www.saxonica.com/saxon-c/doc/html/classXQueryProcessor.html"
+                  >C++</a> | <a href="/api/saxon_c_php_api/saxon_c_php_xqueryprocessor">PHP</a> | <a
+                  href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXQueryProcessor"
+                  >Python</a></td>
+         </tr>
+         <tr>
+            <td>
+               <p>
+                  <code>XPathProcessor</code>
+               </p>
+            </td>
+            <td>
+               <p>An XPathProcessor represents factory to compile, load and execute the XPath
+                  query.</p>
+            </td>
+            <td><a href="https://www.saxonica.com/saxon-c/doc/html/classXPathProcessor.html">C++</a>
+               | <a href="/api/saxon_c_php_api/saxon_c_php_xpathprocessor">PHP</a> | <a
+                  href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXPathProcessor"
+                  >Python</a></td>
+         </tr>
+         <tr>
+            <td>
+               <p>
+                  <code>SchemaValidator</code>
+               </p>
+            </td>
+            <td>
+               <p> An SchemaValidator represents factory for validating instance documents against a
+                  schema.</p>
+            </td>
+            <td><a href="https://www.saxonica.com/saxon-c/doc/html/classschemavalidator.html"
+                  >C++</a> | <a href="/api/saxon_c_php_api/saxon_c_php_schemavalidator">PHP</a> | <a
+                  href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PySchemaValidator"
+                  >Python</a></td>
+         </tr>
+      </tbody>
+   </table>
 
 
-        <table>
-                        <thead>
-                            <tr>
-                                <td>Return</td>
-                                <td>Function name and Description</td>
-                            </tr>
-                        </thead>
+   <section id="saxon_c_cpp_api" title="Saxon/C C++ API">
+      <h1>Saxon/C C++ API</h1>
+
+      <p>Saxon/C 1.2 is built from the Saxon 9.9.1.5 Java product by cross compiling using Excelsior
+         JET Enterprise 15.3 edition (MP1). This generates platform specific machine code, which is
+         interfaced with C/C++ using the Java Native Interace (JNI). The following Saxon/C API
+         classes are available in C++ to process XSLT, XQuery XPath and Schema validation:</p>
+      <ul>
+         <li>
+            <a class="bodylink code"
+               href="https://www.saxonica.com/saxon-c/doc/html/classSaxonProcessor.html"
+               >SaxonProcessor</a>
+         </li>
+         <li>
+            <a class="bodylink code"
+               href="https://www.saxonica.com/saxon-c/doc/html/classXsltProcessor.html"
+               >XsltProcessor</a>
+         </li>
+         <li>
+            <a class="bodylink code"
+               href="https://www.saxonica.com/saxon-c/doc/html/classXslt30Processor.html"
+               >Xslt30Processor</a>
+         </li>
+         <li>
+            <a class="bodylink code"
+               href="https://www.saxonica.com/saxon-c/doc/html/classXPathProcessor.html"
+               >XPathProcessor</a>
+         </li>
+         <li>
+            <a class="bodylink code"
+               href="https://www.saxonica.com/saxon-c/doc/html/classXQueryProcessor.html"
+               >XQueryProcessor</a>
+         </li>
+         <li>
+            <a class="bodylink code"
+               href="https://www.saxonica.com/saxon-c/doc/html/classSchemaValidator.html"
+               >SchemaValidator</a>
+         </li>
+      </ul>
+      <p>Also, the following classes are available for a subset of the XDM data model:</p>
+      <ul>
+         <li>
+            <a class="bodylink code" href="https://www.saxonica.com/saxon-c/doc/html/classXdmValue.html"
+               >XdmValue</a>
+         </li>
+         <li>
+            <a class="bodylink code" href="https://www.saxonica.com/saxon-c/doc/html/classXdmNode.html"
+               >XdmNode</a>
+         </li>
+         <li>
+            <a class="bodylink code" href="https://www.saxonica.com/saxon-c/doc/html/classXdmItem.html"
+               >XdmItem</a>
+         </li>
+         <li>
+            <a class="bodylink code"
+               href="https://www.saxonica.com/saxon-c/doc/html/classXdmAtomicValue.html"
+               >XdmAtomicValue</a>
+         </li>
+      </ul>
+      <p>See the API class list: <a href="https://www.saxonica.com/saxon-c/doc/html/annotated.html"
+            >C++ documentation</a></p>
+   </section>
 
 
-            <tr >
-            <td ><a class="bodylink code" href="classXdmValue.html">XdmValue</a>  </td><td >runQueryToValue() <br/>
-             <em>compile and evaluate the query. Result returned as an <a class="bodylink code" href="classXdmValue.html">XdmValue</a> object. If there are failures then a null is returned</em>   </td></tr>
-            <tr >
-            <td >string  </td><td >runQueryToString() <br/>
-             <em>compile and evaluate the query. Result returned as string. If there are failures then a null is returned</em>   </td></tr>
-            <tr >
-            <td >void  </td><td >runQueryToFile(string $outfilename) <br/>
-             <em>compile and evaluate the query. Save the result to file</em>   </td></tr>
-            <tr >
-            <td >void  </td><td >setQueryContent(string $str) <br/>
-             <em>query supplied as a string</em>   </td></tr>
-            <tr >
-            <td >void  </td><td >setQueryItem(<a class="bodylink code" href="classXdmItem.html">XdmItem</a> $item) <br/>
-             **   </td></tr>
-            <tr >
-            <td >void  </td><td >setQueryFile($string $filename) <br/>
-             <em>query supplied as a file</em>   </td></tr>
-            <tr >
-            <td >void  </td><td >setContextItemFromFile(string $fileName) <br/>
-             <em>Set the initial context item for the query. Supplied as filename</em>   </td></tr>
-            <tr >
-            <td >void  </td><td >setContextItem(Xdm $obj) <br/>
-             <em>Set the initial context item for the query. Any one of the objects are accepted: <a class="bodylink code" href="classXdmValue.html">XdmValue</a>, <a class="bodylink code" href="classXdmItem.html">XdmItem</a>, <a class="bodylink code" href="classXdmNode.html">XdmNode</a> and <a class="bodylink code" href="classXdmAtomicValue.html">XdmAtomicValue</a>.</em>   </td></tr>
-            <tr >
-            <td >void  </td><td >setQueryBaseURI(string $uri) <br/>
-             <em>Set the static base URI for a query expressions compiled using this XQuery Processor. The base URI is part of the static context, and is used to resolve any relative URIS appearing within a query</em>   </td></tr>
-            <tr >
-            <td >void  </td><td >declareNamespace(string $prefix, string $namespace) <br/>
-             <em>Declare a namespace binding as part of the static context for XPath expressions compiled using this XQuery processor</em>   </td></tr>
-            <tr >
-            <td >void  </td><td >setParameter(string $name, <a class="bodylink code" href="classXdmValue.html">XdmValue</a> $value) <br/>
-             <em>Set the parameters required for XQuery Processor</em>   </td></tr>
-            <tr >
-            <td >void  </td><td >setProperty(string $name, string $value) <br/>
-             <em>Set properties for Query.</em>   </td></tr>
-            <tr >
-            <td >void  </td><td >clearParameters() <br/>
-             <em>Clear parameter values set</em>   </td></tr>
-            <tr >
-            <td >void  </td><td >clearProperties() <br/>
-             <em>Clear property values set</em>   </td></tr>
-            <tr >
-            <td >void  </td><td >exceptionClear() <br/>
-             <em>Clear any exception thrown</em>   </td></tr>
-            <tr >
-            <td >string  </td><td >getErrorCode(int $i) <br/>
-             <em>Get the ith error code if there are any errors</em>   </td></tr>
-            <tr >
-            <td >string  </td><td >getErrorMessage(int $i) <br/>
-             <em>Get the ith error message if there are any error</em>   </td></tr>
-            <tr >
-            <td >int  </td><td >getExceptionCount() <br/>
-             <em>Get number of error during execution or evaluate of query</em>   </td></tr>
+   <section id="saxon_c_php_api" title="Saxon/C PHP API">
 
-        </table>
-    </section>
+      <h1>Saxon/C PHP API</h1>
+      
+      <p>The following classes are available in the PHP API:</p>
 
-        <section id="saxon_c_php_xslt30processor" title="Saxon\slt30Processor">
-                    <h3>Saxon\Xslt30Processor Class</h3>
-                    <table>
+      <nav>
+         <ul/>
+      </nav>
 
-                        <thead>
-                                                   <tr>
-                                                       <td>Return</td>
-                                                       <td>Function name and Description</td>
-                                                   </tr>
-                                               </thead>
+      <section id="saxon_c_php_saxonprocessor" title="Saxon\SaxonProcessor">
+         <h1>Saxon\SaxonProcessor Class</h1>
 
-                        <tr >
-                        <td >void  </td><td >addPackages(array packageFileNames) <br/>
-                         <em>File names to XsltPackages stored on filestore are added to a set of packages, which will imported later for use when compiling.</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >applyTemplatesReturningFile(string $stylesheetFileName) <br/>
-                         <em>Invoke the stylesheet by applying templates to a supplied input sequence, Saving the results to file. The stylesheet file name argument can be supplied here. If null then the most recently compiled stylsheet is used.</em>   </td></tr>
-                        <tr >
-                        <td >string  </td><td >applyTemplatesReturningString(string $stylesheetFileName) <br/>
-                         <em>Invoke the stylesheet by applying templates to a supplied input sequence. The result is returned as a serialized string. The stylesheet file name argument can be supplied here. If null then the most recently compiled stylsheet is used.</em>   </td></tr>
-                        <tr >
-                        <td >PyXdmValue  </td><td >applyTemplatesReturningValue(string $stylesheetFileName) <br/>
-                         <em>Invoke the stylesheet by applying templates to a supplied input sequence. the result is returned as an <a class="bodylink code" href="classXdmValue.html">XdmValue</a> object. The stylesheet file name argument can be supplied here. If null then the most recently compiled stylsheet is used.</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >compileFromAssociatedFile(string xmlFileName)<br/>
-                         <em>Get the stylesheet associated via the xml-stylesheet processing instruction (see <a href="http://www.w3.org/TR/xml-stylesheet/">http://www.w3.org/TR/xml-stylesheet/</a>) with the document document specified in the source parameter, and that match the given criteria. If there are several suitable xml-stylesheet processing instructions, then the returned Source will identify a synthesized stylesheet module that imports all the referenced stylesheet module.</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >compileFromFile(string $fileName) <br/>
-                         <em>Compile a stylesheet suplied as by file name</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >compileFromString(string $str) <br/>
-                         <em>Compile a stylesheet received as a string.</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >compileFromValue(<a class="bodylink code" href="classXdmNode.html">XdmNode</a> $node)<br/>
-                         <em>Compile a stylesheet received as an <a class="bodylink code" href="classXdmNode.html">XdmNode</a>.</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >compileFromFileAndSave(string $fileName, string outputFileName) <br/>
-                         <em>Compile a stylesheet suplied as by file name and save as an exported file (SEF)</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >compileFromStringAndSave(string $str, string outputFileName) <br/>
-                         <em>Compile a stylesheet received as a string and save as an exported file (SEF).</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >compileFromValueAndSave(<a class="bodylink code" href="classXdmNode.html">XdmNode</a> $node, string outputFileName)<br/>
-                         <em>Compile a stylesheet received as an <a class="bodylink code" href="classXdmNode.html">XdmNode</a> and save as an exported file (SEF).</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >callFunctionReturningFile(string $FunctionName, array arguments, string outputfileName) <br/>
-                         <em>Call a public user-defined function in the stylesheet. Here we wrap the result in an XML document, and sending this document to a specified file. Arguments: function name and array of <a class="bodylink code" href="classXdmValue.html">XdmValue</a> objects - he values of the arguments to be supplied to the function. These will be converted if necessary to the type as defined in the function signature, using the function conversion rules. *   </em></td></tr>
-                        <tr >
-                        <td ><em> string  </em></td><td ><em> callFunctionReturningString(string $FunctionName, array arguments) <br/>
-                         *Call a public user-defined function in the stylesheet. Here we wrap the result in an XML document, and serialized this document to string value. Arguments: function name and array of <a class="bodylink code" href="classXdmValue.html">XdmValue</a> objects - he values of the arguments to be supplied to the function. These will be converted if necessary to the type as defined in the function signature, using the function conversion rules.</em>   </td></tr>
-                        <tr >
-                        <td >PyXdmValue  </td><td >callFunctionReturningValue(string $FunctionName, array arguments) <br/>
-                         <em>Call a public user-defined function in the stylesheet. Here we wrap the result in an XML document, and return the document as an XdmVale. Arguments: function name and array of <a class="bodylink code" href="classXdmValue.html">XdmValue</a> objects - he values of the arguments to be supplied to the function. These will be converted if necessary to the type as defined in the function signature, using the function conversion rules.</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >callTemplateReturningFile(string $stylesheetFileName, string $templateName, string outputfileName) <br/>
-                         <em>Invoke a transformation by calling a named template. The result is stored in the supplied outputfile name. If the templateName argument is null then the xsl:iitial-template is used. Parameters supplied using setInitialTemplateParameters are made available to the called template.</em>   </td></tr>
-                        <tr >
-                        <td >string  </td><td >callTemplateReturningString(string $stylesheetFileName, string $templateName) <br/>
-                         <em>Invoke a transformation by calling a named template and return result as a string. If the templateName argument is null then the xsl:iitial-template is used. Parameters supplied using setInitialTemplateParameters are made available to the called template.</em>   </td></tr>
-                        <tr >
-                        <td >PyXdmValue  </td><td >callTemplateReturningValue(string $stylesheetFileName, string $templateName) <br/>
-                         <em>Invoke a transformation by calling a named template and return result as an <a class="bodylink code" href="classXdmValue.html">XdmValue</a>. If the templateName argument is null then the xsl:iitial-template is used. Parameters supplied using setInitialTemplateParameters are made available to the called template.</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >transformFileToFile(string $sourceFileName, string $stylesheetFileName, string outputfileName) <br/>
-                         <em>Perform a one shot transformation. The result is stored in the supplied outputfile name.</em>   </td></tr>
-                        <tr >
-                        <td ><a class="bodylink code" href="classXdmValue.html">XdmValue</a>  </td><td >transformFileToValue(string $fileName) <br/>
-                         <em>Perform a one shot transformation. The result is returned as an <a class="bodylink code" href="classXdmValue.html">XdmValue</a></em>   </td></tr>
-                        <tr >
-                        <td ><a class="bodylink code" href="classXdmValue.html">XdmValue</a>  </td><td >transformFileToString(string $fileName) <br/>
-                         <em>Perform a one shot transformation. The result is returned as a stringe</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >transformToFile() <br/>
-                         <em>Perform the transformation based upon cached stylesheet and source document. Result is saved to the supplied file name</em>   </td></tr>
-                        <tr >
-                        <td >string  </td><td >transformToString() <br/>
-                         <em>Perform the transformation based upon cached stylesheet and source document. Result is returned as a serialized string</em>   </td></tr>
-                        <tr >
-                        <td >PyXdmValue  </td><td >transformToValue() <br/>
-                         <em>Perform the transformation based upon cached stylesheet and any source document. Result returned as an <a class="bodylink code" href="classXdmValue.html">XdmValue</a> object. If there are failures then a null is returned</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >setInitialTemplateParameters(array parameters, bool tunnel) <br/>
-                         <em>Set parameters to be passed to the initial template. These are used whether the transformation is invoked by applying templates to an initial source item, or by invoking a named template. The parameters in question are the xsl:param elements appearing as children of the xsl:template element. The tunnel argument if set to true these values are to be used for setting tunnel parameters.</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >setInitialMatchSelection() <br/>
-                         <em>The initial value to which templates are to be applied (equivalent to the 'select' attribute of xsl:apply-templates)</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >setInitialMatchSelectionAsFile <br/>
-                         <em>The initial filename to which templates are to be applied (equivalent to the 'select' attribute of xsl:apply-templates) *   </em></td></tr>
-                        <tr >
-                        <td ><em> void  </em></td><td ><em> setGlobalContextItem <br/>
-                         *Set the source document from an <a class="bodylink code" href="classXdmNode.html">XdmNode</a> for the transformation.</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >setGlobalContextFromFile <br/>
-                         <em>Set the source from file for the transformation.</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >setOutputFile(string $fileName) <br/>
-                         <em>Set the output file name of where the transformation result is sent</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >setParameter(string $name, <a class="bodylink code" href="classXdmValue.html">XdmValue</a> $value) <br/>
-                         <em>Set the parameters required for XSLT stylesheet</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >setProperty(string $name, string $value) <br/>
-                         <em>Set properties for the stylesheet.</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >setJustInTimeCompilation(bool $value) <br/>
-                         <em>ay whether just-in-time compilation of template rules should be used.</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >setResultAsRawValue(bool $value) <br/>
-                         <em>Set true if the return type of callTemplate, applyTemplates and transform methods is to return <a class="bodylink code" href="classXdmValue.html">XdmValue</a>, otherwise return <a class="bodylink code" href="classXdmNode.html">XdmNode</a> object with root Document node.</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >clearParameters() <br/>
-                         <em>Clear parameter values set</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >clearProperties() <br/>
-                         <em>Clear property values set</em>   </td></tr>
-                        <tr >
-                        <td >void  </td><td >exceptionClear() <br/>
-                         <em>Clear any exception thrown</em>   </td></tr>
-                        <tr >
-                        <td >string  </td><td >getErrorCode(int $i) <br/>
-                         <em>Get the ith error code if there are any errors</em>   </td></tr>
-                        <tr >
-                        <td >string  </td><td >getErrorMessage(int $i) <br/>
-                         <em>Get the ith error message if there are any error</em>   </td></tr>
-                        <tr >
-                        <td >int  </td><td >getExceptionCount() <br/>
-                         <em>Get number of error during execution or evaluate of stylesheet</em>   </td></tr>
-
-                    </table>
-            </section>
-
-        <section id="saxon_c_php_xqueryprocessor" title="Saxon\XQueryProcessor">
-                    <h3>Saxon\XQueryProcessor Class</h3>
-            <table><thead>
-                                       <tr>
-                                           <td>Return</td>
-                                           <td>Function name and Description</td>
-                                       </tr>
-                                   </thead>
-
-                
-
-                <tr >
-                <td ><a class="bodylink code" href="classXdmValue.html">XdmValue</a>  </td><td >runQueryToValue() <br/>
-                 <em>compile and evaluate the query. Result returned as an <a class="bodylink code" href="classXdmValue.html">XdmValue</a> object. If there are failures then a null is returned</em>   </td></tr>
-                <tr >
-                <td >string  </td><td >runQueryToString() <br/>
-                 <em>compile and evaluate the query. Result returned as string. If there are failures then a null is returned</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >runQueryToFile(string $outfilename) <br/>
-                 <em>compile and evaluate the query. Save the result to file</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >setQueryContent(string $str) <br/>
-                 <em>query supplied as a string</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >setQueryItem(<a class="bodylink code" href="classXdmItem.html">XdmItem</a> $item) <br/>
-                 **   </td></tr>
-                <tr >
-                <td >void  </td><td >setQueryFile($string $filename) <br/>
-                 <em>query supplied as a file</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >setContextItemFromFile(string $fileName) <br/>
-                 <em>Set the initial context item for the query. Supplied as filename</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >setContextItem(Xdm $obj) <br/>
-                 <em>Set the initial context item for the query. Any one of the objects are accepted: <a class="bodylink code" href="classXdmValue.html">XdmValue</a>, <a class="bodylink code" href="classXdmItem.html">XdmItem</a>, <a class="bodylink code" href="classXdmNode.html">XdmNode</a> and <a class="bodylink code" href="classXdmAtomicValue.html">XdmAtomicValue</a>.</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >setQueryBaseURI(string $uri) <br/>
-                 <em>Set the static base URI for a query expressions compiled using this XQuery Processor. The base URI is part of the static context, and is used to resolve any relative URIS appearing within a query</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >declareNamespace(string $prefix, string $namespace) <br/>
-                 <em>Declare a namespace binding as part of the static context for XPath expressions compiled using this XQuery processor</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >setParameter(string $name, <a class="bodylink code" href="classXdmValue.html">XdmValue</a> $value) <br/>
-                 <em>Set the parameters required for XQuery Processor</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >setProperty(string $name, string $value) <br/>
-                 <em>Set properties for Query.</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >clearParameters() <br/>
-                 <em>Clear parameter values set</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >clearProperties() <br/>
-                 <em>Clear property values set</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >exceptionClear() <br/>
-                 <em>Clear any exception thrown</em>   </td></tr>
-                <tr >
-                <td >string  </td><td >getErrorCode(int $i) <br/>
-                 <em>Get the ith error code if there are any errors</em>   </td></tr>
-                <tr >
-                <td >string  </td><td >getErrorMessage(int $i) <br/>
-                 <em>Get the ith error message if there are any error</em>   </td></tr>
-                <tr >
-                <td >int  </td><td >getExceptionCount() <br/>
-                 <em>Get number of error during execution or evaluate of query</em>   </td></tr>
-
-            </table>
-
-            </section>
-
-
-        <section id="saxon_c_php_xpathprocessor" title="Saxon/XPathProcessor">
-                    <h3>Saxon/XPathProcessor Class</h3>
-            <table>
-
-                <thead>
-                                                       <tr>
-                                                           <td>Return</td>
-                                                           <td>Function name and Description</td>
-                                                       </tr>
-                                                   </thead>
-                <tr >
-                <td >void  </td><td >setContextItem(string $fileName) <br/>
-                 <em>Set the context item from a <a class="bodylink code" href="classXdmItem.html">XdmItem</a></em>   </td></tr>
-                <tr >
-                <td >void  </td><td >setContextFile(string $fileName) <br/>
-                 <em>Set the context item from file</em>   </td></tr>
-                <tr >
-                <td >boolean  </td><td >effectiveBooleanValue(string $xpathStr) <br/>
-                 <em>Evaluate the XPath expression, returning the effective boolean value of the result.</em>   </td></tr>
-                <tr >
-                <td ><a class="bodylink code" href="classXdmValue.html">XdmValue</a>  </td><td >evaluate(string $xpathStr) <br/>
-                 <em>Compile and evaluate an XPath expression, supplied as a character string. Result is an <a class="bodylink code" href="classXdmValue.html">XdmValue</a></em>   </td></tr>
-                <tr >
-                <td ><a class="bodylink code" href="classXdmItem.html">XdmItem</a>  </td><td >evaluateSingle(string $xpathStr) <br/>
-                 <em>Compile and evaluate an XPath expression whose result is expected to be a single item, with a given context item. The expression is supplied as a character string.</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >declareNamespace(string $prefix, string $namespace) <br/>
-                 <em>Declare a namespace binding as part of the static context for XPath expressions compiled using this <a class="bodylink code" href="classXPathProcessor.html">XPathProcessor</a></em>   </td></tr>
-                <tr >
-                <td >void  </td><td >setBaseURI(string $uri) <br/>
-                 <em>Set the static base URI for XPath expressions compiled using this XQuery Processor. The base URI is part of the static context, and is used to resolve any relative URIS appearing within a query</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >setParameter(string $name, <a class="bodylink code" href="classXdmValue.html">XdmValue</a> $value) <br/>
-                 <em>Set the parameters required for XQuery Processor</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >setProperty(string $name, string $value) <br/>
-                 <em>Set properties for Query.</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >clearParameters() <br/>
-                 <em>Clear parameter values set</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >clearProperties() <br/>
-                 <em>Clear property values set</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >exceptionClear() <br/>
-                 <em>Clear any exception thrown</em>   </td></tr>
-                <tr >
-                <td >string  </td><td >getErrorCode(int $i) <br/>
-                 <em>Get the ith error code if there are any errors</em>   </td></tr>
-                <tr >
-                <td >string  </td><td >getErrorMessage(int $i) <br/>
-                 <em>Get the ith error message if there are any error</em>   </td></tr>
-                <tr >
-                <td >int  </td><td >getExceptionCount() <br/>
-                 <em>Get number of error during execution or evaluate of stylesheet and query, respectively</em>   </td></tr>
-
-
-                             </table>
-
-
-                                            </section>
-
-        <section id="saxon_c_php_schemavalidator" title="Saxon\SchemaValidator">
-                            <h3>Saxon\SchemaValidator Class</h3>
-
-            <table>
-                <thead>
-                                                       <tr>
-                                                           <td>Return</td>
-                                                           <td>Function name and Description</td>
-                                                       </tr>
-                                                   </thead>
-
-
-                <tr >
-                <td >void  </td><td >setSourceNode(<a class="bodylink code" href="classXdmNode.html">XdmNode</a> $node) <br/>
-                 <em>The instance document to be validated. Supplied as an Xdm Node</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >setOutputFile(string $fileName) <br/>
-                 <em>The instance document to be validated. Supplied file name is resolved and accessed</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >registerSchemaFromFile(string $fileName) <br/>
-                 <em>Register the Schema which is given as file name.</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >registerSchemaFromString(string $schemaStr) <br/>
-                 <em>Register the Schema which is given as a string representation.</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >validate() <br/>
-                 <em>Validate an instance document supplied as a Source object. Assume source document has already been supplied through accessor methods</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >validate(string $fileName) <br/>
-                 <em>Validate an instance document supplied as a Source object. $filename - The name of the file to be validated. $filename can be null</em>   </td></tr>
-                <tr >
-                <td ><a class="bodylink code" href="classXdmNode.html">XdmNode</a>  </td><td >validateToNode() <br/>
-                 <em>Validate an instance document supplied as a Source object with the validated document returned to the calling program. Assume source document has already been supplied through accessor methods</em>   </td></tr>
-                <tr >
-                <td ><a class="bodylink code" href="classXdmNode.html">XdmNode</a>  </td><td >validateToNode(string $fileName) <br/>
-                 <em>Validate an instance document supplied as a Source object with the validated document returned to the calling program. $filename - The name of the file to be validated. $filename can be null</em>   </td></tr>
-                <tr >
-                <td ><a class="bodylink code" href="classXdmNode.html">XdmNode</a>  </td><td >getValidationReport <br/>
-                 <em>Get the valdiation report produced after valdiating the soucre document. The reporting feature is switched on via setting the property on the <a class="bodylink code" href="classSchemaValidator.html">SchemaValidator</a>: validator.setProperty('report', 'true'). Return <a class="bodylink code" href="classXdmNode.html">XdmNode</a></em>   </td></tr>
-                <tr >
-                <td >void  </td><td >setParameter(string $name, <a class="bodylink code" href="classXdmValue.html">XdmValue</a> $value) <br/>
-                 <em>Set the parameters required for XQuery Processor</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >setProperty(string $name, string $value) <br/>
-                 <em>Set properties for Schema Validator.</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >clearParameters() <br/>
-                 <em>Clear parameter values set</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >clearProperties() <br/>
-                 <em>Clear property values set</em>   </td></tr>
-                <tr >
-                <td >void  </td><td >exceptionClear() <br/>
-                 <em>Clear any exception thrown</em>   </td></tr>
-                <tr >
-                <td >string  </td><td >getErrorCode(int $i) <br/>
-                 <em>Get the ith error code if there are any errors</em>   </td></tr>
-                <tr >
-                <td >string  </td><td >getErrorMessage(int $i) <br/>
-                 <em>Get the ith error message if there are any error</em>   </td></tr>
-                <tr >
-                <td >int  </td><td >getExceptionCount() <br/>
-                 <em>Get number of error during execution of the validator</em>   </td></tr>
-               
-
-                             </table>
-
-                    </section>
-
-        <section id="saxon_c_php_xdmvalue" title="Saxon\XdmValue">
-                   <h3>Saxon\XdmValue Class</h3>
-                   <table>
-
-
-                                    </table>
-                   <thead>
-                                                          <tr>
-                                                              <td>Return</td>
-                                                              <td>Function name and Description</td>
-                                                          </tr>
-                                                      </thead>
-
-            <tr >
-            <td ><a class="bodylink code" href="classXdmItem.html">XdmItem</a>  </td><td >getHead() <br/>
-             <em>Get the first item in the sequence</em>   </td></tr>
-            <tr >
-            <td ><a class="bodylink code" href="classXdmItem.html">XdmItem</a>  </td><td >itemAt(int $index) <br/>
-             <em>Get the n'th item in the value, counting from zero</em>   </td></tr>
-            <tr >
-            <td >int  </td><td >size() <br/>
-             <em>Get the number of items in the sequence</em>   </td></tr>
-            <tr >
-            <td ></td><td >addXdmItem(<a class="bodylink code" href="classXdmItem.html">XdmItem</a> $item) <br/>
-             <em>Add item to the sequence at the end.</em>   </td></tr>
-           
-
-                                   </section>
-
-        <section id="saxon_c_php_xdmitem" title="Saxon\XdmItem">
-            <h3>Saxon\XdmItem Class</h3>  extends Saxon\XdmValue
-            <table>
-
-
-                             </table>
+         <table>
             <thead>
-                                                   <tr>
-                                                       <td>Return</td>
-                                                       <td>Function name and Description</td>
-                                                   </tr>
-                                               </thead>
+               <tr>
+                  <td>Return</td>
+                  <td>Function name and Description</td>
+               </tr>
+            </thead>
 
-            <tr >
-            <td >string  </td><td >getStringValue() <br/>
-             <em>Get the string value of the item. For a node, this gets the string value of the node. For an atomic value, it has the same effect as casting the value to a string. In all cases the result is the same as applying the XPath string() function.</em>   </td></tr>
-            <tr >
-            <td >boolean  </td><td >isNode() <br/>
-             <em>Determine whether the item is a node value or not.</em>   </td></tr>
-            <tr >
-            <td >boolean  </td><td >isAtomic() <br/>
-             <em>Determine whether the item is an atomic value or not.</em>   </td></tr>
-            <tr >
-            <td ><a class="bodylink code" href="classXdmAtomicValue.html">XdmAtomicValue</a>  </td><td >getAtomicValue() <br/>
-             <em>Provided the item is an atomic value we return the <a class="bodylink code" href="classXdmAtomicValue.html">XdmAtomicValue</a> otherwise return null</em>   </td></tr>
-            <tr >
-            <td ><a class="bodylink code" href="classXdmNode.html">XdmNode</a>  </td><td >getNodeValue() <br/>
-             <em>Provided the item is a node value we return the <a class="bodylink code" href="classXdmNode.html">XdmNode</a> otherwise return null</em>   </td></tr>
-           
+            <tr>
+               <td/>
+               <td>
+                  <em>
+                     <a class="bodylink code" href="../saxon_c_php_saxonprocessor"
+                        >SaxonProcessor()</a>
+                  </em>
+                  <br/>
+                  <em>Default Constructor. Create an unlicensed Saxon Processor</em>
+               </td>
+            </tr>
+            <tr>
+               <td/>
+               <td><a class="bodylink code" href="../saxon_c_php_saxonprocessor"
+                  >SaxonProcessor</a>(boolean $license)<br/>
+                  <em>Constructor. Indicates whether the Processor requires features of Saxon that
+                     need a license file. If false, the method will creates a Configuration
+                     appropriate for Saxon HE (Home edition). If true, the method will create a
+                     Configuration appropriate to the version of the software that is running
+                     Saxon-PE or Saxon-EE</em>
+               </td>
+            </tr>
+            <tr>
+               <td/>
+               <td><a class="bodylink code" href="../saxon_c_php_saxonprocessor"
+                  >SaxonProcessor</a>(boolean $license, string $cwd) <br/>
+                  <em>Constructor. Indicates whether the Processor requires features of Saxon that
+                     need a license file. The cwd arugment is used to manually set the current
+                     working directory used for executions of source files</em>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a>
+               </td>
+               <td>createAtomicValue($primitive_type val)<br/>
+                  <em>Create an Xdm Atomic value from any of the main primitive types (i.e. bool,
+                     int, float, double, string)</em>
+               </td>
+            </tr>
+            <tr>
+               <td>Saxon\<a class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a>
+               </td>
+               <td>parseXmlFromString(string $value) <br/>
+                  <em>Create an <a class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a>
+                     object. The $value is a lexical representation of the XML document</em>
+               </td>
+            </tr>
+            <tr>
+               <td>Saxon\<a class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a>
+               </td>
+               <td>parseXmlFromFile(string $fileName) <br/>
+                  <em>Create an <a class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a>
+                     object. Value is a string type and the file name to the XML document. File name
+                     can be relative or absolute. IF relative the cwd is used to resolve the
+                     file.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setcwd(string $cwd) <br/>
+                  <em>Set the current working directory used to resolve against files</em>
+               </td>
+            </tr>
+            <tr>
+               <td>Saxon\<a class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a>
+               </td>
+               <td>parseXmlFromFile(string $fileName) <br/>
+                  <em>Create an <a class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a>
+                     object. Value is a string type and the file name to the XML document. File name
+                     can be relative or absolute. IF relative the cwd is used to resolve the
+                     file.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setResourceDirectory(string $dir) <br/>
+                  <em>Set the resources directory of where Saxon can locate data folder</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setConfigurationProperty(string $name, string $value) <br/>
+                  <em>Set a configuration property specific to the processor in use. Properties
+                     specified here are common across all the processors. See <a
+                        class="bodylink code"
+                        href="http://www.saxonica.com/documentation/index.html#!configuration/config-features"
+                        >Configuration Features</a></em>
+               </td>
+            </tr>
+            <tr>
+               <td>Saxon\<a class="bodylink code" href="../saxon_c_php_xsltprocessor"
+                     >XsltProcessor</a>
+               </td>
+               <td>newXsltProcessor() <br/>
+                  <em>Create an <a class="bodylink code" href="../saxon_c_php_xsltprocessor"
+                        >XsltProcessor</a> in the PHP environment. An <a class="bodylink code"
+                        href="../saxon_c_php_xsltprocessor">XsltProcessor</a> is used to compile and
+                     execute XSLT sytlesheets</em>
+               </td>
+            </tr>
+            <tr>
+               <td>Saxon\<a class="bodylink code" href="../saxon_c_php_xslt30processor"
+                     >Xslt30Processor</a>
+               </td>
+               <td>newXslt30Processor() <br/>
+                  <em>Create an <a class="bodylink code" href="../saxon_c_php_xslt30processor"
+                        >Xslt30Processor</a> in the PHP environment specifically designed for XSLT
+                     3.0 processing. An <a class="bodylink code"
+                        href="../saxon_c_php_xslt30processor">Xslt30Processor</a> is used to compile
+                     and execute XSLT 3.0 sytlesheets. Use this class object (<a
+                        class="bodylink code" href="../saxon_c_php_xslt30processor"
+                        >Xslt30Processor</a>) instead of the <a class="bodylink code"
+                        href="../saxon_c_php_xsltprocessor">XsltProcessor</a> for XSLT 3.0
+                     processing.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>Saxon\<a class="bodylink code" href="../saxon_c_php_xqueryprocessor"
+                     >XQueryProcessor</a>
+               </td>
+               <td>newXQueryProcessor() <br/>
+                  <em>Create an <a class="bodylink code" href="../saxon_c_php_xqueryprocessor"
+                        >XQueryProcessor</a> in the PHP environment. An <a class="bodylink code"
+                        href="../saxon_c_php_xqueryprocessor">XQueryProcessor</a> is used to compile
+                     and execute XQuery queries</em>
+               </td>
+            </tr>
+            <tr>
+               <td>Saxon\XPathProcesssor </td>
+               <td>newXPathProcessor() <br/>
+                  <em>Create an <a class="bodylink code" href="../saxon_c_php_xpathprocessor"
+                        >XPathProcessor</a> in the PHP environment. An <a class="bodylink code"
+                        href="../saxon_c_php_xpathprocessor">XPathProcessor</a> is used to compile
+                     and execute XPath expressions</em>
+               </td>
+            </tr>
+            <tr>
+               <td>Saxon\<a class="bodylink code" href="../saxon_c_php_schemavalidator"
+                     >SchemaValidator</a>
+               </td>
+               <td>newSchemaValidator() <br/>
+                  <em>Create a <a class="bodylink code" href="../saxon_c_php_schemavalidator"
+                        >SchemaValidator</a> in the PHP environment. A <a class="bodylink code"
+                        href="../saxon_c_php_schemavalidator">SchemaValidator</a> provides
+                     capabilities to load and cache XML schema definitions. You can also valdiate
+                     source documents with egistered XML schema definitions</em>
+               </td>
+            </tr>
+            <tr>
+               <td>string </td>
+               <td>version() <br/>
+                  <em>Report the Java Saxon version</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>registerPHPFunctions(string $library) <br/>
+                  <em>Enables the ability to use PHP functions as XSLT functions. Accepts as
+                     parameter the full path of the Saxon/C PHP Extension library. This is needed to
+                     do the callbacks</em>
+               </td>
+            </tr>
+         </table>
 
-                            </section>
+      </section>
 
-        <section id="saxon_c_php_xdmNode" title="Saxon\XdmNode">
-            <h3>Saxon\XdmNode Class</h3> extends Saxon\XdmItem
+      <section id="saxon_c_php_xsltprocessor" title="Saxon\XsltProcessor">
+         <h1>Saxon\XsltProcessor Class</h1>
 
-            <table>
-                <thead>
-                                                   <tr>
-                                                       <td>Return</td>
-                                                       <td>Function name and Description</td>
-                                                   </tr>
-                                               </thead>
+         <table>
+            <thead>
+               <tr>
+                  <td>Return</td>
+                  <td>Function name and Description</td>
+               </tr>
+            </thead>
 
-                <tr >
-                <td >string  </td><td >getStringValue() <br/>
-                 <em>Get the string value of the item. For a node, this gets the string value of the node.</em>   </td></tr>
-                <tr >
-                <td >int  </td><td >getNodeKind() <br/>
-                 <em>Get the kind of node</em>   </td></tr>
-                <tr >
-                <td >string  </td><td >getNodeName <br/>
-                 <em>et the name of the node, as a EQName</em>   </td></tr>
-                <tr >
-                <td >boolean  </td><td >isAtomic() <br/>
-                 <em>Determine whether the item is an atomic value or a node. This method will return FALSE as the item is not atomic</em>   </td></tr>
-                <tr >
-                <td >int  </td><td >getChildCount() <br/>
-                 <em>Get the count of child node at this current node</em>   </td></tr>
-                <tr >
-                <td >int  </td><td >getAttributeCount() <br/>
-                 <em>Get the count of attribute nodes at this node</em>   </td></tr>
-                <tr >
-                <td ><a class="bodylink code" href="classXdmNode.html">XdmNode</a>  </td><td >getChildNode(int index) <br/>
-                 <em>Get the n'th child node at this node. If the child node selected does not exist then return null</em>   </td></tr>
-                <tr >
-                <td ><a class="bodylink code" href="classXdmNode.html">XdmNode</a>  </td><td >getParent() <br/>
-                 <em>Get the parent of this node. If parent node does not exist then return null</em>   </td></tr>
-                <tr >
-                <td ><a class="bodylink code" href="classXdmNode.html">XdmNode</a>  </td><td >getAttributeNode(int $index) <br/>
-                 <em>Get the n'th attribute node at this node. If the attribute node selected does not exist then return null</em>   </td></tr>
-                <tr >
-                <td >string  </td><td >getAttributeValue(int $index) <br/>
-                 <em>Get the n'th attribute node value at this node. If the attribute node selected does not exist then return null</em>   </td></tr>
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a>
+               </td>
+               <td>runQueryToValue() <br/>
+                  <em>compile and evaluate the query. Result returned as an <a class="bodylink code"
+                        href="../saxon_c_php_xdmvalue">XdmValue</a> object. If there are failures
+                     then a null is returned</em>
+               </td>
+            </tr>
+            <tr>
+               <td>string </td>
+               <td>runQueryToString() <br/>
+                  <em>compile and evaluate the query. Result returned as string. If there are
+                     failures then a null is returned</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>runQueryToFile(string $outfilename) <br/>
+                  <em>compile and evaluate the query. Save the result to file</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setQueryContent(string $str) <br/>
+                  <em>query supplied as a string</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setQueryItem(<a class="bodylink code" href="../saxon_c_php_xdmitem">XdmItem</a>
+                  $item) <br/> ** </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setQueryFile($string $filename) <br/>
+                  <em>query supplied as a file</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setContextItemFromFile(string $fileName) <br/>
+                  <em>Set the initial context item for the query. Supplied as filename</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setContextItem(Xdm $obj) <br/>
+                  <em>Set the initial context item for the query. Any one of the objects are
+                     accepted: <a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a>,
+                        <a class="bodylink code" href="../saxon_c_php_xdmitem">XdmItem</a>, <a
+                        class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a> and <a
+                        class="bodylink code" href="../saxon_c_php_xdmatomicvalue"
+                        >XdmAtomicValue</a>.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setQueryBaseURI(string $uri) <br/>
+                  <em>Set the static base URI for a query expressions compiled using this XQuery
+                     Processor. The base URI is part of the static context, and is used to resolve
+                     any relative URIS appearing within a query</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>declareNamespace(string $prefix, string $namespace) <br/>
+                  <em>Declare a namespace binding as part of the static context for XPath
+                     expressions compiled using this XQuery processor</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setParameter(string $name, <a class="bodylink code"
+                     href="../saxon_c_php_xdmvalue">XdmValue</a> $value) <br/>
+                  <em>Set the parameters required for XQuery Processor</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setProperty(string $name, string $value) <br/>
+                  <em>Set properties for Query.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>clearParameters() <br/>
+                  <em>Clear parameter values set</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>clearProperties() <br/>
+                  <em>Clear property values set</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>exceptionClear() <br/>
+                  <em>Clear any exception thrown</em>
+               </td>
+            </tr>
+            <tr>
+               <td>string </td>
+               <td>getErrorCode(int $i) <br/>
+                  <em>Get the ith error code if there are any errors</em>
+               </td>
+            </tr>
+            <tr>
+               <td>string </td>
+               <td>getErrorMessage(int $i) <br/>
+                  <em>Get the ith error message if there are any error</em>
+               </td>
+            </tr>
+            <tr>
+               <td>int </td>
+               <td>getExceptionCount() <br/>
+                  <em>Get number of error during execution or evaluate of query</em>
+               </td>
+            </tr>
+
+         </table>
+      </section>
+
+      <section id="saxon_c_php_xslt30processor" title="Saxon\Xslt30Processor">
+         <h1>Saxon\Xslt30Processor Class</h1>
+
+         <table>
+            <thead>
+               <tr>
+                  <td>Return</td>
+                  <td>Function name and Description</td>
+               </tr>
+            </thead>
+
+            <tr>
+               <td>void </td>
+               <td>addPackages(array packageFileNames) <br/>
+                  <em>File names to XsltPackages stored on filestore are added to a set of packages,
+                     which will imported later for use when compiling.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>applyTemplatesReturningFile(string $stylesheetFileName) <br/>
+                  <em>Invoke the stylesheet by applying templates to a supplied input sequence,
+                     Saving the results to file. The stylesheet file name argument can be supplied
+                     here. If null then the most recently compiled stylsheet is used.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>string </td>
+               <td>applyTemplatesReturningString(string $stylesheetFileName) <br/>
+                  <em>Invoke the stylesheet by applying templates to a supplied input sequence. The
+                     result is returned as a serialized string. The stylesheet file name argument
+                     can be supplied here. If null then the most recently compiled stylsheet is
+                     used.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>PyXdmValue </td>
+               <td>applyTemplatesReturningValue(string $stylesheetFileName) <br/>
+                  <em>Invoke the stylesheet by applying templates to a supplied input sequence. the
+                     result is returned as an <a class="bodylink code"
+                        href="../saxon_c_php_xdmvalue">XdmValue</a> object. The stylesheet file name
+                     argument can be supplied here. If null then the most recently compiled
+                     stylsheet is used.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>compileFromAssociatedFile(string xmlFileName)<br/>
+                  <em>Get the stylesheet associated via the xml-stylesheet processing instruction
+                     (see <a href="http://www.w3.org/TR/xml-stylesheet/"
+                        >http://www.w3.org/TR/xml-stylesheet/</a>) with the document document
+                     specified in the source parameter, and that match the given criteria. If there
+                     are several suitable xml-stylesheet processing instructions, then the returned
+                     Source will identify a synthesized stylesheet module that imports all the
+                     referenced stylesheet module.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>compileFromFile(string $fileName) <br/>
+                  <em>Compile a stylesheet suplied as by file name</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>compileFromString(string $str) <br/>
+                  <em>Compile a stylesheet received as a string.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>compileFromValue(<a class="bodylink code" href="../saxon_c_php_xdmnode"
+                     >XdmNode</a> $node)<br/>
+                  <em>Compile a stylesheet received as an <a class="bodylink code"
+                        href="../saxon_c_php_xdmnode">XdmNode</a>.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>compileFromFileAndSave(string $fileName, string outputFileName) <br/>
+                  <em>Compile a stylesheet suplied as by file name and save as an exported file
+                     (SEF)</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>compileFromStringAndSave(string $str, string outputFileName) <br/>
+                  <em>Compile a stylesheet received as a string and save as an exported file
+                     (SEF).</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>compileFromValueAndSave(<a class="bodylink code" href="../saxon_c_php_xdmnode"
+                     >XdmNode</a> $node, string outputFileName)<br/>
+                  <em>Compile a stylesheet received as an <a class="bodylink code"
+                        href="../saxon_c_php_xdmnode">XdmNode</a> and save as an exported file
+                     (SEF).</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>callFunctionReturningFile(string $FunctionName, array arguments, string
+                  outputfileName) <br/>
+                  <em>Call a public user-defined function in the stylesheet. Here we wrap the result
+                     in an XML document, and sending this document to a specified file. Arguments:
+                     function name and array of <a class="bodylink code"
+                        href="../saxon_c_php_xdmvalue">XdmValue</a> objects - he values of the
+                     arguments to be supplied to the function. These will be converted if necessary
+                     to the type as defined in the function signature, using the function conversion
+                     rules. * </em></td>
+            </tr>
+            <tr>
+               <td>
+                  <em> string </em>
+               </td>
+               <td>
+                  <em> callFunctionReturningString(string $FunctionName, array arguments) <br/>
+                     *Call a public user-defined function in the stylesheet. Here we wrap the result
+                     in an XML document, and serialized this document to string value. Arguments:
+                     function name and array of <a class="bodylink code"
+                        href="../saxon_c_php_xdmvalue">XdmValue</a> objects - he values of the
+                     arguments to be supplied to the function. These will be converted if necessary
+                     to the type as defined in the function signature, using the function conversion
+                     rules.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>PyXdmValue </td>
+               <td>callFunctionReturningValue(string $FunctionName, array arguments) <br/>
+                  <em>Call a public user-defined function in the stylesheet. Here we wrap the result
+                     in an XML document, and return the document as an XdmVale. Arguments: function
+                     name and array of <a class="bodylink code" href="../saxon_c_php_xdmvalue"
+                        >XdmValue</a> objects - he values of the arguments to be supplied to the
+                     function. These will be converted if necessary to the type as defined in the
+                     function signature, using the function conversion rules.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>callTemplateReturningFile(string $stylesheetFileName, string $templateName,
+                  string outputfileName) <br/>
+                  <em>Invoke a transformation by calling a named template. The result is stored in
+                     the supplied outputfile name. If the templateName argument is null then the
+                     xsl:iitial-template is used. Parameters supplied using
+                     setInitialTemplateParameters are made available to the called template.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>string </td>
+               <td>callTemplateReturningString(string $stylesheetFileName, string $templateName) <br/>
+                  <em>Invoke a transformation by calling a named template and return result as a
+                     string. If the templateName argument is null then the xsl:iitial-template is
+                     used. Parameters supplied using setInitialTemplateParameters are made available
+                     to the called template.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>PyXdmValue </td>
+               <td>callTemplateReturningValue(string $stylesheetFileName, string $templateName) <br/>
+                  <em>Invoke a transformation by calling a named template and return result as an <a
+                        class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a>. If the
+                     templateName argument is null then the xsl:iitial-template is used. Parameters
+                     supplied using setInitialTemplateParameters are made available to the called
+                     template.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>transformFileToFile(string $sourceFileName, string $stylesheetFileName, string
+                  outputfileName) <br/>
+                  <em>Perform a one shot transformation. The result is stored in the supplied
+                     outputfile name.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a>
+               </td>
+               <td>transformFileToValue(string $fileName) <br/>
+                  <em>Perform a one shot transformation. The result is returned as an <a
+                        class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a></em>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a>
+               </td>
+               <td>transformFileToString(string $fileName) <br/>
+                  <em>Perform a one shot transformation. The result is returned as a stringe</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>transformToFile() <br/>
+                  <em>Perform the transformation based upon cached stylesheet and source document.
+                     Result is saved to the supplied file name</em>
+               </td>
+            </tr>
+            <tr>
+               <td>string </td>
+               <td>transformToString() <br/>
+                  <em>Perform the transformation based upon cached stylesheet and source document.
+                     Result is returned as a serialized string</em>
+               </td>
+            </tr>
+            <tr>
+               <td>PyXdmValue </td>
+               <td>transformToValue() <br/>
+                  <em>Perform the transformation based upon cached stylesheet and any source
+                     document. Result returned as an <a class="bodylink code"
+                        href="../saxon_c_php_xdmvalue">XdmValue</a> object. If there are failures
+                     then a null is returned</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setInitialTemplateParameters(array parameters, bool tunnel) <br/>
+                  <em>Set parameters to be passed to the initial template. These are used whether
+                     the transformation is invoked by applying templates to an initial source item,
+                     or by invoking a named template. The parameters in question are the xsl:param
+                     elements appearing as children of the xsl:template element. The tunnel argument
+                     if set to true these values are to be used for setting tunnel parameters.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setInitialMatchSelection() <br/>
+                  <em>The initial value to which templates are to be applied (equivalent to the
+                     'select' attribute of xsl:apply-templates)</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setInitialMatchSelectionAsFile <br/>
+                  <em>The initial filename to which templates are to be applied (equivalent to the
+                     'select' attribute of xsl:apply-templates) * </em></td>
+            </tr>
+            <tr>
+               <td>
+                  <em> void </em>
+               </td>
+               <td>
+                  <em> setGlobalContextItem <br/> *Set the source document from an <a
+                        class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a> for the
+                     transformation.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setGlobalContextFromFile <br/>
+                  <em>Set the source from file for the transformation.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setOutputFile(string $fileName) <br/>
+                  <em>Set the output file name of where the transformation result is sent</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setParameter(string $name, <a class="bodylink code"
+                     href="../saxon_c_php_xdmvalue">XdmValue</a> $value) <br/>
+                  <em>Set the parameters required for XSLT stylesheet</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setProperty(string $name, string $value) <br/>
+                  <em>Set properties for the stylesheet.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setJustInTimeCompilation(bool $value) <br/>
+                  <em>ay whether just-in-time compilation of template rules should be used.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setResultAsRawValue(bool $value) <br/>
+                  <em>Set true if the return type of callTemplate, applyTemplates and transform
+                     methods is to return <a class="bodylink code" href="../saxon_c_php_xdmvalue"
+                        >XdmValue</a>, otherwise return <a class="bodylink code"
+                        href="../saxon_c_php_xdmnode">XdmNode</a> object with root Document
+                     node.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>clearParameters() <br/>
+                  <em>Clear parameter values set</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>clearProperties() <br/>
+                  <em>Clear property values set</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>exceptionClear() <br/>
+                  <em>Clear any exception thrown</em>
+               </td>
+            </tr>
+            <tr>
+               <td>string </td>
+               <td>getErrorCode(int $i) <br/>
+                  <em>Get the ith error code if there are any errors</em>
+               </td>
+            </tr>
+            <tr>
+               <td>string </td>
+               <td>getErrorMessage(int $i) <br/>
+                  <em>Get the ith error message if there are any error</em>
+               </td>
+            </tr>
+            <tr>
+               <td>int </td>
+               <td>getExceptionCount() <br/>
+                  <em>Get number of error during execution or evaluate of stylesheet</em>
+               </td>
+            </tr>
+
+         </table>
+      </section>
+
+      <section id="saxon_c_php_xqueryprocessor" title="Saxon\XQueryProcessor">
+         <h1>Saxon\XQueryProcessor Class</h1>
+
+         <table>
+            <thead>
+               <tr>
+                  <td>Return</td>
+                  <td>Function name and Description</td>
+               </tr>
+            </thead>
+
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a>
+               </td>
+               <td>runQueryToValue() <br/>
+                  <em>compile and evaluate the query. Result returned as an <a class="bodylink code"
+                        href="../saxon_c_php_xdmvalue">XdmValue</a> object. If there are failures
+                     then a null is returned</em>
+               </td>
+            </tr>
+            <tr>
+               <td>string </td>
+               <td>runQueryToString() <br/>
+                  <em>compile and evaluate the query. Result returned as string. If there are
+                     failures then a null is returned</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>runQueryToFile(string $outfilename) <br/>
+                  <em>compile and evaluate the query. Save the result to file</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setQueryContent(string $str) <br/>
+                  <em>query supplied as a string</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setQueryItem(<a class="bodylink code" href="../saxon_c_php_xdmitem">XdmItem</a>
+                  $item) <br/> ** </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setQueryFile($string $filename) <br/>
+                  <em>query supplied as a file</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setContextItemFromFile(string $fileName) <br/>
+                  <em>Set the initial context item for the query. Supplied as filename</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setContextItem(Xdm $obj) <br/>
+                  <em>Set the initial context item for the query. Any one of the objects are
+                     accepted: <a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a>,
+                        <a class="bodylink code" href="../saxon_c_php_xdmitem">XdmItem</a>, <a
+                        class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a> and <a
+                        class="bodylink code" href="../saxon_c_php_xdmatomicvalue"
+                        >XdmAtomicValue</a>.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setQueryBaseURI(string $uri) <br/>
+                  <em>Set the static base URI for a query expressions compiled using this XQuery
+                     Processor. The base URI is part of the static context, and is used to resolve
+                     any relative URIS appearing within a query</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>declareNamespace(string $prefix, string $namespace) <br/>
+                  <em>Declare a namespace binding as part of the static context for XPath
+                     expressions compiled using this XQuery processor</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setParameter(string $name, <a class="bodylink code"
+                     href="../saxon_c_php_xdmvalue">XdmValue</a> $value) <br/>
+                  <em>Set the parameters required for XQuery Processor</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setProperty(string $name, string $value) <br/>
+                  <em>Set properties for Query.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>clearParameters() <br/>
+                  <em>Clear parameter values set</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>clearProperties() <br/>
+                  <em>Clear property values set</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>exceptionClear() <br/>
+                  <em>Clear any exception thrown</em>
+               </td>
+            </tr>
+            <tr>
+               <td>string </td>
+               <td>getErrorCode(int $i) <br/>
+                  <em>Get the ith error code if there are any errors</em>
+               </td>
+            </tr>
+            <tr>
+               <td>string </td>
+               <td>getErrorMessage(int $i) <br/>
+                  <em>Get the ith error message if there are any error</em>
+               </td>
+            </tr>
+            <tr>
+               <td>int </td>
+               <td>getExceptionCount() <br/>
+                  <em>Get number of error during execution or evaluate of query</em>
+               </td>
+            </tr>
+
+         </table>
+
+      </section>
 
 
-                             </table>
+      <section id="saxon_c_php_xpathprocessor" title="Saxon\XPathProcessor">
+         <h1>Saxon\XPathProcessor Class</h1>
 
-                            </section>
+         <table>
+            <thead>
+               <tr>
+                  <td>Return</td>
+                  <td>Function name and Description</td>
+               </tr>
+            </thead>
 
-        <section id="saxon_c_php_xdmatomicvalue" title="Saxon\XdmAtomicValue">
-            <h3>Saxon\XdmValue Class</h3> extends Saxon\XdmItem
-                 <table>
-                     <thead>
-                                                            <tr>
-                                                                <td>Return</td>
-                                                                <td>Function name and Description</td>
-                                                            </tr>
-                                                        </thead>
-                    
-                     <tr >
-                     <td >string  </td><td >getStringValue <br/>
-                      <em>Get the string value of the item. For an atomic value, it has the same effect as casting the value to a string. In all cases the result is the same as applying the XPath string() function.</em>   </td></tr>
-                     <tr >
-                     <td >boolean  </td><td >getBooleanValue <br/>
-                      <em>Get the value converted to a boolean using the XPath casting rules</em>   </td></tr>
-                     <tr >
-                     <td >double  </td><td >getDoubleValue <br/>
-                      <em>Get the value converted to a double using the XPath casting rules. If the value is a string, the XSD 1.1 rules are used, which means that the string "+INF" is recognised</em>   </td></tr>
-                     <tr >
-                     <td >long  </td><td >getLongValue <br/>
-                      <em>Get the value converted to an integer using the XPath casting rules</em>   </td></tr>
-                     <tr >
-                     <td >boolean  </td><td >isAtomic <br/>
-                      <em>Determine whether the item is an atomic value or a node. Return TRUE if the item is an atomic value</em>   </td></tr>
-                     
+            <tr>
+               <td>void </td>
+               <td>setContextItem(string $fileName) <br/>
+                  <em>Set the context item from a <a class="bodylink code"
+                        href="../saxon_c_php_xdmitem">XdmItem</a></em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setContextFile(string $fileName) <br/>
+                  <em>Set the context item from file</em>
+               </td>
+            </tr>
+            <tr>
+               <td>boolean </td>
+               <td>effectiveBooleanValue(string $xpathStr) <br/>
+                  <em>Evaluate the XPath expression, returning the effective boolean value of the
+                     result.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a>
+               </td>
+               <td>evaluate(string $xpathStr) <br/>
+                  <em>Compile and evaluate an XPath expression, supplied as a character string.
+                     Result is an <a class="bodylink code" href="../saxon_c_php_xdmvalue"
+                        >XdmValue</a></em>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmitem">XdmItem</a>
+               </td>
+               <td>evaluateSingle(string $xpathStr) <br/>
+                  <em>Compile and evaluate an XPath expression whose result is expected to be a
+                     single item, with a given context item. The expression is supplied as a
+                     character string.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>declareNamespace(string $prefix, string $namespace) <br/>
+                  <em>Declare a namespace binding as part of the static context for XPath
+                     expressions compiled using this <a class="bodylink code"
+                        href="../saxon_c_php_xpathprocessor">XPathProcessor</a></em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setBaseURI(string $uri) <br/>
+                  <em>Set the static base URI for XPath expressions compiled using this XQuery
+                     Processor. The base URI is part of the static context, and is used to resolve
+                     any relative URIS appearing within a query</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setParameter(string $name, <a class="bodylink code"
+                     href="../saxon_c_php_xdmvalue">XdmValue</a> $value) <br/>
+                  <em>Set the parameters required for XQuery Processor</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setProperty(string $name, string $value) <br/>
+                  <em>Set properties for Query.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>clearParameters() <br/>
+                  <em>Clear parameter values set</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>clearProperties() <br/>
+                  <em>Clear property values set</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>exceptionClear() <br/>
+                  <em>Clear any exception thrown</em>
+               </td>
+            </tr>
+            <tr>
+               <td>string </td>
+               <td>getErrorCode(int $i) <br/>
+                  <em>Get the ith error code if there are any errors</em>
+               </td>
+            </tr>
+            <tr>
+               <td>string </td>
+               <td>getErrorMessage(int $i) <br/>
+                  <em>Get the ith error message if there are any error</em>
+               </td>
+            </tr>
+            <tr>
+               <td>int </td>
+               <td>getExceptionCount() <br/>
+                  <em>Get number of error during execution or evaluate of stylesheet and query,
+                     respectively</em>
+               </td>
+            </tr>
 
-                 </table>
+
+         </table>
 
 
-                            </section>
+      </section>
+
+      <section id="saxon_c_php_schemavalidator" title="Saxon\SchemaValidator">
+         <h1>Saxon\SchemaValidator Class</h1>
+
+         <table>
+            <thead>
+               <tr>
+                  <td>Return</td>
+                  <td>Function name and Description</td>
+               </tr>
+            </thead>
+
+            <tr>
+               <td>void </td>
+               <td>setSourceNode(<a class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a>
+                  $node) <br/>
+                  <em>The instance document to be validated. Supplied as an Xdm Node</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setOutputFile(string $fileName) <br/>
+                  <em>The instance document to be validated. Supplied file name is resolved and
+                     accessed</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>registerSchemaFromFile(string $fileName) <br/>
+                  <em>Register the Schema which is given as file name.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>registerSchemaFromString(string $schemaStr) <br/>
+                  <em>Register the Schema which is given as a string representation.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>validate() <br/>
+                  <em>Validate an instance document supplied as a Source object. Assume source
+                     document has already been supplied through accessor methods</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>validate(string $fileName) <br/>
+                  <em>Validate an instance document supplied as a Source object. $filename - The
+                     name of the file to be validated. $filename can be null</em>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a>
+               </td>
+               <td>validateToNode() <br/>
+                  <em>Validate an instance document supplied as a Source object with the validated
+                     document returned to the calling program. Assume source document has already
+                     been supplied through accessor methods</em>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a>
+               </td>
+               <td>validateToNode(string $fileName) <br/>
+                  <em>Validate an instance document supplied as a Source object with the validated
+                     document returned to the calling program. $filename - The name of the file to
+                     be validated. $filename can be null</em>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a>
+               </td>
+               <td>getValidationReport <br/>
+                  <em>Get the valdiation report produced after valdiating the soucre document. The
+                     reporting feature is switched on via setting the property on the <a
+                        class="bodylink code" href="../saxon_c_php_schemavalidator"
+                        >SchemaValidator</a>: validator.setProperty('report', 'true'). Return <a
+                        class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a></em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setParameter(string $name, <a class="bodylink code"
+                     href="../saxon_c_php_xdmvalue">XdmValue</a> $value) <br/>
+                  <em>Set the parameters required for XQuery Processor</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>setProperty(string $name, string $value) <br/>
+                  <em>Set properties for Schema Validator.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>clearParameters() <br/>
+                  <em>Clear parameter values set</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>clearProperties() <br/>
+                  <em>Clear property values set</em>
+               </td>
+            </tr>
+            <tr>
+               <td>void </td>
+               <td>exceptionClear() <br/>
+                  <em>Clear any exception thrown</em>
+               </td>
+            </tr>
+            <tr>
+               <td>string </td>
+               <td>getErrorCode(int $i) <br/>
+                  <em>Get the ith error code if there are any errors</em>
+               </td>
+            </tr>
+            <tr>
+               <td>string </td>
+               <td>getErrorMessage(int $i) <br/>
+                  <em>Get the ith error message if there are any error</em>
+               </td>
+            </tr>
+            <tr>
+               <td>int </td>
+               <td>getExceptionCount() <br/>
+                  <em>Get number of error during execution of the validator</em>
+               </td>
+            </tr>
+
+
+         </table>
+
+      </section>
+
+      <section id="saxon_c_php_xdmvalue" title="Saxon\XdmValue">
+         <h1>Saxon\XdmValue Class</h1>
+
+         <table>
+            <thead>
+               <tr>
+                  <td>Return</td>
+                  <td>Function name and Description</td>
+               </tr>
+            </thead>
+
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmitem">XdmItem</a>
+               </td>
+               <td>getHead() <br/>
+                  <em>Get the first item in the sequence</em>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmitem">XdmItem</a>
+               </td>
+               <td>itemAt(int $index) <br/>
+                  <em>Get the n'th item in the value, counting from zero</em>
+               </td>
+            </tr>
+            <tr>
+               <td>int </td>
+               <td>size() <br/>
+                  <em>Get the number of items in the sequence</em>
+               </td>
+            </tr>
+            <tr>
+               <td/>
+               <td>addXdmItem(<a class="bodylink code" href="../saxon_c_php_xdmitem">XdmItem</a>
+                  $item) <br/>
+                  <em>Add item to the sequence at the end.</em>
+               </td>
+            </tr>
+         </table>
+
+      </section>
+
+      <section id="saxon_c_php_xdmitem" title="Saxon\XdmItem">
+         <h1>Saxon\XdmItem Class</h1>
+         <p>extends <a href="../saxon_c_php_xdmvalue">Saxon\XdmValue</a></p>
+
+         <table>
+            <thead>
+               <tr>
+                  <td>Return</td>
+                  <td>Function name and Description</td>
+               </tr>
+            </thead>
+
+            <tr>
+               <td>string </td>
+               <td>getStringValue() <br/>
+                  <em>Get the string value of the item. For a node, this gets the string value of
+                     the node. For an atomic value, it has the same effect as casting the value to a
+                     string. In all cases the result is the same as applying the XPath string()
+                     function.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>boolean </td>
+               <td>isNode() <br/>
+                  <em>Determine whether the item is a node value or not.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>boolean </td>
+               <td>isAtomic() <br/>
+                  <em>Determine whether the item is an atomic value or not.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmatomicvalue">XdmAtomicValue</a>
+               </td>
+               <td>getAtomicValue() <br/>
+                  <em>Provided the item is an atomic value we return the <a class="bodylink code"
+                        href="../saxon_c_php_xdmatomicvalue">XdmAtomicValue</a> otherwise return
+                     null</em>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a>
+               </td>
+               <td>getNodeValue() <br/>
+                  <em>Provided the item is a node value we return the <a class="bodylink code"
+                        href="../saxon_c_php_xdmnode">XdmNode</a> otherwise return null</em>
+               </td>
+            </tr>
+         </table>
+
+      </section>
+
+      <section id="saxon_c_php_xdmNode" title="Saxon\XdmNode">
+         <h1>Saxon\XdmNode Class</h1>
+         <p>extends <a href="../saxon_c_php_xdmitem">Saxon\XdmItem</a></p>
+
+         <table>
+            <thead>
+               <tr>
+                  <td>Return</td>
+                  <td>Function name and Description</td>
+               </tr>
+            </thead>
+
+            <tr>
+               <td>string </td>
+               <td>getStringValue() <br/>
+                  <em>Get the string value of the item. For a node, this gets the string value of
+                     the node.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>int </td>
+               <td>getNodeKind() <br/>
+                  <em>Get the kind of node</em>
+               </td>
+            </tr>
+            <tr>
+               <td>string </td>
+               <td>getNodeName <br/>
+                  <em>et the name of the node, as a EQName</em>
+               </td>
+            </tr>
+            <tr>
+               <td>boolean </td>
+               <td>isAtomic() <br/>
+                  <em>Determine whether the item is an atomic value or a node. This method will
+                     return FALSE as the item is not atomic</em>
+               </td>
+            </tr>
+            <tr>
+               <td>int </td>
+               <td>getChildCount() <br/>
+                  <em>Get the count of child node at this current node</em>
+               </td>
+            </tr>
+            <tr>
+               <td>int </td>
+               <td>getAttributeCount() <br/>
+                  <em>Get the count of attribute nodes at this node</em>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a>
+               </td>
+               <td>getChildNode(int index) <br/>
+                  <em>Get the n'th child node at this node. If the child node selected does not
+                     exist then return null</em>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a>
+               </td>
+               <td>getParent() <br/>
+                  <em>Get the parent of this node. If parent node does not exist then return
+                     null</em>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a>
+               </td>
+               <td>getAttributeNode(int $index) <br/>
+                  <em>Get the n'th attribute node at this node. If the attribute node selected does
+                     not exist then return null</em>
+               </td>
+            </tr>
+            <tr>
+               <td>string </td>
+               <td>getAttributeValue(int $index) <br/>
+                  <em>Get the n'th attribute node value at this node. If the attribute node selected
+                     does not exist then return null</em>
+               </td>
+            </tr>
+         </table>
+      </section>
+
+      <section id="saxon_c_php_xdmatomicvalue" title="Saxon\XdmAtomicValue">
+         <h1>Saxon\XdmValue Class</h1>
+         <p>extends <a href="../saxon_c_php_xdmitem">Saxon\XdmItem</a></p>
+
+         <table>
+            <thead>
+               <tr>
+                  <td>Return</td>
+                  <td>Function name and Description</td>
+               </tr>
+            </thead>
+
+            <tr>
+               <td>string </td>
+               <td>getStringValue <br/>
+                  <em>Get the string value of the item. For an atomic value, it has the same effect
+                     as casting the value to a string. In all cases the result is the same as
+                     applying the XPath string() function.</em>
+               </td>
+            </tr>
+            <tr>
+               <td>boolean </td>
+               <td>getBooleanValue <br/>
+                  <em>Get the value converted to a boolean using the XPath casting rules</em>
+               </td>
+            </tr>
+            <tr>
+               <td>double </td>
+               <td>getDoubleValue <br/>
+                  <em>Get the value converted to a double using the XPath casting rules. If the
+                     value is a string, the XSD 1.1 rules are used, which means that the string
+                     "+INF" is recognised</em>
+               </td>
+            </tr>
+            <tr>
+               <td>long </td>
+               <td>getLongValue <br/>
+                  <em>Get the value converted to an integer using the XPath casting rules</em>
+               </td>
+            </tr>
+            <tr>
+               <td>boolean </td>
+               <td>isAtomic <br/>
+                  <em>Determine whether the item is an atomic value or a node. Return TRUE if the
+                     item is an atomic value</em>
+               </td>
+            </tr>
+         </table>
+      </section>
+
+   </section>
 
 
 
-    </section>
+   <section id="saxon_c_python_api" title="Saxon/C Python API">
+      <h1>Saxon/C Python API</h1>
+
+      <p>The Saxon/C Python extension API has been developed using <a href="https://cython.org/"
+         target="_blank">Cython</a>. Saxon/C only supports Python3. Cython is required to build the extension
+         library.</p>
+      
+      <p>The following classes are available in the Python API:</p>
+      <ul>
+         <li>
+            <a class="bodylink code"
+               href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PySaxonProcessor"
+               >PySaxonProcessor</a>
+         </li>
+         <li>
+            <a class="bodylink code"
+               href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXsltProcessor"
+               >PyXsltProcessor</a>
+         </li>
+         <li>
+            <a class="bodylink code"
+               href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXslt30Processor"
+               >PyXslt30Processor</a>
+         </li>
+         <li>
+            <a class="bodylink code"
+               href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXPathProcessor"
+               >PyXPathProcessor</a>
+         </li>
+         <li>
+            <a class="bodylink code"
+               href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXQueryProcessor"
+               >PyXQueryProcessor</a>
+         </li>
+         <li>
+            <a class="bodylink code"
+               href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PySchemaValidator"
+               >PySchemaValidator</a>
+         </li>
+      </ul>
+      
+      <p>Also, the following classes are available for a subset of the XDM data model:</p>
+      <ul>
+         <li>
+            <a class="bodylink code"
+               href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXdmValue">PyXdmValue</a>
+         </li>
+         <li>
+            <a class="bodylink code" href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXdmNode">PyXdmNode</a>
+         </li>
+         <li>
+            <a class="bodylink code" href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXdmItem">PyXdmItem</a>
+         </li>
+         <li>
+            <a class="bodylink code" href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXdmAtomicValue"
+               >PyXdmAtomicValue</a>
+         </li>
+      </ul>
 
 
-
-    <section id="saxon_c_python_api" title="Saxon/C Python API">
-        <p> The Saxon/C Python extension API has been developed using <a class="bodylink code" href="https://cython.org/">Cython</a>.
-            Saxon/C only supports Python3. Cython is required to build the extension library.</p>
-
-        <p>The Python API is split up in the following class (links are to the equivalent <a href="https://www.saxonica.com/saxon-c/doc/html/annotated.html">C++ classes</a>):
-            <a href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PySaxonProcessor">PySaxonProcessor</a>,
-            <a href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXsltProcessor">PyXsltProcessor</a>,
-            <a href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXslt30Processor">PyXslt30Processor</a>,
-            <a href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXPathProcessor">PyXPathProcessor</a>,
-            <a href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXQueryProcessor">PyXQueryProcessor</a> and
-            <a href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PySchemaValidator">PySchemaValidator</a>.
-            We also have class for a sub-set of the XDM data model: <a href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXdmValue">PyXdmValue</a>,
-            <a href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXdmNode">PyXdmNode</a>,
-            <a href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXdmItem">PyXdmItem</a> and
-            <a href="https://www.saxonica.com/saxon-c/doc/html/saxonc.html#PyXdmAtomicValue">PyXdmAtomicValue</a>.</p>
-    
-
-    </section>
+   </section>
 
 
 
