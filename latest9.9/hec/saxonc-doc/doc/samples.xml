@@ -13,7 +13,7 @@
    </nav>
 
    <section id="samples_c" title="C/C++ Samples">
-      <h2>C/C++ Samples</h2>
+      <h1>C/C++ Samples</h1>
       
       <h2>Running in C/C++</h2>
       
@@ -51,7 +51,7 @@
    </section>
 
    <section id="samples_php" title="PHP Samples">
-      <h2>PHP Samples</h2>
+      <h1>PHP Samples</h1>
       <p>In the Saxon/C download please see the PHP unit tests (i.e. xslt30_PHPUnit.php i nthe
          samples/php directory) for XSLT. There are also same files for XSLT, XQuery, XPath and
          Schema Validator. The PHP test files are contained in the 'samples/php' folder along with
@@ -129,6 +129,7 @@
    </section>
 
    <section id="samples_python" title="Python Samples">
+      <h1>Python Samples</h1>
       <p>There are a collection of Python unit test cases to be run with the pytest framework. Test
          unit files: test_saxonc.py and test_saxon_Schema.py. See also some python example scripts
          saxon_example.py, saxon_example2.py and saxon_example3.py to get started with Saxon/C and

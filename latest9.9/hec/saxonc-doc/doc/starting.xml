@@ -81,6 +81,11 @@
             the location '/usr/lib'. You must also copy the saxon-data directory to a respective
             location based on the machine.</p>
 
+         <p>Saxon/C is now installed, and ready to run. Please see <a href="../running">Running
+               Saxon/C</a> to get started. Note that the commercial products Saxon-PE/C and
+            Saxon-EE/C require a license, so you may also need to refer to <a href="../licensing"
+               >Licensing</a> for details about how to get this set up.</p>
+
       </section>
 
 
@@ -109,12 +114,10 @@
          <kbd>export JET_HOME=/usr/local/lib/rt</kbd>
          <kbd>export DYLD_LIBRARY_PATH=$JET_HOME/lib/jetvm:$DYLD_LIBRARY_PATH</kbd>
 
-         <p>Saxon/C is now installed, and ready to run. For example, to run the C++ test sample file
-            use the following:</p>
-
-         <kbd>cd samples/cppTests/</kbd>
-         <kbd>./build64-mac.sh</kbd>
-         <kbd>./testXPath</kbd>
+         <p>Saxon/C is now installed, and ready to run. Please see <a href="../running">Running
+               Saxon/C</a> to get started. Note that the commercial products Saxon-PE/C and
+            Saxon-EE/C require a license, so you may also need to refer to <a href="../licensing"
+               >Licensing</a> for details about how to get this set up.</p>
 
       </section>
 
@@ -126,15 +129,16 @@
 
          <p>To install the Saxon-[EDITION]/C release, first run the executable
                <b>libsaxon-[EDITION]-win-setup.exe</b>. </p>
+
          <p>The first step is to select the destination where the product files will be installed -
             the default and recommended location is 'C:\Program
             Files\Saxonica\Saxon[EDITION][VERSION]'. This is the location that the PHP extension
             looks for the Saxon/C DLL library, so we advise using this default location. </p>
 
-         <p>To get started with using the Saxon/C C++ code look at the directory 'samples/cppTest'.
-            The script buildCPPSaxon[Edition].bat is useful to build C/C++ application which uses
-            the Saxon/C API.</p>
-         <p/>
+         <p>Saxon/C is now installed, and ready to run. Please see <a href="../running">Running
+               Saxon/C</a> to get started. Note that the commercial products Saxon-PE/C and
+            Saxon-EE/C require a license, so you may also need to refer to <a href="../licensing"
+               >Licensing</a> for details about how to get this set up.</p>
 
 
       </section>
@@ -145,12 +149,36 @@
    <section id="running" title="Running Saxon/C">
       <h1>Running Saxon/C</h1>
 
+      <p>To check that Saxon/C is correctly installed (having followed the revelant instructions
+         from <a href="../installing">Installing Saxon/C</a>, including getting the Saxon license
+         location set up as required for Saxon-PE/C or Saxon-EE/C, as described in <a
+            href="../licensing">Licensing</a>), you can try running some of the provided samples. </p>
+
+      <p>For example, to run the C++ testXPath sample file on Linux or Mac OS use the following
+         commands (where [PLATFORM] is linux or mac):</p>
+
+      <kbd>cd samples/cppTests/</kbd>
+      <kbd>./build64-[PLATFORM].sh</kbd>
+      <kbd>./testXPath</kbd>
+
+      <p>Similarly for Windows, use the commands:</p>
+
+      <kbd>cd samples/cppTests/</kbd>
+      <kbd>buildCPPSaxon[EDITION].bat</kbd>
+      <kbd>testXPath.exe</kbd>
+
+      <p>The 'samples/cppTest' directory provides many more examples in C/C++ which can be run. For
+         more information about these samples see <a href="/samples/samples_c">Samples</a>.</p>
+
+
+      <h2>Using Saxon/C in applications</h2>
+
       <p>To get started please browse the <a href="/api">Saxon/C APIs</a>. SaxonProcessor, which
          acts as a factory class for generating the processors, is a good place to start.</p>
 
-      <p>The samples directory in the download provides example code in C/C++, PHP and Python
-         programming languages which may be helpful in learning how to use Saxon/C in your
-         application. For further details see <a href="/samplessamples_c">Samples</a>.</p>
+      <p>The 'samples/cppTest' directory in the download provides example code in C/C++ (and PHP and
+         Python) which may also be helpful in learning how to use Saxon/C in your application. For
+         further details see <a href="/samples/samples_c">Samples</a>.</p>
 
       <h2>Commandline Interface</h2>
 
@@ -297,7 +325,7 @@
 
    <section id="licensing" title="Licensing">
       <h1>Licensing</h1>
-      
+
       <h2>Saxon-PE/C and Saxon-EE/C</h2>
 
       <p>Saxon-PE/C and Saxon-EE/C are commercial products, and require a license key. By
@@ -309,15 +337,15 @@
             >https://saxonica.com/license/paid-license.pdf</a> (in the case of paid-up licenses,
          purchased from our <a target="_blank" href="https://saxonica.com/shop/shop.html">online
             store</a>).</p>
-      
+
       <h3>Location of the Saxon license file</h3>
 
-      <p>Saxon/C looks in the
-         path relative to where the main library has been installed. For example, in '/usr/lib' if
-         this is where libsaxon[EDITION]c.so has been installed. Alternatively, Saxon also looks for
-         the license according to the environment variable SAXONC_HOME, if this has been set. The
-         license file can also be placed in the same directory as the stylesheet, but we advise
-         against this for PHP servers where the license might be compromised. </p>
+      <p>Saxon/C looks in the path relative to where the main library has been installed. For
+         example, in '/usr/lib' if this is where libsaxon[EDITION]c.so has been installed.
+         Alternatively, Saxon also looks for the license according to the environment variable
+         SAXONC_HOME, if this has been set. The license file can also be placed in the same
+         directory as the stylesheet, but we advise against this for PHP servers where the license
+         might be compromised. </p>
 
       <p>Alternatively a user can use the <code>licenseFileLocation</code> configuration property to
          provide the license location (see the Saxon 9.9 documentation for details of this and other
@@ -326,7 +354,7 @@
             <code>licenseFileLocation</code> in PHP:</p>
       <samp><![CDATA[$saxonProc = new Saxon\SaxonProcessor(true);
 $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLocation", "/usr/lib/saxon-license.lic");]]></samp>
-      
+
       <h2>Saxon-HE/C</h2>
 
       <p>Saxon-HE/C is an open-source product. The primary license is the <a target="_blank"

@@ -20,8 +20,8 @@
    </p>-->
 
    <p>Saxon/C 1.2 is built from the Saxon 9.9.1.5 Java product using Excelsior JET Enterprise 15.3
-      edition (MP1). The APIs support the current W3C Recommendations: XSLT 3.0, XQuery 3.1, Schema
-      Validation 1.0/1.1 and XPath 3.1. See the Saxon 9.9 documentation <a
+      edition (MP1). The APIs support the current W3C Recommendations: XSLT 3.0, XQuery 3.1, XPath
+      3.1 and Schema Validation 1.0/1.1. See the Saxon 9.9 documentation <a
          href="https://saxonica.com/documentation/index.html#!conformance">Standards Conformance</a>
       section for details.</p>
 
