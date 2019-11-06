@@ -127,7 +127,8 @@
         <xsl:template match="*">
 
         <xsl:variable name="args" select="['param1-data', .]"/>
-            <xsl:variable name="phpCall" select="php:function('userFunction', $args)" />]]</samp>
+            <xsl:variable name="phpCall" select="php:function('userFunction', $args)" />
+            ]]></samp>
 
    </section>
 
