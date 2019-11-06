@@ -297,6 +297,8 @@
 
    <section id="licensing" title="Licensing">
       <h1>Licensing</h1>
+      
+      <h2>Saxon-PE/C and Saxon-EE/C</h2>
 
       <p>Saxon-PE/C and Saxon-EE/C are commercial products, and require a license key. By
          downloading the software, you agree to the terms and conditions published at <a
@@ -307,8 +309,10 @@
             >https://saxonica.com/license/paid-license.pdf</a> (in the case of paid-up licenses,
          purchased from our <a target="_blank" href="https://saxonica.com/shop/shop.html">online
             store</a>).</p>
+      
+      <h3>Location of the Saxon license file</h3>
 
-      <p><b>Location of the Saxon license file for commercial products</b>: Saxon/C looks in the
+      <p>Saxon/C looks in the
          path relative to where the main library has been installed. For example, in '/usr/lib' if
          this is where libsaxon[EDITION]c.so has been installed. Alternatively, Saxon also looks for
          the license according to the environment variable SAXONC_HOME, if this has been set. The
@@ -322,6 +326,8 @@
             <code>licenseFileLocation</code> in PHP:</p>
       <samp><![CDATA[$saxonProc = new Saxon\SaxonProcessor(true);
 $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLocation", "/usr/lib/saxon-license.lic");]]></samp>
+      
+      <h2>Saxon-HE/C</h2>
 
       <p>Saxon-HE/C is an open-source product. The primary license is the <a target="_blank"
             href="https://www.mozilla.org/MPL/2.0/">Mozilla Public License version 2.0</a>. In most
