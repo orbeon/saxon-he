@@ -25,7 +25,8 @@
 
       <p>See the C++ code below to register the extension function the C++ API</p>
 
-      <samp><![CDATA[char fname[] = "_nativeCall";
+      <samp><![CDATA[
+      char fname[] = "_nativeCall";
       char funcParameters[] = "(Ljava/lang/String;[Ljava/lang/Object;[Ljava/lang/String;)Ljava/lang/Object;";
 
       JNINativeMethod cppMethods[] =
@@ -45,7 +46,8 @@
 
         trans->setProperty("extc", "/path/cppExtensionFunction");
 
-      bool nativeFound = processor->registerNativeMethods(SaxonProcessor::sxn_environ->env, "com/saxonica/functions/extfn/cpp/NativeCall",
+      bool nativeFound = processor->registerNativeMethods(SaxonProcessor::sxn_environ->env,
+                                             "com/saxonica/functions/extfn/cpp/NativeCall",
           cppMethods, sizeof(cppMethods) / sizeof(cppMethods[0]));
       if(nativeFound) {
           const char * output = trans->transformFileToString("cat.xml", "testExtension.xsl");
@@ -73,6 +75,9 @@
    <section id="extensions_php" title="Writing Extension functions in PHP">
       <h1>Writing Extension functions in PHP</h1>
 
+      <p>The example below illustrates how to write an user written extension function in PHP which can be used in XSLT and XQuery.
+         Please note that the PHP extension library needs to be registered in the Saxon/C PHP API in the 'registerPHPFunctions' function in the SaxonProcessor for this feature to work.</p>
+      
       <samp><![CDATA[
     // define a user space function
     function userFunction($param , $param2)
