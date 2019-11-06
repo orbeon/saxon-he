@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <article id="extensibility" title="C++/PHP Extension Functions">
-   <h1>C++/PHP Extension Functions</h1>
+   <h1>Extension Functions C++/PHP</h1>
 
-
+   <p>This section describes how to extend the capability of Saxon XSLT stylesheets and XQuery queries by adding extension functions written in
+      C++ and PHP languages, extending the configuration and other user hooks.</p>
 
    <nav>
       <ul/>
@@ -11,12 +12,122 @@
    <section id="extensions_cpp" title="Writing Extension functions in C++">
       <h1>Writing Extension functions in C++</h1>
 
+      <p>The full example of the extension function is in the file cppExtensionFunction.cpp in the directory 'samples/cppTest'.</p>
+       <kdb>g++ -fPIC -shared -m64  cppExtensionFunction.cpp -o bin/cppExtensionFunction.o<br/>
+       g++ -m64 -shared -Wl,-soname,cppExtensionFunction.so -o  cppExtensionFunction.so bin/cppExtensionFunction.o</kdb>
+
+
+      <p>The snippet of XSLT example which uses the extension function is given below (from the testExtension.xsl file):</p>
+
+      <samp><![CDATA[<xsl:variable name="args" select="['param1-data', .]"/>
+      	<xsl:variable name="resultVar" select="saxon:native('userFunction', $args)" /> ]]></samp>
+
+
+      <p>See the C++ code below to register the extension function the C++ API</p>
+
+      <samp><![CDATA[char fname[] = "_nativeCall";
+      char funcParameters[] = "(Ljava/lang/String;[Ljava/lang/Object;[Ljava/lang/String;)Ljava/lang/Object;";
+
+      JNINativeMethod cppMethods[] =
+      {
+          {
+               fname,
+               funcParameters,
+               (void *)&cppNativeCall
+          }
+      };
+
+      /*
+      * Test transform to String. Source and stylesheet supplied as arguments
+      */
+      void testTransformToStringExtensionFunc(SaxonProcessor * processor, XsltProcessor * trans){
+
+
+        trans->setProperty("extc", "/path/cppExtensionFunction");
+
+      bool nativeFound = processor->registerNativeMethods(SaxonProcessor::sxn_environ->env, "com/saxonica/functions/extfn/cpp/NativeCall",
+          cppMethods, sizeof(cppMethods) / sizeof(cppMethods[0]));
+      if(nativeFound) {
+          const char * output = trans->transformFileToString("cat.xml", "testExtension.xsl");
+
+         if(output == NULL) {
+      	    printf("result is null \n");
+
+         }else {
+            //printf("%s", output);
+            printf("result is OK \n");
+         }
+            fflush(stdout);
+      	 delete output;
+      } else{
+          printf("native Class not foun");
+      }
+      }
+]]></samp>
+
+
+      <kdb>g++ -m64  bin/SaxonCGlue.o bin/SaxonCXPath.o bin/SaxonProcessor.o bin/XQueryProcessor.o bin/XsltProcessor.o bin/Xslt30Processor.o bin/XPathProcessor.o bin/XdmValue.o bin/XdmItem.o bin/XdmNode.o bin/XdmAtomicValue.o bin/SchemaValidator.o testXSLT.cpp -o testXSLT -ldl -lc</kdb>
 
    </section>
 
    <section id="extensions_php" title="Writing Extension functions in PHP">
       <h1>Writing Extension functions in PHP</h1>
 
+      <samp><![CDATA[
+    // define a user space function
+    function userFunction($param , $param2)
+    {
+
+      	 if(is_numeric($param2)){
+            echo("userspace function called cp1\n");
+      		$result = $param2*2;
+      		return $result;
+      	 }
+    }
+
+	function  userFunctionExample($saxon, $proc,$xmlfile, $xslFile){
+		echo '<b>userFunctionExample:</b><br/>';
+		global $resultg;
+
+		$saxon->registerPHPFunctions(" /usr/lib/php/20170718/saxon");
+ 		$proc->setSourceFromFile($xmlfile);
+                $proc->compileFromFile($xslFile);
+
+
+                $result = $proc->transformToString();
+		if($result != null) {
+		echo 'Output=======:'.$result;
+		} else {
+			echo "Result is null";
+			if($proc->exceptionOccurred()){
+				echo "Exception occurred";
+			}
+			$errCount = $proc->getExceptionCount();
+			for($i =0;$i<$errCount;$i++) {
+				echo 'Error Message='.$proc->getErrorMessage($i);
+			}
+		}
+
+		$proc->clearParameters();
+		$proc->clearProperties();
+
+	}
+
+]]></samp>
+
+      <p>See XSLT code below for the PHP extension function. Notice here we need to declare the 'php' namespace <code>xmlns:php="http://php.net/xsl"</code>:</p>
+
+      <samp><![CDATA[<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:saxon="http://saxon.sf.net/"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:f="http://www.saxonica.com/myfunction"
+        xmlns:php="http://php.net/xsl"
+        version="3.0">
+
+        <xsl:template match="*">
+
+        <xsl:variable name="args" select="['param1-data', .]"/>
+            <xsl:variable name="phpCall" select="php:function('userFunction', $args)" />]]</samp>
 
    </section>
 
