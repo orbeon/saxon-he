@@ -11,7 +11,7 @@
     <xsl:template match="section|article" mode="primary">
         <xsl:variable name="title" select="(h1|h2|h3)[1]"/>
         <xsl:if test="exists($title)">
-            <ixsl:set-property name="document.title" select="concat('Saxon-JS ', $title)"/>
+            <ixsl:set-property name="document.title" select="string-join(($product, $title), ' ')"/>
         </xsl:if>
         <xsl:apply-templates mode="secondary"/>
     </xsl:template>

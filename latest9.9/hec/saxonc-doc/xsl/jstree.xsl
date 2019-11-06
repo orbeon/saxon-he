@@ -35,6 +35,8 @@
     <xsl:import href="functions-body.xsl"/>
     <xsl:import href="elements-body.xsl"/>
     <!--<xsl:import href="changes.xsl"/>-->
+   
+    <xsl:param name="product" select="'Saxon-JS'" as="xs:string"/>
 
     <xsl:variable name="location" select="resolve-uri('doc', ixsl:location())"/>
     <xsl:variable name="implement-doc" select="concat($location, '/implement.xml')"/>

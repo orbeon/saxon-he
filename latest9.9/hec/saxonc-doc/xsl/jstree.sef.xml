@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<package xmlns='http://ns.saxonica.com/xslt/export' xmlns:fn='http://www.w3.org/2005/xpath-functions' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:vv='http://saxon.sf.net/generated-variable' xmlns:java-type='http://saxon.sf.net/java-type' id='0' version='30' packageVersion='1' saxonVersion='9.9.1.2' target='JS' targetVersion='1' relocatable='true' implicit='true'>
- <co id='0' vis='PRIVATE' binds=''>
+<package xmlns='http://ns.saxonica.com/xslt/export' xmlns:fn='http://www.w3.org/2005/xpath-functions' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:vv='http://saxon.sf.net/generated-variable' xmlns:java-type='http://saxon.sf.net/java-type' when='2019-11-06T15:11:18.018Z' id='0' version='30' packageVersion='1' saxonVersion='9.9.1.5' target='JS' targetVersion='1' relocatable='true' implicit='true'>
+ <co id='0' binds=''>
   <template name='Q{}repeat' flags='os' line='230' module='elements-body.xsl' slots='0'>
    <choose role='body' ns='xsl=~ ixsl=~ xs=~ map=~ f=urn:viewerapp.function el=http://www.saxonica.com/ns/doc/elements' line='232'>
     <vc op='eq' onEmpty='0' comp='CCC'>
@@ -54,7 +54,7 @@
    </choose>
   </template>
  </co>
- <co id='1' vis='PRIVATE' binds=''>
+ <co id='1' binds=''>
   <template name='Q{}no-attributes' flags='os' line='172' module='elements-body.xsl' slots='0'>
    <sequence role='body' ns='xsl=~ ixsl=~ xs=~ map=~ f=urn:viewerapp.function el=http://www.saxonica.com/ns/doc/elements' line='173'>
     <elem name='br' nsuri='' namespaces='map ixsl f'>
@@ -70,9 +70,9 @@
    </sequence>
   </template>
  </co>
- <co id='2' vis='PRIVATE' binds='3 4 5 6'>
-  <template name='Q{}navpage' flags='os' line='351' module='jstree.xsl' slots='5'>
-   <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='352'>
+ <co id='2' binds='3 4 5 6'>
+  <template name='Q{}navpage' flags='os' line='352' module='jstree.xsl' slots='5'>
+   <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='353'>
     <param name='Q{}class' slot='0' flags='i' as='xs:string'>
      <treat role='conversion' as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='8|0|XTTE0590|class'>
       <check card='1' diag='8|0|XTTE0590|class'>
@@ -84,7 +84,7 @@
       </check>
      </treat>
     </param>
-    <let line='354' var='Q{}ids' as='xs:string*' slot='1' eval='4'>
+    <let line='355' var='Q{}ids' as='xs:string*' slot='1' eval='4'>
      <fn name='tokenize'>
       <treat as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='0|0||fn:tokenize'>
        <check card='?' diag='0|0||fn:tokenize'>
@@ -98,18 +98,18 @@
       <str val='/'/>
       <str val=''/>
      </fn>
-     <ufCall line='380' name='Q{urn:viewerapp.function}set-hash' tailCall='false' bSlot='1' eval='8'>
-      <let line='368' var='Q{}c' as='node()' slot='2' eval='16'>
+     <ufCall line='381' name='Q{urn:viewerapp.function}set-hash' tailCall='false' bSlot='1' eval='8'>
+      <let line='369' var='Q{}c' as='node()' slot='2' eval='16'>
        <ufCall name='Q{urn:viewerapp.function}get-item' tailCall='false' bSlot='2' eval='6 16 0'>
         <varRef name='Q{}ids' slot='1'/>
-        <check line='355' card='1' diag='0|1||f:get-item'>
+        <check line='356' card='1' diag='0|1||f:get-item'>
          <let var='Q{}start' as='xs:string?' slot='3' eval='7'>
           <first>
            <varRef name='Q{}ids' slot='1'/>
           </first>
-          <check line='625' card='?' diag='5|0|XTTE0780|f:get-first-item#1'>
+          <check line='626' card='?' diag='5|0|XTTE0780|f:get-first-item#1'>
            <filter flags='b'>
-            <gVarRef name='Q{http://saxon.sf.net/generated-variable}gg221111433' bSlot='3'/>
+            <gVarRef name='Q{http://saxon.sf.net/generated-variable}gg762227630' bSlot='3'/>
             <vc op='eq' onEmpty='0' comp='GAC|http://www.w3.org/2005/xpath-functions/collation/codepoint'>
              <cast as='xs:string' emptiable='1'>
               <attVal name='Q{}id' chk='0'/>
@@ -122,7 +122,7 @@
         </check>
         <int val='1'/>
        </ufCall>
-       <let line='372' var='Q{}new-li' as='element(Q{}li)?' slot='4' eval='7'>
+       <let line='373' var='Q{}new-li' as='element(Q{}li)?' slot='4' eval='7'>
         <choose>
          <vc op='eq' onEmpty='0' comp='CCC'>
           <varRef name='Q{}class' slot='0'/>
@@ -161,7 +161,7 @@
           </slash>
          </first>
         </choose>
-        <fn line='375' name='string-join'>
+        <fn line='376' name='string-join'>
          <data>
           <slash simple='2'>
            <union op='|'>
@@ -185,7 +185,7 @@
    </sequence>
   </template>
  </co>
- <co id='7' vis='PRIVATE' binds='3 8 4'>
+ <co id='7' binds='3 8 4'>
   <template name='Q{}display-results' flags='os' line='202' module='findtext.xsl' slots='3'>
    <let role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='203' var='Q{}foundPathsDiv' as='element(Q{}div)*' slot='0' eval='8'>
     <filter flags=''>
@@ -244,7 +244,7 @@
           <dot type='element(Q{}div)'/>
          </ifCall>
         </forEach>
-        <resultDoc line='211' global='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;' local='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
+        <resultDoc line='211' global='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;' local='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
          <str role='href' val='#findstatus'/>
          <valueOf role='content' line='212'>
           <str val='0 of 0'/>
@@ -297,7 +297,7 @@
            <dot type='element(Q{}div)'/>
           </ifCall>
          </forEach>
-         <resultDoc line='226' global='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;' local='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
+         <resultDoc line='226' global='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;' local='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
           <str role='href' val='#findstatus'/>
           <valueOf role='content' line='227'>
            <fn name='concat'>
@@ -564,9 +564,9 @@
    </templateRule>
   </mode>
  </co>
- <co id='11' vis='PRIVATE' binds='11 8'>
-  <template name='Q{}highlight-item' flags='os' line='565' module='jstree.xsl' slots='6'>
-   <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='566'>
+ <co id='11' binds='11 8'>
+  <template name='Q{}highlight-item' flags='os' line='566' module='jstree.xsl' slots='6'>
+   <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='567'>
     <param name='Q{}parent' slot='0' as='node()?'>
      <empty role='select'/>
      <treat role='conversion' as='node()' jsTest='return SaxonJS.U.isNode(item);' diag='8|0|XTTE0590|parent'>
@@ -575,7 +575,7 @@
       </check>
      </treat>
     </param>
-    <param line='567' name='Q{}ids' slot='1' as='xs:string*'>
+    <param line='568' name='Q{}ids' slot='1' as='xs:string*'>
      <empty role='select'/>
      <treat role='conversion' as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='8|0|XTTE0590|ids'>
       <cvUntyped to='xs:string' diag='8|0|XTTE0590|ids'>
@@ -585,7 +585,7 @@
       </cvUntyped>
      </treat>
     </param>
-    <param line='568' name='Q{}index' slot='2' flags='i' as='xs:integer'>
+    <param line='569' name='Q{}index' slot='2' flags='i' as='xs:integer'>
      <treat role='conversion' as='xs:integer' jsTest='return SaxonJS.U.Atomic.integer.matches(item);' diag='8|0|XTTE0590|index'>
       <check card='1' diag='8|0|XTTE0590|index'>
        <cvUntyped to='xs:integer' diag='8|0|XTTE0590|index'>
@@ -596,7 +596,7 @@
       </check>
      </treat>
     </param>
-    <let line='569' var='Q{}hitem' as='element(Q{}li)*' slot='3' eval='3'>
+    <let line='570' var='Q{}hitem' as='element(Q{}li)*' slot='3' eval='3'>
      <filter flags=''>
       <slash simple='2'>
        <slash simple='1'>
@@ -613,45 +613,45 @@
        </subscript>
       </vc>
      </filter>
-     <choose line='571'>
+     <choose line='572'>
       <vc op='lt' onEmpty='0' comp='CAVC'>
        <varRef name='Q{}index' slot='2'/>
        <fn name='count'>
         <varRef name='Q{}ids' slot='1'/>
        </fn>
       </vc>
-      <callT line='572' name='Q{}highlight-item' bSlot='0' flags='t'>
+      <callT line='573' name='Q{}highlight-item' bSlot='0' flags='t'>
        <withParam name='Q{}parent' flags='c' as='element(Q{}li)?'>
-        <check line='573' card='?' diag='8|0|XTTE0590|parent'>
+        <check line='574' card='?' diag='8|0|XTTE0590|parent'>
          <varRef name='Q{}hitem' slot='3'/>
         </check>
        </withParam>
        <withParam name='Q{}ids' flags='c' as='xs:string*'>
-        <varRef line='574' name='Q{}ids' slot='1'/>
+        <varRef line='575' name='Q{}ids' slot='1'/>
        </withParam>
        <withParam name='Q{}index' flags='c' as='xs:integer'>
-        <arith line='575' op='+' calc='i+i'>
+        <arith line='576' op='+' calc='i+i'>
          <varRef name='Q{}index' slot='2'/>
          <int val='1'/>
         </arith>
        </withParam>
       </callT>
       <true/>
-      <let line='583' var='Q{http://saxon.sf.net/generated-variable}v1' as='item()' slot='4' eval='13'>
+      <let line='584' var='Q{http://saxon.sf.net/generated-variable}v1' as='item()' slot='4' eval='13'>
        <check card='1' diag='0|0||ixsl:call'>
         <ifCall name='Q{http://saxonica.com/ns/interactiveXSLT}window' type='item()?'/>
        </check>
-       <let line='580' var='Q{http://saxon.sf.net/generated-variable}v0' as='item()' slot='5' eval='13'>
+       <let line='581' var='Q{http://saxon.sf.net/generated-variable}v0' as='item()' slot='5' eval='13'>
         <check card='1' diag='0|0||ixsl:call'>
          <ifCall name='Q{http://saxonica.com/ns/interactiveXSLT}window' type='item()?'/>
         </check>
-        <sequence line='579'>
+        <sequence line='580'>
          <forEach>
           <slash simple='2'>
            <varRef name='Q{}hitem' slot='3'/>
            <axis name='child' nodeTest='element(Q{}span)' jsTest='var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;span&#39;;'/>
           </slash>
-          <sequence line='580'>
+          <sequence line='581'>
            <forEach>
             <ifCall name='Q{http://saxonica.com/ns/interactiveXSLT}call' type='item()?'>
              <varRef name='Q{http://saxon.sf.net/generated-variable}v0' slot='5'/>
@@ -660,23 +660,23 @@
               <dot type='element(Q{}span)'/>
              </arrayBlock>
             </ifCall>
-            <ifCall line='581' name='Q{http://saxonica.com/ns/interactiveXSLT}set-attribute' type='item()*'>
+            <ifCall line='582' name='Q{http://saxonica.com/ns/interactiveXSLT}set-attribute' type='item()*'>
              <str val='class'/>
              <str val='item'/>
             </ifCall>
            </forEach>
-           <ifCall line='583' name='Q{http://saxonica.com/ns/interactiveXSLT}call' type='item()?'>
+           <ifCall line='584' name='Q{http://saxonica.com/ns/interactiveXSLT}call' type='item()?'>
             <varRef name='Q{http://saxon.sf.net/generated-variable}v1' slot='4'/>
             <str val='enableScroll'/>
             <array size='0'/>
            </ifCall>
-           <ifCall line='584' name='Q{http://saxonica.com/ns/interactiveXSLT}set-attribute' type='item()*'>
+           <ifCall line='585' name='Q{http://saxonica.com/ns/interactiveXSLT}set-attribute' type='item()*'>
             <str val='class'/>
             <str val='hot'/>
            </ifCall>
           </sequence>
          </forEach>
-         <choose line='587'>
+         <choose line='588'>
           <vc op='ne' onEmpty='0' comp='GAC|http://www.w3.org/2005/xpath-functions/collation/codepoint'>
            <atomSing card='?' diag='1|0||ne'>
             <lookup>
@@ -708,7 +708,7 @@
            </atomSing>
            <str val='none'/>
           </vc>
-          <callT line='589' name='Q{}highlighting' bSlot='1' flags='t'/>
+          <callT line='590' name='Q{}highlighting' bSlot='1' flags='t'/>
          </choose>
         </sequence>
        </let>
@@ -720,11 +720,11 @@
  </co>
  <co id='12' binds='3 13 4'>
   <mode name='Q{}handle-itemclick' onNo='TC' flags='W' patternSlots='0'>
-   <templateRule prec='6' prio='-0.5' seq='65' rank='0' minImp='0' slots='3' flags='s' line='305' module='jstree.xsl'>
+   <templateRule prec='6' prio='-0.5' seq='65' rank='0' minImp='0' slots='3' flags='s' line='306' module='jstree.xsl'>
     <p.nodeTest role='match' test='element()' jsTest='return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1;'/>
-    <let role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='307' var='Q{}new-hash' as='xs:string' slot='0' eval='8'>
+    <let role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='308' var='Q{}new-hash' as='xs:string' slot='0' eval='8'>
      <fn name='string-join'>
-      <cvUntyped line='306' to='xs:string' diag='3|0|XTTE0570|ids'>
+      <cvUntyped line='307' to='xs:string' diag='3|0|XTTE0570|ids'>
        <data>
         <docOrder intra='0'>
          <slash simple='2'>
@@ -744,25 +744,25 @@
       </cvUntyped>
       <str val='/'/>
      </fn>
-     <let line='308' var='Q{}isSpan' as='xs:boolean' slot='1' eval='16'>
+     <let line='309' var='Q{}isSpan' as='xs:boolean' slot='1' eval='16'>
       <check card='1' diag='3|0|XTTE0570|isSpan'>
        <vc op='eq' comp='CCC'>
         <attVal name='Q{}class' chk='0'/>
         <str val='item'/>
        </vc>
       </check>
-      <let line='312' var='Q{http://saxon.sf.net/generated-variable}v0' as='xs:boolean' slot='2' eval='13'>
+      <let line='313' var='Q{http://saxon.sf.net/generated-variable}v0' as='xs:boolean' slot='2' eval='13'>
        <fn name='not'>
         <varRef name='Q{}isSpan' slot='1'/>
        </fn>
-       <forEach line='310'>
+       <forEach line='311'>
         <choose>
          <varRef name='Q{}isSpan' slot='1'/>
          <axis name='parent' nodeTest='(element()|document-node())' jsTest='return SaxonJS.U.isNode(item) &amp;&amp; (item.nodeType===9||item.nodeType===11||item.nodeType===1);'/>
          <true/>
          <dot type='element()'/>
         </choose>
-        <choose line='312'>
+        <choose line='313'>
          <and op='and'>
           <vc op='eq' onEmpty='0' comp='CCC'>
            <attVal name='Q{}class' chk='0'/>
@@ -770,12 +770,12 @@
           </vc>
           <varRef name='Q{http://saxon.sf.net/generated-variable}v0' slot='2'/>
          </and>
-         <ifCall line='313' name='Q{http://saxonica.com/ns/interactiveXSLT}set-attribute' type='item()*'>
+         <ifCall line='314' name='Q{http://saxonica.com/ns/interactiveXSLT}set-attribute' type='item()*'>
           <str val='class'/>
           <str val='closed'/>
          </ifCall>
          <true/>
-         <sequence line='316'>
+         <sequence line='317'>
           <ifCall name='Q{http://saxonica.com/ns/interactiveXSLT}call' type='item()?'>
            <check card='1' diag='0|0||ixsl:call'>
             <ifCall name='Q{http://saxonica.com/ns/interactiveXSLT}window' type='item()?'/>
@@ -783,19 +783,19 @@
            <str val='disableScroll'/>
            <array size='0'/>
           </ifCall>
-          <choose line='318'>
+          <choose line='319'>
            <vc op='eq' onEmpty='0' comp='GAC|http://www.w3.org/2005/xpath-functions/collation/codepoint'>
             <atomSing card='?' diag='1|0||eq'>
              <ufCall name='Q{urn:viewerapp.function}get-hash' tailCall='false' bSlot='0'/>
             </atomSing>
             <varRef name='Q{}new-hash' slot='0'/>
            </vc>
-           <sequence line='320'>
+           <sequence line='321'>
             <ifCall name='Q{http://saxonica.com/ns/interactiveXSLT}set-attribute' type='item()*'>
              <str val='class'/>
-             <choose line='620'>
+             <choose line='621'>
               <vc op='eq' onEmpty='0' comp='CCC'>
-               <check line='319' card='1' diag='0|0||f:get-open-class'>
+               <check line='320' card='1' diag='0|0||f:get-open-class'>
                 <cvUntyped to='xs:string'>
                  <attVal name='Q{}class' chk='0'/>
                 </cvUntyped>
@@ -807,15 +807,15 @@
               <str val='open'/>
              </choose>
             </ifCall>
-            <choose line='321'>
+            <choose line='322'>
              <fn name='empty'>
               <axis name='child' nodeTest='element(Q{}ul)' jsTest='var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;ul&#39;;'/>
              </fn>
-             <callT line='322' name='Q{}process-hashchange' bSlot='1'/>
+             <callT line='323' name='Q{}process-hashchange' bSlot='1'/>
             </choose>
            </sequence>
            <true/>
-           <ufCall line='326' name='Q{urn:viewerapp.function}set-hash' tailCall='false' bSlot='2' eval='6'>
+           <ufCall line='327' name='Q{urn:viewerapp.function}set-hash' tailCall='false' bSlot='2' eval='6'>
             <varRef name='Q{}new-hash' slot='0'/>
            </ufCall>
           </choose>
@@ -828,9 +828,9 @@
    </templateRule>
   </mode>
  </co>
- <co id='14' vis='PRIVATE' binds=''>
-  <template name='Q{}scrollpage' flags='os' line='268' module='jstree.xsl' slots='0'>
-   <ifCall role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='271' name='Q{http://saxonica.com/ns/interactiveXSLT}set-property' type='item()?'>
+ <co id='14' binds=''>
+  <template name='Q{}scrollpage' flags='os' line='269' module='jstree.xsl' slots='0'>
+   <ifCall role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='272' name='Q{http://saxonica.com/ns/interactiveXSLT}set-property' type='item()?'>
     <str val='scrollTop'/>
     <int val='0'/>
     <check card='1' diag='0|2||ixsl:set-property'>
@@ -867,7 +867,7 @@
    </ifCall>
   </template>
  </co>
- <co id='8' vis='PRIVATE' binds='15 16 17'>
+ <co id='8' binds='15 16 17'>
   <template name='Q{}highlighting' flags='os' line='244' module='findtext.xsl' slots='1'>
    <let role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='246' var='Q{}search' as='xs:string' slot='0' eval='8'>
     <fn name='lower-case'>
@@ -877,7 +877,7 @@
         <cvUntyped to='xs:string'>
          <data>
           <ifCall name='Q{http://saxonica.com/ns/interactiveXSLT}get' type='item()*'>
-           <gVarRef name='Q{http://saxon.sf.net/generated-variable}gg899543194' bSlot='0'/>
+           <gVarRef name='Q{http://saxon.sf.net/generated-variable}gg121295574' bSlot='0'/>
            <str val='value'/>
           </ifCall>
          </data>
@@ -907,7 +907,7 @@
         <str val='main'/>
        </vc>
       </filter>
-      <resultDoc line='248' global='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;' local='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
+      <resultDoc line='248' global='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;' local='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
        <str role='href' val='?.'/>
        <applyT role='content' line='249' mode='Q{}highlight-text' flags='i' bSlot='1'>
         <axis role='select' name='child' nodeTest='node()' jsTest='return true;'/>
@@ -926,7 +926,7 @@
    </let>
   </template>
  </co>
- <co id='18' vis='PRIVATE' binds='9 19 7'>
+ <co id='18' binds='9 19 7'>
   <template name='Q{}search-doc' flags='os' line='110' module='findtext.xsl' slots='3'>
    <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='112'>
     <param name='Q{}search' slot='0'>
@@ -1011,16 +1011,16 @@
    </sequence>
   </template>
  </co>
- <co id='20' vis='PRIVATE' binds='21 22'>
-  <template name='Q{}list' flags='os' line='64' module='jstree.xsl' slots='1'>
-   <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='66'>
+ <co id='20' binds='21 22'>
+  <template name='Q{}list' flags='os' line='66' module='jstree.xsl' slots='1'>
+   <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='68'>
     <param name='Q{}docName' slot='0'>
      <str role='select' val=''/>
      <supplied role='conversion' slot='0'/>
     </param>
-    <resultDoc line='67' global='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;' local='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
+    <resultDoc line='69' global='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;' local='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
      <str role='href' val='#list'/>
-     <applyT role='content' line='69' bSlot='0'>
+     <applyT role='content' line='71' bSlot='0'>
       <slash role='select' simple='2'>
        <slash simple='1'>
         <fn name='doc'>
@@ -1040,27 +1040,27 @@
       </slash>
      </applyT>
     </resultDoc>
-    <ifCall line='72' name='Q{http://saxonica.com/ns/interactiveXSLT}schedule-action' type='item()*'>
+    <ifCall line='74' name='Q{http://saxonica.com/ns/interactiveXSLT}schedule-action' type='item()*'>
      <int val='1'/>
      <empty/>
-     <callT line='73' name='Q{}init' bSlot='1'/>
+     <callT line='75' name='Q{}init' bSlot='1'/>
     </ifCall>
    </sequence>
   </template>
  </co>
- <co id='23' vis='PRIVATE' binds='4 3'>
-  <function name='Q{urn:viewerapp.function}anchor-navigation' line='602' module='jstree.xsl' eval='7' flags='pU' as='item()*' slots='1'>
+ <co id='23' binds='4 3'>
+  <function name='Q{urn:viewerapp.function}anchor-navigation' line='603' module='jstree.xsl' eval='7' flags='pU' as='item()*' slots='1'>
    <arg name='Q{}c' as='node()'/>
-   <tailCallLoop role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='609'>
+   <tailCallLoop role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='610'>
     <ufCall name='Q{urn:viewerapp.function}set-hash' tailCall='foreign' bSlot='0' eval='8'>
      <fn name='translate'>
       <cvUntyped to='xs:string'>
-       <cast line='606' as='xs:untypedAtomic' emptiable='0'>
-        <fn line='607' name='string'>
+       <cast line='607' as='xs:untypedAtomic' emptiable='0'>
+        <fn line='608' name='string'>
          <cast as='xs:untypedAtomic' emptiable='0'>
           <fn name='substring'>
            <fn name='string'>
-            <fn line='606' name='resolve-uri'>
+            <fn line='607' name='resolve-uri'>
              <cvUntyped to='xs:string'>
               <data>
                <slash simple='1'>
@@ -1091,7 +1091,7 @@
    </tailCallLoop>
   </function>
  </co>
- <co id='24' vis='PRIVATE' binds='6 25 18'>
+ <co id='24' binds='6 25 18'>
   <template name='Q{}searching' flags='os' line='93' module='findtext.xsl' slots='2'>
    <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='94'>
     <param name='Q{}search' slot='0' flags='i' as='xs:string'>
@@ -1106,7 +1106,7 @@
      </treat>
     </param>
     <forEach line='97'>
-     <gVarRef name='Q{http://saxon.sf.net/generated-variable}gg221111433' bSlot='0'/>
+     <gVarRef name='Q{http://saxon.sf.net/generated-variable}gg762227630' bSlot='0'/>
      <let line='98' var='Q{}docName' as='xs:string' slot='1' eval='8'>
       <fn name='concat'>
        <gVarRef name='Q{}location' bSlot='1'/>
@@ -1320,7 +1320,7 @@
             <sequence line='75'>
              <forEach>
               <varRef name='Q{}status-element' slot='3'/>
-              <resultDoc line='76' global='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;' local='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
+              <resultDoc line='76' global='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;' local='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
                <str role='href' val='?.'/>
                <valueOf role='content' line='77'>
                 <fn name='string-join'>
@@ -1384,10 +1384,10 @@
    </templateRule>
   </mode>
  </co>
- <co id='27' vis='PRIVATE' binds=''>
-  <function name='Q{urn:viewerapp.function}get-open-class' line='618' module='jstree.xsl' eval='16' flags='pU' as='xs:string' slots='1'>
+ <co id='27' binds=''>
+  <function name='Q{urn:viewerapp.function}get-open-class' line='619' module='jstree.xsl' eval='16' flags='pU' as='xs:string' slots='1'>
    <arg name='Q{}class' as='xs:string'/>
-   <choose role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='620'>
+   <choose role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='621'>
     <vc op='eq' onEmpty='0' comp='CCC'>
      <varRef name='Q{}class' slot='0'/>
      <str val='empty'/>
@@ -1398,9 +1398,9 @@
    </choose>
   </function>
  </co>
- <co id='28' vis='PRIVATE' binds='28'>
-  <template name='Q{}get-trail' flags='os' line='409' module='jstree.xsl' slots='7'>
-   <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='410'>
+ <co id='28' binds='28'>
+  <template name='Q{}get-trail' flags='os' line='410' module='jstree.xsl' slots='7'>
+   <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='411'>
     <param name='Q{}ids' slot='0' as='xs:string*'>
      <empty role='select'/>
      <treat role='conversion' as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='8|0|XTTE0590|ids'>
@@ -1411,7 +1411,7 @@
       </cvUntyped>
      </treat>
     </param>
-    <param line='411' name='Q{}parent' slot='1' as='node()?'>
+    <param line='412' name='Q{}parent' slot='1' as='node()?'>
      <empty role='select'/>
      <treat role='conversion' as='node()' jsTest='return SaxonJS.U.isNode(item);' diag='8|0|XTTE0590|parent'>
       <check card='?' diag='8|0|XTTE0590|parent'>
@@ -1419,7 +1419,7 @@
       </check>
      </treat>
     </param>
-    <param line='412' name='Q{}index' slot='2' flags='i' as='xs:integer'>
+    <param line='413' name='Q{}index' slot='2' flags='i' as='xs:integer'>
      <treat role='conversion' as='xs:integer' jsTest='return SaxonJS.U.Atomic.integer.matches(item);' diag='8|0|XTTE0590|index'>
       <check card='1' diag='8|0|XTTE0590|index'>
        <cvUntyped to='xs:integer' diag='8|0|XTTE0590|index'>
@@ -1430,7 +1430,7 @@
       </check>
      </treat>
     </param>
-    <let line='413' var='Q{}section' as='element()*' slot='3' eval='4'>
+    <let line='414' var='Q{}section' as='element()*' slot='3' eval='4'>
      <filter flags=''>
       <slash simple='1'>
        <varRef name='Q{}parent' slot='1'/>
@@ -1444,7 +1444,7 @@
        </subscript>
       </vc>
      </filter>
-     <let line='414' var='Q{}title' as='item()?' slot='4' eval='7'>
+     <let line='415' var='Q{}title' as='item()?' slot='4' eval='7'>
       <first>
        <sequence>
         <slash simple='2'>
@@ -1461,7 +1461,7 @@
         </subscript>
        </sequence>
       </first>
-      <choose line='416'>
+      <choose line='417'>
        <vc op='gt' onEmpty='0' comp='CAVC'>
         <varRef name='Q{}index' slot='2'/>
         <fn name='count'>
@@ -1469,7 +1469,7 @@
         </fn>
        </vc>
        <empty/>
-       <and line='417' op='and'>
+       <and line='418' op='and'>
         <vc op='eq' onEmpty='0' comp='CAVC'>
          <varRef name='Q{}index' slot='2'/>
          <fn name='count'>
@@ -1480,15 +1480,15 @@
          <varRef name='Q{}section' slot='3'/>
         </fn>
        </and>
-       <let line='419' var='Q{}last' as='xs:string?' slot='5' eval='7'>
+       <let line='420' var='Q{}last' as='xs:string?' slot='5' eval='7'>
         <subscript>
          <varRef name='Q{}ids' slot='0'/>
          <varRef name='Q{}index' slot='2'/>
         </subscript>
-        <let line='422' var='Q{}prefix' as='xs:string' slot='6' eval='16'>
+        <let line='423' var='Q{}prefix' as='xs:string' slot='6' eval='16'>
          <choose ns='xsl=~ ixsl=~ xs=~ map=~ fnd=http://www.saxonica.com/ns/doc/functions f=urn:viewerapp.function' module='app-functions.xsl' line='23'>
           <vc op='eq' onEmpty='0' comp='CCC'>
-           <check ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' module='jstree.xsl' line='420' card='1' diag='0|0||f:usual-prefix'>
+           <check ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' module='jstree.xsl' line='421' card='1' diag='0|0||f:usual-prefix'>
             <cvUntyped to='xs:string'>
              <data>
               <slash simple='2'>
@@ -1505,9 +1505,9 @@
                   <varRef name='Q{}last' slot='5'/>
                  </gc>
                 </filter>
-                <axis line='422' name='child' nodeTest='element(Q{http://www.saxonica.com/ns/doc/functions}name)' jsTest='var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;http://www.saxonica.com/ns/doc/functions&#39;&amp;&amp;q.local===&#39;name&#39;;'/>
+                <axis line='423' name='child' nodeTest='element(Q{http://www.saxonica.com/ns/doc/functions}name)' jsTest='var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;http://www.saxonica.com/ns/doc/functions&#39;&amp;&amp;q.local===&#39;name&#39;;'/>
                </slash>
-               <axis line='422' name='attribute' nodeTest='attribute(Q{}namespace)' jsTest='return item.name===&#39;namespace&#39;'/>
+               <axis line='423' name='attribute' nodeTest='attribute(Q{}namespace)' jsTest='return item.name===&#39;namespace&#39;'/>
               </slash>
              </data>
             </cvUntyped>
@@ -1518,7 +1518,7 @@
           <true/>
           <str val=''/>
          </choose>
-         <elem line='425' name='li' nsuri=''>
+         <elem line='426' name='li' nsuri=''>
           <sequence>
            <att name='idt' flags='l'>
             <varRef name='Q{}last' slot='5'/>
@@ -1526,8 +1526,8 @@
            <att name='class' flags='l'>
             <str val='trail'/>
            </att>
-           <valueOf line='426' flags='l'>
-            <choose line='424'>
+           <valueOf line='427' flags='l'>
+            <choose line='425'>
              <vc op='ne' onEmpty='0' comp='GAC|http://www.w3.org/2005/xpath-functions/collation/codepoint'>
               <varRef name='Q{}prefix' slot='6'/>
               <str val=''/>
@@ -1545,13 +1545,13 @@
          </elem>
         </let>
        </let>
-       <vc line='429' op='eq' onEmpty='0' comp='CAVC'>
+       <vc line='430' op='eq' onEmpty='0' comp='CAVC'>
         <varRef name='Q{}index' slot='2'/>
         <fn name='count'>
          <varRef name='Q{}ids' slot='0'/>
         </fn>
        </vc>
-       <elem line='430' name='li' nsuri=''>
+       <elem line='431' name='li' nsuri=''>
         <sequence>
          <att name='idt' flags='l'>
           <fn name='string-join'>
@@ -1569,7 +1569,7 @@
          <att name='class' flags='l'>
           <str val='trail'/>
          </att>
-         <valueOf line='431' flags='l'>
+         <valueOf line='432' flags='l'>
           <fn name='string-join'>
            <convert from='xs:anyAtomicType' to='xs:string'>
             <data>
@@ -1582,7 +1582,7 @@
         </sequence>
        </elem>
        <true/>
-       <sequence line='435'>
+       <sequence line='436'>
         <elem name='li' nsuri=''>
          <sequence>
           <att name='idt' flags='l'>
@@ -1601,7 +1601,7 @@
           <att name='class' flags='l'>
            <str val='trail'/>
           </att>
-          <valueOf line='436' flags='l'>
+          <valueOf line='437' flags='l'>
            <fn name='string-join'>
             <convert from='xs:anyAtomicType' to='xs:string'>
              <data>
@@ -1616,17 +1616,17 @@
           </valueOf>
          </sequence>
         </elem>
-        <callT line='437' name='Q{}get-trail' bSlot='0' flags='t'>
+        <callT line='438' name='Q{}get-trail' bSlot='0' flags='t'>
          <withParam name='Q{}ids' flags='c' as='xs:string*'>
-          <varRef line='438' name='Q{}ids' slot='0'/>
+          <varRef line='439' name='Q{}ids' slot='0'/>
          </withParam>
          <withParam name='Q{}parent' flags='c' as='element()?'>
-          <check line='439' card='?' diag='8|0|XTTE0590|parent'>
+          <check line='440' card='?' diag='8|0|XTTE0590|parent'>
            <varRef name='Q{}section' slot='3'/>
           </check>
          </withParam>
          <withParam name='Q{}index' flags='c' as='xs:integer'>
-          <arith line='440' op='+' calc='i+i'>
+          <arith line='441' op='+' calc='i+i'>
            <varRef name='Q{}index' slot='2'/>
            <int val='1'/>
           </arith>
@@ -1639,15 +1639,15 @@
    </sequence>
   </template>
  </co>
- <co id='29' vis='PRIVATE' binds='2'>
-  <function name='Q{urn:viewerapp.function}navpage' line='342' module='jstree.xsl' eval='8' flags='pU' as='item()*' slots='1'>
+ <co id='29' binds='2'>
+  <function name='Q{urn:viewerapp.function}navpage' line='343' module='jstree.xsl' eval='8' flags='pU' as='item()*' slots='1'>
    <arg name='Q{}class' as='item()*'/>
-   <ifCall role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='344' name='Q{http://saxonica.com/ns/interactiveXSLT}schedule-action' type='item()*'>
+   <ifCall role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='345' name='Q{http://saxonica.com/ns/interactiveXSLT}schedule-action' type='item()*'>
     <int val='16'/>
     <empty/>
-    <callT line='345' name='Q{}navpage' bSlot='0'>
+    <callT line='346' name='Q{}navpage' bSlot='0'>
      <withParam name='Q{}class' flags='c' as='xs:string'>
-      <treat line='346' as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='8|0|XTTE0590|class'>
+      <treat line='347' as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='8|0|XTTE0590|class'>
        <check card='1' diag='8|0|XTTE0590|class'>
         <cvUntyped to='xs:string' diag='8|0|XTTE0590|class'>
          <data>
@@ -1661,7 +1661,7 @@
    </ifCall>
   </function>
  </co>
- <co id='30' vis='PRIVATE' binds=''>
+ <co id='30' binds=''>
   <function name='Q{urn:viewerapp.function}fn-name' line='31' module='app-functions.xsl' eval='16' flags='pU' as='xs:string' slots='2'>
    <arg name='Q{}fn-element' as='element(Q{http://www.saxonica.com/ns/doc/functions}function)'/>
    <let role='body' ns='xsl=~ ixsl=~ xs=~ map=~ fnd=http://www.saxonica.com/ns/doc/functions f=urn:viewerapp.function' line='33' var='Q{}prefix' as='xs:string' slot='1' eval='16'>
@@ -1714,7 +1714,7 @@
    </let>
   </function>
  </co>
- <co id='31' vis='PRIVATE' binds=''>
+ <co id='31' binds=''>
   <function name='Q{urn:viewerapp.function}fn-list' line='12' module='app-functions.xsl' eval='4' flags='pU' as='element()*' slots='1'>
    <arg name='Q{}fns' as='element()*'/>
    <sort role='body' ns='xsl=~ ixsl=~ xs=~ map=~ fnd=http://www.saxonica.com/ns/doc/functions f=urn:viewerapp.function' line='14'>
@@ -1737,9 +1737,9 @@
    </sort>
   </function>
  </co>
- <co id='13' vis='PRIVATE' binds='3 25 32'>
-  <template name='Q{}process-hashchange' flags='os' line='158' module='jstree.xsl' slots='2'>
-   <let role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='159' var='Q{}hash-parts' as='xs:string*' slot='0' eval='4'>
+ <co id='13' binds='3 25 32'>
+  <template name='Q{}process-hashchange' flags='os' line='159' module='jstree.xsl' slots='2'>
+   <let role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='160' var='Q{}hash-parts' as='xs:string*' slot='0' eval='4'>
     <fn name='tokenize'>
      <treat as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='0|0||fn:tokenize'>
       <check card='?' diag='0|0||fn:tokenize'>
@@ -1753,24 +1753,24 @@
      <str val='/'/>
      <str val=''/>
     </fn>
-    <let line='162' var='Q{}docName' as='xs:string' slot='1' eval='8'>
+    <let line='163' var='Q{}docName' as='xs:string' slot='1' eval='8'>
      <fn name='concat'>
       <gVarRef name='Q{}location' bSlot='1'/>
       <str val='/'/>
-      <first line='160'>
+      <first line='161'>
        <varRef name='Q{}hash-parts' slot='0'/>
       </first>
       <str val='.xml'/>
      </fn>
-     <ifCall line='165' name='Q{http://saxonica.com/ns/interactiveXSLT}schedule-action' type='item()*'>
+     <ifCall line='166' name='Q{http://saxonica.com/ns/interactiveXSLT}schedule-action' type='item()*'>
       <int val='0'/>
       <varRef name='Q{}docName' slot='1'/>
-      <callT line='166' name='Q{}render-page' bSlot='2'>
+      <callT line='167' name='Q{}render-page' bSlot='2'>
        <withParam name='Q{}hash-parts' flags='c' as='xs:string*'>
-        <varRef line='167' name='Q{}hash-parts' slot='0'/>
+        <varRef line='168' name='Q{}hash-parts' slot='0'/>
        </withParam>
        <withParam name='Q{}docName' flags='c' as='xs:string'>
-        <varRef line='168' name='Q{}docName' slot='1'/>
+        <varRef line='169' name='Q{}docName' slot='1'/>
        </withParam>
       </callT>
      </ifCall>
@@ -1778,10 +1778,10 @@
    </let>
   </template>
  </co>
- <co id='33' vis='PRIVATE' binds='34'>
-  <function name='Q{urn:viewerapp.function}get-first-item' line='623' module='jstree.xsl' eval='7' flags='pU' as='node()?' slots='2'>
+ <co id='33' binds='34'>
+  <function name='Q{urn:viewerapp.function}get-first-item' line='624' module='jstree.xsl' eval='7' flags='pU' as='node()?' slots='2'>
    <arg name='Q{}start' as='item()*'/>
-   <let role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='625' var='Q{http://saxon.sf.net/generated-variable}v0' as='xs:anyAtomicType*' slot='1' eval='4'>
+   <let role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='626' var='Q{http://saxon.sf.net/generated-variable}v0' as='xs:anyAtomicType*' slot='1' eval='4'>
     <data>
      <varRef name='Q{}start' slot='0'/>
     </data>
@@ -1803,9 +1803,9 @@
    </let>
   </function>
  </co>
- <co id='34' vis='PRIVATE' binds=''>
-  <globalVariable name='Q{}navlist' type='element(Q{}div)' line='45' module='jstree.xsl' visibility='PRIVATE' jsAcceptor='function test(item) {var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;div&#39;;};if (test(val)) {return val;} else {throw SaxonJS.XError(&#39;Conversion failed&#39;, &#39;XTTE0590&#39;);}' jsCardCheck='function c(n) {return n==1;};'>
-   <check ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='45' card='1' diag='3|0|XTTE0570|navlist'>
+ <co id='34' binds=''>
+  <globalVariable name='Q{}navlist' type='element(Q{}div)' line='47' module='jstree.xsl' visibility='PRIVATE' jsAcceptor='function test(item) {var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;div&#39;;};if (test(val)) {return val;} else {throw SaxonJS.XError(&#39;Conversion failed&#39;, &#39;XTTE0590&#39;);}' jsCardCheck='function c(n) {return n==1;};'>
+   <check ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='47' card='1' diag='3|0|XTTE0570|navlist'>
     <filter flags='b'>
      <slash simple='2'>
       <slash simple='2'>
@@ -1832,31 +1832,31 @@
  </co>
  <co id='35' binds='25 36'>
   <mode name='Q{http://saxonica.com/ns/interactiveXSLT}onmouseover' onNo='TC' flags='W' patternSlots='0'>
-   <templateRule prec='6' prio='0.5' seq='62' rank='0' minImp='0' slots='1' flags='s' line='131' module='jstree.xsl'>
+   <templateRule prec='6' prio='0.5' seq='62' rank='0' minImp='0' slots='1' flags='s' line='132' module='jstree.xsl'>
     <p.withPredicate role='match'>
      <p.withPredicate>
       <p.nodeTest test='element(Q{}span)' jsTest='var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;span&#39;;'/>
-      <axis ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='131' name='attribute' nodeTest='attribute(Q{}data-href)' jsTest='return item.name===&#39;data-href&#39;'/>
+      <axis ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='132' name='attribute' nodeTest='attribute(Q{}data-href)' jsTest='return item.name===&#39;data-href&#39;'/>
      </p.withPredicate>
-     <vc ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='131' op='eq' comp='CCC'>
+     <vc ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='132' op='eq' comp='CCC'>
       <attVal name='Q{}class' chk='0'/>
       <str val='flink'/>
      </vc>
     </p.withPredicate>
-    <let role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='132' var='Q{}docName' as='xs:string' slot='0' eval='8'>
+    <let role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='133' var='Q{}docName' as='xs:string' slot='0' eval='8'>
      <fn name='concat'>
       <gVarRef name='Q{}location' bSlot='0'/>
       <str val='/ixsl-extension.xml'/>
      </fn>
-     <ifCall line='133' name='Q{http://saxonica.com/ns/interactiveXSLT}schedule-action' type='item()*'>
+     <ifCall line='134' name='Q{http://saxonica.com/ns/interactiveXSLT}schedule-action' type='item()*'>
       <int val='0'/>
       <varRef name='Q{}docName' slot='0'/>
-      <callT line='134' name='Q{}show-fn' bSlot='1'>
+      <callT line='135' name='Q{}show-fn' bSlot='1'>
        <withParam name='Q{}span' flags='c' as='item()'>
-        <dot line='135' type='element(Q{}span)'/>
+        <dot line='136' type='element(Q{}span)'/>
        </withParam>
        <withParam name='Q{}docName' flags='c' as='xs:string'>
-        <varRef line='136' name='Q{}docName' slot='0'/>
+        <varRef line='137' name='Q{}docName' slot='0'/>
        </withParam>
       </callT>
      </ifCall>
@@ -2165,19 +2165,8 @@
    </templateRule>
   </mode>
  </co>
- <co id='6' vis='PRIVATE' binds='34'>
-  <globalVariable name='Q{http://saxon.sf.net/generated-variable}gg221111433' type='element(Q{}li)*' line='97' module='findtext.xsl' visibility='PRIVATE' jsAcceptor='function test(item) {var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;li&#39;;};if (test(val)) {return val;} else {throw SaxonJS.XError(&#39;Conversion failed&#39;, &#39;XTTE0590&#39;);}' jsCardCheck='function c() {return true;};'>
-   <slash ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='97' simple='2'>
-    <slash simple='1'>
-     <gVarRef name='Q{}navlist' bSlot='0'/>
-     <axis name='child' nodeTest='element(Q{}ul)' jsTest='var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;ul&#39;;'/>
-    </slash>
-    <axis name='child' nodeTest='element(Q{}li)' jsTest='var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;li&#39;;'/>
-   </slash>
-  </globalVariable>
- </co>
- <co id='15' vis='PRIVATE' binds='34'>
-  <globalVariable name='Q{http://saxon.sf.net/generated-variable}gg899543194' type='element(Q{}input)?' line='27' module='findtext.xsl' visibility='PRIVATE' jsAcceptor='function test(item) {var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;input&#39;;};if (test(val)) {return val;} else {throw SaxonJS.XError(&#39;Conversion failed&#39;, &#39;XTTE0590&#39;);}' jsCardCheck='function c(n) {return n&lt;=1;};'>
+ <co id='15' binds='34'>
+  <globalVariable name='Q{http://saxon.sf.net/generated-variable}gg121295574' type='element(Q{}input)?' line='27' module='findtext.xsl' visibility='PRIVATE' jsAcceptor='function test(item) {var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;input&#39;;};if (test(val)) {return val;} else {throw SaxonJS.XError(&#39;Conversion failed&#39;, &#39;XTTE0590&#39;);}' jsCardCheck='function c(n) {return n&lt;=1;};'>
    <check ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='27' card='?' diag='0|0||ixsl:get'>
     <slash simple='2'>
      <slash simple='1'>
@@ -2189,29 +2178,40 @@
    </check>
   </globalVariable>
  </co>
- <co id='39' vis='PRIVATE' binds='25 20 40 41 40'>
-  <template name='Q{}main' flags='os' line='47' module='jstree.xsl' slots='1'>
-   <let role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='48' var='Q{}catDocName' as='xs:string' slot='0' eval='8'>
+ <co id='6' binds='34'>
+  <globalVariable name='Q{http://saxon.sf.net/generated-variable}gg762227630' type='element(Q{}li)*' line='97' module='findtext.xsl' visibility='PRIVATE' jsAcceptor='function test(item) {var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;li&#39;;};if (test(val)) {return val;} else {throw SaxonJS.XError(&#39;Conversion failed&#39;, &#39;XTTE0590&#39;);}' jsCardCheck='function c() {return true;};'>
+   <slash ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='97' simple='2'>
+    <slash simple='1'>
+     <gVarRef name='Q{}navlist' bSlot='0'/>
+     <axis name='child' nodeTest='element(Q{}ul)' jsTest='var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;ul&#39;;'/>
+    </slash>
+    <axis name='child' nodeTest='element(Q{}li)' jsTest='var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;li&#39;;'/>
+   </slash>
+  </globalVariable>
+ </co>
+ <co id='39' binds='25 20 40 41 40'>
+  <template name='Q{}main' flags='os' line='49' module='jstree.xsl' slots='1'>
+   <let role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='50' var='Q{}catDocName' as='xs:string' slot='0' eval='8'>
     <fn name='concat'>
      <gVarRef name='Q{}location' bSlot='0'/>
      <str val='/catalog.xml'/>
     </fn>
-    <sequence line='49'>
+    <sequence line='51'>
      <ifCall name='Q{http://saxonica.com/ns/interactiveXSLT}schedule-action' type='item()*'>
       <int val='0'/>
       <varRef name='Q{}catDocName' slot='0'/>
-      <callT line='50' name='Q{}list' bSlot='1'>
+      <callT line='52' name='Q{}list' bSlot='1'>
        <withParam name='Q{}docName' flags='c' as='xs:string'>
-        <varRef line='51' name='Q{}catDocName' slot='0'/>
+        <varRef line='53' name='Q{}catDocName' slot='0'/>
        </withParam>
       </callT>
      </ifCall>
-     <ifCall line='55' name='Q{http://saxonica.com/ns/interactiveXSLT}schedule-action' type='item()*'>
+     <ifCall line='57' name='Q{http://saxonica.com/ns/interactiveXSLT}schedule-action' type='item()*'>
       <int val='0'/>
       <gVarRef name='Q{}implement-doc' bSlot='2'/>
-      <callT line='58' name='Q{}get-implement-doc' bSlot='3'>
+      <callT line='60' name='Q{}get-implement-doc' bSlot='3'>
        <withParam name='Q{}implement-doc' flags='c' as='xs:string'>
-        <gVarRef line='59' name='Q{}implement-doc' bSlot='4'/>
+        <gVarRef line='61' name='Q{}implement-doc' bSlot='4'/>
        </withParam>
       </callT>
      </ifCall>
@@ -2219,25 +2219,25 @@
    </let>
   </template>
  </co>
- <co id='32' vis='PRIVATE' binds='34 42 43 44 45 14 28 11 34'>
-  <template name='Q{}render-page' flags='os' line='174' module='jstree.xsl' slots='9'>
-   <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='176'>
+ <co id='32' binds='34 42 43 44 45 14 28 11 34'>
+  <template name='Q{}render-page' flags='os' line='175' module='jstree.xsl' slots='9'>
+   <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='177'>
     <param name='Q{}docName' slot='0'>
      <str role='select' val=''/>
      <supplied role='conversion' slot='0'/>
     </param>
-    <param line='177' name='Q{}hash-parts' slot='1'>
+    <param line='178' name='Q{}hash-parts' slot='1'>
      <str role='select' val=''/>
      <supplied role='conversion' slot='1'/>
     </param>
-    <let line='178' var='Q{}start' as='item()?' slot='2' eval='7'>
+    <let line='179' var='Q{}start' as='item()?' slot='2' eval='7'>
      <first>
       <varRef name='Q{}hash-parts' slot='1'/>
      </first>
-     <let line='179' var='Q{}first-item' as='element(Q{}li)?' slot='3' eval='7'>
+     <let line='180' var='Q{}first-item' as='element(Q{}li)?' slot='3' eval='7'>
       <let var='Q{}start' as='item()?' slot='4' eval='6'>
        <varRef name='Q{}start' slot='2'/>
-       <let line='625' var='Q{http://saxon.sf.net/generated-variable}v0' as='xs:anyAtomicType*' slot='5' eval='4'>
+       <let line='626' var='Q{http://saxon.sf.net/generated-variable}v0' as='xs:anyAtomicType*' slot='5' eval='4'>
         <data>
          <varRef name='Q{}start' slot='4'/>
         </data>
@@ -2258,7 +2258,7 @@
         </check>
        </let>
       </let>
-      <let line='181' var='Q{}doc' as='document-node()?' slot='6' eval='7'>
+      <let line='182' var='Q{}doc' as='document-node()?' slot='6' eval='7'>
        <choose>
         <fn name='doc-available'>
          <treat as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='0|0||fn:doc-available'>
@@ -2283,7 +2283,7 @@
          </treat>
         </fn>
        </choose>
-       <choose line='183'>
+       <choose line='184'>
         <and op='and'>
          <fn name='exists'>
           <varRef name='Q{}doc' slot='6'/>
@@ -2292,33 +2292,33 @@
           <varRef name='Q{}first-item' slot='3'/>
          </fn>
         </and>
-        <sequence line='184'>
+        <sequence line='185'>
          <callT name='Q{}show-listitems' bSlot='1'>
           <withParam name='Q{}doc' flags='c' as='document-node()'>
-           <check line='185' card='1' diag='8|0|XTTE0590|doc'>
+           <check line='186' card='1' diag='8|0|XTTE0590|doc'>
             <varRef name='Q{}doc' slot='6'/>
            </check>
           </withParam>
           <withParam name='Q{}ids' flags='c'>
-           <varRef line='186' name='Q{}hash-parts' slot='1'/>
+           <varRef line='187' name='Q{}hash-parts' slot='1'/>
           </withParam>
           <withParam name='Q{}index' flags='c' as='xs:integer'>
            <int val='1'/>
           </withParam>
           <withParam name='Q{}item' flags='c' as='node()?'>
-           <varRef line='188' name='Q{}first-item' slot='3'/>
+           <varRef line='189' name='Q{}first-item' slot='3'/>
           </withParam>
          </callT>
-         <let line='190' var='Q{}count' as='xs:integer' slot='7' eval='8'>
+         <let line='191' var='Q{}count' as='xs:integer' slot='7' eval='8'>
           <fn name='count'>
            <varRef name='Q{}hash-parts' slot='1'/>
           </fn>
-          <sequence line='194'>
-           <resultDoc global='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;' local='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
+          <sequence line='195'>
+           <resultDoc global='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;' local='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
             <str role='href' val='#main'/>
-            <choose role='content' line='197'>
+            <choose role='content' line='198'>
              <and op='and'>
-              <and line='193' op='and'>
+              <and line='194' op='and'>
                <vc op='eq' onEmpty='0' comp='GAC|http://www.w3.org/2005/xpath-functions/collation/codepoint'>
                 <atomSing card='?' diag='1|0||eq'>
                  <varRef name='Q{}start' slot='2'/>
@@ -2339,7 +2339,7 @@
                <varRef name='Q{}count' slot='7'/>
               </compareToInt>
              </and>
-             <applyT line='199' mode='Q{}f' bSlot='2'>
+             <applyT line='200' mode='Q{}f' bSlot='2'>
               <filter role='select' flags=''>
                <slash simple='1'>
                 <varRef name='Q{}doc' slot='6'/>
@@ -2360,23 +2360,23 @@
                </vc>
               </filter>
              </applyT>
-             <compareToInt line='219' op='eq' val='1'>
+             <compareToInt line='220' op='eq' val='1'>
               <varRef name='Q{}count' slot='7'/>
              </compareToInt>
-             <applyT line='220' mode='Q{}primary' bSlot='3'>
+             <applyT line='221' mode='Q{}primary' bSlot='3'>
               <varRef role='select' name='Q{}doc' slot='6'/>
              </applyT>
              <true/>
-             <applyT line='223' mode='Q{}get-section' bSlot='4'>
+             <applyT line='224' mode='Q{}get-section' bSlot='4'>
               <slash role='select' simple='1'>
                <varRef name='Q{}doc' slot='6'/>
                <axis name='child' nodeTest='element()' jsTest='return item.nodeType===1;'/>
               </slash>
               <withParam name='Q{}ids'>
-               <varRef line='224' name='Q{}hash-parts' slot='1'/>
+               <varRef line='225' name='Q{}hash-parts' slot='1'/>
               </withParam>
               <withParam name='Q{}parent' as='element()*'>
-               <slash line='225' simple='1'>
+               <slash line='226' simple='1'>
                 <varRef name='Q{}doc' slot='6'/>
                 <axis name='child' nodeTest='element()' jsTest='return item.nodeType===1;'/>
                </slash>
@@ -2387,14 +2387,14 @@
              </applyT>
             </choose>
            </resultDoc>
-           <ifCall line='232' name='Q{http://saxonica.com/ns/interactiveXSLT}schedule-action' type='item()*'>
+           <ifCall line='233' name='Q{http://saxonica.com/ns/interactiveXSLT}schedule-action' type='item()*'>
             <int val='1'/>
             <empty/>
-            <callT line='233' name='Q{}scrollpage' bSlot='5'/>
+            <callT line='234' name='Q{}scrollpage' bSlot='5'/>
            </ifCall>
-           <resultDoc line='236' global='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;' local='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
+           <resultDoc line='237' global='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;' local='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
             <str role='href' val='#trail'/>
-            <let role='content' line='238' var='Q{}ul' as='element(Q{}ul)*' slot='8' eval='8'>
+            <let role='content' line='239' var='Q{}ul' as='element(Q{}ul)*' slot='8' eval='8'>
              <filter flags='b'>
               <slash simple='2'>
                <filter flags='b'>
@@ -2427,7 +2427,7 @@
                <str val='trail'/>
               </vc>
              </filter>
-             <sequence line='239'>
+             <sequence line='240'>
               <copyOf flags='vc'>
                <filter flags=''>
                 <slash simple='2'>
@@ -2440,7 +2440,7 @@
                 </vc>
                </filter>
               </copyOf>
-              <copyOf line='240' flags='vc'>
+              <copyOf line='241' flags='vc'>
                <filter flags=''>
                 <slash simple='2'>
                  <varRef name='Q{}ul' slot='8'/>
@@ -2452,9 +2452,9 @@
                 </vc>
                </filter>
               </copyOf>
-              <callT line='241' name='Q{}get-trail' bSlot='6'>
+              <callT line='242' name='Q{}get-trail' bSlot='6'>
                <withParam name='Q{}ids' flags='c' as='xs:string*'>
-                <treat line='242' as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='8|0|XTTE0590|ids'>
+                <treat line='243' as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='8|0|XTTE0590|ids'>
                  <cvUntyped to='xs:string' diag='8|0|XTTE0590|ids'>
                   <data>
                    <varRef name='Q{}hash-parts' slot='1'/>
@@ -2463,7 +2463,7 @@
                 </treat>
                </withParam>
                <withParam name='Q{}parent' flags='c' as='document-node()?'>
-                <varRef line='243' name='Q{}doc' slot='6'/>
+                <varRef line='244' name='Q{}doc' slot='6'/>
                </withParam>
                <withParam name='Q{}index' flags='c' as='xs:integer'>
                 <int val='1'/>
@@ -2472,15 +2472,15 @@
              </sequence>
             </let>
            </resultDoc>
-           <ifCall line='248' name='Q{http://saxonica.com/ns/interactiveXSLT}schedule-action' type='item()*'>
+           <ifCall line='249' name='Q{http://saxonica.com/ns/interactiveXSLT}schedule-action' type='item()*'>
             <int val='1'/>
             <empty/>
-            <callT line='249' name='Q{}highlight-item' bSlot='7'>
+            <callT line='250' name='Q{}highlight-item' bSlot='7'>
              <withParam name='Q{}parent' flags='c' as='element(Q{}div)'>
-              <gVarRef line='250' name='Q{}navlist' bSlot='8'/>
+              <gVarRef line='251' name='Q{}navlist' bSlot='8'/>
              </withParam>
              <withParam name='Q{}ids' flags='c' as='xs:string*'>
-              <treat line='251' as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='8|0|XTTE0590|ids'>
+              <treat line='252' as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='8|0|XTTE0590|ids'>
                <cvUntyped to='xs:string' diag='8|0|XTTE0590|ids'>
                 <data>
                  <varRef name='Q{}hash-parts' slot='1'/>
@@ -2497,21 +2497,21 @@
          </let>
         </sequence>
         <true/>
-        <resultDoc line='257' global='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;' local='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
+        <resultDoc line='258' global='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;' local='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
          <str role='href' val='#main'/>
-         <sequence role='content' line='258'>
+         <sequence role='content' line='259'>
           <elem name='h1' nsuri=''>
            <valueOf flags='el'>
             <str val='Page Not Found'/>
            </valueOf>
           </elem>
-          <elem line='259' name='p' nsuri=''>
+          <elem line='260' name='p' nsuri=''>
            <valueOf flags='el'>
             <str val='Error in URI hash-path:'/>
            </valueOf>
           </elem>
-          <elem line='260' name='p' nsuri=''>
-           <sequence line='262'>
+          <elem line='261' name='p' nsuri=''>
+           <sequence line='263'>
             <valueOf flags='l'>
              <fn name='string-join'>
               <convert from='xs:anyAtomicType' to='xs:string'>
@@ -2541,7 +2541,7 @@
               <str val=' '/>
              </fn>
             </valueOf>
-            <valueOf line='260' flags='el'>
+            <valueOf line='261' flags='el'>
              <str val='&#39; not found'/>
             </valueOf>
            </sequence>
@@ -2555,9 +2555,9 @@
    </sequence>
   </template>
  </co>
- <co id='46' vis='PRIVATE' binds='46'>
-  <template name='Q{}add-list' flags='os' line='488' module='jstree.xsl' slots='10'>
-   <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='491'>
+ <co id='46' binds='46'>
+  <template name='Q{}add-list' flags='os' line='489' module='jstree.xsl' slots='10'>
+   <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='492'>
     <param name='Q{}section' slot='0' flags='i' as='node()'>
      <treat role='conversion' as='node()' jsTest='return SaxonJS.U.isNode(item);' diag='8|0|XTTE0590|section'>
       <check card='1' diag='8|0|XTTE0590|section'>
@@ -2565,7 +2565,7 @@
       </check>
      </treat>
     </param>
-    <param line='492' name='Q{}ids' slot='1' as='xs:string*'>
+    <param line='493' name='Q{}ids' slot='1' as='xs:string*'>
      <empty role='select'/>
      <treat role='conversion' as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='8|0|XTTE0590|ids'>
       <cvUntyped to='xs:string' diag='8|0|XTTE0590|ids'>
@@ -2575,7 +2575,7 @@
       </cvUntyped>
      </treat>
     </param>
-    <param line='493' name='Q{}index' slot='2' flags='i' as='xs:integer'>
+    <param line='494' name='Q{}index' slot='2' flags='i' as='xs:integer'>
      <treat role='conversion' as='xs:integer' jsTest='return SaxonJS.U.Atomic.integer.matches(item);' diag='8|0|XTTE0590|index'>
       <check card='1' diag='8|0|XTTE0590|index'>
        <cvUntyped to='xs:integer' diag='8|0|XTTE0590|index'>
@@ -2586,14 +2586,14 @@
       </check>
      </treat>
     </param>
-    <choose line='499'>
+    <choose line='500'>
      <fn name='exists'>
       <slash simple='1'>
        <varRef name='Q{}section' slot='0'/>
        <axis name='child' nodeTest='(element(Q{}section) | element(Q{}j))' jsTest='function a() {var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;section&#39;;};function b() {var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;j&#39;;};return a()||b();'/>
       </slash>
      </fn>
-     <let line='503' var='Q{http://saxon.sf.net/generated-variable}v1' as='xs:string?' slot='3' eval='13'>
+     <let line='504' var='Q{http://saxon.sf.net/generated-variable}v1' as='xs:string?' slot='3' eval='13'>
       <subscript>
        <varRef name='Q{}ids' slot='1'/>
        <arith op='+' calc='i+i'>
@@ -2608,13 +2608,13 @@
          <varRef name='Q{}ids' slot='1'/>
         </fn>
        </vc>
-       <elem line='500' name='ul' nsuri=''>
-        <forEach line='501'>
+       <elem line='501' name='ul' nsuri=''>
+        <forEach line='502'>
          <slash simple='1'>
           <varRef name='Q{}section' slot='0'/>
           <axis name='child' nodeTest='(element(Q{}section) | element(Q{}j))' jsTest='function a() {var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;section&#39;;};function b() {var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;j&#39;;};return a()||b();'/>
          </slash>
-         <let line='503' var='Q{}onpath' as='xs:boolean' slot='5' eval='16'>
+         <let line='504' var='Q{}onpath' as='xs:boolean' slot='5' eval='16'>
           <and op='and'>
            <varRef name='Q{http://saxon.sf.net/generated-variable}v0' slot='4'/>
            <vc op='eq' onEmpty='0' comp='CCC'>
@@ -2622,18 +2622,18 @@
             <varRef name='Q{http://saxon.sf.net/generated-variable}v1' slot='3'/>
            </vc>
           </and>
-          <let line='504' var='Q{}contains' as='xs:boolean' slot='6' eval='8'>
+          <let line='505' var='Q{}contains' as='xs:boolean' slot='6' eval='8'>
            <fn name='exists'>
             <axis name='child' nodeTest='((element(Q{}section) | element(Q{}j)) | element(Q{http://www.saxonica.com/ns/doc/functions}function))' jsTest='function a() {function a() {var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;section&#39;;};function b() {var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;j&#39;;};return a()||b();};function b() {var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;http://www.saxonica.com/ns/doc/functions&#39;&amp;&amp;q.local===&#39;function&#39;;};return a()||b();'/>
            </fn>
-           <elem line='505' name='li' nsuri='' flags='l'>
+           <elem line='506' name='li' nsuri='' flags='l'>
             <sequence>
              <att name='id' flags='l'>
               <convert from='xs:untypedAtomic' to='xs:string'>
                <attVal name='Q{}id' chk='0'/>
               </convert>
              </att>
-             <att line='509' name='class' flags='l'>
+             <att line='510' name='class' flags='l'>
               <choose>
                <and op='and'>
                 <varRef name='Q{}onpath' slot='5'/>
@@ -2646,12 +2646,12 @@
                <str val='empty'/>
               </choose>
              </att>
-             <elem line='510' name='span' nsuri='' flags='l'>
+             <elem line='511' name='span' nsuri='' flags='l'>
               <sequence>
                <att name='class' flags='l'>
                 <str val='item'/>
                </att>
-               <valueOf line='511' flags='l'>
+               <valueOf line='512' flags='l'>
                 <fn name='string-join'>
                  <convert from='xs:anyAtomicType' to='xs:string'>
                   <choose>
@@ -2672,12 +2672,12 @@
                </valueOf>
               </sequence>
              </elem>
-             <choose line='513'>
+             <choose line='514'>
               <and op='and'>
                <varRef name='Q{}onpath' slot='5'/>
                <varRef name='Q{}contains' slot='6'/>
               </and>
-              <let line='515' var='Q{http://saxon.sf.net/generated-variable}v2' as='xs:string?' slot='7' eval='13'>
+              <let line='516' var='Q{http://saxon.sf.net/generated-variable}v2' as='xs:string?' slot='7' eval='13'>
                <subscript>
                 <varRef name='Q{}ids' slot='1'/>
                 <arith op='+' calc='i+i'>
@@ -2685,9 +2685,9 @@
                  <int val='1'/>
                 </arith>
                </subscript>
-               <callT line='514' name='Q{}add-list' bSlot='0'>
+               <callT line='515' name='Q{}add-list' bSlot='0'>
                 <withParam name='Q{}section' flags='c' as='element()'>
-                 <check line='515' card='1' diag='8|0|XTTE0590|section'>
+                 <check line='516' card='1' diag='8|0|XTTE0590|section'>
                   <filter flags='b'>
                    <slash simple='1'>
                     <varRef name='Q{}section' slot='0'/>
@@ -2703,10 +2703,10 @@
                  </check>
                 </withParam>
                 <withParam name='Q{}ids' flags='c' as='xs:string*'>
-                 <varRef line='516' name='Q{}ids' slot='1'/>
+                 <varRef line='517' name='Q{}ids' slot='1'/>
                 </withParam>
                 <withParam name='Q{}index' flags='c' as='xs:integer'>
-                 <arith line='517' op='+' calc='i+i'>
+                 <arith line='518' op='+' calc='i+i'>
                   <varRef name='Q{}index' slot='2'/>
                   <int val='1'/>
                  </arith>
@@ -2723,29 +2723,29 @@
       </let>
      </let>
     </choose>
-    <choose line='524'>
+    <choose line='525'>
      <fn name='exists'>
       <slash simple='1'>
        <varRef name='Q{}section' slot='0'/>
        <axis name='child' nodeTest='element(Q{http://www.saxonica.com/ns/doc/functions}function)' jsTest='var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;http://www.saxonica.com/ns/doc/functions&#39;&amp;&amp;q.local===&#39;function&#39;;'/>
       </slash>
      </fn>
-     <elem line='525' name='ul' nsuri=''>
-      <forEach line='526'>
+     <elem line='526' name='ul' nsuri=''>
+      <forEach line='527'>
        <slash simple='1'>
         <varRef name='Q{}section' slot='0'/>
         <axis name='child' nodeTest='element(Q{http://www.saxonica.com/ns/doc/functions}function)' jsTest='var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;http://www.saxonica.com/ns/doc/functions&#39;&amp;&amp;q.local===&#39;function&#39;;'/>
        </slash>
-       <let line='528' var='Q{}fn-name' as='xs:string' slot='8' eval='8'>
+       <let line='529' var='Q{}fn-name' as='xs:string' slot='8' eval='8'>
         <fn name='string'>
          <check card='?' diag='0|0||fn:string'>
           <axis name='child' nodeTest='element(Q{http://www.saxonica.com/ns/doc/functions}name)' jsTest='var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;http://www.saxonica.com/ns/doc/functions&#39;&amp;&amp;q.local===&#39;name&#39;;'/>
          </check>
         </fn>
-        <let line='531' var='Q{}prefix' as='xs:string' slot='9' eval='16'>
+        <let line='532' var='Q{}prefix' as='xs:string' slot='9' eval='16'>
          <choose ns='xsl=~ ixsl=~ xs=~ map=~ fnd=http://www.saxonica.com/ns/doc/functions f=urn:viewerapp.function' module='app-functions.xsl' line='23'>
           <vc op='eq' onEmpty='0' comp='CCC'>
-           <check ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' module='jstree.xsl' line='531' card='1' diag='0|0||f:usual-prefix'>
+           <check ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' module='jstree.xsl' line='532' card='1' diag='0|0||f:usual-prefix'>
             <cvUntyped to='xs:string'>
              <data>
               <slash simple='2'>
@@ -2761,21 +2761,21 @@
           <true/>
           <str val=''/>
          </choose>
-         <elem line='534' name='li' nsuri='' flags='l'>
+         <elem line='535' name='li' nsuri='' flags='l'>
           <sequence>
            <att name='id' flags='l'>
             <varRef name='Q{}fn-name' slot='8'/>
            </att>
-           <att line='535' name='class' flags='l'>
+           <att line='536' name='class' flags='l'>
             <str val='empty'/>
            </att>
-           <elem line='536' name='span' nsuri='' flags='l'>
+           <elem line='537' name='span' nsuri='' flags='l'>
             <sequence>
              <att name='class' flags='l'>
               <str val='item'/>
              </att>
-             <valueOf line='537' flags='l'>
-              <choose line='533'>
+             <valueOf line='538' flags='l'>
+              <choose line='534'>
                <vc op='ne' onEmpty='0' comp='GAC|http://www.w3.org/2005/xpath-functions/collation/codepoint'>
                 <varRef name='Q{}prefix' slot='9'/>
                 <str val=''/>
@@ -2801,19 +2801,19 @@
    </sequence>
   </template>
  </co>
- <co id='41' vis='PRIVATE' binds=''>
-  <template name='Q{}get-implement-doc' flags='os' line='77' module='jstree.xsl' slots='2'>
-   <let role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='79' var='Q{http://saxon.sf.net/generated-variable}v0' as='xs:boolean' slot='1' eval='13'>
+ <co id='41' binds=''>
+  <template name='Q{}get-implement-doc' flags='os' line='79' module='jstree.xsl' slots='2'>
+   <let role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='81' var='Q{http://saxon.sf.net/generated-variable}v0' as='xs:boolean' slot='1' eval='13'>
     <vc op='lt' comp='CalVC'>
      <fn name='current-date'/>
      <atomic val='2000-01-01' type='xs:date'/>
     </vc>
-    <sequence line='78'>
+    <sequence line='80'>
      <param name='Q{}implement-doc' slot='0'>
       <str role='select' val=''/>
       <supplied role='conversion' slot='0'/>
      </param>
-     <filter line='79' flags='ib'>
+     <filter line='81' flags='ib'>
       <fn name='doc'>
        <treat as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='0|0||fn:doc'>
         <check card='?' diag='0|0||fn:doc'>
@@ -3300,9 +3300,9 @@
      <callT line='197' name='Q{}repeat' bSlot='9' flags='t'/>
     </sequence>
    </templateRule>
-   <templateRule prec='6' prio='0.0' seq='57' rank='5' minImp='0' slots='0' flags='s' line='86' module='jstree.xsl'>
+   <templateRule prec='6' prio='0.0' seq='57' rank='5' minImp='0' slots='0' flags='s' line='88' module='jstree.xsl'>
     <p.nodeTest role='match' test='element(Q{http://www.saxonica.com/ns/doc/catalog}section)' jsTest='var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;http://www.saxonica.com/ns/doc/catalog&#39;&amp;&amp;q.local===&#39;section&#39;;'/>
-    <elem role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='87' name='li' nsuri=''>
+    <elem role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='89' name='li' nsuri=''>
      <sequence>
       <att name='class' flags='l'>
        <str val='closed'/>
@@ -3312,12 +3312,12 @@
         <attVal name='Q{}ref' chk='0'/>
        </convert>
       </att>
-      <elem line='88' name='span' nsuri='' flags='l'>
+      <elem line='90' name='span' nsuri='' flags='l'>
        <sequence>
         <att name='class' flags='l'>
          <str val='item'/>
         </att>
-        <valueOf line='89' flags='l'>
+        <valueOf line='91' flags='l'>
          <convert from='xs:untypedAtomic' to='xs:string'>
           <data>
            <dot type='element(Q{http://www.saxonica.com/ns/doc/catalog}section)'/>
@@ -3849,7 +3849,7 @@
    </templateRule>
   </mode>
  </co>
- <co id='17' vis='PRIVATE' binds=''>
+ <co id='17' binds=''>
   <template name='Q{}scrollToHighlight' flags='os' line='274' module='findtext.xsl' slots='1'>
    <let role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='275' var='Q{}el' as='element(Q{}span)*' slot='0' eval='8'>
     <slash>
@@ -5419,7 +5419,7 @@
    </templateRule>
   </mode>
  </co>
- <co id='10' vis='PRIVATE' binds='30'>
+ <co id='10' binds='30'>
   <template name='Q{}foundPaths' flags='os' line='181' module='findtext.xsl' slots='3'>
    <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='182'>
     <param name='Q{}newPath' slot='0'>
@@ -5485,7 +5485,7 @@
         <varRef name='Q{}start' slot='2'/>
        </vc>
       </filter>
-      <resultDoc line='188' global='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;' local='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}append-content&#xA;'>
+      <resultDoc line='188' global='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;' local='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}append-content&#xA;'>
        <str role='href' val='?.'/>
        <elem role='content' line='189' name='p' nsuri='' namespaces='svg js cat f'>
         <sequence>
@@ -5509,23 +5509,12 @@
            <convert from='xs:anyAtomicType' to='xs:string'>
             <choose>
              <fn name='exists'>
-              <conditionalSort>
-               <fn name='exists'>
-                <tail start='2'>
-                 <treat as='node()' jsTest='return SaxonJS.U.isNode(item);' diag='1|0|XPTY0019|/'>
-                  <varRef name='Q{}section' slot='1'/>
-                 </treat>
-                </tail>
-               </fn>
-               <docOrder intra='0'>
-                <slash simple='2'>
-                 <treat as='node()' jsTest='return SaxonJS.U.isNode(item);' diag='1|0|XPTY0019|/'>
-                  <varRef name='Q{}section' slot='1'/>
-                 </treat>
-                 <axis name='child' nodeTest='element(Q{http://www.saxonica.com/ns/doc/functions}name)' jsTest='var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;http://www.saxonica.com/ns/doc/functions&#39;&amp;&amp;q.local===&#39;name&#39;;'/>
-                </slash>
-               </docOrder>
-              </conditionalSort>
+              <slash simple='2'>
+               <treat as='node()' jsTest='return SaxonJS.U.isNode(item);' diag='1|0|XPTY0019|/'>
+                <varRef name='Q{}section' slot='1'/>
+               </treat>
+               <axis name='child' nodeTest='element(Q{http://www.saxonica.com/ns/doc/functions}name)' jsTest='var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;http://www.saxonica.com/ns/doc/functions&#39;&amp;&amp;q.local===&#39;name&#39;;'/>
+              </slash>
              </fn>
              <ufCall name='Q{urn:viewerapp.function}fn-name' tailCall='false' bSlot='0' eval='16'>
               <treat as='element(Q{http://www.saxonica.com/ns/doc/functions}function)' jsTest='var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;http://www.saxonica.com/ns/doc/functions&#39;&amp;&amp;q.local===&#39;function&#39;;' diag='0|0||f:fn-name'>
@@ -5535,23 +5524,12 @@
               </treat>
              </ufCall>
              <fn name='exists'>
-              <conditionalSort>
-               <fn name='exists'>
-                <tail start='2'>
-                 <treat as='node()' jsTest='return SaxonJS.U.isNode(item);' diag='1|0|XPTY0019|/'>
-                  <varRef name='Q{}section' slot='1'/>
-                 </treat>
-                </tail>
-               </fn>
-               <docOrder intra='0'>
-                <slash simple='2'>
-                 <treat as='node()' jsTest='return SaxonJS.U.isNode(item);' diag='1|0|XPTY0019|/'>
-                  <varRef name='Q{}section' slot='1'/>
-                 </treat>
-                 <axis name='attribute' nodeTest='attribute(Q{}title)' jsTest='return item.name===&#39;title&#39;'/>
-                </slash>
-               </docOrder>
-              </conditionalSort>
+              <slash simple='2'>
+               <treat as='node()' jsTest='return SaxonJS.U.isNode(item);' diag='1|0|XPTY0019|/'>
+                <varRef name='Q{}section' slot='1'/>
+               </treat>
+               <axis name='attribute' nodeTest='attribute(Q{}title)' jsTest='return item.name===&#39;title&#39;'/>
+              </slash>
              </fn>
              <data>
               <conditionalSort>
@@ -5605,7 +5583,7 @@
    </sequence>
   </template>
  </co>
- <co id='47' vis='PRIVATE' binds=''>
+ <co id='47' binds=''>
   <template name='Q{}group' flags='os' line='219' module='elements-body.xsl' slots='0'>
    <choose role='body' ns='xsl=~ ixsl=~ xs=~ map=~ f=urn:viewerapp.function el=http://www.saxonica.com/ns/doc/elements' line='220'>
     <compareToInt op='gt' val='2'>
@@ -5649,7 +5627,7 @@
    </choose>
   </template>
  </co>
- <co id='50' vis='PRIVATE' binds='15 25 24'>
+ <co id='50' binds='15 25 24'>
   <template name='Q{}run-search' flags='os' line='25' module='findtext.xsl' slots='1'>
    <let role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='27' var='Q{}search' as='xs:string' slot='0' eval='8'>
     <fn name='lower-case'>
@@ -5659,7 +5637,7 @@
         <cvUntyped to='xs:string'>
          <data>
           <ifCall name='Q{http://saxonica.com/ns/interactiveXSLT}get' type='item()*'>
-           <gVarRef name='Q{http://saxon.sf.net/generated-variable}gg899543194' bSlot='0'/>
+           <gVarRef name='Q{http://saxon.sf.net/generated-variable}gg121295574' bSlot='0'/>
            <str val='value'/>
           </ifCall>
          </data>
@@ -5705,7 +5683,7 @@
         <dot type='element(Q{}div)'/>
        </ifCall>
       </forEach>
-      <resultDoc line='34' global='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;' local='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
+      <resultDoc line='34' global='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;' local='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
        <str role='href' val='#foundPaths'/>
        <sequence role='content' line='35'>
         <elem name='p' nsuri='' namespaces='svg js cat f'>
@@ -5746,7 +5724,7 @@
         </forEach>
        </sequence>
       </resultDoc>
-      <resultDoc line='40' global='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;' local='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
+      <resultDoc line='40' global='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;' local='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
        <str role='href' val='#findstatus'/>
        <valueOf role='content'>
         <str val=' searching... '/>
@@ -5762,10 +5740,10 @@
    </let>
   </template>
  </co>
- <co id='4' vis='PRIVATE' binds=''>
-  <function name='Q{urn:viewerapp.function}set-hash' line='612' module='jstree.xsl' eval='8' flags='pU' as='item()*' slots='1'>
+ <co id='4' binds=''>
+  <function name='Q{urn:viewerapp.function}set-hash' line='613' module='jstree.xsl' eval='8' flags='pU' as='item()*' slots='1'>
    <arg name='Q{}hash' as='item()*'/>
-   <ifCall role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='615' name='Q{http://saxonica.com/ns/interactiveXSLT}set-property' type='item()?'>
+   <ifCall role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='616' name='Q{http://saxonica.com/ns/interactiveXSLT}set-property' type='item()?'>
     <str val='location.hash'/>
     <fn name='concat'>
      <str val='!'/>
@@ -5779,7 +5757,7 @@
    </ifCall>
   </function>
  </co>
- <co id='51' vis='PRIVATE' binds=''>
+ <co id='51' binds=''>
   <function name='Q{urn:viewerapp.function}edition' line='39' module='app-functions.xsl' eval='4' flags='pU' as='xs:string*' slots='5'>
    <arg name='Q{}available' as='xs:string'/>
    <arg name='Q{}implement' as='document-node()'/>
@@ -5831,11 +5809,11 @@
    </let>
   </function>
  </co>
- <co id='3' vis='PRIVATE' binds='34'>
-  <function name='Q{urn:viewerapp.function}get-hash' line='629' module='jstree.xsl' eval='7' flags='pU' as='item()*' slots='2'>
-   <let role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='630' var='Q{}url' as='item()?' slot='0' eval='8'>
+ <co id='3' binds='34'>
+  <function name='Q{urn:viewerapp.function}get-hash' line='630' module='jstree.xsl' eval='7' flags='pU' as='item()*' slots='2'>
+   <let role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='631' var='Q{}url' as='item()?' slot='0' eval='8'>
     <ifCall name='Q{http://saxonica.com/ns/interactiveXSLT}location' type='item()?'/>
-    <let line='633' var='Q{}hash' as='xs:string' slot='1' eval='16'>
+    <let line='634' var='Q{}hash' as='xs:string' slot='1' eval='16'>
      <choose>
       <fn name='contains'>
        <treat as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='0|0||fn:contains'>
@@ -5878,7 +5856,7 @@
        <int val='3'/>
       </fn>
      </choose>
-     <choose line='634'>
+     <choose line='635'>
       <varRef name='Q{}hash' slot='1'/>
       <varRef name='Q{}hash' slot='1'/>
       <true/>
@@ -5899,12 +5877,12 @@
    </let>
   </function>
  </co>
- <co id='5' vis='PRIVATE' binds='5'>
-  <function name='Q{urn:viewerapp.function}get-item' line='383' module='jstree.xsl' eval='16' flags='pU' as='node()' slots='4'>
+ <co id='5' binds='5'>
+  <function name='Q{urn:viewerapp.function}get-item' line='384' module='jstree.xsl' eval='16' flags='pU' as='node()' slots='4'>
    <arg name='Q{}ids' as='xs:string*'/>
    <arg name='Q{}item' as='node()'/>
    <arg name='Q{}index' as='xs:integer'/>
-   <tailCallLoop role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='388'>
+   <tailCallLoop role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='389'>
     <choose>
      <vc op='eq' onEmpty='0' comp='CAVC'>
       <varRef name='Q{}index' slot='2'/>
@@ -5912,9 +5890,9 @@
        <varRef name='Q{}ids' slot='0'/>
       </fn>
      </vc>
-     <varRef line='389' name='Q{}item' slot='1'/>
+     <varRef line='390' name='Q{}item' slot='1'/>
      <true/>
-     <let line='392' var='Q{http://saxon.sf.net/generated-variable}v0' as='xs:string?' slot='3' eval='13'>
+     <let line='393' var='Q{http://saxon.sf.net/generated-variable}v0' as='xs:string?' slot='3' eval='13'>
       <subscript>
        <varRef name='Q{}ids' slot='0'/>
        <arith op='+' calc='i+i'>
@@ -5922,10 +5900,10 @@
         <int val='1'/>
        </arith>
       </subscript>
-      <ufCall line='393' name='Q{urn:viewerapp.function}get-item' tailCall='self' bSlot='0' eval='6 16 16'>
+      <ufCall line='394' name='Q{urn:viewerapp.function}get-item' tailCall='self' bSlot='0' eval='6 16 16'>
        <varRef name='Q{}ids' slot='0'/>
        <check card='1' diag='0|1||f:get-item'>
-        <filter line='392' flags=''>
+        <filter line='393' flags=''>
          <slash simple='2'>
           <slash simple='1'>
            <varRef name='Q{}item' slot='1'/>
@@ -5949,9 +5927,9 @@
    </tailCallLoop>
   </function>
  </co>
- <co id='25' vis='PRIVATE' binds=''>
-  <globalVariable name='Q{}location' type='xs:anyURI' line='39' module='jstree.xsl' visibility='PRIVATE' jsAcceptor='return SaxonJS.U.Atomic.anyURI.cast(val);' jsCardCheck='function c(n) {return n==1;};'>
-   <fn ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='39' name='resolve-uri'>
+ <co id='25' binds=''>
+  <globalVariable name='Q{}location' type='xs:anyURI' line='41' module='jstree.xsl' visibility='PRIVATE' jsAcceptor='return SaxonJS.U.Atomic.anyURI.cast(val);' jsCardCheck='function c(n) {return n==1;};'>
+   <fn ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='41' name='resolve-uri'>
     <str val='doc'/>
     <treat as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='0|1||fn:resolve-uri'>
      <check card='1' diag='0|1||fn:resolve-uri'>
@@ -6016,7 +5994,7 @@
    </templateRule>
   </mode>
  </co>
- <co id='19' vis='PRIVATE' binds=''>
+ <co id='19' binds=''>
   <function name='Q{urn:viewerapp.function}allSectionsSearched' line='290' module='findtext.xsl' eval='16' flags='pU' as='xs:boolean' slots='1'>
    <let role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='294' var='Q{}foundPathDivs' as='element(Q{}div)*' slot='0' eval='8'>
     <slash simple='2'>
@@ -6066,20 +6044,20 @@
    </let>
   </function>
  </co>
- <co id='40' vis='PRIVATE' binds='25'>
-  <globalVariable name='Q{}implement-doc' type='xs:string' line='40' module='jstree.xsl' visibility='PRIVATE' jsAcceptor='return SaxonJS.U.Atomic.string.cast(val);' jsCardCheck='function c(n) {return n==1;};'>
-   <fn ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='40' name='concat'>
+ <co id='40' binds='25'>
+  <globalVariable name='Q{}implement-doc' type='xs:string' line='42' module='jstree.xsl' visibility='PRIVATE' jsAcceptor='return SaxonJS.U.Atomic.string.cast(val);' jsCardCheck='function c(n) {return n==1;};'>
+   <fn ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='42' name='concat'>
     <gVarRef name='Q{}location' bSlot='0'/>
     <str val='/implement.xml'/>
    </fn>
   </globalVariable>
  </co>
- <co id='52' vis='PRIVATE' binds='4'>
-  <function name='Q{urn:viewerapp.function}crumb-navigation' line='595' module='jstree.xsl' eval='7' flags='pU' as='item()*' slots='1'>
+ <co id='52' binds='4'>
+  <function name='Q{urn:viewerapp.function}crumb-navigation' line='596' module='jstree.xsl' eval='7' flags='pU' as='item()*' slots='1'>
    <arg name='Q{}c' as='node()'/>
-   <tailCallLoop role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='599'>
+   <tailCallLoop role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='600'>
     <ufCall name='Q{urn:viewerapp.function}set-hash' tailCall='foreign' bSlot='0' eval='4'>
-     <fn line='597' name='string-join'>
+     <fn line='598' name='string-join'>
       <cvUntyped to='xs:string' diag='3|0|XTTE0570|seq'>
        <data>
         <slash>
@@ -6102,7 +6080,7 @@
    </tailCallLoop>
   </function>
  </co>
- <co id='44' binds='49 37'>
+ <co id='44' binds='53 49 37'>
   <mode name='Q{}primary' onNo='TC' flags='W' patternSlots='0'>
    <templateRule prec='0' prio='0.0' seq='0' part='1' rank='0' minImp='0' slots='1' flags='s' line='11' module='body.xsl'>
     <p.nodeTest role='match' test='element(Q{}article)' jsTest='var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;article&#39;;'/>
@@ -6117,18 +6095,21 @@
        </fn>
        <ifCall line='14' name='Q{http://saxonica.com/ns/interactiveXSLT}set-property' type='item()?'>
         <str val='document.title'/>
-        <fn name='concat'>
-         <str val='Saxon-JS '/>
-         <data>
-          <varRef name='Q{}title' slot='0'/>
-         </data>
+        <fn name='string-join'>
+         <sequence>
+          <gVarRef name='Q{}product' bSlot='0'/>
+          <data>
+           <varRef name='Q{}title' slot='0'/>
+          </data>
+         </sequence>
+         <str val=' '/>
         </fn>
         <check card='1' diag='0|2||ixsl:set-property'>
          <ifCall name='Q{http://saxonica.com/ns/interactiveXSLT}window' type='item()?'/>
         </check>
        </ifCall>
       </choose>
-      <applyT line='16' mode='Q{}secondary' flags='ti' bSlot='0'>
+      <applyT line='16' mode='Q{}secondary' flags='ti' bSlot='1'>
        <axis role='select' name='child' nodeTest='node()' jsTest='return true;'/>
       </applyT>
      </sequence>
@@ -6144,7 +6125,7 @@
       <str val='functions'/>
      </vc>
     </p.withPredicate>
-    <applyT role='action' ns='xsl=~ ixsl=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions el=http://www.saxonica.com/ns/doc/elements' line='28' mode='Q{}function-list' flags='t' bSlot='1'>
+    <applyT role='action' ns='xsl=~ ixsl=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions el=http://www.saxonica.com/ns/doc/elements' line='28' mode='Q{}function-list' flags='t' bSlot='2'>
      <dot role='select' type='element(Q{}section)'/>
     </applyT>
    </templateRule>
@@ -6161,18 +6142,21 @@
        </fn>
        <ifCall line='14' name='Q{http://saxonica.com/ns/interactiveXSLT}set-property' type='item()?'>
         <str val='document.title'/>
-        <fn name='concat'>
-         <str val='Saxon-JS '/>
-         <data>
-          <varRef name='Q{}title' slot='0'/>
-         </data>
+        <fn name='string-join'>
+         <sequence>
+          <gVarRef name='Q{}product' bSlot='0'/>
+          <data>
+           <varRef name='Q{}title' slot='0'/>
+          </data>
+         </sequence>
+         <str val=' '/>
         </fn>
         <check card='1' diag='0|2||ixsl:set-property'>
          <ifCall name='Q{http://saxonica.com/ns/interactiveXSLT}window' type='item()?'/>
         </check>
        </ifCall>
       </choose>
-      <applyT line='16' mode='Q{}secondary' flags='ti' bSlot='0'>
+      <applyT line='16' mode='Q{}secondary' flags='ti' bSlot='1'>
        <axis role='select' name='child' nodeTest='node()' jsTest='return true;'/>
       </applyT>
      </sequence>
@@ -6182,9 +6166,9 @@
  </co>
  <co id='45' binds='44 45'>
   <mode name='Q{}get-section' onNo='TC' flags='W' patternSlots='0'>
-   <templateRule prec='6' prio='0.0' seq='63' part='1' rank='0' minImp='0' slots='4' flags='s' line='274' module='jstree.xsl'>
+   <templateRule prec='6' prio='0.0' seq='63' part='1' rank='0' minImp='0' slots='4' flags='s' line='275' module='jstree.xsl'>
     <p.nodeTest role='match' test='element(Q{}article)' jsTest='var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;article&#39;;'/>
-    <sequence role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='275'>
+    <sequence role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='276'>
      <param name='Q{}ids' slot='0' as='xs:string*'>
       <empty role='select'/>
       <treat role='conversion' as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='8|0|XTTE0590|ids'>
@@ -6195,7 +6179,7 @@
        </cvUntyped>
       </treat>
      </param>
-     <param line='276' name='Q{}parent' slot='1' as='node()?'>
+     <param line='277' name='Q{}parent' slot='1' as='node()?'>
       <empty role='select'/>
       <treat role='conversion' as='node()' jsTest='return SaxonJS.U.isNode(item);' diag='8|0|XTTE0590|parent'>
        <check card='?' diag='8|0|XTTE0590|parent'>
@@ -6203,7 +6187,7 @@
        </check>
       </treat>
      </param>
-     <param line='277' name='Q{}index' slot='2' flags='i' as='xs:integer'>
+     <param line='278' name='Q{}index' slot='2' flags='i' as='xs:integer'>
       <treat role='conversion' as='xs:integer' jsTest='return SaxonJS.U.Atomic.integer.matches(item);' diag='8|0|XTTE0590|index'>
        <check card='1' diag='8|0|XTTE0590|index'>
         <cvUntyped to='xs:integer' diag='8|0|XTTE0590|index'>
@@ -6214,7 +6198,7 @@
        </check>
       </treat>
      </param>
-     <let line='278' var='Q{}sectionEl' as='(element(Q{}section) | element(Q{}article))*' slot='3' eval='4'>
+     <let line='279' var='Q{}sectionEl' as='(element(Q{}section) | element(Q{}article))*' slot='3' eval='4'>
       <filter flags=''>
        <axis name='child' nodeTest='(element(Q{}section) | element(Q{}article))' jsTest='function a() {var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;section&#39;;};function b() {var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;article&#39;;};return a()||b();'/>
        <vc op='eq' comp='CCC'>
@@ -6225,17 +6209,17 @@
         </subscript>
        </vc>
       </filter>
-      <choose line='280'>
+      <choose line='281'>
        <fn name='empty'>
         <varRef name='Q{}sectionEl' slot='3'/>
        </fn>
-       <sequence line='281'>
+       <sequence line='282'>
         <elem name='p' nsuri=''>
          <valueOf flags='el'>
           <str val='Error in URI hash-path:'/>
          </valueOf>
         </elem>
-        <elem line='282' name='p' nsuri=''>
+        <elem line='283' name='p' nsuri=''>
          <sequence>
           <valueOf flags='el'>
            <str val='Section &#39;'/>
@@ -6249,7 +6233,7 @@
           <valueOf flags='el'>
            <str val='&#39; not found in path: '/>
           </valueOf>
-          <valueOf line='283' flags='l'>
+          <valueOf line='284' flags='l'>
            <fn name='string-join'>
             <varRef name='Q{}ids' slot='0'/>
             <str val='/'/>
@@ -6258,33 +6242,33 @@
          </sequence>
         </elem>
        </sequence>
-       <vc line='285' op='gt' onEmpty='0' comp='CAVC'>
+       <vc line='286' op='gt' onEmpty='0' comp='CAVC'>
         <varRef name='Q{}index' slot='2'/>
         <fn name='count'>
          <varRef name='Q{}ids' slot='0'/>
         </fn>
        </vc>
        <empty/>
-       <vc line='286' op='eq' onEmpty='0' comp='CAVC'>
+       <vc line='287' op='eq' onEmpty='0' comp='CAVC'>
         <varRef name='Q{}index' slot='2'/>
         <fn name='count'>
          <varRef name='Q{}ids' slot='0'/>
         </fn>
        </vc>
-       <applyT line='287' mode='Q{}primary' flags='t' bSlot='0'>
+       <applyT line='288' mode='Q{}primary' flags='t' bSlot='0'>
         <varRef role='select' name='Q{}sectionEl' slot='3'/>
        </applyT>
        <true/>
-       <applyT line='290' mode='Q{}get-section' flags='t' bSlot='1'>
+       <applyT line='291' mode='Q{}get-section' flags='t' bSlot='1'>
         <varRef role='select' name='Q{}sectionEl' slot='3'/>
         <withParam name='Q{}ids' as='xs:string*'>
-         <varRef line='291' name='Q{}ids' slot='0'/>
+         <varRef line='292' name='Q{}ids' slot='0'/>
         </withParam>
         <withParam name='Q{}parent' as='element()*'>
-         <varRef line='292' name='Q{}sectionEl' slot='3'/>
+         <varRef line='293' name='Q{}sectionEl' slot='3'/>
         </withParam>
         <withParam name='Q{}index' as='xs:integer'>
-         <arith line='293' op='+' calc='i+i'>
+         <arith line='294' op='+' calc='i+i'>
           <varRef name='Q{}index' slot='2'/>
           <int val='1'/>
          </arith>
@@ -6294,9 +6278,9 @@
      </let>
     </sequence>
    </templateRule>
-   <templateRule prec='6' prio='0.0' seq='63' rank='0' minImp='0' slots='4' flags='s' line='274' module='jstree.xsl'>
+   <templateRule prec='6' prio='0.0' seq='63' rank='0' minImp='0' slots='4' flags='s' line='275' module='jstree.xsl'>
     <p.nodeTest role='match' test='element(Q{}section)' jsTest='var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;section&#39;;'/>
-    <sequence role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='275'>
+    <sequence role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='276'>
      <param name='Q{}ids' slot='0' as='xs:string*'>
       <empty role='select'/>
       <treat role='conversion' as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='8|0|XTTE0590|ids'>
@@ -6307,7 +6291,7 @@
        </cvUntyped>
       </treat>
      </param>
-     <param line='276' name='Q{}parent' slot='1' as='node()?'>
+     <param line='277' name='Q{}parent' slot='1' as='node()?'>
       <empty role='select'/>
       <treat role='conversion' as='node()' jsTest='return SaxonJS.U.isNode(item);' diag='8|0|XTTE0590|parent'>
        <check card='?' diag='8|0|XTTE0590|parent'>
@@ -6315,7 +6299,7 @@
        </check>
       </treat>
      </param>
-     <param line='277' name='Q{}index' slot='2' flags='i' as='xs:integer'>
+     <param line='278' name='Q{}index' slot='2' flags='i' as='xs:integer'>
       <treat role='conversion' as='xs:integer' jsTest='return SaxonJS.U.Atomic.integer.matches(item);' diag='8|0|XTTE0590|index'>
        <check card='1' diag='8|0|XTTE0590|index'>
         <cvUntyped to='xs:integer' diag='8|0|XTTE0590|index'>
@@ -6326,7 +6310,7 @@
        </check>
       </treat>
      </param>
-     <let line='278' var='Q{}sectionEl' as='(element(Q{}section) | element(Q{}article))*' slot='3' eval='4'>
+     <let line='279' var='Q{}sectionEl' as='(element(Q{}section) | element(Q{}article))*' slot='3' eval='4'>
       <filter flags=''>
        <axis name='child' nodeTest='(element(Q{}section) | element(Q{}article))' jsTest='function a() {var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;section&#39;;};function b() {var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;article&#39;;};return a()||b();'/>
        <vc op='eq' comp='CCC'>
@@ -6337,17 +6321,17 @@
         </subscript>
        </vc>
       </filter>
-      <choose line='280'>
+      <choose line='281'>
        <fn name='empty'>
         <varRef name='Q{}sectionEl' slot='3'/>
        </fn>
-       <sequence line='281'>
+       <sequence line='282'>
         <elem name='p' nsuri=''>
          <valueOf flags='el'>
           <str val='Error in URI hash-path:'/>
          </valueOf>
         </elem>
-        <elem line='282' name='p' nsuri=''>
+        <elem line='283' name='p' nsuri=''>
          <sequence>
           <valueOf flags='el'>
            <str val='Section &#39;'/>
@@ -6361,7 +6345,7 @@
           <valueOf flags='el'>
            <str val='&#39; not found in path: '/>
           </valueOf>
-          <valueOf line='283' flags='l'>
+          <valueOf line='284' flags='l'>
            <fn name='string-join'>
             <varRef name='Q{}ids' slot='0'/>
             <str val='/'/>
@@ -6370,33 +6354,33 @@
          </sequence>
         </elem>
        </sequence>
-       <vc line='285' op='gt' onEmpty='0' comp='CAVC'>
+       <vc line='286' op='gt' onEmpty='0' comp='CAVC'>
         <varRef name='Q{}index' slot='2'/>
         <fn name='count'>
          <varRef name='Q{}ids' slot='0'/>
         </fn>
        </vc>
        <empty/>
-       <vc line='286' op='eq' onEmpty='0' comp='CAVC'>
+       <vc line='287' op='eq' onEmpty='0' comp='CAVC'>
         <varRef name='Q{}index' slot='2'/>
         <fn name='count'>
          <varRef name='Q{}ids' slot='0'/>
         </fn>
        </vc>
-       <applyT line='287' mode='Q{}primary' flags='t' bSlot='0'>
+       <applyT line='288' mode='Q{}primary' flags='t' bSlot='0'>
         <varRef role='select' name='Q{}sectionEl' slot='3'/>
        </applyT>
        <true/>
-       <applyT line='290' mode='Q{}get-section' flags='t' bSlot='1'>
+       <applyT line='291' mode='Q{}get-section' flags='t' bSlot='1'>
         <varRef role='select' name='Q{}sectionEl' slot='3'/>
         <withParam name='Q{}ids' as='xs:string*'>
-         <varRef line='291' name='Q{}ids' slot='0'/>
+         <varRef line='292' name='Q{}ids' slot='0'/>
         </withParam>
         <withParam name='Q{}parent' as='element()*'>
-         <varRef line='292' name='Q{}sectionEl' slot='3'/>
+         <varRef line='293' name='Q{}sectionEl' slot='3'/>
         </withParam>
         <withParam name='Q{}index' as='xs:integer'>
-         <arith line='293' op='+' calc='i+i'>
+         <arith line='294' op='+' calc='i+i'>
           <varRef name='Q{}index' slot='2'/>
           <int val='1'/>
          </arith>
@@ -6408,24 +6392,24 @@
    </templateRule>
   </mode>
  </co>
- <co id='53' binds='52 12 23 29 6 26 26 50'>
+ <co id='54' binds='52 12 23 29 6 26 26 50'>
   <mode name='Q{http://saxonica.com/ns/interactiveXSLT}onclick' onNo='TC' flags='W' patternSlots='0'>
-   <templateRule prec='6' prio='0.5' seq='66' rank='1' minImp='0' slots='0' flags='s' line='334' module='jstree.xsl'>
+   <templateRule prec='6' prio='0.5' seq='66' rank='1' minImp='0' slots='0' flags='s' line='335' module='jstree.xsl'>
     <p.withPredicate role='match'>
      <p.nodeTest test='element(Q{}li)' jsTest='var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;li&#39;;'/>
-     <vc ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='334' op='eq' comp='CCC'>
+     <vc ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='335' op='eq' comp='CCC'>
       <attVal name='Q{}class' chk='0'/>
       <str val='trail'/>
      </vc>
     </p.withPredicate>
-    <ufCall role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='335' name='Q{urn:viewerapp.function}crumb-navigation' tailCall='false' bSlot='0' eval='16'>
+    <ufCall role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='336' name='Q{urn:viewerapp.function}crumb-navigation' tailCall='false' bSlot='0' eval='16'>
      <dot type='element(Q{}li)'/>
     </ufCall>
    </templateRule>
-   <templateRule prec='6' prio='0.5' seq='64' part='1' rank='1' minImp='0' slots='0' flags='s' line='301' module='jstree.xsl'>
+   <templateRule prec='6' prio='0.5' seq='64' part='1' rank='1' minImp='0' slots='0' flags='s' line='302' module='jstree.xsl'>
     <p.withPredicate role='match'>
      <p.nodeTest test='element(Q{}li)' jsTest='var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;li&#39;;'/>
-     <gc ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='301' op='=' card='N:1' comp='CCC'>
+     <gc ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='302' op='=' card='N:1' comp='CCC'>
       <literal count='3'>
        <str val='closed'/>
        <str val='open'/>
@@ -6434,35 +6418,35 @@
       <attVal name='Q{}class' chk='0'/>
      </gc>
     </p.withPredicate>
-    <applyT role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='302' mode='Q{}handle-itemclick' flags='t' bSlot='1'>
+    <applyT role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='303' mode='Q{}handle-itemclick' flags='t' bSlot='1'>
      <dot role='select' type='element()'/>
     </applyT>
    </templateRule>
-   <templateRule prec='6' prio='0.5' seq='64' rank='1' minImp='0' slots='0' flags='s' line='301' module='jstree.xsl'>
+   <templateRule prec='6' prio='0.5' seq='64' rank='1' minImp='0' slots='0' flags='s' line='302' module='jstree.xsl'>
     <p.withPredicate role='match'>
      <p.nodeTest test='element(Q{}span)' jsTest='var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;span&#39;;'/>
-     <vc ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='301' op='eq' comp='CCC'>
+     <vc ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='302' op='eq' comp='CCC'>
       <attVal name='Q{}class' chk='0'/>
       <str val='item'/>
      </vc>
     </p.withPredicate>
-    <applyT role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='302' mode='Q{}handle-itemclick' flags='t' bSlot='1'>
+    <applyT role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='303' mode='Q{}handle-itemclick' flags='t' bSlot='1'>
      <dot role='select' type='element()'/>
     </applyT>
    </templateRule>
-   <templateRule prec='6' prio='0.5' seq='61' rank='1' minImp='0' slots='0' flags='s' line='127' module='jstree.xsl'>
+   <templateRule prec='6' prio='0.5' seq='61' rank='1' minImp='0' slots='0' flags='s' line='128' module='jstree.xsl'>
     <p.withPredicate role='match'>
      <p.nodeTest test='element(Q{}span)' jsTest='var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;span&#39;;'/>
-     <axis ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='127' name='attribute' nodeTest='attribute(Q{}data-href)' jsTest='return item.name===&#39;data-href&#39;'/>
+     <axis ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='128' name='attribute' nodeTest='attribute(Q{}data-href)' jsTest='return item.name===&#39;data-href&#39;'/>
     </p.withPredicate>
-    <ufCall role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='128' name='Q{urn:viewerapp.function}anchor-navigation' tailCall='false' bSlot='2' eval='16'>
+    <ufCall role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='129' name='Q{urn:viewerapp.function}anchor-navigation' tailCall='false' bSlot='2' eval='16'>
      <dot type='element(Q{}span)'/>
     </ufCall>
    </templateRule>
-   <templateRule prec='6' prio='0.5' seq='67' rank='1' minImp='0' slots='0' flags='s' line='338' module='jstree.xsl'>
+   <templateRule prec='6' prio='0.5' seq='67' rank='1' minImp='0' slots='0' flags='s' line='339' module='jstree.xsl'>
     <p.withPredicate role='match'>
      <p.nodeTest test='element(Q{}p)' jsTest='var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;p&#39;;'/>
-     <gc ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='338' op='=' card='N:1' comp='CCC'>
+     <gc ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='339' op='=' card='N:1' comp='CCC'>
       <literal count='2'>
        <str val='arrowLeft'/>
        <str val='arrowRight'/>
@@ -6470,21 +6454,21 @@
       <attVal name='Q{}class' chk='0'/>
      </gc>
     </p.withPredicate>
-    <ufCall role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='339' name='Q{urn:viewerapp.function}navpage' tailCall='false' bSlot='3' eval='8'>
+    <ufCall role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='340' name='Q{urn:viewerapp.function}navpage' tailCall='false' bSlot='3' eval='8'>
      <axis name='attribute' nodeTest='attribute(Q{}class)' jsTest='return item.name===&#39;class&#39;'/>
     </ufCall>
    </templateRule>
-   <templateRule prec='6' prio='0.5' seq='60' rank='1' minImp='0' slots='0' flags='s' line='121' module='jstree.xsl'>
+   <templateRule prec='6' prio='0.5' seq='60' rank='1' minImp='0' slots='0' flags='s' line='122' module='jstree.xsl'>
     <p.withPredicate role='match'>
      <p.nodeTest test='element(Q{}p)' jsTest='var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;p&#39;;'/>
-     <vc ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='121' op='eq' comp='CCC'>
+     <vc ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='122' op='eq' comp='CCC'>
       <attVal name='Q{}class' chk='0'/>
       <str val='arrowNone'/>
      </vc>
     </p.withPredicate>
-    <forEach role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='122'>
-     <gVarRef name='Q{http://saxon.sf.net/generated-variable}gg221111433' bSlot='4'/>
-     <ifCall line='123' name='Q{http://saxonica.com/ns/interactiveXSLT}set-attribute' type='item()*'>
+    <forEach role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='123'>
+     <gVarRef name='Q{http://saxon.sf.net/generated-variable}gg762227630' bSlot='4'/>
+     <ifCall line='124' name='Q{http://saxonica.com/ns/interactiveXSLT}set-attribute' type='item()*'>
       <str val='class'/>
       <str val='closed'/>
      </ifCall>
@@ -6667,14 +6651,14 @@
    </templateRule>
   </mode>
  </co>
- <co id='22' vis='PRIVATE' binds='13'>
-  <template name='Q{}init' flags='os' line='82' module='jstree.xsl' slots='0'>
-   <callT role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='83' name='Q{}process-hashchange' bSlot='0' flags='t'/>
+ <co id='22' binds='13'>
+  <template name='Q{}init' flags='os' line='84' module='jstree.xsl' slots='0'>
+   <callT role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='85' name='Q{}process-hashchange' bSlot='0' flags='t'/>
   </template>
  </co>
- <co id='42' vis='PRIVATE' binds='42 46'>
-  <template name='Q{}show-listitems' flags='os' line='446' module='jstree.xsl' slots='7'>
-   <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='447'>
+ <co id='42' binds='42 46'>
+  <template name='Q{}show-listitems' flags='os' line='447' module='jstree.xsl' slots='7'>
+   <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='448'>
     <param name='Q{}doc' slot='0' flags='i' as='node()'>
      <treat role='conversion' as='node()' jsTest='return SaxonJS.U.isNode(item);' diag='8|0|XTTE0590|doc'>
       <check card='1' diag='8|0|XTTE0590|doc'>
@@ -6682,11 +6666,11 @@
       </check>
      </treat>
     </param>
-    <param line='448' name='Q{}ids' slot='1'>
+    <param line='449' name='Q{}ids' slot='1'>
      <str role='select' val=''/>
      <supplied role='conversion' slot='1'/>
     </param>
-    <param line='449' name='Q{}index' slot='2' flags='i' as='xs:integer'>
+    <param line='450' name='Q{}index' slot='2' flags='i' as='xs:integer'>
      <treat role='conversion' as='xs:integer' jsTest='return SaxonJS.U.Atomic.integer.matches(item);' diag='8|0|XTTE0590|index'>
       <check card='1' diag='8|0|XTTE0590|index'>
        <cvUntyped to='xs:integer' diag='8|0|XTTE0590|index'>
@@ -6697,7 +6681,7 @@
       </check>
      </treat>
     </param>
-    <param line='450' name='Q{}item' slot='3' as='node()?'>
+    <param line='451' name='Q{}item' slot='3' as='node()?'>
      <empty role='select'/>
      <treat role='conversion' as='node()' jsTest='return SaxonJS.U.isNode(item);' diag='8|0|XTTE0590|item'>
       <check card='?' diag='8|0|XTTE0590|item'>
@@ -6705,19 +6689,19 @@
       </check>
      </treat>
     </param>
-    <let line='451' var='Q{}id' as='item()?' slot='4' eval='7'>
+    <let line='452' var='Q{}id' as='item()?' slot='4' eval='7'>
      <subscript>
       <varRef name='Q{}ids' slot='1'/>
       <varRef name='Q{}index' slot='2'/>
      </subscript>
-     <forEach line='453'>
+     <forEach line='454'>
       <varRef name='Q{}item' slot='3'/>
-      <sequence line='454'>
+      <sequence line='455'>
        <ifCall name='Q{http://saxonica.com/ns/interactiveXSLT}set-attribute' type='item()*'>
         <str val='class'/>
-        <choose line='620'>
+        <choose line='621'>
          <vc op='eq' onEmpty='0' comp='CCC'>
-          <check line='454' card='1' diag='0|0||f:get-open-class'>
+          <check line='455' card='1' diag='0|0||f:get-open-class'>
            <cvUntyped to='xs:string'>
             <attVal name='Q{}class' chk='0'/>
            </cvUntyped>
@@ -6729,18 +6713,18 @@
          <str val='open'/>
         </choose>
        </ifCall>
-       <choose line='464'>
+       <choose line='465'>
         <fn name='exists'>
          <axis name='child' nodeTest='element(Q{}ul)' jsTest='var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;ul&#39;;'/>
         </fn>
-        <choose line='465'>
+        <choose line='466'>
          <vc op='lt' onEmpty='0' comp='CAVC'>
           <varRef name='Q{}index' slot='2'/>
           <fn name='count'>
            <varRef name='Q{}ids' slot='1'/>
           </fn>
          </vc>
-         <let line='470' var='Q{http://saxon.sf.net/generated-variable}v1' as='xs:anyAtomicType?' slot='5' eval='13'>
+         <let line='471' var='Q{http://saxon.sf.net/generated-variable}v1' as='xs:anyAtomicType?' slot='5' eval='13'>
           <atomSing card='?' diag='1|1||eq'>
            <subscript>
             <varRef name='Q{}ids' slot='1'/>
@@ -6750,13 +6734,13 @@
             </arith>
            </subscript>
           </atomSing>
-          <let line='467' var='Q{http://saxon.sf.net/generated-variable}v0' as='xs:anyAtomicType?' slot='6' eval='13'>
+          <let line='468' var='Q{http://saxon.sf.net/generated-variable}v0' as='xs:anyAtomicType?' slot='6' eval='13'>
            <atomSing card='?' diag='1|1||eq'>
             <varRef name='Q{}id' slot='4'/>
            </atomSing>
-           <callT line='466' name='Q{}show-listitems' bSlot='0' flags='t'>
+           <callT line='467' name='Q{}show-listitems' bSlot='0' flags='t'>
             <withParam name='Q{}doc' flags='c' as='element()'>
-             <check line='467' card='1' diag='8|0|XTTE0590|doc'>
+             <check line='468' card='1' diag='8|0|XTTE0590|doc'>
               <filter flags=''>
                <slash simple='1'>
                 <varRef name='Q{}doc' slot='0'/>
@@ -6770,16 +6754,16 @@
              </check>
             </withParam>
             <withParam name='Q{}ids' flags='c'>
-             <varRef line='468' name='Q{}ids' slot='1'/>
+             <varRef line='469' name='Q{}ids' slot='1'/>
             </withParam>
             <withParam name='Q{}index' flags='c' as='xs:integer'>
-             <arith line='469' op='+' calc='i+i'>
+             <arith line='470' op='+' calc='i+i'>
               <varRef name='Q{}index' slot='2'/>
               <int val='1'/>
              </arith>
             </withParam>
             <withParam name='Q{}item' flags='c' as='element(Q{}li)?'>
-             <check line='470' card='?' diag='8|0|XTTE0590|item'>
+             <check line='471' card='?' diag='8|0|XTTE0590|item'>
               <filter flags=''>
                <slash simple='2'>
                 <axis name='child' nodeTest='element(Q{}ul)' jsTest='var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;ul&#39;;'/>
@@ -6797,11 +6781,11 @@
          </let>
         </choose>
         <true/>
-        <resultDoc line='475' global='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;' local='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}append-content&#xA;'>
+        <resultDoc line='476' global='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;' local='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}append-content&#xA;'>
          <str role='href' val='?.'/>
-         <callT role='content' line='476' name='Q{}add-list' bSlot='1'>
+         <callT role='content' line='477' name='Q{}add-list' bSlot='1'>
           <withParam name='Q{}section' flags='c' as='element()'>
-           <check line='478' card='1' diag='8|0|XTTE0590|section'>
+           <check line='479' card='1' diag='8|0|XTTE0590|section'>
             <union op='|'>
              <filter flags=''>
               <slash simple='1'>
@@ -6835,7 +6819,7 @@
            </check>
           </withParam>
           <withParam name='Q{}ids' flags='c' as='xs:string*'>
-           <treat line='479' as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='8|0|XTTE0590|ids'>
+           <treat line='480' as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='8|0|XTTE0590|ids'>
             <cvUntyped to='xs:string' diag='8|0|XTTE0590|ids'>
              <data>
               <varRef name='Q{}ids' slot='1'/>
@@ -6844,7 +6828,7 @@
            </treat>
           </withParam>
           <withParam name='Q{}index' flags='c' as='xs:integer'>
-           <varRef line='480' name='Q{}index' slot='2'/>
+           <varRef line='481' name='Q{}index' slot='2'/>
           </withParam>
          </callT>
         </resultDoc>
@@ -6855,32 +6839,32 @@
    </sequence>
   </template>
  </co>
- <co id='36' vis='PRIVATE' binds='54'>
-  <template name='Q{}show-fn' flags='os' line='141' module='jstree.xsl' slots='6'>
-   <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='143'>
+ <co id='36' binds='55'>
+  <template name='Q{}show-fn' flags='os' line='142' module='jstree.xsl' slots='6'>
+   <sequence role='body' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='144'>
     <param name='Q{}span' slot='0'>
      <str role='select' val=''/>
      <supplied role='conversion' slot='0'/>
     </param>
-    <param line='144' name='Q{}docName' slot='1'>
+    <param line='145' name='Q{}docName' slot='1'>
      <str role='select' val=''/>
      <supplied role='conversion' slot='1'/>
     </param>
-    <let line='145' var='Q{}href' as='attribute(Q{}data-href)*' slot='2' eval='8'>
+    <let line='146' var='Q{}href' as='attribute(Q{}data-href)*' slot='2' eval='8'>
      <slash simple='2'>
       <treat as='node()' jsTest='return SaxonJS.U.isNode(item);' diag='1|0|XPTY0019|/'>
        <varRef name='Q{}span' slot='0'/>
       </treat>
       <axis name='attribute' nodeTest='attribute(Q{}data-href)' jsTest='return item.name===&#39;data-href&#39;'/>
      </slash>
-     <let line='147' var='Q{http://saxon.sf.net/generated-variable}v0' as='xs:untypedAtomic*' slot='3' eval='4'>
+     <let line='148' var='Q{http://saxon.sf.net/generated-variable}v0' as='xs:untypedAtomic*' slot='3' eval='4'>
       <data>
        <varRef name='Q{}href' slot='2'/>
       </data>
       <let var='Q{}fn' as='element(Q{http://www.saxonica.com/ns/doc/functions}function)*' slot='4' eval='8'>
        <filter flags='b'>
         <slash simple='2'>
-         <for var='Q{http://saxon.sf.net/generated-variable}dd1971991758' as='document-node()' slot='5'>
+         <for var='Q{http://saxon.sf.net/generated-variable}dd752001567' as='document-node()' slot='5'>
           <fn role='in' name='doc'>
            <treat as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='0|0||fn:doc'>
             <check card='?' diag='0|0||fn:doc'>
@@ -6895,7 +6879,7 @@
           <fn role='return' name='key'>
            <str val='Q{http://saxon.sf.net/}kk101'/>
            <str val='functions'/>
-           <varRef name='Q{http://saxon.sf.net/generated-variable}dd1971991758' slot='5'/>
+           <varRef name='Q{http://saxon.sf.net/generated-variable}dd752001567' slot='5'/>
           </fn>
          </for>
          <axis name='child' nodeTest='element(Q{http://www.saxonica.com/ns/doc/functions}function)' jsTest='var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;http://www.saxonica.com/ns/doc/functions&#39;&amp;&amp;q.local===&#39;function&#39;;'/>
@@ -6907,11 +6891,11 @@
          <varRef name='Q{http://saxon.sf.net/generated-variable}v0' slot='3'/>
         </gc>
        </filter>
-       <resultDoc line='148' global='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;' local='#&#xA;#Tue Jun 25 12:57:32 BST 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
+       <resultDoc line='149' global='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;' local='#&#xA;#Wed Nov 06 15:11:18 GMT 2019&#xA;method={http\://saxonica.com/ns/interactiveXSLT}replace-content&#xA;'>
         <str role='href' val='#fn-desc'/>
-        <sequence role='content' line='149'>
+        <sequence role='content' line='150'>
          <elem name='h4' nsuri=''>
-          <valueOf line='150' flags='l'>
+          <valueOf line='151' flags='l'>
            <fn name='concat'>
             <str val='ixsl:'/>
             <atomSing card='?' diag='0|1||fn:concat'>
@@ -6920,7 +6904,7 @@
            </fn>
           </valueOf>
          </elem>
-         <applyT line='153' mode='Q{}fn-description' bSlot='0'>
+         <applyT line='154' mode='Q{}fn-description' bSlot='0'>
           <union role='select' op='|'>
            <conditionalSort>
             <fn name='exists'>
@@ -6958,7 +6942,7 @@
    </sequence>
   </template>
  </co>
- <co id='54' binds='43 43'>
+ <co id='55' binds='43 43'>
   <mode name='Q{}fn-description' onNo='TC' flags='W' patternSlots='0'>
    <templateRule prec='4' prio='0.0' seq='35' rank='0' minImp='4' slots='0' flags='s' line='140' module='functions-body.xsl'>
     <p.nodeTest role='match' test='element(Q{http://www.saxonica.com/ns/doc/functions}signatures)' jsTest='var q=SaxonJS.U.nameOfNode(item); return SaxonJS.U.isNode(item) &amp;&amp; item.nodeType===1 &amp;&amp; q.uri===&#39;http://www.saxonica.com/ns/doc/functions&#39;&amp;&amp;q.local===&#39;signatures&#39;;'/>
@@ -6994,13 +6978,13 @@
    </templateRule>
   </mode>
  </co>
- <co id='55' binds='50 29'>
+ <co id='56' binds='50 29'>
   <mode name='Q{http://saxonica.com/ns/interactiveXSLT}onkeydown' onNo='TC' flags='W' patternSlots='0'>
-   <templateRule prec='6' prio='-1.0' seq='59' rank='0' minImp='0' slots='3' flags='s' line='101' module='jstree.xsl'>
+   <templateRule prec='6' prio='-1.0' seq='59' rank='0' minImp='0' slots='3' flags='s' line='102' module='jstree.xsl'>
     <p.any role='match'/>
-    <let role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='102' var='Q{}event' as='item()?' slot='0' eval='8'>
+    <let role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='103' var='Q{}event' as='item()?' slot='0' eval='8'>
      <ifCall name='Q{http://saxonica.com/ns/interactiveXSLT}event' type='item()?'/>
-     <let line='103' var='Q{}key' as='xs:string' slot='1' eval='16'>
+     <let line='104' var='Q{}key' as='xs:string' slot='1' eval='16'>
       <treat as='xs:string' jsTest='return SaxonJS.U.Atomic.string.matches(item);' diag='3|0|XTTE0570|key'>
        <check card='1' diag='3|0|XTTE0570|key'>
         <cvUntyped to='xs:string' diag='3|0|XTTE0570|key'>
@@ -7013,7 +6997,7 @@
         </cvUntyped>
        </check>
       </treat>
-      <let line='107' var='Q{}class' as='xs:string?' slot='2' eval='7'>
+      <let line='108' var='Q{}class' as='xs:string?' slot='2' eval='7'>
        <choose>
         <gc op='=' card='N:1' comp='CCC'>
          <literal count='3'>
@@ -7039,18 +7023,18 @@
         </vc>
         <str val='enter'/>
        </choose>
-       <choose line='108'>
+       <choose line='109'>
         <fn name='exists'>
          <varRef name='Q{}class' slot='2'/>
         </fn>
-        <choose line='111'>
+        <choose line='112'>
          <vc op='eq' onEmpty='0' comp='CCC'>
           <varRef name='Q{}class' slot='2'/>
           <str val='enter'/>
          </vc>
-         <callT line='112' name='Q{}run-search' bSlot='0' flags='t'/>
+         <callT line='113' name='Q{}run-search' bSlot='0' flags='t'/>
          <true/>
-         <ufCall line='115' name='Q{urn:viewerapp.function}navpage' tailCall='false' bSlot='1' eval='6'>
+         <ufCall line='116' name='Q{urn:viewerapp.function}navpage' tailCall='false' bSlot='1' eval='6'>
           <varRef name='Q{}class' slot='2'/>
          </ufCall>
         </choose>
@@ -7061,7 +7045,7 @@
    </templateRule>
   </mode>
  </co>
- <co id='56' vis='PRIVATE' binds=''>
+ <co id='57' binds=''>
   <function name='Q{urn:viewerapp.function}usual-prefix' line='20' module='app-functions.xsl' eval='16' flags='pU' as='xs:string' slots='1'>
    <arg name='Q{}ns' as='xs:string'/>
    <choose role='body' ns='xsl=~ ixsl=~ xs=~ map=~ fnd=http://www.saxonica.com/ns/doc/functions f=urn:viewerapp.function' line='23'>
@@ -7075,23 +7059,28 @@
    </choose>
   </function>
  </co>
- <co id='57' binds='13'>
+ <co id='53' binds=''>
+  <globalParam name='Q{}product' type='xs:string' line='39' module='jstree.xsl' visibility='PUBLIC' jsAcceptor='return SaxonJS.U.Atomic.string.cast(val);' jsCardCheck='function c(n) {return n==1;};'>
+   <str val='Saxon-JS'/>
+  </globalParam>
+ </co>
+ <co id='58' binds='13'>
   <mode name='Q{http://saxonica.com/ns/interactiveXSLT}onhashchange' onNo='TC' flags='W' patternSlots='0'>
-   <templateRule prec='6' prio='-1.0' seq='58' rank='0' minImp='0' slots='0' flags='s' line='95' module='jstree.xsl'>
+   <templateRule prec='6' prio='-1.0' seq='58' rank='0' minImp='0' slots='0' flags='s' line='97' module='jstree.xsl'>
     <p.any role='match'/>
-    <callT role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='97' name='Q{}process-hashchange' bSlot='0' flags='t'/>
+    <callT role='action' ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='98' name='Q{}process-hashchange' bSlot='0' flags='t'/>
    </templateRule>
   </mode>
  </co>
  <overridden/>
  <key name='Q{http://saxon.sf.net/}kk101' line='0' binds='' flags='u'>
   <p.nodeSet type='element(Q{}section)'>
-   <slash ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='147'>
+   <slash ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='148'>
     <axis name='child' nodeTest='element(Q{}article)' jsTest='var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;article&#39;;'/>
     <axis name='child' nodeTest='element(Q{}section)' jsTest='var q=SaxonJS.U.nameOfNode(item); return item.nodeType===1 &amp;&amp; q.uri===&#39;&#39;&amp;&amp;q.local===&#39;section&#39;;'/>
    </slash>
   </p.nodeSet>
-  <cast ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='147' as='xs:string' emptiable='1'>
+  <cast ns='xsl=~ svg=http://www.w3.org/2000/svg ch=http://www.saxonica.com/ns/doc/changes f=urn:viewerapp.function cat=http://www.saxonica.com/ns/doc/catalog ixsl=~ js=~ xs=~ fnd=http://www.saxonica.com/ns/doc/functions' line='148' as='xs:string' emptiable='1'>
    <attVal name='Q{}id' chk='0'/>
   </cast>
  </key>
@@ -7100,4 +7089,4 @@
  </output>
  <decimalFormat/>
 </package>
-<?Σ 5e756e09?>
+<?Σ 991708ba?>
