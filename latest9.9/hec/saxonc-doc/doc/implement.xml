@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<implement> <!--  doc:doc="Implementation status notes, keyed by attributes." -->
+           
+    <saxon version="NOT_IMPLEMENTED"> Not implemented in Saxon.</saxon>  
+    <saxon version="ALL"> Available in all Saxon editions.</saxon>
+    <saxon version="PE"> Requires Saxon-PE or Saxon-EE.</saxon>
+    <saxon version="PE/EE"> Requires Saxon-PE or Saxon-EE.</saxon>
+    <saxon version="EE"> Requires Saxon-EE.</saxon>
+    <saxon version="DEFAULT"> Requires Saxon-EE.</saxon>
+    
+</implement>
