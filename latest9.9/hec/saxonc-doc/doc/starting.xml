@@ -46,8 +46,8 @@
          <kbd>ln -s /usr/lib/Saxonica/Saxon-[EDITION]C[VERSION]/libsaxon[EDITION].so
             /usr/lib/libsaxon[EDITION].so</kbd>
 
-         <p>You need to set up the environment for the jet jvm. The jvm is in the directory
-            'Saxonica/Saxon-[EDITION]C[VERSION]/rt'. Link the jetvm library so it can be found. For
+         <p>You need to set up the environment for the JET JVM. The JVM is in the directory
+            'Saxonica/Saxon-[EDITION]C[VERSION]/rt'. Link the JetVM library so it can be found. For
             example:</p>
 
          <kbd>ln -s /usr/lib/Saxonica/Saxon-[EDITION]C[VERSION]/rt /usr/lib/rt</kbd>
@@ -65,20 +65,11 @@
       /usr/lib/rt/lib/amd64/jetvm]]></samp>
 
          <p>Next run: </p>
-         <kbd>$ sudo ldconfig</kbd>
+         <kbd>sudo ldconfig</kbd>
 
-         <p>When working with PHP the export command above should be added to apache environment
-            variables. The apache2 config file is located in one of the following locations
-            depending on your linux distribution: </p>
-         <ul>
-            <li>Ubuntu server: /etc/apache2/envvars</li>
-            <li>Centos server: /etc/sysconfig/httpd</li>
-            <li>SUSE server: /etc/sysconfig/apache2</li>
-         </ul>
-
-         <p>The C++ compiler requires the include path to the java header files during compilation.
+         <p>The C++ compiler requires the include path to the Java header files during compilation.
             In most cases this is achieved simply by installing gcj-jdk. Alternatively, according to
-            http://www.network-theory.co.uk/docs/gccintro/gccintro_23.html, add the java header file
+            http://www.network-theory.co.uk/docs/gccintro/gccintro_23.html, add the Java header file
             dirs in the JAVA_HOME directory to this environment variable used by the compiler. For
             example:</p>
 
@@ -95,6 +86,9 @@
 
       <section id="installingMac" title="Mac OS">
          <h1>Installing on Mac OS</h1>
+
+         <aside>In the following, [EDITION] means one of: HE, PE, EE; and [VERSION] is the
+            maintenance release version number (for instance 1.2.1). </aside>
 
          <p>To install any of the Saxon/C releases on the Mac OS system, first unzip the
             self-contained file <b>libsaxon-[EDITION]-mac-setup-v[VERSION].zip</b>.</p>
@@ -127,6 +121,9 @@
       <section id="installingWindows" title="Windows">
          <h1>Installing on Windows</h1>
 
+         <aside>In the following, [EDITION] means one of: HE, PE, EE; and [VERSION] is the
+            maintenance release version number (for instance 1.2.1). </aside>
+
          <p>To install the Saxon-[EDITION]/C release, first run the executable
                <b>libsaxon-[EDITION]-win-setup.exe</b>. </p>
          <p>The first step is to select the destination where the product files will be installed -
@@ -138,20 +135,6 @@
             The script buildCPPSaxon[Edition].bat is useful to build C/C++ application which uses
             the Saxon/C API.</p>
          <p/>
-
-         <h3>PHP extension</h3>
-         <p>The PHP extension has not yet been built. It can be built using the PHP source. We hope
-            to provide builds for PHP on Windows soon.</p>
-
-
-         <p>Note: On Windows we recommend setting the cwd using the overloaded constructor because
-            there remains an issue with building Saxon/C with PHP when using the function
-            VCWD_GETCWD. That is, <br/>
-            <code>$proc = new SaxonProcessor('C://www/html//trax//');</code><br/> should replace
-            instances of<br/>
-            <code>$proc = new SaxonProcessor();</code><br/> in your PHP scripts (see the <a
-               href="#php-example">PHP example code</a> in the <a href="#started">Getting
-               started</a> section for an example). </p>
 
 
       </section>
@@ -166,55 +149,42 @@
          acts as a factory class for generating the processors, is a good place to start.</p>
 
       <p>The samples directory in the download provides example code in C/C++, PHP and Python
-         programming languages which may be helpful in how to use Saxon/C in your application. For
-         further details see <a href="/samples">Samples</a>.</p>
+         programming languages which may be helpful in learning how to use Saxon/C in your
+         application. For further details see <a href="/samplessamples_c">Samples</a>.</p>
 
       <h2>Commandline Interface</h2>
 
-      <p>Saxon/C can be run from the commandline in a similar way to its Java counterpart (same
-         options are available). See the file Transform.c, Query.c and Validate.c (which is
-         available in Saxon-EE/C) in the directory 'command'. The build.sh script can be executed to
-         build the commandline programs.</p>
-      <p>As in the Java products the same options that are available in the Saxon/C commandline
-         tool. See sections: <a
-            href="https://saxonica.com/documentation/index.html#!using-xsl/commandline">Running XSLT
-            from Commaind Line</a>
-         <a href="https://saxonica.com/documentation/index.html#!using-xquery/commandline">Running
-            XQuery from the Command Line</a> and <a
-            href="https://saxonica.com/documentation/index.html#!schema-processing/commandline"
-            >Running Validation from the Command Line</a>.</p>
+      <p>Saxon/C can be run from the commandline in a similar way to its Java counterpart. See the
+         files Transform.c and Query.c (and for Saxon-EE/C, Validate.c) in the directory 'command'.
+         The build.sh script can be executed to build the commandline programs.</p>
 
-      <kbd>./transform [options][params]</kbd>
-      <kbd>./query [options][params]</kbd>
+      <p>To run Saxon/C from the commandline, the commands look like the following:</p>
+
+      <kbd>./transform [options] [params]</kbd>
+      <kbd>./query [options] [params]</kbd>
       <kbd>./validate [options] source.xml</kbd>
 
-      <h3>C/C++</h3>
-      <h4>C</h4>
-      <p>For C programming see the test harnesses for XSLT, XQuery, Schema Validation and XPath in C
-         code along with the build and run script in the directory 'cTests'. The following files are
-         required to build Saxon/C on C++: SaxonCGlue.c, SaxonXProcessor.c, SaxonCXPath.c To compile
-         the sample test code in C execute the 'build.sh' file the directory 'cTests'. This file
-         builds executables for the test cases testing XSLT, XPath, XQuery and schema Validator. The
-         command is similar to the following:</p>
-      <kbd>gcc -m32 -I$jdkdir/include -I$jdkdir/include/linux -I
-         /System/Library/Frameworks/JavaVM.framework/Headers ../SaxonCGlue.c ../SaxonCProcessor.c
-         ../SaxonCXPath.c testXSLT.c -o testXSLT -ldl -lc $1</kbd>
+      <p>The same commandline options as in the Java products are available in the Saxon/C
+         commandline tool. Please see the relevant sections of the Saxon 9.9 documentation for
+         details:</p>
 
-
-      <h4>C++</h4>
-      <p>For C++ programming see sample code for XSLT, XQuery, Schema Validation and XPath in C++
-         code along with the build and run script in the directory 'cppTests'. The following files
-         are required to build Saxon/C on C++: SaxonCGlue.c, SaxonCXPath.c, XdmValue.cpp,
-         XdmItem.cpp, XdmNode.cpp, XdmAtomicValue.cpp, SaxonProcessor.cpp, XsltProcessor.cpp,
-         Xslt30Processor.cpp and XQueryProcessor.cpp, XPathProcessor.cpp, SchemaValidator.cpp To
-         compile the sample test code in C++ execute the 'build.sh' file the directory 'cppTests'.
-         This file builds executables for the test cases testing XSLT, XPath, XQuery and schema
-         Validator. The command is similar to the following:</p>
-      <kbd>g++ -m32 ../bin/SaxonCGlue.o ../bin/SaxonCXPath.o ../bin/SaxonProcessor.o
-         ../bin/XQueryProcessor.o ../bin/XsltProcessor.o, ../bin/Xslt30Processor.o
-         ../bin/XPathProcessor.o ../bin/XdmValue.o ../bin/XdmItem.o ../bin/XdmNode.o
-         ../bin/XdmAtomicValue.o ../bin/SchemaValidator.o testXSLT.cpp -o testXSLT -ldl -lc $1
-         $2</kbd>
+      <ul>
+         <li>
+            <a target="_blank"
+               href="https://saxonica.com/documentation/index.html#!using-xsl/commandline">Running
+               XSLT from the Command Line</a>
+         </li>
+         <li>
+            <a target="_blank"
+               href="https://saxonica.com/documentation/index.html#!using-xquery/commandline"
+               >Running XQuery from the Command Line</a>
+         </li>
+         <li>
+            <a target="_blank"
+               href="https://saxonica.com/documentation/index.html#!schema-processing/commandline"
+               >Running Validation from the Command Line</a>
+         </li>
+      </ul>
 
    </section>
 
@@ -231,14 +201,14 @@
       <p>Saxon/C should already have been installed following the instructions at <a
             href="../installing">Installing Saxon/C</a>.</p>
 
-      <h2>Installing</h2>
+      <h2>Installing on Linux and Mac OS</h2>
 
       <!--<p>(Alternatively, you may like to use the installation script <a 
          href="https://saxonica.com/saxon-c/download/install.sh">install.sh</a> supplied by
          Petr Zak - written for a 64-bit machine, but can be changed for a 32-bit machine.)</p>-->
 
-      <p>The PHP interface is in the form of a C/C++ PHP extension to Saxon/C created using the Zend
-         module API.</p>
+      <p>The PHP interface is in the form of a C/C++ PHP7 extension to Saxon/C created using the
+         Zend module API.</p>
       <p>To install, run the following commands:</p>
       <kbd>cd /usr/lib/Saxonica/Saxon-[EDITION]C[VERSION]/Saxon-C-API/</kbd>
       <kbd>phpize</kbd>
@@ -246,27 +216,22 @@
       <kbd>make</kbd>
       <kbd>sudo make install</kbd>
 
-      <!-- TODO tidy up this section -->
-      <p>Building with PHP5: Replace the file config.m4 in the directory Saxon-C-API/ with the one
-         held in Saxon-C-API/PHP5-Build. Then run the steps above.</p>
-
-      <samp><![CDATA[Create a module conf file:
-
-                         nano /etc/php/7.2/mods-available/20-saxon.ini
-                     and add contents:
-
-                         ; configuration for php Saxon HE/PE/EE module
-                         extension=saxon.so
-                     save the file.
-
-                     Enable the module for PHP:
-
-                         phpenmod saxon]]></samp>
+      <h3>Building with PHP5</h3>
+      <p>The Saxon/C PHP extension is built for PHP7. To instead build with PHP5, first replace the
+         file config.m4 in the directory 'Saxon-C-API/' with the one held in
+         'Saxon-C-API/PHP5-Build'. Then run the installation steps above.</p>
+      <p>Next create a module conf file: </p>
+      <kbd>nano /etc/php/7.2/mods-available/20-saxon.ini</kbd>
+      <p>with content:</p>
+      <samp><![CDATA[; configuration for php Saxon HE/PE/EE module
+         extension=saxon.so]]></samp>
+      <p>and save the file. Now enable the module for PHP using the command:</p>
+      <kbd>phpenmod saxon</kbd>
 
       <p>Alternatively, you can update the php.ini file or add the 20-saxon.ini file under the
-         conf.d directory (if using Ubuntu it is usually in the location '/etc/php/7.2/apache2/') to
-         contain the PHP extension. Insert the following in the Dynamic Extensions section:
-            <code>extension=saxon.so</code>, then run the following commands:</p>
+         'conf.d' directory (if using Ubuntu it is usually in the location '/etc/php/7.2/apache2/')
+         to contain the PHP extension. Insert the code <code>extension=saxon.so</code> in the
+         Dynamic Extensions section, then run the following commands:</p>
 
       <kbd>sudo service apache2 restart</kbd>
       <kbd>php -m | grep saxon -i</kbd>
@@ -274,13 +239,9 @@
       <p>(Running these should display 'Saxon/C'.)</p>
 
       <p>If you cannot load the extension from the php.ini file, you need to load it at script
-         execution time with the following code. However this is not recommended as the loading and
-         unloading can be slow:</p>
-      <ul>
-         <li>
-            <code>dl(“saxon.so”);</code>
-         </li>
-      </ul>
+         execution time using the code: <code>dl(“saxon.so”);</code>. However this is not
+         recommended as the loading and unloading can be slow.</p>
+
       <p>When working with PHP, the environment variables LD_LIBRARY_PATH and SAXONC_HOME should be
          added to the apache environment variables. The apache2 config file is located in one of the
          following locations depending on your linux distribution: </p>
@@ -289,7 +250,26 @@
          <li>Centos server: /etc/sysconfig/httpd</li>
          <li>SUSE server: /etc/sysconfig/apache2</li>
       </ul>
+
+      <h2>Installing on Windows</h2>
+
+      <p>The PHP extension has not yet been built. It can be built using the PHP source. We hope to
+         provide builds for PHP on Windows soon.</p>
+
+      <p>On Windows we recommend setting the cwd using the overloaded constructor because there
+         remains an issue with building Saxon/C with PHP when using the function VCWD_GETCWD. That
+         is,</p>
+
+      <samp><![CDATA[$proc = new SaxonProcessor('C://www/html//trax//');]]></samp>
+
+      <p>should replace instances of</p>
+
+      <samp><![CDATA[$proc = new SaxonProcessor();]]></samp>
+
+      <p>in your PHP scripts (see the <a href="/samples/samples_php">PHP Samples</a> for an
+         example). </p>
    </section>
+
    <section id="installingpython" title="Python Extension">
       <h1>Python Extension</h1>
 
@@ -323,9 +303,8 @@
             target="_blank" href="https://saxonica.com/license/eval-license.pdf"
             >https://saxonica.com/license/eval-license.pdf</a> (for use with a free <a
             target="_blank" href="https://saxonica.com/download/download.xml">evaluation
-            license</a>) or <a target="_blank"
-            href="https://saxonica.com/license/paid-license.pdf"
-               >https://saxonica.com/license/paid-license.pdf</a> (in the case of paid-up licenses,
+         license</a>) or <a target="_blank" href="https://saxonica.com/license/paid-license.pdf"
+            >https://saxonica.com/license/paid-license.pdf</a> (in the case of paid-up licenses,
          purchased from our <a target="_blank" href="https://saxonica.com/shop/shop.html">online
             store</a>).</p>
 
@@ -342,7 +321,7 @@
             target="_blank">configuration features</a>). For example, to provide the
             <code>licenseFileLocation</code> in PHP:</p>
       <samp><![CDATA[$saxonProc = new Saxon\SaxonProcessor(true);
-          $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLocation", "/usr/lib/saxon-license.lic");]]></samp>
+$saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLocation", "/usr/lib/saxon-license.lic");]]></samp>
 
       <p>Saxon-HE/C is an open-source product. The primary license is the <a target="_blank"
             href="https://www.mozilla.org/MPL/2.0/">Mozilla Public License version 2.0</a>. In most
@@ -350,7 +329,8 @@
          means that the code cannot be combined with code issued under a GPL license (the reason for
          this is the difficulty of contacting all past contributors to gain their assent).</p>
       <p>Some components are licensed under the Apache version 2.0 license or under BSD-style
-         licenses. For more information see <a href="https://saxonica.com/license/license.xml">Licenses</a>.</p>
+         licenses. For more information see the <a href="https://saxonica.com/license/license.xml"
+            target="_blank">Licenses</a> section on the main Saxonica website.</p>
 
 
    </section>

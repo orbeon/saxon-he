@@ -14,6 +14,40 @@
 
    <section id="samples_c" title="C/C++ Samples">
       <h2>C/C++ Samples</h2>
+      
+      <h2>Running in C/C++</h2>
+      
+      <h4>C</h4>
+      
+      <p>For C programming see the test harnesses for XSLT, XQuery, Schema Validation and XPath in C
+         code along with the build and run script in the directory 'cTests'. The following files are
+         required to build Saxon/C on C++: SaxonCGlue.c, SaxonXProcessor.c, SaxonCXPath.c. To compile
+         the sample test code in C execute the 'build.sh' file in the directory 'cTests'. This file
+         builds executables for the test cases testing XSLT, XPath, XQuery and Schema Validation. The
+         command is similar to the following:</p>
+      
+      <kbd>gcc -m32 -I$jdkdir/include -I$jdkdir/include/linux -I
+         /System/Library/Frameworks/JavaVM.framework/Headers ../SaxonCGlue.c ../SaxonCProcessor.c
+         ../SaxonCXPath.c testXSLT.c -o testXSLT -ldl -lc $1</kbd>
+      
+      
+      <h4>C++</h4>
+      
+      <p>For C++ programming see sample code for XSLT, XQuery, Schema Validation and XPath in C++
+         code along with the build and run script in the directory 'cppTests'. The following files
+         are required to build Saxon/C on C++: SaxonCGlue.c, SaxonCXPath.c, XdmValue.cpp,
+         XdmItem.cpp, XdmNode.cpp, XdmAtomicValue.cpp, SaxonProcessor.cpp, XsltProcessor.cpp,
+         Xslt30Processor.cpp and XQueryProcessor.cpp, XPathProcessor.cpp, SchemaValidator.cpp To
+         compile the sample test code in C++ execute the 'build.sh' file the directory 'cppTests'.
+         This file builds executables for the test cases testing XSLT, XPath, XQuery and schema
+         Validator. The command is similar to the following:</p>
+      
+      <kbd>g++ -m32 ../bin/SaxonCGlue.o ../bin/SaxonCXPath.o ../bin/SaxonProcessor.o
+         ../bin/XQueryProcessor.o ../bin/XsltProcessor.o, ../bin/Xslt30Processor.o
+         ../bin/XPathProcessor.o ../bin/XdmValue.o ../bin/XdmItem.o ../bin/XdmNode.o
+         ../bin/XdmAtomicValue.o ../bin/SchemaValidator.o testXSLT.cpp -o testXSLT -ldl -lc $1
+         $2</kbd>
+      
    </section>
 
    <section id="samples_php" title="PHP Samples">
