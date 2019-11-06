@@ -969,3 +969,11 @@ table.objectConversion td.col-input {
 table.objectConversion td.col-ouput {
   width: 50%;
 }
+
+span.signature{
+    display:block;
+    color:#3D5B96;
+    font-family:monospace;
+    margin-top:5px;
+    margin-bottom:5px;
+}
