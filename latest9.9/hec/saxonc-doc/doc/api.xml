@@ -431,12 +431,6 @@
             </tr>
             <tr>
                <td><code>void</code> </td>
-               <td><span class="signature">setQueryItem(<a class="bodylink code" href="../saxon_c_php_xdmitem">XdmItem</a>
-                  $item)</span> 
-                  <div class="fcomment">**</div></td>
-            </tr>
-            <tr>
-               <td><code>void</code> </td>
                <td><span class="signature">setQueryFile($string $filename)</span>
                   <div class="fcomment">query supplied as a file</div>
                </td>
@@ -755,14 +749,15 @@
             </tr>
             <tr>
                <td><code>void</code> </td>
-               <td><span class="signature">setInitialMatchSelection()</span>
+               <td><span class="signature">setInitialMatchSelection(<a class="bodylink code" href="../saxon_c_php_xdmvalue"
+                                    >XdmValue</a> $value)</span>
                   <div class="fcomment">The initial value to which templates are to be applied (equivalent to the
                      'select' attribute of xsl:apply-templates)</div>
                </td>
             </tr>
             <tr>
                <td><code>void</code> </td>
-               <td><span class="signature">setInitialMatchSelectionAsFile</span>
+               <td><span class="signature">setInitialMatchSelectionAsFile(string $filename)</span>
                   <div class="fcomment">The initial filename to which templates are to be applied (equivalent to the
                      'select' attribute of xsl:apply-templates).</div></td>
             </tr>
@@ -770,16 +765,15 @@
                <td>
                   <code>void</code>
                </td>
-               <td><span class="signature">setGlobalContextItem</span>
-                  <div class="fcomment">Set the source document from an <a
-                        class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a> for the
-                     transformation.</div>
+               <td><span class="signature">setGlobalContextItem(<a class="bodylink code" href="../saxon_c_php_xdmitem"
+                                    >XdmItem</a> $item)</span>
+                  <div class="fcomment">Supply the context <a class="bodylink code" href="../saxon_c_php_xdmitem">item</a> to be used when evaluating global variables and parameters.</div>
                </td>
             </tr>
             <tr>
                <td><code>void</code> </td>
-               <td><span class="signature">setGlobalContextFromFile</span>
-                  <div class="fcomment">Set the source from file for the transformation.</div>
+               <td><span class="signature">setGlobalContextFromFile(string filename)</span>
+                  <div class="fcomment">upply the context as supplied as  file to be used when evaluating global variables and parameters.</div>
                </td>
             </tr>
             <tr>
@@ -896,12 +890,6 @@
                <td><span class="signature">setQueryContent(string $str)</span>
                   <div class="fcomment">query supplied as a string</div>
                </td>
-            </tr>
-            <tr>
-               <td><code>void</code> </td>
-               <td><span class="signature">setQueryItem(<a class="bodylink code" href="../saxon_c_php_xdmitem">XdmItem</a>
-                  $item)</span> 
-                  <div class="fcomment">**</div> </td>
             </tr>
             <tr>
                <td><code>void</code> </td>
