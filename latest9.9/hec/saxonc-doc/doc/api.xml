@@ -504,10 +504,9 @@
                </td>
                <td>
                   <span class="signature">setContextItem(<a class="bodylink code"
-                     href="../saxon_c_php_xdmvalue">XdmValue</a> $obj)</span>
+                     href="../saxon_c_php_xdmitem">XdmItem</a> $obj)</span>
                   <div class="fcomment">Set the initial context item for the query. Any one of the
                      following objects is accepted: <a class="bodylink code"
-                        href="../saxon_c_php_xdmvalue">XdmValue</a>, <a class="bodylink code"
                         href="../saxon_c_php_xdmitem">XdmItem</a>, <a class="bodylink code"
                         href="../saxon_c_php_xdmnode">XdmNode</a> and <a class="bodylink code"
                         href="../saxon_c_php_xdmatomicvalue">XdmAtomicValue</a>.</div>
@@ -1173,10 +1172,10 @@
                   <code>void</code>
                </td>
                <td>
-                  <span class="signature">setContextItem(Xdm $obj)</span>
+                  <span class="signature">setContextItem(<a class="bodylink code"
+                     href="../saxon_c_php_xdmitem">XdmItem</a> $obj)</span>
                   <div class="fcomment">Set the initial context item for the query. Any one of the
                      following objects is accepted: <a class="bodylink code"
-                        href="../saxon_c_php_xdmvalue">XdmValue</a>, <a class="bodylink code"
                         href="../saxon_c_php_xdmitem">XdmItem</a>, <a class="bodylink code"
                         href="../saxon_c_php_xdmnode">XdmNode</a> and <a class="bodylink code"
                         href="../saxon_c_php_xdmatomicvalue">XdmAtomicValue</a>.</div>
