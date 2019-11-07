@@ -6,4 +6,5 @@
    <section ref="api">Saxon/C API</section>
    <section ref="samples">Saxon/C Samples &amp; Unit Tests</section>
    <section ref="extensibility">Extension Functions in C++/PHP</section>
+   <section ref="technical">Technical Information</section>
 </catalog>
