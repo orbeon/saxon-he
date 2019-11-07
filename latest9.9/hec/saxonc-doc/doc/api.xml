@@ -430,186 +430,78 @@
       <section id="saxon_c_php_xsltprocessor" title="Saxon\XsltProcessor">
          <h1>Saxon\XsltProcessor Class</h1>
 
-         <table>
+
+
+         <table class="markdownTable">
             <thead>
                <tr>
                   <td>Return</td>
                   <td>Function name and Description</td>
                </tr>
             </thead>
-
-            <tr>
-               <td>
-                  <a class="bodylink code" href="../saxon_c_php_xdmvalue">Saxon/XdmValue</a>
-               </td>
-               <td>
-                  <span class="signature">runQueryToValue()</span>
-                  <div class="fcomment">Compile and evaluate the query. Result returned as an <a
-                        class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a> object. If
-                     there are failures then a null is returned.</div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <code>string</code>
-               </td>
-               <td>
-                  <span class="signature">runQueryToString()</span>
-                  <div class="fcomment">Compile and evaluate the query. Result returned as a string.
-                     If there are failures then a null is returned.</div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <code>void</code>
-               </td>
-               <td>
-                  <span class="signature">runQueryToFile(string $outfilename)</span>
-                  <div class="fcomment">Compile and evaluate the query. Result saved to the file
-                     specified in the $outfilename argument.</div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <code>void</code>
-               </td>
-               <td>
-                  <span class="signature">setQueryContent(string $str)</span>
-                  <div class="fcomment">Query supplied as a string.</div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <code>void</code>
-               </td>
-               <td>
-                  <span class="signature">setQueryFile($string $fileName)</span>
-                  <div class="fcomment">Query supplied supplied as a file as specified by the
-                     $fileName argument.</div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <code>void</code>
-               </td>
-               <td>
-                  <span class="signature">setContextItemFromFile(string $fileName)</span>
-                  <div class="fcomment">Set the initial context item for the query. The context item
-                     is supplied as a file as specified by the $fileName argument.</div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <code>void</code>
-               </td>
-               <td>
-                  <span class="signature">setContextItem(<a class="bodylink code"
-                     href="../saxon_c_php_xdmitem">XdmItem</a> $obj)</span>
-                  <div class="fcomment">Set the initial context item for the query. Any one of the
-                     following objects is accepted: <a class="bodylink code"
-                        href="../saxon_c_php_xdmitem">XdmItem</a>, <a class="bodylink code"
-                        href="../saxon_c_php_xdmnode">XdmNode</a> and <a class="bodylink code"
-                        href="../saxon_c_php_xdmatomicvalue">XdmAtomicValue</a>.</div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <code>void</code>
-               </td>
-               <td>
-                  <span class="signature">setQueryBaseURI(string $uri)</span>
-                  <div class="fcomment">Set the static base URI for a query expression compiled
-                     using this XQuery Processor. The base URI is part of the static context, and is
-                     used to resolve any relative URIs appearing within a query.</div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <code>void</code>
-               </td>
-               <td>
-                  <span class="signature">declareNamespace(string $prefix, string $namespace)</span>
-                  <div class="fcomment">Declare a namespace binding as part of the static context
-                     for XPath expressions compiled using this XQuery processor.</div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <code>void</code>
-               </td>
-               <td>
-                  <span class="signature">setParameter(string $name, <a class="bodylink code"
-                        href="../saxon_c_php_xdmvalue">XdmValue</a> $value)</span>
-                  <div class="fcomment">Set the parameters required for this XQuery Processor.</div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <code>void</code>
-               </td>
-               <td>
-                  <span class="signature">setProperty(string $name, string $value)</span>
-                  <div class="fcomment">Set properties for the XQuery Processor.</div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <code>void</code>
-               </td>
-               <td>
-                  <span class="signature">clearParameters()</span>
-                  <div class="fcomment">Clear parameter values set.</div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <code>void</code>
-               </td>
-               <td>
-                  <span class="signature">clearProperties()</span>
-                  <div class="fcomment">Clear property values set.</div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <code>void</code>
-               </td>
-               <td>
-                  <span class="signature">exceptionClear()</span>
-                  <div class="fcomment">Clear any exception thrown.</div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <code>string</code>
-               </td>
-               <td>
-                  <span class="signature">getErrorCode(int $i)</span>
-                  <div class="fcomment">Get the ith error code if there are any errors.</div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <code>string</code>
-               </td>
-               <td>
-                  <span class="signature">getErrorMessage(int $i)</span>
-                  <div class="fcomment">Get the ith error message if there are any errors.</div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <code>int</code>
-               </td>
-               <td>
-                  <span class="signature">getExceptionCount()</span>
-                  <div class="fcomment">Get the number of errors during execution or evaluation of a
-                     query.</div>
-               </td>
-            </tr>
-
+         <tr>
+            <td>void  </td><td><span class="signature">transformFileToFile(string $sourceFileName, string $stylesheetFileName, string outputfileName)</span>
+          <div class="fcomment">Perform a one shot transformation. The result is stored in the supplied outputfile name.</div>   </td></tr>
+         <tr>
+            <td>string  </td><td><span class="signature">transformFileToString(string $sourceFileName, string $stylesheetFileName)</span>
+          <div class="fcomment">Perform a one shot transformation. The result is returned as a string. If there are failures then a null is returned</div>   </td></tr>
+         <tr>
+            <td><a class="el" href="classXdmValue.html">XdmValue</a>  </td><td><span class="signature">transformFileToValue(string $fileName)</span>
+          <div class="fcomment">Perform a one shot transformation. The result is returned as an <a class="el" href="classXdmValue.html">XdmValue</a></div>   </td></tr>
+         <tr>
+            <td>void  </td><td><span class="signature">transformToFile()</span>
+          <div class="fcomment">Perform the transformation based upon cached stylesheet and source document.</div>   </td></tr>
+         <tr>
+            <td>string  </td><td><span class="signature">transformToString()</span></td></tr>
+         <tr>
+            <td><a class="el" href="classXdmValue.html">XdmValue</a>  </td><td><span class="signature">transformToValue()</span>
+          <div class="fcomment">Perform the transformation based upon cached stylesheet and any source document. Result returned as an <a class="el" href="classXdmValue.html">XdmValue</a> object. If there are failures then a null is returned</div>   </td></tr>
+         <tr>
+            <td>void  </td><td><span class="signature">compileFromFile(string $fileName)</span>
+          <div class="fcomment">Compile a stylesheet suplied as by file name</div>   </td></tr>
+         <tr>
+            <td>void  </td><td><span class="signature">compileFromString(string $str)</span>
+          <div class="fcomment">Compile a stylesheet received as a string.</div>   </td></tr>
+         <tr>
+            <td>void  </td><td><span class="signature">compileFromValue(<a class="el" href="classXdmNode.html">XdmNode</a> $node)</span>
+          <div class="fcomment">Compile a stylesheet received as an <a class="el" href="classXdmNode.html">XdmNode</a>.</div>   </td></tr>
+         <tr>
+            <td>void  </td><td><span class="signature">setOutputFile(string $fileName)</span>
+          <div class="fcomment">Set the output file name of where the transformation result is sent</div>   </td></tr>
+         <tr>
+            <td>void  </td><td><span class="signature">setSourceFromXdmValue(<a class="el" href="classXdmValue.html">XdmValue</a> $value)</span>
+          <div class="fcomment">The source used for a query or stylesheet. Requires an <a class="el" href="classXdmValue.html">XdmValue</a> object</div>   </td></tr>
+         <tr>
+            <td>void  </td><td><span class="signature">setSourceFromFile(string $filename)</span>
+          <div class="fcomment">The source used for query or stylesheet. Requires a file name as string</div>   </td></tr>
+         <tr>
+            <td>void  </td><td><span class="signature">setParameter(string $name, <a class="el" href="classXdmValue.html">XdmValue</a> $value)</span>
+          <div class="fcomment">Set the parameters required for XSLT stylesheet</div>   </td></tr>
+         <tr>
+            <td>void  </td><td><span class="signature">setProperty(string $name, string $value)</span>
+          <div class="fcomment">Set properties for the stylesheet.</div>   </td></tr>
+         <tr>
+            <td>void  </td><td><span class="signature">clearParameters()</span>
+          <div class="fcomment">Clear parameter values set</div>   </td></tr>
+         <tr>
+            <td>void  </td><td><span class="signature">clearProperties()</span>
+          <div class="fcomment">Clear property values set</div>   </td></tr>
+         <tr>
+            <td>void  </td><td><span class="signature">exceptionClear()</span>
+          <div class="fcomment">Clear any exception thrown</div>   </td></tr>
+         <tr>
+            <td>string  </td><td><span class="signature">getErrorCode(int $i)</span>
+          <div class="fcomment">Get the ith error code if there are any errors</div>   </td></tr>
+         <tr>
+            <td>string  </td><td><span class="signature">getErrorMessage(int $i)</span>
+          <div class="fcomment">Get the ith error message if there are any error</div>   </td></tr>
+         <tr>
+            <td>int  </td><td><span class="signature">getExceptionCount()</span>
+          <div class="fcomment">Get number of error during execution or evaluate of stylesheet</div>   </td></tr>
          </table>
+
       </section>
+
 
       <section id="saxon_c_php_xslt30processor" title="Saxon\Xslt30Processor">
          <h1>Saxon\Xslt30Processor Class</h1>
