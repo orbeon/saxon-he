@@ -405,7 +405,7 @@
       <!--<p>(Alternatively, you may like to use the installation script <a 
          href="https://saxonica.com/saxon-c/download/install.sh">install.sh</a> supplied by
          Petr Zak - written for a 64-bit machine, but can be changed for a 32-bit machine.)</p>-->
-
+      <h3>Building with PHP7</h3>
       <p>The PHP interface is in the form of a C/C++ PHP7 extension to Saxon/C created using the
          Zend module API.</p>
       <p>To install, run the following commands:</p>
