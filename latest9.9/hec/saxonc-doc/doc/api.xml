@@ -903,7 +903,7 @@
                </td>
                <td>
                   <span class="signature">setProperty(string $name, string $value)</span>
-                  <div class="fcomment">Set properties for the stylesheet.</div>
+                  <div class="fcomment">Set properties for the XSLT processor.</div>
                </td>
             </tr>
             <tr>
@@ -962,7 +962,7 @@
                </td>
                <td>
                   <span class="signature">getErrorCode(int $i)</span>
-                  <div class="fcomment">Get the ith error code if there are any errors.</div>
+                  <div class="fcomment">Get the i'th error code if there are any errors.</div>
                </td>
             </tr>
             <tr>
@@ -971,7 +971,7 @@
                </td>
                <td>
                   <span class="signature">getErrorMessage(int $i)</span>
-                  <div class="fcomment">Get the ith error message if there are any errors.</div>
+                  <div class="fcomment">Get the i'th error message if there are any errors.</div>
                </td>
             </tr>
             <tr>
@@ -1065,7 +1065,7 @@
                </td>
                <td>
                   <span class="signature">setContextItem(<a class="bodylink code"
-                     href="../saxon_c_php_xdmitem">XdmItem</a> $obj)</span>
+                        href="../saxon_c_php_xdmitem">XdmItem</a> $obj)</span>
                   <div class="fcomment">Set the initial context item for the query. Any one of the
                      following objects is accepted: <a class="bodylink code"
                         href="../saxon_c_php_xdmitem">XdmItem</a>, <a class="bodylink code"
@@ -1101,7 +1101,7 @@
                <td>
                   <span class="signature">setParameter(string $name, <a class="bodylink code"
                         href="../saxon_c_php_xdmvalue">XdmValue</a> $value)</span>
-                  <div class="fcomment">Set the parameters required for this XQuery Processor.</div>
+                  <div class="fcomment">Set the parameters required for the query.</div>
                </td>
             </tr>
             <tr>
@@ -1110,7 +1110,7 @@
                </td>
                <td>
                   <span class="signature">setProperty(string $name, string $value)</span>
-                  <div class="fcomment">Set properties for the XQuery Processor.</div>
+                  <div class="fcomment">Set properties for the XQuery processor.</div>
                </td>
             </tr>
             <tr>
@@ -1137,7 +1137,7 @@
                </td>
                <td>
                   <span class="signature">exceptionClear()</span>
-                  <div class="fcomment">Clear any exception thrown.</div>
+                  <div class="fcomment">Clear any exceptions thrown.</div>
                </td>
             </tr>
             <tr>
@@ -1146,7 +1146,7 @@
                </td>
                <td>
                   <span class="signature">getErrorCode(int $i)</span>
-                  <div class="fcomment">Get the ith error code if there are any errors.</div>
+                  <div class="fcomment">Get the i'th error code if there are any errors.</div>
                </td>
             </tr>
             <tr>
@@ -1155,7 +1155,7 @@
                </td>
                <td>
                   <span class="signature">getErrorMessage(int $i)</span>
-                  <div class="fcomment">Get the ith error message if there are any errors.</div>
+                  <div class="fcomment">Get the i'th error message if there are any errors.</div>
                </td>
             </tr>
             <tr>
@@ -1211,19 +1211,19 @@
                </td>
                <td>
                   <span class="signature">effectiveBooleanValue(string $xpathStr)</span>
-                  <div class="fcomment">Evaluate the XPath expression, returning the effective
-                     boolean value of the result.</div>
+                  <div class="fcomment">Evaluate the supplied XPath expression, returning the
+                     effective boolean value of the result.</div>
                </td>
             </tr>
             <tr>
                <td>
-                  <a class="bodylink code" href="../saxon_c_php_xdmvalue">Sxon\XdmValue</a>
+                  <a class="bodylink code" href="../saxon_c_php_xdmvalue">Saxon\XdmValue</a>
                </td>
                <td>
                   <span class="signature">evaluate(string $xpathStr)</span>
                   <div class="fcomment">Compile and evaluate an XPath expression, supplied as a
-                     character string. Result is an <a class="bodylink code"
-                        href="../saxon_c_php_xdmvalue">XdmValue</a></div>
+                     character string, returning the result as an <a class="bodylink code"
+                        href="../saxon_c_php_xdmvalue">XdmValue</a>.</div>
                </td>
             </tr>
             <tr>
@@ -1234,7 +1234,8 @@
                   <span class="signature">evaluateSingle(string $xpathStr)</span>
                   <div class="fcomment">Compile and evaluate an XPath expression whose result is
                      expected to be a single item, with a given context item. The expression is
-                     supplied as a character string.</div>
+                     supplied as a character string, and the result returned as an <a
+                        class="bodylink code" href="../saxon_c_php_xdmitem">XdmItem</a>.</div>
                </td>
             </tr>
             <tr>
@@ -1244,8 +1245,7 @@
                <td>
                   <span class="signature">declareNamespace(string $prefix, string $namespace)</span>
                   <div class="fcomment">Declare a namespace binding as part of the static context
-                     for XPath expressions compiled using this <a class="bodylink code"
-                        href="../saxon_c_php_xpathprocessor">XPathProcessor</a></div>
+                     for XPath expressions compiled using this XPath processor.</div>
                </td>
             </tr>
             <tr>
@@ -1255,8 +1255,8 @@
                <td>
                   <span class="signature">setBaseURI(string $uri)</span>
                   <div class="fcomment">Set the static base URI for XPath expressions compiled using
-                     this XQuery Processor. The base URI is part of the static context, and is used
-                     to resolve any relative URIS appearing within a query</div>
+                     this XPath processor. The base URI is part of the static context, and is used
+                     to resolve any relative URIs appearing within an XPath expression.</div>
                </td>
             </tr>
             <tr>
@@ -1266,7 +1266,7 @@
                <td>
                   <span class="signature">setParameter(string $name, <a class="bodylink code"
                         href="../saxon_c_php_xdmvalue">XdmValue</a> $value)</span>
-                  <div class="fcomment">Set the parameters required for XQuery Processor</div>
+                  <div class="fcomment">Set the parameters required for the XPath expression.</div>
                </td>
             </tr>
             <tr>
@@ -1275,7 +1275,7 @@
                </td>
                <td>
                   <span class="signature">setProperty(string $name, string $value)</span>
-                  <div class="fcomment">Set properties for Query.</div>
+                  <div class="fcomment">Set properties for the XPath processor.</div>
                </td>
             </tr>
             <tr>
@@ -1284,7 +1284,7 @@
                </td>
                <td>
                   <span class="signature">clearParameters()</span>
-                  <div class="fcomment">Clear parameter values set</div>
+                  <div class="fcomment">Clear parameter values set.</div>
                </td>
             </tr>
             <tr>
@@ -1293,7 +1293,7 @@
                </td>
                <td>
                   <span class="signature">clearProperties()</span>
-                  <div class="fcomment">Clear property values set</div>
+                  <div class="fcomment">Clear property values set.</div>
                </td>
             </tr>
             <tr>
@@ -1302,7 +1302,7 @@
                </td>
                <td>
                   <span class="signature">exceptionClear()</span>
-                  <div class="fcomment">Clear any exception thrown</div>
+                  <div class="fcomment">Clear any exceptions thrown.</div>
                </td>
             </tr>
             <tr>
@@ -1311,7 +1311,7 @@
                </td>
                <td>
                   <span class="signature">getErrorCode(int $i)</span>
-                  <div class="fcomment">Get the ith error code if there are any errors</div>
+                  <div class="fcomment">Get the i'th error code if there are any errors.</div>
                </td>
             </tr>
             <tr>
@@ -1320,7 +1320,7 @@
                </td>
                <td>
                   <span class="signature">getErrorMessage(int $i)</span>
-                  <div class="fcomment">Get the ith error message if there are any error</div>
+                  <div class="fcomment">Get the i'th error message if there are any errors.</div>
                </td>
             </tr>
             <tr>
@@ -1358,8 +1358,8 @@
                <td>
                   <span class="signature">setSourceNode(<a class="bodylink code"
                         href="../saxon_c_php_xdmnode">XdmNode</a> $node)</span>
-                  <div class="fcomment">The instance document to be validated. Supplied as an Xdm
-                     Node</div>
+                  <div class="fcomment">Set the instance document to be validated, supplied as an <a
+                        class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a>.</div>
                </td>
             </tr>
             <tr>
@@ -1368,9 +1368,9 @@
                </td>
                <td>
                   <span class="signature">setOutputFile(string $fileName)</span>
-                  <div class="fcomment">The instance document to be validated. Supplied file name is
-                     resolved and accessed. supplied as a file as specified by the $fileName
-                     argument.</div>
+                  <div class="fcomment">Set the file to which a validated document will be saved if
+                     validation is successful. The supplied file name is resolved and
+                     accessed.</div>
                </td>
             </tr>
             <tr>
@@ -1379,7 +1379,7 @@
                </td>
                <td>
                   <span class="signature">registerSchemaFromFile(string $fileName)</span>
-                  <div class="fcomment">Register the Schema supplied as a file as specified by the
+                  <div class="fcomment">Register a schema supplied as a file as specified by the
                      $fileName argument.</div>
                </td>
             </tr>
@@ -1389,8 +1389,7 @@
                </td>
                <td>
                   <span class="signature">registerSchemaFromString(string $schemaStr)</span>
-                  <div class="fcomment">Register the Schema which is given as a string
-                     representation.</div>
+                  <div class="fcomment">Register a schema supplied as a string.</div>
                </td>
             </tr>
             <tr>
@@ -1399,8 +1398,8 @@
                </td>
                <td>
                   <span class="signature">validate()</span>
-                  <div class="fcomment">Validate an instance document supplied as a Source object.
-                     Assume source document has already been supplied through accessor methods</div>
+                  <div class="fcomment">Validate an instance document, which has already been
+                     supplied through other accessor methods.</div>
                </td>
             </tr>
             <tr>
@@ -1419,9 +1418,9 @@
                </td>
                <td>
                   <span class="signature">validateToNode()</span>
-                  <div class="fcomment">Validate an instance document supplied as a Source object
-                     with the validated document returned to the calling program. Assume source
-                     document has already been supplied through accessor methods</div>
+                  <div class="fcomment">Validate an instance document, which has already been
+                     supplied through other accessor methods, with the validated document returned
+                     to the calling program.</div>
                </td>
             </tr>
             <tr>
@@ -1430,8 +1429,9 @@
                </td>
                <td>
                   <span class="signature">validateToNode(string $fileName)</span>
-                  <div class="fcomment">Validate an instance document supplied as a file as
-                     specified by the $fileName argument. $fileName can be null</div>
+                  <div class="fcomment">Validate an instance document supplied as a file (as
+                     specified by the $fileName argument), with the validated document returned to
+                     the calling program. $fileName can be null.</div>
                </td>
             </tr>
             <tr>
@@ -1440,11 +1440,11 @@
                </td>
                <td>
                   <span class="signature">getValidationReport()</span>
-                  <div class="fcomment">Get the valdiation report produced after valdiating the
-                     soucre document. The reporting feature is switched on via setting the property
-                     on the <a class="bodylink code" href="../saxon_c_php_schemavalidator"
-                        >SchemaValidator</a>: validator.setProperty('report', 'true'). Return <a
-                        class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a></div>
+                  <div class="fcomment">Get the validation report produced after validating the
+                     source document. The reporting feature is switched on by setting the 'report'
+                     property on the SchemaValidator: e.g. <code>validator.setProperty('report',
+                        'true')</code>. Returns the report as an <a class="bodylink code"
+                        href="../saxon_c_php_xdmnode">XdmNode</a>.</div>
                </td>
             </tr>
             <tr>
@@ -1454,7 +1454,7 @@
                <td>
                   <span class="signature">setParameter(string $name, <a class="bodylink code"
                         href="../saxon_c_php_xdmvalue">XdmValue</a> $value)</span>
-                  <div class="fcomment">Set the parameters required for XQuery Processor</div>
+                  <div class="fcomment">Set the parameters required for the schema.</div>
                </td>
             </tr>
             <tr>
@@ -1463,7 +1463,7 @@
                </td>
                <td>
                   <span class="signature">setProperty(string $name, string $value)</span>
-                  <div class="fcomment">Set properties for Schema Validator</div>
+                  <div class="fcomment">Set properties for this Schema Validator.</div>
                </td>
             </tr>
             <tr>
@@ -1472,7 +1472,7 @@
                </td>
                <td>
                   <span class="signature">clearParameters()</span>
-                  <div class="fcomment">Clear parameter values set</div>
+                  <div class="fcomment">Clear parameter values set.</div>
                </td>
             </tr>
             <tr>
@@ -1481,7 +1481,7 @@
                </td>
                <td>
                   <span class="signature">clearProperties()</span>
-                  <div class="fcomment">Clear property values set</div>
+                  <div class="fcomment">Clear property values set.</div>
                </td>
             </tr>
             <tr>
@@ -1490,7 +1490,7 @@
                </td>
                <td>
                   <span class="signature">exceptionClear()</span>
-                  <div class="fcomment">Clear any exception thrown</div>
+                  <div class="fcomment">Clear any exceptions thrown.</div>
                </td>
             </tr>
             <tr>
@@ -1499,7 +1499,7 @@
                </td>
                <td>
                   <span class="signature">getErrorCode(int $i)</span>
-                  <div class="fcomment">Get the ith error code if there are any errors</div>
+                  <div class="fcomment">Get the i'th error code if there are any errors.</div>
                </td>
             </tr>
             <tr>
@@ -1508,7 +1508,7 @@
                </td>
                <td>
                   <span class="signature">getErrorMessage(int $i)</span>
-                  <div class="fcomment">Get the ith error message if there are any error</div>
+                  <div class="fcomment">Get the i'th error message if there are any errors.</div>
                </td>
             </tr>
             <tr>
@@ -1544,7 +1544,7 @@
                </td>
                <td>
                   <span class="signature">getHead()</span>
-                  <div class="fcomment">Get the first item in the sequence</div>
+                  <div class="fcomment">Get the first item in the sequence.</div>
                </td>
             </tr>
             <tr>
@@ -1553,7 +1553,7 @@
                </td>
                <td>
                   <span class="signature">itemAt(int $index)</span>
-                  <div class="fcomment">Get the n'th item in the value, counting from zero</div>
+                  <div class="fcomment">Get the n'th item in the value, counting from zero.</div>
                </td>
             </tr>
             <tr>
@@ -1562,7 +1562,7 @@
                </td>
                <td>
                   <span class="signature">size()</span>
-                  <div class="fcomment">Get the number of items in the sequence</div>
+                  <div class="fcomment">Get the number of items in the sequence.</div>
                </td>
             </tr>
             <tr>
@@ -1570,7 +1570,7 @@
                <td>
                   <span class="signature">addXdmItem(<a class="bodylink code"
                         href="../saxon_c_php_xdmitem">XdmItem</a> $item)</span>
-                  <div class="fcomment">Add item to the sequence at the end.</div>
+                  <div class="fcomment">Add an item to the end of the sequence.</div>
                </td>
             </tr>
          </table>
@@ -1596,9 +1596,9 @@
                <td>
                   <span class="signature">getStringValue()</span>
                   <div class="fcomment">Get the string value of the item. For a node, this gets the
-                     string value of the node. For an atomic value, it has the same effect as
+                     string value of the node. For an atomic value, this has the same effect as
                      casting the value to a string. In all cases the result is the same as applying
-                     the XPath string() function.</div>
+                     the XPath <code>string()</code> function.</div>
                </td>
             </tr>
             <tr>
@@ -1607,7 +1607,7 @@
                </td>
                <td>
                   <span class="signature">isNode()</span>
-                  <div class="fcomment">Determine whether the item is a node value or not.</div>
+                  <div class="fcomment">Determine whether or not the item is a node.</div>
                </td>
             </tr>
             <tr>
@@ -1616,7 +1616,7 @@
                </td>
                <td>
                   <span class="signature">isAtomic()</span>
-                  <div class="fcomment">Determine whether the item is an atomic value or not.</div>
+                  <div class="fcomment">Determine whether or not the item is an atomic value.</div>
                </td>
             </tr>
             <tr>
@@ -1626,9 +1626,9 @@
                </td>
                <td>
                   <span class="signature">getAtomicValue()</span>
-                  <div class="fcomment">Provided the item is an atomic value we return the <a
+                  <div class="fcomment">If the item is an atomic value, then this <a
                         class="bodylink code" href="../saxon_c_php_xdmatomicvalue"
-                        >XdmAtomicValue</a> otherwise return null</div>
+                        >XdmAtomicValue</a> is returned; otherwise returns null.</div>
                </td>
             </tr>
             <tr>
@@ -1637,9 +1637,9 @@
                </td>
                <td>
                   <span class="signature">getNodeValue()</span>
-                  <div class="fcomment">Provided the item is a node value we return the <a
-                        class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a> otherwise
-                     return null</div>
+                  <div class="fcomment">If the item is a node, then this <a class="bodylink code"
+                        href="../saxon_c_php_xdmnode">XdmNode</a> is returned; otherwise returns
+                     null.</div>
                </td>
             </tr>
          </table>
@@ -1664,8 +1664,7 @@
                </td>
                <td>
                   <span class="signature">getStringValue()</span>
-                  <div class="fcomment">Get the string value of the item. For a node, this gets the
-                     string value of the node.</div>
+                  <div class="fcomment">Get the string value of the node.</div>
                </td>
             </tr>
             <tr>
@@ -1682,8 +1681,8 @@
                   <code>string</code>
                </td>
                <td>
-                  <span class="signature">getNodeName</span>
-                  <div class="fcomment">et the name of the node, as a EQName</div>
+                  <span class="signature">getNodeName()</span>
+                  <div class="fcomment">Get the name of the node, as an EQName.</div>
                </td>
             </tr>
             <tr>
@@ -1692,8 +1691,8 @@
                </td>
                <td>
                   <span class="signature">isAtomic()</span>
-                  <div class="fcomment">Determine whether the item is an atomic value or a node.
-                     This method will return FALSE as the item is not atomic</div>
+                  <div class="fcomment">Determine whether or not the item is an atomic value. This
+                     method will return FALSE as the item is not atomic.</div>
                </td>
             </tr>
             <tr>
@@ -1702,7 +1701,7 @@
                </td>
                <td>
                   <span class="signature">getChildCount()</span>
-                  <div class="fcomment">Get the count of child node at this current node</div>
+                  <div class="fcomment">Get the number of child nodes of this node.</div>
                </td>
             </tr>
             <tr>
@@ -1711,7 +1710,7 @@
                </td>
                <td>
                   <span class="signature">getAttributeCount()</span>
-                  <div class="fcomment">Get the count of attribute nodes at this node</div>
+                  <div class="fcomment">Get the number of attribute nodes of this node.</div>
                </td>
             </tr>
             <tr>
@@ -1720,8 +1719,8 @@
                </td>
                <td>
                   <span class="signature">getChildNode(int index)</span>
-                  <div class="fcomment">Get the n'th child node at this node. If the child node
-                     selected does not exist then return null</div>
+                  <div class="fcomment">Get the n'th child node of this node. If the child node
+                     selected does not exist then return null.</div>
                </td>
             </tr>
             <tr>
@@ -1730,8 +1729,8 @@
                </td>
                <td>
                   <span class="signature">getParent()</span>
-                  <div class="fcomment">Get the parent of this node. If parent node does not exist
-                     then return null</div>
+                  <div class="fcomment">Get the parent node of this node. If a parent node does not
+                     exist then return null.</div>
                </td>
             </tr>
             <tr>
@@ -1740,8 +1739,8 @@
                </td>
                <td>
                   <span class="signature">getAttributeNode(int $index)</span>
-                  <div class="fcomment">Get the n'th attribute node at this node. If the attribute
-                     node selected does not exist then return null</div>
+                  <div class="fcomment">Get the n'th attribute node of this node. If the attribute
+                     node selected does not exist then return null.</div>
                </td>
             </tr>
             <tr>
@@ -1750,8 +1749,8 @@
                </td>
                <td>
                   <span class="signature">getAttributeValue(int $index)</span>
-                  <div class="fcomment">Get the n'th attribute node value at this node. If the
-                     attribute node selected does not exist then return null</div>
+                  <div class="fcomment">Get the value of the n'th attribute node of this node. If
+                     the attribute node selected does not exist then return null.</div>
                </td>
             </tr>
          </table>
@@ -1775,9 +1774,9 @@
                </td>
                <td>
                   <span class="signature">getStringValue()</span>
-                  <div class="fcomment">Get the string value of the item. For an atomic value, it
+                  <div class="fcomment">Get the string value of the item. For an atomic value, this
                      has the same effect as casting the value to a string. In all cases the result
-                     is the same as applying the XPath string() function.</div>
+                     is the same as applying the XPath <code>string()</code> function.</div>
                </td>
             </tr>
             <tr>
@@ -1787,7 +1786,7 @@
                <td>
                   <span class="signature">getBooleanValue()</span>
                   <div class="fcomment">Get the value converted to a boolean using the XPath casting
-                     rules</div>
+                     rules.</div>
                </td>
             </tr>
             <tr>
@@ -1798,7 +1797,7 @@
                   <span class="signature">getDoubleValue()</span>
                   <div class="fcomment">Get the value converted to a double using the XPath casting
                      rules. If the value is a string, the XSD 1.1 rules are used, which means that
-                     the string "+INF" is recognised</div>
+                     the string "+INF" is recognised.</div>
                </td>
             </tr>
             <tr>
@@ -1808,7 +1807,7 @@
                <td>
                   <span class="signature">getLongValue()</span>
                   <div class="fcomment">Get the value converted to an integer using the XPath
-                     casting rules</div>
+                     casting rules.</div>
                </td>
             </tr>
             <tr>
@@ -1817,8 +1816,8 @@
                </td>
                <td>
                   <span class="signature">isAtomic()</span>
-                  <div class="fcomment">Determine whether the item is an atomic value or a node.
-                     Return TRUE if the item is an atomic value</div>
+                  <div class="fcomment">Determine whether or not the item is an atomic value.
+                     This method will return TRUE as the item is atomic.</div>
                </td>
             </tr>
          </table>
