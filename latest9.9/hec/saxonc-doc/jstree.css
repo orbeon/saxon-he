@@ -63,17 +63,17 @@ h1{
 }
 h2{
     font-size:18px;
-    margin-top:10px;
+    margin-top:20px;
     margin-bottom:10px;
 }
 h3{
     font-size:16px;
-    margin-top:10px;
+    margin-top:20px;
     margin-bottom:10px;
 }
 h4{
     font-size:14px;
-    margin-top:10px;
+    margin-top:20px;
     margin-bottom:10px;
 }
 #main ol{
@@ -818,6 +818,7 @@ kbd{
     display:block;
     margin-top:4px;
     margin-bottom:8px;
+    margin-left:8px;
     color:#96433D !important;
     font-weight:bold;
     font-size:10pt;
