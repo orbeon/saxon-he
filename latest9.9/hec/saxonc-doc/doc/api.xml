@@ -636,7 +636,7 @@
                         href="../saxon_c_php_xdmvalue">XdmValue</a> objects - he values of the
                      arguments to be supplied to the function. These will be converted if necessary
                      to the type as defined in the function signature, using the function conversion
-                     rules. * </div></td>
+                     rules.</div></td>
             </tr>
             <tr>
                <td>
@@ -764,7 +764,7 @@
                <td><code>void</code> </td>
                <td><span class="signature">setInitialMatchSelectionAsFile</span>
                   <div class="fcomment">The initial filename to which templates are to be applied (equivalent to the
-                     'select' attribute of xsl:apply-templates) * </div></td>
+                     'select' attribute of xsl:apply-templates).</div></td>
             </tr>
             <tr>
                <td>
@@ -1195,7 +1195,7 @@
                <td>
                   <a class="bodylink code" href="../saxon_c_php_xdmnode">Saxon\XdmNode</a>
                </td>
-               <td><span class="signature">getValidationReport</span>
+               <td><span class="signature">getValidationReport()</span>
                   <div class="fcomment">Get the valdiation report produced after valdiating the soucre document. The
                      reporting feature is switched on via setting the property on the <a
                         class="bodylink code" href="../saxon_c_php_schemavalidator"
@@ -1459,7 +1459,7 @@
 
             <tr>
                <td><code>string</code> </td>
-               <td><span class="signature">getStringValue</span>
+               <td><span class="signature">getStringValue()</span>
                   <div class="fcomment">Get the string value of the item. For an atomic value, it has the same effect
                      as casting the value to a string. In all cases the result is the same as
                      applying the XPath string() function.</div>
@@ -1467,13 +1467,13 @@
             </tr>
             <tr>
                <td><code>boolean</code> </td>
-               <td><span class="signature">getBooleanValue</span>
+               <td><span class="signature">getBooleanValue()</span>
                   <div class="fcomment">Get the value converted to a boolean using the XPath casting rules</div>
                </td>
             </tr>
             <tr>
                <td><code>double</code> </td>
-               <td><span class="signature">getDoubleValue</span>
+               <td><span class="signature">getDoubleValue()</span>
                   <div class="fcomment">Get the value converted to a double using the XPath casting rules. If the
                      value is a string, the XSD 1.1 rules are used, which means that the string
                      "+INF" is recognised</div>
@@ -1481,13 +1481,13 @@
             </tr>
             <tr>
                <td><code>long</code> </td>
-               <td><span class="signature">getLongValue</span>
+               <td><span class="signature">getLongValue()</span>
                   <div class="fcomment">Get the value converted to an integer using the XPath casting rules</div>
                </td>
             </tr>
             <tr>
                <td><code>boolean</code> </td>
-               <td><span class="signature">isAtomic</span>
+               <td><span class="signature">isAtomic()</span>
                   <div class="fcomment">Determine whether the item is an atomic value or a node. Return TRUE if the
                      item is an atomic value</div>
                </td>
