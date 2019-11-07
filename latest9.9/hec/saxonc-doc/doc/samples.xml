@@ -38,15 +38,83 @@
          are required to build Saxon/C on C++: SaxonCGlue.c, SaxonCXPath.c, XdmValue.cpp,
          XdmItem.cpp, XdmNode.cpp, XdmAtomicValue.cpp, SaxonProcessor.cpp, XsltProcessor.cpp,
          Xslt30Processor.cpp and XQueryProcessor.cpp, XPathProcessor.cpp, SchemaValidator.cpp To
-         compile the sample test code in C++ execute the 'build.sh' file the directory 'cppTests'.
-         This file builds executables for the test cases testing XSLT, XPath, XQuery and schema
+         compile the sample test code in C++ execute the 'build64-[PLATFORM].sh' (for linux and Mac Os) and 'buildCPPSaxon[Edition].bat' (for Windows)
+         file in the directory 'cppTests'. These files build executables for the test cases testing XSLT, XPath, XQuery and schema
          Validator. The command is similar to the following:</p>
 
       <kbd>g++ -m32 ../bin/SaxonCGlue.o ../bin/SaxonCXPath.o ../bin/SaxonProcessor.o
          ../bin/XQueryProcessor.o ../bin/XsltProcessor.o, ../bin/Xslt30Processor.o
          ../bin/XPathProcessor.o ../bin/XdmValue.o ../bin/XdmItem.o ../bin/XdmNode.o
-         ../bin/XdmAtomicValue.o ../bin/SchemaValidator.o testXSLT.cpp -o testXSLT -ldl -lc $1
-         $2</kbd>
+         ../bin/XdmAtomicValue.o ../bin/SchemaValidator.o testXSLT.cpp -o testXSLT -ldl -lc</kbd>
+      <p>Executables created for Linux and Mac OS, which can be run as follows:</p>
+      <kbd>./testXSLT</kbd>
+      <kbd>./testXSLT30</kbd>
+      <kbd>./testXQuery</kbd>
+      <kbd>./testXPath</kbd>
+      <kbd>./testValidator</kbd>
+
+      <p>On Windows we have .exe files created which can be executed on the command-line.</p>
+
+      <p>See examples C++ code of applications with Saxon/C below:</p>
+
+      <p>C++ Example 1:</p>
+      <samp><![CDATA[SaxonProcessor *processor = new SaxonProcessor(true);
+      XsltProcessor * xslt = processor->newTransformer();
+      cout<<"Hello World"<<endl;
+      cout<<"Test output: "<<xslt->transformFileToString("cat.xml","test.xsl")<<endl;]]> </samp>
+
+      <p>C++ Example 2:</p>
+      <samp><![CDATA[SaxonProcessor * processor = new Saxon\SaxonProcessor(false);
+      XsltProcessor * xslt = processor->newTransformer();
+      xslt->setSourceFile("xml/foo.xml");
+      XdmAtomicValue * xdmvaluex =processor->makeStringValue("Hello to you");
+      if(xdmvaluex !=NULL){
+          cerr<<"xdmvaluex ok"<<endl;
+      }
+      xslt->setParameter("a-param", xdmvaluex);
+      const char * result = test->transformFileToString(NULL, "xsl/foo.xsl");
+      if(result != NULL) {
+          cerr<<result<<endl;
+      } else {
+          cerr<<"Result is NULL"<<endl;
+      }
+      processor->clearParameters(true);
+      processor->clearProperties();]]></samp>
+
+      <p>C++ Example 3 for using the Xslt30Processor:</p>
+
+      <samp><![CDATA[SaxonProcessor * processor = new SaxonProcessor(false);
+          Xslt30Processor * xslt = processor->newXslt30Transformer();
+          xslt->setInitialMatchSelectionAsFile("cat.xml");
+          const char * output = xslt->applyTemplatesReturningString("test.xsl");
+          if(output !=NULL){
+              cerr<< output<<endl;
+          }
+          XdmValue * values = new XdmValue(processor);
+          values->addXdmItem((XdmItem*)processor->makeIntegerValue(10));
+          values->addXdmItem((XdmItem*)processor->makeIntegerValue(5));
+          values->addXdmItem((XdmItem*)processor->makeIntegerValue(6));
+          values->addXdmItem((XdmItem*)processor->makeIntegerValue(7));
+          xslt->setParameter("values",(XdmValue *)values);
+          xslt->setInitialMatchSelection((XdmValue*)input);
+          xslt->compileFromFile("test2.xsl");
+          const char * rootValue = trans->callTemplateReturningString(NULL, "main");
+          if(rootValue != NULL) {
+              cerr<<rootValue<<endl;
+          } else {
+              cerr<<"Result is NULL"<<endl;
+          }
+          xslt->clearParameters(true);
+          xslt->clearProperties();]]></samp>
+
+
+      <p>C++ example for using the XQueryProcesor:</p>
+
+      <samp><![CDATA[SaxonProcessor *processor = new SaxonProcessor(true);
+          XsltProcessor * xslt = processor->newXQueryProcessor();
+           queryProc->setProperty("s", "cat.xml");
+              queryProc->setProperty("q", "family.xq");
+              queryProc->runQueryToString();]]></samp>
 
    </section>
 
