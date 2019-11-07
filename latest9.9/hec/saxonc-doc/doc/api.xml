@@ -470,7 +470,7 @@
           <div class="fcomment">Set the output file name of where the transformation result is sent</div>   </td></tr>
          <tr>
             <td>void  </td><td><span class="signature">setSourceFromXdmValue(<a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a> $value)</span>
-          <div class="fcomment">The source used for a query or stylesheet. Requires an <<a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a> object</div>   </td></tr>
+          <div class="fcomment">The source used for a query or stylesheet. Requires an <a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a> object</div>   </td></tr>
          <tr>
             <td>void  </td><td><span class="signature">setSourceFromFile(string $filename)</span>
           <div class="fcomment">The source used for query or stylesheet. Requires a file name as string</div>   </td></tr>
