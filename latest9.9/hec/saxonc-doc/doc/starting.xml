@@ -228,10 +228,10 @@
 
          <h2>XSLT</h2>
 
-         <p>setParameter(string $name, XdmValue $value) Method</p>
+         <p><code>setParameter(string $name, XdmValue $value)</code> Method</p>
          <table>
          <thead><tr >
-            <th>Name  </th><th>Example  </th><th>Comme   </th></tr></thead>
+            <th>Name  </th><th>Example  </th><th>Comment   </th></tr></thead>
          <tr>
          <td>'node'=xdmValue  </td><td>setParameter("node",xdmNodeObj)  </td><td>Sets the source document for transformation. We also accept the parameter names 'item'.   </td></tr>
          <tr>
@@ -243,7 +243,7 @@
 
          <table>
          <thead><tr >
-            <th>Name  </th><th>Example  </th><th>Comme   </th></tr></thead>
+            <th>Name  </th><th>Example  </th><th>Comment   </th></tr></thead>
          <tr>
          <td>![serialization name]=value  </td><td>setProperty("!INDENT","yes")  </td><td>Influence the serialization of the XML by the parameters specified with a exclamation mark with a name and the value. See <a href="http://saxonica.com/documentation/index.html#!javadoc/net.sf.saxon.s9api/Serializer/Property">Documentation</a>   </td></tr>
          <tr>
@@ -270,10 +270,10 @@
 
          <h2>XQuery</h2>
 
-         <p>setParameter(string $name, XdmValue $value) Method</p>
+         <p><code>setParameter(string $name, XdmValue $value)</code> Method</p>
          <table>
          <thead><tr >
-            <th>Name  </th><th>Example  </th><th>Comme   </th></tr></thead>
+            <th>Name  </th><th>Example  </th><th>Comment   </th></tr></thead>
          <tr>
          <td>'node'=xdmValue  </td><td>setParameter("node",xdmNodeObj)  </td><td>Sets the source document for query. We also accept the parameter names 'item'.   </td></tr>
          <tr>
@@ -285,7 +285,7 @@
 
          <table>
          <thead><tr >
-            <th>Name  </th><th>Example  </th><th>Comme   </th></tr></thead>
+            <th>Name  </th><th>Example  </th><th>Comment   </th></tr></thead>
          <tr>
          <td>'base'=base-URI  </td><td>setProperty("base", "/home/username/example")  </td><td></td></tr>
          <tr>
@@ -309,22 +309,22 @@
          </table>
 
          <h2>XPath</h2>
-         <p>setParameter(string $name, XdmValue $value) Method</p>
+         <p><code>setParameter(string $name, XdmValue $value)</code> Method</p>
 
          <table>
          <thead><tr >
-            <th>Name  </th><th>Example  </th><th>Comme   </th></tr></thead>
+            <th>Name  </th><th>Example  </th><th>Comment   </th></tr></thead>
          <tr>
          <td>'node'=xdmValue  </td><td>setParameter("node",xdmNodeObj)  </td><td>Sets the source document for query. We also accept the parameter names 'item'.   </td></tr>
          <tr>
          <td>param=xdmValue  </td><td>setParameter("numParam",value1)  </td><td>Set the value of external variable defined in the query   </td></tr>
          </table>
 
-         <p>setProperty(string $name, string $propValue) Method</p>
+         <p><code>setProperty(string $name, string $propValue)</code> Method</p>
 
          <table>
          <thead><tr >
-            <th>Name  </th><th>Example  </th><th>Comme   </th></tr></thead>
+            <th>Name  </th><th>Example  </th><th>Comment   </th></tr></thead>
          <tr>
          <td>![serialization name]=value  </td><td>setProperty("!INDENT","yes")  </td><td>Influence the serialization of the XML by the parameters specified with a exclamation mark with a name and the value. See <a href="http://saxonica.com/documentation/index.html#!javadoc/net.sf.saxon.s9api/Serializer/Property">Documentation</a>   </td></tr>
          <tr>
@@ -341,23 +341,23 @@
 
          <h2>XML Schema Validation</h2>
 
-         <p>setParameter(string $name, XdmValue $value) Method</p>
+         <p><code>setParameter(string $name, XdmValue $value)</code> Method</p>
 
          <table>
          <thead><tr >
-            <th>Name  </th><th>Example  </th><th>Comme   </th></tr></thead>
+            <th>Name  </th><th>Example  </th><th>Comment   </th></tr></thead>
          <tr>
          <td>'node'=xdmValue  </td><td>setParameter("node",xdmNodeObj)  </td><td>Sets the source document for the validation. We also accept the parameter names 'item'.   </td></tr>
          <tr>
          <td>param=xdmValue  </td><td>setParameter("numParam",value1)  </td><td>Set the value of external variable defined in the query   </td></tr>
          </table>
 
-         <p>setProperty(string $name, string $propValue) Method<br/>
+         <p><code>setProperty(string $name, string $propValue) Method</code><br/>
             The properties are a subset to those specified for running the Schema Validator from the <a href="http://www.saxonica.com/documentation/index.html#!schema-processing/commandline" target="_blank">command line</a>.</p>
 
          <table>
          <thead><tr >
-            <th>Name  </th><th>Example  </th><th>Comme   </th></tr></thead>
+            <th>Name  </th><th>Example  </th><th>Comment   </th></tr></thead>
          <tr>
          <td>![serialization name]=value  </td><td>setProperty("!INDENT","yes")  </td><td>Influence the serialization of the XML by the parameters specified with a exclamation mark with a name and the value. See <a href="http://saxonica.com/documentation/index.html#!javadoc/net.sf.saxon.s9api/Serializer/Property">Documentation</a>   </td></tr>
          <tr>
