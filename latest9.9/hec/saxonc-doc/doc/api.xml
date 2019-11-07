@@ -191,11 +191,11 @@
          </li>
          <li>
             <a class="bodylink code"
-               href="https://www.saxonica.com/saxon-c/doc/html/classXdmNode.html">XdmNode</a>
+               href="https://www.saxonica.com/saxon-c/doc/html/classXdmItem.html">XdmItem</a>
          </li>
          <li>
             <a class="bodylink code"
-               href="https://www.saxonica.com/saxon-c/doc/html/classXdmItem.html">XdmItem</a>
+               href="https://www.saxonica.com/saxon-c/doc/html/classXdmNode.html">XdmNode</a>
          </li>
          <li>
             <a class="bodylink code"
