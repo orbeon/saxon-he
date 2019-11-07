@@ -432,7 +432,7 @@
 
 
 
-         <table class="markdownTable">
+         <table>
             <thead>
                <tr>
                   <td>Return</td>
@@ -447,14 +447,14 @@
           <div class="fcomment">Perform a one shot transformation. The result is returned as a string. If there are failures then a null is returned</div>   </td></tr>
          <tr>
             <td><a class="el" href="classXdmValue.html">XdmValue</a>  </td><td><span class="signature">transformFileToValue(string $fileName)</span>
-          <div class="fcomment">Perform a one shot transformation. The result is returned as an <a class="el" href="classXdmValue.html">XdmValue</a></div>   </td></tr>
+          <div class="fcomment">Perform a one shot transformation. The result is returned as an <a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a></div>   </td></tr>
          <tr>
             <td>void  </td><td><span class="signature">transformToFile()</span>
           <div class="fcomment">Perform the transformation based upon cached stylesheet and source document.</div>   </td></tr>
          <tr>
             <td>string  </td><td><span class="signature">transformToString()</span></td></tr>
          <tr>
-            <td><a class="el" href="classXdmValue.html">XdmValue</a>  </td><td><span class="signature">transformToValue()</span>
+            <td><a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a>  </td><td><span class="signature">transformToValue()</span>
           <div class="fcomment">Perform the transformation based upon cached stylesheet and any source document. Result returned as an <a class="el" href="classXdmValue.html">XdmValue</a> object. If there are failures then a null is returned</div>   </td></tr>
          <tr>
             <td>void  </td><td><span class="signature">compileFromFile(string $fileName)</span>
@@ -463,14 +463,14 @@
             <td>void  </td><td><span class="signature">compileFromString(string $str)</span>
           <div class="fcomment">Compile a stylesheet received as a string.</div>   </td></tr>
          <tr>
-            <td>void  </td><td><span class="signature">compileFromValue(<a class="el" href="classXdmNode.html">XdmNode</a> $node)</span>
-          <div class="fcomment">Compile a stylesheet received as an <a class="el" href="classXdmNode.html">XdmNode</a>.</div>   </td></tr>
+            <td>void  </td><td><span class="signature">compileFromValue(<a class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a> $node)</span>
+          <div class="fcomment">Compile a stylesheet received as an <a class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a>.</div>   </td></tr>
          <tr>
             <td>void  </td><td><span class="signature">setOutputFile(string $fileName)</span>
           <div class="fcomment">Set the output file name of where the transformation result is sent</div>   </td></tr>
          <tr>
-            <td>void  </td><td><span class="signature">setSourceFromXdmValue(<a class="el" href="classXdmValue.html">XdmValue</a> $value)</span>
-          <div class="fcomment">The source used for a query or stylesheet. Requires an <a class="el" href="classXdmValue.html">XdmValue</a> object</div>   </td></tr>
+            <td>void  </td><td><span class="signature">setSourceFromXdmValue(<a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a> $value)</span>
+          <div class="fcomment">The source used for a query or stylesheet. Requires an <<a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a> object</div>   </td></tr>
          <tr>
             <td>void  </td><td><span class="signature">setSourceFromFile(string $filename)</span>
           <div class="fcomment">The source used for query or stylesheet. Requires a file name as string</div>   </td></tr>
