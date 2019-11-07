@@ -173,12 +173,18 @@
 
       <h2>Using Saxon/C in applications</h2>
 
-      <p>To get started please browse the <a href="/api">Saxon/C APIs</a>. SaxonProcessor, which
-         acts as a factory class for generating the processors, is a good place to start.</p>
+      <p>To get started please browse the <a href="/api">Saxon/C APIs</a>.
+            <code>SaxonProcessor</code>, which acts as a factory class for generating the
+         processors, is a good place to start.</p>
 
       <p>The 'samples/cppTest' directory in the download provides example code in C/C++ (and PHP and
          Python) which may also be helpful in learning how to use Saxon/C in your application. For
          further details see <a href="/samples/samples_c">Samples</a>.</p>
+      
+      <p>There are many parameters and options that can be set to control the way in which Saxon
+         behaves. For more information about setting configuration features on
+         <code>SaxonProcessor</code> and the other processors in Saxon/C, see <a
+            href="/configuration">Configuration</a>.</p>
 
       <h2>Commandline Interface</h2>
 
@@ -214,176 +220,7 @@
          </li>
       </ul>
 
-      <section id="configuration" title="Configuration of Processors">
-          <h1>Configuration of Processors - (setParameter &amp; setProperty methods)</h1>
-         <p>There are many parameters and options that can be set to control the way in which Saxon behaves.
-            At a global level when the SaxonProcessor is created, the configuration features can be set with the method
-            'setConfigurationProperty(const char * name, const char * value)'. For a comprehensive guide on the configuration see
-            the <a href="http://saxonica.com/documentation/index.html#!configuration/config-features" target="_blank">Saxon documentation</a>. There are some feature that don't work or are under tested. For eample, 'bytecode generation'
-            we know does not work.</p>
-         <p>The example below shows how we can set the configuration features on the processor before we create any of the processors (.e.g. XsltProcessor, XQueryProcessor, etc):</p>
-         <kbd>saxonProcessor->setConfigurationProperty("xsdversion", "1.1");</kbd> or<kbd>saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSchemaImports", "on");</kbd>
-         <p>We now give a list of the properties and parameters available in the Saxon/C API in C++, PHP and Python. These are for XSLT, XQuery, XPath and Schema Validator processor which can be configured using the methods setParameter and setProperty. Depending on the specific processor the exact purpose of these methods may differs.
-            Also further details of the setProperty and setParameter methods you will find in the <a href="/api">Saxon/C documentation</a>.</p>
-
-         <h2>XSLT</h2>
-
-         <p><code>setParameter(string $name, XdmValue $value)</code> Method</p>
-         <table>
-         <thead><tr >
-            <th>Name  </th><th>Example  </th><th>Comment   </th></tr></thead>
-         <tr>
-         <td>'node'=xdmValue  </td><td>setParameter("node",xdmNodeObj)  </td><td>Sets the source document for transformation. We also accept the parameter names 'item'.   </td></tr>
-         <tr>
-         <td>param=xdmValue  </td><td>setParameter("numParam",value1)  </td><td>set the value of a stylesheet parameter   </td></tr>
-         </table>
-
-         <p>setProperty(string $name, string $propValue) Method<br/>
-            The properties are a subset to those specified for running XSLT from the <a href="http://www.saxonica.com/documentation/index.html#!using-xsl/commandline">command line</a>.</p>
-
-         <table>
-         <thead><tr >
-            <th>Name  </th><th>Example  </th><th>Comment   </th></tr></thead>
-         <tr>
-         <td>![serialization name]=value  </td><td>setProperty("!INDENT","yes")  </td><td>Influence the serialization of the XML by the parameters specified with a exclamation mark with a name and the value. See <a href="http://saxonica.com/documentation/index.html#!javadoc/net.sf.saxon.s9api/Serializer/Property">Documentation</a>   </td></tr>
-         <tr>
-         <td>'o'=filename  </td><td>setProperty("o", "output.xml")  </td><td>Sets the destination for the result of the transformation to the specificed filename   </td></tr>
-         <tr>
-         <td>'it'=name  </td><td>setProperty("it", "name")  </td><td>Set the initial named template for the transformation by name   </td></tr>
-         <tr>
-         <td>'dtd'=boolean  </td><td>setProperty("dtd", "true")  </td><td>Set whether DTD validation should be applied to documents loaded   </td></tr>
-         <tr>
-         <td>'im'=name  </td><td>setProperty("im", "mode-name")  </td><td>Set the initial mode for the transformation   </td></tr>
-         <tr>
-         <td>'s'=filename  </td><td>setProperty("s", "filename")  </td><td>Identifies the source file or directory. Mandatory unless the -it option is used.   </td></tr>
-         <tr>
-         <td>'resources'=directory  </td><td>setProperty("resources", "dir")  </td><td>Specifies the directory where the resources file are found   </td></tr>
-         <tr>
-         <td>'tunnel'  </td><td>setProperty("tunnel", "true")  </td><td>XSLT3.0 only. Accepts the values true, false, yes, no. True if the initial template parameter values are to be used for setting tunnel parameters; false if they are to be used for non-tunnel parameters   </td></tr>
-         <tr>
-         <td>'outvalue'  </td><td>setProperty("outvalue", "true")  </td><td>XSLT30 only. Accepts the values true, false, yes, no. Set if the return type of callTemplate, applyTemplate and transform methods is to return <a class="el" href="classXdmValue.html">XdmValue</a>, otherwise return <a class="el" href="classXdmNode.html">XdmNode</a> object with root Document node   </td></tr>
-         <tr>
-         <td>'extc'=dir/saxonc  </td><td>setProperty("extc", "dir/saxonc")  </td><td>Specifies the full path to the C/C++ Saxon/C API library which contains the extension function. See example in samples/cppTests   </td></tr>
-         <tr>
-         <td>'m'  </td><td>setProperty("m", "")  </td><td>The presence of this property creates a message listener which is available in the C/C++ API of Saxon/C   </td></tr>
-         </table>
-
-         <h2>XQuery</h2>
-
-         <p><code>setParameter(string $name, XdmValue $value)</code> Method</p>
-         <table>
-         <thead><tr >
-            <th>Name  </th><th>Example  </th><th>Comment   </th></tr></thead>
-         <tr>
-         <td>'node'=xdmValue  </td><td>setParameter("node",xdmNodeObj)  </td><td>Sets the source document for query. We also accept the parameter names 'item'.   </td></tr>
-         <tr>
-         <td>param=xdmValue  </td><td>setParameter("numParam",value1)  </td><td>Set the value of external variable defined in the query   </td></tr>
-         </table>
-
-         <p>setProperty(string $name, string $propValue) Method<br/>
-            The properties are a subset to those specified for running XQuery from the <a href="http://www.saxonica.com/documentation/index.html#!using-xquery/commandline" target="_blank">command line</a>.</p>
-
-         <table>
-         <thead><tr >
-            <th>Name  </th><th>Example  </th><th>Comment   </th></tr></thead>
-         <tr>
-         <td>'base'=base-URI  </td><td>setProperty("base", "/home/username/example")  </td><td></td></tr>
-         <tr>
-         <td>'q'=query-fileName  </td><td>setProperty("q", "filename")  </td><td>Identifies the file containing the query.   </td></tr>
-         <tr>
-         <td>'qs'=query-string  </td><td>setProperty("qs", "saxon:line-number((//person)[1])")  </td><td>Allows the query to be specified inline.   </td></tr>
-         <tr>
-         <td>![serialization name]=value  </td><td>setProperty("!INDENT","yes")  </td><td>Influence the serialization of the XML by the parameters specified with a exclamation mark with a name and the value. See <a href="http://saxonica.com/documentation/index.html#!javadoc/net.sf.saxon.s9api/Serializer/Property">Documentation</a>   </td></tr>
-         <tr>
-         <td>'o'=filename  </td><td>setProperty("o", "output.xml")  </td><td>Sets the destination for the result of the XQuery to the specificed filename   </td></tr>
-         <tr>
-         <td>'dtd'=boolean  </td><td>setProperty("dtd", "true")  </td><td>Set whether DTD validation should be applied to documents loaded   </td></tr>
-         <tr>
-         <td>'s'=filename  </td><td>setProperty("s", "filename")  </td><td>Identifies the source file or directory. Mandatory unless the -it option is used.   </td></tr>
-         <tr>
-         <td>'resources'=directory  </td><td>setProperty("resources", "dir")  </td><td>Specifies the directory where the resources file are found   </td></tr>
-         <tr>
-         <td>'sa'=boolean  </td><td>setProperty("sa", "true")  </td><td>Invoke a schema-aware query. Requires Saxon-EE to be installed.   </td></tr>
-         <tr>
-         <td>'extc'=dir/saxonc  </td><td>setProperty("extc", "dir/saxonc")  </td><td>Specifies the full path to the C/C++ Saxon/C API library which contains the extension function. See example in samples/cppTests   </td></tr>
-         </table>
-
-         <h2>XPath</h2>
-         <p><code>setParameter(string $name, XdmValue $value)</code> Method</p>
-
-         <table>
-         <thead><tr >
-            <th>Name  </th><th>Example  </th><th>Comment   </th></tr></thead>
-         <tr>
-         <td>'node'=xdmValue  </td><td>setParameter("node",xdmNodeObj)  </td><td>Sets the source document for query. We also accept the parameter names 'item'.   </td></tr>
-         <tr>
-         <td>param=xdmValue  </td><td>setParameter("numParam",value1)  </td><td>Set the value of external variable defined in the query   </td></tr>
-         </table>
-
-         <p><code>setProperty(string $name, string $propValue)</code> Method</p>
-
-         <table>
-         <thead><tr >
-            <th>Name  </th><th>Example  </th><th>Comment   </th></tr></thead>
-         <tr>
-         <td>![serialization name]=value  </td><td>setProperty("!INDENT","yes")  </td><td>Influence the serialization of the XML by the parameters specified with a exclamation mark with a name and the value. See <a href="http://saxonica.com/documentation/index.html#!javadoc/net.sf.saxon.s9api/Serializer/Property">Documentation</a>   </td></tr>
-         <tr>
-         <td>'o'=filename  </td><td>setProperty("o", "output.xml")  </td><td>Sets the destination for the result of the XQuery to the specificed filename   </td></tr>
-         <tr>
-         <td>'dtd'=boolean  </td><td>setProperty("dtd", "true")  </td><td>Set whether DTD validation should be applied to documents loaded   </td></tr>
-         <tr>
-         <td>'s'=filename  </td><td>setProperty("s", "filename")  </td><td>Identifies the source file or directory. Mandatory unless the -it option is used.   </td></tr>
-         <tr>
-         <td>'resources'=directory  </td><td>setProperty("resources", "dir")  </td><td>Specifies the directory where the resources file are found   </td></tr>
-         <tr>
-         <td>'extc'=dir/saxonc  </td><td>setProperty("extc", "dir/saxonc")  </td><td>Specifies the full path to the C/C++ Saxon/C API library which contains the extension function. See example in samples/cppTests   </td></tr>
-         </table>
-
-         <h2>XML Schema Validation</h2>
-
-         <p><code>setParameter(string $name, XdmValue $value)</code> Method</p>
-
-         <table>
-         <thead><tr >
-            <th>Name  </th><th>Example  </th><th>Comment   </th></tr></thead>
-         <tr>
-         <td>'node'=xdmValue  </td><td>setParameter("node",xdmNodeObj)  </td><td>Sets the source document for the validation. We also accept the parameter names 'item'.   </td></tr>
-         <tr>
-         <td>param=xdmValue  </td><td>setParameter("numParam",value1)  </td><td>Set the value of external variable defined in the query   </td></tr>
-         </table>
-
-         <p><code>setProperty(string $name, string $propValue) Method</code><br/>
-            The properties are a subset to those specified for running the Schema Validator from the <a href="http://www.saxonica.com/documentation/index.html#!schema-processing/commandline" target="_blank">command line</a>.</p>
-
-         <table>
-         <thead><tr >
-            <th>Name  </th><th>Example  </th><th>Comment   </th></tr></thead>
-         <tr>
-         <td>![serialization name]=value  </td><td>setProperty("!INDENT","yes")  </td><td>Influence the serialization of the XML by the parameters specified with a exclamation mark with a name and the value. See <a href="http://saxonica.com/documentation/index.html#!javadoc/net.sf.saxon.s9api/Serializer/Property">Documentation</a>   </td></tr>
-         <tr>
-         <td>'o'=filename  </td><td>setProperty("o", "output.xml")  </td><td>Sets the destination for the result of the XQuery to the specificed filename   </td></tr>
-         <tr>
-         <td>'string'=xml-string  </td><td>setProperty("string",xml-string)  </td><td>Sets the source document aas a string for validation. Parsing will happen when the validate method has been called.   </td></tr>
-         <tr>
-         <td>'dtd'=boolean  </td><td>setProperty("dtd", "true")  </td><td>Set whether DTD validation should be applied to documents loaded   </td></tr>
-         <tr>
-         <td>'s'=filename  </td><td>setProperty("s", "filename")  </td><td>Identifies the source file or directory. Mandatory unless the -it option is used.   </td></tr>
-         <tr>
-         <td>'resources'=directory  </td><td>setProperty("resources", "dir")  </td><td>Specifies the directory where the resources file are found   </td></tr>
-         <tr>
-         <td>'report-node'=boolean  </td><td>setProperty("report-node", "true")  </td><td>Flag for validation reporting feature. Error validation failures are represented in an XML document   </td></tr>
-         <tr>
-         <td>'report-file'=filename  </td><td>setProperty("report-file", "filename")  </td><td>Switches on the validation reporting feature. Validation failures collected and saved in an XML format in a file.   </td></tr>
-         <tr>
-         <td>'verbose'=boolean  </td><td>setProperty("verbose", "true")  </td><td>Set verbose mode to output to the terminal validation exceptions. The default is on providing the reporting feature has not been enabled.   </td></tr>
-         <tr>
-         <td>'element-type'=string  </td><td>setProperty("element-type", "{uri}local")  </td><td>Set the name of the required type of the top-level element of the document to be validated. The string should be in the Clark notation: {uri}local   </td></tr>
-         <tr>
-         <td>'element-name'=string  </td><td>setProperty("element-name", "{uri}local")  </td><td>Set the name of the required top-level element of the document to be validated (that is, the name of the outermost element of the document). The string should be in the Clark notation: {uri}local   </td></tr>
-         <tr>
-         <td>'lax'=boolean  </td><td>setProperty("lax", "true")  </td><td>The validation mode may be either strict or lax. Default is strict. This property indicates that lax validation is required.   </td></tr>
-         </table>
-      </section>
+      
 
    </section>
 

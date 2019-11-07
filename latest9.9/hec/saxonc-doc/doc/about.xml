@@ -23,7 +23,7 @@
       edition (MP1). The APIs support the current W3C Recommendations: XSLT 3.0, XQuery 3.1, XPath
       3.1 and Schema Validation 1.0/1.1. See the Saxon 9.9 documentation <a
          href="https://saxonica.com/documentation/index.html#!conformance">Standards Conformance</a>
-      section for details.</p>
+      section for full details.</p>
 
    <p>Saxon/C is released in three separate editions, as on the Java platform: the commercial
       products Enterprise Edition (Saxon-EE/C) and Professional Edition (Saxon-PE/C), and the

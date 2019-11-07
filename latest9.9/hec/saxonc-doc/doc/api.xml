@@ -431,7 +431,6 @@
          <h1>Saxon\XsltProcessor Class</h1>
 
 
-
          <table>
             <thead>
                <tr>
@@ -439,65 +438,206 @@
                   <td>Function name and Description</td>
                </tr>
             </thead>
-         <tr>
-            <td>void  </td><td><span class="signature">transformFileToFile(string $sourceFileName, string $stylesheetFileName, string outputfileName)</span>
-          <div class="fcomment">Perform a one shot transformation. The result is stored in the supplied outputfile name.</div>   </td></tr>
-         <tr>
-            <td>string  </td><td><span class="signature">transformFileToString(string $sourceFileName, string $stylesheetFileName)</span>
-          <div class="fcomment">Perform a one shot transformation. The result is returned as a string. If there are failures then a null is returned</div>   </td></tr>
-         <tr>
-            <td><a class="bodylink code" href="../saxon_c_php_xdmvalue">Saxon\XdmValue</a>  </td><td><span class="signature">transformFileToValue(string $fileName)</span>
-          <div class="fcomment">Perform a one shot transformation. The result is returned as an <a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a></div>   </td></tr>
-         <tr>
-            <td>void  </td><td><span class="signature">transformToFile()</span>
-          <div class="fcomment">Perform the transformation based upon cached stylesheet and source document.</div>   </td></tr>
-         <tr>
-            <td>string  </td><td><span class="signature">transformToString()</span></td></tr>
-         <tr>
-            <td><a class="bodylink code" href="../saxon_c_php_xdmvalue">Saxon\XdmValue</a>  </td><td><span class="signature">transformToValue()</span>
-          <div class="fcomment">Perform the transformation based upon cached stylesheet and any source document. Result returned as an <a class="el" href="classXdmValue.html">XdmValue</a> object. If there are failures then a null is returned</div>   </td></tr>
-         <tr>
-            <td>void  </td><td><span class="signature">compileFromFile(string $fileName)</span>
-          <div class="fcomment">Compile a stylesheet suplied as by file name</div>   </td></tr>
-         <tr>
-            <td>void  </td><td><span class="signature">compileFromString(string $str)</span>
-          <div class="fcomment">Compile a stylesheet received as a string.</div>   </td></tr>
-         <tr>
-            <td>void  </td><td><span class="signature">compileFromValue(<a class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a> $node)</span>
-          <div class="fcomment">Compile a stylesheet received as an <a class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a>.</div>   </td></tr>
-         <tr>
-            <td>void  </td><td><span class="signature">setOutputFile(string $fileName)</span>
-          <div class="fcomment">Set the output file name of where the transformation result is sent</div>   </td></tr>
-         <tr>
-            <td>void  </td><td><span class="signature">setSourceFromXdmValue(<a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a> $value)</span>
-          <div class="fcomment">The source used for a query or stylesheet. Requires an <a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a> object</div>   </td></tr>
-         <tr>
-            <td>void  </td><td><span class="signature">setSourceFromFile(string $filename)</span>
-          <div class="fcomment">The source used for query or stylesheet. Requires a file name as string</div>   </td></tr>
-         <tr>
-            <td>void  </td><td><span class="signature">setParameter(string $name, <a class="el" href="classXdmValue.html">XdmValue</a> $value)</span>
-          <div class="fcomment">Set the parameters required for XSLT stylesheet</div>   </td></tr>
-         <tr>
-            <td>void  </td><td><span class="signature">setProperty(string $name, string $value)</span>
-          <div class="fcomment">Set properties for the stylesheet.</div>   </td></tr>
-         <tr>
-            <td>void  </td><td><span class="signature">clearParameters()</span>
-          <div class="fcomment">Clear parameter values set</div>   </td></tr>
-         <tr>
-            <td>void  </td><td><span class="signature">clearProperties()</span>
-          <div class="fcomment">Clear property values set</div>   </td></tr>
-         <tr>
-            <td>void  </td><td><span class="signature">exceptionClear()</span>
-          <div class="fcomment">Clear any exception thrown</div>   </td></tr>
-         <tr>
-            <td>string  </td><td><span class="signature">getErrorCode(int $i)</span>
-          <div class="fcomment">Get the ith error code if there are any errors</div>   </td></tr>
-         <tr>
-            <td>string  </td><td><span class="signature">getErrorMessage(int $i)</span>
-          <div class="fcomment">Get the ith error message if there are any error</div>   </td></tr>
-         <tr>
-            <td>int  </td><td><span class="signature">getExceptionCount()</span>
-          <div class="fcomment">Get number of error during execution or evaluate of stylesheet</div>   </td></tr>
+            <tr>
+               <td>
+                  <code>void</code>
+               </td>
+               <td>
+                  <span class="signature">transformFileToFile(string $sourceFileName, string
+                     $stylesheetFileName, string $outputFileName)</span>
+                  <div class="fcomment">Perform a one shot transformation, saving the results to the
+                     file specified in the $outputFileName argument.</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <code>string</code>
+               </td>
+               <td>
+                  <span class="signature">transformFileToString(string $sourceFileName, string
+                     $stylesheetFileName)</span>
+                  <div class="fcomment">Perform a one shot transformation. The result is returned as
+                     a string. If there are failures then a null is returned.</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmvalue">Saxon\XdmValue</a>
+               </td>
+               <td>
+                  <span class="signature">transformFileToValue(string $fileName)</span>
+                  <div class="fcomment">Perform a one shot transformation. The result is returned as
+                     an <a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a> object.
+                     If there are failures then a null is returned.</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <code>void</code>
+               </td>
+               <td>
+                  <span class="signature">transformToFile()</span>
+                  <div class="fcomment">Perform a one shot transformation, saving the results to the
+                     file as previously set (e.g. using <code>setOutputFile()</code>).</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <code>string</code>
+               </td>
+               <td>
+                  <span class="signature">transformToString()</span>
+                  <div class="fcomment">Perform a one shot transformation. The result is returned as
+                     a serialized string.</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <a class="bodylink code" href="../saxon_c_php_xdmvalue">Saxon\XdmValue</a>
+               </td>
+               <td>
+                  <span class="signature">transformToValue()</span>
+                  <div class="fcomment">Perform a one shot transformation. The result is returned as
+                     an <a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a> object.
+                     If there are failures then a null is returned.</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <code>void</code>
+               </td>
+               <td>
+                  <span class="signature">compileFromFile(string $fileName)</span>
+                  <div class="fcomment">Compile a stylesheet supplied as a file as specified by the
+                     $fileName argument.</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <code>void</code>
+               </td>
+               <td>
+                  <span class="signature">compileFromString(string $str)</span>
+                  <div class="fcomment">Compile a stylesheet received as a string.</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <code>void</code>
+               </td>
+               <td>
+                  <span class="signature">compileFromValue(<a class="bodylink code"
+                        href="../saxon_c_php_xdmnode">XdmNode</a> $node)</span>
+                  <div class="fcomment">Compile a stylesheet received as an <a class="bodylink code"
+                        href="../saxon_c_php_xdmnode">XdmNode</a>.</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <code>void</code>
+               </td>
+               <td>
+                  <span class="signature">setOutputFile(string $fileName)</span>
+                  <div class="fcomment">Set the output file to which the transformation result will
+                     be sent.</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <code>void</code>
+               </td>
+               <td>
+                  <span class="signature">setSourceFromXdmValue(<a class="bodylink code"
+                        href="../saxon_c_php_xdmvalue">XdmValue</a> $value)</span>
+                  <div class="fcomment">Set the source to be used for a transformation, supplied as
+                     an <a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a>
+                     object.</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <code>void</code>
+               </td>
+               <td>
+                  <span class="signature">setSourceFromFile(string $fileName)</span>
+                  <div class="fcomment">Set the source to be used for a transformation, supplied as
+                     a file as specified by the $fileName argument.</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <code>void</code>
+               </td>
+               <td>
+                  <span class="signature">setParameter(string $name, <a class="el"
+                        href="classXdmValue.html">XdmValue</a> $value)</span>
+                  <div class="fcomment">Set the parameters required for the XSLT stylesheet.</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <code>void</code>
+               </td>
+               <td>
+                  <span class="signature">setProperty(string $name, string $value)</span>
+                  <div class="fcomment">Set properties for the XSLT processor.</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <code>void</code>
+               </td>
+               <td>
+                  <span class="signature">clearParameters()</span>
+                  <div class="fcomment">Clear parameter values set.</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <code>void</code>
+               </td>
+               <td>
+                  <span class="signature">clearProperties()</span>
+                  <div class="fcomment">Clear property values set.</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <code>void</code>
+               </td>
+               <td>
+                  <span class="signature">exceptionClear()</span>
+                  <div class="fcomment">Clear any exceptions thrown.</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <code>string</code>
+               </td>
+               <td>
+                  <span class="signature">getErrorCode(int $i)</span>
+                  <div class="fcomment">Get the i'th error code if there are any errors.</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <code>string</code>
+               </td>
+               <td>
+                  <span class="signature">getErrorMessage(int $i)</span>
+                  <div class="fcomment">Get the i'th error message if there are any errors.</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <code>int</code>
+               </td>
+               <td>
+                  <span class="signature">getExceptionCount()</span>
+                  <div class="fcomment">Get the number of errors during execution or evaluation of a
+                     stylesheet.</div>
+               </td>
+            </tr>
          </table>
 
       </section>
@@ -662,7 +802,7 @@
                </td>
                <td>
                   <span class="signature">callFunctionReturningFile(string $functionName, array
-                     $arguments, string $outputfileName)</span>
+                     $arguments, string $outputFileName)</span>
                   <div class="fcomment">Call a public user-defined function in the stylesheet. Here
                      we wrap the result in an XML document, and send this document to a specified
                      file. The function name is supplied as a string, and the values of the
@@ -711,9 +851,9 @@
                </td>
                <td>
                   <span class="signature">callTemplateReturningFile(string $stylesheetFileName,
-                     string $templateName, string $outputfileName)</span>
+                     string $templateName, string $outputFileName)</span>
                   <div class="fcomment">Invoke a transformation by calling a named template, saving
-                     the results to the file specified in the $outputfileName argument. If the
+                     the results to the file specified in the $outputFileName argument. If the
                      $templateName argument is null then the <code>xsl:initial-template</code> is
                      used. Parameters supplied using <code>setInitialTemplateParameters()</code> are
                      made available to the called template.</div>
@@ -754,9 +894,9 @@
                </td>
                <td>
                   <span class="signature">transformFileToFile(string $sourceFileName, string
-                     $stylesheetFileName, string $outputfileName)</span>
+                     $stylesheetFileName, string $outputFileName)</span>
                   <div class="fcomment">Perform a one shot transformation, saving the results to the
-                     file specified in the $outputfileName argument.</div>
+                     file specified in the $outputFileName argument.</div>
                </td>
             </tr>
             <tr>
@@ -922,11 +1062,11 @@
                </td>
                <td>
                   <span class="signature">setResultAsRawValue(bool $value)</span>
-                  <div class="fcomment">Set true if the result of a transform should be returned as
-                     a raw <a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a>
-                     result, rather than as a result tree (an <a class="bodylink code"
-                        href="../saxon_c_php_xdmnode">XdmNode</a> object with a Document node as its
-                     root).</div>
+                  <div class="fcomment">Set true if the result of a transformation should be
+                     returned as a raw <a class="bodylink code" href="../saxon_c_php_xdmvalue"
+                        >XdmValue</a> result, rather than as a result tree (an <a
+                        class="bodylink code" href="../saxon_c_php_xdmnode">XdmNode</a> object with
+                     a Document node as its root).</div>
                </td>
             </tr>
             <tr>
@@ -1025,9 +1165,9 @@
                   <code>void</code>
                </td>
                <td>
-                  <span class="signature">runQueryToFile(string $outfilename)</span>
+                  <span class="signature">runQueryToFile(string $outputFileName)</span>
                   <div class="fcomment">Compile and evaluate the query. Result saved to the file
-                     specified in the $outfilename argument.</div>
+                     specified in the $outputFileName argument.</div>
                </td>
             </tr>
             <tr>
@@ -1816,8 +1956,8 @@
                </td>
                <td>
                   <span class="signature">isAtomic()</span>
-                  <div class="fcomment">Determine whether or not the item is an atomic value.
-                     This method will return TRUE as the item is atomic.</div>
+                  <div class="fcomment">Determine whether or not the item is an atomic value. This
+                     method will return TRUE as the item is atomic.</div>
                </td>
             </tr>
          </table>
