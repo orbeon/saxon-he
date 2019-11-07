@@ -446,7 +446,7 @@
             <td>string  </td><td><span class="signature">transformFileToString(string $sourceFileName, string $stylesheetFileName)</span>
           <div class="fcomment">Perform a one shot transformation. The result is returned as a string. If there are failures then a null is returned</div>   </td></tr>
          <tr>
-            <td><a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a>  </td><td><span class="signature">transformFileToValue(string $fileName)</span>
+            <td><a class="bodylink code" href="../saxon_c_php_xdmvalue">Saxon\XdmValue</a>  </td><td><span class="signature">transformFileToValue(string $fileName)</span>
           <div class="fcomment">Perform a one shot transformation. The result is returned as an <a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a></div>   </td></tr>
          <tr>
             <td>void  </td><td><span class="signature">transformToFile()</span>
@@ -454,7 +454,7 @@
          <tr>
             <td>string  </td><td><span class="signature">transformToString()</span></td></tr>
          <tr>
-            <td><a class="bodylink code" href="../saxon_c_php_xdmvalue">XdmValue</a>  </td><td><span class="signature">transformToValue()</span>
+            <td><a class="bodylink code" href="../saxon_c_php_xdmvalue">Saxon\XdmValue</a>  </td><td><span class="signature">transformToValue()</span>
           <div class="fcomment">Perform the transformation based upon cached stylesheet and any source document. Result returned as an <a class="el" href="classXdmValue.html">XdmValue</a> object. If there are failures then a null is returned</div>   </td></tr>
          <tr>
             <td>void  </td><td><span class="signature">compileFromFile(string $fileName)</span>
