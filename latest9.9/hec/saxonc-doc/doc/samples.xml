@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<article id="samples" title="Samples &amp; Unit Tests">
-   <h1>Saxon/C Samples &amp; Unit Tests</h1>
+<article id="samples" title="Saxon/C Samples">
+   <h1>Saxon/C Samples</h1>
 
    <p>This section of the documentation describes some example code in C/C++, PHP and Python to help
-      users to get started. Within the Saxon/C installation you will find lots of example code in
-      the 'samples' directory. Also within the 'Saxon.C.API/python-saxon' directory you will find
-      Python examples plus unit tests for Python.</p>
-
+      users to get started. A number of samples and unit test code for C/C++ and PHP can be found in
+      the 'samples' directory of the Saxon/C installation. Samples and unit tests for Python can be
+      found in the 'Saxon.C.API/python-saxon' directory.</p>
 
    <nav>
       <ul/>
@@ -15,44 +14,59 @@
    <section id="samples_c" title="C/C++ Samples">
       <h1>C/C++ Samples</h1>
 
-      <h2 class="subtitle">C examples</h2>
+      <h2 class="subtitle">C programming</h2>
 
-      <p>For C programming see the test harnesses for XSLT, XQuery, Schema Validation and XPath in C
-         code along with the build and run script in the directory 'cTests'. The following files are
-         required to build Saxon/C on C++: SaxonCGlue.c, SaxonXProcessor.c, SaxonCXPath.c. To
-         compile the sample test code in C execute the 'build.sh' file in the directory 'cTests'.
-         This file builds executables for the test cases testing XSLT, XPath, XQuery and Schema
-         Validation. The command is similar to the following:</p>
+      <p>The 'samples/cTests' directory in the Saxon/C download contains the test harnesses for
+         XSLT, XQuery, XPath and Schema Validation in C code, along with the build and run scripts.
+         These tests provide various examples of the use of the Saxon/C API.</p>
+
+      <p>To build Saxon/C on C, the following files are required: SaxonCGlue.c, SaxonXProcessor.c
+         and SaxonCXPath.c. To compile the sample test code in C execute the 'build.sh' file in the
+         'samples/cTests' directory. This script builds the test harness executables, using a
+         command similar to the following:</p>
 
       <kbd>gcc -m32 -I$jdkdir/include -I$jdkdir/include/linux -I
          /System/Library/Frameworks/JavaVM.framework/Headers ../SaxonCGlue.c ../SaxonCProcessor.c
          ../SaxonCXPath.c testXSLT.c -o testXSLT -ldl -lc $1</kbd>
 
 
-      <h2 class="subtitle">C++ examples</h2>
+      <h2 class="subtitle">C++ programming</h2>
 
-      <p>For C++ programming see sample code for XSLT, XQuery, Schema Validation and XPath in C++
-         code along with the build and run script in the directory 'cppTests'. The following files
-         are required to build Saxon/C on C++: SaxonCGlue.c, SaxonCXPath.c, XdmValue.cpp,
-         XdmItem.cpp, XdmNode.cpp, XdmAtomicValue.cpp, SaxonProcessor.cpp, XsltProcessor.cpp,
-         Xslt30Processor.cpp and XQueryProcessor.cpp, XPathProcessor.cpp, SchemaValidator.cpp To
-         compile the sample test code in C++ execute the 'build64-[PLATFORM].sh' (for linux and Mac Os) and 'buildCPPSaxon[Edition].bat' (for Windows)
-         file in the directory 'cppTests'. These files build executables for the test cases testing XSLT, XPath, XQuery and schema
-         Validator. The command is similar to the following:</p>
+      <p>The 'samples/cppTests' directory in the Saxon/C download contains the test harnesses for
+         XSLT, XQuery, XPath and Schema Validation in C++ code, along with the build and run
+         scripts. These tests provide various examples of the use of the Saxon/C API.</p>
+
+      <p>To build Saxon/C on C++, the following files are required: SaxonCGlue.c, SaxonCXPath.c,
+         XdmValue.cpp, XdmItem.cpp, XdmNode.cpp, XdmAtomicValue.cpp, SaxonProcessor.cpp,
+         XsltProcessor.cpp, Xslt30Processor.cpp, XQueryProcessor.cpp, XPathProcessor.cpp and
+         SchemaValidator.cpp. To compile the sample test code in C++ execute the
+         'build64-[PLATFORM].sh' file in the 'samples/cTests' directory for Linux and Mac OS, or the
+         'buildCPPSaxon[EDITION].bat' file for Windows. These build files build the test harness
+         executables, using a command similar to the following:</p>
 
       <kbd>g++ -m32 ../bin/SaxonCGlue.o ../bin/SaxonCXPath.o ../bin/SaxonProcessor.o
          ../bin/XQueryProcessor.o ../bin/XsltProcessor.o, ../bin/Xslt30Processor.o
          ../bin/XPathProcessor.o ../bin/XdmValue.o ../bin/XdmItem.o ../bin/XdmNode.o
          ../bin/XdmAtomicValue.o ../bin/SchemaValidator.o testXSLT.cpp -o testXSLT -ldl -lc</kbd>
-      <p>Executables created for Linux and Mac OS, which can be run as follows:</p>
+
+      <p>The executables created for Linux and Mac OS can be run from the commandline using the
+         follow commands:</p>
+
       <kbd>./testXSLT</kbd>
       <kbd>./testXSLT30</kbd>
       <kbd>./testXQuery</kbd>
       <kbd>./testXPath</kbd>
       <kbd>./testValidator</kbd>
 
-      <p>On Windows we have .exe files created which can be executed on the command-line.</p>
+      <p>Similarly on Windows the .exe files created can be run from the commandline using the
+         following commands:</p>
       
+      <kbd>testXSLT.exe</kbd>
+      <kbd>testXSLT30.exe</kbd>
+      <kbd>testXQuery.exe</kbd>
+      <kbd>testXPath.exe</kbd>
+      <kbd>testValidator.exe</kbd>
+
       <h3 class="subtitle">Example code</h3>
 
       <p>See examples C++ code of applications with Saxon/C below:</p>
@@ -61,7 +75,8 @@
       <samp><![CDATA[SaxonProcessor *processor = new SaxonProcessor(true);
       XsltProcessor * xslt = processor->newTransformer();
       cout<<"Hello World"<<endl;
-      cout<<"Test output: "<<xslt->transformFileToString("cat.xml","test.xsl")<<endl;]]> </samp>
+      cout<<"Test output: "<<xslt->transformFileToString("cat.xml","test.xsl")<<endl;]]>
+      </samp>
 
       <p>C++ Example 2:</p>
       <samp><![CDATA[SaxonProcessor * processor = new Saxon\SaxonProcessor(false);
@@ -121,8 +136,8 @@
    <section id="samples_php" title="PHP Samples">
       <h1>PHP Samples</h1>
 
-      <p>The 'samples/php' directory in the Saxon/C download contains various samples for XQuery,
-         XPath and Schema Validation (namely: xsltExamples.php, xslt30Examples.php,
+      <p>The 'samples/php' directory in the Saxon/C download contains various samples for XSLT,
+         XQuery, XPath and Schema Validation (namely: xsltExamples.php, xslt30Examples.php,
          xqueryExamples.php, xpathExamples.php, and validatorExamples.php) and associated files, as
          well as PHP unit tests for XSLT (xslt30_PHPUnit.php). These files contain many useful
          examples which will help get you started. The unit tests run under PHPUnit for PHP 7.2

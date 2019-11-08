@@ -1,4 +1,4 @@
-<article id="technical" title="Techincal Information">
+<article id="technical" title="Technical Information">
     <h1>Technical Information</h1>
 
     <p>Saxon/C is built by cross compiling the Java code of Saxon 9.9.1.5 using the Excelsior Jet 15.3 Enterprise edition (MP1).
