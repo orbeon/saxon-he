@@ -389,7 +389,8 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
                <code>setParameter("node", xdmNodeObj)</code>
             </td>
             <td>
-               <p>Sets the context item for the query to the <code>XdmNode</code> supplied.</p>
+               <p>Sets the context item for the XPath expression to the <code>XdmNode</code>
+                  supplied.</p>
             </td>
          </tr>
          <tr>
@@ -398,7 +399,8 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
                <code>setParameter("item", xdmItemObj)</code>
             </td>
             <td>
-               <p>Sets the context item for the query to the <code>XdmItem</code> supplied.</p>
+               <p>Sets the context item for the XPath expression to the <code>XdmItem</code>
+                  supplied.</p>
             </td>
          </tr>
          <tr>
