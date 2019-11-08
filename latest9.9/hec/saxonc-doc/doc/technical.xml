@@ -1,25 +1,41 @@
 <article id="technical" title="Technical Information">
-    <h1>Technical Information</h1>
+   <h1>Technical Information</h1>
 
-    <p>Saxon/C is built by cross compiling the Java code of Saxon 9.9.1.5 using the Excelsior Jet 15.3 Enterprise edition (MP1).
-        This generates platform specific machine code, which we interface with C/C++ using the Java Native Interace (JNI).</p>
-    <p><b>Embedded systems</b>: It is also possible to build Saxon/C for embedded systems, for example on a Linux/ARM System.
-        If such a build is reuired please contact Saxonica to discuss further: <a href="mailto:support@saxonica.com">support@saxonica.com</a></p>
-    <p>The PHP interface is in the form of a C/C++ PHP extension to Saxon/C created using the Zend module API. Supporting PHP5 and PHP7.</p>
-    <p>The Python interface is in the form of a Cython module interfaced with the C/C++ Saxon/C API. Currently supporting Python3.</p>
-    <p>The XML parser used is the one supplied by the Excelsior JET runtime which is cross compiled from the openJDK 8u181.
-        There are currently no links to libxml.</p>
+   <p>Saxon/C is built by cross compiling the Java code of Saxon 9.9.1.5 using the Excelsior JET
+      15.3 Enterprise edition (MP1). This generates platform specific machine code, which we
+      interface with C/C++ using the Java Native Interace (JNI).</p>
+
+   <p><b>Embedded systems</b>: It is also possible to build Saxon/C for embedded systems, for
+      example on a Linux/ARM System. If such a build is required please contact Saxonica to discuss
+      further: <a href="mailto:support@saxonica.com">support@saxonica.com</a>.</p>
+
+   <p>The PHP interface is in the form of a C/C++ PHP extension to Saxon/C created using the Zend
+      module API. Supports PHP5 and PHP7.</p>
+
+   <p>The Python interface is in the form of a Cython module interfaced with the C/C++ Saxon/C API.
+      Currently supports Python3.</p>
+
+   <p>The XML parser used is the one supplied by the Excelsior JET runtime which is cross compiled
+      from the openJDK 8u181. There are currently no links to libxml.</p>
 
 
 
-    <h2>Limitations</h2>
-    <p>The following limitations apply to the 1.2.1 release:</p>
-    <ul><li>No support for the XdmFunction type in the Xdm data model.</li>
-    <li>The bytecode generation feature in the Saxon-EE edition in Java is not available in Saxon-EE/C.</li>
-    <li>It is currently not possible to create and export to file a precompiled schema component model (SCM).</li></ul>
+   <h2>Limitations</h2>
 
-    <h2>Feedback/Comments:</h2>
+   <p>The following limitations apply to the 1.2.1 release:</p>
+   <ul>
+      <li>No support for the XDM function type in the XDM data model.</li>
+      <li>The bytecode generation feature available in Saxon-EE on Java is not available in
+         Saxon-EE/C.</li>
+      <li>It is currently not possible to create and export to file a precompiled schema component
+         model (SCM).</li>
+   </ul>
 
-    <p>Please use the help forums and bug trackers for Saxon/C at <a href="https://saxonica.plan.io/projects/saxon-c" target="_blank">saxonica.plan.io</a> if you need help or advice. Also send email to <a href="mailto:support@saxonica.com">support@saxonica.com</a></p>
+   <h2>Feedback/Comments:</h2>
+
+   <p>Please use the help forums and bug trackers for Saxon/C at <a
+         href="https://saxonica.plan.io/projects/saxon-c" target="_blank">saxonica.plan.io</a> if
+      you need help or advice. Or send email to <a href="mailto:support@saxonica.com"
+         >support@saxonica.com</a>.</p>
 
 </article>
