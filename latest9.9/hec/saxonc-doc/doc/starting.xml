@@ -136,13 +136,15 @@
          <aside>In the following, [EDITION] means one of: HE, PE, EE; and [VERSION] is the
             maintenance release version number (for instance 1.2.1). </aside>
 
-         <p>To install the Saxon-[EDITION]/C release, first run the executable
+         <ol><li><p>To install the Saxon-[EDITION]/C release, first run the executable
                <b>libsaxon-[EDITION]-win-setup.exe</b>. </p>
+         </li>
 
-         <p>The first step is to select the destination where the product files will be installed -
+         <li><p>The first step is to select the destination where the product files will be installed -
             the default and recommended location is 'C:\Program
             Files\Saxonica\Saxon[EDITION][VERSION]'. This is the location that the PHP extension
-            looks for the Saxon/C DLL library, so we advise using this default location. </p>
+            looks for the Saxon/C DLL library, so we advise using this default location. </p></li>
+         </ol>
 
          <p>Saxon/C is now installed, and ready to run. Please see <a href="../running">Running
                Saxon/C</a> to get started. Note that the commercial products Saxon-PE/C and
