@@ -17,7 +17,7 @@
       <h2 class="subtitle">C programming</h2>
 
       <p>The 'samples/cTests' directory in the Saxon/C download contains the test harnesses for
-         XSLT, XQuery, XPath and Schema Validation in C code, along with the build and run scripts.
+         XSLT, XQuery and XPath in C code, along with the build and run scripts.
          These tests provide various examples of the use of the Saxon/C API.</p>
 
       <p>To build Saxon/C on C, the following files are required: SaxonCGlue.c, SaxonXProcessor.c
@@ -72,6 +72,7 @@
       <p>See examples C++ code of applications with Saxon/C below:</p>
 
       <p>C++ Example 1:</p>
+      
       <samp><![CDATA[SaxonProcessor *processor = new SaxonProcessor(true);
       XsltProcessor * xslt = processor->newTransformer();
       cout<<"Hello World"<<endl;
@@ -79,6 +80,7 @@
       </samp>
 
       <p>C++ Example 2:</p>
+      
       <samp><![CDATA[SaxonProcessor * processor = new Saxon\SaxonProcessor(false);
       XsltProcessor * xslt = processor->newTransformer();
       xslt->setSourceFile("xml/foo.xml");

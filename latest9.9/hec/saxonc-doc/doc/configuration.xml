@@ -58,10 +58,22 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
                <code>setParameter("node", xdmNodeObj)</code>
             </td>
             <td>
-               <p>Sets the source document for transformation. We also accept the parameter names
-                  'item'.</p>
+               <p>Sets the source document for the transformation to the <code>XdmNode</code>
+                  supplied.</p>
             </td>
-            <!-- TODO 'item' ?? what does that mean? -->
+         </tr>
+         <tr>
+            <td>'item'</td>
+            <td>
+               <code>setParameter("item", xdmItemObj)</code>
+            </td>
+            <td>
+               <p>In the <code>Xslt30Processor</code>, this sets the global context item for the
+                  transformation to the <code>XdmItem</code> supplied. In the
+                     <code>XsltProcessor</code>, if the <code>XdmItem</code> is actually an
+                     <code>XdmNode</code>, then this sets the source document (i.e. "item" works in
+                  the same way as "node" above).</p>
+            </td>
          </tr>
          <tr>
             <td>[parameter name]</td>
@@ -73,7 +85,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
             </td>
          </tr>
       </table>
-      
+
       <h3 class="codeTitle">setProperty(string $name, string $propValue)</h3>
 
       <p>The properties are a subset to those specified for running XSLT from the <a
@@ -91,14 +103,14 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
          <tr>
             <td>'![serialization property]'</td>
             <td>
-               <code>setProperty("!INDENT","yes")</code>
+               <code>setProperty("!indent", "yes")</code>
             </td>
             <td>
-               <p>Influence the serialization of the result XML. Serialization properties are
-                  specified by name, preceded with an exclamation mark. See the Saxon 9.9 API
-                  documentation for the class <a class="code"
-                     href="http://saxonica.com/documentation/index.html#!javadoc/net.sf.saxon.s9api/Serializer/Property"
-                     >Serializer.Property</a> for a full list of serialization properties.</p>
+               <p>Influence the serialization of the result output. Serialization parameters are
+                  specified by name, preceded by a leading exclamation mark (!). This is equivalent
+                  to specifying the corresponding attribute (e.g. <code>indent="yes"</code>) on an
+                     <code>xsl:output</code> declaration in the stylesheet. An output parameter
+                  specified on the command line overrides one specified within the stylesheet.</p>
             </td>
          </tr>
          <tr>
@@ -107,7 +119,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
                <code>setProperty("o", "output.xml")</code>
             </td>
             <td>
-               <p>Sets the destination for the result of the transformation to the specified
+               <p>Set the destination for the result of the transformation to the specified
                   filename.</p>
             </td>
          </tr>
@@ -117,7 +129,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
                <code>setProperty("it", "name")</code>
             </td>
             <td>
-               <p>Set the initial named template for the transformation by name.</p>
+               <p>Set the initial template for the transformation by name.</p>
             </td>
          </tr>
          <tr>
@@ -191,8 +203,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
             <td>
                <code>setProperty("m", "")</code>
             </td>
-            <td>The presence of this property creates a message listener which is available in the
-               C/C++ API of Saxon/C.</td>
+            <td>Creates a message listener which is available in the Saxon/C API.</td>
          </tr>
       </table>
    </section>
@@ -219,8 +230,16 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
                <code>setParameter("node", xdmNodeObj)</code>
             </td>
             <td>
-               <p>Sets the source document for the query. We also accept the parameter names
-                  'item'.</p>
+               <p>Sets the context item for the query to the <code>XdmNode</code> supplied.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'item'</td>
+            <td>
+               <code>setParameter("item", xdmItemObj)</code>
+            </td>
+            <td>
+               <p>Sets the context item for the query to the <code>XdmItem</code> supplied.</p>
             </td>
          </tr>
          <tr>
@@ -251,14 +270,13 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
          <tr>
             <td>![serialization property]</td>
             <td>
-               <code>setProperty("!INDENT","yes")</code>
+               <code>setProperty("!indent","yes")</code>
             </td>
             <td>
-               <p>Influence the serialization of the result XML. Serialization properties are
-                  specified by name, preceded with an exclamation mark. See the Saxon 9.9 API
-                  documentation for the class <a class="code"
-                     href="http://saxonica.com/documentation/index.html#!javadoc/net.sf.saxon.s9api/Serializer/Property"
-                     >Serializer.Property</a> for a full list of serialization properties.</p>
+               <p>Influence the serialization of the result output. Serialization parameters are
+                  specified by name, preceded by a leading exclamation mark (!). This is equivalent
+                  to specifying the corresponding output declaration (e.g. <code>declare option
+                     output:indent "yes";</code>) in the query prolog.</p>
             </td>
          </tr>
          <tr>
@@ -371,8 +389,16 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
                <code>setParameter("node", xdmNodeObj)</code>
             </td>
             <td>
-               <p>Sets the source document for an XPath expression. We also accept the parameter
-                  names 'item'.</p>
+               <p>Sets the context item for the query to the <code>XdmNode</code> supplied.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'item'</td>
+            <td>
+               <code>setParameter("item", xdmItemObj)</code>
+            </td>
+            <td>
+               <p>Sets the context item for the query to the <code>XdmItem</code> supplied.</p>
             </td>
          </tr>
          <tr>
@@ -399,14 +425,14 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
          <tr>
             <td>![serialization property]</td>
             <td>
-               <code>setProperty("!INDENT","yes")</code>
+               <code>setProperty("!indent","yes")</code>
             </td>
             <td>
-               <p>Influence the serialization of the result XML. Serialization properties are
-                  specified by name, preceded with an exclamation mark. See the Saxon 9.9 API
-                  documentation for the class <a class="code"
-                     href="http://saxonica.com/documentation/index.html#!javadoc/net.sf.saxon.s9api/Serializer/Property"
-                     >Serializer.Property</a> for a full list of serialization properties.</p>
+               <p>Influence the serialization of the result output. Serialization parameters are
+                  specified by name, preceded by a leading exclamation mark (!). This is equivalent
+                  to specifying the corresponding attribute on an <code>xsl:output</code>
+                  declaration in a stylesheet, or the corresponding output declaration in a query
+                  prolog.</p>
             </td>
          </tr>
          <tr>
@@ -478,13 +504,12 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
             </tr>
          </thead>
          <tr>
-            <td>'node'</td>
+            <td>'node'|'item'</td>
             <td>
                <code>setParameter("node", xdmNodeObj)</code>
             </td>
             <td>
-               <p>Sets the source document for the validation. We also accept the parameter names
-                  'item'.</p>
+               <p>Sets the source document for the validation.</p>
             </td>
          </tr>
          <tr>
@@ -493,9 +518,12 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
                <code>setParameter("numParam", value1)</code>
             </td>
             <td>
-               <p>Sets the value of external variable defined in the schema.</p>
+               <p>Sets the value of a Saxon extension parameter defined in the schema (see <a
+                     target="_blank"
+                     href="http://www.saxonica.com/documentation/index.html#!schema-processing/parameterizing-schemas"
+                     >Parameterizing Schemas</a> in the Saxon 9.9 documentation for more
+                  information).</p>
             </td>
-            <!-- TODO check -->
          </tr>
       </table>
 
@@ -516,14 +544,14 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
          <tr>
             <td>![serialization property]</td>
             <td>
-               <code>setProperty("!INDENT","yes")</code>
+               <code>setProperty("!indent","yes")</code>
             </td>
             <td>
-               <p>Influence the serialization of the result XML. Serialization properties are
-                  specified by name, preceded with an exclamation mark. See the Saxon 9.9 API
-                  documentation for the class <a class="code"
-                     href="http://saxonica.com/documentation/index.html#!javadoc/net.sf.saxon.s9api/Serializer/Property"
-                     >Serializer.Property</a> for a full list of serialization properties.</p>
+               <p>Influence the serialization of the result output. Serialization parameters are
+                  specified by name, preceded by a leading exclamation mark (!). This is equivalent
+                  to specifying the corresponding attribute on an <code>xsl:output</code>
+                  declaration in a stylesheet, or the corresponding output declaration in a query
+                  prolog.</p>
             </td>
          </tr>
          <tr>
