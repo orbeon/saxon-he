@@ -111,6 +111,7 @@
           values->addXdmItem((XdmItem*)processor->makeIntegerValue(6));
           values->addXdmItem((XdmItem*)processor->makeIntegerValue(7));
           xslt->setParameter("values",(XdmValue *)values);
+          XdmNode * input = processor->parseXmlFromFile("cat.xml");
           xslt->setInitialMatchSelection((XdmValue*)input);
           xslt->compileFromFile("test2.xsl");
           const char * rootValue = trans->callTemplateReturningString(NULL, "main");
