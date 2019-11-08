@@ -2,15 +2,15 @@
 <article id="about" title="About Saxon/C">
    <h1>About Saxon/C</h1>
 
-   <p>Saxon/C is a cross-compiled variant of Saxon from the Java platform to the C/C++ platform,
-      with extensions for PHP and Python. All features of Saxon have been ported, other than those
-      (such as collations) that are necessarily platform dependent. In particular, Saxon/C provides
-      processing in XSLT, XQuery and XPath, and Schema validation. It therefore makes these
-      processing capabilities available to a plethora of other languages that are strongly coupled
-      to C/C++ such as PHP, Perl, Python, and Ruby. (For instance, <a
+   <p>Saxon/C is a version of Saxon developed by cross-compiling the Java source code to executables
+      that run on the C/C++ platform, with extensions for PHP and Python. All features of Saxon have
+      been ported, other than those (such as collations) that are necessarily platform dependent. In
+      particular, Saxon/C provides processing in XSLT, XQuery and XPath, and Schema validation. It
+      therefore makes these processing capabilities available to a plethora of other languages that
+      are strongly coupled to C/C++ such as PHP, Perl, Python, and Ruby. (For instance, <a
          href="https://github.com/rimmartin/saxon-node" target="_blank">saxon-node</a> uses Saxon/C
       to create an interface with Node.js.) </p>
-   
+
    <!--<p>
       <figure>
          <img src="/doc/SaxonJSDiag.svg"/>

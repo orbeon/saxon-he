@@ -3,8 +3,7 @@
    <h1>Getting Started</h1>
 
    <p>This section of the documentation describes how to get hold of Saxon/C and the PHP and Python
-      extensions, how to install on the different platforms, and how to get started using it in your
-      application.</p>
+      extensions, how to install on the different platforms, and how to get started using it.</p>
 
    <nav>
       <ul/>
@@ -146,6 +145,59 @@
 
    </section>
 
+   <section id="licensing" title="Licensing">
+      <h1>Licensing</h1>
+
+      <h2 class="subtitle">Saxon-PE/C and Saxon-EE/C</h2>
+
+      <p>Saxon-PE/C and Saxon-EE/C are commercial products, and require a license key. By
+         downloading the software, you agree to the terms and conditions published at <a
+            target="_blank" href="https://saxonica.com/license/eval-license.pdf"
+            >https://saxonica.com/license/eval-license.pdf</a> (for use with a free <a
+            target="_blank" href="https://saxonica.com/download/download.xml">evaluation
+         license</a>) or <a target="_blank" href="https://saxonica.com/license/paid-license.pdf"
+            >https://saxonica.com/license/paid-license.pdf</a> (in the case of paid-up licenses,
+         purchased from our <a target="_blank" href="https://saxonica.com/shop/shop.html">online
+            store</a>).</p>
+
+      <h3>Location of the Saxon license file</h3>
+
+      <p>Saxon/C looks in the path relative to where the main library has been installed. For
+         example, in '/usr/lib' if this is where libsaxon[EDITION]c.so has been installed.
+         Alternatively, Saxon also looks for the license according to the environment variable
+         SAXONC_HOME, if this has been set.</p>
+      <!--<p>The license file can also be placed in the same directory as the stylesheet, but we advise
+         against this for PHP servers where the license might be compromised.</p>-->
+
+      <p>Alternatively a user can use the <code>licenseFileLocation</code> configuration property to
+         provide the license location (see the Saxon 9.9 documentation for details of this and other
+            <a href="https://saxonica.com/documentation/index.html#!configuration/config-features"
+            target="_blank">configuration features</a>). For example, to provide the
+            <code>licenseFileLocation</code> in PHP:</p>
+      <samp><![CDATA[$saxonProc = new Saxon\SaxonProcessor(true);
+$saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLocation", "/usr/lib/saxon-license.lic");]]></samp>
+
+      <h2 class="subtitle">Saxon-HE/C</h2>
+
+      <p>Saxon-HE/C is an open-source product. The primary license is the <a target="_blank"
+            href="https://www.mozilla.org/MPL/2.0/">Mozilla Public License version 2.0</a>. In most
+         cases, the source files are marked as being "incompatible with secondary licenses", which
+         means that the code cannot be combined with code issued under a GPL license (the reason for
+         this is the difficulty of contacting all past contributors to gain their assent).</p>
+      
+      <p>Some components are licensed under the Apache version 2.0 license or under BSD-style
+         licenses. For more information see the <a href="https://saxonica.com/license/license.xml"
+            target="_blank">Licenses</a> section on the main Saxonica website.</p>
+      
+      <p>Although Saxon/C technically adheres to the definition of open source software, there are
+         practical limitations. Specifically, the "Source Code Form" of the product, in the
+         terminology of the MPL license, consists primarily of Java source code, and in order to
+         build Saxon/C from the Java source code, you need access to the Excelsor JET development
+         tools, which are no longer commercially available to new users.</p>
+
+
+   </section>
+
    <section id="running" title="Running Saxon/C">
       <h1>Running Saxon/C</h1>
 
@@ -180,27 +232,26 @@
       <p>The 'samples/cppTest' directory in the download provides example code in C/C++ (and PHP and
          Python) which may also be helpful in learning how to use Saxon/C in your application. For
          further details see <a href="/samples/samples_c">Samples</a>.</p>
-      
+
       <p>There are many parameters and options that can be set to control the way in which Saxon
          behaves. For more information about setting configuration features on
-         <code>SaxonProcessor</code> and the other processors in Saxon/C, see <a
+            <code>SaxonProcessor</code> and the other processors in Saxon/C, see <a
             href="/configuration">Configuration</a>.</p>
 
-      <h2 class="subtitle">Commandline Interface</h2>
+      <h2 class="subtitle">Command Line Interface</h2>
 
-      <p>Saxon/C can be run from the commandline in a similar way to its Java counterpart. See the
+      <p>Saxon/C can be run from the command line in a similar way to its Java counterpart. See the
          files Transform.c and Query.c (and for Saxon-EE/C, Validate.c) in the directory 'command'.
-         The build.sh script can be executed to build the commandline programs.</p>
+         The build.sh script can be executed to build the command line programs.</p>
 
-      <p>To run Saxon/C from the commandline, the commands look like the following:</p>
+      <p>To run Saxon/C from the command line, the commands look like the following:</p>
 
       <kbd>./transform [options] [params]</kbd>
       <kbd>./query [options] [params]</kbd>
       <kbd>./validate [options] source.xml</kbd>
 
-      <p>The same commandline options as in the Java products are available in the Saxon/C
-         commandline tool. Please see the relevant sections of the Saxon 9.9 documentation for
-         details:</p>
+      <p>The same command line options as in the Java products are available in the Saxon/C command
+         line tool. Please see the relevant sections of the Saxon 9.9 documentation for details:</p>
 
       <ul>
          <li>
@@ -220,13 +271,16 @@
          </li>
       </ul>
 
-      
+
 
    </section>
 
 
    <section id="installingphp" title="PHP Extension">
       <h1>PHP Extension</h1>
+
+      <p>The PHP extension is an interface module that allows Saxon/C to be invoked from PHP
+         applications.</p>
 
       <h2 class="subtitle">Prerequisites</h2>
 
@@ -243,7 +297,7 @@
          href="https://saxonica.com/saxon-c/download/install.sh">install.sh</a> supplied by
          Petr Zak - written for a 64-bit machine, but can be changed for a 32-bit machine.)</p>-->
       <h3>Building with PHP7</h3>
-      <p>The PHP interface is in the form of a C/C++ PHP7 extension to Saxon/C created using the
+      <p>The PHP extension is in the form of a C/C++ PHP7 extension to Saxon/C created using the
          Zend module API.</p>
       <p>To install, run the following commands:</p>
       <kbd>cd /usr/lib/Saxonica/Saxon-[EDITION]C[VERSION]/Saxon-C-API/</kbd>
@@ -292,9 +346,9 @@
       <p>The PHP extension has not yet been built. It can be built using the PHP source. We hope to
          provide builds for PHP on Windows soon.</p>
 
-      <p>On Windows we recommend setting the cwd using the overloaded constructor because there
-         remains an issue with building Saxon/C with PHP when using the function VCWD_GETCWD. That
-         is,</p>
+      <p>On Windows we recommend setting the current working directory using the single-argument
+         version of the <code>SaxonProcessor</code> constructor, because there remains an issue with
+         building Saxon/C with PHP when using the function VCWD_GETCWD. That is,</p>
 
       <samp><![CDATA[$proc = new SaxonProcessor('C://www/html//trax//');]]></samp>
 
@@ -308,6 +362,9 @@
 
    <section id="installingpython" title="Python Extension">
       <h1>Python Extension</h1>
+
+      <p>The Python extension is an interface module that allows Saxon/C to be invoked from Python
+         applications.</p>
 
       <h2 class="subtitle">Prerequisites</h2>
 
@@ -324,56 +381,72 @@
       <h2 class="subtitle">Installing</h2>
 
       <p>The Python extension is held in the directory 'Saxon.C.API/python-saxon'. The Python
-         extension on the Linux and Mac OS platforms can be built using the following command (with
-         a similar command on Windows): </p>
+         extension on the Linux and Mac OS platforms can be built using the following command:</p>
 
       <kbd>python3 saxon-setup.py build_ext -if</kbd>
 
-   </section>
+      <p>Similarly, on Windows use the following command:</p>
 
-   <section id="licensing" title="Licensing">
-      <h1>Licensing</h1>
-
-      <h2 class="subtitle">Saxon-PE/C and Saxon-EE/C</h2>
-
-      <p>Saxon-PE/C and Saxon-EE/C are commercial products, and require a license key. By
-         downloading the software, you agree to the terms and conditions published at <a
-            target="_blank" href="https://saxonica.com/license/eval-license.pdf"
-            >https://saxonica.com/license/eval-license.pdf</a> (for use with a free <a
-            target="_blank" href="https://saxonica.com/download/download.xml">evaluation
-         license</a>) or <a target="_blank" href="https://saxonica.com/license/paid-license.pdf"
-            >https://saxonica.com/license/paid-license.pdf</a> (in the case of paid-up licenses,
-         purchased from our <a target="_blank" href="https://saxonica.com/shop/shop.html">online
-            store</a>).</p>
-
-      <h3>Location of the Saxon license file</h3>
-
-      <p>Saxon/C looks in the path relative to where the main library has been installed. For
-         example, in '/usr/lib' if this is where libsaxon[EDITION]c.so has been installed.
-         Alternatively, Saxon also looks for the license according to the environment variable
-         SAXONC_HOME, if this has been set. The license file can also be placed in the same
-         directory as the stylesheet, but we advise against this for PHP servers where the license
-         might be compromised. </p>
-
-      <p>Alternatively a user can use the <code>licenseFileLocation</code> configuration property to
-         provide the license location (see the Saxon 9.9 documentation for details of this and other
-            <a href="https://saxonica.com/documentation/index.html#!configuration/config-features"
-            target="_blank">configuration features</a>). For example, to provide the
-            <code>licenseFileLocation</code> in PHP:</p>
-      <samp><![CDATA[$saxonProc = new Saxon\SaxonProcessor(true);
-$saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLocation", "/usr/lib/saxon-license.lic");]]></samp>
-
-      <h2 class="subtitle">Saxon-HE/C</h2>
-
-      <p>Saxon-HE/C is an open-source product. The primary license is the <a target="_blank"
-            href="https://www.mozilla.org/MPL/2.0/">Mozilla Public License version 2.0</a>. In most
-         cases, the source files are marked as being "incompatible with secondary licenses", which
-         means that the code cannot be combined with code issued under a GPL license (the reason for
-         this is the difficulty of contacting all past contributors to gain their assent).</p>
-      <p>Some components are licensed under the Apache version 2.0 license or under BSD-style
-         licenses. For more information see the <a href="https://saxonica.com/license/license.xml"
-            target="_blank">Licenses</a> section on the main Saxonica website.</p>
-
+      <kbd>python3 saxon-setup.py build_ext -if</kbd>
+      <!-- TODO -->
 
    </section>
+   
+   <section id="troubleshooting" title="Troubleshooting">
+      <h1>Troubleshooting</h1>
+      
+      <p>After installing Saxon/C, if you notice anomalies in execution, then the apache log file
+         usually has useful information on errors reported and crashes. See below for a description
+         of some of the common errors and crashes, and their solutions:</p>
+      <ul>
+         <li>
+            <p>
+               <code>FATAL ERROR: Unable to load /usr/lib64/rt/lib/amd64/libjava.so (libjvm.so
+                  cannot open shared object file: No such file or directory) JNI_CreateJavaVM()
+                  failed with result-1</code>
+            </p>
+            <p><b>Solution:</b> Running the following command should resolve the error:</p>
+            <kbd>sudo ldconfig</kbd>
+            <p>Alternatively create a symlink to the java virtual machine. This is not required to
+               install or compile, but it is required for PHP code. The following command should
+               resolve the issue on a 64-bit machine:</p>
+            <kbd>ln -s $JAVA_HOME/jre/lib/amd64/server/libjvm.so /lib64/libjvm.so<br/></kbd>
+            <p>Alternatively, it is possible to link the libjvm.so from the 'rt/lib/jetjvm'
+               directory.</p>
+         </li>
+         <li>
+            <p>
+               <code>/usr/lib/Saxon-C-API/SaxonProcessor.h:3:17: fatal error: jni.h: No such file or
+                  directory <br/>#include &lt;jni.h&gt; compilation terminated.</code>
+            </p>
+            <p><b>Solution:</b> Link the jni.h on the machine or simply install gcj-jdk which should
+               resolve this error. </p>
+         </li>
+         <li>
+            <p>
+               <code>PHP Warning: PHP Startup: Unable to load dynamic library
+                  '/usr/lib/php/modules/saxon.so' - libsaxonhec.so: cannot enable executable stack
+                  as shared object requires: Permission denied in Unknown on line 0</code>
+            </p>
+            <p><b>Solution:</b> This has been observed on centos systems: SELinux is
+               enforced/enabled.</p>
+            <p>Run the following command to show the security setting for the library files:</p>
+            <kbd>ls -alZ /usr/lib" and 'ls -alZ /usr/lib/php/module/</kbd>
+            <p>Then run the following commands or similar to change the security context:</p>
+            <kbd>chcon system_u:object_r:lib_t:s0 /usr/lib/libsaxonhec.so</kbd>
+            <kbd>chcon system_u:object_r:lib_t:s0 /usr/lib/php/modules/saxon.so</kbd>
+         </li>
+         <li>
+            <p>Some 64-bit Linux flavors do not run the 32-bit JET libraries by default.</p>
+            <p><b>Solution:</b> For instance, <code>ia32-libs</code> must be installed on
+               Ubuntu/Debian, e.g. using the following command:<br/>
+            </p>
+            <kbd>sudo apt-get install ia32-libs</kbd>
+         </li>
+      </ul>
+      
+      
+   </section>
+
+
 </article>

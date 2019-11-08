@@ -29,7 +29,7 @@
          /System/Library/Frameworks/JavaVM.framework/Headers ../SaxonCGlue.c ../SaxonCProcessor.c
          ../SaxonCXPath.c testXSLT.c -o testXSLT -ldl -lc $1</kbd>
       
-      <p>To run the executables from the commandline, use a command such as:</p>
+      <p>To run the executables from the command line, use a command such as:</p>
       
       <kbd>./testXSLT</kbd>
 
@@ -53,7 +53,7 @@
          ../bin/XPathProcessor.o ../bin/XdmValue.o ../bin/XdmItem.o ../bin/XdmNode.o
          ../bin/XdmAtomicValue.o ../bin/SchemaValidator.o testXSLT.cpp -o testXSLT -ldl -lc</kbd>
 
-      <p>The executables created for Linux and Mac OS can be run from the commandline using the
+      <p>The executables created for Linux and Mac OS can be run from the command line using the
          follow commands:</p>
 
       <kbd>./testXSLT</kbd>
@@ -62,7 +62,7 @@
       <kbd>./testXPath</kbd>
       <kbd>./testValidator</kbd>
 
-      <p>Similarly on Windows the .exe files created can be run from the commandline using the
+      <p>Similarly on Windows the .exe files created can be run from the command line using the
          following commands:</p>
       
       <kbd>testXSLT.exe</kbd>
