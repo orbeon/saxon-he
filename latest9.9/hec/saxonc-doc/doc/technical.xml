@@ -39,85 +39,95 @@
          >support@saxonica.com</a>.</p>
 
 
-    <section id="debugging" title="Debugging">
-        <h1>Debuggin</h1>
+   <section id="debugging" title="Debugging">
+      <h1>Debugging</h1>
 
-        <p>Exceptions and errors are captured and maintained silently in Saxon/C, but can be accessed. This is due to the restrictions in JNI: "There is no uniform and general
-            way to throw and catch exceptions in native languages compared to Java. The JNI therefore requires you to check for possible
-                    exceptions after
-                    calling JNI functions". <br/><br/>Any exceptions or errors found in a Saxon/C method can be retrieved
-                    by the method call 'getErrorMessage(<i>n</i>)', where <i>n</i> is an index number
-                    referring to the <i>n</i>th error message.
-                    The method getErrorCount() gets the total number of errors reported, which helps to
-                    loop through the errors if there are more than one of them. Please see the following PHP code snippet:</p>
+      <p>Exceptions and errors are captured and maintained silently in Saxon/C, but can be accessed.
+         This is due to the restrictions in JNI: "There is no uniform and general way to throw and
+         catch exceptions in native languages compared to Java. The JNI therefore requires you to
+         check for possible exceptions after calling JNI functions".</p>
 
-                <pre class="codeblock"><![CDATA[<?php
-            ...
-            $result = $query->runQueryToString();
-            if($result == NULL) {
-                $errCount = $query->getExceptionCount();
-                if($errCount > 0 ){
-                    for ($i = 0; $i &lt; $errCount; $i++) {
-                        $errC = $query->getErrorCode(intval(i));
-                        $errMessage = $query->getErrorMessage(intval(i));
-                        if($errC != NULL) {
-                            echo 'Error found: '. $errC.' :'.$errMessage;
-                        }
-                        $query->exceptionClear();
-                    }
-                }
-            }
-            ...
-        ?>]]></pre>
+      <p>Any exceptions or errors found in a Saxon/C method can be retrieved by the method call
+               <code>getErrorMessage(<i>n</i>)</code>, where <i>n</i> is an index number referring
+         to the <i>n</i>th error message. The method <code>getErrorCount()</code> gets the total
+         number of errors reported, which helps to loop through the errors if there is more than one
+         of them. For example, see the following PHP code snippet:</p>
 
-    </section>
+      <samp><![CDATA[<?php
+  ...
+  $result = $query->runQueryToString();
+  if($result == NULL) {
+    $errCount = $query->getExceptionCount();
+    if($errCount > 0 ){
+      for ($i = 0; $i &lt; $errCount; $i++) {
+        $errC = $query->getErrorCode(intval(i));
+        $errMessage = $query->getErrorMessage(intval(i));
+        if($errC != NULL) {
+          echo 'Error found: '. $errC.' :'.$errMessage;
+        }
+        $query->exceptionClear();
+      }
+    }
+  }
+  ...
+?>]]></samp>
 
-    <section id="troubleshooting" title="Troubleshooting">
-        <h1>Troubleshooting</h1>
+   </section>
 
-        <p>After installing Saxon/C, if you notice anomalies in execution then the apache log file usually has useful information on errors
-                    reported and crashes. We try to best describe some of the common errors and crashes, and their solutions, below: </p>
-                <ul>
-                    <li>
-                        <p><code>FATAL ERROR: Unable to load /usr/lib64/rt/lib/amd64/libjava.so (libjvm.so cannot open shared object file:
-                            No such file or directory) JNI_CreateJavaVM() failed with result-1</code>    </p>
-                        <i>Solution:</i>
-                        Run the following command should resolve the error: "$ sudo ldconfig".
-                        Alternatively create a symlink to java virtual machine. This is not required to install/compile,
-                        but it is required for PHP code.
-                        The following should resolve the issue on a 64-bit machine:
-                        <code><br/>ln -s  $JAVA_HOME/jre/lib/amd64/server/libjvm.so /lib64/libjvm.so<br/></code>
-                        Alternatively, it is possible to link the libjvm.so from the rt/lib/jetjvm directory.
-                    </li>
-                    <li>
-                        <p><code>/usr/lib/Saxon-C-API/SaxonProcessor.h:3:17: fatal error: jni.h: No such
-                            file or directory <br/>#include &lt;jni.h&gt; compilation terminated.</code></p>
-                        <i>Solution:</i>
-                        Link the jni.h on the machine or simply install gcj-jdk which should resolve this error.
-                    </li>
-                    <li>
-                        <p><code>PHP Warning:  PHP Startup: Unable to load dynamic library
-                            '/usr/lib/php/modules/saxon.so' - libsaxonhec.so: cannot enable executable
-                            stack as shared object requires: Permission denied in Unknown on line 0</code>
-                        </p>
-                        <i>Solution:</i>
-                        Observed this on centos systems: SELinux is enforced/enabled<br/>
-                        Run the command: "ls -alZ /usr/lib" and  'ls -alZ /usr/lib/php/module/"<br/>
-                        This is to show up the security setting for the library files. Run the following
-                        commands or similar to change the security context:<br/>
-                        chcon system_u:object_r:lib_t:s0 /usr/lib/libsaxonhec.so<br/>
-                        chcon system_u:object_r:lib_t:s0 /usr/lib/php/modules/saxon.so
+   <section id="troubleshooting" title="Troubleshooting">
+      <h1>Troubleshooting</h1>
 
-                    </li>
-                    <li>
-                        <p>Some 64-bit Linux flavors do not run the 32-bit JET libraries by default.</p>
-                        <i>Solution:</i>
-                        For instance, <code>ia32-libs</code> must be installed on Ubuntu/Debian, using:<br/>
-                        <code>sudo apt-get install ia32-libs</code>
-                    </li>
-                </ul>
+      <p>After installing Saxon/C, if you notice anomalies in execution, then the apache log file
+         usually has useful information on errors reported and crashes. See below for a description
+         of some of the common errors and crashes, and their solutions:</p>
+      <ul>
+         <li>
+            <p>
+               <code>FATAL ERROR: Unable to load /usr/lib64/rt/lib/amd64/libjava.so (libjvm.so
+                  cannot open shared object file: No such file or directory) JNI_CreateJavaVM()
+                  failed with result-1</code>
+            </p>
+            <p><b>Solution:</b> Running the following command should resolve the error:</p>
+            <kbd>sudo ldconfig</kbd>
+            <p>Alternatively create a symlink to the java virtual machine. This is not required to
+               install or compile, but it is required for PHP code. The following command should
+               resolve the issue on a 64-bit machine:</p>
+            <kbd>ln -s $JAVA_HOME/jre/lib/amd64/server/libjvm.so /lib64/libjvm.so<br/></kbd>
+            <p>Alternatively, it is possible to link the libjvm.so from the 'rt/lib/jetjvm'
+               directory.</p>
+         </li>
+         <li>
+            <p>
+               <code>/usr/lib/Saxon-C-API/SaxonProcessor.h:3:17: fatal error: jni.h: No such file or
+                  directory <br/>#include &lt;jni.h&gt; compilation terminated.</code>
+            </p>
+            <p><b>Solution:</b> Link the jni.h on the machine or simply install gcj-jdk which should
+               resolve this error. </p>
+         </li>
+         <li>
+            <p>
+               <code>PHP Warning: PHP Startup: Unable to load dynamic library
+                  '/usr/lib/php/modules/saxon.so' - libsaxonhec.so: cannot enable executable stack
+                  as shared object requires: Permission denied in Unknown on line 0</code>
+            </p>
+            <p><b>Solution:</b> This has been observed on centos systems: SELinux is
+               enforced/enabled.</p>
+            <p>Run the following command to show the security setting for the library files:</p>
+            <kbd>ls -alZ /usr/lib" and 'ls -alZ /usr/lib/php/module/</kbd>
+            <p>Then run the following commands or similar to change the security context:</p>
+            <kbd>chcon system_u:object_r:lib_t:s0 /usr/lib/libsaxonhec.so</kbd>
+            <kbd>chcon system_u:object_r:lib_t:s0 /usr/lib/php/modules/saxon.so</kbd>
+         </li>
+         <li>
+            <p>Some 64-bit Linux flavors do not run the 32-bit JET libraries by default.</p>
+            <p><b>Solution:</b> For instance, <code>ia32-libs</code> must be installed on
+               Ubuntu/Debian, e.g. using the following command:<br/>
+               </p>
+            <kbd>sudo apt-get install ia32-libs</kbd>
+         </li>
+      </ul>
 
 
-    </section>
+   </section>
 
 </article>
