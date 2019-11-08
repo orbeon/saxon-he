@@ -36,8 +36,8 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
       <ul/>
    </nav>
 
-   <section id="xslt" title="XSLT processors">
-      <h1>XSLT processors</h1>
+   <section id="xslt" title="XSLT Processors">
+      <h1>XSLT Processors</h1>
 
       <p>Details about parameters and properties which can be set on an <code>XsltProcessor</code>
          or <code>Xslt30Processor</code>.</p>
@@ -209,8 +209,8 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
       </table>
    </section>
 
-   <section id="xquery" title="XQuery processor">
-      <h1>XQuery processor</h1>
+   <section id="xquery" title="XQuery Processor">
+      <h1>XQuery Processor</h1>
 
       <p>Details about parameters and properties which can be set on an
          <code>XQueryProcessor</code>.</p>
@@ -368,8 +368,8 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
       </table>
    </section>
 
-   <section id="xpath" title="XPath processor">
-      <h1>XPath processor</h1>
+   <section id="xpath" title="XPath Processor">
+      <h1>XPath Processor</h1>
 
       <p>Details about parameters and properties which can be set on an
          <code>XPathProcessor</code>.</p>
