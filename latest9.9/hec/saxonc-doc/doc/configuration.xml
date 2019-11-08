@@ -62,7 +62,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
                   supplied.</p>
             </td>
          </tr>
-         <tr>
+         <!--<tr>
             <td>'item'</td>
             <td>
                <code>setParameter("item", xdmItemObj)</code>
@@ -74,7 +74,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
                      <code>XdmNode</code>, then this sets the source document (i.e. "item" works in
                   the same way as "node" above).</p>
             </td>
-         </tr>
+         </tr>-->
          <tr>
             <td>[parameter name]</td>
             <td>
@@ -233,7 +233,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
                <p>Sets the context item for the query to the <code>XdmNode</code> supplied.</p>
             </td>
          </tr>
-         <tr>
+         <!--<tr>
             <td>'item'</td>
             <td>
                <code>setParameter("item", xdmItemObj)</code>
@@ -241,7 +241,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
             <td>
                <p>Sets the context item for the query to the <code>XdmItem</code> supplied.</p>
             </td>
-         </tr>
+         </tr>-->
          <tr>
             <td>[parameter name]</td>
             <td>
@@ -270,7 +270,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
          <tr>
             <td>![serialization property]</td>
             <td>
-               <code>setProperty("!indent","yes")</code>
+               <code>setProperty("!indent", "yes")</code>
             </td>
             <td>
                <p>Influence the serialization of the result output. Serialization parameters are
@@ -331,8 +331,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
                <code>setProperty("s", "filename")</code>
             </td>
             <td>
-               <p>Identifies the source file or directory. Mandatory unless the -it option is
-                  used.</p>
+               <p>Identifies the source file or directory.</p>
             </td>
          </tr>
          <tr>
@@ -393,7 +392,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
                   supplied.</p>
             </td>
          </tr>
-         <tr>
+         <!--<tr>
             <td>'item'</td>
             <td>
                <code>setParameter("item", xdmItemObj)</code>
@@ -402,7 +401,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
                <p>Sets the context item for the XPath expression to the <code>XdmItem</code>
                   supplied.</p>
             </td>
-         </tr>
+         </tr>-->
          <tr>
             <td>[parameter name]</td>
             <td>
@@ -427,7 +426,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
          <tr>
             <td>![serialization property]</td>
             <td>
-               <code>setProperty("!indent","yes")</code>
+               <code>setProperty("!indent", "yes")</code>
             </td>
             <td>
                <p>Influence the serialization of the result output. Serialization parameters are
@@ -462,8 +461,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
                <code>setProperty("s", "filename")</code>
             </td>
             <td>
-               <p>Identifies the source file or directory. Mandatory unless the -it option is
-                  used.</p>
+               <p>Identifies the source file or directory.</p>
             </td>
          </tr>
          <tr>
@@ -506,7 +504,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
             </tr>
          </thead>
          <tr>
-            <td>'node'|'item'</td>
+            <td>'node'</td>
             <td>
                <code>setParameter("node", xdmNodeObj)</code>
             </td>
@@ -546,7 +544,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
          <tr>
             <td>![serialization property]</td>
             <td>
-               <code>setProperty("!indent","yes")</code>
+               <code>setProperty("!indent", "yes")</code>
             </td>
             <td>
                <p>Influence the serialization of the result output. Serialization parameters are
@@ -591,8 +589,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
                <code>setProperty("s", "filename")</code>
             </td>
             <td>
-               <p>Identifies the source file or directory. Mandatory unless the -it option is
-                  used.</p>
+               <p>Identifies the source file or directory.</p>
             </td>
          </tr>
          <tr>
