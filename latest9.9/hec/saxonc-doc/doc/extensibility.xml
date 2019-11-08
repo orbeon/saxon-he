@@ -3,14 +3,34 @@
    <h1>Extension Functions in C++/PHP</h1>
 
    <p>This section describes how to extend the capability of Saxon XSLT stylesheets and XQuery
-      queries by adding user written extension functions in the C++ and PHP languages.</p>
-
+      queries by adding user written extension functions in the C++ and PHP languages. It is not
+      currently possible to write extension functions in Python.</p>
+   
    <nav>
       <ul/>
    </nav>
 
-   <section id="extensions_cpp" title="Writing Extension functions in C++">
-      <h1>Writing Extension functions in C++</h1>
+   <p>Extension functions allow code written in a host programming language such as C++ to be
+      invoked directly from a function call in an XPath expression (whether in XSLT, XQuery, or pure
+      XPath). For this to work, (a) the Saxon processor needs to be able to locate the executable
+      code corresponding to a particular function name, and (b) function arguments need to be
+      converted from the XDM type system to the host language type system, with the opposite
+      conversion applied to the function result.</p>
+
+   <p>XSLT, XQuery, and XPath are functional languages where it is assumed that functions do not
+      have side effects. Saxon cannot stop you calling extension functions that have side effects,
+      but the effect of doing so is not always guaranteed. For example, the optimizer might
+      eliminate a call to an extension function whose results are never used, or it might execute
+      calls to extension functions in an unexpected order.</p>
+
+   <p>Allowing untrusted stylesheets or queries to call extension functions is a potential security
+      risk. Stylesheets and queries will only be able to call extension functions that have been
+      explicitly registered by the application; it is the responsibility of the application designer
+      to ensure that this does not create vulnerabilities.</p>
+   
+
+   <section id="extensions_cpp" title="Writing Extension Functions in C++">
+      <h1>Writing Extension Functions in C++</h1>
 
       <p>A full example of the use of extension functions can be found in the files
          cppExtensionFunction.cpp and testXSLT.cpp in the directory 'samples/cppTest'. This sample
@@ -97,8 +117,8 @@ void testTransformToStringExtensionFunc(SaxonProcessor * processor, XsltProcesso
 
    </section>
 
-   <section id="extensions_php" title="Writing Extension functions in PHP">
-      <h1>Writing Extension functions in PHP</h1>
+   <section id="extensions_php" title="Writing Extension Functions in PHP">
+      <h1>Writing Extension Functions in PHP</h1>
 
       <p>An example of the use of extension functions can be found in the sample file
          xsltExamples.php in the directory 'samples/php'. The example registers a user written PHP
