@@ -297,7 +297,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
                <code>setProperty("q", "filename")</code>
             </td>
             <td>
-               <code>Identifies the file containing the query.</code>
+               <p>Identifies the file containing the query.</p>
             </td>
          </tr>
          <tr>

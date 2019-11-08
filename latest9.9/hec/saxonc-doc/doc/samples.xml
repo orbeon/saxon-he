@@ -4,8 +4,8 @@
 
    <p>This section of the documentation describes some example code in C/C++, PHP and Python to help
       get started using Saxon/C. A number of samples and unit test code for C/C++ and PHP can be
-      found in the 'samples' directory of the Saxon/C installation. Samples and unit tests for
-      Python can be found in the 'Saxon.C.API/python-saxon' directory.</p>
+      found in the <code>samples</code> directory of the Saxon/C installation. Samples and unit
+      tests for Python can be found in the <code>Saxon.C.API/python-saxon</code> directory.</p>
 
    <nav>
       <ul/>
@@ -16,14 +16,15 @@
 
       <h2 class="subtitle">C programming</h2>
 
-      <p>The 'samples/cTests' directory in the Saxon/C download contains the test harnesses for
-         XSLT, XQuery and XPath in C code, along with the build and run scripts. These tests provide
-         various examples of the use of the Saxon/C API.</p>
+      <p>The <code>samples/cTests</code> directory in the Saxon/C download contains the test
+         harnesses for XSLT, XQuery and XPath in C code, along with the build and run scripts. These
+         tests provide various examples of the use of the Saxon/C API.</p>
 
-      <p>To build Saxon/C on C, the following files are required: SaxonCGlue.c, SaxonXProcessor.c
-         and SaxonCXPath.c. To compile the sample test code in C execute the 'build.sh' file in the
-         'samples/cTests' directory. This script builds the test harness executables, using a
-         command similar to the following:</p>
+      <p>To build Saxon/C on C, the following files are required: <code>SaxonCGlue.c</code>,
+            <code>SaxonXProcessor.c</code> and <code>SaxonCXPath.c</code>. To compile the sample
+         test code in C execute the <code>build.sh</code> file in the <code>samples/cTests</code>
+         directory. This script builds the test harness executables, using a command similar to the
+         following:</p>
 
       <kbd>gcc -m32 -I$jdkdir/include -I$jdkdir/include/linux -I
          /System/Library/Frameworks/JavaVM.framework/Headers ../SaxonCGlue.c ../SaxonCProcessor.c
@@ -36,17 +37,20 @@
 
       <h2 class="subtitle">C++ programming</h2>
 
-      <p>The 'samples/cppTests' directory in the Saxon/C download contains the test harnesses for
-         XSLT, XQuery, XPath and Schema Validation in C++ code, along with the build and run
-         scripts. These tests provide various examples of the use of the Saxon/C API.</p>
+      <p>The <code>samples/cppTests</code> directory in the Saxon/C download contains the test
+         harnesses for XSLT, XQuery, XPath and Schema Validation in C++ code, along with the build
+         and run scripts. These tests provide various examples of the use of the Saxon/C API.</p>
 
-      <p>To build Saxon/C on C++, the following files are required: SaxonCGlue.c, SaxonCXPath.c,
-         XdmValue.cpp, XdmItem.cpp, XdmNode.cpp, XdmAtomicValue.cpp, SaxonProcessor.cpp,
-         XsltProcessor.cpp, Xslt30Processor.cpp, XQueryProcessor.cpp, XPathProcessor.cpp and
-         SchemaValidator.cpp. To compile the sample test code in C++ execute the
-         'build64-[PLATFORM].sh' file in the 'samples/cTests' directory for Linux and Mac OS, or the
-         'buildCPPSaxon[EDITION].bat' file for Windows. These build files build the test harness
-         executables, using a command similar to the following:</p>
+      <p>To build Saxon/C on C++, the following files are required: <code>SaxonCGlue.c</code>,
+            <code>SaxonCXPath.c</code>, <code>XdmValue.cpp</code>, <code>XdmItem.cpp</code>,
+            <code>XdmNode.cpp</code>, <code>XdmAtomicValue.cpp</code>,
+            <code>SaxonProcessor.cpp</code>, <code>XsltProcessor.cpp</code>,
+            <code>Xslt30Processor.cpp</code>, <code>XQueryProcessor.cpp</code>,
+            <code>XPathProcessor.cpp</code> and <code>SchemaValidator.cpp</code>. To compile the
+         sample test code in C++ execute the <code>build64-[PLATFORM].sh</code> file in the
+            <code>samples/cTests</code> directory for Linux and Mac OS, or the
+            <code>buildCPPSaxon[EDITION].bat</code> file for Windows. These build files build the
+         test harness executables, using a command similar to the following:</p>
 
       <kbd>g++ -m32 ../bin/SaxonCGlue.o ../bin/SaxonCXPath.o ../bin/SaxonProcessor.o
          ../bin/XQueryProcessor.o ../bin/XsltProcessor.o, ../bin/Xslt30Processor.o
@@ -62,8 +66,8 @@
       <kbd>./testXPath</kbd>
       <kbd>./testValidator</kbd>
 
-      <p>Similarly on Windows the .exe files created can be run from the command line using the
-         following commands:</p>
+      <p>Similarly on Windows the <code>.exe</code> files created can be run from the command line
+         using the following commands:</p>
 
       <kbd>testXSLT.exe</kbd>
       <kbd>testXSLT30.exe</kbd>
@@ -144,13 +148,14 @@ queryProc->runQueryToString();
    <section id="samples_php" title="PHP Samples">
       <h1>PHP Samples</h1>
 
-      <p>The 'samples/php' directory in the Saxon/C download contains various samples for XSLT,
-         XQuery, XPath and Schema Validation (namely: xsltExamples.php, xslt30Examples.php,
-         xqueryExamples.php, xpathExamples.php, and validatorExamples.php) and associated files, as
-         well as PHP unit tests for XSLT (xslt30_PHPUnit.php). These files contain many useful
-         examples which will help get you started. The unit tests run under PHPUnit for PHP 7.2
-         which can be downloaded and installed separately in the same directory as the unit
-         tests.</p>
+      <p>The <code>samples/php</code> directory in the Saxon/C download contains various samples for
+         XSLT, XQuery, XPath and Schema Validation (namely: <code>xsltExamples.php</code>,
+            <code>xslt30Examples.php</code>, <code>xqueryExamples.php</code>,
+            <code>xpathExamples.php</code>, and <code>validatorExamples.php</code>) and associated
+         files, as well as PHP unit tests for XSLT (<code>xslt30_PHPUnit.php</code>). These files
+         contain many useful examples which will help get you started. The unit tests run under
+         PHPUnit for PHP 7.2 which can be downloaded and installed separately in the same directory
+         as the unit tests.</p>
 
       <p>To run the PHP unit tests for XSLT, use a command such as:</p>
       <kbd>cd samples/php</kbd>
@@ -195,7 +200,7 @@ queryProc->runQueryToString();
 ?> ]]></samp>
 
       <p>The following example shows how to debug if something unexpected is happening. It is also
-         very useful to examine the apache error.log file:</p>
+         very useful to examine the apache <code>error.log</code> file:</p>
 
       <samp><![CDATA[<?php
   $xmlfile = "xml/foo.xml";
@@ -225,19 +230,19 @@ queryProc->runQueryToString();
    <section id="samples_python" title="Python Samples">
       <h1>Python Samples</h1>
 
-      <p>The 'Saxon.C.API/python-saxon' directory in the Saxon/C download includes the unit test
-         files test_saxonc.py and test_saxon_Schema.py, which contain a collection of Python unit
-         test cases to be run with the pytest framework. The pyunit tests can be run with the
-         following command:</p>
+      <p>The <code>Saxon.C.API/python-saxon</code> directory in the Saxon/C download includes the
+         unit test files <code>test_saxonc.py</code> and <code>test_saxon_Schema.py</code>, which
+         contain a collection of Python unit test cases to be run with the pytest framework. The
+         pyunit tests can be run with the following command:</p>
 
       <kbd>cd Saxon.C.API/python-saxon</kbd>
       <kbd>pytest test_saxonc.py</kbd>
 
-      <p>To help get started with Saxon/C and Python, the 'Saxon.C.API/python-saxon' directory also
-         includes some python example scripts: saxon_example.py, saxon_example2.py and
-         saxon_example3.py.</p>
+      <p>To help get started with Saxon/C and Python, the <code>Saxon.C.API/python-saxon</code>
+         directory also includes some python example scripts: <code>saxon_example.py</code>,
+            <code>saxon_example2.py</code> and <code>saxon_example3.py</code>.</p>
 
-      <p>Example Python script with Saxon/C API:</p>
+      <p>Example Python script using the Saxon/C API:</p>
 
       <samp><![CDATA[with saxonc.PySaxonProcessor(license=False) as proc:
 

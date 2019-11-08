@@ -5,7 +5,7 @@
    <p>This section describes how to extend the capability of Saxon XSLT stylesheets and XQuery
       queries by adding user written extension functions in the C++ and PHP languages. It is not
       currently possible to write extension functions in Python.</p>
-   
+
    <nav>
       <ul/>
    </nav>
@@ -27,15 +27,16 @@
       risk. Stylesheets and queries will only be able to call extension functions that have been
       explicitly registered by the application; it is the responsibility of the application designer
       to ensure that this does not create vulnerabilities.</p>
-   
+
 
    <section id="extensions_cpp" title="Writing Extension Functions in C++">
       <h1>Writing Extension Functions in C++</h1>
 
       <p>A full example of the use of extension functions can be found in the files
-         cppExtensionFunction.cpp and testXSLT.cpp in the directory 'samples/cppTest'. This sample
-         test registers a user written C++ extension function called "userFunction", which is then
-         called from an XSLT stylesheet by calling the <code>saxon:native()</code> function.</p>
+            <code>cppExtensionFunction.cpp</code> and <code>testXSLT.cpp</code> in the
+            <code>samples/cppTest</code> directory. This sample test registers a user written C++
+         extension function called "userFunction", which is then called from an XSLT stylesheet by
+         calling the <code>saxon:native()</code> function.</p>
 
       <h2 class="subtitle">Calling extension functions from XSLT and XQuery</h2>
 
@@ -45,7 +46,7 @@
             <code>xs:string</code>, and the arguments to the function, supplied as an XDM array.</p>
 
       <p>For instance, the C++ "userFunction" extension function is called from the XSLT stylesheet
-         testExtension.xsl as shown in the following code snippet:</p>
+            <code>testExtension.xsl</code> as shown in the following code snippet:</p>
 
       <samp><![CDATA[<xsl:variable name="args" select="['param1-data', .]"/>
 <xsl:variable name="resultVar" select="saxon:native('userFunction', $args)"/>]]></samp>
@@ -56,15 +57,16 @@
          containing this function.</p>
 
       <p>For instance, to compile the "userFunction" extension function defined in
-         cppExtensionFunction.cpp, and create a corresponding extension function library containing
-         this function, use the following commands:</p>
+            <code>cppExtensionFunction.cpp</code>, and create a corresponding extension function
+         library containing this function, use the following commands:</p>
 
       <kbd>g++ -fPIC -shared -m64 cppExtensionFunction.cpp -o bin/cppExtensionFunction.o</kbd>
       <kbd>g++ -m64 -shared -Wl,-soname,cppExtensionFunction.so -o cppExtensionFunction.so
          bin/cppExtensionFunction.o</kbd>
 
-      <p>The C++ code below (taken from testXSLT.cpp) shows how to register this extension function
-         library, before running the testExtension.xsl stylesheet, using the C++ API:</p>
+      <p>The C++ code below (taken from <code>testXSLT.cpp</code>) shows how to register this
+         extension function library, before running the testExtension.xsl stylesheet, using the C++
+         API:</p>
 
       <samp><![CDATA[char fname[] = "_nativeCall";
 char funcParameters[] = "(Ljava/lang/String;[Ljava/lang/Object;[Ljava/lang/String;)Ljava/lang/Object;";
@@ -108,7 +110,7 @@ void testTransformToStringExtensionFunc(SaxonProcessor * processor, XsltProcesso
 }
 ]]></samp>
 
-      <p>To run the testXSLT.cpp sample, use the following command:</p>
+      <p>To run the <code>testXSLT.cpp</code> sample, use the following command:</p>
 
       <kbd>g++ -m64 bin/SaxonCGlue.o bin/SaxonCXPath.o bin/SaxonProcessor.o bin/XQueryProcessor.o
          bin/XsltProcessor.o bin/Xslt30Processor.o bin/XPathProcessor.o bin/XdmValue.o bin/XdmItem.o
@@ -121,9 +123,9 @@ void testTransformToStringExtensionFunc(SaxonProcessor * processor, XsltProcesso
       <h1>Writing Extension Functions in PHP</h1>
 
       <p>An example of the use of extension functions can be found in the sample file
-         xsltExamples.php in the directory 'samples/php'. The example registers a user written PHP
-         extension function called "userFunction", which is then called from an XSLT stylesheet by
-         calling the <code>php:function()</code> function.</p>
+            <code>xsltExamples.php</code> in the <code>samples/php</code> directory. The example
+         registers a user written PHP extension function called "userFunction", which is then called
+         from an XSLT stylesheet by calling the <code>php:function()</code> function.</p>
 
       <h2 class="subtitle">Calling extension functions from XSLT and XQuery</h2>
 
@@ -133,9 +135,10 @@ void testTransformToStringExtensionFunc(SaxonProcessor * processor, XsltProcesso
             <code>xs:string</code>, and the arguments to the function, supplied as an XDM array.</p>
 
       <p>For instance, the PHP "userFunction" extension function is called from the XSLT stylesheet
-         testExFunc.xsl (in the 'samples/php/xsl' directory), where the <code>php</code> namespace
-         has been declared (using <code>xmlns:php="http://php.net/xsl"</code>), as shown in the
-         following code snippet:</p>
+            <code>testExFunc.xsl</code> (in the <code>samples/php/xsl</code> directory), where the
+            <code>php</code> namespace has been declared (using
+            <code>xmlns:php="http://php.net/xsl"</code>), as shown in the following code
+         snippet:</p>
 
       <samp><![CDATA[<xsl:variable name="args" select="['param1-data', .]"/>
 <xsl:variable name="phpCall" select="php:function('userFunction', $args)"/>]]></samp>
