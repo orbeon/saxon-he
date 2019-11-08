@@ -7,10 +7,9 @@
       behaves. For a comprehensive guide to the Saxon configuration features see the <a
          href="http://saxonica.com/documentation/index.html#!configuration/config-features"
          target="_blank">Saxon 9.9 documentation</a>.</p>
-   
-   <aside>Note that a small number of the features are
-      not available with Saxon/C. Please see the <a href="/technical"
-         >Technical Information</a> Limitations section for details.</aside>
+
+   <aside>Note that a small number of the features are not available with Saxon/C. Please see the <a
+         href="/technical">Technical Information</a> Limitations section for details.</aside>
 
    <h2 class="subtitle">Setting properties on the SaxonProcessor</h2>
 
@@ -89,9 +88,10 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
 
       <h3 class="codeTitle">setProperty(string $name, string $propValue)</h3>
 
-      <p>The properties are a subset to those specified for running XSLT from the <a
-            href="http://www.saxonica.com/documentation/index.html#!using-xsl/commandline">command
-            line</a>.</p>
+      <p>The properties available are a subset to those specified for running XSLT from the command
+         line (see the <a target="_blank"
+            href="http://www.saxonica.com/documentation/index.html#!using-xsl/commandline">Saxon 9.9
+            documentation</a> for more information).</p>
 
       <table>
          <thead>
@@ -256,9 +256,10 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
 
       <h3 class="codeTitle">setProperty(string $name, string $propValue)</h3>
 
-      <p>The properties are a subset to those specified for running XQuery from the <a
-            href="http://www.saxonica.com/documentation/index.html#!using-xquery/commandline"
-            target="_blank">command line</a>.</p>
+      <p>The properties available are a subset to those specified for running XQuery from the
+         command line (see the <a target="_blank"
+            href="http://www.saxonica.com/documentation/index.html#!using-xquery/commandline">Saxon
+            9.9 documentation</a> for more information).</p>
 
       <table>
          <thead>
@@ -530,9 +531,10 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
 
       <h3 class="codeTitle">setProperty(string $name, string $propValue)</h3>
 
-      <p>The properties are a subset to those specified for running the Schema Validator from the <a
+      <p>The properties available are a subset to those specified for running schema validation from
+         the command line (see the <a target="_blank"
             href="http://www.saxonica.com/documentation/index.html#!schema-processing/commandline"
-            target="_blank">command line</a>.</p>
+            >Saxon 9.9 documentation</a> for more information).</p>
 
       <table>
          <thead>
